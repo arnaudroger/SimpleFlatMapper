@@ -1,0 +1,14 @@
+package org.atclements.setter.reflect;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class ReflectionSetterFactoryTest {
+
+	@Test
+	public void test() {
+		fail("Not yet implemented");
+	}
+
+}

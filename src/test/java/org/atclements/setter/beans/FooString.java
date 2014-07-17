@@ -1,6 +1,6 @@
 package org.atclements.setter.beans;
 
-public class FooString {
+public class FooString extends Bar {
 	private String foo;
 
 	public String getFoo() {
@@ -10,4 +10,5 @@ public class FooString {
 	public void setFoo(String foo) {
 		this.foo = foo;
 	}
+
 }

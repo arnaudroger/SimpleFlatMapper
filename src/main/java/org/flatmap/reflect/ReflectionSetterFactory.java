@@ -1,13 +1,13 @@
-package org.atclements.setter.reflect;
+package org.flatmap.reflect;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import org.atclements.setter.Setter;
-
-public class ReflectionSetterFactory {
-	public Setter getSetter(Class<?> target, String property) {
+public class ReflectionSetterFactory implements SetterFactory {
+	
+	@Override
+	public <T, P, C extends T> Setter<T, P> getSetter(Class<C> target, String property) {
 		// first look for method
 		Method method = lookForMethod(target, property);
 		
@@ -17,10 +17,10 @@ public class ReflectionSetterFactory {
 			
 			if (field != null) {
 				field.setAccessible(true);
-				return new FieldSetter(field);
+				return new FieldSetter<T, P>(field);
 			}
 		} else {
-			return new MethodSetter(method);
+			return new MethodSetter<T, P>(method);
 		}
 		
 		return null;

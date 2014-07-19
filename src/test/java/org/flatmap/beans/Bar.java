@@ -1,4 +1,4 @@
-package org.atclements.setter.beans;
+package org.flatmap.beans;
 
 public class Bar {
 	

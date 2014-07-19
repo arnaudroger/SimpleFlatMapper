@@ -1,18 +1,19 @@
-package org.atclements.setter.reflect;
+package org.flatmap.reflect;
 
 import java.lang.reflect.Field;
 
-import org.atclements.setter.beans.FooString;
+import org.flatmap.beans.Foo;
+import org.flatmap.reflect.FieldSetter;
 import org.junit.Test;
 
 public class FieldSetterTest {
 
 	@Test
 	public void testSet() throws Exception {
-		Field fooField = FooString.class.getDeclaredField("foo");
+		Field fooField = Foo.class.getDeclaredField("foo");
 		fooField.setAccessible(true);
 		
-		FieldSetter setter = new FieldSetter(fooField);
+		FieldSetter<Foo, String> setter = new FieldSetter<Foo, String>(fooField);
 		
 		SetterTestHelper.validateFooSetter(setter);
 	}

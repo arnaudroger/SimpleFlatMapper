@@ -1,23 +1,23 @@
-package org.atclements.setter.reflect;
+package org.flatmap.reflect;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import org.atclements.setter.Setter;
-import org.atclements.setter.beans.FooString;
+import org.flatmap.beans.Bar;
+import org.flatmap.beans.Foo;
 
 public class SetterTestHelper {
-	public static void validateFooSetter(Setter setter)
+	public static void validateFooSetter(Setter<Foo, String> setter)
 			throws Exception {
-		FooString foo = new FooString();
+		Foo foo = new Foo();
 		assertNull(foo.getFoo());
 		setter.set(foo, "FooValue");
 		assertEquals("FooValue", foo.getFoo());
 	}
 	
-	public static void validateBarSetter(Setter setter)
+	public static void validateBarSetter(Setter<Bar, String> setter)
 			throws Exception {
-		FooString foo = new FooString();
+		Foo foo = new Foo();
 		assertNull(foo.getBar());
 		setter.set(foo, "BarValue");
 		assertEquals("BarValue", foo.getBar());

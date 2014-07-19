@@ -1,6 +1,6 @@
-package org.atclements.setter.beans;
+package org.flatmap.beans;
 
-public class FooString extends Bar {
+public class Foo extends Bar {
 	private String foo;
 
 	public String getFoo() {

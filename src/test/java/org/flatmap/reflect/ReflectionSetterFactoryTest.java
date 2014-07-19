@@ -18,6 +18,13 @@ public class ReflectionSetterFactoryTest {
 		assertTrue(setter instanceof MethodSetter);
 		SetterTestHelper.validateFooSetter(setter);
 	}
+	
+	@Test
+	public void testMatchFullMethodName() throws Exception {
+		Setter<Foo, String> setter = factory.getSetter(Foo.class, "setFoo");
+		assertTrue(setter instanceof MethodSetter);
+		SetterTestHelper.validateFooSetter(setter);
+	}
 	@Test
 	public void testFallBackToField() throws Exception {
 		Setter<Bar, String> setter = factory.getSetter(Foo.class, "bar");

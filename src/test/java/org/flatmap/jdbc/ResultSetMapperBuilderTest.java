@@ -1,15 +1,20 @@
 package org.flatmap.jdbc;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
 
 import org.flatmap.beans.DbObject;
+import org.flatmap.beans.DbPrimitiveObject;
+import org.flatmap.beans.DbPrimitiveObjectWithSetter;
 import org.flatmap.map.Mapper;
 import org.flatmap.utils.DateHelper;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class ResultSetMapperBuilderTest {
 
@@ -25,6 +30,69 @@ public class ResultSetMapperBuilderTest {
 		
 		Mapper<ResultSet, DbObject> mapper = builder.mapper();
 		
+		testMapper(mapper);
+	}
+	
+	@Test
+	public void testSelectWithManualColumnDefinition() throws Exception {
+		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilder<DbObject>(DbObject.class);
+		
+		builder.addColumn("id");
+		builder.addColumn("name");
+		builder.addColumn("email");
+		builder.addColumn("creation_time");
+		
+		Mapper<ResultSet, DbObject> mapper = builder.mapper();
+		
+		testMapper(mapper);
+	}
+
+	@Test
+	public void testPrimitivesWithField() throws Exception {
+		ResultSetMapperBuilder<DbPrimitiveObject> builder = new ResultSetMapperBuilder<DbPrimitiveObject>(DbPrimitiveObject.class);
+		testPrimitives(builder, new DbPrimitiveObject());
+	}
+	@Test
+	public void testPrimitivesWithSetter() throws Exception {
+		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
+		testPrimitives(builder, new DbPrimitiveObjectWithSetter());
+	}
+	private <T extends DbPrimitiveObject> void testPrimitives(ResultSetMapperBuilder<T> builder, T object)
+			throws SQLException, Exception {
+		builder.addColumn("p_boolean");
+		builder.addColumn("p_byte");
+		builder.addColumn("p_character");
+		builder.addColumn("p_short");
+		builder.addColumn("p_int");
+		builder.addColumn("p_long");
+		builder.addColumn("p_float");
+		builder.addColumn("p_double");		
+		
+		Mapper<ResultSet, T> mapper = builder.mapper();
+		
+		ResultSet rs = mock(ResultSet.class);
+		when(rs.getBoolean("p_boolean")).thenReturn(true);
+		when(rs.getByte("p_byte")).thenReturn((byte)0xa3);
+		when(rs.getInt("p_character")).thenReturn(0xa4);
+		when(rs.getShort("p_short")).thenReturn((short)0xa5);
+		when(rs.getInt("p_int")).thenReturn(0xa6);
+		when(rs.getLong("p_long")).thenReturn(0xffa4l);
+		when(rs.getFloat("p_float")).thenReturn(3.14f);
+		when(rs.getDouble("p_double")).thenReturn(3.14159);
+		
+		mapper.map(rs, object);
+		
+		assertEquals(true,  object.ispBoolean());
+		assertEquals((byte)0xa3, object.getpByte());
+		assertEquals((char)0xa4, object.getpCharacter());
+		assertEquals((short)0xa5, object.getpShort());
+		assertEquals((int)0xa6, object.getpInt());
+		assertEquals((long)0xffa4l, object.getpLong());
+		assertEquals((float)3.14f, object.getpFloat(), 0);
+		assertEquals((double)3.14159, object.getpDouble(), 0);
+	}
+	private void testMapper(Mapper<ResultSet, DbObject> mapper)
+			throws SQLException, Exception, ParseException {
 		DbObject dbObject = new DbObject();
 		
 		Connection conn = DbHelper.objectDb();

@@ -2,9 +2,9 @@ package org.flatmap.map;
 
 public class Mapper<S, T> {
 	
-	private final FieldMapper<S, T, ?>[] mappers;
+	private final FieldMapper<S, T>[] mappers;
 	
-	public Mapper(FieldMapper<S, T, ?>[] mappers) {
+	public Mapper(FieldMapper<S, T>[] mappers) {
 		this.mappers = mappers;
 	}
 

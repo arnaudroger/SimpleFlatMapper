@@ -5,10 +5,10 @@ import java.sql.SQLException;
 
 import org.flatmap.reflect.Getter;
 
-public class NameResultSetGetter implements Getter<ResultSet, Object> {
+public class ObjectNameResultSetGetter implements Getter<ResultSet, Object> {
 	private final String name;
 	
-	public NameResultSetGetter(String name) {
+	public ObjectNameResultSetGetter(String name) {
 		this.name = name;
 	}
 

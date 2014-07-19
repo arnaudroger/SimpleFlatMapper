@@ -9,9 +9,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 
+import org.flatmap.beans.DbBoxedPrimitveObject;
 import org.flatmap.beans.DbObject;
 import org.flatmap.beans.DbPrimitiveObject;
 import org.flatmap.beans.DbPrimitiveObjectWithSetter;
+import org.flatmap.beans.PrimitiveObject;
 import org.flatmap.map.Mapper;
 import org.flatmap.utils.DateHelper;
 import org.junit.Test;
@@ -30,7 +32,7 @@ public class ResultSetMapperBuilderTest {
 		
 		Mapper<ResultSet, DbObject> mapper = builder.mapper();
 		
-		testMapper(mapper);
+		testDbObjectMappingFromDb(mapper);
 	}
 	
 	@Test
@@ -44,20 +46,25 @@ public class ResultSetMapperBuilderTest {
 		
 		Mapper<ResultSet, DbObject> mapper = builder.mapper();
 		
-		testMapper(mapper);
+		testDbObjectMappingFromDb(mapper);
 	}
 
 	@Test
-	public void testPrimitivesWithField() throws Exception {
+	public void testPrimitivesWithFieldAccess() throws Exception {
 		ResultSetMapperBuilder<DbPrimitiveObject> builder = new ResultSetMapperBuilder<DbPrimitiveObject>(DbPrimitiveObject.class);
 		testPrimitives(builder, new DbPrimitiveObject());
 	}
 	@Test
-	public void testPrimitivesWithSetter() throws Exception {
+	public void testPrimitivesWithSetterAccess() throws Exception {
 		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
 		testPrimitives(builder, new DbPrimitiveObjectWithSetter());
 	}
-	private <T extends DbPrimitiveObject> void testPrimitives(ResultSetMapperBuilder<T> builder, T object)
+	@Test
+	public void testBoxedPrimitives() throws Exception {
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilder<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		testPrimitives(builder, new DbBoxedPrimitveObject());
+	}
+	private <T extends PrimitiveObject> void testPrimitives(ResultSetMapperBuilder<T> builder, T object)
 			throws SQLException, Exception {
 		builder.addColumn("p_boolean");
 		builder.addColumn("p_byte");
@@ -91,7 +98,8 @@ public class ResultSetMapperBuilderTest {
 		assertEquals((float)3.14f, object.getpFloat(), 0);
 		assertEquals((double)3.14159, object.getpDouble(), 0);
 	}
-	private void testMapper(Mapper<ResultSet, DbObject> mapper)
+	
+	private void testDbObjectMappingFromDb(Mapper<ResultSet, DbObject> mapper)
 			throws SQLException, Exception, ParseException {
 		DbObject dbObject = new DbObject();
 		

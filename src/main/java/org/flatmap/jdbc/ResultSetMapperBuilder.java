@@ -2,6 +2,7 @@ package org.flatmap.jdbc;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.flatmap.jdbc.getter.BooleanNameResultSetGetter;
@@ -11,8 +12,9 @@ import org.flatmap.jdbc.getter.DoubleNameResultSetGetter;
 import org.flatmap.jdbc.getter.FloatNameResultSetGetter;
 import org.flatmap.jdbc.getter.IntNameResultSetGetter;
 import org.flatmap.jdbc.getter.LongNameResultSetGetter;
-import org.flatmap.jdbc.getter.ObjectNameResultSetGetter;
 import org.flatmap.jdbc.getter.ShortNameResultSetGetter;
+import org.flatmap.jdbc.getter.StringNameResultSetGetter;
+import org.flatmap.jdbc.getter.TimestampNameResultSetGetter;
 import org.flatmap.map.FieldMapper;
 import org.flatmap.map.Mapper;
 import org.flatmap.map.ObjectFieldMapper;
@@ -49,12 +51,47 @@ public class ResultSetMapperBuilder<T> {
 		if (setter.getType().isPrimitive()) {
 			fieldMapper = primitiveFieldMapper(column, setter);
 		} else {
-			Getter<ResultSet, Object> getter = new ObjectNameResultSetGetter(column);
-			fieldMapper = new ObjectFieldMapper<ResultSet, T, Object>(getter, setter);
+			fieldMapper = objectFieldMapper(column, setter);
 		}
 		
 		fields.add(fieldMapper);
 		return this;
+	}
+
+	private FieldMapper<ResultSet, T> objectFieldMapper(String column,
+			Setter<T, Object> setter) {
+		Class<? extends Object> type = setter.getType();
+		Getter<ResultSet, ? extends Object> getter = getResultSetGetterForType(type, column);
+		return new ObjectFieldMapper<ResultSet, T, Object>(getter, setter);
+	}
+
+	private Getter<ResultSet, ? extends Object> getResultSetGetterForType(
+			Class<? extends Object> type, String column) {
+		Getter<ResultSet, ? extends Object> getter;
+		if (type.isAssignableFrom(String.class)) {
+			getter = new StringNameResultSetGetter(column);
+		} else if (type.isAssignableFrom(Date.class)) {
+			getter = new TimestampNameResultSetGetter(column);
+		} else if (type.equals(Boolean.class)) {
+			getter = new BooleanNameResultSetGetter(column);
+		} else if (type.equals(Integer.class)) {
+			getter = new IntNameResultSetGetter(column);
+		} else if (type.equals(Long.class)) {
+			getter = new LongNameResultSetGetter(column);
+		} else if (type.equals(Float.class)) {
+			getter = new FloatNameResultSetGetter(column);
+		} else if (type.equals(Double.class)) {
+			getter = new DoubleNameResultSetGetter(column);
+		} else if (type.equals(Byte.class)) {
+			getter = new ByteNameResultSetGetter(column);
+		} else if (type.equals(Character.class)) {
+			getter = new CharacterNameResultSetGetter(column);
+		} else if (type.equals(Short.class)) {
+			getter = new ShortNameResultSetGetter(column);
+		} else {
+			throw new UnsupportedOperationException("Unsupported Object type " + type);
+		}
+		return getter;
 	}
 
 	private FieldMapper<ResultSet, T> primitiveFieldMapper(String column, Setter<T, Object> setter) {
@@ -76,9 +113,9 @@ public class ResultSetMapperBuilder<T> {
 			return new CharacterFieldMapper<ResultSet, T>(new CharacterNameResultSetGetter(column), setterFactory.toCharacterSetter(setter));
 		} else if (type.equals(Short.TYPE)) {
 			return new ShortFieldMapper<ResultSet, T>(new ShortNameResultSetGetter(column), setterFactory.toShortSetter(setter));
-		} 
-		
-		return null;
+		} else {
+			throw new UnsupportedOperationException("Type " + type + " is not primitive");
+		}
 	}
 
 	@SuppressWarnings("unchecked")

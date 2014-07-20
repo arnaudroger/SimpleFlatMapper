@@ -19,7 +19,7 @@ public class FieldSetter<T, P> implements Setter<T, P> {
 	}
 
 	@Override
-	public Class<? extends P> getType() {
+	public Class<? extends P> getPropertyType() {
 		return type;
 	}
 	

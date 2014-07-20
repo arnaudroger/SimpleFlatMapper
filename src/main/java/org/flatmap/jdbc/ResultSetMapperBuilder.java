@@ -48,7 +48,7 @@ public class ResultSetMapperBuilder<T> {
 		
 		FieldMapper<ResultSet, T> fieldMapper;
 		
-		if (setter.getType().isPrimitive()) {
+		if (setter.getPropertyType().isPrimitive()) {
 			fieldMapper = primitiveFieldMapper(column, setter);
 		} else {
 			fieldMapper = objectFieldMapper(column, setter);
@@ -60,7 +60,7 @@ public class ResultSetMapperBuilder<T> {
 
 	private FieldMapper<ResultSet, T> objectFieldMapper(String column,
 			Setter<T, Object> setter) {
-		Class<? extends Object> type = setter.getType();
+		Class<? extends Object> type = setter.getPropertyType();
 		Getter<ResultSet, ? extends Object> getter = getResultSetGetterForType(type, column);
 		return new ObjectFieldMapper<ResultSet, T, Object>(getter, setter);
 	}
@@ -95,7 +95,7 @@ public class ResultSetMapperBuilder<T> {
 	}
 
 	private FieldMapper<ResultSet, T> primitiveFieldMapper(String column, Setter<T, Object> setter) {
-		Class<?> type = setter.getType();
+		Class<?> type = setter.getPropertyType();
 		
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<ResultSet, T>(new BooleanNameResultSetGetter(column), setterFactory.toBooleanSetter(setter));

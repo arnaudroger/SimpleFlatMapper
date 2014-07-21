@@ -1,5 +1,7 @@
 package org.flatmap.perf;
 
+import java.util.Random;
+
 import org.flatmap.reflect.FieldSetter;
 import org.flatmap.reflect.MethodSetter;
 import org.flatmap.reflect.Setter;
@@ -10,12 +12,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /***
-Direct Exectime String            2036884
-Direct Exectime Number            1635709
-MethodSetter Exectime String     86622869
-IntMethodSetter Exectime Number 483151018
-FieldSetter Exectime String     388377552
-IntFieldSetter Exectime Number  284462035 
+ * 
+ Exectime String                 292801513
+ Exectime Number                 178614125
+MethodSetter Exectime String    1339894001
+IntMethodSetter Exectime Number 5321094750
+FieldSetter Exectime String     3243315335
+IntFieldSetter Exectime Number  3490070954
+
  *
  */
 public class SetterPerfTest {
@@ -43,6 +47,10 @@ public class SetterPerfTest {
 
 
 	private static final int EXECT_NB = 100000000;
+	
+	
+	private static String[] sdata;
+	private static int[] idata;
 	
 	
 	static FieldSetter<MyClass, String> stringFieldSetter;
@@ -81,6 +89,14 @@ public class SetterPerfTest {
 			}
 			
 		};
+		Random r = new Random();
+		sdata = new String[256];
+		idata = new int[256];
+		for(int i = 0; i < 256; i++) {
+			int j = r.nextInt();
+			sdata[i] = String.valueOf(i);
+			idata[i] = j;
+		}
 		
 	}
 	
@@ -124,13 +140,13 @@ public class SetterPerfTest {
 	private void runStringIteration(Setter<MyClass, String> setter, int nb) throws Exception {
 		MyClass object = new MyClass();
 		for(int i = 0; i < nb; i++) {
-			setter.set(object, "VALUE");
+			setter.set(object, sdata[i & 0xff] );
 		}
 	}
 	private void runNumberIteration(IntSetter<MyClass> setter, int nb) throws Exception {
 		MyClass object = new MyClass();
 		for(int i = 0; i < nb; i++) {
-			setter.setInt(object, i);
+			setter.setInt(object, idata[i & 0xff]);
 		}
 	}
 }

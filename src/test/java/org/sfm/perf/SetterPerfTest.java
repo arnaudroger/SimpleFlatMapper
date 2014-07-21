@@ -17,12 +17,14 @@ import org.sfm.reflect.primitive.IntSetter;
 
 /***
  * 
- Exectime String                 292801513
- Exectime Number                 178614125
-MethodSetter Exectime String    1339894001
-IntMethodSetter Exectime Number 5321094750
-FieldSetter Exectime String     3243315335
-IntFieldSetter Exectime Number  3490070954
+SettersetStringMyClassString Exectime String 10884000
+SettersetNumberMyClassint Exectime Number     7362000
+ Exectime String                             10836000
+ Exectime Number                              6937000
+MethodSetter Exectime String                 42514000
+IntMethodSetter Exectime Number             266098000
+FieldSetter Exectime String                  90045000
+IntFieldSetter Exectime Number               58377000
 
  *
  */
@@ -68,21 +70,26 @@ public class SetterPerfTest {
 
 	static MethodHandleSetter<MyClass, String> stringMethodHandleSetter;
 	static Setter<MyClass, String> stringAsmSetter;
+	static IntSetter<MyClass> numberAsmSetter;
+	
+	@SuppressWarnings("unchecked")
 	@BeforeClass
 	public static void setUp() throws Exception {
 		stringFieldSetter = new FieldSetter<MyClass, String>(MyClass.class.getDeclaredField("string"));
 		numberFieldSetter = new IntFieldSetter<MyClass>(MyClass.class.getDeclaredField("number"));
 		
 		Method setStringMethod = MyClass.class.getMethod("setString", String.class);
+		Method setNumberMethod = MyClass.class.getMethod("setNumber", int.class);
 		
 		stringMethodSetter = new MethodSetter<MyClass, String>(setStringMethod);
-		numberMethodSetter = new IntMethodSetter<MyClass>(MyClass.class.getMethod("setNumber", int.class));
+		numberMethodSetter = new IntMethodSetter<MyClass>(setNumberMethod);
 		
 		stringMethodHandleSetter = new MethodHandleSetter<>(MethodHandles.lookup().unreflect(setStringMethod));
 		
 		AsmSetterFactory asmSetterFactory = new AsmSetterFactory();
 		
 		stringAsmSetter = asmSetterFactory.createSetter(setStringMethod);
+		numberAsmSetter = (IntSetter<MyClass>) asmSetterFactory.createSetter(setNumberMethod);
 		
 		stringDirectSetter = new Setter<MyClass, String>() {
 			@Override
@@ -124,6 +131,7 @@ public class SetterPerfTest {
 		runStringTest(stringMethodSetter);
 		runNumberTest(numberMethodSetter);
 	}
+//	@Test
 	public void testPerfMethodHandle() throws Exception {
 		// to slow to run
 		runStringTest(stringMethodHandleSetter);
@@ -132,6 +140,7 @@ public class SetterPerfTest {
 	@Test
 	public void testPerfAsmMethod() throws Exception {
 		runStringTest(stringAsmSetter);
+		runNumberTest(numberAsmSetter);
 	}
 	@Test
 	public void testPerfDirect() throws Exception {

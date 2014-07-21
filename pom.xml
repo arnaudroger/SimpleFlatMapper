@@ -2,13 +2,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.atclements</groupId>
-  <artifactId>flat-map</artifactId>
+  <groupId>org.sfm</groupId>
+  <artifactId>simpleFlatMapper</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>Flat Map</name>
-  <url>http://github.com/arnaudroger/flat-map</url>
+  <name>SimpleFlatMapper</name>
+  <url>http://github.com/arnaudroger/SimpleFlatMapper</url>
 
   <build>
     <plugins>
@@ -23,6 +23,11 @@
     </plugins>
    </build>
   <dependencies>
+	<dependency>
+		<groupId>org.ow2.asm</groupId>
+		<artifactId>asm</artifactId>
+		<version>5.0.3</version>
+	</dependency>  
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

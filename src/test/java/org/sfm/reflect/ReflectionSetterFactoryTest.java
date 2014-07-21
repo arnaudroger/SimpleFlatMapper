@@ -15,14 +15,14 @@ public class ReflectionSetterFactoryTest {
 	@Test
 	public void testDefaultToMethod() throws Exception {
 		Setter<Foo, String> setter = factory.getSetter(Foo.class, "foo");
-		assertTrue(setter instanceof MethodSetter);
+		assertFalse(setter instanceof FieldSetter);
 		SetterTestHelper.validateFooSetter(setter);
 	}
 	
 	@Test
 	public void testMatchFullMethodName() throws Exception {
 		Setter<Foo, String> setter = factory.getSetter(Foo.class, "setFoo");
-		assertTrue(setter instanceof MethodSetter);
+		assertFalse(setter instanceof FieldSetter);
 		SetterTestHelper.validateFooSetter(setter);
 	}
 	@Test

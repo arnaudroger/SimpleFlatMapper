@@ -43,6 +43,20 @@ public class AsmSetterFactory implements Opcodes {
 	};	
 	
 	@SuppressWarnings("serial")
+	static final Map<Class<?>, Integer> loadOps = new HashMap<Class<?>, Integer>() {
+		{
+			  put(boolean.class, ILOAD);
+		      put(byte.class, ILOAD);
+		      put(char.class, ILOAD);
+		      put(double.class, DLOAD);
+		      put(float.class, FLOAD);
+		      put(int.class, ILOAD);
+		      put(long.class, LLOAD);
+		      put(short.class, ILOAD);
+		}
+	};	
+	
+	@SuppressWarnings("serial")
 	static final Set<Class<?>> primitivesClassAndWrapper = new HashSet<Class<?>>() {
 		{
 			addAll(wrappers.keySet());
@@ -207,9 +221,14 @@ public class AsmSetterFactory implements Opcodes {
 			methodSuffix = "Int";
 		}
 		
+		boolean _64bits = primitive.equals(long.class) || primitive.equals(double.class);
+		
 		String setMethod = "set" + methodSuffix;
 		String valueMethod = methodSuffix.toLowerCase() + "Value";
 
+		
+		int primitiveLoadOp = loadOps.get(primitive);
+		
 		cw.visit(V1_7, ACC_PUBLIC + ACC_SUPER,  classType, 
 				"Ljava/lang/Object;"
 				+ "Lorg/sfm/reflect/Setter<L" + targetType + ";L" + propertyType + ";>;"
@@ -232,10 +251,14 @@ public class AsmSetterFactory implements Opcodes {
 		mv = cw.visitMethod(ACC_PUBLIC, setMethod, "(L" + targetType + ";" + primitiveType + ")V", null, new String[] { "java/lang/Exception" });
 		mv.visitCode();
 		mv.visitVarInsn(ALOAD, 1);
-		mv.visitVarInsn(ILOAD, 2);
+		mv.visitVarInsn(primitiveLoadOp, 2);
 		mv.visitMethodInsn(INVOKEVIRTUAL,  targetType , method.getName(), "(" + primitiveType + ")V", false);
 		mv.visitInsn(RETURN);
-		mv.visitMaxs(2, 3);
+		if (_64bits) {
+			mv.visitMaxs(3, 4);
+		} else {
+			mv.visitMaxs(2, 3);
+		}
 		mv.visitEnd();
 		}
 		{
@@ -246,7 +269,11 @@ public class AsmSetterFactory implements Opcodes {
 		mv.visitMethodInsn(INVOKEVIRTUAL,  propertyType , valueMethod, "()" + primitiveType + "", false);
 		mv.visitMethodInsn(INVOKEVIRTUAL,  targetType , method.getName(), "(" + primitiveType + ")V", false);
 		mv.visitInsn(RETURN);
-		mv.visitMaxs(2, 3);
+		if (_64bits) {
+			mv.visitMaxs(3, 3);
+		} else {
+			mv.visitMaxs(2, 3);
+		}
 		mv.visitEnd();
 		}
 		{
@@ -263,10 +290,14 @@ public class AsmSetterFactory implements Opcodes {
 		mv.visitVarInsn(ALOAD, 0);
 		mv.visitVarInsn(ALOAD, 1);
 		mv.visitTypeInsn(CHECKCAST,  targetType );
-		mv.visitVarInsn(ILOAD, 2);
+		mv.visitVarInsn(primitiveLoadOp, 2);
 		mv.visitMethodInsn(INVOKEVIRTUAL,  classType , setMethod, "(L" + targetType + ";" + primitiveType + ")V", false);
 		mv.visitInsn(RETURN);
-		mv.visitMaxs(3, 3);
+		if (_64bits) {
+			mv.visitMaxs(4, 4);
+		} else {
+			mv.visitMaxs(3, 3);
+		}
 		mv.visitEnd();
 		}
 		{
@@ -285,7 +316,8 @@ public class AsmSetterFactory implements Opcodes {
 		cw.visitEnd();
 
 		return cw.toByteArray();
-		}
+	}
+
 	private static String toType(Class<?> target) {
 		String name = target.getName();
 		return toType(name);

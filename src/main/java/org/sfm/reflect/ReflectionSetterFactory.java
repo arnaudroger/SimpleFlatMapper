@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import org.sfm.reflect.asm.AsmSetterFactory;
 import org.sfm.reflect.primitive.BooleanFieldSetter;
 import org.sfm.reflect.primitive.BooleanMethodSetter;
 import org.sfm.reflect.primitive.BooleanSetter;
@@ -31,6 +32,16 @@ import org.sfm.reflect.primitive.ShortSetter;
 
 public class ReflectionSetterFactory implements SetterFactory {
 	
+	private AsmSetterFactory asmSetterFactory;
+	
+	public ReflectionSetterFactory(AsmSetterFactory asmSetterFactory) {
+		this.asmSetterFactory = asmSetterFactory;
+	}
+	
+	public ReflectionSetterFactory() {
+		this.asmSetterFactory = new AsmSetterFactory();
+	}
+
 	@Override
 	public <T, P, C extends T> Setter<T, P> getSetter(Class<C> target, String property) {
 		// first look for method
@@ -45,7 +56,11 @@ public class ReflectionSetterFactory implements SetterFactory {
 				return new FieldSetter<T, P>(field);
 			}
 		} else {
-			return new MethodSetter<T, P>(method);
+			try {
+				return asmSetterFactory.createSetter(method);
+			} catch(Exception e) {
+				return new MethodSetter<T, P>(method);
+			}
 		}
 		
 		return null;
@@ -100,10 +115,12 @@ public class ReflectionSetterFactory implements SetterFactory {
 		return  name.equalsIgnoreCase(property);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T, P> BooleanSetter<T> toBooleanSetter(Setter<T, P> setter) {
-		if (setter instanceof MethodSetter) {
+		if (setter instanceof BooleanSetter) {
+			return (BooleanSetter<T>) setter;
+		} else if (setter instanceof MethodSetter) {
 			return new BooleanMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
 			return new BooleanFieldSetter<T>(((FieldSetter) setter).getField());
@@ -111,10 +128,12 @@ public class ReflectionSetterFactory implements SetterFactory {
 			throw new IllegalArgumentException("Invalid type " + setter);
 		}
 	}
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T, P> ByteSetter<T> toByteSetter(Setter<T, P> setter) {
-		if (setter instanceof MethodSetter) {
+		if (setter instanceof ByteSetter) {
+			return (ByteSetter<T>) setter;
+		} else if (setter instanceof MethodSetter) {
 			return new ByteMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
 			return new ByteFieldSetter<T>(((FieldSetter) setter).getField());
@@ -122,10 +141,12 @@ public class ReflectionSetterFactory implements SetterFactory {
 			throw new IllegalArgumentException("Invalid type " + setter);
 		}
 	}
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T, P> CharacterSetter<T> toCharacterSetter(Setter<T, P> setter) {
-		if (setter instanceof MethodSetter) {
+		if (setter instanceof CharacterSetter) {
+			return (CharacterSetter<T>) setter;
+		} else if (setter instanceof MethodSetter) {
 			return new CharacterMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
 			return new CharacterFieldSetter<T>(((FieldSetter) setter).getField());
@@ -133,10 +154,12 @@ public class ReflectionSetterFactory implements SetterFactory {
 			throw new IllegalArgumentException("Invalid type " + setter);
 		}
 	}
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T, P> ShortSetter<T> toShortSetter(Setter<T, P> setter) {
-		if (setter instanceof MethodSetter) {
+		if (setter instanceof ShortSetter) {
+			return (ShortSetter<T>) setter;
+		} else if (setter instanceof MethodSetter) {
 			return new ShortMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
 			return new ShortFieldSetter<T>(((FieldSetter) setter).getField());
@@ -145,10 +168,12 @@ public class ReflectionSetterFactory implements SetterFactory {
 		}
 	}
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T, P> IntSetter<T> toIntSetter(Setter<T, P> setter) {
-		if (setter instanceof MethodSetter) {
+		if (setter instanceof IntSetter) {
+			return (IntSetter<T>) setter;
+		} else if (setter instanceof MethodSetter) {
 			return new IntMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
 			return new IntFieldSetter<T>(((FieldSetter) setter).getField());
@@ -157,10 +182,12 @@ public class ReflectionSetterFactory implements SetterFactory {
 		}
 	}
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T, P> LongSetter<T> toLongSetter(Setter<T, P> setter) {
-		if (setter instanceof MethodSetter) {
+		if (setter instanceof LongSetter) {
+			return (LongSetter<T>) setter;
+		} else if (setter instanceof MethodSetter) {
 			return new LongMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
 			return new LongFieldSetter<T>(((FieldSetter) setter).getField());
@@ -168,10 +195,12 @@ public class ReflectionSetterFactory implements SetterFactory {
 			throw new IllegalArgumentException("Invalid type " + setter);
 		}
 	}
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T, P> FloatSetter<T> toFloatSetter(Setter<T, P> setter) {
-		if (setter instanceof MethodSetter) {
+		if (setter instanceof FloatSetter) {
+			return (FloatSetter<T>) setter;
+		} else if (setter instanceof MethodSetter) {
 			return new FloatMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
 			return new FloatFieldSetter<T>(((FieldSetter) setter).getField());
@@ -179,10 +208,12 @@ public class ReflectionSetterFactory implements SetterFactory {
 			throw new IllegalArgumentException("Invalid type " + setter);
 		}
 	}
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T, P> DoubleSetter<T> toDoubleSetter(Setter<T, P> setter) {
-		if (setter instanceof MethodSetter) {
+		if (setter instanceof DoubleSetter) {
+			return (DoubleSetter<T>) setter;
+		} else if (setter instanceof MethodSetter) {
 			return new DoubleMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
 			return new DoubleFieldSetter<T>(((FieldSetter) setter).getField());

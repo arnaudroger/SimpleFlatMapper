@@ -12,7 +12,6 @@ import java.text.ParseException;
 import org.junit.Test;
 import org.sfm.beans.DbBoxedPrimitveObject;
 import org.sfm.beans.DbObject;
-import org.sfm.beans.DbPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.PrimitiveObject;
 import org.sfm.jdbc.ResultSetMapperBuilder;
@@ -51,20 +50,17 @@ public class ResultSetMapperBuilderTest {
 	}
 
 	@Test
-	public void testPrimitivesWithFieldAccess() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObject> builder = new ResultSetMapperBuilder<DbPrimitiveObject>(DbPrimitiveObject.class);
-		testPrimitives(builder, new DbPrimitiveObject());
-	}
-	@Test
 	public void testPrimitivesWithSetterAccess() throws Exception {
 		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
 		testPrimitives(builder, new DbPrimitiveObjectWithSetter());
 	}
+	
 	@Test
 	public void testBoxedPrimitives() throws Exception {
 		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilder<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
 		testPrimitives(builder, new DbBoxedPrimitveObject());
 	}
+	
 	private <T extends PrimitiveObject> void testPrimitives(ResultSetMapperBuilder<T> builder, T object)
 			throws SQLException, Exception {
 		builder.addColumn("p_boolean");

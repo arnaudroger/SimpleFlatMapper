@@ -48,22 +48,30 @@ public class ReflectionSetterFactory implements SetterFactory {
 		Method method = lookForMethod(target, property);
 		
 		if (method == null) {
-			// look for field
-			Field field = lookForField(target, property);
-			
-			if (field != null) {
-				field.setAccessible(true);
-				return new FieldSetter<T, P>(field);
-			}
+			return getFieldSetter(target, property);
 		} else {
-			try {
-				return asmSetterFactory.createSetter(method);
-			} catch(Exception e) {
+			if (asmSetterFactory != null) {
+				try {
+					return asmSetterFactory.createSetter(method);
+				} catch(Exception e) {
+					return new MethodSetter<T, P>(method);
+				}
+			} else {
 				return new MethodSetter<T, P>(method);
 			}
 		}
+	}
+
+	public <T, P, C extends T> FieldSetter<T, P> getFieldSetter(Class<C> target, String property) {
+		// look for field
+		Field field = lookForField(target, property);
 		
-		return null;
+		if (field != null) {
+			field.setAccessible(true);
+			return new FieldSetter<T, P>(field);
+		} else {
+			return null;
+		}
 	}
 
 	private Method lookForMethod(Class<?> target, String property) {

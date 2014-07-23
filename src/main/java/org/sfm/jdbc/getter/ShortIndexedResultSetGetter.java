@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.ShortGetter;
 
-public class ShortNameResultSetGetter implements ShortGetter<ResultSet>, Getter<ResultSet, Short> {
+public class ShortIndexedResultSetGetter implements ShortGetter<ResultSet>, Getter<ResultSet, Short> {
 
-	private final String column;
+	private final int column;
 	
-	public ShortNameResultSetGetter(String column) {
+	public ShortIndexedResultSetGetter(int column) {
 		this.column = column;
 	}
 

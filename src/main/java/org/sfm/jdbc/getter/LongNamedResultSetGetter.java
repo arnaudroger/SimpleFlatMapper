@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.LongGetter;
 
-public class LongNameResultSetGetter implements LongGetter<ResultSet>, Getter<ResultSet, Long> {
+public class LongNamedResultSetGetter implements LongGetter<ResultSet>, Getter<ResultSet, Long> {
 
 	private final String column;
 	
-	public LongNameResultSetGetter(String column) {
+	public LongNamedResultSetGetter(String column) {
 		this.column = column;
 	}
 

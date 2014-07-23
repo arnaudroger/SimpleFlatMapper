@@ -48,6 +48,15 @@ public class ResultSetMapperBuilderTest {
 		
 		testDbObjectMappingFromDb(mapper);
 	}
+	
+	@Test
+	public void testSelectAdaptive() throws Exception {
+		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilder<DbObject>(DbObject.class);
+		
+		Mapper<ResultSet, DbObject> mapper = builder.mapper();
+		
+		testDbObjectMappingFromDb(mapper);
+	}
 
 	@Test
 	public void testPrimitivesWithSetterAccess() throws Exception {

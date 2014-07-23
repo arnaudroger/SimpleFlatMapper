@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.CharacterGetter;
 
-public class CharacterNameResultSetGetter implements CharacterGetter<ResultSet>, Getter<ResultSet, Character> {
+public class CharacterIndexedResultSetGetter implements CharacterGetter<ResultSet>, Getter<ResultSet, Character> {
 
-	private final String column;
+	private final int column;
 	
-	public CharacterNameResultSetGetter(String column) {
+	public CharacterIndexedResultSetGetter(int column) {
 		this.column = column;
 	}
 

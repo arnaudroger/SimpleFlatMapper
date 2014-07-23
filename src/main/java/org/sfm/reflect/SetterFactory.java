@@ -1,5 +1,7 @@
 package org.sfm.reflect;
 
+import java.util.Map;
+
 import org.sfm.reflect.primitive.BooleanSetter;
 import org.sfm.reflect.primitive.ByteSetter;
 import org.sfm.reflect.primitive.CharacterSetter;
@@ -10,6 +12,8 @@ import org.sfm.reflect.primitive.LongSetter;
 import org.sfm.reflect.primitive.ShortSetter;
 
 public interface SetterFactory {
+	
+	<T> Map<String, Setter<T, Object>> getAllSetters(Class<T> target);
 	<T, P, C extends T> Setter<T, P> getSetter(Class<C> target, String property);
 	
 	<T, P> BooleanSetter<T> toBooleanSetter(Setter<T, P> setter);

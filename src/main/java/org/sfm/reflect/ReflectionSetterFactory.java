@@ -3,6 +3,8 @@ package org.sfm.reflect;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.sfm.reflect.asm.AsmSetterFactory;
 import org.sfm.reflect.primitive.BooleanFieldSetter;
@@ -50,15 +52,19 @@ public class ReflectionSetterFactory implements SetterFactory {
 		if (method == null) {
 			return getFieldSetter(target, property);
 		} else {
-			if (asmSetterFactory != null) {
-				try {
-					return asmSetterFactory.createSetter(method);
-				} catch(Exception e) {
-					return new MethodSetter<T, P>(method);
-				}
-			} else {
+			return getMethodSetter(method);
+		}
+	}
+
+	private <T, P, C extends T> Setter<T, P> getMethodSetter(Method method) {
+		if (asmSetterFactory != null) {
+			try {
+				return asmSetterFactory.createSetter(method);
+			} catch(Exception e) {
 				return new MethodSetter<T, P>(method);
 			}
+		} else {
+			return new MethodSetter<T, P>(method);
 		}
 	}
 
@@ -83,7 +89,7 @@ public class ReflectionSetterFactory implements SetterFactory {
 			}
 		}
 		
-		if (target.getSuperclass() != null) {
+		if (!Object.class.equals(target)) {
 			return lookForMethod(target.getSuperclass(), property);
 		}
 		
@@ -99,7 +105,7 @@ public class ReflectionSetterFactory implements SetterFactory {
 			}
 		}
 		
-		if (target.getSuperclass() != null) {
+		if (!Object.class.equals(target)) {
 			return lookForField(target.getSuperclass(), property);
 		}
 		
@@ -228,5 +234,40 @@ public class ReflectionSetterFactory implements SetterFactory {
 		} else {
 			throw new IllegalArgumentException("Invalid type " + setter);
 		}
+	}
+
+	@Override
+	public <T> Map<String, Setter<T, Object>> getAllSetters(Class<T> target) {
+		Map<String, Setter<T, Object>> setters = new HashMap<String, Setter<T,Object>>();
+		
+		Class<?> currentClass = target;
+		
+		while(!Object.class.equals(currentClass)) {
+			
+			for(Method method : currentClass.getDeclaredMethods()) {
+				String name = method.getName();
+				if (methodModifiersMatches(method.getModifiers()) && name.length() > 3 && name.startsWith("set")) {
+					String propertyName = name.substring(3,4).toLowerCase() +  name.substring(4);
+					if (!setters.containsKey(propertyName)) {
+						Setter<T, Object> setter = getMethodSetter(method);
+						setters.put(propertyName, setter);
+					}
+				}
+			}
+			
+			for(Field field : currentClass.getDeclaredFields()) {
+				String name = field.getName();
+				if (fieldModifiersMatches(field.getModifiers())) {
+					if (!setters.containsKey(name)) {
+						Setter<T, Object> setter = new FieldSetter<T, Object>(field);
+						setters.put(name, setter);
+					}
+				}
+			}
+			
+			currentClass = target.getSuperclass();
+		}
+		
+		return setters;
 	}
 }

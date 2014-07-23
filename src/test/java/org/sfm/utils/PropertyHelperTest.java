@@ -9,7 +9,7 @@ public class PropertyHelperTest {
 
 	@Test
 	public void testToPropertyName() {
-		assertEquals("mycolumnname", PropertyHelper.toPropertyName("my_column_name"));
+		assertEquals("myColumnName", PropertyHelper.toPropertyName("my_column_name"));
 	}
 
 }

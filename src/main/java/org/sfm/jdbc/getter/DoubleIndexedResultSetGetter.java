@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.DoubleGetter;
 
-public class DoubleNameResultSetGetter implements DoubleGetter<ResultSet>, Getter<ResultSet, Double> {
+public class DoubleIndexedResultSetGetter implements DoubleGetter<ResultSet>, Getter<ResultSet, Double> {
 
-	private final String column;
+	private final int column;
 	
-	public DoubleNameResultSetGetter(String column) {
+	public DoubleIndexedResultSetGetter(int column) {
 		this.column = column;
 	}
 

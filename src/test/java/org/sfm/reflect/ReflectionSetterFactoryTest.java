@@ -1,14 +1,13 @@
 package org.sfm.reflect;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import org.junit.Test;
 import org.sfm.beans.Bar;
+import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.Foo;
@@ -143,5 +142,13 @@ public class ReflectionSetterFactoryTest {
 		assertTrue(nonAsmfactory.toDoubleSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pDouble")) instanceof DoubleMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pDouble");
 		assertSame(setter, asmfactory.toDoubleSetter(setter));
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void testGetAllSetters() throws Exception {
+		Map<String, Setter<Foo, Object>> setters = nonAsmfactory.getAllSetters(Foo.class);
+		assertEquals(DbObject.class.getDeclaredMethod("setFoo", String.class), ((MethodSetter)setters.get("foo")).getMethod());
+		assertEquals(DbObject.class.getDeclaredMethod("setBar", String.class), ((FieldSetter)setters.get("bar")).getField());
+			
 	}
 }

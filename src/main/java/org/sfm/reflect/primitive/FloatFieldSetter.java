@@ -2,7 +2,7 @@ package org.sfm.reflect.primitive;
 
 import java.lang.reflect.Field;
 
-public class FloatFieldSetter<T> implements FloatSetter<T> {
+public final class FloatFieldSetter<T> implements FloatSetter<T> {
 
 	private final Field field;
 	

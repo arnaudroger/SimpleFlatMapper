@@ -2,7 +2,7 @@ package org.sfm.reflect.primitive;
 
 import java.lang.reflect.Field;
 
-public class ShortFieldSetter<T> implements ShortSetter<T> {
+public final class ShortFieldSetter<T> implements ShortSetter<T> {
 
 	private final Field field;
 	

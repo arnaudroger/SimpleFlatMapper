@@ -3,7 +3,7 @@ package org.sfm.reflect.primitive;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class BooleanMethodSetter<T> implements BooleanSetter<T> {
+public final class BooleanMethodSetter<T> implements BooleanSetter<T> {
 
 	private final Method method;
 	

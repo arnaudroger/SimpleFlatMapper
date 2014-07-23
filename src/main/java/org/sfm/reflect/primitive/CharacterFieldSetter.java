@@ -2,7 +2,7 @@ package org.sfm.reflect.primitive;
 
 import java.lang.reflect.Field;
 
-public class CharacterFieldSetter<T> implements CharacterSetter<T> {
+public final class CharacterFieldSetter<T> implements CharacterSetter<T> {
 
 	private final Field field;
 	

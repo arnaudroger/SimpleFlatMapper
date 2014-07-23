@@ -2,7 +2,7 @@ package org.sfm.reflect.primitive;
 
 import java.lang.reflect.Field;
 
-public class IntFieldSetter<T> implements IntSetter<T> {
+public final class IntFieldSetter<T> implements IntSetter<T> {
 
 	private final Field field;
 	

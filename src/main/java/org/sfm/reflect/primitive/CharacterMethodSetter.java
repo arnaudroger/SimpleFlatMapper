@@ -3,7 +3,7 @@ package org.sfm.reflect.primitive;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class CharacterMethodSetter<T> implements CharacterSetter<T> {
+public final class CharacterMethodSetter<T> implements CharacterSetter<T> {
 
 	private final Method method;
 	

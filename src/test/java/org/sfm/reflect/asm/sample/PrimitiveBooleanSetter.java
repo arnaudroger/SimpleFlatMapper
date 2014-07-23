@@ -4,7 +4,7 @@ import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.primitive.BooleanSetter;
 
-public class PrimitiveBooleanSetter implements Setter<DbPrimitiveObjectWithSetter, Boolean>, BooleanSetter<DbPrimitiveObjectWithSetter> {
+public final class PrimitiveBooleanSetter implements Setter<DbPrimitiveObjectWithSetter, Boolean>, BooleanSetter<DbPrimitiveObjectWithSetter> {
 
 	@Override
 	public void setBoolean(DbPrimitiveObjectWithSetter target, boolean value) throws Exception {

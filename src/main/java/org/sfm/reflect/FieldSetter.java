@@ -2,7 +2,7 @@ package org.sfm.reflect;
 
 import java.lang.reflect.Field;
 
-public class FieldSetter<T, P> implements Setter<T, P> {
+public final class FieldSetter<T, P> implements Setter<T, P> {
 
 	private final Field field;
 	private final Class<? extends P> type; 

@@ -2,7 +2,7 @@ package org.sfm.reflect.primitive;
 
 import java.lang.reflect.Field;
 
-public class BooleanFieldSetter<T> implements BooleanSetter<T> {
+public final class BooleanFieldSetter<T> implements BooleanSetter<T> {
 
 	private final Field field;
 	

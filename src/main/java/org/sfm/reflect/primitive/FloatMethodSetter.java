@@ -3,7 +3,7 @@ package org.sfm.reflect.primitive;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class FloatMethodSetter<T> implements FloatSetter<T> {
+public final class FloatMethodSetter<T> implements FloatSetter<T> {
 
 	private final Method method;
 	

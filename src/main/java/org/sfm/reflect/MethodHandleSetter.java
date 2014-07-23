@@ -2,7 +2,7 @@ package org.sfm.reflect;
 
 import java.lang.invoke.MethodHandle;
 
-public class MethodHandleSetter<T, P> implements Setter<T, P> {
+public final class MethodHandleSetter<T, P> implements Setter<T, P> {
 
 	private final MethodHandle method;
 	private final Class<? extends P> type;

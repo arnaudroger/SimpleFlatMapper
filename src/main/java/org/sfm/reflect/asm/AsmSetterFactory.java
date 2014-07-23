@@ -150,7 +150,7 @@ public class AsmSetterFactory implements Opcodes {
 		
 		cw.visit(
 				V1_7,
-				ACC_PUBLIC + ACC_SUPER,
+				ACC_PUBLIC + ACC_FINAL + ACC_SUPER,
 				classType,
 				"Ljava/lang/Object;Lorg/sfm/reflect/Setter<L" + targetType + ";L" + propertyType + ";>;",
 				"java/lang/Object", new String[] { "org/sfm/reflect/Setter" });
@@ -229,7 +229,7 @@ public class AsmSetterFactory implements Opcodes {
 		
 		int primitiveLoadOp = loadOps.get(primitive);
 		
-		cw.visit(V1_7, ACC_PUBLIC + ACC_SUPER,  classType, 
+		cw.visit(V1_7, ACC_PUBLIC + ACC_FINAL  + ACC_SUPER,  classType, 
 				"Ljava/lang/Object;"
 				+ "Lorg/sfm/reflect/Setter<L" + targetType + ";L" + propertyType + ";>;"
 				+ "Lorg/sfm/reflect/primitive/" + methodSuffix + "Setter<L" + targetType + ";>;", 

@@ -3,7 +3,7 @@ package org.sfm.reflect.primitive;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class LongMethodSetter<T> implements LongSetter<T> {
+public final class LongMethodSetter<T> implements LongSetter<T> {
 
 	private final Method method;
 	

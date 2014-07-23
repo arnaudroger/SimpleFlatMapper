@@ -2,7 +2,7 @@ package org.sfm.reflect.primitive;
 
 import java.lang.reflect.Field;
 
-public class DoubleFieldSetter<T> implements DoubleSetter<T> {
+public final class DoubleFieldSetter<T> implements DoubleSetter<T> {
 
 	private final Field field;
 	

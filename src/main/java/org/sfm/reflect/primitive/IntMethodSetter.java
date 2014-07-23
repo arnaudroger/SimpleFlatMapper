@@ -3,7 +3,7 @@ package org.sfm.reflect.primitive;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class IntMethodSetter<T> implements IntSetter<T> {
+public final class IntMethodSetter<T> implements IntSetter<T> {
 
 	private final Method method;
 	

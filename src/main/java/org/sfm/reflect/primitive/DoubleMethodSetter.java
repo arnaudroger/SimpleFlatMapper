@@ -3,7 +3,7 @@ package org.sfm.reflect.primitive;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class DoubleMethodSetter<T> implements DoubleSetter<T> {
+public final class DoubleMethodSetter<T> implements DoubleSetter<T> {
 
 	private final Method method;
 	

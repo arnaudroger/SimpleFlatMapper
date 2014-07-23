@@ -2,7 +2,7 @@ package org.sfm.reflect.primitive;
 
 import java.lang.reflect.Field;
 
-public class ByteFieldSetter<T> implements ByteSetter<T> {
+public final class ByteFieldSetter<T> implements ByteSetter<T> {
 
 	private final Field field;
 	

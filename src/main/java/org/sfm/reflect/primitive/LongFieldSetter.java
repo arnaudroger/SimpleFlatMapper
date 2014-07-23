@@ -2,7 +2,7 @@ package org.sfm.reflect.primitive;
 
 import java.lang.reflect.Field;
 
-public class LongFieldSetter<T> implements LongSetter<T> {
+public final class LongFieldSetter<T> implements LongSetter<T> {
 
 	private final Field field;
 	

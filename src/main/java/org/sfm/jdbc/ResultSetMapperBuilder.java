@@ -46,7 +46,7 @@ public class ResultSetMapperBuilder<T> {
 	
 	private final Class<T> target;
 	
-	private final SetterFactory setterFactory = new SetterFactory();
+	private final SetterFactory setterFactory;
 	private final InstantiatorFactory instantiatorFactory = new InstantiatorFactory();
 	private final List<Mapper<ResultSet, T>> fields = new ArrayList<Mapper<ResultSet, T>>();
 
@@ -55,6 +55,12 @@ public class ResultSetMapperBuilder<T> {
 	
 	public ResultSetMapperBuilder(Class<T> target) {
 		this.target = target;
+		this.setterFactory = new SetterFactory();
+	}
+	
+	public ResultSetMapperBuilder(Class<T> target, SetterFactory setterFactory) {
+		this.target = target;
+		this.setterFactory = setterFactory;
 	}
 	
 	public ResultSetMapperBuilder<T> fieldMapperErrorHandler(FieldMapperErrorHandler errorHandler) {

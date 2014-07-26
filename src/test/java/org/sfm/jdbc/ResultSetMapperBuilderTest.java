@@ -17,6 +17,7 @@ import org.sfm.beans.PrimitiveObject;
 import org.sfm.map.LogFieldMapperErrorHandler;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuilderErrorHandler;
+import org.sfm.reflect.SetterFactory;
 import org.sfm.utils.Handler;
 
 public class ResultSetMapperBuilderTest {
@@ -76,6 +77,12 @@ public class ResultSetMapperBuilderTest {
 	@Test
 	public void testIndexedPrimitivesWithSetterAccess() throws Exception {
 		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
+		testIndexedPrimitives(builder, new DbPrimitiveObjectWithSetter());
+	}
+	
+	@Test
+	public void testIndexedPrimitivesWithSetterAccessNoAsm() throws Exception {
+		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, new SetterFactory(null));
 		testIndexedPrimitives(builder, new DbPrimitiveObjectWithSetter());
 	}
 	

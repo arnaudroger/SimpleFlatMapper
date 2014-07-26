@@ -119,7 +119,7 @@ public class SetterFactory {
 	}
 
 	private boolean methodNameMatchesProperty(String name, String property) {
-		return (name.startsWith("set") && name.regionMatches(true, 3, property, 0, property.length())) 
+		return (isSetter(name) && name.regionMatches(true, 3, property, 0, property.length())) 
 				|| name.equalsIgnoreCase(property);
 	}
 	
@@ -259,7 +259,7 @@ public class SetterFactory {
 			
 			for(Method method : currentClass.getDeclaredMethods()) {
 				String name = method.getName();
-				if (methodModifiersMatches(method.getModifiers()) && name.length() > 3 && name.startsWith("set")) {
+				if (methodModifiersMatches(method.getModifiers()) && isSetter(name)) {
 					String propertyName = name.substring(3,4).toLowerCase() +  name.substring(4);
 					if (!properties.contains(propertyName)) {
 						Setter<T, Object> setter = getMethodSetter(method);
@@ -275,9 +275,7 @@ public class SetterFactory {
 				String name = field.getName();
 				if (fieldModifiersMatches(field.getModifiers())) {
 					if (!properties.contains(name)) {
-						if (!field.isAccessible()) {
-							field.setAccessible(true);
-						}
+						field.setAccessible(true);
 						Setter<T, Object> setter = new FieldSetter<T, Object>(field);
 						if (!visitor.visitSetter(name, setter)) {
 							return visitor;
@@ -291,5 +289,9 @@ public class SetterFactory {
 		}
 		
 		return visitor;
+	}
+
+	private boolean isSetter(String name) {
+		return name.length() > 3 && name.startsWith("set");
 	}
 }

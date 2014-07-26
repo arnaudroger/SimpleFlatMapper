@@ -20,8 +20,12 @@ import org.sfm.jdbc.getter.LongIndexedResultSetGetter;
 import org.sfm.jdbc.getter.LongNamedResultSetGetter;
 import org.sfm.jdbc.getter.ShortIndexedResultSetGetter;
 import org.sfm.jdbc.getter.ShortNamedResultSetGetter;
+import org.sfm.map.FieldMapper;
+import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.LogFieldMapperErrorHandler;
 import org.sfm.map.Mapper;
-import org.sfm.map.ObjectFieldMapper;
+import org.sfm.map.MapperBuilderErrorHandler;
+import org.sfm.map.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.SaticMapper;
 import org.sfm.map.primitive.BooleanFieldMapper;
 import org.sfm.map.primitive.ByteFieldMapper;
@@ -45,6 +49,9 @@ public class ResultSetMapperBuilder<T> {
 	private final SetterFactory setterFactory = new SetterFactory();
 	private final InstantiatorFactory instantiatorFactory = new InstantiatorFactory();
 	private final List<Mapper<ResultSet, T>> fields = new ArrayList<Mapper<ResultSet, T>>();
+
+	private FieldMapperErrorHandler fieldMapperErrorHandler = new LogFieldMapperErrorHandler();
+	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	
 	public ResultSetMapperBuilder(Class<T> target) {
 		this.target = target;
@@ -52,7 +59,11 @@ public class ResultSetMapperBuilder<T> {
 	
 	public ResultSetMapperBuilder<T>  addNamedColumn(String column) {
 		Setter<T, Object> setter = setterFactory.findSetter(new PropertyNameMatcher(column), target);
-		addMapping(setter, column);
+		if (setter == null) {
+			mapperBuilderErrorHandler.setterNotFound(target, column);
+		} else {
+			addMapping(setter, column);
+		}
 		return this;
 	}
 	
@@ -62,19 +73,31 @@ public class ResultSetMapperBuilder<T> {
 	
 	public ResultSetMapperBuilder<T>  addIndexedColumn(String column, int p) {
 		Setter<T, Object> setter = setterFactory.findSetter(new PropertyNameMatcher(column), target);
-		addMapping(setter, p);
+		if (setter == null) {
+			mapperBuilderErrorHandler.setterNotFound(target, column);
+		} else {
+			addMapping(setter, p);
+		}
 		return this;
 	}
 	
 	public ResultSetMapperBuilder<T> addMapping(String property, String column) {
 		Setter<T, Object> setter = setterFactory.getSetter(target, property);
-		addMapping(setter, column);
+		if (setter == null) {
+			mapperBuilderErrorHandler.setterNotFound(target, property);
+		} else {
+			addMapping(setter, column);
+		}
 		return this;
 	}
 	
 	public ResultSetMapperBuilder<T> addMapping(String property, int column) {
 		Setter<T, Object> setter = setterFactory.getSetter(target, property);
-		addMapping(setter, column);
+		if (setter == null) {
+			mapperBuilderErrorHandler.setterNotFound(target, property);
+		} else {
+			addMapping(setter, column);
+		}
 		return this;
 	}
 	
@@ -123,9 +146,11 @@ public class ResultSetMapperBuilder<T> {
 		Class<? extends Object> type = setter.getPropertyType();
 		Getter<ResultSet, ? extends Object> getter = ResultSetGetterFactory.newGetter(type, column);
 		if (getter == null) {
-			throw new IllegalArgumentException("No getter for column " + column + " type " + type);
+			mapperBuilderErrorHandler.getterNotFound("No getter for column " + column + " type " + type);
+			return null;
+		} else {
+			return new FieldMapper<ResultSet, T, Object>(column, getter, setter, fieldMapperErrorHandler);
 		}
-		return new ObjectFieldMapper<ResultSet, T, Object>(getter, setter);
 	}
 
 	private Mapper<ResultSet, T> objectFieldMapper(int column,
@@ -133,9 +158,11 @@ public class ResultSetMapperBuilder<T> {
 		Class<? extends Object> type = setter.getPropertyType();
 		Getter<ResultSet, ? extends Object> getter = ResultSetGetterFactory.newGetter(type, column);
 		if (getter == null) {
-			throw new IllegalArgumentException("No getter for column " + column + " type " + type);
+			mapperBuilderErrorHandler.getterNotFound("No getter for column " + column + " type " + type);
+			return null;
+		} else {
+			return new FieldMapper<ResultSet, T, Object>(String.valueOf(column), getter, setter, fieldMapperErrorHandler);
 		}
-		return new ObjectFieldMapper<ResultSet, T, Object>(getter, setter);
 	}
 
 

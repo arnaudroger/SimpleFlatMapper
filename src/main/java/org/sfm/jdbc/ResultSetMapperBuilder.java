@@ -57,6 +57,19 @@ public class ResultSetMapperBuilder<T> {
 		this.target = target;
 	}
 	
+	public ResultSetMapperBuilder<T> fieldMapperErrorHandler(FieldMapperErrorHandler errorHandler) {
+		if (!fields.isEmpty()) {
+			throw new IllegalStateException("Error Handler need to be set before adding fields");
+		}
+		fieldMapperErrorHandler = errorHandler;
+		return this;
+	}
+
+	public ResultSetMapperBuilder<T> mapperBuilderErrorHandler(MapperBuilderErrorHandler errorHandler) {
+		mapperBuilderErrorHandler = errorHandler;
+		return this;
+	}
+
 	public ResultSetMapperBuilder<T>  addNamedColumn(String column) {
 		Setter<T, Object> setter = setterFactory.findSetter(new PropertyNameMatcher(column), target);
 		if (setter == null) {

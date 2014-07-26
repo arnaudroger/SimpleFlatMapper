@@ -1,8 +1,7 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,8 +12,11 @@ import org.junit.Test;
 import org.sfm.beans.DbBoxedPrimitveObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
+import org.sfm.beans.Foo;
 import org.sfm.beans.PrimitiveObject;
+import org.sfm.map.LogFieldMapperErrorHandler;
 import org.sfm.map.Mapper;
+import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.utils.Handler;
 
 public class ResultSetMapperBuilderTest {
@@ -161,5 +163,69 @@ public class ResultSetMapperBuilderTest {
 		
 	}
 
+	@Test
+	public void testHandleMapperErrorSetterNotFound() {
+		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilder<DbObject>(DbObject.class);
+		MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
+		
+		builder.mapperBuilderErrorHandler(errorHandler);
+		
+		builder.addMapping("notthere1", 1);
+		
+		verify(errorHandler).setterNotFound(DbObject.class, "notthere1");
+		
+		builder.addMapping("notthere2", "col");
+		
+		verify(errorHandler).setterNotFound(DbObject.class, "notthere2");
+		
+		builder.addIndexedColumn("notthere3");
+		
+		verify(errorHandler).setterNotFound(DbObject.class, "notthere3");
+		
+		builder.addNamedColumn("notthere4");
+		
+		verify(errorHandler).setterNotFound(DbObject.class, "notthere4");
+	}
 	
+	static class MyClass {
+		public Foo prop;
+	}
+	@Test
+	public void testHandleMapperErrorgGetterNotFound() {
+		ResultSetMapperBuilder<MyClass> builder = new ResultSetMapperBuilder<MyClass>(MyClass.class);
+		MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
+		
+		builder.mapperBuilderErrorHandler(errorHandler);
+		
+		builder.addMapping("prop", 1);
+		
+		verify(errorHandler).getterNotFound("No getter for column 1 type class org.sfm.beans.Foo");
+		
+		builder.addMapping("prop", "col");
+		
+		verify(errorHandler).getterNotFound("No getter for column 1 type class org.sfm.beans.Foo");
+		
+		builder.addIndexedColumn("prop");
+		
+		verify(errorHandler).getterNotFound("No getter for column 1 type class org.sfm.beans.Foo");
+		
+		builder.addNamedColumn("prop");
+		
+		verify(errorHandler).getterNotFound("No getter for column 1 type class org.sfm.beans.Foo");
+	}
+	
+	@Test
+	public void setChangeFieldMapperErrorHandler() {
+		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilder<DbObject>(DbObject.class);
+		builder.fieldMapperErrorHandler(new LogFieldMapperErrorHandler());
+		
+		builder.addIndexedColumn("id");
+		
+		try  {
+			builder.fieldMapperErrorHandler(new LogFieldMapperErrorHandler());
+			fail("Expect exception");
+		} catch(IllegalStateException e) {
+			// expected
+		}
+	}
 }

@@ -3,7 +3,7 @@ package org.sfm.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListHandler<T> implements Handler<T> {
+public final class ListHandler<T> implements Handler<T> {
 
 	private final List<T> list = new ArrayList<T>();
 	

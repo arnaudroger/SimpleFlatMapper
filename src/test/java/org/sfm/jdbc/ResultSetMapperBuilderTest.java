@@ -40,10 +40,10 @@ public class ResultSetMapperBuilderTest {
 	public void testSelectWithManualColumnDefinition() throws Exception {
 		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilder<DbObject>(DbObject.class);
 		
-		builder.addColumn("id");
-		builder.addColumn("name");
-		builder.addColumn("email");
-		builder.addColumn("creation_time");
+		builder.addNamedColumn("id");
+		builder.addNamedColumn("name");
+		builder.addNamedColumn("email");
+		builder.addNamedColumn("creation_time");
 		
 		Mapper<ResultSet, DbObject> mapper = builder.mapper();
 		
@@ -98,14 +98,14 @@ public class ResultSetMapperBuilderTest {
 	}
 	private <T extends PrimitiveObject> void testNamedPrimitives(ResultSetMapperBuilder<T> builder, T object)
 			throws SQLException, Exception {
-		builder.addColumn("p_boolean");
-		builder.addColumn("p_byte");
-		builder.addColumn("p_character");
-		builder.addColumn("p_short");
-		builder.addColumn("p_int");
-		builder.addColumn("p_long");
-		builder.addColumn("p_float");
-		builder.addColumn("p_double");		
+		builder.addNamedColumn("p_boolean");
+		builder.addNamedColumn("p_byte");
+		builder.addNamedColumn("p_character");
+		builder.addNamedColumn("p_short");
+		builder.addNamedColumn("p_int");
+		builder.addNamedColumn("p_long");
+		builder.addNamedColumn("p_float");
+		builder.addNamedColumn("p_double");		
 		
 		Mapper<ResultSet, T> mapper = builder.mapper();
 		

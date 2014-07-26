@@ -4,7 +4,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.sfm.reflect.asm.AsmSetterFactory;
 import org.sfm.reflect.primitive.BooleanFieldSetter;
@@ -31,6 +33,7 @@ import org.sfm.reflect.primitive.LongSetter;
 import org.sfm.reflect.primitive.ShortFieldSetter;
 import org.sfm.reflect.primitive.ShortMethodSetter;
 import org.sfm.reflect.primitive.ShortSetter;
+import org.sfm.utils.PropertyNameMatcher;
 
 public class SetterFactory {
 	
@@ -231,8 +234,25 @@ public class SetterFactory {
 	}
 
 	public <T> Map<String, Setter<T, Object>> getAllSetters(Class<T> target) {
-		Map<String, Setter<T, Object>> setters = new HashMap<String, Setter<T,Object>>();
+		final Map<String, Setter<T, Object>> setters = new HashMap<String, Setter<T,Object>>();
 		
+		visitSetters(new SetterVisitor<T>() {
+			@Override
+			public boolean visitSetter(String property, Setter<T, Object> setter) {
+				setters.put(property, setter);
+				return true;
+			}
+		}, target);
+		
+		return setters;
+	}
+	
+	public <T> Setter<T, Object> findSetter(PropertyNameMatcher matcher, Class<T> target) {
+		return visitSetters(new PropertyMatchingSetterVisitor<T>(matcher), target).setter();
+	}
+	
+	public <T, P, C extends SetterVisitor<T>> C visitSetters(C visitor, Class<T> target) {
+		Set<String> properties = new HashSet<String>();
 		Class<?> currentClass = target;
 		
 		while(!Object.class.equals(currentClass)) {
@@ -241,9 +261,12 @@ public class SetterFactory {
 				String name = method.getName();
 				if (methodModifiersMatches(method.getModifiers()) && name.length() > 3 && name.startsWith("set")) {
 					String propertyName = name.substring(3,4).toLowerCase() +  name.substring(4);
-					if (!setters.containsKey(propertyName)) {
+					if (!properties.contains(propertyName)) {
 						Setter<T, Object> setter = getMethodSetter(method);
-						setters.put(propertyName, setter);
+						if (!visitor.visitSetter(propertyName, setter)) {
+							return visitor;
+						}
+						properties.add(propertyName);
 					}
 				}
 			}
@@ -251,9 +274,15 @@ public class SetterFactory {
 			for(Field field : currentClass.getDeclaredFields()) {
 				String name = field.getName();
 				if (fieldModifiersMatches(field.getModifiers())) {
-					if (!setters.containsKey(name)) {
+					if (!properties.contains(name)) {
+						if (!field.isAccessible()) {
+							field.setAccessible(true);
+						}
 						Setter<T, Object> setter = new FieldSetter<T, Object>(field);
-						setters.put(name, setter);
+						if (!visitor.visitSetter(name, setter)) {
+							return visitor;
+						}
+						properties.add(name);
 					}
 				}
 			}
@@ -261,6 +290,6 @@ public class SetterFactory {
 			currentClass = currentClass.getSuperclass();
 		}
 		
-		return setters;
+		return visitor;
 	}
 }

@@ -50,24 +50,51 @@ public class ResultSetMapperBuilder<T> {
 		this.target = target;
 	}
 	
+	public ResultSetMapperBuilder<T>  addNamedColumn(String column) {
+		Setter<T, Object> setter = setterFactory.findSetter(new PropertyNameMatcher(column), target);
+		addMapping(setter, column);
+		return this;
+	}
+	
+	public ResultSetMapperBuilder<T>  addIndexedColumn(String column) {
+		return addIndexedColumn(column, fields.size() + 1);
+	}
+	
+	public ResultSetMapperBuilder<T>  addIndexedColumn(String column, int p) {
+		Setter<T, Object> setter = setterFactory.findSetter(new PropertyNameMatcher(column), target);
+		addMapping(setter, p);
+		return this;
+	}
+	
 	public ResultSetMapperBuilder<T> addMapping(String property, String column) {
 		Setter<T, Object> setter = setterFactory.getSetter(target, property);
-		
-		Mapper<ResultSet, T> fieldMapper;
-		
-		if (setter.getPropertyType().isPrimitive()) {
-			fieldMapper = primitiveFieldMapper(column, setter);
-		} else {
-			fieldMapper = objectFieldMapper(column, setter);
-		}
-		
-		fields.add(fieldMapper);
+		addMapping(setter, column);
 		return this;
 	}
 	
 	public ResultSetMapperBuilder<T> addMapping(String property, int column) {
 		Setter<T, Object> setter = setterFactory.getSetter(target, property);
+		addMapping(setter, column);
+		return this;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ResultSetMapper<T> mapper() throws NoSuchMethodException, SecurityException {
 		
+		final Mapper<ResultSet, T> mapper;
+		
+		if (!fields.isEmpty()) {
+			mapper = new SaticMapper<ResultSet, T>(fields.toArray(new Mapper[fields.size()]));
+		} else {
+			mapper = new ResultSetAdaptiveMapper<T>(this.setterFactory.getAllSetters(target));
+		}
+		
+		final Instantiator<T> instantiator = instantiatorFactory.getInstantiator(target);
+		
+		return new ResultSetMapperImpl<T>(mapper, instantiator);
+	}
+
+	private void addMapping(Setter<T, Object> setter, String column) {
 		Mapper<ResultSet, T> fieldMapper;
 		
 		if (setter.getPropertyType().isPrimitive()) {
@@ -77,9 +104,19 @@ public class ResultSetMapperBuilder<T> {
 		}
 		
 		fields.add(fieldMapper);
-		return this;
 	}
-
+	
+	private void addMapping(Setter<T, Object> setter, int column) {
+		Mapper<ResultSet, T> fieldMapper;
+		
+		if (setter.getPropertyType().isPrimitive()) {
+			fieldMapper = primitiveFieldMapper(column, setter);
+		} else {
+			fieldMapper = objectFieldMapper(column, setter);
+		}
+		
+		fields.add(fieldMapper);
+	}
 
 	private Mapper<ResultSet, T> objectFieldMapper(String column,
 			Setter<T, Object> setter) {
@@ -148,31 +185,5 @@ public class ResultSetMapperBuilder<T> {
 		} else {
 			throw new UnsupportedOperationException("Type " + type + " is not primitive");
 		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public ResultSetMapper<T> mapper() throws NoSuchMethodException, SecurityException {
-		
-		final Mapper<ResultSet, T> mapper;
-		
-		if (!fields.isEmpty()) {
-			mapper = new SaticMapper<ResultSet, T>(fields.toArray(new Mapper[fields.size()]));
-		} else {
-			mapper = new ResultSetAdaptiveMapper<T>(this.setterFactory.getAllSetters(target));
-		}
-		
-		final Instantiator<T> instantiator = instantiatorFactory.getInstantiator(target);
-		
-		return new ResultSetMapperImpl<T>(mapper, instantiator);
-	}
-	
-	public void addColumn(String column) {
-		String name = PropertyNameMatcher.toPropertyName(column);
-		addMapping(name, column);
-	}
-
-	public void addColumn(String column, int p) {
-		String name = PropertyNameMatcher.toPropertyName(column);
-		addMapping(name, p);
 	}
 }

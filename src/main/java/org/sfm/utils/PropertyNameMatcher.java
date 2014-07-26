@@ -1,7 +1,16 @@
 package org.sfm.utils;
 
 public class PropertyNameMatcher {
+	private final String name;
+	
+	public PropertyNameMatcher(String column) {
+		name = toPropertyName(column);
+	}
 
+	public boolean matches(String property) {
+		return property.equalsIgnoreCase(name);
+	}
+	
 	public static String toPropertyName(String column) {
 		StringBuilder sb = new StringBuilder(column.length());
 		
@@ -22,5 +31,4 @@ public class PropertyNameMatcher {
 		}
 		return sb.toString();
 	}
-	
 }

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.sfm.beans.Bar;
+import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.Foo;
@@ -31,8 +32,9 @@ import org.sfm.reflect.primitive.LongFieldSetter;
 import org.sfm.reflect.primitive.LongMethodSetter;
 import org.sfm.reflect.primitive.ShortFieldSetter;
 import org.sfm.reflect.primitive.ShortMethodSetter;
+import org.sfm.utils.PropertyNameMatcher;
 
-public class ReflectionSetterFactoryTest {
+public class SetterFactoryTest {
 	SetterFactory nonAsmfactory = new SetterFactory(null);
 	SetterFactory asmfactory = new SetterFactory();
 
@@ -153,5 +155,12 @@ public class ReflectionSetterFactoryTest {
 		Map<String, Setter<Foo, Object>> setters = nonAsmfactory.getAllSetters(Foo.class);
 		assertEquals(Foo.class.getDeclaredMethod("setFoo", String.class), ((MethodSetter)setters.get("foo")).getMethod());
 		assertEquals(Bar.class.getDeclaredField("bar"), ((FieldSetter)setters.get("bar")).getField());
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Test
+	public void testFindSetter() throws Exception {
+		Setter<DbObject, Object> setter = nonAsmfactory.findSetter(new PropertyNameMatcher("id"), DbObject.class);
+		assertEquals(DbObject.class.getDeclaredMethod("setId", long.class), ((MethodSetter)setter).getMethod());
 	}
 }

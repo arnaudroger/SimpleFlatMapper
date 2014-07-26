@@ -8,7 +8,7 @@ public class ResultSetMapperFactory {
 		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilder<>(target);
 		
 		for(int i = 0; i < metaData.getColumnCount(); i++) {
-			builder.addColumn(metaData.getColumnName(i +1), i+1);
+			builder.addIndexedColumn(metaData.getColumnName(i +1));
 		}
 		
 		return builder.mapper();

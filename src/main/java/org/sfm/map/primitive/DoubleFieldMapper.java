@@ -1,10 +1,10 @@
 package org.sfm.map.primitive;
 
-import org.sfm.map.FieldMapper;
+import org.sfm.map.Mapper;
 import org.sfm.reflect.primitive.DoubleGetter;
 import org.sfm.reflect.primitive.DoubleSetter;
 
-public class DoubleFieldMapper<S, T> implements FieldMapper<S, T> {
+public class DoubleFieldMapper<S, T> implements Mapper<S, T> {
 
 	private final DoubleGetter<S> getter;
 	private final DoubleSetter<T> setter;

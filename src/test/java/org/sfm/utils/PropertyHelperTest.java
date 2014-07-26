@@ -3,13 +3,13 @@ package org.sfm.utils;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.sfm.utils.PropertyHelper;
+import org.sfm.utils.PropertyNameMatcher;
 
 public class PropertyHelperTest {
 
 	@Test
 	public void testToPropertyName() {
-		assertEquals("myColumnName", PropertyHelper.toPropertyName("my_column_name"));
+		assertEquals("myColumnName", PropertyNameMatcher.toPropertyName("my_column_name"));
 	}
 
 }

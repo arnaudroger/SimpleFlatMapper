@@ -1,10 +1,10 @@
 package org.sfm.map.primitive;
 
-import org.sfm.map.FieldMapper;
+import org.sfm.map.Mapper;
 import org.sfm.reflect.primitive.ShortGetter;
 import org.sfm.reflect.primitive.ShortSetter;
 
-public class ShortFieldMapper<S, T> implements FieldMapper<S, T> {
+public class ShortFieldMapper<S, T> implements Mapper<S, T> {
 
 	private final ShortGetter<S> getter;
 	private final ShortSetter<T> setter;

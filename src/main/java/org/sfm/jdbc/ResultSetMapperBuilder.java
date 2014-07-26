@@ -4,15 +4,22 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sfm.jdbc.getter.BooleanIndexedResultSetGetter;
 import org.sfm.jdbc.getter.BooleanNamedResultSetGetter;
+import org.sfm.jdbc.getter.ByteIndexedResultSetGetter;
 import org.sfm.jdbc.getter.ByteNamedResultSetGetter;
+import org.sfm.jdbc.getter.CharacterIndexedResultSetGetter;
 import org.sfm.jdbc.getter.CharacterNamedResultSetGetter;
+import org.sfm.jdbc.getter.DoubleIndexedResultSetGetter;
 import org.sfm.jdbc.getter.DoubleNamedResultSetGetter;
+import org.sfm.jdbc.getter.FloatIndexedResultSetGetter;
 import org.sfm.jdbc.getter.FloatNamedResultSetGetter;
+import org.sfm.jdbc.getter.IntIndexedResultSetGetter;
 import org.sfm.jdbc.getter.IntNamedResultSetGetter;
+import org.sfm.jdbc.getter.LongIndexedResultSetGetter;
 import org.sfm.jdbc.getter.LongNamedResultSetGetter;
+import org.sfm.jdbc.getter.ShortIndexedResultSetGetter;
 import org.sfm.jdbc.getter.ShortNamedResultSetGetter;
-import org.sfm.map.FieldMapper;
 import org.sfm.map.Mapper;
 import org.sfm.map.ObjectFieldMapper;
 import org.sfm.map.SaticMapper;
@@ -25,17 +32,19 @@ import org.sfm.map.primitive.IntFieldMapper;
 import org.sfm.map.primitive.LongFieldMapper;
 import org.sfm.map.primitive.ShortFieldMapper;
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.ReflectionSetterFactory;
+import org.sfm.reflect.Instantiator;
+import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
-import org.sfm.utils.PropertyHelper;
+import org.sfm.utils.PropertyNameMatcher;
 
 public class ResultSetMapperBuilder<T> {
 	
 	private final Class<T> target;
 	
-	private final SetterFactory setterFactory = new ReflectionSetterFactory();
-	private List<FieldMapper<ResultSet, T>> fields = new ArrayList<FieldMapper<ResultSet, T>>();
+	private final SetterFactory setterFactory = new SetterFactory();
+	private final InstantiatorFactory instantiatorFactory = new InstantiatorFactory();
+	private final List<Mapper<ResultSet, T>> fields = new ArrayList<Mapper<ResultSet, T>>();
 	
 	public ResultSetMapperBuilder(Class<T> target) {
 		this.target = target;
@@ -44,7 +53,22 @@ public class ResultSetMapperBuilder<T> {
 	public ResultSetMapperBuilder<T> addMapping(String property, String column) {
 		Setter<T, Object> setter = setterFactory.getSetter(target, property);
 		
-		FieldMapper<ResultSet, T> fieldMapper;
+		Mapper<ResultSet, T> fieldMapper;
+		
+		if (setter.getPropertyType().isPrimitive()) {
+			fieldMapper = primitiveFieldMapper(column, setter);
+		} else {
+			fieldMapper = objectFieldMapper(column, setter);
+		}
+		
+		fields.add(fieldMapper);
+		return this;
+	}
+	
+	public ResultSetMapperBuilder<T> addMapping(String property, int column) {
+		Setter<T, Object> setter = setterFactory.getSetter(target, property);
+		
+		Mapper<ResultSet, T> fieldMapper;
 		
 		if (setter.getPropertyType().isPrimitive()) {
 			fieldMapper = primitiveFieldMapper(column, setter);
@@ -56,7 +80,18 @@ public class ResultSetMapperBuilder<T> {
 		return this;
 	}
 
-	private FieldMapper<ResultSet, T> objectFieldMapper(String column,
+
+	private Mapper<ResultSet, T> objectFieldMapper(String column,
+			Setter<T, Object> setter) {
+		Class<? extends Object> type = setter.getPropertyType();
+		Getter<ResultSet, ? extends Object> getter = ResultSetGetterFactory.newGetter(type, column);
+		if (getter == null) {
+			throw new IllegalArgumentException("No getter for column " + column + " type " + type);
+		}
+		return new ObjectFieldMapper<ResultSet, T, Object>(getter, setter);
+	}
+
+	private Mapper<ResultSet, T> objectFieldMapper(int column,
 			Setter<T, Object> setter) {
 		Class<? extends Object> type = setter.getPropertyType();
 		Getter<ResultSet, ? extends Object> getter = ResultSetGetterFactory.newGetter(type, column);
@@ -67,8 +102,7 @@ public class ResultSetMapperBuilder<T> {
 	}
 
 
-
-	private FieldMapper<ResultSet, T> primitiveFieldMapper(String column, Setter<T, Object> setter) {
+	private Mapper<ResultSet, T> primitiveFieldMapper(String column, Setter<T, Object> setter) {
 		Class<?> type = setter.getPropertyType();
 		
 		if (type.equals(Boolean.TYPE)) {
@@ -92,24 +126,53 @@ public class ResultSetMapperBuilder<T> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public Mapper<ResultSet, T> mapper() {
-		if (!fields.isEmpty()) {
-			return new SaticMapper<ResultSet, T>(fields.toArray(new FieldMapper[fields.size()]));
+	private Mapper<ResultSet, T> primitiveFieldMapper(int column, Setter<T, Object> setter) {
+		Class<?> type = setter.getPropertyType();
+		
+		if (type.equals(Boolean.TYPE)) {
+			return new BooleanFieldMapper<ResultSet, T>(new BooleanIndexedResultSetGetter(column), setterFactory.toBooleanSetter(setter));
+		} else if (type.equals(Integer.TYPE)) {
+			return new IntFieldMapper<ResultSet, T>(new IntIndexedResultSetGetter(column), setterFactory.toIntSetter(setter));
+		} else if (type.equals(Long.TYPE)) {
+			return new LongFieldMapper<ResultSet, T>(new LongIndexedResultSetGetter(column), setterFactory.toLongSetter(setter));
+		} else if (type.equals(Float.TYPE)) {
+			return new FloatFieldMapper<ResultSet, T>(new FloatIndexedResultSetGetter(column), setterFactory.toFloatSetter(setter));
+		} else if (type.equals(Double.TYPE)) {
+			return new DoubleFieldMapper<ResultSet, T>(new DoubleIndexedResultSetGetter(column), setterFactory.toDoubleSetter(setter));
+		} else if (type.equals(Byte.TYPE)) {
+			return new ByteFieldMapper<ResultSet, T>(new ByteIndexedResultSetGetter(column), setterFactory.toByteSetter(setter));
+		} else if (type.equals(Character.TYPE)) {
+			return new CharacterFieldMapper<ResultSet, T>(new CharacterIndexedResultSetGetter(column), setterFactory.toCharacterSetter(setter));
+		} else if (type.equals(Short.TYPE)) {
+			return new ShortFieldMapper<ResultSet, T>(new ShortIndexedResultSetGetter(column), setterFactory.toShortSetter(setter));
 		} else {
-			return adaptiveMapper();
+			throw new UnsupportedOperationException("Type " + type + " is not primitive");
 		}
 	}
 	
-	public Mapper<ResultSet, T> adaptiveMapper() {
-		return new ResultSetAdaptiveMapper<T>(this.setterFactory.getAllSetters(target));
+	@SuppressWarnings("unchecked")
+	public ResultSetMapper<T> mapper() throws NoSuchMethodException, SecurityException {
+		
+		final Mapper<ResultSet, T> mapper;
+		
+		if (!fields.isEmpty()) {
+			mapper = new SaticMapper<ResultSet, T>(fields.toArray(new Mapper[fields.size()]));
+		} else {
+			mapper = new ResultSetAdaptiveMapper<T>(this.setterFactory.getAllSetters(target));
+		}
+		
+		final Instantiator<T> instantiator = instantiatorFactory.getInstantiator(target);
+		
+		return new ResultSetMapperImpl<T>(mapper, instantiator);
 	}
-
+	
 	public void addColumn(String column) {
-		String name = PropertyHelper.toPropertyName(column);
+		String name = PropertyNameMatcher.toPropertyName(column);
 		addMapping(name, column);
 	}
 
-
-
+	public void addColumn(String column, int p) {
+		String name = PropertyNameMatcher.toPropertyName(column);
+		addMapping(name, p);
+	}
 }

@@ -1,10 +1,10 @@
 package org.sfm.map.primitive;
 
-import org.sfm.map.FieldMapper;
+import org.sfm.map.Mapper;
 import org.sfm.reflect.primitive.CharacterGetter;
 import org.sfm.reflect.primitive.CharacterSetter;
 
-public class CharacterFieldMapper<S, T> implements FieldMapper<S, T> {
+public class CharacterFieldMapper<S, T> implements Mapper<S, T> {
 
 	private final CharacterGetter<S> getter;
 	private final CharacterSetter<T> setter;

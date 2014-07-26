@@ -1,10 +1,10 @@
 package org.sfm.map.primitive;
 
-import org.sfm.map.FieldMapper;
+import org.sfm.map.Mapper;
 import org.sfm.reflect.primitive.IntGetter;
 import org.sfm.reflect.primitive.IntSetter;
 
-public class IntFieldMapper<S, T> implements FieldMapper<S, T> {
+public class IntFieldMapper<S, T> implements Mapper<S, T> {
 
 	private final IntGetter<S> getter;
 	private final IntSetter<T> setter;

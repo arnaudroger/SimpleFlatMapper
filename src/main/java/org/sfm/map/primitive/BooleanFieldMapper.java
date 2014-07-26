@@ -1,10 +1,10 @@
 package org.sfm.map.primitive;
 
-import org.sfm.map.FieldMapper;
+import org.sfm.map.Mapper;
 import org.sfm.reflect.primitive.BooleanGetter;
 import org.sfm.reflect.primitive.BooleanSetter;
 
-public class BooleanFieldMapper<S, T> implements FieldMapper<S, T> {
+public class BooleanFieldMapper<S, T> implements Mapper<S, T> {
 
 	private final BooleanGetter<S> getter;
 	private final BooleanSetter<T> setter;

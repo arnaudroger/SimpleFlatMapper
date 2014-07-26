@@ -17,43 +17,14 @@ import org.sfm.reflect.primitive.IntSetter;
 
 /***
  * 
-SettersetStringMyClassString Exectime String 728977000
-SettersetNumberMyClassint Exectime Number    635268000
- Exectime String                             128610000
- Exectime Number                             573275000
-FieldSetter Exectime String                 1552173000
-IntFieldSetter Exectime Number              1298505000
-MethodSetter Exectime String                1020345000
-IntMethodSetter Exectime Number             2944488000
 
-
-Alone
-SettersetStringMyClassString Exectime String 	109234000
-SettersetNumberMyClassint Exectime Number 		 75086000
- Exectime String 								110332000
- Exectime Number 								 70675000
-
-
-Two Togetgher looks like a dispatch optimisation
-SettersetStringMyClassString Exectime String 	63223000
-SettersetNumberMyClassint Exectime Number 		61856000
- Exectime String 								63112000
- Exectime Number 								61756000
-
-
-SettersetStringMyClassString Exectime String 	706857000
-SettersetNumberMyClassint Exectime Number 		624253000
- Exectime String 								617482000
- Exectime Number 								480755000
-MethodSetter Exectime String 					967725000
-IntMethodSetter Exectime Number 			   2712176000
 
 
 Stable Result :
+BenchMark Exectime String 						 699182000 * 
+BenchMark Exectime Number 						 568592000 *
 SettersetStringMyClassString Exectime String 	 623102000
 SettersetNumberMyClassint Exectime Number 		 482238000
- Exectime String 								 699182000
- Exectime Number 								 568592000
 MethodSetter Exectime String 					 933670000
 IntMethodSetter Exectime Number 				2730573000
 FieldSetter Exectime String 					1465671000

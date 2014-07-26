@@ -1,10 +1,10 @@
 package org.sfm.map.primitive;
 
-import org.sfm.map.FieldMapper;
+import org.sfm.map.Mapper;
 import org.sfm.reflect.primitive.FloatGetter;
 import org.sfm.reflect.primitive.FloatSetter;
 
-public class FloatFieldMapper<S, T> implements FieldMapper<S, T> {
+public class FloatFieldMapper<S, T> implements Mapper<S, T> {
 
 	private final FloatGetter<S> getter;
 	private final FloatSetter<T> setter;

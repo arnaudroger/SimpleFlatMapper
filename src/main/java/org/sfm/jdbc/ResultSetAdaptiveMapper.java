@@ -7,7 +7,7 @@ import java.util.Map;
 import org.sfm.map.Mapper;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
-import org.sfm.utils.PropertyHelper;
+import org.sfm.utils.PropertyNameMatcher;
 
 public class ResultSetAdaptiveMapper<T> implements Mapper<ResultSet, T> {
 
@@ -22,7 +22,7 @@ public class ResultSetAdaptiveMapper<T> implements Mapper<ResultSet, T> {
 		ResultSetMetaData metaData = source.getMetaData();
 		for(int i = 1 ; i <= metaData.getColumnCount(); i++) {
 			String columnName = metaData.getColumnName(i);
-			String propertyName = PropertyHelper.toPropertyName(columnName);
+			String propertyName = PropertyNameMatcher.toPropertyName(columnName);
 			Setter<T, Object> setter = setters.get(propertyName);
 			if (setter != null) {
 				Getter<ResultSet, ?> getter = ResultSetGetterFactory.newGetter(setter.getPropertyType(), i);

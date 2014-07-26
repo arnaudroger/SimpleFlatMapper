@@ -1,17 +1,17 @@
 package org.sfm.map;
 
-public class SaticMapper<S, T> implements Mapper<S, T> {
+public final class SaticMapper<S, T> implements Mapper<S, T> {
 	
-	private final FieldMapper<S, T>[] mappers;
+	private final Mapper<S, T>[] fieldMappers;
 	
-	public SaticMapper(FieldMapper<S, T>[] mappers) {
-		this.mappers = mappers;
+	public SaticMapper(Mapper<S, T>[] mappers) {
+		this.fieldMappers = mappers;
 	}
 
 	@Override
-	public void map(S source, T target) throws Exception {
-		for(int i = 0; i < mappers.length; i++) {
-			mappers[i].map(source, target);
+	public final void map(S source, T target) throws Exception {
+		for(int i = 0; i < fieldMappers.length; i++) {
+			fieldMappers[i].map(source, target);
 		}
 	}
 }

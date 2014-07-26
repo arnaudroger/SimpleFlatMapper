@@ -1,6 +1,6 @@
 package org.sfm.utils;
 
-public class PropertyHelper {
+public class PropertyNameMatcher {
 
 	public static String toPropertyName(String column) {
 		StringBuilder sb = new StringBuilder(column.length());

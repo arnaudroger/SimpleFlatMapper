@@ -1,13 +1,16 @@
 package org.sfm.reflect;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.junit.Test;
 import org.sfm.beans.Bar;
-import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.Foo;
@@ -30,12 +33,12 @@ import org.sfm.reflect.primitive.ShortFieldSetter;
 import org.sfm.reflect.primitive.ShortMethodSetter;
 
 public class ReflectionSetterFactoryTest {
-	ReflectionSetterFactory nonAsmfactory = new ReflectionSetterFactory(null);
-	ReflectionSetterFactory asmfactory = new ReflectionSetterFactory();
+	SetterFactory nonAsmfactory = new SetterFactory(null);
+	SetterFactory asmfactory = new SetterFactory();
 
 	@Test
 	public void testFailFallBackToMethod() throws Exception {
-		Setter<Foo, String> setter = new ReflectionSetterFactory(new AsmSetterFactory(){
+		Setter<Foo, String> setter = new SetterFactory(new AsmSetterFactory(){
 			@Override
 			public <T, P> Setter<T, P> createSetter(Method m) throws Exception {
 				throw new UnsupportedOperationException();
@@ -145,10 +148,10 @@ public class ReflectionSetterFactoryTest {
 	}
 	
 	@SuppressWarnings("rawtypes")
+	@Test
 	public void testGetAllSetters() throws Exception {
 		Map<String, Setter<Foo, Object>> setters = nonAsmfactory.getAllSetters(Foo.class);
-		assertEquals(DbObject.class.getDeclaredMethod("setFoo", String.class), ((MethodSetter)setters.get("foo")).getMethod());
-		assertEquals(DbObject.class.getDeclaredMethod("setBar", String.class), ((FieldSetter)setters.get("bar")).getField());
-			
+		assertEquals(Foo.class.getDeclaredMethod("setFoo", String.class), ((MethodSetter)setters.get("foo")).getMethod());
+		assertEquals(Bar.class.getDeclaredField("bar"), ((FieldSetter)setters.get("bar")).getField());
 	}
 }

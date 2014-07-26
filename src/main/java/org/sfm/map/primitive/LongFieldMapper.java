@@ -1,10 +1,10 @@
 package org.sfm.map.primitive;
 
-import org.sfm.map.FieldMapper;
+import org.sfm.map.Mapper;
 import org.sfm.reflect.primitive.LongGetter;
 import org.sfm.reflect.primitive.LongSetter;
 
-public class LongFieldMapper<S, T> implements FieldMapper<S, T> {
+public class LongFieldMapper<S, T> implements Mapper<S, T> {
 
 	private final LongGetter<S> getter;
 	private final LongSetter<T> setter;

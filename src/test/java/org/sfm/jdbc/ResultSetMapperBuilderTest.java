@@ -28,7 +28,7 @@ public class ResultSetMapperBuilderTest {
 		testDbObjectMappingFromDb(mapper);
 	}
 
-	public static  ResultSetMapper<DbObject> newManualMapper() throws NoSuchMethodException, SecurityException {
+	public static  Mapper<ResultSet, DbObject> newManualMapper() throws NoSuchMethodException, SecurityException {
 		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilder<DbObject>(DbObject.class);
 		
 		builder.addMapping("id", "id");
@@ -47,15 +47,6 @@ public class ResultSetMapperBuilderTest {
 		builder.addNamedColumn("name");
 		builder.addNamedColumn("email");
 		builder.addNamedColumn("creation_time");
-		
-		Mapper<ResultSet, DbObject> mapper = builder.mapper();
-		
-		testDbObjectMappingFromDb(mapper);
-	}
-	
-	@Test
-	public void testSelectAdaptive() throws Exception {
-		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilder<DbObject>(DbObject.class);
 		
 		Mapper<ResultSet, DbObject> mapper = builder.mapper();
 		

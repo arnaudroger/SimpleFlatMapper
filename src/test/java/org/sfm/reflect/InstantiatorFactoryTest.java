@@ -12,6 +12,7 @@ public class InstantiatorFactoryTest {
 		@SuppressWarnings("unused")
 		private int value;
 
+		@SuppressWarnings("unused")
 		private MyClass(Object obj) {
 			throw new UnsupportedOperationException();
 		}

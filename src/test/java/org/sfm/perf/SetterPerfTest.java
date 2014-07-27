@@ -18,41 +18,49 @@ import org.sfm.reflect.primitive.IntSetter;
 /***
  * 
 
-
-
 Stable Result :
-BenchMark Exectime String 						 699182000 * 
-BenchMark Exectime Number 						 568592000 *
-SettersetStringMyClassString Exectime String 	 623102000
-SettersetNumberMyClassint Exectime Number 		 482238000
-MethodSetter Exectime String 					 933670000
-IntMethodSetter Exectime Number 				2730573000
-FieldSetter Exectime String 					1465671000
-IntFieldSetter Exectime Number 					1192381000
+Exectime String	 69714000	DirectStringSetter
+Exectime Number	 57298000	DirectIntSetter
+Exectime String	 68962000	SettersetStringMyClassString
+Exectime Number	 62507000	SettersetNumberMyClassint
+Exectime String	 97349000	MethodSetter
+Exectime Number	253535000	IntMethodSetter
+Exectime String	149487000	FieldSetter
+Exectime Number	123140000	IntFieldSetter
 
  *
  */
 public class SetterPerfTest {
 
 	
+	private static final class DirectIntSetter implements IntSetter<MyClass> {
+		@Override
+		public void setInt(MyClass target, int value) throws Exception {
+			target.setNumber(value);
+		}
+	}
+	private static final class DirectStringSetter implements
+			Setter<MyClass, String> {
+		@Override
+		public void set(MyClass target, String value) throws Exception {
+			target.setString(value);
+		}
+
+		@Override
+		public Class<? extends String> getPropertyType() {
+			return String.class;
+		}
+	}
 	public static class MyClass {
 		public String string;
 		public int number;
-		public String getString() {
-			return string;
-		}
 		public void setString(String string) {
 			this.string = string;
-		}
-		public int getNumber() {
-			return number;
 		}
 		public void setNumber(int number) {
 			this.number = number;
 		}
 	}
-
-
 	private static final int WARMUP_NB = 1000000;
 
 	private static final int EXECT_NB =  10000000;
@@ -96,25 +104,9 @@ public class SetterPerfTest {
 		stringAsmSetter = asmSetterFactory.createSetter(setStringMethod);
 		numberAsmSetter = (IntSetter<MyClass>) asmSetterFactory.createSetter(setNumberMethod);
 		
-		stringDirectSetter = new Setter<MyClass, String>() {
-			@Override
-			public void set(MyClass target, String value) throws Exception {
-				target.setString(value);
-			}
-
-			@Override
-			public Class<? extends String> getPropertyType() {
-				return String.class;
-			}
-		};
+		stringDirectSetter = new DirectStringSetter();
 		
-		numberDirectSetter = new IntSetter<MyClass>() {
-			@Override
-			public void setInt(MyClass target, int value) throws Exception {
-				target.setNumber(value);
-			}
-			
-		};
+		numberDirectSetter = new DirectIntSetter();
 		Random r = new Random();
 		sdata = new String[256];
 		idata = new int[256];
@@ -130,12 +122,11 @@ public class SetterPerfTest {
 
 	public static void runWarmUp() throws Exception {
 		
-		runStringIteration(stringAsmSetter, WARMUP_NB);
-		runNumberIteration(numberAsmSetter, WARMUP_NB);
-
-		
 		runStringIteration(stringDirectSetter, WARMUP_NB);
 		runNumberIteration(numberDirectSetter, WARMUP_NB);
+		
+		runStringIteration(stringAsmSetter, WARMUP_NB);
+		runNumberIteration(numberAsmSetter, WARMUP_NB);
 		
 		runStringIteration(stringMethodSetter, WARMUP_NB);
 		runNumberIteration(numberMethodSetter, WARMUP_NB);
@@ -147,10 +138,12 @@ public class SetterPerfTest {
 	
 	@Test
 	public void runPerfTest() throws Exception {
-		testPerfAsmMethod();
-		testPerfDirect();
-		testPerfMethod();
-		testPerfField();
+		//for(int i = 0; i < 10; i++) {
+			testPerfDirect();
+			testPerfAsmMethod();
+			testPerfMethod();
+			testPerfField();
+		//}
 	}
 	
 	public void testPerfField() throws Exception {
@@ -180,14 +173,14 @@ public class SetterPerfTest {
 		long startTime = System.nanoTime();
 		runStringIteration(stringSetter, EXECT_NB);
 		long elapsed = System.nanoTime()- startTime;
-		System.out.println(stringSetter.getClass().getSimpleName() + " Exectime String " + elapsed);
+		System.out.println("Exectime String\t" + elapsed+"\t"+ stringSetter.getClass().getSimpleName());
 	}
 	private void runNumberTest(IntSetter<MyClass> numberSetter) throws Exception {
 		
 		long startTime = System.nanoTime();
 		runNumberIteration(numberSetter, EXECT_NB);
 		long elapsed = System.nanoTime()- startTime;
-		System.out.println(numberSetter.getClass().getSimpleName() + " Exectime Number " + elapsed  );
+		System.out.println("Exectime Number\t" + elapsed+"\t"+ numberSetter.getClass().getSimpleName());
 	}
 	
 	

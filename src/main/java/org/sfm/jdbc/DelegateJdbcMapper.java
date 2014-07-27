@@ -2,17 +2,19 @@ package org.sfm.jdbc;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 
 import org.sfm.map.Mapper;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.Handler;
+import org.sfm.utils.ListHandler;
 
-public final class ResultSetMapperImpl<T> implements ResultSetMapper<T> {
+public final class DelegateJdbcMapper<T> implements JdbcMapper<T> {
 
 	private final Instantiator<T> instantiator;
 	private final Mapper<ResultSet, T> delegate;
 	
-	public ResultSetMapperImpl( Mapper<ResultSet, T> delegate, Instantiator<T> instantiator) {
+	public DelegateJdbcMapper( Mapper<ResultSet, T> delegate, Instantiator<T> instantiator) {
 		this.delegate = delegate;
 		this.instantiator = instantiator;
 	}
@@ -42,5 +44,15 @@ public final class ResultSetMapperImpl<T> implements ResultSetMapper<T> {
 	@Override
 	public void map(ResultSet source, T target) throws Exception {
 		delegate.map(source, target);
+	}
+
+	@Override
+	public List<T> list(ResultSet rs) throws Exception {
+		return forEach(rs, new ListHandler<T>()).getList();
+	}
+
+	@Override
+	public List<T> list(PreparedStatement ps) throws Exception {
+		return forEach(ps, new ListHandler<T>()).getList();
 	}
 }

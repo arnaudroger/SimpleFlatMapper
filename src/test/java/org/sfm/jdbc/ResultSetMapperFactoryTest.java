@@ -1,13 +1,15 @@
 package org.sfm.jdbc;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.List;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.map.Mapper;
 import org.sfm.utils.Handler;
 
 public class ResultSetMapperFactoryTest {
@@ -19,13 +21,35 @@ public class ResultSetMapperFactoryTest {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				ResultSet rs = ps.executeQuery();
-				Mapper<ResultSet, DbObject> mapper = ResultSetMapperFactory.newMapper(DbObject.class, rs.getMetaData());
-				rs.next();
-				DbObject dbObject = new DbObject();
-				mapper.map(rs, dbObject);
-				DbHelper.assertDbObjectMapping(dbObject);
+				JdbcMapper<DbObject> mapper = ResultSetMapperFactory.newMapper(DbObject.class, rs.getMetaData());
+				assertMapPs(rs, mapper);
 			}
 		});
 	}
 	
+	@Test
+	public void testDbObjectMappingFromDbDynamic()
+			throws SQLException, Exception, ParseException {
+		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				JdbcMapper<DbObject> mapper = ResultSetMapperFactory.newMapper(DbObject.class);
+				assertMapPs(ps, mapper);
+			}
+		});
+	}
+	private void assertMapPs(ResultSet rs,
+			JdbcMapper<DbObject> mapper) throws Exception,
+			ParseException {
+		List<DbObject> list = mapper.list(rs);
+		assertEquals(1,  list.size());
+		DbHelper.assertDbObjectMapping(list.get(0));
+	}
+	private void assertMapPs(PreparedStatement ps,
+			JdbcMapper<DbObject> mapper) throws Exception,
+			ParseException {
+		List<DbObject> list = mapper.list(ps);
+		assertEquals(1,  list.size());
+		DbHelper.assertDbObjectMapping(list.get(0));
+	}
 }

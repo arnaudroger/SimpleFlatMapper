@@ -1,0 +1,4 @@
+better caching and handling of mapper
+	1 - cache all setters
+	2 - on fear each match the columns
+benchmark

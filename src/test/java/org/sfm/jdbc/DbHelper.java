@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.text.ParseException;
 
 import org.sfm.beans.DbObject;
@@ -16,6 +17,8 @@ import org.sfm.utils.Handler;
 public class DbHelper {
 	
 	private static boolean objectDb;
+	private static boolean benchmarkDb;
+	
 	public static Connection objectDb() throws SQLException {
 		Connection c = DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", "");
 		
@@ -45,7 +48,41 @@ public class DbHelper {
 		assertEquals("name1@mail.com", dbObject.getEmail());
 		assertEquals(DateHelper.toDate("2014-03-04 11:10:03"), dbObject.getCreationTime());
 	}
+	public static Connection benchmarkDb() throws SQLException {
+		Connection c = DriverManager.getConnection("jdbc:hsqldb:mem:benchmarkdb", "SA", "");
+		
+		if (!benchmarkDb) {
+			System.out.println("init db");
+			Statement st = c.createStatement();
+			
+			try {
+				st.execute("create table test_db_object("
+						+ " id bigint not null primary key,"
+						+ " name varchar(100), "
+						+ " email varchar(100),"
+						+ " creation_Time datetime  )");
+
+				PreparedStatement ps = c.prepareStatement("insert into test_db_object values(?, ?, ?, ?)");
+				for(int i = 0; i < 1000000; i++) {
+					ps.setLong(1, i);
+					ps.setString(2, "name " + i);
+					ps.setString(3, "name" + i + "@gmail.com");
+					ps.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+					
+					ps.execute();
+				}
+				
+				System.out.println("init db done");
+
+			} finally {
+				st.close();
+			}
+		}
 	
+		
+		benchmarkDb = true;
+		return c;
+	}
 	
 	public static void testDbObjectFromDb(Handler<PreparedStatement> handler )
 			throws SQLException, Exception, ParseException {

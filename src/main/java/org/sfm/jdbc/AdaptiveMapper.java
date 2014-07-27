@@ -9,11 +9,11 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
 import org.sfm.utils.PropertyNameMatcher;
 
-public class ResultSetAdaptiveMapper<T> implements Mapper<ResultSet, T> {
+public class AdaptiveMapper<T> implements Mapper<ResultSet, T> {
 
 	private final Map<String, Setter<T, Object>> setters;
 	
-	public ResultSetAdaptiveMapper(Map<String, Setter<T, Object>> setters) {
+	public AdaptiveMapper(Map<String, Setter<T, Object>> setters) {
 		this.setters = setters; 
 	}
 

@@ -9,15 +9,22 @@ import java.util.List;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.reflect.Instantiator;
 import org.sfm.utils.Handler;
 import org.sfm.utils.ListHandler;
 
-public class ResultSetMapperTest {
+public class DelegateJdbcMapperTest {
 	
-	final ResultSetMapper<DbObject> mapper;
+	final JdbcMapper<DbObject> mapper;
 	
-	public ResultSetMapperTest() throws NoSuchMethodException, SecurityException {
-		 mapper = ResultSetMapperBuilderTest.newManualMapper();
+	public DelegateJdbcMapperTest() throws NoSuchMethodException, SecurityException {
+		mapper = new DelegateJdbcMapper<>(ResultSetMapperBuilderTest.newManualMapper(), 
+				 new Instantiator<DbObject>() {
+			@Override
+			public DbObject newInstance() throws Exception {
+				return new DbObject();
+			}
+		});
 	}
 	
 	@Test

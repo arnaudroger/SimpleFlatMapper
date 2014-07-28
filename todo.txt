@@ -1,5 +1,2 @@
-Refactor all builder sutff into FielMappingFactory
-clean up factory builder/factory
 asm instantiator
-hibernate benchmark
-singleton instantiator
+singleton test

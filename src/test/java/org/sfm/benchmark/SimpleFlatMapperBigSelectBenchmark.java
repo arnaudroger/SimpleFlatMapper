@@ -5,24 +5,34 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.junit.Assert;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.ResultSetMapperFactory;
-import org.sfm.utils.Handler;
 
+/*
+ elapased 701595000 1000000 701
+elapased 610761000 1000000 610
+elapased 541784000 1000000 541
+elapased 547786000 1000000 547
+elapased 536929000 1000000 536
+elapased 543782000 1000000 543
+elapased 548968000 1000000 548
+elapased 547359000 1000000 547
+elapased 469154000 1000000 469
+elapased 470288000 1000000 470
+elapased 538422000 1000000 538
+elapased 533390000 1000000 533
+elapased 474490000 1000000 474
+elapased 472035000 1000000 472
+elapased 533603000 1000000 533
+elapased 554950000 1000000 554
+elapased 470591000 1000000 470
+elapased 1688242000 1000000 1688
+elapased 496344000 1000000 496
+elapased 474616000 1000000 474
+ */
 public class SimpleFlatMapperBigSelectBenchmark {
-	private static final class ValidateHandler implements Handler<DbObject> {
-		long c;
-
-		@Override
-		public void handle(DbObject t) throws Exception {
-			Assert.assertNotNull(t.getName());
-			c++;
-		}
-	}
-
 	JdbcMapper<DbObject> mapper;
 	public SimpleFlatMapperBigSelectBenchmark() throws NoSuchMethodException, SecurityException, SQLException {
 		mapper = ResultSetMapperFactory.newMapper(DbObject.class);

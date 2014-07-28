@@ -7,6 +7,30 @@ import java.sql.ResultSet;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.DbHelper;
 
+
+/*
+
+elapased 530475000 1000000 530
+elapased 445398000 1000000 445
+elapased 507337000 1000000 507
+elapased 455670000 1000000 455
+elapased 384460000 1000000 384
+elapased 400342000 1000000 400
+elapased 442569000 1000000 442
+elapased 399914000 1000000 399
+elapased 406357000 1000000 406
+elapased 438062000 1000000 438
+elapased 407320000 1000000 407
+elapased 415381000 1000000 415
+elapased 444106000 1000000 444
+elapased 398666000 1000000 398
+elapased 449121000 1000000 449
+elapased 405771000 1000000 405
+elapased 384581000 1000000 384
+elapased 379616000 1000000 379
+elapased 384504000 1000000 384
+elapased 426004000 1000000 426
+ */
 public class ReferenceBigSelectBenchmark {
 
 	public ReferenceBigSelectBenchmark() {
@@ -21,7 +45,7 @@ public class ReferenceBigSelectBenchmark {
 		
 		long start = System.nanoTime();
 		
-		long c = 0;
+		ValidateHandler handler = new ValidateHandler();
 		
 		while(rs.next()) {
 			DbObject o = new DbObject();
@@ -29,12 +53,12 @@ public class ReferenceBigSelectBenchmark {
 			o.setName(rs.getString(2));
 			o.setEmail(rs.getString(3));
 			o.setCreationTime(rs.getTimestamp(4));
-			c++;
+			handler.handle(o);
 		}
 		
 		long elapsed = System.nanoTime() - start;
 		
-		System.out.println("elapased " + elapsed + " " + c + " " + (elapsed / c));
+		System.out.println("elapased " + elapsed + " " +  handler.c + " " + (elapsed /  handler.c));
 		
 	}
 	

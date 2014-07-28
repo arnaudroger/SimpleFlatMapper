@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.Mapper;
+import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
@@ -20,11 +22,27 @@ public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private final Map<String, Setter<T, Object>> setters;
 	
+	private final SetterFactory setterFactory;
 	private final Instantiator<T> instantiator;
 	private final Class<T> target;
-	private final SetterFactory setterFactory;
 	@SuppressWarnings("unchecked")
 	private final AtomicReference<CacheEntry<T>[]> mapperCache = new AtomicReference<CacheEntry<T>[]>(new CacheEntry[0]);
+
+	private FieldMapperErrorHandler fieldMapperErrorHandler;
+
+	private MapperBuilderErrorHandler mapperBuilderErrorHandler;
+
+	private final boolean useSingleton;
+	
+	public DynamicJdbcMapper(Class<T> target, SetterFactory setterFactory, Instantiator<T> instantiator, FieldMapperErrorHandler fieldMapperErrorHandler, MapperBuilderErrorHandler mapperBuilderErrorHandler, boolean useSingleton) {
+		this.setterFactory = setterFactory;
+		this.setters = setterFactory.getAllSetters(target);
+		this.instantiator = instantiator;
+		this.target = target;
+		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
+		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
+		this.useSingleton = useSingleton;
+	}
 	
 	private static final class CacheEntry<T> {
 		final MapperKey key;
@@ -35,13 +53,6 @@ public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		}
 	}
 
-	
-	public DynamicJdbcMapper(Class<T> target, Instantiator<T> instantiator) {
-		this.setterFactory = new SetterFactory();
-		this.setters = setterFactory.getAllSetters(target);
-		this.instantiator = instantiator;
-		this.target = target;
-	}
 
 	@Override
 	public final void map(ResultSet source, T target) throws Exception {
@@ -52,9 +63,12 @@ public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	@Override
 	public final <H extends Handler<T>> H forEach(final ResultSet rs, final H handle)
 			throws Exception {
-		
+		return forEach(rs, handle, getInstantiator());
+	}
+
+	private final <H extends Handler<T>> H forEach(final ResultSet rs, final H handle, final Instantiator<T> instantiator)
+			throws Exception {
 		final Mapper<ResultSet, T> mapper = buildMapper(rs.getMetaData());
-		
 		while(rs.next()) {
 			final T t = instantiator.newInstance();
 			mapper.map(rs, t);
@@ -62,6 +76,10 @@ public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		}
 		
 		return handle;
+	}
+
+	private Instantiator<T> getInstantiator() throws Exception {
+		return useSingleton ? new SingletonInstantiator<T>(this.instantiator.newInstance()) : this.instantiator;
 	}
 
 	@Override
@@ -84,6 +102,7 @@ public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		
 		if (mapper == null) {
 			CachedResultSetMapperBuilder<T> builder = new CachedResultSetMapperBuilder<T>(target, setters, setterFactory);
+			builder.fieldMapperErrorHandler(fieldMapperErrorHandler).mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 	
 			for(int i = 1; i <= metaData.getColumnCount(); i++) {
 				builder.addIndexedColumn(metaData.getColumnName(i));
@@ -131,11 +150,16 @@ public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	@Override
 	public List<T> list(ResultSet rs) throws Exception {
-		return forEach(rs, new ListHandler<T>()).getList();
+		return forEach(rs, new ListHandler<T>(), instantiator).getList();
 	}
 
 	@Override
 	public List<T> list(PreparedStatement ps) throws Exception {
-		return forEach(ps, new ListHandler<T>()).getList();
+		ResultSet rs = ps.executeQuery();
+		try {
+			return forEach(rs, new ListHandler<T>(), instantiator).getList();
+		} finally {
+			rs.close();
+		}
 	}
 }

@@ -13,14 +13,24 @@ public final class DelegateJdbcMapper<T> implements JdbcMapper<T> {
 
 	private final Instantiator<T> instantiator;
 	private final Mapper<ResultSet, T> delegate;
-	
+	private final boolean useSingleton;
+
 	public DelegateJdbcMapper( Mapper<ResultSet, T> delegate, Instantiator<T> instantiator) {
+		this(delegate, instantiator, false);
+	}
+
+	public DelegateJdbcMapper( Mapper<ResultSet, T> delegate, Instantiator<T> instantiator, boolean useSingleton) {
 		this.delegate = delegate;
 		this.instantiator = instantiator;
+		this.useSingleton = useSingleton;
 	}
 
 	@Override
 	public <H extends Handler<T>> H forEach(ResultSet rs, H handle) throws Exception {
+		return forEach(rs, handle, getInstantiator());
+	}
+
+	private <H extends Handler<T>> H forEach(ResultSet rs, H handle, Instantiator<T> instantiator) throws Exception {
 		while(rs.next()) {
 			T t = instantiator.newInstance();
 			map(rs, t);
@@ -29,6 +39,10 @@ public final class DelegateJdbcMapper<T> implements JdbcMapper<T> {
 		return handle;
 	}
 	
+	private Instantiator<T> getInstantiator() throws Exception {
+		return useSingleton ? new SingletonInstantiator<T>(this.instantiator.newInstance()) : this.instantiator;
+	}
+
 	@Override
 	public <H extends Handler<T>> H forEach(PreparedStatement statement, H handle)
 			throws Exception {
@@ -48,11 +62,16 @@ public final class DelegateJdbcMapper<T> implements JdbcMapper<T> {
 
 	@Override
 	public List<T> list(ResultSet rs) throws Exception {
-		return forEach(rs, new ListHandler<T>()).getList();
+		return forEach(rs, new ListHandler<T>(), instantiator).getList();
 	}
 
 	@Override
 	public List<T> list(PreparedStatement ps) throws Exception {
-		return forEach(ps, new ListHandler<T>()).getList();
+		ResultSet rs = ps.executeQuery();
+		try {
+			return forEach(rs, new ListHandler<T>(), instantiator).getList();
+		} finally {
+			rs.close();
+		}
 	}
 }

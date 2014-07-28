@@ -30,7 +30,7 @@ import org.sfm.map.primitive.ShortFieldMapper;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 
-public class PrimitiveFieldMapperFactory<T> {
+public final class PrimitiveFieldMapperFactory<T> {
 
 	private final SetterFactory setterFactory;
 

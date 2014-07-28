@@ -25,7 +25,7 @@ import org.sfm.jdbc.getter.TimestampIndexedResultSetGetter;
 import org.sfm.jdbc.getter.TimestampNamedResultSetGetter;
 import org.sfm.reflect.Getter;
 
-public class ResultSetGetterFactory {
+public final class ResultSetGetterFactory {
 	public static Getter<ResultSet, ? extends Object> newGetter(
 			Class<? extends Object> type, String column) {
 		Getter<ResultSet, ? extends Object> getter = null;

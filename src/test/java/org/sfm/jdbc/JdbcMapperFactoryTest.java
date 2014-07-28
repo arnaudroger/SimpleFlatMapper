@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.utils.Handler;
 
-public class ResultSetMapperFactoryTest {
+public class JdbcMapperFactoryTest {
 
 	@Test
 	public void testDbObjectMappingFromDbWithMetaData()
@@ -21,7 +21,7 @@ public class ResultSetMapperFactoryTest {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				ResultSet rs = ps.executeQuery();
-				JdbcMapper<DbObject> mapper = ResultSetMapperFactory.newMapper(DbObject.class, rs.getMetaData());
+				JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance().newMapper(DbObject.class, rs.getMetaData());
 				assertMapPs(rs, mapper);
 			}
 		});
@@ -33,7 +33,7 @@ public class ResultSetMapperFactoryTest {
 		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				JdbcMapper<DbObject> mapper = ResultSetMapperFactory.newMapper(DbObject.class);
+				JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance().newMapper(DbObject.class);
 				assertMapPs(ps, mapper);
 			}
 		});

@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.jdbc.ResultSetMapperFactory;
+import org.sfm.jdbc.JdbcMapperFactory;
 
 /*
 init db
@@ -58,7 +58,7 @@ SmallSelect elapsed 1536409000 1000000 1536
 public class DynamicJdbcMapperForEachBenchmark {
 	JdbcMapper<DbObject> mapper;
 	public DynamicJdbcMapperForEachBenchmark() throws NoSuchMethodException, SecurityException, SQLException {
-		mapper = ResultSetMapperFactory.newMapper(DbObject.class);
+		mapper = JdbcMapperFactory.newInstance().useAsm(false).newMapper(DbObject.class);
 	}
 	
 	private void runBigSelect() throws Exception {

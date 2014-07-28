@@ -21,6 +21,11 @@ public class IntNamedResultSetGetter implements IntGetter<ResultSet>, Getter<Res
 
 	@Override
 	public Integer get(ResultSet target) throws Exception {
-		return getInt(target);
+		int i = getInt(target);
+		if (target.wasNull()) {
+			return null;
+		} else {
+			return Integer.valueOf(i);
+		}
 	}
 }

@@ -12,46 +12,49 @@ import org.sfm.jdbc.DbHelper;
 /*
 init db
 init db done
-BigSelect elapsed  4045788000 1000000 4045
-BigSelect elapsed  629981000 1000000 629
-BigSelect elapsed  491926000 1000000 491
-BigSelect elapsed  493075000 1000000 493
-BigSelect elapsed  491405000 1000000 491
-BigSelect elapsed  496468000 1000000 496
-BigSelect elapsed  553518000 1000000 553
-BigSelect elapsed  468903000 1000000 468
-BigSelect elapsed  478725000 1000000 478
-BigSelect elapsed  573720000 1000000 573
-BigSelect elapsed  466093000 1000000 466
-BigSelect elapsed  488112000 1000000 488
-BigSelect elapsed  597355000 1000000 597
-BigSelect elapsed  482435000 1000000 482
-BigSelect elapsed  468965000 1000000 468
-BigSelect elapsed  560380000 1000000 560
-BigSelect elapsed  500890000 1000000 500
-BigSelect elapsed  498847000 1000000 498
-BigSelect elapsed  480548000 1000000 480
-BigSelect elapsed  536597000 1000000 536
-SmallSelect elapsed 2004039000 1000000 2004
-SmallSelect elapsed 1543379000 1000000 1543
-SmallSelect elapsed 1515027000 1000000 1515
-SmallSelect elapsed 1557402000 1000000 1557
-SmallSelect elapsed 1602739000 1000000 1602
-SmallSelect elapsed 1587954000 1000000 1587
-SmallSelect elapsed 1512615000 1000000 1512
-SmallSelect elapsed 1659874000 1000000 1659
-SmallSelect elapsed 1855781000 1000000 1855
-SmallSelect elapsed 1771819000 1000000 1771
-SmallSelect elapsed 1945055000 1000000 1945
-SmallSelect elapsed 1875370000 1000000 1875
-SmallSelect elapsed 1815678000 1000000 1815
-SmallSelect elapsed 1766755000 1000000 1766
-SmallSelect elapsed 1872997000 1000000 1872
-SmallSelect elapsed 1764635000 1000000 1764
-SmallSelect elapsed 1887611000 1000000 1887
-SmallSelect elapsed 1865662000 1000000 1865
-SmallSelect elapsed 1794183000 1000000 1794
-SmallSelect elapsed 1844881000 1000000 1844
+init db
+init db done
+BigSelect elapsed  2733624000 1000000 2733
+BigSelect elapsed  478547000 1000000 478
+BigSelect elapsed  416367000 1000000 416
+BigSelect elapsed  383644000 1000000 383
+BigSelect elapsed  385196000 1000000 385
+BigSelect elapsed  380017000 1000000 380
+BigSelect elapsed  421670000 1000000 421
+BigSelect elapsed  387768000 1000000 387
+BigSelect elapsed  373889000 1000000 373
+BigSelect elapsed  429772000 1000000 429
+BigSelect elapsed  373167000 1000000 373
+BigSelect elapsed  377310000 1000000 377
+BigSelect elapsed  424532000 1000000 424
+BigSelect elapsed  403497000 1000000 403
+BigSelect elapsed  380374000 1000000 380
+BigSelect elapsed  425855000 1000000 425
+BigSelect elapsed  395031000 1000000 395
+BigSelect elapsed  381931000 1000000 381
+BigSelect elapsed  373564000 1000000 373
+BigSelect elapsed  384799000 1000000 384
+SmallSelect elapsed 1641326000 1000000 1641
+SmallSelect elapsed 1452267000 1000000 1452
+SmallSelect elapsed 1461761000 1000000 1461
+SmallSelect elapsed 1470915000 1000000 1470
+SmallSelect elapsed 1487996000 1000000 1487
+SmallSelect elapsed 1473714000 1000000 1473
+SmallSelect elapsed 1471531000 1000000 1471
+SmallSelect elapsed 1471904000 1000000 1471
+SmallSelect elapsed 1441702000 1000000 1441
+SmallSelect elapsed 1465890000 1000000 1465
+SmallSelect elapsed 1463843000 1000000 1463
+SmallSelect elapsed 1466411000 1000000 1466
+SmallSelect elapsed 1480461000 1000000 1480
+SmallSelect elapsed 1485419000 1000000 1485
+SmallSelect elapsed 1460172000 1000000 1460
+SmallSelect elapsed 1488493000 1000000 1488
+SmallSelect elapsed 1483008000 1000000 1483
+SmallSelect elapsed 1464952000 1000000 1464
+SmallSelect elapsed 1479110000 1000000 1479
+SmallSelect elapsed 1465201000 1000000 1465
+
 
  */
 public class ReferenceBenchmark {

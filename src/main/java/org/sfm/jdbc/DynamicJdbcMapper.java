@@ -6,6 +6,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.sfm.map.Mapper;
 import org.sfm.reflect.Instantiator;
@@ -16,25 +17,36 @@ import org.sfm.utils.ListHandler;
 
 public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
-	private final Mapper<ResultSet, T> adaptiveMapper;
+
 	private final Map<String, Setter<T, Object>> setters;
 	
 	private final Instantiator<T> instantiator;
 	private final Class<T> target;
 	private final SetterFactory setterFactory;
+	@SuppressWarnings("unchecked")
+	private final AtomicReference<CacheEntry<T>[]> mapperCache = new AtomicReference<CacheEntry<T>[]>(new CacheEntry[0]);
+	
+	private static final class CacheEntry<T> {
+		final MapperKey key;
+		final Mapper<ResultSet, T> mapper;
+		public CacheEntry(MapperKey key, Mapper<ResultSet, T> mapper) {
+			this.key = key;
+			this.mapper = mapper;
+		}
+	}
 
 	
 	public DynamicJdbcMapper(Class<T> target, Instantiator<T> instantiator) {
 		this.setterFactory = new SetterFactory();
 		this.setters = setterFactory.getAllSetters(target);
-		this.adaptiveMapper = new AdaptiveMapper<>(setters);
 		this.instantiator = instantiator;
 		this.target = target;
 	}
 
 	@Override
 	public final void map(ResultSet source, T target) throws Exception {
-		adaptiveMapper.map(source, target);
+		final Mapper<ResultSet, T> mapper = buildMapper(source.getMetaData());
+		mapper.map(source, target);
 	}
 
 	@Override
@@ -65,15 +77,58 @@ public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	}
 
 	private Mapper<ResultSet, T> buildMapper(ResultSetMetaData metaData) throws SQLException {
-		CachedResultSetMapperBuilder<T> builder = new CachedResultSetMapperBuilder<T>(target, setters, setterFactory);
-
-		for(int i = 1; i <= metaData.getColumnCount(); i++) {
-			builder.addIndexedColumn(metaData.getColumnName(i));
-		}
 		
-		return builder.mapper();
+		MapperKey key = MapperKey.valueOf(metaData);
+		
+		Mapper<ResultSet, T> mapper = getMapper(key);
+		
+		if (mapper == null) {
+			CachedResultSetMapperBuilder<T> builder = new CachedResultSetMapperBuilder<T>(target, setters, setterFactory);
+	
+			for(int i = 1; i <= metaData.getColumnCount(); i++) {
+				builder.addIndexedColumn(metaData.getColumnName(i));
+			}
+			
+			mapper = builder.mapper();
+			
+			addToMapperCache(new CacheEntry<>(key, mapper));
+		}
+		return mapper;
 	}
 	
+	@SuppressWarnings("unchecked")
+	private void addToMapperCache(CacheEntry<T> cacheEntry) {
+		CacheEntry<T>[] entries;
+		CacheEntry<T>[] newEntries;
+		do {
+			entries = mapperCache.get();
+			
+			for(int i = 0; i < entries.length; i++) {
+				if (entries[0].key.equals(cacheEntry.key)) {
+					// already added 
+					return;
+				}
+			}
+			
+			newEntries = new CacheEntry[entries.length + 1];
+			
+			System.arraycopy(entries, 0, newEntries, 0, entries.length);
+			newEntries[entries.length] = cacheEntry;
+		
+		} while(!mapperCache.compareAndSet(entries, newEntries));
+	}
+
+	private Mapper<ResultSet, T> getMapper(MapperKey key) {
+		CacheEntry<T>[] entries = mapperCache.get();
+		for(int i = 0; i < entries.length; i++) {
+			CacheEntry<T> entry = entries[i];
+			if (entry.key.equals(key)) {
+				return entry.mapper;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public List<T> list(ResultSet rs) throws Exception {
 		return forEach(rs, new ListHandler<T>()).getList();

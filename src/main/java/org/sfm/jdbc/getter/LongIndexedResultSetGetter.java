@@ -6,10 +6,11 @@ import java.sql.SQLException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.LongGetter;
 
-public class LongIndexedResultSetGetter implements LongGetter<ResultSet>, Getter<ResultSet, Long> {
+public class LongIndexedResultSetGetter implements LongGetter<ResultSet>,
+		Getter<ResultSet, Long> {
 
 	private final int column;
-	
+
 	public LongIndexedResultSetGetter(int column) {
 		this.column = column;
 	}
@@ -21,6 +22,11 @@ public class LongIndexedResultSetGetter implements LongGetter<ResultSet>, Getter
 
 	@Override
 	public Long get(ResultSet target) throws Exception {
-		return getLong(target);
+		long l = getLong(target);
+		if (target.wasNull()) {
+			return null;
+		} else {
+			return Long.valueOf(l);
+		}
 	}
 }

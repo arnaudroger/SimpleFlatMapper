@@ -21,6 +21,11 @@ public class DoubleIndexedResultSetGetter implements DoubleGetter<ResultSet>, Ge
 
 	@Override
 	public Double get(ResultSet target) throws Exception {
-		return getDouble(target);
+		double d = getDouble(target);
+		if (target.wasNull()) {
+			return null;
+		} else {
+			return Double.valueOf(d);
+		}
 	}
 }

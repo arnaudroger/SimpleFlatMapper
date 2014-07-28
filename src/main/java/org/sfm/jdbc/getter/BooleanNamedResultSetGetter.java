@@ -21,6 +21,11 @@ public class BooleanNamedResultSetGetter implements BooleanGetter<ResultSet>, Ge
 
 	@Override
 	public Boolean get(ResultSet target) throws Exception {
-		return getBoolean(target);
+		boolean b = getBoolean(target);
+		if (target.wasNull()) {
+			return null;
+		} else {
+			return Boolean.valueOf(b);
+		}
 	}
 }

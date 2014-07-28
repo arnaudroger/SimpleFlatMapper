@@ -21,6 +21,11 @@ public class ShortIndexedResultSetGetter implements ShortGetter<ResultSet>, Gett
 
 	@Override
 	public Short get(ResultSet target) throws Exception {
-		return getShort(target);
+		short s = getShort(target);
+		if (target.wasNull()) {
+			return null;
+		} else {
+			return Short.valueOf(s);
+		}
 	}
 }

@@ -15,51 +15,54 @@ import org.sfm.reflect.Instantiator;
 /*
 init db
 init db done
-BigSelect elapsed 3886307000 1000000 3886
-BigSelect elapsed 735384000 1000000 735
-BigSelect elapsed 684350000 1000000 684
-BigSelect elapsed 689482000 1000000 689
-BigSelect elapsed 701372000 1000000 701
-BigSelect elapsed 623838000 1000000 623
-BigSelect elapsed 608107000 1000000 608
-BigSelect elapsed 576389000 1000000 576
-BigSelect elapsed 626839000 1000000 626
-BigSelect elapsed 687534000 1000000 687
-BigSelect elapsed 708666000 1000000 708
-BigSelect elapsed 688244000 1000000 688
-BigSelect elapsed 679142000 1000000 679
-BigSelect elapsed 657913000 1000000 657
-BigSelect elapsed 656848000 1000000 656
-BigSelect elapsed 685421000 1000000 685
-BigSelect elapsed 661396000 1000000 661
-BigSelect elapsed 633898000 1000000 633
-BigSelect elapsed 593492000 1000000 593
-BigSelect elapsed 609580000 1000000 609
-SmallSelect elapsed 2079903000 1000000 2079
-SmallSelect elapsed 1853800000 1000000 1853
-SmallSelect elapsed 1792647000 1000000 1792
-SmallSelect elapsed 1846062000 1000000 1846
-SmallSelect elapsed 1797794000 1000000 1797
-SmallSelect elapsed 1776067000 1000000 1776
-SmallSelect elapsed 1811283000 1000000 1811
-SmallSelect elapsed 1780285000 1000000 1780
-SmallSelect elapsed 1769303000 1000000 1769
-SmallSelect elapsed 2110649000 1000000 2110
-SmallSelect elapsed 1946382000 1000000 1946
-SmallSelect elapsed 2110848000 1000000 2110
-SmallSelect elapsed 2013508000 1000000 2013
-SmallSelect elapsed 2104571000 1000000 2104
-SmallSelect elapsed 1962064000 1000000 1962
-SmallSelect elapsed 2036549000 1000000 2036
-SmallSelect elapsed 1957172000 1000000 1957
-SmallSelect elapsed 2100799000 1000000 2100
-SmallSelect elapsed 1978547000 1000000 1978
-SmallSelect elapsed 2122127000 1000000 2122
+init db
+init db done
+BigSelect elapsed 2872878000 1000000 2872
+BigSelect elapsed 547079000 1000000 547
+BigSelect elapsed 517898000 1000000 517
+BigSelect elapsed 519572000 1000000 519
+BigSelect elapsed 466686000 1000000 466
+BigSelect elapsed 466480000 1000000 466
+BigSelect elapsed 468322000 1000000 468
+BigSelect elapsed 458678000 1000000 458
+BigSelect elapsed 461590000 1000000 461
+BigSelect elapsed 472170000 1000000 472
+BigSelect elapsed 459041000 1000000 459
+BigSelect elapsed 526015000 1000000 526
+BigSelect elapsed 510849000 1000000 510
+BigSelect elapsed 511078000 1000000 511
+BigSelect elapsed 455981000 1000000 455
+BigSelect elapsed 462642000 1000000 462
+BigSelect elapsed 471440000 1000000 471
+BigSelect elapsed 476329000 1000000 476
+BigSelect elapsed 494994000 1000000 494
+BigSelect elapsed 486891000 1000000 486
+SmallSelect elapsed 1588171000 1000000 1588
+SmallSelect elapsed 1420754000 1000000 1420
+SmallSelect elapsed 1362580000 1000000 1362
+SmallSelect elapsed 1372336000 1000000 1372
+SmallSelect elapsed 1368552000 1000000 1368
+SmallSelect elapsed 1371845000 1000000 1371
+SmallSelect elapsed 1380888000 1000000 1380
+SmallSelect elapsed 1360974000 1000000 1360
+SmallSelect elapsed 1601812000 1000000 1601
+SmallSelect elapsed 1392416000 1000000 1392
+SmallSelect elapsed 1371163000 1000000 1371
+SmallSelect elapsed 1353447000 1000000 1353
+SmallSelect elapsed 1347083000 1000000 1347
+SmallSelect elapsed 1372014000 1000000 1372
+SmallSelect elapsed 1385395000 1000000 1385
+SmallSelect elapsed 1346350000 1000000 1346
+SmallSelect elapsed 1360180000 1000000 1360
+SmallSelect elapsed 1359983000 1000000 1359
+SmallSelect elapsed 1345334000 1000000 1345
+SmallSelect elapsed 1359083000 1000000 1359
+
 
  */
-public class SimpleFlatMapperStaticBenchmark {
+public class StaticJdbcMapperStaticBenchmark {
 	JdbcMapper<DbObject> mapper;
-	public SimpleFlatMapperStaticBenchmark() throws NoSuchMethodException, SecurityException, SQLException {
+	public StaticJdbcMapperStaticBenchmark() throws NoSuchMethodException, SecurityException, SQLException {
 		
 		mapper = new DelegateJdbcMapper<DbObject>(new ResultSetMapperBuilder<DbObject>(DbObject.class).addIndexedColumn("id").addIndexedColumn("name").addIndexedColumn("email").addIndexedColumn("creation_time").mapper(), 
 				new Instantiator<DbObject>() {
@@ -106,7 +109,7 @@ public class SimpleFlatMapperStaticBenchmark {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		SimpleFlatMapperStaticBenchmark benchmark = new SimpleFlatMapperStaticBenchmark();
+		StaticJdbcMapperStaticBenchmark benchmark = new StaticJdbcMapperStaticBenchmark();
 		for(int i = 0; i < 20; i++) {
 			benchmark.runBigSelect();
 		}

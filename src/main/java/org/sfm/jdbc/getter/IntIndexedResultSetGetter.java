@@ -21,6 +21,11 @@ public class IntIndexedResultSetGetter implements IntGetter<ResultSet>, Getter<R
 
 	@Override
 	public Integer get(ResultSet target) throws Exception {
-		return getInt(target);
+		int i = getInt(target);
+		if (target.wasNull()) {
+			return null;
+		} else {
+			return Integer.valueOf(i);
+		}
 	}
 }

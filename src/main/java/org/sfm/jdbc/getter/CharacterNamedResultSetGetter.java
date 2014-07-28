@@ -21,6 +21,11 @@ public class CharacterNamedResultSetGetter implements CharacterGetter<ResultSet>
 	
 	@Override
 	public Character get(ResultSet target) throws SQLException {
-		return getCharacter(target);
+		char c = getCharacter(target);
+		if (target.wasNull()) {
+			return null;
+		} else {
+			return Character.valueOf(c);
+		}
 	}
 }

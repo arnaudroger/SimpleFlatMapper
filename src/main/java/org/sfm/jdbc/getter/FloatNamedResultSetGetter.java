@@ -21,6 +21,11 @@ public class FloatNamedResultSetGetter implements FloatGetter<ResultSet>, Getter
 
 	@Override
 	public Float get(ResultSet target) throws Exception {
-		return getFloat(target);
+		float f = getFloat(target);
+		if (target.wasNull()) {
+			return null;
+		} else {
+			return Float.valueOf(f);
+		}
 	}
 }

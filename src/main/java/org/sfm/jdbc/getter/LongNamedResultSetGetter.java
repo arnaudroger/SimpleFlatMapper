@@ -21,6 +21,11 @@ public class LongNamedResultSetGetter implements LongGetter<ResultSet>, Getter<R
 
 	@Override
 	public Long get(ResultSet target) throws Exception {
-		return getLong(target);
+		long l = getLong(target);
+		if (target.wasNull()) {
+			return null;
+		} else {
+			return Long.valueOf(l);
+		}
 	}
 }

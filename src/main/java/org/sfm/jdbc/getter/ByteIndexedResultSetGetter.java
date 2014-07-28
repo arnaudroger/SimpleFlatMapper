@@ -21,6 +21,11 @@ public class ByteIndexedResultSetGetter implements ByteGetter<ResultSet>, Getter
 
 	@Override
 	public Byte get(ResultSet target) throws Exception {
-		return getByte(target);
+		byte b = getByte(target);
+		if (target.wasNull()) {
+			return null;
+		} else {
+			return Byte.valueOf(b);
+		}
 	}
 }

@@ -1,7 +1,5 @@
-Cache FielMapper by column ConcurrentMap? CopyOnWrite?
 Refactor all builder sutff into FielMappingFactory
 clean up factory builder/factory
 asm instantiator
 hibernate benchmark
-test different strategy for adaptive mapper, with cached field mapper might be faster to look those up
 singleton instantiator

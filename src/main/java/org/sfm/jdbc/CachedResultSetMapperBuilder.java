@@ -20,7 +20,6 @@ import org.sfm.utils.PropertyNameMatcher;
 
 public class CachedResultSetMapperBuilder<T> {
 
-	private final SetterFactory setterFactory;
 	private final List<Mapper<ResultSet, T>> fields = new ArrayList<Mapper<ResultSet, T>>();
 
 	private FieldMapperErrorHandler fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler();
@@ -33,7 +32,6 @@ public class CachedResultSetMapperBuilder<T> {
 	public CachedResultSetMapperBuilder(Class<T> target,
 			Map<String, Setter<T, Object>> setters, SetterFactory setterFactory) {
 		this.setters = setters;
-		this.setterFactory = setterFactory;
 		this.target = target;
 		this.primitiveFieldMapperFactory = new PrimitiveFieldMapperFactory<T>(
 				setterFactory);
@@ -76,17 +74,6 @@ public class CachedResultSetMapperBuilder<T> {
 			}
 		}
 		return null;
-	}
-
-	public CachedResultSetMapperBuilder<T> addMapping(String property,
-			int column) {
-		Setter<T, Object> setter = setterFactory.getSetter(target, property);
-		if (setter == null) {
-			mapperBuilderErrorHandler.setterNotFound(target, property);
-		} else {
-			addMapping(setter, column);
-		}
-		return this;
 	}
 
 	@SuppressWarnings("unchecked")

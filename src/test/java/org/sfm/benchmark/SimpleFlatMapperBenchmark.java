@@ -32,13 +32,13 @@ elapased 1688242000 1000000 1688
 elapased 496344000 1000000 496
 elapased 474616000 1000000 474
  */
-public class SimpleFlatMapperBigSelectBenchmark {
+public class SimpleFlatMapperBenchmark {
 	JdbcMapper<DbObject> mapper;
-	public SimpleFlatMapperBigSelectBenchmark() throws NoSuchMethodException, SecurityException, SQLException {
+	public SimpleFlatMapperBenchmark() throws NoSuchMethodException, SecurityException, SQLException {
 		mapper = ResultSetMapperFactory.newMapper(DbObject.class);
 	}
 	
-	private void run() throws Exception {
+	private void runBigSelect() throws Exception {
 		Connection conn = DbHelper.benchmarkDb();
 		
 		PreparedStatement ps = conn.prepareStatement("SELECT * FROM test_db_object");
@@ -50,14 +50,37 @@ public class SimpleFlatMapperBigSelectBenchmark {
 		long c = mapper.forEach(rs, new ValidateHandler() ).c;
 		long elapsed = System.nanoTime() - start;
 		
-		System.out.println("elapased " + elapsed + " " + c + " " + (elapsed / c));
+		System.out.println("BigSelect elapsed " + elapsed + " " + c + " " + (elapsed / c));
+		
+	}
+	
+	private void runSmallSelect() throws Exception {
+		Connection conn = DbHelper.benchmarkDb();
+		
+		PreparedStatement ps = conn.prepareStatement("SELECT * FROM test_db_object LIMIT 1");
+		
+		long start = System.nanoTime();
+
+		ValidateHandler handler = new ValidateHandler();
+		for(int i = 0; i < 1000000; i++) {
+			ResultSet rs = ps.executeQuery();
+			mapper.forEach(rs, handler );
+		
+		}
+		long elapsed = System.nanoTime() - start;
+		
+		System.out.println("SmallSelect elapsed " + elapsed + " " + handler.c + " " + (elapsed / handler.c));
 		
 	}
 	
 	public static void main(String[] args) throws Exception {
-		SimpleFlatMapperBigSelectBenchmark benchmark = new SimpleFlatMapperBigSelectBenchmark();
+		SimpleFlatMapperBenchmark benchmark = new SimpleFlatMapperBenchmark();
 		for(int i = 0; i < 20; i++) {
-			benchmark.run();
+			benchmark.runBigSelect();
+		}
+		
+		for(int i = 0; i < 20; i++) {
+			benchmark.runSmallSelect();
 		}
 	}
 

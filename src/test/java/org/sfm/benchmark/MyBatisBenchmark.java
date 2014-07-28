@@ -39,7 +39,7 @@ elapased 2986674000 1000000 2986
 elapased 2630663000 1000000 2630
 elapased 2494846000 1000000 2494
  */
-public class MyBatisBigSelectBenchmark {
+public class MyBatisBenchmark {
 
 
 	public class ValidateHandler implements ResultHandler {
@@ -59,11 +59,11 @@ public class MyBatisBigSelectBenchmark {
 	}
 
 	private SqlSessionFactory sqlSessionFactory;
-	public MyBatisBigSelectBenchmark(SqlSessionFactory sqlSessionFactory)  {
+	public MyBatisBenchmark(SqlSessionFactory sqlSessionFactory)  {
 		this.sqlSessionFactory = sqlSessionFactory;
 	}
 	
-	private void run() throws Exception {
+	private void runBigSelect() throws Exception {
 		
 		Connection conn = DbHelper.benchmarkDb();
 		
@@ -80,21 +80,46 @@ public class MyBatisBigSelectBenchmark {
 		
 		long c= handler.c;
 		
-		System.out.println("elapased " + elapsed + " " + c + " " + (elapsed / c));
+		System.out.println("BigSelect elapsed " + elapsed + " " + c + " " + (elapsed / c));
+		
+	}
+	
+	
+	private void runSmallSelect() throws Exception {
+		Connection conn = DbHelper.benchmarkDb();
+		
+	SqlSession session = sqlSessionFactory.openSession(conn);
+
+		
+		ValidateHandler handler = new ValidateHandler();
+
+		
+		long start = System.nanoTime();
+
+		for(int i = 0; i < 1000000; i++) {
+			session.select("selectOneDbObjects", handler );
+		}
+		long elapsed = System.nanoTime() - start;
+		
+		System.out.println("SmallSelect elapsed " + elapsed + " " + handler.c + " " + (elapsed / handler.c));
 		
 	}
 	
 	public static void main(String[] args) throws Exception {
-		
 		TransactionFactory transactionFactory = new JdbcTransactionFactory();
 		Environment environment = new Environment("development", transactionFactory, new SingleConnectionDataSource(DbHelper.benchmarkDb()));
 		Configuration configuration = new Configuration(environment);
 		configuration.addMapper(DbObjectMapper.class);
 		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
 		
-		MyBatisBigSelectBenchmark benchmark = new MyBatisBigSelectBenchmark(sqlSessionFactory);
+		MyBatisBenchmark benchmark = new MyBatisBenchmark(sqlSessionFactory);
+		
 		for(int i = 0; i < 20; i++) {
-			benchmark.run();
+			benchmark.runBigSelect();
+		}
+		
+		for(int i = 0; i < 20; i++) {
+			benchmark.runSmallSelect();
 		}
 	}
 

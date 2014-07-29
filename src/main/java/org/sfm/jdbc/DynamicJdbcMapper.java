@@ -17,7 +17,7 @@ import org.sfm.reflect.SetterFactory;
 import org.sfm.utils.Handler;
 import org.sfm.utils.ListHandler;
 
-public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
+public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 
 	private final Map<String, Setter<T, Object>> setters;

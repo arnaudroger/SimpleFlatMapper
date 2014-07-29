@@ -3,7 +3,7 @@ package org.sfm.map;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
 
-public class FieldMapper<S, T, P> implements Mapper<S, T> {
+public final class FieldMapper<S, T, P> implements Mapper<S, T> {
 	
 	private final String name; 
 	private final Getter<S, ? extends P> getter;

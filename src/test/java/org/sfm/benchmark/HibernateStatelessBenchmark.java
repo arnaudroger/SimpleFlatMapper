@@ -62,6 +62,9 @@ BigSelect elapsed 2317084000 1000000 2317
 SmallSelect elapsed 35677038000 1000000 35677
 SmallSelect elapsed 33044847000 1000000 33044
 SmallSelect elapsed 33893664000 1000000 33893
+SmallSelect elapsed 33556880000 1000000 33556
+SmallSelect elapsed 33305668000 1000000 33305
+SmallSelect elapsed 32969910000 1000000 32969
 
  */
 public class HibernateStatelessBenchmark {

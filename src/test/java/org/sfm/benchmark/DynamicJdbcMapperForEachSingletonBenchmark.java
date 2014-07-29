@@ -16,7 +16,7 @@ s
 public class DynamicJdbcMapperForEachSingletonBenchmark {
 	JdbcMapper<DbObject> mapper;
 	public DynamicJdbcMapperForEachSingletonBenchmark() throws NoSuchMethodException, SecurityException, SQLException {
-		mapper = JdbcMapperFactory.newInstance().useSingleton(true).newMapper(DbObject.class);
+		mapper = JdbcMapperFactory.newInstance().newMapper(DbObject.class);
 	}
 	
 	private void runBigSelect() throws Exception {
@@ -25,10 +25,11 @@ public class DynamicJdbcMapperForEachSingletonBenchmark {
 		PreparedStatement ps = conn.prepareStatement("SELECT * FROM test_db_object");
 		
 		ResultSet rs = ps.executeQuery();
-		
+		DbObject o = new DbObject();
+
 		long start = System.nanoTime();
 		
-		long c = mapper.forEach(rs, new ValidateHandler() ).c;
+		long c = mapper.forEach(rs, new ValidateHandler(), o ).c;
 		long elapsed = System.nanoTime() - start;
 		
 		System.out.println("BigSelect elapsed " + elapsed + " " + c + " " + (elapsed / c));
@@ -40,12 +41,13 @@ public class DynamicJdbcMapperForEachSingletonBenchmark {
 		
 		PreparedStatement ps = conn.prepareStatement("SELECT * FROM test_db_object LIMIT 1");
 		
+		DbObject o = new DbObject();
 		long start = System.nanoTime();
 
 		ValidateHandler handler = new ValidateHandler();
 		for(int i = 0; i < 1000000; i++) {
 			ResultSet rs = ps.executeQuery();
-			mapper.forEach(rs, handler );
+			mapper.forEach(rs, handler, o );
 		
 		}
 		long elapsed = System.nanoTime() - start;

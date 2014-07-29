@@ -19,7 +19,6 @@ public class JdbcMapperFactory {
 	private FieldMapperErrorHandler fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler();
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	
-	private boolean useSingleton;
 	private boolean useAsm;
 	
 	private final boolean asmPresent = isAsmPresent();
@@ -31,7 +30,7 @@ public class JdbcMapperFactory {
 			builder.addIndexedColumn(metaData.getColumnName(i +1));
 		}
 		
-		return new DelegateJdbcMapper<T>(builder.mapper(), new InstantiatorFactory().getInstantiator(target), useSingleton);
+		return new DelegateJdbcMapper<T>(builder.mapper(), new InstantiatorFactory().getInstantiator(target));
 	}
 	
 	private boolean isAsmPresent() {
@@ -57,18 +56,13 @@ public class JdbcMapperFactory {
 		return this;
 	}
 
-	public JdbcMapperFactory useSingleton(boolean useSingleton) {
-		this.useSingleton = useSingleton;
-		return this;
-	}
-
 	public JdbcMapperFactory useAsm(boolean useAsm) {
 		this.useAsm = useAsm;
 		return this;
 	}
 
 	public <T> JdbcMapper<T> newMapper(Class<T> target) throws SQLException, NoSuchMethodException, SecurityException {
-		return new DynamicJdbcMapper<T>(target, getSetterFactory(), new InstantiatorFactory().getInstantiator(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, useSingleton);
+		return new DynamicJdbcMapper<T>(target, getSetterFactory(), new InstantiatorFactory().getInstantiator(target), fieldMapperErrorHandler, mapperBuilderErrorHandler);
 	}
 
 	private SetterFactory getSetterFactory() {

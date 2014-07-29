@@ -9,6 +9,7 @@ import org.sfm.utils.Handler;
 
 public interface JdbcMapper<T> extends Mapper<ResultSet, T> {
 	
+	<H extends Handler<T>> H forEach(ResultSet rs, H handle, T t) throws Exception;
 	<H extends Handler<T>> H forEach(ResultSet rs, H handle) throws Exception;
 	<H extends Handler<T>> H forEach(PreparedStatement ps, H handle) throws Exception;
 	

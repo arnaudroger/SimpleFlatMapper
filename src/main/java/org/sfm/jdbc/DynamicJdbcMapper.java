@@ -32,16 +32,13 @@ public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler;
 
-	private final boolean useSingleton;
-	
-	public DynamicJdbcMapper(Class<T> target, SetterFactory setterFactory, Instantiator<T> instantiator, FieldMapperErrorHandler fieldMapperErrorHandler, MapperBuilderErrorHandler mapperBuilderErrorHandler, boolean useSingleton) {
+	public DynamicJdbcMapper(Class<T> target, SetterFactory setterFactory, Instantiator<T> instantiator, FieldMapperErrorHandler fieldMapperErrorHandler, MapperBuilderErrorHandler mapperBuilderErrorHandler) {
 		this.setterFactory = setterFactory;
 		this.setters = setterFactory.getAllSetters(target);
 		this.instantiator = instantiator;
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-		this.useSingleton = useSingleton;
 	}
 	
 	private static final class CacheEntry<T> {
@@ -63,11 +60,6 @@ public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	@Override
 	public final <H extends Handler<T>> H forEach(final ResultSet rs, final H handle)
 			throws Exception {
-		return forEach(rs, handle, getInstantiator());
-	}
-
-	private final <H extends Handler<T>> H forEach(final ResultSet rs, final H handle, final Instantiator<T> instantiator)
-			throws Exception {
 		final Mapper<ResultSet, T> mapper = buildMapper(rs.getMetaData());
 		while(rs.next()) {
 			final T t = instantiator.newInstance();
@@ -77,9 +69,16 @@ public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		
 		return handle;
 	}
-
-	private Instantiator<T> getInstantiator() throws Exception {
-		return useSingleton ? new SingletonInstantiator<T>(this.instantiator.newInstance()) : this.instantiator;
+	
+	@Override
+	public <H extends Handler<T>> H forEach(ResultSet rs, H handle, T t)
+			throws Exception {
+		final Mapper<ResultSet, T> mapper = buildMapper(rs.getMetaData());
+		while(rs.next()) {
+			mapper.map(rs, t);
+			handle.handle(t);
+		}
+		return handle;
 	}
 
 	@Override
@@ -150,16 +149,11 @@ public class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	@Override
 	public List<T> list(ResultSet rs) throws Exception {
-		return forEach(rs, new ListHandler<T>(), instantiator).getList();
+		return forEach(rs, new ListHandler<T>()).getList();
 	}
 
 	@Override
 	public List<T> list(PreparedStatement ps) throws Exception {
-		ResultSet rs = ps.executeQuery();
-		try {
-			return forEach(rs, new ListHandler<T>(), instantiator).getList();
-		} finally {
-			rs.close();
-		}
+		return forEach(ps, new ListHandler<T>()).getList();
 	}
 }

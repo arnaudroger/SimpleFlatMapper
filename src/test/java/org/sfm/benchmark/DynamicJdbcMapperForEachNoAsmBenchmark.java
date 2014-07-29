@@ -16,7 +16,7 @@ import org.sfm.jdbc.JdbcMapperFactory;
 public class DynamicJdbcMapperForEachNoAsmBenchmark {
 	JdbcMapper<DbObject> mapper;
 	public DynamicJdbcMapperForEachNoAsmBenchmark() throws NoSuchMethodException, SecurityException, SQLException {
-		mapper = JdbcMapperFactory.newInstance().newMapper(DbObject.class);
+		mapper = JdbcMapperFactory.newInstance().useAsm(false).newMapper(DbObject.class);
 	}
 	
 	private void runBigSelect() throws Exception {

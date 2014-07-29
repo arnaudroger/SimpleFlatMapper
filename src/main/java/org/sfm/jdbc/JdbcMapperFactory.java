@@ -26,6 +26,9 @@ public class JdbcMapperFactory {
 	public <T> JdbcMapper<T> newMapper(Class<T> target, ResultSetMetaData metaData) throws SQLException, NoSuchMethodException, SecurityException {
 		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilder<>(target, getSetterFactory());
 		
+		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
+		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
+		
 		for(int i = 0; i < metaData.getColumnCount(); i++) {
 			builder.addIndexedColumn(metaData.getColumnName(i +1));
 		}
@@ -41,8 +44,6 @@ public class JdbcMapperFactory {
 			return false;
 		}
 	}
-	
-	
 
 	public JdbcMapperFactory fieldMapperErrorHandler(
 			FieldMapperErrorHandler fieldMapperErrorHandler) {

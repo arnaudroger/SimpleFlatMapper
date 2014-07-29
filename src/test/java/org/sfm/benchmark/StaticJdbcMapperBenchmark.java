@@ -60,9 +60,9 @@ SmallSelect elapsed 1359083000 1000000 1359
 
 
  */
-public class StaticJdbcMapperStaticBenchmark {
+public class StaticJdbcMapperBenchmark {
 	JdbcMapper<DbObject> mapper;
-	public StaticJdbcMapperStaticBenchmark() throws NoSuchMethodException, SecurityException, SQLException {
+	public StaticJdbcMapperBenchmark() throws NoSuchMethodException, SecurityException, SQLException {
 		
 		mapper = new DelegateJdbcMapper<DbObject>(new ResultSetMapperBuilder<DbObject>(DbObject.class).addIndexedColumn("id").addIndexedColumn("name").addIndexedColumn("email").addIndexedColumn("creation_time").mapper(), 
 				new Instantiator<DbObject>() {
@@ -109,7 +109,7 @@ public class StaticJdbcMapperStaticBenchmark {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		StaticJdbcMapperStaticBenchmark benchmark = new StaticJdbcMapperStaticBenchmark();
+		StaticJdbcMapperBenchmark benchmark = new StaticJdbcMapperBenchmark();
 		for(int i = 0; i < 20; i++) {
 			benchmark.runBigSelect();
 		}

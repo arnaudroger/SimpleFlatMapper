@@ -10,6 +10,30 @@ public class DbBoxedPrimitveObject implements PrimitiveObject {
 	protected Long pLong;
 	protected Float pFloat;
 	protected Double pDouble;
+	public Boolean getoBoolean() {
+		return pBoolean;
+	}
+	public Byte getoByte() {
+		return pByte;
+	}
+	public Character getoCharacter() {
+		return pCharacter;
+	}
+	public Short getoShort() {
+		return pShort;
+	}
+	public Integer getoInt() {
+		return pInt;
+	}
+	public Long getoLong() {
+		return pLong;
+	}
+	public Float getoFloat() {
+		return pFloat;
+	}
+	public Double getoDouble() {
+		return pDouble;
+	}
 	
 	public boolean ispBoolean() {
 		return pBoolean;

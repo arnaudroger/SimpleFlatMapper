@@ -136,7 +136,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		} while(!mapperCache.compareAndSet(entries, newEntries));
 	}
 
-	private Mapper<ResultSet, T> getMapper(MapperKey key) {
+	protected Mapper<ResultSet, T> getMapper(MapperKey key) {
 		CacheEntry<T>[] entries = mapperCache.get();
 		for(int i = 0; i < entries.length; i++) {
 			CacheEntry<T> entry = entries[i];

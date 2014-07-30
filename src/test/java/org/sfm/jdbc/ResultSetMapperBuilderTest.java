@@ -72,6 +72,18 @@ public class ResultSetMapperBuilderTest {
 	}
 	
 	@Test
+	public void testNamedBoxedPrimitivesWithNullValues() throws Exception {
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilder<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		testNamedPrimitivesWithNull(builder, new DbBoxedPrimitveObject());
+	}
+	
+	@Test
+	public void testIndexedPrimitivesWithNullValues() throws Exception {
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilder<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		testIndexedPrimitivesWithNull(builder, new DbBoxedPrimitveObject());
+	}
+	
+	@Test
 	public void testIndexedPrimitivesWithSetterAccessNoAsm() throws Exception {
 		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, new SetterFactory(null));
 		testIndexedPrimitives(builder, new DbPrimitiveObjectWithSetter());
@@ -85,7 +97,17 @@ public class ResultSetMapperBuilderTest {
 	
 	private <T extends PrimitiveObject> void testIndexedPrimitives(ResultSetMapperBuilder<T> builder, T object)
 			throws SQLException, Exception {
-		Mapper<ResultSet, T> mapper  = builder
+		addIndexedColumn(builder);		
+		testPrimitives(object, builder.mapper());
+	}
+	private <T extends PrimitiveObject> void testIndexedPrimitivesWithNull(ResultSetMapperBuilder<DbBoxedPrimitveObject> builder, DbBoxedPrimitveObject object)
+			throws SQLException, Exception {
+		addIndexedColumn(builder);		
+		testPrimitivesWithNullValues(object, builder.mapper());
+	}
+	private <T extends PrimitiveObject> void addIndexedColumn(
+			ResultSetMapperBuilder<T> builder) {
+		builder
 			.addMapping("pBoolean", 1)
 			.addMapping("pByte", 2)
 			.addMapping("pCharacter", 3)
@@ -93,11 +115,23 @@ public class ResultSetMapperBuilderTest {
 			.addMapping("pInt", 5)
 			.addMapping("pLong", 6)
 			.addMapping("pFloat", 7)
-			.addMapping("pDouble", 8).mapper();		
-		testPrimitives(object, mapper);
+			.addMapping("pDouble", 8);
 	}
 	private <T extends PrimitiveObject> void testNamedPrimitives(ResultSetMapperBuilder<T> builder, T object)
 			throws SQLException, Exception {
+		addNamedColumns(builder);		
+		testPrimitives(object,  builder.mapper());
+	}
+	
+	private <T extends PrimitiveObject> void testNamedPrimitivesWithNull(ResultSetMapperBuilder<DbBoxedPrimitveObject> builder, DbBoxedPrimitveObject object)
+			throws SQLException, Exception {
+		addNamedColumns(builder);		
+		testPrimitivesWithNullValues(object,  builder.mapper());
+	}
+
+
+	private <T extends PrimitiveObject> void addNamedColumns(
+			ResultSetMapperBuilder<T> builder) {
 		builder.addNamedColumn("p_boolean");
 		builder.addNamedColumn("p_byte");
 		builder.addNamedColumn("p_character");
@@ -105,11 +139,7 @@ public class ResultSetMapperBuilderTest {
 		builder.addNamedColumn("p_int");
 		builder.addNamedColumn("p_long");
 		builder.addNamedColumn("p_float");
-		builder.addNamedColumn("p_double");		
-		
-		Mapper<ResultSet, T> mapper = builder.mapper();
-		
-		testPrimitives(object, mapper);
+		builder.addNamedColumn("p_double");
 	}
 
 	public <T extends PrimitiveObject> void testPrimitives(T object,
@@ -143,6 +173,41 @@ public class ResultSetMapperBuilderTest {
 		assertEquals((long)0xffa4l, object.getpLong());
 		assertEquals((float)3.14f, object.getpFloat(), 0);
 		assertEquals((double)3.14159, object.getpDouble(), 0);
+	}
+	
+	public  void testPrimitivesWithNullValues(DbBoxedPrimitveObject object,
+			Mapper<ResultSet, DbBoxedPrimitveObject> mapper) throws SQLException, Exception {
+		ResultSet rs = mock(ResultSet.class);
+		when(rs.wasNull()).thenReturn(true);
+		
+		when(rs.getBoolean("p_boolean")).thenReturn(false);
+		when(rs.getByte("p_byte")).thenReturn((byte)0);
+		when(rs.getInt("p_character")).thenReturn(0);
+		when(rs.getShort("p_short")).thenReturn((short)0);
+		when(rs.getInt("p_int")).thenReturn(0);
+		when(rs.getLong("p_long")).thenReturn(0l);
+		when(rs.getFloat("p_float")).thenReturn(0f);
+		when(rs.getDouble("p_double")).thenReturn(0.0);
+		
+		when(rs.getBoolean(1)).thenReturn(true);
+		when(rs.getByte(2)).thenReturn((byte)0);
+		when(rs.getInt(3)).thenReturn(0);
+		when(rs.getShort(4)).thenReturn((short)0);
+		when(rs.getInt(5)).thenReturn(0);
+		when(rs.getLong(6)).thenReturn(0l);
+		when(rs.getFloat(7)).thenReturn(0f);
+		when(rs.getDouble(8)).thenReturn(0.0);
+		
+		mapper.map(rs, object);
+		
+		assertNull(object.getoBoolean());
+		assertNull(object.getoByte());
+		assertNull(object.getoCharacter());
+		assertNull(object.getoShort());
+		assertNull(object.getoInt());
+		assertNull(object.getoLong());
+		assertNull(object.getoFloat());
+		assertNull(object.getoDouble());
 	}
 	
 	private void testDbObjectMappingFromDb(final Mapper<ResultSet, DbObject> mapper)

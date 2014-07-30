@@ -13,5 +13,6 @@ $HOME/.m2/repository/org/jboss/logging/jboss-logging/3.1.3.GA/jboss-logging-3.1.
 $HOME/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_spec/1.0.0.Final/jboss-transaction-api_1.2_spec-1.0.0.Final.jar:\
 $HOME/.m2/repository/org/hibernate/javax/persistence/hibernate-jpa-2.1-api/1.0.0.Final/hibernate-jpa-2.1-api-1.0.0.Final.jar:\
 $HOME/.m2/repository/org/javassist/javassist/3.18.1-GA/javassist-3.18.1-GA.jar:\
-$HOME/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar\
+$HOME/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar:\
+/Users/e19224/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar\
  org.sfm.benchmark.HibernateStatefullWithCacheBenchmark

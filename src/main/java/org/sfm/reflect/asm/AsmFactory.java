@@ -47,7 +47,7 @@ public class AsmFactory implements Opcodes {
 	private Map<Class<?>, Instantiator<?>> instantiators = new HashMap<Class<?>, Instantiator<?>>();
 	
 	public AsmFactory() {
-		factoryClassLoader = new FactoryClassLoader(Thread.currentThread().getContextClassLoader());
+		this(Thread.currentThread().getContextClassLoader());
 	}
 	
 	public AsmFactory(ClassLoader cl) {

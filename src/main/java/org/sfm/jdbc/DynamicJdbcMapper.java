@@ -61,13 +61,17 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	public final <H extends Handler<T>> H forEach(final ResultSet rs, final H handle)
 			throws Exception {
 		final Mapper<ResultSet, T> mapper = buildMapper(rs.getMetaData());
+		forEach(rs, handle, mapper);
+		return handle;
+	}
+
+	private <H extends Handler<T>> void forEach(final ResultSet rs,	final H handle, final Mapper<ResultSet, T> mapper)
+			throws SQLException, Exception {
 		while(rs.next()) {
 			final T t = instantiator.newInstance();
 			mapper.map(rs, t);
 			handle.handle(t);
 		}
-		
-		return handle;
 	}
 	
 	@Override

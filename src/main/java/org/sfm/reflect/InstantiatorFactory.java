@@ -37,7 +37,7 @@ public class InstantiatorFactory {
 		
 		if (constructor.getParameterTypes().length == 0) {
 			
-			if (constructor.isAccessible()) {
+			if (Modifier.isPublic(constructor.getModifiers())) {
 				try {
 					return asmFactory.createInstatiantor(target);
 				} catch (Exception e) {

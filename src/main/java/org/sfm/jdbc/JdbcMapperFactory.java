@@ -19,7 +19,7 @@ public class JdbcMapperFactory {
 	private FieldMapperErrorHandler fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler();
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	
-	private boolean useAsm;
+	private boolean useAsm = true;
 	
 	private final boolean asmPresent = isAsmPresent();
 	

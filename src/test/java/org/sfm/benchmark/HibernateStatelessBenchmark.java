@@ -142,6 +142,7 @@ public class HibernateStatelessBenchmark {
 		for(int i = 0; i < 20; i++) {
 			benchmark.runSmallSelect();
 		}
+		sf.close();
 	}
 
 

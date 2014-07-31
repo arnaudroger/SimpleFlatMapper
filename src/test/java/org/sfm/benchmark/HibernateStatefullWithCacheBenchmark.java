@@ -147,6 +147,7 @@ public class HibernateStatefullWithCacheBenchmark {
 		for(int i = 0; i < 20; i++) {
 			benchmark.runSmallSelect();
 		}
+		sf.close();
 	}
 
 

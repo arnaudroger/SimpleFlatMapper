@@ -9,6 +9,8 @@ import org.sfm.beans.DbObject;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.JdbcMapperFactory;
+import org.sfm.reflect.Instantiator;
+import org.sfm.reflect.InstantiatorFactory;
 
 /*
 init db
@@ -56,8 +58,10 @@ SmallSelect elapsed 1640975000 1000000 1640
  */
 public class DynamicJdbcMapperMapBenchmark {
 	JdbcMapper<DbObject> mapper;
+	Instantiator<DbObject> instantiator;
 	public DynamicJdbcMapperMapBenchmark() throws NoSuchMethodException, SecurityException, SQLException {
 		mapper = JdbcMapperFactory.newInstance().newMapper(DbObject.class);
+		instantiator = new InstantiatorFactory().getInstantiator(DbObject.class);
 	}
 	
 	private void runBigSelect() throws Exception {
@@ -82,10 +86,9 @@ public class DynamicJdbcMapperMapBenchmark {
 	private void forEach(ResultSet rs, ValidateHandler handler)
 			throws SQLException, Exception {
 		while(rs.next()) {
-			DbObject o = new DbObject();
+			DbObject o = instantiator.newInstance();
 			mapper.map(rs, o);
 			handler.handle(o);
-			
 		}
 	}
 	

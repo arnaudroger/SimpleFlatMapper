@@ -9,7 +9,7 @@ public final class SaticMapper<S, T> implements Mapper<S, T> {
 	}
 
 	@Override
-	public final void map(S source, T target) throws Exception {
+	public void map(S source, T target) throws Exception {
 		for(int i = 0; i < fieldMappers.length; i++) {
 			fieldMappers[i].map(source, target);
 		}

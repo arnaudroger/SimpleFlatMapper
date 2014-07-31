@@ -37,7 +37,7 @@ public class FieldMapperTest {
 		
 		fieldMapper.map(source, target);
 		
-		verify(errorHandler).errorGettingValue("test", source, target, error);
+		verify(errorHandler).errorMappingField("test", source, target, error);
 		
 	}
 	
@@ -70,7 +70,7 @@ public class FieldMapperTest {
 		
 		fieldMapper.map(source, target);
 		
-		verify(errorHandler).errorSettingValue("test", source, target, error);
+		verify(errorHandler).errorMappingField("test", source, target, error);
 		
 	}
 

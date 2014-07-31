@@ -20,14 +20,10 @@ public final class FieldMapper<S, T, P> implements Mapper<S, T> {
 	@Override
 	public void map(S source, T target) throws Exception {
 		try {
-			P value = getter.get(source);
-			try {
-				setter.set(target, value);
-			} catch(Exception se) {
-				errorHandler.errorSettingValue(name, source, target, se);
-			}
+			final P value = getter.get(source);
+			setter.set(target, value);
 		} catch(Exception ge) {
-			errorHandler.errorGettingValue(name, source, target, ge);
+			errorHandler.errorMappingField(name, source, target, ge);
 		}
 	}
 }

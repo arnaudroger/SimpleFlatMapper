@@ -142,6 +142,8 @@ public class HibernateStatefullBenchmark {
 		for(int i = 0; i < 20; i++) {
 			benchmark.runSmallSelect();
 		}
+		
+		sf.close();
 	}
 
 

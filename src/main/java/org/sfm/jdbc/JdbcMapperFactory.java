@@ -12,6 +12,11 @@ import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.asm.AsmFactory;
 
 public class JdbcMapperFactory {
+	
+	/**
+	 * instantiate a new JdbcMapperFactory
+	 * @return a new JdbcMapperFactory
+	 */
 	public static JdbcMapperFactory newInstance() {
 		return new JdbcMapperFactory();
 	}
@@ -23,6 +28,16 @@ public class JdbcMapperFactory {
 	
 	private final boolean asmPresent = isAsmPresent();
 	
+	
+	/**
+	 * Will create a instance of mapper based on the metadata and the target class;
+	 * @param target the target class of the mapper
+	 * @param metaData the metadata to create the mapper from
+	 * @return a mapper that will map the data represented by the metadata to an instance of target
+	 * @throws SQLException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 */
 	public <T> JdbcMapper<T> newMapper(Class<T> target, ResultSetMetaData metaData) throws SQLException, NoSuchMethodException, SecurityException {
 		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilder<>(target, getSetterFactory());
 		
@@ -45,24 +60,47 @@ public class JdbcMapperFactory {
 		}
 	}
 
+	
+	/**
+	 * 
+	 * @param fieldMapperErrorHandler 
+	 * @return the factory
+	 */
 	public JdbcMapperFactory fieldMapperErrorHandler(
 			FieldMapperErrorHandler fieldMapperErrorHandler) {
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		return this;
 	}
 
+	/**
+	 * 
+	 * @param mapperBuilderErrorHandler
+	 * @return the factory
+	 */
 	public JdbcMapperFactory mapperBuilderErrorHandler(
 			MapperBuilderErrorHandler mapperBuilderErrorHandler) {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		return this;
 	}
 
+	/**
+	 * 
+	 * @param useAsm false if you want to disable asm usage.
+	 * @return the factory
+	 */
 	public JdbcMapperFactory useAsm(boolean useAsm) {
 		this.useAsm = useAsm;
 		return this;
 	}
 
-	public <T> JdbcMapper<T> newMapper(Class<T> target) throws SQLException, NoSuchMethodException, SecurityException {
+	/**
+	 * 
+	 * @param target the targeted class for the mapper
+	 * @return a jdbc mapper that will map to the targeted class.
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 */
+	public <T> JdbcMapper<T> newMapper(Class<T> target) throws NoSuchMethodException, SecurityException {
 		return new DynamicJdbcMapper<T>(target, getSetterFactory(), new InstantiatorFactory(getAsmSetterFactory()).getInstantiator(target), fieldMapperErrorHandler, mapperBuilderErrorHandler);
 	}
 

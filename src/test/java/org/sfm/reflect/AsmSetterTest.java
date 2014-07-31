@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.Foo;
-import org.sfm.reflect.asm.AsmSetterFactory;
+import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.primitive.BooleanSetter;
 import org.sfm.reflect.primitive.ByteSetter;
 import org.sfm.reflect.primitive.CharacterSetter;
@@ -17,7 +17,7 @@ import org.sfm.reflect.primitive.ShortSetter;
 
 public class AsmSetterTest {
 
-	AsmSetterFactory factory = new AsmSetterFactory();
+	AsmFactory factory = new AsmFactory();
 
 	DbPrimitiveObjectWithSetter object = new DbPrimitiveObjectWithSetter();
 	

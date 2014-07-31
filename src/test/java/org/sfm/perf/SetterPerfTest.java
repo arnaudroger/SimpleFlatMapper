@@ -10,7 +10,7 @@ import org.sfm.reflect.FieldSetter;
 import org.sfm.reflect.MethodHandleSetter;
 import org.sfm.reflect.MethodSetter;
 import org.sfm.reflect.Setter;
-import org.sfm.reflect.asm.AsmSetterFactory;
+import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.primitive.IntFieldSetter;
 import org.sfm.reflect.primitive.IntMethodSetter;
 import org.sfm.reflect.primitive.IntSetter;
@@ -99,7 +99,7 @@ public class SetterPerfTest {
 		
 		stringMethodHandleSetter = new MethodHandleSetter<>(MethodHandles.lookup().unreflect(setStringMethod));
 		
-		AsmSetterFactory asmSetterFactory = new AsmSetterFactory();
+		AsmFactory asmSetterFactory = new AsmFactory();
 		
 		stringAsmSetter = asmSetterFactory.createSetter(setStringMethod);
 		numberAsmSetter = (IntSetter<MyClass>) asmSetterFactory.createSetter(setNumberMethod);

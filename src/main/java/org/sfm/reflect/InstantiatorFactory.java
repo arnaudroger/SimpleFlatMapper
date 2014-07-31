@@ -5,6 +5,8 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.sfm.reflect.asm.AsmFactory;
+
 public class InstantiatorFactory {
 	private static final Object[] EMPTY_ARGS = new Object[]{};
 	
@@ -21,6 +23,12 @@ public class InstantiatorFactory {
 			put(double.class, 0.0);
 		}
 	};
+	
+	private final AsmFactory asmFactory;
+	
+	public InstantiatorFactory(AsmFactory asmFactory) {
+		this.asmFactory = asmFactory;
+	}
 
 	public <T> Instantiator<T> getInstantiator(Class<T> target) throws NoSuchMethodException, SecurityException {
 		Constructor<T> constructor = getSmallerConstructor(target);
@@ -28,6 +36,15 @@ public class InstantiatorFactory {
 		Object[] args;
 		
 		if (constructor.getParameterTypes().length == 0) {
+			
+			if (constructor.isAccessible()) {
+				try {
+					return asmFactory.createInstatiantor(target);
+				} catch (Exception e) {
+					// fall back on reflection
+				}
+			}
+			
 			args = EMPTY_ARGS;
 		} else {
 			args = new Object[constructor.getParameterTypes().length];

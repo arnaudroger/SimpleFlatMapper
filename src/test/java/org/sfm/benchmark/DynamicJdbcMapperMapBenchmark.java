@@ -11,6 +11,7 @@ import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorFactory;
+import org.sfm.reflect.asm.AsmFactory;
 
 /*
 init db
@@ -61,7 +62,7 @@ public class DynamicJdbcMapperMapBenchmark {
 	Instantiator<DbObject> instantiator;
 	public DynamicJdbcMapperMapBenchmark() throws NoSuchMethodException, SecurityException, SQLException {
 		mapper = JdbcMapperFactory.newInstance().newMapper(DbObject.class);
-		instantiator = new InstantiatorFactory().getInstantiator(DbObject.class);
+		instantiator = new InstantiatorFactory(new AsmFactory()).getInstantiator(DbObject.class);
 	}
 	
 	private void runBigSelect() throws Exception {

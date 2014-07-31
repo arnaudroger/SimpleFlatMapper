@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.sfm.reflect.asm.AsmSetterFactory;
+import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.primitive.BooleanFieldSetter;
 import org.sfm.reflect.primitive.BooleanMethodSetter;
 import org.sfm.reflect.primitive.BooleanSetter;
@@ -37,14 +37,14 @@ import org.sfm.utils.PropertyNameMatcher;
 
 public class SetterFactory {
 	
-	private AsmSetterFactory asmSetterFactory;
+	private AsmFactory asmSetterFactory;
 	
-	public SetterFactory(AsmSetterFactory asmSetterFactory) {
+	public SetterFactory(AsmFactory asmSetterFactory) {
 		this.asmSetterFactory = asmSetterFactory;
 	}
 	
 	public SetterFactory() {
-		this.asmSetterFactory = new AsmSetterFactory();
+		this.asmSetterFactory = new AsmFactory();
 	}
 
 	public <T, P, C extends T> Setter<T, P> getSetter(Class<C> target, String property) {

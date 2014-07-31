@@ -9,7 +9,7 @@ import org.sfm.map.RethrowFieldMapperErrorHandler;
 import org.sfm.map.RethrowMapperBuilderErrorHandler;
 import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.SetterFactory;
-import org.sfm.reflect.asm.AsmSetterFactory;
+import org.sfm.reflect.asm.AsmFactory;
 
 public class JdbcMapperFactory {
 	public static JdbcMapperFactory newInstance() {
@@ -33,7 +33,7 @@ public class JdbcMapperFactory {
 			builder.addIndexedColumn(metaData.getColumnName(i +1));
 		}
 		
-		return new DelegateJdbcMapper<T>(builder.mapper(), new InstantiatorFactory().getInstantiator(target));
+		return new DelegateJdbcMapper<T>(builder.mapper(), new InstantiatorFactory(getAsmSetterFactory()).getInstantiator(target));
 	}
 	
 	private boolean isAsmPresent() {
@@ -63,14 +63,14 @@ public class JdbcMapperFactory {
 	}
 
 	public <T> JdbcMapper<T> newMapper(Class<T> target) throws SQLException, NoSuchMethodException, SecurityException {
-		return new DynamicJdbcMapper<T>(target, getSetterFactory(), new InstantiatorFactory().getInstantiator(target), fieldMapperErrorHandler, mapperBuilderErrorHandler);
+		return new DynamicJdbcMapper<T>(target, getSetterFactory(), new InstantiatorFactory(getAsmSetterFactory()).getInstantiator(target), fieldMapperErrorHandler, mapperBuilderErrorHandler);
 	}
 
 	private SetterFactory getSetterFactory() {
 		return new SetterFactory(getAsmSetterFactory());
 	}
 
-	private AsmSetterFactory getAsmSetterFactory() {
-		return useAsm && asmPresent ? new AsmSetterFactory() : null;
+	private AsmFactory getAsmSetterFactory() {
+		return useAsm && asmPresent ? new AsmFactory() : null;
 	}
 }

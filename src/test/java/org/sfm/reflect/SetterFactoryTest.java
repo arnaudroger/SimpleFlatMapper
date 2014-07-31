@@ -15,7 +15,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.Foo;
-import org.sfm.reflect.asm.AsmSetterFactory;
+import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.primitive.BooleanFieldSetter;
 import org.sfm.reflect.primitive.BooleanMethodSetter;
 import org.sfm.reflect.primitive.ByteFieldSetter;
@@ -40,7 +40,7 @@ public class SetterFactoryTest {
 
 	@Test
 	public void testFailFallBackToMethod() throws Exception {
-		Setter<Foo, String> setter = new SetterFactory(new AsmSetterFactory(){
+		Setter<Foo, String> setter = new SetterFactory(new AsmFactory(){
 			@Override
 			public <T, P> Setter<T, P> createSetter(Method m) throws Exception {
 				throw new UnsupportedOperationException();

@@ -29,14 +29,14 @@ public class InstantiatorFactoryTest {
 	
 	@Test
 	public void testInstantiateDbObject() throws Exception {
-		Instantiator<DbObject> instantiator = new InstantiatorFactory().getInstantiator(DbObject.class);
+		Instantiator<DbObject> instantiator = new InstantiatorFactory(null).getInstantiator(DbObject.class);
 		DbObject object = instantiator.newInstance();
 		Assert.assertNotNull(object);
 	}
 
 	@Test
 	public void testInstantiateConstructorWithArgs() throws Exception {
-		Instantiator<MyClass> instantiator = new InstantiatorFactory().getInstantiator(MyClass.class);
+		Instantiator<MyClass> instantiator = new InstantiatorFactory(null).getInstantiator(MyClass.class);
 		MyClass object = instantiator.newInstance();
 		Assert.assertNotNull(object);
 	}

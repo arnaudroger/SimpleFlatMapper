@@ -1,9 +1,16 @@
-mkdir -p target/perf/benchmarks
-src/test/scripts/dynamicJdbcMapperForEach.sh > target/perf/benchmarks/dynamicJdbcMapperForEach.txt
-src/test/scripts/dynamicJdbcMapperMap.sh > target/perf/benchmarks/dynamicJdbcMapperMap.txt
-src/test/scripts/hibernateStatefull.sh > target/perf/benchmarks/hibernateStatefull.txt
-src/test/scripts/hibernateStatefullWithCache.sh > target/perf/benchmarks/hibernateStatefullWithCache.txt
-src/test/scripts/hibernateStateless.sh > target/perf/benchmarks/hibernateStateless.txt
-src/test/scripts/mybatis.sh > target/perf/benchmarks/mybatis.txt
-src/test/scripts/reference.sh > target/perf/benchmarks/reference.txt
-src/test/scripts/staticJdbcMapperMap.sh > target/perf/benchmarks/staticJdbcMapperMap.txt
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo $DIR
+ROOT=$DIR/../../..
+
+OUTDIR=$ROOT/target/perf/benchmarks
+echo $OUTDIR
+mkdir -p $OUTDIR
+$DIR/dynamicJdbcMapperForEach.sh > $OUTDIR/dynamicJdbcMapperForEach.txt
+$DIR/dynamicJdbcMapperMap.sh > $OUTDIR/dynamicJdbcMapperMap.txt
+$DIR/hibernateStatefull.sh > $OUTDIR/hibernateStatefull.txt
+$DIR/hibernateStatefullWithCache.sh > $OUTDIR/hibernateStatefullWithCache.txt
+$DIR/hibernateStateless.sh > $OUTDIR/hibernateStateless.txt
+$DIR/mybatis.sh > $OUTDIR/mybatis.txt
+$DIR/reference.sh > $OUTDIR/reference.txt
+$DIR/staticJdbcMapperMap.sh > $OUTDIR/staticJdbcMapperMap.txt

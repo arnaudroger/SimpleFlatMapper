@@ -1,6 +1,9 @@
-#!/bin/sh
-java -Xms1g -cp \
-target/classes:target/test-classes/:\
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TARGET=$DIR/../../../target
+
+java -Xms1g -cp $TARGET/classes:$TARGET/test-classes/:\
 $HOME/.m2/repository/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar:\
 $HOME/.m2/repository/org/hsqldb/hsqldb/2.3.2/hsqldb-2.3.2.jar:\
 $HOME/.m2/repository/junit/junit/4.11/junit-4.11.jar:\
@@ -14,5 +17,5 @@ $HOME/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_
 $HOME/.m2/repository/org/hibernate/javax/persistence/hibernate-jpa-2.1-api/1.0.0.Final/hibernate-jpa-2.1-api-1.0.0.Final.jar:\
 $HOME/.m2/repository/org/javassist/javassist/3.18.1-GA/javassist-3.18.1-GA.jar:\
 $HOME/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar:\
-/Users/e19224/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar\
+$HOME/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar\
  org.sfm.benchmark.HibernateStatefullWithCacheBenchmark

@@ -5,6 +5,10 @@ import java.io.InputStream;
 
 public final class InputStreamCsvParser {
 	
+	private static final byte CARRIAGE_RETURN = '\n';
+	private static final byte COMMA = ',';
+	private static final byte QUOTES = '"';
+
 	static enum State {
 		IN_QUOTE, QUOTE, NONE
 	}
@@ -57,8 +61,7 @@ public final class InputStreamCsvParser {
 	}
 
 	private void handleByte(BytesCellHandler handler, byte c, int i) {
-		switch(c) {
-		case '"':
+		if (c ==  QUOTES) {
 			if (currentStart == i) {
 				currentState = State.IN_QUOTE;
 			} else if (currentState == State.IN_QUOTE) {
@@ -68,21 +71,21 @@ public final class InputStreamCsvParser {
 					currentState = State.IN_QUOTE;
 				}
 			}
-			break;
-		case ',':
-		case '\n':
+		} else if (c == COMMA) {
 			if (currentState != State.IN_QUOTE) {
 				handler.cell(currentRow, currentCol, buffer, currentStart, i - currentStart);
 				currentStart = i  + 1;
 				currentState = State.NONE;
-				if (c == ',') {
-					currentCol ++;
-				} else {
-					currentCol = 0;
-					currentRow ++;
-				}
+				currentCol ++;
 			}
-			break;
+		} else if (c == CARRIAGE_RETURN) {
+			if (currentState != State.IN_QUOTE) {
+				handler.cell(currentRow, currentCol, buffer, currentStart, i - currentStart);
+				currentStart = i  + 1;
+				currentState = State.NONE;
+				currentCol = 0;
+				currentRow ++;
+			}
 		}
 	}
 

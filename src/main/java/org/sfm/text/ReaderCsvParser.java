@@ -57,8 +57,7 @@ public final class ReaderCsvParser {
 	}
 
 	private void handleByte(CharsCellHandler handler, char c, int i) {
-		switch(c) {
-		case '"':
+		if (c == '"') {
 			if (currentStart == i) {
 				currentState = State.IN_QUOTE;
 			} else if (currentState == State.IN_QUOTE) {
@@ -68,21 +67,21 @@ public final class ReaderCsvParser {
 					currentState = State.IN_QUOTE;
 				}
 			}
-			break;
-		case ',':
-		case '\n':
+		} else if (c == ',' ) {
 			if (currentState != State.IN_QUOTE) {
 				handler.cell(currentRow, currentCol, buffer, currentStart, i - currentStart);
 				currentStart = i  + 1;
 				currentState = State.NONE;
-				if (c == ',') {
-					currentCol ++;
-				} else {
-					currentCol = 0;
-					currentRow ++;
-				}
+				currentCol ++;
 			}
-			break;
+		}else if (c == '\n') {
+			if (currentState != State.IN_QUOTE) {
+				handler.cell(currentRow, currentCol, buffer, currentStart, i - currentStart);
+				currentStart = i  + 1;
+				currentState = State.NONE;
+				currentCol = 0;
+				currentRow ++;
+			}
 		}
 	}
 

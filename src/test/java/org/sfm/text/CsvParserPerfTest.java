@@ -15,6 +15,7 @@ public class CsvParserPerfTest {
 
 	
 	private static final int NB = 1000000;
+	private static final int ITERATION = 10;
 
 	private static final class ValidateHandler implements BytesCellHandler, CharsCellHandler {
 		long c;
@@ -31,6 +32,7 @@ public class CsvParserPerfTest {
 
 
 	String content;
+	byte[] bytes;
 	@Before
 	public void setUp() {
 		StringBuilder sb = new StringBuilder();
@@ -40,14 +42,15 @@ public class CsvParserPerfTest {
 		}
 		
 		content = sb.toString();
+		bytes = content.getBytes();
 	}
 	
 	@Test
 	public void testReadCsv() throws IOException {
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < ITERATION; i++) {
 			executeStream();
 		}
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < ITERATION; i++) {
 			executeReader();
 		}
 	}
@@ -59,16 +62,16 @@ public class CsvParserPerfTest {
 		new CsvParser().parse(sr, handler);
 		long elapsed = System.nanoTime() - start;
 		assertEquals(3 * NB, handler.c);
-		System.out.println("Took " + elapsed + "ns " + (elapsed/NB) + " ns per row");
+		System.out.println("Reader Took " + elapsed + "ns " + (elapsed/NB) + " ns per row");
 	}
 
 	private void executeStream() throws IOException {
-		InputStream sr = new ByteArrayInputStream(content.getBytes());
+		InputStream sr = new ByteArrayInputStream(bytes);
 		ValidateHandler handler = new ValidateHandler();
 		long start = System.nanoTime();
 		new CsvParser().parse(sr, handler);
 		long elapsed = System.nanoTime() - start;
 		assertEquals(3 * NB, handler.c);
-		System.out.println("Took " + elapsed + "ns " + (elapsed/NB) + " ns per row");
+		System.out.println("Stream Took " + elapsed + "ns " + (elapsed/NB) + " ns per row");
 	}
 }

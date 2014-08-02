@@ -1,4 +1,4 @@
-package org.sfm.perf;
+package org.sfm.reflect;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;

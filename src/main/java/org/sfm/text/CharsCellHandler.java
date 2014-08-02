@@ -1,5 +1,5 @@
 package org.sfm.text;
 
-public interface CellHandler {
+public interface CharsCellHandler {
 	void cell(long row, long col, char[] chars, int offset, int length);
 }

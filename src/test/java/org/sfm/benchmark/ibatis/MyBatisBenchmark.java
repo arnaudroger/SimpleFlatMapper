@@ -24,6 +24,7 @@ import org.sfm.jdbc.DbHelper;
 public class MyBatisBenchmark implements QueryExecutor {
 
 	private SqlSessionFactory sqlSessionFactory;
+	private Connection conn;
 	
 	public MyBatisBenchmark(Connection conn)  {
 		TransactionFactory transactionFactory = new JdbcTransactionFactory();
@@ -31,11 +32,12 @@ public class MyBatisBenchmark implements QueryExecutor {
 		Configuration configuration = new Configuration(environment);
 		configuration.addMapper(DbObjectMapper.class);
 		this.sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+		this.conn = conn;
 
 	}
 	@Override
 	public void forEach(final ForEachListener ql, int limit) throws Exception {
-		SqlSession session = sqlSessionFactory.openSession();
+		SqlSession session = sqlSessionFactory.openSession(conn);
 		try {
 			if (limit != -1) {
 				session.select("selectDbObjects", new RowBounds(0, limit), new ResultHandler() {

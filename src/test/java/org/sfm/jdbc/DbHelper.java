@@ -52,7 +52,6 @@ public class DbHelper {
 		Connection c = DriverManager.getConnection("jdbc:hsqldb:mem:benchmarkdb", "SA", "");
 		
 		if (!benchmarkDb) {
-			System.out.println("init db");
 			Statement st = c.createStatement();
 			
 			try {
@@ -72,7 +71,6 @@ public class DbHelper {
 					ps.execute();
 				}
 				
-				System.out.println("init db done");
 
 			} finally {
 				st.close();

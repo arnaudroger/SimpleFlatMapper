@@ -18,4 +18,4 @@ $HOME/.m2/repository/org/hibernate/javax/persistence/hibernate-jpa-2.1-api/1.0.0
 $HOME/.m2/repository/org/javassist/javassist/3.18.1-GA/javassist-3.18.1-GA.jar:\
 $HOME/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar:\
 $HOME/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar\
- org.sfm.benchmark.HibernateStatefullWithCacheBenchmark
+ org.sfm.benchmark.hibernate.HibernateStatefullWithCacheBenchmark

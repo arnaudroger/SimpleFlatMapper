@@ -1,0 +1,34 @@
+package org.sfm.benchmark.hibernate;
+
+import java.sql.Connection;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
+
+@SuppressWarnings("deprecation")
+public class HibernateHelper {
+
+	
+	public static SessionFactory getSessionFactory(Connection conn, boolean enableCache) {
+		  // Create the SessionFactory from hibernate.cfg.xml
+        Configuration configuration = new Configuration();
+        
+        configuration.addResource("db_object.hbm.xml");
+        
+        MyConnectionProviderImpl.setConnection(conn);
+
+        configuration.setProperty(Environment.CONNECTION_PROVIDER, MyConnectionProviderImpl.class.getName());
+        if (enableCache) {
+            configuration.setProperty("hibernate.cache.use_query_cache", "true");
+            configuration.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFactory");
+        }
+
+        ServiceRegistry sr = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
+        
+		return configuration.buildSessionFactory(sr);
+
+	}
+}

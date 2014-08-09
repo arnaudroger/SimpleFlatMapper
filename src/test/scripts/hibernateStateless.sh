@@ -17,4 +17,4 @@ $HOME/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_
 $HOME/.m2/repository/org/hibernate/javax/persistence/hibernate-jpa-2.1-api/1.0.0.Final/hibernate-jpa-2.1-api-1.0.0.Final.jar:\
 $HOME/.m2/repository/org/javassist/javassist/3.18.1-GA/javassist-3.18.1-GA.jar:\
 $HOME/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar\
- org.sfm.benchmark.HibernateStatelessBenchmark
+ org.sfm.benchmark.hibernate.HibernateStatelessBenchmark

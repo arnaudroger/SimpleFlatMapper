@@ -1,5 +1,8 @@
 package org.sfm.benchmark.ibatis;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -24,20 +27,29 @@ import org.sfm.jdbc.DbHelper;
 public class MyBatisBenchmark implements QueryExecutor {
 
 	private SqlSessionFactory sqlSessionFactory;
-	private Connection conn;
 	
-	public MyBatisBenchmark(Connection conn)  {
+	public MyBatisBenchmark(final Connection conn)  {
 		TransactionFactory transactionFactory = new JdbcTransactionFactory();
-		Environment environment = new Environment("development", transactionFactory, new SingleConnectionDataSource(conn));
+		Connection connProxy = (Connection) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Connection.class} , new InvocationHandler() {
+			@Override
+			public Object invoke(Object proxy, Method method, Object[] args)
+					throws Throwable {
+				if (method.getName().equals("close")) {
+					return null;
+				}
+				return method.invoke(conn, args);
+			}
+		});
+		
+		Environment environment = new Environment("development", transactionFactory, new SingleConnectionDataSource(connProxy));
 		Configuration configuration = new Configuration(environment);
 		configuration.addMapper(DbObjectMapper.class);
 		this.sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-		this.conn = conn;
 
 	}
 	@Override
 	public void forEach(final ForEachListener ql, int limit) throws Exception {
-		SqlSession session = sqlSessionFactory.openSession(conn);
+		SqlSession session = sqlSessionFactory.openSession();
 		try {
 			if (limit != -1) {
 				session.select("selectDbObjects", new RowBounds(0, limit), new ResultHandler() {

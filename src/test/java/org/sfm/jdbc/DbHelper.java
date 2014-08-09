@@ -20,19 +20,20 @@ public class DbHelper {
 	private static boolean benchmarkDb;
 	
 	public static Connection objectDb() throws SQLException {
-		Connection c = DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", "");
+		Connection c = newConnection();
 		
 		if (!objectDb) {
 			Statement st = c.createStatement();
 			
 			try {
-				st.execute("create table test_db_object("
+				st.execute("create table TEST_DB_OBJECT("
 						+ " id bigint not null primary key,"
 						+ " name varchar(100), "
 						+ " email varchar(100),"
 						+ " creation_Time datetime  )");
 
-				st.execute("insert into test_db_object values(1, 'name 1', 'name1@mail.com', TIMESTAMP'2014-03-04 11:10:03')");
+				st.execute("insert into TEST_DB_OBJECT values(1, 'name 1', 'name1@mail.com', TIMESTAMP'2014-03-04 11:10:03')");
+				c.commit();
 			} finally {
 				st.close();
 			}
@@ -49,8 +50,9 @@ public class DbHelper {
 		assertEquals(DateHelper.toDate("2014-03-04 11:10:03"), dbObject.getCreationTime());
 	}
 	public static Connection benchmarkDb() throws SQLException {
-		Connection c = DriverManager.getConnection("jdbc:hsqldb:mem:benchmarkdb", "SA", "");
-		
+		//Connection c = DriverManager.getConnection("jdbc:hsqldb:mem:benchmarkdb", "SA", "");
+		Connection c = newConnection();
+
 		if (!benchmarkDb) {
 			Statement st = c.createStatement();
 			
@@ -81,6 +83,9 @@ public class DbHelper {
 		benchmarkDb = true;
 		return c;
 	}
+	private static Connection newConnection() throws SQLException {
+		return DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", "");
+	}
 	
 	public static void testDbObjectFromDb(Handler<PreparedStatement> handler )
 			throws SQLException, Exception, ParseException {
@@ -88,7 +93,7 @@ public class DbHelper {
 		Connection conn = DbHelper.objectDb();
 		
 		try {
-			PreparedStatement ps = conn.prepareStatement("select id, name, email, creation_time from test_db_object where id = 1 ");
+			PreparedStatement ps = conn.prepareStatement("select id, name, email, creation_time from TEST_DB_OBJECT where id = 1 ");
 			
 			try {
 				handler.handle(ps);

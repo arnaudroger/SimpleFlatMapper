@@ -1,8 +1,6 @@
 <!DOCTYPE hibernate-mapping PUBLIC
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" [
-    <!ENTITY types SYSTEM "classpath://your/domain/types.xml">
-]>
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping package="org.sfm.beans">
 
     <class name="DbObject" table="test_db_object">

@@ -53,7 +53,6 @@ public class BenchmarkRunner {
 
 	public void run(BenchmarkListener bl) throws Exception {
 		// warm up
-		exec.prepareQuery(limit);
 		ForEachListener listener = new ForEachListenerImpl(null);
 		for(int i = 0; i < warmup; i++) {
 			exec(listener);
@@ -70,7 +69,6 @@ public class BenchmarkRunner {
 	}
 
 	private void exec(ForEachListener listener) throws Exception {
-		exec.executeQuery();
-		exec.forEach(listener);
+		exec.forEach(listener, limit);
 	}
 }

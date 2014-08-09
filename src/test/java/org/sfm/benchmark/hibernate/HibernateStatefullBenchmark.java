@@ -18,46 +18,45 @@ import org.sfm.jdbc.DbHelper;
 public class HibernateStatefullBenchmark implements QueryExecutor {
 
 	private SessionFactory sf;
-	private Session session;
-	private Query query;
-	private ScrollableResults sr;
-	
+
 	public HibernateStatefullBenchmark(Connection conn) {
 		this(HibernateHelper.getSessionFactory(conn, false));
 	}
+
 	public HibernateStatefullBenchmark(SessionFactory sessionFactory) {
 		sf = sessionFactory;
 	}
-	@Override
-	public void executeQuery() throws Exception {
-		sr = query.scroll(ScrollMode.SCROLL_INSENSITIVE);
-	}
 
 	@Override
-	public void prepareQuery(int limit) throws Exception {
-		session = sf.openSession();
-		query = session.createQuery("from DbObject");
-		if (limit >= 0) {
-			query.setMaxResults(limit);
+	public void forEach(ForEachListener ql, int limit) throws Exception {
+		Session session = sf.openSession();
+		try {
+			Query query = session.createQuery("from DbObject");
+			if (limit >= 0) {
+				query.setMaxResults(limit);
+			}
+			ScrollableResults sr = query.scroll(ScrollMode.SCROLL_INSENSITIVE);
+			try {
+				while (sr.next()) {
+					DbObject o = (DbObject) sr.get(0);
+					ql.object(o);
+				}
+			} finally {
+				sr.close();
+			}
+		} finally {
+			session.close();
 		}
+
 	}
 
-	@Override
-	public void forEach(ForEachListener ql) throws Exception {
-		while(sr.next()) {
-			DbObject o = (DbObject) sr.get(0);
-			ql.object(o);
-		}
-		sr.close();
-	}
-
-	@Override
-	public void close() throws Exception {
-		session.close();
-	}
-
-	public static void main(String[] args) throws NoSuchMethodException, SecurityException, SQLException, Exception {
-		new BenchmarkRunner(-1, new HibernateStatefullBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(HibernateStatefullBenchmark.class, "BigQuery"));
-		new BenchmarkRunner(1, new HibernateStatefullBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(HibernateStatefullBenchmark.class, "SmallQuery"));
+	public static void main(String[] args) throws NoSuchMethodException,
+			SecurityException, SQLException, Exception {
+		new BenchmarkRunner(-1, new HibernateStatefullBenchmark(
+				DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(
+				HibernateStatefullBenchmark.class, "BigQuery"));
+		new BenchmarkRunner(1, new HibernateStatefullBenchmark(
+				DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(
+				HibernateStatefullBenchmark.class, "SmallQuery"));
 	}
 }

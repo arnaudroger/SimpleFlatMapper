@@ -23,7 +23,11 @@ public class HibernateHelper {
         configuration.setProperty(Environment.CONNECTION_PROVIDER, MyConnectionProviderImpl.class.getName());
         if (enableCache) {
             configuration.setProperty("hibernate.cache.use_query_cache", "true");
+            configuration.setProperty("hibernate.cache.use_second_level_cache", "true");
             configuration.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFactory");
+        } else {
+            configuration.setProperty("hibernate.cache.use_second_level_cache", "false");
+            configuration.setProperty("hibernate.cache.use_query_cache", "false");
         }
 
         ServiceRegistry sr = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();

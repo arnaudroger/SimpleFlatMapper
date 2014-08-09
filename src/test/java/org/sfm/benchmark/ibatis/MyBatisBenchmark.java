@@ -24,8 +24,6 @@ import org.sfm.jdbc.DbHelper;
 public class MyBatisBenchmark implements QueryExecutor {
 
 	private SqlSessionFactory sqlSessionFactory;
-	private SqlSession session;
-	private int limit;
 	
 	public MyBatisBenchmark(Connection conn)  {
 		TransactionFactory transactionFactory = new JdbcTransactionFactory();
@@ -36,35 +34,31 @@ public class MyBatisBenchmark implements QueryExecutor {
 
 	}
 	@Override
-	public void executeQuery() throws Exception {
-	}
-	@Override
-	public void prepareQuery(int limit) throws Exception {
-		session = sqlSessionFactory.openSession();
-		this.limit = limit;
-	}
-	@Override
-	public void forEach(final ForEachListener ql) throws Exception {
-		RowBounds rb = null;
-		if (limit != -1) {
-			rb = new RowBounds(0, limit);
-		}
-		session.select("selectDbObjects", null, rb, new ResultHandler() {
-			@Override
-			public void handleResult(ResultContext arg0) {
-				ql.object((DbObject) arg0.getResultObject());
+	public void forEach(final ForEachListener ql, int limit) throws Exception {
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			if (limit != -1) {
+				session.select("selectDbObjects", new RowBounds(0, limit), new ResultHandler() {
+					@Override
+					public void handleResult(ResultContext arg0) {
+						ql.object((DbObject) arg0.getResultObject());
+					}
+				});
+			} else {
+				session.select("selectDbObjects",new ResultHandler() {
+					@Override
+					public void handleResult(ResultContext arg0) {
+						ql.object((DbObject) arg0.getResultObject());
+					}
+				});
 			}
-		});
-		
-	}
-	@Override
-	public void close() throws Exception {
-		session.close();
+		} finally {
+			session.close();
+		}
 	}
 	
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, SQLException, Exception {
 		new BenchmarkRunner(-1, new MyBatisBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(MyBatisBenchmark.class, "BigQuery"));
 		new BenchmarkRunner(1, new MyBatisBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(MyBatisBenchmark.class, "SmallQuery"));
 	}
-
 }

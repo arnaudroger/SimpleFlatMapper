@@ -13,18 +13,37 @@ public class PureJdbcBenchmark implements QueryExecutor {
 
 	final  Connection conn;
 	
-	PreparedStatement ps;
-	ResultSet rs;
-	
 	public PureJdbcBenchmark(Connection conn) {
 		this.conn = conn;
 	}
 	
 	@Override
-	public final void forEach(final ForEachListener ql) throws Exception {
-		while(rs.next()) {
-			ql.object(newDbObject(rs));
+	public final void forEach(final ForEachListener ql, int limit) throws Exception {
+		
+		StringBuilder query = buildQuery(limit);
+	
+		PreparedStatement ps = conn.prepareStatement(query.toString());
+		
+		try {
+			ResultSet rs = ps.executeQuery();
+			try {
+				while(rs.next()) {
+					ql.object(newDbObject(rs));
+				}
+			} finally {
+				rs.close();
+			}
+		} finally {
+			ps.close();
 		}
+	}
+
+	private StringBuilder buildQuery(int limit) {
+		StringBuilder query = new StringBuilder("SELECT id, name, email, creation_time FROM test_db_object ");
+		if (limit >= 0) {
+			query.append("LIMIT ").append(Integer.toString(limit));
+		}
+		return query;
 	}
 
 	private DbObject newDbObject(ResultSet rs) throws SQLException {
@@ -36,31 +55,8 @@ public class PureJdbcBenchmark implements QueryExecutor {
 		return o;
 	}
 
-	@Override
-	public final void prepareQuery(int limit) throws Exception {
-		StringBuilder query = new StringBuilder("SELECT id, name, email, creation_time FROM test_db_object ");
-		if (limit >= 0) {
-			query.append("LIMIT ").append(Integer.toString(limit));
-		}
-	
-		ps = conn.prepareStatement(query.toString());
-	}
-
-	@Override
-	public final void executeQuery() throws Exception {
-		rs = ps.executeQuery();
-	}
-
-	@Override
-	public final void close() throws SQLException {
-		ps.close();
-	}
-
-	
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, SQLException, Exception {
 		new BenchmarkRunner(-1, new PureJdbcBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(PureJdbcBenchmark.class, "BigQuery"));
 		new BenchmarkRunner(1, new PureJdbcBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(PureJdbcBenchmark.class, "SmallQuery"));
 	}
-
-
 }

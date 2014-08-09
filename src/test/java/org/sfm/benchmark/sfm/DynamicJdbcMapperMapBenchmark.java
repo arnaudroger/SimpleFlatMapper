@@ -1,6 +1,7 @@
 package org.sfm.benchmark.sfm;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.sfm.beans.DbObject;
@@ -24,7 +25,7 @@ public class DynamicJdbcMapperMapBenchmark extends AbstractMapperQueryExecutor i
 	}
 	
 	@Override
-	public final void forEach(final ForEachListener ql) throws Exception {
+	protected final void forEach(ResultSet rs, final ForEachListener ql) throws Exception {
 		while(rs.next()) {
 			DbObject o = instantiator.newInstance();
 			mapper.map(rs, o);

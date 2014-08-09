@@ -1,8 +1,6 @@
 package org.sfm.benchmark.sfm;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.sfm.beans.DbObject;
@@ -19,8 +17,6 @@ import org.sfm.reflect.asm.AsmFactory;
 public class DynamicJdbcMapperMapBenchmark extends AbstractMapperQueryExecutor implements QueryExecutor {
 	
 	Instantiator<DbObject> instantiator;
-	PreparedStatement ps;
-	ResultSet rs;
 	
 	public DynamicJdbcMapperMapBenchmark(Connection conn) throws NoSuchMethodException, SecurityException, SQLException {
 		super(JdbcMapperFactory.newInstance().newMapper(DbObject.class), conn);
@@ -28,16 +24,12 @@ public class DynamicJdbcMapperMapBenchmark extends AbstractMapperQueryExecutor i
 	}
 	
 	@Override
-	public void forEach(final ForEachListener ql) throws Exception {
-		ql.start();
-		
+	public final void forEach(final ForEachListener ql) throws Exception {
 		while(rs.next()) {
 			DbObject o = instantiator.newInstance();
 			mapper.map(rs, o);
 			ql.object(o);
 		}
-		
-		ql.start();
 	}
 
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, SQLException, Exception {

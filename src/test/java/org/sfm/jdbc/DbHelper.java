@@ -26,11 +26,7 @@ public class DbHelper {
 			Statement st = c.createStatement();
 			
 			try {
-				st.execute("create table TEST_DB_OBJECT("
-						+ " id bigint not null primary key,"
-						+ " name varchar(100), "
-						+ " email varchar(100),"
-						+ " creation_Time datetime  )");
+				createTable(st);
 
 				st.execute("insert into TEST_DB_OBJECT values(1, 'name 1', 'name1@mail.com', TIMESTAMP'2014-03-04 11:10:03')");
 				c.commit();
@@ -43,6 +39,7 @@ public class DbHelper {
 		objectDb = true;
 		return c;
 	}
+
 	public static void assertDbObjectMapping(DbObject dbObject) throws ParseException {
 		assertEquals(1, dbObject.getId());
 		assertEquals("name 1", dbObject.getName());
@@ -57,11 +54,7 @@ public class DbHelper {
 			Statement st = c.createStatement();
 			
 			try {
-				st.execute("create table test_db_object("
-						+ " id bigint not null primary key,"
-						+ " name varchar(100), "
-						+ " email varchar(100),"
-						+ " creation_Time datetime  )");
+				createTable(st);
 
 				PreparedStatement ps = c.prepareStatement("insert into test_db_object values(?, ?, ?, ?)");
 				for(int i = 0; i < 1000000; i++) {
@@ -83,6 +76,14 @@ public class DbHelper {
 		benchmarkDb = true;
 		return c;
 	}
+	private static void createTable(Statement st) throws SQLException {
+		st.execute("create table test_db_object("
+				+ " id bigint not null primary key,"
+				+ " name varchar(100), "
+				+ " email varchar(100),"
+				+ " creation_Time timestamp  )");
+	}
+	
 	private static Connection newConnection() throws SQLException {
 		return DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", "");
 	}

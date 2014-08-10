@@ -8,7 +8,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.sfm.beans.DbObject;
+import org.sfm.beans.SmallBenchmarkObject;
 import org.sfm.benchmark.BenchmarkRunner;
 import org.sfm.benchmark.ForEachListener;
 import org.sfm.benchmark.QueryExecutor;
@@ -54,10 +54,10 @@ public class HibernateStatefullBenchmark implements QueryExecutor {
 	public static void main(String[] args) throws NoSuchMethodException,
 			SecurityException, SQLException, Exception {
 		new BenchmarkRunner(-1, new HibernateStatefullBenchmark(
-				DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(
+				DbHelper.benchmarkDb(), SmallBenchmarkObject.class)).run(new SysOutBenchmarkListener(
 				HibernateStatefullBenchmark.class, "BigQuery"));
 		new BenchmarkRunner(1, new HibernateStatefullBenchmark(
-				DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(
+				DbHelper.benchmarkDb(), SmallBenchmarkObject.class)).run(new SysOutBenchmarkListener(
 				HibernateStatefullBenchmark.class, "SmallQuery"));
 	}
 }

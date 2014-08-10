@@ -17,6 +17,7 @@ public class HibernateHelper {
         Configuration configuration = new Configuration();
         
         configuration.addResource("db_object.hbm.xml");
+        configuration.addResource("small_benchmark_object.hbm.xml");
         
         MyConnectionProviderImpl.setConnection(conn);
 

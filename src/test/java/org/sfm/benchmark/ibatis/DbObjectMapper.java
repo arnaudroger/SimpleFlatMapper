@@ -11,4 +11,10 @@ public interface DbObjectMapper {
 	 
 	 @Select("SELECT * FROM test_db_object LIMIT #{limit}")
 	 List<DbObject> selectDbObjectsWithLimit(int limit);
+	 
+	 @Select("SELECT id, name, email, year_started FROM test_small_benchmark_object ")
+	 List<DbObject> selectSmallBenchmarkObjects();
+	 
+	 @Select("SELECT id, name, email, year_started FROM test_small_benchmark_object LIMIT #{limit}")
+	 List<DbObject> selectSmallBenchmarkObjectsWithLimit(int limit);
 }

@@ -1,2 +1,0 @@
-asm instantiator
-singleton test

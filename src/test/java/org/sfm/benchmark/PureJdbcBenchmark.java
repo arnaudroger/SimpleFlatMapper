@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.sfm.beans.DbObject;
+import org.sfm.beans.SmallBenchmarkObject;
 import org.sfm.jdbc.DbHelper;
 
 
@@ -40,7 +40,7 @@ public class PureJdbcBenchmark implements QueryExecutor {
 
 
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, SQLException, Exception {
-		new BenchmarkRunner(-1, new PureJdbcBenchmark(DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(PureJdbcBenchmark.class, "BigQuery"));
-		new BenchmarkRunner(1, new PureJdbcBenchmark(DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(PureJdbcBenchmark.class, "SmallQuery"));
+		new BenchmarkRunner(-1, new PureJdbcBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class)).run(new SysOutBenchmarkListener(SmallBenchmarkObject.class, "BigQuery"));
+		new BenchmarkRunner(1, new PureJdbcBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class)).run(new SysOutBenchmarkListener(SmallBenchmarkObject.class, "SmallQuery"));
 	}
 }

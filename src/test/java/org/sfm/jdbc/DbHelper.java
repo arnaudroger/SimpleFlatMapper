@@ -7,7 +7,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.text.ParseException;
 
 import org.sfm.beans.DbObject;
@@ -26,7 +25,7 @@ public class DbHelper {
 			Statement st = c.createStatement();
 			
 			try {
-				createTable(st);
+				createDbObject(st);
 
 				st.execute("insert into TEST_DB_OBJECT values(1, 'name 1', 'name1@mail.com', TIMESTAMP'2014-03-04 11:10:03')");
 				c.commit();
@@ -54,15 +53,14 @@ public class DbHelper {
 			Statement st = c.createStatement();
 			
 			try {
-				createTable(st);
+				createSmallBenchmarkObject(st);
 
-				PreparedStatement ps = c.prepareStatement("insert into test_db_object values(?, ?, ?, ?)");
+				PreparedStatement ps = c.prepareStatement("insert into test_small_benchmark_object values(?, ?, ?, ?)");
 				for(int i = 0; i < 1000000; i++) {
 					ps.setLong(1, i);
 					ps.setString(2, "name " + i);
 					ps.setString(3, "name" + i + "@gmail.com");
-					ps.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
-					
+					ps.setInt(4, 2000 + (i % 14));
 					ps.execute();
 				}
 				
@@ -76,12 +74,20 @@ public class DbHelper {
 		benchmarkDb = true;
 		return c;
 	}
-	private static void createTable(Statement st) throws SQLException {
+	private static void createDbObject(Statement st) throws SQLException {
 		st.execute("create table test_db_object("
 				+ " id bigint not null primary key,"
 				+ " name varchar(100), "
 				+ " email varchar(100),"
 				+ " creation_Time timestamp  )");
+	}
+	
+	private static void createSmallBenchmarkObject(Statement st) throws SQLException {
+		st.execute("create table test_small_benchmark_object("
+				+ " id bigint not null primary key,"
+				+ " name varchar(100), "
+				+ " email varchar(100),"
+				+ " year_started int  )");
 	}
 	
 	private static Connection newConnection() throws SQLException {

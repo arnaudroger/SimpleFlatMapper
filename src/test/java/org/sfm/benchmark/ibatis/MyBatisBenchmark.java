@@ -26,8 +26,8 @@ import org.sfm.jdbc.DbHelper;
 public class MyBatisBenchmark implements QueryExecutor {
 
 	private SqlSessionFactory sqlSessionFactory;
-	
-	public MyBatisBenchmark(final Connection conn)  {
+	private Class<?> target;
+	public MyBatisBenchmark(final Connection conn, Class<?> target)  {
 		TransactionFactory transactionFactory = new JdbcTransactionFactory();
 		Connection connProxy = (Connection) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Connection.class} , new InvocationHandler() {
 			@Override
@@ -44,6 +44,7 @@ public class MyBatisBenchmark implements QueryExecutor {
 		Configuration configuration = new Configuration(environment);
 		configuration.addMapper(DbObjectMapper.class);
 		this.sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+		this.target = target;
 
 	}
 	@Override
@@ -51,14 +52,14 @@ public class MyBatisBenchmark implements QueryExecutor {
 		SqlSession session = sqlSessionFactory.openSession();
 		try {
 			if (limit != -1) {
-				session.select("selectDbObjectsWithLimit", limit, new ResultHandler() {
+				session.select("select" + target.getSimpleName() + "sWithLimit", limit, new ResultHandler() {
 					@Override
 					public void handleResult(ResultContext arg0) {
 						ql.object((DbObject) arg0.getResultObject());
 					}
 				});
 			} else {
-				session.select("selectDbObjects",new ResultHandler() {
+				session.select("select" + target.getSimpleName() + "s",new ResultHandler() {
 					@Override
 					public void handleResult(ResultContext arg0) {
 						ql.object((DbObject) arg0.getResultObject());
@@ -71,7 +72,7 @@ public class MyBatisBenchmark implements QueryExecutor {
 	}
 	
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, SQLException, Exception {
-		new BenchmarkRunner(-1, new MyBatisBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(MyBatisBenchmark.class, "BigQuery"));
-		new BenchmarkRunner(1, new MyBatisBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(MyBatisBenchmark.class, "SmallQuery"));
+		new BenchmarkRunner(-1, new MyBatisBenchmark(DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(MyBatisBenchmark.class, "BigQuery"));
+		new BenchmarkRunner(1, new MyBatisBenchmark(DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(MyBatisBenchmark.class, "SmallQuery"));
 	}
 }

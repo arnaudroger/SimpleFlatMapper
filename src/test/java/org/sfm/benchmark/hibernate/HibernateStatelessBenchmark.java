@@ -18,22 +18,24 @@ import org.sfm.jdbc.DbHelper;
 public class HibernateStatelessBenchmark implements QueryExecutor {
 
 	private SessionFactory sf;
-	public HibernateStatelessBenchmark(Connection conn) {
+	private Class<?> target;
+	public HibernateStatelessBenchmark(Connection conn, Class<?> target) {
 		this.sf = HibernateHelper.getSessionFactory(conn, false);
+		this.target = target;
 	}
 
 	@Override
 	public void forEach(ForEachListener ql, int limit) throws Exception {
 		StatelessSession session = sf.openStatelessSession();
 		try {
-			Query query = session.createQuery("from DbObject");
+			Query query = session.createQuery("from " + target.getSimpleName());
 			if (limit >= 0) {
 				query.setMaxResults(limit);
 			}
 			ScrollableResults sr = query.scroll(ScrollMode.SCROLL_INSENSITIVE);
 			try {
 				while(sr.next()) {
-					DbObject o = (DbObject) sr.get(0);
+					Object o = sr.get(0);
 					ql.object(o);
 				}
 			} finally {
@@ -45,7 +47,7 @@ public class HibernateStatelessBenchmark implements QueryExecutor {
 	}
 
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, SQLException, Exception {
-		new BenchmarkRunner(-1, new HibernateStatelessBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(HibernateStatelessBenchmark.class, "BigQuery"));
-		new BenchmarkRunner(1, new HibernateStatelessBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(HibernateStatelessBenchmark.class, "SmallQuery"));
+		new BenchmarkRunner(-1, new HibernateStatelessBenchmark(DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(HibernateStatelessBenchmark.class, "BigQuery"));
+		new BenchmarkRunner(1, new HibernateStatelessBenchmark(DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(HibernateStatelessBenchmark.class, "SmallQuery"));
 	}
 }

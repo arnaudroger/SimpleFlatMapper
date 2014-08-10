@@ -4,33 +4,30 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import org.sfm.beans.DbObject;
 import org.sfm.benchmark.ForEachListener;
+import org.sfm.benchmark.JDBCHelper;
 import org.sfm.benchmark.QueryExecutor;
 import org.sfm.jdbc.JdbcMapper;
 
-public abstract class AbstractMapperQueryExecutor implements QueryExecutor {
+public abstract class AbstractMapperQueryExecutor<T> implements QueryExecutor {
 
-	final JdbcMapper<DbObject> mapper;
+	final JdbcMapper<T> mapper;
 	final  Connection conn;
+	final Class<T> target;
 	
 	
-	
-	public AbstractMapperQueryExecutor(JdbcMapper<DbObject> mapper,
-			Connection conn) {
+	public AbstractMapperQueryExecutor(JdbcMapper<T> mapper,
+			Connection conn, Class<T> target) {
 		super();
 		this.mapper = mapper;
 		this.conn = conn;
+		this.target = target;
 	}
 
 	
 	public final void forEach(final ForEachListener ql, int limit) throws Exception {
-		StringBuilder query = new StringBuilder("SELECT id, name, email, creation_time FROM test_db_object ");
-		if (limit >= 0) {
-			query.append("LIMIT ").append(Integer.toString(limit));
-		}
 	
-		PreparedStatement ps = conn.prepareStatement(query.toString());
+		PreparedStatement ps = conn.prepareStatement(JDBCHelper.query(target, limit));
 		try {
 			ResultSet rs = ps.executeQuery();
 			try {

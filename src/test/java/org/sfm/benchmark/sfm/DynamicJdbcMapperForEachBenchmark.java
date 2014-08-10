@@ -10,14 +10,14 @@ import org.sfm.benchmark.SysOutBenchmarkListener;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.jdbc.JdbcMapperFactory;
 
-public class DynamicJdbcMapperForEachBenchmark extends ForEachMapperQueryExecutor implements QueryExecutor {
-	public DynamicJdbcMapperForEachBenchmark(Connection conn)
+public class DynamicJdbcMapperForEachBenchmark<T> extends ForEachMapperQueryExecutor<T> implements QueryExecutor {
+	public DynamicJdbcMapperForEachBenchmark(Connection conn, Class<T> target)
 			throws NoSuchMethodException, SecurityException, SQLException {
-		super(JdbcMapperFactory.newInstance().newMapper(DbObject.class), conn);
+		super(JdbcMapperFactory.newInstance().newMapper(target), conn, target);
 	}
 
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, SQLException, Exception {
-		new BenchmarkRunner(-1, new DynamicJdbcMapperForEachBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(DynamicJdbcMapperForEachBenchmark.class, "BigQuery"));
-		new BenchmarkRunner(1, new DynamicJdbcMapperForEachBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(DynamicJdbcMapperForEachBenchmark.class, "SmallQuery"));
+		new BenchmarkRunner(-1, new DynamicJdbcMapperForEachBenchmark<DbObject>(DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(DynamicJdbcMapperForEachBenchmark.class, "BigQuery"));
+		new BenchmarkRunner(1, new DynamicJdbcMapperForEachBenchmark<DbObject>(DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(DynamicJdbcMapperForEachBenchmark.class, "SmallQuery"));
 	}
 }

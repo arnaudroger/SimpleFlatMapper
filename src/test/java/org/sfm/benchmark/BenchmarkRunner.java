@@ -1,6 +1,5 @@
 package org.sfm.benchmark;
 
-import org.sfm.beans.DbObject;
 
 public class BenchmarkRunner {
 	private static final class ForEachListenerImpl implements ForEachListener {
@@ -20,7 +19,7 @@ public class BenchmarkRunner {
 		}
 
 		@Override
-		public void object(DbObject o) {
+		public void object(Object o) {
 			counter++;
 		}
 

@@ -15,27 +15,27 @@ import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.asm.AsmFactory;
 
-public class DynamicJdbcMapperMapBenchmark extends AbstractMapperQueryExecutor implements QueryExecutor {
+public class DynamicJdbcMapperMapBenchmark<T> extends AbstractMapperQueryExecutor<T> implements QueryExecutor {
 	
-	Instantiator<DbObject> instantiator;
+	Instantiator<T> instantiator;
 	
-	public DynamicJdbcMapperMapBenchmark(Connection conn) throws NoSuchMethodException, SecurityException, SQLException {
-		super(JdbcMapperFactory.newInstance().newMapper(DbObject.class), conn);
-		instantiator = new InstantiatorFactory(new AsmFactory()).getInstantiator(DbObject.class);
+	public DynamicJdbcMapperMapBenchmark(Connection conn, Class<T> target) throws NoSuchMethodException, SecurityException, SQLException {
+		super(JdbcMapperFactory.newInstance().newMapper(target), conn, target);
+		instantiator = new InstantiatorFactory(new AsmFactory()).getInstantiator(target);
 	}
 	
 	@Override
 	protected final void forEach(ResultSet rs, final ForEachListener ql) throws Exception {
 		while(rs.next()) {
-			DbObject o = instantiator.newInstance();
+			T o = instantiator.newInstance();
 			mapper.map(rs, o);
 			ql.object(o);
 		}
 	}
 
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, SQLException, Exception {
-		new BenchmarkRunner(-1, new DynamicJdbcMapperMapBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(DynamicJdbcMapperMapBenchmark.class, "BigQuery"));
-		new BenchmarkRunner(1, new DynamicJdbcMapperMapBenchmark(DbHelper.benchmarkDb())).run(new SysOutBenchmarkListener(DynamicJdbcMapperMapBenchmark.class, "SmallQuery"));
+		new BenchmarkRunner(-1, new DynamicJdbcMapperMapBenchmark<DbObject>(DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(DynamicJdbcMapperMapBenchmark.class, "BigQuery"));
+		new BenchmarkRunner(1, new DynamicJdbcMapperMapBenchmark<DbObject>(DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(DynamicJdbcMapperMapBenchmark.class, "SmallQuery"));
 	}
 
 }

@@ -10,7 +10,6 @@ import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
-import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -52,7 +51,7 @@ public class MyBatisBenchmark implements QueryExecutor {
 		SqlSession session = sqlSessionFactory.openSession();
 		try {
 			if (limit != -1) {
-				session.select("selectDbObjects", new RowBounds(0, limit), new ResultHandler() {
+				session.select("selectDbObjectsWithLimit", limit, new ResultHandler() {
 					@Override
 					public void handleResult(ResultContext arg0) {
 						ql.object((DbObject) arg0.getResultObject());

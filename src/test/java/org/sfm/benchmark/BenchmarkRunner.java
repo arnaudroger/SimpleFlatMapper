@@ -37,16 +37,16 @@ public class BenchmarkRunner {
 	private final int iteration;
 	private final int innerIteration;
 	private final QueryExecutor exec;
-	private int warmup;
+	private final int warmup;
 	public BenchmarkRunner(int limit, QueryExecutor exec) {
-		this(limit, 20, exec);
+		this(limit, 20, 1000000, exec);
 	}
-	public BenchmarkRunner(int limit, int iteration, QueryExecutor exec) {
+	public BenchmarkRunner(int limit, int iteration, int nbobjects, QueryExecutor exec) {
 		this.limit = limit;
 		this.iteration = iteration;
 		if (limit > 0) {
-			this.innerIteration = 1000000/(limit);
-			this.warmup = 1000000/limit;
+			this.innerIteration = nbobjects/(limit);
+			this.warmup = nbobjects/limit;
 		} else {
 			this.innerIteration = 1;
 			this.warmup = 1;

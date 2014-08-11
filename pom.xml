@@ -70,6 +70,12 @@
 			<artifactId>hibernate-ehcache</artifactId>
 			<version>4.3.6.Final</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hdrhistogram</groupId>
+			<artifactId>HdrHistogram</artifactId>
+			<version>1.2.1</version>
+			<scope>test</scope>
 		</dependency>		
 	</dependencies>
 </project>

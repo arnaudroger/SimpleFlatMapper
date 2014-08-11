@@ -23,30 +23,38 @@ public class AllBenchmark {
 				DynamicJdbcMapperForEachBenchmark.class,
 				HibernateStatefullBenchmark.class, MyBatisBenchmark.class };
 
-		System.out.println("benchmark,object,query size,min time per object,median time per object,avg time per object,max time per object");
+		System.out.println("benchmark,object,query size,10%,25,50%,90%,95%,99%,avg");
 		for (int j = 0; j < classes.length; j++) {
 			Class<? extends QueryExecutor> benchmark = classes[j];
 			
 			for (int i = 10; i <= 10000; i *= 10) {
+				System.gc();
+				Thread.sleep(200);
 				CollectBenchmarkListener cbl = new CollectBenchmarkListener();
 				runBenchmark(conn, target, benchmark, i, cbl);
-				output(benchmark.getSimpleName()+"," + target.getSimpleName() + "," + nf2.format(i), cbl);
+				output(benchmark.getSimpleName()+"," + target.getSimpleName() + "," + nf2.format(i), cbl, i);
 			}
 		}
 
 	}
 	static NumberFormat nf = new DecimalFormat("00000.00");
 	static NumberFormat nf2 = new DecimalFormat("00000");
-	private static void output(String string, CollectBenchmarkListener cbl) {
+	private static void output(String string, CollectBenchmarkListener cbl, int nbObject) {
 		System.out.print(string);
 		System.out.print(",");
-		System.out.print(nf.format(cbl.min().timePerObject));
+		System.out.print(nf.format(cbl.getHistogram().getValueAtPercentile(10.0)));
 		System.out.print(",");
-		System.out.print(nf.format(cbl.median().timePerObject));
+		System.out.print(nf.format(cbl.getHistogram().getValueAtPercentile(25.0)));
 		System.out.print(",");
-		System.out.print(nf.format(cbl.avg().timePerObject));
+		System.out.print(nf.format(cbl.getHistogram().getValueAtPercentile(50.0)));
 		System.out.print(",");
-		System.out.print(nf.format(cbl.max().timePerObject));
+		System.out.print(nf.format(cbl.getHistogram().getValueAtPercentile(90.0)));
+		System.out.print(",");
+		System.out.print(nf.format(cbl.getHistogram().getValueAtPercentile(95.0)));
+		System.out.print(",");
+		System.out.print(nf.format(cbl.getHistogram().getValueAtPercentile(99.0)));
+		System.out.print(",");
+		System.out.print(nf.format(cbl.getHistogram().getMean()));
 		System.out.println();
 	}
 
@@ -54,12 +62,11 @@ public class AllBenchmark {
 			Class<SmallBenchmarkObject> target,
 			Class<? extends QueryExecutor> benchmark, int limit, BenchmarkListener bl)
 			throws Exception {
-		System.gc();
-		Thread.sleep(500);
+
 		
 		Constructor<? extends QueryExecutor> c = benchmark.getDeclaredConstructor(Connection.class, Class.class);
 		QueryExecutor qe = c.newInstance(conn, target);
-		new BenchmarkRunner(limit, qe).run(bl);
+		new BenchmarkRunner(limit, qe, false).run(bl);
 
 	}
 }

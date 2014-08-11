@@ -38,17 +38,32 @@ public class BenchmarkRunner {
 	private final QueryExecutor exec;
 	private final int warmup;
 	public BenchmarkRunner(int limit, QueryExecutor exec) {
-		this(limit, 20, 1000000, exec);
+		this(limit, exec, true);
 	}
-	public BenchmarkRunner(int limit, int iteration, int nbobjects, QueryExecutor exec) {
+	public BenchmarkRunner(int limit, QueryExecutor exec, boolean innerIteration) {
+		this(limit, 20, 1000000, exec, innerIteration);
+	}
+	public BenchmarkRunner(int limit, int iteration, int nbobjects, QueryExecutor exec, boolean innerIteration) {
 		this.limit = limit;
-		this.iteration = iteration;
-		if (limit > 0) {
-			this.innerIteration = nbobjects/(limit);
-			this.warmup = nbobjects/limit;
+		if (innerIteration) {
+			this.iteration = iteration;
+			if (limit > 0) {
+				this.innerIteration = nbobjects/(limit);
+				this.warmup = nbobjects/limit;
+			} else {
+				this.innerIteration = 1;
+				this.warmup = 1;
+			}
 		} else {
-			this.innerIteration = 1;
-			this.warmup = 1;
+			if (limit > 0) {
+				this.iteration = iteration *  nbobjects/(limit);
+				this.innerIteration = 1;
+				this.warmup = nbobjects/limit;
+			} else {
+				this.iteration = iteration;
+				this.innerIteration = 1;
+				this.warmup = 1;
+			}
 		}
 		this.exec = exec;
 	}
@@ -61,7 +76,13 @@ public class BenchmarkRunner {
 	private void benchmark(BenchmarkListener bl) throws Exception {
 		ForEachListener listener = new ForEachListenerImpl(bl);
 		for(int i = 0; i < iteration; i++) {
-			iteration(listener);
+			if (innerIteration == 1) {
+				listener.start();
+				exec.forEach(listener, limit);
+				listener.end();
+			} else {
+				iteration(listener);
+			}
 		}
 	}
 

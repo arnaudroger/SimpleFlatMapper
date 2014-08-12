@@ -1,6 +1,6 @@
 JdbcMapper
- - provide different object type for benchmark, currently time is dominated by calendar op
  - enum support
- - add mysql support
+ - inner object support
 CsvMapper
  - add mapper test
+ - add mapper

@@ -28,7 +28,16 @@ public class AllBenchmark {
 		printHeader(System.out);
 		for (int j = 0; j < classes.length; j++) {
 			Class<? extends QueryExecutor> benchmark = classes[j];
-			
+			if (j ==0) {
+				for (int querySize = 10; querySize <= 10000; querySize *= 10) {
+					runBenchmark(conn, target, benchmark, querySize, 10000, new BenchmarkListener() {
+						@Override
+						public void results(long nb, long elapsed) {
+						}
+					});
+				}
+				
+			}
 			for (int querySize = 10; querySize <= 10000; querySize *= 10) {
 				System.gc();
 				Thread.sleep(200);

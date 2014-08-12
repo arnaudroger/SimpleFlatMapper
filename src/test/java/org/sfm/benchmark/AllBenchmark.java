@@ -70,11 +70,9 @@ public class AllBenchmark {
 			Class<SmallBenchmarkObject> target,
 			Class<? extends QueryExecutor> benchmark, int limit, BenchmarkListener bl)
 			throws Exception {
-
-		
 		Constructor<? extends QueryExecutor> c = benchmark.getDeclaredConstructor(Connection.class, Class.class);
 		QueryExecutor qe = c.newInstance(conn, target);
-		new BenchmarkRunner(limit, qe, false).run(bl);
+		new BenchmarkRunner(10000, limit, qe).run(bl);
 
 	}
 }

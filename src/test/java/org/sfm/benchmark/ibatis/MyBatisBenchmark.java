@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -16,13 +15,9 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.sfm.beans.DbObject;
-import org.sfm.beans.SmallBenchmarkObject;
-import org.sfm.benchmark.BenchmarkRunner;
 import org.sfm.benchmark.ForEachListener;
 import org.sfm.benchmark.QueryExecutor;
 import org.sfm.benchmark.SingleConnectionDataSource;
-import org.sfm.benchmark.SysOutBenchmarkListener;
-import org.sfm.jdbc.DbHelper;
 
 public class MyBatisBenchmark implements QueryExecutor {
 
@@ -72,8 +67,4 @@ public class MyBatisBenchmark implements QueryExecutor {
 		}
 	}
 	
-	public static void main(String[] args) throws NoSuchMethodException, SecurityException, SQLException, Exception {
-		new BenchmarkRunner(-1, new MyBatisBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class)).run(new SysOutBenchmarkListener(MyBatisBenchmark.class, "BigQuery"));
-		new BenchmarkRunner(1, new MyBatisBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class)).run(new SysOutBenchmarkListener(MyBatisBenchmark.class, "SmallQuery"));
-	}
 }

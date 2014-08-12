@@ -51,10 +51,4 @@ public class StaticJdbcMapperBenchmark<T> extends ForEachMapperQueryExecutor<T> 
 			throw new UnsupportedOperationException(target.getName());
 		}
 	}
-	
-	public static void main(String[] args) throws NoSuchMethodException, SecurityException, SQLException, Exception {
-		new BenchmarkRunner(-1, new StaticJdbcMapperBenchmark<DbObject>(DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(StaticJdbcMapperBenchmark.class, "BigQuery"));
-		new BenchmarkRunner(1, new StaticJdbcMapperBenchmark<DbObject>(DbHelper.benchmarkDb(), DbObject.class)).run(new SysOutBenchmarkListener(StaticJdbcMapperBenchmark.class, "SmallQuery"));
-	}
-
 }

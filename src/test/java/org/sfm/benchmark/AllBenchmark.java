@@ -23,7 +23,7 @@ public class AllBenchmark {
 				DynamicJdbcMapperForEachBenchmark.class,
 				HibernateStatefullBenchmark.class, MyBatisBenchmark.class };
 
-		System.out.println("benchmark,object,query size,10%,25,50%,90%,95%,99%,avg");
+		System.out.println("benchmark,object,query size,10%,25%,50%,90%,95%,99%,99.9%,99.99%,min,avg,max");
 		for (int j = 0; j < classes.length; j++) {
 			Class<? extends QueryExecutor> benchmark = classes[j];
 			
@@ -54,7 +54,15 @@ public class AllBenchmark {
 		System.out.print(",");
 		System.out.print(nf.format(cbl.getHistogram().getValueAtPercentile(99.0)));
 		System.out.print(",");
+		System.out.print(nf.format(cbl.getHistogram().getValueAtPercentile(99.9)));
+		System.out.print(",");
+		System.out.print(nf.format(cbl.getHistogram().getValueAtPercentile(99.99)));
+		System.out.print(",");
+		System.out.print(nf.format(cbl.getHistogram().getMinValue()));
+		System.out.print(",");
 		System.out.print(nf.format(cbl.getHistogram().getMean()));
+		System.out.print(",");
+		System.out.print(nf.format(cbl.getHistogram().getMaxValue()));
 		System.out.println();
 	}
 

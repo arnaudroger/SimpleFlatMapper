@@ -26,4 +26,12 @@ public final class FieldMapper<S, T, P> implements Mapper<S, T> {
 			errorHandler.errorMappingField(name, source, target, ge);
 		}
 	}
+
+	public Getter<S, ? extends P> getGetter() {
+		return getter;
+	}
+
+	public Setter<T, P> getSetter() {
+		return setter;
+	}
 }

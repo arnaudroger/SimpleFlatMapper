@@ -21,4 +21,14 @@ public class DoubleFieldMapper<S, T> implements Mapper<S, T> {
 		setter.setDouble(target, getter.getDouble(source));
 	}
 
+
+	public DoubleGetter<S> getGetter() {
+		return getter;
+	}
+
+
+	public DoubleSetter<T> getSetter() {
+		return setter;
+	}
+
 }

@@ -76,11 +76,15 @@ public class CachedResultSetMapperBuilder<T> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Mapper<ResultSet, T> mapper() {
-		return new SaticMapper<ResultSet, T>(fields.toArray(new Mapper[fields
-				.size()]));
+		return new SaticMapper<ResultSet, T>(fields());
 	}
+
+	@SuppressWarnings("unchecked")
+	public Mapper<ResultSet, T>[] fields() {
+		return fields.toArray(new Mapper[fields.size()]);
+	}
+	
 
 	private void addMapping(Setter<T, Object> setter, int column) {
 		Mapper<ResultSet, T> fieldMapper;

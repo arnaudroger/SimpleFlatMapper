@@ -21,4 +21,14 @@ public class IntFieldMapper<S, T> implements Mapper<S, T> {
 		setter.setInt(target, getter.getInt(source));
 	}
 
+
+	public IntGetter<S> getGetter() {
+		return getter;
+	}
+
+
+	public IntSetter<T> getSetter() {
+		return setter;
+	}
+
 }

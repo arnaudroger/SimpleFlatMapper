@@ -21,4 +21,14 @@ public class CharacterFieldMapper<S, T> implements Mapper<S, T> {
 		setter.setCharacter(target, getter.getCharacter(source));
 	}
 
+
+	public CharacterGetter<S> getGetter() {
+		return getter;
+	}
+
+
+	public CharacterSetter<T> getSetter() {
+		return setter;
+	}
+
 }

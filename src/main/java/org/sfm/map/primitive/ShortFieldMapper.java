@@ -21,4 +21,14 @@ public class ShortFieldMapper<S, T> implements Mapper<S, T> {
 		setter.setShort(target, getter.getShort(source));
 	}
 
+
+	public ShortGetter<S> getGetter() {
+		return getter;
+	}
+
+
+	public ShortSetter<T> getSetter() {
+		return setter;
+	}
+
 }

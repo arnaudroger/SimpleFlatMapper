@@ -21,4 +21,14 @@ public class BooleanFieldMapper<S, T> implements Mapper<S, T> {
 		setter.setBoolean(target, getter.getBoolean(source));
 	}
 
+
+	public BooleanGetter<S> getGetter() {
+		return getter;
+	}
+
+
+	public BooleanSetter<T> getSetter() {
+		return setter;
+	}
+
 }

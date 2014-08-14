@@ -21,4 +21,14 @@ public class FloatFieldMapper<S, T> implements Mapper<S, T> {
 		setter.setFloat(target, getter.getFloat(source));
 	}
 
+
+	public FloatGetter<S> getGetter() {
+		return getter;
+	}
+
+
+	public FloatSetter<T> getSetter() {
+		return setter;
+	}
+
 }

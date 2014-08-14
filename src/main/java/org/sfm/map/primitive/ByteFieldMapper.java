@@ -21,4 +21,14 @@ public class ByteFieldMapper<S, T> implements Mapper<S, T> {
 		setter.setByte(target, getter.getByte(source));
 	}
 
+
+	public ByteGetter<S> getGetter() {
+		return getter;
+	}
+
+
+	public ByteSetter<T> getSetter() {
+		return setter;
+	}
+
 }

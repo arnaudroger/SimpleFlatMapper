@@ -1,6 +1,9 @@
 JdbcMapper
+ - asm static mapper
  - enum support
+ - custom mapping support
  - inner object support
+ - list and map
 CsvMapper
  - add mapper test
  - add mapper

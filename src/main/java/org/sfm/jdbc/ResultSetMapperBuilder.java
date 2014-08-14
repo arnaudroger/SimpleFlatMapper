@@ -100,9 +100,13 @@ public class ResultSetMapperBuilder<T> {
 		return this;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Mapper<ResultSet, T> mapper() {
-		return new SaticMapper<ResultSet, T>(fields.toArray(new Mapper[fields.size()]));
+		return new SaticMapper<ResultSet, T>(fields());
+	}
+
+	@SuppressWarnings("unchecked")
+	public Mapper<ResultSet, T>[] fields() {
+		return fields.toArray(new Mapper[fields.size()]);
 	}
 
 	private void addMapping(Setter<T, Object> setter, String column) {

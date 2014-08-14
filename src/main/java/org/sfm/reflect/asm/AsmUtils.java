@@ -44,6 +44,20 @@ public class AsmUtils {
 	};	
 	
 	@SuppressWarnings("serial")
+	static final Map<String, String> stringToPrimitivesType = new HashMap<String, String>() {
+		{
+			  put("Boolean", "Z");
+		      put("Byte", "B");
+		      put("Character", "C");
+		      put("Double", "D");
+		      put("Float", "F");
+		      put("Int", "I");
+		      put("Long", "J");
+		      put("Short", "S");
+		}
+	};
+	
+	@SuppressWarnings("serial")
 	static final Map<Class<?>, Integer> loadOps = new HashMap<Class<?>, Integer>() {
 		{
 			  put(boolean.class, ILOAD);

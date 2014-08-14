@@ -3,8 +3,10 @@ package org.sfm.reflect.asm;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.objectweb.asm.Opcodes;
+import org.sfm.map.Mapper;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.Setter;
 
@@ -89,6 +91,14 @@ public class AsmFactory implements Opcodes {
 		return instantiator;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public <S, T> Mapper<S,T> createMapper(Mapper<S, T>[] mappers, Class<S> source, Class<T> target) throws Exception {
+		String className = generateClassName(mappers, source, target);
+		byte[] bytes = AsmMapperBuilder.dump(className, mappers, source, target);
+		Class<?> type = factoryClassLoader.registerGetter(className, bytes);
+		return (Mapper<S, T>) type.getDeclaredConstructors()[0].newInstance((Object)mappers);
+	}
+	
 	private String generateInstantiatorClassName(Class<?> target) {
 		return "org.sfm.reflect.asm." + target.getPackage().getName() + 
 				".AsmInstantiator" + target.getSimpleName();
@@ -101,5 +111,9 @@ public class AsmFactory implements Opcodes {
 					 + m.getParameterTypes()[0].getSimpleName()
 					;
 	}
-
+	private AtomicLong classNumber = new AtomicLong();
+	private <S, T> String generateClassName(Mapper<S, T>[] mappers, Class<S> source, Class<T> target) {
+		return "org.sfm.reflect.asm." + target.getPackage().getName() + 
+					".AsmMapper" + source.getSimpleName() + "2" +  target.getSimpleName() + mappers.length + classNumber.getAndIncrement(); 
+	}
 }

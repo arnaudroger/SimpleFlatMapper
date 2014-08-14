@@ -21,4 +21,14 @@ public class LongFieldMapper<S, T> implements Mapper<S, T> {
 		setter.setLong(target, getter.getLong(source));
 	}
 
+
+	public LongGetter<S> getGetter() {
+		return getter;
+	}
+
+
+	public LongSetter<T> getSetter() {
+		return setter;
+	}
+
 }

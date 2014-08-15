@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.sfm.reflect.Getter;
 
-public class StringIndexedResultSetGetter implements Getter<ResultSet, String> {
+public final class StringIndexedResultSetGetter implements Getter<ResultSet, String> {
 	private final int column;
 	
 	public StringIndexedResultSetGetter(int column) {

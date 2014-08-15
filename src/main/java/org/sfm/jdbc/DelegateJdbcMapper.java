@@ -15,10 +15,6 @@ public final class DelegateJdbcMapper<T> implements JdbcMapper<T> {
 	private final Mapper<ResultSet, T> delegate;
 
 	public DelegateJdbcMapper( Mapper<ResultSet, T> delegate, Instantiator<T> instantiator) {
-		this(delegate, instantiator, false);
-	}
-
-	public DelegateJdbcMapper( Mapper<ResultSet, T> delegate, Instantiator<T> instantiator, boolean useSingleton) {
 		this.delegate = delegate;
 		this.instantiator = instantiator;
 	}

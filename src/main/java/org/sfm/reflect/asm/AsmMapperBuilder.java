@@ -99,7 +99,7 @@ public class AsmMapperBuilder {
 		}
 		cw.visitEnd();
 
-		return cw.toByteArray();
+		return AsmUtils.writeClassToFile(className, cw.toByteArray());
 		}
 
 	private static <S, T> void generateMappingCall(MethodVisitor mv,

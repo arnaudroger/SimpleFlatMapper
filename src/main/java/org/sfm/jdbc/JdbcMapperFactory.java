@@ -26,7 +26,6 @@ public class JdbcMapperFactory {
 	
 	private boolean useAsm = true;
 	
-	private final boolean asmPresent = isAsmPresent();
 	
 	
 	/**
@@ -39,7 +38,7 @@ public class JdbcMapperFactory {
 	 * @throws SecurityException
 	 */
 	public <T> JdbcMapper<T> newMapper(Class<T> target, ResultSetMetaData metaData) throws SQLException, NoSuchMethodException, SecurityException {
-		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilder<>(target, getSetterFactory());
+		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<>(target, getSetterFactory());
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
@@ -50,16 +49,6 @@ public class JdbcMapperFactory {
 		
 		return new DelegateJdbcMapper<T>(builder.mapper(), new InstantiatorFactory(getAsmSetterFactory()).getInstantiator(target));
 	}
-	
-	private boolean isAsmPresent() {
-		try {
-			Class.forName("org.objectweb.asm.Opcodes");
-			return true;
-		} catch(Exception e) {
-			return false;
-		}
-	}
-
 	
 	/**
 	 * 
@@ -104,11 +93,13 @@ public class JdbcMapperFactory {
 		return new DynamicJdbcMapper<T>(target, getSetterFactory(), new InstantiatorFactory(getAsmSetterFactory()).getInstantiator(target), fieldMapperErrorHandler, mapperBuilderErrorHandler);
 	}
 
+	private AsmFactory getAsmSetterFactory() {
+		return !useAsm ? null : AsmHelper.getAsmSetterFactory();
+	}
+
 	private SetterFactory getSetterFactory() {
 		return new SetterFactory(getAsmSetterFactory());
 	}
 
-	private AsmFactory getAsmSetterFactory() {
-		return useAsm && asmPresent ? new AsmFactory() : null;
-	}
+
 }

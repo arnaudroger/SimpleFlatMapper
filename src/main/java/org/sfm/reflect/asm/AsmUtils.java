@@ -1,10 +1,18 @@
 package org.sfm.reflect.asm;
 
+import static org.objectweb.asm.Opcodes.DLOAD;
+import static org.objectweb.asm.Opcodes.FLOAD;
+import static org.objectweb.asm.Opcodes.ILOAD;
+import static org.objectweb.asm.Opcodes.LLOAD;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import static org.objectweb.asm.Opcodes.*;
 public class AsmUtils {
 	public static String toType(Class<?> target) {
 		String name = target.getName();
@@ -78,4 +86,32 @@ public class AsmUtils {
 			addAll(wrappers.values());
 		}
 	};
+	
+	
+	static File targetDir = null;
+	static {
+		String targetDirStr = System.getProperty("asm.dump.target.dir");
+		if (targetDirStr != null) {
+			targetDir = new File(targetDirStr);
+			targetDir.mkdirs();
+		} 
+	}
+	
+	public static byte[] writeClassToFile (String classname, byte[] bytes) throws IOException {
+		if (targetDir != null) {
+			int lastIndex = classname.lastIndexOf('.');
+			String filename = classname.substring(lastIndex + 1) + ".class";
+			String directory = classname.substring(0, lastIndex).replace('.', '/');
+			File packageDir = new File(targetDir, directory);
+			packageDir.mkdirs();
+			
+			FileOutputStream fos = new FileOutputStream(new File(packageDir, filename ));
+			try {
+				fos.write(bytes);
+			} finally {
+				fos.close();
+			}
+		}		
+		return bytes;
+	}
 }

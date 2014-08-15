@@ -5,11 +5,10 @@ import java.sql.SQLException;
 
 import org.sfm.beans.DbObject;
 import org.sfm.beans.SmallBenchmarkObject;
-import org.sfm.benchmark.BenchmarkRunner;
-import org.sfm.benchmark.SysOutBenchmarkListener;
+import org.sfm.benchmark.AllBenchmark;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.jdbc.DelegateJdbcMapper;
-import org.sfm.jdbc.ResultSetMapperBuilder;
+import org.sfm.jdbc.ResultSetMapperBuilderImpl;
 import org.sfm.reflect.Instantiator;
 
 public class StaticJdbcMapperBenchmark<T> extends ForEachMapperQueryExecutor<T> {
@@ -22,7 +21,7 @@ public class StaticJdbcMapperBenchmark<T> extends ForEachMapperQueryExecutor<T> 
 		if (target.equals(DbObject.class)) {
 			return (DelegateJdbcMapper<T>) 
 					new DelegateJdbcMapper<DbObject>(
-							new ResultSetMapperBuilder<DbObject>(DbObject.class)
+							new ResultSetMapperBuilderImpl<DbObject>(DbObject.class)
 								.addIndexedColumn("id")
 								.addIndexedColumn("name")
 								.addIndexedColumn("email")
@@ -36,7 +35,7 @@ public class StaticJdbcMapperBenchmark<T> extends ForEachMapperQueryExecutor<T> 
 		} else if (target.equals(SmallBenchmarkObject.class)) {
 			return (DelegateJdbcMapper<T>) 
 					new DelegateJdbcMapper<SmallBenchmarkObject>(
-							new ResultSetMapperBuilder<SmallBenchmarkObject>(SmallBenchmarkObject.class)
+							new ResultSetMapperBuilderImpl<SmallBenchmarkObject>(SmallBenchmarkObject.class)
 								.addIndexedColumn("id")
 								.addIndexedColumn("name")
 								.addIndexedColumn("email")
@@ -51,4 +50,9 @@ public class StaticJdbcMapperBenchmark<T> extends ForEachMapperQueryExecutor<T> 
 			throw new UnsupportedOperationException(target.getName());
 		}
 	}
+	
+	public static void main(String[] args) throws SQLException, Exception {
+		AllBenchmark.runBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class, StaticJdbcMapperBenchmark.class, 1000, 100000);
+	}
+
 }

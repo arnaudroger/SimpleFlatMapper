@@ -1,20 +1,16 @@
 package org.sfm.reflect.asm;
 
-import static org.junit.Assert.assertEquals;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.jdbc.AbstractResultSetMapperBuilder;
 import org.sfm.jdbc.DbHelper;
-import org.sfm.jdbc.ResultSetMapperBuilder;
+import org.sfm.jdbc.ResultSetMapperBuilderImpl;
 import org.sfm.map.Mapper;
-import org.sfm.map.primitive.LongFieldMapper;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.utils.Handler;
-import org.sfm.utils.ListHandler;
 
 public class AsmMapperTest {
 
@@ -22,7 +18,7 @@ public class AsmMapperTest {
 	public void testMapperBuilder() throws Exception {
 		AsmFactory factory = new AsmFactory();
 		
-		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilder<>(DbObject.class, new SetterFactory());
+		AbstractResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<>(DbObject.class, new SetterFactory());
 		builder.addIndexedColumn("id");
 		builder.addIndexedColumn("name");
 		builder.addIndexedColumn("email");

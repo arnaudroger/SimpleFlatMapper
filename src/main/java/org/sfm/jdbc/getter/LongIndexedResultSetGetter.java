@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.LongGetter;
 
-public class LongIndexedResultSetGetter implements LongGetter<ResultSet>,
+public final class LongIndexedResultSetGetter implements LongGetter<ResultSet>,
 		Getter<ResultSet, Long> {
 
 	private final int column;

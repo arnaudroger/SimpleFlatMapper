@@ -29,7 +29,7 @@ public class ResultSetMapperBuilderTest {
 	}
 
 	public static  Mapper<ResultSet, DbObject> newManualMapper() throws NoSuchMethodException, SecurityException {
-		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilder<DbObject>(DbObject.class);
+		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
 		
 		builder.addMapping("id", "id");
 		builder.addMapping("name", "name");
@@ -41,7 +41,7 @@ public class ResultSetMapperBuilderTest {
 	
 	@Test
 	public void testSelectWithManualColumnDefinition() throws Exception {
-		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilder<DbObject>(DbObject.class);
+		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
 		
 		builder.addNamedColumn("id");
 		builder.addNamedColumn("name");
@@ -55,43 +55,43 @@ public class ResultSetMapperBuilderTest {
 	
 	@Test
 	public void testNamedPrimitivesWithSetterAccess() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
+		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
 		testNamedPrimitives(builder, new DbPrimitiveObjectWithSetter());
 	}
 	
 	@Test
 	public void testNamedBoxedPrimitives() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilder<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
 		testNamedPrimitives(builder, new DbBoxedPrimitveObject());
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithSetterAccess() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
+		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
 		testIndexedPrimitives(builder, new DbPrimitiveObjectWithSetter());
 	}
 	
 	@Test
 	public void testNamedBoxedPrimitivesWithNullValues() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilder<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
 		testNamedPrimitivesWithNull(builder, new DbBoxedPrimitveObject());
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithNullValues() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilder<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
 		testIndexedPrimitivesWithNull(builder, new DbBoxedPrimitveObject());
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithSetterAccessNoAsm() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, new SetterFactory(null));
+		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, new SetterFactory(null));
 		testIndexedPrimitives(builder, new DbPrimitiveObjectWithSetter());
 	}
 	
 	@Test
 	public void testIndexedBoxedPrimitives() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilder<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
 		testIndexedPrimitives(builder, new DbBoxedPrimitveObject());
 	}
 	
@@ -228,7 +228,7 @@ public class ResultSetMapperBuilderTest {
 
 	@Test
 	public void testHandleMapperErrorSetterNotFound() {
-		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilder<DbObject>(DbObject.class);
+		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
 		MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
 		
 		builder.mapperBuilderErrorHandler(errorHandler);
@@ -255,7 +255,7 @@ public class ResultSetMapperBuilderTest {
 	}
 	@Test
 	public void testHandleMapperErrorgGetterNotFound() {
-		ResultSetMapperBuilder<MyClass> builder = new ResultSetMapperBuilder<MyClass>(MyClass.class);
+		ResultSetMapperBuilder<MyClass> builder = new ResultSetMapperBuilderImpl<MyClass>(MyClass.class);
 		MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
 		
 		builder.mapperBuilderErrorHandler(errorHandler);
@@ -279,7 +279,7 @@ public class ResultSetMapperBuilderTest {
 	
 	@Test
 	public void setChangeFieldMapperErrorHandler() {
-		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilder<DbObject>(DbObject.class);
+		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
 		builder.fieldMapperErrorHandler(new LogFieldMapperErrorHandler());
 		
 		builder.addIndexedColumn("id");

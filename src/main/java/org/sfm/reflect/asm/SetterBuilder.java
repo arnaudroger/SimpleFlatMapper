@@ -72,7 +72,8 @@ public class SetterBuilder implements Opcodes {
 		}
 		cw.visitEnd();
 
-		return cw.toByteArray();
+		return AsmUtils.writeClassToFile(className, cw.toByteArray());
+
 	}
 
 	public static byte[] createPrimitiveSetter(String className, Method method) throws Exception {
@@ -188,7 +189,8 @@ public class SetterBuilder implements Opcodes {
 		}
 		cw.visitEnd();
 
-		return cw.toByteArray();
+		return AsmUtils.writeClassToFile(className, cw.toByteArray());
+
 	}
 
 	private static String toType(Class<?> target) {

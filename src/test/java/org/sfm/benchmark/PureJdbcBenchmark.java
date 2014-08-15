@@ -3,6 +3,10 @@ package org.sfm.benchmark;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.sfm.beans.SmallBenchmarkObject;
+import org.sfm.jdbc.DbHelper;
 
 
 public class PureJdbcBenchmark implements QueryExecutor {
@@ -32,5 +36,9 @@ public class PureJdbcBenchmark implements QueryExecutor {
 		} finally {
 			ps.close();
 		}
+	}
+	
+	public static void main(String[] args) throws SQLException, Exception {
+		AllBenchmark.runBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class, PureJdbcBenchmark.class, 1000, 100000);
 	}
 }

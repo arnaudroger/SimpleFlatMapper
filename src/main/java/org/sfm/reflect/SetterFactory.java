@@ -37,14 +37,18 @@ import org.sfm.utils.PropertyNameMatcher;
 
 public class SetterFactory {
 	
-	private AsmFactory asmSetterFactory;
+	private final AsmFactory asmFactory;
 	
 	public SetterFactory(AsmFactory asmSetterFactory) {
-		this.asmSetterFactory = asmSetterFactory;
+		this.asmFactory = asmSetterFactory;
 	}
 	
 	public SetterFactory() {
-		this.asmSetterFactory = new AsmFactory();
+		this.asmFactory = new AsmFactory();
+	}
+
+	public AsmFactory getAsmFactory() {
+		return asmFactory;
 	}
 
 	public <T, P, C extends T> Setter<T, P> getSetter(Class<C> target, String property) {
@@ -59,9 +63,9 @@ public class SetterFactory {
 	}
 
 	private <T, P, C extends T> Setter<T, P> getMethodSetter(Method method) {
-		if (asmSetterFactory != null) {
+		if (asmFactory != null) {
 			try {
-				return asmSetterFactory.createSetter(method);
+				return asmFactory.createSetter(method);
 			} catch(Exception e) {
 				return new MethodSetter<T, P>(method);
 			}

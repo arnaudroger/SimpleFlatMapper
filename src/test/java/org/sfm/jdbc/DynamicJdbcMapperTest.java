@@ -19,7 +19,7 @@ public class DynamicJdbcMapperTest {
 	final DynamicJdbcMapper<DbObject> mapper;
 	
 	public DynamicJdbcMapperTest() throws NoSuchMethodException, SecurityException, SQLException {
-		mapper = (DynamicJdbcMapper<DbObject>) JdbcMapperFactory.newInstance().newMapper(DbObject.class);
+		mapper = (DynamicJdbcMapper<DbObject>) JdbcMapperFactory.newInstance().useAsm(false).newMapper(DbObject.class);
 	}
 	
 	@Test

@@ -127,7 +127,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 		Mapper<ResultSet, T> fieldMapper;
 	
 		if (setter.getPropertyType().isPrimitive()) {
-			fieldMapper = primitiveFieldMapperFactory.primitiveFieldMapper(column, setter);
+			fieldMapper = primitiveFieldMapperFactory.primitiveFieldMapper(column, setter, column, fieldMapperErrorHandler);
 		} else {
 			fieldMapper = objectFieldMapper(column, setter);
 		}
@@ -139,7 +139,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 		Mapper<ResultSet, T> fieldMapper;
 	
 		if (setter.getPropertyType().isPrimitive()) {
-			fieldMapper = primitiveFieldMapperFactory.primitiveFieldMapper(column, setter);
+			fieldMapper = primitiveFieldMapperFactory.primitiveFieldMapper(column, setter, String.valueOf(column), fieldMapperErrorHandler);
 		} else {
 			fieldMapper = objectFieldMapper(column, setter);
 		}

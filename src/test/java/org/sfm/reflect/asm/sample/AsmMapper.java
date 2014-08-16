@@ -7,8 +7,6 @@ import org.sfm.map.FieldMapper;
 import org.sfm.map.Mapper;
 import org.sfm.map.primitive.IntFieldMapper;
 import org.sfm.map.primitive.LongFieldMapper;
-import org.sfm.reflect.primitive.LongGetter;
-import org.sfm.reflect.primitive.LongSetter;
 
 public class AsmMapper implements Mapper<ResultSet, DbObject>{
 
@@ -17,6 +15,7 @@ public class AsmMapper implements Mapper<ResultSet, DbObject>{
 	private final FieldMapper<ResultSet, DbObject, ?> mapper3;
 	private final FieldMapper<ResultSet, DbObject, ?> mapper4;
 
+	@SuppressWarnings("unchecked")
 	public AsmMapper(Mapper<ResultSet, DbObject>[] mappers) {
 		mapper1 = (LongFieldMapper<ResultSet, DbObject>) mappers[0];
 		mapper2 = (IntFieldMapper<ResultSet, DbObject>) mappers[2];

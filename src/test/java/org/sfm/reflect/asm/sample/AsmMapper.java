@@ -7,44 +7,30 @@ import org.sfm.map.FieldMapper;
 import org.sfm.map.Mapper;
 import org.sfm.map.primitive.IntFieldMapper;
 import org.sfm.map.primitive.LongFieldMapper;
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.Setter;
-import org.sfm.reflect.primitive.IntGetter;
-import org.sfm.reflect.primitive.IntSetter;
 import org.sfm.reflect.primitive.LongGetter;
 import org.sfm.reflect.primitive.LongSetter;
 
 public class AsmMapper implements Mapper<ResultSet, DbObject>{
 
-	private final LongGetter<ResultSet> getter1;
-	private final LongSetter<DbObject> setter1;
-
-	private final IntGetter<ResultSet> getter2;
-	private final IntSetter<DbObject> setter2;
-	
-	private final Getter<ResultSet, String> getter3;
-	private final Setter<DbObject, String> setter3;
-
-	private final Getter<ResultSet, String> getter4;
-	private final Setter<DbObject, String> setter4;
+	private final LongFieldMapper<ResultSet, DbObject> mapper1;
+	private final IntFieldMapper<ResultSet, DbObject> mapper2;
+	private final FieldMapper<ResultSet, DbObject, ?> mapper3;
+	private final FieldMapper<ResultSet, DbObject, ?> mapper4;
 
 	public AsmMapper(Mapper<ResultSet, DbObject>[] mappers) {
-		getter1 = ((LongFieldMapper)mappers[0]).getGetter();
-		setter1 = ((LongFieldMapper)mappers[0]).getSetter();
-		getter2 = ((IntFieldMapper)mappers[1]).getGetter();
-		setter2 = ((IntFieldMapper)mappers[1]).getSetter();
-		getter3 = ((FieldMapper)mappers[2]).getGetter();
-		setter3 = ((FieldMapper)mappers[2]).getSetter();
-		getter4 = ((FieldMapper)mappers[6]).getGetter();
-		setter4 = ((FieldMapper)mappers[6]).getSetter();
+		mapper1 = (LongFieldMapper<ResultSet, DbObject>) mappers[0];
+		mapper2 = (IntFieldMapper<ResultSet, DbObject>) mappers[2];
+		mapper3 = (FieldMapper<ResultSet, DbObject, ?>) mappers[3];
+		mapper4 = (FieldMapper<ResultSet, DbObject, ?>) mappers[4];
 	}
 	
 	@Override
 	public void map(ResultSet source, DbObject target) throws Exception {
-		//setter1.setLong(target, getter1.getLong(source));
-		setter2.setInt(target, getter2.getInt(source));
-		//setter3.set(target, getter3.get(source));
-		//setter4.set(target, getter4.get(source));
+		mapper1.map(source, target);
+		mapper2.map(source, target);
+		mapper3.map(source, target);
+		mapper4.map(source, target);
 	}
+
 
 }

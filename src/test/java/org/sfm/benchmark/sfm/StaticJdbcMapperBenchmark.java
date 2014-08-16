@@ -52,7 +52,7 @@ public class StaticJdbcMapperBenchmark<T> extends ForEachMapperQueryExecutor<T> 
 	}
 	
 	public static void main(String[] args) throws SQLException, Exception {
-		AllBenchmark.runBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class, StaticJdbcMapperBenchmark.class, 1000, 100000);
+		AllBenchmark.runBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class, StaticJdbcMapperBenchmark.class, 100, 1000000);
 	}
 
 }

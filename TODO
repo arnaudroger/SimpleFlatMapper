@@ -1,5 +1,4 @@
 JdbcMapper
- - enum support
  - custom mapping support
  - inner object support
  - list and map

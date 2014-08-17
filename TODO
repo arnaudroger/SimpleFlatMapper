@@ -1,7 +1,4 @@
 JdbcMapper
- - asm static mapper exception handling
- - better test for asm vs non asm
- - Flight record to compare pure jdbc with static
  - enum support
  - custom mapping support
  - inner object support

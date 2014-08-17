@@ -3,5 +3,5 @@ package org.sfm.benchmark;
 import java.sql.ResultSet;
 
 public interface RowMapper<T> {
-	T map(ResultSet rs) throws Exception;
+	void map(ResultSet rs, T o) throws Exception;
 }

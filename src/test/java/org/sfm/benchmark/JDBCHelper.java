@@ -23,31 +23,27 @@ public class JDBCHelper {
 	
 	public static <T> RowMapper<T> mapper(Class<T> target) {
 		if (target.equals(DbObject.class)) {
-			return new RowMapper<T>() {
+			return (RowMapper<T>) new RowMapper<DbObject>() {
 				@SuppressWarnings("unchecked")
 				@Override
-				public T map(ResultSet rs)
+				public void map(ResultSet rs, DbObject o)
 						throws Exception {
-					DbObject o = new DbObject();
 					o.setId(rs.getLong(1));
 					o.setName(rs.getString(2));
 					o.setEmail(rs.getString(3));
 					o.setCreationTime(rs.getTimestamp(4));
-					return (T) o;
 				}
 			};
 		} else if (target.equals(SmallBenchmarkObject.class)) {
-			return new RowMapper<T>() {
+			return (RowMapper<T>) new RowMapper<SmallBenchmarkObject>() {
 				@SuppressWarnings("unchecked")
 				@Override
-				public T map(ResultSet rs)
+				public void map(ResultSet rs, SmallBenchmarkObject o)
 						throws Exception {
-					SmallBenchmarkObject o = new SmallBenchmarkObject();
 					o.setId(rs.getLong(1));
 					o.setName(rs.getString(2));
 					o.setEmail(rs.getString(3));
 					o.setYearStarted(rs.getInt(4));
-					return (T) o;
 				}
 			};
 		}

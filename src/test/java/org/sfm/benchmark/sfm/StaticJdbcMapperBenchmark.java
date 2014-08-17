@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.SmallBenchmarkObject;
 import org.sfm.benchmark.AllBenchmark;
+import org.sfm.benchmark.BenchmarkConstants;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.jdbc.DelegateJdbcMapper;
 import org.sfm.jdbc.ResultSetMapperBuilderImpl;
@@ -52,7 +53,7 @@ public class StaticJdbcMapperBenchmark<T> extends ForEachMapperQueryExecutor<T> 
 	}
 	
 	public static void main(String[] args) throws SQLException, Exception {
-		AllBenchmark.runBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class, StaticJdbcMapperBenchmark.class, 100, 1000000);
+		AllBenchmark.runBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class, StaticJdbcMapperBenchmark.class, BenchmarkConstants.SINGLE_QUERY_SIZE, BenchmarkConstants.SINGLE_NB_ITERATION);
 	}
 
 }

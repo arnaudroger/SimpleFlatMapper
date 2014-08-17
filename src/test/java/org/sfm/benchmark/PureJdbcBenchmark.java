@@ -7,29 +7,33 @@ import java.sql.SQLException;
 
 import org.sfm.beans.SmallBenchmarkObject;
 import org.sfm.jdbc.DbHelper;
+import org.sfm.reflect.Instantiator;
+import org.sfm.reflect.InstantiatorFactory;
+import org.sfm.reflect.asm.AsmFactory;
 
 
-public class PureJdbcBenchmark implements QueryExecutor {
+public class PureJdbcBenchmark<T> implements QueryExecutor {
 
 	final Connection conn;
-	final Class<?> target;
-	public PureJdbcBenchmark(Connection conn, Class<?> target) {
+	final Class<T> target;
+	final RowMapper<T> mapper; 
+	final Instantiator<T> instantiator;
+	
+	public PureJdbcBenchmark(Connection conn, Class<T> target) throws NoSuchMethodException, SecurityException {
 		this.conn = conn;
 		this.target = target;
+		this.mapper = JDBCHelper.mapper(target);
+		this.instantiator = new InstantiatorFactory(new AsmFactory()).getInstantiator(target);
 	}
 	
 	@Override
 	public final void forEach(final ForEachListener ql, int limit) throws Exception {
-		
-	
 		PreparedStatement ps = conn.prepareStatement(JDBCHelper.query(target, limit));
-		RowMapper<?> mapper = JDBCHelper.mapper(target);
 		try {
 			ResultSet rs = ps.executeQuery();
+			
 			try {
-				while(rs.next()) {
-					ql.object(mapper.map(rs));
-				}
+				forEach(rs, ql);
 			} finally {
 				rs.close();
 			}
@@ -37,8 +41,16 @@ public class PureJdbcBenchmark implements QueryExecutor {
 			ps.close();
 		}
 	}
+
+	private void forEach(ResultSet rs, final ForEachListener ql) throws SQLException, Exception {
+		while(rs.next()) {
+			T o = instantiator.newInstance();
+			mapper.map(rs, o);
+			ql.object(o);
+		}
+	}
 	
 	public static void main(String[] args) throws SQLException, Exception {
-		AllBenchmark.runBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class, PureJdbcBenchmark.class, 1000, 100000);
+		AllBenchmark.runBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class, PureJdbcBenchmark.class, BenchmarkConstants.SINGLE_QUERY_SIZE, BenchmarkConstants.SINGLE_NB_ITERATION);
 	}
 }

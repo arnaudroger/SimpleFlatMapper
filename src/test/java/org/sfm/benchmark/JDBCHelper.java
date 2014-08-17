@@ -21,10 +21,10 @@ public class JDBCHelper {
 		return query.toString();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static <T> RowMapper<T> mapper(Class<T> target) {
 		if (target.equals(DbObject.class)) {
 			return (RowMapper<T>) new RowMapper<DbObject>() {
-				@SuppressWarnings("unchecked")
 				@Override
 				public void map(ResultSet rs, DbObject o)
 						throws Exception {
@@ -36,7 +36,6 @@ public class JDBCHelper {
 			};
 		} else if (target.equals(SmallBenchmarkObject.class)) {
 			return (RowMapper<T>) new RowMapper<SmallBenchmarkObject>() {
-				@SuppressWarnings("unchecked")
 				@Override
 				public void map(ResultSet rs, SmallBenchmarkObject o)
 						throws Exception {

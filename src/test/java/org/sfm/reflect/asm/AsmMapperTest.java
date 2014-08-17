@@ -23,6 +23,8 @@ public class AsmMapperTest {
 		builder.addIndexedColumn("name");
 		builder.addIndexedColumn("email");
 		builder.addIndexedColumn("creation_time");
+		builder.addIndexedColumn("type_ordinal");
+		builder.addIndexedColumn("type_name");
 		
 		final Mapper<ResultSet, DbObject> mapper = factory.createMapper(builder.fields(), ResultSet.class, DbObject.class);
 		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {

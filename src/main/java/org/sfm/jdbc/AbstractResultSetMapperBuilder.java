@@ -149,8 +149,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 
 	private Mapper<ResultSet, T> objectFieldMapper(String column, Setter<T, Object> setter) {
 		Class<? extends Object> type = setter.getPropertyType();
-		Getter<ResultSet, ? extends Object> getter = ResultSetGetterFactory
-				.newGetter(type, column);
+		Getter<ResultSet, ? extends Object> getter = ResultSetGetterFactory.newGetter(type, column);
 		if (getter == null) {
 			mapperBuilderErrorHandler.getterNotFound("No getter for column "
 					+ column + " type " + type);
@@ -163,8 +162,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 
 	private Mapper<ResultSet, T> objectFieldMapper(int column, Setter<T, Object> setter) {
 		Class<? extends Object> type = setter.getPropertyType();
-		Getter<ResultSet, ? extends Object> getter = ResultSetGetterFactory
-				.newGetter(type, column);
+		Getter<ResultSet, ? extends Object> getter = ResultSetGetterFactory.newGetter(type, column);
 		if (getter == null) {
 			mapperBuilderErrorHandler.getterNotFound("No getter for column "
 					+ column + " type " + type);

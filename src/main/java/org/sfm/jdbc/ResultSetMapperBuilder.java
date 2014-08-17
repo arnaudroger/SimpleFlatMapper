@@ -11,16 +11,14 @@ public interface ResultSetMapperBuilder<T> {
 
 	ResultSetMapperBuilder<T> addMapping(String property, String column);
 
-	ResultSetMapperBuilder<T> addMapping(String property, int column);
-	
+	ResultSetMapperBuilder<T> addMapping(String property, int index);
 
 	ResultSetMapperBuilder<T> addNamedColumn(String column);
 
 	ResultSetMapperBuilder<T> addIndexedColumn(String column);
 
-	ResultSetMapperBuilder<T> addIndexedColumn(String column, int p);
+	ResultSetMapperBuilder<T> addIndexedColumn(String column, int index);
 	
-
 	ResultSetMapperBuilder<T> fieldMapperErrorHandler(FieldMapperErrorHandler errorHandler);
 
 	ResultSetMapperBuilder<T> mapperBuilderErrorHandler(MapperBuilderErrorHandler errorHandler);

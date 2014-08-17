@@ -4,10 +4,16 @@ import java.util.Date;
 
 public class DbObject {
 	
+	public enum Type {
+		type1, type2, type3, type4;
+	}
 	private long id;
 	private String name;
 	private String email;
 	private Date creationTime;
+	
+	private Type typeOrdinal;
+	private Type typeName;
 	
 	public long getId() {
 		return id;
@@ -33,4 +39,17 @@ public class DbObject {
 	public void setCreationTime(Date creationTime) {
 		this.creationTime = creationTime;
 	}
+	public Type getTypeOrdinal() {
+		return typeOrdinal;
+	}
+	public void setTypeOrdinal(Type typeOrdinal) {
+		this.typeOrdinal = typeOrdinal;
+	}
+	public Type getTypeName() {
+		return typeName;
+	}
+	public void setTypeName(Type typeName) {
+		this.typeName = typeName;
+	}
+	
 }

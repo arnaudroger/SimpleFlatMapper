@@ -35,6 +35,8 @@ public class ResultSetMapperBuilderTest {
 		builder.addMapping("name", "name");
 		builder.addMapping("email", "email");
 		builder.addMapping("creationTime", "creation_time");
+		builder.addMapping("typeOrdinal", "type_ordinal");
+		builder.addMapping("typeName", "type_name");
 		
 		return builder.mapper();
 	}
@@ -47,6 +49,8 @@ public class ResultSetMapperBuilderTest {
 		builder.addNamedColumn("name");
 		builder.addNamedColumn("email");
 		builder.addNamedColumn("creation_time");
+		builder.addNamedColumn("type_ordinal");
+		builder.addNamedColumn("type_name");
 		
 		Mapper<ResultSet, DbObject> mapper = builder.mapper();
 		

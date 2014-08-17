@@ -11,6 +11,8 @@ import org.sfm.jdbc.getter.CharacterIndexedResultSetGetter;
 import org.sfm.jdbc.getter.CharacterNamedResultSetGetter;
 import org.sfm.jdbc.getter.DoubleIndexedResultSetGetter;
 import org.sfm.jdbc.getter.DoubleNamedResultSetGetter;
+import org.sfm.jdbc.getter.EnumIndexedResultSetGetter;
+import org.sfm.jdbc.getter.EnumNamedResultSetGetter;
 import org.sfm.jdbc.getter.FloatIndexedResultSetGetter;
 import org.sfm.jdbc.getter.FloatNamedResultSetGetter;
 import org.sfm.jdbc.getter.IntIndexedResultSetGetter;
@@ -26,39 +28,45 @@ import org.sfm.jdbc.getter.TimestampNamedResultSetGetter;
 import org.sfm.reflect.Getter;
 
 public final class ResultSetGetterFactory {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Getter<ResultSet, ? extends Object> newGetter(
 			Class<? extends Object> type, String column) {
 		Getter<ResultSet, ? extends Object> getter = null;
-		if (type.isAssignableFrom(String.class)) {
+		
+		if (String.class.isAssignableFrom(type)) {
 			getter = new StringNamedResultSetGetter(column);
-		} else if (type.isAssignableFrom(Date.class)) {
+		} else if (Date.class.isAssignableFrom(type)) {
 			getter = new TimestampNamedResultSetGetter(column);
-		} else if (type.equals(Boolean.class)) {
+		} else if (type.equals(Boolean.class) || type.equals(boolean.class)) {
 			getter = new BooleanNamedResultSetGetter(column);
-		} else if (type.equals(Integer.class)) {
+		} else if (type.equals(Integer.class) || type.equals(int.class)) {
 			getter = new IntNamedResultSetGetter(column);
-		} else if (type.equals(Long.class)) {
+		} else if (type.equals(Long.class) || type.equals(long.class)) {
 			getter = new LongNamedResultSetGetter(column);
-		} else if (type.equals(Float.class)) {
+		} else if (type.equals(Float.class) || type.equals(float.class)) {
 			getter = new FloatNamedResultSetGetter(column);
-		} else if (type.equals(Double.class)) {
+		} else if (type.equals(Double.class) || type.equals(double.class)) {
 			getter = new DoubleNamedResultSetGetter(column);
-		} else if (type.equals(Byte.class)) {
+		} else if (type.equals(Byte.class)|| type.equals(byte.class)) {
 			getter = new ByteNamedResultSetGetter(column);
-		} else if (type.equals(Character.class)) {
+		} else if (type.equals(Character.class) || type.equals(char.class)) {
 			getter = new CharacterNamedResultSetGetter(column);
-		} else if (type.equals(Short.class)) {
+		} else if (type.equals(Short.class) || type.equals(short.class)) {
 			getter = new ShortNamedResultSetGetter(column);
+		} else if (Enum.class.isAssignableFrom(type)) {
+			getter = new EnumNamedResultSetGetter(column, type);
 		}
+		
 		return getter;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Getter<ResultSet, ? extends Object> newGetter(
 			Class<? extends Object> type, int column) {
 		Getter<ResultSet, ? extends Object> getter = null;
-		if (type.isAssignableFrom(String.class)) {
+		if (String.class.isAssignableFrom(type)) {
 			getter = new StringIndexedResultSetGetter(column);
-		} else if (type.isAssignableFrom(Date.class)) {
+		} else if (Date.class.isAssignableFrom(type)) {
 			getter = new TimestampIndexedResultSetGetter(column);
 		} else if (type.equals(Boolean.class) || type.equals(boolean.class)) {
 			getter = new BooleanIndexedResultSetGetter(column);
@@ -76,7 +84,10 @@ public final class ResultSetGetterFactory {
 			getter = new CharacterIndexedResultSetGetter(column);
 		} else if (type.equals(Short.class) || type.equals(short.class)) {
 			getter = new ShortIndexedResultSetGetter(column);
-		} 
+		} else if (Enum.class.isAssignableFrom(type)) {
+			getter = new EnumIndexedResultSetGetter(column, type);
+		}
+
 		return getter;
 	}
 }

@@ -27,7 +27,7 @@ public class DbHelper {
 			try {
 				createDbObject(st);
 
-				st.execute("insert into TEST_DB_OBJECT values(1, 'name 1', 'name1@mail.com', TIMESTAMP'2014-03-04 11:10:03')");
+				st.execute("insert into TEST_DB_OBJECT values(1, 'name 1', 'name1@mail.com', TIMESTAMP'2014-03-04 11:10:03', 2, 'type4')");
 				c.commit();
 			} finally {
 				st.close();
@@ -44,6 +44,8 @@ public class DbHelper {
 		assertEquals("name 1", dbObject.getName());
 		assertEquals("name1@mail.com", dbObject.getEmail());
 		assertEquals(DateHelper.toDate("2014-03-04 11:10:03"), dbObject.getCreationTime());
+		assertEquals(DbObject.Type.type3, dbObject.getTypeOrdinal());
+		assertEquals(DbObject.Type.type4, dbObject.getTypeName());
 	}
 	public static Connection benchmarkDb() throws SQLException {
 		//Connection c = DriverManager.getConnection("jdbc:hsqldb:mem:benchmarkdb", "SA", "");
@@ -79,7 +81,7 @@ public class DbHelper {
 				+ " id bigint not null primary key,"
 				+ " name varchar(100), "
 				+ " email varchar(100),"
-				+ " creation_Time timestamp  )");
+				+ " creation_Time timestamp, type_ordinal int, type_name varchar(10)  )");
 	}
 	
 	private static void createSmallBenchmarkObject(Statement st) throws SQLException {
@@ -100,7 +102,7 @@ public class DbHelper {
 		Connection conn = DbHelper.objectDb();
 		
 		try {
-			PreparedStatement ps = conn.prepareStatement("select id, name, email, creation_time from TEST_DB_OBJECT where id = 1 ");
+			PreparedStatement ps = conn.prepareStatement("select id, name, email, creation_time, type_ordinal, type_name from TEST_DB_OBJECT where id = 1 ");
 			
 			try {
 				handler.handle(ps);

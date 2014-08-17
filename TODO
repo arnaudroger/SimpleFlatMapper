@@ -1,7 +1,7 @@
+CsvMapper
+ - add mapper test
+ - add mapper
 JdbcMapper
  - custom mapping support
  - inner object support
  - list and map
-CsvMapper
- - add mapper test
- - add mapper

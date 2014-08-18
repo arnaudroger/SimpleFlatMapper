@@ -18,13 +18,16 @@ public class CsvParserTest {
 		InputStream sr = new ByteArrayInputStream("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2".getBytes("UTF-8"));
 		final CharSequence[][] css = new CharSequence[2][3];
 		new CsvParser(8).parse(sr, new BytesCellHandler() {
-			
+			int row = 0, col = 0;
 			@Override
-			public void cell(long row, long col, byte[] bytes, int offset, int length) {
-				String buffer = new String(bytes);
+			public void newCell(byte[] bytes, int offset, int length) {
 				String value = new String(bytes, offset, length);
-				System.out.println(buffer + " => " + value);
-				css[(int)row][(int)col] = value;
+				css[row][col++] = value;
+			}
+			@Override
+			public void newRow() {
+				row++;
+				col = 0;
 			}
 		});
 		assertEquals("cell1", css[0][0].toString());
@@ -41,13 +44,17 @@ public class CsvParserTest {
 		Reader sr = new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2");
 		final CharSequence[][] css = new CharSequence[2][3];
 		new CsvParser(8).parse(sr, new CharsCellHandler() {
+			int row = 0, col = 0;
+			@Override
+			public void newCell(char[] chars, int offset, int length) {
+				String value = new String(chars, offset, length);
+				css[row][col++] = value;
+			}
 			
 			@Override
-			public void cell(long row, long col, char[] chars, int offset, int length) {
-				String buffer = new String(chars);
-				String value = new String(chars, offset, length);
-				System.out.println(buffer + " => " + value);
-				css[(int)row][(int)col] = value;
+			public void newRow() {
+				row++;
+				col = 0;
 			}
 		});
 		assertEquals("cell1", css[0][0].toString());

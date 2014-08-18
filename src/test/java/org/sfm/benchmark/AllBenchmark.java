@@ -8,13 +8,13 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import org.sfm.beans.SmallBenchmarkObject;
-import org.sfm.benchmark.hibernate.HibernateStatefullBenchmark;
-import org.sfm.benchmark.ibatis.MyBatisBenchmark;
-import org.sfm.benchmark.sfm.DynamicJdbcMapperForEachBenchmark;
 import org.sfm.benchmark.sfm.StaticJdbcMapperBenchmark;
 import org.sfm.jdbc.DbHelper;
 
 public class AllBenchmark {
+	private static final int MIN_QUERY_SIZE = 1000;
+	private static final int MAX_QUERY_SIZE = 1000;
+	static final int NB_ITERATION = 10000;
 	public static void main(String args[]) throws Exception {
 		Connection conn = DbHelper.benchmarkDb();
 		Class<SmallBenchmarkObject> target = SmallBenchmarkObject.class;
@@ -22,16 +22,16 @@ public class AllBenchmark {
 		@SuppressWarnings("unchecked")
 		Class<? extends QueryExecutor>[] classes = new Class[] {
 				PureJdbcBenchmark.class, StaticJdbcMapperBenchmark.class,
-				DynamicJdbcMapperForEachBenchmark.class,
-				HibernateStatefullBenchmark.class, MyBatisBenchmark.class };
+				//DynamicJdbcMapperForEachBenchmark.class,
+				//HibernateStatefullBenchmark.class, MyBatisBenchmark.class
+				};
 
 		printHeader(System.out);
 		for (int j = 0; j < classes.length; j++) {
 			Class<? extends QueryExecutor> benchmark = classes[j];
-			int nbIteration = 10000;
 			if (j ==0) {
-				for (int querySize = 10; querySize <= 10000; querySize *= 10) {
-					runBenchmark(conn, target, benchmark, querySize, nbIteration, new BenchmarkListener() {
+				for (int querySize = MIN_QUERY_SIZE; querySize <= MAX_QUERY_SIZE; querySize *= 10) {
+					runBenchmark(conn, target, benchmark, querySize, NB_ITERATION, new BenchmarkListener() {
 						@Override
 						public void results(long nb, long elapsed) {
 						}
@@ -42,7 +42,7 @@ public class AllBenchmark {
 			for (int querySize = 10; querySize <= 10000; querySize *= 10) {
 				System.gc();
 				Thread.sleep(200);
-				runBenchmark(conn, target, benchmark, querySize, nbIteration);
+				runBenchmark(conn, target, benchmark, querySize, NB_ITERATION);
 			}
 		}
 

@@ -1,6 +1,7 @@
 package org.sfm.jdbc;
 
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.Date;
 
 import org.sfm.jdbc.getter.BooleanIndexedResultSetGetter;
@@ -19,8 +20,12 @@ import org.sfm.jdbc.getter.IntIndexedResultSetGetter;
 import org.sfm.jdbc.getter.IntNamedResultSetGetter;
 import org.sfm.jdbc.getter.LongIndexedResultSetGetter;
 import org.sfm.jdbc.getter.LongNamedResultSetGetter;
+import org.sfm.jdbc.getter.OrdinalEnumIndexedResultSetGetter;
+import org.sfm.jdbc.getter.OrdinalEnumNamedResultSetGetter;
 import org.sfm.jdbc.getter.ShortIndexedResultSetGetter;
 import org.sfm.jdbc.getter.ShortNamedResultSetGetter;
+import org.sfm.jdbc.getter.StringEnumIndexedResultSetGetter;
+import org.sfm.jdbc.getter.StringEnumNamedResultSetGetter;
 import org.sfm.jdbc.getter.StringIndexedResultSetGetter;
 import org.sfm.jdbc.getter.StringNamedResultSetGetter;
 import org.sfm.jdbc.getter.TimestampIndexedResultSetGetter;
@@ -28,9 +33,11 @@ import org.sfm.jdbc.getter.TimestampNamedResultSetGetter;
 import org.sfm.reflect.Getter;
 
 public final class ResultSetGetterFactory {
+	public static final int UNDEFINED = -99999;
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Getter<ResultSet, ? extends Object> newGetter(
-			Class<? extends Object> type, String column) {
+			Class<? extends Object> type, String column, int sqlType) {
 		Getter<ResultSet, ? extends Object> getter = null;
 		
 		if (String.class.isAssignableFrom(type)) {
@@ -54,7 +61,26 @@ public final class ResultSetGetterFactory {
 		} else if (type.equals(Short.class) || type.equals(short.class)) {
 			getter = new ShortNamedResultSetGetter(column);
 		} else if (Enum.class.isAssignableFrom(type)) {
-			getter = new EnumNamedResultSetGetter(column, type);
+			switch(sqlType) {
+			case UNDEFINED: 
+				getter = new EnumNamedResultSetGetter(column, type);
+				break;
+			case Types.BIGINT:
+			case Types.INTEGER:
+			case Types.NUMERIC:
+			case Types.SMALLINT:
+			case Types.TINYINT:
+				getter = new OrdinalEnumNamedResultSetGetter(column, type);
+				break;
+			case Types.CHAR:
+			case Types.LONGNVARCHAR:
+			case Types.LONGVARCHAR:
+			case Types.NCHAR:
+			case Types.NVARCHAR:
+			case Types.VARCHAR:
+				getter = new StringEnumNamedResultSetGetter(column, type);
+				break;
+			}
 		}
 		
 		return getter;
@@ -62,7 +88,7 @@ public final class ResultSetGetterFactory {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Getter<ResultSet, ? extends Object> newGetter(
-			Class<? extends Object> type, int column) {
+			Class<? extends Object> type, int column, int sqlType) {
 		Getter<ResultSet, ? extends Object> getter = null;
 		if (String.class.isAssignableFrom(type)) {
 			getter = new StringIndexedResultSetGetter(column);
@@ -85,7 +111,26 @@ public final class ResultSetGetterFactory {
 		} else if (type.equals(Short.class) || type.equals(short.class)) {
 			getter = new ShortIndexedResultSetGetter(column);
 		} else if (Enum.class.isAssignableFrom(type)) {
-			getter = new EnumIndexedResultSetGetter(column, type);
+			switch(sqlType) {
+			case UNDEFINED: 
+				getter = new EnumIndexedResultSetGetter(column, type);
+				break;
+			case Types.BIGINT:
+			case Types.INTEGER:
+			case Types.NUMERIC:
+			case Types.SMALLINT:
+			case Types.TINYINT:
+				getter = new OrdinalEnumIndexedResultSetGetter(column, type);
+				break;
+			case Types.CHAR:
+			case Types.LONGNVARCHAR:
+			case Types.LONGVARCHAR:
+			case Types.NCHAR:
+			case Types.NVARCHAR:
+			case Types.VARCHAR:
+				getter = new StringEnumIndexedResultSetGetter(column, type);
+				break;
+			}
 		}
 
 		return getter;

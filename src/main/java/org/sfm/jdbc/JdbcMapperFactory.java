@@ -42,10 +42,7 @@ public class JdbcMapperFactory {
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
-		
-		for(int i = 0; i < metaData.getColumnCount(); i++) {
-			builder.addIndexedColumn(metaData.getColumnName(i +1));
-		}
+		builder.addMapping(metaData);
 		
 		return new DelegateJdbcMapper<T>(builder.mapper(), new InstantiatorFactory(getAsmSetterFactory()).getInstantiator(target));
 	}

@@ -12,7 +12,6 @@ public final class ReaderCsvParser {
 
 	int bufferLength;
 	State currentState = State.NONE;
-	long currentRow = 0, currentCol = 0;
 
 	int currentStart =0;
 	int bufferOffset = 0;
@@ -37,7 +36,7 @@ public final class ReaderCsvParser {
 		}
 		
 		if (bufferOffset > 0 || c == ',' ) {
-			handler.cell(currentRow, currentCol, buffer, 0, bufferOffset);
+			handler.newCell(buffer, 0, bufferOffset);
 		}
 	}
 
@@ -69,18 +68,16 @@ public final class ReaderCsvParser {
 			}
 		} else if (c == ',' ) {
 			if (currentState != State.IN_QUOTE) {
-				handler.cell(currentRow, currentCol, buffer, currentStart, i - currentStart);
+				handler.newCell(buffer, currentStart, i - currentStart);
 				currentStart = i  + 1;
 				currentState = State.NONE;
-				currentCol ++;
 			}
 		}else if (c == '\n') {
 			if (currentState != State.IN_QUOTE) {
-				handler.cell(currentRow, currentCol, buffer, currentStart, i - currentStart);
+				handler.newCell(buffer, currentStart, i - currentStart);
 				currentStart = i  + 1;
 				currentState = State.NONE;
-				currentCol = 0;
-				currentRow ++;
+				handler.newRow();
 			}
 		}
 	}

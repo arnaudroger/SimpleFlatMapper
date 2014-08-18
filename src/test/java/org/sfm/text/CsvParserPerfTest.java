@@ -20,13 +20,16 @@ public class CsvParserPerfTest {
 	private static final class ValidateHandler implements BytesCellHandler, CharsCellHandler {
 		long c;
 		@Override
-		public void cell(long row, long col, byte[] bytes, int offset, int length) {
+		public void newCell(byte[] bytes, int offset, int length) {
 			c++;
 		}
 		@Override
-		public void cell(long row, long col, char[] chars, int offset,
+		public void newCell( char[] chars, int offset,
 				int length) {
 			c++;
+		}
+		@Override
+		public void newRow() {
 		}
 	}
 

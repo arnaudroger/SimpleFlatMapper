@@ -4,12 +4,12 @@ import java.sql.ResultSet;
 
 import org.sfm.reflect.Getter;
 
-public class OrdinalEnumNamedResultSetGetter<E extends Enum<E>> implements  Getter<ResultSet, E> {
+public final class OrdinalEnumNamedResultSetGetter<E extends Enum<E>> implements  Getter<ResultSet, E> {
 
 	private final String column;
 	private final E[] values;
 	@SuppressWarnings("unchecked")
-	public OrdinalEnumNamedResultSetGetter(String column, Class<E> enumType) {
+	public OrdinalEnumNamedResultSetGetter(final String column, final Class<E> enumType) {
 		this.column = column;
 		try {
 			this.values = (E[]) enumType.getDeclaredMethod("values").invoke(enumType);
@@ -19,7 +19,7 @@ public class OrdinalEnumNamedResultSetGetter<E extends Enum<E>> implements  Gett
 	}
 
 	@Override
-	public E get(ResultSet target) throws Exception {
+	public E get(final ResultSet target) throws Exception {
 		return values[target.getInt(column)];
 	}
 }

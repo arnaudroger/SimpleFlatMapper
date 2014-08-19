@@ -6,22 +6,22 @@ import java.sql.SQLException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.FloatGetter;
 
-public class FloatNamedResultSetGetter implements FloatGetter<ResultSet>, Getter<ResultSet, Float> {
+public final class FloatNamedResultSetGetter implements FloatGetter<ResultSet>, Getter<ResultSet, Float> {
 
 	private final String column;
 	
-	public FloatNamedResultSetGetter(String column) {
+	public FloatNamedResultSetGetter(final String column) {
 		this.column = column;
 	}
 
 	@Override
-	public float getFloat(ResultSet target) throws SQLException {
+	public float getFloat(final ResultSet target) throws SQLException {
 		return target.getFloat(column);
 	}
 
 	@Override
-	public Float get(ResultSet target) throws Exception {
-		float f = getFloat(target);
+	public Float get(final ResultSet target) throws Exception {
+		final float f = getFloat(target);
 		if (target.wasNull()) {
 			return null;
 		} else {

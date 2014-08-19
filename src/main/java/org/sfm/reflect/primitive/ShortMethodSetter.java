@@ -7,12 +7,12 @@ public final class ShortMethodSetter<T> implements ShortSetter<T> {
 
 	private final Method method;
 	
-	public ShortMethodSetter(Method method) {
+	public ShortMethodSetter(final Method method) {
 		this.method = method;
 	}
 
 	@Override
-	public void setShort(T target, short value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void setShort(final T target, final short value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		method.invoke(target, value);
 	}
 

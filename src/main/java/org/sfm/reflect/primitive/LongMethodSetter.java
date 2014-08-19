@@ -7,12 +7,12 @@ public final class LongMethodSetter<T> implements LongSetter<T> {
 
 	private final Method method;
 	
-	public LongMethodSetter(Method method) {
+	public LongMethodSetter(final Method method) {
 		this.method = method;
 	}
 
 	@Override
-	public void setLong(T target, long value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void setLong(final T target, final long value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		method.invoke(target, value);
 	}
 

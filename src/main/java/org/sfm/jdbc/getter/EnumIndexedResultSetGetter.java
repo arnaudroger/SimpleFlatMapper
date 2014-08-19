@@ -4,13 +4,13 @@ import java.sql.ResultSet;
 
 import org.sfm.reflect.Getter;
 
-public class EnumIndexedResultSetGetter<E extends Enum<E>> implements  Getter<ResultSet, E> {
+public final class EnumIndexedResultSetGetter<E extends Enum<E>> implements  Getter<ResultSet, E> {
 
 	private final int columnIndex;
 	private final Class<E> enumType;
 	private final E[] values;
 	@SuppressWarnings("unchecked")
-	public EnumIndexedResultSetGetter(int column, Class<E> enumType)  {
+	public EnumIndexedResultSetGetter(final int column, final Class<E> enumType)  {
 		this.columnIndex = column;
 		this.enumType = enumType;
 		try {
@@ -21,8 +21,8 @@ public class EnumIndexedResultSetGetter<E extends Enum<E>> implements  Getter<Re
 	}
 
 	@Override
-	public E get(ResultSet target) throws Exception {
-		Object o = target.getObject(columnIndex);
+	public E get(final ResultSet target) throws Exception {
+		final Object o = target.getObject(columnIndex);
 		if (o instanceof Number) {
 			return values[((Number) o).intValue()];
 		} else {

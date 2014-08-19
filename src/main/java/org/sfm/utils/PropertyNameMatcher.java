@@ -3,20 +3,20 @@ package org.sfm.utils;
 public class PropertyNameMatcher {
 	private final String name;
 	
-	public PropertyNameMatcher(String column) {
+	public PropertyNameMatcher(final String column) {
 		name = toPropertyName(column);
 	}
 
-	public boolean matches(String property) {
+	public boolean matches(final String property) {
 		return property.equalsIgnoreCase(name);
 	}
 	
-	public static String toPropertyName(String column) {
-		StringBuilder sb = new StringBuilder(column.length());
+	public static String toPropertyName(final String column) {
+		final StringBuilder sb = new StringBuilder(column.length());
 		
 		boolean upperCase = false;
 		for(int i = 0; i < column.length(); i++) {
-			char c = column.charAt(i);
+			final char c = column.charAt(i);
 			if (c != '_') {
 				if (upperCase) {
 					sb.append(Character.toUpperCase(c));

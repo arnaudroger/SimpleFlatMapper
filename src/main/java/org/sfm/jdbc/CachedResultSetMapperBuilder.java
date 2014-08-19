@@ -7,19 +7,16 @@ import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.utils.PropertyNameMatcher;
 
-public class CachedResultSetMapperBuilder<T> extends AbstractResultSetMapperBuilder<T> {
+public final class CachedResultSetMapperBuilder<T> extends AbstractResultSetMapperBuilder<T> {
 
 	private final Map<String, Setter<T, Object>> setters;
-	
 
-	public CachedResultSetMapperBuilder(Class<T> target,
-			Map<String, Setter<T, Object>> setters, SetterFactory setterFactory) {
+	public CachedResultSetMapperBuilder(final Class<T> target, final Map<String, Setter<T, Object>> setters, final SetterFactory setterFactory) {
 		super(target, setterFactory);
 		this.setters = setters;
 	}
 
-
-	protected Setter<T, Object> findSetter(PropertyNameMatcher propertyNameMatcher) {
+	private Setter<T, Object> findSetter(final PropertyNameMatcher propertyNameMatcher) {
 		for (Entry<String, Setter<T, Object>> e : setters.entrySet()) {
 			if (propertyNameMatcher.matches(e.getKey())) {
 				return e.getValue();
@@ -28,16 +25,13 @@ public class CachedResultSetMapperBuilder<T> extends AbstractResultSetMapperBuil
 		return null;
 	}
 
-
 	@Override
-	protected Setter<T, Object> findSetter(String column) {
+	protected final Setter<T, Object> findSetter(final String column) {
 		return findSetter(new PropertyNameMatcher(column));
 	}
 
-
 	@Override
-	protected Setter<T, Object> getSetter(String property) {
+	protected final Setter<T, Object> getSetter(final String property) {
 		return setters.get(property);
 	}
-
 }

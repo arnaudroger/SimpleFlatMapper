@@ -5,14 +5,14 @@ import java.sql.SQLException;
 
 import org.sfm.reflect.Getter;
 
-public class StringNamedResultSetGetter implements Getter<ResultSet, String> {
+public final class StringNamedResultSetGetter implements Getter<ResultSet, String> {
 	private final String name;
 	
-	public StringNamedResultSetGetter(String name) {
+	public StringNamedResultSetGetter(final String name) {
 		this.name = name;
 	}
 
-	public String get(ResultSet target) throws SQLException {
+	public String get(final ResultSet target) throws SQLException {
 		return target.getString(name);
 	}
 

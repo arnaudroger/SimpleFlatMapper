@@ -14,7 +14,7 @@ public final class DelegateJdbcMapper<T> implements JdbcMapper<T> {
 	private final Instantiator<T> instantiator;
 	private final Mapper<ResultSet, T> delegate;
 
-	public DelegateJdbcMapper(Mapper<ResultSet, T> delegate, Instantiator<T> instantiator) {
+	public DelegateJdbcMapper(final Mapper<ResultSet, T> delegate, final Instantiator<T> instantiator) {
 		this.delegate = delegate;
 		this.instantiator = instantiator;
 	}
@@ -52,7 +52,7 @@ public final class DelegateJdbcMapper<T> implements JdbcMapper<T> {
 	}
 
 	@Override
-	public final void map(final ResultSet source, final T target) throws Exception {
+	public void map(final ResultSet source, final T target) throws Exception {
 		delegate.map(source, target);
 	}
 

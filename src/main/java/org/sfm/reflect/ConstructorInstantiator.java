@@ -2,12 +2,12 @@ package org.sfm.reflect;
 
 import java.lang.reflect.Constructor;
 
-public class ConstructorInstantiator<T> implements Instantiator<T> {
+public final class ConstructorInstantiator<T> implements Instantiator<T> {
 	
 	private final Constructor<T> constructor;
 	private final Object[] args;
 	
-	public ConstructorInstantiator(Constructor<T> constructor, Object[] args) {
+	public ConstructorInstantiator(final Constructor<T> constructor, final Object[] args) {
 		this.constructor = constructor;
 		this.args = args;
 	}

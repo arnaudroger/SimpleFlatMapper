@@ -1,7 +1,12 @@
 package org.sfm.map;
 
 public interface Mapper<S, T> {
-
-	public abstract void map(S source, T target) throws Exception;
+	/**
+	 * map source object to target object.
+	 * @param source object to map from
+	 * @param target object to map to
+	 * @throws Exception
+	 */
+	void map(S source, T target) throws Exception;
 
 }

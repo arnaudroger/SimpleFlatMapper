@@ -6,12 +6,12 @@ public final class ByteFieldSetter<T> implements ByteSetter<T> {
 
 	private final Field field;
 	
-	public ByteFieldSetter(Field field) {
+	public ByteFieldSetter(final Field field) {
 		this.field = field;
 	}
 
 	@Override
-	public void setByte(T target, byte value) throws IllegalArgumentException, IllegalAccessException {
+	public void setByte(final T target, final byte value) throws IllegalArgumentException, IllegalAccessException {
 		field.setByte(target, value);
 	}
 

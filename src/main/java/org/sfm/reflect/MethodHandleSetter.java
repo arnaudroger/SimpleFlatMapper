@@ -8,12 +8,12 @@ public final class MethodHandleSetter<T, P> implements Setter<T, P> {
 	private final Class<? extends P> type;
 	
 	@SuppressWarnings("unchecked")
-	public MethodHandleSetter(MethodHandle method) {
+	public MethodHandleSetter(final MethodHandle method) {
 		this.method = method;
 		this.type = (Class<? extends P>) method.type().parameterType(1);
 	}
 
-	public void set(T target, P value) throws Exception {
+	public void set(final T target, final P value) throws Exception {
 		try {
 			method.invoke(target, value);
 		} catch(Exception e) {

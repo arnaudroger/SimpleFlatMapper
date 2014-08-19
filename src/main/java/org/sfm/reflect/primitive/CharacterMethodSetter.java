@@ -7,12 +7,12 @@ public final class CharacterMethodSetter<T> implements CharacterSetter<T> {
 
 	private final Method method;
 	
-	public CharacterMethodSetter(Method method) {
+	public CharacterMethodSetter(final Method method) {
 		this.method = method;
 	}
 
 	@Override
-	public void setCharacter(T target, char value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void setCharacter(final T target, final char value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		method.invoke(target, value);
 	}
 

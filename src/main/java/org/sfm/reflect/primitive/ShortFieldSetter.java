@@ -6,12 +6,12 @@ public final class ShortFieldSetter<T> implements ShortSetter<T> {
 
 	private final Field field;
 	
-	public ShortFieldSetter(Field field) {
+	public ShortFieldSetter(final Field field) {
 		this.field = field;
 	}
 
 	@Override
-	public void setShort(T target, short value) throws IllegalArgumentException, IllegalAccessException {
+	public void setShort(final T target, final short value) throws IllegalArgumentException, IllegalAccessException {
 		field.setShort(target, value);
 	}
 

@@ -5,12 +5,12 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.reflect.primitive.ByteGetter;
 import org.sfm.reflect.primitive.ByteSetter;
 
-public class ByteFieldMapper<S, T> extends AbstractFieldMapper<S, T> {
+public final class ByteFieldMapper<S, T> extends AbstractFieldMapper<S, T> {
 
 	private final ByteGetter<S> getter;
 	private final ByteSetter<T> setter;
 	
- 	public ByteFieldMapper(String name, ByteGetter<S> getter, ByteSetter<T> setter, FieldMapperErrorHandler errorHandler) {
+ 	public ByteFieldMapper(final String name, final ByteGetter<S> getter, final ByteSetter<T> setter, final FieldMapperErrorHandler errorHandler) {
  		super(name, errorHandler);
 		this.getter = getter;
 		this.setter = setter;
@@ -18,7 +18,7 @@ public class ByteFieldMapper<S, T> extends AbstractFieldMapper<S, T> {
 
 
 	@Override
-	protected void mapUnsafe(S source, T target) throws Exception {
+	protected void mapUnsafe(final S source, final T target) throws Exception {
 		setter.setByte(target, getter.getByte(source));
 	}
 }

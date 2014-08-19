@@ -5,19 +5,19 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.reflect.primitive.FloatGetter;
 import org.sfm.reflect.primitive.FloatSetter;
 
-public class FloatFieldMapper<S, T> extends AbstractFieldMapper<S, T> {
+public final class FloatFieldMapper<S, T> extends AbstractFieldMapper<S, T> {
 
 	private final FloatGetter<S> getter;
 	private final FloatSetter<T> setter;
 	
- 	public FloatFieldMapper(String name, FloatGetter<S> getter, FloatSetter<T> setter, FieldMapperErrorHandler errorHandler) {
+ 	public FloatFieldMapper(final String name, final FloatGetter<S> getter, final FloatSetter<T> setter, final FieldMapperErrorHandler errorHandler) {
  		super(name, errorHandler);
 		this.getter = getter;
 		this.setter = setter;
 	}
 
 	@Override
-	protected void mapUnsafe(S source, T target) throws Exception {
+	protected void mapUnsafe(final S source, final T target) throws Exception {
 		setter.setFloat(target, getter.getFloat(source));
 	}
 }

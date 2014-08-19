@@ -26,12 +26,12 @@ public class InstantiatorFactory {
 	
 	private final AsmFactory asmFactory;
 	
-	public InstantiatorFactory(AsmFactory asmFactory) {
+	public InstantiatorFactory(final AsmFactory asmFactory) {
 		this.asmFactory = asmFactory;
 	}
 
-	public <T> Instantiator<T> getInstantiator(Class<T> target) throws NoSuchMethodException, SecurityException {
-		Constructor<T> constructor = getSmallerConstructor(target);
+	public <T> Instantiator<T> getInstantiator(final Class<T> target) throws NoSuchMethodException, SecurityException {
+		final Constructor<T> constructor = getSmallerConstructor(target);
 		
 		Object[] args;
 		
@@ -61,7 +61,7 @@ public class InstantiatorFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> Constructor<T> getSmallerConstructor(Class<T> target) {
+	private <T> Constructor<T> getSmallerConstructor(final Class<T> target) {
 		Constructor<T> selectedConstructor = null;
 		
 		for(Constructor<?> c : target.getDeclaredConstructors()) {
@@ -73,7 +73,7 @@ public class InstantiatorFactory {
 		return selectedConstructor;
 	}
 	
-	private int compare(Constructor<?> c1, Constructor<?> c2) {
+	private int compare(final Constructor<?> c1, final Constructor<?> c2) {
 		if (Modifier.isPublic(c1.getModifiers())) {
 			if (Modifier.isPublic(c2.getModifiers())) {
 				return c1.getParameterTypes().length - c2.getParameterTypes().length;

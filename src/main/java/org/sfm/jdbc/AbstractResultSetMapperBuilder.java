@@ -36,7 +36,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 
 	@Override
-	public ResultSetMapperBuilder<T> fieldMapperErrorHandler(FieldMapperErrorHandler errorHandler) {
+	public final ResultSetMapperBuilder<T> fieldMapperErrorHandler(final FieldMapperErrorHandler errorHandler) {
 		if (!fields.isEmpty()) {
 			throw new IllegalStateException(
 					"Error Handler need to be set before adding fields");
@@ -46,14 +46,14 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 
 	@Override
-	public ResultSetMapperBuilder<T> mapperBuilderErrorHandler(MapperBuilderErrorHandler errorHandler) {
+	public final ResultSetMapperBuilder<T> mapperBuilderErrorHandler(final MapperBuilderErrorHandler errorHandler) {
 		mapperBuilderErrorHandler = errorHandler;
 		return this;
 	}
 
 	@Override
-	public ResultSetMapperBuilder<T> addNamedColumn(String column, int sqlType) {
-		Setter<T, Object> setter = findSetter(column);
+	public final ResultSetMapperBuilder<T> addNamedColumn(final String column, final int sqlType) {
+		final Setter<T, Object> setter = findSetter(column);
 		if (setter == null) {
 			mapperBuilderErrorHandler.setterNotFound(target, column);
 		} else {
@@ -63,23 +63,23 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 	
 	@Override
-	public ResultSetMapperBuilder<T> addNamedColumn(String column) {
+	public final ResultSetMapperBuilder<T> addNamedColumn(final String column) {
 		return addNamedColumn(column, ResultSetGetterFactory.UNDEFINED);
 	}
 
 	@Override
-	public ResultSetMapperBuilder<T> addIndexedColumn(String column) {
+	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column) {
 		return addIndexedColumn(column, fields.size() + 1);
 	}
 
 	@Override
-	public ResultSetMapperBuilder<T> addIndexedColumn(String column, int columnIndex) {
+	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column, final int columnIndex) {
 		return addIndexedColumn(column, columnIndex, ResultSetGetterFactory.UNDEFINED);
 	}
 	
 	@Override
-	public ResultSetMapperBuilder<T> addIndexedColumn(String column, int columnIndex, int sqlType) {
-		Setter<T, Object> setter = findSetter(column);
+	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column, final int columnIndex, final int sqlType) {
+		final Setter<T, Object> setter = findSetter(column);
 		if (setter == null) {
 			mapperBuilderErrorHandler.setterNotFound(target, column);
 		} else {
@@ -89,8 +89,8 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 
 	@Override
-	public ResultSetMapperBuilder<T> addMapping(String property, String column, int sqlType) {
-		Setter<T, Object> setter = getSetter(property);
+	public final ResultSetMapperBuilder<T> addMapping(final String property, final String column, final int sqlType) {
+		final Setter<T, Object> setter = getSetter(property);
 		if (setter == null) {
 			mapperBuilderErrorHandler.setterNotFound(target, property);
 		} else {
@@ -100,13 +100,13 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 	
 	@Override
-	public ResultSetMapperBuilder<T> addMapping(String property, String column) {
+	public final ResultSetMapperBuilder<T> addMapping(final String property, final String column) {
 		return addMapping(property, column, ResultSetGetterFactory.UNDEFINED);
 	}
 
 	@Override
-	public ResultSetMapperBuilder<T> addMapping(String property, int column, int sqlType) {
-		Setter<T, Object> setter = getSetter(property);
+	public final ResultSetMapperBuilder<T> addMapping(final String property, final int column, final int sqlType) {
+		final Setter<T, Object> setter = getSetter(property);
 		if (setter == null) {
 			mapperBuilderErrorHandler.setterNotFound(target, property);
 		} else {
@@ -116,12 +116,12 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 	
 	@Override
-	public ResultSetMapperBuilder<T> addMapping(String property, int column) {
+	public final ResultSetMapperBuilder<T> addMapping(final String property, final int column) {
 		return addMapping(property, column, ResultSetGetterFactory.UNDEFINED);
 	}
 
 	@Override
-	public ResultSetMapperBuilder<T> addMapping(ResultSetMetaData metaData) throws SQLException {
+	public final ResultSetMapperBuilder<T> addMapping(final ResultSetMetaData metaData) throws SQLException {
 		for(int i = 1; i <= metaData.getColumnCount(); i++) {
 			addIndexedColumn(metaData.getColumnName(i), i, metaData.getColumnType(i));
 		}
@@ -130,7 +130,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 	
 	@Override
-	public Mapper<ResultSet, T> mapper() {
+	public final Mapper<ResultSet, T> mapper() {
 		if (asmFactory != null) {
 			try {
 				return asmFactory.createMapper(fields(), ResultSet.class, target);
@@ -142,13 +142,13 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 		}
 	}
 
-	public Class<T> getTarget() {
+	public final Class<T> getTarget() {
 		return target;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Mapper<ResultSet, T>[] fields() {
+	public final Mapper<ResultSet, T>[] fields() {
 		return fields.toArray(new Mapper[fields.size()]);
 	}
 

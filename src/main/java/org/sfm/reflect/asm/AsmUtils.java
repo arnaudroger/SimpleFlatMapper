@@ -13,12 +13,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 public class AsmUtils {
-	public static String toType(Class<?> target) {
+	public static String toType(final Class<?> target) {
 		String name = target.getName();
 		return toType(name);
 	}
 
-	public static String toType(String name) {
+	public static String toType(final String name) {
 		return name.replace('.', '/');
 	}
 	
@@ -96,15 +96,15 @@ public class AsmUtils {
 		} 
 	}
 	
-	public static byte[] writeClassToFile (String classname, byte[] bytes) throws IOException {
+	public static byte[] writeClassToFile (final String classname, final byte[] bytes) throws IOException {
 		if (targetDir != null) {
-			int lastIndex = classname.lastIndexOf('.');
-			String filename = classname.substring(lastIndex + 1) + ".class";
-			String directory = classname.substring(0, lastIndex).replace('.', '/');
-			File packageDir = new File(targetDir, directory);
+			final int lastIndex = classname.lastIndexOf('.');
+			final String filename = classname.substring(lastIndex + 1) + ".class";
+			final String directory = classname.substring(0, lastIndex).replace('.', '/');
+			final File packageDir = new File(targetDir, directory);
 			packageDir.mkdirs();
 			
-			FileOutputStream fos = new FileOutputStream(new File(packageDir, filename ));
+			final FileOutputStream fos = new FileOutputStream(new File(packageDir, filename ));
 			try {
 				fos.write(bytes);
 			} finally {

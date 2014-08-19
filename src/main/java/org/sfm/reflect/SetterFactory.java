@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.sfm.jdbc.AsmHelper;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.primitive.BooleanFieldSetter;
 import org.sfm.reflect.primitive.BooleanMethodSetter;
@@ -35,25 +36,25 @@ import org.sfm.reflect.primitive.ShortMethodSetter;
 import org.sfm.reflect.primitive.ShortSetter;
 import org.sfm.utils.PropertyNameMatcher;
 
-public class SetterFactory {
+public final class SetterFactory {
 	
 	private final AsmFactory asmFactory;
 	
-	public SetterFactory(AsmFactory asmSetterFactory) {
+	public SetterFactory(final AsmFactory asmSetterFactory) {
 		this.asmFactory = asmSetterFactory;
 	}
 	
 	public SetterFactory() {
-		this.asmFactory = new AsmFactory();
+		this.asmFactory = AsmHelper.getAsmSetterFactory();
 	}
 
 	public AsmFactory getAsmFactory() {
 		return asmFactory;
 	}
 
-	public <T, P, C extends T> Setter<T, P> getSetter(Class<C> target, String property) {
+	public <T, P, C extends T> Setter<T, P> getSetter(final Class<C> target, final String property) {
 		// first look for method
-		Method method = lookForMethod(target, property);
+		final Method method = lookForMethod(target, property);
 		
 		if (method == null) {
 			return getFieldSetter(target, property);
@@ -62,7 +63,7 @@ public class SetterFactory {
 		}
 	}
 
-	private <T, P, C extends T> Setter<T, P> getMethodSetter(Method method) {
+	private <T, P, C extends T> Setter<T, P> getMethodSetter(final Method method) {
 		if (asmFactory != null) {
 			try {
 				return asmFactory.createSetter(method);
@@ -74,9 +75,9 @@ public class SetterFactory {
 		}
 	}
 
-	public <T, P, C extends T> FieldSetter<T, P> getFieldSetter(Class<C> target, String property) {
+	public <T, P, C extends T> FieldSetter<T, P> getFieldSetter(final Class<C> target, final String property) {
 		// look for field
-		Field field = lookForField(target, property);
+		final Field field = lookForField(target, property);
 		
 		if (field != null) {
 			field.setAccessible(true);
@@ -86,7 +87,7 @@ public class SetterFactory {
 		}
 	}
 
-	private Method lookForMethod(Class<?> target, String property) {
+	private Method lookForMethod(final Class<?> target, final String property) {
 		
 		for(Method m : target.getDeclaredMethods()) {
 			if(methodModifiersMatches(m.getModifiers())
@@ -103,7 +104,7 @@ public class SetterFactory {
 	}
 	
 
-	private Field lookForField(Class<?> target, String property) {
+	private Field lookForField(final Class<?> target, final String property) {
 		for(Field field : target.getDeclaredFields()) {
 			if(fieldModifiersMatches(field.getModifiers())
 					&& fieldNameMatchesProperty(field.getName(), property)) {
@@ -118,25 +119,25 @@ public class SetterFactory {
 		return null;
 	}
 	
-	private boolean methodModifiersMatches(int modifiers) {
+	private boolean methodModifiersMatches(final int modifiers) {
 		return !Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers);
 	}
 
-	private boolean methodNameMatchesProperty(String name, String property) {
+	private boolean methodNameMatchesProperty(final String name, final String property) {
 		return (isSetter(name) && name.regionMatches(true, 3, property, 0, property.length())) 
 				|| name.equalsIgnoreCase(property);
 	}
 	
-	private boolean fieldModifiersMatches(int modifiers) {
+	private boolean fieldModifiersMatches(final int modifiers) {
 		return !Modifier.isStatic(modifiers);
 	}
 
-	private boolean fieldNameMatchesProperty(String name, String property) {
+	private boolean fieldNameMatchesProperty(final String name, final String property) {
 		return  name.equalsIgnoreCase(property);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> BooleanSetter<T> toBooleanSetter(Setter<T, P> setter) {
+	public <T, P> BooleanSetter<T> toBooleanSetter(final Setter<T, P> setter) {
 		if (setter instanceof BooleanSetter) {
 			return (BooleanSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -148,7 +149,7 @@ public class SetterFactory {
 		}
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> ByteSetter<T> toByteSetter(Setter<T, P> setter) {
+	public <T, P> ByteSetter<T> toByteSetter(final Setter<T, P> setter) {
 		if (setter instanceof ByteSetter) {
 			return (ByteSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -160,7 +161,7 @@ public class SetterFactory {
 		}
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> CharacterSetter<T> toCharacterSetter(Setter<T, P> setter) {
+	public <T, P> CharacterSetter<T> toCharacterSetter(final Setter<T, P> setter) {
 		if (setter instanceof CharacterSetter) {
 			return (CharacterSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -173,7 +174,7 @@ public class SetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> ShortSetter<T> toShortSetter(Setter<T, P> setter) {
+	public <T, P> ShortSetter<T> toShortSetter(final Setter<T, P> setter) {
 		if (setter instanceof ShortSetter) {
 			return (ShortSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -186,7 +187,7 @@ public class SetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> IntSetter<T> toIntSetter(Setter<T, P> setter) {
+	public <T, P> IntSetter<T> toIntSetter(final Setter<T, P> setter) {
 		if (setter instanceof IntSetter) {
 			return (IntSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -199,7 +200,7 @@ public class SetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> LongSetter<T> toLongSetter(Setter<T, P> setter) {
+	public <T, P> LongSetter<T> toLongSetter(final Setter<T, P> setter) {
 		if (setter instanceof LongSetter) {
 			return (LongSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -212,7 +213,7 @@ public class SetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> FloatSetter<T> toFloatSetter(Setter<T, P> setter) {
+	public <T, P> FloatSetter<T> toFloatSetter(final Setter<T, P> setter) {
 		if (setter instanceof FloatSetter) {
 			return (FloatSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -225,7 +226,7 @@ public class SetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> DoubleSetter<T> toDoubleSetter(Setter<T, P> setter) {
+	public <T, P> DoubleSetter<T> toDoubleSetter(final Setter<T, P> setter) {
 		if (setter instanceof DoubleSetter) {
 			return (DoubleSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -237,12 +238,12 @@ public class SetterFactory {
 		}
 	}
 
-	public <T> Map<String, Setter<T, Object>> getAllSetters(Class<T> target) {
+	public <T> Map<String, Setter<T, Object>> getAllSetters(final Class<T> target) {
 		final Map<String, Setter<T, Object>> setters = new HashMap<String, Setter<T,Object>>();
 		
 		visitSetters(new SetterVisitor<T>() {
 			@Override
-			public boolean visitSetter(String property, Setter<T, Object> setter) {
+			public boolean visitSetter(final String property, final Setter<T, Object> setter) {
 				setters.put(property, setter);
 				return true;
 			}
@@ -251,22 +252,22 @@ public class SetterFactory {
 		return setters;
 	}
 	
-	public <T> Setter<T, Object> findSetter(PropertyNameMatcher matcher, Class<T> target) {
+	public <T> Setter<T, Object> findSetter(final PropertyNameMatcher matcher, final Class<T> target) {
 		return visitSetters(new PropertyMatchingSetterVisitor<T>(matcher), target).setter();
 	}
 	
-	public <T, P, C extends SetterVisitor<T>> C visitSetters(C visitor, Class<T> target) {
-		Set<String> properties = new HashSet<String>();
+	public <T, P, C extends SetterVisitor<T>> C visitSetters(final C visitor, final Class<T> target) {
+		final Set<String> properties = new HashSet<String>();
 		Class<?> currentClass = target;
 		
 		while(!Object.class.equals(currentClass)) {
 			
 			for(Method method : currentClass.getDeclaredMethods()) {
-				String name = method.getName();
+				final String name = method.getName();
 				if (methodModifiersMatches(method.getModifiers()) && isSetter(name)) {
-					String propertyName = name.substring(3,4).toLowerCase() +  name.substring(4);
+					final String propertyName = name.substring(3,4).toLowerCase() +  name.substring(4);
 					if (!properties.contains(propertyName)) {
-						Setter<T, Object> setter = getMethodSetter(method);
+						final Setter<T, Object> setter = getMethodSetter(method);
 						if (!visitor.visitSetter(propertyName, setter)) {
 							return visitor;
 						}
@@ -276,11 +277,11 @@ public class SetterFactory {
 			}
 			
 			for(Field field : currentClass.getDeclaredFields()) {
-				String name = field.getName();
+				final String name = field.getName();
 				if (fieldModifiersMatches(field.getModifiers())) {
 					if (!properties.contains(name)) {
 						field.setAccessible(true);
-						Setter<T, Object> setter = new FieldSetter<T, Object>(field);
+						final Setter<T, Object> setter = new FieldSetter<T, Object>(field);
 						if (!visitor.visitSetter(name, setter)) {
 							return visitor;
 						}
@@ -295,7 +296,7 @@ public class SetterFactory {
 		return visitor;
 	}
 
-	private boolean isSetter(String name) {
+	private boolean isSetter(final String name) {
 		return name.length() > 3 && name.startsWith("set");
 	}
 }

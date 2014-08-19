@@ -3,6 +3,7 @@ package org.sfm.jdbc;
 import org.sfm.reflect.asm.AsmFactory;
 
 public class AsmHelper {
+	
 	public static AsmFactory getAsmSetterFactory() {
 		return asmPresent ? new AsmFactory() : null;
 	}

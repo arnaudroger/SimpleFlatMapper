@@ -6,10 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.sfm.beans.SmallBenchmarkObject;
+import org.sfm.jdbc.AsmHelper;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorFactory;
-import org.sfm.reflect.asm.AsmFactory;
 
 
 public class PureJdbcBenchmark<T> implements QueryExecutor {
@@ -23,7 +23,7 @@ public class PureJdbcBenchmark<T> implements QueryExecutor {
 		this.conn = conn;
 		this.target = target;
 		this.mapper = JDBCHelper.mapper(target);
-		this.instantiator = new InstantiatorFactory(new AsmFactory()).getInstantiator(target);
+		this.instantiator = new InstantiatorFactory(AsmHelper.getAsmSetterFactory()).getInstantiator(target);
 	}
 	
 	@Override

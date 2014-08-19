@@ -7,12 +7,12 @@ public final class FloatMethodSetter<T> implements FloatSetter<T> {
 
 	private final Method method;
 	
-	public FloatMethodSetter(Method method) {
+	public FloatMethodSetter(final Method method) {
 		this.method = method;
 	}
 
 	@Override
-	public void setFloat(T target, float value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void setFloat(final T target, final float value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		method.invoke(target, value);
 	}
 

@@ -19,12 +19,12 @@ import org.sfm.utils.ListHandler;
 
 public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
-
 	private final Map<String, Setter<T, Object>> setters;
 	
 	private final SetterFactory setterFactory;
 	private final Instantiator<T> instantiator;
 	private final Class<T> target;
+	
 	@SuppressWarnings("unchecked")
 	private final AtomicReference<CacheEntry<T>[]> mapperCache = new AtomicReference<CacheEntry<T>[]>(new CacheEntry[0]);
 
@@ -32,7 +32,9 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler;
 
-	public DynamicJdbcMapper(Class<T> target, SetterFactory setterFactory, Instantiator<T> instantiator, FieldMapperErrorHandler fieldMapperErrorHandler, MapperBuilderErrorHandler mapperBuilderErrorHandler) {
+	public DynamicJdbcMapper(final Class<T> target, final SetterFactory setterFactory, 
+			final Instantiator<T> instantiator, final FieldMapperErrorHandler fieldMapperErrorHandler, 
+			final MapperBuilderErrorHandler mapperBuilderErrorHandler) {
 		this.setterFactory = setterFactory;
 		this.setters = setterFactory.getAllSetters(target);
 		this.instantiator = instantiator;
@@ -44,7 +46,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	private static final class CacheEntry<T> {
 		final MapperKey key;
 		final Mapper<ResultSet, T> mapper;
-		public CacheEntry(MapperKey key, Mapper<ResultSet, T> mapper) {
+		public CacheEntry(final MapperKey key, final Mapper<ResultSet, T> mapper) {
 			this.key = key;
 			this.mapper = mapper;
 		}
@@ -52,7 +54,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 
 	@Override
-	public final void map(ResultSet source, T target) throws Exception {
+	public final void map(final ResultSet source, final T target) throws Exception {
 		final Mapper<ResultSet, T> mapper = buildMapper(source.getMetaData());
 		mapper.map(source, target);
 	}
@@ -75,7 +77,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	}
 	
 	@Override
-	public <H extends Handler<T>> H forEach(ResultSet rs, H handle, T t)
+	public <H extends Handler<T>> H forEach(final ResultSet rs, final H handle, final T t)
 			throws Exception {
 		final Mapper<ResultSet, T> mapper = buildMapper(rs.getMetaData());
 		while(rs.next()) {
@@ -86,9 +88,9 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	}
 
 	@Override
-	public final <H extends Handler<T>> H forEach(PreparedStatement statement, H handle)
+	public <H extends Handler<T>> H forEach(final PreparedStatement statement, final H handle)
 			throws Exception {
-		ResultSet rs = statement.executeQuery();
+		final ResultSet rs = statement.executeQuery();
 		try {
 			forEach(rs, handle);
 		} finally {
@@ -97,16 +99,17 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		return handle;
 	}
 
-	private Mapper<ResultSet, T> buildMapper(ResultSetMetaData metaData) throws SQLException {
+	private Mapper<ResultSet, T> buildMapper(final ResultSetMetaData metaData) throws SQLException {
 		
-		MapperKey key = MapperKey.valueOf(metaData);
+		final MapperKey key = MapperKey.valueOf(metaData);
 		
 		Mapper<ResultSet, T> mapper = getMapper(key);
 		
 		if (mapper == null) {
-			CachedResultSetMapperBuilder<T> builder = new CachedResultSetMapperBuilder<T>(target, setters, setterFactory);
+			final CachedResultSetMapperBuilder<T> builder = new CachedResultSetMapperBuilder<T>(target, setters, setterFactory);
 			
-			builder.fieldMapperErrorHandler(fieldMapperErrorHandler).mapperBuilderErrorHandler(mapperBuilderErrorHandler);
+			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
+			builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 			builder.addMapping(metaData);
 			
 			mapper = builder.mapper();
@@ -117,7 +120,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void addToMapperCache(CacheEntry<T> cacheEntry) {
+	private void addToMapperCache(final CacheEntry<T> cacheEntry) {
 		CacheEntry<T>[] entries;
 		CacheEntry<T>[] newEntries;
 		do {
@@ -139,9 +142,9 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	}
 
 	protected Mapper<ResultSet, T> getMapper(MapperKey key) {
-		CacheEntry<T>[] entries = mapperCache.get();
+		final CacheEntry<T>[] entries = mapperCache.get();
 		for(int i = 0; i < entries.length; i++) {
-			CacheEntry<T> entry = entries[i];
+			final CacheEntry<T> entry = entries[i];
 			if (entry.key.equals(key)) {
 				return entry.mapper;
 			}
@@ -150,12 +153,12 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	}
 
 	@Override
-	public List<T> list(ResultSet rs) throws Exception {
+	public List<T> list(final ResultSet rs) throws Exception {
 		return forEach(rs, new ListHandler<T>()).getList();
 	}
 
 	@Override
-	public List<T> list(PreparedStatement ps) throws Exception {
+	public List<T> list(final PreparedStatement ps) throws Exception {
 		return forEach(ps, new ListHandler<T>()).getList();
 	}
 }

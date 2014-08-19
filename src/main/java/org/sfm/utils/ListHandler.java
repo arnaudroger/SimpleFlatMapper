@@ -8,7 +8,7 @@ public final class ListHandler<T> implements Handler<T> {
 	private final List<T> list = new ArrayList<T>();
 	
 	@Override
-	public void handle(T t) throws Exception {
+	public void handle(final T t) throws Exception {
 		list.add(t);
 	}
 

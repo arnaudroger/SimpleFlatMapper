@@ -35,13 +35,13 @@ public final class PrimitiveFieldMapperFactory<T> {
 
 	private final SetterFactory setterFactory;
 
-	public PrimitiveFieldMapperFactory(SetterFactory setterFactory) {
+	public PrimitiveFieldMapperFactory(final SetterFactory setterFactory) {
 		this.setterFactory = setterFactory;
 	}
 
-	public Mapper<ResultSet, T> primitiveFieldMapper(String column,
-			Setter<T, Object> setter, String name, FieldMapperErrorHandler errorHandler) {
-		Class<?> type = setter.getPropertyType();
+	public Mapper<ResultSet, T> primitiveFieldMapper(final String column,
+			final Setter<T, Object> setter, final String name, final FieldMapperErrorHandler errorHandler) {
+		final Class<?> type = setter.getPropertyType();
 
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<ResultSet, T>(name, 
@@ -81,9 +81,9 @@ public final class PrimitiveFieldMapperFactory<T> {
 		}
 	}
 
-	public Mapper<ResultSet, T> primitiveFieldMapper(int column,
-			Setter<T, Object> setter, String name, FieldMapperErrorHandler errorHandler) {
-		Class<?> type = setter.getPropertyType();
+	public Mapper<ResultSet, T> primitiveFieldMapper(final int column,
+			final Setter<T, Object> setter, final String name, final FieldMapperErrorHandler errorHandler) {
+		final Class<?> type = setter.getPropertyType();
 
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<ResultSet, T>(name, 

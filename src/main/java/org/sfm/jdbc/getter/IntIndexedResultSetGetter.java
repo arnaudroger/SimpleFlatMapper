@@ -10,18 +10,18 @@ public final class IntIndexedResultSetGetter implements IntGetter<ResultSet>, Ge
 
 	private final int column;
 	
-	public IntIndexedResultSetGetter(int column) {
+	public IntIndexedResultSetGetter(final int column) {
 		this.column = column;
 	}
 
 	@Override
-	public int getInt(ResultSet target) throws SQLException {
+	public int getInt(final ResultSet target) throws SQLException {
 		return target.getInt(column);
 	}
 
 	@Override
-	public Integer get(ResultSet target) throws Exception {
-		int i = getInt(target);
+	public Integer get(final ResultSet target) throws Exception {
+		final int i = getInt(target);
 		if (target.wasNull()) {
 			return null;
 		} else {

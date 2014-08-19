@@ -7,12 +7,12 @@ public final class IntMethodSetter<T> implements IntSetter<T> {
 
 	private final Method method;
 	
-	public IntMethodSetter(Method method) {
+	public IntMethodSetter(final Method method) {
 		this.method = method;
 	}
 
 	@Override
-	public void setInt(T target, int value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void setInt(final T target, final int value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		method.invoke(target, value);
 	}
 

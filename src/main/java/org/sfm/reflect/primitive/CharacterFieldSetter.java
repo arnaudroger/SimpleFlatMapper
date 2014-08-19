@@ -6,12 +6,12 @@ public final class CharacterFieldSetter<T> implements CharacterSetter<T> {
 
 	private final Field field;
 	
-	public CharacterFieldSetter(Field field) {
+	public CharacterFieldSetter(final Field field) {
 		this.field = field;
 	}
 
 	@Override
-	public void setCharacter(T target, char value) throws IllegalArgumentException, IllegalAccessException {
+	public void setCharacter(final T target, final char value) throws IllegalArgumentException, IllegalAccessException {
 		field.setChar(target, value);
 	}
 

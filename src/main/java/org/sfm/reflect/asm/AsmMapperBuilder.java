@@ -29,7 +29,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.sfm.map.Mapper;
 
 public class AsmMapperBuilder {
-	public static <S,T> byte[] dump (String className, Mapper<S, T>[] mappers, Class<S> source, Class<T> target) throws Exception {
+	public static <S,T> byte[] dump (final String className, final Mapper<S, T>[] mappers, final Class<S> source, final Class<T> target) throws Exception {
 
 		ClassWriter cw = new ClassWriter(0);
 		MethodVisitor mv;

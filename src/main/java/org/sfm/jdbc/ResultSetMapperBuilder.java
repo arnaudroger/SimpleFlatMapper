@@ -22,7 +22,6 @@ public interface ResultSetMapperBuilder<T> {
 
 	ResultSetMapperBuilder<T> addNamedColumn(String column);
 
-
 	ResultSetMapperBuilder<T> addIndexedColumn(String column);
 
 	ResultSetMapperBuilder<T> addIndexedColumn(String column, int index);

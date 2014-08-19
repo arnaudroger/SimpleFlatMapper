@@ -11,18 +11,18 @@ public final class LongIndexedResultSetGetter implements LongGetter<ResultSet>,
 
 	private final int column;
 
-	public LongIndexedResultSetGetter(int column) {
+	public LongIndexedResultSetGetter(final int column) {
 		this.column = column;
 	}
 
 	@Override
-	public long getLong(ResultSet target) throws SQLException {
+	public long getLong(final ResultSet target) throws SQLException {
 		return target.getLong(column);
 	}
 
 	@Override
-	public Long get(ResultSet target) throws Exception {
-		long l = getLong(target);
+	public Long get(final ResultSet target) throws Exception {
+		final long l = getLong(target);
 		if (target.wasNull()) {
 			return null;
 		} else {

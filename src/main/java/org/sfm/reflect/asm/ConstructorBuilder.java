@@ -18,8 +18,8 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
 public class ConstructorBuilder {
-	public static byte[] createEmptyConstructor(String className,
-			Class<?> targetClass) throws Exception {
+	public static byte[] createEmptyConstructor(final String className,
+			final Class<?> targetClass) throws Exception {
 		ClassWriter cw = new ClassWriter(0);
 		MethodVisitor mv;
 

@@ -6,22 +6,22 @@ import java.sql.SQLException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.BooleanGetter;
 
-public class BooleanIndexedResultSetGetter implements BooleanGetter<ResultSet>, Getter<ResultSet, Boolean> {
+public final class BooleanIndexedResultSetGetter implements BooleanGetter<ResultSet>, Getter<ResultSet, Boolean> {
 
 	private final int column;
 	
-	public BooleanIndexedResultSetGetter(int column) {
+	public BooleanIndexedResultSetGetter(final int column) {
 		this.column = column;
 	}
 
 	@Override
-	public boolean getBoolean(ResultSet target) throws SQLException {
+	public boolean getBoolean(final ResultSet target) throws SQLException {
 		return target.getBoolean(column);
 	}
 
 	@Override
-	public Boolean get(ResultSet target) throws Exception {
-		boolean b = getBoolean(target);
+	public Boolean get(final ResultSet target) throws Exception {
+		final boolean b = getBoolean(target);
 		if (target.wasNull()) {
 			return null;
 		} else {

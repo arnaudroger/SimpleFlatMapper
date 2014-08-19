@@ -7,12 +7,12 @@ public final class BooleanMethodSetter<T> implements BooleanSetter<T> {
 
 	private final Method method;
 	
-	public BooleanMethodSetter(Method method) {
+	public BooleanMethodSetter(final Method method) {
 		this.method = method;
 	}
 
 	@Override
-	public void setBoolean(T target, boolean value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void setBoolean(final T target, final boolean value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		method.invoke(target, value);
 	}
 

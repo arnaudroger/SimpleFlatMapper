@@ -6,14 +6,14 @@ import java.sql.Timestamp;
 
 import org.sfm.reflect.Getter;
 
-public class TimestampNamedResultSetGetter implements Getter<ResultSet, Timestamp> {
+public final class TimestampNamedResultSetGetter implements Getter<ResultSet, Timestamp> {
 	private final String name;
 	
-	public TimestampNamedResultSetGetter(String name) {
+	public TimestampNamedResultSetGetter(final String name) {
 		this.name = name;
 	}
 
-	public Timestamp get(ResultSet target) throws SQLException {
+	public Timestamp get(final ResultSet target) throws SQLException {
 		return target.getTimestamp(name);
 	}
 

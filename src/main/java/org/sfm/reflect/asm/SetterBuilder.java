@@ -9,7 +9,7 @@ import org.objectweb.asm.Type;
 
 public class SetterBuilder implements Opcodes {
 
-	public static byte[] createObjectSetter(String className, Method method) throws Exception {
+	public static byte[] createObjectSetter(final String className, final Method method) throws Exception {
 
 		ClassWriter cw = new ClassWriter(0);
 		MethodVisitor mv;

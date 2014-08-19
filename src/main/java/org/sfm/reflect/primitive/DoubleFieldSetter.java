@@ -6,12 +6,12 @@ public final class DoubleFieldSetter<T> implements DoubleSetter<T> {
 
 	private final Field field;
 	
-	public DoubleFieldSetter(Field field) {
+	public DoubleFieldSetter(final Field field) {
 		this.field = field;
 	}
 
 	@Override
-	public void setDouble(T target, double value) throws IllegalArgumentException, IllegalAccessException {
+	public void setDouble(final T target, final double value) throws IllegalArgumentException, IllegalAccessException {
 		field.setDouble(target, value);
 	}
 

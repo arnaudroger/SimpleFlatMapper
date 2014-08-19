@@ -10,14 +10,14 @@ public final class ReaderCsvParser {
 	}
 	private char[] buffer;
 
-	int bufferLength;
-	State currentState = State.NONE;
+	private int bufferLength;
+	private State currentState = State.NONE;
 
-	int currentStart =0;
-	int bufferOffset = 0;
+	private int currentStart =0;
+	private int bufferOffset = 0;
 
 	
-	public ReaderCsvParser(int bufferSize) {
+	public ReaderCsvParser(final int bufferSize) {
 		buffer = new char[bufferSize];
 	}
 	
@@ -28,7 +28,7 @@ public final class ReaderCsvParser {
 	 * @return
 	 * @throws IOException
 	 */
-	public void parse(Reader is, CharsCellHandler handler) throws IOException {
+	public void parse(final Reader is, final CharsCellHandler handler) throws IOException {
 		char c = 0;
 		
 		while((bufferLength = is.read(buffer, bufferOffset, buffer.length - bufferOffset)) != -1) {
@@ -41,7 +41,7 @@ public final class ReaderCsvParser {
 	}
 
 
-	private char consumeBytes(CharsCellHandler handler) {
+	private char consumeBytes(final CharsCellHandler handler) {
 		bufferLength += bufferOffset;
 		
 		char c = 0;
@@ -55,7 +55,7 @@ public final class ReaderCsvParser {
 		return c;
 	}
 
-	private void handleByte(CharsCellHandler handler, char c, int i) {
+	private void handleByte(final CharsCellHandler handler, final char c, final int i) {
 		if (c == '"') {
 			if (currentStart == i) {
 				currentState = State.IN_QUOTE;

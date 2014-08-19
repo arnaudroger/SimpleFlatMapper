@@ -7,12 +7,12 @@ public final class ByteMethodSetter<T> implements ByteSetter<T> {
 
 	private final Method method;
 	
-	public ByteMethodSetter(Method method) {
+	public ByteMethodSetter(final Method method) {
 		this.method = method;
 	}
 
 	@Override
-	public void setByte(T target, byte value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void setByte(final T target, final byte value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		method.invoke(target, value);
 	}
 

@@ -4,19 +4,19 @@ import java.sql.ResultSet;
 
 import org.sfm.reflect.Getter;
 
-public class StringEnumNamedResultSetGetter<E extends Enum<E>> implements  Getter<ResultSet, E> {
+public final class StringEnumNamedResultSetGetter<E extends Enum<E>> implements Getter<ResultSet, E> {
 
 	private final String column;
 	private final Class<E> enumType;
 	
-	public StringEnumNamedResultSetGetter(String column, Class<E> enumType) {
+	public StringEnumNamedResultSetGetter(final String column, final Class<E> enumType) {
 		this.column = column;
 		this.enumType = enumType;
 	}
 
 	@Override
-	public E get(ResultSet target) throws Exception {
-		String o = target.getString(column);
+	public E get(final ResultSet target) throws Exception {
+		final String o = target.getString(column);
 		return (E) Enum.valueOf(enumType, String.valueOf(o));
 	}
 }

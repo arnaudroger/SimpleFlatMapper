@@ -14,14 +14,14 @@ public final class InputStreamCsvParser {
 	}
 	private byte[] buffer;
 
-	int bufferLength;
-	State currentState = State.NONE;
+	private int bufferLength;
+	private State currentState = State.NONE;
 
-	int currentStart =0;
-	int bufferOffset = 0;
+	private int currentStart =0;
+	private int bufferOffset = 0;
 
 	
-	public InputStreamCsvParser(int bufferSize) {
+	public InputStreamCsvParser(final int bufferSize) {
 		buffer = new byte[bufferSize];
 	}
 	
@@ -32,7 +32,7 @@ public final class InputStreamCsvParser {
 	 * @return
 	 * @throws IOException
 	 */
-	public void parse(InputStream is, BytesCellHandler handler) throws IOException {
+	public void parse(final InputStream is, final BytesCellHandler handler) throws IOException {
 		byte c = 0;
 		
 		while((bufferLength = is.read(buffer, bufferOffset, buffer.length - bufferOffset)) != -1) {
@@ -45,7 +45,7 @@ public final class InputStreamCsvParser {
 	}
 
 
-	private byte consumeBytes(BytesCellHandler handler) {
+	private byte consumeBytes(final BytesCellHandler handler) {
 		bufferLength += bufferOffset;
 		
 		byte c = 0;
@@ -59,7 +59,7 @@ public final class InputStreamCsvParser {
 		return c;
 	}
 
-	private void handleByte(BytesCellHandler handler, byte c, int i) {
+	private void handleByte(final BytesCellHandler handler, final byte c, final int i) {
 		if (c ==  QUOTES) {
 			if (currentStart == i) {
 				currentState = State.IN_QUOTE;
@@ -93,7 +93,7 @@ public final class InputStreamCsvParser {
 		// if buffer tight double the size
 		if (bufferOffset > bufferLength >> 1) {
 			// double buffer size
-			byte[] newbuffer = new byte[buffer.length << 1];
+			final byte[] newbuffer = new byte[buffer.length << 1];
 			System.arraycopy(buffer, currentStart, newbuffer, 0, bufferOffset);
 			buffer = newbuffer;
 		} else {

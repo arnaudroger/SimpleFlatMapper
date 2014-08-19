@@ -6,22 +6,22 @@ import java.sql.SQLException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.DoubleGetter;
 
-public class DoubleIndexedResultSetGetter implements DoubleGetter<ResultSet>, Getter<ResultSet, Double> {
+public final class DoubleIndexedResultSetGetter implements DoubleGetter<ResultSet>, Getter<ResultSet, Double> {
 
 	private final int column;
 	
-	public DoubleIndexedResultSetGetter(int column) {
+	public DoubleIndexedResultSetGetter(final int column) {
 		this.column = column;
 	}
 
 	@Override
-	public double getDouble(ResultSet target) throws SQLException {
+	public double getDouble(final ResultSet target) throws SQLException {
 		return target.getDouble(column);
 	}
 
 	@Override
-	public Double get(ResultSet target) throws Exception {
-		double d = getDouble(target);
+	public Double get(final ResultSet target) throws Exception {
+		final double d = getDouble(target);
 		if (target.wasNull()) {
 			return null;
 		} else {

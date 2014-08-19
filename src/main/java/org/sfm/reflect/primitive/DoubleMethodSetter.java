@@ -7,12 +7,12 @@ public final class DoubleMethodSetter<T> implements DoubleSetter<T> {
 
 	private final Method method;
 	
-	public DoubleMethodSetter(Method method) {
+	public DoubleMethodSetter(final Method method) {
 		this.method = method;
 	}
 
 	@Override
-	public void setDouble(T target, double value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void setDouble(final T target, final double value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		method.invoke(target, value);
 	}
 

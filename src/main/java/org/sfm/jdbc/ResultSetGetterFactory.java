@@ -35,9 +35,8 @@ import org.sfm.reflect.Getter;
 public final class ResultSetGetterFactory {
 	public static final int UNDEFINED = -99999;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Getter<ResultSet, ? extends Object> newGetter(
-			Class<? extends Object> type, String column, int sqlType) {
+			final Class<? extends Object> type, final String column, final int sqlType) {
 		Getter<ResultSet, ? extends Object> getter = null;
 		
 		if (String.class.isAssignableFrom(type)) {
@@ -61,32 +60,39 @@ public final class ResultSetGetterFactory {
 		} else if (type.equals(Short.class) || type.equals(short.class)) {
 			getter = new ShortNamedResultSetGetter(column);
 		} else if (Enum.class.isAssignableFrom(type)) {
-			switch(sqlType) {
-			case UNDEFINED: 
-				getter = new EnumNamedResultSetGetter(column, type);
-				break;
-			case Types.BIGINT:
-			case Types.INTEGER:
-			case Types.NUMERIC:
-			case Types.SMALLINT:
-			case Types.TINYINT:
-				getter = new OrdinalEnumNamedResultSetGetter(column, type);
-				break;
-			case Types.CHAR:
-			case Types.LONGNVARCHAR:
-			case Types.LONGVARCHAR:
-			case Types.NCHAR:
-			case Types.NVARCHAR:
-			case Types.VARCHAR:
-				getter = new StringEnumNamedResultSetGetter(column, type);
-				break;
-			}
+			getter = nameEnumGetter(type, column, sqlType, getter);
 		}
 		
 		return getter;
 	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static Getter<ResultSet, ? extends Object> nameEnumGetter(
+			final Class<? extends Object> type, final String column,
+			final int sqlType, Getter<ResultSet, ? extends Object> getter) {
+		switch(sqlType) {
+		case UNDEFINED: 
+			getter = new EnumNamedResultSetGetter(column, type);
+			break;
+		case Types.BIGINT:
+		case Types.INTEGER:
+		case Types.NUMERIC:
+		case Types.SMALLINT:
+		case Types.TINYINT:
+			getter = new OrdinalEnumNamedResultSetGetter(column, type);
+			break;
+		case Types.CHAR:
+		case Types.LONGNVARCHAR:
+		case Types.LONGVARCHAR:
+		case Types.NCHAR:
+		case Types.NVARCHAR:
+		case Types.VARCHAR:
+			getter = new StringEnumNamedResultSetGetter(column, type);
+			break;
+		}
+		return getter;
+	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Getter<ResultSet, ? extends Object> newGetter(
 			Class<? extends Object> type, int column, int sqlType) {
 		Getter<ResultSet, ? extends Object> getter = null;
@@ -111,28 +117,36 @@ public final class ResultSetGetterFactory {
 		} else if (type.equals(Short.class) || type.equals(short.class)) {
 			getter = new ShortIndexedResultSetGetter(column);
 		} else if (Enum.class.isAssignableFrom(type)) {
-			switch(sqlType) {
-			case UNDEFINED: 
-				getter = new EnumIndexedResultSetGetter(column, type);
-				break;
-			case Types.BIGINT:
-			case Types.INTEGER:
-			case Types.NUMERIC:
-			case Types.SMALLINT:
-			case Types.TINYINT:
-				getter = new OrdinalEnumIndexedResultSetGetter(column, type);
-				break;
-			case Types.CHAR:
-			case Types.LONGNVARCHAR:
-			case Types.LONGVARCHAR:
-			case Types.NCHAR:
-			case Types.NVARCHAR:
-			case Types.VARCHAR:
-				getter = new StringEnumIndexedResultSetGetter(column, type);
-				break;
-			}
+			getter = indexEnumGetter(type, column, sqlType, getter);
 		}
 
+		return getter;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static Getter<ResultSet, ? extends Object> indexEnumGetter(
+			Class<? extends Object> type, int column, int sqlType,
+			Getter<ResultSet, ? extends Object> getter) {
+		switch(sqlType) {
+		case UNDEFINED: 
+			getter = new EnumIndexedResultSetGetter(column, type);
+			break;
+		case Types.BIGINT:
+		case Types.INTEGER:
+		case Types.NUMERIC:
+		case Types.SMALLINT:
+		case Types.TINYINT:
+			getter = new OrdinalEnumIndexedResultSetGetter(column, type);
+			break;
+		case Types.CHAR:
+		case Types.LONGNVARCHAR:
+		case Types.LONGVARCHAR:
+		case Types.NCHAR:
+		case Types.NVARCHAR:
+		case Types.VARCHAR:
+			getter = new StringEnumIndexedResultSetGetter(column, type);
+			break;
+		}
 		return getter;
 	}
 }

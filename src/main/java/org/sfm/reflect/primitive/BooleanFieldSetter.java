@@ -6,12 +6,12 @@ public final class BooleanFieldSetter<T> implements BooleanSetter<T> {
 
 	private final Field field;
 	
-	public BooleanFieldSetter(Field field) {
+	public BooleanFieldSetter(final Field field) {
 		this.field = field;
 	}
 
 	@Override
-	public void setBoolean(T target, boolean value) throws IllegalArgumentException, IllegalAccessException {
+	public void setBoolean(final T target, final boolean value) throws IllegalArgumentException, IllegalAccessException {
 		field.setBoolean(target, value);
 	}
 

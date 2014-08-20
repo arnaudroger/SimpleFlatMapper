@@ -19,13 +19,6 @@ What it does not do
 - no caching
 - no binary encoding
 
-TODO
-------
-- Definition of custom mapping
-- Inner object mapping
-- List/Map mapping
-- Csv Mapping
-
 Samples
 ========
 
@@ -63,4 +56,12 @@ Run 100000 queries against in memory hsqldb database, store the time it takes to
 |1000|4%|4%|564%|772%|
 |10000|3%|2%|629%|856%|
 
+TODO
+=======
+JDBCMapper
+- Definition of custom mapping
+- Inner object mapping
+- List/Map mapping
+CSVMapper
+- Csv Mapping
 

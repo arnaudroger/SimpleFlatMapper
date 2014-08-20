@@ -64,6 +64,7 @@ TODO
 =======
 
 - Publish to sonatype
+
 JDBCMapper
 ------
 - Definition of custom mapping

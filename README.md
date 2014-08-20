@@ -62,10 +62,17 @@ Run 100000 queries against in memory hsqldb database, store the time it takes to
 
 TODO
 =======
+
+- Publish to sonatype
 JDBCMapper
+------
 - Definition of custom mapping
 - Inner object mapping
 - List/Map mapping
+
 CSVMapper
+-----
 - Csv Mapping
+
+
 

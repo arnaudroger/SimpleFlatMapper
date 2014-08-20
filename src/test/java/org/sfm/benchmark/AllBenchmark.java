@@ -17,7 +17,7 @@ import org.sfm.jdbc.DbHelper;
 public class AllBenchmark {
 	private static final int MIN_QUERY_SIZE = 10;
 	private static final int MAX_QUERY_SIZE = 10000;
-	static final int NB_ITERATION = 1000000;
+	static final int NB_ITERATION = 100000;
 	public static void main(String args[]) throws Exception {
 		Connection conn = DbHelper.benchmarkDb();
 		Class<SmallBenchmarkObject> target = SmallBenchmarkObject.class;

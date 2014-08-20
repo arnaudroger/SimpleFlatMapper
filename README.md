@@ -1,4 +1,4 @@
-https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master
+[![Build Status](https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 
 SimpleFlatMapper
 ========

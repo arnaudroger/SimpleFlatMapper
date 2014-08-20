@@ -15,16 +15,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-			<plugin>
-			    <groupId>org.eluder.coveralls</groupId>
-			    <artifactId>coveralls-maven-plugin</artifactId>
-			    <version>2.2.0</version>
-			</plugin>			
 		</plugins>
 	</build>
 	<dependencies>
@@ -83,4 +79,25 @@
 			<scope>test</scope>
 		</dependency>		
 	</dependencies>
+	
+	 <profiles>
+	    <profile>
+	      <id>travis</id>
+	      <activation>
+	        <property>
+	          <name>env.TRAVIS</name>
+	          <value>true</value>
+	        </property>
+	      </activation>
+	      <build>
+	        <plugins>
+	          <plugin>
+	            <groupId>org.eluder.coveralls</groupId>
+	            <artifactId>coveralls-maven-plugin</artifactId>
+	            <version>2.2.0</version>
+	          </plugin>
+	        </plugins>
+	      </build>
+	    </profile>
+	  </profiles>	
 </project>

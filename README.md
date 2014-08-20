@@ -1,3 +1,5 @@
+https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master
+
 SimpleFlatMapper
 ========
 

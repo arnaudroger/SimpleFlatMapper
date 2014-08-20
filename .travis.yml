@@ -4,4 +4,4 @@ jdk:
   - oraclejdk7
 
 after_success:
-  - mvn jacoco:report coveralls:jacoco
+  - mvn -P travis jacoco:report coveralls:jacoco

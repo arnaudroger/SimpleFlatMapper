@@ -49,6 +49,8 @@ public class MyDao {
 
 Performance
 ========
+See [src/test/benchmarks](/src/test/benchmarks) for more details.
+
 Run 100000 queries against in memory hsqldb database, store the time it takes to read all the object in HdrHistogram. The table show the percentage above the pure jdbc benchmark for different result size. if it takes 100s for pure jdbc and 105s the targeted implementation it will show 5%.
 
 |Nb Rows|SFM Static|SFM Dynamic|Hibernate|MyBatis|

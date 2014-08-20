@@ -27,7 +27,8 @@ JdbcMapper
 ---------
 ```java
 public class MyDao {
-    private final JdbcMapper<MyObject> mapper = JdbcMapperFactory.newInstance().newMapper(MyObject.class);
+    private final JdbcMapper<MyObject> mapper = 
+    	JdbcMapperFactory.newInstance().newMapper(MyObject.class);
 
     public void writeAllObjectTo(Writer writer, Connection conn) throws Exception {
         PreparedStatement ps = conn.prepareStatement("select * from table");

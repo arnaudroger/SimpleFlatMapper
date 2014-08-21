@@ -27,13 +27,37 @@ Samples
 
 JdbcMapper
 ---------
+```sql
+create table MyTable {
+	id bigint,
+	email varchar(256),
+	my_property int
+}
+```
+
 ```java
+public class MyObject {
+	private long id;
+	public void setId(long id) { this.id = id; }
+	public long getId() { return id; }
+	
+	private String email;
+	public void setEmail(String email) { this.email = email; }
+	public String getEmail() { return email; }
+	
+	private int myProperty;
+	public void setMyProperty(int prop) { this.myProperty = prop; }
+	public int getProperty() { return myProperty; }
+	
+	public String toString() { ... }
+}
+
 public class MyDao {
     private final JdbcMapper<MyObject> mapper = 
     	JdbcMapperFactory.newInstance().newMapper(MyObject.class);
 
     public void writeAllObjectTo(Writer writer, Connection conn) throws Exception {
-        PreparedStatement ps = conn.prepareStatement("select * from table");
+        PreparedStatement ps = conn.prepareStatement("select id, email, my_property from MyTable");
         try {
             ResultSet rs = ps.executeQuery();
             mapper.forEach(rs, 
@@ -47,6 +71,17 @@ public class MyDao {
         }
     }
 }
+```
+
+Mapping
+========
+
+the Dynamic mapper will use assume a column name from the database will match the lower case property name appart from the underscore.
+
+ie:
+```
+- my_property => myProperty
+- myproperty => myProperty
 ```
 
 Performance

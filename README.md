@@ -5,7 +5,7 @@ SimpleFlatMapper
 ========
 Fast and Easy mapping from jdbc, csv to POJO.
 
-SFM aims to provide a performant with no configuration mapping from a flat record - ResultSet, csv - to a java object. The cost of object analysis is concentrated at the initialisation of the mapper, the cost of injection of data is reduce by generating asm for setters when possible and unrolling the mapping loop. The mappers are thread safe and the caching of the specific per query uses non-locking techniques.
+SFM aims to provide a solution to map from a flat record - ResultSet, csv - to a java object with no configuration and low runtime cost. The object analysis is done at the initialisation of the mapper eliminating later reflection cose. The query analysis is cached using a copy on write non locking technique. The cost of injection of data is reduce by generating asm for setters when possible and unrolling the mapping loop.
 
 Design
 ========
@@ -67,7 +67,10 @@ Please be aware that there will be a bit of noise.
 TODO
 =======
 
+Misc
+-------
 - Publish to sonatype
+- Osgi support
 
 Benchmark
 ------

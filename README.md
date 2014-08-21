@@ -3,7 +3,9 @@
 
 SimpleFlatMapper
 ========
-Java library to map flat record - ResultSet, csv - to java object with no configuration and low footprint.
+Fast and Easy mapping from jdbc, csv to POJO.
+
+SFM aims to provide a performant with no configuration mapping from a flat record - ResultSet, csv - to a java object. The cost of object analysis is concentrated at the initialisation of the mapper, the cost of injection of data is reduce by generating asm for setters when possible and unrolling the mapping loop. The mappers are thread safe and the caching of the specific per query uses non-locking techniques.
 
 Design
 ========

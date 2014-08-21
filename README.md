@@ -53,17 +53,24 @@ See [src/test/benchmarks](/src/test/benchmarks) for more details.
 
 Run 100000 queries against in memory hsqldb database, store the time it takes to read all the object in HdrHistogram. The table show the percentage above the pure jdbc benchmark for different result size. if it takes 100s for pure jdbc and 105s the targeted implementation it will show 5%.
 
+Please be aware that there will be a bit of noise.
+
 |Nb Rows|SFM Static|SFM Dynamic|Hibernate|MyBatis|
 |------:|------:|-------:|-------:|------:|
-|10|1%|3%|266%|235%|
-|100|2%|3%|437%|559%|
-|1000|4%|4%|564%|772%|
-|10000|3%|2%|629%|856%|
+|10|2%|4%|264%|232%|
+|100|1%|3%|487%|555%|
+|1000|4%|6%|630%|777%|
+|10000|3%|4%|626%|840%|
 
 TODO
 =======
 
 - Publish to sonatype
+
+Benchmark
+------
+- generate benchmark with new pure jdbc code
+- generate graphs
 
 JDBCMapper
 ------

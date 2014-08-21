@@ -44,8 +44,7 @@ public class PureJdbcBenchmark<T> implements QueryExecutor {
 
 	private void forEach(ResultSet rs, final ForEachListener ql) throws SQLException, Exception {
 		while(rs.next()) {
-			T o = instantiator.newInstance();
-			mapper.map(rs, o);
+			T o = mapper.map(rs);
 			ql.object(o);
 		}
 	}

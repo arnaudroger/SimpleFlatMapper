@@ -32,17 +32,7 @@ public class AllBenchmark {
 		printHeader(System.out);
 		for (int j = 0; j < classes.length; j++) {
 			Class<? extends QueryExecutor> benchmark = classes[j];
-			if (j ==0) {
-				for (int querySize = MIN_QUERY_SIZE; querySize <= MAX_QUERY_SIZE; querySize *= 10) {
-					runBenchmark(conn, target, benchmark, querySize, NB_ITERATION, new BenchmarkListener() {
-						@Override
-						public void results(long nb, long elapsed) {
-						}
-					});
-				}
-				
-			}
-			for (int querySize = 10; querySize <= 10000; querySize *= 10) {
+			for (int querySize = MIN_QUERY_SIZE; querySize <= MAX_QUERY_SIZE; querySize *= 10) {
 				System.gc();
 				Thread.sleep(200);
 				runBenchmark(conn, target, benchmark, querySize, NB_ITERATION);
@@ -61,7 +51,7 @@ public class AllBenchmark {
 	}
 
 	public static void printHeader(PrintStream ps) throws IOException {
-		ps.println("benchmark,object,query size,10%,25%,50%,90%,95%,99%,99.9%,99.99%,min,avg,max");
+		ps.println("benchmark,object,query size,10%,20%,30%,40%,50%,60%,70%,80%,90%,95%,99%,min,avg,max");
 	}
 	
 	static NumberFormat nf = new DecimalFormat("00000.00");
@@ -71,19 +61,25 @@ public class AllBenchmark {
 		out.print(",");
 		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(10.0)));
 		out.print(",");
-		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(25.0)));
+		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(20.0)));
+		out.print(",");
+		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(30.0)));
+		out.print(",");
+		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(40.0)));
 		out.print(",");
 		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(50.0)));
+		out.print(",");
+		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(60.0)));
+		out.print(",");
+		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(70.0)));
+		out.print(",");
+		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(80.0)));
 		out.print(",");
 		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(90.0)));
 		out.print(",");
 		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(95.0)));
 		out.print(",");
 		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(99.0)));
-		out.print(",");
-		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(99.9)));
-		out.print(",");
-		out.print(nf.format(cbl.getHistogram().getValueAtPercentile(99.99)));
 		out.print(",");
 		out.print(nf.format(cbl.getHistogram().getMinValue()));
 		out.print(",");

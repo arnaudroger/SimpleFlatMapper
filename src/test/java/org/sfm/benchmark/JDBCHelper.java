@@ -26,23 +26,27 @@ public class JDBCHelper {
 		if (target.equals(DbObject.class)) {
 			return (RowMapper<T>) new RowMapper<DbObject>() {
 				@Override
-				public void map(ResultSet rs, DbObject o)
+				public DbObject map(ResultSet rs)
 						throws Exception {
+					DbObject o = new DbObject();
 					o.setId(rs.getLong(1));
 					o.setName(rs.getString(2));
 					o.setEmail(rs.getString(3));
 					o.setCreationTime(rs.getTimestamp(4));
+					return o;
 				}
 			};
 		} else if (target.equals(SmallBenchmarkObject.class)) {
 			return (RowMapper<T>) new RowMapper<SmallBenchmarkObject>() {
 				@Override
-				public void map(ResultSet rs, SmallBenchmarkObject o)
+				public SmallBenchmarkObject map(ResultSet rs)
 						throws Exception {
+					SmallBenchmarkObject o = new SmallBenchmarkObject();
 					o.setId(rs.getLong(1));
 					o.setName(rs.getString(2));
 					o.setEmail(rs.getString(3));
 					o.setYearStarted(rs.getInt(4));
+					return o;
 				}
 			};
 		}

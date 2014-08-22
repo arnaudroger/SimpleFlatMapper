@@ -57,7 +57,8 @@ public class MyDao {
     	JdbcMapperFactory.newInstance().newMapper(MyObject.class);
 
     public void writeAllObjectTo(Writer writer, Connection conn) throws Exception {
-        PreparedStatement ps = conn.prepareStatement("select id, email, my_property from MyTable");
+        PreparedStatement ps = 
+        	conn.prepareStatement("select id, email, my_property from MyTable");
         try {
             ResultSet rs = ps.executeQuery();
             mapper.forEach(rs, 

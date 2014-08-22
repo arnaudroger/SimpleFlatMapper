@@ -111,7 +111,6 @@ Misc
 
 Benchmark
 ------
-- generate benchmark with new pure jdbc code
 - generate graphs
 
 JDBCMapper

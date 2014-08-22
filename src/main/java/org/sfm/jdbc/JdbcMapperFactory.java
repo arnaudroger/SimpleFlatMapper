@@ -44,7 +44,7 @@ public final class JdbcMapperFactory {
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 		builder.addMapping(metaData);
 		
-		return new DelegateJdbcMapper<T>(builder.mapper(), new InstantiatorFactory(getAsmSetterFactory()).getInstantiator(target));
+		return builder.mapper();
 	}
 	
 	/**

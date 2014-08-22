@@ -36,34 +36,6 @@ public class DynamicJdbcMapperTest {
 	}
 	
 	@Test
-	public void testResultSetMapperForEachPS()
-			throws SQLException, Exception, ParseException {
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
-			@Override
-			public void handle(PreparedStatement ps) throws Exception {
-				List<DbObject> objects = mapper.forEach(ps, new ListHandler<DbObject>()).getList();
-				assertEquals(1, objects.size());
-				DbHelper.assertDbObjectMapping(objects.get(0));
-			}
-		});
-	}
-	
-	@Test
-	public void testResultSetMapperForEachRSWithParam()
-			throws SQLException, Exception, ParseException {
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
-			@Override
-			public void handle(PreparedStatement ps) throws Exception {
-				DbObject object = new DbObject();
-				List<DbObject> objects = mapper.forEach(ps.executeQuery(), new ListHandler<DbObject>(), object).getList();
-				assertEquals(1, objects.size());
-				DbHelper.assertDbObjectMapping(objects.get(0));
-				assertSame(object, objects.get(0));
-			}
-		});
-	}
-	
-	@Test
 	public void testMapperCache() throws SQLException, ParseException, Exception {
 		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
 			@Override

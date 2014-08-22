@@ -4,8 +4,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuilderErrorHandler;
 
 public interface ResultSetMapperBuilder<T> {
@@ -34,8 +34,8 @@ public interface ResultSetMapperBuilder<T> {
 
 	ResultSetMapperBuilder<T> mapperBuilderErrorHandler(MapperBuilderErrorHandler errorHandler);
 	
-	Mapper<ResultSet, T> mapper();
+	JdbcMapper<T> mapper();
 
-	Mapper<ResultSet, T>[] fields();
+	FieldMapper<ResultSet, T>[] fields();
 
 }

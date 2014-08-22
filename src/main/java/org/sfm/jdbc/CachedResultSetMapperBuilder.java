@@ -11,7 +11,7 @@ public final class CachedResultSetMapperBuilder<T> extends AbstractResultSetMapp
 
 	private final Map<String, Setter<T, Object>> setters;
 
-	public CachedResultSetMapperBuilder(final Class<T> target, final Map<String, Setter<T, Object>> setters, final SetterFactory setterFactory) {
+	public CachedResultSetMapperBuilder(final Class<T> target, final Map<String, Setter<T, Object>> setters, final SetterFactory setterFactory) throws NoSuchMethodException, SecurityException {
 		super(target, setterFactory);
 		this.setters = setters;
 	}

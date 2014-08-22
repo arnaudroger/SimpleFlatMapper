@@ -7,6 +7,8 @@ public class BenchmarkRunner {
 		private BenchmarkListener bl;
 		private long counter;
 		private long startTime;
+		@SuppressWarnings("unused")
+		private volatile Object o;
 		
 		public ForEachListenerImpl(BenchmarkListener bl) {
 			this.bl = bl;
@@ -20,6 +22,7 @@ public class BenchmarkRunner {
 
 		@Override
 		public void object(Object o) {
+			this.o = o;
 			counter++;
 		}
 

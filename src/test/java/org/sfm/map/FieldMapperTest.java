@@ -17,7 +17,7 @@ public class FieldMapperTest {
 		final Object source = new Object();
 		final Object target = new Object();
 		
-		FieldMapper<Object, Object, Object> fieldMapper = new FieldMapper<>(
+		FieldMapperImpl<Object, Object, Object> fieldMapper = new FieldMapperImpl<>(
 				"test", new Getter<Object, Object>() {
 
 					@Override
@@ -49,7 +49,7 @@ public class FieldMapperTest {
 		final Object source = new Object();
 		final Object target = new Object();
 		
-		FieldMapper<Object, Object, Object> fieldMapper = new FieldMapper<>(
+		FieldMapperImpl<Object, Object, Object> fieldMapper = new FieldMapperImpl<>(
 				"test", new Getter<Object, Object>() {
 
 					@Override

@@ -1,12 +1,14 @@
 package org.sfm.reflect.asm;
 
 import java.lang.reflect.Method;
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.objectweb.asm.Opcodes;
-import org.sfm.map.Mapper;
+import org.sfm.jdbc.JdbcMapper;
+import org.sfm.map.FieldMapper;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.Setter;
 
@@ -90,11 +92,11 @@ public class AsmFactory implements Opcodes {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S, T> Mapper<S,T> createMapper(final Mapper<S, T>[] mappers, final Class<S> source, final Class<T> target) throws Exception {
-		final String className = generateClassName(mappers, source, target);
-		final byte[] bytes = AsmMapperBuilder.dump(className, mappers, source, target);
+	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<T> instantiator, final Class<T> target) throws Exception {
+		final String className = generateClassName(mappers, ResultSet.class, target);
+		final byte[] bytes = AsmJdbcMapperBuilder.dump(className, mappers, instantiator, target);
 		final Class<?> type = factoryClassLoader.registerGetter(className, bytes);
-		return (Mapper<S, T>) type.getDeclaredConstructors()[0].newInstance((Object)mappers);
+		return (JdbcMapper<T>) type.getDeclaredConstructors()[0].newInstance(mappers, instantiator);
 	}
 	
 	private String generateInstantiatorClassName(final Class<?> target) {
@@ -110,7 +112,7 @@ public class AsmFactory implements Opcodes {
 					;
 	}
 	private final AtomicLong classNumber = new AtomicLong();
-	private <S, T> String generateClassName(final Mapper<S, T>[] mappers, final Class<S> source, final Class<T> target) {
+	private <S, T> String generateClassName(final FieldMapper<S, T>[] mappers, final Class<S> source, final Class<T> target) {
 		return "org.sfm.reflect.asm." + target.getPackage().getName() + 
 					".AsmMapper" + source.getSimpleName() + "2" +  target.getSimpleName() + mappers.length + classNumber.getAndIncrement(); 
 	}

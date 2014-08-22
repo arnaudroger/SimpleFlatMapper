@@ -8,6 +8,7 @@ import static org.objectweb.asm.Opcodes.LLOAD;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.TypeVariable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -112,5 +113,25 @@ public class AsmUtils {
 			}
 		}		
 		return bytes;
+	}
+
+	public static String toTypeWithParam(Class<?> class1) {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(toType(class1));
+		
+		TypeVariable<?>[] typeParameters = class1.getTypeParameters();
+		
+		if (typeParameters != null && typeParameters.length > 0) {
+			sb.append("<");
+			
+			for(TypeVariable<?> t : typeParameters) {
+				sb.append("L").append(toType(t.getName())).append(";");
+			}
+			
+			sb.append(">");
+		}
+		
+		return sb.toString();
 	}
 }

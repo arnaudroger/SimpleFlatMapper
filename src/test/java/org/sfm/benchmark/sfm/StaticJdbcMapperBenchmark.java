@@ -8,9 +8,8 @@ import org.sfm.beans.SmallBenchmarkObject;
 import org.sfm.benchmark.AllBenchmark;
 import org.sfm.benchmark.BenchmarkConstants;
 import org.sfm.jdbc.DbHelper;
-import org.sfm.jdbc.DelegateJdbcMapper;
+import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.ResultSetMapperBuilderImpl;
-import org.sfm.reflect.Instantiator;
 
 public class StaticJdbcMapperBenchmark<T> extends ForEachMapperQueryExecutor<T> {
 	public StaticJdbcMapperBenchmark(Connection conn, Class<T> target) throws NoSuchMethodException, SecurityException, SQLException {
@@ -18,35 +17,21 @@ public class StaticJdbcMapperBenchmark<T> extends ForEachMapperQueryExecutor<T> 
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> DelegateJdbcMapper<T> newMapper(Class<T> target) {
+	private static <T> JdbcMapper<T> newMapper(Class<T> target) throws NoSuchMethodException, SecurityException {
 		if (target.equals(DbObject.class)) {
-			return (DelegateJdbcMapper<T>) 
-					new DelegateJdbcMapper<DbObject>(
+			return (JdbcMapper<T>) 
 							new ResultSetMapperBuilderImpl<DbObject>(DbObject.class)
 								.addIndexedColumn("id")
 								.addIndexedColumn("name")
 								.addIndexedColumn("email")
-								.addIndexedColumn("creation_time").mapper(), 
-					new Instantiator<DbObject>() {
-						@Override
-						public DbObject newInstance() throws Exception {
-							return new DbObject();
-						}
-					});
+								.addIndexedColumn("creation_time").mapper();
 		} else if (target.equals(SmallBenchmarkObject.class)) {
-			return (DelegateJdbcMapper<T>) 
-					new DelegateJdbcMapper<SmallBenchmarkObject>(
+			return (JdbcMapper<T>) 
 							new ResultSetMapperBuilderImpl<SmallBenchmarkObject>(SmallBenchmarkObject.class)
 								.addIndexedColumn("id")
 								.addIndexedColumn("name")
 								.addIndexedColumn("email")
-								.addIndexedColumn("year_started").mapper(), 
-					new Instantiator<SmallBenchmarkObject>() {
-						@Override
-						public SmallBenchmarkObject newInstance() throws Exception {
-							return new SmallBenchmarkObject();
-						}
-					});
+								.addIndexedColumn("year_started").mapper();
 		} else {
 			throw new UnsupportedOperationException(target.getName());
 		}

@@ -9,6 +9,7 @@ import org.sfm.jdbc.AbstractResultSetMapperBuilder;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.jdbc.ResultSetMapperBuilderImpl;
 import org.sfm.map.Mapper;
+import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.utils.Handler;
 
@@ -26,14 +27,17 @@ public class AsmMapperTest {
 		builder.addIndexedColumn("type_ordinal");
 		builder.addIndexedColumn("type_name");
 		
-		final Mapper<ResultSet, DbObject> mapper = factory.createMapper(builder.fields(), ResultSet.class, DbObject.class);
+		final Mapper<ResultSet, DbObject> mapper = 
+				factory.createJdbcMapper(builder.fields(), 
+						new InstantiatorFactory(factory).getInstantiator(DbObject.class),  
+						DbObject.class);
+		
 		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				ResultSet rs = ps.executeQuery();
 				rs.next();
-				DbObject object = new DbObject();
-				mapper.map(rs, object);
+				DbObject object = mapper.map(rs);
 				DbHelper.assertDbObjectMapping(object);
 			}
 		});

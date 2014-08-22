@@ -8,12 +8,13 @@ import java.util.List;
 
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.FieldMapperImpl;
 import org.sfm.map.LogFieldMapperErrorHandler;
-import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.RethrowMapperBuilderErrorHandler;
-import org.sfm.map.SaticMapper;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.Instantiator;
+import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.asm.AsmFactory;
@@ -26,13 +27,16 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	private final Class<T> target;
 	private final PrimitiveFieldMapperFactory<T> primitiveFieldMapperFactory;
 	private final AsmFactory asmFactory;
-
-	private final List<Mapper<ResultSet, T>> fields = new ArrayList<Mapper<ResultSet, T>>();
 	
-	public AbstractResultSetMapperBuilder(Class<T> target, SetterFactory setterFactory) {
+	private final Instantiator<T> instantiator;
+
+	private final List<FieldMapper<ResultSet, T>> fields = new ArrayList<FieldMapper<ResultSet, T>>();
+	
+	public AbstractResultSetMapperBuilder(Class<T> target, SetterFactory setterFactory) throws NoSuchMethodException, SecurityException {
 		this.target = target;
 		this.primitiveFieldMapperFactory = new PrimitiveFieldMapperFactory<>(setterFactory);
 		this.asmFactory = setterFactory.getAsmFactory();
+		this.instantiator = new InstantiatorFactory(asmFactory).getInstantiator(target);
 	}
 
 	@Override
@@ -130,16 +134,20 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 	
 	@Override
-	public final Mapper<ResultSet, T> mapper() {
+	public final JdbcMapper<T> mapper() {
 		if (asmFactory != null) {
 			try {
-				return asmFactory.createMapper(fields(), ResultSet.class, target);
+				return asmFactory.createJdbcMapper(fields(), getInstantiator(), target);
 			} catch(Exception e) {
-				return new SaticMapper<ResultSet, T>(fields());
+				return new JdbcMapperImpl<T>(fields(), getInstantiator());
 			}
 		} else {
-			return new SaticMapper<ResultSet, T>(fields());
+			return new JdbcMapperImpl<T>(fields(), getInstantiator());
 		}
+	}
+
+	private Instantiator<T> getInstantiator() {
+		return instantiator;
 	}
 
 	public final Class<T> getTarget() {
@@ -148,12 +156,12 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public final Mapper<ResultSet, T>[] fields() {
-		return fields.toArray(new Mapper[fields.size()]);
+	public final FieldMapper<ResultSet, T>[] fields() {
+		return fields.toArray(new FieldMapper[fields.size()]);
 	}
 
 	private void addMapping(Setter<T, Object> setter, String column, int sqlType) {
-		Mapper<ResultSet, T> fieldMapper;
+		FieldMapper<ResultSet, T> fieldMapper;
 	
 		if (setter.getPropertyType().isPrimitive()) {
 			fieldMapper = primitiveFieldMapperFactory.primitiveFieldMapper(column, setter, column, fieldMapperErrorHandler);
@@ -165,7 +173,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 
 	private void addMapping(Setter<T, Object> setter, int column, int sqlType) {
-		Mapper<ResultSet, T> fieldMapper;
+		FieldMapper<ResultSet, T> fieldMapper;
 	
 		if (setter.getPropertyType().isPrimitive()) {
 			fieldMapper = primitiveFieldMapperFactory.primitiveFieldMapper(column, setter, String.valueOf(column), fieldMapperErrorHandler);
@@ -176,7 +184,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 		fields.add(fieldMapper);
 	}
 
-	private Mapper<ResultSet, T> objectFieldMapper(String column, Setter<T, Object> setter, int sqlType) {
+	private FieldMapper<ResultSet, T> objectFieldMapper(String column, Setter<T, Object> setter, int sqlType) {
 		Class<? extends Object> type = setter.getPropertyType();
 		Getter<ResultSet, ? extends Object> getter = ResultSetGetterFactory.newGetter(type, column, sqlType);
 		if (getter == null) {
@@ -184,12 +192,12 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 					+ column + " type " + type);
 			return null;
 		} else {
-			return new FieldMapper<ResultSet, T, Object>(column, getter,
+			return new FieldMapperImpl<ResultSet, T, Object>(column, getter,
 					setter, fieldMapperErrorHandler);
 		}
 	}
 
-	private Mapper<ResultSet, T> objectFieldMapper(int column, Setter<T, Object> setter, int sqlType) {
+	private FieldMapper<ResultSet, T> objectFieldMapper(int column, Setter<T, Object> setter, int sqlType) {
 		Class<? extends Object> type = setter.getPropertyType();
 		Getter<ResultSet, ? extends Object> getter = ResultSetGetterFactory.newGetter(type, column, sqlType);
 		if (getter == null) {
@@ -197,7 +205,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 					+ column + " type " + type);
 			return null;
 		} else {
-			return new FieldMapper<ResultSet, T, Object>(
+			return new FieldMapperImpl<ResultSet, T, Object>(
 					String.valueOf(column), getter, setter,
 					fieldMapperErrorHandler);
 		}

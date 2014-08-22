@@ -11,12 +11,16 @@ import org.sfm.beans.SmallBenchmarkObject;
 import org.sfm.benchmark.hibernate.HibernateStatefullBenchmark;
 import org.sfm.benchmark.ibatis.MyBatisBenchmark;
 import org.sfm.benchmark.sfm.DynamicJdbcMapperForEachBenchmark;
+import org.sfm.benchmark.sfm.DynamicNoAsmJdbcMapperForEachBenchmark;
 import org.sfm.benchmark.sfm.StaticJdbcMapperBenchmark;
 import org.sfm.jdbc.DbHelper;
 
 public class AllBenchmark {
-	private static final int MIN_QUERY_SIZE = 10;
+	private static final int MIN_QUERY_SIZE = 1;
 	private static final int MAX_QUERY_SIZE = 10000;
+//	private static final int MIN_QUERY_SIZE = 1000;
+//	private static final int MAX_QUERY_SIZE = 1000;
+	//static final int NB_ITERATION = 200000;
 	static final int NB_ITERATION = 100000;
 	public static void main(String args[]) throws Exception {
 		Connection conn = DbHelper.benchmarkDb();
@@ -24,13 +28,18 @@ public class AllBenchmark {
 
 		@SuppressWarnings("unchecked")
 		Class<? extends QueryExecutor>[] classes = new Class[] {
-				PureJdbcBenchmark.class, StaticJdbcMapperBenchmark.class,
+				PureJdbcBenchmark.class, 
+				StaticJdbcMapperBenchmark.class,
 				DynamicJdbcMapperForEachBenchmark.class,
-				HibernateStatefullBenchmark.class, MyBatisBenchmark.class
+				DynamicNoAsmJdbcMapperForEachBenchmark.class,
+				HibernateStatefullBenchmark.class, 
+				MyBatisBenchmark.class
 				};
+		
 
 		printHeader(System.out);
-		for (int j = 0; j < classes.length; j++) {
+//		for (int j = classes.length - 1; j >= 0; j--) {
+		for (int j = 0; j <classes.length; j++) {
 			Class<? extends QueryExecutor> benchmark = classes[j];
 			for (int querySize = MIN_QUERY_SIZE; querySize <= MAX_QUERY_SIZE; querySize *= 10) {
 				System.gc();

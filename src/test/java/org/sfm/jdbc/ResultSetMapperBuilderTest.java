@@ -24,11 +24,11 @@ public class ResultSetMapperBuilderTest {
 
 	@Test
 	public void testSelectWithManualDefinition() throws Exception {
-		Mapper<ResultSet, DbObject> mapper = newManualMapper();
+		JdbcMapper<DbObject> mapper = newManualMapper();
 		testDbObjectMappingFromDb(mapper);
 	}
 
-	public static  Mapper<ResultSet, DbObject> newManualMapper() throws NoSuchMethodException, SecurityException {
+	public static  JdbcMapper<DbObject> newManualMapper() throws NoSuchMethodException, SecurityException {
 		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
 		
 		builder.addMapping("id", "id");
@@ -52,7 +52,7 @@ public class ResultSetMapperBuilderTest {
 		builder.addNamedColumn("type_ordinal");
 		builder.addNamedColumn("type_name");
 		
-		Mapper<ResultSet, DbObject> mapper = builder.mapper();
+		JdbcMapper<DbObject> mapper = builder.mapper();
 		
 		testDbObjectMappingFromDb(mapper);
 	}
@@ -60,54 +60,54 @@ public class ResultSetMapperBuilderTest {
 	@Test
 	public void testNamedPrimitivesWithSetterAccess() throws Exception {
 		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
-		testNamedPrimitives(builder, new DbPrimitiveObjectWithSetter());
+		testNamedPrimitives(builder);
 	}
 	
 	@Test
 	public void testNamedBoxedPrimitives() throws Exception {
 		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
-		testNamedPrimitives(builder, new DbBoxedPrimitveObject());
+		testNamedPrimitives(builder);
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithSetterAccess() throws Exception {
 		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
-		testIndexedPrimitives(builder, new DbPrimitiveObjectWithSetter());
+		testIndexedPrimitives(builder);
 	}
 	
 	@Test
 	public void testNamedBoxedPrimitivesWithNullValues() throws Exception {
 		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
-		testNamedPrimitivesWithNull(builder, new DbBoxedPrimitveObject());
+		testNamedPrimitivesWithNull(builder);
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithNullValues() throws Exception {
 		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
-		testIndexedPrimitivesWithNull(builder, new DbBoxedPrimitveObject());
+		testIndexedPrimitivesWithNull(builder);
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithSetterAccessNoAsm() throws Exception {
 		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, new SetterFactory(null));
-		testIndexedPrimitives(builder, new DbPrimitiveObjectWithSetter());
+		testIndexedPrimitives(builder);
 	}
 	
 	@Test
 	public void testIndexedBoxedPrimitives() throws Exception {
 		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
-		testIndexedPrimitives(builder, new DbBoxedPrimitveObject());
+		testIndexedPrimitives(builder);
 	}
 	
-	private <T extends PrimitiveObject> void testIndexedPrimitives(ResultSetMapperBuilder<T> builder, T object)
+	private <T extends PrimitiveObject> void testIndexedPrimitives(ResultSetMapperBuilder<T> builder)
 			throws SQLException, Exception {
 		addIndexedColumn(builder);		
-		testPrimitives(object, builder.mapper());
+		testPrimitives(builder.mapper());
 	}
-	private <T extends PrimitiveObject> void testIndexedPrimitivesWithNull(ResultSetMapperBuilder<DbBoxedPrimitveObject> builder, DbBoxedPrimitveObject object)
+	private void testIndexedPrimitivesWithNull(ResultSetMapperBuilder<DbBoxedPrimitveObject> builder)
 			throws SQLException, Exception {
 		addIndexedColumn(builder);		
-		testPrimitivesWithNullValues(object, builder.mapper());
+		testPrimitivesWithNullValues(builder.mapper());
 	}
 	private <T extends PrimitiveObject> void addIndexedColumn(
 			ResultSetMapperBuilder<T> builder) {
@@ -121,16 +121,16 @@ public class ResultSetMapperBuilderTest {
 			.addMapping("pFloat", 7)
 			.addMapping("pDouble", 8);
 	}
-	private <T extends PrimitiveObject> void testNamedPrimitives(ResultSetMapperBuilder<T> builder, T object)
+	private <T extends PrimitiveObject> void testNamedPrimitives(ResultSetMapperBuilder<T> builder)
 			throws SQLException, Exception {
 		addNamedColumns(builder);		
-		testPrimitives(object,  builder.mapper());
+		testPrimitives(builder.mapper());
 	}
 	
-	private <T extends PrimitiveObject> void testNamedPrimitivesWithNull(ResultSetMapperBuilder<DbBoxedPrimitveObject> builder, DbBoxedPrimitveObject object)
+	private void testNamedPrimitivesWithNull(ResultSetMapperBuilder<DbBoxedPrimitveObject> builder)
 			throws SQLException, Exception {
 		addNamedColumns(builder);		
-		testPrimitivesWithNullValues(object,  builder.mapper());
+		testPrimitivesWithNullValues(builder.mapper());
 	}
 
 
@@ -146,8 +146,7 @@ public class ResultSetMapperBuilderTest {
 		builder.addNamedColumn("p_double");
 	}
 
-	public <T extends PrimitiveObject> void testPrimitives(T object,
-			Mapper<ResultSet, T> mapper) throws SQLException, Exception {
+	public <T extends PrimitiveObject> void testPrimitives(Mapper<ResultSet, T> mapper) throws SQLException, Exception {
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.getBoolean("p_boolean")).thenReturn(true);
 		when(rs.getByte("p_byte")).thenReturn((byte)0xa3);
@@ -167,7 +166,7 @@ public class ResultSetMapperBuilderTest {
 		when(rs.getFloat(7)).thenReturn(3.14f);
 		when(rs.getDouble(8)).thenReturn(3.14159);
 		
-		mapper.map(rs, object);
+		T object = mapper.map(rs);
 		
 		assertEquals(true,  object.ispBoolean());
 		assertEquals((byte)0xa3, object.getpByte());
@@ -179,7 +178,7 @@ public class ResultSetMapperBuilderTest {
 		assertEquals((double)3.14159, object.getpDouble(), 0);
 	}
 	
-	public  void testPrimitivesWithNullValues(DbBoxedPrimitveObject object,
+	public  void testPrimitivesWithNullValues(
 			Mapper<ResultSet, DbBoxedPrimitveObject> mapper) throws SQLException, Exception {
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.wasNull()).thenReturn(true);
@@ -202,7 +201,7 @@ public class ResultSetMapperBuilderTest {
 		when(rs.getFloat(7)).thenReturn(0f);
 		when(rs.getDouble(8)).thenReturn(0.0);
 		
-		mapper.map(rs, object);
+		DbBoxedPrimitveObject object = mapper.map(rs);
 		
 		assertNull(object.getoBoolean());
 		assertNull(object.getoByte());
@@ -214,24 +213,22 @@ public class ResultSetMapperBuilderTest {
 		assertNull(object.getoDouble());
 	}
 	
-	private void testDbObjectMappingFromDb(final Mapper<ResultSet, DbObject> mapper)
+	private void testDbObjectMappingFromDb(final JdbcMapper<DbObject> mapper)
 			throws SQLException, Exception, ParseException {
 		
 		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				ResultSet rs = ps.executeQuery();
-				DbObject dbObject = new DbObject();
 				rs.next();
-				mapper.map(rs, dbObject);
-				DbHelper.assertDbObjectMapping(dbObject);
+				DbHelper.assertDbObjectMapping(mapper.map(rs));
 			}
 		});
 		
 	}
 
 	@Test
-	public void testHandleMapperErrorSetterNotFound() {
+	public void testHandleMapperErrorSetterNotFound() throws NoSuchMethodException, SecurityException {
 		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
 		MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
 		
@@ -258,7 +255,7 @@ public class ResultSetMapperBuilderTest {
 		public Foo prop;
 	}
 	@Test
-	public void testHandleMapperErrorgGetterNotFound() {
+	public void testHandleMapperErrorgGetterNotFound() throws NoSuchMethodException, SecurityException {
 		ResultSetMapperBuilder<MyClass> builder = new ResultSetMapperBuilderImpl<MyClass>(MyClass.class);
 		MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
 		
@@ -282,7 +279,7 @@ public class ResultSetMapperBuilderTest {
 	}
 	
 	@Test
-	public void setChangeFieldMapperErrorHandler() {
+	public void setChangeFieldMapperErrorHandler() throws NoSuchMethodException, SecurityException {
 		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
 		builder.fieldMapperErrorHandler(new LogFieldMapperErrorHandler());
 		

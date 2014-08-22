@@ -1,6 +1,6 @@
 package org.sfm.map;
 
-public abstract class AbstractFieldMapper<S, T>  implements Mapper<S, T>  {
+public abstract class AbstractFieldMapper<S, T>  implements FieldMapper<S, T>  {
 
 	private final String name;
 	private final FieldMapperErrorHandler errorHandler;

@@ -18,8 +18,8 @@ import org.sfm.jdbc.getter.LongIndexedResultSetGetter;
 import org.sfm.jdbc.getter.LongNamedResultSetGetter;
 import org.sfm.jdbc.getter.ShortIndexedResultSetGetter;
 import org.sfm.jdbc.getter.ShortNamedResultSetGetter;
+import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.Mapper;
 import org.sfm.map.primitive.BooleanFieldMapper;
 import org.sfm.map.primitive.ByteFieldMapper;
 import org.sfm.map.primitive.CharacterFieldMapper;
@@ -39,7 +39,7 @@ public final class PrimitiveFieldMapperFactory<T> {
 		this.setterFactory = setterFactory;
 	}
 
-	public Mapper<ResultSet, T> primitiveFieldMapper(final String column,
+	public FieldMapper<ResultSet, T> primitiveFieldMapper(final String column,
 			final Setter<T, Object> setter, final String name, final FieldMapperErrorHandler errorHandler) {
 		final Class<?> type = setter.getPropertyType();
 
@@ -81,7 +81,7 @@ public final class PrimitiveFieldMapperFactory<T> {
 		}
 	}
 
-	public Mapper<ResultSet, T> primitiveFieldMapper(final int column,
+	public FieldMapper<ResultSet, T> primitiveFieldMapper(final int column,
 			final Setter<T, Object> setter, final String name, final FieldMapperErrorHandler errorHandler) {
 		final Class<?> type = setter.getPropertyType();
 

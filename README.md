@@ -93,8 +93,6 @@ Run 100000 queries against in memory hsqldb database, store the time it takes to
 
 SFM is for SimpleFlatMapper.
 
-Please note that there is always a bit a variability in the results specially with 1 row. It's been between -2% and 4% so far for SFM Static/Dynamic.
-
 |Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Hibernate|MyBatis|
 |------:|------:|-------:|-------:|------:|----:|
 |1*|4%|4%|6%|181%|127%|

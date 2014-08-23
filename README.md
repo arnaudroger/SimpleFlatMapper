@@ -108,7 +108,7 @@ TODO
 
 Misc
 -------
-- Publish to sonatype
+- Publish to sonatype in progress  [OSSRH-11232](https://issues.sonatype.org/browse/OSSRH-11232)
 - Osgi support
 
 Benchmark

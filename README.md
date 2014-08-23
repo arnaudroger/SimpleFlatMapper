@@ -101,7 +101,7 @@ Please note that there is always a bit a variability in the results specially wi
 |10|1%|1%|12%|251%|228%|
 |100|1%|2%|41%|512%|560%|
 |1000|4%|4%|56%|675%|762%|
-|10000|3%|5%|59%|718%|825|
+|10000|3%|5%|59%|718%|825%|
 
 TODO
 =======

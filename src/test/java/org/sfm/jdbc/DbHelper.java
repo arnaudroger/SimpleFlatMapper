@@ -71,6 +71,16 @@ public class DbHelper {
 		Statement st = c.createStatement();
 		
 		try {
+			try {
+				ResultSet rs = st.executeQuery("select count(*) from test_small_benchmark_object");
+				rs.next();
+				if (rs.getLong(1) == NB_BENCHMARK_OBJECT) {
+					return;
+				}
+			}catch(Exception e) {
+				// ignore
+			}
+			
 			createSmallBenchmarkObject(st);
 
 			PreparedStatement ps = c.prepareStatement("insert into test_small_benchmark_object values(?, ?, ?, ?)");
@@ -96,16 +106,6 @@ public class DbHelper {
 	}
 	
 	private static void createSmallBenchmarkObject(Statement st) throws SQLException {
-		try {
-			ResultSet rs = st.executeQuery("select count(*) table test_small_benchmark_object");
-			rs.next();
-			if (rs.getLong(1) == NB_BENCHMARK_OBJECT) {
-				return;
-			}
-		}catch(Exception e) {
-			// ignore
-		}
-		
 		st.execute("create table test_small_benchmark_object("
 				+ " id bigint not null primary key,"
 				+ " name varchar(100), "

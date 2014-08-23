@@ -16,6 +16,6 @@ public class DynamicNoAsmJdbcMapperForEachBenchmark<T> extends ForEachMapperQuer
 	}
 	
 	public static void main(String[] args) throws SQLException, Exception {
-		AllBenchmark.runBenchmark(DbHelper.benchmarkDb(), SmallBenchmarkObject.class, DynamicNoAsmJdbcMapperForEachBenchmark.class, 1000, 100000);
+		AllBenchmark.runBenchmark(DbHelper.benchmarkHsqlDb(), SmallBenchmarkObject.class, DynamicNoAsmJdbcMapperForEachBenchmark.class, 1000, 100000);
 	}
 }

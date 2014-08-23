@@ -23,7 +23,8 @@ public class AllBenchmark {
 	//static final int NB_ITERATION = 200000;
 	static final int NB_ITERATION = 100000;
 	public static void main(String args[]) throws Exception {
-		Connection conn = DbHelper.benchmarkDb();
+//		Connection conn = DbHelper.benchmarkMysqlDb();
+		Connection conn = DbHelper.benchmarkHsqlDb();
 		Class<SmallBenchmarkObject> target = SmallBenchmarkObject.class;
 
 		@SuppressWarnings("unchecked")

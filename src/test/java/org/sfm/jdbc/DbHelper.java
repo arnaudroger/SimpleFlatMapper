@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
@@ -15,11 +16,11 @@ import org.sfm.utils.Handler;
 
 public class DbHelper {
 	
+	private static final int NB_BENCHMARK_OBJECT = 10000;
 	private static boolean objectDb;
-	private static boolean benchmarkDb;
 	
 	public static Connection objectDb() throws SQLException {
-		Connection c = newConnection();
+		Connection c = newHsqlDbConnection();
 		
 		if (!objectDb) {
 			Statement st = c.createStatement();
@@ -47,34 +48,44 @@ public class DbHelper {
 		assertEquals(DbObject.Type.type3, dbObject.getTypeOrdinal());
 		assertEquals(DbObject.Type.type4, dbObject.getTypeName());
 	}
-	public static Connection benchmarkDb() throws SQLException {
+	public static Connection benchmarkHsqlDb() throws SQLException {
 		//Connection c = DriverManager.getConnection("jdbc:hsqldb:mem:benchmarkdb", "SA", "");
-		Connection c = newConnection();
+		Connection c = newHsqlDbConnection();
 
-		if (!benchmarkDb) {
-			Statement st = c.createStatement();
-			
-			try {
-				createSmallBenchmarkObject(st);
-
-				PreparedStatement ps = c.prepareStatement("insert into test_small_benchmark_object values(?, ?, ?, ?)");
-				for(int i = 0; i < 1000000; i++) {
-					ps.setLong(1, i);
-					ps.setString(2, "name " + i);
-					ps.setString(3, "name" + i + "@gmail.com");
-					ps.setInt(4, 2000 + (i % 14));
-					ps.execute();
-				}
-				
-
-			} finally {
-				st.close();
-			}
-		}
+		createTableAndInsertData(c);
 	
-		
-		benchmarkDb = true;
 		return c;
+	}
+	
+	public static Connection benchmarkMysqlDb() throws SQLException {
+		//Connection c = DriverManager.getConnection("jdbc:hsqldb:mem:benchmarkdb", "SA", "");
+		Connection c = newMysqlDbConnection();
+
+		createTableAndInsertData(c);
+	
+		return c;
+	}
+
+	private static void createTableAndInsertData(Connection c)
+			throws SQLException {
+		Statement st = c.createStatement();
+		
+		try {
+			createSmallBenchmarkObject(st);
+
+			PreparedStatement ps = c.prepareStatement("insert into test_small_benchmark_object values(?, ?, ?, ?)");
+			for(int i = 0; i < NB_BENCHMARK_OBJECT; i++) {
+				ps.setLong(1, i);
+				ps.setString(2, "name " + i);
+				ps.setString(3, "name" + i + "@gmail.com");
+				ps.setInt(4, 2000 + (i % 14));
+				ps.execute();
+			}
+			
+
+		} finally {
+			st.close();
+		}
 	}
 	private static void createDbObject(Statement st) throws SQLException {
 		st.execute("create table test_db_object("
@@ -85,6 +96,16 @@ public class DbHelper {
 	}
 	
 	private static void createSmallBenchmarkObject(Statement st) throws SQLException {
+		try {
+			ResultSet rs = st.executeQuery("select count(*) table test_small_benchmark_object");
+			rs.next();
+			if (rs.getLong(1) == NB_BENCHMARK_OBJECT) {
+				return;
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		
 		st.execute("create table test_small_benchmark_object("
 				+ " id bigint not null primary key,"
 				+ " name varchar(100), "
@@ -92,8 +113,12 @@ public class DbHelper {
 				+ " year_started int  )");
 	}
 	
-	private static Connection newConnection() throws SQLException {
+	private static Connection newHsqlDbConnection() throws SQLException {
 		return DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", "");
+	}
+	
+	private static Connection newMysqlDbConnection() throws SQLException {
+		return DriverManager.getConnection("jdbc:mysql://localhost/sfm", "sfm", "");
 	}
 	
 	public static void testDbObjectFromDb(Handler<PreparedStatement> handler )

@@ -12,6 +12,7 @@
 
 	<developers>
 		<developer>
+			<id>arnaudroger</id>
 			<name>Arnaud Roger</name>
 			<email>arnaud.roger@gmail.com</email>
 		</developer>
@@ -26,9 +27,9 @@
 	</licenses>
 
 	<scm>
+		<url>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</url>
 		<connection>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</connection>
 		<developerConnection>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</developerConnection>
-		<url>https://github.com/arnaudroger/SimpleFlatMapper</url>
 	</scm>
 
 	<properties>

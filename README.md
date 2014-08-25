@@ -22,6 +22,13 @@ What it does not do
 - no caching
 - no binary encoding
 
+Why?
+-------
+
+Ibatis provide the same kind of functionality put it forces you to use it's query mechanism and mask the jdbc api. It's also poor from a performance point of view see the benchmark further down.
+Sfm just focus on the mapping from a ResultSet. You can manage the query the way you want. You can use JdbcTemplate, even use it in an Hibernate session.
+
+
 Samples
 ========
 

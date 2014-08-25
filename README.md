@@ -128,12 +128,22 @@ Local Mysql
 |1000|3%|2%|11%|171%|197%|
 |10000|2%|1%|12%|194%|216%|
 
+Maven dependency
+======
+
+```xml
+		<dependency>
+			<groupId>com.github.arnaudroger</groupId>
+			<artifactId>simpleFlatMapper</artifactId>
+			<version>0.1</version>
+		</dependency>
+```
+
 TODO
 =======
 
 Misc
 -------
-- Publish to sonatype in progress  [OSSRH-11232](https://issues.sonatype.org/browse/OSSRH-11232)
 - Osgi support
 
 Benchmark

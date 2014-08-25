@@ -89,9 +89,12 @@ Performance
 ========
 See [src/test/benchmarks](/src/test/benchmarks) for more details.
 
-Run 100000 queries against in memory hsqldb database, store the time it takes to read all the object in HdrHistogram. The table show the percentage above the pure jdbc benchmark 50% percentile. if it takes 100s for pure jdbc and 105s the targeted implementation it will show 5%.
+Run 100000 queries, store the time it takes to read all the object in HdrHistogram. The table show the percentage above the pure jdbc benchmark 50% percentile. if it takes 100s for pure jdbc and 105s the targeted implementation it will show 5%.
 
 SFM is for SimpleFlatMapper.
+
+In mem HsqlDb
+-------
 
 |Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Hibernate|MyBatis|
 |------:|------:|-------:|-------:|------:|----:|
@@ -100,6 +103,17 @@ SFM is for SimpleFlatMapper.
 |100|1%|2%|41%|512%|560%|
 |1000|4%|4%|56%|675%|762%|
 |10000|3%|5%|59%|718%|825%|
+
+Local Mysql
+-------
+
+|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Hibernate|MyBatis|
+|------:|------:|-------:|-------:|------:|----:|
+|1|0%|2%|3%|91%|125%|
+|10|2%|1%|30%|96%|129%|
+|100|1%|0%|4%|113%|75%|
+|1000|3%|2%|11%|171%|197%|
+|10000|2%|1%|12%|194%|216%|
 
 TODO
 =======

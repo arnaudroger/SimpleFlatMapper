@@ -25,9 +25,15 @@ What it does not do
 Why?
 -------
 
-Ibatis provide the same kind of functionality put it forces you to use it's query mechanism and mask the jdbc api. It's also poor from a performance point of view see the benchmark further down.
-Sfm just focus on the mapping from a ResultSet. You can manage the query the way you want. You can use JdbcTemplate, even use it in an Hibernate session.
+### Performance
 
+Ibatis and hibernate have very expensive injection mechanism. On the hsqldb in mem for a medium size query it's a about 700% mark up for both. 
+Sfm get's as fast as it can using asm generation. Event if you don't use asm is still a lot faster. 
+
+### API intrusiveness
+
+Ibatis provide the same kind of functionality put it forces you to use it's query mechanism and mask the jdbc api. 
+Sfm just focus on the mapping from a ResultSet. You can manage the query the way you want. You can use JdbcTemplate, even use it in an Hibernate session.
 
 Samples
 ========

@@ -9,6 +9,8 @@
 	<name>SimpleFlatMapper</name>
 	<url>http://github.com/arnaudroger/SimpleFlatMapper</url>
 
+	<description>Java library to map flat record - ResultSet, csv - to java object with minimum configuration and low footprint.</description>
+
 	<developers>
 		<developer>
 			<id>arnaudroger</id>

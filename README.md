@@ -144,7 +144,7 @@ TODO
 
 JDBCMapper
 ------
-- Constructor injection
+- Constructor injection / IN PROGRESS
 - Definition of custom mapping
 - Inner object mapping
 - List/Map mapping

@@ -20,7 +20,6 @@ What it does not do
 - no query generation
 - no insert/update
 - no caching
-- no binary encoding
 
 Why?
 -------

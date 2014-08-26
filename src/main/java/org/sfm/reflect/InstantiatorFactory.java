@@ -3,9 +3,12 @@ package org.sfm.reflect;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.asm.ConstructorDefinition;
+import org.sfm.reflect.asm.Parameter;
 
 public class InstantiatorFactory {
 	private static final Object[] EMPTY_ARGS = new Object[]{};
@@ -30,7 +33,7 @@ public class InstantiatorFactory {
 		this.asmFactory = asmFactory;
 	}
 
-	public <T> Instantiator<T> getInstantiator(final Class<T> target) throws NoSuchMethodException, SecurityException {
+	public <S, T> Instantiator<S, T> getInstantiator(final Class<S> source, final Class<T> target) throws NoSuchMethodException, SecurityException {
 		final Constructor<T> constructor = getSmallerConstructor(target);
 		
 		Object[] args;
@@ -39,7 +42,7 @@ public class InstantiatorFactory {
 			
 			if (Modifier.isPublic(constructor.getModifiers())) {
 				try {
-					return asmFactory.createInstatiantor(target);
+					return asmFactory.createInstatiantor(source, target);
 				} catch (Exception e) {
 					// fall back on reflection
 				}
@@ -57,8 +60,25 @@ public class InstantiatorFactory {
 		
 		constructor.setAccessible(true);
 		
-		return new ConstructorInstantiator<T>(constructor, args); 
+		return new StaticConstructorInstantiator<S, T>(constructor, args); 
 	}
+	
+	public <S, T> Instantiator<S, T> getInstantiator(final Class<S> source, List<ConstructorDefinition<T>> constructors, Map<Parameter, Getter<S, ?>> injections) throws NoSuchMethodException, SecurityException {
+		final ConstructorDefinition<T> constructor = getSmallerConstructor(constructors);
+		
+		if (Modifier.isPublic(constructor.getConstructor().getModifiers())) {
+			try {
+				return asmFactory.createInstatiantor(source, constructor, injections);
+			} catch (Exception e) {
+				// fall back on reflection
+			}
+		}
+			
+		constructor.getConstructor().setAccessible(true);
+		
+		return new InjectConstructorInstantiator<S, T>(constructor, injections); 
+	}
+
 
 	@SuppressWarnings("unchecked")
 	private <T> Constructor<T> getSmallerConstructor(final Class<T> target) {
@@ -67,6 +87,18 @@ public class InstantiatorFactory {
 		for(Constructor<?> c : target.getDeclaredConstructors()) {
 			if (selectedConstructor == null || (compare(c, selectedConstructor) < 0)) {
 				selectedConstructor = (Constructor<T>) c;
+			}
+		}
+		
+		return selectedConstructor;
+	}
+
+	private <T> ConstructorDefinition<T> getSmallerConstructor(final List<ConstructorDefinition<T>> constructors) {
+		ConstructorDefinition<T> selectedConstructor = null;
+		
+		for(ConstructorDefinition<T> c : constructors) {
+			if (selectedConstructor == null || (c.getParameters().length < selectedConstructor.getParameters().length)) {
+				selectedConstructor = c;
 			}
 		}
 		

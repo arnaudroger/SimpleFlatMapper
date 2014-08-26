@@ -1,5 +1,6 @@
 package org.sfm.jdbc;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -8,7 +9,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.utils.Handler;
@@ -28,7 +28,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler;
 
 	public DynamicJdbcMapper(final Class<T> target, final SetterFactory setterFactory, 
-			final Instantiator<T> instantiator, final FieldMapperErrorHandler fieldMapperErrorHandler, 
+			final FieldMapperErrorHandler fieldMapperErrorHandler, 
 			final MapperBuilderErrorHandler mapperBuilderErrorHandler) {
 		this.setterFactory = setterFactory;
 		this.setters = setterFactory.getAllSetters(target);
@@ -59,7 +59,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		return mapper.forEach(rs, handle);
 	}
 
-	private JdbcMapper<T> buildMapper(final ResultSetMetaData metaData) throws SQLException, NoSuchMethodException, SecurityException {
+	private JdbcMapper<T> buildMapper(final ResultSetMetaData metaData) throws SQLException, NoSuchMethodException, SecurityException, IOException {
 		
 		final MapperKey key = MapperKey.valueOf(metaData);
 		

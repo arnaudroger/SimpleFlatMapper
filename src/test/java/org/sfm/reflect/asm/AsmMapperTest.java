@@ -29,7 +29,7 @@ public class AsmMapperTest {
 		
 		final Mapper<ResultSet, DbObject> mapper = 
 				factory.createJdbcMapper(builder.fields(), 
-						new InstantiatorFactory(factory).getInstantiator(DbObject.class),  
+						new InstantiatorFactory(factory).getInstantiator(ResultSet.class, DbObject.class),  
 						DbObject.class);
 		
 		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {

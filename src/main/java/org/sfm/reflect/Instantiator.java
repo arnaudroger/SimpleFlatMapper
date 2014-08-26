@@ -1,5 +1,5 @@
 package org.sfm.reflect;
 
-public interface Instantiator<T> {
-	T newInstance() throws Exception;
+public interface Instantiator<S, T> {
+	T newInstance(S s) throws Exception;
 }

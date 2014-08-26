@@ -34,7 +34,7 @@ public interface ResultSetMapperBuilder<T> {
 
 	ResultSetMapperBuilder<T> mapperBuilderErrorHandler(MapperBuilderErrorHandler errorHandler);
 	
-	JdbcMapper<T> mapper();
+	JdbcMapper<T> mapper() throws NoSuchMethodException, SecurityException;
 
 	FieldMapper<ResultSet, T>[] fields();
 

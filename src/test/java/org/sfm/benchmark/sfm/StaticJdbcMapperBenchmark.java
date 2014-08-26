@@ -1,5 +1,6 @@
 package org.sfm.benchmark.sfm;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -12,12 +13,12 @@ import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.ResultSetMapperBuilderImpl;
 
 public class StaticJdbcMapperBenchmark<T> extends ForEachMapperQueryExecutor<T> {
-	public StaticJdbcMapperBenchmark(Connection conn, Class<T> target) throws NoSuchMethodException, SecurityException, SQLException {
+	public StaticJdbcMapperBenchmark(Connection conn, Class<T> target) throws NoSuchMethodException, SecurityException, SQLException, IOException {
 		super(newMapper(target), conn, target);
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> JdbcMapper<T> newMapper(Class<T> target) throws NoSuchMethodException, SecurityException {
+	private static <T> JdbcMapper<T> newMapper(Class<T> target) throws NoSuchMethodException, SecurityException, IOException {
 		if (target.equals(DbObject.class)) {
 			return (JdbcMapper<T>) 
 							new ResultSetMapperBuilderImpl<DbObject>(DbObject.class)

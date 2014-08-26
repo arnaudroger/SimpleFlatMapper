@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.objectweb.asm.Opcodes;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.FieldMapper;
+import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.Setter;
 
@@ -46,7 +47,7 @@ public class AsmFactory implements Opcodes {
 	private final FactoryClassLoader factoryClassLoader;
 	
 	private final Map<Method, Setter<?, ?>> setters = new HashMap<Method, Setter<?, ?>>();
-	private final Map<Class<?>, Instantiator<?>> instantiators = new HashMap<Class<?>, Instantiator<?>>();
+	private final Map<Class<?>, Instantiator<?, ?>> instantiators = new HashMap<Class<?>, Instantiator<?, ?>>();
 	
 	public AsmFactory() {
 		this(Thread.currentThread().getContextClassLoader());
@@ -79,20 +80,24 @@ public class AsmFactory implements Opcodes {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> Instantiator<T> createInstatiantor(final Class<?> target) throws Exception {
-		Instantiator<T> instantiator = (Instantiator<T>) instantiators.get(target);
+	public <S, T> Instantiator<S, T> createInstatiantor(final Class<S> source, final Class<T> target) throws Exception {
+		Instantiator<S, T> instantiator = (Instantiator<S, T>) instantiators.get(target);
 		if (instantiator == null) {
 			final String className = generateInstantiatorClassName(target);
-			final byte[] bytes = ConstructorBuilder.createEmptyConstructor(className, target);
+			final byte[] bytes = ConstructorBuilder.createEmptyConstructor(className, source, target);
 			final Class<?> type = factoryClassLoader.registerGetter(className, bytes);
-			instantiator = (Instantiator<T>) type.newInstance();
+			instantiator = (Instantiator<S, T>) type.newInstance();
 			instantiators.put(target, instantiator);
 		}
 		return instantiator;
 	}
 	
+	public <S, T> Instantiator<S, T> createInstatiantor(final Class<S> source, final ConstructorDefinition<T> constructorDefinition,final Map<Parameter, Getter<S, ?>> injections) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+	
 	@SuppressWarnings("unchecked")
-	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<T> instantiator, final Class<T> target) throws Exception {
+	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target) throws Exception {
 		final String className = generateClassName(mappers, ResultSet.class, target);
 		final byte[] bytes = AsmJdbcMapperBuilder.dump(className, mappers, instantiator, target);
 		final Class<?> type = factoryClassLoader.registerGetter(className, bytes);

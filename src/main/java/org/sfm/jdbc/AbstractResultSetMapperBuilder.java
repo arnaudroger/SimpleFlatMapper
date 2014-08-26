@@ -1,10 +1,14 @@
 package org.sfm.jdbc;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
@@ -18,6 +22,9 @@ import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.asm.ConstructorDefinition;
+import org.sfm.reflect.asm.Parameter;
+import org.sfm.utils.PropertyNameMatcher;
 
 public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapperBuilder<T> {
 
@@ -28,15 +35,27 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	private final PrimitiveFieldMapperFactory<T> primitiveFieldMapperFactory;
 	private final AsmFactory asmFactory;
 	
-	private final Instantiator<T> instantiator;
+	private final InstantiatorFactory instantiatorFactory;
 
 	private final List<FieldMapper<ResultSet, T>> fields = new ArrayList<FieldMapper<ResultSet, T>>();
 	
-	public AbstractResultSetMapperBuilder(Class<T> target, SetterFactory setterFactory) throws NoSuchMethodException, SecurityException {
+	
+	private final List<ConstructorDefinition<T>> constructors;
+	private final Map<Parameter, Getter<ResultSet, ?>> constructorInjection;
+	
+	public AbstractResultSetMapperBuilder(Class<T> target, SetterFactory setterFactory) throws NoSuchMethodException, SecurityException, IOException {
 		this.target = target;
 		this.primitiveFieldMapperFactory = new PrimitiveFieldMapperFactory<>(setterFactory);
 		this.asmFactory = setterFactory.getAsmFactory();
-		this.instantiator = new InstantiatorFactory(asmFactory).getInstantiator(target);
+		this.instantiatorFactory = new InstantiatorFactory(asmFactory);
+		
+		if (AsmHelper.isAsmPresent()) {
+			this.constructors = ConstructorDefinition.extractConstructors(target);
+			this.constructorInjection = new HashMap<Parameter, Getter<ResultSet,?>>();
+		} else {
+			this.constructors = null;
+			this.constructorInjection = null;
+		}
 	}
 
 	@Override
@@ -56,17 +75,6 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 
 	@Override
-	public final ResultSetMapperBuilder<T> addNamedColumn(final String column, final int sqlType) {
-		final Setter<T, Object> setter = findSetter(column);
-		if (setter == null) {
-			mapperBuilderErrorHandler.setterNotFound(target, column);
-		} else {
-			addMapping(setter, column, sqlType);
-		}
-		return this;
-	}
-	
-	@Override
 	public final ResultSetMapperBuilder<T> addNamedColumn(final String column) {
 		return addNamedColumn(column, ResultSetGetterFactory.UNDEFINED);
 	}
@@ -81,6 +89,57 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 		return addIndexedColumn(column, columnIndex, ResultSetGetterFactory.UNDEFINED);
 	}
 	
+	@Override
+	public final ResultSetMapperBuilder<T> addMapping(final String property, final String column) {
+		return addMapping(property, column, ResultSetGetterFactory.UNDEFINED);
+	}
+	
+	@Override
+	public final ResultSetMapperBuilder<T> addMapping(final String property, final int column) {
+		return addMapping(property, column, ResultSetGetterFactory.UNDEFINED);
+	}
+	
+	@Override
+	public final ResultSetMapperBuilder<T> addNamedColumn(final String column, final int sqlType) {
+		// match any constructor?
+		Parameter param = hasMatchingConstructor(column);
+		if (param != null) {
+			removeNonMatchingConstructor(param);
+			constructorInjection.put(param, ResultSetGetterFactory.newGetter(param.getType(), column, sqlType));
+		} else {
+			final Setter<T, Object> setter = findSetter(column);
+			if (setter == null) {
+				mapperBuilderErrorHandler.setterNotFound(target, column);
+			} else {
+				addMapping(setter, column, sqlType);
+			}
+		}
+		return this;
+	}
+	
+	private void removeNonMatchingConstructor(Parameter param) {
+		ListIterator<ConstructorDefinition<T>> li = constructors.listIterator();
+		
+		while(li.hasNext()){
+			ConstructorDefinition<T> cd = li.next();
+			if (!cd.hasParam(param)) {
+				li.remove();
+			}
+		}
+	}
+
+	private Parameter hasMatchingConstructor(String column) {
+		if (constructors == null)  return null;
+		
+		for(ConstructorDefinition<T> cd : constructors) {
+			Parameter param = cd.lookFor(new PropertyNameMatcher(column));
+			if (param != null) {
+				return param;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column, final int columnIndex, final int sqlType) {
 		final Setter<T, Object> setter = findSetter(column);
@@ -102,11 +161,6 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 		}
 		return this;
 	}
-	
-	@Override
-	public final ResultSetMapperBuilder<T> addMapping(final String property, final String column) {
-		return addMapping(property, column, ResultSetGetterFactory.UNDEFINED);
-	}
 
 	@Override
 	public final ResultSetMapperBuilder<T> addMapping(final String property, final int column, final int sqlType) {
@@ -119,10 +173,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 		return this;
 	}
 	
-	@Override
-	public final ResultSetMapperBuilder<T> addMapping(final String property, final int column) {
-		return addMapping(property, column, ResultSetGetterFactory.UNDEFINED);
-	}
+
 
 	@Override
 	public final ResultSetMapperBuilder<T> addMapping(final ResultSetMetaData metaData) throws SQLException {
@@ -134,7 +185,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 	
 	@Override
-	public final JdbcMapper<T> mapper() {
+	public final JdbcMapper<T> mapper() throws NoSuchMethodException, SecurityException {
 		if (asmFactory != null) {
 			try {
 				return asmFactory.createJdbcMapper(fields(), getInstantiator(), target);
@@ -146,8 +197,12 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 		}
 	}
 
-	private Instantiator<T> getInstantiator() {
-		return instantiator;
+	private Instantiator<ResultSet, T> getInstantiator() throws NoSuchMethodException, SecurityException {
+		if (constructors == null || constructors.isEmpty() || constructorInjection.isEmpty()) {
+			return instantiatorFactory.getInstantiator(ResultSet.class, target);
+		} else {
+			return instantiatorFactory.getInstantiator(ResultSet.class, constructors, constructorInjection);
+		}
 	}
 
 	public final Class<T> getTarget() {

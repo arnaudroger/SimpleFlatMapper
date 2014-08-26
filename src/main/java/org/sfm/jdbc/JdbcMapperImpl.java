@@ -10,16 +10,16 @@ public final class JdbcMapperImpl<T> implements JdbcMapper<T> {
 
 	
 	private final FieldMapper<ResultSet, T>[] fieldMappers;
-	private final Instantiator<T> instantiator;
+	private final Instantiator<ResultSet, T> instantiator;
 	
-	public JdbcMapperImpl(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<T> instantiator) {
+	public JdbcMapperImpl(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<ResultSet, T> instantiator) {
 		this.fieldMappers = mappers;
 		this.instantiator = instantiator;
 	}
 
 	@Override
 	public T map(final ResultSet source) throws Exception {
-		final T target = instantiator.newInstance();
+		final T target = instantiator.newInstance(source);
 		for(int i = 0; i < fieldMappers.length; i++) {
 			fieldMappers[i].map(source, target);
 		}

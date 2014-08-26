@@ -1,5 +1,6 @@
 package org.sfm.jdbc;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -11,7 +12,7 @@ public final class CachedResultSetMapperBuilder<T> extends AbstractResultSetMapp
 
 	private final Map<String, Setter<T, Object>> setters;
 
-	public CachedResultSetMapperBuilder(final Class<T> target, final Map<String, Setter<T, Object>> setters, final SetterFactory setterFactory) throws NoSuchMethodException, SecurityException {
+	public CachedResultSetMapperBuilder(final Class<T> target, final Map<String, Setter<T, Object>> setters, final SetterFactory setterFactory) throws NoSuchMethodException, SecurityException, IOException {
 		super(target, setterFactory);
 		this.setters = setters;
 	}

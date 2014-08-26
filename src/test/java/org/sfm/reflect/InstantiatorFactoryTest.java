@@ -1,5 +1,7 @@
 package org.sfm.reflect;
 
+import java.sql.ResultSet;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
@@ -29,15 +31,15 @@ public class InstantiatorFactoryTest {
 	
 	@Test
 	public void testInstantiateDbObject() throws Exception {
-		Instantiator<DbObject> instantiator = new InstantiatorFactory(null).getInstantiator(DbObject.class);
-		DbObject object = instantiator.newInstance();
+		Instantiator<ResultSet, DbObject> instantiator = new InstantiatorFactory(null).getInstantiator(ResultSet.class, DbObject.class);
+		DbObject object = instantiator.newInstance(null);
 		Assert.assertNotNull(object);
 	}
 
 	@Test
 	public void testInstantiateConstructorWithArgs() throws Exception {
-		Instantiator<MyClass> instantiator = new InstantiatorFactory(null).getInstantiator(MyClass.class);
-		MyClass object = instantiator.newInstance();
+		Instantiator<ResultSet, MyClass> instantiator = new InstantiatorFactory(null).getInstantiator(ResultSet.class, MyClass.class);
+		MyClass object = instantiator.newInstance(null);
 		Assert.assertNotNull(object);
 	}
 

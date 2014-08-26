@@ -129,7 +129,7 @@ public final class SetterFactory {
 	}
 	
 	private boolean fieldModifiersMatches(final int modifiers) {
-		return !Modifier.isStatic(modifiers);
+		return !Modifier.isStatic(modifiers) &&  ! Modifier.isFinal(modifiers);
 	}
 
 	private boolean fieldNameMatchesProperty(final String name, final String property) {

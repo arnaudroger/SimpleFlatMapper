@@ -18,10 +18,10 @@ public final class AsmMapper implements JdbcMapper<DbObject>{
 	private final FieldMapperImpl<ResultSet, DbObject, ?> mapper3;
 	private final FieldMapperImpl<ResultSet, DbObject, ?> mapper4;
 	
-	private final Instantiator<DbObject> instantiator;
+	private final Instantiator<ResultSet, DbObject> instantiator;
 
 	@SuppressWarnings("unchecked")
-	public AsmMapper(FieldMapper<ResultSet, DbObject>[] mappers, Instantiator<DbObject> instantiator) {
+	public AsmMapper(FieldMapper<ResultSet, DbObject>[] mappers, Instantiator<ResultSet, DbObject> instantiator) {
 		mapper1 = (LongFieldMapper<ResultSet, DbObject>) mappers[0];
 		mapper2 = (IntFieldMapper<ResultSet, DbObject>) mappers[2];
 		mapper3 = (FieldMapperImpl<ResultSet, DbObject, ?>) mappers[3];
@@ -31,7 +31,7 @@ public final class AsmMapper implements JdbcMapper<DbObject>{
 	
 	@Override
 	public DbObject map(ResultSet source) throws Exception {
-		DbObject target = instantiator.newInstance();
+		DbObject target = instantiator.newInstance(source);
 		mapper1.map(source, target);
 		mapper2.map(source, target);
 		mapper3.map(source, target);

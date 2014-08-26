@@ -2,6 +2,8 @@ package org.sfm.reflect;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.sql.ResultSet;
+
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.asm.AsmFactory;
@@ -13,9 +15,9 @@ public class AsmInstantiatorTest {
 	@Test
 	public void testInstantiate() throws Exception {
 		
-		Instantiator<DbObject> instantiator = factory.createInstatiantor(DbObject.class);
+		Instantiator<ResultSet, DbObject> instantiator = factory.createInstatiantor(ResultSet.class, DbObject.class);
 		
-		assertNotNull(instantiator.newInstance());
+		assertNotNull(instantiator.newInstance(null));
 	}
 
 }

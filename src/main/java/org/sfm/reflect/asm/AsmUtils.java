@@ -134,4 +134,20 @@ public class AsmUtils {
 		
 		return sb.toString();
 	}
+
+	public static Class<?> toClass(String desc) throws ClassNotFoundException {
+		if (desc.length() == 1) {
+			switch (desc.charAt(0)) {
+			case 'Z': return boolean.class;
+			case 'B': return byte.class;
+			case 'C': return char.class;
+			case 'D': return double.class;
+			case 'F': return float.class;
+			case 'I': return int.class;
+			case 'J': return long.class;
+			case 'S': return short.class;
+			}
+		}
+		return Class.forName(desc.substring(1, desc.length() - 1).replace('/', '.'));
+	}
 }

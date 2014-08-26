@@ -10,7 +10,7 @@ public class AsmHelper {
 	
 	private static final boolean asmPresent = isAsmPresent();
 
-	private static boolean isAsmPresent() {
+	public static boolean isAsmPresent() {
 		try {
 			Class.forName("org.objectweb.asm.Opcodes");
 			return true;

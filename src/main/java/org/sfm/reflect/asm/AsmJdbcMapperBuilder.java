@@ -13,7 +13,7 @@ import org.sfm.map.FieldMapper;
 import org.sfm.reflect.Instantiator;
 
 public class AsmJdbcMapperBuilder {
-	public static <S,T> byte[] dump (final String className, final FieldMapper<S, T>[] mappers, final Instantiator<T> instantiator, final Class<T> target) throws Exception {
+	public static <S,T> byte[] dump (final String className, final FieldMapper<S, T>[] mappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target) throws Exception {
 
 		ClassWriter cw = new ClassWriter(0);
 		MethodVisitor mv;
@@ -59,10 +59,11 @@ public class AsmJdbcMapperBuilder {
 			mv.visitCode();
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitFieldInsn(GETFIELD, classType, "instantiator", "L" + instantiatorType + ";");
+			mv.visitVarInsn(ALOAD, 1);
 			if (isStillGeneric(instantiator.getClass())) {
-				mv.visitMethodInsn(INVOKEVIRTUAL, instantiatorType, "newInstance", "()Ljava/lang/Object;", false);
+				mv.visitMethodInsn(INVOKEVIRTUAL, instantiatorType, "newInstance", "(Ljava/lang/Object;)Ljava/lang/Object;", false);
 			} else {
-				mv.visitMethodInsn(INVOKEVIRTUAL, instantiatorType, "newInstance", "()L" + targetType + ";", false);
+				mv.visitMethodInsn(INVOKEVIRTUAL, instantiatorType, "newInstance", "(L" + sourceType + ";)L" + targetType + ";", false);
 			}
 			mv.visitTypeInsn(CHECKCAST, targetType);
 			mv.visitVarInsn(ASTORE, 2);

@@ -1,5 +1,6 @@
 package org.sfm.jdbc;
 
+import java.io.IOException;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
@@ -7,7 +8,6 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.RethrowFieldMapperErrorHandler;
 import org.sfm.map.RethrowMapperBuilderErrorHandler;
-import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.asm.AsmFactory;
 
@@ -36,8 +36,9 @@ public final class JdbcMapperFactory {
 	 * @throws SQLException
 	 * @throws NoSuchMethodException
 	 * @throws SecurityException
+	 * @throws IOException 
 	 */
-	public <T> JdbcMapper<T> newMapper(final Class<T> target, final ResultSetMetaData metaData) throws SQLException, NoSuchMethodException, SecurityException {
+	public <T> JdbcMapper<T> newMapper(final Class<T> target, final ResultSetMetaData metaData) throws SQLException, NoSuchMethodException, SecurityException, IOException {
 		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<>(target, getSetterFactory());
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
@@ -85,7 +86,7 @@ public final class JdbcMapperFactory {
 	 * @throws SecurityException
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) throws NoSuchMethodException, SecurityException {
-		return new DynamicJdbcMapper<T>(target, getSetterFactory(), new InstantiatorFactory(getAsmSetterFactory()).getInstantiator(target), fieldMapperErrorHandler, mapperBuilderErrorHandler);
+		return new DynamicJdbcMapper<T>(target, getSetterFactory(), fieldMapperErrorHandler, mapperBuilderErrorHandler);
 	}
 
 	private AsmFactory getAsmSetterFactory() {

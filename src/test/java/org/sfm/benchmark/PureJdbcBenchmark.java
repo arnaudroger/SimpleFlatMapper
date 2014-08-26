@@ -6,10 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.sfm.beans.SmallBenchmarkObject;
-import org.sfm.jdbc.AsmHelper;
 import org.sfm.jdbc.DbHelper;
-import org.sfm.reflect.Instantiator;
-import org.sfm.reflect.InstantiatorFactory;
 
 
 public class PureJdbcBenchmark<T> implements QueryExecutor {
@@ -17,13 +14,11 @@ public class PureJdbcBenchmark<T> implements QueryExecutor {
 	final Connection conn;
 	final Class<T> target;
 	final RowMapper<T> mapper; 
-	final Instantiator<T> instantiator;
 	
 	public PureJdbcBenchmark(Connection conn, Class<T> target) throws NoSuchMethodException, SecurityException {
 		this.conn = conn;
 		this.target = target;
 		this.mapper = JDBCHelper.mapper(target);
-		this.instantiator = new InstantiatorFactory(AsmHelper.getAsmSetterFactory()).getInstantiator(target);
 	}
 	
 	@Override

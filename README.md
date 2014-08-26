@@ -142,16 +142,10 @@ Maven dependency
 TODO
 =======
 
-Misc
--------
-- Osgi support
-
-Benchmark
-------
-- generate graphs
 
 JDBCMapper
 ------
+- Constructor injection
 - Definition of custom mapping
 - Inner object mapping
 - List/Map mapping
@@ -159,6 +153,10 @@ JDBCMapper
 CSVMapper
 -----
 - Csv Mapping
+ 
+Misc
+-------
+- Osgi support
 
 
 

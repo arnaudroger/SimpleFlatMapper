@@ -34,6 +34,36 @@ Sfm get's as fast as it can using asm generation. Event if you don't use asm is 
 Ibatis provide the same kind of functionality put it forces you to use it's query mechanism and mask the jdbc api. 
 Sfm just focus on the mapping from a ResultSet. You can manage the query the way you want. You can use JdbcTemplate, even use it in an Hibernate session.
 
+Performance
+========
+See [src/test/benchmarks](/src/test/benchmarks) for more details.
+
+Run 100000 queries, store the time it takes to read all the object in HdrHistogram. The table show the percentage above the pure jdbc benchmark 50% percentile. if it takes 100s for pure jdbc and 105s the targeted implementation it will show 5%.
+
+SFM is for SimpleFlatMapper.
+
+In mem HsqlDb
+-------
+
+|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Hibernate|MyBatis|
+|------:|------:|-------:|-------:|------:|----:|
+|1|4%|4%|6%|181%|127%|
+|10|1%|1%|12%|251%|228%|
+|100|1%|2%|41%|512%|560%|
+|1000|4%|4%|56%|675%|762%|
+|10000|3%|5%|59%|718%|825%|
+
+Local Mysql
+-------
+
+|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Hibernate|MyBatis|
+|------:|------:|-------:|-------:|------:|----:|
+|1|0%|2%|3%|91%|125%|
+|10|2%|1%|30%|96%|129%|
+|100|1%|0%|4%|113%|75%|
+|1000|3%|2%|11%|171%|197%|
+|10000|2%|1%|12%|194%|216%|
+
 Samples
 ========
 
@@ -97,35 +127,14 @@ ie:
 - myproperty => myProperty
 ```
 
-Performance
-========
-See [src/test/benchmarks](/src/test/benchmarks) for more details.
+Value Injection
+=======
 
-Run 100000 queries, store the time it takes to read all the object in HdrHistogram. The table show the percentage above the pure jdbc benchmark 50% percentile. if it takes 100s for pure jdbc and 105s the targeted implementation it will show 5%.
+1. look for constructor injection, only available if asm present
+2. look for setter method
+3. look for non final field access through reflection
 
-SFM is for SimpleFlatMapper.
-
-In mem HsqlDb
--------
-
-|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Hibernate|MyBatis|
-|------:|------:|-------:|-------:|------:|----:|
-|1|4%|4%|6%|181%|127%|
-|10|1%|1%|12%|251%|228%|
-|100|1%|2%|41%|512%|560%|
-|1000|4%|4%|56%|675%|762%|
-|10000|3%|5%|59%|718%|825%|
-
-Local Mysql
--------
-
-|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Hibernate|MyBatis|
-|------:|------:|-------:|-------:|------:|----:|
-|1|0%|2%|3%|91%|125%|
-|10|2%|1%|30%|96%|129%|
-|100|1%|0%|4%|113%|75%|
-|1000|3%|2%|11%|171%|197%|
-|10000|2%|1%|12%|194%|216%|
+1 and 2 will get asm generated version if asm is present and not disabled.
 
 Maven dependency
 ======
@@ -134,7 +143,7 @@ Maven dependency
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>0.1</version>
+			<version>0.2</version>
 		</dependency>
 ```
 
@@ -144,7 +153,6 @@ TODO
 
 JDBCMapper
 ------
-- Constructor injection / IN PROGRESS
 - Definition of custom mapping
 - Inner object mapping
 - List/Map mapping

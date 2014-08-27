@@ -10,39 +10,102 @@ import java.util.List;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.beans.FinalDbObject;
 import org.sfm.utils.Handler;
 import org.sfm.utils.ListHandler;
 
 public class JdbcMapperFactoryTest {
 
+	JdbcMapperFactory asmFactory = JdbcMapperFactory.newInstance().useAsm(true);
+	JdbcMapperFactory nonAsmFactory = JdbcMapperFactory.newInstance().useAsm(false);
+	
 	@Test
-	public void testDbObjectMappingFromDbWithMetaData()
+	public void testAsmDbObjectMappingFromDbWithMetaData()
 			throws SQLException, Exception, ParseException {
 		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				ResultSet rs = ps.executeQuery();
-				JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance().newMapper(DbObject.class, rs.getMetaData());
-				assertMapPs(rs, mapper);
+				JdbcMapper<DbObject> mapper = asmFactory.newMapper(DbObject.class, rs.getMetaData());
+				assertMapPsDbObject(rs, mapper);
 			}
 		});
 	}
 	
 	@Test
-	public void testDbObjectMappingFromDbDynamic()
+	public void testNonAsmDbObjectMappingFromDbWithMetaData()
 			throws SQLException, Exception, ParseException {
 		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance().newMapper(DbObject.class);
-				assertMapPs(ps.executeQuery(), mapper);
+				ResultSet rs = ps.executeQuery();
+				JdbcMapper<DbObject> mapper = nonAsmFactory.newMapper(DbObject.class, rs.getMetaData());
+				assertMapPsDbObject(rs, mapper);
 			}
 		});
 	}
-	private void assertMapPs(ResultSet rs,
+	
+	@Test
+	public void testAsmDbObjectMappingFromDbDynamic()
+			throws SQLException, Exception, ParseException {
+		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				JdbcMapper<DbObject> mapper = asmFactory.newMapper(DbObject.class);
+				assertMapPsDbObject(ps.executeQuery(), mapper);
+			}
+		});
+	}
+	
+	@Test
+	public void testNonAsmDbObjectMappingFromDbDynamic()
+			throws SQLException, Exception, ParseException {
+		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				JdbcMapper<DbObject> mapper = nonAsmFactory.newMapper(DbObject.class);
+				assertMapPsDbObject(ps.executeQuery(), mapper);
+			}
+		});
+	}
+	
+	@Test
+	public void testAsmFinalDbObjectMappingFromDbDynamic()
+			throws SQLException, Exception, ParseException {
+		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				JdbcMapper<FinalDbObject> mapper = asmFactory.newMapper(FinalDbObject.class);
+				assertMapPsFinalDbObject(ps.executeQuery(), mapper);
+			}
+		});
+	}
+	
+	@Test
+	public void testNonAsmFinalDbObjectMappingFromDbDynamic()
+			throws SQLException, Exception, ParseException {
+		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				JdbcMapper<FinalDbObject> mapper = nonAsmFactory.newMapper(FinalDbObject.class);
+				assertMapPsFinalDbObject(ps.executeQuery(), mapper);
+			}
+		});
+	}	
+	
+	private void assertMapPsDbObject(ResultSet rs,
 			JdbcMapper<DbObject> mapper) throws Exception,
 			ParseException {
 		List<DbObject> list = mapper.forEach(rs, new ListHandler<DbObject>()).getList();
+		assertEquals(1,  list.size());
+		DbHelper.assertDbObjectMapping(list.get(0));
+	}
+	
+	
+	private void assertMapPsFinalDbObject(ResultSet rs,
+			JdbcMapper<FinalDbObject> mapper) throws Exception,
+			ParseException {
+		List<FinalDbObject> list = mapper.forEach(rs, new ListHandler<FinalDbObject>()).getList();
 		assertEquals(1,  list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}

@@ -11,7 +11,7 @@ public class SetterBuilder implements Opcodes {
 
 	public static byte[] createObjectSetter(final String className, final Method method) throws Exception {
 
-		ClassWriter cw = new ClassWriter(0);
+		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
 
 		Class<?> target = method.getDeclaringClass();
@@ -78,7 +78,7 @@ public class SetterBuilder implements Opcodes {
 
 	public static byte[] createPrimitiveSetter(String className, Method method) throws Exception {
 
-		ClassWriter cw = new ClassWriter(0);
+		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
 
 		Class<?> target = method.getDeclaringClass();
@@ -94,8 +94,6 @@ public class SetterBuilder implements Opcodes {
 		if ("Integer".equals(methodSuffix)) {
 			methodSuffix = "Int";
 		}
-		
-		boolean _64bits = primitive.equals(long.class) || primitive.equals(double.class);
 		
 		String setMethod = "set" + methodSuffix;
 		String valueMethod = methodSuffix.toLowerCase() + "Value";
@@ -128,11 +126,7 @@ public class SetterBuilder implements Opcodes {
 		mv.visitVarInsn(primitiveLoadOp, 2);
 		mv.visitMethodInsn(INVOKEVIRTUAL,  targetType , method.getName(), "(" + primitiveType + ")V", false);
 		mv.visitInsn(RETURN);
-		if (_64bits) {
-			mv.visitMaxs(3, 4);
-		} else {
-			mv.visitMaxs(2, 3);
-		}
+		mv.visitMaxs(2, 3);
 		mv.visitEnd();
 		}
 		{
@@ -143,11 +137,7 @@ public class SetterBuilder implements Opcodes {
 		mv.visitMethodInsn(INVOKEVIRTUAL,  propertyType , valueMethod, "()" + primitiveType + "", false);
 		mv.visitMethodInsn(INVOKEVIRTUAL,  targetType , method.getName(), "(" + primitiveType + ")V", false);
 		mv.visitInsn(RETURN);
-		if (_64bits) {
-			mv.visitMaxs(3, 3);
-		} else {
-			mv.visitMaxs(2, 3);
-		}
+		mv.visitMaxs(2, 3);
 		mv.visitEnd();
 		}
 		{
@@ -167,11 +157,7 @@ public class SetterBuilder implements Opcodes {
 		mv.visitVarInsn(primitiveLoadOp, 2);
 		mv.visitMethodInsn(INVOKEVIRTUAL,  classType , setMethod, "(L" + targetType + ";" + primitiveType + ")V", false);
 		mv.visitInsn(RETURN);
-		if (_64bits) {
-			mv.visitMaxs(4, 4);
-		} else {
-			mv.visitMaxs(3, 3);
-		}
+		mv.visitMaxs(3, 3);
 		mv.visitEnd();
 		}
 		{

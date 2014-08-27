@@ -1,8 +1,34 @@
 package org.sfm.reflect.asm;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.AALOAD;
+import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
+import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_SUPER;
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
+import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.ARETURN;
+import static org.objectweb.asm.Opcodes.ASTORE;
+import static org.objectweb.asm.Opcodes.BIPUSH;
+import static org.objectweb.asm.Opcodes.CHECKCAST;
+import static org.objectweb.asm.Opcodes.F_SAME;
+import static org.objectweb.asm.Opcodes.GETFIELD;
+import static org.objectweb.asm.Opcodes.GOTO;
+import static org.objectweb.asm.Opcodes.ICONST_0;
+import static org.objectweb.asm.Opcodes.ICONST_1;
+import static org.objectweb.asm.Opcodes.ICONST_2;
+import static org.objectweb.asm.Opcodes.ICONST_3;
+import static org.objectweb.asm.Opcodes.ICONST_4;
+import static org.objectweb.asm.Opcodes.ICONST_5;
+import static org.objectweb.asm.Opcodes.IFNE;
+import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
+import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
+import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
+import static org.objectweb.asm.Opcodes.PUTFIELD;
+import static org.objectweb.asm.Opcodes.RETURN;
+import static org.objectweb.asm.Opcodes.V1_7;
 
-import java.lang.reflect.TypeVariable;
 import java.sql.ResultSet;
 
 import org.objectweb.asm.ClassWriter;
@@ -15,7 +41,7 @@ import org.sfm.reflect.Instantiator;
 public class AsmJdbcMapperBuilder {
 	public static <S,T> byte[] dump (final String className, final FieldMapper<S, T>[] mappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target) throws Exception {
 
-		ClassWriter cw = new ClassWriter(0);
+		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
 		
 		final String targetType = AsmUtils.toType(target);
@@ -60,7 +86,7 @@ public class AsmJdbcMapperBuilder {
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitFieldInsn(GETFIELD, classType, "instantiator", "L" + instantiatorType + ";");
 			mv.visitVarInsn(ALOAD, 1);
-			if (isStillGeneric(instantiator.getClass())) {
+			if (AsmUtils.isStillGeneric(instantiator.getClass())) {
 				mv.visitMethodInsn(INVOKEVIRTUAL, instantiatorType, "newInstance", "(Ljava/lang/Object;)Ljava/lang/Object;", false);
 			} else {
 				mv.visitMethodInsn(INVOKEVIRTUAL, instantiatorType, "newInstance", "(L" + sourceType + ";)L" + targetType + ";", false);
@@ -122,11 +148,6 @@ public class AsmJdbcMapperBuilder {
 		return AsmUtils.writeClassToFile(className, cw.toByteArray());
 	}
 
-	private static boolean isStillGeneric(Class<? > clazz) {
-		final TypeVariable<?>[] typeParameters = clazz.getTypeParameters();
-		return typeParameters != null && typeParameters.length > 0;
-	}
-
 	private static <S, T> void generateMappingCall(MethodVisitor mv,
 			FieldMapper<S, T> mapper, int index, String classType, String sourceType, String targetType) {
 		Class<?> mapperClass = mapper.getClass();
@@ -135,7 +156,7 @@ public class AsmJdbcMapperBuilder {
 		mv.visitVarInsn(ALOAD, 1);
 		mv.visitVarInsn(ALOAD, 2);
 		
-		if (isStillGeneric(mapperClass)) {
+		if (AsmUtils.isStillGeneric(mapperClass)) {
 			mv.visitMethodInsn(INVOKEVIRTUAL, AsmUtils.toType(mapperClass), "map", "(Ljava/lang/Object;Ljava/lang/Object;)V", false);
 		} else {
 			mv.visitMethodInsn(INVOKEVIRTUAL, AsmUtils.toType(mapperClass), "map", "(L" + sourceType + ";L" + targetType +";)V", false);

@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.objectweb.asm.Opcodes;
@@ -47,7 +48,7 @@ public class AsmFactory implements Opcodes {
 	private final FactoryClassLoader factoryClassLoader;
 	
 	private final Map<Method, Setter<?, ?>> setters = new HashMap<Method, Setter<?, ?>>();
-	private final Map<Class<?>, Instantiator<?, ?>> instantiators = new HashMap<Class<?>, Instantiator<?, ?>>();
+	private final Map<InstantiatorKey, Instantiator<?, ?>> instantiators = new HashMap<InstantiatorKey, Instantiator<?, ?>>();
 	
 	public AsmFactory() {
 		this(Thread.currentThread().getContextClassLoader());
@@ -80,20 +81,37 @@ public class AsmFactory implements Opcodes {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> createInstatiantor(final Class<S> source, final Class<T> target) throws Exception {
-		Instantiator<S, T> instantiator = (Instantiator<S, T>) instantiators.get(target);
+	public <S, T> Instantiator<S, T> createEmptyArgsInstatiantor(final Class<S> source, final Class<T> target) throws Exception {
+		InstantiatorKey instantiatorKey = new InstantiatorKey(target);
+		Instantiator<S, T> instantiator = (Instantiator<S, T>) instantiators.get(instantiatorKey);
 		if (instantiator == null) {
-			final String className = generateInstantiatorClassName(target);
+			final String className = generateInstantiatorClassName(instantiatorKey);
 			final byte[] bytes = ConstructorBuilder.createEmptyConstructor(className, source, target);
 			final Class<?> type = factoryClassLoader.registerGetter(className, bytes);
 			instantiator = (Instantiator<S, T>) type.newInstance();
-			instantiators.put(target, instantiator);
+			instantiators.put(instantiatorKey, instantiator);
 		}
 		return instantiator;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> createInstatiantor(final Class<S> source, final ConstructorDefinition<T> constructorDefinition,final Map<Parameter, Getter<S, ?>> injections) throws Exception {
-		throw new UnsupportedOperationException();
+		InstantiatorKey instantiatorKey = new InstantiatorKey(constructorDefinition, injections.keySet());
+		Instantiator<S, T> instantiator = (Instantiator<S, T>) instantiators.get(instantiatorKey);
+		if (instantiator == null) {
+			final String className = generateInstantiatorClassName(instantiatorKey);
+			final byte[] bytes = InstantiatorBuilder.createInstantiator(className, source, constructorDefinition, injections);
+			final Class<?> type = factoryClassLoader.registerGetter(className, bytes);
+			
+			Map<String, Getter<S, ?>> getterPerName = new HashMap<>();
+			for(Entry<Parameter, Getter<S, ?>> e : injections.entrySet()) {
+				getterPerName.put(e.getKey().getName(), e.getValue());
+			}
+			
+			instantiator = (Instantiator<S, T>) type.getConstructor(Map.class).newInstance(getterPerName);
+			instantiators.put(instantiatorKey, instantiator);
+		}
+		return instantiator;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -104,9 +122,22 @@ public class AsmFactory implements Opcodes {
 		return (JdbcMapper<T>) type.getDeclaredConstructors()[0].newInstance(mappers, instantiator);
 	}
 	
-	private String generateInstantiatorClassName(final Class<?> target) {
-		return "org.sfm.reflect.asm." + target.getPackage().getName() + 
-				".AsmInstantiator" + target.getSimpleName();
+	private final AtomicLong classNumber = new AtomicLong();
+	
+	private String generateInstantiatorClassName(final InstantiatorKey key) {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append( "org.sfm.reflect.asm.")
+		.append(key.getConstructor().getDeclaringClass().getPackage().getName())
+		.append(".AsmInstantiator").append(key.getConstructor().getDeclaringClass().getSimpleName());
+		String[] injectedParams = key.getInjectedParams();
+		if (injectedParams != null) {
+			for(String str : injectedParams) {
+				sb.append(str.substring(0, Math.min(str.length(), 3)));
+			}
+		}
+		sb.append(Long.toHexString(classNumber.getAndIncrement()));
+		return sb.toString();
 	}
 
 	private String generateClassName(final Method m) {
@@ -116,9 +147,9 @@ public class AsmFactory implements Opcodes {
 					 + m.getParameterTypes()[0].getSimpleName()
 					;
 	}
-	private final AtomicLong classNumber = new AtomicLong();
+	
 	private <S, T> String generateClassName(final FieldMapper<S, T>[] mappers, final Class<S> source, final Class<T> target) {
 		return "org.sfm.reflect.asm." + target.getPackage().getName() + 
-					".AsmMapper" + source.getSimpleName() + "2" +  target.getSimpleName() + mappers.length + classNumber.getAndIncrement(); 
+					".AsmMapper" + source.getSimpleName() + "2" +  target.getSimpleName() + mappers.length + "_" + classNumber.getAndIncrement(); 
 	}
 }

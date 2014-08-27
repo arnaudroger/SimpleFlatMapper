@@ -13,6 +13,7 @@ public class FinalDbObject {
 	private final Type typeOrdinal;
 	private final Type typeName;
 	
+	
 	public FinalDbObject(long id, String name, String email, Date creationTime, Type typeOrdinal, Type typeName) {
 		this.id = id;
 		this.name = name;

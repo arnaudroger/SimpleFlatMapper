@@ -21,7 +21,7 @@ import org.objectweb.asm.MethodVisitor;
 public class ConstructorBuilder {
 	public static byte[] createEmptyConstructor(final String className, final Class<?> sourceClass,
 			final Class<?> targetClass) throws Exception {
-		ClassWriter cw = new ClassWriter(0);
+		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
 
 		String targetType = AsmUtils.toType(targetClass);

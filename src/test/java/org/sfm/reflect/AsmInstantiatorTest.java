@@ -15,7 +15,7 @@ public class AsmInstantiatorTest {
 	@Test
 	public void testInstantiate() throws Exception {
 		
-		Instantiator<ResultSet, DbObject> instantiator = factory.createInstatiantor(ResultSet.class, DbObject.class);
+		Instantiator<ResultSet, DbObject> instantiator = factory.createEmptyArgsInstatiantor(ResultSet.class, DbObject.class);
 		
 		assertNotNull(instantiator.newInstance(null));
 	}

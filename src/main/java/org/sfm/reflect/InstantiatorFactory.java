@@ -42,7 +42,7 @@ public class InstantiatorFactory {
 			
 			if (Modifier.isPublic(constructor.getModifiers())) {
 				try {
-					return asmFactory.createInstatiantor(source, target);
+					return asmFactory.createEmptyArgsInstatiantor(source, target);
 				} catch (Exception e) {
 					// fall back on reflection
 				}

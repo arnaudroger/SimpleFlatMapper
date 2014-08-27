@@ -1,6 +1,6 @@
 package org.sfm.reflect.asm;
 
-import static org.objectweb.asm.Opcodes.DLOAD;
+import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Opcodes.FLOAD;
 import static org.objectweb.asm.Opcodes.ILOAD;
 import static org.objectweb.asm.Opcodes.LLOAD;
@@ -15,6 +15,10 @@ import java.util.Map;
 import java.util.Set;
 public class AsmUtils {
 	public static String toType(final Class<?> target) {
+		if (target.isPrimitive()) {
+			return primitivesType.get(target);
+		}
+		
 		String name = target.getName();
 		return toType(name);
 	}
@@ -78,7 +82,19 @@ public class AsmUtils {
 		      put(short.class, ILOAD);
 		}
 	};	
-	
+	@SuppressWarnings("serial")
+	static final Map<Class<?>, Integer> defaultValue = new HashMap<Class<?>, Integer>() {
+		{
+			  put(boolean.class, ICONST_0);
+		      put(byte.class, ICONST_0);
+		      put(char.class, ICONST_0);
+		      put(double.class, DCONST_0);
+		      put(float.class, FCONST_0);
+		      put(int.class, ICONST_0);
+		      put(long.class, LCONST_0);
+		      put(short.class, ICONST_0);
+		}
+	};	
 	@SuppressWarnings("serial")
 	static final Set<Class<?>> primitivesClassAndWrapper = new HashSet<Class<?>>() {
 		{
@@ -95,6 +111,11 @@ public class AsmUtils {
 			targetDir = new File(targetDirStr);
 			targetDir.mkdirs();
 		} 
+	}
+	
+	public static boolean isStillGeneric(Class<? > clazz) {
+		final TypeVariable<?>[] typeParameters = clazz.getTypeParameters();
+		return typeParameters != null && typeParameters.length > 0;
 	}
 	
 	public static byte[] writeClassToFile (final String classname, final byte[] bytes) throws IOException {

@@ -101,7 +101,6 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	
 	@Override
 	public final ResultSetMapperBuilder<T> addNamedColumn(final String column, final int sqlType) {
-		// match any constructor?
 		Parameter param = hasMatchingConstructor(column);
 		if (param != null) {
 			removeNonMatchingConstructor(param);
@@ -117,64 +116,57 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 		return this;
 	}
 	
-	private void removeNonMatchingConstructor(Parameter param) {
-		ListIterator<ConstructorDefinition<T>> li = constructors.listIterator();
-		
-		while(li.hasNext()){
-			ConstructorDefinition<T> cd = li.next();
-			if (!cd.hasParam(param)) {
-				li.remove();
-			}
-		}
-	}
-
-	private Parameter hasMatchingConstructor(String column) {
-		if (constructors == null)  return null;
-		
-		for(ConstructorDefinition<T> cd : constructors) {
-			Parameter param = cd.lookFor(new PropertyNameMatcher(column));
-			if (param != null) {
-				return param;
-			}
-		}
-		return null;
-	}
-
 	@Override
 	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column, final int columnIndex, final int sqlType) {
-		final Setter<T, Object> setter = findSetter(column);
-		if (setter == null) {
-			mapperBuilderErrorHandler.setterNotFound(target, column);
+		Parameter param = hasMatchingConstructor(column);
+		if (param != null) {
+			removeNonMatchingConstructor(param);
+			constructorInjection.put(param, ResultSetGetterFactory.newGetter(param.getType(), columnIndex, sqlType));
 		} else {
-			addMapping(setter, columnIndex, sqlType);
+			final Setter<T, Object> setter = findSetter(column);
+			if (setter == null) {
+				mapperBuilderErrorHandler.setterNotFound(target, column);
+			} else {
+				addMapping(setter, columnIndex, sqlType);
+			}
 		}
 		return this;
 	}
 
 	@Override
 	public final ResultSetMapperBuilder<T> addMapping(final String property, final String column, final int sqlType) {
-		final Setter<T, Object> setter = getSetter(property);
-		if (setter == null) {
-			mapperBuilderErrorHandler.setterNotFound(target, property);
+		Parameter param = hasMatchingConstructor(column);
+		if (param != null) {
+			removeNonMatchingConstructor(param);
+			constructorInjection.put(param, ResultSetGetterFactory.newGetter(param.getType(), column, sqlType));
 		} else {
-			addMapping(setter, column, sqlType);
+			final Setter<T, Object> setter = getSetter(property);
+			if (setter == null) {
+				mapperBuilderErrorHandler.setterNotFound(target, property);
+			} else {
+				addMapping(setter, column, sqlType);
+			}
 		}
 		return this;
 	}
 
 	@Override
 	public final ResultSetMapperBuilder<T> addMapping(final String property, final int column, final int sqlType) {
-		final Setter<T, Object> setter = getSetter(property);
-		if (setter == null) {
-			mapperBuilderErrorHandler.setterNotFound(target, property);
+		Parameter param = hasMatchingConstructor(property);
+		if (param != null) {
+			removeNonMatchingConstructor(param);
+			constructorInjection.put(param, ResultSetGetterFactory.newGetter(param.getType(), column, sqlType));
 		} else {
-			addMapping(setter, column, sqlType);
+			final Setter<T, Object> setter = getSetter(property);
+			if (setter == null) {
+				mapperBuilderErrorHandler.setterNotFound(target, property);
+			} else {
+				addMapping(setter, column, sqlType);
+			}
 		}
 		return this;
 	}
 	
-
-
 	@Override
 	public final ResultSetMapperBuilder<T> addMapping(final ResultSetMetaData metaData) throws SQLException {
 		for(int i = 1; i <= metaData.getColumnCount(); i++) {
@@ -198,7 +190,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 
 	private Instantiator<ResultSet, T> getInstantiator() throws NoSuchMethodException, SecurityException {
-		if (constructors == null || constructors.isEmpty() || constructorInjection.isEmpty()) {
+		if (constructors == null) {
 			return instantiatorFactory.getInstantiator(ResultSet.class, target);
 		} else {
 			return instantiatorFactory.getInstantiator(ResultSet.class, constructors, constructorInjection);
@@ -264,6 +256,29 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 					String.valueOf(column), getter, setter,
 					fieldMapperErrorHandler);
 		}
+	}
+	
+	private void removeNonMatchingConstructor(Parameter param) {
+		ListIterator<ConstructorDefinition<T>> li = constructors.listIterator();
+		
+		while(li.hasNext()){
+			ConstructorDefinition<T> cd = li.next();
+			if (!cd.hasParam(param)) {
+				li.remove();
+			}
+		}
+	}
+
+	private Parameter hasMatchingConstructor(String column) {
+		if (constructors == null)  return null;
+		
+		for(ConstructorDefinition<T> cd : constructors) {
+			Parameter param = cd.lookFor(new PropertyNameMatcher(column));
+			if (param != null) {
+				return param;
+			}
+		}
+		return null;
 	}
 	
 	protected abstract Setter<T, Object> findSetter(String column);

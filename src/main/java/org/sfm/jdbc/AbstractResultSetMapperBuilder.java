@@ -1,6 +1,5 @@
 package org.sfm.jdbc;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -13,8 +12,9 @@ import java.util.Map;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.FieldMapperImpl;
-import org.sfm.map.LogFieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
+import org.sfm.map.MapperBuildingException;
+import org.sfm.map.RethrowFieldMapperErrorHandler;
 import org.sfm.map.RethrowMapperBuilderErrorHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
@@ -28,9 +28,9 @@ import org.sfm.utils.PropertyNameMatcher;
 
 public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapperBuilder<T> {
 
-	private FieldMapperErrorHandler fieldMapperErrorHandler = new LogFieldMapperErrorHandler();
+	private FieldMapperErrorHandler fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler();
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
-
+	private JdbcMapperErrorHandler jdbcMapperErrorHandler = new RethrowJdbcMapperErrorHandler();
 	private final Class<T> target;
 	private final PrimitiveFieldMapperFactory<T> primitiveFieldMapperFactory;
 	private final AsmFactory asmFactory;
@@ -43,14 +43,18 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	private final List<ConstructorDefinition<T>> constructors;
 	private final Map<Parameter, Getter<ResultSet, ?>> constructorInjection;
 	
-	public AbstractResultSetMapperBuilder(Class<T> target, SetterFactory setterFactory, boolean asmPresent) throws NoSuchMethodException, SecurityException, IOException {
+	public AbstractResultSetMapperBuilder(Class<T> target, SetterFactory setterFactory, boolean asmPresent) throws MapperBuildingException {
 		this.target = target;
 		this.primitiveFieldMapperFactory = new PrimitiveFieldMapperFactory<>(setterFactory);
 		this.asmFactory = setterFactory.getAsmFactory();
 		this.instantiatorFactory = new InstantiatorFactory(asmFactory);
 		
 		if (asmPresent) {
-			this.constructors = ConstructorDefinition.extractConstructors(target);
+			try {
+				this.constructors = ConstructorDefinition.extractConstructors(target);
+			} catch(Exception e) {
+				throw new MapperBuildingException(e.getMessage(), e);
+			}
 			this.constructorInjection = new HashMap<Parameter, Getter<ResultSet,?>>();
 		} else {
 			this.constructors = null;
@@ -177,23 +181,31 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	}
 	
 	@Override
-	public final JdbcMapper<T> mapper() throws NoSuchMethodException, SecurityException {
+	public final JdbcMapper<T> mapper() throws MapperBuildingException {
 		if (asmFactory != null) {
 			try {
-				return asmFactory.createJdbcMapper(fields(), getInstantiator(), target);
+				return asmFactory.createJdbcMapper(fields(), getInstantiator(), target, jdbcMapperErrorHandler);
 			} catch(Exception e) {
-				return new JdbcMapperImpl<T>(fields(), getInstantiator());
+				return new JdbcMapperImpl<T>(fields(), getInstantiator(), jdbcMapperErrorHandler);
 			}
 		} else {
-			return new JdbcMapperImpl<T>(fields(), getInstantiator());
+			return new JdbcMapperImpl<T>(fields(), getInstantiator(), jdbcMapperErrorHandler);
 		}
 	}
 
-	private Instantiator<ResultSet, T> getInstantiator() throws NoSuchMethodException, SecurityException {
+	private Instantiator<ResultSet, T> getInstantiator() throws MapperBuildingException {
 		if (constructors == null) {
-			return instantiatorFactory.getInstantiator(ResultSet.class, target);
+			try {
+				return instantiatorFactory.getInstantiator(ResultSet.class, target);
+			} catch(Exception e) {
+				throw new MapperBuildingException(e.getMessage(), e);
+			}
 		} else {
-			return instantiatorFactory.getInstantiator(ResultSet.class, constructors, constructorInjection);
+			try {
+				return instantiatorFactory.getInstantiator(ResultSet.class, constructors, constructorInjection);
+			} catch(Exception e) {
+				throw new MapperBuildingException(e.getMessage(), e);
+			}
 		}
 	}
 

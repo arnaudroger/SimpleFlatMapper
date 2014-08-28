@@ -44,7 +44,9 @@ public class SetterBuilder implements Opcodes {
 			mv.visitCode();
 			mv.visitVarInsn(ALOAD, 1);
 			mv.visitVarInsn(ALOAD, 2);
-			mv.visitMethodInsn(INVOKEVIRTUAL,  targetType , method.getName(), "(L" + propertyType + ";)V", false);
+			
+			AsmUtils.invoke(mv, target, method.getName(),  "(L" + propertyType + ";)V");
+			
 			mv.visitInsn(RETURN);
 			mv.visitMaxs(2, 3);
 			mv.visitEnd();
@@ -124,7 +126,9 @@ public class SetterBuilder implements Opcodes {
 		mv.visitCode();
 		mv.visitVarInsn(ALOAD, 1);
 		mv.visitVarInsn(primitiveLoadOp, 2);
-		mv.visitMethodInsn(INVOKEVIRTUAL,  targetType , method.getName(), "(" + primitiveType + ")V", false);
+		
+		AsmUtils.invoke(mv, target, method.getName(), "(" + primitiveType + ")V");
+		
 		mv.visitInsn(RETURN);
 		mv.visitMaxs(2, 3);
 		mv.visitEnd();
@@ -134,8 +138,8 @@ public class SetterBuilder implements Opcodes {
 		mv.visitCode();
 		mv.visitVarInsn(ALOAD, 1);
 		mv.visitVarInsn(ALOAD, 2);
-		mv.visitMethodInsn(INVOKEVIRTUAL,  propertyType , valueMethod, "()" + primitiveType + "", false);
-		mv.visitMethodInsn(INVOKEVIRTUAL,  targetType , method.getName(), "(" + primitiveType + ")V", false);
+		AsmUtils.invoke(mv, property, valueMethod, "()" + primitiveType);
+		AsmUtils.invoke(mv, target, method.getName(), "(" + primitiveType + ")V");
 		mv.visitInsn(RETURN);
 		mv.visitMaxs(2, 3);
 		mv.visitEnd();

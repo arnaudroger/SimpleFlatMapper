@@ -5,12 +5,12 @@ public final class RethrowMapperBuilderErrorHandler implements
 
 	@Override
 	public void getterNotFound(final String msg) {
-		throw new IllegalArgumentException(msg);
+		throw new MapperBuildingException(msg);
 	}
 
 	@Override
 	public void setterNotFound(final Class<?> target, final String property) {
-		throw new IllegalArgumentException("Setter for " + property + " on  " + target + " not found");
+		throw new MapperBuildingException("Setter for " + property + " on  " + target + " not found");
 	}
 
 }

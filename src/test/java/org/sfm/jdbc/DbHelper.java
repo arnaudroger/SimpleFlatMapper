@@ -41,7 +41,7 @@ public class DbHelper {
 		return c;
 	}
 
-	public static void assertDbObjectMapping(DbObject dbObject) throws ParseException {
+	public static void assertDbObjectMapping(DbObject dbObject) throws ParseException  {
 		assertEquals(1, dbObject.getId());
 		assertEquals("name 1", dbObject.getName());
 		assertEquals("name1@mail.com", dbObject.getEmail());

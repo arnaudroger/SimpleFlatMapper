@@ -3,18 +3,26 @@ package org.sfm.reflect.asm;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.rmi.UnexpectedException;
 import java.sql.ResultSet;
 import java.util.HashMap;
 
 import org.junit.Test;
+import org.objenesis.instantiator.basic.ConstructorInstantiator;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.beans.DbFinalObject;
+import org.sfm.jdbc.JdbcMapper;
+import org.sfm.jdbc.RethrowJdbcMapperErrorHandler;
 import org.sfm.jdbc.getter.LongIndexedResultSetGetter;
 import org.sfm.jdbc.getter.OrdinalEnumIndexedResultSetGetter;
 import org.sfm.jdbc.getter.StringIndexedResultSetGetter;
+import org.sfm.map.FieldMapper;
+import org.sfm.map.InstantiationMappingException;
+import org.sfm.map.MappingException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
+import org.sfm.reflect.StaticConstructorInstantiator;
 
 public class AsmFactoryTest {
 
@@ -92,5 +100,54 @@ public class AsmFactoryTest {
 		assertEquals(0, fdo.getId());
 		assertEquals("fdo", fdo.getName());
 		assertEquals(Type.type2, fdo.getTypeOrdinal());
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testAsmJdbcMapperFailedInstantiator() throws NoSuchMethodException, SecurityException, Exception {
+		JdbcMapper<DbObject> jdbcMapper = asmFactory.createJdbcMapper(
+				(FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {},
+				new Instantiator<ResultSet, DbObject>() {
+					@Override
+					public DbObject newInstance(ResultSet s) throws Exception {
+						throw new UnexpectedException("Error");
+					}
+				}, 
+				DbObject.class, new RethrowJdbcMapperErrorHandler());
+		
+		try {
+			jdbcMapper.map(null);
+		} catch(InstantiationMappingException e) {
+			// ok
+		} 
+	}
+	
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testAsmJdbcMapperFailedGetter() throws NoSuchMethodException, SecurityException, Exception {
+		JdbcMapper<DbObject> jdbcMapper = asmFactory.createJdbcMapper(
+				(FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {
+						new FieldMapper<ResultSet, DbObject>() {
+							@Override
+							public void map(ResultSet source, DbObject target)
+									throws MappingException {
+								throw new MappingException("Expected ", null);
+							}
+						}
+				},
+				new Instantiator<ResultSet, DbObject>() {
+					@Override
+					public DbObject newInstance(ResultSet s) throws Exception {
+						return new DbObject();
+					}
+				}, 
+				DbObject.class, new RethrowJdbcMapperErrorHandler());
+		
+		try {
+			jdbcMapper.map(null);
+		} catch(MappingException e) {
+			// ok
+		} 
 	}
 }

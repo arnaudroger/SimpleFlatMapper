@@ -113,7 +113,9 @@ public class InstantiatorBuilder {
  						mv.visitInsn(ACONST_NULL);
  					}
  				} else {
- 					String getterType = AsmUtils.toType(getter.getClass());
+ 					
+ 					Class<?> getterPublicType = AsmUtils.getPublicOrInterfaceClass(getter.getClass());
+ 					String getterType = AsmUtils.toType(getterPublicType);
  					
  					mv.visitVarInsn(ALOAD, 0);
  					mv.visitFieldInsn(GETFIELD, classType, "getter_" + p.getName(), "L" + getterType + ";");
@@ -124,13 +126,13 @@ public class InstantiatorBuilder {
  						if ("Integer".equals(methodSuffix)) {
  							methodSuffix = "Int";
  						}
- 						mv.visitMethodInsn(INVOKEVIRTUAL, getterType, "get" + methodSuffix, "(Ljava/sql/ResultSet;)" +propertyType , false);
+ 						AsmUtils.invoke(mv, getterPublicType, "get" + methodSuffix, "(Ljava/sql/ResultSet;)" +propertyType);
  					} else {
  						if (AsmUtils.isStillGeneric(getter.getClass())) {
- 							mv.visitMethodInsn(INVOKEVIRTUAL, getterType, "get", "(Ljava/lang/Object;)Ljava/lang/Object;", false);
+ 	 						AsmUtils.invoke(mv, getterPublicType, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
  							mv.visitTypeInsn(CHECKCAST, propertyType);
  						} else {
- 							mv.visitMethodInsn(INVOKEVIRTUAL, getterType, "get", "(Ljava/sql/ResultSet;)L"+ AsmUtils.toType(getter.getClass().getMethod("get", ResultSet.class).getReturnType()) + ";", false);
+ 	 						AsmUtils.invoke(mv, getterPublicType, "get", "(Ljava/sql/ResultSet;)L"+ AsmUtils.toType(getter.getClass().getMethod("get", ResultSet.class).getReturnType()) + ";");
  						}
  					}
  					

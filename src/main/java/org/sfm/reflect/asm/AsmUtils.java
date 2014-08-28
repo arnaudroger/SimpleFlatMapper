@@ -1,26 +1,32 @@
 package org.sfm.reflect.asm;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.DCONST_0;
+import static org.objectweb.asm.Opcodes.DLOAD;
+import static org.objectweb.asm.Opcodes.FCONST_0;
 import static org.objectweb.asm.Opcodes.FLOAD;
+import static org.objectweb.asm.Opcodes.ICONST_0;
 import static org.objectweb.asm.Opcodes.ILOAD;
+import static org.objectweb.asm.Opcodes.LCONST_0;
 import static org.objectweb.asm.Opcodes.LLOAD;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.TypeVariable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 public class AsmUtils {
 	public static String toType(final Class<?> target) {
 		if (target.isPrimitive()) {
 			return primitivesType.get(target);
 		}
-		
-		String name = target.getName();
-		return toType(name);
+		return toType(getPublicOrInterfaceClass(target).getName());
 	}
 
 	public static String toType(final String name) {
@@ -114,6 +120,7 @@ public class AsmUtils {
 	}
 	
 	public static boolean isStillGeneric(Class<? > clazz) {
+		clazz = getPublicOrInterfaceClass(clazz);
 		final TypeVariable<?>[] typeParameters = clazz.getTypeParameters();
 		return typeParameters != null && typeParameters.length > 0;
 	}
@@ -138,6 +145,8 @@ public class AsmUtils {
 
 	public static String toTypeWithParam(Class<?> class1) {
 		StringBuilder sb = new StringBuilder();
+		
+		class1 = getPublicOrInterfaceClass(class1);
 		
 		sb.append(toType(class1));
 		
@@ -170,5 +179,25 @@ public class AsmUtils {
 			}
 		}
 		return Class.forName(desc.substring(1, desc.length() - 1).replace('/', '.'));
+	}
+
+	public static Class<?> getPublicOrInterfaceClass(Class<?> clazz) {
+		if (! Modifier.isPublic(clazz.getModifiers()) && ! Modifier.isStatic(clazz.getModifiers())) {
+			Class<?>[] interfaces = clazz.getInterfaces();
+			if (interfaces != null && interfaces.length > 0) {
+				return interfaces[0];
+			} else {
+				return getPublicOrInterfaceClass(clazz.getSuperclass());
+			}
+		}
+		
+		return clazz;
+	}
+
+	public static void invoke(MethodVisitor mv, Class<?> target,
+			String method, String sig) {
+		Class<?> publicClass = getPublicOrInterfaceClass(target);
+		boolean isinterface = publicClass.isInterface();
+		mv.visitMethodInsn(isinterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, toType(publicClass), method, sig, isinterface);
 	}
 }

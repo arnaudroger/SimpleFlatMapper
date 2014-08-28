@@ -7,7 +7,7 @@ public final class LogFieldMapperErrorHandler implements FieldMapperErrorHandler
 	private Logger logger = Logger.getLogger(getClass().getName());
 	@Override
 	public void errorMappingField(final String name, final Object source, final Object target,
-			final Exception error) throws Exception {
+			final Exception error) throws MappingException {
 		logger.log(Level.WARNING, "Error getting value from " + source, error);
 	}
 }

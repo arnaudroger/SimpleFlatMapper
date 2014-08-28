@@ -7,6 +7,6 @@ public interface Mapper<S, T> {
 	 * @return a new mapped instance of T
 	 * @throws Exception
 	 */
-	T map(S source) throws Exception;
+	T map(S source) throws MappingException;
 
 }

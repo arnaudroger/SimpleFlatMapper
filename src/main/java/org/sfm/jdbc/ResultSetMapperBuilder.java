@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
+import org.sfm.map.MapperBuildingException;
 
 public interface ResultSetMapperBuilder<T> {
 
@@ -34,7 +35,7 @@ public interface ResultSetMapperBuilder<T> {
 
 	ResultSetMapperBuilder<T> mapperBuilderErrorHandler(MapperBuilderErrorHandler errorHandler);
 	
-	JdbcMapper<T> mapper() throws NoSuchMethodException, SecurityException;
+	JdbcMapper<T> mapper() throws MapperBuildingException;
 
 	FieldMapper<ResultSet, T>[] fields();
 

@@ -11,7 +11,7 @@ public abstract class AbstractFieldMapper<S, T>  implements FieldMapper<S, T>  {
 	}
 
 	@Override
-	public final void map(final S source, final T target) throws Exception {
+	public final void map(final S source, final T target) throws MappingException {
 		try {
 			mapUnsafe(source, target);
 		} catch(Exception ge) {

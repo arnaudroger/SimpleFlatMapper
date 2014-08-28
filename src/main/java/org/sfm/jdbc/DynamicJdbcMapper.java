@@ -66,7 +66,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		JdbcMapper<T> mapper = getMapper(key);
 		
 		if (mapper == null) {
-			final CachedResultSetMapperBuilder<T> builder = new CachedResultSetMapperBuilder<T>(target, setters, setterFactory);
+			final CachedResultSetMapperBuilder<T> builder = new CachedResultSetMapperBuilder<T>(target, setters, setterFactory, AsmHelper.isAsmPresent());
 			
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 			builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);

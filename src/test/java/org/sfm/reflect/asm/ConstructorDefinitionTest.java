@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
-import org.sfm.beans.FinalDbObject;
+import org.sfm.beans.DbFinalObject;
 
 public class ConstructorDefinitionTest {
 
@@ -25,7 +25,7 @@ public class ConstructorDefinitionTest {
 	@Test
 	public void testExtractConstructorsFinalDbObject() throws IOException, NoSuchMethodException, SecurityException {
 
-		List<ConstructorDefinition<FinalDbObject>> finalDbObjectConstructors = ConstructorDefinition.extractConstructors(FinalDbObject.class);
+		List<ConstructorDefinition<DbFinalObject>> finalDbObjectConstructors = ConstructorDefinition.extractConstructors(DbFinalObject.class);
 		assertEquals(1, finalDbObjectConstructors.size());
 		assertEquals(6, finalDbObjectConstructors.get(0).getParameters().length);
 		
@@ -44,7 +44,7 @@ public class ConstructorDefinitionTest {
 		assertEquals("typeName", finalDbObjectConstructors.get(0).getParameters()[5].getName());
 
 		
-		assertEquals(FinalDbObject.class.getConstructor(long.class, String.class, String.class, Date.class, Type.class, Type.class), finalDbObjectConstructors.get(0).getConstructor());
+		assertEquals(DbFinalObject.class.getConstructor(long.class, String.class, String.class, Date.class, Type.class, Type.class), finalDbObjectConstructors.get(0).getConstructor());
 
 	}
 

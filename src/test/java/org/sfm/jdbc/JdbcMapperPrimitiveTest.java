@@ -10,6 +10,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 import org.sfm.beans.DbBoxedPrimitveObject;
+import org.sfm.beans.DbFinalPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.PrimitiveObject;
 import org.sfm.map.Mapper;
@@ -24,10 +25,30 @@ public class JdbcMapperPrimitiveTest {
 	}
 	
 	@Test
-	public void testNamedBoxedPrimitives() throws Exception {
+	public void testNamedPrimitivesWithConstructorAccess() throws Exception {
+		ResultSetMapperBuilder<DbFinalPrimitiveObject> builder = new ResultSetMapperBuilderImpl<DbFinalPrimitiveObject>(DbFinalPrimitiveObject.class);
+		testNamedPrimitives(builder);
+	}
+
+	@Test
+	public void testNamedPrimitivesWithSetterAccessNoAsm() throws Exception {
+		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, new SetterFactory(null), false);
+		testNamedPrimitives(builder);
+	}
+	
+	@Test
+	public void testNamedBoxedPrimitivesWithFieldAccess() throws Exception {
 		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
 		testNamedPrimitives(builder);
 	}
+
+	@Test
+	public void testNamedBoxedPrimitivesWithFieldAccessNullValues() throws Exception {
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		testNamedPrimitivesWithNull(builder);
+	}
+	
+	
 	
 	@Test
 	public void testIndexedPrimitivesWithSetterAccess() throws Exception {
@@ -36,29 +57,32 @@ public class JdbcMapperPrimitiveTest {
 	}
 	
 	@Test
-	public void testNamedBoxedPrimitivesWithNullValues() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
-		testNamedPrimitivesWithNull(builder);
+	public void testIndexedPrimitivesWithConstructorAccess() throws Exception {
+		ResultSetMapperBuilder<DbFinalPrimitiveObject> builder = new ResultSetMapperBuilderImpl<DbFinalPrimitiveObject>(DbFinalPrimitiveObject.class);
+		testIndexedPrimitives(builder);
+	}
+	
+	
+	@Test
+	public void testIndexedPrimitivesWithSetterAccessNoAsm() throws Exception {
+		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, new SetterFactory(null), false);
+		testIndexedPrimitives(builder);
 	}
 	
 	@Test
-	public void testIndexedPrimitivesWithNullValues() throws Exception {
+	public void testIndexedBoxedPrimitivesWithFieldAccess() throws Exception {
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		testIndexedPrimitives(builder);
+	}
+	
+	@Test
+	public void testIndexedPrimitivesWithFieldAccessNullValues() throws Exception {
 		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
 		testIndexedPrimitivesWithNull(builder);
 	}
 	
-	@Test
-	public void testIndexedPrimitivesWithSetterAccessNoAsm() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, new SetterFactory(null));
-		testIndexedPrimitives(builder);
-	}
 	
-	@Test
-	public void testIndexedBoxedPrimitives() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
-		testIndexedPrimitives(builder);
-	}
-	
+
 	private <T extends PrimitiveObject> void testIndexedPrimitives(ResultSetMapperBuilder<T> builder)
 			throws SQLException, Exception {
 		addIndexedColumn(builder);		

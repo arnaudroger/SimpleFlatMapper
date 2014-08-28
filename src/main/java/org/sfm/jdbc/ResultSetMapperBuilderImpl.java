@@ -11,11 +11,11 @@ public final class ResultSetMapperBuilderImpl<T> extends AbstractResultSetMapper
 	private final SetterFactory setterFactory;
 
 	public ResultSetMapperBuilderImpl(final Class<T> target) throws NoSuchMethodException, SecurityException, IOException {
-		this(target, new SetterFactory());
+		this(target, new SetterFactory(), AsmHelper.isAsmPresent());
 	}
 
-	public ResultSetMapperBuilderImpl(final Class<T> target, final SetterFactory setterFactory) throws NoSuchMethodException, SecurityException, IOException {
-		super(target, setterFactory);
+	public ResultSetMapperBuilderImpl(final Class<T> target, final SetterFactory setterFactory, final boolean asmPresent) throws NoSuchMethodException, SecurityException, IOException {
+		super(target, setterFactory, asmPresent);
 		this.setterFactory = setterFactory;
 	}
 

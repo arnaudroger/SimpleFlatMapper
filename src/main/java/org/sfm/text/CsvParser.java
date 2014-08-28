@@ -6,10 +6,6 @@ import java.io.Reader;
 
 public final class CsvParser {
 	
-	static enum State {
-		IN_QUOTE, QUOTE, NONE
-	}
-
 	private final int bufferSize;
 	
 	public CsvParser(final int bufferSize) {

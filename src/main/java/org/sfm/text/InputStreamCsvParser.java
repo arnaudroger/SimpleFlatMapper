@@ -9,13 +9,10 @@ public final class InputStreamCsvParser {
 	private static final byte COMMA = ',';
 	private static final byte QUOTES = '"';
 
-	static enum State {
-		IN_QUOTE, QUOTE, NONE
-	}
 	private byte[] buffer;
 
 	private int bufferLength;
-	private State currentState = State.NONE;
+	private CsvParserState currentState = CsvParserState.NONE;
 
 	private int currentStart =0;
 	private int bufferOffset = 0;
@@ -62,25 +59,25 @@ public final class InputStreamCsvParser {
 	private void handleByte(final BytesCellHandler handler, final byte c, final int i) {
 		if (c ==  QUOTES) {
 			if (currentStart == i) {
-				currentState = State.IN_QUOTE;
-			} else if (currentState == State.IN_QUOTE) {
-				currentState = State.QUOTE;
+				currentState = CsvParserState.IN_QUOTE;
+			} else if (currentState == CsvParserState.IN_QUOTE) {
+				currentState = CsvParserState.QUOTE;
 			} else {
-				if (currentState == State.QUOTE) {
-					currentState = State.IN_QUOTE;
+				if (currentState == CsvParserState.QUOTE) {
+					currentState = CsvParserState.IN_QUOTE;
 				}
 			}
 		} else if (c == COMMA) {
-			if (currentState != State.IN_QUOTE) {
+			if (currentState != CsvParserState.IN_QUOTE) {
 				handler.newCell(buffer, currentStart, i - currentStart);
 				currentStart = i  + 1;
-				currentState = State.NONE;
+				currentState = CsvParserState.NONE;
 			}
 		} else if (c == CARRIAGE_RETURN) {
-			if (currentState != State.IN_QUOTE) {
+			if (currentState != CsvParserState.IN_QUOTE) {
 				handler.newCell(buffer, currentStart, i - currentStart);
 				currentStart = i  + 1;
-				currentState = State.NONE;
+				currentState = CsvParserState.NONE;
 				handler.newRow();
 			}
 		}

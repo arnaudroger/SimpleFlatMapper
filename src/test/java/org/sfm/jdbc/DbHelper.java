@@ -11,7 +11,7 @@ import java.sql.Statement;
 import java.text.ParseException;
 
 import org.sfm.beans.DbObject;
-import org.sfm.beans.FinalDbObject;
+import org.sfm.beans.DbFinalObject;
 import org.sfm.utils.DateHelper;
 import org.sfm.utils.Handler;
 
@@ -50,7 +50,7 @@ public class DbHelper {
 		assertEquals(DbObject.Type.type4, dbObject.getTypeName());
 	}
 	
-	public static void assertDbObjectMapping(FinalDbObject dbObject) throws ParseException {
+	public static void assertDbObjectMapping(DbFinalObject dbObject) throws ParseException {
 		assertEquals(1, dbObject.getId());
 		assertEquals("name 1", dbObject.getName());
 		assertEquals("name1@mail.com", dbObject.getEmail());

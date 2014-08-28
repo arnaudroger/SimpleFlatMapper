@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -91,6 +92,20 @@ public class SetterFactoryTest {
 		assertTrue(nonAsmfactory.toBooleanSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pBoolean")) instanceof BooleanMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pBoolean");
 		assertSame(setter, asmfactory.toBooleanSetter(setter));
+		
+		try {
+			nonAsmfactory.toBooleanSetter(new Setter<DbPrimitiveObject, Boolean>() {
+				@Override
+				public void set(DbPrimitiveObject target, Boolean value) throws Exception {
+				}
+				@Override
+				public Class<? extends Boolean> getPropertyType() {
+					return null;
+				}
+			});
+			fail("Should fail");
+		} catch (Exception e) {
+		}
 	}
 	
 	@Test
@@ -99,6 +114,20 @@ public class SetterFactoryTest {
 		assertTrue(nonAsmfactory.toByteSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pByte")) instanceof ByteMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pByte");
 		assertSame(setter, asmfactory.toByteSetter(setter));
+		
+		try {
+			nonAsmfactory.toByteSetter(new Setter<DbPrimitiveObject, Byte>() {
+				@Override
+				public void set(DbPrimitiveObject target, Byte value) throws Exception {
+				}
+				@Override
+				public Class<? extends Byte> getPropertyType() {
+					return null;
+				}
+			});
+			fail("Should fail");
+		} catch (Exception e) {
+		}
 	}
 	
 	@Test
@@ -107,6 +136,20 @@ public class SetterFactoryTest {
 		assertTrue(nonAsmfactory.toCharacterSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pCharacter")) instanceof CharacterMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pCharacter");
 		assertSame(setter, asmfactory.toCharacterSetter(setter));
+		
+		try {
+			nonAsmfactory.toCharacterSetter(new Setter<DbPrimitiveObject, Character>() {
+				@Override
+				public void set(DbPrimitiveObject target, Character value) throws Exception {
+				}
+				@Override
+				public Class<? extends Character> getPropertyType() {
+					return null;
+				}
+			});
+			fail("Should fail");
+		} catch (Exception e) {
+		}
 	}
 	
 	@Test
@@ -115,6 +158,20 @@ public class SetterFactoryTest {
 		assertTrue(nonAsmfactory.toShortSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pShort")) instanceof ShortMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pShort");
 		assertSame(setter, asmfactory.toShortSetter(setter));
+		
+		try {
+			nonAsmfactory.toShortSetter(new Setter<DbPrimitiveObject, Short>() {
+				@Override
+				public void set(DbPrimitiveObject target, Short value) throws Exception {
+				}
+				@Override
+				public Class<? extends Short> getPropertyType() {
+					return null;
+				}
+			});
+			fail("Should fail");
+		} catch (Exception e) {
+		}
 	}
 	
 	@Test
@@ -123,6 +180,20 @@ public class SetterFactoryTest {
 		assertTrue(nonAsmfactory.toIntSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pInt")) instanceof IntMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pInt");
 		assertSame(setter, asmfactory.toIntSetter(setter));
+		
+		try {
+			nonAsmfactory.toIntSetter(new Setter<DbPrimitiveObject, Integer>() {
+				@Override
+				public void set(DbPrimitiveObject target, Integer value) throws Exception {
+				}
+				@Override
+				public Class<? extends Integer> getPropertyType() {
+					return null;
+				}
+			});
+			fail("Should fail");
+		} catch (Exception e) {
+		}
 	}
 	
 	@Test
@@ -131,6 +202,20 @@ public class SetterFactoryTest {
 		assertTrue(nonAsmfactory.toLongSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pLong")) instanceof LongMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pLong");
 		assertSame(setter, asmfactory.toLongSetter(setter));
+		
+		try {
+			nonAsmfactory.toLongSetter(new Setter<DbPrimitiveObject, Long>() {
+				@Override
+				public void set(DbPrimitiveObject target, Long value) throws Exception {
+				}
+				@Override
+				public Class<? extends Long> getPropertyType() {
+					return null;
+				}
+			});
+			fail("Should fail");
+		} catch (Exception e) {
+		}
 	}
 	
 	@Test
@@ -139,6 +224,20 @@ public class SetterFactoryTest {
 		assertTrue(nonAsmfactory.toFloatSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pFloat")) instanceof FloatMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pFloat");
 		assertSame(setter, asmfactory.toFloatSetter(setter));
+		
+		try {
+			nonAsmfactory.toFloatSetter(new Setter<DbPrimitiveObject, Float>() {
+				@Override
+				public void set(DbPrimitiveObject target, Float value) throws Exception {
+				}
+				@Override
+				public Class<? extends Float> getPropertyType() {
+					return null;
+				}
+			});
+			fail("Should fail");
+		} catch (Exception e) {
+		}
 	}
 	
 	@Test
@@ -147,6 +246,20 @@ public class SetterFactoryTest {
 		assertTrue(nonAsmfactory.toDoubleSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pDouble")) instanceof DoubleMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pDouble");
 		assertSame(setter, asmfactory.toDoubleSetter(setter));
+		
+		try {
+			nonAsmfactory.toDoubleSetter(new Setter<DbPrimitiveObject, Double>() {
+				@Override
+				public void set(DbPrimitiveObject target, Double value) throws Exception {
+				}
+				@Override
+				public Class<? extends Double> getPropertyType() {
+					return null;
+				}
+			});
+			fail("Should fail");
+		} catch (Exception e) {
+		}
 	}
 	
 	@SuppressWarnings("rawtypes")

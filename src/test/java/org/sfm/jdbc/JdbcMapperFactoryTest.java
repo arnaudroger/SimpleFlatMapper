@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.beans.FinalDbObject;
+import org.sfm.beans.DbFinalObject;
 import org.sfm.utils.Handler;
 import org.sfm.utils.ListHandler;
 
@@ -75,7 +75,7 @@ public class JdbcMapperFactoryTest {
 		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				JdbcMapper<FinalDbObject> mapper = asmFactory.newMapper(FinalDbObject.class);
+				JdbcMapper<DbFinalObject> mapper = asmFactory.newMapper(DbFinalObject.class);
 				assertMapPsFinalDbObject(ps.executeQuery(), mapper);
 			}
 		});
@@ -87,7 +87,7 @@ public class JdbcMapperFactoryTest {
 		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				JdbcMapper<FinalDbObject> mapper = nonAsmFactory.newMapper(FinalDbObject.class);
+				JdbcMapper<DbFinalObject> mapper = nonAsmFactory.newMapper(DbFinalObject.class);
 				assertMapPsFinalDbObject(ps.executeQuery(), mapper);
 			}
 		});
@@ -103,9 +103,9 @@ public class JdbcMapperFactoryTest {
 	
 	
 	private void assertMapPsFinalDbObject(ResultSet rs,
-			JdbcMapper<FinalDbObject> mapper) throws Exception,
+			JdbcMapper<DbFinalObject> mapper) throws Exception,
 			ParseException {
-		List<FinalDbObject> list = mapper.forEach(rs, new ListHandler<FinalDbObject>()).getList();
+		List<DbFinalObject> list = mapper.forEach(rs, new ListHandler<DbFinalObject>()).getList();
 		assertEquals(1,  list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}

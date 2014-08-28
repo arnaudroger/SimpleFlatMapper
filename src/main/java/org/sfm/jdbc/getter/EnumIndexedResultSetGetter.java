@@ -9,15 +9,11 @@ public final class EnumIndexedResultSetGetter<E extends Enum<E>> implements  Get
 	private final int columnIndex;
 	private final Class<E> enumType;
 	private final E[] values;
-	@SuppressWarnings("unchecked")
+	
 	public EnumIndexedResultSetGetter(final int column, final Class<E> enumType)  {
 		this.columnIndex = column;
 		this.enumType = enumType;
-		try {
-			this.values = (E[]) enumType.getDeclaredMethod("values").invoke(enumType);
-		} catch (Exception e) {
-			throw new Error("Unexpected error getting enum values " + e, e);
-		}
+		this.values = EnumHelper.getValues(enumType);
 	}
 
 	@Override

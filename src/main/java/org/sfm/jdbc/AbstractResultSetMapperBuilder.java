@@ -43,13 +43,13 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	private final List<ConstructorDefinition<T>> constructors;
 	private final Map<Parameter, Getter<ResultSet, ?>> constructorInjection;
 	
-	public AbstractResultSetMapperBuilder(Class<T> target, SetterFactory setterFactory) throws NoSuchMethodException, SecurityException, IOException {
+	public AbstractResultSetMapperBuilder(Class<T> target, SetterFactory setterFactory, boolean asmPresent) throws NoSuchMethodException, SecurityException, IOException {
 		this.target = target;
 		this.primitiveFieldMapperFactory = new PrimitiveFieldMapperFactory<>(setterFactory);
 		this.asmFactory = setterFactory.getAsmFactory();
 		this.instantiatorFactory = new InstantiatorFactory(asmFactory);
 		
-		if (AsmHelper.isAsmPresent()) {
+		if (asmPresent) {
 			this.constructors = ConstructorDefinition.extractConstructors(target);
 			this.constructorInjection = new HashMap<Parameter, Getter<ResultSet,?>>();
 		} else {
@@ -81,7 +81,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 
 	@Override
 	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column) {
-		return addIndexedColumn(column, fields.size() + 1);
+		return addIndexedColumn(column, fields.size() + constructorInjection.size() + 1);
 	}
 
 	@Override

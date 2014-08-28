@@ -8,14 +8,10 @@ public final class OrdinalEnumIndexedResultSetGetter<E extends Enum<E>> implemen
 
 	private final int columnIndex;
 	private final E[] values;
-	@SuppressWarnings("unchecked")
+	
 	public OrdinalEnumIndexedResultSetGetter(final int column, final Class<E> enumType)  {
 		this.columnIndex = column;
-		try {
-			this.values = (E[]) enumType.getDeclaredMethod("values").invoke(enumType);
-		} catch (Exception e) {
-			throw new Error("Unexpected error getting enum values " + e, e);
-		}
+		this.values = EnumHelper.getValues(enumType);
 	}
 
 	@Override

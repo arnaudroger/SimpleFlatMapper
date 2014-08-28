@@ -8,15 +8,19 @@ public class AsmHelper {
 		return asmPresent ? new AsmFactory() : null;
 	}
 	
-	private static final boolean asmPresent = isAsmPresent();
+	private static final boolean asmPresent = _isAsmPresent();
 
-	public static boolean isAsmPresent() {
+	private static boolean _isAsmPresent() {
 		try {
 			Class.forName("org.objectweb.asm.Opcodes");
 			return true;
 		} catch(Exception e) {
 			return false;
 		}
+	}
+	
+	public static boolean isAsmPresent() {
+		return asmPresent;
 	}
 
 }

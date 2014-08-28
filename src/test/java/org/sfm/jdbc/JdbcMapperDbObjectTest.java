@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.beans.FinalDbObject;
+import org.sfm.beans.DbFinalObject;
 import org.sfm.utils.Handler;
 import org.sfm.utils.ListHandler;
 
@@ -50,7 +50,7 @@ public class JdbcMapperDbObjectTest {
 	
 	@Test
 	public void testColumnFinalProperty() throws Exception {
-		ResultSetMapperBuilder<FinalDbObject> builder = new ResultSetMapperBuilderImpl<FinalDbObject>(FinalDbObject.class);
+		ResultSetMapperBuilder<DbFinalObject> builder = new ResultSetMapperBuilderImpl<DbFinalObject>(DbFinalObject.class);
 		
 		builder.addNamedColumn("id");
 		builder.addNamedColumn("name");
@@ -59,12 +59,12 @@ public class JdbcMapperDbObjectTest {
 		builder.addNamedColumn("type_ordinal");
 		builder.addNamedColumn("type_name");
 		
-		final JdbcMapper<FinalDbObject> mapper = builder.mapper();
+		final JdbcMapper<DbFinalObject> mapper = builder.mapper();
 		
 		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				List<FinalDbObject> objects = mapper.forEach(ps.executeQuery(), new ListHandler<FinalDbObject>()).getList();
+				List<DbFinalObject> objects = mapper.forEach(ps.executeQuery(), new ListHandler<DbFinalObject>()).getList();
 				assertEquals(1, objects.size());
 				DbHelper.assertDbObjectMapping(objects.get(0));
 			}

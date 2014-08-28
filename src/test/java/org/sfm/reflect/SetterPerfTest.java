@@ -1,15 +1,10 @@
 package org.sfm.reflect;
 
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.Random;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.sfm.reflect.FieldSetter;
-import org.sfm.reflect.MethodHandleSetter;
-import org.sfm.reflect.MethodSetter;
-import org.sfm.reflect.Setter;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.primitive.IntFieldSetter;
 import org.sfm.reflect.primitive.IntMethodSetter;
@@ -79,9 +74,6 @@ public class SetterPerfTest {
 	static Setter<MyClass, String> stringDirectSetter;
 	static IntSetter<MyClass> numberDirectSetter;
 	
-
-	static MethodHandleSetter<MyClass, String> stringMethodHandleSetter;
-	
 	static Setter<MyClass, String> stringAsmSetter;
 	static IntSetter<MyClass> numberAsmSetter;
 	
@@ -96,8 +88,6 @@ public class SetterPerfTest {
 		
 		stringMethodSetter = new MethodSetter<MyClass, String>(setStringMethod);
 		numberMethodSetter = new IntMethodSetter<MyClass>(setNumberMethod);
-		
-		stringMethodHandleSetter = new MethodHandleSetter<>(MethodHandles.lookup().unreflect(setStringMethod));
 		
 		AsmFactory asmSetterFactory = new AsmFactory();
 		
@@ -153,10 +143,6 @@ public class SetterPerfTest {
 	public void testPerfMethod() throws Exception {
 		runStringTest(stringMethodSetter);
 		runNumberTest(numberMethodSetter);
-	}
-	public void testPerfMethodHandle() throws Exception {
-		// to slow to run
-		runStringTest(stringMethodHandleSetter);
 	}
 	
 	public void testPerfAsmMethod() throws Exception {

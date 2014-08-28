@@ -5,13 +5,10 @@ import java.io.Reader;
 
 public final class ReaderCsvParser {
 	
-	static enum State {
-		IN_QUOTE, QUOTE, NONE
-	}
 	private char[] buffer;
 
 	private int bufferLength;
-	private State currentState = State.NONE;
+	private CsvParserState currentState = CsvParserState.NONE;
 
 	private int currentStart =0;
 	private int bufferOffset = 0;
@@ -58,25 +55,25 @@ public final class ReaderCsvParser {
 	private void handleByte(final CharsCellHandler handler, final char c, final int i) {
 		if (c == '"') {
 			if (currentStart == i) {
-				currentState = State.IN_QUOTE;
-			} else if (currentState == State.IN_QUOTE) {
-				currentState = State.QUOTE;
+				currentState = CsvParserState.IN_QUOTE;
+			} else if (currentState == CsvParserState.IN_QUOTE) {
+				currentState = CsvParserState.QUOTE;
 			} else {
-				if (currentState == State.QUOTE) {
-					currentState = State.IN_QUOTE;
+				if (currentState == CsvParserState.QUOTE) {
+					currentState = CsvParserState.IN_QUOTE;
 				}
 			}
 		} else if (c == ',' ) {
-			if (currentState != State.IN_QUOTE) {
+			if (currentState != CsvParserState.IN_QUOTE) {
 				handler.newCell(buffer, currentStart, i - currentStart);
 				currentStart = i  + 1;
-				currentState = State.NONE;
+				currentState = CsvParserState.NONE;
 			}
 		}else if (c == '\n') {
-			if (currentState != State.IN_QUOTE) {
+			if (currentState != CsvParserState.IN_QUOTE) {
 				handler.newCell(buffer, currentStart, i - currentStart);
 				currentStart = i  + 1;
-				currentState = State.NONE;
+				currentState = CsvParserState.NONE;
 				handler.newRow();
 			}
 		}

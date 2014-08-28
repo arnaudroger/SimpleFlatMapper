@@ -1,10 +1,14 @@
 package org.sfm.reflect;
 
 import java.sql.ResultSet;
+import java.util.HashMap;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.sfm.beans.DbFinalPrimitiveObject;
 import org.sfm.beans.DbObject;
+import org.sfm.reflect.asm.ConstructorDefinition;
+import org.sfm.reflect.asm.Parameter;
 
 public class InstantiatorFactoryTest {
 
@@ -40,6 +44,13 @@ public class InstantiatorFactoryTest {
 	public void testInstantiateConstructorWithArgs() throws Exception {
 		Instantiator<ResultSet, MyClass> instantiator = new InstantiatorFactory(null).getInstantiator(ResultSet.class, MyClass.class);
 		MyClass object = instantiator.newInstance(null);
+		Assert.assertNotNull(object);
+	}
+	
+	@Test
+	public void testInstantiateConstructorWithArgsAllPr() throws Exception {
+		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(null).getInstantiator(ResultSet.class,ConstructorDefinition.extractConstructors(DbFinalPrimitiveObject.class), new HashMap<Parameter, Getter<ResultSet, ?>>());
+		DbFinalPrimitiveObject object = instantiator.newInstance(null);
 		Assert.assertNotNull(object);
 	}
 

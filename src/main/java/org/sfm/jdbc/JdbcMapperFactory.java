@@ -39,7 +39,7 @@ public final class JdbcMapperFactory {
 	 * @throws IOException 
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target, final ResultSetMetaData metaData) throws SQLException, NoSuchMethodException, SecurityException, IOException {
-		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<>(target, getSetterFactory());
+		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<>(target, getSetterFactory(), AsmHelper.isAsmPresent());
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);

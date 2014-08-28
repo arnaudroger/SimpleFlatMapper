@@ -5,7 +5,11 @@ SimpleFlatMapper
 ========
 Fast and Easy mapping from jdbc, csv to POJO.
 
-SFM aims to provide a solution to map from a flat record - ResultSet, csv - to a java object with no configuration and low runtime cost. The object analysis is done at the initialisation of the mapper eliminating later reflection cost. The query analysis is cached using a copy on write non locking technique. The cost of injection of data is reduce by generating asm for setters when possible and unrolling the mapping loop.
+SFM aims to provide a solution to map from a flat record - ResultSet, csv - to a java object with no configuration and low runtime cost. The object analysis is done at the initialisation of the mapper eliminating later reflection cost. 
+
+The JdbcMapper query analysis is cached using a copy on write non locking technique. The cost of injection of data is reduce by generating asm for setters when possible and unrolling the mapping loop.
+
+The JdbcMapper is a lightweight to ibatis and hibernate.
 
 Design
 ========
@@ -130,11 +134,12 @@ ie:
 Value Injection
 =======
 
-1. look for constructor injection, only available if asm present
-2. look for setter method
-3. look for non final field access through reflection
+The JdbcMapper supports
+- constructor injection using asm to get the parameter name
+- setter injection
+- field injection
 
-1 and 2 will get asm generated version if asm is present and not disabled.
+It looks for injection on that order and if asm is present will generate optimised asm version.
 
 Maven dependency
 ======

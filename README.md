@@ -153,8 +153,9 @@ TODO
 
 JDBCMapper
 ------
-- Definition of custom mapping
+- Remove exception from JdbcMapper signature appart from SQLException, use runtime for other issues.
 - Inner object mapping
+- Definition of custom mapping
 - List/Map mapping
 
 CSVMapper

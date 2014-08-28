@@ -38,7 +38,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.sfm.map.FieldMapper;
 import org.sfm.reflect.Instantiator;
 
-public class AsmJdbcMapperBuilder {
+public class JdbcMapperBuilder {
 	public static <S,T> byte[] dump (final String className, final FieldMapper<S, T>[] mappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target) throws Exception {
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);

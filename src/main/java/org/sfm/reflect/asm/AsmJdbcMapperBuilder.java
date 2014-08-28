@@ -88,10 +88,10 @@ public class AsmJdbcMapperBuilder {
 			mv.visitVarInsn(ALOAD, 1);
 			if (AsmUtils.isStillGeneric(instantiator.getClass())) {
 				mv.visitMethodInsn(INVOKEVIRTUAL, instantiatorType, "newInstance", "(Ljava/lang/Object;)Ljava/lang/Object;", false);
+				mv.visitTypeInsn(CHECKCAST, targetType);
 			} else {
 				mv.visitMethodInsn(INVOKEVIRTUAL, instantiatorType, "newInstance", "(L" + sourceType + ";)L" + targetType + ";", false);
 			}
-			mv.visitTypeInsn(CHECKCAST, targetType);
 			mv.visitVarInsn(ASTORE, 2);
 
 			for(int i = 0; i < mappers.length; i++) {

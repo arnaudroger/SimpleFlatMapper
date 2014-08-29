@@ -105,6 +105,12 @@
 			<version>1.2.1</version>
 			<scope>test</scope>
 		</dependency>
+    <dependency>
+        <groupId>org.sql2o</groupId>
+        <artifactId>sql2o</artifactId>
+        <version>1.5.1</version>
+			<scope>test</scope>
+    </dependency>		
 	</dependencies>
 
 	<profiles>

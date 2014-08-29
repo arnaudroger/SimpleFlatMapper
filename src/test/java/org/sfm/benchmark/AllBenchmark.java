@@ -13,6 +13,7 @@ import org.sfm.benchmark.ibatis.MyBatisBenchmark;
 import org.sfm.benchmark.sfm.DynamicJdbcMapperForEachBenchmark;
 import org.sfm.benchmark.sfm.DynamicNoAsmJdbcMapperForEachBenchmark;
 import org.sfm.benchmark.sfm.StaticJdbcMapperBenchmark;
+import org.sfm.benchmark.sql2o.Sql2OBenchmark;
 import org.sfm.jdbc.DbHelper;
 
 public class AllBenchmark {
@@ -33,6 +34,7 @@ public class AllBenchmark {
 				StaticJdbcMapperBenchmark.class,
 				DynamicJdbcMapperForEachBenchmark.class,
 				DynamicNoAsmJdbcMapperForEachBenchmark.class,
+				Sql2OBenchmark.class,
 				HibernateStatefullBenchmark.class, 
 				MyBatisBenchmark.class
 				};

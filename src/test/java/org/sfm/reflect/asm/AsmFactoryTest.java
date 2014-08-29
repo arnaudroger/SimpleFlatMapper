@@ -1,17 +1,20 @@
 package org.sfm.reflect.asm;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.rmi.UnexpectedException;
 import java.sql.ResultSet;
 import java.util.HashMap;
 
 import org.junit.Test;
-import org.objenesis.instantiator.basic.ConstructorInstantiator;
+import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
-import org.sfm.beans.DbFinalObject;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.RethrowJdbcMapperErrorHandler;
 import org.sfm.jdbc.getter.LongIndexedResultSetGetter;
@@ -22,7 +25,6 @@ import org.sfm.map.InstantiationMappingException;
 import org.sfm.map.MappingException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
-import org.sfm.reflect.StaticConstructorInstantiator;
 
 public class AsmFactoryTest {
 
@@ -34,9 +36,9 @@ public class AsmFactoryTest {
 		assertNotNull(instantiator.newInstance(null));
 		assertSame(instantiator, asmFactory.createEmptyArgsInstatiantor(ResultSet.class, DbObject.class));
 	}
+	@SuppressWarnings("serial")
 	@Test
 	public void testCreateInstatiatorFinalDbObjectInjectIdAndName() throws Exception {
-		@SuppressWarnings("serial")
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstatiantor(ResultSet.class, 
 				ConstructorDefinition.extractConstructors(DbFinalObject.class).get(0),
 				new HashMap<Parameter, Getter<ResultSet, ?>>() {

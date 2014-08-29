@@ -21,6 +21,7 @@ $HOME/.m2/repository/org/javassist/javassist/3.18.1-GA/javassist-3.18.1-GA.jar:\
 $HOME/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar:\
 $HOME/.m2/repository/org/hdrhistogram/HdrHistogram/1.2.1/HdrHistogram-1.2.1.jar:\
 $HOME/.m2/repository/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar:\
+$HOME/.m2/repository/org/sql2o/sql2o/1.5.1/sql2o-1.5.1.jar:\
 $HOME/.m2/repository/org/mybatis/mybatis/3.2.7/mybatis-3.2.7.jar \
 -Dasm.dump.target.dir=$TARGET/asm-classes/ \
 org.sfm.benchmark.AllBenchmark

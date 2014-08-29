@@ -59,7 +59,7 @@ In mem HsqlDb
 Local Mysql
 -------
 
-|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Hibernate|MyBatis|
+|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Sql2o|Hibernate|MyBatis|
 |------:|------:|-------:|-------:|------:|----:|
 1|0%|1%|3%|9%|90%|128%|
 |10|6%|3%|32%|139%|92%|135%|

@@ -49,13 +49,12 @@ SFM is for SimpleFlatMapper.
 In mem HsqlDb
 -------
 
-|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Hibernate|MyBatis|
-|------:|------:|-------:|-------:|------:|----:|
-|1|-1%|2%|9%|165%|109%|
-|10|2%|4%|18%|240%|210%|
-|100|6%|8%|48%|506%|545%|
-|1000|8%|8%|65%|665%|758%|
-|10000|9%|11%|70%|685%|833%|
+|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Sql2o|Hibernate|MyBatis|
+|------:|------:|-------:|-------:|------:|----:|----:|
+|1|-2%|0%|4%|36%|163%|105%|
+|10|1%|3%|14%|46%|221%|221%|
+|100|4%|7%|44%|67%|386%|573%|
+|1000|4%|10%|66%|75%|495%|759%|
 
 Local Mysql
 -------
@@ -160,7 +159,6 @@ TODO
 
 JDBCMapper
 ------
-- add sql2o to benchmark
 - Inner object mapping
 - Definition of custom mapping
 - List/Map mapping

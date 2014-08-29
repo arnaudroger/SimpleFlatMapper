@@ -64,19 +64,25 @@ public class InstantiatorFactory {
 	}
 	
 	public <S, T> Instantiator<S, T> getInstantiator(final Class<S> source, List<ConstructorDefinition<T>> constructors, Map<Parameter, Getter<S, ?>> injections) throws NoSuchMethodException, SecurityException {
-		final ConstructorDefinition<T> constructor = getSmallerConstructor(constructors);
+		final ConstructorDefinition<T> constructorDefinition = getSmallerConstructor(constructors);
 		
-		if (Modifier.isPublic(constructor.getConstructor().getModifiers())) {
+		Constructor<T> constructor = constructorDefinition.getConstructor();
+		
+		if (Modifier.isPublic(constructor.getModifiers())) {
 			try {
-				return asmFactory.createInstatiantor(source, constructor, injections);
+				return asmFactory.createInstatiantor(source, constructorDefinition, injections);
 			} catch (Exception e) {
 				// fall back on reflection
 			}
 		}
-			
-		constructor.getConstructor().setAccessible(true);
 		
-		return new InjectConstructorInstantiator<S, T>(constructor, injections); 
+		constructor.setAccessible(true);
+		
+		if (constructor.getParameterTypes().length == 0) {
+			return new StaticConstructorInstantiator<S, T>(constructor, EMPTY_ARGS); 
+		} else {
+			return new InjectConstructorInstantiator<S, T>(constructorDefinition, injections);
+		}
 	}
 
 

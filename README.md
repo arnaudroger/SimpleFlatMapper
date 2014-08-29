@@ -123,7 +123,8 @@ public class MyDao {
 Mapping
 ========
 
-the Dynamic mapper will use assume a column name from the database will match the lower case property name appart from the underscore.
+the Dynamic mapper will assume a column name from the database will be matching ignoring case and underscore to the property name.
+It is on the todo list to be able to specify manual mapping and a custom property name matcher.
 
 ie:
 ```

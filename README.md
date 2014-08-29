@@ -83,16 +83,18 @@ create table MyTable {
 
 ```java
 public class MyObject {
-	private long id;
-	public void setId(long id) { this.id = id; }
+	private final long id;
+	private final String email;
+	private final int myProperty;
+	
+	public MyObject(long id, String email,  int myProperty) {
+		this.id = id;
+		this.email = email;
+		this.myProperty = myProperty;
+	}
+
 	public long getId() { return id; }
-	
-	private String email;
-	public void setEmail(String email) { this.email = email; }
 	public String getEmail() { return email; }
-	
-	private int myProperty;
-	public void setMyProperty(int prop) { this.myProperty = prop; }
 	public int getProperty() { return myProperty; }
 	
 	public String toString() { ... }
@@ -102,7 +104,7 @@ public class MyDao {
     private final JdbcMapper<MyObject> mapper = 
     	JdbcMapperFactory.newInstance().newMapper(MyObject.class);
 
-    public void writeAllObjectTo(Writer writer, Connection conn) throws Exception {
+    public void writeAllObjectTo(Writer writer, Connection conn) throws SQLException {
         PreparedStatement ps = 
         	conn.prepareStatement("select id, email, my_property from MyTable");
         try {
@@ -158,7 +160,7 @@ TODO
 
 JDBCMapper
 ------
-- Remove exception from JdbcMapper signature appart from SQLException, use runtime for other issues.
+- add sql2o to benchmark
 - Inner object mapping
 - Definition of custom mapping
 - List/Map mapping

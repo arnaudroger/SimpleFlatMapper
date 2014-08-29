@@ -18,7 +18,7 @@ import org.sfm.jdbc.DbHelper;
 
 public class AllBenchmark {
 	private static final int MIN_QUERY_SIZE = 1;
-	private static final int MAX_QUERY_SIZE = 10000;
+	private static final int MAX_QUERY_SIZE = 1000;
 //	private static final int MIN_QUERY_SIZE = 1000;
 //	private static final int MAX_QUERY_SIZE = 1000;
 	//static final int NB_ITERATION = 200000;

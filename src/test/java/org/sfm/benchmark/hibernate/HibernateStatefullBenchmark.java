@@ -1,10 +1,9 @@
 package org.sfm.benchmark.hibernate;
 
 import java.sql.Connection;
+import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.sfm.benchmark.ForEachListener;
@@ -31,14 +30,9 @@ public class HibernateStatefullBenchmark implements QueryExecutor {
 			if (limit >= 0) {
 				query.setMaxResults(limit);
 			}
-			ScrollableResults sr = query.scroll(ScrollMode.SCROLL_INSENSITIVE);
-			try {
-				while (sr.next()) {
-					Object o =  sr.get(0);
-					ql.object(o);
-				}
-			} finally {
-				sr.close();
+			List<?> sr = query.list();
+			for(Object o : sr) {
+				ql.object(o);
 			}
 		} finally {
 			session.close();

@@ -47,9 +47,13 @@ public class AllBenchmark {
 		}
 
 	}
-
 	public static void runBenchmark(Connection conn,
-			Class<SmallBenchmarkObject> objectClassToMap,
+			Class<? extends QueryExecutor> benchmark)
+			throws Exception {
+		runBenchmark(conn, SmallBenchmarkObject.class, benchmark, BenchmarkConstants.SINGLE_QUERY_SIZE, BenchmarkConstants.SINGLE_NB_ITERATION);
+	}
+	public static void runBenchmark(Connection conn,
+			Class<?> objectClassToMap,
 			Class<? extends QueryExecutor> benchmark, int querySize, int nbIteration)
 			throws Exception {
 		CollectBenchmarkListener cbl = new CollectBenchmarkListener();
@@ -97,7 +101,7 @@ public class AllBenchmark {
 	}
 
 	private static void runBenchmark(Connection conn,
-			Class<SmallBenchmarkObject> target,
+			Class<?> target,
 			Class<? extends QueryExecutor> benchmark, int querySize, int nbIteration, BenchmarkListener bl)
 			throws Exception {
 		Constructor<? extends QueryExecutor> c = benchmark.getDeclaredConstructor(Connection.class, Class.class);

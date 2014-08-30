@@ -174,7 +174,7 @@ public abstract class AbstractResultSetMapperBuilder<T> implements ResultSetMapp
 	@Override
 	public final ResultSetMapperBuilder<T> addMapping(final ResultSetMetaData metaData) throws SQLException {
 		for(int i = 1; i <= metaData.getColumnCount(); i++) {
-			addIndexedColumn(metaData.getColumnName(i), i, metaData.getColumnType(i));
+			addIndexedColumn(metaData.getColumnLabel(i), i, metaData.getColumnType(i));
 		}
 		
 		return this;

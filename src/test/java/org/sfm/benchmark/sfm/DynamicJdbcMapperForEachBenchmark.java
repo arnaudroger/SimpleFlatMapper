@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.sfm.beans.SmallBenchmarkObject;
 import org.sfm.benchmark.AllBenchmark;
+import org.sfm.benchmark.BenchmarkConstants;
 import org.sfm.benchmark.QueryExecutor;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.jdbc.JdbcMapperFactory;
@@ -16,6 +17,6 @@ public class DynamicJdbcMapperForEachBenchmark<T> extends ForEachMapperQueryExec
 	}
 	
 	public static void main(String[] args) throws SQLException, Exception {
-		AllBenchmark.runBenchmark(DbHelper.benchmarkHsqlDb(), SmallBenchmarkObject.class, DynamicJdbcMapperForEachBenchmark.class, 1000, 100000);
+		AllBenchmark.runBenchmark(DbHelper.mockDb(), SmallBenchmarkObject.class, DynamicJdbcMapperForEachBenchmark.class, BenchmarkConstants.SINGLE_QUERY_SIZE, BenchmarkConstants.SINGLE_NB_ITERATION);
 	}
 }

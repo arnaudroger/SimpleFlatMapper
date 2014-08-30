@@ -10,8 +10,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 
-import org.sfm.beans.DbObject;
 import org.sfm.beans.DbFinalObject;
+import org.sfm.beans.DbObject;
+import org.sfm.jdbc.mockdb.MockConnection;
 import org.sfm.utils.DateHelper;
 import org.sfm.utils.Handler;
 
@@ -58,6 +59,18 @@ public class DbHelper {
 		assertEquals(DbObject.Type.type3, dbObject.getTypeOrdinal());
 		assertEquals(DbObject.Type.type4, dbObject.getTypeName());
 	}
+	
+	public static Connection getConnection(String[] args) throws SQLException {
+		if (args.length > 0) {
+			if ("mysql".equals(args[0])) {
+				return benchmarkMysqlDb();
+			} else if("mock".equals(args[0])) {
+				return mockDb();
+			}
+		}
+		
+		return benchmarkHsqlDb();
+	}
 	public static Connection benchmarkHsqlDb() throws SQLException {
 		//Connection c = DriverManager.getConnection("jdbc:hsqldb:mem:benchmarkdb", "SA", "");
 		Connection c = newHsqlDbConnection();
@@ -65,6 +78,10 @@ public class DbHelper {
 		createTableAndInsertData(c);
 	
 		return c;
+	}
+	
+	public static Connection mockDb() throws SQLException {
+		return new MockConnection();
 	}
 	
 	public static Connection benchmarkMysqlDb() throws SQLException {

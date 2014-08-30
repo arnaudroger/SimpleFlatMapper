@@ -10,7 +10,7 @@ public final class MapperKey {
 		final String[] columns = new String[metaData.getColumnCount()];
 		
 		for(int i = 0; i < columns.length; i++) {
-			columns[i] = metaData.getColumnName(i + 1);
+			columns[i] = metaData.getColumnLabel(i + 1);
 		}
 		
 		return new MapperKey(columns);

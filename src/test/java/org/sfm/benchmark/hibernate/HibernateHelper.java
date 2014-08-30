@@ -7,6 +7,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
+import org.sfm.jdbc.mockdb.MockConnection;
 
 @SuppressWarnings("deprecation")
 public class HibernateHelper {
@@ -18,6 +19,10 @@ public class HibernateHelper {
         
         configuration.addResource("db_object.hbm.xml");
         configuration.addResource("small_benchmark_object.hbm.xml");
+        
+        if (conn instanceof MockConnection) {
+        	configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+        }
         
         MyConnectionProviderImpl.setConnection(conn);
 

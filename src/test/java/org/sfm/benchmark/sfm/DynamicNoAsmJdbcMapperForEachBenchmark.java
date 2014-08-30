@@ -3,9 +3,8 @@ package org.sfm.benchmark.sfm;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.sfm.beans.SmallBenchmarkObject;
-import org.sfm.benchmark.RunBenchmark;
 import org.sfm.benchmark.QueryExecutor;
+import org.sfm.benchmark.RunBenchmark;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.jdbc.JdbcMapperFactory;
 
@@ -16,6 +15,6 @@ public class DynamicNoAsmJdbcMapperForEachBenchmark<T> extends ForEachMapperQuer
 	}
 	
 	public static void main(String[] args) throws SQLException, Exception {
-		RunBenchmark.runBenchmark(DbHelper.benchmarkHsqlDb(), SmallBenchmarkObject.class, DynamicNoAsmJdbcMapperForEachBenchmark.class, 1000, 100000);
+		RunBenchmark.runBenchmark(DbHelper.getConnection(args), DynamicNoAsmJdbcMapperForEachBenchmark.class);
 	}
 }

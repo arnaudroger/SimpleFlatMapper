@@ -16,15 +16,14 @@ import org.sfm.benchmark.sfm.StaticJdbcMapperBenchmark;
 import org.sfm.benchmark.sql2o.Sql2OBenchmark;
 import org.sfm.jdbc.DbHelper;
 
-public class AllBenchmark {
-	private static final int MIN_QUERY_SIZE = 1;
-	private static final int MAX_QUERY_SIZE = 1000;
+public class RunBenchmark {
 	static final int NB_ITERATION = 100000;
+	@SuppressWarnings("unchecked")
 	public static void main(String args[]) throws Exception {
-		Connection conn = DbHelper.getConnection(args);
-		Class<SmallBenchmarkObject> target = SmallBenchmarkObject.class;
-
-		@SuppressWarnings("unchecked")
+		
+		boolean displayHeader = true;
+		int currentArgIndex = 0;
+		
 		Class<? extends QueryExecutor>[] classes = new Class[] {
 				PureJdbcBenchmark.class, 
 				StaticJdbcMapperBenchmark.class,
@@ -35,14 +34,72 @@ public class AllBenchmark {
 				MyBatisBenchmark.class
 				};
 		
+		if (args.length > currentArgIndex) {
+			displayHeader = false;
+			String type = args[0].toLowerCase();
+			if (type.startsWith("pure")) {
+				classes = new Class[] { PureJdbcBenchmark.class };
+				currentArgIndex++;
+			} else if(type.startsWith("static")) {
+				classes = new Class[] { StaticJdbcMapperBenchmark.class };
+				currentArgIndex++;
+			} else if(type.startsWith("dyn")) {
+				classes = new Class[] { DynamicJdbcMapperForEachBenchmark.class };
+				currentArgIndex++;
+			} else if(type.startsWith("dyn") && type.contains("no")) {
+				classes = new Class[] { DynamicNoAsmJdbcMapperForEachBenchmark.class };
+				currentArgIndex++;
+			} else if(type.startsWith("sql2o")) {
+				classes = new Class[] { Sql2OBenchmark.class };
+				currentArgIndex++;
+			} else if(type.startsWith("hib")) {
+				classes = new Class[] { HibernateStatefullBenchmark.class };
+				currentArgIndex++;
+			} else if(type.contains("batis")) {
+				classes = new Class[] { MyBatisBenchmark.class };
+				currentArgIndex++;
+			} else if (type.equals("header")) {
+				printHeader(System.out);
+				return;
+			} else {
+				System.err.println("Invalid type " + type);
+				System.exit(-1);
+			}
+		}
+		Connection conn;
+		
+		if (args.length > currentArgIndex) {
+			conn = DbHelper.getConnection(args[currentArgIndex++]);
+		} else {
+			conn = DbHelper.benchmarkHsqlDb();
+		}
+		
+		int[] queries = new int[] {1,10,100,1000};
+		
+		if (args.length > currentArgIndex) {
+			String[] sizesStr = args[currentArgIndex++].split(",");
+			queries = new int[sizesStr.length];
+			for(int i = 0; i < queries.length; i++) {
+				queries [i] = Integer.parseInt(sizesStr[i]);
+			}
+		}
+		
+		int iteration = NB_ITERATION;
+		if (args.length > currentArgIndex) {
+			iteration = Integer.parseInt(args[currentArgIndex++]);
+		}
+		
+		Class<SmallBenchmarkObject> target = SmallBenchmarkObject.class;
 
-		printHeader(System.out);
+		if (displayHeader) {
+			printHeader(System.out);
+		}
 		for (int j = 0; j <classes.length; j++) {
 			Class<? extends QueryExecutor> benchmark = classes[j];
-			for (int querySize = MIN_QUERY_SIZE; querySize <= MAX_QUERY_SIZE; querySize *= 10) {
+			for (int querySize : queries) {
 				System.gc();
 				Thread.sleep(200);
-				runBenchmark(conn, target, benchmark, querySize, NB_ITERATION);
+				runBenchmark(conn, target, benchmark, querySize, iteration);
 			}
 		}
 

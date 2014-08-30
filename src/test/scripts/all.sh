@@ -1,11 +1,10 @@
 #!/bin/bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-TARGET=$DIR/../../../target
-#-XX:+UnlockCommercialFeatures -XX:+FlightRecorder 
-#JAVA_OPTS="-XX:+UnlockDiagnosticVMOptions -XX:+TraceClassLoading -XX:+LogCompilation -XX:+PrintAssembly"
 
-java -Xms2g -Xmx2g $JAVA_OPTS -cp $TARGET/classes:$TARGET/test-classes/:\
+TARGET=$DIR/../../../target
+
+export CLASSPATH=$TARGET/classes:$TARGET/test-classes/:\
 $HOME/.m2/repository/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar:\
 $HOME/.m2/repository/org/hsqldb/hsqldb/2.3.2/hsqldb-2.3.2.jar:\
 $HOME/.m2/repository/junit/junit/4.11/junit-4.11.jar:\
@@ -22,6 +21,21 @@ $HOME/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar:\
 $HOME/.m2/repository/org/hdrhistogram/HdrHistogram/1.2.1/HdrHistogram-1.2.1.jar:\
 $HOME/.m2/repository/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.32.jar:\
 $HOME/.m2/repository/org/sql2o/sql2o/1.5.1/sql2o-1.5.1.jar:\
-$HOME/.m2/repository/org/mybatis/mybatis/3.2.7/mybatis-3.2.7.jar \
--Dasm.dump.target.dir=$TARGET/asm-classes/ \
-org.sfm.benchmark.AllBenchmark $*
+$HOME/.m2/repository/org/mybatis/mybatis/3.2.7/mybatis-3.2.7.jar
+
+#JAVA_OPTS="-XX:+UnlockCommercialFeatures -XX:+FlightRecorder" 
+#JAVA_OPTS="-XX:+UnlockDiagnosticVMOptions -XX:+TraceClassLoading -XX:+LogCompilation -XX:+PrintAssembly"
+
+MAINCLASS=org.sfm.benchmark.RunBenchmark
+JAVACMD="java -Xms1g -Xmx1g $JAVA_OPTS $MAINCLASS"
+
+$JAVACMD header
+$JAVACMD pure $*
+$JAVACMD static $*
+$JAVACMD dynamic $*
+$JAVACMD dynamicNoAsm $*
+$JAVACMD sql2o $*
+$JAVACMD hibernate $*
+$JAVACMD ibatis $*
+
+

@@ -11,4 +11,4 @@ $HOME/.m2/repository/org/hsqldb/hsqldb/2.3.2/hsqldb-2.3.2.jar:\
 $HOME/.m2/repository/org/hdrhistogram/HdrHistogram/1.2.1/HdrHistogram-1.2.1.jar:\
 $HOME/.m2/repository/junit/junit/4.11/junit-4.11.jar \
 -Dasm.dump.target.dir=$TARGET/asm-classes/ \
-org.sfm.benchmark.sfm.StaticJdbcMapperBenchmark
+org.sfm.benchmark.sfm.StaticJdbcMapperBenchmark $*

@@ -51,7 +51,7 @@ public class BenchmarkRunner {
 		benchmark(bl);
 	}
 
-	private void benchmark(BenchmarkListener bl) throws Exception {
+	public void benchmark(BenchmarkListener bl) throws Exception {
 		ForEachListener listener = new ForEachListenerImpl(bl);
 		for(int i = 0; i < iteration; i++) {
 			listener.start();
@@ -60,7 +60,7 @@ public class BenchmarkRunner {
 		}
 	}
 
-	private void warmup() throws Exception {
+	public void warmup() throws Exception {
 		ForEachListener listener = new ForEachListenerImpl(null);
 		for(int i = 0; i < warmup; i++) {
 			exec.forEach(listener, limit);

@@ -62,13 +62,19 @@ public class DbHelper {
 	
 	public static Connection getConnection(String[] args) throws SQLException {
 		if (args.length > 0) {
-			if ("mysql".equals(args[0])) {
-				return benchmarkMysqlDb();
-			} else if("mock".equals(args[0])) {
-				return mockDb();
-			}
+			String arg = args[0];
+			return getConnection(arg);
 		}
 		
+		return benchmarkHsqlDb();
+	}
+
+	public static Connection getConnection(String type) throws SQLException {
+		if ("mysql".equals(type)) {
+			return benchmarkMysqlDb();
+		} else if("mock".equals(type)) {
+			return mockDb();
+		}
 		return benchmarkHsqlDb();
 	}
 	public static Connection benchmarkHsqlDb() throws SQLException {

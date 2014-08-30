@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 
 import org.sfm.beans.SmallBenchmarkObject;
 import org.sfm.benchmark.hibernate.HibernateStatefullBenchmark;
@@ -91,7 +92,7 @@ public class RunBenchmark {
 		}
 		
 		Class<SmallBenchmarkObject> target = SmallBenchmarkObject.class;
-
+		System.err.println(conn.getClass().getSimpleName() + " "  + Arrays.toString(queries) + " " + iteration + " " + Arrays.toString(classes));
 		if (displayHeader) {
 			printHeader(System.out);
 		}

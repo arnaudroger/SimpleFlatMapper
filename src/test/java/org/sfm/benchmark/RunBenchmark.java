@@ -44,10 +44,11 @@ public class RunBenchmark {
 				classes = new Class[] { StaticJdbcMapperBenchmark.class };
 				currentArgIndex++;
 			} else if(type.startsWith("dyn")) {
-				classes = new Class[] { DynamicJdbcMapperForEachBenchmark.class };
-				currentArgIndex++;
-			} else if(type.startsWith("dyn") && type.contains("no")) {
-				classes = new Class[] { DynamicNoAsmJdbcMapperForEachBenchmark.class };
+				if (type.contains("no")) {
+					classes = new Class[] { DynamicNoAsmJdbcMapperForEachBenchmark.class };
+				} else {
+					classes = new Class[] { DynamicJdbcMapperForEachBenchmark.class };
+				}
 				currentArgIndex++;
 			} else if(type.startsWith("sql2o")) {
 				classes = new Class[] { Sql2OBenchmark.class };

@@ -171,17 +171,17 @@ TODO
 
 JDBCMapper
 ------
-- [Inner object mapping](/issues/1)
-- Definition of custom mapping
-- List/Map mapping
+- [Inner object mapping](https://github.com/arnaudroger/SimpleFlatMapper/issues/1)
+- [Definition of custom mapping](https://github.com/arnaudroger/SimpleFlatMapper/issues/2)
+- [List mapping](https://github.com/arnaudroger/SimpleFlatMapper/issues/4)
 
 CSVMapper
 -----
-- Csv Mapping
+- [Csv Mapping](https://github.com/arnaudroger/SimpleFlatMapper/issues/5)
  
 Misc
 -------
-- Osgi support
+- [Osgi support](https://github.com/arnaudroger/SimpleFlatMapper/issues/3)
 
 
 

@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.SmallBenchmarkObject;
 import org.sfm.benchmark.RunBenchmark;
-import org.sfm.benchmark.BenchmarkConstants;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.ResultSetMapperBuilderImpl;

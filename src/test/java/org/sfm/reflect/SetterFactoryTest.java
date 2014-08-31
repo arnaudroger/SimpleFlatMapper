@@ -265,7 +265,7 @@ public class SetterFactoryTest {
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testGetAllSetters() throws Exception {
-		Map<String, Setter<Foo, Object>> setters = nonAsmfactory.getAllSetters(Foo.class);
+		Map<String, Setter<Foo, ?>> setters = nonAsmfactory.getAllSetters(Foo.class);
 		assertEquals(Foo.class.getDeclaredMethod("setFoo", String.class), ((MethodSetter)setters.get("foo")).getMethod());
 		assertEquals(Bar.class.getDeclaredField("bar"), ((FieldSetter)setters.get("bar")).getField());
 	}
@@ -273,7 +273,7 @@ public class SetterFactoryTest {
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testFindSetter() throws Exception {
-		Setter<DbObject, Object> setter = nonAsmfactory.findSetter(new PropertyNameMatcher("id"), DbObject.class);
+		Setter<DbObject, ?> setter = nonAsmfactory.findSetter(new PropertyNameMatcher("id"), DbObject.class);
 		assertEquals(DbObject.class.getDeclaredMethod("setId", long.class), ((MethodSetter)setter).getMethod());
 	}
 }

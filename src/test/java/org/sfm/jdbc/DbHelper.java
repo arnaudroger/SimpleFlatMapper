@@ -157,10 +157,16 @@ public class DbHelper {
 	public static void testDbObjectFromDb(Handler<PreparedStatement> handler )
 			throws SQLException, Exception, ParseException {
 		
+		String query = "select id, name, email, creation_time, type_ordinal, type_name from TEST_DB_OBJECT where id = 1 ";
+		testQuery(handler, query);
+	}
+
+	public static void testQuery(Handler<PreparedStatement> handler,
+			String query) throws SQLException, Exception {
 		Connection conn = DbHelper.objectDb();
 		
 		try {
-			PreparedStatement ps = conn.prepareStatement("select id, name, email, creation_time, type_ordinal, type_name from TEST_DB_OBJECT where id = 1 ");
+			PreparedStatement ps = conn.prepareStatement(query);
 			
 			try {
 				handler.handle(ps);

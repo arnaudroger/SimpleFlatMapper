@@ -238,12 +238,15 @@ public final class SetterFactory {
 		}
 	}
 
-	public <T> Map<String, Setter<T, Object>> getAllSetters(final Class<T> target) {
-		final Map<String, Setter<T, Object>> setters = new HashMap<String, Setter<T,Object>>();
+	public <T> ClassMeta<T> getClassMeta(final Class<T> target) {
+		return new ClassMeta<T>(getAllSetters(target)); 
+	}
+	public <T> Map<String, Setter<T, ?>> getAllSetters(final Class<T> target) {
+		final Map<String, Setter<T, ?>> setters = new HashMap<String, Setter<T,?>>();
 		
 		visitSetters(new SetterVisitor<T>() {
 			@Override
-			public boolean visitSetter(final String property, final Setter<T, Object> setter) {
+			public boolean visitSetter(final String property, final Setter<T, ?> setter) {
 				setters.put(property, setter);
 				return true;
 			}
@@ -252,7 +255,7 @@ public final class SetterFactory {
 		return setters;
 	}
 	
-	public <T> Setter<T, Object> findSetter(final PropertyNameMatcher matcher, final Class<T> target) {
+	public <T> Setter<T, ?> findSetter(final PropertyNameMatcher matcher, final Class<T> target) {
 		return visitSetters(new PropertyMatchingSetterVisitor<T>(matcher), target).setter();
 	}
 	

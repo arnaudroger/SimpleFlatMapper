@@ -3,20 +3,19 @@ package org.sfm.jdbc;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.MappingException;
-import org.sfm.reflect.Setter;
+import org.sfm.reflect.ClassMeta;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.utils.Handler;
 
 public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
-	private final Map<String, Setter<T, Object>> setters;
+	private final ClassMeta<T> classMeta;
 	
 	private final SetterFactory setterFactory;
 	private final Class<T> target;
@@ -32,7 +31,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 			final FieldMapperErrorHandler fieldMapperErrorHandler, 
 			final MapperBuilderErrorHandler mapperBuilderErrorHandler) {
 		this.setterFactory = setterFactory;
-		this.setters = setterFactory.getAllSetters(target);
+		this.classMeta = setterFactory.getClassMeta(target);
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
@@ -71,7 +70,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		JdbcMapper<T> mapper = getMapper(key);
 		
 		if (mapper == null) {
-			final CachedResultSetMapperBuilder<T> builder = new CachedResultSetMapperBuilder<T>(target, setters, setterFactory, AsmHelper.isAsmPresent());
+			final ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<T>(target, classMeta, setterFactory, AsmHelper.isAsmPresent());
 			
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 			builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);

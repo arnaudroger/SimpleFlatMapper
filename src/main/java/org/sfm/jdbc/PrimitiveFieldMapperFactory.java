@@ -40,7 +40,7 @@ public final class PrimitiveFieldMapperFactory<T> {
 	}
 
 	public FieldMapper<ResultSet, T> primitiveFieldMapper(final String column,
-			final Setter<T, Object> setter, final String name, final FieldMapperErrorHandler errorHandler) {
+			final Setter<T, ?> setter, final String name, final FieldMapperErrorHandler errorHandler) {
 		final Class<?> type = setter.getPropertyType();
 
 		if (type.equals(Boolean.TYPE)) {
@@ -82,7 +82,7 @@ public final class PrimitiveFieldMapperFactory<T> {
 	}
 
 	public FieldMapper<ResultSet, T> primitiveFieldMapper(final int column,
-			final Setter<T, Object> setter, final String name, final FieldMapperErrorHandler errorHandler) {
+			final Setter<T, ?> setter, final String name, final FieldMapperErrorHandler errorHandler) {
 		final Class<?> type = setter.getPropertyType();
 
 		if (type.equals(Boolean.TYPE)) {

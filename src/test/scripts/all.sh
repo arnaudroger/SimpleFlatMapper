@@ -27,7 +27,7 @@ $HOME/.m2/repository/org/mybatis/mybatis/3.2.7/mybatis-3.2.7.jar
 #JAVA_OPTS="-XX:+UnlockDiagnosticVMOptions -XX:+TraceClassLoading -XX:+LogCompilation -XX:+PrintAssembly"
 
 MAINCLASS=org.sfm.benchmark.RunBenchmark
-JAVACMD="java -Xms1g -Xmx1g $JAVA_OPTS $MAINCLASS"
+JAVACMD="time java -Xms1g -Xmx1g $JAVA_OPTS $MAINCLASS"
 
 $JAVACMD header
 $JAVACMD pure $*

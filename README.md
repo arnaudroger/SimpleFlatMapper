@@ -46,25 +46,37 @@ Run 100000 queries, store the time it takes to read all the object in HdrHistogr
 
 SFM is for SimpleFlatMapper.
 
+As you can see by the negative numbers are the one that look a bit sour there can be quite a bit of noise in the benchmark I'm still looking at sorting that out.
+
+Mock Connection
+-------
+
+|Nb Rows|StaticJdbcMapperBenchmark|DynamicJdbcMapperForEachBenchmark|DynamicNoAsmJdbcMapperForEachBenchmark|Sql2OBenchmark|HibernateStatefullBenchmark|MyBatisBenchmark|
+|------:|------:|-------:|-------:|------:|----:|----:|
+|1|6%|14%|86%|967%|6245%|3916%|
+|10|1%|6%|358%|781%|3715%|6854%|
+|100|1%|1%|693%|741%|1527%|10752%|
+|1000|24%|7%|785%|714%|985%|11361%|
+
 In mem HsqlDb
 -------
 
 |Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Sql2o|Hibernate|MyBatis|
 |------:|------:|-------:|-------:|------:|----:|----:|
-|1|0%|3%|7%|45%|179%|122%|
-|10|2%|3%|16%|54%|231%|229%|
-|100|6%|7%|44%|71%|398%|564%|
-|1000|4%|10%|62%|82%|526%|800%|
+|1|-4%|18%|5%|37%|167%|110%|
+|10|0%|12%|14%|45%|230%|209%|
+|100|6%|8%|41%|66%|426%|552%|
+|1000|9%|6%|58%|75%|553%|767%|
 
 Local Mysql
 -------
 
 |Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Sql2o|Hibernate|MyBatis|
 |------:|------:|-------:|-------:|------:|----:|----:|
-|1|0%|1%|3%|9%|92%|127%|
-|10|0%|1%|33%|137%|92%|133%|
-|100|0%|1%|4%|11%|99%|78%|
-|1000|1%|2%|10%|25%|133%|204%|
+|1|1%|2%|2%|9%|90%|124%|
+|10|-22%|-21%|3%|86%|47%|77%|
+|100|0%|1%|6%|11%|94%|77%|
+|1000|0%|0%|14%|25%|125%|201%|
 
 Samples
 ========

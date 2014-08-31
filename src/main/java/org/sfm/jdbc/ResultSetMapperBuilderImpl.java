@@ -115,36 +115,12 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	
 	@Override
 	public final ResultSetMapperBuilder<T> addNamedColumn(final String column, final int sqlType) {
-		Parameter param = hasMatchingConstructor(column);
-		if (param != null) {
-			removeNonMatchingConstructor(param);
-			constructorInjection.put(param, ResultSetGetterFactory.newGetter(param.getType(), column, sqlType));
-		} else {
-			final Setter<T, ?> setter = classMeta.findSetter(column);
-			if (setter == null) {
-				mapperBuilderErrorHandler.setterNotFound(target, column);
-			} else {
-				addMapping(setter, column, sqlType);
-			}
-		}
-		return this;
+		return addMapping(column, column, sqlType);
 	}
 	
 	@Override
 	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column, final int columnIndex, final int sqlType) {
-		Parameter param = hasMatchingConstructor(column);
-		if (param != null) {
-			removeNonMatchingConstructor(param);
-			constructorInjection.put(param, ResultSetGetterFactory.newGetter(param.getType(), columnIndex, sqlType));
-		} else {
-			final Setter<T, ?> setter = classMeta.findSetter(column);
-			if (setter == null) {
-				mapperBuilderErrorHandler.setterNotFound(target, column);
-			} else {
-				addMapping(setter, columnIndex, sqlType);
-			}
-		}
-		return this;
+		return addMapping(column, columnIndex, sqlType);
 	}
 
 	@Override
@@ -154,7 +130,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 			removeNonMatchingConstructor(param);
 			constructorInjection.put(param, ResultSetGetterFactory.newGetter(param.getType(), column, sqlType));
 		} else {
-			final Setter<T, ?> setter = classMeta.getSetter(property);
+			final Setter<T, ?> setter = classMeta.findSetter(property);
 			if (setter == null) {
 				mapperBuilderErrorHandler.setterNotFound(target, property);
 			} else {
@@ -171,7 +147,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 			removeNonMatchingConstructor(param);
 			constructorInjection.put(param, ResultSetGetterFactory.newGetter(param.getType(), column, sqlType));
 		} else {
-			final Setter<T, ?> setter = classMeta.getSetter(property);
+			final Setter<T, ?> setter = classMeta.findSetter(property);
 			if (setter == null) {
 				mapperBuilderErrorHandler.setterNotFound(target, property);
 			} else {

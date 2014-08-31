@@ -51,7 +51,7 @@ As you can see by the negative numbers are the one that look a bit sour there ca
 Mock Connection
 -------
 
-|Nb Rows|StaticJdbcMapperBenchmark|DynamicJdbcMapperForEachBenchmark|DynamicNoAsmJdbcMapperForEachBenchmark|Sql2OBenchmark|HibernateStatefullBenchmark|MyBatisBenchmark|
+|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Sql2o|Hibernate|MyBatis|
 |------:|------:|-------:|-------:|------:|----:|----:|
 |1|6%|14%|86%|967%|6245%|3916%|
 |10|1%|6%|358%|781%|3715%|6854%|

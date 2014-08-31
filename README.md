@@ -171,7 +171,7 @@ TODO
 
 JDBCMapper
 ------
-- Inner object mapping
+- [Inner object mapping](/issues/1)
 - Definition of custom mapping
 - List/Map mapping
 

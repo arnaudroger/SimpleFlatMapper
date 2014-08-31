@@ -9,7 +9,7 @@ SFM aims to provide a solution to map from a flat record - ResultSet, csv - to a
 
 The JdbcMapper query analysis is cached using a copy on write non locking technique. The cost of injection of data is reduce by generating asm for setters when possible and unrolling the mapping loop.
 
-The JdbcMapper is a lightweight alternative to ibatis and hibernate.
+The SimpleFlatMapper JdbcMapper is a lightweight alternative to ibatis and hibernate.
 
 Design
 ========

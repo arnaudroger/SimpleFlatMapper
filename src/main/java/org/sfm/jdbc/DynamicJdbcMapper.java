@@ -31,7 +31,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 			final FieldMapperErrorHandler fieldMapperErrorHandler, 
 			final MapperBuilderErrorHandler mapperBuilderErrorHandler) {
 		this.setterFactory = setterFactory;
-		this.classMeta = setterFactory.getClassMeta(target);
+		this.classMeta = new ClassMeta<T>(target, setterFactory, AsmHelper.isAsmPresent());
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;

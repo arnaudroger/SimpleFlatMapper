@@ -2,11 +2,6 @@ package org.sfm.reflect;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import org.sfm.jdbc.AsmHelper;
 import org.sfm.reflect.asm.AsmFactory;
@@ -34,7 +29,6 @@ import org.sfm.reflect.primitive.LongSetter;
 import org.sfm.reflect.primitive.ShortFieldSetter;
 import org.sfm.reflect.primitive.ShortMethodSetter;
 import org.sfm.reflect.primitive.ShortSetter;
-import org.sfm.utils.PropertyNameMatcher;
 
 public final class SetterFactory {
 	
@@ -63,7 +57,7 @@ public final class SetterFactory {
 		}
 	}
 
-	private <T, P, C extends T> Setter<T, P> getMethodSetter(final Method method) {
+	public <T, P, C extends T> Setter<T, P> getMethodSetter(final Method method) {
 		if (asmFactory != null) {
 			try {
 				return asmFactory.createSetter(method);
@@ -90,8 +84,8 @@ public final class SetterFactory {
 	private Method lookForMethod(final Class<?> target, final String property) {
 		
 		for(Method m : target.getDeclaredMethods()) {
-			if(methodModifiersMatches(m.getModifiers())
-					&& methodNameMatchesProperty(m.getName(), property)) {
+			if(SetterHelper.methodModifiersMatches(m.getModifiers())
+					&& SetterHelper.methodNameMatchesProperty(m.getName(), property)) {
 				return m;
 			}
 		}
@@ -106,8 +100,8 @@ public final class SetterFactory {
 
 	private Field lookForField(final Class<?> target, final String property) {
 		for(Field field : target.getDeclaredFields()) {
-			if(fieldModifiersMatches(field.getModifiers())
-					&& fieldNameMatchesProperty(field.getName(), property)) {
+			if(SetterHelper.fieldModifiersMatches(field.getModifiers())
+					&& SetterHelper.fieldNameMatchesProperty(field.getName(), property)) {
 				return field;
 			}
 		}
@@ -119,22 +113,6 @@ public final class SetterFactory {
 		return null;
 	}
 	
-	private boolean methodModifiersMatches(final int modifiers) {
-		return !Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers);
-	}
-
-	private boolean methodNameMatchesProperty(final String name, final String property) {
-		return (isSetter(name) && name.regionMatches(true, 3, property, 0, property.length())) 
-				|| name.equalsIgnoreCase(property);
-	}
-	
-	private boolean fieldModifiersMatches(final int modifiers) {
-		return !Modifier.isStatic(modifiers) &&  ! Modifier.isFinal(modifiers);
-	}
-
-	private boolean fieldNameMatchesProperty(final String name, final String property) {
-		return  name.equalsIgnoreCase(property);
-	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T, P> BooleanSetter<T> toBooleanSetter(final Setter<T, P> setter) {
@@ -238,68 +216,4 @@ public final class SetterFactory {
 		}
 	}
 
-	public <T> ClassMeta<T> getClassMeta(final Class<T> target) {
-		return new ClassMeta<T>(getAllSetters(target)); 
-	}
-	public <T> Map<String, Setter<T, ?>> getAllSetters(final Class<T> target) {
-		final Map<String, Setter<T, ?>> setters = new HashMap<String, Setter<T,?>>();
-		
-		visitSetters(new SetterVisitor<T>() {
-			@Override
-			public boolean visitSetter(final String property, final Setter<T, ?> setter) {
-				setters.put(property, setter);
-				return true;
-			}
-		}, target);
-		
-		return setters;
-	}
-	
-	public <T> Setter<T, ?> findSetter(final PropertyNameMatcher matcher, final Class<T> target) {
-		return visitSetters(new PropertyMatchingSetterVisitor<T>(matcher), target).setter();
-	}
-	
-	public <T, P, C extends SetterVisitor<T>> C visitSetters(final C visitor, final Class<T> target) {
-		final Set<String> properties = new HashSet<String>();
-		Class<?> currentClass = target;
-		
-		while(!Object.class.equals(currentClass)) {
-			
-			for(Method method : currentClass.getDeclaredMethods()) {
-				final String name = method.getName();
-				if (methodModifiersMatches(method.getModifiers()) && isSetter(name)) {
-					final String propertyName = name.substring(3,4).toLowerCase() +  name.substring(4);
-					if (!properties.contains(propertyName)) {
-						final Setter<T, Object> setter = getMethodSetter(method);
-						if (!visitor.visitSetter(propertyName, setter)) {
-							return visitor;
-						}
-						properties.add(propertyName);
-					}
-				}
-			}
-			
-			for(Field field : currentClass.getDeclaredFields()) {
-				final String name = field.getName();
-				if (fieldModifiersMatches(field.getModifiers())) {
-					if (!properties.contains(name)) {
-						field.setAccessible(true);
-						final Setter<T, Object> setter = new FieldSetter<T, Object>(field);
-						if (!visitor.visitSetter(name, setter)) {
-							return visitor;
-						}
-						properties.add(name);
-					}
-				}
-			}
-			
-			currentClass = currentClass.getSuperclass();
-		}
-		
-		return visitor;
-	}
-
-	private boolean isSetter(final String name) {
-		return name.length() > 3 && name.startsWith("set");
-	}
 }

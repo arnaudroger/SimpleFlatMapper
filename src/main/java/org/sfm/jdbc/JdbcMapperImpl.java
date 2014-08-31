@@ -52,5 +52,4 @@ public final class JdbcMapperImpl<T> implements JdbcMapper<T> {
 		}
 		return handler;
 	}
-
 }

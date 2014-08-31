@@ -42,13 +42,15 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 
 	private final List<FieldMapper<ResultSet, T>> fields = new ArrayList<FieldMapper<ResultSet, T>>();
 	private final List<ConstructorDefinition<T>> constructors;
-	private final Map<Parameter, Getter<ResultSet, ?>> constructorInjection;
-
+	private final Map<Parameter, Getter<ResultSet, ?>> constructorInjections;
+	
+	private final Map<String,  ResultSetMapperBuilderImpl<?>> innerObjectsMapper = new HashMap<>(); 
+	
 	public ResultSetMapperBuilderImpl(final Class<T> target) throws MapperBuildingException {
 		this(target, new SetterFactory(), AsmHelper.isAsmPresent());
 	}
 	public ResultSetMapperBuilderImpl(final Class<T> target, final SetterFactory setterFactory, final boolean asmPresent) throws MapperBuildingException {
-		this(target, setterFactory.getClassMeta(target), setterFactory, asmPresent);
+		this(target, new ClassMeta<T>(target, setterFactory, asmPresent), setterFactory, asmPresent);
 	}
 	
 	public ResultSetMapperBuilderImpl(final Class<T> target, final ClassMeta<T> classMeta, final SetterFactory setterFactory, final boolean asmPresent) throws MapperBuildingException {
@@ -57,18 +59,8 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		this.asmFactory = setterFactory.getAsmFactory();
 		this.instantiatorFactory = new InstantiatorFactory(asmFactory);
 		this.classMeta = classMeta;
-		
-		if (asmPresent) {
-			try {
-				this.constructors = ConstructorDefinition.extractConstructors(target);
-			} catch(Exception e) {
-				throw new MapperBuildingException(e.getMessage(), e);
-			}
-			this.constructorInjection = new HashMap<Parameter, Getter<ResultSet,?>>();
-		} else {
-			this.constructors = null;
-			this.constructorInjection = null;
-		}
+		this.constructors = classMeta.getConstructorDefinitions();
+		this.constructorInjections = new HashMap<Parameter, Getter<ResultSet,?>>();
 	}
 
 
@@ -95,7 +87,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 
 	@Override
 	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column) {
-		return addIndexedColumn(column, fields.size() + constructorInjection.size() + 1);
+		return addIndexedColumn(column, fields.size() + constructorInjections.size() + 1);
 	}
 
 	@Override
@@ -128,7 +120,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		Parameter param = hasMatchingConstructor(column);
 		if (param != null) {
 			removeNonMatchingConstructor(param);
-			constructorInjection.put(param, ResultSetGetterFactory.newGetter(param.getType(), column, sqlType));
+			constructorInjections.put(param, ResultSetGetterFactory.newGetter(param.getType(), column, sqlType));
 		} else {
 			final Setter<T, ?> setter = classMeta.findSetter(property);
 			if (setter == null) {
@@ -141,17 +133,20 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	}
 
 	@Override
-	public final ResultSetMapperBuilder<T> addMapping(final String property, final int column, final int sqlType) {
+	public final ResultSetMapperBuilder<T> addMapping(final String property, final int columnIndex, final int sqlType) {
 		Parameter param = hasMatchingConstructor(property);
 		if (param != null) {
 			removeNonMatchingConstructor(param);
-			constructorInjection.put(param, ResultSetGetterFactory.newGetter(param.getType(), column, sqlType));
+			constructorInjections.put(param, ResultSetGetterFactory.newGetter(param.getType(), columnIndex, sqlType));
 		} else {
 			final Setter<T, ?> setter = classMeta.findSetter(property);
 			if (setter == null) {
+				// is there a object that match
+				
+				
 				mapperBuilderErrorHandler.setterNotFound(target, property);
 			} else {
-				addMapping(setter, column, sqlType);
+				addMapping(setter, columnIndex, sqlType);
 			}
 		}
 		return this;
@@ -188,7 +183,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 			}
 		} else {
 			try {
-				return instantiatorFactory.getInstantiator(ResultSet.class, constructors, constructorInjection);
+				return instantiatorFactory.getInstantiator(ResultSet.class, constructors, constructorInjections);
 			} catch(Exception e) {
 				throw new MapperBuildingException(e.getMessage(), e);
 			}

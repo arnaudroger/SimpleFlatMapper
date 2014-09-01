@@ -1,8 +1,5 @@
 package org.sfm.benchmark.ibatis;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.sql.Connection;
 
 import org.apache.ibatis.mapping.Environment;
@@ -17,7 +14,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.sfm.beans.DbObject;
 import org.sfm.benchmark.ForEachListener;
 import org.sfm.benchmark.QueryExecutor;
-import org.sfm.benchmark.SingleConnectionDataSource;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 public class MyBatisBenchmark implements QueryExecutor {
 
@@ -25,18 +22,7 @@ public class MyBatisBenchmark implements QueryExecutor {
 	private Class<?> target;
 	public MyBatisBenchmark(final Connection conn, Class<?> target)  {
 		TransactionFactory transactionFactory = new JdbcTransactionFactory();
-		Connection connProxy = (Connection) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Connection.class} , new InvocationHandler() {
-			@Override
-			public Object invoke(Object proxy, Method method, Object[] args)
-					throws Throwable {
-				if (method.getName().equals("close")) {
-					return null;
-				}
-				return method.invoke(conn, args);
-			}
-		});
-		
-		Environment environment = new Environment("development", transactionFactory, new SingleConnectionDataSource(connProxy));
+		Environment environment = new Environment("development", transactionFactory, new SingleConnectionDataSource(conn, true));
 		Configuration configuration = new Configuration(environment);
 		configuration.addMapper(DbObjectMapper.class);
 		this.sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
+import org.sfm.map.MapperBuildingException;
 import org.springframework.jdbc.core.RowMapper;
 
 public final class RowMapperFactory {
@@ -29,11 +30,11 @@ public final class RowMapperFactory {
 	}
 
 	public <T> RowMapper<T> newMapper(Class<T> target,	ResultSetMetaData metaData) throws SQLException,
-			NoSuchMethodException, SecurityException, IOException {
+			MapperBuildingException {
 		return new RowMapperDelegate<>(jdbcMapperFactory.newMapper(target, metaData));
 	}
 	public <T> RowMapper<T> newMapper(Class<T> target)
-			throws NoSuchMethodException, SecurityException {
+			throws MapperBuildingException {
 		return new RowMapperDelegate<>(jdbcMapperFactory.newMapper(target));
 	}
 }

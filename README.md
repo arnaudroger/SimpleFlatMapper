@@ -132,6 +132,19 @@ public class MyDao {
 }
 ```
 
+JdbcTemplate
+-----
+
+```java
+
+		private final RowMapper<DbObject> mapper = new RowMapperFactory().newMapper(DbObject.class);
+		
+		...
+		
+		List<DbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);
+
+```
+
 Mapping
 ========
 
@@ -162,7 +175,7 @@ Maven dependency
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>0.4</version>
+			<version>0.4.1</version>
 		</dependency>
 ```
 

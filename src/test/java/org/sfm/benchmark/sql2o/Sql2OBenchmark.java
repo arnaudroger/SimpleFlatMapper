@@ -1,8 +1,5 @@
 package org.sfm.benchmark.sql2o;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -11,8 +8,8 @@ import org.sfm.benchmark.ForEachListener;
 import org.sfm.benchmark.JDBCHelper;
 import org.sfm.benchmark.QueryExecutor;
 import org.sfm.benchmark.RunBenchmark;
-import org.sfm.benchmark.SingleConnectionDataSource;
 import org.sfm.jdbc.DbHelper;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.sql2o.Sql2o;
 
 public class Sql2OBenchmark implements QueryExecutor {
@@ -20,17 +17,7 @@ public class Sql2OBenchmark implements QueryExecutor {
 	private Sql2o sql2o;
 	private Class<?> target;
 	public Sql2OBenchmark(final Connection conn, Class<?> target)  {
-		Connection connProxy = (Connection) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Connection.class} , new InvocationHandler() {
-			@Override
-			public Object invoke(Object proxy, Method method, Object[] args)
-					throws Throwable {
-				if (method.getName().equals("close")) {
-					return null;
-				}
-				return method.invoke(conn, args);
-			}
-		});
-		sql2o = new Sql2o(new SingleConnectionDataSource(connProxy));
+		sql2o = new Sql2o(new SingleConnectionDataSource(conn, true));
 		
 		this.target = target;
 

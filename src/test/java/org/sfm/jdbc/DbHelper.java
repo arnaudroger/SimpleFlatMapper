@@ -18,6 +18,7 @@ import org.sfm.utils.Handler;
 
 public class DbHelper {
 	
+	public static final String TEST_DB_OBJECT_QUERY = "select id, name, email, creation_time, type_ordinal, type_name from TEST_DB_OBJECT where id = 1 ";
 	private static final int NB_BENCHMARK_OBJECT = 10000;
 	private static boolean objectDb;
 	
@@ -157,7 +158,7 @@ public class DbHelper {
 	public static void testDbObjectFromDb(Handler<PreparedStatement> handler )
 			throws SQLException, Exception, ParseException {
 		
-		String query = "select id, name, email, creation_time, type_ordinal, type_name from TEST_DB_OBJECT where id = 1 ";
+		String query = TEST_DB_OBJECT_QUERY;
 		testQuery(handler, query);
 	}
 

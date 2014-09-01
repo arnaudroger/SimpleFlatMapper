@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalPrimitiveObject;
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.asm.ConstructorDefinition;
-import org.sfm.reflect.asm.Parameter;
+import org.sfm.reflect.asm.ConstructorParameter;
 
 public class InstantiatorFactoryTest {
 
@@ -49,7 +49,7 @@ public class InstantiatorFactoryTest {
 	
 	@Test
 	public void testInstantiateConstructorWithArgsAllPr() throws Exception {
-		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(null).getInstantiator(ResultSet.class,ConstructorDefinition.extractConstructors(DbFinalPrimitiveObject.class), new HashMap<Parameter, Getter<ResultSet, ?>>());
+		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(null).getInstantiator(ResultSet.class,ConstructorDefinition.extractConstructors(DbFinalPrimitiveObject.class), new HashMap<ConstructorParameter, Getter<ResultSet, ?>>());
 		DbFinalPrimitiveObject object = instantiator.newInstance(null);
 		Assert.assertNotNull(object);
 	}

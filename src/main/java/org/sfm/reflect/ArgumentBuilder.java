@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sfm.reflect.asm.ConstructorDefinition;
-import org.sfm.reflect.asm.Parameter;
+import org.sfm.reflect.asm.ConstructorParameter;
 
 public final class ArgumentBuilder<S, T> {
 
@@ -73,11 +73,11 @@ public final class ArgumentBuilder<S, T> {
 	private final Getter<S, ?>[] getters;
 	@SuppressWarnings("unchecked")
 	public ArgumentBuilder(ConstructorDefinition<T> constructorDefinition,
-			Map<Parameter, Getter<S, ?>> injections) {
-		Parameter[] parameters = constructorDefinition.getParameters();
+			Map<ConstructorParameter, Getter<S, ?>> injections) {
+		ConstructorParameter[] parameters = constructorDefinition.getParameters();
 		getters = new Getter[parameters.length];
 		for (int i = 0; i < getters.length; i++) {
-			Parameter param = parameters[i];
+			ConstructorParameter param = parameters[i];
 			Getter<S, ?> getter = injections.get(param);
 			if (getter == null) {
 				if (param.getType().isPrimitive()) {

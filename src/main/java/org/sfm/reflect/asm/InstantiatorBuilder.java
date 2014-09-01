@@ -33,7 +33,7 @@ import org.sfm.reflect.Getter;
 public class InstantiatorBuilder {
 
 	public static <S,T>  byte[] createInstantiator(final String className, final Class<S> sourceClass,
-			 final ConstructorDefinition<T> constructorDefinition,final Map<Parameter, Getter<S, ?>> injections) throws Exception {
+			 final ConstructorDefinition<T> constructorDefinition,final Map<ConstructorParameter, Getter<S, ?>> injections) throws Exception {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
 		FieldVisitor fv;
@@ -50,7 +50,7 @@ public class InstantiatorBuilder {
 				new String[] { "org/sfm/reflect/Instantiator" });
 		
 		
-		for(Entry<Parameter, Getter<S, ?>> entry : injections.entrySet()) {
+		for(Entry<ConstructorParameter, Getter<S, ?>> entry : injections.entrySet()) {
 			fv = cw.visitField(ACC_FINAL, "getter_" + entry.getKey().getName(), "L" + AsmUtils.toType(entry.getValue().getClass()) +";", null, null);
 			fv.visitEnd();
 		}
@@ -64,7 +64,7 @@ public class InstantiatorBuilder {
 			
 			
 			
-			for(Entry<Parameter, Getter<S, ?>> entry : injections.entrySet()) {
+			for(Entry<ConstructorParameter, Getter<S, ?>> entry : injections.entrySet()) {
 				String name = entry.getKey().getName();
 				String getterType = AsmUtils.toType(entry.getValue().getClass());
 				
@@ -90,11 +90,11 @@ public class InstantiatorBuilder {
 			mv.visitInsn(DUP);
 			
 			
-			Parameter[] parameters = constructorDefinition.getParameters();
+			ConstructorParameter[] parameters = constructorDefinition.getParameters();
 			StringBuilder sb = new StringBuilder();
 			
  			for(int i = 0; i < parameters.length; i++) {
- 				Parameter p = parameters[i];
+ 				ConstructorParameter p = parameters[i];
  				Getter<S, ?> getter = injections.get(p);
 				
  				

@@ -11,13 +11,12 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.sfm.utils.PropertyNameMatcher;
 
 public final class ConstructorDefinition<T> {
 	private final Constructor<T> constructor;
-	private final Parameter[] parameters;
+	private final ConstructorParameter[] parameters;
 	public ConstructorDefinition(Constructor<T> constructor,
-			Parameter[] parameters) {
+			ConstructorParameter[] parameters) {
 		super();
 		this.constructor = constructor;
 		this.parameters = parameters;
@@ -25,7 +24,7 @@ public final class ConstructorDefinition<T> {
 	public Constructor<T> getConstructor() {
 		return constructor;
 	}
-	public Parameter[] getParameters() {
+	public ConstructorParameter[] getParameters() {
 		return parameters;
 	}
 	
@@ -50,7 +49,7 @@ public final class ConstructorDefinition<T> {
                         String[] exceptions) {
 					if ("<init>".equals(name)) {
 						return new MethodVisitor(Opcodes.ASM5) {
-							final List<Parameter> parameters = new ArrayList<>();
+							final List<ConstructorParameter> parameters = new ArrayList<>();
 							Label firstLabel;
 							Label lastLabel;
 							@Override
@@ -68,10 +67,10 @@ public final class ConstructorDefinition<T> {
 								}
 							}
 
-							private Parameter createParameter(String name,
+							private ConstructorParameter createParameter(String name,
 									String desc) {
 								try {
-									return new Parameter(name, AsmUtils.toClass(desc));
+									return new ConstructorParameter(name, AsmUtils.toClass(desc));
 								} catch (ClassNotFoundException e) {
 									throw new Error("Unexpected error " + e, e);
 								}
@@ -80,13 +79,13 @@ public final class ConstructorDefinition<T> {
 							@Override
 							public void visitEnd() {
 								try {
-									constructors.add(new ConstructorDefinition<>(target.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new Parameter[parameters.size()])));
+									constructors.add(new ConstructorDefinition<>(target.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new ConstructorParameter[parameters.size()])));
 								} catch(Exception e) {
 									throw new Error("Unexpected error " + e, e);
 								}
 							}
 							
-							private Class<?>[] toTypeArray(List<Parameter> parameters) {
+							private Class<?>[] toTypeArray(List<ConstructorParameter> parameters) {
 								Class<?>[] types = new Class<?>[parameters.size()];
 								for(int i = 0; i < types.length; i++) {
 									types[i] = parameters.get(i).getType();
@@ -108,20 +107,12 @@ public final class ConstructorDefinition<T> {
 		
 		return constructors;
 	}
-	public boolean hasParam(Parameter param) {
-		for (Parameter p : parameters) {
+	public boolean hasParam(ConstructorParameter param) {
+		for (ConstructorParameter p : parameters) {
 			if (p.equals(param)) {
 				return true;
 			}
 		}
 		return false;
-	}
-	public Parameter lookFor(PropertyNameMatcher propertyNameMatcher) {
-		for (Parameter p : parameters) {
-			if (propertyNameMatcher.matches(p.getName())) {
-				return p;
-			}
-		}
-		return null;
 	}
 }

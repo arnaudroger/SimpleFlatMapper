@@ -1,9 +1,9 @@
 package org.sfm.reflect.asm;
 
-public final class Parameter {
+public final class ConstructorParameter {
 	private final String name;
 	private final Class<?> type;
-	public Parameter(String name, Class<?> type) {
+	public ConstructorParameter(String name, Class<?> type) {
 		super();
 		this.name = name;
 		this.type = type;
@@ -30,7 +30,7 @@ public final class Parameter {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Parameter other = (Parameter) obj;
+		ConstructorParameter other = (ConstructorParameter) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

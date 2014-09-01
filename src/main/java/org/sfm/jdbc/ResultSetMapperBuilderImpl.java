@@ -6,9 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
@@ -18,6 +16,7 @@ import org.sfm.map.MapperBuildingException;
 import org.sfm.map.RethrowFieldMapperErrorHandler;
 import org.sfm.map.RethrowMapperBuilderErrorHandler;
 import org.sfm.reflect.ClassMeta;
+import org.sfm.reflect.ConstructorPropertyMeta;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorFactory;
@@ -26,9 +25,7 @@ import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.SubPropertyMeta;
 import org.sfm.reflect.asm.AsmFactory;
-import org.sfm.reflect.asm.ConstructorDefinition;
-import org.sfm.reflect.asm.Parameter;
-import org.sfm.utils.PropertyNameMatcher;
+import org.sfm.reflect.asm.ConstructorParameter;
 
 public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuilder<T> {
 
@@ -44,10 +41,10 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	private final InstantiatorFactory instantiatorFactory;
 
 	private final List<FieldMapper<ResultSet, T>> fields = new ArrayList<FieldMapper<ResultSet, T>>();
-	private final List<ConstructorDefinition<T>> constructors;
-	private final Map<Parameter, Getter<ResultSet, ?>> constructorInjections;
+	private final Map<ConstructorParameter, Getter<ResultSet, ?>> constructorInjections;
 	
-	private final Map<String, ResultSetMapperBuilderImpl<?>> subPropertyMappers = new HashMap<>();
+	private final List<SubProperty<T>> subProperties = new ArrayList<>();
+	
 	private final SetterFactory setterFactory;
 	private final boolean asmPresent;
 	
@@ -66,10 +63,9 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		this.asmFactory = setterFactory.getAsmFactory();
 		this.instantiatorFactory = new InstantiatorFactory(asmFactory);
 		this.classMeta = classMeta;
-		this.constructors = classMeta.getConstructorDefinitions();
 		this.setterFactory = setterFactory;
 		this.asmPresent = asmPresent;
-		this.constructorInjections = new HashMap<Parameter, Getter<ResultSet,?>>();
+		this.constructorInjections = new HashMap<ConstructorParameter, Getter<ResultSet,?>>();
 	}
 
 
@@ -125,39 +121,27 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	}
 
 	@Override
-	public final ResultSetMapperBuilder<T> addMapping(final String propertyName, final String column, final int sqlType) {
-		Parameter param = hasMatchingConstructor(column);
-		if (param != null) {
-			removeNonMatchingConstructor(param);
-			constructorInjections.put(param, ResultSetGetterFactory.newGetter(param.getType(), column, sqlType));
-		} else {
-			final PropertyMeta<T, ?> property = classMeta.findProperty(propertyName);
-			if (property == null) {
-				mapperBuilderErrorHandler.setterNotFound(target, propertyName);
-			} else {
-				addMapping(property, column, sqlType);
-			}
-		}
-		return this;
-	}
-
-	@Override
 	public final ResultSetMapperBuilder<T> addMapping(final String propertyName, final int columnIndex, final int sqlType) {
 		return addMapping(propertyName, "column:"+ columnIndex, columnIndex, sqlType);
 	}
 	
-	public final ResultSetMapperBuilder<T> addMapping(final String propertyName, final String columnName, final int columnIndex, final int sqlType) {
-		Parameter param = hasMatchingConstructor(propertyName);
-		if (param != null) {
-			removeNonMatchingConstructor(param);
-			constructorInjections.put(param, ResultSetGetterFactory.newGetter(param.getType(), columnIndex, sqlType));
+	@Override
+	public final ResultSetMapperBuilder<T> addMapping(final String propertyName, final String column, final int sqlType) {
+		final PropertyMeta<T, ?> property = classMeta.findProperty(propertyName);
+		if (property == null) {
+			mapperBuilderErrorHandler.setterNotFound(target, propertyName);
 		} else {
-			final PropertyMeta<T, ?> property = classMeta.findProperty(propertyName);
-			if (property == null) {
-					mapperBuilderErrorHandler.setterNotFound(target, propertyName);
-			} else {
-				addMapping(property, columnName, columnIndex, sqlType);
-			}
+			addMapping(property, column, sqlType);
+		}
+		return this;
+	}
+	
+	public final ResultSetMapperBuilder<T> addMapping(final String propertyName, final String columnName, final int columnIndex, final int sqlType) {
+		final PropertyMeta<T, ?> property = classMeta.findProperty(propertyName);
+		if (property == null) {
+				mapperBuilderErrorHandler.setterNotFound(target, propertyName);
+		} else {
+			addMapping(property, columnName, columnIndex, sqlType);
 		}
 		return this;
 	}
@@ -185,7 +169,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	}
 
 	private Instantiator<ResultSet, T> getInstantiator() throws MapperBuildingException {
-		if (constructors == null) {
+		if (!asmPresent) {
 			try {
 				return instantiatorFactory.getInstantiator(ResultSet.class, target);
 			} catch(Exception e) {
@@ -193,13 +177,33 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 			}
 		} else {
 			try {
-				return instantiatorFactory.getInstantiator(ResultSet.class, constructors, constructorInjections);
+				return instantiatorFactory.getInstantiator(ResultSet.class, classMeta.getConstructorDefinitions(), constructorInjections());
 			} catch(Exception e) {
 				throw new MapperBuildingException(e.getMessage(), e);
 			}
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private Map<ConstructorParameter, Getter<ResultSet, ?>> constructorInjections() {
+		Map<ConstructorParameter, Getter<ResultSet, ?>> injections = new HashMap<>(constructorInjections);
+		
+		for(SubProperty<T> subProp : subProperties) {
+			PropertyMeta<T, ?> prop = subProp.subProperty.getProperty();
+			if (prop instanceof ConstructorPropertyMeta) {
+				ResultSetMapperBuilderImpl<?> builder = subProp.mapperBuilder;
+				
+				final JdbcMapper<T> mapper = (JdbcMapper<T>) builder.mapper();
+				
+				Getter<ResultSet, T> getter = new JdbcMapperGetterAdapter<>(mapper); 
+				
+				injections.put(((ConstructorPropertyMeta) prop).getConstructorParameter(), getter);
+			}
+			
+		}
+		
+		return injections;
+	}
 	public final Class<T> getTarget() {
 		return target;
 	}
@@ -207,34 +211,50 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	@Override
 	@SuppressWarnings("unchecked")
 	public final FieldMapper<ResultSet, T>[] fields() {
-		
 		List<FieldMapper<ResultSet, T>> fields = new ArrayList<>(this.fields);
 		
-		for(Entry<String, ResultSetMapperBuilderImpl<?>> e: subPropertyMappers.entrySet()) {
-			String prop = e.getKey();
-			ResultSetMapperBuilderImpl<?> builder = e.getValue();
-			
-			Setter<T, Object> setter = (Setter<T, Object>) classMeta.findProperty(prop).getSetter();
-			final JdbcMapper<T> mapper = (JdbcMapper<T>) builder.mapper();
-			
-			Getter<ResultSet, T> getter = new Getter<ResultSet, T>() {
-				@Override
-				public T get(ResultSet target) throws Exception {
-					return mapper.map(target);
-				}
-			};
-			
-			fields.add(new FieldMapperImpl<ResultSet, T, Object>(prop, getter, setter, fieldMapperErrorHandler));
+		for(SubProperty<T> subProp : subProperties) {
+			PropertyMeta<T, ?> prop = subProp.subProperty.getProperty();
+			if (!(prop instanceof ConstructorPropertyMeta)) {
+				Setter<T, Object> setter = (Setter<T, Object>) prop.getSetter();
+				
+				JdbcMapper<T> mapper = (JdbcMapper<T>) subProp.mapperBuilder.mapper();
+				
+				Getter<ResultSet, T> getter = new JdbcMapperGetterAdapter<>(mapper);
+				
+				fields.add(new FieldMapperImpl<ResultSet, T, Object>(prop.getName(), getter, setter, fieldMapperErrorHandler));
+			}
 			
 		}
+		
 		return fields.toArray(new FieldMapper[fields.size()]);
 	}
 
+	private SubProperty<T> getOrAddSubPropertyMapperBuilder(SubPropertyMeta<T, ?> property) {
+		
+		for(SubProperty<T> subProp : subProperties) {
+			if (subProp.subProperty.getName().equals(property.getName())) {
+				return subProp;
+			}
+ 		}
+		
+		ResultSetMapperBuilderImpl<T> builder = new ResultSetMapperBuilderImpl<>(property.getType(), property.getClassMeta(setterFactory, asmPresent), setterFactory, asmPresent);
+		SubProperty<T> subProp = new SubProperty<T>(builder, property);
+		
+		subProperties.add(subProp);
+		
+		return subProp;
+	}
+	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addMapping(PropertyMeta<T, ?> property, String column, int sqlType) {
-		if (property instanceof SubPropertyMeta) {
-			ResultSetMapperBuilderImpl<?> subPropertyMapperBuilder = getOrAddSubPropertyMapperBuilder(property);
-			subPropertyMapperBuilder.addMapping(((SubPropertyMeta) property).getSubProperty(), column, sqlType);
+		if (property instanceof ConstructorPropertyMeta) {
+			ConstructorParameter constructorParameter = ((ConstructorPropertyMeta) property).getConstructorParameter();
+			constructorInjections.put(constructorParameter, ResultSetGetterFactory.newGetter(constructorParameter.getType(), column, sqlType));
+		} else if (property instanceof SubPropertyMeta) {
+			SubProperty<T> subProp = getOrAddSubPropertyMapperBuilder((SubPropertyMeta)property);
+			subProp.mapperBuilder.addMapping(((SubPropertyMeta) property).getSubProperty(), column, sqlType);
 		} else if (property.getType().isPrimitive()) {
 			FieldMapper<ResultSet, T> fieldMapper = primitiveFieldMapperFactory.primitiveFieldMapper(column, property.getSetter(), column, fieldMapperErrorHandler);
 			fields.add(fieldMapper);
@@ -244,23 +264,15 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		}
 	
 	}
-	public ResultSetMapperBuilderImpl<?> getOrAddSubPropertyMapperBuilder(
-			PropertyMeta<T, ?> property) {
-		ResultSetMapperBuilderImpl<?> subPropertyMapperBuilder = subPropertyMappers.get(property.getName());
-		
-		if (subPropertyMapperBuilder == null) {
-			subPropertyMapperBuilder =  new ResultSetMapperBuilderImpl<>(property.getType(), property.getClassMeta(setterFactory, asmPresent), setterFactory, asmPresent);
-			subPropertyMappers.put(property.getName(), subPropertyMapperBuilder);
-		}
-		return subPropertyMapperBuilder;
-	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addMapping(PropertyMeta<T, ?> property, String columnName, int column, int sqlType) {
-	
-		if (property instanceof SubPropertyMeta) {
-			ResultSetMapperBuilderImpl<?> subPropertyMapperBuilder = getOrAddSubPropertyMapperBuilder(property);
-			subPropertyMapperBuilder.addMapping(((SubPropertyMeta) property).getSubProperty(), columnName, column, sqlType);
+		if (property instanceof ConstructorPropertyMeta) {
+			ConstructorParameter constructorParameter = ((ConstructorPropertyMeta) property).getConstructorParameter();
+			constructorInjections.put(constructorParameter, ResultSetGetterFactory.newGetter(constructorParameter.getType(), column, sqlType));
+		} else if (property instanceof SubPropertyMeta) {
+			SubProperty<T> subProp = getOrAddSubPropertyMapperBuilder((SubPropertyMeta)property);
+			subProp.mapperBuilder.addMapping(((SubPropertyMeta) property).getSubProperty(), columnName, column, sqlType);
 		} else if (property.getType().isPrimitive()) {
 			FieldMapper<ResultSet, T> fieldMapper = primitiveFieldMapperFactory.primitiveFieldMapper(column, property.getSetter(), columnName, fieldMapperErrorHandler);
 			fields.add(fieldMapper);
@@ -296,29 +308,16 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		}
 	}
 	
-	private void removeNonMatchingConstructor(Parameter param) {
-		ListIterator<ConstructorDefinition<T>> li = constructors.listIterator();
-		
-		while(li.hasNext()){
-			ConstructorDefinition<T> cd = li.next();
-			if (!cd.hasParam(param)) {
-				li.remove();
-			}
-		}
-	}
+	private static class SubProperty<T> {
+		final ResultSetMapperBuilderImpl<?> mapperBuilder;
+		final SubPropertyMeta<T, ?> subProperty;
 
-	private Parameter hasMatchingConstructor(String column) {
-		if (constructors == null)  return null;
-		
-		for(ConstructorDefinition<T> cd : constructors) {
-			Parameter param = cd.lookFor(new PropertyNameMatcher(column));
-			if (param != null) {
-				return param;
-			}
+		SubProperty(ResultSetMapperBuilderImpl<?> mapperBuilder,
+				SubPropertyMeta<T, ?> subProperty) {
+			this.mapperBuilder = mapperBuilder;
+			this.subProperty = subProperty;
 		}
-		return null;
-	}
-	
 
+	}
 
 }

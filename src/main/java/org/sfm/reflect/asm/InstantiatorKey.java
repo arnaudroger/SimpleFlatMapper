@@ -17,13 +17,13 @@ public class InstantiatorKey {
 		this(target.getConstructor(), null);
 	}
 	public InstantiatorKey(ConstructorDefinition<?> constructorDefinition,
-			Set<Parameter>  injections) {
+			Set<ConstructorParameter>  injections) {
 		this(constructorDefinition.getConstructor(), toParamNameS(injections));
 	}
-	private static String[] toParamNameS(Set<Parameter> keySet) {
+	private static String[] toParamNameS(Set<ConstructorParameter> keySet) {
 		String[] names = new String[keySet.size()];
 		int i = 0;
-		for(Parameter param : keySet) {
+		for(ConstructorParameter param : keySet) {
 			names[i++] = param.getName();
 		}
 		Arrays.sort(names);

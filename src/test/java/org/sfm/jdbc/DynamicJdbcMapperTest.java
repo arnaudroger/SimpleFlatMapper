@@ -36,6 +36,19 @@ public class DynamicJdbcMapperTest {
 	}
 	
 	@Test
+	public void testResultSetMapperMap()
+			throws SQLException, Exception, ParseException {
+		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				ResultSet rs = ps.executeQuery();
+				rs.next();
+				DbObject object = mapper.map(rs);
+				DbHelper.assertDbObjectMapping(object);
+			}
+		});
+	}
+	@Test
 	public void testMapperCache() throws SQLException, ParseException, Exception {
 		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
 			@Override

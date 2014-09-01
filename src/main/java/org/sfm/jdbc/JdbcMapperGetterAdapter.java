@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 
 import org.sfm.reflect.Getter;
 
-public class JdbcMapperGetterAdapter<P> implements Getter<ResultSet, P> {
+public final class JdbcMapperGetterAdapter<P> implements Getter<ResultSet, P> {
 
 	private final JdbcMapper<P> mapper;
 	

@@ -96,7 +96,7 @@ public class AsmFactory implements Opcodes {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> createInstatiantor(final Class<S> source, final ConstructorDefinition<T> constructorDefinition,final Map<Parameter, Getter<S, ?>> injections) throws Exception {
+	public <S, T> Instantiator<S, T> createInstatiantor(final Class<S> source, final ConstructorDefinition<T> constructorDefinition,final Map<ConstructorParameter, Getter<S, ?>> injections) throws Exception {
 		InstantiatorKey instantiatorKey = new InstantiatorKey(constructorDefinition, injections.keySet());
 		Instantiator<S, T> instantiator = (Instantiator<S, T>) instantiators.get(instantiatorKey);
 		if (instantiator == null) {
@@ -105,7 +105,7 @@ public class AsmFactory implements Opcodes {
 			final Class<?> type = factoryClassLoader.registerGetter(className, bytes);
 			
 			Map<String, Getter<S, ?>> getterPerName = new HashMap<>();
-			for(Entry<Parameter, Getter<S, ?>> e : injections.entrySet()) {
+			for(Entry<ConstructorParameter, Getter<S, ?>> e : injections.entrySet()) {
 				getterPerName.put(e.getKey().getName(), e.getValue());
 			}
 			

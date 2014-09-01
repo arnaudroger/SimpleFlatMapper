@@ -41,10 +41,10 @@ public class AsmFactoryTest {
 	public void testCreateInstatiatorFinalDbObjectInjectIdAndName() throws Exception {
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstatiantor(ResultSet.class, 
 				ConstructorDefinition.extractConstructors(DbFinalObject.class).get(0),
-				new HashMap<Parameter, Getter<ResultSet, ?>>() {
+				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
-						put(new Parameter("id", long.class), new LongIndexedResultSetGetter(1));
-						put(new Parameter("name", String.class), new StringIndexedResultSetGetter(2));
+						put(new ConstructorParameter("id", long.class), new LongIndexedResultSetGetter(1));
+						put(new ConstructorParameter("name", String.class), new StringIndexedResultSetGetter(2));
 					}
 				}
 				);
@@ -66,10 +66,10 @@ public class AsmFactoryTest {
 		
 		assertSame(instantiator, asmFactory.createInstatiantor(ResultSet.class, 
 				ConstructorDefinition.extractConstructors(DbFinalObject.class).get(0),
-				new HashMap<Parameter, Getter<ResultSet, ?>>() {
+				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
-						put(new Parameter("id", long.class), new LongIndexedResultSetGetter(1));
-						put(new Parameter("name", String.class), new StringIndexedResultSetGetter(2));
+						put(new ConstructorParameter("id", long.class), new LongIndexedResultSetGetter(1));
+						put(new ConstructorParameter("name", String.class), new StringIndexedResultSetGetter(2));
 					}
 				}
 				));
@@ -80,10 +80,10 @@ public class AsmFactoryTest {
 		@SuppressWarnings("serial")
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstatiantor(ResultSet.class, 
 				ConstructorDefinition.extractConstructors(DbFinalObject.class).get(0),
-				new HashMap<Parameter, Getter<ResultSet, ?>>() {
+				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
-						put(new Parameter("typeOrdinal", Type.class), new OrdinalEnumIndexedResultSetGetter<Type>(1, Type.class));
-						put(new Parameter("name", String.class), new StringIndexedResultSetGetter(2));
+						put(new ConstructorParameter("typeOrdinal", Type.class), new OrdinalEnumIndexedResultSetGetter<Type>(1, Type.class));
+						put(new ConstructorParameter("name", String.class), new StringIndexedResultSetGetter(2));
 					}
 				}
 				);

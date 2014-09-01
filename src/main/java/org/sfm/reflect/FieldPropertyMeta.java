@@ -6,8 +6,8 @@ public class FieldPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
 	private final Field field;
 
-	public FieldPropertyMeta(Field field) {
-		super(field.getName());
+	public FieldPropertyMeta(String name, Field field) {
+		super(name);
 		this.field = field;
 	}
 
@@ -15,6 +15,12 @@ public class FieldPropertyMeta<T, P> extends PropertyMeta<T, P> {
 	protected Setter<T, P> newSetter() {
 		field.setAccessible(true);
 		return new FieldSetter<>(field);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Class<T> getType() {
+		return (Class<T>) field.getType();
 	}
 
 }

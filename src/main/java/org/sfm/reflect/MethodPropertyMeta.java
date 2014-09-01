@@ -18,4 +18,10 @@ public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		return setterFactory.getMethodSetter(method);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public Class<T> getType() {
+		return (Class<T>) method.getParameterTypes()[0];
+	}
+
 }

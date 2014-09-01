@@ -5,7 +5,7 @@ public final class RethrowFieldMapperErrorHandler implements FieldMapperErrorHan
 	@Override
 	public void errorMappingField(final String name, final Object source, final Object target,
 			final Exception error) throws MappingException {
-		throw new MappingException(error.getMessage(), error);
+		throw new MappingException("Error mapping field " + name + " : " + error.getMessage(), error);
 	}
 
 }

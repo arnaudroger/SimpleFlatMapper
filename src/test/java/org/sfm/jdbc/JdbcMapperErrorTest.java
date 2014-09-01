@@ -1,8 +1,7 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 
@@ -49,20 +48,13 @@ public class JdbcMapperErrorTest {
 		builder.mapperBuilderErrorHandler(errorHandler);
 		
 		builder.addMapping("prop", 1);
-		
-		verify(errorHandler).getterNotFound("No getter for column 1 type class org.sfm.beans.Foo");
-		
 		builder.addMapping("prop", "col");
-		
-		verify(errorHandler).getterNotFound("No getter for column 1 type class org.sfm.beans.Foo");
-		
 		builder.addIndexedColumn("prop");
-		
-		verify(errorHandler).getterNotFound("No getter for column 1 type class org.sfm.beans.Foo");
-		
 		builder.addNamedColumn("prop");
 		
-		verify(errorHandler).getterNotFound("No getter for column 1 type class org.sfm.beans.Foo");
+		verify(errorHandler).getterNotFound("No getter for column column:1 type class org.sfm.beans.Foo");
+		verify(errorHandler).getterNotFound("No getter for column col type class org.sfm.beans.Foo");
+		verify(errorHandler, times(2)).getterNotFound("No getter for column prop type class org.sfm.beans.Foo");
 	}
 	
 	@Test

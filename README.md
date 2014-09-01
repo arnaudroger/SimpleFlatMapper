@@ -151,6 +151,7 @@ The JdbcMapper supports
 - constructor injection using asm to get the parameter name
 - setter injection
 - field injection
+- complex object injection
 
 It looks for injection on that order and if asm is present will generate optimised asm version.
 
@@ -161,7 +162,7 @@ Maven dependency
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>0.3.1</version>
+			<version>0.4</version>
 		</dependency>
 ```
 

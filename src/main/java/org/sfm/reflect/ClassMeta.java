@@ -3,6 +3,7 @@ package org.sfm.reflect;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
@@ -17,7 +18,6 @@ public final class ClassMeta<T> {
 	
 	private final List<PropertyMeta<T, ?>> properties;
 	private final List<ConstructorPropertyMeta<T, ?>> constructorProperties;
-	
 	private final List<ConstructorDefinition<T>> constructorDefinitions;
 
 	private final SetterFactory setterFactory;
@@ -37,14 +37,33 @@ public final class ClassMeta<T> {
 		if (asmPresent) {
 			try {
 				this.constructorDefinitions = ConstructorDefinition.extractConstructors(target);
+				this.constructorProperties = Collections.unmodifiableList(listProperties(constructorDefinitions));
 			} catch(Exception e) {
 				throw new MapperBuildingException(e.getMessage(), e);
 			}
 		} else {
 			this.constructorDefinitions = null;
+			this.constructorProperties = null;
 		}
-		this.properties = listProperties(setterFactory, target);
-		this.constructorProperties = listProperties(constructorDefinitions);
+		this.properties = Collections.unmodifiableList(listProperties(setterFactory, target));
+	}
+	
+	private ClassMeta(String prefix,SetterFactory setterFactory, 
+			boolean asmPresent, 
+			List<ConstructorDefinition<T>> constructorDefinitions, 
+			List<PropertyMeta<T, ?>> properties,  
+			List<ConstructorPropertyMeta<T, ?>> constructorProperties ) throws MapperBuildingException {
+		this.prefix = prefix;
+		this.setterFactory = setterFactory;
+		this.asmPresent = asmPresent;
+		this.constructorDefinitions = constructorDefinitions;
+		this.properties = properties;
+		this.constructorProperties = constructorProperties;
+	}
+
+	
+	public ClassMeta<T> duplicate() {
+		return new ClassMeta<>(prefix, setterFactory, asmPresent, new ArrayList<>(constructorDefinitions), properties, constructorProperties);
 	}
 
 	private List<ConstructorPropertyMeta<T, ?>> listProperties(List<ConstructorDefinition<T>> constructorDefinitions) {

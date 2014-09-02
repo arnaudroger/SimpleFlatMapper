@@ -8,6 +8,7 @@ import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.RethrowFieldMapperErrorHandler;
 import org.sfm.map.RethrowMapperBuilderErrorHandler;
+import org.sfm.osgi.BridgeClassLoader;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.asm.AsmFactory;
 
@@ -27,16 +28,16 @@ public final class JdbcMapperFactory {
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	
 	private boolean useAsm = true;
-	private AsmFactory asmFactory;
-	private final boolean registerTargetClassLoader;
 	
-	public JdbcMapperFactory(AsmFactory asmFactory, boolean registerTargetClassLoader) {
-		this.asmFactory = asmFactory;
-		this.registerTargetClassLoader = registerTargetClassLoader;
+	private final boolean useBridgeClassLoader;
+	
+	
+	public JdbcMapperFactory(boolean useBridgeClassLoader) {
+		this.useBridgeClassLoader = useBridgeClassLoader;
 	}
 	
 	public JdbcMapperFactory() {
-		this(_asmFactory, false);
+		this(false);
 	}
 	
 	/**
@@ -78,11 +79,7 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target, final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
-		if (registerTargetClassLoader) {
-			asmFactory.registerDelegate(target.getClassLoader());
-		}
-		
-		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<>(target, reflectionService());
+		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<>(target, reflectionService(target));
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
@@ -98,14 +95,19 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
-		if (registerTargetClassLoader) {
-			asmFactory.registerDelegate(target.getClassLoader());
-		}
-		return new DynamicJdbcMapper<T>(target, reflectionService(), fieldMapperErrorHandler, mapperBuilderErrorHandler);
+		return new DynamicJdbcMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler);
 	}
 
 	
-	private ReflectionService reflectionService() {
+	private ReflectionService reflectionService(Class<?> target) {
+		AsmFactory asmFactory = null;
+		if (AsmHelper.isAsmPresent()) {
+			if (useBridgeClassLoader) {
+				asmFactory = new AsmFactory(new BridgeClassLoader(getClass().getClassLoader(), target.getClassLoader()));
+			} else {
+				asmFactory = _asmFactory;
+			}
+		}
 		return new ReflectionService(AsmHelper.isAsmPresent(), useAsm, asmFactory);
 	}
 

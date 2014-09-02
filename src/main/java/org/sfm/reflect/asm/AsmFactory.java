@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.objectweb.asm.Opcodes;
@@ -17,53 +16,7 @@ import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.Setter;
 
 public class AsmFactory implements Opcodes {
-	private static class FactoryClassLoader extends ClassLoader {
-
-		public FactoryClassLoader(final ClassLoader parent) {
-			super(parent);
-		}
-
-		private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
-		private final CopyOnWriteArrayList<ClassLoader> delegate = new CopyOnWriteArrayList<>();
-		@Override
-		protected Class<?> findClass(final String name) throws ClassNotFoundException {
-			final Class<?> type = classes.get(name);
-			
-			if (type != null) {
-				return type; 
-			} else {
-				try {
-					return super.findClass(name);
-				} catch(ClassNotFoundException e) {
-					for(ClassLoader cl : delegate) {
-						try {
-							return cl.loadClass(name);
-						} catch(ClassNotFoundException ee) {}
-					}
-					throw new ClassNotFoundException();
-				}
-			}
-		}
-		
-		public Class<?> registerClass(final String name, final byte[] bytes) {
-			Class<?> type = classes.get(name);
-			if (type == null) {
-				type = defineClass(name, bytes, 0, bytes.length);
-				return type;
-			} else {
-				throw new RuntimeException("Class " + name + " already defined");
-			}
-		}
-		
-		public void registerDelegate(ClassLoader classLoader) {
-			if (!delegate.contains(classLoader)) {
-				delegate.add(classLoader);
-			}
-		}
-	}
-	
 	private final FactoryClassLoader factoryClassLoader;
-	
 	private final Map<Method, Setter<?, ?>> setters = new HashMap<Method, Setter<?, ?>>();
 	private final Map<InstantiatorKey, Instantiator<?, ?>> instantiators = new HashMap<InstantiatorKey, Instantiator<?, ?>>();
 	
@@ -73,10 +26,6 @@ public class AsmFactory implements Opcodes {
 	
 	public AsmFactory(ClassLoader cl) {
 		factoryClassLoader = new FactoryClassLoader(cl);
-	}
-	
-	public void registerDelegate(ClassLoader cl) {
-		factoryClassLoader.registerDelegate(cl);
 	}
 	
 	@SuppressWarnings("unchecked")

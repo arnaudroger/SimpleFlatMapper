@@ -209,9 +209,5 @@ CSVMapper
 -----
 - [Csv Mapping](https://github.com/arnaudroger/SimpleFlatMapper/issues/5)
  
-Misc
--------
-- [Osgi support](https://github.com/arnaudroger/SimpleFlatMapper/issues/3)
-
 
 

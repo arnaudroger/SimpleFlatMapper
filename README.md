@@ -147,6 +147,8 @@ class MyDao {
 
 OsgiSupport
 ------
+
+```java
 class MyService {
 
 	@Reference
@@ -161,6 +163,7 @@ class MyService {
 		mapper = jdbcMapperService.newFactory().newMapper(DbObject.class);
 	}
 }
+```
 
 Mapping
 ========

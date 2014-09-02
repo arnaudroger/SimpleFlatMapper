@@ -1,9 +1,7 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,37 +12,40 @@ import org.sfm.beans.DbFinalPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.PrimitiveObject;
 import org.sfm.map.Mapper;
-import org.sfm.reflect.SetterFactory;
+import org.sfm.reflect.ReflectionService;
 
 public class JdbcMapperPrimitiveTest {
+	
+	private ReflectionService nonAsmReflectionService = new ReflectionService(false, false);
+	private ReflectionService asmReflectionService = new ReflectionService(true, true);
 
 	@Test
 	public void testNamedPrimitivesWithSetterAccess() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
+		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, asmReflectionService);
 		testNamedPrimitives(builder);
 	}
 	
 	@Test
 	public void testNamedPrimitivesWithConstructorAccess() throws Exception {
-		ResultSetMapperBuilder<DbFinalPrimitiveObject> builder = new ResultSetMapperBuilderImpl<DbFinalPrimitiveObject>(DbFinalPrimitiveObject.class);
+		ResultSetMapperBuilder<DbFinalPrimitiveObject> builder = new ResultSetMapperBuilderImpl<DbFinalPrimitiveObject>(DbFinalPrimitiveObject.class, asmReflectionService);
 		testNamedPrimitives(builder);
 	}
 
 	@Test
 	public void testNamedPrimitivesWithSetterAccessNoAsm() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, new SetterFactory(null), false);
+		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, nonAsmReflectionService);
 		testNamedPrimitives(builder);
 	}
 	
 	@Test
 	public void testNamedBoxedPrimitivesWithFieldAccess() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class, asmReflectionService);
 		testNamedPrimitives(builder);
 	}
 
 	@Test
 	public void testNamedBoxedPrimitivesWithFieldAccessNullValues() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class, asmReflectionService);
 		testNamedPrimitivesWithNull(builder);
 	}
 	
@@ -52,32 +53,32 @@ public class JdbcMapperPrimitiveTest {
 	
 	@Test
 	public void testIndexedPrimitivesWithSetterAccess() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
+		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, asmReflectionService);
 		testIndexedPrimitives(builder);
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithConstructorAccess() throws Exception {
-		ResultSetMapperBuilder<DbFinalPrimitiveObject> builder = new ResultSetMapperBuilderImpl<DbFinalPrimitiveObject>(DbFinalPrimitiveObject.class);
+		ResultSetMapperBuilder<DbFinalPrimitiveObject> builder = new ResultSetMapperBuilderImpl<DbFinalPrimitiveObject>(DbFinalPrimitiveObject.class, asmReflectionService);
 		testIndexedPrimitives(builder);
 	}
 	
 	
 	@Test
 	public void testIndexedPrimitivesWithSetterAccessNoAsm() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, new SetterFactory(null), false);
+		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, nonAsmReflectionService);
 		testIndexedPrimitives(builder);
 	}
 	
 	@Test
 	public void testIndexedBoxedPrimitivesWithFieldAccess() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class, asmReflectionService);
 		testIndexedPrimitives(builder);
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithFieldAccessNullValues() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class);
+		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class, asmReflectionService);
 		testIndexedPrimitivesWithNull(builder);
 	}
 	

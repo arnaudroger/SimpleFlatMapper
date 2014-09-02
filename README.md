@@ -136,14 +136,31 @@ JdbcTemplate
 -----
 
 ```java
-
-		private final RowMapper<DbObject> mapper = new RowMapperFactory().newMapper(DbObject.class);
+class MyDao {
+	private final RowMapper<DbObject> mapper = new RowMapperFactory().newMapper(DbObject.class);
 		
-		...
-		
+	public void doSomething() {		
 		List<DbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);
-
+	}
+}
 ```
+
+OsgiSupport
+------
+class MyService {
+
+	@Reference
+	JdbcMapperService jdbcMapperService;
+	
+	JdbcMapper mapper;
+	
+	....
+	
+	@Activate
+	public void activate() {
+		mapper = jdbcMapperService.newFactory().newMapper(DbObject.class);
+	}
+}
 
 Mapping
 ========

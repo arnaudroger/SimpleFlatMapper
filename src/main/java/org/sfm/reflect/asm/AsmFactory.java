@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.objectweb.asm.Opcodes;
@@ -23,7 +24,7 @@ public class AsmFactory implements Opcodes {
 		}
 
 		private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
-		
+		private final CopyOnWriteArrayList<ClassLoader> delegate = new CopyOnWriteArrayList<>();
 		@Override
 		protected Class<?> findClass(final String name) throws ClassNotFoundException {
 			final Class<?> type = classes.get(name);
@@ -31,17 +32,32 @@ public class AsmFactory implements Opcodes {
 			if (type != null) {
 				return type; 
 			} else {
-				return super.findClass(name);
+				try {
+					return super.findClass(name);
+				} catch(ClassNotFoundException e) {
+					for(ClassLoader cl : delegate) {
+						try {
+							return cl.loadClass(name);
+						} catch(ClassNotFoundException ee) {}
+					}
+					throw new ClassNotFoundException();
+				}
 			}
 		}
 		
-		public Class<?> registerGetter(final String name, final byte[] bytes) {
+		public Class<?> registerClass(final String name, final byte[] bytes) {
 			Class<?> type = classes.get(name);
 			if (type == null) {
 				type = defineClass(name, bytes, 0, bytes.length);
 				return type;
 			} else {
-				throw new RuntimeException("Setter " + name + " already defined");
+				throw new RuntimeException("Class " + name + " already defined");
+			}
+		}
+		
+		public void registerDelegate(ClassLoader classLoader) {
+			if (!delegate.contains(classLoader)) {
+				delegate.add(classLoader);
 			}
 		}
 	}
@@ -59,13 +75,17 @@ public class AsmFactory implements Opcodes {
 		factoryClassLoader = new FactoryClassLoader(cl);
 	}
 	
+	public void registerDelegate(ClassLoader cl) {
+		factoryClassLoader.registerDelegate(cl);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public <T, P> Setter<T,P> createSetter(final Method m) throws Exception {
 		Setter<T,P> setter = (Setter<T, P>) setters.get(m);
 		if (setter == null) {
 			final String className = generateClassName(m);
 			final byte[] bytes = generateClass(m, className);
-			final Class<?> type = factoryClassLoader.registerGetter(className, bytes);
+			final Class<?> type = factoryClassLoader.registerClass(className, bytes);
 			setter = (Setter<T, P>) type.newInstance();
 			setters.put(m, setter);
 		}
@@ -88,7 +108,7 @@ public class AsmFactory implements Opcodes {
 		if (instantiator == null) {
 			final String className = generateInstantiatorClassName(instantiatorKey);
 			final byte[] bytes = ConstructorBuilder.createEmptyConstructor(className, source, target);
-			final Class<?> type = factoryClassLoader.registerGetter(className, bytes);
+			final Class<?> type = factoryClassLoader.registerClass(className, bytes);
 			instantiator = (Instantiator<S, T>) type.newInstance();
 			instantiators.put(instantiatorKey, instantiator);
 		}
@@ -102,7 +122,7 @@ public class AsmFactory implements Opcodes {
 		if (instantiator == null) {
 			final String className = generateInstantiatorClassName(instantiatorKey);
 			final byte[] bytes = InstantiatorBuilder.createInstantiator(className, source, constructorDefinition, injections);
-			final Class<?> type = factoryClassLoader.registerGetter(className, bytes);
+			final Class<?> type = factoryClassLoader.registerClass(className, bytes);
 			
 			Map<String, Getter<S, ?>> getterPerName = new HashMap<>();
 			for(Entry<ConstructorParameter, Getter<S, ?>> e : injections.entrySet()) {
@@ -119,7 +139,7 @@ public class AsmFactory implements Opcodes {
 	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target, JdbcMapperErrorHandler errorHandler) throws Exception {
 		final String className = generateClassName(mappers, ResultSet.class, target);
 		final byte[] bytes = JdbcMapperBuilder.dump(className, mappers, instantiator, target);
-		final Class<?> type = factoryClassLoader.registerGetter(className, bytes);
+		final Class<?> type = factoryClassLoader.registerClass(className, bytes);
 		return (JdbcMapper<T>) type.getDeclaredConstructors()[0].newInstance(mappers, instantiator, errorHandler);
 	}
 	

@@ -10,16 +10,14 @@ import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.MappingException;
 import org.sfm.reflect.ClassMeta;
-import org.sfm.reflect.SetterFactory;
+import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.Handler;
 
 public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private final ClassMeta<T> classMeta;
-	
-	private final SetterFactory setterFactory;
 	private final Class<T> target;
-	
+
 	@SuppressWarnings("unchecked")
 	private final AtomicReference<CacheEntry<T>[]> mapperCache = new AtomicReference<CacheEntry<T>[]>(new CacheEntry[0]);
 
@@ -27,11 +25,10 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler;
 
-	public DynamicJdbcMapper(final Class<T> target, final SetterFactory setterFactory, 
+	public DynamicJdbcMapper(final Class<T> target, final ReflectionService reflectionService, 
 			final FieldMapperErrorHandler fieldMapperErrorHandler, 
 			final MapperBuilderErrorHandler mapperBuilderErrorHandler) {
-		this.setterFactory = setterFactory;
-		this.classMeta = new ClassMeta<T>(target, setterFactory, AsmHelper.isAsmPresent());
+		this.classMeta = new ClassMeta<T>(target, reflectionService);
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
@@ -70,7 +67,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		JdbcMapper<T> mapper = getMapper(key);
 		
 		if (mapper == null) {
-			final ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<T>(target, classMeta.duplicate(), setterFactory, AsmHelper.isAsmPresent());
+			final ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<T>(target, classMeta);
 			
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 			builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);

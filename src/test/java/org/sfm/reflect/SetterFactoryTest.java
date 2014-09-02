@@ -28,8 +28,9 @@ import org.sfm.reflect.primitive.ShortFieldSetter;
 import org.sfm.reflect.primitive.ShortMethodSetter;
 
 public class SetterFactoryTest {
+	
 	SetterFactory nonAsmfactory = new SetterFactory(null);
-	SetterFactory asmfactory = new SetterFactory();
+	SetterFactory asmfactory = new SetterFactory(new AsmFactory());
 
 	@Test
 	public void testFailFallBackToMethod() throws Exception {

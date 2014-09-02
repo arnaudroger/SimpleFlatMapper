@@ -3,11 +3,13 @@ package org.sfm.reflect;
 
 public abstract class PropertyMeta<T, P> {
 	private final String name;
+	protected final ReflectionService reflectService;
+	
 	private volatile Setter<T, P> setter;
 	private volatile ClassMeta<T> classMeta;
- 	
-	public PropertyMeta(String name) {
+	public PropertyMeta(String name, ReflectionService reflectService) {
 		this.name = name;
+		this.reflectService = reflectService;
 	}
 
 	public final Setter<T, P> getSetter() {
@@ -27,10 +29,10 @@ public abstract class PropertyMeta<T, P> {
 
 	public abstract Class<T> getType();
 
-	public final ClassMeta<T> getClassMeta(SetterFactory setterFactory, boolean asmPresent) {
+	public final ClassMeta<T> getClassMeta() {
 		ClassMeta<T> meta = classMeta;
 		if (meta == null) {
-			meta = new ClassMeta<>(name, getType(), setterFactory, asmPresent);
+			meta = new ClassMeta<>(name, getType(), reflectService);
 			classMeta = meta;
 		}
 		return meta;

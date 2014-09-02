@@ -6,8 +6,8 @@ public class FieldPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
 	private final Field field;
 
-	public FieldPropertyMeta(String name, Field field) {
-		super(name);
+	public FieldPropertyMeta(String name, ReflectionService reflectService, Field field) {
+		super(name, reflectService);
 		this.field = field;
 	}
 

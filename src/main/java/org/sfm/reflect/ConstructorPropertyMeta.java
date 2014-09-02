@@ -4,8 +4,8 @@ import org.sfm.reflect.asm.ConstructorParameter;
 
 public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
-	public ConstructorPropertyMeta(String name, ConstructorParameter constructorParameter) {
-		super(name);
+	public ConstructorPropertyMeta(String name, ReflectionService reflectService, ConstructorParameter constructorParameter) {
+		super(name, reflectService);
 		this.constructorParameter = constructorParameter;
 	}
 

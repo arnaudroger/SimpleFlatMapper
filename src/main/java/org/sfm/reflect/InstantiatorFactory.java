@@ -40,7 +40,7 @@ public class InstantiatorFactory {
 		
 		if (constructor.getParameterTypes().length == 0) {
 			
-			if (Modifier.isPublic(constructor.getModifiers())) {
+			if (asmFactory != null && Modifier.isPublic(constructor.getModifiers())) {
 				try {
 					return asmFactory.createEmptyArgsInstatiantor(source, target);
 				} catch (Exception e) {
@@ -68,7 +68,7 @@ public class InstantiatorFactory {
 		
 		Constructor<T> constructor = constructorDefinition.getConstructor();
 		
-		if (Modifier.isPublic(constructor.getModifiers())) {
+		if (asmFactory != null && Modifier.isPublic(constructor.getModifiers())) {
 			try {
 				return asmFactory.createInstatiantor(source, constructorDefinition, injections);
 			} catch (Exception e) {

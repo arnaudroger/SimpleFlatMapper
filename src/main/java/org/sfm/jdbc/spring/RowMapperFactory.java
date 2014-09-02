@@ -1,6 +1,5 @@
 package org.sfm.jdbc.spring;
 
-import java.io.IOException;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 

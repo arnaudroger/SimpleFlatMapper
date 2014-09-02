@@ -3,7 +3,6 @@ package org.sfm.reflect;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import org.sfm.jdbc.AsmHelper;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.primitive.BooleanFieldSetter;
 import org.sfm.reflect.primitive.BooleanMethodSetter;
@@ -34,14 +33,10 @@ public final class SetterFactory {
 	
 	private final AsmFactory asmFactory;
 	
-	public SetterFactory(final AsmFactory asmSetterFactory) {
-		this.asmFactory = asmSetterFactory;
+	public SetterFactory(final AsmFactory asmFactory) {
+		this.asmFactory = asmFactory;
 	}
 	
-	public SetterFactory() {
-		this.asmFactory = AsmHelper.getAsmSetterFactory();
-	}
-
 	public AsmFactory getAsmFactory() {
 		return asmFactory;
 	}

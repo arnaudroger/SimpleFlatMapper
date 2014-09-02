@@ -147,6 +147,7 @@ class MyDao {
 
 OsgiSupport
 ------
+Why? because sometimes you don't have a choice.
 
 ```java
 class MyService {

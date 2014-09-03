@@ -23,7 +23,9 @@ $HOME/.m2/repository/mysql/mysql-connector-java/5.1.32/mysql-connector-java-5.1.
 $HOME/.m2/repository/org/sql2o/sql2o/1.5.1/sql2o-1.5.1.jar:\
 $HOME/.m2/repository/org/mybatis/mybatis/3.2.7/mybatis-3.2.7.jar:\
 $HOME/.m2/repository/org/springframework/spring-jdbc/4.0.6.RELEASE/spring-jdbc-4.0.6.RELEASE.jar:\
-$HOME/.m2/repository/org/springframework/spring-beans/4.0.6.RELEASE/spring-beans-4.0.6.RELEASE.jar
+$HOME/.m2/repository/org/springframework/spring-beans/4.0.6.RELEASE/spring-beans-4.0.6.RELEASE.jar:\
+$HOME/.m2/repository/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar:\
+$HOME/.m2/repository/org/springframework/spring-core/4.0.6.RELEASE/spring-core-4.0.6.RELEASE.jar
 
 #JAVA_OPTS="-XX:+UnlockCommercialFeatures -XX:+FlightRecorder" 
 #JAVA_OPTS="-XX:+UnlockDiagnosticVMOptions -XX:+TraceClassLoading -XX:+LogCompilation -XX:+PrintAssembly"

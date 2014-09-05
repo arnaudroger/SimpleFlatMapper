@@ -3,8 +3,11 @@ package org.sfm.jdbc;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
@@ -21,17 +24,24 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	@SuppressWarnings("unchecked")
 	private final AtomicReference<CacheEntry<T>[]> mapperCache = new AtomicReference<CacheEntry<T>[]>(new CacheEntry[0]);
 
-	private FieldMapperErrorHandler fieldMapperErrorHandler;
+	private final FieldMapperErrorHandler fieldMapperErrorHandler;
 
-	private MapperBuilderErrorHandler mapperBuilderErrorHandler;
+	private final  MapperBuilderErrorHandler mapperBuilderErrorHandler;
+	private final Map<String, String> aliases;
+	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<>();
+
 
 	public DynamicJdbcMapper(final Class<T> target, final ReflectionService reflectionService, 
 			final FieldMapperErrorHandler fieldMapperErrorHandler, 
-			final MapperBuilderErrorHandler mapperBuilderErrorHandler) {
+			final MapperBuilderErrorHandler mapperBuilderErrorHandler, 
+			final Map<String, String> aliases, 
+			final Map<String, FieldMapper<ResultSet, ?>> customMappings) {
 		this.classMeta = new ClassMeta<T>(target, reflectionService);
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
+		this.aliases = aliases;
+		this.customMappings = customMappings;
 	}
 	
 	private static final class CacheEntry<T> {
@@ -67,7 +77,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		JdbcMapper<T> mapper = getMapper(key);
 		
 		if (mapper == null) {
-			final ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<T>(target, classMeta);
+			final ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<T>(target, classMeta, aliases, customMappings);
 			
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 			builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);

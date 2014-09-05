@@ -1,8 +1,12 @@
 package org.sfm.jdbc;
 
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
@@ -26,6 +30,8 @@ public final class JdbcMapperFactory {
 	
 	private FieldMapperErrorHandler fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler();
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
+	private Map<String, String> aliases = new HashMap<>();
+	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<>();
 	
 	private boolean useAsm = true;
 	
@@ -79,7 +85,7 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target, final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
-		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<>(target, reflectionService(target));
+		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<>(target, reflectionService(target), aliases, customMappings);
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
@@ -95,7 +101,7 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
-		return new DynamicJdbcMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler);
+		return new DynamicJdbcMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, aliases, customMappings);
 	}
 
 	
@@ -111,5 +117,11 @@ public final class JdbcMapperFactory {
 		return new ReflectionService(AsmHelper.isAsmPresent(), useAsm, asmFactory);
 	}
 
+	public void addAlias(String key, String value) {
+		aliases.put(key.toUpperCase(), value.toUpperCase());
+	}
 
+	public void addCustomFieldMapper(String column,	FieldMapper<ResultSet, ?> fieldMapper) {
+		customMappings.put(column.toUpperCase(), fieldMapper);
+	}
 }

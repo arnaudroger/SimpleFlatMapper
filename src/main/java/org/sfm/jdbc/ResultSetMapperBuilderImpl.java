@@ -45,21 +45,29 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	private final Map<ConstructorParameter, Getter<ResultSet, ?>> constructorInjections;
 	private final List<SubProperty<T>> subProperties = new ArrayList<>();
 	
+	private final Map<String, String> aliases;
+	private final Map<String, FieldMapper<ResultSet, ?>> customMappings;
+	
 	private int columnIndex = 1;
 	
 	public ResultSetMapperBuilderImpl(final Class<T> target) throws MapperBuildingException {
 		this(target, new ReflectionService());
 	}
 	public ResultSetMapperBuilderImpl(final Class<T> target, ReflectionService reflectService) throws MapperBuildingException {
-		this(target, new ClassMeta<T>(target, reflectService));
+		this(target, reflectService, null, null);
+	}
+	public ResultSetMapperBuilderImpl(final Class<T> target, ReflectionService reflectService, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
+		this(target, new ClassMeta<T>(target, reflectService), aliases, customMappings);
 	}
 	
-	public ResultSetMapperBuilderImpl(final Class<T> target, final ClassMeta<T> classMeta) throws MapperBuildingException {
+	public ResultSetMapperBuilderImpl(final Class<T> target, final ClassMeta<T> classMeta, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
 		this.target = target;
 		this.reflectionService = classMeta.getReflectionService();
 		this.primitiveFieldMapperFactory = new PrimitiveFieldMapperFactory<>(reflectionService.getSetterFactory());
 		this.constructorInjections = new HashMap<ConstructorParameter, Getter<ResultSet,?>>();
 		this.propertyFinder = new PropertyFinder<>(classMeta);
+		this.aliases = aliases;
+		this.customMappings = customMappings;
 	}
 
 
@@ -106,12 +114,22 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	
 	@Override
 	public final ResultSetMapperBuilder<T> addNamedColumn(final String column, final int sqlType) {
-		return addMapping(column, column, sqlType);
+		return addMapping(columnToPropertyName(column), column, sqlType);
 	}
 	
+	private String columnToPropertyName(String column) {
+		if (aliases == null || aliases.isEmpty()) {
+			return column;
+		} 
+		String alias = aliases.get(column.toUpperCase());
+		if (alias == null) {
+			return column;
+		}
+		return alias;
+	}
 	@Override
 	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column, final int columnIndex, final int sqlType) {
-		return addMapping(column, column, columnIndex, sqlType);
+		return addMapping(columnToPropertyName(column), column, columnIndex, sqlType);
 	}
 
 	@Override
@@ -120,24 +138,38 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	}
 	
 	@Override
-	public final ResultSetMapperBuilder<T> addMapping(final String propertyName, final String column, final int sqlType) {
-		final PropertyMeta<T, ?> property = propertyFinder.findProperty(propertyName);
-		if (property == null) {
-			mapperBuilderErrorHandler.setterNotFound(target, propertyName);
+	public final ResultSetMapperBuilder<T> addMapping(final String propertyName, final String columnName, final int sqlType) {
+		FieldMapper<ResultSet, T> fieldMapper = getCustomMapper(columnName);
+		if (fieldMapper != null) {
+			fields.add(fieldMapper);
 		} else {
-			addMapping(property, column, sqlType);
+			final PropertyMeta<T, ?> property = propertyFinder.findProperty(propertyName);
+			if (property == null) {
+				mapperBuilderErrorHandler.setterNotFound(target, propertyName);
+			} else {
+				addMapping(property, columnName, sqlType);
+			}
 		}
 		return this;
 	}
 	
 	public final ResultSetMapperBuilder<T> addMapping(final String propertyName, final String columnName, final int columnIndex, final int sqlType) {
-		final PropertyMeta<T, ?> property = propertyFinder.findProperty(propertyName);
-		if (property == null) {
-				mapperBuilderErrorHandler.setterNotFound(target, propertyName);
+		FieldMapper<ResultSet, T> fieldMapper = getCustomMapper(columnName);
+		if (fieldMapper != null) {
+			fields.add(fieldMapper);
 		} else {
-			addMapping(property, columnName, columnIndex, sqlType);
+			final PropertyMeta<T, ?> property = propertyFinder.findProperty(propertyName);
+			if (property == null) {
+					mapperBuilderErrorHandler.setterNotFound(target, propertyName);
+			} else {
+				addMapping(property, columnName, columnIndex, sqlType);
+			}
 		}
 		return this;
+	}
+	@SuppressWarnings("unchecked")
+	public FieldMapper<ResultSet, T> getCustomMapper(final String columnName) {
+		return customMappings != null ? (FieldMapper<ResultSet, T>) customMappings.get(columnName.toUpperCase()) : null;
 	}
 	
 	@Override
@@ -233,7 +265,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 			}
  		}
 		
-		ResultSetMapperBuilderImpl<T> builder = new ResultSetMapperBuilderImpl<>(property.getType(), property.getClassMeta());
+		ResultSetMapperBuilderImpl<T> builder = new ResultSetMapperBuilderImpl<>(property.getType(), property.getClassMeta(), aliases, customMappings);
 		SubProperty<T> subProp = new SubProperty<T>(builder, property);
 		
 		subProperties.add(subProp);
@@ -313,6 +345,12 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 			this.subProperty = subProperty;
 		}
 
+	}
+
+	@Override
+	public ResultSetMapperBuilder<T> addMapper(FieldMapper<ResultSet, T> mapper) {
+		fields.add(mapper);
+		return this;
 	}
 
 }

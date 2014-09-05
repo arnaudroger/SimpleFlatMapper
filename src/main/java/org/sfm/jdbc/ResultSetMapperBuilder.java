@@ -29,6 +29,8 @@ public interface ResultSetMapperBuilder<T> {
 	
 	ResultSetMapperBuilder<T> addIndexedColumn(String column, int index, int sqlType);
 
+	ResultSetMapperBuilder<T> addMapper(FieldMapper<ResultSet, T> mapper);
+
 	ResultSetMapperBuilder<T> addMapping(ResultSetMetaData metaData) throws SQLException;
 	
 	ResultSetMapperBuilder<T> fieldMapperErrorHandler(FieldMapperErrorHandler errorHandler);

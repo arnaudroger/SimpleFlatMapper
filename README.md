@@ -137,7 +137,8 @@ JdbcTemplate
 
 ```java
 class MyDao {
-	private final RowMapper<DbObject> mapper = new RowMapperFactory().newMapper(DbObject.class);
+	private final RowMapper<DbObject> mapper = 
+		new RowMapperFactory().newMapper(DbObject.class);
 		
 	public void doSomething() {		
 		List<DbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);

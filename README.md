@@ -206,7 +206,6 @@ TODO
 
 JDBCMapper
 ------
-- [Definition of custom mapping](https://github.com/arnaudroger/SimpleFlatMapper/issues/2)
 - [List mapping](https://github.com/arnaudroger/SimpleFlatMapper/issues/4)
 
 CSVMapper

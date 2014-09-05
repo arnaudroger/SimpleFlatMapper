@@ -196,7 +196,7 @@ Maven dependency
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>0.5</version>
+			<version>0.6</version>
 		</dependency>
 ```
 

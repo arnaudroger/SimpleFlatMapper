@@ -209,9 +209,5 @@ JDBCMapper
 ------
 - [List mapping](https://github.com/arnaudroger/SimpleFlatMapper/issues/4)
 
-CSVMapper
------
-- [Csv Mapping](https://github.com/arnaudroger/SimpleFlatMapper/issues/5)
- 
 
 

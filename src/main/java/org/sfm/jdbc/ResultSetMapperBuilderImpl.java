@@ -22,7 +22,6 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.asm.ConstructorParameter;
 import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.ObjectClassMeta;
 import org.sfm.reflect.meta.ConstructorPropertyMeta;
 import org.sfm.reflect.meta.PropertyFinder;
 import org.sfm.reflect.meta.PropertyMeta;
@@ -58,7 +57,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		this(target, reflectService, null, null);
 	}
 	public ResultSetMapperBuilderImpl(final Class<T> target, ReflectionService reflectService, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
-		this(target, new ObjectClassMeta<T>(target, reflectService), aliases, customMappings);
+		this(target, reflectService.getClassMeta(target), aliases, customMappings);
 	}
 	
 	public ResultSetMapperBuilderImpl(final Class<T> target, final ClassMeta<T> classMeta, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {

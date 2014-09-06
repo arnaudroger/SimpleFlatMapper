@@ -24,10 +24,6 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	
 	private final ReflectionService reflectService;
 
-	public ObjectClassMeta(Class<T> target, ReflectionService reflectService) throws MapperBuildingException {
-		this(null, target, reflectService);
-	}
-	
 	public ObjectClassMeta(String prefix, Class<T> target, ReflectionService reflectService) throws MapperBuildingException {
 		this.prefix = prefix;
 		this.reflectService = reflectService;
@@ -112,17 +108,11 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return constructorProperties;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sfm.reflect.meta.ClassMeta#getReflectionService()
-	 */
 	@Override
 	public ReflectionService getReflectionService() {
 		return reflectService;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sfm.reflect.meta.ClassMeta#newPropertyFinder()
-	 */
 	@Override
 	public PropertyFinder<T> newPropertyFinder() {
 		return new ObjectPropertyFinder<>(this);

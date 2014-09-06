@@ -1,7 +1,12 @@
 package org.sfm.reflect;
 
+import java.util.List;
+
 import org.sfm.jdbc.AsmHelper;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.ListClassMeta;
+import org.sfm.reflect.meta.ObjectClassMeta;
 
 public class ReflectionService {
 	private final SetterFactory setterFactory;
@@ -59,6 +64,15 @@ public class ReflectionService {
 	}
 	public AsmFactory getAsmFactory() {
 		return asmFactory;
+	}
+	public <T> ClassMeta<T> getClassMeta(Class<T> target) {
+		return getClassMeta(null, target);
+	}
+	public <T> ClassMeta<T> getClassMeta(String prefix, Class<T> target) {
+		if (List.class.isAssignableFrom(target)) {
+			return new ListClassMeta(prefix, target, this);
+		}
+		return new ObjectClassMeta<T>(prefix, target, this);
 	}
 }
  

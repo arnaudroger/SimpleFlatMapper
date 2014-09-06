@@ -143,17 +143,11 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sfm.reflect.PropertyFinder#findProperty(java.lang.String)
-	 */
 	@Override
 	public PropertyMeta<T, ?> findProperty(String propertyName) {
 		return findProperty(new PropertyNameMatcher(propertyName));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.sfm.reflect.PropertyFinder#getEligibleConstructorDefinitions()
-	 */
 	@Override
 	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
 		return eligibleConstructorDefinitions;

@@ -35,7 +35,7 @@ public abstract class PropertyMeta<T, P> {
 	public final ClassMeta<T> getClassMeta() {
 		ClassMeta<T> meta = classMeta;
 		if (meta == null) {
-			meta = new ObjectClassMeta<>(name, getType(), reflectService);
+			meta = reflectService.getClassMeta(name, getType());
 			classMeta = meta;
 		}
 		return meta;

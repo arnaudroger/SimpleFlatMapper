@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 
 import org.junit.Test;
 import org.sfm.beans.Db1DeepObject;
+import org.sfm.beans.Db2DeepObject;
 import org.sfm.beans.DbFinal1DeepObject;
 import org.sfm.utils.Handler;
 
@@ -66,6 +67,37 @@ public class JdbcMapperSubObjectTest {
 		}, QUERY);
 	}
 
+	@Test
+	public void testMapInnerObject2LevelWithStaticMapper() throws Exception {
+		final ResultSetMapperBuilder<Db2DeepObject> builder = new ResultSetMapperBuilderImpl<Db2DeepObject>(Db2DeepObject.class);
+
+		DbHelper.testQuery(new Handler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement t) throws Exception {
+				ResultSet rs = t.executeQuery();
+				
+				JdbcMapper<Db2DeepObject> mapper = builder.addMapping(rs.getMetaData()).mapper();
+				
+				rs.next();
+				
+				Db2DeepObject object = mapper.map(rs);
+				assertEquals(33, object.getId());
+				assertEquals(32, object.getDb1Object().getId());
+				assertEquals("value12", object.getDb1Object().getValue());
+				DbHelper.assertDbObjectMapping(object.getDb1Object().getDbObject());
+			}
+		}, "select 33 as id, "
+				+ "32 as db1_object_id,  "
+				+ "'value12' as db1_object_value,  "
+				+ "id as db1_object_db_object_id, "
+				+ "name as db1_object_db_object_name, "
+				+ "email as db1_object_db_object_email, "
+				+ "creation_time as db1_object_db_object_creation_time, "
+				+ "type_ordinal as db1_object_db_object_type_ordinal, "
+				+ "type_name as db1_object_db_object_type_name "
+				+ "from TEST_DB_OBJECT where id = 1 ");
+	}
+	
 	public void addColumns(ResultSetMapperBuilder<?> builder) {
 		builder.addIndexedColumn("id");
 		builder.addIndexedColumn("value");

@@ -7,8 +7,7 @@ import org.sfm.utils.PropertyNameMatcher;
 
 public interface PropertyFinder<T> {
 
-	public PropertyMeta<T, ?> findProperty(
-			PropertyNameMatcher propertyNameMatcher);
+	public PropertyMeta<T, ?> findProperty(PropertyNameMatcher propertyNameMatcher);
 
 	public PropertyMeta<T, ?> findProperty(String propertyName);
 

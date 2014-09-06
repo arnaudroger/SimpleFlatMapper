@@ -1,8 +1,9 @@
-package org.sfm.reflect;
+package org.sfm.reflect.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.sfm.reflect.Getter;
 import org.sfm.reflect.asm.ConstructorDefinition;
 import org.sfm.reflect.asm.ConstructorParameter;
 

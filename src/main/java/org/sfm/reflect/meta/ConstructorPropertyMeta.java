@@ -1,5 +1,7 @@
-package org.sfm.reflect;
+package org.sfm.reflect.meta;
 
+import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.Setter;
 import org.sfm.reflect.asm.ConstructorParameter;
 
 public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {

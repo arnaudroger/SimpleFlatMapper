@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.impl.FieldSetter;
+import org.sfm.reflect.impl.MethodSetter;
 import org.sfm.reflect.primitive.BooleanFieldSetter;
 import org.sfm.reflect.primitive.BooleanMethodSetter;
 import org.sfm.reflect.primitive.BooleanSetter;

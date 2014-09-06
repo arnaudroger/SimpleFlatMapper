@@ -1,4 +1,4 @@
-package org.sfm.reflect;
+package org.sfm.reflect.meta;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.sfm.map.MapperBuildingException;
+import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.SetterHelper;
 import org.sfm.reflect.asm.ConstructorDefinition;
 import org.sfm.reflect.asm.ConstructorParameter;
 
-public final class ClassMeta<T> {
+public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	
 	private final List<PropertyMeta<T, ?>> properties;
 	private final List<ConstructorPropertyMeta<T, ?>> constructorProperties;
@@ -22,11 +24,11 @@ public final class ClassMeta<T> {
 	
 	private final ReflectionService reflectService;
 
-	public ClassMeta(Class<T> target, ReflectionService reflectService) throws MapperBuildingException {
+	public ObjectClassMeta(Class<T> target, ReflectionService reflectService) throws MapperBuildingException {
 		this(null, target, reflectService);
 	}
 	
-	public ClassMeta(String prefix, Class<T> target, ReflectionService reflectService) throws MapperBuildingException {
+	public ObjectClassMeta(String prefix, Class<T> target, ReflectionService reflectService) throws MapperBuildingException {
 		this.prefix = prefix;
 		this.reflectService = reflectService;
 		if (reflectService.isAsmPresent()) {
@@ -65,7 +67,7 @@ public final class ClassMeta<T> {
 		final Set<String> propertiesSet = new HashSet<String>();
 		Class<?> currentClass = target;
 		
-		while(!Object.class.equals(currentClass)) {
+		while(currentClass != null && !Object.class.equals(currentClass)) {
 			
 			for(Method method : currentClass.getDeclaredMethods()) {
 				final String name = method.getName();
@@ -98,21 +100,31 @@ public final class ClassMeta<T> {
 		return prefix == null ? propertyName : prefix + propertyName;
 	}
 
-	public List<ConstructorDefinition<T>> getConstructorDefinitions() {
+	List<ConstructorDefinition<T>> getConstructorDefinitions() {
 		return constructorDefinitions;
 	}
 
-	public List<PropertyMeta<T, ?>> getProperties() {
+	List<PropertyMeta<T, ?>> getProperties() {
 		return properties;
 	}
 
-	public List<ConstructorPropertyMeta<T, ?>> getConstructorProperties() {
+	List<ConstructorPropertyMeta<T, ?>> getConstructorProperties() {
 		return constructorProperties;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sfm.reflect.meta.ClassMeta#getReflectionService()
+	 */
+	@Override
 	public ReflectionService getReflectionService() {
 		return reflectService;
 	}
-	
-	
+
+	/* (non-Javadoc)
+	 * @see org.sfm.reflect.meta.ClassMeta#newPropertyFinder()
+	 */
+	@Override
+	public PropertyFinder<T> newPropertyFinder() {
+		return new ObjectPropertyFinder<>(this);
+	}
 }

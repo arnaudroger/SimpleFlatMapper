@@ -1,4 +1,7 @@
-package org.sfm.reflect;
+package org.sfm.reflect.meta;
+
+import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.Setter;
 
 public class SubPropertyMeta<T, P> extends PropertyMeta<T, P> {
 	private final PropertyMeta<T, P> property;

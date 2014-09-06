@@ -15,17 +15,18 @@ import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.RethrowFieldMapperErrorHandler;
 import org.sfm.map.RethrowMapperBuilderErrorHandler;
-import org.sfm.reflect.ClassMeta;
-import org.sfm.reflect.ConstructorPropertyMeta;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorFactory;
-import org.sfm.reflect.PropertyFinder;
-import org.sfm.reflect.PropertyMeta;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
-import org.sfm.reflect.SubPropertyMeta;
 import org.sfm.reflect.asm.ConstructorParameter;
+import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.ObjectClassMeta;
+import org.sfm.reflect.meta.ConstructorPropertyMeta;
+import org.sfm.reflect.meta.PropertyFinder;
+import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.reflect.meta.SubPropertyMeta;
 
 public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuilder<T> {
 
@@ -57,7 +58,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		this(target, reflectService, null, null);
 	}
 	public ResultSetMapperBuilderImpl(final Class<T> target, ReflectionService reflectService, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
-		this(target, new ClassMeta<T>(target, reflectService), aliases, customMappings);
+		this(target, new ObjectClassMeta<T>(target, reflectService), aliases, customMappings);
 	}
 	
 	public ResultSetMapperBuilderImpl(final Class<T> target, final ClassMeta<T> classMeta, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
@@ -65,7 +66,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		this.reflectionService = classMeta.getReflectionService();
 		this.primitiveFieldMapperFactory = new PrimitiveFieldMapperFactory<>(reflectionService.getSetterFactory());
 		this.constructorInjections = new HashMap<ConstructorParameter, Getter<ResultSet,?>>();
-		this.propertyFinder = new PropertyFinder<>(classMeta);
+		this.propertyFinder = classMeta.newPropertyFinder();
 		this.aliases = aliases;
 		this.customMappings = customMappings;
 	}

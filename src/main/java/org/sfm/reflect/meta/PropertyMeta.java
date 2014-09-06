@@ -1,4 +1,7 @@
-package org.sfm.reflect;
+package org.sfm.reflect.meta;
+
+import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.Setter;
 
 
 public abstract class PropertyMeta<T, P> {
@@ -32,11 +35,10 @@ public abstract class PropertyMeta<T, P> {
 	public final ClassMeta<T> getClassMeta() {
 		ClassMeta<T> meta = classMeta;
 		if (meta == null) {
-			meta = new ClassMeta<>(name, getType(), reflectService);
+			meta = new ObjectClassMeta<>(name, getType(), reflectService);
 			classMeta = meta;
 		}
 		return meta;
 	}
-	
 	
 }

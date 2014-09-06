@@ -1,4 +1,4 @@
-package org.sfm.reflect;
+package org.sfm.reflect.meta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,17 +11,21 @@ import org.sfm.reflect.asm.ConstructorDefinition;
 import org.sfm.reflect.asm.ConstructorParameter;
 import org.sfm.utils.PropertyNameMatcher;
 
-public final class PropertyFinder<T> {
+final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	
 	private final List<ConstructorDefinition<T>> eligibleConstructorDefinitions;
-	private final ClassMeta<T> classMeta;
+	private final ObjectClassMeta<T> classMeta;
 	private final Map<String, PropertyFinder<?>> subPropertyFinders = new HashMap<>();
 
-	public PropertyFinder(ClassMeta<T> classMeta) throws MapperBuildingException {
+	ObjectPropertyFinder(ObjectClassMeta<T> classMeta) throws MapperBuildingException {
 		this.classMeta = classMeta;
 		this.eligibleConstructorDefinitions = classMeta.getConstructorDefinitions() != null ? new ArrayList<>(classMeta.getConstructorDefinitions()) : null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sfm.reflect.PropertyFinder#findProperty(org.sfm.utils.PropertyNameMatcher)
+	 */
+	@Override
 	public PropertyMeta<T, ?> findProperty(final PropertyNameMatcher propertyNameMatcher) {
 		PropertyMeta<T, ?> prop = null; 
 		
@@ -52,7 +56,7 @@ public final class PropertyFinder<T> {
 		return prop;
 	}
 	
-	public ConstructorPropertyMeta<T, ?> lookForConstructor(final PropertyNameMatcher propertyNameMatcher) {
+	private ConstructorPropertyMeta<T, ?> lookForConstructor(final PropertyNameMatcher propertyNameMatcher) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
 				if (propertyNameMatcher.matches(prop.getName())
@@ -65,7 +69,7 @@ public final class PropertyFinder<T> {
 		return null;
 	}
 
-	public PropertyMeta<T, ?> lookForProperty(final PropertyNameMatcher propertyNameMatcher) {
+	private PropertyMeta<T, ?> lookForProperty(final PropertyNameMatcher propertyNameMatcher) {
 		for (PropertyMeta<T, ?> prop : classMeta.getProperties()) {
 			if (propertyNameMatcher.matches(prop.getName())) {
 				return prop;
@@ -75,7 +79,7 @@ public final class PropertyFinder<T> {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public PropertyMeta<T, ?> lookForSubPropertyInConstructors(final PropertyNameMatcher propertyNameMatcher) {
+	private PropertyMeta<T, ?> lookForSubPropertyInConstructors(final PropertyNameMatcher propertyNameMatcher) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
 				if (propertyNameMatcher.couldBePropertyOf(prop.getName())
@@ -91,7 +95,7 @@ public final class PropertyFinder<T> {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public PropertyMeta<T, ?> lookForSubProperty(final PropertyNameMatcher propertyNameMatcher) {
+	private PropertyMeta<T, ?> lookForSubProperty(final PropertyNameMatcher propertyNameMatcher) {
 		for (PropertyMeta<T, ?> prop : classMeta.getProperties()) {
 			if (propertyNameMatcher.couldBePropertyOf(prop.getName())) {
 				PropertyMeta<?, ?> subProp =  lookForSubProperty(propertyNameMatcher, prop);
@@ -110,7 +114,7 @@ public final class PropertyFinder<T> {
 			final PropertyMeta<T, ?> prop) {
 		PropertyFinder<?> subPropertyFinder = subPropertyFinders.get(prop.getName());
 		if (subPropertyFinder == null) {
-			subPropertyFinder = new PropertyFinder<>(prop.getClassMeta());
+			subPropertyFinder = prop.getClassMeta().newPropertyFinder();
 			subPropertyFinders.put(prop.getName(), subPropertyFinder);
 		}
 
@@ -139,10 +143,18 @@ public final class PropertyFinder<T> {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sfm.reflect.PropertyFinder#findProperty(java.lang.String)
+	 */
+	@Override
 	public PropertyMeta<T, ?> findProperty(String propertyName) {
 		return findProperty(new PropertyNameMatcher(propertyName));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sfm.reflect.PropertyFinder#getEligibleConstructorDefinitions()
+	 */
+	@Override
 	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
 		return eligibleConstructorDefinitions;
 	}

@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 import org.junit.Test;
 import org.sfm.beans.DbPrimitiveObject;
 import org.sfm.beans.Foo;
-import org.sfm.reflect.FieldSetter;
+import org.sfm.reflect.impl.FieldSetter;
 import org.sfm.reflect.primitive.BooleanFieldSetter;
 import org.sfm.reflect.primitive.BooleanSetter;
 import org.sfm.reflect.primitive.ByteFieldSetter;

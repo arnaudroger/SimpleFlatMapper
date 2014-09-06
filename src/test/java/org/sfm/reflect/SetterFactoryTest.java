@@ -10,6 +10,8 @@ import org.sfm.beans.DbPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.Foo;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.impl.FieldSetter;
+import org.sfm.reflect.impl.MethodSetter;
 import org.sfm.reflect.primitive.BooleanFieldSetter;
 import org.sfm.reflect.primitive.BooleanMethodSetter;
 import org.sfm.reflect.primitive.ByteFieldSetter;

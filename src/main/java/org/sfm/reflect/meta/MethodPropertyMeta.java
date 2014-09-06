@@ -1,6 +1,9 @@
-package org.sfm.reflect;
+package org.sfm.reflect.meta;
 
 import java.lang.reflect.Method;
+
+import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.Setter;
 
 public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
 

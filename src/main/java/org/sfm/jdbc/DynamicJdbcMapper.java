@@ -12,8 +12,9 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.MappingException;
-import org.sfm.reflect.ClassMeta;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.ObjectClassMeta;
 import org.sfm.utils.Handler;
 
 public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
@@ -36,7 +37,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 			final MapperBuilderErrorHandler mapperBuilderErrorHandler, 
 			final Map<String, String> aliases, 
 			final Map<String, FieldMapper<ResultSet, ?>> customMappings) {
-		this.classMeta = new ClassMeta<T>(target, reflectionService);
+		this.classMeta = new ObjectClassMeta<T>(target, reflectionService);
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;

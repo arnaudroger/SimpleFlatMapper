@@ -9,6 +9,8 @@ import java.util.Map;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.ConstructorDefinition;
 import org.sfm.reflect.asm.ConstructorParameter;
+import org.sfm.reflect.impl.InjectConstructorInstantiator;
+import org.sfm.reflect.impl.StaticConstructorInstantiator;
 
 public class InstantiatorFactory {
 	private static final Object[] EMPTY_ARGS = new Object[]{};

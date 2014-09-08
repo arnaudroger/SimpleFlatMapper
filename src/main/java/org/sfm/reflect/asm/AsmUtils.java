@@ -6,10 +6,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -164,9 +167,9 @@ public class AsmUtils {
 		return sb.toString();
 	}
 
-	public static Class<?> toClass(String desc) throws ClassNotFoundException {
-		if (desc.length() == 1) {
-			switch (desc.charAt(0)) {
+	public static Type toGenericType(String sig) throws ClassNotFoundException {
+		if (sig.length() == 1) {
+			switch (sig.charAt(0)) {
 			case 'Z': return boolean.class;
 			case 'B': return byte.class;
 			case 'C': return char.class;
@@ -177,9 +180,63 @@ public class AsmUtils {
 			case 'S': return short.class;
 			}
 		}
-		return Class.forName(desc.substring(1, desc.length() - 1).replace('/', '.'));
+		
+		if (sig.startsWith("L")) {
+			sig = sig.substring(1);
+			if (sig.endsWith(";")) {
+				sig = sig.substring(0, sig.length() - 1);
+			}
+		}
+		
+		int indexOf = sig.indexOf('<');
+		if (indexOf == -1) {
+			return Class.forName(sig.replace('/','.'));
+		} else {
+			final Class<?> rawType = Class.forName(sig.substring(0, indexOf).replace('/','.'));
+
+			final Type[] types = parseTypes(sig.substring(indexOf+ 1, sig.length() - 1));
+			
+			return new ParameterizedType() {
+				
+				@Override
+				public Type getRawType() {
+					return rawType;
+				}
+				
+				@Override
+				public Type getOwnerType() {
+					return null;
+				}
+				
+				@Override
+				public Type[] getActualTypeArguments() {
+					return types;
+				}
+			};
+		}
 	}
 
+	private static Type[] parseTypes(String sig) throws ClassNotFoundException {
+		List<Type> types = new ArrayList<Type>();
+		
+		int genericLevel = 0;
+		int currentStart = 0;
+		for(int i = 0; i < sig.length(); i++) {
+			char c = sig.charAt(i);
+			switch(c) {
+			case '<': genericLevel ++; break;
+			case '>': genericLevel --; break;
+			case ';' : 
+				if (genericLevel == 0) {
+					types.add(toGenericType(sig.substring(currentStart, i)));
+					currentStart = i;
+				} 
+				break;
+			}
+		}
+		
+		return types.toArray(new Type[] {});
+	}
 	public static Class<?> getPublicOrInterfaceClass(Class<?> clazz) {
 		if (! Modifier.isPublic(clazz.getModifiers()) && ! Modifier.isStatic(clazz.getModifiers())) {
 			Class<?>[] interfaces = clazz.getInterfaces();

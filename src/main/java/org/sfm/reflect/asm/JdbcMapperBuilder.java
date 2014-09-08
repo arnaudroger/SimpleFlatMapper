@@ -47,8 +47,9 @@ public class JdbcMapperBuilder {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
 		
+		Class<ResultSet> sourceClass = ResultSet.class;
 		final String targetType = AsmUtils.toType(target);
-		final String sourceType = AsmUtils.toType(ResultSet.class);
+		final String sourceType = AsmUtils.toType(sourceClass);
 		final String classType = AsmUtils.toType(className);
 		final Class<?> instantiatorClass = AsmUtils.getPublicOrInterfaceClass(instantiator.getClass());
 		final String instantiatorType = AsmUtils.toType(instantiatorClass);
@@ -104,7 +105,7 @@ public class JdbcMapperBuilder {
 				AsmUtils.invoke(mv, instantiatorClass, "newInstance", "(Ljava/lang/Object;)Ljava/lang/Object;");
 				mv.visitTypeInsn(CHECKCAST, targetType);
 			} else {
-				AsmUtils.invoke(mv, instantiatorClass, "newInstance",  "(L" + sourceType + ";)L" + targetType + ";");
+				AsmUtils.invoke(mv, instantiatorClass, "newInstance",  "(L" + sourceType + ";)L" + AsmUtils.toType(instantiatorClass.getMethod("newInstance", sourceClass).getReturnType()) + ";");
 			}
 			mv.visitVarInsn(ASTORE, 2);
 			mv.visitLabel(l1);

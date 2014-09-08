@@ -11,6 +11,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.sfm.reflect.TypeHelper;
 
 public final class ConstructorDefinition<T> {
 	private final Constructor<T> constructor;
@@ -88,7 +89,7 @@ public final class ConstructorDefinition<T> {
 							private Class<?>[] toTypeArray(List<ConstructorParameter> parameters) {
 								Class<?>[] types = new Class<?>[parameters.size()];
 								for(int i = 0; i < types.length; i++) {
-									types[i] = parameters.get(i).getType();
+									types[i] = TypeHelper.toClass(parameters.get(i).getType());
 								}
 								return types;
 							}

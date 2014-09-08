@@ -2,16 +2,26 @@ package org.sfm.utils;
 
 public class PropertyNameMatcher {
 	private final String name;
+	private final String propertyName;
 	
 	public PropertyNameMatcher(final String column) {
-		name = toPropertyName(column);
+		this.propertyName = toPropertyName(column);
+		this.name = column;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getPropertyName() {
+		return propertyName;
 	}
 
 	public boolean matches(final String property) {
-		return property.equalsIgnoreCase(name);
+		return property.equalsIgnoreCase(propertyName);
 	}
 	public boolean couldBePropertyOf(final String property) {
-		return startsWithIgnoreCase(name, property);
+		return startsWithIgnoreCase(propertyName, property);
 	}
 	
 	public static boolean startsWithIgnoreCase(String v1, String v2) {

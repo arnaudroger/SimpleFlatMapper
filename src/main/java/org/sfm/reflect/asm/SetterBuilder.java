@@ -52,7 +52,7 @@ public class SetterBuilder implements Opcodes {
 			mv.visitEnd();
 		}
 		{
-			mv = cw.visitMethod(ACC_PUBLIC, "getPropertyType", "()Ljava/lang/Class;", "()Ljava/lang/Class<+L" + propertyType + ";>;", null);
+			mv = cw.visitMethod(ACC_PUBLIC, "getPropertyType", "()Ljava/lang/reflect/Type;", null, null);
 			mv.visitCode();
 			mv.visitLdcInsn(Type.getType("L" + propertyType + ";"));
 			mv.visitInsn(ARETURN);
@@ -145,7 +145,7 @@ public class SetterBuilder implements Opcodes {
 		mv.visitEnd();
 		}
 		{
-		mv = cw.visitMethod(ACC_PUBLIC, "getPropertyType", "()Ljava/lang/Class;", "()Ljava/lang/Class<+L" + propertyType + ";>;", null);
+		mv = cw.visitMethod(ACC_PUBLIC, "getPropertyType", "()Ljava/lang/reflect/Type;", null, null);
 		mv.visitCode();
 		mv.visitFieldInsn(GETSTATIC,  propertyType , "TYPE", "Ljava/lang/Class;");
 		mv.visitInsn(ARETURN);

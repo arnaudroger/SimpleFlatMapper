@@ -1,5 +1,6 @@
 package org.sfm.jdbc;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Date;
@@ -31,13 +32,16 @@ import org.sfm.jdbc.getter.StringNamedResultSetGetter;
 import org.sfm.jdbc.getter.TimestampIndexedResultSetGetter;
 import org.sfm.jdbc.getter.TimestampNamedResultSetGetter;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.TypeHelper;
 
 public final class ResultSetGetterFactory {
 	public static final int UNDEFINED = -99999;
 
 	public static Getter<ResultSet, ? extends Object> newGetter(
-			final Class<? extends Object> type, final String column, final int sqlType) {
+			final Type genericType, final String column, final int sqlType) {
 		Getter<ResultSet, ? extends Object> getter = null;
+		
+		Class<?> type = TypeHelper.toClass(genericType);
 		
 		if (String.class.isAssignableFrom(type)) {
 			getter = new StringNamedResultSetGetter(column);
@@ -94,8 +98,11 @@ public final class ResultSetGetterFactory {
 	}
 	
 	public static Getter<ResultSet, ? extends Object> newGetter(
-			Class<? extends Object> type, int column, int sqlType) {
+			Type genericType, int column, int sqlType) {
 		Getter<ResultSet, ? extends Object> getter = null;
+		
+		Class<?> type = TypeHelper.toClass(genericType);
+		
 		if (String.class.isAssignableFrom(type)) {
 			getter = new StringIndexedResultSetGetter(column);
 		} else if (Date.class.isAssignableFrom(type)) {

@@ -1,9 +1,11 @@
 package org.sfm.reflect.asm;
 
+import java.lang.reflect.Type;
+
 public final class ConstructorParameter {
 	private final String name;
-	private final Class<?> type;
-	public ConstructorParameter(String name, Class<?> type) {
+	private final Type type;
+	public ConstructorParameter(String name, Type type) {
 		super();
 		this.name = name;
 		this.type = type;
@@ -11,7 +13,7 @@ public final class ConstructorParameter {
 	public String getName() {
 		return name;
 	}
-	public Class<?> getType() {
+	public Type getType() {
 		return type;
 	}
 	@Override

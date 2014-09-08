@@ -30,6 +30,7 @@ import org.sfm.map.primitive.LongFieldMapper;
 import org.sfm.map.primitive.ShortFieldMapper;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
+import org.sfm.reflect.TypeHelper;
 
 public final class PrimitiveFieldMapperFactory<T> {
 
@@ -41,7 +42,7 @@ public final class PrimitiveFieldMapperFactory<T> {
 
 	public FieldMapper<ResultSet, T> primitiveFieldMapper(final String column,
 			final Setter<T, ?> setter, final String name, final FieldMapperErrorHandler errorHandler) {
-		final Class<?> type = setter.getPropertyType();
+		final Class<?> type = TypeHelper.toClass(setter.getPropertyType());
 
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<ResultSet, T>(name, 
@@ -83,7 +84,7 @@ public final class PrimitiveFieldMapperFactory<T> {
 
 	public FieldMapper<ResultSet, T> primitiveFieldMapper(final int column,
 			final Setter<T, ?> setter, final String name, final FieldMapperErrorHandler errorHandler) {
-		final Class<?> type = setter.getPropertyType();
+		final Class<?> type = TypeHelper.toClass(setter.getPropertyType());
 
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<ResultSet, T>(name, 

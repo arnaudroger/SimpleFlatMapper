@@ -1,5 +1,7 @@
 package org.sfm.map;
 
+import java.lang.reflect.Type;
+
 public final class RethrowMapperBuilderErrorHandler implements
 		MapperBuilderErrorHandler {
 
@@ -9,7 +11,7 @@ public final class RethrowMapperBuilderErrorHandler implements
 	}
 
 	@Override
-	public void setterNotFound(final Class<?> target, final String property) {
+	public void setterNotFound(final Type target, final String property) {
 		throw new MapperBuildingException("Setter for " + property + " on  " + target + " not found");
 	}
 

@@ -1,5 +1,6 @@
 package org.sfm.jdbc;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
+import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.asm.ConstructorParameter;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ConstructorPropertyMeta;
@@ -33,7 +35,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	private JdbcMapperErrorHandler jdbcMapperErrorHandler = new RethrowJdbcMapperErrorHandler();
 	
-	private final Class<T> target;
+	private final Type target;
 	
 	private final PrimitiveFieldMapperFactory<T> primitiveFieldMapperFactory;
 
@@ -50,17 +52,18 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	
 	private int columnIndex = 1;
 	
-	public ResultSetMapperBuilderImpl(final Class<T> target) throws MapperBuildingException {
+	public ResultSetMapperBuilderImpl(final Type target) throws MapperBuildingException {
 		this(target, new ReflectionService());
 	}
-	public ResultSetMapperBuilderImpl(final Class<T> target, ReflectionService reflectService) throws MapperBuildingException {
+	public ResultSetMapperBuilderImpl(final Type target, ReflectionService reflectService) throws MapperBuildingException {
 		this(target, reflectService, null, null);
 	}
-	public ResultSetMapperBuilderImpl(final Class<T> target, ReflectionService reflectService, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
-		this(target, reflectService.getClassMeta(target), aliases, customMappings);
+	@SuppressWarnings("unchecked")
+	public ResultSetMapperBuilderImpl(final Type target, ReflectionService reflectService, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
+		this(target, (ClassMeta<T>) reflectService.getClassMeta(target), aliases, customMappings);
 	}
 	
-	public ResultSetMapperBuilderImpl(final Class<T> target, final ClassMeta<T> classMeta, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
+	public ResultSetMapperBuilderImpl(final Type target, final ClassMeta<T> classMeta, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
 		this.target = target;
 		this.reflectionService = classMeta.getReflectionService();
 		this.primitiveFieldMapperFactory = new PrimitiveFieldMapperFactory<>(reflectionService.getSetterFactory());
@@ -185,7 +188,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	public final JdbcMapper<T> mapper() throws MapperBuildingException {
 		if (reflectionService.isAsmActivated()) {
 			try {
-				return reflectionService.getAsmFactory().createJdbcMapper(fields(), getInstantiator(), target, jdbcMapperErrorHandler);
+				return reflectionService.getAsmFactory().createJdbcMapper(fields(), getInstantiator(), getTargetClass(), jdbcMapperErrorHandler);
 			} catch(Exception e) {
 				return new JdbcMapperImpl<T>(fields(), getInstantiator(), jdbcMapperErrorHandler);
 			}
@@ -194,11 +197,14 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		}
 	}
 
+	private Class<T> getTargetClass() {
+		return TypeHelper.toClass(target);
+	}
 	private Instantiator<ResultSet, T> getInstantiator() throws MapperBuildingException {
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 		if (!reflectionService.isAsmPresent()) {
 			try {
-				return instantiatorFactory.getInstantiator(ResultSet.class, target);
+				return instantiatorFactory.getInstantiator(ResultSet.class, getTargetClass());
 			} catch(Exception e) {
 				throw new MapperBuildingException(e.getMessage(), e);
 			}
@@ -230,9 +236,6 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		}
 		
 		return injections;
-	}
-	public final Class<T> getTarget() {
-		return target;
 	}
 
 	@Override
@@ -282,7 +285,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		} else if (property instanceof SubPropertyMeta) {
 			SubProperty<T> subProp = getOrAddSubPropertyMapperBuilder((SubPropertyMeta)property);
 			subProp.mapperBuilder.addMapping(((SubPropertyMeta) property).getSubProperty(), column, sqlType);
-		} else if (property.getType().isPrimitive()) {
+		} else if (property.isPrimitive()) {
 			FieldMapper<ResultSet, T> fieldMapper = primitiveFieldMapperFactory.primitiveFieldMapper(column, property.getSetter(), column, fieldMapperErrorHandler);
 			fields.add(fieldMapper);
 		} else {
@@ -300,7 +303,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		} else if (property instanceof SubPropertyMeta) {
 			SubProperty<T> subProp = getOrAddSubPropertyMapperBuilder((SubPropertyMeta)property);
 			subProp.mapperBuilder.addMapping(((SubPropertyMeta) property).getSubProperty(), columnName, column, sqlType);
-		} else if (property.getType().isPrimitive()) {
+		} else if (property.isPrimitive()) {
 			FieldMapper<ResultSet, T> fieldMapper = primitiveFieldMapperFactory.primitiveFieldMapper(column, property.getSetter(), columnName, fieldMapperErrorHandler);
 			fields.add(fieldMapper);
 		} else {
@@ -313,7 +316,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 
 	@SuppressWarnings("unchecked")
 	private FieldMapper<ResultSet, T> objectFieldMapper(String column, Setter<T, ?> setter, int sqlType) {
-		Class<? extends Object> type = setter.getPropertyType();
+		Type type = setter.getPropertyType();
 		Getter<ResultSet, ? extends Object> getter = ResultSetGetterFactory.newGetter(type, column, sqlType);
 		if (getter == null) {
 			mapperBuilderErrorHandler.getterNotFound("No getter for column " + column + " type " + type);
@@ -325,7 +328,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 
 	@SuppressWarnings("unchecked")
 	private FieldMapper<ResultSet, T> objectFieldMapper(String columnName, int column, Setter<T, ?> setter, int sqlType) {
-		Class<? extends Object> type = setter.getPropertyType();
+		Type type = setter.getPropertyType();
 		Getter<ResultSet, ? extends Object> getter = ResultSetGetterFactory.newGetter(type, column, sqlType);
 		if (getter == null) {
 			mapperBuilderErrorHandler.getterNotFound("No getter for column " + columnName + " type " + type);

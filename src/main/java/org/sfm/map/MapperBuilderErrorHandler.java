@@ -1,7 +1,9 @@
 package org.sfm.map;
 
+import java.lang.reflect.Type;
+
 public interface MapperBuilderErrorHandler {
 
 	void getterNotFound(String msg);
-	void setterNotFound(Class<?> target, String property);
+	void setterNotFound(Type target, String property);
 }

@@ -1,7 +1,10 @@
 package org.sfm.reflect.meta;
 
+import java.lang.reflect.Type;
+
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
+import org.sfm.reflect.TypeHelper;
 
 
 public abstract class PropertyMeta<T, P> {
@@ -30,15 +33,23 @@ public abstract class PropertyMeta<T, P> {
 		return name;
 	}
 
-	public abstract Class<T> getType();
+	public abstract Type getType();
 
 	public final ClassMeta<T> getClassMeta() {
 		ClassMeta<T> meta = classMeta;
 		if (meta == null) {
-			meta = reflectService.getClassMeta(name, getType());
+			meta = newClassMeta();
 			classMeta = meta;
 		}
 		return meta;
+	}
+
+	protected ClassMeta<T> newClassMeta() {
+		return reflectService.getClassMeta(name, getType());
+	}
+
+	public boolean isPrimitive() {
+		return TypeHelper.isPrimitive(getType());
 	}
 	
 }

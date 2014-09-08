@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.asm.ConstructorDefinition;
 import org.sfm.reflect.asm.ConstructorParameter;
 
@@ -81,7 +82,7 @@ public final class ArgumentBuilder<S, T> {
 			ConstructorParameter param = parameters[i];
 			Getter<S, ?> getter = injections.get(param);
 			if (getter == null) {
-				if (param.getType().isPrimitive()) {
+				if (TypeHelper.isPrimitive(param.getType())) {
 					getter = DEFAULT_GETTERS.get(param.getType());
 				} else {
 					getter = NULL_GETTER;

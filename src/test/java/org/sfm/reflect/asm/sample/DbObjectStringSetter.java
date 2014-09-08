@@ -1,5 +1,7 @@
 package org.sfm.reflect.asm.sample;
 
+import java.lang.reflect.Type;
+
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.Setter;
 
@@ -11,7 +13,7 @@ public class DbObjectStringSetter implements Setter<DbObject, String> {
 	}
 
 	@Override
-	public Class<? extends String> getPropertyType() {
+	public Type getPropertyType() {
 		return String.class;
 	}
 

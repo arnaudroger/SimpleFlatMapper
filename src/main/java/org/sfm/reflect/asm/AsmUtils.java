@@ -1,18 +1,12 @@
 package org.sfm.reflect.asm;
 
-import static org.objectweb.asm.Opcodes.DCONST_0;
-import static org.objectweb.asm.Opcodes.DLOAD;
-import static org.objectweb.asm.Opcodes.FCONST_0;
-import static org.objectweb.asm.Opcodes.FLOAD;
-import static org.objectweb.asm.Opcodes.ICONST_0;
-import static org.objectweb.asm.Opcodes.ILOAD;
-import static org.objectweb.asm.Opcodes.LCONST_0;
-import static org.objectweb.asm.Opcodes.LLOAD;
+import static org.objectweb.asm.Opcodes.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,7 +15,12 @@ import java.util.Set;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.sfm.reflect.TypeHelper;
 public class AsmUtils {
+
+	public static String toType(final Type target) {
+		return toType(TypeHelper.toClass(target));
+	}
 	public static String toType(final Class<?> target) {
 		if (target.isPrimitive()) {
 			return primitivesType.get(target);

@@ -27,6 +27,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.TypeHelper;
 
 
 
@@ -100,14 +101,14 @@ public class InstantiatorBuilder {
  				
  				String propertyType = AsmUtils.toType(p.getType());
 				
- 				if (p.getType().isPrimitive()) {
+ 				if (TypeHelper.isPrimitive(p.getType())) {
 					sb.append(propertyType);
 				} else {
 					sb.append("L").append(propertyType).append(";");
 				}
 				
  				if (getter == null) {
- 					if (p.getType().isPrimitive()) {
+ 					if (TypeHelper.isPrimitive(p.getType())) {
  						mv.visitInsn(AsmUtils.defaultValue.get(p.getType()));
  					} else {
  						mv.visitInsn(ACONST_NULL);
@@ -121,7 +122,7 @@ public class InstantiatorBuilder {
  					mv.visitFieldInsn(GETFIELD, classType, "getter_" + p.getName(), "L" + getterType + ";");
  					mv.visitVarInsn(ALOAD, 1);
  					
-					if (p.getType().isPrimitive()) {
+					if (TypeHelper.isPrimitive(p.getType())) {
  						String methodSuffix =  AsmUtils.wrappers.get(p.getType()).getSimpleName();
  						if ("Integer".equals(methodSuffix)) {
  							methodSuffix = "Int";

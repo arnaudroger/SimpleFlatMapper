@@ -1,5 +1,7 @@
 package org.sfm.reflect;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import org.sfm.jdbc.AsmHelper;
@@ -65,14 +67,18 @@ public class ReflectionService {
 	public AsmFactory getAsmFactory() {
 		return asmFactory;
 	}
-	public <T> ClassMeta<T> getClassMeta(Class<T> target) {
+	public <T> ClassMeta<T> getClassMeta(Type target) {
 		return getClassMeta(null, target);
 	}
-	public <T> ClassMeta<T> getClassMeta(String prefix, Class<T> target) {
-		if (List.class.isAssignableFrom(target)) {
-			return new ListClassMeta(prefix, target, this);
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public <T> ClassMeta<T> getClassMeta(String prefix, Type target) {
+		Class<T> clazz = TypeHelper.toClass(target);
+		
+		if (List.class.isAssignableFrom(clazz)) {
+			ParameterizedType pt = (ParameterizedType) target;
+			return new ListClassMeta(prefix, pt.getActualTypeArguments()[0], this);
 		}
-		return new ObjectClassMeta<T>(prefix, target, this);
+		return new ObjectClassMeta<T>(prefix, clazz, this);
 	}
 }
  

@@ -1,5 +1,6 @@
 package org.sfm.map;
 
+import java.lang.reflect.Type;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,7 +14,7 @@ public final class LogRethrowMapperBuilderErrorHandler implements
 	}
 
 	@Override
-	public void setterNotFound(final Class<?> target, final String property) {
+	public void setterNotFound(final Type target, final String property) {
 		logger.log(Level.WARNING, "Setter for " + property + " on  " + target + " not found");
 	}
 }

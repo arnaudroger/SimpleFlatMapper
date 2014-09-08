@@ -1,6 +1,5 @@
 package org.sfm.reflect.meta;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,14 +7,13 @@ import java.util.Map;
 
 import org.sfm.reflect.asm.ConstructorDefinition;
 import org.sfm.reflect.asm.ConstructorParameter;
-import org.sfm.utils.PropertyNameMatcher;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 
 	private final ListClassMeta<T> listClassMeta;
 	private final Map<Integer, ElementPropertyMeta<T>> properties = new HashMap<>();
-	private final Map<String, PropertyFinder<?>> subPropertyFinders = new HashMap<>();
+	private final Map<String, PropertyFinder<T>> subPropertyFinders = new HashMap<>();
 	private static final List constructors;
 	
 	static {
@@ -35,11 +33,13 @@ public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 	@Override
 	public PropertyMeta<List<T>, ?> findProperty(PropertyNameMatcher propertyNameMatcher) {
 		
-		String propertyName = propertyNameMatcher.getPropertyName();
+		String propertyName = propertyNameMatcher.getColumn();
 		
-		String prefix = listClassMeta.getPrefix();
+		int listIndexStart = propertyNameMatcher.getFrom();
+		while(listIndexStart < propertyName.length() &&  !Character.isDigit(propertyName.charAt(listIndexStart))) {
+			listIndexStart++;
+		}
 		
-		int listIndexStart = prefix != null ? prefix.length() : 0;
 		int listIndexEnd = listIndexStart;
 		while(listIndexEnd < propertyName.length() &&  Character.isDigit(propertyName.charAt(listIndexEnd))) {
 			listIndexEnd++;
@@ -52,7 +52,7 @@ public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 
 		ElementPropertyMeta<T> prop = properties.get(index);
 		if (prop == null) {
-			prop = new ElementPropertyMeta<>(prefix + index, listClassMeta.getReflectionService(), index, listClassMeta);
+			prop = new ElementPropertyMeta<>(String.valueOf(index), listClassMeta.getReflectionService(), index, listClassMeta);
 			properties.put(index, prop);
 		}
 		
@@ -60,9 +60,16 @@ public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 			return prop;
 		}
 		
-		String propertyNName = propertyName.substring(0, listIndexStart)  + propertyName.substring(listIndexEnd);
-		PropertyFinder<T> propertyFinder = listClassMeta.getElementClassMeta().newPropertyFinder();
-		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(propertyNName);
+		String subPropName = propertyName.substring(listIndexEnd);
+		
+		PropertyFinder<T> propertyFinder = subPropertyFinders.get(subPropName);
+		
+		if (propertyFinder == null) {
+			propertyFinder = listClassMeta.getElementClassMeta().newPropertyFinder();
+			subPropertyFinders.put(subPropName, propertyFinder);
+		}
+		
+		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(subPropName);
 
 		
 		if (subProp != null) {

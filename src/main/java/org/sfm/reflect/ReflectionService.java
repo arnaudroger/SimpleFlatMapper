@@ -67,18 +67,15 @@ public class ReflectionService {
 	public AsmFactory getAsmFactory() {
 		return asmFactory;
 	}
-	public <T> ClassMeta<T> getClassMeta(Type target) {
-		return getClassMeta(null, target);
-	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public <T> ClassMeta<T> getClassMeta(String prefix, Type target) {
+	public <T> ClassMeta<T> getClassMeta(Type target) {
 		Class<T> clazz = TypeHelper.toClass(target);
 		
 		if (List.class.isAssignableFrom(clazz)) {
 			ParameterizedType pt = (ParameterizedType) target;
-			return new ListClassMeta(prefix, pt.getActualTypeArguments()[0], this);
+			return new ListClassMeta(pt.getActualTypeArguments()[0], this);
 		}
-		return new ObjectClassMeta<T>(prefix, clazz, this);
+		return new ObjectClassMeta<T>(clazz, this);
 	}
 }
  

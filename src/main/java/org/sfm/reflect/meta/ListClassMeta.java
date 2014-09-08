@@ -9,14 +9,12 @@ public class ListClassMeta<T> implements ClassMeta<List<T>> {
 
 	private final ReflectionService reflectionService;
 	private final Type elementTarget;
-	private final String prefix;
 	private final ClassMeta<T> elementClassMeta;
 	
-	public ListClassMeta(String prefix, Type elementTarget, ReflectionService reflectionService) {
+	public ListClassMeta(Type elementTarget, ReflectionService reflectionService) {
 		this.elementTarget = elementTarget;
 		this.reflectionService = reflectionService;
-		this.prefix = prefix;
-		this.elementClassMeta = reflectionService.getClassMeta(prefix, elementTarget);
+		this.elementClassMeta = reflectionService.getClassMeta(elementTarget);
 	}
 
 	public ClassMeta<T> getElementClassMeta() {
@@ -25,10 +23,6 @@ public class ListClassMeta<T> implements ClassMeta<List<T>> {
 	
 	public Type getElementTarget() {
 		return elementTarget;
-	}
-
-	public String getPrefix() {
-		return prefix;
 	}
 
 	@Override

@@ -9,7 +9,6 @@ import java.util.Map;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.asm.ConstructorDefinition;
 import org.sfm.reflect.asm.ConstructorParameter;
-import org.sfm.utils.PropertyNameMatcher;
 
 final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	
@@ -82,9 +81,9 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	private PropertyMeta<T, ?> lookForSubPropertyInConstructors(final PropertyNameMatcher propertyNameMatcher) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
-				if (propertyNameMatcher.couldBePropertyOf(prop.getName())
-						&& hasConstructorMatching(prop.getConstructorParameter())) {
-					PropertyMeta<?, ?> subProp = lookForSubProperty(propertyNameMatcher, prop);
+				PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(prop.getName());
+				if (subPropMatcher != null && hasConstructorMatching(prop.getConstructorParameter())) {
+					PropertyMeta<?, ?> subProp = lookForSubProperty(subPropMatcher, prop);
 					if (subProp != null) {
 						return new SubPropertyMeta(classMeta.getReflectionService(), prop, subProp);
 					}
@@ -97,9 +96,9 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private PropertyMeta<T, ?> lookForSubProperty(final PropertyNameMatcher propertyNameMatcher) {
 		for (PropertyMeta<T, ?> prop : classMeta.getProperties()) {
-			if (propertyNameMatcher.couldBePropertyOf(prop.getName())) {
-				PropertyMeta<?, ?> subProp =  lookForSubProperty(propertyNameMatcher, prop);
-
+			PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(prop.getName());
+			if (subPropMatcher != null) {
+				PropertyMeta<?, ?> subProp =  lookForSubProperty(subPropMatcher, prop);
 				if (subProp != null) {
 					return new SubPropertyMeta(classMeta.getReflectionService(), prop, subProp);
 				}

@@ -29,7 +29,7 @@ public class ElementPropertyMeta<P> extends PropertyMeta<List<P>, P> {
 
 			@Override
 			public Type getPropertyType() {
-				return List.class;
+				return listMetaData.getElementTarget();
 			}
 		};
 	}

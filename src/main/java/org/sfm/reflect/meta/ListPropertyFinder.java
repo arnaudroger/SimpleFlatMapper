@@ -56,6 +56,9 @@ public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 			properties.put(index, prop);
 		}
 		
+		if (listIndexEnd == propertyName.length()) {
+			return prop;
+		}
 		
 		String propertyNName = propertyName.substring(0, listIndexStart)  + propertyName.substring(listIndexEnd);
 		PropertyFinder<T> propertyFinder = listClassMeta.getElementClassMeta().newPropertyFinder();

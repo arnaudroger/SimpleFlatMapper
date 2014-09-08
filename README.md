@@ -197,7 +197,7 @@ Maven dependency
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>0.6</version>
+			<version>0.7</version>
 		</dependency>
 ```
 
@@ -207,7 +207,7 @@ TODO
 
 JDBCMapper
 ------
-- [List mapping](https://github.com/arnaudroger/SimpleFlatMapper/issues/4)
+- [Better property name handling](https://github.com/arnaudroger/SimpleFlatMapper/issues/6)
 
 
 

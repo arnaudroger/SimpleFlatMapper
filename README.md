@@ -197,17 +197,6 @@ Maven dependency
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>0.7</version>
+			<version>0.8</version>
 		</dependency>
 ```
-
-TODO
-=======
-
-
-JDBCMapper
-------
-- [Better property name handling](https://github.com/arnaudroger/SimpleFlatMapper/issues/6)
-
-
-

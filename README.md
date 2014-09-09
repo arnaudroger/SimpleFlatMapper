@@ -135,13 +135,22 @@ public class MyDao {
 JdbcTemplate
 -----
 
+See [JdbcTemplateMapperFactoryTest](/src/test/java/org/sfm/jdbc/spring/JdbcTemplateMapperFactoryTest.java) for examples.
+
 ```java
 class MyDao {
-	private final RowMapper<DbObject> mapper = 
-		new RowMapperFactory().newMapper(DbObject.class);
+	private final JdbcTemplateMapper<DbObject> mapper = 
+		new JdbcTemplateMapperFactory().newMapper(DbObject.class);
 		
 	public void doSomething() {		
 		List<DbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);
+	}
+	
+	public void doSomethingElse() {		
+		 template
+		 	.query(DbHelper.TEST_DB_OBJECT_QUERY, 
+		 		mapper.newResultSetExtractor(new ListHandler<DbObject>()))
+		 	.getList();
 	}
 }
 ```

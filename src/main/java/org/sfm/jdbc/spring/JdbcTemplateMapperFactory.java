@@ -31,20 +31,20 @@ public final class JdbcTemplateMapperFactory {
 	
 	public <T> RowMapper<T> newRowMapper(Class<T> target)
 			throws MapperBuildingException {
-		return newMapperDelegate(target);
+		return newMapper(target);
 	}
 
-	public <T> MapperDelegate<T> newMapperDelegate(Class<T> target) {
-		return new MapperDelegate<>(jdbcMapperFactory.newMapper(target));
+	public <T> JdbcTemplateMapper<T> newMapper(Class<T> target) {
+		return new JdbcTemplateMapper<>(jdbcMapperFactory.newMapper(target));
 	}
 	
 	public <T> PreparedStatementCallback<List<T>> newPreparedStatementCallback(Class<T> target)
 			throws MapperBuildingException {
-		return newMapperDelegate(target);
+		return newMapper(target);
 	}
 	
 	public <T> ResultSetExtractor<List<T>> newResultSetExtractor(Class<T> target)
 			throws MapperBuildingException {
-		return newMapperDelegate(target);
+		return newMapper(target);
 	}
 }

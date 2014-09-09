@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.DbHelper;
+import org.sfm.utils.ListHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -41,6 +42,25 @@ public class JdbcTemplateMapperFactoryTest {
 	public void testResultSetExtractor() throws SQLException, ParseException  {
 		ResultSetExtractor<List<DbObject>> mapper = new JdbcTemplateMapperFactory().newResultSetExtractor(DbObject.class);
 		List<DbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);
+		DbHelper.assertDbObjectMapping(results.get(0));
+	}
+
+	@Test
+	public void testPreparedStatementCallbackWithHandler() throws SQLException, ParseException  {
+		JdbcTemplateMapper<DbObject> mapper = new JdbcTemplateMapperFactory().newMapper(DbObject.class);
+		List<DbObject> results = 
+			template
+				.execute(DbHelper.TEST_DB_OBJECT_QUERY, 
+						mapper.newPreparedStatementCallback(new ListHandler<DbObject>())).getList();
+		DbHelper.assertDbObjectMapping(results.get(0));
+	}
+	@Test
+	public void testResultSetExtractorWithHandler() throws SQLException, ParseException  {
+		JdbcTemplateMapper<DbObject> mapper = new JdbcTemplateMapperFactory().newMapper(DbObject.class);
+		List<DbObject> results = 
+			template
+				.query(DbHelper.TEST_DB_OBJECT_QUERY, 
+						mapper.newResultSetExtractor(new ListHandler<DbObject>())).getList();
 		DbHelper.assertDbObjectMapping(results.get(0));
 	}
 }

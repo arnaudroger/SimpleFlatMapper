@@ -32,7 +32,7 @@ import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.TypeHelper;
 
-public final class PrimitiveFieldMapperFactory<T> {
+public final class PrimitiveFieldMapperFactory {
 
 	private final SetterFactory setterFactory;
 
@@ -40,7 +40,7 @@ public final class PrimitiveFieldMapperFactory<T> {
 		this.setterFactory = setterFactory;
 	}
 
-	public FieldMapper<ResultSet, T> primitiveFieldMapper(final String column,
+	public <T> FieldMapper<ResultSet, T> primitiveFieldMapper(final String column,
 			final Setter<T, ?> setter, final String name, final FieldMapperErrorHandler errorHandler) {
 		final Class<?> type = TypeHelper.toClass(setter.getPropertyType());
 
@@ -82,7 +82,7 @@ public final class PrimitiveFieldMapperFactory<T> {
 		}
 	}
 
-	public FieldMapper<ResultSet, T> primitiveFieldMapper(final int column,
+	public <T> FieldMapper<ResultSet, T> primitiveFieldMapper(final int column,
 			final Setter<T, ?> setter, final String name, final FieldMapperErrorHandler errorHandler) {
 		final Class<?> type = TypeHelper.toClass(setter.getPropertyType());
 

@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.sfm.beans.DbFinalPrimitiveObject;
 import org.sfm.beans.DbObject;
+import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.ConstructorDefinition;
 import org.sfm.reflect.asm.ConstructorParameter;
 
@@ -54,4 +55,26 @@ public class InstantiatorFactoryTest {
 		Assert.assertNotNull(object);
 	}
 
+	@Test
+	public void testInstantiateDbObjecAsm() throws Exception {
+		Instantiator<ResultSet, DbObject> instantiator = new InstantiatorFactory(new AsmFactory()).getInstantiator(ResultSet.class, DbObject.class);
+		DbObject object = instantiator.newInstance(null);
+		Assert.assertNotNull(object);
+	}
+
+	@Test
+	public void testInstantiateConstructorWithArgsAsm() throws Exception {
+		Instantiator<ResultSet, MyClass> instantiator = new InstantiatorFactory(new AsmFactory()).getInstantiator(ResultSet.class, MyClass.class);
+		MyClass object = instantiator.newInstance(null);
+		Assert.assertNotNull(object);
+	}
+	
+	@Test
+	public void testInstantiateConstructorWithArgsAllPrAsm() throws Exception {
+		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(new AsmFactory()).getInstantiator(ResultSet.class,ConstructorDefinition.extractConstructors(DbFinalPrimitiveObject.class), new HashMap<ConstructorParameter, Getter<ResultSet, ?>>());
+		DbFinalPrimitiveObject object = instantiator.newInstance(null);
+		Assert.assertNotNull(object);
+	}
+
+	
 }

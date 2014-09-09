@@ -37,7 +37,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	
 	private final Type target;
 	
-	private final PrimitiveFieldMapperFactory<T> primitiveFieldMapperFactory;
+	private final PrimitiveFieldMapperFactory primitiveFieldMapperFactory;
 
 	private final PropertyFinder<T> propertyFinder;
 	private final ReflectionService reflectionService;
@@ -66,7 +66,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	public ResultSetMapperBuilderImpl(final Type target, final ClassMeta<T> classMeta, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
 		this.target = target;
 		this.reflectionService = classMeta.getReflectionService();
-		this.primitiveFieldMapperFactory = new PrimitiveFieldMapperFactory<>(reflectionService.getSetterFactory());
+		this.primitiveFieldMapperFactory = new PrimitiveFieldMapperFactory(reflectionService.getSetterFactory());
 		this.constructorInjections = new HashMap<ConstructorParameter, Getter<ResultSet,?>>();
 		this.propertyFinder = classMeta.newPropertyFinder();
 		this.aliases = aliases;
@@ -350,7 +350,6 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 
 	}
 
-	@Override
 	public ResultSetMapperBuilder<T> addMapper(FieldMapper<ResultSet, T> mapper) {
 		fields.add(mapper);
 		return this;

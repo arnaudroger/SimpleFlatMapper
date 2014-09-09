@@ -4,12 +4,20 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.Foo;
+import org.sfm.jdbc.mockdb.MockResultSet;
+import org.sfm.map.FieldMapper;
+import org.sfm.map.InstantiationMappingException;
 import org.sfm.map.LogFieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
+import org.sfm.map.MappingException;
+import org.sfm.reflect.Instantiator;
+import org.sfm.utils.Handler;
 
 public class JdbcMapperErrorTest {
 
@@ -72,4 +80,47 @@ public class JdbcMapperErrorTest {
 		}
 	}
 	
+	@Test
+	public void testInstantiatorError() {
+		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<>(null,
+				new Instantiator<ResultSet, DbObject>() {
+					@Override
+					public DbObject newInstance(ResultSet s) throws Exception {
+						throw new UnsupportedOperationException();
+					}
+				}, new RethrowJdbcMapperErrorHandler());
+		
+		try {
+			mapper.map(null);
+			fail("Expecte error");
+		} catch(InstantiationMappingException e) {}
+	}
+	
+	
+	@Test
+	public void testInstantiatorHandlerError() throws MappingException, SQLException {
+		
+		MyJdbcMapperErrorHandler handler = new MyJdbcMapperErrorHandler();
+		@SuppressWarnings("unchecked")
+		FieldMapper<ResultSet, DbObject>[] fields = new FieldMapper[] {};
+		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<>(fields,
+				new Instantiator<ResultSet, DbObject>() {
+					@Override
+					public DbObject newInstance(ResultSet s) throws Exception {
+						return new DbObject();
+					}
+				}, handler);
+		final Error error = new Error();
+		mapper.forEach(new MockResultSet(1), new Handler<DbObject>() {
+
+			@Override
+			public void handle(DbObject t) throws Exception {
+				throw error;
+			}
+		});
+		
+		assertSame(error, handler.error);
+		
+		
+	}
 }

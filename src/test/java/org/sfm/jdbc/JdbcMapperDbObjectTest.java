@@ -36,28 +36,28 @@ public class JdbcMapperDbObjectTest {
 	public void testColumn() throws Exception {
 		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
 		
+		addNamedColumn(builder);
+		
+		final JdbcMapper<DbObject> mapper = builder.mapper();
+		
+		testDbObjectMapper(mapper);
+	}
+
+	public static <T> ResultSetMapperBuilder<T> addNamedColumn(ResultSetMapperBuilder<T> builder) {
 		builder.addNamedColumn("id");
 		builder.addNamedColumn("name");
 		builder.addNamedColumn("email");
 		builder.addNamedColumn("creation_time");
 		builder.addNamedColumn("type_ordinal");
 		builder.addNamedColumn("type_name");
-		
-		final JdbcMapper<DbObject> mapper = builder.mapper();
-		
-		testDbObjectMapper(mapper);
+		return builder;
 	}
 	
 	@Test
 	public void testColumnFinalProperty() throws Exception {
 		ResultSetMapperBuilder<DbFinalObject> builder = new ResultSetMapperBuilderImpl<DbFinalObject>(DbFinalObject.class);
 		
-		builder.addNamedColumn("id");
-		builder.addNamedColumn("name");
-		builder.addNamedColumn("email");
-		builder.addNamedColumn("creation_time");
-		builder.addNamedColumn("type_ordinal");
-		builder.addNamedColumn("type_name");
+		addNamedColumn(builder);
 		
 		final JdbcMapper<DbFinalObject> mapper = builder.mapper();
 		

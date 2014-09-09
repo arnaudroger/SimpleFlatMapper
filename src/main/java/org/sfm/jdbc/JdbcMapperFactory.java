@@ -85,13 +85,23 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target, final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
+		ResultSetMapperBuilder<T> builder = newBuilder(target);
+		builder.addMapping(metaData);
+		return builder.mapper();
+	}
+	
+	/**
+	 * Will create a instance of ResultSetMapperBuilder 
+	 * @param target the target class of the mapper
+	 * @return a builder ready to instantiate a mapper or to be customized
+	 * @throws MapperBuildingException
+	 */
+	public <T> ResultSetMapperBuilder<T> newBuilder(final Class<T> target) {
 		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<>(target, reflectionService(target), aliases, customMappings);
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
-		builder.addMapping(metaData);
-		
-		return builder.mapper();
+		return builder;
 	}
 
 	/**

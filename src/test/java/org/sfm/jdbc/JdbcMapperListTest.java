@@ -4,11 +4,13 @@ import static org.junit.Assert.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 
 import org.junit.Test;
 import org.sfm.beans.DbFinalListObject;
 import org.sfm.beans.DbListObject;
 import org.sfm.beans.DbListOfString;
+import org.sfm.beans.DbObject;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.Handler;
 
@@ -72,6 +74,36 @@ public class JdbcMapperListTest {
 		}
 	}
 
+
+	private static final class TestListObject implements
+			Handler<PreparedStatement> {
+		
+		private final boolean asm ;
+		private List<DbObject> list;
+		public TestListObject(boolean asm) {
+			this.asm = asm;
+		}
+
+		@Override
+		public void handle(PreparedStatement t) throws Exception {
+			ResultSet rs = t.executeQuery();
+			final JdbcMapper<List<DbObject>> mapper =  
+					new ResultSetMapperBuilderImpl<List<DbObject>>(getClass().getDeclaredField("list").getGenericType(), 
+							new ReflectionService(true, asm))
+						.addMapping(rs.getMetaData())
+						.mapper();
+			
+			rs.next();
+			
+			list = mapper.map(rs);
+			
+			assertEquals(3, list.size());
+			assertNull(list.get(0));
+			DbHelper.assertDbObjectMapping(list.get(1));
+			DbHelper.assertDbObjectMapping(list.get(2));
+		}
+	}
+	
 	private static final class TestDbListString implements
 			Handler<PreparedStatement> {
 
@@ -104,6 +136,12 @@ public class JdbcMapperListTest {
 			+ " 1 as objects_1_id, 'name 1' as objects_1_name, 'name1@mail.com' as objects_1_email, TIMESTAMP'2014-03-04 11:10:03' as objects_1_creation_time, 2 as objects_1_type_ordinal, 'type4' as objects_1_type_name, "
 			+ " 1 as objects_2_id, 'name 1' as objects_2_name, 'name1@mail.com' as objects_2_email, TIMESTAMP'2014-03-04 11:10:03' as objects_2_creation_time, 2 as objects_2_type_ordinal, 'type4' as objects_2_type_name "
 			+ " from TEST_DB_OBJECT ";
+	
+	private static final String QUERY_LIST = "select "
+			+ " 1 as objects_1_id, 'name 1' as objects_1_name, 'name1@mail.com' as objects_1_email, TIMESTAMP'2014-03-04 11:10:03' as objects_1_creation_time, 2 as objects_1_type_ordinal, 'type4' as objects_1_type_name, "
+			+ " 1 as objects_2_id, 'name 1' as objects_2_name, 'name1@mail.com' as objects_2_email, TIMESTAMP'2014-03-04 11:10:03' as objects_2_creation_time, 2 as objects_2_type_ordinal, 'type4' as objects_2_type_name "
+			+ " from TEST_DB_OBJECT ";
+	
 	private static final String QUERY_STRING_LIST = "select 12 as id, "
 			+ " 'value1' as objects_1, 'value2' as objects_2 from TEST_DB_OBJECT ";
 	@Test
@@ -132,7 +170,17 @@ public class JdbcMapperListTest {
 	}
 	
 	@Test
-	public void testMapDbListOfStringAsm() throws Exception {
+	public void testMapListOfStringAsm() throws Exception {
 		DbHelper.testQuery(new TestDbListString(true), QUERY_STRING_LIST);
 	}	
+	
+	@Test
+	public void testMapTestListObjectNoAsm() throws Exception {
+		DbHelper.testQuery(new TestListObject(false), QUERY_LIST);
+	}
+	
+	@Test
+	public void testMapTestListObjectAsm() throws Exception {
+		DbHelper.testQuery(new TestListObject(true), QUERY_LIST);
+	}
 }

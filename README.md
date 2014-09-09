@@ -135,7 +135,7 @@ public class MyDao {
 JdbcTemplate
 -----
 
-See [JdbcTemplateMapperFactoryTest](/src/test/java/org/sfm/jdbc/spring/JdbcTemplateMapperFactoryTest.java) for examples.
+See [JdbcTemplateMapperFactoryTest](/src/test/java/org/sfm/jdbc/spring/JdbcTemplateMapperFactoryTest.java) for more examples.
 
 ```java
 class MyDao {

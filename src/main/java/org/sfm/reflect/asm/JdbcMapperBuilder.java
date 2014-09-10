@@ -161,7 +161,7 @@ public class JdbcMapperBuilder {
 		
 		
 		{
-			mv = cw.visitMethod(ACC_PUBLIC, "forEach", "(Ljava/sql/ResultSet;Lorg/sfm/utils/Handler;)Lorg/sfm/utils/Handler;", "<H::Lorg/sfm/utils/Handler<L"+ targetType +";>;>(Ljava/sql/ResultSet;TH;)TH;", new String[] { "org/sfm/map/MappingException", "java/sql/SQLException" });
+			mv = cw.visitMethod(ACC_PUBLIC, "forEach", "(Ljava/sql/ResultSet;Lorg/sfm/utils/RowHandler;)Lorg/sfm/utils/RowHandler;", "<H::Lorg/sfm/utils/RowHandler<L"+ targetType +";>;>(Ljava/sql/ResultSet;TH;)TH;", new String[] { "org/sfm/map/MappingException", "java/sql/SQLException" });
 			mv.visitCode();
 			Label l0 = new Label();
 			Label l1 = new Label();
@@ -181,11 +181,11 @@ public class JdbcMapperBuilder {
 			mv.visitLabel(l0);
 			mv.visitVarInsn(ALOAD, 2);
 			mv.visitVarInsn(ALOAD, 3);
-			mv.visitMethodInsn(INVOKEINTERFACE, "org/sfm/utils/Handler", "handle", "(Ljava/lang/Object;)V", true);
+			mv.visitMethodInsn(INVOKEINTERFACE, "org/sfm/utils/RowHandler", "handle", "(Ljava/lang/Object;)V", true);
 			mv.visitLabel(l1);
 			mv.visitJumpInsn(GOTO, l4);
 			mv.visitLabel(l2);
-			mv.visitFrame(Opcodes.F_FULL, 4, new Object[] {classType, "java/sql/ResultSet", "org/sfm/utils/Handler", targetType}, 1, new Object[] {"java/lang/Throwable"});
+			mv.visitFrame(Opcodes.F_FULL, 4, new Object[] {classType, "java/sql/ResultSet", "org/sfm/utils/RowHandler", targetType}, 1, new Object[] {"java/lang/Throwable"});
 			mv.visitVarInsn(ASTORE, 4);
 			Label l6 = new Label();
 			mv.visitLabel(l6);

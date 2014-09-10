@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 import org.sfm.utils.ListHandler;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
@@ -36,7 +36,7 @@ public final class JdbcTemplateMapper<T> implements RowMapper<T>, PreparedStatem
 		}
 	}
 	
-	public <H extends Handler<T>> PreparedStatementCallback<H> newPreparedStatementCallback(final H handler) {
+	public <H extends RowHandler<T>> PreparedStatementCallback<H> newPreparedStatementCallback(final H handler) {
 		return new PreparedStatementCallback<H>() {
 			@Override
 			public H doInPreparedStatement(
@@ -53,7 +53,7 @@ public final class JdbcTemplateMapper<T> implements RowMapper<T>, PreparedStatem
 		};
 	}
 
-	public <H extends Handler<T>>  ResultSetExtractor<H> newResultSetExtractor(final H handler) {
+	public <H extends RowHandler<T>>  ResultSetExtractor<H> newResultSetExtractor(final H handler) {
 		return new ResultSetExtractor<H>() {
 			@Override
 			public H extractData(ResultSet rs) throws SQLException,

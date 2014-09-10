@@ -12,12 +12,12 @@ import org.sfm.beans.DbListObject;
 import org.sfm.beans.DbListOfString;
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.ReflectionService;
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 
 public class JdbcMapperListTest {
 	
 	private static final class TestDbFinalListObject implements
-			Handler<PreparedStatement> {
+			RowHandler<PreparedStatement> {
 
 		private final boolean asm;
 
@@ -46,7 +46,7 @@ public class JdbcMapperListTest {
 
 
 	private static final class TestDbListObject implements
-			Handler<PreparedStatement> {
+			RowHandler<PreparedStatement> {
 		
 		private final boolean asm ;
 		
@@ -76,7 +76,7 @@ public class JdbcMapperListTest {
 
 
 	private static final class TestListObject implements
-			Handler<PreparedStatement> {
+			RowHandler<PreparedStatement> {
 		
 		private final boolean asm ;
 		private List<DbObject> list;
@@ -105,7 +105,7 @@ public class JdbcMapperListTest {
 	}
 	
 	private static final class TestDbListString implements
-			Handler<PreparedStatement> {
+			RowHandler<PreparedStatement> {
 
 		private final boolean asm;
 

@@ -1,5 +1,5 @@
 package org.sfm.utils;
 
-public interface Handler<T> {
+public interface RowHandler<T> {
 	void handle(T t) throws Exception;
 }

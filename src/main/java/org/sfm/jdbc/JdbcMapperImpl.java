@@ -7,7 +7,7 @@ import org.sfm.map.FieldMapper;
 import org.sfm.map.InstantiationMappingException;
 import org.sfm.map.MappingException;
 import org.sfm.reflect.Instantiator;
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 
 public final class JdbcMapperImpl<T> implements JdbcMapper<T> {
 
@@ -40,7 +40,7 @@ public final class JdbcMapperImpl<T> implements JdbcMapper<T> {
 	}
 	
 	@Override
-	public <H extends Handler<T>> H forEach(final ResultSet rs, final H handler)
+	public <H extends RowHandler<T>> H forEach(final ResultSet rs, final H handler)
 			throws SQLException, MappingException {
 		while(rs.next()) {
 			T t = map(rs);

@@ -2,8 +2,8 @@ package org.sfm.text;
 
 import java.io.InputStream;
 
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 
 public interface CsvMapper<T> {
-	<H extends Handler<T>> H forEach(InputStream is, H handle) throws Exception;
+	<H extends RowHandler<T>> H forEach(InputStream is, H handle) throws Exception;
 }

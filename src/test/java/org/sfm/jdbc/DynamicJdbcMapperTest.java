@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.map.Mapper;
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 import org.sfm.utils.ListHandler;
 
 public class DynamicJdbcMapperTest {
@@ -25,7 +25,7 @@ public class DynamicJdbcMapperTest {
 	@Test
 	public void testResultSetMapperForEachRS()
 			throws SQLException, Exception, ParseException {
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				List<DbObject> objects = mapper.forEach(ps.executeQuery(), new ListHandler<DbObject>()).getList();
@@ -38,7 +38,7 @@ public class DynamicJdbcMapperTest {
 	@Test
 	public void testResultSetMapperMap()
 			throws SQLException, Exception, ParseException {
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				ResultSet rs = ps.executeQuery();
@@ -50,7 +50,7 @@ public class DynamicJdbcMapperTest {
 	}
 	@Test
 	public void testMapperCache() throws SQLException, ParseException, Exception {
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				ResultSet rs = ps.executeQuery();

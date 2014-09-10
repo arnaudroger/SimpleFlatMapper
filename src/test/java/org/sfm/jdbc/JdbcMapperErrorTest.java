@@ -17,7 +17,7 @@ import org.sfm.map.LogFieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.reflect.Instantiator;
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 
 public class JdbcMapperErrorTest {
 
@@ -111,7 +111,7 @@ public class JdbcMapperErrorTest {
 					}
 				}, handler);
 		final Error error = new Error();
-		mapper.forEach(new MockResultSet(1), new Handler<DbObject>() {
+		mapper.forEach(new MockResultSet(1), new RowHandler<DbObject>() {
 
 			@Override
 			public void handle(DbObject t) throws Exception {

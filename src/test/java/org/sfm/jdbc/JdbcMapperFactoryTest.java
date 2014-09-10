@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbFinalObject;
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 import org.sfm.utils.ListHandler;
 
 public class JdbcMapperFactoryTest {
@@ -22,7 +22,7 @@ public class JdbcMapperFactoryTest {
 	@Test
 	public void testAsmDbObjectMappingFromDbWithMetaData()
 			throws SQLException, Exception, ParseException {
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				ResultSet rs = ps.executeQuery();
@@ -35,7 +35,7 @@ public class JdbcMapperFactoryTest {
 	@Test
 	public void testNonAsmDbObjectMappingFromDbWithMetaData()
 			throws SQLException, Exception, ParseException {
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				ResultSet rs = ps.executeQuery();
@@ -48,7 +48,7 @@ public class JdbcMapperFactoryTest {
 	@Test
 	public void testAsmDbObjectMappingFromDbDynamic()
 			throws SQLException, Exception, ParseException {
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				JdbcMapper<DbObject> mapper = asmFactory.newMapper(DbObject.class);
@@ -60,7 +60,7 @@ public class JdbcMapperFactoryTest {
 	@Test
 	public void testNonAsmDbObjectMappingFromDbDynamic()
 			throws SQLException, Exception, ParseException {
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				JdbcMapper<DbObject> mapper = nonAsmFactory.newMapper(DbObject.class);
@@ -72,7 +72,7 @@ public class JdbcMapperFactoryTest {
 	@Test
 	public void testAsmFinalDbObjectMappingFromDbDynamic()
 			throws SQLException, Exception, ParseException {
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				JdbcMapper<DbFinalObject> mapper = asmFactory.newMapper(DbFinalObject.class);
@@ -84,7 +84,7 @@ public class JdbcMapperFactoryTest {
 	@Test
 	public void testNonAsmFinalDbObjectMappingFromDbDynamic()
 			throws SQLException, Exception, ParseException {
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				JdbcMapper<DbFinalObject> mapper = nonAsmFactory.newMapper(DbFinalObject.class);

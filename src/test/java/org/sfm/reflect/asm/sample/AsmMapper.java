@@ -13,7 +13,7 @@ import org.sfm.map.MappingException;
 import org.sfm.map.primitive.IntFieldMapper;
 import org.sfm.map.primitive.LongFieldMapper;
 import org.sfm.reflect.Instantiator;
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 
 public final class AsmMapper implements JdbcMapper<DbObject>{
 
@@ -56,7 +56,7 @@ public final class AsmMapper implements JdbcMapper<DbObject>{
 	}
 
 	@Override
-	public <H extends Handler<DbObject>> H forEach(ResultSet rs, H handler)
+	public <H extends RowHandler<DbObject>> H forEach(ResultSet rs, H handler)
 			throws MappingException, SQLException {
 		while(rs.next()) {
 			DbObject t = map(rs);

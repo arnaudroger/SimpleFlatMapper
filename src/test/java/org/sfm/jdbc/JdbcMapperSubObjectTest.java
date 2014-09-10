@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.sfm.beans.Db1DeepObject;
 import org.sfm.beans.Db2DeepObject;
 import org.sfm.beans.DbFinal1DeepObject;
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 
 public class JdbcMapperSubObjectTest {
 
@@ -31,7 +31,7 @@ public class JdbcMapperSubObjectTest {
 		
 		final JdbcMapper<Db1DeepObject> mapper = builder.mapper();
 		
-		DbHelper.testQuery(new Handler<PreparedStatement>() {
+		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement t) throws Exception {
 				ResultSet rs = t.executeQuery();
@@ -53,7 +53,7 @@ public class JdbcMapperSubObjectTest {
 		
 		final JdbcMapper<Db1DeepObject> mapper = builder.mapper();
 		
-		DbHelper.testQuery(new Handler<PreparedStatement>() {
+		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement t) throws Exception {
 				ResultSet rs = t.executeQuery();
@@ -75,7 +75,7 @@ public class JdbcMapperSubObjectTest {
 		
 		final JdbcMapper<DbFinal1DeepObject> mapper = builder.mapper();
 		
-		DbHelper.testQuery(new Handler<PreparedStatement>() {
+		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement t) throws Exception {
 				ResultSet rs = t.executeQuery();
@@ -93,7 +93,7 @@ public class JdbcMapperSubObjectTest {
 	public void testMapInnerObject2LevelWithStaticMapper() throws Exception {
 		final ResultSetMapperBuilder<Db2DeepObject> builder = new ResultSetMapperBuilderImpl<Db2DeepObject>(Db2DeepObject.class);
 
-		DbHelper.testQuery(new Handler<PreparedStatement>() {
+		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement t) throws Exception {
 				ResultSet rs = t.executeQuery();

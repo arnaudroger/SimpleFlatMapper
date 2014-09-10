@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MappingException;
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 
 public class JdbcMapperCustomMappingTest {
 
@@ -19,7 +19,7 @@ public class JdbcMapperCustomMappingTest {
 		
 		final JdbcMapper<DbObject> mapper = mapperFactory.newMapper(DbObject.class);
 		
-		DbHelper.testQuery(new Handler<PreparedStatement>() {
+		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 
 			@Override
 			public void handle(PreparedStatement t) throws Exception {
@@ -38,7 +38,7 @@ public class JdbcMapperCustomMappingTest {
 		
 		final JdbcMapper<DbObject> mapper = JdbcMapperDbObjectTest.addNamedColumn(mapperFactory.newBuilder(DbObject.class)).mapper();
 		
-		DbHelper.testQuery(new Handler<PreparedStatement>() {
+		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 
 			@Override
 			public void handle(PreparedStatement t) throws Exception {
@@ -64,7 +64,7 @@ public class JdbcMapperCustomMappingTest {
 		
 		final JdbcMapper<DbObject> mapper = JdbcMapperDbObjectTest.addNamedColumn(mapperFactory.newBuilder(DbObject.class)).mapper();
 		
-		DbHelper.testQuery(new Handler<PreparedStatement>() {
+		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 
 			@Override
 			public void handle(PreparedStatement t) throws Exception {
@@ -90,7 +90,7 @@ public class JdbcMapperCustomMappingTest {
 		
 		final JdbcMapper<DbObject> mapper = mapperFactory.newMapper(DbObject.class);
 		
-		DbHelper.testQuery(new Handler<PreparedStatement>() {
+		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 
 			@Override
 			public void handle(PreparedStatement t) throws Exception {

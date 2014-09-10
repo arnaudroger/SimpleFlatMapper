@@ -14,7 +14,7 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.mockdb.MockConnection;
 import org.sfm.utils.DateHelper;
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 
 public class DbHelper {
 	
@@ -155,14 +155,14 @@ public class DbHelper {
 		return DriverManager.getConnection("jdbc:mysql://localhost/sfm", "sfm", "");
 	}
 	
-	public static void testDbObjectFromDb(Handler<PreparedStatement> handler )
+	public static void testDbObjectFromDb(RowHandler<PreparedStatement> handler )
 			throws SQLException, Exception, ParseException {
 		
 		String query = TEST_DB_OBJECT_QUERY;
 		testQuery(handler, query);
 	}
 
-	public static void testQuery(Handler<PreparedStatement> handler,
+	public static void testQuery(RowHandler<PreparedStatement> handler,
 			String query) throws SQLException, Exception {
 		Connection conn = DbHelper.objectDb();
 		

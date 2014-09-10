@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbFinalObject;
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 import org.sfm.utils.ListHandler;
 
 public class JdbcMapperDbObjectTest {
@@ -61,7 +61,7 @@ public class JdbcMapperDbObjectTest {
 		
 		final JdbcMapper<DbFinalObject> mapper = builder.mapper();
 		
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				List<DbFinalObject> objects = mapper.forEach(ps.executeQuery(), new ListHandler<DbFinalObject>()).getList();
@@ -72,7 +72,7 @@ public class JdbcMapperDbObjectTest {
 	}
 	private void testDbObjectMapper(final JdbcMapper<DbObject> mapper)
 			throws SQLException, Exception, ParseException {
-		DbHelper.testDbObjectFromDb(new Handler<PreparedStatement>() {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				List<DbObject> objects = mapper.forEach(ps.executeQuery(), new ListHandler<DbObject>()).getList();

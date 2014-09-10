@@ -8,7 +8,7 @@ import org.sfm.benchmark.ForEachListener;
 import org.sfm.benchmark.JDBCHelper;
 import org.sfm.benchmark.QueryExecutor;
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.utils.Handler;
+import org.sfm.utils.RowHandler;
 
 public class ForEachMapperQueryExecutor<T> implements QueryExecutor {
 
@@ -31,7 +31,7 @@ public class ForEachMapperQueryExecutor<T> implements QueryExecutor {
 		try {
 			ResultSet rs = ps.executeQuery();
 			try {
-				mapper.forEach(rs, new Handler<T>() {
+				mapper.forEach(rs, new RowHandler<T>() {
 					@Override
 					public void handle(T t) throws Exception {
 						ql.object(t);

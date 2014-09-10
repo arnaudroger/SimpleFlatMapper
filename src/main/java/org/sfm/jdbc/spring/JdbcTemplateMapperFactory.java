@@ -11,6 +11,11 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
 public final class JdbcTemplateMapperFactory {
+	
+	public static JdbcTemplateMapperFactory newInstance() {
+		return new JdbcTemplateMapperFactory();
+	}
+	
 	private final JdbcMapperFactory jdbcMapperFactory = new JdbcMapperFactory();
 
 	public JdbcTemplateMapperFactory fieldMapperErrorHandler(FieldMapperErrorHandler fieldMapperErrorHandler) {

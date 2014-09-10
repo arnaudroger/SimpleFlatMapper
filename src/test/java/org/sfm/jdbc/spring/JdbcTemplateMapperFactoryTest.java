@@ -26,28 +26,28 @@ public class JdbcTemplateMapperFactoryTest {
 
 	@Test
 	public void testRowMapper() throws SQLException, ParseException  {
-		RowMapper<DbObject> mapper = new JdbcTemplateMapperFactory().newRowMapper(DbObject.class);
+		RowMapper<DbObject> mapper = JdbcTemplateMapperFactory.newInstance().newRowMapper(DbObject.class);
 		List<DbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);
 		DbHelper.assertDbObjectMapping(results.get(0));
 	}
 	
 	@Test
 	public void testPreparedStatementCallback() throws SQLException, ParseException  {
-		PreparedStatementCallback<List<DbObject>> mapper = new JdbcTemplateMapperFactory().newPreparedStatementCallback(DbObject.class);
+		PreparedStatementCallback<List<DbObject>> mapper = JdbcTemplateMapperFactory.newInstance().newPreparedStatementCallback(DbObject.class);
 		List<DbObject> results = template.execute(DbHelper.TEST_DB_OBJECT_QUERY, mapper);
 		DbHelper.assertDbObjectMapping(results.get(0));
 	}
 
 	@Test
 	public void testResultSetExtractor() throws SQLException, ParseException  {
-		ResultSetExtractor<List<DbObject>> mapper = new JdbcTemplateMapperFactory().newResultSetExtractor(DbObject.class);
+		ResultSetExtractor<List<DbObject>> mapper = JdbcTemplateMapperFactory.newInstance().newResultSetExtractor(DbObject.class);
 		List<DbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);
 		DbHelper.assertDbObjectMapping(results.get(0));
 	}
 
 	@Test
 	public void testPreparedStatementCallbackWithHandler() throws SQLException, ParseException  {
-		JdbcTemplateMapper<DbObject> mapper = new JdbcTemplateMapperFactory().newMapper(DbObject.class);
+		JdbcTemplateMapper<DbObject> mapper = JdbcTemplateMapperFactory.newInstance().newMapper(DbObject.class);
 		List<DbObject> results = 
 			template
 				.execute(DbHelper.TEST_DB_OBJECT_QUERY, 
@@ -56,7 +56,7 @@ public class JdbcTemplateMapperFactoryTest {
 	}
 	@Test
 	public void testResultSetExtractorWithHandler() throws SQLException, ParseException  {
-		JdbcTemplateMapper<DbObject> mapper = new JdbcTemplateMapperFactory().newMapper(DbObject.class);
+		JdbcTemplateMapper<DbObject> mapper = JdbcTemplateMapperFactory.newInstance().newMapper(DbObject.class);
 		List<DbObject> results = 
 			template
 				.query(DbHelper.TEST_DB_OBJECT_QUERY, 

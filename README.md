@@ -50,7 +50,8 @@ public class MyDao {
     	JdbcMapperFactory.newInstance().newMapper(MyObject.class);
 
     public void writeAllObjectTo(Writer writer, Connection conn) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement("select id, email, my_property from MyTable")) {
+        try (PreparedStatement ps = 
+        		conn.prepareStatement("select id, email, my_property from MyTable")) {
 	        try (ResultSet rs = ps.executeQuery()){
 	            mapper.forEach(rs, (o) -> writer.append(o.toString()).append("\n"));
 	        }
@@ -74,7 +75,9 @@ class MyDao {
 	}
 	
 	public void doSomethingElse() {		
-		 template.query(TEST_DB_OBJECT_QUERY, mapper.newResultSetExtractor((o) -> System.out.println(o.toString())));
+		 template
+		 	.query(TEST_DB_OBJECT_QUERY, 
+		 		mapper.newResultSetExtractor((o) -> System.out.println(o.toString())));
 	}
 }
 ```

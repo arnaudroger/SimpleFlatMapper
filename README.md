@@ -181,7 +181,10 @@ public class ListObject {
 ```
 
 ```sql
-select id, sub_objects_0_id, sub_objects_0_email, sub_objects_0_my_property, sub_objects_1_id, sub_objects_3_id   
+select id, 
+	sub_objects_0_id, sub_objects_0_email, sub_objects_0_my_property, 
+	sub_objects_1_id, 
+	sub_objects_3_id   
 ```
 
 Performance

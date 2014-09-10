@@ -6,7 +6,7 @@ SimpleFlatMapper
 Fast and Easy mapping from database to POJO. 
 A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 
-Compatible with Java 7 and Java 8. [Lambda Ready](#jdbcmapper) and easy to integrate with [Spring JdbcTemplate](#jdbctemplate). 
+Compatible with Java 7 and Java 8. [Lambda Ready](#jdbcmapper) and easy to integrate with [Spring JdbcTemplate](#jdbctemplate). It is also [Osgi](#osgisupport) ready.
 
 Design
 ========
@@ -29,13 +29,13 @@ Why?
 
 ### Performance
 
-Ibatis and hibernate have very expensive injection mechanism. On the hsqldb in mem for a medium size query it's a about 700% markup for both. 
-Sfm is as fast as it can using asm generation. Even if you don't use asm is still a lot faster. 
+Ibatis and hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [700%](#in-mem-hsqldb) for both. 
+Sfm is as fast as it can using asm generation. Even if you don't use asm it is still a lot faster. 
 
 ### API intrusiveness
 
 Ibatis provide the same kind of functionality put it forces you to use it's query mechanism and mask the jdbc api. 
-Sfm just focus on the mapping from a ResultSet. You can manage the query the way you want. You can use JdbcTemplate, even use it in an Hibernate session via the doWork method.
+Sfm just focus on the mapping from a [ResultSet](#jdbcmapper). You can manage the query the way you want. You can use [JdbcTemplate](#jdbctemplate), even use it in an Hibernate session via the doWork method.
 
 Samples
 ========

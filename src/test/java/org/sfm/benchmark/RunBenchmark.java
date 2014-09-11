@@ -14,6 +14,7 @@ import org.sfm.benchmark.ibatis.MyBatisBenchmark;
 import org.sfm.benchmark.sfm.DynamicJdbcMapperForEachBenchmark;
 import org.sfm.benchmark.sfm.DynamicNoAsmJdbcMapperForEachBenchmark;
 import org.sfm.benchmark.sfm.StaticJdbcMapperBenchmark;
+import org.sfm.benchmark.spring.BeanPropertyRowMapperBenchmark;
 import org.sfm.benchmark.sql2o.Sql2OBenchmark;
 import org.sfm.jdbc.DbHelper;
 
@@ -32,7 +33,8 @@ public class RunBenchmark {
 				DynamicNoAsmJdbcMapperForEachBenchmark.class,
 				Sql2OBenchmark.class,
 				HibernateStatefullBenchmark.class, 
-				MyBatisBenchmark.class
+				MyBatisBenchmark.class,
+				BeanPropertyRowMapperBenchmark.class
 				};
 		
 		if (args.length > currentArgIndex) {
@@ -59,6 +61,9 @@ public class RunBenchmark {
 				currentArgIndex++;
 			} else if(type.contains("batis")) {
 				classes = new Class[] { MyBatisBenchmark.class };
+				currentArgIndex++;
+			}  else if(type.contains("rowmapper")) {
+				classes = new Class[] { BeanPropertyRowMapperBenchmark.class };
 				currentArgIndex++;
 			} else if (type.equals("header")) {
 				printHeader(System.out);

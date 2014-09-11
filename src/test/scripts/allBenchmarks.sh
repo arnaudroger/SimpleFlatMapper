@@ -25,8 +25,8 @@ $HOME/.m2/repository/org/mybatis/mybatis/3.2.7/mybatis-3.2.7.jar:\
 $HOME/.m2/repository/org/springframework/spring-jdbc/4.0.6.RELEASE/spring-jdbc-4.0.6.RELEASE.jar:\
 $HOME/.m2/repository/org/springframework/spring-beans/4.0.6.RELEASE/spring-beans-4.0.6.RELEASE.jar:\
 $HOME/.m2/repository/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar:\
-$HOME/.m2/repository/org/springframework/spring-core/4.0.6.RELEASE/spring-core-4.0.6.RELEASE.jar
-
+$HOME/.m2/repository/org/springframework/spring-core/4.0.6.RELEASE/spring-core-4.0.6.RELEASE.jar:\
+$HOME/.m2/repository/org/springframework/spring-tx/4.0.6.RELEASE/spring-tx-4.0.6.RELEASE.jar
 #JAVA_OPTS="-XX:+UnlockCommercialFeatures -XX:+FlightRecorder" 
 #JAVA_OPTS="-XX:+UnlockDiagnosticVMOptions -XX:+TraceClassLoading -XX:+LogCompilation -XX:+PrintAssembly"
 
@@ -39,6 +39,7 @@ $JAVACMD static $*
 $JAVACMD dynamic $*
 $JAVACMD dynamicNoAsm $*
 $JAVACMD sql2o $*
+$JAVACMD rowmapper $*
 $JAVACMD hibernate $*
 $JAVACMD ibatis $*
 

@@ -54,7 +54,7 @@ public final class SetterFactory {
 		}
 	}
 
-	public <T, P, C extends T> Setter<T, P> getMethodSetter(final Method method) {
+	public <T, P> Setter<T, P> getMethodSetter(final Method method) {
 		if (asmFactory != null) {
 			try {
 				return asmFactory.createSetter(method);

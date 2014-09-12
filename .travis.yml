@@ -1,10 +1,10 @@
 language: java
 
 jdk:
-  - oraclejdk7
   - oraclejdk8
+  - oraclejdk7
   - openjdk7
-  - openjdk6
+  - oraclejdk6
 
 after_success:
   - mvn -P travis jacoco:report coveralls:jacoco

@@ -51,7 +51,7 @@ public class AsmFactory implements Opcodes {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> createEmptyArgsInstatiantor(final Class<S> source, final Class<T> target) throws Exception {
+	public <S, T> Instantiator<S, T> createEmptyArgsInstatiantor(final Class<S> source, final Class<? extends T> target) throws Exception {
 		InstantiatorKey instantiatorKey = new InstantiatorKey(target);
 		Instantiator<S, T> instantiator = (Instantiator<S, T>) instantiators.get(instantiatorKey);
 		if (instantiator == null) {

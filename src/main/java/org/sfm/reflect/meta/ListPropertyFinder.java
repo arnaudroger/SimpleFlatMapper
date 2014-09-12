@@ -90,8 +90,9 @@ public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 	}
 
 	@Override
-	public Class<?> getClassToInstantiate() {
-		return ArrayList.class;
+	public Class<? extends List<T>> getClassToInstantiate() {
+		Class type = ArrayList.class;
+		return type;
 	}
 
 }

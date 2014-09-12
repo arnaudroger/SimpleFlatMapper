@@ -70,8 +70,7 @@ public class ResultSetMapperBuilderImplTest {
 			public InstantiatorFactory getInstantiatorFactory() {
 				return new InstantiatorFactory(null) {
 					@Override
-					public <S, T> Instantiator<S, T> getInstantiator(
-							Class<S> source, Class<T> target)
+					public <S, T> Instantiator<S, T> getInstantiator(Class<S> source, Class<? extends T> target)
 							throws NoSuchMethodException, SecurityException {
 						throw new UnsupportedOperationException();
 					}

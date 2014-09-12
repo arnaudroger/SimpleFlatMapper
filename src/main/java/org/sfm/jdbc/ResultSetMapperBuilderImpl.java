@@ -204,7 +204,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 		if (!reflectionService.isAsmPresent()) {
 			try {
-				return instantiatorFactory.getInstantiator(ResultSet.class, getTargetClass());
+				return instantiatorFactory.getInstantiator(ResultSet.class, propertyFinder.getClassToInstantiate());
 			} catch(Exception e) {
 				throw new MapperBuildingException(e.getMessage(), e);
 			}

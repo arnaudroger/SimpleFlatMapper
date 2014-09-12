@@ -35,7 +35,7 @@ public class InstantiatorFactory {
 		this.asmFactory = asmFactory;
 	}
 
-	public <S, T> Instantiator<S, T> getInstantiator(final Class<S> source, final Class<T> target) throws NoSuchMethodException, SecurityException {
+	public <S, T> Instantiator<S, T> getInstantiator(final Class<S> source, final Class<? extends T> target) throws NoSuchMethodException, SecurityException {
 		final Constructor<T> constructor = getSmallerConstructor(target);
 		
 		if (constructor == null) {
@@ -93,7 +93,7 @@ public class InstantiatorFactory {
 
 
 	@SuppressWarnings("unchecked")
-	private <T> Constructor<T> getSmallerConstructor(final Class<T> target) {
+	private <T> Constructor<T> getSmallerConstructor(final Class<? extends T> target) {
 		Constructor<T> selectedConstructor = null;
 		
 		for(Constructor<?> c : target.getDeclaredConstructors()) {

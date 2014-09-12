@@ -12,12 +12,12 @@ import org.sfm.reflect.asm.ConstructorParameter;
 public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 
 	private final ListClassMeta<T> listClassMeta;
-	private final Map<Integer, ElementPropertyMeta<T>> properties = new HashMap<>();
-	private final Map<String, PropertyFinder<T>> subPropertyFinders = new HashMap<>();
+	private final Map<Integer, ElementPropertyMeta<T>> properties = new HashMap<Integer, ElementPropertyMeta<T>>();
+	private final Map<String, PropertyFinder<T>> subPropertyFinders = new HashMap<String, PropertyFinder<T>>();
 	private static final List constructors;
 	
 	static {
-		constructors = new ArrayList<>();
+		constructors = new ArrayList();
 		try {
 			constructors.add(new ConstructorDefinition(ArrayList.class.getConstructor(), new ConstructorParameter[] {}));
 		} catch(Exception e) {
@@ -52,7 +52,7 @@ public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 
 		ElementPropertyMeta<T> prop = properties.get(index);
 		if (prop == null) {
-			prop = new ElementPropertyMeta<>(String.valueOf(index), listClassMeta.getReflectionService(), index, listClassMeta);
+			prop = new ElementPropertyMeta<T>(String.valueOf(index), listClassMeta.getReflectionService(), index, listClassMeta);
 			properties.put(index, prop);
 		}
 		
@@ -87,6 +87,11 @@ public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 	@Override
 	public List<ConstructorDefinition<List<T>>> getEligibleConstructorDefinitions() {
 		return constructors ;
+	}
+
+	@Override
+	public Class<?> getClassToInstantiate() {
+		return ArrayList.class;
 	}
 
 }

@@ -69,7 +69,7 @@ public class JdbcMapperSubObjectTest {
 	
 	@Test
 	public void testMapInnerFinalObjectWithStaticMapper() throws Exception {
-		ResultSetMapperBuilder<DbFinal1DeepObject> builder = new ResultSetMapperBuilderImpl<>(DbFinal1DeepObject.class);
+		ResultSetMapperBuilder<DbFinal1DeepObject> builder = new ResultSetMapperBuilderImpl<DbFinal1DeepObject>(DbFinal1DeepObject.class);
 
 		addColumns(builder);
 		

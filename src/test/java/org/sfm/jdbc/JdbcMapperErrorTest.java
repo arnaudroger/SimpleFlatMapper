@@ -82,7 +82,7 @@ public class JdbcMapperErrorTest {
 	
 	@Test
 	public void testInstantiatorError() {
-		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<>(null,
+		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<DbObject>(null,
 				new Instantiator<ResultSet, DbObject>() {
 					@Override
 					public DbObject newInstance(ResultSet s) throws Exception {
@@ -103,7 +103,7 @@ public class JdbcMapperErrorTest {
 		MyJdbcMapperErrorHandler handler = new MyJdbcMapperErrorHandler();
 		@SuppressWarnings("unchecked")
 		FieldMapper<ResultSet, DbObject>[] fields = new FieldMapper[] {};
-		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<>(fields,
+		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<DbObject>(fields,
 				new Instantiator<ResultSet, DbObject>() {
 					@Override
 					public DbObject newInstance(ResultSet s) throws Exception {

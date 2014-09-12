@@ -14,11 +14,11 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	
 	private final List<ConstructorDefinition<T>> eligibleConstructorDefinitions;
 	private final ObjectClassMeta<T> classMeta;
-	private final Map<String, PropertyFinder<?>> subPropertyFinders = new HashMap<>();
+	private final Map<String, PropertyFinder<?>> subPropertyFinders = new HashMap<String, PropertyFinder<?>>();
 
 	ObjectPropertyFinder(ObjectClassMeta<T> classMeta) throws MapperBuildingException {
 		this.classMeta = classMeta;
-		this.eligibleConstructorDefinitions = classMeta.getConstructorDefinitions() != null ? new ArrayList<>(classMeta.getConstructorDefinitions()) : null;
+		this.eligibleConstructorDefinitions = classMeta.getConstructorDefinitions() != null ? new ArrayList<ConstructorDefinition<T>>(classMeta.getConstructorDefinitions()) : null;
 	}
 
 	/* (non-Javadoc)
@@ -150,5 +150,10 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	@Override
 	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
 		return eligibleConstructorDefinitions;
+	}
+
+	@Override
+	public Class<T> getClassToInstantiate() {
+		return classMeta.getTargetClass();
 	}
 }

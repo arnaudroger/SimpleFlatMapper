@@ -19,7 +19,7 @@ public class BeanPropertyRowMapperBenchmark<T> implements QueryExecutor {
 		super();
 		this.conn = conn;
 		this.target = target;
-		this.rowMapper = new BeanPropertyRowMapper<>(target);
+		this.rowMapper = new BeanPropertyRowMapper<T>(target);
 	}
 
 

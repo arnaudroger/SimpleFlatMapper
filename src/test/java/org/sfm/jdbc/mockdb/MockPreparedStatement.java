@@ -239,12 +239,10 @@ public class MockPreparedStatement implements PreparedStatement {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public void closeOnCompletion() throws SQLException {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public boolean isCloseOnCompletion() throws SQLException {
 		return false;
 	}

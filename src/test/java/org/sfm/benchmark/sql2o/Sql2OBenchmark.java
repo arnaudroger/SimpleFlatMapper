@@ -24,11 +24,15 @@ public class Sql2OBenchmark implements QueryExecutor {
 	}
 	@Override
 	public void forEach(final ForEachListener ql, int limit) throws Exception {
-		try (org.sql2o.Connection conn = sql2o.open()) {
+		
+		org.sql2o.Connection conn = sql2o.open();
+		try  {
 			List<?> list = conn.createQuery(JDBCHelper.query(target, limit)).addColumnMapping("YEAR_STARTED", "yearStarted").executeAndFetch(target);
 			for(Object o : list) {
 				ql.object(o);
 			}
+		} finally {
+			conn.close();
 		}
 	}
 	

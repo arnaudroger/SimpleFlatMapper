@@ -38,6 +38,10 @@ public class InstantiatorFactory {
 	public <S, T> Instantiator<S, T> getInstantiator(final Class<S> source, final Class<T> target) throws NoSuchMethodException, SecurityException {
 		final Constructor<T> constructor = getSmallerConstructor(target);
 		
+		if (constructor == null) {
+			throw new NoSuchMethodException("No available constructor for " + target);
+		}
+		
 		Object[] args;
 		
 		if (constructor.getParameterTypes().length == 0) {

@@ -18,7 +18,7 @@ public class FieldPropertyMeta<T, P> extends PropertyMeta<T, P> {
 	@Override
 	protected Setter<T, P> newSetter() {
 		field.setAccessible(true);
-		return new FieldSetter<>(field);
+		return new FieldSetter<T, P>(field);
 	}
 
 	@SuppressWarnings("unchecked")

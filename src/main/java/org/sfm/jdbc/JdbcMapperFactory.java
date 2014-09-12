@@ -30,10 +30,11 @@ public final class JdbcMapperFactory {
 	
 	private FieldMapperErrorHandler fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler();
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
-	private Map<String, String> aliases = new HashMap<>();
-	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<>();
+	private Map<String, String> aliases = new HashMap<String, String>();
+	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();
 	
 	private boolean useAsm = true;
+	private boolean disableAsm = false;
 	
 	private final boolean useBridgeClassLoader;
 	
@@ -75,7 +76,14 @@ public final class JdbcMapperFactory {
 		this.useAsm = useAsm;
 		return this;
 	}
-
+	
+	/**
+	 * @param disableAsm true if you want to disable asm.
+	 */
+	public JdbcMapperFactory disableAsm(final boolean disableAsm) {
+		this.disableAsm = disableAsm;
+		return this;
+	}
 	
 	/**
 	 * Will create a instance of mapper based on the metadata and the target class;
@@ -97,7 +105,7 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> ResultSetMapperBuilder<T> newBuilder(final Class<T> target) {
-		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<>(target, reflectionService(target), aliases, customMappings);
+		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<T>(target, reflectionService(target), aliases, customMappings);
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
@@ -117,14 +125,14 @@ public final class JdbcMapperFactory {
 	
 	private ReflectionService reflectionService(Class<?> target) {
 		AsmFactory asmFactory = null;
-		if (AsmHelper.isAsmPresent()) {
+		if (AsmHelper.isAsmPresent() && !disableAsm) {
 			if (useBridgeClassLoader) {
 				asmFactory = new AsmFactory(new BridgeClassLoader(getClass().getClassLoader(), target.getClassLoader()));
 			} else {
 				asmFactory = _asmFactory;
 			}
 		}
-		return new ReflectionService(AsmHelper.isAsmPresent(), useAsm, asmFactory);
+		return new ReflectionService(AsmHelper.isAsmPresent() && !disableAsm, useAsm, asmFactory);
 	}
 
 	public void addAlias(String key, String value) {

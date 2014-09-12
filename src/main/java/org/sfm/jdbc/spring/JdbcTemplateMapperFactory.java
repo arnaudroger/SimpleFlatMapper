@@ -40,7 +40,7 @@ public final class JdbcTemplateMapperFactory {
 	}
 
 	public <T> JdbcTemplateMapper<T> newMapper(Class<T> target) {
-		return new JdbcTemplateMapper<>(jdbcMapperFactory.newMapper(target));
+		return new JdbcTemplateMapper<T>(jdbcMapperFactory.newMapper(target));
 	}
 	
 	public <T> PreparedStatementCallback<List<T>> newPreparedStatementCallback(Class<T> target)

@@ -30,7 +30,7 @@ public final class ConstructorDefinition<T> {
 	}
 	
 	public static <T> List<ConstructorDefinition<T>> extractConstructors(final Class<T> target) throws IOException {
-		final List<ConstructorDefinition<T>> constructors = new ArrayList<>();
+		final List<ConstructorDefinition<T>> constructors = new ArrayList<ConstructorDefinition<T>>();
 		
 		ClassLoader cl = target.getClassLoader();
 		if (cl == null) {
@@ -50,7 +50,7 @@ public final class ConstructorDefinition<T> {
                         String[] exceptions) {
 					if ("<init>".equals(name)) {
 						return new MethodVisitor(Opcodes.ASM5) {
-							final List<ConstructorParameter> parameters = new ArrayList<>();
+							final List<ConstructorParameter> parameters = new ArrayList<ConstructorParameter>();
 							Label firstLabel;
 							Label lastLabel;
 							@Override
@@ -80,7 +80,7 @@ public final class ConstructorDefinition<T> {
 							@Override
 							public void visitEnd() {
 								try {
-									constructors.add(new ConstructorDefinition<>(target.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new ConstructorParameter[parameters.size()])));
+									constructors.add(new ConstructorDefinition<T>(target.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new ConstructorParameter[parameters.size()])));
 								} catch(Exception e) {
 									throw new Error("Unexpected error " + e, e);
 								}

@@ -28,7 +28,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private final  MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private final Map<String, String> aliases;
-	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<>();
+	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();
 
 
 	public DynamicJdbcMapper(final Class<T> target, final ReflectionService reflectionService, 
@@ -85,7 +85,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 			
 			mapper = builder.mapper();
 			
-			addToMapperCache(new CacheEntry<>(key, mapper));
+			addToMapperCache(new CacheEntry<T>(key, mapper));
 		}
 		return mapper;
 	}

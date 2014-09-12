@@ -22,6 +22,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
 	
 	private final ReflectionService reflectService;
+	private final Class<T> target;
 
 	public ObjectClassMeta(Class<T> target, ReflectionService reflectService) throws MapperBuildingException {
 		this.reflectService = reflectService;
@@ -37,13 +38,14 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			this.constructorProperties = null;
 		}
 		this.properties = Collections.unmodifiableList(listProperties(reflectService, target));
+		this.target = target;
 	}
 	
 	private List<ConstructorPropertyMeta<T, ?>> listProperties(List<ConstructorDefinition<T>> constructorDefinitions) {
 		if (constructorDefinitions == null) return null;
 		
-		Set<String> properties = new HashSet<>();
-		List<ConstructorPropertyMeta<T, ?>> constructorProperties = new ArrayList<>();
+		Set<String> properties = new HashSet<String>();
+		List<ConstructorPropertyMeta<T, ?>> constructorProperties = new ArrayList<ConstructorPropertyMeta<T, ?>>();
 		for(ConstructorDefinition<T> cd : constructorDefinitions) {
 			for(ConstructorParameter param : cd.getParameters()) {
 				String paramName = param.getName();
@@ -57,7 +59,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	}
 
 	private List<PropertyMeta<T, ?>> listProperties(ReflectionService reflectService, Class<?> target) {
-		final List<PropertyMeta<T, ?>> properties = new ArrayList<>();
+		final List<PropertyMeta<T, ?>> properties = new ArrayList<PropertyMeta<T, ?>>();
 		final Set<String> propertiesSet = new HashSet<String>();
 		Class<?> currentClass = target;
 		
@@ -109,6 +111,10 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
 	@Override
 	public PropertyFinder<T> newPropertyFinder() {
-		return new ObjectPropertyFinder<>(this);
+		return new ObjectPropertyFinder<T>(this);
+	}
+
+	public Class<T> getTargetClass() {
+		return target;
 	}
 }

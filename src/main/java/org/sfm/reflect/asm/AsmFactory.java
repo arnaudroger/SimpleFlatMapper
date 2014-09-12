@@ -73,7 +73,7 @@ public class AsmFactory implements Opcodes {
 			final byte[] bytes = InstantiatorBuilder.createInstantiator(className, source, constructorDefinition, injections);
 			final Class<?> type = factoryClassLoader.registerClass(className, bytes);
 			
-			Map<String, Getter<S, ?>> getterPerName = new HashMap<>();
+			Map<String, Getter<S, ?>> getterPerName = new HashMap<String, Getter<S, ?>>();
 			for(Entry<ConstructorParameter, Getter<S, ?>> e : injections.entrySet()) {
 				getterPerName.put(e.getKey().getName(), e.getValue());
 			}

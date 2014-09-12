@@ -45,7 +45,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	
 	private final List<FieldMapper<ResultSet, T>> fields = new ArrayList<FieldMapper<ResultSet, T>>();
 	private final Map<ConstructorParameter, Getter<ResultSet, ?>> constructorInjections;
-	private final List<SubProperty<T>> subProperties = new ArrayList<>();
+	private final List<SubProperty<T>> subProperties = new ArrayList<SubProperty<T>>();
 	
 	private final Map<String, String> aliases;
 	private final Map<String, FieldMapper<ResultSet, ?>> customMappings;
@@ -219,7 +219,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Map<ConstructorParameter, Getter<ResultSet, ?>> constructorInjections() {
-		Map<ConstructorParameter, Getter<ResultSet, ?>> injections = new HashMap<>(constructorInjections);
+		Map<ConstructorParameter, Getter<ResultSet, ?>> injections = new HashMap<ConstructorParameter, Getter<ResultSet, ?>>(constructorInjections);
 		
 		for(SubProperty<T> subProp : subProperties) {
 			PropertyMeta<T, ?> prop = subProp.subProperty.getProperty();
@@ -228,7 +228,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 				
 				final JdbcMapper<T> mapper = (JdbcMapper<T>) builder.mapper();
 				
-				Getter<ResultSet, T> getter = new JdbcMapperGetterAdapter<>(mapper); 
+				Getter<ResultSet, T> getter = new JdbcMapperGetterAdapter<T>(mapper); 
 				
 				injections.put(((ConstructorPropertyMeta) prop).getConstructorParameter(), getter);
 			}
@@ -241,7 +241,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 	@Override
 	@SuppressWarnings("unchecked")
 	public final FieldMapper<ResultSet, T>[] fields() {
-		List<FieldMapper<ResultSet, T>> fields = new ArrayList<>(this.fields);
+		List<FieldMapper<ResultSet, T>> fields = new ArrayList<FieldMapper<ResultSet, T>>(this.fields);
 		
 		for(SubProperty<T> subProp : subProperties) {
 			PropertyMeta<T, ?> prop = subProp.subProperty.getProperty();
@@ -250,7 +250,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 				
 				JdbcMapper<T> mapper = (JdbcMapper<T>) subProp.mapperBuilder.mapper();
 				
-				Getter<ResultSet, T> getter = new JdbcMapperGetterAdapter<>(mapper);
+				Getter<ResultSet, T> getter = new JdbcMapperGetterAdapter<T>(mapper);
 				
 				fields.add(new FieldMapperImpl<ResultSet, T, Object>(prop.getName(), getter, setter, fieldMapperErrorHandler));
 			}
@@ -268,7 +268,7 @@ public final class ResultSetMapperBuilderImpl<T> implements ResultSetMapperBuild
 			}
  		}
 		
-		ResultSetMapperBuilderImpl<T> builder = new ResultSetMapperBuilderImpl<>(property.getType(), property.getClassMeta(), aliases, customMappings);
+		ResultSetMapperBuilderImpl<T> builder = new ResultSetMapperBuilderImpl<T>(property.getType(), property.getClassMeta(), aliases, customMappings);
 		SubProperty<T> subProp = new SubProperty<T>(builder, property);
 		
 		subProperties.add(subProp);

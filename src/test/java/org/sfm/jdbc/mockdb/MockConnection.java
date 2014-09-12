@@ -273,28 +273,23 @@ public class MockConnection implements Connection {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public void setSchema(String schema) throws SQLException {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public String getSchema() throws SQLException {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public void abort(Executor executor) throws SQLException {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public void setNetworkTimeout(Executor executor, int milliseconds)
 			throws SQLException {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public int getNetworkTimeout() throws SQLException {
 		throw new UnsupportedOperationException();
 	}

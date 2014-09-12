@@ -8,8 +8,7 @@ public class AsmHelper {
 
 	private static boolean _isAsmPresent() {
 		try {
-			Class.forName("org.objectweb.asm.Opcodes");
-			return true;
+			return !Class.forName("org.objectweb.asm.ClassVisitor").isInterface();
 		} catch(Exception e) {
 			return false;
 		}

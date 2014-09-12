@@ -22,7 +22,7 @@ public class SetterBuilder implements Opcodes {
 		String classType = toType(className);
 		
 		cw.visit(
-				V1_7,
+				V1_6,
 				ACC_PUBLIC + ACC_FINAL + ACC_SUPER,
 				classType,
 				"Ljava/lang/Object;Lorg/sfm/reflect/Setter<L" + targetType + ";L" + propertyType + ";>;",
@@ -103,7 +103,7 @@ public class SetterBuilder implements Opcodes {
 		
 		int primitiveLoadOp = AsmUtils.loadOps.get(primitive);
 		
-		cw.visit(V1_7, ACC_PUBLIC + ACC_FINAL  + ACC_SUPER,  classType, 
+		cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL  + ACC_SUPER,  classType, 
 				"Ljava/lang/Object;"
 				+ "Lorg/sfm/reflect/Setter<L" + targetType + ";L" + propertyType + ";>;"
 				+ "Lorg/sfm/reflect/primitive/" + methodSuffix + "Setter<L" + targetType + ";>;", 

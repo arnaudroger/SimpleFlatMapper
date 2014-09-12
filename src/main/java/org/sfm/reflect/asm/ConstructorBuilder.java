@@ -13,7 +13,7 @@ import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
 import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 import static org.objectweb.asm.Opcodes.NEW;
 import static org.objectweb.asm.Opcodes.RETURN;
-import static org.objectweb.asm.Opcodes.V1_7;
+import static org.objectweb.asm.Opcodes.V1_6;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -28,7 +28,7 @@ public class ConstructorBuilder {
 		String sourceType = AsmUtils.toType(sourceClass);
 		String classType = AsmUtils.toType(className);
 
-		cw.visit(V1_7, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType,
+		cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType,
 				"Ljava/lang/Object;Lorg/sfm/reflect/Instantiator<L"
 						+ targetType + ";>;", "java/lang/Object",
 				new String[] { "org/sfm/reflect/Instantiator" });

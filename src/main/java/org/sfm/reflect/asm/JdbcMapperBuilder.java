@@ -29,7 +29,7 @@ import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 import static org.objectweb.asm.Opcodes.NEW;
 import static org.objectweb.asm.Opcodes.PUTFIELD;
 import static org.objectweb.asm.Opcodes.RETURN;
-import static org.objectweb.asm.Opcodes.V1_7;
+import static org.objectweb.asm.Opcodes.V1_6;
 
 import java.sql.ResultSet;
 
@@ -53,7 +53,7 @@ public class JdbcMapperBuilder {
 		final String classType = AsmUtils.toType(className);
 		final Class<?> instantiatorClass = AsmUtils.getPublicOrInterfaceClass(instantiator.getClass());
 		final String instantiatorType = AsmUtils.toType(instantiatorClass);
-		cw.visit(V1_7, ACC_PUBLIC + ACC_SUPER + ACC_FINAL, classType, "Ljava/lang/Object;Lorg/sfm/jdbc/JdbcMapper<L" + targetType + ";>;", "java/lang/Object", new String[] { "org/sfm/jdbc/JdbcMapper" });
+		cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER + ACC_FINAL, classType, "Ljava/lang/Object;Lorg/sfm/jdbc/JdbcMapper<L" + targetType + ";>;", "java/lang/Object", new String[] { "org/sfm/jdbc/JdbcMapper" });
 
 
 		for(int i = 0; i < mappers.length; i++) {

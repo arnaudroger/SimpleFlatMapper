@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.Foo;
-import org.sfm.jdbc.mockdb.MockResultSet;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.InstantiationMappingException;
 import org.sfm.map.LogFieldMapperErrorHandler;
@@ -111,7 +110,11 @@ public class JdbcMapperErrorTest {
 					}
 				}, handler);
 		final Error error = new Error();
-		mapper.forEach(new MockResultSet(1), new RowHandler<DbObject>() {
+		
+		ResultSet rs = mock(ResultSet.class);
+		when(rs.next()).thenReturn(true, false);
+		
+		mapper.forEach(rs, new RowHandler<DbObject>() {
 
 			@Override
 			public void handle(DbObject t) throws Exception {

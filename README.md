@@ -29,7 +29,7 @@ Why?
 
 ### Performance
 
-Ibatis and hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [500%](#in-mem-hsqldb) for both. 
+Ibatis and hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [400%](#in-mem-hsqldb) for both. 
 Sfm is as fast as it can using asm generation. Even if you don't use asm it is still a lot faster. 
 
 ### API intrusiveness

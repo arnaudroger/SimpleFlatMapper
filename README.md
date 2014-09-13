@@ -202,6 +202,7 @@ We run a query n times that return 1,10,100 and 1000 row against the [SmallBench
 We capture the time it takes from the query execution to the end of the transformation of all the rows into an [HdrHistogram](https://github.com/HdrHistogram/HdrHistogram). 
 We capture from the query execution because some library don't give us control over that and the query exec time will be the same accross framework.
 
+Removed ibatis as I think I identified an issue in the benchmark.
 
 - SFM Static uses a predefined list of the columns
 - SFM Dynamic will use the ResultSetMetadata
@@ -215,30 +216,30 @@ Mock Connection
 
 |Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Sql2o|Hibernate|MyBatis|
 |------:|------:|-------:|-------:|------:|----:|----:|
-|1|10%|16%|48%|1031%|6103%|4163%|
-|10|8%|11%|200%|839%|3770%|7103%|
-|100|2%|2%|325%|738%|1443%|10444%|
-|1000|24%|59%|353%|706%|940%|11043%|
+|1|10%|16%|48%|1031%|6103%|NA|
+|10|8%|11%|200%|839%|3770%|NA|
+|100|2%|2%|325%|738%|1443%|NA|
+|1000|24%|59%|353%|706%|940%|NA|
 
 In mem HsqlDb
 -------
 
 |Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Sql2o|Hibernate|MyBatis|
 |------:|------:|-------:|-------:|------:|----:|----:|
-|1|-1%|12%|2%|60%|167%|146%|
-|10|4%|13%|8%|65%|231%|259%|
-|100|4%|11%|19%|69%|394%|597%|
-|1000|10%|16%|32%|77%|547%|829%|
+|1|-1%|12%|2%|60%|167%|NA|
+|10|4%|13%|8%|65%|231%|NA|
+|100|4%|11%|19%|69%|394%|NA|
+|1000|10%|16%|32%|77%|547%|NA|
 
 Local Mysql
 -------
 
 |Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Sql2o|Hibernate|MyBatis|
 |------:|------:|-------:|-------:|------:|----:|----:|
-|1|0%|2%|2%|9%|89%|127%|
-|10|1%|2%|2%|139%|90%|131%|
-|100|1%|1%|3%|11%|95%|75%|
-|1000|2%|1%|6%|26%|127%|198%|
+|1|0%|2%|2%|9%|89%|NA|
+|10|1%|2%|2%|139%|90%|NA|
+|100|1%|1%|3%|11%|95%|NA|
+|1000|2%|1%|6%|26%|127%|NA|
 
 
 Maven dependency

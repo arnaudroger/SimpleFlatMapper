@@ -202,44 +202,43 @@ We run a query n times that return 1,10,100 and 1000 row against the [SmallBench
 We capture the time it takes from the query execution to the end of the transformation of all the rows into an [HdrHistogram](https://github.com/HdrHistogram/HdrHistogram). 
 We capture from the query execution because some library don't give us control over that and the query exec time will be the same accross framework.
 
-Removed ibatis as I think I identified an issue in the benchmark.
-
 - SFM Static uses a predefined list of the columns
 - SFM Dynamic will use the ResultSetMetadata
 - SFM Dynamic NoASM will use the ResultSetMetadata but not use asm
 - [Sql2o 1.5.1](http://www.sql2o.org)
 - [Hibernate 4.3.6.Final](http://hibernate.org/)
 - [MyBatis 3.2.7](http://mybatis.github.io/mybatis-3/)
+- [Spring Roma](https://github.com/serkan-ozal/spring-jdbc-roma-impl)
 
 Mock Connection
 -------
 
-|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Sql2o|Hibernate|MyBatis|
-|------:|------:|-------:|-------:|------:|----:|----:|
-|1|10%|16%|48%|1031%|6103%|NA|
-|10|8%|11%|200%|839%|3770%|NA|
-|100|2%|2%|325%|738%|1443%|NA|
-|1000|24%|59%|353%|706%|940%|NA|
+|Nb Rows|StaticJdbcMapperBenchmark|DynamicJdbcMapperForEachBenchmark|DynamicNoAsmJdbcMapperForEachBenchmark|RomaBenchmark|Sql2OBenchmark|HibernateStatefullBenchmark|MyBatisBenchmark
+|------:|------:|------:|-------:|-------:|------:|----:|----:|
+|1|9%|18%|49%|4%|1009%|7561%|3457%|
+|10|12%|18%|186%|16%|989%|7265%|6363%|
+|100|3%|8%|318%|26%|1004%|7232%|10365%|
+|1000|24%|63%|344%|28%|1042%|6831%|9264%|
 
 In mem HsqlDb
 -------
 
-|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Sql2o|Hibernate|MyBatis|
-|------:|------:|-------:|-------:|------:|----:|----:|
-|1|-1%|12%|2%|60%|167%|NA|
-|10|4%|13%|8%|65%|231%|NA|
-|100|4%|11%|19%|69%|394%|NA|
-|1000|10%|16%|32%|77%|547%|NA|
+|Nb Rows|StaticJdbcMapperBenchmark|DynamicJdbcMapperForEachBenchmark|DynamicNoAsmJdbcMapperForEachBenchmark|RomaBenchmark|Sql2OBenchmark|HibernateStatefullBenchmark|MyBatisBenchmark
+|------:|------:|------:|-------:|-------:|------:|----:|----:|
+|1|4%|11%|3%|13%|49%|186%|105%|
+|10|5%|8%|8%|13%|50%|241%|207%|
+|100|8%|10%|19%|16%|65%|400%|531%|
+|1000|14%|14%|29%|22%|79%|524%|714%|
 
 Local Mysql
 -------
 
-|Nb Rows|SFM Static|SFM Dynamic|SFM Dynamic NoASM|Sql2o|Hibernate|MyBatis|
-|------:|------:|-------:|-------:|------:|----:|----:|
-|1|0%|2%|2%|9%|89%|NA|
-|10|1%|2%|2%|139%|90%|NA|
-|100|1%|1%|3%|11%|95%|NA|
-|1000|2%|1%|6%|26%|127%|NA|
+|Nb Rows|StaticJdbcMapperBenchmark|DynamicJdbcMapperForEachBenchmark|DynamicNoAsmJdbcMapperForEachBenchmark|RomaBenchmark|Sql2OBenchmark|HibernateStatefullBenchmark|MyBatisBenchmark
+|------:|------:|------:|-------:|-------:|------:|----:|----:|
+|1|0%|1%|1%|6%|12%|176%|123%|
+|10|0%|1%|2%|111%|137%|169%|125%|
+|100|1%|1%|2%|5%|12%|52%|72%|
+|1000|3%|1%|6%|8%|27%|116%|188%|
 
 
 Maven dependency

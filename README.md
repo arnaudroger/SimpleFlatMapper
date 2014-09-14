@@ -213,7 +213,7 @@ We capture from the query execution because some library don't give us control o
 Mock Connection
 -------
 
-|Nb Rows|StaticJdbcMapperBenchmark|DynamicJdbcMapperForEachBenchmark|DynamicNoAsmJdbcMapperForEachBenchmark|RomaBenchmark|Sql2OBenchmark|HibernateStatefullBenchmark|MyBatisBenchmark
+|NbRows|SFMStatic|SFMDyna|SFMNoASM|Roma|Sql2O|Hibernate|MyBatis|
 |------:|------:|------:|-------:|-------:|------:|----:|----:|
 |1|9%|18%|49%|4%|1009%|7561%|3457%|
 |10|12%|18%|186%|16%|989%|7265%|6363%|
@@ -223,7 +223,7 @@ Mock Connection
 In mem HsqlDb
 -------
 
-|Nb Rows|StaticJdbcMapperBenchmark|DynamicJdbcMapperForEachBenchmark|DynamicNoAsmJdbcMapperForEachBenchmark|RomaBenchmark|Sql2OBenchmark|HibernateStatefullBenchmark|MyBatisBenchmark
+|NbRows|SFMStatic|SFMDyna|SFMNoASM|Roma|Sql2O|Hibernate|MyBatis|
 |------:|------:|------:|-------:|-------:|------:|----:|----:|
 |1|4%|11%|3%|13%|49%|186%|105%|
 |10|5%|8%|8%|13%|50%|241%|207%|
@@ -233,7 +233,7 @@ In mem HsqlDb
 Local Mysql
 -------
 
-|Nb Rows|StaticJdbcMapperBenchmark|DynamicJdbcMapperForEachBenchmark|DynamicNoAsmJdbcMapperForEachBenchmark|RomaBenchmark|Sql2OBenchmark|HibernateStatefullBenchmark|MyBatisBenchmark
+|NbRows|SFMStatic|SFMDyna|SFMNoASM|Roma|Sql2O|Hibernate|MyBatis|
 |------:|------:|------:|-------:|-------:|------:|----:|----:|
 |1|0%|1%|1%|6%|12%|176%|123%|
 |10|0%|1%|2%|111%|137%|169%|125%|

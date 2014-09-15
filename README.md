@@ -30,7 +30,11 @@ Why?
 ### Performance
 
 Ibatis and hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [400%](#in-mem-hsqldb) for both. 
+
+BeanPropertyRowMapper is very slow.
+
 Sfm is as fast as it can using asm generation. Even if you don't use asm it is still a lot faster. 
+
 
 ### API intrusiveness
 
@@ -193,6 +197,7 @@ See [orm-benchmarks](https://github.com/arnaudroger/orm-benchmark) for more deta
 
 Some of the result that seem odd look to be linked to the optimizer, I'm trying to get all [JMH](http://openjdk.java.net/projects/code-tools/jmh/) to increase consitency.
 
+BeanPropertyRowMapper is not in the benchmark because it makes the benchmark run time to last more than an overnight run. I'll try to add to jmh as it uses a timebound benchmark.
 
 Mock Connection
 -------

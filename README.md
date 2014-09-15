@@ -27,7 +27,7 @@ What it does not do
 Why?
 -------
 
-[Mapping Landscape](/wiki/Mapping-Landscape)
+[Mapping Landscape](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Mapping-Landscape)
 
 ### Performance
 

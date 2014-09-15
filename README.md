@@ -189,9 +189,9 @@ select id,
 
 Performance
 ========
-See [src/test/benchmarks](/src/test/benchmarks) for more details.
+See [orm-benchmarks](https://github.com/arnaudroger/orm-benchmark) for more details.
 
-We run a query n times that return 1,10,100 and 1000 row against the [SmallBenchmarkObject](/src/test/java/org/sfm/beans/SmallBenchmarkObject.java) where n is
+We run a query n times that return 1,10,100 and 1000 row against the [SmallBenchmarkObject](https://github.com/arnaudroger/orm-benchmark/blob/master/src/main/java/org/sfm/beans/SmallBenchmarkObject.java) where n is
 
 |Test|NB|
 |------|------:|

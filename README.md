@@ -27,6 +27,8 @@ What it does not do
 Why?
 -------
 
+[Mapping Landscape](/wiki/Mapping-Landscape)
+
 ### Performance
 
 Ibatis and hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [400%](#in-mem-hsqldb) for both. 

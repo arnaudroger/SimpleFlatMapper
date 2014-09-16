@@ -5,13 +5,13 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.reflect.primitive.LongGetter;
 import org.sfm.reflect.primitive.LongSetter;
 
-public final class LongFieldMapper<S, T> extends AbstractFieldMapper<S, T> {
+public final class LongFieldMapper<S, T, K> extends AbstractFieldMapper<S, T, K> {
 
 	private final LongGetter<S> getter;
 	private final LongSetter<T> setter;
 	
- 	public LongFieldMapper(final String name, final LongGetter<S> getter, final LongSetter<T> setter, final FieldMapperErrorHandler errorHandler) {
- 		super(name, errorHandler);
+ 	public LongFieldMapper(final K key, final LongGetter<S> getter, final LongSetter<T> setter, final FieldMapperErrorHandler<K> errorHandler) {
+ 		super(key, errorHandler);
 		this.getter = getter;
 		this.setter = setter;
 	}

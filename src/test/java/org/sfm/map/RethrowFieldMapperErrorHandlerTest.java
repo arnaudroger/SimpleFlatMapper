@@ -10,7 +10,7 @@ public class RethrowFieldMapperErrorHandlerTest {
 
 	@Test
 	public void test() {
-		RethrowFieldMapperErrorHandler handler = new RethrowFieldMapperErrorHandler();
+		RethrowFieldMapperErrorHandler<String> handler = new RethrowFieldMapperErrorHandler<String>();
 		Exception error = new Exception();
 		try {
 			handler.errorMappingField("prop", this, this, error);

@@ -69,7 +69,7 @@ public class InstantiatorFactory {
 		return new StaticConstructorInstantiator<S, T>(constructor, args); 
 	}
 	
-	public <S, T> Instantiator<S, T> getInstantiator(final Class<S> source, List<ConstructorDefinition<T>> constructors, Map<ConstructorParameter, Getter<S, ?>> injections) throws NoSuchMethodException, SecurityException {
+	public <S, T> Instantiator<S, T> getInstantiator(final Class<?> source, List<ConstructorDefinition<T>> constructors, Map<ConstructorParameter, Getter<S, ?>> injections) throws NoSuchMethodException, SecurityException {
 		final ConstructorDefinition<T> constructorDefinition = getSmallerConstructor(constructors);
 		
 		Constructor<T> constructor = constructorDefinition.getConstructor();

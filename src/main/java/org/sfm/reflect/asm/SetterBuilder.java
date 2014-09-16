@@ -97,8 +97,13 @@ public class SetterBuilder implements Opcodes {
 			methodSuffix = "Int";
 		}
 		
+		String valueMethodPrefix = methodSuffix.toLowerCase();
+		if ("character".equals(valueMethodPrefix)) {
+			valueMethodPrefix = "char";
+		}
+		
 		String setMethod = "set" + methodSuffix;
-		String valueMethod = methodSuffix.toLowerCase() + "Value";
+		String valueMethod = valueMethodPrefix + "Value";
 
 		
 		int primitiveLoadOp = AsmUtils.loadOps.get(primitive);

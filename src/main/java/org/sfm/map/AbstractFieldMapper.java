@@ -1,12 +1,12 @@
 package org.sfm.map;
 
-public abstract class AbstractFieldMapper<S, T>  implements FieldMapper<S, T>  {
+public abstract class AbstractFieldMapper<S, T, K>  implements FieldMapper<S, T>  {
 
-	private final String name;
-	private final FieldMapperErrorHandler errorHandler;
+	private final K key;
+	private final FieldMapperErrorHandler<K> errorHandler;
 
-	public AbstractFieldMapper(final String name, final FieldMapperErrorHandler errorHandler) {
-		this.name = name;
+	public AbstractFieldMapper(final K key, final FieldMapperErrorHandler<K> errorHandler) {
+		this.key = key;
 		this.errorHandler = errorHandler;
 	}
 
@@ -15,7 +15,7 @@ public abstract class AbstractFieldMapper<S, T>  implements FieldMapper<S, T>  {
 		try {
 			mapUnsafe(source, target);
 		} catch(Exception ge) {
-			errorHandler.errorMappingField(name, source, target, ge);
+			errorHandler.errorMappingField(key, source, target, ge);
 		}
 	}
 	

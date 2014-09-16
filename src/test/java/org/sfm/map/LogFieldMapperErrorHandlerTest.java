@@ -7,7 +7,7 @@ public class LogFieldMapperErrorHandlerTest {
 
 	@Test
 	public void testErrorMappingField() {
-		LogFieldMapperErrorHandler handler = new LogFieldMapperErrorHandler();
+		LogFieldMapperErrorHandler<String> handler = new LogFieldMapperErrorHandler<String>();
 		handler.errorMappingField("prop", this, this, new Exception());
 	}
 

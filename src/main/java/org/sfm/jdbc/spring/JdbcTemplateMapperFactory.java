@@ -2,6 +2,7 @@ package org.sfm.jdbc.spring;
 
 import java.util.List;
 
+import org.sfm.jdbc.ColumnKey;
 import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
@@ -18,7 +19,7 @@ public final class JdbcTemplateMapperFactory {
 	
 	private final JdbcMapperFactory jdbcMapperFactory = new JdbcMapperFactory();
 
-	public JdbcTemplateMapperFactory fieldMapperErrorHandler(FieldMapperErrorHandler fieldMapperErrorHandler) {
+	public JdbcTemplateMapperFactory fieldMapperErrorHandler(FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler) {
 		jdbcMapperFactory.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		return this;
 	}

@@ -33,7 +33,7 @@ import org.sfm.reflect.TypeHelper;
 
 public class InstantiatorBuilder {
 
-	public static <S,T>  byte[] createInstantiator(final String className, final Class<S> sourceClass,
+	public static <S,T>  byte[] createInstantiator(final String className, final Class<?> sourceClass,
 			 final ConstructorDefinition<T> constructorDefinition,final Map<ConstructorParameter, Getter<S, ?>> injections) throws Exception {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;

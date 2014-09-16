@@ -5,13 +5,13 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.reflect.primitive.ByteGetter;
 import org.sfm.reflect.primitive.ByteSetter;
 
-public final class ByteFieldMapper<S, T> extends AbstractFieldMapper<S, T> {
+public final class ByteFieldMapper<S, T, K> extends AbstractFieldMapper<S, T, K> {
 
 	private final ByteGetter<S> getter;
 	private final ByteSetter<T> setter;
 	
- 	public ByteFieldMapper(final String name, final ByteGetter<S> getter, final ByteSetter<T> setter, final FieldMapperErrorHandler errorHandler) {
- 		super(name, errorHandler);
+ 	public ByteFieldMapper(final K key, final ByteGetter<S> getter, final ByteSetter<T> setter, final FieldMapperErrorHandler<K> errorHandler) {
+ 		super(key, errorHandler);
 		this.getter = getter;
 		this.setter = setter;
 	}

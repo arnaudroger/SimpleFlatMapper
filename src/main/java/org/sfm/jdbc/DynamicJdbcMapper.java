@@ -24,7 +24,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	@SuppressWarnings("unchecked")
 	private final AtomicReference<CacheEntry<T>[]> mapperCache = new AtomicReference<CacheEntry<T>[]>(new CacheEntry[0]);
 
-	private final FieldMapperErrorHandler fieldMapperErrorHandler;
+	private final FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler;
 
 	private final  MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private final Map<String, String> aliases;
@@ -32,7 +32,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 
 	public DynamicJdbcMapper(final Class<T> target, final ReflectionService reflectionService, 
-			final FieldMapperErrorHandler fieldMapperErrorHandler, 
+			final FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler, 
 			final MapperBuilderErrorHandler mapperBuilderErrorHandler, 
 			final Map<String, String> aliases, 
 			final Map<String, FieldMapper<ResultSet, ?>> customMappings) {

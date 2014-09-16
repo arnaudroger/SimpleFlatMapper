@@ -77,7 +77,7 @@ public class ResultSetMapperBuilderImplTest {
 
 					@Override
 					public <S, T> Instantiator<S, T> getInstantiator(
-							Class<S> source,
+							Class<?> source,
 							List<ConstructorDefinition<T>> constructors,
 							Map<ConstructorParameter, Getter<S, ?>> injections)
 							throws NoSuchMethodException, SecurityException {

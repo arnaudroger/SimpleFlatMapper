@@ -28,7 +28,7 @@ public final class JdbcMapperFactory {
 		return new JdbcMapperFactory();
 	}
 	
-	private FieldMapperErrorHandler fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler();
+	private FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<ColumnKey>();
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	private Map<String, String> aliases = new HashMap<String, String>();
 	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();
@@ -52,7 +52,7 @@ public final class JdbcMapperFactory {
 	 * @param fieldMapperErrorHandler 
 	 * @return the factory
 	 */
-	public JdbcMapperFactory fieldMapperErrorHandler(final FieldMapperErrorHandler fieldMapperErrorHandler) {
+	public JdbcMapperFactory fieldMapperErrorHandler(final FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler) {
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		return this;
 	}

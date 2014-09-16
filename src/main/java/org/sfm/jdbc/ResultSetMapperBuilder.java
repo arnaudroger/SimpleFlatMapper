@@ -5,11 +5,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import org.sfm.map.FieldMapper;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.MapperBuildingException;
 
-public interface ResultSetMapperBuilder<T> {
+public interface ResultSetMapperBuilder<T> extends MapperBuilder<ResultSet, T, ColumnKey, JdbcMapper<T>,  ResultSetMapperBuilder<T>> {
 
 	ResultSetMapperBuilder<T> addMapping(String property, String column, int sqlType);
 
@@ -32,13 +29,5 @@ public interface ResultSetMapperBuilder<T> {
 	ResultSetMapperBuilder<T> addMapper(FieldMapper<ResultSet, T> mapper);
 
 	ResultSetMapperBuilder<T> addMapping(ResultSetMetaData metaData) throws SQLException;
-	
-	ResultSetMapperBuilder<T> fieldMapperErrorHandler(FieldMapperErrorHandler errorHandler);
-
-	ResultSetMapperBuilder<T> mapperBuilderErrorHandler(MapperBuilderErrorHandler errorHandler);
-	
-	JdbcMapper<T> mapper() throws MapperBuildingException;
-
-	FieldMapper<ResultSet, T>[] fields();
 
 }

@@ -5,13 +5,13 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.reflect.primitive.FloatGetter;
 import org.sfm.reflect.primitive.FloatSetter;
 
-public final class FloatFieldMapper<S, T> extends AbstractFieldMapper<S, T> {
+public final class FloatFieldMapper<S, T, K> extends AbstractFieldMapper<S, T, K> {
 
 	private final FloatGetter<S> getter;
 	private final FloatSetter<T> setter;
 	
- 	public FloatFieldMapper(final String name, final FloatGetter<S> getter, final FloatSetter<T> setter, final FieldMapperErrorHandler errorHandler) {
- 		super(name, errorHandler);
+ 	public FloatFieldMapper(final K key, final FloatGetter<S> getter, final FloatSetter<T> setter, final FieldMapperErrorHandler<K> errorHandler) {
+ 		super(key, errorHandler);
 		this.getter = getter;
 		this.setter = setter;
 	}

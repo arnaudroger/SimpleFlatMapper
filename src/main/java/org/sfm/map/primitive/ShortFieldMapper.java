@@ -5,13 +5,13 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.reflect.primitive.ShortGetter;
 import org.sfm.reflect.primitive.ShortSetter;
 
-public final class ShortFieldMapper<S, T> extends AbstractFieldMapper<S, T> {
+public final class ShortFieldMapper<S, T, K> extends AbstractFieldMapper<S, T, K> {
 
 	private final ShortGetter<S> getter;
 	private final ShortSetter<T> setter;
 	
- 	public ShortFieldMapper(final String name, final ShortGetter<S> getter, final ShortSetter<T> setter, final FieldMapperErrorHandler errorHandler) {
- 		super(name, errorHandler);
+ 	public ShortFieldMapper(final K key, final ShortGetter<S> getter, final ShortSetter<T> setter, final FieldMapperErrorHandler<K> errorHandler) {
+ 		super(key, errorHandler);
 		this.getter = getter;
 		this.setter = setter;
 	}

@@ -12,12 +12,13 @@ public class FieldMapperTest {
 	@Test
 	public void testErrorHandlerOnGetterError() throws Exception {
 
-		FieldMapperErrorHandler errorHandler = mock(FieldMapperErrorHandler.class);
+		@SuppressWarnings("unchecked")
+		FieldMapperErrorHandler<String> errorHandler = mock(FieldMapperErrorHandler.class);
 		final Exception error = new Exception();
 		final Object source = new Object();
 		final Object target = new Object();
 		
-		FieldMapperImpl<Object, Object, Object> fieldMapper = new FieldMapperImpl<Object, Object, Object>(
+		FieldMapperImpl<Object, Object, Object, String> fieldMapper = new FieldMapperImpl<Object, Object, Object, String>(
 				"test", new Getter<Object, Object>() {
 
 					@Override
@@ -44,12 +45,13 @@ public class FieldMapperTest {
 	@Test
 	public void testErrorHandlerOnSetterError() throws Exception {
 
-		FieldMapperErrorHandler errorHandler = mock(FieldMapperErrorHandler.class);
+		@SuppressWarnings("unchecked")
+		FieldMapperErrorHandler<String> errorHandler = mock(FieldMapperErrorHandler.class);
 		final Exception error = new Exception();
 		final Object source = new Object();
 		final Object target = new Object();
 		
-		FieldMapperImpl<Object, Object, Object> fieldMapper = new FieldMapperImpl<Object, Object, Object>(
+		FieldMapperImpl<Object, Object, Object, String> fieldMapper = new FieldMapperImpl<Object, Object, Object, String>(
 				"test", new Getter<Object, Object>() {
 
 					@Override

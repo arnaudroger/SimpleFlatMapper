@@ -21,27 +21,15 @@ public final class TupleGetterFactory implements GetterFactory<Tuple, TupleEleme
 			Class<?> columnType = key.getExpression().getType();
 			
 			if (Number.class.isAssignableFrom(columnType)) {
-				if (key.hasIndex()) {
-					return new EnumTupleOrdinalIndexedGetter(key, propretyClass);
-				} else {
-					return new EnumTupleOrdinalGetter(key.getExpression(), propretyClass);
-				}
+				return new EnumTupleOrdinalIndexedGetter(key, propretyClass);
 			} else if (String.class.equals(columnType)){
-				if (key.hasIndex()) {
-					return new EnumTupleNamedIndexedGetter(key, propretyClass);
-				} else {
-					return new EnumTupleNamedGetter(key.getExpression(), propretyClass);
-				}
+				return new EnumTupleNamedIndexedGetter(key, propretyClass);
 			} else {
 				return null;
 			}
  			
 		}
 		
-		if (key.hasIndex()) {
-			return new TupleIndexedGetter<P>((TupleElementKey<P>) key);
-		} else {
-			return new TupleGetter<P>((Expression<P>) key.getExpression());
-		}
+		return new TupleIndexedGetter<P>((TupleElementKey<P>) key);
 	}
 }

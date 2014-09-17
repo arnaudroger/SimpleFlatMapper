@@ -60,11 +60,4 @@ public final class QueryDslMapperBuilderImpl<T>
 		addMapping(propertyName, new TupleElementKey<E>(expr, i));
 		return this;
 	}
-	
-	@Override
-	public <E> QueryDslMapperBuilder<T> addMapping(Expression<E> expr) {
-		return addMapping(expr, -1);
-	}
-
-
 }

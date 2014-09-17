@@ -104,8 +104,8 @@ public final class ResultSetMapperBuilderImpl<T> extends AbstractMapperBuilderIm
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	protected FieldMapper<ResultSet, T> getCustomMapper(final ColumnKey columnInformation) {
-		return customMappings != null ? (FieldMapper<ResultSet, T>) customMappings.get(columnInformation.getColumnName().toUpperCase()) : null;
+	protected FieldMapper<ResultSet, T> getCustomMapper(final ColumnKey columnKey) {
+		return customMappings != null ? (FieldMapper<ResultSet, T>) customMappings.get(columnKey.getColumnName().toUpperCase()) : null;
 	}
 	@Override
 	public JdbcMapper<T> mapper() {

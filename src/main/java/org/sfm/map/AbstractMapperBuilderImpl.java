@@ -68,8 +68,8 @@ public abstract class AbstractMapperBuilderImpl<S, T, K, M extends Mapper<S, T>,
 	}
 
 	@SuppressWarnings("unchecked")
-	public final B addMapping(final String propertyName, final K columnInformation) {
-		FieldMapper<S, T> fieldMapper = getCustomMapper(columnInformation);
+	public final B addMapping(final String propertyName, final K columnKey) {
+		FieldMapper<S, T> fieldMapper = getCustomMapper(columnKey);
 		if (fieldMapper != null) {
 			fields.add(fieldMapper);
 		} else {
@@ -77,13 +77,13 @@ public abstract class AbstractMapperBuilderImpl<S, T, K, M extends Mapper<S, T>,
 			if (property == null) {
 					mapperBuilderErrorHandler.setterNotFound(target, propertyName);
 			} else {
-				addMapping(property, columnInformation);
+				addMapping(property, columnKey);
 			}
 		}
 		return (B) this;
 	}
 
-	protected FieldMapper<S, T> getCustomMapper(K columnInformation) {
+	protected FieldMapper<S, T> getCustomMapper(K columnKey) {
 		return null;
 	}
 

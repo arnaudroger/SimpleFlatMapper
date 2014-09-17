@@ -2,6 +2,7 @@ package org.sfm.jdbc.getter;
 
 import java.sql.ResultSet;
 
+import org.sfm.reflect.EnumHelper;
 import org.sfm.reflect.Getter;
 
 public final class OrdinalEnumNamedResultSetGetter<E extends Enum<E>> implements  Getter<ResultSet, E> {

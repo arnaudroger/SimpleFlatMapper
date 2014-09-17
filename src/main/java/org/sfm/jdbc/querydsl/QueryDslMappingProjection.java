@@ -12,9 +12,13 @@ public class QueryDslMappingProjection<T> extends MappingProjection<T> {
 	 */
 	private static final long serialVersionUID = -9015755919878465141L;
 	private final Mapper<Tuple, T> mapper;
-	public QueryDslMappingProjection(Class<? super T> type, Expression<?>... args) {
+	public QueryDslMappingProjection(Class<T> type, Expression<?>... args) {
 		super(type, args);
-		mapper = null;
+		QueryDslMapperBuilder<T> builder =new QueryDslMapperBuilderImpl<T>(type);
+		for(int i = 0; i < args.length; i++) {
+			builder.addMapping(args[i], i);
+		}
+		mapper = builder.mapper();
 	}
 
 

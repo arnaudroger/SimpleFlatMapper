@@ -7,18 +7,19 @@ import java.util.Set;
 public class InstantiatorKey {
 	private final Constructor<?> constructor;
 	private final String[] injectedParams;
+	private final Class<?> source;
 	
-	public InstantiatorKey(Constructor<?> constructor, String[] injectedParams) {
+	public InstantiatorKey(Constructor<?> constructor, String[] injectedParams,  Class<?> source) {
 		super();
 		this.constructor = constructor;
 		this.injectedParams = injectedParams;
+		this.source = source;
 	}
-	public InstantiatorKey(Class<?> target) throws NoSuchMethodException, SecurityException {
-		this(target.getConstructor(), null);
+	public InstantiatorKey(Class<?> target, Class<?> source) throws NoSuchMethodException, SecurityException {
+		this(target.getConstructor(), null, source);
 	}
-	public InstantiatorKey(ConstructorDefinition<?> constructorDefinition,
-			Set<ConstructorParameter>  injections) {
-		this(constructorDefinition.getConstructor(), toParamNameS(injections));
+	public InstantiatorKey(ConstructorDefinition<?> constructorDefinition,	Set<ConstructorParameter>  injections, Class<?> source) {
+		this(constructorDefinition.getConstructor(), toParamNameS(injections), source);
 	}
 	private static String[] toParamNameS(Set<ConstructorParameter> keySet) {
 		String[] names = new String[keySet.size()];
@@ -36,6 +37,7 @@ public class InstantiatorKey {
 		result = prime * result
 				+ ((constructor == null) ? 0 : constructor.hashCode());
 		result = prime * result + Arrays.hashCode(injectedParams);
+		result = prime * result + ((source == null) ? 0 : source.hashCode());
 		return result;
 	}
 	@Override
@@ -54,6 +56,11 @@ public class InstantiatorKey {
 			return false;
 		if (!Arrays.equals(injectedParams, other.injectedParams))
 			return false;
+		if (source == null) {
+			if (other.source != null)
+				return false;
+		} else if (!source.equals(other.source))
+			return false;
 		return true;
 	}
 	public Constructor<?> getConstructor() {
@@ -62,6 +69,7 @@ public class InstantiatorKey {
 	public String[] getInjectedParams() {
 		return injectedParams;
 	}
-	
-	
+	public Class<?> getSource() {
+		return source;
+	}
 }

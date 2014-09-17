@@ -19,7 +19,6 @@ import static org.objectweb.asm.Opcodes.PUTFIELD;
 import static org.objectweb.asm.Opcodes.RETURN;
 import static org.objectweb.asm.Opcodes.V1_6;
 
-import java.sql.ResultSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -58,7 +57,7 @@ public class InstantiatorBuilder {
 
 		{
 			
-			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/util/Map;)V", "(Ljava/util/Map<Ljava.lang.String;Lorg/sfm/reflect/Getter<Ljava/sql/ResultSet;*>;>;)V", null);
+			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/util/Map;)V", "(Ljava/util/Map<Ljava.lang.String;Lorg/sfm/reflect/Getter<L" +  sourceType + ";*>;>;)V", null);
 			mv.visitCode();
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
@@ -127,13 +126,13 @@ public class InstantiatorBuilder {
  						if ("Integer".equals(methodSuffix)) {
  							methodSuffix = "Int";
  						}
- 						AsmUtils.invoke(mv, getterPublicType, "get" + methodSuffix, "(Ljava/sql/ResultSet;)" +propertyType);
+ 						AsmUtils.invoke(mv, getterPublicType, "get" + methodSuffix, "(L" +  sourceType + ";)" +propertyType);
  					} else {
  						if (AsmUtils.isStillGeneric(getter.getClass())) {
  	 						AsmUtils.invoke(mv, getterPublicType, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
  							mv.visitTypeInsn(CHECKCAST, propertyType);
  						} else {
- 	 						AsmUtils.invoke(mv, getterPublicType, "get", "(Ljava/sql/ResultSet;)L"+ AsmUtils.toType(getter.getClass().getMethod("get", ResultSet.class).getReturnType()) + ";");
+ 	 						AsmUtils.invoke(mv, getterPublicType, "get", "(L" +  sourceType + ";)L"+ AsmUtils.toType(getter.getClass().getMethod("get", sourceClass).getReturnType()) + ";");
  						}
  					}
  					

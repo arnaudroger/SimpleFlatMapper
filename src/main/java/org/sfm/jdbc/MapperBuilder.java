@@ -13,5 +13,5 @@ public interface MapperBuilder<S, T, K, M extends Mapper<S, T>, B extends Mapper
 	M mapper() throws MapperBuildingException;
 	FieldMapper<S, T>[] fields();
 	B addMapping(String property, K key);
-	void addMapping(PropertyMeta<T, ?> property, K key);
+	B addMapping(PropertyMeta<T, ?> property, K key);
 }

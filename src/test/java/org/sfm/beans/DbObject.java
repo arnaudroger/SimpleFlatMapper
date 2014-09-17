@@ -51,5 +51,11 @@ public class DbObject {
 	public void setTypeName(Type typeName) {
 		this.typeName = typeName;
 	}
+	@Override
+	public String toString() {
+		return "DbObject [id=" + id + ", name=" + name + ", email=" + email
+				+ ", creationTime=" + creationTime + ", typeOrdinal="
+				+ typeOrdinal + ", typeName=" + typeName + "]";
+	}
 	
 }

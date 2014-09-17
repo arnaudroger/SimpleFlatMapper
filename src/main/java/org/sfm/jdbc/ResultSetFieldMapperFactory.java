@@ -133,18 +133,16 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 	@Override
 	public <T, P> FieldMapper<ResultSet, T> newFieldMapper(Setter<T, P> setter,
 			ColumnKey key, FieldMapperErrorHandler<ColumnKey> errorHandler, MapperBuilderErrorHandler mappingErrorHandler) {
-		
 		final Class<?> type = TypeHelper.toClass(setter.getPropertyType());
 
-		
 		if (type.isPrimitive()) {
 			if (key.hasColumnIndex()) {
-				primitiveIndexedFieldMapper(setter, key, errorHandler);
+				return primitiveIndexedFieldMapper(setter, key, errorHandler);
 			} else {
-				primitiveNamedFieldMapper(setter, key, errorHandler);
+				return primitiveNamedFieldMapper(setter, key, errorHandler);
 			}
-			
 		}
+		
 		Getter<ResultSet, P> getter = getterFactory.newGetter(type, key);
 		if (getter == null) {
 			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + type);

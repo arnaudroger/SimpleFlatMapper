@@ -1,4 +1,4 @@
-package org.sfm.jdbc.getter;
+package org.sfm.reflect;
 
 public class EnumHelper {
 

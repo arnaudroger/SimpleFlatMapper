@@ -173,10 +173,14 @@ public abstract class AbstractMapperBuilderImpl<S, T, K, M extends Mapper<S, T>,
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void addMapping(PropertyMeta<T, ?> property, K key) {
+	public B addMapping(PropertyMeta<T, ?> property, K key) {
 		if (property instanceof ConstructorPropertyMeta) {
 			ConstructorParameter constructorParameter = ((ConstructorPropertyMeta) property).getConstructorParameter();
-			constructorInjections.put(constructorParameter, getterFactory.newGetter(constructorParameter.getType(), key));
+			Getter<S, Object> getter = getterFactory.newGetter(constructorParameter.getType(), key);
+			if (getter == null) {
+				mapperBuilderErrorHandler.getterNotFound("Could not find getter for " + key + " type " + constructorParameter.getType());
+			}
+			constructorInjections.put(constructorParameter, getter);
 		} else if (property instanceof SubPropertyMeta) {
 			SubProperty<S, T, K> subProp = getOrAddSubPropertyMapperBuilder((SubPropertyMeta)property);
 			MapperBuilder<S, T, K, ?, ?> mapperBuilder = subProp.getMapperBuilder();
@@ -184,6 +188,7 @@ public abstract class AbstractMapperBuilderImpl<S, T, K, M extends Mapper<S, T>,
 		} else {
 			fields.add(fieldMapperFactory.newFieldMapper(property.getSetter(), key, fieldMapperErrorHandler, mapperBuilderErrorHandler));
 		}
+		return (B) this;
 	}
 
 	@SuppressWarnings("unchecked")

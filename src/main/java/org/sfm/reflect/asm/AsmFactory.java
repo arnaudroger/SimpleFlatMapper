@@ -52,7 +52,7 @@ public class AsmFactory implements Opcodes {
 	
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> createEmptyArgsInstatiantor(final Class<S> source, final Class<? extends T> target) throws Exception {
-		InstantiatorKey instantiatorKey = new InstantiatorKey(target);
+		InstantiatorKey instantiatorKey = new InstantiatorKey(target, source);
 		Instantiator<S, T> instantiator = (Instantiator<S, T>) instantiators.get(instantiatorKey);
 		if (instantiator == null) {
 			final String className = generateInstantiatorClassName(instantiatorKey);
@@ -66,7 +66,7 @@ public class AsmFactory implements Opcodes {
 	
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> createInstatiantor(final Class<?> source, final ConstructorDefinition<T> constructorDefinition,final Map<ConstructorParameter, Getter<S, ?>> injections) throws Exception {
-		InstantiatorKey instantiatorKey = new InstantiatorKey(constructorDefinition, injections.keySet());
+		InstantiatorKey instantiatorKey = new InstantiatorKey(constructorDefinition, injections.keySet(), source);
 		Instantiator<S, T> instantiator = (Instantiator<S, T>) instantiators.get(instantiatorKey);
 		if (instantiator == null) {
 			final String className = generateInstantiatorClassName(instantiatorKey);
@@ -106,6 +106,7 @@ public class AsmFactory implements Opcodes {
 				sb.append(str.substring(0, Math.min(str.length(), 3)));
 			}
 		}
+		sb.append(key.getSource().getSimpleName());
 		sb.append(Long.toHexString(classNumber.getAndIncrement()));
 		return sb.toString();
 	}

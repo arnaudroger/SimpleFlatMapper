@@ -6,7 +6,11 @@ SimpleFlatMapper
 Fast and Easy mapping from database to POJO. 
 A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 
-Compatible with Java 6, 7 and 8. [Lambda Ready](#jdbcmapper) and easy to integrate with [Spring JdbcTemplate](#jdbctemplate). It is also [Osgi](#osgisupport) ready.
+- Compatible with Java 6, 7 and 8. 
+- [Lambda Ready](#jdbcmapper).
+- easy to integrate with [Spring JdbcTemplate](#jdbctemplate). 
+- [Osgi](#osgisupport) ready.
+- QueryDSl Jdbc support
 
 Design
 ========

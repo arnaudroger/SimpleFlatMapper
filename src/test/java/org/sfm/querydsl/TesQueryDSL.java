@@ -1,16 +1,17 @@
 package org.sfm.querydsl;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.DbHelper;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.jdbc.query.QueryDslJdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import com.mysema.query.Tuple;
+import com.mysema.query.sql.HSQLDBTemplates;
 import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.SQLQueryImpl;
 import com.mysema.query.types.MappingProjection;
 
 public class TesQueryDSL {
@@ -18,13 +19,16 @@ public class TesQueryDSL {
 	
 	public List<DbObject> getProductListByCategory()
 	        throws DataAccessException, SQLException {
-
-		QueryDslJdbcTemplate template = new QueryDslJdbcTemplate(new SingleConnectionDataSource(DbHelper.objectDb(), true));
 		
-	    SQLQuery sqlQuery = template.newSqlQuery().from(qTestDbObject)
-	            .where(qTestDbObject.id.eq(1l));
-
-	    return template.query(sqlQuery, new MappingProductProjection(qTestDbObject));
+		SQLQuery sqlquery = new SQLQueryImpl(new HSQLDBTemplates());
+		
+		Connection conn = DbHelper.objectDb();
+		
+		try {
+			return sqlquery.from(qTestDbObject).where(qTestDbObject.id.eq(1l)).clone(conn).list(new MappingProductProjection(qTestDbObject));
+		} finally {
+			conn.close();
+		}
 	}
 
 	private class MappingProductProjection extends MappingProjection<DbObject> {

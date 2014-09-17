@@ -1,9 +1,14 @@
 package org.sfm.jdbc;
+import static org.junit.Assert.*;
+
+import java.sql.ResultSet;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.RethrowMapperBuilderErrorHandler;
+import org.sfm.map.primitive.LongFieldMapper;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 
@@ -14,11 +19,17 @@ public class ResultSetFieldMapperFactoryTest {
 	private FieldMapperErrorHandler<ColumnKey> errorHandler;
 
 	@Test
-	public void testPrimitiveFieldMapperWrontType() {
-		Setter<DbObject, String> setter = setterFactory.getFieldSetter(DbObject.class, "name");
+	public void testPrimitiveField() {
+		Setter<DbObject, Integer> setter = setterFactory.getFieldSetter(DbObject.class, "id");
 		
-		factory.newFieldMapper(setter, new ColumnKey("id", 1), errorHandler, new RethrowMapperBuilderErrorHandler());
-		factory.newFieldMapper(setter, new ColumnKey("col1"), errorHandler, new RethrowMapperBuilderErrorHandler());
+		
+		FieldMapper<ResultSet, DbObject> fieldMapper = factory.newFieldMapper(setter, new ColumnKey("id", 1), errorHandler, new RethrowMapperBuilderErrorHandler());
+		
+		assertTrue(fieldMapper instanceof LongFieldMapper);
+
+		fieldMapper = factory.newFieldMapper(setter, new ColumnKey("id"), errorHandler, new RethrowMapperBuilderErrorHandler());
+		assertTrue(fieldMapper instanceof LongFieldMapper);
+
 	}
 
 

@@ -10,7 +10,7 @@ A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 - [Lambda Ready](#jdbcmapper).
 - easy to integrate with [Spring JdbcTemplate](#jdbctemplate). 
 - [Osgi](#osgisupport) ready.
-- [QueryDSL Jdbc support](#querydsljdbc)
+- [QueryDSL Jdbc support](#querydsl-jdbc)
 
 Design
 ========

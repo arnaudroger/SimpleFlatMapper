@@ -9,6 +9,8 @@ import java.util.Map;
 import org.sfm.map.AbstractMapperBuilderImpl;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MapperBuildingException;
+import org.sfm.map.RethrowRowHandlerErrorHandler;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 
@@ -17,7 +19,7 @@ public final class ResultSetMapperBuilderImpl<T> extends AbstractMapperBuilderIm
 	private final Map<String, String> aliases;
 	private int columnIndex = 1;
 	protected final Map<String, FieldMapper<ResultSet, ?>> customMappings;
-	private JdbcMapperErrorHandler jdbcMapperErrorHandler = new RethrowJdbcMapperErrorHandler();
+	private RowHandlerErrorHandler jdbcMapperErrorHandler = new RethrowRowHandlerErrorHandler();
 
 	public ResultSetMapperBuilderImpl(final Type target) throws MapperBuildingException {
 		this(target, new ReflectionService());

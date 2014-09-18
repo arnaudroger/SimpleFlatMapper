@@ -1,4 +1,4 @@
-package org.sfm.text;
+package org.sfm.csv.parser;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,6 +10,9 @@ import java.io.StringReader;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sfm.csv.parser.BytesCellHandler;
+import org.sfm.csv.parser.CharsCellHandler;
+import org.sfm.csv.parser.CsvParser;
 
 public class CsvParserPerfTest {
 
@@ -29,7 +32,10 @@ public class CsvParserPerfTest {
 			c++;
 		}
 		@Override
-		public void newRow() {
+		public void endOfRow() {
+		}
+		@Override
+		public void end() {
 		}
 	}
 

@@ -9,8 +9,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.objectweb.asm.Opcodes;
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.jdbc.JdbcMapperErrorHandler;
 import org.sfm.map.FieldMapper;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.Setter;
@@ -85,7 +85,7 @@ public class AsmFactory implements Opcodes {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target, JdbcMapperErrorHandler errorHandler) throws Exception {
+	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target, RowHandlerErrorHandler errorHandler) throws Exception {
 		final String className = generateClassName(mappers, ResultSet.class, target);
 		final byte[] bytes = JdbcMapperBuilder.dump(className, mappers, instantiator, target);
 		final Class<?> type = factoryClassLoader.registerClass(className, bytes);

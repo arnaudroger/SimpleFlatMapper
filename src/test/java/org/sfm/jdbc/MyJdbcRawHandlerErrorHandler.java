@@ -1,6 +1,8 @@
 package org.sfm.jdbc;
 
-public class MyJdbcMapperErrorHandler implements JdbcMapperErrorHandler {
+import org.sfm.map.RowHandlerErrorHandler;
+
+public class MyJdbcRawHandlerErrorHandler implements RowHandlerErrorHandler {
 
 	public Throwable error;
 

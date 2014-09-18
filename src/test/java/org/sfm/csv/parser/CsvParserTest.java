@@ -1,4 +1,4 @@
-package org.sfm.text;
+package org.sfm.csv.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -10,6 +10,9 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import org.junit.Test;
+import org.sfm.csv.parser.BytesCellHandler;
+import org.sfm.csv.parser.CharsCellHandler;
+import org.sfm.csv.parser.CsvParser;
 
 public class CsvParserTest {
 
@@ -25,9 +28,12 @@ public class CsvParserTest {
 				css[row][col++] = value;
 			}
 			@Override
-			public void newRow() {
+			public void endOfRow() {
 				row++;
 				col = 0;
+			}
+			@Override
+			public void end() {
 			}
 		});
 		assertEquals("cell1", css[0][0].toString());
@@ -52,9 +58,13 @@ public class CsvParserTest {
 			}
 			
 			@Override
-			public void newRow() {
+			public void endOfRow() {
 				row++;
 				col = 0;
+			}
+
+			@Override
+			public void end() {
 			}
 		});
 		assertEquals("cell1", css[0][0].toString());

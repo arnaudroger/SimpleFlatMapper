@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.ColumnKey;
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.jdbc.JdbcMapperErrorHandler;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperImpl;
 import org.sfm.map.InstantiationMappingException;
 import org.sfm.map.MappingException;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.primitive.IntFieldMapper;
 import org.sfm.map.primitive.LongFieldMapper;
 import org.sfm.reflect.Instantiator;
@@ -25,10 +25,10 @@ public final class AsmMapper implements JdbcMapper<DbObject>{
 	
 	private final Instantiator<ResultSet, DbObject> instantiator;
 	
-	private final JdbcMapperErrorHandler errorHandler;
+	private final RowHandlerErrorHandler errorHandler;
 
 	@SuppressWarnings("unchecked")
-	public AsmMapper(FieldMapper<ResultSet, DbObject>[] mappers, Instantiator<ResultSet, DbObject> instantiator, JdbcMapperErrorHandler errorHandler) {
+	public AsmMapper(FieldMapper<ResultSet, DbObject>[] mappers, Instantiator<ResultSet, DbObject> instantiator, RowHandlerErrorHandler errorHandler) {
 		mapper1 = (LongFieldMapper<ResultSet, DbObject, ColumnKey>) mappers[0];
 		mapper2 = (IntFieldMapper<ResultSet, DbObject, ColumnKey>) mappers[2];
 		mapper3 = (FieldMapperImpl<ResultSet, DbObject, ?, ColumnKey>) mappers[3];

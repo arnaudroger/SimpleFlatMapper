@@ -1,4 +1,4 @@
-package org.sfm.text;
+package org.sfm.csv.parser;
 
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;

@@ -1,6 +1,7 @@
-package org.sfm.text;
+package org.sfm.csv.parser;
 
 public interface BytesCellHandler {
-	void newRow();
+	void endOfRow();
 	void newCell(byte[] bytes, int offset, int length);
+	void end();
 }

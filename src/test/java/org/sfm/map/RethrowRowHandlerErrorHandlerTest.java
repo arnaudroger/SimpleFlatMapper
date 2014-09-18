@@ -1,14 +1,16 @@
-package org.sfm.jdbc;
+package org.sfm.map;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.sfm.jdbc.HandlerErrorException;
+import org.sfm.map.RethrowRowHandlerErrorHandler;
 
-public class RethrowJdbcMapperErrorHandlerTest {
+public class RethrowRowHandlerErrorHandlerTest {
 
 	@Test
 	public void testHandlerError() {
-		RethrowJdbcMapperErrorHandler handler = new RethrowJdbcMapperErrorHandler();
+		RethrowRowHandlerErrorHandler handler = new RethrowRowHandlerErrorHandler();
 		
 		Exception error = new Exception();
 		try {

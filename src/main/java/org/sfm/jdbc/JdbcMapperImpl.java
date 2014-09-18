@@ -6,15 +6,16 @@ import java.sql.SQLException;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MapperImpl;
 import org.sfm.map.MappingException;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
 
 public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements JdbcMapper<T> {
 
 	
-	private final JdbcMapperErrorHandler errorHandler; 
+	private final RowHandlerErrorHandler errorHandler; 
 	
-	public JdbcMapperImpl(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<ResultSet, T> instantiator, final JdbcMapperErrorHandler errorHandler) {
+	public JdbcMapperImpl(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<ResultSet, T> instantiator, final RowHandlerErrorHandler errorHandler) {
 		super(mappers, instantiator);
 		this.errorHandler = errorHandler;
 	}

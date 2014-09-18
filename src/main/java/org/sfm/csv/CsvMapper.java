@@ -1,4 +1,4 @@
-package org.sfm.text;
+package org.sfm.csv;
 
 import java.io.InputStream;
 

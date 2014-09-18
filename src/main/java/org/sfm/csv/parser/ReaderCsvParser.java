@@ -1,4 +1,4 @@
-package org.sfm.text;
+package org.sfm.csv.parser;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -35,6 +35,8 @@ public final class ReaderCsvParser {
 		if (bufferOffset > 0 || c == ',' ) {
 			handler.newCell(buffer, 0, bufferOffset);
 		}
+		
+		handler.end();
 	}
 
 
@@ -74,7 +76,7 @@ public final class ReaderCsvParser {
 				handler.newCell(buffer, currentStart, i - currentStart);
 				currentStart = i  + 1;
 				currentState = CsvParserState.NONE;
-				handler.newRow();
+				handler.endOfRow();
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-package org.sfm.text;
+package org.sfm.csv.parser;
 
 import java.io.IOException;
 import java.io.InputStream;

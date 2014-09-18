@@ -15,6 +15,7 @@ import org.sfm.map.InstantiationMappingException;
 import org.sfm.map.LogFieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
+import org.sfm.map.RethrowRowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
 
@@ -88,7 +89,7 @@ public class JdbcMapperErrorTest {
 					public DbObject newInstance(ResultSet s) throws Exception {
 						throw new UnsupportedOperationException();
 					}
-				}, new RethrowJdbcMapperErrorHandler());
+				}, new RethrowRowHandlerErrorHandler());
 		
 		try {
 			mapper.map(null);
@@ -100,7 +101,7 @@ public class JdbcMapperErrorTest {
 	@Test
 	public void testInstantiatorHandlerError() throws MappingException, SQLException {
 		
-		MyJdbcMapperErrorHandler handler = new MyJdbcMapperErrorHandler();
+		MyJdbcRawHandlerErrorHandler handler = new MyJdbcRawHandlerErrorHandler();
 		@SuppressWarnings("unchecked")
 		FieldMapper<ResultSet, DbObject>[] fields = new FieldMapper[] {};
 		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<DbObject>(fields,

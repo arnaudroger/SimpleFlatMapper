@@ -11,6 +11,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.MappingException;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorFactory;
@@ -50,7 +51,7 @@ public class ResultSetMapperBuilderImplTest {
 					public <T> JdbcMapper<T> createJdbcMapper(
 							FieldMapper<ResultSet, T>[] mappers,
 							Instantiator<ResultSet, T> instantiator,
-							Class<T> target, JdbcMapperErrorHandler errorHandler)
+							Class<T> target, RowHandlerErrorHandler errorHandler)
 							throws Exception {
 						throw new UnsupportedOperationException();
 					}

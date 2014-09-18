@@ -16,13 +16,13 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.jdbc.RethrowJdbcMapperErrorHandler;
 import org.sfm.jdbc.getter.LongIndexedResultSetGetter;
 import org.sfm.jdbc.getter.OrdinalEnumIndexedResultSetGetter;
 import org.sfm.jdbc.getter.StringIndexedResultSetGetter;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.InstantiationMappingException;
 import org.sfm.map.MappingException;
+import org.sfm.map.RethrowRowHandlerErrorHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 
@@ -116,7 +116,7 @@ public class AsmFactoryTest {
 						throw new UnexpectedException("Error");
 					}
 				}, 
-				DbObject.class, new RethrowJdbcMapperErrorHandler());
+				DbObject.class, new RethrowRowHandlerErrorHandler());
 		
 		try {
 			jdbcMapper.map(null);
@@ -144,7 +144,7 @@ public class AsmFactoryTest {
 						return new DbObject();
 					}
 				}, 
-				DbObject.class, new RethrowJdbcMapperErrorHandler());
+				DbObject.class, new RethrowRowHandlerErrorHandler());
 		
 		try {
 			jdbcMapper.map(null);

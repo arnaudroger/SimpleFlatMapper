@@ -7,7 +7,6 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
 import com.mysema.query.Tuple;
-import com.mysema.query.types.Expression;
 
 public final class TupleGetterFactory implements GetterFactory<Tuple, TupleElementKey<?>>{
 	public static final int UNDEFINED = -99999;

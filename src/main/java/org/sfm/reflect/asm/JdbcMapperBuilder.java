@@ -1,35 +1,6 @@
 package org.sfm.reflect.asm;
 
-import static org.objectweb.asm.Opcodes.AALOAD;
-import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
-import static org.objectweb.asm.Opcodes.ACC_FINAL;
-import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_SUPER;
-import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.ASTORE;
-import static org.objectweb.asm.Opcodes.ATHROW;
-import static org.objectweb.asm.Opcodes.BIPUSH;
-import static org.objectweb.asm.Opcodes.CHECKCAST;
-import static org.objectweb.asm.Opcodes.DUP;
-import static org.objectweb.asm.Opcodes.GETFIELD;
-import static org.objectweb.asm.Opcodes.GOTO;
-import static org.objectweb.asm.Opcodes.ICONST_0;
-import static org.objectweb.asm.Opcodes.ICONST_1;
-import static org.objectweb.asm.Opcodes.ICONST_2;
-import static org.objectweb.asm.Opcodes.ICONST_3;
-import static org.objectweb.asm.Opcodes.ICONST_4;
-import static org.objectweb.asm.Opcodes.ICONST_5;
-import static org.objectweb.asm.Opcodes.IFNE;
-import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
-import static org.objectweb.asm.Opcodes.NEW;
-import static org.objectweb.asm.Opcodes.PUTFIELD;
-import static org.objectweb.asm.Opcodes.RETURN;
-import static org.objectweb.asm.Opcodes.V1_6;
+import static org.objectweb.asm.Opcodes.*;
 
 import java.sql.ResultSet;
 
@@ -39,6 +10,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.sfm.map.FieldMapper;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 
 public class JdbcMapperBuilder {
@@ -62,11 +34,11 @@ public class JdbcMapperBuilder {
 		FieldVisitor fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, "instantiator", "L" + instantiatorType + ";", "L" + AsmUtils.toTypeWithParam(instantiator.getClass()) + ";", null);
 		fv.visitEnd();
 		
-		fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, "errorHandler", "Lorg/sfm/jdbc/JdbcMapperErrorHandler;", null, null);
+		fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, "errorHandler", "L" + AsmUtils.toType(RowHandlerErrorHandler.class) + ";", null, null);
 		fv.visitEnd();
 
 		{
-			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "([Lorg/sfm/map/FieldMapper;Lorg/sfm/reflect/Instantiator;Lorg/sfm/jdbc/JdbcMapperErrorHandler;)V", "([Lorg/sfm/map/FieldMapper<L" + sourceType + ";L" + targetType + ";>;Lorg/sfm/reflect/Instantiator<L" + targetType + ";>;Lorg/sfm/jdbc/JdbcMapperErrorHandler;)V", null);
+			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "([Lorg/sfm/map/FieldMapper;Lorg/sfm/reflect/Instantiator;L" + AsmUtils.toType(RowHandlerErrorHandler.class) + ";)V", "([Lorg/sfm/map/FieldMapper<L" + sourceType + ";L" + targetType + ";>;Lorg/sfm/reflect/Instantiator<L" + targetType + ";>;L" + AsmUtils.toType(RowHandlerErrorHandler.class) + ";)V", null);
 
 			mv.visitCode();
 			mv.visitVarInsn(ALOAD, 0);
@@ -84,7 +56,7 @@ public class JdbcMapperBuilder {
 			
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitVarInsn(ALOAD, 3);
-			mv.visitFieldInsn(PUTFIELD, classType, "errorHandler", "Lorg/sfm/jdbc/JdbcMapperErrorHandler;");
+			mv.visitFieldInsn(PUTFIELD, classType, "errorHandler", "L" + AsmUtils.toType(RowHandlerErrorHandler.class) + ";");
 			
 			mv.visitInsn(RETURN);
 			mv.visitMaxs(3, 3);
@@ -190,10 +162,10 @@ public class JdbcMapperBuilder {
 			Label l6 = new Label();
 			mv.visitLabel(l6);
 			mv.visitVarInsn(ALOAD, 0);
-			mv.visitFieldInsn(GETFIELD, classType, "errorHandler", "Lorg/sfm/jdbc/JdbcMapperErrorHandler;");
+			mv.visitFieldInsn(GETFIELD, classType, "errorHandler", "L" + AsmUtils.toType(RowHandlerErrorHandler.class) + ";");
 			mv.visitVarInsn(ALOAD, 4);
 			mv.visitVarInsn(ALOAD, 3);
-			mv.visitMethodInsn(INVOKEINTERFACE, "org/sfm/jdbc/JdbcMapperErrorHandler", "handlerError", "(Ljava/lang/Throwable;Ljava/lang/Object;)V", true);
+			mv.visitMethodInsn(INVOKEINTERFACE, "" + AsmUtils.toType(RowHandlerErrorHandler.class) + "", "handlerError", "(Ljava/lang/Throwable;Ljava/lang/Object;)V", true);
 			mv.visitLabel(l4);
 			mv.visitFrame(Opcodes.F_CHOP,1, null, 0, null);
 			mv.visitVarInsn(ALOAD, 1);

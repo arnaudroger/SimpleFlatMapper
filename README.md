@@ -220,42 +220,50 @@ select id,
 
 Performance
 ========
+
+Use JMH to with sample mode.
+
 See [orm-benchmarks](https://github.com/arnaudroger/orm-benchmark) for more details.
 
-Some of the result that seem odd look to be linked to the optimizer, I'm trying to get all [JMH](http://openjdk.java.net/projects/code-tools/jmh/) to increase consitency.
-
-BeanPropertyRowMapper is not in the benchmark because it makes the benchmark run time to last more than an overnight run. I'll try to add to jmh as it uses a timebound benchmark.
 
 Mock Connection
 -------
 
-|Rows|SfmStatic|Sfm|SfmNoAsm|Roma|Sql2O|Hibernate|MyBatis|
-|------:|------:|------:|-------:|-------:|------:|----:|----:|
-|1|9%|18%|49%|4%|1009%|7561%|3457%|
-|10|12%|18%|186%|16%|989%|7265%|6363%|
-|100|3%|8%|318%|26%|1004%|7232%|10365%|
-|1000|24%|63%|344%|28%|1042%|6831%|9264%|
+|Benchmark|1|10|100|1000|
+|---------|---:|---:|---:|---:|
+|SfmStaticJmhBenchmarks|15.91%|44.47%|130.91%|181.19%|
+|SfmDynamicJmhBenchmarks|26.57%|52.88%|133.69%|178.76%|
+|SfmNoAsmJmhBenchmarks|44.90%|253.80%|766.06%|937.20%|
+|RomaJmhBenchmarks|2.36%|31.93%|100.49%|139.69%|
+|Sql2oJmhBenchmarks|986.62%|1331.76%|2274.64%|2571.55%|
+|HibernateJmhBenchmarks|6829.42%|8785.59%|14259.63%|17404.53%|
+|MyBatisJmhBenchmarks|4189.73%|10242.03%|24265.92%|30279.47%|
 
 In mem HsqlDb
 -------
 
-|Rows|SfmStatic|Sfm|SfmNoAsm|Roma|Sql2O|Hibernate|MyBatis|
-|------:|------:|------:|-------:|-------:|------:|----:|----:|
-|1|4%|11%|3%|13%|49%|186%|105%|
-|10|5%|8%|8%|13%|50%|241%|207%|
-|100|8%|10%|19%|16%|65%|400%|531%|
-|1000|14%|14%|29%|22%|79%|524%|714%|
+|Benchmark|1|10|100|1000
+|---------|---:|---:|---:|---:|
+|SfmStaticJmhBenchmarks|2.40%|-0.48%|5.32%|8.46%|
+|SfmDynamicJmhBenchmarks|4.67%|0.26%|6.40%|6.96%|
+|SfmNoAsmJmhBenchmarks|2.17%|4.52%|22.62%|30.64%|
+|RomaJmhBenchmarks|9.48%|10.03%|18.76%|19.68%|
+|Sql2oJmhBenchmarks|44.42%|49.28%|63.63%|65.32%|
+|HibernateJmhBenchmarks|189.69%|232.00%|400.30%|585.56%|
+|MyBatisJmhBenchmarks|113.44%|217.05%|565.39%|836.84%|
 
 Local Mysql
 -------
 
-|Rows|SfmStatic|Sfm|SfmNoAsm|Roma|Sql2O|Hibernate|MyBatis|
-|------:|------:|------:|-------:|-------:|------:|----:|----:|
-|1|0%|1%|1%|6%|12%|176%|123%|
-|10|0%|1%|2%|111%|137%|169%|125%|
-|100|1%|1%|2%|5%|12%|52%|72%|
-|1000|3%|1%|6%|8%|27%|116%|188%|
-
+|Benchmark|1|10|100|1000
+|---------|---:|---:|---:|---:|
+|SfmStaticJmhBenchmarks|0.15%|-0.15%|0.65%|1.16%|
+|SfmDynamicJmhBenchmarks|2.01%|5.01%|0.62%|1.12%|
+|SfmNoAsmJmhBenchmarks|2.22%|11.20%|2.53%|6.15%|
+|RomaJmhBenchmarks|12.87%|48.74%|4.37%|5.56%|
+|Sql2oJmhBenchmarks|20.57%|64.58%|12.04%|24.20%|
+|HibernateJmhBenchmarks|143.21%|99.42%|57.94%|118.57%|
+|MyBatisJmhBenchmarks|106.57%|78.53%|120.92%|207.32%|
 
 Maven dependency
 ======

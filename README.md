@@ -35,7 +35,7 @@ Why?
 
 ### Performance
 
-Ibatis and hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [400%](#in-mem-hsqldb) for both. 
+Ibatis and hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [%](#in-mem-hsqldb) for both. 
 
 BeanPropertyRowMapper is very slow.
 
@@ -231,42 +231,42 @@ Mock Connection
 
 |Benchmark|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|SfmStaticJmhBenchmarks|15.91%|44.47%|130.91%|181.19%|
-|SfmDynamicJmhBenchmarks|26.57%|52.88%|133.69%|178.76%|
-|SfmNoAsmJmhBenchmarks|44.90%|253.80%|766.06%|937.20%|
-|RomaJmhBenchmarks|2.36%|31.93%|100.49%|139.69%|
-|Sql2oJmhBenchmarks|986.62%|1331.76%|2274.64%|2571.55%|
-|HibernateJmhBenchmarks|6829.42%|8785.59%|14259.63%|17404.53%|
-|MyBatisJmhBenchmarks|4189.73%|10242.03%|24265.92%|30279.47%|
-|BeansPropertyRowMapperJmhBenchmarks|3165.05%|23329.02%|71939.21%|90564.78%|
+|SfmStatic%|44%|130%|181%|
+|SfmDynamic|26%|52%|133%|178%|
+|SfmNoAsm|44%|253%|766%|937%|
+|Roma|2%|31%|100%|139%|
+|Sql2o|986%|1331%|2274%|2571%|
+|Hibernate|6829%|8785%|14259%|17404%|
+|MyBatis|4189%|10242%|24265%|30279%|
+|BeansPropertyRowMapper|3165%|23329%|71939%|90564%|
 
 In mem HsqlDb
 -------
 
 |Benchmark|1|10|100|1000
 |---------|---:|---:|---:|---:|
-|SfmStaticJmhBenchmarks|2.40%|-0.48%|5.32%|8.46%|
-|SfmDynamicJmhBenchmarks|4.67%|0.26%|6.40%|6.96%|
-|SfmNoAsmJmhBenchmarks|2.17%|4.52%|22.62%|30.64%|
-|RomaJmhBenchmarks|9.48%|10.03%|18.76%|19.68%|
-|Sql2oJmhBenchmarks|44.42%|49.28%|63.63%|65.32%|
-|HibernateJmhBenchmarks|189.69%|232.00%|400.30%|585.56%|
-|MyBatisJmhBenchmarks|113.44%|217.05%|565.39%|836.84%|
-|BeansPropertyRowMapperJmhBenchmarks|90.10%|492.38%|2035.80%|2935.68%|
+|SfmStatic|2%|-0%|5%|8%|
+|SfmDynamic|4%|0%|6%|6%|
+|SfmNoAsm|2%|4%|22%|30%|
+|Roma|9%|10%|18%|19%|
+|Sql2o|44%|49%|63%|65%|
+|Hibernate|189%|232%|400%|585%|
+|MyBatis|113%|217%|565%|836%|
+|BeansPropertyRowMapper|90%|492%|2035%|2935%|
 
 Local Mysql
 -------
 
 |Benchmark|1|10|100|1000
 |---------|---:|---:|---:|---:|
-|SfmStaticJmhBenchmarks|0.15%|-0.15%|0.65%|1.16%|
-|SfmDynamicJmhBenchmarks|2.01%|5.01%|0.62%|1.12%|
-|SfmNoAsmJmhBenchmarks|2.22%|11.20%|2.53%|6.15%|
-|RomaJmhBenchmarks|12.87%|48.74%|4.37%|5.56%|
-|Sql2oJmhBenchmarks|20.57%|64.58%|12.04%|24.20%|
-|HibernateJmhBenchmarks|143.21%|99.42%|57.94%|118.57%|
-|MyBatisJmhBenchmarks|106.57%|78.53%|120.92%|207.32%|
-|BeansPropertyRowMapperJmhBenchmarks|85.27%|131.54%|235.94%|519.60%|
+|SfmStatic|0%|-0%|0%|1%|
+|SfmDynamic|2%|5%|0%|1%|
+|SfmNoAsm|2%|11%|2%|6%|
+|Roma|12%|48%|4%|5%|
+|Sql2o|20%|64%|12%|24%|
+|Hibernate|143%|99%|57%|118%|
+|MyBatis|106%|78%|120%|207%|
+|BeansPropertyRowMapper|85%|131%|235%|519%|
 
 Maven dependency
 ======

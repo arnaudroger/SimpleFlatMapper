@@ -238,6 +238,7 @@ Mock Connection
 |Sql2oJmhBenchmarks|986.62%|1331.76%|2274.64%|2571.55%|
 |HibernateJmhBenchmarks|6829.42%|8785.59%|14259.63%|17404.53%|
 |MyBatisJmhBenchmarks|4189.73%|10242.03%|24265.92%|30279.47%|
+|BeansPropertyRowMapperJmhBenchmarks|3165.05%|23329.02%|71939.21%|90564.78%|
 
 In mem HsqlDb
 -------
@@ -251,6 +252,7 @@ In mem HsqlDb
 |Sql2oJmhBenchmarks|44.42%|49.28%|63.63%|65.32%|
 |HibernateJmhBenchmarks|189.69%|232.00%|400.30%|585.56%|
 |MyBatisJmhBenchmarks|113.44%|217.05%|565.39%|836.84%|
+|BeansPropertyRowMapperJmhBenchmarks|90.10%|492.38%|2035.80%|2935.68%|
 
 Local Mysql
 -------
@@ -264,6 +266,7 @@ Local Mysql
 |Sql2oJmhBenchmarks|20.57%|64.58%|12.04%|24.20%|
 |HibernateJmhBenchmarks|143.21%|99.42%|57.94%|118.57%|
 |MyBatisJmhBenchmarks|106.57%|78.53%|120.92%|207.32%|
+|BeansPropertyRowMapperJmhBenchmarks|85.27%|131.54%|235.94%|519.60%|
 
 Maven dependency
 ======

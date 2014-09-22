@@ -18,6 +18,7 @@ public class ShortCellValueReaderTest {
 		testReadShort(Short.MAX_VALUE);
 	}
 	
+	@Test
 	public void testInvalidShort() throws UnsupportedEncodingException {
 		final byte[] bytes = "Nan".getBytes("UTF-8");
 		try {

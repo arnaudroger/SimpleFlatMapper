@@ -20,7 +20,7 @@ public class RethrowMapperBuilderErrorHandlerTest {
 	public void testSetterNotFound() {
 		RethrowMapperBuilderErrorHandler handler = new RethrowMapperBuilderErrorHandler();
 		try {
-			handler.setterNotFound(this.getClass(), "prop");
+			handler.propertyNotFound(this.getClass(), "prop");
 			fail("Expected exception");
 		} catch(MapperBuildingException e) {
 		}

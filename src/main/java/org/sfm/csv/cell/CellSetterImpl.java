@@ -6,18 +6,18 @@ import org.sfm.reflect.Setter;
 
 public final class CellSetterImpl<T, P> implements CellSetter<T> {
 
-	private final CellValueReader<P> cellValueTransformer;
+	private final CellValueReader<P> reader;
 	private final Setter<T, P> setter;
 
-	public CellSetterImpl(CellValueReader<P> cellValueTransformer,
+	public CellSetterImpl(CellValueReader<P> reader,
 			Setter<T, P> setter) {
-		this.cellValueTransformer = cellValueTransformer;
+		this.reader = reader;
 		this.setter = setter;
 	}
 
 	@Override
 	public void set(T target, byte[] bytes, int offset, int length) throws Exception {
-		setter.set(target, cellValueTransformer.read(bytes, offset, length));
+		setter.set(target, reader.read(bytes, offset, length));
 	}
 
 }

@@ -17,6 +17,7 @@ import static org.objectweb.asm.Opcodes.V1_6;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.sfm.reflect.Instantiator;
 
 public class ConstructorBuilder {
 	public static byte[] createEmptyConstructor(final String className, final Class<?> sourceClass,
@@ -27,11 +28,12 @@ public class ConstructorBuilder {
 		String targetType = AsmUtils.toType(targetClass);
 		String sourceType = AsmUtils.toType(sourceClass);
 		String classType = AsmUtils.toType(className);
+		String instantiatorType = AsmUtils.toType(Instantiator.class);
 
 		cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType,
-				"Ljava/lang/Object;Lorg/sfm/reflect/Instantiator<L"
+				"Ljava/lang/Object;L" + instantiatorType + "<L"
 						+ targetType + ";>;", "java/lang/Object",
-				new String[] { "org/sfm/reflect/Instantiator" });
+				new String[] {  instantiatorType });
 
 		{
 			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);

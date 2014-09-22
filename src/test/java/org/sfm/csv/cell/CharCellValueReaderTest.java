@@ -16,6 +16,7 @@ public class CharCellValueReaderTest {
 		testReadShort(Character.MAX_VALUE);
 	}
 	
+	@Test
 	public void testInvalidChar() throws UnsupportedEncodingException {
 		final byte[] bytes = "Nan".getBytes("UTF-8");
 		try {

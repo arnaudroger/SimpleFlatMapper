@@ -18,6 +18,7 @@ public class IntegerCellValueReaderTest {
 		testReadInt(Integer.MAX_VALUE);
 	}
 	
+	@Test
 	public void testInvalidInt() throws UnsupportedEncodingException {
 		final byte[] bytes = "Nan".getBytes("UTF-8");
 		try {

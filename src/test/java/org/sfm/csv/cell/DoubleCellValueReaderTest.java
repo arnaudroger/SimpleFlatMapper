@@ -18,12 +18,13 @@ public class DoubleCellValueReaderTest {
 		testReadDouble(Double.MAX_VALUE);
 	}
 	
+	@Test
 	public void testInvalidDouble() throws UnsupportedEncodingException {
 		final byte[] bytes = "ddd".getBytes("UTF-8");
 		try {
 			reader.read(bytes, 0, bytes.length);
 			fail("Expect exception");
-		} catch(ParsingException e){
+		} catch(NumberFormatException e){
 			// expected
 		}
 	

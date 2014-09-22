@@ -11,7 +11,7 @@ public final class RethrowMapperBuilderErrorHandler implements
 	}
 
 	@Override
-	public void setterNotFound(final Type target, final String property) {
+	public void propertyNotFound(final Type target, final String property) {
 		throw new MapperBuildingException("Setter for " + property + " on  " + target + " not found");
 	}
 

@@ -8,7 +8,7 @@ public class LogRethrowMapperBuilderErrorHandlerTest {
 	public void test() {
 		LogRethrowMapperBuilderErrorHandler handler = new LogRethrowMapperBuilderErrorHandler();
 		handler.getterNotFound("hello");
-		handler.setterNotFound(LogRethrowMapperBuilderErrorHandler.class, "prop");
+		handler.propertyNotFound(LogRethrowMapperBuilderErrorHandler.class, "prop");
 	}
 
 }

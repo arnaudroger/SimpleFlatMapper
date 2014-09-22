@@ -80,11 +80,11 @@ class MyDao {
 	private final JdbcTemplateMapper<DbObject> mapper = 
 		JdbcTemplateMapperFactory.newInstance().newMapper(DbObject.class);
 		
-	public void doSomething() {		
+	public void doSomething() {
 		List<DbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);
 	}
 	
-	public void doSomethingElse() {		
+	public void doSomethingElse() {
 		 template
 		 	.query(TEST_DB_OBJECT_QUERY, 
 		 		mapper.newResultSetExtractor((o) -> System.out.println(o.toString())));
@@ -215,7 +215,7 @@ public class ListObject {
 select id, 
 	sub_objects_0_id, sub_objects_0_email, sub_objects_0_my_property, 
 	sub_objects_1_id, 
-	sub_objects_3_id   
+	sub_objects_3_id
 ```
 
 Performance

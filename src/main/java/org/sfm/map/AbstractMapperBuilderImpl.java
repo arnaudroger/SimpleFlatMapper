@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.sfm.builder.FieldMapperFactory;
-import org.sfm.builder.GetterFactory;
 import org.sfm.jdbc.MapperBuilder;
 import org.sfm.jdbc.MapperGetterAdapter;
 import org.sfm.reflect.Getter;
@@ -75,7 +73,7 @@ public abstract class AbstractMapperBuilderImpl<S, T, K, M extends Mapper<S, T>,
 		} else {
 			final PropertyMeta<T, ?> property = propertyFinder.findProperty(propertyName);
 			if (property == null) {
-					mapperBuilderErrorHandler.setterNotFound(target, propertyName);
+					mapperBuilderErrorHandler.propertyNotFound(target, propertyName);
 			} else {
 				addMapping(property, columnKey);
 			}

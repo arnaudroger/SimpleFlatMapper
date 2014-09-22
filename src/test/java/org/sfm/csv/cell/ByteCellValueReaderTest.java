@@ -17,7 +17,7 @@ public class ByteCellValueReaderTest {
 		testReadByte(Byte.MIN_VALUE);
 		testReadByte(Byte.MAX_VALUE);
 	}
-	
+	@Test
 	public void testInvalidByte() throws UnsupportedEncodingException {
 		final byte[] bytes = "Nan".getBytes("UTF-8");
 		try {

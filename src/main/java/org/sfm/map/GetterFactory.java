@@ -1,4 +1,4 @@
-package org.sfm.builder;
+package org.sfm.map;
 
 import java.lang.reflect.Type;
 

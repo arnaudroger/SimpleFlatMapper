@@ -256,4 +256,16 @@ public class AsmUtils {
 		boolean isinterface = publicClass.isInterface();
 		mv.visitMethodInsn(isinterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, toType(publicClass), method, sig, isinterface);
 	}
+	public static String toDeclaredLType(String sourceType) {
+		if (sourceType.startsWith("[L") || sourceType.startsWith("L")) {
+			return sourceType;
+		}
+		return "L" + sourceType + ";";
+	}
+	public static Class<?> toWrapperClass(Type type) {
+		return wrappers.get(TypeHelper.toClass(type));
+	}
+	public static String toWrapperType(Type type) {
+		return toType(toWrapperClass(type));
+	}
 }

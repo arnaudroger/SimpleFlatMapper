@@ -16,7 +16,12 @@ public class StringCellValueReaderTest {
 
 		bytes = "HHH\"Hello!\"HHH".getBytes("UTF-8");
 		assertEquals("Hello!", reader.read(bytes, 3, bytes.length - 6));
-}
+
+		bytes = "\"Hello!\"\"Sir\"\"\"".getBytes("UTF-8");
+		assertEquals("Hello!\"Sir\"", reader.read(bytes, 0, bytes.length));
+		bytes = "\"Hello!\"\"Sir".getBytes("UTF-8");
+		assertEquals("Hello!\"Sir", reader.read(bytes, 0, bytes.length));
+	}
 	
 
 }

@@ -30,19 +30,19 @@ public class JdbcMapperErrorTest {
 		
 		builder.addMapping("notthere1", 1);
 		
-		verify(errorHandler).setterNotFound(DbObject.class, "notthere1");
+		verify(errorHandler).propertyNotFound(DbObject.class, "notthere1");
 		
 		builder.addMapping("notthere2", "col");
 		
-		verify(errorHandler).setterNotFound(DbObject.class, "notthere2");
+		verify(errorHandler).propertyNotFound(DbObject.class, "notthere2");
 		
 		builder.addIndexedColumn("notthere3");
 		
-		verify(errorHandler).setterNotFound(DbObject.class, "notthere3");
+		verify(errorHandler).propertyNotFound(DbObject.class, "notthere3");
 		
 		builder.addNamedColumn("notthere4");
 		
-		verify(errorHandler).setterNotFound(DbObject.class, "notthere4");
+		verify(errorHandler).propertyNotFound(DbObject.class, "notthere4");
 	}
 	
 	static class MyClass {

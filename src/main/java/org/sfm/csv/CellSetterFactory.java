@@ -1,5 +1,6 @@
 package org.sfm.csv;
 
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.sfm.csv.cell.ByteCellValueReader;
 import org.sfm.csv.cell.CellSetterImpl;
 import org.sfm.csv.cell.CharCellValueReader;
 import org.sfm.csv.cell.DateCellValueReader;
+import org.sfm.csv.cell.DelayedCellSetterImpl;
 import org.sfm.csv.cell.DoubleCellValueReader;
 import org.sfm.csv.cell.EnumCellValueReader;
 import org.sfm.csv.cell.FloatCellValueReader;
@@ -44,23 +46,41 @@ public class CellSetterFactory {
 		put(String.class,    new StringCellValueReader());
 		put(Date.class,      new DateCellValueReader());
 	}};
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T,P> CellSetter<T> getCellSetter(Setter<T, P> setter) {
+		return new CellSetterImpl<T, P>(getReaderForSetter(setter), setter) ;
+	}
+
+	public <T, P> CellValueReader<P> getReaderForSetter(Setter<T, P> setter) {
 		Class<P> propertyType = TypeHelper.toClass(setter.getPropertyType());
-		CellValueReader<P> cellValueTransformer = null;
+		CellValueReader<P> reader = getReader(propertyType);
+		return reader;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public <P> CellValueReader<P> getReader(Class<P> propertyType) {
+		CellValueReader<P> reader = null;
 		if (Enum.class.isAssignableFrom(propertyType)) {
-			cellValueTransformer = new EnumCellValueReader(propertyType);
+			reader = new EnumCellValueReader(propertyType);
 		} else {
-			cellValueTransformer = getCellValueTransformer(propertyType);
+			reader = getCellValueTransformer(propertyType);
 		}
-		if (cellValueTransformer == null) {
+		if (reader == null) {
 			throw new ParsingException("No cell reader for " + propertyType);
 		}
-		return new CellSetterImpl<T, P>(cellValueTransformer, setter) ;
+		return reader;
 	}
 
 	@SuppressWarnings("unchecked")
 	private <P> CellValueReader<P> getCellValueTransformer(Class<P> propertyType) {
 		return (CellValueReader<P>) transformers.get(propertyType);
+	}
+
+	public <T, P> DelayedCellSetter<T, P> getDelayedCellSetter(
+			Setter<T, P> setter) {
+		return new DelayedCellSetterImpl<T, P>(getReaderForSetter(setter), setter);
+	}
+	@SuppressWarnings("unchecked")
+	public <T, P> DelayedCellSetter<T, P> getDelayedCellSetter(Type type) {
+		return new DelayedCellSetterImpl<T, P>(getReader((Class<P>)TypeHelper.toClass(type)), null);
 	}
 }

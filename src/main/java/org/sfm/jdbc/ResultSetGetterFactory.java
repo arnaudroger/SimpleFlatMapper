@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Date;
 
-import org.sfm.builder.GetterFactory;
 import org.sfm.jdbc.getter.BooleanIndexedResultSetGetter;
 import org.sfm.jdbc.getter.BooleanNamedResultSetGetter;
 import org.sfm.jdbc.getter.ByteIndexedResultSetGetter;
@@ -32,6 +31,7 @@ import org.sfm.jdbc.getter.StringIndexedResultSetGetter;
 import org.sfm.jdbc.getter.StringNamedResultSetGetter;
 import org.sfm.jdbc.getter.TimestampIndexedResultSetGetter;
 import org.sfm.jdbc.getter.TimestampNamedResultSetGetter;
+import org.sfm.map.GetterFactory;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;

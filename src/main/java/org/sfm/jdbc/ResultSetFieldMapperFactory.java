@@ -2,8 +2,6 @@ package org.sfm.jdbc;
 
 import java.sql.ResultSet;
 
-import org.sfm.builder.FieldMapperFactory;
-import org.sfm.builder.GetterFactory;
 import org.sfm.jdbc.getter.BooleanIndexedResultSetGetter;
 import org.sfm.jdbc.getter.BooleanNamedResultSetGetter;
 import org.sfm.jdbc.getter.ByteIndexedResultSetGetter;
@@ -22,7 +20,9 @@ import org.sfm.jdbc.getter.ShortIndexedResultSetGetter;
 import org.sfm.jdbc.getter.ShortNamedResultSetGetter;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.FieldMapperFactory;
 import org.sfm.map.FieldMapperImpl;
+import org.sfm.map.GetterFactory;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.primitive.BooleanFieldMapper;
 import org.sfm.map.primitive.ByteFieldMapper;

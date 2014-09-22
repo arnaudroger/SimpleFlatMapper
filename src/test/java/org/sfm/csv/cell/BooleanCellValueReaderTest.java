@@ -11,11 +11,14 @@ public class BooleanCellValueReaderTest {
 	BooleanCellValueReader reader = new BooleanCellValueReader();
 	@Test
 	public void testReadByte() throws UnsupportedEncodingException {
+		testReadBoolean(false, "");
 		testReadBoolean(false, "False");
 		testReadBoolean(false, "0");
 		testReadBoolean(false, "N");
+		testReadBoolean(false, "n");
 		testReadBoolean(false, "f");
 		testReadBoolean(false, "No");
+		testReadBoolean(false, "nO");
 		testReadBoolean(true, "else");
 		testReadBoolean(true, "1");
 	}

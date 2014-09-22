@@ -18,6 +18,7 @@ public class LongCellValueReaderTest {
 		testReadLong(Long.MAX_VALUE);
 	}
 	
+	@Test
 	public void testInvalidLong() throws UnsupportedEncodingException {
 		final byte[] bytes = "Nan".getBytes("UTF-8");
 		try {

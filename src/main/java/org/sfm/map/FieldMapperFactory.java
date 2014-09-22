@@ -1,8 +1,5 @@
-package org.sfm.builder;
+package org.sfm.map;
 
-import org.sfm.map.FieldMapper;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.reflect.Setter;
 
 public interface FieldMapperFactory<S, K> {

@@ -2,7 +2,7 @@ package org.sfm.jdbc.querydsl;
 
 import java.lang.reflect.Type;
 
-import org.sfm.builder.GetterFactory;
+import org.sfm.map.GetterFactory;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 

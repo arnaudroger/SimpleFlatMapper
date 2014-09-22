@@ -17,7 +17,7 @@ import com.mysema.query.sql.HSQLDBTemplates;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLQueryImpl;
 
-public class TesQueryDSL {
+public class TestQueryDSL {
 	QTestDbObject qTestDbObject = new QTestDbObject("o");
 	
 	@Test

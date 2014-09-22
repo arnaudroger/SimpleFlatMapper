@@ -14,7 +14,7 @@ public final class LogRethrowMapperBuilderErrorHandler implements
 	}
 
 	@Override
-	public void setterNotFound(final Type target, final String property) {
+	public void propertyNotFound(final Type target, final String property) {
 		logger.log(Level.WARNING, "Setter for " + property + " on  " + target + " not found");
 	}
 }

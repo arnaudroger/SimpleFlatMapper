@@ -106,9 +106,13 @@ public class AsmFactory implements Opcodes {
 				sb.append(str.substring(0, Math.min(str.length(), 3)));
 			}
 		}
-		sb.append(key.getSource().getSimpleName());
+		sb.append(replaceArray(key.getSource().getSimpleName()));
 		sb.append(Long.toHexString(classNumber.getAndIncrement()));
 		return sb.toString();
+	}
+
+	private String replaceArray(String simpleName) {
+		return simpleName.replace('[', '_').replace(']', '_');
 	}
 
 	private String generateClassName(final Method m) {

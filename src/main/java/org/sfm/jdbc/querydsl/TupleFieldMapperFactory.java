@@ -1,10 +1,10 @@
 package org.sfm.jdbc.querydsl;
 
-import org.sfm.builder.FieldMapperFactory;
-import org.sfm.builder.GetterFactory;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.FieldMapperFactory;
 import org.sfm.map.FieldMapperImpl;
+import org.sfm.map.GetterFactory;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;

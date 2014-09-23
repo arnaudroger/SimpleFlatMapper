@@ -112,7 +112,7 @@ public final class SetterFactory {
 	
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> BooleanSetter<T> toBooleanSetter(final Setter<T, P> setter) {
+	public static <T, P> BooleanSetter<T> toBooleanSetter(final Setter<T, P> setter) {
 		if (setter instanceof BooleanSetter) {
 			return (BooleanSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -124,7 +124,7 @@ public final class SetterFactory {
 		}
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> ByteSetter<T> toByteSetter(final Setter<T, P> setter) {
+	public static <T, P> ByteSetter<T> toByteSetter(final Setter<T, P> setter) {
 		if (setter instanceof ByteSetter) {
 			return (ByteSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -136,7 +136,7 @@ public final class SetterFactory {
 		}
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> CharacterSetter<T> toCharacterSetter(final Setter<T, P> setter) {
+	public static <T, P> CharacterSetter<T> toCharacterSetter(final Setter<T, P> setter) {
 		if (setter instanceof CharacterSetter) {
 			return (CharacterSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -149,7 +149,7 @@ public final class SetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> ShortSetter<T> toShortSetter(final Setter<T, P> setter) {
+	public static <T, P> ShortSetter<T> toShortSetter(final Setter<T, P> setter) {
 		if (setter instanceof ShortSetter) {
 			return (ShortSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -162,7 +162,7 @@ public final class SetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> IntSetter<T> toIntSetter(final Setter<T, P> setter) {
+	public static <T, P> IntSetter<T> toIntSetter(final Setter<T, P> setter) {
 		if (setter instanceof IntSetter) {
 			return (IntSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -175,7 +175,7 @@ public final class SetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> LongSetter<T> toLongSetter(final Setter<T, P> setter) {
+	public static <T, P> LongSetter<T> toLongSetter(final Setter<T, P> setter) {
 		if (setter instanceof LongSetter) {
 			return (LongSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -188,7 +188,7 @@ public final class SetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> FloatSetter<T> toFloatSetter(final Setter<T, P> setter) {
+	public static <T, P> FloatSetter<T> toFloatSetter(final Setter<T, P> setter) {
 		if (setter instanceof FloatSetter) {
 			return (FloatSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {
@@ -201,7 +201,7 @@ public final class SetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public <T, P> DoubleSetter<T> toDoubleSetter(final Setter<T, P> setter) {
+	public static <T, P> DoubleSetter<T> toDoubleSetter(final Setter<T, P> setter) {
 		if (setter instanceof DoubleSetter) {
 			return (DoubleSetter<T>) setter;
 		} else if (setter instanceof MethodSetter) {

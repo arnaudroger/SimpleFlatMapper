@@ -1,5 +1,6 @@
 package org.sfm.csv;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 import org.sfm.csv.cell.DelayedSetterImpl;
 import org.sfm.csv.parser.CsvParser;
 import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.MappingException;
 import org.sfm.map.RethrowFieldMapperErrorHandler;
 import org.sfm.map.RethrowRowHandlerErrorHandler;
 import org.sfm.map.RowHandlerErrorHandler;
@@ -45,7 +47,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	}
 
 	@Override
-	public <H extends RowHandler<T>> H forEach(final InputStream is, final H handler) throws Exception {
+	public <H extends RowHandler<T>> H forEach(final InputStream is, final H handler) throws IOException, MappingException {
 		new CsvParser().parse(is, newCellHandler(handler));
 		return handler;
 	}

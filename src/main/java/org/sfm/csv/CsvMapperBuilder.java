@@ -130,7 +130,7 @@ public class CsvMapperBuilder<T> {
 		return setters.toArray(new CellSetter[0]);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private  Instantiator<DelayedSetter[], T>  getInstantiator() throws MapperBuildingException {
 		
 		int lastConstructorArg = -1;

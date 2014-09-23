@@ -33,7 +33,7 @@ public final class ResultSetMapperBuilderImpl<T> extends AbstractMapperBuilderIm
 	}
 	
 	public ResultSetMapperBuilderImpl(final Type target, final ClassMeta<T> classMeta, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
-		super(target, ResultSet.class, classMeta, new ResultSetGetterFactory(), new ResultSetFieldMapperFactory(classMeta.getReflectionService().getSetterFactory(), new ResultSetGetterFactory()));
+		super(target, ResultSet.class, classMeta, new ResultSetGetterFactory(), new ResultSetFieldMapperFactory(new ResultSetGetterFactory()));
 		this.aliases = aliases;
 		this.customMappings = customMappings;
 	}

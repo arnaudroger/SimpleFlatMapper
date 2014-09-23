@@ -1,11 +1,11 @@
 package org.sfm.reflect.asm.sample;
 
 import org.sfm.beans.DbFinalObject;
-import org.sfm.beans.DbObject;
 import org.sfm.csv.DelayedGetter;
 import org.sfm.csv.DelayedSetter;
 import org.sfm.reflect.Instantiator;
 
+@SuppressWarnings("rawtypes")
 public final class CsvDbFinalObjectInstantiator implements Instantiator<DelayedSetter[], DbFinalObject> {
 	
 	DelayedGetter<Long> getter1;

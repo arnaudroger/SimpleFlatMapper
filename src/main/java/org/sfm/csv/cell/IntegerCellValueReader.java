@@ -5,9 +5,9 @@ import org.sfm.csv.CellValueReader;
 
 public class IntegerCellValueReader implements CellValueReader<Integer> {
 
-	final static byte ZERO = '0';
-	final static byte NINE = '9';
-	final static byte NEGSIGN = '-';
+	public final static byte ZERO = '0';
+	public final static byte NINE = '9';
+	public final static byte NEGSIGN = '-';
 	@Override
 	public Integer read(byte[] bytes, int offset, int length) {
 		int n = parseInt(bytes, offset, length);
@@ -33,5 +33,4 @@ public class IntegerCellValueReader implements CellValueReader<Integer> {
 		}
 		return n;
 	}
-
 }

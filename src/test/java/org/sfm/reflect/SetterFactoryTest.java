@@ -83,13 +83,13 @@ public class SetterFactoryTest {
 	
 	@Test
 	public void testToBooleanSetter() throws Exception {
-		assertTrue(nonAsmfactory.toBooleanSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pBoolean")) instanceof BooleanFieldSetter);
-		assertTrue(nonAsmfactory.toBooleanSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pBoolean")) instanceof BooleanMethodSetter);
+		assertTrue(SetterFactory.toBooleanSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pBoolean")) instanceof BooleanFieldSetter);
+		assertTrue(SetterFactory.toBooleanSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pBoolean")) instanceof BooleanMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pBoolean");
-		assertSame(setter, asmfactory.toBooleanSetter(setter));
+		assertSame(setter, SetterFactory.toBooleanSetter(setter));
 		
 		try {
-			nonAsmfactory.toBooleanSetter(new Setter<DbPrimitiveObject, Boolean>() {
+			SetterFactory.toBooleanSetter(new Setter<DbPrimitiveObject, Boolean>() {
 				@Override
 				public void set(DbPrimitiveObject target, Boolean value) throws Exception {
 				}
@@ -105,13 +105,13 @@ public class SetterFactoryTest {
 	
 	@Test
 	public void testToByteSetter() throws Exception {
-		assertTrue(nonAsmfactory.toByteSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pByte")) instanceof ByteFieldSetter);
-		assertTrue(nonAsmfactory.toByteSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pByte")) instanceof ByteMethodSetter);
+		assertTrue(SetterFactory.toByteSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pByte")) instanceof ByteFieldSetter);
+		assertTrue(SetterFactory.toByteSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pByte")) instanceof ByteMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pByte");
-		assertSame(setter, asmfactory.toByteSetter(setter));
+		assertSame(setter, SetterFactory.toByteSetter(setter));
 		
 		try {
-			nonAsmfactory.toByteSetter(new Setter<DbPrimitiveObject, Byte>() {
+			SetterFactory.toByteSetter(new Setter<DbPrimitiveObject, Byte>() {
 				@Override
 				public void set(DbPrimitiveObject target, Byte value) throws Exception {
 				}
@@ -127,13 +127,13 @@ public class SetterFactoryTest {
 	
 	@Test
 	public void testToCharacterSetter() throws Exception {
-		assertTrue(nonAsmfactory.toCharacterSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pCharacter")) instanceof CharacterFieldSetter);
-		assertTrue(nonAsmfactory.toCharacterSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pCharacter")) instanceof CharacterMethodSetter);
+		assertTrue(SetterFactory.toCharacterSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pCharacter")) instanceof CharacterFieldSetter);
+		assertTrue(SetterFactory.toCharacterSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pCharacter")) instanceof CharacterMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pCharacter");
-		assertSame(setter, asmfactory.toCharacterSetter(setter));
+		assertSame(setter, SetterFactory.toCharacterSetter(setter));
 		
 		try {
-			nonAsmfactory.toCharacterSetter(new Setter<DbPrimitiveObject, Character>() {
+			SetterFactory.toCharacterSetter(new Setter<DbPrimitiveObject, Character>() {
 				@Override
 				public void set(DbPrimitiveObject target, Character value) throws Exception {
 				}
@@ -149,13 +149,13 @@ public class SetterFactoryTest {
 	
 	@Test
 	public void testToShortSetter() throws Exception {
-		assertTrue(nonAsmfactory.toShortSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pShort")) instanceof ShortFieldSetter);
-		assertTrue(nonAsmfactory.toShortSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pShort")) instanceof ShortMethodSetter);
+		assertTrue(SetterFactory.toShortSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pShort")) instanceof ShortFieldSetter);
+		assertTrue(SetterFactory.toShortSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pShort")) instanceof ShortMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pShort");
-		assertSame(setter, asmfactory.toShortSetter(setter));
+		assertSame(setter, SetterFactory.toShortSetter(setter));
 		
 		try {
-			nonAsmfactory.toShortSetter(new Setter<DbPrimitiveObject, Short>() {
+			SetterFactory.toShortSetter(new Setter<DbPrimitiveObject, Short>() {
 				@Override
 				public void set(DbPrimitiveObject target, Short value) throws Exception {
 				}
@@ -171,13 +171,13 @@ public class SetterFactoryTest {
 	
 	@Test
 	public void testToIntSetter() throws Exception {
-		assertTrue(nonAsmfactory.toIntSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pInt")) instanceof IntFieldSetter);
-		assertTrue(nonAsmfactory.toIntSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pInt")) instanceof IntMethodSetter);
+		assertTrue(SetterFactory.toIntSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pInt")) instanceof IntFieldSetter);
+		assertTrue(SetterFactory.toIntSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pInt")) instanceof IntMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pInt");
-		assertSame(setter, asmfactory.toIntSetter(setter));
+		assertSame(setter, SetterFactory.toIntSetter(setter));
 		
 		try {
-			nonAsmfactory.toIntSetter(new Setter<DbPrimitiveObject, Integer>() {
+			SetterFactory.toIntSetter(new Setter<DbPrimitiveObject, Integer>() {
 				@Override
 				public void set(DbPrimitiveObject target, Integer value) throws Exception {
 				}
@@ -193,13 +193,13 @@ public class SetterFactoryTest {
 	
 	@Test
 	public void testToLongSetter() throws Exception {
-		assertTrue(nonAsmfactory.toLongSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pLong")) instanceof LongFieldSetter);
-		assertTrue(nonAsmfactory.toLongSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pLong")) instanceof LongMethodSetter);
+		assertTrue(SetterFactory.toLongSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pLong")) instanceof LongFieldSetter);
+		assertTrue(SetterFactory.toLongSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pLong")) instanceof LongMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pLong");
-		assertSame(setter, asmfactory.toLongSetter(setter));
+		assertSame(setter, SetterFactory.toLongSetter(setter));
 		
 		try {
-			nonAsmfactory.toLongSetter(new Setter<DbPrimitiveObject, Long>() {
+			SetterFactory.toLongSetter(new Setter<DbPrimitiveObject, Long>() {
 				@Override
 				public void set(DbPrimitiveObject target, Long value) throws Exception {
 				}
@@ -215,13 +215,13 @@ public class SetterFactoryTest {
 	
 	@Test
 	public void testToFloatSetter() throws Exception {
-		assertTrue(nonAsmfactory.toFloatSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pFloat")) instanceof FloatFieldSetter);
-		assertTrue(nonAsmfactory.toFloatSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pFloat")) instanceof FloatMethodSetter);
+		assertTrue(SetterFactory.toFloatSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pFloat")) instanceof FloatFieldSetter);
+		assertTrue(SetterFactory.toFloatSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pFloat")) instanceof FloatMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pFloat");
-		assertSame(setter, asmfactory.toFloatSetter(setter));
+		assertSame(setter, SetterFactory.toFloatSetter(setter));
 		
 		try {
-			nonAsmfactory.toFloatSetter(new Setter<DbPrimitiveObject, Float>() {
+			SetterFactory.toFloatSetter(new Setter<DbPrimitiveObject, Float>() {
 				@Override
 				public void set(DbPrimitiveObject target, Float value) throws Exception {
 				}
@@ -237,13 +237,13 @@ public class SetterFactoryTest {
 	
 	@Test
 	public void testToDoubleSetter() throws Exception {
-		assertTrue(nonAsmfactory.toDoubleSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pDouble")) instanceof DoubleFieldSetter);
-		assertTrue(nonAsmfactory.toDoubleSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pDouble")) instanceof DoubleMethodSetter);
+		assertTrue(SetterFactory.toDoubleSetter(nonAsmfactory.getSetter(DbPrimitiveObject.class, "pDouble")) instanceof DoubleFieldSetter);
+		assertTrue(SetterFactory.toDoubleSetter(nonAsmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pDouble")) instanceof DoubleMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmfactory.getSetter(DbPrimitiveObjectWithSetter.class, "pDouble");
-		assertSame(setter, asmfactory.toDoubleSetter(setter));
+		assertSame(setter, SetterFactory.toDoubleSetter(setter));
 		
 		try {
-			nonAsmfactory.toDoubleSetter(new Setter<DbPrimitiveObject, Double>() {
+			SetterFactory.toDoubleSetter(new Setter<DbPrimitiveObject, Double>() {
 				@Override
 				public void set(DbPrimitiveObject target, Double value) throws Exception {
 				}

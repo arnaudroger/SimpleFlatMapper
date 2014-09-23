@@ -6,10 +6,13 @@ public class BooleanCellValueReader implements CellValueReader<Boolean> {
 
 	@Override
 	public Boolean read(byte[] bytes, int offset, int length) {
+		return new Boolean(parseBoolean(bytes, offset, length));
+	}
 
+	public static boolean parseBoolean(byte[] bytes, int offset, int length) {
 		switch (length) {
 		case 0:
-			return Boolean.FALSE;
+			return false;
 		case 1:
 			switch (bytes[offset]) {
 			case 0:
@@ -18,14 +21,14 @@ public class BooleanCellValueReader implements CellValueReader<Boolean> {
 			case 'f':
 			case 'n':
 			case 'N':
-				return Boolean.FALSE;
+				return false;
 			default:
-				return Boolean.TRUE;
+				return true;
 			}
 		case 2:
 			if ((bytes[offset] == 'N' || bytes[offset] == 'n')
 				&& (bytes[offset + 1] == 'O' || bytes[offset + 1] == 'o')) {
-				return Boolean.FALSE;
+				return false;
 			}
 		case 5:
 			if (
@@ -35,10 +38,10 @@ public class BooleanCellValueReader implements CellValueReader<Boolean> {
 				&& (bytes[offset + 3] == 'S' || bytes[offset + 3] == 's')
 				&& (bytes[offset + 4] == 'E' || bytes[offset + 4] == 'e')
 				) {
-					return Boolean.FALSE;
+					return false;
 				}
-		default: return Boolean.TRUE;
 		}
+		return true;
 	}
 
 }

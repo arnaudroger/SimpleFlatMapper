@@ -4,6 +4,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.csv.DelayedSetter;
 import org.sfm.reflect.Instantiator;
 
+@SuppressWarnings("rawtypes")
 public final class CsvDbObjectInstantiator implements Instantiator<DelayedSetter[], DbObject> {
 	@Override
 	public DbObject newInstance(DelayedSetter[] source) throws Exception {

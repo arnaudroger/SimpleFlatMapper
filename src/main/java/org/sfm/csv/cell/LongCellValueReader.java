@@ -11,6 +11,11 @@ public class LongCellValueReader implements CellValueReader<Long> {
 	
 	@Override
 	public Long read(byte[] bytes, int offset, int length) {
+		long n = parseLong(bytes, offset, length);
+		return new Long(n);
+	}
+
+	public static long parseLong(byte[] bytes, int offset, int length) {
 		long n = 0;
 		boolean negative = false;
 		for(int i = offset; i < offset + length; i++) {
@@ -28,7 +33,7 @@ public class LongCellValueReader implements CellValueReader<Long> {
 		if (negative) {
 			n = 0 - n;
 		}
-		return new Long(n);
+		return n;
 	}
 
 }

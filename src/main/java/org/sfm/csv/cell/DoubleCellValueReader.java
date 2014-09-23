@@ -4,10 +4,13 @@ import org.sfm.csv.CellValueReader;
 
 public class DoubleCellValueReader implements CellValueReader<Double> {
 
-	private final StringCellValueReader stringReader = new StringCellValueReader();
 	@Override
 	public Double read(byte[] bytes, int offset, int length) {
-		return new Double(stringReader.read(bytes, offset, length));
+		return new Double(parseDouble(bytes, offset, length));
+	}
+
+	public static double parseDouble(byte[] bytes, int offset, int length) {
+		return Double.parseDouble(StringCellValueReader.readString(bytes, offset, length));
 	}
 
 }

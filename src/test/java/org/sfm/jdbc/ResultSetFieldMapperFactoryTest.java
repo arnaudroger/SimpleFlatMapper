@@ -15,7 +15,7 @@ import org.sfm.reflect.SetterFactory;
 public class ResultSetFieldMapperFactoryTest {
 	
 	SetterFactory setterFactory = new SetterFactory(null);
-	ResultSetFieldMapperFactory factory = new ResultSetFieldMapperFactory(setterFactory, new ResultSetGetterFactory());
+	ResultSetFieldMapperFactory factory = new ResultSetFieldMapperFactory(new ResultSetGetterFactory());
 	private FieldMapperErrorHandler<ColumnKey> errorHandler;
 
 	@Test

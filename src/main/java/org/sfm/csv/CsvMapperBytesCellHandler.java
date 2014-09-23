@@ -1,7 +1,5 @@
 package org.sfm.csv;
 
-import java.util.Arrays;
-
 import org.sfm.csv.parser.BytesCellHandler;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.InstantiationMappingException;
@@ -14,21 +12,19 @@ final class CsvMapperBytesCellHandler<T> implements BytesCellHandler {
 	private final DelayedCellSetter<T, ?>[] delayedCellSetters;
 	private final CellSetter<T>[] setters;
 	@SuppressWarnings("rawtypes")
-	private final Instantiator<DelayedSetter[], T> instantiator;
+	private final Instantiator<DelayedCellSetter[], T> instantiator;
 	private final FieldMapperErrorHandler<Integer> fieldErrorHandler;
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
 	private final RowHandler<T> handler;
 	private final int flushIndex;
 	private final int lastIndex;
 	
-	final DelayedSetter<T, ?>[] delayedSetters;
 	T value;
 	int cellIndex = 0;
+	boolean hasValue;
 
-
-	@SuppressWarnings("unchecked")
 	public CsvMapperBytesCellHandler(
-			@SuppressWarnings("rawtypes") Instantiator<DelayedSetter[], T> instantiator,
+			@SuppressWarnings("rawtypes") Instantiator<DelayedCellSetter[], T> instantiator,
 			DelayedCellSetter<T, ?>[] delayedCellSetters,
 			CellSetter<T>[] setters,
 			FieldMapperErrorHandler<Integer> fieldErrorHandler,
@@ -41,15 +37,12 @@ final class CsvMapperBytesCellHandler<T> implements BytesCellHandler {
 		this.fieldErrorHandler = fieldErrorHandler;
 		this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
 		this.handler = handler;
-		this.delayedSetters = new DelayedSetter[delayedCellSetters.length];
 		this.flushIndex = flushIndex;
 		this.lastIndex = lastNonNullSetter(delayedCellSetters, setters);
 	}
-	
 
-	@SuppressWarnings("unchecked")
 	public CsvMapperBytesCellHandler(
-			@SuppressWarnings("rawtypes") Instantiator<DelayedSetter[], T> instantiator,
+			@SuppressWarnings("rawtypes") Instantiator<DelayedCellSetter[], T> instantiator,
 			DelayedCellSetter<T, ?>[] delayedCellSetters,
 			CellSetter<T>[] setters,
 			FieldMapperErrorHandler<Integer> fieldErrorHandler,
@@ -62,7 +55,6 @@ final class CsvMapperBytesCellHandler<T> implements BytesCellHandler {
 		this.fieldErrorHandler = fieldErrorHandler;
 		this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
 		this.handler = handler;
-		this.delayedSetters = new DelayedSetter[delayedCellSetters.length];
 		this.flushIndex = lastNonNullSetter(delayedCellSetters, setters);
 		this.lastIndex = flushIndex;
 	}
@@ -95,17 +87,17 @@ final class CsvMapperBytesCellHandler<T> implements BytesCellHandler {
 
 	public void flush() {
 		if (value == null) {
-			if (hasDelayedSetter()) {
+			if (hasValue) {
 				try {
-					value = instantiator.newInstance(delayedSetters);
+					value = instantiator.newInstance(delayedCellSetters);
 				} catch (Exception e) {
 					throw new InstantiationMappingException(e.getMessage(), e);
 				}
 			}
 		}
 		if (value != null) {
-			for(int i = 0; i < delayedSetters.length; i++) {
-				DelayedSetter<T, ?> delayedSetter = delayedSetters[i];
+			for(int i = 0; i < delayedCellSetters.length; i++) {
+				DelayedCellSetter<T, ?> delayedSetter = delayedCellSetters[i];
 				if (delayedSetter != null && delayedSetter.isSettable()) {
 					try {
 						delayedSetter.set(value);
@@ -120,13 +112,13 @@ final class CsvMapperBytesCellHandler<T> implements BytesCellHandler {
 				rowHandlerErrorHandlers.handlerError(e, value);
 			}
 			value = null;
-			Arrays.fill(delayedSetters, null);
+			hasValue = false;
 		}
 	}
 
 	private boolean hasDelayedSetter() {
-		for(int i = 0; i < delayedSetters.length; i++) {
-			if (delayedSetters[i] != null) {
+		for(int i = 0; i < delayedCellSetters.length; i++) {
+			if (delayedCellSetters[i] != null) {
 				return true;
 			}
 		}
@@ -138,23 +130,22 @@ final class CsvMapperBytesCellHandler<T> implements BytesCellHandler {
 		newCell(bytes, offset, length, cellIndex++);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void newCell(byte[] bytes, int offset, int length, int cellIndex) {
+		hasValue = true;
 		if (cellIndex > lastIndex) {
 			return;
 		}
 		
 		if (cellIndex < delayedCellSetters.length) {
 			try {
-				delayedSetters[cellIndex] = delayedCellSetters[cellIndex].set(bytes, offset, length);
+				delayedCellSetters[cellIndex].set(bytes, offset, length);
 			} catch (Exception e) {
 				fieldErrorHandler.errorMappingField(cellIndex, this, value, e);
-				delayedSetters[cellIndex] = CsvMapperImpl.NULL_DELAYED_SETTER;
 			}
 		} else {
 			if (value == null) {
 				try {
-					value = instantiator.newInstance(delayedSetters);
+					value = instantiator.newInstance(delayedCellSetters);
 				} catch (Exception e) {
 					throw new InstantiationMappingException(e.getMessage(), e);
 				}

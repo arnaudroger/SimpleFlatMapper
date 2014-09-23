@@ -41,10 +41,10 @@ public class CsvMapperImplTest {
 			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "typeName"))
 		};
 		@SuppressWarnings("rawtypes")
-		Instantiator<DelayedSetter[], DbObject> instantiator = new InstantiatorFactory(null).getInstantiator(DelayedSetter[].class, DbObject.class);
+		Instantiator<DelayedCellSetter[], DbObject> instantiator = new InstantiatorFactory(null).getInstantiator(DelayedCellSetter[].class, DbObject.class);
 		@SuppressWarnings("unchecked")
 		CsvMapperImpl<DbObject> mapper = new CsvMapperImpl<DbObject>(instantiator ,
-				(DelayedCellSetter<DbObject, ?>[])new DelayedCellSetter[] {} 
+				(DelayedCellSetterFactory<DbObject, ?>[])new DelayedCellSetterFactory[] {} 
 				, setters);
 		
 		List<DbObject> list = mapper.forEach(sr, new ListHandler<DbObject>()).getList();
@@ -65,7 +65,7 @@ public class CsvMapperImplTest {
 		CellSetterFactory cellSetterFactory = new CellSetterFactory();
 
 		@SuppressWarnings("unchecked")
-		DelayedCellSetter<DbFinalObject, ?>[] delayedSetters = new DelayedCellSetter[] {
+		DelayedCellSetterFactory<DbFinalObject, ?>[] delayedSetters = new DelayedCellSetterFactory[] {
 			cellSetterFactory.getDelayedCellSetter(int.class),
 			cellSetterFactory.getDelayedCellSetter(String.class),
 			cellSetterFactory.getDelayedCellSetter(String.class),
@@ -78,10 +78,10 @@ public class CsvMapperImplTest {
 		};
 		final List<ConstructorDefinition<DbFinalObject>> constructorsDefinition = ConstructorDefinition.extractConstructors(DbFinalObject.class);
 		@SuppressWarnings({ "rawtypes", "serial" })
-		Instantiator<DelayedSetter[], DbFinalObject> instantiator = 
+		Instantiator<DelayedCellSetter[], DbFinalObject> instantiator = 
 			new InstantiatorFactory(null)
-				.getInstantiator(DelayedSetter[].class, constructorsDefinition,
-						new HashMap<ConstructorParameter, Getter<DelayedSetter[], ?>>() {{
+				.getInstantiator(DelayedCellSetter[].class, constructorsDefinition,
+						new HashMap<ConstructorParameter, Getter<DelayedCellSetter[], ?>>() {{
 							put(new ConstructorParameter("id", long.class), new DelayedGetter<Long>(0));
 							put(new ConstructorParameter("name", String.class), new DelayedGetter<String>(1));
 							put(new ConstructorParameter("email", String.class), new DelayedGetter<String>(2));
@@ -108,7 +108,7 @@ public class CsvMapperImplTest {
 		SetterFactory setterFactory = new SetterFactory(null);
 		
 		@SuppressWarnings("unchecked")
-		DelayedCellSetter<DbPartialFinalObject, ?>[] delayedSetters = new DelayedCellSetter[] {
+		DelayedCellSetterFactory<DbPartialFinalObject, ?>[] delayedSetters = new DelayedCellSetterFactory[] {
 			cellSetterFactory.getDelayedCellSetter(int.class),
 			cellSetterFactory.getDelayedCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "name")),
 			cellSetterFactory.getDelayedCellSetter(String.class),
@@ -121,10 +121,10 @@ public class CsvMapperImplTest {
 		};
 		final List<ConstructorDefinition<DbPartialFinalObject>> constructorsDefinition = ConstructorDefinition.extractConstructors(DbPartialFinalObject.class);
 		@SuppressWarnings({ "rawtypes", "serial" })
-		Instantiator<DelayedSetter[], DbPartialFinalObject> instantiator = 
+		Instantiator<DelayedCellSetter[], DbPartialFinalObject> instantiator = 
 			new InstantiatorFactory(null)
-				.getInstantiator(DelayedSetter[].class, constructorsDefinition,
-						new HashMap<ConstructorParameter, Getter<DelayedSetter[], ?>>() {{
+				.getInstantiator(DelayedCellSetter[].class, constructorsDefinition,
+						new HashMap<ConstructorParameter, Getter<DelayedCellSetter[], ?>>() {{
 							put(new ConstructorParameter("id", long.class), new DelayedGetter<Long>(0));
 							put(new ConstructorParameter("email", String.class), new DelayedGetter<String>(2));
 						}}

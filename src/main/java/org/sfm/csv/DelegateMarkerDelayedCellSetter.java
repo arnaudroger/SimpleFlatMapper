@@ -4,7 +4,7 @@ import java.lang.reflect.Type;
 
 import org.sfm.reflect.Setter;
 
-public class DelegateMarkerDelayedCellSetter<T, P> implements DelayedCellSetter<T, P> {
+public class DelegateMarkerDelayedCellSetter<T, P> implements DelayedCellSetterFactory<T, P> {
 
 	private final CsvMapper<P> mapper;
 	private final Setter<T, P> setter;
@@ -39,9 +39,9 @@ public class DelegateMarkerDelayedCellSetter<T, P> implements DelayedCellSetter<
 	}
 
 	@Override
-	public DelayedSetter<T, P> set(byte[] bytes, int offset, int length)
-			throws Exception {
-		throw new UnsupportedOperationException();
+	public DelayedCellSetter<T, P> newCellSetter() {
+		return null;
 	}
+
 
 }

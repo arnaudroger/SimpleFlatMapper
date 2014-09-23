@@ -10,7 +10,7 @@ import org.sfm.csv.cell.ByteCellValueReader;
 import org.sfm.csv.cell.CellSetterImpl;
 import org.sfm.csv.cell.CharCellValueReader;
 import org.sfm.csv.cell.DateCellValueReader;
-import org.sfm.csv.cell.DelayedCellSetterImpl;
+import org.sfm.csv.cell.DelayedCellSetterFactoryImpl;
 import org.sfm.csv.cell.DoubleCellValueReader;
 import org.sfm.csv.cell.EnumCellValueReader;
 import org.sfm.csv.cell.FloatCellValueReader;
@@ -111,11 +111,11 @@ public class CellSetterFactory {
 		return (CellValueReader<P>) transformers.get(propertyType);
 	}
 
-	public <T, P> DelayedCellSetter<T, P> getDelayedCellSetter(Setter<T, P> setter) {
-		return new DelayedCellSetterImpl<T, P>(getReaderForSetter(setter), setter);
+	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Setter<T, P> setter) {
+		return new DelayedCellSetterFactoryImpl<T, P>(getReaderForSetter(setter), setter);
 	}
 	@SuppressWarnings("unchecked")
-	public <T, P> DelayedCellSetter<T, P> getDelayedCellSetter(Type type) {
-		return new DelayedCellSetterImpl<T, P>(getReader((Class<P>)TypeHelper.toClass(type)), null);
+	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type type) {
+		return new DelayedCellSetterFactoryImpl<T, P>(getReader((Class<P>)TypeHelper.toClass(type)), null);
 	}
 }

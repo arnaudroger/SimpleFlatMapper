@@ -1,5 +1,10 @@
 package org.sfm.csv;
 
 public interface DelayedCellSetter<T, P> {
-	DelayedSetter<T, P> set(byte[] bytes, int offset, int length) throws Exception;
+	
+	void set(byte[] bytes, int offset, int length) throws Exception;
+
+	public P getValue();
+	public void set(T t) throws Exception;
+	public boolean isSettable();
 }

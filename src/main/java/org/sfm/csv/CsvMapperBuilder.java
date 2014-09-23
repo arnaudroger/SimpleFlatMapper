@@ -27,7 +27,7 @@ import org.sfm.reflect.meta.SubPropertyMeta;
 public class CsvMapperBuilder<T> {
 
 	@SuppressWarnings("rawtypes")
-	private static final Class<DelayedSetter[]> SOURCE = DelayedSetter[].class;
+	private static final Class<DelayedCellSetter[]> SOURCE = DelayedCellSetter[].class;
 	
 	private FieldMapperErrorHandler<Integer> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<Integer>();
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
@@ -131,10 +131,10 @@ public class CsvMapperBuilder<T> {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private  Instantiator<DelayedSetter[], T>  getInstantiator() throws MapperBuildingException {
+	private  Instantiator<DelayedCellSetter[], T>  getInstantiator() throws MapperBuildingException {
 		
 		int lastConstructorArg = -1;
-		Map<ConstructorParameter, Getter<DelayedSetter[], ?>> constructorInjections = new HashMap<ConstructorParameter, Getter<DelayedSetter[], ?>>();
+		Map<ConstructorParameter, Getter<DelayedCellSetter[], ?>> constructorInjections = new HashMap<ConstructorParameter, Getter<DelayedCellSetter[], ?>>();
 		for(int i = 0; i < properties.size(); i++) {
 			PropertyMeta<T, ?> meta = properties.get(i);
 			if (meta instanceof ConstructorPropertyMeta) {
@@ -159,7 +159,7 @@ public class CsvMapperBuilder<T> {
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 		if (!reflectionService.isAsmPresent()) {
 			try {
-				return ( Instantiator<DelayedSetter[], T> ) instantiatorFactory.getInstantiator(SOURCE, propertyFinder.getClassToInstantiate());
+				return ( Instantiator<DelayedCellSetter[], T> ) instantiatorFactory.getInstantiator(SOURCE, propertyFinder.getClassToInstantiate());
 			} catch(Exception e) {
 				throw new MapperBuildingException(e.getMessage(), e);
 			}
@@ -173,17 +173,17 @@ public class CsvMapperBuilder<T> {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private DelayedCellSetter<T, ?>[] getDelayedSetters() {
+	private DelayedCellSetterFactory<T, ?>[] getDelayedSetters() {
 		
 		Map<String, CsvMapperBuilder<?>> delegateMapperBuilders = new HashMap<String, CsvMapperBuilder<?>>();
-		List<DelayedCellSetter<T, ?>> delayedSetters = new ArrayList<DelayedCellSetter<T, ?>>(syncSetterStart);
+		List<DelayedCellSetterFactory<T, ?>> delayedSetters = new ArrayList<DelayedCellSetterFactory<T, ?>>(syncSetterStart);
 		CellSetterFactory cellSetterFactory = new CellSetterFactory();
 
 		for(int i = 0; i < syncSetterStart; i++) {
 			PropertyMeta<T, ?> prop = properties.get(i);
 			if (prop != null) {
 				if (prop instanceof ConstructorPropertyMeta) {
-					delayedSetters.add((DelayedCellSetter<T, ?>)cellSetterFactory.getDelayedCellSetter(prop.getType()));
+					delayedSetters.add((DelayedCellSetterFactory<T, ?>)cellSetterFactory.getDelayedCellSetter(prop.getType()));
 				}  else if (prop instanceof SubPropertyMeta) {
 					final PropertyMeta<?, ?> powner = ((SubPropertyMeta)prop).getProperty();
 					CsvMapperBuilder<?> delegateMapperBuilder = delegateMapperBuilders .get(powner.getName());
@@ -228,6 +228,6 @@ public class CsvMapperBuilder<T> {
 			}
 		}
 		
-		return delayedSetters.toArray(new DelayedCellSetter[syncSetterStart]);
+		return delayedSetters.toArray(new DelayedCellSetterFactory[syncSetterStart]);
 	}
 }

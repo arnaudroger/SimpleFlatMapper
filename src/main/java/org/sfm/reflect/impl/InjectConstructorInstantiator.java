@@ -8,8 +8,6 @@ import org.sfm.reflect.asm.ConstructorDefinition;
 import org.sfm.reflect.asm.ConstructorParameter;
 
 public final class InjectConstructorInstantiator<S, T> implements Instantiator<S, T> {
-	
-	
 
 	private final ConstructorDefinition<T> constructorDefinition;
 	private final ArgumentBuilder<S, T> argBuilder;

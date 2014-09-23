@@ -2,24 +2,43 @@ package org.sfm.csv.cell;
 
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.DelayedCellSetter;
-import org.sfm.csv.DelayedSetter;
 import org.sfm.reflect.Setter;
 
 public class DelayedCellSetterImpl<T, P> implements DelayedCellSetter<T, P> {
 
+	private P value;
+
 	private final CellValueReader<P> reader;
 	private final Setter<T, P> setter;
 	
-	public DelayedCellSetterImpl(CellValueReader<P> reader, Setter<T, P> setter) {
-		this.reader = reader;
+	public DelayedCellSetterImpl(Setter<T, P> setter, CellValueReader<P> reader) {
 		this.setter = setter;
+		this.reader = reader;
 	}
 
 	@Override
-	public DelayedSetter<T, P> set(byte[] bytes, int offset, int length)
+	public P getValue() {
+		P val = value;
+		value = null;
+		return val;
+	}
+
+	@Override
+	public void set(T t) throws Exception {
+		P val = value;
+		value = null;
+		setter.set(t, val);
+	}
+
+	@Override
+	public boolean isSettable() {
+		return setter != null;
+	}
+	
+	@Override
+	public void set(byte[] bytes, int offset, int length)
 			throws Exception {
-		final P value = reader.read(bytes, offset, length);
-		return new DelayedSetterImpl<T, P>(value, setter);
+		value = reader.read(bytes, offset, length);
 	}
 
 }

@@ -2,26 +2,26 @@ package org.sfm.csv;
 
 import org.sfm.utils.RowHandler;
 
-public class DelegateDelayedCellSetter<T, P> implements DelayedCellSetter<T, P> {
+public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetterFactory<T, P> {
 
 	private final DelegateMarkerDelayedCellSetter<T, P> marker;
 	private final CsvMapperBytesCellHandler<?> handler;
 	private final int cellIndex;
 	protected P value;
-	public DelegateDelayedCellSetter(
+	public DelegateDelayedCellSetterFactory(
 			DelegateMarkerDelayedCellSetter<T, P> marker, int cellIndex) {
 		this.marker = marker;
 		this.handler = ((CsvMapperImpl<P>)marker.getMapper()).newCellHandler(new RowHandler<P>() {
 			@Override
 			public void handle(P t) throws Exception {
-				DelegateDelayedCellSetter.this.value = t;
+				DelegateDelayedCellSetterFactory.this.value = t;
 			}
 			
 		});
 		this.cellIndex = cellIndex;
 	}
 
-	public DelegateDelayedCellSetter(
+	public DelegateDelayedCellSetterFactory(
 			DelegateMarkerDelayedCellSetter<T, P> marker,
 			CsvMapperBytesCellHandler<?> bhandler, int cellIndex) {
 		this.handler = bhandler;
@@ -34,10 +34,8 @@ public class DelegateDelayedCellSetter<T, P> implements DelayedCellSetter<T, P> 
 	}
 
 	@Override
-	public DelayedSetter<T, P> set(byte[] bytes, int offset, int length)
-			throws Exception {
-		handler.newCell(bytes, offset, length, cellIndex);
-		return new DelayedSetter<T, P>() {
+	public DelayedCellSetter<T, P> newCellSetter() {
+		return new DelayedCellSetter<T, P>() {
 
 			@Override
 			public P getValue() {
@@ -53,6 +51,12 @@ public class DelegateDelayedCellSetter<T, P> implements DelayedCellSetter<T, P> 
 			@Override
 			public boolean isSettable() {
 				return marker.getSetter() != null;
+			}
+			
+			public void set(byte[] bytes, int offset, int length)
+					throws Exception {
+				handler.newCell(bytes, offset, length, cellIndex);
+
 			}
 		};
 	}

@@ -35,7 +35,7 @@ Why?
 
 ### Performance
 
-Ibatis and hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [%](#in-mem-hsqldb) for both. 
+Ibatis and hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [400%](#in-mem-hsqldb) for both. 
 
 BeanPropertyRowMapper is very slow.
 
@@ -58,12 +58,23 @@ JdbcMapper
 public class MyDao {
     private final JdbcMapper<MyObject> mapper = 
     	JdbcMapperFactory.newInstance().newMapper(MyObject.class);
-
-    public void writeAllObjectTo(Writer writer, Connection conn) throws SQLException {
+    public void writeAllObjectToLambda(Writer writer, Connection conn) throws SQLException {
         try (PreparedStatement ps = 
         		conn.prepareStatement("select id, email, my_property from MyTable")) {
 	        try (ResultSet rs = ps.executeQuery()){
 	            mapper.forEach(rs, (o) -> writer.append(o.toString()).append("\n"));
+	        }
+        }
+    }
+    public void writeAllObjectNoLambda(Writer writer, Connection conn) throws SQLException {
+        try (PreparedStatement ps = 
+        		conn.prepareStatement("select id, email, my_property from MyTable")) {
+	        try (ResultSet rs = ps.executeQuery()){
+	            mapper.forEach(rs, new RowHandler<MyObject>{
+	            	public void handle(MyObject o) throws IOException { 
+	            		writer.append(o.toString()).append("\n")); 
+	            	}  
+	            });
 	        }
         }
     }

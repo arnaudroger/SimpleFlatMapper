@@ -1,9 +1,11 @@
 package org.sfm.csv;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +28,6 @@ public class CsvMapperImplTest {
 
 	@Test
 	public void testDbObject() throws Exception {
-		InputStream sr = dbObjectCsvStream();
 
 		CellSetterFactory cellSetterFactory = new CellSetterFactory();
 		SetterFactory setterFactory = new SetterFactory(null);
@@ -47,10 +48,14 @@ public class CsvMapperImplTest {
 				(DelayedCellSetterFactory<DbObject, ?>[])new DelayedCellSetterFactory[] {} 
 				, setters);
 		
-		List<DbObject> list = mapper.forEach(sr, new ListHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(dbObjectCsvStream(), new ListHandler<DbObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
-		
+
+		list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
+		assertEquals(1, list.size());
+		DbHelper.assertDbObjectMapping(list.get(0));
+
 	}
 
 	public static InputStream dbObjectCsvStream() throws UnsupportedEncodingException {
@@ -58,10 +63,13 @@ public class CsvMapperImplTest {
 		return sr;
 	}
 	
+	public static Reader dbObjectCsvReader() throws UnsupportedEncodingException {
+		Reader sr = new StringReader("1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4");
+		return sr;
+	}
+	
 	@Test
 	public void testFinalDbObject() throws Exception {
-		InputStream sr = dbObjectCsvStream();
-
 		CellSetterFactory cellSetterFactory = new CellSetterFactory();
 
 		@SuppressWarnings("unchecked")
@@ -95,7 +103,11 @@ public class CsvMapperImplTest {
 				delayedSetters, 
 				setters);
 		
-		List<DbFinalObject> list = mapper.forEach(sr, new ListHandler<DbFinalObject>()).getList();
+		List<DbFinalObject> list = mapper.forEach(dbObjectCsvStream(), new ListHandler<DbFinalObject>()).getList();
+		assertEquals(1, list.size());
+		DbHelper.assertDbObjectMapping(list.get(0));
+		
+		list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 		

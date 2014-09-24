@@ -17,4 +17,10 @@ public class DoubleCellSetter<T> implements CellSetter<T> {
 			throws Exception {
 		setter.setDouble(target, DoubleCellValueReader.parseDouble(bytes, offset, length));
 	}
+	
+	@Override
+	public void set(T target, char[] chars, int offset, int length)
+			throws Exception {
+		setter.setDouble(target, DoubleCellValueReader.parseDouble(chars, offset, length));
+	}
 }

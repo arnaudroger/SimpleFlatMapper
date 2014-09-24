@@ -9,4 +9,8 @@ public class ShortCellValueReader implements CellValueReader<Short> {
 		return new Short((short)IntegerCellValueReader.parseInt(bytes, offset, length));
 	}
 
+	@Override
+	public Short read(char[] chars, int offset, int length) {
+		return new Short((short)IntegerCellValueReader.parseInt(chars, offset, length));
+	}
 }

@@ -21,18 +21,26 @@ public class LongCellValueReaderTest {
 	@Test
 	public void testInvalidLong() throws UnsupportedEncodingException {
 		final byte[] bytes = "Nan".getBytes("UTF-8");
+		final char[] chars = "Nan".toCharArray();
 		try {
 			reader.read(bytes, 0, bytes.length);
 			fail("Expect exception");
 		} catch(ParsingException e){
 			// expected
 		}
-	
+		try {
+			reader.read(chars, 0, chars.length);
+			fail("Expect exception");
+		} catch(ParsingException e){
+			// expected
+		}
 	}
 
 	private void testReadLong(long l) throws UnsupportedEncodingException {
 		final byte[] bytes = ("_" + Long.toString(l) + "_").getBytes("UTF-8");
+		final char[] chars = ("_" + Long.toString(l) + "_").toCharArray();
 		assertEquals(l, reader.read(bytes, 1, bytes.length -2).longValue());
+		assertEquals(l, reader.read(chars, 1, chars.length -2).longValue());
 	}
 
 }

@@ -17,4 +17,10 @@ public class CharCellSetter<T> implements CellSetter<T> {
 			throws Exception {
 		setter.setCharacter(target, (char) IntegerCellValueReader.parseInt(bytes, offset, length));
 	}
+	
+	@Override
+	public void set(T target, char[] chars, int offset, int length)
+			throws Exception {
+		setter.setCharacter(target, (char) IntegerCellValueReader.parseInt(chars, offset, length));
+	}
 }

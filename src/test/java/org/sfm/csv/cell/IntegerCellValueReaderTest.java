@@ -21,18 +21,26 @@ public class IntegerCellValueReaderTest {
 	@Test
 	public void testInvalidInt() throws UnsupportedEncodingException {
 		final byte[] bytes = "Nan".getBytes("UTF-8");
+		final char[] chars = "Nan".toCharArray();
 		try {
 			reader.read(bytes, 0, bytes.length);
 			fail("Expect exception");
 		} catch(ParsingException e){
 			// expected
 		}
-	
+		try {
+			reader.read(chars, 0, chars.length);
+			fail("Expect exception");
+		} catch(ParsingException e){
+			// expected
+		}
 	}
 
 	private void testReadInt(int i) throws UnsupportedEncodingException {
 		final byte[] bytes = ("_" + Integer.toString(i) + "_").getBytes("UTF-8");
+		final char[] chars = ("_" + Integer.toString(i) + "_").toCharArray();
 		assertEquals(i, reader.read(bytes, 1, bytes.length-2).intValue());
+		assertEquals(i, reader.read(chars, 1, chars.length-2).intValue());
 	}
 
 }

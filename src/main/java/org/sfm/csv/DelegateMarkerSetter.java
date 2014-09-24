@@ -17,6 +17,11 @@ public class DelegateMarkerSetter<T> implements CellSetter<T> {
 			throws Exception {
 		throw new UnsupportedOperationException();
 	}
+	@Override
+	public void set(T target, char[] chars, int offset, int length)
+			throws Exception {
+		throw new UnsupportedOperationException();
+	}
 
 	public CsvMapper<?> getMapper() {
 		return mapper;

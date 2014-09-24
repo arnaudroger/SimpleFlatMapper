@@ -5,7 +5,7 @@ import org.sfm.utils.RowHandler;
 public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetterFactory<T, P> {
 
 	private final DelegateMarkerDelayedCellSetter<T, P> marker;
-	private final CsvMapperBytesCellHandler<?> handler;
+	private final CsvMapperCellHandler<?> handler;
 	private final int cellIndex;
 	protected P value;
 	public DelegateDelayedCellSetterFactory(
@@ -23,13 +23,13 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 
 	public DelegateDelayedCellSetterFactory(
 			DelegateMarkerDelayedCellSetter<T, P> marker,
-			CsvMapperBytesCellHandler<?> bhandler, int cellIndex) {
+			CsvMapperCellHandler<?> bhandler, int cellIndex) {
 		this.handler = bhandler;
 		this.marker = marker;
 		this.cellIndex = cellIndex;
 	}
 
-	public CsvMapperBytesCellHandler<?> getBytesCellHandler() {
+	public CsvMapperCellHandler<?> getBytesCellHandler() {
 		return handler;
 	}
 
@@ -56,6 +56,11 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 			public void set(byte[] bytes, int offset, int length)
 					throws Exception {
 				handler.newCell(bytes, offset, length, cellIndex);
+
+			}
+			public void set(char[] chars, int offset, int length)
+					throws Exception {
+				handler.newCell(chars, offset, length, cellIndex);
 
 			}
 		};

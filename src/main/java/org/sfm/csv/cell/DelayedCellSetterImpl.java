@@ -41,4 +41,10 @@ public class DelayedCellSetterImpl<T, P> implements DelayedCellSetter<T, P> {
 		value = reader.read(bytes, offset, length);
 	}
 
+	@Override
+	public void set(char[] chars, int offset, int length)
+			throws Exception {
+		value = reader.read(chars, offset, length);
+	}
+
 }

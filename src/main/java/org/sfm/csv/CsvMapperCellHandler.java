@@ -1,13 +1,14 @@
 package org.sfm.csv;
 
 import org.sfm.csv.parser.BytesCellHandler;
+import org.sfm.csv.parser.CharsCellHandler;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.InstantiationMappingException;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
 
-final class CsvMapperBytesCellHandler<T> implements BytesCellHandler {
+final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCellHandler {
 
 	private final DelayedCellSetter<T, ?>[] delayedCellSetters;
 	private final CellSetter<T>[] setters;
@@ -23,25 +24,7 @@ final class CsvMapperBytesCellHandler<T> implements BytesCellHandler {
 	int cellIndex = 0;
 	boolean hasValue;
 
-	public CsvMapperBytesCellHandler(
-			@SuppressWarnings("rawtypes") Instantiator<DelayedCellSetter[], T> instantiator,
-			DelayedCellSetter<T, ?>[] delayedCellSetters,
-			CellSetter<T>[] setters,
-			FieldMapperErrorHandler<Integer> fieldErrorHandler,
-			RowHandlerErrorHandler rowHandlerErrorHandlers,
-			RowHandler<T> handler, int flushIndex) {
-		super();
-		this.instantiator = instantiator;
-		this.delayedCellSetters = delayedCellSetters;
-		this.setters = setters;
-		this.fieldErrorHandler = fieldErrorHandler;
-		this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
-		this.handler = handler;
-		this.flushIndex = flushIndex;
-		this.lastIndex = lastNonNullSetter(delayedCellSetters, setters);
-	}
-
-	public CsvMapperBytesCellHandler(
+	public CsvMapperCellHandler(
 			@SuppressWarnings("rawtypes") Instantiator<DelayedCellSetter[], T> instantiator,
 			DelayedCellSetter<T, ?>[] delayedCellSetters,
 			CellSetter<T>[] setters,
@@ -116,15 +99,6 @@ final class CsvMapperBytesCellHandler<T> implements BytesCellHandler {
 		}
 	}
 
-	private boolean hasDelayedSetter() {
-		for(int i = 0; i < delayedCellSetters.length; i++) {
-			if (delayedCellSetters[i] != null) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	@Override
 	public void newCell(byte[] bytes, int offset, int length) {
 		newCell(bytes, offset, length, cellIndex++);
@@ -167,5 +141,43 @@ final class CsvMapperBytesCellHandler<T> implements BytesCellHandler {
 	@Override
 	public void end() {
 		endOfRow();
+	}
+
+	@Override
+	public void newCell(char[] chars, int offset, int length) {
+		newCell(chars, offset, length, cellIndex++);
+	}
+	public void newCell(char[] chars, int offset, int length, int cellIndex) {
+		hasValue = true;
+		if (cellIndex > lastIndex) {
+			return;
+		}
+		
+		if (cellIndex < delayedCellSetters.length) {
+			try {
+				delayedCellSetters[cellIndex].set(chars, offset, length);
+			} catch (Exception e) {
+				fieldErrorHandler.errorMappingField(cellIndex, this, value, e);
+			}
+		} else {
+			if (value == null) {
+				try {
+					value = instantiator.newInstance(delayedCellSetters);
+				} catch (Exception e) {
+					throw new InstantiationMappingException(e.getMessage(), e);
+				}
+			}
+			if (cellIndex < setters.length + delayedCellSetters.length) {
+				try {
+					setters[cellIndex - delayedCellSetters.length].set(value, chars, offset, length);
+				} catch (Exception e) {
+					fieldErrorHandler.errorMappingField(cellIndex, this, value, e);
+				}
+			}
+		}
+		if (cellIndex == flushIndex) {
+			flush();
+		}
+		cellIndex++;
 	}
 }

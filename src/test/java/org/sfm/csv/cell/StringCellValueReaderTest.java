@@ -12,15 +12,24 @@ public class StringCellValueReaderTest {
 	@Test
 	public void testReadString() throws UnsupportedEncodingException {
 		byte[] bytes = "Hello!".getBytes("UTF-8");
+		char[] chars = "Hello!".toCharArray();
 		assertEquals("Hello!", reader.read(bytes, 0, bytes.length));
+		assertEquals("Hello!", reader.read(chars, 0, chars.length));
 
 		bytes = "HHH\"Hello!\"HHH".getBytes("UTF-8");
+		chars = "HHH\"Hello!\"HHH".toCharArray();
 		assertEquals("Hello!", reader.read(bytes, 3, bytes.length - 6));
-
+		assertEquals("Hello!", reader.read(chars, 3, chars.length - 6));
+		
 		bytes = "\"Hello!\"\"Sir\"\"\"".getBytes("UTF-8");
+		chars = "\"Hello!\"\"Sir\"\"\"".toCharArray();
 		assertEquals("Hello!\"Sir\"", reader.read(bytes, 0, bytes.length));
+		assertEquals("Hello!\"Sir\"", reader.read(chars, 0, chars.length));
+		
 		bytes = "\"Hello!\"\"Sir".getBytes("UTF-8");
+		chars = "\"Hello!\"\"Sir".toCharArray();
 		assertEquals("Hello!\"Sir", reader.read(bytes, 0, bytes.length));
+		assertEquals("Hello!\"Sir", reader.read(chars, 0, chars.length));
 	}
 	
 

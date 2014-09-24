@@ -21,18 +21,26 @@ public class FloatCellValueReaderTest {
 	@Test
 	public void testInvalidFloat() throws UnsupportedEncodingException {
 		final byte[] bytes = "ddd".getBytes("UTF-8");
+		final char[] chars = "ddd".toCharArray();
 		try {
 			reader.read(bytes, 0, bytes.length);
 			fail("Expect exception");
 		} catch(NumberFormatException e){
 			// expected
 		}
-	
+		try {
+			reader.read(chars, 0, chars.length);
+			fail("Expect exception");
+		} catch(NumberFormatException e){
+			// expected
+		}
 	}
 
 	private void testReadFloat(float i) throws UnsupportedEncodingException {
 		final byte[] bytes = ("_" + Float.toString(i) + "_").getBytes("UTF-8");
+		final char[] chars = ("_" + Float.toString(i) + "_").toCharArray();
 		assertEquals(i, reader.read(bytes, 1, bytes.length-2).floatValue(), 0);
+		assertEquals(i, reader.read(chars, 1, chars.length-2).floatValue(), 0);
 	}
 
 }

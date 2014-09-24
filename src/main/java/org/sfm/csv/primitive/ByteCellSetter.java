@@ -17,4 +17,10 @@ public class ByteCellSetter<T> implements CellSetter<T> {
 			throws Exception {
 		setter.setByte(target, (byte) IntegerCellValueReader.parseInt(bytes, offset, length));
 	}
+	
+	@Override
+	public void set(T target, char[] chars, int offset, int length)
+			throws Exception {
+		setter.setByte(target, (byte) IntegerCellValueReader.parseInt(chars, offset, length));
+	}
 }

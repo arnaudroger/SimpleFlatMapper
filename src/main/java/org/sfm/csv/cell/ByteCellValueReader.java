@@ -8,4 +8,9 @@ public class ByteCellValueReader implements CellValueReader<Byte> {
 	public Byte read(byte[] bytes, int offset, int length) {
 		return new Byte((byte)IntegerCellValueReader.parseInt(bytes, offset, length));
 	}
+	
+	@Override
+	public Byte read(char[] chars, int offset, int length) {
+		return new Byte((byte)IntegerCellValueReader.parseInt(chars, offset, length));
+	}
 }

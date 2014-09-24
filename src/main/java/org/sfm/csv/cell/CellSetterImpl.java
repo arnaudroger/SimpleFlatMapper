@@ -19,5 +19,9 @@ public final class CellSetterImpl<T, P> implements CellSetter<T> {
 	public void set(T target, byte[] bytes, int offset, int length) throws Exception {
 		setter.set(target, reader.read(bytes, offset, length));
 	}
+	@Override
+	public void set(T target, char[] chars, int offset, int length) throws Exception {
+		setter.set(target, reader.read(chars, offset, length));
+	}
 
 }

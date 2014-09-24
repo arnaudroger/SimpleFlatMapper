@@ -20,13 +20,21 @@ import org.sfm.csv.cell.ParsingException;
 import org.sfm.csv.cell.ShortCellValueReader;
 import org.sfm.csv.cell.StringCellValueReader;
 import org.sfm.csv.primitive.BooleanCellSetter;
+import org.sfm.csv.primitive.BooleanDelayedCellSetterFactory;
 import org.sfm.csv.primitive.ByteCellSetter;
+import org.sfm.csv.primitive.ByteDelayedCellSetterFactory;
 import org.sfm.csv.primitive.CharCellSetter;
+import org.sfm.csv.primitive.CharDelayedCellSetterFactory;
 import org.sfm.csv.primitive.DoubleCellSetter;
+import org.sfm.csv.primitive.DoubleDelayedCellSetterFactory;
 import org.sfm.csv.primitive.FloatCellSetter;
+import org.sfm.csv.primitive.FloatDelayedCellSetterFactory;
 import org.sfm.csv.primitive.IntCellSetter;
+import org.sfm.csv.primitive.IntDelayedCellSetterFactory;
 import org.sfm.csv.primitive.LongCellSetter;
+import org.sfm.csv.primitive.LongDelayedCellSetterFactory;
 import org.sfm.csv.primitive.ShortCellSetter;
+import org.sfm.csv.primitive.ShortDelayedCellSetterFactory;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.TypeHelper;
@@ -85,6 +93,28 @@ public class CellSetterFactory {
 		} 
 		throw new IllegalArgumentException("Invalid primitive type " + clazz);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public <T,P> DelayedCellSetterFactory<T, P> getPrimitiveDelayedCellSetter(Class<?> clazz, Setter<T, P> setter) {
+		if (boolean.class.equals(clazz)) {
+			return (DelayedCellSetterFactory<T, P>) new BooleanDelayedCellSetterFactory<T>(SetterFactory.toBooleanSetter(setter));
+		} else if (byte.class.equals(clazz)) {
+			return (DelayedCellSetterFactory<T, P>) new ByteDelayedCellSetterFactory<T>(SetterFactory.toByteSetter(setter));
+		} else if (char.class.equals(clazz)) {
+			return (DelayedCellSetterFactory<T, P>) new CharDelayedCellSetterFactory<T>(SetterFactory.toCharacterSetter(setter));
+		} else if (short.class.equals(clazz)) {
+			return (DelayedCellSetterFactory<T, P>) new ShortDelayedCellSetterFactory<T>(SetterFactory.toShortSetter(setter));
+		} else if (int.class.equals(clazz)) {
+			return (DelayedCellSetterFactory<T, P>) new IntDelayedCellSetterFactory<T>(SetterFactory.toIntSetter(setter));
+		} else if (long.class.equals(clazz)) {
+			return (DelayedCellSetterFactory<T, P>) new LongDelayedCellSetterFactory<T>(SetterFactory.toLongSetter(setter));
+		} else if (float.class.equals(clazz)) {
+			return (DelayedCellSetterFactory<T, P>) new FloatDelayedCellSetterFactory<T>(SetterFactory.toFloatSetter(setter));
+		} else if (double.class.equals(clazz)) {
+			return (DelayedCellSetterFactory<T, P>) new DoubleDelayedCellSetterFactory<T>(SetterFactory.toDoubleSetter(setter));
+		} 
+		throw new IllegalArgumentException("Invalid primitive type " + clazz);
+	}
 
 	private <T, P> CellValueReader<P> getReaderForSetter(Setter<T, P> setter) {
 		Class<P> propertyType = TypeHelper.toClass(setter.getPropertyType());
@@ -112,10 +142,22 @@ public class CellSetterFactory {
 	}
 
 	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Setter<T, P> setter) {
+		Class<?> propertyClass = TypeHelper.toClass(setter.getPropertyType());
+		
+		if (propertyClass.isPrimitive()) {
+			return getPrimitiveDelayedCellSetter(propertyClass, setter);
+		}
+		
 		return new DelayedCellSetterFactoryImpl<T, P>(getReaderForSetter(setter), setter);
 	}
 	@SuppressWarnings("unchecked")
 	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type type) {
+		Class<?> propertyClass = TypeHelper.toClass(type);
+		
+		if (propertyClass.isPrimitive()) {
+			return getPrimitiveDelayedCellSetter(propertyClass, null);
+		}
+		
 		return new DelayedCellSetterFactoryImpl<T, P>(getReader((Class<P>)TypeHelper.toClass(type)), null);
 	}
 }

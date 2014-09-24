@@ -4,22 +4,26 @@ import org.sfm.csv.DelayedCellSetter;
 import org.sfm.csv.cell.IntegerCellValueReader;
 import org.sfm.reflect.primitive.IntSetter;
 
-public class IntDelayedSetter<T> implements DelayedCellSetter<T, Integer> {
+public class IntDelayedCellSetter<T> implements DelayedCellSetter<T, Integer> {
 
 	private final IntSetter<T> setter;
 	private int value;
 	
-	public IntDelayedSetter(IntSetter<T> setter) {
+	public IntDelayedCellSetter(IntSetter<T> setter) {
 		this.setter = setter;
 	}
 
 	@Override
 	public Integer getValue() {
-		int v = value;
-		value = 0;
-		return new Integer(v);
+		return new Integer(getInt());
 	}
 
+	public int getInt() {
+		int v = value;
+		value = 0;
+		return v;
+	}
+	
 	@Override
 	public void set(T t) throws Exception {
 		int v = value;

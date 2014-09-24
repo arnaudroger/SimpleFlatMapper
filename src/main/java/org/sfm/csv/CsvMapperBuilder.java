@@ -6,6 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.sfm.csv.primitive.BooleanDelayedGetter;
+import org.sfm.csv.primitive.ByteDelayedGetter;
+import org.sfm.csv.primitive.CharDelayedGetter;
+import org.sfm.csv.primitive.DoubleDelayedGetter;
+import org.sfm.csv.primitive.FloatDelayedGetter;
+import org.sfm.csv.primitive.IntDelayedGetter;
+import org.sfm.csv.primitive.LongDelayedGetter;
+import org.sfm.csv.primitive.ShortDelayedGetter;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
@@ -17,6 +25,7 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.asm.ConstructorParameter;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ConstructorPropertyMeta;
@@ -130,22 +139,22 @@ public class CsvMapperBuilder<T> {
 		return setters.toArray(new CellSetter[0]);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	private  Instantiator<DelayedCellSetter[], T>  getInstantiator() throws MapperBuildingException {
-		
+
 		int lastConstructorArg = -1;
 		Map<ConstructorParameter, Getter<DelayedCellSetter[], ?>> constructorInjections = new HashMap<ConstructorParameter, Getter<DelayedCellSetter[], ?>>();
 		for(int i = 0; i < properties.size(); i++) {
 			PropertyMeta<T, ?> meta = properties.get(i);
 			if (meta instanceof ConstructorPropertyMeta) {
 				lastConstructorArg = i;
-				constructorInjections.put(((ConstructorPropertyMeta) meta).getConstructorParameter(), new DelayedGetter(i));
+				constructorInjections.put(((ConstructorPropertyMeta) meta).getConstructorParameter(), newDelayedGetter(i, meta.getType()));
 			} else if (meta instanceof SubPropertyMeta) {
 				SubPropertyMeta subMeta = (SubPropertyMeta) meta;
 				if  (subMeta.getProperty() instanceof ConstructorPropertyMeta) {
 					ConstructorPropertyMeta constPropMeta = (ConstructorPropertyMeta) subMeta.getProperty();
 					if (!constructorInjections.containsKey(constPropMeta.getConstructorParameter())) {
-						constructorInjections.put(constPropMeta.getConstructorParameter(), new DelayedGetter(i));
+						constructorInjections.put(constPropMeta.getConstructorParameter(), newDelayedGetter(i, constPropMeta.getType()));
 					}
 					lastConstructorArg = i;
 				}
@@ -172,6 +181,33 @@ public class CsvMapperBuilder<T> {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
+	private Getter<DelayedCellSetter[], ?> newDelayedGetter(int i, Type type) {
+		Class<?> clazz = TypeHelper.toClass(type);
+		if (clazz.isPrimitive()) {
+			if (boolean.class.equals(clazz)) {
+				return new BooleanDelayedGetter(i);
+			} else if (byte.class.equals(clazz)) {
+				return new ByteDelayedGetter(i);
+			} else if (char.class.equals(clazz)) {
+				return new CharDelayedGetter(i);
+			} else if (short.class.equals(clazz)) {
+				return new ShortDelayedGetter(i);
+			} else if (int.class.equals(clazz)) {
+				return new IntDelayedGetter(i);
+			} else if (long.class.equals(clazz)) {
+				return new LongDelayedGetter(i);
+			} else if (float.class.equals(clazz)) {
+				return new FloatDelayedGetter(i);
+			} else if (double.class.equals(clazz)) {
+				return new DoubleDelayedGetter(i);
+			} else {
+				throw new IllegalArgumentException("Unexpected primitive " + clazz);
+			}
+		} else {
+			return new DelayedGetter<T>(i);
+		}
+	}
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private DelayedCellSetterFactory<T, ?>[] getDelayedSetters() {
 		

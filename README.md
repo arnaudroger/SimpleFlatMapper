@@ -36,7 +36,7 @@ Why?
 
 ### Performance
 
-Ibatis and hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [400%](#in-mem-hsqldb) for both. 
+Mybatis and Hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [400%](#in-mem-hsqldb) for Hibernate and 500% for MyBatis. 
 
 BeanPropertyRowMapper is very slow.
 

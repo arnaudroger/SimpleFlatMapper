@@ -266,4 +266,18 @@ public class CsvMapperBuilder<T> {
 		
 		return delayedSetters.toArray(new DelayedCellSetterFactory[syncSetterStart]);
 	}
+	
+	public final CsvMapperBuilder<T> fieldMapperErrorHandler(final FieldMapperErrorHandler<Integer> errorHandler) {
+		if (!properties.isEmpty()) {
+			throw new IllegalStateException(
+					"Error Handler need to be set before adding fields");
+		}
+		fieldMapperErrorHandler = errorHandler;
+		return this;
+	}
+
+	public final CsvMapperBuilder<T> mapperBuilderErrorHandler(final MapperBuilderErrorHandler errorHandler) {
+		mapperBuilderErrorHandler = errorHandler;
+		return this;
+	}
 }

@@ -5,12 +5,13 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
+import org.sfm.map.MapperCache;
+import org.sfm.map.MapperKey;
 import org.sfm.map.MappingException;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
@@ -21,15 +22,13 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	private final ClassMeta<T> classMeta;
 	private final Class<T> target;
 
-	@SuppressWarnings("unchecked")
-	private final AtomicReference<CacheEntry<T>[]> mapperCache = new AtomicReference<CacheEntry<T>[]>(new CacheEntry[0]);
 
 	private final FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler;
 
 	private final  MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private final Map<String, String> aliases;
 	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();
-
+	private MapperCache<JdbcMapper<T>> mapperCache = new MapperCache<JdbcMapper<T>>();
 
 	public DynamicJdbcMapper(final Class<T> target, final ReflectionService reflectionService, 
 			final FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler, 
@@ -44,14 +43,6 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		this.customMappings = customMappings;
 	}
 	
-	private static final class CacheEntry<T> {
-		final MapperKey key;
-		final JdbcMapper<T> mapper;
-		public CacheEntry(final MapperKey key, final JdbcMapper<T> mapper) {
-			this.key = key;
-			this.mapper = mapper;
-		}
-	}
 
 	@Override
 	public final T map(final ResultSet source) throws MappingException {
@@ -72,9 +63,9 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private JdbcMapper<T> buildMapper(final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
 		
-		final MapperKey key = MapperKey.valueOf(metaData);
+		final MapperKey key = mapperKey(metaData);
 		
-		JdbcMapper<T> mapper = getMapper(key);
+		JdbcMapper<T> mapper = mapperCache.get(key);
 		
 		if (mapper == null) {
 			final ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<T>(target, classMeta, aliases, customMappings);
@@ -84,42 +75,18 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 			builder.addMapping(metaData);
 			
 			mapper = builder.mapper();
-			
-			addToMapperCache(new CacheEntry<T>(key, mapper));
+			mapperCache.add(key, mapper);
 		}
 		return mapper;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void addToMapperCache(final CacheEntry<T> cacheEntry) {
-		CacheEntry<T>[] entries;
-		CacheEntry<T>[] newEntries;
-		do {
-			entries = mapperCache.get();
-			
-			for(int i = 0; i < entries.length; i++) {
-				if (entries[0].key.equals(cacheEntry.key)) {
-					// already added 
-					return;
-				}
-			}
-			
-			newEntries = new CacheEntry[entries.length + 1];
-			
-			System.arraycopy(entries, 0, newEntries, 0, entries.length);
-			newEntries[entries.length] = cacheEntry;
+	private static MapperKey mapperKey(final ResultSetMetaData metaData) throws SQLException {
+		final String[] columns = new String[metaData.getColumnCount()];
 		
-		} while(!mapperCache.compareAndSet(entries, newEntries));
-	}
-
-	protected JdbcMapper<T> getMapper(MapperKey key) {
-		final CacheEntry<T>[] entries = mapperCache.get();
-		for(int i = 0; i < entries.length; i++) {
-			final CacheEntry<T> entry = entries[i];
-			if (entry.key.equals(key)) {
-				return entry.mapper;
-			}
+		for(int i = 0; i < columns.length; i++) {
+			columns[i] = metaData.getColumnLabel(i + 1);
 		}
-		return null;
+		
+		return new MapperKey(columns);
 	}
 }

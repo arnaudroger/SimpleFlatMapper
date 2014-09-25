@@ -11,6 +11,7 @@ A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 - easy to integrate with [Spring JdbcTemplate](#jdbctemplate). 
 - [Osgi](#osgisupport) ready.
 - [QueryDSL Jdbc support](#querydsl-jdbc)
+- [CsvMapper](#csvmapper)
 
 Design
 ========
@@ -142,6 +143,23 @@ try {
 	conn.close();
 }
 ```
+
+CsvMapper
+---------
+
+Uses header to match to the property.
+
+```java
+public class MyParser {
+    private final CsvMapper<MyObject> mapper = 
+    	CsvMapperFactory.newInstance().newMapper(MyObject.class);
+    public void writeAllObjectToLambda(Writer writer, InputStream is) throws SQLException {
+        mapper.forEach(is, (o) -> writer.append(o.toString()).append("\n"));
+    }
+}
+```
+
+
 
 Property Mapping
 ========

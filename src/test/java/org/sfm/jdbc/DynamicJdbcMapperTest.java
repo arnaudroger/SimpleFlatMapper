@@ -10,9 +10,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.map.Mapper;
-import org.sfm.utils.RowHandler;
 import org.sfm.utils.ListHandler;
+import org.sfm.utils.RowHandler;
 
 public class DynamicJdbcMapperTest {
 	
@@ -45,23 +44,6 @@ public class DynamicJdbcMapperTest {
 				rs.next();
 				DbObject object = mapper.map(rs);
 				DbHelper.assertDbObjectMapping(object);
-			}
-		});
-	}
-	@Test
-	public void testMapperCache() throws SQLException, ParseException, Exception {
-		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
-			@Override
-			public void handle(PreparedStatement ps) throws Exception {
-				ResultSet rs = ps.executeQuery();
-				MapperKey key = MapperKey.valueOf(rs.getMetaData());
-				Mapper<ResultSet, ?> delegate = mapper.getMapper(key);
-				assertNull(delegate);
-				mapper.forEach(rs, new ListHandler<DbObject>());
-				delegate = mapper.getMapper(key);
-				assertNotNull(delegate);
-				mapper.forEach(rs, new ListHandler<DbObject>());
-				assertSame(delegate, mapper.getMapper(key));
 			}
 		});
 	}

@@ -299,6 +299,17 @@ Local Mysql
 |MyBatis|106%|78%|120%|207%|
 |BeansPropertyRowMapper|85%|131%|235%|519%|
 
+Csv Mapping 
+-------
+
+Beta results.
+Reads a 1000 rows in memory csv. 
+
+|Benchmark|Median us/op|
+|-----|----:|
+|Jackson|783|
+|Sfm|522|
+
 Maven dependency
 ======
 

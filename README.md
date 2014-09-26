@@ -59,7 +59,7 @@ JdbcMapper
 public class MyDao {
     private final JdbcMapper<MyObject> mapper = 
     	JdbcMapperFactory.newInstance().newMapper(MyObject.class);
-    public void writeAllObjectToLambda(Writer writer, Connection conn) throws SQLException {
+    public void printAllLambda(Writer writer, Connection conn) throws SQLException {
         try (PreparedStatement ps = 
         		conn.prepareStatement("select id, email, my_property from MyTable")) {
 	        try (ResultSet rs = ps.executeQuery()){
@@ -67,7 +67,7 @@ public class MyDao {
 	        }
         }
     }
-    public void writeAllObjectNoLambda(Writer writer, Connection conn) throws SQLException {
+    public void printAll(Writer writer, Connection conn) throws SQLException {
         try (PreparedStatement ps = 
         		conn.prepareStatement("select id, email, my_property from MyTable")) {
 	        try (ResultSet rs = ps.executeQuery()){
@@ -153,7 +153,7 @@ Uses header to match to the property.
 public class MyParser {
     private final CsvMapper<MyObject> mapper = 
     	CsvMapperFactory.newInstance().newMapper(MyObject.class);
-    public void writeAllObjectToLambda(Writer writer, InputStream is) throws SQLException {
+    public void printAll(Writer writer, InputStream is) throws IOException {
         mapper.forEach(is, (o) -> writer.append(o.toString()).append("\n"));
     }
 }

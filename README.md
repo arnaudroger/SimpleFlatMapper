@@ -13,6 +13,8 @@ A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 - [QueryDSL Jdbc support](#querydsl-jdbc)
 - [CsvMapper](#csvmapper)
 
+Feedbacks are welcome specially from real use case, don't hesitate to raise an issue or send me an email.
+
 Design
 ========
 - no configuration

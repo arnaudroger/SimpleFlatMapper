@@ -11,7 +11,7 @@ public class DelegateCellSetter<T> implements CellSetter<T> {
 	private final int cellIndex;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public DelegateCellSetter(DelegateMarkerSetter<?> marker, int cellIndex) {
+	public DelegateCellSetter(DelegateMarkerSetter<?> marker, int cellIndex, DecoderContext context) {
 		this.marker = marker;
 		this.handler = ((CsvMapperImpl<?>)marker.getMapper()).newCellHandler(new RowHandler() {
 			@Override
@@ -20,7 +20,7 @@ public class DelegateCellSetter<T> implements CellSetter<T> {
 				setter.set(target, t);
 			}
 			
-		});
+		}, context);
 		this.cellIndex = cellIndex;
 	}
 
@@ -32,7 +32,7 @@ public class DelegateCellSetter<T> implements CellSetter<T> {
 	}
 
 	@Override
-	public void set(T target, byte[] bytes, int offset, int length)
+	public void set(T target, byte[] bytes, int offset, int length, DecoderContext context)
 			throws Exception {
 		this.target = target;
 		this.handler.newCell(bytes, offset, length, cellIndex);

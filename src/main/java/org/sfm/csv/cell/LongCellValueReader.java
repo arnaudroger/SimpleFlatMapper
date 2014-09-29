@@ -1,6 +1,7 @@
 package org.sfm.csv.cell;
 
 import org.sfm.csv.CellValueReader;
+import org.sfm.csv.DecoderContext;
 
 
 public class LongCellValueReader implements CellValueReader<Long> {
@@ -14,7 +15,7 @@ public class LongCellValueReader implements CellValueReader<Long> {
 	final static char CNEGSIGN = '-';
 	
 	@Override
-	public Long read(byte[] bytes, int offset, int length) {
+	public Long read(byte[] bytes, int offset, int length, DecoderContext decoderContext) {
 		long n = parseLong(bytes, offset, length);
 		return new Long(n);
 	}

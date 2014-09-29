@@ -1,10 +1,7 @@
 package org.sfm.csv.cell;
 
-import java.nio.charset.Charset;
-
 import org.sfm.csv.CellValueReader;
-import org.sfm.text.StringDecoder;
-import org.sfm.text.StringDecoderFactory;
+import org.sfm.csv.DecoderContext;
 
 
 public class StringCellValueReader implements CellValueReader<String> {
@@ -12,11 +9,9 @@ public class StringCellValueReader implements CellValueReader<String> {
 	final static byte QUOTE = '"';
 	final static char CQUOTE = '"';
 	
-	private final StringDecoder stringDecoder = StringDecoderFactory.newStringDecoder(Charset.forName("UTF-8")); 
-	
 	@Override
-	public String read(byte[] bytes, int offset, int length) {
-		return readString(bytes, offset, length);
+	public String read(byte[] bytes, int offset, int length, DecoderContext decoderContext) {
+		return readString(bytes, offset, length, decoderContext);
 	}
 
 	@Override
@@ -24,14 +19,14 @@ public class StringCellValueReader implements CellValueReader<String> {
 		return readString(chars, offset, length);
 	}
 	
-	public String readString(byte[] bytes, int offset, int length) {
+	public static String readString(byte[] bytes, int offset, int length, DecoderContext decoderContext) {
 		if (bytes[offset] == QUOTE) {
-			return unescape(bytes, offset, length);
+			return unescape(bytes, offset, length, decoderContext);
 		}
-		return decode(bytes, offset, length);
+		return decode(bytes, offset, length, decoderContext);
 	}
 
-	private String unescape(byte[] bytes, int offset, int length) {
+	private static String unescape(byte[] bytes, int offset, int length, DecoderContext decoderContext) {
 		byte[] newBytes = new byte[length];
 		boolean lastWasQuote = false;
 		int j = 0;
@@ -46,11 +41,11 @@ public class StringCellValueReader implements CellValueReader<String> {
 		if (bytes[offset + length -1] != QUOTE) {
 			newBytes[j++] = bytes[offset + length -1];
 		}
-		return decode(newBytes, 0, j);
+		return decode(newBytes, 0, j, decoderContext);
 	}
 
-	private String decode(byte[] bytes, int offset, int length) {
-		return stringDecoder.decode(bytes, offset, length);
+	private static String decode(byte[] bytes, int offset, int length, DecoderContext decoderContext) {
+		return decoderContext.getStringDecoder().decode(bytes, offset, length);
 	}
 	
 	public static String readString(char[] chars, int offset, int length) {

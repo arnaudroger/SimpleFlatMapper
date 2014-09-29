@@ -13,7 +13,7 @@ public class DelegateMarkerSetter<T> implements CellSetter<T> {
 	}
 
 	@Override
-	public void set(T target, byte[] bytes, int offset, int length)
+	public void set(T target, byte[] bytes, int offset, int length, DecoderContext decoderContext)
 			throws Exception {
 		throw new UnsupportedOperationException();
 	}

@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
+import org.sfm.csv.DecoderContext;
 
 public class FloatCellValueReaderTest {
 
@@ -23,7 +24,7 @@ public class FloatCellValueReaderTest {
 		final byte[] bytes = "ddd".getBytes("UTF-8");
 		final char[] chars = "ddd".toCharArray();
 		try {
-			reader.read(bytes, 0, bytes.length);
+			reader.read(bytes, 0, bytes.length, DecoderContext.forCharset("UTF-8"));
 			fail("Expect exception");
 		} catch(NumberFormatException e){
 			// expected
@@ -39,7 +40,7 @@ public class FloatCellValueReaderTest {
 	private void testReadFloat(float i) throws UnsupportedEncodingException {
 		final byte[] bytes = ("_" + Float.toString(i) + "_").getBytes("UTF-8");
 		final char[] chars = ("_" + Float.toString(i) + "_").toCharArray();
-		assertEquals(i, reader.read(bytes, 1, bytes.length-2).floatValue(), 0);
+		assertEquals(i, reader.read(bytes, 1, bytes.length-2, DecoderContext.forCharset("UTF-8")).floatValue(), 0);
 		assertEquals(i, reader.read(chars, 1, chars.length-2).floatValue(), 0);
 	}
 

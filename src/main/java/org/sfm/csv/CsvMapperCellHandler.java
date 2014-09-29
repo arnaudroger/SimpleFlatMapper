@@ -18,6 +18,7 @@ public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCel
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
 	private final RowHandler<T> handler;
 	private final int flushIndex;
+	private final DecoderContext decoderContext;
 	
 	T currentInstance;
 	int cellIndex = 0;
@@ -30,7 +31,8 @@ public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCel
 			CellSetter<T>[] setters,
 			FieldMapperErrorHandler<Integer> fieldErrorHandler,
 			RowHandlerErrorHandler rowHandlerErrorHandlers,
-			RowHandler<T> handler) {
+			RowHandler<T> handler, 
+			DecoderContext decoderContext) {
 		super();
 		this.instantiator = instantiator;
 		this.delayedCellSetters = delayedCellSetters;
@@ -40,6 +42,7 @@ public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCel
 		this.handler = handler;
 		this.flushIndex = lastNonNullSetter(delayedCellSetters, setters);
 		this.totalLength = delayedCellSetters.length + setters.length;
+		this.decoderContext = decoderContext;
 	}
 	
 	private int lastNonNullSetter(
@@ -121,7 +124,7 @@ public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCel
 
 	private void newCellForDelayedSetter(byte[] bytes, int offset, int length, int cellIndex) {
 		try {
-			delayedCellSetters[cellIndex].set(bytes, offset, length);
+			delayedCellSetters[cellIndex].set(bytes, offset, length,decoderContext);
 		} catch (Exception e) {
 			fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
 		}
@@ -138,7 +141,7 @@ public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCel
 	private void newCellForSetter(byte[] bytes, int offset, int length, int cellIndex) {
 		if (cellIndex < totalLength) {
 			try {
-				setters[cellIndex - delayedCellSetters.length].set(currentInstance, bytes, offset, length);
+				setters[cellIndex - delayedCellSetters.length].set(currentInstance, bytes, offset, length, decoderContext);
 			} catch (Exception e) {
 				fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
 			}

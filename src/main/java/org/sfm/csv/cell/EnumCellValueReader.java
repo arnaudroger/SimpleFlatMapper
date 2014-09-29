@@ -1,6 +1,7 @@
 package org.sfm.csv.cell;
 
 import org.sfm.csv.CellValueReader;
+import org.sfm.csv.DecoderContext;
 import org.sfm.reflect.EnumHelper;
 
 public class EnumCellValueReader<E extends Enum<E>> implements CellValueReader<E> {
@@ -22,13 +23,13 @@ public class EnumCellValueReader<E extends Enum<E>> implements CellValueReader<E
 	}
 
 	@Override
-	public E read(byte[] bytes, int offset, int length) {
+	public E read(byte[] bytes, int offset, int length, DecoderContext decoderContext) {
 		
 		int n = parsePositiveNumber(bytes, offset, length);
 		if (n >= 0 && n < values.length) {
 			return values[n];
 		} else {
-			return Enum.valueOf(enumClass, stringCellValueReader.read(bytes, offset, length));
+			return Enum.valueOf(enumClass, stringCellValueReader.read(bytes, offset, length, decoderContext));
 		}
 	}
 

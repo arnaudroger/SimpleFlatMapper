@@ -2,6 +2,7 @@ package org.sfm.csv.cell;
 
 import org.sfm.csv.CellSetter;
 import org.sfm.csv.CellValueReader;
+import org.sfm.csv.DecoderContext;
 import org.sfm.reflect.Setter;
 
 public final class CellSetterImpl<T, P> implements CellSetter<T> {
@@ -16,8 +17,8 @@ public final class CellSetterImpl<T, P> implements CellSetter<T> {
 	}
 
 	@Override
-	public void set(T target, byte[] bytes, int offset, int length) throws Exception {
-		final P value = reader.read(bytes, offset, length);
+	public void set(T target, byte[] bytes, int offset, int length, DecoderContext dc) throws Exception {
+		final P value = reader.read(bytes, offset, length, dc);
 		setter.set(target, value);
 	}
 	@Override

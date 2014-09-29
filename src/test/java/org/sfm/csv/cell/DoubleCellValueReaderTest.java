@@ -3,8 +3,10 @@ package org.sfm.csv.cell;
 import static org.junit.Assert.*;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.junit.Test;
+import org.sfm.csv.DecoderContext;
 
 public class DoubleCellValueReaderTest {
 
@@ -23,7 +25,7 @@ public class DoubleCellValueReaderTest {
 		final byte[] bytes = "ddd".getBytes("UTF-8");
 		final char[] chars = "ddd".toCharArray();
 		try {
-			reader.read(bytes, 0, bytes.length);
+			reader.read(bytes, 0, bytes.length, new DecoderContext(Charset.forName("UTF-8")));
 			fail("Expect exception");
 		} catch(NumberFormatException e){
 			// expected
@@ -39,7 +41,7 @@ public class DoubleCellValueReaderTest {
 	private void testReadDouble(double i) throws UnsupportedEncodingException {
 		final byte[] bytes = ("_" + Double.toString(i) + "_").getBytes("UTF-8");
 		final char[] chars = ("_" + Double.toString(i) + "_").toCharArray();
-		assertEquals(i, reader.read(bytes, 1, bytes.length-2).doubleValue(), 0);
+		assertEquals(i, reader.read(bytes, 1, bytes.length-2, new DecoderContext(Charset.forName("UTF-8"))).doubleValue(), 0);
 		assertEquals(i, reader.read(chars, 1, chars.length-2).doubleValue(), 0);
 	}
 

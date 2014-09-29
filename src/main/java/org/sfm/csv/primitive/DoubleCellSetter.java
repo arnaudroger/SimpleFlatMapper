@@ -1,6 +1,7 @@
 package org.sfm.csv.primitive;
 
 import org.sfm.csv.CellSetter;
+import org.sfm.csv.DecoderContext;
 import org.sfm.csv.cell.DoubleCellValueReader;
 import org.sfm.reflect.primitive.DoubleSetter;
 
@@ -14,9 +15,9 @@ public class DoubleCellSetter<T> implements CellSetter<T> {
 	}
 	
 	@Override
-	public void set(T target, byte[] bytes, int offset, int length)
+	public void set(T target, byte[] bytes, int offset, int length, DecoderContext dc)
 			throws Exception {
-		setter.setDouble(target, reader.parseDouble(bytes, offset, length));
+		setter.setDouble(target, reader.parseDouble(bytes, offset, length, dc));
 	}
 	
 	@Override

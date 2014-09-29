@@ -305,10 +305,17 @@ Csv Mapping
 Beta results.
 Reads a 1000 rows in memory csv. 
 
-|Benchmark|Median us/op|
-|-----|----:|
-|Jackson|783|
-|Sfm|522|
+```
+Benchmark                                        Mode  Samples    Score  Score error  Units
+o.s.b.c.CsvBenchmark.testReadCsvJackson1000    sample    28342  775.944        2.378  us/op
+o.s.b.c.CsvBenchmark.testReadCsvSfm1000        sample    49380  445.330        1.410  us/op
+```
+
+```
+Benchmark                                       Mode  Samples     Score  Score error  Units
+o.s.b.c.CsvBenchmark.testReadCsvJackson1000    thrpt      200  1290.502        0.984  ops/s
+o.s.b.c.CsvBenchmark.testReadCsvSfm1000        thrpt      200  2198.874       18.738  ops/s
+```
 
 Maven dependency
 ======

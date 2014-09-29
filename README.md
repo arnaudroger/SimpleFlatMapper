@@ -324,7 +324,7 @@ Maven dependency
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>0.9.4</version>
+			<version>0.9.5</version>
 		</dependency>
 ```
 

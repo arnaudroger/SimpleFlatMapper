@@ -307,8 +307,8 @@ Reads a 1000 rows in memory csv.
 
 ```
 Benchmark                                        Mode  Samples    Score  Score error  Units
-o.s.b.c.CsvBenchmark.testReadCsvJackson1000    sample    28342  775.944        2.378  us/op
-o.s.b.c.CsvBenchmark.testReadCsvSfm1000        sample    49380  445.330        1.410  us/op
+o.s.b.c.CsvBenchmark.testReadCsvJackson1000    sample   283551  775.594        0.767  us/op
+o.s.b.c.CsvBenchmark.testReadCsvSfm1000        sample   494288  444.869        0.427  us/op
 ```
 
 ```

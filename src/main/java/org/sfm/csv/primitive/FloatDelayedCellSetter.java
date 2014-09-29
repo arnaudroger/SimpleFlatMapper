@@ -7,6 +7,7 @@ import org.sfm.reflect.primitive.FloatSetter;
 public class FloatDelayedCellSetter<T> implements DelayedCellSetter<T, Float> {
 
 	private final FloatSetter<T> setter;
+	private final FloatCellValueReader reader = new FloatCellValueReader();
 	private float value;
 	
 	public FloatDelayedCellSetter(FloatSetter<T> setter) {
@@ -38,7 +39,7 @@ public class FloatDelayedCellSetter<T> implements DelayedCellSetter<T, Float> {
 
 	@Override
 	public void set(byte[] bytes, int offset, int length) throws Exception {
-		this.value = FloatCellValueReader.parseFloat(bytes, offset, length);
+		this.value = reader.parseFloat(bytes, offset, length);
 	}
 
 	@Override

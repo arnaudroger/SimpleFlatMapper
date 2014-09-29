@@ -3,6 +3,7 @@ package org.sfm.csv.cell;
 import org.sfm.csv.CellValueReader;
 
 public class DoubleCellValueReader implements CellValueReader<Double> {
+	private final StringCellValueReader reader = new StringCellValueReader();
 
 	@Override
 	public Double read(byte[] bytes, int offset, int length) {
@@ -14,8 +15,8 @@ public class DoubleCellValueReader implements CellValueReader<Double> {
 		return new Double(parseDouble(chars, offset, length));
 	}
 
-	public static double parseDouble(byte[] bytes, int offset, int length) {
-		return Double.parseDouble(StringCellValueReader.readString(bytes, offset, length));
+	public double parseDouble(byte[] bytes, int offset, int length) {
+		return Double.parseDouble(reader.read(bytes, offset, length));
 	}
 	
 	public static double parseDouble(char[] chars, int offset, int length) {

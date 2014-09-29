@@ -7,6 +7,7 @@ import org.sfm.reflect.primitive.DoubleSetter;
 public class DoubleCellSetter<T> implements CellSetter<T> {
 
 	private final DoubleSetter<T> setter;
+	private final DoubleCellValueReader reader = new DoubleCellValueReader();
 	
 	public DoubleCellSetter(DoubleSetter<T> setter) {
 		this.setter = setter;
@@ -15,7 +16,7 @@ public class DoubleCellSetter<T> implements CellSetter<T> {
 	@Override
 	public void set(T target, byte[] bytes, int offset, int length)
 			throws Exception {
-		setter.setDouble(target, DoubleCellValueReader.parseDouble(bytes, offset, length));
+		setter.setDouble(target, reader.parseDouble(bytes, offset, length));
 	}
 	
 	@Override

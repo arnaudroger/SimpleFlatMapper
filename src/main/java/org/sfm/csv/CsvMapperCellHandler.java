@@ -8,7 +8,7 @@ import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
 
-final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCellHandler {
+public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCellHandler {
 
 	private final DelayedCellSetter<T, ?>[] delayedCellSetters;
 	private final CellSetter<T>[] setters;
@@ -18,11 +18,11 @@ final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCellHandle
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
 	private final RowHandler<T> handler;
 	private final int flushIndex;
-	private final int lastIndex;
 	
-	T value;
+	T currentInstance;
 	int cellIndex = 0;
-	boolean hasValue;
+	
+	private final int totalLength;
 
 	public CsvMapperCellHandler(
 			@SuppressWarnings("rawtypes") Instantiator<DelayedCellSetter[], T> instantiator,
@@ -39,7 +39,7 @@ final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCellHandle
 		this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
 		this.handler = handler;
 		this.flushIndex = lastNonNullSetter(delayedCellSetters, setters);
-		this.lastIndex = flushIndex;
+		this.totalLength = delayedCellSetters.length + setters.length;
 	}
 	
 	private int lastNonNullSetter(
@@ -64,80 +64,97 @@ final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCellHandle
 
 	@Override
 	public void endOfRow() {
-		flush();
+		endOfRow(cellIndex);
 		cellIndex = 0;
 	}
+	public void endOfRow(int cellIndex) {
+		flush(cellIndex);
+	}
+	public void flush(int cellIndex) {
+		if (cellIndex > 0) {
+			T instance = currentInstance;
+			if (instance == null) {
+				instance = createInstance();
+				applyDelayedSetters(instance);
+				callHandler(instance);
+			} else {
+				applyDelayedSetters(instance);
+				callHandler(instance);
+				currentInstance = null;
+			}
+			this.cellIndex = -1;
+		}
+	}
 
-	public void flush() {
-		if (value == null) {
-			if (hasValue) {
+
+	private void callHandler(T instance) {
+		try {
+			handler.handle(instance);
+		} catch (Exception e) {
+			rowHandlerErrorHandlers.handlerError(e, instance);
+		}
+	}
+
+	private void applyDelayedSetters(T instance) {
+		for(int i = 0; i < delayedCellSetters.length; i++) {
+			DelayedCellSetter<T, ?> delayedSetter = delayedCellSetters[i];
+			if (delayedSetter != null && delayedSetter.isSettable()) {
 				try {
-					value = instantiator.newInstance(delayedCellSetters);
+					delayedSetter.set(instance);
 				} catch (Exception e) {
-					throw new InstantiationMappingException(e.getMessage(), e);
+					rowHandlerErrorHandlers.handlerError(e, instance);
 				}
 			}
 		}
-		if (value != null) {
-			for(int i = 0; i < delayedCellSetters.length; i++) {
-				DelayedCellSetter<T, ?> delayedSetter = delayedCellSetters[i];
-				if (delayedSetter != null && delayedSetter.isSettable()) {
-					try {
-						delayedSetter.set(value);
-					} catch (Exception e) {
-						rowHandlerErrorHandlers.handlerError(e, value);
-					}
-				}
-			}
+	}
+
+
+
+	
+	private T createInstance() {
+		try {
+			return instantiator.newInstance(delayedCellSetters);
+		} catch (Exception e) {
+			throw new InstantiationMappingException(e.getMessage(), e);
+		}
+	}
+
+	private void newCellForDelayedSetter(byte[] bytes, int offset, int length, int cellIndex) {
+		try {
+			delayedCellSetters[cellIndex].set(bytes, offset, length);
+		} catch (Exception e) {
+			fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
+		}
+	}
+
+	private void newCellForDelayedSetter(char[] chars, int offset, int length, int cellIndex) {
+		try {
+			delayedCellSetters[cellIndex].set(chars, offset, length);
+		} catch (Exception e) {
+			fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
+		}
+	}
+
+	private void newCellForSetter(byte[] bytes, int offset, int length, int cellIndex) {
+		if (cellIndex < totalLength) {
 			try {
-				handler.handle(value);
+				setters[cellIndex - delayedCellSetters.length].set(currentInstance, bytes, offset, length);
 			} catch (Exception e) {
-				rowHandlerErrorHandlers.handlerError(e, value);
+				fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
 			}
-			value = null;
-			hasValue = false;
 		}
 	}
 
-	@Override
-	public void newCell(byte[] bytes, int offset, int length) {
-		newCell(bytes, offset, length, cellIndex++);
-	}
-
-	public void newCell(byte[] bytes, int offset, int length, int cellIndex) {
-		hasValue = true;
-		if (cellIndex > lastIndex) {
-			return;
-		}
-		
-		if (cellIndex < delayedCellSetters.length) {
+	private void newCellForSetter(char[] chars, int offset, int length, int cellIndex) {
+		if (cellIndex < totalLength) {
 			try {
-				delayedCellSetters[cellIndex].set(bytes, offset, length);
+				setters[cellIndex - delayedCellSetters.length].set(currentInstance, chars, offset, length);
 			} catch (Exception e) {
-				fieldErrorHandler.errorMappingField(cellIndex, this, value, e);
-			}
-		} else {
-			if (value == null) {
-				try {
-					value = instantiator.newInstance(delayedCellSetters);
-				} catch (Exception e) {
-					throw new InstantiationMappingException(e.getMessage(), e);
-				}
-			}
-			if (cellIndex < setters.length + delayedCellSetters.length) {
-				try {
-					setters[cellIndex - delayedCellSetters.length].set(value, bytes, offset, length);
-				} catch (Exception e) {
-					fieldErrorHandler.errorMappingField(cellIndex, this, value, e);
-				}
+				fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
 			}
 		}
-		if (cellIndex == flushIndex) {
-			flush();
-		}
-		cellIndex++;
 	}
-
+	
 	@Override
 	public void end() {
 		endOfRow();
@@ -145,39 +162,52 @@ final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCellHandle
 
 	@Override
 	public void newCell(char[] chars, int offset, int length) {
-		newCell(chars, offset, length, cellIndex++);
-	}
-	public void newCell(char[] chars, int offset, int length, int cellIndex) {
-		hasValue = true;
-		if (cellIndex > lastIndex) {
+		if (cellIndex == -1) {
 			return;
 		}
+		newCell(chars, offset, length, cellIndex);
+		cellIndex++;
+	}
+	
+	@Override
+	public void newCell(byte[] bytes, int offset, int length) {
+		if (cellIndex == -1) {
+			return;
+		}
+		newCell(bytes, offset, length, cellIndex);
+		cellIndex ++;
+	}
+
+	public void newCell(byte[] bytes, int offset, int length, int cellIndex) {
+		if (cellIndex < delayedCellSetters.length) {
+			newCellForDelayedSetter(bytes, offset, length, cellIndex);
+		} else {
+			if (currentInstance == null) {
+				currentInstance = createInstance();
+			}
+			newCellForSetter(bytes, offset, length, cellIndex);
+		}
+		
+		if (cellIndex == flushIndex) {
+			flush(cellIndex);
+		}
+	}
+
+	public void newCell(char[] chars, int offset, int length, int cellIndex) {
 		
 		if (cellIndex < delayedCellSetters.length) {
-			try {
-				delayedCellSetters[cellIndex].set(chars, offset, length);
-			} catch (Exception e) {
-				fieldErrorHandler.errorMappingField(cellIndex, this, value, e);
-			}
+			newCellForDelayedSetter(chars, offset, length, cellIndex);
 		} else {
-			if (value == null) {
-				try {
-					value = instantiator.newInstance(delayedCellSetters);
-				} catch (Exception e) {
-					throw new InstantiationMappingException(e.getMessage(), e);
-				}
+			if (currentInstance == null) {
+				currentInstance = createInstance();
 			}
-			if (cellIndex < setters.length + delayedCellSetters.length) {
-				try {
-					setters[cellIndex - delayedCellSetters.length].set(value, chars, offset, length);
-				} catch (Exception e) {
-					fieldErrorHandler.errorMappingField(cellIndex, this, value, e);
-				}
-			}
+			newCellForSetter(chars, offset, length, cellIndex);
 		}
+		
 		if (cellIndex == flushIndex) {
-			flush();
+			flush(cellIndex);
 		}
+		
 		cellIndex++;
 	}
 }

@@ -7,6 +7,7 @@ import org.sfm.reflect.primitive.FloatSetter;
 public class FloatCellSetter<T> implements CellSetter<T> {
 
 	private final FloatSetter<T> setter;
+	private final FloatCellValueReader reader = new FloatCellValueReader();
 	
 	public FloatCellSetter(FloatSetter<T> setter) {
 		this.setter = setter;
@@ -15,7 +16,7 @@ public class FloatCellSetter<T> implements CellSetter<T> {
 	@Override
 	public void set(T target, byte[] bytes, int offset, int length)
 			throws Exception {
-		setter.setFloat(target, FloatCellValueReader.parseFloat(bytes, offset, length));
+		setter.setFloat(target, reader.parseFloat(bytes, offset, length));
 	}
 	
 	@Override

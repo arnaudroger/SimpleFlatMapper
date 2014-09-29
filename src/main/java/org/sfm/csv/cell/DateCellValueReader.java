@@ -7,9 +7,11 @@ import java.util.Date;
 import org.sfm.csv.CellValueReader;
 
 public class DateCellValueReader implements CellValueReader<Date> {
+	
+	private final StringCellValueReader reader = new StringCellValueReader();
 	@Override
 	public Date read(byte[] bytes, int offset, int length) {
-		String str = StringCellValueReader.readString(bytes, offset, length);
+		String str = reader.read(bytes, offset, length);
 		try {
 			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(str);
 		} catch (ParseException e) {

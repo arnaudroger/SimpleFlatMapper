@@ -17,11 +17,13 @@ public final class CellSetterImpl<T, P> implements CellSetter<T> {
 
 	@Override
 	public void set(T target, byte[] bytes, int offset, int length) throws Exception {
-		setter.set(target, reader.read(bytes, offset, length));
+		final P value = reader.read(bytes, offset, length);
+		setter.set(target, value);
 	}
 	@Override
 	public void set(T target, char[] chars, int offset, int length) throws Exception {
-		setter.set(target, reader.read(chars, offset, length));
+		final P value = reader.read(chars, offset, length);
+		setter.set(target, value);
 	}
 
 }

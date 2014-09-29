@@ -22,7 +22,7 @@ import org.sfm.utils.RowHandler;
 public class DynamicCsvMapper<T> implements CsvMapper<T> {
 	
 	public final class DynamicCellHandler implements BytesCellHandler, CharsCellHandler {
-
+		private StringCellValueReader reader = new StringCellValueReader();
 		private final RowHandler<T> handle;
 		private CsvMapperCellHandler<T> cellHandler;
 		private List<String> columns = new ArrayList<String>();
@@ -49,7 +49,7 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 		@Override
 		public void newCell(byte[] bytes, int offset, int length) {
 			if (cellHandler == null) {
-				columns.add(StringCellValueReader.readString(bytes, offset, length));
+				columns.add(reader.readString(bytes, offset, length));
 			} else {
 				cellHandler.newCell(bytes, offset, length);
 			}

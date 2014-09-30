@@ -10,4 +10,7 @@ import org.sfm.utils.RowHandler;
 public interface CsvMapper<T> {
 	<H extends RowHandler<T>> H forEach(InputStream is, H handle) throws IOException, MappingException;
 	<H extends RowHandler<T>> H forEach(Reader reader, H handle) throws IOException, MappingException;
+	<H extends RowHandler<T>> H forEach(Reader reader, H handle, int rowStart) throws IOException, MappingException;
+	<H extends RowHandler<T>> H forEach(Reader reader, H handle, int rowStart, int rowEnd) throws IOException, MappingException;
+
 }

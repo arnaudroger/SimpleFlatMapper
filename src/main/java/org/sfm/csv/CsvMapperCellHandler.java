@@ -17,11 +17,16 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
 	private final RowHandler<T> handler;
 	private final int flushIndex;
-	
-	T currentInstance;
-	int cellIndex = 0;
-	
 	private final int totalLength;
+
+	private final int rowStart;
+	private final int limit;
+	
+	
+	
+	private T currentInstance;
+	private int cellIndex = 0;
+	private int currentRow = 0;
 
 	public CsvMapperCellHandler(
 			@SuppressWarnings("rawtypes") Instantiator<DelayedCellSetter[], T> instantiator,
@@ -29,7 +34,8 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 			CellSetter<T>[] setters,
 			FieldMapperErrorHandler<Integer> fieldErrorHandler,
 			RowHandlerErrorHandler rowHandlerErrorHandlers,
-			RowHandler<T> handler) {
+			RowHandler<T> handler, 
+			int rowStart, int limit) {
 		super();
 		this.instantiator = instantiator;
 		this.delayedCellSetters = delayedCellSetters;
@@ -39,6 +45,8 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 		this.handler = handler;
 		this.flushIndex = lastNonNullSetter(delayedCellSetters, setters);
 		this.totalLength = delayedCellSetters.length + setters.length;
+		this.rowStart = rowStart;
+		this.limit = limit;
 	}
 	
 	private int lastNonNullSetter(
@@ -65,8 +73,15 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 	public boolean endOfRow() {
 		endOfRow(cellIndex);
 		cellIndex = 0;
-		return true;
+		return continueProcessing();
 	}
+	
+	private boolean continueProcessing() {
+		currentRow++;
+		boolean continueProcessing =  limit == -1 || (currentRow - rowStart) < limit;
+		return continueProcessing;
+	} 
+	
 	public void endOfRow(int cellIndex) {
 		flush(cellIndex);
 	}
@@ -141,11 +156,13 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 
 	@Override
 	public void newCell(char[] chars, int offset, int length) {
-		if (cellIndex == -1) {
-			return;
+		if (rowStart == -1 || currentRow >= rowStart) {
+			if (cellIndex == -1) {
+				return;
+			}
+			newCell(chars, offset, length, cellIndex);
+			cellIndex++;
 		}
-		newCell(chars, offset, length, cellIndex);
-		cellIndex++;
 	}
 	
 	public void newCell(char[] chars, int offset, int length, int cellIndex) {

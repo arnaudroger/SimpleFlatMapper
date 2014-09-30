@@ -32,11 +32,12 @@ public final class ReaderCsvParser {
 			c = consumeBytes(handler);
 		}
 		
-		if (c != -1 && (bufferOffset > 0 || c == ',' )) {
-			handler.newCell(buffer, 0, bufferOffset);
+		if (c != -1) {
+			if (bufferOffset > 0 || c == ',' ) {
+				handler.newCell(buffer, 0, bufferOffset);
+			}
+			handler.end();
 		}
-		
-		handler.end();
 	}
 
 
@@ -46,7 +47,9 @@ public final class ReaderCsvParser {
 		int c = 0;
 		for(int i = 0; i < bufferLength; i++) {
 			c = buffer[i];
-			handleByte(handler, c, i);
+			if (!handleByte(handler, c, i)) {
+				return -1;
+			}
 		}
 		
 		shiftBuffer();

@@ -46,7 +46,13 @@ public class CsvMapperImplTest {
 				(DelayedCellSetterFactory<DbObject, ?>[])new DelayedCellSetterFactory[] {} 
 				, setters);
 		
-		List<DbObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
+		List<DbObject> list = null;
+		
+		list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
+		assertEquals(1, list.size());
+		DbHelper.assertDbObjectMapping(list.get(0));
+		
+		list = mapper.forEach(dbObjectCsvReader3Lines(), new ListHandler<DbObject>(), 1, 1).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 
@@ -54,6 +60,15 @@ public class CsvMapperImplTest {
 
 	public static Reader dbObjectCsvReader() throws UnsupportedEncodingException {
 		Reader sr = new StringReader("1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4");
+		return sr;
+	}
+	
+	public static Reader dbObjectCsvReader3Lines() throws UnsupportedEncodingException {
+		Reader sr = new StringReader("0,name 0,name0@mail.com,2014-03-04 11:10:03,2,type4\n"
+				+ "1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4\n"
+				+ "2,name 2,name2@mail.com,2014-03-04 11:10:03,2,type4"
+				
+				);
 		return sr;
 	}
 	
@@ -96,6 +111,10 @@ public class CsvMapperImplTest {
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 		
+		list = mapper.forEach(dbObjectCsvReader3Lines(), new ListHandler<DbFinalObject>(), 1, 1).getList();
+		assertEquals(1, list.size());
+		DbHelper.assertDbObjectMapping(list.get(0));
+		
 	}
 	@Test
 	public void testPartialFinalDbObject() throws Exception {
@@ -131,6 +150,10 @@ public class CsvMapperImplTest {
 				setters);
 		
 		List<DbPartialFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbPartialFinalObject>()).getList();
+		assertEquals(1, list.size());
+		DbHelper.assertDbObjectMapping(list.get(0));
+		
+		list = mapper.forEach(dbObjectCsvReader3Lines(), new ListHandler<DbPartialFinalObject>(), 1, 1).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 		

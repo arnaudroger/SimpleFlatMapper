@@ -46,7 +46,17 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
 	@Override
 	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
-		new CsvParser().parse(reader, newCellHandler(handler));
+		return forEach(reader, handler, 0, -1);
+	}
+	
+	@Override
+	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int rowStart) throws IOException, MappingException {
+		return forEach(reader, handler, rowStart, -1);
+	}
+	
+	@Override
+	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int rowStart, final int limit) throws IOException, MappingException {
+		new CsvParser().parse(reader, newCellHandler(handler, rowStart, limit));
 		return handler;
 	}
 
@@ -54,9 +64,11 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	public <H extends RowHandler<T>> H forEach(final InputStream is, final H handler) throws IOException, MappingException {
 		return forEach(new InputStreamReader(is), handler);
 	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected CsvMapperCellHandler<T> newCellHandler(final RowHandler<T> handler) {
+		return newCellHandler(handler, -1, -1);
+	}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected CsvMapperCellHandler<T> newCellHandler(final RowHandler<T> handler, int rowStart, int limit) {
 		
 		CellSetter<T>[] outSetters = new CellSetter[setters.length];
 		DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetters.length];
@@ -112,7 +124,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 				outDelayedCellSetters, 
 				outSetters, 				
 				fieldErrorHandler, 
-				rowHandlerErrorHandlers, handler);
+				rowHandlerErrorHandlers, handler, rowStart, limit);
 	}
 
 

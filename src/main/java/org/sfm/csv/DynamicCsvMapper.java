@@ -23,35 +23,52 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 	
 	public final class DynamicCellHandler implements CharsCellHandler {
 		private final RowHandler<T> handle;
+		private final int rowStart;
+		private final int limit;
+
 		private CsvMapperCellHandler<T> cellHandler;
 		private List<String> columns = new ArrayList<String>();
+		private int currentRow;
 		
-		public DynamicCellHandler(RowHandler<T> handle) {
+		public DynamicCellHandler(RowHandler<T> handle, int rowStart, int limit) {
 			this.handle = handle;
+			this.rowStart = rowStart;
+			this.limit = limit;
 		}
 
 		@Override
 		public boolean endOfRow() {
-			if (cellHandler == null) {
-				MapperKey key = new MapperKey(columns.toArray(new String[columns.size()]));
-				CsvMapperImpl<T> csvMapperImpl = mapperCache.get(key);
-				if (csvMapperImpl == null) {
-					csvMapperImpl = buildeMapper(key);
-					mapperCache.add(key, csvMapperImpl);
+			if (rowStart == -1 || currentRow >= rowStart) {
+				if (cellHandler == null) {
+					MapperKey key = new MapperKey(columns.toArray(new String[columns.size()]));
+					CsvMapperImpl<T> csvMapperImpl = mapperCache.get(key);
+					if (csvMapperImpl == null) {
+						csvMapperImpl = buildeMapper(key);
+						mapperCache.add(key, csvMapperImpl);
+					}
+					cellHandler = csvMapperImpl.newCellHandler(handle);
+				} else {
+					cellHandler.endOfRow();
 				}
-				cellHandler = csvMapperImpl.newCellHandler(handle);
-				return true;
-			} else {
-				return cellHandler.endOfRow();
 			}
+			
+			return continueProcessing();
+		}
+
+		private boolean continueProcessing() {
+			boolean continueProcessing =  limit == -1 || (currentRow - rowStart) < limit;
+			currentRow++;
+			return continueProcessing;
 		}
 
 		@Override
 		public void newCell(char[] chars, int offset, int length) {
-			if (cellHandler == null) {
-				columns.add(StringCellValueReader.readString(chars, offset, length));
-			} else {
-				cellHandler.newCell(chars, offset, length);
+			if (rowStart == -1 || currentRow >= rowStart) {
+				if (cellHandler == null) {
+					columns.add(StringCellValueReader.readString(chars, offset, length));
+				} else {
+					cellHandler.newCell(chars, offset, length);
+				}
 			}
 		}
 
@@ -82,12 +99,20 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	}
 
-
 	@Override
-	public <H extends RowHandler<T>> H forEach(Reader reader, H handle)
-			throws IOException, MappingException {
-		csvParser.parse(reader, new DynamicCellHandler(handle));
-		return handle;
+	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
+		return forEach(reader, handler, 0, -1);
+	}
+	
+	@Override
+	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int rowStart) throws IOException, MappingException {
+		return forEach(reader, handler, rowStart, -1);
+	}
+	
+	@Override
+	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int rowStart, final int limit) throws IOException, MappingException {
+		csvParser.parse(reader, new DynamicCellHandler(handler, rowStart, limit));
+		return handler;
 	}
 	
 	private CsvMapperImpl<T> buildeMapper(MapperKey key) {

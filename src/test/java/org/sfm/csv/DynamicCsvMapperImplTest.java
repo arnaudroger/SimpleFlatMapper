@@ -28,24 +28,34 @@ import org.sfm.utils.RowHandler;
 
 public class DynamicCsvMapperImplTest {
 
-	private static final String CSV = "id,name,email,creationTime,typeOrdinal,typeName\n"
-			+ "1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4";
+	public static Reader dbObjectCsvReader() throws UnsupportedEncodingException {
+		Reader sr = new StringReader("id,name,email,creationTime,typeOrdinal,typeName\n"
+				+ "1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4");
+		return sr;
+	}
+	
+	public static Reader dbObjectCsvReader3Lines() throws UnsupportedEncodingException {
+		Reader sr = new StringReader("\nid,name,email,creationTime,typeOrdinal,typeName\n"
+				+ "1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4\n"
+				+ "2,name 2,name2@mail.com,2014-03-04 11:10:03,2,type4"
+				
+				);
+		return sr;
+	}
+	
 	@Test
 	public void testDbObject() throws Exception {
-		
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 		
+//		List<DbObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
+//		assertEquals(1, list.size());
+//		DbHelper.assertDbObjectMapping(list.get(0));
 		
-		List<DbObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(dbObjectCsvReader3Lines(), new ListHandler<DbObject>(),1,1).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
 
-	public static Reader dbObjectCsvReader() throws UnsupportedEncodingException {
-		Reader sr = new StringReader(CSV);
-		return sr;
-	}
-	
 	@Test
 	public void testFinalDbObject() throws Exception {
 		CsvMapper<DbFinalObject> mapper = CsvMapperFactory.newInstance().newMapper(DbFinalObject.class);

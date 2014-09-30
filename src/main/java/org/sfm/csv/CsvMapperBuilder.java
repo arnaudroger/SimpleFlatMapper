@@ -63,10 +63,16 @@ public class CsvMapperBuilder<T> {
 	}
 
 	public final CsvMapperBuilder<T> addMapping(final String columnKey) {
-		
+		return addMapping(columnKey, properties.size());
+	}
+	
+	public final CsvMapperBuilder<T> addMapping(final String columnKey, int columnIndex) {
 		final PropertyMeta<T, ?> prop = propertyFinder.findProperty(columnKey);
 		
 		if (prop != null) {
+			while(properties.size() < columnIndex) {
+				properties.add(null);
+			}
 			properties.add(prop);
 		} else {
 			mapperBuilderErrorHandler.propertyNotFound(target, columnKey);

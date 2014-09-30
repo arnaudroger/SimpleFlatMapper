@@ -133,7 +133,10 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 
 	private void newCellForDelayedSetter(char[] chars, int offset, int length, int cellIndex) {
 		try {
-			delayedCellSetters[cellIndex].set(chars, offset, length);
+			DelayedCellSetter<T, ?> delayedCellSetter = delayedCellSetters[cellIndex];
+			if (delayedCellSetter != null) {
+				delayedCellSetter.set(chars, offset, length);
+			}
 		} catch (Exception e) {
 			fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
 		}
@@ -142,7 +145,10 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 	private void newCellForSetter(char[] chars, int offset, int length, int cellIndex) {
 		if (cellIndex < totalLength) {
 			try {
-				setters[cellIndex - delayedCellSetters.length].set(currentInstance, chars, offset, length);
+				CellSetter<T> cellSetter = setters[cellIndex - delayedCellSetters.length];
+				if (cellSetter != null) {
+					cellSetter.set(currentInstance, chars, offset, length);
+				}
 			} catch (Exception e) {
 				fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
 			}
@@ -161,7 +167,9 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 				return;
 			}
 			newCell(chars, offset, length, cellIndex);
-			cellIndex++;
+			if (cellIndex != -1) {
+				cellIndex++;
+			}
 		}
 	}
 	
@@ -179,7 +187,5 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 		if (cellIndex == flushIndex) {
 			flush(cellIndex);
 		}
-		
-		cellIndex++;
 	}
 }

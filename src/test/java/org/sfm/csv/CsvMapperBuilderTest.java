@@ -25,6 +25,26 @@ public class CsvMapperBuilderTest {
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
+	
+	@Test
+	public void testMapDbObjectWithColumnIndex() throws UnsupportedEncodingException, Exception {
+		
+		CsvMapperBuilder<DbObject> builder = new CsvMapperBuilder<DbObject>(DbObject.class);
+		builder.addMapping("email", 2);
+		CsvMapper<DbObject> mapper = builder.mapper();
+		
+		List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
+		assertEquals(1, list.size());
+		
+		DbObject o = list.get(0);
+		assertEquals(0,  o.getId());
+		assertNull(o.getName());
+		assertEquals("name1@mail.com", o.getEmail());
+		assertNull(o.getCreationTime());
+		assertNull(o.getTypeName());
+		assertNull(o.getTypeOrdinal());
+	}
+	
 	@Test
 	public void testMapFinalDbObject() throws UnsupportedEncodingException, Exception {
 		

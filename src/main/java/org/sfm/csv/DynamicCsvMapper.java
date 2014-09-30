@@ -1,14 +1,11 @@
 package org.sfm.csv;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.sfm.csv.cell.StringCellValueReader;
-import org.sfm.csv.parser.BytesCellHandler;
 import org.sfm.csv.parser.CharsCellHandler;
 import org.sfm.csv.parser.CsvParser;
 import org.sfm.map.FieldMapperErrorHandler;
@@ -22,19 +19,17 @@ import org.sfm.utils.RowHandler;
 
 public class DynamicCsvMapper<T> implements CsvMapper<T> {
 	
-	public final class DynamicCellHandler implements BytesCellHandler, CharsCellHandler {
+	public final class DynamicCellHandler implements CharsCellHandler {
 		private final RowHandler<T> handle;
 		private CsvMapperCellHandler<T> cellHandler;
 		private List<String> columns = new ArrayList<String>();
-		private final DecoderContext decoderContext;
 		
-		public DynamicCellHandler(RowHandler<T> handle, DecoderContext decoderContext) {
+		public DynamicCellHandler(RowHandler<T> handle) {
 			this.handle = handle;
-			this.decoderContext = decoderContext;
 		}
 
 		@Override
-		public void endOfRow() {
+		public boolean endOfRow() {
 			if (cellHandler == null) {
 				MapperKey key = new MapperKey(columns.toArray(new String[columns.size()]));
 				CsvMapperImpl<T> csvMapperImpl = mapperCache.get(key);
@@ -42,20 +37,13 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 					csvMapperImpl = buildeMapper(key);
 					mapperCache.add(key, csvMapperImpl);
 				}
-				cellHandler = csvMapperImpl.newCellHandler(handle, decoderContext);
+				cellHandler = csvMapperImpl.newCellHandler(handle);
+				return true;
 			} else {
-				cellHandler.endOfRow();
+				return cellHandler.endOfRow();
 			}
 		}
 
-		@Override
-		public void newCell(byte[] bytes, int offset, int length) {
-			if (cellHandler == null) {
-				columns.add(StringCellValueReader.readString(bytes, offset, length, decoderContext));
-			} else {
-				cellHandler.newCell(bytes, offset, length);
-			}
-		}
 		@Override
 		public void newCell(char[] chars, int offset, int length) {
 			if (cellHandler == null) {
@@ -92,23 +80,11 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	}
 
-	@Override
-	public <H extends RowHandler<T>> H forEach(InputStream is, H handle)
-			throws IOException, MappingException {
-		return forEach(is, handle, Charset.forName("UTF-8"));
-	}
-	
-	@Override
-	public <H extends RowHandler<T>> H forEach(InputStream is, H handle, Charset charset)
-			throws IOException, MappingException {
-		csvParser.parse(is, new DynamicCellHandler(handle, new DecoderContext(charset)));
-		return handle;
-	}
 
 	@Override
 	public <H extends RowHandler<T>> H forEach(Reader reader, H handle)
 			throws IOException, MappingException {
-		csvParser.parse(reader, new DynamicCellHandler(handle, null));
+		csvParser.parse(reader, new DynamicCellHandler(handle));
 		return handle;
 	}
 	

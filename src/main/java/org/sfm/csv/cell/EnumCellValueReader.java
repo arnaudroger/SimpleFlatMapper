@@ -1,7 +1,6 @@
 package org.sfm.csv.cell;
 
 import org.sfm.csv.CellValueReader;
-import org.sfm.csv.DecoderContext;
 import org.sfm.reflect.EnumHelper;
 
 public class EnumCellValueReader<E extends Enum<E>> implements CellValueReader<E> {
@@ -23,17 +22,6 @@ public class EnumCellValueReader<E extends Enum<E>> implements CellValueReader<E
 	}
 
 	@Override
-	public E read(byte[] bytes, int offset, int length, DecoderContext decoderContext) {
-		
-		int n = parsePositiveNumber(bytes, offset, length);
-		if (n >= 0 && n < values.length) {
-			return values[n];
-		} else {
-			return Enum.valueOf(enumClass, stringCellValueReader.read(bytes, offset, length, decoderContext));
-		}
-	}
-
-	@Override
 	public E read(char[] chars, int offset, int length) {
 		
 		int n = parsePositiveNumber(chars, offset, length);
@@ -42,19 +30,6 @@ public class EnumCellValueReader<E extends Enum<E>> implements CellValueReader<E
 		} else {
 			return Enum.valueOf(enumClass, stringCellValueReader.read(chars, offset, length));
 		}
-	}
-	
-	private int parsePositiveNumber(byte[] bytes, int offset, int length) {
-		int n = 0;
-		for(int i = offset; i< offset + length ; i++) {
-			byte b = bytes[i];
-			if (b >= BZERO && b <= BNINE) {
-				n = n * 10 + b - BZERO;
-			} else {
-				return -1;
-			}
-		}
-		return n;
 	}
 	
 	private int parsePositiveNumber(char[] chars, int offset, int length) {

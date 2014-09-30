@@ -1,6 +1,5 @@
 package org.sfm.csv.primitive;
 
-import org.sfm.csv.DecoderContext;
 import org.sfm.csv.DelayedCellSetter;
 import org.sfm.csv.cell.FloatCellValueReader;
 import org.sfm.reflect.primitive.FloatSetter;
@@ -8,7 +7,6 @@ import org.sfm.reflect.primitive.FloatSetter;
 public class FloatDelayedCellSetter<T> implements DelayedCellSetter<T, Float> {
 
 	private final FloatSetter<T> setter;
-	private final FloatCellValueReader reader = new FloatCellValueReader();
 	private float value;
 	
 	public FloatDelayedCellSetter(FloatSetter<T> setter) {
@@ -36,11 +34,6 @@ public class FloatDelayedCellSetter<T> implements DelayedCellSetter<T, Float> {
 	@Override
 	public boolean isSettable() {
 		return setter != null;
-	}
-
-	@Override
-	public void set(byte[] bytes, int offset, int length, DecoderContext decoderContext) throws Exception {
-		this.value = reader.parseFloat(bytes, offset, length, decoderContext);
 	}
 
 	@Override

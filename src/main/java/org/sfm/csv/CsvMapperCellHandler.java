@@ -1,6 +1,5 @@
 package org.sfm.csv;
 
-import org.sfm.csv.parser.BytesCellHandler;
 import org.sfm.csv.parser.CharsCellHandler;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.InstantiationMappingException;
@@ -8,7 +7,7 @@ import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
 
-public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCellHandler {
+public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 
 	private final DelayedCellSetter<T, ?>[] delayedCellSetters;
 	private final CellSetter<T>[] setters;
@@ -18,7 +17,6 @@ public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCel
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
 	private final RowHandler<T> handler;
 	private final int flushIndex;
-	private final DecoderContext decoderContext;
 	
 	T currentInstance;
 	int cellIndex = 0;
@@ -31,8 +29,7 @@ public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCel
 			CellSetter<T>[] setters,
 			FieldMapperErrorHandler<Integer> fieldErrorHandler,
 			RowHandlerErrorHandler rowHandlerErrorHandlers,
-			RowHandler<T> handler, 
-			DecoderContext decoderContext) {
+			RowHandler<T> handler) {
 		super();
 		this.instantiator = instantiator;
 		this.delayedCellSetters = delayedCellSetters;
@@ -42,7 +39,6 @@ public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCel
 		this.handler = handler;
 		this.flushIndex = lastNonNullSetter(delayedCellSetters, setters);
 		this.totalLength = delayedCellSetters.length + setters.length;
-		this.decoderContext = decoderContext;
 	}
 	
 	private int lastNonNullSetter(
@@ -66,9 +62,10 @@ public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCel
 	}
 
 	@Override
-	public void endOfRow() {
+	public boolean endOfRow() {
 		endOfRow(cellIndex);
 		cellIndex = 0;
+		return true;
 	}
 	public void endOfRow(int cellIndex) {
 		flush(cellIndex);
@@ -111,9 +108,6 @@ public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCel
 		}
 	}
 
-
-
-	
 	private T createInstance() {
 		try {
 			return instantiator.newInstance(delayedCellSetters);
@@ -122,29 +116,11 @@ public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCel
 		}
 	}
 
-	private void newCellForDelayedSetter(byte[] bytes, int offset, int length, int cellIndex) {
-		try {
-			delayedCellSetters[cellIndex].set(bytes, offset, length,decoderContext);
-		} catch (Exception e) {
-			fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
-		}
-	}
-
 	private void newCellForDelayedSetter(char[] chars, int offset, int length, int cellIndex) {
 		try {
 			delayedCellSetters[cellIndex].set(chars, offset, length);
 		} catch (Exception e) {
 			fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
-		}
-	}
-
-	private void newCellForSetter(byte[] bytes, int offset, int length, int cellIndex) {
-		if (cellIndex < totalLength) {
-			try {
-				setters[cellIndex - delayedCellSetters.length].set(currentInstance, bytes, offset, length, decoderContext);
-			} catch (Exception e) {
-				fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
-			}
 		}
 	}
 
@@ -172,30 +148,6 @@ public final class CsvMapperCellHandler<T> implements BytesCellHandler, CharsCel
 		cellIndex++;
 	}
 	
-	@Override
-	public void newCell(byte[] bytes, int offset, int length) {
-		if (cellIndex == -1) {
-			return;
-		}
-		newCell(bytes, offset, length, cellIndex);
-		cellIndex ++;
-	}
-
-	public void newCell(byte[] bytes, int offset, int length, int cellIndex) {
-		if (cellIndex < delayedCellSetters.length) {
-			newCellForDelayedSetter(bytes, offset, length, cellIndex);
-		} else {
-			if (currentInstance == null) {
-				currentInstance = createInstance();
-			}
-			newCellForSetter(bytes, offset, length, cellIndex);
-		}
-		
-		if (cellIndex == flushIndex) {
-			flush(cellIndex);
-		}
-	}
-
 	public void newCell(char[] chars, int offset, int length, int cellIndex) {
 		
 		if (cellIndex < delayedCellSetters.length) {

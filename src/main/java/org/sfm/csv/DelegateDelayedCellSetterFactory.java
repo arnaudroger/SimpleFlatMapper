@@ -8,8 +8,7 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 	private final CsvMapperCellHandler<?> handler;
 	private final int cellIndex;
 	protected P value;
-	public DelegateDelayedCellSetterFactory(
-			DelegateMarkerDelayedCellSetter<T, P> marker, int cellIndex, DecoderContext dc) {
+	public DelegateDelayedCellSetterFactory(DelegateMarkerDelayedCellSetter<T, P> marker, int cellIndex) {
 		this.marker = marker;
 		this.handler = ((CsvMapperImpl<P>)marker.getMapper()).newCellHandler(new RowHandler<P>() {
 			@Override
@@ -17,7 +16,7 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 				DelegateDelayedCellSetterFactory.this.value = t;
 			}
 			
-		}, dc);
+		});
 		this.cellIndex = cellIndex;
 	}
 
@@ -53,11 +52,6 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 				return marker.getSetter() != null;
 			}
 			
-			public void set(byte[] bytes, int offset, int length, DecoderContext context)
-					throws Exception {
-				handler.newCell(bytes, offset, length, cellIndex);
-
-			}
 			public void set(char[] chars, int offset, int length)
 					throws Exception {
 				handler.newCell(chars, offset, length, cellIndex);

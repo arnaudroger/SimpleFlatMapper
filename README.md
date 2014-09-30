@@ -155,8 +155,8 @@ Uses header to match to the property.
 public class MyParser {
     private final CsvMapper<MyObject> mapper = 
     	CsvMapperFactory.newInstance().newMapper(MyObject.class);
-    public void printAll(Writer writer, InputStream is) throws IOException {
-        mapper.forEach(is, (o) -> writer.append(o.toString()).append("\n"));
+    public void printAll(Writer writer, Reader reader) throws IOException {
+        mapper.forEach(reader, (o) -> writer.append(o.toString()).append("\n"));
     }
 }
 ```
@@ -306,15 +306,9 @@ Beta results.
 Reads a 1000 rows in memory csv. 
 
 ```
-Benchmark                                        Mode  Samples    Score  Score error  Units
-o.s.b.c.CsvBenchmark.testReadCsvJackson1000    sample   283551  775.594        0.767  us/op
-o.s.b.c.CsvBenchmark.testReadCsvSfm1000        sample   494288  444.869        0.427  us/op
-```
-
-```
-Benchmark                                       Mode  Samples     Score  Score error  Units
-o.s.b.c.CsvBenchmark.testReadCsvJackson1000    thrpt      200  1290.502        0.984  ops/s
-o.s.b.c.CsvBenchmark.testReadCsvSfm1000        thrpt      200  2198.874       18.738  ops/s
+Benchmark                                         Mode  Samples     Score  Score error  Units
+o.s.b.c.CsvBenchmark.testReadCsvJackson1000      thrpt      200  1992.767        6.634  ops/s
+o.s.b.c.CsvBenchmark.testReadCsvSfm1000Reader    thrpt      200  3096.793        8.749  ops/s
 ```
 
 Maven dependency

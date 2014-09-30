@@ -21,7 +21,7 @@ public class CsvMapperBuilderTest {
 		addDbObjectFields(builder);
 		CsvMapper<DbObject> mapper = builder.mapper();
 		
-		List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvStream(), new ListHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
@@ -33,7 +33,7 @@ public class CsvMapperBuilderTest {
 		
 		CsvMapper<DbFinalObject> mapper = builder.mapper();
 		
-		List<DbFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvStream(), new ListHandler<DbFinalObject>()).getList();
+		List<DbFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
@@ -45,7 +45,7 @@ public class CsvMapperBuilderTest {
 		
 		CsvMapper<DbPartialFinalObject> mapper = builder.mapper();
 		
-		List<DbPartialFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvStream(), new ListHandler<DbPartialFinalObject>()).getList();
+		List<DbPartialFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbPartialFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}

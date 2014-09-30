@@ -2,17 +2,12 @@ package org.sfm.csv.parser;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sfm.csv.parser.BytesCellHandler;
-import org.sfm.csv.parser.CharsCellHandler;
-import org.sfm.csv.parser.CsvParser;
 
 public class CsvParserPerfTest {
 
@@ -20,19 +15,16 @@ public class CsvParserPerfTest {
 	private static final int NB = 1000000;
 	private static final int ITERATION = 10;
 
-	private static final class ValidateHandler implements BytesCellHandler, CharsCellHandler {
+	private static final class ValidateHandler implements CharsCellHandler {
 		long c;
-		@Override
-		public void newCell(byte[] bytes, int offset, int length) {
-			c++;
-		}
 		@Override
 		public void newCell( char[] chars, int offset,
 				int length) {
 			c++;
 		}
 		@Override
-		public void endOfRow() {
+		public boolean endOfRow() {
+			return true;
 		}
 		@Override
 		public void end() {
@@ -57,9 +49,6 @@ public class CsvParserPerfTest {
 	@Test
 	public void testReadCsv() throws IOException {
 		for(int i = 0; i < ITERATION; i++) {
-			executeStream();
-		}
-		for(int i = 0; i < ITERATION; i++) {
 			executeReader();
 		}
 	}
@@ -74,13 +63,4 @@ public class CsvParserPerfTest {
 		System.out.println("Reader Took " + elapsed + "ns " + (elapsed/NB) + " ns per row");
 	}
 
-	private void executeStream() throws IOException {
-		InputStream sr = new ByteArrayInputStream(bytes);
-		ValidateHandler handler = new ValidateHandler();
-		long start = System.nanoTime();
-		new CsvParser().parse(sr, handler);
-		long elapsed = System.nanoTime() - start;
-		assertEquals(3 * NB, handler.c);
-		System.out.println("Stream Took " + elapsed + "ns " + (elapsed/NB) + " ns per row");
-	}
 }

@@ -2,8 +2,8 @@ package org.sfm.csv;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class CsvMapperBuilderSubObjectTest {
 		addDbObjectFields(builder);
 		CsvMapper<Db1DeepObject> mapper = builder.mapper();
 		
-		List<Db1DeepObject> list = mapper.forEach(db1deepObjectCsvStream(), new ListHandler<Db1DeepObject>()).getList();
+		List<Db1DeepObject> list = mapper.forEach(db1deepObjectCsvReader(), new ListHandler<Db1DeepObject>()).getList();
 		assertEquals(1, list.size());
 		
 		Db1DeepObject o = list.get(0);
@@ -38,7 +38,7 @@ public class CsvMapperBuilderSubObjectTest {
 		addDbObjectFields(builder);
 		CsvMapper<DbFinal1DeepObject> mapper = builder.mapper();
 		
-		List<DbFinal1DeepObject> list = mapper.forEach(db1deepObjectCsvStream(), new ListHandler<DbFinal1DeepObject>()).getList();
+		List<DbFinal1DeepObject> list = mapper.forEach(db1deepObjectCsvReader(), new ListHandler<DbFinal1DeepObject>()).getList();
 		assertEquals(1, list.size());
 		
 		DbFinal1DeepObject o = list.get(0);
@@ -47,9 +47,8 @@ public class CsvMapperBuilderSubObjectTest {
 		DbHelper.assertDbObjectMapping(o.getDbObject());
 	}
 	
-	public static InputStream db1deepObjectCsvStream() throws UnsupportedEncodingException {
-			InputStream sr = new ByteArrayInputStream("1234,val!,1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4".getBytes("UTF-8"));
-			return sr;
+	public static Reader db1deepObjectCsvReader() throws UnsupportedEncodingException {
+			return new StringReader("1234,val!,1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4");
 	}
 	public void addDbObjectFields(CsvMapperBuilder<?> builder) {
 		builder

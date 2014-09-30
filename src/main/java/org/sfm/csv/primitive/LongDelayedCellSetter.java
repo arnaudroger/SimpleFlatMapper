@@ -1,6 +1,5 @@
 package org.sfm.csv.primitive;
 
-import org.sfm.csv.DecoderContext;
 import org.sfm.csv.DelayedCellSetter;
 import org.sfm.csv.cell.LongCellValueReader;
 import org.sfm.reflect.primitive.LongSetter;
@@ -35,11 +34,6 @@ public class LongDelayedCellSetter<T> implements DelayedCellSetter<T, Long> {
 	@Override
 	public boolean isSettable() {
 		return setter != null;
-	}
-
-	@Override
-	public void set(byte[] bytes, int offset, int length, DecoderContext dc) throws Exception {
-		this.value = LongCellValueReader.parseLong(bytes, offset, length);
 	}
 
 	@Override

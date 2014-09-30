@@ -26,13 +26,13 @@ public final class ReaderCsvParser {
 	 * @throws IOException
 	 */
 	public void parse(final Reader is, final CharsCellHandler handler) throws IOException {
-		char c = 0;
+		int c = 0;
 		
-		while((bufferLength = is.read(buffer, bufferOffset, buffer.length - bufferOffset)) != -1) {
+		while(c != -1 && (bufferLength = is.read(buffer, bufferOffset, buffer.length - bufferOffset)) != -1) {
 			c = consumeBytes(handler);
 		}
 		
-		if (bufferOffset > 0 || c == ',' ) {
+		if (c != -1 && (bufferOffset > 0 || c == ',' )) {
 			handler.newCell(buffer, 0, bufferOffset);
 		}
 		
@@ -40,10 +40,10 @@ public final class ReaderCsvParser {
 	}
 
 
-	private char consumeBytes(final CharsCellHandler handler) {
+	private int consumeBytes(final CharsCellHandler handler) {
 		bufferLength += bufferOffset;
 		
-		char c = 0;
+		int c = 0;
 		for(int i = 0; i < bufferLength; i++) {
 			c = buffer[i];
 			handleByte(handler, c, i);
@@ -54,31 +54,39 @@ public final class ReaderCsvParser {
 		return c;
 	}
 
-	private void handleByte(final CharsCellHandler handler, final char c, final int i) {
+
+	private boolean handleByte(final CharsCellHandler handler, final int c, final int i) {
 		if (c == '"') {
-			if (currentStart == i) {
-				currentState = CsvParserState.IN_QUOTE;
-			} else if (currentState == CsvParserState.IN_QUOTE) {
-				currentState = CsvParserState.QUOTE;
-			} else {
-				if (currentState == CsvParserState.QUOTE) {
-					currentState = CsvParserState.IN_QUOTE;
-				}
-			}
-		} else if (c == ',' ) {
+			quote(i);
+		} else if (c == ',') {
 			if (currentState != CsvParserState.IN_QUOTE) {
-				handler.newCell(buffer, currentStart, i - currentStart);
-				currentStart = i  + 1;
-				currentState = CsvParserState.NONE;
+				newCell(handler, i);
 			}
 		}else if (c == '\n') {
 			if (currentState != CsvParserState.IN_QUOTE) {
-				handler.newCell(buffer, currentStart, i - currentStart);
-				currentStart = i  + 1;
-				currentState = CsvParserState.NONE;
-				handler.endOfRow();
+				newCell(handler, i);
+				return handler.endOfRow();
 			}
 		}
+		return true;
+	}
+
+	public void quote(final int i) {
+		if (currentStart == i) {
+			currentState = CsvParserState.IN_QUOTE;
+		} else {
+			if (currentState ==  CsvParserState.IN_QUOTE) {
+				currentState = CsvParserState.QUOTE;
+			} else if(currentState ==  CsvParserState.QUOTE) {
+				currentState = CsvParserState.IN_QUOTE;
+			}
+		}
+	}
+
+	public void newCell(final CharsCellHandler handler, final int i) {
+		handler.newCell(buffer, currentStart, i - currentStart);
+		currentStart = i  + 1;
+		currentState = CsvParserState.NONE;
 	}
 
 	private void shiftBuffer() {

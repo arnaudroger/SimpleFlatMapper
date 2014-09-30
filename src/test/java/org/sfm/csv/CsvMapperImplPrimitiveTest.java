@@ -1,9 +1,7 @@
 package org.sfm.csv;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -26,11 +24,7 @@ public class CsvMapperImplPrimitiveTest {
 
 		CsvMapper<DbPrimitiveObjectWithSetter> mapper = builder.mapper();
 		
-		List<DbPrimitiveObjectWithSetter> list = mapper.forEach(dbObjectCsvStream(), new ListHandler<DbPrimitiveObjectWithSetter>()).getList();
-		assertEquals(1, list.size());
-		assertDbPrimitiveObject(list.get(0));
-
-		list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbPrimitiveObjectWithSetter>()).getList();
+		List<DbPrimitiveObjectWithSetter> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbPrimitiveObjectWithSetter>()).getList();
 		assertEquals(1, list.size());
 		assertDbPrimitiveObject(list.get(0));
 
@@ -71,10 +65,6 @@ public class CsvMapperImplPrimitiveTest {
 	}
 
 	static String CONTENT = "true,12,13,345,3452,4533,3.14,3.14159";
-	public static InputStream dbObjectCsvStream() throws UnsupportedEncodingException {
-		InputStream sr = new ByteArrayInputStream(CONTENT.getBytes("UTF-8"));
-		return sr;
-	}
 	
 	public static Reader dbObjectCsvReader() throws UnsupportedEncodingException {
 		Reader sr = new StringReader(CONTENT);
@@ -89,13 +79,8 @@ public class CsvMapperImplPrimitiveTest {
 
 		CsvMapper<DbFinalPrimitiveObject> mapper = builder.mapper();
 		
-		List<DbFinalPrimitiveObject> list = mapper.forEach(dbObjectCsvStream(), new ListHandler<DbFinalPrimitiveObject>()).getList();
+		List<DbFinalPrimitiveObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbFinalPrimitiveObject>()).getList();
 		assertEquals(1, list.size());
 		assertDbPrimitiveObject(list.get(0));
-
-		list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbFinalPrimitiveObject>()).getList();
-		assertEquals(1, list.size());
-		assertDbPrimitiveObject(list.get(0));
-		
 	}
 }

@@ -1,9 +1,7 @@
 package org.sfm.csv;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -48,21 +46,12 @@ public class CsvMapperImplTest {
 				(DelayedCellSetterFactory<DbObject, ?>[])new DelayedCellSetterFactory[] {} 
 				, setters);
 		
-		List<DbObject> list = mapper.forEach(dbObjectCsvStream(), new ListHandler<DbObject>()).getList();
-		assertEquals(1, list.size());
-		DbHelper.assertDbObjectMapping(list.get(0));
-
-		list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 
 	}
 
-	public static InputStream dbObjectCsvStream() throws UnsupportedEncodingException {
-		InputStream sr = new ByteArrayInputStream("1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4".getBytes("UTF-8"));
-		return sr;
-	}
-	
 	public static Reader dbObjectCsvReader() throws UnsupportedEncodingException {
 		Reader sr = new StringReader("1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4");
 		return sr;
@@ -103,18 +92,13 @@ public class CsvMapperImplTest {
 				delayedSetters, 
 				setters);
 		
-		List<DbFinalObject> list = mapper.forEach(dbObjectCsvStream(), new ListHandler<DbFinalObject>()).getList();
-		assertEquals(1, list.size());
-		DbHelper.assertDbObjectMapping(list.get(0));
-		
-		list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbFinalObject>()).getList();
+		List<DbFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 		
 	}
 	@Test
 	public void testPartialFinalDbObject() throws Exception {
-		InputStream sr = dbObjectCsvStream();
 
 		CellSetterFactory cellSetterFactory = new CellSetterFactory();
 		SetterFactory setterFactory = new SetterFactory(null);
@@ -146,7 +130,7 @@ public class CsvMapperImplTest {
 				delayedSetters, 
 				setters);
 		
-		List<DbPartialFinalObject> list = mapper.forEach(sr, new ListHandler<DbPartialFinalObject>()).getList();
+		List<DbPartialFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbPartialFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 		

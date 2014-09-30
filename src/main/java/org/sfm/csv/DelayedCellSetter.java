@@ -2,7 +2,6 @@ package org.sfm.csv;
 
 public interface DelayedCellSetter<T, P> {
 	
-	void set(byte[] bytes, int offset, int length, DecoderContext decoderContext) throws Exception;
 	void set(char[] chars, int offset, int length) throws Exception;
 
 	public P getValue();

@@ -1,9 +1,7 @@
 package org.sfm.csv;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,24 +43,13 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	}
 
 	@Override
-	public <H extends RowHandler<T>> H forEach(final InputStream is, final H handler, final Charset charset) throws IOException, MappingException {
-		new CsvParser().parse(is, newCellHandler(handler, new DecoderContext(charset)));
-		return handler;
-	}
-	
-	@Override
-	public <H extends RowHandler<T>> H forEach(final InputStream is, final H handler) throws IOException, MappingException {
-		return forEach(is, handler, Charset.forName("UTF-8"));
-	}
-	
-	@Override
 	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
-		new CsvParser().parse(reader, newCellHandler(handler, null));
+		new CsvParser().parse(reader, newCellHandler(handler));
 		return handler;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected CsvMapperCellHandler<T> newCellHandler(final RowHandler<T> handler, DecoderContext decoderContext) {
+	protected CsvMapperCellHandler<T> newCellHandler(final RowHandler<T> handler) {
 		
 		CellSetter<T>[] outSetters = new CellSetter[setters.length];
 		DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetters.length];
@@ -81,7 +68,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 					DelegateDelayedCellSetterFactory<T, ?> delegateCellSetter;
 					
 					if(bhandler == null) {
-						delegateCellSetter = new DelegateDelayedCellSetterFactory(marker, i, decoderContext);
+						delegateCellSetter = new DelegateDelayedCellSetterFactory(marker, i);
 						cellHandlers.put(marker.getMapper(), delegateCellSetter.getBytesCellHandler());
 					} else {
 						delegateCellSetter = new DelegateDelayedCellSetterFactory(marker, bhandler, i);
@@ -103,7 +90,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 				DelegateCellSetter<T> delegateCellSetter;
 				
 				if(bhandler == null) {
-					delegateCellSetter = new DelegateCellSetter<T>(marker, i + delayedCellSetters.length, decoderContext);
+					delegateCellSetter = new DelegateCellSetter<T>(marker, i + delayedCellSetters.length);
 					cellHandlers.put(marker.getMapper(), delegateCellSetter.getBytesCellHandler());
 				} else {
 					delegateCellSetter = new DelegateCellSetter<T>(marker, bhandler, i + delayedCellSetters.length);
@@ -122,7 +109,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 				outDelayedCellSetters, 
 				outSetters, 				
 				fieldErrorHandler, 
-				rowHandlerErrorHandlers, handler, decoderContext);
+				rowHandlerErrorHandlers, handler);
 	}
 
 

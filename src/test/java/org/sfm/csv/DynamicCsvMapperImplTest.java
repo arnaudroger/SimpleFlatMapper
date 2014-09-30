@@ -1,9 +1,7 @@
 package org.sfm.csv;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -27,21 +25,11 @@ public class DynamicCsvMapperImplTest {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 		
 		
-		List<DbObject> list = mapper.forEach(dbObjectCsvStream(), new ListHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
-
-		list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
-		assertEquals(1, list.size());
-		DbHelper.assertDbObjectMapping(list.get(0));
-
 	}
 
-	public static InputStream dbObjectCsvStream() throws UnsupportedEncodingException {
-		InputStream sr = new ByteArrayInputStream(CSV.getBytes("UTF-8"));
-		return sr;
-	}
-	
 	public static Reader dbObjectCsvReader() throws UnsupportedEncodingException {
 		Reader sr = new StringReader(CSV);
 		return sr;
@@ -51,11 +39,7 @@ public class DynamicCsvMapperImplTest {
 	public void testFinalDbObject() throws Exception {
 		CsvMapper<DbFinalObject> mapper = CsvMapperFactory.newInstance().newMapper(DbFinalObject.class);
 
-		List<DbFinalObject> list = mapper.forEach(dbObjectCsvStream(), new ListHandler<DbFinalObject>()).getList();
-		assertEquals(1, list.size());
-		DbHelper.assertDbObjectMapping(list.get(0));
-		
-		list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbFinalObject>()).getList();
+		List<DbFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 		
@@ -65,13 +49,10 @@ public class DynamicCsvMapperImplTest {
 	public void testPartialFinalDbObject() throws Exception {
 		CsvMapper<DbPartialFinalObject> mapper = CsvMapperFactory.newInstance().newMapper(DbPartialFinalObject.class);
 		
-		List<DbPartialFinalObject> list = mapper.forEach(dbObjectCsvStream(), new ListHandler<DbPartialFinalObject>()).getList();
+		List<DbPartialFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbPartialFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 		
-		list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbPartialFinalObject>()).getList();
-		assertEquals(1, list.size());
-		DbHelper.assertDbObjectMapping(list.get(0));
 	}
 	
 	private static final String CSV_LIST = "id,objects_0_id,objects_0_name,objects_0_email,objects_0_creationTime,objects_0_typeOrdinal,objects_0_typeName\n"

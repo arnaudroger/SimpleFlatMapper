@@ -1,6 +1,8 @@
 package org.sfm.csv;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,5 +98,12 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 			builder.addMapping(col);
 		}
 		return (CsvMapperImpl<T>)builder.mapper();
+	}
+
+
+	@Override
+	public <H extends RowHandler<T>> H forEach(InputStream is, H handle)
+			throws IOException, MappingException {
+		return forEach(new InputStreamReader(is), handle);
 	}
 }

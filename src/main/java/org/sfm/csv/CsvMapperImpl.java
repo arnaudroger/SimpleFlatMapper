@@ -1,6 +1,8 @@
 package org.sfm.csv;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +50,11 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		return handler;
 	}
 
+	@Override
+	public <H extends RowHandler<T>> H forEach(final InputStream is, final H handler) throws IOException, MappingException {
+		return forEach(new InputStreamReader(is), handler);
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected CsvMapperCellHandler<T> newCellHandler(final RowHandler<T> handler) {
 		
@@ -100,10 +107,6 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 				outSetters[i] = setters[i];
 			}
 		}
-		
-		
-		
-		
 		
 		return new CsvMapperCellHandler<T>(instantiator, 
 				outDelayedCellSetters, 

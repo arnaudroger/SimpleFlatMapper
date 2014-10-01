@@ -1,6 +1,7 @@
 package org.sfm.csv.cell;
 
 import org.sfm.csv.CellValueReader;
+import org.sfm.csv.ParsingContext;
 
 
 public class StringCellValueReader implements CellValueReader<String> {
@@ -9,7 +10,7 @@ public class StringCellValueReader implements CellValueReader<String> {
 	final static char CQUOTE = '"';
 	
 	@Override
-	public String read(char[] chars, int offset, int length) {
+	public String read(char[] chars, int offset, int length, ParsingContext parsingContext) {
 		return readString(chars, offset, length);
 	}
 	

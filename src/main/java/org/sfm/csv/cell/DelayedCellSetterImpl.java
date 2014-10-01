@@ -2,6 +2,7 @@ package org.sfm.csv.cell;
 
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.DelayedCellSetter;
+import org.sfm.csv.ParsingContext;
 import org.sfm.reflect.Setter;
 
 public class DelayedCellSetterImpl<T, P> implements DelayedCellSetter<T, P> {
@@ -36,9 +37,9 @@ public class DelayedCellSetterImpl<T, P> implements DelayedCellSetter<T, P> {
 	}
 	
 	@Override
-	public void set(char[] chars, int offset, int length)
+	public void set(char[] chars, int offset, int length, ParsingContext parsingContext)
 			throws Exception {
-		value = reader.read(chars, offset, length);
+		value = reader.read(chars, offset, length, parsingContext);
 	}
 
 }

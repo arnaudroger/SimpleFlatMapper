@@ -1,11 +1,12 @@
 package org.sfm.csv.cell;
 
 import org.sfm.csv.CellValueReader;
+import org.sfm.csv.ParsingContext;
 
 public class BooleanCellValueReader implements CellValueReader<Boolean> {
 
 	@Override
-	public Boolean read(char[] chars, int offset, int length) {
+	public Boolean read(char[] chars, int offset, int length, ParsingContext parsingContext) {
 		return new Boolean(parseBoolean(chars, offset, length));
 	}
 

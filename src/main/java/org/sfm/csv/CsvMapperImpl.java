@@ -23,10 +23,12 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	private final Instantiator<DelayedCellSetter[], T> instantiator;
 	private final FieldMapperErrorHandler<Integer> fieldErrorHandler;
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
+	private final ParsingContextFactory parsingContextFactory;
 	
 	public CsvMapperImpl(@SuppressWarnings("rawtypes") Instantiator<DelayedCellSetter[], T> instantiator,
 			DelayedCellSetterFactory<T, ?>[] delayedCellSetters,
 			CellSetter<T>[] setters,
+			ParsingContextFactory parsingContextFactory,
 			FieldMapperErrorHandler<Integer> fieldErrorHandler,
 			RowHandlerErrorHandler rowHandlerErrorHandlers) {
 		super();
@@ -35,13 +37,15 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		this.setters = setters;
 		this.fieldErrorHandler = fieldErrorHandler;
 		this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
+		this.parsingContextFactory = parsingContextFactory;
 	}
 
 	@SuppressWarnings("rawtypes")
 	public CsvMapperImpl(Instantiator<DelayedCellSetter[], T> instantiator,
 			DelayedCellSetterFactory<T, ?>[] delayedCellSetters,
-			CellSetter<T>[] setters) {
-		this(instantiator, delayedCellSetters, setters, new RethrowFieldMapperErrorHandler<Integer>(), new RethrowRowHandlerErrorHandler());
+			CellSetter<T>[] setters, 
+			ParsingContextFactory parsingContextFactory) {
+		this(instantiator, delayedCellSetters, setters, parsingContextFactory, new RethrowFieldMapperErrorHandler<Integer>(), new RethrowRowHandlerErrorHandler());
 	}
 
 	@Override
@@ -76,6 +80,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		
 		Map<CsvMapper<?>, CsvMapperCellHandler<?>> cellHandlers = new HashMap<CsvMapper<?>, CsvMapperCellHandler<?>>();
 
+		
 		for(int i = 0; i < delayedCellSetters.length; i++) {
 			DelayedCellSetterFactory<T, ?> delayedCellSetterFactory = delayedCellSetters[i];
 			if (delayedCellSetterFactory != null) {
@@ -120,11 +125,14 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 			}
 		}
 		
+		
+		
+		
 		return new CsvMapperCellHandler<T>(instantiator, 
 				outDelayedCellSetters, 
 				outSetters, 				
 				fieldErrorHandler, 
-				rowHandlerErrorHandlers, handler, rowStart, limit);
+				rowHandlerErrorHandlers, handler, parsingContextFactory.newContext(), rowStart, limit);
 	}
 
 

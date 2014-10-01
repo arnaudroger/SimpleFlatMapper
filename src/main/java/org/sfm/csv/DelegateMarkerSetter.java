@@ -13,7 +13,7 @@ public class DelegateMarkerSetter<T> implements CellSetter<T> {
 	}
 
 	@Override
-	public void set(T target, char[] chars, int offset, int length)
+	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
 			throws Exception {
 		throw new UnsupportedOperationException();
 	}

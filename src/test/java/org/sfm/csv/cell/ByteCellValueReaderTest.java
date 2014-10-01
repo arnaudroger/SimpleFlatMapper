@@ -21,7 +21,7 @@ public class ByteCellValueReaderTest {
 	public void testInvalid() throws UnsupportedEncodingException {
 		final char[] chars = "Nan".toCharArray();
 		try {
-			reader.read(chars, 0, chars.length);
+			reader.read(chars, 0, chars.length, null);
 			fail("Expect exception");
 		} catch(ParsingException e){
 			// expected
@@ -31,7 +31,7 @@ public class ByteCellValueReaderTest {
 
 	private void testRead(int i) throws UnsupportedEncodingException {
 		final char[] chars = ("_" + Integer.toString(i) + "_").toCharArray();
-		assertEquals(i, reader.read(chars, 1, chars.length-2).byteValue());
+		assertEquals(i, reader.read(chars, 1, chars.length-2, null).byteValue());
 	}
 
 }

@@ -60,17 +60,16 @@ public class CellSetterFactory {
 		put(Float.class,     new FloatCellValueReader());
 		put(Double.class,    new DoubleCellValueReader());
 		put(String.class,    new StringCellValueReader());
-		put(Date.class,      new DateCellValueReader());
 	}};
 	
-	public <T,P> CellSetter<T> getCellSetter(Setter<T, P> setter) {
+	public <T,P> CellSetter<T> getCellSetter(Setter<T, P> setter, int index) {
 		Class<?> propertyClass = TypeHelper.toClass(setter.getPropertyType());
 		
 		if (propertyClass.isPrimitive()) {
 			return getPrimitiveCellSetter(propertyClass, setter);
 		}
 		
-		return new CellSetterImpl<T, P>(getReaderForSetter(setter), setter) ;
+		return new CellSetterImpl<T, P>(getReaderForSetter(setter, index), setter) ;
 	}
 	
 	public <T,P> CellSetter<T> getPrimitiveCellSetter(Class<?> clazz, Setter<T, P> setter) {
@@ -116,16 +115,18 @@ public class CellSetterFactory {
 		throw new IllegalArgumentException("Invalid primitive type " + clazz);
 	}
 
-	private <T, P> CellValueReader<P> getReaderForSetter(Setter<T, P> setter) {
+	private <T, P> CellValueReader<P> getReaderForSetter(Setter<T, P> setter, int index) {
 		Class<P> propertyType = TypeHelper.toClass(setter.getPropertyType());
-		CellValueReader<P> reader = getReader(propertyType);
+		CellValueReader<P> reader = getReader(propertyType, index);
 		return reader;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private <P> CellValueReader<P> getReader(Class<P> propertyType) {
+	private <P> CellValueReader<P> getReader(Class<P> propertyType, int index) {
 		CellValueReader<P> reader = null;
-		if (Enum.class.isAssignableFrom(propertyType)) {
+		if (Date.class.isAssignableFrom(propertyType)) {
+			reader = (CellValueReader<P>) new DateCellValueReader(index);
+		} else if (Enum.class.isAssignableFrom(propertyType)) {
 			reader = new EnumCellValueReader(propertyType);
 		} else {
 			reader = getCellValueTransformer(propertyType);
@@ -141,23 +142,23 @@ public class CellSetterFactory {
 		return (CellValueReader<P>) transformers.get(propertyType);
 	}
 
-	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Setter<T, P> setter) {
+	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Setter<T, P> setter, int index) {
 		Class<?> propertyClass = TypeHelper.toClass(setter.getPropertyType());
 		
 		if (propertyClass.isPrimitive()) {
 			return getPrimitiveDelayedCellSetter(propertyClass, setter);
 		}
 		
-		return new DelayedCellSetterFactoryImpl<T, P>(getReaderForSetter(setter), setter);
+		return new DelayedCellSetterFactoryImpl<T, P>(getReaderForSetter(setter, index), setter);
 	}
 	@SuppressWarnings("unchecked")
-	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type type) {
+	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type type, int index) {
 		Class<?> propertyClass = TypeHelper.toClass(type);
 		
 		if (propertyClass.isPrimitive()) {
 			return getPrimitiveDelayedCellSetter(propertyClass, null);
 		}
 		
-		return new DelayedCellSetterFactoryImpl<T, P>(getReader((Class<P>)TypeHelper.toClass(type)), null);
+		return new DelayedCellSetterFactoryImpl<T, P>(getReader((Class<P>)TypeHelper.toClass(type), index), null);
 	}
 }

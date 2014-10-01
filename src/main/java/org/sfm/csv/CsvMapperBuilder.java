@@ -2,6 +2,7 @@ package org.sfm.csv;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,7 @@ public class CsvMapperBuilder<T> {
 	private List<PropertyMeta<T, ?>> properties = new ArrayList<PropertyMeta<T, ?>>();
 	private int syncSetterStart;
 
+	private String defaultDateFormat = "yyyy-MM-dd HH:mm:ss";
 
 	public CsvMapperBuilder(final Type target) {
 		this(target, new ReflectionService());
@@ -87,9 +89,13 @@ public class CsvMapperBuilder<T> {
 		}
 		properties.set(i, subProperty);
 	}
+	
+	public void setDefaultDateFormat(String defaultDateFormat) {
+		this.defaultDateFormat = defaultDateFormat;
+	}
 
 	public final CsvMapper<T> mapper() {
-		return new CsvMapperImpl<T>(getInstantiator(), getDelayedSetters(), getSetters(), fieldMapperErrorHandler, rowHandlerErrorHandler);
+		return new CsvMapperImpl<T>(getInstantiator(), getDelayedSetters(), getSetters(), getParserContextFactory(), fieldMapperErrorHandler, rowHandlerErrorHandler);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -119,7 +125,7 @@ public class CsvMapperBuilder<T> {
 					setters.add(null);
 					
 				} else {
-					setters.add(cellSetterFactory.getCellSetter(prop.getSetter()));
+					setters.add(cellSetterFactory.getCellSetter(prop.getSetter(), i));
 				}
 			} else {
 				setters.add(null);
@@ -144,7 +150,34 @@ public class CsvMapperBuilder<T> {
 		
 		return setters.toArray(new CellSetter[0]);
 	}
+	
+	@SuppressWarnings("rawtypes")
+	private ParsingContextFactory getParserContextFactory() {
+		ParsingContextFactory pcf = new ParsingContextFactory(properties.size());
+		
+		for(int i = 0; i < properties.size(); i++) {
+			PropertyMeta<T, ?> prop = properties.get(i);
+			if (prop != null) {
+				Class<?> target;
+				if (prop instanceof SubPropertyMeta) {
+					target = TypeHelper.toClass(((SubPropertyMeta) prop)
+							.getFinalType());
+				} else {
+					target = TypeHelper.toClass(prop.getType());
+				}
+				if (Date.class.equals(target)) {
+					pcf.setDateFormat(i, getDateFormat(i));
+				}
+			}
+		}
+		
+		return pcf;
+	}
 
+	private String getDateFormat(int i) {
+		return defaultDateFormat;
+	}
+	
 	@SuppressWarnings({ "rawtypes" })
 	private  Instantiator<DelayedCellSetter[], T>  getInstantiator() throws MapperBuildingException {
 
@@ -225,7 +258,7 @@ public class CsvMapperBuilder<T> {
 			PropertyMeta<T, ?> prop = properties.get(i);
 			if (prop != null) {
 				if (prop instanceof ConstructorPropertyMeta) {
-					delayedSetters.add((DelayedCellSetterFactory<T, ?>)cellSetterFactory.getDelayedCellSetter(prop.getType()));
+					delayedSetters.add((DelayedCellSetterFactory<T, ?>)cellSetterFactory.getDelayedCellSetter(prop.getType(), i));
 				}  else if (prop instanceof SubPropertyMeta) {
 					final PropertyMeta<?, ?> powner = ((SubPropertyMeta)prop).getProperty();
 					CsvMapperBuilder<?> delegateMapperBuilder = delegateMapperBuilders .get(powner.getName());
@@ -239,7 +272,7 @@ public class CsvMapperBuilder<T> {
 					
 					delayedSetters.add(null);
 				}else {
-					delayedSetters.add(cellSetterFactory.getDelayedCellSetter(prop.getSetter()));
+					delayedSetters.add(cellSetterFactory.getDelayedCellSetter(prop.getSetter(), i));
 				}
 			} else {
 				delayedSetters.add(null);

@@ -1,18 +1,26 @@
 package org.sfm.csv.cell;
 
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.sfm.csv.CellValueReader;
+import org.sfm.csv.ParsingContext;
 
 public class DateCellValueReader implements CellValueReader<Date> {
 	
+	private int index;
+
+	public DateCellValueReader(int index) {
+		this.index = index;
+	}
+	
 	@Override
-	public Date read(char[] chars, int offset, int length) {
+	public Date read(char[] chars, int offset, int length, ParsingContext parsingContext) {
 		String str = StringCellValueReader.readString(chars, offset, length);
 		try {
-			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(str);
+			DateFormat df = parsingContext.getDateFormat(index);
+			return df.parse(str);
 		} catch (ParseException e) {
 			throw new ParsingException(e.getMessage());
 		}

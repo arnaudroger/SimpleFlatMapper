@@ -1,6 +1,7 @@
 package org.sfm.csv.primitive;
 
 import org.sfm.csv.DelayedCellSetter;
+import org.sfm.csv.ParsingContext;
 import org.sfm.csv.cell.BooleanCellValueReader;
 import org.sfm.reflect.primitive.BooleanSetter;
 
@@ -37,7 +38,7 @@ public class BooleanDelayedCellSetter<T> implements DelayedCellSetter<T, Boolean
 	}
 
 	@Override
-	public void set(char[] chars, int offset, int length) throws Exception {
+	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
 		this.value = BooleanCellValueReader.parseBoolean(chars, offset, length);
 	}
 }

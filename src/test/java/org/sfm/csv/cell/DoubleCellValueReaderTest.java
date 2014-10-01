@@ -23,7 +23,7 @@ public class DoubleCellValueReaderTest {
 	public void testInvalidDouble() throws UnsupportedEncodingException {
 		final char[] chars = "ddd".toCharArray();
 		try {
-			reader.read(chars, 0, chars.length);
+			reader.read(chars, 0, chars.length, null);
 			fail("Expect exception");
 		} catch(NumberFormatException e){
 			// expected
@@ -32,7 +32,7 @@ public class DoubleCellValueReaderTest {
 
 	private void testReadDouble(double i) throws UnsupportedEncodingException {
 		final char[] chars = ("_" + Double.toString(i) + "_").toCharArray();
-		assertEquals(i, reader.read(chars, 1, chars.length-2).doubleValue(), 0);
+		assertEquals(i, reader.read(chars, 1, chars.length-2, null).doubleValue(), 0);
 	}
 
 }

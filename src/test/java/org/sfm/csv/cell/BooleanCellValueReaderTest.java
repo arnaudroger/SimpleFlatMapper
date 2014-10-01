@@ -26,7 +26,7 @@ public class BooleanCellValueReaderTest {
 
 	private void testReadBoolean(boolean expected, String str) throws UnsupportedEncodingException {
 		final char[] chars = ("_" + str+ "_").toCharArray();
-		assertEquals(expected, reader.read(chars, 1, chars.length-2).booleanValue());
+		assertEquals(expected, reader.read(chars, 1, chars.length-2, null).booleanValue());
 	}
 
 }

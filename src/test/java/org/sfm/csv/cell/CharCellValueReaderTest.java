@@ -20,7 +20,7 @@ public class CharCellValueReaderTest {
 	public void testInvalidChar() throws UnsupportedEncodingException {
 		final char[] chars = "Nan".toCharArray();
 		try {
-			reader.read(chars, 0, chars.length);
+			reader.read(chars, 0, chars.length, null);
 			fail("Expect exception");
 		} catch(ParsingException e){
 			// expected
@@ -29,7 +29,7 @@ public class CharCellValueReaderTest {
 
 	private void testReadShort(int i) throws UnsupportedEncodingException {
 		final char[] chars = ("_" + Integer.toString(i) + "_").toCharArray();
-		assertEquals(i, reader.read(chars, 1, chars.length-2).charValue());
+		assertEquals(i, reader.read(chars, 1, chars.length-2, null).charValue());
 	}
 
 }

@@ -30,6 +30,7 @@ public final class CsvMapperFactory {
 	
 	private final boolean useBridgeClassLoader;
 	
+	private String defaultDateFormat = "yyyy-MM-dd HH:mm:ss";
 	
 	public CsvMapperFactory(boolean useBridgeClassLoader) {
 		this.useBridgeClassLoader = useBridgeClassLoader;
@@ -77,6 +78,10 @@ public final class CsvMapperFactory {
 		return this;
 	}
 	
+	public CsvMapperFactory defaultDateFormat(final String defaultDateFormat) {
+		this.defaultDateFormat = defaultDateFormat;
+		return this;
+	}
 	/**
 	 * 
 	 * @param target the targeted class for the mapper
@@ -84,7 +89,7 @@ public final class CsvMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> CsvMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
-		return new DynamicCsvMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler);
+		return new DynamicCsvMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, defaultDateFormat);
 	}
 
 	
@@ -98,6 +103,7 @@ public final class CsvMapperFactory {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, reflectionService(target));
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
+		builder.setDefaultDateFormat(defaultDateFormat);
 		return builder;
 	}
 

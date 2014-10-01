@@ -52,7 +52,7 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 				return marker.getSetter() != null;
 			}
 			
-			public void set(char[] chars, int offset, int length)
+			public void set(char[] chars, int offset, int length, ParsingContext parsingContext)
 					throws Exception {
 				handler.newCell(chars, offset, length, cellIndex);
 

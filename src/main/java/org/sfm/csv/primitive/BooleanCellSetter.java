@@ -1,6 +1,7 @@
 package org.sfm.csv.primitive;
 
 import org.sfm.csv.CellSetter;
+import org.sfm.csv.ParsingContext;
 import org.sfm.csv.cell.BooleanCellValueReader;
 import org.sfm.reflect.primitive.BooleanSetter;
 
@@ -13,7 +14,7 @@ public class BooleanCellSetter<T> implements CellSetter<T> {
 	}
 	
 	@Override
-	public void set(T target, char[] chars, int offset, int length)
+	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
 			throws Exception {
 		setter.setBoolean(target, BooleanCellValueReader.parseBoolean(chars, offset, length));
 	}

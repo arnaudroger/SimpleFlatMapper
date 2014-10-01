@@ -18,6 +18,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 	private final RowHandler<T> handler;
 	private final int flushIndex;
 	private final int totalLength;
+	private final ParsingContext parsingContext;
 
 	private final int rowStart;
 	private final int limit;
@@ -35,6 +36,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 			FieldMapperErrorHandler<Integer> fieldErrorHandler,
 			RowHandlerErrorHandler rowHandlerErrorHandlers,
 			RowHandler<T> handler, 
+			ParsingContext parsingContext,
 			int rowStart, int limit) {
 		super();
 		this.instantiator = instantiator;
@@ -47,6 +49,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 		this.totalLength = delayedCellSetters.length + setters.length;
 		this.rowStart = rowStart;
 		this.limit = limit;
+		this.parsingContext = parsingContext;
 	}
 	
 	private int lastNonNullSetter(
@@ -135,7 +138,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 		try {
 			DelayedCellSetter<T, ?> delayedCellSetter = delayedCellSetters[cellIndex];
 			if (delayedCellSetter != null) {
-				delayedCellSetter.set(chars, offset, length);
+				delayedCellSetter.set(chars, offset, length, parsingContext);
 			}
 		} catch (Exception e) {
 			fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
@@ -147,7 +150,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 			try {
 				CellSetter<T> cellSetter = setters[cellIndex - delayedCellSetters.length];
 				if (cellSetter != null) {
-					cellSetter.set(currentInstance, chars, offset, length);
+					cellSetter.set(currentInstance, chars, offset, length, parsingContext);
 				}
 			} catch (Exception e) {
 				fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);

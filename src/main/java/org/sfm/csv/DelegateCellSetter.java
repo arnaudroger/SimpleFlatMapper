@@ -32,7 +32,7 @@ public class DelegateCellSetter<T> implements CellSetter<T> {
 	}
 
 	@Override
-	public void set(T target, char[] chars, int offset, int length)
+	public void set(T target, char[] chars, int offset, int length, ParsingContext context)
 			throws Exception {
 		this.target = target;
 		this.handler.newCell(chars, offset, length, cellIndex);

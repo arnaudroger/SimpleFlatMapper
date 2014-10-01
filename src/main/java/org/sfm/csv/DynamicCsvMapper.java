@@ -85,18 +85,21 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	private final FieldMapperErrorHandler<Integer> fieldMapperErrorHandler;
 
-	private final  MapperBuilderErrorHandler mapperBuilderErrorHandler;
+	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
+	
+	private final String defaultDateFormat;
+	
 	private MapperCache<CsvMapperImpl<T>> mapperCache = new MapperCache<CsvMapperImpl<T>>();
 
 	public DynamicCsvMapper(final Class<T> target, final ReflectionService reflectionService, 
 			final FieldMapperErrorHandler<Integer> fieldMapperErrorHandler, 
-			final MapperBuilderErrorHandler mapperBuilderErrorHandler) {
+			final MapperBuilderErrorHandler mapperBuilderErrorHandler, String defaultDateFormat) {
 		this.classMeta = reflectionService.getClassMeta(target);
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.csvParser = new CsvParser();
-
+		this.defaultDateFormat = defaultDateFormat;
 	}
 
 	@Override
@@ -119,6 +122,7 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
+		builder.setDefaultDateFormat(defaultDateFormat);
 		for(String col : key.getColumns()) {
 			builder.addMapping(col);
 		}

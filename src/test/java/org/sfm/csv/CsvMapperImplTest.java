@@ -32,19 +32,24 @@ public class CsvMapperImplTest {
 		
 		@SuppressWarnings("unchecked")
 		CellSetter<DbObject>[] setters = new CellSetter[] {
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "id")),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "name")),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "email")),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "creationTime")),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "typeOrdinal")),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "typeName"))
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "id"), 0),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "name"), 1),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "email"), 2),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "creationTime"), 3),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "typeOrdinal"), 4),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "typeName"), 5)
 		};
 		@SuppressWarnings("rawtypes")
 		Instantiator<DelayedCellSetter[], DbObject> instantiator = new InstantiatorFactory(null).getInstantiator(DelayedCellSetter[].class, DbObject.class);
+		
+		
+		ParsingContextFactory pcf = new ParsingContextFactory(6);
+		pcf.setDateFormat(3, "yyyy-MM-dd HH:mm:ss");
+
 		@SuppressWarnings("unchecked")
 		CsvMapperImpl<DbObject> mapper = new CsvMapperImpl<DbObject>(instantiator ,
 				(DelayedCellSetterFactory<DbObject, ?>[])new DelayedCellSetterFactory[] {} 
-				, setters);
+				, setters, pcf);
 		
 		List<DbObject> list = null;
 		
@@ -78,12 +83,12 @@ public class CsvMapperImplTest {
 
 		@SuppressWarnings("unchecked")
 		DelayedCellSetterFactory<DbFinalObject, ?>[] delayedSetters = new DelayedCellSetterFactory[] {
-			cellSetterFactory.getDelayedCellSetter(int.class),
-			cellSetterFactory.getDelayedCellSetter(String.class),
-			cellSetterFactory.getDelayedCellSetter(String.class),
-			cellSetterFactory.getDelayedCellSetter(Date.class),
-			cellSetterFactory.getDelayedCellSetter(DbObject.Type.class),
-			cellSetterFactory.getDelayedCellSetter(DbObject.Type.class)
+			cellSetterFactory.getDelayedCellSetter(int.class, 0),
+			cellSetterFactory.getDelayedCellSetter(String.class, 1),
+			cellSetterFactory.getDelayedCellSetter(String.class, 2),
+			cellSetterFactory.getDelayedCellSetter(Date.class, 3),
+			cellSetterFactory.getDelayedCellSetter(DbObject.Type.class, 4),
+			cellSetterFactory.getDelayedCellSetter(DbObject.Type.class, 5)
 		};
 		@SuppressWarnings("unchecked")
 		CellSetter<DbFinalObject>[] setters = new CellSetter[] {
@@ -103,9 +108,12 @@ public class CsvMapperImplTest {
 						}}
 						);
 		
+		ParsingContextFactory pcf = new ParsingContextFactory(6);
+		pcf.setDateFormat(3, "yyyy-MM-dd HH:mm:ss");
+		
 		CsvMapperImpl<DbFinalObject> mapper = new CsvMapperImpl<DbFinalObject>(instantiator ,
 				delayedSetters, 
-				setters);
+				setters, pcf);
 		
 		List<DbFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbFinalObject>()).getList();
 		assertEquals(1, list.size());
@@ -124,15 +132,15 @@ public class CsvMapperImplTest {
 		
 		@SuppressWarnings("unchecked")
 		DelayedCellSetterFactory<DbPartialFinalObject, ?>[] delayedSetters = new DelayedCellSetterFactory[] {
-			cellSetterFactory.getDelayedCellSetter(int.class),
-			cellSetterFactory.getDelayedCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "name")),
-			cellSetterFactory.getDelayedCellSetter(String.class),
+			cellSetterFactory.getDelayedCellSetter(int.class, 0),
+			cellSetterFactory.getDelayedCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "name"), 1),
+			cellSetterFactory.getDelayedCellSetter(String.class, 2),
 		};
 		@SuppressWarnings("unchecked")
 		CellSetter<DbPartialFinalObject>[] setters = new CellSetter[] {
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "creationTime")),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "typeOrdinal")),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "typeName"))
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "creationTime"), 3),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "typeOrdinal"), 4),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "typeName"), 5)
 		};
 		final List<ConstructorDefinition<DbPartialFinalObject>> constructorsDefinition = ConstructorDefinition.extractConstructors(DbPartialFinalObject.class);
 		@SuppressWarnings({ "rawtypes", "serial" })
@@ -145,9 +153,13 @@ public class CsvMapperImplTest {
 						}}
 						);
 		
+		ParsingContextFactory pcf = new ParsingContextFactory(6);
+		pcf.setDateFormat(3, "yyyy-MM-dd HH:mm:ss");
+
+		
 		CsvMapperImpl<DbPartialFinalObject> mapper = new CsvMapperImpl<DbPartialFinalObject>(instantiator ,
 				delayedSetters, 
-				setters);
+				setters, pcf);
 		
 		List<DbPartialFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbPartialFinalObject>()).getList();
 		assertEquals(1, list.size());

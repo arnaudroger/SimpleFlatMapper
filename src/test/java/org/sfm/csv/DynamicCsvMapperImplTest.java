@@ -91,6 +91,10 @@ public class DynamicCsvMapperImplTest {
 	}
 	
 	
+
+	private static final int NBROW = 2;
+	private static final int NBFUTURE = 10000;
+	
 	@Test
 	public void testMultipleThread() throws InterruptedException, ExecutionException {
 		final CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
@@ -115,26 +119,11 @@ public class DynamicCsvMapperImplTest {
 			}
 		};
 		
-		StringBuilder sb = new StringBuilder();
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		
-		sb.append("id,name,email,type_name,type_ordinal,creation_time\n");
-		for(int i = 100; i < 0; i++) {
-			sb.append(Long.toString(i)).append(",");
-			sb.append("name" + Long.toHexString(i)).append(",");
-			sb.append("email" + Long.toHexString(i)).append(",");
-			sb.append("type" + ((i + 1) % 4)).append(",");
-			sb.append(Long.toString(i % 4)).append(",");
-			sb.append(sdf.format(new Date(i * 1000))).append("\n");
-		}
-		
-		final String str = sb.toString();
+		final String str = buildCsvContent();
 		
 		List<Future<Object>> futures = new ArrayList<Future<Object>>(); 
-		for(int i = 0; i < 100000; i++) {
+		for(int i = 0; i < NBFUTURE; i++) {
 			futures.add(service.submit(new Callable<Object>() {
-
 				@Override
 				public Object call() throws Exception {
 					mapper.forEach(new StringReader(str), handler);
@@ -143,10 +132,43 @@ public class DynamicCsvMapperImplTest {
 			}));
 		}
 		
+		
+		int i = 0;
 		for(Future<Object> future : futures) {
-			future.get();
+			try {
+				future.get();
+			}  catch(Exception e) {
+				System.out.println("Future " + i + " fail " + e);
+			}
+			i++;
+		}
+		assertEquals(NBFUTURE, i);
+		assertEquals(nbRow.get(), NBFUTURE * NBROW);
+		
+		int sum = 0;
+		for(i = 0 ; i < NBROW ; i++) {
+			sum += i;
 		}
 		
+		assertEquals(sumOfAllIds.get(), NBFUTURE * sum);
+	}
+
+	private String buildCsvContent() {
+		StringBuilder sb = new StringBuilder();
 		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		sb.append("id,name,email,type_name,type_ordinal,creation_time\n");
+		for(int i = 0; i < NBROW; i++) {
+			sb.append(Long.toString(i)).append(",");
+			sb.append("name" + Long.toHexString(i)).append(",");
+			sb.append("email" + Long.toHexString(i)).append(",");
+			sb.append("type" + ((i % 4) + 1)).append(",");
+			sb.append(Long.toString(i % 4)).append(",");
+			sb.append(sdf.format(new Date(i * 1000))).append("\n");
+		}
+		
+		final String str = sb.toString();
+		return str;
 	}
 }

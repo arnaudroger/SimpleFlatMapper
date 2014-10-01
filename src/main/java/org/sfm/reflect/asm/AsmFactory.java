@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.objectweb.asm.Opcodes;
@@ -17,8 +19,8 @@ import org.sfm.reflect.Setter;
 
 public class AsmFactory implements Opcodes {
 	private final FactoryClassLoader factoryClassLoader;
-	private final Map<Method, Setter<?, ?>> setters = new HashMap<Method, Setter<?, ?>>();
-	private final Map<InstantiatorKey, Instantiator<?, ?>> instantiators = new HashMap<InstantiatorKey, Instantiator<?, ?>>();
+	private final ConcurrentMap<Method, Setter<?, ?>> setterCache = new ConcurrentHashMap<Method, Setter<?, ?>>();
+	private final ConcurrentMap<InstantiatorKey, Instantiator<?, ?>> instantiatorCache = new ConcurrentHashMap<InstantiatorKey, Instantiator<?, ?>>();
 	
 	public AsmFactory() {
 		this(Thread.currentThread().getContextClassLoader());
@@ -30,18 +32,18 @@ public class AsmFactory implements Opcodes {
 	
 	@SuppressWarnings("unchecked")
 	public <T, P> Setter<T,P> createSetter(final Method m) throws Exception {
-		Setter<T,P> setter = (Setter<T, P>) setters.get(m);
+		Setter<T,P> setter = (Setter<T, P>) setterCache.get(m);
 		if (setter == null) {
 			final String className = generateClassName(m);
-			final byte[] bytes = generateClass(m, className);
+			final byte[] bytes = generateClassByteCodes(m, className);
 			final Class<?> type = factoryClassLoader.registerClass(className, bytes);
 			setter = (Setter<T, P>) type.newInstance();
-			setters.put(m, setter);
+			setterCache.putIfAbsent(m, setter);
 		}
 		return setter;
 	}
 
-	private byte[] generateClass(final Method m, final String className) throws Exception {
+	private byte[] generateClassByteCodes(final Method m, final String className) throws Exception {
 		final Class<?> propertyType = m.getParameterTypes()[0];
 		if (AsmUtils.primitivesClassAndWrapper.contains(propertyType)) {
 			return SetterBuilder.createPrimitiveSetter(className, m);
@@ -53,13 +55,13 @@ public class AsmFactory implements Opcodes {
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> createEmptyArgsInstatiantor(final Class<S> source, final Class<? extends T> target) throws Exception {
 		InstantiatorKey instantiatorKey = new InstantiatorKey(target, source);
-		Instantiator<S, T> instantiator = (Instantiator<S, T>) instantiators.get(instantiatorKey);
+		Instantiator<S, T> instantiator = (Instantiator<S, T>) instantiatorCache.get(instantiatorKey);
 		if (instantiator == null) {
 			final String className = generateInstantiatorClassName(instantiatorKey);
 			final byte[] bytes = ConstructorBuilder.createEmptyConstructor(className, source, target);
 			final Class<?> type = factoryClassLoader.registerClass(className, bytes);
 			instantiator = (Instantiator<S, T>) type.newInstance();
-			instantiators.put(instantiatorKey, instantiator);
+			instantiatorCache.putIfAbsent(instantiatorKey, instantiator);
 		}
 		return instantiator;
 	}
@@ -67,7 +69,7 @@ public class AsmFactory implements Opcodes {
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> createInstatiantor(final Class<?> source, final ConstructorDefinition<T> constructorDefinition,final Map<ConstructorParameter, Getter<S, ?>> injections) throws Exception {
 		InstantiatorKey instantiatorKey = new InstantiatorKey(constructorDefinition, injections.keySet(), source);
-		Instantiator<S, T> instantiator = (Instantiator<S, T>) instantiators.get(instantiatorKey);
+		Instantiator<S, T> instantiator = (Instantiator<S, T>) instantiatorCache.get(instantiatorKey);
 		if (instantiator == null) {
 			final String className = generateInstantiatorClassName(instantiatorKey);
 			final byte[] bytes = InstantiatorBuilder.createInstantiator(className, source, constructorDefinition, injections);
@@ -79,7 +81,7 @@ public class AsmFactory implements Opcodes {
 			}
 			
 			instantiator = (Instantiator<S, T>) type.getConstructor(Map.class).newInstance(getterPerName);
-			instantiators.put(instantiatorKey, instantiator);
+			instantiatorCache.put(instantiatorKey, instantiator);
 		}
 		return instantiator;
 	}

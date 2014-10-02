@@ -79,6 +79,7 @@ public final class ResultSetMapperBuilderImpl<T> extends AbstractMapperBuilderIm
 		}
 		return alias;
 	}
+	
 	@Override
 	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column, final int columnIndex, final int sqlType) {
 		return addMapping(columnToPropertyName(column), new ColumnKey(column, columnIndex, sqlType));

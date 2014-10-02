@@ -1,5 +1,8 @@
 package org.sfm.csv;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.sfm.jdbc.AsmHelper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
@@ -24,6 +27,9 @@ public final class CsvMapperFactory {
 	
 	private FieldMapperErrorHandler<Integer> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<Integer>();
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
+	
+	private Map<String, String> aliases = new HashMap<String, String>();
+	private Map<String, CellValueReader<?>> customReaders = new HashMap<String, CellValueReader<?>>();
 	
 	private boolean useAsm = true;
 	private boolean disableAsm = false;
@@ -89,7 +95,7 @@ public final class CsvMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> CsvMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
-		return new DynamicCsvMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, defaultDateFormat);
+		return new DynamicCsvMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, defaultDateFormat, aliases, customReaders);
 	}
 
 	
@@ -100,7 +106,7 @@ public final class CsvMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> CsvMapperBuilder<T> newBuilder(final Class<T> target) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, reflectionService(target));
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, reflectionService(target), aliases, customReaders);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);
@@ -119,5 +125,13 @@ public final class CsvMapperFactory {
 			}
 		}
 		return new ReflectionService(AsmHelper.isAsmPresent() && !disableAsm, useAsm, asmFactory);
+	}
+	
+	public void addAlias(String key, String value) {
+		aliases.put(key.toUpperCase(), value.toUpperCase());
+	}
+
+	public void addCustomValueReader(String column,	CellValueReader<?> cellValueReader) {
+		customReaders.put(column.toUpperCase(), cellValueReader);
 	}
 }

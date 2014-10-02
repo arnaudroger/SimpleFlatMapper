@@ -45,6 +45,10 @@ public class CsvMapperBuilder<T> {
 	private final Type target;
 	private final PropertyFinder<T> propertyFinder;
 	private final ReflectionService reflectionService;
+	private final Map<String, String> aliases;
+	private final Map<String, CellValueReader<?>> customReaders;
+	private final List<String> columns = new ArrayList<String>();
+
 	
 	private List<PropertyMeta<T, ?>> properties = new ArrayList<PropertyMeta<T, ?>>();
 	private int syncSetterStart;
@@ -52,16 +56,24 @@ public class CsvMapperBuilder<T> {
 	private String defaultDateFormat = "yyyy-MM-dd HH:mm:ss";
 
 	public CsvMapperBuilder(final Type target) {
-		this(target, new ReflectionService());
+		this(target, new ReflectionService(),
+				new HashMap<String, String>(), 
+				new HashMap<String, CellValueReader<?>>());
 	}
+	
 	@SuppressWarnings("unchecked")
-	public CsvMapperBuilder(final Type target, ReflectionService reflectionService) throws MapperBuildingException {
-		this(target, (ClassMeta<T>) reflectionService.getClassMeta(target));
+	public CsvMapperBuilder(final Type target, ReflectionService reflectionService,
+			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders) throws MapperBuildingException {
+		this(target, (ClassMeta<T>) reflectionService.getClassMeta(target), aliases, customReaders);
 	}
-	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta) throws MapperBuildingException {
+	
+	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta,
+			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders) throws MapperBuildingException {
 		this.target = target;
 		this.reflectionService = classMeta.getReflectionService();
 		this.propertyFinder = classMeta.newPropertyFinder();
+		this.aliases = aliases;
+		this.customReaders = customReaders;
 	}
 
 	public final CsvMapperBuilder<T> addMapping(final String columnKey) {
@@ -69,25 +81,32 @@ public class CsvMapperBuilder<T> {
 	}
 	
 	public final CsvMapperBuilder<T> addMapping(final String columnKey, int columnIndex) {
-		final PropertyMeta<T, ?> prop = propertyFinder.findProperty(columnKey);
+		final String mappedColumnKey = columnToPropertyName(columnKey);
+		
+		final PropertyMeta<T, ?> prop = propertyFinder.findProperty(mappedColumnKey);
 		
 		if (prop != null) {
 			while(properties.size() < columnIndex) {
 				properties.add(null);
+				columns.add(null);
 			}
 			properties.add(prop);
+			columns.add(columnKey);
 		} else {
-			mapperBuilderErrorHandler.propertyNotFound(target, columnKey);
+			mapperBuilderErrorHandler.propertyNotFound(target, mappedColumnKey);
 		}
 		
 		return this;
 	}
 	
-	private void addMapping(PropertyMeta<T, ?> subProperty, int i) {
+	private void addMapping(PropertyMeta<T, ?> subProperty, int i, String column) {
 		while (i >= properties.size()) {
 			properties.add(null);
+			columns.add(null);
 		}
 		properties.set(i, subProperty);
+		columns.set(i, column);
+		
 	}
 	
 	public void setDefaultDateFormat(String defaultDateFormat) {
@@ -100,9 +119,9 @@ public class CsvMapperBuilder<T> {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private CellSetter<T>[] getSetters() {
-		
 		Map<String, CsvMapperBuilder<?>> delegateMapperBuilders = new HashMap<String, CsvMapperBuilder<?>>();
-		CellSetterFactory cellSetterFactory = new CellSetterFactory();
+		
+		CellSetterFactory cellSetterFactory = new CellSetterFactory(customReaders);
 		
 		List<CellSetter<T>> setters = new ArrayList<CellSetter<T>>();
 
@@ -116,16 +135,16 @@ public class CsvMapperBuilder<T> {
 					CsvMapperBuilder<?> delegateMapperBuilder = delegateMapperBuilders .get(powner.getName());
 					
 					if (delegateMapperBuilder == null) {
-						delegateMapperBuilder = new CsvMapperBuilder(powner.getType(), powner.getClassMeta());
+						delegateMapperBuilder = new CsvMapperBuilder(powner.getType(), powner.getClassMeta(), aliases, customReaders);
 						delegateMapperBuilders.put(powner.getName(), delegateMapperBuilder);
 					}
 					
-					delegateMapperBuilder.addMapping(((SubPropertyMeta) prop).getSubProperty(), i);
+					delegateMapperBuilder.addMapping(((SubPropertyMeta) prop).getSubProperty(), i, columns.get(i));
 					
 					setters.add(null);
 					
 				} else {
-					setters.add(cellSetterFactory.getCellSetter(prop.getSetter(), i));
+					setters.add(cellSetterFactory.getCellSetter(prop.getSetter(), i, columns.get(i)));
 				}
 			} else {
 				setters.add(null);
@@ -252,27 +271,27 @@ public class CsvMapperBuilder<T> {
 		
 		Map<String, CsvMapperBuilder<?>> delegateMapperBuilders = new HashMap<String, CsvMapperBuilder<?>>();
 		List<DelayedCellSetterFactory<T, ?>> delayedSetters = new ArrayList<DelayedCellSetterFactory<T, ?>>(syncSetterStart);
-		CellSetterFactory cellSetterFactory = new CellSetterFactory();
+		CellSetterFactory cellSetterFactory = new CellSetterFactory(customReaders);
 
 		for(int i = 0; i < syncSetterStart; i++) {
 			PropertyMeta<T, ?> prop = properties.get(i);
 			if (prop != null) {
 				if (prop instanceof ConstructorPropertyMeta) {
-					delayedSetters.add((DelayedCellSetterFactory<T, ?>)cellSetterFactory.getDelayedCellSetter(prop.getType(), i));
+					delayedSetters.add((DelayedCellSetterFactory<T, ?>)cellSetterFactory.getDelayedCellSetter(prop.getType(), i, columns.get(i)));
 				}  else if (prop instanceof SubPropertyMeta) {
 					final PropertyMeta<?, ?> powner = ((SubPropertyMeta)prop).getProperty();
 					CsvMapperBuilder<?> delegateMapperBuilder = delegateMapperBuilders .get(powner.getName());
 					
 					if (delegateMapperBuilder == null) {
-						delegateMapperBuilder = new CsvMapperBuilder(powner.getType(), powner.getClassMeta());
+						delegateMapperBuilder = new CsvMapperBuilder(powner.getType(), powner.getClassMeta(), aliases, customReaders);
 						delegateMapperBuilders.put(powner.getName(), delegateMapperBuilder);
 					}
 					
-					delegateMapperBuilder.addMapping(((SubPropertyMeta) prop).getSubProperty(), i);
+					delegateMapperBuilder.addMapping(((SubPropertyMeta) prop).getSubProperty(), i, columns.get(i));
 					
 					delayedSetters.add(null);
 				}else {
-					delayedSetters.add(cellSetterFactory.getDelayedCellSetter(prop.getSetter(), i));
+					delayedSetters.add(cellSetterFactory.getDelayedCellSetter(prop.getSetter(), i, columns.get(i)));
 				}
 			} else {
 				delayedSetters.add(null);
@@ -304,6 +323,17 @@ public class CsvMapperBuilder<T> {
 		}
 		
 		return delayedSetters.toArray(new DelayedCellSetterFactory[syncSetterStart]);
+	}
+	
+	private String columnToPropertyName(String column) {
+		if (aliases == null || aliases.isEmpty()) {
+			return column;
+		} 
+		String alias = aliases.get(column.toUpperCase());
+		if (alias == null) {
+			return column;
+		}
+		return alias;
 	}
 	
 	public final CsvMapperBuilder<T> fieldMapperErrorHandler(final FieldMapperErrorHandler<Integer> errorHandler) {

@@ -32,12 +32,12 @@ public class CsvMapperImplTest {
 		
 		@SuppressWarnings("unchecked")
 		CellSetter<DbObject>[] setters = new CellSetter[] {
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "id"), 0),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "name"), 1),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "email"), 2),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "creationTime"), 3),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "typeOrdinal"), 4),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "typeName"), 5)
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "id"), 0, "id"),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "name"), 1, "name"),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "email"), 2, "email"),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "creationTime"), 3, "creationTime"),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "typeOrdinal"), 4, "typeOrdinal"),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbObject.class, "typeName"), 5, "typeName")
 		};
 		@SuppressWarnings("rawtypes")
 		Instantiator<DelayedCellSetter[], DbObject> instantiator = new InstantiatorFactory(null).getInstantiator(DelayedCellSetter[].class, DbObject.class);
@@ -83,12 +83,12 @@ public class CsvMapperImplTest {
 
 		@SuppressWarnings("unchecked")
 		DelayedCellSetterFactory<DbFinalObject, ?>[] delayedSetters = new DelayedCellSetterFactory[] {
-			cellSetterFactory.getDelayedCellSetter(int.class, 0),
-			cellSetterFactory.getDelayedCellSetter(String.class, 1),
-			cellSetterFactory.getDelayedCellSetter(String.class, 2),
-			cellSetterFactory.getDelayedCellSetter(Date.class, 3),
-			cellSetterFactory.getDelayedCellSetter(DbObject.Type.class, 4),
-			cellSetterFactory.getDelayedCellSetter(DbObject.Type.class, 5)
+			cellSetterFactory.getDelayedCellSetter(int.class, 0, null),
+			cellSetterFactory.getDelayedCellSetter(String.class, 1, null),
+			cellSetterFactory.getDelayedCellSetter(String.class, 2, null),
+			cellSetterFactory.getDelayedCellSetter(Date.class, 3, null),
+			cellSetterFactory.getDelayedCellSetter(DbObject.Type.class, 4, null),
+			cellSetterFactory.getDelayedCellSetter(DbObject.Type.class, 5, null)
 		};
 		@SuppressWarnings("unchecked")
 		CellSetter<DbFinalObject>[] setters = new CellSetter[] {
@@ -132,15 +132,15 @@ public class CsvMapperImplTest {
 		
 		@SuppressWarnings("unchecked")
 		DelayedCellSetterFactory<DbPartialFinalObject, ?>[] delayedSetters = new DelayedCellSetterFactory[] {
-			cellSetterFactory.getDelayedCellSetter(int.class, 0),
-			cellSetterFactory.getDelayedCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "name"), 1),
-			cellSetterFactory.getDelayedCellSetter(String.class, 2),
+			cellSetterFactory.getDelayedCellSetter(int.class, 0, null),
+			cellSetterFactory.getDelayedCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "name"), 1, null),
+			cellSetterFactory.getDelayedCellSetter(String.class, 2, null),
 		};
 		@SuppressWarnings("unchecked")
 		CellSetter<DbPartialFinalObject>[] setters = new CellSetter[] {
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "creationTime"), 3),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "typeOrdinal"), 4),
-			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "typeName"), 5)
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "creationTime"), 3, null),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "typeOrdinal"), 4, null),
+			cellSetterFactory.getCellSetter(setterFactory.getSetter(DbPartialFinalObject.class, "typeName"), 5, null)
 		};
 		final List<ConstructorDefinition<DbPartialFinalObject>> constructorsDefinition = ConstructorDefinition.extractConstructors(DbPartialFinalObject.class);
 		@SuppressWarnings({ "rawtypes", "serial" })

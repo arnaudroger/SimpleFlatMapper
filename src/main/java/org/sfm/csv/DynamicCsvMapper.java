@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.sfm.csv.cell.StringCellValueReader;
 import org.sfm.csv.parser.CharsCellHandler;
@@ -90,16 +91,21 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 	private final String defaultDateFormat;
 	
 	private MapperCache<CsvMapperImpl<T>> mapperCache = new MapperCache<CsvMapperImpl<T>>();
+	private final Map<String, String> aliases;
+	private final Map<String, CellValueReader<?>> customReaders;
 
 	public DynamicCsvMapper(final Class<T> target, final ReflectionService reflectionService, 
 			final FieldMapperErrorHandler<Integer> fieldMapperErrorHandler, 
-			final MapperBuilderErrorHandler mapperBuilderErrorHandler, String defaultDateFormat) {
+			final MapperBuilderErrorHandler mapperBuilderErrorHandler, String defaultDateFormat, 
+			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders) {
 		this.classMeta = reflectionService.getClassMeta(target);
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.csvParser = new CsvParser();
 		this.defaultDateFormat = defaultDateFormat;
+		this.aliases = aliases;
+		this.customReaders = customReaders;
 	}
 
 	@Override
@@ -119,7 +125,7 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 	
 	private CsvMapperImpl<T> buildeMapper(MapperKey key) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, aliases, customReaders);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);

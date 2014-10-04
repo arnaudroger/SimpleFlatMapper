@@ -89,7 +89,7 @@ public class AsmFactory implements Opcodes {
 	@SuppressWarnings("unchecked")
 	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target, RowHandlerErrorHandler errorHandler) throws Exception {
 		final String className = generateClassName(mappers, ResultSet.class, target);
-		final byte[] bytes = JdbcMapperBuilder.dump(className, mappers, instantiator, target);
+		final byte[] bytes = JdbcMapperAsmBuilder.dump(className, mappers, target);
 		final Class<?> type = factoryClassLoader.registerClass(className, bytes);
 		return (JdbcMapper<T>) type.getDeclaredConstructors()[0].newInstance(mappers, instantiator, errorHandler);
 	}

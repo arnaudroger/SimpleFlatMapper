@@ -1,11 +1,7 @@
 package org.sfm.reflect.asm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.rmi.UnexpectedException;
 import java.sql.ResultSet;
@@ -20,7 +16,6 @@ import org.sfm.jdbc.getter.LongIndexedResultSetGetter;
 import org.sfm.jdbc.getter.OrdinalEnumIndexedResultSetGetter;
 import org.sfm.jdbc.getter.StringIndexedResultSetGetter;
 import org.sfm.map.FieldMapper;
-import org.sfm.map.InstantiationMappingException;
 import org.sfm.map.MappingException;
 import org.sfm.map.RethrowRowHandlerErrorHandler;
 import org.sfm.reflect.Getter;
@@ -120,7 +115,7 @@ public class AsmFactoryTest {
 		
 		try {
 			jdbcMapper.map(null);
-		} catch(InstantiationMappingException e) {
+		} catch(MappingException e) {
 			// ok
 		} 
 	}

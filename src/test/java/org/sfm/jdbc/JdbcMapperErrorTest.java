@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.Foo;
 import org.sfm.map.FieldMapper;
-import org.sfm.map.InstantiationMappingException;
 import org.sfm.map.LogFieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
@@ -94,7 +93,7 @@ public class JdbcMapperErrorTest {
 		try {
 			mapper.map(null);
 			fail("Expecte error");
-		} catch(InstantiationMappingException e) {}
+		} catch(MappingException e) {}
 	}
 	
 	

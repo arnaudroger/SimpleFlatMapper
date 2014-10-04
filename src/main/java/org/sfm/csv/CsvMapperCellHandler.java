@@ -2,7 +2,7 @@ package org.sfm.csv;
 
 import org.sfm.csv.parser.CharsCellHandler;
 import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.InstantiationMappingException;
+import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
@@ -130,7 +130,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 		try {
 			return instantiator.newInstance(delayedCellSetters);
 		} catch (Exception e) {
-			throw new InstantiationMappingException(e.getMessage(), e);
+			throw new MappingException(e.getMessage(), e);
 		}
 	}
 

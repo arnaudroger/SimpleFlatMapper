@@ -143,7 +143,7 @@ public abstract class AbstractMapperBuilderImpl<S, T, K, M extends Mapper<S, T>,
 				Mapper<S, T> mapper = (Mapper<S,T>) subProp.getMapperBuilder().mapper();
 				Getter<S, T> getter = new MapperGetterAdapter<S, T>(mapper);
 				
-				fields.add(new FieldMapperImpl<S, T, Object, K>(null, getter, setter, fieldMapperErrorHandler));
+				fields.add(new FieldMapperImpl<S, T, Object>(getter, setter));
 			}
 			
 		}

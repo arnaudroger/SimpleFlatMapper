@@ -50,37 +50,37 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 		final Class<?> type = TypeHelper.toClass(setter.getPropertyType());
 
 		if (type.equals(Boolean.TYPE)) {
-			return new BooleanFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new BooleanFieldMapper<ResultSet, T>(
 					new BooleanNamedResultSetGetter(key.getColumnName()),
-					SetterFactory.toBooleanSetter(setter), errorHandler);
+					SetterFactory.toBooleanSetter(setter));
 		} else if (type.equals(Integer.TYPE)) {
-			return new IntFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new IntFieldMapper<ResultSet, T>(
 					new IntNamedResultSetGetter(key.getColumnName()),
-					SetterFactory.toIntSetter(setter), errorHandler);
+					SetterFactory.toIntSetter(setter));
 		} else if (type.equals(Long.TYPE)) {
-			return new LongFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new LongFieldMapper<ResultSet, T>(
 					new LongNamedResultSetGetter(key.getColumnName()),
-					SetterFactory.toLongSetter(setter), errorHandler);
+					SetterFactory.toLongSetter(setter));
 		} else if (type.equals(Float.TYPE)) {
-			return new FloatFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new FloatFieldMapper<ResultSet, T>(
 					new FloatNamedResultSetGetter(key.getColumnName()),
-					SetterFactory.toFloatSetter(setter), errorHandler);
+					SetterFactory.toFloatSetter(setter));
 		} else if (type.equals(Double.TYPE)) {
-			return new DoubleFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new DoubleFieldMapper<ResultSet, T>(
 					new DoubleNamedResultSetGetter(key.getColumnName()),
-					SetterFactory.toDoubleSetter(setter), errorHandler);
+					SetterFactory.toDoubleSetter(setter));
 		} else if (type.equals(Byte.TYPE)) {
-			return new ByteFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new ByteFieldMapper<ResultSet, T>(
 					new ByteNamedResultSetGetter(key.getColumnName()),
-					SetterFactory.toByteSetter(setter), errorHandler);
+					SetterFactory.toByteSetter(setter));
 		} else if (type.equals(Character.TYPE)) {
-			return new CharacterFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new CharacterFieldMapper<ResultSet, T>(
 					new CharacterNamedResultSetGetter(key.getColumnName()),
-					SetterFactory.toCharacterSetter(setter), errorHandler);
+					SetterFactory.toCharacterSetter(setter));
 		} else if (type.equals(Short.TYPE)) {
-			return new ShortFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new ShortFieldMapper<ResultSet, T>(
 					new ShortNamedResultSetGetter(key.getColumnName()),
-					SetterFactory.toShortSetter(setter), errorHandler);
+					SetterFactory.toShortSetter(setter));
 		} else {
 			throw new UnsupportedOperationException("Type " + type
 					+ " is not primitive");
@@ -91,37 +91,37 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 		final Class<?> type = TypeHelper.toClass(setter.getPropertyType());
 
 		if (type.equals(Boolean.TYPE)) {
-			return new BooleanFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new BooleanFieldMapper<ResultSet, T>(
 					new BooleanIndexedResultSetGetter(key.getColumnIndex()),
-					SetterFactory.toBooleanSetter(setter), errorHandler);
+					SetterFactory.toBooleanSetter(setter));
 		} else if (type.equals(Integer.TYPE)) {
-			return new IntFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new IntFieldMapper<ResultSet, T>(
 					new IntIndexedResultSetGetter(key.getColumnIndex()),
-					SetterFactory.toIntSetter(setter), errorHandler);
+					SetterFactory.toIntSetter(setter));
 		} else if (type.equals(Long.TYPE)) {
-			return new LongFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new LongFieldMapper<ResultSet, T>(
 					new LongIndexedResultSetGetter(key.getColumnIndex()),
-					SetterFactory.toLongSetter(setter), errorHandler);
+					SetterFactory.toLongSetter(setter));
 		} else if (type.equals(Float.TYPE)) {
-			return new FloatFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new FloatFieldMapper<ResultSet, T>(
 					new FloatIndexedResultSetGetter(key.getColumnIndex()),
-					SetterFactory.toFloatSetter(setter), errorHandler);
+					SetterFactory.toFloatSetter(setter));
 		} else if (type.equals(Double.TYPE)) {
-			return new DoubleFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new DoubleFieldMapper<ResultSet, T>(
 					new DoubleIndexedResultSetGetter(key.getColumnIndex()),
-					SetterFactory.toDoubleSetter(setter), errorHandler);
+					SetterFactory.toDoubleSetter(setter));
 		} else if (type.equals(Byte.TYPE)) {
-			return new ByteFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new ByteFieldMapper<ResultSet, T>(
 					new ByteIndexedResultSetGetter(key.getColumnIndex()),
-					SetterFactory.toByteSetter(setter), errorHandler);
+					SetterFactory.toByteSetter(setter));
 		} else if (type.equals(Character.TYPE)) {
-			return new CharacterFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new CharacterFieldMapper<ResultSet, T>(
 					new CharacterIndexedResultSetGetter(key.getColumnIndex()),
-					SetterFactory.toCharacterSetter(setter), errorHandler);
+					SetterFactory.toCharacterSetter(setter));
 		} else if (type.equals(Short.TYPE)) {
-			return new ShortFieldMapper<ResultSet, T, ColumnKey>(key, 
+			return new ShortFieldMapper<ResultSet, T>(
 					new ShortIndexedResultSetGetter(key.getColumnIndex()),
-					SetterFactory.toShortSetter(setter), errorHandler);
+					SetterFactory.toShortSetter(setter));
 		} else {
 			throw new UnsupportedOperationException("Type " + type
 					+ " is not primitive");
@@ -145,7 +145,7 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 		if (getter == null) {
 			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + type);
 		}
-		return new FieldMapperImpl<ResultSet, T, P, ColumnKey>(key, getter, setter, errorHandler);
+		return new FieldMapperImpl<ResultSet, T, P>(getter, setter);
 	}
 
 }

@@ -29,6 +29,6 @@ public final class TupleFieldMapperFactory implements FieldMapperFactory<Tuple, 
 		if (getter == null) {
 			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + type);
 		}
-		return new FieldMapperImpl<Tuple, T, P, TupleElementKey<?>>(key, getter, setter, errorHandler);
+		return new FieldMapperImpl<Tuple, T, P>(getter, setter);
 	}
 }

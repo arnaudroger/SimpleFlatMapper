@@ -5,7 +5,6 @@ import java.util.Arrays;
 public final class MapperKey {
 
 	private final String[] columns;
-
 	public MapperKey(final String... columns) {
 		this.columns = columns;
 	}

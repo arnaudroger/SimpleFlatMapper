@@ -1,23 +1,21 @@
 package org.sfm.map.primitive;
 
-import org.sfm.map.AbstractFieldMapper;
-import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.FieldMapper;
 import org.sfm.reflect.primitive.ShortGetter;
 import org.sfm.reflect.primitive.ShortSetter;
 
-public final class ShortFieldMapper<S, T, K> extends AbstractFieldMapper<S, T, K> {
+public final class ShortFieldMapper<S, T> implements FieldMapper<S, T> {
 
 	private final ShortGetter<S> getter;
 	private final ShortSetter<T> setter;
 	
- 	public ShortFieldMapper(final K key, final ShortGetter<S> getter, final ShortSetter<T> setter, final FieldMapperErrorHandler<K> errorHandler) {
- 		super(key, errorHandler);
+ 	public ShortFieldMapper(final ShortGetter<S> getter, final ShortSetter<T> setter) {
 		this.getter = getter;
 		this.setter = setter;
 	}
 
 	@Override
-	protected void mapUnsafe(final S source, final T target) throws Exception {
+	public void map(final S source, final T target) throws Exception {
 		setter.setShort(target, getter.getShort(source));
 	}
 }

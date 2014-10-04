@@ -7,6 +7,6 @@ public interface FieldMapper<S, T> {
 	 * @param target object to map to
 	 * @throws Exception
 	 */
-	void map(S source, T target) throws MappingException;
+	void map(S source, T target) throws Exception;
 
 }

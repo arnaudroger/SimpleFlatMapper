@@ -278,7 +278,14 @@ In mem HsqlDb
 
 |Benchmark|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-
+|JdbcMapperStatic|3%|3%|6%|6%
+|JdbcMapperDynamic|15%|7%|6%|7%
+|JdbcMapperDynamicNoAsm|21%|27%|32%|31%
+|Roma|37%|30%|26%|24%
+|Sql2o|227%|135%|85%|74%
+|Hibernate|812%|669%|582%|612%
+|MyBatis|836%|851%|879%|883%
+|RowMapper|573%|2017%|2942%|3116%
 
 Local Mysql
 -------

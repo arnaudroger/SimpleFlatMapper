@@ -10,7 +10,6 @@ import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
-import org.sfm.map.RethrowFieldMapperErrorHandler;
 import org.sfm.map.RethrowMapperBuilderErrorHandler;
 import org.sfm.osgi.BridgeClassLoader;
 import org.sfm.reflect.ReflectionService;
@@ -28,7 +27,7 @@ public final class JdbcMapperFactory {
 		return new JdbcMapperFactory();
 	}
 	
-	private FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<ColumnKey>();
+	private FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler = null;
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	private Map<String, String> aliases = new HashMap<String, String>();
 	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();

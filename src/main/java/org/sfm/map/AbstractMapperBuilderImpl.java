@@ -25,7 +25,7 @@ import org.sfm.reflect.meta.SubPropertyMeta;
 public abstract class AbstractMapperBuilderImpl<S, T, K, M extends Mapper<S, T>,  B extends MapperBuilder<S, T, K, M, B>> 
 	implements MapperBuilder<S, T, K, M, B> {
 
-	private FieldMapperErrorHandler<K> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<K> ();
+	private FieldMapperErrorHandler<K> fieldMapperErrorHandler;
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	private final Type target;
 	private final Type source;
@@ -184,7 +184,11 @@ public abstract class AbstractMapperBuilderImpl<S, T, K, M extends Mapper<S, T>,
 			MapperBuilder<S, T, K, ?, ?> mapperBuilder = subProp.getMapperBuilder();
 			mapperBuilder.addMapping(((SubPropertyMeta) property).getSubProperty(), key);
 		} else {
-			fields.add(fieldMapperFactory.newFieldMapper(property.getSetter(), key, fieldMapperErrorHandler, mapperBuilderErrorHandler));
+			FieldMapper<S, T> fieldMapper = fieldMapperFactory.newFieldMapper(property.getSetter(), key, fieldMapperErrorHandler, mapperBuilderErrorHandler);
+			if (fieldMapperErrorHandler != null) {
+				fieldMapper = new FieldErrorHandlerMapper<S, T, K>(key, fieldMapper, fieldMapperErrorHandler);
+			}
+			fields.add(fieldMapper);
 		}
 		return (B) this;
 	}

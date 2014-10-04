@@ -253,11 +253,10 @@ Performance
 ========
 
 New Results, with better consistency. Use a slightly modified BoneCP and PreparedStatement cache. 
-Use JMH to with sample mode. I still need to validate the mysql.
 I will try to see how to get the static mapper closer to Roma by changing the error handling at field level.  
 Because Roma assume that there is a 1 to 1 match between column and property it does not check for a column change between query. Roma is slower on the real database benchmark because it's using column name lookup.
 
-See [orm-benchmarks](https://github.com/arnaudroger/orm-benchmark) for more details.
+See [orm-benchmarks](https://github.com/arnaudroger/orm-benchmark) for benchmark sources and results.
 
 
 Mock Connection
@@ -292,6 +291,15 @@ Local Mysql
 -------
 
 |Benchmark|1|10|100|1000|
+|---------|---:|---:|---:|---:|
+|JdbcMapperStatic|-0.88%|3.29%|-0.97%|0.71%
+|JdbcMapperDynamic|0.42%|5.89%|-1.04%|0.47%
+|JdbcMapperDynamicNoAsm|0.93%|3.06%|4.78%|3.45%
+|Roma|5.46%|11.28%|10.66%|11.90%
+|Sql2o|8.51%|17.89%|18.61%|27.76%
+|Hibernate|38.32%|31.11%|67.67%|97.33%
+|MyBatis|76.29%|72.28%|82.38%|168.34%
+|RowMapper|27.79%|58.71%|200.53%|395.64%
 
 Csv Mapping 
 -------

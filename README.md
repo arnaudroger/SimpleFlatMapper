@@ -253,8 +253,9 @@ Performance
 ========
 
 New Results, with better consistency. Use a slightly modified BoneCP and PreparedStatement cache. 
-Use JMH to with sample mode. I still need to validate the mysql and hsqldb result via a profiler.
-I will try to see how to get the static mapper closer to Roma. Because Roma assume that there is a 1 to 1 match between column and property it does not check for a column change between query.
+Use JMH to with sample mode. I still need to validate the mysql.
+I will try to see how to get the static mapper closer to Roma by changing the error handling at field level.  
+Because Roma assume that there is a 1 to 1 match between column and property it does not check for a column change between query. Roma is slower on the real database benchmark because it's using column name lookup.
 
 See [orm-benchmarks](https://github.com/arnaudroger/orm-benchmark) for more details.
 

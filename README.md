@@ -252,7 +252,9 @@ select id,
 Performance
 ========
 
-Use JMH to with sample mode.
+New Results, with better consistency. Use a slightly modified BoneCP and PreparedStatement cache. 
+Use JMH to with sample mode. I still need to validate the mysql and hsqldb result via a profiler.
+I will try to see how to get the static mapper closer to Roma. Because Roma assume that there is a 1 to 1 match between column and property it does not check for a column change between query.
 
 See [orm-benchmarks](https://github.com/arnaudroger/orm-benchmark) for more details.
 
@@ -262,42 +264,42 @@ Mock Connection
 
 |Benchmark|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|SfmStatic|15%|44%|130%|181%|
-|SfmDynamic|26%|52%|133%|178%|
-|SfmNoAsm|44%|253%|766%|937%|
-|Roma|2%|31%|100%|139%|
-|Sql2o|986%|1331%|2274%|2571%|
-|Hibernate|6829%|8785%|14259%|17404%|
-|MyBatis|4189%|10242%|24265%|30279%|
-|BeansPropertyRowMapper|3165%|23329%|71939%|90564%|
+|JdbcMapperStatic|46%|106%|141%|193%|
+|JdbcMapperDynamic|103%|126%|145%|224%|
+|JdbcMapperDynamicNoAsm|260%|632%|939%|1101%|
+|Roma|15%|81%|127%|131%|
+|Sql2o|4565%|3272%|2970%|2675%|
+|Hibernate|29984%|22163%|17873%|17920%|
+|MyBatis|18541%|24605%|28910%|30041%|
+|RowMapper|16396%|62859%|94365%|100019%|
 
 In mem HsqlDb
 -------
 
-|Benchmark|1|10|100|1000
+|Benchmark|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|SfmStatic|2%|-0%|5%|8%|
-|SfmDynamic|4%|0%|6%|6%|
-|SfmNoAsm|2%|4%|22%|30%|
-|Roma|9%|10%|18%|19%|
-|Sql2o|44%|49%|63%|65%|
-|Hibernate|189%|232%|400%|585%|
-|MyBatis|113%|217%|565%|836%|
-|BeansPropertyRowMapper|90%|492%|2035%|2935%|
+|JdbcMapperStatic|39%|108%|140%|194%|
+|JdbcMapperDynamic|102%|125%|144%|226%|
+|JdbcMapperDynamicNoAsm|252%|618%|936%|1104%|
+|Roma|13%|79%|124%|132%|
+|Sql2o|4595%|3250%|2998%|2673%|
+|Hibernate|29624%|22027%|17766%|18341%|
+|MyBatis|18206%|24424%|28842%|30290%|
+|RowMapper|16402%|63278%|93224%|100358%|
 
 Local Mysql
 -------
 
-|Benchmark|1|10|100|1000
+|Benchmark|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|SfmStatic|0%|-0%|0%|1%|
-|SfmDynamic|2%|5%|0%|1%|
-|SfmNoAsm|2%|11%|2%|6%|
-|Roma|12%|48%|4%|5%|
-|Sql2o|20%|64%|12%|24%|
-|Hibernate|143%|99%|57%|118%|
-|MyBatis|106%|78%|120%|207%|
-|BeansPropertyRowMapper|85%|131%|235%|519%|
+|JdbcMapperStatic|43%|101%|140%|192%|
+|JdbcMapperDynamic|104%|123%|142%|222%|
+|JdbcMapperDynamicNoAsm|262%|617%|939%|1115%|
+|Roma|14%|77%|123%|132%|
+|Sql2o|4699%|3215%|2990%|2671%|
+|Hibernate|29593%|21783%|17723%|18228%|
+|MyBatis|18417%|24373%|28708%|29829%|
+|RowMapper|16140%|60963%|94062%|99111%|
 
 Csv Mapping 
 -------

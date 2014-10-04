@@ -314,7 +314,7 @@ public class CsvMapperBuilder<T> {
 				}
 				
 				if (subProp instanceof ConstructorPropertyMeta) {
-					delayedSetters.set(i , new DelegateMarkerDelayedCellSetter(mapper, subProp.getType()));
+					delayedSetters.set(i , new DelegateMarkerDelayedCellSetter(mapper));
 				} else {
 					delayedSetters.set(i , new DelegateMarkerDelayedCellSetter(mapper, subProp.getSetter()));
 				}

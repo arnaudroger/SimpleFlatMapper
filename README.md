@@ -264,42 +264,42 @@ Mock Connection
 
 |Benchmark|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|JdbcMapperStatic|46%|106%|141%|193%|
-|JdbcMapperDynamic|103%|126%|145%|224%|
-|JdbcMapperDynamicNoAsm|260%|632%|939%|1101%|
-|Roma|15%|81%|127%|131%|
-|Sql2o|4565%|3272%|2970%|2675%|
-|Hibernate|29984%|22163%|17873%|17920%|
-|MyBatis|18541%|24605%|28910%|30041%|
-|RowMapper|16396%|62859%|94365%|100019%|
+|JdbcMapperStatic|20%|132%|179%|194%
+|JdbcMapperDynamic|123%|303%|438%|459%
+|JdbcMapperDynamicNoAsm|216%|779%|1168%|1247%
+|Roma|19%|164%|217%|244%
+|Sql2o|4517%|3250%|3103%|2680%
+|Hibernate|29318%|22365%|18036%|18318%
+|MyBatis|18976%|25061%|28879%|30087%
+|RowMapper|15585%|59746%|89662%|94740%
 
 In mem HsqlDb
 -------
 
 |Benchmark|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|JdbcMapperStatic|3%|3%|6%|6%
-|JdbcMapperDynamic|15%|7%|6%|7%
-|JdbcMapperDynamicNoAsm|21%|27%|32%|31%
-|Roma|37%|30%|26%|24%
-|Sql2o|227%|135%|85%|74%
-|Hibernate|812%|669%|582%|612%
-|MyBatis|836%|851%|879%|883%
-|RowMapper|573%|2017%|2942%|3116%
+|JdbcMapperStatic|2%|6%|5%|4%
+|JdbcMapperDynamic|17%|24%|30%|30%
+|JdbcMapperDynamicNoAsm|21%|43%|59%|59%
+|Roma|39%|32%|25%|22%
+|Sql2o|221%|135%|86%|74%
+|Hibernate|808%|685%|582%|603%
+|MyBatis|807%|870%|876%|878%
+|RowMapper|565%|2072%|3014%|3080%
 
 Local Mysql
 -------
 
 |Benchmark|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|JdbcMapperStatic|-0.88%|3.29%|-0.97%|0.71%
-|JdbcMapperDynamic|0.42%|5.89%|-1.04%|0.47%
-|JdbcMapperDynamicNoAsm|0.93%|3.06%|4.78%|3.45%
-|Roma|5.46%|11.28%|10.66%|11.90%
-|Sql2o|8.51%|17.89%|18.61%|27.76%
-|Hibernate|38.32%|31.11%|67.67%|97.33%
-|MyBatis|76.29%|72.28%|82.38%|168.34%
-|RowMapper|27.79%|58.71%|200.53%|395.64%
+|JdbcMapperStatic|-1%|-1%|1%|1%
+|JdbcMapperDynamic|0%|7%|8%|5%
+|JdbcMapperDynamicNoAsm|1%|11%|11%|8%
+|Roma|4%|17%|11%|12%
+|Sql2o|8%|22%|22%|29%
+|Hibernate|37%|30%|73%|99%
+|MyBatis|76%|71%|87%|165%
+|RowMapper|30%|59%|210%|417%
 
 Csv Mapping 
 -------
@@ -320,7 +320,7 @@ Maven dependency
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>0.9.6</version>
+			<version>0.9.7</version>
 		</dependency>
 ```
 

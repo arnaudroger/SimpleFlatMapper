@@ -304,13 +304,27 @@ Local Mysql
 Csv Mapping 
 -------
 
-Beta results.
-Reads a 1000 rows in memory csv. 
+
+Jmh benchmark. The lower the better.
 
 ```
-Benchmark                                         Mode  Samples     Score  Score error  Units
-o.s.b.c.CsvBenchmark.testReadCsvJackson1000      thrpt      200  1992.767        6.634  ops/s
-o.s.b.c.CsvBenchmark.testReadCsvSfm1000Reader    thrpt      200  3096.793        8.749  ops/s
+Benchmark                                      (nbRows)  Mode  Samples      Score  Score error  Units
+o.s.b.c.CsvBenchmark.testJacksonCsvMapper            10  avgt      200      9.011        0.008  us/op
+o.s.b.c.CsvBenchmark.testJacksonCsvMapper          1000  avgt      200    793.161        0.698  us/op
+o.s.b.c.CsvBenchmark.testJacksonCsvMapper        100000  avgt      200  82052.639      145.173  us/op
+o.s.b.c.CsvBenchmark.testReadSfmCsvMapper            10  avgt      200     17.999        0.011  us/op
+o.s.b.c.CsvBenchmark.testReadSfmCsvMapper          1000  avgt      200    430.299        0.346  us/op
+o.s.b.c.CsvBenchmark.testReadSfmCsvMapper        100000  avgt      200  47083.984      388.712  us/op
+
+o.s.b.c.CsvBenchmark.testJacksonCsvParser            10  avgt      200     18.085        0.066  us/op
+o.s.b.c.CsvBenchmark.testJacksonCsvParser          1000  avgt      200    606.611        1.146  us/op
+o.s.b.c.CsvBenchmark.testJacksonCsvParser        100000  avgt      200  61537.596      107.770  us/op
+o.s.b.c.CsvBenchmark.testSfmCsvParser                10  avgt      200     17.629        0.013  us/op
+o.s.b.c.CsvBenchmark.testSfmCsvParser              1000  avgt      200    389.017        0.224  us/op
+o.s.b.c.CsvBenchmark.testSfmCsvParser            100000  avgt      200  41065.558      144.704  us/op
+o.s.b.c.CsvBenchmark.testUnivocityCsvParser          10  avgt      200   4666.659        7.167  us/op
+o.s.b.c.CsvBenchmark.testUnivocityCsvParser        1000  avgt      200   5542.329       16.841  us/op
+o.s.b.c.CsvBenchmark.testUnivocityCsvParser      100000  avgt      200  95024.513     1001.946  us/op
 ```
 
 Maven dependency

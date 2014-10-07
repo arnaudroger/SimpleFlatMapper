@@ -134,11 +134,13 @@ public final class JdbcMapperFactory {
 		return new ReflectionService(AsmHelper.isAsmPresent() && !disableAsm, useAsm, asmFactory);
 	}
 
-	public void addAlias(String key, String value) {
+	public JdbcMapperFactory addAlias(String key, String value) {
 		aliases.put(key.toUpperCase(), value.toUpperCase());
+		return this;
 	}
 
-	public void addCustomFieldMapper(String column,	FieldMapper<ResultSet, ?> fieldMapper) {
+	public JdbcMapperFactory addCustomFieldMapper(String column,	FieldMapper<ResultSet, ?> fieldMapper) {
 		customMappings.put(column.toUpperCase(), fieldMapper);
+		return this;
 	}
 }

@@ -44,4 +44,34 @@ public class ColumnKey {
 	public boolean hasColumnIndex() {
 		return columnIndex != -1;
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + columnIndex;
+		result = prime * result
+				+ ((columnName == null) ? 0 : columnName.hashCode());
+		result = prime * result + sqlType;
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ColumnKey other = (ColumnKey) obj;
+		if (columnIndex != other.columnIndex)
+			return false;
+		if (columnName == null) {
+			if (other.columnName != null)
+				return false;
+		} else if (!columnName.equals(other.columnName))
+			return false;
+		if (sqlType != other.sqlType)
+			return false;
+		return true;
+	}
 }

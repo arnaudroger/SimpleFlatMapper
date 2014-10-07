@@ -69,6 +69,9 @@ public abstract class AbstractMapperBuilderImpl<S, T, K, M extends Mapper<S, T>,
 	public final B addMapping(final String propertyName, final K columnKey) {
 		FieldMapper<S, T> fieldMapper = getCustomMapper(columnKey);
 		if (fieldMapper != null) {
+			if (fieldMapperErrorHandler != null) {
+				fieldMapper = new FieldErrorHandlerMapper<S, T, K>(columnKey, fieldMapper, fieldMapperErrorHandler);
+			}
 			fields.add(fieldMapper);
 		} else {
 			final PropertyMeta<T, ?> property = propertyFinder.findProperty(propertyName);

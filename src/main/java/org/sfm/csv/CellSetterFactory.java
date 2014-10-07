@@ -71,7 +71,7 @@ public class CellSetterFactory {
 	public <T,P> CellSetter<T> getCellSetter(Setter<T, P> setter, int index, String columnName) {
 		Class<?> propertyClass = TypeHelper.toClass(setter.getPropertyType());
 		
-		if (propertyClass.isPrimitive()) {
+		if (propertyClass.isPrimitive() && !customReaders.containsKey(columnName)) {
 			return getPrimitiveCellSetter(propertyClass, setter);
 		}
 		
@@ -128,10 +128,10 @@ public class CellSetterFactory {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private <P> CellValueReader<P> getReader(Class<P> propertyType, int index, String colunn) {
+	private <P> CellValueReader<P> getReader(Class<P> propertyType, int index, String column) {
 		CellValueReader<P> reader = null;
 		
-		reader = (CellValueReader<P>) customReaders.get(colunn);
+		reader = (CellValueReader<P>) customReaders.get(column);
 		if (reader == null) {
 			if (Date.class.isAssignableFrom(propertyType)) {
 				reader = (CellValueReader<P>) new DateCellValueReader(index);
@@ -156,7 +156,7 @@ public class CellSetterFactory {
 	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Setter<T, P> setter, int index, String columnName) {
 		Class<?> propertyClass = TypeHelper.toClass(setter.getPropertyType());
 		
-		if (propertyClass.isPrimitive()) {
+		if (propertyClass.isPrimitive() && !customReaders.containsKey(columnName)) {
 			return getPrimitiveDelayedCellSetter(propertyClass, setter);
 		}
 		
@@ -166,7 +166,7 @@ public class CellSetterFactory {
 	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type type, int index, String columnName) {
 		Class<?> propertyClass = TypeHelper.toClass(type);
 		
-		if (propertyClass.isPrimitive()) {
+		if (propertyClass.isPrimitive() && !customReaders.containsKey(columnName)) {
 			return getPrimitiveDelayedCellSetter(propertyClass, null);
 		}
 		

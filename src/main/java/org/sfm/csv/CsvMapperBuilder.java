@@ -224,25 +224,21 @@ public class CsvMapperBuilder<T> {
 		}
 		
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
-		if (!reflectionService.isAsmPresent()) {
-			try {
+		try {
+			if (!reflectionService.isAsmPresent()) {
 				return ( Instantiator<DelayedCellSetter[], T> ) instantiatorFactory.getInstantiator(SOURCE, propertyFinder.getClassToInstantiate());
-			} catch(Exception e) {
-				throw new MapperBuildingException(e.getMessage(), e);
+			} else {
+				return instantiatorFactory.getInstantiator(SOURCE, propertyFinder.getEligibleConstructorDefinitions(), constructorInjections, customReaders.isEmpty());
 			}
-		} else {
-			try {
-				return instantiatorFactory.getInstantiator(SOURCE, propertyFinder.getEligibleConstructorDefinitions(), constructorInjections);
-			} catch(Exception e) {
-				throw new MapperBuildingException(e.getMessage(), e);
-			}
+		} catch(Exception e) {
+			throw new MapperBuildingException(e.getMessage(), e);
 		}
 	}
 	
 	@SuppressWarnings("rawtypes")
 	private Getter<DelayedCellSetter[], ?> newDelayedGetter(int i, Type type) {
 		Class<?> clazz = TypeHelper.toClass(type);
-		if (clazz.isPrimitive()) {
+		if (clazz.isPrimitive() && ! customReaders.containsKey(columns.get(i))) {
 			if (boolean.class.equals(clazz)) {
 				return new BooleanDelayedGetter(i);
 			} else if (byte.class.equals(clazz)) {

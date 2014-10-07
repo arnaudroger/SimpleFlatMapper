@@ -70,11 +70,15 @@ public class InstantiatorFactory {
 	}
 	
 	public <S, T> Instantiator<S, T> getInstantiator(final Class<?> source, List<ConstructorDefinition<T>> constructors, Map<ConstructorParameter, Getter<S, ?>> injections) throws NoSuchMethodException, SecurityException {
+		return getInstantiator(source, constructors, injections, true);
+	}
+	
+	public <S, T> Instantiator<S, T> getInstantiator(final Class<?> source, List<ConstructorDefinition<T>> constructors, Map<ConstructorParameter, Getter<S, ?>> injections, boolean useAsmIfEnabled) throws NoSuchMethodException, SecurityException {
 		final ConstructorDefinition<T> constructorDefinition = getSmallerConstructor(constructors);
 		
 		Constructor<T> constructor = constructorDefinition.getConstructor();
 		
-		if (asmFactory != null && Modifier.isPublic(constructor.getModifiers())) {
+		if (asmFactory != null && Modifier.isPublic(constructor.getModifiers()) && useAsmIfEnabled) {
 			try {
 				return asmFactory.createInstatiantor(source, constructorDefinition, injections);
 			} catch (Exception e) {

@@ -133,7 +133,7 @@ public final class CsvMapperFactory {
 	}
 
 	public CsvMapperFactory addCustomValueReader(String column,	CellValueReader<?> cellValueReader) {
-		customReaders.put(column.toUpperCase(), cellValueReader);
+		customReaders.put(column, cellValueReader);
 		return this;
 	}
 }

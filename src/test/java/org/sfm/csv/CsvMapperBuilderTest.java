@@ -1,6 +1,7 @@
 package org.sfm.csv;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -13,6 +14,7 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPartialFinalObject;
 import org.sfm.jdbc.DbHelper;
+import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.utils.ListHandler;
 
@@ -109,13 +111,10 @@ public class CsvMapperBuilderTest {
 	
 	@Test
 	public void testMapDbObjectWrongName() throws UnsupportedEncodingException, Exception {
-		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.newBuilder(DbFinalObject.class);
-		try {
-			builder.addMapping("No_prop");
-			fail("Expect failure");
-		} catch(MapperBuildingException e) {
-			// expected
-		}
+		MapperBuilderErrorHandler mapperBuilderErrorHandler = mock(MapperBuilderErrorHandler.class);
+		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.mapperBuilderErrorHandler(mapperBuilderErrorHandler ).newBuilder(DbFinalObject.class);
+		builder.addMapping("No_prop");
+		verify(mapperBuilderErrorHandler).propertyNotFound(DbFinalObject.class, "No_prop");
 	}
 	
 	@Test
@@ -124,7 +123,42 @@ public class CsvMapperBuilderTest {
 		builder.addMapping("No_prop");
 	}
 
+	@Test
+	public void testMapDbObjectCustomReader() throws UnsupportedEncodingException, Exception {
+		CsvMapperBuilder<DbObject> builder = csvMapperFactory.addCustomValueReader("id", new CellValueReader<Long>() {
 
+			@Override
+			public Long read(char[] chars, int offset, int length,
+					ParsingContext parsingContext) {
+				return 0x5677al;
+			}
+		}).newBuilder(DbObject.class);
+		addDbObjectFields(builder);
+		
+		CsvMapper<DbObject> mapper = builder.mapper();
+		List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
+		assertEquals(1, list.size());
+		assertEquals(0x5677al, list.get(0).getId());
+		assertEquals("name 1", list.get(0).getName());
+	}
+	@Test
+	public void testMapDbFinalObjectCustomReader() throws UnsupportedEncodingException, Exception {
+		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.addCustomValueReader("id", new CellValueReader<Long>() {
+
+			@Override
+			public Long read(char[] chars, int offset, int length,
+					ParsingContext parsingContext) {
+				return 0x5677al;
+			}
+		}).newBuilder(DbFinalObject.class);
+		addDbObjectFields(builder);
+		
+		CsvMapper<DbFinalObject> mapper = builder.mapper();
+		List<DbFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbFinalObject>()).getList();
+		assertEquals(1, list.size());
+		assertEquals(0x5677al, list.get(0).getId());
+		assertEquals("name 1", list.get(0).getName());
+	}
 	private void testMapPartialFinalDbObject(
 			CsvMapperBuilder<DbPartialFinalObject> builder) throws IOException,
 			UnsupportedEncodingException, ParseException {

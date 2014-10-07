@@ -40,17 +40,9 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		this.parsingContextFactory = parsingContextFactory;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public CsvMapperImpl(Instantiator<DelayedCellSetter[], T> instantiator,
-			DelayedCellSetterFactory<T, ?>[] delayedCellSetters,
-			CellSetter<T>[] setters, 
-			ParsingContextFactory parsingContextFactory) {
-		this(instantiator, delayedCellSetters, setters, parsingContextFactory, new RethrowFieldMapperErrorHandler<Integer>(), new RethrowRowHandlerErrorHandler());
-	}
-
 	@Override
 	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
-		return forEach(reader, handler, 0, -1);
+		return forEach(reader, handler, 0);
 	}
 	
 	@Override

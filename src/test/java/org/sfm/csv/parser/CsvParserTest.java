@@ -1,13 +1,14 @@
 package org.sfm.csv.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.List;
 
 import org.junit.Test;
+import org.sfm.utils.ListHandler;
 
 public class CsvParserTest {
 
@@ -40,6 +41,18 @@ public class CsvParserTest {
 		assertEquals("\"cell\r\"\"value\"\"\"", css[1][0].toString());
 		assertEquals("val2", css[1][1].toString());
 		assertNull(css[1][2]);
+		
+	}
+	
+	@Test
+	public void testReadRowsCsvReader() throws IOException {
+		Reader sr = new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2");
+		List<String[]> list = new CsvParser(8).readRows(sr, new ListHandler<String[]>()).getList();
+		assertEquals("cell1", list.get(0)[0]);
+		assertEquals("cell2", list.get(0)[1]);
+		assertEquals("", list.get(0)[2]);
+		assertEquals("cell\r\"value\"", list.get(1)[0]);
+		assertEquals("val2", list.get(1)[1]);
 		
 	}
 }

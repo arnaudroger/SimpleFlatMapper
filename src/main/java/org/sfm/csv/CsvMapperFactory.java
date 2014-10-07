@@ -127,11 +127,13 @@ public final class CsvMapperFactory {
 		return new ReflectionService(AsmHelper.isAsmPresent() && !disableAsm, useAsm, asmFactory);
 	}
 	
-	public void addAlias(String key, String value) {
+	public CsvMapperFactory addAlias(String key, String value) {
 		aliases.put(key.toUpperCase(), value.toUpperCase());
+		return this;
 	}
 
-	public void addCustomValueReader(String column,	CellValueReader<?> cellValueReader) {
+	public CsvMapperFactory addCustomValueReader(String column,	CellValueReader<?> cellValueReader) {
 		customReaders.put(column.toUpperCase(), cellValueReader);
+		return this;
 	}
 }

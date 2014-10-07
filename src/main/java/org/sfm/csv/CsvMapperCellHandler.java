@@ -120,7 +120,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 				try {
 					delayedSetter.set(instance);
 				} catch (Exception e) {
-					rowHandlerErrorHandlers.handlerError(e, instance);
+					fieldErrorHandler.errorMappingField(i, this, instance, e);
 				}
 			}
 		}

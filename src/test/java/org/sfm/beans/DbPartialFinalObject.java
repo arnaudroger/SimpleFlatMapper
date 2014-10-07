@@ -5,18 +5,17 @@ import java.util.Date;
 import org.sfm.beans.DbObject.Type;
 
 public class DbPartialFinalObject {
-	private final long id;
+	private long id;
 	private String name;
 	private final String email;
 	private Date creationTime;
 	
-	private Type typeOrdinal;
+	private final Type typeOrdinal;
 	private Type typeName;
 	
-	
-	public DbPartialFinalObject(long id,String email) {
-		this.id = id;
+	public DbPartialFinalObject(String email,  Type typeOrdinal) {
 		this.email = email;
+		this.typeOrdinal = typeOrdinal;
 	}
 	
 	public void setName(String name) {
@@ -27,12 +26,12 @@ public class DbPartialFinalObject {
 		this.creationTime = creationTime;
 	}
 
-	public void setTypeOrdinal(Type typeOrdinal) {
-		this.typeOrdinal = typeOrdinal;
-	}
-
 	public void setTypeName(Type typeName) {
 		this.typeName = typeName;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public long getId() {

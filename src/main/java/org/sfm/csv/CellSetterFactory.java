@@ -68,10 +68,6 @@ public class CellSetterFactory {
 		this.customReaders = customReaders;
 	}
 
-	public CellSetterFactory() {
-		this(new HashMap<String, CellValueReader<?>>());
-	}
-
 	public <T,P> CellSetter<T> getCellSetter(Setter<T, P> setter, int index, String columnName) {
 		Class<?> propertyClass = TypeHelper.toClass(setter.getPropertyType());
 		

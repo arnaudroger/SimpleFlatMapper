@@ -38,7 +38,7 @@ Why?
 
 ### Performance
 
-Mybatis and Hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [400%](#in-mem-hsqldb) for Hibernate and 500% for MyBatis. 
+Mybatis and Hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [600%](#in-mem-hsqldb) for Hibernate and 800% for MyBatis. 
 
 BeanPropertyRowMapper is very slow.
 
@@ -320,7 +320,7 @@ Maven dependency
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>0.9.7</version>
+			<version>0.9.8</version>
 		</dependency>
 ```
 

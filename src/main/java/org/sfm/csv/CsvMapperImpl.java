@@ -10,8 +10,6 @@ import java.util.Map;
 import org.sfm.csv.parser.CsvParser;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingException;
-import org.sfm.map.RethrowFieldMapperErrorHandler;
-import org.sfm.map.RethrowRowHandlerErrorHandler;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;

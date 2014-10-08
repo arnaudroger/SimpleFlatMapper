@@ -6,7 +6,6 @@ import org.sfm.csv.ParsingContext;
 
 public class StringCellValueReader implements CellValueReader<String> {
 
-	final static byte QUOTE = '"';
 	final static char CQUOTE = '"';
 	
 	@Override
@@ -17,27 +16,24 @@ public class StringCellValueReader implements CellValueReader<String> {
 	public static String readString(char[] chars, int offset, int length) {
 		if (chars[offset] == CQUOTE) {
 			return unescape(chars, offset, length);
+		} else {
+			return new String(chars, offset, length);
 		}
-		
-		return new String(chars, offset, length);	
 	}
 
-	private static String unescape(char[] chars, int offset, int length) {
-		char[] newChars = new char[length];
-		boolean lastWasQuote = false;
-		int j = 0;
+	
+	public static String unescape(char[] chars, int offset, int length) {
+		boolean notEscaped = true;
+		int j = offset + 1;
 		for(int i = offset + 1; i < offset + length -1; i++) {
-			if (chars[i] != CQUOTE || lastWasQuote) {
-				newChars[j++] = chars[i];
-				lastWasQuote = false;
-			} else {
-				lastWasQuote = true;
+			notEscaped = chars[i] != CQUOTE || !notEscaped;
+			if (notEscaped) {
+				chars[j++] = chars[i];
 			}
 		}
 		if (chars[offset + length -1] != CQUOTE) {
-			newChars[j++] = chars[offset + length -1];
+			chars[j++] = chars[offset + length -1];
 		}
-		return new String(newChars, 0, j);
+		return new String(chars, offset + 1, j  - offset -1);
 	}
-
 }

@@ -252,54 +252,45 @@ select id,
 Performance
 ========
 
-New Results, with better consistency. Use a slightly modified BoneCP and PreparedStatement cache. 
-I will try to see how to get the static mapper closer to Roma by changing the error handling at field level.  
-Because Roma assume that there is a 1 to 1 match between column and property it does not check for a column change between query. Roma is slower on the real database benchmark because it's using column name lookup.
-
 See [orm-benchmarks](https://github.com/arnaudroger/orm-benchmark) for benchmark sources and results.
 
-
-Mock Connection
--------
-
-|Benchmark|1|10|100|1000|
-|---------|---:|---:|---:|---:|
-|JdbcMapperStatic|20%|132%|179%|194%
-|JdbcMapperDynamic|123%|303%|438%|459%
-|JdbcMapperDynamicNoAsm|216%|779%|1168%|1247%
-|Roma|19%|164%|217%|244%
-|Sql2o|4517%|3250%|3103%|2680%
-|Hibernate|29318%|22365%|18036%|18318%
-|MyBatis|18976%|25061%|28879%|30087%
-|RowMapper|15585%|59746%|89662%|94740%
 
 In mem HsqlDb
 -------
 
+Average time us/op, the lower the better.
+
 |Benchmark|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|JdbcMapperStatic|2%|6%|5%|4%
-|JdbcMapperDynamic|17%|24%|30%|30%
-|JdbcMapperDynamicNoAsm|21%|43%|59%|59%
-|Roma|39%|32%|25%|22%
-|Sql2o|221%|135%|86%|74%
-|Hibernate|808%|685%|582%|603%
-|MyBatis|807%|870%|876%|878%
-|RowMapper|565%|2072%|3014%|3080%
+|PureJdbc|2.29|5.55|36.87|353.74
+|JdbcMapperStatic|2.32|5.86|39.47|378.52
+|JdbcMapperDynamic|2.67|6.86|47.84|461.43
+|JdbcMapperDynamicNoAsm|2.67|7.28|52.50|499.58
+|Roma|3.13|7.21|46.97|436.48
+|Sql2o|7.33|13.33|69.21|627.33
+|Hibernate|20.35|43.84|253.15|2,518.48
+|MyBatis|20.32|54.61|356.67|3,508.62
+|RowMapper|15.47|121.64|1,195.32|11,973.27
+
+[![HsqlDb Graph](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/hsqldb-all.png)]
 
 Local Mysql
 -------
+Average time us/op, the lower the better.
 
 |Benchmark|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|JdbcMapperStatic|-1%|-1%|1%|1%
-|JdbcMapperDynamic|0%|7%|8%|5%
-|JdbcMapperDynamicNoAsm|1%|11%|11%|8%
-|Roma|4%|17%|11%|12%
-|Sql2o|8%|22%|22%|29%
-|Hibernate|37%|30%|73%|99%
-|MyBatis|76%|71%|87%|165%
-|RowMapper|30%|59%|210%|417%
+|PureJdbc|238.09|306.89|678.87|2,850.50
+|JdbcMapperStatic|238.75|310.16|686.52|2,850.68
+|JdbcMapperDynamic|242.15|317.92|702.20|2,988.53
+|JdbcMapperDynamicNoAsm|240.80|306.80|707.21|3,011.82
+|Roma|251.97|341.98|735.82|3,216.27
+|Sql2o|257.53|378.67|811.51|3,641.11
+|Hibernate|328.14|395.72|1,141.16|5,580.97
+|MyBatis|419.73|534.01|1,244.39|7,673.28
+|RowMapper|309.43|484.62|2,069.53|15,017.92
+
+[![Mysql Graph](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/mysql-all.png)]
 
 Csv Mapping 
 -------

@@ -272,7 +272,7 @@ Average time us/op, the lower the better.
 |MyBatis|20.32|54.61|356.67|3,508.62
 |RowMapper|15.47|121.64|1,195.32|11,973.27
 
-[![HsqlDb Graph](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/hsqldb-all.png)]
+![HsqlDb us/op](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/hsqldb-all.png)
 
 Local Mysql
 -------
@@ -290,7 +290,7 @@ Average time us/op, the lower the better.
 |MyBatis|419.73|534.01|1,244.39|7,673.28
 |RowMapper|309.43|484.62|2,069.53|15,017.92
 
-[![Mysql Graph](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/mysql-all.png)]
+![Mysql us/op](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/mysql-all.png)
 
 Csv Mapping 
 -------

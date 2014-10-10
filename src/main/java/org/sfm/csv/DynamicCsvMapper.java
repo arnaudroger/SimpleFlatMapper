@@ -75,7 +75,9 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 		@Override
 		public void end() {
-			cellHandler.end();
+			if (cellHandler != null) {
+				cellHandler.end();
+			}
 		}
 	}
 

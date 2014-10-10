@@ -37,8 +37,8 @@ public class PropertyNameMatcher {
 					char charColumn = column.charAt(indexColumn);
 					indexColumn ++;
 					
-					if (charColumn == '_') {
-						if (charProperty == '_') {
+					if (ignoreCharacter(charColumn)) {
+						if (ignoreCharacter(charProperty)) {
 							indexProperty++;
 						}
 					} else if (Character.toLowerCase(charProperty) != Character.toLowerCase(charColumn)) {
@@ -55,6 +55,10 @@ public class PropertyNameMatcher {
 			}
 		}
 		while(true);
+	}
+
+	private boolean ignoreCharacter(char charColumn) {
+		return charColumn == '_' || charColumn == ' ';
 	}
 	
 	public PropertyNameMatcher partialMatch(final String property) {

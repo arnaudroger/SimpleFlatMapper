@@ -13,9 +13,24 @@ import org.sfm.utils.ListHandler;
 public class CsvParserTest {
 
 	@Test
-	public void testReadCsvReader() throws IOException {
-		Reader sr = new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2");
-		final CharSequence[][] css = new CharSequence[2][3];
+	public void testReadCsvReaderLF() throws IOException {
+		testReadCsv(new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2\nval3"));
+	}
+	@Test
+	public void testReadCsvReaderCR() throws IOException {
+		testReadCsv(new StringReader("cell1,cell2,\r\"cell\r\"\"value\"\"\",val2\rval3"));
+	}
+	@Test
+	public void testReadCsvReaderCRLF() throws IOException {
+		testReadCsv(new StringReader("cell1,cell2,\r\n\"cell\r\"\"value\"\"\",val2\r\nval3"));
+	}
+	@Test
+	public void testReadCsvReaderMixed() throws IOException {
+		testReadCsv(new StringReader("cell1,cell2,\r\"cell\r\"\"value\"\"\",val2\nval3"));
+	}
+
+	private void testReadCsv(Reader sr) throws IOException {
+		final CharSequence[][] css = new CharSequence[3][3];
 		new CsvParser(8).parse(sr, new CharsCellHandler() {
 			int row = 0, col = 0;
 			@Override
@@ -41,7 +56,7 @@ public class CsvParserTest {
 		assertEquals("\"cell\r\"\"value\"\"\"", css[1][0].toString());
 		assertEquals("val2", css[1][1].toString());
 		assertNull(css[1][2]);
-		
+		assertEquals("val3", css[2][0].toString());
 	}
 	
 	@Test

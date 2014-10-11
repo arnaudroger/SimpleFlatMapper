@@ -16,7 +16,7 @@ public final class ReaderCsvParser {
 	public ReaderCsvParser(final int bufferSize) {
 		buffer = new char[bufferSize];
 	}
-
+	
 	/**
 	 * parse cvs from input stream assumes character encoding for '"', ',' and
 	 * '\n' match utf8
@@ -63,10 +63,23 @@ public final class ReaderCsvParser {
 				newCell(handler, i);
 			}
 		} else if (c == '\n') {
+			if (currentState != CsvParserState.IN_QUOTE ) {
+				if (currentState != CsvParserState.IN_CR) {
+					newCell(handler, i);
+					return handler.endOfRow();
+				} else {
+					currentStart = i + 1;
+					currentState = CsvParserState.NONE;
+				}
+			}
+		} else if (c == '\r') {
 			if (currentState != CsvParserState.IN_QUOTE) {
 				newCell(handler, i);
+				currentState = CsvParserState.IN_CR;
 				return handler.endOfRow();
 			}
+		} else if (currentState == CsvParserState.IN_CR) {
+			currentState = CsvParserState.NONE;
 		}
 		return true;
 	}

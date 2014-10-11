@@ -14,28 +14,29 @@ public class CsvParserTest {
 
 	@Test
 	public void testReadCsvReaderLF() throws IOException {
-		testReadCsv(new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2\nval3"));
+		testReadCsv(new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2\nval3\nval4"));
 	}
 	@Test
 	public void testReadCsvReaderCR() throws IOException {
-		testReadCsv(new StringReader("cell1,cell2,\r\"cell\r\"\"value\"\"\",val2\rval3"));
+		testReadCsv(new StringReader("cell1,cell2,\r\"cell\r\"\"value\"\"\",val2\rval3\rval4"));
 	}
 	@Test
 	public void testReadCsvReaderCRLF() throws IOException {
-		testReadCsv(new StringReader("cell1,cell2,\r\n\"cell\r\"\"value\"\"\",val2\r\nval3"));
+		testReadCsv(new StringReader("cell1,cell2,\r\n\"cell\r\"\"value\"\"\",val2\r\nval3\r\nval4"));
 	}
 	@Test
 	public void testReadCsvReaderMixed() throws IOException {
-		testReadCsv(new StringReader("cell1,cell2,\r\"cell\r\"\"value\"\"\",val2\nval3"));
+		testReadCsv(new StringReader("cell1,cell2,\r\"cell\r\"\"value\"\"\",val2\rval3\nval4"));
 	}
 
 	private void testReadCsv(Reader sr) throws IOException {
-		final CharSequence[][] css = new CharSequence[3][3];
+		final CharSequence[][] css = new CharSequence[4][3];
 		new CsvParser(8).parse(sr, new CharsCellHandler() {
 			int row = 0, col = 0;
 			@Override
 			public void newCell(char[] chars, int offset, int length) {
 				String value = new String(chars, offset, length);
+				System.out.println("'" + value + "'");
 				css[row][col++] = value;
 			}
 			
@@ -57,6 +58,7 @@ public class CsvParserTest {
 		assertEquals("val2", css[1][1].toString());
 		assertNull(css[1][2]);
 		assertEquals("val3", css[2][0].toString());
+		assertEquals("val4", css[3][0].toString());
 	}
 	
 	@Test

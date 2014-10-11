@@ -3,7 +3,7 @@
 
 SimpleFlatMapper
 ========
-Fast and Easy mapping from database to POJO. 
+Fast and Easy mapping from database and csv to POJO. 
 A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 
 - Compatible with Java 6, 7 and 8. 
@@ -38,16 +38,14 @@ Why?
 
 ### Performance
 
-Mybatis and Hibernate have very expensive injection mechanism. On the hsqldb in memory the markup for a medium size query is [600%](#in-mem-hsqldb) for Hibernate and 800% for MyBatis. 
+Sfm is very fast, the fastest I've been able to test again for the JdbcMapper and CsvMapper.
 
-BeanPropertyRowMapper is very slow.
-
-Sfm is as fast as it can using asm generation. Even if you don't use asm it is still a lot faster. 
-
+MyBatis, Hibernate, Jooq, QueryDSL have a considerable overwrite, that can raise the cost by at least  [600%](#in-mem-hsqldb) on 1000 rows query.
+BeanPropertyRowMapper is even worse.
 
 ### API intrusiveness
 
-Ibatis provide the same kind of functionality put it forces you to use it's query mechanism and mask the jdbc api. 
+Ibatis provide the same kind of functionality but it forces you to use it's query mechanism and mask the jdbc api. 
 Sfm just focus on the mapping from a [ResultSet](#jdbcmapper). You can manage the query the way you want. You can use [JdbcTemplate](#jdbctemplate), even use it in an Hibernate session via the doWork method.
 
 Samples

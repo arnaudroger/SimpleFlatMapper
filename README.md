@@ -258,10 +258,10 @@ See [orm-benchmarks](https://github.com/arnaudroger/orm-benchmark) for benchmark
 
 In mem HsqlDb
 -------
+Average time us/op to execute, fetch and map to object the result of a query with 1, 10, 100 and 1000 rows.
+The lower the better.
 
-Average time us/op, the lower the better.
-
-|Benchmark|1|10|100|1000|
+|Type/NbRows|1|10|100|1000|
 |---------|---:|---:|---:|---:|
 |PureJdbc|2.25|5.59|37.17|353.20
 |JdbcMapperStatic|2.28|5.82|39.24|378.06
@@ -278,9 +278,10 @@ Average time us/op, the lower the better.
 
 Local Mysql
 -------
-Average time us/op, the lower the better.
+Average time us/op to execute, fetch and map to object the result of a query with 1, 10, 100 and 1000 rows.
+The lower the better.
 
-|Benchmark|1|10|100|1000|
+|Type/NbRows|1|10|100|1000|
 |---------|---:|---:|---:|---:|
 |PureJdbc|242.34|307.93|687.90|2,861.32
 |JdbcMapperStatic|239.68|310.62|688.94|2,870.02

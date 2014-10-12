@@ -15,10 +15,10 @@ A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 
 Fastest CsvParser on [csv-parsers-comparaison](https://github.com/uniVocity/csv-parsers-comparison).
 
-Fastest [CsvMapper](#csv-mapping) and [ORM Mapper](#in-mem-hsqldb).
+Fastest [CsvMapper](#csv-mapping) and [ORM Mapper](#in-mem-hsqldb), as far as I could test. If you believe something would be worth testing please raise an issue.
 
 
-Feedbacks are welcome specially from real use case, don't hesitate to raise an issue or send me an email.
+Feedbacks are more than welcome, don't hesitate to raise an issue or send me an email.
 
 Design
 ========

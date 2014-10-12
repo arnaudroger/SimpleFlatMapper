@@ -305,9 +305,8 @@ The lower the better.
 
 |Type/NbRows|10|1000|100,000|
 |---------|---:|---:|---:|
-|Sfm|18|430|47,084
-|Jackson|9|793|82,052
-
+|Sfm|4|304|31,703
+|Jackson|6|485|50,774
 
 Maven dependency
 ======

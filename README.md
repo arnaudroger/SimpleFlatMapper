@@ -13,6 +13,9 @@ A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 - [QueryDSL Jdbc support](#querydsl-jdbc)
 - [CsvMapper](#csvmapper)
 
+Fastest CsvParser on [csv-parsers-comparaison](https://github.com/uniVocity/csv-parsers-comparison).
+Fastest [CsvMapper](##csv-mapping) and [ORM Mapper](#in-mem-hsqldb).
+
 Feedbacks are welcome specially from real use case, don't hesitate to raise an issue or send me an email.
 
 Design
@@ -33,8 +36,6 @@ What it does not do
 
 Why?
 -------
-
-[Mapping Landscape](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Mapping-Landscape)
 
 ### Performance
 
@@ -292,7 +293,7 @@ Average time us/op, the lower the better.
 
 ![Mysql us/op](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/mysql-all.png)
 
-Csv Mapping 
+Csv Mapping
 -------
 
 
@@ -306,16 +307,6 @@ o.s.b.c.CsvBenchmark.testJacksonCsvMapper        100000  avgt      200  82052.63
 o.s.b.c.CsvBenchmark.testReadSfmCsvMapper            10  avgt      200     17.999        0.011  us/op
 o.s.b.c.CsvBenchmark.testReadSfmCsvMapper          1000  avgt      200    430.299        0.346  us/op
 o.s.b.c.CsvBenchmark.testReadSfmCsvMapper        100000  avgt      200  47083.984      388.712  us/op
-
-o.s.b.c.CsvBenchmark.testJacksonCsvParser            10  avgt      200     18.085        0.066  us/op
-o.s.b.c.CsvBenchmark.testJacksonCsvParser          1000  avgt      200    606.611        1.146  us/op
-o.s.b.c.CsvBenchmark.testJacksonCsvParser        100000  avgt      200  61537.596      107.770  us/op
-o.s.b.c.CsvBenchmark.testSfmCsvParser                10  avgt      200     17.629        0.013  us/op
-o.s.b.c.CsvBenchmark.testSfmCsvParser              1000  avgt      200    389.017        0.224  us/op
-o.s.b.c.CsvBenchmark.testSfmCsvParser            100000  avgt      200  41065.558      144.704  us/op
-o.s.b.c.CsvBenchmark.testUnivocityCsvParser          10  avgt      200   4666.659        7.167  us/op
-o.s.b.c.CsvBenchmark.testUnivocityCsvParser        1000  avgt      200   5542.329       16.841  us/op
-o.s.b.c.CsvBenchmark.testUnivocityCsvParser      100000  avgt      200  95024.513     1001.946  us/op
 ```
 
 Maven dependency

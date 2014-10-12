@@ -260,15 +260,16 @@ Average time us/op, the lower the better.
 
 |Benchmark|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|PureJdbc|2.29|5.55|36.87|353.74
-|JdbcMapperStatic|2.32|5.86|39.47|378.52
-|JdbcMapperDynamic|2.67|6.86|47.84|461.43
-|JdbcMapperDynamicNoAsm|2.67|7.28|52.50|499.58
-|Roma|3.13|7.21|46.97|436.48
-|Sql2o|7.33|13.33|69.21|627.33
-|Hibernate|20.35|43.84|253.15|2,518.48
-|MyBatis|20.32|54.61|356.67|3,508.62
-|RowMapper|15.47|121.64|1,195.32|11,973.27
+|PureJdbc|2.25|5.59|37.17|353.20
+|JdbcMapperStatic|2.28|5.82|39.24|378.06
+|JdbcMapperDynamic|2.63|6.77|47.93|459.36
+|JdbcMapperDynamicNoAsm|2.71|7.23|52.28|505.37
+|Roma|3.12|7.21|46.78|432.40
+|Sql2o|7.33|13.06|68.86|613.32
+|Jooq|40.73|57.24|212.12|1,800.72
+|Hibernate|20.26|43.21|252.04|2,545.97
+|MyBatis|21.05|54.17|359.39|3,491.73
+|RowMapper|15.58|121.16|1,190.37|11,637.21
 
 ![HsqlDb us/op](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/hsqldb-all.png)
 
@@ -278,15 +279,16 @@ Average time us/op, the lower the better.
 
 |Benchmark|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|PureJdbc|238.09|306.89|678.87|2,850.50
-|JdbcMapperStatic|238.75|310.16|686.52|2,850.68
-|JdbcMapperDynamic|242.15|317.92|702.20|2,988.53
-|JdbcMapperDynamicNoAsm|240.80|306.80|707.21|3,011.82
-|Roma|251.97|341.98|735.82|3,216.27
-|Sql2o|257.53|378.67|811.51|3,641.11
-|Hibernate|328.14|395.72|1,141.16|5,580.97
-|MyBatis|419.73|534.01|1,244.39|7,673.28
-|RowMapper|309.43|484.62|2,069.53|15,017.92
+|PureJdbc|242.34|307.93|687.90|2,861.32
+|JdbcMapperStatic|239.68|310.62|688.94|2,870.02
+|JdbcMapperDynamic|241.73|319.13|693.55|2,958.79
+|JdbcMapperDynamicNoAsm|241.06|313.13|693.64|3,023.33
+|Roma|248.63|350.59|740.67|3,205.41
+|Sql2o|257.37|368.18|814.33|3,575.64
+|Jooq|349.60|456.55|1,014.53|4,646.25
+|Hibernate|330.21|405.29|1,136.28|5,663.27
+|MyBatis|429.10|533.00|1,246.27|7,503.65
+|RowMapper|315.90|487.20|2,048.60|14,547.18
 
 ![Mysql us/op](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/mysql-all.png)
 
@@ -323,7 +325,7 @@ Maven dependency
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>0.9.10</version>
+			<version>0.9.11</version>
 		</dependency>
 ```
 

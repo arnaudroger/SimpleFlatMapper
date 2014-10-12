@@ -300,17 +300,14 @@ Csv Mapping
 -------
 
 
-Jmh benchmark. The lower the better.
+Jmh benchmark. Average time in us to parse and map to object a csv file with 10, 1000 and 100000 rows.
+The lower the better.
 
-```
-Benchmark                                      (nbRows)  Mode  Samples      Score  Score error  Units
-o.s.b.c.CsvBenchmark.testJacksonCsvMapper            10  avgt      200      9.011        0.008  us/op
-o.s.b.c.CsvBenchmark.testJacksonCsvMapper          1000  avgt      200    793.161        0.698  us/op
-o.s.b.c.CsvBenchmark.testJacksonCsvMapper        100000  avgt      200  82052.639      145.173  us/op
-o.s.b.c.CsvBenchmark.testReadSfmCsvMapper            10  avgt      200     17.999        0.011  us/op
-o.s.b.c.CsvBenchmark.testReadSfmCsvMapper          1000  avgt      200    430.299        0.346  us/op
-o.s.b.c.CsvBenchmark.testReadSfmCsvMapper        100000  avgt      200  47083.984      388.712  us/op
-```
+|Type/NbRows|10|1000|100,000|
+|---------|---:|---:|---:|
+|Sfm|18|430|47,084
+|Jackson|9|793|82,052
+
 
 Maven dependency
 ======

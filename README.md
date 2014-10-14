@@ -274,10 +274,10 @@ The lower the better.
 |MyBatis|21.05|54.17|359.39|3,491.73
 |RowMapper|15.58|121.16|1,190.37|11,637.21
 
-Difference on % to PureJdbc Average Time
+% Difference from PureJdbc Average Time
 ![HsqlDb Average time difference to PureJdbc](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/hsqldb-difference-from-purejdbc.png)
 
-Difference on % to PureJdbc Average Time Top 5
+% Difference from PureJdbc Average Time Top 5
 ![HsqlDb Average time difference to PureJdbc Top5](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/hsqldb-difference-from-purejdbc-top5.png)
 
 Local Mysql
@@ -298,10 +298,10 @@ The lower the better.
 |MyBatis|429.10|533.00|1,246.27|7,503.65
 |RowMapper|315.90|487.20|2,048.60|14,547.18
 
-Difference on % to PureJdbc Average Time
+% Difference from PureJdbc Average Time
 ![Mysql difference to PureJdbc](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/mysql-difference-from-purejdbc.png)
 
-Difference on % to PureJdbc Average Time Top5
+% Difference from PureJdbc Average Time Top5
 ![Mysql difference to PureJdbc Top5](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/mysql-difference-from-purejdbc-top5.png)
 
 Csv Mapping

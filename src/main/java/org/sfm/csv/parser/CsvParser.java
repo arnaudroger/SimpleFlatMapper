@@ -23,12 +23,12 @@ public final class CsvParser {
 	}
 		
 	public <CH extends CharsCellHandler> CH parse(final Reader r, final CH handler) throws IOException {
-		new ReaderCsvParser(bufferSize).parse(r, handler);
+		new CsvReader(bufferSize, handler, r).parse();
 		return handler;
 	}
 	
 	public <RH extends RowHandler<String[]>> RH readRows(final Reader r, final RH handler) throws IOException {
-		new ReaderCsvParser(bufferSize).parse(r, new StringArrayHandler(handler));
+		new CsvReader(bufferSize, new StringArrayHandler(handler), r).parse();
 		return handler;
 	}
 }

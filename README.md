@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
-SimpleFlatMapper [v0.9.12](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v0.9.11)
+SimpleFlatMapper [v0.9.12](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v0.9.12)
 ========
 Fast and Easy mapping from database and csv to POJO. 
 A super lightweight no configuration ORM alternative to iBatis or Hibernate.

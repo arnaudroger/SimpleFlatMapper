@@ -230,6 +230,23 @@ public class OuterObject {
 select id, sub_object_id, sub_object_email, sub_object_my_property
 ```
 
+If your sub object has a one parameter constructor you can map the column name to the name of the subobject property. And that one does not require asm to do the constructor param naming.
+
+```java
+public class OuterObject {
+	String id;
+	MyObject subObject;
+}
+
+public class MyObject {
+	public MyObject(String argNameNotMatter) {
+	}
+}
+```
+
+```sql
+select id, subObject
+```
 
 List Mapping
 -------

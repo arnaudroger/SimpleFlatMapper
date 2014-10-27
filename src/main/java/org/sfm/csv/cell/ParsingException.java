@@ -11,4 +11,8 @@ public class ParsingException extends RuntimeException {
 		super(msg);
 	}
 
+	public ParsingException(Throwable e) {
+		super(e.getMessage(), e);
+	}
+
 }

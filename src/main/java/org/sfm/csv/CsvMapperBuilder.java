@@ -56,10 +56,14 @@ public class CsvMapperBuilder<T> {
 	private String defaultDateFormat = "yyyy-MM-dd HH:mm:ss";
 
 	public CsvMapperBuilder(final Type target) {
-		this(target, new ReflectionService(),
+		this(target, new ReflectionService());
+	}
+	
+	public CsvMapperBuilder(final Type target, ReflectionService reflectionService) {
+		this(target, reflectionService,
 				new HashMap<String, String>(), 
 				new HashMap<String, CellValueReader<?>>());
-	}
+	}	
 	
 	@SuppressWarnings("unchecked")
 	public CsvMapperBuilder(final Type target, ReflectionService reflectionService,

@@ -1,5 +1,6 @@
 package org.sfm.jdbc;
 
+import java.lang.reflect.Constructor;
 import java.sql.ResultSet;
 
 import org.sfm.jdbc.getter.BooleanIndexedResultSetGetter;
@@ -32,6 +33,7 @@ import org.sfm.map.primitive.FloatFieldMapper;
 import org.sfm.map.primitive.IntFieldMapper;
 import org.sfm.map.primitive.LongFieldMapper;
 import org.sfm.map.primitive.ShortFieldMapper;
+import org.sfm.reflect.ConstructorOnGetter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
@@ -143,9 +145,24 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 		
 		Getter<ResultSet, P> getter = getterFactory.newGetter(type, key);
 		if (getter == null) {
-			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + type);
+			// check if has a one arg construct
+			final Constructor<?>[] constructors = type.getConstructors();
+			if (constructors != null && constructors.length == 1 && constructors[0].getParameterTypes().length == 1) {
+				@SuppressWarnings("unchecked")
+				final Constructor<P> constructor = (Constructor<P>) constructors[0];
+				getter = getterFactory.newGetter(constructor.getParameterTypes()[0], key);
+				
+				if (getter != null) {
+					getter = new ConstructorOnGetter<ResultSet, P>(constructor, getter);
+				}
+			}
 		}
-		return new FieldMapperImpl<ResultSet, T, P>(getter, setter);
+		if (getter == null) {
+			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + type);
+			return null;
+		} else {
+			return new FieldMapperImpl<ResultSet, T, P>(getter, setter);
+		}
 	}
 
 }

@@ -1,6 +1,8 @@
 package org.sfm.csv;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
+import java.sql.ResultSet;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,7 @@ import org.sfm.csv.primitive.LongCellSetter;
 import org.sfm.csv.primitive.LongDelayedCellSetterFactory;
 import org.sfm.csv.primitive.ShortCellSetter;
 import org.sfm.csv.primitive.ShortDelayedCellSetterFactory;
+import org.sfm.reflect.ConstructorOnGetter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.TypeHelper;
@@ -133,17 +136,37 @@ public class CellSetterFactory {
 		
 		reader = (CellValueReader<P>) customReaders.get(column);
 		if (reader == null) {
-			if (Date.class.isAssignableFrom(propertyType)) {
-				reader = (CellValueReader<P>) new DateCellValueReader(index);
-			} else if (Enum.class.isAssignableFrom(propertyType)) {
-				reader = new EnumCellValueReader(propertyType);
-			} else {
-				reader = getCellValueTransformer(propertyType);
+			reader = getKnownReader(propertyType, index);
+		}
+		
+		if (reader == null) {
+			// check if has a one arg construct
+			final Constructor<?>[] constructors = propertyType.getConstructors();
+			if (constructors != null && constructors.length == 1 && constructors[0].getParameterTypes().length == 1) {
+				final Constructor<P> constructor = (Constructor<P>) constructors[0];
+				CellValueReader<?> innerReader =   getKnownReader(constructor.getParameterTypes()[0], index);
+				
+				if (innerReader != null) {
+					reader = new ConstructorOnReader<P>(constructor, innerReader);
+				}
 			}
 		}
 		
 		if (reader == null) {
 			throw new ParsingException("No cell reader for " + propertyType);
+		}
+		return reader;
+	}
+
+	public <P> CellValueReader<P> getKnownReader(Class<P> propertyType,
+			int index) {
+		CellValueReader<P> reader;
+		if (Date.class.isAssignableFrom(propertyType)) {
+			reader = (CellValueReader<P>) new DateCellValueReader(index);
+		} else if (Enum.class.isAssignableFrom(propertyType)) {
+			reader = new EnumCellValueReader(propertyType);
+		} else {
+			reader = getCellValueTransformer(propertyType);
 		}
 		return reader;
 	}

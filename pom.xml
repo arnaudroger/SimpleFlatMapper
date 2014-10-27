@@ -3,7 +3,7 @@
 
 	<groupId>com.github.arnaudroger</groupId>
 	<artifactId>simpleFlatMapper</artifactId>
-	<version>0.9.14</version>
+	<version>0.9.15-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<name>SimpleFlatMapper</name>

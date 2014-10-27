@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 import org.junit.Test;
 import org.sfm.reflect.ReflectionService;
@@ -66,6 +67,15 @@ public class JdbcMapperOneConstructorType {
 		testMatchConstructor(builder);
 	}
 	
+	@Test
+	public void testCanCreateTypeFromAmbiguousWithType() throws Exception {
+		ResultSetMapperBuilder<MyObject> builder = new ResultSetMapperBuilderImpl<MyObject>(MyObject.class, new ReflectionService(true, true));
+		builder.addIndexedColumn("prop", 1, Types.VARCHAR);
+		JdbcMapper<MyObject> mapper = builder.mapper();
+		ResultSet rs = mock(ResultSet.class);
+		when(rs.getString(1)).thenReturn("val");
+		assertEquals("val", mapper.map(rs).prop.value);
+	}	
 	private void testMatchConstructor(ResultSetMapperBuilder<MyObject> builder)
 			throws SQLException {
 		builder.addIndexedColumn("prop");

@@ -2,6 +2,8 @@ package org.sfm.jdbc;
 
 import java.lang.reflect.Constructor;
 import java.sql.ResultSet;
+import java.sql.Types;
+import java.util.Date;
 
 import org.sfm.jdbc.getter.BooleanIndexedResultSetGetter;
 import org.sfm.jdbc.getter.BooleanNamedResultSetGetter;
@@ -155,6 +157,21 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 				if (getter != null) {
 					getter = new ConstructorOnGetter<ResultSet, P>(constructor, getter);
 				}
+			} else if (key.getSqlType() != ColumnKey.UNDEFINED_TYPE) {
+				Class<?> targetType = getTargetTypeFromSqlType(key.getSqlType());
+				if (targetType != null) {
+					try {
+						@SuppressWarnings("unchecked")
+						Constructor<P> constructor = (Constructor<P>) type.getConstructor(targetType);
+						getter = getterFactory.newGetter(targetType, key);
+						
+						if (getter != null) {
+							getter = new ConstructorOnGetter<ResultSet, P>(constructor, getter);
+						}
+					} catch (Exception e) {
+						// ignore 
+					}
+				}
 			}
 		}
 		if (getter == null) {
@@ -163,6 +180,35 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 		} else {
 			return new FieldMapperImpl<ResultSet, T, P>(getter, setter);
 		}
+	}
+
+	private Class<?> getTargetTypeFromSqlType(int sqlType) {
+		switch (sqlType) {
+		case Types.LONGNVARCHAR:
+		case Types.LONGVARCHAR:
+		case Types.CHAR:
+		case Types.CLOB:
+		case Types.NCHAR:
+		case Types.NCLOB:
+		case Types.NVARCHAR:
+		case Types.VARCHAR:
+			return String.class;
+			
+		case Types.BIGINT:
+			return Long.class;
+		case Types.INTEGER:
+			return Integer.class;
+			
+		case Types.FLOAT:
+			return Float.class;
+		case Types.DOUBLE:
+			return Double.class;
+		case Types.BOOLEAN: 
+			return Boolean.class;
+		case Types.DATE: 
+			return Date.class;
+		}
+		return null;
 	}
 
 }

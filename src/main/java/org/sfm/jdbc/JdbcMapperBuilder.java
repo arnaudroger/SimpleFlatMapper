@@ -6,110 +6,37 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.sfm.map.AbstractMapperBuilderImpl;
+import org.sfm.map.AbstractFieldMapperMapperBuilder;
 import org.sfm.map.FieldMapper;
+import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.KeyFieldMapperCouple;
+import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.RethrowRowHandlerErrorHandler;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 
-public final class ResultSetMapperBuilderImpl<T> extends AbstractMapperBuilderImpl<ResultSet, T, ColumnKey, JdbcMapper<T>, ResultSetMapperBuilder<T>> implements ResultSetMapperBuilder<T> {
+public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey>  {
 
-	private final Map<String, String> aliases;
 	private int columnIndex = 1;
-	protected final Map<String, FieldMapper<ResultSet, ?>> customMappings;
 	private RowHandlerErrorHandler jdbcMapperErrorHandler = new RethrowRowHandlerErrorHandler();
 
-	public ResultSetMapperBuilderImpl(final Type target) throws MapperBuildingException {
+	public JdbcMapperBuilder(final Type target) throws MapperBuildingException {
 		this(target, new ReflectionService());
 	}
-	public ResultSetMapperBuilderImpl(final Type target, ReflectionService reflectService) throws MapperBuildingException {
+	public JdbcMapperBuilder(final Type target, ReflectionService reflectService) throws MapperBuildingException {
 		this(target, reflectService, null, null);
 	}
 	@SuppressWarnings("unchecked")
-	public ResultSetMapperBuilderImpl(final Type target, ReflectionService reflectService, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
+	public JdbcMapperBuilder(final Type target, ReflectionService reflectService, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
 		this(target, (ClassMeta<T>) reflectService.getClassMeta(target), aliases, customMappings);
 	}
 	
-	public ResultSetMapperBuilderImpl(final Type target, final ClassMeta<T> classMeta, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
-		super(target, ResultSet.class, classMeta, new ResultSetGetterFactory(), new ResultSetFieldMapperFactory(new ResultSetGetterFactory()));
-		this.aliases = aliases;
-		this.customMappings = customMappings;
-	}
-
-
-	@Override
-	public final ResultSetMapperBuilder<T> addNamedColumn(final String column) {
-		return addNamedColumn(column, ResultSetGetterFactory.UNDEFINED);
-	}
-
-	@Override
-	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column) {
-		return addIndexedColumn(column, columnIndex ++);
-	}
-
-	@Override
-	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column, final int columnIndex) {
-		return addIndexedColumn(column, columnIndex, ResultSetGetterFactory.UNDEFINED);
+	public JdbcMapperBuilder(final Type target, final ClassMeta<T> classMeta, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings) throws MapperBuildingException {
+		super(target, ResultSet.class, classMeta, new ResultSetGetterFactory(), new ResultSetFieldMapperFactory(new ResultSetGetterFactory()), aliases, customMappings);
 	}
 	
-	@Override
-	public final ResultSetMapperBuilder<T> addMapping(final String property, final String column) {
-		return addMapping(property, column, ResultSetGetterFactory.UNDEFINED);
-	}
-	
-	@Override
-	public final ResultSetMapperBuilder<T> addMapping(final String property, final int column) {
-		return addMapping(property, column, ResultSetGetterFactory.UNDEFINED);
-	}
-	
-	@Override
-	public final ResultSetMapperBuilder<T> addNamedColumn(final String column, final int sqlType) {
-		return addMapping(columnToPropertyName(column), column, sqlType);
-	}
-	
-	private String columnToPropertyName(String column) {
-		if (aliases == null || aliases.isEmpty()) {
-			return column;
-		} 
-		String alias = aliases.get(column.toUpperCase());
-		if (alias == null) {
-			return column;
-		}
-		return alias;
-	}
-	
-	@Override
-	public final ResultSetMapperBuilder<T> addIndexedColumn(final String column, final int columnIndex, final int sqlType) {
-		return addMapping(columnToPropertyName(column), new ColumnKey(column, columnIndex, sqlType));
-	}
-
-	@Override
-	public final ResultSetMapperBuilder<T> addMapping(final String propertyName, final int columnIndex, final int sqlType) {
-		return addMapping(propertyName, new ColumnKey("column:"+ columnIndex, columnIndex, sqlType));
-	}
-	
-	@Override
-	public ResultSetMapperBuilder<T> addMapping(String propertyName, String column,
-			int sqlType) {
-		return addMapping(propertyName, new ColumnKey(column, -1, sqlType));
-	}
-	
-	@Override
-	public final ResultSetMapperBuilder<T> addMapping(final ResultSetMetaData metaData) throws SQLException {
-		for(int i = 1; i <= metaData.getColumnCount(); i++) {
-			addIndexedColumn(metaData.getColumnLabel(i), i, metaData.getColumnType(i));
-		}
-		
-		return this;
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	protected FieldMapper<ResultSet, T> getCustomMapper(final ColumnKey columnKey) {
-		return customMappings != null ? (FieldMapper<ResultSet, T>) customMappings.get(columnKey.getColumnName().toUpperCase()) : null;
-	}
 	@Override
 	public JdbcMapper<T> mapper() {
 		if (reflectionService.isAsmActivated()) {
@@ -122,9 +49,49 @@ public final class ResultSetMapperBuilderImpl<T> extends AbstractMapperBuilderIm
 			return new JdbcMapperImpl<T>(fields(), getInstantiator(), jdbcMapperErrorHandler);
 		}
 	}
-	@Override
-	protected MapperBuilder<ResultSet, T, ColumnKey, ?, ?> newMapperBuilder(Type type, ClassMeta<T> classMeta) {
-		return new  ResultSetMapperBuilderImpl<T>(type, classMeta, aliases, customMappings);
+
+	
+	public JdbcMapperBuilder<T> addMapping(String column) {
+		return addMapping(column, columnIndex++);
 	}
+	public JdbcMapperBuilder<T> addMapping(String column, int index) {
+		return addMapping(column, index, JdbcColumnKey.UNDEFINED_TYPE);
+	}
+	
+	public JdbcMapperBuilder<T> addMapper(FieldMapper<ResultSet, T> mapper) {
+		mappers.add(new KeyFieldMapperCouple<ResultSet, T, JdbcColumnKey>(null, mapper));
+		return this;
+	}
+	
+	public JdbcMapperBuilder<T> addMapping(final String column, final int columnIndex, final int sqlType) {
+		addMapping(new JdbcColumnKey(column, columnIndex, sqlType));
+		return this;
+	}
+	
+	public JdbcMapperBuilder<T> addMapping(final ResultSetMetaData metaData) throws SQLException {
+		for(int i = 1; i <= metaData.getColumnCount(); i++) {
+			addMapping(metaData.getColumnLabel(i), i, metaData.getColumnType(i));
+		}
+		
+		return this;
+	}
+
+	
+	public JdbcMapperBuilder<T> fieldMapperErrorHandler(FieldMapperErrorHandler<JdbcColumnKey> errorHandler) {
+		setFieldMapperErrorHandler(errorHandler);
+		return this;
+	}
+	
+	public JdbcMapperBuilder<T> mapperBuilderErrorHandler(MapperBuilderErrorHandler errorHandler) {
+		setMapperBuilderErrorHandler(errorHandler);
+		return this;
+	}
+	
+	
+	@Override
+	protected <ST> AbstractFieldMapperMapperBuilder<ResultSet, ST, JdbcColumnKey> newSubBuilder(Type type, ClassMeta<ST> classMeta) {
+		return new  JdbcMapperBuilder<ST>(type, classMeta, aliases, customMappings);
+	}
+	
 
 }

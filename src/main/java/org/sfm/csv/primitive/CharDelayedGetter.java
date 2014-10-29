@@ -4,21 +4,21 @@ import org.sfm.csv.DelayedCellSetter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.CharacterGetter;
 
-@SuppressWarnings("rawtypes")
-public class CharDelayedGetter implements CharacterGetter<DelayedCellSetter[]>, Getter<DelayedCellSetter[], Character> {
+public class CharDelayedGetter<T> implements CharacterGetter<DelayedCellSetter<T, ?>[]>, Getter<DelayedCellSetter<T, ?>[], Character> {
 	private final int index;
 	
 	public CharDelayedGetter(int index) {
 		this.index = index;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public char getCharacter(DelayedCellSetter[] target) throws Exception {
-		return ((CharDelayedCellSetter<?>)target[index]).getCharacter();
+	public char getCharacter(DelayedCellSetter<T, ?>[] target) throws Exception {
+		return ((CharDelayedCellSetter<T>)target[index]).getCharacter();
 	}
 
 	@Override
-	public Character get(DelayedCellSetter[] target) throws Exception {
+	public Character get(DelayedCellSetter<T, ?>[] target) throws Exception {
 		return Character.valueOf(getCharacter(target));
 	}
 }

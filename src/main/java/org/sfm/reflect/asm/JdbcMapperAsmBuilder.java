@@ -79,6 +79,7 @@ public class JdbcMapperAsmBuilder {
 
 	private static <S, T> void generateMappingCall(MethodVisitor mv,
 			FieldMapper<S, T> mapper, int index, String classType, String sourceType, String targetType) {
+		if (mapper ==null) return;
 		Class<?> mapperClass = AsmUtils.getPublicOrInterfaceClass(mapper.getClass());
 		mv.visitVarInsn(ALOAD, 0);
 		mv.visitFieldInsn(GETFIELD, classType, "mapper" + index, "L" +  AsmUtils.toType(mapperClass) + ";");
@@ -94,6 +95,7 @@ public class JdbcMapperAsmBuilder {
 
 	private static <S, T> void addGetterSetterInit(MethodVisitor mv,
 			FieldMapper<S, T> mapper, int index, String classType) {
+		if (mapper == null) return;
 		Class<?> mapperClass = mapper.getClass();
 		
 		mv.visitVarInsn(ALOAD, 0);
@@ -107,6 +109,9 @@ public class JdbcMapperAsmBuilder {
 
 	private static <S, T> void declareMapperFields(ClassWriter cw,
 			FieldMapper<S, T> mapper, String targetType, String sourceType, int index) {
+		if (mapper == null) 
+			return;
+		
 		FieldVisitor fv;
 		Class<?> mapperClass = AsmUtils.getPublicOrInterfaceClass(mapper.getClass());
 		

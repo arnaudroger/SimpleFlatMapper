@@ -86,7 +86,7 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	private final CsvParser csvParser;
 
-	private final FieldMapperErrorHandler<Integer> fieldMapperErrorHandler;
+	private final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler;
 
 	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	
@@ -97,7 +97,7 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 	private final Map<String, CellValueReader<?>> customReaders;
 
 	public DynamicCsvMapper(final Class<T> target, final ReflectionService reflectionService, 
-			final FieldMapperErrorHandler<Integer> fieldMapperErrorHandler, 
+			final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler, 
 			final MapperBuilderErrorHandler mapperBuilderErrorHandler, String defaultDateFormat, 
 			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders) {
 		this.classMeta = reflectionService.getClassMeta(target);

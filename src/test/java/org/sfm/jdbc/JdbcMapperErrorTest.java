@@ -22,7 +22,7 @@ public class JdbcMapperErrorTest {
 
 	@Test
 	public void testHandleMapperErrorSetterNotFound() throws NoSuchMethodException, SecurityException, IOException {
-		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
 		MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
 		
 		builder.mapperBuilderErrorHandler(errorHandler);
@@ -31,17 +31,11 @@ public class JdbcMapperErrorTest {
 		
 		verify(errorHandler).propertyNotFound(DbObject.class, "notthere1");
 		
-		builder.addMapping("notthere2", "col");
 		
-		verify(errorHandler).propertyNotFound(DbObject.class, "notthere2");
-		
-		builder.addIndexedColumn("notthere3");
+		builder.addMapping("notthere3");
 		
 		verify(errorHandler).propertyNotFound(DbObject.class, "notthere3");
 		
-		builder.addNamedColumn("notthere4");
-		
-		verify(errorHandler).propertyNotFound(DbObject.class, "notthere4");
 	}
 	
 	static class MyClass {
@@ -49,35 +43,23 @@ public class JdbcMapperErrorTest {
 	}
 	@Test
 	public void testHandleMapperErrorgGetterNotFound() throws NoSuchMethodException, SecurityException, IOException {
-		ResultSetMapperBuilder<MyClass> builder = new ResultSetMapperBuilderImpl<MyClass>(MyClass.class);
+		JdbcMapperBuilder<MyClass> builder = new JdbcMapperBuilder<MyClass>(MyClass.class);
 		MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
 		
 		builder.mapperBuilderErrorHandler(errorHandler);
 		
 		builder.addMapping("prop", 1);
-		builder.addMapping("prop", "col");
-		builder.addIndexedColumn("prop", 2);
-		builder.addNamedColumn("prop");
 		
-		verify(errorHandler).getterNotFound("Could not find getter for ColumnKey [columnName=column:1, columnIndex=1, sqlType=-99999] type class org.sfm.beans.Foo");
-		verify(errorHandler).getterNotFound("Could not find getter for ColumnKey [columnName=col, columnIndex=-1, sqlType=-99999] type class org.sfm.beans.Foo");
-		verify(errorHandler).getterNotFound("Could not find getter for ColumnKey [columnName=prop, columnIndex=2, sqlType=-99999] type class org.sfm.beans.Foo");
-		verify(errorHandler).getterNotFound("Could not find getter for ColumnKey [columnName=prop, columnIndex=-1, sqlType=-99999] type class org.sfm.beans.Foo");
+		builder.mapper();
+		
+		verify(errorHandler).getterNotFound("Could not find getter for ColumnKey [columnName=prop, columnIndex=1, sqlType=-99999] type class org.sfm.beans.Foo");
 	}
 	
 	@Test
 	public void setChangeFieldMapperErrorHandler() throws NoSuchMethodException, SecurityException, IOException {
-		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
-		builder.fieldMapperErrorHandler(new LogFieldMapperErrorHandler<ColumnKey>());
-		
-		builder.addIndexedColumn("id");
-		
-		try  {
-			builder.fieldMapperErrorHandler(new LogFieldMapperErrorHandler<ColumnKey>());
-			fail("Expect exception");
-		} catch(IllegalStateException e) {
-			// expected
-		}
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
+		builder.addMapping("id");
+		builder.fieldMapperErrorHandler(new LogFieldMapperErrorHandler<JdbcColumnKey>());
 	}
 	
 	@Test

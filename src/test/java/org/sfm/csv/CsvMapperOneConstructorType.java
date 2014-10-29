@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.sql.SQLException;
 
 import org.junit.Test;
 import org.sfm.map.MappingException;

@@ -9,7 +9,7 @@ public final class EnumTupleNamedIndexedGetter<E extends Enum<E>> implements Get
 	private final int index;
 	private final Class<E> enumType;
 	
-	public EnumTupleNamedIndexedGetter(final TupleElementKey<String> key, Class<E> enumType) {
+	public EnumTupleNamedIndexedGetter(final TupleElementKey key, Class<E> enumType) {
 		this.index = key.getIndex();
 		this.enumType = enumType;
 	}

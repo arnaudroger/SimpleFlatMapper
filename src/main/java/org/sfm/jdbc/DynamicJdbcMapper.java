@@ -23,7 +23,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	private final Class<T> target;
 
 
-	private final FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler;
+	private final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler;
 
 	private final  MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private final Map<String, String> aliases;
@@ -31,7 +31,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	private MapperCache<JdbcMapper<T>> mapperCache = new MapperCache<JdbcMapper<T>>();
 
 	public DynamicJdbcMapper(final Class<T> target, final ReflectionService reflectionService, 
-			final FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler, 
+			final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler, 
 			final MapperBuilderErrorHandler mapperBuilderErrorHandler, 
 			final Map<String, String> aliases, 
 			final Map<String, FieldMapper<ResultSet, ?>> customMappings) {
@@ -68,7 +68,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		JdbcMapper<T> mapper = mapperCache.get(key);
 		
 		if (mapper == null) {
-			final ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<T>(target, classMeta, aliases, customMappings);
+			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, classMeta, aliases, customMappings);
 			
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 			builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);

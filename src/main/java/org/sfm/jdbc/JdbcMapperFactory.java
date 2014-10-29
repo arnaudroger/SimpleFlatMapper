@@ -27,7 +27,7 @@ public final class JdbcMapperFactory {
 		return new JdbcMapperFactory();
 	}
 	
-	private FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler = null;
+	private FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler = null;
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	private Map<String, String> aliases = new HashMap<String, String>();
 	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();
@@ -51,7 +51,7 @@ public final class JdbcMapperFactory {
 	 * @param fieldMapperErrorHandler 
 	 * @return the factory
 	 */
-	public JdbcMapperFactory fieldMapperErrorHandler(final FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler) {
+	public JdbcMapperFactory fieldMapperErrorHandler(final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler) {
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		return this;
 	}
@@ -92,7 +92,7 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target, final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
-		ResultSetMapperBuilder<T> builder = newBuilder(target);
+		JdbcMapperBuilder<T> builder = newBuilder(target);
 		builder.addMapping(metaData);
 		return builder.mapper();
 	}
@@ -103,8 +103,8 @@ public final class JdbcMapperFactory {
 	 * @return a builder ready to instantiate a mapper or to be customized
 	 * @throws MapperBuildingException
 	 */
-	public <T> ResultSetMapperBuilder<T> newBuilder(final Class<T> target) {
-		ResultSetMapperBuilder<T> builder = new ResultSetMapperBuilderImpl<T>(target, reflectionService(target), aliases, customMappings);
+	public <T> JdbcMapperBuilder<T> newBuilder(final Class<T> target) {
+		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, reflectionService(target), aliases, customMappings);
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
@@ -139,7 +139,7 @@ public final class JdbcMapperFactory {
 		return this;
 	}
 
-	public JdbcMapperFactory addCustomFieldMapper(String column,	FieldMapper<ResultSet, ?> fieldMapper) {
+	public JdbcMapperFactory addCustomFieldMapper(String column, FieldMapper<ResultSet, ?> fieldMapper) {
 		customMappings.put(column.toUpperCase(), fieldMapper);
 		return this;
 	}

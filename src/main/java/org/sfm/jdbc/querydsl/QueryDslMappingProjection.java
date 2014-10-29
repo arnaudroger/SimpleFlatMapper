@@ -14,7 +14,7 @@ public class QueryDslMappingProjection<T> extends MappingProjection<T> {
 	private final Mapper<Tuple, T> mapper;
 	public QueryDslMappingProjection(Class<T> type, Expression<?>... args) {
 		super(type, args);
-		QueryDslMapperBuilder<T> builder =new QueryDslMapperBuilderImpl<T>(type);
+		QueryDslMapperBuilder<T> builder =new QueryDslMapperBuilder<T>(type);
 		for(int i = 0; i < args.length; i++) {
 			builder.addMapping(args[i], i);
 		}

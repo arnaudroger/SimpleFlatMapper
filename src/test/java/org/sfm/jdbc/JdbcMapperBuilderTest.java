@@ -16,9 +16,9 @@ public class JdbcMapperBuilderTest {
 	
 	@Test
 	public void testWithWrongColumn() throws MappingException, SQLException {
-		ResultSetMapperBuilderImpl<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
 		builder.mapperBuilderErrorHandler(MapperBuilderErrorHandler.NULL);
-		builder.addIndexedColumn("no_id").addIndexedColumn("no_name").addIndexedColumn("email");
+		builder.addMapping("no_id").addMapping("no_name").addMapping("email");
 		
 		JdbcMapper<DbObject> mapper = builder.mapper();
 		

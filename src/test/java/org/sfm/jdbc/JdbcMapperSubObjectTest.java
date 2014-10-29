@@ -25,7 +25,7 @@ public class JdbcMapperSubObjectTest {
 
 	@Test
 	public void testMapInnerObjectWithStaticMapper() throws Exception {
-		ResultSetMapperBuilder<Db1DeepObject> builder = new ResultSetMapperBuilderImpl<Db1DeepObject>(Db1DeepObject.class);
+		JdbcMapperBuilder<Db1DeepObject> builder = new JdbcMapperBuilder<Db1DeepObject>(Db1DeepObject.class);
 
 		addColumns(builder);
 		
@@ -46,30 +46,8 @@ public class JdbcMapperSubObjectTest {
 	}
 	
 	@Test
-	public void testMapInnerObjectWithStaticMapperNamedColumn() throws Exception {
-		ResultSetMapperBuilder<Db1DeepObject> builder = new ResultSetMapperBuilderImpl<Db1DeepObject>(Db1DeepObject.class);
-
-		addNamedColumns(builder);
-		
-		final JdbcMapper<Db1DeepObject> mapper = builder.mapper();
-		
-		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
-			@Override
-			public void handle(PreparedStatement t) throws Exception {
-				ResultSet rs = t.executeQuery();
-				rs.next();
-				
-				Db1DeepObject object = mapper.map(rs);
-				assertEquals(33, object.getId());
-				assertEquals("value", object.getValue());
-				DbHelper.assertDbObjectMapping(object.getDbObject());
-			}
-		}, QUERY);
-	}
-	
-	@Test
 	public void testMapInnerFinalObjectWithStaticMapper() throws Exception {
-		ResultSetMapperBuilder<DbFinal1DeepObject> builder = new ResultSetMapperBuilderImpl<DbFinal1DeepObject>(DbFinal1DeepObject.class);
+		JdbcMapperBuilder<DbFinal1DeepObject> builder = new JdbcMapperBuilder<DbFinal1DeepObject>(DbFinal1DeepObject.class);
 
 		addColumns(builder);
 		
@@ -91,7 +69,7 @@ public class JdbcMapperSubObjectTest {
 
 	@Test
 	public void testMapInnerObject2LevelWithStaticMapper() throws Exception {
-		final ResultSetMapperBuilder<Db2DeepObject> builder = new ResultSetMapperBuilderImpl<Db2DeepObject>(Db2DeepObject.class);
+		final JdbcMapperBuilder<Db2DeepObject> builder = new JdbcMapperBuilder<Db2DeepObject>(Db2DeepObject.class);
 
 		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 			@Override
@@ -120,25 +98,15 @@ public class JdbcMapperSubObjectTest {
 				+ "from TEST_DB_OBJECT where id = 1 ");
 	}
 	
-	public void addColumns(ResultSetMapperBuilder<?> builder) {
-		builder.addIndexedColumn("id");
-		builder.addIndexedColumn("value");
-		builder.addIndexedColumn("db_object_id");
-		builder.addIndexedColumn("db_object_name");
-		builder.addIndexedColumn("db_object_email");
-		builder.addIndexedColumn("db_object_creation_time");
-		builder.addIndexedColumn("db_object_type_ordinal");
-		builder.addIndexedColumn("db_object_type_name");
+	public void addColumns(JdbcMapperBuilder<?> builder) {
+		builder.addMapping("id");
+		builder.addMapping("value");
+		builder.addMapping("db_object_id");
+		builder.addMapping("db_object_name");
+		builder.addMapping("db_object_email");
+		builder.addMapping("db_object_creation_time");
+		builder.addMapping("db_object_type_ordinal");
+		builder.addMapping("db_object_type_name");
 	}
 	
-	public void addNamedColumns(ResultSetMapperBuilder<?> builder) {
-		builder.addNamedColumn("id");
-		builder.addNamedColumn("value");
-		builder.addNamedColumn("db_object_id");
-		builder.addNamedColumn("db_object_name");
-		builder.addNamedColumn("db_object_email");
-		builder.addNamedColumn("db_object_creation_time");
-		builder.addNamedColumn("db_object_type_ordinal");
-		builder.addNamedColumn("db_object_type_name");
-	}
 }

@@ -43,17 +43,17 @@ public class JdbcMapperOneConstructorType {
 	
 	@Test
 	public void testCanCreateTypeFromUnambiguousConstructorNoAsm() throws Exception {
-		ResultSetMapperBuilder<MyObject> builder = new ResultSetMapperBuilderImpl<MyObject>(MyObject.class, new ReflectionService(false, false));
+		JdbcMapperBuilder<MyObject> builder = new JdbcMapperBuilder<MyObject>(MyObject.class, new ReflectionService(false, false));
 		testMatchConstructor(builder);
 	}
 
 	@Test
 	public void testCantCreateTypeFromAmbiguousConstructor() throws Exception {
 
-		ResultSetMapperBuilder<MyObjectAmbiguity> builder = new ResultSetMapperBuilderImpl<MyObjectAmbiguity>(MyObjectAmbiguity.class, new ReflectionService(false, false));
+		JdbcMapperBuilder<MyObjectAmbiguity> builder = new JdbcMapperBuilder<MyObjectAmbiguity>(MyObjectAmbiguity.class, new ReflectionService(false, false));
 		
 		try {
-			builder.addIndexedColumn("prop").mapper();
+			builder.addMapping("prop").mapper();
 			fail("Cannot map with ambiguous constructor");
 		} catch(Exception e) {
 			// expected
@@ -63,22 +63,22 @@ public class JdbcMapperOneConstructorType {
 	
 	@Test
 	public void testCanCreateTypeFromUnambiguousConstructorAsm() throws Exception {
-		ResultSetMapperBuilder<MyObject> builder = new ResultSetMapperBuilderImpl<MyObject>(MyObject.class, new ReflectionService(true, true));
+		JdbcMapperBuilder<MyObject> builder = new JdbcMapperBuilder<MyObject>(MyObject.class, new ReflectionService(true, true));
 		testMatchConstructor(builder);
 	}
 	
 	@Test
 	public void testCanCreateTypeFromAmbiguousWithType() throws Exception {
-		ResultSetMapperBuilder<MyObject> builder = new ResultSetMapperBuilderImpl<MyObject>(MyObject.class, new ReflectionService(true, true));
-		builder.addIndexedColumn("prop", 1, Types.VARCHAR);
+		JdbcMapperBuilder<MyObject> builder = new JdbcMapperBuilder<MyObject>(MyObject.class, new ReflectionService(true, true));
+		builder.addMapping("prop", 1, Types.VARCHAR);
 		JdbcMapper<MyObject> mapper = builder.mapper();
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.getString(1)).thenReturn("val");
 		assertEquals("val", mapper.map(rs).prop.value);
 	}	
-	private void testMatchConstructor(ResultSetMapperBuilder<MyObject> builder)
+	private void testMatchConstructor(JdbcMapperBuilder<MyObject> builder)
 			throws SQLException {
-		builder.addIndexedColumn("prop");
+		builder.addMapping("prop");
 		JdbcMapper<MyObject> mapper = builder.mapper();
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.getString(1)).thenReturn("val");

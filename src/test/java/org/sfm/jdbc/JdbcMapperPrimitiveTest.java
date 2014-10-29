@@ -20,82 +20,50 @@ public class JdbcMapperPrimitiveTest {
 	private ReflectionService asmReflectionService = new ReflectionService(true, true);
 
 	@Test
-	public void testNamedPrimitivesWithSetterAccess() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, asmReflectionService);
-		testNamedPrimitives(builder);
-	}
-	
-	@Test
-	public void testNamedPrimitivesWithConstructorAccess() throws Exception {
-		ResultSetMapperBuilder<DbFinalPrimitiveObject> builder = new ResultSetMapperBuilderImpl<DbFinalPrimitiveObject>(DbFinalPrimitiveObject.class, asmReflectionService);
-		testNamedPrimitives(builder);
-	}
-
-	@Test
-	public void testNamedPrimitivesWithSetterAccessNoAsm() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, nonAsmReflectionService);
-		testNamedPrimitives(builder);
-	}
-	
-	@Test
-	public void testNamedBoxedPrimitivesWithFieldAccess() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class, asmReflectionService);
-		testNamedPrimitives(builder);
-	}
-
-	@Test
-	public void testNamedBoxedPrimitivesWithFieldAccessNullValues() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class, asmReflectionService);
-		testNamedPrimitivesWithNull(builder);
-	}
-	
-	
-	
-	@Test
 	public void testIndexedPrimitivesWithSetterAccess() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, asmReflectionService);
+		JdbcMapperBuilder<DbPrimitiveObjectWithSetter> builder = new JdbcMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, asmReflectionService);
 		testIndexedPrimitives(builder);
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithConstructorAccess() throws Exception {
-		ResultSetMapperBuilder<DbFinalPrimitiveObject> builder = new ResultSetMapperBuilderImpl<DbFinalPrimitiveObject>(DbFinalPrimitiveObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbFinalPrimitiveObject> builder = new JdbcMapperBuilder<DbFinalPrimitiveObject>(DbFinalPrimitiveObject.class, asmReflectionService);
 		testIndexedPrimitives(builder);
 	}
 	
 	
 	@Test
 	public void testIndexedPrimitivesWithSetterAccessNoAsm() throws Exception {
-		ResultSetMapperBuilder<DbPrimitiveObjectWithSetter> builder = new ResultSetMapperBuilderImpl<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, nonAsmReflectionService);
+		JdbcMapperBuilder<DbPrimitiveObjectWithSetter> builder = new JdbcMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, nonAsmReflectionService);
 		testIndexedPrimitives(builder);
 	}
 	
 	@Test
 	public void testIndexedBoxedPrimitivesWithFieldAccess() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbBoxedPrimitveObject> builder = new JdbcMapperBuilder<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class, asmReflectionService);
 		testIndexedPrimitives(builder);
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithFieldAccessNullValues() throws Exception {
-		ResultSetMapperBuilder<DbBoxedPrimitveObject> builder = new ResultSetMapperBuilderImpl<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbBoxedPrimitveObject> builder = new JdbcMapperBuilder<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class, asmReflectionService);
 		testIndexedPrimitivesWithNull(builder);
 	}
 	
 	
 
-	private <T extends PrimitiveObject> void testIndexedPrimitives(ResultSetMapperBuilder<T> builder)
+	private <T extends PrimitiveObject> void testIndexedPrimitives(JdbcMapperBuilder<T> builder)
 			throws SQLException, Exception {
 		addIndexedColumn(builder);		
 		testPrimitives(builder.mapper());
 	}
-	private void testIndexedPrimitivesWithNull(ResultSetMapperBuilder<DbBoxedPrimitveObject> builder)
+	private void testIndexedPrimitivesWithNull(JdbcMapperBuilder<DbBoxedPrimitveObject> builder)
 			throws SQLException, Exception {
 		addIndexedColumn(builder);		
 		testPrimitivesWithNullValues(builder.mapper());
 	}
 	private <T extends PrimitiveObject> void addIndexedColumn(
-			ResultSetMapperBuilder<T> builder) {
+			JdbcMapperBuilder<T> builder) {
 		builder
 			.addMapping("pBoolean", 1)
 			.addMapping("pByte", 2)
@@ -107,29 +75,6 @@ public class JdbcMapperPrimitiveTest {
 			.addMapping("pDouble", 8);
 	}
 	
-	private <T extends PrimitiveObject> void testNamedPrimitives(ResultSetMapperBuilder<T> builder)
-			throws SQLException, Exception {
-		addNamedColumns(builder);		
-		testPrimitives(builder.mapper());
-	}
-	
-	private void testNamedPrimitivesWithNull(ResultSetMapperBuilder<DbBoxedPrimitveObject> builder)
-			throws SQLException, Exception {
-		addNamedColumns(builder);		
-		testPrimitivesWithNullValues(builder.mapper());
-	}
-
-	private <T extends PrimitiveObject> void addNamedColumns(
-			ResultSetMapperBuilder<T> builder) {
-		builder.addNamedColumn("p_boolean");
-		builder.addNamedColumn("p_byte");
-		builder.addNamedColumn("p_character");
-		builder.addNamedColumn("p_short");
-		builder.addNamedColumn("p_int");
-		builder.addNamedColumn("p_long");
-		builder.addNamedColumn("p_float");
-		builder.addNamedColumn("p_double");
-	}
 
 	public <T extends PrimitiveObject> void testPrimitives(Mapper<ResultSet, T> mapper) throws SQLException, Exception {
 		ResultSet rs = mock(ResultSet.class);

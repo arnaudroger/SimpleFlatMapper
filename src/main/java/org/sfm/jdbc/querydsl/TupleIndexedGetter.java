@@ -14,8 +14,9 @@ public class TupleIndexedGetter<P> implements Getter<Tuple, P> {
 		this.index = index;
 	}
 
-	public TupleIndexedGetter(TupleElementKey<P> key) {
-		this(key.getExpression().getType(), key.getIndex());
+	@SuppressWarnings("unchecked")
+	public TupleIndexedGetter(TupleElementKey key) {
+		this((Class<? extends P>) key.getExpression().getType(), key.getIndex());
 	}
 
 	@Override

@@ -1,18 +1,44 @@
 package org.sfm.jdbc.querydsl;
 
-import com.mysema.query.types.Expression;
+import org.sfm.csv.MappingKey;
+import org.sfm.map.MappingException;
 
-public class TupleElementKey<T> {
-	private final Expression<T> expression;
+import com.mysema.query.types.Expression;
+import com.mysema.query.types.Path;
+import com.mysema.query.types.PathMetadata;
+import com.mysema.query.types.PathType;
+
+public class TupleElementKey implements MappingKey<TupleElementKey> {
+	private final Expression<?> expression;
 	private final int index;
-	public TupleElementKey(Expression<T> expression, int index) {
+	private final String name;
+	public TupleElementKey(Expression<?> expression, int index) {
+		if (expression instanceof Path<?>) {
+			@SuppressWarnings("rawtypes")
+			PathMetadata<?> metadata = ((Path) expression).getMetadata();
+			if (metadata.getPathType() == PathType.PROPERTY) {
+				name = metadata.getExpression().toString();
+			} else {
+				throw new MappingException("Unexpected expression " + expression);
+			}
+		}  else {
+			throw new MappingException("Unexpected expression " + expression);
+		}
 		this.expression = expression;
 		this.index = index;
 	}
-	public Expression<T> getExpression() {
+	public Expression<?> getExpression() {
 		return expression;
 	}
 	public int getIndex() {
 		return index;
+	}
+	@Override
+	public String getName() {
+		return name;
+	}
+	@Override
+	public TupleElementKey alias(String alias) {
+		throw new UnsupportedOperationException();
 	}
 }

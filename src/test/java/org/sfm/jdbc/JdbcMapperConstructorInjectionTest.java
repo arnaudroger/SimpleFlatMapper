@@ -18,9 +18,9 @@ public class JdbcMapperConstructorInjectionTest {
 
 	@Test
 	public void testChooseSmallestMatchingConstructor() throws Exception {
-		ResultSetMapperBuilder<DbConstructorObject> builder = new ResultSetMapperBuilderImpl<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
 		
-		builder.addIndexedColumn("prop1");
+		builder.addMapping("prop1");
 		
 		JdbcMapper<DbConstructorObject> mapper = builder.mapper();
 		
@@ -37,10 +37,10 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorProp1Prop2() throws Exception {
-		ResultSetMapperBuilder<DbConstructorObject> builder = new ResultSetMapperBuilderImpl<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
 		
-		builder.addIndexedColumn("prop1");
-		builder.addIndexedColumn("prop2");
+		builder.addMapping("prop1");
+		builder.addMapping("prop2");
 		
 		JdbcMapper<DbConstructorObject> mapper = builder.mapper();
 		
@@ -58,10 +58,10 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorProp1Prop3() throws Exception {
-		ResultSetMapperBuilder<DbConstructorObject> builder = new ResultSetMapperBuilderImpl<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
 		
-		builder.addIndexedColumn("prop1");
-		builder.addIndexedColumn("prop3");
+		builder.addMapping("prop1");
+		builder.addMapping("prop3");
 		
 		JdbcMapper<DbConstructorObject> mapper = builder.mapper();
 		
@@ -81,9 +81,9 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorProp3() throws Exception {
-		ResultSetMapperBuilder<DbConstructorObject> builder = new ResultSetMapperBuilderImpl<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
 		
-		builder.addIndexedColumn("prop3");
+		builder.addMapping("prop3");
 		
 		JdbcMapper<DbConstructorObject> mapper = builder.mapper();
 		
@@ -101,12 +101,12 @@ public class JdbcMapperConstructorInjectionTest {
 	}	
 	@Test
 	public void testConstructorProp1Prop2Prop3() throws Exception {
-		ResultSetMapperBuilder<DbConstructorObject> builder = new ResultSetMapperBuilderImpl<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
 		
-		builder.addIndexedColumn("prop1");
-		builder.addIndexedColumn("prop2");
+		builder.addMapping("prop1");
+		builder.addMapping("prop2");
 		try {
-			builder.addIndexedColumn("prop3");
+			builder.addMapping("prop3");
 			fail("Expect exception");
 		} catch(Exception e) {
 			// expected
@@ -117,9 +117,9 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testChooseSmallestMatchingConstructoNoAsm() throws Exception {
-		ResultSetMapperBuilder<DbConstructorObject> builder = new ResultSetMapperBuilderImpl<DbConstructorObject>(DbConstructorObject.class, asmDeactivatedReflectionService );
+		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmDeactivatedReflectionService );
 		
-		builder.addIndexedColumn("prop1");
+		builder.addMapping("prop1");
 		
 		JdbcMapper<DbConstructorObject> mapper = builder.mapper();
 		
@@ -136,10 +136,10 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorProp1Prop2NoAsm() throws Exception {
-		ResultSetMapperBuilder<DbConstructorObject> builder = new ResultSetMapperBuilderImpl<DbConstructorObject>(DbConstructorObject.class, asmDeactivatedReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmDeactivatedReflectionService);
 		
-		builder.addIndexedColumn("prop1");
-		builder.addIndexedColumn("prop2");
+		builder.addMapping("prop1");
+		builder.addMapping("prop2");
 		
 		JdbcMapper<DbConstructorObject> mapper = builder.mapper();
 		
@@ -157,10 +157,10 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorProp1Prop3NoAsm() throws Exception {
-		ResultSetMapperBuilder<DbConstructorObject> builder = new ResultSetMapperBuilderImpl<DbConstructorObject>(DbConstructorObject.class, asmDeactivatedReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmDeactivatedReflectionService);
 		
-		builder.addIndexedColumn("prop1");
-		builder.addIndexedColumn("prop3");
+		builder.addMapping("prop1");
+		builder.addMapping("prop3");
 		
 		JdbcMapper<DbConstructorObject> mapper = builder.mapper();
 		
@@ -180,9 +180,9 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorProp3NoAsm() throws Exception {
-		ResultSetMapperBuilder<DbConstructorObject> builder = new ResultSetMapperBuilderImpl<DbConstructorObject>(DbConstructorObject.class, asmDeactivatedReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmDeactivatedReflectionService);
 		
-		builder.addIndexedColumn("prop3");
+		builder.addMapping("prop3");
 		
 		JdbcMapper<DbConstructorObject> mapper = builder.mapper();
 		
@@ -201,10 +201,10 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorNoAsmAndNoAsmLinb() throws Exception {
-		ResultSetMapperBuilder<DbConstructorObject> builder = new ResultSetMapperBuilderImpl<DbConstructorObject>(DbConstructorObject.class, nonAsmReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, nonAsmReflectionService);
 		
 		try {
-			builder.addIndexedColumn("prop1");
+			builder.addMapping("prop1");
 			fail("Expect exception");
 		} catch(Exception e) {
 			// expected

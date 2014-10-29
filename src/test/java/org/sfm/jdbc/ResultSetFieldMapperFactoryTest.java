@@ -16,18 +16,18 @@ public class ResultSetFieldMapperFactoryTest {
 	
 	SetterFactory setterFactory = new SetterFactory(null);
 	ResultSetFieldMapperFactory factory = new ResultSetFieldMapperFactory(new ResultSetGetterFactory());
-	private FieldMapperErrorHandler<ColumnKey> errorHandler;
+	private FieldMapperErrorHandler<JdbcColumnKey> errorHandler;
 
 	@Test
 	public void testPrimitiveField() {
 		Setter<DbObject, Integer> setter = setterFactory.getFieldSetter(DbObject.class, "id");
 		
 		
-		FieldMapper<ResultSet, DbObject> fieldMapper = factory.newFieldMapper(setter, new ColumnKey("id", 1), errorHandler, new RethrowMapperBuilderErrorHandler());
+		FieldMapper<ResultSet, DbObject> fieldMapper = factory.newFieldMapper(setter, new JdbcColumnKey("id", 1), errorHandler, new RethrowMapperBuilderErrorHandler());
 		
 		assertTrue(fieldMapper instanceof LongFieldMapper);
 
-		fieldMapper = factory.newFieldMapper(setter, new ColumnKey("id"), errorHandler, new RethrowMapperBuilderErrorHandler());
+		fieldMapper = factory.newFieldMapper(setter, new JdbcColumnKey("id", 0), errorHandler, new RethrowMapperBuilderErrorHandler());
 		assertTrue(fieldMapper instanceof LongFieldMapper);
 
 	}

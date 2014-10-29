@@ -1,56 +1,66 @@
 package org.sfm.jdbc;
 
-public class ColumnKey {
+import org.sfm.csv.MappingKey;
+
+public class JdbcColumnKey implements MappingKey<JdbcColumnKey> {
 	public static final int UNDEFINED_TYPE = -99999;
-	private final String columnName;
-	private final int columnIndex;
+	private final String name;
+	private final int index;
 	private final int sqlType;
+	private final JdbcColumnKey parent;
 
-	public ColumnKey(String columnName) {
-		this.columnName = columnName;
-		this.columnIndex = -1;
+	public JdbcColumnKey(String columnName, int columnIndex) {
+		this.name = columnName;
+		this.index = columnIndex;
 		this.sqlType = UNDEFINED_TYPE;
-	}
-	public ColumnKey(String columnName, int columnIndex) {
-		this.columnName = columnName;
-		this.columnIndex = columnIndex;
-		this.sqlType = UNDEFINED_TYPE;
+		this.parent = null;
 	}
 
-	public ColumnKey(String columnName, int columnIndex, int sqlType) {
-		this.columnName = columnName;
-		this.columnIndex = columnIndex;
+	public JdbcColumnKey(String columnName, int columnIndex, int sqlType) {
+		this.name = columnName;
+		this.index = columnIndex;
 		this.sqlType = sqlType;
+		this.parent = null;
 	}
 
-	public String getColumnName() {
-		return columnName;
+	public JdbcColumnKey(String columnName, int columnIndex, int sqlType, JdbcColumnKey parent) {
+		this.name = columnName;
+		this.index = columnIndex;
+		this.sqlType = sqlType;
+		this.parent = parent;
 	}
 
-	public int getColumnIndex() {
-		return columnIndex;
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public int getIndex() {
+		return index;
 	}
 
 	public int getSqlType() {
 		return sqlType;
 	}
 
-	@Override
-	public String toString() {
-		return "ColumnKey [columnName=" + columnName + ", columnIndex="
-				+ columnIndex + ", sqlType=" + sqlType + "]";
+	public JdbcColumnKey getParent() {
+		return parent;
 	}
 
-	public boolean hasColumnIndex() {
-		return columnIndex != -1;
+	@Override
+	public String toString() {
+		return "ColumnKey [columnName=" + name + ", columnIndex="
+				+ index + ", sqlType=" + sqlType + "]";
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + columnIndex;
+		result = prime * result + index;
 		result = prime * result
-				+ ((columnName == null) ? 0 : columnName.hashCode());
+				+ ((name == null) ? 0 : name.hashCode());
 		result = prime * result + sqlType;
 		return result;
 	}
@@ -62,16 +72,21 @@ public class ColumnKey {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ColumnKey other = (ColumnKey) obj;
-		if (columnIndex != other.columnIndex)
+		JdbcColumnKey other = (JdbcColumnKey) obj;
+		if (index != other.index)
 			return false;
-		if (columnName == null) {
-			if (other.columnName != null)
+		if (name == null) {
+			if (other.name != null)
 				return false;
-		} else if (!columnName.equals(other.columnName))
+		} else if (!name.equals(other.name))
 			return false;
 		if (sqlType != other.sqlType)
 			return false;
 		return true;
+	}
+
+	@Override
+	public JdbcColumnKey alias(String alias) {
+		return new JdbcColumnKey(alias, index, sqlType, this);
 	}
 }

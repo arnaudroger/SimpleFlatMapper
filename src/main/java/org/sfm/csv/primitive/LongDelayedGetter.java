@@ -4,21 +4,21 @@ import org.sfm.csv.DelayedCellSetter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.LongGetter;
 
-@SuppressWarnings("rawtypes")
-public class LongDelayedGetter implements LongGetter<DelayedCellSetter[]>, Getter<DelayedCellSetter[], Long> {
+public class LongDelayedGetter<T> implements LongGetter<DelayedCellSetter<T, ?>[]>, Getter<DelayedCellSetter<T, ?>[], Long> {
 	private final int index;
 	
 	public LongDelayedGetter(int index) {
 		this.index = index;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public long getLong(DelayedCellSetter[] target) throws Exception {
-		return ((LongDelayedCellSetter<?>)target[index]).getLong();
+	public long getLong(DelayedCellSetter<T, ?>[] target) throws Exception {
+		return ((LongDelayedCellSetter<T>)target[index]).getLong();
 	}
 
 	@Override
-	public Long get(DelayedCellSetter[] target) throws Exception {
+	public Long get(DelayedCellSetter<T, ?>[] target) throws Exception {
 		return Long.valueOf(getLong(target));
 	}
 }

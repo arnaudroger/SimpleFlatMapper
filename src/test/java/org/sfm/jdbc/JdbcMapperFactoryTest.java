@@ -100,7 +100,7 @@ public class JdbcMapperFactoryTest {
 	public void testFieldErrorHandling()
 			throws SQLException, Exception, ParseException {
 		@SuppressWarnings("unchecked")
-		FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler  = mock(FieldMapperErrorHandler.class);
+		FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler  = mock(FieldMapperErrorHandler.class);
 		final Exception exception = new Exception("Error!");
 		JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance()
 			.fieldMapperErrorHandler(fieldMapperErrorHandler)
@@ -109,11 +109,11 @@ public class JdbcMapperFactoryTest {
 				public void map(ResultSet source, DbObject target) throws Exception {
 					throw exception;
 				}
-			}).newBuilder(DbObject.class).addIndexedColumn("id").mapper();
+			}).newBuilder(DbObject.class).addMapping("id").mapper();
 		
 		List<DbObject> list = mapper.forEach(new MockDbObjectResultSet(1), new ListHandler<DbObject>()).getList();
 		assertNotNull(list.get(0));
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new ColumnKey("id", 1)), any(), same(list.get(0)), same(exception));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new JdbcColumnKey("id", 1)), any(), same(list.get(0)), same(exception));
 	}
 	
 	
@@ -121,20 +121,20 @@ public class JdbcMapperFactoryTest {
 	public void testFieldErrorHandlingOnResultSet()
 			throws SQLException, Exception, ParseException {
 		@SuppressWarnings("unchecked")
-		FieldMapperErrorHandler<ColumnKey> fieldMapperErrorHandler  = mock(FieldMapperErrorHandler.class);
+		FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler  = mock(FieldMapperErrorHandler.class);
 		ResultSet rs = mock(ResultSet.class);
 		
 		final Exception exception = new SQLException("Error!");
 		JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance()
 			.fieldMapperErrorHandler(fieldMapperErrorHandler)
-			.newBuilder(DbObject.class).addIndexedColumn("id").mapper();
+			.newBuilder(DbObject.class).addMapping("id").mapper();
 		
 		when(rs.next()).thenReturn(true, false);
 		when(rs.getLong(1)).thenThrow(exception);
 		
 		List<DbObject> list = mapper.forEach(rs, new ListHandler<DbObject>()).getList();
 		assertNotNull(list.get(0));
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new ColumnKey("id", 1)), any(), same(list.get(0)), same(exception));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new JdbcColumnKey("id", 1)), any(), same(list.get(0)), same(exception));
 	}
 	
 	private void assertMapPsDbObject(ResultSet rs,

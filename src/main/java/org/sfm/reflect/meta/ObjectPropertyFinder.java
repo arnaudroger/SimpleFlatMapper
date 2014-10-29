@@ -42,7 +42,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 					prop = lookForSubProperty(propertyNameMatcher);
 					
 				} else {
-					ConstructorPropertyMeta<T, ?> constructorProperty = (ConstructorPropertyMeta<T, ?>) ((SubPropertyMeta<T, ?>)prop).getProperty();
+					ConstructorPropertyMeta<T, ?> constructorProperty = (ConstructorPropertyMeta<T, ?>) ((SubPropertyMeta<T, ?>)prop).getOwnerProperty();
 					removeNonMatching(constructorProperty.getConstructorParameter());
 				}
 			}

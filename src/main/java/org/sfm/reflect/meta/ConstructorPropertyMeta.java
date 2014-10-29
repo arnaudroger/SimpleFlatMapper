@@ -28,4 +28,9 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 	public ConstructorParameter getConstructorParameter() {
 		return constructorParameter;
 	}
+	
+	public boolean isConstructorProperty() {
+		return true;
+	}
+
 }

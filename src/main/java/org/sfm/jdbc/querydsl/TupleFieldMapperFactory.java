@@ -12,17 +12,17 @@ import org.sfm.reflect.TypeHelper;
 
 import com.mysema.query.Tuple;
 
-public final class TupleFieldMapperFactory implements FieldMapperFactory<Tuple, TupleElementKey<?>> {
+public final class TupleFieldMapperFactory implements FieldMapperFactory<Tuple, TupleElementKey> {
 
-	private final GetterFactory<Tuple, TupleElementKey<?>>  getterFactory;
+	private final GetterFactory<Tuple, TupleElementKey>  getterFactory;
 
-	public TupleFieldMapperFactory(GetterFactory<Tuple, TupleElementKey<?>> getterFactory) {
+	public TupleFieldMapperFactory(GetterFactory<Tuple, TupleElementKey> getterFactory) {
 		this.getterFactory = getterFactory;
 	}
 
 	@Override
 	public <T, P> FieldMapper<Tuple, T> newFieldMapper(Setter<T, P> setter,
-			TupleElementKey<?> key, FieldMapperErrorHandler<TupleElementKey<?>> errorHandler, MapperBuilderErrorHandler mappingErrorHandler) {
+			TupleElementKey key, FieldMapperErrorHandler<TupleElementKey> errorHandler, MapperBuilderErrorHandler mappingErrorHandler) {
 		final Class<?> type = TypeHelper.toClass(setter.getPropertyType());
 		
 		Getter<Tuple, P> getter = getterFactory.newGetter(type, key);

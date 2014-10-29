@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.sfm.jdbc.MapperBuilder;
+import org.sfm.csv.MappingKey;
 import org.sfm.jdbc.MapperGetterAdapter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
@@ -17,77 +18,43 @@ import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.asm.ConstructorParameter;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ConstructorPropertyMeta;
-import org.sfm.reflect.meta.PropertyFinder;
 import org.sfm.reflect.meta.PropertyMeta;
-import org.sfm.reflect.meta.SubProperty;
 import org.sfm.reflect.meta.SubPropertyMeta;
+import org.sfm.utils.ForEachCallBack;
 
-public abstract class AbstractMapperBuilderImpl<S, T, K, M extends Mapper<S, T>,  B extends MapperBuilder<S, T, K, M, B>> 
-	implements MapperBuilder<S, T, K, M, B> {
+public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends MappingKey<K>>  {
 
-	private FieldMapperErrorHandler<K> fieldMapperErrorHandler;
-	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
-	private final Type target;
 	private final Type source;
-	private final PropertyFinder<T> propertyFinder;
-	private final List<FieldMapper<S, T>> fields = new ArrayList<FieldMapper<S, T>>();
-	private final Map<ConstructorParameter, Getter<S, ?>> constructorInjections;
-	private final List<SubProperty<S, T, K>> subProperties = new ArrayList<SubProperty<S, T, K>>();
+	protected final Type target;
+
 	private final FieldMapperFactory<S, K> fieldMapperFactory;
 	private final GetterFactory<S, K> getterFactory;
 
+	private final PropertyMappingsBuilder<T, K> propertyMappingsBuilder;
 	protected final ReflectionService reflectionService;
 	
-	public AbstractMapperBuilderImpl(final Type target, final Type source, final ClassMeta<T> classMeta,   
-			GetterFactory<S, K> getterFactory, FieldMapperFactory<S, K> fieldMapperFactory) throws MapperBuildingException {
-		this.target = target;
+	protected final Map<String, String> aliases;
+	protected final Map<String, FieldMapper<S, ?>> customMappings;
+	protected final List<KeyFieldMapperCouple<S, T, K>> mappers;
+
+	
+	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
+	private FieldMapperErrorHandler<K> fieldMapperErrorHandler;
+	
+	public AbstractFieldMapperMapperBuilder(final Type target, final Type source, final ClassMeta<T> classMeta,   
+			GetterFactory<S, K> getterFactory, FieldMapperFactory<S, K> fieldMapperFactory, 
+			Map<String, String> aliases, Map<String, FieldMapper<S, ?>> customMappings
+			) throws MapperBuildingException {
 		this.source = source;
-		this.reflectionService = classMeta.getReflectionService();
-		this.constructorInjections = new HashMap<ConstructorParameter, Getter<S,?>>();
-		this.propertyFinder = classMeta.newPropertyFinder();
 		this.getterFactory = getterFactory;
 		this.fieldMapperFactory = fieldMapperFactory;
+		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K>(classMeta);
+		this.target = target;
+		this.reflectionService = classMeta.getReflectionService();
+		this.aliases = aliases;
+		this.customMappings = customMappings;
+		this.mappers = new ArrayList<KeyFieldMapperCouple<S,T,K>>();
 	}
-
-	@SuppressWarnings("unchecked")
-	public final B fieldMapperErrorHandler(final FieldMapperErrorHandler<K> errorHandler) {
-		if (!fields.isEmpty()) {
-			throw new IllegalStateException(
-					"Error Handler need to be set before adding fields");
-		}
-		fieldMapperErrorHandler = errorHandler;
-		return (B) this;
-	}
-
-	@SuppressWarnings("unchecked")
-	public final B mapperBuilderErrorHandler(final MapperBuilderErrorHandler errorHandler) {
-		mapperBuilderErrorHandler = errorHandler;
-		return (B) this;
-	}
-
-	@SuppressWarnings("unchecked")
-	public final B addMapping(final String propertyName, final K columnKey) {
-		FieldMapper<S, T> fieldMapper = getCustomMapper(columnKey);
-		if (fieldMapper != null) {
-			if (fieldMapperErrorHandler != null) {
-				fieldMapper = new FieldErrorHandlerMapper<S, T, K>(columnKey, fieldMapper, fieldMapperErrorHandler);
-			}
-			fields.add(fieldMapper);
-		} else {
-			final PropertyMeta<T, ?> property = propertyFinder.findProperty(propertyName);
-			if (property == null) {
-					mapperBuilderErrorHandler.propertyNotFound(target, propertyName);
-			} else {
-				addMapping(property, columnKey);
-			}
-		}
-		return (B) this;
-	}
-
-	protected FieldMapper<S, T> getCustomMapper(K columnKey) {
-		return null;
-	}
-
 
 	protected Class<T> getTargetClass() {
 		return TypeHelper.toClass(target);
@@ -98,107 +65,193 @@ public abstract class AbstractMapperBuilderImpl<S, T, K, M extends Mapper<S, T>,
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 		if (!reflectionService.isAsmPresent()) {
 			try {
-				return (Instantiator<S, T>) instantiatorFactory.getInstantiator(TypeHelper.toClass(source), propertyFinder.getClassToInstantiate());
+				return (Instantiator<S, T>) instantiatorFactory.getInstantiator(TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getClassToInstantiate());
 			} catch(Exception e) {
 				throw new MapperBuildingException(e.getMessage(), e);
 			}
 		} else {
 			try {
-				return instantiatorFactory.getInstantiator(TypeHelper.toClass(source), propertyFinder.getEligibleConstructorDefinitions(), constructorInjections());
+				return instantiatorFactory.getInstantiator(TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getEligibleConstructorDefinitions(), constructorInjections());
 			} catch(Exception e) {
 				throw new MapperBuildingException(e.getMessage(), e);
 			}
 		}
 	}
 
-	@SuppressWarnings({  "rawtypes" })
 	private Map<ConstructorParameter, Getter<S, ?>> constructorInjections() {
-		Map<ConstructorParameter, Getter<S, ?>> injections = new HashMap<ConstructorParameter, Getter<S, ?>>(constructorInjections);
+		final Map<ConstructorParameter, Getter<S, ?>> injections = new HashMap<ConstructorParameter, Getter<S, ?>>();
 		
-		for(SubProperty<S, T, K> subProp : subProperties) {
-			PropertyMeta<T, ?> prop = subProp.getSubProperty().getProperty();
-			if (prop instanceof ConstructorPropertyMeta) {
-				MapperBuilder<S, T, K, ?, ?> builder = subProp.getMapperBuilder();
-				
-				final Mapper<S, T> mapper = builder.mapper();
-				
-				Getter<S, T> getter = new MapperGetterAdapter<S, T>(mapper); 
-				
-				injections.put(((ConstructorPropertyMeta) prop).getConstructorParameter(), getter);
+		propertyMappingsBuilder.forEachConstructorProperties(new ForEachCallBack<PropertyMapping<T,?,K>>() {
+			@Override
+			public void handle(PropertyMapping<T, ?, K> t, int index) {
+				PropertyMeta<T, ?> pm  = t.getPropertyMeta();
+					ConstructorPropertyMeta<T, ?> cProp = (ConstructorPropertyMeta<T, ?>) pm;
+					ConstructorParameter constructorParameter = cProp.getConstructorParameter();
+					injections.put(constructorParameter, getterFor(t.getColumnKey(), constructorParameter.getType()));
 			}
-			
+		});
+		
+		final Map<ConstructorParameter, AbstractFieldMapperMapperBuilder<S, ?, K>> builderToInject = new HashMap<ConstructorParameter, AbstractFieldMapperMapperBuilder<S, ?, K>>();
+		propertyMappingsBuilder.forEachSubProperties(new ForEachCallBack<PropertyMapping<T,?,K>>() {
+			@Override
+			public void handle(PropertyMapping<T, ?, K> t, int index) {
+				PropertyMeta<T, ?> pm  = t.getPropertyMeta();
+				SubPropertyMeta<T, ?> subProp = (SubPropertyMeta<T, ?>) pm;
+				PropertyMeta<T, ?> propOwner = subProp.getOwnerProperty();
+				if (propOwner.isConstructorProperty()) {
+					ConstructorParameter param = ((ConstructorPropertyMeta<T, ?>)propOwner).getConstructorParameter();
+					AbstractFieldMapperMapperBuilder<S, ?, K> builder = builderToInject.get(param);
+					if (builder == null) {
+						builder = newSubBuilder(propOwner.getType(), propOwner.getClassMeta());
+						builderToInject.put(param, builder);
+					}
+					addPropertyoBuilder(t, subProp, builder);
+				}
+			}
+
+			@SuppressWarnings("unchecked")
+			private <P> void addPropertyoBuilder(PropertyMapping<T, ?, K> t,
+					SubPropertyMeta<T, ?> subProp,
+					AbstractFieldMapperMapperBuilder<S, ?, K> builder) {
+				((AbstractFieldMapperMapperBuilder<S, P, K>)builder).addMapping(t.getColumnKey(), ((SubPropertyMeta<T, P>)subProp).getSubProperty());
+			}
+		});
+		
+		for(Entry<ConstructorParameter, AbstractFieldMapperMapperBuilder<S, ?, K>> e : builderToInject.entrySet()) {
+			injections.put(e.getKey(), newSubMapperGetter(e.getValue()));
 		}
 		
 		return injections;
 	}
 
-	public abstract M mapper();
+	@SuppressWarnings("unchecked")
+	protected void addMapping(K columnKey) {
+		if (customMappings != null && customMappings.containsKey(columnKey.getName().toUpperCase())) {
+			mappers.add(
+					new KeyFieldMapperCouple<S, T, K>(columnKey, 
+						(FieldMapper<S, T>) customMappings.get(columnKey.getName().toUpperCase())));
+		} else {
+			K alias = alias(columnKey);
+			if (! propertyMappingsBuilder.addProperty(alias)) {
+				mapperBuilderErrorHandler.propertyNotFound(target, columnKey.getName());
+			}
+		}
+	}
 	
+	private K alias(K key) {
+		if (aliases == null || aliases.isEmpty()) {
+			return key;
+		} 
+		String alias = aliases.get(key.getName().toUpperCase());
+		if (alias == null) {
+			return key;
+		}
+		return key.alias(alias);
+	}
+	
+	protected <P> void addMapping(K columnKey, PropertyMeta<T, P> prop) {
+		propertyMappingsBuilder.addProperty(columnKey, prop);
+	}
+	private <P> Getter<S, P> newSubMapperGetter(AbstractFieldMapperMapperBuilder<S, P, K> value) {
+		return new MapperGetterAdapter<S, P>(value.mapper());
+	}
+
 	@SuppressWarnings("unchecked")
 	public final FieldMapper<S, T>[] fields() {
-		List<FieldMapper<S, T>> fields = new ArrayList<FieldMapper<S, T>>(this.fields);
+		final List<FieldMapper<S, T>> fields = new ArrayList<FieldMapper<S, T>>();
 		
-		for(SubProperty<S, T, K> subProp : subProperties) {
-			PropertyMeta<T, ?> prop = subProp.getSubProperty().getProperty();
+		final Map<PropertyMapping<T, ?, K>, AbstractFieldMapperMapperBuilder<S, ?, K>> buildersByOwner = 
+				new HashMap<PropertyMapping<T, ?, K>, AbstractFieldMapperMapperBuilder<S,?,K>>();
+		
+		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,K>>() {
 			
-			if (!(prop instanceof ConstructorPropertyMeta)) {
-				Setter<T, Object> setter = (Setter<T, Object>) prop.getSetter();
-				Mapper<S, T> mapper = (Mapper<S,T>) subProp.getMapperBuilder().mapper();
-				Getter<S, T> getter = new MapperGetterAdapter<S, T>(mapper);
-				
-				fields.add(new FieldMapperImpl<S, T, Object>(getter, setter));
+			final Map<String, AbstractFieldMapperMapperBuilder<S, ?, K>> builders = new HashMap<String, AbstractFieldMapperMapperBuilder<S,?,K>>();
+			@Override
+			public void handle(PropertyMapping<T, ?, K> t, int index) {
+				if (t == null) return;
+				PropertyMeta<T, ?> meta = t.getPropertyMeta();
+				if (meta == null) return;
+				if (meta.isSubProperty()) {
+					addSubProperty(t,  (SubPropertyMeta<T, ?>) meta, t.getColumnKey());
+				} else if (!meta.isConstructorProperty()) {
+					fields.add(newFieldMapper(t));
+				}
 			}
-			
+			private <P> void addSubProperty(PropertyMapping<T, ?, K> pm,  SubPropertyMeta<T, ?> subPropertyMeta, K key) {
+				PropertyMeta<T, ?> propertyOwner = subPropertyMeta.getOwnerProperty();
+				if (!propertyOwner.isConstructorProperty()) {
+					AbstractFieldMapperMapperBuilder<S, P, K> builder = (AbstractFieldMapperMapperBuilder<S, P, K>) builders.get(propertyOwner.getName());
+					if (builder == null) {
+						builder = (AbstractFieldMapperMapperBuilder<S, P, K>) newSubBuilder(propertyOwner.getType(), propertyOwner.getClassMeta());
+						builders.put(propertyOwner.getName(), builder);
+						buildersByOwner.put(pm, builder);
+					}
+					builder.addMapping(key, ((SubPropertyMeta<T, P>)subPropertyMeta).getSubProperty());
+				}
+			}
+		});
+		
+		for(Entry<PropertyMapping<T, ?, K>, AbstractFieldMapperMapperBuilder<S, ?, K>> e : buildersByOwner.entrySet()) {
+			SubPropertyMeta<T, ?> prop = (SubPropertyMeta<T, ?>) e.getKey().getPropertyMeta();
+			fields.add(newSubFieldMapper(prop.getOwnerProperty(), e.getValue(), e.getKey().getColumnKey()));
+		}
+		
+		for(KeyFieldMapperCouple<S, T, K> keyFieldMapper: mappers) {
+			FieldMapper<S, T> mapper = keyFieldMapper.getFieldMapper();
+			if (fieldMapperErrorHandler != null) {
+				mapper = new FieldErrorHandlerMapper<S, T, K>(keyFieldMapper.getKey(), mapper, fieldMapperErrorHandler);
+			}
+			fields.add(mapper);
 		}
 		
 		return fields.toArray(new FieldMapper[fields.size()]);
 	}
 
-	private SubProperty<S, T, K> getOrAddSubPropertyMapperBuilder(SubPropertyMeta<T, ?> property) {
-		
-		for(SubProperty<S, T, K> subProp : subProperties) {
-			if (subProp.getSubProperty().getName().equals(property.getName())) {
-				return subProp;
-			}
-		}
-		
-		MapperBuilder<S, T, K, ?, ?> builder = newMapperBuilder(property.getType(), property.getClassMeta());
-		SubProperty<S, T, K> subProp = new SubProperty<S, T, K>(builder, property);
-		
-		subProperties.add(subProp);
-		
-		return subProp;
-	}
 
-	protected abstract MapperBuilder<S, T, K, ?, ?> newMapperBuilder(Type type, ClassMeta<T> classMeta);
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public B addMapping(PropertyMeta<T, ?> property, K key) {
-		if (property instanceof ConstructorPropertyMeta) {
-			ConstructorParameter constructorParameter = ((ConstructorPropertyMeta) property).getConstructorParameter();
-			Getter<S, Object> getter = getterFactory.newGetter(constructorParameter.getType(), key);
-			if (getter == null) {
-				mapperBuilderErrorHandler.getterNotFound("Could not find getter for " + key + " type " + constructorParameter.getType());
-			}
-			constructorInjections.put(constructorParameter, getter);
-		} else if (property instanceof SubPropertyMeta) {
-			SubProperty<S, T, K> subProp = getOrAddSubPropertyMapperBuilder((SubPropertyMeta)property);
-			MapperBuilder<S, T, K, ?, ?> mapperBuilder = subProp.getMapperBuilder();
-			mapperBuilder.addMapping(((SubPropertyMeta) property).getSubProperty(), key);
-		} else {
-			FieldMapper<S, T> fieldMapper = fieldMapperFactory.newFieldMapper(property.getSetter(), key, fieldMapperErrorHandler, mapperBuilderErrorHandler);
-			if (fieldMapperErrorHandler != null) {
-				fieldMapper = new FieldErrorHandlerMapper<S, T, K>(key, fieldMapper, fieldMapperErrorHandler);
-			}
-			fields.add(fieldMapper);
-		}
-		return (B) this;
+	@SuppressWarnings("unchecked")
+	private <P> FieldMapper<S, T> newSubFieldMapper(PropertyMeta<T, ?> prop,
+			AbstractFieldMapperMapperBuilder<S, ?, K> builder, K key) {
+		Setter<T, P> setter = (Setter<T, P>) prop.getSetter();
+		return newFieldMapper(builder, setter, key);		
 	}
 
 	@SuppressWarnings("unchecked")
-	public B addMapper(FieldMapper<S, T> mapper) {
-		fields.add(mapper);
-		return (B) this;
+	private <P> FieldMapper<S, T> newFieldMapper(
+			AbstractFieldMapperMapperBuilder<S, ?, K> builder,
+			Setter<T, P> setter, K key) {
+		FieldMapper<S, T> fm =  new FieldMapperImpl<S, T, P>((Getter<S, ? extends P>) newSubMapperGetter(builder), setter);
+		if (fieldMapperErrorHandler != null) {
+			fm = new FieldErrorHandlerMapper<S, T, K>(key, fm, fieldMapperErrorHandler);
+		}
+		return fm;
+	}
+
+	protected <P> FieldMapper<S, T> newFieldMapper(PropertyMapping<T, P, K> t) {
+		FieldMapper<S, T> fieldMapper = fieldMapperFactory.newFieldMapper(t.getPropertyMeta().getSetter(), t.getColumnKey(), fieldMapperErrorHandler, mapperBuilderErrorHandler);
+		if (fieldMapperErrorHandler != null) {
+			fieldMapper = new FieldErrorHandlerMapper<S, T, K>(t.getColumnKey(), fieldMapper, fieldMapperErrorHandler);
+		}
+		return fieldMapper;
+	}
+
+	private Getter<S, Object> getterFor(K key, Type paramType) {
+		Getter<S, Object> getter = getterFactory.newGetter(paramType, key);
+		if (getter == null) {
+			mapperBuilderErrorHandler.getterNotFound("Could not find getter for " + key + " type " + paramType);
+		}
+		return getter;
+	}
+
+	protected abstract <ST> AbstractFieldMapperMapperBuilder<S, ST, K> newSubBuilder(Type type, ClassMeta<ST> classMeta);
+	
+	public abstract Mapper<S, T> mapper();
+
+	protected void setMapperBuilderErrorHandler(MapperBuilderErrorHandler errorHandler) {
+		this.mapperBuilderErrorHandler = errorHandler;
+	}
+	
+	protected void setFieldMapperErrorHandler(
+			FieldMapperErrorHandler<K> errorHandler) {
+		this.fieldMapperErrorHandler = errorHandler;
 	}
 }

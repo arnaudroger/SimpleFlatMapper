@@ -9,31 +9,46 @@ import org.sfm.utils.RowHandler;
 
 public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 
+	/**
+	 * mapping information
+	 */
+	private final Instantiator<DelayedCellSetter<T, ?>[], T> instantiator;
 	private final DelayedCellSetter<T, ?>[] delayedCellSetters;
 	private final CellSetter<T>[] setters;
-	@SuppressWarnings("rawtypes")
-	private final Instantiator<DelayedCellSetter[], T> instantiator;
-	private final FieldMapperErrorHandler<Integer> fieldErrorHandler;
+	private final CsvColumnKey[] columns;
+	
+	
+	/**
+	 * error handling
+	 */
+	private final FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler;
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
+	
+	
+	
 	private final RowHandler<T> handler;
+	
+	/**
+	 * parsing information
+	 */
+	private final ParsingContext parsingContext;
+
 	private final int flushIndex;
 	private final int totalLength;
-	private final ParsingContext parsingContext;
 
 	private final int rowStart;
 	private final int limit;
-	
-	
 	
 	private T currentInstance;
 	private int cellIndex = 0;
 	private int currentRow = 0;
 
 	public CsvMapperCellHandler(
-			@SuppressWarnings("rawtypes") Instantiator<DelayedCellSetter[], T> instantiator,
+			Instantiator<DelayedCellSetter<T, ?>[], T> instantiator,
 			DelayedCellSetter<T, ?>[] delayedCellSetters,
 			CellSetter<T>[] setters,
-			FieldMapperErrorHandler<Integer> fieldErrorHandler,
+			CsvColumnKey[] columns,
+			FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
 			RowHandlerErrorHandler rowHandlerErrorHandlers,
 			RowHandler<T> handler, 
 			ParsingContext parsingContext,
@@ -42,6 +57,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 		this.instantiator = instantiator;
 		this.delayedCellSetters = delayedCellSetters;
 		this.setters = setters;
+		this.columns = columns;
 		this.fieldErrorHandler = fieldErrorHandler;
 		this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
 		this.handler = handler;
@@ -79,15 +95,17 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 		return continueProcessing();
 	}
 	
+	public void endOfRow(int cellIndex) {
+		flush(cellIndex);
+	}
+	
 	private boolean continueProcessing() {
 		currentRow++;
 		boolean continueProcessing =  limit == -1 || (currentRow - rowStart) < limit;
 		return continueProcessing;
 	} 
 	
-	public void endOfRow(int cellIndex) {
-		flush(cellIndex);
-	}
+
 	public void flush(int cellIndex) {
 		if (cellIndex > 0) {
 			T instance = currentInstance;
@@ -120,7 +138,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 				try {
 					delayedSetter.set(instance);
 				} catch (Exception e) {
-					fieldErrorHandler.errorMappingField(i, this, instance, e);
+					fieldErrorHandler.errorMappingField(columns[i], this, instance, e);
 				}
 			}
 		}
@@ -141,7 +159,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 				delayedCellSetter.set(chars, offset, length, parsingContext);
 			}
 		} catch (Exception e) {
-			fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
+			fieldErrorHandler.errorMappingField(columns[cellIndex], this, currentInstance, e);
 		}
 	}
 
@@ -153,7 +171,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 					cellSetter.set(currentInstance, chars, offset, length, parsingContext);
 				}
 			} catch (Exception e) {
-				fieldErrorHandler.errorMappingField(cellIndex, this, currentInstance, e);
+				fieldErrorHandler.errorMappingField(columns[cellIndex], this, currentInstance, e);
 			}
 		}
 	}

@@ -16,48 +16,31 @@ import org.sfm.utils.ListHandler;
 public class JdbcMapperDbObjectTest {
 	
 	@Test
-	public void testPropertyToColumnMapping()
-			throws SQLException, Exception, ParseException {
-		
-		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
-		
-		builder.addMapping("id", "id");
-		builder.addMapping("name", "name");
-		builder.addMapping("email", "email");
-		builder.addMapping("creationTime", "creation_time");
-		builder.addMapping("typeOrdinal", "type_ordinal");
-		builder.addMapping("typeName", "type_name");
-		
-		final JdbcMapper<DbObject> mapper = builder.mapper();
-		testDbObjectMapper(mapper);
-	}
-
-	@Test
 	public void testColumn() throws Exception {
-		ResultSetMapperBuilder<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
 		
-		addNamedColumn(builder);
+		addColumn(builder);
 		
 		final JdbcMapper<DbObject> mapper = builder.mapper();
 		
 		testDbObjectMapper(mapper);
 	}
 
-	public static <T> ResultSetMapperBuilder<T> addNamedColumn(ResultSetMapperBuilder<T> builder) {
-		builder.addNamedColumn("id");
-		builder.addNamedColumn("name");
-		builder.addNamedColumn("email");
-		builder.addNamedColumn("creation_time");
-		builder.addNamedColumn("type_ordinal");
-		builder.addNamedColumn("type_name");
+	public static <T> JdbcMapperBuilder<T> addColumn(JdbcMapperBuilder<T> builder) {
+		builder.addMapping("id");
+		builder.addMapping("name");
+		builder.addMapping("email");
+		builder.addMapping("creation_time");
+		builder.addMapping("type_ordinal");
+		builder.addMapping("type_name");
 		return builder;
 	}
 	
 	@Test
 	public void testColumnFinalProperty() throws Exception {
-		ResultSetMapperBuilder<DbFinalObject> builder = new ResultSetMapperBuilderImpl<DbFinalObject>(DbFinalObject.class);
+		JdbcMapperBuilder<DbFinalObject> builder = new JdbcMapperBuilder<DbFinalObject>(DbFinalObject.class);
 		
-		addNamedColumn(builder);
+		addColumn(builder);
 		
 		final JdbcMapper<DbFinalObject> mapper = builder.mapper();
 		

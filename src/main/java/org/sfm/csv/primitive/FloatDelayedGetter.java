@@ -4,21 +4,21 @@ import org.sfm.csv.DelayedCellSetter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.FloatGetter;
 
-@SuppressWarnings("rawtypes")
-public class FloatDelayedGetter implements FloatGetter<DelayedCellSetter[]>, Getter<DelayedCellSetter[], Float> {
+public class FloatDelayedGetter<T> implements FloatGetter<DelayedCellSetter<T, ?>[]>, Getter<DelayedCellSetter<T, ?>[], Float> {
 	private final int index;
 	
 	public FloatDelayedGetter(int index) {
 		this.index = index;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public float getFloat(DelayedCellSetter[] target) throws Exception {
-		return ((FloatDelayedCellSetter<?>)target[index]).getFloat();
+	public float getFloat(DelayedCellSetter<T, ?>[] target) throws Exception {
+		return ((FloatDelayedCellSetter<T>)target[index]).getFloat();
 	}
 
 	@Override
-	public Float get(DelayedCellSetter[] target) throws Exception {
+	public Float get(DelayedCellSetter<T, ?>[] target) throws Exception {
 		return Float.valueOf(getFloat(target));
 	}
 }

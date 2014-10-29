@@ -25,7 +25,7 @@ public final class CsvMapperFactory {
 		return new CsvMapperFactory();
 	}
 	
-	private FieldMapperErrorHandler<Integer> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<Integer>();
+	private FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<CsvColumnKey>();
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	
 	private Map<String, String> aliases = new HashMap<String, String>();
@@ -51,7 +51,7 @@ public final class CsvMapperFactory {
 	 * @param fieldMapperErrorHandler 
 	 * @return the factory
 	 */
-	public CsvMapperFactory fieldMapperErrorHandler(final FieldMapperErrorHandler<Integer> fieldMapperErrorHandler) {
+	public CsvMapperFactory fieldMapperErrorHandler(final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler) {
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		return this;
 	}

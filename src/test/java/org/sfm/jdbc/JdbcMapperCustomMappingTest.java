@@ -36,7 +36,7 @@ public class JdbcMapperCustomMappingTest {
 		JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance();
 		mapperFactory.addAlias("not_id_column", "id");
 		
-		final JdbcMapper<DbObject> mapper = JdbcMapperDbObjectTest.addNamedColumn(mapperFactory.newBuilder(DbObject.class)).mapper();
+		final JdbcMapper<DbObject> mapper = JdbcMapperDbObjectTest.addColumn(mapperFactory.newBuilder(DbObject.class)).mapper();
 		
 		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 
@@ -62,7 +62,7 @@ public class JdbcMapperCustomMappingTest {
 		});
 		
 		
-		final JdbcMapper<DbObject> mapper = JdbcMapperDbObjectTest.addNamedColumn(mapperFactory.newBuilder(DbObject.class)).mapper();
+		final JdbcMapper<DbObject> mapper = JdbcMapperDbObjectTest.addColumn(mapperFactory.newBuilder(DbObject.class)).mapper();
 		
 		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 

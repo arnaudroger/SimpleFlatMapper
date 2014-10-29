@@ -21,10 +21,10 @@ public class ElementPropertyMeta<P> extends PropertyMeta<List<P>, P> {
 		return new Setter<List<P>, P>() {
 			@Override
 			public void set(List<P> target, P value) throws Exception {
-				while(target.size() < index) {
+				while(target.size() <= index) {
 					target.add(null);
 				}
-				target.add(index, value);
+				target.set(index, value);
 			}
 
 			@Override

@@ -60,7 +60,7 @@ public class CsvMapperDateFormatTest {
 	public void testErrorHandler() throws ParseException, MappingException, IOException {
 		
 		@SuppressWarnings("unchecked")
-		FieldMapperErrorHandler<Integer> fieldMapperErrorHandler = mock(FieldMapperErrorHandler.class);
+		FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = mock(FieldMapperErrorHandler.class);
 		CsvMapper<ObjectWithDate> mapper = CsvMapperFactory.newInstance().fieldMapperErrorHandler(fieldMapperErrorHandler).newMapper(ObjectWithDate.class);
 		
 		String data = "date1,date2\nwrong date,wrong date";
@@ -70,8 +70,8 @@ public class CsvMapperDateFormatTest {
 		assertNull(list.get(0).date1);
 		assertNull(list.get(0).date2);
 		
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new Integer(0)), any(),isNull(), any(Exception.class));
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new Integer(1)), any(),same(list.get(0)), any(Exception.class));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 0)), any(),isNull(), any(Exception.class));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 1)), any(),same(list.get(0)), any(Exception.class));
 	}
 
 }

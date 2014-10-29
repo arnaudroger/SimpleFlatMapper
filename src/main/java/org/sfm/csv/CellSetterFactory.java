@@ -2,7 +2,6 @@ package org.sfm.csv;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
-import java.sql.ResultSet;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +36,6 @@ import org.sfm.csv.primitive.LongCellSetter;
 import org.sfm.csv.primitive.LongDelayedCellSetterFactory;
 import org.sfm.csv.primitive.ShortCellSetter;
 import org.sfm.csv.primitive.ShortDelayedCellSetterFactory;
-import org.sfm.reflect.ConstructorOnGetter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.TypeHelper;
@@ -130,7 +128,7 @@ public class CellSetterFactory {
 		return reader;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"unchecked" })
 	private <P> CellValueReader<P> getReader(Class<P> propertyType, int index, String column) {
 		CellValueReader<P> reader = null;
 		
@@ -158,6 +156,7 @@ public class CellSetterFactory {
 		return reader;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <P> CellValueReader<P> getKnownReader(Class<P> propertyType,
 			int index) {
 		CellValueReader<P> reader;

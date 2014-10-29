@@ -17,22 +17,25 @@ import org.sfm.utils.RowHandler;
 public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	private final DelayedCellSetterFactory<T, ?>[] delayedCellSetters;
 	private final CellSetter<T>[] setters;
-	@SuppressWarnings("rawtypes")
-	private final Instantiator<DelayedCellSetter[], T> instantiator;
-	private final FieldMapperErrorHandler<Integer> fieldErrorHandler;
+	private final CsvColumnKey[] keys;
+	
+	private final Instantiator<DelayedCellSetter<T, ?>[], T> instantiator;
+	private final FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler;
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
 	private final ParsingContextFactory parsingContextFactory;
 	
-	public CsvMapperImpl(@SuppressWarnings("rawtypes") Instantiator<DelayedCellSetter[], T> instantiator,
+	public CsvMapperImpl(Instantiator<DelayedCellSetter<T, ?>[], T> instantiator,
 			DelayedCellSetterFactory<T, ?>[] delayedCellSetters,
 			CellSetter<T>[] setters,
+			CsvColumnKey[] keys,
 			ParsingContextFactory parsingContextFactory,
-			FieldMapperErrorHandler<Integer> fieldErrorHandler,
+			FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
 			RowHandlerErrorHandler rowHandlerErrorHandlers) {
 		super();
 		this.instantiator = instantiator;
 		this.delayedCellSetters = delayedCellSetters;
 		this.setters = setters;
+		this.keys = keys;
 		this.fieldErrorHandler = fieldErrorHandler;
 		this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
 		this.parsingContextFactory = parsingContextFactory;
@@ -64,12 +67,9 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected CsvMapperCellHandler<T> newCellHandler(final RowHandler<T> handler, int rowStart, int limit) {
 		
-		CellSetter<T>[] outSetters = new CellSetter[setters.length];
 		DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetters.length];
-		
-		
 		Map<CsvMapper<?>, CsvMapperCellHandler<?>> cellHandlers = new HashMap<CsvMapper<?>, CsvMapperCellHandler<?>>();
-
+		
 		
 		for(int i = 0; i < delayedCellSetters.length; i++) {
 			DelayedCellSetterFactory<T, ?> delayedCellSetterFactory = delayedCellSetters[i];
@@ -95,6 +95,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		}
 
 		
+		CellSetter<T>[] outSetters = new CellSetter[setters.length];
 		for(int i = 0; i < setters.length; i++) {
 			if (setters[i] instanceof DelegateMarkerSetter) {
 				DelegateMarkerSetter<?> marker = (DelegateMarkerSetter<?>) setters[i];
@@ -120,9 +121,12 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		
 		return new CsvMapperCellHandler<T>(instantiator, 
 				outDelayedCellSetters, 
-				outSetters, 				
+				outSetters, keys,		
 				fieldErrorHandler, 
-				rowHandlerErrorHandlers, handler, parsingContextFactory.newContext(), rowStart, limit);
+				rowHandlerErrorHandlers, 
+				handler, 
+				parsingContextFactory.newContext(), 
+				rowStart, limit);
 	}
 
 

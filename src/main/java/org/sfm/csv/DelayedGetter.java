@@ -2,8 +2,7 @@ package org.sfm.csv;
 
 import org.sfm.reflect.Getter;
 
-@SuppressWarnings("rawtypes")
-public class DelayedGetter<T> implements Getter<DelayedCellSetter[], T> {
+public class DelayedGetter<T> implements Getter<DelayedCellSetter<T, ?>[], T> {
 	private final int index;
 	
 	public DelayedGetter(int index) {
@@ -12,7 +11,7 @@ public class DelayedGetter<T> implements Getter<DelayedCellSetter[], T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T get(DelayedCellSetter[] target) throws Exception {
+	public T get(DelayedCellSetter<T, ?>[] target) throws Exception {
 		return (T) target[index].getValue();
 	}
 

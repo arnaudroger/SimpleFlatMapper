@@ -8,12 +8,12 @@ import org.sfm.reflect.TypeHelper;
 
 import com.mysema.query.Tuple;
 
-public final class TupleGetterFactory implements GetterFactory<Tuple, TupleElementKey<?>>{
+public final class TupleGetterFactory implements GetterFactory<Tuple, TupleElementKey>{
 	public static final int UNDEFINED = -99999;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public <P> Getter<Tuple, P> newGetter(Type genericType, TupleElementKey<?> key) {
+	public <P> Getter<Tuple, P> newGetter(Type genericType, TupleElementKey key) {
 		
 		Class<Object> propretyClass = TypeHelper.toClass(genericType);
 		if (Enum.class.isAssignableFrom(propretyClass)) {
@@ -29,6 +29,6 @@ public final class TupleGetterFactory implements GetterFactory<Tuple, TupleEleme
  			
 		}
 		
-		return new TupleIndexedGetter<P>((TupleElementKey<P>) key);
+		return new TupleIndexedGetter<P>( key);
 	}
 }

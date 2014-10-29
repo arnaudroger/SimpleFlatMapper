@@ -10,6 +10,7 @@ public final class CsvDbFinalObjectInstantiator implements Instantiator<DelayedC
 	
 	DelayedGetter<Long> getter1;
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public DbFinalObject newInstance(DelayedCellSetter[] source) throws Exception {
 		return new DbFinalObject(getter1.get(source).longValue(), null, null, null, null, null);

@@ -25,7 +25,7 @@ public class ResultSetMapperBuilderImplTest {
 	@Test
 	public void testAddFieldMapper() {
 		
-		ResultSetMapperBuilderImpl<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
 		
 		JdbcMapper<DbObject> mapper = builder.addMapper(new FieldMapper<ResultSet, DbObject>() {
 			
@@ -42,7 +42,7 @@ public class ResultSetMapperBuilderImplTest {
 	@Test
 	public void testAsmFailureOnJdbcMapper() {
 		
-		ResultSetMapperBuilderImpl<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class, new ReflectionService() {
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService() {
 
 			@Override
 			public AsmFactory getAsmFactory() {
@@ -66,7 +66,7 @@ public class ResultSetMapperBuilderImplTest {
 	public boolean asmPresent = true;
 	@Test
 	public void testAsmFailureOnInstantiator() {
-		ResultSetMapperBuilderImpl<DbObject> builder = new ResultSetMapperBuilderImpl<DbObject>(DbObject.class, new ReflectionService() {
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService() {
 			@Override
 			public InstantiatorFactory getInstantiatorFactory() {
 				return new InstantiatorFactory(null) {

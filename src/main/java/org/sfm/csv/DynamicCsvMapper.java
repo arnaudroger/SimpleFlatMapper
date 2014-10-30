@@ -14,7 +14,7 @@ import org.sfm.csv.parser.CsvParser;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperCache;
-import org.sfm.map.MapperKey;
+import org.sfm.map.ColumnsMapperKey;
 import org.sfm.map.MappingException;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
@@ -41,7 +41,7 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 		public boolean endOfRow() {
 			if (rowStart == -1 || currentRow >= rowStart) {
 				if (cellHandler == null) {
-					MapperKey key = new MapperKey(columns.toArray(new String[columns.size()]));
+					ColumnsMapperKey key = new ColumnsMapperKey(columns.toArray(new String[columns.size()]));
 					CsvMapperImpl<T> csvMapperImpl = mapperCache.get(key);
 					if (csvMapperImpl == null) {
 						csvMapperImpl = buildeMapper(key);
@@ -92,7 +92,7 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 	
 	private final String defaultDateFormat;
 	
-	private MapperCache<CsvMapperImpl<T>> mapperCache = new MapperCache<CsvMapperImpl<T>>();
+	private MapperCache<ColumnsMapperKey, CsvMapperImpl<T>> mapperCache = new MapperCache<ColumnsMapperKey, CsvMapperImpl<T>>();
 	private final Map<String, String> aliases;
 	private final Map<String, CellValueReader<?>> customReaders;
 
@@ -126,7 +126,7 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 		return handler;
 	}
 	
-	private CsvMapperImpl<T> buildeMapper(MapperKey key) {
+	private CsvMapperImpl<T> buildeMapper(ColumnsMapperKey key) {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, aliases, customReaders);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);

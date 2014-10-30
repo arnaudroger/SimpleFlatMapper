@@ -3,13 +3,12 @@ package org.sfm.map;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sfm.csv.MappingKey;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyFinder;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.ForEachCallBack;
 
-public final class PropertyMappingsBuilder<T, K extends MappingKey<K>> {
+public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 
 
 

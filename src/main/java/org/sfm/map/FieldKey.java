@@ -1,6 +1,6 @@
-package org.sfm.csv;
+package org.sfm.map;
 
-public interface MappingKey<K> {
+public interface FieldKey<K> {
 	String getName();
 	int getIndex();
     K alias(String alias); 

@@ -1,8 +1,8 @@
 package org.sfm.jdbc;
 
-import org.sfm.csv.MappingKey;
+import org.sfm.map.FieldKey;
 
-public class JdbcColumnKey implements MappingKey<JdbcColumnKey> {
+public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 	public static final int UNDEFINED_TYPE = -99999;
 	private final String name;
 	private final int index;

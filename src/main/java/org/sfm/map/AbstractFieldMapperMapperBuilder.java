@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.sfm.csv.MappingKey;
 import org.sfm.jdbc.MapperGetterAdapter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
@@ -22,7 +21,7 @@ import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.meta.SubPropertyMeta;
 import org.sfm.utils.ForEachCallBack;
 
-public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends MappingKey<K>>  {
+public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
 	private final Type source;
 	protected final Type target;

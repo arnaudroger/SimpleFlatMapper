@@ -11,8 +11,8 @@ public class MapperCacheTest {
 
 	@Test
 	public void testMapperCache() throws SQLException, ParseException, Exception {
-		MapperCache<Object> cache = new MapperCache<Object>();
-		MapperKey key = new MapperKey("col1", "col2");
+		MapperCache<ColumnsMapperKey, Object> cache = new MapperCache<ColumnsMapperKey, Object>();
+		ColumnsMapperKey key = new ColumnsMapperKey("col1", "col2");
 		Object delegate = cache.get(key);
 		assertNull(delegate);
 		delegate = new Object();

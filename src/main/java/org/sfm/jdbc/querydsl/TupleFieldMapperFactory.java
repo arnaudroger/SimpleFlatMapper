@@ -1,5 +1,6 @@
 package org.sfm.jdbc.querydsl;
 
+import org.sfm.map.FieldErrorHandlerMapper;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.FieldMapperFactory;
@@ -29,6 +30,11 @@ public final class TupleFieldMapperFactory implements FieldMapperFactory<Tuple, 
 		if (getter == null) {
 			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + type);
 		}
-		return new FieldMapperImpl<Tuple, T, P>(getter, setter);
+		
+		FieldMapper<Tuple, T> fm =  new FieldMapperImpl<Tuple, T, P>(getter, setter);
+		if (errorHandler != null) {
+			fm = new FieldErrorHandlerMapper<Tuple, T, TupleElementKey>(key, fm, errorHandler);
+		}
+		return fm;
 	}
 }

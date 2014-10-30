@@ -1,14 +1,14 @@
 package org.sfm.jdbc.querydsl;
 
-import org.sfm.csv.MappingKey;
 import org.sfm.map.MappingException;
+import org.sfm.map.FieldKey;
 
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.Path;
 import com.mysema.query.types.PathMetadata;
 import com.mysema.query.types.PathType;
 
-public class TupleElementKey implements MappingKey<TupleElementKey> {
+public class TupleElementKey implements FieldKey<TupleElementKey> {
 	private final Expression<?> expression;
 	private final int index;
 	private final String name;

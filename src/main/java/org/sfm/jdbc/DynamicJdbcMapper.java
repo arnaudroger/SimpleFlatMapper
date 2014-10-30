@@ -11,7 +11,7 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.MapperCache;
-import org.sfm.map.MapperKey;
+import org.sfm.map.ColumnsMapperKey;
 import org.sfm.map.MappingException;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
@@ -28,7 +28,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	private final  MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private final Map<String, String> aliases;
 	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();
-	private MapperCache<JdbcMapper<T>> mapperCache = new MapperCache<JdbcMapper<T>>();
+	private MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache = new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
 
 	public DynamicJdbcMapper(final Class<T> target, final ReflectionService reflectionService, 
 			final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler, 
@@ -63,7 +63,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private JdbcMapper<T> buildMapper(final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
 		
-		final MapperKey key = mapperKey(metaData);
+		final ColumnsMapperKey key = mapperKey(metaData);
 		
 		JdbcMapper<T> mapper = mapperCache.get(key);
 		
@@ -80,13 +80,13 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		return mapper;
 	}
 	
-	private static MapperKey mapperKey(final ResultSetMetaData metaData) throws SQLException {
+	private static ColumnsMapperKey mapperKey(final ResultSetMetaData metaData) throws SQLException {
 		final String[] columns = new String[metaData.getColumnCount()];
 		
 		for(int i = 0; i < columns.length; i++) {
 			columns[i] = metaData.getColumnLabel(i + 1);
 		}
 		
-		return new MapperKey(columns);
+		return new ColumnsMapperKey(columns);
 	}
 }

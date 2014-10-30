@@ -1,6 +1,8 @@
 package org.sfm.csv;
 
-public class CsvColumnKey implements MappingKey<CsvColumnKey> {
+import org.sfm.map.FieldKey;
+
+public class CsvColumnKey implements FieldKey<CsvColumnKey> {
 	private final String name;
 	private final int index;
 	private final CsvColumnKey parent;

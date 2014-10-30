@@ -2,7 +2,6 @@ package org.sfm.jdbc.jooq;
 
 import java.lang.reflect.Type;
 
-import org.jooq.Field;
 import org.jooq.Record;
 import org.sfm.map.GetterFactory;
 import org.sfm.reflect.Getter;
@@ -27,8 +26,8 @@ public class RecordGetterFactory<R extends Record> implements
 			}
  			
 		}
-		
-		return new RecordGetter<R, P>((Field<P>) key.getField());
+		Class<P> clazz = TypeHelper.toClass(genericType);
+		return new RecordGetter<R, P>(key.getIndex(), clazz);
 	}
 
 }

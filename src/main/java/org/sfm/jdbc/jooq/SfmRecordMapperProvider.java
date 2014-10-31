@@ -23,7 +23,6 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 		Mapper<Record, E> mapper = (Mapper<Record, E>) mapperCache.get(key);
 		
 		if (mapper == null) {
-		
 			JooqMapperBuilder<Record, E> mapperBuilder = new JooqMapperBuilder<Record, E>(type);
 			
 			int i = 0;
@@ -32,13 +31,12 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 			}
 			
 			mapper = mapperBuilder.mapper();
-			
 			mapperCache.add(key, mapper);
-		
 		}
 		
 		return new RecordMapperWrapper<R, E>(mapper);
 	}
+
 	
 	private <R extends Record> TargetColumnsMapperKey getMapperKey(RecordType<R> recordType, Class<?> type) {
 		String[] columns = new String[recordType.size()];

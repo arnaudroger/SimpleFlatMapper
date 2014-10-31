@@ -15,7 +15,7 @@ public final class EnumRecordNamedGetter<R extends Record, E extends Enum<E>> im
 
 	@Override
 	public E get(final R target) throws Exception {
-		final String o = target.getValue(index, String.class);
+		final Object o = target.getValue(index);
 		return (E) Enum.valueOf(enumType, String.valueOf(o));
 	}
 }

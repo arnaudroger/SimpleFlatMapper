@@ -17,6 +17,6 @@ public final class EnumRecordOrdinalGetter<R extends Record, E extends Enum<E>> 
 
 	@Override
 	public E get(final R target) throws Exception {
-		return values[target.getValue(index, Integer.class).intValue()];
+		return values[((Number)target.getValue(index)).intValue()];
 	}
 }

@@ -6,16 +6,15 @@ import org.sfm.reflect.Getter;
 public class RecordGetter<R extends Record, P> implements Getter<R, P> {
 
 	private final int index;
-	private final Class<P> type;
 	
-	public RecordGetter(int index, Class<P> type) {
+	public RecordGetter(int index) {
 		this.index = index;
-		this.type = type;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public P get(R target) throws Exception {
-		return target.getValue(index, type);
+		return (P) target.getValue(index);
 	}
 
 }

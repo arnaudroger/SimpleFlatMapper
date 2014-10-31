@@ -9,9 +9,10 @@ A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 - Compatible with Java 6, 7 and 8. 
 - [Lambda Ready](#jdbcmapper).
 - easy to integrate with [Spring JdbcTemplate](#jdbctemplate). 
+- [CsvMapper](#csvmapper)
+- Jooq Integration
 - [Osgi](#osgisupport) ready.
 - [QueryDSL Jdbc support](#querydsl-jdbc)
-- [CsvMapper](#csvmapper)
 
 Fastest CsvParser on [csv-parsers-comparaison](https://github.com/uniVocity/csv-parsers-comparison).
 

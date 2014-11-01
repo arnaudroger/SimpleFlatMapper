@@ -2,7 +2,7 @@ package org.sfm.jdbc.jooq;
 
 import org.jooq.Record;
 import org.sfm.reflect.Getter;
-import org.sfm.utils.Converter;
+import org.sfm.utils.conv.Converter;
 
 public class RecordGetterWithConverter<R extends Record, P, F> implements Getter<R, P> {
 
@@ -17,7 +17,13 @@ public class RecordGetterWithConverter<R extends Record, P, F> implements Getter
 	@SuppressWarnings("unchecked")
 	@Override
 	public P get(R target) throws Exception {
-		return (P) converter.convert((F) target.getValue(index));
+		F value = (F) target.getValue(index);
+		if (value != null) {
+			return (P) converter.convert(value);
+		} else {
+			return null;
+		}
 	}
-
+	
+	
 }

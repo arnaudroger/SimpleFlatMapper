@@ -1,10 +1,14 @@
 package org.sfm.jdbc;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Date;
 
+import org.sfm.jdbc.getter.BigDecimalIndexedResultSetGetter;
+import org.sfm.jdbc.getter.BigIntegerIndexedResultSetGetter;
 import org.sfm.jdbc.getter.BooleanIndexedResultSetGetter;
 import org.sfm.jdbc.getter.ByteIndexedResultSetGetter;
 import org.sfm.jdbc.getter.CharacterIndexedResultSetGetter;
@@ -57,6 +61,10 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("rawtypes")
 			Class<? extends Enum> enumClass = (Class<? extends Enum>) type; 
 			getter = indexEnumGetter(enumClass, key);
+		} else if (BigDecimal.class.equals(type)) {
+			getter = (Getter<ResultSet, P>) new BigDecimalIndexedResultSetGetter(column);
+		} else if (BigInteger.class.equals(type)) {
+			getter = (Getter<ResultSet, P>) new BigIntegerIndexedResultSetGetter(column);
 		}
 
 		return getter;

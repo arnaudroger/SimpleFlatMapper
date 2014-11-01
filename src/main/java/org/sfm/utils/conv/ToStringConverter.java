@@ -1,6 +1,5 @@
-package org.sfm.jdbc.jooq.conv;
+package org.sfm.utils.conv;
 
-import org.sfm.utils.Converter;
 
 public class ToStringConverter<I> implements Converter<I, String> {
 	@Override

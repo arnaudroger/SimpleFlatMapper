@@ -33,7 +33,7 @@ public class JdbcMapperDbExtentedTypeTest {
 				assertEquals(new BigInteger("123"), o.getBigInteger());
 				assertEquals(new BigDecimal("123.321").toString(), o.getBigDecimal().toString());
 				assertEquals(new Time(7, 8, 9), o.getTime());
-				assertEquals(new Date(14, 10, 2), o.getDate());
+				assertEquals(new Date(114, 10, 2), o.getDate());
 				
 			}
 		}, "select bytes, biginteger, bigdecimal, time, date from db_extented_type");

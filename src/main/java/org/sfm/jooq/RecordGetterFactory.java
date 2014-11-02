@@ -1,8 +1,12 @@
-package org.sfm.jdbc.jooq;
+package org.sfm.jooq;
 
 import java.lang.reflect.Type;
 
 import org.jooq.Record;
+import org.sfm.jooq.getter.EnumRecordNamedGetter;
+import org.sfm.jooq.getter.EnumRecordOrdinalGetter;
+import org.sfm.jooq.getter.RecordGetter;
+import org.sfm.jooq.getter.RecordGetterWithConverter;
 import org.sfm.map.GetterFactory;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;

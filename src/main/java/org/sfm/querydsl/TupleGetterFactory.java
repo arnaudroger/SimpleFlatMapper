@@ -1,8 +1,11 @@
-package org.sfm.jdbc.querydsl;
+package org.sfm.querydsl;
 
 import java.lang.reflect.Type;
 
 import org.sfm.map.GetterFactory;
+import org.sfm.querydsl.getter.EnumTupleNamedIndexedGetter;
+import org.sfm.querydsl.getter.EnumTupleOrdinalIndexedGetter;
+import org.sfm.querydsl.getter.TupleIndexedGetter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 

@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URL;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Time;
@@ -24,6 +23,7 @@ public class JdbcMapperDbExtentedTypeTest {
 		
 		
 		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public void handle(PreparedStatement t) throws Exception {
 				List<DbExtentedType> list = mapper.forEach(t.executeQuery(), new ListHandler<DbExtentedType>()).getList();

@@ -12,6 +12,7 @@ import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.DbHelper;
+import org.sfm.jooq.SfmRecordMapperProvider;
 
 public class JooqMapperTest {
 

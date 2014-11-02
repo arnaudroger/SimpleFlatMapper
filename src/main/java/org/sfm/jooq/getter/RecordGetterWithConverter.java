@@ -1,4 +1,4 @@
-package org.sfm.jdbc.jooq;
+package org.sfm.jooq.getter;
 
 import org.jooq.Record;
 import org.sfm.reflect.Getter;

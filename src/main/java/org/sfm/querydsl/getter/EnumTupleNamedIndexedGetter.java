@@ -1,5 +1,6 @@
-package org.sfm.jdbc.querydsl;
+package org.sfm.querydsl.getter;
 
+import org.sfm.querydsl.TupleElementKey;
 import org.sfm.reflect.Getter;
 
 import com.mysema.query.Tuple;

@@ -1,4 +1,4 @@
-package org.sfm.jdbc.jooq;
+package org.sfm.jooq;
 
 import org.jooq.Record;
 import org.sfm.map.FieldErrorHandlerMapper;

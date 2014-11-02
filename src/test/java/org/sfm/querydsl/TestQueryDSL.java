@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.DbHelper;
-import org.sfm.jdbc.querydsl.QueryDslMappingProjection;
+import org.sfm.querydsl.QueryDslMappingProjection;
 import org.springframework.dao.DataAccessException;
 
 import com.mysema.query.sql.HSQLDBTemplates;

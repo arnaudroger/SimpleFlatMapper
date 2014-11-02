@@ -1,4 +1,4 @@
-package org.sfm.jdbc.querydsl;
+package org.sfm.querydsl;
 
 import java.lang.reflect.Type;
 

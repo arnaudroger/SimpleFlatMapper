@@ -1,6 +1,7 @@
-package org.sfm.jdbc.jooq;
+package org.sfm.jooq.getter;
 
 import org.jooq.Record;
+import org.sfm.jooq.JooqFieldKey;
 import org.sfm.reflect.Getter;
 
 public final class EnumRecordNamedGetter<R extends Record, E extends Enum<E>> implements Getter<R, E> {

@@ -1,6 +1,7 @@
-package org.sfm.jdbc.jooq;
+package org.sfm.jooq.getter;
 
 import org.jooq.Record;
+import org.sfm.jooq.JooqFieldKey;
 import org.sfm.reflect.EnumHelper;
 import org.sfm.reflect.Getter;
 

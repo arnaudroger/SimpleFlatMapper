@@ -1,4 +1,4 @@
-package org.sfm.jdbc.jooq;
+package org.sfm.jooq;
 
 import java.lang.reflect.Type;
 

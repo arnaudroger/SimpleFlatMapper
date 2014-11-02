@@ -2,6 +2,7 @@ package org.sfm.utils.conv;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +52,8 @@ public class ConverterFactory {
 			return (Converter<F, P>) new ToStringConverter<F>();
 		} else if (TypeHelper.isNumber(outType) && TypeHelper.isNumber(inType)) {
 			return (Converter<F, P>) numberConvertors.get(TypeHelper.wrap(outType));
+		} else if (URL.class.equals(outType)) {
+			return  (Converter<F, P>)new URLConvertor<F>();
 		}
 		throw new IllegalArgumentException("No converter from " + inType + " to  " + outType);
 	}

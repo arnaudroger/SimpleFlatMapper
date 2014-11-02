@@ -36,7 +36,7 @@ public class JdbcMapperDbExtentedTypeTest {
 				assertEquals(new Date(114, 10, 2), o.getDate());
 				
 			}
-		}, "select bytes, biginteger, bigdecimal, time, date from db_extented_type");
+		}, "select bytes, biginteger, bigdecimal, time, date, url from db_extented_type");
 	}
 
 

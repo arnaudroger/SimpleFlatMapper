@@ -1,5 +1,6 @@
 package org.sfm.jdbc;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +16,10 @@ public class UrlResultSetGetter implements
 	}
 
 	public URL get(final ResultSet target) throws SQLException {
-		return target.getURL(column);
+		try {
+			return new URL(target.getString(column));
+		} catch (MalformedURLException e) {
+			throw new SQLException(e.getMessage(), e);
+		}
 	}
 }

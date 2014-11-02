@@ -171,7 +171,11 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
-				return (Getter<ResultSet, P>) new UrlResultSetGetter(key.getIndex());
+				if (key.getSqlType() == Types.DATALINK) {
+					return (Getter<ResultSet, P>) new UrlResultSetGetter(key.getIndex());
+				} else {
+					return (Getter<ResultSet, P>) new UrlFromStringResultSetGetter(key.getIndex());
+				}
 			}
 		});
 		

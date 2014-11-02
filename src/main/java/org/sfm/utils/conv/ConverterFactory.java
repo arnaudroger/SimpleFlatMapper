@@ -53,7 +53,7 @@ public class ConverterFactory {
 		} else if (TypeHelper.isNumber(outType) && TypeHelper.isNumber(inType)) {
 			return (Converter<F, P>) numberConvertors.get(TypeHelper.wrap(outType));
 		} else if (URL.class.equals(outType)) {
-			return  (Converter<F, P>)new URLConvertor<F>();
+			return  (Converter<F, P>)new StringToURLConvertor<F>();
 		}
 		throw new IllegalArgumentException("No converter from " + inType + " to  " + outType);
 	}

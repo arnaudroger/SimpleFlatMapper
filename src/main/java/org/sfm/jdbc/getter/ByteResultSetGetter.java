@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.ByteGetter;
 
-public final class ByteIndexedResultSetGetter implements ByteGetter<ResultSet>, Getter<ResultSet, Byte> {
+public final class ByteResultSetGetter implements ByteGetter<ResultSet>, Getter<ResultSet, Byte> {
 
 	private final int column;
 	
-	public ByteIndexedResultSetGetter(final int column) {
+	public ByteResultSetGetter(final int column) {
 		this.column = column;
 	}
 

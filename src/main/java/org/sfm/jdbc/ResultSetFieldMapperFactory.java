@@ -5,14 +5,14 @@ import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Date;
 
-import org.sfm.jdbc.getter.BooleanIndexedResultSetGetter;
-import org.sfm.jdbc.getter.ByteIndexedResultSetGetter;
-import org.sfm.jdbc.getter.CharacterIndexedResultSetGetter;
-import org.sfm.jdbc.getter.DoubleIndexedResultSetGetter;
-import org.sfm.jdbc.getter.FloatIndexedResultSetGetter;
-import org.sfm.jdbc.getter.IntIndexedResultSetGetter;
-import org.sfm.jdbc.getter.LongIndexedResultSetGetter;
-import org.sfm.jdbc.getter.ShortIndexedResultSetGetter;
+import org.sfm.jdbc.getter.BooleanResultSetGetter;
+import org.sfm.jdbc.getter.ByteResultSetGetter;
+import org.sfm.jdbc.getter.CharacterResultSetGetter;
+import org.sfm.jdbc.getter.DoubleResultSetGetter;
+import org.sfm.jdbc.getter.FloatResultSetGetter;
+import org.sfm.jdbc.getter.IntResultSetGetter;
+import org.sfm.jdbc.getter.LongResultSetGetter;
+import org.sfm.jdbc.getter.ShortResultSetGetter;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.FieldMapperFactory;
@@ -47,35 +47,35 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<ResultSet, T>(
-					new BooleanIndexedResultSetGetter(key.getIndex()),
+					new BooleanResultSetGetter(key.getIndex()),
 					SetterFactory.toBooleanSetter(setter));
 		} else if (type.equals(Integer.TYPE)) {
 			return new IntFieldMapper<ResultSet, T>(
-					new IntIndexedResultSetGetter(key.getIndex()),
+					new IntResultSetGetter(key.getIndex()),
 					SetterFactory.toIntSetter(setter));
 		} else if (type.equals(Long.TYPE)) {
 			return new LongFieldMapper<ResultSet, T>(
-					new LongIndexedResultSetGetter(key.getIndex()),
+					new LongResultSetGetter(key.getIndex()),
 					SetterFactory.toLongSetter(setter));
 		} else if (type.equals(Float.TYPE)) {
 			return new FloatFieldMapper<ResultSet, T>(
-					new FloatIndexedResultSetGetter(key.getIndex()),
+					new FloatResultSetGetter(key.getIndex()),
 					SetterFactory.toFloatSetter(setter));
 		} else if (type.equals(Double.TYPE)) {
 			return new DoubleFieldMapper<ResultSet, T>(
-					new DoubleIndexedResultSetGetter(key.getIndex()),
+					new DoubleResultSetGetter(key.getIndex()),
 					SetterFactory.toDoubleSetter(setter));
 		} else if (type.equals(Byte.TYPE)) {
 			return new ByteFieldMapper<ResultSet, T>(
-					new ByteIndexedResultSetGetter(key.getIndex()),
+					new ByteResultSetGetter(key.getIndex()),
 					SetterFactory.toByteSetter(setter));
 		} else if (type.equals(Character.TYPE)) {
 			return new CharacterFieldMapper<ResultSet, T>(
-					new CharacterIndexedResultSetGetter(key.getIndex()),
+					new CharacterResultSetGetter(key.getIndex()),
 					SetterFactory.toCharacterSetter(setter));
 		} else if (type.equals(Short.TYPE)) {
 			return new ShortFieldMapper<ResultSet, T>(
-					new ShortIndexedResultSetGetter(key.getIndex()),
+					new ShortResultSetGetter(key.getIndex()),
 					SetterFactory.toShortSetter(setter));
 		} else {
 			throw new UnsupportedOperationException("Type " + type

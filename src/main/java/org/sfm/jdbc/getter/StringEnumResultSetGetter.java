@@ -4,12 +4,12 @@ import java.sql.ResultSet;
 
 import org.sfm.reflect.Getter;
 
-public final class StringEnumIndexedResultSetGetter<E extends Enum<E>> implements Getter<ResultSet, E> {
+public final class StringEnumResultSetGetter<E extends Enum<E>> implements Getter<ResultSet, E> {
 
 	private final int columnIndex;
 	private final Class<E> enumType;
 	
-	public StringEnumIndexedResultSetGetter(final int column, final Class<E> enumType)  {
+	public StringEnumResultSetGetter(final int column, final Class<E> enumType)  {
 		this.columnIndex = column;
 		this.enumType = enumType;
 	}

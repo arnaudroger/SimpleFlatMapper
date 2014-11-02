@@ -5,13 +5,13 @@ import java.sql.ResultSet;
 import org.sfm.reflect.EnumHelper;
 import org.sfm.reflect.Getter;
 
-public final class EnumIndexedResultSetGetter<E extends Enum<E>> implements  Getter<ResultSet, E> {
+public final class EnumResultSetGetter<E extends Enum<E>> implements  Getter<ResultSet, E> {
 
 	private final int columnIndex;
 	private final Class<E> enumType;
 	private final E[] values;
 	
-	public EnumIndexedResultSetGetter(final int column, final Class<E> enumType)  {
+	public EnumResultSetGetter(final int column, final Class<E> enumType)  {
 		this.columnIndex = column;
 		this.enumType = enumType;
 		this.values = EnumHelper.getValues(enumType);

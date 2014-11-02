@@ -6,22 +6,26 @@ import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import org.sfm.jdbc.getter.BigDecimalIndexedResultSetGetter;
-import org.sfm.jdbc.getter.BigIntegerIndexedResultSetGetter;
-import org.sfm.jdbc.getter.BooleanIndexedResultSetGetter;
-import org.sfm.jdbc.getter.ByteIndexedResultSetGetter;
-import org.sfm.jdbc.getter.CharacterIndexedResultSetGetter;
-import org.sfm.jdbc.getter.DoubleIndexedResultSetGetter;
-import org.sfm.jdbc.getter.EnumIndexedResultSetGetter;
-import org.sfm.jdbc.getter.FloatIndexedResultSetGetter;
-import org.sfm.jdbc.getter.IntIndexedResultSetGetter;
-import org.sfm.jdbc.getter.LongIndexedResultSetGetter;
-import org.sfm.jdbc.getter.OrdinalEnumIndexedResultSetGetter;
-import org.sfm.jdbc.getter.ShortIndexedResultSetGetter;
-import org.sfm.jdbc.getter.StringEnumIndexedResultSetGetter;
-import org.sfm.jdbc.getter.StringIndexedResultSetGetter;
-import org.sfm.jdbc.getter.TimestampIndexedResultSetGetter;
+import org.sfm.jdbc.getter.BigDecimalResultSetGetter;
+import org.sfm.jdbc.getter.BigIntegerResultSetGetter;
+import org.sfm.jdbc.getter.BooleanResultSetGetter;
+import org.sfm.jdbc.getter.ByteResultSetGetter;
+import org.sfm.jdbc.getter.CharacterResultSetGetter;
+import org.sfm.jdbc.getter.DoubleResultSetGetter;
+import org.sfm.jdbc.getter.EnumResultSetGetter;
+import org.sfm.jdbc.getter.FloatResultSetGetter;
+import org.sfm.jdbc.getter.IntResultSetGetter;
+import org.sfm.jdbc.getter.LongResultSetGetter;
+import org.sfm.jdbc.getter.OrdinalEnumResultSetGetter;
+import org.sfm.jdbc.getter.ShortResultSetGetter;
+import org.sfm.jdbc.getter.StringEnumResultSetGetter;
+import org.sfm.jdbc.getter.StringResultSetGetter;
+import org.sfm.jdbc.getter.TimeResultSetGetter;
+import org.sfm.jdbc.getter.TimestampResultSetGetter;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.Getter;
@@ -30,71 +34,161 @@ import org.sfm.reflect.TypeHelper;
 public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey>{
 	public static final int UNDEFINED = -99999;
 
-	@SuppressWarnings("unchecked")
-	private <P> Getter<ResultSet, P> newIndexedGetter(
-			Type genericType, JdbcColumnKey key) {
-		Getter<ResultSet, P> getter = null;
+	@SuppressWarnings("serial")
+	private static final Map<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>> factoryPerType = 
+		new HashMap<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>>() {{
+		put(String.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new StringResultSetGetter(key.getIndex());
+			}
+		});
+		put(Date.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				switch (key.getSqlType()) {
+				 case JdbcColumnKey.UNDEFINED_TYPE:
+				 case Types.TIMESTAMP:
+						return (Getter<ResultSet, P>) new TimestampResultSetGetter(key.getIndex());
+				 case Types.DATE: 
+						return (Getter<ResultSet, P>) new DateResultSetGetter(key.getIndex());
+				 case Types.TIME:
+						return (Getter<ResultSet, P>) new TimeResultSetGetter(key.getIndex());
+				default:
+					return null;
+				}
+			}
+		});
+		put(Boolean.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new BooleanResultSetGetter(key.getIndex());
+			}
+		});
+		put(Byte.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new ByteResultSetGetter(key.getIndex());
+			}
+		});
+		put(Character.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new CharacterResultSetGetter(key.getIndex());
+			}
+		});
+		put(Short.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new ShortResultSetGetter(key.getIndex());
+			}
+		});
+		put(Integer.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new IntResultSetGetter(key.getIndex());
+			}
+		});
+		put(Long.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new LongResultSetGetter(key.getIndex());
+			}
+		});
+		put(Float.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new FloatResultSetGetter(key.getIndex());
+			}
+		});
+		put(Double.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new DoubleResultSetGetter(key.getIndex());
+			}
+		});
+		put(BigInteger.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new BigIntegerResultSetGetter(key.getIndex());
+			}
+		});
+		put(BigDecimal.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new BigDecimalResultSetGetter(key.getIndex());
+			}
+		});
 		
-		Class<?> type = TypeHelper.toClass(genericType);
-		int column = key.getIndex();
-		if (String.class.isAssignableFrom(type)) {
-			getter = (Getter<ResultSet, P>) new StringIndexedResultSetGetter(column);
-		} else if (Date.class.isAssignableFrom(type)) {
-			getter = (Getter<ResultSet, P>) new TimestampIndexedResultSetGetter(column);
-		} else if (type.equals(Boolean.class) || type.equals(boolean.class)) {
-			getter = (Getter<ResultSet, P>) new BooleanIndexedResultSetGetter(column);
-		} else if (type.equals(Integer.class) || type.equals(int.class)) {
-			getter = (Getter<ResultSet, P>) new IntIndexedResultSetGetter(column);
-		} else if (type.equals(Long.class) || type.equals(long.class)) {
-			getter = (Getter<ResultSet, P>) new LongIndexedResultSetGetter(column);
-		} else if (type.equals(Float.class) || type.equals(float.class)) {
-			getter = (Getter<ResultSet, P>) new FloatIndexedResultSetGetter(column);
-		} else if (type.equals(Double.class) || type.equals(double.class)) {
-			getter = (Getter<ResultSet, P>) new DoubleIndexedResultSetGetter(column);
-		} else if (type.equals(Byte.class) || type.equals(byte.class)) {
-			getter = (Getter<ResultSet, P>) new ByteIndexedResultSetGetter(column);
-		} else if (type.equals(Character.class) || type.equals(char.class)) {
-			getter = (Getter<ResultSet, P>) new CharacterIndexedResultSetGetter(column);
-		} else if (type.equals(Short.class) || type.equals(short.class)) {
-			getter = (Getter<ResultSet, P>) new ShortIndexedResultSetGetter(column);
-		} else if (Enum.class.isAssignableFrom(type)) {
-			@SuppressWarnings("rawtypes")
-			Class<? extends Enum> enumClass = (Class<? extends Enum>) type; 
-			getter = indexEnumGetter(enumClass, key);
-		} else if (BigDecimal.class.equals(type)) {
-			getter = (Getter<ResultSet, P>) new BigDecimalIndexedResultSetGetter(column);
-		} else if (BigInteger.class.equals(type)) {
-			getter = (Getter<ResultSet, P>) new BigIntegerIndexedResultSetGetter(column);
-		}
+		put(Enum.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type type, JdbcColumnKey key) {
+				@SuppressWarnings("rawtypes")
+				Class<? extends Enum> enumClass = TypeHelper.toClass(type); 
+				return (Getter<ResultSet, P>) newEnumGetter(enumClass, key);
+			}
+			
+			private <P extends Enum<P>> Getter<ResultSet, P> newEnumGetter(Class<P> type, JdbcColumnKey key) {
+				int column = key.getIndex();
+				switch(key.getSqlType()) {
+				case JdbcColumnKey.UNDEFINED_TYPE: 
+					return new EnumResultSetGetter<P>(column, type);
+				case Types.BIGINT:
+				case Types.INTEGER:
+				case Types.NUMERIC:
+				case Types.SMALLINT:
+				case Types.TINYINT:
+					return  new OrdinalEnumResultSetGetter<P>(column, type);
+				case Types.CHAR:
+				case Types.LONGNVARCHAR:
+				case Types.LONGVARCHAR:
+				case Types.NCHAR:
+				case Types.NVARCHAR:
+				case Types.VARCHAR:
+					return  new StringEnumResultSetGetter<P>(column, type);
+				default:
+					throw new MapperBuildingException("Incompatible type " + key.getSqlType() + " with enum");
+				}
+			}
+		});	
+	}};
 
+	@Override
+	public <P> Getter<ResultSet, P> newGetter(Type genericType,
+			JdbcColumnKey key) {
+		
+		Class<?> clazz = TypeHelper.wrap(TypeHelper.toClass(genericType));
+		
+		GetterFactory<ResultSet, JdbcColumnKey> getterFactory = factoryPerType.get(clazz);
+		
+		if (getterFactory == null) {
+			for(Entry<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>> e : factoryPerType.entrySet()) {
+				if (e.getKey().isAssignableFrom(clazz)) {
+					getterFactory = e.getValue();
+					break;
+				}
+			}
+		}
+		
+		Getter<ResultSet, P> getter = null;
+		if (getterFactory != null) {
+			getter = getterFactory.newGetter(genericType, key);
+		}
 		return getter;
 	}
-
-	private <P extends Enum<P>> Getter<ResultSet, P> indexEnumGetter(Class<P> type, JdbcColumnKey key) {
-		int column = key.getIndex();
-		switch(key.getSqlType()) {
-		case JdbcColumnKey.UNDEFINED_TYPE: 
-			return new EnumIndexedResultSetGetter<P>(column, type);
-		case Types.BIGINT:
-		case Types.INTEGER:
-		case Types.NUMERIC:
-		case Types.SMALLINT:
-		case Types.TINYINT:
-			return  new OrdinalEnumIndexedResultSetGetter<P>(column, type);
-		case Types.CHAR:
-		case Types.LONGNVARCHAR:
-		case Types.LONGVARCHAR:
-		case Types.NCHAR:
-		case Types.NVARCHAR:
-		case Types.VARCHAR:
-			return  new StringEnumIndexedResultSetGetter<P>(column, type);
-		default:
-			throw new MapperBuildingException("Incompatible type " + key.getSqlType() + " with enum");
-		}
-	}
 	
-	@Override
-	public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
-		return newIndexedGetter(genericType, key);
-	}
+	
 }

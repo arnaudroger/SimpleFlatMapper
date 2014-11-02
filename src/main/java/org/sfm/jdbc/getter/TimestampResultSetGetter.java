@@ -6,10 +6,10 @@ import java.sql.Timestamp;
 
 import org.sfm.reflect.Getter;
 
-public final class TimestampIndexedResultSetGetter implements Getter<ResultSet, Timestamp> {
+public final class TimestampResultSetGetter implements Getter<ResultSet, Timestamp> {
 	private final int column;
 	
-	public TimestampIndexedResultSetGetter(final int column) {
+	public TimestampResultSetGetter(final int column) {
 		this.column = column;
 	}
 

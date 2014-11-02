@@ -12,9 +12,9 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.jdbc.getter.LongIndexedResultSetGetter;
-import org.sfm.jdbc.getter.OrdinalEnumIndexedResultSetGetter;
-import org.sfm.jdbc.getter.StringIndexedResultSetGetter;
+import org.sfm.jdbc.getter.LongResultSetGetter;
+import org.sfm.jdbc.getter.OrdinalEnumResultSetGetter;
+import org.sfm.jdbc.getter.StringResultSetGetter;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MappingException;
 import org.sfm.map.RethrowRowHandlerErrorHandler;
@@ -38,8 +38,8 @@ public class AsmFactoryTest {
 				ConstructorDefinition.extractConstructors(DbFinalObject.class).get(0),
 				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
-						put(new ConstructorParameter("id", long.class), new LongIndexedResultSetGetter(1));
-						put(new ConstructorParameter("name", String.class), new StringIndexedResultSetGetter(2));
+						put(new ConstructorParameter("id", long.class), new LongResultSetGetter(1));
+						put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
 					}
 				}
 				);
@@ -63,8 +63,8 @@ public class AsmFactoryTest {
 				ConstructorDefinition.extractConstructors(DbFinalObject.class).get(0),
 				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
-						put(new ConstructorParameter("id", long.class), new LongIndexedResultSetGetter(1));
-						put(new ConstructorParameter("name", String.class), new StringIndexedResultSetGetter(2));
+						put(new ConstructorParameter("id", long.class), new LongResultSetGetter(1));
+						put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
 					}
 				}
 				));
@@ -77,8 +77,8 @@ public class AsmFactoryTest {
 				ConstructorDefinition.extractConstructors(DbFinalObject.class).get(0),
 				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
-						put(new ConstructorParameter("typeOrdinal", Type.class), new OrdinalEnumIndexedResultSetGetter<Type>(1, Type.class));
-						put(new ConstructorParameter("name", String.class), new StringIndexedResultSetGetter(2));
+						put(new ConstructorParameter("typeOrdinal", Type.class), new OrdinalEnumResultSetGetter<Type>(1, Type.class));
+						put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
 					}
 				}
 				);

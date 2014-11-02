@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.FloatGetter;
 
-public final class FloatIndexedResultSetGetter implements FloatGetter<ResultSet>, Getter<ResultSet, Float> {
+public final class FloatResultSetGetter implements FloatGetter<ResultSet>, Getter<ResultSet, Float> {
 
 	private final int column;
 	
-	public FloatIndexedResultSetGetter(final int column) {
+	public FloatResultSetGetter(final int column) {
 		this.column = column;
 	}
 

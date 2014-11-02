@@ -5,11 +5,11 @@ import java.sql.ResultSet;
 
 import org.sfm.reflect.Getter;
 
-public final class BigDecimalIndexedResultSetGetter implements Getter<ResultSet, BigDecimal> {
+public final class BigDecimalResultSetGetter implements Getter<ResultSet, BigDecimal> {
 
 	private final int column;
 
-	public BigDecimalIndexedResultSetGetter(final int column) {
+	public BigDecimalResultSetGetter(final int column) {
 		this.column = column;
 	}
 

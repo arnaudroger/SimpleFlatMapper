@@ -5,10 +5,10 @@ import java.sql.SQLException;
 
 import org.sfm.reflect.Getter;
 
-public final class StringIndexedResultSetGetter implements Getter<ResultSet, String> {
+public final class StringResultSetGetter implements Getter<ResultSet, String> {
 	private final int column;
 	
-	public StringIndexedResultSetGetter(final int column) {
+	public StringResultSetGetter(final int column) {
 		this.column = column;
 	}
 

@@ -3,6 +3,7 @@ package org.sfm.jdbc;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Date;
@@ -164,6 +165,14 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				}
 			}
 		});	
+		
+		put(URL.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new UrlResultSetGetter(key.getIndex());
+			}
+		});
 	}};
 
 	@Override

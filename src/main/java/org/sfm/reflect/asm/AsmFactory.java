@@ -114,19 +114,19 @@ public class AsmFactory implements Opcodes {
 	}
 
 	private String replaceArray(String simpleName) {
-		return simpleName.replace('[', '_').replace(']', '_');
+		return simpleName.replace('[', 's').replace(']', '_');
 	}
 
 	private String generateClassName(final Method m) {
 		return "org.sfm.reflect.asm." + m.getDeclaringClass().getPackage().getName() + 
 					".AsmSetter" + m.getName()
-					 + m.getDeclaringClass().getSimpleName()
-					 + m.getParameterTypes()[0].getSimpleName()
+					 + replaceArray(m.getDeclaringClass().getSimpleName())
+					 + replaceArray(m.getParameterTypes()[0].getSimpleName())
 					;
 	}
 	
 	private <S, T> String generateClassName(final FieldMapper<S, T>[] mappers, final Class<S> source, final Class<T> target) {
 		return "org.sfm.reflect.asm." + target.getPackage().getName() + 
-					".AsmMapper" + source.getSimpleName() + "2" +  target.getSimpleName() + mappers.length + "_" + classNumber.getAndIncrement(); 
+					".AsmMapper" + replaceArray(source.getSimpleName()) + "2" +  replaceArray(target.getSimpleName()) + mappers.length + "_" + classNumber.getAndIncrement(); 
 	}
 }

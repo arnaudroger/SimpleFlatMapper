@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import org.sfm.jdbc.getter.BigDecimalResultSetGetter;
 import org.sfm.jdbc.getter.BigIntegerResultSetGetter;
 import org.sfm.jdbc.getter.BooleanResultSetGetter;
+import org.sfm.jdbc.getter.ByteArrayResultSetGetter;
 import org.sfm.jdbc.getter.ByteResultSetGetter;
 import org.sfm.jdbc.getter.CharacterResultSetGetter;
 import org.sfm.jdbc.getter.DoubleResultSetGetter;
@@ -171,6 +172,14 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new UrlResultSetGetter(key.getIndex());
+			}
+		});
+		
+		put(byte[].class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new ByteArrayResultSetGetter(key.getIndex());
 			}
 		});
 	}};

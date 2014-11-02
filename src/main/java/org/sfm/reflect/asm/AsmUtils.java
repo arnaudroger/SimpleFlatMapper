@@ -158,7 +158,8 @@ public class AsmUtils {
 			sb.append("<");
 			
 			for(TypeVariable<?> t : typeParameters) {
-				sb.append("L").append(toType(t.getName())).append(";");
+				String typeName = t.getName();
+				sb.append(toTypeParam(typeName));
 			}
 			
 			sb.append(">");
@@ -167,6 +168,13 @@ public class AsmUtils {
 		return sb.toString();
 	}
 
+	public static String toTypeParam(String typeName) {
+		if (typeName.startsWith("[")) {
+			return typeName;
+		} else {
+			return "L" + toType(typeName) + ";";
+		}
+	}
 	public static Type toGenericType(String sig) throws ClassNotFoundException {
 		if (sig.length() == 1) {
 			switch (sig.charAt(0)) {

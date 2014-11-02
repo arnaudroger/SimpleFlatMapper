@@ -30,6 +30,24 @@ public class DbHelper {
 				createDbObject(st);
 
 				st.execute("insert into TEST_DB_OBJECT values(1, 'name 1', 'name1@mail.com', TIMESTAMP'2014-03-04 11:10:03', 2, 'type4')");
+				
+				
+				st.execute("create table db_extented_type("
+						+ " bytes varbinary(10),"
+						+ " url varchar(100), "
+						+ " time TIME(6),"
+						+ " date DATE,"
+						+ " bigdecimal decimal(10,3),"
+						+ " biginteger bigint  )");
+				
+				PreparedStatement ps = c.prepareStatement("insert into db_extented_type values (?, 'https://github.com/arnaudroger/SimpleFlatMapper',"
+						+ "'07:08:09', '2014-11-02', 123.321, 123)");
+				try {
+					ps.setBytes(1, new byte[] { 'a', 'b', 'c' });
+					ps.execute();
+				} finally {
+					ps.close();
+				}
 				c.commit();
 			} finally {
 				st.close();

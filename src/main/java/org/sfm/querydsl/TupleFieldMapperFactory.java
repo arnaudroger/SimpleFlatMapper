@@ -1,12 +1,12 @@
 package org.sfm.querydsl;
 
-import org.sfm.map.FieldErrorHandlerMapper;
-import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.FieldMapperFactory;
-import org.sfm.map.FieldMapperImpl;
-import org.sfm.map.GetterFactory;
 import org.sfm.map.MapperBuilderErrorHandler;
+import org.sfm.map.impl.FieldErrorHandlerMapper;
+import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.impl.FieldMapperFactory;
+import org.sfm.map.impl.GetterFactory;
+import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.TypeHelper;

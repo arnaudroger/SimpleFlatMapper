@@ -3,15 +3,16 @@ package org.sfm.csv;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sfm.jdbc.AsmHelper;
+import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
-import org.sfm.map.RethrowFieldMapperErrorHandler;
-import org.sfm.map.RethrowMapperBuilderErrorHandler;
+import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
+import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
 import org.sfm.osgi.BridgeClassLoader;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.asm.AsmHelper;
 
 public final class CsvMapperFactory {
 	

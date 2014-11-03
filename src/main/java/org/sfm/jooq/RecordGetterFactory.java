@@ -7,7 +7,7 @@ import org.sfm.jooq.getter.EnumRecordNamedGetter;
 import org.sfm.jooq.getter.EnumRecordOrdinalGetter;
 import org.sfm.jooq.getter.RecordGetter;
 import org.sfm.jooq.getter.RecordGetterWithConverter;
-import org.sfm.map.GetterFactory;
+import org.sfm.map.impl.GetterFactory;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.utils.conv.Converter;
@@ -19,7 +19,7 @@ public class RecordGetterFactory<R extends Record> implements
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public <P> Getter<R, P> newGetter(Type genericType, JooqFieldKey key) {
-		Class<Object> propretyClass = TypeHelper.toClass(genericType);
+		Class<P> propretyClass = TypeHelper.toClass(genericType);
 		if (Enum.class.isAssignableFrom(propretyClass)) {
 			Class<?> columnType = key.getField().getType();
 			
@@ -32,18 +32,20 @@ public class RecordGetterFactory<R extends Record> implements
 			}
 		}
 		
-		Class<P> clazz = TypeHelper.toClass(genericType);
-		
-		if (TypeHelper.areCompatible(clazz, key.getField().getType())) {
+		if (TypeHelper.areCompatible(propretyClass, key.getField().getType())) {
 			return new RecordGetter<R, P>(key.getIndex());
 		} else {
-			return newRecordGetterWithConverter(key.getField().getType(), clazz, key.getIndex());
+			return newRecordGetterWithConverter(key.getField().getType(), propretyClass, key.getIndex());
 		}
 	}
 	
 	private <P, F> Getter<R, P> newRecordGetterWithConverter(Class<F> inType, Class<P> outType, int index) {
 		Converter<F, P> converter = ConverterFactory.getConverter(inType, outType);
-		return new RecordGetterWithConverter<R, P, F>(index, converter);
+		if (converter != null) {
+			return new RecordGetterWithConverter<R, P, F>(index, converter);
+		} else {
+			return null;
+		}
 	}
 
 }

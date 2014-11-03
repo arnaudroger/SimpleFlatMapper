@@ -4,8 +4,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.sfm.jdbc.AsmHelper;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.asm.AsmHelper;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ListClassMeta;
 import org.sfm.reflect.meta.ObjectClassMeta;

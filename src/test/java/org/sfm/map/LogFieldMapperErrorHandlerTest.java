@@ -1,6 +1,7 @@
 package org.sfm.map;
 
 import org.junit.Test;
+import org.sfm.map.impl.LogFieldMapperErrorHandler;
 
 public class LogFieldMapperErrorHandlerTest {
 

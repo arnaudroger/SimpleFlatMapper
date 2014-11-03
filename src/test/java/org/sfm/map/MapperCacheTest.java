@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.text.ParseException;
 
 import org.junit.Test;
+import org.sfm.map.impl.ColumnsMapperKey;
+import org.sfm.map.impl.MapperCache;
 
 public class MapperCacheTest {
 

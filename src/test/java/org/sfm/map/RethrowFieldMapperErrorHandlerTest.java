@@ -4,6 +4,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
 
 public class RethrowFieldMapperErrorHandlerTest {
 

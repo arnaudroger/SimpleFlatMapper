@@ -13,6 +13,9 @@ public class DbExtentedType {
 	private java.sql.Date date;
 	private BigDecimal bigDecimal;
 	private BigInteger bigInteger;
+	private String[] stringArray;
+	
+	
 	public byte[] getBytes() {
 		return bytes;
 	}
@@ -48,6 +51,12 @@ public class DbExtentedType {
 	}
 	public void setBigInteger(BigInteger bigInteger) {
 		this.bigInteger = bigInteger;
+	}
+	public String[] getStringArray() {
+		return stringArray;
+	}
+	public void setStringArray(String[] stringArray) {
+		this.stringArray = stringArray;
 	}
 	
 }

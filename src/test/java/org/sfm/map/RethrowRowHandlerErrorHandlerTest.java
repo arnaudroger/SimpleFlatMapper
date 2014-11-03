@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.sfm.jdbc.HandlerErrorException;
-import org.sfm.map.RethrowRowHandlerErrorHandler;
+import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
 
 public class RethrowRowHandlerErrorHandlerTest {
 

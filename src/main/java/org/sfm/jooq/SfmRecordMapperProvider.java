@@ -6,8 +6,8 @@ import org.jooq.RecordMapper;
 import org.jooq.RecordMapperProvider;
 import org.jooq.RecordType;
 import org.sfm.map.Mapper;
-import org.sfm.map.MapperCache;
-import org.sfm.map.TargetColumnsMapperKey;
+import org.sfm.map.impl.MapperCache;
+import org.sfm.map.impl.TargetColumnsMapperKey;
 
 public class SfmRecordMapperProvider implements RecordMapperProvider {
 

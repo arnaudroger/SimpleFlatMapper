@@ -70,6 +70,7 @@ public class JdbcMapperConstructorInjectionTest {
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.getString(1)).thenReturn("propValue1");
 		when(rs.getTimestamp(2)).thenReturn(ts);
+		when(rs.getObject(2)).thenReturn(ts);
 		
 		DbConstructorObject  o = mapper.map(rs);
 		
@@ -91,6 +92,7 @@ public class JdbcMapperConstructorInjectionTest {
 		
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.getTimestamp(1)).thenReturn(ts);
+		when(rs.getObject(1)).thenReturn(ts);
 		
 		DbConstructorObject  o = mapper.map(rs);
 		
@@ -169,6 +171,7 @@ public class JdbcMapperConstructorInjectionTest {
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.getString(1)).thenReturn("propValue1");
 		when(rs.getTimestamp(2)).thenReturn(ts);
+		when(rs.getObject(2)).thenReturn(ts);
 		
 		DbConstructorObject  o = mapper.map(rs);
 		
@@ -190,7 +193,8 @@ public class JdbcMapperConstructorInjectionTest {
 		
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.getTimestamp(1)).thenReturn(ts);
-		
+		when(rs.getObject(1)).thenReturn(ts);
+
 		DbConstructorObject  o = mapper.map(rs);
 		
 		assertNull(o.getProp1());

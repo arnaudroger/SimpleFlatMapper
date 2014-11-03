@@ -7,8 +7,8 @@ import java.sql.ResultSet;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.sfm.map.FieldMapper;
 import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.map.impl.FieldMapper;
 
 public class JdbcMapperAsmBuilder {
 	public static <S,T> byte[] dump (final String className, final FieldMapper<S, T>[] mappers, final Class<T> target) throws Exception {
@@ -20,20 +20,20 @@ public class JdbcMapperAsmBuilder {
 		final String targetType = AsmUtils.toType(target);
 		final String sourceType = AsmUtils.toType(sourceClass);
 		final String classType = AsmUtils.toType(className);
-		cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType, "Lorg/sfm/jdbc/AbstractJdbcMapperImpl<L" + targetType + ";>;", "org/sfm/jdbc/AbstractJdbcMapperImpl", null);
+		cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType, "Lorg/sfm/jdbc/impl/AbstractJdbcMapperImpl<L" + targetType + ";>;", "org/sfm/jdbc/impl/AbstractJdbcMapperImpl", null);
 
 		for(int i = 0; i < mappers.length; i++) {
 			declareMapperFields(cw,  mappers[i], targetType, sourceType, i);  
 		}
 
 		{
-			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "([Lorg/sfm/map/FieldMapper;Lorg/sfm/reflect/Instantiator;L" + AsmUtils.toType(RowHandlerErrorHandler.class) + ";)V", "([Lorg/sfm/map/FieldMapper<L" + sourceType + ";L" + targetType + ";>;Lorg/sfm/reflect/Instantiator<L" + targetType + ";>;L" + AsmUtils.toType(RowHandlerErrorHandler.class) + ";)V", null);
+			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "([Lorg/sfm/map/impl/FieldMapper;Lorg/sfm/reflect/Instantiator;L" + AsmUtils.toType(RowHandlerErrorHandler.class) + ";)V", "([Lorg/sfm/map/impl/FieldMapper<L" + sourceType + ";L" + targetType + ";>;Lorg/sfm/reflect/Instantiator<L" + targetType + ";>;L" + AsmUtils.toType(RowHandlerErrorHandler.class) + ";)V", null);
 
 			mv.visitCode();
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitVarInsn(ALOAD, 2);
 			mv.visitVarInsn(ALOAD, 3);
-			mv.visitMethodInsn(INVOKESPECIAL, "org/sfm/jdbc/AbstractJdbcMapperImpl", "<init>", "(Lorg/sfm/reflect/Instantiator;Lorg/sfm/map/RowHandlerErrorHandler;)V", false);
+			mv.visitMethodInsn(INVOKESPECIAL, "org/sfm/jdbc/impl/AbstractJdbcMapperImpl", "<init>", "(Lorg/sfm/reflect/Instantiator;Lorg/sfm/map/RowHandlerErrorHandler;)V", false);
 			
 			
 			for(int i = 0; i < mappers.length; i++) {

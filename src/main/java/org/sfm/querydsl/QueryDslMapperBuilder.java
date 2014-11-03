@@ -2,10 +2,10 @@ package org.sfm.querydsl;
 
 import java.lang.reflect.Type;
 
-import org.sfm.map.AbstractFieldMapperMapperBuilder;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
-import org.sfm.map.MapperImpl;
+import org.sfm.map.impl.AbstractFieldMapperMapperBuilder;
+import org.sfm.map.impl.MapperImpl;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 

@@ -3,14 +3,14 @@ package org.sfm.csv.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sfm.csv.cell.StringCellValueReader;
+import org.sfm.csv.impl.cellreader.StringCellValueReader;
 import org.sfm.utils.RowHandler;
 
-final class StringArrayHandler implements CharsCellHandler {
+public final class StringArrayHandler implements CharsCellHandler {
 	private final RowHandler<String[]> handler;
 	private final List<String> currentRow = new ArrayList<String>(10);
 
-	StringArrayHandler(RowHandler<String[]> handler) {
+	public StringArrayHandler(RowHandler<String[]> handler) {
 		this.handler = handler;
 	}
 

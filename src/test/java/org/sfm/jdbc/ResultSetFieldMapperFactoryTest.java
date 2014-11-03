@@ -5,10 +5,12 @@ import java.sql.ResultSet;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.map.FieldMapper;
+import org.sfm.jdbc.impl.ResultSetFieldMapperFactory;
+import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.RethrowMapperBuilderErrorHandler;
-import org.sfm.map.primitive.LongFieldMapper;
+import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
+import org.sfm.map.impl.fieldmapper.LongFieldMapper;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 

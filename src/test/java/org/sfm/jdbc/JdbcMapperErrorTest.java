@@ -10,11 +10,12 @@ import java.sql.SQLException;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.Foo;
-import org.sfm.map.FieldMapper;
-import org.sfm.map.LogFieldMapperErrorHandler;
+import org.sfm.jdbc.impl.JdbcMapperImpl;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
-import org.sfm.map.RethrowRowHandlerErrorHandler;
+import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.impl.LogFieldMapperErrorHandler;
+import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
 

@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPartialFinalObject;
+import org.sfm.csv.impl.ParsingContext;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;

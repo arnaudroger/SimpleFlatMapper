@@ -12,8 +12,8 @@ import java.util.List;
 import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
-import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.impl.FieldMapper;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.RowHandler;
 

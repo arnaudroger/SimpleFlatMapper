@@ -6,14 +6,16 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sfm.map.FieldMapper;
+import org.sfm.jdbc.impl.DynamicJdbcMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
-import org.sfm.map.RethrowMapperBuilderErrorHandler;
+import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
 import org.sfm.osgi.BridgeClassLoader;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.asm.AsmHelper;
 
 public final class JdbcMapperFactory {
 	
@@ -134,11 +136,23 @@ public final class JdbcMapperFactory {
 		return new ReflectionService(AsmHelper.isAsmPresent() && !disableAsm, useAsm, asmFactory);
 	}
 
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
 	public JdbcMapperFactory addAlias(String key, String value) {
 		aliases.put(key.toUpperCase(), value.toUpperCase());
 		return this;
 	}
 
+	/**
+	 * 
+	 * @param column
+	 * @param fieldMapper
+	 * @return
+	 */
 	public JdbcMapperFactory addCustomFieldMapper(String column, FieldMapper<ResultSet, ?> fieldMapper) {
 		customMappings.put(column.toUpperCase(), fieldMapper);
 		return this;

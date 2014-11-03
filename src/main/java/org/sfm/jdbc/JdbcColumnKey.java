@@ -1,6 +1,6 @@
 package org.sfm.jdbc;
 
-import org.sfm.map.FieldKey;
+import org.sfm.map.impl.FieldKey;
 
 public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 	public static final int UNDEFINED_TYPE = -99999;

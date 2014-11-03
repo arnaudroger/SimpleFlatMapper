@@ -1,8 +1,8 @@
 package org.sfm.reflect.asm.sample;
 
 import org.sfm.beans.DbFinalObject;
-import org.sfm.csv.DelayedGetter;
-import org.sfm.csv.DelayedCellSetter;
+import org.sfm.csv.impl.DelayedCellSetter;
+import org.sfm.csv.impl.DelayedGetter;
 import org.sfm.reflect.Instantiator;
 
 @SuppressWarnings("rawtypes")

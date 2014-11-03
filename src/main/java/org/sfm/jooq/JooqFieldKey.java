@@ -1,7 +1,7 @@
 package org.sfm.jooq;
 
 import org.jooq.Field;
-import org.sfm.map.FieldKey;
+import org.sfm.map.impl.FieldKey;
 
 public class JooqFieldKey implements FieldKey<JooqFieldKey> {
 	private final Field<?> field;

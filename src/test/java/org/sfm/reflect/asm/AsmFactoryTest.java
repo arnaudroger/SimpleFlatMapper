@@ -12,12 +12,12 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.jdbc.getter.LongResultSetGetter;
-import org.sfm.jdbc.getter.OrdinalEnumResultSetGetter;
-import org.sfm.jdbc.getter.StringResultSetGetter;
-import org.sfm.map.FieldMapper;
+import org.sfm.jdbc.impl.getter.LongResultSetGetter;
+import org.sfm.jdbc.impl.getter.OrdinalEnumResultSetGetter;
+import org.sfm.jdbc.impl.getter.StringResultSetGetter;
 import org.sfm.map.MappingException;
-import org.sfm.map.RethrowRowHandlerErrorHandler;
+import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 

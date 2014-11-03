@@ -6,14 +6,17 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.sfm.map.AbstractFieldMapperMapperBuilder;
-import org.sfm.map.FieldMapper;
+import org.sfm.jdbc.impl.JdbcMapperImpl;
+import org.sfm.jdbc.impl.ResultSetFieldMapperFactory;
+import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.KeyFieldMapperCouple;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
-import org.sfm.map.RethrowRowHandlerErrorHandler;
 import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.map.impl.AbstractFieldMapperMapperBuilder;
+import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.impl.KeyFieldMapperCouple;
+import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 

@@ -1,7 +1,7 @@
 package org.sfm.querydsl;
 
 import org.sfm.map.MappingException;
-import org.sfm.map.FieldKey;
+import org.sfm.map.impl.FieldKey;
 
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.Path;

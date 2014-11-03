@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
+import org.sfm.jdbc.impl.DynamicJdbcMapper;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.RowHandler;
 

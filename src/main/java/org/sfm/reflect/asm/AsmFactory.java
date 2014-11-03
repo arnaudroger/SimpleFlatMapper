@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.objectweb.asm.Opcodes;
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.map.FieldMapper;
 import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.map.impl.FieldMapper;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.Setter;

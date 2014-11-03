@@ -5,10 +5,10 @@ import java.util.Map;
 
 import org.sfm.beans.DbObject.Type;
 import org.sfm.beans.DbFinalObject;
-import org.sfm.jdbc.getter.LongResultSetGetter;
-import org.sfm.jdbc.getter.OrdinalEnumResultSetGetter;
-import org.sfm.jdbc.getter.StringEnumResultSetGetter;
-import org.sfm.jdbc.getter.StringResultSetGetter;
+import org.sfm.jdbc.impl.getter.LongResultSetGetter;
+import org.sfm.jdbc.impl.getter.OrdinalEnumResultSetGetter;
+import org.sfm.jdbc.impl.getter.StringEnumResultSetGetter;
+import org.sfm.jdbc.impl.getter.StringResultSetGetter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 

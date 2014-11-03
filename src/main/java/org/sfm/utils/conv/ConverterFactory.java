@@ -3,9 +3,13 @@ package org.sfm.utils.conv;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.sfm.jdbc.JdbcColumnKey;
+import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
+import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
 public class ConverterFactory {
@@ -54,8 +58,17 @@ public class ConverterFactory {
 			return (Converter<F, P>) numberConvertors.get(TypeHelper.wrap(outType));
 		} else if (URL.class.equals(outType)) {
 			return  (Converter<F, P>)new StringToURLConvertor<F>();
+		}  else if (outType.isArray()) {
+			return  newArrayConverter(outType.getComponentType());
 		}
-		throw new IllegalArgumentException("No converter from " + inType + " to  " + outType);
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <F, P, E> Converter<F, P> newArrayConverter(Class<E> outType) {
+		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(outType, new JdbcColumnKey("elt", 2));
+		if (elementGetter == null) return null;
+		return (Converter<F, P>)new ArrayConverter<F,E>(outType, elementGetter);
 	}
 	
 }

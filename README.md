@@ -11,13 +11,13 @@ A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 - [JdbcMapper](src/main/java/org/sfm/jdbc)
 - [CsvMapper](src/main/java/org/sfm/csv)
 - easy to integrate with [Spring JdbcTemplate](src/main/java/org/sfm/jdbc/spring). 
-- [Jooq Integration](src/main/java/org/sfm/csv)
+- [Jooq Integration](src/main/java/org/sfm/jooq)
 - [Osgi](src/main/java/org/sfm/osgi) ready.
 - [QueryDSL Jdbc support](src/main/java/org/sfm/querydsl)
 
 Fastest CsvParser on [csv-parsers-comparaison](https://github.com/uniVocity/csv-parsers-comparison).
 
-Fastest [CsvMapper](src/main/java/org/sfm/csv) and [ORM Mapper](#in-mem-hsqldb), as far as I could test. If you believe something would be worth testing please raise an issue.
+Fastest [CsvMapper](#csv-mapping) and [ORM Mapper](#in-mem-hsqldb), as far as I could test. If you believe something would be worth testing please raise an issue.
 
 
 Feedbacks are more than welcome, don't hesitate to raise an issue or send me an email.
@@ -64,7 +64,6 @@ ie:
 - my_property => myProperty
 - myproperty => myProperty
 ```
-
 
 Value Injection
 ------

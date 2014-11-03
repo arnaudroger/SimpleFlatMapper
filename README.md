@@ -7,16 +7,17 @@ Fast and Easy mapping from database and csv to POJO.
 A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 
 - Compatible with Java 6, 7 and 8. 
-- [Lambda Ready](#jdbcmapper).
-- easy to integrate with [Spring JdbcTemplate](#jdbctemplate). 
-- [CsvMapper](#csvmapper)
-- Jooq Integration
-- [Osgi](#osgisupport) ready.
-- [QueryDSL Jdbc support](#querydsl-jdbc)
+- [Lambda Ready](src/main/java/org/sfm/jdbc)
+- [JdbcMapper](src/main/java/org/sfm/jdbc)
+- [CsvMapper](src/main/java/org/sfm/csv)
+- easy to integrate with [Spring JdbcTemplate](src/main/java/org/sfm/jdbc/spring). 
+- [Jooq Integration](src/main/java/org/sfm/csv)
+- [Osgi](src/main/java/org/sfm/osgi) ready.
+- [QueryDSL Jdbc support](src/main/java/org/sfm/querydsl)
 
 Fastest CsvParser on [csv-parsers-comparaison](https://github.com/uniVocity/csv-parsers-comparison).
 
-Fastest [CsvMapper](#csv-mapping) and [ORM Mapper](#in-mem-hsqldb), as far as I could test. If you believe something would be worth testing please raise an issue.
+Fastest [CsvMapper](src/main/java/org/sfm/csv) and [ORM Mapper](#in-mem-hsqldb), as far as I could test. If you believe something would be worth testing please raise an issue.
 
 
 Feedbacks are more than welcome, don't hesitate to raise an issue or send me an email.
@@ -44,125 +45,13 @@ Why?
 
 Sfm is very fast, the fastest I've been able to test again for the JdbcMapper and CsvMapper.
 
-MyBatis, Hibernate, Jooq, QueryDSL have a considerable overwrite, that can raise the cost by at least  [600%](#in-mem-hsqldb) on 1000 rows query.
+MyBatis, Hibernate, have a considerable overwrite, that can raise the cost by at least  [600%](#in-mem-hsqldb) on 1000 rows query.
 BeanPropertyRowMapper is even worse.
 
 ### API intrusiveness
 
 Ibatis provide the same kind of functionality but it forces you to use it's query mechanism and mask the jdbc api. 
-Sfm just focus on the mapping from a [ResultSet](#jdbcmapper). You can manage the query the way you want. You can use [JdbcTemplate](#jdbctemplate), even use it in an Hibernate session via the doWork method.
-
-Samples
-========
-
-JdbcMapper
----------
-
-```java
-
-public class MyDao {
-    private final JdbcMapper<MyObject> mapper = 
-    	JdbcMapperFactory.newInstance().newMapper(MyObject.class);
-    public void printAllLambda(Writer writer, Connection conn) throws SQLException {
-        try (PreparedStatement ps = 
-        		conn.prepareStatement("select id, email, my_property from MyTable")) {
-	        try (ResultSet rs = ps.executeQuery()){
-	            mapper.forEach(rs, (o) -> writer.append(o.toString()).append("\n"));
-	        }
-        }
-    }
-    public void printAll(Writer writer, Connection conn) throws SQLException {
-        try (PreparedStatement ps = 
-        		conn.prepareStatement("select id, email, my_property from MyTable")) {
-	        try (ResultSet rs = ps.executeQuery()){
-	            mapper.forEach(rs, new RowHandler<MyObject>{
-	            	public void handle(MyObject o) throws IOException { 
-	            		writer.append(o.toString()).append("\n")); 
-	            	}  
-	            });
-	        }
-        }
-    }
-}
-```
-
-JdbcTemplate
------
-
-See [JdbcTemplateMapperFactoryTest](/src/test/java/org/sfm/jdbc/spring/JdbcTemplateMapperFactoryTest.java) for more examples.
-
-```java
-class MyDao {
-	private final JdbcTemplateMapper<DbObject> mapper = 
-		JdbcTemplateMapperFactory.newInstance().newMapper(DbObject.class);
-		
-	public void doSomething() {
-		List<DbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);
-	}
-	
-	public void doSomethingElse() {
-		 template
-		 	.query(TEST_DB_OBJECT_QUERY, 
-		 		mapper.newResultSetExtractor((o) -> System.out.println(o.toString())));
-	}
-}
-```
-
-OsgiSupport
-------
-The Osgi support just expose a service that will deal with the classloading wizardry needed to generate bytecode.
-
-```java
-class MyService {
-
-	@Reference
-	JdbcMapperService jdbcMapperService;
-	
-	volatile JdbcMapper mapper;
-	
-	@Activate
-	public void activate() {
-		mapper = jdbcMapperService.newFactory().newMapper(DbObject.class);
-	}
-}
-```
-
-QueryDSL Jdbc
-------
-
-```java
-SQLQuery sqlquery = new SQLQueryImpl(conn, new HSQLDBTemplates());
-try {
-	return sqlquery
-		.from(qTestDbObject)
-		.where(qTestDbObject.id.eq(1l))
-		.list(new QueryDslMappingProjection<DbObject>(DbObject.class, 
-				qTestDbObject.id,
-				qTestDbObject.name, 
-				qTestDbObject.email, 
-				qTestDbObject.creationTime, 
-				qTestDbObject.typeName, 
-				qTestDbObject.typeOrdinal ));
-} finally {
-	conn.close();
-}
-```
-
-CsvMapper
----------
-
-Uses header to match to the property.
-
-```java
-public class MyParser {
-    private final CsvMapper<MyObject> mapper = 
-    	CsvMapperFactory.newInstance().newMapper(MyObject.class);
-    public void printAll(Writer writer, Reader reader) throws IOException {
-        mapper.forEach(reader, (o) -> writer.append(o.toString()).append("\n"));
-    }
-}
-```
-
+Sfm just focus on the mapping from a [ResultSet](src/main/java/org/sfm/jdbc). You can manage the query the way you want. You can use [JdbcTemplate](src/main/java/org/sfm/jdbc/spring), even use it in an Hibernate session via the doWork method.
 
 
 Property Mapping

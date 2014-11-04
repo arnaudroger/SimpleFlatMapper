@@ -1,4 +1,4 @@
 /**
- * Provides a MappingProjection implementation to integrate with QueryDsl and Spring data.
+ * {@link com.mysema.query.types.MappingProjection} implementation for querydsl.
  */
 package org.sfm.querydsl;

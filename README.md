@@ -164,21 +164,23 @@ See [orm-benchmarks](https://github.com/arnaudroger/orm-benchmark) for benchmark
 
 In mem HsqlDb
 -------
-Average time us/op to execute, fetch and map to object the result of a query with 1, 10, 100 and 1000 rows.
+Average time ns/op to execute, fetch and map to object the result of a query with 1, 10, 100 and 1000 rows.
 The lower the better.
 
 |Type/NbRows|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|PureJdbc|2.25|5.59|37.17|353.20
-|JdbcMapperStatic|2.28|5.82|39.24|378.06
-|JdbcMapperDynamic|2.63|6.77|47.93|459.36
-|JdbcMapperDynamicNoAsm|2.71|7.23|52.28|505.37
-|Roma|3.12|7.21|46.78|432.40
-|Sql2o|7.33|13.06|68.86|613.32
-|Jooq|40.73|57.24|212.12|1,800.72
-|Hibernate|20.26|43.21|252.04|2,545.97
-|MyBatis|21.05|54.17|359.39|3,491.73
-|RowMapper|15.58|121.16|1,190.37|11,637.21
+|PureJdbcBenchmark|1,884.74|4,981.15|35,108.09|333,855.37
+|JdbcMapperStaticBenchmark|1,961.92|5,241.82|37,552.89|357,953.28
+|JdbcMapperStaticNoAsmBenchmark|2,008.67|5,699.53|41,382.78|396,282.36
+|JdbcMapperDynamicBenchmark|2,212.21|6,238.83|45,468.29|437,271.11
+|JdbcMapperDynamicNoAsmBenchmark|2,236.20|6,602.97|49,683.90|480,556.26
+|RomaBenchmark|2,865.76|6,656.07|43,735.55|410,173.50
+|Sql2OBenchmark|6,469.54|12,008.03|65,871.85|603,808.79
+|BeanPropertyRowMapperBenchmark|14,789.95|118,763.24|1,141,809.37|11,418,948.31
+|HibernateStatefullBenchmark|19,554.63|40,889.14|252,239.35|2,524,391.76
+|MyBatisBenchmark|19,756.59|52,311.55|356,205.37|3,560,270.36
+|JooqWithSfmMappingBenchmark|32,604.51|43,735.90|145,061.77|1,160,997.02
+|JooqBenchmark|40,174.46|55,876.53|208,156.68|1,809,146.26
 
 % Difference from PureJdbc Average Time, the lower the better
 ![HsqlDb Average time difference to PureJdbc](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/hsqldb-difference-from-purejdbc.png)
@@ -188,21 +190,23 @@ The lower the better.
 
 Local Mysql
 -------
-Average time us/op to execute, fetch and map to object the result of a query with 1, 10, 100 and 1000 rows.
+Average time ns/op to execute, fetch and map to object the result of a query with 1, 10, 100 and 1000 rows.
 The lower the better.
 
 |Type/NbRows|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|PureJdbc|242.34|307.93|687.90|2,861.32
-|JdbcMapperStatic|239.68|310.62|688.94|2,870.02
-|JdbcMapperDynamic|241.73|319.13|693.55|2,958.79
-|JdbcMapperDynamicNoAsm|241.06|313.13|693.64|3,023.33
-|Roma|248.63|350.59|740.67|3,205.41
-|Sql2o|257.37|368.18|814.33|3,575.64
-|Jooq|349.60|456.55|1,014.53|4,646.25
-|Hibernate|330.21|405.29|1,136.28|5,663.27
-|MyBatis|429.10|533.00|1,246.27|7,503.65
-|RowMapper|315.90|487.20|2,048.60|14,547.18
+|PureJdbcBenchmark|245,113.75|317,283.50|667,585.28|2,865,698.12
+|JdbcMapperStaticBenchmark|247,535.57|316,710.25|690,418.35|2,872,758.13
+|JdbcMapperStaticNoAsmBenchmark|248,253.39|323,421.45|706,963.50|2,929,431.20
+|JdbcMapperDynamicBenchmark|248,192.67|330,782.38|710,853.21|2,982,768.31
+|JdbcMapperDynamicNoAsmBenchmark|247,403.30|331,048.68|711,389.78|3,038,683.13
+|RomaBenchmark|258,237.16|390,898.21|739,865.89|3,215,603.67
+|Sql2OBenchmark|262,418.64|388,297.26|779,157.67|3,601,053.19
+|BeanPropertyRowMapperBenchmark|313,128.79|474,301.33|2,001,145.59|14,377,744.63
+|HibernateStatefullBenchmark|349,046.36|409,242.83|1,116,423.86|5,625,843.02
+|MyBatisBenchmark|439,412.26|549,851.68|1,215,320.29|7,418,589.52
+|JooqWithSfmMappingBenchmark|348,793.42|443,529.22|872,743.17|4,052,582.49
+|JooqBenchmark|354,027.51|462,085.84|974,488.90|4,579,035.61
 
 % Difference from PureJdbc Average Time, the lower the better
 ![Mysql difference to PureJdbc](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/mysql-difference-from-purejdbc.png)

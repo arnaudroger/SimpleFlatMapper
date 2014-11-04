@@ -1,5 +1,7 @@
 package org.sfm.querydsl;
 
+import java.lang.reflect.Type;
+
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.impl.FieldErrorHandlerMapper;
@@ -22,9 +24,9 @@ public final class TupleFieldMapperFactory implements FieldMapperFactory<Tuple, 
 	}
 
 	@Override
-	public <T, P> FieldMapper<Tuple, T> newFieldMapper(Setter<T, P> setter,
+	public <T, P> FieldMapper<Tuple, T> newFieldMapper(Type propertyType, Setter<T, P> setter,
 			TupleElementKey key, FieldMapperErrorHandler<TupleElementKey> errorHandler, MapperBuilderErrorHandler mappingErrorHandler) {
-		final Class<?> type = TypeHelper.toClass(setter.getPropertyType());
+		final Class<?> type = TypeHelper.toClass(propertyType);
 		
 		Getter<Tuple, P> getter = getterFactory.newGetter(type, key);
 		if (getter == null) {

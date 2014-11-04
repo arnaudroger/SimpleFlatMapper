@@ -1,6 +1,7 @@
 package org.sfm.jdbc.impl;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Date;
@@ -43,9 +44,7 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 	}
 
 
-	private <T> FieldMapper<ResultSet, T> primitiveIndexedFieldMapper(final Setter<T, ?> setter, final JdbcColumnKey key, final FieldMapperErrorHandler<JdbcColumnKey> errorHandler) {
-		final Class<?> type = TypeHelper.toClass(setter.getPropertyType());
-
+	private <T> FieldMapper<ResultSet, T> primitiveIndexedFieldMapper(final Class<?> type, final Setter<T, ?> setter, final JdbcColumnKey key, final FieldMapperErrorHandler<JdbcColumnKey> errorHandler) {
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<ResultSet, T>(
 					new BooleanResultSetGetter(key.getIndex()),
@@ -85,15 +84,15 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 	}
 
 	@Override
-	public <T, P> FieldMapper<ResultSet, T> newFieldMapper(Setter<T, P> setter,
+	public <T, P> FieldMapper<ResultSet, T> newFieldMapper(Type propretyType, Setter<T, P> setter,
 			JdbcColumnKey key, FieldMapperErrorHandler<JdbcColumnKey> errorHandler, MapperBuilderErrorHandler mappingErrorHandler) {
-		final Class<?> type = TypeHelper.toClass(setter.getPropertyType());
+		final Class<?> type = TypeHelper.toClass(propretyType);
 
 		if (type.isPrimitive()) {
-			return primitiveIndexedFieldMapper(setter, key, errorHandler);
+			return primitiveIndexedFieldMapper(type, setter, key, errorHandler);
 		}
 		
-		Getter<ResultSet, P> getter = getterFactory.newGetter(type, key);
+		Getter<ResultSet, P> getter = getterFactory.newGetter(propretyType, key);
 		if (getter == null) {
 			// check if has a one arg construct
 			final Constructor<?>[] constructors = type.getConstructors();
@@ -123,7 +122,7 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 			}
 		}
 		if (getter == null) {
-			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + type);
+			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + propretyType);
 			return null;
 		} else {
 			return new FieldMapperImpl<ResultSet, T, P>(getter, setter);

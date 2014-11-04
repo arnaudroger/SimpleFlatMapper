@@ -25,11 +25,11 @@ public class ResultSetFieldMapperFactoryTest {
 		Setter<DbObject, Integer> setter = setterFactory.getFieldSetter(DbObject.class, "id");
 		
 		
-		FieldMapper<ResultSet, DbObject> fieldMapper = factory.newFieldMapper(setter, new JdbcColumnKey("id", 1), errorHandler, new RethrowMapperBuilderErrorHandler());
+		FieldMapper<ResultSet, DbObject> fieldMapper = factory.newFieldMapper(long.class, setter, new JdbcColumnKey("id", 1), errorHandler, new RethrowMapperBuilderErrorHandler());
 		
 		assertTrue(fieldMapper instanceof LongFieldMapper);
 
-		fieldMapper = factory.newFieldMapper(setter, new JdbcColumnKey("id", 0), errorHandler, new RethrowMapperBuilderErrorHandler());
+		fieldMapper = factory.newFieldMapper(long.class, setter, new JdbcColumnKey("id", 0), errorHandler, new RethrowMapperBuilderErrorHandler());
 		assertTrue(fieldMapper instanceof LongFieldMapper);
 
 	}

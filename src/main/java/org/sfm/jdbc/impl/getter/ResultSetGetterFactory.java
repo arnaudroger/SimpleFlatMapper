@@ -17,6 +17,7 @@ import java.sql.SQLXML;
 import java.sql.Types;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -286,9 +287,14 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		
 		Class<?> clazz = TypeHelper.wrap(TypeHelper.toClass(genericType));
 		
-		if (clazz.isArray() && key.getSqlType() == Types.ARRAY) {
-			Class<?> elementType = clazz.getComponentType();
-			return (Getter<ResultSet, P>) newArrayGetter(elementType, key);
+		if (key.getSqlType() == Types.ARRAY) {
+			if (clazz.isArray()) {
+				Class<?> elementType = clazz.getComponentType();
+				return (Getter<ResultSet, P>) newArrayGetter(elementType, key);
+			} else if (TypeHelper.isAssignable(List.class, genericType)) {
+				Type elementType = TypeHelper.getComponentType(genericType);
+				return (Getter<ResultSet, P>) newArrayListGetter(elementType, key);
+			}
 		}
 		
 		GetterFactory<ResultSet, JdbcColumnKey> getterFactory = factoryPerType.get(clazz);
@@ -319,5 +325,13 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		return null;
 	}
 	
-	
+	private <E> Getter<ResultSet, List<E>> newArrayListGetter(Type elementType, JdbcColumnKey key) {
+		Getter<ResultSet, E> elementGetter = newGetter(elementType, new JdbcColumnKey("elt", 2));
+		
+		if (elementGetter != null) {
+			return new ArrayToListResultSetGetter<E>(key.getIndex(), elementGetter);
+		}
+		
+		return null;
+	}
 }

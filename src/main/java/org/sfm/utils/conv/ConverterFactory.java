@@ -1,10 +1,12 @@
 package org.sfm.utils.conv;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.sfm.jdbc.JdbcColumnKey;
@@ -51,24 +53,32 @@ public class ConverterFactory {
 	}};
 	
 	@SuppressWarnings("unchecked")
-	public static <P, F> Converter<F, P> getConverter(Class<F> inType, Class<P> outType) {
+	public static <P, F> Converter<F, P> getConverter(Class<F> inType, Type outType) {
 		if (outType.equals(String.class)) {
 			return (Converter<F, P>) new ToStringConverter<F>();
 		} else if (TypeHelper.isNumber(outType) && TypeHelper.isNumber(inType)) {
 			return (Converter<F, P>) numberConvertors.get(TypeHelper.wrap(outType));
-		} else if (URL.class.equals(outType)) {
+		} else if (TypeHelper.isClass(outType, URL.class)) {
 			return  (Converter<F, P>)new StringToURLConvertor<F>();
-		}  else if (outType.isArray()) {
-			return  newArrayConverter(outType.getComponentType());
+		}  else if (TypeHelper.isArray(outType)) {
+			return  newArrayConverter(TypeHelper.getComponentType(outType));
+		} else if (TypeHelper.isAssignable(List.class, outType)) {
+			return  newArrayToListConverter(TypeHelper.getComponentType(outType));
 		}
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <F, P, E> Converter<F, P> newArrayConverter(Class<E> outType) {
-		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(outType, new JdbcColumnKey("elt", 2));
+	private static <F, P, E> Converter<F, P> newArrayConverter(Type eltType) {
+		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(eltType, new JdbcColumnKey("elt", 2));
 		if (elementGetter == null) return null;
-		return (Converter<F, P>)new ArrayConverter<F,E>(outType, elementGetter);
+		return (Converter<F, P>)new ArrayConverter<F,E>((Class<E>) TypeHelper.toClass(eltType), elementGetter);
+	}
+	@SuppressWarnings("unchecked")
+	private static <F, P, E> Converter<F, P> newArrayToListConverter(Type eltType) {
+		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(eltType, new JdbcColumnKey("elt", 2));
+		if (elementGetter == null) return null;
+		return (Converter<F, P>)new ArrayToListConverter<F,E>(elementGetter);
 	}
 	
 }

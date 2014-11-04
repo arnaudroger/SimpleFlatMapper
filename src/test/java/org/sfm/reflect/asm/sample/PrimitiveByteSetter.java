@@ -16,10 +16,4 @@ public class PrimitiveByteSetter implements Setter<DbPrimitiveObjectWithSetter, 
 		target.setpByte(value.byteValue());
 	}
 
-	@Override
-	public Class<? extends Byte> getPropertyType() {
-		return byte.class;
-	}
-
-
 }

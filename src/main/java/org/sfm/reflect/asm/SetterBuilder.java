@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 
 public class SetterBuilder implements Opcodes {
 
@@ -49,14 +48,6 @@ public class SetterBuilder implements Opcodes {
 			
 			mv.visitInsn(RETURN);
 			mv.visitMaxs(2, 3);
-			mv.visitEnd();
-		}
-		{
-			mv = cw.visitMethod(ACC_PUBLIC, "getPropertyType", "()Ljava/lang/reflect/Type;", null, null);
-			mv.visitCode();
-			mv.visitLdcInsn(Type.getType("" + AsmUtils.toTypeParam(propertyType) + ""));
-			mv.visitInsn(ARETURN);
-			mv.visitMaxs(1, 1);
 			mv.visitEnd();
 		}
 		{
@@ -147,14 +138,6 @@ public class SetterBuilder implements Opcodes {
 		AsmUtils.invoke(mv, target, method.getName(), "(" + primitiveType + ")V");
 		mv.visitInsn(RETURN);
 		mv.visitMaxs(2, 3);
-		mv.visitEnd();
-		}
-		{
-		mv = cw.visitMethod(ACC_PUBLIC, "getPropertyType", "()Ljava/lang/reflect/Type;", null, null);
-		mv.visitCode();
-		mv.visitFieldInsn(GETSTATIC,  propertyType , "TYPE", "Ljava/lang/Class;");
-		mv.visitInsn(ARETURN);
-		mv.visitMaxs(1, 1);
 		mv.visitEnd();
 		}
 		{

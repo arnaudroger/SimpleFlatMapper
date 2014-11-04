@@ -39,10 +39,11 @@ public class DbHelper {
 						+ " date DATE,"
 						+ " bigdecimal decimal(10,3),"
 						+ " biginteger bigint , "
-						+ " stringArray VARCHAR(20) ARRAY DEFAULT ARRAY[] )");
+						+ " stringArray VARCHAR(20) ARRAY DEFAULT ARRAY[],"
+						+ " stringList VARCHAR(20) ARRAY DEFAULT ARRAY[] )");
 				
 				PreparedStatement ps = c.prepareStatement("insert into db_extented_type values (?, 'https://github.com/arnaudroger/SimpleFlatMapper',"
-						+ "'07:08:09', '2014-11-02', 123.321, 123, ARRAY [ 'HOT', 'COLD' ])");
+						+ "'07:08:09', '2014-11-02', 123.321, 123, ARRAY [ 'HOT', 'COLD' ], ARRAY [ 'COLD', 'FREEZING' ])");
 				try {
 					ps.setBytes(1, new byte[] { 'a', 'b', 'c' });
 					ps.execute();

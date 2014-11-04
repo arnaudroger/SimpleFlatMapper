@@ -15,11 +15,4 @@ public class PrimitiveLongSetter implements Setter<DbPrimitiveObjectWithSetter, 
 	public void set(DbPrimitiveObjectWithSetter target, Long value) throws Exception {
 		target.setpLong(value.longValue());
 	}
-
-	@Override
-	public Class<? extends Long> getPropertyType() {
-		return long.class;
-	}
-
-
 }

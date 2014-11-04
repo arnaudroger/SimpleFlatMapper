@@ -42,11 +42,6 @@ public class SetterPerfTest {
 		public void set(MyClass target, String value) throws Exception {
 			target.setString(value);
 		}
-
-		@Override
-		public Class<? extends String> getPropertyType() {
-			return String.class;
-		}
 	}
 	public static class MyClass {
 		public String string;

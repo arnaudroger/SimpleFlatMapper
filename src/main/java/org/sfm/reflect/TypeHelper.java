@@ -2,6 +2,7 @@ package org.sfm.reflect;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,14 +30,18 @@ public class TypeHelper {
 		}
 	}
 	
+	public static Class<?> wrap(Type type) {
+		return wrap(TypeHelper.toClass(type));
+	}
+	
 	public static  boolean areCompatible(Class<?> target, Class<?> source) {
 		Class<?> wrapTarget = wrap(target);
 		Class<?> wrapSource = wrap(source);
 		return wrapTarget.isAssignableFrom(wrapSource);
 	}
 	
-	public static boolean isNumber(Class<?> target) {
-		return Number.class.isAssignableFrom(wrap(target));
+	public static boolean isNumber(Type target) {
+		return Number.class.isAssignableFrom(wrap(TypeHelper.toClass(target)));
 	}
 
 	@SuppressWarnings("serial")
@@ -50,5 +55,28 @@ public class TypeHelper {
 		put(float.class, Float.class);
 		put(double.class, Double.class);
 	}};
+
+	public static boolean isArray(Type outType) {
+		return TypeHelper.toClass(outType).isArray();
+	}
+
+	public static Type getComponentType(Type outType) {
+		Class<?> target = toClass(outType);
+		if (target.isArray()) {
+			return toClass(outType).getComponentType();
+		} else if (outType instanceof ParameterizedType) {
+			ParameterizedType pt = (ParameterizedType) outType;
+			return pt.getActualTypeArguments()[0];
+		}
+		return null;
+	}
+
+	public static boolean isClass(Type outType, Class<URL> class1) {
+		return toClass(outType).equals(class1);
+	}
+
+	public static boolean isAssignable(Class<?> class1, Type from) {
+		return class1.isAssignableFrom(toClass(from));
+	}
 	
 }

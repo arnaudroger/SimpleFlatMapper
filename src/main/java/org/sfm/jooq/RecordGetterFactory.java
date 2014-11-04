@@ -35,11 +35,11 @@ public class RecordGetterFactory<R extends Record> implements
 		if (TypeHelper.areCompatible(propretyClass, key.getField().getType())) {
 			return new RecordGetter<R, P>(key.getIndex());
 		} else {
-			return newRecordGetterWithConverter(key.getField().getType(), propretyClass, key.getIndex());
+			return newRecordGetterWithConverter(key.getField().getType(), genericType, key.getIndex());
 		}
 	}
 	
-	private <P, F> Getter<R, P> newRecordGetterWithConverter(Class<F> inType, Class<P> outType, int index) {
+	private <P, F> Getter<R, P> newRecordGetterWithConverter(Class<F> inType, Type outType, int index) {
 		Converter<F, P> converter = ConverterFactory.getConverter(inType, outType);
 		if (converter != null) {
 			return new RecordGetterWithConverter<R, P, F>(index, converter);

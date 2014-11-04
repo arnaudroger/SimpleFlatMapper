@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.AsmHelper;
+import org.sfm.reflect.meta.ArrayClassMeta;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ListClassMeta;
 import org.sfm.reflect.meta.ObjectClassMeta;
@@ -74,6 +75,8 @@ public class ReflectionService {
 		if (List.class.isAssignableFrom(clazz)) {
 			ParameterizedType pt = (ParameterizedType) target;
 			return new ListClassMeta(pt.getActualTypeArguments()[0], this);
+		}else if (clazz.isArray()) {
+			return new ArrayClassMeta(clazz, clazz.getComponentType(), this);
 		}
 		return new ObjectClassMeta<T>(clazz, this);
 	}

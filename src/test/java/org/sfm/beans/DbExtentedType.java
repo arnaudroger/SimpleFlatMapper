@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.sql.Time;
+import java.util.List;
 
 public class DbExtentedType {
 	
@@ -14,7 +15,7 @@ public class DbExtentedType {
 	private BigDecimal bigDecimal;
 	private BigInteger bigInteger;
 	private String[] stringArray;
-	
+	private List<String> stringList;
 	
 	public byte[] getBytes() {
 		return bytes;
@@ -58,5 +59,10 @@ public class DbExtentedType {
 	public void setStringArray(String[] stringArray) {
 		this.stringArray = stringArray;
 	}
-	
+	public List<String> getStringList() {
+		return stringList;
+	}
+	public void setStringList(List<String> stringList) {
+		this.stringList = stringList;
+	}
 }

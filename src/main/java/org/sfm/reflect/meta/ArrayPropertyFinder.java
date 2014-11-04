@@ -1,37 +1,27 @@
 package org.sfm.reflect.meta;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.sfm.reflect.asm.ConstructorDefinition;
-import org.sfm.reflect.asm.ConstructorParameter;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
+public class ArrayPropertyFinder<T> implements PropertyFinder<T[]> {
 
-	private final ListClassMeta<T> listClassMeta;
-	private final Map<Integer, ListElementPropertyMeta<T>> properties = new HashMap<Integer, ListElementPropertyMeta<T>>();
+	private final ArrayClassMeta<T> arrayClassMeta;
+	private final Map<Integer, ArrayElementPropertyMeta<T>> properties = new HashMap<Integer, ArrayElementPropertyMeta<T>>();
 	private final Map<String, PropertyFinder<T>> subPropertyFinders = new HashMap<String, PropertyFinder<T>>();
-	private static final List constructors;
+	private int maxIndex = -1;
 	
-	static {
-		constructors = new ArrayList();
-		try {
-			constructors.add(new ConstructorDefinition(ArrayList.class.getConstructor(), new ConstructorParameter[] {}));
-		} catch(Exception e) {
-			throw new Error(e.getMessage(), e);
-		}
-	}
-
 	
-	public ListPropertyFinder(ListClassMeta<T> listClassMeta) {
-		this.listClassMeta = listClassMeta;
+	public ArrayPropertyFinder(ArrayClassMeta<T> arrayClassMeta) {
+		this.arrayClassMeta = arrayClassMeta;
 	}
 
 	@Override
-	public PropertyMeta<List<T>, ?> findProperty(PropertyNameMatcher propertyNameMatcher) {
+	public PropertyMeta<T[], ?> findProperty(PropertyNameMatcher propertyNameMatcher) {
 		
 		String propertyName = propertyNameMatcher.getColumn();
 		
@@ -49,10 +39,12 @@ public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 		}
 		
 		int index = Integer.parseInt(propertyName.substring(listIndexStart, listIndexEnd));
+		
+		maxIndex = Math.max(index,  maxIndex);
 
-		ListElementPropertyMeta<T> prop = properties.get(index);
+		ArrayElementPropertyMeta<T> prop = properties.get(index);
 		if (prop == null) {
-			prop = new ListElementPropertyMeta<T>(String.valueOf(index), listClassMeta.getReflectionService(), index, listClassMeta);
+			prop = new ArrayElementPropertyMeta<T>(String.valueOf(index), arrayClassMeta.getReflectionService(), index, arrayClassMeta);
 			properties.put(index, prop);
 		}
 		
@@ -65,7 +57,7 @@ public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 		PropertyFinder<T> propertyFinder = subPropertyFinders.get(subPropName);
 		
 		if (propertyFinder == null) {
-			propertyFinder = listClassMeta.getElementClassMeta().newPropertyFinder();
+			propertyFinder = arrayClassMeta.getElementClassMeta().newPropertyFinder();
 			subPropertyFinders.put(subPropName, propertyFinder);
 		}
 		
@@ -73,26 +65,33 @@ public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 
 		
 		if (subProp != null) {
-			return new SubPropertyMeta(listClassMeta.getReflectionService(), prop, subProp);
+			return new SubPropertyMeta(arrayClassMeta.getReflectionService(), prop, subProp);
 		}
 		
 		return null;
 	}
 	
 	@Override
-	public PropertyMeta<List<T>, ?> findProperty(String propertyName) {
+	public PropertyMeta<T[], ?> findProperty(String propertyName) {
 		return findProperty(new PropertyNameMatcher(propertyName));
 	}
 
 	@Override
-	public List<ConstructorDefinition<List<T>>> getEligibleConstructorDefinitions() {
-		return constructors ;
+	public List<ConstructorDefinition<T[]>> getEligibleConstructorDefinitions() {
+		return Collections.emptyList();
 	}
 
 	@Override
-	public Class<? extends List<T>> getClassToInstantiate() {
-		Class type = ArrayList.class;
-		return type;
+	public Class<T[]> getClassToInstantiate() {
+		return arrayClassMeta.getType();
+	}
+
+	public Class<?> getElementType() {
+		return arrayClassMeta.getElementTarget();
+	}
+	
+	public int getLength() {
+		return maxIndex + 1;
 	}
 
 }

@@ -93,10 +93,6 @@ public class SetterFactoryTest {
 				@Override
 				public void set(DbPrimitiveObject target, Boolean value) throws Exception {
 				}
-				@Override
-				public Class<? extends Boolean> getPropertyType() {
-					return null;
-				}
 			});
 			fail("Should fail");
 		} catch (Exception e) {
@@ -114,10 +110,6 @@ public class SetterFactoryTest {
 			SetterFactory.toByteSetter(new Setter<DbPrimitiveObject, Byte>() {
 				@Override
 				public void set(DbPrimitiveObject target, Byte value) throws Exception {
-				}
-				@Override
-				public Class<? extends Byte> getPropertyType() {
-					return null;
 				}
 			});
 			fail("Should fail");
@@ -137,10 +129,6 @@ public class SetterFactoryTest {
 				@Override
 				public void set(DbPrimitiveObject target, Character value) throws Exception {
 				}
-				@Override
-				public Class<? extends Character> getPropertyType() {
-					return null;
-				}
 			});
 			fail("Should fail");
 		} catch (Exception e) {
@@ -158,10 +146,6 @@ public class SetterFactoryTest {
 			SetterFactory.toShortSetter(new Setter<DbPrimitiveObject, Short>() {
 				@Override
 				public void set(DbPrimitiveObject target, Short value) throws Exception {
-				}
-				@Override
-				public Class<? extends Short> getPropertyType() {
-					return null;
 				}
 			});
 			fail("Should fail");
@@ -181,10 +165,6 @@ public class SetterFactoryTest {
 				@Override
 				public void set(DbPrimitiveObject target, Integer value) throws Exception {
 				}
-				@Override
-				public Class<? extends Integer> getPropertyType() {
-					return null;
-				}
 			});
 			fail("Should fail");
 		} catch (Exception e) {
@@ -202,10 +182,6 @@ public class SetterFactoryTest {
 			SetterFactory.toLongSetter(new Setter<DbPrimitiveObject, Long>() {
 				@Override
 				public void set(DbPrimitiveObject target, Long value) throws Exception {
-				}
-				@Override
-				public Class<? extends Long> getPropertyType() {
-					return null;
 				}
 			});
 			fail("Should fail");
@@ -225,10 +201,6 @@ public class SetterFactoryTest {
 				@Override
 				public void set(DbPrimitiveObject target, Float value) throws Exception {
 				}
-				@Override
-				public Class<? extends Float> getPropertyType() {
-					return null;
-				}
 			});
 			fail("Should fail");
 		} catch (Exception e) {
@@ -246,10 +218,6 @@ public class SetterFactoryTest {
 			SetterFactory.toDoubleSetter(new Setter<DbPrimitiveObject, Double>() {
 				@Override
 				public void set(DbPrimitiveObject target, Double value) throws Exception {
-				}
-				@Override
-				public Class<? extends Double> getPropertyType() {
-					return null;
 				}
 			});
 			fail("Should fail");

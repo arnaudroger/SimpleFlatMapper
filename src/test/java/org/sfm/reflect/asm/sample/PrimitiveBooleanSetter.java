@@ -16,9 +16,4 @@ public final class PrimitiveBooleanSetter implements Setter<DbPrimitiveObjectWit
 		target.setpBoolean(value.booleanValue());
 	}
 
-	@Override
-	public Class<? extends Boolean> getPropertyType() {
-		return boolean.class;
-	}
-
 }

@@ -6,11 +6,11 @@ import java.util.List;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 
-public class ElementPropertyMeta<P> extends PropertyMeta<List<P>, P> {
+public class ListElementPropertyMeta<P> extends PropertyMeta<List<P>, P> {
 
 	private final int index;
 	private final ListClassMeta<P> listMetaData;
-	public ElementPropertyMeta(String name,  ReflectionService reflectService, int index, ListClassMeta<P> listMetaData) {
+	public ListElementPropertyMeta(String name,  ReflectionService reflectService, int index, ListClassMeta<P> listMetaData) {
 		super(name, reflectService);
 		this.index = index;
 		this.listMetaData = listMetaData;
@@ -25,11 +25,6 @@ public class ElementPropertyMeta<P> extends PropertyMeta<List<P>, P> {
 					target.add(null);
 				}
 				target.set(index, value);
-			}
-
-			@Override
-			public Type getPropertyType() {
-				return listMetaData.getElementTarget();
 			}
 		};
 	}

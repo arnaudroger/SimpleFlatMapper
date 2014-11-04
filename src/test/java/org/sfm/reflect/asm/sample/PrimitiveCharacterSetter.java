@@ -16,10 +16,4 @@ public class PrimitiveCharacterSetter implements Setter<DbPrimitiveObjectWithSet
 		target.setpInt(value.charValue());
 	}
 
-	@Override
-	public Class<? extends Character> getPropertyType() {
-		return char.class;
-	}
-
-
 }

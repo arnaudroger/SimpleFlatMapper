@@ -1,5 +1,6 @@
 package org.sfm.reflect;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -136,5 +137,15 @@ public class InstantiatorFactory {
 			}
 		}
 		
+	}
+
+	public <S, T> Instantiator<S, T> getArrayInstantiator(final Class<?> elementType, final int length) {
+		return new Instantiator<S, T>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public T newInstance(S s) throws Exception {
+				return (T) Array.newInstance(elementType, length);
+			}
+		};
 	}
 }	

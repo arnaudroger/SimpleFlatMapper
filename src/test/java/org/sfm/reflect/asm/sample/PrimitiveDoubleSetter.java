@@ -16,10 +16,4 @@ public class PrimitiveDoubleSetter implements Setter<DbPrimitiveObjectWithSetter
 		target.setpDouble(value.doubleValue());
 	}
 
-	@Override
-	public Class<? extends Double> getPropertyType() {
-		return double.class;
-	}
-
-
 }

@@ -28,6 +28,7 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.map.impl.CaclculateMaxIndex;
 import org.sfm.map.impl.PropertyMapping;
 import org.sfm.map.impl.PropertyMappingsBuilder;
 import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
@@ -39,6 +40,7 @@ import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.asm.ConstructorParameter;
+import org.sfm.reflect.meta.ArrayPropertyFinder;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ConstructorPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;
@@ -176,11 +178,19 @@ public class CsvMapperBuilder<T> {
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 		try {
 			Instantiator<DelayedCellSetter<T, ?>[], T> instatiator;
-			if (!reflectionService.isAsmPresent()) {
-				instatiator = instantiatorFactory.getInstantiator(SOURCE, propertyMappingsBuilder.getPropertyFinder().getClassToInstantiate());
+			
+			if (TypeHelper.isArray(target)) {
+				instatiator = instantiatorFactory.getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CaclculateMaxIndex<T, CsvColumnKey>()).maxIndex + 1);
+			} else if (propertyMappingsBuilder.getPropertyFinder() instanceof ArrayPropertyFinder) {
+				ArrayPropertyFinder<?> arrayPropertyFinder = (ArrayPropertyFinder<?>) propertyMappingsBuilder.getPropertyFinder();
+				instatiator = instantiatorFactory.getArrayInstantiator(arrayPropertyFinder.getElementType(), arrayPropertyFinder.getLength());
 			} else {
-				Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>> constructorInjections = buildConstructorParametersDelayedCellSetter();
-				instatiator = instantiatorFactory.getInstantiator(SOURCE, propertyMappingsBuilder.getPropertyFinder().getEligibleConstructorDefinitions(), constructorInjections, customReaders.isEmpty());
+				if (!reflectionService.isAsmPresent()) {
+					instatiator = instantiatorFactory.getInstantiator(SOURCE, propertyMappingsBuilder.getPropertyFinder().getClassToInstantiate());
+				} else {
+					Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>> constructorInjections = buildConstructorParametersDelayedCellSetter();
+					instatiator = instantiatorFactory.getInstantiator(SOURCE, propertyMappingsBuilder.getPropertyFinder().getEligibleConstructorDefinitions(), constructorInjections, customReaders.isEmpty());
+				}
 			}
 			return instatiator;
 		} catch(Exception e) {
@@ -271,7 +281,7 @@ public class CsvMapperBuilder<T> {
 						}  else if (prop.isSubProperty()) {
 							addSubProperty(delegateMapperBuilders, delayedSetters, prop, key);
 						}else {
-							delayedSetters.add(cellSetterFactory.getDelayedCellSetter(prop.getSetter(), index, key.getName()));
+							delayedSetters.add(cellSetterFactory.getDelayedCellSetter(prop.getType(), prop.getSetter(), index, key.getName()));
 						}
 					} else {
 						delayedSetters.add(null);
@@ -380,7 +390,7 @@ public class CsvMapperBuilder<T> {
 							setters.add(null);
 							
 						} else {
-							setters.add(cellSetterFactory.getCellSetter(prop.getSetter(), index, key.getName()));
+							setters.add(cellSetterFactory.getCellSetter(prop.getType(), prop.getSetter(), index, key.getName()));
 						}
 					} else {
 						setters.add(null);

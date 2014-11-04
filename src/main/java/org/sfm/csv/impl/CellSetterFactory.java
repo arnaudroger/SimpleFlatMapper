@@ -69,14 +69,14 @@ public class CellSetterFactory {
 		this.customReaders = customReaders;
 	}
 
-	public <T,P> CellSetter<T> getCellSetter(Setter<T, P> setter, int index, String columnName) {
-		Class<?> propertyClass = TypeHelper.toClass(setter.getPropertyType());
+	public <T,P> CellSetter<T> getCellSetter(Type propertyType, Setter<T, P> setter, int index, String columnName) {
+		Class<?> propertyClass = TypeHelper.toClass(propertyType);
 		
 		if (propertyClass.isPrimitive() && !customReaders.containsKey(columnName)) {
 			return getPrimitiveCellSetter(propertyClass, setter);
 		}
 		
-		return new CellSetterImpl<T, P>(getReaderForSetter(setter, index, columnName), setter) ;
+		return new CellSetterImpl<T, P>(getReaderForSetter(propertyType, setter, index, columnName), setter) ;
 	}
 	
 	public <T,P> CellSetter<T> getPrimitiveCellSetter(Class<?> clazz, Setter<T, P> setter) {
@@ -122,8 +122,8 @@ public class CellSetterFactory {
 		throw new IllegalArgumentException("Invalid primitive type " + clazz);
 	}
 
-	private <T, P> CellValueReader<P> getReaderForSetter(Setter<T, P> setter, int index, String colunn) {
-		Class<P> propertyType = TypeHelper.toClass(setter.getPropertyType());
+	private <T, P> CellValueReader<P> getReaderForSetter(Type type, Setter<T, P> setter, int index, String colunn) {
+		Class<P> propertyType = TypeHelper.toClass(type);
 		CellValueReader<P> reader = getReader(propertyType, index, colunn);
 		return reader;
 	}
@@ -175,14 +175,14 @@ public class CellSetterFactory {
 		return (CellValueReader<P>) transformers.get(propertyType);
 	}
 
-	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Setter<T, P> setter, int index, String columnName) {
-		Class<?> propertyClass = TypeHelper.toClass(setter.getPropertyType());
+	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type propertyType, Setter<T, P> setter, int index, String columnName) {
+		Class<?> propertyClass = TypeHelper.toClass(propertyType);
 		
 		if (propertyClass.isPrimitive() && !customReaders.containsKey(columnName)) {
 			return getPrimitiveDelayedCellSetter(propertyClass, setter);
 		}
 		
-		return new DelayedCellSetterFactoryImpl<T, P>(getReaderForSetter(setter, index, columnName), setter);
+		return new DelayedCellSetterFactoryImpl<T, P>(getReaderForSetter(propertyType, setter, index, columnName), setter);
 	}
 	@SuppressWarnings("unchecked")
 	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type type, int index, String columnName) {

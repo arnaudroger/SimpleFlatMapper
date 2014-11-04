@@ -16,10 +16,4 @@ public class PrimitiveShortSetter implements Setter<DbPrimitiveObjectWithSetter,
 		target.setpShort(value.shortValue());
 	}
 
-	@Override
-	public Class<? extends Short> getPropertyType() {
-		return short.class;
-	}
-
-
 }

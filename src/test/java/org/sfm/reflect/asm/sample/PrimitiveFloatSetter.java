@@ -16,10 +16,4 @@ public class PrimitiveFloatSetter implements Setter<DbPrimitiveObjectWithSetter,
 		target.setpFloat(value.floatValue());
 	}
 
-	@Override
-	public Class<? extends Float> getPropertyType() {
-		return float.class;
-	}
-
-
 }

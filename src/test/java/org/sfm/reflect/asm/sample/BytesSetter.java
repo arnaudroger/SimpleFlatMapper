@@ -9,11 +9,4 @@ public class BytesSetter implements Setter<DbExtentedType, byte[]> {
 	public void set(DbExtentedType target, byte[] value) throws Exception {
 		target.setBytes(value);
 	}
-
-	@Override
-	public Class<? extends byte[]> getPropertyType() {
-		return byte[].class;
-	}
-
-
 }

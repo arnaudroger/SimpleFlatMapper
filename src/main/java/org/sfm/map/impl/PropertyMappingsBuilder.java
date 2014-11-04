@@ -86,8 +86,9 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
  		}
 	}
 
-	public void forEachProperties(ForEachCallBack<PropertyMapping<T, ?, K>> handler)  {
+	public <H extends ForEachCallBack<PropertyMapping<T, ?, K>>> H forEachProperties(H handler)  {
 		forEachProperties(handler, 0);
+		return handler;
 	}
 	
 	public void forEachProperties(ForEachCallBack<PropertyMapping<T, ?, K>> handler, int start)  {

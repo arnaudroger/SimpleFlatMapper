@@ -2,11 +2,7 @@ package org.sfm.jooq;
 
 import static org.junit.Assert.*;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Connection;
-import java.sql.Date;
-import java.sql.Time;
 import java.util.List;
 
 import org.jooq.DSLContext;
@@ -17,7 +13,7 @@ import org.junit.Test;
 import org.sfm.beans.DbExtentedType;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.DbHelper;
-import org.sfm.jooq.SfmRecordMapperProvider;
+import org.sfm.jdbc.JdbcMapperDbExtentedTypeTest;
 
 public class JooqMapperTest {
 
@@ -52,12 +48,8 @@ public class JooqMapperTest {
 		
 		assertEquals(1, list.size());
 		DbExtentedType o = list.get(0);
-		assertArrayEquals(new byte[] { 'a', 'b', 'c' }, o.getBytes());
-		assertEquals(new BigInteger("123"), o.getBigInteger());
-		assertEquals(new BigDecimal("123.321").toString(), o.getBigDecimal().toString());
-		assertEquals(new Time(7, 8, 9), o.getTime());
-		assertEquals(new Date(114, 10, 2), o.getDate());
-		assertArrayEquals(new String[] { "HOT", "COLD"}, o.getStringArray());
+		
+		JdbcMapperDbExtentedTypeTest.assertDbExtended(o);
 		
 	}
 }

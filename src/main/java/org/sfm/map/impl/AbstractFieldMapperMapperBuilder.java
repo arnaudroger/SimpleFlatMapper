@@ -67,17 +67,22 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	@SuppressWarnings("unchecked")
 	protected Instantiator<S, T> getInstantiator() throws MapperBuildingException {
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
-		if (!reflectionService.isAsmPresent()) {
-			try {
-				return (Instantiator<S, T>) instantiatorFactory.getInstantiator(TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getClassToInstantiate());
-			} catch(Exception e) {
-				throw new MapperBuildingException(e.getMessage(), e);
-			}
+		
+		if (TypeHelper.isArray(target)) {
+			return instantiatorFactory.getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CaclculateMaxIndex<T, K>()).maxIndex + 1);
 		} else {
-			try {
-				return instantiatorFactory.getInstantiator(TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getEligibleConstructorDefinitions(), constructorInjections());
-			} catch(Exception e) {
-				throw new MapperBuildingException(e.getMessage(), e);
+			if (!reflectionService.isAsmPresent()) {
+				try {
+					return (Instantiator<S, T>) instantiatorFactory.getInstantiator(TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getClassToInstantiate());
+				} catch(Exception e) {
+					throw new MapperBuildingException(e.getMessage(), e);
+				}
+			} else {
+				try {
+					return instantiatorFactory.getInstantiator(TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getEligibleConstructorDefinitions(), constructorInjections());
+				} catch(Exception e) {
+					throw new MapperBuildingException(e.getMessage(), e);
+				}
 			}
 		}
 	}
@@ -231,7 +236,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	}
 
 	protected <P> FieldMapper<S, T> newFieldMapper(PropertyMapping<T, P, K> t) {
-		FieldMapper<S, T> fieldMapper = fieldMapperFactory.newFieldMapper(t.getPropertyMeta().getSetter(), t.getColumnKey(), fieldMapperErrorHandler, mapperBuilderErrorHandler);
+		FieldMapper<S, T> fieldMapper = fieldMapperFactory.newFieldMapper(t.getPropertyMeta().getType(), t.getPropertyMeta().getSetter(), t.getColumnKey(), fieldMapperErrorHandler, mapperBuilderErrorHandler);
 		if (fieldMapperErrorHandler != null) {
 			fieldMapper = new FieldErrorHandlerMapper<S, T, K>(t.getColumnKey(), fieldMapper, fieldMapperErrorHandler);
 		}

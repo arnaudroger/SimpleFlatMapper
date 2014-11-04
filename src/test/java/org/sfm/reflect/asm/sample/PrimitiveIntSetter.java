@@ -16,10 +16,4 @@ public class PrimitiveIntSetter implements Setter<DbPrimitiveObjectWithSetter, I
 		target.setpInt(value.intValue());
 	}
 
-	@Override
-	public Class<? extends Integer> getPropertyType() {
-		return int.class;
-	}
-
-
 }

@@ -1,6 +1,4 @@
 
-CsvMapper
----------
 
 Uses header to match to the property.
 
@@ -13,5 +11,14 @@ public class MyParser {
     }
 }
 ```
+
+Supported type
+------
+
+Csv mapper can map to :
+
+boolean, byte, char, date, double, enum, float, integer, long short, string
+
+Or any object compose of those. It also can map to list or array.
 
 

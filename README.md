@@ -173,18 +173,18 @@ The lower the better.
 
 |Type/NbRows|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|PureJdbc|1,884.74|4,981.15|35,108.09|333,855.37
-|JdbcMapperStatic|1,961.92|5,241.82|37,552.89|357,953.28
-|JdbcMapperStaticNoAsm|2,008.67|5,699.53|41,382.78|396,282.36
-|JdbcMapperDynamic|2,212.21|6,238.83|45,468.29|437,271.11
-|JdbcMapperDynamicNoAsm|2,236.20|6,602.97|49,683.90|480,556.26
-|Roma|2,865.76|6,656.07|43,735.55|410,173.50
-|Sql2O|6,469.54|12,008.03|65,871.85|603,808.79
-|BeanPropertyRowMapper|14,789.95|118,763.24|1,141,809.37|11,418,948.31
-|HibernateStatefull|19,554.63|40,889.14|252,239.35|2,524,391.76
-|MyBatis|19,756.59|52,311.55|356,205.37|3,560,270.36
-|JooqWithSfmMapping|32,604.51|43,735.90|145,061.77|1,160,997.02
-|Jooq|40,174.46|55,876.53|208,156.68|1,809,146.26
+|PureJdbc|1,927.79|4,990.25|35,045.21|331,337.21
+|JdbcMapperStatic|1,945.92|5,209.80|37,478.74|357,181.89
+|JdbcMapperStaticNoAsm|1,992.03|5,632.44|41,012.90|397,116.84
+|JdbcMapperDynamic|2,185.29|6,185.78|45,454.88|436,129.27
+|JdbcMapperDynamicNoAsm|2,233.54|6,600.33|49,589.06|479,481.54
+|Roma|2,837.18|6,642.74|43,826.42|410,034.25
+|Sql2O|6,486.77|11,920.62|65,794.94|601,438.12
+|HibernateStatefull|18,902.73|41,758.94|251,733.36|2,534,663.16
+|JooqWithSfmMapping|32,990.96|44,402.42|143,848.83|1,174,061.05
+|MyBatis|19,760.95|52,844.85|355,763.88|3,491,809.10
+|Jooq|39,140.63|57,231.23|209,301.52|1,803,546.20
+|BeanPropertyRowMapper|14,643.52|118,298.90|1,153,763.09|11,700,000.00
 
 % Difference from PureJdbc Average Time, the lower the better
 ![HsqlDb Average time difference to PureJdbc](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/hsqldb-difference-from-purejdbc.png)
@@ -199,18 +199,18 @@ The lower the better.
 
 |Type/NbRows|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|PureJdbc|245,113.75|317,283.50|667,585.28|2,865,698.12
-|JdbcMapperStatic|247,535.57|316,710.25|690,418.35|2,872,758.13
-|JdbcMapperStaticNoAsm|248,253.39|323,421.45|706,963.50|2,929,431.20
-|JdbcMapperDynamic|248,192.67|330,782.38|710,853.21|2,982,768.31
-|JdbcMapperDynamicNoAsm|247,403.30|331,048.68|711,389.78|3,038,683.13
-|Roma|258,237.16|390,898.21|739,865.89|3,215,603.67
-|Sql2O|262,418.64|388,297.26|779,157.67|3,601,053.19
-|BeanPropertyRowMapper|313,128.79|474,301.33|2,001,145.59|14,377,744.63
-|HibernateStatefull|349,046.36|409,242.83|1,116,423.86|5,625,843.02
-|MyBatis|439,412.26|549,851.68|1,215,320.29|7,418,589.52
-|JooqWithSfmMapping|348,793.42|443,529.22|872,743.17|4,052,582.49
-|Jooq|354,027.51|462,085.84|974,488.90|4,579,035.61
+|PureJdbc|244,467.47|284,516.96|622,006.45|2,381,662.80
+|JdbcMapperStatic|243,904.51|280,482.25|594,999.27|2,400,891.93
+|JdbcMapperStaticNoAsm|245,923.92|282,146.45|617,954.10|2,443,118.58
+|Roma|253,717.67|333,795.64|629,789.26|2,476,847.22
+|JdbcMapperDynamic|247,358.98|311,235.90|635,957.08|2,527,565.65
+|JdbcMapperDynamicNoAsm|247,873.48|322,955.14|635,153.11|2,575,559.43
+|Sql2O|261,462.68|352,085.79|712,857.30|2,894,537.87
+|JooqWithSfmMapping|346,452.54|414,009.25|789,125.17|3,407,026.53
+|Jooq|352,018.25|433,689.84|875,751.49|3,953,254.82
+|HibernateStatefull|326,142.77|385,037.66|919,370.54|4,666,538.42
+|MyBatis|425,368.59|512,035.00|956,222.21|5,293,635.82
+|BeanPropertyRowMapper|320,750.60|471,385.88|1,841,829.36|13,630,933.78
 
 % Difference from PureJdbc Average Time, the lower the better
 ![Mysql difference to PureJdbc](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/mysql-difference-from-purejdbc.png)
@@ -225,10 +225,16 @@ Csv Mapping
 Jmh benchmark. Average time in us to parse and map to object a csv file with 10, 1000 and 100000 rows.
 The lower the better.
 
-|Type/NbRows|10|1000|100,000|
-|---------|---:|---:|---:|
-|Sfm|4|304|31,703
-|Jackson|6|485|50,774
+
+|Type/NbRows|1|10|100|1000|
+|---------|---:|---:|---:|---:|
+|JacksonCsvMapper|1110.39|8999.41|85186.40|787092.65
+|ReadSfmCsvMapper|2335.10|6401.91|49774.74|512753.55
+|OpenCsvMapper|2664.67|13828.84|127703.17|1291361.24
+
+% Difference from Jackson Average Time, the lower the better
+![Difference from Jackson](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/csv-java7.png)
+
 
 Maven dependency
 ======

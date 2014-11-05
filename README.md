@@ -3,6 +3,8 @@
 
 SimpleFlatMapper [v1.0.0b2](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.0.0b2)
 ========
+
+[Google Group](https://groups.google.com/d/forum/simpleflatmapper)
 Fast and Easy mapping from database and csv to POJO. 
 A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 

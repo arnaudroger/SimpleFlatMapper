@@ -7,11 +7,13 @@ Fast and Easy mapping from database and csv to POJO.
 A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 
 - Compatible with Java 6, 7 and 8. 
+- [Flexible mapping](#inner-object-mapping) with inner object, arrays and list support
+- Constructor, setter and field [injection](#value-injection)
 - [Lambda Ready](src/main/java/org/sfm/jdbc)
-- [JdbcMapper](src/main/java/org/sfm/jdbc)
-- [CsvMapper](src/main/java/org/sfm/csv)
+- [Mapper for Jdbc ResultSet](src/main/java/org/sfm/jdbc)
+- [Mapper for Csvs](src/main/java/org/sfm/csv)
 - easy to integrate with [Spring JdbcTemplate](src/main/java/org/sfm/jdbc/spring). 
-- [Jooq Integration](src/main/java/org/sfm/jooq)
+- [Mapper for Jooq](src/main/java/org/sfm/jooq)
 - [Osgi](src/main/java/org/sfm/osgi) ready.
 - [QueryDSL Jdbc support](src/main/java/org/sfm/querydsl)
 

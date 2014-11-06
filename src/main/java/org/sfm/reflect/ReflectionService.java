@@ -19,7 +19,7 @@ public class ReflectionService {
 	private final boolean asmActivated;
 
 	public ReflectionService() {
-		this(true);
+		this(AsmHelper.isAsmPresent());
 
 	}
 	public ReflectionService(final boolean asmActivated) {

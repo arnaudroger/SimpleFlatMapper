@@ -28,7 +28,7 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.CaclculateMaxIndex;
+import org.sfm.map.impl.CalculateMaxIndex;
 import org.sfm.map.impl.PropertyMapping;
 import org.sfm.map.impl.PropertyMappingsBuilder;
 import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
@@ -180,7 +180,7 @@ public class CsvMapperBuilder<T> {
 			Instantiator<DelayedCellSetter<T, ?>[], T> instatiator;
 			
 			if (TypeHelper.isArray(target)) {
-				instatiator = instantiatorFactory.getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CaclculateMaxIndex<T, CsvColumnKey>()).maxIndex + 1);
+				instatiator = instantiatorFactory.getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, CsvColumnKey>()).maxIndex + 1);
 			} else if (propertyMappingsBuilder.getPropertyFinder() instanceof ArrayPropertyFinder) {
 				ArrayPropertyFinder<?> arrayPropertyFinder = (ArrayPropertyFinder<?>) propertyMappingsBuilder.getPropertyFinder();
 				instatiator = instantiatorFactory.getArrayInstantiator(arrayPropertyFinder.getElementType(), arrayPropertyFinder.getLength());

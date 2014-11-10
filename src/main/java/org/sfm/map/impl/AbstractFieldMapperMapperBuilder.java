@@ -69,7 +69,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 		
 		if (TypeHelper.isArray(target)) {
-			return instantiatorFactory.getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CaclculateMaxIndex<T, K>()).maxIndex + 1);
+			return instantiatorFactory.getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, K>()).maxIndex + 1);
 		} else {
 			if (!reflectionService.isAsmPresent()) {
 				try {

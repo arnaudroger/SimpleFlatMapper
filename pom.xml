@@ -299,7 +299,64 @@
 				</plugins>
 			</build>
 		</profile>
-
+		<profile>
+			<id>jdk17</id>
+			<activation>
+				<jdk>1.7</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-jar-plugin</artifactId>
+						<configuration>
+							<classifier>jdk17</classifier>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.2</version>
+						          <executions>                
+			                <execution>
+			                    <phase>process-sources</phase>
+			                    <goals>
+			                        <goal>replace</goal>
+			                    </goals>
+			                </execution>
+			            </executions>
+						<configuration>
+							<includes>
+								<include>src/main/java/org/sfm/jdbc/*</include>
+								<include>src/main/java/org/sfm/jdbc/impl/*</include>
+							</includes>
+							<excludes>
+								<exclude>target/**</exclude>
+							</excludes>
+							<replacements>
+								<replacement>
+									<token>//IFJAVA8_START</token>
+									<value>/*IFJAVA8_START </value>
+								</replacement>
+								<replacement>
+									<token>//IFJAVA8_END</token>
+									<value>IFJAVA8_END*/</value>
+								</replacement>
+							</replacements>
+						</configuration>
+					</plugin>
+				
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.1</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<distributionManagement>

@@ -46,12 +46,13 @@ public final class SetterFactory {
 	public <T, P, C extends T> Setter<T, P> getSetter(final Class<C> target, final String property) {
 		// first look for method
 		final Method method = lookForMethod(target, property);
-		
+		final Setter<T, P> setter;
 		if (method == null) {
-			return getFieldSetter(target, property);
+			setter = getFieldSetter(target, property);
 		} else {
-			return getMethodSetter(method);
+			setter = getMethodSetter(method);
 		}
+		return setter;
 	}
 
 	public <T, P> Setter<T, P> getMethodSetter(final Method method) {
@@ -66,7 +67,7 @@ public final class SetterFactory {
 		}
 	}
 
-	public <T, P, C extends T> FieldSetter<T, P> getFieldSetter(final Class<C> target, final String property) {
+	public <T, P> FieldSetter<T, P> getFieldSetter(final Class<?> target, final String property) {
 		// look for field
 		final Field field = lookForField(target, property);
 		

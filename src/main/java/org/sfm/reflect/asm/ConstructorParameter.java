@@ -16,6 +16,7 @@ public final class ConstructorParameter {
 	public Type getType() {
 		return type;
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

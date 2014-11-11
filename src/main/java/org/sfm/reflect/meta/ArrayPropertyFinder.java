@@ -44,7 +44,7 @@ public class ArrayPropertyFinder<T> implements PropertyFinder<T[]> {
 
 		ArrayElementPropertyMeta<T> prop = properties.get(index);
 		if (prop == null) {
-			prop = new ArrayElementPropertyMeta<T>(String.valueOf(index), arrayClassMeta.getReflectionService(), index, arrayClassMeta);
+			prop = new ArrayElementPropertyMeta<T>(String.valueOf(index), String.valueOf(index) , arrayClassMeta.getReflectionService(), index, arrayClassMeta);
 			properties.put(index, prop);
 		}
 		

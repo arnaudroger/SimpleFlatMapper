@@ -58,7 +58,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	private ConstructorPropertyMeta<T, ?> lookForConstructor(final PropertyNameMatcher propertyNameMatcher) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
-				if (propertyNameMatcher.matches(prop.getName())
+				if (propertyNameMatcher.matches(prop.getColumn())
 						&& hasConstructorMatching(prop.getConstructorParameter())) {
 					return prop;
 				}
@@ -70,7 +70,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 
 	private PropertyMeta<T, ?> lookForProperty(final PropertyNameMatcher propertyNameMatcher) {
 		for (PropertyMeta<T, ?> prop : classMeta.getProperties()) {
-			if (propertyNameMatcher.matches(prop.getName())) {
+			if (propertyNameMatcher.matches(prop.getColumn())) {
 				return prop;
 			}
 		}
@@ -81,7 +81,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	private PropertyMeta<T, ?> lookForSubPropertyInConstructors(final PropertyNameMatcher propertyNameMatcher) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
-				PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(prop.getName());
+				PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(prop.getColumn());
 				if (subPropMatcher != null && hasConstructorMatching(prop.getConstructorParameter())) {
 					PropertyMeta<?, ?> subProp = lookForSubProperty(subPropMatcher, prop);
 					if (subProp != null) {
@@ -96,7 +96,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private PropertyMeta<T, ?> lookForSubProperty(final PropertyNameMatcher propertyNameMatcher) {
 		for (PropertyMeta<T, ?> prop : classMeta.getProperties()) {
-			PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(prop.getName());
+			PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(prop.getColumn());
 			if (subPropMatcher != null) {
 				PropertyMeta<?, ?> subProp =  lookForSubProperty(subPropMatcher, prop);
 				if (subProp != null) {
@@ -111,7 +111,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	private PropertyMeta<?, ?> lookForSubProperty(
 			final PropertyNameMatcher propertyNameMatcher,
 			final PropertyMeta<T, ?> prop) {
-		PropertyFinder<?> subPropertyFinder = subPropertyFinders.get(prop.getName());
+		PropertyFinder<?> subPropertyFinder = subPropertyFinders.get(prop.getColumn());
 		if (subPropertyFinder == null) {
 			subPropertyFinder = prop.getClassMeta().newPropertyFinder();
 			subPropertyFinders.put(prop.getName(), subPropertyFinder);

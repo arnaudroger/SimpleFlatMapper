@@ -52,7 +52,7 @@ public class ListPropertyFinder<T> implements PropertyFinder<List<T>> {
 
 		ListElementPropertyMeta<T> prop = properties.get(index);
 		if (prop == null) {
-			prop = new ListElementPropertyMeta<T>(String.valueOf(index), listClassMeta.getReflectionService(), index, listClassMeta);
+			prop = new ListElementPropertyMeta<T>(String.valueOf(index), String.valueOf(index),listClassMeta.getReflectionService(), index, listClassMeta);
 			properties.put(index, prop);
 		}
 		

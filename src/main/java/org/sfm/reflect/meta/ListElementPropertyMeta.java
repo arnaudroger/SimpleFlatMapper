@@ -10,8 +10,8 @@ public class ListElementPropertyMeta<P> extends PropertyMeta<List<P>, P> {
 
 	private final int index;
 	private final ListClassMeta<P> listMetaData;
-	public ListElementPropertyMeta(String name,  ReflectionService reflectService, int index, ListClassMeta<P> listMetaData) {
-		super(name, reflectService);
+	public ListElementPropertyMeta(String name, String column, ReflectionService reflectService, int index, ListClassMeta<P> listMetaData) {
+		super(name, column, reflectService);
 		this.index = index;
 		this.listMetaData = listMetaData;
 	}

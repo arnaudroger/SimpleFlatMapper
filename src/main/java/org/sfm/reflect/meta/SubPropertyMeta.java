@@ -10,7 +10,7 @@ public class SubPropertyMeta<O, P> extends PropertyMeta<O, P> {
 	private final PropertyMeta<P, ?> subProperty;
 	
 	public SubPropertyMeta(ReflectionService reflectService, PropertyMeta<O, P> property, PropertyMeta<P, ?> subProperty) {
-		super(property.getName(), reflectService);
+		super(property.getName(),  property.getColumn(), reflectService);
 		this.ownerProperty = property;
 		this.subProperty = subProperty;
 	}

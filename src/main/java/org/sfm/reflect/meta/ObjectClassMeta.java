@@ -50,7 +50,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			for(ConstructorParameter param : cd.getParameters()) {
 				String paramName = param.getName();
 				if (!properties.contains(paramName)) {
-					constructorProperties.add(new ConstructorPropertyMeta<T, Object>(paramName, reflectService, param));
+					constructorProperties.add(new ConstructorPropertyMeta<T, Object>(paramName, paramName, reflectService, param));
 					properties.add(paramName);
 				}
 			}
@@ -70,7 +70,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 				if (SetterHelper.methodModifiersMatches(method.getModifiers()) && SetterHelper.isSetter(name)) {
 					final String propertyName = name.substring(3,4).toLowerCase() +  name.substring(4);
 					if (!propertiesSet.contains(propertyName)) {
-						properties.add(new MethodPropertyMeta<T, Object>(propertyName, reflectService, method));
+						properties.add(new MethodPropertyMeta<T, Object>(propertyName, propertyName,  reflectService, method));
 						propertiesSet.add(propertyName);
 					}
 				}
@@ -80,7 +80,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 				final String name = field.getName();
 				if (SetterHelper.fieldModifiersMatches(field.getModifiers())) {
 					if (!propertiesSet.contains(name)) {
-						properties.add(new FieldPropertyMeta<T, Object>(field.getName(), reflectService, field));
+						properties.add(new FieldPropertyMeta<T, Object>(field.getName(), field.getName(), reflectService, field));
 						propertiesSet.add(name);
 					}
 				}

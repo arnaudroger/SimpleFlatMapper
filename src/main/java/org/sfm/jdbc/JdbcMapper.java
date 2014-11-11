@@ -2,6 +2,8 @@ package org.sfm.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.stream.Stream;
 
 import org.sfm.map.Mapper;
 import org.sfm.map.MappingException;
@@ -19,4 +21,10 @@ public interface JdbcMapper<T> extends Mapper<ResultSet, T> {
 	 */
 	<H extends RowHandler<T>> H forEach(ResultSet rs, H handle) throws SQLException, MappingException;
 	
+	Iterator<T> iterate(ResultSet rs) throws SQLException, MappingException;
+	
+	//IFJAVA8_START
+	Stream<T> stream(ResultSet rs) throws SQLException, MappingException;
+	//IFJAVA8_END
+
 }

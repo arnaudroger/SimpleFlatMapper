@@ -4,7 +4,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapper;
@@ -61,8 +63,21 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	@Override
 	public final <H extends RowHandler<T>> H forEach(final ResultSet rs, final H handle)
 			throws SQLException, MappingException {
-		final JdbcMapper<T>mapper = buildMapper(rs.getMetaData());
+		final JdbcMapper<T> mapper = buildMapper(rs.getMetaData());
 		return mapper.forEach(rs, handle);
+	}
+	
+	@Override
+	public final Iterator<T> iterate(final ResultSet rs)
+			throws SQLException, MappingException {
+		final JdbcMapper<T> mapper = buildMapper(rs.getMetaData());
+		return mapper.iterate(rs);
+	}
+	
+	@Override
+	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
+		final JdbcMapper<T> mapper = buildMapper(rs.getMetaData());
+		return mapper.stream(rs);
 	}
 
 	private JdbcMapper<T> buildMapper(final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
@@ -93,4 +108,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		
 		return new ColumnsMapperKey(columns);
 	}
+
+
+
 }

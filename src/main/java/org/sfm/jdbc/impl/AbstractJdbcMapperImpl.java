@@ -2,6 +2,11 @@ package org.sfm.jdbc.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.MappingException;
@@ -32,4 +37,19 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 		}
 		return handler;
 	}
+	
+	@Override
+	public Iterator<T> iterate(ResultSet rs) throws SQLException,
+			MappingException {
+		return new ResultSetIterator<T>(rs, this);
+	}
+	
+	//IFJAVA8_START
+	@Override
+	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
+		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(rs), Spliterator.DISTINCT | Spliterator.ORDERED);
+		return StreamSupport.stream(spliterator, false);
+	}
+	//IFJAVA8_END
+
 }

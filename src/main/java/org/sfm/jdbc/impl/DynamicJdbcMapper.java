@@ -74,11 +74,13 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		return mapper.iterate(rs);
 	}
 	
+	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
 		final JdbcMapper<T> mapper = buildMapper(rs.getMetaData());
 		return mapper.stream(rs);
 	}
+	//IFJAVA8_END
 
 	private JdbcMapper<T> buildMapper(final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
 		

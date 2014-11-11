@@ -257,7 +257,7 @@
 					<plugin>
 						<groupId>com.google.code.maven-replacer-plugin</groupId>
 						<artifactId>replacer</artifactId>
-						<version>1.5.3</version>
+						<version>1.5.2</version>
 						          <executions>                
 			                <execution>
 			                    <phase>process-sources</phase>
@@ -267,9 +267,13 @@
 			                </execution>
 			            </executions>
 						<configuration>
-							<file>src/main/java/org/sfm/jdbc/JdbcMapper.java</file>
-							<file>src/main/java/org/sfm/jdbc/impl/JdbcMapperImpl.java</file>
-							<file>src/main/java/org/sfm/jdbc/impl/AbstractJdbcMapperImpl.java</file>
+							<includes>
+								<include>src/main/java/org/sfm/jdbc/*</include>
+								<include>src/main/java/org/sfm/jdbc/impl/*</include>
+							</includes>
+							<excludes>
+								<exclude>target/**</exclude>
+							</excludes>
 							<replacements>
 								<replacement>
 									<token>//IFJAVA8_START</token>
@@ -282,34 +286,7 @@
 							</replacements>
 						</configuration>
 					</plugin>
-										<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-						<version>1.5.3</version>
-						          <executions>                
-			                <execution>
-			                    <phase>process-classes</phase>
-			                    <goals>
-			                        <goal>replace</goal>
-			                    </goals>
-			                </execution>
-			            </executions>
-						<configuration>
-							<file>src/main/java/org/sfm/jdbc/JdbcMapper.java</file>
-							<file>src/main/java/org/sfm/jdbc/impl/JdbcMapperImpl.java</file>
-							<file>src/main/java/org/sfm/jdbc/impl/AbstractJdbcMapperImpl.java</file>
-							<replacements>
-								<replacement>
-									<token>/*IFJAVA8_START</token>
-									<value>//IFJAVA8_START </value>
-								</replacement>
-								<replacement>
-									<token>IFJAVA8_END*/</token>
-									<value>//IFJAVA8_END*/</value>
-								</replacement>
-							</replacements>
-						</configuration>
-					</plugin>
+				
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>

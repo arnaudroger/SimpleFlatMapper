@@ -3,12 +3,12 @@ package org.sfm.jdbc.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.Spliterators;
 
 //IFJAVA8_START
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import java.util.Spliterator;
+import java.util.Spliterators;
 //IFJAVA8_END
 
 import org.sfm.jdbc.JdbcMapper;

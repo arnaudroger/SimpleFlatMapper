@@ -6,8 +6,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+//IFJAVA8_START
 import java.util.stream.Stream;
-
+//IFJAVA8_END
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.JdbcMapperBuilder;

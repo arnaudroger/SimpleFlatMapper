@@ -5,8 +5,10 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
+//IFJAVA8_START
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+//IFJAVA8_END
 
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.MappingException;

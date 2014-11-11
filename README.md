@@ -19,6 +19,10 @@ A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 - [Osgi](src/main/java/org/sfm/osgi) ready.
 - [QueryDSL Jdbc support](src/main/java/org/sfm/querydsl)
 
+To come in b3
+- return objects as a Stream
+- @Column JPA annotation support to define aliases
+
 Fastest CsvParser on [csv-parsers-comparaison](https://github.com/uniVocity/csv-parsers-comparison).
 
 Fastest [CsvMapper](#csv-mapping) and [ORM Mapper](#in-mem-hsqldb), as far as I could test. If you believe something would be worth testing please raise an issue.

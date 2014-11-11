@@ -40,6 +40,7 @@
 
 	<build>
 		<plugins>
+		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -249,9 +250,20 @@
 			<build>
 				<plugins>
 					<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<configuration>
+							<classifier>jdk16</classifier>
+												<instructions>
+						<Export-Package>org.sfm.map,org.sfm.jdbc,org.sfm.osgi,org.sfm.utils</Export-Package>
+						<Import-Package>*;resolution:=optional</Import-Package>
+						<Bundle-Activator>org.sfm.osgi.SfmBundleActivator</Bundle-Activator>
+					</instructions>
+				</configuration>
+			</plugin>
+					<plugin>
 						<artifactId>maven-jar-plugin</artifactId>
 						<configuration>
-							<classifier>jdk16</classifier>
 						</configuration>
 					</plugin>
 					<plugin>
@@ -307,11 +319,17 @@
 			<build>
 				<plugins>
 					<plugin>
-						<artifactId>maven-jar-plugin</artifactId>
-						<configuration>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<configuration>
 							<classifier>jdk17</classifier>
-						</configuration>
-					</plugin>
+												<instructions>
+						<Export-Package>org.sfm.map,org.sfm.jdbc,org.sfm.osgi,org.sfm.utils</Export-Package>
+						<Import-Package>*;resolution:=optional</Import-Package>
+						<Bundle-Activator>org.sfm.osgi.SfmBundleActivator</Bundle-Activator>
+					</instructions>
+				</configuration>
+			</plugin>
 					<plugin>
 						<groupId>com.google.code.maven-replacer-plugin</groupId>
 						<artifactId>replacer</artifactId>

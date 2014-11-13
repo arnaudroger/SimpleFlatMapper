@@ -24,11 +24,15 @@ public class CsvParserTest {
 	}
 	@Test
 	public void testReadCsvReaderCRLF() throws IOException {
-		testReadCsv(new StringReader("cell1,cell2,\r\n\"cell\r\"\"value\"\"\",val2\r\nval3\r\nval4"));
+		testReadCsv(new StringReader("cell1,cell2,\r\n"
+				+ "\"cell\r\"\"value\"\"\",val2\r\n"
+				+ "val3\r\nval4"));
 	}
 	@Test
 	public void testReadCsvReaderMixed() throws IOException {
-		testReadCsv(new StringReader("cell1,cell2,\r\"cell\r\"\"value\"\"\",val2\rval3\nval4"));
+		testReadCsv(new StringReader("cell1,cell2,\r"
+				+ "\"cell\r\"\"value\"\"\",val2\r"
+				+ "val3\nval4"));
 	}
 
 	private void testReadCsv(Reader sr) throws IOException {

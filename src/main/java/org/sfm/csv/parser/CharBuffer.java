@@ -8,27 +8,21 @@ public final class CharBuffer {
 
 	private char[] buffer;
 	private int bufferLength;
-	
-
 	private int bufferIndex;
 	
-	private boolean stop;
-	private int consumableStartIndex;
+	private int mark;
 
 	public CharBuffer(final int bufferSize) {
 		this.buffer = new char[bufferSize];
 	}
 	
-	public void markConsume(int index) {
-		this.consumableStartIndex = index;
-	}
-	public void markStop() {
-		this.stop = true;
+	public void mark() {
+		this.mark = bufferIndex;
 	}
 	
 	public boolean fillBuffer(Reader reader) throws IOException {
 		
-		shiftBufferToConsumedIndex();
+		shiftBufferToMark();
 		
 		int length = reader.read(buffer, bufferLength, buffer.length- bufferLength);
 		if (length != -1) {
@@ -38,64 +32,25 @@ public final class CharBuffer {
 			return false;
 		}
 	}
-	
-	public void consumeBytes(CharConsumer consumer) {
-		while (isNotStopped() && bufferIndex < bufferLength) {
-			consumer.handleChar(this);
-			bufferIndex++;
-		}
-	}
 
-	private boolean isNotStopped() {
-		return !stop;
-	}
 
-	/**
-	 * parse cvs
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	public void parse(Reader reader, CharConsumer consumer)
-			throws IOException {
-		unstop();
-		
-		do {
-			consumeBytes(consumer);
-			
-			if (isStopped()) return;
-			
-		} while(fillBuffer(reader));
-		
-		consumer.finish(this);
-		
-	}
-
-	private boolean isStopped() {
-		return stop;
-	}
-
-	private void unstop() {
-		stop = false;
-	}
-
-	private void shiftBufferToConsumedIndex() {
+	private void shiftBufferToMark() {
 		// shift buffer consumer data
-		int newLength = Math.max(bufferLength - consumableStartIndex, 0);
+		int newLength = Math.max(bufferLength - mark, 0);
 
 		// if buffer tight double the size
 		if (newLength <= (bufferLength >> 1)) {
-			System.arraycopy(buffer, consumableStartIndex, buffer, 0, newLength);
+			System.arraycopy(buffer, mark, buffer, 0, newLength);
 		} else {
 			// double buffer size
 			char[] newbuffer = new char[buffer.length << 1];
-			System.arraycopy(buffer, consumableStartIndex, newbuffer, 0, newLength);
+			System.arraycopy(buffer, mark, newbuffer, 0, newLength);
 			buffer = newbuffer;
 		}
-		bufferIndex = bufferIndex - consumableStartIndex;
+		bufferIndex = bufferIndex - mark;
 		bufferLength = newLength;
 		
-		consumableStartIndex = 0;
+		mark = 0;
 	}
 
 	public char getCurrentChar() {
@@ -111,14 +66,22 @@ public final class CharBuffer {
 	}
 
 	public boolean isAllConsumed() {
-		return consumableStartIndex >= bufferIndex;
+		return mark >= bufferIndex -1 ;
 	}
 
-	public int getConsumedIndex() {
-		return consumableStartIndex;
+	public int getMark() {
+		return mark;
 	}
 
-	public int getConsumableLength() {
-		return bufferIndex - consumableStartIndex;
+	public int getLengthFromMark() {
+		return bufferIndex - mark;
+	}
+
+	public char getNextChar() {
+		return buffer[bufferIndex++];
+	}
+
+	public boolean hasContent() {
+		return bufferIndex < bufferLength;
 	}
 }

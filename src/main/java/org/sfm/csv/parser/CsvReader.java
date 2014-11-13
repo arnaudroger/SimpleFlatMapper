@@ -25,6 +25,12 @@ public final class CsvReader {
 	 */
 	public void parse()
 			throws IOException {
-		buffer.parse(reader, consumer);
+		do {
+			if(!consumer.next(buffer)) {
+				return;
+			}
+		} while(buffer.fillBuffer(reader));
+		
+		consumer.finish(buffer);
 	}
 }

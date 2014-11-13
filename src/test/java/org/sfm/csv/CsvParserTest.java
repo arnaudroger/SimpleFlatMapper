@@ -42,7 +42,7 @@ public class CsvParserTest {
 			@Override
 			public void newCell(char[] chars, int offset, int length) {
 				String value = new String(chars, offset, length);
-				System.out.println("'" + value + "'");
+				System.out.println("X'" + value + "'X");
 				css[row][col++] = value;
 			}
 			

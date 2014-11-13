@@ -17,7 +17,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 	private final DelayedCellSetter<T, ?>[] delayedCellSetters;
 	private final CellSetter<T>[] setters;
 	private final CsvColumnKey[] columns;
-	
+	private final boolean pushMode;
 	
 	/**
 	 * error handling
@@ -53,7 +53,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 			RowHandlerErrorHandler rowHandlerErrorHandlers,
 			RowHandler<T> handler, 
 			ParsingContext parsingContext,
-			int rowStart, int limit) {
+			int rowStart, int limit, boolean pushMode) {
 		super();
 		this.instantiator = instantiator;
 		this.delayedCellSetters = delayedCellSetters;
@@ -67,6 +67,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 		this.rowStart = rowStart;
 		this.limit = limit;
 		this.parsingContext = parsingContext;
+		this.pushMode = pushMode;
 	}
 	
 	private int lastNonNullSetter(
@@ -102,7 +103,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 	
 	private boolean continueProcessing() {
 		currentRow++;
-		boolean continueProcessing =  limit == -1 || (currentRow - rowStart) < limit;
+		boolean continueProcessing = pushMode && (limit == -1 || (currentRow - rowStart) < limit);
 		return continueProcessing;
 	} 
 	

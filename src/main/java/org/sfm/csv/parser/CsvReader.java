@@ -23,6 +23,7 @@ public final class CsvReader {
 
 	private int currentStart = 0;
 	private int bufferOffset = 0;
+	private int bufferIndex;
 
 	public CsvReader(final int bufferSize, final CharsCellHandler handler, final Reader reader) {
 		this.buffer = new char[bufferSize];
@@ -38,28 +39,55 @@ public final class CsvReader {
 	 */
 	public void parse()
 			throws IOException {
-		while ((bufferLength = reader.read(buffer, bufferOffset, buffer.length
-				- bufferOffset)) != -1
-				&& currentState != STOP) {
-			bufferLength += bufferOffset;
+		
+		if(isStopped()) {
+			unstop();
 			consumeBytes();
+			if (isStopped()) {
+				return;
+			}
 			shiftBuffer();
 		}
+		
+		while ( 
+			 (bufferLength = reader.read(buffer, bufferOffset, buffer.length- bufferOffset)) != -1
+				) {
+			bufferLength += bufferOffset;
+			bufferIndex = 0;
+			consumeBytes();
+			
+			if (isStopped()) {
+				return;
+			}
 
-		if (bufferOffset > 0 && currentState != STOP) {
+			shiftBuffer();
+		}
+		
+		if (bufferOffset > 0) {
 			handler.newCell(buffer, 0, bufferOffset);
+			bufferLength = 0;
+			bufferOffset = 0;
 		}
 		handler.end();
 	}
 
+	private int unstop() {
+		return currentState &= ~STOP;
+	}
+
 	private void consumeBytes() {
-		int bufferIndex = 0;
-		while (bufferIndex < bufferLength && currentState != STOP) {
+		while (bufferIndex < bufferLength && isNotStopped()) {
 			handleChar(buffer[bufferIndex], bufferIndex);
 			bufferIndex++;
 		}
 	}
 
+	private boolean isNotStopped() {
+		return (currentState & STOP) == 0;
+	}
+	private boolean isStopped() {
+		return (currentState & STOP) != 0;
+	}
 	private void handleChar(final char c, final int bufferIndex) {
 		switch (c) {
 		case ',':
@@ -111,7 +139,7 @@ public final class CsvReader {
 	private void endOfRow(int bufferIndex) {
 		newCell(bufferIndex);
 		if (!handler.endOfRow()) {
-			currentState = STOP;
+			currentState |= STOP;
 		}
 	}
 

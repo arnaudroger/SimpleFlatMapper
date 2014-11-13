@@ -15,20 +15,7 @@ import org.sfm.utils.ListHandler;
 
 public class CsvMapperImplPrimitiveTest {
 
-	@Test
-	public void testDbObject() throws Exception {
-		
-		CsvMapperBuilder<DbPrimitiveObjectWithSetter> builder = new CsvMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
-		
-		addMapping(builder);
 
-		CsvMapper<DbPrimitiveObjectWithSetter> mapper = builder.mapper();
-		
-		List<DbPrimitiveObjectWithSetter> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbPrimitiveObjectWithSetter>()).getList();
-		assertEquals(1, list.size());
-		assertDbPrimitiveObject(list.get(0));
-
-	}
 
 	private void assertDbPrimitiveObject(DbPrimitiveObject object) {
 		assertEquals(true,  object.ispBoolean());
@@ -72,7 +59,22 @@ public class CsvMapperImplPrimitiveTest {
 	}
 	
 	@Test
-	public void testFinalDbObject() throws Exception {
+	public void testDbPrimitiveObject() throws Exception {
+		
+		CsvMapperBuilder<DbPrimitiveObjectWithSetter> builder = new CsvMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class);
+		
+		addMapping(builder);
+
+		CsvMapper<DbPrimitiveObjectWithSetter> mapper = builder.mapper();
+		
+		List<DbPrimitiveObjectWithSetter> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbPrimitiveObjectWithSetter>()).getList();
+		assertEquals(1, list.size());
+		assertDbPrimitiveObject(list.get(0));
+
+	}
+	
+	@Test
+	public void testFinalDbPrimitiveObject() throws Exception {
 		CsvMapperBuilder<DbFinalPrimitiveObject> builder = new CsvMapperBuilder<DbFinalPrimitiveObject>(DbFinalPrimitiveObject.class);
 		
 		addMapping(builder);

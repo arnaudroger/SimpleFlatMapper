@@ -28,7 +28,7 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 		this.cellIndex = cellIndex;
 	}
 
-	public CsvMapperCellHandler<?> getBytesCellHandler() {
+	public CsvMapperCellHandler<?> getCellHandler() {
 		return handler;
 	}
 

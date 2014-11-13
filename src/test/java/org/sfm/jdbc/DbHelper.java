@@ -69,7 +69,14 @@ public class DbHelper {
 		assertEquals(DbObject.Type.type3, dbObject.getTypeOrdinal());
 		assertEquals(DbObject.Type.type4, dbObject.getTypeName());
 	}
-	
+	public static void assertDbObjectMapping(int i, DbObject dbObject) throws ParseException  {
+		assertEquals(i, dbObject.getId());
+		assertEquals("name " + i, dbObject.getName());
+		assertEquals("name" + i + "@mail.com", dbObject.getEmail());
+		assertEquals(DateHelper.toDate("2014-03-04 11:10:03"), dbObject.getCreationTime());
+		assertEquals(DbObject.Type.type3, dbObject.getTypeOrdinal());
+		assertEquals(DbObject.Type.type4, dbObject.getTypeName());
+	}
 	public static void assertDbObjectMapping(DbFinalObject dbObject) throws ParseException {
 		assertEquals(1, dbObject.getId());
 		assertEquals("name 1", dbObject.getName());

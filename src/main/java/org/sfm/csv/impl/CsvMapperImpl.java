@@ -3,6 +3,7 @@ package org.sfm.csv.impl;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.sfm.csv.CsvColumnKey;
@@ -53,16 +54,20 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	
 	@Override
 	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int rowStart, final int limit) throws IOException, MappingException {
-		new CsvParser().parse(reader, newCellHandler(handler, rowStart, limit));
+		new CsvParser().parse(reader, newCellHandler(handler, rowStart, limit, true));
 		return handler;
+	}
+	
+	public Iterator<T> iterate(Reader reader) throws IOException {
+		return new CsvIterator<T>(reader, this);
 	}
 
 	protected CsvMapperCellHandler<T> newCellHandler(final RowHandler<T> handler) {
-		return newCellHandler(handler, -1, -1);
+		return newCellHandler(handler, -1, -1, true);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected CsvMapperCellHandler<T> newCellHandler(final RowHandler<T> handler, int rowStart, int limit) {
+	protected CsvMapperCellHandler<T> newCellHandler(final RowHandler<T> handler, int rowStart, int limit, boolean pushMode) {
 		
 		DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetters.length];
 		Map<CsvMapper<?>, CsvMapperCellHandler<?>> cellHandlers = new HashMap<CsvMapper<?>, CsvMapperCellHandler<?>>();
@@ -80,7 +85,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 					
 					if(bhandler == null) {
 						delegateCellSetter = new DelegateDelayedCellSetterFactory(marker, i);
-						cellHandlers.put(marker.getMapper(), delegateCellSetter.getBytesCellHandler());
+						cellHandlers.put(marker.getMapper(), delegateCellSetter.getCellHandler());
 					} else {
 						delegateCellSetter = new DelegateDelayedCellSetterFactory(marker, bhandler, i);
 					}
@@ -123,7 +128,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 				rowHandlerErrorHandlers, 
 				handler, 
 				parsingContextFactory.newContext(), 
-				rowStart, limit);
+				rowStart, limit, pushMode);
 	}
 
 

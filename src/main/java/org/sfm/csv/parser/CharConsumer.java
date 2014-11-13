@@ -26,16 +26,12 @@ public final class CharConsumer {
 			switch (c) {
 			case ',':
 				newCellIfNotInQuote(csvBuffer);
-				turnOffCrFlag();
 				break;
 			case '"':
 				quote(csvBuffer);
-				turnOffCrFlag();
 				break;
 			case '\n':
-				boolean cont = handleEndOfLineLF(csvBuffer);
-				turnOffCrFlag();
-				if (!cont) {
+				if (!handleEndOfLineLF(csvBuffer)) {
 					return false;
 				}
 				break;
@@ -60,6 +56,7 @@ public final class CharConsumer {
 			return;
 		
 		newCell(csvBuffer, 1);
+		turnOffCrFlag();
 	}
 
 
@@ -78,6 +75,7 @@ public final class CharConsumer {
 				csvBuffer.mark();
 			}
 		}
+		turnOffCrFlag();
 		return b;
 	}
 
@@ -101,6 +99,7 @@ public final class CharConsumer {
 		} else {
 			currentState = currentState ^ ALL_QUOTES;
 		}
+		turnOffCrFlag();
 	}
 
 	private void newCell(CharBuffer csvBuffer, int shift) {;

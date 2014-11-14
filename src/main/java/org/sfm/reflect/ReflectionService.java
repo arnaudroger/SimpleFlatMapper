@@ -1,11 +1,15 @@
 package org.sfm.reflect;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.AsmHelper;
+import org.sfm.reflect.meta.AliasProvider;
+import org.sfm.reflect.meta.AliasProviderFactory;
 import org.sfm.reflect.meta.ArrayClassMeta;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ListClassMeta;
@@ -15,6 +19,8 @@ public class ReflectionService {
 	private final SetterFactory setterFactory;
 	private final InstantiatorFactory instantiatorFactory;
 	private final AsmFactory asmFactory;
+	private final AliasProvider aliasProvider;
+	
 	private final boolean asmPresent;
 	private final boolean asmActivated;
 
@@ -36,6 +42,7 @@ public class ReflectionService {
 		}
 		this.setterFactory = new SetterFactory(asmFactory);
 		this.instantiatorFactory = new InstantiatorFactory(asmFactory);
+		this.aliasProvider = AliasProviderFactory.getAliasProvider();
 	}
 	
 	public ReflectionService(final boolean asmPresent, final boolean asmActivated, final AsmFactory asmFactory) {
@@ -48,6 +55,7 @@ public class ReflectionService {
 		}
 		this.setterFactory = new SetterFactory(asmFactory);
 		this.instantiatorFactory = new InstantiatorFactory(asmFactory);
+		this.aliasProvider = AliasProviderFactory.getAliasProvider();
 	}
 
 	public SetterFactory getSetterFactory() {
@@ -79,6 +87,12 @@ public class ReflectionService {
 			return new ArrayClassMeta(clazz, clazz.getComponentType(), this);
 		}
 		return new ObjectClassMeta<T>(clazz, this);
+	}
+	public String getColumnName(Method method) {
+		return aliasProvider.getAliasForMethod(method);
+	}
+	public String getColumnName(Field field) {
+		return aliasProvider.getAliasForField(field);
 	}
 }
  

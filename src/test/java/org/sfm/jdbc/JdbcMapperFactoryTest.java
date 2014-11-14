@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
+import org.sfm.beans.DbObjectWithAlias;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.impl.FieldMapper;
 import org.sfm.utils.ListHandler;
@@ -31,6 +32,19 @@ public class JdbcMapperFactoryTest {
 				ResultSet rs = ps.executeQuery();
 				JdbcMapper<DbObject> mapper = asmFactory.newMapper(DbObject.class, rs.getMetaData());
 				assertMapPsDbObject(rs, mapper);
+			}
+		});
+	}
+	
+	@Test
+	public void testAsmDbObjectWithAliasMappingFromDbWithMetaData()
+			throws SQLException, Exception, ParseException {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				ResultSet rs = ps.executeQuery();
+				JdbcMapper<DbObjectWithAlias> mapper = asmFactory.newMapper(DbObjectWithAlias.class, rs.getMetaData());
+				assertMapPsDbObjectWithAlias(rs, mapper);
 			}
 		});
 	}
@@ -145,6 +159,13 @@ public class JdbcMapperFactoryTest {
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
 	
+	private void assertMapPsDbObjectWithAlias(ResultSet rs,
+			JdbcMapper<DbObjectWithAlias> mapper) throws Exception,
+			ParseException {
+		List<DbObjectWithAlias> list = mapper.forEach(rs, new ListHandler<DbObjectWithAlias>()).getList();
+		assertEquals(1,  list.size());
+		DbHelper.assertDbObjectWithAliasMapping(list.get(0));
+	}
 	
 	private void assertMapPsFinalDbObject(ResultSet rs,
 			JdbcMapper<DbFinalObject> mapper) throws Exception,

@@ -10,10 +10,11 @@ public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
 	private final Method method;
 
-	public MethodPropertyMeta(String name, String column, ReflectionService reflectService, Method method) {
-		super(name, column, reflectService);
+	public MethodPropertyMeta(String name, String columnName, ReflectionService reflectService, Method method) {
+		super(name, columnName, reflectService);
 		this.method = method;
 	}
+
 
 	@Override
 	protected Setter<T, P> newSetter() {

@@ -20,6 +20,10 @@ public class SetterHelper {
 		return  name.equalsIgnoreCase(property);
 	}
 	
+	public static String getPropertyNameFromMethodName(final String name) {
+		return name.substring(3,4).toLowerCase() +  name.substring(4);
+	}
+	
 
 	public static boolean isSetter(final String name) {
 		return name.length() > 3 && name.startsWith("set");

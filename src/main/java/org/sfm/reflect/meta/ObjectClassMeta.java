@@ -4,8 +4,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sfm.map.MapperBuildingException;
@@ -24,6 +26,8 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	private final ReflectionService reflectService;
 	private final Class<T> target;
 
+	private final Map<String, String> fieldAliases;
+	
 	public ObjectClassMeta(Class<T> target, ReflectionService reflectService) throws MapperBuildingException {
 		this.reflectService = reflectService;
 		if (reflectService.isAsmPresent()) {
@@ -37,10 +41,35 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			this.constructorDefinitions = null;
 			this.constructorProperties = null;
 		}
+		this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, target));
 		this.properties = Collections.unmodifiableList(listProperties(reflectService, target));
 		this.target = target;
 	}
 	
+	private Map<String, String> aliases(final ReflectionService reflectService, Class<T> target) {
+		final Map<String, String> map = new HashMap<String, String>();
+		
+		ClassVisitor.visit(target, new FielAndMethodCallBack() {
+			@Override
+			public void method(Method method) {
+				String alias = reflectService.getColumnName(method);
+				if (alias != null) {
+					map.put(SetterHelper.getPropertyNameFromMethodName(method.getName()), alias);
+				}
+			}
+			
+			@Override
+			public void field(Field field) {
+				String alias = reflectService.getColumnName(field);
+				if (alias != null) {
+					map.put(field.getName(), alias);
+				}
+			}
+		});
+		
+		return map;
+	}
+
 	private List<ConstructorPropertyMeta<T, ?>> listProperties(List<ConstructorDefinition<T>> constructorDefinitions) {
 		if (constructorDefinitions == null) return null;
 		
@@ -58,38 +87,45 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return constructorProperties;
 	}
 
-	private List<PropertyMeta<T, ?>> listProperties(ReflectionService reflectService, Class<?> target) {
+	private List<PropertyMeta<T, ?>> listProperties(final ReflectionService reflectService, Class<?> target) {
 		final List<PropertyMeta<T, ?>> properties = new ArrayList<PropertyMeta<T, ?>>();
 		final Set<String> propertiesSet = new HashSet<String>();
-		Class<?> currentClass = target;
 		
-		while(currentClass != null && !Object.class.equals(currentClass)) {
-			
-			for(Method method : currentClass.getDeclaredMethods()) {
+		ClassVisitor.visit(target, new FielAndMethodCallBack() {
+			@Override
+			public void method(Method method) {
 				final String name = method.getName();
 				if (SetterHelper.methodModifiersMatches(method.getModifiers()) && SetterHelper.isSetter(name)) {
-					final String propertyName = name.substring(3,4).toLowerCase() +  name.substring(4);
+					final String propertyName = SetterHelper.getPropertyNameFromMethodName(name);
 					if (!propertiesSet.contains(propertyName)) {
-						properties.add(new MethodPropertyMeta<T, Object>(propertyName, propertyName,  reflectService, method));
+						properties.add(new MethodPropertyMeta<T, Object>(propertyName, getAlias(propertyName), reflectService, method));
 						propertiesSet.add(propertyName);
 					}
 				}
 			}
 			
-			for(Field field : currentClass.getDeclaredFields()) {
+			@Override
+			public void field(Field field) {
 				final String name = field.getName();
 				if (SetterHelper.fieldModifiersMatches(field.getModifiers())) {
 					if (!propertiesSet.contains(name)) {
-						properties.add(new FieldPropertyMeta<T, Object>(field.getName(), field.getName(), reflectService, field));
+						properties.add(new FieldPropertyMeta<T, Object>(field.getName(), getAlias(name), reflectService, field));
 						propertiesSet.add(name);
 					}
 				}
 			}
-			
-			currentClass = currentClass.getSuperclass();
-		}
+		});
 		
 		return properties;
+	}
+
+
+	private String getAlias(String propertyName) {
+		String columnName = this.fieldAliases.get(propertyName);
+		if (columnName == null) {
+			columnName = propertyName;
+		}
+		return columnName;
 	}
 
 	List<ConstructorDefinition<T>> getConstructorDefinitions() {

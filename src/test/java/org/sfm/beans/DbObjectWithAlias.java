@@ -7,23 +7,23 @@ import javax.persistence.Column;
 import org.sfm.beans.DbObject.Type;
 
 public class DbObjectWithAlias {
-	
+
+	@Column(name="id")
 	private long idWithAlias;
 	private String nameWithAlias;
 	private String emailWithAlias;
 	private Date creationTimeWithAlias;
-	
+
 	private Type typeOrdinalWithAlias;
 	private Type typeNameWithAlias;
-	
-	@Column(name="id")
+
 	public long getIdWithAlias() {
 		return idWithAlias;
 	}
 	public void setIdWithAlias(long idWithAlias) {
 		this.idWithAlias = idWithAlias;
 	}
-	
+
 	@Column(name="name")
 	public String getNameWithAlias() {
 		return nameWithAlias;

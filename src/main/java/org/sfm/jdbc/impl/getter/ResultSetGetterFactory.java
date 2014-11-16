@@ -221,9 +221,9 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				case Types.NCHAR:
 				case Types.NVARCHAR:
 				case Types.NCLOB:
-					return (Getter<ResultSet, P>) new ReaderResultSetGetter(key.getIndex());
-				default:
 					return (Getter<ResultSet, P>) new NReaderResultSetGetter(key.getIndex());
+				default:
+					return (Getter<ResultSet, P>) new ReaderResultSetGetter(key.getIndex());
 				}
 			}
 		});

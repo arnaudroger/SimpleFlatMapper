@@ -5,8 +5,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.sql.ResultSet;
-import java.sql.Types;
+import java.io.InputStream;
+import java.io.Reader;
+import java.sql.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +44,55 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(DbObject.Type.type3, factory.newGetter(DbObject.Type.class, key(Types.CHAR)).get(resultSet));
 		assertEquals(DbObject.Type.type3, factory.newGetter(DbObject.Type.class, key(Types.CLOB)).get(resultSet));
 		assertEquals(DbObject.Type.type3, factory.newGetter(DbObject.Type.class, key(Types.VARCHAR)).get(resultSet));
+	}
+
+	@Test
+	public void testBlob() throws Exception {
+		Blob blob = mock(Blob.class);
+		when(resultSet.getBlob(1)).thenReturn(blob);
+		assertEquals(blob, factory.newGetter(Blob.class, key(Types.BLOB)).get(resultSet));
+	}
+
+	@Test
+	public void testClob() throws Exception {
+		Clob blob = mock(Clob.class);
+		when(resultSet.getClob(1)).thenReturn(blob);
+		assertEquals(blob, factory.newGetter(Clob.class, key(Types.CLOB)).get(resultSet));
+	}
+
+	@Test
+	public void testReader() throws Exception {
+		Reader blob = mock(Reader.class);
+		when(resultSet.getCharacterStream(1)).thenReturn(blob);
+		assertEquals(blob, factory.newGetter(Reader.class, key(Types.CLOB)).get(resultSet));
+	}
+
+	@Test
+	public void testNClob() throws Exception {
+		NClob blob = mock(NClob.class);
+		when(resultSet.getNClob(1)).thenReturn(blob);
+		assertEquals(blob, factory.newGetter(NClob.class, key(Types.NCLOB)).get(resultSet));
+	}
+
+	@Test
+	public void testNReader() throws Exception {
+		Reader blob = mock(Reader.class);
+		when(resultSet.getNCharacterStream(1)).thenReturn(blob);
+		assertEquals(blob, factory.newGetter(Reader.class, key(Types.NCLOB)).get(resultSet));
+	}
+
+	@Test
+	public void testInputStream() throws Exception {
+		InputStream inputStream = mock(InputStream.class);
+		when(resultSet.getBinaryStream(1)).thenReturn(inputStream);
+		assertEquals(inputStream, factory.newGetter(InputStream.class, key(Types.BLOB)).get(resultSet));
+	}
+
+	@Test
+	public void testRef() throws Exception {
+		Ref ref = mock(Ref.class);
+		when(resultSet.getRef(1)).thenReturn(ref);
+		assertEquals(ref, factory.newGetter(Ref.class, key(Types.REF)).get(resultSet));
 	}
 	
 	private JdbcColumnKey key(int type) {

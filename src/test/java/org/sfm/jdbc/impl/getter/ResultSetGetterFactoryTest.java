@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.URL;
 import java.sql.*;
 
 import org.junit.Before;
@@ -94,7 +95,51 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getRef(1)).thenReturn(ref);
 		assertEquals(ref, factory.newGetter(Ref.class, key(Types.REF)).get(resultSet));
 	}
-	
+
+	@Test
+	public void testRowId() throws Exception {
+		RowId rowId = mock(RowId.class);
+		when(resultSet.getRowId(1)).thenReturn(rowId);
+		assertEquals(rowId, factory.newGetter(RowId.class, key(Types.ROWID)).get(resultSet));
+	}
+
+	@Test
+	public void testSqlArray() throws Exception {
+		Array array = mock(Array.class);
+		when(resultSet.getArray(1)).thenReturn(array);
+		assertEquals(array, factory.newGetter(Array.class, key(Types.ARRAY)).get(resultSet));
+	}
+
+	@Test
+	public void testSqlXml() throws Exception {
+		SQLXML sqlxml = mock(SQLXML.class);
+		when(resultSet.getSQLXML(1)).thenReturn(sqlxml);
+		assertEquals(sqlxml, factory.newGetter(SQLXML.class, key(Types.SQLXML)).get(resultSet));
+	}
+
+	@Test
+	public void testUrl() throws Exception {
+		URL url = new URL("http://url.net");
+		when(resultSet.getURL(1)).thenReturn(url);
+		assertEquals(url, factory.newGetter(URL.class, key(Types.DATALINK)).get(resultSet));
+	}
+
+	@Test
+	public void testUrlFromString() throws Exception {
+		URL url = new URL("http://url.net");
+		when(resultSet.getString(1)).thenReturn("http://url.net");
+		assertEquals(url, factory.newGetter(URL.class, key(Types.VARCHAR)).get(resultSet));
+	}
+
+	@Test
+	public void testDateFromUdefined() throws Exception {
+		java.util.Date date = new java.util.Date(13l);
+		when(resultSet.getObject(1)).thenReturn(date);
+		assertEquals(date, factory.newGetter(Date.class, key(JdbcColumnKey.UNDEFINED_TYPE)).get(resultSet));
+		when(resultSet.getObject(1)).thenReturn(131l);
+		assertEquals(new java.util.Date(131l), factory.newGetter(Date.class, key(JdbcColumnKey.UNDEFINED_TYPE)).get(resultSet));
+	}
+
 	private JdbcColumnKey key(int type) {
 		return new JdbcColumnKey("NA", 1, type);
 	}

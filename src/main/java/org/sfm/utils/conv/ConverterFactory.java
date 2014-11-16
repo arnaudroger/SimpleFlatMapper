@@ -72,13 +72,13 @@ public class ConverterFactory {
 	private static <F, P, E> Converter<F, P> newArrayConverter(Type eltType) {
 		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(eltType, new JdbcColumnKey("elt", 2));
 		if (elementGetter == null) return null;
-		return (Converter<F, P>)new ArrayConverter<F,E>((Class<E>) TypeHelper.toClass(eltType), elementGetter);
+		return (Converter<F, P>)new ArrayConverter<E>((Class<E>) TypeHelper.toClass(eltType), elementGetter);
 	}
 	@SuppressWarnings("unchecked")
 	private static <F, P, E> Converter<F, P> newArrayToListConverter(Type eltType) {
 		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(eltType, new JdbcColumnKey("elt", 2));
 		if (elementGetter == null) return null;
-		return (Converter<F, P>)new ArrayToListConverter<F,E>(elementGetter);
+		return (Converter<F, P>)new ArrayToListConverter<E>(elementGetter);
 	}
 	
 }

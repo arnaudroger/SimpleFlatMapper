@@ -2,6 +2,8 @@ package org.sfm.utils.conv;
 
 import org.junit.Test;
 
+import javax.swing.text.Document;
+import javax.xml.parsers.SAXParser;
 import java.math.BigDecimal;
 import java.net.URL;
 
@@ -46,4 +48,10 @@ public class ConverterFactoryTest {
             // expected
         }
     }
+
+    @Test
+    public void testNoConverter()  {
+        assertNull(ConverterFactory.getConverter(Document.class, SAXParser.class));
+    }
+
 }

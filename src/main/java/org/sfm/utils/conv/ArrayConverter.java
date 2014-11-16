@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.sfm.reflect.Getter;
 
-public class ArrayConverter<F, E> implements Converter<F, E[]> {
+public class ArrayConverter<E> implements Converter<Array, E[]> {
 
 	private final Class<E> elementClass;
 	private final Getter<ResultSet, E> elementGetter;
@@ -18,13 +18,7 @@ public class ArrayConverter<F, E> implements Converter<F, E[]> {
 	}
 
 	@Override
-	public E[] convert(F in) throws Exception {
-		// expext an Array
-		if (!(in instanceof Array)) {
-			throw new IllegalArgumentException("Expect java.sql.Array but got " + in);
-		}
-		
-		Array array = (Array) in;
+	public E[] convert(Array array) throws Exception {
 		List<E> list = new ArrayList<E>();
 		
 		ResultSet rs = array.getResultSet();

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
 
+import org.sfm.csv.CsvParser;
 import org.sfm.csv.parser.CharsCellHandler;
 import org.sfm.csv.parser.CsvReader;
 import org.sfm.utils.RowHandler;
@@ -17,17 +18,25 @@ public class CsvIterator<T> implements Iterator<T> {
 	private final CsvReader reader;
 	private CharsCellHandler handler;
 	
-	public CsvIterator(Reader reader, CsvMapperImpl<T> csvMapperImpl) {
+	public CsvIterator(Reader reader, CsvMapperImpl<T> csvMapperImpl, int rowStart) {
 		handler = csvMapperImpl.newCellHandler(new RowHandler<T>() {
 			@Override
 			public void handle(T t) throws Exception {
 				currentValue = t;
 			}
-		}, -1, -1, false);
-		this.reader = new CsvReader(4096, handler, reader);
-		
+		}, rowStart, -1, false);
+		this.reader = new CsvReader(CsvParser.DEFAULT, handler, reader);
 	}
-
+	public CsvIterator(Reader reader, DynamicCsvMapper<T> csvMapperImpl, int rowStart) {
+		handler = csvMapperImpl.newPullCellHandler(new RowHandler<T>() {
+			@Override
+			public void handle(T t) throws Exception {
+				currentValue = t;
+			}
+		}, rowStart);
+		this.reader = new CsvReader(CsvParser.DEFAULT, handler, reader);
+	}
+	
 	@Override
 	public boolean hasNext() {
 		fetch();

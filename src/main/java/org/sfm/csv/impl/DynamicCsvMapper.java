@@ -2,12 +2,13 @@ package org.sfm.csv.impl;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 //IFJAVA8_START
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 //IFJAVA8_END
 
 import org.sfm.csv.CellValueReader;
@@ -15,7 +16,6 @@ import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.CsvMapper;
 import org.sfm.csv.CsvMapperBuilder;
 import org.sfm.csv.CsvParser;
-import org.sfm.csv.impl.cellreader.StringCellValueReader;
 import org.sfm.csv.parser.CharsCellHandler;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
@@ -26,67 +26,8 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.utils.RowHandler;
 
-public class DynamicCsvMapper<T> implements CsvMapper<T> {
+public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	
-	public final class DynamicCellHandler implements CharsCellHandler {
-		private final RowHandler<T> handle;
-		private final int rowStart;
-		private final int limit;
-
-		private CsvMapperCellHandler<T> cellHandler;
-		private List<String> columns = new ArrayList<String>();
-		private int currentRow;
-		
-		public DynamicCellHandler(RowHandler<T> handle, int rowStart, int limit) {
-			this.handle = handle;
-			this.rowStart = rowStart;
-			this.limit = limit;
-		}
-
-		@Override
-		public boolean endOfRow() {
-			if (rowStart == -1 || currentRow >= rowStart) {
-				if (cellHandler == null) {
-					ColumnsMapperKey key = new ColumnsMapperKey(columns.toArray(new String[columns.size()]));
-					CsvMapperImpl<T> csvMapperImpl = mapperCache.get(key);
-					if (csvMapperImpl == null) {
-						csvMapperImpl = buildeMapper(key);
-						mapperCache.add(key, csvMapperImpl);
-					}
-					cellHandler = csvMapperImpl.newCellHandler(handle);
-				} else {
-					cellHandler.endOfRow();
-				}
-			}
-			
-			return continueProcessing();
-		}
-
-		private boolean continueProcessing() {
-			boolean continueProcessing =  limit == -1 || (currentRow - rowStart) < limit;
-			currentRow++;
-			return continueProcessing;
-		}
-
-		@Override
-		public void newCell(char[] chars, int offset, int length) {
-			if (rowStart == -1 || currentRow >= rowStart) {
-				if (cellHandler == null) {
-					columns.add(StringCellValueReader.readString(chars, offset, length));
-				} else {
-					cellHandler.newCell(chars, offset, length);
-				}
-			}
-		}
-
-		@Override
-		public void end() {
-			if (cellHandler != null) {
-				cellHandler.end();
-			}
-		}
-	}
-
 	private final ClassMeta<T> classMeta;
 	private final Class<T> target;
 
@@ -128,8 +69,12 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 	
 	@Override
 	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int rowStart, final int limit) throws IOException, MappingException {
-		csvParser.parse(reader, new DynamicCellHandler(handler, rowStart, limit));
+		csvParser.parse(reader, new DynamicPushCellHandler<T>(this, handler, rowStart, limit));
 		return handler;
+	}
+	
+	protected CharsCellHandler newPullCellHandler(RowHandler<T> handler, int rowStart) {
+		return new DynamicPullCellHandler<T>(this, handler, rowStart);
 	}
 	
 	private CsvMapperImpl<T> buildeMapper(ColumnsMapperKey key) {
@@ -145,15 +90,29 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	@Override
 	public Iterator<T> iterate(Reader reader) throws IOException {
-		return null;
+		return iterate(reader, -1);
+	}
+	
+	@Override
+	public Iterator<T> iterate(Reader reader, int rowStart) throws IOException {
+		return new CsvIterator<T>(reader, this, rowStart);
 	}
 
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(Reader reader) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader), Spliterator.DISTINCT | Spliterator.ORDERED);
+		return StreamSupport.stream(spliterator, false);
 	}
 	//IFJAVA8_END
+
+	public CsvMapperImpl<T> getCsvMapper(ColumnsMapperKey key) {
+		CsvMapperImpl<T> csvMapperImpl = mapperCache.get(key);
+		if (csvMapperImpl == null) {
+			csvMapperImpl = buildeMapper(key);
+			mapperCache.add(key, csvMapperImpl);
+		}
+		return csvMapperImpl;
+	}
 
 }

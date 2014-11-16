@@ -15,6 +15,8 @@ public final class CsvParser {
 	public static int _32K = 1 << 15;
 	public static int _64K = 1 << 16;
 	
+	public static final int DEFAULT = _8K;
+	
 	private final int bufferSize;
 	
 	public CsvParser(final int bufferSize) {
@@ -22,7 +24,7 @@ public final class CsvParser {
 	}
 	
 	public CsvParser() {
-		this(_8K);
+		this(DEFAULT);
 	}
 		
 	public <CH extends CharsCellHandler> CH parse(final Reader r, final CH handler) throws IOException {

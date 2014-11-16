@@ -1,6 +1,6 @@
 package org.sfm.csv;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -47,10 +48,6 @@ public class DynamicCsvMapperImplTest {
 	public void testDbObject() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 		
-//		List<DbObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
-//		assertEquals(1, list.size());
-//		DbHelper.assertDbObjectMapping(list.get(0));
-		
 		List<DbObject> list = mapper.forEach(dbObjectCsvReader3Lines(), new ListHandler<DbObject>(),1,1).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
@@ -73,6 +70,21 @@ public class DynamicCsvMapperImplTest {
 		List<DbPartialFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbPartialFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
+		
+	}
+	
+	
+	@Test
+	public void testDbObjectIterator() throws Exception {
+		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
+		
+		Iterator<DbObject> it = mapper.iterate(dbObjectCsvReader3Lines(), 1);
+		
+		assertTrue(it.hasNext());
+		DbHelper.assertDbObjectMapping(1, it.next());
+		assertTrue(it.hasNext());
+		DbHelper.assertDbObjectMapping(2, it.next());
+		assertFalse(it.hasNext());
 		
 	}
 	

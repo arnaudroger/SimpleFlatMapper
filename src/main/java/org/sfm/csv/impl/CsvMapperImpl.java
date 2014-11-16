@@ -66,7 +66,12 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	
 	@Override
 	public Iterator<T> iterate(Reader reader) {
-		return new CsvIterator<T>(reader, this);
+		return iterate(reader, -1);
+	}
+	
+	@Override
+	public Iterator<T> iterate(Reader reader, int rowStart) {
+		return new CsvIterator<T>(reader, this, rowStart);
 	}
 	
 	//IFJAVA8_START

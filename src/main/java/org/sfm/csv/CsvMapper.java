@@ -53,6 +53,8 @@ public interface CsvMapper<T> {
 
 	Iterator<T> iterate(Reader reader) throws IOException;
 
+	Iterator<T> iterate(Reader reader, int rowStart) throws IOException;
+
 	//IFJAVA8_START
 	Stream<T> stream(Reader reader) throws IOException;
 	//IFJAVA8_END

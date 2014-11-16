@@ -12,7 +12,7 @@ import java.sql.Types;
 import org.junit.Test;
 import org.sfm.reflect.ReflectionService;
 
-public class JdbcMapperOneConstructorType {
+public class JdbcMapperOneConstructorTypeTest {
 
 	public static class MyObject {
 		SubObject prop;
@@ -29,7 +29,6 @@ public class JdbcMapperOneConstructorType {
 		SubObjectAmbiguity prop;
 	}
 	public static class SubObjectAmbiguity {
-		@SuppressWarnings("unused")
 		private final String value;
 
 		public SubObjectAmbiguity(String value) {
@@ -69,9 +68,9 @@ public class JdbcMapperOneConstructorType {
 	
 	@Test
 	public void testCanCreateTypeFromAmbiguousWithType() throws Exception {
-		JdbcMapperBuilder<MyObject> builder = new JdbcMapperBuilder<MyObject>(MyObject.class, new ReflectionService(true, true));
+		JdbcMapperBuilder<MyObjectAmbiguity> builder = new JdbcMapperBuilder<MyObjectAmbiguity>(MyObjectAmbiguity.class, new ReflectionService(true, true));
 		builder.addMapping("prop", 1, Types.VARCHAR);
-		JdbcMapper<MyObject> mapper = builder.mapper();
+		JdbcMapper<MyObjectAmbiguity> mapper = builder.mapper();
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.getString(1)).thenReturn("val");
 		assertEquals("val", mapper.map(rs).prop.value);

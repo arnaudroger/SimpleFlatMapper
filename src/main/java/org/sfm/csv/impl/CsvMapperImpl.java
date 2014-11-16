@@ -5,6 +5,12 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+//IFJAVA8_START
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+//IFJAVA8_END
 
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.CsvMapper;
@@ -58,9 +64,18 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		return handler;
 	}
 	
-	public Iterator<T> iterate(Reader reader) throws IOException {
+	@Override
+	public Iterator<T> iterate(Reader reader) {
 		return new CsvIterator<T>(reader, this);
 	}
+	
+	//IFJAVA8_START
+	@Override
+	public Stream<T> stream(Reader reader) {
+		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader), Spliterator.DISTINCT | Spliterator.ORDERED);
+		return StreamSupport.stream(spliterator, false);
+	}
+	//IFJAVA8_END
 
 	protected CsvMapperCellHandler<T> newCellHandler(final RowHandler<T> handler) {
 		return newCellHandler(handler, -1, -1, true);

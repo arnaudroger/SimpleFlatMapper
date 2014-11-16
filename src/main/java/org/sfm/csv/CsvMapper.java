@@ -2,6 +2,10 @@ package org.sfm.csv;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Iterator;
+//IFJAVA8_START
+import java.util.stream.Stream;
+//IFJAVA8_END
 
 import org.sfm.map.MappingException;
 import org.sfm.utils.RowHandler;
@@ -47,4 +51,9 @@ public interface CsvMapper<T> {
 	 */
 	<H extends RowHandler<T>> H forEach(Reader reader, H handle, int rowStart, int rowEnd) throws IOException, MappingException;
 
+	Iterator<T> iterate(Reader reader) throws IOException;
+
+	//IFJAVA8_START
+	Stream<T> stream(Reader reader) throws IOException;
+	//IFJAVA8_END
 }

@@ -3,8 +3,12 @@ package org.sfm.csv.impl;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+//IFJAVA8_START
+import java.util.stream.Stream;
+//IFJAVA8_END
 
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.CsvColumnKey;
@@ -138,5 +142,18 @@ public class DynamicCsvMapper<T> implements CsvMapper<T> {
 		}
 		return (CsvMapperImpl<T>)builder.mapper();
 	}
+
+	@Override
+	public Iterator<T> iterate(Reader reader) throws IOException {
+		return null;
+	}
+
+	//IFJAVA8_START
+	@Override
+	public Stream<T> stream(Reader reader) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	//IFJAVA8_END
 
 }

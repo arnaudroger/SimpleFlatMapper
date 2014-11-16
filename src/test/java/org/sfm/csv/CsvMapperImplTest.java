@@ -1,6 +1,7 @@
 package org.sfm.csv;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -8,6 +9,10 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Iterator;
+import java.util.function.Consumer;
+//IFJAVA8_START
+import java.util.stream.Stream;
+//IFJAVA8_END
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
@@ -45,4 +50,28 @@ public class CsvMapperImplTest {
 		assertFalse(it.hasNext());
 	}
 
+	//IFJAVA8_START
+	@Test
+	public void testCsvStream()
+			throws IOException, UnsupportedEncodingException, ParseException {
+		CsvMapperBuilder<DbObject> builder = CsvMapperFactory.newInstance().newBuilder(DbObject.class);
+		CsvMapperBuilderTest.addDbObjectFields(builder);
+		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
+
+		Stream<DbObject> st = mapper.stream(CsvMapperImplTest.dbObjectCsvReader3Lines());
+		st.forEach(new Consumer<DbObject>() {
+			int i = 0;
+
+			@Override
+			public void accept(DbObject t) {
+				assertTrue(i < 3);
+				try {
+					DbHelper.assertDbObjectMapping(i++, t);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
+	}
+	//IFJAVA8_END
 }

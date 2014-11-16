@@ -1,10 +1,11 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
@@ -64,4 +65,52 @@ public class JdbcMapperDbObjectTest {
 			}
 		});
 	}
+	
+	@Test
+	public void testDbObjectMapperWithIterator()
+			throws SQLException, Exception, ParseException {
+		
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
+		
+		addColumn(builder);
+		
+		final JdbcMapper<DbObject> mapper = builder.mapper();
+
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				Iterator<DbObject> objects = mapper.iterate(ps.executeQuery());
+				assertTrue(objects.hasNext());
+				DbHelper.assertDbObjectMapping(objects.next());
+				assertFalse(objects.hasNext());
+			}
+		});
+	}
+	
+	//IFJAVA8_START
+	@Test
+	public void testDbObjectMapperWithStream()
+			throws SQLException, Exception, ParseException {
+		
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
+		addColumn(builder);
+		final JdbcMapper<DbObject> mapper = builder.mapper();
+
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				mapper.stream(ps.executeQuery()).forEach(
+						(o) -> {
+							try {
+								DbHelper.assertDbObjectMapping(o);
+							} catch (Exception e) {
+								throw new RuntimeException(e);
+							}
+						}
+				);
+			}
+		});
+	}
+	//IFJAVA8_END
+
 }

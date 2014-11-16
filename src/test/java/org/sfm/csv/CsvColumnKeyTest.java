@@ -15,7 +15,7 @@ public class CsvColumnKeyTest {
     @Test
     public void testGetParent() throws Exception {
         assertNull(new CsvColumnKey("c" ,0).getParent());
-        assertNotNull(new CsvColumnKey("c" ,0).alias("b").getParent());
+        assertNotNull(new CsvColumnKey("c", 0).alias("b").getParent());
     }
 
     @Test
@@ -26,6 +26,8 @@ public class CsvColumnKeyTest {
     @Test
     public void testEquals() throws Exception {
         assertEquals(new CsvColumnKey("col", 2), new CsvColumnKey("col", 2));
+        assertEquals(new CsvColumnKey("col", 2).alias("h"), new CsvColumnKey("col", 2).alias("h"));
+        assertNotEquals(new CsvColumnKey("col2", 2).alias("h"), new CsvColumnKey("col3", 2).alias("h"));
         assertNotEquals(new CsvColumnKey("col", 2), new CsvColumnKey("col1", 2));
         assertNotEquals(new CsvColumnKey("col", 2), new CsvColumnKey("col", 4));
     }

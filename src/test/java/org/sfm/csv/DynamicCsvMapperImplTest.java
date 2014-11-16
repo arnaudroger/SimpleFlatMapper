@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +17,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
+//IFJAVA8_START
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+//IFJAVA8_END
 
 import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
@@ -87,7 +92,32 @@ public class DynamicCsvMapperImplTest {
 		assertFalse(it.hasNext());
 		
 	}
-	
+
+
+	//IFJAVA8_START
+	@Test
+	public void testDbObjectStream() throws Exception {
+		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
+
+		Stream<DbObject> it = mapper.stream(dbObjectCsvReader3Lines(), 1);
+
+		it.forEach(new Consumer<DbObject>() {
+			int i = 1;
+
+			@Override
+			public void accept(DbObject dbObject) {
+				try {
+					DbHelper.assertDbObjectMapping(i, dbObject);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+				i++;
+			}
+		});
+	}
+	//IFJAVA8_END
+
+
 	private static final String CSV_LIST = "id,objects_0_id,objects_0_name,objects_0_email,objects_0_creationTime,objects_0_typeOrdinal,objects_0_typeName\n"
 			+ "1,1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4";
 	@Test

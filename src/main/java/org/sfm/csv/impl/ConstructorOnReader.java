@@ -20,13 +20,7 @@ public class ConstructorOnReader<T> implements CellValueReader<T> {
 			ParsingContext parsingContext) {
 		try {
 			return constructor.newInstance(innerReader.read(chars, offset, length, parsingContext));
-		} catch (IllegalArgumentException e) {
-			throw new ParsingException(e);
-		} catch (InstantiationException e) {
-			throw new ParsingException(e);
-		} catch (IllegalAccessException e) {
-			throw new ParsingException(e);
-		} catch (InvocationTargetException e) {
+		} catch (Exception e) {
 			throw new ParsingException(e);
 		}
 	}

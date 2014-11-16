@@ -63,37 +63,6 @@
 					</instructions>
 				</configuration>
 			</plugin>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-						<version>1.5.2</version>
-						<executions>                
-			                <execution>
-			                    <phase>process-sources</phase>
-			                    <goals>
-			                        <goal>replace</goal>
-			                    </goals>
-			                </execution>
-			            </executions>
-						<configuration>
-							<includes>
-								<include>src/main/java/org/sfm/**/*</include>
-							</includes>
-							<excludes>
-								<exclude>target/**</exclude>
-							</excludes>
-							<replacements>
-								<replacement>
-									<token>/*IFJAVA8_START</token>
-									<value>//IFJAVA8_START </value>
-								</replacement>
-								<replacement>
-									<token>IFJAVA8_END*/</token>
-									<value>//IFJAVA8_END</value>
-								</replacement>
-							</replacements>
-						</configuration>
-					</plugin>			
 		</plugins>
 	</build>
 	<dependencies>
@@ -312,6 +281,7 @@
 						<configuration>
 							<includes>
 								<include>src/main/java/org/sfm/**/*</include>
+								<include>src/test/java/org/sfm/**/*</include>
 							</includes>
 							<excludes>
 								<exclude>target/**</exclude>
@@ -374,8 +344,8 @@
 			            </executions>
 						<configuration>
 							<includes>
-								<include>src/main/java/org/sfm/jdbc/*</include>
-								<include>src/main/java/org/sfm/jdbc/impl/*</include>
+								<include>src/main/java/org/sfm/**/*</include>
+								<include>src/test/java/org/sfm/**/*</include>
 							</includes>
 							<excludes>
 								<exclude>target/**</exclude>

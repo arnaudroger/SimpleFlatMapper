@@ -2,6 +2,7 @@ package org.sfm.jdbc.impl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Date;
@@ -129,7 +130,7 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 		}
 	}
 
-	private Class<?> getTargetTypeFromSqlType(int sqlType) {
+	public Class<?> getTargetTypeFromSqlType(int sqlType) {
 		switch (sqlType) {
 		case Types.LONGNVARCHAR:
 		case Types.LONGVARCHAR:
@@ -145,15 +146,23 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 			return Long.class;
 		case Types.INTEGER:
 			return Integer.class;
-			
+		case Types.SMALLINT:
+			return Short.class;
+		case Types.TINYINT:
+			return Byte.class;
+		case Types.NUMERIC:
+			return BigDecimal.class;
+
 		case Types.FLOAT:
 			return Float.class;
 		case Types.DOUBLE:
 			return Double.class;
+
 		case Types.BOOLEAN: 
 			return Boolean.class;
-		case Types.DATE: 
-			return Date.class;
+		case Types.DATE:
+		case Types.TIMESTAMP:
+				return Date.class;
 		}
 		return null;
 	}

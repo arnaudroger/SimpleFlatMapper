@@ -70,7 +70,6 @@ public interface CsvMapper<T> {
 	 */
 	Iterator<T> iterate(Reader reader, int rowStart) throws IOException;
 
-	//IFJAVA8_START
 	/**
 	 * Will return a Stream of T
 	 * 
@@ -78,7 +77,9 @@ public interface CsvMapper<T> {
 	 * @return stream of T
 	 * @throws IOException
 	 */
+	//IFJAVA8_START
 	Stream<T> stream(Reader reader) throws IOException;
+	//IFJAVA8_END
 	
 	/**
 	 * Will return a Stream of T.
@@ -87,6 +88,7 @@ public interface CsvMapper<T> {
 	 * @return stream of T
 	 * @throws IOException
 	 */
+	//IFJAVA8_START
 	Stream<T> stream(Reader reader, int rowStart) throws IOException;
 	//IFJAVA8_END
 }

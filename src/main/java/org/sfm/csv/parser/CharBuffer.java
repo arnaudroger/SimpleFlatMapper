@@ -53,16 +53,8 @@ public final class CharBuffer {
 		mark = 0;
 	}
 
-	public char getCurrentChar() {
-		return buffer[bufferIndex];
-	}
-
 	public char[] getCharBuffer() {
 		return buffer;
-	}
-
-	public int getBufferIndex() {
-		return bufferIndex;
 	}
 
 	public boolean isAllConsumed() {

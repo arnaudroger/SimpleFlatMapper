@@ -3,6 +3,7 @@ package org.sfm.utils.conv;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.net.URL;
 
 import static org.junit.Assert.*;
 
@@ -31,5 +32,18 @@ public class ConverterFactoryTest {
         assertEquals(new BigDecimal(13),
                 ConverterFactory.getConverter(Integer.class, BigDecimal.class).convert(13));
 
+    }
+
+    @Test
+    public void testURLConverter() throws Exception {
+        assertEquals(new URL("http://url.net"),
+                ConverterFactory.getConverter(String.class, URL.class).convert("http://url.net"));
+
+        try {
+            ConverterFactory.getConverter(String.class, URL.class).convert("blop");
+            fail();
+        } catch(ConversionException e) {
+            // expected
+        }
     }
 }

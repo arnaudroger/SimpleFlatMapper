@@ -4,6 +4,8 @@
 SimpleFlatMapper [v1.0.0b3](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.0.0b3)
 ========
 
+Straight line to v1.0.0
+
 [Google Group](https://groups.google.com/d/forum/simpleflatmapper)
 
 Fast and Easy mapping from database and csv to POJO. 

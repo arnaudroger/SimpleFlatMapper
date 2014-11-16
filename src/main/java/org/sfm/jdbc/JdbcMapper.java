@@ -22,8 +22,22 @@ public interface JdbcMapper<T> extends Mapper<ResultSet, T> {
 	 */
 	<H extends RowHandler<T>> H forEach(ResultSet rs, H handle) throws SQLException, MappingException;
 	
+	/**
+	 * 
+	 * @param rs
+	 * @return
+	 * @throws SQLException
+	 * @throws MappingException
+	 */
 	Iterator<T> iterate(ResultSet rs) throws SQLException, MappingException;
 	
+	/**
+	 * 
+	 * @param rs
+	 * @return
+	 * @throws SQLException
+	 * @throws MappingException
+	 */
 	//IFJAVA8_START
 	Stream<T> stream(ResultSet rs) throws SQLException, MappingException;
 	//IFJAVA8_END

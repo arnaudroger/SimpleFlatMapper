@@ -16,3 +16,6 @@ target/
 .classpath
 .project
 .settings/
+
+.idea/
+simpleFlatMapper.iml

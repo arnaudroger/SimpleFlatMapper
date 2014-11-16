@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbFinalObject;
+import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.RowHandler;
 import org.sfm.utils.ListHandler;
 
@@ -69,11 +70,20 @@ public class JdbcMapperDbObjectTest {
 	@Test
 	public void testDbObjectMapperWithIterator()
 			throws SQLException, Exception, ParseException {
-		
 		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
-		
+
+		testMapperBuilderWithIterator(builder);
+	}
+	@Test
+	public void testDbObjectMapperWithIteratorNoAsm()
+			throws SQLException, Exception, ParseException {
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService(false, false));
+
+		testMapperBuilderWithIterator(builder);
+	}
+	private void testMapperBuilderWithIterator(JdbcMapperBuilder<DbObject> builder) throws Exception {
 		addColumn(builder);
-		
+
 		final JdbcMapper<DbObject> mapper = builder.mapper();
 
 		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
@@ -86,13 +96,23 @@ public class JdbcMapperDbObjectTest {
 			}
 		});
 	}
-	
+
 	//IFJAVA8_START
 	@Test
 	public void testDbObjectMapperWithStream()
 			throws SQLException, Exception, ParseException {
 		
 		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
+		testMapperBuilderWithStream(builder);
+	}
+
+	@Test
+	public void testDbObjectMapperWithStreamNoAsm()
+			throws SQLException, Exception, ParseException {
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService(false, false));
+		testMapperBuilderWithStream(builder);
+	}
+	private void testMapperBuilderWithStream(JdbcMapperBuilder<DbObject> builder) throws Exception {
 		addColumn(builder);
 		final JdbcMapper<DbObject> mapper = builder.mapper();
 

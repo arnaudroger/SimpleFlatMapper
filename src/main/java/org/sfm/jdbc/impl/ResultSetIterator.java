@@ -3,6 +3,7 @@ package org.sfm.jdbc.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.sfm.map.Mapper;
 
@@ -44,7 +45,7 @@ public class ResultSetIterator<T> implements Iterator<T> {
 			isFetched = false;
 			return t;
 		} else {
-			throw new IllegalStateException("No more rows");
+			throw new NoSuchElementException("No more rows");
 		}
 	}
 

@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -14,6 +15,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
@@ -42,7 +45,48 @@ public class DynamicJdbcMapperTest {
 			}
 		});
 	}
-	
+
+	@Test
+	public void testResultSetMapperIterate()
+			throws SQLException, Exception, ParseException {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				Iterator<DbObject> objectIterator = mapper.iterate(ps.executeQuery());
+				assertTrue(objectIterator.hasNext());
+				DbHelper.assertDbObjectMapping(objectIterator.next());
+				assertFalse(objectIterator.hasNext());
+			}
+		});
+	}
+
+
+	//IFJAVA8_START
+	@Test
+	public void testResultSetMapperStream()
+			throws SQLException, Exception, ParseException {
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				Stream<DbObject> stream = mapper.stream(ps.executeQuery());
+				stream.forEach(new Consumer<DbObject>() {
+					int i = 0;
+					@Override
+					public void accept(DbObject dbObject) {
+						assertTrue(i < 1);
+						try {
+							DbHelper.assertDbObjectMapping(dbObject);
+						} catch (ParseException e) {
+							throw new RuntimeException(e);
+						}
+						i++;
+					}
+				});
+			}
+		});
+	}
+	//IFJAVA8_END
+
 	@Test
 	public void testResultSetMapperMap()
 			throws SQLException, Exception, ParseException {

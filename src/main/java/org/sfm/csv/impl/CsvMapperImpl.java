@@ -77,7 +77,12 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(Reader reader) {
-		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader), Spliterator.DISTINCT | Spliterator.ORDERED);
+		return stream(reader, -1);
+	}
+
+	@Override
+	public Stream<T> stream(Reader reader, int rowStart) {
+		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader, rowStart), Spliterator.DISTINCT | Spliterator.ORDERED);
 		return StreamSupport.stream(spliterator, false);
 	}
 	//IFJAVA8_END

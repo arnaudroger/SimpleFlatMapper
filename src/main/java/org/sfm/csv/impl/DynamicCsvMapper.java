@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END
 
+
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.CsvMapper;
@@ -101,7 +102,12 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(Reader reader) throws IOException {
-		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader), Spliterator.DISTINCT | Spliterator.ORDERED);
+		return stream(reader, -1);
+	}
+	
+	@Override
+	public Stream<T> stream(Reader reader, int rowStart) throws IOException {
+		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader, rowStart), Spliterator.DISTINCT | Spliterator.ORDERED);
 		return StreamSupport.stream(spliterator, false);
 	}
 	//IFJAVA8_END

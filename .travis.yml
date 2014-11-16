@@ -2,9 +2,6 @@ language: java
 
 jdk:
   - oraclejdk8
-  - oraclejdk7
-  - openjdk7
-  - openjdk6
 
 after_success:
   - mvn -P travis jacoco:report coveralls:jacoco

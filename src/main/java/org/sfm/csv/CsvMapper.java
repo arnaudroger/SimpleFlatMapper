@@ -51,11 +51,42 @@ public interface CsvMapper<T> {
 	 */
 	<H extends RowHandler<T>> H forEach(Reader reader, H handle, int rowStart, int rowEnd) throws IOException, MappingException;
 
+	/**
+	 * Will return an iterator on the reader that will return a mapped object for each row.
+	 * 
+	 * @param reader the reader
+	 * @return an iterator on the file
+	 * @throws IOException
+	 */
 	Iterator<T> iterate(Reader reader) throws IOException;
 
+	/**
+	 * Will return an iterator on the reader that will return a mapped object for each row.
+	 * 
+	 * @param reader the reader
+	 * @param rowStart the row at which we start mapping, starts at 0
+	 * @return an iterator on the file
+	 * @throws IOException
+	 */
 	Iterator<T> iterate(Reader reader, int rowStart) throws IOException;
 
 	//IFJAVA8_START
+	/**
+	 * Will return a Stream of T
+	 * 
+	 * @param reader the reader
+	 * @return stream of T
+	 * @throws IOException
+	 */
 	Stream<T> stream(Reader reader) throws IOException;
+	
+	/**
+	 * Will return a Stream of T.
+	 * 
+	 * @param reader the reader
+	 * @return stream of T
+	 * @throws IOException
+	 */
+	Stream<T> stream(Reader reader, int rowStart) throws IOException;
 	//IFJAVA8_END
 }

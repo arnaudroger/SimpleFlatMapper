@@ -1,0 +1,32 @@
+package org.sfm.csv;
+
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class CsvColumnKeyTest {
+
+    @Test
+    public void testIsAlias() throws Exception {
+        assertFalse(new CsvColumnKey("c" ,0).isAlias());
+        assertTrue(new CsvColumnKey("c", 0).alias("b").isAlias());
+    }
+
+    @Test
+    public void testGetParent() throws Exception {
+        assertNull(new CsvColumnKey("c" ,0).getParent());
+        assertNotNull(new CsvColumnKey("c" ,0).alias("b").getParent());
+    }
+
+    @Test
+    public void testHashCode() throws Exception {
+        assertNotEquals(new CsvColumnKey("col", 2).hashCode(), new CsvColumnKey("col", 3).hashCode());
+    }
+
+    @Test
+    public void testEquals() throws Exception {
+        assertEquals(new CsvColumnKey("col", 2), new CsvColumnKey("col", 2));
+        assertNotEquals(new CsvColumnKey("col", 2), new CsvColumnKey("col1", 2));
+        assertNotEquals(new CsvColumnKey("col", 2), new CsvColumnKey("col", 4));
+    }
+}

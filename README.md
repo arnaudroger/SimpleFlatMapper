@@ -12,22 +12,18 @@ A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 - Compatible with Java 6, 7 and 8. 
 - [Flexible mapping](#inner-object-mapping) with inner object, arrays and list support
 - Constructor, setter and field [injection](#value-injection)
-- [Lambda Ready](src/main/java/org/sfm/jdbc)
+- [Lambda Ready](src/main/java/org/sfm/jdbc), also exposes Streams
 - [Mapper for Jdbc ResultSet](src/main/java/org/sfm/jdbc)
 - [Mapper for Csvs](src/main/java/org/sfm/csv)
 - easy to integrate with [Spring JdbcTemplate](src/main/java/org/sfm/jdbc/spring). 
 - [Mapper for Jooq](src/main/java/org/sfm/jooq)
 - [Osgi](src/main/java/org/sfm/osgi) ready.
 - [QueryDSL Jdbc support](src/main/java/org/sfm/querydsl)
-
-To come in b3
-- return objects as a Stream
-- @Column JPA annotation support to define aliases
+- Support JPA @Column for alias definition
 
 Fastest CsvParser on [csv-parsers-comparaison](https://github.com/uniVocity/csv-parsers-comparison).
 
 Fastest [CsvMapper](#csv-mapping) and [ORM Mapper](#in-mem-hsqldb), as far as I could test. If you believe something would be worth testing please raise an issue.
-
 
 Feedbacks are more than welcome, don't hesitate to raise an issue or send me an email.
 
@@ -244,11 +240,34 @@ The lower the better.
 Maven dependency
 ======
 
+Java 8
+----
 ```xml
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.0.0b2</version>
+			<version>1.0.0b3</version>
 		</dependency>
 ```
 
+Java 7
+----
+```xml
+		<dependency>
+			<groupId>com.github.arnaudroger</groupId>
+			<artifactId>simpleFlatMapper</artifactId>
+			<version>1.0.0b3</version>
+			<classifier>jdk17</classifier>
+		</dependency>
+```
+
+Java 6
+----
+```xml
+		<dependency>
+			<groupId>com.github.arnaudroger</groupId>
+			<artifactId>simpleFlatMapper</artifactId>
+			<version>1.0.0b3</version>
+			<classifier>jdk16</classifier>
+		</dependency>
+```

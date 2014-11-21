@@ -171,5 +171,28 @@ public class CsvMapperImplTest {
 
 		assertEquals(3, i);
 	}
+
+	@Test
+	public void testCsvStreamTryAdvance()
+			throws IOException, UnsupportedEncodingException, ParseException {
+		CsvMapperBuilder<DbObject> builder = CsvMapperFactory.newInstance().newBuilder(DbObject.class);
+		CsvMapperBuilderTest.addDbObjectFields(builder);
+		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
+
+		Stream<DbObject> st = mapper.stream(CsvMapperImplTest.dbObjectCsvReader3Lines());
+		i = 0;
+		st.limit(1).forEach(new Consumer<DbObject>() {
+
+			@Override
+			public void accept(DbObject t) {
+				try {
+					DbHelper.assertDbObjectMapping(i++, t);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
+		assertEquals(1, i);
+	}
 	//IFJAVA8_END
 }

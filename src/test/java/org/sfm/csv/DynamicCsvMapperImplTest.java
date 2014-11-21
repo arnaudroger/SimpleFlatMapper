@@ -164,6 +164,27 @@ public class DynamicCsvMapperImplTest {
 	}
 
 	@Test
+	public void testDbObjectStreamLimit() throws Exception {
+		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
+
+		Stream<DbObject> it = mapper.stream(dbObjectCsvReader3Lines());
+		i = 1;
+		it.limit(1).forEach(new Consumer<DbObject>() {
+
+			@Override
+			public void accept(DbObject dbObject) {
+				try {
+					DbHelper.assertDbObjectMapping(i, dbObject);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+				i++;
+			}
+		});
+		assertEquals(2, i);
+	}
+
+	@Test
 	public void testDbObjectStreamWithSkip() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 

@@ -15,12 +15,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.Map;
+/*IFJAVA8_START
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-/*IFJAVA8_START
 IFJAVA8_END*/
 
 public final class DynamicCsvMapper<T> implements CsvMapper<T> {

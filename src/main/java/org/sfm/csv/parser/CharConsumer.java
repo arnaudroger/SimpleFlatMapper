@@ -1,8 +1,6 @@
 package org.sfm.csv.parser;
 
 
-import javafx.scene.control.Cell;
-
 /**
  * Consume the charbuffer.
  */

@@ -5,13 +5,13 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.CsvMapper;
@@ -81,7 +81,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		return new CsvIterator<T>(csvReader, this);
 	}
 
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	@Override
 	public Stream<T> stream(Reader reader) {
 		return StreamSupport.stream(new CsvSpliterator(CsvParser.newCsvReader(reader)), false);
@@ -155,7 +155,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		}
 	}
 
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected CsvMapperCellConsumer<T> newCellConsumer(final RowHandler<T> handler) {

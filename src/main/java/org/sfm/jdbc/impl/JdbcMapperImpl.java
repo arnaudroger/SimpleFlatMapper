@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.Spliterator;
 import java.util.Spliterators;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 import org.sfm.csv.parser.CellConsumer;
 import org.sfm.csv.parser.CsvReader;
@@ -52,7 +52,7 @@ public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements
 		return new ResultSetIterator<T>(rs, this);
 	}
 
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
 		return StreamSupport.stream(new JdbcSpliterator(rs), false);
@@ -108,5 +108,5 @@ public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements
 		}
 	}
 
-	//IFJAVA8_END
+	IFJAVA8_END*/
 }

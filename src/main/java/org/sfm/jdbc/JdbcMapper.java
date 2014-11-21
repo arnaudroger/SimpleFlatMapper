@@ -3,9 +3,9 @@ package org.sfm.jdbc;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.stream.Stream;
-//IFJAVA8_END
+IFJAVA8_END*/
 import org.sfm.map.Mapper;
 import org.sfm.map.MappingException;
 import org.sfm.utils.RowHandler;
@@ -38,8 +38,8 @@ public interface JdbcMapper<T> extends Mapper<ResultSet, T> {
 	 * @throws SQLException
 	 * @throws MappingException
 	 */
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	Stream<T> stream(ResultSet rs) throws SQLException, MappingException;
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
 }

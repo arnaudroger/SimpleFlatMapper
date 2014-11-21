@@ -20,8 +20,8 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-//IFJAVA8_START
-//IFJAVA8_END
+/*IFJAVA8_START
+IFJAVA8_END*/
 
 public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	
@@ -102,7 +102,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 
 
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	@Override
 	public Stream<T> stream(Reader reader) throws IOException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
@@ -117,7 +117,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
 		return StreamSupport.stream(mapper.new CsvSpliterator(csvReader), false);
 	}
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
 	protected CsvMapperImpl<T> getCsvMapper(ColumnsMapperKey key) {
 		CsvMapperImpl<T> csvMapperImpl = mapperCache.get(key);

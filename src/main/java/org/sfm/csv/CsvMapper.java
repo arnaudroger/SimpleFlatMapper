@@ -3,9 +3,9 @@ package org.sfm.csv;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.stream.Stream;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 import org.sfm.map.MappingException;
 import org.sfm.utils.RowHandler;
@@ -77,9 +77,9 @@ public interface CsvMapper<T> {
 	 * @return stream of T
 	 * @throws IOException
 	 */
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	Stream<T> stream(Reader reader) throws IOException;
-	//IFJAVA8_END
+	IFJAVA8_END*/
 	
 	/**
 	 * Will return a Stream of T.
@@ -89,7 +89,7 @@ public interface CsvMapper<T> {
 	 * @return stream of T
 	 * @throws IOException
 	 */
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	Stream<T> stream(Reader reader, int skip) throws IOException;
-	//IFJAVA8_END
+	IFJAVA8_END*/
 }

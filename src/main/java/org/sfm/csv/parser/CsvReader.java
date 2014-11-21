@@ -22,7 +22,6 @@ public final class CsvReader {
 	/**
 	 * parse cvs
 	 * 
-	 * @return
 	 * @throws IOException
 	 */
 	public void parseAll(CellConsumer cellConsumer)
@@ -36,7 +35,6 @@ public final class CsvReader {
 	/**
 	 * parse cvs
 	 *
-	 * @return
 	 * @throws IOException
 	 */
 	public void parseLine(CellConsumer cellConsumer)

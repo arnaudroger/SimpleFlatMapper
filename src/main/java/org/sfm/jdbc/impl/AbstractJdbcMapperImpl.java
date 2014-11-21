@@ -4,12 +4,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.Spliterator;
 import java.util.Spliterators;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.MappingException;
@@ -47,12 +47,12 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 		return new ResultSetIterator<T>(rs, this);
 	}
 	
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
 		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(rs), Spliterator.DISTINCT | Spliterator.ORDERED);
 		return StreamSupport.stream(spliterator, false);
 	}
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
 }

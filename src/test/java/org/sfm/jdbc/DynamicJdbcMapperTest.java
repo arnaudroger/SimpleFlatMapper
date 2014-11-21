@@ -15,10 +15,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
@@ -63,7 +63,7 @@ public class DynamicJdbcMapperTest {
 	}
 
 
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	@Test
 	public void testResultSetMapperStream()
 			throws SQLException, Exception, ParseException {
@@ -87,7 +87,7 @@ public class DynamicJdbcMapperTest {
 			}
 		});
 	}
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
 	@Test
 	public void testResultSetMapperMap()

@@ -105,14 +105,17 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(Reader reader) throws IOException {
-		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader), Spliterator.DISTINCT | Spliterator.ORDERED);
-		return StreamSupport.stream(spliterator, false);
+		CsvReader csvReader = CsvParser.newCsvReader(reader);
+		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
+		return StreamSupport.stream(mapper.new CsvSpliterator(csvReader), false);
 	}
 
 	@Override
 	public Stream<T> stream(Reader reader, int skip) throws IOException {
-		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader, skip), Spliterator.DISTINCT | Spliterator.ORDERED);
-		return StreamSupport.stream(spliterator, false);
+		CsvReader csvReader = CsvParser.newCsvReader(reader);
+		csvReader.skipLines(skip);
+		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
+		return StreamSupport.stream(mapper.new CsvSpliterator(csvReader), false);
 	}
 	//IFJAVA8_END
 

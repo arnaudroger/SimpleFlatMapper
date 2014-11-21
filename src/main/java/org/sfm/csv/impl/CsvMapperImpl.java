@@ -8,6 +8,7 @@ import java.util.Map;
 //IFJAVA8_START
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END
@@ -15,6 +16,7 @@ import java.util.stream.StreamSupport;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.CsvMapper;
 import org.sfm.csv.CsvParser;
+import org.sfm.csv.parser.CellConsumer;
 import org.sfm.csv.parser.CsvReader;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingException;
@@ -82,15 +84,77 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(Reader reader) {
-		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader), Spliterator.DISTINCT | Spliterator.ORDERED);
-		return StreamSupport.stream(spliterator, false);
+		return StreamSupport.stream(new CsvSpliterator(CsvParser.newCsvReader(reader)), false);
 	}
 
 	@Override
 	public Stream<T> stream(Reader reader, int skip) throws IOException {
-		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader, skip), Spliterator.DISTINCT | Spliterator.ORDERED);
-		return StreamSupport.stream(spliterator, false);
+		CsvReader csvReader = CsvParser.newCsvReader(reader);
+		csvReader.skipLines(skip);
+		return StreamSupport.stream(new CsvSpliterator(csvReader), false);
 	}
+
+	public class CsvSpliterator implements Spliterator<T> {
+		private final CsvReader csvReader;
+		private final CellConsumer cellConsumer;
+		private T current;
+
+		public CsvSpliterator(CsvReader csvReader) {
+			this.csvReader = csvReader;
+			this.cellConsumer = newCellConsumer(new RowHandler<T>() {
+				@Override
+				public void handle(T t) throws Exception {
+					current = t;
+				}
+			});
+		}
+
+		@Override
+		public boolean tryAdvance(Consumer<? super T> action) {
+			current = null;
+			try {
+				csvReader.parseLine(cellConsumer);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			if (current != null) {
+				action.accept(current);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		@Override
+		public void forEachRemaining(Consumer<? super T> action) {
+			try {
+				csvReader.parseAll(newCellConsumer(new RowHandler<T>() {
+                    @Override
+                    public void handle(T t) throws Exception {
+						action.accept(t);
+                    }
+                }));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override
+		public Spliterator<T> trySplit() {
+			return null;
+		}
+
+		@Override
+		public long estimateSize() {
+			return Long.MAX_VALUE;
+		}
+
+		@Override
+		public int characteristics() {
+			return Spliterator.ORDERED | Spliterator.NONNULL;
+		}
+	}
+
 	//IFJAVA8_END
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -153,6 +217,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 				handler,
 				parsingContextFactory.newContext());
 	}
+
 
 
 }

@@ -6,11 +6,11 @@ import java.util.List;
 import org.sfm.csv.impl.cellreader.StringCellValueReader;
 import org.sfm.utils.RowHandler;
 
-public final class StringArrayHandler implements CharsCellHandler {
-	private final RowHandler<String[]> handler;
+public final class StringArrayConsumer<RH extends RowHandler<String[]>> implements CellConsumer {
+	private final RH handler;
 	private final List<String> currentRow = new ArrayList<String>(10);
 
-	public StringArrayHandler(RowHandler<String[]> handler) {
+	public StringArrayConsumer(RH handler) {
 		this.handler = handler;
 	}
 
@@ -21,14 +21,17 @@ public final class StringArrayHandler implements CharsCellHandler {
 	}
 
 	@Override
-	public boolean endOfRow() {
+	public void endOfRow() {
 		try {
 			handler.handle(currentRow.toArray(new String[currentRow.size()]));
 			currentRow.clear();
-			return true;
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
+	}
+
+	public RH handler() {
+		return handler;
 	}
 
 	@Override
@@ -36,5 +39,9 @@ public final class StringArrayHandler implements CharsCellHandler {
 		if (!currentRow.isEmpty()) {
 			endOfRow();
 		}
+	}
+
+	public static <RH extends RowHandler<String[]>> StringArrayConsumer<RH> newInstance(RH handler) {
+		return new StringArrayConsumer<RH>(handler);
 	}
 }

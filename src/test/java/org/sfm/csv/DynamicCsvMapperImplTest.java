@@ -40,7 +40,7 @@ public class DynamicCsvMapperImplTest {
 		return sr;
 	}
 	
-	public static Reader dbObjectCsvReader3Lines() throws UnsupportedEncodingException {
+	public static Reader dbObjectCsvReader3LinesWithLineToSkip() throws UnsupportedEncodingException {
 		Reader sr = new StringReader("\nid,name,email,creationTime,typeOrdinal,typeName\n"
 				+ "1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4\n"
 				+ "2,name 2,name2@mail.com,2014-03-04 11:10:03,2,type4"
@@ -48,12 +48,42 @@ public class DynamicCsvMapperImplTest {
 				);
 		return sr;
 	}
-	
+	public static Reader dbObjectCsvReader3Lines() throws UnsupportedEncodingException {
+		Reader sr = new StringReader("id,name,email,creationTime,typeOrdinal,typeName\n"
+				+ "1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4\n"
+				+ "2,name 2,name2@mail.com,2014-03-04 11:10:03,2,type4"
+
+		);
+		return sr;
+	}
+
+
 	@Test
 	public void testDbObject() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
+
+		List<DbObject> list = mapper.forEach(dbObjectCsvReader3Lines(), new ListHandler<DbObject>()).getList();
+		assertEquals(2, list.size());
+		DbHelper.assertDbObjectMapping(1, list.get(0));
+		DbHelper.assertDbObjectMapping(2, list.get(1));
+	}
+
+	@Test
+	public void testDbObjectWithSkip() throws Exception {
+		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
+
+		List<DbObject> list = mapper.forEach(dbObjectCsvReader3LinesWithLineToSkip(), new ListHandler<DbObject>(),1).getList();
+		assertEquals(2, list.size());
+		DbHelper.assertDbObjectMapping(1, list.get(0));
+		DbHelper.assertDbObjectMapping(2, list.get(1));
+	}
+
+
+	@Test
+	public void testDbObjectWithSkipAndLimit() throws Exception {
+		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 		
-		List<DbObject> list = mapper.forEach(dbObjectCsvReader3Lines(), new ListHandler<DbObject>(),1,1).getList();
+		List<DbObject> list = mapper.forEach(dbObjectCsvReader3LinesWithLineToSkip(), new ListHandler<DbObject>(),1,1).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
@@ -82,27 +112,43 @@ public class DynamicCsvMapperImplTest {
 	@Test
 	public void testDbObjectIterator() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
-		
-		Iterator<DbObject> it = mapper.iterate(dbObjectCsvReader3Lines(), 1);
-		
+
+		Iterator<DbObject> it = mapper.iterate(dbObjectCsvReader3Lines());
+
 		assertTrue(it.hasNext());
 		DbHelper.assertDbObjectMapping(1, it.next());
 		assertTrue(it.hasNext());
 		DbHelper.assertDbObjectMapping(2, it.next());
 		assertFalse(it.hasNext());
-		
+
 	}
 
+	@Test
+	public void testDbObjectIteratorWithSkip() throws Exception {
+		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
+
+		Iterator<DbObject> it = mapper.iterate(dbObjectCsvReader3LinesWithLineToSkip(), 1);
+
+		assertTrue(it.hasNext());
+		DbHelper.assertDbObjectMapping(1, it.next());
+		assertTrue(it.hasNext());
+		DbHelper.assertDbObjectMapping(2, it.next());
+		assertFalse(it.hasNext());
+
+	}
+
+
+
+	int i;
 
 	//IFJAVA8_START
 	@Test
 	public void testDbObjectStream() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 
-		Stream<DbObject> it = mapper.stream(dbObjectCsvReader3Lines(), 1);
-
+		Stream<DbObject> it = mapper.stream(dbObjectCsvReader3Lines());
+		i = 1;
 		it.forEach(new Consumer<DbObject>() {
-			int i = 1;
 
 			@Override
 			public void accept(DbObject dbObject) {
@@ -114,6 +160,28 @@ public class DynamicCsvMapperImplTest {
 				i++;
 			}
 		});
+		assertEquals(3, i);
+	}
+
+	@Test
+	public void testDbObjectStreamWithSkip() throws Exception {
+		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
+
+		Stream<DbObject> it = mapper.stream(dbObjectCsvReader3LinesWithLineToSkip(), 1);
+		i  = 1;
+		it.forEach(new Consumer<DbObject>() {
+
+			@Override
+			public void accept(DbObject dbObject) {
+				try {
+					DbHelper.assertDbObjectMapping(i, dbObject);
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+				i++;
+			}
+		});
+		assertEquals(3, i);
 	}
 	//IFJAVA8_END
 

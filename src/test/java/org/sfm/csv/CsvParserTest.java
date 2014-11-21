@@ -8,9 +8,10 @@ import java.io.StringReader;
 import java.util.List;
 
 import org.junit.Test;
-import org.sfm.csv.CsvParser;
-import org.sfm.csv.parser.CharsCellHandler;
+import org.sfm.csv.parser.CellConsumer;
+import org.sfm.csv.parser.StringArrayConsumer;
 import org.sfm.utils.ListHandler;
+import org.sfm.utils.RowHandler;
 
 public class CsvParserTest {
 
@@ -37,7 +38,7 @@ public class CsvParserTest {
 
 	private void testReadCsv(Reader sr) throws IOException {
 		final CharSequence[][] css = new CharSequence[4][3];
-		new CsvParser(8).parse(sr, new CharsCellHandler() {
+		new CsvParser(8).parse(sr, new CellConsumer() {
 			int row = 0, col = 0;
 			@Override
 			public void newCell(char[] chars, int offset, int length) {
@@ -47,10 +48,9 @@ public class CsvParserTest {
 			}
 			
 			@Override
-			public boolean endOfRow() {
+			public void endOfRow() {
 				row++;
 				col = 0;
-				return true;
 			}
 
 			@Override
@@ -66,7 +66,39 @@ public class CsvParserTest {
 		assertEquals("val3", css[2][0].toString());
 		assertEquals("val4", css[3][0].toString());
 	}
-	
+
+	@Test
+	public void testReadRowsSkip() throws
+			IOException {
+		Reader sr = new StringReader("row1\nrow2\nrow3");
+		int nbRows = new CsvParser().parse(sr,  StringArrayConsumer.newInstance(new RowHandler<String[]>() {
+			int i = 1;
+			@Override
+			public void handle(String[] strings) throws Exception {
+				assertEquals("row" + (i+1) , strings[0]);
+				i++;
+			}
+		}), 1).handler().i;
+
+		assertEquals(3, nbRows);
+	}
+
+	@Test
+	public void testReadRowsSkipLimit() throws
+			IOException {
+		Reader sr = new StringReader("row1\nrow2\nrow3");
+		int nbRows = new CsvParser().parse(sr,  StringArrayConsumer.newInstance(new RowHandler<String[]>() {
+			int i = 1;
+			@Override
+			public void handle(String[] strings) throws Exception {
+				assertEquals("row" + (i+1) , strings[0]);
+				i++;
+			}
+		}), 1, 1).handler().i;
+
+		assertEquals(2, nbRows);
+	}
+
 	@Test
 	public void testReadRowsCsvReader() throws IOException {
 		Reader sr = new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2");

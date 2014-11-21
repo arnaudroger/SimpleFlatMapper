@@ -8,8 +8,7 @@ import java.io.StringReader;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sfm.csv.CsvParser;
-import org.sfm.csv.parser.CharsCellHandler;
+import org.sfm.csv.parser.CellConsumer;
 
 public class CsvParserPerfTest {
 
@@ -17,7 +16,7 @@ public class CsvParserPerfTest {
 	private static final int NB = 1000000;
 	private static final int ITERATION = 10;
 
-	private static final class ValidateHandler implements CharsCellHandler {
+	private static final class ValidateConsumer implements CellConsumer {
 		long c;
 		@Override
 		public void newCell( char[] chars, int offset,
@@ -25,8 +24,8 @@ public class CsvParserPerfTest {
 			c++;
 		}
 		@Override
-		public boolean endOfRow() {
-			return true;
+		public void endOfRow() {
+
 		}
 		@Override
 		public void end() {
@@ -57,7 +56,7 @@ public class CsvParserPerfTest {
 
 	private void executeReader() throws IOException {
 		Reader sr = new StringReader(content);
-		ValidateHandler handler = new ValidateHandler();
+		ValidateConsumer handler = new ValidateConsumer();
 		long start = System.nanoTime();
 		new CsvParser().parse(sr, handler);
 		long elapsed = System.nanoTime() - start;

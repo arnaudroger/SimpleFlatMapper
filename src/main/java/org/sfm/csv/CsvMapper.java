@@ -30,12 +30,12 @@ public interface CsvMapper<T> {
 	 * 
 	 * @param reader the reader
 	 * @param handle the callback instance
-	 * @param rowStart the row at which we start mapping, starts at 0
+	 * @param skip the number of row to skip
 	 * @return the callback instance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
-	<H extends RowHandler<T>> H forEach(Reader reader, H handle, int rowStart) throws IOException, MappingException;
+	<H extends RowHandler<T>> H forEach(Reader reader, H handle, int skip) throws IOException, MappingException;
 	
 	/**
 	 * Will map each row of the content of reader, starting at rowStart and ending before rowEnd, to an object of type T and will pass that object to the handle via the {@link RowHandler}.handler(T t) call back.
@@ -43,13 +43,13 @@ public interface CsvMapper<T> {
 	 * 
 	 * @param reader the reader
 	 * @param handle the callback instance
-	 * @param rowStart the row at which we start mapping, starts at 0
-	 * @param rowEnd the row before the last row we will map, starts at 0
+	 * @param skip the number of row to skip
+	 * @param limit the number of row to process
 	 * @return the callback instance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
-	<H extends RowHandler<T>> H forEach(Reader reader, H handle, int rowStart, int rowEnd) throws IOException, MappingException;
+	<H extends RowHandler<T>> H forEach(Reader reader, H handle, int skip, int limit) throws IOException, MappingException;
 
 	/**
 	 * Will return an iterator on the reader that will return a mapped object for each row.
@@ -64,11 +64,11 @@ public interface CsvMapper<T> {
 	 * Will return an iterator on the reader that will return a mapped object for each row.
 	 * 
 	 * @param reader the reader
-	 * @param rowStart the row at which we start mapping, starts at 0
+	 * @param skip the number of row to skip
 	 * @return an iterator on the file
 	 * @throws IOException
 	 */
-	Iterator<T> iterate(Reader reader, int rowStart) throws IOException;
+	Iterator<T> iterate(Reader reader, int skip) throws IOException;
 
 	/**
 	 * Will return a Stream of T
@@ -85,10 +85,11 @@ public interface CsvMapper<T> {
 	 * Will return a Stream of T.
 	 * 
 	 * @param reader the reader
+	 * @param skip the number of row to skip
 	 * @return stream of T
 	 * @throws IOException
 	 */
 	//IFJAVA8_START
-	Stream<T> stream(Reader reader, int rowStart) throws IOException;
+	Stream<T> stream(Reader reader, int skip) throws IOException;
 	//IFJAVA8_END
 }

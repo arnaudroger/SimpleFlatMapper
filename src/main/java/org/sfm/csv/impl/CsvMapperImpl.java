@@ -15,6 +15,7 @@ import java.util.stream.StreamSupport;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.CsvMapper;
 import org.sfm.csv.CsvParser;
+import org.sfm.csv.parser.CsvReader;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
@@ -49,111 +50,108 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	}
 
 	@Override
-	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
-		return forEach(reader, handler, 0);
-	}
-	
-	@Override
-	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int rowStart) throws IOException, MappingException {
-		return forEach(reader, handler, rowStart, -1);
-	}
-	
-	@Override
-	public <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int rowStart, final int limit) throws IOException, MappingException {
-		new CsvParser().parse(reader, newCellHandler(handler, rowStart, limit, true));
+	public final <H extends RowHandler<T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
+		new CsvParser().parse(reader, newCellConsumer(handler));
 		return handler;
-	}
-	
-	@Override
-	public Iterator<T> iterate(Reader reader) {
-		return iterate(reader, -1);
-	}
-	
-	@Override
-	public Iterator<T> iterate(Reader reader, int rowStart) {
-		return new CsvIterator<T>(reader, this, rowStart);
-	}
-	
-	//IFJAVA8_START
-	@Override
-	public Stream<T> stream(Reader reader) {
-		return stream(reader, -1);
 	}
 
 	@Override
-	public Stream<T> stream(Reader reader, int rowStart) {
-		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader, rowStart), Spliterator.DISTINCT | Spliterator.ORDERED);
+	public final <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int skip) throws IOException, MappingException {
+		new CsvParser().parse(reader, newCellConsumer(handler), skip);
+		return handler;
+	}
+
+	@Override
+	public final <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int skip, final int limit) throws IOException, MappingException {
+		new CsvParser().parse(reader, newCellConsumer(handler), skip, limit);
+		return handler;
+	}
+
+	@Override
+	public Iterator<T> iterate(Reader reader) {
+		return new CsvIterator<T>(CsvParser.newCsvReader(reader), this);
+	}
+
+	@Override
+	public Iterator<T> iterate(Reader reader, int skip) throws IOException {
+		CsvReader csvReader = CsvParser.newCsvReader(reader);
+		csvReader.skipLines(skip);
+		return new CsvIterator<T>(csvReader, this);
+	}
+
+	//IFJAVA8_START
+	@Override
+	public Stream<T> stream(Reader reader) {
+		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader), Spliterator.DISTINCT | Spliterator.ORDERED);
+		return StreamSupport.stream(spliterator, false);
+	}
+
+	@Override
+	public Stream<T> stream(Reader reader, int skip) throws IOException {
+		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(reader, skip), Spliterator.DISTINCT | Spliterator.ORDERED);
 		return StreamSupport.stream(spliterator, false);
 	}
 	//IFJAVA8_END
 
-	protected CsvMapperCellHandler<T> newCellHandler(final RowHandler<T> handler) {
-		return newCellHandler(handler, -1, -1, true);
-	}
-	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected CsvMapperCellHandler<T> newCellHandler(final RowHandler<T> handler, int rowStart, int limit, boolean pushMode) {
-		
+	protected CsvMapperCellConsumer<T> newCellConsumer(final RowHandler<T> handler) {
+
 		DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetters.length];
-		Map<CsvMapper<?>, CsvMapperCellHandler<?>> cellHandlers = new HashMap<CsvMapper<?>, CsvMapperCellHandler<?>>();
-		
-		
+		Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers = new HashMap<CsvMapper<?>, CsvMapperCellConsumer<?>>();
+
+
 		for(int i = 0; i < delayedCellSetters.length; i++) {
 			DelayedCellSetterFactory<T, ?> delayedCellSetterFactory = delayedCellSetters[i];
 			if (delayedCellSetterFactory != null) {
 				if (delayedCellSetterFactory instanceof DelegateMarkerDelayedCellSetter) {
 					DelegateMarkerDelayedCellSetter<T, ?> marker = (DelegateMarkerDelayedCellSetter<T, ?>) delayedCellSetterFactory;
-					
-					CsvMapperCellHandler<?> bhandler = cellHandlers.get(marker.getMapper());
-					
+
+					CsvMapperCellConsumer<?> bhandler = cellHandlers.get(marker.getMapper());
+
 					DelegateDelayedCellSetterFactory<T, ?> delegateCellSetter;
-					
+
 					if(bhandler == null) {
 						delegateCellSetter = new DelegateDelayedCellSetterFactory(marker, i);
 						cellHandlers.put(marker.getMapper(), delegateCellSetter.getCellHandler());
 					} else {
 						delegateCellSetter = new DelegateDelayedCellSetterFactory(marker, bhandler, i);
 					}
-					outDelayedCellSetters[i] =  delegateCellSetter.newCellSetter(); 
+					outDelayedCellSetters[i] =  delegateCellSetter.newCellSetter();
 				} else {
 					outDelayedCellSetters[i] = delayedCellSetterFactory.newCellSetter();
 				}
 			}
 		}
 
-		
+
 		CellSetter<T>[] outSetters = new CellSetter[setters.length];
 		for(int i = 0; i < setters.length; i++) {
 			if (setters[i] instanceof DelegateMarkerSetter) {
 				DelegateMarkerSetter<?> marker = (DelegateMarkerSetter<?>) setters[i];
-				
-				CsvMapperCellHandler<?> bhandler = cellHandlers.get(marker.getMapper());
-				
+
+				CsvMapperCellConsumer<?> bhandler = cellHandlers.get(marker.getMapper());
+
 				DelegateCellSetter<T> delegateCellSetter;
-				
+
 				if(bhandler == null) {
 					delegateCellSetter = new DelegateCellSetter<T>(marker, i + delayedCellSetters.length);
 					cellHandlers.put(marker.getMapper(), delegateCellSetter.getBytesCellHandler());
 				} else {
 					delegateCellSetter = new DelegateCellSetter<T>(marker, bhandler, i + delayedCellSetters.length);
 				}
-				outSetters[i] = delegateCellSetter; 
+				outSetters[i] = delegateCellSetter;
 			} else {
 				outSetters[i] = setters[i];
 			}
 		}
-		
-		
-		
-		
-		return new CsvMapperCellHandler<T>(instantiator, 
-				outDelayedCellSetters, 
-				outSetters, keys,		
-				fieldErrorHandler, 
-				rowHandlerErrorHandlers, 
-				handler, 
-				parsingContextFactory.newContext(), 
-				rowStart, limit, pushMode);
+
+		return new CsvMapperCellConsumer<T>(instantiator,
+				outDelayedCellSetters,
+				outSetters, keys,
+				fieldErrorHandler,
+				rowHandlerErrorHandlers,
+				handler,
+				parsingContextFactory.newContext());
 	}
 
 

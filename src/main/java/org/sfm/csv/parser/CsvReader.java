@@ -1,5 +1,7 @@
 package org.sfm.csv.parser;
 
+import org.sfm.csv.CsvParser;
+
 import java.io.IOException;
 import java.io.Reader;
 
@@ -11,9 +13,9 @@ public final class CsvReader {
 	private final CharBuffer buffer;
 	private final CharConsumer consumer;
 
-	public CsvReader(final int bufferSize, final CharsCellHandler handler, final Reader reader) {
+	public CsvReader(final int bufferSize, final Reader reader) {
 		this.buffer = new CharBuffer(bufferSize);
-		this.consumer = new CharConsumer(handler);
+		this.consumer = new CharConsumer();
 		this.reader = reader;
 	}
 
@@ -23,14 +25,40 @@ public final class CsvReader {
 	 * @return
 	 * @throws IOException
 	 */
-	public void parse()
+	public void parseAll(CellConsumer cellConsumer)
 			throws IOException {
 		do {
-			if(!consumer.next(buffer)) {
+			consumer.parseFull(buffer, cellConsumer);
+		} while (buffer.fillBuffer(reader));
+		consumer.finish(buffer, cellConsumer);
+	}
+
+	/**
+	 * parse cvs
+	 *
+	 * @return
+	 * @throws IOException
+	 */
+	public void parseLine(CellConsumer cellConsumer)
+			throws IOException {
+
+		do {
+			if (consumer.nextLine(buffer, cellConsumer)) {
 				return;
 			}
-		} while(buffer.fillBuffer(reader));
-		
-		consumer.finish(buffer);
+		} while (buffer.fillBuffer(reader));
+
+		consumer.finish(buffer, cellConsumer);
+	}
+
+
+	public void skipLines(int n) throws IOException {
+		parseLines(CsvParser.DUMMY_CONSUMER, n);
+	}
+
+	public void parseLines(CellConsumer cellConsumer, int limit) throws IOException {
+		for(int i = 0; i < limit; i++) {
+			parseLine(cellConsumer);
+		}
 	}
 }

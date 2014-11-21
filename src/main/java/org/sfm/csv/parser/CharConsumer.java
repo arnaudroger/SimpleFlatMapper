@@ -1,6 +1,11 @@
 package org.sfm.csv.parser;
 
 
+import javafx.scene.control.Cell;
+
+/**
+ * Consume the charbuffer.
+ */
 public final class CharConsumer {
 
 	public static final int IN_QUOTE = 4;
@@ -14,48 +19,69 @@ public final class CharConsumer {
 	
 	private int currentState = NONE;
 
-	private final CharsCellHandler handler;
 
-	public CharConsumer(CharsCellHandler handler) {
-		this.handler = handler;
-	}
-	
-	public boolean next(CharBuffer csvBuffer) {
+	public void parseFull(CharBuffer csvBuffer, CellConsumer cellConsumer) {
 		while(csvBuffer.hasContent()) {
 			char c = csvBuffer.getNextChar();
 			switch (c) {
 			case ',':
-				newCellIfNotInQuote(csvBuffer);
+				newCellIfNotInQuote(csvBuffer, cellConsumer);
 				break;
 			case '"':
 				quote(csvBuffer);
 				break;
 			case '\n':
-				if (!handleEndOfLineLF(csvBuffer)) {
-					return false;
-				}
+				handleEndOfLineLF(csvBuffer, cellConsumer);
 				break;
 			case '\r':
-				if (!handleEndOfLineCR(csvBuffer)) {
-					return false;
-				}
+				handleEndOfLineCR(csvBuffer, cellConsumer);
 				break;
 			default:
 				turnOffCrFlag();
 			}
 		}
-		return true;
 	}
 
-	private int turnOffCrFlag() {
-		return currentState = currentState & TURN_OFF_IN_CR_MASK;
+	public boolean nextLine(CharBuffer csvBuffer, CellConsumer cellConsumer) {
+		while(csvBuffer.hasContent()) {
+			char c = csvBuffer.getNextChar();
+			switch (c) {
+				case ',':
+					newCellIfNotInQuote(csvBuffer, cellConsumer);
+					break;
+				case '"':
+					quote(csvBuffer);
+					break;
+				case '\n':
+					if (handleEndOfLineLF(csvBuffer, cellConsumer)) {
+						return true;
+					}
+					break;
+				case '\r':
+					if (handleEndOfLineCR(csvBuffer, cellConsumer)) {
+						return true;
+					}
+					break;
+				default:
+					turnOffCrFlag();
+			}
+		}
+
+		return false;
 	}
 
-	private void newCellIfNotInQuote(CharBuffer csvBuffer) {
+	/**
+	 * use bit mask to testing if == IN_CR
+	 */
+	private void turnOffCrFlag() {
+		currentState = currentState & TURN_OFF_IN_CR_MASK;
+	}
+
+	private void newCellIfNotInQuote(CharBuffer csvBuffer, CellConsumer cellConsumer) {
 		if (isInQuote())
 			return;
-		
-		newCell(csvBuffer, 1);
+
+		newCell(csvBuffer, 1, cellConsumer);
 		turnOffCrFlag();
 	}
 
@@ -64,33 +90,38 @@ public final class CharConsumer {
 	private boolean isInQuote() {
 		return currentState == IN_QUOTE;
 	}
-	
-	private boolean handleEndOfLineLF(CharBuffer csvBuffer) {
-		boolean b = true;
+
+	/**
+	 *
+	 * @param csvBuffer
+	 * @return true if endOfLine
+	 */
+	private boolean handleEndOfLineLF(CharBuffer csvBuffer, CellConsumer cellConsumer) {
 		if (!isInQuote()) {
 			if (currentState != IN_CR) {
-				b = endOfRow(csvBuffer);
+				endOfRow(csvBuffer, cellConsumer);
+				return true;
 			} else {
 				// we had a preceding cr so shift the marl
 				csvBuffer.mark();
 			}
 		}
 		turnOffCrFlag();
-		return b;
+		return false;
 	}
 
-	private boolean handleEndOfLineCR(CharBuffer csvBuffer) {
-		boolean b = true;
+	private boolean handleEndOfLineCR(CharBuffer csvBuffer, CellConsumer cellConsumer) {
 		if (!isInQuote()) {
-			b = endOfRow(csvBuffer);
+			endOfRow(csvBuffer, cellConsumer);
 			currentState = IN_CR;
+			return true;
 		}
-		return b;
+		return false;
 	}
 
-	private boolean endOfRow(CharBuffer csvBuffer) {
-		newCell(csvBuffer, 1);
-		return handler.endOfRow();
+	private void endOfRow(CharBuffer csvBuffer, CellConsumer cellConsumer) {
+		newCell(csvBuffer, 1, cellConsumer);
+		cellConsumer.endOfRow();
 	}
 
 	private void quote(CharBuffer csvBuffer) {
@@ -102,17 +133,17 @@ public final class CharConsumer {
 		turnOffCrFlag();
 	}
 
-	private void newCell(CharBuffer csvBuffer, int shift) {;
-		handler.newCell(csvBuffer.getCharBuffer(), csvBuffer.getMark(), csvBuffer.getLengthFromMark() - shift);
+	private void newCell(CharBuffer csvBuffer, int shift, CellConsumer cellConsumer) {;
+		cellConsumer.newCell(csvBuffer.getCharBuffer(), csvBuffer.getMark(), csvBuffer.getLengthFromMark() - shift);
 		csvBuffer.mark();
 		currentState = NONE;
 	}
 
-	public void finish(CharBuffer csvBuffer) {
+	public void finish(CharBuffer csvBuffer, CellConsumer cellConsumer) {
 		if (!csvBuffer.isAllConsumed()) {
-			newCell(csvBuffer, 0);
+			newCell(csvBuffer, 0, cellConsumer);
 		}
-		handler.end();
+		cellConsumer.end();
 	}
 
 }

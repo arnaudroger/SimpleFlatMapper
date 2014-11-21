@@ -1,14 +1,14 @@
 package org.sfm.csv.impl;
 
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.csv.parser.CharsCellHandler;
+import org.sfm.csv.parser.CellConsumer;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
 
-public final class CsvMapperCellHandler<T> implements CharsCellHandler {
+public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
 	/**
 	 * mapping information
@@ -17,8 +17,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 	private final DelayedCellSetter<T, ?>[] delayedCellSetters;
 	private final CellSetter<T>[] setters;
 	private final CsvColumnKey[] columns;
-	private final boolean pushMode;
-	
+
 	/**
 	 * error handling
 	 */
@@ -37,23 +36,20 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 	private final int flushIndex;
 	private final int totalLength;
 
-	private final int rowStart;
-	private final int limit;
-	
+
 	private T currentInstance;
 	private int cellIndex = 0;
 	private int currentRow = 0;
 
-	public CsvMapperCellHandler(
+	public CsvMapperCellConsumer(
 			Instantiator<DelayedCellSetter<T, ?>[], T> instantiator,
 			DelayedCellSetter<T, ?>[] delayedCellSetters,
 			CellSetter<T>[] setters,
 			CsvColumnKey[] columns,
 			FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
 			RowHandlerErrorHandler rowHandlerErrorHandlers,
-			RowHandler<T> handler, 
-			ParsingContext parsingContext,
-			int rowStart, int limit, boolean pushMode) {
+			RowHandler<T> handler,
+			ParsingContext parsingContext) {
 		super();
 		this.instantiator = instantiator;
 		this.delayedCellSetters = delayedCellSetters;
@@ -64,10 +60,7 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 		this.handler = handler;
 		this.flushIndex = lastNonNullSetter(delayedCellSetters, setters);
 		this.totalLength = delayedCellSetters.length + setters.length;
-		this.rowStart = rowStart;
-		this.limit = limit;
 		this.parsingContext = parsingContext;
-		this.pushMode = pushMode;
 	}
 	
 	private int lastNonNullSetter(
@@ -91,21 +84,14 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 	}
 
 	@Override
-	public boolean endOfRow() {
+	public void endOfRow() {
 		endOfRow(cellIndex);
 		cellIndex = 0;
-		return continueProcessing();
 	}
 	
 	public void endOfRow(int cellIndex) {
 		flush(cellIndex);
 	}
-	
-	private boolean continueProcessing() {
-		currentRow++;
-		boolean continueProcessing = pushMode && (limit == -1 || (currentRow - rowStart) < limit);
-		return continueProcessing;
-	} 
 	
 
 	public void flush(int cellIndex) {
@@ -185,14 +171,12 @@ public final class CsvMapperCellHandler<T> implements CharsCellHandler {
 
 	@Override
 	public void newCell(char[] chars, int offset, int length) {
-		if (rowStart == -1 || currentRow >= rowStart) {
-			if (cellIndex == -1) {
-				return;
-			}
-			newCell(chars, offset, length, cellIndex);
-			if (cellIndex != -1) {
-				cellIndex++;
-			}
+		if (cellIndex == -1) {
+			return;
+		}
+		newCell(chars, offset, length, cellIndex);
+		if (cellIndex != -1) {
+			cellIndex++;
 		}
 	}
 	

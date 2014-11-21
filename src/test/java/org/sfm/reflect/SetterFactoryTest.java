@@ -70,7 +70,7 @@ public class SetterFactoryTest {
 	
 	@Test
 	public void testFallBackToField() throws Exception {
-		Setter<Bar, String> setter = nonAsmfactory.getSetter(Foo.class, "bar");
+		Setter<Bar, String> setter = nonAsmfactory.getSetter(Bar.class, "bar");
 		assertTrue(setter instanceof FieldSetter);
 		SetterTestHelper.validateBarSetter(setter);
 	}

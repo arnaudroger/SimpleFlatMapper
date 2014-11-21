@@ -35,7 +35,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<source.classifier>source</source.classifier>
+		<source.classifier>sources</source.classifier>
 		<javadoc.classifier>javadoc</javadoc.classifier>
 	</properties>
 
@@ -255,7 +255,7 @@
 				<jdk>1.6</jdk>
 			</activation>
 			<properties>
-				<source.classifier>jdk16-source</source.classifier>
+				<source.classifier>jdk16-sources</source.classifier>
 				<javadoc.classifier>jdk16-javadoc</javadoc.classifier>
 			</properties>
 
@@ -329,7 +329,7 @@
 				<jdk>1.7</jdk>
 			</activation>
 			<properties>
-				<source.classifier>jdk17-source</source.classifier>
+				<source.classifier>jdk17-sources</source.classifier>
 				<javadoc.classifier>jdk17-javadoc</javadoc.classifier>
 			</properties>
 

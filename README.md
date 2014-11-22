@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
-SimpleFlatMapper [v1.0.0b3](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.0.0b3)
+SimpleFlatMapper [v1.0.0rc1](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.0.0rc1)
 ========
 
 Straight line to v1.0.0
@@ -248,7 +248,7 @@ Java 8
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.0.0b3</version>
+			<version>1.0.0rc1</version>
 		</dependency>
 ```
 
@@ -258,7 +258,7 @@ Java 7
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.0.0b3</version>
+			<version>1.0.0rc1</version>
 			<classifier>jdk17</classifier>
 		</dependency>
 ```
@@ -269,7 +269,7 @@ Java 6
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.0.0b3</version>
+			<version>1.0.0rc1</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 ```

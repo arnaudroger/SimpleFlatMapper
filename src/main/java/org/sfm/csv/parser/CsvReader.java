@@ -37,16 +37,17 @@ public final class CsvReader {
 	 *
 	 * @throws IOException
 	 */
-	public void parseLine(CellConsumer cellConsumer)
+	public boolean parseLine(CellConsumer cellConsumer)
 			throws IOException {
 
 		do {
 			if (consumer.nextLine(buffer, cellConsumer)) {
-				return;
+				return true;
 			}
 		} while (buffer.fillBuffer(reader));
 
 		consumer.finish(buffer, cellConsumer);
+		return false;
 	}
 
 

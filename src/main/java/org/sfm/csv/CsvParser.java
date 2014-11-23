@@ -2,9 +2,18 @@ package org.sfm.csv;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Iterator;
+
+//IFJAVA8_START
+import java.util.Spliterator;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+//IFJAVA8_END
 
 import org.sfm.csv.parser.CellConsumer;
 import org.sfm.csv.parser.CsvReader;
+import org.sfm.csv.parser.CsvStringArrayIterator;
 import org.sfm.csv.parser.StringArrayConsumer;
 import org.sfm.utils.RowHandler;
 
@@ -25,31 +34,25 @@ public final class CsvParser {
 		}
 	};
 
-	public static int _4K = 1 << 12;
 	public static int _8K = 1 << 13;
-	public static int _16K = 1 << 14;
-	public static int _32K = 1 << 15;
-	public static int _64K = 1 << 16;
-	
+
 	public static final int DEFAULT = _8K;
-	
-	private final int bufferSize;
-	
-	public CsvParser(final int bufferSize) {
-		this.bufferSize = bufferSize;
-	}
-	
-	public CsvParser() {
-		this(DEFAULT);
+
+	private CsvParser(){
 	}
 
-	public <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer) throws IOException {
+	public static <CC extends CellConsumer> CC parse(int bufferSize, Reader r, CC cellConsumer) throws IOException {
 		newCsvReader(bufferSize, r).parseAll(cellConsumer);
 		return cellConsumer;
 	}
 
-	public <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer, int skip) throws IOException {
-		CsvReader reader = newCsvReader(bufferSize, r);
+	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer) throws IOException {
+		newCsvReader(r).parseAll(cellConsumer);
+		return cellConsumer;
+	}
+
+	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer, int skip) throws IOException {
+		CsvReader reader = newCsvReader(r);
 
 		reader.skipLines(skip);
 
@@ -58,8 +61,8 @@ public final class CsvParser {
 		return cellConsumer;
 	}
 
-	public <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer, int skip, int limit) throws IOException {
-		CsvReader reader = newCsvReader(bufferSize, r);
+	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer, int skip, int limit) throws IOException {
+		CsvReader reader = newCsvReader(r);
 
 		reader.skipLines(skip);
 
@@ -68,20 +71,89 @@ public final class CsvParser {
 		return cellConsumer;
 	}
 
-	public <RH extends RowHandler<String[]>> RH readRows(final Reader r, final RH handler) throws IOException {
-		parse(r, new StringArrayConsumer(handler));
+	public static <RH extends RowHandler<String[]>> RH readRows(final Reader r, final RH handler) throws IOException {
+		parse(r, new StringArrayConsumer<RH>(handler));
 		return handler;
 	}
 
-	public <RH extends RowHandler<String[]>> RH readRows(final Reader r, final RH handler, int skip) throws IOException {
-		parse(r, new StringArrayConsumer(handler), skip);
+	public static <RH extends RowHandler<String[]>> RH readRows(final Reader r, final RH handler, int skip) throws IOException {
+		parse(r, new StringArrayConsumer<RH>(handler), skip);
 		return handler;
 	}
 
-	public <RH extends RowHandler<String[]>> RH readRows(final Reader r, final RH handler, int skip, int limit) throws IOException {
-		parse(r, new StringArrayConsumer(handler), skip, limit);
+	public static <RH extends RowHandler<String[]>> RH readRows(final Reader r, final RH handler, int skip, int limit) throws IOException {
+		parse(r, new StringArrayConsumer<RH>(handler), skip, limit);
 		return handler;
 	}
+
+
+	public static Iterator<String[]> iterateRows(Reader r) {
+		return new CsvStringArrayIterator(newCsvReader(r));
+	}
+
+	public static Iterator<String[]> iterateRows(Reader r, int skip) throws IOException {
+		CsvReader csvReader = newCsvReader(r);
+		csvReader.skipLines(skip);
+		return new CsvStringArrayIterator(csvReader);
+	}
+
+	//IFJAVA8_START
+	public static Stream<String[]> stream(Reader r) {
+		CsvReader csvReader = newCsvReader(r);
+		Spliterator<String[]> spliterator = new CsvStringArraySpliterator(csvReader);
+		return StreamSupport.stream(spliterator, false);
+	}
+
+	public static Stream<String[]> stream(Reader r, int skip) throws IOException {
+		CsvReader csvReader = newCsvReader(r);
+		csvReader.skipLines(skip);
+		Spliterator<String[]> spliterator = new CsvStringArraySpliterator(csvReader);
+		return StreamSupport.stream(spliterator, false);
+	}
+
+	private static class CsvStringArraySpliterator implements Spliterator<String[]> {
+		private final CsvReader reader;
+
+		public CsvStringArraySpliterator(CsvReader csvReader) {
+			this.reader = csvReader;
+		}
+
+		@Override
+		public boolean tryAdvance(Consumer<? super String[]> action) {
+			try {
+				return reader.parseLine(new StringArrayConsumer<RowHandler<String[]>>((strings) -> action.accept(strings)));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override
+		public void forEachRemaining(Consumer<? super String[]> action) {
+			try {
+				reader.parseAll(new StringArrayConsumer<RowHandler<String[]>>((strings) -> action.accept(strings)));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override
+		public Spliterator<String[]> trySplit() {
+			return null;
+		}
+
+		@Override
+		public long estimateSize() {
+			return Long.MAX_VALUE;
+		}
+
+		@Override
+		public int characteristics() {
+			return Spliterator.ORDERED | Spliterator.NONNULL;
+		}
+	}
+
+	//IFJAVA8_END
+
 
 	public static CsvReader newCsvReader(Reader reader) {
 		return newCsvReader(DEFAULT, reader);
@@ -90,4 +162,6 @@ public final class CsvParser {
 	public static CsvReader newCsvReader(int bufferSize, Reader reader) {
 		return new CsvReader(bufferSize, reader);
 	}
+
+
 }

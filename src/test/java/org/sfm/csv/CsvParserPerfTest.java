@@ -58,7 +58,7 @@ public class CsvParserPerfTest {
 		Reader sr = new StringReader(content);
 		ValidateConsumer handler = new ValidateConsumer();
 		long start = System.nanoTime();
-		new CsvParser().parse(sr, handler);
+		CsvParser.parse(sr, handler);
 		long elapsed = System.nanoTime() - start;
 		assertEquals(3 * NB, handler.c);
 		System.out.println("Reader Took " + elapsed + "ns " + (elapsed/NB) + " ns per row");

@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
@@ -38,7 +39,7 @@ public class CsvParserTest {
 
 	private void testReadCsv(Reader sr) throws IOException {
 		final CharSequence[][] css = new CharSequence[4][3];
-		new CsvParser(8).parse(sr, new CellConsumer() {
+		CsvParser.parse(8, sr, new CellConsumer() {
 			int row = 0, col = 0;
 			@Override
 			public void newCell(char[] chars, int offset, int length) {
@@ -68,10 +69,10 @@ public class CsvParserTest {
 	}
 
 	@Test
-	public void testReadRowsSkip() throws
+	public void testParseSkip() throws
 			IOException {
 		Reader sr = new StringReader("row1\nrow2\nrow3");
-		int nbRows = new CsvParser().parse(sr,  StringArrayConsumer.newInstance(new RowHandler<String[]>() {
+		int nbRows = CsvParser.parse(sr,  StringArrayConsumer.newInstance(new RowHandler<String[]>() {
 			int i = 1;
 			@Override
 			public void handle(String[] strings) throws Exception {
@@ -84,10 +85,10 @@ public class CsvParserTest {
 	}
 
 	@Test
-	public void testReadRowsSkipLimit() throws
+	public void testParseSkipLimit() throws
 			IOException {
 		Reader sr = new StringReader("row1\nrow2\nrow3");
-		int nbRows = new CsvParser().parse(sr,  StringArrayConsumer.newInstance(new RowHandler<String[]>() {
+		int nbRows = CsvParser.parse(sr,  StringArrayConsumer.newInstance(new RowHandler<String[]>() {
 			int i = 1;
 			@Override
 			public void handle(String[] strings) throws Exception {
@@ -102,12 +103,87 @@ public class CsvParserTest {
 	@Test
 	public void testReadRowsCsvReader() throws IOException {
 		Reader sr = new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2");
-		List<String[]> list = new CsvParser(8).readRows(sr, new ListHandler<String[]>()).getList();
+		List<String[]> list = CsvParser.readRows(sr, new ListHandler<String[]>()).getList();
 		assertEquals("cell1", list.get(0)[0]);
 		assertEquals("cell2", list.get(0)[1]);
 		assertEquals("", list.get(0)[2]);
 		assertEquals("cell\r\"value\"", list.get(1)[0]);
 		assertEquals("val2", list.get(1)[1]);
-		
+
 	}
+
+	@Test
+	public void testReadRowsSkip() throws IOException {
+		Reader sr = new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2");
+		List<String[]> list = CsvParser.readRows(sr, new ListHandler<String[]>(), 1).getList();
+		assertEquals("cell\r\"value\"", list.get(0)[0]);
+		assertEquals("val2", list.get(0)[1]);
+	}
+
+	@Test
+	public void testReadRowsSkipLimit() throws IOException {
+		Reader sr = new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2");
+		List<String[]> list = CsvParser.readRows(sr, new ListHandler<String[]>(), 1, 1).getList();
+		assertEquals("cell\r\"value\"", list.get(0)[0]);
+		assertEquals("val2", list.get(0)[1]);
+	}
+
+	@Test
+	public void testIterateRows() throws
+			IOException {
+		Reader sr = new StringReader("row1\nrow2\nrow3");
+		Iterator<String[]> it = CsvParser.iterateRows(sr);
+
+	 	assertArrayEquals(new String[] {"row1"}, it.next());
+		assertTrue(it.hasNext());
+		assertArrayEquals(new String[]{"row2"}, it.next());
+		assertTrue(it.hasNext());
+		assertArrayEquals(new String[] {"row3"}, it.next());
+		assertFalse(it.hasNext());
+	}
+
+	@Test
+	public void testIterateRowsSkip() throws
+			IOException {
+		Reader sr = new StringReader("row1\nrow2\nrow3");
+		Iterator<String[]> it = CsvParser.iterateRows(sr, 1);
+
+		assertArrayEquals(new String[]{"row2"}, it.next());
+		assertTrue(it.hasNext());
+		assertArrayEquals(new String[] {"row3"}, it.next());
+		assertFalse(it.hasNext());
+	}
+
+
+	int i = 0;
+
+	//IFJAVA8_START
+	@Test
+	public void testStreamRows() throws
+			IOException {
+		Reader sr = new StringReader("row1\nrow2\nrow3");
+		i = 0;
+		CsvParser.stream(sr).forEach(strings -> assertArrayEquals(new String[] {"row" + ++i}, strings));
+		assertEquals(3, i);
+	}
+
+	@Test
+	public void testStreamRowsSkip() throws
+			IOException {
+		Reader sr = new StringReader("row1\nrow2\nrow3");
+		i = 1;
+		CsvParser.stream(sr, 1).forEach(strings -> assertArrayEquals(new String[] {"row" + ++i}, strings));
+		assertEquals(3, i);
+	}
+
+	@Test
+	public void testStreamRowsLimit() throws
+			IOException {
+		Reader sr = new StringReader("row1\nrow2\nrow3");
+		i = 1;
+		CsvParser.stream(sr, 1).limit(1).forEach(strings -> assertArrayEquals(new String[]{"row" + ++i}, strings));
+		assertEquals(2, i);
+	}
+	//IFJAVA8_END
+
 }

@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.Map;
 //IFJAVA8_START
 import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -53,32 +52,32 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
 	@Override
 	public final <H extends RowHandler<T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
-		new CsvParser().parse(reader, newCellConsumer(handler));
+		CsvParser.parse(reader, newCellConsumer(handler));
 		return handler;
 	}
 
 	@Override
 	public final <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int skip) throws IOException, MappingException {
-		new CsvParser().parse(reader, newCellConsumer(handler), skip);
+		CsvParser.parse(reader, newCellConsumer(handler), skip);
 		return handler;
 	}
 
 	@Override
 	public final <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int skip, final int limit) throws IOException, MappingException {
-		new CsvParser().parse(reader, newCellConsumer(handler), skip, limit);
+		CsvParser.parse(reader, newCellConsumer(handler), skip, limit);
 		return handler;
 	}
 
 	@Override
 	public Iterator<T> iterate(Reader reader) {
-		return new CsvIterator<T>(CsvParser.newCsvReader(reader), this);
+		return new CsvMapperIterator<T>(CsvParser.newCsvReader(reader), this);
 	}
 
 	@Override
 	public Iterator<T> iterate(Reader reader, int skip) throws IOException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
 		csvReader.skipLines(skip);
-		return new CsvIterator<T>(csvReader, this);
+		return new CsvMapperIterator<T>(csvReader, this);
 	}
 
 	//IFJAVA8_START

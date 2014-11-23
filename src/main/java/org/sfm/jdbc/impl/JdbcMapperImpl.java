@@ -1,6 +1,5 @@
 package org.sfm.jdbc.impl;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -9,11 +8,8 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.Spliterator;
-import java.util.Spliterators;
 //IFJAVA8_END
 
-import org.sfm.csv.parser.CellConsumer;
-import org.sfm.csv.parser.CsvReader;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;

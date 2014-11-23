@@ -16,8 +16,6 @@ import java.io.Reader;
 import java.util.Iterator;
 import java.util.Map;
 //IFJAVA8_START
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END
@@ -26,8 +24,6 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	
 	private final ClassMeta<T> classMeta;
 	private final Class<T> target;
-
-	private final CsvParser csvParser;
 
 	private final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler;
 
@@ -47,7 +43,6 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-		this.csvParser = new CsvParser();
 		this.defaultDateFormat = defaultDateFormat;
 		this.aliases = aliases;
 		this.customReaders = customReaders;
@@ -83,7 +78,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	public Iterator<T> iterate(Reader reader) throws IOException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
 		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
-		return new CsvIterator<T>(csvReader, mapper);
+		return new CsvMapperIterator<T>(csvReader, mapper);
 	}
 
 	@Override
@@ -91,7 +86,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
 		csvReader.skipLines(skip);
 		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
-		return new CsvIterator<T>(csvReader, mapper);
+		return new CsvMapperIterator<T>(csvReader, mapper);
 	}
 
 	private CsvMapperImpl<T> getDelegateMapper(CsvReader reader) throws IOException {

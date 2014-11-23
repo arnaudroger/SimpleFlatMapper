@@ -149,6 +149,29 @@ public class JdbcMapperDbObjectTest {
 	@Test
 	public void testDbObjectMapperWithStreamTryAdvance()
 			throws SQLException, Exception, ParseException {
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
+		addColumn(builder);
+		final JdbcMapper<DbObject> mapper = builder.mapper();
+
+		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement ps) throws Exception {
+				mapper.stream(ps.executeQuery()).limit(1).forEach(
+						(o) -> {
+							try {
+								DbHelper.assertDbObjectMapping(o);
+							} catch (Exception e) {
+								throw new RuntimeException(e);
+							}
+						}
+				);
+			}
+		});
+	}
+
+	@Test
+	public void testDbObjectMapperWithStreamTryAdvanceNoAsm()
+			throws SQLException, Exception, ParseException {
 		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService(false, false));
 		addColumn(builder);
 		final JdbcMapper<DbObject> mapper = builder.mapper();

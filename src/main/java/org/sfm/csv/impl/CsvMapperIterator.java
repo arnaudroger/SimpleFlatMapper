@@ -8,7 +8,7 @@ import org.sfm.csv.parser.CsvReader;
 import org.sfm.map.impl.AbstractMapperImpl;
 import org.sfm.utils.RowHandler;
 
-public class CsvIterator<T> implements Iterator<T> {
+public class CsvMapperIterator<T> implements Iterator<T> {
 
 	
 	private T currentValue;
@@ -17,7 +17,7 @@ public class CsvIterator<T> implements Iterator<T> {
 	private final CsvReader reader;
 	private final CellConsumer cellConsumer;
 	
-	public CsvIterator(CsvReader reader, CsvMapperImpl<T> csvMapperImpl) {
+	public CsvMapperIterator(CsvReader reader, CsvMapperImpl<T> csvMapperImpl) {
 		cellConsumer = csvMapperImpl.newCellConsumer(new RowHandler<T>() {
 			@Override
 			public void handle(T t) throws Exception {

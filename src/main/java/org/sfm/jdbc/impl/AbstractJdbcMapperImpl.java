@@ -5,10 +5,10 @@ import java.sql.SQLException;
 import java.util.Iterator;
 
 //IFJAVA8_START
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.Spliterator;
-import java.util.Spliterators;
 //IFJAVA8_END
 
 import org.sfm.jdbc.JdbcMapper;
@@ -50,9 +50,57 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
-		Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(iterate(rs), Spliterator.DISTINCT | Spliterator.ORDERED);
-		return StreamSupport.stream(spliterator, false);
+		return StreamSupport.stream(new JdbcSpliterator(rs), false);
 	}
-	//IFJAVA8_END
+
+	public class JdbcSpliterator implements Spliterator<T> {
+		private final ResultSet resultSet;
+
+		public JdbcSpliterator(ResultSet resultSet) {
+			this.resultSet = resultSet;
+		}
+
+		@Override
+		public boolean tryAdvance(Consumer<? super T> action) {
+			try {
+				if (resultSet.next()) {
+					action.accept(map(resultSet));
+					return true;
+				}
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+			return false;
+		}
+
+		@Override
+		public void forEachRemaining(Consumer<? super T> action) {
+			try {
+				forEach(resultSet, new RowHandler<T>() {
+					@Override
+					public void handle(T t) throws Exception {
+						action.accept(t);
+					}
+				});
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override
+		public Spliterator<T> trySplit() {
+			return null;
+		}
+
+		@Override
+		public long estimateSize() {
+			return Long.MAX_VALUE;
+		}
+
+		@Override
+		public int characteristics() {
+			return Spliterator.ORDERED | Spliterator.NONNULL;
+		}
+	}	//IFJAVA8_END
 
 }

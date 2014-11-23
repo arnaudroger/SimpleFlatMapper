@@ -20,24 +20,28 @@ public final class CharConsumer {
 
 	public void parseFull(CharBuffer csvBuffer, CellConsumer cellConsumer) {
 		while(csvBuffer.hasContent()) {
-			char c = csvBuffer.getNextChar();
-			switch (c) {
-			case ',':
-				newCellIfNotInQuote(csvBuffer, cellConsumer);
-				break;
-			case '"':
-				quote(csvBuffer);
-				break;
-			case '\n':
-				handleEndOfLineLF(csvBuffer, cellConsumer);
-				break;
-			case '\r':
-				handleEndOfLineCR(csvBuffer, cellConsumer);
-				break;
-			default:
-				turnOffCrFlag();
-			}
+			parseChar(csvBuffer, cellConsumer);
 		}
+	}
+
+	private void parseChar(CharBuffer csvBuffer, CellConsumer cellConsumer) {
+		char c = csvBuffer.getNextChar();
+		switch (c) {
+        case ',':
+            newCellIfNotInQuote(csvBuffer, cellConsumer);
+            break;
+        case '"':
+            quote(csvBuffer);
+            break;
+        case '\n':
+            handleEndOfLineLF(csvBuffer, cellConsumer);
+            break;
+        case '\r':
+            handleEndOfLineCR(csvBuffer, cellConsumer);
+            break;
+        default:
+            turnOffCrFlag();
+        }
 	}
 
 	public boolean nextLine(CharBuffer csvBuffer, CellConsumer cellConsumer) {

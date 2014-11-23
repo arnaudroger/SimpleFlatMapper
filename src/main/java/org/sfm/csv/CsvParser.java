@@ -38,7 +38,8 @@ public final class CsvParser {
 
 	public static final int DEFAULT = _8K;
 
-	private CsvParser(){
+	@Deprecated
+	public CsvParser(){
 	}
 
 	public static <CC extends CellConsumer> CC parse(int bufferSize, Reader r, CC cellConsumer) throws IOException {

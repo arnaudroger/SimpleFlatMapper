@@ -6,9 +6,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.stream.Stream;
-IFJAVA8_END*/
+//IFJAVA8_END
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.JdbcMapperBuilder;
@@ -75,13 +75,13 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		return mapper.iterate(rs);
 	}
 	
-	/*IFJAVA8_START
+	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
 		final JdbcMapper<T> mapper = buildMapper(rs.getMetaData());
 		return mapper.stream(rs);
 	}
-	IFJAVA8_END*/
+	//IFJAVA8_END
 
 	private JdbcMapper<T> buildMapper(final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
 		

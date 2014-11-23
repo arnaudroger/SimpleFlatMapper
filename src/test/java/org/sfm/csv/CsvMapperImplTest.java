@@ -10,10 +10,10 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Iterator;
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
@@ -123,7 +123,7 @@ public class CsvMapperImplTest {
 	}
 
 
-	/*IFJAVA8_START
+	//IFJAVA8_START
 	@Test
 	public void testCsvStream()
 			throws IOException, UnsupportedEncodingException, ParseException {
@@ -194,5 +194,5 @@ public class CsvMapperImplTest {
 		});
 		assertEquals(1, i);
 	}
-	IFJAVA8_END*/
+	//IFJAVA8_END
 }

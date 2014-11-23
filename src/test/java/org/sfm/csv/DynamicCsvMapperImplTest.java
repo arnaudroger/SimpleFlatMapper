@@ -17,10 +17,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
@@ -141,7 +141,7 @@ public class DynamicCsvMapperImplTest {
 
 	int i;
 
-	/*IFJAVA8_START
+	//IFJAVA8_START
 	@Test
 	public void testDbObjectStream() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
@@ -204,7 +204,7 @@ public class DynamicCsvMapperImplTest {
 		});
 		assertEquals(3, i);
 	}
-	IFJAVA8_END*/
+	//IFJAVA8_END
 
 
 	private static final String CSV_LIST = "id,objects_0_id,objects_0_name,objects_0_email,objects_0_creationTime,objects_0_typeOrdinal,objects_0_typeName\n"

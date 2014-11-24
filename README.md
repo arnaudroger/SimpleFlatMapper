@@ -52,7 +52,7 @@ Why?
 
 Sfm is very fast, the fastest I've been able to test again for the JdbcMapper and CsvMapper.
 
-MyBatis, Hibernate, have a considerable overwrite, that can raise the cost by at least  [600%](#in-mem-hsqldb) on 1000 rows query.
+MyBatis, Hibernate, have a considerable overwrite, that can raise the cost by at least [600%](#in-mem-hsqldb) on 1000 rows query.
 BeanPropertyRowMapper is even worse.
 
 ### API intrusiveness

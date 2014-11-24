@@ -4,7 +4,7 @@
 SimpleFlatMapper [v1.0.0rc2](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.0.0rc2)
 ========
 
-Straight line to v1.0.0
+Next build should be 1.0.0
 
 [Google Group](https://groups.google.com/d/forum/simpleflatmapper)
 
@@ -14,18 +14,18 @@ A super lightweight no configuration ORM alternative to iBatis or Hibernate.
 - Compatible with Java 6, 7 and 8. 
 - [Flexible mapping](#inner-object-mapping) with inner object, arrays and list support
 - Constructor, setter and field [injection](#value-injection)
-- [Lambda Ready](src/main/java/org/sfm/jdbc), also exposes Streams
+- Support for [Lambdas](src/main/java/org/sfm/jdbc) and Stream.
 - [Mapper for Jdbc ResultSet](src/main/java/org/sfm/jdbc)
 - [Mapper for Csvs](src/main/java/org/sfm/csv)
 - easy to integrate with [Spring JdbcTemplate](src/main/java/org/sfm/jdbc/spring). 
 - [Mapper for Jooq](src/main/java/org/sfm/jooq)
-- [Osgi](src/main/java/org/sfm/osgi) ready.
+- [Osgi](src/main/java/org/sfm/osgi) service.
 - [QueryDSL Jdbc support](src/main/java/org/sfm/querydsl)
 - Support JPA @Column for alias definition
 
 Fastest CsvParser on [csv-parsers-comparaison](https://github.com/uniVocity/csv-parsers-comparison).
 
-Fastest [CsvMapper](#csv-mapping) and [ORM Mapper](#in-mem-hsqldb), as far as I could test. If you believe something would be worth testing please raise an issue.
+Fastest [CsvMapper](#csv-mapping) and [ORM Mapper](#in-mem-hsqldb).
 
 Feedbacks are more than welcome, don't hesitate to raise an issue or send me an email.
 

@@ -176,18 +176,19 @@ The lower the better.
 
 |Type/NbRows|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|PureJdbc|1,927.79|4,990.25|35,045.21|331,337.21
-|JdbcMapperStatic|1,945.92|5,209.80|37,478.74|357,181.89
-|JdbcMapperStaticNoAsm|1,992.03|5,632.44|41,012.90|397,116.84
-|JdbcMapperDynamic|2,185.29|6,185.78|45,454.88|436,129.27
-|JdbcMapperDynamicNoAsm|2,233.54|6,600.33|49,589.06|479,481.54
-|Roma|2,837.18|6,642.74|43,826.42|410,034.25
-|Sql2O|6,486.77|11,920.62|65,794.94|601,438.12
-|HibernateStatefull|18,902.73|41,758.94|251,733.36|2,534,663.16
-|JooqWithSfmMapping|32,990.96|44,402.42|143,848.83|1,174,061.05
-|MyBatis|19,760.95|52,844.85|355,763.88|3,491,809.10
-|Jooq|39,140.63|57,231.23|209,301.52|1,803,546.20
-|BeanPropertyRowMapper|14,643.52|118,298.90|1,153,763.09|11,700,000.00
+|PureJdbc|1,925.79|5,042.98|35,186.81|336,625.96
+|JdbcMapperStatic|2,019.54|5,255.85|37,673.69|358,678.93
+|JdbcMapperStaticNoAsm|2,015.28|5,544.55|41,696.29|399,234.51
+|JdbcMapperDynamic|2,181.21|6,218.88|45,714.43|439,786.14
+|Roma|2,634.56|6,455.94|43,483.63|410,553.17
+|JdbcMapperDynamicNoAsm|2,214.56|6,671.09|49,871.66|480,406.45
+|Sql2O|6,452.89|12,226.59|66,217.41|609,071.18
+|Jooq.testSqlSmfMapper|32,822.27|43,472.96|141,448.46|1,118,003.03
+|Jooq.testFetchRecord|29,460.89|44,009.94|176,350.97|1,559,655.25
+|MyBatis|20,142.78|52,291.87|359,531.09|3,493,167.27
+|Jooq.testSqlWithJooqMapper|38,604.32|55,232.34|204,774.29|1,772,289.92
+|BeanPropertyRowMapper|15,024.78|121,918.09|1,191,479.77|11,839,887.44
+|HibernateStatefull|37,067.58|143,725.44|1,339,112.69|12,231,137.68
 
 % Difference from PureJdbc Average Time, the lower the better
 ![HsqlDb Average time difference to PureJdbc](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/hsqldb-difference-from-purejdbc.png)
@@ -202,18 +203,19 @@ The lower the better.
 
 |Type/NbRows|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|PureJdbc|244,467.47|284,516.96|622,006.45|2,381,662.80
-|JdbcMapperStatic|243,904.51|280,482.25|594,999.27|2,400,891.93
-|JdbcMapperStaticNoAsm|245,923.92|282,146.45|617,954.10|2,443,118.58
-|Roma|253,717.67|333,795.64|629,789.26|2,476,847.22
-|JdbcMapperDynamic|247,358.98|311,235.90|635,957.08|2,527,565.65
-|JdbcMapperDynamicNoAsm|247,873.48|322,955.14|635,153.11|2,575,559.43
-|Sql2O|261,462.68|352,085.79|712,857.30|2,894,537.87
-|JooqWithSfmMapping|346,452.54|414,009.25|789,125.17|3,407,026.53
-|Jooq|352,018.25|433,689.84|875,751.49|3,953,254.82
-|HibernateStatefull|326,142.77|385,037.66|919,370.54|4,666,538.42
-|MyBatis|425,368.59|512,035.00|956,222.21|5,293,635.82
-|BeanPropertyRowMapper|320,750.60|471,385.88|1,841,829.36|13,630,933.78
+|JdbcMapperDynamic|244,132.45|303,217.51|667,957.81|2,982,436.00
+|PureJdbc|239,473.80|309,337.96|642,470.12|2,869,874.95
+|JdbcMapperStatic|240,930.98|312,776.74|646,734.60|2,867,544.47
+|JdbcMapperStaticNoAsm|241,145.05|315,291.14|661,614.65|2,913,358.80
+|JdbcMapperDynamicNoAsm|243,952.93|321,778.82|682,339.77|3,003,549.52
+|Roma|253,860.87|352,882.58|718,077.47|3,231,870.34
+|Sql2O|260,788.27|368,675.83|776,665.14|3,625,665.28
+|Jooq.testSqlSmfMapper|347,155.42|427,559.17|862,504.44|3,992,848.11
+|Jooq.testFetchRecord|345,209.38|432,352.72|938,448.50|4,531,427.84
+|Jooq.testSqlWithJooqMapper|350,431.61|438,528.91|892,823.06|4,042,104.61
+|BeanPropertyRowMapper|304,083.26|466,785.52|1,998,807.89|14,649,609.80
+|MyBatis|424,565.50|522,097.96|1,232,858.88|7,414,298.89
+|HibernateStatefull|414,734.04|603,521.08|2,318,520.92|16,223,061.59
 
 % Difference from PureJdbc Average Time, the lower the better
 ![Mysql difference to PureJdbc](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/mysql-difference-from-purejdbc.png)
@@ -231,9 +233,9 @@ The lower the better.
 
 |Type/NbRows|1|10|100|1000|
 |---------|---:|---:|---:|---:|
-|JacksonCsvMapper|1110.39|8999.41|85186.40|787092.65
-|ReadSfmCsvMapper|2335.10|6401.91|49774.74|512753.55
-|OpenCsvMapper|2664.67|13828.84|127703.17|1291361.24
+|JacksonCsvMapper|1,118.47|9,118.87|85,848.88|792,258.04
+|ReadSfmCsvMapper|2,316.74|6,360.36|54,518.06|569,732.59
+|OpenCsvMapper|2,602.02|13,782.47|127,311.26|1,330,882.55
 
 % Difference from Jackson Average Time, the lower the better
 ![Difference from Jackson](https://raw.githubusercontent.com/arnaudroger/orm-benchmark/master/src/main/resources/graphs/csv-java7.png)

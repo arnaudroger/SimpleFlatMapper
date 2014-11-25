@@ -24,8 +24,8 @@ still needs to inflate the object from a tuple.
 SFM is a library and does not force a framework on you it plugs on top of jdbc, jooq, java io, spring jdbc.
 
 SFM makes also the assumption that it should be able to figure out the mapping rule without you being explicit about it.
-Object will most of the time match the structure of a query or a csv. But is still allow you to customized the mapping
-definition. [More details.](wiki/Property-Mapping)
+Object will most of the time match the structure of a query or a csv. But it still allow you to customized the mapping
+definition. [More details.](/arnaudroger/SimpleFlatMapper/wiki/Property-Mapping)
 
 SFM also supports Constructor injection and respect the semantic of final fields.
 
@@ -39,7 +39,7 @@ The Csv Mapper is about 30% faster than jackson-csv for file of 10 records or mo
 
 The Jooq integration give you a mapping to object for almost no cost.
 
-[More details.](wiki/Performance-Java-7)
+[More details.](/arnaudroger/SimpleFlatMapper/wiki/Performance-Java-7)
 
 ## Getting Started
 

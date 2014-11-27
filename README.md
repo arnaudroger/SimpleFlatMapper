@@ -13,7 +13,7 @@ SFM provides very fast and easy to use mapper for
 
 It also provides one of the fastest csv parser available.
 
-All the mapper are supports Lambda and can return the data in form of Stream.
+All the mapper supports Lambdas and can return the data in form of a Stream.
 
 ## Why?
 

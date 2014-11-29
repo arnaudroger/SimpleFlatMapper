@@ -120,3 +120,13 @@ public class MyDao {
 
 }
 ```
+
+### Building it
+
+The build is using [Maven](http://maven.apache.org/).
+
+```
+git clone https://github.com/arnaudroger/SimpleFlatMapper.git
+cd SimpleFlatMapper
+mvn install
+```

@@ -29,6 +29,8 @@ definition. [More details.](https://github.com/arnaudroger/SimpleFlatMapper/wiki
 
 SFM also supports Constructor injection and respect the semantic of final fields.
 
+[More storyfied Why.](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Why-extended-version)
+
 ## How Fast?
 
 The Jdbc Mapper is the fastest on the market. Adding a maximum of 5% over pure jdbc on a query to a local Mysql. The next

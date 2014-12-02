@@ -28,6 +28,7 @@ public final class CsvReader {
 			throws IOException {
 		do {
 			consumer.parseFull(buffer, cellConsumer);
+			consumer.shiftCurrentIndex(buffer.shiftBufferToMark());
 		} while (buffer.fillBuffer(reader));
 		consumer.finish(buffer, cellConsumer);
 	}
@@ -44,6 +45,7 @@ public final class CsvReader {
 			if (consumer.nextLine(buffer, cellConsumer)) {
 				return true;
 			}
+			consumer.shiftCurrentIndex(buffer.shiftBufferToMark());
 		} while (buffer.fillBuffer(reader));
 
 		consumer.finish(buffer, cellConsumer);

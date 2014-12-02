@@ -8,22 +8,18 @@ public final class CharBuffer {
 
 	private char[] buffer;
 	private int bufferLength;
-	private int bufferIndex;
-	
+
 	private int mark;
 
 	public CharBuffer(final int bufferSize) {
 		this.buffer = new char[bufferSize];
 	}
 	
-	public void mark() {
-		this.mark = bufferIndex;
+	public void mark(int index) {
+		this.mark = index;
 	}
 	
 	public boolean fillBuffer(Reader reader) throws IOException {
-		
-		shiftBufferToMark();
-		
 		int length = reader.read(buffer, bufferLength, buffer.length- bufferLength);
 		if (length != -1) {
 			bufferLength += length;
@@ -34,7 +30,7 @@ public final class CharBuffer {
 	}
 
 
-	private void shiftBufferToMark() {
+	public int shiftBufferToMark() {
 		// shift buffer consumer data
 		int newLength = Math.max(bufferLength - mark, 0);
 
@@ -47,17 +43,18 @@ public final class CharBuffer {
 			System.arraycopy(buffer, mark, newbuffer, 0, newLength);
 			buffer = newbuffer;
 		}
-		bufferIndex = bufferIndex - mark;
 		bufferLength = newLength;
-		
+
+		int m = mark;
 		mark = 0;
+		return m;
 	}
 
 	public char[] getCharBuffer() {
 		return buffer;
 	}
 
-	public boolean isAllConsumed() {
+	public boolean isAllConsumed(int bufferIndex) {
 		return mark >= bufferIndex -1 ;
 	}
 
@@ -65,15 +62,20 @@ public final class CharBuffer {
 		return mark;
 	}
 
-	public int getLengthFromMark() {
+	public int getLengthFromMark(int bufferIndex) {
 		return bufferIndex - mark;
 	}
 
-	public char getNextChar() {
-		return buffer[bufferIndex++];
+	public char getChar(int bufferIndex) {
+		return buffer[bufferIndex];
 	}
 
-	public boolean hasContent() {
+	public boolean hasContent(int bufferIndex) {
 		return bufferIndex < bufferLength;
+	}
+
+
+	public int getBufferLength() {
+		return bufferLength;
 	}
 }

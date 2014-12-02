@@ -10,13 +10,15 @@ public final class CsvReader {
 
 
 	private final Reader reader;
-	private final CharBuffer buffer;
-	private final CharConsumer consumer;
+	private final CsvCharConsumer consumer;
+
+	public CsvReader(CharBuffer buffer, Reader reader) {
+		this.reader = reader;
+		this.consumer = new CsvCharConsumer(buffer);
+	}
 
 	public CsvReader(final int bufferSize, final Reader reader) {
-		this.buffer = new CharBuffer(bufferSize);
-		this.consumer = new CharConsumer();
-		this.reader = reader;
+		this(new CharBuffer(bufferSize), reader);
 	}
 
 	/**
@@ -27,10 +29,9 @@ public final class CsvReader {
 	public void parseAll(CellConsumer cellConsumer)
 			throws IOException {
 		do {
-			consumer.parseFull(buffer, cellConsumer);
-			consumer.shiftCurrentIndex(buffer.shiftBufferToMark());
-		} while (buffer.fillBuffer(reader));
-		consumer.finish(buffer, cellConsumer);
+			consumer.parseFull(cellConsumer);
+		} while (consumer.fillBuffer(reader));
+		consumer.finish(cellConsumer);
 	}
 
 	/**
@@ -42,13 +43,12 @@ public final class CsvReader {
 			throws IOException {
 
 		do {
-			if (consumer.nextLine(buffer, cellConsumer)) {
+			if (consumer.nextLine(cellConsumer)) {
 				return true;
 			}
-			consumer.shiftCurrentIndex(buffer.shiftBufferToMark());
-		} while (buffer.fillBuffer(reader));
+		} while (consumer.fillBuffer(reader));
 
-		consumer.finish(buffer, cellConsumer);
+		consumer.finish(cellConsumer);
 		return false;
 	}
 

@@ -1,10 +1,13 @@
 package org.sfm.csv.parser;
 
 
+import java.io.IOException;
+import java.io.Reader;
+
 /**
  * Consume the charbuffer.
  */
-public final class CharConsumer {
+public final class CsvCharConsumer {
 
 	public static final int IN_QUOTE = 4;
 	public static final int IN_CR = 2;
@@ -14,15 +17,19 @@ public final class CharConsumer {
 	public static final int TURN_OFF_IN_CR_MASK = ~IN_CR;
 	public static final int ALL_QUOTES = QUOTE | IN_QUOTE;
 
-	
+
+	private final CharBuffer csvBuffer;
+
 	private int currentState = NONE;
 	private CellConsumer cellConsumer;
-	private CharBuffer csvBuffer;
 	private int _currentIndex;
 
-	public void parseFull(CharBuffer csvBuffer, CellConsumer cellConsumer) {
-		this.cellConsumer = cellConsumer;
+	public CsvCharConsumer(CharBuffer csvBuffer) {
 		this.csvBuffer = csvBuffer;
+	}
+
+	public void parseFull(CellConsumer cellConsumer) {
+		this.cellConsumer = cellConsumer;
 
 		int bufferLength = csvBuffer.getBufferLength();
 		for(int i = _currentIndex; i  < bufferLength; i++) {
@@ -50,9 +57,8 @@ public final class CharConsumer {
         }
 	}
 
-	public boolean nextLine(CharBuffer csvBuffer, CellConsumer cellConsumer) {
+	public boolean nextLine(CellConsumer cellConsumer) {
 		this.cellConsumer = cellConsumer;
-		this.csvBuffer = csvBuffer;
 
 		int bufferLength = csvBuffer.getBufferLength();
 		for(int i = _currentIndex; i  < bufferLength; i++) {
@@ -153,7 +159,7 @@ public final class CharConsumer {
 		currentState = NONE;
 	}
 
-	public void finish(CharBuffer csvBuffer, CellConsumer cellConsumer) {
+	public void finish(CellConsumer cellConsumer) {
 		if (!csvBuffer.isAllConsumed(_currentIndex)) {
 			newCell(csvBuffer,  cellConsumer, _currentIndex);
 		}
@@ -162,5 +168,10 @@ public final class CharConsumer {
 
 	public void shiftCurrentIndex(int mark) {
 		_currentIndex -= mark;
+	}
+
+	public boolean fillBuffer(Reader reader) throws IOException {
+		shiftCurrentIndex(csvBuffer.shiftBufferToMark());
+		return csvBuffer.fillBuffer(reader);
 	}
 }

@@ -79,19 +79,20 @@ public final class ConstructorDefinition<T> {
 							@Override
 							public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
 								if (start.equals(firstLabel) && end.equals(lastLabel) && ! "this".equals(name)) {
-									parameters.add(createParameter(name, signature == null ? desc : signature));
+									parameters.add(createParameter(name, desc , signature));
 								}
 							}
 
 							private ConstructorParameter createParameter(String name,
-									String desc) {
+									String desc, String signature) {
 								try {
-									Type paramType = AsmUtils.toGenericType(desc, genericTypeNames, target);
-									Type type = paramType;
-									if (desc.startsWith("T")) {
-										type = Object.class;
+
+									Type basicType = AsmUtils.toGenericType(desc, genericTypeNames, target);
+									Type genericType = basicType;
+									if (signature != null) {
+										genericType = AsmUtils.toGenericType(signature, genericTypeNames, target);
 									}
-									return new ConstructorParameter(name, type, paramType);
+									return new ConstructorParameter(name, basicType, genericType);
 								} catch (ClassNotFoundException e) {
 									throw new Error("Unexpected error " + e, e);
 								}

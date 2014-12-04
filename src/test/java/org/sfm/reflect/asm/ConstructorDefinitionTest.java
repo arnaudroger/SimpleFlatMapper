@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.beans.DbFinalObject;
+import org.sfm.tuples.Tuple2;
 
 public class ConstructorDefinitionTest {
 
@@ -47,5 +48,27 @@ public class ConstructorDefinitionTest {
 		assertEquals(DbFinalObject.class.getConstructor(long.class, String.class, String.class, Date.class, Type.class, Type.class), finalDbObjectConstructors.get(0).getConstructor());
 
 	}
+
+
+	@Test
+	public void testExtractConstructorsTuple2() throws IOException, NoSuchMethodException, SecurityException {
+
+		List<ConstructorDefinition<Tuple2<String, DbObject>>> finalDbObjectConstructors = ConstructorDefinition.extractConstructors(Tuple2.typeDef(String.class, DbObject.class));
+		assertEquals(1, finalDbObjectConstructors.size());
+		assertEquals(2, finalDbObjectConstructors.get(0).getParameters().length);
+
+		assertEquals(Object.class, finalDbObjectConstructors.get(0).getParameters()[0].getType());
+		assertEquals(Object.class, finalDbObjectConstructors.get(0).getParameters()[1].getType());
+
+		assertEquals(String.class, finalDbObjectConstructors.get(0).getParameters()[0].getResolvedType());
+		assertEquals(DbObject.class, finalDbObjectConstructors.get(0).getParameters()[1].getResolvedType());
+
+		assertEquals("element1", finalDbObjectConstructors.get(0).getParameters()[0].getName());
+		assertEquals("element2", finalDbObjectConstructors.get(0).getParameters()[1].getName());
+
+		assertEquals(Tuple2.class.getConstructor(Object.class, Object.class), finalDbObjectConstructors.get(0).getConstructor());
+
+	}
+
 
 }

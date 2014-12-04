@@ -22,7 +22,7 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
 	@Override
 	public Type getType() {
-		return constructorParameter.getType();
+		return constructorParameter.getResolvedType();
 	}
 
 	public ConstructorParameter getConstructorParameter() {

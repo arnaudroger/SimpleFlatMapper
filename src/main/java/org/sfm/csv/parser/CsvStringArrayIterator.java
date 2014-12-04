@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-/**
- * Created by e19224 on 23/11/2014.
- */
 public class CsvStringArrayIterator implements Iterator<String[]> {
 
     private final CsvReader reader;

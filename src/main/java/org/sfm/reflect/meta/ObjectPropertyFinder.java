@@ -7,6 +7,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.sfm.map.MapperBuildingException;
+import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.asm.ConstructorDefinition;
 import org.sfm.reflect.asm.ConstructorParameter;
 
@@ -154,6 +155,6 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 
 	@Override
 	public Class<T> getClassToInstantiate() {
-		return classMeta.getTargetClass();
+		return TypeHelper.toClass(classMeta.getTargetClass());
 	}
 }

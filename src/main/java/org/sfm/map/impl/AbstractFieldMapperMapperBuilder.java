@@ -96,7 +96,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 				PropertyMeta<T, ?> pm  = t.getPropertyMeta();
 					ConstructorPropertyMeta<T, ?> cProp = (ConstructorPropertyMeta<T, ?>) pm;
 					ConstructorParameter constructorParameter = cProp.getConstructorParameter();
-					injections.put(constructorParameter, getterFor(t.getColumnKey(), constructorParameter.getType()));
+					injections.put(constructorParameter, getterFor(t.getColumnKey(), constructorParameter.getResolvedType()));
 			}
 		});
 		

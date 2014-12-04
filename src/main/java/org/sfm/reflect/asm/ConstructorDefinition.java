@@ -3,7 +3,9 @@ package org.sfm.reflect.asm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.objectweb.asm.ClassReader;
@@ -28,19 +30,32 @@ public final class ConstructorDefinition<T> {
 	public ConstructorParameter[] getParameters() {
 		return parameters;
 	}
-	
-	public static <T> List<ConstructorDefinition<T>> extractConstructors(final Class<T> target) throws IOException {
+
+	public static <T> List<ConstructorDefinition<T>> extractConstructors(final Type target) throws IOException {
 		final List<ConstructorDefinition<T>> constructors = new ArrayList<ConstructorDefinition<T>>();
+
+		final Class<T> targetClass = TypeHelper.toClass(target);
 		
-		ClassLoader cl = target.getClassLoader();
+		ClassLoader cl = targetClass.getClassLoader();
 		if (cl == null) {
 			cl = ClassLoader.getSystemClassLoader();
 		}
 		
-		final InputStream is = cl.getResourceAsStream(target.getName().replace('.', '/') + ".class");
+		final InputStream is = cl.getResourceAsStream(targetClass.getName().replace('.', '/') + ".class");
 		try {
 			ClassReader classReader = new ClassReader(is);
 			classReader.accept(new ClassVisitor(Opcodes.ASM5) {
+				List<String> genericTypeNames;
+
+				@Override
+				public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+					if (signature != null) {
+						genericTypeNames =  AsmUtils.extractGenericTypeNames(signature);
+					} else {
+						genericTypeNames = Collections.emptyList();
+					}
+					super.visit(version, access, name, signature, superName, interfaces);
+				}
 
 				@Override
 				public MethodVisitor visitMethod(int access,
@@ -71,7 +86,12 @@ public final class ConstructorDefinition<T> {
 							private ConstructorParameter createParameter(String name,
 									String desc) {
 								try {
-									return new ConstructorParameter(name, AsmUtils.toGenericType(desc));
+									Type paramType = AsmUtils.toGenericType(desc, genericTypeNames, target);
+									Type type = paramType;
+									if (desc.startsWith("T")) {
+										type = Object.class;
+									}
+									return new ConstructorParameter(name, type, paramType);
 								} catch (ClassNotFoundException e) {
 									throw new Error("Unexpected error " + e, e);
 								}
@@ -80,7 +100,7 @@ public final class ConstructorDefinition<T> {
 							@Override
 							public void visitEnd() {
 								try {
-									constructors.add(new ConstructorDefinition<T>(target.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new ConstructorParameter[parameters.size()])));
+									constructors.add(new ConstructorDefinition<T>(targetClass.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new ConstructorParameter[parameters.size()])));
 								} catch(Exception e) {
 									throw new Error("Unexpected error " + e, e);
 								}

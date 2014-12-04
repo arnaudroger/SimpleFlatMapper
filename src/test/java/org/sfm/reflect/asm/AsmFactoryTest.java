@@ -34,8 +34,9 @@ public class AsmFactoryTest {
 	@SuppressWarnings("serial")
 	@Test
 	public void testCreateInstatiatorFinalDbObjectInjectIdAndName() throws Exception {
-		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstatiantor(ResultSet.class, 
-				ConstructorDefinition.extractConstructors(DbFinalObject.class).get(0),
+		ConstructorDefinition<DbFinalObject> constructorDefinition = ConstructorDefinition.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0);
+		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstatiantor(ResultSet.class,
+				constructorDefinition,
 				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
 						put(new ConstructorParameter("id", long.class), new LongResultSetGetter(1));
@@ -59,8 +60,8 @@ public class AsmFactoryTest {
 		assertEquals(33l, fdo.getId());
 		assertEquals("fdo", fdo.getName());
 		
-		assertSame(instantiator, asmFactory.createInstatiantor(ResultSet.class, 
-				ConstructorDefinition.extractConstructors(DbFinalObject.class).get(0),
+		assertSame(instantiator, asmFactory.createInstatiantor(ResultSet.class,
+				constructorDefinition,
 				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
 						put(new ConstructorParameter("id", long.class), new LongResultSetGetter(1));
@@ -74,7 +75,7 @@ public class AsmFactoryTest {
 	public void testCreateInstatiatorFinalDbObjectNameAndType() throws Exception {
 		@SuppressWarnings("serial")
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstatiantor(ResultSet.class, 
-				ConstructorDefinition.extractConstructors(DbFinalObject.class).get(0),
+				ConstructorDefinition.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0),
 				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
 						put(new ConstructorParameter("typeOrdinal", Type.class), new OrdinalEnumResultSetGetter<Type>(1, Type.class));

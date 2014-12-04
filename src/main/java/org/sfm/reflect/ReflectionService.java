@@ -86,7 +86,7 @@ public class ReflectionService {
 		}else if (clazz.isArray()) {
 			return new ArrayClassMeta(clazz, clazz.getComponentType(), this);
 		}
-		return new ObjectClassMeta<T>(clazz, this);
+		return new ObjectClassMeta<T>(target, this);
 	}
 	public String getColumnName(Method method) {
 		return aliasProvider.getAliasForMethod(method);

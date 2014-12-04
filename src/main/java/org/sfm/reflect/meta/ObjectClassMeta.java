@@ -2,6 +2,7 @@ package org.sfm.reflect.meta;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Set;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.SetterHelper;
+import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.asm.ConstructorDefinition;
 import org.sfm.reflect.asm.ConstructorParameter;
 
@@ -24,11 +26,11 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
 	
 	private final ReflectionService reflectService;
-	private final Class<T> target;
+	private final Type target;
 
 	private final Map<String, String> fieldAliases;
 	
-	public ObjectClassMeta(Class<T> target, ReflectionService reflectService) throws MapperBuildingException {
+	public ObjectClassMeta(Type target, ReflectionService reflectService) throws MapperBuildingException {
 		this.reflectService = reflectService;
 		if (reflectService.isAsmPresent()) {
 			try {
@@ -41,8 +43,8 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			this.constructorDefinitions = null;
 			this.constructorProperties = null;
 		}
-		this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, target));
-		this.properties = Collections.unmodifiableList(listProperties(reflectService, target));
+		this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.toClass(target)));
+		this.properties = Collections.unmodifiableList(listProperties(reflectService, TypeHelper.toClass(target)));
 		this.target = target;
 	}
 	
@@ -150,7 +152,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return new ObjectPropertyFinder<T>(this);
 	}
 
-	public Class<T> getTargetClass() {
+	public Type getTargetClass() {
 		return target;
 	}
 }

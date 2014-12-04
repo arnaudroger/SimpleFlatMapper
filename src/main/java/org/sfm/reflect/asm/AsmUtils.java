@@ -175,7 +175,7 @@ public class AsmUtils {
 			return "L" + toType(typeName) + ";";
 		}
 	}
-	public static Type toGenericType(String sig) throws ClassNotFoundException {
+	public static Type toGenericType(String sig, List<String> genericTypeNames, Type target) throws ClassNotFoundException {
 		if (sig.length() == 1) {
 			switch (sig.charAt(0)) {
 			case 'Z': return boolean.class;
@@ -194,6 +194,13 @@ public class AsmUtils {
 			if (sig.endsWith(";")) {
 				sig = sig.substring(0, sig.length() - 1);
 			}
+		} else if (sig.startsWith("T")) {
+			int indexOfParam = genericTypeNames.indexOf(sig.substring(1, sig.length() -1));
+			if (target instanceof  ParameterizedType) {
+				return ((ParameterizedType) target).getActualTypeArguments()[indexOfParam];
+			} else {
+				throw new IllegalArgumentException("Cannot resolve generic type " + sig + " from non ParameterizedType " + target);
+			}
 		}
 		
 		int indexOf = sig.indexOf('<');
@@ -202,7 +209,7 @@ public class AsmUtils {
 		} else {
 			final Class<?> rawType = Class.forName(sig.substring(0, indexOf).replace('/','.'));
 
-			final Type[] types = parseTypes(sig.substring(indexOf+ 1, sig.length() - 1));
+			final Type[] types = parseTypes(sig.substring(indexOf+ 1, sig.length() - 1), genericTypeNames, target);
 			
 			return new ParameterizedType() {
 				
@@ -224,7 +231,7 @@ public class AsmUtils {
 		}
 	}
 
-	private static Type[] parseTypes(String sig) throws ClassNotFoundException {
+	private static Type[] parseTypes(String sig, List<String> genericTypeNames, Type target) throws ClassNotFoundException {
 		List<Type> types = new ArrayList<Type>();
 		
 		int genericLevel = 0;
@@ -236,7 +243,7 @@ public class AsmUtils {
 			case '>': genericLevel --; break;
 			case ';' : 
 				if (genericLevel == 0) {
-					types.add(toGenericType(sig.substring(currentStart, i)));
+					types.add(toGenericType(sig.substring(currentStart, i), genericTypeNames, target));
 					currentStart = i;
 				} 
 				break;
@@ -275,5 +282,30 @@ public class AsmUtils {
 	}
 	public static String toWrapperType(Type type) {
 		return toType(toWrapperClass(type));
+	}
+
+	public static List<String> extractGenericTypeNames(String sig) {
+		List<String> types = new ArrayList<String>();
+
+		boolean nameDetected = false;
+		int currentStart = -1;
+		for(int i = 0; i < sig.length(); i++) {
+			char c = sig.charAt(i);
+			switch(c) {
+				case '<' :
+				case ';' :
+					if (!nameDetected) {
+						nameDetected = true;
+						currentStart = i + 1;
+					}
+					break;
+				case ':' :
+					types.add(sig.substring(currentStart, i));
+					nameDetected = false;
+					break;
+			}
+		}
+
+		return types;
 	}
 }

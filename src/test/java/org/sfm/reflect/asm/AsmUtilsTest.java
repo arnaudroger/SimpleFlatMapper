@@ -3,24 +3,58 @@ package org.sfm.reflect.asm;
 import static org.junit.Assert.*;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class AsmUtilsTest {
 
 	@Test
+	public void testToClass() throws  Exception {
+		assertEquals(int.class, AsmUtils.toGenericType("I", null, null));
+		assertEquals(String.class, AsmUtils.toGenericType("java/lang/String", null, null));
+		assertEquals(String.class, AsmUtils.toGenericType("Ljava/lang/String;", null, null));
+	}
+
+	@Test
 	public void testToGenericType() throws ClassNotFoundException {
-		assertEquals(int.class, AsmUtils.toGenericType("I"));
-		assertEquals(String.class, AsmUtils.toGenericType("java/lang/String"));
-		assertEquals(String.class, AsmUtils.toGenericType("Ljava/lang/String;"));
-		
-		
-		ParameterizedType pt = (ParameterizedType) AsmUtils.toGenericType("java/util/List<Ljava/util/List<Ljava/lang/String;>;>");
+
+		ParameterizedType pt = (ParameterizedType) AsmUtils.toGenericType("java/util/List<Ljava/util/List<Ljava/lang/String;>;>", null, null);
 		ParameterizedType pt2 = (ParameterizedType) pt.getActualTypeArguments()[0];
 		assertEquals(List.class, pt.getRawType());
 		assertEquals(List.class, pt2.getRawType());
 		assertEquals(String.class, pt2.getActualTypeArguments()[0]);
 	}
+
+	@Test
+	public void testToClassFromGeneric() throws  Exception {
+		assertEquals(String.class, AsmUtils.toGenericType("TT1;", Arrays.asList("T0", "T1"), new ParameterizedType() {
+			@Override
+			public Type[] getActualTypeArguments() {
+				return new Type[] {Long.class, String.class};
+			}
+
+			@Override
+			public Type getRawType() {
+				return null;
+			}
+
+			@Override
+			public Type getOwnerType() {
+				return null;
+			}
+		}));
+	}
+
+	@Test
+	public void extractGenericTypeName() throws  Exception {
+		Assert.assertArrayEquals(new String[] { "T1", "T2", "O"},
+				AsmUtils.extractGenericTypeNames("<T1:Ljava.lang.Object;T2:Ljava.lang.Object;O:java.lang.Object>Ljava.lang.Object;").toArray(new String[] {}));
+	}
+
+
 
 }

@@ -5,18 +5,30 @@ import java.lang.reflect.Type;
 public final class ConstructorParameter {
 	private final String name;
 	private final Type type;
-	public ConstructorParameter(String name, Type type) {
+	private final Type resolvedType;
+
+	public ConstructorParameter(String name, Type type, Type resolvedType) {
 		super();
 		this.name = name;
 		this.type = type;
+		this.resolvedType = resolvedType;
 	}
+
+	public ConstructorParameter(String id, Type type) {
+		this(id, type, type);
+	}
+
 	public String getName() {
 		return name;
 	}
 	public Type getType() {
 		return type;
 	}
-	
+
+	public Type getResolvedType() {
+		return resolvedType;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

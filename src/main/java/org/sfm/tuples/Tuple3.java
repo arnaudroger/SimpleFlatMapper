@@ -26,23 +26,4 @@ public class Tuple3<T1, T2, T3> {
     public T3 getElement3() {
         return element3;
     }
-
-    public static <T1, T2, T3> ParameterizedType typeDef(final Class<T1> c1, final Class<T2> c2, final Class<T3> c3) {
-        return new ParameterizedType() {
-            @Override
-            public Type[] getActualTypeArguments() {
-                return new Type[] { c1, c2, c3 };
-            }
-
-            @Override
-            public Type getRawType() {
-                return Tuple2.class;
-            }
-
-            @Override
-            public Type getOwnerType() {
-                return null;
-            }
-        };
-    }
 }

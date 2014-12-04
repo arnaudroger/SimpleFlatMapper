@@ -38,25 +38,4 @@ public class Tuple5<T1, T2, T3, T4, T5> {
     public T5 getElement5() {
         return element5;
     }
-
-    public static <T1, T2, T3, T4, T5> ParameterizedType typeDef(final Class<T1> c1, final Class<T2> c2,
-                                                             final Class<T3> c3, final Class<T4> c4,
-                                                             final Class<T5> c5) {
-        return new ParameterizedType() {
-            @Override
-            public Type[] getActualTypeArguments() {
-                return new Type[] { c1, c2, c3, c4, c5 };
-            }
-
-            @Override
-            public Type getRawType() {
-                return Tuple2.class;
-            }
-
-            @Override
-            public Type getOwnerType() {
-                return null;
-            }
-        };
-    }
 }

@@ -43,8 +43,8 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			this.constructorDefinitions = null;
 			this.constructorProperties = null;
 		}
-		this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.toClass(target)));
-		this.properties = Collections.unmodifiableList(listProperties(reflectService, TypeHelper.toClass(target)));
+		this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.<T>toClass(target)));
+		this.properties = Collections.unmodifiableList(listProperties(reflectService, TypeHelper.<T>toClass(target)));
 		this.target = target;
 	}
 	

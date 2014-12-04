@@ -50,7 +50,7 @@ public class InstantiatorFactoryTest {
 	
 	@Test
 	public void testInstantiateConstructorWithArgsAllPr() throws Exception {
-		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(null).getInstantiator(ResultSet.class,ConstructorDefinition.extractConstructors(DbFinalPrimitiveObject.class), new HashMap<ConstructorParameter, Getter<ResultSet, ?>>());
+		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(null).getInstantiator(ResultSet.class,ConstructorDefinition.<DbFinalPrimitiveObject>extractConstructors(DbFinalPrimitiveObject.class), new HashMap<ConstructorParameter, Getter<ResultSet, ?>>());
 		DbFinalPrimitiveObject object = instantiator.newInstance(null);
 		Assert.assertNotNull(object);
 	}
@@ -71,7 +71,7 @@ public class InstantiatorFactoryTest {
 	
 	@Test
 	public void testInstantiateConstructorWithArgsAllPrAsm() throws Exception {
-		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(new AsmFactory()).getInstantiator(ResultSet.class,ConstructorDefinition.extractConstructors(DbFinalPrimitiveObject.class), new HashMap<ConstructorParameter, Getter<ResultSet, ?>>());
+		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(new AsmFactory()).getInstantiator(ResultSet.class,ConstructorDefinition.<DbFinalPrimitiveObject>extractConstructors(DbFinalPrimitiveObject.class), new HashMap<ConstructorParameter, Getter<ResultSet, ?>>());
 		DbFinalPrimitiveObject object = instantiator.newInstance(null);
 		Assert.assertNotNull(object);
 	}

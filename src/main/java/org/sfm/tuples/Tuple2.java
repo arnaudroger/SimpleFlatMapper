@@ -21,7 +21,7 @@ public class Tuple2<T1, T2> {
         return element2;
     }
 
-    public static <T1, T2> ParameterizedType typeDef(Class<T1> c1, Class<T2> c2) {
+    public static <T1, T2> ParameterizedType typeDef(final Class<T1> c1, final Class<T2> c2) {
         return new ParameterizedType() {
             @Override
             public Type[] getActualTypeArguments() {

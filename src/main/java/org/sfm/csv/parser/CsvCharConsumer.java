@@ -19,9 +19,10 @@ public final class CsvCharConsumer {
 
 
 	private final CharBuffer csvBuffer;
+	private final char escapeChar = '"';
+	private final char fieldSeparator = ',';
 
 	private int currentState = NONE;
-	private CellConsumer cellConsumer;
 	private int _currentIndex;
 
 	public CsvCharConsumer(CharBuffer csvBuffer) {
@@ -29,62 +30,64 @@ public final class CsvCharConsumer {
 	}
 
 	public void parseFull(CellConsumer cellConsumer) {
-		this.cellConsumer = cellConsumer;
-
 		int bufferLength = csvBuffer.getBufferLength();
+
 		for(int i = _currentIndex; i  < bufferLength; i++) {
-			consumeChar(i, csvBuffer.getChar(i));
+			char c = csvBuffer.getChar(i);
+			concumeCharSwitch(c, i, cellConsumer);
 		}
+
 		_currentIndex = bufferLength;
 	}
 
-	public void consumeChar(int i, char c) {
-		switch (c) {
-        case ',':
-            newCellIfNotInQuote(i);
-            break;
-        case '"':
-            quote(i);
-            break;
-        case '\n':
-            handleEndOfLineLF(i);
-            break;
-        case '\r':
-            handleEndOfLineCR(i);
-            break;
-        default:
-            turnOffCrFlag();
-        }
+	private void concumeCharSwitch(char character, int index, CellConsumer cellConsumer) {
+		switch(character) {
+			case ',':
+				newCellIfNotInQuote(index, cellConsumer);
+				break;
+			case '\n':
+				handleEndOfLineLF(index, cellConsumer);
+				break;
+			case '\r':
+				handleEndOfLineCR(index, cellConsumer);
+				return;
+			case '"':
+				quote(index);
+				break;
+			default:
+		}
+		turnOffCrFlag();
 	}
 
 	public boolean nextLine(CellConsumer cellConsumer) {
-		this.cellConsumer = cellConsumer;
 
 		int bufferLength = csvBuffer.getBufferLength();
-		for(int i = _currentIndex; i  < bufferLength; i++) {
-			char c = csvBuffer.getChar(i);
-			switch (c) {
+		for(int index = _currentIndex; index  < bufferLength; index++) {
+
+			char character = csvBuffer.getChar(index);
+			switch(character) {
 				case ',':
-					newCellIfNotInQuote(i);
-					break;
-				case '"':
-					quote(i);
+					newCellIfNotInQuote(index, cellConsumer);
 					break;
 				case '\n':
-					if (handleEndOfLineLF(i)) {
-						_currentIndex = i + 1;
+					if (handleEndOfLineLF(index, cellConsumer)) {
+						_currentIndex = index + 1;
+						turnOffCrFlag();
 						return true;
 					}
 					break;
 				case '\r':
-					if (handleEndOfLineCR(i)) {
-						_currentIndex = i + 1;
+					if (handleEndOfLineCR(index, cellConsumer)) {
+						_currentIndex = index + 1;
 						return true;
 					}
 					break;
+				case '"':
+					quote(index);
+					break;
 				default:
-					turnOffCrFlag();
 			}
+			turnOffCrFlag();
 		}
 		_currentIndex = bufferLength;
 
@@ -98,14 +101,12 @@ public final class CsvCharConsumer {
 		currentState = currentState & TURN_OFF_IN_CR_MASK;
 	}
 
-	private void newCellIfNotInQuote(int currentIndex) {
+	private void newCellIfNotInQuote(int currentIndex, CellConsumer cellConsumer) {
 		if (isInQuote())
 			return;
 
-		newCell(csvBuffer,  cellConsumer, currentIndex);
-		turnOffCrFlag();
+		newCell(currentIndex, cellConsumer);
 	}
-
 
 
 	private boolean isInQuote() {
@@ -116,52 +117,50 @@ public final class CsvCharConsumer {
 	 *
 	 * @return true if endOfLine
 	 */
-	private boolean handleEndOfLineLF(int currentIndex) {
+	private boolean handleEndOfLineLF(int currentIndex, CellConsumer cellConsumer) {
 		if (!isInQuote()) {
 			if (currentState != IN_CR) {
-				endOfRow(currentIndex);
+				endOfRow(currentIndex, cellConsumer);
 				return true;
 			} else {
 				// we had a preceding cr so shift the marl
 				csvBuffer.mark(currentIndex + 1);
 			}
 		}
-		turnOffCrFlag();
 		return false;
 	}
 
-	private boolean handleEndOfLineCR(int currentIndex) {
+	private boolean handleEndOfLineCR(int currentIndex, CellConsumer cellConsumer) {
 		if (!isInQuote()) {
-			endOfRow(currentIndex);
+			endOfRow(currentIndex, cellConsumer);
 			currentState = IN_CR;
 			return true;
 		}
 		return false;
 	}
 
-	private void endOfRow(int currentIndex) {
-		newCell(csvBuffer,  cellConsumer, currentIndex);
+	private void endOfRow(int currentIndex, CellConsumer cellConsumer) {
+		newCell(currentIndex, cellConsumer);
 		cellConsumer.endOfRow();
 	}
 
 	private void quote(int currentIndex) {
-		if (csvBuffer.isAllConsumed(currentIndex)) {
+		if (isAllConsumedFromMark(currentIndex)) {
 			currentState = IN_QUOTE;
 		} else {
 			currentState = currentState ^ ALL_QUOTES;
 		}
-		turnOffCrFlag();
 	}
 
-	private void newCell(CharBuffer csvBuffer, CellConsumer cellConsumer, int currentIndex) {;
-		cellConsumer.newCell(csvBuffer.getCharBuffer(), csvBuffer.getMark(), csvBuffer.getLengthFromMark(currentIndex));
+	private void newCell(int currentIndex, CellConsumer cellConsumer) {;
+		cellConsumer.newCell(csvBuffer.getCharBuffer(), csvBuffer.getMark(), currentIndex - csvBuffer.getMark());
 		csvBuffer.mark(currentIndex + 1);
 		currentState = NONE;
 	}
 
 	public void finish(CellConsumer cellConsumer) {
-		if (!csvBuffer.isAllConsumed(_currentIndex)) {
-			newCell(csvBuffer,  cellConsumer, _currentIndex);
+		if (!isAllConsumedFromMark(_currentIndex)) {
+			newCell(_currentIndex, cellConsumer);
 		}
 		cellConsumer.end();
 	}
@@ -173,5 +172,9 @@ public final class CsvCharConsumer {
 	public boolean fillBuffer(Reader reader) throws IOException {
 		shiftCurrentIndex(csvBuffer.shiftBufferToMark());
 		return csvBuffer.fillBuffer(reader);
+	}
+
+	public boolean isAllConsumedFromMark(int bufferIndex) {
+		return csvBuffer.getMark() >= bufferIndex -1 ;
 	}
 }

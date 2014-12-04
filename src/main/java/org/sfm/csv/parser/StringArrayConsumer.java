@@ -18,14 +18,13 @@ public final class StringArrayConsumer<RH extends RowHandler<String[]>> implemen
 
 	@Override
 	public void newCell(char[] chars, int offset, int length) {
-		String str = StringCellValueReader.readString(chars, offset, length);
 		if (currentIndex >= currentRow.length) {
-			increaseSize();
+			doubleSize();
 		}
-		currentRow[currentIndex++] = str;
+		currentRow[currentIndex++] = StringCellValueReader.readString(chars, offset, length);
 	}
 
-	private void increaseSize() {
+	private void doubleSize() {
 		String[] newArray = new String[currentRow.length * 2];
 		System.arraycopy(currentRow, 0, newArray, 0, currentIndex);
 		currentRow = newArray;

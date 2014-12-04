@@ -4,7 +4,7 @@ import org.sfm.csv.CellValueReader;
 import org.sfm.csv.impl.ParsingContext;
 
 
-public class StringCellValueReader implements CellValueReader<String> {
+public final class StringCellValueReader implements CellValueReader<String> {
 
 	final static char CQUOTE = '"';
 	

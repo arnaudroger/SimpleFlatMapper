@@ -54,26 +54,16 @@ public final class CharBuffer {
 		return buffer;
 	}
 
-	public boolean isAllConsumed(int bufferIndex) {
-		return mark >= bufferIndex -1 ;
-	}
 
 	public int getMark() {
 		return mark;
 	}
 
-	public int getLengthFromMark(int bufferIndex) {
-		return bufferIndex - mark;
-	}
+
 
 	public char getChar(int bufferIndex) {
 		return buffer[bufferIndex];
 	}
-
-	public boolean hasContent(int bufferIndex) {
-		return bufferIndex < bufferLength;
-	}
-
 
 	public int getBufferLength() {
 		return bufferLength;

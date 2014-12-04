@@ -143,6 +143,35 @@ public class CsvParserTest {
 	}
 
 	@Test
+	public void testIterateRowsCRLF() throws
+			IOException {
+		Reader sr = new StringReader("row1\r\nrow2\r\nrow3");
+		Iterator<String[]> it = CsvParser.iterateRows(sr);
+
+		assertArrayEquals(new String[] {"row1"}, it.next());
+		assertTrue(it.hasNext());
+		assertArrayEquals(new String[]{"row2"}, it.next());
+		assertTrue(it.hasNext());
+		assertArrayEquals(new String[] {"row3"}, it.next());
+		assertFalse(it.hasNext());
+	}
+
+	@Test
+	public void testIterateRowsCR() throws
+			IOException {
+		Reader sr = new StringReader("row1\rrow2\rrow3");
+		Iterator<String[]> it = CsvParser.iterateRows(sr);
+
+		assertArrayEquals(new String[] {"row1"}, it.next());
+		assertTrue(it.hasNext());
+		assertArrayEquals(new String[]{"row2"}, it.next());
+		assertTrue(it.hasNext());
+		assertArrayEquals(new String[] {"row3"}, it.next());
+		assertFalse(it.hasNext());
+	}
+
+
+	@Test
 	public void testIterateRowsSkip() throws
 			IOException {
 		Reader sr = new StringReader("row1\nrow2\nrow3");

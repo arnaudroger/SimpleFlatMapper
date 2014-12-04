@@ -31,7 +31,8 @@ public class JdbcMapperTupleTest {
 				new RowHandler<PreparedStatement>() {
 					@Override
 					public void handle(PreparedStatement preparedStatement) throws Exception {
-						try (ResultSet rs = preparedStatement.executeQuery()) {
+						ResultSet rs = preparedStatement.executeQuery();
+						try  {
 							List<Tuple2<String, String>> list = mapper.forEach(rs, new ListHandler<Tuple2<String, String>>()).getList();
 
 							assertEquals(1, list.size());
@@ -39,6 +40,8 @@ public class JdbcMapperTupleTest {
 							Tuple2<String, String> tuple2 = list.get(0);
 							assertEquals("1", tuple2.getElement1());
 							assertEquals("2", tuple2.getElement2());
+						} finally {
+							try { rs.close(); } catch (Exception e) {}
 						}
 					}
 				},

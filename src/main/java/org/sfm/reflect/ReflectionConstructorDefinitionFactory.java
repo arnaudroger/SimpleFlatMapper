@@ -26,7 +26,7 @@ public class ReflectionConstructorDefinitionFactory {
     }
 
     private static ConstructorParameter[] getConstructorParameters(Constructor<?> constructor, Type target) {
-        ConstructorParameter[] parameters = new ConstructorParameter[constructor.getParameterCount()];
+        ConstructorParameter[] parameters = new ConstructorParameter[constructor.getParameterTypes().length];
         TypeVariable<Class<Object>>[] typeParameters = TypeHelper.toClass(target).getTypeParameters();
 
         for(int i = 0; i < parameters.length; i++) {

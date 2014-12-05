@@ -74,7 +74,7 @@ public class InstantiatorFactory {
 	}
 
 	public <S, T> Instantiator<S, T> getArrayInstantiator(final Class<?> elementType, final int length) {
-		return new ArrayInstantiator<>(elementType, length);
+		return new ArrayInstantiator<S, T>(elementType, length);
 	}
 
 

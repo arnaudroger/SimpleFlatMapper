@@ -6,9 +6,9 @@ import org.sfm.reflect.ConstructorDefinition;
 
 public interface PropertyFinder<T> {
 
-	public PropertyMeta<T, ?> findProperty(PropertyNameMatcher propertyNameMatcher);
+	public <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher);
 
-	public PropertyMeta<T, ?> findProperty(String propertyName);
+	public <E> PropertyMeta<T, E> findProperty(String propertyName);
 
 	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions();
 

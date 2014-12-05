@@ -55,11 +55,11 @@ public class PropertyFinderTest {
         propEltId = propertyFinder.findProperty("element1");
         assertNotNull(propEltId);
 
-//        propEltId = propertyFinder.findProperty("elt1");
-//        assertNotNull(propEltId);
-//
-//        propEltId = propertyFinder.findProperty("1");
-//        assertNotNull(propEltId);
+        propEltId = propertyFinder.findProperty("elt1");
+        assertNotNull(propEltId);
+
+        propEltId = propertyFinder.findProperty("1");
+        assertNotNull(propEltId);
 
     }
 }

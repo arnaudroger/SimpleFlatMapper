@@ -11,11 +11,7 @@ import java.util.List;
 import org.sfm.reflect.asm.AsmConstructorDefinitionFactory;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.AsmHelper;
-import org.sfm.reflect.meta.AliasProvider;
-import org.sfm.reflect.meta.AliasProviderFactory;
-import org.sfm.reflect.meta.ArrayClassMeta;
-import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.ObjectClassMeta;
+import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuples;
 
 public class ReflectionService {
@@ -89,7 +85,7 @@ public class ReflectionService {
 		}else if (clazz.isArray()) {
 			return new ArrayClassMeta<T, E>(clazz, clazz.getComponentType(), this);
 		}else if (Tuples.isTuple(target)) {
-			return new ObjectClassMeta<T>(target, this);
+			return new TupleClassMeta<T>(target, this);
 		}
 		return new ObjectClassMeta<T>(target, this);
 	}

@@ -1,5 +1,7 @@
 package org.sfm.tuples;
 
+import org.sfm.reflect.TypeHelper;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -7,6 +9,15 @@ import java.lang.reflect.Type;
  * Created by e19224 on 04/12/2014.
  */
 public class Tuples {
+
+    public static boolean isTuple(Type type) {
+        Class<?> clazz = TypeHelper.toClass(type);
+        return clazz.equals(Tuple2.class)
+                || clazz.equals(Tuple3.class)
+                || clazz.equals(Tuple4.class)
+                || clazz.equals(Tuple5.class);
+    }
+
     public static <T1, T2> ParameterizedType typeDef(final Class<T1> c1, final Class<T2> c2) {
         return new TupleParameterizedType(Tuple2.class, c1, c2);
     }

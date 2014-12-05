@@ -2,6 +2,7 @@ package org.sfm.jdbc;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +19,8 @@ import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.asm.AsmFactory;
-import org.sfm.reflect.asm.ConstructorDefinition;
-import org.sfm.reflect.asm.ConstructorParameter;
+import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.ConstructorParameter;
 
 public class ResultSetMapperBuilderImplTest {
 
@@ -72,16 +73,10 @@ public class ResultSetMapperBuilderImplTest {
 			public InstantiatorFactory getInstantiatorFactory() {
 				return new InstantiatorFactory(null) {
 					@Override
-					public <S, T> Instantiator<S, T> getInstantiator(Class<S> source, Class<? extends T> target)
-							throws NoSuchMethodException, SecurityException {
-						throw new UnsupportedOperationException();
-					}
-
-					@Override
-					public <S, T> Instantiator<S, T> getInstantiator(
+					public <S, T> Instantiator<S, T> getInstantiator(Type target,
 							Class<?> source,
 							List<ConstructorDefinition<T>> constructors,
-							Map<ConstructorParameter, Getter<S, ?>> injections)
+							Map<ConstructorParameter, Getter<S, ?>> injections, boolean useAsm)
 							throws NoSuchMethodException, SecurityException {
 						throw new UnsupportedOperationException();
 					}

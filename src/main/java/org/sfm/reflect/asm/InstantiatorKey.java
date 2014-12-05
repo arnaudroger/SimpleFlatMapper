@@ -1,5 +1,8 @@
 package org.sfm.reflect.asm;
 
+import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.ConstructorParameter;
+
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Set;

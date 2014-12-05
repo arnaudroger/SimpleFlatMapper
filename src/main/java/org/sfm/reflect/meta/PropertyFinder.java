@@ -2,7 +2,7 @@ package org.sfm.reflect.meta;
 
 import java.util.List;
 
-import org.sfm.reflect.asm.ConstructorDefinition;
+import org.sfm.reflect.ConstructorDefinition;
 
 public interface PropertyFinder<T> {
 
@@ -12,6 +12,6 @@ public interface PropertyFinder<T> {
 
 	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions();
 
-	public Class<? extends T> getClassToInstantiate();
+	public Class<?> getClassToInstantiate();
 
 }

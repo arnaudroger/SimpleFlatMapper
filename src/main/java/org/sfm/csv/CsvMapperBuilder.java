@@ -39,7 +39,7 @@ import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
-import org.sfm.reflect.asm.ConstructorParameter;
+import org.sfm.reflect.ConstructorParameter;
 import org.sfm.reflect.meta.ArrayPropertyFinder;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ConstructorPropertyMeta;
@@ -176,23 +176,9 @@ public class CsvMapperBuilder<T> {
 	
 	private  Instantiator<DelayedCellSetter<T, ?>[], T>  getInstantiator() throws MapperBuildingException {
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
+
 		try {
-			Instantiator<DelayedCellSetter<T, ?>[], T> instatiator;
-			
-			if (TypeHelper.isArray(target)) {
-				instatiator = instantiatorFactory.getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, CsvColumnKey>()).maxIndex + 1);
-			} else if (propertyMappingsBuilder.getPropertyFinder() instanceof ArrayPropertyFinder) {
-				ArrayPropertyFinder<?> arrayPropertyFinder = (ArrayPropertyFinder<?>) propertyMappingsBuilder.getPropertyFinder();
-				instatiator = instantiatorFactory.getArrayInstantiator(arrayPropertyFinder.getElementType(), arrayPropertyFinder.getLength());
-			} else {
-				if (!reflectionService.isAsmPresent()) {
-					instatiator = instantiatorFactory.getInstantiator(SOURCE, propertyMappingsBuilder.getPropertyFinder().getClassToInstantiate());
-				} else {
-					Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>> constructorInjections = buildConstructorParametersDelayedCellSetter();
-					instatiator = instantiatorFactory.getInstantiator(SOURCE, propertyMappingsBuilder.getPropertyFinder().getEligibleConstructorDefinitions(), constructorInjections, customReaders.isEmpty());
-				}
-			}
-			return instatiator;
+			return instantiatorFactory.getInstantiator(SOURCE, target, propertyMappingsBuilder, buildConstructorParametersDelayedCellSetter(), customReaders.isEmpty() );
 		} catch(Exception e) {
 			throw new MapperBuildingException(e.getMessage(), e);
 		}

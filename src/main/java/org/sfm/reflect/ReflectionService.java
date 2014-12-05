@@ -1,19 +1,22 @@
 package org.sfm.reflect;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.sfm.reflect.asm.AsmConstructorDefinitionFactory;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.AsmHelper;
 import org.sfm.reflect.meta.AliasProvider;
 import org.sfm.reflect.meta.AliasProviderFactory;
 import org.sfm.reflect.meta.ArrayClassMeta;
 import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.ListClassMeta;
 import org.sfm.reflect.meta.ObjectClassMeta;
+import org.sfm.tuples.Tuples;
 
 public class ReflectionService {
 	private final SetterFactory setterFactory;
@@ -76,15 +79,17 @@ public class ReflectionService {
 	public AsmFactory getAsmFactory() {
 		return asmFactory;
 	}
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public <T> ClassMeta<T> getClassMeta(Type target) {
+
+	public <T, E> ClassMeta<T> getClassMeta(Type target) {
 		Class<T> clazz = TypeHelper.toClass(target);
 		
 		if (List.class.isAssignableFrom(clazz)) {
 			ParameterizedType pt = (ParameterizedType) target;
-			return new ListClassMeta(pt.getActualTypeArguments()[0], this);
+			return new ArrayClassMeta<T, E>(ArrayList.class, pt.getActualTypeArguments()[0], this);
 		}else if (clazz.isArray()) {
-			return new ArrayClassMeta(clazz, clazz.getComponentType(), this);
+			return new ArrayClassMeta<T, E>(clazz, clazz.getComponentType(), this);
+		}else if (Tuples.isTuple(target)) {
+			return new ObjectClassMeta<T>(target, this);
 		}
 		return new ObjectClassMeta<T>(target, this);
 	}
@@ -93,6 +98,18 @@ public class ReflectionService {
 	}
 	public String getColumnName(Field field) {
 		return aliasProvider.getAliasForField(field);
+	}
+
+	public <T> List<ConstructorDefinition<T>> extractConstructors(Type target) throws IOException {
+		List<ConstructorDefinition<T>> list;
+
+
+		if (isAsmPresent()) {
+			list = AsmConstructorDefinitionFactory.extractConstructors(target);
+		} else {
+			list = ReflectionConstructorDefinitionFactory.extractConstructors(target);;
+		}
+		return list;
 	}
 }
  

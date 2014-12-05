@@ -26,4 +26,9 @@ public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		return method.getGenericParameterTypes()[0];
 	}
 
+	@Override
+	public String getPath() {
+		return getName();
+	}
+
 }

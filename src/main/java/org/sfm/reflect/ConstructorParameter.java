@@ -1,4 +1,4 @@
-package org.sfm.reflect.asm;
+package org.sfm.reflect;
 
 import java.lang.reflect.Type;
 

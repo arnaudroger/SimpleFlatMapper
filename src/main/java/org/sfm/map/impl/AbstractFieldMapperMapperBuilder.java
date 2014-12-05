@@ -19,7 +19,7 @@ import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.TypeHelper;
-import org.sfm.reflect.asm.ConstructorParameter;
+import org.sfm.reflect.ConstructorParameter;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ConstructorPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;
@@ -67,23 +67,10 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	@SuppressWarnings("unchecked")
 	protected Instantiator<S, T> getInstantiator() throws MapperBuildingException {
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
-		
-		if (TypeHelper.isArray(target)) {
-			return instantiatorFactory.getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, K>()).maxIndex + 1);
-		} else {
-			if (!reflectionService.isAsmPresent()) {
-				try {
-					return (Instantiator<S, T>) instantiatorFactory.getInstantiator(TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getClassToInstantiate());
-				} catch(Exception e) {
-					throw new MapperBuildingException(e.getMessage(), e);
-				}
-			} else {
-				try {
-					return instantiatorFactory.getInstantiator(TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getEligibleConstructorDefinitions(), constructorInjections());
-				} catch(Exception e) {
-					throw new MapperBuildingException(e.getMessage(), e);
-				}
-			}
+		try {
+			return instantiatorFactory.getInstantiator(source, target, propertyMappingsBuilder, constructorInjections());
+		} catch(Exception e) {
+			throw new MapperBuildingException(e.getMessage(), e);
 		}
 	}
 

@@ -1,67 +1,73 @@
 package org.sfm.reflect.meta;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
+import java.util.*;
 
-import org.sfm.reflect.asm.ConstructorDefinition;
+import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.TypeHelper;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class ArrayPropertyFinder<T> implements PropertyFinder<T[]> {
+public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 
-	private final ArrayClassMeta<T> arrayClassMeta;
-	private final Map<Integer, ArrayElementPropertyMeta<T>> properties = new HashMap<Integer, ArrayElementPropertyMeta<T>>();
-	private final Map<String, PropertyFinder<T>> subPropertyFinders = new HashMap<String, PropertyFinder<T>>();
+	private final ArrayClassMeta<T, E> arrayClassMeta;
+	private final Map<Integer, ArrayElementPropertyMeta<T, E>> properties = new HashMap<Integer, ArrayElementPropertyMeta<T, E>>();
+	private final Map<String, PropertyFinder<E>> subPropertyFinders = new HashMap<String, PropertyFinder<E>>();
+	private final Map<String, Integer> assignedProperties = new HashMap<String, Integer>();
 	private int maxIndex = -1;
 	
 	
-	public ArrayPropertyFinder(ArrayClassMeta<T> arrayClassMeta) {
+	public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta) {
 		this.arrayClassMeta = arrayClassMeta;
 	}
 
 	@Override
-	public PropertyMeta<T[], ?> findProperty(PropertyNameMatcher propertyNameMatcher) {
-		
-		String propertyName = propertyNameMatcher.getColumn();
-		
-		int listIndexStart = propertyNameMatcher.getFrom();
-		while(listIndexStart < propertyName.length() &&  !Character.isDigit(propertyName.charAt(listIndexStart))) {
-			listIndexStart++;
+	public PropertyMeta<T, ?> findProperty(PropertyNameMatcher propertyNameMatcher) {
+
+		IndexedColumn indexedColumn = propertyNameMatcher.matchesIndex();
+
+		if (indexedColumn == null) {
+			indexedColumn = extrapolateIndex(propertyNameMatcher, indexedColumn);
 		}
-		
-		int listIndexEnd = listIndexStart;
-		while(listIndexEnd < propertyName.length() &&  Character.isDigit(propertyName.charAt(listIndexEnd))) {
-			listIndexEnd++;
-		}
-		if (listIndexStart == listIndexEnd) {
+
+		if (indexedColumn == null) {
 			return null;
 		}
-		
-		int index = Integer.parseInt(propertyName.substring(listIndexStart, listIndexEnd));
-		
-		maxIndex = Math.max(index,  maxIndex);
 
-		ArrayElementPropertyMeta<T> prop = properties.get(index);
+		maxIndex = Math.max(indexedColumn.getIndexValue(),  maxIndex);
+
+		ArrayElementPropertyMeta<T, E> prop = properties.get(indexedColumn.getIndexValue());
 		if (prop == null) {
-			prop = new ArrayElementPropertyMeta<T>(String.valueOf(index), String.valueOf(index) , arrayClassMeta.getReflectionService(), index, arrayClassMeta);
-			properties.put(index, prop);
+			prop = new ArrayElementPropertyMeta<T, E>(indexedColumn.getIndexName(), indexedColumn.getIndexName() , arrayClassMeta.getReflectionService(), indexedColumn.getIndexValue(), arrayClassMeta);
+			properties.put(indexedColumn.getIndexValue(), prop);
 		}
 		
-		if (listIndexEnd == propertyName.length()) {
+		if (!indexedColumn.hasProperty()) {
 			return prop;
 		}
 		
-		String subPropName = propertyName.substring(listIndexEnd);
-		
-		PropertyFinder<T> propertyFinder = subPropertyFinders.get(subPropName);
+
+		PropertyFinder<E> propertyFinder = subPropertyFinders.get(indexedColumn.getPropertyName());
 		
 		if (propertyFinder == null) {
 			propertyFinder = arrayClassMeta.getElementClassMeta().newPropertyFinder();
-			subPropertyFinders.put(subPropName, propertyFinder);
+			subPropertyFinders.put(indexedColumn.getPropertyName(), propertyFinder);
 		}
 		
-		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(subPropName);
+		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getPropertyName());
+
+
+		String path = subProp.getPath();
+
+		Integer lastValue = assignedProperties.get(path);
+
+		if (lastValue == null) {
+			lastValue = new Integer(indexedColumn.getIndexValue() + 1);
+		} else {
+			lastValue = Math.max(lastValue, indexedColumn.getIndexValue() + 1);
+		}
+
+		assignedProperties.put(path, lastValue);
 
 		
 		if (subProp != null) {
@@ -70,23 +76,48 @@ public class ArrayPropertyFinder<T> implements PropertyFinder<T[]> {
 		
 		return null;
 	}
-	
+
+	private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher, IndexedColumn indexedColumn) {
+		PropertyMeta<E, ?> property = arrayClassMeta.getElementClassMeta().newPropertyFinder().findProperty(propertyNameMatcher);
+		if (property != null) {
+
+            String path = property.getPath();
+
+            Integer lastValue = assignedProperties.get(path);
+
+            if (lastValue == null) {
+                lastValue = new Integer(0);
+            }
+
+            indexedColumn = new IndexedColumn("elt" + lastValue, lastValue, propertyNameMatcher.getColumn());
+        }
+		return indexedColumn;
+	}
+
 	@Override
-	public PropertyMeta<T[], ?> findProperty(String propertyName) {
+	public PropertyMeta<T, ?> findProperty(String propertyName) {
 		return findProperty(new PropertyNameMatcher(propertyName));
 	}
 
 	@Override
-	public List<ConstructorDefinition<T[]>> getEligibleConstructorDefinitions() {
-		return Collections.emptyList();
+	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
+		if (List.class.isAssignableFrom(TypeHelper.toClass(this.arrayClassMeta.getType()))) {
+			try {
+				return Arrays.asList(new ConstructorDefinition<T>((Constructor<? extends T>) ArrayList.class.getConstructor()));
+			} catch (NoSuchMethodException e) {
+				throw new Error("Unexpected error " + e, e);
+			}
+		} else {
+			return Collections.emptyList();
+		}
 	}
 
 	@Override
-	public Class<T[]> getClassToInstantiate() {
-		return arrayClassMeta.getType();
+	public Class<?> getClassToInstantiate() {
+		return TypeHelper.toClass(arrayClassMeta.getType());
 	}
 
-	public Class<?> getElementType() {
+	public Type getElementType() {
 		return arrayClassMeta.getElementTarget();
 	}
 	

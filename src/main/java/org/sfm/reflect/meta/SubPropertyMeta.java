@@ -44,5 +44,8 @@ public class SubPropertyMeta<O, P> extends PropertyMeta<O, P> {
 	public boolean isSubProperty() {
 		return true;
 	}
-	
+	@Override
+	public String getPath() {
+		return getOwnerProperty().getPath() + "." + subProperty.getPath();
+	}
 }

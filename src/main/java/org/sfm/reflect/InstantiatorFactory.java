@@ -3,81 +3,46 @@ package org.sfm.reflect;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
+import org.sfm.map.impl.CalculateMaxIndex;
+import org.sfm.map.impl.FieldKey;
+import org.sfm.map.impl.PropertyMappingsBuilder;
 import org.sfm.reflect.asm.AsmFactory;
-import org.sfm.reflect.asm.ConstructorDefinition;
-import org.sfm.reflect.asm.ConstructorParameter;
 import org.sfm.reflect.impl.InjectConstructorInstantiator;
 import org.sfm.reflect.impl.StaticConstructorInstantiator;
 
 public class InstantiatorFactory {
 	private static final Object[] EMPTY_ARGS = new Object[]{};
-	
-	@SuppressWarnings("serial")
-	private static final Map<Class<?>, Object> DEFAULT_VALUES = new HashMap<Class<?>, Object>() {
-		{
-			put(boolean.class, true);
-			put(byte.class, (byte)0);
-			put(char.class, (char)0);
-			put(short.class, (short)0);
-			put(int.class, 0);
-			put(long.class, 0l);
-			put(float.class, 0f);
-			put(double.class, 0.0);
-		}
-	};
-	
+
 	private final AsmFactory asmFactory;
 	
 	public InstantiatorFactory(final AsmFactory asmFactory) {
 		this.asmFactory = asmFactory;
 	}
 
-	public <S, T> Instantiator<S, T> getInstantiator(final Class<S> source, final Class<? extends T> target) throws NoSuchMethodException, SecurityException {
-		final Constructor<T> constructor = getSmallerConstructor(target);
-		
-		if (constructor == null) {
-			throw new NoSuchMethodException("No available constructor for " + target);
-		}
-		
-		Object[] args;
-		
-		if (constructor.getParameterTypes().length == 0) {
-			
-			if (asmFactory != null && Modifier.isPublic(constructor.getModifiers())) {
-				try {
-					return asmFactory.createEmptyArgsInstatiantor(source, target);
-				} catch (Exception e) {
-					// fall back on reflection
-				}
-			}
-			
-			args = EMPTY_ARGS;
+
+	public <S, T, K extends FieldKey<K>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap) throws NoSuchMethodException {
+		return  getInstantiator(source, target, propertyMappingsBuilder, constructorParameterGetterMap, true);
+	}
+
+	public <S, T, K extends FieldKey<K>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap, boolean useAsmIfEnabled) throws NoSuchMethodException {
+		if (TypeHelper.isArray(target)) {
+			return getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, K>()).maxIndex + 1);
 		} else {
-			args = new Object[constructor.getParameterTypes().length];
-			for(int i = 0; i < args.length; i++) {
-				if (constructor.getParameterTypes()[i].isPrimitive()) {
-					args[i] = DEFAULT_VALUES.get(constructor.getParameterTypes()[i]);
-				}
-			}
+			return getInstantiator(target, TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getEligibleConstructorDefinitions(), constructorParameterGetterMap,useAsmIfEnabled);
 		}
-		
-		constructor.setAccessible(true);
-		
-		return new StaticConstructorInstantiator<S, T>(constructor, args); 
 	}
-	
-	public <S, T> Instantiator<S, T> getInstantiator(final Class<?> source, List<ConstructorDefinition<T>> constructors, Map<ConstructorParameter, Getter<S, ?>> injections) throws NoSuchMethodException, SecurityException {
-		return getInstantiator(source, constructors, injections, true);
-	}
-	
-	public <S, T> Instantiator<S, T> getInstantiator(final Class<?> source, List<ConstructorDefinition<T>> constructors, Map<ConstructorParameter, Getter<S, ?>> injections, boolean useAsmIfEnabled) throws NoSuchMethodException, SecurityException {
+
+	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<ConstructorDefinition<T>> constructors, Map<ConstructorParameter, Getter<S, ?>> injections, boolean useAsmIfEnabled) throws NoSuchMethodException, SecurityException {
 		final ConstructorDefinition<T> constructorDefinition = getSmallerConstructor(constructors);
-		
-		Constructor<T> constructor = constructorDefinition.getConstructor();
+
+		if (constructorDefinition == null) {
+			throw new IllegalArgumentException("No constructor available for " + target);
+		}
+		Constructor<? extends T> constructor = constructorDefinition.getConstructor();
 		
 		if (asmFactory != null && Modifier.isPublic(constructor.getModifiers()) && useAsmIfEnabled) {
 			try {
@@ -96,20 +61,6 @@ public class InstantiatorFactory {
 		}
 	}
 
-
-	@SuppressWarnings("unchecked")
-	private <T> Constructor<T> getSmallerConstructor(final Class<? extends T> target) {
-		Constructor<T> selectedConstructor = null;
-		
-		for(Constructor<?> c : target.getDeclaredConstructors()) {
-			if (selectedConstructor == null || (compare(c, selectedConstructor) < 0)) {
-				selectedConstructor = (Constructor<T>) c;
-			}
-		}
-		
-		return selectedConstructor;
-	}
-
 	private <T> ConstructorDefinition<T> getSmallerConstructor(final List<ConstructorDefinition<T>> constructors) {
 		ConstructorDefinition<T> selectedConstructor = null;
 		
@@ -121,31 +72,26 @@ public class InstantiatorFactory {
 		
 		return selectedConstructor;
 	}
-	
-	private int compare(final Constructor<?> c1, final Constructor<?> c2) {
-		if (Modifier.isPublic(c1.getModifiers())) {
-			if (Modifier.isPublic(c2.getModifiers())) {
-				return c1.getParameterTypes().length - c2.getParameterTypes().length;
-			} else {
-				return -1;
-			}
-		} else {
-			if (Modifier.isPublic(c2.getModifiers())) {
-				return 1;
-			} else {
-				return c1.getParameterTypes().length - c2.getParameterTypes().length;
-			}
-		}
-		
-	}
 
 	public <S, T> Instantiator<S, T> getArrayInstantiator(final Class<?> elementType, final int length) {
-		return new Instantiator<S, T>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public T newInstance(S s) throws Exception {
-				return (T) Array.newInstance(elementType, length);
-			}
-		};
+		return new ArrayInstantiator<>(elementType, length);
 	}
-}	
+
+
+
+	private static final class ArrayInstantiator<S, T> implements Instantiator<S, T> {
+		private final Class<?> elementType;
+		private final int length;
+
+		public ArrayInstantiator(Class<?> elementType, int length) {
+			this.elementType = elementType;
+			this.length = length;
+		}
+
+		@SuppressWarnings("unchecked")
+        @Override
+        public T newInstance(S s) throws Exception {
+            return (T) Array.newInstance(elementType, length);
+        }
+	}
+}

@@ -18,8 +18,8 @@ public final class CalculateMaxIndex<T, K> implements
 				propMeta = ((SubPropertyMeta<T, ?>)propMeta).getOwnerProperty(); 
 			}
 			
-			if (propMeta instanceof ArrayElementPropertyMeta<?>) {
-				currentIndex = ((ArrayElementPropertyMeta<?>) propMeta).getIndex();
+			if (propMeta instanceof ArrayElementPropertyMeta<?, ?>) {
+				currentIndex = ((ArrayElementPropertyMeta<?, ?>) propMeta).getIndex();
 			}
 		}
 		maxIndex = Math.max(currentIndex, maxIndex);

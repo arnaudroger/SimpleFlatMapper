@@ -4,7 +4,7 @@ import java.lang.reflect.Type;
 
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
-import org.sfm.reflect.asm.ConstructorParameter;
+import org.sfm.reflect.ConstructorParameter;
 
 public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
@@ -31,6 +31,11 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 	
 	public boolean isConstructorProperty() {
 		return true;
+	}
+
+	@Override
+	public String getPath() {
+		return getName();
 	}
 
 }

@@ -25,6 +25,37 @@ public class PropertyNameMatcher {
 		return _partialMatch(property) == column.length();
 	}
 
+	public IndexedColumn matchesIndex() {
+		int index = -1;
+
+		int listIndexStart = from;
+		while(listIndexStart < column.length() &&  !Character.isDigit(column.charAt(listIndexStart))) {
+			listIndexStart++;
+		}
+
+		int listIndexEnd = listIndexStart;
+		while(listIndexEnd < column.length() &&  Character.isDigit(column.charAt(listIndexEnd))) {
+			listIndexEnd++;
+		}
+		if (listIndexStart != listIndexEnd) {
+			index = Integer.parseInt(column.substring(listIndexStart, listIndexEnd));
+		}
+
+		if (index == -1) {
+			return null;
+		}
+
+		String indexName = column.substring(0, listIndexEnd);
+
+		String subPropName = null;
+
+		if (listIndexEnd < column.length()) {
+			subPropName = column.substring(listIndexEnd);
+		}
+
+		return new IndexedColumn(indexName, index, subPropName);
+	}
+
 	private int _partialMatch(final String property) {
 		int indexColumn = from;
 		int indexProperty = 0;

@@ -15,8 +15,8 @@ import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.SetterHelper;
 import org.sfm.reflect.TypeHelper;
-import org.sfm.reflect.asm.ConstructorDefinition;
-import org.sfm.reflect.asm.ConstructorParameter;
+import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.ConstructorParameter;
 
 public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	
@@ -32,16 +32,11 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	
 	public ObjectClassMeta(Type target, ReflectionService reflectService) throws MapperBuildingException {
 		this.reflectService = reflectService;
-		if (reflectService.isAsmPresent()) {
-			try {
-				this.constructorDefinitions = ConstructorDefinition.extractConstructors(target);
-				this.constructorProperties = Collections.unmodifiableList(listProperties(constructorDefinitions));
-			} catch(Exception e) {
-				throw new MapperBuildingException(e.getMessage(), e);
-			}
-		} else {
-			this.constructorDefinitions = null;
-			this.constructorProperties = null;
+		try {
+			this.constructorDefinitions = reflectService.extractConstructors(target);
+			this.constructorProperties = Collections.unmodifiableList(listProperties(constructorDefinitions));
+		} catch(Exception e) {
+			throw new MapperBuildingException(e.getMessage(), e);
 		}
 		this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.<T>toClass(target)));
 		this.properties = Collections.unmodifiableList(listProperties(reflectService, TypeHelper.<T>toClass(target)));

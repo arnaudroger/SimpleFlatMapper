@@ -13,9 +13,7 @@ import org.objectweb.asm.Opcodes;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.FieldMapper;
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.Instantiator;
-import org.sfm.reflect.Setter;
+import org.sfm.reflect.*;
 
 public class AsmFactory implements Opcodes {
 	private final FactoryClassLoader factoryClassLoader;

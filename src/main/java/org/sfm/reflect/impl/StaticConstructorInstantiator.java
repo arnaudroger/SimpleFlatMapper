@@ -6,10 +6,10 @@ import org.sfm.reflect.Instantiator;
 
 public final class StaticConstructorInstantiator<S, T> implements Instantiator<S, T> {
 	
-	private final Constructor<T> constructor;
+	private final Constructor<? extends T> constructor;
 	private final Object[] args;
 	
-	public StaticConstructorInstantiator(final Constructor<T> constructor, final Object[] args) {
+	public StaticConstructorInstantiator(final Constructor<? extends T> constructor, final Object[] args) {
 		this.constructor = constructor;
 		this.args = args;
 	}

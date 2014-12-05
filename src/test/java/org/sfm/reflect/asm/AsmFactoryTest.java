@@ -18,6 +18,8 @@ import org.sfm.jdbc.impl.getter.StringResultSetGetter;
 import org.sfm.map.MappingException;
 import org.sfm.map.impl.FieldMapper;
 import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
+import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.ConstructorParameter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 
@@ -34,7 +36,7 @@ public class AsmFactoryTest {
 	@SuppressWarnings("serial")
 	@Test
 	public void testCreateInstatiatorFinalDbObjectInjectIdAndName() throws Exception {
-		ConstructorDefinition<DbFinalObject> constructorDefinition = ConstructorDefinition.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0);
+		ConstructorDefinition<DbFinalObject> constructorDefinition = AsmConstructorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0);
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstatiantor(ResultSet.class,
 				constructorDefinition,
 				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
@@ -74,8 +76,8 @@ public class AsmFactoryTest {
 	@Test
 	public void testCreateInstatiatorFinalDbObjectNameAndType() throws Exception {
 		@SuppressWarnings("serial")
-		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstatiantor(ResultSet.class, 
-				ConstructorDefinition.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0),
+		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstatiantor(ResultSet.class,
+				AsmConstructorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0),
 				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
 						put(new ConstructorParameter("typeOrdinal", Type.class), new OrdinalEnumResultSetGetter<Type>(1, Type.class));

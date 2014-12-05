@@ -2,25 +2,27 @@ package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ReflectionService;
 
-public class ArrayClassMeta<T> implements ClassMeta<T[]> {
+import java.lang.reflect.Type;
+
+public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 
 	private final ReflectionService reflectionService;
-	private final Class<T> elementTarget;
-	private final ClassMeta<T> elementClassMeta;
-	private Class<T[]> type;
+	private final Type elementTarget;
+	private final ClassMeta<E> elementClassMeta;
+	private Type type;
 	
-	public ArrayClassMeta(Class<T[]> type, Class<T> elementTarget, ReflectionService reflectionService) {
+	public ArrayClassMeta(Type type, Type elementTarget, ReflectionService reflectionService) {
 		this.type = type;
 		this.elementTarget = elementTarget;
 		this.reflectionService = reflectionService;
 		this.elementClassMeta = reflectionService.getClassMeta(elementTarget);
 	}
 
-	public ClassMeta<T> getElementClassMeta() {
+	public ClassMeta<E> getElementClassMeta() {
 		return elementClassMeta;
 	}
 	
-	public Class<?> getElementTarget() {
+	public Type getElementTarget() {
 		return elementTarget;
 	}
 
@@ -30,11 +32,11 @@ public class ArrayClassMeta<T> implements ClassMeta<T[]> {
 	}
 
 	@Override
-	public PropertyFinder<T[]> newPropertyFinder() {
-		return new ArrayPropertyFinder<T>(this);
+	public PropertyFinder<T> newPropertyFinder() {
+		return new ArrayPropertyFinder<T, E>(this);
 	}
 
-	public Class<T[]> getType() {
+	public Type getType() {
 		return type;
 	}
 

@@ -25,10 +25,7 @@ import java.util.Map.Entry;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.Instantiator;
-import org.sfm.reflect.TypeHelper;
-
+import org.sfm.reflect.*;
 
 
 public class InstantiatorBuilder {
@@ -39,7 +36,7 @@ public class InstantiatorBuilder {
 		MethodVisitor mv;
 		FieldVisitor fv;
 
-		Class<T> targetClass= constructorDefinition.getConstructor().getDeclaringClass();
+		Class<? extends T> targetClass= constructorDefinition.getConstructor().getDeclaringClass();
 		
 		String targetType = AsmUtils.toType(targetClass);
 		String sourceType = AsmUtils.toType(sourceClass);

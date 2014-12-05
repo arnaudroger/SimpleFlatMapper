@@ -10,14 +10,15 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.beans.DbFinalObject;
+import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
 
-public class ConstructorDefinitionTest {
+public class AsmConstructorDefinitionFactoryTest {
 
 	@Test
 	public void testExtractConstructorsDbObject() throws IOException, NoSuchMethodException, SecurityException {
-		List<ConstructorDefinition<DbObject>> dbObjectConstructors = ConstructorDefinition.extractConstructors(DbObject.class);
+		List<ConstructorDefinition<DbObject>> dbObjectConstructors = AsmConstructorDefinitionFactory.extractConstructors(DbObject.class);
 		assertEquals(1, dbObjectConstructors.size());
 		assertEquals(0, dbObjectConstructors.get(0).getParameters().length);
 		assertEquals(DbObject.class.getConstructor(), dbObjectConstructors.get(0).getConstructor());
@@ -27,7 +28,7 @@ public class ConstructorDefinitionTest {
 	@Test
 	public void testExtractConstructorsFinalDbObject() throws IOException, NoSuchMethodException, SecurityException {
 
-		List<ConstructorDefinition<DbFinalObject>> finalDbObjectConstructors = ConstructorDefinition.extractConstructors(DbFinalObject.class);
+		List<ConstructorDefinition<DbFinalObject>> finalDbObjectConstructors = AsmConstructorDefinitionFactory.extractConstructors(DbFinalObject.class);
 		assertEquals(1, finalDbObjectConstructors.size());
 		assertEquals(6, finalDbObjectConstructors.get(0).getParameters().length);
 		
@@ -54,7 +55,7 @@ public class ConstructorDefinitionTest {
 	@Test
 	public void testExtractConstructorsTuple2() throws IOException, NoSuchMethodException, SecurityException {
 
-		List<ConstructorDefinition<Tuple2<String, DbObject>>> finalDbObjectConstructors = ConstructorDefinition.extractConstructors(Tuples.typeDef(String.class, DbObject.class));
+		List<ConstructorDefinition<Tuple2<String, DbObject>>> finalDbObjectConstructors = AsmConstructorDefinitionFactory.extractConstructors(Tuples.typeDef(String.class, DbObject.class));
 		assertEquals(1, finalDbObjectConstructors.size());
 		assertEquals(2, finalDbObjectConstructors.get(0).getParameters().length);
 

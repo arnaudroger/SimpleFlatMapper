@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
-import org.sfm.reflect.asm.ConstructorDefinition;
-import org.sfm.reflect.asm.ConstructorParameter;
+import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.ConstructorParameter;
 
 public final class ArgumentBuilder<S, T> {
 

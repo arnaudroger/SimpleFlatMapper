@@ -8,8 +8,8 @@ import java.util.Map;
 
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.TypeHelper;
-import org.sfm.reflect.asm.ConstructorDefinition;
-import org.sfm.reflect.asm.ConstructorParameter;
+import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.ConstructorParameter;
 
 final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	

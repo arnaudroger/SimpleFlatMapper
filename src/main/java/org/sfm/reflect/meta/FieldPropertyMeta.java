@@ -27,4 +27,10 @@ public class FieldPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		return (Class<T>) field.getType();
 	}
 
+
+	@Override
+	public String getPath() {
+		return getName();
+	}
+
 }

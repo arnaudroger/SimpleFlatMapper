@@ -11,6 +11,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.tuples.Tuple2;
+import org.sfm.tuples.Tuples;
 
 public class ConstructorDefinitionTest {
 
@@ -53,7 +54,7 @@ public class ConstructorDefinitionTest {
 	@Test
 	public void testExtractConstructorsTuple2() throws IOException, NoSuchMethodException, SecurityException {
 
-		List<ConstructorDefinition<Tuple2<String, DbObject>>> finalDbObjectConstructors = ConstructorDefinition.extractConstructors(Tuple2.typeDef(String.class, DbObject.class));
+		List<ConstructorDefinition<Tuple2<String, DbObject>>> finalDbObjectConstructors = ConstructorDefinition.extractConstructors(Tuples.typeDef(String.class, DbObject.class));
 		assertEquals(1, finalDbObjectConstructors.size());
 		assertEquals(2, finalDbObjectConstructors.get(0).getParameters().length);
 

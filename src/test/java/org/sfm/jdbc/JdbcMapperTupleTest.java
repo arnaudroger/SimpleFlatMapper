@@ -5,6 +5,7 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.tuples.Tuple2;
+import org.sfm.tuples.Tuples;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.RowHandler;
 
@@ -21,7 +22,7 @@ public class JdbcMapperTupleTest {
 	
 	@Test
 	public void testTuple2OnString() throws Exception {
-		JdbcMapperBuilder<Tuple2<String, String>> builder = new JdbcMapperBuilder<Tuple2<String, String>>(Tuple2.typeDef(String.class, String.class));
+		JdbcMapperBuilder<Tuple2<String, String>> builder = new JdbcMapperBuilder<Tuple2<String, String>>(Tuples.typeDef(String.class, String.class));
 		
 		addColumn(builder);
 		

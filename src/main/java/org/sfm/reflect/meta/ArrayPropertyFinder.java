@@ -12,7 +12,7 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 
 	private final ArrayClassMeta<T, E> arrayClassMeta;
 	private final Map<Integer, ArrayElementPropertyMeta<T, E>> properties = new HashMap<Integer, ArrayElementPropertyMeta<T, E>>();
-	private final Map<String, PropertyFinder<E>> subPropertyFinders = new HashMap<String, PropertyFinder<E>>();
+	private final Map<Integer, PropertyFinder<E>> subPropertyFinders = new HashMap<Integer, PropertyFinder<E>>();
 	private final Map<String, Integer> assignedProperties = new HashMap<String, Integer>();
 	private int maxIndex = -1;
 	
@@ -47,15 +47,18 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 		}
 		
 
-		PropertyFinder<E> propertyFinder = subPropertyFinders.get(indexedColumn.getPropertyName());
+		PropertyFinder<E> propertyFinder = subPropertyFinders.get(indexedColumn.getIndexValue());
 		
 		if (propertyFinder == null) {
 			propertyFinder = arrayClassMeta.getElementClassMeta().newPropertyFinder();
-			subPropertyFinders.put(indexedColumn.getPropertyName(), propertyFinder);
+			subPropertyFinders.put(indexedColumn.getIndexValue(), propertyFinder);
 		}
 		
 		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getPropertyName());
 
+		if (subProp == null) {
+			return null;
+		}
 
 		String path = subProp.getPath();
 

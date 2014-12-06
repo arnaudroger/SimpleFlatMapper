@@ -62,4 +62,46 @@ public class PropertyFinderTest {
         assertNotNull(propEltId);
 
     }
+
+
+    // https://github.com/arnaudroger/SimpleFlatMapper/issues/56
+    @Test
+    public void testArrayElementConstructorInjectionWithIncompatibleConstructorUseCompatibleOutlay() {
+        ClassMeta<ObjectWithIncompatibleConstructor[]> classMeta = new ReflectionService().getClassMeta(ObjectWithIncompatibleConstructor[].class);
+
+        PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder();
+
+        assertNotNull(propertyFinder.findProperty("1_arg1"));
+        assertNotNull(propertyFinder.findProperty("1_arg3"));
+        assertNotNull(propertyFinder.findProperty("2_arg1"));
+        assertNotNull(propertyFinder.findProperty("2_arg2"));
+    }
+
+    @Test
+    public void testArrayElementConstructorInjectionWithIncompatibleConstructorUseIncompatibleOutlay() {
+        ClassMeta<ObjectWithIncompatibleConstructor[]> classMeta = new ReflectionService().getClassMeta(ObjectWithIncompatibleConstructor[].class);
+
+        PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder();
+
+        assertNotNull(propertyFinder.findProperty("1_arg1"));
+        assertNotNull(propertyFinder.findProperty("1_arg3"));
+        assertNull(propertyFinder.findProperty("1_arg2"));
+    }
+
+    static class ObjectWithIncompatibleConstructor {
+        private final String arg1;
+        private final Long arg2;
+        private final Integer arg3;
+
+        public ObjectWithIncompatibleConstructor(String arg1, Long arg2) {
+            this.arg1 = arg1;
+            this.arg2 = arg2;
+            this.arg3 = null;
+        }
+        public ObjectWithIncompatibleConstructor(String arg1, Integer arg3) {
+            this.arg1 = arg1;
+            this.arg2 = null;
+            this.arg3 = arg3;
+        }
+    }
 }

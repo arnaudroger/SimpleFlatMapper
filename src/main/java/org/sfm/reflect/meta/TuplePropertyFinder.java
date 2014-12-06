@@ -55,6 +55,9 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 		
 		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getPropertyName());
 
+		if (subProp == null) {
+			return null;
+		}
 
 		String path = subProp.getPath();
 

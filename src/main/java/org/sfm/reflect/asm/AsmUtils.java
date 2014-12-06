@@ -231,27 +231,7 @@ public class AsmUtils {
 		}
 	}
 
-	private static Type[] parseTypes(String sig, List<String> genericTypeNames, Type target) throws ClassNotFoundException {
-		List<Type> types = new ArrayList<Type>();
-		
-		int genericLevel = 0;
-		int currentStart = 0;
-		for(int i = 0; i < sig.length(); i++) {
-			char c = sig.charAt(i);
-			switch(c) {
-			case '<': genericLevel ++; break;
-			case '>': genericLevel --; break;
-			case ';' : 
-				if (genericLevel == 0) {
-					types.add(toGenericType(sig.substring(currentStart, i), genericTypeNames, target));
-					currentStart = i;
-				} 
-				break;
-			}
-		}
-		
-		return types.toArray(new Type[] {});
-	}
+
 	public static Class<?> getPublicOrInterfaceClass(Class<?> clazz) {
 		if (! Modifier.isPublic(clazz.getModifiers()) && ! Modifier.isStatic(clazz.getModifiers())) {
 			Class<?>[] interfaces = clazz.getInterfaces();
@@ -302,6 +282,80 @@ public class AsmUtils {
 				case ':' :
 					types.add(sig.substring(currentStart, i));
 					nameDetected = false;
+					break;
+			}
+		}
+
+		return types;
+	}
+
+	private static Type[] parseTypes(String sig, List<String> genericTypeNames, Type target) throws ClassNotFoundException {
+		List<Type> types = new ArrayList<Type>();
+
+		int genericLevel = 0;
+		int currentStart = 0;
+		for(int i = 0; i < sig.length(); i++) {
+			char c = sig.charAt(i);
+			switch(c) {
+				case '<': genericLevel ++; break;
+				case '>': genericLevel --; break;
+				case ';' :
+					if (genericLevel == 0) {
+						types.add(toGenericType(sig.substring(currentStart, i), genericTypeNames, target));
+						currentStart = i;
+					}
+					break;
+			}
+		}
+
+		return types.toArray(new Type[] {});
+	}
+
+	public static List<String> extractConstructorTypeNames(String sig) {
+		List<String> types = new ArrayList<String>();
+		int currentStart = 1;
+		boolean array = false;
+		for(int i = 1; i < sig.length() -2 ; i++) {
+			char c = sig.charAt(i);
+			switch (c) {
+				case '[':
+					array = true;
+					break;
+				case 'T':
+				case 'L':
+
+					int genericLevel = 0;
+					i++;
+					while(c != ';' || genericLevel != 0) {
+						switch(c) {
+							case '<':
+								genericLevel++;
+								break;
+							case '>':
+								genericLevel--;
+								break;
+						}
+
+						i ++;
+						c = sig.charAt(i);
+					}
+					types.add(sig.substring(currentStart, i + 1));
+					currentStart = i + 1;
+					array = false;
+					break;
+
+
+				case 'Z':
+				case 'B':
+				case 'C':
+				case 'D':
+				case 'F':
+				case 'I':
+				case 'J':
+				case 'S':
+					types.add(sig.substring(currentStart, i +1));
+					currentStart = i + 1;
+					array = false;
 					break;
 			}
 		}

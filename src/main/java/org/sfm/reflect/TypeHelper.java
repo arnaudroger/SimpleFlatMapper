@@ -78,5 +78,8 @@ public class TypeHelper {
 	public static boolean isAssignable(Class<?> class1, Type from) {
 		return class1.isAssignableFrom(toClass(from));
 	}
-	
+
+	public static boolean isJavaLang(Type target) {
+		return TypeHelper.toClass(target).getPackage().getName().equals("java.lang");
+	}
 }

@@ -50,8 +50,18 @@ public class AsmConstructorDefinitionFactory {
                                                  String signature,
                                                  String[] exceptions) {
                     if ("<init>".equals(name)) {
+                        final List<String> descTypes = AsmUtils.extractConstructorTypeNames(desc);
+                        final List<String> genericTypes;
+                        final List<String> names = new ArrayList<String>();
+                        if (signature != null) {
+                            genericTypes = AsmUtils.extractConstructorTypeNames(signature);
+                        } else {
+                            genericTypes = descTypes;
+                        }
+
                         return new MethodVisitor(Opcodes.ASM5) {
-                            final List<ConstructorParameter> parameters = new ArrayList<ConstructorParameter>();
+
+
                             Label firstLabel;
                             Label lastLabel;
                             @Override
@@ -65,8 +75,36 @@ public class AsmConstructorDefinitionFactory {
                             @Override
                             public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
                                 if (start.equals(firstLabel) && end.equals(lastLabel) && ! "this".equals(name)) {
-                                    parameters.add(createParameter(name, desc , signature));
+                                    names.add(name);
                                 }
+                            }
+
+
+                            @Override
+                            public void visitEnd() {
+                                try {
+                                    final List<ConstructorParameter> parameters = new ArrayList<ConstructorParameter>();
+
+                                    for(int i = 0; i < descTypes.size(); i ++) {
+                                        String name = "arg" + i;
+                                        if (i < names.size()) {
+                                            name =names.get(i);
+                                        }
+                                        parameters.add(createParameter(name, descTypes.get(i), genericTypes.get(i)));
+                                    }
+
+                                    constructors.add(new ConstructorDefinition<T>(targetClass.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new ConstructorParameter[parameters.size()])));
+                                } catch(Exception e) {
+                                    throw new Error("Unexpected error " + e, e);
+                                }
+                            }
+
+                            private Class<?>[] toTypeArray(List<ConstructorParameter> parameters) {
+                                Class<?>[] types = new Class<?>[parameters.size()];
+                                for(int i = 0; i < types.length; i++) {
+                                    types[i] = TypeHelper.toClass(parameters.get(i).getType());
+                                }
+                                return types;
                             }
 
                             private ConstructorParameter createParameter(String name,
@@ -82,23 +120,6 @@ public class AsmConstructorDefinitionFactory {
                                 } catch (ClassNotFoundException e) {
                                     throw new Error("Unexpected error " + e, e);
                                 }
-                            }
-
-                            @Override
-                            public void visitEnd() {
-                                try {
-                                    constructors.add(new ConstructorDefinition<T>(targetClass.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new ConstructorParameter[parameters.size()])));
-                                } catch(Exception e) {
-                                    throw new Error("Unexpected error " + e, e);
-                                }
-                            }
-
-                            private Class<?>[] toTypeArray(List<ConstructorParameter> parameters) {
-                                Class<?>[] types = new Class<?>[parameters.size()];
-                                for(int i = 0; i < types.length; i++) {
-                                    types[i] = TypeHelper.toClass(parameters.get(i).getType());
-                                }
-                                return types;
                             }
                         };
                     } else {

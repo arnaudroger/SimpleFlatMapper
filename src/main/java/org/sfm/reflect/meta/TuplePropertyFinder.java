@@ -15,16 +15,31 @@ import java.util.*;
 public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 
 	private final TupleClassMeta<T> tupleClassMeta;
-	private final Map<Integer, ConstructorPropertyMeta<T, ?>> properties = new HashMap<Integer,  ConstructorPropertyMeta<T, ?>>();
-	private final Map<Integer, PropertyFinder<?>> subPropertyFinders = new HashMap<Integer, PropertyFinder<?>>();
-	private final Map<String, Integer> assignedProperties = new HashMap<String, Integer>();
-	private int maxIndex = -1;
+
+	private final List<IndexedElement<T, ?>> elements;
+
 	private List<ConstructorDefinition<T>> constructorDefinitions;
 
 
 	public TuplePropertyFinder(TupleClassMeta<T> tupleClassMeta) {
 		this.tupleClassMeta = tupleClassMeta;
 		this.constructorDefinitions = tupleClassMeta.getConstructorDefinitions();
+
+		this.elements = new ArrayList<IndexedElement<T, ?>>();
+
+		for(int i = 0; i < tupleClassMeta.getTupleSize(); i++) {
+			elements.add(newIndexedElement(tupleClassMeta, i));
+		}
+	}
+
+	private <E> IndexedElement<T, E> newIndexedElement(TupleClassMeta<T> tupleClassMeta, int i) {
+		Type resolvedType = ((ParameterizedType) tupleClassMeta.getType()).getActualTypeArguments()[i];
+		ConstructorPropertyMeta<T, E> prop =
+				new ConstructorPropertyMeta<T, E>("element" + (i+1),
+					"element" + (i+1), 	tupleClassMeta.getReflectionService(),
+					new ConstructorParameter("element" + (i+1), Object.class, resolvedType));
+		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(resolvedType);
+		return new IndexedElement<T, E>(prop, classMeta);
 	}
 
 	@Override
@@ -32,77 +47,51 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 
 		IndexedColumn indexedColumn = propertyNameMatcher.matchesIndex();
 
-//		if (indexedColumn == null) {
-//			indexedColumn = extrapolateIndex(propertyNameMatcher, indexedColumn);
-//		}
+		if (indexedColumn == null) {
+			indexedColumn = extrapolateIndex(propertyNameMatcher);
+		}
 
 		if (indexedColumn == null) {
 			return null;
 		}
 
+		IndexedElement indexedElement = elements.get(indexedColumn.getIndexValue() - 1);
 
-
-		maxIndex = Math.max(indexedColumn.getIndexValue(),  maxIndex);
-
-		ConstructorPropertyMeta<T, E> prop = gettConstructorPropertyMeta(indexedColumn);
-		
 		if (!indexedColumn.hasProperty()) {
-			return prop;
+			return indexedElement.getPropertyMeta();
 		}
 
+		PropertyFinder<?> propertyFinder = indexedElement.getPropertyFinder();
+		if (propertyFinder == null) {
+			return null;
+		}
 
-		PropertyFinder<?> propertyFinder = getPropertyFinder(indexedColumn, prop, tupleClassMeta.getReflectionService());
-		
 		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getPropertyName());
-
 		if (subProp == null) {
 			return null;
 		}
 
-		String path = subProp.getPath();
+		indexedElement.addProperty(subProp);
 
-		Integer lastValue = assignedProperties.get(path);
-
-		if (lastValue == null) {
-			lastValue = new Integer(indexedColumn.getIndexValue() + 1);
-		} else {
-			lastValue = Math.max(lastValue, indexedColumn.getIndexValue() + 1);
-		}
-
-		assignedProperties.put(path, lastValue);
-
-		
-		if (subProp != null) {
-			return new SubPropertyMeta(tupleClassMeta.getReflectionService(), prop, subProp);
-		}
-		
-		return null;
+		return new SubPropertyMeta(tupleClassMeta.getReflectionService(), indexedElement.getPropertyMeta(), subProp);
 	}
 
-	private <E> PropertyFinder<E> getPropertyFinder(IndexedColumn indexedColumn, ConstructorPropertyMeta<T, E> constructorPropertyMeta, ReflectionService reflectionService) {
-		PropertyFinder<E> propertyFinder = (PropertyFinder<E>) subPropertyFinders.get(indexedColumn.getIndexValue());
 
-		if (propertyFinder == null) {
-			propertyFinder = (PropertyFinder<E>) reflectionService.getClassMeta(constructorPropertyMeta.getConstructorParameter().getResolvedType()).newPropertyFinder();
-			subPropertyFinders.put(indexedColumn.getIndexValue(), propertyFinder);
+	private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
+		for(int i = 0; i < elements.size(); i++) {
+			IndexedElement element = elements.get(i);
+
+			if (element.getElementClassMeta() != null) {
+				PropertyFinder<?> pf = element.getPropertyFinder();
+				PropertyMeta<?, Object> property = pf.findProperty(propertyNameMatcher);
+				if (property != null) {
+					if (!element.hasProperty(property)) {
+						return new IndexedColumn("element" + (i+ 1), i + 1, propertyNameMatcher.getColumn());
+					}
+				}
+
+			}
 		}
-		return propertyFinder;
-	}
-
-	private <P> ConstructorPropertyMeta<T, P> gettConstructorPropertyMeta(IndexedColumn indexedColumn) {
-		ConstructorPropertyMeta<T, P> prop = (ConstructorPropertyMeta<T, P>) properties.get(indexedColumn.getIndexValue());
-		if (prop == null) {
-			prop = new ConstructorPropertyMeta<T, P>("element" + indexedColumn.getIndexValue(),
-					indexedColumn.getIndexName(), tupleClassMeta.getReflectionService(),
-					new ConstructorParameter("element" + indexedColumn.getIndexValue(),
-							Object.class,
-							((ParameterizedType)tupleClassMeta.getType()).getActualTypeArguments()[indexedColumn.getIndexValue() - 1]));
-			properties.put(indexedColumn.getIndexValue(), prop);
-		}
-		return prop;
-	}
-
-	private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher, IndexedColumn indexedColumn) {
 		return null;
 	}
 
@@ -119,10 +108,6 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 	@Override
 	public Class<?> getClassToInstantiate() {
 		return TypeHelper.toClass(tupleClassMeta.getType());
-	}
-
-	public int getLength() {
-		return maxIndex + 1;
 	}
 
 }

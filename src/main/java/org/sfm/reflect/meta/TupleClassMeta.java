@@ -44,4 +44,8 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 	public List<ConstructorDefinition<T>> getConstructorDefinitions() {
 		return constructorDefinitions;
 	}
+
+	public int getTupleSize() {
+		return constructorDefinitions.get(0).getParameters().length;
+	}
 }

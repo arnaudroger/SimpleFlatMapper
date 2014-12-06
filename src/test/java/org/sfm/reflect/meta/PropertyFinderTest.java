@@ -45,7 +45,7 @@ public class PropertyFinderTest {
 
     @Test
     public void testFindElementOnTuple() {
-        ClassMeta<DbObject[]> classMeta = new ReflectionService().getClassMeta(Tuples.typeDef(String.class, DbObject.class));
+        ClassMeta<DbObject[]> classMeta = new ReflectionService().getClassMeta(Tuples.typeDef(String.class, DbObject.class, DbObject.class));
 
         PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder();
 
@@ -60,6 +60,10 @@ public class PropertyFinderTest {
 
         propEltId = propertyFinder.findProperty("1");
         assertNotNull(propEltId);
+
+        propEltId = propertyFinder.findProperty("id");
+        assertNotNull(propEltId);
+
 
     }
 

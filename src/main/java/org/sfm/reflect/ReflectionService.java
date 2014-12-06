@@ -86,6 +86,8 @@ public class ReflectionService {
 			return new ArrayClassMeta<T, E>(clazz, clazz.getComponentType(), this);
 		}else if (Tuples.isTuple(target)) {
 			return new TupleClassMeta<T>(target, this);
+		} else if (TypeHelper.isJavaLang(target)) {
+			return null;
 		}
 		return new ObjectClassMeta<T>(target, this);
 	}

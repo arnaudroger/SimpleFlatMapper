@@ -1,7 +1,6 @@
 package org.sfm.reflect.meta;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Type;
 import java.util.*;
 
 import org.sfm.reflect.ConstructorDefinition;

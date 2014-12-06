@@ -11,10 +11,8 @@ import org.sfm.reflect.TypeHelper;
 public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 
 	private final ArrayClassMeta<T, E> arrayClassMeta;
-	private final Map<Integer, ArrayElementPropertyMeta<T, E>> properties = new HashMap<Integer, ArrayElementPropertyMeta<T, E>>();
-	private final Map<Integer, PropertyFinder<E>> subPropertyFinders = new HashMap<Integer, PropertyFinder<E>>();
-	private final Map<String, Integer> assignedProperties = new HashMap<String, Integer>();
-	private int maxIndex = -1;
+
+	private final List<IndexedElement<T, E>> elements = new ArrayList<IndexedElement<T, E>>();
 	
 	
 	public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta) {
@@ -27,74 +25,60 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 		IndexedColumn indexedColumn = propertyNameMatcher.matchesIndex();
 
 		if (indexedColumn == null) {
-			indexedColumn = extrapolateIndex(propertyNameMatcher, indexedColumn);
+			indexedColumn = extrapolateIndex(propertyNameMatcher);
 		}
 
 		if (indexedColumn == null) {
 			return null;
 		}
 
-		maxIndex = Math.max(indexedColumn.getIndexValue(),  maxIndex);
+		IndexedElement<T, E> indexedElement = getIndexedElement(indexedColumn);
 
-		ArrayElementPropertyMeta<T, E> prop = properties.get(indexedColumn.getIndexValue());
-		if (prop == null) {
-			prop = new ArrayElementPropertyMeta<T, E>(indexedColumn.getIndexName(), indexedColumn.getIndexName() , arrayClassMeta.getReflectionService(), indexedColumn.getIndexValue(), arrayClassMeta);
-			properties.put(indexedColumn.getIndexValue(), prop);
-		}
-		
 		if (!indexedColumn.hasProperty()) {
-			return prop;
+			return indexedElement.getPropertyMeta();
 		}
-		
 
-		PropertyFinder<E> propertyFinder = subPropertyFinders.get(indexedColumn.getIndexValue());
-		
+		PropertyFinder<?> propertyFinder = indexedElement.getPropertyFinder();
 		if (propertyFinder == null) {
-			propertyFinder = arrayClassMeta.getElementClassMeta().newPropertyFinder();
-			subPropertyFinders.put(indexedColumn.getIndexValue(), propertyFinder);
+			return null;
 		}
-		
-		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getPropertyName());
 
+		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getPropertyName());
 		if (subProp == null) {
 			return null;
 		}
 
-		String path = subProp.getPath();
+		indexedElement.addProperty(subProp);
 
-		Integer lastValue = assignedProperties.get(path);
-
-		if (lastValue == null) {
-			lastValue = new Integer(indexedColumn.getIndexValue() + 1);
-		} else {
-			lastValue = Math.max(lastValue, indexedColumn.getIndexValue() + 1);
-		}
-
-		assignedProperties.put(path, lastValue);
-
-		
-		if (subProp != null) {
-			return new SubPropertyMeta(arrayClassMeta.getReflectionService(), prop, subProp);
-		}
-		
-		return null;
+		return new SubPropertyMeta(arrayClassMeta.getReflectionService(), indexedElement.getPropertyMeta(), subProp);
 	}
 
-	private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher, IndexedColumn indexedColumn) {
-		PropertyMeta<E, ?> property = arrayClassMeta.getElementClassMeta().newPropertyFinder().findProperty(propertyNameMatcher);
+	private IndexedElement<T, E> getIndexedElement(IndexedColumn indexedColumn) {
+
+		while (elements.size() <= indexedColumn.getIndexValue()) {
+			ArrayElementPropertyMeta<T, E> arrayElementPropertyMeta =
+					new ArrayElementPropertyMeta<T, E>("element" + elements.size(), "element" + elements.size(),
+							arrayClassMeta.getReflectionService(), elements.size(), arrayClassMeta);
+			elements.add(new IndexedElement<T, E>(arrayElementPropertyMeta, arrayClassMeta.getElementClassMeta()));
+		}
+
+		return elements.get(indexedColumn.getIndexValue());
+	}
+
+	private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
+		PropertyMeta<E, Object> property = arrayClassMeta.getElementClassMeta().newPropertyFinder().findProperty(propertyNameMatcher);
 		if (property != null) {
 
-            String path = property.getPath();
+			for (int i = 0; i < elements.size(); i++) {
+				IndexedElement element = elements.get(i);
+				if (!element.hasProperty(property)) {
+					return new IndexedColumn("element" + i, i, propertyNameMatcher.getColumn());
+				}
+			}
 
-            Integer lastValue = assignedProperties.get(path);
-
-            if (lastValue == null) {
-                lastValue = new Integer(0);
-            }
-
-            indexedColumn = new IndexedColumn("elt" + lastValue, lastValue, propertyNameMatcher.getColumn());
-        }
-		return indexedColumn;
+			return new IndexedColumn("element" + elements.size(), elements.size(), propertyNameMatcher.getColumn());
+		}
+		return null;
 	}
 
 	@Override
@@ -120,12 +104,8 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 		return TypeHelper.toClass(arrayClassMeta.getType());
 	}
 
-	public Type getElementType() {
-		return arrayClassMeta.getElementTarget();
-	}
-	
 	public int getLength() {
-		return maxIndex + 1;
+		return elements.size();
 	}
 
 }

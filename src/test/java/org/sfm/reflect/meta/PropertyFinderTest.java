@@ -29,12 +29,12 @@ public class PropertyFinderTest {
 
         propEltId = propertyFinder.findProperty("id");
         assertNotNull(propEltId);
-        assertEquals(3, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?>) propEltId).getOwnerProperty()).getIndex());
+        assertEquals(1, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?>) propEltId).getOwnerProperty()).getIndex());
 
 
         propEltId = propertyFinder.findProperty("id");
         assertNotNull(propEltId);
-        assertEquals(4, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?>) propEltId).getOwnerProperty()).getIndex());
+        assertEquals(3, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?>) propEltId).getOwnerProperty()).getIndex());
 
 
         propEltId = propertyFinder.findProperty("name");

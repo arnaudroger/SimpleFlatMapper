@@ -76,7 +76,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	@Override
 	public Iterator<T> iterate(Reader reader, int skip) throws IOException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
-		csvReader.skipLines(skip);
+		csvReader.skipRows(skip);
 		return new CsvMapperIterator<T>(csvReader, this);
 	}
 
@@ -89,7 +89,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	@Override
 	public Stream<T> stream(Reader reader, int skip) throws IOException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
-		csvReader.skipLines(skip);
+		csvReader.skipRows(skip);
 		return StreamSupport.stream(new CsvSpliterator(csvReader), false);
 	}
 
@@ -112,7 +112,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		public boolean tryAdvance(Consumer<? super T> action) {
 			current = null;
 			try {
-				csvReader.parseLine(cellConsumer);
+				csvReader.parseRow(cellConsumer);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

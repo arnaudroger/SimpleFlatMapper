@@ -55,7 +55,7 @@ public final class CsvParser {
 	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer, int skip) throws IOException {
 		CsvReader reader = newCsvReader(r);
 
-		reader.skipLines(skip);
+		reader.skipRows(skip);
 
 		reader.parseAll(cellConsumer);
 
@@ -65,9 +65,9 @@ public final class CsvParser {
 	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer, int skip, int limit) throws IOException {
 		CsvReader reader = newCsvReader(r);
 
-		reader.skipLines(skip);
+		reader.skipRows(skip);
 
-		reader.parseLines(cellConsumer, limit);
+		reader.parseRows(cellConsumer, limit);
 
 		return cellConsumer;
 	}
@@ -94,7 +94,7 @@ public final class CsvParser {
 
 	public static Iterator<String[]> iterateRows(Reader r, int skip) throws IOException {
 		CsvReader csvReader = newCsvReader(r);
-		csvReader.skipLines(skip);
+		csvReader.skipRows(skip);
 		return new CsvStringArrayIterator(csvReader);
 	}
 
@@ -107,7 +107,7 @@ public final class CsvParser {
 
 	public static Stream<String[]> stream(Reader r, int skip) throws IOException {
 		CsvReader csvReader = newCsvReader(r);
-		csvReader.skipLines(skip);
+		csvReader.skipRows(skip);
 		Spliterator<String[]> spliterator = new CsvStringArraySpliterator(csvReader);
 		return StreamSupport.stream(spliterator, false);
 	}
@@ -122,7 +122,7 @@ public final class CsvParser {
 		@Override
 		public boolean tryAdvance(Consumer<? super String[]> action) {
 			try {
-				return reader.parseLine(new StringArrayConsumer<RowHandler<String[]>>((strings) -> action.accept(strings)));
+				return reader.parseRow(new StringArrayConsumer<RowHandler<String[]>>((strings) -> action.accept(strings)));
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

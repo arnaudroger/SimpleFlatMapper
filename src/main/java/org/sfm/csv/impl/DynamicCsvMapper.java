@@ -9,7 +9,6 @@ import org.sfm.map.impl.ColumnsMapperKey;
 import org.sfm.map.impl.MapperCache;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.PropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.RowHandler;
 
@@ -63,7 +62,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	@Override
 	public <H extends RowHandler<T>> H forEach(Reader reader, H handle, int skip) throws IOException, MappingException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
-		csvReader.skipLines(skip);
+		csvReader.skipRows(skip);
 		CsvMapperCellConsumer<T> mapperCellConsumer = getDelegateMapper(csvReader).newCellConsumer(handle);
 		csvReader.parseAll(mapperCellConsumer);
 		return handle;
@@ -72,9 +71,9 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	@Override
 	public <H extends RowHandler<T>> H forEach(Reader reader, H handle, int skip, int limit) throws IOException, MappingException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
-		csvReader.skipLines(skip);
+		csvReader.skipRows(skip);
 		CsvMapperCellConsumer<T> mapperCellConsumer = getDelegateMapper(csvReader).newCellConsumer(handle);
-		csvReader.parseLines(mapperCellConsumer, limit);
+		csvReader.parseRows(mapperCellConsumer, limit);
 		return handle;
 	}
 
@@ -88,14 +87,14 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	@Override
 	public Iterator<T> iterate(Reader reader, int skip) throws IOException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
-		csvReader.skipLines(skip);
+		csvReader.skipRows(skip);
 		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
 		return new CsvMapperIterator<T>(csvReader, mapper);
 	}
 
 	private CsvMapperImpl<T> getDelegateMapper(CsvReader reader) throws IOException {
 		ColumnsMapperKeyBuilderCellConsumer keyBuilderCellConsumer = new ColumnsMapperKeyBuilderCellConsumer();
-		reader.parseLine(keyBuilderCellConsumer);
+		reader.parseRow(keyBuilderCellConsumer);
 		return getCsvMapper(keyBuilderCellConsumer.getKey());
 	}
 
@@ -111,7 +110,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	@Override
 	public Stream<T> stream(Reader reader, int skip) throws IOException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
-		csvReader.skipLines(skip);
+		csvReader.skipRows(skip);
 		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
 		return StreamSupport.stream(mapper.new CsvSpliterator(csvReader), false);
 	}

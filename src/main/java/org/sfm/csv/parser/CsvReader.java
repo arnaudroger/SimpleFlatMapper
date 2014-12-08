@@ -7,14 +7,12 @@ import java.io.Reader;
 
 public final class CsvReader {
 
-
-
 	private final Reader reader;
 	private final CsvCharConsumer consumer;
 
 	public CsvReader(CharBuffer buffer, Reader reader) {
 		this.reader = reader;
-		this.consumer = new CsvCharConsumer(buffer);
+		this.consumer = new StandardCsvCharConsumer(buffer);
 	}
 
 	public CsvReader(final int bufferSize, final Reader reader) {
@@ -29,7 +27,7 @@ public final class CsvReader {
 	public void parseAll(CellConsumer cellConsumer)
 			throws IOException {
 		do {
-			consumer.parseFull(cellConsumer);
+			consumer.parseAll(cellConsumer);
 		} while (consumer.fillBuffer(reader));
 		consumer.finish(cellConsumer);
 	}
@@ -39,11 +37,11 @@ public final class CsvReader {
 	 *
 	 * @throws IOException
 	 */
-	public boolean parseLine(CellConsumer cellConsumer)
+	public boolean parseRow(CellConsumer cellConsumer)
 			throws IOException {
 
 		do {
-			if (consumer.nextLine(cellConsumer)) {
+			if (consumer.nextRow(cellConsumer)) {
 				return true;
 			}
 		} while (consumer.fillBuffer(reader));
@@ -53,13 +51,13 @@ public final class CsvReader {
 	}
 
 
-	public void skipLines(int n) throws IOException {
-		parseLines(CsvParser.DUMMY_CONSUMER, n);
+	public void skipRows(int n) throws IOException {
+		parseRows(CsvParser.DUMMY_CONSUMER, n);
 	}
 
-	public void parseLines(CellConsumer cellConsumer, int limit) throws IOException {
+	public void parseRows(CellConsumer cellConsumer, int limit) throws IOException {
 		for(int i = 0; i < limit; i++) {
-			parseLine(cellConsumer);
+			parseRow(cellConsumer);
 		}
 	}
 }

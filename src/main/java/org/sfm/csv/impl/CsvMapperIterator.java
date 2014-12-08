@@ -5,7 +5,6 @@ import java.util.Iterator;
 
 import org.sfm.csv.parser.CellConsumer;
 import org.sfm.csv.parser.CsvReader;
-import org.sfm.map.impl.AbstractMapperImpl;
 import org.sfm.utils.RowHandler;
 
 public class CsvMapperIterator<T> implements Iterator<T> {
@@ -37,7 +36,7 @@ public class CsvMapperIterator<T> implements Iterator<T> {
 		if (isFetched) return;
 		try {
 			currentValue = null;
-			reader.parseLine(cellConsumer);
+			reader.parseRow(cellConsumer);
 			isFetched = true;
 		} catch (IOException e) {
 			throw new RuntimeException(e);

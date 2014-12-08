@@ -2,7 +2,6 @@ package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
-import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.ParameterizedType;
@@ -55,16 +54,13 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 
 		IndexedElement indexedElement = elements.get(calculateTupleIndex(indexedColumn));
 
-		if (!indexedColumn.hasProperty()) {
+		if (!indexedColumn.hasSubProperty()) {
 			return indexedElement.getPropertyMeta();
 		}
 
 		PropertyFinder<?> propertyFinder = indexedElement.getPropertyFinder();
-		if (propertyFinder == null) {
-			return null;
-		}
 
-		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getPropertyName());
+		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getSubPropertyNameMatcher());
 		if (subProp == null) {
 			return null;
 		}
@@ -88,18 +84,13 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 				PropertyMeta<?, Object> property = pf.findProperty(propertyNameMatcher);
 				if (property != null) {
 					if (!element.hasProperty(property)) {
-						return new IndexedColumn("element" + (i), i , propertyNameMatcher.getColumn());
+						return new IndexedColumn("element" + (i), i , propertyNameMatcher);
 					}
 				}
 
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public PropertyMeta<T, ?> findProperty(String propertyName) {
-		return findProperty(new PropertyNameMatcher(propertyName));
 	}
 
 	@Override

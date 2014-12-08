@@ -10,12 +10,14 @@ import org.sfm.jdbc.impl.DynamicJdbcMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
+import org.sfm.map.impl.DefaultPropertyNameMatcherFactory;
 import org.sfm.map.impl.FieldMapper;
 import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
 import org.sfm.osgi.BridgeClassLoader;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.AsmHelper;
+import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 
 public final class JdbcMapperFactory {
 	
@@ -33,6 +35,8 @@ public final class JdbcMapperFactory {
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	private Map<String, String> aliases = new HashMap<String, String>();
 	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();
+
+	private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
 	
 	private boolean useAsm = true;
 	private boolean disableAsm = false;
@@ -106,7 +110,7 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapperBuilder<T> newBuilder(final Class<T> target) {
-		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, reflectionService(target), aliases, customMappings);
+		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, reflectionService(target), aliases, customMappings, propertyNameMatcherFactory);
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
@@ -120,7 +124,7 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
-		return new DynamicJdbcMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, aliases, customMappings);
+		return new DynamicJdbcMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, aliases, customMappings, propertyNameMatcherFactory);
 	}
 
 	
@@ -155,6 +159,12 @@ public final class JdbcMapperFactory {
 	 */
 	public JdbcMapperFactory addCustomFieldMapper(String column, FieldMapper<ResultSet, ?> fieldMapper) {
 		customMappings.put(column.toUpperCase(), fieldMapper);
+		return this;
+	}
+
+
+	public JdbcMapperFactory propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
+		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		return this;
 	}
 }

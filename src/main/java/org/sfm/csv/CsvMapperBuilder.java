@@ -28,23 +28,14 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.CalculateMaxIndex;
-import org.sfm.map.impl.PropertyMapping;
-import org.sfm.map.impl.PropertyMappingsBuilder;
-import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
-import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
-import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
+import org.sfm.map.impl.*;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.ConstructorParameter;
-import org.sfm.reflect.meta.ArrayPropertyFinder;
-import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.ConstructorPropertyMeta;
-import org.sfm.reflect.meta.PropertyMeta;
-import org.sfm.reflect.meta.SubPropertyMeta;
+import org.sfm.reflect.meta.*;
 import org.sfm.utils.ForEachCallBack;
 
 public class CsvMapperBuilder<T> {
@@ -52,10 +43,11 @@ public class CsvMapperBuilder<T> {
 	private final Class<?> SOURCE_UNTYPE = DelayedCellSetter[].class;
 	@SuppressWarnings("unchecked")
 	private final Class<DelayedCellSetter<T, ?>[]> SOURCE = (Class<DelayedCellSetter<T, ?>[]>) SOURCE_UNTYPE;
-	
 	private FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<CsvColumnKey>();
+
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	private RowHandlerErrorHandler rowHandlerErrorHandler = new RethrowRowHandlerErrorHandler();
+	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
 	private final Type target;
 	private final ReflectionService reflectionService;
 	private final Map<String, String> aliases;
@@ -74,20 +66,21 @@ public class CsvMapperBuilder<T> {
 	public CsvMapperBuilder(final Type target, ReflectionService reflectionService) {
 		this(target, reflectionService,
 				new HashMap<String, String>(), 
-				new HashMap<String, CellValueReader<?>>());
+				new HashMap<String, CellValueReader<?>>(), new DefaultPropertyNameMatcherFactory());
 	}	
 	
 	@SuppressWarnings("unchecked")
 	public CsvMapperBuilder(final Type target, ReflectionService reflectionService,
-			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders) throws MapperBuildingException {
-		this(target, (ClassMeta<T>) reflectionService.getClassMeta(target), aliases, customReaders);
+			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
+		this(target, (ClassMeta<T>) reflectionService.getClassMeta(target), aliases, customReaders, propertyNameMatcherFactory);
 	}
 	
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta,
-			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders) throws MapperBuildingException {
+			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
 		this.target = target;
 		this.reflectionService = classMeta.getReflectionService();
-		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey>(classMeta);
+		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey>(classMeta, propertyNameMatcherFactory);
+		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.aliases = aliases;
 		this.customReaders = customReaders;
 	}
@@ -288,7 +281,7 @@ public class CsvMapperBuilder<T> {
 				CsvMapperBuilder<P> delegateMapperBuilder = (CsvMapperBuilder<P>) delegateMapperBuilders .get(propOwner.getName());
 				
 				if (delegateMapperBuilder == null) {
-					delegateMapperBuilder = new CsvMapperBuilder<P>(propOwner.getType(), propOwner.getClassMeta(), aliases, customReaders);
+					delegateMapperBuilder = new CsvMapperBuilder<P>(propOwner.getType(), propOwner.getClassMeta(), aliases, customReaders, propertyNameMatcherFactory);
 					delegateMapperBuilders.put(propOwner.getName(), delegateMapperBuilder);
 				}
 				
@@ -367,7 +360,7 @@ public class CsvMapperBuilder<T> {
 							CsvMapperBuilder<?> delegateMapperBuilder = delegateMapperBuilders .get(powner.getName());
 							
 							if (delegateMapperBuilder == null) {
-								delegateMapperBuilder = new CsvMapperBuilder(powner.getType(), powner.getClassMeta(), aliases, customReaders);
+								delegateMapperBuilder = new CsvMapperBuilder(powner.getType(), powner.getClassMeta(), aliases, customReaders, propertyNameMatcherFactory);
 								delegateMapperBuilders.put(powner.getName(), delegateMapperBuilder);
 							}
 							

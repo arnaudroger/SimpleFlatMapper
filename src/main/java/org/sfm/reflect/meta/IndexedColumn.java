@@ -7,12 +7,12 @@ public class IndexedColumn {
 
     private final String indexName;
     private final int indexValue;
-    private final String propertyName;
+    private final PropertyNameMatcher subPropertyNameMatcher;
 
-    public IndexedColumn(String indexName, int indexValue, String propertyName) {
+    public IndexedColumn(String indexName, int indexValue, PropertyNameMatcher subPropertyNameMatcher) {
         this.indexName = indexName;
         this.indexValue = indexValue;
-        this.propertyName = propertyName;
+        this.subPropertyNameMatcher = subPropertyNameMatcher;
     }
 
     public String getIndexName() {
@@ -23,11 +23,11 @@ public class IndexedColumn {
         return indexValue;
     }
 
-    public String getPropertyName() {
-        return propertyName;
+    public PropertyNameMatcher getSubPropertyNameMatcher() {
+        return subPropertyNameMatcher;
     }
 
-    public boolean hasProperty() {
-        return propertyName != null;
+    public boolean hasSubProperty() {
+        return subPropertyNameMatcher != null;
     }
 }

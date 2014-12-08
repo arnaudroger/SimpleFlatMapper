@@ -5,6 +5,7 @@ import java.lang.reflect.Type;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.impl.AbstractFieldMapperMapperBuilder;
+import org.sfm.map.impl.DefaultPropertyNameMatcherFactory;
 import org.sfm.map.impl.MapperImpl;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
@@ -26,7 +27,7 @@ public final class QueryDslMapperBuilder<T>
 	}
 	
 	public QueryDslMapperBuilder(final Type target, final ClassMeta<T> classMeta) throws MapperBuildingException {
-		super(target, Tuple.class, classMeta, new TupleGetterFactory(), new TupleFieldMapperFactory(new TupleGetterFactory()), null, null);
+		super(target, Tuple.class, classMeta, new TupleGetterFactory(), new TupleFieldMapperFactory(new TupleGetterFactory()), null, null, new DefaultPropertyNameMatcherFactory());
 	}
 
 	@Override

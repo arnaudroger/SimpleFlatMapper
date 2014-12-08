@@ -22,6 +22,7 @@ import org.sfm.map.impl.FieldMapper;
 import org.sfm.map.impl.MapperCache;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.RowHandler;
 
 public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
@@ -34,20 +35,22 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private final  MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private final Map<String, String> aliases;
+	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
 	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();
 	private MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache = new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
 
-	public DynamicJdbcMapper(final Class<T> target, final ReflectionService reflectionService, 
-			final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler, 
-			final MapperBuilderErrorHandler mapperBuilderErrorHandler, 
-			final Map<String, String> aliases, 
-			final Map<String, FieldMapper<ResultSet, ?>> customMappings) {
+	public DynamicJdbcMapper(final Class<T> target, final ReflectionService reflectionService,
+							 final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler,
+							 final MapperBuilderErrorHandler mapperBuilderErrorHandler,
+							 final Map<String, String> aliases,
+							 final Map<String, FieldMapper<ResultSet, ?>> customMappings, PropertyNameMatcherFactory propertyNameMatcherFactory) {
 		this.classMeta = reflectionService.getClassMeta(target);
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.aliases = aliases;
 		this.customMappings = customMappings;
+		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 	}
 	
 
@@ -90,7 +93,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		JdbcMapper<T> mapper = mapperCache.get(key);
 		
 		if (mapper == null) {
-			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, classMeta, aliases, customMappings);
+			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, classMeta, aliases, customMappings, propertyNameMatcherFactory);
 			
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 			builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);

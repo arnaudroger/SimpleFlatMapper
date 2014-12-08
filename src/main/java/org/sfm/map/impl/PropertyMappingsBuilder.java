@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sfm.map.MapperBuildingException;
-import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.PropertyFinder;
-import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.reflect.meta.*;
 import org.sfm.utils.ForEachCallBack;
 
 public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
@@ -14,11 +12,14 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 	protected final PropertyFinder<T> propertyFinder;
 	
 	protected final List<PropertyMapping<T, ?, K>> properties = new ArrayList<PropertyMapping<T, ?, K>>();
+
+	protected final PropertyNameMatcherFactory propertyNameMatcherFactory;
 	
 	protected boolean modifiable = true;
 
-	public PropertyMappingsBuilder(final ClassMeta<T> classMeta) throws MapperBuildingException {
+	public PropertyMappingsBuilder(final ClassMeta<T> classMeta, final PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
 		this.propertyFinder = classMeta.newPropertyFinder();
+		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 	}
 
 	
@@ -27,13 +28,12 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>> {
 		if (!modifiable) throw new IllegalStateException("Builder not modifiable");
 		
 		@SuppressWarnings("unchecked")
-		final PropertyMeta<T, P> prop = (PropertyMeta<T, P>) propertyFinder.findProperty(key.getName());
+		final PropertyMeta<T, P> prop = (PropertyMeta<T, P>) propertyFinder.findProperty(propertyNameMatcherFactory.newInstance(key));
 		
 		addProperty(key, prop);
 		
 		return prop != null;
 	}
-
 
 	public <P> void addProperty(final K key, final PropertyMeta<T, P> prop) {
 		while(properties.size() <= key.getIndex()) {

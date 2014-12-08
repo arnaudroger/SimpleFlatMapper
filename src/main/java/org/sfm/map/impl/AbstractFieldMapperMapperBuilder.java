@@ -20,10 +20,7 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.ConstructorParameter;
-import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.ConstructorPropertyMeta;
-import org.sfm.reflect.meta.PropertyMeta;
-import org.sfm.reflect.meta.SubPropertyMeta;
+import org.sfm.reflect.meta.*;
 import org.sfm.utils.ForEachCallBack;
 
 public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
@@ -40,19 +37,21 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	protected final Map<String, String> aliases;
 	protected final Map<String, FieldMapper<S, ?>> customMappings;
 	protected final List<KeyFieldMapperCouple<S, T, K>> mappers;
+	protected final PropertyNameMatcherFactory propertyNameMatcherFactory;
 
-	
+
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	private FieldMapperErrorHandler<K> fieldMapperErrorHandler;
-	
+
 	public AbstractFieldMapperMapperBuilder(final Type target, final Type source, final ClassMeta<T> classMeta,   
 			GetterFactory<S, K> getterFactory, FieldMapperFactory<S, K> fieldMapperFactory, 
-			Map<String, String> aliases, Map<String, FieldMapper<S, ?>> customMappings
+			Map<String, String> aliases, Map<String, FieldMapper<S, ?>> customMappings, PropertyNameMatcherFactory propertyNameMatcherFactory
 			) throws MapperBuildingException {
 		this.source = source;
 		this.getterFactory = getterFactory;
 		this.fieldMapperFactory = fieldMapperFactory;
-		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K>(classMeta);
+		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K>(classMeta, propertyNameMatcherFactory);
+		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.target = target;
 		this.reflectionService = classMeta.getReflectionService();
 		this.aliases = aliases;

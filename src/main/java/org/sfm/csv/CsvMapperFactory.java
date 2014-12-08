@@ -7,12 +7,15 @@ import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
+import org.sfm.map.impl.DefaultPropertyNameMatcherFactory;
 import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
 import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
 import org.sfm.osgi.BridgeClassLoader;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.AsmHelper;
+import org.sfm.reflect.meta.PropertyNameMatcher;
+import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 
 public final class CsvMapperFactory {
 	
@@ -36,6 +39,8 @@ public final class CsvMapperFactory {
 	private boolean disableAsm = false;
 	
 	private final boolean useBridgeClassLoader;
+
+	private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
 	
 	private String defaultDateFormat = "yyyy-MM-dd HH:mm:ss";
 	
@@ -96,7 +101,7 @@ public final class CsvMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> CsvMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
-		return new DynamicCsvMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, defaultDateFormat, aliases, customReaders);
+		return new DynamicCsvMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, defaultDateFormat, aliases, customReaders, propertyNameMatcherFactory);
 	}
 
 	
@@ -107,7 +112,7 @@ public final class CsvMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> CsvMapperBuilder<T> newBuilder(final Class<T> target) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, reflectionService(target), aliases, customReaders);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, reflectionService(target), aliases, customReaders, propertyNameMatcherFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);
@@ -135,6 +140,11 @@ public final class CsvMapperFactory {
 
 	public CsvMapperFactory addCustomValueReader(String column,	CellValueReader<?> cellValueReader) {
 		customReaders.put(column, cellValueReader);
+		return this;
+	}
+
+	public CsvMapperFactory propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
+		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		return this;
 	}
 }

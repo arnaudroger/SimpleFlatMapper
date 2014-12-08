@@ -4,11 +4,11 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class PropertyNameMatcherTest {
+public class DefaultPropertyNameMatcherTest {
 
 	@Test
 	public void testFullMatch() {
-		PropertyNameMatcher matcher = new PropertyNameMatcher("my_Col");
+		PropertyNameMatcher matcher = new DefaultPropertyNameMatcher("my_Col");
 		assertTrue(matcher.matches("myCol"));
 		assertTrue(matcher.matches("my_Col"));
 		assertTrue(matcher.matches("my Col"));
@@ -19,7 +19,7 @@ public class PropertyNameMatcherTest {
 	
 	@Test
 	public void testStartOf() {
-		PropertyNameMatcher matcher = new PropertyNameMatcher("my_Col_top_bottom");
+		PropertyNameMatcher matcher = new DefaultPropertyNameMatcher("my_Col_top_bottom");
 		assertTrue(matcher.partialMatch("myCol").partialMatch("top").matches("bottom"));
 		assertTrue(matcher.partialMatch("my_Col").partialMatch("tOp").matches("bottom"));
 		assertTrue(matcher.partialMatch("my Col").partialMatch("tOp").matches("bottom"));

@@ -9,6 +9,8 @@ import org.sfm.map.impl.ColumnsMapperKey;
 import org.sfm.map.impl.MapperCache;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.PropertyNameMatcher;
+import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
@@ -30,7 +32,8 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	
 	private final String defaultDateFormat;
-	
+	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
+
 	private MapperCache<ColumnsMapperKey, CsvMapperImpl<T>> mapperCache = new MapperCache<ColumnsMapperKey, CsvMapperImpl<T>>();
 	private final Map<String, String> aliases;
 	private final Map<String, CellValueReader<?>> customReaders;
@@ -38,7 +41,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	public DynamicCsvMapper(final Class<T> target, final ReflectionService reflectionService, 
 			final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler, 
 			final MapperBuilderErrorHandler mapperBuilderErrorHandler, String defaultDateFormat, 
-			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders) {
+			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders, PropertyNameMatcherFactory propertyNameMatcherFactory) {
 		this.classMeta = reflectionService.getClassMeta(target);
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
@@ -46,6 +49,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		this.defaultDateFormat = defaultDateFormat;
 		this.aliases = aliases;
 		this.customReaders = customReaders;
+		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 	}
 
 	@Override
@@ -123,7 +127,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 
 	private CsvMapperImpl<T> buildeMapper(ColumnsMapperKey key) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, aliases, customReaders);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, aliases, customReaders, propertyNameMatcherFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);

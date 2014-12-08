@@ -33,16 +33,13 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 
 		IndexedElement<T, E> indexedElement = getIndexedElement(indexedColumn);
 
-		if (!indexedColumn.hasProperty()) {
+		if (!indexedColumn.hasSubProperty()) {
 			return indexedElement.getPropertyMeta();
 		}
 
 		PropertyFinder<?> propertyFinder = indexedElement.getPropertyFinder();
-		if (propertyFinder == null) {
-			return null;
-		}
 
-		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getPropertyName());
+		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getSubPropertyNameMatcher());
 		if (subProp == null) {
 			return null;
 		}
@@ -71,18 +68,13 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 			for (int i = 0; i < elements.size(); i++) {
 				IndexedElement element = elements.get(i);
 				if (!element.hasProperty(property)) {
-					return new IndexedColumn("element" + i, i, propertyNameMatcher.getColumn());
+					return new IndexedColumn("element" + i, i, propertyNameMatcher);
 				}
 			}
 
-			return new IndexedColumn("element" + elements.size(), elements.size(), propertyNameMatcher.getColumn());
+			return new IndexedColumn("element" + elements.size(), elements.size(), propertyNameMatcher);
 		}
 		return null;
-	}
-
-	@Override
-	public PropertyMeta<T, ?> findProperty(String propertyName) {
-		return findProperty(new PropertyNameMatcher(propertyName));
 	}
 
 	@Override

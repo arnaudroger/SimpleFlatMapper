@@ -144,11 +144,6 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	}
 
 	@Override
-	public PropertyMeta<T, ?> findProperty(String propertyName) {
-		return findProperty(new PropertyNameMatcher(propertyName));
-	}
-
-	@Override
 	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
 		return eligibleConstructorDefinitions;
 	}

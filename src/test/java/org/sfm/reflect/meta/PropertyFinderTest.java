@@ -65,6 +65,10 @@ public class PropertyFinderTest {
         assertNotNull(propEltId);
 
 
+        propEltId = propertyFinder.findProperty("4_id");
+        assertNull(propEltId);
+
+
     }
 
 

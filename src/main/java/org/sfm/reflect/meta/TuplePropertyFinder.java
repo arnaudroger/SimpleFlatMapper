@@ -33,9 +33,9 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 	private <E> IndexedElement<T, E> newIndexedElement(TupleClassMeta<T> tupleClassMeta, int i) {
 		Type resolvedType = ((ParameterizedType) tupleClassMeta.getType()).getActualTypeArguments()[i];
 		ConstructorPropertyMeta<T, E> prop =
-				new ConstructorPropertyMeta<T, E>("element" + (i+1),
-					"element" + (i+1), 	tupleClassMeta.getReflectionService(),
-					new ConstructorParameter("element" + (i+1), Object.class, resolvedType));
+				new ConstructorPropertyMeta<T, E>("element" + (i),
+					"element" + (i), 	tupleClassMeta.getReflectionService(),
+					new ConstructorParameter("element" + (i), Object.class, resolvedType));
 		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(resolvedType);
 		return new IndexedElement<T, E>(prop, classMeta);
 	}
@@ -49,11 +49,11 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 			indexedColumn = extrapolateIndex(propertyNameMatcher);
 		}
 
-		if (indexedColumn == null) {
+		if (indexedColumn == null || calculateTupleIndex(indexedColumn) >= elements.size()) {
 			return null;
 		}
 
-		IndexedElement indexedElement = elements.get(indexedColumn.getIndexValue() - 1);
+		IndexedElement indexedElement = elements.get(calculateTupleIndex(indexedColumn));
 
 		if (!indexedColumn.hasProperty()) {
 			return indexedElement.getPropertyMeta();
@@ -74,6 +74,10 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 		return new SubPropertyMeta(tupleClassMeta.getReflectionService(), indexedElement.getPropertyMeta(), subProp);
 	}
 
+	private int calculateTupleIndex(IndexedColumn indexedColumn) {
+		return indexedColumn.getIndexValue();
+	}
+
 
 	private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
 		for(int i = 0; i < elements.size(); i++) {
@@ -84,7 +88,7 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 				PropertyMeta<?, Object> property = pf.findProperty(propertyNameMatcher);
 				if (property != null) {
 					if (!element.hasProperty(property)) {
-						return new IndexedColumn("element" + (i+ 1), i + 1, propertyNameMatcher.getColumn());
+						return new IndexedColumn("element" + (i), i , propertyNameMatcher.getColumn());
 					}
 				}
 

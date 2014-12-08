@@ -65,8 +65,8 @@ public class AsmConstructorDefinitionFactoryTest {
 		assertEquals(String.class, finalDbObjectConstructors.get(0).getParameters()[0].getResolvedType());
 		assertEquals(DbObject.class, finalDbObjectConstructors.get(0).getParameters()[1].getResolvedType());
 
-		assertEquals("element1", finalDbObjectConstructors.get(0).getParameters()[0].getName());
-		assertEquals("element2", finalDbObjectConstructors.get(0).getParameters()[1].getName());
+		assertEquals("element0", finalDbObjectConstructors.get(0).getParameters()[0].getName());
+		assertEquals("element1", finalDbObjectConstructors.get(0).getParameters()[1].getName());
 
 		assertEquals(Tuple2.class.getConstructor(Object.class, Object.class), finalDbObjectConstructors.get(0).getConstructor());
 

@@ -38,15 +38,6 @@ public final class CsvParser {
 
 	public static final int DEFAULT = _8K;
 
-	@Deprecated
-	public CsvParser(){
-	}
-
-	public static <CC extends CellConsumer> CC parse(int bufferSize, Reader r, CC cellConsumer) throws IOException {
-		newCsvReader(bufferSize, r).parseAll(cellConsumer);
-		return cellConsumer;
-	}
-
 	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer) throws IOException {
 		newCsvReader(r).parseAll(cellConsumer);
 		return cellConsumer;
@@ -110,6 +101,14 @@ public final class CsvParser {
 		csvReader.skipRows(skip);
 		Spliterator<String[]> spliterator = new CsvStringArraySpliterator(csvReader);
 		return StreamSupport.stream(spliterator, false);
+	}
+
+	public static CsvParserBuilder separator(char c) {
+		return new CsvParserBuilder().separator(c);
+	}
+
+	public static CsvParserBuilder bufferSize(int size) {
+		return new CsvParserBuilder().bufferSize(size);
 	}
 
 	private static class CsvStringArraySpliterator implements Spliterator<String[]> {

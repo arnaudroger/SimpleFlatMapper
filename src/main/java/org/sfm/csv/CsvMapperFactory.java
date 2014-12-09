@@ -14,7 +14,6 @@ import org.sfm.osgi.BridgeClassLoader;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.AsmHelper;
-import org.sfm.reflect.meta.PropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 
 public final class CsvMapperFactory {

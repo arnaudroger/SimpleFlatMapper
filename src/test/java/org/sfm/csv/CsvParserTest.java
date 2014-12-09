@@ -37,27 +37,22 @@ public class CsvParserTest {
 				+ "val3\nval4"));
 	}
 
-	private void testReadCsv(Reader sr) throws IOException {
-		final CharSequence[][] css = new CharSequence[4][3];
-		CsvParser.parse(8, sr, new CellConsumer() {
-			int row = 0, col = 0;
-			@Override
-			public void newCell(char[] chars, int offset, int length) {
-				String value = new String(chars, offset, length);
-				System.out.println("X'" + value + "'X");
-				css[row][col++] = value;
-			}
-			
-			@Override
-			public void endOfRow() {
-				row++;
-				col = 0;
-			}
+	@Test
+	public void testReadCsvReadeTabs() throws IOException {
+		Reader reader = new StringReader("cell1\tcell2\t\r"
+				+ "'cell\r''value'''\tval2\r"
+				+ "val3\nval4");
+		validateParserOutputSC(CsvParser.separator('\t').quote('\'').bufferSize(8).parseAll(reader, new AccumulateCellConsumer()).css);
 
-			@Override
-			public void end() {
-			}
-		});
+	}
+
+	private void testReadCsv(Reader sr) throws IOException {
+		final CharSequence[][] css =
+		CsvParser.bufferSize(8).parseAll(sr, new AccumulateCellConsumer()).css;
+		validateParserOutput(css);
+	}
+
+	private void validateParserOutput(CharSequence[][] css) {
 		assertEquals("cell1", css[0][0].toString());
 		assertEquals("cell2", css[0][1].toString());
 		assertEquals("", css[0][2].toString());
@@ -67,7 +62,16 @@ public class CsvParserTest {
 		assertEquals("val3", css[2][0].toString());
 		assertEquals("val4", css[3][0].toString());
 	}
-
+	private void validateParserOutputSC(CharSequence[][] css) {
+		assertEquals("cell1", css[0][0].toString());
+		assertEquals("cell2", css[0][1].toString());
+		assertEquals("", css[0][2].toString());
+		assertEquals("'cell\r''value'''", css[1][0].toString());
+		assertEquals("val2", css[1][1].toString());
+		assertNull(css[1][2]);
+		assertEquals("val3", css[2][0].toString());
+		assertEquals("val4", css[3][0].toString());
+	}
 	@Test
 	public void testParseSkip() throws
 			IOException {
@@ -212,6 +216,28 @@ public class CsvParserTest {
 		i = 1;
 		CsvParser.stream(sr, 1).limit(1).forEach(strings -> assertArrayEquals(new String[]{"row" + ++i}, strings));
 		assertEquals(2, i);
+	}
+
+	private static class AccumulateCellConsumer implements CellConsumer {
+		final CharSequence[][] css = new CharSequence[4][3];
+		int row = 0, col = 0;
+
+		@Override
+        public void newCell(char[] chars, int offset, int length) {
+            String value = new String(chars, offset, length);
+            System.out.println("X'" + value + "'X");
+            css[row][col++] = value;
+        }
+
+		@Override
+        public void endOfRow() {
+            row++;
+            col = 0;
+        }
+
+		@Override
+        public void end() {
+        }
 	}
 	//IFJAVA8_END
 

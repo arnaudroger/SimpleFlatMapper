@@ -15,6 +15,11 @@ public final class CsvReader {
 		this.consumer = new StandardCsvCharConsumer(buffer);
 	}
 
+	public CsvReader(Reader reader, CsvCharConsumer charConsumer) {
+		this.reader = reader;
+		this.consumer = charConsumer;
+	}
+
 	public CsvReader(final int bufferSize, final Reader reader) {
 		this(new CharBuffer(bufferSize), reader);
 	}
@@ -24,12 +29,14 @@ public final class CsvReader {
 	 * 
 	 * @throws IOException
 	 */
-	public void parseAll(CellConsumer cellConsumer)
+	public <CC extends CellConsumer> CC parseAll(CC cellConsumer)
 			throws IOException {
 		do {
 			consumer.parseAll(cellConsumer);
 		} while (consumer.fillBuffer(reader));
 		consumer.finish(cellConsumer);
+
+		return cellConsumer;
 	}
 
 	/**

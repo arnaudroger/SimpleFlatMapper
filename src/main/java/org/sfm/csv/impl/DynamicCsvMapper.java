@@ -37,10 +37,10 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	private final Map<String, String> aliases;
 	private final Map<String, CellValueReader<?>> customReaders;
 
-	public DynamicCsvMapper(final Class<T> target, final ReflectionService reflectionService, 
-			final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler, 
-			final MapperBuilderErrorHandler mapperBuilderErrorHandler, String defaultDateFormat, 
-			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders, PropertyNameMatcherFactory propertyNameMatcherFactory) {
+	public DynamicCsvMapper(final Class<T> target, final ReflectionService reflectionService,
+							final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler,
+							final MapperBuilderErrorHandler mapperBuilderErrorHandler, String defaultDateFormat,
+							Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders, PropertyNameMatcherFactory propertyNameMatcherFactory) {
 		this.classMeta = reflectionService.getClassMeta(target);
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;

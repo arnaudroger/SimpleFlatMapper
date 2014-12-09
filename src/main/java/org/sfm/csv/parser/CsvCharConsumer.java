@@ -14,4 +14,6 @@ public interface CsvCharConsumer {
     void finish(CellConsumer cellConsumer);
 
     boolean fillBuffer(Reader reader) throws IOException;
+
+    char quoteChar();
 }

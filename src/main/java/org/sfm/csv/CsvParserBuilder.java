@@ -14,6 +14,8 @@ public final class CsvParserBuilder {
 	private char separatorChar = ',';
 	private char quoteChar= '"';
 	private int bufferSize = 8192;
+	private int skip = 0;
+	private int limit = -1;
 
 	public CsvParserBuilder separator(char c) {
 		this.separatorChar = c;
@@ -29,9 +31,27 @@ public final class CsvParserBuilder {
 		return this;
     }
 
-	public <CC extends CellConsumer> CC parseAll(Reader reader, CC cellConsumer) throws IOException {
+	public CsvParserBuilder skip(int skip) {
+		this.skip = skip;
+		return this;
+	}
+
+	public CsvParserBuilder limit(int limit) {
+		this.limit = limit;
+		return this;
+	}
+
+	public <CC extends CellConsumer> CC parse(Reader reader, CC cellConsumer) throws IOException {
 		CsvReader csvreader = reader(reader);
-		return csvreader.parseAll(cellConsumer);
+
+		csvreader.skipRows(skip);
+
+		if (limit == -1) {
+			return csvreader.parseAll(cellConsumer);
+		} else {
+			return csvreader.parseRows(cellConsumer, limit);
+
+		}
 	}
 
 	public CsvReader reader(Reader reader) {
@@ -49,13 +69,17 @@ public final class CsvParserBuilder {
 
 	}
 
-	public Iterator<String[]> iterate(Reader reader) {
-		return new CsvStringArrayIterator(reader(reader));
+	public Iterator<String[]> iterate(Reader reader) throws IOException {
+		CsvReader csvReader = reader(reader);
+		csvReader.skipRows(skip);
+		return new CsvStringArrayIterator(csvReader);
 	}
 
 	//IFJAVA8_START
-	public Stream<String[]> stream(Reader r) {
-		return CsvParser.stream(reader(r));
+	public Stream<String[]> stream(Reader reader) throws IOException {
+		CsvReader csvReader = reader(reader);
+		csvReader.skipRows(skip);
+		return CsvParser.stream(csvReader);
 	}
 	//IFJAVA8_END
 

@@ -19,28 +19,15 @@ import org.sfm.utils.RowHandler;
 public final class CsvParser {
 
 	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer) throws IOException {
-		reader(r).parseAll(cellConsumer);
-		return cellConsumer;
+		return reader(r).parseAll(cellConsumer);
 	}
 
 	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer, int skip) throws IOException {
-		CsvReader reader = reader(r);
-
-		reader.skipRows(skip);
-
-		reader.parseAll(cellConsumer);
-
-		return cellConsumer;
+		return skip(skip).parse(r, cellConsumer);
 	}
 
 	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer, int skip, int limit) throws IOException {
-		CsvReader reader = reader(r);
-
-		reader.skipRows(skip);
-
-		reader.parseRows(cellConsumer, limit);
-
-		return cellConsumer;
+		return skip(skip).limit(limit).parse(r, cellConsumer);
 	}
 
 	public static <RH extends RowHandler<String[]>> RH readRows(final Reader r, final RH handler) throws IOException {
@@ -70,6 +57,14 @@ public final class CsvParser {
 		return new CsvParserBuilder().quote(c);
 	}
 
+	public static CsvParserBuilder skip(int skip) {
+		return new CsvParserBuilder().skip(skip);
+	}
+
+	public static CsvParserBuilder limit(int limit) {
+		return new CsvParserBuilder().limit(limit);
+	}
+
 	public static CsvReader reader(Reader reader) {
 		return new CsvParserBuilder().reader(reader);
 	}
@@ -79,9 +74,7 @@ public final class CsvParser {
 	}
 
 	public static Iterator<String[]> iterateRows(Reader r, int skip) throws IOException {
-		CsvReader csvReader = newCsvReader(r);
-		csvReader.skipRows(skip);
-		return new CsvStringArrayIterator(csvReader);
+		return skip(skip).iterate(r);
 	}
 
 	//IFJAVA8_START

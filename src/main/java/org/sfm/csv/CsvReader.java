@@ -81,9 +81,10 @@ public final class CsvReader {
 		parseRows(DUMMY_CONSUMER, n);
 	}
 
-	public void parseRows(CellConsumer cellConsumer, int limit) throws IOException {
+	public <CC extends CellConsumer> CC  parseRows(CC cellConsumer, int limit) throws IOException {
 		for(int i = 0; i < limit; i++) {
 			parseRow(cellConsumer);
 		}
+		return cellConsumer;
 	}
 }

@@ -42,7 +42,7 @@ public class CsvParserTest {
 		Reader reader = new StringReader("cell1\tcell2\t\r"
 				+ "'cell\r''value'''\tval2\r"
 				+ "val3\nval4");
-		validateParserOutputSC(CsvParser.separator('\t').quote('\'').bufferSize(8).parseAll(reader, new AccumulateCellConsumer()).css);
+		validateParserOutputSC(CsvParser.separator('\t').quote('\'').bufferSize(8).parse(reader, new AccumulateCellConsumer()).css);
 
 	}
 	@Test
@@ -74,7 +74,7 @@ public class CsvParserTest {
 
 	private void testReadCsv(Reader sr) throws IOException {
 		final CharSequence[][] css =
-		CsvParser.bufferSize(8).parseAll(sr, new AccumulateCellConsumer()).css;
+		CsvParser.bufferSize(8).parse(sr, new AccumulateCellConsumer()).css;
 		validateParserOutput(css);
 	}
 

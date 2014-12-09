@@ -19,21 +19,6 @@ import org.sfm.utils.RowHandler;
 
 public final class CsvParser {
 
-	public final static CellConsumer DUMMY_CONSUMER = new CellConsumer() {
-
-		@Override
-		public void newCell(char[] chars, int offset, int length) {
-		}
-
-		@Override
-		public void endOfRow() {
-		}
-
-		@Override
-		public void end() {
-		}
-	};
-
 	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer) throws IOException {
 		reader(r).parseAll(cellConsumer);
 		return cellConsumer;

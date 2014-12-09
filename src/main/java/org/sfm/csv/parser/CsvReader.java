@@ -7,6 +7,21 @@ import java.io.Reader;
 
 public final class CsvReader {
 
+	private final static CellConsumer DUMMY_CONSUMER = new CellConsumer() {
+
+		@Override
+		public void newCell(char[] chars, int offset, int length) {
+		}
+
+		@Override
+		public void endOfRow() {
+		}
+
+		@Override
+		public void end() {
+		}
+	};
+
 	private final Reader reader;
 	private final CsvCharConsumer consumer;
 
@@ -59,7 +74,7 @@ public final class CsvReader {
 
 
 	public void skipRows(int n) throws IOException {
-		parseRows(CsvParser.DUMMY_CONSUMER, n);
+		parseRows(DUMMY_CONSUMER, n);
 	}
 
 	public void parseRows(CellConsumer cellConsumer, int limit) throws IOException {

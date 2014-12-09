@@ -218,27 +218,29 @@ public class CsvParserTest {
 		assertEquals(2, i);
 	}
 
+
+	//IFJAVA8_END
+
 	private static class AccumulateCellConsumer implements CellConsumer {
 		final CharSequence[][] css = new CharSequence[4][3];
 		int row = 0, col = 0;
 
 		@Override
-        public void newCell(char[] chars, int offset, int length) {
-            String value = new String(chars, offset, length);
-            System.out.println("X'" + value + "'X");
-            css[row][col++] = value;
-        }
+		public void newCell(char[] chars, int offset, int length) {
+			String value = new String(chars, offset, length);
+			System.out.println("X'" + value + "'X");
+			css[row][col++] = value;
+		}
 
 		@Override
-        public void endOfRow() {
-            row++;
-            col = 0;
-        }
+		public void endOfRow() {
+			row++;
+			col = 0;
+		}
 
 		@Override
-        public void end() {
-        }
+		public void end() {
+		}
 	}
-	//IFJAVA8_END
 
 }

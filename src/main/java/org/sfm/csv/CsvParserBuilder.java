@@ -5,7 +5,9 @@ import org.sfm.csv.parser.*;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
+//IFJAVA8_START
 import java.util.stream.Stream;
+//IFJAVA8_END
 
 public final class CsvParserBuilder {
 	private char separatorChar = ',';

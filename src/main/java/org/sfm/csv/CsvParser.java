@@ -78,6 +78,14 @@ public final class CsvParser {
 		return handler;
 	}
 
+	public static CsvParserBuilder separator(char c) {
+		return new CsvParserBuilder().separator(c);
+	}
+
+	public static CsvParserBuilder bufferSize(int size) {
+		return new CsvParserBuilder().bufferSize(size);
+	}
+
 
 	public static Iterator<String[]> iterateRows(Reader r) {
 		return new CsvStringArrayIterator(newCsvReader(r));
@@ -101,14 +109,6 @@ public final class CsvParser {
 		csvReader.skipRows(skip);
 		Spliterator<String[]> spliterator = new CsvStringArraySpliterator(csvReader);
 		return StreamSupport.stream(spliterator, false);
-	}
-
-	public static CsvParserBuilder separator(char c) {
-		return new CsvParserBuilder().separator(c);
-	}
-
-	public static CsvParserBuilder bufferSize(int size) {
-		return new CsvParserBuilder().bufferSize(size);
 	}
 
 	private static class CsvStringArraySpliterator implements Spliterator<String[]> {

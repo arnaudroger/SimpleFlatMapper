@@ -86,6 +86,13 @@ public final class CsvParser {
 		return new CsvParserBuilder().bufferSize(size);
 	}
 
+	public static CsvParserBuilder quote(char c) {
+		return new CsvParserBuilder().quote(c);
+	}
+
+	public static CsvReader reader(Reader reader) {
+		return new CsvParserBuilder().reader(reader);
+	}
 
 	public static Iterator<String[]> iterateRows(Reader r) {
 		return new CsvStringArrayIterator(newCsvReader(r));
@@ -160,12 +167,10 @@ public final class CsvParser {
 
 
 	public static CsvReader newCsvReader(Reader reader) {
-		return newCsvReader(DEFAULT, reader);
+		return reader(reader);
 	}
 
 	public static CsvReader newCsvReader(int bufferSize, Reader reader) {
-		return new CsvReader(bufferSize, reader);
+		return bufferSize(bufferSize).reader(reader);
 	}
-
-
 }

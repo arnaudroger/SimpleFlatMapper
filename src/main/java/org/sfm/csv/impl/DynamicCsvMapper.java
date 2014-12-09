@@ -1,7 +1,7 @@
 package org.sfm.csv.impl;
 
 import org.sfm.csv.*;
-import org.sfm.csv.parser.CsvReader;
+import org.sfm.csv.CsvReader;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;

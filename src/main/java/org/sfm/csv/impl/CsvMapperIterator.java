@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.sfm.csv.parser.CellConsumer;
-import org.sfm.csv.parser.CsvReader;
+import org.sfm.csv.CsvReader;
 import org.sfm.utils.RowHandler;
 
 public class CsvMapperIterator<T> implements Iterator<T> {

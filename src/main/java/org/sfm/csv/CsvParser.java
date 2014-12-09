@@ -12,7 +12,6 @@ import java.util.stream.StreamSupport;
 //IFJAVA8_END
 
 import org.sfm.csv.parser.CellConsumer;
-import org.sfm.csv.parser.CsvReader;
 import org.sfm.csv.parser.CsvStringArrayIterator;
 import org.sfm.csv.parser.StringArrayConsumer;
 import org.sfm.utils.RowHandler;

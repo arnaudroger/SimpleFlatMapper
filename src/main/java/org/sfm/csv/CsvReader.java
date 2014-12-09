@@ -1,6 +1,10 @@
-package org.sfm.csv.parser;
+package org.sfm.csv;
 
 import org.sfm.csv.CsvParser;
+import org.sfm.csv.parser.CellConsumer;
+import org.sfm.csv.parser.CharBuffer;
+import org.sfm.csv.parser.CsvCharConsumer;
+import org.sfm.csv.parser.StandardCsvCharConsumer;
 
 import java.io.IOException;
 import java.io.Reader;

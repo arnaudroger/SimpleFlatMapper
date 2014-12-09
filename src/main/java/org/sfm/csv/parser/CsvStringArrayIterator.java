@@ -1,5 +1,6 @@
 package org.sfm.csv.parser;
 
+import org.sfm.csv.CsvReader;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;

@@ -16,7 +16,7 @@ import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.CsvMapper;
 import org.sfm.csv.CsvParser;
 import org.sfm.csv.parser.CellConsumer;
-import org.sfm.csv.parser.CsvReader;
+import org.sfm.csv.CsvReader;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;

@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 //IFJAVA8_END
 
-import org.sfm.csv.parser.CsvReader;
 import org.sfm.map.MappingException;
 import org.sfm.utils.RowHandler;
 

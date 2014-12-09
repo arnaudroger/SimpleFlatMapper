@@ -7,9 +7,6 @@ import java.io.Reader;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-/**
-* Created by e19224 on 08/12/2014.
-*/
 public final class CsvParserBuilder {
 	private char separatorChar = ',';
 	private char quoteChar= '"';

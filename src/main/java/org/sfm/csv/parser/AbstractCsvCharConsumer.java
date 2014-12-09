@@ -3,9 +3,6 @@ package org.sfm.csv.parser;
 import java.io.IOException;
 import java.io.Reader;
 
-/**
- * Created by e19224 on 08/12/2014.
- */
 public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 	public static final int IN_QUOTE = 4;
 	public static final int IN_CR = 2;

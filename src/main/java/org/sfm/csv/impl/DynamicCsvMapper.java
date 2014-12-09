@@ -54,6 +54,11 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	@Override
 	public <H extends RowHandler<T>> H forEach(Reader reader, H handle) throws IOException, MappingException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
+		return forEach(csvReader, handle);
+	}
+
+	@Override
+	public <H extends RowHandler<T>> H forEach(CsvReader csvReader, H handle) throws IOException {
 		CsvMapperCellConsumer<T> mapperCellConsumer = getDelegateMapper(csvReader).newCellConsumer(handle);
 		csvReader.parseAll(mapperCellConsumer);
 		return handle;
@@ -62,6 +67,11 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	@Override
 	public <H extends RowHandler<T>> H forEach(Reader reader, H handle, int skip) throws IOException, MappingException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
+		return forEach(csvReader, handle, skip);
+	}
+
+	@Override
+	public <H extends RowHandler<T>> H forEach(CsvReader csvReader, H handle, int skip) throws IOException {
 		csvReader.skipRows(skip);
 		CsvMapperCellConsumer<T> mapperCellConsumer = getDelegateMapper(csvReader).newCellConsumer(handle);
 		csvReader.parseAll(mapperCellConsumer);
@@ -71,6 +81,11 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	@Override
 	public <H extends RowHandler<T>> H forEach(Reader reader, H handle, int skip, int limit) throws IOException, MappingException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
+		return forEach(csvReader, handle, skip, limit);
+	}
+
+	@Override
+	public <H extends RowHandler<T>> H forEach(CsvReader csvReader, H handle, int skip, int limit) throws IOException {
 		csvReader.skipRows(skip);
 		CsvMapperCellConsumer<T> mapperCellConsumer = getDelegateMapper(csvReader).newCellConsumer(handle);
 		csvReader.parseRows(mapperCellConsumer, limit);
@@ -80,6 +95,11 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	@Override
 	public Iterator<T> iterate(Reader reader) throws IOException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
+		return iterate(csvReader);
+	}
+
+	@Override
+	public Iterator<T> iterate(CsvReader csvReader) throws IOException {
 		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
 		return new CsvMapperIterator<T>(csvReader, mapper);
 	}
@@ -87,6 +107,11 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	@Override
 	public Iterator<T> iterate(Reader reader, int skip) throws IOException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
+		return iterate(csvReader, skip);
+	}
+
+	@Override
+	public Iterator<T> iterate(CsvReader csvReader, int skip) throws IOException {
 		csvReader.skipRows(skip);
 		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
 		return new CsvMapperIterator<T>(csvReader, mapper);
@@ -103,6 +128,11 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	@Override
 	public Stream<T> stream(Reader reader) throws IOException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
+		return stream(csvReader);
+	}
+
+	@Override
+	public Stream<T> stream(CsvReader csvReader) throws IOException {
 		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
 		return StreamSupport.stream(mapper.new CsvSpliterator(csvReader), false);
 	}
@@ -110,6 +140,11 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	@Override
 	public Stream<T> stream(Reader reader, int skip) throws IOException {
 		CsvReader csvReader = CsvParser.newCsvReader(reader);
+		return stream(csvReader, skip);
+	}
+
+	@Override
+	public Stream<T> stream(CsvReader csvReader, int skip) throws IOException {
 		csvReader.skipRows(skip);
 		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
 		return StreamSupport.stream(mapper.new CsvSpliterator(csvReader), false);

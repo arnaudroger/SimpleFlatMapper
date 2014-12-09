@@ -45,6 +45,32 @@ public class CsvParserTest {
 		validateParserOutputSC(CsvParser.separator('\t').quote('\'').bufferSize(8).parseAll(reader, new AccumulateCellConsumer()).css);
 
 	}
+	@Test
+	public void testReadCsvReaderIterator() throws IOException {
+		Reader reader = new StringReader("cell1\tcell2\t\r"
+				+ "'cell\r''value'''\tval2\r"
+				+ "val3\nval4");
+		Iterator<String[]>  iterate = CsvParser.separator('\t').quote('\'').bufferSize(8).iterate(reader);
+
+		String[] row = iterate.next();
+
+		assertEquals("cell1", row[0].toString());
+		assertEquals("cell2", row[1].toString());
+		assertEquals("", row[2].toString());
+
+		row = iterate.next();
+		assertEquals("cell\r\'value\'", row[0].toString());
+		assertEquals("val2", row[1].toString());
+
+		row = iterate.next();
+		assertEquals("val3", row[0].toString());
+
+
+		row = iterate.next();
+		assertEquals("val4", row[0].toString());
+
+
+	}
 
 	private void testReadCsv(Reader sr) throws IOException {
 		final CharSequence[][] css =
@@ -56,7 +82,7 @@ public class CsvParserTest {
 		assertEquals("cell1", css[0][0].toString());
 		assertEquals("cell2", css[0][1].toString());
 		assertEquals("", css[0][2].toString());
-		assertEquals("\"cell\r\"\"value\"\"\"", css[1][0].toString());
+		assertEquals("cell\r\"value\"", css[1][0].toString());
 		assertEquals("val2", css[1][1].toString());
 		assertNull(css[1][2]);
 		assertEquals("val3", css[2][0].toString());
@@ -66,7 +92,7 @@ public class CsvParserTest {
 		assertEquals("cell1", css[0][0].toString());
 		assertEquals("cell2", css[0][1].toString());
 		assertEquals("", css[0][2].toString());
-		assertEquals("'cell\r''value'''", css[1][0].toString());
+		assertEquals("cell\r'value'", css[1][0].toString());
 		assertEquals("val2", css[1][1].toString());
 		assertNull(css[1][2]);
 		assertEquals("val3", css[2][0].toString());

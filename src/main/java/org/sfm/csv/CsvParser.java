@@ -100,6 +100,10 @@ public final class CsvParser {
 	//IFJAVA8_START
 	public static Stream<String[]> stream(Reader r) {
 		CsvReader csvReader = newCsvReader(r);
+		return stream(csvReader);
+	}
+
+	public static Stream<String[]> stream(CsvReader csvReader) {
 		Spliterator<String[]> spliterator = new CsvStringArraySpliterator(csvReader);
 		return StreamSupport.stream(spliterator, false);
 	}

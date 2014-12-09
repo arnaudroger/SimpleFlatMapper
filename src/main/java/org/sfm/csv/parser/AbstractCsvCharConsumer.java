@@ -92,7 +92,16 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 	}
 
 	private void newCell(int currentIndex, CellConsumer cellConsumer) {;
-		cellConsumer.newCell(csvBuffer.getCharBuffer(), csvBuffer.getMark(), currentIndex - csvBuffer.getMark());
+		char[] charBuffer = csvBuffer.getCharBuffer();
+		int start = csvBuffer.getMark();
+		int length = currentIndex - start;
+
+		if (charBuffer[start] == quoteChar()) {
+			start ++;
+			length = unescape(charBuffer, start, length);
+		}
+
+		cellConsumer.newCell(charBuffer, start, length);
 		csvBuffer.mark(currentIndex + 1);
 		currentState = NONE;
 	}
@@ -117,5 +126,26 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 
 	private boolean isAllConsumedFromMark(int bufferIndex) {
 		return csvBuffer.getMark() >= bufferIndex -1 ;
+	}
+
+	private int unescape(char[] chars, int offset, int length) {
+		final char quoteChar = quoteChar();
+
+
+		int j = offset + 1;
+		boolean notEscaped = true;
+
+		for(int i = offset + 1; i < offset + length -1; i++) {
+			notEscaped = chars[i] != quoteChar || !notEscaped;
+			if (notEscaped) {
+				chars[j++] = chars[i];
+			}
+		}
+
+		if (chars[offset + length -1] != quoteChar) {
+			chars[j++] = chars[offset + length -1];
+		}
+
+		return j - offset - 1;
 	}
 }

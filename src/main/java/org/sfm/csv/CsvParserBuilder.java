@@ -4,6 +4,8 @@ import org.sfm.csv.parser.*;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Iterator;
+import java.util.stream.Stream;
 
 /**
 * Created by e19224 on 08/12/2014.
@@ -46,5 +48,15 @@ public final class CsvParserBuilder {
 		}
 
 	}
+
+	public Iterator<String[]> iterate(Reader reader) {
+		return new CsvStringArrayIterator(reader(reader));
+	}
+
+	//IFJAVA8_START
+	public Stream<String[]> stream(Reader r) {
+		return CsvParser.stream(reader(r));
+	}
+	//IFJAVA8_END
 
 }

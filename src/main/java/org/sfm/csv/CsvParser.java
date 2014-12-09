@@ -34,17 +34,13 @@ public final class CsvParser {
 		}
 	};
 
-	public static int _8K = 1 << 13;
-
-	public static final int DEFAULT = _8K;
-
 	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer) throws IOException {
-		newCsvReader(r).parseAll(cellConsumer);
+		reader(r).parseAll(cellConsumer);
 		return cellConsumer;
 	}
 
 	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer, int skip) throws IOException {
-		CsvReader reader = newCsvReader(r);
+		CsvReader reader = reader(r);
 
 		reader.skipRows(skip);
 
@@ -54,7 +50,7 @@ public final class CsvParser {
 	}
 
 	public static <CC extends CellConsumer> CC parse(final Reader r, final CC cellConsumer, int skip, int limit) throws IOException {
-		CsvReader reader = newCsvReader(r);
+		CsvReader reader = reader(r);
 
 		reader.skipRows(skip);
 

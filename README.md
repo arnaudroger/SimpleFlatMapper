@@ -97,7 +97,7 @@ public class MyDao {
 
 	public List<MyObject> findAll() throws SQLException {
 		try (Connection conn = getConnection();
-		     PreparedStatement ps = ps.prepareStatement("select * from my_table");
+		     PreparedStatement ps = conn.prepareStatement("select * from my_table");
 		     ResultSet rs = ps.executeQuery();) {
 			return mapper.forEach(rs, new ListHandler<MyObject>()).getList();
 		}

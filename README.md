@@ -96,12 +96,10 @@ public class MyDao {
 	JdbcMapper<MyObject> mapper = JdbcMapperFactory.newInstance().newMapper(MyObject.class);
 
 	public List<MyObject> findAll() throws SQLException {
-		try (Connection conn = getConnection()) {
-			try (PreparedStatement ps = ps.prepareStatement("select * from my_table")) {
-				try (ResultSet rs = ps.executeQuery()) {
-					return mapper.forEach(rs, new ListHandler<MyObject>()).getList();
-				}
-			}
+		try (Connection conn = getConnection();
+		     PreparedStatement ps = ps.prepareStatement("select * from my_table");
+		     ResultSet rs = ps.executeQuery();) {
+			return mapper.forEach(rs, new ListHandler<MyObject>()).getList();
 		}
 	}
 

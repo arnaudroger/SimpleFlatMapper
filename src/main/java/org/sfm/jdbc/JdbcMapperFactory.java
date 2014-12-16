@@ -10,9 +10,11 @@ import org.sfm.jdbc.impl.DynamicJdbcMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.DefaultPropertyNameMatcherFactory;
 import org.sfm.map.impl.FieldMapper;
 import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
+import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
 import org.sfm.osgi.BridgeClassLoader;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.asm.AsmFactory;
@@ -33,6 +35,7 @@ public final class JdbcMapperFactory {
 	
 	private FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler = null;
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
+	private RowHandlerErrorHandler rowHandlerErrorHandler = new RethrowRowHandlerErrorHandler();
 	private Map<String, String> aliases = new HashMap<String, String>();
 	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();
 
@@ -72,6 +75,11 @@ public final class JdbcMapperFactory {
 		return this;
 	}
 
+
+	public JdbcMapperFactory rowHandlerErrorHandler(final RowHandlerErrorHandler rowHandlerErrorHandler) {
+		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
+		return this;
+	}
 	/**
 	 * 
 	 * @param useAsm false if you want to disable asm usage.
@@ -114,6 +122,7 @@ public final class JdbcMapperFactory {
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
+		builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
 		return builder;
 	}
 
@@ -124,7 +133,7 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
-		return new DynamicJdbcMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, aliases, customMappings, propertyNameMatcherFactory);
+		return new DynamicJdbcMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, aliases, customMappings, propertyNameMatcherFactory);
 	}
 
 	

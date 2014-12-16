@@ -17,6 +17,7 @@ import org.sfm.beans.DbObjectWithAlias;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.FieldMapper;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.RowHandler;
@@ -152,6 +153,28 @@ public class JdbcMapperFactoryTest {
 		List<DbObject> list = mapper.forEach(rs, new ListHandler<DbObject>()).getList();
 		assertNotNull(list.get(0));
 		verify(fieldMapperErrorHandler).errorMappingField(eq(new JdbcColumnKey("id", 1)), any(), same(list.get(0)), same(exception));
+
+	}
+
+	@Test
+	public void testSetRowHandlerError() throws SQLException {
+		RowHandlerErrorHandler errorHandler = mock(RowHandlerErrorHandler.class);
+		ResultSet rs = mock(ResultSet.class);
+		when(rs.next()).thenReturn(true, true, false);
+		when(rs.getLong(1)).thenReturn(1l);
+
+		final Exception exception = new SQLException("Error!");
+		JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance()
+				.rowHandlerErrorHandler(errorHandler)
+				.newBuilder(DbObject.class).addMapping("id").mapper();
+
+		mapper.forEach(rs, new RowHandler<DbObject>() {
+			@Override
+			public void handle(DbObject dbObject) throws Exception {
+				throw exception;
+			}
+		});
+		verify(errorHandler, times(2)).handlerError(same(exception), any(DbObject.class));
 
 	}
 	

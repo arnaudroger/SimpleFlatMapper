@@ -38,7 +38,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	public JdbcMapperBuilder(final Type target, final ClassMeta<T> classMeta, final Map<String,String> aliases, Map<String, FieldMapper<ResultSet, ?>> customMappings, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
 		super(target, ResultSet.class, classMeta, new ResultSetGetterFactory(), new ResultSetFieldMapperFactory(new ResultSetGetterFactory()), aliases, customMappings, propertyNameMatcherFactory);
 	}
-	
+
 	@Override
 	public JdbcMapper<T> mapper() {
 		if (reflectionService.isAsmActivated()) {
@@ -88,8 +88,12 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 		setMapperBuilderErrorHandler(errorHandler);
 		return this;
 	}
-	
-	
+
+	public JdbcMapperBuilder<T> jdbcMapperErrorHandler(RowHandlerErrorHandler jdbcMapperErrorHandler) {
+		this.jdbcMapperErrorHandler = jdbcMapperErrorHandler;
+		return this;
+	}
+
 	@Override
 	protected <ST> AbstractFieldMapperMapperBuilder<ResultSet, ST, JdbcColumnKey> newSubBuilder(Type type, ClassMeta<ST> classMeta) {
 		return new  JdbcMapperBuilder<ST>(type, classMeta, aliases, customMappings, propertyNameMatcherFactory);

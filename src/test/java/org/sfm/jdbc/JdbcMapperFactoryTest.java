@@ -3,6 +3,7 @@ package org.sfm.jdbc;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,6 +15,8 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObjectWithAlias;
 import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.MapperBuilderErrorHandler;
+import org.sfm.map.MappingException;
 import org.sfm.map.impl.FieldMapper;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.RowHandler;
@@ -149,6 +152,7 @@ public class JdbcMapperFactoryTest {
 		List<DbObject> list = mapper.forEach(rs, new ListHandler<DbObject>()).getList();
 		assertNotNull(list.get(0));
 		verify(fieldMapperErrorHandler).errorMappingField(eq(new JdbcColumnKey("id", 1)), any(), same(list.get(0)), same(exception));
+
 	}
 	
 	private void assertMapPsDbObject(ResultSet rs,

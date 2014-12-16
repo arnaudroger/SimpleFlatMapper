@@ -1,15 +1,19 @@
 package org.sfm.csv;
 
-import org.sfm.csv.CsvParser;
-import org.sfm.csv.parser.CellConsumer;
-import org.sfm.csv.parser.CharBuffer;
-import org.sfm.csv.parser.CsvCharConsumer;
-import org.sfm.csv.parser.StandardCsvCharConsumer;
+import org.sfm.csv.parser.*;
+import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Iterator;
+//IFJAVA8_START
+import java.util.Spliterator;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+//IFJAVA8_END
 
-public final class CsvReader {
+public final class CsvReader implements Iterable<String[]> {
 
 	private final static CellConsumer DUMMY_CONSUMER = new CellConsumer() {
 
@@ -29,18 +33,9 @@ public final class CsvReader {
 	private final Reader reader;
 	private final CsvCharConsumer consumer;
 
-	public CsvReader(CharBuffer buffer, Reader reader) {
-		this.reader = reader;
-		this.consumer = new StandardCsvCharConsumer(buffer);
-	}
-
 	public CsvReader(Reader reader, CsvCharConsumer charConsumer) {
 		this.reader = reader;
 		this.consumer = charConsumer;
-	}
-
-	public CsvReader(final int bufferSize, final Reader reader) {
-		this(new CharBuffer(bufferSize), reader);
 	}
 
 	/**
@@ -87,4 +82,68 @@ public final class CsvReader {
 		}
 		return cellConsumer;
 	}
+
+	public <RH extends RowHandler<String[]>> RH read(RH handler) throws IOException {
+		parseAll(new StringArrayConsumer<RH>(handler));
+		return handler;
+	}
+
+	public <RH extends RowHandler<String[]>> RH read(RH handler, int limit) throws IOException {
+		parseRows(new StringArrayConsumer<RH>(handler), limit);
+		return handler;
+	}
+
+	@Override
+	public Iterator<String[]> iterator() {
+		return new CsvStringArrayIterator(this);
+	}
+
+	//IFJAVA8_START
+	public Stream<String[]> stream() {
+		return StreamSupport.stream(new CsvStringArraySpliterator(this), false);
+	}
+
+	private static class CsvStringArraySpliterator implements Spliterator<String[]> {
+		private final CsvReader reader;
+
+		public CsvStringArraySpliterator(CsvReader csvReader) {
+			this.reader = csvReader;
+		}
+
+		@Override
+		public boolean tryAdvance(Consumer<? super String[]> action) {
+			try {
+				return reader.parseRow(new StringArrayConsumer<RowHandler<String[]>>((strings) -> action.accept(strings)));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override
+		public void forEachRemaining(Consumer<? super String[]> action) {
+			try {
+				reader.parseAll(new StringArrayConsumer<RowHandler<String[]>>((strings) -> action.accept(strings)));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override
+		public Spliterator<String[]> trySplit() {
+			return null;
+		}
+
+		@Override
+		public long estimateSize() {
+			return Long.MAX_VALUE;
+		}
+
+		@Override
+		public int characteristics() {
+			return Spliterator.ORDERED | Spliterator.NONNULL;
+		}
+	}
+
+	//IFJAVA8_END
+
 }

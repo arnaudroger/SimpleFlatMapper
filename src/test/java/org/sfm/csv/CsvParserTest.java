@@ -2,217 +2,227 @@ package org.sfm.csv;
 
 import static org.junit.Assert.*;
 
+import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
 import org.sfm.csv.parser.CellConsumer;
-import org.sfm.csv.parser.StringArrayConsumer;
 import org.sfm.utils.ListHandler;
-import org.sfm.utils.RowHandler;
 
 public class CsvParserTest {
 
+
+	private static String[][] SAMPLE_CSV_MIX_EXPECTATION =
+			{
+					{"cell1", "cell2", ""},
+					{"cell\r\"value\"", "val2"},
+					{"val3"},
+					{"val4"}
+			};
 	@Test
 	public void testReadCsvReaderLF() throws IOException {
-		testReadCsv(new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2\nval3\nval4"));
+		testCsvReader(SAMPLE_CSV_MIX_EXPECTATION, ',', '"', "\n");
 	}
+
 	@Test
 	public void testReadCsvReaderCR() throws IOException {
-		testReadCsv(new StringReader("cell1,cell2,\r\"cell\r\"\"value\"\"\",val2\rval3\rval4"));
+		testCsvReader(SAMPLE_CSV_MIX_EXPECTATION, ',', '"', "\r");
 	}
+
 	@Test
 	public void testReadCsvReaderCRLF() throws IOException {
-		testReadCsv(new StringReader("cell1,cell2,\r\n"
-				+ "\"cell\r\"\"value\"\"\",val2\r\n"
-				+ "val3\r\nval4"));
-	}
-	@Test
-	public void testReadCsvReaderMixed() throws IOException {
-		testReadCsv(new StringReader("cell1,cell2,\r"
-				+ "\"cell\r\"\"value\"\"\",val2\r"
-				+ "val3\nval4"));
+		testCsvReader(SAMPLE_CSV_MIX_EXPECTATION, ',', '"', "\r\n");
 	}
 
 	@Test
-	public void testReadCsvReadeTabs() throws IOException {
-		Reader reader = new StringReader("cell1\tcell2\t\r"
-				+ "'cell\r''value'''\tval2\r"
-				+ "val3\nval4");
-		validateParserOutputSC(CsvParser.separator('\t').quote('\'').bufferSize(8).parse(reader, new AccumulateCellConsumer()).css);
-
+	public void testReadCsvReaderTabs() throws IOException {
+		testCsvReader(SAMPLE_CSV_MIX_EXPECTATION, '\t', '"', "\n");
 	}
+
 	@Test
-	public void testReadCsvReaderIterator() throws IOException {
-		Reader reader = new StringReader("cell1\tcell2\t\r"
-				+ "'cell\r''value'''\tval2\r"
-				+ "val3\nval4");
-		Iterator<String[]>  iterate = CsvParser.separator('\t').quote('\'').bufferSize(8).iterate(reader);
-
-		String[] row = iterate.next();
-
-		assertEquals("cell1", row[0].toString());
-		assertEquals("cell2", row[1].toString());
-		assertEquals("", row[2].toString());
-
-		row = iterate.next();
-		assertEquals("cell\r\'value\'", row[0].toString());
-		assertEquals("val2", row[1].toString());
-
-		row = iterate.next();
-		assertEquals("val3", row[0].toString());
-
-
-		row = iterate.next();
-		assertEquals("val4", row[0].toString());
-
-
+	public void testDSLRootConfig() {
+		assertEquals(9, CsvParser.bufferSize(9).bufferSize());
+		assertEquals(3, CsvParser.limit(3).limit());
+		assertEquals(3, CsvParser.skip(3).skip());
+		assertEquals('-', CsvParser.separator('-').separator());
+		assertEquals(';', CsvParser.quote(';').quote());
 	}
 
-	private void testReadCsv(Reader sr) throws IOException {
-		final CharSequence[][] css =
-		CsvParser.bufferSize(8).parse(sr, new AccumulateCellConsumer()).css;
-		validateParserOutput(css);
-	}
-
-	private void validateParserOutput(CharSequence[][] css) {
-		assertEquals("cell1", css[0][0].toString());
-		assertEquals("cell2", css[0][1].toString());
-		assertEquals("", css[0][2].toString());
-		assertEquals("cell\r\"value\"", css[1][0].toString());
-		assertEquals("val2", css[1][1].toString());
-		assertNull(css[1][2]);
-		assertEquals("val3", css[2][0].toString());
-		assertEquals("val4", css[3][0].toString());
-	}
-	private void validateParserOutputSC(CharSequence[][] css) {
-		assertEquals("cell1", css[0][0].toString());
-		assertEquals("cell2", css[0][1].toString());
-		assertEquals("", css[0][2].toString());
-		assertEquals("cell\r'value'", css[1][0].toString());
-		assertEquals("val2", css[1][1].toString());
-		assertNull(css[1][2]);
-		assertEquals("val3", css[2][0].toString());
-		assertEquals("val4", css[3][0].toString());
-	}
 	@Test
-	public void testParseSkip() throws
-			IOException {
-		Reader sr = new StringReader("row1\nrow2\nrow3");
-		int nbRows = CsvParser.parse(sr,  StringArrayConsumer.newInstance(new RowHandler<String[]>() {
-			int i = 1;
-			@Override
-			public void handle(String[] strings) throws Exception {
-				assertEquals("row" + (i+1) , strings[0]);
-				i++;
+	public void testDSLRootAction() throws IOException {
+		Iterator<String[]> it = CsvParser.iterate(getOneRowReader());
+		assertTrue(it.hasNext());
+		assertArrayEquals(new String[]{"value"}, it.next());
+		assertFalse(it.hasNext());
+
+		assertArrayEquals(new String[][] {{"value"}} , CsvParser.parse(getOneRowReader(), new AccumulateCellConsumer()).allValues());
+
+	}
+
+	private Reader getOneRowReader() {
+		return new StringReader("value");
+	}
+
+	private void testCsvReader(String[][] expectations, char separator, char quote, String cr) throws IOException {
+		CsvParser.DSL dsl = CsvParser
+				.bufferSize(4)
+				.separator(separator)
+				.quote(quote);
+
+		// reader call
+		testParseAll(expectations, separator, quote, cr, dsl);
+
+		testSkipThenParseAll(expectations, separator, quote, cr, dsl);
+
+		testSkipThenParseRows(expectations, separator, quote, cr, dsl);
+
+		testSkipThenParseRow(expectations, separator, quote, cr, dsl);
+
+		// dsl call
+		testIterate(expectations, separator, quote, cr, dsl);
+
+		testSkipAndIterate(expectations, separator, quote, cr, dsl);
+
+		testReadRows(expectations, separator, quote, cr, dsl);
+
+		testReadRowsWithLimit(expectations, separator, quote, cr, dsl);
+
+		testParse(expectations, separator, quote, cr, dsl);
+
+		testParseWithLimit(expectations, separator, quote, cr, dsl);
+
+	}
+
+	private void testParse(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+		String[][] rows =
+				dsl.parse(createReader(expectations, separator, quote, cr), new AccumulateCellConsumer()).allValues();
+
+		assertArrayEquals(expectations, rows);
+	}
+
+
+
+	private void testParseWithLimit(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+
+		String[][] rows =
+				dsl.limit(1).parse(createReader(expectations, separator, quote, cr), new AccumulateCellConsumer()).allValues();
+
+		assertArrayEquals(toSubArray(expectations, 0, 1), rows);
+	}
+
+
+	private void testReadRows(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+		List<String[]> rows =
+				dsl.reader(createReader(expectations, separator, quote, cr)).read(new ListHandler<String[]>()).getList();
+
+		assertArrayEquals(expectations, rows.toArray(new String[0][]));
+	}
+
+
+
+	private void testReadRowsWithLimit(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+		List<String[]> rows =
+				dsl.reader(createReader(expectations, separator, quote, cr)).read(new ListHandler<String[]>(), 1).getList();
+
+		assertArrayEquals(toSubArray(expectations, 0, 1), rows.toArray(new String[0][]));
+	}
+
+	private void testIterate(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+
+		List<String[]> rows = new ArrayList<String[]>();
+		for(String[] row : dsl.reader(createReader(expectations, separator, quote, cr))) {
+			rows.add(row);
+		}
+
+		assertArrayEquals(expectations, rows.toArray(new String[0][]));
+	}
+
+	private void testSkipAndIterate(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+
+		List<String[]> rows = new ArrayList<String[]>();
+		for(String[] row : dsl.skip(1).reader(createReader(expectations, separator, quote, cr))) {
+			rows.add(row);
+		}
+
+		assertArrayEquals(toSubArray(expectations, 1), rows.toArray(new String[0][]));
+	}
+
+	private void testSkipThenParseRow(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+		AccumulateCellConsumer cellConsumer = new AccumulateCellConsumer();
+		dsl.skip(1).reader(createReader(expectations, separator, quote, cr)).parseRow(cellConsumer);
+
+		assertArrayEquals(toSubArray(expectations, 1, 1), cellConsumer.allValues());
+	}
+
+	private void testSkipThenParseRows(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+		String[][] cells;
+		cells = dsl.skip(1).reader(createReader(expectations, separator, quote, cr)).parseRows(new AccumulateCellConsumer(), 2).allValues();
+
+		assertArrayEquals(toSubArray(expectations, 1, 2), cells);
+	}
+
+	private void testSkipThenParseAll(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+		String[][] cells;
+		cells = dsl.skip(1).reader(createReader(expectations, separator, quote, cr)).parseAll(new AccumulateCellConsumer()).allValues();
+
+		assertArrayEquals(toSubArray(expectations, 1, expectations.length - 1), cells);
+	}
+
+	private String[][] toSubArray(String[][] expectations, int fromIndex) {
+		return toSubArray(expectations, fromIndex, expectations.length - fromIndex);
+	}
+	private String[][] toSubArray(String[][] expectations, int fromIndex, int length) {
+		return Arrays.asList(expectations).subList(fromIndex, fromIndex + length).toArray(new String[0][]);
+	}
+
+	private void testParseAll(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+		String[][] cells;
+		cells =
+				dsl.reader(createReader(expectations, separator, quote, cr)).parseAll(new AccumulateCellConsumer()).allValues();
+		assertArrayEquals(expectations, cells);
+	}
+
+	private Reader createReader(String[][] expectations, char separator, char quote, String cr) {
+		return new CharArrayReader(toCSV(expectations, separator, quote, cr).toString().toCharArray());
+	}
+
+	private CharSequence toCSV(String[][] cells, char separator, char quoteChar, String carriageReturn) {
+		StringBuilder sb = new StringBuilder();
+
+		for(int rowIndex = 0; rowIndex < cells.length; rowIndex++) {
+			String[] row = cells[rowIndex];
+
+			for (int colIndex = 0; colIndex < row.length; colIndex++) {
+				String cell = row[colIndex];
+				if (colIndex > 0) {
+					sb.append(separator);
+				}
+				if (cell.indexOf(quoteChar) != -1) {
+					sb.append(quoteChar);
+					for (int j = 0; j < cell.length(); j++) {
+						char c = cell.charAt(j);
+						if (c == quoteChar) {
+							sb.append(quoteChar);
+						}
+						sb.append(c);
+					}
+					sb.append(quoteChar);
+				} else {
+					sb.append(cell);
+				}
 			}
-		}), 1).handler().i;
+			sb.append(carriageReturn);
 
-		assertEquals(3, nbRows);
+		}
+
+		return sb;
 	}
-
-	@Test
-	public void testParseSkipLimit() throws
-			IOException {
-		Reader sr = new StringReader("row1\nrow2\nrow3");
-		int nbRows = CsvParser.parse(sr,  StringArrayConsumer.newInstance(new RowHandler<String[]>() {
-			int i = 1;
-			@Override
-			public void handle(String[] strings) throws Exception {
-				assertEquals("row" + (i+1) , strings[0]);
-				i++;
-			}
-		}), 1, 1).handler().i;
-
-		assertEquals(2, nbRows);
-	}
-
-	@Test
-	public void testReadRowsCsvReader() throws IOException {
-		Reader sr = new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2");
-		List<String[]> list = CsvParser.readRows(sr, new ListHandler<String[]>()).getList();
-		assertEquals("cell1", list.get(0)[0]);
-		assertEquals("cell2", list.get(0)[1]);
-		assertEquals("", list.get(0)[2]);
-		assertEquals("cell\r\"value\"", list.get(1)[0]);
-		assertEquals("val2", list.get(1)[1]);
-
-	}
-
-	@Test
-	public void testReadRowsSkip() throws IOException {
-		Reader sr = new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2");
-		List<String[]> list = CsvParser.readRows(sr, new ListHandler<String[]>(), 1).getList();
-		assertEquals("cell\r\"value\"", list.get(0)[0]);
-		assertEquals("val2", list.get(0)[1]);
-	}
-
-	@Test
-	public void testReadRowsSkipLimit() throws IOException {
-		Reader sr = new StringReader("cell1,cell2,\n\"cell\r\"\"value\"\"\",val2");
-		List<String[]> list = CsvParser.readRows(sr, new ListHandler<String[]>(), 1, 1).getList();
-		assertEquals("cell\r\"value\"", list.get(0)[0]);
-		assertEquals("val2", list.get(0)[1]);
-	}
-
-	@Test
-	public void testIterateRows() throws
-			IOException {
-		Reader sr = new StringReader("row1\nrow2\nrow3");
-		Iterator<String[]> it = CsvParser.iterateRows(sr);
-
-	 	assertArrayEquals(new String[] {"row1"}, it.next());
-		assertTrue(it.hasNext());
-		assertArrayEquals(new String[]{"row2"}, it.next());
-		assertTrue(it.hasNext());
-		assertArrayEquals(new String[] {"row3"}, it.next());
-		assertFalse(it.hasNext());
-	}
-
-	@Test
-	public void testIterateRowsCRLF() throws
-			IOException {
-		Reader sr = new StringReader("row1\r\nrow2\r\nrow3");
-		Iterator<String[]> it = CsvParser.iterateRows(sr);
-
-		assertArrayEquals(new String[] {"row1"}, it.next());
-		assertTrue(it.hasNext());
-		assertArrayEquals(new String[]{"row2"}, it.next());
-		assertTrue(it.hasNext());
-		assertArrayEquals(new String[] {"row3"}, it.next());
-		assertFalse(it.hasNext());
-	}
-
-	@Test
-	public void testIterateRowsCR() throws
-			IOException {
-		Reader sr = new StringReader("row1\rrow2\rrow3");
-		Iterator<String[]> it = CsvParser.iterateRows(sr);
-
-		assertArrayEquals(new String[] {"row1"}, it.next());
-		assertTrue(it.hasNext());
-		assertArrayEquals(new String[]{"row2"}, it.next());
-		assertTrue(it.hasNext());
-		assertArrayEquals(new String[] {"row3"}, it.next());
-		assertFalse(it.hasNext());
-	}
-
-
-	@Test
-	public void testIterateRowsSkip() throws
-			IOException {
-		Reader sr = new StringReader("row1\nrow2\nrow3");
-		Iterator<String[]> it = CsvParser.iterateRows(sr, 1);
-
-		assertArrayEquals(new String[]{"row2"}, it.next());
-		assertTrue(it.hasNext());
-		assertArrayEquals(new String[] {"row3"}, it.next());
-		assertFalse(it.hasNext());
-	}
-
 
 	int i = 0;
 
@@ -231,7 +241,7 @@ public class CsvParserTest {
 			IOException {
 		Reader sr = new StringReader("row1\nrow2\nrow3");
 		i = 1;
-		CsvParser.stream(sr, 1).forEach(strings -> assertArrayEquals(new String[] {"row" + ++i}, strings));
+		CsvParser.skip(1).stream(sr).forEach(strings -> assertArrayEquals(new String[]{"row" + ++i}, strings));
 		assertEquals(3, i);
 	}
 
@@ -240,32 +250,39 @@ public class CsvParserTest {
 			IOException {
 		Reader sr = new StringReader("row1\nrow2\nrow3");
 		i = 1;
-		CsvParser.stream(sr, 1).limit(1).forEach(strings -> assertArrayEquals(new String[]{"row" + ++i}, strings));
+		CsvParser.skip(1).stream(sr).limit(1).forEach(strings -> assertArrayEquals(new String[]{"row" + ++i}, strings));
 		assertEquals(2, i);
 	}
+
 
 
 	//IFJAVA8_END
 
 	private static class AccumulateCellConsumer implements CellConsumer {
-		final CharSequence[][] css = new CharSequence[4][3];
-		int row = 0, col = 0;
+		final List<String[]> rows = new ArrayList<String[]>();
+		final List<String> currentRow = new ArrayList<String>();
 
 		@Override
 		public void newCell(char[] chars, int offset, int length) {
-			String value = new String(chars, offset, length);
-			System.out.println("X'" + value + "'X");
-			css[row][col++] = value;
+			currentRow.add(new String(chars, offset, length));
 		}
 
 		@Override
 		public void endOfRow() {
-			row++;
-			col = 0;
+			rows.add(currentRow.toArray(new String[0]));
+			currentRow.clear();
 		}
 
 		@Override
 		public void end() {
+			if (!currentRow.isEmpty()) {
+				rows.add(currentRow.toArray(new String[0]));
+			}
+			currentRow.clear();
+		}
+
+		public String[][] allValues() {
+			return rows.toArray(new String[0][]);
 		}
 	}
 

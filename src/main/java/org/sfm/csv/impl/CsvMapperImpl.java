@@ -52,8 +52,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
 	@Override
 	public final <H extends RowHandler<T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
-		CsvParser.parse(reader, newCellConsumer(handler));
-		return handler;
+		return forEach(CsvParser.reader(reader), handler);
 	}
 
 	@Override
@@ -64,34 +63,23 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
 	@Override
 	public final <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int skip) throws IOException, MappingException {
-		CsvParser.parse(reader, newCellConsumer(handler), skip);
-		return handler;
-	}
-
-	@Override
-	public <H extends RowHandler<T>> H forEach(CsvReader reader, H handle, int skip) throws IOException, MappingException {
-		reader.skipRows(skip);
-		reader.parseAll(newCellConsumer(handle));
-		return handle;
+		return forEach(CsvParser.skip(skip).reader(reader), handler);
 	}
 
 	@Override
 	public final <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int skip, final int limit) throws IOException, MappingException {
-		CsvParser.parse(reader, newCellConsumer(handler), skip, limit);
-		return handler;
+		return forEach(CsvParser.skip(skip).reader(reader), handler, limit);
 	}
 
 	@Override
-	public <H extends RowHandler<T>> H forEach(CsvReader reader, H handle, int skip, int limit) throws IOException, MappingException {
-		reader.skipRows(skip);
+	public <H extends RowHandler<T>> H forEach(CsvReader reader, H handle, int limit) throws IOException, MappingException {
 		reader.parseRows(newCellConsumer(handle), limit);
 		return handle;
 	}
 
 	@Override
-	public Iterator<T> iterate(Reader reader) {
-		CsvReader csvReader = CsvParser.newCsvReader(reader);
-		return iterate(csvReader);
+	public Iterator<T> iterate(Reader reader) throws IOException {
+		return iterate(CsvParser.reader(reader));
 	}
 
 	@Override
@@ -101,21 +89,13 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
 	@Override
 	public Iterator<T> iterate(Reader reader, int skip) throws IOException {
-		CsvReader csvReader = CsvParser.newCsvReader(reader);
-		return iterate(csvReader, skip);
-	}
-
-	@Override
-	public Iterator<T> iterate(CsvReader csvReader, int skip) throws IOException {
-		csvReader.skipRows(skip);
-		return new CsvMapperIterator<T>(csvReader, this);
+		return iterate(CsvParser.skip(skip).reader(reader));
 	}
 
 	//IFJAVA8_START
 	@Override
-	public Stream<T> stream(Reader reader) {
-		CsvReader csvReader = CsvParser.newCsvReader(reader);
-		return stream(csvReader);
+	public Stream<T> stream(Reader reader) throws IOException {
+		return stream(CsvParser.reader(reader));
 	}
 
 	@Override
@@ -125,14 +105,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
 	@Override
 	public Stream<T> stream(Reader reader, int skip) throws IOException {
-		CsvReader csvReader = CsvParser.newCsvReader(reader);
-		return stream(csvReader, skip);
-	}
-
-	@Override
-	public Stream<T> stream(CsvReader csvReader, int skip) throws IOException {
-		csvReader.skipRows(skip);
-		return StreamSupport.stream(new CsvSpliterator(csvReader), false);
+		return stream(CsvParser.skip(skip).reader(reader));
 	}
 
 	public class CsvSpliterator implements Spliterator<T> {

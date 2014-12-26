@@ -4,6 +4,7 @@ import org.sfm.csv.parser.*;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.util.Iterator;
 
 //IFJAVA8_START
@@ -39,6 +40,10 @@ public final class CsvParser {
 
 	public static DSL limit(int limit) {
 		return schema().limit(limit);
+	}
+
+	public static <T> MapToDSL<T> mapTo(Type type) {
+		return schema().mapTo(type);
 	}
 
 	/**
@@ -165,6 +170,10 @@ public final class CsvParser {
             return reader(reader).iterator();
         }
 
+		public <T> MapToDSL<T> mapTo(Type target) {
+			return new MapToDSL<T>(this, target);
+		}
+
         //IFJAVA8_START
         public Stream<String[]> stream(Reader reader) throws IOException {
 			return reader(reader).stream();
@@ -201,6 +210,25 @@ public final class CsvParser {
 
 		public char quote() {
 			return quoteChar;
+		}
+	}
+
+
+	public static final class MapToDSL<T> {
+		private final DSL dsl;
+		private final Type mapToClass;
+
+		public MapToDSL(DSL dsl, Type mapToClass) {
+			this.dsl = dsl;
+			this.mapToClass = mapToClass;
+		}
+
+		public Iterator<T> iterate(Reader reader) throws IOException {
+			return CsvMapperFactory.newInstance().<T>newMapper(mapToClass).iterate(dsl.reader(reader));
+		}
+
+		public Stream<T> stream(Reader reader) throws IOException {
+			return CsvMapperFactory.newInstance().<T>newMapper(mapToClass).stream(dsl.reader(reader));
 		}
 	}
 }

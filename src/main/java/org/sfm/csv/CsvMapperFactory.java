@@ -1,5 +1,6 @@
 package org.sfm.csv;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
 import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
 import org.sfm.osgi.BridgeClassLoader;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.AsmHelper;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
@@ -99,7 +101,7 @@ public final class CsvMapperFactory {
 	 * @return a jdbc mapper that will map to the targeted class.
 	 * @throws MapperBuildingException
 	 */
-	public <T> CsvMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
+	public <T> CsvMapper<T> newMapper(final Type target) throws MapperBuildingException {
 		return new DynamicCsvMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, defaultDateFormat, aliases, customReaders, propertyNameMatcherFactory);
 	}
 
@@ -120,11 +122,11 @@ public final class CsvMapperFactory {
 
 
 	
-	private ReflectionService reflectionService(Class<?> target) {
+	private ReflectionService reflectionService(Type target) {
 		AsmFactory asmFactory = null;
 		if (AsmHelper.isAsmPresent() && !disableAsm) {
 			if (useBridgeClassLoader) {
-				asmFactory = new AsmFactory(new BridgeClassLoader(getClass().getClassLoader(), target.getClassLoader()));
+				asmFactory = new AsmFactory(new BridgeClassLoader(getClass().getClassLoader(), TypeHelper.toClass(target).getClassLoader()));
 			} else {
 				asmFactory = _asmFactory;
 			}

@@ -14,6 +14,7 @@ import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Map;
 //IFJAVA8_START
@@ -24,7 +25,7 @@ import java.util.stream.StreamSupport;
 public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	
 	private final ClassMeta<T> classMeta;
-	private final Class<T> target;
+	private final Type target;
 
 	private final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler;
 
@@ -37,7 +38,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	private final Map<String, String> aliases;
 	private final Map<String, CellValueReader<?>> customReaders;
 
-	public DynamicCsvMapper(final Class<T> target, final ReflectionService reflectionService,
+	public DynamicCsvMapper(final Type target, final ReflectionService reflectionService,
 							final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler,
 							final MapperBuilderErrorHandler mapperBuilderErrorHandler, String defaultDateFormat,
 							Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders, PropertyNameMatcherFactory propertyNameMatcherFactory) {

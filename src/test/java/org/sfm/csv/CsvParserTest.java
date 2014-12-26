@@ -13,6 +13,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.sfm.csv.parser.CellConsumer;
+import org.sfm.tuples.Tuple2;
+import org.sfm.tuples.Tuples;
 import org.sfm.utils.ListHandler;
 
 public class CsvParserTest {
@@ -63,6 +65,17 @@ public class CsvParserTest {
 
 		assertArrayEquals(new String[][] {{"value"}} , CsvParser.parse(getOneRowReader(), new AccumulateCellConsumer()).allValues());
 
+	}
+
+	@Test
+	public void testDSLWithMapper() throws IOException {
+		Iterator<Tuple2<String, String>> iterate =  CsvParser.<Tuple2<String, String>>mapTo(Tuples.typeDef(String.class, String.class)).iterate(new StringReader("val0,val1\nvalue1,value2"));
+
+		assertTrue(iterate.hasNext());
+		Tuple2<String, String> tuple2 = iterate.next();
+		assertEquals("value1", tuple2.first());
+		assertEquals("value2", tuple2.second());
+		assertFalse(iterate.hasNext());
 	}
 
 	private Reader getOneRowReader() {

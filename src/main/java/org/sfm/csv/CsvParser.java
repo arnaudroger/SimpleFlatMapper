@@ -46,6 +46,10 @@ public final class CsvParser {
 		return schema().mapTo(type);
 	}
 
+	public static <T> MapToDSL<T> mapTo(Class<T> type) {
+		return mapTo((Type)type);
+	}
+
 	/**
 	 * @param reader the reader
 	 * @return a csv reader based on the default setup.
@@ -174,6 +178,10 @@ public final class CsvParser {
 			return new MapToDSL<T>(this, target);
 		}
 
+		public <T> MapToDSL<T> mapTo(Class<T> target) {
+			return mapTo((Type)target);
+		}
+
         //IFJAVA8_START
         public Stream<String[]> stream(Reader reader) throws IOException {
 			return reader(reader).stream();
@@ -227,8 +235,10 @@ public final class CsvParser {
 			return CsvMapperFactory.newInstance().<T>newMapper(mapToClass).iterate(dsl.reader(reader));
 		}
 
+		//IFJAVA8_START
 		public Stream<T> stream(Reader reader) throws IOException {
 			return CsvMapperFactory.newInstance().<T>newMapper(mapToClass).stream(dsl.reader(reader));
 		}
+		//IFJAVA8_END
 	}
 }

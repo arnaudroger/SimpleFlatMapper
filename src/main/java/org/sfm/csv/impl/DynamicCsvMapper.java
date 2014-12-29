@@ -5,8 +5,7 @@ import org.sfm.csv.CsvReader;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
-import org.sfm.map.impl.ColumnsMapperKey;
-import org.sfm.map.impl.MapperCache;
+import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
@@ -15,6 +14,7 @@ import org.sfm.utils.RowHandler;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 //IFJAVA8_START
@@ -51,6 +51,11 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		this.aliases = aliases;
 		this.customReaders = customReaders;
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
+	}
+
+	public DynamicCsvMapper(Type target, ClassMeta<T> classMeta) {
+		this(target, classMeta, new RethrowFieldMapperErrorHandler<CsvColumnKey>(), new RethrowMapperBuilderErrorHandler(), "yyyy-MM-dd HH:mm:ss",
+				new HashMap<String, String>(), new HashMap<String, CellValueReader<?>>(), new DefaultPropertyNameMatcherFactory());
 	}
 
 	@Override

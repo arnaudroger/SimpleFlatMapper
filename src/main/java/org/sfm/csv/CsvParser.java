@@ -1,6 +1,9 @@
 package org.sfm.csv;
 
+import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.csv.parser.*;
+import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.meta.ClassMeta;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -224,20 +227,21 @@ public final class CsvParser {
 
 	public static final class MapToDSL<T> {
 		private final DSL dsl;
-		private final Type mapToClass;
+		private final DynamicCsvMapper<T> mapper;
 
 		public MapToDSL(DSL dsl, Type mapToClass) {
 			this.dsl = dsl;
-			this.mapToClass = mapToClass;
+			ClassMeta<T> tClassMeta = ReflectionService.classMeta(mapToClass);
+			this.mapper = new DynamicCsvMapper<T>(mapToClass, tClassMeta);
 		}
 
 		public Iterator<T> iterate(Reader reader) throws IOException {
-			return CsvMapperFactory.newInstance().<T>newMapper(mapToClass).iterate(dsl.reader(reader));
+			return mapper.iterate(dsl.reader(reader));
 		}
 
 		//IFJAVA8_START
 		public Stream<T> stream(Reader reader) throws IOException {
-			return CsvMapperFactory.newInstance().<T>newMapper(mapToClass).stream(dsl.reader(reader));
+			return mapper.stream(dsl.reader(reader));
 		}
 		//IFJAVA8_END
 	}

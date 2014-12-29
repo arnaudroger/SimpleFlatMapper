@@ -227,12 +227,34 @@ public final class CsvParser {
 
 	public static final class MapToDSL<T> {
 		private final DSL dsl;
-		private final DynamicCsvMapper<T> mapper;
+		private final CsvMapper<T> mapper;
+		private final ClassMeta<T> classMeta;
+		private final Type mapToClass;
 
 		public MapToDSL(DSL dsl, Type mapToClass) {
 			this.dsl = dsl;
-			ClassMeta<T> tClassMeta = ReflectionService.classMeta(mapToClass);
-			this.mapper = new DynamicCsvMapper<T>(mapToClass, tClassMeta);
+			this.mapToClass = mapToClass;
+			this.classMeta = ReflectionService.classMeta(mapToClass);
+			this.mapper = new DynamicCsvMapper<T>(mapToClass, classMeta);
+		}
+
+		public MapToDSL(DSL dsl, ClassMeta<T> classMeta, Type mapToClass, String[] headers) {
+			this.dsl = dsl;
+			this.classMeta = classMeta;
+			this.mapper = newStaticMapper(classMeta, headers);
+			this.mapToClass = mapToClass;
+		}
+
+		private CsvMapper<T> newStaticMapper(ClassMeta<T> classMeta, String[] headers) {
+			CsvMapperBuilder builder = new CsvMapperBuilder(mapToClass, classMeta);
+			for(String header : headers) {
+				builder.addMapping(header);
+			}
+			return builder.mapper();
+		}
+
+		public MapToDSL<T> headers(String... headers) {
+			return new MapToDSL<T>(dsl, classMeta, mapToClass, headers);
 		}
 
 		public Iterator<T> iterate(Reader reader) throws IOException {

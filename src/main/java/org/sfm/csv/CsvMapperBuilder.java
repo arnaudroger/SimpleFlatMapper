@@ -64,11 +64,15 @@ public class CsvMapperBuilder<T> {
 	}
 	
 	public CsvMapperBuilder(final Type target, ReflectionService reflectionService) {
-		this(target, (ClassMeta<T>)reflectionService.getClassMeta(target),
-				new HashMap<String, String>(), 
+		this(target, (ClassMeta<T>)reflectionService.getClassMeta(target));
+	}
+
+	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta) {
+		this(target, classMeta,
+				new HashMap<String, String>(),
 				new HashMap<String, CellValueReader<?>>(), new DefaultPropertyNameMatcherFactory());
-	}	
-	
+	}
+
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta,
 			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
 		this.target = target;

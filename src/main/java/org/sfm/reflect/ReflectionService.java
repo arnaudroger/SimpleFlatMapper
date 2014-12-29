@@ -15,6 +15,7 @@ import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuples;
 
 public class ReflectionService {
+
 	private final SetterFactory setterFactory;
 	private final InstantiatorFactory instantiatorFactory;
 	private final AsmFactory asmFactory;
@@ -23,27 +24,6 @@ public class ReflectionService {
 	private final boolean asmPresent;
 	private final boolean asmActivated;
 
-	public ReflectionService() {
-		this(AsmHelper.isAsmPresent());
-
-	}
-	public ReflectionService(final boolean asmActivated) {
-		this(AsmHelper.isAsmPresent(), asmActivated);
-	}
-	
-	public ReflectionService(final boolean asmPresent, final boolean asmActivated) {
-		this.asmPresent = asmPresent;
-		this.asmActivated = asmActivated && asmPresent;
-		if (asmActivated) {
-			asmFactory = new AsmFactory();
-		} else {
-			asmFactory = null;
-		}
-		this.setterFactory = new SetterFactory(asmFactory);
-		this.instantiatorFactory = new InstantiatorFactory(asmFactory);
-		this.aliasProvider = AliasProviderFactory.getAliasProvider();
-	}
-	
 	public ReflectionService(final boolean asmPresent, final boolean asmActivated, final AsmFactory asmFactory) {
 		this.asmPresent = asmPresent;
 		this.asmActivated = asmActivated && asmPresent;
@@ -105,9 +85,40 @@ public class ReflectionService {
 		if (isAsmPresent()) {
 			list = AsmConstructorDefinitionFactory.extractConstructors(target);
 		} else {
-			list = ReflectionConstructorDefinitionFactory.extractConstructors(target);;
+			list = ReflectionConstructorDefinitionFactory.extractConstructors(target);
 		}
 		return list;
+	}
+
+	public static ReflectionService newInstance() {
+		return newInstance(false, true);
+	}
+
+	private static AsmFactory _asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader());
+
+	public static ReflectionService newInstance(boolean disableAsm, boolean useAsmGeneration) {
+		boolean asmPresent = AsmHelper.isAsmPresent() && !disableAsm;
+		boolean hasClassLoaderIncapacity = cannotSeeSetterFromContextClassLoader();
+
+		if (hasClassLoaderIncapacity) {
+			useAsmGeneration = false;
+		}
+
+		return new ReflectionService(asmPresent, useAsmGeneration, asmPresent && useAsmGeneration ? _asmFactory  : null);
+	}
+
+	private static boolean cannotSeeSetterFromContextClassLoader() {
+		try {
+			Class.forName(Setter.class.getName(), false, Thread.currentThread().getContextClassLoader());
+		} catch(Exception e) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static <T> ClassMeta<T> classMeta(Type target) {
+		return newInstance().getClassMeta(target);
 	}
 }
  

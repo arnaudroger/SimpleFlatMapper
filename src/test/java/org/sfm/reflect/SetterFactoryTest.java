@@ -32,11 +32,11 @@ import org.sfm.reflect.primitive.ShortMethodSetter;
 public class SetterFactoryTest {
 	
 	SetterFactory nonAsmfactory = new SetterFactory(null);
-	SetterFactory asmfactory = new SetterFactory(new AsmFactory());
+	SetterFactory asmfactory = new SetterFactory(new AsmFactory(Thread.currentThread().getContextClassLoader()));
 
 	@Test
 	public void testFailFallBackToMethod() throws Exception {
-		Setter<Foo, String> setter = new SetterFactory(new AsmFactory(){
+		Setter<Foo, String> setter = new SetterFactory(new AsmFactory(Thread.currentThread().getContextClassLoader()){
 			@Override
 			public <T, P> Setter<T, P> createSetter(Method m) throws Exception {
 				throw new UnsupportedOperationException();

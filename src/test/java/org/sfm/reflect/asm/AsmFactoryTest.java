@@ -25,13 +25,13 @@ import org.sfm.reflect.Instantiator;
 
 public class AsmFactoryTest {
 
-	static AsmFactory asmFactory = new AsmFactory();
+	static AsmFactory asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader());
 	
 	@Test
 	public void testCreateInstatiatorEmptyConstructor() throws Exception {
 		Instantiator<ResultSet, DbObject> instantiator = asmFactory.createEmptyArgsInstatiantor(ResultSet.class, DbObject.class);
 		assertNotNull(instantiator.newInstance(null));
-		assertSame(instantiator, asmFactory.createEmptyArgsInstatiantor(ResultSet.class, DbObject.class));
+		assertSame(instantiator.getClass(), asmFactory.createEmptyArgsInstatiantor(ResultSet.class, DbObject.class).getClass());
 	}
 	@SuppressWarnings("serial")
 	@Test
@@ -62,7 +62,7 @@ public class AsmFactoryTest {
 		assertEquals(33l, fdo.getId());
 		assertEquals("fdo", fdo.getName());
 		
-		assertSame(instantiator, asmFactory.createInstatiantor(ResultSet.class,
+		assertSame(instantiator.getClass(), asmFactory.createInstatiantor(ResultSet.class,
 				constructorDefinition,
 				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
@@ -70,7 +70,7 @@ public class AsmFactoryTest {
 						put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
 					}
 				}
-				));
+				).getClass());
 	}
 	
 	@Test

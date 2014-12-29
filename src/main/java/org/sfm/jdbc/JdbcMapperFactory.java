@@ -1,11 +1,5 @@
 package org.sfm.jdbc;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.sfm.jdbc.impl.DynamicJdbcMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
@@ -15,15 +9,19 @@ import org.sfm.map.impl.DefaultPropertyNameMatcherFactory;
 import org.sfm.map.impl.FieldMapper;
 import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
-import org.sfm.osgi.BridgeClassLoader;
 import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.asm.AsmFactory;
-import org.sfm.reflect.asm.AsmHelper;
+import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 
+import java.lang.reflect.Type;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+
 public final class JdbcMapperFactory {
-	
-	private static final AsmFactory _asmFactory = AsmHelper.isAsmPresent() ? new AsmFactory() : null;
 	
 	/**
 	 * instantiate a new JdbcMapperFactory
@@ -44,15 +42,8 @@ public final class JdbcMapperFactory {
 	private boolean useAsm = true;
 	private boolean disableAsm = false;
 	
-	private final boolean useBridgeClassLoader;
-	
-	
-	public JdbcMapperFactory(boolean useBridgeClassLoader) {
-		this.useBridgeClassLoader = useBridgeClassLoader;
-	}
-	
+
 	public JdbcMapperFactory() {
-		this(false);
 	}
 	
 	/**
@@ -118,7 +109,7 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapperBuilder<T> newBuilder(final Class<T> target) {
-		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, reflectionService(target), aliases, customMappings, propertyNameMatcherFactory);
+		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, getClassMeta(target), aliases, customMappings, propertyNameMatcherFactory);
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
@@ -133,22 +124,10 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
-		return new DynamicJdbcMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, aliases, customMappings, propertyNameMatcherFactory);
+		return new DynamicJdbcMapper<T>(target, getClassMeta(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, aliases, customMappings, propertyNameMatcherFactory);
 	}
 
 	
-	private ReflectionService reflectionService(Class<?> target) {
-		AsmFactory asmFactory = null;
-		if (AsmHelper.isAsmPresent() && !disableAsm) {
-			if (useBridgeClassLoader) {
-				asmFactory = new AsmFactory(new BridgeClassLoader(getClass().getClassLoader(), target.getClassLoader()));
-			} else {
-				asmFactory = _asmFactory;
-			}
-		}
-		return new ReflectionService(AsmHelper.isAsmPresent() && !disableAsm, useAsm, asmFactory);
-	}
-
 	/**
 	 * 
 	 * @param key
@@ -175,5 +154,9 @@ public final class JdbcMapperFactory {
 	public JdbcMapperFactory propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		return this;
+	}
+
+	private <T> ClassMeta<T> getClassMeta(Type target) {
+		return ReflectionService.newInstance(disableAsm, useAsm).getClassMeta(target);
 	}
 }

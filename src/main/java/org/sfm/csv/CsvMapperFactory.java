@@ -1,9 +1,5 @@
 package org.sfm.csv;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
@@ -11,17 +7,17 @@ import org.sfm.map.MapperBuildingException;
 import org.sfm.map.impl.DefaultPropertyNameMatcherFactory;
 import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
 import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
-import org.sfm.osgi.BridgeClassLoader;
 import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.TypeHelper;
-import org.sfm.reflect.asm.AsmFactory;
-import org.sfm.reflect.asm.AsmHelper;
+import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class CsvMapperFactory {
 	
-	private static final AsmFactory _asmFactory = AsmHelper.isAsmPresent() ? new AsmFactory() : null;
-	
+
 	/**
 	 * instantiate a new JdbcMapperFactory
 	 * @return a new JdbcMapperFactory
@@ -39,20 +35,14 @@ public final class CsvMapperFactory {
 	private boolean useAsm = true;
 	private boolean disableAsm = false;
 	
-	private final boolean useBridgeClassLoader;
-
 	private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
 	
 	private String defaultDateFormat = "yyyy-MM-dd HH:mm:ss";
 	
-	public CsvMapperFactory(boolean useBridgeClassLoader) {
-		this.useBridgeClassLoader = useBridgeClassLoader;
-	}
-	
+
 	public CsvMapperFactory() {
-		this(false);
 	}
-	
+
 	/**
 	 * 
 	 * @param fieldMapperErrorHandler 
@@ -102,10 +92,17 @@ public final class CsvMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> CsvMapper<T> newMapper(final Type target) throws MapperBuildingException {
-		return new DynamicCsvMapper<T>(target, reflectionService(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, defaultDateFormat, aliases, customReaders, propertyNameMatcherFactory);
+		return new DynamicCsvMapper<T>(target,
+				getClassMeta(target),
+				fieldMapperErrorHandler, mapperBuilderErrorHandler,
+				defaultDateFormat, aliases, customReaders, propertyNameMatcherFactory);
 	}
 
-	
+	private <T> ClassMeta<T> getClassMeta(Type target) {
+		return ReflectionService.newInstance(disableAsm, useAsm).getClassMeta(target);
+	}
+
+
 	/**
 	 * Will create a instance of ResultSetMapperBuilder 
 	 * @param target the target class of the mapper
@@ -113,7 +110,7 @@ public final class CsvMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> CsvMapperBuilder<T> newBuilder(final Class<T> target) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, reflectionService(target), aliases, customReaders, propertyNameMatcherFactory);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, getClassMeta(target), aliases, customReaders, propertyNameMatcherFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);
@@ -121,19 +118,6 @@ public final class CsvMapperFactory {
 	}
 
 
-	
-	private ReflectionService reflectionService(Type target) {
-		AsmFactory asmFactory = null;
-		if (AsmHelper.isAsmPresent() && !disableAsm) {
-			if (useBridgeClassLoader) {
-				asmFactory = new AsmFactory(new BridgeClassLoader(getClass().getClassLoader(), TypeHelper.toClass(target).getClassLoader()));
-			} else {
-				asmFactory = _asmFactory;
-			}
-		}
-		return new ReflectionService(AsmHelper.isAsmPresent() && !disableAsm, useAsm, asmFactory);
-	}
-	
 	public CsvMapperFactory addAlias(String key, String value) {
 		aliases.put(key.toUpperCase(), value.toUpperCase());
 		return this;

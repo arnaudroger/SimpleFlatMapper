@@ -60,20 +60,14 @@ public class CsvMapperBuilder<T> {
 	private String defaultDateFormat = "yyyy-MM-dd HH:mm:ss";
 
 	public CsvMapperBuilder(final Type target) {
-		this(target, new ReflectionService());
+		this(target, ReflectionService.newInstance());
 	}
 	
 	public CsvMapperBuilder(final Type target, ReflectionService reflectionService) {
-		this(target, reflectionService,
+		this(target, reflectionService.getClassMeta(target),
 				new HashMap<String, String>(), 
 				new HashMap<String, CellValueReader<?>>(), new DefaultPropertyNameMatcherFactory());
 	}	
-	
-	@SuppressWarnings("unchecked")
-	public CsvMapperBuilder(final Type target, ReflectionService reflectionService,
-			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
-		this(target, (ClassMeta<T>) reflectionService.getClassMeta(target), aliases, customReaders, propertyNameMatcherFactory);
-	}
 	
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta,
 			Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {

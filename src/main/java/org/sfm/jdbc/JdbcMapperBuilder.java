@@ -25,7 +25,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	private RowHandlerErrorHandler jdbcMapperErrorHandler = new RethrowRowHandlerErrorHandler();
 
 	public JdbcMapperBuilder(final Type target) throws MapperBuildingException {
-		this(target, new ReflectionService());
+		this(target, ReflectionService.newInstance());
 	}
 	public JdbcMapperBuilder(final Type target, ReflectionService reflectService) throws MapperBuildingException {
 		this(target, reflectService, null, null, new DefaultPropertyNameMatcherFactory());

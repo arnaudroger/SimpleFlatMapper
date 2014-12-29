@@ -77,7 +77,7 @@ public class JdbcMapperDbObjectTest {
 	@Test
 	public void testDbObjectMapperWithIteratorNoAsm()
 			throws SQLException, Exception, ParseException {
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService(false, false));
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, ReflectionService.newInstance(true, false));
 
 		testMapperBuilderWithIterator(builder);
 	}
@@ -126,7 +126,7 @@ public class JdbcMapperDbObjectTest {
 	@Test
 	public void testDbObjectMapperWithStreamNoAsm()
 			throws SQLException, Exception, ParseException {
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService(false, false));
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, ReflectionService.newInstance(true, false));
 		addColumn(builder);
 		final JdbcMapper<DbObject> mapper = builder.mapper();
 
@@ -172,7 +172,7 @@ public class JdbcMapperDbObjectTest {
 	@Test
 	public void testDbObjectMapperWithStreamTryAdvanceNoAsm()
 			throws SQLException, Exception, ParseException {
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService(false, false));
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, ReflectionService.newInstance(true, false));
 		addColumn(builder);
 		final JdbcMapper<DbObject> mapper = builder.mapper();
 

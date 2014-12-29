@@ -29,7 +29,7 @@ public class JdbcMapperListTest {
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
 			final JdbcMapper< DbFinalListObject> mapper = new JdbcMapperBuilder<DbFinalListObject>(
-					DbFinalListObject.class, new ReflectionService(true, asm))
+					DbFinalListObject.class, ReflectionService.newInstance(false, asm))
 					.addMapping(rs.getMetaData()).mapper();
 
 			rs.next();
@@ -58,7 +58,7 @@ public class JdbcMapperListTest {
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
 			final JdbcMapper<DbListObject> mapper =  
-					new JdbcMapperBuilder<DbListObject>(DbListObject.class, new ReflectionService(true, asm))
+					new JdbcMapperBuilder<DbListObject>(DbListObject.class, ReflectionService.newInstance(false, asm))
 						.addMapping(rs.getMetaData())
 						.mapper();
 			
@@ -88,8 +88,8 @@ public class JdbcMapperListTest {
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
 			final JdbcMapper<List<DbObject>> mapper =  
-					new JdbcMapperBuilder<List<DbObject>>(getClass().getDeclaredField("list").getGenericType(), 
-							new ReflectionService(true, asm))
+					new JdbcMapperBuilder<List<DbObject>>(getClass().getDeclaredField("list").getGenericType(),
+							ReflectionService.newInstance(false, asm))
 						.addMapping(rs.getMetaData())
 						.mapper();
 			
@@ -117,7 +117,7 @@ public class JdbcMapperListTest {
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
 			final JdbcMapper<DbListOfString> mapper = new JdbcMapperBuilder<DbListOfString>(
-					DbListOfString.class, new ReflectionService(true, asm))
+					DbListOfString.class, ReflectionService.newInstance(false, asm))
 					.addMapping(rs.getMetaData()).mapper();
 
 			rs.next();

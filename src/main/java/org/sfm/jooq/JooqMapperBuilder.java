@@ -16,7 +16,7 @@ public class JooqMapperBuilder<R extends Record, E> extends
 		AbstractFieldMapperMapperBuilder<R, E, JooqFieldKey> {
 
 	public JooqMapperBuilder(final Type target) throws MapperBuildingException {
-		this(target, new ReflectionService());
+		this(target, ReflectionService.newInstance());
 	}
 	
 	@SuppressWarnings("unchecked")

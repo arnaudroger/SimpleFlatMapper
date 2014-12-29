@@ -37,12 +37,12 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();
 	private MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache = new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
 
-	public DynamicJdbcMapper(final Class<T> target, final ReflectionService reflectionService,
+	public DynamicJdbcMapper(final Class<T> target, final ClassMeta<T> classMeta,
 							 final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler,
 							 final MapperBuilderErrorHandler mapperBuilderErrorHandler,
 							 RowHandlerErrorHandler rowHandlerErrorHandler, final Map<String, String> aliases,
 							 final Map<String, FieldMapper<ResultSet, ?>> customMappings, PropertyNameMatcherFactory propertyNameMatcherFactory) {
-		this.classMeta = reflectionService.getClassMeta(target);
+		this.classMeta = classMeta;
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;

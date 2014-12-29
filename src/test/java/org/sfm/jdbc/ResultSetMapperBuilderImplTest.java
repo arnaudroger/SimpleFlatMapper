@@ -44,23 +44,17 @@ public class ResultSetMapperBuilderImplTest {
 	@Test
 	public void testAsmFailureOnJdbcMapper() {
 		
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService() {
-
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService(true, true, new AsmFactory(Thread.currentThread().getContextClassLoader()) {
 			@Override
-			public AsmFactory getAsmFactory() {
-				return new AsmFactory() {
-					@Override
-					public <T> JdbcMapper<T> createJdbcMapper(
-							FieldMapper<ResultSet, T>[] mappers,
-							Instantiator<ResultSet, T> instantiator,
-							Class<T> target, RowHandlerErrorHandler errorHandler)
-							throws Exception {
-						throw new UnsupportedOperationException();
-					}
-					
-				};
+			public <T> JdbcMapper<T> createJdbcMapper(
+					FieldMapper<ResultSet, T>[] mappers,
+					Instantiator<ResultSet, T> instantiator,
+					Class<T> target, RowHandlerErrorHandler errorHandler)
+					throws Exception {
+				throw new UnsupportedOperationException();
 			}
-		});
+
+		}));
 		
 		assertTrue(builder.mapper() instanceof JdbcMapperImpl);
 	}
@@ -68,7 +62,7 @@ public class ResultSetMapperBuilderImplTest {
 	public boolean asmPresent = true;
 	@Test
 	public void testAsmFailureOnInstantiator() {
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService() {
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService(true, true, null) {
 			@Override
 			public InstantiatorFactory getInstantiatorFactory() {
 				return new InstantiatorFactory(null) {

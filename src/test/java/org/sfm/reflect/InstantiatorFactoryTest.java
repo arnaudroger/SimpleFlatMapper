@@ -42,7 +42,7 @@ public class InstantiatorFactoryTest {
 
 	@Test
 	public void testInstantiateConstructorWithArgsAllPrAsm() throws Exception {
-		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(new AsmFactory()).getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class,AsmConstructorDefinitionFactory.<DbFinalPrimitiveObject>extractConstructors(DbFinalPrimitiveObject.class), new HashMap<ConstructorParameter, Getter<ResultSet, ?>>(), true);
+		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(new AsmFactory(Thread.currentThread().getContextClassLoader())).getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class,AsmConstructorDefinitionFactory.<DbFinalPrimitiveObject>extractConstructors(DbFinalPrimitiveObject.class), new HashMap<ConstructorParameter, Getter<ResultSet, ?>>(), true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null);
 		Assert.assertNotNull(object);
 	}

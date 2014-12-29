@@ -16,8 +16,8 @@ import org.sfm.reflect.ReflectionService;
 
 public class JdbcMapperPrimitiveTest {
 	
-	private ReflectionService nonAsmReflectionService = new ReflectionService(false, false);
-	private ReflectionService asmReflectionService = new ReflectionService(true, true);
+	private ReflectionService nonAsmReflectionService = ReflectionService.newInstance(true, false);
+	private ReflectionService asmReflectionService = ReflectionService.newInstance(false, true);
 
 	@Test
 	public void testIndexedPrimitivesWithSetterAccess() throws Exception {

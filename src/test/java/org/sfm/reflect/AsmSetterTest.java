@@ -17,7 +17,7 @@ import org.sfm.reflect.primitive.ShortSetter;
 
 public class AsmSetterTest {
 
-	AsmFactory factory = new AsmFactory();
+	AsmFactory factory = new AsmFactory(Thread.currentThread().getContextClassLoader());
 
 	DbPrimitiveObjectWithSetter object = new DbPrimitiveObjectWithSetter();
 	

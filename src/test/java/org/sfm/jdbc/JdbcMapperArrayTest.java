@@ -27,7 +27,7 @@ public class JdbcMapperArrayTest {
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
 			final JdbcMapper<DbArrayObject> mapper =  
-					new JdbcMapperBuilder<DbArrayObject>(DbArrayObject.class, new ReflectionService(true, asm))
+					new JdbcMapperBuilder<DbArrayObject>(DbArrayObject.class, ReflectionService.newInstance(false, asm))
 						.addMapping(rs.getMetaData())
 						.mapper();
 			
@@ -57,7 +57,7 @@ public class JdbcMapperArrayTest {
 			ResultSet rs = t.executeQuery();
 			final JdbcMapper<DbObject[]> mapper =  
 					new JdbcMapperBuilder<DbObject[]>(DbObject[].class, 
-							new ReflectionService(true, asm))
+							ReflectionService.newInstance(false, asm))
 						.addMapping(rs.getMetaData())
 						.mapper();
 			
@@ -85,7 +85,7 @@ public class JdbcMapperArrayTest {
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
 			
-			JdbcMapperBuilder<DbArrayOfString> builder = new JdbcMapperBuilder<DbArrayOfString>(DbArrayOfString.class, new ReflectionService(true, asm)).addMapping(rs.getMetaData());
+			JdbcMapperBuilder<DbArrayOfString> builder = new JdbcMapperBuilder<DbArrayOfString>(DbArrayOfString.class, ReflectionService.newInstance(true, asm)).addMapping(rs.getMetaData());
 			
 			
 			final JdbcMapper<DbArrayOfString> mapper = 

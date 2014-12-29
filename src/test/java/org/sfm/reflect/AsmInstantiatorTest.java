@@ -10,7 +10,7 @@ import org.sfm.reflect.asm.AsmFactory;
 
 public class AsmInstantiatorTest {
 
-	AsmFactory factory = new AsmFactory();
+	AsmFactory factory = new AsmFactory(Thread.currentThread().getContextClassLoader());
 
 	@Test
 	public void testInstantiate() throws Exception {

@@ -86,7 +86,7 @@ public class SetterPerfTest {
 		stringMethodSetter = new MethodSetter<MyClass, String>(setStringMethod);
 		numberMethodSetter = new IntMethodSetter<MyClass>(setNumberMethod);
 		
-		AsmFactory asmSetterFactory = new AsmFactory();
+		AsmFactory asmSetterFactory = new AsmFactory(Thread.currentThread().getContextClassLoader());
 		
 		stringAsmSetter = asmSetterFactory.createSetter(setStringMethod);
 		numberAsmSetter = (IntSetter<MyClass>) asmSetterFactory.createSetter(setNumberMethod);

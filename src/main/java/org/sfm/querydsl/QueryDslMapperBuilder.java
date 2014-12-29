@@ -18,7 +18,7 @@ public final class QueryDslMapperBuilder<T>
 
 
 	public QueryDslMapperBuilder(final Type target) throws MapperBuildingException {
-		this(target, new ReflectionService());
+		this(target, ReflectionService.newInstance());
 	}
 	
 	@SuppressWarnings("unchecked")

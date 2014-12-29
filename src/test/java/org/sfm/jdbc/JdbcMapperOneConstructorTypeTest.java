@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.junit.Test;
+import org.sfm.csv.CsvMapperOneConstructorType;
 import org.sfm.reflect.ReflectionService;
 
 public class JdbcMapperOneConstructorTypeTest {
@@ -42,14 +43,14 @@ public class JdbcMapperOneConstructorTypeTest {
 	
 	@Test
 	public void testCanCreateTypeFromUnambiguousConstructorNoAsm() throws Exception {
-		JdbcMapperBuilder<MyObject> builder = new JdbcMapperBuilder<MyObject>(MyObject.class, new ReflectionService(false, false));
+		JdbcMapperBuilder<MyObject> builder = new JdbcMapperBuilder<MyObject>(MyObject.class, ReflectionService.newInstance(true, false));
 		testMatchConstructor(builder);
 	}
 
 	@Test
 	public void testCantCreateTypeFromAmbiguousConstructor() throws Exception {
 
-		JdbcMapperBuilder<MyObjectAmbiguity> builder = new JdbcMapperBuilder<MyObjectAmbiguity>(MyObjectAmbiguity.class, new ReflectionService(false, false));
+		JdbcMapperBuilder<MyObjectAmbiguity> builder = new JdbcMapperBuilder<MyObjectAmbiguity>(MyObjectAmbiguity.class, ReflectionService.newInstance(true, false));
 		
 		try {
 			builder.addMapping("prop").mapper();
@@ -62,13 +63,13 @@ public class JdbcMapperOneConstructorTypeTest {
 	
 	@Test
 	public void testCanCreateTypeFromUnambiguousConstructorAsm() throws Exception {
-		JdbcMapperBuilder<MyObject> builder = new JdbcMapperBuilder<MyObject>(MyObject.class, new ReflectionService(true, true));
+		JdbcMapperBuilder<MyObject> builder = new JdbcMapperBuilder<MyObject>(MyObject.class, ReflectionService.newInstance(false, true));
 		testMatchConstructor(builder);
 	}
 	
 	@Test
 	public void testCanCreateTypeFromAmbiguousWithType() throws Exception {
-		JdbcMapperBuilder<MyObjectAmbiguity> builder = new JdbcMapperBuilder<MyObjectAmbiguity>(MyObjectAmbiguity.class, new ReflectionService(true, true));
+		JdbcMapperBuilder<MyObjectAmbiguity> builder = new JdbcMapperBuilder<MyObjectAmbiguity>(MyObjectAmbiguity.class, ReflectionService.newInstance(false, true ));
 		builder.addMapping("prop", 1, Types.VARCHAR);
 		JdbcMapper<MyObjectAmbiguity> mapper = builder.mapper();
 		ResultSet rs = mock(ResultSet.class);

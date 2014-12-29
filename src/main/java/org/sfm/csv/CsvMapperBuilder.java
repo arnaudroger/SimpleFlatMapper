@@ -64,7 +64,7 @@ public class CsvMapperBuilder<T> {
 	}
 	
 	public CsvMapperBuilder(final Type target, ReflectionService reflectionService) {
-		this(target, reflectionService.getClassMeta(target),
+		this(target, (ClassMeta<T>)reflectionService.getClassMeta(target),
 				new HashMap<String, String>(), 
 				new HashMap<String, CellValueReader<?>>(), new DefaultPropertyNameMatcherFactory());
 	}	

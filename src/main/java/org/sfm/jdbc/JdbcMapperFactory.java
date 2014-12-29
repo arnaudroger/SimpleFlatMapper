@@ -109,7 +109,9 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapperBuilder<T> newBuilder(final Class<T> target) {
-		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, getClassMeta(target), aliases, customMappings, propertyNameMatcherFactory);
+		ClassMeta<T> classMeta = getClassMeta(target);
+
+		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, classMeta, aliases, customMappings, propertyNameMatcherFactory);
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
@@ -124,7 +126,8 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
-		return new DynamicJdbcMapper<T>(target, getClassMeta(target), fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, aliases, customMappings, propertyNameMatcherFactory);
+		ClassMeta<T> classMeta = getClassMeta(target);
+		return new DynamicJdbcMapper<T>(target, classMeta, fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, aliases, customMappings, propertyNameMatcherFactory);
 	}
 
 	

@@ -92,8 +92,9 @@ public final class CsvMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> CsvMapper<T> newMapper(final Type target) throws MapperBuildingException {
+		ClassMeta<T> classMeta = getClassMeta(target);
 		return new DynamicCsvMapper<T>(target,
-				getClassMeta(target),
+				classMeta,
 				fieldMapperErrorHandler, mapperBuilderErrorHandler,
 				defaultDateFormat, aliases, customReaders, propertyNameMatcherFactory);
 	}
@@ -110,7 +111,8 @@ public final class CsvMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> CsvMapperBuilder<T> newBuilder(final Class<T> target) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, getClassMeta(target), aliases, customReaders, propertyNameMatcherFactory);
+		ClassMeta<T> classMeta = getClassMeta(target);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, aliases, customReaders, propertyNameMatcherFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);

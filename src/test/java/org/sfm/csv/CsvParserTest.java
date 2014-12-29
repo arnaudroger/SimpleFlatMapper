@@ -78,6 +78,17 @@ public class CsvParserTest {
 		assertFalse(iterate.hasNext());
 	}
 
+	@Test
+	public void testDSLWitStatichMapper() throws IOException {
+		Iterator<Tuple2<String, String>> iterate =  CsvParser.<Tuple2<String, String>>mapTo(Tuples.typeDef(String.class, String.class)).headers("0,1").iterate(new StringReader("value1,value2"));
+
+		assertTrue(iterate.hasNext());
+		Tuple2<String, String> tuple2 = iterate.next();
+		assertEquals("value1", tuple2.first());
+		assertEquals("value2", tuple2.second());
+		assertFalse(iterate.hasNext());
+	}
+
 	private Reader getOneRowReader() {
 		return new StringReader("value");
 	}

@@ -60,6 +60,10 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 
 		PropertyFinder<?> propertyFinder = indexedElement.getPropertyFinder();
 
+		if (propertyFinder == null) {
+			return null;
+		}
+
 		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getSubPropertyNameMatcher());
 		if (subProp == null) {
 			return null;

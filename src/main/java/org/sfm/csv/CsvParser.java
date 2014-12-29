@@ -241,8 +241,8 @@ public final class CsvParser {
 		public MapToDSL(DSL dsl, ClassMeta<T> classMeta, Type mapToClass, String[] headers) {
 			this.dsl = dsl;
 			this.classMeta = classMeta;
-			this.mapper = newStaticMapper(classMeta, headers);
 			this.mapToClass = mapToClass;
+			this.mapper = newStaticMapper(classMeta, headers);
 		}
 
 		private CsvMapper<T> newStaticMapper(ClassMeta<T> classMeta, String[] headers) {

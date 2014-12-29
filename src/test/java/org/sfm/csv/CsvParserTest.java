@@ -80,7 +80,7 @@ public class CsvParserTest {
 
 	@Test
 	public void testDSLWitStatichMapper() throws IOException {
-		Iterator<Tuple2<String, String>> iterate =  CsvParser.<Tuple2<String, String>>mapTo(Tuples.typeDef(String.class, String.class)).headers("0,1").iterate(new StringReader("value1,value2"));
+		Iterator<Tuple2<String, String>> iterate =  CsvParser.<Tuple2<String, String>>mapTo(Tuples.typeDef(String.class, String.class)).headers("0", "1").iterate(new StringReader("value1,value2"));
 
 		assertTrue(iterate.hasNext());
 		Tuple2<String, String> tuple2 = iterate.next();

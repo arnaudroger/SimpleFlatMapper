@@ -3,7 +3,7 @@
 
 # Simple Flat Mapper (SFM) [v1.2.0](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.2.0)
 
-SFM provides very fast and easy to use mapper for
+SFM provides fast and easy to use mapper for
 
 - [ResultSet aka micro ORM](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JdbcMapper)
 - [Csv](src/main/java/org/sfm/csv)

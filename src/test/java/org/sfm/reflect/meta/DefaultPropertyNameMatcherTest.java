@@ -16,6 +16,21 @@ public class DefaultPropertyNameMatcherTest {
 		assertFalse(matcher.matches("my__Col"));
 		assertFalse(matcher.matches("myCol2"));
 	}
+
+	@Test
+	public void testFullMatchCaseSensitive() {
+		PropertyNameMatcher matcher = new DefaultPropertyNameMatcher("my_col", 0, false, true);
+		assertTrue(matcher.matches("myCol"));
+		assertFalse(matcher.matches("mycol"));
+	}
+
+	@Test
+	public void testFullMatchExactMath() {
+		PropertyNameMatcher matcher = new DefaultPropertyNameMatcher("my_col", 0, true, false);
+		assertTrue(matcher.matches("my_col"));
+		assertTrue(matcher.matches("my_COL"));
+		assertFalse(matcher.matches("myCol"));
+	}
 	
 	@Test
 	public void testStartOf() {

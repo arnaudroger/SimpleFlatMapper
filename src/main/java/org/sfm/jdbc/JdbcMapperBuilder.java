@@ -16,7 +16,6 @@ import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.PropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 
 public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey>  {

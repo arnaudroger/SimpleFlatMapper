@@ -1,16 +1,25 @@
 package org.sfm.reflect.meta;
 
-public class DefaultPropertyNameMatcher implements PropertyNameMatcher {
+public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	private final String column;
 	private final int from;
+
+	private final boolean exactMatch;
+	private final boolean caseSensitive;
 
 	public DefaultPropertyNameMatcher(final String column) {
 		this(column, 0);
 	}
 
 	public DefaultPropertyNameMatcher(final String column, final int from) {
+		this(column, from, false, false);
+	}
+
+	public DefaultPropertyNameMatcher(String column, int from, boolean exactMatch, boolean caseSensitive) {
 		this.column = column;
 		this.from = from;
+		this.exactMatch = exactMatch;
+		this.caseSensitive = caseSensitive;
 	}
 
 	@Override
@@ -55,20 +64,27 @@ public class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	private int _partialMatch(final String property) {
 		int indexColumn = from;
 		int indexProperty = 0;
-
+		boolean nextToUpperCase = false;
 		do {
 			if (indexProperty < property.length()) {
 				char charProperty = property.charAt(indexProperty);
 				
 				if (indexColumn < column.length()) {
 					char charColumn = column.charAt(indexColumn);
+					if (nextToUpperCase) {
+						charColumn = Character.toUpperCase(charColumn);
+						nextToUpperCase = false;
+					}
 					indexColumn ++;
 					
 					if (ignoreCharacter(charColumn)) {
 						if (ignoreCharacter(charProperty)) {
 							indexProperty++;
 						}
-					} else if (Character.toLowerCase(charProperty) != Character.toLowerCase(charColumn)) {
+						if (caseSensitive) {
+							nextToUpperCase = true;
+						}
+					} else if (areDifferentCharacters(charProperty, charColumn)) {
 						return -1;
 					} else {
 						indexProperty++;
@@ -84,8 +100,16 @@ public class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		while(true);
 	}
 
+	private boolean areDifferentCharacters(char c1, char c2) {
+		if (caseSensitive) {
+			return c1 != c2;
+		} else {
+			return Character.toLowerCase(c1) != Character.toLowerCase(c2);
+		}
+	}
+
 	private boolean ignoreCharacter(final char charColumn) {
-		return charColumn == '_' || charColumn == ' ' || charColumn == '.';
+		return !exactMatch && (charColumn == '_' || charColumn == ' ' || charColumn == '.');
 	}
 	
 	@Override

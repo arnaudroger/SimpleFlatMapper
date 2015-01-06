@@ -327,6 +327,21 @@
 								<exclude>**/org/sfm/sql2o/*</exclude>
 							</excludes>
 						</configuration>
+
+						<executions>
+							<execution>
+								<id>default-testCompile</id>
+								<phase>test-compile</phase>
+								<configuration>
+									<testExcludes>
+										<exclude>**/org/sfm/sql2o/*</exclude>
+									</testExcludes>
+								</configuration>
+								<goals>
+									<goal>testCompile</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

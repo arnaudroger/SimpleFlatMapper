@@ -17,7 +17,6 @@ import org.sfm.map.*;
 import org.sfm.map.impl.ColumnsMapperKey;
 import org.sfm.map.impl.FieldMapper;
 import org.sfm.map.impl.MapperCache;
-import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.RowHandler;
@@ -85,7 +84,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	}
 	//IFJAVA8_END
 
-	private JdbcMapper<T> buildMapper(final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
+	public JdbcMapper<T> buildMapper(final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
 		
 		final ColumnsMapperKey key = mapperKey(metaData);
 		

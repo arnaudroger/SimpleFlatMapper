@@ -323,6 +323,9 @@
 						<configuration>
 							<source>1.6</source>
 							<target>1.6</target>
+							<excludes>
+								<exclude>**/org/sfm/sql2o/*</exclude>
+							</excludes>
 						</configuration>
 					</plugin>
 				</plugins>

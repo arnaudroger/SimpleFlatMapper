@@ -18,11 +18,15 @@ public class SfmResultSetHandlerFactoryBuilder extends DefaultResultSetHandlerFa
         DefaultPropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory(!isAutoDeriveColumnNames(), isCaseSensitive());
         Map<String, String> columnMappings = getColumnMappings();
 
+        JdbcMapperFactory jdbcMapperFactory = JdbcMapperFactory
+                .newInstance()
+                .propertyNameMatcherFactory(propertyNameMatcherFactory);
+        if (columnMappings != null) {
+            jdbcMapperFactory.addAliases(columnMappings);
+        }
+
         DynamicJdbcMapper<E> dynamicJdbcMapper = (DynamicJdbcMapper<E>)
-                JdbcMapperFactory
-                        .newInstance()
-                        .propertyNameMatcherFactory(propertyNameMatcherFactory)
-                        .addAliases(columnMappings)
+                jdbcMapperFactory
                         .newMapper(aClass);
         return new SfmResultSetHandlerFactory<E>(dynamicJdbcMapper);
     }

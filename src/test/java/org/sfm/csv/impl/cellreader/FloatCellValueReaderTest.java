@@ -6,11 +6,10 @@ import static org.junit.Assert.fail;
 import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
-import org.sfm.csv.impl.cellreader.FloatCellValueReader;
 
 public class FloatCellValueReaderTest {
 
-	FloatCellValueReader reader = new FloatCellValueReader();
+	FloatCellValueReaderImpl reader = new FloatCellValueReaderImpl();
 	@Test
 	public void testReadInt() throws UnsupportedEncodingException {
 		testReadFloat(0);

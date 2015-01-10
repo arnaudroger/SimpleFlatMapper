@@ -142,7 +142,7 @@ public class CsvMapperBuilderTest {
 	@Test
 	public void testMapDbObjectAlias() throws UnsupportedEncodingException, Exception {
 		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.addAlias("no_prop", "id").newBuilder(DbFinalObject.class);
-		builder.addMapping("No_prop");
+		builder.addMapping("no_prop");
 	}
 
 	@Test

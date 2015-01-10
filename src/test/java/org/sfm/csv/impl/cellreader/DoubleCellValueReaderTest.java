@@ -6,11 +6,10 @@ import static org.junit.Assert.fail;
 import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
-import org.sfm.csv.impl.cellreader.DoubleCellValueReader;
 
 public class DoubleCellValueReaderTest {
 
-	DoubleCellValueReader reader = new DoubleCellValueReader();
+	DoubleCellValueReaderImpl reader = new DoubleCellValueReaderImpl();
 	@Test
 	public void testReadInt() throws UnsupportedEncodingException {
 		testReadDouble(0);

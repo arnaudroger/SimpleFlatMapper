@@ -6,11 +6,10 @@ import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
 import org.sfm.csv.impl.ParsingException;
-import org.sfm.csv.impl.cellreader.IntegerCellValueReader;
 
 public class IntegerCellValueReaderTest {
 
-	IntegerCellValueReader reader = new IntegerCellValueReader();
+	IntegerCellValueReaderImpl reader = new IntegerCellValueReaderImpl();
 	@Test
 	public void testReadInt() throws UnsupportedEncodingException {
 		testReadInt(0);

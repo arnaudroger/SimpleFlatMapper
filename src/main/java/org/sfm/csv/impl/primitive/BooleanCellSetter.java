@@ -8,15 +8,17 @@ import org.sfm.reflect.primitive.BooleanSetter;
 public class BooleanCellSetter<T> implements CellSetter<T> {
 
 	private final BooleanSetter<T> setter;
+	private final BooleanCellValueReader reader;
 	
-	public BooleanCellSetter(BooleanSetter<T> setter) {
+	public BooleanCellSetter(BooleanSetter<T> setter, BooleanCellValueReader reader) {
 		this.setter = setter;
+		this.reader = reader;
 	}
 	
 	@Override
 	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
 			throws Exception {
-		setter.setBoolean(target, BooleanCellValueReader.parseBoolean(chars, offset, length));
+		setter.setBoolean(target, reader.readBoolean(chars, offset, length, parsingContext));
 	}
 	
 }

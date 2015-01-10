@@ -29,9 +29,8 @@ public final class CsvMapperFactory {
 	private FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<CsvColumnKey>();
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	
-	private Map<String, String> aliases = new HashMap<String, String>();
-	private Map<String, CellValueReader<?>> customReaders = new HashMap<String, CellValueReader<?>>();
-	
+	private Map<String, CsvColumnDefinition> columnDefinitions = new HashMap<String, CsvColumnDefinition>();
+
 	private boolean useAsm = true;
 	private boolean disableAsm = false;
 	
@@ -96,7 +95,7 @@ public final class CsvMapperFactory {
 		return new DynamicCsvMapper<T>(target,
 				classMeta,
 				fieldMapperErrorHandler, mapperBuilderErrorHandler,
-				defaultDateFormat, aliases, customReaders, propertyNameMatcherFactory);
+				defaultDateFormat, columnDefinitions, propertyNameMatcherFactory);
 	}
 
 	private <T> ClassMeta<T> getClassMeta(Type target) {
@@ -112,7 +111,7 @@ public final class CsvMapperFactory {
 	 */
 	public <T> CsvMapperBuilder<T> newBuilder(final Class<T> target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, aliases, customReaders, propertyNameMatcherFactory);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, columnDefinitions, propertyNameMatcherFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);
@@ -121,13 +120,23 @@ public final class CsvMapperFactory {
 
 
 	public CsvMapperFactory addAlias(String key, String value) {
-		aliases.put(key.toUpperCase(), value.toUpperCase());
+		CsvColumnDefinition columnDefinition = getColumnDefinition(key);
+		columnDefinitions.put(key, CsvColumnDefinition.compose(columnDefinition, CsvColumnDefinition.newRename(value)));
 		return this;
 	}
 
-	public CsvMapperFactory addCustomValueReader(String column,	CellValueReader<?> cellValueReader) {
-		customReaders.put(column, cellValueReader);
+	public CsvMapperFactory addCustomValueReader(String key,	CellValueReader<?> cellValueReader) {
+		CsvColumnDefinition columnDefinition = getColumnDefinition(key);
+		columnDefinitions.put(key, CsvColumnDefinition.compose(columnDefinition, CsvColumnDefinition.newCustomReader(cellValueReader)));
 		return this;
+	}
+
+	private CsvColumnDefinition getColumnDefinition(String key) {
+		CsvColumnDefinition columnDefinition = columnDefinitions.get(key);
+		if (columnDefinition == null) {
+			return CsvColumnDefinition.IDENTITY;
+		}
+		return columnDefinition;
 	}
 
 	public CsvMapperFactory propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {

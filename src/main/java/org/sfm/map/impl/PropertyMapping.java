@@ -1,16 +1,18 @@
 package org.sfm.map.impl;
 
+import org.sfm.map.ColumnDefinition;
 import org.sfm.reflect.meta.PropertyMeta;
 
-public class PropertyMapping<T, P, K> {
+public class PropertyMapping<T, P, K extends FieldKey<K>, D extends ColumnDefinition<K>> {
 	private final PropertyMeta<T, P> propertyMeta;
 	private final K columnKey;
-	
-	
-	public PropertyMapping(PropertyMeta<T, P> propertyMeta, K columnKey) {
+	private final D columnDefinition;
+
+	public PropertyMapping(PropertyMeta<T, P> propertyMeta, K columnKey, D columnDefinition) {
 		super();
 		this.propertyMeta = propertyMeta;
 		this.columnKey = columnKey;
+		this.columnDefinition = columnDefinition;
 	}
 
 	public PropertyMeta<T, P> getPropertyMeta() {
@@ -21,5 +23,7 @@ public class PropertyMapping<T, P, K> {
 		return columnKey;
 	}
 
-	
+	public D getColumnDefinition() {
+		return columnDefinition;
+	}
 }

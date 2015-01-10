@@ -6,11 +6,10 @@ import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
 import org.sfm.csv.impl.ParsingException;
-import org.sfm.csv.impl.cellreader.LongCellValueReader;
 
 public class LongCellValueReaderTest {
 
-	LongCellValueReader reader = new LongCellValueReader();
+	LongCellValueReaderImpl reader = new LongCellValueReaderImpl();
 	@Test
 	public void testReadLong() throws UnsupportedEncodingException {
 		testReadLong(0);

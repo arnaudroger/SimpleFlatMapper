@@ -3,15 +3,18 @@ package org.sfm.csv.impl.primitive;
 import org.sfm.csv.impl.DelayedCellSetter;
 import org.sfm.csv.impl.ParsingContext;
 import org.sfm.csv.impl.cellreader.IntegerCellValueReader;
+import org.sfm.csv.impl.cellreader.IntegerCellValueReaderImpl;
 import org.sfm.reflect.primitive.IntSetter;
 
 public class IntDelayedCellSetter<T> implements DelayedCellSetter<T, Integer> {
 
 	private final IntSetter<T> setter;
+	private final IntegerCellValueReader reader;
 	private int value;
-	
-	public IntDelayedCellSetter(IntSetter<T> setter) {
+
+	public IntDelayedCellSetter(IntSetter<T> setter, IntegerCellValueReader reader) {
 		this.setter = setter;
+		this.reader = reader;
 	}
 
 	@Override
@@ -39,6 +42,6 @@ public class IntDelayedCellSetter<T> implements DelayedCellSetter<T, Integer> {
 
 	@Override
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
-		this.value = IntegerCellValueReader.parseInt(chars, offset, length);
+		this.value = reader.readInt(chars, offset, length, parsingContext);
 	}
 }

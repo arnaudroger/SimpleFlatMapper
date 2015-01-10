@@ -7,136 +7,260 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sfm.csv.CellValueReader;
-import org.sfm.csv.impl.cellreader.BooleanCellValueReader;
-import org.sfm.csv.impl.cellreader.ByteCellValueReader;
-import org.sfm.csv.impl.cellreader.CellSetterImpl;
-import org.sfm.csv.impl.cellreader.CharCellValueReader;
-import org.sfm.csv.impl.cellreader.DateCellValueReader;
-import org.sfm.csv.impl.cellreader.DelayedCellSetterFactoryImpl;
-import org.sfm.csv.impl.cellreader.DoubleCellValueReader;
-import org.sfm.csv.impl.cellreader.EnumCellValueReader;
-import org.sfm.csv.impl.cellreader.FloatCellValueReader;
-import org.sfm.csv.impl.cellreader.IntegerCellValueReader;
-import org.sfm.csv.impl.cellreader.LongCellValueReader;
-import org.sfm.csv.impl.cellreader.ShortCellValueReader;
-import org.sfm.csv.impl.cellreader.StringCellValueReader;
-import org.sfm.csv.impl.primitive.BooleanCellSetter;
-import org.sfm.csv.impl.primitive.BooleanDelayedCellSetterFactory;
-import org.sfm.csv.impl.primitive.ByteCellSetter;
-import org.sfm.csv.impl.primitive.ByteDelayedCellSetterFactory;
-import org.sfm.csv.impl.primitive.CharCellSetter;
-import org.sfm.csv.impl.primitive.CharDelayedCellSetterFactory;
-import org.sfm.csv.impl.primitive.DoubleCellSetter;
-import org.sfm.csv.impl.primitive.DoubleDelayedCellSetterFactory;
-import org.sfm.csv.impl.primitive.FloatCellSetter;
-import org.sfm.csv.impl.primitive.FloatDelayedCellSetterFactory;
-import org.sfm.csv.impl.primitive.IntCellSetter;
-import org.sfm.csv.impl.primitive.IntDelayedCellSetterFactory;
-import org.sfm.csv.impl.primitive.LongCellSetter;
-import org.sfm.csv.impl.primitive.LongDelayedCellSetterFactory;
-import org.sfm.csv.impl.primitive.ShortCellSetter;
-import org.sfm.csv.impl.primitive.ShortDelayedCellSetterFactory;
+import org.sfm.csv.CsvColumnDefinition;
+import org.sfm.csv.CsvColumnKey;
+import org.sfm.csv.impl.cellreader.*;
+import org.sfm.csv.impl.primitive.*;
+import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.TypeHelper;
 
-public class CellSetterFactory {
+public final class CellSetterFactory {
 
-	@SuppressWarnings("serial")
-	private static final Map<Class<?>, CellValueReader<?>> transformers = new HashMap<Class<?>, CellValueReader<?>>(){{
-		put(boolean.class,   new BooleanCellValueReader());
-		put(byte.class,      new ByteCellValueReader());
-		put(char.class, new CharCellValueReader());
-		put(short.class,     new ShortCellValueReader());
-		put(int.class,   new IntegerCellValueReader());
-		put(long.class,      new LongCellValueReader());
-		put(float.class,     new FloatCellValueReader());
-		put(double.class,    new DoubleCellValueReader());
-		put(Boolean.class,   new BooleanCellValueReader());
-		put(Byte.class,      new ByteCellValueReader());
-		put(Character.class, new CharCellValueReader());
-		put(Short.class,     new ShortCellValueReader());
-		put(Integer.class,   new IntegerCellValueReader());
-		put(Long.class,      new LongCellValueReader());
-		put(Float.class,     new FloatCellValueReader());
-		put(Double.class,    new DoubleCellValueReader());
-		put(String.class,    new StringCellValueReader());
-	}};
-	
-	private Map<String, CellValueReader<?>> customReaders;
-	
-	public CellSetterFactory(Map<String, CellValueReader<?>> customReaders) {
-		this.customReaders = customReaders;
-	}
+	private static final Map<Class<?>, CellValueReader<?>> READERS = new HashMap<Class<?>, CellValueReader<?>>();
 
-	public <T,P> CellSetter<T> getCellSetter(Type propertyType, Setter<T, P> setter, int index, String columnName) {
-		Class<?> propertyClass = TypeHelper.toClass(propertyType);
-		
-		if (propertyClass.isPrimitive() && !customReaders.containsKey(columnName)) {
-			return getPrimitiveCellSetter(propertyClass, setter);
-		}
-		
-		return new CellSetterImpl<T, P>(getReaderForSetter(propertyType, setter, index, columnName), setter) ;
+	static {
+		READERS.put(boolean.class, new BooleanCellValueReaderImpl());
+		READERS.put(byte.class, new ByteCellValueReaderImpl());
+		READERS.put(char.class, new CharCellValueReaderImpl());
+		READERS.put(short.class, new ShortCellValueReaderImpl());
+		READERS.put(int.class, new IntegerCellValueReaderImpl());
+		READERS.put(long.class, new LongCellValueReaderImpl());
+		READERS.put(float.class, new FloatCellValueReaderImpl());
+		READERS.put(double.class, new DoubleCellValueReaderImpl());
+		READERS.put(Boolean.class, new BooleanCellValueReaderImpl());
+		READERS.put(Byte.class, new ByteCellValueReaderImpl());
+		READERS.put(Character.class, new CharCellValueReaderImpl());
+		READERS.put(Short.class, new ShortCellValueReaderImpl());
+		READERS.put(Integer.class, new IntegerCellValueReaderImpl());
+		READERS.put(Long.class, new LongCellValueReaderImpl());
+		READERS.put(Float.class, new FloatCellValueReaderImpl());
+		READERS.put(Double.class, new DoubleCellValueReaderImpl());
+		READERS.put(String.class,    new StringCellValueReader());
 	}
 	
-	public <T,P> CellSetter<T> getPrimitiveCellSetter(Class<?> clazz, Setter<T, P> setter) {
+
+	
+	public <T,P> CellSetter<T> getPrimitiveCellSetter(Class<?> clazz, Setter<T, P> setter, CsvColumnDefinition columnDefinition) {
 		if (boolean.class.equals(clazz)) {
-			return new BooleanCellSetter<T>(SetterFactory.toBooleanSetter(setter));
+			BooleanCellValueReader reader = booleanReader(columnDefinition);
+			return new BooleanCellSetter<T>(SetterFactory.toBooleanSetter(setter), reader);
 		} else if (byte.class.equals(clazz)) {
-			return new ByteCellSetter<T>(SetterFactory.toByteSetter(setter));
+			ByteCellValueReader reader = byteReader(columnDefinition);
+			return new ByteCellSetter<T>(SetterFactory.toByteSetter(setter), reader);
 		} else if (char.class.equals(clazz)) {
-			return new CharCellSetter<T>(SetterFactory.toCharacterSetter(setter));
+			CharCellValueReader reader = charReader(columnDefinition);
+			return new CharCellSetter<T>(SetterFactory.toCharacterSetter(setter), reader);
 		} else if (short.class.equals(clazz)) {
-			return new ShortCellSetter<T>(SetterFactory.toShortSetter(setter));
+			ShortCellValueReader reader = shortReader(columnDefinition);
+			return new ShortCellSetter<T>(SetterFactory.toShortSetter(setter), reader);
 		} else if (int.class.equals(clazz)) {
-			return new IntCellSetter<T>(SetterFactory.toIntSetter(setter));
+			IntegerCellValueReader reader = intReader(columnDefinition);
+			return new IntCellSetter<T>(SetterFactory.toIntSetter(setter), reader);
 		} else if (long.class.equals(clazz)) {
-			return new LongCellSetter<T>(SetterFactory.toLongSetter(setter));
+			LongCellValueReader reader = longReader(columnDefinition);
+			return new LongCellSetter<T>(SetterFactory.toLongSetter(setter), reader);
 		} else if (float.class.equals(clazz)) {
-			return new FloatCellSetter<T>(SetterFactory.toFloatSetter(setter));
+			FloatCellValueReader reader = floatReader(columnDefinition);
+			return new FloatCellSetter<T>(SetterFactory.toFloatSetter(setter), reader);
 		} else if (double.class.equals(clazz)) {
-			return new DoubleCellSetter<T>(SetterFactory.toDoubleSetter(setter));
+			DoubleCellValueReader reader = doubleReader(columnDefinition);
+			return new DoubleCellSetter<T>(SetterFactory.toDoubleSetter(setter), reader);
 		} 
 		throw new IllegalArgumentException("Invalid primitive type " + clazz);
 	}
-	
+
+	private DoubleCellValueReader doubleReader(CsvColumnDefinition columnDefinition) {
+		DoubleCellValueReader reader;
+		if (columnDefinition.hasCustomReader()) {
+            CellValueReader<?> customReader = columnDefinition.getCustomReader();
+            if (customReader instanceof DoubleCellValueReader) {
+                reader = (DoubleCellValueReader) customReader;
+            } else {
+                reader = new DoubleCellValueReaderUnbox((CellValueReader<Double>)customReader);
+            }
+        } else {
+            reader = new DoubleCellValueReaderImpl();
+        }
+		return reader;
+	}
+
+	private FloatCellValueReader floatReader(CsvColumnDefinition columnDefinition) {
+		FloatCellValueReader reader;
+		if (columnDefinition.hasCustomReader()) {
+            CellValueReader<?> customReader = columnDefinition.getCustomReader();
+            if (customReader instanceof FloatCellValueReader) {
+                reader = (FloatCellValueReader) customReader;
+            } else {
+                reader = new FloatCellValueReaderUnbox((CellValueReader<Float>)customReader);
+            }
+        } else {
+            reader = new FloatCellValueReaderImpl();
+        }
+		return reader;
+	}
+
+	private LongCellValueReader longReader(CsvColumnDefinition columnDefinition) {
+		LongCellValueReader reader;
+		if (columnDefinition.hasCustomReader()) {
+            CellValueReader<?> customReader = columnDefinition.getCustomReader();
+            if (customReader instanceof LongCellValueReader) {
+                reader = (LongCellValueReader) customReader;
+            } else {
+                reader = new LongCellValueReaderUnbox((CellValueReader<Long>)customReader);
+            }
+        } else {
+            reader = new LongCellValueReaderImpl();
+        }
+		return reader;
+	}
+
+	private IntegerCellValueReader intReader(CsvColumnDefinition columnDefinition) {
+		IntegerCellValueReader reader;
+		if (columnDefinition.hasCustomReader()) {
+            CellValueReader<?> customReader = columnDefinition.getCustomReader();
+            if (customReader instanceof IntegerCellValueReader) {
+                reader = (IntegerCellValueReader) customReader;
+            } else {
+                reader = new IntegerCellValueReaderUnbox((CellValueReader<Integer>)customReader);
+            }
+        } else {
+            reader = new IntegerCellValueReaderImpl();
+        }
+		return reader;
+	}
+
+	private ShortCellValueReader shortReader(CsvColumnDefinition columnDefinition) {
+		ShortCellValueReader reader;
+		if (columnDefinition.hasCustomReader()) {
+            CellValueReader<?> customReader = columnDefinition.getCustomReader();
+            if (customReader instanceof ShortCellValueReader) {
+                reader = (ShortCellValueReader) customReader;
+            } else {
+                reader = new ShortCellValueReaderUnbox((CellValueReader<Short>)customReader);
+            }
+        } else {
+            reader = new ShortCellValueReaderImpl();
+        }
+		return reader;
+	}
+
+	private CharCellValueReader charReader(CsvColumnDefinition columnDefinition) {
+		CharCellValueReader reader;
+		if (columnDefinition.hasCustomReader()) {
+            CellValueReader<?> customReader = columnDefinition.getCustomReader();
+            if (customReader instanceof CharCellValueReader) {
+                reader = (CharCellValueReader) customReader;
+            } else {
+                reader = new CharCellValueReaderUnbox((CellValueReader<Character>)customReader);
+            }
+        } else {
+            reader = new CharCellValueReaderImpl();
+        }
+		return reader;
+	}
+
+	private ByteCellValueReader byteReader(CsvColumnDefinition columnDefinition) {
+		ByteCellValueReader reader;
+		if (columnDefinition.hasCustomReader()) {
+            CellValueReader<?> customReader = columnDefinition.getCustomReader();
+            if (customReader instanceof BooleanCellValueReader) {
+                reader = (ByteCellValueReader) customReader;
+            } else {
+                reader = new ByteCellValueReaderUnbox((CellValueReader<Byte>)customReader);
+            }
+        } else {
+            reader = new ByteCellValueReaderImpl();
+        }
+		return reader;
+	}
+
+	private BooleanCellValueReader booleanReader(CsvColumnDefinition columnDefinition) {
+		BooleanCellValueReader reader;
+		if (columnDefinition.hasCustomReader()) {
+            CellValueReader<?> customReader = columnDefinition.getCustomReader();
+            if (customReader instanceof BooleanCellValueReader) {
+                reader = (BooleanCellValueReader) customReader;
+            } else {
+                reader = new BooleanCellValueReaderUnbox((CellValueReader<Boolean>)customReader);
+            }
+        } else {
+            reader = new BooleanCellValueReaderImpl();
+        }
+		return reader;
+	}
+
 	@SuppressWarnings("unchecked")
-	public <T,P> DelayedCellSetterFactory<T, P> getPrimitiveDelayedCellSetter(Class<?> clazz, Setter<T, P> setter) {
+	public <T,P> DelayedCellSetterFactory<T, P> getPrimitiveDelayedCellSetter(Class<?> clazz, Setter<T, P> setter, CsvColumnDefinition columnDefinition) {
 		if (boolean.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new BooleanDelayedCellSetterFactory<T>(SetterFactory.toBooleanSetter(setter));
+			return (DelayedCellSetterFactory<T, P>) new BooleanDelayedCellSetterFactory<T>(SetterFactory.toBooleanSetter(setter), booleanReader(columnDefinition));
 		} else if (byte.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new ByteDelayedCellSetterFactory<T>(SetterFactory.toByteSetter(setter));
+			return (DelayedCellSetterFactory<T, P>) new ByteDelayedCellSetterFactory<T>(SetterFactory.toByteSetter(setter), byteReader(columnDefinition));
 		} else if (char.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new CharDelayedCellSetterFactory<T>(SetterFactory.toCharacterSetter(setter));
+			return (DelayedCellSetterFactory<T, P>) new CharDelayedCellSetterFactory<T>(SetterFactory.toCharacterSetter(setter), charReader(columnDefinition));
 		} else if (short.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new ShortDelayedCellSetterFactory<T>(SetterFactory.toShortSetter(setter));
+			return (DelayedCellSetterFactory<T, P>) new ShortDelayedCellSetterFactory<T>(SetterFactory.toShortSetter(setter), shortReader(columnDefinition));
 		} else if (int.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new IntDelayedCellSetterFactory<T>(SetterFactory.toIntSetter(setter));
+			return (DelayedCellSetterFactory<T, P>) new IntDelayedCellSetterFactory<T>(SetterFactory.toIntSetter(setter), intReader(columnDefinition));
 		} else if (long.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new LongDelayedCellSetterFactory<T>(SetterFactory.toLongSetter(setter));
+			return (DelayedCellSetterFactory<T, P>) new LongDelayedCellSetterFactory<T>(SetterFactory.toLongSetter(setter), longReader(columnDefinition));
 		} else if (float.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new FloatDelayedCellSetterFactory<T>(SetterFactory.toFloatSetter(setter));
+			return (DelayedCellSetterFactory<T, P>) new FloatDelayedCellSetterFactory<T>(SetterFactory.toFloatSetter(setter), floatReader(columnDefinition));
 		} else if (double.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new DoubleDelayedCellSetterFactory<T>(SetterFactory.toDoubleSetter(setter));
+			return (DelayedCellSetterFactory<T, P>) new DoubleDelayedCellSetterFactory<T>(SetterFactory.toDoubleSetter(setter), doubleReader(columnDefinition));
 		} 
 		throw new IllegalArgumentException("Invalid primitive type " + clazz);
 	}
 
-	private <T, P> CellValueReader<P> getReaderForSetter(Type type, Setter<T, P> setter, int index, String colunn) {
+	public <T> Getter<DelayedCellSetter<T, ?>[], ?> newDelayedGetter(CsvColumnKey key, Type type) {
+		Class<?> clazz = TypeHelper.toClass(type);
+		Getter<DelayedCellSetter<T, ?>[], ?> getter;
+		int columnIndex = key.getIndex();
+		if (clazz.isPrimitive()) {
+			if (boolean.class.equals(clazz)) {
+				getter = new BooleanDelayedGetter<T>(columnIndex);
+			} else if (byte.class.equals(clazz)) {
+				getter = new ByteDelayedGetter<T>(columnIndex);
+			} else if (char.class.equals(clazz)) {
+				getter = new CharDelayedGetter<T>(columnIndex);
+			} else if (short.class.equals(clazz)) {
+				getter = new ShortDelayedGetter<T>(columnIndex);
+			} else if (int.class.equals(clazz)) {
+				getter = new IntDelayedGetter<T>(columnIndex);
+			} else if (long.class.equals(clazz)) {
+				getter = new LongDelayedGetter<T>(columnIndex);
+			} else if (float.class.equals(clazz)) {
+				getter = new FloatDelayedGetter<T>(columnIndex);
+			} else if (double.class.equals(clazz)) {
+				getter = new DoubleDelayedGetter<T>(columnIndex);
+			} else {
+				throw new IllegalArgumentException("Unexpected primitive " + clazz);
+			}
+		} else {
+			getter = new DelayedGetter<T>(columnIndex);
+		}
+		return getter;
+	}
+
+	private <T, P> CellValueReader<P> getReaderForSetter(Type type, Setter<T, P> setter, int index, CsvColumnDefinition columnDefinition) {
 		Class<P> propertyType = TypeHelper.toClass(type);
-		CellValueReader<P> reader = getReader(propertyType, index, colunn);
+		CellValueReader<P> reader = getReader(propertyType, index, columnDefinition);
 		return reader;
 	}
 
 	@SuppressWarnings({"unchecked" })
-	private <P> CellValueReader<P> getReader(Class<P> propertyType, int index, String column) {
+	private <P> CellValueReader<P> getReader(Class<P> propertyType, int index, CsvColumnDefinition columnDefinition) {
 		CellValueReader<P> reader = null;
-		
-		reader = (CellValueReader<P>) customReaders.get(column);
+
+		if (columnDefinition.hasCustomReader()) {
+			reader = (CellValueReader<P>) columnDefinition.getCustomReader();
+		}
+
 		if (reader == null) {
 			reader = getKnownReader(propertyType, index);
 		}
-		
+
 		if (reader == null) {
 			// check if has a one arg construct
 			final Constructor<?>[] constructors = propertyType.getConstructors();
@@ -157,7 +281,7 @@ public class CellSetterFactory {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public <P> CellValueReader<P> getKnownReader(Class<P> propertyType,
+	private <P> CellValueReader<P> getKnownReader(Class<P> propertyType,
 			int index) {
 		CellValueReader<P> reader;
 		if (Date.class.isAssignableFrom(propertyType)) {
@@ -172,26 +296,43 @@ public class CellSetterFactory {
 
 	@SuppressWarnings("unchecked")
 	private <P> CellValueReader<P> getCellValueTransformer(Class<P> propertyType) {
-		return (CellValueReader<P>) transformers.get(propertyType);
+		return (CellValueReader<P>) READERS.get(propertyType);
 	}
 
-	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type propertyType, Setter<T, P> setter, int index, String columnName) {
+
+	public <T,P> CellSetter<T> getCellSetter(Type propertyType, Setter<T, P> setter, int index, CsvColumnDefinition columnDefinition) {
+		Class<?> propertyClass = TypeHelper.toClass(propertyType);
+
+		if (propertyClass.isPrimitive()) {
+			return getPrimitiveCellSetter(propertyClass, setter, columnDefinition);
+		}
+
+		CellValueReader<P> readerForSetter = getReaderForSetter(propertyType, setter, index, columnDefinition);
+
+		return new CellSetterImpl<T, P>(readerForSetter, setter) ;
+	}
+
+	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type propertyType, Setter<T, P> setter, int index, CsvColumnDefinition columnDefinition) {
 		Class<?> propertyClass = TypeHelper.toClass(propertyType);
 		
-		if (propertyClass.isPrimitive() && !customReaders.containsKey(columnName)) {
-			return getPrimitiveDelayedCellSetter(propertyClass, setter);
+		if (propertyClass.isPrimitive()) {
+			return getPrimitiveDelayedCellSetter(propertyClass, setter, columnDefinition);
 		}
-		
-		return new DelayedCellSetterFactoryImpl<T, P>(getReaderForSetter(propertyType, setter, index, columnName), setter);
+
+		CellValueReader<P> reader = getReaderForSetter(propertyType, setter, index, columnDefinition);
+
+		return new DelayedCellSetterFactoryImpl<T, P>(reader, setter);
 	}
 	@SuppressWarnings("unchecked")
-	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type type, int index, String columnName) {
+	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type type, int index, CsvColumnDefinition columnDefinition) {
 		Class<?> propertyClass = TypeHelper.toClass(type);
 		
-		if (propertyClass.isPrimitive() && !customReaders.containsKey(columnName)) {
-			return getPrimitiveDelayedCellSetter(propertyClass, null);
+		if (propertyClass.isPrimitive()) {
+			return getPrimitiveDelayedCellSetter(propertyClass, null, columnDefinition);
 		}
-		
-		return new DelayedCellSetterFactoryImpl<T, P>(getReader((Class<P>)TypeHelper.toClass(type), index, columnName), null);
+
+		CellValueReader<P> reader = getReader((Class<P>) TypeHelper.toClass(type), index, columnDefinition);
+
+		return new DelayedCellSetterFactoryImpl<T, P>(reader, null);
 	}
 }

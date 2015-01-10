@@ -34,27 +34,27 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
 
 	private MapperCache<ColumnsMapperKey, CsvMapperImpl<T>> mapperCache = new MapperCache<ColumnsMapperKey, CsvMapperImpl<T>>();
-	private final Map<String, String> aliases;
-	private final Map<String, CellValueReader<?>> customReaders;
+
+
+	private final Map<String, CsvColumnDefinition> columnDefinitions;
 
 	public DynamicCsvMapper(final Type target, final ClassMeta<T> classMeta,
 							final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler,
 							final MapperBuilderErrorHandler mapperBuilderErrorHandler, String defaultDateFormat,
-							Map<String, String> aliases, Map<String, CellValueReader<?>> customReaders,
+							Map<String, CsvColumnDefinition> columnDefinitions,
 							PropertyNameMatcherFactory propertyNameMatcherFactory) {
 		this.classMeta = classMeta;
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.defaultDateFormat = defaultDateFormat;
-		this.aliases = aliases;
-		this.customReaders = customReaders;
+		this.columnDefinitions = columnDefinitions;
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 	}
 
 	public DynamicCsvMapper(Type target, ClassMeta<T> classMeta) {
 		this(target, classMeta, new RethrowFieldMapperErrorHandler<CsvColumnKey>(), new RethrowMapperBuilderErrorHandler(), "yyyy-MM-dd HH:mm:ss",
-				new HashMap<String, String>(), new HashMap<String, CellValueReader<?>>(), new DefaultPropertyNameMatcherFactory());
+				new HashMap<String, CsvColumnDefinition>(), new DefaultPropertyNameMatcherFactory());
 	}
 
 	@Override
@@ -133,14 +133,14 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	protected CsvMapperImpl<T> getCsvMapper(ColumnsMapperKey key) {
 		CsvMapperImpl<T> csvMapperImpl = mapperCache.get(key);
 		if (csvMapperImpl == null) {
-			csvMapperImpl = buildeMapper(key);
+			csvMapperImpl = buildMapper(key);
 			mapperCache.add(key, csvMapperImpl);
 		}
 		return csvMapperImpl;
 	}
 
-	private CsvMapperImpl<T> buildeMapper(ColumnsMapperKey key) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, aliases, customReaders, propertyNameMatcherFactory);
+	private CsvMapperImpl<T> buildMapper(ColumnsMapperKey key) {
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, columnDefinitions, propertyNameMatcherFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);

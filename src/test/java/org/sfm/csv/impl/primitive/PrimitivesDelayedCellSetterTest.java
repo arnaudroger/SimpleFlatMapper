@@ -4,14 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
-import org.sfm.csv.impl.primitive.BooleanDelayedCellSetter;
-import org.sfm.csv.impl.primitive.ByteDelayedCellSetter;
-import org.sfm.csv.impl.primitive.CharDelayedCellSetter;
-import org.sfm.csv.impl.primitive.DoubleDelayedCellSetter;
-import org.sfm.csv.impl.primitive.FloatDelayedCellSetter;
-import org.sfm.csv.impl.primitive.IntDelayedCellSetter;
-import org.sfm.csv.impl.primitive.LongDelayedCellSetter;
-import org.sfm.csv.impl.primitive.ShortDelayedCellSetter;
+import org.sfm.csv.impl.cellreader.*;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 
@@ -23,7 +16,7 @@ public class PrimitivesDelayedCellSetterTest {
 	public void testBooleanGetSetValue() throws Exception {
 		Setter<DbPrimitiveObjectWithSetter, Boolean> setter = setterFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pBoolean");
 		BooleanDelayedCellSetter<DbPrimitiveObjectWithSetter> bsetter = 
-				new BooleanDelayedCellSetter<DbPrimitiveObjectWithSetter>(SetterFactory.toBooleanSetter(setter));
+				new BooleanDelayedCellSetter<DbPrimitiveObjectWithSetter>(SetterFactory.toBooleanSetter(setter), new BooleanCellValueReaderImpl());
 		bsetter.set("true".toCharArray(), 0, 4, null);
 		assertTrue(bsetter.getValue());
 		
@@ -38,7 +31,7 @@ public class PrimitivesDelayedCellSetterTest {
 		Setter<DbPrimitiveObjectWithSetter, Byte> byteSetter = setterFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pByte");
 		ByteDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new ByteDelayedCellSetter<DbPrimitiveObjectWithSetter>(
-						SetterFactory.toByteSetter(byteSetter));
+						SetterFactory.toByteSetter(byteSetter), new ByteCellValueReaderImpl());
 		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Byte((byte)13), setter.getValue());
 		
@@ -53,7 +46,7 @@ public class PrimitivesDelayedCellSetterTest {
 		Setter<DbPrimitiveObjectWithSetter, Character> charSetter = setterFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pChar");
 		CharDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new CharDelayedCellSetter<DbPrimitiveObjectWithSetter>(
-						SetterFactory.toCharacterSetter(charSetter));
+						SetterFactory.toCharacterSetter(charSetter), new CharCellValueReaderImpl());
 		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Character((char)13), setter.getValue());
 		
@@ -68,7 +61,7 @@ public class PrimitivesDelayedCellSetterTest {
 		Setter<DbPrimitiveObjectWithSetter, Short> shortSetter = setterFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pShort");
 		ShortDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new ShortDelayedCellSetter<DbPrimitiveObjectWithSetter>(
-						SetterFactory.toShortSetter(shortSetter));
+						SetterFactory.toShortSetter(shortSetter), new ShortCellValueReaderImpl());
 		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Short((short)13), setter.getValue());
 		
@@ -83,7 +76,7 @@ public class PrimitivesDelayedCellSetterTest {
 		Setter<DbPrimitiveObjectWithSetter, Integer> intSetter = setterFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pInt");
 		IntDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new IntDelayedCellSetter<DbPrimitiveObjectWithSetter>(
-						SetterFactory.toIntSetter(intSetter));
+						SetterFactory.toIntSetter(intSetter), new IntegerCellValueReaderImpl());
 		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Integer(13), setter.getValue());
 		
@@ -98,7 +91,7 @@ public class PrimitivesDelayedCellSetterTest {
 		Setter<DbPrimitiveObjectWithSetter, Long> longSetter = setterFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pLong");
 		LongDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new LongDelayedCellSetter<DbPrimitiveObjectWithSetter>(
-						SetterFactory.toLongSetter(longSetter));
+						SetterFactory.toLongSetter(longSetter), new LongCellValueReaderImpl());
 		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Long(13), setter.getValue());
 		
@@ -113,7 +106,7 @@ public class PrimitivesDelayedCellSetterTest {
 		Setter<DbPrimitiveObjectWithSetter, Float> floatSetter = setterFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pFloat");
 		FloatDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new FloatDelayedCellSetter<DbPrimitiveObjectWithSetter>(
-						SetterFactory.toFloatSetter(floatSetter));
+						SetterFactory.toFloatSetter(floatSetter), new FloatCellValueReaderImpl());
 		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Float(13), setter.getValue());
 		
@@ -128,7 +121,7 @@ public class PrimitivesDelayedCellSetterTest {
 		Setter<DbPrimitiveObjectWithSetter, Double> doubleSetter = setterFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pDouble");
 		DoubleDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new DoubleDelayedCellSetter<DbPrimitiveObjectWithSetter>(
-						SetterFactory.toDoubleSetter(doubleSetter));
+						SetterFactory.toDoubleSetter(doubleSetter), new DoubleCellValueReaderImpl());
 		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Double(13), setter.getValue());
 		

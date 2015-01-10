@@ -2,16 +2,19 @@ package org.sfm.csv.impl.primitive;
 
 import org.sfm.csv.impl.DelayedCellSetter;
 import org.sfm.csv.impl.ParsingContext;
-import org.sfm.csv.impl.cellreader.IntegerCellValueReader;
+import org.sfm.csv.impl.cellreader.ByteCellValueReader;
+import org.sfm.csv.impl.cellreader.IntegerCellValueReaderImpl;
 import org.sfm.reflect.primitive.ByteSetter;
 
 public class ByteDelayedCellSetter<T> implements DelayedCellSetter<T, Byte> {
 
 	private final ByteSetter<T> setter;
 	private byte value;
-	
-	public ByteDelayedCellSetter(ByteSetter<T> setter) {
+	private final ByteCellValueReader reader;
+
+	public ByteDelayedCellSetter(ByteSetter<T> setter, ByteCellValueReader reader) {
 		this.setter = setter;
+		this.reader = reader;
 	}
 
 	@Override
@@ -39,6 +42,6 @@ public class ByteDelayedCellSetter<T> implements DelayedCellSetter<T, Byte> {
 
 	@Override
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
-		this.value = (byte)IntegerCellValueReader.parseInt(chars, offset, length);
+		this.value = reader.readByte(chars, offset, length, parsingContext);
 	}
 }

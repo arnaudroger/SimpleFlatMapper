@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
+import org.sfm.map.ColumnDefinition;
 import org.sfm.map.impl.CalculateMaxIndex;
 import org.sfm.map.impl.FieldKey;
 import org.sfm.map.impl.PropertyMappingsBuilder;
@@ -24,13 +25,13 @@ public class InstantiatorFactory {
 	}
 
 
-	public <S, T, K extends FieldKey<K>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap) throws NoSuchMethodException {
+	public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap) throws NoSuchMethodException {
 		return  getInstantiator(source, target, propertyMappingsBuilder, constructorParameterGetterMap, true);
 	}
 
-	public <S, T, K extends FieldKey<K>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap, boolean useAsmIfEnabled) throws NoSuchMethodException {
+	public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap, boolean useAsmIfEnabled) throws NoSuchMethodException {
 		if (TypeHelper.isArray(target)) {
-			return getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, K>()).maxIndex + 1);
+			return getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, K, D>()).maxIndex + 1);
 		} else {
 			return getInstantiator(target, TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getEligibleConstructorDefinitions(), constructorParameterGetterMap,useAsmIfEnabled);
 		}

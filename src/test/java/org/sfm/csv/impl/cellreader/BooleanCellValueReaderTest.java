@@ -5,11 +5,10 @@ import static org.junit.Assert.*;
 import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
-import org.sfm.csv.impl.cellreader.BooleanCellValueReader;
 
 public class BooleanCellValueReaderTest {
 
-	BooleanCellValueReader reader = new BooleanCellValueReader();
+	BooleanCellValueReaderImpl reader = new BooleanCellValueReaderImpl();
 	@Test
 	public void testRead() throws UnsupportedEncodingException {
 		testReadBoolean(false, "");

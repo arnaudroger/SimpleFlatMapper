@@ -125,7 +125,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 						(FieldMapper<S, T>) customMappings.get(columnKey.getName().toUpperCase())));
 		} else {
 			K alias = alias(columnKey);
-			if (! propertyMappingsBuilder.addProperty(alias, ColumnDefinition.identity())) {
+			if (! propertyMappingsBuilder.addProperty(alias, identity)) {
 				mapperBuilderErrorHandler.propertyNotFound(target, columnKey.getName());
 			}
 		}

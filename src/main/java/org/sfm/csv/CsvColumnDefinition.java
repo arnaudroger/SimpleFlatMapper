@@ -2,15 +2,15 @@ package org.sfm.csv;
 
 import org.sfm.map.ColumnDefinition;
 
-public interface CsvColumnDefinition extends ColumnDefinition<CsvColumnKey> {
+public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey> {
 
-    String dateFormat(String dateFormat);
-    boolean hasCustomReader();
-    CellValueReader<?> getCustomReader();
+    public abstract String dateFormat(String dateFormat);
+    public abstract boolean hasCustomReader();
+    public abstract CellValueReader<?> getCustomReader();
 
     public static CsvColumnDefinition IDENTITY = new IndentityCsvColumnDefinition();
 
-    public static CsvColumnDefinition newRename(String name) {
+    public static CsvColumnDefinition newRename(final String name) {
         return new IndentityCsvColumnDefinition() {
             @Override
             public CsvColumnKey rename(CsvColumnKey key) {
@@ -51,7 +51,7 @@ public interface CsvColumnDefinition extends ColumnDefinition<CsvColumnKey> {
 
 
 
-    static class IndentityCsvColumnDefinition implements CsvColumnDefinition {
+    static class IndentityCsvColumnDefinition extends CsvColumnDefinition {
         @Override
         public String dateFormat(String dateFormat) {
             return dateFormat;
@@ -73,7 +73,7 @@ public interface CsvColumnDefinition extends ColumnDefinition<CsvColumnKey> {
         }
     }
 
-    static final class ComposeCsvColumnDefinition implements CsvColumnDefinition {
+    static final class ComposeCsvColumnDefinition extends CsvColumnDefinition {
         private final CsvColumnDefinition def1;
         private final CsvColumnDefinition def2;
 

@@ -82,7 +82,15 @@ public class CsvMapperBuilder<T> {
 	public final CsvMapperBuilder<T> addMapping(final String columnKey) {
 		return addMapping(columnKey, propertyMappingsBuilder.size());
 	}
-	
+
+	public final CsvMapperBuilder<T> addMapping(final String columnKey, final CsvColumnDefinition columnDefinition) {
+		return addMapping(columnKey, propertyMappingsBuilder.size(), columnDefinition);
+	}
+
+	public final CsvMapperBuilder<T> addMapping(final String columnKey, int columnIndex, CsvColumnDefinition columnDefinition) {
+		return addMapping(new CsvColumnKey(columnKey, columnIndex), columnDefinition);
+	}
+
 	public final CsvMapperBuilder<T> addMapping(final String columnKey, int columnIndex) {
 		return addMapping(new CsvColumnKey(columnKey, columnIndex), CsvColumnDefinition.IDENTITY);
 	}

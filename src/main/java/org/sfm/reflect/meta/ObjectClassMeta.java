@@ -46,7 +46,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	private Map<String, String> aliases(final ReflectionService reflectService, Class<T> target) {
 		final Map<String, String> map = new HashMap<String, String>();
 		
-		ClassVisitor.visit(target, new FielAndMethodCallBack() {
+		ClassVisitor.visit(target, new FieldAndMethodCallBack() {
 			@Override
 			public void method(Method method) {
 				String alias = reflectService.getColumnName(method);
@@ -88,7 +88,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		final List<PropertyMeta<T, ?>> properties = new ArrayList<PropertyMeta<T, ?>>();
 		final Set<String> propertiesSet = new HashSet<String>();
 		
-		ClassVisitor.visit(target, new FielAndMethodCallBack() {
+		ClassVisitor.visit(target, new FieldAndMethodCallBack() {
 			@Override
 			public void method(Method method) {
 				final String name = method.getName();

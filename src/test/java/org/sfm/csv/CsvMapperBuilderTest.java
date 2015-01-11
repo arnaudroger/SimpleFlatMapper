@@ -145,42 +145,6 @@ public class CsvMapperBuilderTest {
 		builder.addMapping("no_prop");
 	}
 
-	@Test
-	public void testMapDbObjectCustomReader() throws UnsupportedEncodingException, Exception {
-		CsvMapperBuilder<DbObject> builder = csvMapperFactory.addCustomValueReader("id", new CellValueReader<Long>() {
-
-			@Override
-			public Long read(char[] chars, int offset, int length,
-					ParsingContext parsingContext) {
-				return 0x5677al;
-			}
-		}).newBuilder(DbObject.class);
-		addDbObjectFields(builder);
-		
-		CsvMapper<DbObject> mapper = builder.mapper();
-		List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
-		assertEquals(1, list.size());
-		assertEquals(0x5677al, list.get(0).getId());
-		assertEquals("name 1", list.get(0).getName());
-	}
-	@Test
-	public void testMapDbFinalObjectCustomReader() throws UnsupportedEncodingException, Exception {
-		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.addCustomValueReader("id", new CellValueReader<Long>() {
-
-			@Override
-			public Long read(char[] chars, int offset, int length,
-					ParsingContext parsingContext) {
-				return 0x5677al;
-			}
-		}).newBuilder(DbFinalObject.class);
-		addDbObjectFields(builder);
-		
-		CsvMapper<DbFinalObject> mapper = builder.mapper();
-		List<DbFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbFinalObject>()).getList();
-		assertEquals(1, list.size());
-		assertEquals(0x5677al, list.get(0).getId());
-		assertEquals("name 1", list.get(0).getName());
-	}
 	private void testMapPartialFinalDbObject(
 			CsvMapperBuilder<DbPartialFinalObject> builder) throws IOException,
 			UnsupportedEncodingException, ParseException {

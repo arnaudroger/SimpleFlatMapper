@@ -3,7 +3,7 @@ package org.sfm.reflect.meta;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public interface FielAndMethodCallBack {
+public interface FieldAndMethodCallBack {
 
 	void method(Method method);
 

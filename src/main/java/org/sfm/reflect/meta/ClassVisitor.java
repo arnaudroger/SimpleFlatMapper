@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 public class ClassVisitor {
 
 	
-	public static void visit(Class<?> target, FielAndMethodCallBack callback) {
+	public static void visit(Class<?> target, FieldAndMethodCallBack callback) {
 		Class<?> currentClass = target;
 		
 		while(currentClass != null && !Object.class.equals(currentClass)) {

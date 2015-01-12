@@ -1,14 +1,9 @@
 package org.sfm.jdbc;
 
+import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.jdbc.impl.DynamicJdbcMapper;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.MapperBuildingException;
-import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.DefaultPropertyNameMatcherFactory;
-import org.sfm.map.impl.FieldMapper;
-import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
-import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
+import org.sfm.map.*;
+import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
@@ -34,8 +29,7 @@ public final class JdbcMapperFactory {
 	private FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler = null;
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	private RowHandlerErrorHandler rowHandlerErrorHandler = new RethrowRowHandlerErrorHandler();
-	private Map<String, String> aliases = new HashMap<String, String>();
-	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();
+	private Map<String, FieldMapperColumnDefinition<JdbcColumnKey>> columnDefinitions = new HashMap<String, FieldMapperColumnDefinition<JdbcColumnKey>>();
 
 	private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
 	
@@ -109,9 +103,13 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapperBuilder<T> newBuilder(final Class<T> target) {
+		return newBuilder((Type)target);
+	}
+
+	public <T> JdbcMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
 
-		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, classMeta, aliases, customMappings, propertyNameMatcherFactory);
+		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, classMeta, columnDefinitions, propertyNameMatcherFactory);
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
@@ -126,11 +124,23 @@ public final class JdbcMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
-		ClassMeta<T> classMeta = getClassMeta(target);
-		return new DynamicJdbcMapper<T>(target, classMeta, fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, aliases, customMappings, propertyNameMatcherFactory);
+		return newMapper((Type)target);
 	}
 
-	
+	public <T> JdbcMapper<T> newMapper(final Type target) throws MapperBuildingException {
+		ClassMeta<T> classMeta = getClassMeta(target);
+		return new DynamicJdbcMapper<T>(target, classMeta, fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, columnDefinitions, propertyNameMatcherFactory);
+	}
+
+
+	private FieldMapperColumnDefinition<JdbcColumnKey> getColumnDefinition(String key) {
+		FieldMapperColumnDefinition<JdbcColumnKey> columnDefinition = columnDefinitions.get(key.toLowerCase());
+		if (columnDefinition == null) {
+			return FieldMapperColumnDefinition.identity();
+		}
+		return columnDefinition;
+	}
+
 	/**
 	 * 
 	 * @param key
@@ -138,18 +148,18 @@ public final class JdbcMapperFactory {
 	 * @return
 	 */
 	public JdbcMapperFactory addAlias(String key, String value) {
-		aliases.put(key.toUpperCase(), value.toUpperCase());
+		columnDefinitions.put(key.toLowerCase(), FieldMapperColumnDefinition.<JdbcColumnKey>compose(getColumnDefinition(key), FieldMapperColumnDefinition.<JdbcColumnKey>renameDefinition(value)));
 		return this;
 	}
 
 	/**
 	 * 
-	 * @param column
+	 * @param key
 	 * @param fieldMapper
 	 * @return
 	 */
-	public JdbcMapperFactory addCustomFieldMapper(String column, FieldMapper<ResultSet, ?> fieldMapper) {
-		customMappings.put(column.toUpperCase(), fieldMapper);
+	public JdbcMapperFactory addCustomFieldMapper(String key, FieldMapper<ResultSet, ?> fieldMapper) {
+		columnDefinitions.put(key.toLowerCase(), FieldMapperColumnDefinition.<JdbcColumnKey>compose(getColumnDefinition(key), FieldMapperColumnDefinition.<JdbcColumnKey>customFieldMapperDefinition(fieldMapper)));
 		return this;
 	}
 
@@ -164,7 +174,9 @@ public final class JdbcMapperFactory {
 	}
 
 	public JdbcMapperFactory addAliases(Map<String, String> aliases) {
-		this.aliases.putAll(aliases);
+		for(Map.Entry<String, String> e : aliases.entrySet()) {
+			addAlias(e.getKey(), e.getValue());
+		}
 		return this;
 	}
 }

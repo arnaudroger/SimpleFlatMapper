@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.sfm.beans.Db1DeepObject;
 import org.sfm.beans.DbFinal1DeepObject;
 import org.sfm.jdbc.DbHelper;
+import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.ListHandler;
 
 public class CsvMapperBuilderSubObjectTest {
@@ -18,7 +19,7 @@ public class CsvMapperBuilderSubObjectTest {
 	@Test
 	public void testMapDbObject() throws UnsupportedEncodingException, Exception {
 		
-		CsvMapperBuilder<Db1DeepObject> builder = new CsvMapperBuilder<Db1DeepObject>(Db1DeepObject.class);
+		CsvMapperBuilder<Db1DeepObject> builder = new CsvMapperBuilder<Db1DeepObject>(Db1DeepObject.class,  ReflectionService.newInstance(true, false));
 		addDbObjectFields(builder);
 		CsvMapper<Db1DeepObject> mapper = builder.mapper();
 		

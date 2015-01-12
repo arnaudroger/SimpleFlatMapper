@@ -26,4 +26,6 @@ public class PropertyMapping<T, P, K extends FieldKey<K>, D extends ColumnDefini
 	public D getColumnDefinition() {
 		return columnDefinition;
 	}
+
+
 }

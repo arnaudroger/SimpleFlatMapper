@@ -1,5 +1,6 @@
 package org.sfm.jdbc.impl;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -16,6 +17,7 @@ import org.sfm.jdbc.SQLMappingException;
 import org.sfm.map.*;
 import org.sfm.map.impl.ColumnsMapperKey;
 import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.MapperCache;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
@@ -24,29 +26,28 @@ import org.sfm.utils.RowHandler;
 public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private final ClassMeta<T> classMeta;
-	private final Class<T> target;
+	private final Type target;
 
 
 	private final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler;
 
 	private final  MapperBuilderErrorHandler mapperBuilderErrorHandler;
-	private final Map<String, String> aliases;
+	private final Map<String, FieldMapperColumnDefinition<JdbcColumnKey>> columnDefinitions;
 	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
 	private final RowHandlerErrorHandler rowHandlerErrorHandler;
-	private Map<String, FieldMapper<ResultSet, ?>> customMappings = new HashMap<String, FieldMapper<ResultSet, ?>>();
 	private MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache = new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
 
-	public DynamicJdbcMapper(final Class<T> target, final ClassMeta<T> classMeta,
+	public DynamicJdbcMapper(final Type target, final ClassMeta<T> classMeta,
 							 final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler,
 							 final MapperBuilderErrorHandler mapperBuilderErrorHandler,
-							 RowHandlerErrorHandler rowHandlerErrorHandler, final Map<String, String> aliases,
-							 final Map<String, FieldMapper<ResultSet, ?>> customMappings, PropertyNameMatcherFactory propertyNameMatcherFactory) {
+							 RowHandlerErrorHandler rowHandlerErrorHandler,
+							 final Map<String, FieldMapperColumnDefinition<JdbcColumnKey>> columnDefinitions,
+							 PropertyNameMatcherFactory propertyNameMatcherFactory) {
 		this.classMeta = classMeta;
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-		this.aliases = aliases;
-		this.customMappings = customMappings;
+		this.columnDefinitions = columnDefinitions;
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
 	}
@@ -91,7 +92,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		JdbcMapper<T> mapper = mapperCache.get(key);
 		
 		if (mapper == null) {
-			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, classMeta, aliases, customMappings, propertyNameMatcherFactory);
+			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, classMeta, columnDefinitions, propertyNameMatcherFactory);
 
 			builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);

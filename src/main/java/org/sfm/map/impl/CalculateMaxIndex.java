@@ -12,7 +12,7 @@ public final class CalculateMaxIndex<T, K extends FieldKey<K>, D extends ColumnD
 	public int maxIndex = -1;
 
 	@Override
-	public void handle(PropertyMapping<T, ?, K, D> e, int index) {
+	public void handle(PropertyMapping<T, ?, K, D> e) {
 		int currentIndex = -1;
 		if (e != null) {
 			PropertyMeta<T, ?> propMeta = e.getPropertyMeta();

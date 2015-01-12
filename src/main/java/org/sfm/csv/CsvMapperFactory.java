@@ -90,6 +90,10 @@ public final class CsvMapperFactory {
 	 * @return a jdbc mapper that will map to the targeted class.
 	 * @throws MapperBuildingException
 	 */
+	public <T> CsvMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
+		return newMapper((Type)target);
+	}
+
 	public <T> CsvMapper<T> newMapper(final Type target) throws MapperBuildingException {
 		ClassMeta<T> classMeta = getClassMeta(target);
 		return new DynamicCsvMapper<T>(target,
@@ -110,6 +114,10 @@ public final class CsvMapperFactory {
 	 * @throws MapperBuildingException
 	 */
 	public <T> CsvMapperBuilder<T> newBuilder(final Class<T> target) {
+		return newBuilder((Type)target);
+	}
+
+	public <T> CsvMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, columnDefinitions, propertyNameMatcherFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
@@ -121,18 +129,18 @@ public final class CsvMapperFactory {
 
 	public CsvMapperFactory addAlias(String key, String value) {
 		CsvColumnDefinition columnDefinition = getColumnDefinition(key);
-		columnDefinitions.put(key, CsvColumnDefinition.compose(columnDefinition, CsvColumnDefinition.newRename(value)));
+		columnDefinitions.put(key.toLowerCase(), CsvColumnDefinition.compose(columnDefinition, CsvColumnDefinition.renameDefinition(value)));
 		return this;
 	}
 
 	public CsvMapperFactory addCustomValueReader(String key,	CellValueReader<?> cellValueReader) {
 		CsvColumnDefinition columnDefinition = getColumnDefinition(key);
-		columnDefinitions.put(key, CsvColumnDefinition.compose(columnDefinition, CsvColumnDefinition.newCustomReader(cellValueReader)));
+		columnDefinitions.put(key.toLowerCase(), CsvColumnDefinition.compose(columnDefinition, CsvColumnDefinition.customReaderDefinition(cellValueReader)));
 		return this;
 	}
 
 	private CsvColumnDefinition getColumnDefinition(String key) {
-		CsvColumnDefinition columnDefinition = columnDefinitions.get(key);
+		CsvColumnDefinition columnDefinition = columnDefinitions.get(key.toLowerCase());
 		if (columnDefinition == null) {
 			return CsvColumnDefinition.IDENTITY;
 		}
@@ -141,6 +149,12 @@ public final class CsvMapperFactory {
 
 	public CsvMapperFactory propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
+		return this;
+	}
+
+	public CsvMapperFactory addColumnDefinition(String key, CsvColumnDefinition columnDefinition) {
+		CsvColumnDefinition cd = getColumnDefinition(key);
+		columnDefinitions.put(key.toLowerCase(), CsvColumnDefinition.compose(cd, columnDefinition));
 		return this;
 	}
 }

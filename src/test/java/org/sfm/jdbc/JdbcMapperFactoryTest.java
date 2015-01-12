@@ -8,17 +8,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObjectWithAlias;
+import org.sfm.csv.CsvMapperFactory;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.FieldMapper;
+import org.sfm.tuples.Tuples;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.RowHandler;
 
@@ -26,7 +29,14 @@ public class JdbcMapperFactoryTest {
 
 	JdbcMapperFactory asmFactory = JdbcMapperFactory.newInstance().useAsm(true);
 	JdbcMapperFactory nonAsmFactory = JdbcMapperFactory.newInstance().useAsm(false);
-	
+
+
+	@Test
+	public void testFactoryOnTuples() {
+		assertNotNull(JdbcMapperFactory.newInstance().newMapper(Tuples.typeDef(Date.class, Date.class)));
+		assertNotNull(JdbcMapperFactory.newInstance().newBuilder(Tuples.typeDef(Date.class, Date.class)));
+	}
+
 	@Test
 	public void testAsmDbObjectMappingFromDbWithMetaData()
 			throws SQLException, Exception, ParseException {

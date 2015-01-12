@@ -147,7 +147,7 @@ public class CsvMapperBuilderTest {
 
 	private void testMapPartialFinalDbObject(
 			CsvMapperBuilder<DbPartialFinalObject> builder) throws IOException,
-			UnsupportedEncodingException, ParseException {
+			 ParseException {
 		addDbObjectFields(builder);
 		
 		CsvMapper<DbPartialFinalObject> mapper = builder.mapper();

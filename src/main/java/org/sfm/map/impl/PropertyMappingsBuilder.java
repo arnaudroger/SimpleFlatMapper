@@ -37,10 +37,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	}
 
 	public <P> void addProperty(final K key, final D columnDefinition, final PropertyMeta<T, P> prop) {
-		while(properties.size() <= key.getIndex()) {
-			properties.add(null);
-		}
-		properties.set(key.getIndex(), new PropertyMapping<T, P, K, D>(prop, key, columnDefinition));
+		properties.add(new PropertyMapping<T, P, K, D>(prop, key, columnDefinition));
 	}
 	
 	public List<K> getKeys() {
@@ -67,7 +64,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 			if (property != null) {
 				PropertyMeta<T, ?> propertyMeta = property.getPropertyMeta();
 				if (propertyMeta != null && propertyMeta.isConstructorProperty()) {
-					handler.handle(property, i);
+					handler.handle(property);
 				}
 			}
  		}
@@ -81,27 +78,30 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 			if (property != null) {
 				PropertyMeta<T, ?> propertyMeta = property.getPropertyMeta();
 				if (propertyMeta != null && propertyMeta.isSubProperty()) {
-					handler.handle(property, i);
+					handler.handle(property);
 				} 
 			}
  		}
 	}
 
 	public <H extends ForEachCallBack<PropertyMapping<T, ?, K, D>>> H forEachProperties(H handler)  {
-		forEachProperties(handler, 0);
-		return handler;
+		return forEachProperties(handler, -1 );
 	}
 	
-	public void forEachProperties(ForEachCallBack<PropertyMapping<T, ?, K, D>> handler, int start)  {
-		forEachProperties(handler, start, properties.size());
+	public <F extends ForEachCallBack<PropertyMapping<T, ?, K, D>>> F forEachProperties(F handler, int start)  {
+		return forEachProperties(handler, start, -1 );
 	}
 	
-	public void forEachProperties(ForEachCallBack<PropertyMapping<T, ?, K, D>> handler, int start, int end)  {
+	public <F extends ForEachCallBack<PropertyMapping<T, ?, K, D>>> F forEachProperties(F handler, int start, int end)  {
 		modifiable = false;
-		for(int i = start; i < end; i++) {
+		for(int i = 0; i < properties.size(); i++) {
 			PropertyMapping<T, ?, K, D> prop = properties.get(i);
-			handler.handle(prop, i);
+			if ((prop.getColumnKey().getIndex() >= start || start == -1)
+					 && (prop.getColumnKey().getIndex() < end || end == -1)) {
+				handler.handle(prop);
+			}
  		}
+		return handler;
 	}
 
 

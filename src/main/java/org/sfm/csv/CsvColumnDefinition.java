@@ -10,7 +10,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
 
     public static CsvColumnDefinition IDENTITY = new IndentityCsvColumnDefinition();
 
-    public static CsvColumnDefinition newRename(final String name) {
+    public static CsvColumnDefinition renameDefinition(final String name) {
         return new IndentityCsvColumnDefinition() {
             @Override
             public CsvColumnKey rename(CsvColumnKey key) {
@@ -19,7 +19,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         };
     }
 
-    public static CsvColumnDefinition dateFormatDef(final String dateFormatDef) {
+    public static CsvColumnDefinition dateFormatDefinition(final String dateFormatDef) {
         return new IndentityCsvColumnDefinition() {
             @Override
             public String dateFormat(String dateFormat) {
@@ -28,14 +28,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         };
     }
 
-    public static CsvColumnDefinition compose(final CsvColumnDefinition def1, final CsvColumnDefinition def2) {
-        if (def1 == IDENTITY) return def2;
-        if (def2 == IDENTITY) return def1;
-
-        return new ComposeCsvColumnDefinition(def1, def2);
-    }
-
-    static CsvColumnDefinition newCustomReader(final CellValueReader<?> cellValueReader) {
+    public static CsvColumnDefinition customReaderDefinition(final CellValueReader<?> cellValueReader) {
         return new IndentityCsvColumnDefinition() {
             @Override
             public CellValueReader<?> getCustomReader() {
@@ -48,6 +41,15 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
             }
         };
     }
+
+
+    public static CsvColumnDefinition compose(final CsvColumnDefinition def1, final CsvColumnDefinition def2) {
+        if (def1 == IDENTITY) return def2;
+        if (def2 == IDENTITY) return def1;
+
+        return new ComposeCsvColumnDefinition(def1, def2);
+    }
+
 
 
 

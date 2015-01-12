@@ -141,8 +141,12 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 			final FieldMapperColumnDefinition<K> composedDefinition = FieldMapperColumnDefinition.compose(columnDefinition, getColumnDefintion(key));
 			final K mappedColumnKey = composedDefinition.rename(key);
 
-		if (!propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition)) {
-			mapperBuilderErrorHandler.propertyNotFound(target, key.getName());
+		if (columnDefinition.getFieldMapper() != null) {
+			_addMapper((FieldMapper<S, T>) columnDefinition.getFieldMapper());
+		} else {
+			if (!propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition)) {
+				mapperBuilderErrorHandler.propertyNotFound(target, key.getName());
+			}
 		}
 	}
 

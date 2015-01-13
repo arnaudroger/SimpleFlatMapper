@@ -33,7 +33,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	protected final ReflectionService reflectionService;
 	
 	protected final Map<String, FieldMapperColumnDefinition<K>> columnDefinitions;
-	protected final List<FieldMapper<S, T>> additionalMappers = new ArrayList<>();
+	protected final List<FieldMapper<S, T>> additionalMappers = new ArrayList<FieldMapper<S, T>>();
 	protected final PropertyNameMatcherFactory propertyNameMatcherFactory;
 
 	private final FieldMapperColumnDefinition<K> identity = FieldMapperColumnDefinition.identity();

@@ -43,6 +43,12 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 							final MapperBuilderErrorHandler mapperBuilderErrorHandler, String defaultDateFormat,
 							Map<String, CsvColumnDefinition> columnDefinitions,
 							PropertyNameMatcherFactory propertyNameMatcherFactory) {
+		if (classMeta == null) {
+			throw new NullPointerException("classMeta is null");
+		}
+		if (target == null) {
+			throw new NullPointerException("classMeta is null");
+		}
 		this.classMeta = classMeta;
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;

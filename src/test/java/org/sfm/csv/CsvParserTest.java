@@ -76,6 +76,20 @@ public class CsvParserTest {
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
 		assertFalse(iterate.hasNext());
+
+		//assertEquals("value", CsvParser.mapTo(String.class).iterate(new StringReader("val\nvalue")).next());
+	}
+
+	@Test
+	public void testDSLMapWith() throws IOException {
+		CsvMapper<Tuple2<String, String>> mapper = CsvMapperFactory.newInstance().newMapper(Tuples.typeDef(String.class, String.class));
+		Iterator<Tuple2<String, String>> iterate =  CsvParser.<Tuple2<String, String>>mapWith(mapper).iterate(new StringReader("val0,val1\nvalue1,value2"));
+
+		assertTrue(iterate.hasNext());
+		Tuple2<String, String> tuple2 = iterate.next();
+		assertEquals("value1", tuple2.first());
+		assertEquals("value2", tuple2.second());
+		assertFalse(iterate.hasNext());
 	}
 
 	@Test

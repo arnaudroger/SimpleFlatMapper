@@ -1,11 +1,10 @@
 package org.sfm.reflect;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import org.sfm.beans.Bar;
 import org.sfm.beans.Foo;
-import org.sfm.reflect.Setter;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class SetterTestHelper {
 	public static void validateFooSetter(Setter<Foo, String> setter)

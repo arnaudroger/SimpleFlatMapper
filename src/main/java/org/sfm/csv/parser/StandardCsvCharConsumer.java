@@ -1,9 +1,6 @@
 package org.sfm.csv.parser;
 
 
-import java.io.IOException;
-import java.io.Reader;
-
 /**
  * Consume the charbuffer.
  */

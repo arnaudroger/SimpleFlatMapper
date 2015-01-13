@@ -1,15 +1,11 @@
 package org.sfm.reflect.meta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
 import org.sfm.map.MapperBuildingException;
-import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.TypeHelper;
+
+import java.util.*;
 
 final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	

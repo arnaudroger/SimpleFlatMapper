@@ -1,14 +1,15 @@
 package org.sfm.csv;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.io.StringReader;
-
 import org.junit.Test;
 import org.sfm.map.MappingException;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.ListHandler;
+
+import java.io.IOException;
+import java.io.StringReader;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class CsvMapperOneConstructorType {
 

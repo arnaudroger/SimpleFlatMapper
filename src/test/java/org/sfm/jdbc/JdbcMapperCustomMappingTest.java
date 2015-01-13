@@ -1,14 +1,14 @@
 package org.sfm.jdbc;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.map.MappingException;
 import org.sfm.map.impl.FieldMapper;
 import org.sfm.utils.RowHandler;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class JdbcMapperCustomMappingTest {
 

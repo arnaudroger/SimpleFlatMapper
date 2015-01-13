@@ -1,11 +1,5 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.junit.Test;
 import org.sfm.beans.DbBoxedPrimitveObject;
 import org.sfm.beans.DbFinalPrimitiveObject;
@@ -13,6 +7,14 @@ import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.PrimitiveObject;
 import org.sfm.map.Mapper;
 import org.sfm.reflect.ReflectionService;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class JdbcMapperPrimitiveTest {
 	

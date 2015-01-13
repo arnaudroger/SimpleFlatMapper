@@ -1,14 +1,14 @@
 package org.sfm.csv;
 
+import org.sfm.map.MappingException;
+import org.sfm.utils.RowHandler;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
 //IFJAVA8_START
 import java.util.stream.Stream;
 //IFJAVA8_END
-
-import org.sfm.map.MappingException;
-import org.sfm.utils.RowHandler;
 
 public interface CsvMapper<T> {
 	

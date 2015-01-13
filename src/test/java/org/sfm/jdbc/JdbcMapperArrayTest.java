@@ -1,16 +1,17 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.*;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
 import org.junit.Test;
 import org.sfm.beans.DbArrayObject;
 import org.sfm.beans.DbArrayOfString;
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.RowHandler;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class JdbcMapperArrayTest {
 	

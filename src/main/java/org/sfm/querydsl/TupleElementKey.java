@@ -1,12 +1,11 @@
 package org.sfm.querydsl;
 
-import org.sfm.map.MappingException;
-import org.sfm.map.impl.FieldKey;
-
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.Path;
 import com.mysema.query.types.PathMetadata;
 import com.mysema.query.types.PathType;
+import org.sfm.map.MappingException;
+import org.sfm.map.impl.FieldKey;
 
 public class TupleElementKey implements FieldKey<TupleElementKey> {
 	private final Expression<?> expression;

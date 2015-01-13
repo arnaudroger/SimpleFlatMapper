@@ -1,10 +1,10 @@
 package org.sfm.jdbc.impl.getter;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.ByteGetter;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public final class ByteResultSetGetter implements ByteGetter<ResultSet>, Getter<ResultSet, Byte> {
 

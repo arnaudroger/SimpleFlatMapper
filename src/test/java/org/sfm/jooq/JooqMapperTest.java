@@ -1,10 +1,5 @@
 package org.sfm.jooq;
 
-import static org.junit.Assert.*;
-
-import java.sql.Connection;
-import java.util.List;
-
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
@@ -14,6 +9,11 @@ import org.sfm.beans.DbExtentedType;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.jdbc.JdbcMapperDbExtentedTypeTest;
+
+import java.sql.Connection;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class JooqMapperTest {
 

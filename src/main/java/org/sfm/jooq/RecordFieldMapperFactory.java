@@ -1,7 +1,5 @@
 package org.sfm.jooq;
 
-import java.lang.reflect.Type;
-
 import org.jooq.Record;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
@@ -11,6 +9,8 @@ import org.sfm.map.impl.FieldMapperFactory;
 import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
+
+import java.lang.reflect.Type;
 
 public class RecordFieldMapperFactory<R extends Record> implements
 		FieldMapperFactory<R, JooqFieldKey> {

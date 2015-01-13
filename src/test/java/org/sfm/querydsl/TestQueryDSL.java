@@ -1,21 +1,19 @@
 package org.sfm.querydsl;
 
-import static org.junit.Assert.*;
+import com.mysema.query.sql.HSQLDBTemplates;
+import com.mysema.query.sql.SQLQuery;
+import com.mysema.query.sql.SQLQueryImpl;
+import org.junit.Test;
+import org.sfm.beans.DbObject;
+import org.sfm.jdbc.DbHelper;
+import org.springframework.dao.DataAccessException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 
-import org.junit.Test;
-import org.sfm.beans.DbObject;
-import org.sfm.jdbc.DbHelper;
-import org.sfm.querydsl.QueryDslMappingProjection;
-import org.springframework.dao.DataAccessException;
-
-import com.mysema.query.sql.HSQLDBTemplates;
-import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.sql.SQLQueryImpl;
+import static org.junit.Assert.assertEquals;
 
 public class TestQueryDSL {
 	QTestDbObject qTestDbObject = new QTestDbObject("o");

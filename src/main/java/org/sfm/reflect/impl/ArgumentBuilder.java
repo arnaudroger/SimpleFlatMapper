@@ -1,12 +1,12 @@
 package org.sfm.reflect.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.Getter;
+import org.sfm.reflect.TypeHelper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public final class ArgumentBuilder<S, T> {
 

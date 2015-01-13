@@ -1,9 +1,9 @@
 package org.sfm.jdbc.impl.getter;
 
+import org.sfm.reflect.Getter;
+
 import java.math.BigInteger;
 import java.sql.ResultSet;
-
-import org.sfm.reflect.Getter;
 
 public final class BigIntegerResultSetGetter implements Getter<ResultSet, BigInteger> {
 

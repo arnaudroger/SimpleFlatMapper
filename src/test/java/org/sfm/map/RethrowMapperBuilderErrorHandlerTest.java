@@ -1,9 +1,9 @@
 package org.sfm.map;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
+
+import static org.junit.Assert.fail;
 
 public class RethrowMapperBuilderErrorHandlerTest {
 

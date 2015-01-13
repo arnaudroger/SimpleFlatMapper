@@ -1,7 +1,6 @@
 package org.sfm.querydsl;
 
-import java.lang.reflect.Type;
-
+import com.mysema.query.Tuple;
 import org.sfm.map.impl.GetterFactory;
 import org.sfm.querydsl.getter.EnumTupleNamedIndexedGetter;
 import org.sfm.querydsl.getter.EnumTupleOrdinalIndexedGetter;
@@ -9,7 +8,7 @@ import org.sfm.querydsl.getter.TupleIndexedGetter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
-import com.mysema.query.Tuple;
+import java.lang.reflect.Type;
 
 public final class TupleGetterFactory implements GetterFactory<Tuple, TupleElementKey>{
 	public static final int UNDEFINED = -99999;

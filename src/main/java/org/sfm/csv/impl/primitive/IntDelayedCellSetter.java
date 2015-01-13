@@ -3,7 +3,6 @@ package org.sfm.csv.impl.primitive;
 import org.sfm.csv.impl.DelayedCellSetter;
 import org.sfm.csv.impl.ParsingContext;
 import org.sfm.csv.impl.cellreader.IntegerCellValueReader;
-import org.sfm.csv.impl.cellreader.IntegerCellValueReaderImpl;
 import org.sfm.reflect.primitive.IntSetter;
 
 public class IntDelayedCellSetter<T> implements DelayedCellSetter<T, Integer> {

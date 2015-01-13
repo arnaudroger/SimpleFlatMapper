@@ -1,15 +1,16 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.*;
-
-import java.sql.SQLException;
-import java.util.List;
-
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.utils.ListHandler;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class JdbcMapperBuilderTest {
 

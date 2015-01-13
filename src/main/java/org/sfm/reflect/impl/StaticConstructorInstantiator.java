@@ -1,8 +1,8 @@
 package org.sfm.reflect.impl;
 
-import java.lang.reflect.Constructor;
-
 import org.sfm.reflect.Instantiator;
+
+import java.lang.reflect.Constructor;
 
 public final class StaticConstructorInstantiator<S, T> implements Instantiator<S, T> {
 	

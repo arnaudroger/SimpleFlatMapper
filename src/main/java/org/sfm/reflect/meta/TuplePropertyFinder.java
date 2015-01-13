@@ -6,7 +6,8 @@ import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TuplePropertyFinder<T> implements PropertyFinder<T> {

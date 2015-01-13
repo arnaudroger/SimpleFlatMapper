@@ -1,10 +1,10 @@
 package org.sfm.jdbc.impl.getter;
 
+import org.sfm.reflect.Getter;
+
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.sfm.reflect.Getter;
 
 public class UrlResultSetGetter implements
 		Getter<java.sql.ResultSet, URL> {

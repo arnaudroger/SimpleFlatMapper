@@ -1,10 +1,9 @@
 package org.sfm.querydsl.getter;
 
+import com.mysema.query.Tuple;
 import org.sfm.querydsl.TupleElementKey;
 import org.sfm.reflect.EnumHelper;
 import org.sfm.reflect.Getter;
-
-import com.mysema.query.Tuple;
 
 public final class EnumTupleOrdinalIndexedGetter<E extends Enum<E>> implements  Getter<Tuple, E> {
 

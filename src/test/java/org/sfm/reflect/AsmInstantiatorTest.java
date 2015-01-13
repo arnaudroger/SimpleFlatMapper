@@ -1,12 +1,12 @@
 package org.sfm.reflect;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.sql.ResultSet;
-
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.asm.AsmFactory;
+
+import java.sql.ResultSet;
+
+import static org.junit.Assert.assertNotNull;
 
 public class AsmInstantiatorTest {
 

@@ -1,9 +1,9 @@
 package org.sfm.reflect.impl;
 
+import org.sfm.reflect.Setter;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import org.sfm.reflect.Setter;
 
 public final class MethodSetter<T, P> implements Setter<T, P> {
 

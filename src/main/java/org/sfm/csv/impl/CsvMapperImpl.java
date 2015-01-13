@@ -1,5 +1,16 @@
 package org.sfm.csv.impl;
 
+import org.sfm.csv.CsvColumnKey;
+import org.sfm.csv.CsvMapper;
+import org.sfm.csv.CsvParser;
+import org.sfm.csv.CsvReader;
+import org.sfm.csv.parser.CellConsumer;
+import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.MappingException;
+import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.reflect.Instantiator;
+import org.sfm.utils.RowHandler;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
@@ -12,16 +23,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END
 
-import org.sfm.csv.CsvColumnKey;
-import org.sfm.csv.CsvMapper;
-import org.sfm.csv.CsvParser;
-import org.sfm.csv.parser.CellConsumer;
-import org.sfm.csv.CsvReader;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MappingException;
-import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.reflect.Instantiator;
-import org.sfm.utils.RowHandler;
+
 
 public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	private final DelayedCellSetterFactory<T, ?>[] delayedCellSetters;

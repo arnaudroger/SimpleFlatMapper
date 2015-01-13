@@ -1,7 +1,6 @@
 package org.sfm.querydsl;
 
-import java.lang.reflect.Type;
-
+import com.mysema.query.Tuple;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.impl.FieldErrorHandlerMapper;
@@ -13,7 +12,7 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.TypeHelper;
 
-import com.mysema.query.Tuple;
+import java.lang.reflect.Type;
 
 public final class TupleFieldMapperFactory implements FieldMapperFactory<Tuple, TupleElementKey> {
 

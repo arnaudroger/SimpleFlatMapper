@@ -1,18 +1,18 @@
 package org.sfm.csv;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-
 import org.junit.Test;
 import org.sfm.beans.Db1DeepObject;
 import org.sfm.beans.DbFinal1DeepObject;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.ListHandler;
+
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class CsvMapperBuilderSubObjectTest {
 

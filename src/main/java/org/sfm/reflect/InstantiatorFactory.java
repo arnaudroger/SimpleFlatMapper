@@ -1,12 +1,5 @@
 package org.sfm.reflect;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.impl.CalculateMaxIndex;
 import org.sfm.map.impl.FieldKey;
@@ -14,6 +7,13 @@ import org.sfm.map.impl.PropertyMappingsBuilder;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.impl.InjectConstructorInstantiator;
 import org.sfm.reflect.impl.StaticConstructorInstantiator;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 public class InstantiatorFactory {
 	private static final Object[] EMPTY_ARGS = new Object[]{};

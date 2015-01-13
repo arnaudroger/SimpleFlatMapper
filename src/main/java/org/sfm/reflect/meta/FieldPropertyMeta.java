@@ -1,10 +1,10 @@
 package org.sfm.reflect.meta;
 
-import java.lang.reflect.Field;
-
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.impl.FieldSetter;
+
+import java.lang.reflect.Field;
 
 public class FieldPropertyMeta<T, P> extends PropertyMeta<T, P> {
 

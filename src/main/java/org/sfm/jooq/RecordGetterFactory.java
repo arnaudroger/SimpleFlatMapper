@@ -1,7 +1,5 @@
 package org.sfm.jooq;
 
-import java.lang.reflect.Type;
-
 import org.jooq.Record;
 import org.sfm.jooq.getter.EnumRecordNamedGetter;
 import org.sfm.jooq.getter.EnumRecordOrdinalGetter;
@@ -12,6 +10,8 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.utils.conv.Converter;
 import org.sfm.utils.conv.ConverterFactory;
+
+import java.lang.reflect.Type;
 
 public class RecordGetterFactory<R extends Record> implements
 		GetterFactory<R, JooqFieldKey> {

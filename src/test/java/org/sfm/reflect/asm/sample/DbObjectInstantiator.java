@@ -1,9 +1,9 @@
 package org.sfm.reflect.asm.sample;
 
-import java.sql.ResultSet;
-
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.Instantiator;
+
+import java.sql.ResultSet;
 
 public final class DbObjectInstantiator implements Instantiator<ResultSet, DbObject> {
 	@Override

@@ -1,8 +1,10 @@
 package org.sfm.csv;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.sfm.beans.DbObject;
+import org.sfm.csv.impl.CsvMapperImpl;
+import org.sfm.jdbc.DbHelper;
+import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -15,11 +17,9 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 //IFJAVA8_END
 
-import org.junit.Test;
-import org.sfm.beans.DbObject;
-import org.sfm.csv.impl.CsvMapperImpl;
-import org.sfm.jdbc.DbHelper;
-import org.sfm.utils.RowHandler;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 
 public class CsvMapperImplTest {
 

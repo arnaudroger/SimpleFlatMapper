@@ -1,6 +1,8 @@
 package org.sfm.reflect.asm;
 
-import static org.objectweb.asm.Opcodes.*;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.sfm.reflect.TypeHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,16 +11,9 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.sfm.reflect.TypeHelper;
+import static org.objectweb.asm.Opcodes.*;
 public class AsmUtils {
 
 	public static String toType(final Type target) {

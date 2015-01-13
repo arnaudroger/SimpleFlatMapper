@@ -1,6 +1,9 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.sfm.beans.DbExtentedType;
+import org.sfm.utils.ListHandler;
+import org.sfm.utils.RowHandler;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -10,10 +13,8 @@ import java.sql.Time;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
-import org.sfm.beans.DbExtentedType;
-import org.sfm.utils.ListHandler;
-import org.sfm.utils.RowHandler;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class JdbcMapperDbExtentedTypeTest {
 	

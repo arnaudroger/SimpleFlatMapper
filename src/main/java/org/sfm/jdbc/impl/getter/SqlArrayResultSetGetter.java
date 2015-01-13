@@ -1,10 +1,10 @@
 package org.sfm.jdbc.impl.getter;
 
+import org.sfm.reflect.Getter;
+
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.sfm.reflect.Getter;
 
 public final class SqlArrayResultSetGetter implements Getter<ResultSet, Array> {
 	private final int column;

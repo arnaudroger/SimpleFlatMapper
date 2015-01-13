@@ -1,10 +1,6 @@
 package org.sfm.jooq;
 
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
-import org.jooq.RecordMapperProvider;
-import org.jooq.RecordType;
+import org.jooq.*;
 import org.sfm.map.Mapper;
 import org.sfm.map.impl.MapperCache;
 import org.sfm.map.impl.TargetColumnsMapperKey;

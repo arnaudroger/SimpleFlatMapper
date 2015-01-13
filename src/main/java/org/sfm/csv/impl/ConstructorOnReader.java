@@ -1,9 +1,8 @@
 package org.sfm.csv.impl;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import org.sfm.csv.CellValueReader;
+
+import java.lang.reflect.Constructor;
 
 public class ConstructorOnReader<T> implements CellValueReader<T> {
 	private final Constructor<T> constructor;

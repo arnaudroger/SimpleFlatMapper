@@ -1,10 +1,10 @@
 package org.sfm.map;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-
 import org.junit.Test;
 import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
+
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 public class RethrowFieldMapperErrorHandlerTest {
 

@@ -3,7 +3,6 @@ package org.sfm.csv.impl.primitive;
 import org.sfm.csv.impl.DelayedCellSetter;
 import org.sfm.csv.impl.ParsingContext;
 import org.sfm.csv.impl.cellreader.BooleanCellValueReader;
-import org.sfm.csv.impl.cellreader.BooleanCellValueReaderImpl;
 import org.sfm.reflect.primitive.BooleanSetter;
 
 public class BooleanDelayedCellSetter<T> implements DelayedCellSetter<T, Boolean> {

@@ -1,12 +1,13 @@
 package org.sfm.csv.impl.primitive;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.csv.impl.cellreader.*;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PrimitivesDelayedCellSetterTest {
 

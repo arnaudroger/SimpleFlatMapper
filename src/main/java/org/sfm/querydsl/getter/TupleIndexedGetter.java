@@ -1,9 +1,8 @@
 package org.sfm.querydsl.getter;
 
+import com.mysema.query.Tuple;
 import org.sfm.querydsl.TupleElementKey;
 import org.sfm.reflect.Getter;
-
-import com.mysema.query.Tuple;
 
 public class TupleIndexedGetter<P> implements Getter<Tuple, P> {
 

@@ -1,10 +1,10 @@
 package org.sfm.map.impl;
 
+import org.sfm.map.MapperBuilderErrorHandler;
+
 import java.lang.reflect.Type;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.sfm.map.MapperBuilderErrorHandler;
 
 public final class LogRethrowMapperBuilderErrorHandler implements
 		MapperBuilderErrorHandler {

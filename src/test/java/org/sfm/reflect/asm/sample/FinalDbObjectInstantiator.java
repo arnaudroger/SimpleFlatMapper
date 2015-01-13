@@ -1,16 +1,16 @@
 package org.sfm.reflect.asm.sample;
 
-import java.sql.ResultSet;
-import java.util.Map;
-
-import org.sfm.beans.DbObject.Type;
 import org.sfm.beans.DbFinalObject;
+import org.sfm.beans.DbObject.Type;
 import org.sfm.jdbc.impl.getter.LongResultSetGetter;
 import org.sfm.jdbc.impl.getter.OrdinalEnumResultSetGetter;
 import org.sfm.jdbc.impl.getter.StringEnumResultSetGetter;
 import org.sfm.jdbc.impl.getter.StringResultSetGetter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
+
+import java.sql.ResultSet;
+import java.util.Map;
 
 public final class FinalDbObjectInstantiator implements Instantiator<ResultSet, DbFinalObject> {
 	

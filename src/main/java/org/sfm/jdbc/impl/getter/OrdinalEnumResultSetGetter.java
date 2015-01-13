@@ -1,9 +1,9 @@
 package org.sfm.jdbc.impl.getter;
 
-import java.sql.ResultSet;
-
 import org.sfm.reflect.EnumHelper;
 import org.sfm.reflect.Getter;
+
+import java.sql.ResultSet;
 
 public final class OrdinalEnumResultSetGetter<E extends Enum<E>> implements  Getter<ResultSet, E> {
 

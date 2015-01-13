@@ -1,9 +1,9 @@
 package org.sfm.reflect.meta;
 
-import java.lang.reflect.Type;
-
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
+
+import java.lang.reflect.Type;
 
 public class SubPropertyMeta<O, P> extends PropertyMeta<O, P> {
 	private final PropertyMeta<O, P> ownerProperty;

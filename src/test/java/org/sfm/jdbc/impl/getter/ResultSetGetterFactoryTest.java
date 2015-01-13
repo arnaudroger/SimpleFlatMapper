@@ -1,19 +1,19 @@
 package org.sfm.jdbc.impl.getter;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.junit.Test;
+import org.sfm.beans.DbObject;
+import org.sfm.jdbc.JdbcColumnKey;
 
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.sql.*;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.sfm.beans.DbObject;
-import org.sfm.jdbc.JdbcColumnKey;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ResultSetGetterFactoryTest {
 

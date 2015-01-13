@@ -5,7 +5,6 @@ import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ReflectionService;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.List;
 
 public class TupleClassMeta<T> implements ClassMeta<T> {

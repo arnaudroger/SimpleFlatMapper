@@ -1,9 +1,9 @@
 package org.sfm.jdbc.impl.getter;
 
+import org.sfm.reflect.Getter;
+
 import java.math.BigDecimal;
 import java.sql.ResultSet;
-
-import org.sfm.reflect.Getter;
 
 public final class BigDecimalResultSetGetter implements Getter<ResultSet, BigDecimal> {
 

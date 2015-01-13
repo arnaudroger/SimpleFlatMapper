@@ -1,8 +1,8 @@
 package org.sfm.jdbc.impl.getter;
 
-import java.sql.ResultSet;
-
 import org.sfm.reflect.Getter;
+
+import java.sql.ResultSet;
 
 public final class ByteArrayResultSetGetter implements Getter<ResultSet, byte[]> {
 

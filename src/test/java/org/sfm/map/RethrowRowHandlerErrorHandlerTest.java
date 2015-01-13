@@ -1,10 +1,10 @@
 package org.sfm.map;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 import org.sfm.jdbc.HandlerErrorException;
 import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
+
+import static org.junit.Assert.assertSame;
 
 public class RethrowRowHandlerErrorHandlerTest {
 

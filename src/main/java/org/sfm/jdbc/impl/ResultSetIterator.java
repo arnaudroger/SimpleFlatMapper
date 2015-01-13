@@ -1,11 +1,11 @@
 package org.sfm.jdbc.impl;
 
+import org.sfm.map.Mapper;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import org.sfm.map.Mapper;
 
 public class ResultSetIterator<T> implements Iterator<T> {
 

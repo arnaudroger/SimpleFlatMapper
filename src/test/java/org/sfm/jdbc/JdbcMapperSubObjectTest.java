@@ -1,15 +1,15 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.*;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
 import org.junit.Test;
 import org.sfm.beans.Db1DeepObject;
 import org.sfm.beans.Db2DeepObject;
 import org.sfm.beans.DbFinal1DeepObject;
 import org.sfm.utils.RowHandler;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import static org.junit.Assert.assertEquals;
 
 public class JdbcMapperSubObjectTest {
 

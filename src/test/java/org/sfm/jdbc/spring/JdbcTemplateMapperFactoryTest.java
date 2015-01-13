@@ -1,9 +1,5 @@
 package org.sfm.jdbc.spring;
 
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
@@ -14,6 +10,10 @@ import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.List;
 
 public class JdbcTemplateMapperFactoryTest {
 	

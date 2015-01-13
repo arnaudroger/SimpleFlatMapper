@@ -1,8 +1,7 @@
 package org.sfm.querydsl;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-
+import com.mysema.query.Tuple;
+import com.mysema.query.types.Expression;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.impl.AbstractFieldMapperMapperBuilder;
@@ -12,8 +11,8 @@ import org.sfm.map.impl.MapperImpl;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 
-import com.mysema.query.Tuple;
-import com.mysema.query.types.Expression;
+import java.lang.reflect.Type;
+import java.util.HashMap;
 
 public final class QueryDslMapperBuilder<T> 
 	extends AbstractFieldMapperMapperBuilder<Tuple, T, TupleElementKey> {

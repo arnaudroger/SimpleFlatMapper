@@ -1,22 +1,12 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.map.MapperBuildingException;
+import org.sfm.reflect.*;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.sfm.map.MapperBuildingException;
-import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.SetterHelper;
-import org.sfm.reflect.TypeHelper;
-import org.sfm.reflect.ConstructorDefinition;
-import org.sfm.reflect.ConstructorParameter;
+import java.util.*;
 
 public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	

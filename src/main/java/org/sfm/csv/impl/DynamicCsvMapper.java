@@ -1,7 +1,6 @@
 package org.sfm.csv.impl;
 
 import org.sfm.csv.*;
-import org.sfm.csv.CsvReader;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
@@ -16,6 +15,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 //IFJAVA8_START
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;

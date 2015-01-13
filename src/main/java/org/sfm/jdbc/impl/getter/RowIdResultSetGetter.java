@@ -1,10 +1,10 @@
 package org.sfm.jdbc.impl.getter;
 
+import org.sfm.reflect.Getter;
+
 import java.sql.ResultSet;
 import java.sql.RowId;
 import java.sql.SQLException;
-
-import org.sfm.reflect.Getter;
 
 public final class RowIdResultSetGetter implements Getter<ResultSet, RowId> {
 	private final int column;

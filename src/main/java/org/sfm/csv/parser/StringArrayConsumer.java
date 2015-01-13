@@ -1,8 +1,5 @@
 package org.sfm.csv.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.sfm.csv.impl.cellreader.StringCellValueReader;
 import org.sfm.utils.RowHandler;
 

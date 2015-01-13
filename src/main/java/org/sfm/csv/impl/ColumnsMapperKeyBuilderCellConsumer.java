@@ -1,12 +1,11 @@
 package org.sfm.csv.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.sfm.csv.impl.cellreader.StringCellValueReader;
 import org.sfm.csv.parser.CellConsumer;
 import org.sfm.map.impl.ColumnsMapperKey;
-import org.sfm.utils.RowHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class ColumnsMapperKeyBuilderCellConsumer<T> implements CellConsumer {
 	/**

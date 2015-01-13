@@ -1,8 +1,5 @@
 package org.sfm.reflect;
 
-import java.lang.reflect.Method;
-import java.util.Random;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sfm.reflect.asm.AsmFactory;
@@ -11,6 +8,9 @@ import org.sfm.reflect.impl.MethodSetter;
 import org.sfm.reflect.primitive.IntFieldSetter;
 import org.sfm.reflect.primitive.IntMethodSetter;
 import org.sfm.reflect.primitive.IntSetter;
+
+import java.lang.reflect.Method;
+import java.util.Random;
 
 /***
  * 

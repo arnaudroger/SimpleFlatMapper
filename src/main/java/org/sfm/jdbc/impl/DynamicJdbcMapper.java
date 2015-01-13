@@ -1,27 +1,27 @@
 package org.sfm.jdbc.impl;
 
-import java.lang.reflect.Type;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-//IFJAVA8_START
-import java.util.stream.Stream;
-//IFJAVA8_END
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.JdbcMapperBuilder;
 import org.sfm.jdbc.SQLMappingException;
 import org.sfm.map.*;
 import org.sfm.map.impl.ColumnsMapperKey;
-import org.sfm.map.impl.FieldMapper;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.MapperCache;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.RowHandler;
+
+import java.lang.reflect.Type;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Map;
+//IFJAVA8_START
+import java.util.stream.Stream;
+//IFJAVA8_END
+
 
 public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 

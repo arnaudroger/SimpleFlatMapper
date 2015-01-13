@@ -1,8 +1,5 @@
 package org.sfm.tuples;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 public class Tuple4<T1, T2, T3, T4>  extends Tuple3<T1, T2, T3> {
 
     private final T4 element3;

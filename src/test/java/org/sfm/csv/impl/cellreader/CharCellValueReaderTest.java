@@ -1,11 +1,12 @@
 package org.sfm.csv.impl.cellreader;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.sfm.csv.impl.ParsingException;
 
 import java.io.UnsupportedEncodingException;
 
-import org.junit.Test;
-import org.sfm.csv.impl.ParsingException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class CharCellValueReaderTest {
 

@@ -1,14 +1,14 @@
 package org.sfm.reflect.asm;
 
-import static org.objectweb.asm.Opcodes.*;
-
-import java.sql.ResultSet;
-
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.FieldMapper;
+
+import java.sql.ResultSet;
+
+import static org.objectweb.asm.Opcodes.*;
 
 public class JdbcMapperAsmBuilder {
 	public static <S,T> byte[] dump (final String className, final FieldMapper<S, T>[] mappers, final Class<T> target) throws Exception {

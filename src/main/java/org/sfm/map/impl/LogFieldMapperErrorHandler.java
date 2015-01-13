@@ -1,10 +1,10 @@
 package org.sfm.map.impl;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingException;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class LogFieldMapperErrorHandler<K> implements FieldMapperErrorHandler<K> {
 	private Logger logger = Logger.getLogger(getClass().getName());

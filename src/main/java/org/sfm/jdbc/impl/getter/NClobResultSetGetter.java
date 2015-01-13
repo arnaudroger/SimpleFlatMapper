@@ -1,10 +1,10 @@
 package org.sfm.jdbc.impl.getter;
 
+import org.sfm.reflect.Getter;
+
 import java.sql.NClob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.sfm.reflect.Getter;
 
 public final class NClobResultSetGetter implements Getter<ResultSet, NClob> {
 	private final int column;

@@ -1,27 +1,12 @@
 package org.sfm.reflect;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.Foo;
 import org.sfm.reflect.impl.MethodSetter;
-import org.sfm.reflect.primitive.BooleanMethodSetter;
-import org.sfm.reflect.primitive.BooleanSetter;
-import org.sfm.reflect.primitive.ByteMethodSetter;
-import org.sfm.reflect.primitive.ByteSetter;
-import org.sfm.reflect.primitive.CharacterMethodSetter;
-import org.sfm.reflect.primitive.CharacterSetter;
-import org.sfm.reflect.primitive.DoubleMethodSetter;
-import org.sfm.reflect.primitive.DoubleSetter;
-import org.sfm.reflect.primitive.FloatMethodSetter;
-import org.sfm.reflect.primitive.FloatSetter;
-import org.sfm.reflect.primitive.IntMethodSetter;
-import org.sfm.reflect.primitive.IntSetter;
-import org.sfm.reflect.primitive.LongMethodSetter;
-import org.sfm.reflect.primitive.LongSetter;
-import org.sfm.reflect.primitive.ShortMethodSetter;
-import org.sfm.reflect.primitive.ShortSetter;
+import org.sfm.reflect.primitive.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class MethodSetterTest {
 

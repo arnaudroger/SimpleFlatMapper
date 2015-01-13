@@ -1,9 +1,16 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import org.junit.Test;
+import org.sfm.beans.DbFinalObject;
+import org.sfm.beans.DbObject;
+import org.sfm.beans.DbObjectWithAlias;
+import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.map.impl.FieldMapper;
+import org.sfm.tuples.Tuples;
+import org.sfm.utils.ListHandler;
+import org.sfm.utils.RowHandler;
 
-import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,19 +18,9 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
-import org.sfm.beans.DbFinalObject;
-import org.sfm.beans.DbObject;
-import org.sfm.beans.DbObjectWithAlias;
-import org.sfm.csv.CsvMapperFactory;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.MappingException;
-import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.FieldMapper;
-import org.sfm.tuples.Tuples;
-import org.sfm.utils.ListHandler;
-import org.sfm.utils.RowHandler;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.*;
 
 public class JdbcMapperFactoryTest {
 

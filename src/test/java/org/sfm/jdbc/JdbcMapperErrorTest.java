@@ -1,12 +1,5 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.Foo;
@@ -18,6 +11,14 @@ import org.sfm.map.impl.LogFieldMapperErrorHandler;
 import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
+
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
 
 public class JdbcMapperErrorTest {
 

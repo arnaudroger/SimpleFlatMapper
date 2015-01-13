@@ -1,35 +1,12 @@
 package org.sfm.reflect;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.impl.FieldSetter;
 import org.sfm.reflect.impl.MethodSetter;
-import org.sfm.reflect.primitive.BooleanFieldSetter;
-import org.sfm.reflect.primitive.BooleanMethodSetter;
-import org.sfm.reflect.primitive.BooleanSetter;
-import org.sfm.reflect.primitive.ByteFieldSetter;
-import org.sfm.reflect.primitive.ByteMethodSetter;
-import org.sfm.reflect.primitive.ByteSetter;
-import org.sfm.reflect.primitive.CharacterFieldSetter;
-import org.sfm.reflect.primitive.CharacterMethodSetter;
-import org.sfm.reflect.primitive.CharacterSetter;
-import org.sfm.reflect.primitive.DoubleFieldSetter;
-import org.sfm.reflect.primitive.DoubleMethodSetter;
-import org.sfm.reflect.primitive.DoubleSetter;
-import org.sfm.reflect.primitive.FloatFieldSetter;
-import org.sfm.reflect.primitive.FloatMethodSetter;
-import org.sfm.reflect.primitive.FloatSetter;
-import org.sfm.reflect.primitive.IntFieldSetter;
-import org.sfm.reflect.primitive.IntMethodSetter;
-import org.sfm.reflect.primitive.IntSetter;
-import org.sfm.reflect.primitive.LongFieldSetter;
-import org.sfm.reflect.primitive.LongMethodSetter;
-import org.sfm.reflect.primitive.LongSetter;
-import org.sfm.reflect.primitive.ShortFieldSetter;
-import org.sfm.reflect.primitive.ShortMethodSetter;
-import org.sfm.reflect.primitive.ShortSetter;
+import org.sfm.reflect.primitive.*;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public final class SetterFactory {
 	

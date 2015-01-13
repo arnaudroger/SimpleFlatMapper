@@ -1,12 +1,15 @@
 package org.sfm.map.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.MapperBuildingException;
-import org.sfm.reflect.meta.*;
+import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.PropertyFinder;
+import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.ForEachCallBack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends ColumnDefinition<K>> {
 

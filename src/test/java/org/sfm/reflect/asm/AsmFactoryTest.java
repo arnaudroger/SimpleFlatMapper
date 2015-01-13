@@ -1,12 +1,5 @@
 package org.sfm.reflect.asm;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.rmi.UnexpectedException;
-import java.sql.ResultSet;
-import java.util.HashMap;
-
 import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
@@ -22,6 +15,14 @@ import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
+
+import java.rmi.UnexpectedException;
+import java.sql.ResultSet;
+import java.util.HashMap;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AsmFactoryTest {
 

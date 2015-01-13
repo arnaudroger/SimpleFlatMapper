@@ -1,6 +1,5 @@
 package org.sfm.map.impl;
 
-import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.reflect.meta.ArrayElementPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;

@@ -1,14 +1,14 @@
 package org.sfm.reflect.asm;
 
-import static org.junit.Assert.*;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class AsmUtilsTest {
 

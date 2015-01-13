@@ -1,10 +1,10 @@
 package org.sfm.reflect.meta;
 
-import java.lang.reflect.Type;
-
+import org.sfm.reflect.ConstructorParameter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
-import org.sfm.reflect.ConstructorParameter;
+
+import java.lang.reflect.Type;
 
 public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 

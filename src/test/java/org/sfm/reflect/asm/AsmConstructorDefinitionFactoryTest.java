@@ -1,18 +1,18 @@
 package org.sfm.reflect.asm;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.sfm.beans.DbFinalObject;
+import org.sfm.beans.DbObject;
+import org.sfm.beans.DbObject.Type;
+import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.tuples.Tuple2;
+import org.sfm.tuples.Tuples;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
-import org.sfm.beans.DbObject;
-import org.sfm.beans.DbObject.Type;
-import org.sfm.beans.DbFinalObject;
-import org.sfm.reflect.ConstructorDefinition;
-import org.sfm.tuples.Tuple2;
-import org.sfm.tuples.Tuples;
+import static org.junit.Assert.assertEquals;
 
 public class AsmConstructorDefinitionFactoryTest {
 

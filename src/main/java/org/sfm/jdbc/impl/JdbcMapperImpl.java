@@ -1,15 +1,5 @@
 package org.sfm.jdbc.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Iterator;
-//IFJAVA8_START
-import java.util.function.Consumer;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-import java.util.Spliterator;
-//IFJAVA8_END
-
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
@@ -17,6 +7,17 @@ import org.sfm.map.impl.FieldMapper;
 import org.sfm.map.impl.MapperImpl;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Iterator;
+//IFJAVA8_START
+import java.util.Spliterator;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+//IFJAVA8_END
+
 
 public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements JdbcMapper<T> {
 

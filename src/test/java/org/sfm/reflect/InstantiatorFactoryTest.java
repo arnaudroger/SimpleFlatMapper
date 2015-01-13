@@ -1,13 +1,13 @@
 package org.sfm.reflect;
 
-import java.sql.ResultSet;
-import java.util.HashMap;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.sfm.beans.DbFinalPrimitiveObject;
 import org.sfm.reflect.asm.AsmConstructorDefinitionFactory;
 import org.sfm.reflect.asm.AsmFactory;
+
+import java.sql.ResultSet;
+import java.util.HashMap;
 
 public class InstantiatorFactoryTest {
 

@@ -1,17 +1,17 @@
 package org.sfm.csv;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.sfm.beans.DbFinalPrimitiveObject;
+import org.sfm.beans.DbPrimitiveObject;
+import org.sfm.beans.DbPrimitiveObjectWithSetter;
+import org.sfm.utils.ListHandler;
 
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import org.junit.Test;
-import org.sfm.beans.DbFinalPrimitiveObject;
-import org.sfm.beans.DbPrimitiveObject;
-import org.sfm.beans.DbPrimitiveObjectWithSetter;
-import org.sfm.utils.ListHandler;
+import static org.junit.Assert.assertEquals;
 
 public class CsvMapperImplPrimitiveTest {
 

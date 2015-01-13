@@ -1,5 +1,11 @@
 package org.sfm.reflect;
 
+import org.sfm.reflect.asm.AsmConstructorDefinitionFactory;
+import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.asm.AsmHelper;
+import org.sfm.reflect.meta.*;
+import org.sfm.tuples.Tuples;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -7,12 +13,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.sfm.reflect.asm.AsmConstructorDefinitionFactory;
-import org.sfm.reflect.asm.AsmFactory;
-import org.sfm.reflect.asm.AsmHelper;
-import org.sfm.reflect.meta.*;
-import org.sfm.tuples.Tuples;
 
 public class ReflectionService {
 

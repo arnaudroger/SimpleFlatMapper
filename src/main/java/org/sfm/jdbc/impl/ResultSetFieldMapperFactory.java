@@ -1,40 +1,21 @@
 package org.sfm.jdbc.impl;
 
+import org.sfm.jdbc.JdbcColumnKey;
+import org.sfm.jdbc.impl.getter.*;
+import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.MapperBuilderErrorHandler;
+import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.impl.FieldMapperFactory;
+import org.sfm.map.impl.GetterFactory;
+import org.sfm.map.impl.fieldmapper.*;
+import org.sfm.reflect.*;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Date;
-
-import org.sfm.jdbc.JdbcColumnKey;
-import org.sfm.jdbc.impl.getter.BooleanResultSetGetter;
-import org.sfm.jdbc.impl.getter.ByteResultSetGetter;
-import org.sfm.jdbc.impl.getter.CharacterResultSetGetter;
-import org.sfm.jdbc.impl.getter.DoubleResultSetGetter;
-import org.sfm.jdbc.impl.getter.FloatResultSetGetter;
-import org.sfm.jdbc.impl.getter.IntResultSetGetter;
-import org.sfm.jdbc.impl.getter.LongResultSetGetter;
-import org.sfm.jdbc.impl.getter.ShortResultSetGetter;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.impl.FieldMapper;
-import org.sfm.map.impl.FieldMapperFactory;
-import org.sfm.map.impl.GetterFactory;
-import org.sfm.map.impl.fieldmapper.BooleanFieldMapper;
-import org.sfm.map.impl.fieldmapper.ByteFieldMapper;
-import org.sfm.map.impl.fieldmapper.CharacterFieldMapper;
-import org.sfm.map.impl.fieldmapper.DoubleFieldMapper;
-import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
-import org.sfm.map.impl.fieldmapper.FloatFieldMapper;
-import org.sfm.map.impl.fieldmapper.IntFieldMapper;
-import org.sfm.map.impl.fieldmapper.LongFieldMapper;
-import org.sfm.map.impl.fieldmapper.ShortFieldMapper;
-import org.sfm.reflect.ConstructorOnGetter;
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.Setter;
-import org.sfm.reflect.SetterFactory;
-import org.sfm.reflect.TypeHelper;
 
 public final class ResultSetFieldMapperFactory implements FieldMapperFactory<ResultSet, JdbcColumnKey> {
 

@@ -1,10 +1,10 @@
 package org.sfm.jdbc.impl.getter;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.ShortGetter;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public final class ShortResultSetGetter implements ShortGetter<ResultSet>, Getter<ResultSet, Short> {
 

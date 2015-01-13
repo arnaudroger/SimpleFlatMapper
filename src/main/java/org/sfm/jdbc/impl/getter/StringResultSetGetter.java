@@ -1,9 +1,9 @@
 package org.sfm.jdbc.impl.getter;
 
+import org.sfm.reflect.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.sfm.reflect.Getter;
 
 public final class StringResultSetGetter implements Getter<ResultSet, String> {
 	private final int column;

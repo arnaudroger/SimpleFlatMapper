@@ -1,12 +1,5 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.*;
-
-import java.lang.reflect.Type;
-import java.sql.ResultSet;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.impl.JdbcMapperImpl;
@@ -14,13 +7,15 @@ import org.sfm.map.MapperBuildingException;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.FieldMapper;
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.Instantiator;
-import org.sfm.reflect.InstantiatorFactory;
-import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.*;
 import org.sfm.reflect.asm.AsmFactory;
-import org.sfm.reflect.ConstructorDefinition;
-import org.sfm.reflect.ConstructorParameter;
+
+import java.lang.reflect.Type;
+import java.sql.ResultSet;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 public class ResultSetMapperBuilderImplTest {
 

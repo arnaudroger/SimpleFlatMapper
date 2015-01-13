@@ -1,9 +1,5 @@
 package org.sfm.reflect;
 
-import static org.junit.Assert.*;
-
-import java.lang.reflect.Method;
-
 import org.junit.Test;
 import org.sfm.beans.Bar;
 import org.sfm.beans.DbPrimitiveObject;
@@ -12,22 +8,11 @@ import org.sfm.beans.Foo;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.impl.FieldSetter;
 import org.sfm.reflect.impl.MethodSetter;
-import org.sfm.reflect.primitive.BooleanFieldSetter;
-import org.sfm.reflect.primitive.BooleanMethodSetter;
-import org.sfm.reflect.primitive.ByteFieldSetter;
-import org.sfm.reflect.primitive.ByteMethodSetter;
-import org.sfm.reflect.primitive.CharacterFieldSetter;
-import org.sfm.reflect.primitive.CharacterMethodSetter;
-import org.sfm.reflect.primitive.DoubleFieldSetter;
-import org.sfm.reflect.primitive.DoubleMethodSetter;
-import org.sfm.reflect.primitive.FloatFieldSetter;
-import org.sfm.reflect.primitive.FloatMethodSetter;
-import org.sfm.reflect.primitive.IntFieldSetter;
-import org.sfm.reflect.primitive.IntMethodSetter;
-import org.sfm.reflect.primitive.LongFieldSetter;
-import org.sfm.reflect.primitive.LongMethodSetter;
-import org.sfm.reflect.primitive.ShortFieldSetter;
-import org.sfm.reflect.primitive.ShortMethodSetter;
+import org.sfm.reflect.primitive.*;
+
+import java.lang.reflect.Method;
+
+import static org.junit.Assert.*;
 
 public class SetterFactoryTest {
 	

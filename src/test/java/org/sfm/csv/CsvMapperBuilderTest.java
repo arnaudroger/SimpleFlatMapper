@@ -1,23 +1,23 @@
 package org.sfm.csv;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.sfm.beans.DbFinalObject;
+import org.sfm.beans.DbObject;
+import org.sfm.beans.DbPartialFinalObject;
+import org.sfm.jdbc.DbHelper;
+import org.sfm.map.MapperBuilderErrorHandler;
+import org.sfm.map.MapperBuildingException;
+import org.sfm.utils.ListHandler;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.sfm.beans.DbFinalObject;
-import org.sfm.beans.DbObject;
-import org.sfm.beans.DbPartialFinalObject;
-import org.sfm.csv.impl.ParsingContext;
-import org.sfm.jdbc.DbHelper;
-import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.MapperBuildingException;
-import org.sfm.utils.ListHandler;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class CsvMapperBuilderTest {
 	private CsvMapperFactory csvMapperFactory;

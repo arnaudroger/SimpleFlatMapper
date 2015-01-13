@@ -1,11 +1,11 @@
 package org.sfm.reflect.impl;
 
-import java.util.Map;
-
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.Getter;
+import org.sfm.reflect.Instantiator;
+
+import java.util.Map;
 
 public final class InjectConstructorInstantiator<S, T> implements Instantiator<S, T> {
 

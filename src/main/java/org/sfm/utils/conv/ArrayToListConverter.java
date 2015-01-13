@@ -1,11 +1,11 @@
 package org.sfm.utils.conv;
 
+import org.sfm.reflect.Getter;
+
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.sfm.reflect.Getter;
 
 public class ArrayToListConverter<E> implements Converter<Array, List<E>> {
 

@@ -1,12 +1,5 @@
 package org.sfm.jdbc;
 
-import java.lang.reflect.Type;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.sfm.jdbc.impl.JdbcMapperImpl;
 import org.sfm.jdbc.impl.ResultSetFieldMapperFactory;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
@@ -18,6 +11,13 @@ import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
+
+import java.lang.reflect.Type;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey>  {
 

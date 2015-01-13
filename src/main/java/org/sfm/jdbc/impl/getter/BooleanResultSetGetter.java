@@ -1,10 +1,10 @@
 package org.sfm.jdbc.impl.getter;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.BooleanGetter;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public final class BooleanResultSetGetter implements BooleanGetter<ResultSet>, Getter<ResultSet, Boolean> {
 

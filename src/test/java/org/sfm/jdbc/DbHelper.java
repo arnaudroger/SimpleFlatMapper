@@ -1,20 +1,16 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.*;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.ParseException;
-
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObjectWithAlias;
 import org.sfm.beans.DbPartialFinalObject;
 import org.sfm.utils.DateHelper;
 import org.sfm.utils.RowHandler;
+
+import java.sql.*;
+import java.text.ParseException;
+
+import static org.junit.Assert.assertEquals;
 
 public class DbHelper {
 	

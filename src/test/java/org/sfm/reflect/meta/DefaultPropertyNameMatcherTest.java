@@ -1,8 +1,8 @@
 package org.sfm.reflect.meta;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class DefaultPropertyNameMatcherTest {
 

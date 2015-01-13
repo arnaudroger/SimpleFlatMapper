@@ -1,10 +1,9 @@
 package org.sfm.beans;
 
-import java.util.Date;
+import org.sfm.beans.DbObject.Type;
 
 import javax.persistence.Column;
-
-import org.sfm.beans.DbObject.Type;
+import java.util.Date;
 
 public class DbObjectWithAlias {
 

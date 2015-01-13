@@ -1,6 +1,10 @@
 package org.sfm.csv;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.sfm.csv.parser.CellConsumer;
+import org.sfm.tuples.Tuple2;
+import org.sfm.tuples.Tuples;
+import org.sfm.utils.ListHandler;
 
 import java.io.CharArrayReader;
 import java.io.IOException;
@@ -11,11 +15,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Test;
-import org.sfm.csv.parser.CellConsumer;
-import org.sfm.tuples.Tuple2;
-import org.sfm.tuples.Tuples;
-import org.sfm.utils.ListHandler;
+import static org.junit.Assert.*;
 
 public class CsvParserTest {
 

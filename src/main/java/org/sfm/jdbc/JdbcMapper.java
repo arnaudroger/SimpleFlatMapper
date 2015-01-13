@@ -1,14 +1,17 @@
 package org.sfm.jdbc;
 
+import org.sfm.map.Mapper;
+import org.sfm.map.MappingException;
+import org.sfm.utils.RowHandler;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 //IFJAVA8_START
 import java.util.stream.Stream;
 //IFJAVA8_END
-import org.sfm.map.Mapper;
-import org.sfm.map.MappingException;
-import org.sfm.utils.RowHandler;
+
+
 
 public interface JdbcMapper<T> extends Mapper<ResultSet, T> {
 	

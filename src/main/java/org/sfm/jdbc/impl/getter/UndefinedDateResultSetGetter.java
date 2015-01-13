@@ -1,10 +1,10 @@
 package org.sfm.jdbc.impl.getter;
 
-import java.util.Date;
+import org.sfm.reflect.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.sfm.reflect.Getter;
+import java.util.Date;
 
 public class UndefinedDateResultSetGetter implements
 		Getter<java.sql.ResultSet, Date> {

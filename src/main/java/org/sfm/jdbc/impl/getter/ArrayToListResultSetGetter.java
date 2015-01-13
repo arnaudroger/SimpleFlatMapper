@@ -1,11 +1,11 @@
 package org.sfm.jdbc.impl.getter;
 
+import org.sfm.reflect.Getter;
+
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.sfm.reflect.Getter;
 
 public final class ArrayToListResultSetGetter<E> implements Getter<ResultSet, List<E>> {
 	private final int column;

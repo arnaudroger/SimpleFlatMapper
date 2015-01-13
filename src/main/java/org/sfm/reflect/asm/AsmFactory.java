@@ -1,5 +1,10 @@
 package org.sfm.reflect.asm;
 
+import org.sfm.jdbc.JdbcMapper;
+import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.map.impl.FieldMapper;
+import org.sfm.reflect.*;
+
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.util.HashMap;
@@ -8,11 +13,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.sfm.jdbc.JdbcMapper;
-import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.FieldMapper;
-import org.sfm.reflect.*;
 
 public class AsmFactory {
 	private final FactoryClassLoader factoryClassLoader;

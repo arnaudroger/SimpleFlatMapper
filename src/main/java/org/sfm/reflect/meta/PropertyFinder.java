@@ -1,8 +1,8 @@
 package org.sfm.reflect.meta;
 
-import java.util.List;
-
 import org.sfm.reflect.ConstructorDefinition;
+
+import java.util.List;
 
 public interface PropertyFinder<T> {
 

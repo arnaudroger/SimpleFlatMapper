@@ -1,8 +1,8 @@
 package org.sfm.reflect.impl;
 
-import java.lang.reflect.Field;
-
 import org.sfm.reflect.Setter;
+
+import java.lang.reflect.Field;
 
 public final class FieldSetter<T, P> implements Setter<T, P> {
 

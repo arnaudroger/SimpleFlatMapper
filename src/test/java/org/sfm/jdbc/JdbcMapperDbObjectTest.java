@@ -1,6 +1,11 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.sfm.beans.DbFinalObject;
+import org.sfm.beans.DbObject;
+import org.sfm.reflect.ReflectionService;
+import org.sfm.utils.ListHandler;
+import org.sfm.utils.RowHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -8,12 +13,7 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Test;
-import org.sfm.beans.DbObject;
-import org.sfm.beans.DbFinalObject;
-import org.sfm.reflect.ReflectionService;
-import org.sfm.utils.RowHandler;
-import org.sfm.utils.ListHandler;
+import static org.junit.Assert.*;
 
 public class JdbcMapperDbObjectTest {
 	

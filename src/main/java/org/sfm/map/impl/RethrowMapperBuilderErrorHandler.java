@@ -1,9 +1,9 @@
 package org.sfm.map.impl;
 
-import java.lang.reflect.Type;
-
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
+
+import java.lang.reflect.Type;
 
 public final class RethrowMapperBuilderErrorHandler implements
 		MapperBuilderErrorHandler {

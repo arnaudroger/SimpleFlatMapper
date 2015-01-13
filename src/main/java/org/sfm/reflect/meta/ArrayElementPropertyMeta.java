@@ -1,11 +1,11 @@
 package org.sfm.reflect.meta;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.TypeHelper;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 

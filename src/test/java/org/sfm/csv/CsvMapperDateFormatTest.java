@@ -1,5 +1,10 @@
 package org.sfm.csv;
 
+import org.junit.Test;
+import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.MappingException;
+import org.sfm.utils.ListHandler;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.ParseException;
@@ -7,14 +12,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
-
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MappingException;
-import org.sfm.utils.ListHandler;
 
 public class CsvMapperDateFormatTest {
 

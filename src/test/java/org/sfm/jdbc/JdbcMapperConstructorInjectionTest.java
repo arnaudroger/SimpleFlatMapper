@@ -1,14 +1,15 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import org.junit.Test;
+import org.sfm.beans.DbConstructorObject;
+import org.sfm.reflect.ReflectionService;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 
-import org.junit.Test;
-import org.sfm.beans.DbConstructorObject;
-import org.sfm.reflect.ReflectionService;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class JdbcMapperConstructorInjectionTest {
 	

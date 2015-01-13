@@ -1,11 +1,5 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.*;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.List;
-
 import org.junit.Test;
 import org.sfm.beans.DbFinalListObject;
 import org.sfm.beans.DbListObject;
@@ -13,6 +7,13 @@ import org.sfm.beans.DbListOfString;
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.RowHandler;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class JdbcMapperListTest {
 	

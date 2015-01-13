@@ -1,10 +1,4 @@
 package org.sfm.jdbc;
-import static org.junit.Assert.*;
-
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.Types;
-import java.util.Date;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
@@ -16,6 +10,14 @@ import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.impl.fieldmapper.LongFieldMapper;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
+
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.Types;
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ResultSetFieldMapperFactoryTest {
 	

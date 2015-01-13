@@ -1,7 +1,5 @@
 package org.sfm.jdbc.spring;
 
-import java.util.List;
-
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.map.FieldMapperErrorHandler;
@@ -10,6 +8,8 @@ import org.sfm.map.MapperBuildingException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+
+import java.util.List;
 
 public final class JdbcTemplateMapperFactory {
 	

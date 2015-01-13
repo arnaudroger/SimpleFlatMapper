@@ -1,8 +1,5 @@
 package org.sfm.jooq;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-
 import org.jooq.Record;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
@@ -12,6 +9,9 @@ import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.MapperImpl;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
 
 
 public class JooqMapperBuilder<R extends Record, E> extends

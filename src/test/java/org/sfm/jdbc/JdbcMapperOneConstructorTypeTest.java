@@ -1,17 +1,16 @@
 package org.sfm.jdbc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Test;
+import org.sfm.reflect.ReflectionService;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.junit.Test;
-import org.sfm.csv.CsvMapperOneConstructorType;
-import org.sfm.reflect.ReflectionService;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class JdbcMapperOneConstructorTypeTest {
 

@@ -1,17 +1,17 @@
 package org.sfm.jdbc.spring;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.utils.RowHandler;
 import org.sfm.utils.ListHandler;
+import org.sfm.utils.RowHandler;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 public final class JdbcTemplateMapper<T> implements RowMapper<T>, PreparedStatementCallback<List<T>>, ResultSetExtractor<List<T>> {
 	private final JdbcMapper<T> mapper;

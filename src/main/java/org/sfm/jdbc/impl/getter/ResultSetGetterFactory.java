@@ -1,31 +1,23 @@
 package org.sfm.jdbc.impl.getter;
 
+import org.sfm.jdbc.JdbcColumnKey;
+import org.sfm.map.MapperBuildingException;
+import org.sfm.map.impl.GetterFactory;
+import org.sfm.reflect.Getter;
+import org.sfm.reflect.TypeHelper;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.NClob;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.RowId;
-import java.sql.SQLXML;
-import java.sql.Types;
+import java.sql.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.sfm.jdbc.JdbcColumnKey;
-import org.sfm.map.MapperBuildingException;
-import org.sfm.map.impl.GetterFactory;
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.TypeHelper;
 
 public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey>{
 	public static final class StringResultSetGetterFactory implements

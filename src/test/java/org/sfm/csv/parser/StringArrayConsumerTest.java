@@ -3,7 +3,7 @@ package org.sfm.csv.parser;
 import org.junit.Test;
 import org.sfm.utils.RowHandler;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class StringArrayConsumerTest {
 

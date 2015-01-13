@@ -1,13 +1,14 @@
 package org.sfm.map;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.sfm.map.impl.ColumnsMapperKey;
+import org.sfm.map.impl.MapperCache;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 
-import org.junit.Test;
-import org.sfm.map.impl.ColumnsMapperKey;
-import org.sfm.map.impl.MapperCache;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 public class MapperCacheTest {
 

@@ -1,10 +1,10 @@
 package org.sfm.reflect;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.math.BigDecimal;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class TypeHelperTest {
 

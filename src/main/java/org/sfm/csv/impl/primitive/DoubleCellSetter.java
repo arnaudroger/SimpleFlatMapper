@@ -3,7 +3,6 @@ package org.sfm.csv.impl.primitive;
 import org.sfm.csv.impl.CellSetter;
 import org.sfm.csv.impl.ParsingContext;
 import org.sfm.csv.impl.cellreader.DoubleCellValueReader;
-import org.sfm.csv.impl.cellreader.DoubleCellValueReaderImpl;
 import org.sfm.reflect.primitive.DoubleSetter;
 
 public class DoubleCellSetter<T> implements CellSetter<T> {

@@ -1,10 +1,9 @@
 package org.sfm.querydsl;
 
-import org.sfm.map.Mapper;
-
 import com.mysema.query.Tuple;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.MappingProjection;
+import org.sfm.map.Mapper;
 
 public class QueryDslMappingProjection<T> extends MappingProjection<T> {
 	/**

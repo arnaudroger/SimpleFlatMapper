@@ -1,17 +1,22 @@
 package org.sfm.csv;
 
-import org.sfm.csv.parser.*;
+import org.sfm.csv.parser.CellConsumer;
+import org.sfm.csv.parser.CsvCharConsumer;
+import org.sfm.csv.parser.CsvStringArrayIterator;
+import org.sfm.csv.parser.StringArrayConsumer;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
 //IFJAVA8_START
-import java.util.Spliterator;
+// import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END
+
+
 
 public final class CsvReader implements Iterable<String[]> {
 

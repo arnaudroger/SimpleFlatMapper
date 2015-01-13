@@ -4,6 +4,7 @@ import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.csv.parser.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.tuples.*;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -50,6 +51,22 @@ public final class CsvParser {
 
 	public static <T> MapToDSL<T> mapTo(Class<T> type) {
 		return mapTo((Type)type);
+	}
+
+	public static <T1, T2> MapToDSL<Tuple2<T1, T2>> mapTo(Class<T1> class1, Class<T2> class2) {
+		return  schema().mapTo(class1, class2);
+	}
+
+	public static <T1, T2, T3> MapToDSL<Tuple3<T1, T2, T3>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3) {
+		return  schema().mapTo(class1, class2, class3);
+	}
+
+	public static <T1, T2, T3, T4> MapToDSL<Tuple4<T1, T2, T3, T4>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4) {
+		return  schema().mapTo(class1, class2, class3, class4);
+	}
+
+	public static <T1, T2, T3, T4, T5> MapToDSL<Tuple5<T1, T2, T3, T4, T5>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5) {
+		return  schema().mapTo(class1, class2, class3, class4, class5);
 	}
 
 	public static <T> MapWithDSL<T> mapWith(CsvMapper<T> mapper) {
@@ -186,6 +203,22 @@ public final class CsvParser {
 
 		public <T> MapToDSL<T> mapTo(Class<T> target) {
 			return mapTo((Type)target);
+		}
+
+		public <T1, T2> MapToDSL<Tuple2<T1, T2>> mapTo(Class<T1> class1, Class<T2> class2) {
+			return new MapToDSL<Tuple2<T1, T2>>(this, Tuples.typeDef(class1, class2));
+		}
+
+		public <T1, T2, T3> MapToDSL<Tuple3<T1, T2, T3>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3) {
+			return new MapToDSL<Tuple3<T1, T2, T3>>(this, Tuples.typeDef(class1, class2, class3));
+		}
+
+		public <T1, T2, T3, T4> MapToDSL<Tuple4<T1, T2, T3, T4>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4) {
+			return new MapToDSL<Tuple4<T1, T2, T3, T4>>(this, Tuples.typeDef(class1, class2, class3, class4));
+		}
+
+		public <T1, T2, T3, T4, T5> MapToDSL<Tuple5<T1, T2, T3, T4, T5>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5) {
+			return new MapToDSL<Tuple5<T1, T2, T3, T4, T5>>(this, Tuples.typeDef(class1, class2, class3, class4, class5));
 		}
 
 		public <T> MapWithDSL<T> mapWith(CsvMapper<T> mapper) {

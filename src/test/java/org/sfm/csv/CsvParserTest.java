@@ -2,8 +2,7 @@ package org.sfm.csv;
 
 import org.junit.Test;
 import org.sfm.csv.parser.CellConsumer;
-import org.sfm.tuples.Tuple2;
-import org.sfm.tuples.Tuples;
+import org.sfm.tuples.*;
 import org.sfm.utils.ListHandler;
 
 import java.io.CharArrayReader;
@@ -63,7 +62,7 @@ public class CsvParserTest {
 		assertArrayEquals(new String[]{"value"}, it.next());
 		assertFalse(it.hasNext());
 
-		assertArrayEquals(new String[][] {{"value"}} , CsvParser.parse(getOneRowReader(), new AccumulateCellConsumer()).allValues());
+		assertArrayEquals(new String[][]{{"value"}}, CsvParser.parse(getOneRowReader(), new AccumulateCellConsumer()).allValues());
 
 	}
 
@@ -100,6 +99,55 @@ public class CsvParserTest {
 		Tuple2<String, String> tuple2 = iterate.next();
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
+		assertFalse(iterate.hasNext());
+	}
+
+	@Test
+	public void testDSLMapToTuple2() throws IOException {
+		Iterator<Tuple2<String, String>> iterate = CsvParser.mapTo(String.class, String.class).headers("0", "1").iterate(new StringReader("value1,value2"));
+		assertTrue(iterate.hasNext());
+		Tuple2<String, String> tuple2 = iterate.next();
+		assertEquals("value1", tuple2.first());
+		assertEquals("value2", tuple2.second());
+		assertFalse(iterate.hasNext());
+	}
+
+	@Test
+	public void testDSLMapToTuple3() throws IOException {
+		Iterator<Tuple3<String, String, String>> iterate = CsvParser.mapTo(String.class, String.class, String.class).headers("0", "1", "2").iterate(new StringReader("value1,value2,value3"));
+		assertTrue(iterate.hasNext());
+		Tuple3<String, String, String> tuple2 = iterate.next();
+		assertEquals("value1", tuple2.first());
+		assertEquals("value2", tuple2.second());
+		assertEquals("value3", tuple2.third());
+		assertFalse(iterate.hasNext());
+	}
+
+	@Test
+	public void testDSLMapToTuple4() throws IOException {
+		Iterator<Tuple4<String, String, String, String>> iterate =
+				CsvParser.mapTo(String.class, String.class, String.class, String.class).headers("0", "1", "2", "3").iterate(new StringReader("value1,value2,value3,value4"));
+		assertTrue(iterate.hasNext());
+		Tuple4<String, String, String, String> tuple2 = iterate.next();
+		assertEquals("value1", tuple2.first());
+		assertEquals("value2", tuple2.second());
+		assertEquals("value3", tuple2.third());
+		assertEquals("value4", tuple2.forth());
+		assertFalse(iterate.hasNext());
+	}
+
+	@Test
+	public void testDSLMapToTuple5() throws IOException {
+		Iterator<Tuple5<String, String, String, String, String>> iterate =
+				CsvParser.mapTo(String.class, String.class, String.class, String.class, String.class)
+						.headers("0", "1", "2", "3", "4").iterate(new StringReader("value1,value2,value3,value4,value5"));
+		assertTrue(iterate.hasNext());
+		Tuple5<String, String, String, String, String> tuple2 = iterate.next();
+		assertEquals("value1", tuple2.first());
+		assertEquals("value2", tuple2.second());
+		assertEquals("value3", tuple2.third());
+		assertEquals("value4", tuple2.forth());
+		assertEquals("value5", tuple2.fifth());
 		assertFalse(iterate.hasNext());
 	}
 

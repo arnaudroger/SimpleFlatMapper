@@ -12,24 +12,24 @@ public class Tuples {
         return Tuple2.class.isAssignableFrom(clazz);
     }
 
-    public static ParameterizedType typeDef(final Class<?> c1, final Class<?> c2) {
+    public static ParameterizedType typeDef(final Type c1, final Type c2) {
         return tupleImplementationTypeDef(Tuple2.class, c1, c2);
     }
 
-    public static ParameterizedType typeDef(final Class<?> c1, final Class<?> c2, Class<?> c3) {
+    public static ParameterizedType typeDef(final Type c1, final Type c2, Type c3) {
         return tupleImplementationTypeDef(Tuple3.class, c1, c2, c3);
     }
 
-    public static ParameterizedType typeDef(final Class<?> c1, final Class<?> c2, Class<?> c3, Class<?> c4) {
+    public static ParameterizedType typeDef(final Type c1, final Type c2, Type c3, Type c4) {
         return tupleImplementationTypeDef(Tuple4.class, c1, c2, c3, c4);
     }
 
-    public static ParameterizedType typeDef(final Class<?> c1, final Class<?> c2, Class<?> c3, Class<?> c4, Class<?> c5) {
+    public static ParameterizedType typeDef(final Type c1, final Type c2, Type c3, Type c4, Type c5) {
         return tupleImplementationTypeDef(Tuple5.class, c1, c2, c3, c4, c5);
     }
 
 
-    public static ParameterizedType tupleImplementationTypeDef(final Class<?> tupleImplementation, final Class<?>... tupleTypes) {
+    public static ParameterizedType tupleImplementationTypeDef(final Class<?> tupleImplementation, final Type... tupleTypes) {
         if (tupleImplementation.getTypeParameters().length  != tupleTypes.length) {
             throw new IllegalArgumentException("Incompatible tupleImplementation and type defintion expected " + tupleImplementation.getTypeParameters().length + " type definition for " + tupleImplementation);
         } else {

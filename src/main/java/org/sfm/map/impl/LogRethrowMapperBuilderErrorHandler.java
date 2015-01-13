@@ -19,4 +19,9 @@ public final class LogRethrowMapperBuilderErrorHandler implements
 	public void propertyNotFound(final Type target, final String property) {
 		logger.log(Level.WARNING, "Setter for " + property + " on  " + target + " not found");
 	}
+
+	@Override
+	public void customFieldError(FieldKey<?> key, String message) {
+		logger.log(Level.WARNING, message);
+	}
 }

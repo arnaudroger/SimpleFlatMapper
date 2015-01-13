@@ -10,6 +10,7 @@ import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
 import org.sfm.utils.ForEachCallBack;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;
@@ -75,14 +76,56 @@ public class CsvMapperBuilder<T> {
 	public final CsvMapperBuilder<T> addMapping(final CsvColumnKey key, final CsvColumnDefinition columnDefinition) {
 		final CsvColumnDefinition composedDefinition = CsvColumnDefinition.compose(columnDefinition, getColumnDefintion(key));
 		final CsvColumnKey mappedColumnKey = composedDefinition.rename(key);
-		
-		if (!propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition)) {
+
+		PropertyMeta<T, ?> propertyMeta = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
+		if (propertyMeta == null) {
 			mapperBuilderErrorHandler.propertyNotFound(target, key.getName());
 		}
-		
+		if (composedDefinition.hasCustomReader()) {
+			checkCompatibility(key, propertyMeta, composedDefinition);
+		}
+
 		return this;
 	}
-	
+
+	private void checkCompatibility(CsvColumnKey key, PropertyMeta<T, ?> propertyMeta, CsvColumnDefinition composedDefinition) {
+		CellValueReader<?> customReader = composedDefinition.getCustomReader();
+
+		Class<?> readerClass = getCellReaderType(customReader.getClass());
+
+		if (readerClass == null) {
+			mapperBuilderErrorHandler.customFieldError(key, "Could not find reader return type " + customReader);
+		} else if(!areCompatible(propertyMeta.getType(), readerClass)) {
+			mapperBuilderErrorHandler.customFieldError(key, "Incompatible customreader type " + customReader + " returns" + readerClass + " for " + propertyMeta.getType());
+		}
+	}
+
+	private Class<?> getCellReaderType(Class<?> currentclass) {
+		if (currentclass == null) {
+			return null;
+		}
+		Type[] genericInterfaces = currentclass.getGenericInterfaces();
+		for(Type t : genericInterfaces) {
+			if (t instanceof ParameterizedType) {
+				ParameterizedType pt = (ParameterizedType) t;
+				if (pt.getRawType().equals(CellValueReader.class)) {
+					return TypeHelper.toClass(pt.getActualTypeArguments()[0]);
+				}
+			} else if (t instanceof Class) {
+				Class<?> readerClass = getCellReaderType((Class)t);
+				if (readerClass != null) {
+					return readerClass;
+				}
+			}
+		}
+		return getCellReaderType(currentclass.getSuperclass());
+	}
+
+	private boolean areCompatible(Type type, Class<?> readerClass) {
+		Class<?> aClass = TypeHelper.toBoxClass(TypeHelper.toClass(type));
+		return aClass.isAssignableFrom(TypeHelper.toBoxClass(readerClass));
+	}
+
 	private <P> void addMapping(PropertyMeta<T, P> propertyMeta, final CsvColumnKey key, final CsvColumnDefinition columnDefinition) {
 		propertyMappingsBuilder.addProperty(key, columnDefinition, propertyMeta);
 	}

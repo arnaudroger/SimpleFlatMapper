@@ -18,4 +18,9 @@ public final class RethrowMapperBuilderErrorHandler implements
 		throw new MapperBuildingException("Setter for " + property + " on  " + target + " not found");
 	}
 
+	@Override
+	public void customFieldError(FieldKey<?> key, String message) {
+		throw new MapperBuildingException(message);
+	}
+
 }

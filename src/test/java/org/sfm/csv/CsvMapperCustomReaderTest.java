@@ -14,6 +14,7 @@ import java.io.StringReader;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class CsvMapperCustomReaderTest {
 
@@ -23,6 +24,41 @@ public class CsvMapperCustomReaderTest {
     public void setUp() {
         csvMapperFactory = CsvMapperFactory.newInstance();
     }
+    @Test
+    public void testMapDbObjectCustomReaderWithWrongType() throws Exception {
+        csvMapperFactory
+                .addCustomValueReader("id", new CellValueReader<String>() {
+
+                    @Override
+                    public String read(char[] chars, int offset, int length,
+                                       ParsingContext parsingContext) {
+                        return "dddd";
+                    }
+                })
+                .addCustomValueReader("typeName", new CellValueReader<String>() {
+
+                    @Override
+                    public String read(char[] chars, int offset, int length,
+                                       ParsingContext parsingContext) {
+                        return "dddd";
+                    }
+                });
+
+
+
+        try {
+            csvMapperFactory.newBuilder(DbObject.class).addMapping("id");
+            fail("Expect exception due to incompatible custom reader");
+        } catch(Exception e) {
+        }
+        try {
+            csvMapperFactory.newBuilder(DbObject.class).addMapping("typeName");
+            fail("Expect exception due to incompatible custom reader");
+        } catch(Exception e) {
+        }
+    }
+
+
     @Test
     public void testMapDbObjectCustomReader() throws Exception {
         CsvMapperBuilder<DbObject> builder = csvMapperFactory.addCustomValueReader("id", new CellValueReader<Long>() {
@@ -41,6 +77,7 @@ public class CsvMapperCustomReaderTest {
         assertEquals(0x5677al, list.get(0).getId());
         assertEquals("name 1", list.get(0).getName());
     }
+
     @Test
     public void testMapDbFinalObjectCustomReader() throws Exception {
         CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.addCustomValueReader("id", new CellValueReader<Long>() {

@@ -27,7 +27,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	}
 
 	
-	public <P> boolean addProperty(final K key, final D columnDefinition) {
+	public <P> PropertyMeta<T, P> addProperty(final K key, final D columnDefinition) {
 		
 		if (!modifiable) throw new IllegalStateException("Builder not modifiable");
 		
@@ -36,7 +36,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		
 		addProperty(key, columnDefinition, prop);
 		
-		return prop != null;
+		return prop;
 	}
 
 	public <P> void addProperty(final K key, final D columnDefinition, final PropertyMeta<T, P> prop) {

@@ -90,6 +90,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		final Map<ConstructorParameter, Getter<S, ?>> injections = new HashMap<ConstructorParameter, Getter<S, ?>>();
 		
 		propertyMappingsBuilder.forEachConstructorProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K>>>() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> t) {
 				PropertyMeta<T, ?> pm  = t.getPropertyMeta();
@@ -101,6 +102,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		
 		final Map<ConstructorParameter, AbstractFieldMapperMapperBuilder<S, ?, K>> builderToInject = new HashMap<ConstructorParameter, AbstractFieldMapperMapperBuilder<S, ?, K>>();
 		propertyMappingsBuilder.forEachSubProperties(new ForEachCallBack<PropertyMapping<T,?, K, FieldMapperColumnDefinition<K>>>() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> t) {
 				PropertyMeta<T, ?> pm  = t.getPropertyMeta();
@@ -140,7 +142,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		if (columnDefinition.getFieldMapper() != null) {
 			_addMapper((FieldMapper<S, T>) columnDefinition.getFieldMapper());
 		} else {
-			if (!propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition)) {
+			if (propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition) == null) {
 				mapperBuilderErrorHandler.propertyNotFound(target, key.getName());
 			}
 		}
@@ -230,6 +232,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		return fm;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected <P> FieldMapper<S, T> newFieldMapper(PropertyMapping<T, P, K, FieldMapperColumnDefinition<K>> t) {
 		FieldMapper<S, T> fieldMapper = (FieldMapper<S, T>) t.getColumnDefinition().getFieldMapper();
 

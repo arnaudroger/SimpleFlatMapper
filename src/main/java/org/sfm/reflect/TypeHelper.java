@@ -82,4 +82,12 @@ public class TypeHelper {
 	public static boolean isJavaLang(Type target) {
 		return TypeHelper.toClass(target).getPackage().getName().equals("java.lang");
 	}
+
+	public static Class<?> toBoxClass(Class<?> target) {
+		if (target.isPrimitive()) {
+			return wrappers.get(target);
+		} else {
+			return target;
+		}
+	}
 }

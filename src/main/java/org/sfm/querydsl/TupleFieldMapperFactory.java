@@ -3,10 +3,7 @@ package org.sfm.querydsl;
 import com.mysema.query.Tuple;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.impl.FieldErrorHandlerMapper;
-import org.sfm.map.impl.FieldMapper;
-import org.sfm.map.impl.FieldMapperFactory;
-import org.sfm.map.impl.GetterFactory;
+import org.sfm.map.impl.*;
 import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
@@ -14,7 +11,7 @@ import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
 
-public final class TupleFieldMapperFactory implements FieldMapperFactory<Tuple, TupleElementKey> {
+public final class TupleFieldMapperFactory implements FieldMapperFactory<Tuple, TupleElementKey, FieldMapperColumnDefinition<TupleElementKey, Tuple>> {
 
 	private final GetterFactory<Tuple, TupleElementKey>  getterFactory;
 
@@ -23,13 +20,16 @@ public final class TupleFieldMapperFactory implements FieldMapperFactory<Tuple, 
 	}
 
 	@Override
-	public <T, P> FieldMapper<Tuple, T> newFieldMapper(Type propertyType, Setter<T, P> setter,
-			TupleElementKey key, FieldMapperErrorHandler<TupleElementKey> errorHandler, MapperBuilderErrorHandler mappingErrorHandler) {
-		final Class<?> type = TypeHelper.toClass(propertyType);
-		
-		Getter<Tuple, P> getter = getterFactory.newGetter(type, key);
+	public <T, P> FieldMapper<Tuple, T> newFieldMapper(PropertyMapping<T, P, TupleElementKey , FieldMapperColumnDefinition<TupleElementKey, Tuple>> propertyMapping, FieldMapperErrorHandler<TupleElementKey> errorHandler,
+													   MapperBuilderErrorHandler mappingErrorHandler) {
+
+		final Type propertyType = propertyMapping.getPropertyMeta().getType();
+		final Setter<T, P> setter = propertyMapping.getPropertyMeta().getSetter();
+		final TupleElementKey key = propertyMapping.getColumnKey();
+
+		Getter<Tuple, P> getter = getterFactory.newGetter(propertyType, key);
 		if (getter == null) {
-			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + type);
+			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + propertyType);
 		}
 		
 		FieldMapper<Tuple, T> fm =  new FieldMapperImpl<Tuple, T, P>(getter, setter);

@@ -28,14 +28,14 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 		this(target, ReflectionService.newInstance());
 	}
 	public JdbcMapperBuilder(final Type target, ReflectionService reflectService) throws MapperBuildingException {
-		this(target, reflectService, new HashMap<String, FieldMapperColumnDefinition<JdbcColumnKey>>(), new DefaultPropertyNameMatcherFactory());
+		this(target, reflectService, new HashMap<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>>(), new DefaultPropertyNameMatcherFactory());
 	}
 	@SuppressWarnings("unchecked")
-	public JdbcMapperBuilder(final Type target, ReflectionService reflectService, final Map<String,FieldMapperColumnDefinition<JdbcColumnKey>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
+	public JdbcMapperBuilder(final Type target, ReflectionService reflectService, final Map<String,FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
 		this(target, (ClassMeta<T>) reflectService.getClassMeta(target), columnDefinitions, propertyNameMatcherFactory);
 	}
 	
-	public JdbcMapperBuilder(final Type target, final ClassMeta<T> classMeta, final Map<String,FieldMapperColumnDefinition<JdbcColumnKey>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
+	public JdbcMapperBuilder(final Type target, final ClassMeta<T> classMeta, final Map<String,FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
 		super(target, ResultSet.class, classMeta, new ResultSetGetterFactory(), new ResultSetFieldMapperFactory(new ResultSetGetterFactory()), columnDefinitions, propertyNameMatcherFactory);
 	}
 
@@ -66,7 +66,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	}
 
 	public JdbcMapperBuilder<T> addMapping(final String column, final int columnIndex, final int sqlType) {
-		addMapping(new JdbcColumnKey(column, columnIndex, sqlType), FieldMapperColumnDefinition.<JdbcColumnKey>identity());
+		addMapping(new JdbcColumnKey(column, columnIndex, sqlType), FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>identity());
 		return this;
 	}
 	

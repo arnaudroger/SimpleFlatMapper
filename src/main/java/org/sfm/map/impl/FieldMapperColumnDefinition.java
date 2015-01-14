@@ -1,39 +1,52 @@
 package org.sfm.map.impl;
 
 import org.sfm.map.ColumnDefinition;
+import org.sfm.reflect.Getter;
 
 import java.sql.ResultSet;
 
 
-public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>> extends ColumnDefinition<K> {
+public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends ColumnDefinition<K> {
 
-    public abstract FieldMapper<?, ?> getFieldMapper();
+    public abstract FieldMapper<?, ?> getCustomFieldMapper();
 
-    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> identity() {
-        return new IndentityColumnDefinition<K>();
+    public abstract Getter<S, ?> getCustomGetter();
+
+    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> identity() {
+        return new IndentityColumnDefinition<K, S>();
     }
 
-    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> compose(final FieldMapperColumnDefinition<K> def1, final FieldMapperColumnDefinition<K> def2) {
-        return new ComposeColumnDefinition<K>(def1, def2);
+    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> compose(final FieldMapperColumnDefinition<K, S> def1, final FieldMapperColumnDefinition<K, S> def2) {
+        return new ComposeColumnDefinition<K, S>(def1, def2);
     }
 
-    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> customFieldMapperDefinition(final FieldMapper<ResultSet, ?> mapper) {
-        return new IndentityColumnDefinition<K>() {
+    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customFieldMapperDefinition(final FieldMapper<ResultSet, ?> mapper) {
+        return new IndentityColumnDefinition<K, S>() {
             @Override
-            public FieldMapper<?, ?> getFieldMapper() {
+            public FieldMapper<?, ?> getCustomFieldMapper() {
                 return mapper;
             }
         };
     }
-    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> renameDefinition(final String name) {
-        return new IndentityColumnDefinition<K>() {
+
+    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customGetter(final Getter<S, ?> getter) {
+        return new IndentityColumnDefinition<K, S>() {
+            @Override
+            public Getter<S, ?> getCustomGetter() {
+                return getter;
+            }
+        };
+    }
+
+    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> renameDefinition(final String name) {
+        return new IndentityColumnDefinition<K, S>() {
             @Override
             public K rename(K key) {
                 return key.alias(name);
             }
         };
     }
-    static class IndentityColumnDefinition<K extends FieldKey<K>> extends FieldMapperColumnDefinition<K> {
+    static class IndentityColumnDefinition<K extends FieldKey<K>, S> extends FieldMapperColumnDefinition<K, S> {
         @Override
         public K rename(K key) {
             return key;
@@ -41,16 +54,21 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>> extends
 
 
         @Override
-        public FieldMapper<?, ?> getFieldMapper() {
+        public FieldMapper<?, ?> getCustomFieldMapper() {
+            return null;
+        }
+
+        @Override
+        public Getter<S, ?> getCustomGetter() {
             return null;
         }
     }
 
-    static final class ComposeColumnDefinition<K extends FieldKey<K>> extends FieldMapperColumnDefinition<K> {
-        private final FieldMapperColumnDefinition<K> def1;
-        private final FieldMapperColumnDefinition<K> def2;
+    static final class ComposeColumnDefinition<K extends FieldKey<K>, S> extends FieldMapperColumnDefinition<K, S> {
+        private final FieldMapperColumnDefinition<K, S> def1;
+        private final FieldMapperColumnDefinition<K, S> def2;
 
-        public ComposeColumnDefinition(FieldMapperColumnDefinition<K> def1, FieldMapperColumnDefinition<K> def2) {
+        public ComposeColumnDefinition(FieldMapperColumnDefinition<K, S> def1, FieldMapperColumnDefinition<K, S> def2) {
             this.def1 = def1;
             this.def2 = def2;
         }
@@ -61,11 +79,21 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>> extends
         }
 
         @Override
-        public FieldMapper<?, ?> getFieldMapper() {
-            FieldMapper<?, ?> fm = def1.getFieldMapper();
+        public FieldMapper<?, ?> getCustomFieldMapper() {
+            FieldMapper<?, ?> fm = def1.getCustomFieldMapper();
 
             if (fm == null) {
-                fm = def2.getFieldMapper();
+                fm = def2.getCustomFieldMapper();
+            }
+            return fm;
+        }
+
+        @Override
+        public Getter<S, ?> getCustomGetter() {
+            Getter<S, ?> fm = def1.getCustomGetter();
+
+            if (fm == null) {
+                fm = def2.getCustomGetter();
             }
             return fm;
         }

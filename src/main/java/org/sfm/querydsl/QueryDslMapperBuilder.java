@@ -28,7 +28,7 @@ public final class QueryDslMapperBuilder<T>
 	}
 	
 	public QueryDslMapperBuilder(final Type target, final ClassMeta<T> classMeta) throws MapperBuildingException {
-		super(target, Tuple.class, classMeta, new TupleGetterFactory(), new TupleFieldMapperFactory(new TupleGetterFactory()), new HashMap<String, FieldMapperColumnDefinition<TupleElementKey>>(), new DefaultPropertyNameMatcherFactory());
+		super(target, Tuple.class, classMeta, new TupleGetterFactory(), new TupleFieldMapperFactory(new TupleGetterFactory()), new HashMap<String, FieldMapperColumnDefinition<TupleElementKey, Tuple>>(), new DefaultPropertyNameMatcherFactory());
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public final class QueryDslMapperBuilder<T>
 	}
 
 	public <E> QueryDslMapperBuilder<T> addMapping(Expression<?> expression, int i) {
-		addMapping(new TupleElementKey(expression, i), FieldMapperColumnDefinition.<TupleElementKey>identity());
+		addMapping(new TupleElementKey(expression, i), FieldMapperColumnDefinition.<TupleElementKey, Tuple>identity());
 		return this;
 	}
 	

@@ -27,7 +27,7 @@ public class JooqMapperBuilder<R extends Record, E> extends
 	}
 	
 	public JooqMapperBuilder(final Type target, final ClassMeta<E> classMeta) throws MapperBuildingException {
-		super(target, Record.class, classMeta, new RecordGetterFactory<R>(), new RecordFieldMapperFactory<R>(new RecordGetterFactory<R>()), new HashMap<String, FieldMapperColumnDefinition<JooqFieldKey>>(), new DefaultPropertyNameMatcherFactory());
+		super(target, Record.class, classMeta, new RecordGetterFactory<R>(), new RecordFieldMapperFactory<R>(new RecordGetterFactory<R>()), new HashMap<String, FieldMapperColumnDefinition<JooqFieldKey, R>>(), new DefaultPropertyNameMatcherFactory());
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class JooqMapperBuilder<R extends Record, E> extends
 	}
 	
 	public JooqMapperBuilder<R, E> addField(JooqFieldKey key) {
-		super.addMapping(key, FieldMapperColumnDefinition.<JooqFieldKey>identity());
+		super.addMapping(key, FieldMapperColumnDefinition.<JooqFieldKey, R>identity());
 		return this;
 	}
 	

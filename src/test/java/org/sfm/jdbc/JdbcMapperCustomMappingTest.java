@@ -1,9 +1,12 @@
 package org.sfm.jdbc;
 
 import org.junit.Test;
+import org.sfm.beans.DbFinalListObject;
+import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.map.MappingException;
 import org.sfm.map.impl.FieldMapper;
+import org.sfm.reflect.Getter;
 import org.sfm.utils.RowHandler;
 
 import java.sql.PreparedStatement;
@@ -99,6 +102,55 @@ public class JdbcMapperCustomMappingTest {
 				DbHelper.assertDbObjectMapping(mapper.map(r));
 			}
 			
+		}, DbHelper.TEST_DB_OBJECT_QUERY.replace("id,", "33 as id,"));
+	}
+
+	@Test
+	public void testCustomReaderOnSetter() throws SQLException, Exception  {
+		JdbcMapperFactory mapperFactory = JdbcMapperFactory
+				.newInstance().addCustomGetter("id",new Getter<ResultSet, Long>() {
+					@Override
+					public Long get(ResultSet target) throws Exception {
+						return 1l;
+					}
+				});
+
+
+		final JdbcMapper<DbObject> mapper = mapperFactory.newMapper(DbObject.class);
+
+		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
+
+			@Override
+			public void handle(PreparedStatement t) throws Exception {
+				ResultSet r = t.executeQuery();
+				r.next();
+				DbHelper.assertDbObjectMapping(mapper.map(r));
+			}
+
+		}, DbHelper.TEST_DB_OBJECT_QUERY.replace("id,", "33 as id,"));
+	}
+	@Test
+	public void testCustomReaderOnConstructor() throws SQLException, Exception  {
+		JdbcMapperFactory mapperFactory = JdbcMapperFactory
+				.newInstance().addCustomGetter("id",new Getter<ResultSet, Long>() {
+					@Override
+					public Long get(ResultSet target) throws Exception {
+						return 1l;
+					}
+				});
+
+
+		final JdbcMapper<DbFinalObject> mapper = mapperFactory.newMapper(DbFinalObject.class);
+
+		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
+
+			@Override
+			public void handle(PreparedStatement t) throws Exception {
+				ResultSet r = t.executeQuery();
+				r.next();
+				DbHelper.assertDbObjectMapping(mapper.map(r));
+			}
+
 		}, DbHelper.TEST_DB_OBJECT_QUERY.replace("id,", "33 as id,"));
 	}
 }

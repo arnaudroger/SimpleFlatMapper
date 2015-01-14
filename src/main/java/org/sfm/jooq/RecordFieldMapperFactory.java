@@ -3,17 +3,16 @@ package org.sfm.jooq;
 import org.jooq.Record;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.impl.FieldErrorHandlerMapper;
-import org.sfm.map.impl.FieldMapper;
-import org.sfm.map.impl.FieldMapperFactory;
+import org.sfm.map.impl.*;
 import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
+import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
 
 public class RecordFieldMapperFactory<R extends Record> implements
-		FieldMapperFactory<R, JooqFieldKey> {
+		FieldMapperFactory<R, JooqFieldKey, FieldMapperColumnDefinition<JooqFieldKey, R>> {
 
 	private RecordGetterFactory<R> getterFactory;
 
@@ -22,12 +21,16 @@ public class RecordFieldMapperFactory<R extends Record> implements
 	}
 
 	@Override
-	public <T, P> FieldMapper<R, T> newFieldMapper(Type type, Setter<T, P> setter,
-			JooqFieldKey key, FieldMapperErrorHandler<JooqFieldKey> errorHandler,
+	public <T, P> FieldMapper<R, T> newFieldMapper(PropertyMapping<T, P, JooqFieldKey , FieldMapperColumnDefinition<JooqFieldKey, R>> propertyMapping, FieldMapperErrorHandler<JooqFieldKey> errorHandler,
 			MapperBuilderErrorHandler mapperErrorHandler) {
-		Getter<R, P> getter = getterFactory.newGetter(type, key);
+
+		final Type propertyType = propertyMapping.getPropertyMeta().getType();
+		final Setter<T, P> setter = propertyMapping.getPropertyMeta().getSetter();
+		final JooqFieldKey key = propertyMapping.getColumnKey();
+
+		Getter<R, P> getter = getterFactory.newGetter(propertyType, key);
 		if (getter == null) {
-			mapperErrorHandler.getterNotFound("Could not find getter for " + key + " type " + type);
+			mapperErrorHandler.getterNotFound("Could not find getter for " + key + " type " + propertyType);
 		}
 		FieldMapper<R, T> fm =  new FieldMapperImpl<R, T, P>(getter, setter);
 		if (errorHandler != null) {

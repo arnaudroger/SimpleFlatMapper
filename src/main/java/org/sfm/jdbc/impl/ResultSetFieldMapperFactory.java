@@ -4,9 +4,7 @@ import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.getter.*;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.impl.FieldMapper;
-import org.sfm.map.impl.FieldMapperFactory;
-import org.sfm.map.impl.GetterFactory;
+import org.sfm.map.impl.*;
 import org.sfm.map.impl.fieldmapper.*;
 import org.sfm.reflect.*;
 
@@ -17,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Date;
 
-public final class ResultSetFieldMapperFactory implements FieldMapperFactory<ResultSet, JdbcColumnKey> {
+public final class ResultSetFieldMapperFactory implements FieldMapperFactory<ResultSet, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> {
 
 	private final GetterFactory<ResultSet, JdbcColumnKey>  getterFactory;
 
@@ -66,15 +64,22 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 	}
 
 	@Override
-	public <T, P> FieldMapper<ResultSet, T> newFieldMapper(Type propretyType, Setter<T, P> setter,
-			JdbcColumnKey key, FieldMapperErrorHandler<JdbcColumnKey> errorHandler, MapperBuilderErrorHandler mappingErrorHandler) {
-		final Class<?> type = TypeHelper.toClass(propretyType);
+	public <T, P> FieldMapper<ResultSet, T> newFieldMapper(PropertyMapping<T, P, JdbcColumnKey , FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> propertyMapping,  FieldMapperErrorHandler<JdbcColumnKey> errorHandler, MapperBuilderErrorHandler mappingErrorHandler) {
 
-		if (type.isPrimitive()) {
+		final Type propertyType = propertyMapping.getPropertyMeta().getType();
+		final Setter<T, P> setter = propertyMapping.getPropertyMeta().getSetter();
+		final JdbcColumnKey key = propertyMapping.getColumnKey();
+		final Class<?> type = TypeHelper.toClass(propertyType);
+
+		Getter<ResultSet, P> getter = (Getter<ResultSet, P>) propertyMapping.getColumnDefinition().getCustomGetter();
+
+		if (getter == null && type.isPrimitive()) {
 			return primitiveIndexedFieldMapper(type, setter, key, errorHandler);
 		}
-		
-		Getter<ResultSet, P> getter = getterFactory.newGetter(propretyType, key);
+
+		if (getter == null) {
+			getter = getterFactory.newGetter(propertyType, key);
+		}
 		if (getter == null) {
 			// check if has a one arg construct
 			final Constructor<?>[] constructors = type.getConstructors();
@@ -104,7 +109,7 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 			}
 		}
 		if (getter == null) {
-			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + propretyType);
+			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + propertyType);
 			return null;
 		} else {
 			return new FieldMapperImpl<ResultSet, T, P>(getter, setter);

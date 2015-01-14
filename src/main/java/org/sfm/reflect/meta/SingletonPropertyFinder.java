@@ -28,7 +28,7 @@ public class SingletonPropertyFinder<T> implements PropertyFinder<T> {
 
 		PropertyMeta<T, E> property = propertyFinder.findProperty(propertyNameMatcher);
 
-		if (property == null && ! selectedParameters.isEmpty()) {
+		if (property == null && selectedParameters.isEmpty()) {
 			ConstructorDefinition<T> constructorDefinition = getSmallestConstructorWithAtLeast(selectedParameters.size() + 1);
 
 			if (constructorDefinition != null) {

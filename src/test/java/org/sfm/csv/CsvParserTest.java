@@ -103,6 +103,14 @@ public class CsvParserTest {
 	}
 
 	@Test
+	public void testDSLMapToString() throws IOException {
+		Iterator<String> iterate = CsvParser.mapTo(String.class).headers("value").iterate(new StringReader("value1,value2"));
+		assertTrue(iterate.hasNext());
+		String tuple2 = iterate.next();
+		assertEquals("value1", tuple2);
+		assertFalse(iterate.hasNext());
+	}
+	@Test
 	public void testDSLMapToTuple2() throws IOException {
 		Iterator<Tuple2<String, String>> iterate = CsvParser.mapTo(String.class, String.class).headers("0", "1").iterate(new StringReader("value1,value2"));
 		assertTrue(iterate.hasNext());

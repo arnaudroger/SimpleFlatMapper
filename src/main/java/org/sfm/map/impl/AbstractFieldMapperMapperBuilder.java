@@ -34,13 +34,13 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 
 	private final FieldMapperColumnDefinition<K, S> identity = FieldMapperColumnDefinition.identity();
 
-	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
+	protected final MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private FieldMapperErrorHandler<K> fieldMapperErrorHandler;
 
-	public AbstractFieldMapperMapperBuilder(final Type target, final Type source, final ClassMeta<T> classMeta,   
-			GetterFactory<S, K> getterFactory, FieldMapperFactory<S, K, FieldMapperColumnDefinition<K, S>> fieldMapperFactory,
-			Map<String, FieldMapperColumnDefinition<K, S>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory
-			) throws MapperBuildingException {
+	public AbstractFieldMapperMapperBuilder(final Type target, final Type source, final ClassMeta<T> classMeta,
+											GetterFactory<S, K> getterFactory, FieldMapperFactory<S, K, FieldMapperColumnDefinition<K, S>> fieldMapperFactory,
+											Map<String, FieldMapperColumnDefinition<K, S>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory,
+											MapperBuilderErrorHandler mapperBuilderErrorHandler) throws MapperBuildingException {
 		if (target == null) {
 			throw new NullPointerException("target is null");
 		}
@@ -62,14 +62,19 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		if (propertyNameMatcherFactory == null) {
 			throw new NullPointerException("propertyNameMatcherFactory is null");
 		}
+		if (mapperBuilderErrorHandler == null) {
+			throw new NullPointerException("mapperBuilderErrorHandler is null");
+		}
 		this.source = source;
 		this.getterFactory = getterFactory;
 		this.fieldMapperFactory = fieldMapperFactory;
-		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K, S>>(classMeta, propertyNameMatcherFactory);
+		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K, S>>(classMeta, propertyNameMatcherFactory, mapperBuilderErrorHandler);
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.target = target;
 		this.reflectionService = classMeta.getReflectionService();
 		this.columnDefinitions = columnDefinitions;
+		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
+
 	}
 
 	protected Class<T> getTargetClass() {
@@ -142,9 +147,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		if (columnDefinition.getCustomFieldMapper() != null) {
 			_addMapper((FieldMapper<S, T>) columnDefinition.getCustomFieldMapper());
 		} else {
-			if (propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition) == null) {
-				mapperBuilderErrorHandler.propertyNotFound(target, key.getName());
-			}
+			propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
 		}
 	}
 
@@ -267,10 +270,6 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	
 	public abstract Mapper<S, T> mapper();
 
-	protected void setMapperBuilderErrorHandler(MapperBuilderErrorHandler errorHandler) {
-		this.mapperBuilderErrorHandler = errorHandler;
-	}
-	
 	protected void setFieldMapperErrorHandler(
 			FieldMapperErrorHandler<K> errorHandler) {
 		this.fieldMapperErrorHandler = errorHandler;

@@ -1,11 +1,13 @@
 package org.sfm.csv;
 
 import org.sfm.map.ColumnDefinition;
+import org.sfm.reflect.TypeHelper;
+
+import java.lang.reflect.Type;
 
 public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey> {
 
     public abstract String dateFormat(String dateFormat);
-    public abstract boolean hasCustomReader();
     public abstract CellValueReader<?> getCustomReader();
 
     public static CsvColumnDefinition IDENTITY = new IndentityCsvColumnDefinition();
@@ -36,8 +38,13 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
             }
 
             @Override
-            public boolean hasCustomReader() {
+            public boolean hasCustomSource() {
                 return true;
+            }
+
+            @Override
+            public Type getCustomSourceReturnType() {
+                return TypeHelper.getParamTypesForInterface(cellValueReader.getClass(), CellValueReader.class)[0];
             }
         };
     }
@@ -60,11 +67,6 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         }
 
         @Override
-        public boolean hasCustomReader() {
-            return false;
-        }
-
-        @Override
         public CellValueReader<?> getCustomReader() {
             return null;
         }
@@ -72,6 +74,16 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         @Override
         public CsvColumnKey rename(CsvColumnKey key) {
             return key;
+        }
+
+        @Override
+        public boolean hasCustomSource() {
+            return false;
+        }
+
+        @Override
+        public Type getCustomSourceReturnType() {
+            throw new IllegalStateException();
         }
     }
 
@@ -90,11 +102,6 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         }
 
         @Override
-        public boolean hasCustomReader() {
-            return def2.hasCustomReader() || def1.hasCustomReader();
-        }
-
-        @Override
         public CellValueReader<?> getCustomReader() {
             CellValueReader<?> reader = def1.getCustomReader();
 
@@ -108,6 +115,22 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         @Override
         public CsvColumnKey rename(CsvColumnKey key) {
             return def2.rename(def1.rename(key));
+        }
+
+        @Override
+        public boolean hasCustomSource() {
+            return def1.hasCustomSource() || def2.hasCustomSource();
+        }
+
+        @Override
+        public Type getCustomSourceReturnType() {
+            if (def1.hasCustomSource()) {
+                return def1.getCustomSourceReturnType();
+            } else if (def2.hasCustomSource()){
+                return def2.getCustomSourceReturnType();
+            } else {
+                throw new IllegalStateException();
+            }
         }
     }
 }

@@ -92,11 +92,10 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		JdbcMapper<T> mapper = mapperCache.get(key);
 		
 		if (mapper == null) {
-			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, classMeta, columnDefinitions, propertyNameMatcherFactory);
+			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler,columnDefinitions, propertyNameMatcherFactory);
 
 			builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
-			builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 			builder.addMapping(metaData);
 			
 			mapper = builder.mapper();

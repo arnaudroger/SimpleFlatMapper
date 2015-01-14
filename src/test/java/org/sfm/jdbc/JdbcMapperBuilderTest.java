@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
+import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.ListHandler;
 
 import java.sql.SQLException;
@@ -17,8 +18,8 @@ public class JdbcMapperBuilderTest {
 	
 	@Test
 	public void testWithWrongColumn() throws MappingException, SQLException {
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
-		builder.mapperBuilderErrorHandler(MapperBuilderErrorHandler.NULL);
+		;
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactory.newInstance().mapperBuilderErrorHandler(MapperBuilderErrorHandler.NULL).newBuilder(DbObject.class);
 		builder.addMapping("no_id").addMapping("no_name").addMapping("email");
 		
 		JdbcMapper<DbObject> mapper = builder.mapper();

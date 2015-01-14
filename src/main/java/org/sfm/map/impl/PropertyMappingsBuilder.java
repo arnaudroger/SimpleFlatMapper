@@ -1,13 +1,16 @@
 package org.sfm.map.impl;
 
 import org.sfm.map.ColumnDefinition;
+import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
+import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyFinder;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.ForEachCallBack;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,12 +21,19 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	protected final List<PropertyMapping<T, ?, K, D>> properties = new ArrayList<PropertyMapping<T, ?, K, D>>();
 
 	protected final PropertyNameMatcherFactory propertyNameMatcherFactory;
-	
+
+	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
+	private final ClassMeta<T> classMeta;
+
 	protected boolean modifiable = true;
 
-	public PropertyMappingsBuilder(final ClassMeta<T> classMeta, final PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
+	public PropertyMappingsBuilder(final ClassMeta<T> classMeta,
+								   final PropertyNameMatcherFactory propertyNameMatcherFactory,
+								   final MapperBuilderErrorHandler mapperBuilderErrorHandler) throws MapperBuildingException {
+		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.propertyFinder = classMeta.newPropertyFinder();
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
+		this.classMeta = classMeta;
 	}
 
 	
@@ -33,16 +43,44 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		
 		@SuppressWarnings("unchecked")
 		final PropertyMeta<T, P> prop = (PropertyMeta<T, P>) propertyFinder.findProperty(propertyNameMatcherFactory.newInstance(key));
-		
-		addProperty(key, columnDefinition, prop);
-		
+
+		if (prop == null) {
+			mapperBuilderErrorHandler.propertyNotFound(classMeta.getType(), key.getName());
+			properties.add(null);
+		} else {
+			addProperty(key, columnDefinition, prop);
+		}
 		return prop;
 	}
 
 	public <P> void addProperty(final K key, final D columnDefinition, final PropertyMeta<T, P> prop) {
+		if (columnDefinition.hasCustomSource()) {
+			if (!checkTypeCompatibility(key, columnDefinition.getCustomSourceReturnType(), prop.getType())) {
+				properties.add(null);
+				return;
+			}
+		}
 		properties.add(new PropertyMapping<T, P, K, D>(prop, key, columnDefinition));
 	}
-	
+
+	private boolean checkTypeCompatibility(K key, Type customSourceReturnType, Type propertyMetaType) {
+		if (customSourceReturnType == null) {
+			mapperBuilderErrorHandler.customFieldError(key, "Column definition has a custom source but not custom source return type");
+			return false;
+		} else if(!areCompatible(propertyMetaType, customSourceReturnType)) {
+			mapperBuilderErrorHandler.customFieldError(key, "Incompatible customreader type " + customSourceReturnType +  " expected " + propertyMetaType);
+			return false;
+		}
+		return true;
+	}
+
+	private boolean areCompatible(Type propertyMetaType, Type customSourceReturnType) {
+		Class<?> propertyMetaClass = TypeHelper.toBoxedClass(TypeHelper.toClass(propertyMetaType));
+		Class<?> customSourceReturnClass = TypeHelper.toBoxedClass(TypeHelper.toClass(customSourceReturnType));
+		return propertyMetaClass.isAssignableFrom(customSourceReturnClass);
+	}
+
+
 	public List<K> getKeys() {
 		modifiable = false;
 		
@@ -99,7 +137,8 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		modifiable = false;
 		for(int i = 0; i < properties.size(); i++) {
 			PropertyMapping<T, ?, K, D> prop = properties.get(i);
-			if ((prop.getColumnKey().getIndex() >= start || start == -1)
+			if (prop != null
+			         && (prop.getColumnKey().getIndex() >= start || start == -1)
 					 && (prop.getColumnKey().getIndex() < end || end == -1)) {
 				handler.handle(prop);
 			}

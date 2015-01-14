@@ -137,6 +137,11 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return new ObjectPropertyFinder<T>(this);
 	}
 
+	@Override
+	public Type getType() {
+		return target;
+	}
+
 	public Type getTargetClass() {
 		return target;
 	}

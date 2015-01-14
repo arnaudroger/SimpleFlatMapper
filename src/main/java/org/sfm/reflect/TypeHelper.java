@@ -1,5 +1,7 @@
 package org.sfm.reflect;
 
+import org.sfm.csv.CellValueReader;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
@@ -71,6 +73,28 @@ public class TypeHelper {
 		return null;
 	}
 
+
+	public static Type[] getParamTypesForInterface(Class<?> target, Class<?> inter) {
+		if (target == null) {
+			return null;
+		}
+		Type[] genericInterfaces = target.getGenericInterfaces();
+		for(Type t : genericInterfaces) {
+			if (t instanceof ParameterizedType) {
+				ParameterizedType pt = (ParameterizedType) t;
+				if (pt.getRawType().equals(inter)) {
+					return pt.getActualTypeArguments();
+				}
+			} else if (t instanceof Class) {
+				Type[] readerClass = getParamTypesForInterface((Class) t, inter);
+				if (readerClass != null) {
+					return readerClass;
+				}
+			}
+		}
+		return getParamTypesForInterface(target.getSuperclass(), inter);
+	}
+
 	public static boolean isClass(Type outType, Class<URL> class1) {
 		return toClass(outType).equals(class1);
 	}
@@ -83,7 +107,7 @@ public class TypeHelper {
 		return TypeHelper.toClass(target).getPackage().getName().equals("java.lang");
 	}
 
-	public static Class<?> toBoxClass(Class<?> target) {
+	public static Class<?> toBoxedClass(Class<?> target) {
 		if (target.isPrimitive()) {
 			return wrappers.get(target);
 		} else {

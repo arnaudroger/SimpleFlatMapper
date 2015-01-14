@@ -10,7 +10,6 @@ import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
 import org.sfm.utils.ForEachCallBack;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,7 +22,7 @@ public class CsvMapperBuilder<T> {
 	private final Class<DelayedCellSetter<T, ?>[]> SOURCE = (Class<DelayedCellSetter<T, ?>[]>) SOURCE_UNTYPE;
 	private FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<CsvColumnKey>();
 
-	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
+	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private RowHandlerErrorHandler rowHandlerErrorHandler = new RethrowRowHandlerErrorHandler();
 	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
 	private final Type target;
@@ -40,19 +39,21 @@ public class CsvMapperBuilder<T> {
 		this(target, ReflectionService.newInstance());
 	}
 	
+	@SuppressWarnings("unchecked")
 	public CsvMapperBuilder(final Type target, ReflectionService reflectionService) {
 		this(target, (ClassMeta<T>)reflectionService.getClassMeta(target));
 	}
 
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta) {
-		this(target, classMeta, new HashMap<String, CsvColumnDefinition>(),new DefaultPropertyNameMatcherFactory());
+		this(target, classMeta, new RethrowMapperBuilderErrorHandler(), new HashMap<String, CsvColumnDefinition>(),new DefaultPropertyNameMatcherFactory());
 	}
 
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta,
-			Map<String, CsvColumnDefinition> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
+							MapperBuilderErrorHandler mapperBuilderErrorHandler, Map<String, CsvColumnDefinition> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
 		this.target = target;
+		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.reflectionService = classMeta.getReflectionService();
-		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition>(classMeta, propertyNameMatcherFactory);
+		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition>(classMeta, propertyNameMatcherFactory, this.mapperBuilderErrorHandler);
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.columnDefinitions = columnDefinitions;
 	}
@@ -77,54 +78,11 @@ public class CsvMapperBuilder<T> {
 		final CsvColumnDefinition composedDefinition = CsvColumnDefinition.compose(columnDefinition, getColumnDefintion(key));
 		final CsvColumnKey mappedColumnKey = composedDefinition.rename(key);
 
-		PropertyMeta<T, ?> propertyMeta = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
-		if (propertyMeta == null) {
-			mapperBuilderErrorHandler.propertyNotFound(target, key.getName());
-		}
-		if (composedDefinition.hasCustomReader()) {
-			checkCompatibility(key, propertyMeta, composedDefinition);
-		}
+		propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
 
 		return this;
 	}
 
-	private void checkCompatibility(CsvColumnKey key, PropertyMeta<T, ?> propertyMeta, CsvColumnDefinition composedDefinition) {
-		CellValueReader<?> customReader = composedDefinition.getCustomReader();
-
-		Class<?> readerClass = getCellReaderType(customReader.getClass());
-
-		if (readerClass == null) {
-			mapperBuilderErrorHandler.customFieldError(key, "Could not find reader return type " + customReader);
-		} else if(!areCompatible(propertyMeta.getType(), readerClass)) {
-			mapperBuilderErrorHandler.customFieldError(key, "Incompatible customreader type " + customReader + " returns" + readerClass + " for " + propertyMeta.getType());
-		}
-	}
-
-	private Class<?> getCellReaderType(Class<?> currentclass) {
-		if (currentclass == null) {
-			return null;
-		}
-		Type[] genericInterfaces = currentclass.getGenericInterfaces();
-		for(Type t : genericInterfaces) {
-			if (t instanceof ParameterizedType) {
-				ParameterizedType pt = (ParameterizedType) t;
-				if (pt.getRawType().equals(CellValueReader.class)) {
-					return TypeHelper.toClass(pt.getActualTypeArguments()[0]);
-				}
-			} else if (t instanceof Class) {
-				Class<?> readerClass = getCellReaderType((Class)t);
-				if (readerClass != null) {
-					return readerClass;
-				}
-			}
-		}
-		return getCellReaderType(currentclass.getSuperclass());
-	}
-
-	private boolean areCompatible(Type type, Class<?> readerClass) {
-		Class<?> aClass = TypeHelper.toBoxClass(TypeHelper.toClass(type));
-		return aClass.isAssignableFrom(TypeHelper.toBoxClass(readerClass));
-	}
 
 	private <P> void addMapping(PropertyMeta<T, P> propertyMeta, final CsvColumnKey key, final CsvColumnDefinition columnDefinition) {
 		propertyMappingsBuilder.addProperty(key, columnDefinition, propertyMeta);
@@ -266,7 +224,7 @@ public class CsvMapperBuilder<T> {
 				CsvMapperBuilder<P> delegateMapperBuilder = (CsvMapperBuilder<P>) delegateMapperBuilders .get(propOwner.getName());
 				
 				if (delegateMapperBuilder == null) {
-					delegateMapperBuilder = new CsvMapperBuilder<P>(propOwner.getType(), propOwner.getClassMeta(), columnDefinitions, propertyNameMatcherFactory);
+					delegateMapperBuilder = new CsvMapperBuilder<P>(propOwner.getType(), propOwner.getClassMeta(), mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory);
 					delegateMapperBuilders.put(propOwner.getName(), delegateMapperBuilder);
 				}
 				
@@ -347,7 +305,7 @@ public class CsvMapperBuilder<T> {
 							CsvMapperBuilder<?> delegateMapperBuilder = delegateMapperBuilders .get(powner.getName());
 							
 							if (delegateMapperBuilder == null) {
-								delegateMapperBuilder = new CsvMapperBuilder(powner.getType(), powner.getClassMeta(), columnDefinitions, propertyNameMatcherFactory);
+								delegateMapperBuilder = new CsvMapperBuilder(powner.getType(), powner.getClassMeta(), mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory);
 								delegateMapperBuilders.put(powner.getName(), delegateMapperBuilder);
 							}
 							
@@ -404,8 +362,4 @@ public class CsvMapperBuilder<T> {
 		return this;
 	}
 
-	public final CsvMapperBuilder<T> mapperBuilderErrorHandler(final MapperBuilderErrorHandler errorHandler) {
-		mapperBuilderErrorHandler = errorHandler;
-		return this;
-	}
 }

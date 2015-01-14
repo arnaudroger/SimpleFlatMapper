@@ -4,10 +4,7 @@ import com.mysema.query.Tuple;
 import com.mysema.query.types.Expression;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
-import org.sfm.map.impl.AbstractFieldMapperMapperBuilder;
-import org.sfm.map.impl.DefaultPropertyNameMatcherFactory;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
-import org.sfm.map.impl.MapperImpl;
+import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 
@@ -28,7 +25,7 @@ public final class QueryDslMapperBuilder<T>
 	}
 	
 	public QueryDslMapperBuilder(final Type target, final ClassMeta<T> classMeta) throws MapperBuildingException {
-		super(target, Tuple.class, classMeta, new TupleGetterFactory(), new TupleFieldMapperFactory(new TupleGetterFactory()), new HashMap<String, FieldMapperColumnDefinition<TupleElementKey, Tuple>>(), new DefaultPropertyNameMatcherFactory());
+		super(target, Tuple.class, classMeta, new TupleGetterFactory(), new TupleFieldMapperFactory(new TupleGetterFactory()), new HashMap<String, FieldMapperColumnDefinition<TupleElementKey, Tuple>>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler());
 	}
 
 	@Override

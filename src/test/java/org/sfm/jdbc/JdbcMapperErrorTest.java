@@ -24,11 +24,9 @@ public class JdbcMapperErrorTest {
 
 	@Test
 	public void testHandleMapperErrorSetterNotFound() throws NoSuchMethodException, SecurityException, IOException {
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
 		MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
-		
-		builder.mapperBuilderErrorHandler(errorHandler);
-		
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactory.newInstance().mapperBuilderErrorHandler(errorHandler).newBuilder(DbObject.class);
+
 		builder.addMapping("notthere1", 1);
 		
 		verify(errorHandler).propertyNotFound(DbObject.class, "notthere1");
@@ -45,11 +43,10 @@ public class JdbcMapperErrorTest {
 	}
 	@Test
 	public void testHandleMapperErrorgGetterNotFound() throws NoSuchMethodException, SecurityException, IOException {
-		JdbcMapperBuilder<MyClass> builder = new JdbcMapperBuilder<MyClass>(MyClass.class);
 		MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
-		
-		builder.mapperBuilderErrorHandler(errorHandler);
-		
+
+		JdbcMapperBuilder<MyClass> builder = JdbcMapperFactory.newInstance().mapperBuilderErrorHandler(errorHandler).newBuilder(MyClass.class);
+
 		builder.addMapping("prop", 1);
 		
 		builder.mapper();

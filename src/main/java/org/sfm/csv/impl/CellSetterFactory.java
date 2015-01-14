@@ -73,7 +73,7 @@ public final class CellSetterFactory {
 
 	private DoubleCellValueReader doubleReader(CsvColumnDefinition columnDefinition) {
 		DoubleCellValueReader reader;
-		if (columnDefinition.hasCustomReader()) {
+		if (columnDefinition.hasCustomSource()) {
             CellValueReader<?> customReader = columnDefinition.getCustomReader();
             if (customReader instanceof DoubleCellValueReader) {
                 reader = (DoubleCellValueReader) customReader;
@@ -88,7 +88,7 @@ public final class CellSetterFactory {
 
 	private FloatCellValueReader floatReader(CsvColumnDefinition columnDefinition) {
 		FloatCellValueReader reader;
-		if (columnDefinition.hasCustomReader()) {
+		if (columnDefinition.hasCustomSource()) {
             CellValueReader<?> customReader = columnDefinition.getCustomReader();
             if (customReader instanceof FloatCellValueReader) {
                 reader = (FloatCellValueReader) customReader;
@@ -103,7 +103,7 @@ public final class CellSetterFactory {
 
 	private LongCellValueReader longReader(CsvColumnDefinition columnDefinition) {
 		LongCellValueReader reader;
-		if (columnDefinition.hasCustomReader()) {
+		if (columnDefinition.hasCustomSource()) {
             CellValueReader<?> customReader = columnDefinition.getCustomReader();
             if (customReader instanceof LongCellValueReader) {
                 reader = (LongCellValueReader) customReader;
@@ -118,7 +118,7 @@ public final class CellSetterFactory {
 
 	private IntegerCellValueReader intReader(CsvColumnDefinition columnDefinition) {
 		IntegerCellValueReader reader;
-		if (columnDefinition.hasCustomReader()) {
+		if (columnDefinition.hasCustomSource()) {
             CellValueReader<?> customReader = columnDefinition.getCustomReader();
             if (customReader instanceof IntegerCellValueReader) {
                 reader = (IntegerCellValueReader) customReader;
@@ -133,7 +133,7 @@ public final class CellSetterFactory {
 
 	private ShortCellValueReader shortReader(CsvColumnDefinition columnDefinition) {
 		ShortCellValueReader reader;
-		if (columnDefinition.hasCustomReader()) {
+		if (columnDefinition.hasCustomSource()) {
             CellValueReader<?> customReader = columnDefinition.getCustomReader();
             if (customReader instanceof ShortCellValueReader) {
                 reader = (ShortCellValueReader) customReader;
@@ -148,7 +148,7 @@ public final class CellSetterFactory {
 
 	private CharCellValueReader charReader(CsvColumnDefinition columnDefinition) {
 		CharCellValueReader reader;
-		if (columnDefinition.hasCustomReader()) {
+		if (columnDefinition.hasCustomSource()) {
             CellValueReader<?> customReader = columnDefinition.getCustomReader();
             if (customReader instanceof CharCellValueReader) {
                 reader = (CharCellValueReader) customReader;
@@ -163,7 +163,7 @@ public final class CellSetterFactory {
 
 	private ByteCellValueReader byteReader(CsvColumnDefinition columnDefinition) {
 		ByteCellValueReader reader;
-		if (columnDefinition.hasCustomReader()) {
+		if (columnDefinition.hasCustomSource()) {
             CellValueReader<?> customReader = columnDefinition.getCustomReader();
             if (customReader instanceof BooleanCellValueReader) {
                 reader = (ByteCellValueReader) customReader;
@@ -178,7 +178,7 @@ public final class CellSetterFactory {
 
 	private BooleanCellValueReader booleanReader(CsvColumnDefinition columnDefinition) {
 		BooleanCellValueReader reader;
-		if (columnDefinition.hasCustomReader()) {
+		if (columnDefinition.hasCustomSource()) {
             CellValueReader<?> customReader = columnDefinition.getCustomReader();
             if (customReader instanceof BooleanCellValueReader) {
                 reader = (BooleanCellValueReader) customReader;
@@ -253,7 +253,7 @@ public final class CellSetterFactory {
 	private <P> CellValueReader<P> getReader(Class<P> propertyType, int index, CsvColumnDefinition columnDefinition) {
 		CellValueReader<P> reader = null;
 
-		if (columnDefinition.hasCustomReader()) {
+		if (columnDefinition.hasCustomSource()) {
 			reader = (CellValueReader<P>) columnDefinition.getCustomReader();
 		}
 

@@ -32,11 +32,11 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	}
 	@SuppressWarnings("unchecked")
 	public JdbcMapperBuilder(final Type target, ReflectionService reflectService, final Map<String,FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
-		this(target, (ClassMeta<T>) reflectService.getClassMeta(target), columnDefinitions, propertyNameMatcherFactory);
+		this(target, (ClassMeta<T>) reflectService.getClassMeta(target), new RethrowMapperBuilderErrorHandler(), columnDefinitions, propertyNameMatcherFactory);
 	}
 	
-	public JdbcMapperBuilder(final Type target, final ClassMeta<T> classMeta, final Map<String,FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
-		super(target, ResultSet.class, classMeta, new ResultSetGetterFactory(), new ResultSetFieldMapperFactory(new ResultSetGetterFactory()), columnDefinitions, propertyNameMatcherFactory);
+	public JdbcMapperBuilder(final Type target, final ClassMeta<T> classMeta, final MapperBuilderErrorHandler mapperBuilderErrorHandler,  final Map<String,FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
+		super(target, ResultSet.class, classMeta, new ResultSetGetterFactory(), new ResultSetFieldMapperFactory(new ResultSetGetterFactory()), columnDefinitions, propertyNameMatcherFactory, mapperBuilderErrorHandler);
 	}
 
 	@Override
@@ -84,11 +84,6 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 		return this;
 	}
 	
-	public JdbcMapperBuilder<T> mapperBuilderErrorHandler(MapperBuilderErrorHandler errorHandler) {
-		setMapperBuilderErrorHandler(errorHandler);
-		return this;
-	}
-
 	public JdbcMapperBuilder<T> jdbcMapperErrorHandler(RowHandlerErrorHandler jdbcMapperErrorHandler) {
 		this.jdbcMapperErrorHandler = jdbcMapperErrorHandler;
 		return this;
@@ -96,7 +91,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 
 	@Override
 	protected <ST> AbstractFieldMapperMapperBuilder<ResultSet, ST, JdbcColumnKey> newSubBuilder(Type type, ClassMeta<ST> classMeta) {
-		return new  JdbcMapperBuilder<ST>(type, classMeta, columnDefinitions, propertyNameMatcherFactory);
+		return new  JdbcMapperBuilder<ST>(type, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory);
 	}
 	
 

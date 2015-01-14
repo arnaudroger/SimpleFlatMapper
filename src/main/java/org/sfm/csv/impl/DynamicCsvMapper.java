@@ -146,9 +146,8 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 
 	private CsvMapperImpl<T> buildMapper(ColumnsMapperKey key) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, columnDefinitions, propertyNameMatcherFactory);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
-		builder.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);
 		for(String col : key.getColumns()) {
 			builder.addMapping(col);

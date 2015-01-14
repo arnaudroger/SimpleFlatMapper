@@ -2,7 +2,9 @@ package org.sfm.map.impl;
 
 import org.sfm.map.ColumnDefinition;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.TypeHelper;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 
 
@@ -35,6 +37,16 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
             public Getter<S, ?> getCustomGetter() {
                 return getter;
             }
+
+            @Override
+            public boolean hasCustomSource() {
+                return true;
+            }
+
+            @Override
+            public Type getCustomSourceReturnType() {
+                return TypeHelper.getParamTypesForInterface(getter.getClass(), Getter.class)[1];
+            }
         };
     }
 
@@ -52,6 +64,15 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
             return key;
         }
 
+        @Override
+        public boolean hasCustomSource() {
+            return false;
+        }
+
+        @Override
+        public Type getCustomSourceReturnType() {
+            throw new IllegalStateException();
+        }
 
         @Override
         public FieldMapper<?, ?> getCustomFieldMapper() {
@@ -96,6 +117,22 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
                 fm = def2.getCustomGetter();
             }
             return fm;
+        }
+
+        @Override
+        public boolean hasCustomSource() {
+            return def1.hasCustomSource() || def2.hasCustomSource();
+        }
+
+        @Override
+        public Type getCustomSourceReturnType() {
+            if (def1.hasCustomSource()) {
+                return def1.getCustomSourceReturnType();
+            } else if (def2.hasCustomSource()){
+                return def2.getCustomSourceReturnType();
+            } else {
+                throw new IllegalStateException();
+            }
         }
     }
 }

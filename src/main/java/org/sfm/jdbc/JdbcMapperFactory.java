@@ -138,7 +138,7 @@ public final class JdbcMapperFactory {
 	private FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> getColumnDefinition(String key) {
 		FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition = columnDefinitions.get(key.toLowerCase());
 		if (columnDefinition == null) {
-			return FieldMapperColumnDefinition.identity();
+			columnDefinition = FieldMapperColumnDefinition.identity();
 		}
 		return columnDefinition;
 	}

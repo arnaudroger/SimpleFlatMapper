@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.sfm.csv.impl.ParsingContext;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CsvColumnDefinitionTest {
 
@@ -22,5 +23,8 @@ public class CsvColumnDefinitionTest {
         assertEquals("blop", compose.rename(new CsvColumnKey("bar", -1)).getName());
         assertEquals("yyyyMM", compose.dateFormat("MMyyyy"));
         assertEquals(new Integer(3), compose.getCustomReader().read(null, 0, 0 , null));
+
+        assertTrue(compose.hasCustomSource());
+        assertEquals(Integer.class, compose.getCustomSourceReturnType());
     }
 }

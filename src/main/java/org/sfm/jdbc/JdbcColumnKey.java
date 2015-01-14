@@ -4,10 +4,7 @@ import org.sfm.map.impl.FieldKey;
 
 public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 
-
 	public static final int UNDEFINED_TYPE = -99999;
-
-	public static final JdbcColumnKey FAKE = new JdbcColumnKey("Fake", -1 , UNDEFINED_TYPE);
 
 	private final String name;
 	private final int index;

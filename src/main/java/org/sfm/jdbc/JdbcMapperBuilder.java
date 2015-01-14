@@ -32,7 +32,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	}
 	@SuppressWarnings("unchecked")
 	public JdbcMapperBuilder(final Type target, ReflectionService reflectService, final Map<String,FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
-		this(target, (ClassMeta<T>) reflectService.getClassMeta(target), new RethrowMapperBuilderErrorHandler(), columnDefinitions, propertyNameMatcherFactory);
+		this(target, (ClassMeta<T>) reflectService.getRootClassMeta(target), new RethrowMapperBuilderErrorHandler(), columnDefinitions, propertyNameMatcherFactory);
 	}
 	
 	public JdbcMapperBuilder(final Type target, final ClassMeta<T> classMeta, final MapperBuilderErrorHandler mapperBuilderErrorHandler,  final Map<String,FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {

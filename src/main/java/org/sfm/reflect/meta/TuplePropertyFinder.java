@@ -36,7 +36,7 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 				new ConstructorPropertyMeta<T, E>("element" + (i),
 					"element" + (i), 	tupleClassMeta.getReflectionService(),
 					new ConstructorParameter("element" + (i), Object.class, resolvedType));
-		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(resolvedType);
+		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(resolvedType, false);
 		return new IndexedElement<T, E>(prop, classMeta);
 	}
 

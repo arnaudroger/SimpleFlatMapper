@@ -15,7 +15,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 		this.type = type;
 		this.elementTarget = elementTarget;
 		this.reflectionService = reflectionService;
-		this.elementClassMeta = reflectionService.getClassMeta(elementTarget);
+		this.elementClassMeta = reflectionService.getClassMeta(elementTarget, false);
 	}
 
 	public ClassMeta<E> getElementClassMeta() {

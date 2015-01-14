@@ -54,7 +54,7 @@ public abstract class PropertyMeta<O, P> {
 	}
 
 	protected ClassMeta<P> newClassMeta() {
-		return reflectService.getClassMeta(getType());
+		return reflectService.getClassMeta(getType(), false);
 	}
 
 	public boolean isPrimitive() {

@@ -34,7 +34,7 @@ public class ResultSetFieldMapperFactoryTest {
 	@Test
 	public void testPrimitiveField() {
 
-		ClassMeta<DbObject> classMeta = ReflectionService.newInstance(true, false).getClassMeta(DbObject.class);
+		ClassMeta<DbObject> classMeta = ReflectionService.newInstance(true, false).getRootClassMeta(DbObject.class);
 		PropertyMeta<DbObject, Long> id = classMeta.newPropertyFinder().<Long>findProperty(new DefaultPropertyNameMatcher("id"));
 
 		FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> identity = FieldMapperColumnDefinition.identity();

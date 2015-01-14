@@ -176,7 +176,7 @@ public final class JdbcMapperFactory {
 	}
 
 	private <T> ClassMeta<T> getClassMeta(Type target) {
-		return ReflectionService.newInstance(disableAsm, useAsm).getClassMeta(target);
+		return ReflectionService.newInstance(disableAsm, useAsm).getRootClassMeta(target);
 	}
 
 	public JdbcMapperFactory addAliases(Map<String, String> aliases) {

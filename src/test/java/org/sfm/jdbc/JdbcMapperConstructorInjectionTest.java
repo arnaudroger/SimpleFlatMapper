@@ -207,9 +207,10 @@ public class JdbcMapperConstructorInjectionTest {
 	@Test
 	public void testConstructorNoAsmAndNoAsmLinb() throws Exception {
 		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, nonAsmReflectionService);
-		
+
 		try {
 			builder.addMapping("prop1");
+			builder.addMapping("prop2");
 			fail("Expect exception");
 		} catch(Exception e) {
 			// expected

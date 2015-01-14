@@ -274,7 +274,7 @@ public final class CsvParser {
 		public MapToDSL(DSL dsl, Type mapToClass) {
 			this.dsl = dsl;
 			this.mapToClass = mapToClass;
-			this.classMeta = ReflectionService.classMeta(mapToClass);
+			this.classMeta = ReflectionService.newInstance().getRootClassMeta(mapToClass);
 			this.mapper = new DynamicCsvMapper<T>(mapToClass, classMeta);
 		}
 

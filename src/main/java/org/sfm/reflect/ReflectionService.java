@@ -56,21 +56,32 @@ public class ReflectionService {
 		return asmFactory;
 	}
 
-	public <T, E> ClassMeta<T> getClassMeta(Type target) {
+	public <T, E> ClassMeta<T> getClassMeta(Type target, boolean root) {
 		Class<T> clazz = TypeHelper.toClass(target);
 		
 		if (List.class.isAssignableFrom(clazz)) {
 			ParameterizedType pt = (ParameterizedType) target;
 			return new ArrayClassMeta<T, E>(ArrayList.class, pt.getActualTypeArguments()[0], this);
-		}else if (clazz.isArray()) {
+		} else if (clazz.isArray()) {
 			return new ArrayClassMeta<T, E>(clazz, clazz.getComponentType(), this);
-		}else if (Tuples.isTuple(target)) {
+		} else if (Tuples.isTuple(target)) {
 			return new TupleClassMeta<T>(target, this);
-		} else if (TypeHelper.isJavaLang(target)) {
-			return null;
 		}
-		return new ObjectClassMeta<T>(target, this);
+		if (root) {
+			return new SingletonClassMeta<T>(new ObjectClassMeta<T>(target, this));
+		} else {
+			if (TypeHelper.isJavaLang(target)) {
+				return null;
+			} else {
+				return new ObjectClassMeta<T>(target, this);
+			}
+		}
 	}
+
+	public <T> ClassMeta<T> getRootClassMeta(Type mapToClass) {
+		return getClassMeta(mapToClass, true);
+	}
+
 	public String getColumnName(Method method) {
 		return aliasProvider.getAliasForMethod(method);
 	}
@@ -117,8 +128,5 @@ public class ReflectionService {
 		return false;
 	}
 
-	public static <T> ClassMeta<T> classMeta(Type target) {
-		return newInstance().getClassMeta(target);
-	}
 }
  

@@ -21,7 +21,7 @@ public final class QueryDslMapperBuilder<T>
 	
 	@SuppressWarnings("unchecked")
 	public QueryDslMapperBuilder(final Type target, ReflectionService reflectService) throws MapperBuildingException {
-		this(target, (ClassMeta<T>) reflectService.getClassMeta(target));
+		this(target, (ClassMeta<T>) reflectService.getRootClassMeta(target));
 	}
 	
 	public QueryDslMapperBuilder(final Type target, final ClassMeta<T> classMeta) throws MapperBuildingException {

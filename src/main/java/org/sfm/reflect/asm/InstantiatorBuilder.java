@@ -82,6 +82,8 @@ public class InstantiatorBuilder {
 				
  				if (TypeHelper.isPrimitive(p.getType())) {
 					sb.append(propertyType);
+				} else if (TypeHelper.isArray(p.getType())) {
+					sb.append(propertyType);
 				} else {
 					sb.append("L").append(propertyType).append(";");
 				}

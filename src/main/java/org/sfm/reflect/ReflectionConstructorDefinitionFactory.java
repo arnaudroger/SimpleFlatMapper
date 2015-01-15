@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class ReflectionConstructorDefinitionFactory {
 
+    @SuppressWarnings("unchecked")
     public static <T> List<ConstructorDefinition<T>> extractConstructors(Type target) {
         Class<T> clazz = TypeHelper.toClass(target);
         List<ConstructorDefinition<T>> constructorDefinitions = new ArrayList<ConstructorDefinition<T>>();

@@ -11,16 +11,29 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ReflectionService {
+
+	@SuppressWarnings("raw")
+	private static final Map<Type, List> predefinedConstructors = new HashMap<Type, List>();
+
+	static {
+		try {
+			predefinedConstructors.put(String.class, Arrays.asList(
+					new ConstructorDefinition<String>(String.class.getConstructor(String.class), new ConstructorParameter("value", String.class)),
+					new ConstructorDefinition<String>(String.class.getConstructor(char[].class), new ConstructorParameter("value", char[].class))
+			));
+		} catch (NoSuchMethodException e) {
+			throw new Error("Could not find new String(String)");
+		}
+	}
 
 	private final SetterFactory setterFactory;
 	private final InstantiatorFactory instantiatorFactory;
 	private final AsmFactory asmFactory;
 	private final AliasProvider aliasProvider;
-	
+
 	private final boolean asmPresent;
 	private final boolean asmActivated;
 
@@ -89,11 +102,14 @@ public class ReflectionService {
 		return aliasProvider.getAliasForField(field);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> List<ConstructorDefinition<T>> extractConstructors(Type target) throws IOException {
 		List<ConstructorDefinition<T>> list;
 
-
-		if (isAsmPresent()) {
+		if (predefinedConstructors.containsKey(target)) {
+			List constructorDefinitions = predefinedConstructors.get(target);
+			list = (List<ConstructorDefinition<T>>) constructorDefinitions;
+		} else if (isAsmPresent()) {
 			list = AsmConstructorDefinitionFactory.extractConstructors(target);
 		} else {
 			list = ReflectionConstructorDefinitionFactory.extractConstructors(target);

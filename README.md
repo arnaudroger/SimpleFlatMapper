@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
-# Simple Flat Mapper (SFM) [v1.2.0](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.2.0)
+# Simple Flat Mapper (SFM) [v1.3.0](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.2.0)
 
 SFM provides fast and easy to use mapper for
 
@@ -55,7 +55,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.2.0</version>
+			<version>1.3.0</version>
 		</dependency>
 ```
 
@@ -65,7 +65,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.2.0</version>
+			<version>1.3.0</version>
 			<classifier>jdk17</classifier>
 		</dependency>
 ```
@@ -76,7 +76,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>com.github.arnaudroger</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.2.0</version>
+			<version>1.3.0</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 ```

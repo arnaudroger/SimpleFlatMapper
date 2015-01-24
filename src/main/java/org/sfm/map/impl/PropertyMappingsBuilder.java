@@ -65,8 +65,8 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 	private boolean checkTypeCompatibility(K key, Type customSourceReturnType, Type propertyMetaType) {
 		if (customSourceReturnType == null) {
-			mapperBuilderErrorHandler.customFieldError(key, "Column definition has a custom source but not custom source return type");
-			return false;
+			// cannot determine type
+			return true;
 		} else if(!areCompatible(propertyMetaType, customSourceReturnType)) {
 			mapperBuilderErrorHandler.customFieldError(key, "Incompatible customreader type " + customSourceReturnType +  " expected " + propertyMetaType);
 			return false;

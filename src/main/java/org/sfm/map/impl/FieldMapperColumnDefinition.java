@@ -45,7 +45,8 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
 
             @Override
             public Type getCustomSourceReturnType() {
-                return TypeHelper.getParamTypesForInterface(getter.getClass(), Getter.class)[1];
+                Type[] paramTypesForInterface = TypeHelper.getParamTypesForInterface(getter.getClass(), Getter.class);
+                return paramTypesForInterface != null ? paramTypesForInterface[1] : null;
             }
         };
     }

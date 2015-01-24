@@ -6,6 +6,7 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.map.MappingException;
 import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.utils.RowHandler;
 
@@ -106,9 +107,9 @@ public class JdbcMapperCustomMappingTest {
 	}
 
 	@Test
-	public void testCustomReaderOnSetter() throws SQLException, Exception  {
+	public void testCustomReaderOnSetter() throws SQLException, Exception {
 		JdbcMapperFactory mapperFactory = JdbcMapperFactory
-				.newInstance().addCustomGetter("id",new Getter<ResultSet, Long>() {
+				.newInstance().addCustomGetter("id", new Getter<ResultSet, Long>() {
 					@Override
 					public Long get(ResultSet target) throws Exception {
 						return 1l;
@@ -117,6 +118,38 @@ public class JdbcMapperCustomMappingTest {
 
 
 		final JdbcMapper<DbObject> mapper = mapperFactory.newMapper(DbObject.class);
+
+		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
+
+			@Override
+			public void handle(PreparedStatement t) throws Exception {
+				ResultSet r = t.executeQuery();
+				r.next();
+				DbHelper.assertDbObjectMapping(mapper.map(r));
+			}
+
+		}, DbHelper.TEST_DB_OBJECT_QUERY.replace("id,", "33 as id,"));
+	}
+	@Test
+	public void testCustomReaderOnSetterStatic() throws SQLException, Exception  {
+		JdbcMapper<DbObject> mapper =
+				JdbcMapperFactory
+						.newInstance()
+						.newBuilder(DbObject.class)
+						.addMapping("id",
+								FieldMapperColumnDefinition.customGetter(new Getter() {
+									@Override
+									public Object get(Object target) throws Exception {
+										return 1l;
+									}
+								}))
+						.addMapping("name") //email, creation_time, type_ordinal, type_name
+						.addMapping("email")
+						.addMapping("creation_time")
+						.addMapping("type_ordinal")
+						.addMapping("type_name")
+						.mapper();
+
 
 		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 

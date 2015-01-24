@@ -33,7 +33,7 @@ public class JooqMapperBuilder<R extends Record, E> extends
 	}
 	
 	public JooqMapperBuilder<R, E> addField(JooqFieldKey key) {
-		super.addMapping(key, FieldMapperColumnDefinition.<JooqFieldKey, R>identity());
+		super._addMapping(key, FieldMapperColumnDefinition.<JooqFieldKey, R>identity());
 		return this;
 	}
 	

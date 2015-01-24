@@ -56,20 +56,35 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	public JdbcMapperBuilder<T> addMapping(String column) {
 		return addMapping(column, columnIndex++);
 	}
+
+	public JdbcMapperBuilder<T> addMapping(final String column, final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
+		return addMapping(column, columnIndex++, columnDefinition);
+	}
+
 	public JdbcMapperBuilder<T> addMapping(String column, int index) {
 		return addMapping(column, index, JdbcColumnKey.UNDEFINED_TYPE);
 	}
-	
+
+	public JdbcMapperBuilder<T> addMapping(String column, int index, final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
+		return addMapping(column, index, JdbcColumnKey.UNDEFINED_TYPE, columnDefinition);
+	}
+
+
 	public JdbcMapperBuilder<T> addMapper(FieldMapper<ResultSet, T> mapper) {
 		_addMapper(mapper);
 		return this;
 	}
 
 	public JdbcMapperBuilder<T> addMapping(final String column, final int columnIndex, final int sqlType) {
-		addMapping(new JdbcColumnKey(column, columnIndex, sqlType), FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>identity());
+		addMapping(column, columnIndex, sqlType, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>identity());
 		return this;
 	}
-	
+
+	public JdbcMapperBuilder<T> addMapping(final String column, final int columnIndex, final int sqlType, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
+		_addMapping(new JdbcColumnKey(column, columnIndex, sqlType), columnDefinition);
+		return this;
+	}
+
 	public JdbcMapperBuilder<T> addMapping(final ResultSetMetaData metaData) throws SQLException {
 		for(int i = 1; i <= metaData.getColumnCount(); i++) {
 			addMapping(metaData.getColumnLabel(i), i, metaData.getColumnType(i));

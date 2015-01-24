@@ -140,7 +140,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void addMapping(K key, final FieldMapperColumnDefinition<K, S> columnDefinition) {
+	protected void _addMapping(K key, final FieldMapperColumnDefinition<K, S> columnDefinition) {
 			final FieldMapperColumnDefinition<K, S> composedDefinition = FieldMapperColumnDefinition.compose(columnDefinition, getColumnDefintion(key));
 			final K mappedColumnKey = composedDefinition.rename(key);
 

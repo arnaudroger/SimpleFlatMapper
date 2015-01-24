@@ -132,7 +132,7 @@ public class JdbcMapperCustomMappingTest {
 	}
 	@Test
 	public void testCustomReaderOnSetterStatic() throws SQLException, Exception  {
-		JdbcMapper<DbObject> mapper =
+		final JdbcMapper<DbObject> mapper =
 				JdbcMapperFactory
 						.newInstance()
 						.newBuilder(DbObject.class)

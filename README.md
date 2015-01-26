@@ -7,7 +7,7 @@ SFM provides fast and easy to use mapper for
 
 - [ResultSet aka micro ORM](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JdbcMapper)
 - [Csv](src/main/java/org/sfm/csv)
-- [Jooq](src/main/java/org/sfm/jooq)
+- [Jooq and Sql2o](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JooqAndSql2oIntegration)
 - [SpringJdbcTemplate](src/main/java/org/sfm/jdbc/spring)
 - [QueryDSL](src/main/java/org/sfm/querydsl)
 

@@ -40,6 +40,10 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 		return type;
 	}
 
+	@Override
+	public String[] generateHeaders() {
+		throw new UnsupportedOperationException("Cannot generate headers for a list/array");
+	}
 
 
 }

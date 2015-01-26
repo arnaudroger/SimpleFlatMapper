@@ -145,4 +145,26 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	public Type getTargetClass() {
 		return target;
 	}
+
+
+	@Override
+	public String[] generateHeaders() {
+		List<String> strings = new ArrayList<String>();
+
+		for(ConstructorPropertyMeta<T, ?> cpm : constructorProperties) {
+			String prefix = cpm.getName();
+
+			ClassMeta<?> classMeta = reflectService.getClassMeta(cpm.getType(), false);
+
+			if (classMeta != null) {
+				for(String prop : classMeta.generateHeaders()) {
+					strings.add(prefix + "_" + prop);
+				}
+			} else {
+				strings.add(prefix);
+			}
+		}
+
+		return strings.toArray(new String[0]);
+	}
 }

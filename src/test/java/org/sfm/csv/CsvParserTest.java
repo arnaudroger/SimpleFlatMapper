@@ -131,6 +131,25 @@ public class CsvParserTest {
 	}
 
 	@Test
+	public void testDSLMapToTuple2WithDefaultHeader() throws IOException {
+		Iterator<Tuple2<String, String>> iterate = CsvParser.mapTo(String.class, String.class).defaultHeaders().iterate(new StringReader("value1,value2"));
+		assertTrue(iterate.hasNext());
+		Tuple2<String, String> tuple2 = iterate.next();
+		assertEquals("value1", tuple2.first());
+		assertEquals("value2", tuple2.second());
+		assertFalse(iterate.hasNext());
+	}
+	@Test
+	public void testDSLMapToTuple2OverrideWithDefaultHeader() throws IOException {
+		Iterator<Tuple2<String, String>> iterate = CsvParser.mapTo(String.class, String.class).overrideWithDefaultHeaders().iterate(new StringReader("key,value\nvalue1,value2"));
+		assertTrue(iterate.hasNext());
+		Tuple2<String, String> tuple2 = iterate.next();
+		assertEquals("value1", tuple2.first());
+		assertEquals("value2", tuple2.second());
+		assertFalse(iterate.hasNext());
+	}
+
+	@Test
 	public void testDSLMapToTuple3() throws IOException {
 		Iterator<Tuple3<String, String, String>> iterate = CsvParser.mapTo(String.class, String.class, String.class).headers("0", "1", "2").iterate(new StringReader("value1,value2,value3"));
 		assertTrue(iterate.hasNext());

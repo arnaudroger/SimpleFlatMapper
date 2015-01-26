@@ -11,4 +11,6 @@ public interface ClassMeta<T> {
 	public PropertyFinder<T> newPropertyFinder();
 
 	public Type getType();
+
+	String[] generateHeaders();
 }

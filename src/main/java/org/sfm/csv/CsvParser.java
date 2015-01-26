@@ -301,6 +301,18 @@ public final class CsvParser {
 			return mapper.iterate(dsl.reader(reader));
 		}
 
+		public MapToDSL<T> defaultHeaders() {
+			return headers(classMeta.generateHeaders());
+		}
+
+		public MapToDSL<T> overrideHeaders(String... headers) {
+			return new MapToDSL<T>(dsl.skip(1), classMeta, mapToClass, headers);
+		}
+
+		public MapToDSL<T> overrideWithDefaultHeaders() {
+			return overrideHeaders(classMeta.generateHeaders());
+		}
+
 		//IFJAVA8_START
 		public Stream<T> stream(Reader reader) throws IOException {
 			return mapper.stream(dsl.reader(reader));

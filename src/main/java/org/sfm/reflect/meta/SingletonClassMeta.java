@@ -1,11 +1,8 @@
 package org.sfm.reflect.meta;
 
-import org.sfm.map.MapperBuildingException;
-import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ReflectionService;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
 public class SingletonClassMeta<T> implements ClassMeta<T> {
 
@@ -29,6 +26,11 @@ public class SingletonClassMeta<T> implements ClassMeta<T> {
 	@Override
 	public Type getType() {
 		return classMeta.getType();
+	}
+
+	@Override
+	public String[] generateHeaders() {
+		return classMeta.generateHeaders();
 	}
 
 }

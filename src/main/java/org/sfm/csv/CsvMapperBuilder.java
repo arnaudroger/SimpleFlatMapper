@@ -156,7 +156,7 @@ public class CsvMapperBuilder<T> {
 		final Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>> constructorInjections = new HashMap<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>>();
 
 		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
-			final CellSetterFactory cellSetterFactory = new CellSetterFactory();
+			final CellSetterFactory cellSetterFactory = new CellSetterFactory(new CellValueReaderFactoryImpl());
 
 			@Override
 			public void handle(PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition> propMapping) {
@@ -196,7 +196,7 @@ public class CsvMapperBuilder<T> {
 		final DelayedCellSetterFactory<T, ?>[] delayedSetters = new DelayedCellSetterFactory[syncSetterStart];
 		
 		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
-			CellSetterFactory cellSetterFactory = new CellSetterFactory();
+			CellSetterFactory cellSetterFactory = new CellSetterFactory(new CellValueReaderFactoryImpl());
 
 			@Override
 			public void handle(PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition> propMapping) {
@@ -323,7 +323,7 @@ public class CsvMapperBuilder<T> {
 
 		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
 			final Map<String, CsvMapper<?>> mappers = new HashMap<String, CsvMapper<?>>();
-			final CellSetterFactory cellSetterFactory = new CellSetterFactory();
+			final CellSetterFactory cellSetterFactory = new CellSetterFactory(new CellValueReaderFactoryImpl());
 
 			@Override
 			public void handle(PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition> propMapping) {

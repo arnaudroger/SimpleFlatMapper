@@ -1,4 +1,4 @@
-package org.sfm.csv.impl;
+package org.sfm.csv;
 
 import org.sfm.csv.CellValueReader;
 

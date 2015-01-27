@@ -2,7 +2,7 @@ package org.sfm.jdbc.impl.getter;
 
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.MapperBuildingException;
-import org.sfm.map.impl.GetterFactory;
+import org.sfm.map.GetterFactory;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 

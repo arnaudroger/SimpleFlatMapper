@@ -1,16 +1,10 @@
 package org.sfm.csv.impl;
 
 import org.sfm.csv.CellValueReader;
-import org.sfm.csv.CsvColumnDefinition;
-import org.sfm.csv.CsvColumnKey;
+import org.sfm.csv.CellValueReaderFactory;
 import org.sfm.csv.impl.cellreader.*;
-import org.sfm.csv.impl.primitive.*;
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.Setter;
-import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.TypeHelper;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;

@@ -5,7 +5,7 @@ import org.sfm.jooq.getter.EnumRecordNamedGetter;
 import org.sfm.jooq.getter.EnumRecordOrdinalGetter;
 import org.sfm.jooq.getter.RecordGetter;
 import org.sfm.jooq.getter.RecordGetterWithConverter;
-import org.sfm.map.impl.GetterFactory;
+import org.sfm.map.GetterFactory;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.utils.conv.Converter;

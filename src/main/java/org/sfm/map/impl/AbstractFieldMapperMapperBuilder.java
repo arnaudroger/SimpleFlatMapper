@@ -1,10 +1,7 @@
 package org.sfm.map.impl;
 
 import org.sfm.jdbc.impl.getter.MapperGetterAdapter;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.Mapper;
-import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.MapperBuildingException;
+import org.sfm.map.*;
 import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;

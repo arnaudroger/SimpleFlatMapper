@@ -3,6 +3,7 @@ package org.sfm.jdbc.impl;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.getter.*;
 import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.GetterFactory;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.impl.*;
 import org.sfm.map.impl.fieldmapper.*;
@@ -17,7 +18,7 @@ import java.util.Date;
 
 public final class ResultSetFieldMapperFactory implements FieldMapperFactory<ResultSet, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> {
 
-	private final GetterFactory<ResultSet, JdbcColumnKey>  getterFactory;
+	private final GetterFactory<ResultSet, JdbcColumnKey> getterFactory;
 
 	public ResultSetFieldMapperFactory(GetterFactory<ResultSet, JdbcColumnKey> getterFactory) {
 		this.getterFactory = getterFactory;

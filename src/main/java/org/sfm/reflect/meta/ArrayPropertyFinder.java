@@ -97,11 +97,6 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 		}
 	}
 
-	@Override
-	public Class<?> getClassToInstantiate() {
-		return TypeHelper.toClass(arrayClassMeta.getType());
-	}
-
 	public int getLength() {
 		return elements.size();
 	}

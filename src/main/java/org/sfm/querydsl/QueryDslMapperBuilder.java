@@ -21,11 +21,11 @@ public final class QueryDslMapperBuilder<T>
 	
 	@SuppressWarnings("unchecked")
 	public QueryDslMapperBuilder(final Type target, ReflectionService reflectService) throws MapperBuildingException {
-		this(target, (ClassMeta<T>) reflectService.getRootClassMeta(target));
+		this(reflectService.<T>getRootClassMeta(target));
 	}
 	
-	public QueryDslMapperBuilder(final Type target, final ClassMeta<T> classMeta) throws MapperBuildingException {
-		super(target, Tuple.class, classMeta, new TupleGetterFactory(), new TupleFieldMapperFactory(new TupleGetterFactory()), new HashMap<String, FieldMapperColumnDefinition<TupleElementKey, Tuple>>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler());
+	public QueryDslMapperBuilder(final ClassMeta<T> classMeta) throws MapperBuildingException {
+		super(Tuple.class, classMeta, new TupleGetterFactory(), new TupleFieldMapperFactory(new TupleGetterFactory()), new HashMap<String, FieldMapperColumnDefinition<TupleElementKey, Tuple>>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler());
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public final class QueryDslMapperBuilder<T>
 	@Override
 	protected <ST> AbstractFieldMapperMapperBuilder<Tuple, ST, TupleElementKey> newSubBuilder(
 			Type type, ClassMeta<ST> classMeta) {
-		return new QueryDslMapperBuilder<ST>(type, classMeta);
+		return new QueryDslMapperBuilder<ST>(classMeta);
 	}
 
 	public <E> QueryDslMapperBuilder<T> addMapping(Expression<?> expression, int i) {

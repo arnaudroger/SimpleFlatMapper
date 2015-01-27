@@ -92,9 +92,4 @@ public class SingletonPropertyFinder<T> implements PropertyFinder<T> {
 		return propertyFinder.getEligibleConstructorDefinitions();
 	}
 
-	@Override
-	public Class<?> getClassToInstantiate() {
-		return TypeHelper.toClass(classMeta.getType());
-	}
-
 }

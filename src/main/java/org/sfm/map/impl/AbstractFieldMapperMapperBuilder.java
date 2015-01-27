@@ -34,13 +34,13 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	protected final MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private FieldMapperErrorHandler<K> fieldMapperErrorHandler;
 
-	public AbstractFieldMapperMapperBuilder(final Type target, final Type source, final ClassMeta<T> classMeta,
-											GetterFactory<S, K> getterFactory, FieldMapperFactory<S, K, FieldMapperColumnDefinition<K, S>> fieldMapperFactory,
-											Map<String, FieldMapperColumnDefinition<K, S>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory,
+	public AbstractFieldMapperMapperBuilder(final Type source,
+											final ClassMeta<T> classMeta,
+											GetterFactory<S, K> getterFactory,
+											FieldMapperFactory<S, K, FieldMapperColumnDefinition<K, S>> fieldMapperFactory,
+											Map<String, FieldMapperColumnDefinition<K, S>> columnDefinitions,
+											PropertyNameMatcherFactory propertyNameMatcherFactory,
 											MapperBuilderErrorHandler mapperBuilderErrorHandler) throws MapperBuildingException {
-		if (target == null) {
-			throw new NullPointerException("target is null");
-		}
 		if (source == null) {
 			throw new NullPointerException("source is null");
 		}
@@ -67,7 +67,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		this.fieldMapperFactory = fieldMapperFactory;
 		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K, S>>(classMeta, propertyNameMatcherFactory, mapperBuilderErrorHandler);
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
-		this.target = target;
+		this.target = classMeta.getType();
 		this.reflectionService = classMeta.getReflectionService();
 		this.columnDefinitions = columnDefinitions;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;

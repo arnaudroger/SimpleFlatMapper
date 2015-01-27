@@ -144,8 +144,4 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 		return eligibleConstructorDefinitions;
 	}
 
-	@Override
-	public Class<T> getClassToInstantiate() {
-		return TypeHelper.toClass(classMeta.getTargetClass());
-	}
 }

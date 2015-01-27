@@ -10,6 +10,4 @@ public interface PropertyFinder<T> {
 
 	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions();
 
-	public Class<?> getClassToInstantiate();
-
 }

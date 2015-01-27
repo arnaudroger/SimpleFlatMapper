@@ -20,16 +20,16 @@ public class JooqMapperBuilder<R extends Record, E> extends
 	
 	@SuppressWarnings("unchecked")
 	public JooqMapperBuilder(final Type target, ReflectionService reflectService) throws MapperBuildingException {
-		this(target, (ClassMeta<E>) reflectService.getRootClassMeta(target));
+		this(reflectService.<E>getRootClassMeta(target));
 	}
 	
-	public JooqMapperBuilder(final Type target, final ClassMeta<E> classMeta) throws MapperBuildingException {
-		super(target, Record.class, classMeta, new RecordGetterFactory<R>(), new RecordFieldMapperFactory<R>(new RecordGetterFactory<R>()), new HashMap<String, FieldMapperColumnDefinition<JooqFieldKey, R>>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler());
+	public JooqMapperBuilder(final ClassMeta<E> classMeta) throws MapperBuildingException {
+		super(Record.class, classMeta, new RecordGetterFactory<R>(), new RecordFieldMapperFactory<R>(new RecordGetterFactory<R>()), new HashMap<String, FieldMapperColumnDefinition<JooqFieldKey, R>>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler());
 	}
 
 	@Override
 	protected <ST> AbstractFieldMapperMapperBuilder<R, ST, JooqFieldKey> newSubBuilder(Type type, ClassMeta<ST> classMeta) {
-		return new JooqMapperBuilder<R, ST>(type, classMeta);
+		return new JooqMapperBuilder<R, ST>(classMeta);
 	}
 	
 	public JooqMapperBuilder<R, E> addField(JooqFieldKey key) {

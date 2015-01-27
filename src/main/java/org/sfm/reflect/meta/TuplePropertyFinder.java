@@ -103,9 +103,4 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 		return constructorDefinitions;
 	}
 
-	@Override
-	public Class<?> getClassToInstantiate() {
-		return TypeHelper.toClass(tupleClassMeta.getType());
-	}
-
 }

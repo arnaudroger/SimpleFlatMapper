@@ -47,9 +47,11 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 			reader = (CellValueReader<P>) new DateCellValueReader(index);
 		} else if (Enum.class.isAssignableFrom(propertyClass)) {
 			reader = new EnumCellValueReader(propertyClass);
-		} else if (JodaTimeCellValueReaderHelper.isJodaTime(propertyClass)) {
-			reader = (CellValueReader<P>) JodaTimeCellValueReaderHelper.getReader(columnDefinition);
 		} else {
+			reader = (CellValueReader<P>) JodaTimeCellValueReaderHelper.getReader(propertyClass, columnDefinition);
+		}
+
+		if (reader == null) {
 			reader = getCellValueTransformer(propertyClass);
 		}
 

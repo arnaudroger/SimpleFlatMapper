@@ -68,4 +68,12 @@ public class CsvColumnKey implements FieldKey<CsvColumnKey> {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "CsvColumnKey{" +
+				"name='" + name + '\'' +
+				", index=" + index +
+				'}';
+	}
 }

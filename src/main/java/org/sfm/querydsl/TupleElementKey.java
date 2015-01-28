@@ -40,4 +40,13 @@ public class TupleElementKey implements FieldKey<TupleElementKey> {
 	public TupleElementKey alias(String alias) {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public String toString() {
+		return "TupleElementKey{" +
+				"expression=" + expression +
+				", index=" + index +
+				", name='" + name + '\'' +
+				'}';
+	}
 }

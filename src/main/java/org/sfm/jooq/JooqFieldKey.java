@@ -30,4 +30,12 @@ public class JooqFieldKey implements FieldKey<JooqFieldKey> {
 	public Field<?> getField() {
 		return field;
 	}
+
+	@Override
+	public String toString() {
+		return "JooqFieldKey{" +
+				"field=" + field +
+				", index=" + index +
+				'}';
+	}
 }

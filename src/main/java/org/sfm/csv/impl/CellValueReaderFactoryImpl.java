@@ -41,7 +41,7 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 
 		CellValueReader<P> reader;
 
-		if (Date.class.isAssignableFrom(propertyClass)) {
+		if (propertyClass.isAssignableFrom(Date.class)) {
 			reader = (CellValueReader<P>) new DateCellValueReader(index);
 		} else if (Enum.class.isAssignableFrom(propertyClass)) {
 			reader = new EnumCellValueReader(propertyClass);

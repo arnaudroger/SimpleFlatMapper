@@ -6,6 +6,7 @@ public final class ShortCellValueReaderImpl implements ShortCellValueReader {
 
 	@Override
 	public Short read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+		if (length == 0) return null;
 		return new Short(readShort(chars, offset, length, parsingContext));
 	}
 

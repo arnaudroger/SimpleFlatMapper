@@ -12,6 +12,7 @@ public final class IntegerCellValueReaderImpl implements IntegerCellValueReader 
 
 	@Override
 	public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+		if (length == 0) return null;
 		return new Integer(readInt(chars, offset, length, parsingContext));
 	}
 

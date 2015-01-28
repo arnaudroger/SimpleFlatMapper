@@ -6,6 +6,7 @@ public final class DoubleCellValueReaderImpl implements DoubleCellValueReader {
 
 	@Override
 	public Double read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+		if (length == 0) return null;
 		return new Double(readDouble(chars, offset, length, parsingContext));
 	}
 

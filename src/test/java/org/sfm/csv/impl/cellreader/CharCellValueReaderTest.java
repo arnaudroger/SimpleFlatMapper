@@ -6,6 +6,7 @@ import org.sfm.csv.impl.ParsingException;
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 public class CharCellValueReaderTest {
@@ -27,6 +28,11 @@ public class CharCellValueReaderTest {
 		} catch(ParsingException e){
 			// expected
 		}	
+	}
+
+	@Test
+	public void testReadEmptyStringReturnNull() {
+		assertNull(reader.read(new char[10], 2, 0, null));
 	}
 
 	private void testReadShort(int i) throws UnsupportedEncodingException {

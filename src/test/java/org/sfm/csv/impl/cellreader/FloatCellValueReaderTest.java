@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 public class FloatCellValueReaderTest {
@@ -28,6 +29,11 @@ public class FloatCellValueReaderTest {
 		} catch(NumberFormatException e){
 			// expected
 		}
+	}
+
+	@Test
+	public void testReadEmptyStringReturnNull() {
+		assertNull(reader.read(new char[10], 2, 0, null));
 	}
 
 	private void testReadFloat(float i) throws UnsupportedEncodingException {

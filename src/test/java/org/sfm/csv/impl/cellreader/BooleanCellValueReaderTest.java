@@ -5,13 +5,14 @@ import org.junit.Test;
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class BooleanCellValueReaderTest {
 
 	BooleanCellValueReaderImpl reader = new BooleanCellValueReaderImpl();
 	@Test
 	public void testRead() throws UnsupportedEncodingException {
-		testReadBoolean(false, "");
+		testReadBoolean(null, "");
 		testReadBoolean(false, "False");
 		testReadBoolean(false, "0");
 		testReadBoolean(false, "N");
@@ -22,11 +23,17 @@ public class BooleanCellValueReaderTest {
 		testReadBoolean(true, "else");
 		testReadBoolean(true, "1");
 	}
-	
 
-	private void testReadBoolean(boolean expected, String str) throws UnsupportedEncodingException {
-		final char[] chars = ("_" + str+ "_").toCharArray();
-		assertEquals(expected, reader.read(chars, 1, chars.length-2, null).booleanValue());
+	@Test
+	public void testReadEmptyStringReturnNull() {
+		assertNull(reader.read(new char[10], 2, 0, null));
 	}
+
+	private void testReadBoolean(Boolean expected, String str) throws UnsupportedEncodingException {
+		final char[] chars = ("_" + str+ "_").toCharArray();
+		assertEquals(expected, reader.read(chars, 1, chars.length-2, null));
+	}
+
+
 
 }

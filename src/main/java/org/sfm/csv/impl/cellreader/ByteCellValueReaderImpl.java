@@ -6,6 +6,7 @@ public class ByteCellValueReaderImpl implements ByteCellValueReader {
 
 	@Override
 	public Byte read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+		if (length == 0) return null;
 		return new Byte(readByte(chars, offset, length, parsingContext));
 	}
 

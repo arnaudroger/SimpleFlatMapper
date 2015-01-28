@@ -6,6 +6,7 @@ public final class CharCellValueReaderImpl implements CharCellValueReader {
 
 	@Override
 	public Character read(char[] bytes, int offset, int length, ParsingContext parsingContext) {
+		if (length == 0) return null;
 		return new Character(readChar(bytes, offset, length, parsingContext));
 	}
 

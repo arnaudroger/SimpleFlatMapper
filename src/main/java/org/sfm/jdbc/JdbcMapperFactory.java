@@ -1,10 +1,8 @@
 package org.sfm.jdbc;
 
 import org.sfm.jdbc.impl.DynamicJdbcMapper;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.MapperBuildingException;
-import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
+import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
@@ -20,7 +18,8 @@ import java.util.Map;
 
 
 public final class JdbcMapperFactory {
-	
+
+
 	/**
 	 * instantiate a new JdbcMapperFactory
 	 * @return a new JdbcMapperFactory
@@ -35,7 +34,8 @@ public final class JdbcMapperFactory {
 	private Map<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions = new HashMap<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>>();
 
 	private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
-	
+	private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = new ResultSetGetterFactory();
+
 	private boolean useAsm = true;
 	private boolean disableAsm = false;
 	
@@ -85,7 +85,14 @@ public final class JdbcMapperFactory {
 		this.disableAsm = disableAsm;
 		return this;
 	}
-	
+
+
+	public JdbcMapperFactory getterFactory(final GetterFactory<ResultSet, JdbcColumnKey> getterFactory) {
+		this.getterFactory = getterFactory;
+		return this;
+	}
+
+
 	/**
 	 * Will create a instance of mapper based on the metadata and the target class;
 	 * @param target the target class of the mapper
@@ -112,7 +119,7 @@ public final class JdbcMapperFactory {
 	public <T> JdbcMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
 
-		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory);
+		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, getterFactory);
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);

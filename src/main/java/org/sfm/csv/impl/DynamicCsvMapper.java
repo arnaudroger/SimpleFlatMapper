@@ -37,12 +37,13 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 
 	private final Map<String, CsvColumnDefinition> columnDefinitions;
+	private final CellValueReaderFactory cellValueReaderFactory;
 
 	public DynamicCsvMapper(final Type target, final ClassMeta<T> classMeta,
 							final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler,
 							final MapperBuilderErrorHandler mapperBuilderErrorHandler, String defaultDateFormat,
 							Map<String, CsvColumnDefinition> columnDefinitions,
-							PropertyNameMatcherFactory propertyNameMatcherFactory) {
+							PropertyNameMatcherFactory propertyNameMatcherFactory, CellValueReaderFactory cellValueReaderFactory) {
 		if (classMeta == null) {
 			throw new NullPointerException("classMeta is null");
 		}
@@ -56,11 +57,12 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		this.defaultDateFormat = defaultDateFormat;
 		this.columnDefinitions = columnDefinitions;
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
+		this.cellValueReaderFactory = cellValueReaderFactory;
 	}
 
 	public DynamicCsvMapper(Type target, ClassMeta<T> classMeta) {
 		this(target, classMeta, new RethrowFieldMapperErrorHandler<CsvColumnKey>(), new RethrowMapperBuilderErrorHandler(), "yyyy-MM-dd HH:mm:ss",
-				new HashMap<String, CsvColumnDefinition>(), new DefaultPropertyNameMatcherFactory());
+				new HashMap<String, CsvColumnDefinition>(), new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl());
 	}
 
 	@Override
@@ -146,7 +148,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 
 	private CsvMapperImpl<T> buildMapper(ColumnsMapperKey key) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);
 		for(String col : key.getColumns()) {

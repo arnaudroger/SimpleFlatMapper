@@ -1,5 +1,6 @@
 package org.sfm.csv;
 
+import org.sfm.csv.impl.CellValueReaderFactoryImpl;
 import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
@@ -16,7 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class CsvMapperFactory {
-	
+
+
 
 	/**
 	 * instantiate a new JdbcMapperFactory
@@ -37,7 +39,8 @@ public final class CsvMapperFactory {
 	private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
 	
 	private String defaultDateFormat = "yyyy-MM-dd HH:mm:ss";
-	
+
+	private CellValueReaderFactory cellValueReaderFactory = new CellValueReaderFactoryImpl();
 
 	public CsvMapperFactory() {
 	}
@@ -84,6 +87,13 @@ public final class CsvMapperFactory {
 		this.defaultDateFormat = defaultDateFormat;
 		return this;
 	}
+
+	public CsvMapperFactory cellValueReaderFactory(final CellValueReaderFactory cellValueReaderFactory) {
+		this.cellValueReaderFactory = cellValueReaderFactory;
+		return this;
+	}
+
+
 	/**
 	 * 
 	 * @param target the targeted class for the mapper
@@ -99,7 +109,7 @@ public final class CsvMapperFactory {
 		return new DynamicCsvMapper<T>(target,
 				classMeta,
 				fieldMapperErrorHandler, mapperBuilderErrorHandler,
-				defaultDateFormat, columnDefinitions, propertyNameMatcherFactory);
+				defaultDateFormat, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
 	}
 
 	private <T> ClassMeta<T> getClassMeta(Type target) {
@@ -119,7 +129,7 @@ public final class CsvMapperFactory {
 
 	public <T> CsvMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);
 		return builder;

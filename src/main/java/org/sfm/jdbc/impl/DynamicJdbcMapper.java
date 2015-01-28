@@ -4,6 +4,7 @@ import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.JdbcMapperBuilder;
 import org.sfm.jdbc.SQLMappingException;
+import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.impl.ColumnsMapperKey;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
@@ -92,7 +93,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		JdbcMapper<T> mapper = mapperCache.get(key);
 		
 		if (mapper == null) {
-			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler,columnDefinitions, propertyNameMatcherFactory);
+			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler,columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory());
 
 			builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);

@@ -3,10 +3,7 @@ package org.sfm.jdbc;
 import org.sfm.jdbc.impl.JdbcMapperImpl;
 import org.sfm.jdbc.impl.ResultSetFieldMapperFactory;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.MapperBuildingException;
-import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
@@ -28,15 +25,15 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 		this(target, ReflectionService.newInstance());
 	}
 	public JdbcMapperBuilder(final Type target, ReflectionService reflectService) throws MapperBuildingException {
-		this(target, reflectService, new HashMap<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>>(), new DefaultPropertyNameMatcherFactory());
+		this(target, reflectService, new HashMap<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>>(), new DefaultPropertyNameMatcherFactory(), new ResultSetGetterFactory());
 	}
 	@SuppressWarnings("unchecked")
-	public JdbcMapperBuilder(final Type target, ReflectionService reflectService, final Map<String,FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
-		this(reflectService.<T>getRootClassMeta(target), new RethrowMapperBuilderErrorHandler(), columnDefinitions, propertyNameMatcherFactory);
+	public JdbcMapperBuilder(final Type target, ReflectionService reflectService, final Map<String,FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory, GetterFactory<ResultSet, JdbcColumnKey> getterFactory) throws MapperBuildingException {
+		this(reflectService.<T>getRootClassMeta(target), new RethrowMapperBuilderErrorHandler(), columnDefinitions, propertyNameMatcherFactory, getterFactory);
 	}
 	
-	public JdbcMapperBuilder(final ClassMeta<T> classMeta, final MapperBuilderErrorHandler mapperBuilderErrorHandler,  final Map<String,FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory) throws MapperBuildingException {
-		super(ResultSet.class, classMeta, new ResultSetGetterFactory(), new ResultSetFieldMapperFactory(new ResultSetGetterFactory()), columnDefinitions, propertyNameMatcherFactory, mapperBuilderErrorHandler);
+	public JdbcMapperBuilder(final ClassMeta<T> classMeta, final MapperBuilderErrorHandler mapperBuilderErrorHandler, final Map<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory, GetterFactory<ResultSet, JdbcColumnKey> getterFactory) throws MapperBuildingException {
+		super(ResultSet.class, classMeta, getterFactory, new ResultSetFieldMapperFactory(getterFactory), columnDefinitions, propertyNameMatcherFactory, mapperBuilderErrorHandler);
 	}
 
 	@Override
@@ -106,7 +103,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 
 	@Override
 	protected <ST> AbstractFieldMapperMapperBuilder<ResultSet, ST, JdbcColumnKey> newSubBuilder(Type type, ClassMeta<ST> classMeta) {
-		return new  JdbcMapperBuilder<ST>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory);
+		return new  JdbcMapperBuilder<ST>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory());
 	}
 	
 

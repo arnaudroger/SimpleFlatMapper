@@ -1,6 +1,7 @@
 package org.sfm.map.impl;
 
 import org.sfm.map.ColumnDefinition;
+import org.sfm.map.FieldKey;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 

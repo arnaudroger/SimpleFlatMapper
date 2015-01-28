@@ -1,6 +1,7 @@
 package org.sfm.map.impl;
 
 import org.sfm.map.ColumnDefinition;
+import org.sfm.map.FieldKey;
 import org.sfm.reflect.meta.PropertyMeta;
 
 public class PropertyMapping<T, P, K extends FieldKey<K>, D extends ColumnDefinition<K>> {

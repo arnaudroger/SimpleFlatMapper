@@ -1,6 +1,5 @@
 package org.sfm.map;
 
-import org.sfm.map.impl.FieldKey;
 import org.sfm.reflect.Getter;
 
 import java.lang.reflect.Type;

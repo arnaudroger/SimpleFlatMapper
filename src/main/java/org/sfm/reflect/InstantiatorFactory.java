@@ -2,7 +2,7 @@ package org.sfm.reflect;
 
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.impl.CalculateMaxIndex;
-import org.sfm.map.impl.FieldKey;
+import org.sfm.map.FieldKey;
 import org.sfm.map.impl.PropertyMappingsBuilder;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.impl.InjectConstructorInstantiator;

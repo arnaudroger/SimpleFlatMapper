@@ -1,8 +1,5 @@
 package org.sfm.map;
 
-import org.sfm.csv.CsvColumnKey;
-import org.sfm.map.impl.FieldKey;
-
 import java.lang.reflect.Type;
 
 public interface MapperBuilderErrorHandler {

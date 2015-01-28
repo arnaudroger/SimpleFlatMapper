@@ -1,4 +1,4 @@
-package org.sfm.map.impl;
+package org.sfm.map;
 
 public interface FieldKey<K> {
 	String getName();

@@ -1,6 +1,6 @@
 package org.sfm.jdbc;
 
-import org.sfm.map.impl.FieldKey;
+import org.sfm.map.FieldKey;
 
 public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 

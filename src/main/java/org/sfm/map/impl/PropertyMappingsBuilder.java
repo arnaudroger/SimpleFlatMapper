@@ -1,6 +1,7 @@
 package org.sfm.map.impl;
 
 import org.sfm.map.ColumnDefinition;
+import org.sfm.map.FieldKey;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.TypeHelper;

@@ -21,7 +21,7 @@ public class CsvColumnDefinitionTest {
                 }));
 
         assertEquals("blop", compose.rename(new CsvColumnKey("bar", -1)).getName());
-        assertEquals("yyyyMM", compose.dateFormat("MMyyyy"));
+        assertEquals("yyyyMM", compose.dateFormat());
         assertEquals(new Integer(3), compose.getCustomReader().read(null, 0, 0 , null));
 
         assertTrue(compose.hasCustomSource());

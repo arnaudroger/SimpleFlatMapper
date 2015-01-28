@@ -2,7 +2,9 @@ package org.sfm.csv.impl;
 
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.CellValueReaderFactory;
+import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.csv.impl.cellreader.*;
+import org.sfm.csv.impl.cellreader.joda.JodaTimeCellValueReaderHelper;
 import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
@@ -36,7 +38,7 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public <P> CellValueReader<P> getReader(Type propertyType, int index) {
+	public <P> CellValueReader<P> getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition) {
 		Class<? extends P> propertyClass =  TypeHelper.toClass(propertyType);
 
 		CellValueReader<P> reader;
@@ -45,6 +47,8 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 			reader = (CellValueReader<P>) new DateCellValueReader(index);
 		} else if (Enum.class.isAssignableFrom(propertyClass)) {
 			reader = new EnumCellValueReader(propertyClass);
+		} else if (JodaTimeCellValueReaderHelper.isJodaTime(propertyClass)) {
+			reader = (CellValueReader<P>) JodaTimeCellValueReaderHelper.getReader(columnDefinition);
 		} else {
 			reader = getCellValueTransformer(propertyClass);
 		}

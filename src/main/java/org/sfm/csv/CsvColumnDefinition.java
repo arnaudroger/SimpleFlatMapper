@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 
 public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey> {
 
-    public abstract String dateFormat(String dateFormat);
+    public abstract String dateFormat();
     public abstract CellValueReader<?> getCustomReader();
 
     public static CsvColumnDefinition IDENTITY = new IndentityCsvColumnDefinition();
@@ -24,7 +24,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
     public static CsvColumnDefinition dateFormatDefinition(final String dateFormatDef) {
         return new IndentityCsvColumnDefinition() {
             @Override
-            public String dateFormat(String dateFormat) {
+            public String dateFormat() {
                 return dateFormatDef;
             }
         };
@@ -62,8 +62,8 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
 
     static class IndentityCsvColumnDefinition extends CsvColumnDefinition {
         @Override
-        public String dateFormat(String dateFormat) {
-            return dateFormat;
+        public String dateFormat() {
+            return null;
         }
 
         @Override
@@ -97,16 +97,20 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         }
 
         @Override
-        public String dateFormat(String dateFormat) {
-            return def2.dateFormat(def1.dateFormat(dateFormat));
+        public String dateFormat() {
+            String df = def2.dateFormat();
+            if (df == null) {
+                df = def1.dateFormat();
+            }
+            return df;
         }
 
         @Override
         public CellValueReader<?> getCustomReader() {
-            CellValueReader<?> reader = def1.getCustomReader();
+            CellValueReader<?> reader = def2.getCustomReader();
 
             if (reader == null) {
-                reader = def2.getCustomReader();
+                reader = def1.getCustomReader();
             }
 
             return reader;

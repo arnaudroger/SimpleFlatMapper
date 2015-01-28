@@ -75,7 +75,7 @@ public class CsvMapperBuilder<T> {
 	}
 	
 	public final CsvMapperBuilder<T> addMapping(final CsvColumnKey key, final CsvColumnDefinition columnDefinition) {
-		final CsvColumnDefinition composedDefinition = CsvColumnDefinition.compose(columnDefinition, getColumnDefintion(key));
+		final CsvColumnDefinition composedDefinition = CsvColumnDefinition.compose(getColumnDefintion(key), columnDefinition);
 		final CsvColumnKey mappedColumnKey = composedDefinition.rename(key);
 
 		propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
@@ -92,7 +92,7 @@ public class CsvMapperBuilder<T> {
 		CsvColumnDefinition definition = columnDefinitions.get(key.getName().toLowerCase());
 
 		if (definition == null) {
-			return CsvColumnDefinition.IDENTITY;
+			return CsvColumnDefinition.dateFormatDefinition(defaultDateFormat);
 		} else {
 			return definition;
 		}
@@ -133,7 +133,7 @@ public class CsvMapperBuilder<T> {
 						target = TypeHelper.toClass(prop.getType());
 					}
 					if (Date.class.equals(target)) {
-						pcf.setDateFormat(propMapping.getColumnKey().getIndex(), propMapping.getColumnDefinition().dateFormat(defaultDateFormat));
+						pcf.setDateFormat(propMapping.getColumnKey().getIndex(), propMapping.getColumnDefinition().dateFormat());
 					}
 				}
 			}

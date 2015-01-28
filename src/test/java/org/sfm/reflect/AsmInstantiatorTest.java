@@ -27,6 +27,7 @@ public class AsmInstantiatorTest {
 		assertNotNull(instantiator.newInstance(null));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testInstantiateStringWithCharArray() throws Exception {
 		HashMap<ConstructorParameter, Getter<DelayedCellSetter[], ?>> injections = new HashMap<ConstructorParameter, Getter<DelayedCellSetter[], ?>>();

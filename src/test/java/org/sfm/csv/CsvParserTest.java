@@ -424,6 +424,6 @@ public class CsvParserTest {
 	}
 	public static class MyScalaClass {
 		public String myField;
-		public String secondField;
+		public java.sql.Date secondField;
 	}
 }

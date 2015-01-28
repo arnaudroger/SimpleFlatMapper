@@ -409,4 +409,21 @@ public class CsvParserTest {
 		}
 	}
 
+
+	@Test
+	public void testIssue84() throws IOException {
+		String str = "my_field,second_field\n" +
+				",,";
+
+		Iterator<MyScalaClass> iterate = CsvParser.mapTo(MyScalaClass.class).iterate(new StringReader(str));
+
+		while(iterate.hasNext()) {
+			System.out.println(iterate.next());
+		}
+
+	}
+	public static class MyScalaClass {
+		public String myField;
+		public String secondField;
+	}
 }

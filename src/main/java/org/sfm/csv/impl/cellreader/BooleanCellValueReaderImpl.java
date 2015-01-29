@@ -7,7 +7,7 @@ public final class BooleanCellValueReaderImpl implements BooleanCellValueReader 
 	@Override
 	public Boolean read(char[] chars, int offset, int length, ParsingContext parsingContext) {
 		if (length == 0) return null;
-		return new Boolean(readBoolean(chars, offset, length, parsingContext));
+		return Boolean.valueOf(readBoolean(chars, offset, length, parsingContext));
 	}
 
 	@Override

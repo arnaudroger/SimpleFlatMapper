@@ -7,7 +7,6 @@ import org.sfm.map.impl.*;
 import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
-import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
 

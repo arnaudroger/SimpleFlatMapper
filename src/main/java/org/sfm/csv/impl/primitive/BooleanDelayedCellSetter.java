@@ -18,7 +18,7 @@ public class BooleanDelayedCellSetter<T> implements DelayedCellSetter<T, Boolean
 
 	@Override
 	public Boolean getValue() {
-		return new Boolean(getBoolean());
+		return Boolean.valueOf(getBoolean());
 	}
 
 	public boolean getBoolean() {

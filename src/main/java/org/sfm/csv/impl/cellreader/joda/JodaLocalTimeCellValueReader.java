@@ -1,6 +1,5 @@
 package org.sfm.csv.impl.cellreader.joda;
 
-import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;

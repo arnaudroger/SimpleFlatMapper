@@ -16,6 +16,8 @@ import java.util.*;
 import static org.objectweb.asm.Opcodes.*;
 public class AsmUtils {
 
+	public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
+
 	public static String toType(final Type target) {
 		return toType(TypeHelper.toClass(target));
 	}
@@ -303,18 +305,16 @@ public class AsmUtils {
 			}
 		}
 
-		return types.toArray(new Type[] {});
+		return types.toArray(EMPTY_TYPE_ARRAY);
 	}
 
 	public static List<String> extractConstructorTypeNames(String sig) {
 		List<String> types = new ArrayList<String>();
 		int currentStart = 1;
-		boolean array = false;
 		for(int i = 1; i < sig.length() -2 ; i++) {
 			char c = sig.charAt(i);
 			switch (c) {
 				case '[':
-					array = true;
 					break;
 				case 'T':
 				case 'L':
@@ -336,7 +336,6 @@ public class AsmUtils {
 					}
 					types.add(sig.substring(currentStart, i + 1));
 					currentStart = i + 1;
-					array = false;
 					break;
 
 
@@ -350,7 +349,6 @@ public class AsmUtils {
 				case 'S':
 					types.add(sig.substring(currentStart, i +1));
 					currentStart = i + 1;
-					array = false;
 					break;
 			}
 		}

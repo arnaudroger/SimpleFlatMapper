@@ -1,7 +1,5 @@
 package org.sfm.reflect;
 
-import org.sfm.csv.CellValueReader;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
@@ -95,7 +93,7 @@ public class TypeHelper {
 		return getParamTypesForInterface(target.getSuperclass(), inter);
 	}
 
-	public static boolean isClass(Type outType, Class<URL> class1) {
+	public static boolean isClass(Type outType, Class<?> class1) {
 		return toClass(outType).equals(class1);
 	}
 

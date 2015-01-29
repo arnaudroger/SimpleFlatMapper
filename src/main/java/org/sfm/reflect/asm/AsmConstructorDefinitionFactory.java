@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by aroger on 05/12/14.
- */
 public class AsmConstructorDefinitionFactory {
 
     public static <T> List<ConstructorDefinition<T>> extractConstructors(final Type target) throws IOException {

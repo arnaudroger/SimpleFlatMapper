@@ -11,6 +11,7 @@ public final class CalculateMaxIndex<T, K extends FieldKey<K>, D extends ColumnD
 		ForEachCallBack<PropertyMapping<T, ?, K, D>> {
 	public int maxIndex = -1;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void handle(PropertyMapping<T, ?, K, D> e) {
 		int currentIndex = -1;

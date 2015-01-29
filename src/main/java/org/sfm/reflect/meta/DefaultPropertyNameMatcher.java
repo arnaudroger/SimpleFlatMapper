@@ -40,9 +40,6 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 			return null;
 		}
 
-		String indexName = column.substring(0, listIndexEnd);
-
-
 		PropertyNameMatcher subPropertyNameMatcher = null;
 
 

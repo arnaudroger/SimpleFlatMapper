@@ -1,8 +1,5 @@
 package org.sfm.reflect.meta;
 
-/**
- * Created by aroger on 05/12/14.
- */
 public class IndexedColumn {
 
     private final int indexValue;

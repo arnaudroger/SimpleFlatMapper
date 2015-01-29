@@ -160,6 +160,7 @@ public class CsvMapperBuilder<T> {
 		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
 			final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public void handle(PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition> propMapping) {
 				if(propMapping == null) return;

@@ -2,7 +2,6 @@ package org.sfm.jdbc.impl.getter;
 
 import org.sfm.reflect.Getter;
 
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

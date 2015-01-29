@@ -15,6 +15,7 @@ public class CsvStringArrayIterator implements Iterator<String[]> {
     private boolean isFetched;
     private String[] value;
 
+    @SuppressWarnings("unchecked")
     public CsvStringArrayIterator(CsvReader csvReader) {
         cellConsumer = new StringArrayConsumer(new RowHandler<String[]>() {
             @Override

@@ -9,7 +9,8 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 public final class ObjectClassMeta<T> implements ClassMeta<T> {
-	
+
+	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private final List<PropertyMeta<T, ?>> properties;
 	private final List<ConstructorPropertyMeta<T, ?>> constructorProperties;
 	private final List<ConstructorDefinition<T>> constructorDefinitions;
@@ -165,6 +166,6 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			}
 		}
 
-		return strings.toArray(new String[0]);
+		return strings.toArray(EMPTY_STRING_ARRAY);
 	}
 }

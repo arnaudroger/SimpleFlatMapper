@@ -7,9 +7,6 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by aroger on 05/12/14.
- */
 public class ReflectionConstructorDefinitionFactory {
 
     @SuppressWarnings("unchecked")

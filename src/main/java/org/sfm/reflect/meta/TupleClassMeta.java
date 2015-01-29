@@ -11,6 +11,7 @@ import java.util.List;
 
 public class TupleClassMeta<T> implements ClassMeta<T> {
 
+	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private final ReflectionService reflectionService;
 	private Type type;
 	private List<ConstructorDefinition<T>> constructorDefinitions;
@@ -62,7 +63,7 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 			i++;
 		}
 
-		return strings.toArray(new String[0]);
+		return strings.toArray(EMPTY_STRING_ARRAY);
 	}
 
 

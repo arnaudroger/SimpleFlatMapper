@@ -54,8 +54,7 @@ public class CsvMapperImplPrimitiveTest {
 	static String CONTENT = "true,12,13,345,3452,4533,3.14,3.14159";
 	
 	public static Reader dbObjectCsvReader() throws UnsupportedEncodingException {
-		Reader sr = new StringReader(CONTENT);
-		return sr;
+		return new StringReader(CONTENT);
 	}
 	
 	@Test

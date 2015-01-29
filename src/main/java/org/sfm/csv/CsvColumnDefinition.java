@@ -10,7 +10,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
     public abstract String dateFormat();
     public abstract CellValueReader<?> getCustomReader();
 
-    public static CsvColumnDefinition IDENTITY = new IndentityCsvColumnDefinition();
+    public static final CsvColumnDefinition IDENTITY = new IndentityCsvColumnDefinition();
 
     public static CsvColumnDefinition renameDefinition(final String name) {
         return new IndentityCsvColumnDefinition() {

@@ -9,7 +9,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	private final ReflectionService reflectionService;
 	private final Type elementTarget;
 	private final ClassMeta<E> elementClassMeta;
-	private Type type;
+	private final Type type;
 	
 	public ArrayClassMeta(Type type, Type elementTarget, ReflectionService reflectionService) {
 		this.type = type;

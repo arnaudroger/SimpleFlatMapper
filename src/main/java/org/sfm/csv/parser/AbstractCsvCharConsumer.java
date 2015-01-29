@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.io.Reader;
 
 public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
-	public static final int IN_QUOTE = 4;
-	public static final int IN_CR = 2;
-	public static final int QUOTE = 1;
-	public static final int NONE = 0;
-	public static final int TURN_OFF_IN_CR_MASK = ~IN_CR;
-	public static final int ALL_QUOTES = QUOTE | IN_QUOTE;
+	private static final int IN_QUOTE = 4;
+	private static final int IN_CR = 2;
+	private static final int QUOTE = 1;
+	private static final int NONE = 0;
+	private static final int TURN_OFF_IN_CR_MASK = ~IN_CR;
+	private static final int ALL_QUOTES = QUOTE | IN_QUOTE;
 	protected final CharBuffer csvBuffer;
 
 	protected int _currentIndex;

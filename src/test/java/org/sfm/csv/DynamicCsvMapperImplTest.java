@@ -33,26 +33,23 @@ import static org.junit.Assert.*;
 public class DynamicCsvMapperImplTest {
 
 	public static Reader dbObjectCsvReader() throws UnsupportedEncodingException {
-		Reader sr = new StringReader("id,name,email,creationTime,typeOrdinal,typeName\n"
+		return new StringReader("id,name,email,creationTime,typeOrdinal,typeName\n"
 				+ "1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4");
-		return sr;
 	}
 	
 	public static Reader dbObjectCsvReader3LinesWithLineToSkip() throws UnsupportedEncodingException {
-		Reader sr = new StringReader("\nid,name,email,creationTime,typeOrdinal,typeName\n"
+		return new StringReader("\nid,name,email,creationTime,typeOrdinal,typeName\n"
 				+ "1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4\n"
 				+ "2,name 2,name2@mail.com,2014-03-04 11:10:03,2,type4"
 				
 				);
-		return sr;
 	}
 	public static Reader dbObjectCsvReader3Lines() throws UnsupportedEncodingException {
-		Reader sr = new StringReader("id,name,email,creationTime,typeOrdinal,typeName\n"
+		return new StringReader("id,name,email,creationTime,typeOrdinal,typeName\n"
 				+ "1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4\n"
 				+ "2,name 2,name2@mail.com,2014-03-04 11:10:03,2,type4"
 
 		);
-		return sr;
 	}
 
 

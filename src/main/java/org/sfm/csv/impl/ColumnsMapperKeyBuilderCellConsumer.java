@@ -11,7 +11,7 @@ public final class ColumnsMapperKeyBuilderCellConsumer<T> implements CellConsume
 	/**
 	 * 
 	 */
-	private List<String> columns = new ArrayList<String>();
+	private final List<String> columns = new ArrayList<String>();
 
 	public ColumnsMapperKeyBuilderCellConsumer() {
 	}

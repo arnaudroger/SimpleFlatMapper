@@ -17,7 +17,8 @@ import java.util.Map;
 public class ConverterFactory {
 
 	@SuppressWarnings("serial")
-	private static Map<Class<? extends Number>, Converter<? extends Number, ? extends Number>> numberConvertors = new HashMap<Class<? extends Number>, Converter<? extends Number, ? extends Number>>() {{
+	private static final Map<Class<? extends Number>, Converter<? extends Number, ? extends Number>> numberConvertors =
+			new HashMap<Class<? extends Number>, Converter<? extends Number, ? extends Number>>() {{
 		put(Byte.class, new Converter<Number, Byte>() {
 			@Override
 			public Byte convert(Number in) { return new Byte(in.byteValue());}

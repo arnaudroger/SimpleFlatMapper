@@ -17,7 +17,7 @@ import java.util.Map.Entry;
 public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
 	private final Type source;
-	protected final Type target;
+	private final Type target;
 
 	private final FieldMapperFactory<S, K, FieldMapperColumnDefinition<K, S>> fieldMapperFactory;
 	private final GetterFactory<S, K> getterFactory;
@@ -26,7 +26,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	protected final ReflectionService reflectionService;
 	
 	protected final Map<String, FieldMapperColumnDefinition<K, S>> columnDefinitions;
-	protected final List<FieldMapper<S, T>> additionalMappers = new ArrayList<FieldMapper<S, T>>();
+	private final List<FieldMapper<S, T>> additionalMappers = new ArrayList<FieldMapper<S, T>>();
 	protected final PropertyNameMatcherFactory propertyNameMatcherFactory;
 
 	private final FieldMapperColumnDefinition<K, S> identity = FieldMapperColumnDefinition.identity();

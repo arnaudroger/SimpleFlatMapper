@@ -5,9 +5,11 @@ import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.DefaultPropertyNameMatcherFactory;
 import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
 import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
+import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
@@ -30,7 +32,8 @@ public final class CsvMapperFactory {
 	
 	private FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<CsvColumnKey>();
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
-	
+	private RowHandlerErrorHandler rowHandlerErrorHandler = new RethrowRowHandlerErrorHandler();
+
 	private Map<String, CsvColumnDefinition> columnDefinitions = new HashMap<String, CsvColumnDefinition>();
 
 	private boolean useAsm = true;
@@ -62,6 +65,11 @@ public final class CsvMapperFactory {
 	 */
 	public CsvMapperFactory mapperBuilderErrorHandler(final MapperBuilderErrorHandler mapperBuilderErrorHandler) {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
+		return this;
+	}
+
+	public CsvMapperFactory rowHandlerErrorHandler(final RowHandlerErrorHandler rowHandlerErrorHandler) {
+		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
 		return this;
 	}
 
@@ -109,7 +117,7 @@ public final class CsvMapperFactory {
 		return new DynamicCsvMapper<T>(target,
 				classMeta,
 				fieldMapperErrorHandler, mapperBuilderErrorHandler,
-				defaultDateFormat, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
+				rowHandlerErrorHandler, defaultDateFormat, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
 	}
 
 	private <T> ClassMeta<T> getClassMeta(Type target) {
@@ -131,6 +139,7 @@ public final class CsvMapperFactory {
 		ClassMeta<T> classMeta = getClassMeta(target);
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
+		builder.rowHandlerErrorHandler(rowHandlerErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);
 		return builder;
 	}

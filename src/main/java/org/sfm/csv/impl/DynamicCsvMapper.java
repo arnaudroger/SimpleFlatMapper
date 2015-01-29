@@ -4,6 +4,7 @@ import org.sfm.csv.*;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
@@ -29,6 +30,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	private final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler;
 
 	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
+	private final RowHandlerErrorHandler rowHandlerErrorHandler;
 	
 	private final String defaultDateFormat;
 	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
@@ -41,7 +43,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	public DynamicCsvMapper(final Type target, final ClassMeta<T> classMeta,
 							final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler,
-							final MapperBuilderErrorHandler mapperBuilderErrorHandler, String defaultDateFormat,
+							final MapperBuilderErrorHandler mapperBuilderErrorHandler, RowHandlerErrorHandler rowHandlerErrorHandler, String defaultDateFormat,
 							Map<String, CsvColumnDefinition> columnDefinitions,
 							PropertyNameMatcherFactory propertyNameMatcherFactory, CellValueReaderFactory cellValueReaderFactory) {
 		if (classMeta == null) {
@@ -54,6 +56,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
+		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
 		this.defaultDateFormat = defaultDateFormat;
 		this.columnDefinitions = columnDefinitions;
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
@@ -61,7 +64,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 
 	public DynamicCsvMapper(Type target, ClassMeta<T> classMeta) {
-		this(target, classMeta, new RethrowFieldMapperErrorHandler<CsvColumnKey>(), new RethrowMapperBuilderErrorHandler(), "yyyy-MM-dd HH:mm:ss",
+		this(target, classMeta, new RethrowFieldMapperErrorHandler<CsvColumnKey>(), new RethrowMapperBuilderErrorHandler(), new RethrowRowHandlerErrorHandler(), "yyyy-MM-dd HH:mm:ss",
 				new HashMap<String, CsvColumnDefinition>(), new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl());
 	}
 
@@ -151,6 +154,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);
+		builder.rowHandlerErrorHandler(rowHandlerErrorHandler);
 		for(String col : key.getColumns()) {
 			builder.addMapping(col);
 		}

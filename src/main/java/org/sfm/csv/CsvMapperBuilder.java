@@ -364,4 +364,9 @@ public class CsvMapperBuilder<T> {
 		return this;
 	}
 
+
+	public final CsvMapperBuilder<T>  rowHandlerErrorHandler(RowHandlerErrorHandler rowHandlerErrorHandler) {
+		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
+		return this;
+	}
 }

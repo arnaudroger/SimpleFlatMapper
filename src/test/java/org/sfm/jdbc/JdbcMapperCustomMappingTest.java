@@ -130,6 +130,7 @@ public class JdbcMapperCustomMappingTest {
 
 		}, DbHelper.TEST_DB_OBJECT_QUERY.replace("id,", "33 as id,"));
 	}
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testCustomReaderOnSetterStatic() throws SQLException, Exception  {
 		final JdbcMapper<DbObject> mapper =

@@ -3,7 +3,6 @@ package org.sfm.reflect.meta;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
-import org.sfm.reflect.TypeHelper;
 
 import java.util.*;
 
@@ -21,13 +20,11 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	/* (non-Javadoc)
 	 * @see org.sfm.reflect.PropertyFinder#findProperty(org.sfm.utils.PropertyNameMatcher)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public PropertyMeta<T, ?> findProperty(final PropertyNameMatcher propertyNameMatcher) {
-		PropertyMeta<T, ?> prop = null; 
-		
-		
 		// check for constructor
-		prop = lookForConstructor(propertyNameMatcher);
+		PropertyMeta<T, ?> prop = lookForConstructor(propertyNameMatcher);
 
 		if (prop == null) {
 			prop = lookForProperty(propertyNameMatcher);
@@ -114,8 +111,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 			subPropertyFinders.put(prop.getName(), subPropertyFinder);
 		}
 
-		PropertyMeta<?, ?> subProp = subPropertyFinder.findProperty(propertyNameMatcher);
-		return subProp;
+		return subPropertyFinder.findProperty(propertyNameMatcher);
 	}
 
 	private void removeNonMatching(ConstructorParameter param) {
@@ -129,9 +125,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	}
 	
 	private boolean hasConstructorMatching(ConstructorParameter param) {
-		ListIterator<ConstructorDefinition<T>> li = eligibleConstructorDefinitions.listIterator();
-		while(li.hasNext()){
-			ConstructorDefinition<T> cd = li.next();
+		for(ConstructorDefinition<T> cd : eligibleConstructorDefinitions) {
 			if (cd.hasParam(param)) {
 				return true;
 			}

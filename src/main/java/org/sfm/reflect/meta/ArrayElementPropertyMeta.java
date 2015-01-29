@@ -17,6 +17,7 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 		this.arrayMetaData = arrayMetaData;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Setter<T, E> newSetter() {
 		if (List.class.isAssignableFrom(TypeHelper.toClass(arrayMetaData.getType()))) {

@@ -222,7 +222,7 @@ public final class CsvParser {
 		}
 
 		public <T> MapWithDSL<T> mapWith(CsvMapper<T> mapper) {
-			return new MapWithDSL(this, mapper);
+			return new MapWithDSL<T>(this, mapper);
 		}
 
         //IFJAVA8_START
@@ -286,7 +286,7 @@ public final class CsvParser {
 		}
 
 		private CsvMapper<T> newStaticMapper(ClassMeta<T> classMeta, String[] headers) {
-			CsvMapperBuilder builder = new CsvMapperBuilder(mapToClass, classMeta);
+			CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(mapToClass, classMeta);
 			for(String header : headers) {
 				builder.addMapping(header);
 			}

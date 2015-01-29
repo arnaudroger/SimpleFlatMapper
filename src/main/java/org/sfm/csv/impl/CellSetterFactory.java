@@ -43,6 +43,7 @@ public final class CellSetterFactory {
 		throw new IllegalArgumentException("Invalid primitive type " + clazz);
 	}
 
+	@SuppressWarnings("unchecked")
 	private DoubleCellValueReader doubleReader(CellValueReader<?> reader) {
 		if (reader instanceof DoubleCellValueReader)  {
 			return (DoubleCellValueReader) reader;
@@ -51,6 +52,7 @@ public final class CellSetterFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private FloatCellValueReader floatReader(CellValueReader<?> reader) {
 		if (reader instanceof FloatCellValueReader)  {
 			return (FloatCellValueReader) reader;
@@ -59,6 +61,7 @@ public final class CellSetterFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private LongCellValueReader longReader(CellValueReader<?> reader) {
 		if (reader instanceof LongCellValueReader)  {
 			return (LongCellValueReader) reader;
@@ -67,6 +70,7 @@ public final class CellSetterFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private IntegerCellValueReader intReader(CellValueReader<?> reader) {
 		if (reader instanceof IntegerCellValueReader)  {
 			return (IntegerCellValueReader) reader;
@@ -75,6 +79,7 @@ public final class CellSetterFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private ShortCellValueReader shortReader(CellValueReader<?> reader) {
 		if (reader instanceof ShortCellValueReader)  {
 			return (ShortCellValueReader) reader;
@@ -83,6 +88,7 @@ public final class CellSetterFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private CharCellValueReader charReader(CellValueReader<?> reader) {
 		if (reader instanceof CharCellValueReader)  {
 			return (CharCellValueReader) reader;
@@ -91,6 +97,7 @@ public final class CellSetterFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private ByteCellValueReader byteReader(CellValueReader<?> reader) {
 		if (reader instanceof ByteCellValueReader)  {
 			return (ByteCellValueReader) reader;
@@ -99,6 +106,7 @@ public final class CellSetterFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private BooleanCellValueReader booleanReader(CellValueReader<?> reader) {
 		if (reader instanceof BooleanCellValueReader)  {
 			return (BooleanCellValueReader) reader;
@@ -107,6 +115,7 @@ public final class CellSetterFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T,P> DelayedCellSetterFactory<T, P> getPrimitiveDelayedCellSetter(Class<?> clazz, CellValueReader<P> reader, Setter<T, P> setter) {
 		if (boolean.class.equals(clazz)) {
 			return (DelayedCellSetterFactory<T, P>) new BooleanDelayedCellSetterFactory<T>(SetterFactory.toBooleanSetter(setter), booleanReader(reader));
@@ -190,6 +199,7 @@ public final class CellSetterFactory {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public <T,P> CellSetter<T> getCellSetter(Type propertyType, Setter<T, P> setter, int index, CsvColumnDefinition columnDefinition) {
 		Class<? extends P> propertyClass = (Class<? extends P>) TypeHelper.toClass(propertyType);
 

@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.JdbcColumnKey;
+import org.sfm.reflect.meta.ObjectClassMeta;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -12,6 +13,7 @@ import java.net.URL;
 import java.sql.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -132,12 +134,20 @@ public class ResultSetGetterFactoryTest {
 	}
 
 	@Test
-	public void testDateFromUdefined() throws Exception {
+	public void testJavaUtilDateFromUdefined() throws Exception {
 		java.util.Date date = new java.util.Date(13l);
 		when(resultSet.getObject(1)).thenReturn(date);
-		assertEquals(date, factory.newGetter(Date.class, key(JdbcColumnKey.UNDEFINED_TYPE)).get(resultSet));
+		assertEquals(date, factory.newGetter(java.util.Date.class, key(JdbcColumnKey.UNDEFINED_TYPE)).get(resultSet));
 		when(resultSet.getObject(1)).thenReturn(131l);
-		assertEquals(new java.util.Date(131l), factory.newGetter(Date.class, key(JdbcColumnKey.UNDEFINED_TYPE)).get(resultSet));
+		assertEquals(new java.util.Date(131l), factory.newGetter(java.util.Date.class, key(JdbcColumnKey.UNDEFINED_TYPE)).get(resultSet));
+	}
+
+
+	@Test
+	public void testObject() throws Exception {
+		Object object = new Object();
+		when(resultSet.getObject(1)).thenReturn(object);
+		assertEquals(object, factory.newGetter(Object.class, key(JdbcColumnKey.UNDEFINED_TYPE)).get(resultSet));
 	}
 
 	private JdbcColumnKey key(int type) {

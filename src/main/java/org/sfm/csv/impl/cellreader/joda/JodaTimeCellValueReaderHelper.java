@@ -50,16 +50,16 @@ public class JodaTimeCellValueReaderHelper {
 
     public static CellValueReader<?> getReader(Type type, CsvColumnDefinition columnDefinition) {
         Class<?> clazz = TypeHelper.toClass(type);
-        if (dateTimeClass != null && clazz.isAssignableFrom(dateTimeClass)) {
+        if (dateTimeClass != null && dateTimeClass.equals(clazz)) {
             return new JodaDateTimeCellValueReader(columnDefinition.dateFormat());
         }
-        if (localDateClass != null && clazz.isAssignableFrom(localDateClass)) {
+        if (localDateClass != null && localDateClass.equals(clazz)) {
             return new JodaLocalDateCellValueReader(columnDefinition.dateFormat());
         }
-        if (localDateTimeClass != null && clazz.isAssignableFrom(localDateTimeClass)) {
+        if (localDateTimeClass != null && localDateTimeClass.isAssignableFrom(clazz)) {
             return new JodaLocalDateTimeCellValueReader(columnDefinition.dateFormat());
         }
-        if (localTimeClass != null && clazz.isAssignableFrom(localTimeClass)) {
+        if (localTimeClass != null && localTimeClass.isAssignableFrom(clazz)) {
             return new JodaLocalTimeCellValueReader(columnDefinition.dateFormat());
         }
         return null;

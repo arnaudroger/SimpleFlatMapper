@@ -34,6 +34,7 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 		READERS.put(Float.class, new FloatCellValueReaderImpl());
 		READERS.put(Double.class, new DoubleCellValueReaderImpl());
 		READERS.put(String.class,    new StringCellValueReader());
+		READERS.put(Object.class,    new StringCellValueReader());
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 
 		CellValueReader<P> reader;
 
-		if (propertyClass.isAssignableFrom(Date.class)) {
+		if (propertyClass.equals(Date.class)) {
 			reader = (CellValueReader<P>) new DateCellValueReader(index);
 		} else if (Enum.class.isAssignableFrom(propertyClass)) {
 			reader = new EnumCellValueReader(propertyClass);

@@ -37,6 +37,42 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		}
 	}
 
+	public static GetterFactory<ResultSet, JdbcColumnKey> ENUM_GETTER_FACTORY = new GetterFactory<ResultSet, JdbcColumnKey>() {
+		@SuppressWarnings("unchecked")
+		@Override
+		public <P> Getter<ResultSet, P> newGetter(Type type, JdbcColumnKey key) {
+			@SuppressWarnings("rawtypes")
+			Class<? extends Enum> enumClass = TypeHelper.toClass(type);
+			return (Getter<ResultSet, P>) newEnumGetter(enumClass, key);
+		}
+
+		private <P extends Enum<P>> Getter<ResultSet, P> newEnumGetter(Class<P> type, JdbcColumnKey key) {
+			int column = key.getIndex();
+			switch (key.getSqlType()) {
+				case JdbcColumnKey.UNDEFINED_TYPE:
+					return new EnumResultSetGetter<P>(column, type);
+				case Types.BIGINT:
+				case Types.INTEGER:
+				case Types.NUMERIC:
+				case Types.SMALLINT:
+				case Types.TINYINT:
+					return new OrdinalEnumResultSetGetter<P>(column, type);
+				case Types.CHAR:
+				case Types.LONGVARCHAR:
+				case Types.VARCHAR:
+				case Types.CLOB:
+					return new StringEnumResultSetGetter<P>(new StringResultSetGetter(column), type);
+				case Types.LONGNVARCHAR:
+				case Types.NCHAR:
+				case Types.NVARCHAR:
+				case Types.NCLOB:
+					return new StringEnumResultSetGetter<P>(new NStringResultSetGetter(column), type);
+				default:
+					throw new MapperBuildingException("Incompatible type " + key.getSqlType() + " with enum");
+			}
+		}
+	};
+
 	public static final int UNDEFINED = -99999;
 
 	@SuppressWarnings("serial")
@@ -61,6 +97,31 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				}
 			}
 		});
+
+		put(java.sql.Date.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new DateResultSetGetter(key.getIndex());
+			}
+		});
+
+		put(java.sql.Timestamp.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new TimestampResultSetGetter(key.getIndex());
+			}
+		});
+
+		put(java.sql.Time.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new TimeResultSetGetter(key.getIndex());
+			}
+		});
+
 		put(Boolean.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -131,43 +192,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				return (Getter<ResultSet, P>) new BigDecimalResultSetGetter(key.getIndex());
 			}
 		});
-		
-		put(Enum.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type type, JdbcColumnKey key) {
-				@SuppressWarnings("rawtypes")
-				Class<? extends Enum> enumClass = TypeHelper.toClass(type); 
-				return (Getter<ResultSet, P>) newEnumGetter(enumClass, key);
-			}
-			
-			private <P extends Enum<P>> Getter<ResultSet, P> newEnumGetter(Class<P> type, JdbcColumnKey key) {
-				int column = key.getIndex();
-				switch(key.getSqlType()) {
-				case JdbcColumnKey.UNDEFINED_TYPE: 
-					return new EnumResultSetGetter<P>(column, type);
-				case Types.BIGINT:
-				case Types.INTEGER:
-				case Types.NUMERIC:
-				case Types.SMALLINT:
-				case Types.TINYINT:
-					return  new OrdinalEnumResultSetGetter<P>(column, type);
-				case Types.CHAR:
-				case Types.LONGVARCHAR:
-				case Types.VARCHAR:
-				case Types.CLOB:
-					return  new StringEnumResultSetGetter<P>(new StringResultSetGetter(column), type);
-				case Types.LONGNVARCHAR:
-				case Types.NCHAR:
-				case Types.NVARCHAR:
-				case Types.NCLOB:
-					return  new StringEnumResultSetGetter<P>(new NStringResultSetGetter(column), type);
-				default:
-					throw new MapperBuildingException("Incompatible type " + key.getSqlType() + " with enum");
-				}
-			}
-		});	
-		
+
 		put(URL.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -278,7 +303,11 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			JdbcColumnKey key) {
 		
 		Class<?> clazz = TypeHelper.wrap(TypeHelper.toClass(genericType));
-		
+
+		if (Object.class.equals(clazz)) {
+			return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
+		}
+
 		if (key.getSqlType() == Types.ARRAY) {
 			if (clazz.isArray()) {
 				Class<?> elementType = clazz.getComponentType();
@@ -289,11 +318,18 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			}
 		}
 		
-		GetterFactory<ResultSet, JdbcColumnKey> getterFactory = factoryPerType.get(clazz);
-		
+		GetterFactory<ResultSet, JdbcColumnKey> getterFactory;
+
+		if (clazz.isEnum()) {
+			getterFactory = ENUM_GETTER_FACTORY;
+		} else {
+			getterFactory = factoryPerType.get(clazz);
+		}
+
+
 		if (getterFactory == null) {
 			for(Entry<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>> e : factoryPerType.entrySet()) {
-				if (e.getKey().isAssignableFrom(clazz)) {
+				if (clazz.isAssignableFrom(e.getKey())) {
 					getterFactory = e.getValue();
 					break;
 				}

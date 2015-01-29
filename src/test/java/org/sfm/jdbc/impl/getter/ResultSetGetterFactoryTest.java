@@ -144,6 +144,24 @@ public class ResultSetGetterFactoryTest {
 
 
 	@Test
+	public void testTime() throws Exception {
+		Time time = new Time(10000);
+		when(resultSet.getTime(1)).thenReturn(time);
+		assertEquals(time, factory.newGetter(Time.class, key(JdbcColumnKey.UNDEFINED_TYPE)).get(resultSet));
+	}
+	@Test
+	public void testTimestamp() throws Exception {
+		Timestamp time = new Timestamp(10000);
+		when(resultSet.getTimestamp(1)).thenReturn(time);
+		assertEquals(time, factory.newGetter(Timestamp.class, key(JdbcColumnKey.UNDEFINED_TYPE)).get(resultSet));
+	}
+	@Test
+	public void testSqlDate() throws Exception {
+		java.sql.Date time = new Date(10000);
+		when(resultSet.getDate(1)).thenReturn(time);
+		assertEquals(time, factory.newGetter(Date.class, key(JdbcColumnKey.UNDEFINED_TYPE)).get(resultSet));
+	}
+	@Test
 	public void testObject() throws Exception {
 		Object object = new Object();
 		when(resultSet.getObject(1)).thenReturn(object);

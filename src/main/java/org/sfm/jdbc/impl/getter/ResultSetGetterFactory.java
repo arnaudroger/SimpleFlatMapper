@@ -264,13 +264,6 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
-				return (Getter<ResultSet, P>) new NClobResultSetGetter(key.getIndex());
-			}
-		});
-		put(Ref.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new RefResultSetGetter(key.getIndex());
 			}
 		});

@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 //IFJAVA8_START
@@ -48,14 +49,23 @@ public class DynamicJdbcMapperTest {
 
 	@Test
 	public void testResultSetMapperIterate()
-			throws SQLException, Exception, ParseException {
+			throws Exception {
 		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				Iterator<DbObject> objectIterator = mapper.iterate(ps.executeQuery());
 				assertTrue(objectIterator.hasNext());
+				try {
+					objectIterator.remove();
+					fail("Expect UnsupportedOperationException");
+				} catch(UnsupportedOperationException e) {
+				}
 				DbHelper.assertDbObjectMapping(objectIterator.next());
 				assertFalse(objectIterator.hasNext());
+				try {
+					objectIterator.next();
+					fail("Expect UnsupportedOperationException");
+				} catch(NoSuchElementException e) {}
 			}
 		});
 	}

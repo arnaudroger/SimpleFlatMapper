@@ -27,8 +27,6 @@ import java.util.stream.Stream;
 public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private final ClassMeta<T> classMeta;
-	private final Type target;
-
 
 	private final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler;
 
@@ -38,14 +36,13 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	private final RowHandlerErrorHandler rowHandlerErrorHandler;
 	private MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache = new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
 
-	public DynamicJdbcMapper(final Type target, final ClassMeta<T> classMeta,
+	public DynamicJdbcMapper(final ClassMeta<T> classMeta,
 							 final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler,
 							 final MapperBuilderErrorHandler mapperBuilderErrorHandler,
 							 RowHandlerErrorHandler rowHandlerErrorHandler,
 							 final Map<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions,
 							 PropertyNameMatcherFactory propertyNameMatcherFactory) {
 		this.classMeta = classMeta;
-		this.target = target;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.columnDefinitions = columnDefinitions;

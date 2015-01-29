@@ -22,6 +22,6 @@ public class DefaultPropertyNameMatcherFactory implements PropertyNameMatcherFac
 
     @Override
     public PropertyNameMatcher newInstance(FieldKey<?> key) {
-        return new DefaultPropertyNameMatcher(key.getName());
+        return new DefaultPropertyNameMatcher(key.getName(), 0, exactMatch, caseSensitive);
     }
 }

@@ -7,14 +7,6 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	private final boolean exactMatch;
 	private final boolean caseSensitive;
 
-	public DefaultPropertyNameMatcher(final String column) {
-		this(column, 0);
-	}
-
-	public DefaultPropertyNameMatcher(final String column, final int from) {
-		this(column, from, false, false);
-	}
-
 	public DefaultPropertyNameMatcher(String column, int from, boolean exactMatch, boolean caseSensitive) {
 		this.column = column;
 		this.from = from;
@@ -55,10 +47,10 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 
 
 		if (listIndexEnd < column.length()) {
-			subPropertyNameMatcher = new DefaultPropertyNameMatcher(column, listIndexEnd );
+			subPropertyNameMatcher = new DefaultPropertyNameMatcher(column, listIndexEnd, exactMatch, caseSensitive );
 		}
 
-		return new IndexedColumn(indexName, index, subPropertyNameMatcher);
+		return new IndexedColumn(index, subPropertyNameMatcher);
 	}
 
 	private int _partialMatch(final String property) {
@@ -116,9 +108,14 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	public PropertyNameMatcher partialMatch(final String property) {
 		int index = _partialMatch(property);
 		if (index != -1) {
-			return new DefaultPropertyNameMatcher(column, index);
+			return new DefaultPropertyNameMatcher(column, index, exactMatch, caseSensitive);
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public PropertyNameMatcher newMatcher(String name) {
+		return new DefaultPropertyNameMatcher(name, 0, exactMatch, caseSensitive);
 	}
 }

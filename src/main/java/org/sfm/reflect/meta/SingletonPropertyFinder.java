@@ -32,13 +32,11 @@ public class SingletonPropertyFinder<T> implements PropertyFinder<T> {
 		coefficients.put(Date.class, 113);
 	}
 
-	private final ClassMeta<T> classMeta;
 	private final PropertyFinder<T> propertyFinder;
 
 	private final List<String> selectedParameters = new ArrayList<String>();
 
 	public SingletonPropertyFinder(ClassMeta<T> classMeta) {
-		this.classMeta = classMeta;
 		this.propertyFinder = classMeta.newPropertyFinder();
 	}
 
@@ -54,7 +52,7 @@ public class SingletonPropertyFinder<T> implements PropertyFinder<T> {
 			if (constructorDefinition != null) {
 				ConstructorParameter param = constructorDefinition.getParameters()[selectedParameters.size()];
 				selectedParameters.add(param.getName());
-				return propertyFinder.findProperty(new DefaultPropertyNameMatcher(param.getName()));
+				return propertyFinder.findProperty(propertyNameMatcher.newMatcher(param.getName()));
 			}
 		}
 		return property;
@@ -80,7 +78,7 @@ public class SingletonPropertyFinder<T> implements PropertyFinder<T> {
 
 	private int getCoefficient(Type t) {
 		if (coefficients.containsKey(TypeHelper.toClass(t))) {
-			return coefficients.get(TypeHelper.toClass(t)).intValue();
+			return coefficients.get(TypeHelper.toClass(t));
 		} else {
 			return -1;
 		}

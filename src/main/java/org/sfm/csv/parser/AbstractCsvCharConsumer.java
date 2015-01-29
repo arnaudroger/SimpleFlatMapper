@@ -88,7 +88,7 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 		}
 	}
 
-	private void newCell(int currentIndex, CellConsumer cellConsumer) {;
+	private void newCell(int currentIndex, CellConsumer cellConsumer) {
 		char[] charBuffer = csvBuffer.getCharBuffer();
 		int start = csvBuffer.getMark();
 		int length = currentIndex - start;

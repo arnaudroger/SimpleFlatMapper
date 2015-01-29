@@ -89,7 +89,7 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 				PropertyMeta<?, Object> property = pf.findProperty(propertyNameMatcher);
 				if (property != null) {
 					if (!element.hasProperty(property)) {
-						return new IndexedColumn("element" + (i), i , propertyNameMatcher);
+						return new IndexedColumn(i , propertyNameMatcher);
 					}
 				}
 

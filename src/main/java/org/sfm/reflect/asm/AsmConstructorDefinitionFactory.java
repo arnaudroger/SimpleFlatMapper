@@ -131,7 +131,7 @@ public class AsmConstructorDefinitionFactory {
 
             }, 0);
         } finally {
-            try { is.close(); } catch(Exception e) {};
+            try { is.close(); } catch(Exception e) {}
         }
 
         return constructors;

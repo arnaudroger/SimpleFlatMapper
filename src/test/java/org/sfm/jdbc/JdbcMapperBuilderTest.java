@@ -18,7 +18,6 @@ public class JdbcMapperBuilderTest {
 	
 	@Test
 	public void testWithWrongColumn() throws MappingException, SQLException {
-		;
 		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactory.newInstance().mapperBuilderErrorHandler(MapperBuilderErrorHandler.NULL).newBuilder(DbObject.class);
 		builder.addMapping("no_id").addMapping("no_name").addMapping("email");
 		

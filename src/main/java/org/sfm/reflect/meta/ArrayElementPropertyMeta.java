@@ -50,7 +50,7 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 	}
 
 
-	private class ArraySetter<E> implements Setter<E[], E> {
+	private static class ArraySetter<E> implements Setter<E[], E> {
 		private final int index;
 
 		private ArraySetter(int index) {
@@ -63,7 +63,7 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
         }
 	}
 
-	private class ListSetter<E> implements Setter<List<E>, E> {
+	private static class ListSetter<E> implements Setter<List<E>, E> {
 		private final int index;
 
 		private ListSetter(int index) {

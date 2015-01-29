@@ -138,7 +138,7 @@ public final class JdbcMapperFactory {
 
 	public <T> JdbcMapper<T> newMapper(final Type target) throws MapperBuildingException {
 		ClassMeta<T> classMeta = getClassMeta(target);
-		return new DynamicJdbcMapper<T>(target, classMeta, fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, columnDefinitions, propertyNameMatcherFactory);
+		return new DynamicJdbcMapper<T>(classMeta, fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, columnDefinitions, propertyNameMatcherFactory);
 	}
 
 

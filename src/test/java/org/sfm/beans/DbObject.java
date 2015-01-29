@@ -5,7 +5,7 @@ import java.util.Date;
 public class DbObject {
 	
 	public enum Type {
-		type1, type2, type3, type4;
+		type1, type2, type3, type4
 	}
 	private long id;
 	private String name;

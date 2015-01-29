@@ -5,18 +5,12 @@ package org.sfm.reflect.meta;
  */
 public class IndexedColumn {
 
-    private final String indexName;
     private final int indexValue;
     private final PropertyNameMatcher subPropertyNameMatcher;
 
-    public IndexedColumn(String indexName, int indexValue, PropertyNameMatcher subPropertyNameMatcher) {
-        this.indexName = indexName;
+    public IndexedColumn(int indexValue, PropertyNameMatcher subPropertyNameMatcher) {
         this.indexValue = indexValue;
         this.subPropertyNameMatcher = subPropertyNameMatcher;
-    }
-
-    public String getIndexName() {
-        return indexName;
     }
 
     public int getIndexValue() {

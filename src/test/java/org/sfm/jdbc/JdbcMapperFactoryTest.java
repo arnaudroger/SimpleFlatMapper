@@ -191,6 +191,7 @@ public class JdbcMapperFactoryTest {
 	@Test
 	public void testCustomGetterFactory() throws SQLException {
 		JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance().getterFactory(new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
 				return new Getter() {

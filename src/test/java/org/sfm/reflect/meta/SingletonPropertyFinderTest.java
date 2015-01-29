@@ -17,7 +17,7 @@ public class SingletonPropertyFinderTest {
         ClassMeta<String> stringClassMeta =new ObjectClassMeta<String>(String.class, ReflectionService.newInstance());
         SingletonPropertyFinder<String> pf = new SingletonPropertyFinder<String>(stringClassMeta);
 
-        ConstructorPropertyMeta<String, ?> blop = (ConstructorPropertyMeta<String, ?>) pf.findProperty(new DefaultPropertyNameMatcher("value"));
+        ConstructorPropertyMeta<String, ?> blop = (ConstructorPropertyMeta<String, ?>) pf.findProperty(new DefaultPropertyNameMatcher("value", 0, false, false));
 
         assertEquals(String.class, blop.getConstructorParameter().getType());
 

@@ -51,7 +51,7 @@ public class PropertyFinderTest {
     }
 
     private PropertyNameMatcher matcher(String col) {
-        return new DefaultPropertyNameMatcher(col);
+        return new DefaultPropertyNameMatcher(col, 0, false, false);
     }
 
     @Test

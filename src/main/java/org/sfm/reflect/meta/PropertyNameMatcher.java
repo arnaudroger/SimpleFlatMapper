@@ -6,4 +6,6 @@ public interface PropertyNameMatcher {
     IndexedColumn matchesIndex();
 
     PropertyNameMatcher partialMatch(String property);
+
+    PropertyNameMatcher newMatcher(String name);
 }

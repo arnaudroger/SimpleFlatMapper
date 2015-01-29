@@ -75,11 +75,11 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 			for (int i = 0; i < elements.size(); i++) {
 				IndexedElement element = elements.get(i);
 				if (!element.hasProperty(property)) {
-					return new IndexedColumn("element" + i, i, propertyNameMatcher);
+					return new IndexedColumn(i, propertyNameMatcher);
 				}
 			}
 
-			return new IndexedColumn("element" + elements.size(), elements.size(), propertyNameMatcher);
+			return new IndexedColumn(elements.size(), propertyNameMatcher);
 		}
 		return null;
 	}

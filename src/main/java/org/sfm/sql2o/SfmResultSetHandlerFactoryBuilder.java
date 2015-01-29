@@ -10,10 +10,16 @@ import java.util.Map;
 
 public class SfmResultSetHandlerFactoryBuilder extends DefaultResultSetHandlerFactoryBuilder {
 
+    public SfmResultSetHandlerFactoryBuilder() {
+        super();
+    }
+
     @Override
     public <E> ResultSetHandlerFactory<E> newFactory(Class<E> aClass) {
 
-        DefaultPropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory(!isAutoDeriveColumnNames(), isCaseSensitive());
+        boolean exactMatch = !isAutoDeriveColumnNames();
+
+        DefaultPropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory(exactMatch, isCaseSensitive());
         Map<String, String> columnMappings = getColumnMappings();
 
         JdbcMapperFactory jdbcMapperFactory = JdbcMapperFactory

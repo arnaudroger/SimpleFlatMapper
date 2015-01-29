@@ -25,6 +25,7 @@ public class Sql2oIntegrationTest {
             Sql2o sql2o = new Sql2o(scds);
 
             Query query = sql2o.open().createQuery(DbHelper.TEST_DB_OBJECT_QUERY);
+            query.setAutoDeriveColumnNames(true);
             query.setResultSetHandlerFactoryBuilder(new SfmResultSetHandlerFactoryBuilder());
 
             List<DbObject> dbObjects = query.executeAndFetch(DbObject.class);

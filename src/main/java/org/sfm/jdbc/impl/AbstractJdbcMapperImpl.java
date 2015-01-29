@@ -51,21 +51,23 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
-		return StreamSupport.stream(new JdbcSpliterator(rs), false);
+		return StreamSupport.stream(new JdbcSpliterator(rs, this), false);
 	}
 
-	public class JdbcSpliterator implements Spliterator<T> {
+	public static class JdbcSpliterator<T> implements Spliterator<T> {
 		private final ResultSet resultSet;
+		private final JdbcMapper<T> mapper;
 
-		public JdbcSpliterator(ResultSet resultSet) {
+		public JdbcSpliterator(ResultSet resultSet, JdbcMapper<T> mapper) {
 			this.resultSet = resultSet;
+			this.mapper = mapper;
 		}
 
 		@Override
 		public boolean tryAdvance(Consumer<? super T> action) {
 			try {
 				if (resultSet.next()) {
-					action.accept(map(resultSet));
+					action.accept(mapper.map(resultSet));
 					return true;
 				}
 			} catch (SQLException e) {
@@ -77,7 +79,7 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 		@Override
 		public void forEachRemaining(Consumer<? super T> action) {
 			try {
-				forEach(resultSet, new RowHandler<T>() {
+				mapper.forEach(resultSet, new RowHandler<T>() {
 					@Override
 					public void handle(T t) throws Exception {
 						action.accept(t);

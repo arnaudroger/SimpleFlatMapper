@@ -5,12 +5,15 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObjectWithAlias;
 import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.GetterFactory;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.FieldMapper;
+import org.sfm.reflect.Getter;
 import org.sfm.tuples.Tuples;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.RowHandler;
 
+import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -184,7 +187,31 @@ public class JdbcMapperFactoryTest {
 		verify(errorHandler, times(2)).handlerError(same(exception), any(DbObject.class));
 
 	}
-	
+
+	@Test
+	public void testCustomGetterFactory() throws SQLException {
+		JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance().getterFactory(new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+				return new Getter() {
+					@Override
+					public Object get(Object target) throws Exception {
+						return "Hello!";
+					}
+				}
+						;
+			}
+		}).newBuilder(DbObject.class).addMapping("name").mapper();
+
+		ResultSet rs = mock(ResultSet.class);
+		when(rs.next()).thenReturn(true, false);
+
+		DbObject object = mapper.iterate(rs).next();
+
+		assertEquals("Hello!", object.getName());
+	}
+
+
 	private void assertMapPsDbObject(ResultSet rs,
 			JdbcMapper<DbObject> mapper) throws Exception,
 			ParseException {

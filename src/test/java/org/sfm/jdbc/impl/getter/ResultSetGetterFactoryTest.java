@@ -1,6 +1,11 @@
 package org.sfm.jdbc.impl.getter;
 
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
@@ -11,9 +16,11 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.sql.*;
+import java.util.Calendar;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -175,4 +182,37 @@ public class ResultSetGetterFactoryTest {
 		return new JdbcColumnKey("NA", 1, type);
 	}
 
+
+	@Test
+	public void testJodaDateTime() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		Timestamp ts = new Timestamp(cal.getTimeInMillis());
+		when(resultSet.getTimestamp(1)).thenReturn(ts);
+		DateTime dt = factory.<DateTime>newGetter(DateTime.class, key(Types.TIMESTAMP)).get(resultSet);
+		assertTrue(new DateTime(cal).isEqual(dt));
+	}
+	@Test
+	public void testJodaLocalDate() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		Date ts = new Date(cal.getTimeInMillis());
+		when(resultSet.getDate(1)).thenReturn(ts);
+		LocalDate dt = factory.<LocalDate>newGetter(LocalDate.class, key(Types.DATE)).get(resultSet);
+		assertTrue(new LocalDate(cal).isEqual(dt));
+	}
+	@Test
+	public void testJodaLocalDateTime() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		Timestamp ts = new Timestamp(cal.getTimeInMillis());
+		when(resultSet.getTimestamp(1)).thenReturn(ts);
+		LocalDateTime dt = factory.<LocalDateTime>newGetter(LocalDateTime.class, key(Types.TIMESTAMP)).get(resultSet);
+		assertTrue(new LocalDateTime(cal).isEqual(dt));
+	}
+	@Test
+	public void testJodaLocalTime() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		Time ts = new Time(cal.getTimeInMillis());
+		when(resultSet.getTime(1)).thenReturn(ts);
+		LocalTime dt = factory.<LocalTime>newGetter(LocalTime.class, key(Types.TIME)).get(resultSet);
+		assertTrue(new LocalTime(cal).isEqual(dt));
+	}
 }

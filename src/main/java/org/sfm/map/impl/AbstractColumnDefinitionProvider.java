@@ -18,9 +18,6 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
     public void addColumnDefinition(Predicate<? super K> predicate, C definition) {
         defintions.add(new Tuple2<Predicate<? super K>, C>(predicate, definition));
     }
-    public void addColumnDefinition(String key, C definition) {
-        defintions.add(new Tuple2<Predicate<? super K>, C>(new CaseInsensitiveFieldKeyNamePredicate(key), definition));
-    }
 
     @Override
     public C getColumnDefinition(K key) {

@@ -8,6 +8,7 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -148,8 +149,7 @@ public final class JdbcMapperFactory {
 	 * @return
 	 */
 	public JdbcMapperFactory addAlias(String key, String value) {
-		columnDefinitions.addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>renameDefinition(value));
-		return this;
+		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>renameDefinition(value));
 	}
 
 	/**
@@ -159,12 +159,19 @@ public final class JdbcMapperFactory {
 	 * @return
 	 */
 	public JdbcMapperFactory addCustomFieldMapper(String key, FieldMapper<ResultSet, ?> fieldMapper) {
-		columnDefinitions.addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customFieldMapperDefinition(fieldMapper));
-		return this;
+		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customFieldMapperDefinition(fieldMapper));
 	}
 
 	public JdbcMapperFactory addCustomGetter(String key, Getter<ResultSet, Long> getter) {
-		columnDefinitions.addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customGetter(getter));
+		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customGetter(getter));
+	}
+
+	public JdbcMapperFactory addColumnDefinition(String key, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
+		return addColumnDefinition(new CaseInsensitiveFieldKeyNamePredicate(key), columnDefinition);
+	}
+
+	public JdbcMapperFactory addColumnDefinition(Predicate<? super JdbcColumnKey> predicate, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
+		columnDefinitions.addColumnDefinition(predicate, columnDefinition);
 		return this;
 	}
 

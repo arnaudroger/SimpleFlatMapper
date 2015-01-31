@@ -3,14 +3,12 @@ package org.sfm.csv;
 import org.sfm.csv.impl.CellValueReaderFactoryImpl;
 import org.sfm.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.sfm.csv.impl.DynamicCsvMapper;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.MapperBuildingException;
-import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 
@@ -142,13 +140,11 @@ public final class CsvMapperFactory {
 
 
 	public CsvMapperFactory addAlias(String key, String value) {
-		columnDefinitions.addColumnDefinition(key, CsvColumnDefinition.renameDefinition(value));
-		return this;
+		return addColumnDefinition(key, CsvColumnDefinition.renameDefinition(value));
 	}
 
 	public CsvMapperFactory addCustomValueReader(String key,	CellValueReader<?> cellValueReader) {
-		columnDefinitions.addColumnDefinition(key, CsvColumnDefinition.customReaderDefinition(cellValueReader));
-		return this;
+		return addColumnDefinition(key, CsvColumnDefinition.customReaderDefinition(cellValueReader));
 	}
 
 	public CsvMapperFactory propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
@@ -157,7 +153,12 @@ public final class CsvMapperFactory {
 	}
 
 	public CsvMapperFactory addColumnDefinition(String key, CsvColumnDefinition columnDefinition) {
-		columnDefinitions.addColumnDefinition(key, columnDefinition);
+		return addColumnDefinition(new CaseInsensitiveFieldKeyNamePredicate(key), columnDefinition);
+	}
+
+	public CsvMapperFactory addColumnDefinition(Predicate<? super CsvColumnKey> predicate, CsvColumnDefinition columnDefinition) {
+		columnDefinitions.addColumnDefinition(predicate, columnDefinition);
 		return this;
 	}
+
 }

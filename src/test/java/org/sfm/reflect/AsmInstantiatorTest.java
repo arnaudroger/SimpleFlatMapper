@@ -7,7 +7,6 @@ import org.sfm.csv.impl.DelayedCellSetter;
 import org.sfm.csv.impl.DelayedGetter;
 import org.sfm.csv.impl.ParsingContext;
 import org.sfm.csv.impl.cellreader.DelayedCellSetterImpl;
-import org.sfm.csv.impl.primitive.BooleanDelayedGetter;
 import org.sfm.reflect.asm.AsmFactory;
 
 import java.sql.ResultSet;
@@ -22,7 +21,7 @@ public class AsmInstantiatorTest {
 	@Test
 	public void testInstantiate() throws Exception {
 		
-		Instantiator<ResultSet, DbObject> instantiator = factory.createEmptyArgsInstatiantor(ResultSet.class, DbObject.class);
+		Instantiator<ResultSet, DbObject> instantiator = factory.createEmptyArgsInstantiator(ResultSet.class, DbObject.class);
 		
 		assertNotNull(instantiator.newInstance(null));
 	}
@@ -37,7 +36,7 @@ public class AsmInstantiatorTest {
 		injections.put(parameter, delayedGetter);
 
 		Instantiator<DelayedCellSetter[], String> instantiator =
-				factory.createInstatiantor( DelayedCellSetter[].class,
+				factory.createInstantiator(DelayedCellSetter[].class,
 						new ConstructorDefinition<String>(String.class.getConstructor(char[].class), parameter),
 						injections);
 		DelayedCellSetterImpl delayedCellSetter = new DelayedCellSetterImpl(null, new CellValueReader() {

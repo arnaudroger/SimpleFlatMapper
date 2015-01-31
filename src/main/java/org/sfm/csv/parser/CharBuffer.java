@@ -39,9 +39,9 @@ public final class CharBuffer {
 			System.arraycopy(buffer, mark, buffer, 0, newLength);
 		} else {
 			// double buffer size
-			char[] newbuffer = new char[buffer.length << 1];
-			System.arraycopy(buffer, mark, newbuffer, 0, newLength);
-			buffer = newbuffer;
+			char[] newBuffer = new char[buffer.length << 1];
+			System.arraycopy(buffer, mark, newBuffer, 0, newLength);
+			buffer = newBuffer;
 		}
 		bufferLength = newLength;
 

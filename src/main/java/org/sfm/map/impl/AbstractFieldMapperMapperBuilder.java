@@ -117,14 +117,14 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 						builder = newSubBuilder(propOwner.getType(), propOwner.getClassMeta());
 						builderToInject.put(param, builder);
 					}
-					addPropertyoBuilder(t, subProp, builder);
+					addPropertyBuilder(t, subProp, builder);
 				}
 			}
 
 			@SuppressWarnings("unchecked")
-			private <P> void addPropertyoBuilder(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t,
-					SubPropertyMeta<T, ?> subProp,
-					AbstractFieldMapperMapperBuilder<S, ?, K> builder) {
+			private <P> void addPropertyBuilder(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t,
+												SubPropertyMeta<T, ?> subProp,
+												AbstractFieldMapperMapperBuilder<S, ?, K> builder) {
 				((AbstractFieldMapperMapperBuilder<S, P, K>)builder).addMapping(t.getColumnKey(), ((SubPropertyMeta<T, P>)subProp).getSubProperty());
 			}
 		});

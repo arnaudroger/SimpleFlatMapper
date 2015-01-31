@@ -24,12 +24,12 @@ public abstract class PropertyMeta<O, P> {
 	}
 
 	public final Setter<O, P> getSetter() {
-		Setter<O, P> lsetter = setter;
-		if (lsetter == null) {
-			lsetter = newSetter();
-			setter = lsetter;
+		Setter<O, P> lSetter = setter;
+		if (lSetter == null) {
+			lSetter = newSetter();
+			setter = lSetter;
 		}
-		return lsetter;
+		return lSetter;
 	}
 
 	protected abstract Setter<O, P> newSetter();

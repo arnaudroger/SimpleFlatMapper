@@ -47,7 +47,7 @@ public class InstantiatorFactory {
 		
 		if (asmFactory != null && Modifier.isPublic(constructor.getModifiers()) && useAsmIfEnabled) {
 			try {
-				return asmFactory.createInstatiantor(source, constructorDefinition, injections);
+				return asmFactory.createInstantiator(source, constructorDefinition, injections);
 			} catch (Exception e) {
 				// fall back on reflection
 			}

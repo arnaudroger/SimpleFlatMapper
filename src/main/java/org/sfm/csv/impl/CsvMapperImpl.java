@@ -186,15 +186,15 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 				if (delayedCellSetterFactory instanceof DelegateMarkerDelayedCellSetter) {
 					DelegateMarkerDelayedCellSetter<T, ?> marker = (DelegateMarkerDelayedCellSetter<T, ?>) delayedCellSetterFactory;
 
-					CsvMapperCellConsumer<?> bhandler = cellHandlers.get(marker.getMapper());
+					CsvMapperCellConsumer<?> cellHandler = cellHandlers.get(marker.getMapper());
 
 					DelegateDelayedCellSetterFactory<T, ?> delegateCellSetter;
 
-					if(bhandler == null) {
+					if(cellHandler == null) {
 						delegateCellSetter = new DelegateDelayedCellSetterFactory(marker, i);
 						cellHandlers.put(marker.getMapper(), delegateCellSetter.getCellHandler());
 					} else {
-						delegateCellSetter = new DelegateDelayedCellSetterFactory(marker, bhandler, i);
+						delegateCellSetter = new DelegateDelayedCellSetterFactory(marker, cellHandler, i);
 					}
 					outDelayedCellSetters[i] =  delegateCellSetter.newCellSetter();
 				} else {
@@ -209,15 +209,15 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 			if (setters[i] instanceof DelegateMarkerSetter) {
 				DelegateMarkerSetter<?> marker = (DelegateMarkerSetter<?>) setters[i];
 
-				CsvMapperCellConsumer<?> bhandler = cellHandlers.get(marker.getMapper());
+				CsvMapperCellConsumer<?> cellHandler = cellHandlers.get(marker.getMapper());
 
 				DelegateCellSetter<T> delegateCellSetter;
 
-				if(bhandler == null) {
+				if(cellHandler == null) {
 					delegateCellSetter = new DelegateCellSetter<T>(marker, i + delayedCellSetters.length);
 					cellHandlers.put(marker.getMapper(), delegateCellSetter.getBytesCellHandler());
 				} else {
-					delegateCellSetter = new DelegateCellSetter<T>(marker, bhandler, i + delayedCellSetters.length);
+					delegateCellSetter = new DelegateCellSetter<T>(marker, cellHandler, i + delayedCellSetters.length);
 				}
 				outSetters[i] = delegateCellSetter;
 			} else {

@@ -19,20 +19,20 @@ public class RecordGetterFactory<R extends Record> implements
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public <P> Getter<R, P> newGetter(Type genericType, JooqFieldKey key) {
-		Class<P> propretyClass = TypeHelper.toClass(genericType);
-		if (Enum.class.isAssignableFrom(propretyClass)) {
+		Class<P> propertyClass = TypeHelper.toClass(genericType);
+		if (Enum.class.isAssignableFrom(propertyClass)) {
 			Class<?> columnType = key.getField().getType();
 			
 			if (TypeHelper.isNumber(columnType)) {
-				return new EnumRecordOrdinalGetter(key, propretyClass);
+				return new EnumRecordOrdinalGetter(key, propertyClass);
 			} else if (String.class.equals(columnType)){
-				return new EnumRecordNamedGetter(key, propretyClass);
+				return new EnumRecordNamedGetter(key, propertyClass);
 			} else {
 				return null;
 			}
 		}
 		
-		if (TypeHelper.areCompatible(propretyClass, key.getField().getType())) {
+		if (TypeHelper.areCompatible(propertyClass, key.getField().getType())) {
 			return new RecordGetter<R, P>(key.getIndex());
 		} else {
 			return newRecordGetterWithConverter(key.getField().getType(), genericType, key.getIndex());

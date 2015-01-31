@@ -30,15 +30,15 @@ public class AsmFactoryTest {
 	
 	@Test
 	public void testCreateInstatiatorEmptyConstructor() throws Exception {
-		Instantiator<ResultSet, DbObject> instantiator = asmFactory.createEmptyArgsInstatiantor(ResultSet.class, DbObject.class);
+		Instantiator<ResultSet, DbObject> instantiator = asmFactory.createEmptyArgsInstantiator(ResultSet.class, DbObject.class);
 		assertNotNull(instantiator.newInstance(null));
-		assertSame(instantiator.getClass(), asmFactory.createEmptyArgsInstatiantor(ResultSet.class, DbObject.class).getClass());
+		assertSame(instantiator.getClass(), asmFactory.createEmptyArgsInstantiator(ResultSet.class, DbObject.class).getClass());
 	}
 	@SuppressWarnings("serial")
 	@Test
 	public void testCreateInstatiatorFinalDbObjectInjectIdAndName() throws Exception {
 		ConstructorDefinition<DbFinalObject> constructorDefinition = AsmConstructorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0);
-		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstatiantor(ResultSet.class,
+		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
 				constructorDefinition,
 				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
@@ -46,7 +46,7 @@ public class AsmFactoryTest {
 						put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
 					}
 				}
-				);
+		);
 		
 		ResultSet rs= mock(ResultSet.class);
 		when(rs.getLong(1)).thenReturn(33l);
@@ -63,7 +63,7 @@ public class AsmFactoryTest {
 		assertEquals(33l, fdo.getId());
 		assertEquals("fdo", fdo.getName());
 		
-		assertSame(instantiator.getClass(), asmFactory.createInstatiantor(ResultSet.class,
+		assertSame(instantiator.getClass(), asmFactory.createInstantiator(ResultSet.class,
 				constructorDefinition,
 				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
@@ -71,13 +71,13 @@ public class AsmFactoryTest {
 						put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
 					}
 				}
-				).getClass());
+		).getClass());
 	}
 	
 	@Test
 	public void testCreateInstatiatorFinalDbObjectNameAndType() throws Exception {
 		@SuppressWarnings("serial")
-		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstatiantor(ResultSet.class,
+		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
 				AsmConstructorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0),
 				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
 					{
@@ -85,7 +85,7 @@ public class AsmFactoryTest {
 						put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
 					}
 				}
-				);
+		);
 		
 		ResultSet rs= mock(ResultSet.class);
 		when(rs.getInt(1)).thenReturn(1);

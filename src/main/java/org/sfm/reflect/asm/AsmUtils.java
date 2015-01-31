@@ -124,11 +124,11 @@ public class AsmUtils {
 		return typeParameters != null && typeParameters.length > 0;
 	}
 	
-	public static byte[] writeClassToFile (final String classname, final byte[] bytes) throws IOException {
+	public static byte[] writeClassToFile (final String className, final byte[] bytes) throws IOException {
 		if (targetDir != null) {
-			final int lastIndex = classname.lastIndexOf('.');
-			final String filename = classname.substring(lastIndex + 1) + ".class";
-			final String directory = classname.substring(0, lastIndex).replace('.', '/');
+			final int lastIndex = className.lastIndexOf('.');
+			final String filename = className.substring(lastIndex + 1) + ".class";
+			final String directory = className.substring(0, lastIndex).replace('.', '/');
 			final File packageDir = new File(targetDir, directory);
 			packageDir.mkdirs();
 			
@@ -245,8 +245,8 @@ public class AsmUtils {
 	public static void invoke(MethodVisitor mv, Class<?> target,
 			String method, String sig) {
 		Class<?> publicClass = getPublicOrInterfaceClass(target);
-		boolean isinterface = publicClass.isInterface();
-		mv.visitMethodInsn(isinterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, toType(publicClass), method, sig, isinterface);
+		boolean isInterface = publicClass.isInterface();
+		mv.visitMethodInsn(isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, toType(publicClass), method, sig, isInterface);
 	}
 	public static String toDeclaredLType(String sourceType) {
 		if (sourceType.startsWith("[L") || sourceType.startsWith("L")) {

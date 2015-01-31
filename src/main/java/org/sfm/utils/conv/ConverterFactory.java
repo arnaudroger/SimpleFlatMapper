@@ -17,7 +17,7 @@ import java.util.Map;
 public class ConverterFactory {
 
 	@SuppressWarnings("serial")
-	private static final Map<Class<? extends Number>, Converter<? extends Number, ? extends Number>> numberConvertors =
+	private static final Map<Class<? extends Number>, Converter<? extends Number, ? extends Number>> numberConverters =
 			new HashMap<Class<? extends Number>, Converter<? extends Number, ? extends Number>>() {{
 		put(Byte.class, new Converter<Number, Byte>() {
 			@Override
@@ -58,9 +58,9 @@ public class ConverterFactory {
 		if (outType.equals(String.class)) {
 			return (Converter<F, P>) new ToStringConverter<F>();
 		} else if (TypeHelper.isNumber(outType) && TypeHelper.isNumber(inType)) {
-			return (Converter<F, P>) numberConvertors.get(TypeHelper.wrap(outType));
+			return (Converter<F, P>) numberConverters.get(TypeHelper.wrap(outType));
 		} else if (TypeHelper.isClass(outType, URL.class)) {
-			return  (Converter<F, P>)new StringToURLConvertor<F>();
+			return  (Converter<F, P>)new StringToURLConverter<F>();
 		}  else if (TypeHelper.isArray(outType)) {
 			return  newArrayConverter(TypeHelper.getComponentType(outType));
 		} else if (TypeHelper.isAssignable(List.class, outType)) {

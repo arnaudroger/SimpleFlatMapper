@@ -20,6 +20,11 @@ public final class EnumTupleOrdinalIndexedGetter<E extends Enum<E>> implements  
 
 	@Override
 	public E get(final Tuple target) throws Exception {
-		return values[((Number)target.get(index, type)).intValue()];
+		Number number = (Number) target.get(index, type);
+		if (number != null) {
+			return values[number.intValue()];
+		} else {
+			return null;
+		}
 	}
 }

@@ -69,7 +69,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 			// cannot determine type
 			return true;
 		} else if(!areCompatible(propertyMetaType, customSourceReturnType)) {
-			mapperBuilderErrorHandler.customFieldError(key, "Incompatible customreader type " + customSourceReturnType +  " expected " + propertyMetaType);
+			mapperBuilderErrorHandler.customFieldError(key, "Incompatible customReader type " + customSourceReturnType +  " expected " + propertyMetaType);
 			return false;
 		}
 		return true;

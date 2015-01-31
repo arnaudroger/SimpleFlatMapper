@@ -74,7 +74,7 @@ public class CsvMapperBuilder<T> {
 	}
 	
 	public final CsvMapperBuilder<T> addMapping(final CsvColumnKey key, final CsvColumnDefinition columnDefinition) {
-		final CsvColumnDefinition composedDefinition = CsvColumnDefinition.compose(getColumnDefintion(key), columnDefinition);
+		final CsvColumnDefinition composedDefinition = CsvColumnDefinition.compose(getColumnDefinition(key), columnDefinition);
 		final CsvColumnKey mappedColumnKey = composedDefinition.rename(key);
 
 		propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
@@ -87,7 +87,7 @@ public class CsvMapperBuilder<T> {
 		propertyMappingsBuilder.addProperty(key, columnDefinition, propertyMeta);
 	}
 	
-	private CsvColumnDefinition getColumnDefintion(CsvColumnKey key) {
+	private CsvColumnDefinition getColumnDefinition(CsvColumnKey key) {
 		return CsvColumnDefinition.compose(CsvColumnDefinition.dateFormatDefinition(defaultDateFormat), columnDefinitions.getColumnDefinition(key));
 	}
 
@@ -295,12 +295,12 @@ public class CsvMapperBuilder<T> {
 						if (prop.isConstructorProperty()) {
 							throw new IllegalStateException("Unexpected ConstructorPropertyMeta at " + key.getIndex());
 						} else if (prop.isSubProperty()) {
-							final PropertyMeta<?, ?> powner = ((SubPropertyMeta)prop).getOwnerProperty();
-							CsvMapperBuilder<?> delegateMapperBuilder = delegateMapperBuilders .get(powner.getName());
+							final PropertyMeta<?, ?> propOwner = ((SubPropertyMeta)prop).getOwnerProperty();
+							CsvMapperBuilder<?> delegateMapperBuilder = delegateMapperBuilders .get(propOwner.getName());
 							
 							if (delegateMapperBuilder == null) {
-								delegateMapperBuilder = new CsvMapperBuilder(powner.getType(), powner.getClassMeta(), mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
-								delegateMapperBuilders.put(powner.getName(), delegateMapperBuilder);
+								delegateMapperBuilder = new CsvMapperBuilder(propOwner.getType(), propOwner.getClassMeta(), mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
+								delegateMapperBuilders.put(propOwner.getName(), delegateMapperBuilder);
 							}
 							
 							delegateMapperBuilder.addMapping(((SubPropertyMeta) prop).getSubProperty(), key, propMapping.getColumnDefinition());

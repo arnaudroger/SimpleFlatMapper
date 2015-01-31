@@ -31,7 +31,7 @@ public class Tuples {
 
     public static ParameterizedType tupleImplementationTypeDef(final Class<?> tupleImplementation, final Type... tupleTypes) {
         if (tupleImplementation.getTypeParameters().length  != tupleTypes.length) {
-            throw new IllegalArgumentException("Incompatible tupleImplementation and type defintion expected " + tupleImplementation.getTypeParameters().length + " type definition for " + tupleImplementation);
+            throw new IllegalArgumentException("Incompatible tupleImplementation and type definition expected " + tupleImplementation.getTypeParameters().length + " type definition for " + tupleImplementation);
         } else {
             return new TupleParameterizedType(tupleImplementation, tupleTypes);
         }

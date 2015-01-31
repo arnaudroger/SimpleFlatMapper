@@ -1,7 +1,6 @@
 package org.sfm.map.impl;
 
 
-import org.sfm.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.ColumnDefinitionProvider;
 import org.sfm.map.FieldKey;
@@ -13,17 +12,17 @@ import java.util.List;
 
 public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinition<K>, K extends FieldKey<K>> implements ColumnDefinitionProvider<C, K> {
 
-    private List<Tuple2<Predicate<? super K>, C>> defintions = new ArrayList<Tuple2<Predicate<? super K>, C>>();
+    private List<Tuple2<Predicate<? super K>, C>> definitions = new ArrayList<Tuple2<Predicate<? super K>, C>>();
 
     public void addColumnDefinition(Predicate<? super K> predicate, C definition) {
-        defintions.add(new Tuple2<Predicate<? super K>, C>(predicate, definition));
+        definitions.add(new Tuple2<Predicate<? super K>, C>(predicate, definition));
     }
 
     @Override
     public C getColumnDefinition(K key) {
         C definition = identity();
 
-        for(Tuple2<Predicate<? super K>, C> def : defintions) {
+        for(Tuple2<Predicate<? super K>, C> def : definitions) {
             if (def.first().test(key)) {
                 definition = compose(definition, def.second());
             }

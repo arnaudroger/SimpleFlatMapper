@@ -2,7 +2,7 @@ package org.sfm.csv.parser;
 
 
 /**
- * Consume the charbuffer.
+ * Consume the charBuffer.
  */
 public final class StandardCsvCharConsumer extends AbstractCsvCharConsumer {
 

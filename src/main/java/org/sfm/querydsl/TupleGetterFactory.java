@@ -17,14 +17,14 @@ public final class TupleGetterFactory implements GetterFactory<Tuple, TupleEleme
 	@Override
 	public <P> Getter<Tuple, P> newGetter(Type genericType, TupleElementKey key) {
 		
-		Class<Object> propretyClass = TypeHelper.toClass(genericType);
-		if (Enum.class.isAssignableFrom(propretyClass)) {
+		Class<Object> propertyClass = TypeHelper.toClass(genericType);
+		if (Enum.class.isAssignableFrom(propertyClass)) {
 			Class<?> columnType = key.getExpression().getType();
 			
 			if (Number.class.isAssignableFrom(columnType)) {
-				return new EnumTupleOrdinalIndexedGetter(key, propretyClass);
+				return new EnumTupleOrdinalIndexedGetter(key, propertyClass);
 			} else if (String.class.equals(columnType)){
-				return new EnumTupleNamedIndexedGetter(key, propretyClass);
+				return new EnumTupleNamedIndexedGetter(key, propertyClass);
 			} else {
 				return null;
 			}

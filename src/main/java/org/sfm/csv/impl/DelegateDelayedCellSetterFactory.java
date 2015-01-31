@@ -22,8 +22,8 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 
 	public DelegateDelayedCellSetterFactory(
 			DelegateMarkerDelayedCellSetter<T, P> marker,
-			CsvMapperCellConsumer<?> bhandler, int cellIndex) {
-		this.handler = bhandler;
+			CsvMapperCellConsumer<?> handler, int cellIndex) {
+		this.handler = handler;
 		this.marker = marker;
 		this.cellIndex = cellIndex;
 	}

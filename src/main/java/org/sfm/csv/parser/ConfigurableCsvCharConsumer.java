@@ -2,21 +2,21 @@ package org.sfm.csv.parser;
 
 
 /**
- * Consume the charbuffer.
+ * Consume the charBuffer.
  */
 public final class ConfigurableCsvCharConsumer extends AbstractCsvCharConsumer {
 
-	private final char separatoChar;
+	private final char separatorChar;
 	private final char quoteChar;
 
-	public ConfigurableCsvCharConsumer(CharBuffer csvBuffer, char separatoChar, char quoteChar) {
+	public ConfigurableCsvCharConsumer(CharBuffer csvBuffer, char separatorChar, char quoteChar) {
 		super(csvBuffer);
-		this.separatoChar = separatoChar;
+		this.separatorChar = separatorChar;
 		this.quoteChar = quoteChar;
 	}
 
 	protected void consumeOneChar(char character, int index, CellConsumer cellConsumer) {
-		if (character == separatoChar) {
+		if (character == separatorChar) {
 			newCellIfNotInQuote(index, cellConsumer);
 		} else if (character ==  '\n') {
 				handleEndOfLineLF(index, cellConsumer);
@@ -37,7 +37,7 @@ public final class ConfigurableCsvCharConsumer extends AbstractCsvCharConsumer {
 
 			char character = csvBuffer.getChar(index);
 
-			if (character == separatoChar) {
+			if (character == separatorChar) {
 				newCellIfNotInQuote(index, cellConsumer);
 			} else if (character ==  '\n') {
 				if (handleEndOfLineLF(index, cellConsumer)) {

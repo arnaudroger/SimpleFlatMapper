@@ -3,7 +3,7 @@ package org.sfm.utils.conv;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class StringToURLConvertor<I> implements Converter<I, URL> {
+public class StringToURLConverter<I> implements Converter<I, URL> {
 
 	@Override
 	public URL convert(I in) {

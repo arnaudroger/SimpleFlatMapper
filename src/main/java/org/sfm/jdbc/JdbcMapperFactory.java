@@ -13,7 +13,6 @@ import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -31,7 +30,7 @@ public final class JdbcMapperFactory {
 	private FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler = null;
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	private RowHandlerErrorHandler rowHandlerErrorHandler = new RethrowRowHandlerErrorHandler();
-	private Map<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions = new HashMap<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>>();
+	private FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey, ResultSet> columnDefinitions = new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey, ResultSet>();
 
 	private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
 	private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = new ResultSetGetterFactory();
@@ -142,14 +141,6 @@ public final class JdbcMapperFactory {
 	}
 
 
-	private FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> getColumnDefinition(String key) {
-		FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition = columnDefinitions.get(key.toLowerCase());
-		if (columnDefinition == null) {
-			columnDefinition = FieldMapperColumnDefinition.identity();
-		}
-		return columnDefinition;
-	}
-
 	/**
 	 * 
 	 * @param key
@@ -157,7 +148,7 @@ public final class JdbcMapperFactory {
 	 * @return
 	 */
 	public JdbcMapperFactory addAlias(String key, String value) {
-		columnDefinitions.put(key.toLowerCase(), FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>compose(getColumnDefinition(key), FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>renameDefinition(value)));
+		columnDefinitions.addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>renameDefinition(value));
 		return this;
 	}
 
@@ -168,12 +159,12 @@ public final class JdbcMapperFactory {
 	 * @return
 	 */
 	public JdbcMapperFactory addCustomFieldMapper(String key, FieldMapper<ResultSet, ?> fieldMapper) {
-		columnDefinitions.put(key.toLowerCase(), FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>compose(getColumnDefinition(key), FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customFieldMapperDefinition(fieldMapper)));
+		columnDefinitions.addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customFieldMapperDefinition(fieldMapper));
 		return this;
 	}
 
 	public JdbcMapperFactory addCustomGetter(String key, Getter<ResultSet, Long> getter) {
-		columnDefinitions.put(key.toLowerCase(), FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>compose(getColumnDefinition(key), FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customGetter(getter)));
+		columnDefinitions.addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customGetter(getter));
 		return this;
 	}
 

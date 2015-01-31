@@ -13,8 +13,6 @@ import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey>  {
 
@@ -25,14 +23,14 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 		this(target, ReflectionService.newInstance());
 	}
 	public JdbcMapperBuilder(final Type target, ReflectionService reflectService) throws MapperBuildingException {
-		this(target, reflectService, new HashMap<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>>(), new DefaultPropertyNameMatcherFactory(), new ResultSetGetterFactory());
+		this(target, reflectService, new IdentityFieldMapperColumnDefinitionProvider<JdbcColumnKey, ResultSet>(), new DefaultPropertyNameMatcherFactory(), new ResultSetGetterFactory());
 	}
 	@SuppressWarnings("unchecked")
-	public JdbcMapperBuilder(final Type target, ReflectionService reflectService, final Map<String,FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory, GetterFactory<ResultSet, JdbcColumnKey> getterFactory) throws MapperBuildingException {
+	public JdbcMapperBuilder(final Type target, ReflectionService reflectService, final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory, GetterFactory<ResultSet, JdbcColumnKey> getterFactory) throws MapperBuildingException {
 		this(reflectService.<T>getRootClassMeta(target), new RethrowMapperBuilderErrorHandler(), columnDefinitions, propertyNameMatcherFactory, getterFactory);
 	}
 	
-	public JdbcMapperBuilder(final ClassMeta<T> classMeta, final MapperBuilderErrorHandler mapperBuilderErrorHandler, final Map<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory, GetterFactory<ResultSet, JdbcColumnKey> getterFactory) throws MapperBuildingException {
+	public JdbcMapperBuilder(final ClassMeta<T> classMeta, final MapperBuilderErrorHandler mapperBuilderErrorHandler, final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory, GetterFactory<ResultSet, JdbcColumnKey> getterFactory) throws MapperBuildingException {
 		super(ResultSet.class, classMeta, getterFactory, new ResultSetFieldMapperFactory(getterFactory), columnDefinitions, propertyNameMatcherFactory, mapperBuilderErrorHandler);
 	}
 

@@ -1,10 +1,7 @@
 package org.sfm.csv.impl;
 
 import org.sfm.csv.*;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.MappingException;
-import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
@@ -13,9 +10,7 @@ import org.sfm.utils.RowHandler;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 //IFJAVA8_START
 import java.util.stream.Stream;
@@ -38,13 +33,13 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	private MapperCache<ColumnsMapperKey, CsvMapperImpl<T>> mapperCache = new MapperCache<ColumnsMapperKey, CsvMapperImpl<T>>();
 
 
-	private final Map<String, CsvColumnDefinition> columnDefinitions;
+	private final ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitions;
 	private final CellValueReaderFactory cellValueReaderFactory;
 
 	public DynamicCsvMapper(final Type target, final ClassMeta<T> classMeta,
 							final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler,
 							final MapperBuilderErrorHandler mapperBuilderErrorHandler, RowHandlerErrorHandler rowHandlerErrorHandler, String defaultDateFormat,
-							Map<String, CsvColumnDefinition> columnDefinitions,
+							ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitions,
 							PropertyNameMatcherFactory propertyNameMatcherFactory, CellValueReaderFactory cellValueReaderFactory) {
 		if (classMeta == null) {
 			throw new NullPointerException("classMeta is null");
@@ -65,7 +60,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	public DynamicCsvMapper(Type target, ClassMeta<T> classMeta) {
 		this(target, classMeta, new RethrowFieldMapperErrorHandler<CsvColumnKey>(), new RethrowMapperBuilderErrorHandler(), new RethrowRowHandlerErrorHandler(), "yyyy-MM-dd HH:mm:ss",
-				new HashMap<String, CsvColumnDefinition>(), new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl());
+				new IdentityCsvColumnDefinitionProvider(), new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl());
 	}
 
 	@Override

@@ -12,8 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 //IFJAVA8_START
-import java.util.Spliterator;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END
@@ -52,7 +50,7 @@ public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
-		return StreamSupport.stream(new AbstractJdbcMapperImpl.JdbcSpliterator(rs, this), false);
+		return StreamSupport.stream(new AbstractJdbcMapperImpl.JdbcSpliterator<T>(rs, this), false);
 	}
 	//IFJAVA8_END
 }

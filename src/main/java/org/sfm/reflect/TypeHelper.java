@@ -2,7 +2,6 @@ package org.sfm.reflect;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 

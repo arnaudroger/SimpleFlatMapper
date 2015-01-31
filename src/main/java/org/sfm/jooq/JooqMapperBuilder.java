@@ -8,7 +8,6 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 
 
 public class JooqMapperBuilder<R extends Record, E> extends
@@ -24,7 +23,7 @@ public class JooqMapperBuilder<R extends Record, E> extends
 	}
 	
 	public JooqMapperBuilder(final ClassMeta<E> classMeta) throws MapperBuildingException {
-		super(Record.class, classMeta, new RecordGetterFactory<R>(), new RecordFieldMapperFactory<R>(new RecordGetterFactory<R>()), new HashMap<String, FieldMapperColumnDefinition<JooqFieldKey, R>>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler());
+		super(Record.class, classMeta, new RecordGetterFactory<R>(), new RecordFieldMapperFactory<R>(new RecordGetterFactory<R>()), new IdentityFieldMapperColumnDefinitionProvider<JooqFieldKey, R>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler());
 	}
 
 	@Override

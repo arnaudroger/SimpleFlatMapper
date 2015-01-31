@@ -1,22 +1,18 @@
 package org.sfm.csv;
 
 import org.sfm.csv.impl.CellValueReaderFactoryImpl;
+import org.sfm.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.DefaultPropertyNameMatcherFactory;
-import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
-import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
-import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
+import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class CsvMapperFactory {
 
@@ -34,7 +30,7 @@ public final class CsvMapperFactory {
 	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
 	private RowHandlerErrorHandler rowHandlerErrorHandler = new RethrowRowHandlerErrorHandler();
 
-	private Map<String, CsvColumnDefinition> columnDefinitions = new HashMap<String, CsvColumnDefinition>();
+	private CsvColumnDefinitionProviderImpl columnDefinitions = new CsvColumnDefinitionProviderImpl();
 
 	private boolean useAsm = true;
 	private boolean disableAsm = false;
@@ -146,23 +142,13 @@ public final class CsvMapperFactory {
 
 
 	public CsvMapperFactory addAlias(String key, String value) {
-		CsvColumnDefinition columnDefinition = getColumnDefinition(key);
-		columnDefinitions.put(key.toLowerCase(), CsvColumnDefinition.compose(columnDefinition, CsvColumnDefinition.renameDefinition(value)));
+		columnDefinitions.addColumnDefinition(key, CsvColumnDefinition.renameDefinition(value));
 		return this;
 	}
 
 	public CsvMapperFactory addCustomValueReader(String key,	CellValueReader<?> cellValueReader) {
-		CsvColumnDefinition columnDefinition = getColumnDefinition(key);
-		columnDefinitions.put(key.toLowerCase(), CsvColumnDefinition.compose(columnDefinition, CsvColumnDefinition.customReaderDefinition(cellValueReader)));
+		columnDefinitions.addColumnDefinition(key, CsvColumnDefinition.customReaderDefinition(cellValueReader));
 		return this;
-	}
-
-	private CsvColumnDefinition getColumnDefinition(String key) {
-		CsvColumnDefinition columnDefinition = columnDefinitions.get(key.toLowerCase());
-		if (columnDefinition == null) {
-			return CsvColumnDefinition.IDENTITY;
-		}
-		return columnDefinition;
 	}
 
 	public CsvMapperFactory propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
@@ -171,8 +157,7 @@ public final class CsvMapperFactory {
 	}
 
 	public CsvMapperFactory addColumnDefinition(String key, CsvColumnDefinition columnDefinition) {
-		CsvColumnDefinition cd = getColumnDefinition(key);
-		columnDefinitions.put(key.toLowerCase(), CsvColumnDefinition.compose(cd, columnDefinition));
+		columnDefinitions.addColumnDefinition(key, columnDefinition);
 		return this;
 	}
 }

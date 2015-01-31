@@ -1,10 +1,7 @@
 package org.sfm.csv;
 
 import org.sfm.csv.impl.*;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.MapperBuildingException;
-import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
@@ -28,7 +25,7 @@ public class CsvMapperBuilder<T> {
 	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
 	private final Type target;
 	private final ReflectionService reflectionService;
-	private final Map<String, CsvColumnDefinition> columnDefinitions;
+	private final ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitions;
 
 	private final PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition> propertyMappingsBuilder;
 	
@@ -46,11 +43,11 @@ public class CsvMapperBuilder<T> {
 	}
 
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta) {
-		this(target, classMeta, new RethrowMapperBuilderErrorHandler(), new HashMap<String, CsvColumnDefinition>(),new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl());
+		this(target, classMeta, new RethrowMapperBuilderErrorHandler(), new IdentityCsvColumnDefinitionProvider(), new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl());
 	}
 
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta,
-							MapperBuilderErrorHandler mapperBuilderErrorHandler, Map<String, CsvColumnDefinition> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory, CellValueReaderFactory cellValueReaderFactory) throws MapperBuildingException {
+							MapperBuilderErrorHandler mapperBuilderErrorHandler, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory, CellValueReaderFactory cellValueReaderFactory) throws MapperBuildingException {
 		this.target = target;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.reflectionService = classMeta.getReflectionService();
@@ -91,13 +88,7 @@ public class CsvMapperBuilder<T> {
 	}
 	
 	private CsvColumnDefinition getColumnDefintion(CsvColumnKey key) {
-		CsvColumnDefinition definition = columnDefinitions.get(key.getName().toLowerCase());
-
-		if (definition == null) {
-			return CsvColumnDefinition.dateFormatDefinition(defaultDateFormat);
-		} else {
-			return definition;
-		}
+		return CsvColumnDefinition.compose(CsvColumnDefinition.dateFormatDefinition(defaultDateFormat), columnDefinitions.getColumnDefinition(key));
 	}
 
 
@@ -370,4 +361,5 @@ public class CsvMapperBuilder<T> {
 		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
 		return this;
 	}
+
 }

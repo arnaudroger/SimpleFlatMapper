@@ -16,15 +16,21 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
     public abstract Getter<S, ?> getCustomGetter();
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> identity() {
-        return new IndentityColumnDefinition<K, S>();
+        return new IdentityColumnDefinition<K, S>();
     }
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> compose(final FieldMapperColumnDefinition<K, S> def1, final FieldMapperColumnDefinition<K, S> def2) {
+        if (def1.getClass().equals(IdentityColumnDefinition.class)) {
+            return def2;
+        }
+        if (def2.getClass().equals(IdentityColumnDefinition.class)) {
+            return def1;
+        }
         return new ComposeColumnDefinition<K, S>(def1, def2);
     }
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customFieldMapperDefinition(final FieldMapper<ResultSet, ?> mapper) {
-        return new IndentityColumnDefinition<K, S>() {
+        return new IdentityColumnDefinition<K, S>() {
             @Override
             public FieldMapper<?, ?> getCustomFieldMapper() {
                 return mapper;
@@ -33,7 +39,7 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
     }
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customGetter(final Getter<S, ?> getter) {
-        return new IndentityColumnDefinition<K, S>() {
+        return new IdentityColumnDefinition<K, S>() {
             @Override
             public Getter<S, ?> getCustomGetter() {
                 return getter;
@@ -53,14 +59,14 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
     }
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> renameDefinition(final String name) {
-        return new IndentityColumnDefinition<K, S>() {
+        return new IdentityColumnDefinition<K, S>() {
             @Override
             public K rename(K key) {
                 return key.alias(name);
             }
         };
     }
-    static class IndentityColumnDefinition<K extends FieldKey<K>, S> extends FieldMapperColumnDefinition<K, S> {
+    static class IdentityColumnDefinition<K extends FieldKey<K>, S> extends FieldMapperColumnDefinition<K, S> {
         @Override
         public K rename(K key) {
             return key;

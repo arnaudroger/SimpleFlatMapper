@@ -25,7 +25,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	private final PropertyMappingsBuilder<T, K,FieldMapperColumnDefinition<K, S>> propertyMappingsBuilder;
 	protected final ReflectionService reflectionService;
 	
-	protected final Map<String, FieldMapperColumnDefinition<K, S>> columnDefinitions;
+	protected final ColumnDefinitionProvider<FieldMapperColumnDefinition<K, S>, K> columnDefinitions;
 	private final List<FieldMapper<S, T>> additionalMappers = new ArrayList<FieldMapper<S, T>>();
 	protected final PropertyNameMatcherFactory propertyNameMatcherFactory;
 
@@ -38,7 +38,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 											final ClassMeta<T> classMeta,
 											GetterFactory<S, K> getterFactory,
 											FieldMapperFactory<S, K, FieldMapperColumnDefinition<K, S>> fieldMapperFactory,
-											Map<String, FieldMapperColumnDefinition<K, S>> columnDefinitions,
+											ColumnDefinitionProvider<FieldMapperColumnDefinition<K, S>, K> columnDefinitions,
 											PropertyNameMatcherFactory propertyNameMatcherFactory,
 											MapperBuilderErrorHandler mapperBuilderErrorHandler) throws MapperBuildingException {
 		if (source == null) {
@@ -138,8 +138,8 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 
 	@SuppressWarnings("unchecked")
 	protected void _addMapping(K key, final FieldMapperColumnDefinition<K, S> columnDefinition) {
-			final FieldMapperColumnDefinition<K, S> composedDefinition = FieldMapperColumnDefinition.compose(columnDefinition, getColumnDefintion(key));
-			final K mappedColumnKey = composedDefinition.rename(key);
+		final FieldMapperColumnDefinition<K, S> composedDefinition = FieldMapperColumnDefinition.compose(columnDefinition, columnDefinitions.getColumnDefinition(key));
+		final K mappedColumnKey = composedDefinition.rename(key);
 
 		if (columnDefinition.getCustomFieldMapper() != null) {
 			_addMapper((FieldMapper<S, T>) columnDefinition.getCustomFieldMapper());
@@ -149,16 +149,6 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	}
 
 
-	private FieldMapperColumnDefinition<K, S> getColumnDefintion(K key) {
-		FieldMapperColumnDefinition<K, S> definition = columnDefinitions.get(key.getName().toLowerCase());
-
-		if (definition == null) {
-			return FieldMapperColumnDefinition.identity();
-		} else {
-			return definition;
-		}
-	}
-	
 	protected <P> void addMapping(K columnKey, PropertyMeta<T, P> prop) {
 		propertyMappingsBuilder.addProperty(columnKey, identity, prop);
 	}

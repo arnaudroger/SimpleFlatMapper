@@ -17,7 +17,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.Map;
 //IFJAVA8_START
 import java.util.stream.Stream;
 //IFJAVA8_END
@@ -29,8 +28,8 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler;
 
-	private final  MapperBuilderErrorHandler mapperBuilderErrorHandler;
-	private final Map<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions;
+	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
+	private final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions;
 	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
 	private final RowHandlerErrorHandler rowHandlerErrorHandler;
 	private MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache = new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
@@ -39,7 +38,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 							 final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler,
 							 final MapperBuilderErrorHandler mapperBuilderErrorHandler,
 							 RowHandlerErrorHandler rowHandlerErrorHandler,
-							 final Map<String, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> columnDefinitions,
+							 final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions,
 							 PropertyNameMatcherFactory propertyNameMatcherFactory) {
 		this.classMeta = classMeta;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;

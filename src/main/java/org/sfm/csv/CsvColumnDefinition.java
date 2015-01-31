@@ -10,10 +10,10 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
     public abstract String dateFormat();
     public abstract CellValueReader<?> getCustomReader();
 
-    public static final CsvColumnDefinition IDENTITY = new IndentityCsvColumnDefinition();
+    public static final CsvColumnDefinition IDENTITY = new IdentityCsvColumnDefinition();
 
     public static CsvColumnDefinition renameDefinition(final String name) {
-        return new IndentityCsvColumnDefinition() {
+        return new IdentityCsvColumnDefinition() {
             @Override
             public CsvColumnKey rename(CsvColumnKey key) {
                 return key.alias(name);
@@ -22,7 +22,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
     }
 
     public static CsvColumnDefinition dateFormatDefinition(final String dateFormatDef) {
-        return new IndentityCsvColumnDefinition() {
+        return new IdentityCsvColumnDefinition() {
             @Override
             public String dateFormat() {
                 return dateFormatDef;
@@ -31,7 +31,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
     }
 
     public static CsvColumnDefinition customReaderDefinition(final CellValueReader<?> cellValueReader) {
-        return new IndentityCsvColumnDefinition() {
+        return new IdentityCsvColumnDefinition() {
             @Override
             public CellValueReader<?> getCustomReader() {
                 return cellValueReader;
@@ -53,14 +53,13 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
     public static CsvColumnDefinition compose(final CsvColumnDefinition def1, final CsvColumnDefinition def2) {
         if (def1 == IDENTITY) return def2;
         if (def2 == IDENTITY) return def1;
-
         return new ComposeCsvColumnDefinition(def1, def2);
     }
 
 
 
 
-    static class IndentityCsvColumnDefinition extends CsvColumnDefinition {
+    static class IdentityCsvColumnDefinition extends CsvColumnDefinition {
         @Override
         public String dateFormat() {
             return null;

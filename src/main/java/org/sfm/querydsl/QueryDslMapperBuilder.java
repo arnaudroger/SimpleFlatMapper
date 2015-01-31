@@ -9,7 +9,6 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 
 public final class QueryDslMapperBuilder<T> 
 	extends AbstractFieldMapperMapperBuilder<Tuple, T, TupleElementKey> {
@@ -25,7 +24,7 @@ public final class QueryDslMapperBuilder<T>
 	}
 	
 	public QueryDslMapperBuilder(final ClassMeta<T> classMeta) throws MapperBuildingException {
-		super(Tuple.class, classMeta, new TupleGetterFactory(), new TupleFieldMapperFactory(new TupleGetterFactory()), new HashMap<String, FieldMapperColumnDefinition<TupleElementKey, Tuple>>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler());
+		super(Tuple.class, classMeta, new TupleGetterFactory(), new TupleFieldMapperFactory(new TupleGetterFactory()), new IdentityFieldMapperColumnDefinitionProvider<TupleElementKey, Tuple>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler());
 	}
 
 	@Override

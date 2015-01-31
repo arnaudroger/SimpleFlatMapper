@@ -51,7 +51,7 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
-		return StreamSupport.stream(new JdbcSpliterator(rs, this), false);
+		return StreamSupport.stream(new JdbcSpliterator<T>(rs, this), false);
 	}
 
 	public static class JdbcSpliterator<T> implements Spliterator<T> {

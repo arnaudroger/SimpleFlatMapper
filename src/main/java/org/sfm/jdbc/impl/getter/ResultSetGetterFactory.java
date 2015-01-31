@@ -1,6 +1,7 @@
 package org.sfm.jdbc.impl.getter;
 
 import org.sfm.jdbc.JdbcColumnKey;
+import org.sfm.jdbc.impl.getter.joda.JodaTimeGetterHelper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.GetterFactory;
 import org.sfm.reflect.Getter;
@@ -20,6 +21,25 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey>{
+
+	public static GetterFactory<ResultSet, JdbcColumnKey> DATE_GETTER_FACTORY = new GetterFactory<ResultSet, JdbcColumnKey>() {
+		@SuppressWarnings("unchecked")
+		@Override
+		public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			switch (key.getSqlType()) {
+				case JdbcColumnKey.UNDEFINED_TYPE:
+					return (Getter<ResultSet, P>) new UndefinedDateResultSetGetter(key.getIndex());
+				case Types.TIMESTAMP:
+					return (Getter<ResultSet, P>) new TimestampResultSetGetter(key.getIndex());
+				case Types.DATE:
+					return (Getter<ResultSet, P>) new DateResultSetGetter(key.getIndex());
+				case Types.TIME:
+					return (Getter<ResultSet, P>) new TimeResultSetGetter(key.getIndex());
+				default:
+					return null;
+			}
+		}
+	};
 	public static final class StringResultSetGetterFactory implements
 			GetterFactory<ResultSet, JdbcColumnKey> {
 		@SuppressWarnings("unchecked")
@@ -79,24 +99,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 	private static final Map<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>> factoryPerType = 
 		new HashMap<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>>() {{
 		put(String.class, new StringResultSetGetterFactory());
-		put(Date.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
-				switch (key.getSqlType()) {
-				 case JdbcColumnKey.UNDEFINED_TYPE:
-						return (Getter<ResultSet, P>) new UndefinedDateResultSetGetter(key.getIndex());
-				 case Types.TIMESTAMP:
-						return (Getter<ResultSet, P>) new TimestampResultSetGetter(key.getIndex());
-				 case Types.DATE: 
-						return (Getter<ResultSet, P>) new DateResultSetGetter(key.getIndex());
-				 case Types.TIME:
-						return (Getter<ResultSet, P>) new TimeResultSetGetter(key.getIndex());
-				default:
-					return null;
-				}
-			}
-		});
+			put(Date.class, DATE_GETTER_FACTORY);
 
 		put(java.sql.Date.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
@@ -331,7 +334,9 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		
 		Getter<ResultSet, P> getter = null;
 		if (getterFactory != null) {
-			getter = getterFactory.newGetter(genericType, key);
+			getter = (Getter<ResultSet, P>) getterFactory.newGetter(genericType, key);
+		} else {
+			getter = (Getter<ResultSet, P>) JodaTimeGetterHelper.getGetter(genericType, key);
 		}
 		return getter;
 	}

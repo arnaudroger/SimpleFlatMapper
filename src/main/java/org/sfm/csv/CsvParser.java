@@ -11,10 +11,9 @@ import org.sfm.utils.Predicate;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Iterator;
-//IFJAVA8_START
 import java.util.List;
+//IFJAVA8_START
 import java.util.stream.Stream;
 //IFJAVA8_END
 

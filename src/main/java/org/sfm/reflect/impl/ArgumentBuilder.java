@@ -17,59 +17,58 @@ public final class ArgumentBuilder<S, T> {
 			return null;
 		}
 	};
-	@SuppressWarnings({ "serial", "rawtypes" })
-	private static final Map<Class<?>, Getter> DEFAULT_GETTERS = new HashMap<Class<?>, Getter>() {
-		{
-			put(boolean.class, new Getter() {
-				@Override
-				public Object get(Object target) throws Exception {
-					return Boolean.TRUE;
-				}
-			});
-			put(byte.class,  new Getter() {
-				@Override
-				public Object get(Object target) throws Exception {
-					return new Byte((byte) 0);
-				}
-			});
-			put(char.class, new Getter() {
-				@Override
-				public Object get(Object target) throws Exception {
-					return new Character((char)0);
-				}
-			});
-			put(short.class, new Getter() {
-				@Override
-				public Object get(Object target) throws Exception {
-					return new Short((short)0);
-				}
-			});
-			put(int.class, new Getter() {
-				@Override
-				public Object get(Object target) throws Exception {
-					return new Integer(0);
-				}
-			});
-			put(long.class, new Getter() {
-				@Override
-				public Object get(Object target) throws Exception {
-					return new Long(0);
-				}
-			});
-			put(float.class, new Getter() {
-				@Override
-				public Object get(Object target) throws Exception {
-					return new Float(0.0);
-				}
-			});
-			put(double.class, new Getter() {
+	@SuppressWarnings({  "rawtypes" })
+	private static final Map<Class<?>, Getter> DEFAULT_GETTERS = new HashMap<Class<?>, Getter>();
+	static {
+		DEFAULT_GETTERS.put(boolean.class, new Getter() {
+			@Override
+			public Object get(Object target) throws Exception {
+				return Boolean.TRUE;
+			}
+		});
+		DEFAULT_GETTERS.put(byte.class, new Getter() {
+			@Override
+			public Object get(Object target) throws Exception {
+				return new Byte((byte) 0);
+			}
+		});
+		DEFAULT_GETTERS.put(char.class, new Getter() {
+			@Override
+			public Object get(Object target) throws Exception {
+				return new Character((char) 0);
+			}
+		});
+		DEFAULT_GETTERS.put(short.class, new Getter() {
+			@Override
+			public Object get(Object target) throws Exception {
+				return new Short((short) 0);
+			}
+		});
+		DEFAULT_GETTERS.put(int.class, new Getter() {
+			@Override
+			public Object get(Object target) throws Exception {
+				return new Integer(0);
+			}
+		});
+		DEFAULT_GETTERS.put(long.class, new Getter() {
+			@Override
+			public Object get(Object target) throws Exception {
+				return new Long(0);
+			}
+		});
+		DEFAULT_GETTERS.put(float.class, new Getter() {
+			@Override
+			public Object get(Object target) throws Exception {
+				return new Float(0.0);
+			}
+		});
+		DEFAULT_GETTERS.put(double.class, new Getter() {
 				@Override
 				public Object get(Object target) throws Exception {
 					return new Double(0.0d);
 				}
 			});
-		}
-	};	
+	};
 	
 	
 	private final Getter<S, ?>[] getters;

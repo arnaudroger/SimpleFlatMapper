@@ -34,18 +34,15 @@ public class AsmFactoryTest {
 		assertNotNull(instantiator.newInstance(null));
 		assertSame(instantiator.getClass(), asmFactory.createEmptyArgsInstantiator(ResultSet.class, DbObject.class).getClass());
 	}
-	@SuppressWarnings("serial")
 	@Test
 	public void testCreateInstatiatorFinalDbObjectInjectIdAndName() throws Exception {
 		ConstructorDefinition<DbFinalObject> constructorDefinition = AsmConstructorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0);
+		HashMap<ConstructorParameter, Getter<ResultSet, ?>> injections = new HashMap<ConstructorParameter, Getter<ResultSet, ?>>();
+		injections.put(new ConstructorParameter("id", long.class), new LongResultSetGetter(1));
+		injections.put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
 				constructorDefinition,
-				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
-					{
-						put(new ConstructorParameter("id", long.class), new LongResultSetGetter(1));
-						put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
-					}
-				}
+				injections
 		);
 		
 		ResultSet rs= mock(ResultSet.class);
@@ -62,29 +59,23 @@ public class AsmFactoryTest {
 		assertNull(fdo.getTypeOrdinal());
 		assertEquals(33l, fdo.getId());
 		assertEquals("fdo", fdo.getName());
-		
+
+
 		assertSame(instantiator.getClass(), asmFactory.createInstantiator(ResultSet.class,
 				constructorDefinition,
-				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
-					{
-						put(new ConstructorParameter("id", long.class), new LongResultSetGetter(1));
-						put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
-					}
-				}
+				injections
 		).getClass());
 	}
 	
 	@Test
 	public void testCreateInstatiatorFinalDbObjectNameAndType() throws Exception {
-		@SuppressWarnings("serial")
+		HashMap<ConstructorParameter, Getter<ResultSet, ?>> injections = new HashMap<ConstructorParameter, Getter<ResultSet, ?>>();
+		injections.put(new ConstructorParameter("typeOrdinal", Type.class), new OrdinalEnumResultSetGetter<Type>(1, Type.class));
+		injections.put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
+
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
 				AsmConstructorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0),
-				new HashMap<ConstructorParameter, Getter<ResultSet, ?>>() {
-					{
-						put(new ConstructorParameter("typeOrdinal", Type.class), new OrdinalEnumResultSetGetter<Type>(1, Type.class));
-						put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
-					}
-				}
+				injections
 		);
 		
 		ResultSet rs= mock(ResultSet.class);

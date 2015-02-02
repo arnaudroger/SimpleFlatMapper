@@ -43,17 +43,17 @@ public class TypeHelper {
 		return Number.class.isAssignableFrom(wrap(TypeHelper.toClass(target)));
 	}
 
-	@SuppressWarnings("serial")
-	private final static Map<Class<?>, Class<?>> wrappers = new HashMap<Class<?>, Class<?>>() {{
-		put(boolean.class, Boolean.class);
-		put(byte.class, Byte.class);
-		put(short.class, Short.class);
-		put(char.class, Character.class);
-		put(int.class, Integer.class);
-		put(long.class, Long.class);
-		put(float.class, Float.class);
-		put(double.class, Double.class);
-	}};
+	private final static Map<Class<?>, Class<?>> wrappers = new HashMap<Class<?>, Class<?>>();
+	static {
+		wrappers.put(boolean.class, Boolean.class);
+		wrappers.put(byte.class, Byte.class);
+		wrappers.put(short.class, Short.class);
+		wrappers.put(char.class, Character.class);
+		wrappers.put(int.class, Integer.class);
+		wrappers.put(long.class, Long.class);
+		wrappers.put(float.class, Float.class);
+		wrappers.put(double.class, Double.class);
+	}
 
 	public static boolean isArray(Type outType) {
 		return TypeHelper.toClass(outType).isArray();

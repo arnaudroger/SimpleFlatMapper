@@ -95,13 +95,13 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 
 	public static final int UNDEFINED = -99999;
 
-	@SuppressWarnings("serial")
-	private static final Map<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>> factoryPerType = 
-		new HashMap<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>>() {{
-		put(String.class, new StringResultSetGetterFactory());
-			put(Date.class, DATE_GETTER_FACTORY);
+	private static final Map<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>> factoryPerType =
+		new HashMap<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>>();
+	static {
+		factoryPerType.put(String.class, new StringResultSetGetterFactory());
+		factoryPerType.put(Date.class, DATE_GETTER_FACTORY);
 
-		put(java.sql.Date.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(java.sql.Date.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
@@ -109,7 +109,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			}
 		});
 
-		put(java.sql.Timestamp.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(java.sql.Timestamp.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
@@ -117,7 +117,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			}
 		});
 
-		put(java.sql.Time.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(java.sql.Time.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
@@ -125,70 +125,70 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			}
 		});
 
-		put(Boolean.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(Boolean.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new BooleanResultSetGetter(key.getIndex());
 			}
 		});
-		put(Byte.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(Byte.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new ByteResultSetGetter(key.getIndex());
 			}
 		});
-		put(Character.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(Character.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new CharacterResultSetGetter(key.getIndex());
 			}
 		});
-		put(Short.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(Short.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new ShortResultSetGetter(key.getIndex());
 			}
 		});
-		put(Integer.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(Integer.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new IntResultSetGetter(key.getIndex());
 			}
 		});
-		put(Long.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(Long.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new LongResultSetGetter(key.getIndex());
 			}
 		});
-		put(Float.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(Float.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new FloatResultSetGetter(key.getIndex());
 			}
 		});
-		put(Double.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(Double.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new DoubleResultSetGetter(key.getIndex());
 			}
 		});
-		put(BigInteger.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(BigInteger.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new BigIntegerResultSetGetter(key.getIndex());
 			}
 		});
-		put(BigDecimal.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(BigDecimal.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
@@ -196,7 +196,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			}
 		});
 
-		put(URL.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(URL.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
@@ -207,91 +207,91 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				}
 			}
 		});
-		
-		put(byte[].class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+
+		factoryPerType.put(byte[].class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new ByteArrayResultSetGetter(key.getIndex());
 			}
 		});
-		
-		put(InputStream.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+
+		factoryPerType.put(InputStream.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new InputStreamResultSetGetter(key.getIndex());
 			}
 		});
-		
-		put(Blob.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+
+		factoryPerType.put(Blob.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new BlobResultSetGetter(key.getIndex());
 			}
 		});
-		
-		put(Reader.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+
+		factoryPerType.put(Reader.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
-				switch(key.getSqlType()) {
-				case Types.LONGNVARCHAR:
-				case Types.NCHAR:
-				case Types.NVARCHAR:
-				case Types.NCLOB:
-					return (Getter<ResultSet, P>) new NReaderResultSetGetter(key.getIndex());
-				default:
-					return (Getter<ResultSet, P>) new ReaderResultSetGetter(key.getIndex());
+				switch (key.getSqlType()) {
+					case Types.LONGNVARCHAR:
+					case Types.NCHAR:
+					case Types.NVARCHAR:
+					case Types.NCLOB:
+						return (Getter<ResultSet, P>) new NReaderResultSetGetter(key.getIndex());
+					default:
+						return (Getter<ResultSet, P>) new ReaderResultSetGetter(key.getIndex());
 				}
 			}
 		});
-		
-		put(Clob.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+
+		factoryPerType.put(Clob.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new ClobResultSetGetter(key.getIndex());
 			}
 		});
-		
-		put(NClob.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+
+		factoryPerType.put(NClob.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new NClobResultSetGetter(key.getIndex());
 			}
 		});
-		put(Ref.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(Ref.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new RefResultSetGetter(key.getIndex());
 			}
 		});
-		put(RowId.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(RowId.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new RowIdResultSetGetter(key.getIndex());
 			}
 		});
-		put(SQLXML.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(SQLXML.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new SQLXMLResultSetGetter(key.getIndex());
 			}
 		});
-		put(Array.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		factoryPerType.put(Array.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
 				return (Getter<ResultSet, P>) new SqlArrayResultSetGetter(key.getIndex());
 			}
 		});
-	}};
+	};
 
 	@SuppressWarnings("unchecked")
 	@Override

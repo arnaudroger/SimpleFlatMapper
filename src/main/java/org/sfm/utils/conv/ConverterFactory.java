@@ -16,42 +16,56 @@ import java.util.Map;
 
 public class ConverterFactory {
 
-	@SuppressWarnings("serial")
 	private static final Map<Class<? extends Number>, Converter<? extends Number, ? extends Number>> numberConverters =
-			new HashMap<Class<? extends Number>, Converter<? extends Number, ? extends Number>>() {{
-		put(Byte.class, new Converter<Number, Byte>() {
+			new HashMap<Class<? extends Number>, Converter<? extends Number, ? extends Number>>();
+	static {
+		numberConverters.put(Byte.class, new Converter<Number, Byte>() {
 			@Override
-			public Byte convert(Number in) { return new Byte(in.byteValue());}
+			public Byte convert(Number in) {
+				return new Byte(in.byteValue());
+			}
 		});
-		put(Short.class, new Converter<Number, Short>() {
+		numberConverters.put(Short.class, new Converter<Number, Short>() {
 			@Override
-			public Short convert(Number in) { return new Short(in.shortValue());}
+			public Short convert(Number in) {
+				return new Short(in.shortValue());
+			}
 		});
-		put(Integer.class, new Converter<Number, Integer>() {
+		numberConverters.put(Integer.class, new Converter<Number, Integer>() {
 			@Override
-			public Integer convert(Number in) { return new Integer(in.intValue());}
+			public Integer convert(Number in) {
+				return new Integer(in.intValue());
+			}
 		});
-		put(Long.class, new Converter<Number, Long>() {
+		numberConverters.put(Long.class, new Converter<Number, Long>() {
 			@Override
-			public Long convert(Number in) { return new Long(in.longValue());}
+			public Long convert(Number in) {
+				return new Long(in.longValue());
+			}
 		});
-		put(Float.class, new Converter<Number, Float>() {
+		numberConverters.put(Float.class, new Converter<Number, Float>() {
 			@Override
-			public Float convert(Number in) { return new Float(in.floatValue());}
+			public Float convert(Number in) {
+				return new Float(in.floatValue());
+			}
 		});
-		put(Double.class, new Converter<Number, Double>() {
+		numberConverters.put(Double.class, new Converter<Number, Double>() {
 			@Override
-			public Double convert(Number in) { return new Double(in.doubleValue());}
+			public Double convert(Number in) {
+				return new Double(in.doubleValue());
+			}
 		});
-		put(BigDecimal.class, new Converter<Number, BigDecimal>() {
+		numberConverters.put(BigDecimal.class, new Converter<Number, BigDecimal>() {
 			@Override
-			public BigDecimal convert(Number in) { return new BigDecimal(in.doubleValue());}
+			public BigDecimal convert(Number in) {
+				return new BigDecimal(in.doubleValue());
+			}
 		});
-		put(BigInteger.class, new Converter<Number, BigInteger>() {
+		numberConverters.put(BigInteger.class, new Converter<Number, BigInteger>() {
 			@Override
 			public BigInteger convert(Number in) { return new BigInteger(String.valueOf(in));}
 		});
-	}};
+	};
 	
 	@SuppressWarnings("unchecked")
 	public static <P, F> Converter<F, P> getConverter(Class<F> inType, Type outType) {

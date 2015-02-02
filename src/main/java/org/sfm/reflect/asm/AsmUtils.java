@@ -32,81 +32,69 @@ public class AsmUtils {
 		return name.replace('.', '/');
 	}
 	
-	@SuppressWarnings("serial")
-	static final Map<Class<?>, Class<?>> wrappers = new HashMap<Class<?>, Class<?>>() {
-		{
-			  put(boolean.class, Boolean.class);
-		      put(byte.class, Byte.class);
-		      put(char.class, Character.class);
-		      put(double.class, Double.class);
-		      put(float.class, Float.class);
-		      put(int.class, Integer.class);
-		      put(long.class, Long.class);
-		      put(short.class, Short.class);
-		}
-	};
+	static final Map<Class<?>, Class<?>> wrappers = new HashMap<Class<?>, Class<?>>();
+	static {
+		wrappers.put(boolean.class, Boolean.class);
+		wrappers.put(byte.class, Byte.class);
+		wrappers.put(char.class, Character.class);
+		wrappers.put(double.class, Double.class);
+		wrappers.put(float.class, Float.class);
+		wrappers.put(int.class, Integer.class);
+		wrappers.put(long.class, Long.class);
+		wrappers.put(short.class, Short.class);
+	}
 	
-	@SuppressWarnings("serial")
-	static final Map<Class<?>, String> primitivesType = new HashMap<Class<?>, String>() {
-		{
-			  put(boolean.class, "Z");
-		      put(byte.class, "B");
-		      put(char.class, "C");
-		      put(double.class, "D");
-		      put(float.class, "F");
-		      put(int.class, "I");
-		      put(long.class, "J");
-		      put(short.class, "S");
-		}
-	};	
+	static final Map<Class<?>, String> primitivesType = new HashMap<Class<?>, String>();
+	static {
+		primitivesType.put(boolean.class, "Z");
+		primitivesType.put(byte.class, "B");
+		primitivesType.put(char.class, "C");
+		primitivesType.put(double.class, "D");
+		primitivesType.put(float.class, "F");
+		primitivesType.put(int.class, "I");
+		primitivesType.put(long.class, "J");
+		primitivesType.put(short.class, "S");
+	}
 	
-	@SuppressWarnings("serial")
-	static final Map<String, String> stringToPrimitivesType = new HashMap<String, String>() {
-		{
-			  put("Boolean", "Z");
-		      put("Byte", "B");
-		      put("Character", "C");
-		      put("Double", "D");
-		      put("Float", "F");
-		      put("Int", "I");
-		      put("Long", "J");
-		      put("Short", "S");
-		}
-	};
+	static final Map<String, String> stringToPrimitivesType = new HashMap<String, String>();
+	static {
+		stringToPrimitivesType.put("Boolean", "Z");
+		stringToPrimitivesType.put("Byte", "B");
+		stringToPrimitivesType.put("Character", "C");
+		stringToPrimitivesType.put("Double", "D");
+		stringToPrimitivesType.put("Float", "F");
+		stringToPrimitivesType.put("Int", "I");
+		stringToPrimitivesType.put("Long", "J");
+		stringToPrimitivesType.put("Short", "S");
+	}
 	
-	@SuppressWarnings("serial")
-	static final Map<Class<?>, Integer> loadOps = new HashMap<Class<?>, Integer>() {
-		{
-			  put(boolean.class, ILOAD);
-		      put(byte.class, ILOAD);
-		      put(char.class, ILOAD);
-		      put(double.class, DLOAD);
-		      put(float.class, FLOAD);
-		      put(int.class, ILOAD);
-		      put(long.class, LLOAD);
-		      put(short.class, ILOAD);
-		}
-	};	
-	@SuppressWarnings("serial")
-	static final Map<Class<?>, Integer> defaultValue = new HashMap<Class<?>, Integer>() {
-		{
-			  put(boolean.class, ICONST_0);
-		      put(byte.class, ICONST_0);
-		      put(char.class, ICONST_0);
-		      put(double.class, DCONST_0);
-		      put(float.class, FCONST_0);
-		      put(int.class, ICONST_0);
-		      put(long.class, LCONST_0);
-		      put(short.class, ICONST_0);
-		}
-	};	
-	@SuppressWarnings("serial")
-	static final Set<Class<?>> primitivesClassAndWrapper = new HashSet<Class<?>>() {
-		{
-			addAll(wrappers.keySet());
-			addAll(wrappers.values());
-		}
-	};
+	static final Map<Class<?>, Integer> loadOps = new HashMap<Class<?>, Integer>();
+	static {
+		loadOps.put(boolean.class, ILOAD);
+		loadOps.put(byte.class, ILOAD);
+		loadOps.put(char.class, ILOAD);
+		loadOps.put(double.class, DLOAD);
+		loadOps.put(float.class, FLOAD);
+		loadOps.put(int.class, ILOAD);
+		loadOps.put(long.class, LLOAD);
+		loadOps.put(short.class, ILOAD);
+	}
+	static final Map<Class<?>, Integer> defaultValue = new HashMap<Class<?>, Integer>();
+	static {
+		defaultValue.put(boolean.class, ICONST_0);
+		defaultValue.put(byte.class, ICONST_0);
+		defaultValue.put(char.class, ICONST_0);
+		defaultValue.put(double.class, DCONST_0);
+		defaultValue.put(float.class, FCONST_0);
+		defaultValue.put(int.class, ICONST_0);
+		defaultValue.put(long.class, LCONST_0);
+		defaultValue.put(short.class, ICONST_0);
+	}
+	static final Set<Class<?>> primitivesClassAndWrapper = new HashSet<Class<?>>();
+	static {
+		primitivesClassAndWrapper.addAll(wrappers.keySet());
+		primitivesClassAndWrapper.addAll(wrappers.values());
+	}
 	
 	
 	static File targetDir = null;

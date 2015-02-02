@@ -43,7 +43,11 @@ public class CsvMapperBuilder<T> {
 	}
 
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta) {
-		this(target, classMeta, new RethrowMapperBuilderErrorHandler(), new IdentityCsvColumnDefinitionProvider(), new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl());
+		this(target, classMeta, new IdentityCsvColumnDefinitionProvider());
+	}
+
+	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitionProvider) {
+		this(target, classMeta, new RethrowMapperBuilderErrorHandler(), columnDefinitionProvider, new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl());
 	}
 
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta,

@@ -58,7 +58,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		this.cellValueReaderFactory = cellValueReaderFactory;
 	}
 
-	public DynamicCsvMapper(Type target, ClassMeta<T> classMeta) {
+	public DynamicCsvMapper(Type target, ClassMeta<T> classMeta, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitionProvider) {
 		this(target, classMeta, new RethrowFieldMapperErrorHandler<CsvColumnKey>(), new RethrowMapperBuilderErrorHandler(), new RethrowRowHandlerErrorHandler(), "yyyy-MM-dd HH:mm:ss",
 				new IdentityCsvColumnDefinitionProvider(), new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl());
 	}

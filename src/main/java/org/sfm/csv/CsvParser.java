@@ -1,16 +1,20 @@
 package org.sfm.csv;
 
+import org.sfm.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.csv.parser.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.tuples.*;
+import org.sfm.utils.Predicate;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Iterator;
 //IFJAVA8_START
+import java.util.List;
 import java.util.stream.Stream;
 //IFJAVA8_END
 
@@ -280,23 +284,29 @@ public final class CsvParser {
 		private final CsvMapper<T> mapper;
 		private final ClassMeta<T> classMeta;
 		private final Type mapToClass;
+		private final CsvColumnDefinitionProviderImpl columnDefinitionProvider;
 
 		public MapToDSL(DSL dsl, Type mapToClass) {
+			this(dsl, ReflectionService.newInstance().getRootClassMeta(mapToClass), mapToClass, new CsvColumnDefinitionProviderImpl());
+		}
+		private MapToDSL(DSL dsl, ClassMeta<T> classMeta, Type mapToClass, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 			this.dsl = dsl;
 			this.mapToClass = mapToClass;
 			this.classMeta = ReflectionService.newInstance().getRootClassMeta(mapToClass);
-			this.mapper = new DynamicCsvMapper<T>(mapToClass, classMeta);
+			this.mapper = new DynamicCsvMapper<T>(mapToClass, classMeta, columnDefinitionProvider);
+			this.columnDefinitionProvider = columnDefinitionProvider;
 		}
 
-		public MapToDSL(DSL dsl, ClassMeta<T> classMeta, Type mapToClass, String[] headers) {
+		private MapToDSL(DSL dsl, ClassMeta<T> classMeta, Type mapToClass, String[] headers, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 			this.dsl = dsl;
 			this.classMeta = classMeta;
 			this.mapToClass = mapToClass;
-			this.mapper = newStaticMapper(classMeta, headers);
+			this.mapper = newStaticMapper(classMeta, headers, columnDefinitionProvider);
+			this.columnDefinitionProvider = columnDefinitionProvider;
 		}
 
-		private CsvMapper<T> newStaticMapper(ClassMeta<T> classMeta, String[] headers) {
-			CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(mapToClass, classMeta);
+		private CsvMapper<T> newStaticMapper(ClassMeta<T> classMeta, String[] headers, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
+			CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(mapToClass, classMeta, columnDefinitionProvider);
 			for(String header : headers) {
 				builder.addMapping(header);
 			}
@@ -304,7 +314,7 @@ public final class CsvParser {
 		}
 
 		public MapToDSL<T> headers(String... headers) {
-			return new MapToDSL<T>(dsl, classMeta, mapToClass, headers);
+			return new MapToDSL<T>(dsl, classMeta, mapToClass, headers, columnDefinitionProvider);
 		}
 
 		@Deprecated
@@ -320,7 +330,21 @@ public final class CsvParser {
 		}
 
 		public MapToDSL<T> overrideHeaders(String... headers) {
-			return new MapToDSL<T>(dsl.skip(1), classMeta, mapToClass, headers);
+			return new MapToDSL<T>(dsl.skip(1), classMeta, mapToClass, headers, columnDefinitionProvider);
+		}
+
+		public MapToDSL<T> columnDefinition(Predicate<? super CsvColumnKey> predicate, CsvColumnDefinition columnDefinition) {
+			if (mapper instanceof DynamicCsvMapper) {
+				return new MapToDSL<T>(dsl, classMeta, mapToClass, newColumnDefinitionProvider(predicate, columnDefinition));
+			} else {
+				throw new IllegalStateException("Cannot add column definition on static mapper");
+			}
+		}
+
+		private CsvColumnDefinitionProviderImpl newColumnDefinitionProvider(Predicate<? super CsvColumnKey> predicate, CsvColumnDefinition columnDefinition) {
+			List<Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>> definitions = columnDefinitionProvider.getDefinitions();
+			definitions.add(new Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>(predicate, columnDefinition));
+			return new CsvColumnDefinitionProviderImpl(definitions);
 		}
 
 		public MapToDSL<T> overrideWithDefaultHeaders() {

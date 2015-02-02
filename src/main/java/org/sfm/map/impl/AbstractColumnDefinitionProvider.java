@@ -1,6 +1,8 @@
 package org.sfm.map.impl;
 
 
+import org.sfm.csv.CsvColumnDefinition;
+import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.ColumnDefinitionProvider;
 import org.sfm.map.FieldKey;
@@ -12,7 +14,14 @@ import java.util.List;
 
 public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinition<K>, K extends FieldKey<K>> implements ColumnDefinitionProvider<C, K> {
 
-    private List<Tuple2<Predicate<? super K>, C>> definitions = new ArrayList<Tuple2<Predicate<? super K>, C>>();
+    protected final List<Tuple2<Predicate<? super K>, C>> definitions;
+
+    public AbstractColumnDefinitionProvider() {
+        definitions = new ArrayList<Tuple2<Predicate<? super K>, C>>();
+    }
+    public AbstractColumnDefinitionProvider(List<Tuple2<Predicate<? super K>, C>> definitions) {
+        this.definitions = definitions;
+    }
 
     public void addColumnDefinition(Predicate<? super K> predicate, C definition) {
         definitions.add(new Tuple2<Predicate<? super K>, C>(predicate, definition));

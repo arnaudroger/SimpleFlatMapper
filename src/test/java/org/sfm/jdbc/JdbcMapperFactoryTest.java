@@ -207,7 +207,7 @@ public class JdbcMapperFactoryTest {
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.next()).thenReturn(true, false);
 
-		DbObject object = mapper.iterate(rs).next();
+		DbObject object = mapper.iterator(rs).next();
 
 		assertEquals("Hello!", object.getName());
 	}

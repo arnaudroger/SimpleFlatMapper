@@ -72,6 +72,12 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		final JdbcMapper<T> mapper = buildMapper(rs.getMetaData());
 		return mapper.iterate(rs);
 	}
+
+	@Override
+	public final Iterator<T> iterator(final ResultSet rs)
+			throws SQLException, MappingException {
+		return iterate(rs);
+	}
 	
 	//IFJAVA8_START
 	@Override

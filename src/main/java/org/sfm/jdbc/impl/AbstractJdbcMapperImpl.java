@@ -47,6 +47,12 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 			MappingException {
 		return new ResultSetIterator<T>(rs, this);
 	}
+
+	@Override
+	public Iterator<T> iterator(ResultSet rs) throws SQLException,
+			MappingException {
+		return iterate(rs);
+	}
 	
 	//IFJAVA8_START
 	@Override

@@ -98,7 +98,7 @@ public class CsvMapperImplTest {
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
 		
 		
-		Iterator<DbObject> it = mapper.iterate(CsvMapperImplTest.dbObjectCsvReader3Lines());
+		Iterator<DbObject> it = mapper.iterator(CsvMapperImplTest.dbObjectCsvReader3Lines());
 		DbHelper.assertDbObjectMapping(0, it.next());
 		DbHelper.assertDbObjectMapping(1, it.next());
 		DbHelper.assertDbObjectMapping(2, it.next());
@@ -114,7 +114,7 @@ public class CsvMapperImplTest {
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
 
 
-		Iterator<DbObject> it = mapper.iterate(CsvMapperImplTest.dbObjectCsvReader3Lines(), 1);
+		Iterator<DbObject> it = mapper.iterator(CsvMapperImplTest.dbObjectCsvReader3Lines(), 1);
 		DbHelper.assertDbObjectMapping(1, it.next());
 		DbHelper.assertDbObjectMapping(2, it.next());
 		assertFalse(it.hasNext());

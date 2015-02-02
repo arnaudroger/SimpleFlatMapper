@@ -30,7 +30,7 @@ public class CsvMappetDateFormatDefinition {
 
         CsvMapper<Tuple2<Date, Date>> mapper = builder.mapper();
 
-        Tuple2<Date, Date> next = mapper.iterate(new StringReader("20140909,091409")).next();
+        Tuple2<Date, Date> next = mapper.iterator(new StringReader("20140909,091409")).next();
 
         assertEquals(new SimpleDateFormat(df1).parse("20140909"), next.first());
         assertEquals(new SimpleDateFormat(df2).parse("091409"), next.second());
@@ -46,7 +46,7 @@ public class CsvMappetDateFormatDefinition {
 
         CsvMapper<Tuple2<Date, Date>> mapper = csvMapperFactory.newMapper(Tuples.typeDef(Date.class, Date.class));
 
-        Tuple2<Date, Date> next = mapper.iterate(new StringReader("date0,date1\n20140909,091409")).next();
+        Tuple2<Date, Date> next = mapper.iterator(new StringReader("date0,date1\n20140909,091409")).next();
 
         assertEquals(new SimpleDateFormat(df1).parse("20140909"), next.first());
         assertEquals(new SimpleDateFormat(df2).parse("091409"), next.second());

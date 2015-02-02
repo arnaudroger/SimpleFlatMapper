@@ -53,7 +53,7 @@ public class DynamicJdbcMapperTest {
 		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				Iterator<DbObject> objectIterator = mapper.iterate(ps.executeQuery());
+				Iterator<DbObject> objectIterator = mapper.iterator(ps.executeQuery());
 				assertTrue(objectIterator.hasNext());
 				try {
 					objectIterator.remove();

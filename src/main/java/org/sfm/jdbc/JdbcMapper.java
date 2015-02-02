@@ -32,8 +32,11 @@ public interface JdbcMapper<T> extends Mapper<ResultSet, T> {
 	 * @throws SQLException
 	 * @throws MappingException
 	 */
+	Iterator<T> iterator(ResultSet rs) throws SQLException, MappingException;
+
+	@Deprecated
 	Iterator<T> iterate(ResultSet rs) throws SQLException, MappingException;
-	
+
 	/**
 	 * 
 	 * @param rs the result set

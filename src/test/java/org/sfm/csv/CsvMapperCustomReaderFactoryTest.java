@@ -27,7 +27,7 @@ public class CsvMapperCustomReaderFactoryTest {
             }
         }).newBuilder(DbObject.class).addMapping("name").mapper();
 
-        DbObject bop = mapper.iterate(new StringReader("bop")).next();
+        DbObject bop = mapper.iterator(new StringReader("bop")).next();
 
         assertEquals("Hello!", bop.getName());
 

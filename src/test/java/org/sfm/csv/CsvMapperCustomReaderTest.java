@@ -169,7 +169,7 @@ public class CsvMapperCustomReaderTest {
                     ))
             .mapper();
 
-        DbPrimitiveObject object = intMapper.iterate(new StringReader("false,12,12,12,12,12,12,12")).next();
+        DbPrimitiveObject object = intMapper.iterator(new StringReader("false,12,12,12,12,12,12,12")).next();
 
         assertEquals(true, object.ispBoolean());
         assertEquals(35, object.getpByte());
@@ -292,7 +292,7 @@ public class CsvMapperCustomReaderTest {
                                 ))
                         .mapper();
 
-        DbPrimitiveObject object = intMapper.iterate(new StringReader("false,12,12,12,12,12,12,12")).next();
+        DbPrimitiveObject object = intMapper.iterator(new StringReader("false,12,12,12,12,12,12,12")).next();
 
         assertEquals(true, object.ispBoolean());
         assertEquals(35, object.getpByte());

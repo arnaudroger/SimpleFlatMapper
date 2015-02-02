@@ -94,6 +94,22 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		return iterate(CsvParser.skip(skip).reader(reader));
 	}
 
+	@Override
+	public Iterator<T> iterator(Reader reader) throws IOException {
+		return iterate(reader);
+	}
+
+	@Override
+	public Iterator<T> iterator(CsvReader csvReader) {
+		return iterate(csvReader);
+	}
+
+	@Override
+	public Iterator<T> iterator(Reader reader, int skip) throws IOException {
+		return iterate(reader, skip);
+	}
+
+
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(Reader reader) throws IOException {

@@ -89,7 +89,7 @@ public class JdbcMapperDbObjectTest {
 		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				Iterator<DbObject> objects = mapper.iterate(ps.executeQuery());
+				Iterator<DbObject> objects = mapper.iterator(ps.executeQuery());
 				assertTrue(objects.hasNext());
 				DbHelper.assertDbObjectMapping(objects.next());
 				assertFalse(objects.hasNext());

@@ -57,7 +57,7 @@ public class CsvParserTest {
 
 	@Test
 	public void testDSLRootAction() throws IOException {
-		Iterator<String[]> it = CsvParser.iterate(getOneRowReader());
+		Iterator<String[]> it = CsvParser.iterator(getOneRowReader());
 		assertTrue(it.hasNext());
 		assertArrayEquals(new String[]{"value"}, it.next());
 		assertFalse(it.hasNext());
@@ -68,124 +68,124 @@ public class CsvParserTest {
 
 	@Test
 	public void testDSLWithMapper() throws IOException {
-		Iterator<Tuple2<String, String>> iterate =  CsvParser.<Tuple2<String, String>>mapTo(Tuples.typeDef(String.class, String.class)).iterate(new StringReader("val0,val1\nvalue1,value2"));
+		Iterator<Tuple2<String, String>> iterator =  CsvParser.<Tuple2<String, String>>mapTo(Tuples.typeDef(String.class, String.class)).iterator(new StringReader("val0,val1\nvalue1,value2"));
 
-		assertTrue(iterate.hasNext());
-		Tuple2<String, String> tuple2 = iterate.next();
+		assertTrue(iterator.hasNext());
+		Tuple2<String, String> tuple2 = iterator.next();
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
-		assertFalse(iterate.hasNext());
+		assertFalse(iterator.hasNext());
 
-		//assertEquals("value", CsvParser.mapTo(String.class).iterate(new StringReader("val\nvalue")).next());
+		//assertEquals("value", CsvParser.mapTo(String.class).iterator(new StringReader("val\nvalue")).next());
 	}
 
 	@Test
 	public void testDSLMapWith() throws IOException {
 		CsvMapper<Tuple2<String, String>> mapper = CsvMapperFactory.newInstance().newMapper(Tuples.typeDef(String.class, String.class));
-		Iterator<Tuple2<String, String>> iterate =  CsvParser.<Tuple2<String, String>>mapWith(mapper).iterate(new StringReader("val0,val1\nvalue1,value2"));
+		Iterator<Tuple2<String, String>> iterator =  CsvParser.<Tuple2<String, String>>mapWith(mapper).iterator(new StringReader("val0,val1\nvalue1,value2"));
 
-		assertTrue(iterate.hasNext());
-		Tuple2<String, String> tuple2 = iterate.next();
+		assertTrue(iterator.hasNext());
+		Tuple2<String, String> tuple2 = iterator.next();
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
-		assertFalse(iterate.hasNext());
+		assertFalse(iterator.hasNext());
 	}
 
 	@Test
 	public void testDSLWitStatichMapper() throws IOException {
-		Iterator<Tuple2<String, String>> iterate =  CsvParser.<Tuple2<String, String>>mapTo(Tuples.typeDef(String.class, String.class)).headers("0", "1").iterate(new StringReader("value1,value2"));
+		Iterator<Tuple2<String, String>> iterator =  CsvParser.<Tuple2<String, String>>mapTo(Tuples.typeDef(String.class, String.class)).headers("0", "1").iterator(new StringReader("value1,value2"));
 
-		assertTrue(iterate.hasNext());
-		Tuple2<String, String> tuple2 = iterate.next();
+		assertTrue(iterator.hasNext());
+		Tuple2<String, String> tuple2 = iterator.next();
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
-		assertFalse(iterate.hasNext());
+		assertFalse(iterator.hasNext());
 	}
 
 	@Test
 	public void testDSLMapToString() throws IOException {
-		Iterator<String> iterate = CsvParser.mapTo(String.class).headers("value").iterate(new StringReader("value1,value2"));
-		assertTrue(iterate.hasNext());
-		String tuple2 = iterate.next();
+		Iterator<String> iterator = CsvParser.mapTo(String.class).headers("value").iterator(new StringReader("value1,value2"));
+		assertTrue(iterator.hasNext());
+		String tuple2 = iterator.next();
 		assertEquals("value1", tuple2);
-		assertFalse(iterate.hasNext());
+		assertFalse(iterator.hasNext());
 	}
 
 	@Test
 	public void testDSLMapToLong() throws IOException {
-		Iterator<Long> iterate = CsvParser.mapTo(Long.class).headers("value").iterate(new StringReader("123,value2"));
-		assertTrue(iterate.hasNext());
-		Long tuple2 = iterate.next();
+		Iterator<Long> iterator = CsvParser.mapTo(Long.class).headers("value").iterator(new StringReader("123,value2"));
+		assertTrue(iterator.hasNext());
+		Long tuple2 = iterator.next();
 		assertEquals(123l, tuple2.longValue());
-		assertFalse(iterate.hasNext());
+		assertFalse(iterator.hasNext());
 	}
 
 	@Test
 	public void testDSLMapToTuple2() throws IOException {
-		Iterator<Tuple2<String, String>> iterate = CsvParser.mapTo(String.class, String.class).headers("0", "1").iterate(new StringReader("value1,value2"));
-		assertTrue(iterate.hasNext());
-		Tuple2<String, String> tuple2 = iterate.next();
+		Iterator<Tuple2<String, String>> iterator = CsvParser.mapTo(String.class, String.class).headers("0", "1").iterator(new StringReader("value1,value2"));
+		assertTrue(iterator.hasNext());
+		Tuple2<String, String> tuple2 = iterator.next();
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
-		assertFalse(iterate.hasNext());
+		assertFalse(iterator.hasNext());
 	}
 
 	@Test
 	public void testDSLMapToTuple2WithDefaultHeader() throws IOException {
-		Iterator<Tuple2<String, String>> iterate = CsvParser.mapTo(String.class, String.class).defaultHeaders().iterate(new StringReader("value1,value2"));
-		assertTrue(iterate.hasNext());
-		Tuple2<String, String> tuple2 = iterate.next();
+		Iterator<Tuple2<String, String>> iterator = CsvParser.mapTo(String.class, String.class).defaultHeaders().iterator(new StringReader("value1,value2"));
+		assertTrue(iterator.hasNext());
+		Tuple2<String, String> tuple2 = iterator.next();
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
-		assertFalse(iterate.hasNext());
+		assertFalse(iterator.hasNext());
 	}
 	@Test
 	public void testDSLMapToTuple2OverrideWithDefaultHeader() throws IOException {
-		Iterator<Tuple2<String, String>> iterate = CsvParser.mapTo(String.class, String.class).overrideWithDefaultHeaders().iterate(new StringReader("key,value\nvalue1,value2"));
-		assertTrue(iterate.hasNext());
-		Tuple2<String, String> tuple2 = iterate.next();
+		Iterator<Tuple2<String, String>> iterator = CsvParser.mapTo(String.class, String.class).overrideWithDefaultHeaders().iterator(new StringReader("key,value\nvalue1,value2"));
+		assertTrue(iterator.hasNext());
+		Tuple2<String, String> tuple2 = iterator.next();
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
-		assertFalse(iterate.hasNext());
+		assertFalse(iterator.hasNext());
 	}
 
 	@Test
 	public void testDSLMapToTuple3() throws IOException {
-		Iterator<Tuple3<String, String, String>> iterate = CsvParser.mapTo(String.class, String.class, String.class).headers("0", "1", "2").iterate(new StringReader("value1,value2,value3"));
-		assertTrue(iterate.hasNext());
-		Tuple3<String, String, String> tuple2 = iterate.next();
+		Iterator<Tuple3<String, String, String>> iterator = CsvParser.mapTo(String.class, String.class, String.class).headers("0", "1", "2").iterator(new StringReader("value1,value2,value3"));
+		assertTrue(iterator.hasNext());
+		Tuple3<String, String, String> tuple2 = iterator.next();
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
 		assertEquals("value3", tuple2.third());
-		assertFalse(iterate.hasNext());
+		assertFalse(iterator.hasNext());
 	}
 
 	@Test
 	public void testDSLMapToTuple4() throws IOException {
-		Iterator<Tuple4<String, String, String, String>> iterate =
-				CsvParser.mapTo(String.class, String.class, String.class, String.class).headers("0", "1", "2", "3").iterate(new StringReader("value1,value2,value3,value4"));
-		assertTrue(iterate.hasNext());
-		Tuple4<String, String, String, String> tuple2 = iterate.next();
+		Iterator<Tuple4<String, String, String, String>> iterator =
+				CsvParser.mapTo(String.class, String.class, String.class, String.class).headers("0", "1", "2", "3").iterator(new StringReader("value1,value2,value3,value4"));
+		assertTrue(iterator.hasNext());
+		Tuple4<String, String, String, String> tuple2 = iterator.next();
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
 		assertEquals("value3", tuple2.third());
 		assertEquals("value4", tuple2.forth());
-		assertFalse(iterate.hasNext());
+		assertFalse(iterator.hasNext());
 	}
 
 	@Test
 	public void testDSLMapToTuple5() throws IOException {
-		Iterator<Tuple5<String, String, String, String, String>> iterate =
+		Iterator<Tuple5<String, String, String, String, String>> iterator =
 				CsvParser.mapTo(String.class, String.class, String.class, String.class, String.class)
-						.headers("0", "1", "2", "3", "4").iterate(new StringReader("value1,value2,value3,value4,value5"));
-		assertTrue(iterate.hasNext());
-		Tuple5<String, String, String, String, String> tuple2 = iterate.next();
+						.headers("0", "1", "2", "3", "4").iterator(new StringReader("value1,value2,value3,value4,value5"));
+		assertTrue(iterator.hasNext());
+		Tuple5<String, String, String, String, String> tuple2 = iterator.next();
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
 		assertEquals("value3", tuple2.third());
 		assertEquals("value4", tuple2.forth());
 		assertEquals("value5", tuple2.fifth());
-		assertFalse(iterate.hasNext());
+		assertFalse(iterator.hasNext());
 	}
 
 	private Reader getOneRowReader() {
@@ -208,9 +208,9 @@ public class CsvParserTest {
 		testSkipThenParseRow(expectations, separator, quote, cr, dsl);
 
 		// dsl call
-		testIterate(expectations, separator, quote, cr, dsl);
+		testiterator(expectations, separator, quote, cr, dsl);
 
-		testSkipAndIterate(expectations, separator, quote, cr, dsl);
+		testSkipAnditerator(expectations, separator, quote, cr, dsl);
 
 		testReadRows(expectations, separator, quote, cr, dsl);
 
@@ -256,7 +256,7 @@ public class CsvParserTest {
 		assertArrayEquals(toSubArray(expectations, 0, 1), rows.toArray(new String[0][]));
 	}
 
-	private void testIterate(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+	private void testiterator(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
 
 		List<String[]> rows = new ArrayList<String[]>();
 		for(String[] row : dsl.reader(createReader(expectations, separator, quote, cr))) {
@@ -266,7 +266,7 @@ public class CsvParserTest {
 		assertArrayEquals(expectations, rows.toArray(new String[0][]));
 	}
 
-	private void testSkipAndIterate(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+	private void testSkipAnditerator(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
 
 		List<String[]> rows = new ArrayList<String[]>();
 		for(String[] row : dsl.skip(1).reader(createReader(expectations, separator, quote, cr))) {
@@ -415,10 +415,10 @@ public class CsvParserTest {
 		String str = "my_field,second_field\n" +
 				",,";
 
-		Iterator<MyScalaClass> iterate = CsvParser.mapTo(MyScalaClass.class).iterate(new StringReader(str));
+		Iterator<MyScalaClass> iterator = CsvParser.mapTo(MyScalaClass.class).iterator(new StringReader(str));
 
-		while(iterate.hasNext()) {
-			System.out.println(iterate.next());
+		while(iterator.hasNext()) {
+			System.out.println(iterator.next());
 		}
 
 	}

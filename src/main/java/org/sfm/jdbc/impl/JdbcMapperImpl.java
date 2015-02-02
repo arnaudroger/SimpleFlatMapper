@@ -47,6 +47,12 @@ public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements
 		return new ResultSetIterator<T>(rs, this);
 	}
 
+	@Override
+	public Iterator<T> iterator(ResultSet rs) throws SQLException,
+			MappingException {
+		return iterate(rs);
+	}
+
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {

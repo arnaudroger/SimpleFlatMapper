@@ -109,6 +109,21 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		return iterate(CsvParser.skip(skip).reader(reader));
 	}
 
+	@Override
+	public Iterator<T> iterator(Reader reader) throws IOException {
+		return iterate(reader);
+	}
+
+	@Override
+	public Iterator<T> iterator(CsvReader csvReader) throws IOException {
+		return iterate(csvReader);
+	}
+
+	@Override
+	public Iterator<T> iterator(Reader reader, int skip) throws IOException {
+		return iterate(reader, skip);
+	}
+
 	private CsvMapperImpl<T> getDelegateMapper(CsvReader reader) throws IOException {
 		ColumnsMapperKeyBuilderCellConsumer keyBuilderCellConsumer = new ColumnsMapperKeyBuilderCellConsumer();
 		reader.parseRow(keyBuilderCellConsumer);

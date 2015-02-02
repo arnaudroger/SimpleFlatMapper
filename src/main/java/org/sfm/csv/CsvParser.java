@@ -81,8 +81,13 @@ public final class CsvParser {
 		return schema().reader(reader);
 	}
 
+	@Deprecated
 	public static Iterator<String[]> iterate(Reader reader) throws IOException {
 		return schema().iterate(reader);
+	}
+
+	public static Iterator<String[]> iterator(Reader reader) throws IOException {
+		return iterate(reader);
 	}
 
 	public static <CC extends CellConsumer> CC parse(Reader reader, CC cellConsumer) throws IOException {
@@ -193,9 +198,14 @@ public final class CsvParser {
             return csvReader;
         }
 
+		@Deprecated
         public Iterator<String[]> iterate(Reader reader) throws IOException {
             return reader(reader).iterator();
         }
+
+		public Iterator<String[]> iterator(Reader reader) throws IOException {
+			return iterate(reader);
+		}
 
 		public <T> MapToDSL<T> mapTo(Type target) {
 			return new MapToDSL<T>(this, target);
@@ -297,10 +307,14 @@ public final class CsvParser {
 			return new MapToDSL<T>(dsl, classMeta, mapToClass, headers);
 		}
 
+		@Deprecated
 		public Iterator<T> iterate(Reader reader) throws IOException {
 			return mapper.iterate(dsl.reader(reader));
 		}
 
+		public Iterator<T> iterator(Reader reader) throws IOException {
+			return iterate(reader);
+		}
 		public MapToDSL<T> defaultHeaders() {
 			return headers(classMeta.generateHeaders());
 		}
@@ -329,8 +343,13 @@ public final class CsvParser {
 			this.mapper = mapper;
 		}
 
+		@Deprecated
 		public Iterator<T> iterate(Reader reader) throws IOException {
 			return mapper.iterate(dsl.reader(reader));
+		}
+
+		public Iterator<T> iterator(Reader reader) throws IOException {
+			return iterate(reader);
 		}
 
 		//IFJAVA8_START

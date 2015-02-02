@@ -108,7 +108,7 @@ public class DynamicCsvMapperImplTest {
 	public void testDbObjectIterator() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 
-		Iterator<DbObject> it = mapper.iterate(dbObjectCsvReader3Lines());
+		Iterator<DbObject> it = mapper.iterator(dbObjectCsvReader3Lines());
 
 		assertTrue(it.hasNext());
 		DbHelper.assertDbObjectMapping(1, it.next());
@@ -122,7 +122,7 @@ public class DynamicCsvMapperImplTest {
 	public void testDbObjectIteratorWithSkip() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 
-		Iterator<DbObject> it = mapper.iterate(dbObjectCsvReader3LinesWithLineToSkip(), 1);
+		Iterator<DbObject> it = mapper.iterator(dbObjectCsvReader3LinesWithLineToSkip(), 1);
 
 		assertTrue(it.hasNext());
 		DbHelper.assertDbObjectMapping(1, it.next());

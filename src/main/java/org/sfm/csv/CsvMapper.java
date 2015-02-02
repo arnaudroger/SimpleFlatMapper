@@ -87,6 +87,9 @@ public interface CsvMapper<T> {
 	 * @return an iterator on the file
 	 * @throws IOException
 	 */
+	Iterator<T> iterator(Reader reader) throws IOException;
+
+	@Deprecated
 	Iterator<T> iterate(Reader reader) throws IOException;
 
 	/**
@@ -96,6 +99,9 @@ public interface CsvMapper<T> {
 	 * @return an iterator on the file
 	 * @throws IOException
 	 */
+	Iterator<T> iterator(CsvReader reader) throws IOException;
+
+	@Deprecated
 	Iterator<T> iterate(CsvReader reader) throws IOException;
 
 	/**
@@ -106,6 +112,9 @@ public interface CsvMapper<T> {
 	 * @return an iterator on the file
 	 * @throws IOException
 	 */
+	Iterator<T> iterator(Reader reader, int skip) throws IOException;
+
+	@Deprecated
 	Iterator<T> iterate(Reader reader, int skip) throws IOException;
 
 	/**

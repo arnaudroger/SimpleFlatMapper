@@ -37,7 +37,7 @@ public class InstantiatorBuilder {
 
 		{
 			
-			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/util/Map;)V", "(Ljava/util/Map<Ljava.lang.String;Lorg/sfm/reflect/Getter<" + AsmUtils.toDeclaredLType(sourceType) + "*>;>;)V", null);
+			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/util/Map;)V", "(Ljava/util/Map<Ljava.lang.String;L" + AsmUtils.toType(Getter.class)  +"<" + AsmUtils.toDeclaredLType(sourceType) + "*>;>;)V", null);
 			mv.visitCode();
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);

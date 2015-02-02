@@ -3,10 +3,15 @@ package org.sfm.reflect.asm;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.sfm.reflect.Setter;
+import org.sfm.reflect.primitive.IntSetter;
 
 import java.lang.reflect.Method;
 
 public class SetterBuilder implements Opcodes {
+
+	private static final String SETTER_TYPE = AsmUtils.toType(Setter.class);
+	private static final String ORG_SFM_REFLECT_PRIMITIVE = AsmUtils.toType(IntSetter.class.getPackage().getName());
 
 	public static byte[] createObjectSetter(final String className, final Method method) throws Exception {
 
@@ -24,8 +29,8 @@ public class SetterBuilder implements Opcodes {
 				V1_6,
 				ACC_PUBLIC + ACC_FINAL + ACC_SUPER,
 				classType,
-				"Ljava/lang/Object;Lorg/sfm/reflect/Setter<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;",
-				"java/lang/Object", new String[] { "org/sfm/reflect/Setter" });
+				"Ljava/lang/Object;L" + SETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;",
+				"java/lang/Object", new String[] {SETTER_TYPE});
 
 		{
 			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
@@ -101,11 +106,11 @@ public class SetterBuilder implements Opcodes {
 		
 		cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL  + ACC_SUPER,  classType, 
 				"Ljava/lang/Object;"
-				+ "Lorg/sfm/reflect/Setter<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;"
-				+ "Lorg/sfm/reflect/primitive/" + methodSuffix + "Setter<L" + targetType + ";>;", 
+				+ "L"  + SETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;"
+				+ "L" + ORG_SFM_REFLECT_PRIMITIVE + methodSuffix + "Setter<L" + targetType + ";>;",
 				"java/lang/Object", 
-				new String[] { "org/sfm/reflect/Setter", 
-								"org/sfm/reflect/primitive/" + methodSuffix + "Setter" });
+				new String[] { SETTER_TYPE,
+								ORG_SFM_REFLECT_PRIMITIVE + "/" + methodSuffix + "Setter" });
 
 
 		{

@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
-# ! *bought simpleflatmapper.org the packages and the group id will be change accordingly in 1.5.0.*
+*bought simpleflatmapper.org the group id will be change accordingly in 1.5.0*
 
 # Simple Flat Mapper (SFM) [v1.4.1](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.4.1)
 

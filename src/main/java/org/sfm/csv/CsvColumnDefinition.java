@@ -10,9 +10,10 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
     public abstract String dateFormat();
     public abstract CellValueReader<?> getCustomReader();
 
-    public abstract CsvColumnDefinition addRename(final String name);
-    public abstract CsvColumnDefinition addDateFormat(final String dateFormatDef);
-    public abstract CsvColumnDefinition addCustomReader(final CellValueReader<?> cellValueReader);
+    public abstract CsvColumnDefinition addRename(String name);
+    public abstract CsvColumnDefinition addDateFormat(String dateFormatDef);
+    public abstract CsvColumnDefinition addCustomReader(CellValueReader<?> cellValueReader);
+    public abstract CsvColumnDefinition compose(CsvColumnDefinition columnDefinition);
 
     public static final CsvColumnDefinition IDENTITY = new IdentityCsvColumnDefinition();
 
@@ -77,7 +78,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
             return compose(CsvColumnDefinition.customReaderDefinition(cellValueReader));
         }
 
-        private CsvColumnDefinition compose(CsvColumnDefinition columnDefinition) {
+        public CsvColumnDefinition compose(CsvColumnDefinition columnDefinition) {
             return compose(this, columnDefinition);
         }
 

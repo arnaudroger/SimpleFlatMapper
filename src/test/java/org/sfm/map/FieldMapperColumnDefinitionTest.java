@@ -2,6 +2,7 @@ package org.sfm.map;
 
 import org.junit.Test;
 import org.sfm.jdbc.JdbcColumnKey;
+import org.sfm.map.impl.FieldMapper;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 
@@ -21,12 +22,16 @@ public class FieldMapperColumnDefinitionTest {
                 return 3;
             }
         };
+        FieldMapper<ResultSet, Object> fieldMapper = new FieldMapper<ResultSet, Object>() {
+            @Override
+            public void map(ResultSet source, Object target) throws Exception {
+            }
+        };
         FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> compose =
-                FieldMapperColumnDefinition.compose(
-                        FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>renameDefinition("blop"),
-                        FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customGetter(getter));
+                FieldMapperColumnDefinition.<JdbcColumnKey,ResultSet>identity().addRename("blop").addGetter(getter).addFieldMapper(fieldMapper);
 
         assertEquals("blop", compose.rename(new JdbcColumnKey("bar", -1)).getName());
+        assertEquals(fieldMapper, compose.getCustomFieldMapper());
         assertEquals(new Integer(3), compose.getCustomGetter().get(null));
 
         assertTrue(compose.hasCustomSource());

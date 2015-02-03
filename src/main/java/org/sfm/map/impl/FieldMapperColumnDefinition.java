@@ -15,6 +15,11 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
 
     public abstract Getter<S, ?> getCustomGetter();
 
+    public abstract FieldMapperColumnDefinition<K, S> addRename(String name);
+    public abstract FieldMapperColumnDefinition<K, S> addGetter(Getter<S, ?> getter);
+    public abstract FieldMapperColumnDefinition<K, S> addFieldMapper(FieldMapper<ResultSet, ?> mapper);
+    public abstract FieldMapperColumnDefinition<K, S> compose(FieldMapperColumnDefinition<K, S> columnDefinition);
+
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> identity() {
         return new IdentityColumnDefinition<K, S>();
     }
@@ -30,42 +35,17 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
     }
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customFieldMapperDefinition(final FieldMapper<ResultSet, ?> mapper) {
-        return new IdentityColumnDefinition<K, S>() {
-            @Override
-            public FieldMapper<?, ?> getCustomFieldMapper() {
-                return mapper;
-            }
-        };
+        return new CustomFieldMapperColumnDefinition<>(mapper);
     }
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customGetter(final Getter<S, ?> getter) {
-        return new IdentityColumnDefinition<K, S>() {
-            @Override
-            public Getter<S, ?> getCustomGetter() {
-                return getter;
-            }
-
-            @Override
-            public boolean hasCustomSource() {
-                return true;
-            }
-
-            @Override
-            public Type getCustomSourceReturnType() {
-                Type[] paramTypesForInterface = TypeHelper.getParamTypesForInterface(getter.getClass(), Getter.class);
-                return paramTypesForInterface != null ? paramTypesForInterface[1] : null;
-            }
-        };
+        return new GetterColumnDefinition<>(getter);
     }
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> renameDefinition(final String name) {
-        return new IdentityColumnDefinition<K, S>() {
-            @Override
-            public K rename(K key) {
-                return key.alias(name);
-            }
-        };
+        return new RenameColumnDefinition<>(name);
     }
+
     static class IdentityColumnDefinition<K extends FieldKey<K>, S> extends FieldMapperColumnDefinition<K, S> {
         @Override
         public K rename(K key) {
@@ -91,9 +71,29 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         public Getter<S, ?> getCustomGetter() {
             return null;
         }
+
+        @Override
+        public FieldMapperColumnDefinition<K, S> addRename(String name) {
+            return compose(renameDefinition(name));
+        }
+
+        @Override
+        public FieldMapperColumnDefinition<K, S> addGetter(Getter<S, ?> getter) {
+            return compose(customGetter(getter));
+        }
+
+        @Override
+        public FieldMapperColumnDefinition<K, S> addFieldMapper(FieldMapper<ResultSet, ?> mapper) {
+            return compose(customFieldMapperDefinition(mapper));
+        }
+
+        @Override
+        public FieldMapperColumnDefinition<K, S> compose(FieldMapperColumnDefinition<K, S> columnDefinition) {
+            return compose(this, columnDefinition);
+        }
     }
 
-    static final class ComposeColumnDefinition<K extends FieldKey<K>, S> extends FieldMapperColumnDefinition<K, S> {
+    static final class ComposeColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
         private final FieldMapperColumnDefinition<K, S> def1;
         private final FieldMapperColumnDefinition<K, S> def2;
 
@@ -141,6 +141,56 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
             } else {
                 throw new IllegalStateException();
             }
+        }
+    }
+
+    private static class CustomFieldMapperColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
+        private final FieldMapper<ResultSet, ?> mapper;
+
+        public CustomFieldMapperColumnDefinition(FieldMapper<ResultSet, ?> mapper) {
+            this.mapper = mapper;
+        }
+
+        @Override
+        public FieldMapper<?, ?> getCustomFieldMapper() {
+            return mapper;
+        }
+    }
+
+    private static class GetterColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
+        private final Getter<S, ?> getter;
+
+        public GetterColumnDefinition(Getter<S, ?> getter) {
+            this.getter = getter;
+        }
+
+        @Override
+        public Getter<S, ?> getCustomGetter() {
+            return getter;
+        }
+
+        @Override
+        public boolean hasCustomSource() {
+            return true;
+        }
+
+        @Override
+        public Type getCustomSourceReturnType() {
+            Type[] paramTypesForInterface = TypeHelper.getParamTypesForInterface(getter.getClass(), Getter.class);
+            return paramTypesForInterface != null ? paramTypesForInterface[1] : null;
+        }
+    }
+
+    private static class RenameColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
+        private final String name;
+
+        public RenameColumnDefinition(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public K rename(K key) {
+            return key.alias(name);
         }
     }
 }

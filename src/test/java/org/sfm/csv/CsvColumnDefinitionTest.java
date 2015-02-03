@@ -12,7 +12,7 @@ public class CsvColumnDefinitionTest {
     @Test
     public void testComposition() {
 
-        CsvColumnDefinition compose = CsvColumnDefinition.dateFormatDefinition("yyyyMM").addRename("blop").addCustomReader(
+        CsvColumnDefinition compose = CsvColumnDefinition.IDENTITY.addDateFormat("yyyyMM").addRename("blop").addCustomReader(
                 new CellValueReader<Integer>() {
                     @Override
                     public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {

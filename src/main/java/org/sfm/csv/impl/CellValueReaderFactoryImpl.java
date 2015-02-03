@@ -8,6 +8,7 @@ import org.sfm.csv.impl.cellreader.joda.JodaTimeCellValueReaderHelper;
 import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +47,9 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 
 		if (propertyClass.equals(Date.class)) {
 			reader = (CellValueReader<P>) new DateCellValueReader(index);
-		} else if (Enum.class.isAssignableFrom(propertyClass)) {
+		} else if (Calendar.class.equals(propertyClass)) {
+			reader = (CellValueReader<P>) new CalendarCellValueReader(index);
+		}  else if (Enum.class.isAssignableFrom(propertyClass)) {
 			reader = new EnumCellValueReader(propertyClass);
 		} else {
 			reader = (CellValueReader<P>) JodaTimeCellValueReaderHelper.getReader(propertyClass, columnDefinition);

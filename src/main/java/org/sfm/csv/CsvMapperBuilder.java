@@ -8,6 +8,7 @@ import org.sfm.reflect.meta.*;
 import org.sfm.utils.ForEachCallBack;
 
 import java.lang.reflect.Type;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -129,7 +130,7 @@ public class CsvMapperBuilder<T> {
 					} else {
 						target = TypeHelper.toClass(prop.getType());
 					}
-					if (Date.class.equals(target)) {
+					if (Date.class.equals(target) || Calendar.class.equals(target)) {
 						pcf.setDateFormat(propMapping.getColumnKey().getIndex(), propMapping.getColumnDefinition().dateFormat());
 					}
 				}

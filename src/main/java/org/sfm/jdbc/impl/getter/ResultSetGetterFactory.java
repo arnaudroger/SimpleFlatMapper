@@ -101,6 +101,15 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(String.class, new StringResultSetGetterFactory());
 		factoryPerType.put(Date.class, DATE_GETTER_FACTORY);
 
+
+		factoryPerType.put(java.util.Calendar.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new CalendarResultSetGetter(DATE_GETTER_FACTORY.newGetter(java.util.Date.class, key));
+			}
+		});
+
 		factoryPerType.put(java.sql.Date.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override

@@ -9,6 +9,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.csv.CellValueReader;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.reflect.meta.ObjectClassMeta;
 
@@ -16,6 +17,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import static org.junit.Assert.assertEquals;
@@ -214,5 +217,17 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getTime(1)).thenReturn(ts);
 		LocalTime dt = factory.<LocalTime>newGetter(LocalTime.class, key(Types.TIME)).get(resultSet);
 		assertTrue(new LocalTime(cal).isEqual(dt));
+	}
+
+	@Test
+	public void testCalendar() throws Exception {
+		String date = "20150128";
+		java.util.Date dd = new SimpleDateFormat("yyyyMMdd").parse(date);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dd);
+
+		when(resultSet.getTimestamp(1)).thenReturn(new Timestamp(dd.getTime()));
+
+		assertEquals(cal, factory.<Calendar>newGetter(Calendar.class, key(Types.TIMESTAMP)).get(resultSet));
 	}
 }

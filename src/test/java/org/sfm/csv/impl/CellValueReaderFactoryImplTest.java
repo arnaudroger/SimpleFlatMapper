@@ -11,6 +11,11 @@ import org.sfm.csv.CellValueReader;
 import org.sfm.csv.CsvColumnDefinition;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -29,6 +34,18 @@ public class CellValueReaderFactoryImplTest {
         assertEquals(object, reader.read(object.toCharArray(), 0, object.length(), null));
     }
 
+    @Test
+    public void testCalendar() throws ParseException {
+        String date = "20150128";
+        Date dd = new SimpleDateFormat("yyyyMMdd").parse(date);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dd);
+
+        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(Calendar.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"));
+        ParsingContextFactory parsingContextFactory = new ParsingContextFactory(1);
+        parsingContextFactory.setDateFormat(0, "yyyyMMdd");
+        assertEquals(cal, reader.read(date.toCharArray(), 0, date.length(), parsingContextFactory.newContext()));
+    }
 
     @Test
     public void testJodaDateTime() {

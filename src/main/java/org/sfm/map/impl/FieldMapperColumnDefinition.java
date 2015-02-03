@@ -74,17 +74,20 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
 
         @Override
         public FieldMapperColumnDefinition<K, S> addRename(String name) {
-            return compose(renameDefinition(name));
+            FieldMapperColumnDefinition<K, S> columnDefinition = renameDefinition(name);
+            return compose(columnDefinition);
         }
 
         @Override
         public FieldMapperColumnDefinition<K, S> addGetter(Getter<S, ?> getter) {
-            return compose(customGetter(getter));
+            FieldMapperColumnDefinition<K, S> columnDefinition = customGetter(getter);
+            return compose(columnDefinition);
         }
 
         @Override
         public FieldMapperColumnDefinition<K, S> addFieldMapper(FieldMapper<ResultSet, ?> mapper) {
-            return compose(customFieldMapperDefinition(mapper));
+            FieldMapperColumnDefinition<K, S> columnDefinition = customFieldMapperDefinition(mapper);
+            return compose(columnDefinition);
         }
 
         @Override

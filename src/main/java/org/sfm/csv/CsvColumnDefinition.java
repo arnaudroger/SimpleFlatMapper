@@ -10,43 +10,22 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
     public abstract String dateFormat();
     public abstract CellValueReader<?> getCustomReader();
 
+    public abstract CsvColumnDefinition addRename(final String name);
+    public abstract CsvColumnDefinition addDateFormat(final String dateFormatDef);
+    public abstract CsvColumnDefinition addCustomReader(final CellValueReader<?> cellValueReader);
+
     public static final CsvColumnDefinition IDENTITY = new IdentityCsvColumnDefinition();
 
     public static CsvColumnDefinition renameDefinition(final String name) {
-        return new IdentityCsvColumnDefinition() {
-            @Override
-            public CsvColumnKey rename(CsvColumnKey key) {
-                return key.alias(name);
-            }
-        };
+        return new RenameCsvColumnDefinition(name);
     }
 
     public static CsvColumnDefinition dateFormatDefinition(final String dateFormatDef) {
-        return new IdentityCsvColumnDefinition() {
-            @Override
-            public String dateFormat() {
-                return dateFormatDef;
-            }
-        };
+        return new DateFormatCsvColumnDefinition(dateFormatDef);
     }
 
     public static CsvColumnDefinition customReaderDefinition(final CellValueReader<?> cellValueReader) {
-        return new IdentityCsvColumnDefinition() {
-            @Override
-            public CellValueReader<?> getCustomReader() {
-                return cellValueReader;
-            }
-
-            @Override
-            public boolean hasCustomSource() {
-                return true;
-            }
-
-            @Override
-            public Type getCustomSourceReturnType() {
-                return TypeHelper.getParamTypesForInterface(cellValueReader.getClass(), CellValueReader.class)[0];
-            }
-        };
+        return new CustomReaderCsvColumnDefinition(cellValueReader);
     }
 
 
@@ -84,9 +63,28 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         public Type getCustomSourceReturnType() {
             throw new IllegalStateException();
         }
+
+
+        public CsvColumnDefinition addRename(final String name) {
+            return compose(CsvColumnDefinition.renameDefinition(name));
+        }
+
+        public CsvColumnDefinition addDateFormat(final String dateFormatDef) {
+            return compose(CsvColumnDefinition.dateFormatDefinition(dateFormatDef));
+        }
+
+        public CsvColumnDefinition addCustomReader(final CellValueReader<?> cellValueReader) {
+            return compose(CsvColumnDefinition.customReaderDefinition(cellValueReader));
+        }
+
+        private CsvColumnDefinition compose(CsvColumnDefinition columnDefinition) {
+            return compose(this, columnDefinition);
+        }
+
+
     }
 
-    static final class ComposeCsvColumnDefinition extends CsvColumnDefinition {
+    static final class ComposeCsvColumnDefinition extends IdentityCsvColumnDefinition {
         private final CsvColumnDefinition def1;
         private final CsvColumnDefinition def2;
 
@@ -134,6 +132,55 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
             } else {
                 throw new IllegalStateException();
             }
+        }
+    }
+
+    private static class CustomReaderCsvColumnDefinition extends IdentityCsvColumnDefinition {
+        private final CellValueReader<?> cellValueReader;
+
+        public CustomReaderCsvColumnDefinition(CellValueReader<?> cellValueReader) {
+            this.cellValueReader = cellValueReader;
+        }
+
+        @Override
+        public CellValueReader<?> getCustomReader() {
+            return cellValueReader;
+        }
+
+        @Override
+        public boolean hasCustomSource() {
+            return true;
+        }
+
+        @Override
+        public Type getCustomSourceReturnType() {
+            return TypeHelper.getParamTypesForInterface(cellValueReader.getClass(), CellValueReader.class)[0];
+        }
+    }
+
+    private static class DateFormatCsvColumnDefinition extends IdentityCsvColumnDefinition {
+        private final String dateFormatDef;
+
+        public DateFormatCsvColumnDefinition(String dateFormatDef) {
+            this.dateFormatDef = dateFormatDef;
+        }
+
+        @Override
+        public String dateFormat() {
+            return dateFormatDef;
+        }
+    }
+
+    private static class RenameCsvColumnDefinition extends IdentityCsvColumnDefinition {
+        private final String name;
+
+        public RenameCsvColumnDefinition(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public CsvColumnKey rename(CsvColumnKey key) {
+            return key.alias(name);
         }
     }
 }

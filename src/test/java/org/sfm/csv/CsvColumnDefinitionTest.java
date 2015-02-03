@@ -12,13 +12,13 @@ public class CsvColumnDefinitionTest {
     @Test
     public void testComposition() {
 
-        CsvColumnDefinition compose = CsvColumnDefinition.compose(CsvColumnDefinition.compose(CsvColumnDefinition.dateFormatDefinition("yyyyMM"), CsvColumnDefinition.renameDefinition("blop")),
-                CsvColumnDefinition.customReaderDefinition(new CellValueReader<Integer>() {
+        CsvColumnDefinition compose = CsvColumnDefinition.dateFormatDefinition("yyyyMM").addRename("blop").addCustomReader(
+                new CellValueReader<Integer>() {
                     @Override
                     public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                         return 3;
                     }
-                }));
+                });
 
         assertEquals("blop", compose.rename(new CsvColumnKey("bar", -1)).getName());
         assertEquals("yyyyMM", compose.dateFormat());

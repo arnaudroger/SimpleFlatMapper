@@ -35,15 +35,15 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
     }
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customFieldMapperDefinition(final FieldMapper<ResultSet, ?> mapper) {
-        return new CustomFieldMapperColumnDefinition<>(mapper);
+        return new CustomFieldMapperColumnDefinition<K, S>(mapper);
     }
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customGetter(final Getter<S, ?> getter) {
-        return new GetterColumnDefinition<>(getter);
+        return new GetterColumnDefinition<K, S>(getter);
     }
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> renameDefinition(final String name) {
-        return new RenameColumnDefinition<>(name);
+        return new RenameColumnDefinition<K, S>(name);
     }
 
     static class IdentityColumnDefinition<K extends FieldKey<K>, S> extends FieldMapperColumnDefinition<K, S> {

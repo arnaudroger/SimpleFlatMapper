@@ -1,9 +1,11 @@
 package org.sfm.csv;
 
 import org.junit.Test;
+import org.sfm.csv.impl.ParsingContext;
 import org.sfm.csv.parser.CellConsumer;
 import org.sfm.tuples.*;
 import org.sfm.utils.ListHandler;
+import org.sfm.utils.Predicate;
 
 import java.io.CharArrayReader;
 import java.io.IOException;
@@ -186,6 +188,26 @@ public class CsvParserTest {
 		assertEquals("value4", tuple2.forth());
 		assertEquals("value5", tuple2.fifth());
 		assertFalse(iterator.hasNext());
+	}
+
+	@Test
+	public void testDSLMapWithCustomDefinition() throws  Exception {
+		Iterator<Tuple2<String, String>> iterator = CsvParser.mapTo(String.class, String.class).columnDefinition(new Predicate<CsvColumnKey>() {
+			@Override
+			public boolean test(CsvColumnKey csvColumnKey) {
+				return csvColumnKey.getIndex() == 1;
+			}
+		}, CsvColumnDefinition.customReaderDefinition(new CellValueReader<String>() {
+			@Override
+			public String read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+				return "c1";
+			}
+		})).iterator(new StringReader("0,1\nv0,v1"));
+
+		Tuple2<String, String> tuple = iterator.next();
+
+		assertEquals("v0", tuple.first());
+		assertEquals("c1", tuple.second());
 	}
 
 	private Reader getOneRowReader() {

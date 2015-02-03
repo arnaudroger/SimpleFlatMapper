@@ -60,7 +60,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	public DynamicCsvMapper(Type target, ClassMeta<T> classMeta, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitionProvider) {
 		this(target, classMeta, new RethrowFieldMapperErrorHandler<CsvColumnKey>(), new RethrowMapperBuilderErrorHandler(), new RethrowRowHandlerErrorHandler(), "yyyy-MM-dd HH:mm:ss",
-				new IdentityCsvColumnDefinitionProvider(), new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl());
+				columnDefinitionProvider, new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl());
 	}
 
 	@Override

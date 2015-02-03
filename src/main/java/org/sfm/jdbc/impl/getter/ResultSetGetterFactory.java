@@ -106,7 +106,8 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
-				return (Getter<ResultSet, P>) new CalendarResultSetGetter(DATE_GETTER_FACTORY.newGetter(java.util.Date.class, key));
+				Getter<ResultSet, Date> dateGetter = DATE_GETTER_FACTORY.newGetter(Date.class, key);
+				return (Getter<ResultSet, P>) new CalendarResultSetGetter(dateGetter);
 			}
 		});
 

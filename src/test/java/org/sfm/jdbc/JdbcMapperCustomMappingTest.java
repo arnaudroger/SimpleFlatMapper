@@ -4,12 +4,14 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalListObject;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
+import org.sfm.map.GetterFactory;
 import org.sfm.map.MappingException;
 import org.sfm.map.impl.FieldMapper;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.utils.RowHandler;
 
+import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -163,6 +165,45 @@ public class JdbcMapperCustomMappingTest {
 
 		}, DbHelper.TEST_DB_OBJECT_QUERY.replace("id,", "33 as id,"));
 	}
+
+    @Test
+    public void testCustomGetterFactory() throws SQLException, Exception  {
+        final JdbcMapper<DbObject> mapper =
+                JdbcMapperFactory
+                        .newInstance()
+                        .newBuilder(DbObject.class)
+                        .addMapping("id",
+                                FieldMapperColumnDefinition.customGetterFactory(new GetterFactory<ResultSet, JdbcColumnKey>() {
+                                    @Override
+                                    public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+                                        return (Getter<ResultSet, P>) new Getter<ResultSet, Long>() {
+                                            @Override
+                                            public Long get(ResultSet target) throws Exception {
+                                                return 1l;
+                                            }
+                                        };
+                                    }
+                                }))
+                        .addMapping("name") //email, creation_time, type_ordinal, type_name
+                        .addMapping("email")
+                        .addMapping("creation_time")
+                        .addMapping("type_ordinal")
+                        .addMapping("type_name")
+                        .mapper();
+
+
+        DbHelper.testQuery(new RowHandler<PreparedStatement>() {
+
+            @Override
+            public void handle(PreparedStatement t) throws Exception {
+                ResultSet r = t.executeQuery();
+                r.next();
+                DbHelper.assertDbObjectMapping(mapper.map(r));
+            }
+
+        }, DbHelper.TEST_DB_OBJECT_QUERY.replace("id,", "33 as id,"));
+    }
+
 	@Test
 	public void testCustomReaderOnConstructor() throws SQLException, Exception  {
 		JdbcMapperFactory mapperFactory = JdbcMapperFactory

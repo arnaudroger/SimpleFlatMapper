@@ -2,6 +2,7 @@ package org.sfm.map.impl;
 
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.FieldKey;
+import org.sfm.map.GetterFactory;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
@@ -14,9 +15,12 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
     public abstract FieldMapper<?, ?> getCustomFieldMapper();
 
     public abstract Getter<S, ?> getCustomGetter();
+    public abstract GetterFactory<S, K> getCustomGetterFactory();
+    public abstract boolean hasCustomFactory();
 
     public abstract FieldMapperColumnDefinition<K, S> addRename(String name);
     public abstract FieldMapperColumnDefinition<K, S> addGetter(Getter<S, ?> getter);
+    public abstract FieldMapperColumnDefinition<K, S> addGetterFactory(GetterFactory<S, K> getterFactory);
     public abstract FieldMapperColumnDefinition<K, S> addFieldMapper(FieldMapper<ResultSet, ?> mapper);
     public abstract FieldMapperColumnDefinition<K, S> compose(FieldMapperColumnDefinition<K, S> columnDefinition);
 
@@ -40,6 +44,10 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customGetter(final Getter<S, ?> getter) {
         return new GetterColumnDefinition<K, S>(getter);
+    }
+
+    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customGetterFactory(final GetterFactory<S, K> getterFactory) {
+        return new GetterFactoryColumnDefinition<K, S>(getterFactory);
     }
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> renameDefinition(final String name) {
@@ -73,6 +81,16 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         }
 
         @Override
+        public GetterFactory<S, K> getCustomGetterFactory() {
+            return null;
+        }
+
+        @Override
+        public boolean hasCustomFactory() {
+            return false;
+        }
+
+        @Override
         public FieldMapperColumnDefinition<K, S> addRename(String name) {
             FieldMapperColumnDefinition<K, S> columnDefinition = renameDefinition(name);
             return compose(columnDefinition);
@@ -81,6 +99,12 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         @Override
         public FieldMapperColumnDefinition<K, S> addGetter(Getter<S, ?> getter) {
             FieldMapperColumnDefinition<K, S> columnDefinition = customGetter(getter);
+            return compose(columnDefinition);
+        }
+
+        @Override
+        public FieldMapperColumnDefinition<K, S> addGetterFactory(GetterFactory<S, K> getterFactory) {
+            FieldMapperColumnDefinition<K, S> columnDefinition = customGetterFactory(getterFactory);
             return compose(columnDefinition);
         }
 
@@ -129,10 +153,24 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
             }
             return fm;
         }
+        @Override
+        public GetterFactory<S, K> getCustomGetterFactory() {
+            GetterFactory<S, K> fm = def1.getCustomGetterFactory();
+
+            if (fm == null) {
+                fm = def2.getCustomGetterFactory();
+            }
+            return fm;
+        }
 
         @Override
         public boolean hasCustomSource() {
             return def1.hasCustomSource() || def2.hasCustomSource();
+        }
+
+        @Override
+        public boolean hasCustomFactory() {
+            return def1.hasCustomFactory() || def2.hasCustomFactory();
         }
 
         @Override
@@ -182,6 +220,25 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
             Type[] paramTypesForInterface = TypeHelper.getParamTypesForInterface(getter.getClass(), Getter.class);
             return paramTypesForInterface != null ? paramTypesForInterface[1] : null;
         }
+    }
+
+    private static class GetterFactoryColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
+        private final GetterFactory<S, K> getterFactory;
+
+        public GetterFactoryColumnDefinition(GetterFactory<S, K> getterFactory) {
+            this.getterFactory = getterFactory;
+        }
+
+        @Override
+        public GetterFactory<S, K> getCustomGetterFactory() {
+            return getterFactory;
+        }
+
+        @Override
+        public boolean hasCustomFactory() {
+            return true;
+        }
+
     }
 
     private static class RenameColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {

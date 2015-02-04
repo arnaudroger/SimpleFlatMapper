@@ -75,9 +75,15 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 
 		Getter<ResultSet, P> getter = (Getter<ResultSet, P>) propertyMapping.getColumnDefinition().getCustomGetter();
 
-		if (getter == null && type.isPrimitive()) {
+		if (getter == null && type.isPrimitive() && !propertyMapping.getColumnDefinition().hasCustomFactory() ) {
 			return primitiveIndexedFieldMapper(type, setter, key, errorHandler);
 		}
+
+        GetterFactory<ResultSet, JdbcColumnKey> getterFactory = this.getterFactory;
+
+        if (propertyMapping.getColumnDefinition().hasCustomFactory()) {
+            getterFactory = propertyMapping.getColumnDefinition().getCustomGetterFactory();
+        }
 
 		if (getter == null) {
 			getter = getterFactory.newGetter(propertyType, key);

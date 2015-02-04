@@ -7,10 +7,14 @@ import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPrimitiveObject;
 import org.sfm.csv.impl.ParsingContext;
 import org.sfm.csv.impl.cellreader.*;
+import org.sfm.tuples.Tuple2;
+import org.sfm.tuples.Tuples;
 import org.sfm.utils.ListHandler;
+import org.sfm.utils.Predicate;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -304,4 +308,30 @@ public class CsvMapperCustomReaderTest {
         assertEquals(3.1526, object.getpDouble(), 0.000001);
     }
 
+    @Test
+    public void testCustomCsvReaderValueFactory() throws IOException {
+        CsvMapper<Tuple2<String, String>> csvMapper = CsvMapperFactory.newInstance().addColumnDefinition(new Predicate<CsvColumnKey>() {
+            @Override
+            public boolean test(CsvColumnKey csvColumnKey) {
+                return true;
+            }
+        }, CsvColumnDefinition.customCellValueReaderFactoryDefinition(new CellValueReaderFactory() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> CellValueReader<P> getReader(Type propertyType, final int index, CsvColumnDefinition columnDefinition) {
+                return (CellValueReader<P>) new CellValueReader<String>() {
+                    @Override
+                    public String read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+                        return "g" + index;
+                    }
+                };
+            }
+        })).newMapper(Tuples.typeDef(String.class, String.class));
+
+        Tuple2<String, String> value = csvMapper.iterator(new StringReader("b0,b1\nc0,c1")).next();
+
+        assertEquals("g0", value.first());
+        assertEquals("g1", value.second());
+    }
 }

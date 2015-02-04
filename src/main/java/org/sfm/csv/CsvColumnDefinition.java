@@ -9,11 +9,16 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
 
     public abstract String dateFormat();
     public abstract CellValueReader<?> getCustomReader();
+    public abstract CellValueReaderFactory getCustomCellValueReaderFactory();
+    public abstract boolean hasCustomReaderFactory();
 
     public abstract CsvColumnDefinition addRename(String name);
     public abstract CsvColumnDefinition addDateFormat(String dateFormatDef);
     public abstract CsvColumnDefinition addCustomReader(CellValueReader<?> cellValueReader);
+    public abstract CsvColumnDefinition addCustomCellValueReaderFactory(CellValueReaderFactory cellValueReaderFactory);
+
     public abstract CsvColumnDefinition compose(CsvColumnDefinition columnDefinition);
+
 
     public static final CsvColumnDefinition IDENTITY = new IdentityCsvColumnDefinition();
 
@@ -36,8 +41,9 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         return new ComposeCsvColumnDefinition(def1, def2);
     }
 
-
-
+    public static CsvColumnDefinition customCellValueReaderFactoryDefinition(final CellValueReaderFactory cellValueReaderFactory) {
+        return new CustomCellValueReaderFactoryCsvColumnDefinition(cellValueReaderFactory);
+    }
 
     static class IdentityCsvColumnDefinition extends CsvColumnDefinition {
         @Override
@@ -48,6 +54,16 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         @Override
         public CellValueReader<?> getCustomReader() {
             return null;
+        }
+
+        @Override
+        public CellValueReaderFactory getCustomCellValueReaderFactory() {
+            return null;
+        }
+
+        @Override
+        public boolean hasCustomReaderFactory() {
+            return false;
         }
 
         @Override
@@ -66,18 +82,27 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         }
 
 
+        @Override
         public CsvColumnDefinition addRename(final String name) {
             return compose(CsvColumnDefinition.renameDefinition(name));
         }
 
+        @Override
         public CsvColumnDefinition addDateFormat(final String dateFormatDef) {
             return compose(CsvColumnDefinition.dateFormatDefinition(dateFormatDef));
         }
 
+        @Override
         public CsvColumnDefinition addCustomReader(final CellValueReader<?> cellValueReader) {
             return compose(CsvColumnDefinition.customReaderDefinition(cellValueReader));
         }
 
+        @Override
+        public CsvColumnDefinition addCustomCellValueReaderFactory(CellValueReaderFactory cellValueReaderFactory) {
+            return compose(CsvColumnDefinition.customCellValueReaderFactoryDefinition(cellValueReaderFactory));
+        }
+
+        @Override
         public CsvColumnDefinition compose(CsvColumnDefinition columnDefinition) {
             return compose(this, columnDefinition);
         }
@@ -115,6 +140,17 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         }
 
         @Override
+        public CellValueReaderFactory getCustomCellValueReaderFactory() {
+            CellValueReaderFactory cellValueReaderFactory = def2.getCustomCellValueReaderFactory();
+
+            if (cellValueReaderFactory == null) {
+                cellValueReaderFactory = def1.getCustomCellValueReaderFactory();
+            }
+
+            return cellValueReaderFactory;
+        }
+
+        @Override
         public CsvColumnKey rename(CsvColumnKey key) {
             return def2.rename(def1.rename(key));
         }
@@ -122,6 +158,11 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         @Override
         public boolean hasCustomSource() {
             return def1.hasCustomSource() || def2.hasCustomSource();
+        }
+
+        @Override
+        public boolean hasCustomReaderFactory() {
+            return def1.hasCustomReaderFactory() || def2.hasCustomReaderFactory();
         }
 
         @Override
@@ -182,6 +223,24 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         @Override
         public CsvColumnKey rename(CsvColumnKey key) {
             return key.alias(name);
+        }
+    }
+
+    private static class CustomCellValueReaderFactoryCsvColumnDefinition extends IdentityCsvColumnDefinition {
+        private final CellValueReaderFactory cellValueReaderFactory;
+
+        public CustomCellValueReaderFactoryCsvColumnDefinition(CellValueReaderFactory cellValueReaderFactory) {
+            this.cellValueReaderFactory = cellValueReaderFactory;
+        }
+
+        @Override
+        public CellValueReaderFactory getCustomCellValueReaderFactory() {
+            return cellValueReaderFactory;
+        }
+
+        @Override
+        public boolean hasCustomReaderFactory() {
+            return true;
         }
     }
 }

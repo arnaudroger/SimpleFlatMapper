@@ -176,8 +176,12 @@ public final class CellSetterFactory {
 		}
 
 		if (reader == null) {
-			reader = cellValueReaderFactory.getReader(propertyType, index, columnDefinition);
-		}
+            CellValueReaderFactory factory = cellValueReaderFactory;
+            if (columnDefinition.hasCustomReaderFactory()) {
+                factory = columnDefinition.getCustomCellValueReaderFactory();
+            }
+            reader = factory.getReader(propertyType, index, columnDefinition);
+        }
 
 		if (reader == null) {
 			// check if has a one arg construct

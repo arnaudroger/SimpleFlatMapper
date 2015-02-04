@@ -175,12 +175,13 @@ public final class CellSetterFactory {
 			reader = (CellValueReader<P>) columnDefinition.getCustomReader();
 		}
 
-		if (reader == null) {
-            CellValueReaderFactory factory = cellValueReaderFactory;
-            if (columnDefinition.hasCustomReaderFactory()) {
-                factory = columnDefinition.getCustomCellValueReaderFactory();
-            }
-            reader = factory.getReader(propertyType, index, columnDefinition);
+        CellValueReaderFactory factory = cellValueReaderFactory;
+        if (columnDefinition.hasCustomReaderFactory()) {
+            factory = columnDefinition.getCustomCellValueReaderFactory();
+        }
+
+        if (reader == null) {
+            reader = factory.<P>getReader(propertyType, index, columnDefinition);
         }
 
 		if (reader == null) {
@@ -188,7 +189,7 @@ public final class CellSetterFactory {
 			final Constructor<?>[] constructors = propertyType.getConstructors();
 			if (constructors != null && constructors.length == 1 && constructors[0].getParameterTypes().length == 1) {
 				final Constructor<P> constructor = (Constructor<P>) constructors[0];
-				CellValueReader<?> innerReader = cellValueReaderFactory.getReader(constructor.getParameterTypes()[0], index, columnDefinition);
+				CellValueReader<?> innerReader = factory.<P>getReader(constructor.getParameterTypes()[0], index, columnDefinition);
 				
 				if (innerReader != null) {
 					reader = new ConstructorOnReader<P>(constructor, innerReader);

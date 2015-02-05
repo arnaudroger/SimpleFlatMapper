@@ -22,7 +22,7 @@ public final class ShortResultSetGetter implements ShortGetter<ResultSet>, Gette
 	@Override
 	public Short get(final ResultSet target) throws Exception {
 		final short s = getShort(target);
-		if (target.wasNull()) {
+		if (s == 0 && target.wasNull()) {
 			return null;
 		} else {
 			return Short.valueOf(s);

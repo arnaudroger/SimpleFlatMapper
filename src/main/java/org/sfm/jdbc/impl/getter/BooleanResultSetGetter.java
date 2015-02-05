@@ -22,7 +22,7 @@ public final class BooleanResultSetGetter implements BooleanGetter<ResultSet>, G
 	@Override
 	public Boolean get(final ResultSet target) throws Exception {
 		final boolean b = getBoolean(target);
-		if (target.wasNull()) {
+		if (b == false && target.wasNull()) {
 			return null;
 		} else {
 			return Boolean.valueOf(b);

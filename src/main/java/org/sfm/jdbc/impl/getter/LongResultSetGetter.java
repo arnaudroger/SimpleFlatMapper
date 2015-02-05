@@ -23,7 +23,7 @@ public final class LongResultSetGetter implements LongGetter<ResultSet>,
 	@Override
 	public Long get(final ResultSet target) throws Exception {
 		final long l = getLong(target);
-		if (target.wasNull()) {
+		if (l == 0 && target.wasNull()) {
 			return null;
 		} else {
 			return Long.valueOf(l);

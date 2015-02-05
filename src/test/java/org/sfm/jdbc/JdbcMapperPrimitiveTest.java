@@ -80,15 +80,7 @@ public class JdbcMapperPrimitiveTest {
 
 	public <T extends PrimitiveObject> void testPrimitives(Mapper<ResultSet, T> mapper) throws SQLException, Exception {
 		ResultSet rs = mock(ResultSet.class);
-		when(rs.getBoolean("p_boolean")).thenReturn(true);
-		when(rs.getByte("p_byte")).thenReturn((byte)0xa3);
-		when(rs.getInt("p_character")).thenReturn(0xa4);
-		when(rs.getShort("p_short")).thenReturn((short)0xa5);
-		when(rs.getInt("p_int")).thenReturn(0xa6);
-		when(rs.getLong("p_long")).thenReturn(0xffa4l);
-		when(rs.getFloat("p_float")).thenReturn(3.14f);
-		when(rs.getDouble("p_double")).thenReturn(3.14159);
-		
+
 		when(rs.getBoolean(1)).thenReturn(true);
 		when(rs.getByte(2)).thenReturn((byte)0xa3);
 		when(rs.getInt(3)).thenReturn(0xa4);
@@ -115,23 +107,14 @@ public class JdbcMapperPrimitiveTest {
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.wasNull()).thenReturn(true);
 		
-		when(rs.getBoolean("p_boolean")).thenReturn(false);
-		when(rs.getByte("p_byte")).thenReturn((byte)0);
-		when(rs.getInt("p_character")).thenReturn(0);
-		when(rs.getShort("p_short")).thenReturn((short)0);
-		when(rs.getInt("p_int")).thenReturn(0);
-		when(rs.getLong("p_long")).thenReturn(0l);
-		when(rs.getFloat("p_float")).thenReturn(0f);
-		when(rs.getDouble("p_double")).thenReturn(0.0);
-		
-		when(rs.getBoolean(1)).thenReturn(true);
+		when(rs.getBoolean(1)).thenReturn(false);
 		when(rs.getByte(2)).thenReturn((byte)0);
 		when(rs.getInt(3)).thenReturn(0);
 		when(rs.getShort(4)).thenReturn((short)0);
 		when(rs.getInt(5)).thenReturn(0);
 		when(rs.getLong(6)).thenReturn(0l);
 		when(rs.getFloat(7)).thenReturn(0f);
-		when(rs.getDouble(8)).thenReturn(0.0);
+		when(rs.getDouble(8)).thenReturn(0d);
 		
 		DbBoxedPrimitveObject object = mapper.map(rs);
 		

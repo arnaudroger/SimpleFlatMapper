@@ -22,7 +22,7 @@ public final class ByteResultSetGetter implements ByteGetter<ResultSet>, Getter<
 	@Override
 	public Byte get(final ResultSet target) throws Exception {
 		final byte b = getByte(target);
-		if (target.wasNull()) {
+		if (b == 0 && target.wasNull()) {
 			return null;
 		} else {
 			return Byte.valueOf(b);

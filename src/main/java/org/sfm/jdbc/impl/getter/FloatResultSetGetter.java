@@ -22,7 +22,7 @@ public final class FloatResultSetGetter implements FloatGetter<ResultSet>, Gette
 	@Override
 	public Float get(final ResultSet target) throws Exception {
 		final float f = getFloat(target);
-		if (target.wasNull()) {
+		if (f == 0f && target.wasNull()) {
 			return null;
 		} else {
 			return Float.valueOf(f);

@@ -22,7 +22,7 @@ public final class DoubleResultSetGetter implements DoubleGetter<ResultSet>, Get
 	@Override
 	public Double get(final ResultSet target) throws Exception {
 		final double d = getDouble(target);
-		if (target.wasNull()) {
+		if (d == 0d && target.wasNull()) {
 			return null;
 		} else {
 			return Double.valueOf(d);

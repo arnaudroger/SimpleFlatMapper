@@ -22,7 +22,7 @@ public final class CharacterResultSetGetter implements CharacterGetter<ResultSet
 	@Override
 	public Character get(final ResultSet target) throws SQLException {
 		final char c = getCharacter(target);
-		if (target.wasNull()) {
+		if (c == 0 && target.wasNull()) {
 			return null;
 		} else {
 			return Character.valueOf(c);

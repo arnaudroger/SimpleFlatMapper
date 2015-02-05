@@ -22,7 +22,7 @@ public final class IntResultSetGetter implements IntGetter<ResultSet>, Getter<Re
 	@Override
 	public Integer get(final ResultSet target) throws Exception {
 		final int i = getInt(target);
-		if (target.wasNull()) {
+		if (i == 0 && target.wasNull()) {
 			return null;
 		} else {
 			return Integer.valueOf(i);

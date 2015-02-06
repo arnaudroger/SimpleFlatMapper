@@ -77,18 +77,22 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
 	private List<PropertyMeta<T, ?>> listProperties(final ReflectionService reflectService, Class<?> target) {
 		final List<PropertyMeta<T, ?>> properties = new ArrayList<PropertyMeta<T, ?>>();
-		final Set<String> propertiesSet = new HashSet<String>();
-		
+
 		ClassVisitor.visit(target, new FieldAndMethodCallBack() {
 			@Override
 			public void method(Method method) {
 				final String name = method.getName();
 				if (SetterHelper.methodModifiersMatches(method.getModifiers()) && SetterHelper.isSetter(name)) {
 					final String propertyName = SetterHelper.getPropertyNameFromMethodName(name);
-					if (!propertiesSet.contains(propertyName)) {
-						properties.add(new MethodPropertyMeta<T, Object>(propertyName, getAlias(propertyName), reflectService, method));
-						propertiesSet.add(propertyName);
-					}
+
+                    int indexOfProperty = findProperty(properties, propertyName);
+
+                    MethodPropertyMeta<T, Object> propertyMeta = new MethodPropertyMeta<T, Object>(propertyName, getAlias(propertyName), reflectService, method);
+                    if (indexOfProperty == -1) {
+                        properties.add(propertyMeta);
+                    } else {
+                        properties.set(indexOfProperty, propertyMeta);
+                    }
 				}
 			}
 			
@@ -96,13 +100,22 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			public void field(Field field) {
 				final String name = field.getName();
 				if (SetterHelper.fieldModifiersMatches(field.getModifiers())) {
-					if (!propertiesSet.contains(name)) {
-						properties.add(new FieldPropertyMeta<T, Object>(field.getName(), getAlias(name), reflectService, field));
-						propertiesSet.add(name);
-					}
+                    int indexOfProperty = findProperty(properties, name);
+                    if (indexOfProperty == -1) {
+                        properties.add(new FieldPropertyMeta<T, Object>(field.getName(), getAlias(name), reflectService, field));
+                    }
 				}
 			}
-		});
+
+            private int findProperty(List<PropertyMeta<T, ?>> properties, String name) {
+                for(int i = 0; i < properties.size(); i++) {
+                    if (properties.get(i).getName().equals(name)) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+        });
 		
 		return properties;
 	}
@@ -143,29 +156,36 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return target;
 	}
 
-	public Type getTargetClass() {
-		return target;
-	}
-
-
 	@Override
 	public String[] generateHeaders() {
 		List<String> strings = new ArrayList<String>();
 
-		for(ConstructorPropertyMeta<T, ?> cpm : constructorProperties) {
-			String prefix = cpm.getName();
-
-			ClassMeta<?> classMeta = reflectService.getClassMeta(cpm.getType(), false);
-
-			if (classMeta != null) {
-				for(String prop : classMeta.generateHeaders()) {
-					strings.add(prefix + "_" + prop);
-				}
-			} else {
-				strings.add(prefix);
-			}
+		for(PropertyMeta<T, ?> cpm : constructorProperties) {
+            extractProperties(strings, cpm);
 		}
 
-		return strings.toArray(EMPTY_STRING_ARRAY);
+        for(PropertyMeta<T, ?> cpm : properties) {
+            extractProperties(strings, cpm);
+        }
+
+        return strings.toArray(EMPTY_STRING_ARRAY);
 	}
+
+    private void extractProperties(List<String> properties, PropertyMeta<T, ?> cpm) {
+        String prefix = cpm.getName();
+        ClassMeta<?> classMeta = cpm.getClassMeta();
+
+        if (classMeta != null) {
+            for(String prop : classMeta.generateHeaders()) {
+                String name = prefix + "_" + prop;
+                if (!properties.contains(name)) {
+                    properties.add(name);
+                }
+            }
+        } else {
+            if (!properties.contains(prefix)) {
+                properties.add(prefix);
+            }
+        }
+    }
 }

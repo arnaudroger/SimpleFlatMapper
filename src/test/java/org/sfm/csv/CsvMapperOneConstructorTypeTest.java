@@ -11,7 +11,7 @@ import java.io.StringReader;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class CsvMapperOneConstructorType {
+public class CsvMapperOneConstructorTypeTest {
 
 	public static class MyObject {
 		SubObject prop;

@@ -14,16 +14,16 @@ public class JodaTimeCellValueReaderHelper {
         Class<?> clazz = TypeHelper.toClass(type);
 
         if (JodaTimeClasses.isJodaDateTime(clazz)) {
-            return new JodaDateTimeCellValueReader(columnDefinition.dateFormat());
+            return new JodaDateTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
         }
         if (JodaTimeClasses.isJodaLocalDate(clazz)) {
-            return new JodaLocalDateCellValueReader(columnDefinition.dateFormat());
+            return new JodaLocalDateCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
         }
         if (JodaTimeClasses.isJodaLocalDateTime(clazz)) {
-            return new JodaLocalDateTimeCellValueReader(columnDefinition.dateFormat());
+            return new JodaLocalDateTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
         }
         if (JodaTimeClasses.isJodaLocalTime(clazz)) {
-            return new JodaLocalTimeCellValueReader(columnDefinition.dateFormat());
+            return new JodaLocalTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
         }
 
         return null;

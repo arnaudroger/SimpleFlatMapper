@@ -32,14 +32,6 @@ public class SubPropertyMeta<O, P> extends PropertyMeta<O, P> {
 	protected ClassMeta<P> newClassMeta() {
 		return ownerProperty.getClassMeta();
 	}
-	@SuppressWarnings("rawtypes")
-	public Type getFinalType() {
-		if (subProperty instanceof SubPropertyMeta) {
-			return ((SubPropertyMeta) subProperty).getFinalType();
-		} else {
-			return subProperty.getType();
-		}
-	}
 	@Override
 	public boolean isSubProperty() {
 		return true;

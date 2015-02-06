@@ -34,7 +34,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	private final FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler;
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
 	private final ParsingContextFactory parsingContextFactory;
-	
+
 	public CsvMapperImpl(Instantiator<DelayedCellSetter<T, ?>[], T> instantiator,
 			DelayedCellSetterFactory<T, ?>[] delayedCellSetters,
 			CellSetter<T>[] setters,

@@ -5,9 +5,11 @@ import org.sfm.csv.CellValueReaderFactory;
 import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.csv.impl.cellreader.*;
 import org.sfm.csv.impl.cellreader.joda.JodaTimeCellValueReaderHelper;
+import org.sfm.csv.ParsingContextFactoryBuilder;
 import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,15 +42,19 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public <P> CellValueReader<P> getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition) {
+	public <P> CellValueReader<P> getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
 		Class<? extends P> propertyClass =  TypeHelper.toClass(propertyType);
 
 		CellValueReader<P> reader;
 
 		if (propertyClass.equals(Date.class)) {
-			reader = (CellValueReader<P>) new DateCellValueReader(index);
+            DateCellValueReader dateCellValueReader = new DateCellValueReader(index, columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+            reader = (CellValueReader<P>) dateCellValueReader;
+            parsingContextFactoryBuilder.addParsingContextProvider(index, dateCellValueReader);
 		} else if (Calendar.class.equals(propertyClass)) {
-			reader = (CellValueReader<P>) new CalendarCellValueReader(index);
+            CalendarCellValueReader calendarCellValueReader = new CalendarCellValueReader(index, columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+            reader = (CellValueReader<P>) calendarCellValueReader;
+            parsingContextFactoryBuilder.addParsingContextProvider(index, calendarCellValueReader);
 		}  else if (Enum.class.isAssignableFrom(propertyClass)) {
 			reader = new EnumCellValueReader(propertyClass);
 		} else {
@@ -62,7 +68,13 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 		return reader;
 	}
 
-	@SuppressWarnings("unchecked")
+    private SimpleDateFormat getSimpleDateFormat(CsvColumnDefinition columnDefinition) {
+        SimpleDateFormat sdf = new SimpleDateFormat(columnDefinition.dateFormat());
+        sdf.setTimeZone(columnDefinition.getTimeZone());
+        return sdf;
+    }
+
+    @SuppressWarnings("unchecked")
 	private <P> CellValueReader<P> getCellValueTransformer(Class<? extends P> propertyType) {
 		return (CellValueReader<P>) READERS.get(propertyType);
 	}

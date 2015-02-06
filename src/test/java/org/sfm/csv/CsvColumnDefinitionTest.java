@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.sfm.csv.impl.ParsingContext;
 
 import java.lang.reflect.Type;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -14,9 +15,10 @@ public class CsvColumnDefinitionTest {
     @Test
     public void testComposition() {
 
+        TimeZone tz = TimeZone.getTimeZone("Europe/Brussel");
         CellValueReaderFactory cellValueReaderFactory = new CellValueReaderFactory() {
             @Override
-            public <P> CellValueReader getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition) {
+            public <P> CellValueReader getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder contextFactoryBuilder) {
                 return null;
             }
         };
@@ -26,12 +28,13 @@ public class CsvColumnDefinitionTest {
                     public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                         return 3;
                     }
-                }).addCustomCellValueReaderFactory(cellValueReaderFactory);
+                }).addCustomCellValueReaderFactory(cellValueReaderFactory).addTimeZone(tz);
 
         assertEquals("blop", compose.rename(new CsvColumnKey("bar", -1)).getName());
         assertEquals("yyyyMM", compose.dateFormat());
-        assertEquals(new Integer(3), compose.getCustomReader().read(null, 0, 0 , null));
+        assertEquals(new Integer(3), compose.getCustomReader().read(null, 0, 0, null));
         assertEquals(cellValueReaderFactory, compose.getCustomCellValueReaderFactory());
+        assertEquals(tz, compose.getTimeZone());
 
         assertTrue(compose.hasCustomSource());
         assertEquals(Integer.class, compose.getCustomSourceReturnType());

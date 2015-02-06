@@ -2,6 +2,7 @@ package org.sfm.reflect;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -101,8 +102,14 @@ public class TypeHelper {
 	}
 
 	public static boolean isJavaLang(Type target) {
-		return TypeHelper.toClass(target).getPackage().getName().equals("java.lang");
+        Class<?> clazz = TypeHelper.toClass(target);
+        return clazz.isPrimitive() || clazz.getPackage().getName().equals("java.lang");
 	}
+
+    public static boolean isEnum(Type target) {
+        Class<?> clazz = TypeHelper.toClass(target);
+        return clazz.isEnum();
+    }
 
 	public static Class<?> toBoxedClass(Class<?> target) {
 		if (target.isPrimitive()) {
@@ -111,4 +118,8 @@ public class TypeHelper {
 			return target;
 		}
 	}
+
+    public static boolean areEquals(Type target, Class<?> clazz) {
+        return clazz.equals(TypeHelper.toClass(target));
+    }
 }

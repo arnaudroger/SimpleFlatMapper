@@ -9,6 +9,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.junit.Test;
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.CsvColumnDefinition;
+import org.sfm.csv.ParsingContextFactoryBuilder;
+import org.sfm.map.ParsingContextProvider;
 
 
 import java.text.ParseException;
@@ -24,12 +26,12 @@ public class CellValueReaderFactoryImplTest {
 
     @Test
     public void testDoesNotReaderAReaderForJavaSqlDate() {
-        assertNull(new CellValueReaderFactoryImpl().getReader(java.sql.Date.class, 1, null));
+        assertNull(new CellValueReaderFactoryImpl().getReader(java.sql.Date.class, 1, null, null));
     }
 
     @Test
     public void testReturnStringForObject() {
-        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(Object.class, 1, null);
+        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(Object.class, 1, null, null);
         String object = "string";
         assertEquals(object, reader.read(object.toCharArray(), 0, object.length(), null));
     }
@@ -41,38 +43,38 @@ public class CellValueReaderFactoryImplTest {
         Calendar cal = Calendar.getInstance();
         cal.setTime(dd);
 
-        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(Calendar.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"));
-        ParsingContextFactory parsingContextFactory = new ParsingContextFactory(1);
-        parsingContextFactory.setDateFormat(0, "yyyyMMdd");
-        assertEquals(cal, reader.read(date.toCharArray(), 0, date.length(), parsingContextFactory.newContext()));
+        ParsingContextFactoryBuilder parsingContextFactoryBuilder = new ParsingContextFactoryBuilder(1);
+
+        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(Calendar.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"), parsingContextFactoryBuilder);
+        assertEquals(cal, reader.read(date.toCharArray(), 0, date.length(), parsingContextFactoryBuilder.newFactory().newContext()));
     }
 
     @Test
     public void testJodaDateTime() {
         String date = "20150128";
         DateTime dateTime = DateTimeFormat.forPattern("yyyyMMdd").parseDateTime(date);
-        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(DateTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"));
+        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(DateTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"), null);
         assertEquals(dateTime, reader.read(date.toCharArray(), 0, date.length(), null));
     }
     @Test
     public void testJodaLocalDate() {
         String date = "20150128";
         LocalDate localDate = DateTimeFormat.forPattern("yyyyMMdd").parseLocalDate(date);
-        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(LocalDate.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"));
+        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(LocalDate.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"), null);
         assertEquals(localDate, reader.read(date.toCharArray(), 0, date.length(), null));
     }
     @Test
     public void testJodaLocalDateTime() {
         String date = "20150128";
         LocalDateTime localDateTime = DateTimeFormat.forPattern("yyyyMMdd").parseLocalDateTime(date);
-        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(LocalDateTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"));
+        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(LocalDateTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"), null);
         assertEquals(localDateTime, reader.read(date.toCharArray(), 0, date.length(), null));
     }
     @Test
     public void testJodaLocalTime() {
         String date = "20150128";
         LocalTime localTime = DateTimeFormat.forPattern("yyyyMMdd").parseLocalTime(date);
-        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(LocalTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"));
+        CellValueReader<?> reader = new CellValueReaderFactoryImpl().getReader(LocalTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"), null);
         assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
     }
 }

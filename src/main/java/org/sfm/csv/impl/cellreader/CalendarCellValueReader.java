@@ -2,19 +2,18 @@ package org.sfm.csv.impl.cellreader;
 
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.impl.ParsingContext;
-import org.sfm.csv.impl.ParsingException;
+import org.sfm.map.ParsingContextProvider;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
-public class CalendarCellValueReader implements CellValueReader<Calendar> {
+public class CalendarCellValueReader implements CellValueReader<Calendar>, ParsingContextProvider {
 
 	private final DateCellValueReader reader;
 
-	public CalendarCellValueReader(int index) {
-		this.reader = new DateCellValueReader(index);
+	public CalendarCellValueReader(int index, String pattern, TimeZone timeZone) {
+		this.reader = new DateCellValueReader(index, pattern, timeZone);
 	}
 	
 	@Override
@@ -27,4 +26,9 @@ public class CalendarCellValueReader implements CellValueReader<Calendar> {
 		}
 		return null;
 	}
+
+    @Override
+    public Object newContext() {
+        return reader.newContext();
+    }
 }

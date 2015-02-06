@@ -68,7 +68,7 @@ public final class ArgumentBuilder<S, T> {
 					return new Double(0.0d);
 				}
 			});
-	};
+	}
 	
 	
 	private final Getter<S, ?>[] getters;

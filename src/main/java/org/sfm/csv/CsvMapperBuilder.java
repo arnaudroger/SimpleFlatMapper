@@ -8,8 +8,6 @@ import org.sfm.reflect.meta.*;
 import org.sfm.utils.ForEachCallBack;
 
 import java.lang.reflect.Type;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -102,42 +100,15 @@ public class CsvMapperBuilder<T> {
 	}
 
 	public final CsvMapper<T> mapper() {
-		return new CsvMapperImpl<T>(getInstantiator(), buildDelayedSetters(), getSetters(), getKeys(), getParserContextFactory(), fieldMapperErrorHandler, rowHandlerErrorHandler);
+        ParsingContextFactoryBuilder parsingContextFactoryBuilder = new ParsingContextFactoryBuilder(propertyMappingsBuilder.size());
+		return new CsvMapperImpl<T>(getInstantiator(),
+                buildDelayedSetters(parsingContextFactoryBuilder),
+                getSetters(parsingContextFactoryBuilder), getKeys(), parsingContextFactoryBuilder.newFactory(), fieldMapperErrorHandler, rowHandlerErrorHandler);
 	}
 
 
 	private CsvColumnKey[] getKeys() {
 		return propertyMappingsBuilder.getKeys().toArray(new CsvColumnKey[propertyMappingsBuilder.size()]);
-	}
-
-
-	
-	private ParsingContextFactory getParserContextFactory() {
-		final ParsingContextFactory pcf = new ParsingContextFactory(propertyMappingsBuilder.size());
-		
-		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
-
-			@Override
-			public void handle(PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition> propMapping) {
-				if (propMapping == null) return;
-				
-				PropertyMeta<T, ?> prop = propMapping.getPropertyMeta();
-				if (prop != null) {
-					Class<?> target;
-					if (prop instanceof SubPropertyMeta) {
-						target = TypeHelper.toClass(((SubPropertyMeta<?, ?>) prop)
-								.getFinalType());
-					} else {
-						target = TypeHelper.toClass(prop.getType());
-					}
-					if (Date.class.equals(target) || Calendar.class.equals(target)) {
-						pcf.setDateFormat(propMapping.getColumnKey().getIndex(), propMapping.getColumnDefinition().dateFormat());
-					}
-				}
-			}
-		});
-		
-		return pcf;
 	}
 
 	private  Instantiator<DelayedCellSetter<T, ?>[], T>  getInstantiator() throws MapperBuildingException {
@@ -188,7 +159,7 @@ public class CsvMapperBuilder<T> {
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	private DelayedCellSetterFactory<T, ?>[] buildDelayedSetters() {
+	private DelayedCellSetterFactory<T, ?>[] buildDelayedSetters(final ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
 		
 		final Map<String, CsvMapperBuilder<?>> delegateMapperBuilders = new HashMap<String, CsvMapperBuilder<?>>();
 
@@ -204,11 +175,11 @@ public class CsvMapperBuilder<T> {
 					CsvColumnKey key = propMapping.getColumnKey();
 					if (prop != null) {
 						if (prop.isConstructorProperty()) {
-							delayedSetters[propMapping.getColumnKey().getIndex()] = cellSetterFactory.getDelayedCellSetter(prop.getType(), key.getIndex(), propMapping.getColumnDefinition());
+							delayedSetters[propMapping.getColumnKey().getIndex()] = cellSetterFactory.getDelayedCellSetter(prop.getType(), key.getIndex(), propMapping.getColumnDefinition(), parsingContextFactoryBuilder);
 						}  else if (prop.isSubProperty()) {
 							addSubProperty(delegateMapperBuilders, prop, key, propMapping.getColumnDefinition());
 						}else {
-							delayedSetters[propMapping.getColumnKey().getIndex()] =  cellSetterFactory.getDelayedCellSetter(prop.getType(), prop.getSetter(), key.getIndex(), propMapping.getColumnDefinition());
+							delayedSetters[propMapping.getColumnKey().getIndex()] =  cellSetterFactory.getDelayedCellSetter(prop.getType(), prop.getSetter(), key.getIndex(), propMapping.getColumnDefinition(), parsingContextFactoryBuilder);
 						}
 					}
 				}
@@ -280,7 +251,7 @@ public class CsvMapperBuilder<T> {
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private CellSetter<T>[] getSetters() {
+	private CellSetter<T>[] getSetters(final ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
 		final Map<String, CsvMapperBuilder<?>> delegateMapperBuilders = new HashMap<String, CsvMapperBuilder<?>>();
 		
 		
@@ -347,7 +318,7 @@ public class CsvMapperBuilder<T> {
 					}
 					setters[propMapping.getColumnKey().getIndex()- syncSetterStart] = new DelegateMarkerSetter(mapper, ((SubPropertyMeta) prop).getOwnerProperty().getSetter());
 				} else {
-					setters[propMapping.getColumnKey().getIndex()- syncSetterStart] = cellSetterFactory.getCellSetter(prop.getType(), prop.getSetter(), propMapping.getColumnKey().getIndex(), propMapping.getColumnDefinition());
+					setters[propMapping.getColumnKey().getIndex()- syncSetterStart] = cellSetterFactory.getCellSetter(prop.getType(), prop.getSetter(), propMapping.getColumnKey().getIndex(), propMapping.getColumnDefinition(), parsingContextFactoryBuilder);
 				}
 			}
 		}, syncSetterStart);

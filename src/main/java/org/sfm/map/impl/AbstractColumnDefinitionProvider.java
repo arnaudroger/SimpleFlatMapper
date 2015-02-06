@@ -1,8 +1,6 @@
 package org.sfm.map.impl;
 
 
-import org.sfm.csv.CsvColumnDefinition;
-import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.ColumnDefinitionProvider;
 import org.sfm.map.FieldKey;

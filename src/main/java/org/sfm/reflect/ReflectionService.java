@@ -83,7 +83,7 @@ public class ReflectionService {
 		if (root) {
 			return new SingletonClassMeta<T>(new ObjectClassMeta<T>(target, this));
 		} else {
-			if (TypeHelper.isJavaLang(target)) {
+			if (TypeHelper.isJavaLang(target)|| TypeHelper.isEnum(target) || TypeHelper.areEquals(target, Date.class)) {
 				return null;
 			} else {
 				return new ObjectClassMeta<T>(target, this);

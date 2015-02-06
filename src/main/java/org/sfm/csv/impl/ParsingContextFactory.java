@@ -1,19 +1,31 @@
 package org.sfm.csv.impl;
 
 
+import org.sfm.map.ParsingContextProvider;
+
 public class ParsingContextFactory {
 
-	private final String[] dateFormats;
+    private static final ParsingContext NULL_PARSING_CONTEXT = new ParsingContext(null);
+    private final ParsingContextProvider[] providers;
 	
-	public ParsingContextFactory(int size) {
-		dateFormats = new String[size];
+	public ParsingContextFactory(ParsingContextProvider[] providers) {
+	    this.providers = providers;
 	}
-	
-	public void setDateFormat(int index, String format) {
-		dateFormats[index] = format;
-	}
-	
+
+
 	public ParsingContext newContext() {
-		return new ParsingContext(dateFormats);
+        if (providers != null) {
+            Object[] context = new Object[providers.length];
+
+            for (int i = 0; i < providers.length; i++) {
+                ParsingContextProvider provider = providers[i];
+                if (provider != null) {
+                    context[i] = provider.newContext();
+                }
+            }
+            return new ParsingContext(context);
+        } else {
+            return NULL_PARSING_CONTEXT;
+        }
 	}
 }

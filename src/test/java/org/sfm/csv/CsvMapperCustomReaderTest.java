@@ -319,7 +319,7 @@ public class CsvMapperCustomReaderTest {
 
             @SuppressWarnings("unchecked")
             @Override
-            public <P> CellValueReader<P> getReader(Type propertyType, final int index, CsvColumnDefinition columnDefinition) {
+            public <P> CellValueReader<P> getReader(Type propertyType, final int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder builder) {
                 return (CellValueReader<P>) new CellValueReader<String>() {
                     @Override
                     public String read(char[] chars, int offset, int length, ParsingContext parsingContext) {

@@ -4,18 +4,21 @@ import org.sfm.map.ColumnDefinition;
 import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
+import java.util.TimeZone;
 
 public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey> {
 
     public abstract String dateFormat();
     public abstract CellValueReader<?> getCustomReader();
     public abstract CellValueReaderFactory getCustomCellValueReaderFactory();
+    public abstract TimeZone getTimeZone();
     public abstract boolean hasCustomReaderFactory();
 
     public abstract CsvColumnDefinition addRename(String name);
     public abstract CsvColumnDefinition addDateFormat(String dateFormatDef);
     public abstract CsvColumnDefinition addCustomReader(CellValueReader<?> cellValueReader);
     public abstract CsvColumnDefinition addCustomCellValueReaderFactory(CellValueReaderFactory cellValueReaderFactory);
+    public abstract CsvColumnDefinition addTimeZone(TimeZone tz);
 
     public abstract CsvColumnDefinition compose(CsvColumnDefinition columnDefinition);
 
@@ -33,6 +36,11 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
     public static CsvColumnDefinition customReaderDefinition(final CellValueReader<?> cellValueReader) {
         return new CustomReaderCsvColumnDefinition(cellValueReader);
     }
+
+    private static CsvColumnDefinition timeZoneDefinition(final TimeZone timeZone) {
+        return new TimeZoneCsvColumnDefinition(timeZone);
+    }
+
 
 
     public static CsvColumnDefinition compose(final CsvColumnDefinition def1, final CsvColumnDefinition def2) {
@@ -59,6 +67,11 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         @Override
         public CellValueReaderFactory getCustomCellValueReaderFactory() {
             return null;
+        }
+
+        @Override
+        public TimeZone getTimeZone() {
+            return TimeZone.getDefault();
         }
 
         @Override
@@ -100,6 +113,11 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         @Override
         public CsvColumnDefinition addCustomCellValueReaderFactory(CellValueReaderFactory cellValueReaderFactory) {
             return compose(CsvColumnDefinition.customCellValueReaderFactoryDefinition(cellValueReaderFactory));
+        }
+
+        @Override
+        public CsvColumnDefinition addTimeZone(TimeZone tz) {
+            return compose(CsvColumnDefinition.timeZoneDefinition(tz));
         }
 
         @Override
@@ -175,6 +193,15 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
                 throw new IllegalStateException();
             }
         }
+
+        @Override
+        public TimeZone getTimeZone() {
+            TimeZone tz = def2.getTimeZone();
+            if (tz == null) {
+                tz = def1.getTimeZone();
+            }
+            return tz;
+        }
     }
 
     private static class CustomReaderCsvColumnDefinition extends IdentityCsvColumnDefinition {
@@ -241,6 +268,19 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         @Override
         public boolean hasCustomReaderFactory() {
             return true;
+        }
+    }
+
+    private static class TimeZoneCsvColumnDefinition extends IdentityCsvColumnDefinition {
+        private final TimeZone timeZone;
+
+        public TimeZoneCsvColumnDefinition(TimeZone timeZone) {
+            this.timeZone = timeZone;
+        }
+
+        @Override
+        public TimeZone getTimeZone() {
+            return timeZone;
         }
     }
 }

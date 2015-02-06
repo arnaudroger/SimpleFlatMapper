@@ -50,7 +50,7 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 		for(ConstructorParameter cp : constructorDefinitions.get(0).getParameters()) {
 			String prefix = "element" + i;
 
-			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getType(), false);
+			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getResolvedType(), false);
 
 			if (classMeta != null) {
 				for(String prop : classMeta.generateHeaders()) {

@@ -65,7 +65,7 @@ public class ConverterFactory {
 			@Override
 			public BigInteger convert(Number in) { return new BigInteger(String.valueOf(in));}
 		});
-	};
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static <P, F> Converter<F, P> getConverter(Class<F> inType, Type outType) {

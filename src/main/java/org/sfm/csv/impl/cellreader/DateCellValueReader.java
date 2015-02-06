@@ -3,17 +3,23 @@ package org.sfm.csv.impl.cellreader;
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.impl.ParsingContext;
 import org.sfm.csv.impl.ParsingException;
+import org.sfm.map.ParsingContextProvider;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
-public class DateCellValueReader implements CellValueReader<Date> {
+public class DateCellValueReader implements CellValueReader<Date>, ParsingContextProvider {
 	
-	private int index;
-
-	public DateCellValueReader(int index) {
+	private final int index;
+    private final TimeZone timeZone;
+    private final String pattern;
+	public DateCellValueReader(int index, String pattern, TimeZone timeZone) {
 		this.index = index;
+        this.timeZone = timeZone;
+        this.pattern = pattern;
 	}
 	
 	@Override
@@ -22,10 +28,17 @@ public class DateCellValueReader implements CellValueReader<Date> {
 
 		String str = StringCellValueReader.readString(chars, offset, length);
 		try {
-			DateFormat df = parsingContext.getDateFormat(index);
+			DateFormat df = (DateFormat) parsingContext.getContext(index);
 			return df.parse(str);
 		} catch (ParseException e) {
 			throw new ParsingException(e.getMessage());
 		}
 	}
+
+    @Override
+    public Object newContext() {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        sdf.setTimeZone(timeZone);
+        return sdf;
+    }
 }

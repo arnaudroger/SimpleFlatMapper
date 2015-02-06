@@ -301,7 +301,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				return (Getter<ResultSet, P>) new SqlArrayResultSetGetter(key.getIndex());
 			}
 		});
-	};
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

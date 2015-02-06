@@ -10,15 +10,15 @@ public class ClassVisitor {
 		Class<?> currentClass = target;
 		
 		while(currentClass != null && !Object.class.equals(currentClass)) {
-			
+
+            for(Field field : currentClass.getDeclaredFields()) {
+                callback.field(field);
+            }
+
 			for(Method method : currentClass.getDeclaredMethods()) {
 				callback.method(method);
 			}
-			
-			for(Field field : currentClass.getDeclaredFields()) {
-				callback.field(field);
-			}
-			
+
 			currentClass = currentClass.getSuperclass();
 		}
 		

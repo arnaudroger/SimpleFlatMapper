@@ -67,14 +67,16 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	}
 	
 	@Override
+    @Deprecated
 	public final Iterator<T> iterate(final ResultSet rs)
 			throws SQLException, MappingException {
 		final JdbcMapper<T> mapper = buildMapper(rs.getMetaData());
-		return mapper.iterate(rs);
+		return mapper.iterator(rs);
 	}
 
 	@Override
-	public final Iterator<T> iterator(final ResultSet rs)
+    @SuppressWarnings("deprecation")
+    public final Iterator<T> iterator(final ResultSet rs)
 			throws SQLException, MappingException {
 		return iterate(rs);
 	}

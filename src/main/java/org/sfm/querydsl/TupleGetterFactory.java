@@ -11,7 +11,6 @@ import org.sfm.reflect.TypeHelper;
 import java.lang.reflect.Type;
 
 public final class TupleGetterFactory implements GetterFactory<Tuple, TupleElementKey>{
-	public static final int UNDEFINED = -99999;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override

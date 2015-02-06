@@ -66,7 +66,10 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T, P> FieldMapper<ResultSet, T> newFieldMapper(PropertyMapping<T, P, JdbcColumnKey , FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> propertyMapping,  FieldMapperErrorHandler<JdbcColumnKey> errorHandler, MapperBuilderErrorHandler mappingErrorHandler) {
+	public <T, P> FieldMapper<ResultSet, T> newFieldMapper(PropertyMapping<T, P, JdbcColumnKey ,
+                            FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> propertyMapping,
+                           FieldMapperErrorHandler<JdbcColumnKey> errorHandler,
+                           MapperBuilderErrorHandler mappingErrorHandler) {
 
 		final Type propertyType = propertyMapping.getPropertyMeta().getType();
 		final Setter<T, P> setter = propertyMapping.getPropertyMeta().getSetter();

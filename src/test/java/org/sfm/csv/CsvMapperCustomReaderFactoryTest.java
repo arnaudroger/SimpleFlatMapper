@@ -17,7 +17,7 @@ public class CsvMapperCustomReaderFactoryTest {
     public void testCustomReaderFactory() throws IOException {
         CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().cellValueReaderFactory(new CellValueReaderFactory() {
             @Override
-            public <P> CellValueReader<P> getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition) {
+            public <P> CellValueReader<P> getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder builder) {
                 return new CellValueReader<P>() {
                     @Override
                     public P read(char[] chars, int offset, int length, ParsingContext parsingContext) {

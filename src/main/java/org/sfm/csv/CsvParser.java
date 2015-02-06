@@ -87,11 +87,13 @@ public final class CsvParser {
 		return schema().reader(reader);
 	}
 
-	@Deprecated
+	@SuppressWarnings("deprecation")
+    @Deprecated
 	public static Iterator<String[]> iterate(Reader reader) throws IOException {
 		return schema().iterate(reader);
 	}
 
+    @SuppressWarnings("deprecation")
 	public static Iterator<String[]> iterator(Reader reader) throws IOException {
 		return iterate(reader);
 	}
@@ -209,6 +211,7 @@ public final class CsvParser {
             return reader(reader).iterator();
         }
 
+        @SuppressWarnings("deprecation")
 		public Iterator<String[]> iterator(Reader reader) throws IOException {
 			return iterate(reader);
 		}
@@ -300,14 +303,15 @@ public final class CsvParser {
 		}
 
 		public StaticMapToDSL<T> headers(String... headers) {
-			return new StaticMapToDSL<T>(dsl, classMeta, mapToClass, getColumnDefnitions(headers), columnDefinitionProvider);
+			return new StaticMapToDSL<T>(dsl, classMeta, mapToClass, getColumnDefinitions(headers), columnDefinitionProvider);
 		}
 
 		@Deprecated
 		public Iterator<T> iterate(Reader reader) throws IOException {
-			return mapper.iterate(dsl.reader(reader));
+			return mapper.iterator(dsl.reader(reader));
 		}
 
+        @SuppressWarnings("deprecation")
 		public Iterator<T> iterator(Reader reader) throws IOException {
 			return iterate(reader);
 		}
@@ -316,11 +320,11 @@ public final class CsvParser {
 		}
 
 		public StaticMapToDSL<T> overrideHeaders(String... headers) {
-			List<Tuple2<String, CsvColumnDefinition>> columns = getColumnDefnitions(headers);
+			List<Tuple2<String, CsvColumnDefinition>> columns = getColumnDefinitions(headers);
 			return new StaticMapToDSL<T>(dsl.skip(1), classMeta, mapToClass, columns, columnDefinitionProvider);
 		}
 
-		private List<Tuple2<String, CsvColumnDefinition>> getColumnDefnitions(String[] headers) {
+		private List<Tuple2<String, CsvColumnDefinition>> getColumnDefinitions(String[] headers) {
 			List<Tuple2<String,CsvColumnDefinition>> columns = new ArrayList<Tuple2<String, CsvColumnDefinition>>();
 			for(String header : headers) {
 				columns.add(new Tuple2<String, CsvColumnDefinition>(header, CsvColumnDefinition.IDENTITY));
@@ -405,9 +409,10 @@ public final class CsvParser {
 
 		@Deprecated
 		public Iterator<T> iterate(Reader reader) throws IOException {
-			return mapper.iterate(dsl.reader(reader));
+			return mapper.iterator(dsl.reader(reader));
 		}
 
+        @SuppressWarnings("deprecation")
 		public Iterator<T> iterator(Reader reader) throws IOException {
 			return iterate(reader);
 		}
@@ -430,9 +435,10 @@ public final class CsvParser {
 
 		@Deprecated
 		public Iterator<T> iterate(Reader reader) throws IOException {
-			return mapper.iterate(dsl.reader(reader));
+			return mapper.iterator(dsl.reader(reader));
 		}
 
+        @SuppressWarnings("deprecation")
 		public Iterator<T> iterator(Reader reader) throws IOException {
 			return iterate(reader);
 		}

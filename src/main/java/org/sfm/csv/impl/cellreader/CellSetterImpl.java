@@ -7,11 +7,11 @@ import org.sfm.reflect.Setter;
 
 public final class CellSetterImpl<T, P> implements CellSetter<T> {
 
-	private final CellValueReader<P> reader;
-	private final Setter<T, P> setter;
+	private final CellValueReader<? extends P> reader;
+	private final Setter<T, ? super P> setter;
 
-	public CellSetterImpl(CellValueReader<P> reader,
-			Setter<T, P> setter) {
+	public CellSetterImpl(CellValueReader<? extends P> reader,
+			Setter<T, ? super P> setter) {
 		this.reader = reader;
 		this.setter = setter;
 	}

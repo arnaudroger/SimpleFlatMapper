@@ -9,10 +9,10 @@ public class DelayedCellSetterImpl<T, P> implements DelayedCellSetter<T, P> {
 
 	private P value;
 
-	private final CellValueReader<P> reader;
-	private final Setter<T, P> setter;
+	private final CellValueReader<? extends P> reader;
+	private final Setter<T, ? super P> setter;
 	
-	public DelayedCellSetterImpl(Setter<T, P> setter, CellValueReader<P> reader) {
+	public DelayedCellSetterImpl(Setter<T, ? super P> setter, CellValueReader<? extends P> reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

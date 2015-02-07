@@ -7,10 +7,10 @@ import org.sfm.reflect.Setter;
 
 public class DelayedCellSetterFactoryImpl<T, P> implements DelayedCellSetterFactory<T, P> {
 
-	private final CellValueReader<P> reader;
-	private final Setter<T, P> setter;
+	private final CellValueReader<? extends P> reader;
+	private final Setter<T, ? super P> setter;
 	
-	public DelayedCellSetterFactoryImpl(CellValueReader<P> reader, Setter<T, P> setter) {
+	public DelayedCellSetterFactoryImpl(CellValueReader<? extends P> reader, Setter<T, ? super P> setter) {
 		this.reader = reader;
 		this.setter = setter;
 	}

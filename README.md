@@ -1,6 +1,5 @@
 [![Build Status](https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
-[![Analytics](https://ga-beacon.appspot.com/UA-59484015-1/simpleFlatMapper/README.md)](https://github.com/igrigorik/ga-beacon)
 
 # Simple Flat Mapper (SFM) [v1.5.0](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.5.0)
 
@@ -133,3 +132,6 @@ git clone https://github.com/arnaudroger/SimpleFlatMapper.git
 cd SimpleFlatMapper
 mvn install
 ```
+
+
+[![Analytics](https://ga-beacon.appspot.com/UA-59484015-1/simpleFlatMapper/README.md)](https://github.com/igrigorik/ga-beacon)

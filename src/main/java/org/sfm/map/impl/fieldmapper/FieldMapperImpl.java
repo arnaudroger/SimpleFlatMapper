@@ -7,9 +7,9 @@ import org.sfm.reflect.Setter;
 public final class FieldMapperImpl<S, T, P> implements FieldMapper<S, T> {
 	
 	private final Getter<S, ? extends P> getter;
-	private final Setter<T, P> setter;
+	private final Setter<T, ? super P> setter;
 	
-	public FieldMapperImpl(final Getter<S, ? extends P> getter, final Setter<T, P> setter) {
+	public FieldMapperImpl(final Getter<S, ? extends P> getter, final Setter<T, ? super P> setter) {
 		this.getter = getter;
 		this.setter = setter;
 	}

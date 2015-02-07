@@ -174,6 +174,7 @@ public class JdbcMapperCustomMappingTest {
                         .newBuilder(DbObject.class)
                         .addMapping("id",
                                 FieldMapperColumnDefinition.customGetterFactory(new GetterFactory<ResultSet, JdbcColumnKey>() {
+                                    @SuppressWarnings("unchecked")
                                     @Override
                                     public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
                                         return (Getter<ResultSet, P>) new Getter<ResultSet, Long>() {

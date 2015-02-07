@@ -25,7 +25,7 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 	}
 
 
-	private <T> FieldMapper<ResultSet, T> primitiveIndexedFieldMapper(final Class<?> type, final Setter<T, ?> setter, final JdbcColumnKey key, final FieldMapperErrorHandler<JdbcColumnKey> errorHandler) {
+	private <T, P> FieldMapper<ResultSet, T> primitiveIndexedFieldMapper(final Class<P> type, final Setter<T, ? super P> setter, final JdbcColumnKey key, final FieldMapperErrorHandler<JdbcColumnKey> errorHandler) {
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<ResultSet, T>(
 					new BooleanResultSetGetter(key.getIndex()),
@@ -64,7 +64,6 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T, P> FieldMapper<ResultSet, T> newFieldMapper(PropertyMapping<T, P, JdbcColumnKey ,
                             FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> propertyMapping,
@@ -72,14 +71,15 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
                            MapperBuilderErrorHandler mappingErrorHandler) {
 
 		final Type propertyType = propertyMapping.getPropertyMeta().getType();
-		final Setter<T, P> setter = propertyMapping.getPropertyMeta().getSetter();
+		final Setter<T, ? super P> setter = propertyMapping.getPropertyMeta().getSetter();
 		final JdbcColumnKey key = propertyMapping.getColumnKey();
-		final Class<?> type = TypeHelper.toClass(propertyType);
+		final Class<P> type = TypeHelper.toClass(propertyType);
 
-		Getter<ResultSet, P> getter = (Getter<ResultSet, P>) propertyMapping.getColumnDefinition().getCustomGetter();
+        @SuppressWarnings("unchecked")
+		Getter<ResultSet, ? extends P> getter = (Getter<ResultSet, ? extends P>) propertyMapping.getColumnDefinition().getCustomGetter();
 
 		if (getter == null && type.isPrimitive() && !propertyMapping.getColumnDefinition().hasCustomFactory() ) {
-			return primitiveIndexedFieldMapper(type, setter, key, errorHandler);
+			return this.primitiveIndexedFieldMapper(type, setter, key, errorHandler);
 		}
 
         GetterFactory<ResultSet, JdbcColumnKey> getterFactory = this.getterFactory;
@@ -96,7 +96,7 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 			final Constructor<?>[] constructors = type.getConstructors();
 			if (constructors != null && constructors.length == 1 && constructors[0].getParameterTypes().length == 1) {
 				@SuppressWarnings("unchecked")
-				final Constructor<P> constructor = (Constructor<P>) constructors[0];
+				final Constructor<? extends P> constructor = (Constructor<P>) constructors[0];
 				getter = getterFactory.newGetter(constructor.getParameterTypes()[0], key);
 				
 				if (getter != null) {
@@ -107,7 +107,7 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 				if (targetType != null) {
 					try {
 						@SuppressWarnings("unchecked")
-						Constructor<P> constructor = (Constructor<P>) type.getConstructor(targetType);
+						Constructor<? extends P> constructor = (Constructor<? extends P>) type.getConstructor(targetType);
 						getter = getterFactory.newGetter(targetType, key);
 						
 						if (getter != null) {

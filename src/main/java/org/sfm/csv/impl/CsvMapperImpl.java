@@ -80,32 +80,40 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	}
 
 	@Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
 	public Iterator<T> iterate(Reader reader) throws IOException {
 		return iterate(CsvParser.reader(reader));
 	}
 
 	@Override
+    @Deprecated
 	public Iterator<T> iterate(CsvReader csvReader) {
 		return new CsvMapperIterator<T>(csvReader, this);
 	}
 
 	@Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
 	public Iterator<T> iterate(Reader reader, int skip) throws IOException {
 		return iterate(CsvParser.skip(skip).reader(reader));
 	}
 
 	@Override
+    @SuppressWarnings("deprecation")
 	public Iterator<T> iterator(Reader reader) throws IOException {
 		return iterate(reader);
 	}
 
-	@Override
+	@SuppressWarnings("deprecation")
+    @Override
 	public Iterator<T> iterator(CsvReader csvReader) {
 		return iterate(csvReader);
 	}
 
 	@Override
-	public Iterator<T> iterator(Reader reader, int skip) throws IOException {
+    @SuppressWarnings("deprecation")
+    public Iterator<T> iterator(Reader reader, int skip) throws IOException {
 		return iterate(reader, skip);
 	}
 

@@ -42,13 +42,15 @@ public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements
 	}
 
 	@Override
+    @Deprecated
 	public Iterator<T> iterate(ResultSet rs) throws SQLException,
 			MappingException {
 		return new ResultSetIterator<T>(rs, this);
 	}
 
 	@Override
-	public Iterator<T> iterator(ResultSet rs) throws SQLException,
+    @SuppressWarnings("deprecation")
+    public Iterator<T> iterator(ResultSet rs) throws SQLException,
 			MappingException {
 		return iterate(rs);
 	}

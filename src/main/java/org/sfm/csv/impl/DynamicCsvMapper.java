@@ -93,32 +93,41 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 
 	@Override
-	public Iterator<T> iterate(Reader reader) throws IOException {
+    @Deprecated
+    @SuppressWarnings("deprecation")
+    public Iterator<T> iterate(Reader reader) throws IOException {
 		CsvReader csvReader = CsvParser.reader(reader);
 		return iterate(csvReader);
 	}
 
 	@Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
 	public Iterator<T> iterate(CsvReader csvReader) throws IOException {
 		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
 		return new CsvMapperIterator<T>(csvReader, mapper);
 	}
 
 	@Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
 	public Iterator<T> iterate(Reader reader, int skip) throws IOException {
 		return iterate(CsvParser.skip(skip).reader(reader));
 	}
 
-	@Override
+	@SuppressWarnings("deprecation")
+    @Override
 	public Iterator<T> iterator(Reader reader) throws IOException {
 		return iterate(reader);
 	}
 
+    @SuppressWarnings("deprecation")
 	@Override
 	public Iterator<T> iterator(CsvReader csvReader) throws IOException {
 		return iterate(csvReader);
 	}
 
+    @SuppressWarnings("deprecation")
 	@Override
 	public Iterator<T> iterator(Reader reader, int skip) throws IOException {
 		return iterate(reader, skip);

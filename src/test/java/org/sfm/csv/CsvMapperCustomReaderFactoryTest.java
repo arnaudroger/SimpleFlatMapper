@@ -19,6 +19,7 @@ public class CsvMapperCustomReaderFactoryTest {
             @Override
             public <P> CellValueReader<P> getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder builder) {
                 return new CellValueReader<P>() {
+                    @SuppressWarnings("unchecked")
                     @Override
                     public P read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                         return (P) "Hello!";

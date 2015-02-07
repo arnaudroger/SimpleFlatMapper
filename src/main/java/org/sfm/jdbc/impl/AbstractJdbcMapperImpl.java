@@ -43,13 +43,15 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 	}
 	
 	@Override
+    @Deprecated
 	public Iterator<T> iterate(ResultSet rs) throws SQLException,
 			MappingException {
 		return new ResultSetIterator<T>(rs, this);
 	}
 
 	@Override
-	public Iterator<T> iterator(ResultSet rs) throws SQLException,
+    @SuppressWarnings("deprecation")
+    public Iterator<T> iterator(ResultSet rs) throws SQLException,
 			MappingException {
 		return iterate(rs);
 	}

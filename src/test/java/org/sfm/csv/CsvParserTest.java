@@ -190,7 +190,16 @@ public class CsvParserTest {
 		assertFalse(iterator.hasNext());
 	}
 
-	@Test
+    @Test
+    public void testDSLMapToForEach() throws IOException {
+        List<Tuple2<String, String>> list = CsvParser.mapTo(String.class, String.class)
+                .headers("0", "1").forEach(new StringReader("value1,value2\nvalue3"), new ListHandler<Tuple2<String, String>>()).getList();
+
+        assertArrayEquals(new Object[] { new Tuple2<String, String>("value1", "value2"), new Tuple2<String, String>("value3", null)}, list.toArray());
+    }
+
+
+    @Test
 	public void testDSLMapWithCustomDefinition() throws  Exception {
 		Iterator<Tuple2<String, String>> iterator = CsvParser.mapTo(String.class, String.class).columnDefinition("1", CsvColumnDefinition.customReaderDefinition(new CellValueReader<String>() {
 			@Override

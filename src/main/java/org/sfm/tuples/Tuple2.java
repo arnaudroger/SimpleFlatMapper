@@ -26,4 +26,23 @@ public class Tuple2<T1, T2> {
         return element1;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Tuple2 tuple2 = (Tuple2) o;
+
+        if (element0 != null ? !element0.equals(tuple2.element0) : tuple2.element0 != null) return false;
+        if (element1 != null ? !element1.equals(tuple2.element1) : tuple2.element1 != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = element0 != null ? element0.hashCode() : 0;
+        result = 31 * result + (element1 != null ? element1.hashCode() : 0);
+        return result;
+    }
 }

@@ -8,6 +8,7 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.tuples.*;
 import org.sfm.utils.Predicate;
+import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -284,9 +285,7 @@ public final class CsvParser {
 	}
 
 
-	public static final class MapToDSL<T> {
-		private final DSL dsl;
-		private final CsvMapper<T> mapper;
+	public static final class MapToDSL<T> extends  MapWithDSL<T> {
 		private final ClassMeta<T> classMeta;
 		private final Type mapToClass;
 		private final CsvColumnDefinitionProviderImpl columnDefinitionProvider;
@@ -295,33 +294,23 @@ public final class CsvParser {
 			this(dsl, ReflectionService.newInstance().<T>getRootClassMeta(mapToClass), mapToClass, new CsvColumnDefinitionProviderImpl());
 		}
 		private MapToDSL(DSL dsl, ClassMeta<T> classMeta, Type mapToClass, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
-			this.dsl = dsl;
+			super(dsl, new DynamicCsvMapper<T>(mapToClass, classMeta, columnDefinitionProvider));
 			this.mapToClass = mapToClass;
 			this.classMeta = classMeta;
-			this.mapper = new DynamicCsvMapper<T>(mapToClass, classMeta, columnDefinitionProvider);
 			this.columnDefinitionProvider = columnDefinitionProvider;
 		}
 
 		public StaticMapToDSL<T> headers(String... headers) {
-			return new StaticMapToDSL<T>(dsl, classMeta, mapToClass, getColumnDefinitions(headers), columnDefinitionProvider);
+			return new StaticMapToDSL<T>(getDsl(), classMeta, mapToClass, getColumnDefinitions(headers), columnDefinitionProvider);
 		}
 
-		@Deprecated
-		public Iterator<T> iterate(Reader reader) throws IOException {
-			return mapper.iterator(dsl.reader(reader));
-		}
-
-        @SuppressWarnings("deprecation")
-		public Iterator<T> iterator(Reader reader) throws IOException {
-			return iterate(reader);
-		}
 		public StaticMapToDSL<T> defaultHeaders() {
 			return headers(classMeta.generateHeaders());
 		}
 
 		public StaticMapToDSL<T> overrideHeaders(String... headers) {
 			List<Tuple2<String, CsvColumnDefinition>> columns = getColumnDefinitions(headers);
-			return new StaticMapToDSL<T>(dsl.skip(1), classMeta, mapToClass, columns, columnDefinitionProvider);
+			return new StaticMapToDSL<T>(getDsl().skip(1), classMeta, mapToClass, columns, columnDefinitionProvider);
 		}
 
 		private List<Tuple2<String, CsvColumnDefinition>> getColumnDefinitions(String[] headers) {
@@ -337,7 +326,7 @@ public final class CsvParser {
 		}
 
 		public MapToDSL<T> columnDefinition(Predicate<? super CsvColumnKey> predicate, CsvColumnDefinition columnDefinition) {
-			return new MapToDSL<T>(dsl, classMeta, mapToClass, newColumnDefinitionProvider(predicate, columnDefinition));
+			return new MapToDSL<T>(getDsl(), classMeta, mapToClass, newColumnDefinitionProvider(predicate, columnDefinition));
 		}
 
 		private CsvColumnDefinitionProviderImpl newColumnDefinitionProvider(Predicate<? super CsvColumnKey> predicate, CsvColumnDefinition columnDefinition) {
@@ -359,21 +348,11 @@ public final class CsvParser {
 		}
 
 		private StaticMapToDSL<T> staticMapper() {
-			return new StaticMapToDSL<T>(dsl.skip(1), classMeta, mapToClass, Collections.<Tuple2<String,CsvColumnDefinition>>emptyList(), columnDefinitionProvider);
+			return new StaticMapToDSL<T>(getDsl().skip(1), classMeta, mapToClass, Collections.<Tuple2<String,CsvColumnDefinition>>emptyList(), columnDefinitionProvider);
 		}
-
-
-		//IFJAVA8_START
-		public Stream<T> stream(Reader reader) throws IOException {
-			return mapper.stream(dsl.reader(reader));
-		}
-
-		//IFJAVA8_END
 	}
 
-	public static final class StaticMapToDSL<T> {
-		private final DSL dsl;
-		private final CsvMapper<T> mapper;
+	public static final class StaticMapToDSL<T> extends  MapWithDSL<T> {
 		private final ClassMeta<T> classMeta;
 		private final Type mapToClass;
 		private final CsvColumnDefinitionProviderImpl columnDefinitionProvider;
@@ -381,15 +360,14 @@ public final class CsvParser {
 
 
 		private StaticMapToDSL(DSL dsl, ClassMeta<T> classMeta, Type mapToClass, List<Tuple2<String, CsvColumnDefinition>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
-			this.dsl = dsl;
+			super(dsl, newStaticMapper(mapToClass, classMeta, columns, columnDefinitionProvider));
 			this.classMeta = classMeta;
 			this.mapToClass = mapToClass;
 			this.columns = columns;
 			this.columnDefinitionProvider = columnDefinitionProvider;
-			this.mapper = newStaticMapper(classMeta, columns, columnDefinitionProvider);
 		}
 
-		private CsvMapper<T> newStaticMapper(ClassMeta<T> classMeta, List<Tuple2<String, CsvColumnDefinition>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
+		private static <T> CsvMapper<T> newStaticMapper(Type mapToClass, ClassMeta<T> classMeta, List<Tuple2<String, CsvColumnDefinition>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 			CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(mapToClass, classMeta, columnDefinitionProvider);
 			for(Tuple2<String, CsvColumnDefinition> col: columns) {
 				builder.addMapping(col.first(), col.second());
@@ -404,27 +382,11 @@ public final class CsvParser {
 		public StaticMapToDSL<T> addMapping(String column, CsvColumnDefinition columnDefinition) {
 			List<Tuple2<String, CsvColumnDefinition>> newColumns = new ArrayList<Tuple2<String, CsvColumnDefinition>>(columns);
 			newColumns.add(new Tuple2<String, CsvColumnDefinition>(column, columnDefinition));
-			return new StaticMapToDSL<T>(dsl, classMeta, mapToClass, newColumns, columnDefinitionProvider);
+			return new StaticMapToDSL<T>(getDsl(), classMeta, mapToClass, newColumns, columnDefinitionProvider);
 		}
-
-		@Deprecated
-		public Iterator<T> iterate(Reader reader) throws IOException {
-			return mapper.iterator(dsl.reader(reader));
-		}
-
-        @SuppressWarnings("deprecation")
-		public Iterator<T> iterator(Reader reader) throws IOException {
-			return iterate(reader);
-		}
-
-		//IFJAVA8_START
-		public Stream<T> stream(Reader reader) throws IOException {
-			return mapper.stream(dsl.reader(reader));
-		}
-		//IFJAVA8_END
 	}
 
-	public static final class MapWithDSL<T> {
+	public static class MapWithDSL<T> {
 		private final DSL dsl;
 		private final CsvMapper<T> mapper;
 
@@ -433,18 +395,31 @@ public final class CsvParser {
 			this.mapper = mapper;
 		}
 
+        protected final DSL getDsl() {
+            return dsl;
+        }
+
+        protected final CsvMapper<T> getMapper() {
+            return mapper;
+        }
+
 		@Deprecated
-		public Iterator<T> iterate(Reader reader) throws IOException {
+		public final Iterator<T> iterate(Reader reader) throws IOException {
 			return mapper.iterator(dsl.reader(reader));
 		}
 
         @SuppressWarnings("deprecation")
-		public Iterator<T> iterator(Reader reader) throws IOException {
+		public final Iterator<T> iterator(Reader reader) throws IOException {
 			return iterate(reader);
 		}
 
+        public final <H extends RowHandler<T>> H forEach(Reader reader, H rowHandler) throws IOException {
+            mapper.forEach(dsl.reader(reader), rowHandler);
+            return rowHandler;
+        }
+
 		//IFJAVA8_START
-		public Stream<T> stream(Reader reader) throws IOException {
+		public final Stream<T> stream(Reader reader) throws IOException {
 			return mapper.stream(dsl.reader(reader));
 		}
 		//IFJAVA8_END

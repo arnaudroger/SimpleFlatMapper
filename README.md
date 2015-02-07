@@ -103,7 +103,7 @@ public class MyDao {
 		try (Connection conn = getConnection();
 		     PreparedStatement ps = conn.prepareStatement("select * from my_table");
 		     ResultSet rs = ps.executeQuery();) {
-			return mapper.forEach(rs, new ListHandler<MyObject>()).getList();
+			return mapper.stream(rs).collect(Collectors.toList());
 		}
 	}
 

@@ -3,7 +3,7 @@
 
 # Simple Flat Mapper (SFM) [v1.5.0](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.5.0)
 
-*The maven groupId has changed to org.simpleflatmapper*
+*The maven groupId has changed to [org.simpleflatmapper](http://www.simpleflatmapper.org)*
 
 SFM provides fast and easy to use mapper for
 

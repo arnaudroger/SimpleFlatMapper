@@ -11,6 +11,7 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.reflect.meta.PropertyMeta;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
@@ -205,6 +206,9 @@ public final class CellSetterFactory {
 	}
 
 
+    public <T, P> CellSetter<T> getCellSetter(PropertyMeta<T, P> prop, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
+        return getCellSetter(prop.getType(), prop.getSetter(), index, columnDefinition, parsingContextFactoryBuilder);
+    }
 	@SuppressWarnings("unchecked")
 	public <T,P> CellSetter<T> getCellSetter(Type propertyType, Setter<T, ? super P> setter, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
 		Class<? extends P> propertyClass = (Class<? extends P>) TypeHelper.toClass(propertyType);
@@ -219,6 +223,10 @@ public final class CellSetterFactory {
 		}
 	}
 
+    public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(PropertyMeta<T, P> prop, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
+        return getDelayedCellSetter(prop.getType(), prop.getSetter(), index, columnDefinition, parsingContextFactoryBuilder);
+    }
+
 	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type propertyType, Setter<T, ? super P> setter, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
 		Class<? extends P> propertyClass = TypeHelper.toClass(propertyType);
 
@@ -232,6 +240,7 @@ public final class CellSetterFactory {
 
 
 	}
+
 	@SuppressWarnings("unchecked")
 	public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(Type type, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
 		Class<?> propertyClass = TypeHelper.toClass(type);

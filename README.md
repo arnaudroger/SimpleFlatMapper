@@ -113,16 +113,11 @@ public class MyDao {
 #### Csv
 
 ```java
-public class MyDao {
-	CsvMapper<MyObject> mapper = CsvMapperFactory.newInstance().newMapper(MyObject.class);
-
-	public List<MyObject> findAll(File file) throws SQLException {
-		try (FileReader reader = new FileReader(file)) {
-			return mapper.forEach(reader, new ListHandler<MyObject>()).getList();
-		}
-	}
-
-}
+CsvParser
+        .separator('\t')
+        .mapTo(String.class, Date.class, MyObject.class)
+        .stream(reader)
+        .forEach(System.out::println);
 ```
 
 ### Building it

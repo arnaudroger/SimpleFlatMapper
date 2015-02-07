@@ -5,6 +5,8 @@
 
 *The maven groupId has changed to [org.simpleflatmapper](http://www.simpleflatmapper.org)*
 
+[Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
+
 SFM provides fast and easy to use mapper for
 
 - [ResultSet aka micro ORM](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JdbcMapper)

@@ -130,5 +130,3 @@ cd SimpleFlatMapper
 mvn install
 ```
 
-
-[![Analytics](https://ga-beacon.appspot.com/UA-59484015-1/simpleFlatMapper/README.md)](https://github.com/igrigorik/ga-beacon)

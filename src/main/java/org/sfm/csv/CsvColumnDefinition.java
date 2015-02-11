@@ -6,7 +6,7 @@ import org.sfm.reflect.TypeHelper;
 import java.lang.reflect.Type;
 import java.util.TimeZone;
 
-public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey> {
+public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColumnDefinition> {
 
     public abstract String dateFormat();
     public abstract CellValueReader<?> getCustomReader();
@@ -14,11 +14,11 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
     public abstract TimeZone getTimeZone();
     public abstract boolean hasCustomReaderFactory();
 
-    public abstract CsvColumnDefinition addRename(String name);
+
     public abstract CsvColumnDefinition addDateFormat(String dateFormatDef);
+    public abstract CsvColumnDefinition addTimeZone(TimeZone tz);
     public abstract CsvColumnDefinition addCustomReader(CellValueReader<?> cellValueReader);
     public abstract CsvColumnDefinition addCustomCellValueReaderFactory(CellValueReaderFactory cellValueReaderFactory);
-    public abstract CsvColumnDefinition addTimeZone(TimeZone tz);
 
     public abstract CsvColumnDefinition compose(CsvColumnDefinition columnDefinition);
 
@@ -37,11 +37,17 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         return new CustomReaderCsvColumnDefinition(cellValueReader);
     }
 
-    private static CsvColumnDefinition timeZoneDefinition(final TimeZone timeZone) {
+    public static CsvColumnDefinition timeZoneDefinition(final TimeZone timeZone) {
         return new TimeZoneCsvColumnDefinition(timeZone);
     }
 
+    public static CsvColumnDefinition ignoreDefinition() {
+        return new IgnoreCsvColumnDefinition();
+    }
 
+    public static CsvColumnDefinition customCellValueReaderFactoryDefinition(final CellValueReaderFactory cellValueReaderFactory) {
+        return new CustomCellValueReaderFactoryCsvColumnDefinition(cellValueReaderFactory);
+    }
 
     public static CsvColumnDefinition compose(final CsvColumnDefinition def1, final CsvColumnDefinition def2) {
         if (def1 == IDENTITY) return def2;
@@ -49,9 +55,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         return new ComposeCsvColumnDefinition(def1, def2);
     }
 
-    public static CsvColumnDefinition customCellValueReaderFactoryDefinition(final CellValueReaderFactory cellValueReaderFactory) {
-        return new CustomCellValueReaderFactoryCsvColumnDefinition(cellValueReaderFactory);
-    }
+
 
     static class IdentityCsvColumnDefinition extends CsvColumnDefinition {
         @Override
@@ -94,10 +98,20 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
             throw new IllegalStateException();
         }
 
+        @Override
+        public boolean ignore() {
+            return false;
+        }
+
 
         @Override
         public CsvColumnDefinition addRename(final String name) {
             return compose(CsvColumnDefinition.renameDefinition(name));
+        }
+
+        @Override
+        public CsvColumnDefinition addIgnore() {
+            return compose(CsvColumnDefinition.ignoreDefinition());
         }
 
         @Override
@@ -202,6 +216,11 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
             }
             return tz;
         }
+
+        @Override
+        public boolean ignore() {
+            return def1.ignore() || def2.ignore();
+        }
     }
 
     private static class CustomReaderCsvColumnDefinition extends IdentityCsvColumnDefinition {
@@ -281,6 +300,13 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey>
         @Override
         public TimeZone getTimeZone() {
             return timeZone;
+        }
+    }
+
+    private static class IgnoreCsvColumnDefinition extends IdentityCsvColumnDefinition {
+        @Override
+        public boolean ignore() {
+            return true;
         }
     }
 }

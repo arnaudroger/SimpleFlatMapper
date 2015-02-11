@@ -231,6 +231,24 @@ public class CsvParserTest {
 		assertEquals("c1", tuple.second());
 	}
 
+    @Test
+    public void testDSLIgnoreField() throws Exception {
+        Iterator<Tuple2<String, String>> iterator = CsvParser.mapTo(String.class, String.class)
+                .columnDefinition(new Predicate<CsvColumnKey>() {
+                    @Override
+                    public boolean test(CsvColumnKey csvColumnKey) {
+                        return csvColumnKey.getIndex() != 1 && csvColumnKey.getIndex() != 2;
+                    }
+                }, CsvColumnDefinition.ignoreDefinition())
+
+                .iterator(new StringReader("-1,0,1,2\nv0,v1,v2,v3"));
+
+        Tuple2<String, String> tuple = iterator.next();
+
+        assertEquals("v1", tuple.first());
+        assertEquals("v2", tuple.second());
+    }
+
 	private Reader getOneRowReader() {
 		return new StringReader("value");
 	}

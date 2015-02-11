@@ -7,7 +7,7 @@ import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.meta.SubPropertyMeta;
 import org.sfm.utils.ForEachCallBack;
 
-public final class CalculateMaxIndex<T, K extends FieldKey<K>, D extends ColumnDefinition<K>> implements
+public final class CalculateMaxIndex<T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> implements
 		ForEachCallBack<PropertyMapping<T, ?, K, D>> {
 	public int maxIndex = -1;
 

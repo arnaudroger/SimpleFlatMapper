@@ -8,6 +8,7 @@ import java.lang.reflect.Type;
 import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class CsvColumnDefinitionTest {
@@ -37,6 +38,9 @@ public class CsvColumnDefinitionTest {
         assertEquals(tz, compose.getTimeZone());
 
         assertTrue(compose.hasCustomSource());
+        assertFalse(compose.ignore());
         assertEquals(Integer.class, compose.getCustomSourceReturnType());
+
+        assertTrue(CsvColumnDefinition.IDENTITY.addIgnore().ignore());
     }
 }

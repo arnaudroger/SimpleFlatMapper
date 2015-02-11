@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 import java.sql.ResultSet;
 
 
-public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends ColumnDefinition<K> {
+public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends ColumnDefinition<K, FieldMapperColumnDefinition<K, S>> {
 
     public abstract FieldMapper<?, ?> getCustomFieldMapper();
 
@@ -18,7 +18,6 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
     public abstract GetterFactory<S, K> getCustomGetterFactory();
     public abstract boolean hasCustomFactory();
 
-    public abstract FieldMapperColumnDefinition<K, S> addRename(String name);
     public abstract FieldMapperColumnDefinition<K, S> addGetter(Getter<S, ?> getter);
     public abstract FieldMapperColumnDefinition<K, S> addGetterFactory(GetterFactory<S, K> getterFactory);
     public abstract FieldMapperColumnDefinition<K, S> addFieldMapper(FieldMapper<ResultSet, ?> mapper);
@@ -54,6 +53,10 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         return new RenameColumnDefinition<K, S>(name);
     }
 
+    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> ignoreDefinition() {
+        return new IgnoreColumnDefinition<K, S>();
+    }
+
     static class IdentityColumnDefinition<K extends FieldKey<K>, S> extends FieldMapperColumnDefinition<K, S> {
         @Override
         public K rename(K key) {
@@ -68,6 +71,11 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         @Override
         public Type getCustomSourceReturnType() {
             throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean ignore() {
+            return false;
         }
 
         @Override
@@ -93,6 +101,12 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         @Override
         public FieldMapperColumnDefinition<K, S> addRename(String name) {
             FieldMapperColumnDefinition<K, S> columnDefinition = renameDefinition(name);
+            return compose(columnDefinition);
+        }
+
+        @Override
+        public FieldMapperColumnDefinition<K, S> addIgnore() {
+            FieldMapperColumnDefinition<K, S> columnDefinition = ignoreDefinition();
             return compose(columnDefinition);
         }
 
@@ -161,6 +175,11 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
                 fm = def2.getCustomGetterFactory();
             }
             return fm;
+        }
+
+        @Override
+        public boolean ignore() {
+            return def1.ignore() || def2.ignore();
         }
 
         @Override
@@ -251,6 +270,17 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         @Override
         public K rename(K key) {
             return key.alias(name);
+        }
+    }
+
+    private static class IgnoreColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
+
+        public IgnoreColumnDefinition() {
+        }
+
+        @Override
+        public boolean ignore() {
+            return true;
         }
     }
 }

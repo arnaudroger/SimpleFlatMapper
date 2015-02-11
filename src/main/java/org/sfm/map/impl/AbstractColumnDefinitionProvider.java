@@ -10,7 +10,7 @@ import org.sfm.utils.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinition<K>, K extends FieldKey<K>> implements ColumnDefinitionProvider<C, K> {
+public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinition<K, C>, K extends FieldKey<K>> implements ColumnDefinitionProvider<C, K> {
 
     protected final List<Tuple2<Predicate<? super K>, C>> definitions;
 

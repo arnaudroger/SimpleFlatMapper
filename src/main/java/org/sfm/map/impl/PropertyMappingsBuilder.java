@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends ColumnDefinition<K>> {
+public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> {
 
 	protected final PropertyFinder<T> propertyFinder;
 	
@@ -38,10 +38,15 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	}
 
 	
-	public <P> PropertyMeta<T, P> addProperty(final K key, final D columnDefinition) {
+	public <P> void addProperty(final K key, final D columnDefinition) {
 		
 		if (!modifiable) throw new IllegalStateException("Builder not modifiable");
-		
+
+        if (columnDefinition.ignore()) {
+            properties.add(null);
+            return;
+        }
+
 		@SuppressWarnings("unchecked")
 		final PropertyMeta<T, P> prop = (PropertyMeta<T, P>) propertyFinder.findProperty(propertyNameMatcherFactory.newInstance(key));
 
@@ -51,7 +56,6 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		} else {
 			addProperty(key, columnDefinition, prop);
 		}
-		return prop;
 	}
 
 	public <P> void addProperty(final K key, final D columnDefinition, final PropertyMeta<T, P> prop) {

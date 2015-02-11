@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
 import java.sql.ResultSet;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class FieldMapperColumnDefinitionTest {
@@ -44,6 +45,9 @@ public class FieldMapperColumnDefinitionTest {
 
         assertTrue(compose.hasCustomSource());
         assertTrue(compose.hasCustomFactory());
+        assertFalse(compose.ignore());
         assertEquals(Integer.class, compose.getCustomSourceReturnType());
+
+        assertTrue(FieldMapperColumnDefinition.<JdbcColumnKey,ResultSet>identity().addIgnore().ignore());
     }
 }

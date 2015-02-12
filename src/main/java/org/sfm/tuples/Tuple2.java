@@ -10,20 +10,20 @@ public class Tuple2<T1, T2> {
         this.element1 = element1;
     }
 
-    public final T1 first() {
-        return getElement0();
-    }
-
-    public final T2 second() {
-        return getElement1();
-    }
-
     public final T1 getElement0() {
         return element0;
     }
 
+    public final T1 first() {
+        return getElement0();
+    }
+
     public final T2 getElement1() {
         return element1;
+    }
+
+    public final T2 second() {
+        return getElement1();
     }
 
     @Override
@@ -46,5 +46,11 @@ public class Tuple2<T1, T2> {
         return result;
     }
 
-
+    @Override
+    public String toString() {
+        return "Tuple2{" +
+                "element0=" + element0 +
+                ", element1=" + element1 +
+                '}';
+    }
 }

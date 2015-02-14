@@ -1,6 +1,6 @@
 package org.sfm.tuples;
 
-public class Tuple5<T1, T2, T3, T4, T5>  extends Tuple4<T1, T2, T3, T4> {
+public class Tuple5<T1, T2, T3, T4, T5> extends Tuple4<T1, T2, T3, T4> {
 
     private final T5 element4;
 
@@ -9,12 +9,12 @@ public class Tuple5<T1, T2, T3, T4, T5>  extends Tuple4<T1, T2, T3, T4> {
         this.element4 = element4;
     }
 
-    public final T5 fifth() {
-        return getElement4();
-    }
-
     public final T5 getElement4() {
         return element4;
+    }
+
+    public final T5 fifth() {
+        return getElement4();
     }
 
     @Override
@@ -35,5 +35,16 @@ public class Tuple5<T1, T2, T3, T4, T5>  extends Tuple4<T1, T2, T3, T4> {
         int result = super.hashCode();
         result = 31 * result + (element4 != null ? element4.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Tuple5{" +
+                "element0=" + getElement0() +
+                ", element1=" + getElement1() +
+                ", element2=" + getElement2() +
+                ", element3=" + getElement3() +
+                ", element4=" + getElement4() +
+                '}';
     }
 }

@@ -49,8 +49,8 @@ public class Tuple2<T1, T2> {
     @Override
     public String toString() {
         return "Tuple2{" +
-                "element0=" + element0 +
-                ", element1=" + element1 +
+                "element0=" + getElement0() +
+                ", element1=" + getElement1() +
                 '}';
     }
 }

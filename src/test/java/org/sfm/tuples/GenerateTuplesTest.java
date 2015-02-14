@@ -13,8 +13,28 @@ public class GenerateTuplesTest {
     @Test
     public void testGenerateTuple2() throws IOException {
         StringWriter stringWriter = new StringWriter();
-        GenerateTuples.generateTuple(stringWriter, 2);
+        GenerateTuples.generateTuple(stringWriter,0, 2);
         assertEquals(getContent("src/main/java/org/sfm/tuples/Tuple2.java"), stringWriter.toString());
+    }
+
+    @Test
+    public void testGenerateTuple3() throws IOException {
+        StringWriter stringWriter = new StringWriter();
+        GenerateTuples.generateTuple(stringWriter,2,  3);
+        assertEquals(getContent("src/main/java/org/sfm/tuples/Tuple3.java"), stringWriter.toString());
+    }
+
+    @Test
+    public void testGenerateTuple4() throws IOException {
+        StringWriter stringWriter = new StringWriter();
+        GenerateTuples.generateTuple(stringWriter,3,  4);
+        assertEquals(getContent("src/main/java/org/sfm/tuples/Tuple4.java"), stringWriter.toString());
+    }
+    @Test
+    public void testGenerateTuple5() throws IOException {
+        StringWriter stringWriter = new StringWriter();
+        GenerateTuples.generateTuple(stringWriter,4, 5);
+        assertEquals(getContent("src/main/java/org/sfm/tuples/Tuple5.java"), stringWriter.toString());
     }
 
     private String getContent(String file) throws IOException {

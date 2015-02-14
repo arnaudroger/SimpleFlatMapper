@@ -8,7 +8,7 @@ import java.io.Writer;
 public class GenerateTuples {
 
 
-    public static void generateTuple(Writer writer, int size) throws IOException {
+    public static void generateTuple(Writer writer, int from, int size) throws IOException {
         writer.append("package org.sfm.tuples;\n\n");
         writer.append("public class Tuple").append(Integer.toString(size)).append("<");
 
@@ -19,13 +19,25 @@ public class GenerateTuples {
 
 
 
-        writer.append("> {\n");
+        writer.append(">");
+
+        if (from > 0) {
+            writer.append(" extends Tuple").append(Integer.toString(from)).append("<");
+            for(int i = 0; i < from; i++) {
+                if (i != 0) writer.append(", ");
+                writer.append("T").append(Integer.toString(i+1));
+            }
+
+            writer.append(">");
+        }
+
+        writer.append(" {\n");
 
 
         // variable
         writer.append("\n");
 
-        for(int i = 0; i < size; i++) {
+        for(int i = from; i < size; i++) {
             writer.append("    private final T").append(Integer.toString(i+1)).append(" element").append(Integer.toString(i)).append(";\n");
         }
 
@@ -39,14 +51,24 @@ public class GenerateTuples {
             writer.append("T").append(Integer.toString(i + 1)).append(" element").append(Integer.toString(i));
         }
         writer.append(") {\n");
-        for(int i = 0; i < size; i++) {
+
+        if (from >0) {
+            writer.append("        super(");
+            for(int i = 0; i < from; i++) {
+                if (i != 0) writer.append(", ");
+                writer.append("element").append(Integer.toString(i));
+            }
+            writer.append(");\n");
+        }
+
+        for(int i = from; i < size; i++) {
             writer.append("        this.element").append(Integer.toString(i)).append(" = element").append(Integer.toString(i)).append(";\n");
         }
         writer.append("    }\n\n");
 
 
         // accessor
-        for(int i = 0; i < size; i++) {
+        for(int i = from; i < size; i++) {
             writer.append("    public final T").append(Integer.toString(i + 1)).append(" getElement").append(Integer.toString(i)).append("() {\n");
             writer.append("        return element").append(Integer.toString(i)).append(";\n");
 
@@ -65,11 +87,20 @@ public class GenerateTuples {
                 .append("    @Override\n")
                 .append("    public boolean equals(Object o) {\n")
                 .append("        if (this == o) return true;\n")
-                .append("        if (o == null || getClass() != o.getClass()) return false;\n\n")
-                .append("        Tuple").append(Integer.toString(size)).append(" tuple").append(Integer.toString(size))
-                .append(" = (Tuple").append(Integer.toString(size)).append(") o;\n\n");
+                .append("        if (o == null || getClass() != o.getClass()) return false;\n");
 
-        for(int i = 0; i < size; i++) {
+
+        if (from > 0) {
+            writer.append("        if (!super.equals(o)) return false;\n");
+        }
+        writer.append("\n");
+
+        writer
+                .append("        Tuple").append(Integer.toString(size)).append(" tuple").append(Integer.toString(size))
+                .append(" = (Tuple").append(Integer.toString(size)).append(") o;\n");
+
+        writer.append("\n");
+        for(int i = from; i < size; i++) {
             writer
                     .append("        if (element")
                     .append(Integer.toString(i))
@@ -91,18 +122,14 @@ public class GenerateTuples {
 
 
         // hashcode
-/*
-    @Override
-    public int hashCode() {
-        int result = element0 != null ? element0.hashCode() : 0;
-        result = 31 * result + (element1 != null ? element1.hashCode() : 0);
-        return result;
-    }
- */
         writer
                 .append("    @Override\n")
                 .append("    public int hashCode() {\n");
-        for(int i = 0; i < size; i++) {
+
+        if (from > 0) {
+            writer.append("        int result = super.hashCode();\n");
+        }
+        for(int i = from; i < size; i++) {
             writer.append("        ");
             if (i == 0) {
                 writer.append("int ");
@@ -119,15 +146,6 @@ public class GenerateTuples {
                 .append("    }\n\n");
 
         // to string
-        /*
-            @Override
-    public String toString() {
-        return "Tuple2{" +
-                "element0=" + element0 +
-                ", element1=" + element1 +
-                '}';
-    }
-         */
         writer
                 .append("    @Override\n")
                 .append("    public String toString() {\n");
@@ -144,9 +162,9 @@ public class GenerateTuples {
             writer
                     .append("element")
                     .append(Integer.toString(i))
-                    .append("=\" + element")
+                    .append("=\" + getElement")
                     .append(Integer.toString(i))
-                    .append(" +\n");
+                    .append("() +\n");
         }
 
         writer
@@ -173,9 +191,4 @@ public class GenerateTuples {
     }
 
 
-    public static void main(String[] args) throws IOException {
-        OutputStreamWriter writer = new OutputStreamWriter(System.out);
-        generateTuple(writer, 4);
-        writer.flush();
-    }
 }

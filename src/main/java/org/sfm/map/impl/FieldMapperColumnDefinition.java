@@ -111,6 +111,11 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         }
 
         @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("Identity{}");
+        }
+
+        @Override
         public FieldMapperColumnDefinition<K, S> addGetter(Getter<S, ?> getter) {
             FieldMapperColumnDefinition<K, S> columnDefinition = customGetter(getter);
             return compose(columnDefinition);
@@ -202,6 +207,13 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
                 throw new IllegalStateException();
             }
         }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            def1.appendToStringBuilder(sb);
+            sb.append(", ");
+            def2.appendToStringBuilder(sb);
+        }
     }
 
     private static class CustomFieldMapperColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
@@ -214,6 +226,11 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         @Override
         public FieldMapper<?, ?> getCustomFieldMapper() {
             return mapper;
+        }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("FieldMapper{").append(mapper).append("}");
         }
     }
 
@@ -239,6 +256,11 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
             Type[] paramTypesForInterface = TypeHelper.getParamTypesForInterface(getter.getClass(), Getter.class);
             return paramTypesForInterface != null ? paramTypesForInterface[1] : null;
         }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("Getter{").append(getter).append("}");
+        }
     }
 
     private static class GetterFactoryColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
@@ -258,6 +280,10 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
             return true;
         }
 
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("GetterFactory{").append(getterFactory).append("}");
+        }
     }
 
     private static class RenameColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
@@ -271,6 +297,11 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         public K rename(K key) {
             return key.alias(name);
         }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("Rename{'").append(name).append("'}");
+        }
     }
 
     private static class IgnoreColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
@@ -282,5 +313,11 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         public boolean ignore() {
             return true;
         }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("Ignore{}");
+        }
+
     }
 }

@@ -30,4 +30,9 @@ public class JdbcColumnKeyTest {
     public void testAlias() throws Exception {
         assertNotNull(new JdbcColumnKey("col", 1, Types.ARRAY).alias("h").getParent());
     }
+
+    @Test
+    public void testToString() throws Exception {
+        assertEquals("ColumnKey [columnName=col, columnIndex=1, sqlType=2003]", new JdbcColumnKey("col", 1, Types.ARRAY).toString());
+    }
 }

@@ -91,4 +91,7 @@ public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 	public JdbcColumnKey alias(String alias) {
 		return new JdbcColumnKey(alias, index, sqlType, this);
 	}
+
+
+
 }

@@ -22,12 +22,22 @@ public class CsvColumnDefinitionTest {
             public <P> CellValueReader getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder contextFactoryBuilder) {
                 return null;
             }
+
+            @Override
+            public String toString() {
+                return "CellValueReaderFactory";
+            }
         };
         CsvColumnDefinition compose = CsvColumnDefinition.IDENTITY.addDateFormat("yyyyMM").addRename("blop").addCustomReader(
                 new CellValueReader<Integer>() {
                     @Override
                     public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                         return 3;
+                    }
+
+                    @Override
+                    public String toString() {
+                        return "CellValueReader";
                     }
                 }).addCustomCellValueReaderFactory(cellValueReaderFactory).addTimeZone(tz);
 
@@ -42,5 +52,10 @@ public class CsvColumnDefinitionTest {
         assertEquals(Integer.class, compose.getCustomSourceReturnType());
 
         assertTrue(CsvColumnDefinition.IDENTITY.addIgnore().ignore());
+
+        assertEquals("ColumnDefinition{DateFormat{'yyyyMM'}," +
+                " Rename{'blop'}, CustomReader{CellValueReader}," +
+                " CellValueReaderFactory{CellValueReaderFactory}," +
+                " TimeZone{Greenwich Mean Time}, Ignore{}}", compose.addIgnore().toString());
     }
 }

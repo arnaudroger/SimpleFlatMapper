@@ -31,4 +31,9 @@ public class CsvColumnKeyTest {
         assertNotEquals(new CsvColumnKey("col", 2), new CsvColumnKey("col1", 2));
         assertNotEquals(new CsvColumnKey("col", 2), new CsvColumnKey("col", 4));
     }
+
+    @Test
+    public void testToString() throws Exception {
+        assertEquals("CsvColumnKey{name='col2', index=2}", new CsvColumnKey("col2", 2).toString());
+    }
 }

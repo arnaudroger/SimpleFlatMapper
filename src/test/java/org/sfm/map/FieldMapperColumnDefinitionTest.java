@@ -23,16 +23,31 @@ public class FieldMapperColumnDefinitionTest {
             public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
                 return null;
             }
+
+            @Override
+            public String toString() {
+                return "GetterFactory";
+            }
+
         };
         Getter<ResultSet, Integer> getter = new Getter<ResultSet, Integer>() {
             @Override
             public Integer get(ResultSet target) throws Exception {
                 return 3;
             }
+            @Override
+            public String toString() {
+                return "Getter";
+            }
         };
         FieldMapper<ResultSet, Object> fieldMapper = new FieldMapper<ResultSet, Object>() {
             @Override
             public void map(ResultSet source, Object target) throws Exception {
+            }
+
+            @Override
+            public String toString() {
+                return "FieldMapper";
             }
         };
         FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> compose =
@@ -49,5 +64,7 @@ public class FieldMapperColumnDefinitionTest {
         assertEquals(Integer.class, compose.getCustomSourceReturnType());
 
         assertTrue(FieldMapperColumnDefinition.<JdbcColumnKey,ResultSet>identity().addIgnore().ignore());
+
+        assertEquals("ColumnDefinition{Rename{'blop'}, Getter{Getter}, FieldMapper{FieldMapper}, GetterFactory{GetterFactory}, Ignore{}}", compose.addIgnore().toString());
     }
 }

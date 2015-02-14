@@ -52,7 +52,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
     public static CsvColumnDefinition compose(final CsvColumnDefinition def1, final CsvColumnDefinition def2) {
         if (def1 == IDENTITY) return def2;
         if (def2 == IDENTITY) return def1;
-        return new ComposeCsvColumnDefinition(def1, def2);
+        return new ComposedCsvColumnDefinition(def1, def2);
     }
 
 
@@ -115,6 +115,11 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
         }
 
         @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("Identity{}");
+        }
+
+        @Override
         public CsvColumnDefinition addDateFormat(final String dateFormatDef) {
             return compose(CsvColumnDefinition.dateFormatDefinition(dateFormatDef));
         }
@@ -138,15 +143,13 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
         public CsvColumnDefinition compose(CsvColumnDefinition columnDefinition) {
             return compose(this, columnDefinition);
         }
-
-
     }
 
-    static final class ComposeCsvColumnDefinition extends IdentityCsvColumnDefinition {
+    static final class ComposedCsvColumnDefinition extends IdentityCsvColumnDefinition {
         private final CsvColumnDefinition def1;
         private final CsvColumnDefinition def2;
 
-        public ComposeCsvColumnDefinition(CsvColumnDefinition def1, CsvColumnDefinition def2) {
+        public ComposedCsvColumnDefinition(CsvColumnDefinition def1, CsvColumnDefinition def2) {
             this.def1 = def1;
             this.def2 = def2;
         }
@@ -221,6 +224,13 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
         public boolean ignore() {
             return def1.ignore() || def2.ignore();
         }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            def1.appendToStringBuilder(sb);
+            sb.append(", ");
+            def2.appendToStringBuilder(sb);
+        }
     }
 
     private static class CustomReaderCsvColumnDefinition extends IdentityCsvColumnDefinition {
@@ -244,6 +254,11 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
         public Type getCustomSourceReturnType() {
             return TypeHelper.getParamTypesForInterface(cellValueReader.getClass(), CellValueReader.class)[0];
         }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("CustomReader{").append(cellValueReader).append("}");
+        }
     }
 
     private static class DateFormatCsvColumnDefinition extends IdentityCsvColumnDefinition {
@@ -256,6 +271,11 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
         @Override
         public String dateFormat() {
             return dateFormatDef;
+        }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("DateFormat{'").append(dateFormatDef).append("'}");
         }
     }
 
@@ -270,6 +290,12 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
         public CsvColumnKey rename(CsvColumnKey key) {
             return key.alias(name);
         }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("Rename{'").append(name).append("'}");
+        }
+
     }
 
     private static class CustomCellValueReaderFactoryCsvColumnDefinition extends IdentityCsvColumnDefinition {
@@ -288,6 +314,11 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
         public boolean hasCustomReaderFactory() {
             return true;
         }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("CellValueReaderFactory{").append(cellValueReaderFactory).append("}");
+        }
     }
 
     private static class TimeZoneCsvColumnDefinition extends IdentityCsvColumnDefinition {
@@ -301,12 +332,22 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
         public TimeZone getTimeZone() {
             return timeZone;
         }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("TimeZone{").append(timeZone  != null ? timeZone.getDisplayName() : "null").append("}");
+        }
     }
 
     private static class IgnoreCsvColumnDefinition extends IdentityCsvColumnDefinition {
         @Override
         public boolean ignore() {
             return true;
+        }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("Ignore{}");
         }
     }
 }

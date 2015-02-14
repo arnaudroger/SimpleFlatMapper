@@ -2,7 +2,6 @@ package org.sfm.tuples;
 
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 public class GenerateTuples {
@@ -190,5 +189,8 @@ public class GenerateTuples {
         return null;
     }
 
+    public static void main(String[] args) {
+
+    }
 
 }

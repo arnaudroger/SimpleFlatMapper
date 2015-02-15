@@ -22,6 +22,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	private final Map<String, String> fieldAliases;
 	
 	public ObjectClassMeta(Type target, ReflectionService reflectService) throws MapperBuildingException {
+		this.target = target;
 		this.reflectService = reflectService;
 		try {
 			this.constructorDefinitions = reflectService.extractConstructors(target);
@@ -30,8 +31,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			throw new MapperBuildingException(e.getMessage(), e);
 		}
 		this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.<T>toClass(target)));
-		this.properties = Collections.unmodifiableList(listProperties(reflectService, TypeHelper.<T>toClass(target)));
-		this.target = target;
+		this.properties = Collections.unmodifiableList(listProperties(reflectService, target));
 	}
 	
 	private Map<String, String> aliases(final ReflectionService reflectService, Class<T> target) {
@@ -75,8 +75,10 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return constructorProperties;
 	}
 
-	private List<PropertyMeta<T, ?>> listProperties(final ReflectionService reflectService, Class<?> target) {
+	private List<PropertyMeta<T, ?>> listProperties(final ReflectionService reflectService, Type targetType) {
+		final Class<T> target = TypeHelper.<T>toClass(targetType);
 		final List<PropertyMeta<T, ?>> properties = new ArrayList<PropertyMeta<T, ?>>();
+		final Map<Type, Type> genericTypes = TypeHelper.getTypesMap(targetType, target);
 
 		ClassVisitor.visit(target, new FieldAndMethodCallBack() {
 			@Override
@@ -86,8 +88,13 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 					final String propertyName = SetterHelper.getPropertyNameFromMethodName(name);
 
                     int indexOfProperty = findProperty(properties, propertyName);
+					Type firstMethodType = method.getGenericParameterTypes()[0];
+					Type resolvedType = genericTypes.get(firstMethodType);
+					if (resolvedType == null) {
+						resolvedType = firstMethodType;
+					}
 
-                    MethodPropertyMeta<T, Object> propertyMeta = new MethodPropertyMeta<T, Object>(propertyName, getAlias(propertyName), reflectService, method);
+					MethodPropertyMeta<T, Object> propertyMeta = new MethodPropertyMeta<T, Object>(propertyName, getAlias(propertyName), reflectService, method, resolvedType);
                     if (indexOfProperty == -1) {
                         properties.add(propertyMeta);
                     } else {
@@ -102,7 +109,12 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 				if (SetterHelper.fieldModifiersMatches(field.getModifiers())) {
                     int indexOfProperty = findProperty(properties, name);
                     if (indexOfProperty == -1) {
-                        properties.add(new FieldPropertyMeta<T, Object>(field.getName(), getAlias(name), reflectService, field));
+						Type resolvedType = genericTypes.get(field.getGenericType());
+						if (resolvedType == null) {
+							resolvedType = field.getType();
+						}
+
+						properties.add(new FieldPropertyMeta<T, Object>(field.getName(), getAlias(name), reflectService, field, resolvedType));
                     }
 				}
 			}

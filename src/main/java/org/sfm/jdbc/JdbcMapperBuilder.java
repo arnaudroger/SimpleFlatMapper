@@ -6,6 +6,7 @@ import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 
@@ -19,6 +20,9 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	private int columnIndex = 1;
 	private RowHandlerErrorHandler jdbcMapperErrorHandler = new RethrowRowHandlerErrorHandler();
 
+	public JdbcMapperBuilder(final TypeReference target) throws MapperBuildingException {
+		this(target.getType());
+	}
 	public JdbcMapperBuilder(final Type target) throws MapperBuildingException {
 		this(target, ReflectionService.newInstance());
 	}

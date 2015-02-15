@@ -33,7 +33,7 @@ public class GenerateTuplesTest {
     @Test
     public void testGenerateTuple5() throws IOException {
         StringWriter stringWriter = new StringWriter();
-        GenerateTuples.generateTuple(stringWriter,4, 5, false);
+        GenerateTuples.generateTuple(stringWriter,4, 5, true);
         assertEquals(getContent("src/main/java/org/sfm/tuples/Tuple5.java"), stringWriter.toString());
     }
 

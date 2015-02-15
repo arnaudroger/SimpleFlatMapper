@@ -31,7 +31,9 @@ public class TuplesTest {
     @Test
     public void testTuple2() {
         assertEquals(new Tuple2<String, String>("aa", "bb"), aabb);
+        assertEquals(new Tuple2<String, String>("aa", "bb").hashCode(), aabb.hashCode());
         assertNotEquals(new Tuple2<String, String>("aa", "bbb"), aabb);
+        assertNotEquals(new Tuple2<String, String>("aa", "bbb").hashCode(), aabb.hashCode());
         assertNotEquals(new Tuple2<String, String>("aaa", "bb"), aabb);
         assertEquals("Tuple2{element0=aa, element1=bb}", aabb.toString());
     }
@@ -40,6 +42,8 @@ public class TuplesTest {
     public void testTuple3() {
         assertEquals(aabb.tuple3("cc"), aabbcc);
         assertNotEquals(aabb.tuple3("ccc"), aabbcc);
+        assertEquals(aabb.tuple3("cc").hashCode(), aabbcc.hashCode());
+        assertNotEquals(aabb.tuple3("ccc").hashCode(), aabbcc.hashCode());
         assertNotEquals(aabb, aabbcc);
         assertEquals("Tuple3{element0=aa, element1=bb, element2=cc}", aabbcc.toString());
     }
@@ -48,6 +52,8 @@ public class TuplesTest {
     public void testTuple4() {
         assertEquals(aabbcc.tuple4("dd"), aabbccdd);
         assertNotEquals(aabbcc.tuple4("ddd"), aabbccdd);
+        assertEquals(aabbcc.tuple4("dd").hashCode(), aabbccdd.hashCode());
+        assertNotEquals(aabbcc.tuple4("ddd").hashCode(), aabbccdd.hashCode());
         assertNotEquals(aabbcc, aabbccdd);
         assertEquals("Tuple4{element0=aa, element1=bb, element2=cc, element3=dd}", aabbccdd.toString());
     }
@@ -56,6 +62,8 @@ public class TuplesTest {
     public void testTuple5() {
         assertEquals(aabbccdd.tuple5("ee"), aabbccddee);
         assertNotEquals(aabbccdd.tuple5("eee"), aabbccddee);
+        assertEquals(aabbccdd.tuple5("ee").hashCode(), aabbccddee.hashCode());
+        assertNotEquals(aabbccdd.tuple5("eee").hashCode(), aabbccddee.hashCode());
         assertNotEquals(aabbccdd, aabbccddee);
         assertEquals("Tuple5{element0=aa, element1=bb, element2=cc, element3=dd, element4=ee}", aabbccddee.toString());
     }

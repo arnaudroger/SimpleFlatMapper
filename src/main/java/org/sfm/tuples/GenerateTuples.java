@@ -1,6 +1,7 @@
 package org.sfm.tuples;
 
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -213,8 +214,18 @@ public class GenerateTuples {
         return null;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
+        for(int i = 2; i <= 32; i++) {
+            write(i);
+        }
+
+    }
+
+    private static void write(int i) throws IOException {
+        try(FileWriter writer = new FileWriter("src/main/java/org/sfm/tuples/Tuple" + i + ".java")) {
+            generateTuple(writer, i == 2 ? 0 : i - 1, i , i != 32);
+        }
     }
 
 }

@@ -19,4 +19,12 @@ public class FloatDelayedCellSetterFactory<T> implements DelayedCellSetterFactor
 	public DelayedCellSetter<T, Float> newCellSetter() {
 		return new FloatDelayedCellSetter<T>(setter, reader);
 	}
+
+    @Override
+    public String toString() {
+        return "FloatDelayedCellSetterFactory{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

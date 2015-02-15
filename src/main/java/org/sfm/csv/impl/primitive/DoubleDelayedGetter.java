@@ -21,4 +21,11 @@ public class DoubleDelayedGetter<T> implements DoubleGetter<DelayedCellSetter<T,
 	public Double get(DelayedCellSetter<T, ?>[] target) throws Exception {
 		return Double.valueOf(getDouble(target));
 	}
+
+    @Override
+    public String toString() {
+        return "DoubleDelayedGetter{" +
+                "index=" + index +
+                '}';
+    }
 }

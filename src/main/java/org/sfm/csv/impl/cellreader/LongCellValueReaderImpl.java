@@ -41,4 +41,9 @@ public final class LongCellValueReaderImpl implements LongCellValueReader {
 		}
 		return n;
 	}
+
+    @Override
+    public String toString() {
+        return "LongCellValueReaderImpl{}";
+    }
 }

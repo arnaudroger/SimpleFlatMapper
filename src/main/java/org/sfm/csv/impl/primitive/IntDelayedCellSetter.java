@@ -43,4 +43,12 @@ public class IntDelayedCellSetter<T> implements DelayedCellSetter<T, Integer> {
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
 		this.value = reader.readInt(chars, offset, length, parsingContext);
 	}
+
+    @Override
+    public String toString() {
+        return "IntDelayedCellSetter{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

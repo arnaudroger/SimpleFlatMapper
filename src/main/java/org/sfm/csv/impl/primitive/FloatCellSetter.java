@@ -20,4 +20,12 @@ public class FloatCellSetter<T> implements CellSetter<T> {
 			throws Exception {
 		setter.setFloat(target, reader.readFloat(chars, offset, length, parsingContext));
 	}
+
+    @Override
+    public String toString() {
+        return "FloatCellSetter{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

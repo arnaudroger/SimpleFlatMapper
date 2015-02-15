@@ -20,4 +20,12 @@ public class DoubleCellSetter<T> implements CellSetter<T> {
 			throws Exception {
 		setter.setDouble(target, reader.readDouble(chars, offset, length, parsingContext));
 	}
+
+    @Override
+    public String toString() {
+        return "DoubleCellSetter{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

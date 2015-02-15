@@ -20,4 +20,11 @@ public class LongCellValueReaderUnbox implements LongCellValueReader {
     public Long read(char[] chars, int offset, int length, ParsingContext parsingContext) {
         return reader.read(chars, offset, length, parsingContext);
     }
+
+    @Override
+    public String toString() {
+        return "LongCellValueReaderUnbox{" +
+                "reader=" + reader +
+                '}';
+    }
 }

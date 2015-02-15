@@ -41,4 +41,9 @@ public final class IntegerCellValueReaderImpl implements IntegerCellValueReader 
 		}
 		return n;
 	}
+
+    @Override
+    public String toString() {
+        return "IntegerCellValueReaderImpl{}";
+    }
 }

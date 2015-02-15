@@ -14,4 +14,9 @@ public final class CharCellValueReaderImpl implements CharCellValueReader {
 	public char readChar(char[] bytes, int offset, int length, ParsingContext parsingContext) {
 		return (char) IntegerCellValueReaderImpl.parseInt(bytes, offset, length);
 	}
+
+    @Override
+    public String toString() {
+        return "CharCellValueReaderImpl{}";
+    }
 }

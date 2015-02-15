@@ -21,4 +21,11 @@ public class ByteDelayedGetter<T> implements ByteGetter<DelayedCellSetter<T, ?>[
 	public Byte get(DelayedCellSetter<T, ?>[] target) throws Exception {
 		return Byte.valueOf(getByte(target));
 	}
+
+    @Override
+    public String toString() {
+        return "ByteDelayedGetter{" +
+                "index=" + index +
+                '}';
+    }
 }

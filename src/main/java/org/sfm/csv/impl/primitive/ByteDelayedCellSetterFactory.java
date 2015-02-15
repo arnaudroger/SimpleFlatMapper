@@ -19,4 +19,12 @@ public class ByteDelayedCellSetterFactory<T> implements DelayedCellSetterFactory
 	public DelayedCellSetter<T, Byte> newCellSetter() {
 		return new ByteDelayedCellSetter<T>(setter, reader);
 	}
+
+    @Override
+    public String toString() {
+        return "ByteDelayedCellSetterFactory{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

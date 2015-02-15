@@ -19,4 +19,12 @@ public class ShortDelayedCellSetterFactory<T> implements DelayedCellSetterFactor
 	public DelayedCellSetter<T, Short> newCellSetter() {
 		return new ShortDelayedCellSetter<T>(setter, reader);
 	}
+
+    @Override
+    public String toString() {
+        return "ShortDelayedCellSetterFactory{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

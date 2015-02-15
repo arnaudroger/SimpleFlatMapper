@@ -22,4 +22,11 @@ public final class CellSetterImpl<T, P> implements CellSetter<T> {
 		setter.set(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "CellSetterImpl{" +
+                "reader=" + reader +
+                ", setter=" + setter +
+                '}';
+    }
 }

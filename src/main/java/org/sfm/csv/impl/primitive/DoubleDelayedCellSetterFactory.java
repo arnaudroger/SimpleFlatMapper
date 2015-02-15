@@ -19,4 +19,12 @@ public class DoubleDelayedCellSetterFactory<T> implements DelayedCellSetterFacto
 	public DelayedCellSetter<T, Double> newCellSetter() {
 		return new DoubleDelayedCellSetter<T>(setter, reader);
 	}
+
+    @Override
+    public String toString() {
+        return "DoubleDelayedCellSetterFactory{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

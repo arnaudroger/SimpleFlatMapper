@@ -68,12 +68,6 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 		return reader;
 	}
 
-    private SimpleDateFormat getSimpleDateFormat(CsvColumnDefinition columnDefinition) {
-        SimpleDateFormat sdf = new SimpleDateFormat(columnDefinition.dateFormat());
-        sdf.setTimeZone(columnDefinition.getTimeZone());
-        return sdf;
-    }
-
     @SuppressWarnings("unchecked")
 	private <P> CellValueReader<P> getCellValueTransformer(Class<? extends P> propertyType) {
 		return (CellValueReader<P>) READERS.get(propertyType);

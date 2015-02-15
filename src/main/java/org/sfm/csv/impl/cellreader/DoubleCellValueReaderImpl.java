@@ -17,4 +17,9 @@ public final class DoubleCellValueReaderImpl implements DoubleCellValueReader {
 	public static double parseDouble(char[] chars, int offset, int length) {
 		return Double.parseDouble(StringCellValueReader.readString(chars, offset, length));
 	}
+
+    @Override
+    public String toString() {
+        return "DoubleCellValueReaderImpl{}";
+    }
 }

@@ -20,4 +20,12 @@ public class CharCellSetter<T> implements CellSetter<T> {
 			throws Exception {
 		setter.setCharacter(target, reader.readChar(chars, offset, length, parsingContext));
 	}
+
+    @Override
+    public String toString() {
+        return "CharCellSetter{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

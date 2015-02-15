@@ -20,5 +20,11 @@ public class BooleanDelayedCellSetterFactory<T> implements DelayedCellSetterFact
 		return new BooleanDelayedCellSetter<T>(setter, reader);
 	}
 
-
+    @Override
+    public String toString() {
+        return "BooleanDelayedCellSetterFactory{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

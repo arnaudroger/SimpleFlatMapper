@@ -21,4 +21,11 @@ public class LongDelayedGetter<T> implements LongGetter<DelayedCellSetter<T, ?>[
 	public Long get(DelayedCellSetter<T, ?>[] target) throws Exception {
 		return Long.valueOf(getLong(target));
 	}
+
+    @Override
+    public String toString() {
+        return "LongDelayedGetter{" +
+                "index=" + index +
+                '}';
+    }
 }

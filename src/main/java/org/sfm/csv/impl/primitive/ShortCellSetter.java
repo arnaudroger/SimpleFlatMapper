@@ -19,5 +19,13 @@ public class ShortCellSetter<T> implements CellSetter<T> {
 	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
 			throws Exception {
 		setter.setShort(target, reader.readShort(chars, offset, length, parsingContext));
-	}	
+	}
+
+    @Override
+    public String toString() {
+        return "ShortCellSetter{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

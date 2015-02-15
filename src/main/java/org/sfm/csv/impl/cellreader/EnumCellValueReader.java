@@ -6,8 +6,6 @@ import org.sfm.reflect.EnumHelper;
 
 public class EnumCellValueReader<E extends Enum<E>> implements CellValueReader<E> {
 
-	final static byte BZERO = '0';
-	final static byte BNINE = '9';
 	final static char CZERO = '0';
 	final static char CNINE = '9';
 	
@@ -46,4 +44,10 @@ public class EnumCellValueReader<E extends Enum<E>> implements CellValueReader<E
 		return n;
 	}
 
+    @Override
+    public String toString() {
+        return "EnumCellValueReader{" +
+                "enumClass=" + enumClass +
+                '}';
+    }
 }

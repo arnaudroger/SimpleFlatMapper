@@ -21,4 +21,11 @@ public class ShortDelayedGetter<T> implements ShortGetter<DelayedCellSetter<T, ?
 	public Short get(DelayedCellSetter<T, ?>[] target) throws Exception {
 		return Short.valueOf(getShort(target));
 	}
+
+    @Override
+    public String toString() {
+        return "ShortDelayedGetter{" +
+                "index=" + index +
+                '}';
+    }
 }

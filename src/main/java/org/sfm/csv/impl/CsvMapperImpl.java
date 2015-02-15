@@ -261,7 +261,6 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
                 "instantiator=" + instantiator +
                 ", delayedCellSetters=" + Arrays.toString(delayedCellSetters) +
                 ", setters=" + Arrays.toString(setters) +
-                ", keys=" + Arrays.toString(keys) +
                 '}';
     }
 }

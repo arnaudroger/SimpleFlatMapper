@@ -19,4 +19,12 @@ public class CharDelayedCellSetterFactory<T> implements DelayedCellSetterFactory
 	public DelayedCellSetter<T, Character> newCellSetter() {
 		return new CharDelayedCellSetter<T>(setter, reader);
 	}
+
+    @Override
+    public String toString() {
+        return "CharDelayedCellSetterFactory{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

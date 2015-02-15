@@ -21,4 +21,11 @@ public class BooleanDelayedGetter<T> implements BooleanGetter<DelayedCellSetter<
 	public Boolean get(DelayedCellSetter<T, ?>[] target) throws Exception {
 		return Boolean.valueOf(getBoolean(target));
 	}
+
+    @Override
+    public String toString() {
+        return "BooleanDelayedGetter{" +
+                "index=" + index +
+                '}';
+    }
 }

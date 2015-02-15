@@ -31,5 +31,11 @@ public class DelegateMarkerDelayedCellSetter<T, P> implements DelayedCellSetterF
 		return null;
 	}
 
-
+    @Override
+    public String toString() {
+        return "DelegateMarkerDelayedCellSetter{" +
+                "mapper=" + mapper +
+                ", setter=" + setter +
+                '}';
+    }
 }

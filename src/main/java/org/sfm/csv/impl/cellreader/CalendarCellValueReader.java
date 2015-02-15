@@ -31,4 +31,11 @@ public class CalendarCellValueReader implements CellValueReader<Calendar>, Parsi
     public Object newContext() {
         return reader.newContext();
     }
+
+    @Override
+    public String toString() {
+        return "CalendarCellValueReader{" +
+                "reader=" + reader +
+                '}';
+    }
 }

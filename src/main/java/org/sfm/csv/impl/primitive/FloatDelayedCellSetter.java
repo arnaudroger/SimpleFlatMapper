@@ -43,4 +43,12 @@ public class FloatDelayedCellSetter<T> implements DelayedCellSetter<T, Float> {
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
 		this.value = reader.readFloat(chars, offset, length, parsingContext);
 	}
+
+    @Override
+    public String toString() {
+        return "FloatDelayedCellSetter{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

@@ -42,4 +42,13 @@ public class DelegateCellSetter<T> implements CellSetter<T> {
 		return handler;
 	}
 
+    @Override
+    public String toString() {
+        return "DelegateCellSetter{" +
+                "marker=" + marker +
+                ", handler=" + handler +
+                ", target=" + target +
+                ", cellIndex=" + cellIndex +
+                '}';
+    }
 }

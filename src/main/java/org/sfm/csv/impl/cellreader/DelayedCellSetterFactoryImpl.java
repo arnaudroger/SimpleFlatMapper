@@ -20,5 +20,4 @@ public class DelayedCellSetterFactoryImpl<T, P> implements DelayedCellSetterFact
 		return new DelayedCellSetterImpl<T, P>(setter, reader);
 	}
 
-
 }

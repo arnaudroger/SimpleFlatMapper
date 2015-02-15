@@ -15,4 +15,9 @@ public final class StringCellValueReader implements CellValueReader<String> {
 	public static String readString(char[] chars, int offset, int length) {
 		return new String(chars, offset, length);
 	}
+
+    @Override
+    public String toString() {
+        return "StringCellValueReader{}";
+    }
 }

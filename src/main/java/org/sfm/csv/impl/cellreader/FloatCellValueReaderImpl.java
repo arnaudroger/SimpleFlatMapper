@@ -18,4 +18,9 @@ public final class FloatCellValueReaderImpl implements FloatCellValueReader {
 	public static float parseFloat(char[] chars, int offset, int length) {
 		return Float.parseFloat(StringCellValueReader.readString(chars, offset, length));
 	}
+
+    @Override
+    public String toString() {
+        return "FloatCellValueReaderImpl{}";
+    }
 }

@@ -60,4 +60,12 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 		};
 	}
 
+    @Override
+    public String toString() {
+        return "DelegateDelayedCellSetterFactory{" +
+                "cellIndex=" + cellIndex +
+                ", marker=" + marker +
+                ", handler=" + handler +
+                '}';
+    }
 }

@@ -15,4 +15,10 @@ public class DelayedGetter<T> implements Getter<DelayedCellSetter<T, ?>[], T> {
 		return (T) target[index].getValue();
 	}
 
+    @Override
+    public String toString() {
+        return "DelayedGetter{" +
+                "index=" + index +
+                '}';
+    }
 }

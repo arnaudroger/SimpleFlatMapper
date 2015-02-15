@@ -20,4 +20,11 @@ public class DoubleCellValueReaderUnbox implements DoubleCellValueReader {
     public Double read(char[] chars, int offset, int length, ParsingContext parsingContext) {
         return reader.read(chars, offset, length, parsingContext);
     }
+
+    @Override
+    public String toString() {
+        return "DoubleCellValueReaderUnbox{" +
+                "reader=" + reader +
+                '}';
+    }
 }

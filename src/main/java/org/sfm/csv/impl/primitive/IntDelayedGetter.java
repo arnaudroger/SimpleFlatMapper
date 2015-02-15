@@ -21,4 +21,11 @@ public class IntDelayedGetter<T> implements IntGetter<DelayedCellSetter<T, ?>[]>
 	public Integer get(DelayedCellSetter<T, ?>[] target) throws Exception {
 		return Integer.valueOf(getInt(target));
 	}
+
+    @Override
+    public String toString() {
+        return "IntDelayedGetter{" +
+                "index=" + index +
+                '}';
+    }
 }

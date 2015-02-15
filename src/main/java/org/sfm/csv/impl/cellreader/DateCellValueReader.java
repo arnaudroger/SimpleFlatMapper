@@ -41,4 +41,13 @@ public class DateCellValueReader implements CellValueReader<Date>, ParsingContex
         sdf.setTimeZone(timeZone);
         return sdf;
     }
+
+    @Override
+    public String toString() {
+        return "DateCellValueReader{" +
+                "index=" + index +
+                ", timeZone=" + timeZone +
+                ", pattern='" + pattern + '\'' +
+                '}';
+    }
 }

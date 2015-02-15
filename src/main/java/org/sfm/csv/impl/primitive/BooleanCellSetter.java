@@ -20,5 +20,12 @@ public class BooleanCellSetter<T> implements CellSetter<T> {
 			throws Exception {
 		setter.setBoolean(target, reader.readBoolean(chars, offset, length, parsingContext));
 	}
-	
+
+    @Override
+    public String toString() {
+        return "BooleanCellSetter{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

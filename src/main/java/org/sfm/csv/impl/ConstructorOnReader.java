@@ -24,4 +24,11 @@ public class ConstructorOnReader<T> implements CellValueReader<T> {
 		}
 	}
 
+    @Override
+    public String toString() {
+        return "ConstructorOnReader{" +
+                "constructor=" + constructor +
+                ", innerReader=" + innerReader +
+                '}';
+    }
 }

@@ -50,6 +50,8 @@ public final class BooleanCellValueReaderImpl implements BooleanCellValueReader 
 		return true;
 	}
 
-
-
+    @Override
+    public String toString() {
+        return "BooleanCellValueReaderImpl{}";
+    }
 }

@@ -43,4 +43,12 @@ public class DoubleDelayedCellSetter<T> implements DelayedCellSetter<T, Double> 
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
 		this.value = reader.readDouble(chars, offset, length, parsingContext);
 	}
+
+    @Override
+    public String toString() {
+        return "DoubleDelayedCellSetter{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

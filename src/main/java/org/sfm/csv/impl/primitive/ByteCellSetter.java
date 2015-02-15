@@ -20,4 +20,12 @@ public class ByteCellSetter<T> implements CellSetter<T> {
 			throws Exception {
 		setter.setByte(target, reader.readByte(chars, offset, length, parsingContext));
 	}
+
+    @Override
+    public String toString() {
+        return "ByteCellSetter{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

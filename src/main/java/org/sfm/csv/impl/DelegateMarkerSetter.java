@@ -27,4 +27,12 @@ public class DelegateMarkerSetter<T> implements CellSetter<T> {
 	public Setter<T, ?> getSetter() {
 		return setter;
 	}
+
+    @Override
+    public String toString() {
+        return "DelegateMarkerSetter{" +
+                "mapper=" + mapper +
+                ", setter=" + setter +
+                '}';
+    }
 }

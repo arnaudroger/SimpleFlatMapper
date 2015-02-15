@@ -42,4 +42,11 @@ public class DelayedCellSetterImpl<T, P> implements DelayedCellSetter<T, P> {
 		value = reader.read(chars, offset, length, parsingContext);
 	}
 
+    @Override
+    public String toString() {
+        return "DelayedCellSetterImpl{" +
+                "reader=" + reader +
+                ", setter=" + setter +
+                '}';
+    }
 }

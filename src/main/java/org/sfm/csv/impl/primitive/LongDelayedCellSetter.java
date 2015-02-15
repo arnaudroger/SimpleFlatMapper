@@ -43,4 +43,12 @@ public class LongDelayedCellSetter<T> implements DelayedCellSetter<T, Long> {
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
 		this.value = reader.readLong(chars, offset, length, parsingContext);
 	}
+
+    @Override
+    public String toString() {
+        return "LongDelayedCellSetter{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

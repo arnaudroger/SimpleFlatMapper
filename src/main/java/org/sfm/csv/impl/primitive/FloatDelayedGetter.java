@@ -21,4 +21,11 @@ public class FloatDelayedGetter<T> implements FloatGetter<DelayedCellSetter<T, ?
 	public Float get(DelayedCellSetter<T, ?>[] target) throws Exception {
 		return Float.valueOf(getFloat(target));
 	}
+
+    @Override
+    public String toString() {
+        return "FloatDelayedGetter{" +
+                "index=" + index +
+                '}';
+    }
 }

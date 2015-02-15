@@ -21,4 +21,11 @@ public class CharDelayedGetter<T> implements CharacterGetter<DelayedCellSetter<T
 	public Character get(DelayedCellSetter<T, ?>[] target) throws Exception {
 		return Character.valueOf(getCharacter(target));
 	}
+
+    @Override
+    public String toString() {
+        return "CharDelayedGetter{" +
+                "index=" + index +
+                '}';
+    }
 }

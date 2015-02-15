@@ -19,5 +19,13 @@ public class LongCellSetter<T> implements CellSetter<T> {
 	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
 			throws Exception {
 		setter.setLong(target, reader.readLong(chars, offset, length, parsingContext));
-	}	
+	}
+
+    @Override
+    public String toString() {
+        return "LongCellSetter{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

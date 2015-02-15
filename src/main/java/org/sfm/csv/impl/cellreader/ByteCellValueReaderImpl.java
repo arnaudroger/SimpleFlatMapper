@@ -14,4 +14,9 @@ public class ByteCellValueReaderImpl implements ByteCellValueReader {
 	public byte readByte(char[] chars, int offset, int length, ParsingContext parsingContext) {
 		return (byte) IntegerCellValueReaderImpl.parseInt(chars, offset, length);
 	}
+
+    @Override
+    public String toString() {
+        return "ByteCellValueReaderImpl{}";
+    }
 }

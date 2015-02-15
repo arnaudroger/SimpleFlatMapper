@@ -43,4 +43,12 @@ public class BooleanDelayedCellSetter<T> implements DelayedCellSetter<T, Boolean
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
 		this.value = reader.readBoolean(chars, offset, length, parsingContext);
 	}
+
+    @Override
+    public String toString() {
+        return "BooleanDelayedCellSetter{" +
+                "setter=" + setter +
+                ", reader=" + reader +
+                '}';
+    }
 }

@@ -153,7 +153,8 @@ public class CsvParserTest {
 
 	@Test
 	public void testDSLMapToTuple3() throws IOException {
-		Iterator<Tuple3<String, String, String>> iterator = CsvParser.mapTo(String.class, String.class, String.class).headers("0", "1", "2").iterator(new StringReader("value1,value2,value3"));
+		Iterator<Tuple3<String, String, String>> iterator = CsvParser.mapTo(String.class, String.class, String.class)
+                .defaultHeaders().iterator(new StringReader("value1,value2,value3"));
 		assertTrue(iterator.hasNext());
 		Tuple3<String, String, String> tuple2 = iterator.next();
 		assertEquals("value1", tuple2.first());
@@ -165,7 +166,8 @@ public class CsvParserTest {
 	@Test
 	public void testDSLMapToTuple4() throws IOException {
 		Iterator<Tuple4<String, String, String, String>> iterator =
-				CsvParser.mapTo(String.class, String.class, String.class, String.class).headers("0", "1", "2", "3").iterator(new StringReader("value1,value2,value3,value4"));
+				CsvParser.mapTo(String.class, String.class, String.class, String.class)
+                        .defaultHeaders().iterator(new StringReader("value1,value2,value3,value4"));
 		assertTrue(iterator.hasNext());
 		Tuple4<String, String, String, String> tuple2 = iterator.next();
 		assertEquals("value1", tuple2.first());
@@ -179,7 +181,7 @@ public class CsvParserTest {
 	public void testDSLMapToTuple5() throws IOException {
 		Iterator<Tuple5<String, String, String, String, String>> iterator =
 				CsvParser.mapTo(String.class, String.class, String.class, String.class, String.class)
-						.headers("0", "1", "2", "3", "4").iterator(new StringReader("value1,value2,value3,value4,value5"));
+						.defaultHeaders().iterator(new StringReader("value1,value2,value3,value4,value5"));
 		assertTrue(iterator.hasNext());
 		Tuple5<String, String, String, String, String> tuple2 = iterator.next();
 		assertEquals("value1", tuple2.first());
@@ -189,6 +191,50 @@ public class CsvParserTest {
 		assertEquals("value5", tuple2.fifth());
 		assertFalse(iterator.hasNext());
 	}
+
+    @Test
+    public void testDSLMapToTuple6() throws IOException {
+        Tuple6<String, String, String, String, String, String> tuple6 = CsvParser.mapTo(String.class, String.class, String.class,
+                String.class, String.class, String.class)
+                .defaultHeaders().iterator(new StringReader("value1,value2,value3,value4,value5,value6")).next();
+        assertEquals("value1", tuple6.first());
+        assertEquals("value2", tuple6.second());
+        assertEquals("value3", tuple6.third());
+        assertEquals("value4", tuple6.forth());
+        assertEquals("value5", tuple6.fifth());
+        assertEquals("value6", tuple6.sixth());
+    }
+
+    @Test
+    public void testDSLMapToTuple7() throws IOException {
+        Tuple7<String, String, String, String, String, String, String> tuple = CsvParser.mapTo(String.class, String.class, String.class,
+                String.class, String.class, String.class,
+                String.class)
+                .defaultHeaders().iterator(new StringReader("value1,value2,value3,value4,value5,value6,value7")).next();
+        assertEquals("value1", tuple.first());
+        assertEquals("value2", tuple.second());
+        assertEquals("value3", tuple.third());
+        assertEquals("value4", tuple.forth());
+        assertEquals("value5", tuple.fifth());
+        assertEquals("value6", tuple.sixth());
+        assertEquals("value7", tuple.seventh());
+    }
+
+    @Test
+    public void testDSLMapToTuple8() throws IOException {
+        Tuple8<String, String, String, String, String, String, String, String> tuple = CsvParser.mapTo(String.class, String.class, String.class,
+                String.class, String.class, String.class,
+                String.class, String.class)
+                .defaultHeaders().iterator(new StringReader("value1,value2,value3,value4,value5,value6,value7,value8")).next();
+        assertEquals("value1", tuple.first());
+        assertEquals("value2", tuple.second());
+        assertEquals("value3", tuple.third());
+        assertEquals("value4", tuple.forth());
+        assertEquals("value5", tuple.fifth());
+        assertEquals("value6", tuple.sixth());
+        assertEquals("value7", tuple.seventh());
+        assertEquals("value8", tuple.eighth());
+    }
 
     @Test
     public void testDSLMapToForEach() throws IOException {

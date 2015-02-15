@@ -91,6 +91,8 @@ public class TuplesTest {
             assertNotEquals(nextTuple.hashCode(), diffTuple.hashCode());
             assertNotEquals(nextTuple.toString(), diffTuple.hashCode());
 
+            assertTrue(Tuples.isTuple(nextTuple.getClass()));
+
             currentTuple = nextTuple;
         }
     }

@@ -6,6 +6,7 @@ import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.Predicate;
@@ -106,7 +107,11 @@ public final class CsvMapperFactory {
 		return newMapper((Type)target);
 	}
 
-	public <T> CsvMapper<T> newMapper(final Type target) throws MapperBuildingException {
+    public <T> CsvMapper<T> newMapper(final TypeReference<T> target) throws MapperBuildingException {
+        return newMapper(target.getType());
+    }
+
+    public <T> CsvMapper<T> newMapper(final Type target) throws MapperBuildingException {
 		ClassMeta<T> classMeta = getClassMeta(target);
 		return new DynamicCsvMapper<T>(target,
 				classMeta,
@@ -129,7 +134,11 @@ public final class CsvMapperFactory {
 		return newBuilder((Type)target);
 	}
 
-	public <T> CsvMapperBuilder<T> newBuilder(final Type target) {
+    public <T> CsvMapperBuilder<T> newBuilder(final TypeReference<T> target) {
+        return newBuilder(target.getType());
+    }
+
+    public <T> CsvMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);

@@ -6,6 +6,7 @@ import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.Predicate;
@@ -116,7 +117,11 @@ public final class JdbcMapperFactory {
 		return newBuilder((Type)target);
 	}
 
-	public <T> JdbcMapperBuilder<T> newBuilder(final Type target) {
+    public <T> JdbcMapperBuilder<T> newBuilder(final TypeReference<T> target) {
+        return newBuilder(target.getType());
+    }
+
+    public <T> JdbcMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
 
 		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, getterFactory);
@@ -135,6 +140,10 @@ public final class JdbcMapperFactory {
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
 		return newMapper((Type)target);
 	}
+
+    public <T> JdbcMapper<T> newMapper(final TypeReference<T> target) throws MapperBuildingException {
+        return newMapper(target.getType());
+    }
 
 	public <T> JdbcMapper<T> newMapper(final Type target) throws MapperBuildingException {
 		ClassMeta<T> classMeta = getClassMeta(target);

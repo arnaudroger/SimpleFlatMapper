@@ -3,8 +3,8 @@ package org.sfm.reflect;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-public abstract class TypeReference<T> implements Comparable<TypeReference<T>> {
-	protected final Type _type;
+public abstract class TypeReference<T>  {
+	private final Type _type;
 
 	protected TypeReference() {
 		Type superClass = getClass().getGenericSuperclass();
@@ -19,8 +19,4 @@ public abstract class TypeReference<T> implements Comparable<TypeReference<T>> {
 		return _type;
 	}
 
-	@Override
-	public int compareTo(TypeReference<T> o) {
-		return 0;
-	}
 }

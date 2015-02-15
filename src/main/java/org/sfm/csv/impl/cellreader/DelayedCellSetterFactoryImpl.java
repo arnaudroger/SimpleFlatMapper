@@ -20,4 +20,11 @@ public class DelayedCellSetterFactoryImpl<T, P> implements DelayedCellSetterFact
 		return new DelayedCellSetterImpl<T, P>(setter, reader);
 	}
 
+    @Override
+    public String toString() {
+        return "DelayedCellSetterFactoryImpl{" +
+                "reader=" + reader +
+                ", setter=" + setter +
+                '}';
+    }
 }

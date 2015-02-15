@@ -32,7 +32,7 @@ public class CsvMapperBuilderTest {
 
 
     @Test
-    public void testStaticMapperToString() throws Exception {
+    public void testStaticMapperDbObjectToString() throws Exception {
         CsvMapperBuilder<DbObject> builder = csvMapperFactory.disableAsm(true).newBuilder(DbObject.class);
         addDbObjectFields(builder);
         assertEquals(
@@ -47,7 +47,31 @@ public class CsvMapperBuilderTest {
                         "CellSetterImpl{reader=EnumCellValueReader{enumClass=class org.sfm.beans.DbObject$Type}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setTypeName(org.sfm.beans.DbObject$Type)}}]}", builder.mapper().toString());
     }
 
-	@Test
+    @Test
+    public void testStaticMapperDbFinalObjectToString() throws Exception {
+        CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.useAsm(false).newBuilder(DbFinalObject.class);
+        addDbObjectFields(builder);
+        assertEquals(
+                "CsvMapperImpl{" +
+                        "instantiator=InjectConstructorInstantiator{" +
+                            "constructorDefinition=ConstructorDefinition{constructor=public org.sfm.beans.DbFinalObject(long,java.lang.String,java.lang.String,java.util.Date,org.sfm.beans.DbObject$Type,org.sfm.beans.DbObject$Type), " +
+                            "parameters=[" +
+                                "ConstructorParameter{name='id', type=long, resolvedType=long}, " +
+                                "ConstructorParameter{name='name', type=class java.lang.String, resolvedType=class java.lang.String}, " +
+                                "ConstructorParameter{name='email', type=class java.lang.String, resolvedType=class java.lang.String}, " +
+                                "ConstructorParameter{name='creationTime', type=class java.util.Date, resolvedType=class java.util.Date}, " +
+                                "ConstructorParameter{name='typeOrdinal', type=class org.sfm.beans.DbObject$Type, resolvedType=class org.sfm.beans.DbObject$Type}, " +
+                                "ConstructorParameter{name='typeName', type=class org.sfm.beans.DbObject$Type, resolvedType=class org.sfm.beans.DbObject$Type}]}}, " +
+                        "delayedCellSetters=[" +
+                        "LongDelayedCellSetterFactory{setter=null, reader=LongCellValueReaderImpl{}}, " +
+                        "DelayedCellSetterFactoryImpl{reader=StringCellValueReader{}, setter=null}, " +
+                        "DelayedCellSetterFactoryImpl{reader=StringCellValueReader{}, setter=null}, " +
+                        "DelayedCellSetterFactoryImpl{reader=DateCellValueReader{index=3, timeZone=Greenwich Mean Time, pattern='yyyy-MM-dd HH:mm:ss'}, setter=null}, " +
+                        "DelayedCellSetterFactoryImpl{reader=EnumCellValueReader{enumClass=class org.sfm.beans.DbObject$Type}, setter=null}, " +
+                        "DelayedCellSetterFactoryImpl{reader=EnumCellValueReader{enumClass=class org.sfm.beans.DbObject$Type}, setter=null}], setters=[null]}", builder.mapper().toString());
+    }
+
+    @Test
 	public void testMapDbObject() throws Exception {
 		testMapDbObject(csvMapperFactory.newBuilder(DbObject.class));
 	}

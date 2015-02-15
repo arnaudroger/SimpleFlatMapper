@@ -58,4 +58,13 @@ public final class ConstructorParameter {
 			return false;
 		return true;
 	}
+
+    @Override
+    public String toString() {
+        return "ConstructorParameter{" +
+                "name='" + name + '\'' +
+                ", type=" + type +
+                ", resolvedType=" + resolvedType +
+                '}';
+    }
 }

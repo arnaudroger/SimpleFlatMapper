@@ -2,7 +2,7 @@ package org.sfm.reflect;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Date;
+import java.lang.reflect.TypeVariable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +14,9 @@ public class TypeHelper {
 			return (Class<T>) target;
 		} else if (target instanceof ParameterizedType) {
 			return (Class<T>) ((ParameterizedType) target).getRawType();
+		} else if (target instanceof TypeVariable) {
+			Type[] bounds = ((TypeVariable) target).getBounds();
+			return (Class<T>) bounds[0];
 		}
 		throw new UnsupportedOperationException("Cannot extract class from type " + target);
 	}

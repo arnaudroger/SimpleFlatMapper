@@ -223,8 +223,11 @@ public class GenerateTuples {
     }
 
     private static void write(int i) throws IOException {
-        try(FileWriter writer = new FileWriter("src/main/java/org/sfm/tuples/Tuple" + i + ".java")) {
+        FileWriter writer = new FileWriter("src/main/java/org/sfm/tuples/Tuple" + i + ".java");
+        try {
             generateTuple(writer, i == 2 ? 0 : i - 1, i , i != 32);
+        } finally {
+            writer.close();
         }
     }
 

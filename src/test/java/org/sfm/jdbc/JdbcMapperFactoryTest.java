@@ -9,14 +9,14 @@ import org.sfm.map.GetterFactory;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.FieldMapper;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.TypeReference;
+import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.RowHandler;
 
 import java.lang.reflect.Type;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +37,45 @@ public class JdbcMapperFactoryTest {
 		assertNotNull(JdbcMapperFactory.newInstance().newBuilder(Tuples.typeDef(Date.class, Date.class)));
 	}
 
-	@Test
+    @Test
+    public void testFactoryOnReferenceType() throws SQLException {
+        ResultSet rs = mock(ResultSet.class);
+        ResultSetMetaData metaData = mock(ResultSetMetaData.class);
+        when(rs.getMetaData()).thenReturn(metaData);
+
+        when(metaData.getColumnCount()).thenReturn(2);
+        when(metaData.getColumnLabel(1)).thenReturn("e0");
+        when(metaData.getColumnLabel(2)).thenReturn("e1");
+        when(metaData.getColumnType(1)).thenReturn(Types.VARCHAR);
+        when(metaData.getColumnType(2)).thenReturn(Types.VARCHAR);
+        when(rs.next()).thenReturn(true, false);
+
+        when(rs.getString(1)).thenReturn("v1");
+        when(rs.getString(2)).thenReturn("v2");
+
+        Tuple2<String, String> tuple2 = JdbcMapperFactory.newInstance().newMapper(new TypeReference<Tuple2<String, String>>() {
+        }).iterator(rs).next();
+
+        assertEquals("v1", tuple2.first());
+        assertEquals("v2", tuple2.second());
+    }
+
+    @Test
+    public void testFactoryOnReferenceTypeStatic() throws SQLException {
+        ResultSet rs = mock(ResultSet.class);
+        when(rs.next()).thenReturn(true, false);
+
+        when(rs.getString(1)).thenReturn("v1");
+        when(rs.getString(2)).thenReturn("v2");
+
+        Tuple2<String, String> tuple2 = JdbcMapperFactory.newInstance().newBuilder(new TypeReference<Tuple2<String, String>>() {
+        }).addMapping("e0").addMapping("e1").mapper()
+                .iterator(rs).next();
+
+        assertEquals("v1", tuple2.first());
+        assertEquals("v2", tuple2.second());
+    }
+    @Test
 	public void testAsmDbObjectMappingFromDbWithMetaData()
 			throws SQLException, Exception, ParseException {
 		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {

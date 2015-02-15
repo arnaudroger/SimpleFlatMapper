@@ -8,9 +8,12 @@ import org.sfm.beans.DbPartialFinalObject;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
+import org.sfm.reflect.TypeReference;
+import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ListHandler;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.List;
@@ -156,7 +159,30 @@ public class CsvMapperBuilderTest {
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
-	
+
+
+    @Test
+    public void testMapTypeReferenceDynamic() throws IOException {
+        Tuple2<String, String> next = CsvMapperFactory
+                .newInstance()
+                .newMapper(new TypeReference<Tuple2<String, String>>() {
+                })
+                .iterator(new StringReader("e0,e1\nv0,v1")).next();
+        assertEquals("v0", next.first());
+        assertEquals("v1", next.second());
+    }
+
+    @Test
+    public void testMapTypeReferenceBuild() throws IOException {
+        Tuple2<String, String> next = CsvMapperFactory
+                .newInstance()
+                .newBuilder(new TypeReference<Tuple2<String, String>>() {
+                }).addMapping("e0").addMapping("e1")
+                .mapper()
+                .iterator(new StringReader("v0,v1")).next();
+        assertEquals("v0", next.first());
+        assertEquals("v1", next.second());
+    }
 	
 	public static void addDbObjectFields(CsvMapperBuilder<?> builder) {
 		builder.addMapping("id")

@@ -12,6 +12,7 @@ public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 	private final JdbcColumnKey parent;
 
 	public JdbcColumnKey(String columnName, int columnIndex) {
+        if (columnName == null)  throw new NullPointerException("ColumnName is null");
 		this.name = columnName;
 		this.index = columnIndex;
 		this.sqlType = UNDEFINED_TYPE;
@@ -19,6 +20,7 @@ public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 	}
 
 	public JdbcColumnKey(String columnName, int columnIndex, int sqlType) {
+        if (columnName == null)  throw new NullPointerException("ColumnName is null");
 		this.name = columnName;
 		this.index = columnIndex;
 		this.sqlType = sqlType;
@@ -26,6 +28,7 @@ public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 	}
 
 	public JdbcColumnKey(String columnName, int columnIndex, int sqlType, JdbcColumnKey parent) {
+        if (columnName == null)  throw new NullPointerException("ColumnName is null");
 		this.name = columnName;
 		this.index = columnIndex;
 		this.sqlType = sqlType;

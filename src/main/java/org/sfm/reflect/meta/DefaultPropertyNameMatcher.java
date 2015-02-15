@@ -8,6 +8,8 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	private final boolean caseSensitive;
 
 	public DefaultPropertyNameMatcher(String column, int from, boolean exactMatch, boolean caseSensitive) {
+        if (column == null)
+            throw new NullPointerException("column is null");
 		this.column = column;
 		this.from = from;
 		this.exactMatch = exactMatch;

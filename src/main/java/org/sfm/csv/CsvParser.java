@@ -5,6 +5,7 @@ import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.csv.parser.*;
 import org.sfm.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.tuples.*;
 import org.sfm.utils.Predicate;
@@ -57,10 +58,14 @@ public final class CsvParser {
 	}
 
 	public static <T> MapToDSL<T> mapTo(Class<T> type) {
-		return mapTo((Type)type);
+		return schema().mapTo(type);
 	}
 
-	public static <T1, T2> MapToDSL<Tuple2<T1, T2>> mapTo(Class<T1> class1, Class<T2> class2) {
+    public static <T> MapToDSL<T> mapTo(TypeReference<T> type) {
+        return schema().mapTo(type);
+    }
+
+    public static <T1, T2> MapToDSL<Tuple2<T1, T2>> mapTo(Class<T1> class1, Class<T2> class2) {
 		return  schema().mapTo(class1, class2);
 	}
 
@@ -236,6 +241,10 @@ public final class CsvParser {
 		public <T> MapToDSL<T> mapTo(Class<T> target) {
 			return mapTo((Type)target);
 		}
+
+        public <T> MapToDSL<T> mapTo(TypeReference<T> target) {
+            return mapTo(target.getType());
+        }
 
 		public <T1, T2> MapToDSL<Tuple2<T1, T2>> mapTo(Class<T1> class1, Class<T2> class2) {
 			return new MapToDSL<Tuple2<T1, T2>>(this, Tuples.typeDef(class1, class2));

@@ -3,6 +3,7 @@ package org.sfm.csv;
 import org.junit.Test;
 import org.sfm.csv.impl.ParsingContext;
 import org.sfm.csv.parser.CellConsumer;
+import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.*;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.Predicate;
@@ -141,6 +142,17 @@ public class CsvParserTest {
 		assertEquals("value2", tuple2.second());
 		assertFalse(iterator.hasNext());
 	}
+
+
+    @Test
+    public void testDSLMapToTypeReference() throws IOException {
+        Iterator<Tuple2<String, String>> iterator = CsvParser.mapTo(new TypeReference<Tuple2<String, String>>() {}).defaultHeaders().iterator(new StringReader("value1,value2"));
+        assertTrue(iterator.hasNext());
+        Tuple2<String, String> tuple2 = iterator.next();
+        assertEquals("value1", tuple2.first());
+        assertEquals("value2", tuple2.second());
+        assertFalse(iterator.hasNext());
+    }
 	@Test
 	public void testDSLMapToTuple2OverrideWithDefaultHeader() throws IOException {
 		Iterator<Tuple2<String, String>> iterator = CsvParser.mapTo(String.class, String.class).overrideWithDefaultHeaders().iterator(new StringReader("key,value\nvalue1,value2"));

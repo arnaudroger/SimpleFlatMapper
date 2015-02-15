@@ -17,6 +17,7 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -229,7 +230,7 @@ public class CsvMapperBuilderTest {
 		builder.addMapping("id")
 		.addMapping("name")
 		.addMapping("email")
-		.addMapping("creationTime")
+		.addMapping("creationTime", CsvColumnDefinition.timeZoneDefinition(TimeZone.getTimeZone("Europe/London")))
 		.addMapping("typeOrdinal")
 		.addMapping("typeName");
 	}

@@ -2,6 +2,9 @@ package org.sfm.tuples;
 
 import org.junit.Test;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import static org.junit.Assert.*;
 
 public class TuplesTest {
@@ -66,5 +69,29 @@ public class TuplesTest {
         assertNotEquals(aabbccdd.tuple5("eee").hashCode(), aabbccddee.hashCode());
         assertNotEquals(aabbccdd, aabbccddee);
         assertEquals("Tuple5{element0=aa, element1=bb, element2=cc, element3=dd, element4=ee}", aabbccddee.toString());
+    }
+
+    @Test
+    public void testTuples() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Tuple2<?, ?> currentTuple = new Tuple2<Object, Object>("v1", "v2");
+        for(int i = 3; i <= 32; i++) {
+            Method m = currentTuple.getClass().getDeclaredMethod("tuple" + i, Object.class);
+
+            Tuple2<?, ?> nextTuple = (Tuple2<?, ?>) m.invoke(currentTuple, "v" + i);
+            Tuple2<?, ?> sameTuple = (Tuple2<?, ?>) m.invoke(currentTuple, "v" + i);
+            Tuple2<?, ?> diffTuple = (Tuple2<?, ?>) m.invoke(currentTuple, "d" + i);
+
+
+            assertEquals(nextTuple, sameTuple);
+            assertEquals(nextTuple.hashCode(), sameTuple.hashCode());
+            assertEquals(nextTuple.toString(), sameTuple.toString());
+
+            assertNotEquals(nextTuple, diffTuple);
+            assertNotEquals(nextTuple.hashCode(), diffTuple.hashCode());
+            assertNotEquals(nextTuple.toString(), diffTuple.hashCode());
+
+            currentTuple = nextTuple;
+        }
     }
 }

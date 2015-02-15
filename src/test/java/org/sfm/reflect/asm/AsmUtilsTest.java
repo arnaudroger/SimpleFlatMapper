@@ -2,6 +2,7 @@ package org.sfm.reflect.asm;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -28,6 +29,29 @@ public class AsmUtilsTest {
 		assertEquals(List.class, pt2.getRawType());
 		assertEquals(String.class, pt2.getActualTypeArguments()[0]);
 	}
+
+    @Test
+    public void testToGenericTypeTuples() throws ClassNotFoundException {
+
+        ParameterizedType pt = (ParameterizedType) AsmUtils.toGenericType("Lorg/sfm/tuples/Tuple2<TT1;TT2;>;", Arrays.asList("T1", "T2"), new ParameterizedType() {
+            @Override
+            public Type[] getActualTypeArguments() {
+                return new Type[] { String.class, Long.class};
+            }
+
+            @Override
+            public Type getRawType() {
+                return null;
+            }
+
+            @Override
+            public Type getOwnerType() {
+                return null;
+            }
+        });
+        assertEquals(String.class, TypeHelper.toClass(pt.getActualTypeArguments()[0]));
+        assertEquals(Long.class, TypeHelper.toClass(pt.getActualTypeArguments()[1]));
+    }
 
 	@Test
 	public void testToClassFromGeneric() throws  Exception {

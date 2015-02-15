@@ -7,7 +7,7 @@ import java.io.Writer;
 public class GenerateTuples {
 
 
-    public static void generateTuple(Writer writer, int from, int size) throws IOException {
+    public static void generateTuple(Writer writer, int from, int size, boolean upward) throws IOException {
         writer.append("package org.sfm.tuples;\n\n");
         writer.append("public class Tuple").append(Integer.toString(size)).append("<");
 
@@ -169,6 +169,30 @@ public class GenerateTuples {
         writer
                 .append("                '}';\n");
         writer.append("    }\n");
+
+        if (upward) {
+            writer.append("\n");
+            writer.append("    public <T").append(Integer.toString(size + 1)).append("> Tuple").append(Integer.toString(size + 1)).append("<");
+
+            for (int i = 0; i <= size; i++) {
+                if (i != 0) writer.append(", ");
+                writer.append("T").append(Integer.toString(i + 1));
+            }
+            writer.append("> tuple").append(Integer.toString(size + 1)).append("(T").append(Integer.toString(size + 1)).append(" element").append(Integer.toString(size)).append(") {\n");
+            writer.append("        return new Tuple").append(Integer.toString(size + 1)).append("<");
+            for (int i = 0; i <= size; i++) {
+                if (i != 0) writer.append(", ");
+                writer.append("T").append(Integer.toString(i + 1));
+            }
+            writer.append(">(");
+            for (int i = 0; i < size; i++) {
+                if (i != 0) writer.append(", ");
+                writer.append("getElement").append(Integer.toString(i)).append("()");
+            }
+            writer.append(", element").append(Integer.toString(size));
+            writer.append(");\n");
+            writer.append("    }\n");
+        }
 
         writer.append("}\n");
     }

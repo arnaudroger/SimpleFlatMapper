@@ -53,4 +53,8 @@ public class Tuple2<T1, T2> {
                 ", element1=" + getElement1() +
                 '}';
     }
+
+    public <T3> Tuple3<T1, T2, T3> tuple3(T3 element2) {
+        return new Tuple3<T1, T2, T3>(getElement0(), getElement1(), element2);
+    }
 }

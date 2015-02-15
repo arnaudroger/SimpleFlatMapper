@@ -45,4 +45,8 @@ public class Tuple3<T1, T2, T3> extends Tuple2<T1, T2> {
                 ", element2=" + getElement2() +
                 '}';
     }
+
+    public <T4> Tuple4<T1, T2, T3, T4> tuple4(T4 element3) {
+        return new Tuple4<T1, T2, T3, T4>(getElement0(), getElement1(), getElement2(), element3);
+    }
 }

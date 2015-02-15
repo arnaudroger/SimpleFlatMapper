@@ -180,7 +180,8 @@ public class AsmUtils {
 				sig = sig.substring(0, sig.length() - 1);
 			}
 		} else if (sig.startsWith("T")) {
-			int indexOfParam = genericTypeNames.indexOf(sig.substring(1, sig.length() -1));
+            String templateType = sig.substring(1, sig.length() - (sig.endsWith(";") ? 1 : 0));
+            int indexOfParam = genericTypeNames.indexOf(templateType);
 			if (target instanceof  ParameterizedType) {
 				return ((ParameterizedType) target).getActualTypeArguments()[indexOfParam];
 			} else {
@@ -287,7 +288,7 @@ public class AsmUtils {
 				case ';' :
 					if (genericLevel == 0) {
 						types.add(toGenericType(sig.substring(currentStart, i), genericTypeNames, target));
-						currentStart = i;
+						currentStart = i + 1;
 					}
 					break;
 			}

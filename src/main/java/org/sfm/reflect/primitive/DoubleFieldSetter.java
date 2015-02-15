@@ -15,4 +15,10 @@ public final class DoubleFieldSetter<T> implements DoubleSetter<T> {
 		field.setDouble(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "DoubleFieldSetter{" +
+                "field=" + field +
+                '}';
+    }
 }

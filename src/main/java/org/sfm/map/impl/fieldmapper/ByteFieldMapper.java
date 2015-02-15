@@ -19,4 +19,12 @@ public final class ByteFieldMapper<S, T> implements FieldMapper<S, T> {
 	public void map(final S source, final T target) throws Exception {
 		setter.setByte(target, getter.getByte(source));
 	}
+
+    @Override
+    public String toString() {
+        return "ByteFieldMapper{" +
+                "getter=" + getter +
+                ", setter=" + setter +
+                '}';
+    }
 }

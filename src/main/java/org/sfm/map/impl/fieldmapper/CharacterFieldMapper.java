@@ -18,4 +18,12 @@ public final class CharacterFieldMapper<S, T> implements FieldMapper<S, T> {
 	public void map(final S source, final T target) throws Exception {
 		setter.setCharacter(target, getter.getCharacter(source));
 	}
+
+    @Override
+    public String toString() {
+        return "CharacterFieldMapper{" +
+                "getter=" + getter +
+                ", setter=" + setter +
+                '}';
+    }
 }

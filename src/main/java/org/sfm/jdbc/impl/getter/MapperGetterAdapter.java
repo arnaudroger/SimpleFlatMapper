@@ -16,4 +16,10 @@ public final class MapperGetterAdapter<S, P> implements Getter<S, P> {
 		return mapper.map(target);
 	}
 
+    @Override
+    public String toString() {
+        return "MapperGetterAdapter{" +
+                "mapper=" + mapper +
+                '}';
+    }
 }

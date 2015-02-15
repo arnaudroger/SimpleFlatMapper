@@ -16,4 +16,10 @@ public final class CharacterMethodSetter<T> implements CharacterSetter<T> {
 		method.invoke(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "CharacterMethodSetter{" +
+                "method=" + method +
+                '}';
+    }
 }

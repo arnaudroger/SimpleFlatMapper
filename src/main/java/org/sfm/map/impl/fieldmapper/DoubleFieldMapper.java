@@ -18,4 +18,12 @@ public final class DoubleFieldMapper<S, T> implements FieldMapper<S, T> {
 	public void map(final S source, final T target) throws Exception {
 		setter.setDouble(target, getter.getDouble(source));
 	}
+
+    @Override
+    public String toString() {
+        return "DoubleFieldMapper{" +
+                "getter=" + getter +
+                ", setter=" + setter +
+                '}';
+    }
 }

@@ -2,6 +2,8 @@ package org.sfm.map.impl;
 
 import org.sfm.reflect.Instantiator;
 
+import java.util.Arrays;
+
 public class MapperImpl<S, T> extends AbstractMapperImpl<S, T> {
 	
 	private final FieldMapper<S, T>[] fieldMappers;
@@ -16,4 +18,18 @@ public class MapperImpl<S, T> extends AbstractMapperImpl<S, T> {
 			fieldMappers[i].map(source, target);
 		}
 	}
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(getClass().getSimpleName())
+                .append("{");
+
+        super.appendToStringBuilder(sb);
+        sb.append(", fieldMappers=").append(Arrays.toString(fieldMappers));
+        sb.append("}");
+
+        return sb.toString();
+    }
 }

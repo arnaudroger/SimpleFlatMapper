@@ -31,4 +31,12 @@ public final class ArrayToListResultSetGetter<E> implements Getter<ResultSet, Li
 		
 		return list;
 	}
+
+    @Override
+    public String toString() {
+        return "ArrayToListResultSetGetter{" +
+                "column=" + column +
+                ", elementGetter=" + elementGetter +
+                '}';
+    }
 }

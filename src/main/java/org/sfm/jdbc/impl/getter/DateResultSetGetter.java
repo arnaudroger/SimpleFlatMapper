@@ -17,4 +17,11 @@ public class DateResultSetGetter implements
 	public Date get(final ResultSet target) throws SQLException {
 		return target.getDate(column);
 	}
+
+    @Override
+    public String toString() {
+        return "DateResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

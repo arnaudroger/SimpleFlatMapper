@@ -4,6 +4,7 @@ import org.sfm.reflect.EnumHelper;
 import org.sfm.reflect.Getter;
 
 import java.sql.ResultSet;
+import java.util.Arrays;
 
 public final class EnumResultSetGetter<E extends Enum<E>> implements  Getter<ResultSet, E> {
 
@@ -26,4 +27,12 @@ public final class EnumResultSetGetter<E extends Enum<E>> implements  Getter<Res
 			return (E) Enum.valueOf(enumType, String.valueOf(o));
 		}
 	}
+
+    @Override
+    public String toString() {
+        return "EnumResultSetGetter{" +
+                "columnIndex=" + columnIndex +
+                ", enumType=" + enumType +
+                '}';
+    }
 }

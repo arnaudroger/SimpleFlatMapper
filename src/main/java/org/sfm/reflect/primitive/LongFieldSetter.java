@@ -15,4 +15,10 @@ public final class LongFieldSetter<T> implements LongSetter<T> {
 		field.setLong(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "LongFieldSetter{" +
+                "field=" + field +
+                '}';
+    }
 }

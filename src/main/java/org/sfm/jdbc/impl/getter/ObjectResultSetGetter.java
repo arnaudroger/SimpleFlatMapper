@@ -15,4 +15,11 @@ public final class ObjectResultSetGetter implements Getter<ResultSet, Object> {
 	public Object get(final ResultSet target) throws SQLException {
 		return target.getObject(column);
 	}
+
+    @Override
+    public String toString() {
+        return "ObjectResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

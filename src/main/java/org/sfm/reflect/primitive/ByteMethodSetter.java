@@ -16,4 +16,10 @@ public final class ByteMethodSetter<T> implements ByteSetter<T> {
 		method.invoke(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "ByteMethodSetter{" +
+                "method=" + method +
+                '}';
+    }
 }

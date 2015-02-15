@@ -17,4 +17,11 @@ public class UrlResultSetGetter implements
 	public URL get(final ResultSet target) throws SQLException {
 		return target.getURL(column);
 	}
+
+    @Override
+    public String toString() {
+        return "UrlResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

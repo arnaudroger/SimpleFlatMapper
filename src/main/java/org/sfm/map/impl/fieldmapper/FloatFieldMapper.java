@@ -18,4 +18,12 @@ public final class FloatFieldMapper<S, T> implements FieldMapper<S, T> {
 	public void map(final S source, final T target) throws Exception {
 		setter.setFloat(target, getter.getFloat(source));
 	}
+
+    @Override
+    public String toString() {
+        return "FloatFieldMapper{" +
+                "getter=" + getter +
+                ", setter=" + setter +
+                '}';
+    }
 }

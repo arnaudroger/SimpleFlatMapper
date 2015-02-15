@@ -15,4 +15,10 @@ public final class IntFieldSetter<T> implements IntSetter<T> {
 		field.setInt(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "IntFieldSetter{" +
+                "field=" + field +
+                '}';
+    }
 }

@@ -19,4 +19,11 @@ public final class IntFieldMapper<S, T> implements FieldMapper<S, T> {
 		setter.setInt(target, getter.getInt(source));
 	}
 
+    @Override
+    public String toString() {
+        return "IntFieldMapper{" +
+                "getter=" + getter +
+                ", setter=" + setter +
+                '}';
+    }
 }

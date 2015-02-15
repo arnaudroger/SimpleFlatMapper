@@ -22,4 +22,10 @@ public final class InjectConstructorInstantiator<S, T> implements Instantiator<S
 		return constructorDefinition.getConstructor().newInstance(argBuilder.build(s));
 	}
 
+    @Override
+    public String toString() {
+        return "InjectConstructorInstantiator{" +
+                "constructorDefinition=" + constructorDefinition +
+                '}';
+    }
 }

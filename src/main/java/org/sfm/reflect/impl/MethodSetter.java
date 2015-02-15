@@ -20,4 +20,11 @@ public final class MethodSetter<T, P> implements Setter<T, P> {
 	public Method getMethod() {
 		return method;
 	}
+
+    @Override
+    public String toString() {
+        return "MethodSetter{" +
+                "method=" + method +
+                '}';
+    }
 }

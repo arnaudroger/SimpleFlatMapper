@@ -17,4 +17,10 @@ public final class NReaderResultSetGetter implements Getter<ResultSet, Reader> {
 		return target.getNCharacterStream(column);
 	}
 
+    @Override
+    public String toString() {
+        return "NReaderResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

@@ -16,4 +16,11 @@ public final class RowIdResultSetGetter implements Getter<ResultSet, RowId> {
 	public RowId get(final ResultSet target) throws SQLException {
 		return target.getRowId(column);
 	}
+
+    @Override
+    public String toString() {
+        return "RowIdResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

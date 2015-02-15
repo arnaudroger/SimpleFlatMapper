@@ -17,4 +17,11 @@ public final class BigIntegerResultSetGetter implements Getter<ResultSet, BigInt
 	public BigInteger get(final ResultSet target) throws Exception {
 		return new BigInteger(target.getString(column));
 	}
+
+    @Override
+    public String toString() {
+        return "BigIntegerResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

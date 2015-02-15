@@ -17,4 +17,10 @@ public final class InputStreamResultSetGetter implements Getter<ResultSet, Input
 		return target.getBinaryStream(column);
 	}
 
+    @Override
+    public String toString() {
+        return "InputStreamResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

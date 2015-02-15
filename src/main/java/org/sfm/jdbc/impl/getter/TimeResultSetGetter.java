@@ -17,4 +17,10 @@ public final class TimeResultSetGetter implements Getter<ResultSet, Time> {
 		return target.getTime(column);
 	}
 
+    @Override
+    public String toString() {
+        return "TimeResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

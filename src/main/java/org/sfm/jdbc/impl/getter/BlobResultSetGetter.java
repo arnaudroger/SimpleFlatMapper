@@ -17,4 +17,10 @@ public final class BlobResultSetGetter implements Getter<ResultSet, Blob> {
 		return target.getBlob(column);
 	}
 
+    @Override
+    public String toString() {
+        return "BlobResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

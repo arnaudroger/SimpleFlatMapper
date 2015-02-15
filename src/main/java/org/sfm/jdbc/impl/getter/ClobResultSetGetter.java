@@ -17,4 +17,10 @@ public final class ClobResultSetGetter implements Getter<ResultSet, Clob> {
 		return target.getClob(column);
 	}
 
+    @Override
+    public String toString() {
+        return "ClobResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

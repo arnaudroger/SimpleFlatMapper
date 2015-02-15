@@ -3,6 +3,7 @@ package org.sfm.reflect.impl;
 import org.sfm.reflect.Instantiator;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 
 public final class StaticConstructorInstantiator<S, T> implements Instantiator<S, T> {
 	
@@ -19,4 +20,11 @@ public final class StaticConstructorInstantiator<S, T> implements Instantiator<S
 		return constructor.newInstance(args);
 	}
 
+    @Override
+    public String toString() {
+        return "StaticConstructorInstantiator{" +
+                "constructor=" + constructor +
+                ", args=" + Arrays.toString(args) +
+                '}';
+    }
 }

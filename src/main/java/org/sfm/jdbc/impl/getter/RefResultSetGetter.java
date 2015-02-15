@@ -16,4 +16,11 @@ public final class RefResultSetGetter implements Getter<ResultSet, Ref> {
 	public Ref get(final ResultSet target) throws SQLException {
 		return target.getRef(column);
 	}
+
+    @Override
+    public String toString() {
+        return "RefResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

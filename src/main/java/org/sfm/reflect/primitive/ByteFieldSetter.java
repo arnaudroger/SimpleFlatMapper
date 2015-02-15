@@ -15,4 +15,10 @@ public final class ByteFieldSetter<T> implements ByteSetter<T> {
 		field.setByte(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "ByteFieldSetter{" +
+                "field=" + field +
+                '}';
+    }
 }

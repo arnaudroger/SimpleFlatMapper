@@ -28,4 +28,11 @@ public final class CharacterResultSetGetter implements CharacterGetter<ResultSet
 			return Character.valueOf(c);
 		}
 	}
+
+    @Override
+    public String toString() {
+        return "CharacterResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

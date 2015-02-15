@@ -28,4 +28,11 @@ public final class ShortResultSetGetter implements ShortGetter<ResultSet>, Gette
 			return Short.valueOf(s);
 		}
 	}
+
+    @Override
+    public String toString() {
+        return "ShortResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

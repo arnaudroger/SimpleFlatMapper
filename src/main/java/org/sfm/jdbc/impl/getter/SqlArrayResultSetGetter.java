@@ -16,4 +16,11 @@ public final class SqlArrayResultSetGetter implements Getter<ResultSet, Array> {
 	public Array get(final ResultSet target) throws SQLException {
 		return target.getArray(column);
 	}
+
+    @Override
+    public String toString() {
+        return "SqlArrayResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

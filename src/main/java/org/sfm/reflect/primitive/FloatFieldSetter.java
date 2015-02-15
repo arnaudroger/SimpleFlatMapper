@@ -15,4 +15,10 @@ public final class FloatFieldSetter<T> implements FloatSetter<T> {
 		field.setFloat(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "FloatFieldSetter{" +
+                "field=" + field +
+                '}';
+    }
 }

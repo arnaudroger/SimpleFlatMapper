@@ -16,4 +16,10 @@ public final class StringResultSetGetter implements Getter<ResultSet, String> {
 		return target.getString(column);
 	}
 
+    @Override
+    public String toString() {
+        return "StringResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

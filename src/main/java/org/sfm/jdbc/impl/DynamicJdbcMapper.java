@@ -118,6 +118,10 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		return new ColumnsMapperKey(columns);
 	}
 
-
-
+    @Override
+    public String toString() {
+        return "DynamicJdbcMapper{target=" + classMeta.getType()
+                +  ", mapperCache=" + mapperCache +
+                '}';
+    }
 }

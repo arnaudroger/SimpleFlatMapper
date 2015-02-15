@@ -16,4 +16,10 @@ public final class DoubleMethodSetter<T> implements DoubleSetter<T> {
 		method.invoke(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "DoubleMethodSetter{" +
+                "method=" + method +
+                '}';
+    }
 }

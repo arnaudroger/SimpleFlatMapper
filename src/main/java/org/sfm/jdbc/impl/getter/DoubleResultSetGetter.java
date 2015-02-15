@@ -28,4 +28,11 @@ public final class DoubleResultSetGetter implements DoubleGetter<ResultSet>, Get
 			return Double.valueOf(d);
 		}
 	}
+
+    @Override
+    public String toString() {
+        return "DoubleResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

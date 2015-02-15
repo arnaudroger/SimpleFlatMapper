@@ -35,4 +35,12 @@ public final class ArrayResultSetGetter<E> implements Getter<ResultSet, E[]> {
 		E[] eltArray = (E[]) java.lang.reflect.Array.newInstance(elementType, list.size());
 		return list.toArray(eltArray);
 	}
+
+    @Override
+    public String toString() {
+        return "ArrayResultSetGetter{" +
+                "column=" + column +
+                ", elementGetter=" + elementGetter +
+                '}';
+    }
 }

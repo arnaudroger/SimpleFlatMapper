@@ -16,4 +16,10 @@ public final class ShortMethodSetter<T> implements ShortSetter<T> {
 		method.invoke(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "ShortMethodSetter{" +
+                "method=" + method +
+                '}';
+    }
 }

@@ -18,4 +18,12 @@ public final class ShortFieldMapper<S, T> implements FieldMapper<S, T> {
 	public void map(final S source, final T target) throws Exception {
 		setter.setShort(target, getter.getShort(source));
 	}
+
+    @Override
+    public String toString() {
+        return "ShortFieldMapper{" +
+                "getter=" + getter +
+                ", setter=" + setter +
+                '}';
+    }
 }

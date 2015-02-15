@@ -25,6 +25,11 @@ public final class FieldErrorHandlerMapper<S, T, K> implements FieldMapper<S, T>
 			errorHandler.errorMappingField(key, source, target, e);
 		}
 	}
-	
-	
+
+    @Override
+    public String toString() {
+        return "FieldErrorHandlerMapper{" +
+                "delegate=" + delegate +
+                '}';
+    }
 }

@@ -15,4 +15,10 @@ public final class BooleanFieldSetter<T> implements BooleanSetter<T> {
 		field.setBoolean(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "BooleanFieldSetter{" +
+                "field=" + field +
+                '}';
+    }
 }

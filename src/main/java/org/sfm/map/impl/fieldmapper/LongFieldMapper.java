@@ -18,4 +18,12 @@ public final class LongFieldMapper<S, T> implements FieldMapper<S, T> {
 	public void map(final S source, final T target) throws Exception {
 		setter.setLong(target, getter.getLong(source));
 	}
+
+    @Override
+    public String toString() {
+        return "LongFieldMapper{" +
+                "getter=" + getter +
+                ", setter=" + setter +
+                '}';
+    }
 }

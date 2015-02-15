@@ -28,4 +28,11 @@ public final class ByteResultSetGetter implements ByteGetter<ResultSet>, Getter<
 			return Byte.valueOf(b);
 		}
 	}
+
+    @Override
+    public String toString() {
+        return "ByteResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

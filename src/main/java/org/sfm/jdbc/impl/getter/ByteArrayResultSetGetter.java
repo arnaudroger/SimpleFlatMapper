@@ -16,4 +16,11 @@ public final class ByteArrayResultSetGetter implements Getter<ResultSet, byte[]>
 	public byte[] get(final ResultSet target) throws Exception {
 		return target.getBytes(column);
 	}
+
+    @Override
+    public String toString() {
+        return "ByteArrayResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

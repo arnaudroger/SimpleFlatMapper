@@ -29,4 +29,11 @@ public final class LongResultSetGetter implements LongGetter<ResultSet>,
 			return Long.valueOf(l);
 		}
 	}
+
+    @Override
+    public String toString() {
+        return "LongResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

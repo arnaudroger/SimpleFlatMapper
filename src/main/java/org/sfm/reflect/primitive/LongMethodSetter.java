@@ -16,4 +16,10 @@ public final class LongMethodSetter<T> implements LongSetter<T> {
 		method.invoke(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "LongMethodSetter{" +
+                "method=" + method +
+                '}';
+    }
 }

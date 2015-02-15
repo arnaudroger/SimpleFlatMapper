@@ -15,4 +15,10 @@ public final class ShortFieldSetter<T> implements ShortSetter<T> {
 		field.setShort(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "ShortFieldSetter{" +
+                "field=" + field +
+                '}';
+    }
 }

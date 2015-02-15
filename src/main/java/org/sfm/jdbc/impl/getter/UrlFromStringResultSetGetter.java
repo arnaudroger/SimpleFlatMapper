@@ -22,4 +22,11 @@ public class UrlFromStringResultSetGetter implements
 			throw new SQLException(e.getMessage(), e);
 		}
 	}
+
+    @Override
+    public String toString() {
+        return "UrlFromStringResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

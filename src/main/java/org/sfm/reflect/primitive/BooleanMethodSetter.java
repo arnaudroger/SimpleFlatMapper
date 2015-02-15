@@ -16,4 +16,10 @@ public final class BooleanMethodSetter<T> implements BooleanSetter<T> {
 		method.invoke(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "BooleanMethodSetter{" +
+                "method=" + method +
+                '}';
+    }
 }

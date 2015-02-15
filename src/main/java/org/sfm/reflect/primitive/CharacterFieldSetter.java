@@ -15,4 +15,10 @@ public final class CharacterFieldSetter<T> implements CharacterSetter<T> {
 		field.setChar(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "CharacterFieldSetter{" +
+                "field=" + field +
+                '}';
+    }
 }

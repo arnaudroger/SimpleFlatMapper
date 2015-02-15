@@ -17,4 +17,11 @@ public final class BigDecimalResultSetGetter implements Getter<ResultSet, BigDec
 	public BigDecimal get(final ResultSet target) throws Exception {
 		return target.getBigDecimal(column);
 	}
+
+    @Override
+    public String toString() {
+        return "BigDecimalResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

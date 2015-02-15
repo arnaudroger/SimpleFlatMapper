@@ -28,4 +28,11 @@ public final class IntResultSetGetter implements IntGetter<ResultSet>, Getter<Re
 			return Integer.valueOf(i);
 		}
 	}
+
+    @Override
+    public String toString() {
+        return "IntResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

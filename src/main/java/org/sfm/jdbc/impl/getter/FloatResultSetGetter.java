@@ -28,4 +28,11 @@ public final class FloatResultSetGetter implements FloatGetter<ResultSet>, Gette
 			return Float.valueOf(f);
 		}
 	}
+
+    @Override
+    public String toString() {
+        return "FloatResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

@@ -23,4 +23,11 @@ public class CalendarResultSetGetter implements Getter<ResultSet, Calendar> {
         }
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "CalendarResultSetGetter{" +
+                "dateGetter=" + dateGetter +
+                '}';
+    }
 }

@@ -16,4 +16,10 @@ public final class FloatMethodSetter<T> implements FloatSetter<T> {
 		method.invoke(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "FloatMethodSetter{" +
+                "method=" + method +
+                '}';
+    }
 }

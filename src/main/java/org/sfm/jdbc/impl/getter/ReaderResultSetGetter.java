@@ -17,4 +17,10 @@ public final class ReaderResultSetGetter implements Getter<ResultSet, Reader> {
 		return target.getCharacterStream(column);
 	}
 
+    @Override
+    public String toString() {
+        return "ReaderResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

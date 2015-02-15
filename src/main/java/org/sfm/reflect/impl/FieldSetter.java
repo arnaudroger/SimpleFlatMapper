@@ -19,4 +19,11 @@ public final class FieldSetter<T, P> implements Setter<T, P> {
 	public Field getField() {
 		return field;
 	}
+
+    @Override
+    public String toString() {
+        return "FieldSetter{" +
+                "field=" + field +
+                '}';
+    }
 }

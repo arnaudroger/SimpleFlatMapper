@@ -16,4 +16,10 @@ public final class NStringResultSetGetter implements Getter<ResultSet, String> {
 		return target.getNString(column);
 	}
 
+    @Override
+    public String toString() {
+        return "NStringResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

@@ -77,7 +77,7 @@ public class JdbcMapperFactoryTest {
     }
     @Test
 	public void testAsmDbObjectMappingFromDbWithMetaData()
-			throws SQLException, Exception, ParseException {
+			throws Exception {
 		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
@@ -90,7 +90,7 @@ public class JdbcMapperFactoryTest {
 	
 	@Test
 	public void testAsmDbObjectWithAliasMappingFromDbWithMetaData()
-			throws SQLException, Exception, ParseException {
+			throws Exception {
 		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
@@ -103,14 +103,14 @@ public class JdbcMapperFactoryTest {
 	
 	@Test
 	public void testNonAsmDbObjectMappingFromDbWithMetaData()
-			throws SQLException, Exception, ParseException {
+			throws Exception {
 		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				ResultSet rs = ps.executeQuery();
 				JdbcMapper<DbObject> mapper = nonAsmFactory.newMapper(DbObject.class, rs.getMetaData());
 				assertMapPsDbObject(rs, mapper);
-			}
+            }
 		});
 	}
 	

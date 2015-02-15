@@ -19,4 +19,12 @@ public final class StringEnumResultSetGetter<E extends Enum<E>> implements Gette
 		final String o = stringGetter.get(target);
 		return (E) Enum.valueOf(enumType, String.valueOf(o));
 	}
+
+    @Override
+    public String toString() {
+        return "StringEnumResultSetGetter{" +
+                "enumType=" + enumType +
+                ", stringGetter=" + stringGetter +
+                '}';
+    }
 }

@@ -28,4 +28,11 @@ public final class BooleanResultSetGetter implements BooleanGetter<ResultSet>, G
 			return Boolean.valueOf(b);
 		}
 	}
+
+    @Override
+    public String toString() {
+        return "BooleanResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

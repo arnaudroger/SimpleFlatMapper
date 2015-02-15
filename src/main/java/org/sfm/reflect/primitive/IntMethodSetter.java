@@ -16,4 +16,10 @@ public final class IntMethodSetter<T> implements IntSetter<T> {
 		method.invoke(target, value);
 	}
 
+    @Override
+    public String toString() {
+        return "IntMethodSetter{" +
+                "method=" + method +
+                '}';
+    }
 }

@@ -24,5 +24,8 @@ public abstract class AbstractMapperImpl<S, T> implements Mapper<S, T> {
 	}
 
 	protected abstract void mapFields(final S source, final T target) throws Exception;
-	
+
+    protected void appendToStringBuilder(StringBuilder sb) {
+        sb.append("instantiator=" + instantiator);
+    }
 }

@@ -17,4 +17,10 @@ public final class NClobResultSetGetter implements Getter<ResultSet, NClob> {
 		return target.getNClob(column);
 	}
 
+    @Override
+    public String toString() {
+        return "NClobResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

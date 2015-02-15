@@ -20,4 +20,11 @@ public final class BooleanFieldMapper<S, T> implements FieldMapper<S, T> {
 		setter.setBoolean(target, getter.getBoolean(source));
 	}
 
+    @Override
+    public String toString() {
+        return "BooleanFieldMapper{" +
+                "getter=" + getter +
+                ", setter=" + setter +
+                '}';
+    }
 }

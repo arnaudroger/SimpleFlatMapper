@@ -28,4 +28,11 @@ public class UndefinedDateResultSetGetter implements
 		
 		throw new SQLException("Expected date, cannot convert " + o  + " to date");
 	}
+
+    @Override
+    public String toString() {
+        return "UndefinedDateResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

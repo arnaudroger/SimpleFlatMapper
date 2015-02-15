@@ -16,4 +16,11 @@ public final class SQLXMLResultSetGetter implements Getter<ResultSet, SQLXML> {
 	public SQLXML get(final ResultSet target) throws SQLException {
 		return target.getSQLXML(column);
 	}
+
+    @Override
+    public String toString() {
+        return "SQLXMLResultSetGetter{" +
+                "column=" + column +
+                '}';
+    }
 }

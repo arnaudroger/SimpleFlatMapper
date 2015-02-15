@@ -19,4 +19,12 @@ public final class FieldMapperImpl<S, T, P> implements FieldMapper<S, T> {
 		final P value = getter.get(source);
 		setter.set(target, value);
 	}
+
+    @Override
+    public String toString() {
+        return "FieldMapperImpl{" +
+                "getter=" + getter +
+                ", setter=" + setter +
+                '}';
+    }
 }

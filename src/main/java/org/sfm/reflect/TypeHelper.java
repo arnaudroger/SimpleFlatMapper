@@ -3,6 +3,7 @@ package org.sfm.reflect;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +20,23 @@ public class TypeHelper {
 			return (Class<T>) bounds[0];
 		}
 		throw new UnsupportedOperationException("Cannot extract class from type " + target);
+	}
+
+	public static <T> Map<Type, Type> getTypesMap(Type targetType, Class<T> targetClass) {
+		Map<Type, Type> genericTypes = Collections.emptyMap();
+		if (targetType instanceof ParameterizedType) {
+			TypeVariable<Class<T>>[] typeParameters = targetClass.getTypeParameters();
+			Type[] actualTypeArguments = ((ParameterizedType) targetType).getActualTypeArguments();
+
+			genericTypes = new HashMap<>();
+			for (int i = 0; i < typeParameters.length; i++) {
+				TypeVariable<Class<T>> typeParameter = typeParameters[i];
+				Type typeArgument = actualTypeArguments[i];
+				genericTypes.put(typeParameter, typeArgument);
+			}
+		}
+
+		return genericTypes;
 	}
 
 	public static boolean isPrimitive(Type type) {

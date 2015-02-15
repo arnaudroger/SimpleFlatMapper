@@ -15,10 +15,7 @@ public class JdbcMapperGenericObjectTest {
 	private static final String QUERY = "select 33 as id, "
 			+ "'barbar' as bar_object_bar, "
 			+ "'foobar' as foo_object_bar, "
-			+ "'foofoo' as foo_object_foo, "
-			+ "'pair_first_bar' as pair.first_bar, "
-			+ "'pair_second_bar' as pair.second_bar, "
-			+ "'pair_second_foo' as pair.second_foo "
+			+ "'foofoo' as foo_object_foo "
 			+ "from TEST_DB_OBJECT where id = 1 ";
 
 	@Test
@@ -28,11 +25,6 @@ public class JdbcMapperGenericObjectTest {
 				.addMapping("bar_object_bar")
 				.addMapping("foo_object_bar")
 				.addMapping("foo_object_foo");
-
-				// unsupported yet
-				// .addMapping("pair.first_bar")
-				// .addMapping("pair.second_bar")
-				// .addMapping("pair.second_foo");
 
 		final JdbcMapper<Db1GenericObject> mapper = builder.mapper();
 

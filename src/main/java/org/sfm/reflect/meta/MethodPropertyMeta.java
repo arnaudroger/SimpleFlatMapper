@@ -9,12 +9,13 @@ import java.lang.reflect.Type;
 public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
 	private final Method method;
+	private final Type type;
 
-	public MethodPropertyMeta(String name, String columnName, ReflectionService reflectService, Method method) {
+	public MethodPropertyMeta(String name, String columnName, ReflectionService reflectService, Method method, Type type) {
 		super(name, columnName, reflectService);
 		this.method = method;
+		this.type = type;
 	}
-
 
 	@Override
 	protected Setter<T, P> newSetter() {
@@ -23,12 +24,11 @@ public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
 	@Override
 	public Type getType() {
-		return method.getGenericParameterTypes()[0];
+		return type;
 	}
 
 	@Override
 	public String getPath() {
 		return getName();
 	}
-
 }

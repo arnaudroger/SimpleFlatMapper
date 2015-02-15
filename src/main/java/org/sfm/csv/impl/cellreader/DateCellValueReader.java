@@ -46,7 +46,7 @@ public class DateCellValueReader implements CellValueReader<Date>, ParsingContex
     public String toString() {
         return "DateCellValueReader{" +
                 "index=" + index +
-                ", timeZone=" + timeZone +
+                ", timeZone=" + timeZone.getDisplayName() +
                 ", pattern='" + pattern + '\'' +
                 '}';
     }

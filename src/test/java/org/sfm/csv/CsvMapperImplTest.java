@@ -38,7 +38,7 @@ public class CsvMapperImplTest {
 
 	@Test
 	public void testCsvForEach()
-			throws IOException, UnsupportedEncodingException, ParseException {
+			throws IOException, ParseException {
 		CsvMapperBuilder<DbObject> builder = CsvMapperFactory.newInstance().newBuilder(DbObject.class);
 		CsvMapperBuilderTest.addDbObjectFields(builder);
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
@@ -57,7 +57,7 @@ public class CsvMapperImplTest {
 
 	@Test
 	public void testCsvForEachSkip()
-			throws IOException, UnsupportedEncodingException, ParseException {
+			throws IOException, ParseException {
 		CsvMapperBuilder<DbObject> builder = CsvMapperFactory.newInstance().newBuilder(DbObject.class);
 		CsvMapperBuilderTest.addDbObjectFields(builder);
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
@@ -74,7 +74,7 @@ public class CsvMapperImplTest {
 	}
 	@Test
 	public void testCsvForEachSkipAndLimit()
-			throws IOException, UnsupportedEncodingException, ParseException {
+			throws IOException, ParseException {
 		CsvMapperBuilder<DbObject> builder = CsvMapperFactory.newInstance().newBuilder(DbObject.class);
 		CsvMapperBuilderTest.addDbObjectFields(builder);
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
@@ -92,7 +92,7 @@ public class CsvMapperImplTest {
 
 	@Test
 	public void testCsvIterator()
-			throws IOException, UnsupportedEncodingException, ParseException {
+			throws IOException, ParseException {
 		CsvMapperBuilder<DbObject> builder = CsvMapperFactory.newInstance().newBuilder(DbObject.class);
 		CsvMapperBuilderTest.addDbObjectFields(builder);
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
@@ -108,7 +108,7 @@ public class CsvMapperImplTest {
 
 	@Test
 	public void testCsvIteratorWithSkip()
-			throws IOException, UnsupportedEncodingException, ParseException {
+			throws IOException, ParseException {
 		CsvMapperBuilder<DbObject> builder = CsvMapperFactory.newInstance().newBuilder(DbObject.class);
 		CsvMapperBuilderTest.addDbObjectFields(builder);
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
@@ -124,7 +124,7 @@ public class CsvMapperImplTest {
 	//IFJAVA8_START
 	@Test
 	public void testCsvStream()
-			throws IOException, UnsupportedEncodingException, ParseException {
+			throws IOException, ParseException {
 		CsvMapperBuilder<DbObject> builder = CsvMapperFactory.newInstance().newBuilder(DbObject.class);
 		CsvMapperBuilderTest.addDbObjectFields(builder);
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
@@ -148,7 +148,7 @@ public class CsvMapperImplTest {
 	int i;
 	@Test
 	public void testCsvStreamWithSkip()
-			throws IOException, UnsupportedEncodingException, ParseException {
+			throws IOException, ParseException {
 		CsvMapperBuilder<DbObject> builder = CsvMapperFactory.newInstance().newBuilder(DbObject.class);
 		CsvMapperBuilderTest.addDbObjectFields(builder);
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
@@ -172,7 +172,7 @@ public class CsvMapperImplTest {
 
 	@Test
 	public void testCsvStreamTryAdvance()
-			throws IOException, UnsupportedEncodingException, ParseException {
+			throws IOException, ParseException {
 		CsvMapperBuilder<DbObject> builder = CsvMapperFactory.newInstance().newBuilder(DbObject.class);
 		CsvMapperBuilderTest.addDbObjectFields(builder);
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();

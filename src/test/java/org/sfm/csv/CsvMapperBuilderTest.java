@@ -29,29 +29,46 @@ public class CsvMapperBuilderTest {
 	public void setUp() {
 		csvMapperFactory = new CsvMapperFactory();
 	}
-	
+
+
+    @Test
+    public void testStaticMapperToString() throws Exception {
+        CsvMapperBuilder<DbObject> builder = csvMapperFactory.disableAsm(true).newBuilder(DbObject.class);
+        addDbObjectFields(builder);
+        assertEquals(
+                "CsvMapperImpl{" +
+                "instantiator=StaticConstructorInstantiator{constructor=public org.sfm.beans.DbObject(), args=[]}, " +
+                "delayedCellSetters=[], " +
+                "setters=[LongCellSetter{setter=LongMethodSetter{method=public void org.sfm.beans.DbObject.setId(long)}, reader=LongCellValueReaderImpl{}}, " +
+                        "CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setName(java.lang.String)}}, " +
+                        "CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setEmail(java.lang.String)}}, " +
+                        "CellSetterImpl{reader=DateCellValueReader{index=3, timeZone=Greenwich Mean Time, pattern='yyyy-MM-dd HH:mm:ss'}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setCreationTime(java.util.Date)}}, " +
+                        "CellSetterImpl{reader=EnumCellValueReader{enumClass=class org.sfm.beans.DbObject$Type}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setTypeOrdinal(org.sfm.beans.DbObject$Type)}}, " +
+                        "CellSetterImpl{reader=EnumCellValueReader{enumClass=class org.sfm.beans.DbObject$Type}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setTypeName(org.sfm.beans.DbObject$Type)}}]}", builder.mapper().toString());
+    }
+
 	@Test
-	public void testMapDbObject() throws UnsupportedEncodingException, Exception {
+	public void testMapDbObject() throws Exception {
 		testMapDbObject(csvMapperFactory.newBuilder(DbObject.class));
 	}
 	
 	@Test
-	public void testMapDbObjectNoAsm() throws UnsupportedEncodingException, Exception {
+	public void testMapDbObjectNoAsm() throws Exception {
 		testMapDbObject(csvMapperFactory.disableAsm(true).newBuilder(DbObject.class));
 	}
 
 	private void testMapDbObject(CsvMapperBuilder<DbObject> builder)
-			throws IOException, UnsupportedEncodingException, ParseException {
+			throws IOException, ParseException {
 		addDbObjectFields(builder);
 		CsvMapper<DbObject> mapper = builder.mapper();
 		
 		List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
-	}
+    }
 	
 	@Test
-	public void testMapDbObjectWithColumnIndex() throws UnsupportedEncodingException, Exception {
+	public void testMapDbObjectWithColumnIndex() throws Exception {
 		
 		CsvMapperBuilder<DbObject> builder = csvMapperFactory.newBuilder(DbObject.class);
 		builder.addMapping("email", 2);
@@ -70,7 +87,7 @@ public class CsvMapperBuilderTest {
 	}
 	
 	@Test
-	public void testMapDbObjectWithWrongColumnStillMapGoodOne() throws UnsupportedEncodingException, Exception {
+	public void testMapDbObjectWithWrongColumnStillMapGoodOne() throws Exception {
 		
 		CsvMapperBuilder<DbObject> builder = csvMapperFactory.mapperBuilderErrorHandler(MapperBuilderErrorHandler.NULL).newBuilder(DbObject.class);
 		builder.addMapping("no_id");
@@ -91,18 +108,18 @@ public class CsvMapperBuilderTest {
 	}
 	
 	@Test
-	public void testMapFinalDbObject() throws UnsupportedEncodingException, Exception {
+	public void testMapFinalDbObject() throws Exception {
 		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.newBuilder(DbFinalObject.class);
 		testMapFinalDbObject(builder);
 	}
 	@Test
-	public void testMapFinalDbObjectNoAsm() throws UnsupportedEncodingException, Exception {
+	public void testMapFinalDbObjectNoAsm() throws Exception {
 		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.useAsm(false).newBuilder(DbFinalObject.class);
 		testMapFinalDbObject(builder);
 	}
 
 	private void testMapFinalDbObject(CsvMapperBuilder<DbFinalObject> builder)
-			throws IOException, UnsupportedEncodingException, ParseException {
+			throws IOException, ParseException {
 		addDbObjectFields(builder);
 		
 		CsvMapper<DbFinalObject> mapper = builder.mapper();
@@ -112,19 +129,19 @@ public class CsvMapperBuilderTest {
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
 	@Test
-	public void testMapPartialFinalDbObject() throws UnsupportedEncodingException, Exception {
+	public void testMapPartialFinalDbObject() throws Exception {
 		CsvMapperBuilder<DbPartialFinalObject> builder = csvMapperFactory.newBuilder(DbPartialFinalObject.class);
 		testMapPartialFinalDbObject(builder);
 	}
 	
 	@Test
-	public void testMapPartialFinalDbObjectNoAsm() throws UnsupportedEncodingException, Exception {
+	public void testMapPartialFinalDbObjectNoAsm() throws Exception {
 		CsvMapperBuilder<DbPartialFinalObject> builder = csvMapperFactory.useAsm(false).newBuilder(DbPartialFinalObject.class);
 		testMapPartialFinalDbObject(builder);
 	}
 
 	@Test
-	public void testMapFinalDbObjectDisableAsm() throws UnsupportedEncodingException, Exception {
+	public void testMapFinalDbObjectDisableAsm() throws Exception {
 		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.disableAsm(true).newBuilder(DbFinalObject.class);
 		try {
 			addDbObjectFields(builder);
@@ -135,7 +152,7 @@ public class CsvMapperBuilderTest {
 	}
 	
 	@Test
-	public void testMapDbObjectWrongName() throws UnsupportedEncodingException, Exception {
+	public void testMapDbObjectWrongName() throws Exception {
 		MapperBuilderErrorHandler mapperBuilderErrorHandler = mock(MapperBuilderErrorHandler.class);
 		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.mapperBuilderErrorHandler(mapperBuilderErrorHandler ).newBuilder(DbFinalObject.class);
 		builder.addMapping("No_prop");
@@ -143,7 +160,7 @@ public class CsvMapperBuilderTest {
 	}
 	
 	@Test
-	public void testMapDbObjectAlias() throws UnsupportedEncodingException, Exception {
+	public void testMapDbObjectAlias() throws Exception {
 		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.addAlias("no_prop", "id").newBuilder(DbFinalObject.class);
 		builder.addMapping("no_prop");
 	}

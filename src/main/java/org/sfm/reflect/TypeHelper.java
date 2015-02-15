@@ -28,7 +28,7 @@ public class TypeHelper {
 			TypeVariable<Class<T>>[] typeParameters = targetClass.getTypeParameters();
 			Type[] actualTypeArguments = ((ParameterizedType) targetType).getActualTypeArguments();
 
-			genericTypes = new HashMap<>();
+			genericTypes = new HashMap<Type, Type>();
 			for (int i = 0; i < typeParameters.length; i++) {
 				TypeVariable<Class<T>> typeParameter = typeParameters[i];
 				Type typeArgument = actualTypeArguments[i];

@@ -180,4 +180,11 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		return (CsvMapperImpl<T>)builder.mapper();
 	}
 
+    @Override
+    public String toString() {
+        return "DynamicCsvMapper{" +
+                "target=" + target +
+                ", mapperCache=" + mapperCache +
+                '}';
+    }
 }

@@ -13,11 +13,8 @@ import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 //IFJAVA8_START
-import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -258,6 +255,13 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 				parsingContextFactory.newContext());
 	}
 
-
-
+    @Override
+    public String toString() {
+        return "CsvMapperImpl{" +
+                "instantiator=" + instantiator +
+                ", delayedCellSetters=" + Arrays.toString(delayedCellSetters) +
+                ", setters=" + Arrays.toString(setters) +
+                ", keys=" + Arrays.toString(keys) +
+                '}';
+    }
 }

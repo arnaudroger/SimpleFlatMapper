@@ -53,28 +53,28 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	}
 
 	@Override
-	public final <H extends RowHandler<T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
+	public final <H extends RowHandler<? super T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
 		return forEach(CsvParser.reader(reader), handler);
 	}
 
 	@Override
-	public <H extends RowHandler<T>> H forEach(CsvReader reader, H handle) throws IOException, MappingException {
+	public <H extends RowHandler<? super T>> H forEach(CsvReader reader, H handle) throws IOException, MappingException {
 		reader.parseAll(newCellConsumer(handle));
 		return handle;
 	}
 
 	@Override
-	public final <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int skip) throws IOException, MappingException {
+	public final <H extends RowHandler<? super T>> H forEach(final Reader reader, final H handler, final int skip) throws IOException, MappingException {
 		return forEach(CsvParser.skip(skip).reader(reader), handler);
 	}
 
 	@Override
-	public final <H extends RowHandler<T>> H forEach(final Reader reader, final H handler, final int skip, final int limit) throws IOException, MappingException {
+	public final <H extends RowHandler<? super T>> H forEach(final Reader reader, final H handler, final int skip, final int limit) throws IOException, MappingException {
 		return forEach(CsvParser.skip(skip).reader(reader), handler, limit);
 	}
 
 	@Override
-	public <H extends RowHandler<T>> H forEach(CsvReader reader, H handle, int limit) throws IOException, MappingException {
+	public final <H extends RowHandler<? super T>> H forEach(CsvReader reader, H handle, int limit) throws IOException, MappingException {
 		reader.parseRows(newCellConsumer(handle), limit);
 		return handle;
 	}
@@ -198,7 +198,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	//IFJAVA8_END
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected CsvMapperCellConsumer<T> newCellConsumer(final RowHandler<T> handler) {
+	protected CsvMapperCellConsumer<T> newCellConsumer(final RowHandler<? super T> handler) {
 
 		DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetters.length];
 		Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers = new HashMap<CsvMapper<?>, CsvMapperCellConsumer<?>>();

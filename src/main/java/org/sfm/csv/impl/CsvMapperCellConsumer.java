@@ -26,7 +26,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 	
 	
 	
-	private final RowHandler<T> handler;
+	private final RowHandler<? super T> handler;
 	
 	/**
 	 * parsing information
@@ -39,7 +39,6 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
 	private T currentInstance;
 	private int cellIndex = 0;
-	private int currentRow = 0;
 
 	public CsvMapperCellConsumer(
 			Instantiator<DelayedCellSetter<T, ?>[], T> instantiator,
@@ -48,7 +47,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 			CsvColumnKey[] columns,
 			FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
 			RowHandlerErrorHandler rowHandlerErrorHandlers,
-			RowHandler<T> handler,
+			RowHandler<? super T> handler,
 			ParsingContext parsingContext) {
 		super();
 		this.instantiator = instantiator;

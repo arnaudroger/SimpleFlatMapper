@@ -22,7 +22,7 @@ public interface CsvMapper<T> {
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
-	<H extends RowHandler<T>> H forEach(Reader reader, H handle) throws IOException, MappingException;
+	<H extends RowHandler<? super T>> H forEach(Reader reader, H handle) throws IOException, MappingException;
 
 
 	/**
@@ -35,7 +35,7 @@ public interface CsvMapper<T> {
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
-	<H extends RowHandler<T>> H forEach(CsvReader reader, H handle) throws IOException, MappingException;
+	<H extends RowHandler<? super T>> H forEach(CsvReader reader, H handle) throws IOException, MappingException;
 
 
 	/**
@@ -49,7 +49,7 @@ public interface CsvMapper<T> {
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
-	<H extends RowHandler<T>> H forEach(Reader reader, H handle, int skip) throws IOException, MappingException;
+	<H extends RowHandler<? super T>> H forEach(Reader reader, H handle, int skip) throws IOException, MappingException;
 
 
 	/**
@@ -64,7 +64,7 @@ public interface CsvMapper<T> {
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
-	<H extends RowHandler<T>> H forEach(Reader reader, H handle, int skip, int limit) throws IOException, MappingException;
+	<H extends RowHandler<? super T>> H forEach(Reader reader, H handle, int skip, int limit) throws IOException, MappingException;
 
 	/**
 	 * Will map each row of the content of reader, starting at rowStart and ending before rowEnd, to an object of type T and will pass that object to the handle via the {@link RowHandler}.handler(T t) call back.
@@ -72,13 +72,12 @@ public interface CsvMapper<T> {
 	 *
 	 * @param reader the reader
 	 * @param handle the callback instance
-	 * @param skip the number of row to skip
 	 * @param limit the number of row to process
 	 * @return the callback instance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
-	<H extends RowHandler<T>> H forEach(CsvReader reader, H handle, int limit) throws IOException, MappingException;
+	<H extends RowHandler<? super T>> H forEach(CsvReader reader, H handle, int limit) throws IOException, MappingException;
 
 	/**
 	 * Will return an iterator on the reader that will return a mapped object for each row.

@@ -28,7 +28,7 @@ public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements
 	}
 
 	@Override
-	public <H extends RowHandler<T>> H forEach(final ResultSet rs, final H handler)
+	public <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
 			throws SQLException, MappingException {
 		while(rs.next()) {
 			T t = map(rs);

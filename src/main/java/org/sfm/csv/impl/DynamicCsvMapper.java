@@ -64,31 +64,31 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 
 	@Override
-	public <H extends RowHandler<T>> H forEach(Reader reader, H handle) throws IOException, MappingException {
+	public <H extends RowHandler<? super T>> H forEach(Reader reader, H handle) throws IOException, MappingException {
 		return forEach(CsvParser.reader(reader), handle);
 	}
 
 	@Override
-	public <H extends RowHandler<T>> H forEach(CsvReader csvReader, H handle) throws IOException {
+	public <H extends RowHandler<? super T>> H forEach(CsvReader csvReader, H handle) throws IOException {
 		CsvMapperCellConsumer<T> mapperCellConsumer = getDelegateMapper(csvReader).newCellConsumer(handle);
 		csvReader.parseAll(mapperCellConsumer);
 		return handle;
 	}
 
 	@Override
-	public <H extends RowHandler<T>> H forEach(Reader reader, H handle, int skip) throws IOException, MappingException {
+	public <H extends RowHandler<? super T>> H forEach(Reader reader, H handle, int skip) throws IOException, MappingException {
 		return forEach(CsvParser.skip(skip).reader(reader), handle);
 	}
 
 	@Override
-	public <H extends RowHandler<T>> H forEach(CsvReader csvReader, H handle, int limit) throws IOException {
+	public <H extends RowHandler<? super T>> H forEach(CsvReader csvReader, H handle, int limit) throws IOException {
 		CsvMapperCellConsumer<T> mapperCellConsumer = getDelegateMapper(csvReader).newCellConsumer(handle);
 		csvReader.parseRows(mapperCellConsumer, limit);
 		return handle;
 	}
 
 	@Override
-	public <H extends RowHandler<T>> H forEach(Reader reader, H handle, int skip, int limit) throws IOException, MappingException {
+	public <H extends RowHandler<? super T>> H forEach(Reader reader, H handle, int skip, int limit) throws IOException, MappingException {
 		return forEach(CsvParser.skip(skip).reader(reader), handle, limit);
 	}
 

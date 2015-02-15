@@ -29,7 +29,7 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 	}
 
 	@Override
-	public final <H extends RowHandler<T>> H forEach(final ResultSet rs, final H handler)
+	public final <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
 			throws SQLException, MappingException {
 		while(rs.next()) {
 			T t = map(rs);

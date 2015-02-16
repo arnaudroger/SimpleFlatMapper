@@ -1,6 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
 
@@ -44,6 +45,10 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	public String[] generateHeaders() {
 		throw new UnsupportedOperationException("Cannot generate headers for a list/array");
 	}
+
+    public boolean isArray() {
+        return TypeHelper.isArray(type);
+    }
 
 
 }

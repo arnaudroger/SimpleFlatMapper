@@ -13,6 +13,7 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 	private final ArrayClassMeta<T, E> arrayMetaData;
 	public ArrayElementPropertyMeta(String name,  String column, ReflectionService reflectService, int index, ArrayClassMeta<T, E> arrayMetaData) {
 		super(name, column, reflectService);
+        if (index < 0) throw new IllegalArgumentException("Invalid array index " + index);
 		this.index = index;
 		this.arrayMetaData = arrayMetaData;
 	}
@@ -20,20 +21,13 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Setter<T, E> newSetter() {
-		if (List.class.isAssignableFrom(TypeHelper.toClass(arrayMetaData.getType()))) {
-			return (Setter<T, E>) new ListSetter<E>(index);
-		} else if (TypeHelper.toClass(arrayMetaData.getType()).isArray()) {
-			return (Setter<T, E>) new ArraySetter<E>(index);
-		} else {
-			throw new IllegalArgumentException("Asking setter on unsupported type " + arrayMetaData.getType());
-		}
+        return (Setter<T, E>) new IndexArraySetter<E>(index);
 	}
 
 	@Override
 	public Type getType() {
 		return arrayMetaData.getElementTarget();
 	}
-
 
 	public int getIndex() {
 		return index;
@@ -50,10 +44,10 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 	}
 
 
-	private static class ArraySetter<E> implements Setter<E[], E> {
+	private static class IndexArraySetter<E> implements Setter<E[], E> {
 		private final int index;
 
-		private ArraySetter(int index) {
+		private IndexArraySetter(int index) {
 			this.index = index;
 		}
 
@@ -61,21 +55,5 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
         public void set(E[] target, E value) throws Exception {
 			target[index] = value;
         }
-	}
-
-	private static class ListSetter<E> implements Setter<List<E>, E> {
-		private final int index;
-
-		private ListSetter(int index) {
-			this.index = index;
-		}
-
-		@Override
-		public void set(List<E> target, E value) throws Exception {
-			while(target.size() <= index) {
-				target.add(null);
-			}
-			target.set(index, value);
-		}
 	}
 }

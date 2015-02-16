@@ -59,16 +59,23 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 	private IndexedElement<T, E> getIndexedElement(IndexedColumn indexedColumn) {
 
 		while (elements.size() <= indexedColumn.getIndexValue()) {
-			ArrayElementPropertyMeta<T, E> arrayElementPropertyMeta =
-					new ArrayElementPropertyMeta<T, E>("element" + elements.size(), "element" + elements.size(),
-							arrayClassMeta.getReflectionService(), elements.size(), arrayClassMeta);
-			elements.add(new IndexedElement<T, E>(arrayElementPropertyMeta, arrayClassMeta.getElementClassMeta()));
+            elements.add(new IndexedElement<T, E>(newElementPropertyMeta(), arrayClassMeta.getElementClassMeta()));
 		}
 
 		return elements.get(indexedColumn.getIndexValue());
 	}
 
-	private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
+    private PropertyMeta<T, E> newElementPropertyMeta() {
+        if (arrayClassMeta.isArray()) {
+            return new ArrayElementPropertyMeta<T, E>("element" + elements.size(), "element" + elements.size(),
+                    arrayClassMeta.getReflectionService(), elements.size(), arrayClassMeta);
+        } else {
+            return new ListElementPropertyMeta<T, E>("element" + elements.size(), "element" + elements.size(),
+                    arrayClassMeta.getReflectionService(), elements.size(), arrayClassMeta);
+        }
+    }
+
+    private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
 		PropertyMeta<E, Object> property = arrayClassMeta.getElementClassMeta().newPropertyFinder().findProperty(propertyNameMatcher);
 		if (property != null) {
 

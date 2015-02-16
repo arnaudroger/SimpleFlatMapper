@@ -17,7 +17,7 @@ public class IndexedElement<T, E> {
         this.propertyMeta = propertyMeta;
         this.elementClassMeta = elementClassMeta;
         if (elementClassMeta != null) {
-            propertyFinder = elementClassMeta.newPropertyFinder(isJoinProperty);
+            propertyFinder = elementClassMeta.newPropertyFinder(propertyMeta, isJoinProperty);
         } else {
             propertyFinder = null;
         }

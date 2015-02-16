@@ -9,7 +9,7 @@ public interface ClassMeta<T> {
 
 	public ReflectionService getReflectionService();
 
-	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> isJoinProperty);
+	public PropertyFinder<T> newPropertyFinder(PropertyMeta<?, ?> propertyMeta, Predicate<PropertyMeta<?, ?>> isJoinProperty);
 
 	public Type getType();
 

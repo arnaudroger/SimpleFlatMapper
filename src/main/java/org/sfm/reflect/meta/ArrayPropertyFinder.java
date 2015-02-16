@@ -99,7 +99,7 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
     }
 
     private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
-		PropertyMeta<E, Object> property = arrayClassMeta.getElementClassMeta().newPropertyFinder(isJoinProperty).findProperty(propertyNameMatcher);
+		PropertyMeta<E, Object> property = arrayClassMeta.getElementClassMeta().newPropertyFinder(parentProperty, isJoinProperty).findProperty(propertyNameMatcher);
 		if (property != null) {
 
 			for (int i = 0; i < elements.size(); i++) {

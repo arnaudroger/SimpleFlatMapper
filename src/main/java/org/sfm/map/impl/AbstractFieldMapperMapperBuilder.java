@@ -67,7 +67,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		this.source = source;
 		this.getterFactory = getterFactory;
 		this.fieldMapperFactory = fieldMapperFactory;
-		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K, S>>(classMeta, propertyNameMatcherFactory, mapperBuilderErrorHandler, FalsePredicate.instance());
+		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K, S>>(classMeta, propertyNameMatcherFactory, mapperBuilderErrorHandler, FalsePredicate.<PropertyMeta<?,?>>instance());
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.target = classMeta.getType();
 		this.reflectionService = classMeta.getReflectionService();

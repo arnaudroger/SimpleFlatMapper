@@ -56,7 +56,7 @@ public class CsvMapperBuilder<T> {
 		this.target = target;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.reflectionService = classMeta.getReflectionService();
-		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition>(classMeta, propertyNameMatcherFactory, this.mapperBuilderErrorHandler, FalsePredicate.instance());
+		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition>(classMeta, propertyNameMatcherFactory, this.mapperBuilderErrorHandler, FalsePredicate.<PropertyMeta<?,?>>instance());
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.columnDefinitions = columnDefinitions;
 		this.cellValueReaderFactory = cellValueReaderFactory;

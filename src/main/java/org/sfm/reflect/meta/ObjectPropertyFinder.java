@@ -110,7 +110,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 			final PropertyMeta<T, ?> prop) {
 		PropertyFinder<?> subPropertyFinder = subPropertyFinders.get(prop.getColumn());
 		if (subPropertyFinder == null) {
-			subPropertyFinder = prop.getClassMeta().newPropertyFinder(isJoinProperty);
+			subPropertyFinder = prop.getClassMeta().newPropertyFinder(prop, isJoinProperty);
 			subPropertyFinders.put(prop.getName(), subPropertyFinder);
 		}
 

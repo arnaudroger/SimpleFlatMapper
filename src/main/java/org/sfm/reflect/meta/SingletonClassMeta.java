@@ -20,8 +20,8 @@ public class SingletonClassMeta<T> implements ClassMeta<T> {
 	}
 
 	@Override
-	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> isJoinProperty) {
-		return new SingletonPropertyFinder<T>(classMeta, isJoinProperty);
+	public PropertyFinder<T> newPropertyFinder(PropertyMeta<?,?> propertyMeta, Predicate<PropertyMeta<?, ?>> isJoinProperty) {
+		return new SingletonPropertyFinder<T>(propertyMeta, classMeta, isJoinProperty);
 	}
 
 	@Override

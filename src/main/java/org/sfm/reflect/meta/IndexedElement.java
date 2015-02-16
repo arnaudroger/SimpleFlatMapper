@@ -13,7 +13,7 @@ public class IndexedElement<T, E> {
     private final List<String> assignedPath = new ArrayList<String>();
 
 
-    public IndexedElement(PropertyMeta<T, E> propertyMeta, ClassMeta<E> elementClassMeta, Predicate<PropertyFinder> isJoinProperty) {
+    public IndexedElement(PropertyMeta<T, E> propertyMeta, ClassMeta<E> elementClassMeta, Predicate<PropertyMeta<?, ?>> isJoinProperty) {
         this.propertyMeta = propertyMeta;
         this.elementClassMeta = elementClassMeta;
         if (elementClassMeta != null) {

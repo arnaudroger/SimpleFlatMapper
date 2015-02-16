@@ -37,7 +37,7 @@ public class SingletonPropertyFinder<T> implements PropertyFinder<T> {
 
 	private final List<String> selectedParameters = new ArrayList<String>();
 
-	public SingletonPropertyFinder(ClassMeta<T> classMeta, Predicate<PropertyFinder> isJoinProperty) {
+	public SingletonPropertyFinder(ClassMeta<T> classMeta, Predicate<PropertyMeta<?, ?>> isJoinProperty) {
 		this.propertyFinder = classMeta.newPropertyFinder(isJoinProperty);
 	}
 

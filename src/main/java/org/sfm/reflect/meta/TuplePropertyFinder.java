@@ -15,12 +15,12 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 	private final TupleClassMeta<T> tupleClassMeta;
 
 	private final List<IndexedElement<T, ?>> elements;
-    private final Predicate<PropertyFinder> isJoinProperty;
+    private final Predicate<PropertyMeta<?, ?>> isJoinProperty;
 
     private List<ConstructorDefinition<T>> constructorDefinitions;
 
 
-	public TuplePropertyFinder(TupleClassMeta<T> tupleClassMeta, Predicate<PropertyFinder> isJoinProperty) {
+	public TuplePropertyFinder(TupleClassMeta<T> tupleClassMeta, Predicate<PropertyMeta<?, ?>> isJoinProperty) {
 		this.tupleClassMeta = tupleClassMeta;
 		this.constructorDefinitions = tupleClassMeta.getConstructorDefinitions();
 

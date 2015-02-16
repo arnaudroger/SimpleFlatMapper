@@ -34,8 +34,8 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	}
 
 	@Override
-	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyFinder> isJoinProperty) {
-		return new ArrayPropertyFinder<T, E>(this, isJoinProperty);
+	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> isJoinProperty) {
+		return new ArrayPropertyFinder<T, E>(null, this, isJoinProperty);
 	}
 
 	public Type getType() {

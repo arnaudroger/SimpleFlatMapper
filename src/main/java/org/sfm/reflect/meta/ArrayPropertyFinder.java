@@ -17,14 +17,16 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 
 	private final List<IndexedElement<T, E>> elements = new ArrayList<IndexedElement<T, E>>();
 
-    private final Predicate<PropertyFinder> isJoinProperty;
+    private final Predicate<PropertyMeta<?, ?>> isJoinProperty;
+    private final PropertyMeta<?, ?> parentProperty;
 
-    public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta, Predicate<PropertyFinder> isJoinProperty) {
-        if (arrayClassMeta.isArray() && isJoinProperty.test(this)) {
+    public ArrayPropertyFinder(PropertyMeta<?, ?> parentProperty, ArrayClassMeta<T, E> arrayClassMeta, Predicate<PropertyMeta<?, ?>> isJoinProperty) {
+        if (arrayClassMeta.isArray() && isJoinProperty.test(parentProperty)) {
             throw new IllegalArgumentException("Does not support join property on array");
         }
         this.arrayClassMeta = arrayClassMeta;
         this.isJoinProperty = isJoinProperty;
+        this.parentProperty = parentProperty;
     }
 
     @Override
@@ -68,7 +70,7 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 	}
 
     private boolean isJoinProperty() {
-        return isJoinProperty.test(this);
+        return isJoinProperty.test(parentProperty);
     }
 
     private IndexedElement<T, E> getIndexedElement(IndexedColumn indexedColumn) {

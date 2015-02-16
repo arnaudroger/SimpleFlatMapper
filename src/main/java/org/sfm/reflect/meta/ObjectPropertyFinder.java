@@ -12,9 +12,9 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	private final List<ConstructorDefinition<T>> eligibleConstructorDefinitions;
 	private final ObjectClassMeta<T> classMeta;
 	private final Map<String, PropertyFinder<?>> subPropertyFinders = new HashMap<String, PropertyFinder<?>>();
-    private final Predicate<PropertyFinder> isJoinProperty;
+    private final Predicate<PropertyMeta<?, ?>> isJoinProperty;
 
-    ObjectPropertyFinder(ObjectClassMeta<T> classMeta, Predicate<PropertyFinder> isJoinProperty) throws MapperBuildingException {
+    ObjectPropertyFinder(ObjectClassMeta<T> classMeta, Predicate<PropertyMeta<?, ?>> isJoinProperty) throws MapperBuildingException {
 		this.classMeta = classMeta;
         this.isJoinProperty = isJoinProperty;
 		this.eligibleConstructorDefinitions = classMeta.getConstructorDefinitions() != null ? new ArrayList<ConstructorDefinition<T>>(classMeta.getConstructorDefinitions()) : null;

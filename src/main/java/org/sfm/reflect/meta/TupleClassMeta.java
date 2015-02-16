@@ -35,7 +35,7 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 	}
 
 	@Override
-	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyFinder> isJoinProperty) {
+	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> isJoinProperty) {
 		return new TuplePropertyFinder<T>(this, isJoinProperty);
 	}
 

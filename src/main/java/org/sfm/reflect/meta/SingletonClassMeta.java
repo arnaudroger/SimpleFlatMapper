@@ -1,6 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ReflectionService;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 
@@ -19,8 +20,8 @@ public class SingletonClassMeta<T> implements ClassMeta<T> {
 	}
 
 	@Override
-	public PropertyFinder<T> newPropertyFinder() {
-		return new SingletonPropertyFinder<T>(classMeta);
+	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyFinder> isJoinProperty) {
+		return new SingletonPropertyFinder<T>(classMeta, isJoinProperty);
 	}
 
 	@Override

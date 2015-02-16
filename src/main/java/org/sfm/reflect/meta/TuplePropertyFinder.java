@@ -2,6 +2,7 @@ package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -14,11 +15,12 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 	private final TupleClassMeta<T> tupleClassMeta;
 
 	private final List<IndexedElement<T, ?>> elements;
+    private final Predicate<PropertyFinder> isJoinProperty;
 
-	private List<ConstructorDefinition<T>> constructorDefinitions;
+    private List<ConstructorDefinition<T>> constructorDefinitions;
 
 
-	public TuplePropertyFinder(TupleClassMeta<T> tupleClassMeta) {
+	public TuplePropertyFinder(TupleClassMeta<T> tupleClassMeta, Predicate<PropertyFinder> isJoinProperty) {
 		this.tupleClassMeta = tupleClassMeta;
 		this.constructorDefinitions = tupleClassMeta.getConstructorDefinitions();
 
@@ -27,6 +29,8 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 		for(int i = 0; i < tupleClassMeta.getTupleSize(); i++) {
 			elements.add(newIndexedElement(tupleClassMeta, i));
 		}
+
+        this.isJoinProperty = isJoinProperty;
 	}
 
 	private <E> IndexedElement<T, E> newIndexedElement(TupleClassMeta<T> tupleClassMeta, int i) {
@@ -36,7 +40,7 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 					"element" + (i), 	tupleClassMeta.getReflectionService(),
 					new ConstructorParameter("element" + (i), Object.class, resolvedType));
 		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(resolvedType, false);
-		return new IndexedElement<T, E>(prop, classMeta);
+		return new IndexedElement<T, E>(prop, classMeta, isJoinProperty);
 	}
 
 	@Override

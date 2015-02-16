@@ -2,6 +2,7 @@ package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 
@@ -11,7 +12,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	private final Type elementTarget;
 	private final ClassMeta<E> elementClassMeta;
 	private final Type type;
-	
+
 	public ArrayClassMeta(Type type, Type elementTarget, ReflectionService reflectionService) {
 		this.type = type;
 		this.elementTarget = elementTarget;
@@ -33,8 +34,8 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	}
 
 	@Override
-	public PropertyFinder<T> newPropertyFinder() {
-		return new ArrayPropertyFinder<T, E>(this);
+	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyFinder> isJoinProperty) {
+		return new ArrayPropertyFinder<T, E>(this, isJoinProperty);
 	}
 
 	public Type getType() {

@@ -1,5 +1,7 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.utils.Predicate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,11 +13,11 @@ public class IndexedElement<T, E> {
     private final List<String> assignedPath = new ArrayList<String>();
 
 
-    public IndexedElement(PropertyMeta<T, E> propertyMeta, ClassMeta<E> elementClassMeta) {
+    public IndexedElement(PropertyMeta<T, E> propertyMeta, ClassMeta<E> elementClassMeta, Predicate<PropertyFinder> isJoinProperty) {
         this.propertyMeta = propertyMeta;
         this.elementClassMeta = elementClassMeta;
         if (elementClassMeta != null) {
-            propertyFinder = elementClassMeta.newPropertyFinder();
+            propertyFinder = elementClassMeta.newPropertyFinder(isJoinProperty);
         } else {
             propertyFinder = null;
         }

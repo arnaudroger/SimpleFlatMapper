@@ -3,6 +3,7 @@ package org.sfm.reflect.meta;
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -36,8 +37,8 @@ public class SingletonPropertyFinder<T> implements PropertyFinder<T> {
 
 	private final List<String> selectedParameters = new ArrayList<String>();
 
-	public SingletonPropertyFinder(ClassMeta<T> classMeta) {
-		this.propertyFinder = classMeta.newPropertyFinder();
+	public SingletonPropertyFinder(ClassMeta<T> classMeta, Predicate<PropertyFinder> isJoinProperty) {
+		this.propertyFinder = classMeta.newPropertyFinder(isJoinProperty);
 	}
 
 

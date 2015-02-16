@@ -2,6 +2,7 @@ package org.sfm.reflect.meta;
 
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.*;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -159,8 +160,8 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	}
 
 	@Override
-	public PropertyFinder<T> newPropertyFinder() {
-		return new ObjectPropertyFinder<T>(this);
+	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyFinder> isJoinProperty) {
+		return new ObjectPropertyFinder<T>(this, isJoinProperty);
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.utils.FalsePredicate;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -35,7 +36,7 @@ public class ResultSetFieldMapperFactoryTest {
 	public void testPrimitiveField() {
 
 		ClassMeta<DbObject> classMeta = ReflectionService.newInstance(true, false).getRootClassMeta(DbObject.class);
-		PropertyMeta<DbObject, Long> id = classMeta.newPropertyFinder().<Long>findProperty(new DefaultPropertyNameMatcher("id", 0, false, false));
+		PropertyMeta<DbObject, Long> id = classMeta.newPropertyFinder(FalsePredicate.instance()).<Long>findProperty(new DefaultPropertyNameMatcher("id", 0, false, false));
 
 		FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> identity = FieldMapperColumnDefinition.identity();
 		PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> propertyMapping = new PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>>(id, new JdbcColumnKey("id", 1), identity);

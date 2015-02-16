@@ -2,6 +2,7 @@ package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -15,16 +16,26 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 	private final ArrayClassMeta<T, E> arrayClassMeta;
 
 	private final List<IndexedElement<T, E>> elements = new ArrayList<IndexedElement<T, E>>();
-	
-	
-	public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta) {
-		this.arrayClassMeta = arrayClassMeta;
-	}
 
-	@Override
+    private final Predicate<PropertyFinder> isJoinProperty;
+
+    public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta, Predicate<PropertyFinder> isJoinProperty) {
+        if (arrayClassMeta.isArray() && isJoinProperty.test(this)) {
+            throw new IllegalArgumentException("Does not support join property on array");
+        }
+        this.arrayClassMeta = arrayClassMeta;
+        this.isJoinProperty = isJoinProperty;
+    }
+
+    @Override
 	public PropertyMeta<T, ?> findProperty(PropertyNameMatcher propertyNameMatcher) {
+		IndexedColumn indexedColumn;
 
-		IndexedColumn indexedColumn = propertyNameMatcher.matchesIndex();
+        if (isJoinProperty()) {
+            indexedColumn = new IndexedColumn(-1, propertyNameMatcher);
+        } else {
+           indexedColumn = propertyNameMatcher.matchesIndex();
+        }
 
 		if (indexedColumn == null) {
 			indexedColumn = extrapolateIndex(propertyNameMatcher);
@@ -56,27 +67,37 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 		return new SubPropertyMeta(arrayClassMeta.getReflectionService(), indexedElement.getPropertyMeta(), subProp);
 	}
 
-	private IndexedElement<T, E> getIndexedElement(IndexedColumn indexedColumn) {
+    private boolean isJoinProperty() {
+        return isJoinProperty.test(this);
+    }
 
-		while (elements.size() <= indexedColumn.getIndexValue()) {
-            elements.add(new IndexedElement<T, E>(newElementPropertyMeta(), arrayClassMeta.getElementClassMeta()));
-		}
+    private IndexedElement<T, E> getIndexedElement(IndexedColumn indexedColumn) {
+        if (isJoinProperty()) {
+            if (elements.isEmpty()) {
+                elements.add(new IndexedElement<T, E>(newElementPropertyMeta(-1, "element"), arrayClassMeta.getElementClassMeta(), isJoinProperty));
+            }
+            return elements.get(0);
+        } else {
+            while (elements.size() <= indexedColumn.getIndexValue()) {
+                elements.add(new IndexedElement<T, E>(newElementPropertyMeta(elements.size(), "element" + elements.size()), arrayClassMeta.getElementClassMeta(), isJoinProperty));
+            }
 
-		return elements.get(indexedColumn.getIndexValue());
+            return elements.get(indexedColumn.getIndexValue());
+        }
 	}
 
-    private PropertyMeta<T, E> newElementPropertyMeta() {
+    private PropertyMeta<T, E> newElementPropertyMeta(int index, String name) {
         if (arrayClassMeta.isArray()) {
-            return new ArrayElementPropertyMeta<T, E>("element" + elements.size(), "element" + elements.size(),
-                    arrayClassMeta.getReflectionService(), elements.size(), arrayClassMeta);
+            return new ArrayElementPropertyMeta<T, E>(name, name,
+                    arrayClassMeta.getReflectionService(), index, arrayClassMeta);
         } else {
-            return new ListElementPropertyMeta<T, E>("element" + elements.size(), "element" + elements.size(),
-                    arrayClassMeta.getReflectionService(), elements.size(), arrayClassMeta);
+            return new ListElementPropertyMeta<T, E>(name, name,
+                    arrayClassMeta.getReflectionService(), index, arrayClassMeta);
         }
     }
 
     private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
-		PropertyMeta<E, Object> property = arrayClassMeta.getElementClassMeta().newPropertyFinder().findProperty(propertyNameMatcher);
+		PropertyMeta<E, Object> property = arrayClassMeta.getElementClassMeta().newPropertyFinder(isJoinProperty).findProperty(propertyNameMatcher);
 		if (property != null) {
 
 			for (int i = 0; i < elements.size(); i++) {

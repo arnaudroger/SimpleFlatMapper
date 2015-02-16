@@ -5,7 +5,9 @@ import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
+import org.sfm.utils.FalsePredicate;
 import org.sfm.utils.ForEachCallBack;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -54,7 +56,7 @@ public class CsvMapperBuilder<T> {
 		this.target = target;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.reflectionService = classMeta.getReflectionService();
-		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition>(classMeta, propertyNameMatcherFactory, this.mapperBuilderErrorHandler);
+		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition>(classMeta, propertyNameMatcherFactory, this.mapperBuilderErrorHandler, FalsePredicate.instance());
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.columnDefinitions = columnDefinitions;
 		this.cellValueReaderFactory = cellValueReaderFactory;

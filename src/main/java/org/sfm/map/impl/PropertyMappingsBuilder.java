@@ -10,6 +10,7 @@ import org.sfm.reflect.meta.PropertyFinder;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.ForEachCallBack;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -30,9 +31,10 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 	public PropertyMappingsBuilder(final ClassMeta<T> classMeta,
 								   final PropertyNameMatcherFactory propertyNameMatcherFactory,
-								   final MapperBuilderErrorHandler mapperBuilderErrorHandler) throws MapperBuildingException {
+								   final MapperBuilderErrorHandler mapperBuilderErrorHandler,
+                                   Predicate<PropertyFinder> isJoinProperty) throws MapperBuildingException {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-		this.propertyFinder = classMeta.newPropertyFinder();
+		this.propertyFinder = classMeta.newPropertyFinder(isJoinProperty);
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.classMeta = classMeta;
 	}

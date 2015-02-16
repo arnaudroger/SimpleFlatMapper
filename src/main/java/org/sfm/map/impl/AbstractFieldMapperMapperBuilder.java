@@ -5,7 +5,9 @@ import org.sfm.map.*;
 import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
+import org.sfm.utils.FalsePredicate;
 import org.sfm.utils.ForEachCallBack;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -65,7 +67,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		this.source = source;
 		this.getterFactory = getterFactory;
 		this.fieldMapperFactory = fieldMapperFactory;
-		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K, S>>(classMeta, propertyNameMatcherFactory, mapperBuilderErrorHandler);
+		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K, S>>(classMeta, propertyNameMatcherFactory, mapperBuilderErrorHandler, FalsePredicate.instance());
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.target = classMeta.getType();
 		this.reflectionService = classMeta.getReflectionService();

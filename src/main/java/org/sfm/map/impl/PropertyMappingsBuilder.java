@@ -31,10 +31,9 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 	public PropertyMappingsBuilder(final ClassMeta<T> classMeta,
 								   final PropertyNameMatcherFactory propertyNameMatcherFactory,
-								   final MapperBuilderErrorHandler mapperBuilderErrorHandler,
-                                   Predicate<PropertyMeta<?, ?>> isJoinProperty) throws MapperBuildingException {
+								   final MapperBuilderErrorHandler mapperBuilderErrorHandler) throws MapperBuildingException {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-		this.propertyFinder = classMeta.newPropertyFinder(null, isJoinProperty);
+		this.propertyFinder = classMeta.newPropertyFinder();
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.classMeta = classMeta;
 	}

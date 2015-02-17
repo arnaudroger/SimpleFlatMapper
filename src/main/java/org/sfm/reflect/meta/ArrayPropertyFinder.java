@@ -2,6 +2,7 @@ package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.utils.BooleanProvider;
 import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Constructor;
@@ -17,27 +18,16 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 
 	private final List<IndexedElement<T, E>> elements = new ArrayList<IndexedElement<T, E>>();
 
-    private final Predicate<PropertyMeta<?, ?>> isJoinProperty;
-    private final PropertyMeta<?, ?> parentProperty;
 
-    public ArrayPropertyFinder(PropertyMeta<?, ?> parentProperty, ArrayClassMeta<T, E> arrayClassMeta, Predicate<PropertyMeta<?, ?>> isJoinProperty) {
-        if (arrayClassMeta.isArray() && isJoinProperty.test(parentProperty)) {
-            throw new IllegalArgumentException("Does not support join property on array");
-        }
+    public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta) {
         this.arrayClassMeta = arrayClassMeta;
-        this.isJoinProperty = isJoinProperty;
-        this.parentProperty = parentProperty;
     }
 
     @Override
 	public PropertyMeta<T, ?> findProperty(PropertyNameMatcher propertyNameMatcher) {
 		IndexedColumn indexedColumn;
 
-        if (isJoinProperty()) {
-            indexedColumn = new IndexedColumn(-1, propertyNameMatcher);
-        } else {
-           indexedColumn = propertyNameMatcher.matchesIndex();
-        }
+       indexedColumn = propertyNameMatcher.matchesIndex();
 
 		if (indexedColumn == null) {
 			indexedColumn = extrapolateIndex(propertyNameMatcher);
@@ -69,23 +59,12 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 		return new SubPropertyMeta(arrayClassMeta.getReflectionService(), indexedElement.getPropertyMeta(), subProp);
 	}
 
-    private boolean isJoinProperty() {
-        return isJoinProperty.test(parentProperty);
-    }
-
     private IndexedElement<T, E> getIndexedElement(IndexedColumn indexedColumn) {
-        if (isJoinProperty()) {
-            if (elements.isEmpty()) {
-                elements.add(new IndexedElement<T, E>(newElementPropertyMeta(-1, "element"), arrayClassMeta.getElementClassMeta(), isJoinProperty));
-            }
-            return elements.get(0);
-        } else {
-            while (elements.size() <= indexedColumn.getIndexValue()) {
-                elements.add(new IndexedElement<T, E>(newElementPropertyMeta(elements.size(), "element" + elements.size()), arrayClassMeta.getElementClassMeta(), isJoinProperty));
-            }
-
-            return elements.get(indexedColumn.getIndexValue());
+        while (elements.size() <= indexedColumn.getIndexValue()) {
+            elements.add(new IndexedElement<T, E>(newElementPropertyMeta(elements.size(), "element" + elements.size()), arrayClassMeta.getElementClassMeta()));
         }
+
+        return elements.get(indexedColumn.getIndexValue());
 	}
 
     private PropertyMeta<T, E> newElementPropertyMeta(int index, String name) {
@@ -94,12 +73,18 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
                     arrayClassMeta.getReflectionService(), index, arrayClassMeta);
         } else {
             return new ListElementPropertyMeta<T, E>(name, name,
-                    arrayClassMeta.getReflectionService(), index, arrayClassMeta);
+                    arrayClassMeta.getReflectionService(), index, arrayClassMeta, new BooleanProvider() {
+
+                @Override
+                public boolean value() {
+                    return elements.size() == 1;
+                }
+            });
         }
     }
 
     private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
-		PropertyMeta<E, Object> property = arrayClassMeta.getElementClassMeta().newPropertyFinder(parentProperty, isJoinProperty).findProperty(propertyNameMatcher);
+		PropertyMeta<E, Object> property = arrayClassMeta.getElementClassMeta().newPropertyFinder().findProperty(propertyNameMatcher);
 		if (property != null) {
 
 			for (int i = 0; i < elements.size(); i++) {

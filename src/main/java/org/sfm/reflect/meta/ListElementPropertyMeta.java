@@ -3,6 +3,7 @@ package org.sfm.reflect.meta;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.utils.BooleanProvider;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -11,16 +12,19 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
 	private final int index;
 	private final ArrayClassMeta<T, E> arrayMetaData;
-	public ListElementPropertyMeta(String name, String column, ReflectionService reflectService, int index, ArrayClassMeta<T, E> arrayMetaData) {
+    private final BooleanProvider isVerticalList;
+
+    public ListElementPropertyMeta(String name, String column, ReflectionService reflectService, int index, ArrayClassMeta<T, E> arrayMetaData, BooleanProvider isVerticalList) {
 		super(name, column, reflectService);
 		this.index = index;
 		this.arrayMetaData = arrayMetaData;
+        this.isVerticalList = isVerticalList;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Setter<T, E> newSetter() {
-		if (index < 0) {
+		if (isVerticalList.value()) {
             return (Setter<T, E>) new AppendListSetter<E>();
         } else {
 			return (Setter<T, E>) new IndexListSetter<E>(index);

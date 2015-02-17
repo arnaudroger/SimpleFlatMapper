@@ -160,8 +160,8 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	}
 
 	@Override
-	public PropertyFinder<T> newPropertyFinder(PropertyMeta<?,?> propertyMeta, Predicate<PropertyMeta<?, ?>> isJoinProperty) {
-		return new ObjectPropertyFinder<T>(this, isJoinProperty);
+	public PropertyFinder<T> newPropertyFinder() {
+		return new ObjectPropertyFinder<T>(this);
 	}
 
 	@Override

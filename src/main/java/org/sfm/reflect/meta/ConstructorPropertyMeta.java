@@ -1,6 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 
@@ -20,7 +21,12 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
+    @Override
+    protected Getter<T, P> newGetter() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
 	public Type getType() {
 		return constructorParameter.getResolvedType();
 	}

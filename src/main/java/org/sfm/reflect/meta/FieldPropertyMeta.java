@@ -1,7 +1,9 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
+import org.sfm.reflect.impl.FieldGetter;
 import org.sfm.reflect.impl.FieldSetter;
 
 import java.lang.reflect.Field;
@@ -24,10 +26,15 @@ public class FieldPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		return new FieldSetter<T, P>(field);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Class<T> getType() {
-		return (Class<T>) type;
+    @Override
+    protected Getter<T, P> newGetter() {
+        field.setAccessible(true);
+        return new FieldGetter<T, P>(field);
+    }
+
+    @Override
+	public Type getType() {
+		return type;
 	}
 
 	@Override

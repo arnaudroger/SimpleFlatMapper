@@ -1,5 +1,6 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.TypeHelper;
@@ -24,7 +25,12 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
         return (Setter<T, E>) new IndexArraySetter<E>(index);
 	}
 
-	@Override
+    @Override
+    protected Getter<T, E> newGetter() {
+        return (Getter<T, E>) new IndexArrayGetter<E>(index);
+    }
+
+    @Override
 	public Type getType() {
 		return arrayMetaData.getElementTarget();
 	}
@@ -56,4 +62,17 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 			target[index] = value;
         }
 	}
+
+    private static class IndexArrayGetter<E> implements Getter<E[], E> {
+        private final int index;
+
+        private IndexArrayGetter(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public E get(E[] target) throws Exception {
+            return target[index];
+        }
+    }
 }

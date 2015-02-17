@@ -144,5 +144,8 @@ public class ReflectionService {
 		return false;
 	}
 
+    public GetterFactory getGetterFactory() {
+        return new GetterFactory();
+    }
 }
  

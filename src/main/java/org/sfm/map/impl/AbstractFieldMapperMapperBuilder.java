@@ -2,12 +2,11 @@ package org.sfm.map.impl;
 
 import org.sfm.jdbc.impl.getter.MapperGetterAdapter;
 import org.sfm.map.*;
-import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
+import org.sfm.map.GetterFactory;
+import org.sfm.map.impl.fieldmapper.MapperFieldMapper;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
-import org.sfm.utils.FalsePredicate;
 import org.sfm.utils.ForEachCallBack;
-import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -205,19 +204,27 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		return fields.toArray(new FieldMapper[fields.size()]);
 	}
 
+    protected K findKey(String columnName) {
+        for(K k : propertyMappingsBuilder.getKeys()) {
+            if (k.getName().equalsIgnoreCase(columnName)) {
+                return k;
+            }
+        }
+        return null;
+    }
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	private <P> FieldMapper<S, T> newSubFieldMapper(PropertyMeta<T, ?> prop,
 			AbstractFieldMapperMapperBuilder<S, ?, K> builder, K key) {
 		Setter<T, P> setter = (Setter<T, P>) prop.getSetter();
-		return newFieldMapper(builder, setter, key);		
+        Getter<T, P> getter = (Getter<T, P>) prop.getGetter();
+		return newFieldMapper((AbstractFieldMapperMapperBuilder<S, P, K>)builder, setter, getter, key);
 	}
 
-	@SuppressWarnings("unchecked")
 	private <P> FieldMapper<S, T> newFieldMapper(
-			AbstractFieldMapperMapperBuilder<S, ?, K> builder,
-			Setter<T, P> setter, K key) {
-		FieldMapper<S, T> fm =  new FieldMapperImpl<S, T, P>((Getter<S, ? extends P>) newSubMapperGetter(builder), setter);
+			AbstractFieldMapperMapperBuilder<S, P, K> builder,
+			Setter<T, P> setter, Getter<T, P> getter,  K key) {
+		FieldMapper<S, T> fm =  new MapperFieldMapper<S, T, P>((AbstractMapperImpl<S, P>)builder.mapper(), setter, getter);
 		if (fieldMapperErrorHandler != null) {
 			fm = new FieldErrorHandlerMapper<S, T, K>(key, fm, fieldMapperErrorHandler);
 		}

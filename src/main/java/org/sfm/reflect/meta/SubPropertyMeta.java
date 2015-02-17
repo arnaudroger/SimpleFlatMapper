@@ -1,5 +1,6 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 
@@ -18,7 +19,13 @@ public class SubPropertyMeta<O, P> extends PropertyMeta<O, P> {
 	protected Setter<O, P> newSetter() {
 		return ownerProperty.newSetter();
 	}
-	@Override
+
+    @Override
+    protected Getter<O, P> newGetter() {
+        return ownerProperty.newGetter();
+    }
+
+    @Override
 	public Type getType() {
 		return ownerProperty.getType();
 	}

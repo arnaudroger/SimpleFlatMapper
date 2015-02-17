@@ -1,5 +1,6 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.TypeHelper;
@@ -14,6 +15,7 @@ public abstract class PropertyMeta<O, P> {
 	protected final ReflectionService reflectService;
 	
 	private volatile Setter<O, P> setter;
+    private volatile Getter<O, P> getter;
 	private volatile ClassMeta<P> classMeta;
 	private String path;
 
@@ -32,7 +34,17 @@ public abstract class PropertyMeta<O, P> {
 		return lSetter;
 	}
 
+    public final Getter<O, P> getGetter() {
+        Getter<O, P> lGetter = getter;
+        if (lGetter == null) {
+            lGetter = newGetter();
+            getter = lGetter;
+        }
+        return lGetter;
+    }
+
 	protected abstract Setter<O, P> newSetter();
+    protected abstract Getter<O, P> newGetter();
 
 	public final String getName() {
 		return name;
@@ -70,6 +82,7 @@ public abstract class PropertyMeta<O, P> {
 	public boolean isSubProperty() {
 		return false;
 	}
+
 
 
 }

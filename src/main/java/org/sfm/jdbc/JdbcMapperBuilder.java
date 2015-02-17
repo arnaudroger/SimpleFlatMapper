@@ -1,7 +1,6 @@
 package org.sfm.jdbc;
 
-import org.sfm.jdbc.impl.JdbcMapperImpl;
-import org.sfm.jdbc.impl.ResultSetFieldMapperFactory;
+import org.sfm.jdbc.impl.*;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.impl.*;
@@ -107,6 +106,20 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	protected <ST> AbstractFieldMapperMapperBuilder<ResultSet, ST, JdbcColumnKey> newSubBuilder(Type type, ClassMeta<ST> classMeta) {
 		return new  JdbcMapperBuilder<ST>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory());
 	}
-	
 
+
+    public JdbcMapper<T> joinOn(String... columns) {
+        return new JoinJdbcMapper<T>(breakDetector(columns), (AbstractMapperImpl<ResultSet, T>) mapper(), jdbcMapperErrorHandler );
+    }
+
+    private BreakDetectorFactory<ResultSet> breakDetector(String[] columnNames) {
+        int[] columns = new int[columnNames.length];
+
+        for(int i = 0; i < columns.length; i++) {
+            JdbcColumnKey key = findKey(columnNames[i]);
+            columns[i] = key.getIndex();
+        }
+
+        return new ResultSetBreakDetectorFactory(columns);
+    }
 }

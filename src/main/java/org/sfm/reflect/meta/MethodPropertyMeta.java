@@ -1,7 +1,9 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
+import org.sfm.reflect.SetterHelper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -22,7 +24,12 @@ public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		return reflectService.getSetterFactory().getMethodSetter(method);
 	}
 
-	@Override
+    @Override
+    protected Getter<T, P> newGetter() {
+        return reflectService.getGetterFactory().<T,P>getGetter((Class<? super T>) method.getDeclaringClass(), SetterHelper.getPropertyNameFromMethodName(method.getName()));
+    }
+
+    @Override
 	public Type getType() {
 		return type;
 	}

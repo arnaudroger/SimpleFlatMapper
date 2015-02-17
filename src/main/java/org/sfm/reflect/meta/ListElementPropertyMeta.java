@@ -1,5 +1,7 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.reflect.Getter;
+import org.sfm.reflect.impl.NullGetter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.utils.BooleanSupplier;
@@ -30,7 +32,17 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 		}
 	}
 
-	@Override
+    @SuppressWarnings("unchecked")
+    @Override
+    protected Getter<T, E> newGetter() {
+        if (isVerticalList.getAsBoolean()) {
+            return new NullGetter<T, E>();
+        } else {
+            return (Getter<T, E>) new IndexListGetter<E>(index);
+        }
+    }
+
+    @Override
 	public Type getType() {
 		return arrayMetaData.getElementTarget();
 	}
@@ -49,6 +61,22 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 	public String getPath() {
 		return index + "." + getName();
 	}
+
+    private static class IndexListGetter<E> implements Getter<List<E>, E> {
+        private final int index;
+
+        private IndexListGetter(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public E get(List<E> target) throws Exception {
+            if (index < target.size()) {
+                return  target.get(index);
+            }
+            return null;
+        }
+    }
 
 	private static class IndexListSetter<E> implements Setter<List<E>, E> {
 		private final int index;

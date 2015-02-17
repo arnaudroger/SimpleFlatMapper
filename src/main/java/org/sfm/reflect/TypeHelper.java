@@ -22,15 +22,15 @@ public class TypeHelper {
 		throw new UnsupportedOperationException("Cannot extract class from type " + target);
 	}
 
-	public static <T> Map<Type, Type> getTypesMap(Type targetType, Class<T> targetClass) {
-		Map<Type, Type> genericTypes = Collections.emptyMap();
+	public static <T> Map<TypeVariable<?>, Type> getTypesMap(Type targetType, Class<T> targetClass) {
+		Map<TypeVariable<?>, Type> genericTypes = Collections.emptyMap();
 		if (targetType instanceof ParameterizedType) {
 			TypeVariable<Class<T>>[] typeParameters = targetClass.getTypeParameters();
 			Type[] actualTypeArguments = ((ParameterizedType) targetType).getActualTypeArguments();
 
-			genericTypes = new HashMap<Type, Type>();
+			genericTypes = new HashMap<TypeVariable<?>, Type>();
 			for (int i = 0; i < typeParameters.length; i++) {
-				TypeVariable<Class<T>> typeParameter = typeParameters[i];
+				TypeVariable<?> typeParameter = typeParameters[i];
 				Type typeArgument = actualTypeArguments[i];
 				genericTypes.put(typeParameter, typeArgument);
 			}

@@ -7,6 +7,7 @@ import org.sfm.utils.Predicate;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.*;
 
 public final class ObjectClassMeta<T> implements ClassMeta<T> {
@@ -79,7 +80,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	private List<PropertyMeta<T, ?>> listProperties(final ReflectionService reflectService, Type targetType) {
 		final Class<T> target = TypeHelper.<T>toClass(targetType);
 		final List<PropertyMeta<T, ?>> properties = new ArrayList<PropertyMeta<T, ?>>();
-		final Map<Type, Type> genericTypes = TypeHelper.getTypesMap(targetType, target);
+		final Map<TypeVariable<?>, Type> typeVariableTypeMap = TypeHelper.getTypesMap(targetType, target);
 
 		ClassVisitor.visit(target, new FieldAndMethodCallBack() {
 			@Override
@@ -89,11 +90,14 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 					final String propertyName = SetterHelper.getPropertyNameFromMethodName(name);
 
                     int indexOfProperty = findProperty(properties, propertyName);
-					Type firstMethodType = method.getGenericParameterTypes()[0];
-					Type resolvedType = genericTypes.get(firstMethodType);
-					if (resolvedType == null) {
-						resolvedType = firstMethodType;
-					}
+					Type resolvedType = method.getGenericParameterTypes()[0];
+
+                    if (resolvedType instanceof TypeVariable) {
+                        Type mappedType = typeVariableTypeMap.get(resolvedType);
+                        if (mappedType != null) {
+                            resolvedType = mappedType;
+                        }
+                    }
 
 					MethodPropertyMeta<T, Object> propertyMeta = new MethodPropertyMeta<T, Object>(propertyName, getAlias(propertyName), reflectService, method, resolvedType);
                     if (indexOfProperty == -1) {
@@ -110,11 +114,15 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 				if (SetterHelper.fieldModifiersMatches(field.getModifiers())) {
                     int indexOfProperty = findProperty(properties, name);
                     if (indexOfProperty == -1) {
-						Type resolvedType = genericTypes.get(field.getGenericType());
-						if (resolvedType == null) {
-							resolvedType = field.getType();
-						}
 
+						Type resolvedType = field.getGenericType();
+
+                        if (resolvedType instanceof  TypeVariable) {
+                            Type mappedType = typeVariableTypeMap.get(resolvedType);
+                            if (mappedType != null) {
+                                resolvedType = mappedType;
+                            }
+                        }
 						properties.add(new FieldPropertyMeta<T, Object>(field.getName(), getAlias(name), reflectService, field, resolvedType));
                     }
 				}

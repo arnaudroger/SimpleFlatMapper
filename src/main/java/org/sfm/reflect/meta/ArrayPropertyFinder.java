@@ -2,8 +2,7 @@ package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.TypeHelper;
-import org.sfm.utils.BooleanProvider;
-import org.sfm.utils.Predicate;
+import org.sfm.utils.BooleanSupplier;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -73,10 +72,10 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
                     arrayClassMeta.getReflectionService(), index, arrayClassMeta);
         } else {
             return new ListElementPropertyMeta<T, E>(name, name,
-                    arrayClassMeta.getReflectionService(), index, arrayClassMeta, new BooleanProvider() {
+                    arrayClassMeta.getReflectionService(), index, arrayClassMeta, new BooleanSupplier() {
 
                 @Override
-                public boolean value() {
+                public boolean getAsBoolean() {
                     return elements.size() == 1;
                 }
             });

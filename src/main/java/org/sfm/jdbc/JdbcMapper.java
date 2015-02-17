@@ -24,7 +24,7 @@ public interface JdbcMapper<T> extends Mapper<ResultSet, T> {
 	 * @throws MappingException if an error occurs during the mapping
 	 */
 	<H extends RowHandler<? super T>> H forEach(ResultSet rs, H handle) throws SQLException, MappingException;
-	
+
 	/**
 	 * 
 	 * @param rs the result set

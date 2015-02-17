@@ -2,8 +2,6 @@ package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
-import org.sfm.utils.BooleanProvider;
-import org.sfm.utils.Predicate;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

@@ -1,8 +1,5 @@
 package org.sfm.reflect.meta;
 
-import org.sfm.utils.BooleanProvider;
-import org.sfm.utils.Predicate;
-
 import java.util.ArrayList;
 import java.util.List;
 

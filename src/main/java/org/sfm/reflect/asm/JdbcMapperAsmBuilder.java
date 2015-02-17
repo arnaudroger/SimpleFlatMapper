@@ -55,7 +55,7 @@ public class JdbcMapperAsmBuilder {
 		}
 		
 		{
-			mv = cw.visitMethod(ACC_PROTECTED + ACC_FINAL, "mapFields", "(L" + sourceType + ";L" + targetType + ";)V", null, new String[] { "java/lang/Exception" });
+			mv = cw.visitMethod(ACC_PUBLIC + ACC_FINAL, "mapFields", "(L" + sourceType + ";L" + targetType + ";)V", null, new String[] { "java/lang/Exception" });
 			mv.visitCode();
 
 			for(int i = 0; i < mappers.length; i++) {
@@ -66,7 +66,7 @@ public class JdbcMapperAsmBuilder {
 			mv.visitMaxs(3, 3);
 		}
 		{
-			mv = cw.visitMethod(ACC_PROTECTED + ACC_BRIDGE + ACC_SYNTHETIC, "mapFields", "(Ljava/lang/Object;Ljava/lang/Object;)V", null, new String[] { "java/lang/Exception" });
+			mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "mapFields", "(Ljava/lang/Object;Ljava/lang/Object;)V", null, new String[] { "java/lang/Exception" });
 			mv.visitCode();
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitVarInsn(ALOAD, 1);

@@ -4,6 +4,7 @@ import org.sfm.jdbc.impl.*;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.impl.*;
+import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
@@ -39,14 +40,16 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 
 	@Override
 	public JdbcMapper<T> mapper() {
-		if (reflectionService.isAsmActivated()) {
+        FieldMapper<ResultSet, T>[] fields = fields();
+        Instantiator<ResultSet, T> instantiator = getInstantiator();
+        if (reflectionService.isAsmActivated()) {
 			try {
-				return reflectionService.getAsmFactory().createJdbcMapper(fields(), getInstantiator(), getTargetClass(), jdbcMapperErrorHandler);
+				return reflectionService.getAsmFactory().createJdbcMapper(fields, instantiator, getTargetClass(), jdbcMapperErrorHandler);
 			} catch(Exception e) {
-				return new JdbcMapperImpl<T>(fields(), getInstantiator(), jdbcMapperErrorHandler);
+				return new JdbcMapperImpl<T>(fields, instantiator, jdbcMapperErrorHandler);
 			}
 		} else {
-			return new JdbcMapperImpl<T>(fields(), getInstantiator(), jdbcMapperErrorHandler);
+			return new JdbcMapperImpl<T>(fields, instantiator, jdbcMapperErrorHandler);
 		}
 	}
 

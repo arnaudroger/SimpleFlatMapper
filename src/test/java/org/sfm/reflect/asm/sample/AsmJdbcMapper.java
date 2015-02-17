@@ -33,4 +33,14 @@ public final class AsmJdbcMapper extends AbstractJdbcMapperImpl<DbObject> {
 		mapper3.map(source, target);
 		mapper4.map(source, target);
 	}
+
+    @Override
+    public String toString() {
+        return "AsmJdbcMapper{" +
+                "mapper1=" + mapper1 +
+                ", mapper2=" + mapper2 +
+                ", mapper3=" + mapper3 +
+                ", mapper4=" + mapper4 +
+                '}';
+    }
 }

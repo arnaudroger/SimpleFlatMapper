@@ -239,7 +239,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 			fieldMapper = fieldMapperFactory.newFieldMapper(t, fieldMapperErrorHandler, mapperBuilderErrorHandler);
 		}
 
-		if (fieldMapperErrorHandler != null) {
+		if (fieldMapperErrorHandler != null && fieldMapper != null) {
 			fieldMapper = new FieldErrorHandlerMapper<S, T, K>(t.getColumnKey(), fieldMapper, fieldMapperErrorHandler);
 		}
 		return fieldMapper;

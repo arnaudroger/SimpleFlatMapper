@@ -73,7 +73,7 @@ public class JdbcMapperErrorTest {
 		
 		try {
 			mapper.map(null);
-			fail("Expecte error");
+			fail("Expected error");
 		} catch(MappingException e) {}
 	}
 	

@@ -2,7 +2,6 @@ package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.BreakDetectorFactory;
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.map.Mapper;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.AbstractMapperImpl;
@@ -11,9 +10,8 @@ import org.sfm.utils.RowHandler;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
-//IFJAVA8_START
-import java.util.Map;
 import java.util.NoSuchElementException;
+//IFJAVA8_START
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;

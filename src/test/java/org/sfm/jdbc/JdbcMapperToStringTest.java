@@ -4,7 +4,10 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 
+import java.util.regex.Pattern;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class JdbcMapperToStringTest {
 
@@ -27,9 +30,9 @@ public class JdbcMapperToStringTest {
                 .newInstance()
                 .newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper();
 
-//        assertEquals("AsmMapperResultSet2DbObject2_1{" +
-//                "instantiator=AsmInstantiatorDbObjectResultSet0{}, " +
-//                "mapper0=LongFieldMapper{getter=LongResultSetGetter{column=1}, setter=AsmSettersetIdDbObjectlong{}}, " +
-//                "mapper1=FieldMapperImpl{getter=StringResultSetGetter{column=2}, setter=AsmSettersetNameDbObjectString{}}}", mapper.toString());
+        assertTrue(Pattern.matches("AsmMapperResultSet2DbObject2_[0-9]+\\{" +
+                "instantiator=AsmInstantiatorDbObjectResultSet[0-9]+\\{\\}, " +
+                "mapper0=LongFieldMapper\\{getter=LongResultSetGetter\\{column=1\\}, setter=AsmSettersetIdDbObjectlong\\{\\}\\}, " +
+                "mapper1=FieldMapperImpl\\{getter=StringResultSetGetter\\{column=2\\}, setter=AsmSettersetNameDbObjectString\\{\\}\\}\\}", mapper.toString()));
     }
 }

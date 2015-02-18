@@ -6,9 +6,7 @@ import org.sfm.map.GetterFactory;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
-import org.sfm.utils.FalsePredicate;
 import org.sfm.utils.ForEachCallBack;
-import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;

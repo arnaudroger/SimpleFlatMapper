@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.tuples.Tuples;
-import org.sfm.utils.FalsePredicate;
 
 import static org.junit.Assert.*;
 

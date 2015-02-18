@@ -11,12 +11,10 @@ import org.sfm.map.impl.PropertyMapping;
 import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.impl.fieldmapper.LongFieldMapper;
 import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyMeta;
-import org.sfm.utils.FalsePredicate;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;

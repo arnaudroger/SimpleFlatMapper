@@ -49,7 +49,14 @@ public class CsvParserTest {
 		testCsvReader(SAMPLE_CSV_MIX_EXPECTATION, '\t', '"', "\n");
 	}
 
-	@Test
+    @Test
+    public void testReadCsvReaderOneChar() throws IOException {
+        Iterator<String[]> iterator = CsvParser.iterator(new StringReader("0"));
+        String[] strs = iterator.next();
+        assertEquals("0", strs[0]);
+    }
+
+    @Test
 	public void testDSLRootConfig() {
 		assertEquals(9, CsvParser.bufferSize(9).bufferSize());
 		assertEquals(3, CsvParser.limit(3).limit());

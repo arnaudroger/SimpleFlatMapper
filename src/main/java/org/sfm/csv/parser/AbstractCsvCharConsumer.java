@@ -122,7 +122,7 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 	}
 
 	private boolean isAllConsumedFromMark(int bufferIndex) {
-		return csvBuffer.getMark() >= bufferIndex -1 ;
+		return (bufferIndex) <  (csvBuffer.getMark() + 1)  ;
 	}
 
 	private int unescape(char[] chars, int offset, int length) {

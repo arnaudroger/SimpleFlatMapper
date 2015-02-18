@@ -81,9 +81,10 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 
 	@SuppressWarnings("unchecked")
 	protected Instantiator<S, T> getInstantiator() throws MapperBuildingException {
+
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 		try {
-			return instantiatorFactory.getInstantiator(source, target, propertyMappingsBuilder, constructorInjections());
+			return instantiatorFactory.getInstantiator(source, target, propertyMappingsBuilder, constructorInjections(), getterFactory);
 		} catch(Exception e) {
 			throw new MapperBuildingException(e.getMessage(), e);
 		}
@@ -171,7 +172,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t) {
 				if (t == null) return;
 				PropertyMeta<T, ?> meta = t.getPropertyMeta();
-				if (meta == null) return;
+				if (meta == null || (meta instanceof DirectClassMeta.DirectPropertyMeta)) return;
 				if (meta.isSubProperty()) {
 					addSubProperty(t,  (SubPropertyMeta<T, ?>) meta, t.getColumnKey());
 				} else if (!meta.isConstructorProperty()) {

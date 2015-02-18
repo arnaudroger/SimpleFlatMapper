@@ -5,10 +5,7 @@ import org.sfm.map.FieldKey;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.TypeHelper;
-import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.PropertyFinder;
-import org.sfm.reflect.meta.PropertyMeta;
-import org.sfm.reflect.meta.PropertyNameMatcherFactory;
+import org.sfm.reflect.meta.*;
 import org.sfm.utils.ForEachCallBack;
 import org.sfm.utils.Predicate;
 
@@ -168,5 +165,8 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		modifiable = false;
 		return properties.get(i);
 	}
-	
+
+    public boolean isDirectProperty() {
+        return  (properties.size() == 1 && properties.get(0) != null && properties.get(0).getPropertyMeta() instanceof DirectClassMeta.DirectPropertyMeta);
+    }
 }

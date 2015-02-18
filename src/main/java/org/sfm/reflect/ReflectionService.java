@@ -81,9 +81,13 @@ public class ReflectionService {
 			return new TupleClassMeta<T>(target, this);
 		}
 		if (root) {
-			return new SingletonClassMeta<T>(new ObjectClassMeta<T>(target, this));
+            if (isDirectType(target)) {
+                return new DirectClassMeta<T>(target, this);
+            } else {
+                return new SingletonClassMeta<T>(new ObjectClassMeta<T>(target, this));
+            }
 		} else {
-			if (TypeHelper.isJavaLang(target)|| TypeHelper.isEnum(target) || TypeHelper.areEquals(target, Date.class)) {
+			if (isDirectType(target)) {
 				return null;
 			} else {
 				return new ObjectClassMeta<T>(target, this);
@@ -91,7 +95,11 @@ public class ReflectionService {
 		}
 	}
 
-	public <T> ClassMeta<T> getRootClassMeta(Type mapToClass) {
+    private boolean isDirectType(Type target) {
+        return TypeHelper.isJavaLang(target)|| TypeHelper.isEnum(target) || TypeHelper.areEquals(target, Date.class);
+    }
+
+    public <T> ClassMeta<T> getRootClassMeta(Type mapToClass) {
 		return getClassMeta(mapToClass, true);
 	}
 
@@ -107,8 +115,10 @@ public class ReflectionService {
 		List<ConstructorDefinition<T>> list;
 
 		if (predefinedConstructors.containsKey(target)) {
-			List constructorDefinitions = predefinedConstructors.get(target);
-			list = (List<ConstructorDefinition<T>>) constructorDefinitions;
+            List constructorDefinitions = predefinedConstructors.get(target);
+            list = (List<ConstructorDefinition<T>>) constructorDefinitions;
+        } else if (TypeHelper.isEnum(target)) {
+            return Collections.emptyList();
 		} else if (isAsmPresent()) {
 			list = AsmConstructorDefinitionFactory.extractConstructors(target);
 		} else {

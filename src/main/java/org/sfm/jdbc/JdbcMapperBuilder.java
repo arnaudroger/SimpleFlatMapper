@@ -20,7 +20,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	private int columnIndex = 1;
 	private RowHandlerErrorHandler jdbcMapperErrorHandler = new RethrowRowHandlerErrorHandler();
 
-	public JdbcMapperBuilder(final TypeReference target) throws MapperBuildingException {
+	public JdbcMapperBuilder(final TypeReference<T> target) throws MapperBuildingException {
 		this(target.getType());
 	}
 	public JdbcMapperBuilder(final Type target) throws MapperBuildingException {

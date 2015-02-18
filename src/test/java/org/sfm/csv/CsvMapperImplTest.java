@@ -4,12 +4,14 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.csv.impl.CsvMapperImpl;
 import org.sfm.jdbc.DbHelper;
+import org.sfm.tuples.Tuple2;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Iterator;
 //IFJAVA8_START
@@ -193,4 +195,26 @@ public class CsvMapperImplTest {
 		assertEquals(1, i);
 	}
 	//IFJAVA8_END
+
+
+    public enum TypeRoot {
+        type1   ("1"), type2   ("2"), type3   ("3"), type4   ("4");
+
+        private String value;
+        TypeRoot(String ... values) { this.value = values[0]; }
+        public String getValue() { return value;  }
+    }
+
+
+    @Test
+    public void testEnumRoot() throws IOException {
+        CsvMapperBuilder<TypeRoot> builder = new CsvMapperBuilder<TypeRoot>(TypeRoot.class);
+        builder.addMapping("c1");
+
+        CsvMapper<TypeRoot> mapper = builder.mapper();
+
+
+        assertEquals(TypeRoot.type1, mapper.iterator(new StringReader("0")).next());
+    }
+
 }

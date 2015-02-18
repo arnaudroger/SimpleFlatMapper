@@ -3,10 +3,13 @@ package org.sfm.reflect;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.impl.CalculateMaxIndex;
 import org.sfm.map.FieldKey;
+import org.sfm.map.impl.FieldMapperColumnDefinition;
+import org.sfm.map.impl.PropertyMapping;
 import org.sfm.map.impl.PropertyMappingsBuilder;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.impl.InjectConstructorInstantiator;
 import org.sfm.reflect.impl.StaticConstructorInstantiator;
+import org.sfm.utils.ForEachCallBack;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -25,11 +28,25 @@ public class InstantiatorFactory {
 	}
 
 
-	public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap) throws NoSuchMethodException {
-		return  getInstantiator(source, target, propertyMappingsBuilder, constructorParameterGetterMap, true);
+	public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap, org.sfm.map.GetterFactory<S, K> getterFactory) throws NoSuchMethodException {
+		return  getInstantiator(source, target, propertyMappingsBuilder, constructorParameterGetterMap, getterFactory, true);
 	}
 
-	public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap, boolean useAsmIfEnabled) throws NoSuchMethodException {
+	public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap, org.sfm.map.GetterFactory<S, K> getterFactory,  boolean useAsmIfEnabled) throws NoSuchMethodException {
+
+        if (propertyMappingsBuilder.isDirectProperty()) {
+            Getter getter = propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K, D>>() {
+                public Getter getter;
+                @Override
+                public void handle(PropertyMapping<T, ?, K, D> propertyMapping) {
+                    getter = getterFactory.newGetter(propertyMapping.getPropertyMeta().getType(), propertyMapping.getColumnKey());
+                }
+            }).getter;
+
+            return new GetterInstantiator<S, T>(getter);
+
+        }
+
 		if (TypeHelper.isArray(target)) {
 			return getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, K, D>()).maxIndex + 1);
 		} else {
@@ -63,6 +80,10 @@ public class InstantiatorFactory {
 	}
 
 	private <T> ConstructorDefinition<T> getSmallerConstructor(final List<ConstructorDefinition<T>> constructors) {
+        if (constructors == null) {
+            return null;
+        }
+
 		ConstructorDefinition<T> selectedConstructor = null;
 		
 		for(ConstructorDefinition<T> c : constructors) {

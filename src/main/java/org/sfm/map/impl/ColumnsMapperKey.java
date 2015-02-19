@@ -18,4 +18,10 @@ public final class ColumnsMapperKey {
 	public String[] getColumns() {
 		return columns;
 	}
+
+    @Override
+    public String toString() {
+        return "ColumnsMapperKey{" + Arrays.toString(columns) +
+                '}';
+    }
 }

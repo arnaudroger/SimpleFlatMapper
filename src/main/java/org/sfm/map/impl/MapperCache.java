@@ -1,5 +1,6 @@
 package org.sfm.map.impl;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class MapperCache<K, M> {
@@ -14,7 +15,14 @@ public final class MapperCache<K, M> {
 			this.key = key;
 			this.mapper = mapper;
 		}
-	}
+
+        @Override
+        public String toString() {
+            return "{" +  key +
+                    "," + mapper +
+                    '}';
+        }
+    }
 	@SuppressWarnings("unchecked")
 	public void add(final K key, final M mapper) {
 		CacheEntry<K, M>[] entries;
@@ -47,4 +55,10 @@ public final class MapperCache<K, M> {
 		}
 		return null;
 	}
+
+    @Override
+    public String toString() {
+        return "MapperCache{" + Arrays.toString(mapperCache.get()) +
+                '}';
+    }
 }

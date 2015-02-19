@@ -121,7 +121,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
     @Override
     public String toString() {
         return "DynamicJdbcMapper{target=" + classMeta.getType()
-                +  ", mapperCache=" + mapperCache +
+                +  ", " + mapperCache +
                 '}';
     }
 }

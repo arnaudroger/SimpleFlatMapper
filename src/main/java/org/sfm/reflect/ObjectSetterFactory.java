@@ -8,11 +8,11 @@ import org.sfm.reflect.primitive.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public final class SetterFactory {
+public final class ObjectSetterFactory {
 	
 	private final AsmFactory asmFactory;
 	
-	public SetterFactory(final AsmFactory asmFactory) {
+	public ObjectSetterFactory(final AsmFactory asmFactory) {
 		this.asmFactory = asmFactory;
 	}
 	

@@ -6,10 +6,10 @@ import org.sfm.reflect.impl.MethodGetter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public final class GetterFactory {
+public final class ObjectGetterFactory {
 
 
-	public GetterFactory() {
+	public ObjectGetterFactory() {
 	}
 	
 

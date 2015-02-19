@@ -45,7 +45,7 @@ public class JdbcMapperToStringTest {
     @Test
     public void testDynamicJdbcMapperNoAsm() throws SQLException {
         JdbcMapper<DbObject> mapper = JdbcMapperFactory
-                .newInstance()
+                .newInstance().useAsm(false)
                 .newMapper(DbObject.class);
 
         ResultSet rs = mock(ResultSet.class);
@@ -58,9 +58,8 @@ public class JdbcMapperToStringTest {
 
 
         assertEquals("DynamicJdbcMapper{target=class org.sfm.beans.DbObject, " +
-                "MapperCache{" +
-                "[{ColumnsMapperKey{[id]}," +
-                "AsmMapperResultSet2DbObject1_1{instantiator=AsmInstantiatorDbObjectResultSet0{}, " +
-                "mapper0=LongFieldMapper{getter=LongResultSetGetter{column=1}, setter=AsmSettersetIdDbObjectlong{}}}}]}}", mapper.toString());
+                "MapperCache{[{ColumnsMapperKey{[id]}," +
+                "JdbcMapperImpl{instantiator=StaticConstructorInstantiator{constructor=public org.sfm.beans.DbObject(), args=[]}, " +
+                "fieldMappers=[LongFieldMapper{getter=LongResultSetGetter{column=1}, setter=LongMethodSetter{method=public void org.sfm.beans.DbObject.setId(long)}}]}}]}}", mapper.toString());
     }
 }

@@ -11,7 +11,7 @@ import org.sfm.map.impl.PropertyMapping;
 import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.impl.fieldmapper.LongFieldMapper;
 import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.SetterFactory;
+import org.sfm.reflect.ObjectSetterFactory;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyMeta;
@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ResultSetFieldMapperFactoryTest {
 	
-	SetterFactory setterFactory = new SetterFactory(null);
+	ObjectSetterFactory objectSetterFactory = new ObjectSetterFactory(null);
 	ResultSetFieldMapperFactory factory = new ResultSetFieldMapperFactory(new ResultSetGetterFactory());
 	private FieldMapperErrorHandler<JdbcColumnKey> errorHandler;
 

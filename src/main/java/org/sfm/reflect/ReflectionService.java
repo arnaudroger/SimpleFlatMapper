@@ -29,7 +29,8 @@ public class ReflectionService {
 		}
 	}
 
-	private final SetterFactory setterFactory;
+	private final ObjectSetterFactory objectSetterFactory;
+    private final ObjectGetterFactory objectGetterFactory;
 	private final InstantiatorFactory instantiatorFactory;
 	private final AsmFactory asmFactory;
 	private final AliasProvider aliasProvider;
@@ -45,13 +46,14 @@ public class ReflectionService {
 		} else {
 			this.asmFactory = null;
 		}
-		this.setterFactory = new SetterFactory(asmFactory);
+		this.objectSetterFactory = new ObjectSetterFactory(asmFactory);
+        this.objectGetterFactory = new ObjectGetterFactory(asmFactory);
 		this.instantiatorFactory = new InstantiatorFactory(asmFactory);
 		this.aliasProvider = AliasProviderFactory.getAliasProvider();
 	}
 
-	public SetterFactory getSetterFactory() {
-		return setterFactory;
+	public ObjectSetterFactory getObjectSetterFactory() {
+		return objectSetterFactory;
 	}
 
 	public InstantiatorFactory getInstantiatorFactory() {
@@ -154,8 +156,8 @@ public class ReflectionService {
 		return false;
 	}
 
-    public GetterFactory getGetterFactory() {
-        return new GetterFactory();
+    public ObjectGetterFactory getGetterFactory() {
+        return objectGetterFactory;
     }
 }
  

@@ -41,65 +41,73 @@ public class SetterBuilder implements Opcodes {
 			mv.visitMaxs(1, 1);
 			mv.visitEnd();
 		}
-		{
-			mv = cw.visitMethod(ACC_PUBLIC, "set",
-					"(L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ")V", null,
-					new String[] { "java/lang/Exception" });
-			mv.visitCode();
-			mv.visitVarInsn(ALOAD, 1);
-			mv.visitVarInsn(ALOAD, 2);
-			
-			AsmUtils.invoke(mv, target, method.getName(),  "(" + AsmUtils.toTypeParam(propertyType) + ")V");
-			
-			mv.visitInsn(RETURN);
-			mv.visitMaxs(2, 3);
-			mv.visitEnd();
-		}
-		{
-			mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "set", "(Ljava/lang/Object;Ljava/lang/Object;)V", null, new String[] { "java/lang/Exception" });
-			mv.visitCode();
-			mv.visitVarInsn(ALOAD, 0);
-			mv.visitVarInsn(ALOAD, 1);
-			mv.visitTypeInsn(CHECKCAST, targetType);
-			mv.visitVarInsn(ALOAD, 2);
-			mv.visitTypeInsn(CHECKCAST,  propertyType );
-			mv.visitMethodInsn(INVOKEVIRTUAL, classType , "set", "(L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ")V", false);
-			mv.visitInsn(RETURN);
-			mv.visitMaxs(3, 3);
-			mv.visitEnd();
-		}
+        appendSet(method, cw, target, targetType, propertyType, classType);
 
 
-        {
-            mv = cw.visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
-            mv.visitCode();
-            mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
-            mv.visitInsn(DUP);
-            mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
-            mv.visitVarInsn(ASTORE, 1);
-            mv.visitVarInsn(ALOAD, 1);
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getSimpleName", "()Ljava/lang/String;", false);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-            mv.visitLdcInsn("{");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-            mv.visitLdcInsn("}");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-
-
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
-            mv.visitInsn(ARETURN);
-            mv.visitMaxs(2, 1);
-            mv.visitEnd();
-        }
-		cw.visitEnd();
+        appendToString(cw);
+        cw.visitEnd();
 
 		return AsmUtils.writeClassToFile(className, cw.toByteArray());
 
 	}
 
-	public static byte[] createPrimitiveSetter(String className, Method method) throws Exception {
+    private static void appendSet(Method method, ClassWriter cw, Class<?> target, String targetType, String propertyType, String classType) {
+        MethodVisitor mv;
+        {
+            mv = cw.visitMethod(ACC_PUBLIC, "set",
+                    "(L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ")V", null,
+                    new String[] { "java/lang/Exception" });
+            mv.visitCode();
+            mv.visitVarInsn(ALOAD, 1);
+            mv.visitVarInsn(ALOAD, 2);
+
+            AsmUtils.invoke(mv, target, method.getName(),  "(" + AsmUtils.toTypeParam(propertyType) + ")V");
+
+            mv.visitInsn(RETURN);
+            mv.visitMaxs(2, 3);
+            mv.visitEnd();
+        }
+        {
+            mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "set", "(Ljava/lang/Object;Ljava/lang/Object;)V", null, new String[] { "java/lang/Exception" });
+            mv.visitCode();
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitVarInsn(ALOAD, 1);
+            mv.visitTypeInsn(CHECKCAST, targetType);
+            mv.visitVarInsn(ALOAD, 2);
+            mv.visitTypeInsn(CHECKCAST,  propertyType );
+            mv.visitMethodInsn(INVOKEVIRTUAL, classType , "set", "(L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ")V", false);
+            mv.visitInsn(RETURN);
+            mv.visitMaxs(3, 3);
+            mv.visitEnd();
+        }
+    }
+
+    private static void appendToString(ClassWriter cw) {
+        MethodVisitor mv;
+        mv = cw.visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
+        mv.visitCode();
+        mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
+        mv.visitInsn(DUP);
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+        mv.visitVarInsn(ASTORE, 1);
+        mv.visitVarInsn(ALOAD, 1);
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getSimpleName", "()Ljava/lang/String;", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+        mv.visitLdcInsn("{");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+        mv.visitLdcInsn("}");
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+
+
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+        mv.visitInsn(ARETURN);
+        mv.visitMaxs(2, 1);
+        mv.visitEnd();
+    }
+
+    public static byte[] createPrimitiveSetter(String className, Method method) throws Exception {
 
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
@@ -196,29 +204,8 @@ public class SetterBuilder implements Opcodes {
 		mv.visitEnd();
 		}
 
-        {
-            mv = cw.visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
-            mv.visitCode();
-            mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
-            mv.visitInsn(DUP);
-            mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
-            mv.visitVarInsn(ASTORE, 1);
-            mv.visitVarInsn(ALOAD, 1);
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getSimpleName", "()Ljava/lang/String;", false);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-            mv.visitLdcInsn("{");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
-            mv.visitLdcInsn("}");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+        appendToString(cw);
 
-
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
-            mv.visitInsn(ARETURN);
-            mv.visitMaxs(2, 1);
-            mv.visitEnd();
-        }
 		cw.visitEnd();
 
 		return AsmUtils.writeClassToFile(className, cw.toByteArray());

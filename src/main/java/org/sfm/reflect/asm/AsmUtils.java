@@ -79,6 +79,19 @@ public class AsmUtils {
 		loadOps.put(long.class, LLOAD);
 		loadOps.put(short.class, ILOAD);
 	}
+
+    static final Map<Class<?>, Integer> returnOps = new HashMap<Class<?>, Integer>();
+    static {
+        returnOps.put(boolean.class, ILOAD);
+        returnOps.put(byte.class, ILOAD);
+        returnOps.put(char.class, ILOAD);
+        returnOps.put(double.class, DLOAD);
+        returnOps.put(float.class, FLOAD);
+        returnOps.put(int.class, ILOAD);
+        returnOps.put(long.class, LLOAD);
+        returnOps.put(short.class, ILOAD);
+    }
+
 	static final Map<Class<?>, Integer> defaultValue = new HashMap<Class<?>, Integer>();
 	static {
 		defaultValue.put(boolean.class, ICONST_0);

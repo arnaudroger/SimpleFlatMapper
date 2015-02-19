@@ -1,13 +1,12 @@
 package org.sfm.reflect.asm.sample;
 
 import org.sfm.beans.DbObject;
-import org.sfm.reflect.Setter;
+import org.sfm.reflect.Getter;
 
-public class DbObjectStringGetter implements Setter<DbObject, String> {
+public class DbObjectStringGetter implements Getter<DbObject, String> {
 
-	@Override
-	public void set(DbObject target, String value) throws Exception {
-		target.setName(value);
-	}
-
+    @Override
+    public String get(DbObject target) throws Exception {
+        return target.getName();
+    }
 }

@@ -86,7 +86,7 @@ public class JdbcMapperArrayTest {
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
 			
-			JdbcMapperBuilder<DbArrayOfString> builder = new JdbcMapperBuilder<DbArrayOfString>(DbArrayOfString.class, ReflectionService.newInstance(true, asm)).addMapping(rs.getMetaData());
+			JdbcMapperBuilder<DbArrayOfString> builder = new JdbcMapperBuilder<DbArrayOfString>(DbArrayOfString.class, ReflectionService.newInstance(false, asm)).addMapping(rs.getMetaData());
 			
 			
 			final JdbcMapper<DbArrayOfString> mapper = 

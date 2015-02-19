@@ -21,7 +21,7 @@ public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
 	@Override
 	protected Setter<T, P> newSetter() {
-		return reflectService.getSetterFactory().getMethodSetter(method);
+		return reflectService.getObjectSetterFactory().getMethodSetter(method);
 	}
 
     @Override

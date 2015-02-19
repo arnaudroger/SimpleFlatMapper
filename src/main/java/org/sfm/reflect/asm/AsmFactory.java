@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class AsmFactory {
 	private final FactoryClassLoader factoryClassLoader;
 	private final ConcurrentMap<Method, Setter<?, ?>> setterCache = new ConcurrentHashMap<Method, Setter<?, ?>>();
+    private final ConcurrentMap<Method, Getter<?, ?>> getterCache = new ConcurrentHashMap<Method, Getter<?, ?>>();
 	private final ConcurrentMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>> instantiatorCache = new ConcurrentHashMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>>();
 	
 	public AsmFactory(ClassLoader cl) {
@@ -28,7 +29,7 @@ public class AsmFactory {
 		Setter<T,P> setter = (Setter<T, P>) setterCache.get(m);
 		if (setter == null) {
 			final String className = generateClassNameForSetter(m);
-			final byte[] bytes = generateClassByteCodes(m, className);
+			final byte[] bytes = generateSetterByteCodes(m, className);
 			final Class<?> type = factoryClassLoader.registerClass(className, bytes);
 			setter = (Setter<T, P>) type.newInstance();
 			setterCache.putIfAbsent(m, setter);
@@ -36,7 +37,28 @@ public class AsmFactory {
 		return setter;
 	}
 
-	private byte[] generateClassByteCodes(final Method m, final String className) throws Exception {
+    public <T, P> Getter<T,P> createGetter(final Method m) throws Exception {
+        Getter<T,P> getter = (Getter<T, P>) getterCache.get(m);
+        if (getter == null) {
+            final String className = generateClassNameForGetter(m);
+            final byte[] bytes = generateGetterByteCodes(m, className);
+            final Class<?> type = factoryClassLoader.registerClass(className, bytes);
+            getter = (Getter<T, P>) type.newInstance();
+            getterCache.putIfAbsent(m, getter);
+        }
+        return getter;
+    }
+
+    private byte[] generateGetterByteCodes(final Method m, final String className) throws Exception {
+        final Class<?> propertyType = m.getParameterTypes()[0];
+        if (AsmUtils.primitivesClassAndWrapper.contains(propertyType)) {
+            return GetterBuilder.createPrimitiveGetter(className, m);
+        } else {
+            return GetterBuilder.createObjectGetter(className, m);
+        }
+    }
+
+	private byte[] generateSetterByteCodes(final Method m, final String className) throws Exception {
 		final Class<?> propertyType = m.getParameterTypes()[0];
 		if (AsmUtils.primitivesClassAndWrapper.contains(propertyType)) {
 			return SetterBuilder.createPrimitiveSetter(className, m);
@@ -115,6 +137,13 @@ public class AsmFactory {
 					 + replaceArray(m.getParameterTypes()[0].getSimpleName())
 					;
 	}
+
+    private String generateClassNameForGetter(final Method m) {
+        return "org.sfm.reflect.asm." + m.getDeclaringClass().getPackage().getName() +
+                ".AsmGetter" + m.getName()
+                + replaceArray(m.getDeclaringClass().getSimpleName())
+                ;
+    }
 	
 	private <S, T> String generateClassNameForJdbcMapper(final FieldMapper<S, T>[] mappers, final Class<S> source, final Class<T> target) {
 		return "org.sfm.reflect.asm." + target.getPackage().getName() + 

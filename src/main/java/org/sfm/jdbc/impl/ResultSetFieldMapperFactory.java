@@ -29,35 +29,35 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<ResultSet, T>(
 					new BooleanResultSetGetter(key.getIndex()),
-					SetterFactory.toBooleanSetter(setter));
+					ObjectSetterFactory.toBooleanSetter(setter));
 		} else if (type.equals(Integer.TYPE)) {
 			return new IntFieldMapper<ResultSet, T>(
 					new IntResultSetGetter(key.getIndex()),
-					SetterFactory.toIntSetter(setter));
+					ObjectSetterFactory.toIntSetter(setter));
 		} else if (type.equals(Long.TYPE)) {
 			return new LongFieldMapper<ResultSet, T>(
 					new LongResultSetGetter(key.getIndex()),
-					SetterFactory.toLongSetter(setter));
+					ObjectSetterFactory.toLongSetter(setter));
 		} else if (type.equals(Float.TYPE)) {
 			return new FloatFieldMapper<ResultSet, T>(
 					new FloatResultSetGetter(key.getIndex()),
-					SetterFactory.toFloatSetter(setter));
+					ObjectSetterFactory.toFloatSetter(setter));
 		} else if (type.equals(Double.TYPE)) {
 			return new DoubleFieldMapper<ResultSet, T>(
 					new DoubleResultSetGetter(key.getIndex()),
-					SetterFactory.toDoubleSetter(setter));
+					ObjectSetterFactory.toDoubleSetter(setter));
 		} else if (type.equals(Byte.TYPE)) {
 			return new ByteFieldMapper<ResultSet, T>(
 					new ByteResultSetGetter(key.getIndex()),
-					SetterFactory.toByteSetter(setter));
+					ObjectSetterFactory.toByteSetter(setter));
 		} else if (type.equals(Character.TYPE)) {
 			return new CharacterFieldMapper<ResultSet, T>(
 					new CharacterResultSetGetter(key.getIndex()),
-					SetterFactory.toCharacterSetter(setter));
+					ObjectSetterFactory.toCharacterSetter(setter));
 		} else if (type.equals(Short.TYPE)) {
 			return new ShortFieldMapper<ResultSet, T>(
 					new ShortResultSetGetter(key.getIndex()),
-					SetterFactory.toShortSetter(setter));
+					ObjectSetterFactory.toShortSetter(setter));
 		} else {
 			throw new UnsupportedOperationException("Type " + type
 					+ " is not primitive");

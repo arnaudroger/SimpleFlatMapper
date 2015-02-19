@@ -16,10 +16,6 @@ public final class ObjectSetterFactory {
 		this.asmFactory = asmFactory;
 	}
 	
-	public AsmFactory getAsmFactory() {
-		return asmFactory;
-	}
-
 	public <T, P, C extends T> Setter<T, P> getSetter(final Class<C> target, final String property) {
 		// first look for method
 		final Method method = lookForMethod(target, property);

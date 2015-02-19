@@ -1,5 +1,6 @@
 package org.sfm.reflect;
 
+import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.impl.FieldGetter;
 import org.sfm.reflect.impl.MethodGetter;
 
@@ -7,10 +8,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public final class ObjectGetterFactory {
+    private final AsmFactory asmFactory;
 
-
-	public ObjectGetterFactory() {
-	}
+	public ObjectGetterFactory(AsmFactory asmFactory) {
+        this.asmFactory = asmFactory;
+    }
 	
 
 	public <T, P> Getter<T, P> getGetter(final Class<? super T> target, final String property) {
@@ -26,7 +28,15 @@ public final class ObjectGetterFactory {
 	}
 
 	public <T, P> Getter<T, P> getMethodGetter(final Method method) {
-		return new MethodGetter<T, P>(method);
+        if (asmFactory != null) {
+            try {
+                return asmFactory.createGetter(method);
+            } catch(Exception e) {
+                return new MethodGetter<T, P>(method);
+            }
+        } else {
+            return new MethodGetter<T, P>(method);
+        }
 	}
 
 	public <T, P> FieldGetter<T, P> getFieldGetter(final Class<?> target, final String property) {

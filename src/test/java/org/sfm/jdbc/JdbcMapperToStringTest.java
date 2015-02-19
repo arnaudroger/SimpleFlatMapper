@@ -30,6 +30,7 @@ public class JdbcMapperToStringTest {
                 .newInstance()
                 .newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper();
 
+        System.out.println(mapper.toString());
         assertTrue(Pattern.matches("AsmMapperResultSet2DbObject2_[0-9]+\\{" +
                 "instantiator=AsmInstantiatorDbObjectResultSet[0-9]+\\{\\}, " +
                 "mapper0=LongFieldMapper\\{getter=LongResultSetGetter\\{column=1\\}, setter=AsmSettersetIdDbObjectlong\\{\\}\\}, " +

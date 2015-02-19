@@ -14,6 +14,9 @@ import java.lang.reflect.TypeVariable;
 import java.util.*;
 
 import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.FRETURN;
+import static org.objectweb.asm.Opcodes.LRETURN;
+
 public class AsmUtils {
 
 	public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
@@ -82,14 +85,14 @@ public class AsmUtils {
 
     static final Map<Class<?>, Integer> returnOps = new HashMap<Class<?>, Integer>();
     static {
-        returnOps.put(boolean.class, ILOAD);
-        returnOps.put(byte.class, ILOAD);
-        returnOps.put(char.class, ILOAD);
-        returnOps.put(double.class, DLOAD);
-        returnOps.put(float.class, FLOAD);
-        returnOps.put(int.class, ILOAD);
-        returnOps.put(long.class, LLOAD);
-        returnOps.put(short.class, ILOAD);
+        returnOps.put(boolean.class, IRETURN);
+        returnOps.put(byte.class, IRETURN);
+        returnOps.put(char.class, IRETURN);
+        returnOps.put(double.class, DRETURN);
+        returnOps.put(float.class, FRETURN);
+        returnOps.put(int.class, IRETURN);
+        returnOps.put(long.class, LRETURN);
+        returnOps.put(short.class, IRETURN);
     }
 
 	static final Map<Class<?>, Integer> defaultValue = new HashMap<Class<?>, Integer>();

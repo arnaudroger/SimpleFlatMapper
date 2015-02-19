@@ -2,11 +2,15 @@ package org.sfm.reflect;
 
 import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
+import org.sfm.beans.DbFinalPrimitiveObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPublicObject;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.impl.MethodGetter;
+import org.sfm.reflect.primitive.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class ObjectGetterFactoryTest {
 
@@ -24,6 +28,8 @@ public class ObjectGetterFactoryTest {
         dbpo.name = "v1";
     }
 
+    private DbFinalPrimitiveObject dbFinalPrimitiveObject = new DbFinalPrimitiveObject(true, (byte)1, (char)2, (short)3, 4, 5l, 6.0f, 7.0);
+
     @Test
     public void testObjectGetterNoAsm() throws Exception {
         assertEquals(dbo.getName(), noAsm.getGetter(DbObject.class, "name").get(dbo));
@@ -33,7 +39,24 @@ public class ObjectGetterFactoryTest {
     @Test
     public void testObjectGetterAsm() throws Exception {
         assertEquals(dbo.getName(), asm.getGetter(DbObject.class, "name").get(dbo));
+        assertFalse(asm.getGetter(DbObject.class, "name") instanceof MethodGetter);
         assertEquals(dbfo.getName(), asm.getGetter(DbFinalObject.class, "name").get(dbfo));
+        assertFalse(asm.getGetter(DbFinalObject.class, "name") instanceof MethodGetter);
 
     }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testPrimitiveGetterAsm() throws Exception {
+        assertEquals(dbFinalPrimitiveObject.ispBoolean(),    ((BooleanGetter<DbFinalPrimitiveObject>)asm.getGetter(DbFinalPrimitiveObject.class, "pBoolean")).getBoolean(dbFinalPrimitiveObject));
+        assertEquals(dbFinalPrimitiveObject.getpByte(),      ((ByteGetter<DbFinalPrimitiveObject>)asm.getGetter(DbFinalPrimitiveObject.class, "pByte")).getByte(dbFinalPrimitiveObject));
+        assertEquals(dbFinalPrimitiveObject.getpCharacter(), ((CharacterGetter<DbFinalPrimitiveObject>)asm.getGetter(DbFinalPrimitiveObject.class, "pCharacter")).getCharacter(dbFinalPrimitiveObject));
+        assertEquals(dbFinalPrimitiveObject.getpShort(),     ((ShortGetter<DbFinalPrimitiveObject>)asm.getGetter(DbFinalPrimitiveObject.class, "pShort")).getShort(dbFinalPrimitiveObject));
+        assertEquals(dbFinalPrimitiveObject.getpInt(),       ((IntGetter<DbFinalPrimitiveObject>)asm.getGetter(DbFinalPrimitiveObject.class, "pInt")).getInt(dbFinalPrimitiveObject));
+        assertEquals(dbFinalPrimitiveObject.getpLong(),      ((LongGetter<DbFinalPrimitiveObject>)asm.getGetter(DbFinalPrimitiveObject.class, "pLong")).getLong(dbFinalPrimitiveObject));
+        assertEquals(dbFinalPrimitiveObject.getpFloat(),     ((FloatGetter<DbFinalPrimitiveObject>)asm.getGetter(DbFinalPrimitiveObject.class, "pFloat")).getFloat(dbFinalPrimitiveObject), 0.0);
+        assertEquals(dbFinalPrimitiveObject.getpDouble(),    ((DoubleGetter<DbFinalPrimitiveObject>)asm.getGetter(DbFinalPrimitiveObject.class, "pDouble")).getDouble(dbFinalPrimitiveObject), 0.0);
+
+    }
+
 }

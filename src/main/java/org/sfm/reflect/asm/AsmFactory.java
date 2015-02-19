@@ -50,7 +50,7 @@ public class AsmFactory {
     }
 
     private byte[] generateGetterByteCodes(final Method m, final String className) throws Exception {
-        final Class<?> propertyType = m.getParameterTypes()[0];
+        final Class<?> propertyType = m.getReturnType();
         if (AsmUtils.primitivesClassAndWrapper.contains(propertyType)) {
             return GetterBuilder.createPrimitiveGetter(className, m);
         } else {

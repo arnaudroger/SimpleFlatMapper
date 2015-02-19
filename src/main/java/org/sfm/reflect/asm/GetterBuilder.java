@@ -19,7 +19,7 @@ public class GetterBuilder implements Opcodes {
 		MethodVisitor mv;
 
 		Class<?> target = method.getDeclaringClass();
-		Class<?> property = method.getParameterTypes()[0];
+		Class<?> property = method.getReturnType();
 		
 		String targetType = toType(target);
 		String propertyType = toType(property);
@@ -80,7 +80,7 @@ public class GetterBuilder implements Opcodes {
 		MethodVisitor mv;
 
 		Class<?> target = method.getDeclaringClass();
-		Class<?> primitive = method.getParameterTypes()[0];
+		Class<?> primitive = method.getReturnType();
 		Class<?> property = AsmUtils.wrappers.get(primitive);
 		
 		String targetType = toType(target);
@@ -127,7 +127,7 @@ public class GetterBuilder implements Opcodes {
 		mv.visitCode();
 		mv.visitVarInsn(ALOAD, 1);
 
-		AsmUtils.invoke(mv, target, method.getName(), "(" + primitiveType + ")V");
+		AsmUtils.invoke(mv, target, method.getName(), "()" +  primitiveType);
 		
 		mv.visitInsn(AsmUtils.returnOps.get(primitive));
 		mv.visitMaxs(1, 2);

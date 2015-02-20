@@ -19,7 +19,7 @@ public class BooleanDelayedGetter<T> implements BooleanGetter<DelayedCellSetter<
 
 	@Override
 	public Boolean get(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return Boolean.valueOf(getBoolean(target));
+		return getBoolean(target);
 	}
 
     @Override

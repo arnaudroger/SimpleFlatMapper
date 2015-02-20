@@ -18,7 +18,7 @@ public class CharDelayedCellSetter<T> implements DelayedCellSetter<T, Character>
 
 	@Override
 	public Character getValue() {
-		return new Character(getCharacter());
+		return getCharacter();
 	}
 
 	public char getCharacter() {

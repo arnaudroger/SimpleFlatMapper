@@ -139,7 +139,8 @@ public final class CellSetterFactory {
 		throw new IllegalArgumentException("Invalid primitive type " + clazz);
 	}
 
-	public <T, P> Getter<DelayedCellSetter<T, ?>[], P> newDelayedGetter(CsvColumnKey key, Type type) {
+	@SuppressWarnings("unchecked")
+    public <T, P> Getter<DelayedCellSetter<T, ?>[], P> newDelayedGetter(CsvColumnKey key, Type type) {
 		Class<?> clazz = TypeHelper.toClass(type);
 		Getter getter;
 		int columnIndex = key.getIndex();

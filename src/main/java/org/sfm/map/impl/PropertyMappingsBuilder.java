@@ -7,7 +7,6 @@ import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.meta.*;
 import org.sfm.utils.ForEachCallBack;
-import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -88,44 +87,41 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		modifiable = false;
 		
 		List<K>  keys = new ArrayList<K>(properties.size());
-		for(int i = 0; i < properties.size(); i++) {
-			PropertyMapping<T, ?, K, D> propMapping = properties.get(i);
-			if (propMapping != null) {
-				keys.add(propMapping.getColumnKey());
-			} else {
-				keys.add(null);
-			}
-				
-		}
+        for (PropertyMapping<T, ?, K, D> propMapping : properties) {
+            if (propMapping != null) {
+                keys.add(propMapping.getColumnKey());
+            } else {
+                keys.add(null);
+            }
+
+        }
 		return keys;
 	}
 
 	public void forEachConstructorProperties(ForEachCallBack<PropertyMapping<T, ?, K, D>> handler)  {
 		modifiable = false;
 
-		for(int i = 0; i < properties.size(); i++) {
-			PropertyMapping<T, ?, K, D> property = properties.get(i);
-			if (property != null) {
-				PropertyMeta<T, ?> propertyMeta = property.getPropertyMeta();
-				if (propertyMeta != null && propertyMeta.isConstructorProperty()) {
-					handler.handle(property);
-				}
-			}
- 		}
+        for (PropertyMapping<T, ?, K, D> property : properties) {
+            if (property != null) {
+                PropertyMeta<T, ?> propertyMeta = property.getPropertyMeta();
+                if (propertyMeta != null && propertyMeta.isConstructorProperty()) {
+                    handler.handle(property);
+                }
+            }
+        }
 	}
 	
 	public void forEachSubProperties(ForEachCallBack<PropertyMapping<T, ?, K, D>> handler)  {
 		modifiable = false;
 
-		for(int i = 0; i < properties.size(); i++) {
-			PropertyMapping<T, ?, K, D> property = properties.get(i);
-			if (property != null) {
-				PropertyMeta<T, ?> propertyMeta = property.getPropertyMeta();
-				if (propertyMeta != null && propertyMeta.isSubProperty()) {
-					handler.handle(property);
-				} 
-			}
- 		}
+        for (PropertyMapping<T, ?, K, D> property : properties) {
+            if (property != null) {
+                PropertyMeta<T, ?> propertyMeta = property.getPropertyMeta();
+                if (propertyMeta != null && propertyMeta.isSubProperty()) {
+                    handler.handle(property);
+                }
+            }
+        }
 	}
 
 	public <H extends ForEachCallBack<PropertyMapping<T, ?, K, D>>> H forEachProperties(H handler)  {
@@ -138,14 +134,13 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	
 	public <F extends ForEachCallBack<PropertyMapping<T, ?, K, D>>> F forEachProperties(F handler, int start, int end)  {
 		modifiable = false;
-		for(int i = 0; i < properties.size(); i++) {
-			PropertyMapping<T, ?, K, D> prop = properties.get(i);
-			if (prop != null
-			         && (prop.getColumnKey().getIndex() >= start || start == -1)
-					 && (prop.getColumnKey().getIndex() < end || end == -1)) {
-				handler.handle(prop);
-			}
- 		}
+        for (PropertyMapping<T, ?, K, D> prop : properties) {
+            if (prop != null
+                    && (prop.getColumnKey().getIndex() >= start || start == -1)
+                    && (prop.getColumnKey().getIndex() < end || end == -1)) {
+                handler.handle(prop);
+            }
+        }
 		return handler;
 	}
 

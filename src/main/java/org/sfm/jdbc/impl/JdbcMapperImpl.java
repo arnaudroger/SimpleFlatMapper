@@ -22,8 +22,8 @@ public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements
 	
 	private final RowHandlerErrorHandler errorHandler; 
 	
-	public JdbcMapperImpl(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<ResultSet, T> instantiator, final RowHandlerErrorHandler errorHandler) {
-		super(mappers, instantiator);
+	public JdbcMapperImpl(final FieldMapper<ResultSet, T>[] fieldMappers, final FieldMapper<ResultSet, T>[] constructorMappers, final Instantiator<ResultSet, T> instantiator, final RowHandlerErrorHandler errorHandler) {
+		super(fieldMappers, constructorMappers, instantiator);
 		this.errorHandler = errorHandler;
 	}
 

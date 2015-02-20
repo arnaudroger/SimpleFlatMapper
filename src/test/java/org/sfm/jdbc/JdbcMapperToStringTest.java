@@ -35,10 +35,12 @@ public class JdbcMapperToStringTest {
                 .newInstance()
                 .newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper();
 
-        assertTrue(Pattern.matches("AsmMapperResultSet2DbObject2_[a-z0-9]+\\{" +
+        String input = mapper.toString();
+
+        assertTrue(Pattern.matches("AsmMapperResultSet2DbObject2_0_[a-z0-9]+\\{" +
                 "instantiator=AsmInstantiatorDbObjectResultSet[a-z0-9]+\\{\\}, " +
                 "mapper0=LongFieldMapper\\{getter=LongResultSetGetter\\{column=1\\}, setter=AsmSettersetIdDbObjectlong\\{\\}\\}, " +
-                "mapper1=FieldMapperImpl\\{getter=StringResultSetGetter\\{column=2\\}, setter=AsmSettersetNameDbObjectString\\{\\}\\}\\}", mapper.toString()));
+                "mapper1=FieldMapperImpl\\{getter=StringResultSetGetter\\{column=2\\}, setter=AsmSettersetNameDbObjectString\\{\\}\\}\\}", input));
     }
 
 

@@ -18,7 +18,7 @@ public class ShortDelayedCellSetter<T> implements DelayedCellSetter<T, Short> {
 
 	@Override
 	public Short getValue() {
-		return new Short(getShort());
+		return getShort();
 	}
 
 	public short getShort() {

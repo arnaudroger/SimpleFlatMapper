@@ -1,13 +1,13 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.map.MapperBuildingException;
-import org.sfm.reflect.*;
+import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.Getter;
+import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.Setter;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.util.*;
+import java.util.List;
 
 public final class DirectClassMeta<T> implements ClassMeta<T> {
 

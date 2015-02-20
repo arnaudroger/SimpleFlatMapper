@@ -63,7 +63,7 @@ public class JdbcMapperErrorTest {
 	
 	@Test
 	public void testInstantiatorError() {
-		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<DbObject>(null,
+		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<DbObject>(null, null,
 				new Instantiator<ResultSet, DbObject>() {
 					@Override
 					public DbObject newInstance(ResultSet s) throws Exception {
@@ -84,8 +84,8 @@ public class JdbcMapperErrorTest {
 		MyJdbcRawHandlerErrorHandler handler = new MyJdbcRawHandlerErrorHandler();
 		@SuppressWarnings("unchecked")
 		FieldMapper<ResultSet, DbObject>[] fields = new FieldMapper[] {};
-		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<DbObject>(fields,
-				new Instantiator<ResultSet, DbObject>() {
+		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<DbObject>(fields, new FieldMapper[] {},
+                new Instantiator<ResultSet, DbObject>() {
 					@Override
 					public DbObject newInstance(ResultSet s) throws Exception {
 						return new DbObject();

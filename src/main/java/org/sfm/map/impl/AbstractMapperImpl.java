@@ -23,9 +23,20 @@ public abstract class AbstractMapperImpl<S, T> implements Mapper<S, T> {
 		}
 	}
 
-	public abstract void mapFields(final S source, final T target) throws Exception;
+    @Override
+    public final void mapTo(final S source, final T target) throws MappingException {
+        try {
+            mapToFields(source, target);
+        } catch(Exception e) {
+            throw new MappingException(e.getMessage(), e);
+        }
+    }
+
+    protected abstract void mapFields(final S source, final T target) throws Exception;
+
+    protected abstract void mapToFields(final S source, final T target) throws Exception;
 
     protected void appendToStringBuilder(StringBuilder sb) {
-        sb.append("instantiator=" + instantiator);
+        sb.append("instantiator=").append(String.valueOf(instantiator));
     }
 }

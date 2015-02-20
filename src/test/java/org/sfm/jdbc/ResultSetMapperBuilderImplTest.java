@@ -40,15 +40,11 @@ public class ResultSetMapperBuilderImplTest {
 	public void testAsmFailureOnJdbcMapper() {
 		
 		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, new ReflectionService(true, true, new AsmFactory(Thread.currentThread().getContextClassLoader()) {
-			@Override
-			public <T> JdbcMapper<T> createJdbcMapper(
-					FieldMapper<ResultSet, T>[] mappers,
-					Instantiator<ResultSet, T> instantiator,
-					Class<T> target, RowHandlerErrorHandler errorHandler)
-					throws Exception {
-				throw new UnsupportedOperationException();
-			}
 
+            @Override
+            public <T> JdbcMapper<T> createJdbcMapper(FieldMapper<ResultSet, T>[] mappers, FieldMapper<ResultSet, T>[] constructorMappers, Instantiator<ResultSet, T> instantiator, Class<T> target, RowHandlerErrorHandler errorHandler) throws Exception {
+                throw new UnsupportedOperationException();
+            }
 		}));
 		
 		assertTrue(builder.mapper() instanceof JdbcMapperImpl);

@@ -18,7 +18,7 @@ public class ByteDelayedCellSetter<T> implements DelayedCellSetter<T, Byte> {
 
 	@Override
 	public Byte getValue() {
-		return new Byte(getByte());
+		return getByte();
 	}
 
 	public byte getByte() {

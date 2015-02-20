@@ -2,6 +2,7 @@ package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -32,14 +33,19 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 	private <E> IndexedElement<T, E> newIndexedElement(TupleClassMeta<T> tupleClassMeta, int i) {
 		Type resolvedType = ((ParameterizedType) tupleClassMeta.getType()).getActualTypeArguments()[i];
 		ConstructorPropertyMeta<T, E> prop =
-				new ConstructorPropertyMeta<T, E>("element" + (i),
-					"element" + (i), 	tupleClassMeta.getReflectionService(),
-					new ConstructorParameter("element" + (i), Object.class, resolvedType));
+                newConstructorPropertyMeta(tupleClassMeta, i, resolvedType);
 		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(resolvedType, false);
 		return new IndexedElement<T, E>(prop, classMeta);
 	}
 
-	@Override
+    private <E> ConstructorPropertyMeta<T, E> newConstructorPropertyMeta(TupleClassMeta<T> tupleClassMeta, int i, Type resolvedType) {
+        Class<T> tClass = TypeHelper.toClass(tupleClassMeta.getType());
+        return new ConstructorPropertyMeta<T, E>("element" + (i),
+            "element" + (i), 	tupleClassMeta.getReflectionService(),
+            new ConstructorParameter("element" + (i), Object.class, resolvedType), tClass);
+    }
+
+    @Override
 	public <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
 
 		IndexedColumn indexedColumn = propertyNameMatcher.matchesIndex();

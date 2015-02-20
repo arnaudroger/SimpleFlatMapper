@@ -13,7 +13,7 @@ public final class LongCellValueReaderImpl implements LongCellValueReader {
 	@Override
 	public Long read(char[] chars, int offset, int length, ParsingContext parsingContext) {
 		if (length == 0) return null;
-		return new Long(readLong(chars, offset, length, parsingContext));
+		return readLong(chars, offset, length, parsingContext);
 	}
 
 	@Override

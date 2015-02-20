@@ -3,7 +3,6 @@ package org.sfm.reflect;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.impl.CalculateMaxIndex;
 import org.sfm.map.FieldKey;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.PropertyMapping;
 import org.sfm.map.impl.PropertyMappingsBuilder;
 import org.sfm.reflect.asm.AsmFactory;
@@ -32,7 +31,8 @@ public class InstantiatorFactory {
 		return  getInstantiator(source, target, propertyMappingsBuilder, constructorParameterGetterMap, getterFactory, true);
 	}
 
-	public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap, final org.sfm.map.GetterFactory<S, K> getterFactory,  boolean useAsmIfEnabled) throws NoSuchMethodException {
+	@SuppressWarnings("unchecked")
+    public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap, final org.sfm.map.GetterFactory<S, K> getterFactory,  boolean useAsmIfEnabled) throws NoSuchMethodException {
 
         if (propertyMappingsBuilder.isDirectProperty()) {
             Getter getter = propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K, D>>() {

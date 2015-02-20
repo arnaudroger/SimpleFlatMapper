@@ -25,7 +25,7 @@ public final class FloatResultSetGetter implements FloatGetter<ResultSet>, Gette
 		if (f == 0f && target.wasNull()) {
 			return null;
 		} else {
-			return Float.valueOf(f);
+			return f;
 		}
 	}
 

@@ -52,7 +52,8 @@ public final class ObjectGetterFactory {
 	}
 
 	private Method lookForMethod(final Class<?> target, final String property) {
-		
+        if (target == null)  return null;
+
 		for(Method m : target.getDeclaredMethods()) {
 			if(GetterHelper.methodModifiersMatches(m.getModifiers())
 					&& GetterHelper.methodNameMatchesProperty(m.getName(), property)) {
@@ -69,6 +70,9 @@ public final class ObjectGetterFactory {
 	
 
 	private Field lookForField(final Class<?> target, final String property) {
+
+        if (target == null)  return null;
+
 		for(Field field : target.getDeclaredFields()) {
 			if(GetterHelper.fieldModifiersMatches(field.getModifiers())
 					&& GetterHelper.fieldNameMatchesProperty(field.getName(), property)) {

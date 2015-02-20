@@ -51,7 +51,7 @@ public class JoinJdbcMapperTest {
     public static class ProfessorGS {
         private int id;
         private String name;
-        private List<StudentField> students;
+        private List<StudentGS> students;
 
         public int getId() {
             return id;
@@ -69,19 +69,65 @@ public class JoinJdbcMapperTest {
             this.name = name;
         }
 
-        public List<StudentField> getStudents() {
+        public List<StudentGS> getStudents() {
             return students;
         }
 
-        public void setStudents(List<StudentField> students) {
+        public void setStudents(List<StudentGS> students) {
             this.students = students;
         }
     }
 
 
+    public static class StudentC{
+        private final int id;
+        private final String name;
+
+        public StudentC(int id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+    }
+    public static class ProfessorC {
+        private final int id;
+        private final String name;
+        private final List<StudentC> students;
+
+        public ProfessorC(int id, String name, List<StudentC> students) {
+            this.id = id;
+            this.name = name;
+            this.students = students;
+        }
+
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public List<StudentC> getStudents() {
+            return students;
+        }
+
+    }
+
+
     @Test
     public void testJoinTableFields() throws SQLException {
-        JdbcMapper<ProfessorField> mapper = JdbcMapperFactory.newInstance().disableAsm(true)
+        JdbcMapper<ProfessorField> mapper = JdbcMapperFactory.newInstance()
+                //.disableAsm(true)
                 .newBuilder(ProfessorField.class)
                 .addMapping("id")
                 .addMapping("name")
@@ -114,8 +160,9 @@ public class JoinJdbcMapperTest {
     }
 
     @Test
-    public void testJoinTableGS() throws SQLException {
-        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactory.newInstance().disableAsm(true)
+    public void testJoinTableGSNoAsm() throws SQLException {
+        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactory.newInstance()
+                .useAsm(false)
                 .newBuilder(ProfessorGS.class)
                 .addMapping("id")
                 .addMapping("name")
@@ -124,12 +171,12 @@ public class JoinJdbcMapperTest {
                 .joinOn("id");
 
         List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
-        validate(professors);
+        validateGS(professors);
 
         //IFJAVA8_START
-        validate(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
+        validateGS(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
 
-        validate(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
+        validateGS(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
         //IFJAVA8_END
 
         Iterator<ProfessorGS> iterator = mapper.iterator(setUpResultSetMock());
@@ -137,12 +184,97 @@ public class JoinJdbcMapperTest {
         while(iterator.hasNext()) {
             professors.add(iterator.next());
         }
-        validate(professors);
-
-
-
-
+        validateGS(professors);
     }
+
+    @Test
+    public void testJoinTableGS() throws SQLException {
+        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactory.newInstance()
+                //.disableAsm(true)
+                .newBuilder(ProfessorGS.class)
+                .addMapping("id")
+                .addMapping("name")
+                .addMapping("students_id")
+                .addMapping("students_name")
+                .joinOn("id");
+
+        List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
+        validateGS(professors);
+
+        //IFJAVA8_START
+        validateGS(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
+
+        validateGS(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
+        //IFJAVA8_END
+
+        Iterator<ProfessorGS> iterator = mapper.iterator(setUpResultSetMock());
+        professors = new ArrayList<ProfessorGS>();
+        while(iterator.hasNext()) {
+            professors.add(iterator.next());
+        }
+        validateGS(professors);
+    }
+
+
+    @Test
+    public void testJoinTableC() throws SQLException {
+        JdbcMapper<ProfessorC> mapper = JdbcMapperFactory.newInstance()
+                //.disableAsm(true)
+                .newBuilder(ProfessorC.class)
+                .addMapping("id")
+                .addMapping("name")
+                .addMapping("students_id")
+                .addMapping("students_name")
+                .joinOn("id");
+
+        List<ProfessorC> professors = mapper.forEach(setUpResultSetMockConstructor(), new ListHandler<ProfessorC>()).getList();
+        validateC(professors);
+
+        //IFJAVA8_START
+        validateC(mapper.stream(setUpResultSetMockConstructor()).collect(Collectors.toList()));
+
+        validateC(mapper.stream(setUpResultSetMockConstructor()).limit(2).collect(Collectors.toList()));
+        //IFJAVA8_END
+
+        Iterator<ProfessorC> iterator = mapper.iterator(setUpResultSetMockConstructor());
+        professors = new ArrayList<ProfessorC>();
+        while(iterator.hasNext()) {
+            professors.add(iterator.next());
+        }
+        validateC(professors);
+    }
+
+
+    @Test
+    public void testJoinTableCNoAsm() throws SQLException {
+        JdbcMapper<ProfessorC> mapper = JdbcMapperFactory.newInstance()
+                .useAsm(false)
+                .newBuilder(ProfessorC.class)
+                .addMapping("id")
+                .addMapping("name")
+                .addMapping("students_id")
+                .addMapping("students_name")
+                .joinOn("id");
+
+        ResultSet rs = setUpResultSetMockConstructor();
+        ListHandler<ProfessorC> listHandler = new ListHandler<ProfessorC>();
+        List<ProfessorC> professors = mapper.forEach(rs, listHandler).getList();
+        validateC(professors);
+
+        //IFJAVA8_START
+        validateC(mapper.stream(setUpResultSetMockConstructor()).collect(Collectors.toList()));
+
+        validateC(mapper.stream(setUpResultSetMockConstructor()).limit(2).collect(Collectors.toList()));
+        //IFJAVA8_END
+
+        Iterator<ProfessorC> iterator = mapper.iterator(setUpResultSetMockConstructor());
+        professors = new ArrayList<ProfessorC>();
+        while(iterator.hasNext()) {
+            professors.add(iterator.next());
+        }
+        validateC(professors);
+    }
+
 
     private ResultSet setUpResultSetMock() throws SQLException {
         ResultSet rs = mock(ResultSet.class);
@@ -156,7 +288,38 @@ public class JoinJdbcMapperTest {
         return rs;
     }
 
-    private void validate(List<ProfessorGS> professors) {
+    private ResultSet setUpResultSetMockConstructor() throws SQLException {
+        ResultSet rs = mock(ResultSet.class);
+
+        when(rs.next()).thenReturn(true, true, true, false);
+        when(rs.getInt(1)).thenReturn(1, 2);
+        when(rs.getString(2)).thenReturn("professor1", "professor2");
+        when(rs.getInt(3)).thenReturn(3, 4, 3);
+        when(rs.getString(4)).thenReturn("student3", "student4", "student3");
+        when(rs.getObject(1)).thenReturn(1, 1, 2);
+        return rs;
+    }
+
+    private void validateGS(List<ProfessorGS> professors) {
+        assertEquals(2, professors.size());
+        assertEquals(1, professors.get(0).id);
+        assertEquals("professor1", professors.get(0).name);
+        assertEquals(2, professors.get(0).students.size());
+        assertEquals(3, professors.get(0).students.get(0).id);
+        assertEquals("student3", professors.get(0).students.get(0).name);
+        assertEquals(4, professors.get(0).students.get(1).id);
+        assertEquals("student4", professors.get(0).students.get(1).name);
+
+
+        assertEquals(2, professors.get(1).id);
+        assertEquals("professor2", professors.get(1).name);
+        assertEquals(1, professors.get(1).students.size());
+        assertEquals(3, professors.get(1).students.get(0).id);
+        assertEquals("student3", professors.get(1).students.get(0).name);
+    }
+
+
+    private void validateC(List<ProfessorC> professors) {
         assertEquals(2, professors.size());
         assertEquals(1, professors.get(0).id);
         assertEquals("professor1", professors.get(0).name);

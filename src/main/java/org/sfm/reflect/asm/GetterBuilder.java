@@ -93,17 +93,8 @@ public class GetterBuilder implements Opcodes {
 			methodSuffix = "Int";
 		}
 		
-		String valueMethodPrefix = methodSuffix.toLowerCase();
-		if ("character".equals(valueMethodPrefix)) {
-			valueMethodPrefix = "char";
-		}
-		
 		String getMethod = "get" + methodSuffix;
-		String valueMethod = valueMethodPrefix + "Value";
 
-		
-		int primitiveLoadOp = AsmUtils.loadOps.get(primitive);
-		
 		cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL  + ACC_SUPER,  classType, 
 				"Ljava/lang/Object;"
 				+ "L"  + GETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;"

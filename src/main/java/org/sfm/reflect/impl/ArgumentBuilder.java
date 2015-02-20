@@ -29,43 +29,43 @@ public final class ArgumentBuilder<S, T> {
 		DEFAULT_GETTERS.put(byte.class, new Getter() {
 			@Override
 			public Object get(Object target) throws Exception {
-				return new Byte((byte) 0);
+				return (byte) 0;
 			}
 		});
 		DEFAULT_GETTERS.put(char.class, new Getter() {
 			@Override
 			public Object get(Object target) throws Exception {
-				return new Character((char) 0);
+				return (char) 0;
 			}
 		});
 		DEFAULT_GETTERS.put(short.class, new Getter() {
 			@Override
 			public Object get(Object target) throws Exception {
-				return new Short((short) 0);
+				return (short) 0;
 			}
 		});
 		DEFAULT_GETTERS.put(int.class, new Getter() {
 			@Override
 			public Object get(Object target) throws Exception {
-				return new Integer(0);
+				return 0;
 			}
 		});
 		DEFAULT_GETTERS.put(long.class, new Getter() {
 			@Override
 			public Object get(Object target) throws Exception {
-				return new Long(0);
+				return (long) 0;
 			}
 		});
 		DEFAULT_GETTERS.put(float.class, new Getter() {
 			@Override
 			public Object get(Object target) throws Exception {
-				return new Float(0.0);
+				return 0.0f;
 			}
 		});
 		DEFAULT_GETTERS.put(double.class, new Getter() {
 				@Override
 				public Object get(Object target) throws Exception {
-					return new Double(0.0d);
+					return 0.0d;
 				}
 			});
 	}

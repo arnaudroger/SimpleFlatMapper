@@ -1,17 +1,17 @@
 package org.sfm.reflect.meta;
 
-import org.sfm.reflect.ConstructorParameter;
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.Setter;
+import org.sfm.reflect.*;
 
 import java.lang.reflect.Type;
 
 public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
-	public ConstructorPropertyMeta(String name, String column, ReflectionService reflectService, ConstructorParameter constructorParameter) {
+    private final Class<T> owner;
+
+    public ConstructorPropertyMeta(String name, String column, ReflectionService reflectService, ConstructorParameter constructorParameter, Class<T> owner) {
 		super(name, column, reflectService);
 		this.constructorParameter = constructorParameter;
+        this.owner = owner;
 	}
 
 	private final ConstructorParameter constructorParameter;
@@ -23,7 +23,7 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
     @Override
     protected Getter<T, P> newGetter() {
-        throw new UnsupportedOperationException();
+        return reflectService.getObjectGetterFactory().getGetter(owner, getName());
     }
 
     @Override

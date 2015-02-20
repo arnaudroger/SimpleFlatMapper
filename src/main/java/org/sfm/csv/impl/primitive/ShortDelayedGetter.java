@@ -19,7 +19,7 @@ public class ShortDelayedGetter<T> implements ShortGetter<DelayedCellSetter<T, ?
 
 	@Override
 	public Short get(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return Short.valueOf(getShort(target));
+		return getShort(target);
 	}
 
     @Override

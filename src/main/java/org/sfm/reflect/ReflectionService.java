@@ -156,7 +156,7 @@ public class ReflectionService {
 		return false;
 	}
 
-    public ObjectGetterFactory getGetterFactory() {
+    public ObjectGetterFactory getObjectGetterFactory() {
         return objectGetterFactory;
     }
 }

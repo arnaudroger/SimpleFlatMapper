@@ -59,6 +59,16 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		}
 	}
 
+    @Override
+    public final void mapTo(final ResultSet source, T target) throws MappingException {
+        try {
+            final JdbcMapper<T> mapper = buildMapper(source.getMetaData());
+            mapper.mapTo(source, target);
+        } catch(SQLException e) {
+            throw new SQLMappingException(e.getMessage(), e);
+        }
+    }
+
 	@Override
 	public final <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handle)
 			throws SQLException, MappingException {

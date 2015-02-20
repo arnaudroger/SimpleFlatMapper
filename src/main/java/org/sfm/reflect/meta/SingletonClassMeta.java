@@ -1,7 +1,6 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ReflectionService;
-import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 

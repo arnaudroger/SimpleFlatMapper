@@ -25,7 +25,7 @@ public final class ByteResultSetGetter implements ByteGetter<ResultSet>, Getter<
 		if (b == 0 && target.wasNull()) {
 			return null;
 		} else {
-			return Byte.valueOf(b);
+			return b;
 		}
 	}
 

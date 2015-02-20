@@ -19,7 +19,7 @@ public class CharDelayedGetter<T> implements CharacterGetter<DelayedCellSetter<T
 
 	@Override
 	public Character get(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return Character.valueOf(getCharacter(target));
+		return getCharacter(target);
 	}
 
     @Override

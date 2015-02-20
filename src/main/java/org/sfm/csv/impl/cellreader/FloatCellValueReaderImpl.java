@@ -7,7 +7,7 @@ public final class FloatCellValueReaderImpl implements FloatCellValueReader {
 	@Override
 	public Float read(char[] chars, int offset, int length, ParsingContext parsingContext) {
 		if (length == 0) return null;
-		return new Float(readFloat(chars, offset, length, parsingContext));
+		return readFloat(chars, offset, length, parsingContext);
 	}
 
 	@Override

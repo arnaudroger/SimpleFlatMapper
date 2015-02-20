@@ -25,7 +25,7 @@ public final class DoubleResultSetGetter implements DoubleGetter<ResultSet>, Get
 		if (d == 0d && target.wasNull()) {
 			return null;
 		} else {
-			return Double.valueOf(d);
+			return d;
 		}
 	}
 

@@ -11,6 +11,7 @@ public class MethodGetter<T, P> implements Getter<T, P> {
         this.method = method;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public P get(T target) throws Exception {
         return (P) method.invoke(target);

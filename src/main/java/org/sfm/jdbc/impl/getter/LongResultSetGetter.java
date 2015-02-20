@@ -26,7 +26,7 @@ public final class LongResultSetGetter implements LongGetter<ResultSet>,
 		if (l == 0 && target.wasNull()) {
 			return null;
 		} else {
-			return Long.valueOf(l);
+			return l;
 		}
 	}
 

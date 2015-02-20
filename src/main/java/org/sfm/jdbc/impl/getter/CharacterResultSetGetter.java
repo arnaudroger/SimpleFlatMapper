@@ -25,7 +25,7 @@ public final class CharacterResultSetGetter implements CharacterGetter<ResultSet
 		if (c == 0 && target.wasNull()) {
 			return null;
 		} else {
-			return Character.valueOf(c);
+			return c;
 		}
 	}
 

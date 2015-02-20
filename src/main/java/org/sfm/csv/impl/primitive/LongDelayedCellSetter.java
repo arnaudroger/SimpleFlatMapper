@@ -18,7 +18,7 @@ public class LongDelayedCellSetter<T> implements DelayedCellSetter<T, Long> {
 
 	@Override
 	public Long getValue() {
-		return new Long(getLong());
+		return getLong();
 	}
 	
 	public long getLong() {

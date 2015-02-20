@@ -19,7 +19,7 @@ public class DoubleDelayedGetter<T> implements DoubleGetter<DelayedCellSetter<T,
 
 	@Override
 	public Double get(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return Double.valueOf(getDouble(target));
+		return getDouble(target);
 	}
 
     @Override

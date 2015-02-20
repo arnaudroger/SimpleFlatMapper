@@ -7,17 +7,29 @@ import java.util.Arrays;
 public class MapperImpl<S, T> extends AbstractMapperImpl<S, T> {
 	
 	private final FieldMapper<S, T>[] fieldMappers;
-	
-	public MapperImpl(final FieldMapper<S, T>[] mappers, final Instantiator<S, T> instantiator) {
+
+    private final FieldMapper<S, T>[] constructorMappers;
+
+    public MapperImpl(final FieldMapper<S, T>[] fieldMappers, final FieldMapper<S, T>[] constructorMappers, final Instantiator<S, T> instantiator) {
 		super(instantiator);
-		this.fieldMappers = mappers;
+		this.fieldMappers = fieldMappers;
+        this.constructorMappers = constructorMappers;
 	}
 
-	public final void mapFields(final S source, final T target) throws Exception {
-		for(int i = 0; i < fieldMappers.length; i++) {
-			fieldMappers[i].map(source, target);
-		}
+	protected final void mapFields(final S source, final T target) throws Exception {
+        for (FieldMapper<S, T> fieldMapper : fieldMappers) {
+            fieldMapper.map(source, target);
+        }
 	}
+
+    @Override
+    protected final void mapToFields(S source, T target) throws Exception {
+        for (FieldMapper<S, T> constructorMapper : constructorMappers) {
+            constructorMapper.map(source, target);
+        }
+
+        mapFields(source, target);
+    }
 
     @Override
     public String toString() {

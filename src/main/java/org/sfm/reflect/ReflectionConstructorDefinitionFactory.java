@@ -35,8 +35,8 @@ public class ReflectionConstructorDefinitionFactory {
                 TypeVariable<?> tv = (TypeVariable<?>) paramType;
                 paramType = constructor.getParameterTypes()[i];
                 ParameterizedType pt = (ParameterizedType) target;
-                for(int pti = 0; pti < typeParameters.length; pti++) {
-                    if (typeParameters[pti].getName().equals(tv.getName())) {
+                for (TypeVariable<Class<Object>> typeParameter : typeParameters) {
+                    if (typeParameter.getName().equals(tv.getName())) {
                         resolvedParamType = pt.getActualTypeArguments()[i];
                         break;
                     }

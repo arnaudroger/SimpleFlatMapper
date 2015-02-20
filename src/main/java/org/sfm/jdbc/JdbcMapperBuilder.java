@@ -9,6 +9,7 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
+import org.sfm.tuples.Tuple2;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -41,15 +42,16 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	@Override
 	public JdbcMapper<T> mapper() {
         FieldMapper<ResultSet, T>[] fields = fields();
-        Instantiator<ResultSet, T> instantiator = getInstantiator();
+        Tuple2<FieldMapper<ResultSet, T>[], Instantiator<ResultSet, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
         if (reflectionService.isAsmActivated()) {
 			try {
-				return reflectionService.getAsmFactory().createJdbcMapper(fields, instantiator, getTargetClass(), jdbcMapperErrorHandler);
+				return reflectionService.getAsmFactory().createJdbcMapper(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), getTargetClass(), jdbcMapperErrorHandler);
 			} catch(Exception e) {
-				return new JdbcMapperImpl<T>(fields, instantiator, jdbcMapperErrorHandler);
+                //throw new RuntimeException(e);
+				return new JdbcMapperImpl<T>(fields, constructorFieldMappersAndInstantiator.first(),  constructorFieldMappersAndInstantiator.second(), jdbcMapperErrorHandler);
 			}
 		} else {
-			return new JdbcMapperImpl<T>(fields, instantiator, jdbcMapperErrorHandler);
+			return new JdbcMapperImpl<T>(fields, constructorFieldMappersAndInstantiator.first(),  constructorFieldMappersAndInstantiator.second(), jdbcMapperErrorHandler);
 		}
 	}
 
@@ -112,7 +114,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 
 
     public JdbcMapper<T> joinOn(String... columns) {
-        return new JoinJdbcMapper<T>(breakDetector(columns), (AbstractMapperImpl<ResultSet, T>) mapper(), jdbcMapperErrorHandler );
+        return new JoinJdbcMapper<T>(breakDetector(columns),  mapper(), jdbcMapperErrorHandler );
     }
 
     private BreakDetectorFactory<ResultSet> breakDetector(String[] columnNames) {

@@ -24,9 +24,10 @@ public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		return reflectService.getObjectSetterFactory().getMethodSetter(method);
 	}
 
+    @SuppressWarnings("unchecked")
     @Override
     protected Getter<T, P> newGetter() {
-        return reflectService.getGetterFactory().<T,P>getGetter((Class<? super T>) method.getDeclaringClass(), SetterHelper.getPropertyNameFromMethodName(method.getName()));
+        return reflectService.getObjectGetterFactory().<T,P>getGetter((Class<? super T>) method.getDeclaringClass(), SetterHelper.getPropertyNameFromMethodName(method.getName()));
     }
 
     @Override

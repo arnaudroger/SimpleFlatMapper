@@ -19,7 +19,7 @@ public class ByteDelayedGetter<T> implements ByteGetter<DelayedCellSetter<T, ?>[
 
 	@Override
 	public Byte get(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return Byte.valueOf(getByte(target));
+		return getByte(target);
 	}
 
     @Override

@@ -342,7 +342,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			}
 		}
 		
-		Getter<ResultSet, P> getter = null;
+		Getter<ResultSet, P> getter;
 		if (getterFactory != null) {
 			getter = (Getter<ResultSet, P>) getterFactory.newGetter(genericType, key);
 		} else {

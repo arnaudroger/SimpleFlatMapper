@@ -2,9 +2,9 @@ package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.BreakDetectorFactory;
 import org.sfm.jdbc.JdbcMapper;
+import org.sfm.map.Mapper;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.AbstractMapperImpl;
 import org.sfm.utils.RowHandler;
 
 import java.sql.ResultSet;
@@ -23,10 +23,10 @@ import java.util.stream.StreamSupport;
 public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
 
     private final BreakDetectorFactory<ResultSet> breakDetectorFactory;
-    private final AbstractMapperImpl<ResultSet, T> mapper;
+    private final Mapper<ResultSet, T> mapper;
     private final RowHandlerErrorHandler errorHandler;
 
-    public JoinJdbcMapper(BreakDetectorFactory breakDetectorFactory, AbstractMapperImpl<ResultSet, T> mapper, RowHandlerErrorHandler errorHandler) {
+    public JoinJdbcMapper(BreakDetectorFactory<ResultSet> breakDetectorFactory, Mapper<ResultSet, T> mapper, RowHandlerErrorHandler errorHandler) {
         this.breakDetectorFactory = breakDetectorFactory;
         this.mapper = mapper;
         this.errorHandler = errorHandler;
@@ -36,6 +36,11 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
     @Override
     public T map(ResultSet source) throws MappingException {
         return mapper.map(source);
+    }
+
+    @Override
+    public void mapTo(ResultSet source, T target) throws MappingException {
+        mapper.mapTo(source, target);
     }
 
     @Override
@@ -50,13 +55,9 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
                 t = map(rs);
             } else {
                 if (t == null) {
-                    t = mapper.map(rs);
+                    t = map(rs);
                 } else {
-                    try {
-                        mapper.mapFields(rs, t);
-                    } catch (Exception e) {
-                        throw new MappingException(e.getMessage(), e);
-                    }
+                    mapTo(rs, t);
                 }
             }
 		}
@@ -125,7 +126,7 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
                                 currentValue = JoinJdbcMapper.this.mapper.map(rs);
                             } else {
                                 try {
-                                    JoinJdbcMapper.this.mapper.mapFields(rs, currentValue);
+                                    JoinJdbcMapper.this.mapper.mapTo(rs, currentValue);
                                 } catch (Exception e) {
                                     throw new MappingException(e.getMessage(), e);
                                 }
@@ -201,7 +202,7 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
                             currentValue = JoinJdbcMapper.this.mapper.map(resultSet);
                         } else {
                             try {
-                                JoinJdbcMapper.this.mapper.mapFields(resultSet, currentValue);
+                                JoinJdbcMapper.this.mapper.mapTo(resultSet, currentValue);
                             } catch (Exception e) {
                                 throw new MappingException(e.getMessage(), e);
                             }

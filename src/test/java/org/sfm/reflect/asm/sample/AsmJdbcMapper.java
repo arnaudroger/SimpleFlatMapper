@@ -19,20 +19,25 @@ public final class AsmJdbcMapper extends AbstractJdbcMapperImpl<DbObject> {
 	private final FieldMapperImpl<ResultSet, DbObject, ?> mapper4;
 	
 	@SuppressWarnings("unchecked")
-	public AsmJdbcMapper(FieldMapper<ResultSet, DbObject>[] mappers, Instantiator<ResultSet, DbObject> instantiator, RowHandlerErrorHandler errorHandler) {
+	public AsmJdbcMapper(FieldMapper<ResultSet, DbObject>[] mappers, FieldMapper<ResultSet, DbObject>[] mappers2, Instantiator<ResultSet, DbObject> instantiator, RowHandlerErrorHandler errorHandler) {
 		super(instantiator, errorHandler);
 		mapper1 = (LongFieldMapper<ResultSet, DbObject>) mappers[0];
 		mapper2 = (IntFieldMapper<ResultSet, DbObject>) mappers[2];
 		mapper3 = (FieldMapperImpl<ResultSet, DbObject, ?>) mappers[3];
-		mapper4 = (FieldMapperImpl<ResultSet, DbObject, ?>) mappers[4];
+		mapper4 = (FieldMapperImpl<ResultSet, DbObject, ?>) mappers2[0];
 	}
 	
-	public final void mapFields(ResultSet source, final DbObject target) throws Exception {
+	protected final void mapFields(ResultSet source, final DbObject target) throws Exception {
 		mapper1.map(source, target);
 		mapper2.map(source, target);
 		mapper3.map(source, target);
 		mapper4.map(source, target);
 	}
+
+    @Override
+    protected final void mapToFields(ResultSet source, DbObject target) throws Exception {
+        mapFields(source, target);
+    }
 
     @Override
     public String toString() {

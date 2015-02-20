@@ -1,7 +1,6 @@
 package org.sfm.reflect.impl;
 
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.Setter;
 
 import java.lang.reflect.Field;
 
@@ -13,7 +12,8 @@ public final class FieldGetter<T, P> implements Getter<T, P> {
 		this.field = field;
 	}
 
-	public P get(final T target) throws IllegalAccessException {
+	@SuppressWarnings("unchecked")
+    public P get(final T target) throws IllegalAccessException {
 		return (P) field.get(target);
 	}
 

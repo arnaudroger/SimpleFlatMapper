@@ -29,13 +29,13 @@ public final class MapperCache<K, M> {
 		CacheEntry<K, M>[] newEntries;
 		do {
 			entries = mapperCache.get();
-			
-			for(int i = 0; i < entries.length; i++) {
-				if (entries[0].key.equals(key)) {
-					// already added 
-					return;
-				}
-			}
+
+            for (CacheEntry<K, M> entry : entries) {
+                if (entry.key.equals(key)) {
+                    // already added
+                    return;
+                }
+            }
 			
 			newEntries = new CacheEntry[entries.length + 1];
 			
@@ -47,12 +47,11 @@ public final class MapperCache<K, M> {
 
 	public M get(K key) {
 		final CacheEntry<K, M>[] entries = mapperCache.get();
-		for(int i = 0; i < entries.length; i++) {
-			final CacheEntry<K, M> entry = entries[i];
-			if (entry.key.equals(key)) {
-				return entry.mapper;
-			}
-		}
+        for (final CacheEntry<K, M> entry : entries) {
+            if (entry.key.equals(key)) {
+                return entry.mapper;
+            }
+        }
 		return null;
 	}
 

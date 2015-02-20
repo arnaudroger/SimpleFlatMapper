@@ -18,7 +18,7 @@ public class FloatDelayedCellSetter<T> implements DelayedCellSetter<T, Float> {
 
 	@Override
 	public Float getValue() {
-		return new Float(getFloat());
+		return getFloat();
 	}
 
 	public float getFloat() {

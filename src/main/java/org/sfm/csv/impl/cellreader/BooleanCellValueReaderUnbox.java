@@ -12,7 +12,7 @@ public class BooleanCellValueReaderUnbox implements BooleanCellValueReader {
 
     @Override
     public boolean readBoolean(char[] chars, int offset, int length, ParsingContext parsingContext) {
-        return reader.read(chars, offset, length, parsingContext).booleanValue();
+        return reader.read(chars, offset, length, parsingContext);
     }
 
     @Override

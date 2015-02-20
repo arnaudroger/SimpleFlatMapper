@@ -13,7 +13,7 @@ public class DoubleCellValueReaderUnbox implements DoubleCellValueReader {
 
     @Override
     public double readDouble(char[] chars, int offset, int length, ParsingContext parsingContext) {
-        return read(chars, offset, length, parsingContext).doubleValue();
+        return read(chars, offset, length, parsingContext);
     }
 
     @Override

@@ -25,7 +25,7 @@ public final class IntResultSetGetter implements IntGetter<ResultSet>, Getter<Re
 		if (i == 0 && target.wasNull()) {
 			return null;
 		} else {
-			return Integer.valueOf(i);
+			return i;
 		}
 	}
 

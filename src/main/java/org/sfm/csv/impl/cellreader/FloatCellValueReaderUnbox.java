@@ -13,7 +13,7 @@ public class FloatCellValueReaderUnbox implements FloatCellValueReader {
 
     @Override
     public float readFloat(char[] chars, int offset, int length, ParsingContext parsingContext) {
-        return read(chars, offset, length, parsingContext).floatValue();
+        return read(chars, offset, length, parsingContext);
     }
 
     @Override

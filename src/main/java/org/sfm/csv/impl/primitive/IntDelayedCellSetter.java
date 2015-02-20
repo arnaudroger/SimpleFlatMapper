@@ -18,7 +18,7 @@ public class IntDelayedCellSetter<T> implements DelayedCellSetter<T, Integer> {
 
 	@Override
 	public Integer getValue() {
-		return new Integer(getInt());
+		return getInt();
 	}
 
 	public int getInt() {

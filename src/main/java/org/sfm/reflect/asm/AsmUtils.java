@@ -14,8 +14,6 @@ import java.lang.reflect.TypeVariable;
 import java.util.*;
 
 import static org.objectweb.asm.Opcodes.*;
-import static org.objectweb.asm.Opcodes.FRETURN;
-import static org.objectweb.asm.Opcodes.LRETURN;
 
 public class AsmUtils {
 

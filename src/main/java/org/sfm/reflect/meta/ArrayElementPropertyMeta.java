@@ -3,10 +3,8 @@ package org.sfm.reflect.meta;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
-import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
 public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
@@ -25,6 +23,7 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
         return (Setter<T, E>) new IndexArraySetter<E>(index);
 	}
 
+    @SuppressWarnings("unchecked")
     @Override
     protected Getter<T, E> newGetter() {
         return (Getter<T, E>) new IndexArrayGetter<E>(index);

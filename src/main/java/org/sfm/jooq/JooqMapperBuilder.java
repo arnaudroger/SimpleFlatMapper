@@ -4,8 +4,10 @@ import org.jooq.Record;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.impl.*;
+import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.tuples.Tuple2;
 
 import java.lang.reflect.Type;
 
@@ -38,7 +40,8 @@ public class JooqMapperBuilder<R extends Record, E> extends
 	
 	@Override
 	public Mapper<R, E> mapper() {
-		return new MapperImpl<R, E>(fields(), getInstantiator());
+        Tuple2<FieldMapper<R, E>[], Instantiator<R, E>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
+        return new MapperImpl<R, E>(fields(), constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second());
 	}
 
 }

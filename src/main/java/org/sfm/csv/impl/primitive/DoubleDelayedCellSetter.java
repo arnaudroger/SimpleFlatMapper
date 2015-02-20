@@ -18,7 +18,7 @@ public class DoubleDelayedCellSetter<T> implements DelayedCellSetter<T, Double> 
 
 	@Override
 	public Double getValue() {
-		return new Double(getDouble());
+		return getDouble();
 	}
 
 	public double getDouble() {

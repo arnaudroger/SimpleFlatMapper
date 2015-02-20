@@ -14,7 +14,7 @@ public class ShortCellValueReaderUnbox implements ShortCellValueReader {
 
     @Override
     public short readShort(char[] chars, int offset, int length, ParsingContext parsingContext) {
-        return read(chars, offset, length, parsingContext).shortValue();
+        return read(chars, offset, length, parsingContext);
     }
 
     @Override

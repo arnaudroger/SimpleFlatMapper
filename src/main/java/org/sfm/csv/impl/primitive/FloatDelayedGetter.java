@@ -19,7 +19,7 @@ public class FloatDelayedGetter<T> implements FloatGetter<DelayedCellSetter<T, ?
 
 	@Override
 	public Float get(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return Float.valueOf(getFloat(target));
+		return getFloat(target);
 	}
 
     @Override

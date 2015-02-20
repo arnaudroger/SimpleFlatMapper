@@ -5,8 +5,10 @@ import com.mysema.query.types.Expression;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.impl.*;
+import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.tuples.Tuple2;
 
 import java.lang.reflect.Type;
 
@@ -29,7 +31,8 @@ public final class QueryDslMapperBuilder<T>
 
 	@Override
 	public Mapper<Tuple, T> mapper() {
-		return new MapperImpl<Tuple, T>(fields(), getInstantiator());
+        Tuple2<FieldMapper<Tuple, T>[], Instantiator<Tuple, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
+        return new MapperImpl<Tuple, T>(fields(), constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second());
 	}
 
 	@Override

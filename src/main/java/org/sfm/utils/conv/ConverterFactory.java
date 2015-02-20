@@ -22,37 +22,37 @@ public class ConverterFactory {
 		numberConverters.put(Byte.class, new Converter<Number, Byte>() {
 			@Override
 			public Byte convert(Number in) {
-				return new Byte(in.byteValue());
+				return in.byteValue();
 			}
 		});
 		numberConverters.put(Short.class, new Converter<Number, Short>() {
 			@Override
 			public Short convert(Number in) {
-				return new Short(in.shortValue());
+				return in.shortValue();
 			}
 		});
 		numberConverters.put(Integer.class, new Converter<Number, Integer>() {
 			@Override
 			public Integer convert(Number in) {
-				return new Integer(in.intValue());
+				return in.intValue();
 			}
 		});
 		numberConverters.put(Long.class, new Converter<Number, Long>() {
 			@Override
 			public Long convert(Number in) {
-				return new Long(in.longValue());
+				return in.longValue();
 			}
 		});
 		numberConverters.put(Float.class, new Converter<Number, Float>() {
 			@Override
 			public Float convert(Number in) {
-				return new Float(in.floatValue());
+				return in.floatValue();
 			}
 		});
 		numberConverters.put(Double.class, new Converter<Number, Double>() {
 			@Override
 			public Double convert(Number in) {
-				return new Double(in.doubleValue());
+				return in.doubleValue();
 			}
 		});
 		numberConverters.put(BigDecimal.class, new Converter<Number, BigDecimal>() {

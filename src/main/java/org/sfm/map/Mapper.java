@@ -9,4 +9,13 @@ public interface Mapper<S, T> {
 	 */
 	T map(S source) throws MappingException;
 
+
+    /**
+     * map source object on an existing target
+     * @param source object to map from
+     * @param target object to map to
+     * @throws MappingException
+     */
+    void mapTo(S source, T target) throws MappingException;
+
 }

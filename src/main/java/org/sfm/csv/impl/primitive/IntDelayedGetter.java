@@ -19,7 +19,7 @@ public class IntDelayedGetter<T> implements IntGetter<DelayedCellSetter<T, ?>[]>
 
 	@Override
 	public Integer get(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return Integer.valueOf(getInt(target));
+		return getInt(target);
 	}
 
     @Override

@@ -4,7 +4,6 @@ import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
 import org.sfm.reflect.ReflectionService;
-import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

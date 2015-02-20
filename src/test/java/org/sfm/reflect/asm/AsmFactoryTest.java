@@ -100,6 +100,7 @@ public class AsmFactoryTest {
 	public void testAsmJdbcMapperFailedInstantiator() throws NoSuchMethodException, SecurityException, Exception {
 		JdbcMapper<DbObject> jdbcMapper = asmFactory.createJdbcMapper(
 				(FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {},
+                (FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {},
 				new Instantiator<ResultSet, DbObject>() {
 					@Override
 					public DbObject newInstance(ResultSet s) throws Exception {
@@ -128,6 +129,7 @@ public class AsmFactoryTest {
 							}
 						}
 				},
+                (FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {},
 				new Instantiator<ResultSet, DbObject>() {
 					@Override
 					public DbObject newInstance(ResultSet s) throws Exception {

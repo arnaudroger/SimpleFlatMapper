@@ -25,7 +25,7 @@ public final class ShortResultSetGetter implements ShortGetter<ResultSet>, Gette
 		if (s == 0 && target.wasNull()) {
 			return null;
 		} else {
-			return Short.valueOf(s);
+			return s;
 		}
 	}
 

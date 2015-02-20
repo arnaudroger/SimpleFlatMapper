@@ -13,7 +13,7 @@ public class LongCellValueReaderUnbox implements LongCellValueReader {
 
     @Override
     public long readLong(char[] chars, int offset, int length, ParsingContext parsingContext) {
-        return read(chars, offset, length, parsingContext).longValue();
+        return read(chars, offset, length, parsingContext);
     }
 
     @Override

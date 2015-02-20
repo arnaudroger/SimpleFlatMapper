@@ -19,7 +19,7 @@ public class LongDelayedGetter<T> implements LongGetter<DelayedCellSetter<T, ?>[
 
 	@Override
 	public Long get(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return Long.valueOf(getLong(target));
+		return getLong(target);
 	}
 
     @Override

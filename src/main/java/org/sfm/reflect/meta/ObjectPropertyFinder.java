@@ -3,7 +3,6 @@ package org.sfm.reflect.meta;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
-import org.sfm.utils.Predicate;
 
 import java.util.*;
 

@@ -5,6 +5,7 @@ import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.FieldMapper;
 import org.sfm.reflect.*;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ public class AsmFactory {
 		return setter;
 	}
 
+    @SuppressWarnings("unchecked")
     public <T, P> Getter<T,P> createGetter(final Method m) throws Exception {
         Getter<T,P> getter = (Getter<T, P>) getterCache.get(m);
         if (getter == null) {
@@ -100,11 +102,12 @@ public class AsmFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target, RowHandlerErrorHandler errorHandler) throws Exception {
-		final String className = generateClassNameForJdbcMapper(mappers, ResultSet.class, target);
-		final byte[] bytes = JdbcMapperAsmBuilder.dump(className, mappers, target);
+	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final FieldMapper<ResultSet, T>[] constructorMappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target, RowHandlerErrorHandler errorHandler) throws Exception {
+		final String className = generateClassNameForJdbcMapper(mappers, constructorMappers, ResultSet.class, target);
+		final byte[] bytes = JdbcMapperAsmBuilder.dump(className, mappers, constructorMappers, target);
 		final Class<?> type = factoryClassLoader.registerClass(className, bytes);
-		return (JdbcMapper<T>) type.getDeclaredConstructors()[0].newInstance(mappers, instantiator, errorHandler);
+        final Constructor<?> constructor = type.getDeclaredConstructors()[0];
+        return (JdbcMapper<T>) constructor.newInstance(mappers, constructorMappers, instantiator, errorHandler);
 	}
 	
 	private final AtomicLong classNumber = new AtomicLong();
@@ -145,8 +148,14 @@ public class AsmFactory {
                 ;
     }
 	
-	private <S, T> String generateClassNameForJdbcMapper(final FieldMapper<S, T>[] mappers, final Class<S> source, final Class<T> target) {
-		return "org.sfm.reflect.asm." + target.getPackage().getName() + 
-					".AsmMapper" + replaceArray(source.getSimpleName()) + "2" +  replaceArray(target.getSimpleName()) + mappers.length + "_" + classNumber.getAndIncrement(); 
+	private <S, T> String generateClassNameForJdbcMapper(final FieldMapper<S, T>[] mappers,final FieldMapper<S, T>[] mappers2, final Class<S> source, final Class<T> target) {
+		return "org.sfm.reflect.asm." + getPackageName(target) +
+					".AsmMapper" + replaceArray(source.getSimpleName()) + "2" +  replaceArray(target.getSimpleName()) + mappers.length + "_"+ mappers2.length + "_" + classNumber.getAndIncrement();
 	}
+
+    private <T> String getPackageName(Class<T> target) {
+
+        Package targetPackage = target.getPackage();
+        return targetPackage != null ? targetPackage.getName() : ".null";
+    }
 }

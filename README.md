@@ -3,7 +3,7 @@
 
 # Simple Flat Mapper (SFM) [v1.5.4](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.5.4)
 
-Next Release : [1.6.0](https://github.com/arnaudroger/SimpleFlatMapper/milestones/1.6.0) focuses on 1-n support for jdbc and class discriminator support.
+Next Release : [1.6.0](https://github.com/arnaudroger/SimpleFlatMapper/issues?q=milestone%3A1.6.0) focuses on 1-n support for jdbc and class discriminator support.
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 

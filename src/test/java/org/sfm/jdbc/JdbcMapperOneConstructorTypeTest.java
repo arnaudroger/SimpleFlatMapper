@@ -1,7 +1,6 @@
 package org.sfm.jdbc;
 
 import org.junit.Test;
-import org.sfm.reflect.ReflectionService;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,14 +41,14 @@ public class JdbcMapperOneConstructorTypeTest {
 	
 	@Test
 	public void testCanCreateTypeFromUnambiguousConstructorNoAsm() throws Exception {
-		JdbcMapperBuilder<MyObject> builder = new JdbcMapperBuilder<MyObject>(MyObject.class, ReflectionService.newInstance(true, false));
+		JdbcMapperBuilder<MyObject> builder = JdbcMapperFactoryHelper.disableAsm().newBuilder(MyObject.class);
 		testMatchConstructor(builder);
 	}
 
 	@Test
 	public void testCantCreateTypeFromAmbiguousConstructor() throws Exception {
 
-		JdbcMapperBuilder<MyObjectAmbiguity> builder = new JdbcMapperBuilder<MyObjectAmbiguity>(MyObjectAmbiguity.class, ReflectionService.newInstance(true, false));
+		JdbcMapperBuilder<MyObjectAmbiguity> builder = JdbcMapperFactoryHelper.disableAsm().newBuilder(MyObjectAmbiguity.class);
 		
 		try {
 			builder.addMapping("prop").mapper();
@@ -62,13 +61,13 @@ public class JdbcMapperOneConstructorTypeTest {
 	
 	@Test
 	public void testCanCreateTypeFromUnambiguousConstructorAsm() throws Exception {
-		JdbcMapperBuilder<MyObject> builder = new JdbcMapperBuilder<MyObject>(MyObject.class, ReflectionService.newInstance(false, true));
+		JdbcMapperBuilder<MyObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(MyObject.class);
 		testMatchConstructor(builder);
 	}
 	
 	@Test
 	public void testCanCreateTypeFromAmbiguousWithType() throws Exception {
-		JdbcMapperBuilder<MyObjectAmbiguity> builder = new JdbcMapperBuilder<MyObjectAmbiguity>(MyObjectAmbiguity.class, ReflectionService.newInstance(false, true ));
+		JdbcMapperBuilder<MyObjectAmbiguity> builder = JdbcMapperFactoryHelper.asm().newBuilder(MyObjectAmbiguity.class);
 		builder.addMapping("prop", 1, Types.VARCHAR);
 		JdbcMapper<MyObjectAmbiguity> mapper = builder.mapper();
 		ResultSet rs = mock(ResultSet.class);

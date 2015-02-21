@@ -126,8 +126,7 @@ public class JoinJdbcMapperTest {
 
     @Test
     public void testJoinTableFields() throws SQLException {
-        JdbcMapper<ProfessorField> mapper = JdbcMapperFactory.newInstance()
-                //.disableAsm(true)
+        JdbcMapper<ProfessorField> mapper = JdbcMapperFactoryHelper.asm()
                 .newBuilder(ProfessorField.class)
                 .addMapping("id")
                 .addMapping("name")
@@ -161,8 +160,7 @@ public class JoinJdbcMapperTest {
 
     @Test
     public void testJoinTableGSNoAsm() throws SQLException {
-        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactory.newInstance()
-                .useAsm(false)
+        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.noAsm()
                 .newBuilder(ProfessorGS.class)
                 .addMapping("id")
                 .addMapping("name")
@@ -189,8 +187,7 @@ public class JoinJdbcMapperTest {
 
     @Test
     public void testJoinTableGS() throws SQLException {
-        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactory.newInstance()
-                //.disableAsm(true)
+        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
                 .newBuilder(ProfessorGS.class)
                 .addMapping("id")
                 .addMapping("name")
@@ -218,8 +215,7 @@ public class JoinJdbcMapperTest {
 
     @Test
     public void testJoinTableC() throws SQLException {
-        JdbcMapper<ProfessorC> mapper = JdbcMapperFactory.newInstance()
-                //.disableAsm(true)
+        JdbcMapper<ProfessorC> mapper = JdbcMapperFactoryHelper.asm()
                 .newBuilder(ProfessorC.class)
                 .addMapping("id")
                 .addMapping("name")
@@ -247,8 +243,7 @@ public class JoinJdbcMapperTest {
 
     @Test
     public void testJoinTableCNoAsm() throws SQLException {
-        JdbcMapper<ProfessorC> mapper = JdbcMapperFactory.newInstance()
-                .useAsm(false)
+        JdbcMapper<ProfessorC> mapper = JdbcMapperFactoryHelper.noAsm()
                 .newBuilder(ProfessorC.class)
                 .addMapping("id")
                 .addMapping("name")

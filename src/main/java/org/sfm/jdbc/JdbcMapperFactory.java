@@ -21,29 +21,34 @@ import java.util.Map;
 public final class JdbcMapperFactory {
 
 
-	/**
+    /**
 	 * instantiate a new JdbcMapperFactory
 	 * @return a new JdbcMapperFactory
 	 */
 	public static JdbcMapperFactory newInstance() {
 		return new JdbcMapperFactory();
 	}
-	
+
 	private FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler = null;
-	private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
-	private RowHandlerErrorHandler rowHandlerErrorHandler = new RethrowRowHandlerErrorHandler();
-	private FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey, ResultSet> columnDefinitions = new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey, ResultSet>();
 
+    private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
+    private RowHandlerErrorHandler rowHandlerErrorHandler = new RethrowRowHandlerErrorHandler();
+    private FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey, ResultSet> columnDefinitions = new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey, ResultSet>();
 	private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
-	private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = new ResultSetGetterFactory();
 
+    private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = new ResultSetGetterFactory();
 	private boolean useAsm = true;
-	private boolean disableAsm = false;
-	
+
+    private boolean disableAsm = false;
+    private boolean failOnAsm = false;
+
+    private ReflectionService reflectionService = null;
+
+
 
 	public JdbcMapperFactory() {
 	}
-	
+
 	/**
 	 * 
 	 * @param fieldMapperErrorHandler 
@@ -93,6 +98,11 @@ public final class JdbcMapperFactory {
 		return this;
 	}
 
+    public JdbcMapperFactory reflectionService(final ReflectionService reflectionService) {
+        this.reflectionService = reflectionService;
+        return this;
+    }
+
 
 	/**
 	 * Will create a instance of mapper based on the metadata and the target class;
@@ -124,7 +134,7 @@ public final class JdbcMapperFactory {
     public <T> JdbcMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
 
-		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, getterFactory);
+		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, getterFactory, failOnAsm);
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
@@ -147,7 +157,7 @@ public final class JdbcMapperFactory {
 
 	public <T> JdbcMapper<T> newMapper(final Type target) throws MapperBuildingException {
 		ClassMeta<T> classMeta = getClassMeta(target);
-		return new DynamicJdbcMapper<T>(classMeta, fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, columnDefinitions, propertyNameMatcherFactory);
+		return new DynamicJdbcMapper<T>(classMeta, fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, columnDefinitions, propertyNameMatcherFactory, failOnAsm);
 	}
 
 
@@ -190,15 +200,26 @@ public final class JdbcMapperFactory {
 	}
 
 	private <T> ClassMeta<T> getClassMeta(Type target) {
-		return ReflectionService.newInstance(disableAsm, useAsm).getRootClassMeta(target);
+		return getReflectionService().getRootClassMeta(target);
 	}
 
-	public JdbcMapperFactory addAliases(Map<String, String> aliases) {
+    private ReflectionService getReflectionService() {
+        if (reflectionService != null) {
+            return reflectionService;
+        } else {
+            return ReflectionService.newInstance(disableAsm, useAsm);
+        }
+    }
+
+    public JdbcMapperFactory addAliases(Map<String, String> aliases) {
 		for(Map.Entry<String, String> e : aliases.entrySet()) {
 			addAlias(e.getKey(), e.getValue());
 		}
 		return this;
 	}
 
-
+    public JdbcMapperFactory failOnAsm(boolean b) {
+        this.failOnAsm = b;
+        return this;
+    }
 }

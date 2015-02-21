@@ -3,13 +3,10 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
-import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.RowHandler;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,7 +16,7 @@ public class JdbcMapperDbObjectTest {
 	
 	@Test
 	public void testColumn() throws Exception {
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class);
 		
 		addColumn(builder);
 		
@@ -40,7 +37,7 @@ public class JdbcMapperDbObjectTest {
 	
 	@Test
 	public void testColumnFinalProperty() throws Exception {
-		JdbcMapperBuilder<DbFinalObject> builder = new JdbcMapperBuilder<DbFinalObject>(DbFinalObject.class);
+		JdbcMapperBuilder<DbFinalObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbFinalObject.class);
 		
 		addColumn(builder);
 		
@@ -56,7 +53,7 @@ public class JdbcMapperDbObjectTest {
 		});
 	}
 	private void testDbObjectMapper(final JdbcMapper<DbObject> mapper)
-			throws SQLException, Exception, ParseException {
+			throws Exception {
 		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
@@ -69,15 +66,15 @@ public class JdbcMapperDbObjectTest {
 	
 	@Test
 	public void testDbObjectMapperWithIterator()
-			throws SQLException, Exception, ParseException {
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
+			throws Exception {
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class);
 
 		testMapperBuilderWithIterator(builder);
 	}
 	@Test
 	public void testDbObjectMapperWithIteratorNoAsm()
-			throws SQLException, Exception, ParseException {
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, ReflectionService.newInstance(true, false));
+			throws Exception {
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noAsm().newBuilder(DbObject.class);
 
 		testMapperBuilderWithIterator(builder);
 	}
@@ -100,9 +97,9 @@ public class JdbcMapperDbObjectTest {
 	//IFJAVA8_START
 	@Test
 	public void testDbObjectMapperWithStream()
-			throws SQLException, Exception, ParseException {
+			throws Exception {
 		
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class);
 		addColumn(builder);
 
 		final JdbcMapper<DbObject> mapper = builder.mapper();
@@ -125,8 +122,8 @@ public class JdbcMapperDbObjectTest {
 
 	@Test
 	public void testDbObjectMapperWithStreamNoAsm()
-			throws SQLException, Exception, ParseException {
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, ReflectionService.newInstance(true, false));
+			throws Exception {
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noAsm().newBuilder(DbObject.class);
 		addColumn(builder);
 		final JdbcMapper<DbObject> mapper = builder.mapper();
 
@@ -148,8 +145,8 @@ public class JdbcMapperDbObjectTest {
 
 	@Test
 	public void testDbObjectMapperWithStreamTryAdvance()
-			throws SQLException, Exception, ParseException {
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
+			throws Exception {
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class);
 		addColumn(builder);
 		final JdbcMapper<DbObject> mapper = builder.mapper();
 
@@ -171,8 +168,8 @@ public class JdbcMapperDbObjectTest {
 
 	@Test
 	public void testDbObjectMapperWithStreamTryAdvanceNoAsm()
-			throws SQLException, Exception, ParseException {
-		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class, ReflectionService.newInstance(true, false));
+			throws Exception {
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noAsm().newBuilder(DbObject.class);
 		addColumn(builder);
 		final JdbcMapper<DbObject> mapper = builder.mapper();
 

@@ -25,7 +25,7 @@ public class JdbcMapperSubObjectTest {
 
 	@Test
 	public void testMapInnerObjectWithStaticMapper() throws Exception {
-		JdbcMapperBuilder<Db1DeepObject> builder = new JdbcMapperBuilder<Db1DeepObject>(Db1DeepObject.class);
+		JdbcMapperBuilder<Db1DeepObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(Db1DeepObject.class);
 
 		addColumns(builder);
 		
@@ -47,7 +47,7 @@ public class JdbcMapperSubObjectTest {
 	
 	@Test
 	public void testMapInnerFinalObjectWithStaticMapper() throws Exception {
-		JdbcMapperBuilder<DbFinal1DeepObject> builder = new JdbcMapperBuilder<DbFinal1DeepObject>(DbFinal1DeepObject.class);
+		JdbcMapperBuilder<DbFinal1DeepObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbFinal1DeepObject.class);
 
 		addColumns(builder);
 		
@@ -69,7 +69,7 @@ public class JdbcMapperSubObjectTest {
 
 	@Test
 	public void testMapInnerObject2LevelWithStaticMapper() throws Exception {
-		final JdbcMapperBuilder<Db2DeepObject> builder = new JdbcMapperBuilder<Db2DeepObject>(Db2DeepObject.class);
+		final JdbcMapperBuilder<Db2DeepObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(Db2DeepObject.class);
 
 		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 			@Override

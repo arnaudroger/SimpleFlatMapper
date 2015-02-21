@@ -20,11 +20,11 @@ public class JdbcMapperGenericObjectTest {
 
 	@Test
 	public void testMapGenericObjectWithStaticMapper() throws Exception {
-		JdbcMapperBuilder<Db1GenericObject> builder = new JdbcMapperBuilder<Db1GenericObject>(Db1GenericObject.class)
-				.addMapping("id")
-				.addMapping("bar_object_bar")
-				.addMapping("foo_object_bar")
-				.addMapping("foo_object_foo");
+		JdbcMapperBuilder<Db1GenericObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(Db1GenericObject.class)
+                .addMapping("id")
+                .addMapping("bar_object_bar")
+                .addMapping("foo_object_bar")
+                .addMapping("foo_object_foo");
 
 		final JdbcMapper<Db1GenericObject> mapper = builder.mapper();
 

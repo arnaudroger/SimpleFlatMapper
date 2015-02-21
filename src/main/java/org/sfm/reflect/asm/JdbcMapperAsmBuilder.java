@@ -20,7 +20,6 @@ public class JdbcMapperAsmBuilder {
 	private static final String ROW_HANDLER_ERROR_HANDLER_TYPE = AsmUtils.toType(RowHandlerErrorHandler.class);
 
 	public static <S,T> byte[] dump (final String className, final FieldMapper<S, T>[] mappers, final FieldMapper<S, T>[] constructorMappers, final Class<T> target) throws Exception {
-
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
 		

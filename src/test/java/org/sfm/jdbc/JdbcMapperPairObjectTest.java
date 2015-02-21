@@ -23,10 +23,11 @@ public class JdbcMapperPairObjectTest {
 
 	@Test
 	public void testMapGenericObjectWithStaticMapper() throws Exception {
-		JdbcMapperBuilder<Pair<Bar, Foo>> builder = new JdbcMapperBuilder<Pair<Bar, Foo>>(new TypeReference<Pair<Bar, Foo>>() {})
-				.addMapping("first_bar")
-				.addMapping("second_bar")
-				.addMapping("second_foo");
+		JdbcMapperBuilder<Pair<Bar, Foo>> builder = JdbcMapperFactoryHelper.asm().newBuilder(new TypeReference<Pair<Bar, Foo>>() {
+        })
+                .addMapping("first_bar")
+                .addMapping("second_bar")
+                .addMapping("second_foo");
 
 		final JdbcMapper<Pair<Bar, Foo>> mapper = builder.mapper();
 

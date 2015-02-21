@@ -18,9 +18,7 @@ public class JdbcMapperToStringTest {
 
     @Test
     public void testStaticJdbcMapperNoAsm() {
-        JdbcMapper<DbObject> mapper = JdbcMapperFactory
-                .newInstance()
-                .useAsm(false)
+        JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.noAsm()
                 .newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper();
 
         assertEquals("JdbcMapperImpl{" +
@@ -31,8 +29,7 @@ public class JdbcMapperToStringTest {
 
     @Test
     public void testStaticJdbcMapperAsm() {
-        JdbcMapper<DbObject> mapper = JdbcMapperFactory
-                .newInstance()
+        JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.asm()
                 .newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper();
 
         String input = mapper.toString();
@@ -46,8 +43,7 @@ public class JdbcMapperToStringTest {
 
     @Test
     public void testDynamicJdbcMapperNoAsm() throws SQLException {
-        JdbcMapper<DbObject> mapper = JdbcMapperFactory
-                .newInstance().useAsm(false)
+        JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.noAsm()
                 .newMapper(DbObject.class);
 
         ResultSet rs = mock(ResultSet.class);

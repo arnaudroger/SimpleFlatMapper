@@ -19,7 +19,7 @@ public class JdbcMapperEnumTest {
 
 	@Test
 	public void testIndexedEnumUndefined() throws Exception {
-		JdbcMapperBuilder<DbEnumObject> builder = new JdbcMapperBuilder<DbEnumObject>(DbEnumObject.class);
+		JdbcMapperBuilder<DbEnumObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbEnumObject.class);
 		builder.addMapping("val", 1);
 		
 		JdbcMapper<DbEnumObject> mapper = builder.mapper();
@@ -39,7 +39,7 @@ public class JdbcMapperEnumTest {
 	
 	@Test
 	public void testIndexedEnumString() throws Exception {
-		JdbcMapperBuilder<DbEnumObject> builder = new JdbcMapperBuilder<DbEnumObject>(DbEnumObject.class);
+		JdbcMapperBuilder<DbEnumObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbEnumObject.class);
 		builder.addMapping("val",1, Types.VARCHAR);
 		
 		JdbcMapper<DbEnumObject> mapper = builder.mapper();
@@ -55,7 +55,7 @@ public class JdbcMapperEnumTest {
 	
 	@Test
 	public void testIndexedEnumOrdinal() throws Exception {
-		JdbcMapperBuilder<DbEnumObject> builder = new JdbcMapperBuilder<DbEnumObject>(DbEnumObject.class);
+		JdbcMapperBuilder<DbEnumObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbEnumObject.class);
 		builder.addMapping("val",1, Types.INTEGER);
 		
 		JdbcMapper<DbEnumObject> mapper = builder.mapper();
@@ -79,7 +79,7 @@ public class JdbcMapperEnumTest {
 
     @Test
     public void testEnumRoot() throws SQLException {
-        JdbcMapperBuilder<TypeRoot> builder = new JdbcMapperBuilder<TypeRoot>(TypeRoot.class);
+        JdbcMapperBuilder<TypeRoot> builder = JdbcMapperFactoryHelper.asm().newBuilder(TypeRoot.class);
         builder.addMapping("c1");
 
         JdbcMapper<TypeRoot> mapper = builder.mapper();
@@ -94,7 +94,7 @@ public class JdbcMapperEnumTest {
 
     @Test
     public void testEnumTuple() throws SQLException {
-        JdbcMapperBuilder<Tuple2<TypeRoot, TypeRoot>> builder = new JdbcMapperBuilder<Tuple2<TypeRoot, TypeRoot>>(new TypeReference<Tuple2<TypeRoot, TypeRoot>>() {});
+        JdbcMapperBuilder<Tuple2<TypeRoot, TypeRoot>> builder = JdbcMapperFactoryHelper.asm().newBuilder(new TypeReference<Tuple2<TypeRoot, TypeRoot>>() {});
         builder.addMapping("0");
         builder.addMapping("1");
 

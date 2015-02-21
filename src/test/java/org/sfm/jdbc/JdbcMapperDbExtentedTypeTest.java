@@ -21,7 +21,7 @@ public class JdbcMapperDbExtentedTypeTest {
 	@Test
 	public void testMapExtentedType() throws Exception {
 		
-		final JdbcMapper<DbExtentedType> mapper = JdbcMapperFactory.newInstance().newMapper(DbExtentedType.class);
+		final JdbcMapper<DbExtentedType> mapper = JdbcMapperFactoryHelper.asm().newMapper(DbExtentedType.class);
 		
 		
 		DbHelper.testQuery(new RowHandler<PreparedStatement>() {

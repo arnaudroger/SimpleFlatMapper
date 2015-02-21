@@ -32,20 +32,24 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	private final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions;
 	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
 	private final RowHandlerErrorHandler rowHandlerErrorHandler;
-	private MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache = new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
+    private final boolean failOnAsm;
+
+    private MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache = new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
 
 	public DynamicJdbcMapper(final ClassMeta<T> classMeta,
 							 final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler,
 							 final MapperBuilderErrorHandler mapperBuilderErrorHandler,
 							 RowHandlerErrorHandler rowHandlerErrorHandler,
 							 final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions,
-							 PropertyNameMatcherFactory propertyNameMatcherFactory) {
+							 PropertyNameMatcherFactory propertyNameMatcherFactory,
+                             boolean failOnAsm) {
 		this.classMeta = classMeta;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.columnDefinitions = columnDefinitions;
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
+        this.failOnAsm = failOnAsm;
 	}
 	
 
@@ -106,7 +110,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		JdbcMapper<T> mapper = mapperCache.get(key);
 		
 		if (mapper == null) {
-			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler,columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory());
+			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler,columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory(), failOnAsm);
 
 			builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);

@@ -5,7 +5,7 @@ import org.sfm.beans.DbFinalListObject;
 import org.sfm.beans.DbListObject;
 import org.sfm.beans.DbListOfString;
 import org.sfm.beans.DbObject;
-import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.TypeReference;
 import org.sfm.utils.RowHandler;
 
 import java.sql.PreparedStatement;
@@ -29,8 +29,8 @@ public class JdbcMapperListTest {
 		@Override
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
-			final JdbcMapper< DbFinalListObject> mapper = new JdbcMapperBuilder<DbFinalListObject>(
-					DbFinalListObject.class, ReflectionService.newInstance(false, asm))
+			final JdbcMapper< DbFinalListObject> mapper = JdbcMapperFactoryHelper.asm().useAsm(asm).newBuilder(
+                    DbFinalListObject.class)
 					.addMapping(rs.getMetaData()).mapper();
 
 			rs.next();
@@ -58,8 +58,8 @@ public class JdbcMapperListTest {
 		@Override
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
-			final JdbcMapper<DbListObject> mapper =  
-					new JdbcMapperBuilder<DbListObject>(DbListObject.class, ReflectionService.newInstance(false, asm))
+			final JdbcMapper<DbListObject> mapper =
+                    JdbcMapperFactoryHelper.asm().useAsm(asm).newBuilder(DbListObject.class)
 						.addMapping(rs.getMetaData())
 						.mapper();
 			
@@ -88,9 +88,7 @@ public class JdbcMapperListTest {
 		@Override
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
-			final JdbcMapper<List<DbObject>> mapper =  
-					new JdbcMapperBuilder<List<DbObject>>(getClass().getDeclaredField("list").getGenericType(),
-							ReflectionService.newInstance(false, asm))
+			final JdbcMapper<List<DbObject>> mapper =  JdbcMapperFactoryHelper.asm().useAsm(asm).newBuilder(new TypeReference<List<DbObject>>() {})
 						.addMapping(rs.getMetaData())
 						.mapper();
 			
@@ -117,8 +115,8 @@ public class JdbcMapperListTest {
 		@Override
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
-			final JdbcMapper<DbListOfString> mapper = new JdbcMapperBuilder<DbListOfString>(
-					DbListOfString.class, ReflectionService.newInstance(false, asm))
+			final JdbcMapper<DbListOfString> mapper = JdbcMapperFactoryHelper.asm().useAsm(asm).newBuilder(
+                    DbListOfString.class)
 					.addMapping(rs.getMetaData()).mapper();
 
 			rs.next();

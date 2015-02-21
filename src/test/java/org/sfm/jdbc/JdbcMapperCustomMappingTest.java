@@ -1,7 +1,6 @@
 package org.sfm.jdbc;
 
 import org.junit.Test;
-import org.sfm.beans.DbFinalListObject;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.map.GetterFactory;
@@ -19,8 +18,8 @@ import java.sql.SQLException;
 public class JdbcMapperCustomMappingTest {
 
 	@Test
-	public void testColumnAlias() throws SQLException, Exception {
-		JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance();
+	public void testColumnAlias() throws Exception {
+		JdbcMapperFactory mapperFactory = JdbcMapperFactoryHelper.asm();
 		mapperFactory.addAlias("not_id_column", "id");
 		
 		final JdbcMapper<DbObject> mapper = mapperFactory.newMapper(DbObject.class);
@@ -38,8 +37,8 @@ public class JdbcMapperCustomMappingTest {
 	}
 	
 	@Test
-	public void testColumnAliasStatic() throws SQLException, Exception {
-		JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance();
+	public void testColumnAliasStatic() throws Exception {
+		JdbcMapperFactory mapperFactory = JdbcMapperFactoryHelper.asm();
 		mapperFactory.addAlias("not_id_column", "id");
 		
 		final JdbcMapper<DbObject> mapper = JdbcMapperDbObjectTest.addColumn(mapperFactory.newBuilder(DbObject.class)).mapper();
@@ -58,7 +57,7 @@ public class JdbcMapperCustomMappingTest {
 	
 	@Test
 	public void testCustomMappingStatic() throws SQLException, Exception  {
-		JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance();
+		JdbcMapperFactory mapperFactory = JdbcMapperFactoryHelper.asm();
 		mapperFactory.addCustomFieldMapper("id", new FieldMapper<ResultSet, DbObject>() {
 			@Override
 			public void map(ResultSet source, DbObject target)
@@ -84,7 +83,7 @@ public class JdbcMapperCustomMappingTest {
 	
 	@Test
 	public void testCustomMapping() throws SQLException, Exception  {
-		JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance();
+		JdbcMapperFactory mapperFactory = JdbcMapperFactoryHelper.asm();
 		mapperFactory.addCustomFieldMapper("id", new FieldMapper<ResultSet, DbObject>() {
 			@Override
 			public void map(ResultSet source, DbObject target)
@@ -110,8 +109,7 @@ public class JdbcMapperCustomMappingTest {
 
 	@Test
 	public void testCustomReaderOnSetter() throws SQLException, Exception {
-		JdbcMapperFactory mapperFactory = JdbcMapperFactory
-				.newInstance().addCustomGetter("id", new Getter<ResultSet, Long>() {
+		JdbcMapperFactory mapperFactory = JdbcMapperFactoryHelper.asm().addCustomGetter("id", new Getter<ResultSet, Long>() {
 					@Override
 					public Long get(ResultSet target) throws Exception {
 						return 1l;
@@ -136,8 +134,7 @@ public class JdbcMapperCustomMappingTest {
 	@Test
 	public void testCustomReaderOnSetterStatic() throws SQLException, Exception  {
 		final JdbcMapper<DbObject> mapper =
-				JdbcMapperFactory
-						.newInstance()
+                JdbcMapperFactoryHelper.asm()
 						.newBuilder(DbObject.class)
 						.addMapping("id",
 								FieldMapperColumnDefinition.customGetter(new Getter() {
@@ -169,8 +166,7 @@ public class JdbcMapperCustomMappingTest {
     @Test
     public void testCustomGetterFactory() throws SQLException, Exception  {
         final JdbcMapper<DbObject> mapper =
-                JdbcMapperFactory
-                        .newInstance()
+                JdbcMapperFactoryHelper.asm()
                         .newBuilder(DbObject.class)
                         .addMapping("id",
                                 FieldMapperColumnDefinition.customGetterFactory(new GetterFactory<ResultSet, JdbcColumnKey>() {
@@ -207,8 +203,7 @@ public class JdbcMapperCustomMappingTest {
 
 	@Test
 	public void testCustomReaderOnConstructor() throws SQLException, Exception  {
-		JdbcMapperFactory mapperFactory = JdbcMapperFactory
-				.newInstance().addCustomGetter("id",new Getter<ResultSet, Long>() {
+		JdbcMapperFactory mapperFactory = JdbcMapperFactoryHelper.asm().addCustomGetter("id",new Getter<ResultSet, Long>() {
 					@Override
 					public Long get(ResultSet target) throws Exception {
 						return 1l;

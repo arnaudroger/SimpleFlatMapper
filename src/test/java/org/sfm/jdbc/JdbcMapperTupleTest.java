@@ -15,7 +15,7 @@ public class JdbcMapperTupleTest {
 	
 	@Test
 	public void testTuple2OnString() throws Exception {
-		JdbcMapperBuilder<Tuple2<String, String>> builder = new JdbcMapperBuilder<Tuple2<String, String>>(Tuples.typeDef(String.class, String.class));
+		JdbcMapperBuilder<Tuple2<String, String>> builder = JdbcMapperFactoryHelper.asm().newBuilder(Tuples.typeDef(String.class, String.class));
 
 		builder.addMapping("element0");
 		builder.addMapping("element1");
@@ -47,7 +47,7 @@ public class JdbcMapperTupleTest {
 
 	@Test
 	public void testTuple3OnString() throws Exception {
-		JdbcMapperBuilder<Tuple3<String, String, Long>> builder = new JdbcMapperBuilder<Tuple3<String, String, Long>>(Tuples.typeDef(String.class, String.class, Long.class));
+		JdbcMapperBuilder<Tuple3<String, String, Long>> builder = JdbcMapperFactoryHelper.asm().newBuilder(Tuples.typeDef(String.class, String.class, Long.class));
 
 		builder.addMapping("element0");
 		builder.addMapping("element1");
@@ -81,7 +81,7 @@ public class JdbcMapperTupleTest {
 
 	@Test
 	public void testTuple4OnString() throws Exception {
-		JdbcMapperBuilder<Tuple4<String, String, Long, Integer>> builder = new JdbcMapperBuilder<Tuple4<String, String, Long, Integer>>(Tuples.typeDef(String.class, String.class, Long.class, Integer.class));
+		JdbcMapperBuilder<Tuple4<String, String, Long, Integer>> builder = JdbcMapperFactoryHelper.asm().newBuilder(Tuples.typeDef(String.class, String.class, Long.class, Integer.class));
 
 		builder.addMapping("element0");
 		builder.addMapping("element1");
@@ -117,7 +117,7 @@ public class JdbcMapperTupleTest {
 
 	@Test
 	public void testTuple5OnString() throws Exception {
-		JdbcMapperBuilder<Tuple5<String, String, Long, Integer, Float>> builder = new JdbcMapperBuilder<Tuple5<String, String, Long, Integer, Float>>(Tuples.typeDef(String.class, String.class, Long.class, Integer.class, Float.class));
+		JdbcMapperBuilder<Tuple5<String, String, Long, Integer, Float>> builder = JdbcMapperFactoryHelper.asm().newBuilder(Tuples.typeDef(String.class, String.class, Long.class, Integer.class, Float.class));
 
 		builder.addMapping("element0");
 		builder.addMapping("element1");

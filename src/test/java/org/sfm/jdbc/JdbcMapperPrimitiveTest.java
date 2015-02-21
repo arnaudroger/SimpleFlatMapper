@@ -6,7 +6,6 @@ import org.sfm.beans.DbFinalPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.PrimitiveObject;
 import org.sfm.map.Mapper;
-import org.sfm.reflect.ReflectionService;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,37 +17,35 @@ import static org.mockito.Mockito.when;
 
 public class JdbcMapperPrimitiveTest {
 	
-	private ReflectionService nonAsmReflectionService = ReflectionService.newInstance(true, false);
-	private ReflectionService asmReflectionService = ReflectionService.newInstance(false, true);
 
 	@Test
 	public void testIndexedPrimitivesWithSetterAccess() throws Exception {
-		JdbcMapperBuilder<DbPrimitiveObjectWithSetter> builder = new JdbcMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, asmReflectionService);
+		JdbcMapperBuilder<DbPrimitiveObjectWithSetter> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbPrimitiveObjectWithSetter.class);
 		testIndexedPrimitives(builder);
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithConstructorAccess() throws Exception {
-		JdbcMapperBuilder<DbFinalPrimitiveObject> builder = new JdbcMapperBuilder<DbFinalPrimitiveObject>(DbFinalPrimitiveObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbFinalPrimitiveObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbFinalPrimitiveObject.class);
 		testIndexedPrimitives(builder);
 	}
 	
 	
 	@Test
 	public void testIndexedPrimitivesWithSetterAccessNoAsm() throws Exception {
-		JdbcMapperBuilder<DbPrimitiveObjectWithSetter> builder = new JdbcMapperBuilder<DbPrimitiveObjectWithSetter>(DbPrimitiveObjectWithSetter.class, nonAsmReflectionService);
+		JdbcMapperBuilder<DbPrimitiveObjectWithSetter> builder = JdbcMapperFactoryHelper.disableAsm().newBuilder(DbPrimitiveObjectWithSetter.class);
 		testIndexedPrimitives(builder);
 	}
 	
 	@Test
 	public void testIndexedBoxedPrimitivesWithFieldAccess() throws Exception {
-		JdbcMapperBuilder<DbBoxedPrimitveObject> builder = new JdbcMapperBuilder<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbBoxedPrimitveObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbBoxedPrimitveObject.class);
 		testIndexedPrimitives(builder);
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithFieldAccessNullValues() throws Exception {
-		JdbcMapperBuilder<DbBoxedPrimitveObject> builder = new JdbcMapperBuilder<DbBoxedPrimitveObject>(DbBoxedPrimitveObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbBoxedPrimitveObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbBoxedPrimitveObject.class);
 		testIndexedPrimitivesWithNull(builder);
 	}
 	

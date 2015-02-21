@@ -27,14 +27,14 @@ import static org.mockito.Mockito.*;
 
 public class JdbcMapperFactoryTest {
 
-	JdbcMapperFactory asmFactory = JdbcMapperFactory.newInstance().useAsm(true);
-	JdbcMapperFactory nonAsmFactory = JdbcMapperFactory.newInstance().useAsm(false);
+	JdbcMapperFactory asmFactory = JdbcMapperFactoryHelper.asm();
+	JdbcMapperFactory nonAsmFactory = JdbcMapperFactoryHelper.noAsm();
 
 
 	@Test
 	public void testFactoryOnTuples() {
-		assertNotNull(JdbcMapperFactory.newInstance().newMapper(Tuples.typeDef(Date.class, Date.class)));
-		assertNotNull(JdbcMapperFactory.newInstance().newBuilder(Tuples.typeDef(Date.class, Date.class)));
+		assertNotNull(asmFactory.newMapper(Tuples.typeDef(Date.class, Date.class)));
+		assertNotNull(asmFactory.newBuilder(Tuples.typeDef(Date.class, Date.class)));
 	}
 
     @Test
@@ -53,7 +53,7 @@ public class JdbcMapperFactoryTest {
         when(rs.getString(1)).thenReturn("v1");
         when(rs.getString(2)).thenReturn("v2");
 
-        Tuple2<String, String> tuple2 = JdbcMapperFactory.newInstance().newMapper(new TypeReference<Tuple2<String, String>>() {
+        Tuple2<String, String> tuple2 = JdbcMapperFactoryHelper.asm().newMapper(new TypeReference<Tuple2<String, String>>() {
         }).iterator(rs).next();
 
         assertEquals("v1", tuple2.first());
@@ -68,7 +68,7 @@ public class JdbcMapperFactoryTest {
         when(rs.getString(1)).thenReturn("v1");
         when(rs.getString(2)).thenReturn("v2");
 
-        Tuple2<String, String> tuple2 = JdbcMapperFactory.newInstance().newBuilder(new TypeReference<Tuple2<String, String>>() {
+        Tuple2<String, String> tuple2 = JdbcMapperFactoryHelper.asm().newBuilder(new TypeReference<Tuple2<String, String>>() {
         }).addMapping("e0").addMapping("e1").mapper()
                 .iterator(rs).next();
 
@@ -168,7 +168,7 @@ public class JdbcMapperFactoryTest {
 		@SuppressWarnings("unchecked")
 		FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler  = mock(FieldMapperErrorHandler.class);
 		final Exception exception = new Exception("Error!");
-		JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance()
+		JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.asm()
 			.fieldMapperErrorHandler(fieldMapperErrorHandler)
 			.addCustomFieldMapper("id",  new FieldMapper<ResultSet, DbObject>() {
 				@Override
@@ -191,7 +191,7 @@ public class JdbcMapperFactoryTest {
 		ResultSet rs = mock(ResultSet.class);
 		
 		final Exception exception = new SQLException("Error!");
-		JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance()
+		JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.asm()
 			.fieldMapperErrorHandler(fieldMapperErrorHandler)
 			.newBuilder(DbObject.class).addMapping("id").mapper();
 		
@@ -212,7 +212,7 @@ public class JdbcMapperFactoryTest {
 		when(rs.getLong(1)).thenReturn(1l);
 
 		final Exception exception = new SQLException("Error!");
-		JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance()
+		JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.asm()
 				.rowHandlerErrorHandler(errorHandler)
 				.newBuilder(DbObject.class).addMapping("id").mapper();
 
@@ -228,7 +228,7 @@ public class JdbcMapperFactoryTest {
 
 	@Test
 	public void testCustomGetterFactory() throws SQLException {
-		JdbcMapper<DbObject> mapper = JdbcMapperFactory.newInstance().getterFactory(new GetterFactory<ResultSet, JdbcColumnKey>() {
+		JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.asm().getterFactory(new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {

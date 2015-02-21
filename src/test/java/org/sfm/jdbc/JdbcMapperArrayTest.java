@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.sfm.beans.DbArrayObject;
 import org.sfm.beans.DbArrayOfString;
 import org.sfm.beans.DbObject;
-import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.RowHandler;
 
 import java.sql.PreparedStatement;
@@ -27,8 +26,9 @@ public class JdbcMapperArrayTest {
 		@Override
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
-			final JdbcMapper<DbArrayObject> mapper =  
-					new JdbcMapperBuilder<DbArrayObject>(DbArrayObject.class, ReflectionService.newInstance(false, asm))
+			final JdbcMapper<DbArrayObject> mapper =
+
+                    JdbcMapperFactoryHelper.asm().useAsm(asm).newBuilder(DbArrayObject.class)
 						.addMapping(rs.getMetaData())
 						.mapper();
 			
@@ -56,9 +56,8 @@ public class JdbcMapperArrayTest {
 		@Override
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
-			final JdbcMapper<DbObject[]> mapper =  
-					new JdbcMapperBuilder<DbObject[]>(DbObject[].class, 
-							ReflectionService.newInstance(false, asm))
+			final JdbcMapper<DbObject[]> mapper =
+                    JdbcMapperFactoryHelper.asm().useAsm(asm).newBuilder(DbObject[].class)
 						.addMapping(rs.getMetaData())
 						.mapper();
 			
@@ -86,7 +85,7 @@ public class JdbcMapperArrayTest {
 		public void handle(PreparedStatement t) throws Exception {
 			ResultSet rs = t.executeQuery();
 			
-			JdbcMapperBuilder<DbArrayOfString> builder = new JdbcMapperBuilder<DbArrayOfString>(DbArrayOfString.class, ReflectionService.newInstance(false, asm)).addMapping(rs.getMetaData());
+			JdbcMapperBuilder<DbArrayOfString> builder = JdbcMapperFactoryHelper.asm().useAsm(asm).newBuilder(DbArrayOfString.class).addMapping(rs.getMetaData());
 			
 			
 			final JdbcMapper<DbArrayOfString> mapper = 

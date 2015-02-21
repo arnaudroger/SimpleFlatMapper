@@ -31,12 +31,12 @@ public class DynamicJdbcMapperTest {
 	final DynamicJdbcMapper<DbObject> mapper;
 	
 	public DynamicJdbcMapperTest() throws NoSuchMethodException, SecurityException, SQLException {
-		mapper = (DynamicJdbcMapper<DbObject>) JdbcMapperFactory.newInstance().useAsm(false).newMapper(DbObject.class);
+		mapper = (DynamicJdbcMapper<DbObject>) JdbcMapperFactoryHelper.noAsm().newMapper(DbObject.class);
 	}
 	
 	@Test
 	public void testResultSetMapperForEachRS()
-			throws SQLException, Exception, ParseException {
+			throws Exception {
 		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
@@ -116,7 +116,7 @@ public class DynamicJdbcMapperTest {
 	private static final int NBFUTURE = 10000;
 	@Test
 	public void testMultipleThread() throws InterruptedException, ExecutionException {
-		final DynamicJdbcMapper<DbObject> mapper = (DynamicJdbcMapper<DbObject>) JdbcMapperFactory.newInstance().useAsm(true).newMapper(DbObject.class);
+		final DynamicJdbcMapper<DbObject> mapper = (DynamicJdbcMapper<DbObject>) JdbcMapperFactoryHelper.asm().newMapper(DbObject.class);
 		
 		ExecutorService service = Executors.newFixedThreadPool(4);
 		final AtomicLong sumOfAllIds = new AtomicLong();

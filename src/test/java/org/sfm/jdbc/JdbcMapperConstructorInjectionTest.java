@@ -2,7 +2,6 @@ package org.sfm.jdbc;
 
 import org.junit.Test;
 import org.sfm.beans.DbConstructorObject;
-import org.sfm.reflect.ReflectionService;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -13,14 +12,11 @@ import static org.mockito.Mockito.when;
 
 public class JdbcMapperConstructorInjectionTest {
 	
-	private ReflectionService nonAsmReflectionService = ReflectionService.newInstance(true, false);
-	private ReflectionService asmDeactivatedReflectionService = ReflectionService.newInstance(false, false);
-	private ReflectionService asmReflectionService = ReflectionService.newInstance(false, true);
 
 	@Test
 	public void testChooseSmallestMatchingConstructor() throws Exception {
-		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
-		
+		JdbcMapperBuilder<DbConstructorObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbConstructorObject.class);
+                
 		builder.addMapping("prop1");
 		
 		JdbcMapper<DbConstructorObject> mapper = builder.mapper();
@@ -38,7 +34,7 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorProp1Prop2() throws Exception {
-		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbConstructorObject.class);
 		
 		builder.addMapping("prop1");
 		builder.addMapping("prop2");
@@ -59,7 +55,7 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorProp1Prop3() throws Exception {
-		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbConstructorObject.class);
 		
 		builder.addMapping("prop1");
 		builder.addMapping("prop3");
@@ -83,7 +79,7 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorProp3() throws Exception {
-		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbConstructorObject.class);
 		
 		builder.addMapping("prop3");
 		
@@ -104,7 +100,7 @@ public class JdbcMapperConstructorInjectionTest {
 	}	
 	@Test
 	public void testConstructorProp1Prop2Prop3() throws Exception {
-		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbConstructorObject.class);
 		
 		builder.addMapping("prop1");
 		builder.addMapping("prop2");
@@ -120,7 +116,7 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testChooseSmallestMatchingConstructoNoAsm() throws Exception {
-		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmDeactivatedReflectionService );
+		JdbcMapperBuilder<DbConstructorObject> builder = JdbcMapperFactoryHelper.noAsm().newBuilder(DbConstructorObject.class);
 		
 		builder.addMapping("prop1");
 		
@@ -139,7 +135,7 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorProp1Prop2NoAsm() throws Exception {
-		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmDeactivatedReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = JdbcMapperFactoryHelper.noAsm().newBuilder(DbConstructorObject.class);
 		
 		builder.addMapping("prop1");
 		builder.addMapping("prop2");
@@ -160,7 +156,7 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorProp1Prop3NoAsm() throws Exception {
-		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmDeactivatedReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = JdbcMapperFactoryHelper.noAsm().newBuilder(DbConstructorObject.class);
 		
 		builder.addMapping("prop1");
 		builder.addMapping("prop3");
@@ -184,7 +180,7 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorProp3NoAsm() throws Exception {
-		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, asmDeactivatedReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = JdbcMapperFactoryHelper.noAsm().newBuilder(DbConstructorObject.class);
 		
 		builder.addMapping("prop3");
 		
@@ -206,7 +202,7 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	@Test
 	public void testConstructorNoAsmAndNoAsmLinb() throws Exception {
-		JdbcMapperBuilder<DbConstructorObject> builder = new JdbcMapperBuilder<DbConstructorObject>(DbConstructorObject.class, nonAsmReflectionService);
+		JdbcMapperBuilder<DbConstructorObject> builder = JdbcMapperFactoryHelper.disableAsm().newBuilder(DbConstructorObject.class);
 
 		try {
 			builder.addMapping("prop1");

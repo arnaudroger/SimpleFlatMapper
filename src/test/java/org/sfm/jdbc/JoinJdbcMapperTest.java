@@ -23,20 +23,66 @@ import static org.mockito.Mockito.when;
 
 public class JoinJdbcMapperTest {
 
-    public static class StudentField {
+    public static interface Student {
+        int getId();
+
+        String getName();
+
+        List<String> getPhones();
+    }
+
+    public static interface Professor<T extends Student> {
+        int getId();
+
+        String getName();
+
+        List<T> getStudents();
+    }
+    public static class StudentField implements Student {
         public int id;
         public String name;
+        public List<String> phones;
+
+        @Override
+        public int getId() {
+            return id;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public List<String> getPhones() {
+            return phones;
+        }
     }
-    public static class ProfessorField {
+    public static class ProfessorField implements Professor<StudentField> {
         public int id;
         public String name;
         public List<StudentField> students;
+
+        @Override
+        public int getId() {
+            return id;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public List<StudentField> getStudents() {
+            return students;
+        }
     }
 
-    public static class StudentGS {
+    public static class StudentGS implements Student {
         private int id;
         private String name;
-        private List<String> surnames;
+        private List<String> phones;
 
         public int getId() {
             return id;
@@ -54,15 +100,15 @@ public class JoinJdbcMapperTest {
             this.name = name;
         }
 
-        public List<String> getSurnames() {
-            return surnames;
+        public List<String> getPhones() {
+            return phones;
         }
 
-        public void setSurnames(List<String> surnames) {
-            this.surnames = surnames;
+        public void setPhones(List<String> phones) {
+            this.phones = phones;
         }
     }
-    public static class ProfessorGS {
+    public static class ProfessorGS implements Professor<StudentGS> {
         private int id;
         private String name;
         private List<StudentGS> students;
@@ -93,13 +139,15 @@ public class JoinJdbcMapperTest {
     }
 
 
-    public static class StudentC{
+    public static class StudentC implements Student {
         private final int id;
         private final String name;
+        private final List<String> phones;
 
-        public StudentC(int id, String name) {
+        public StudentC(int id, String name, List<String> phones) {
             this.id = id;
             this.name = name;
+            this.phones = phones;
         }
 
         public int getId() {
@@ -110,8 +158,11 @@ public class JoinJdbcMapperTest {
             return name;
         }
 
+        public List<String> getPhones() {
+            return phones;
+        }
     }
-    public static class ProfessorC {
+    public static class ProfessorC implements  Professor<StudentC> {
         private final int id;
         private final String name;
         private final List<StudentC> students;
@@ -145,26 +196,7 @@ public class JoinJdbcMapperTest {
                 .newMapper(ProfessorField.class);
 
 
-        ResultSet rs = setUpResultSetMock();
-
-
-        List<ProfessorField> professors = mapper.forEach(rs, new ListHandler<ProfessorField>()).getList();
-        assertEquals(2, professors.size());
-        assertEquals(1, professors.get(0).id);
-        assertEquals("professor1", professors.get(0).name);
-        assertEquals(2, professors.get(0).students.size());
-        assertEquals(3, professors.get(0).students.get(0).id);
-        assertEquals("student3", professors.get(0).students.get(0).name);
-        assertEquals(4, professors.get(0).students.get(1).id);
-        assertEquals("student4", professors.get(0).students.get(1).name);
-
-
-        assertEquals(2, professors.get(1).id);
-        assertEquals("professor2", professors.get(1).name);
-        assertEquals(1, professors.get(1).students.size());
-        assertEquals(3, professors.get(1).students.get(0).id);
-        assertEquals("student3", professors.get(1).students.get(0).name);
-
+        validateMapper(mapper);
 
     }
 
@@ -175,21 +207,25 @@ public class JoinJdbcMapperTest {
                 .addKeys("id", "student_id")
                 .newMapper(ProfessorGS.class);
 
-        List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
-        validateGS(professors);
+        validateMapper(mapper);
+    }
+
+    private <T extends Professor<?>> void validateMapper(JdbcMapper<T> mapper) throws SQLException {
+        List<T> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<T>()).getList();
+        validateProfessors(professors);
 
         //IFJAVA8_START
-        validateGS(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
+        validateProfessors(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
 
-        validateGS(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
+        validateProfessors(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
         //IFJAVA8_END
 
-        Iterator<ProfessorGS> iterator = mapper.iterator(setUpResultSetMock());
-        professors = new ArrayList<ProfessorGS>();
+        Iterator<T> iterator = mapper.iterator(setUpResultSetMock());
+        professors = new ArrayList<T>();
         while(iterator.hasNext()) {
             professors.add(iterator.next());
         }
-        validateGS(professors);
+        validateProfessors(professors);
     }
 
     @Test
@@ -199,21 +235,7 @@ public class JoinJdbcMapperTest {
                 .addKeys("id", "student_id")
                 .newMapper(ProfessorGS.class);
 
-        List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
-        validateGS(professors);
-
-        //IFJAVA8_START
-        validateGS(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
-
-        validateGS(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
-        //IFJAVA8_END
-
-        Iterator<ProfessorGS> iterator = mapper.iterator(setUpResultSetMock());
-        professors = new ArrayList<ProfessorGS>();
-        while(iterator.hasNext()) {
-            professors.add(iterator.next());
-        }
-        validateGS(professors);
+        validateMapper(mapper);
     }
 
 
@@ -224,21 +246,7 @@ public class JoinJdbcMapperTest {
                 .addKeys("id", "student_id")
                 .newMapper(ProfessorGS.class);
 
-        List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
-        validateGS(professors);
-
-        //IFJAVA8_START
-        validateGS(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
-
-        validateGS(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
-        //IFJAVA8_END
-
-        Iterator<ProfessorGS> iterator = mapper.iterator(setUpResultSetMock());
-        professors = new ArrayList<ProfessorGS>();
-        while(iterator.hasNext()) {
-            professors.add(iterator.next());
-        }
-        validateGS(professors);
+        validateMapper(mapper);
     }
 
     @Test
@@ -252,21 +260,7 @@ public class JoinJdbcMapperTest {
                 .addKey("students_name")
                 .mapper();
 
-        List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
-        validateGS(professors);
-
-        //IFJAVA8_START
-        validateGS(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
-
-        validateGS(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
-        //IFJAVA8_END
-
-        Iterator<ProfessorGS> iterator = mapper.iterator(setUpResultSetMock());
-        professors = new ArrayList<ProfessorGS>();
-        while(iterator.hasNext()) {
-            professors.add(iterator.next());
-        }
-        validateGS(professors);
+        validateMapper(mapper);
     }
 
 
@@ -278,21 +272,8 @@ public class JoinJdbcMapperTest {
                 .addKeys("id", "students_id")
                 .newMapper(ProfessorC.class);
 
-        List<ProfessorC> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorC>()).getList();
-        validateC(professors);
+        validateMapper(mapper);
 
-        //IFJAVA8_START
-        validateC(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
-
-        validateC(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
-        //IFJAVA8_END
-
-        Iterator<ProfessorC> iterator = mapper.iterator(setUpResultSetMock());
-        professors = new ArrayList<ProfessorC>();
-        while(iterator.hasNext()) {
-            professors.add(iterator.next());
-        }
-        validateC(professors);
     }
 
 
@@ -303,23 +284,8 @@ public class JoinJdbcMapperTest {
                 .addKeys("id", "students_id")
                 .newMapper(ProfessorC.class);
 
-        ResultSet rs = setUpResultSetMock();
-        ListHandler<ProfessorC> listHandler = new ListHandler<ProfessorC>();
-        List<ProfessorC> professors = mapper.forEach(rs, listHandler).getList();
-        validateC(professors);
+        validateMapper(mapper);
 
-        //IFJAVA8_START
-        validateC(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
-
-        validateC(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
-        //IFJAVA8_END
-
-        Iterator<ProfessorC> iterator = mapper.iterator(setUpResultSetMock());
-        professors = new ArrayList<ProfessorC>();
-        while(iterator.hasNext()) {
-            professors.add(iterator.next());
-        }
-        validateC(professors);
     }
 
 
@@ -333,20 +299,28 @@ public class JoinJdbcMapperTest {
         when(metaData.getColumnLabel(2)).thenReturn("name");
         when(metaData.getColumnLabel(3)).thenReturn("students_id");
         when(metaData.getColumnLabel(4)).thenReturn("students_name");
+//        when(metaData.getColumnLabel(5)).thenReturn("students_phones");
 
         when(rs.getMetaData()).thenReturn(metaData);
 
         final AtomicInteger ai = new AtomicInteger();
 
+//        final int[] professorIds = new int[]{1, 1, 1, 2, 2, 3};
+//        final String[] professorNames = new String[] {"professor1", "professor1", "professor1", "professor2", "professor2", "professor3"};
+//        final Integer[] studentIds = new Integer []{3, 4, 4, 5, 5, null};
+//        final String[] studentNames = new String[] {"student3", "student4", "student4", "student5", "student5", null};
+//        final String[] phones = new String[] {"phone31", "phone41", "phone42", "phone51", "phone52", null};
+
         final int[] professorIds = new int[]{1, 1, 2};
         final String[] professorNames = new String[] {"professor1", "professor1", "professor2"};
-        final int[] studentIds = new int[]{3, 4, 3};
-        final String[] studentNames = new String[] {"student3", "student4", "student3"};
+        final Integer[] studentIds = new Integer []{3, 4, 5, 5, null};
+        final String[] studentNames = new String[] {"student3", "student4","student5"};
+        final String[] phones = new String[] {"phone31", "phone41", "phone42", "phone51", "phone52", null};
 
         when(rs.next()).then(new Answer<Boolean>() {
             @Override
             public Boolean answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return ai.getAndIncrement() < 3;
+                return ai.getAndIncrement() < professorIds.length;
             }
         });
         when(rs.getInt(1)).then(new Answer<Integer>() {
@@ -364,7 +338,8 @@ public class JoinJdbcMapperTest {
         when(rs.getInt(3)).then(new Answer<Integer>() {
             @Override
             public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return studentIds[ai.get() - 1];
+                Integer studentId = studentIds[ai.get() - 1];
+                return studentId != null ? studentId : 0;
             }
         });
         when(rs.getString(4))
@@ -374,6 +349,13 @@ public class JoinJdbcMapperTest {
                 return studentNames[ai.get() - 1];
             }
         });
+        when(rs.getString(5))
+                .then(new Answer<String>() {
+                    @Override
+                    public String answer(InvocationOnMock invocationOnMock) throws Throwable {
+                        return phones[ai.get() - 1];
+                    }
+                });
         when(rs.getObject(1)).then(new Answer<Object>() {
             @Override
             public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
@@ -389,40 +371,22 @@ public class JoinJdbcMapperTest {
         return rs;
     }
 
-    private void validateGS(List<ProfessorGS> professors) {
+    private void validateProfessors(List<? extends Professor<?>> professors) {
         assertEquals(2, professors.size());
-        assertEquals(1, professors.get(0).id);
-        assertEquals("professor1", professors.get(0).name);
-        assertEquals(2, professors.get(0).students.size());
-        assertEquals(3, professors.get(0).students.get(0).id);
-        assertEquals("student3", professors.get(0).students.get(0).name);
-        assertEquals(4, professors.get(0).students.get(1).id);
-        assertEquals("student4", professors.get(0).students.get(1).name);
+        assertEquals(1, professors.get(0).getId());
+        assertEquals("professor1", professors.get(0).getName());
+        assertEquals(2, professors.get(0).getStudents().size());
+        assertEquals(3, professors.get(0).getStudents().get(0).getId());
+        assertEquals("student3", professors.get(0).getStudents().get(0).getName());
+        assertEquals(4, professors.get(0).getStudents().get(1).getId());
+        assertEquals("student4", professors.get(0).getStudents().get(1).getName());
 
 
-        assertEquals(2, professors.get(1).id);
-        assertEquals("professor2", professors.get(1).name);
-        assertEquals(1, professors.get(1).students.size());
-        assertEquals(3, professors.get(1).students.get(0).id);
-        assertEquals("student3", professors.get(1).students.get(0).name);
+        assertEquals(2, professors.get(1).getId());
+        assertEquals("professor2", professors.get(1).getName());
+        assertEquals(1, professors.get(1).getStudents().size());
+        assertEquals(5, professors.get(1).getStudents().get(0).getId());
+        assertEquals("student5", professors.get(1).getStudents().get(0).getName());
     }
 
-
-    private void validateC(List<ProfessorC> professors) {
-        assertEquals(2, professors.size());
-        assertEquals(1, professors.get(0).id);
-        assertEquals("professor1", professors.get(0).name);
-        assertEquals(2, professors.get(0).students.size());
-        assertEquals(3, professors.get(0).students.get(0).id);
-        assertEquals("student3", professors.get(0).students.get(0).name);
-        assertEquals(4, professors.get(0).students.get(1).id);
-        assertEquals("student4", professors.get(0).students.get(1).name);
-
-
-        assertEquals(2, professors.get(1).id);
-        assertEquals("professor2", professors.get(1).name);
-        assertEquals(1, professors.get(1).students.size());
-        assertEquals(3, professors.get(1).students.get(0).id);
-        assertEquals("student3", professors.get(1).students.get(0).name);
-    }
 }

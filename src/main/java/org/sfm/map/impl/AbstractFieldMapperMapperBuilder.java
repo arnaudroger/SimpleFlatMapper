@@ -130,7 +130,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 			private <P> void addPropertyBuilder(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t,
 												SubPropertyMeta<T, ?> subProp,
 												AbstractFieldMapperMapperBuilder<S, ?, K> builder) {
-				((AbstractFieldMapperMapperBuilder<S, P, K>)builder).addMapping(t.getColumnKey(), ((SubPropertyMeta<T, P>)subProp).getSubProperty());
+				((AbstractFieldMapperMapperBuilder<S, P, K>)builder).addMapping(t.getColumnKey(), t.getColumnDefinition(), ((SubPropertyMeta<T, P>)subProp).getSubProperty());
 			}
 		});
 		
@@ -171,8 +171,8 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	}
 
 
-	protected <P> void addMapping(K columnKey, PropertyMeta<T, P> prop) {
-		propertyMappingsBuilder.addProperty(columnKey, identity, prop);
+	protected <P> void addMapping(K columnKey, FieldMapperColumnDefinition<K, S> columnDefinition,  PropertyMeta<T, P> prop) {
+		propertyMappingsBuilder.addProperty(columnKey, columnDefinition, prop);
 	}
 
 
@@ -206,7 +206,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 						builders.put(propertyOwner.getName(), builder);
 						buildersByOwner.put(pm, builder);
 					}
-					builder.addMapping(key, ((SubPropertyMeta<T, P>)subPropertyMeta).getSubProperty());
+					builder.addMapping(key, pm.getColumnDefinition(), ((SubPropertyMeta<T, P>)subPropertyMeta).getSubProperty());
 				}
 			}
 		});

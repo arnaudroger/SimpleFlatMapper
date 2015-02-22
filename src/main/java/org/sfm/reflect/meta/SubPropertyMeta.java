@@ -47,4 +47,12 @@ public class SubPropertyMeta<O, P> extends PropertyMeta<O, P> {
 	public String getPath() {
 		return getOwnerProperty().getPath() + "." + subProperty.getPath();
 	}
+
+    public Type getLeafType() {
+        if (subProperty.isSubProperty()) {
+            return ((SubPropertyMeta<P,?>)subProperty).getLeafType();
+        } else {
+            return subProperty.getType();
+        }
+    }
 }

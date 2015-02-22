@@ -3,6 +3,7 @@ package org.sfm.csv;
 import org.junit.Test;
 import org.sfm.beans.Db1DeepObject;
 import org.sfm.beans.DbFinal1DeepObject;
+import org.sfm.csv.impl.ParsingContext;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.ListHandler;
@@ -15,6 +16,24 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class CsvMapperBuilderSubObjectTest {
+
+    @Test
+    public void testMapDbObjectWithCustomReader() throws Exception {
+        CsvMapperBuilder<Db1DeepObject> builder = new CsvMapperBuilder<Db1DeepObject>(Db1DeepObject.class,  ReflectionService.newInstance(true, false));
+        CsvColumnDefinition columnDefinition = CsvColumnDefinition.customReaderDefinition(new CellValueReader<String>() {
+            @Override
+            public String read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+                return "cv1";
+            }
+        });
+        builder.addMapping("db_Object_name", columnDefinition);
+
+        CsvMapper<Db1DeepObject> mapper = builder.mapper();
+
+        Db1DeepObject v1 = mapper.iterator(new StringReader("v1")).next();
+
+        assertEquals("cv1", v1.getDbObject().getName());
+    }
 
 	@Test
 	public void testMapDbObject() throws UnsupportedEncodingException, Exception {

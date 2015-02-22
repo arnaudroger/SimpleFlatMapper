@@ -94,7 +94,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 	
 
 	public void flush(int cellIndex) {
-		if (cellIndex > 0) {
+		if (cellIndex >= 0) {
 			T instance = currentInstance;
 			if (instance == null) {
 				instance = createInstance();

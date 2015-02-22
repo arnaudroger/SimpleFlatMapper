@@ -4,12 +4,16 @@ import org.junit.Test;
 import org.sfm.beans.Db1DeepObject;
 import org.sfm.beans.Db2DeepObject;
 import org.sfm.beans.DbFinal1DeepObject;
+import org.sfm.map.impl.FieldMapperColumnDefinition;
+import org.sfm.reflect.Getter;
 import org.sfm.utils.RowHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class JdbcMapperSubObjectTest {
 
@@ -44,7 +48,33 @@ public class JdbcMapperSubObjectTest {
 			}
 		}, QUERY);
 	}
-	
+
+
+    @Test
+    public void testMapInnerObjectWithColumnDefinition() throws Exception {
+        JdbcMapperBuilder<Db1DeepObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(Db1DeepObject.class);
+
+        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition = FieldMapperColumnDefinition.customGetter(new Getter<ResultSet, String>() {
+            @Override
+            public String get(ResultSet target) throws Exception {
+                return "ov1";
+            }
+        });
+        builder.addMapping("db_object_name", columnDefinition);
+
+        final JdbcMapper<Db1DeepObject> mapper = builder.mapper();
+
+        ResultSet rs = mock(ResultSet.class);
+
+        when(rs.getString(1)).thenReturn("name1");
+        when(rs.next()).thenReturn(true, false);
+
+        Db1DeepObject next = mapper.iterator(rs).next();
+
+        assertEquals("ov1", next.getDbObject().getName());
+
+    }
+
 	@Test
 	public void testMapInnerFinalObjectWithStaticMapper() throws Exception {
 		JdbcMapperBuilder<DbFinal1DeepObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbFinal1DeepObject.class);

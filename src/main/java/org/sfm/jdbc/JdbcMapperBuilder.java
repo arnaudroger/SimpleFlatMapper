@@ -75,8 +75,11 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 		}
 	}
 
-	
-	public JdbcMapperBuilder<T> addMapping(String column) {
+    public JdbcMapperBuilder<T> addKey(String column) {
+        return addMapping(column, columnIndex++, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>key());
+    }
+
+    public JdbcMapperBuilder<T> addMapping(String column) {
 		return addMapping(column, columnIndex++);
 	}
 

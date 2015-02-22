@@ -207,6 +207,35 @@ public class JoinJdbcMapperTest {
         validateGS(professors);
     }
 
+    @Test
+    public void testJoinTableGSManualMapping() throws SQLException {
+        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
+        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
+                .newBuilder(ProfessorGS.class)
+                .addKey("id")
+                .addMapping("name")
+                .addMapping("students_id")
+                .addMapping("students_name")
+                .mapper();
+
+        List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
+        validateGS(professors);
+
+        //IFJAVA8_START
+        validateGS(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
+
+        validateGS(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
+        //IFJAVA8_END
+
+        Iterator<ProfessorGS> iterator = mapper.iterator(setUpResultSetMock());
+        professors = new ArrayList<ProfessorGS>();
+        while(iterator.hasNext()) {
+            professors.add(iterator.next());
+        }
+        validateGS(professors);
+    }
+
+
 
     @Test
     public void testJoinTableC() throws SQLException {

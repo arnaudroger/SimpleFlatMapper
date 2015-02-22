@@ -36,6 +36,7 @@ public class JoinJdbcMapperTest {
     public static class StudentGS {
         private int id;
         private String name;
+        private List<String> surnames;
 
         public int getId() {
             return id;
@@ -51,6 +52,14 @@ public class JoinJdbcMapperTest {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public List<String> getSurnames() {
+            return surnames;
+        }
+
+        public void setSurnames(List<String> surnames) {
+            this.surnames = surnames;
         }
     }
     public static class ProfessorGS {
@@ -132,7 +141,7 @@ public class JoinJdbcMapperTest {
     @Test
     public void testJoinTableFields() throws SQLException {
         JdbcMapper<ProfessorField> mapper = JdbcMapperFactoryHelper.asm()
-                .addKeys("id")
+                .addKeys("id", "student_id")
                 .newMapper(ProfessorField.class);
 
 
@@ -163,7 +172,7 @@ public class JoinJdbcMapperTest {
     public void testJoinTableGSNoAsm() throws SQLException {
         FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
         JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.noAsm()
-                .addKeys("id")
+                .addKeys("id", "student_id")
                 .newMapper(ProfessorGS.class);
 
         List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
@@ -187,7 +196,32 @@ public class JoinJdbcMapperTest {
     public void testJoinTableGS() throws SQLException {
         FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
         JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
-                .addKeys("id")
+                .addKeys("id", "student_id")
+                .newMapper(ProfessorGS.class);
+
+        List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
+        validateGS(professors);
+
+        //IFJAVA8_START
+        validateGS(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
+
+        validateGS(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
+        //IFJAVA8_END
+
+        Iterator<ProfessorGS> iterator = mapper.iterator(setUpResultSetMock());
+        professors = new ArrayList<ProfessorGS>();
+        while(iterator.hasNext()) {
+            professors.add(iterator.next());
+        }
+        validateGS(professors);
+    }
+
+
+    @Test
+    public void testJoinTableGS2Joins() throws SQLException {
+        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
+        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
+                .addKeys("id", "student_id")
                 .newMapper(ProfessorGS.class);
 
         List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
@@ -215,7 +249,7 @@ public class JoinJdbcMapperTest {
                 .addKey("id")
                 .addMapping("name")
                 .addMapping("students_id")
-                .addMapping("students_name")
+                .addKey("students_name")
                 .mapper();
 
         List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
@@ -241,7 +275,7 @@ public class JoinJdbcMapperTest {
     public void testJoinTableC() throws SQLException {
         FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
         JdbcMapper<ProfessorC> mapper = JdbcMapperFactoryHelper.asm()
-                .addKeys("id")
+                .addKeys("id", "students_id")
                 .newMapper(ProfessorC.class);
 
         List<ProfessorC> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorC>()).getList();
@@ -266,7 +300,7 @@ public class JoinJdbcMapperTest {
     public void testJoinTableCNoAsm() throws SQLException {
         FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
         JdbcMapper<ProfessorC> mapper = JdbcMapperFactoryHelper.noAsm()
-                .addKeys("id")
+                .addKeys("id", "students_id")
                 .newMapper(ProfessorC.class);
 
         ResultSet rs = setUpResultSetMock();
@@ -344,6 +378,12 @@ public class JoinJdbcMapperTest {
             @Override
             public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
                 return professorIds[ai.get() - 1];
+            }
+        });
+        when(rs.getObject(3)).then(new Answer<Object>() {
+            @Override
+            public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return studentIds[ai.get() - 1];
             }
         });
         return rs;

@@ -296,10 +296,27 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
             @Override
             public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> propertyMapping) {
                 if (propertyMapping.getColumnDefinition().isKey()) {
-                    primaryKeys.add(propertyMapping.getColumnKey());
+                    if (!isInAList(propertyMapping.getPropertyMeta())) {
+                        primaryKeys.add(propertyMapping.getColumnKey());
+                    }
                 }
             }
         });
         return primaryKeys;
+    }
+
+    private boolean isInAList(PropertyMeta<?, ?> propertyMeta) {
+        if (propertyMeta.isSubProperty()) {
+            SubPropertyMeta<?, ?> subPropertyMeta = (SubPropertyMeta) propertyMeta;
+            PropertyMeta<?, ?> owner = subPropertyMeta.getOwnerProperty();
+
+            if (TypeHelper.isAssignable(List.class, owner.getClassMeta().getType())) {
+                return true;
+            } else {
+                return isInAList(subPropertyMeta.getSubProperty());
+            }
+        }
+
+        return false;
     }
 }

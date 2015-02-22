@@ -243,7 +243,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	private <P> FieldMapper<S, T> newFieldMapper(
 			AbstractFieldMapperMapperBuilder<S, P, K> builder,
 			Setter<T, P> setter, Getter<T, P> getter,  K key) {
-		FieldMapper<S, T> fm =  new MapperFieldMapper<S, T, P>((AbstractMapperImpl<S, P>)builder.mapper(), setter, getter);
+		FieldMapper<S, T> fm =  new MapperFieldMapper<S, T, P>(builder.mapper(), setter, getter);
 		if (fieldMapperErrorHandler != null) {
 			fm = new FieldErrorHandlerMapper<S, T, K>(key, fm, fieldMapperErrorHandler);
 		}

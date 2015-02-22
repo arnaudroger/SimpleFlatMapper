@@ -39,8 +39,9 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
 	private T currentInstance;
 	private int cellIndex = 0;
+    private boolean hasData;
 
-	public CsvMapperCellConsumer(
+    public CsvMapperCellConsumer(
 			Instantiator<DelayedCellSetter<T, ?>[], T> instantiator,
 			DelayedCellSetter<T, ?>[] delayedCellSetters,
 			CellSetter<T>[] setters,
@@ -84,17 +85,13 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
 	@Override
 	public void endOfRow() {
-		endOfRow(cellIndex);
+		flush();
 		cellIndex = 0;
 	}
 	
-	public void endOfRow(int cellIndex) {
-		flush(cellIndex);
-	}
-	
 
-	public void flush(int cellIndex) {
-		if (cellIndex >= 0) {
+	public void flush() {
+		if (hasData) {
 			T instance = currentInstance;
 			if (instance == null) {
 				instance = createInstance();
@@ -107,7 +104,8 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 			}
 			this.cellIndex = -1;
 		}
-	}
+        hasData = false;
+    }
 
 
 	private void callHandler(T instance) {
@@ -180,7 +178,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 	}
 	
 	public void newCell(char[] chars, int offset, int length, int cellIndex) {
-		
+		hasData = true;
 		if (cellIndex < delayedCellSetters.length) {
 			newCellForDelayedSetter(chars, offset, length, cellIndex);
 		} else {
@@ -191,7 +189,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 		}
 		
 		if (cellIndex == flushIndex) {
-			flush(cellIndex);
+			flush();
 		}
 	}
 }

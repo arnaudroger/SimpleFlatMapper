@@ -17,7 +17,9 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
     public abstract Getter<S, ?> getCustomGetter();
     public abstract GetterFactory<S, K> getCustomGetterFactory();
     public abstract boolean hasCustomFactory();
+    public abstract boolean isKey();
 
+    public abstract FieldMapperColumnDefinition<K, S> addKey();
     public abstract FieldMapperColumnDefinition<K, S> addGetter(Getter<S, ?> getter);
     public abstract FieldMapperColumnDefinition<K, S> addGetterFactory(GetterFactory<S, K> getterFactory);
     public abstract FieldMapperColumnDefinition<K, S> addFieldMapper(FieldMapper<ResultSet, ?> mapper);
@@ -55,6 +57,10 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> ignoreDefinition() {
         return new IgnoreColumnDefinition<K, S>();
+    }
+
+    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> key() {
+        return new KeyColumnDefinition<K, S>();
     }
 
     static class IdentityColumnDefinition<K extends FieldKey<K>, S> extends FieldMapperColumnDefinition<K, S> {
@@ -96,6 +102,17 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         @Override
         public boolean hasCustomFactory() {
             return false;
+        }
+
+        @Override
+        public boolean isKey() {
+            return false;
+        }
+
+        @Override
+        public FieldMapperColumnDefinition<K, S> addKey() {
+            FieldMapperColumnDefinition<K, S> columnDefinition = key();
+            return compose(columnDefinition);
         }
 
         @Override
@@ -209,6 +226,11 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         }
 
         @Override
+        public boolean isKey() {
+            return def1.isKey() || def2.isKey();
+        }
+
+        @Override
         protected void appendToStringBuilder(StringBuilder sb) {
             def1.appendToStringBuilder(sb);
             sb.append(", ");
@@ -306,9 +328,6 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
 
     private static class IgnoreColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
 
-        public IgnoreColumnDefinition() {
-        }
-
         @Override
         public boolean ignore() {
             return true;
@@ -317,6 +336,20 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         @Override
         protected void appendToStringBuilder(StringBuilder sb) {
             sb.append("Ignore{}");
+        }
+
+    }
+
+    private static class KeyColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
+
+        @Override
+        public boolean isKey() {
+            return true;
+        }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("Key{}");
         }
 
     }

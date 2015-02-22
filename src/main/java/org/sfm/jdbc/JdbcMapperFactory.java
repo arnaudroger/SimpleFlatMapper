@@ -222,4 +222,16 @@ public final class JdbcMapperFactory {
         this.failOnAsm = b;
         return this;
     }
+
+    /**
+     * Define keys use to detect when to break the 1-n join.
+     * @param columns name of the column to define as key
+     * @return this
+     */
+    public JdbcMapperFactory addKeys(String... columns) {
+        for(String col : columns) {
+            addColumnDefinition(col, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>key());
+        }
+        return this;
+    }
 }

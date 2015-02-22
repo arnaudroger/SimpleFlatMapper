@@ -15,6 +15,8 @@ import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey>  {
 
@@ -42,7 +44,20 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	}
 
 	@Override
-	public JdbcMapper<T> mapper() {
+    public JdbcMapper<T> mapper() {
+        JdbcMapper<T> mapper = buildMapper();
+
+        List<JdbcColumnKey> primaryKeys = getPrimaryKeys();
+
+        if (primaryKeys.isEmpty()) {
+            return mapper;
+        } else {
+            return new JoinJdbcMapper<T>(breakDetector(primaryKeys), mapper, jdbcMapperErrorHandler);
+        }
+    }
+
+
+    private JdbcMapper<T> buildMapper() {
         FieldMapper<ResultSet, T>[] fields = fields();
         Tuple2<FieldMapper<ResultSet, T>[], Instantiator<ResultSet, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
         if (reflectionService.isAsmActivated()) {
@@ -117,19 +132,16 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 		return new  JdbcMapperBuilder<ST>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory(), failOnAsm);
 	}
 
+    private BreakDetectorFactory<ResultSet> breakDetector(List<JdbcColumnKey> columnNames) {
+        int[] columns = new int[columnNames.size()];
 
-    public JdbcMapper<T> joinOn(String... columns) {
-        return new JoinJdbcMapper<T>(breakDetector(columns),  mapper(), jdbcMapperErrorHandler );
-    }
-
-    private BreakDetectorFactory<ResultSet> breakDetector(String[] columnNames) {
-        int[] columns = new int[columnNames.length];
-
-        for(int i = 0; i < columns.length; i++) {
-            JdbcColumnKey key = findKey(columnNames[i]);
+        int i = 0;
+        for(JdbcColumnKey key : columnNames) {
             columns[i] = key.getIndex();
+            i++;
         }
 
         return new ResultSetBreakDetectorFactory(columns);
     }
+
 }

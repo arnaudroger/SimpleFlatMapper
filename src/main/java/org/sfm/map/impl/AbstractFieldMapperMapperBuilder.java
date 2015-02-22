@@ -289,4 +289,17 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 			FieldMapperErrorHandler<K> errorHandler) {
 		this.fieldMapperErrorHandler = errorHandler;
 	}
+
+    protected List<K> getPrimaryKeys() {
+        final List<K> primaryKeys = new ArrayList<K>();
+        propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>>() {
+            @Override
+            public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> propertyMapping) {
+                if (propertyMapping.getColumnDefinition().isKey()) {
+                    primaryKeys.add(propertyMapping.getColumnKey());
+                }
+            }
+        });
+        return primaryKeys;
+    }
 }

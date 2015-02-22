@@ -1,13 +1,18 @@
 package org.sfm.jdbc;
 
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.utils.ListHandler;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 //IFJAVA8_START
 import java.util.stream.Collectors;
 //IFJAVA8_END
@@ -127,12 +132,8 @@ public class JoinJdbcMapperTest {
     @Test
     public void testJoinTableFields() throws SQLException {
         JdbcMapper<ProfessorField> mapper = JdbcMapperFactoryHelper.asm()
-                .newBuilder(ProfessorField.class)
-                .addMapping("id")
-                .addMapping("name")
-                .addMapping("students_id")
-                .addMapping("students_name")
-                .joinOn("id");
+                .addKeys("id")
+                .newMapper(ProfessorField.class);
 
 
         ResultSet rs = setUpResultSetMock();
@@ -160,13 +161,10 @@ public class JoinJdbcMapperTest {
 
     @Test
     public void testJoinTableGSNoAsm() throws SQLException {
+        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
         JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.noAsm()
-                .newBuilder(ProfessorGS.class)
-                .addMapping("id")
-                .addMapping("name")
-                .addMapping("students_id")
-                .addMapping("students_name")
-                .joinOn("id");
+                .addKeys("id")
+                .newMapper(ProfessorGS.class);
 
         List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
         validateGS(professors);
@@ -187,13 +185,10 @@ public class JoinJdbcMapperTest {
 
     @Test
     public void testJoinTableGS() throws SQLException {
+        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
         JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
-                .newBuilder(ProfessorGS.class)
-                .addMapping("id")
-                .addMapping("name")
-                .addMapping("students_id")
-                .addMapping("students_name")
-                .joinOn("id");
+                .addKeys("id")
+                .newMapper(ProfessorGS.class);
 
         List<ProfessorGS> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorGS>()).getList();
         validateGS(professors);
@@ -215,24 +210,21 @@ public class JoinJdbcMapperTest {
 
     @Test
     public void testJoinTableC() throws SQLException {
+        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
         JdbcMapper<ProfessorC> mapper = JdbcMapperFactoryHelper.asm()
-                .newBuilder(ProfessorC.class)
-                .addMapping("id")
-                .addMapping("name")
-                .addMapping("students_id")
-                .addMapping("students_name")
-                .joinOn("id");
+                .addKeys("id")
+                .newMapper(ProfessorC.class);
 
-        List<ProfessorC> professors = mapper.forEach(setUpResultSetMockConstructor(), new ListHandler<ProfessorC>()).getList();
+        List<ProfessorC> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<ProfessorC>()).getList();
         validateC(professors);
 
         //IFJAVA8_START
-        validateC(mapper.stream(setUpResultSetMockConstructor()).collect(Collectors.toList()));
+        validateC(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
 
-        validateC(mapper.stream(setUpResultSetMockConstructor()).limit(2).collect(Collectors.toList()));
+        validateC(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
         //IFJAVA8_END
 
-        Iterator<ProfessorC> iterator = mapper.iterator(setUpResultSetMockConstructor());
+        Iterator<ProfessorC> iterator = mapper.iterator(setUpResultSetMock());
         professors = new ArrayList<ProfessorC>();
         while(iterator.hasNext()) {
             professors.add(iterator.next());
@@ -243,26 +235,23 @@ public class JoinJdbcMapperTest {
 
     @Test
     public void testJoinTableCNoAsm() throws SQLException {
+        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
         JdbcMapper<ProfessorC> mapper = JdbcMapperFactoryHelper.noAsm()
-                .newBuilder(ProfessorC.class)
-                .addMapping("id")
-                .addMapping("name")
-                .addMapping("students_id")
-                .addMapping("students_name")
-                .joinOn("id");
+                .addKeys("id")
+                .newMapper(ProfessorC.class);
 
-        ResultSet rs = setUpResultSetMockConstructor();
+        ResultSet rs = setUpResultSetMock();
         ListHandler<ProfessorC> listHandler = new ListHandler<ProfessorC>();
         List<ProfessorC> professors = mapper.forEach(rs, listHandler).getList();
         validateC(professors);
 
         //IFJAVA8_START
-        validateC(mapper.stream(setUpResultSetMockConstructor()).collect(Collectors.toList()));
+        validateC(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
 
-        validateC(mapper.stream(setUpResultSetMockConstructor()).limit(2).collect(Collectors.toList()));
+        validateC(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
         //IFJAVA8_END
 
-        Iterator<ProfessorC> iterator = mapper.iterator(setUpResultSetMockConstructor());
+        Iterator<ProfessorC> iterator = mapper.iterator(setUpResultSetMock());
         professors = new ArrayList<ProfessorC>();
         while(iterator.hasNext()) {
             professors.add(iterator.next());
@@ -274,24 +263,60 @@ public class JoinJdbcMapperTest {
     private ResultSet setUpResultSetMock() throws SQLException {
         ResultSet rs = mock(ResultSet.class);
 
-        when(rs.next()).thenReturn(true, true, true, false);
-        when(rs.getInt(1)).thenReturn(1, 1, 2);
-        when(rs.getString(2)).thenReturn("professor1", "professor1", "professor2");
-        when(rs.getInt(3)).thenReturn(3, 4, 3);
-        when(rs.getString(4)).thenReturn("student3", "student4", "student3");
-        when(rs.getObject(1)).thenReturn(1, 1, 2);
-        return rs;
-    }
+        ResultSetMetaData metaData = mock(ResultSetMetaData.class);
 
-    private ResultSet setUpResultSetMockConstructor() throws SQLException {
-        ResultSet rs = mock(ResultSet.class);
+        when(metaData.getColumnCount()).thenReturn(4);
+        when(metaData.getColumnLabel(1)).thenReturn("id");
+        when(metaData.getColumnLabel(2)).thenReturn("name");
+        when(metaData.getColumnLabel(3)).thenReturn("students_id");
+        when(metaData.getColumnLabel(4)).thenReturn("students_name");
 
-        when(rs.next()).thenReturn(true, true, true, false);
-        when(rs.getInt(1)).thenReturn(1, 2);
-        when(rs.getString(2)).thenReturn("professor1", "professor2");
-        when(rs.getInt(3)).thenReturn(3, 4, 3);
-        when(rs.getString(4)).thenReturn("student3", "student4", "student3");
-        when(rs.getObject(1)).thenReturn(1, 1, 2);
+        when(rs.getMetaData()).thenReturn(metaData);
+
+        final AtomicInteger ai = new AtomicInteger();
+
+        final int[] professorIds = new int[]{1, 1, 2};
+        final String[] professorNames = new String[] {"professor1", "professor1", "professor2"};
+        final int[] studentIds = new int[]{3, 4, 3};
+        final String[] studentNames = new String[] {"student3", "student4", "student3"};
+
+        when(rs.next()).then(new Answer<Boolean>() {
+            @Override
+            public Boolean answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return ai.getAndIncrement() < 3;
+            }
+        });
+        when(rs.getInt(1)).then(new Answer<Integer>() {
+            @Override
+            public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return professorIds[ai.get() - 1];
+            }
+        });
+        when(rs.getString(2)).then(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return professorNames[ai.get() - 1];
+            }
+        });
+        when(rs.getInt(3)).then(new Answer<Integer>() {
+            @Override
+            public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return studentIds[ai.get() - 1];
+            }
+        });
+        when(rs.getString(4))
+        .then(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return studentNames[ai.get() - 1];
+            }
+        });
+        when(rs.getObject(1)).then(new Answer<Object>() {
+            @Override
+            public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return professorIds[ai.get() - 1];
+            }
+        });
         return rs;
     }
 

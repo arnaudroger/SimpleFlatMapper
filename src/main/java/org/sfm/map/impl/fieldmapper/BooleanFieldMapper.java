@@ -1,6 +1,7 @@
 package org.sfm.map.impl.fieldmapper;
 
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.FieldMapper;
+import org.sfm.map.MappingContext;
 import org.sfm.reflect.primitive.BooleanGetter;
 import org.sfm.reflect.primitive.BooleanSetter;
 
@@ -16,7 +17,7 @@ public final class BooleanFieldMapper<S, T> implements FieldMapper<S, T> {
 
 
 	@Override
-	public void map(final S source, final T target) throws Exception {
+	public void mapTo(final S source, final T target, final MappingContext mappingContext) throws Exception {
 		setter.setBoolean(target, getter.getBoolean(source));
 	}
 

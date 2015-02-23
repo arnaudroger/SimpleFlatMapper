@@ -1,5 +1,7 @@
 package org.sfm.map.impl;
 
+import org.sfm.map.FieldMapper;
+import org.sfm.map.MappingContext;
 import org.sfm.reflect.Instantiator;
 
 import java.util.Arrays;
@@ -16,19 +18,19 @@ public class MapperImpl<S, T> extends AbstractMapperImpl<S, T> {
         this.constructorMappers = constructorMappers;
 	}
 
-	protected final void mapFields(final S source, final T target) throws Exception {
+	protected final void mapFields(final S source, final T target, final MappingContext mappingContext) throws Exception {
         for (FieldMapper<S, T> fieldMapper : fieldMappers) {
-            fieldMapper.map(source, target);
+            fieldMapper.mapTo(source, target, mappingContext);
         }
 	}
 
     @Override
-    protected final void mapToFields(S source, T target) throws Exception {
+    protected final void mapToFields(S source, T target, final MappingContext mappingContext) throws Exception {
         for (FieldMapper<S, T> constructorMapper : constructorMappers) {
-            constructorMapper.map(source, target);
+            constructorMapper.mapTo(source, target, mappingContext);
         }
 
-        mapFields(source, target);
+        mapFields(source, target, mappingContext);
     }
 
     @Override

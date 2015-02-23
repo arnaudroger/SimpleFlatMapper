@@ -1,6 +1,7 @@
 package org.sfm.map.impl.fieldmapper;
 
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.FieldMapper;
+import org.sfm.map.MappingContext;
 import org.sfm.reflect.primitive.ShortGetter;
 import org.sfm.reflect.primitive.ShortSetter;
 
@@ -15,8 +16,8 @@ public final class ShortFieldMapper<S, T> implements FieldMapper<S, T> {
 	}
 
 	@Override
-	public void map(final S source, final T target) throws Exception {
-		setter.setShort(target, getter.getShort(source));
+	public void mapTo(final S source, final T target, final MappingContext mappingContext) throws Exception {
+        setter.setShort(target, getter.getShort(source));
 	}
 
     @Override

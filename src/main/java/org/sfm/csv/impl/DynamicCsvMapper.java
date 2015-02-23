@@ -30,7 +30,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	private final String defaultDateFormat;
 	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
 
-	private MapperCache<ColumnsMapperKey, CsvMapperImpl<T>> mapperCache = new MapperCache<ColumnsMapperKey, CsvMapperImpl<T>>();
+	private final MapperCache<ColumnsMapperKey, CsvMapperImpl<T>> mapperCache = new MapperCache<ColumnsMapperKey, CsvMapperImpl<T>>();
 
 
 	private final ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitions;

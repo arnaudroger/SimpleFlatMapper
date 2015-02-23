@@ -6,7 +6,7 @@ import org.sfm.map.ParsingContextProvider;
 
 public class ParsingContextFactoryBuilder {
 
-    private ParsingContextProvider[] providers;
+    private final ParsingContextProvider[] providers;
     private boolean hasProviders = false;
 
     public ParsingContextFactoryBuilder(int size) {

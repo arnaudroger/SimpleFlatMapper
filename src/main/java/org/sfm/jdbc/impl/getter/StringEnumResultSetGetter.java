@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 public final class StringEnumResultSetGetter<E extends Enum<E>> implements Getter<ResultSet, E> {
 
 	private final Class<E> enumType;
-	private Getter<ResultSet, String> stringGetter;
+	private final Getter<ResultSet, String> stringGetter;
 	
 	public StringEnumResultSetGetter(final Getter<ResultSet, String> stringGetter, final Class<E> enumType)  {
 		this.stringGetter = stringGetter;

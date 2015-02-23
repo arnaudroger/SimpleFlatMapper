@@ -18,24 +18,169 @@ import java.util.stream.Collectors;
 //IFJAVA8_END
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class JoinJdbcMapperTest {
 
-    public static interface Student {
+    private JdbcMapperFactory asmJdbcMapperFactory = JdbcMapperFactoryHelper.asm().addKeys("id", "students_id");
+    private JdbcMapperFactory noAsmJdbcMapperFactory = JdbcMapperFactoryHelper.noAsm().addKeys("id", "students_id");
+
+
+    @Test
+    public void testJoinTableFields() throws SQLException {
+        validateMapper(asmJdbcMapperFactory.newMapper(ProfessorField.class));
+    }
+
+    @Test
+    public void testJoinTableGSNoAsm() throws SQLException {
+        validateMapper(noAsmJdbcMapperFactory.newMapper(ProfessorGS.class));
+    }
+
+
+    @Test
+    public void testJoinTableGS() throws SQLException {
+        validateMapper(asmJdbcMapperFactory.newMapper(ProfessorGS.class));
+    }
+
+
+    @Test
+    public void testJoinTableGS2Joins() throws SQLException {
+        validateMapper(asmJdbcMapperFactory.newMapper(ProfessorGS.class));
+    }
+
+    @Test
+    public void testJoinTableC() throws SQLException {
+        validateMapper(asmJdbcMapperFactory.newMapper(ProfessorC.class));
+    }
+
+
+    @Test
+    public void testJoinTableCNoAsm() throws SQLException {
+        validateMapper(noAsmJdbcMapperFactory.newMapper(ProfessorC.class));
+    }
+
+
+    @Test
+    public void testJoinTableGSManualMapping() throws SQLException {
+        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
+        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
+                .newBuilder(ProfessorGS.class)
+                .addKey("id")
+                .addMapping("name")
+                .addMapping("students_id")
+                .addKey("students_name")
+                .mapper();
+
+        validateMapper(mapper);
+    }
+
+
+    private ResultSet setUpResultSetMock() throws SQLException {
+        ResultSet rs = mock(ResultSet.class);
+
+        ResultSetMetaData metaData = mock(ResultSetMetaData.class);
+
+
+        String[] columns = new String[] { "id", "name", "students_id", "students_name"};
+
+        when(metaData.getColumnCount()).thenReturn(columns.length);
+        when(metaData.getColumnLabel(anyInt())).then(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return columns[-1 + (Integer)invocationOnMock.getArguments()[0]];
+            }
+        });
+
+        when(rs.getMetaData()).thenReturn(metaData);
+
+        final AtomicInteger ai = new AtomicInteger();
+
+        final Object[][] rows = new Object[][]{
+                {1, "professor1", 3, "student3"},
+                {1, "professor1", 4, "student4"},
+                {2, "professor2", 5, "student5"},
+                {3, "professor3", null, null}
+        };
+
+        when(rs.next()).then(new Answer<Boolean>() {
+            @Override
+            public Boolean answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return ai.getAndIncrement() < rows.length;
+            }
+        });
+        final Answer<Object> getValue = new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                final Object[] row = rows[ai.get() - 1];
+                final Integer col = -1 + (Integer) invocationOnMock.getArguments()[0];
+                return (row[col]);
+            }
+        };
+
+        when(rs.getInt(anyInt())).then(getValue);
+        when(rs.getString(anyInt())).then(getValue);
+        when(rs.getObject(anyInt())).then(getValue);
+
+        return rs;
+    }
+
+    private void validateProfessors(List<? extends Professor<?>> professors) {
+        assertEquals("we get 3 professors from the resultset", 3, professors.size());
+        final Professor<?> professor0 = professors.get(0);
+
+        assertPersonEquals(1, "professor1", professor0);
+        assertEquals(2, professor0.getStudents().size());
+        assertPersonEquals(3, "student3", professor0.getStudents().get(0));
+        assertPersonEquals(4, "student4", professor0.getStudents().get(1));
+
+
+        final Professor<?> professor1 = professors.get(1);
+        assertPersonEquals(2, "professor2", professor1);
+        assertEquals(1, professor1.getStudents().size());
+        assertPersonEquals(5, "student5", professor1.getStudents().get(0));
+
+        final Professor<?> professor3 = professors.get(2);
+        assertPersonEquals(3, "professor3", professor3);
+        assertTrue("professor3 has no students", professor3.getStudents().isEmpty());
+
+    }
+
+    private void assertPersonEquals(int id, String name, Person person) {
+        assertEquals(id, person.getId());
+        assertEquals(name, person.getName());
+    }
+
+    private <T extends Professor<?>> void validateMapper(JdbcMapper<T> mapper) throws SQLException {
+        List<T> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<T>()).getList();
+        validateProfessors(professors);
+
+        //IFJAVA8_START
+        validateProfessors(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
+
+        validateProfessors(mapper.stream(setUpResultSetMock()).limit(3).collect(Collectors.toList()));
+        //IFJAVA8_END
+
+        Iterator<T> iterator = mapper.iterator(setUpResultSetMock());
+        professors = new ArrayList<T>();
+        while(iterator.hasNext()) {
+            professors.add(iterator.next());
+        }
+        validateProfessors(professors);
+    }
+
+    public static interface Person {
         int getId();
-
         String getName();
+    }
 
+    public static interface Student  extends Person {
         List<String> getPhones();
     }
 
-    public static interface Professor<T extends Student> {
-        int getId();
-
-        String getName();
-
+    public static interface Professor<T extends Student> extends Person {
         List<T> getStudents();
     }
     public static class StudentField implements Student {
@@ -186,207 +331,6 @@ public class JoinJdbcMapperTest {
             return students;
         }
 
-    }
-
-
-    @Test
-    public void testJoinTableFields() throws SQLException {
-        JdbcMapper<ProfessorField> mapper = JdbcMapperFactoryHelper.asm()
-                .addKeys("id", "student_id")
-                .newMapper(ProfessorField.class);
-
-
-        validateMapper(mapper);
-
-    }
-
-    @Test
-    public void testJoinTableGSNoAsm() throws SQLException {
-        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
-        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.noAsm()
-                .addKeys("id", "student_id")
-                .newMapper(ProfessorGS.class);
-
-        validateMapper(mapper);
-    }
-
-    private <T extends Professor<?>> void validateMapper(JdbcMapper<T> mapper) throws SQLException {
-        List<T> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<T>()).getList();
-        validateProfessors(professors);
-
-        //IFJAVA8_START
-        validateProfessors(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
-
-        validateProfessors(mapper.stream(setUpResultSetMock()).limit(2).collect(Collectors.toList()));
-        //IFJAVA8_END
-
-        Iterator<T> iterator = mapper.iterator(setUpResultSetMock());
-        professors = new ArrayList<T>();
-        while(iterator.hasNext()) {
-            professors.add(iterator.next());
-        }
-        validateProfessors(professors);
-    }
-
-    @Test
-    public void testJoinTableGS() throws SQLException {
-        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
-        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
-                .addKeys("id", "student_id")
-                .newMapper(ProfessorGS.class);
-
-        validateMapper(mapper);
-    }
-
-
-    @Test
-    public void testJoinTableGS2Joins() throws SQLException {
-        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
-        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
-                .addKeys("id", "student_id")
-                .newMapper(ProfessorGS.class);
-
-        validateMapper(mapper);
-    }
-
-    @Test
-    public void testJoinTableGSManualMapping() throws SQLException {
-        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
-        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
-                .newBuilder(ProfessorGS.class)
-                .addKey("id")
-                .addMapping("name")
-                .addMapping("students_id")
-                .addKey("students_name")
-                .mapper();
-
-        validateMapper(mapper);
-    }
-
-
-
-    @Test
-    public void testJoinTableC() throws SQLException {
-        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
-        JdbcMapper<ProfessorC> mapper = JdbcMapperFactoryHelper.asm()
-                .addKeys("id", "students_id")
-                .newMapper(ProfessorC.class);
-
-        validateMapper(mapper);
-
-    }
-
-
-    @Test
-    public void testJoinTableCNoAsm() throws SQLException {
-        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
-        JdbcMapper<ProfessorC> mapper = JdbcMapperFactoryHelper.noAsm()
-                .addKeys("id", "students_id")
-                .newMapper(ProfessorC.class);
-
-        validateMapper(mapper);
-
-    }
-
-
-    private ResultSet setUpResultSetMock() throws SQLException {
-        ResultSet rs = mock(ResultSet.class);
-
-        ResultSetMetaData metaData = mock(ResultSetMetaData.class);
-
-        when(metaData.getColumnCount()).thenReturn(4);
-        when(metaData.getColumnLabel(1)).thenReturn("id");
-        when(metaData.getColumnLabel(2)).thenReturn("name");
-        when(metaData.getColumnLabel(3)).thenReturn("students_id");
-        when(metaData.getColumnLabel(4)).thenReturn("students_name");
-//        when(metaData.getColumnLabel(5)).thenReturn("students_phones");
-
-        when(rs.getMetaData()).thenReturn(metaData);
-
-        final AtomicInteger ai = new AtomicInteger();
-
-//        final int[] professorIds = new int[]{1, 1, 1, 2, 2, 3};
-//        final String[] professorNames = new String[] {"professor1", "professor1", "professor1", "professor2", "professor2", "professor3"};
-//        final Integer[] studentIds = new Integer []{3, 4, 4, 5, 5, null};
-//        final String[] studentNames = new String[] {"student3", "student4", "student4", "student5", "student5", null};
-//        final String[] phones = new String[] {"phone31", "phone41", "phone42", "phone51", "phone52", null};
-
-        final int[] professorIds = new int[]{1, 1, 2};
-        final String[] professorNames = new String[] {"professor1", "professor1", "professor2"};
-        final Integer[] studentIds = new Integer []{3, 4, 5, 5, null};
-        final String[] studentNames = new String[] {"student3", "student4","student5"};
-        final String[] phones = new String[] {"phone31", "phone41", "phone42", "phone51", "phone52", null};
-
-        when(rs.next()).then(new Answer<Boolean>() {
-            @Override
-            public Boolean answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return ai.getAndIncrement() < professorIds.length;
-            }
-        });
-        when(rs.getInt(1)).then(new Answer<Integer>() {
-            @Override
-            public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return professorIds[ai.get() - 1];
-            }
-        });
-        when(rs.getString(2)).then(new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return professorNames[ai.get() - 1];
-            }
-        });
-        when(rs.getInt(3)).then(new Answer<Integer>() {
-            @Override
-            public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
-                Integer studentId = studentIds[ai.get() - 1];
-                return studentId != null ? studentId : 0;
-            }
-        });
-        when(rs.getString(4))
-        .then(new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return studentNames[ai.get() - 1];
-            }
-        });
-        when(rs.getString(5))
-                .then(new Answer<String>() {
-                    @Override
-                    public String answer(InvocationOnMock invocationOnMock) throws Throwable {
-                        return phones[ai.get() - 1];
-                    }
-                });
-        when(rs.getObject(1)).then(new Answer<Object>() {
-            @Override
-            public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return professorIds[ai.get() - 1];
-            }
-        });
-        when(rs.getObject(3)).then(new Answer<Object>() {
-            @Override
-            public Integer answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return studentIds[ai.get() - 1];
-            }
-        });
-        return rs;
-    }
-
-    private void validateProfessors(List<? extends Professor<?>> professors) {
-        assertEquals(2, professors.size());
-        assertEquals(1, professors.get(0).getId());
-        assertEquals("professor1", professors.get(0).getName());
-        assertEquals(2, professors.get(0).getStudents().size());
-        assertEquals(3, professors.get(0).getStudents().get(0).getId());
-        assertEquals("student3", professors.get(0).getStudents().get(0).getName());
-        assertEquals(4, professors.get(0).getStudents().get(1).getId());
-        assertEquals("student4", professors.get(0).getStudents().get(1).getName());
-
-
-        assertEquals(2, professors.get(1).getId());
-        assertEquals("professor2", professors.get(1).getName());
-        assertEquals(1, professors.get(1).getStudents().size());
-        assertEquals(5, professors.get(1).getStudents().get(0).getId());
-        assertEquals("student5", professors.get(1).getStudents().get(0).getName());
     }
 
 }

@@ -1,6 +1,7 @@
 package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.JdbcMapper;
+import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.AbstractMapperImpl;
@@ -31,8 +32,9 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 	@Override
 	public final <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
 			throws SQLException, MappingException {
+        MappingContext context = newMappingContext();
 		while(rs.next()) {
-			T t = map(rs);
+			T t = map(rs, context);
 			try {
 				handler.handle(t);
 			} catch(Throwable error) {
@@ -46,7 +48,7 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
     @Deprecated
 	public Iterator<T> iterate(ResultSet rs) throws SQLException,
 			MappingException {
-		return new ResultSetIterator<T>(rs, this);
+		return new ResultSetIterator<T>(rs, this, newMappingContext());
 	}
 
 	@Override
@@ -59,23 +61,25 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
-		return StreamSupport.stream(new JdbcSpliterator<T>(rs, this), false);
+		return StreamSupport.stream(new JdbcSpliterator<T>(rs, this, newMappingContext()), false);
 	}
 
 	public static class JdbcSpliterator<T> implements Spliterator<T> {
 		private final ResultSet resultSet;
 		private final JdbcMapper<T> mapper;
+        private final MappingContext mappingContext;
 
-		public JdbcSpliterator(ResultSet resultSet, JdbcMapper<T> mapper) {
+		public JdbcSpliterator(ResultSet resultSet, JdbcMapper<T> mapper, MappingContext mappingContext) {
 			this.resultSet = resultSet;
 			this.mapper = mapper;
-		}
+            this.mappingContext = mappingContext;
+        }
 
 		@Override
 		public boolean tryAdvance(Consumer<? super T> action) {
 			try {
 				if (resultSet.next()) {
-					action.accept(mapper.map(resultSet));
+					action.accept(mapper.map(resultSet, mappingContext));
 					return true;
 				}
 			} catch (SQLException e) {

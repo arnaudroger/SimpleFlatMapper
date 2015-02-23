@@ -16,7 +16,7 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 
 	private final List<IndexedElement<T, ?>> elements;
 
-    private List<ConstructorDefinition<T>> constructorDefinitions;
+    private final List<ConstructorDefinition<T>> constructorDefinitions;
 
 
 	public TuplePropertyFinder(TupleClassMeta<T> tupleClassMeta) {

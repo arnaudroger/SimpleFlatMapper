@@ -7,7 +7,7 @@ import org.sfm.map.impl.TargetColumnsMapperKey;
 
 public class SfmRecordMapperProvider implements RecordMapperProvider {
 
-	private MapperCache<TargetColumnsMapperKey, Mapper<Record, ?>> mapperCache = new MapperCache<TargetColumnsMapperKey, Mapper<Record, ?>>();
+	private final MapperCache<TargetColumnsMapperKey, Mapper<Record, ?>> mapperCache = new MapperCache<TargetColumnsMapperKey, Mapper<Record, ?>>();
 
 	
 	@Override

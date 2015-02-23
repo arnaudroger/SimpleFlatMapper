@@ -2,7 +2,6 @@ package org.sfm.map;
 
 import org.junit.Test;
 import org.sfm.jdbc.JdbcColumnKey;
-import org.sfm.map.impl.FieldMapper;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 
@@ -42,7 +41,7 @@ public class FieldMapperColumnDefinitionTest {
         };
         FieldMapper<ResultSet, Object> fieldMapper = new FieldMapper<ResultSet, Object>() {
             @Override
-            public void map(ResultSet source, Object target) throws Exception {
+            public void mapTo(ResultSet source, Object target, MappingContext mappingContext) throws Exception {
             }
 
             @Override

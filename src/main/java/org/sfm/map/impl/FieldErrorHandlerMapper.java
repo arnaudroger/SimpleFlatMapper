@@ -1,6 +1,8 @@
 package org.sfm.map.impl;
 
+import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
+import org.sfm.map.MappingContext;
 
 
 public final class FieldErrorHandlerMapper<S, T, K> implements FieldMapper<S, T> {
@@ -18,9 +20,9 @@ public final class FieldErrorHandlerMapper<S, T, K> implements FieldMapper<S, T>
 	}
 
 	@Override
-	public void map(S source, T target)  {
+	public void mapTo(S source, T target, MappingContext mappingContext)  {
 		try {
-			delegate.map(source, target);
+			delegate.mapTo(source, target, mappingContext);
 		} catch(Exception e) {
 			errorHandler.errorMappingField(key, source, target, e);
 		}

@@ -2,7 +2,7 @@ package org.sfm.reflect.asm;
 
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.FieldMapper;
 import org.sfm.reflect.*;
 
 import java.lang.reflect.Constructor;

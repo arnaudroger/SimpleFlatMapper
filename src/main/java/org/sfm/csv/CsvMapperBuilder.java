@@ -175,7 +175,7 @@ public class CsvMapperBuilder<T> {
 		final DelayedCellSetterFactory<T, ?>[] delayedSetters = new DelayedCellSetterFactory[syncSetterStart];
 		
 		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
-			CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
+			final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
 
 			@Override
 			public void handle(PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition> propMapping) {

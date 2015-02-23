@@ -20,8 +20,8 @@ class FactoryClassLoader extends ClassLoader {
 		}
  	}
 
-	private Map<String, ClassInfo> classes = new HashMap<String, ClassInfo>();
-	private Lock lock = new ReentrantLock();
+	private final Map<String, ClassInfo> classes = new HashMap<String, ClassInfo>();
+	private final Lock lock = new ReentrantLock();
 	
 	public FactoryClassLoader(final ClassLoader parent) {
 		super(parent);

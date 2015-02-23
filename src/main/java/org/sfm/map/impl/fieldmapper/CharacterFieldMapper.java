@@ -1,6 +1,7 @@
 package org.sfm.map.impl.fieldmapper;
 
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.FieldMapper;
+import org.sfm.map.MappingContext;
 import org.sfm.reflect.primitive.CharacterGetter;
 import org.sfm.reflect.primitive.CharacterSetter;
 
@@ -15,7 +16,7 @@ public final class CharacterFieldMapper<S, T> implements FieldMapper<S, T> {
 	}
 
 	@Override
-	public void map(final S source, final T target) throws Exception {
+	public void mapTo(final S source, final T target, final MappingContext mappingContext) throws Exception {
 		setter.setCharacter(target, getter.getCharacter(source));
 	}
 

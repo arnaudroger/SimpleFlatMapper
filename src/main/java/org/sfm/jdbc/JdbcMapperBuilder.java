@@ -10,12 +10,12 @@ import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.tuples.Tuple2;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey>  {
@@ -135,7 +135,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 		return new  JdbcMapperBuilder<ST>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory(), failOnAsm);
 	}
 
-    private BreakDetectorFactory<ResultSet> breakDetector(List<JdbcColumnKey> columnNames) {
+    protected BreakDetectorFactory<ResultSet> breakDetector(List<JdbcColumnKey> columnNames) {
         int[] columns = new int[columnNames.size()];
 
         int i = 0;
@@ -147,4 +147,38 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
         return new ResultSetBreakDetectorFactory(columns);
     }
 
+    @Override
+    protected Predicate<ResultSet> nullChecker(final List<JdbcColumnKey> keys) {
+        return new NullCheckPredicate(keys);
+    }
+
+    private static class NullCheckPredicate implements Predicate<ResultSet> {
+        private final List<JdbcColumnKey> keys;
+
+        public NullCheckPredicate(List<JdbcColumnKey> keys) {
+            this.keys = keys;
+        }
+
+        @Override
+        public boolean test(ResultSet resultSet) {
+            if (keys.isEmpty()) return false;
+            for(JdbcColumnKey k : keys) {
+                try {
+                    if (resultSet.getObject(k.getIndex()) != null) {
+                        return false;
+                    }
+                } catch (SQLException e) {
+                    throw new SQLMappingException(e.getMessage(), e);
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return "NullCheckPredicate{" +
+                    "keys=" + keys +
+                    '}';
+        }
+    }
 }

@@ -4,8 +4,9 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.sfm.jdbc.impl.AbstractJdbcMapperImpl;
+import org.sfm.map.MappingContext;
 import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.FieldMapper;
 import org.sfm.reflect.Instantiator;
 
 import java.sql.ResultSet;
@@ -19,14 +20,16 @@ public class JdbcMapperAsmBuilder {
 	private static final String INSTANTIATOR_TYPE = AsmUtils.toType(Instantiator.class);
 	private static final String ROW_HANDLER_ERROR_HANDLER_TYPE = AsmUtils.toType(RowHandlerErrorHandler.class);
 
-	public static <S,T> byte[] dump (final String className, final FieldMapper<S, T>[] mappers, final FieldMapper<S, T>[] constructorMappers, final Class<T> target) throws Exception {
-		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-		MethodVisitor mv;
-		
-		Class<ResultSet> sourceClass = ResultSet.class;
-		final String targetType = AsmUtils.toType(target);
-		final String sourceType = AsmUtils.toType(sourceClass);
-		final String classType = AsmUtils.toType(className);
+    private static final String mappingContextType = AsmUtils.toType(MappingContext.class);
+
+    public static <S,T> byte[] dump (final String className, final FieldMapper<S, T>[] mappers, final FieldMapper<S, T>[] constructorMappers, final Class<T> target) throws Exception {
+        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        MethodVisitor mv;
+
+        Class<ResultSet> sourceClass = ResultSet.class;
+        final String targetType = AsmUtils.toType(target);
+        final String sourceType = AsmUtils.toType(sourceClass);
+        final String classType = AsmUtils.toType(className);
 		cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType, "L" + ABSTRACT_JDBC_MAPPER_IMPL_TYPE + "<" + toTargetTypeDeclaration(targetType) + ">;", ABSTRACT_JDBC_MAPPER_IMPL_TYPE, null);
 
 		for(int i = 0; i < mappers.length; i++) {
@@ -63,7 +66,7 @@ public class JdbcMapperAsmBuilder {
 		}
 		
 		{
-			mv = cw.visitMethod(ACC_PUBLIC + ACC_FINAL, "mapFields", "(L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ")V", null, new String[] { "java/lang/Exception" });
+			mv = cw.visitMethod(ACC_PUBLIC + ACC_FINAL, "mapFields", "(L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType) +")V", null, new String[] { "java/lang/Exception" });
 			mv.visitCode();
 
 			for(int i = 0; i < mappers.length; i++) {
@@ -74,21 +77,22 @@ public class JdbcMapperAsmBuilder {
 			mv.visitMaxs(3, 3);
 		}
 		{
-			mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "mapFields", "(Ljava/lang/Object;Ljava/lang/Object;)V", null, new String[] { "java/lang/Exception" });
+			mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "mapFields", "(Ljava/lang/Object;Ljava/lang/Object;" + toTargetTypeDeclaration(mappingContextType) + ")V", null, new String[] { "java/lang/Exception" });
 			mv.visitCode();
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitVarInsn(ALOAD, 1);
 			mv.visitTypeInsn(CHECKCAST, sourceType);
 			mv.visitVarInsn(ALOAD, 2);
 			mv.visitTypeInsn(CHECKCAST, targetType);
-			mv.visitMethodInsn(INVOKEVIRTUAL, classType, "mapFields", "(L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ")V", false);
+            mv.visitVarInsn(ALOAD, 3);
+			mv.visitMethodInsn(INVOKEVIRTUAL, classType, "mapFields", "(L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType)+ ")V", false);
 			mv.visitInsn(RETURN);
 			mv.visitMaxs(3, 3);
 			mv.visitEnd();
 		}
 
         {
-            mv = cw.visitMethod(ACC_PROTECTED + ACC_FINAL, "mapToFields", "(L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ")V", null, new String[]{"java/lang/Exception"});
+            mv = cw.visitMethod(ACC_PROTECTED + ACC_FINAL, "mapToFields", "(L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType)+  ")V", null, new String[]{"java/lang/Exception"});
             mv.visitCode();
 
             for(int i = 0; i < constructorMappers.length; i++) {
@@ -98,20 +102,22 @@ public class JdbcMapperAsmBuilder {
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(ALOAD, 2);
-            mv.visitMethodInsn(INVOKEVIRTUAL, classType, "mapFields", "(L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ")V", false);
+            mv.visitVarInsn(ALOAD, 3);
+            mv.visitMethodInsn(INVOKEVIRTUAL, classType, "mapFields", "(L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType)+  ")V", false);
             mv.visitInsn(RETURN);
             mv.visitMaxs(3, 3);
             mv.visitEnd();
         }
         {
-            mv = cw.visitMethod(ACC_PROTECTED + ACC_BRIDGE + ACC_SYNTHETIC, "mapToFields", "(Ljava/lang/Object;Ljava/lang/Object;)V", null, new String[]{"java/lang/Exception"});
+            mv = cw.visitMethod(ACC_PROTECTED + ACC_BRIDGE + ACC_SYNTHETIC, "mapToFields", "(Ljava/lang/Object;Ljava/lang/Object;" + toTargetTypeDeclaration(mappingContextType) + ")V", null, new String[]{"java/lang/Exception"});
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitTypeInsn(CHECKCAST, sourceType);
             mv.visitVarInsn(ALOAD, 2);
             mv.visitTypeInsn(CHECKCAST, targetType);
-            mv.visitMethodInsn(INVOKEVIRTUAL, classType, "mapToFields", "(L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ")V", false);
+            mv.visitVarInsn(ALOAD, 3);
+            mv.visitMethodInsn(INVOKEVIRTUAL, classType, "mapToFields", "(L" + sourceType + ";" + toTargetTypeDeclaration(targetType)+ toTargetTypeDeclaration(mappingContextType) + ")V", false);
             mv.visitInsn(RETURN);
             mv.visitMaxs(3, 3);
             mv.visitEnd();
@@ -189,35 +195,28 @@ public class JdbcMapperAsmBuilder {
 
     private static <S, T> void generateMappingCall(MethodVisitor mv,
 			FieldMapper<S, T> mapper, int index, String classType, String sourceType, String targetType) {
-		if (mapper ==null) return;
-		Class<?> mapperClass = AsmUtils.getPublicOrInterfaceClass(mapper.getClass());
-		mv.visitVarInsn(ALOAD, 0);
-		mv.visitFieldInsn(GETFIELD, classType, "mapper" + index, "L" +  AsmUtils.toType(mapperClass) + ";");
-		mv.visitVarInsn(ALOAD, 1);
-		mv.visitVarInsn(ALOAD, 2);
-		if (AsmUtils.isStillGeneric(mapperClass)) {
-			AsmUtils.invoke(mv, mapperClass, "map", "(Ljava/lang/Object;Ljava/lang/Object;)V");
-		} else {
-			AsmUtils.invoke(mv, mapperClass, "map", "(L" + sourceType + ";L" + targetType +";)V");
-		}
-
+        generateMappingCall(mv, mapper, index, classType, sourceType, targetType, "mapper");
 	}
-
     private static <S, T> void generateConstructorMappingCall(MethodVisitor mv,
-                                                   FieldMapper<S, T> mapper, int index, String classType, String sourceType, String targetType) {
+                                                              FieldMapper<S, T> mapper, int index, String classType, String sourceType, String targetType) {
+        generateMappingCall(mv, mapper, index, classType, sourceType, targetType, "constructorMapper");
+    }
+
+    private static <S, T> void generateMappingCall(MethodVisitor mv, FieldMapper<S, T> mapper, int index, String classType, String sourceType, String targetType, String variablePrefix) {
         if (mapper ==null) return;
         Class<?> mapperClass = AsmUtils.getPublicOrInterfaceClass(mapper.getClass());
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD, classType, "constructorMapper" + index, "L" +  AsmUtils.toType(mapperClass) + ";");
+        mv.visitFieldInsn(GETFIELD, classType, variablePrefix + index, "L" + AsmUtils.toType(mapperClass) + ";");
         mv.visitVarInsn(ALOAD, 1);
         mv.visitVarInsn(ALOAD, 2);
+        mv.visitVarInsn(ALOAD, 3);
         if (AsmUtils.isStillGeneric(mapperClass)) {
-            AsmUtils.invoke(mv, mapperClass, "map", "(Ljava/lang/Object;Ljava/lang/Object;)V");
+            AsmUtils.invoke(mv, mapperClass, "mapTo", "(Ljava/lang/Object;Ljava/lang/Object;" + toTargetTypeDeclaration(mappingContextType) + ")V");
         } else {
-            AsmUtils.invoke(mv, mapperClass, "map", "(L" + sourceType + ";L" + targetType +";)V");
+            AsmUtils.invoke(mv, mapperClass, "mapTo", "(L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + toTargetTypeDeclaration(mappingContextType) + ")V");
         }
-
     }
+
 
 	private static <S, T> void addGetterSetterInit(MethodVisitor mv,
 			FieldMapper<S, T> mapper, int index, String classType) {

@@ -1,6 +1,7 @@
 package org.sfm.jdbc.impl;
 
 import org.sfm.map.Mapper;
+import org.sfm.map.MappingContext;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,14 +12,16 @@ public class ResultSetIterator<T> implements Iterator<T> {
 
 	private final ResultSet rs;
 	private final Mapper<ResultSet, T> mapper;
+    private final MappingContext mappingContext;
 	
 	private boolean isFetched;
 	private boolean hasValue;
 	
-	public ResultSetIterator(ResultSet rs, Mapper<ResultSet, T> mapper) {
+	public ResultSetIterator(ResultSet rs, Mapper<ResultSet, T> mapper, MappingContext mappingContext) {
 		this.rs = rs;
 		this.mapper = mapper;
-	}
+        this.mappingContext = mappingContext;
+    }
 
 	@Override
 	public boolean hasNext() {
@@ -41,7 +44,7 @@ public class ResultSetIterator<T> implements Iterator<T> {
 	public T next() {
 		fetch();
 		if (hasValue) {
-			T t = mapper.map(rs);
+			T t = mapper.map(rs, mappingContext);
 			isFetched = false;
 			return t;
 		} else {

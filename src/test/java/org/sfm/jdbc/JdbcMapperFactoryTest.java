@@ -4,10 +4,7 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObjectWithAlias;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.GetterFactory;
-import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.*;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;
@@ -172,7 +169,7 @@ public class JdbcMapperFactoryTest {
 			.fieldMapperErrorHandler(fieldMapperErrorHandler)
 			.addCustomFieldMapper("id",  new FieldMapper<ResultSet, DbObject>() {
 				@Override
-				public void map(ResultSet source, DbObject target) throws Exception {
+				public void mapTo(ResultSet source, DbObject target, MappingContext mappingContext) throws Exception {
 					throw exception;
 				}
 			}).newBuilder(DbObject.class).addMapping("id").mapper();

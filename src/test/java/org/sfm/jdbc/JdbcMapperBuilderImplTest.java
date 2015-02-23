@@ -3,10 +3,7 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.impl.JdbcMapperImpl;
-import org.sfm.map.MapperBuildingException;
-import org.sfm.map.MappingException;
-import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.asm.AsmFactory;
 
@@ -27,7 +24,7 @@ public class JdbcMapperBuilderImplTest {
 		JdbcMapper<DbObject> mapper = builder.addMapper(new FieldMapper<ResultSet, DbObject>() {
 			
 			@Override
-			public void map(ResultSet source, DbObject target) throws MappingException {
+			public void mapTo(ResultSet source, DbObject target, MappingContext mappingContext) throws MappingException {
 				target.setId(33);
 			}
 		}).mapper();
@@ -81,7 +78,7 @@ public class JdbcMapperBuilderImplTest {
 							Class<?> source,
 							List<ConstructorDefinition<T>> constructors,
 							Map<ConstructorParameter, Getter<S, ?>> injections, boolean useAsm)
-							throws NoSuchMethodException, SecurityException {
+							throws SecurityException {
 						throw new UnsupportedOperationException();
 					}
 					

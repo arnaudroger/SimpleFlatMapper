@@ -34,7 +34,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	private final RowHandlerErrorHandler rowHandlerErrorHandler;
     private final boolean failOnAsm;
 
-    private MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache = new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
+    private final MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache = new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
 
 	public DynamicJdbcMapper(final ClassMeta<T> classMeta,
 							 final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler,
@@ -51,25 +51,32 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
         this.failOnAsm = failOnAsm;
 	}
-	
 
-	@Override
-	public final T map(final ResultSet source) throws MappingException {
+
+    @Override
+    public final T map(ResultSet source) throws MappingException {
+        return map(source, null);
+    }
+
+    @Override
+	public final T map(final ResultSet source, final MappingContext mappingContext) throws MappingException {
 		try {
 			final JdbcMapper<T> mapper = buildMapper(source.getMetaData());
-			return mapper.map(source);
+			return mapper.map(source, mappingContext);
 		} catch(SQLException e) {
 			throw new SQLMappingException(e.getMessage(), e);
 		}
 	}
 
     @Override
-    public final void mapTo(final ResultSet source, T target) throws MappingException {
+    public final void mapTo(final ResultSet source, final T target, final MappingContext mappingContext) throws MappingException {
         try {
             final JdbcMapper<T> mapper = buildMapper(source.getMetaData());
-            mapper.mapTo(source, target);
+            mapper.mapTo(source, target, mappingContext);
         } catch(SQLException e) {
             throw new SQLMappingException(e.getMessage(), e);
+        } catch(Exception e) {
+            throw new MappingException(e.getMessage(), e);
         }
     }
 

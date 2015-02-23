@@ -4,8 +4,9 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.map.GetterFactory;
+import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.utils.RowHandler;
@@ -60,7 +61,7 @@ public class JdbcMapperCustomMappingTest {
 		JdbcMapperFactory mapperFactory = JdbcMapperFactoryHelper.asm();
 		mapperFactory.addCustomFieldMapper("id", new FieldMapper<ResultSet, DbObject>() {
 			@Override
-			public void map(ResultSet source, DbObject target)
+			public void mapTo(ResultSet source, DbObject target, MappingContext mappingContext)
 					throws MappingException {
 				target.setId(1);
 			}
@@ -86,7 +87,7 @@ public class JdbcMapperCustomMappingTest {
 		JdbcMapperFactory mapperFactory = JdbcMapperFactoryHelper.asm();
 		mapperFactory.addCustomFieldMapper("id", new FieldMapper<ResultSet, DbObject>() {
 			@Override
-			public void map(ResultSet source, DbObject target)
+			public void mapTo(ResultSet source, DbObject target, MappingContext mappingContext)
 					throws MappingException {
 				target.setId(1);
 			}

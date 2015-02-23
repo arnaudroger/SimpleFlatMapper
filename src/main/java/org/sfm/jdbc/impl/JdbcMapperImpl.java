@@ -1,9 +1,10 @@
 package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.JdbcMapper;
+import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.MapperImpl;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
@@ -30,8 +31,9 @@ public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements
 	@Override
 	public <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
 			throws SQLException, MappingException {
+        MappingContext mappingContext = newMappingContext();
 		while(rs.next()) {
-			T t = map(rs);
+			T t = map(rs, mappingContext);
 			try {
 				handler.handle(t);
 			} catch(Throwable error) {
@@ -45,10 +47,10 @@ public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements
     @Deprecated
 	public Iterator<T> iterate(ResultSet rs) throws SQLException,
 			MappingException {
-		return new ResultSetIterator<T>(rs, this);
+		return new ResultSetIterator<T>(rs, this, newMappingContext());
 	}
 
-	@Override
+    @Override
     @SuppressWarnings("deprecation")
     public Iterator<T> iterator(ResultSet rs) throws SQLException,
 			MappingException {
@@ -58,7 +60,7 @@ public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
-		return StreamSupport.stream(new AbstractJdbcMapperImpl.JdbcSpliterator<T>(rs, this), false);
+		return StreamSupport.stream(new AbstractJdbcMapperImpl.JdbcSpliterator<T>(rs, this, newMappingContext()), false);
 	}
 	//IFJAVA8_END
 }

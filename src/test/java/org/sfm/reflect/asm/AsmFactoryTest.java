@@ -8,8 +8,9 @@ import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.impl.getter.LongResultSetGetter;
 import org.sfm.jdbc.impl.getter.OrdinalEnumResultSetGetter;
 import org.sfm.jdbc.impl.getter.StringResultSetGetter;
+import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
@@ -123,7 +124,7 @@ public class AsmFactoryTest {
 				(FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {
 						new FieldMapper<ResultSet, DbObject>() {
 							@Override
-							public void map(ResultSet source, DbObject target)
+							public void mapTo(ResultSet source, DbObject target, MappingContext mappingContext)
 									throws MappingException {
 								throw new MappingException("Expected ", null);
 							}

@@ -2,6 +2,7 @@ package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.getter.*;
+import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.MapperBuilderErrorHandler;

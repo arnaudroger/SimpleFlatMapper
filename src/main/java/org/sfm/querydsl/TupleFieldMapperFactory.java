@@ -1,6 +1,7 @@
 package org.sfm.querydsl;
 
 import com.mysema.query.Tuple;
+import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.MapperBuilderErrorHandler;

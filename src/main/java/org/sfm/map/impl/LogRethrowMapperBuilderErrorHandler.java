@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public final class LogRethrowMapperBuilderErrorHandler implements
 		MapperBuilderErrorHandler {
-	private Logger logger = Logger.getLogger(getClass().getName());
+	private final Logger logger = Logger.getLogger(getClass().getName());
 
 	@Override
 	public void getterNotFound(final String msg) {

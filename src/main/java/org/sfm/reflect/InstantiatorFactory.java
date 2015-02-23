@@ -54,7 +54,7 @@ public class InstantiatorFactory {
 		}
 	}
 
-	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<ConstructorDefinition<T>> constructors, Map<ConstructorParameter, Getter<S, ?>> injections, boolean useAsmIfEnabled) throws NoSuchMethodException, SecurityException {
+	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<ConstructorDefinition<T>> constructors, Map<ConstructorParameter, Getter<S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
 		final ConstructorDefinition<T> constructorDefinition = getSmallerConstructor(constructors);
 
 		if (constructorDefinition == null) {

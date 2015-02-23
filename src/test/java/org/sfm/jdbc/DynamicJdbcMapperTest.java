@@ -161,7 +161,7 @@ public class DynamicJdbcMapperTest {
 			i++;
 		}
 		assertEquals(NBFUTURE, i);
-		assertEquals(nbRow.get(), NBFUTURE * NBROW);
+		assertEquals(NBFUTURE * NBROW, nbRow.get());
 		
 		int sum = 0;
 		for(i = 1 ; i <= NBROW ; i++) {

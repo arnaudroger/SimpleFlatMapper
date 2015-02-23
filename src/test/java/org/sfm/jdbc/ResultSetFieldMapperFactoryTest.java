@@ -5,7 +5,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.jdbc.impl.ResultSetFieldMapperFactory;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.PropertyMapping;
 import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;

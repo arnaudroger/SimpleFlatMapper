@@ -48,6 +48,7 @@ public class SubPropertyMeta<O, P> extends PropertyMeta<O, P> {
 		return getOwnerProperty().getPath() + "." + subProperty.getPath();
 	}
 
+    @SuppressWarnings("unchecked")
     public Type getLeafType() {
         if (subProperty.isSubProperty()) {
             return ((SubPropertyMeta<P,?>)subProperty).getLeafType();

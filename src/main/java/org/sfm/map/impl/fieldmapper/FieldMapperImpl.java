@@ -1,6 +1,7 @@
 package org.sfm.map.impl.fieldmapper;
 
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.FieldMapper;
+import org.sfm.map.MappingContext;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
 
@@ -15,7 +16,7 @@ public final class FieldMapperImpl<S, T, P> implements FieldMapper<S, T> {
 	}
 	
 	@Override
-	public void map(final S source, final T target) throws Exception {
+	public void mapTo(final S source, final T target, final MappingContext mappingContext) throws Exception {
 		final P value = getter.get(source);
 		setter.set(target, value);
 	}

@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 
 public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey>{
 
-	public static GetterFactory<ResultSet, JdbcColumnKey> DATE_GETTER_FACTORY = new GetterFactory<ResultSet, JdbcColumnKey>() {
+	public static final GetterFactory<ResultSet, JdbcColumnKey> DATE_GETTER_FACTORY = new GetterFactory<ResultSet, JdbcColumnKey>() {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
@@ -57,7 +57,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		}
 	}
 
-	public static GetterFactory<ResultSet, JdbcColumnKey> ENUM_GETTER_FACTORY = new GetterFactory<ResultSet, JdbcColumnKey>() {
+	public static final GetterFactory<ResultSet, JdbcColumnKey> ENUM_GETTER_FACTORY = new GetterFactory<ResultSet, JdbcColumnKey>() {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <P> Getter<ResultSet, P> newGetter(Type type, JdbcColumnKey key) {

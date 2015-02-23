@@ -133,7 +133,7 @@ public class ReflectionService {
 		return newInstance(false, true);
 	}
 
-	private static AsmFactory _asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader());
+	private static final AsmFactory _asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader());
 
 	public static ReflectionService newInstance(boolean disableAsm, boolean useAsmGeneration) {
 		boolean asmPresent = AsmHelper.isAsmPresent() && !disableAsm;

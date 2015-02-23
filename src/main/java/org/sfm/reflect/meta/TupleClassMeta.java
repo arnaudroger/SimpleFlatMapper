@@ -13,8 +13,8 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private final ReflectionService reflectionService;
-	private Type type;
-	private List<ConstructorDefinition<T>> constructorDefinitions;
+	private final Type type;
+	private final List<ConstructorDefinition<T>> constructorDefinitions;
 
 	public TupleClassMeta(Type type, ReflectionService reflectionService) {
 		this.type = type;

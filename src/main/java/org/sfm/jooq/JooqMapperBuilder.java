@@ -1,6 +1,7 @@
 package org.sfm.jooq;
 
 import org.jooq.Record;
+import org.sfm.map.FieldMapper;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.impl.*;
@@ -8,8 +9,10 @@ import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.tuples.Tuple2;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 
 public class JooqMapperBuilder<R extends Record, E> extends
@@ -32,8 +35,24 @@ public class JooqMapperBuilder<R extends Record, E> extends
 	protected <ST> AbstractFieldMapperMapperBuilder<R, ST, JooqFieldKey> newSubBuilder(Type type, ClassMeta<ST> classMeta) {
 		return new JooqMapperBuilder<R, ST>(classMeta);
 	}
-	
-	public JooqMapperBuilder<R, E> addField(JooqFieldKey key) {
+
+    @Override
+    protected Predicate<R> nullChecker(final List<JooqFieldKey> keys) {
+        return new Predicate<R>() {
+            @Override
+            public boolean test(R r) {
+                if (keys.isEmpty()) return false;
+                for(JooqFieldKey k : keys) {
+                    if (r.getValue(k.getIndex()) != null) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        };
+    }
+
+    public JooqMapperBuilder<R, E> addField(JooqFieldKey key) {
 		super._addMapping(key, FieldMapperColumnDefinition.<JooqFieldKey, R>identity());
 		return this;
 	}

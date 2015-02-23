@@ -2,8 +2,9 @@ package org.sfm.reflect.asm.sample;
 
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.impl.AbstractJdbcMapperImpl;
+import org.sfm.map.MappingContext;
 import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.FieldMapper;
+import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
 import org.sfm.map.impl.fieldmapper.IntFieldMapper;
 import org.sfm.map.impl.fieldmapper.LongFieldMapper;
@@ -27,16 +28,16 @@ public final class AsmJdbcMapper extends AbstractJdbcMapperImpl<DbObject> {
 		mapper4 = (FieldMapperImpl<ResultSet, DbObject, ?>) mappers2[0];
 	}
 	
-	protected final void mapFields(ResultSet source, final DbObject target) throws Exception {
-		mapper1.map(source, target);
-		mapper2.map(source, target);
-		mapper3.map(source, target);
-		mapper4.map(source, target);
+	protected final void mapFields(ResultSet source, final DbObject target, MappingContext mappingContext) throws Exception {
+		mapper1.mapTo(source, target, mappingContext);
+		mapper2.mapTo(source, target, mappingContext);
+		mapper3.mapTo(source, target, mappingContext);
+		mapper4.mapTo(source, target, mappingContext);
 	}
 
     @Override
-    protected final void mapToFields(ResultSet source, DbObject target) throws Exception {
-        mapFields(source, target);
+    protected final void mapToFields(ResultSet source, DbObject target, MappingContext mappingContext) throws Exception {
+        mapFields(source, target, mappingContext);
     }
 
     @Override

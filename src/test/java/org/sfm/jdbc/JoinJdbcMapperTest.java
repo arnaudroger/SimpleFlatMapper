@@ -84,7 +84,7 @@ public class JoinJdbcMapperTest {
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
 
 
-        String[] columns = new String[] { "id", "name", "students_id", "students_name"};
+        final String[] columns = new String[] { "id", "name", "students_id", "students_name"};
 
         when(metaData.getColumnCount()).thenReturn(columns.length);
         when(metaData.getColumnLabel(anyInt())).then(new Answer<String>() {

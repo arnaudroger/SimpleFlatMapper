@@ -23,4 +23,10 @@ public class MappingContext<S> {
             bs.handle(source);
         }
     }
+
+    public void markAsBroken() {
+        for(int i = 0; i < breakDetectors.length; i++) {
+            breakDetectors[i].markAsBroken();
+        }
+    }
 }

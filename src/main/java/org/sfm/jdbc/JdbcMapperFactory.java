@@ -234,4 +234,21 @@ public final class JdbcMapperFactory {
         }
         return this;
     }
+
+    public <T> JdbcDiscriminatorBuilder<T> newDiscriminator(String column, Type root) {
+        addColumnDefinition(column, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>ignoreDefinition());
+        return new JdbcDiscriminatorBuilder<T>(column, root, this);
+    }
+
+    public <T> JdbcDiscriminatorBuilder<T> newDiscriminator(String column, Class<T> root) {
+        return newDiscriminator(column, (Type)root);
+    }
+
+    public <T> JdbcDiscriminatorBuilder<T> newDiscriminator(String column, TypeReference<T> root) {
+        return newDiscriminator(column, root.getType());
+    }
+
+    public RowHandlerErrorHandler rowHandlerErrorHandler() {
+        return rowHandlerErrorHandler;
+    }
 }

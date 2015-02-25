@@ -212,5 +212,11 @@ public class MappingContextFactoryBuilder<S, K> {
         public boolean isBroken() {
             return isBroken;
         }
+
+        @Override
+        public void markAsBroken() {
+            isBroken = true;
+            lastValues = null;
+        }
     }
 }

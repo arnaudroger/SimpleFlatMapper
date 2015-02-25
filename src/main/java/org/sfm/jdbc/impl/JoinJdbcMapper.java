@@ -72,7 +72,7 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
 		return handler;
 	}
 
-    private MappingContext<ResultSet> newMappingContext() {
+    public MappingContext<ResultSet> newMappingContext() {
         return mappingContextFactory.newContext();
     }
 

@@ -138,17 +138,4 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	protected <ST> AbstractFieldMapperMapperBuilder<ResultSet, ST, JdbcColumnKey> newSubBuilder(Type type, ClassMeta<ST> classMeta, MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> mappingContextFactoryBuilder) {
 		return new  JdbcMapperBuilder<ST>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory(), failOnAsm, mappingContextFactoryBuilder);
 	}
-
-    protected BreakDetectorFactory<ResultSet> breakDetector(List<JdbcColumnKey> columnNames) {
-        int[] columns = new int[columnNames.size()];
-
-        int i = 0;
-        for(JdbcColumnKey key : columnNames) {
-            columns[i] = key.getIndex();
-            i++;
-        }
-
-        return new ResultSetBreakDetectorFactory(columns);
-    }
-
 }

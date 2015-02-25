@@ -38,7 +38,7 @@ public abstract class AbstractMapperImpl<S, T> implements Mapper<S, T> {
         }
     }
 
-    protected final MappingContext<S> newMappingContext() {
+    public final MappingContext<S> newMappingContext() {
         return mappingContextFactory.newContext();
     }
 

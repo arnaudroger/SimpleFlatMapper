@@ -3,6 +3,7 @@ package org.sfm.reflect.asm.sample;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.impl.AbstractJdbcMapperImpl;
 import org.sfm.map.MappingContext;
+import org.sfm.map.MappingContextFactory;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
@@ -20,8 +21,8 @@ public final class AsmJdbcMapper extends AbstractJdbcMapperImpl<DbObject> {
 	private final FieldMapperImpl<ResultSet, DbObject, ?> mapper4;
 	
 	@SuppressWarnings("unchecked")
-	public AsmJdbcMapper(FieldMapper<ResultSet, DbObject>[] mappers, FieldMapper<ResultSet, DbObject>[] mappers2, Instantiator<ResultSet, DbObject> instantiator, RowHandlerErrorHandler errorHandler) {
-		super(instantiator, errorHandler);
+	public AsmJdbcMapper(FieldMapper<ResultSet, DbObject>[] mappers, FieldMapper<ResultSet, DbObject>[] mappers2, Instantiator<ResultSet, DbObject> instantiator, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) {
+		super(instantiator, errorHandler, mappingContextFactory);
 		mapper1 = (LongFieldMapper<ResultSet, DbObject>) mappers[0];
 		mapper2 = (IntFieldMapper<ResultSet, DbObject>) mappers[2];
 		mapper3 = (FieldMapperImpl<ResultSet, DbObject, ?>) mappers[3];

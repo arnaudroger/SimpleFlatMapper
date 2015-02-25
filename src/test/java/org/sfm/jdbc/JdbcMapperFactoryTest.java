@@ -169,7 +169,7 @@ public class JdbcMapperFactoryTest {
 			.fieldMapperErrorHandler(fieldMapperErrorHandler)
 			.addCustomFieldMapper("id",  new FieldMapper<ResultSet, DbObject>() {
 				@Override
-				public void mapTo(ResultSet source, DbObject target, MappingContext mappingContext) throws Exception {
+				public void mapTo(ResultSet source, DbObject target, MappingContext<ResultSet> mappingContext) throws Exception {
 					throw exception;
 				}
 			}).newBuilder(DbObject.class).addMapping("id").mapper();

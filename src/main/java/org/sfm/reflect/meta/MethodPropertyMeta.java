@@ -39,4 +39,12 @@ public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
 	public String getPath() {
 		return getName();
 	}
+
+    @Override
+    public String toString() {
+        return "MethodPropertyMeta{" +
+                "method=" + method +
+                ", type=" + type +
+                '}';
+    }
 }

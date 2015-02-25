@@ -1,6 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.reflect.*;
+import org.sfm.reflect.impl.NullSetter;
 
 import java.lang.reflect.Type;
 
@@ -18,7 +19,7 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 	
 	@Override
 	protected Setter<T, P> newSetter() {
-		throw new UnsupportedOperationException();
+		return new NullSetter<T, P>();
 	}
 
     @Override
@@ -44,4 +45,11 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		return getName();
 	}
 
+    @Override
+    public String toString() {
+        return "ConstructorPropertyMeta{" +
+                "owner=" + owner +
+                ", constructorParameter=" + constructorParameter +
+                '}';
+    }
 }

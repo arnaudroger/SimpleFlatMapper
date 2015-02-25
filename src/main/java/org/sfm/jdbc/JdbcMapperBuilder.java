@@ -10,7 +10,6 @@ import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.tuples.Tuple2;
-import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -31,15 +30,19 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 		this(target, ReflectionService.newInstance());
 	}
 	public JdbcMapperBuilder(final Type target, ReflectionService reflectService) throws MapperBuildingException {
-		this(target, reflectService, new IdentityFieldMapperColumnDefinitionProvider<JdbcColumnKey, ResultSet>(), new DefaultPropertyNameMatcherFactory(), new ResultSetGetterFactory(), false);
+		this(target, reflectService, new IdentityFieldMapperColumnDefinitionProvider<JdbcColumnKey, ResultSet>(), new DefaultPropertyNameMatcherFactory(), new ResultSetGetterFactory(), false, new JdbcMappingContextFactoryBuilder());
 	}
 	@SuppressWarnings("unchecked")
-	public JdbcMapperBuilder(final Type target, ReflectionService reflectService, final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory, GetterFactory<ResultSet, JdbcColumnKey> getterFactory, boolean failOnAsm) throws MapperBuildingException {
-		this(reflectService.<T>getRootClassMeta(target), new RethrowMapperBuilderErrorHandler(), columnDefinitions, propertyNameMatcherFactory, getterFactory, failOnAsm);
+	public JdbcMapperBuilder(final Type target, ReflectionService reflectService, final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory, GetterFactory<ResultSet, JdbcColumnKey> getterFactory, boolean failOnAsm, MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) throws MapperBuildingException {
+		this(reflectService.<T>getRootClassMeta(target), new RethrowMapperBuilderErrorHandler(), columnDefinitions, propertyNameMatcherFactory, getterFactory, failOnAsm, parentBuilder);
 	}
 	
-	public JdbcMapperBuilder(final ClassMeta<T> classMeta, final MapperBuilderErrorHandler mapperBuilderErrorHandler, final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions, PropertyNameMatcherFactory propertyNameMatcherFactory, GetterFactory<ResultSet, JdbcColumnKey> getterFactory, boolean failOnAsm) throws MapperBuildingException {
-		super(ResultSet.class, classMeta, getterFactory, new ResultSetFieldMapperFactory(getterFactory), columnDefinitions, propertyNameMatcherFactory, mapperBuilderErrorHandler);
+	public JdbcMapperBuilder(final ClassMeta<T> classMeta, final MapperBuilderErrorHandler mapperBuilderErrorHandler,
+                             final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions,
+                             PropertyNameMatcherFactory propertyNameMatcherFactory,
+                             GetterFactory<ResultSet, JdbcColumnKey> getterFactory, boolean failOnAsm,
+                             MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) throws MapperBuildingException {
+		super(ResultSet.class, classMeta, getterFactory, new ResultSetFieldMapperFactory(getterFactory), columnDefinitions, propertyNameMatcherFactory, mapperBuilderErrorHandler, parentBuilder);
         this.failOnAsm = failOnAsm;
 	}
 
@@ -52,7 +55,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
         if (primaryKeys.isEmpty()) {
             return mapper;
         } else {
-            return new JoinJdbcMapper<T>(breakDetector(primaryKeys), mapper, jdbcMapperErrorHandler);
+            return new JoinJdbcMapper<T>(mapper, jdbcMapperErrorHandler, mappingContextFactoryBuilder.newFactory());
         }
     }
 
@@ -60,18 +63,19 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
     private JdbcMapper<T> buildMapper() {
         FieldMapper<ResultSet, T>[] fields = fields();
         Tuple2<FieldMapper<ResultSet, T>[], Instantiator<ResultSet, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
+        MappingContextFactory mappingContextFactory = mappingContextFactoryBuilder.newFactory();
         if (reflectionService.isAsmActivated()) {
 			try {
-				return reflectionService.getAsmFactory().createJdbcMapper(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), getTargetClass(), jdbcMapperErrorHandler);
+				return reflectionService.getAsmFactory().createJdbcMapper(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), getTargetClass(), jdbcMapperErrorHandler, mappingContextFactory);
 			} catch(Exception e) {
                 if (failOnAsm) {
                     throw new MapperBuildingException(e.getMessage(), e);
                 } else {
-                    return new JdbcMapperImpl<T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), jdbcMapperErrorHandler);
+                    return new JdbcMapperImpl<T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), jdbcMapperErrorHandler, mappingContextFactory);
                 }
 			}
 		} else {
-			return new JdbcMapperImpl<T>(fields, constructorFieldMappersAndInstantiator.first(),  constructorFieldMappersAndInstantiator.second(), jdbcMapperErrorHandler);
+			return new JdbcMapperImpl<T>(fields, constructorFieldMappersAndInstantiator.first(),  constructorFieldMappersAndInstantiator.second(), jdbcMapperErrorHandler, mappingContextFactory);
 		}
 	}
 
@@ -131,8 +135,8 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 	}
 
 	@Override
-	protected <ST> AbstractFieldMapperMapperBuilder<ResultSet, ST, JdbcColumnKey> newSubBuilder(Type type, ClassMeta<ST> classMeta) {
-		return new  JdbcMapperBuilder<ST>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory(), failOnAsm);
+	protected <ST> AbstractFieldMapperMapperBuilder<ResultSet, ST, JdbcColumnKey> newSubBuilder(Type type, ClassMeta<ST> classMeta, MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> mappingContextFactoryBuilder) {
+		return new  JdbcMapperBuilder<ST>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory(), failOnAsm, mappingContextFactoryBuilder);
 	}
 
     protected BreakDetectorFactory<ResultSet> breakDetector(List<JdbcColumnKey> columnNames) {
@@ -147,38 +151,4 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
         return new ResultSetBreakDetectorFactory(columns);
     }
 
-    @Override
-    protected Predicate<ResultSet> nullChecker(final List<JdbcColumnKey> keys) {
-        return new NullCheckPredicate(keys);
-    }
-
-    private static class NullCheckPredicate implements Predicate<ResultSet> {
-        private final List<JdbcColumnKey> keys;
-
-        public NullCheckPredicate(List<JdbcColumnKey> keys) {
-            this.keys = keys;
-        }
-
-        @Override
-        public boolean test(ResultSet resultSet) {
-            if (keys.isEmpty()) return false;
-            for(JdbcColumnKey k : keys) {
-                try {
-                    if (resultSet.getObject(k.getIndex()) != null) {
-                        return false;
-                    }
-                } catch (SQLException e) {
-                    throw new SQLMappingException(e.getMessage(), e);
-                }
-            }
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "NullCheckPredicate{" +
-                    "keys=" + keys +
-                    '}';
-        }
-    }
 }

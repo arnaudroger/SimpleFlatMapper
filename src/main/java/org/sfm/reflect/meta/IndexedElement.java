@@ -33,10 +33,22 @@ public class IndexedElement<T, E> {
     }
 
     public void addProperty(PropertyMeta<?, ?> s) {
-        assignedPath.add(s.getPath());
+        addProperty(s.getPath());
+    }
+
+    public void addProperty(String path) {
+        assignedPath.add(path);
     }
 
     public boolean hasProperty(PropertyMeta<?, ?> property) {
-        return assignedPath.contains(property.getPath());
+        return hasProperty(property.getPath());
+    }
+
+    public boolean hasProperty(String path) {
+        return assignedPath.contains(path);
+    }
+
+    public boolean hasProperties() {
+        return !assignedPath.isEmpty();
     }
 }

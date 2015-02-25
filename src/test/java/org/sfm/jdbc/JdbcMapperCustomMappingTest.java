@@ -61,7 +61,7 @@ public class JdbcMapperCustomMappingTest {
 		JdbcMapperFactory mapperFactory = JdbcMapperFactoryHelper.asm();
 		mapperFactory.addCustomFieldMapper("id", new FieldMapper<ResultSet, DbObject>() {
 			@Override
-			public void mapTo(ResultSet source, DbObject target, MappingContext mappingContext)
+			public void mapTo(ResultSet source, DbObject target, MappingContext<ResultSet> mappingContext)
 					throws MappingException {
 				target.setId(1);
 			}
@@ -87,7 +87,7 @@ public class JdbcMapperCustomMappingTest {
 		JdbcMapperFactory mapperFactory = JdbcMapperFactoryHelper.asm();
 		mapperFactory.addCustomFieldMapper("id", new FieldMapper<ResultSet, DbObject>() {
 			@Override
-			public void mapTo(ResultSet source, DbObject target, MappingContext mappingContext)
+			public void mapTo(ResultSet source, DbObject target, MappingContext<ResultSet> mappingContext)
 					throws MappingException {
 				target.setId(1);
 			}

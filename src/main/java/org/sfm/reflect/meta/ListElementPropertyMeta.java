@@ -36,7 +36,7 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
     @Override
     protected Getter<T, E> newGetter() {
         if (isVerticalList.getAsBoolean()) {
-            return new NullGetter<T, E>();
+            return (Getter<T, E>) new LastIndexListGetter<E>();
         } else {
             return (Getter<T, E>) new IndexListGetter<E>(index);
         }
@@ -78,6 +78,20 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
         }
     }
 
+    private static class LastIndexListGetter<E> implements Getter<List<E>, E> {
+
+        private LastIndexListGetter() {
+        }
+
+        @Override
+        public E get(List<E> target) throws Exception {
+            if (!target.isEmpty()) {
+                return  target.get(target.size() - 1);
+            }
+            return null;
+        }
+    }
+
 	private static class IndexListSetter<E> implements Setter<List<E>, E> {
 		private final int index;
 
@@ -103,5 +117,12 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
         public void set(List<E> target, E value) throws Exception {
             target.add(value);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ListElementPropertyMeta{" +
+                "index=" + index +
+                '}';
     }
 }

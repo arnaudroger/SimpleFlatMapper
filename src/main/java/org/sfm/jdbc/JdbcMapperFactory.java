@@ -134,7 +134,7 @@ public final class JdbcMapperFactory {
     public <T> JdbcMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
 
-		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, getterFactory, failOnAsm);
+		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, getterFactory, failOnAsm, new JdbcMappingContextFactoryBuilder());
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);

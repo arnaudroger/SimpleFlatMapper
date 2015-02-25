@@ -2,6 +2,7 @@ package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.MappingContext;
+import org.sfm.map.MappingContextFactory;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.AbstractMapperImpl;
@@ -24,15 +25,17 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 	
 	private final RowHandlerErrorHandler errorHandler; 
 	
-	public AbstractJdbcMapperImpl(final Instantiator<ResultSet, T> instantiator, final RowHandlerErrorHandler errorHandler) {
-		super(instantiator);
+	public AbstractJdbcMapperImpl(final Instantiator<ResultSet, T> instantiator,
+                                  final RowHandlerErrorHandler errorHandler,
+                                  final MappingContextFactory<ResultSet> mappingContextFactory) {
+		super(instantiator, mappingContextFactory);
 		this.errorHandler = errorHandler;
 	}
 
 	@Override
 	public final <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
 			throws SQLException, MappingException {
-        MappingContext context = newMappingContext();
+        MappingContext<ResultSet> context = newMappingContext();
 		while(rs.next()) {
 			T t = map(rs, context);
 			try {
@@ -67,9 +70,9 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 	public static class JdbcSpliterator<T> implements Spliterator<T> {
 		private final ResultSet resultSet;
 		private final JdbcMapper<T> mapper;
-        private final MappingContext mappingContext;
+        private final MappingContext<ResultSet> mappingContext;
 
-		public JdbcSpliterator(ResultSet resultSet, JdbcMapper<T> mapper, MappingContext mappingContext) {
+		public JdbcSpliterator(ResultSet resultSet, JdbcMapper<T> mapper, MappingContext<ResultSet> mappingContext) {
 			this.resultSet = resultSet;
 			this.mapper = mapper;
             this.mappingContext = mappingContext;

@@ -42,4 +42,11 @@ public class FieldPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		return getName();
 	}
 
+    @Override
+    public String toString() {
+        return "FieldPropertyMeta{" +
+                "field=" + field +
+                ", type=" + type +
+                '}';
+    }
 }

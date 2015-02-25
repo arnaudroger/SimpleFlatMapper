@@ -1,6 +1,7 @@
 package org.sfm.reflect.asm;
 
 import org.sfm.jdbc.JdbcMapper;
+import org.sfm.map.MappingContextFactory;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.FieldMapper;
 import org.sfm.reflect.*;
@@ -102,12 +103,12 @@ public class AsmFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final FieldMapper<ResultSet, T>[] constructorMappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target, RowHandlerErrorHandler errorHandler) throws Exception {
+	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final FieldMapper<ResultSet, T>[] constructorMappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
 		final String className = generateClassNameForJdbcMapper(mappers, constructorMappers, ResultSet.class, target);
 		final byte[] bytes = JdbcMapperAsmBuilder.dump(className, mappers, constructorMappers, target);
 		final Class<?> type = factoryClassLoader.registerClass(className, bytes);
         final Constructor<?> constructor = type.getDeclaredConstructors()[0];
-        return (JdbcMapper<T>) constructor.newInstance(mappers, constructorMappers, instantiator, errorHandler);
+        return (JdbcMapper<T>) constructor.newInstance(mappers, constructorMappers, instantiator, errorHandler, mappingContextFactory);
 	}
 	
 	private final AtomicLong classNumber = new AtomicLong();

@@ -1,0 +1,20 @@
+package org.sfm.jdbc;
+
+import org.sfm.map.MappingContextFactoryBuilder;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+public class JdbcMappingContextFactoryBuilder extends MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> {
+    public JdbcMappingContextFactoryBuilder() {
+        super(new JdbcKeySourceGetter());
+    }
+
+    private static class JdbcKeySourceGetter implements KeySourceGetter<JdbcColumnKey, ResultSet> {
+        @Override
+        public Object getValue(JdbcColumnKey key, ResultSet source) throws SQLException {
+            return source.getObject(key.getIndex());
+        }
+    }
+}

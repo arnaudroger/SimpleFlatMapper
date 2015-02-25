@@ -3,7 +3,6 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.utils.ListHandler;
 
 import java.sql.ResultSet;
@@ -17,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 //IFJAVA8_END
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyInt;
@@ -65,13 +65,13 @@ public class JoinJdbcMapperTest {
 
     @Test
     public void testJoinTableGSManualMapping() throws SQLException {
-        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> key = FieldMapperColumnDefinition.key();
         JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
                 .newBuilder(ProfessorGS.class)
                 .addKey("id")
                 .addMapping("name")
-                .addMapping("students_id")
-                .addKey("students_name")
+                .addKey("students_id")
+                .addMapping("students_name")
+                .addMapping("students_phones_value")
                 .mapper();
 
         validateMapper(mapper);
@@ -84,7 +84,7 @@ public class JoinJdbcMapperTest {
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
 
 
-        final String[] columns = new String[] { "id", "name", "students_id", "students_name"};
+        final String[] columns = new String[] { "id", "name", "students_id", "students_name", "students_phones_value"};
 
         when(metaData.getColumnCount()).thenReturn(columns.length);
         when(metaData.getColumnLabel(anyInt())).then(new Answer<String>() {
@@ -99,10 +99,12 @@ public class JoinJdbcMapperTest {
         final AtomicInteger ai = new AtomicInteger();
 
         final Object[][] rows = new Object[][]{
-                {1, "professor1", 3, "student3"},
-                {1, "professor1", 4, "student4"},
-                {2, "professor2", 5, "student5"},
-                {3, "professor3", null, null}
+                {1, "professor1", 3, "student3", "phone31"},
+                {1, "professor1", 3, "student3", "phone32"},
+                {1, "professor1", 4, "student4", "phone41"},
+                {2, "professor2", 4, "student4", "phone51"},
+                {2, "professor2", 4, "student4", "phone52"},
+                {3, "professor3", null, null, null}
         };
 
         when(rs.next()).then(new Answer<Boolean>() {
@@ -132,15 +134,18 @@ public class JoinJdbcMapperTest {
         final Professor<?> professor0 = professors.get(0);
 
         assertPersonEquals(1, "professor1", professor0);
-        assertEquals(2, professor0.getStudents().size());
+        assertEquals("has 2 students", 2, professor0.getStudents().size());
         assertPersonEquals(3, "student3", professor0.getStudents().get(0));
+        assertArrayEquals(new Object[]{"phone31", "phone32"}, professor0.getStudents().get(0).getPhones().toArray());
         assertPersonEquals(4, "student4", professor0.getStudents().get(1));
+        assertArrayEquals(new Object[]{"phone41"}, professor0.getStudents().get(1).getPhones().toArray());
 
 
         final Professor<?> professor1 = professors.get(1);
         assertPersonEquals(2, "professor2", professor1);
-        assertEquals(1, professor1.getStudents().size());
-        assertPersonEquals(5, "student5", professor1.getStudents().get(0));
+        assertEquals("has 1 student", 1, professor1.getStudents().size());
+        assertPersonEquals(4, "student4", professor1.getStudents().get(0));
+        assertArrayEquals(new Object[]{"phone51", "phone52"}, professor1.getStudents().get(0).getPhones().toArray());
 
         final Professor<?> professor3 = professors.get(2);
         assertPersonEquals(3, "professor3", professor3);

@@ -9,14 +9,17 @@ import java.util.Arrays;
 public class ResultSetBreakDetector implements BreakDetector<ResultSet> {
 
 
-    private Object[] lastKey;
     private final int[] columns;
+
+    private Object[] lastKey;
+    private boolean isBroken;
+
     public ResultSetBreakDetector(int[] columns) {
         this.columns = columns;
     }
 
     @Override
-    public boolean isBreaking(ResultSet source) throws MappingException {
+    public void handle(ResultSet source) throws MappingException {
         Object[] newKeys = new Object[columns.length];
 
         for(int i = 0; i < columns.length; i++) {
@@ -27,10 +30,13 @@ public class ResultSetBreakDetector implements BreakDetector<ResultSet> {
             }
         }
 
-        boolean isBreaking = lastKey != null && !Arrays.equals(lastKey, newKeys);
+        isBroken = lastKey != null && !Arrays.equals(lastKey, newKeys);
 
         lastKey = newKeys;
+    }
 
-        return isBreaking;
+    @Override
+    public boolean isBroken() {
+        return isBroken;
     }
 }

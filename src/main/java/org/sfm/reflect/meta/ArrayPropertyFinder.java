@@ -39,6 +39,7 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 		IndexedElement<T, E> indexedElement = getIndexedElement(indexedColumn);
 
 		if (!indexedColumn.hasSubProperty()) {
+            indexedElement.addProperty(indexedElement.getPropertyMeta());
 			return indexedElement.getPropertyMeta();
 		}
 
@@ -83,18 +84,32 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
     }
 
     private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
-		PropertyMeta<E, Object> property = arrayClassMeta.getElementClassMeta().newPropertyFinder().findProperty(propertyNameMatcher);
-		if (property != null) {
+        final ClassMeta<E> elementClassMeta = arrayClassMeta.getElementClassMeta();
 
-			for (int i = 0; i < elements.size(); i++) {
-				IndexedElement element = elements.get(i);
-				if (!element.hasProperty(property)) {
-					return new IndexedColumn(i, propertyNameMatcher);
-				}
-			}
+        PropertyMeta<E, Object> property = null;
 
-			return new IndexedColumn(elements.size(), propertyNameMatcher);
-		}
+        if (elementClassMeta != null) {
+            property = elementClassMeta.newPropertyFinder().findProperty(propertyNameMatcher);
+            if (property != null) {
+
+                for (int i = 0; i < elements.size(); i++) {
+                    IndexedElement element = elements.get(i);
+                    if (!element.hasProperty(property)) {
+                        return new IndexedColumn(i, propertyNameMatcher);
+                    }
+                }
+
+                return new IndexedColumn(elements.size(), propertyNameMatcher);
+            }
+        } else {
+            for (int i = 0; i < elements.size(); i++) {
+                IndexedElement element = elements.get(i);
+                if (!element.hasProperties()) {
+                    return new IndexedColumn(i, null);
+                }
+            }
+            return new IndexedColumn(elements.size(), null);
+        }
 		return null;
 	}
 

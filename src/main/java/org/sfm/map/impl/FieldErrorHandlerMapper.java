@@ -20,7 +20,7 @@ public final class FieldErrorHandlerMapper<S, T, K> implements FieldMapper<S, T>
 	}
 
 	@Override
-	public void mapTo(S source, T target, MappingContext mappingContext)  {
+	public void mapTo(S source, T target, MappingContext<S> mappingContext)  {
 		try {
 			delegate.mapTo(source, target, mappingContext);
 		} catch(Exception e) {

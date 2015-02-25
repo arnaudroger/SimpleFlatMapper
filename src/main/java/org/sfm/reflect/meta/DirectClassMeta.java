@@ -84,5 +84,14 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
         public String getPath() {
             return getName();
         }
+
+        @Override
+        public String toString() {
+            return "DirectPropertyMeta{" +
+                    "type=" + type +
+                    '}';
+        }
     }
+
+
 }

@@ -1,9 +1,6 @@
 package org.sfm.jdbc.impl;
 
-import org.sfm.jdbc.JdbcColumnKey;
-import org.sfm.jdbc.JdbcMapper;
-import org.sfm.jdbc.JdbcMapperBuilder;
-import org.sfm.jdbc.SQLMappingException;
+import org.sfm.jdbc.*;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.impl.ColumnsMapperKey;
@@ -59,7 +56,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
     }
 
     @Override
-	public final T map(final ResultSet source, final MappingContext mappingContext) throws MappingException {
+	public final T map(final ResultSet source, final MappingContext<ResultSet> mappingContext) throws MappingException {
 		try {
 			final JdbcMapper<T> mapper = buildMapper(source.getMetaData());
 			return mapper.map(source, mappingContext);
@@ -69,7 +66,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	}
 
     @Override
-    public final void mapTo(final ResultSet source, final T target, final MappingContext mappingContext) throws MappingException {
+    public final void mapTo(final ResultSet source, final T target, final MappingContext<ResultSet> mappingContext) throws MappingException {
         try {
             final JdbcMapper<T> mapper = buildMapper(source.getMetaData());
             mapper.mapTo(source, target, mappingContext);
@@ -117,7 +114,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		JdbcMapper<T> mapper = mapperCache.get(key);
 		
 		if (mapper == null) {
-			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler,columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory(), failOnAsm);
+			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler,columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory(), failOnAsm, new JdbcMappingContextFactoryBuilder());
 
 			builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);

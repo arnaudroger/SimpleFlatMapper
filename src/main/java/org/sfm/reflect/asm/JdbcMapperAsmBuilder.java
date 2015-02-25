@@ -5,6 +5,7 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.sfm.jdbc.impl.AbstractJdbcMapperImpl;
 import org.sfm.map.MappingContext;
+import org.sfm.map.MappingContextFactory;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.FieldMapper;
 import org.sfm.reflect.Instantiator;
@@ -21,6 +22,8 @@ public class JdbcMapperAsmBuilder {
 	private static final String ROW_HANDLER_ERROR_HANDLER_TYPE = AsmUtils.toType(RowHandlerErrorHandler.class);
 
     private static final String mappingContextType = AsmUtils.toType(MappingContext.class);
+
+    private static final String mappingContextFactory = AsmUtils.toType(MappingContextFactory.class);
 
     public static <S,T> byte[] dump (final String className, final FieldMapper<S, T>[] mappers, final FieldMapper<S, T>[] constructorMappers, final Class<T> target) throws Exception {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -41,14 +44,28 @@ public class JdbcMapperAsmBuilder {
         }
 
 		{
-			mv = cw.visitMethod(ACC_PUBLIC, "<init>", "([L" + FIELD_MAPPER_TYPE + ";" + "[L" + FIELD_MAPPER_TYPE + ";L" + INSTANTIATOR_TYPE + ";L" + ROW_HANDLER_ERROR_HANDLER_TYPE + ";)V",
-                    "([L" + FIELD_MAPPER_TYPE +"<L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ">;[L" + FIELD_MAPPER_TYPE +"<L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ">;L" + AsmUtils.toType(Instantiator.class) + "<" + toTargetTypeDeclaration(targetType) + ">;L" + AsmUtils.toType(RowHandlerErrorHandler.class) + ";)V", null);
+			mv = cw.visitMethod(ACC_PUBLIC, "<init>",
+                            "([L" + FIELD_MAPPER_TYPE + ";"
+                            + "[L" + FIELD_MAPPER_TYPE + ";L"
+                            + INSTANTIATOR_TYPE + ";L"
+                            + ROW_HANDLER_ERROR_HANDLER_TYPE + ";L"
+                            + mappingContextFactory + ";)V",
+                            "([L" + FIELD_MAPPER_TYPE +"<L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ">;[L"
+                            + FIELD_MAPPER_TYPE +"<L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ">;L"
+                            + INSTANTIATOR_TYPE + "<" + toTargetTypeDeclaration(targetType) + ">;L"
+                            + ROW_HANDLER_ERROR_HANDLER_TYPE + ";L"
+                            + mappingContextFactory + "<L" + sourceType + ";>"
+                            + ";)V", null);
 
 			mv.visitCode();
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitVarInsn(ALOAD, 3);
 			mv.visitVarInsn(ALOAD, 4);
-			mv.visitMethodInsn(INVOKESPECIAL, ABSTRACT_JDBC_MAPPER_IMPL_TYPE, "<init>", "(L" + INSTANTIATOR_TYPE + ";L" + ROW_HANDLER_ERROR_HANDLER_TYPE +  ";)V", false);
+            mv.visitVarInsn(ALOAD, 5);
+			mv.visitMethodInsn(INVOKESPECIAL, ABSTRACT_JDBC_MAPPER_IMPL_TYPE, "<init>",
+                    "(L" + INSTANTIATOR_TYPE + ";L"
+                            + ROW_HANDLER_ERROR_HANDLER_TYPE +  ";L"
+                            + mappingContextFactory +";)V", false);
 			
 			
 			for(int i = 0; i < mappers.length; i++) {

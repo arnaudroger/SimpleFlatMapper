@@ -74,4 +74,11 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
             return target[index];
         }
     }
+
+    @Override
+    public String toString() {
+        return "ArrayElementPropertyMeta{" +
+                "index=" + index +
+                '}';
+    }
 }

@@ -12,12 +12,12 @@ public class ResultSetIterator<T> implements Iterator<T> {
 
 	private final ResultSet rs;
 	private final Mapper<ResultSet, T> mapper;
-    private final MappingContext mappingContext;
+    private final MappingContext<ResultSet> mappingContext;
 	
 	private boolean isFetched;
 	private boolean hasValue;
 	
-	public ResultSetIterator(ResultSet rs, Mapper<ResultSet, T> mapper, MappingContext mappingContext) {
+	public ResultSetIterator(ResultSet rs, Mapper<ResultSet, T> mapper, MappingContext<ResultSet> mappingContext) {
 		this.rs = rs;
 		this.mapper = mapper;
         this.mappingContext = mappingContext;

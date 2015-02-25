@@ -5,6 +5,7 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.jdbc.JdbcMapper;
+import org.sfm.jdbc.JdbcMappingContextFactoryBuilder;
 import org.sfm.jdbc.impl.getter.LongResultSetGetter;
 import org.sfm.jdbc.impl.getter.OrdinalEnumResultSetGetter;
 import org.sfm.jdbc.impl.getter.StringResultSetGetter;
@@ -108,7 +109,7 @@ public class AsmFactoryTest {
 						throw new UnexpectedException("Error");
 					}
 				}, 
-				DbObject.class, new RethrowRowHandlerErrorHandler());
+				DbObject.class, new RethrowRowHandlerErrorHandler(), new JdbcMappingContextFactoryBuilder().newFactory());
 		
 		try {
 			jdbcMapper.map(null);
@@ -124,7 +125,7 @@ public class AsmFactoryTest {
 				(FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {
 						new FieldMapper<ResultSet, DbObject>() {
 							@Override
-							public void mapTo(ResultSet source, DbObject target, MappingContext mappingContext)
+							public void mapTo(ResultSet source, DbObject target, MappingContext<ResultSet> mappingContext)
 									throws MappingException {
 								throw new MappingException("Expected ", null);
 							}
@@ -137,7 +138,7 @@ public class AsmFactoryTest {
 						return new DbObject();
 					}
 				}, 
-				DbObject.class, new RethrowRowHandlerErrorHandler());
+				DbObject.class, new RethrowRowHandlerErrorHandler(), new JdbcMappingContextFactoryBuilder().newFactory());
 		
 		try {
 			jdbcMapper.map(null);

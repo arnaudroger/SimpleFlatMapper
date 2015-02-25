@@ -8,5 +8,5 @@ public interface FieldMapper<S, T> {
      * @param context the mapping context
 	 * @throws Exception
 	 */
-	void mapTo(S source, T target, MappingContext context) throws Exception;
+	void mapTo(S source, T target, MappingContext<S> context) throws Exception;
 }

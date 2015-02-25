@@ -4,15 +4,14 @@ import org.jooq.Record;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
+import org.sfm.map.MappingContextFactoryBuilder;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.tuples.Tuple2;
-import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
 
 public class JooqMapperBuilder<R extends Record, E> extends
@@ -24,33 +23,17 @@ public class JooqMapperBuilder<R extends Record, E> extends
 	
 	@SuppressWarnings("unchecked")
 	public JooqMapperBuilder(final Type target, ReflectionService reflectService) throws MapperBuildingException {
-		this(reflectService.<E>getRootClassMeta(target));
+		this(reflectService.<E>getRootClassMeta(target), new JooqMappingContextFactoryBuilder<R>());
 	}
 	
-	public JooqMapperBuilder(final ClassMeta<E> classMeta) throws MapperBuildingException {
-		super(Record.class, classMeta, new RecordGetterFactory<R>(), new RecordFieldMapperFactory<R>(new RecordGetterFactory<R>()), new IdentityFieldMapperColumnDefinitionProvider<JooqFieldKey, R>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler());
+	public JooqMapperBuilder(final ClassMeta<E> classMeta, MappingContextFactoryBuilder<R, JooqFieldKey> mappingContextFactoryBuilder) throws MapperBuildingException {
+		super(Record.class, classMeta, new RecordGetterFactory<R>(), new RecordFieldMapperFactory<R>(new RecordGetterFactory<R>()), new IdentityFieldMapperColumnDefinitionProvider<JooqFieldKey, R>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler(), mappingContextFactoryBuilder);
 	}
 
 	@Override
-	protected <ST> AbstractFieldMapperMapperBuilder<R, ST, JooqFieldKey> newSubBuilder(Type type, ClassMeta<ST> classMeta) {
-		return new JooqMapperBuilder<R, ST>(classMeta);
+	protected <ST> AbstractFieldMapperMapperBuilder<R, ST, JooqFieldKey> newSubBuilder(Type type, ClassMeta<ST> classMeta, MappingContextFactoryBuilder<R, JooqFieldKey> mappingContextFactoryBuilder) {
+		return new JooqMapperBuilder<R, ST>(classMeta, mappingContextFactoryBuilder);
 	}
-
-    @Override
-    protected Predicate<R> nullChecker(final List<JooqFieldKey> keys) {
-        return new Predicate<R>() {
-            @Override
-            public boolean test(R r) {
-                if (keys.isEmpty()) return false;
-                for(JooqFieldKey k : keys) {
-                    if (r.getValue(k.getIndex()) != null) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        };
-    }
 
     public JooqMapperBuilder<R, E> addField(JooqFieldKey key) {
 		super._addMapping(key, FieldMapperColumnDefinition.<JooqFieldKey, R>identity());
@@ -60,7 +43,7 @@ public class JooqMapperBuilder<R extends Record, E> extends
 	@Override
 	public Mapper<R, E> mapper() {
         Tuple2<FieldMapper<R, E>[], Instantiator<R, E>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
-        return new MapperImpl<R, E>(fields(), constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second());
+        return new MapperImpl<R, E>(fields(), constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactoryBuilder.newFactory());
 	}
 
 }

@@ -6,6 +6,7 @@ import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.meta.*;
+import org.sfm.utils.BooleanSupplier;
 import org.sfm.utils.ForEachCallBack;
 
 import java.lang.reflect.Type;
@@ -35,13 +36,14 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	}
 
 	
-	public <P> void addProperty(final K key, final D columnDefinition) {
+	@SuppressWarnings("unchecked")
+    public <P> PropertyMeta<T, P> addProperty(final K key, final D columnDefinition) {
 		
 		if (!modifiable) throw new IllegalStateException("Builder not modifiable");
 
         if (columnDefinition.ignore()) {
             properties.add(null);
-            return;
+            return null;
         }
 
 		@SuppressWarnings("unchecked")
@@ -50,8 +52,10 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		if (prop == null) {
 			mapperBuilderErrorHandler.propertyNotFound(classMeta.getType(), key.getName());
 			properties.add(null);
+            return null;
 		} else {
 			addProperty(key, columnDefinition, prop);
+            return prop;
 		}
 	}
 

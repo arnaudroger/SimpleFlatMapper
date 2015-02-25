@@ -17,7 +17,7 @@ public final class ByteFieldMapper<S, T> implements FieldMapper<S, T> {
 
 
 	@Override
-	public void mapTo(final S source, final T target, MappingContext mappingContext) throws Exception {
+	public void mapTo(final S source, final T target, MappingContext<S> mappingContext) throws Exception {
         setter.setByte(target, getter.getByte(source));
 	}
 

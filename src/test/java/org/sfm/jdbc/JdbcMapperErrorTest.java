@@ -69,7 +69,7 @@ public class JdbcMapperErrorTest {
 					public DbObject newInstance(ResultSet s) throws Exception {
 						throw new UnsupportedOperationException();
 					}
-				}, new RethrowRowHandlerErrorHandler());
+				}, new RethrowRowHandlerErrorHandler(), new JdbcMappingContextFactoryBuilder().newFactory());
 		
 		try {
 			mapper.map(null);
@@ -90,7 +90,7 @@ public class JdbcMapperErrorTest {
 					public DbObject newInstance(ResultSet s) throws Exception {
 						return new DbObject();
 					}
-				}, handler);
+				}, handler, new JdbcMappingContextFactoryBuilder().newFactory());
 		final Error error = new Error();
 		
 		ResultSet rs = mock(ResultSet.class);

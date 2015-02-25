@@ -16,7 +16,7 @@ public final class CharacterFieldMapper<S, T> implements FieldMapper<S, T> {
 	}
 
 	@Override
-	public void mapTo(final S source, final T target, final MappingContext mappingContext) throws Exception {
+	public void mapTo(final S source, final T target, final MappingContext<S> mappingContext) throws Exception {
 		setter.setCharacter(target, getter.getCharacter(source));
 	}
 

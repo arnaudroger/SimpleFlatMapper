@@ -16,7 +16,7 @@ public final class IntFieldMapper<S, T> implements FieldMapper<S, T> {
 	}
 
 	@Override
-	public void mapTo(final S source, final T target, final MappingContext mappingContext) throws Exception {
+	public void mapTo(final S source, final T target, final MappingContext<S> mappingContext) throws Exception {
         setter.setInt(target, getter.getInt(source));
 	}
 

@@ -1,11 +1,7 @@
 package org.sfm.jdbc.impl;
 
-import org.sfm.jdbc.BreakDetectorFactory;
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.map.Mapper;
-import org.sfm.map.MappingContext;
-import org.sfm.map.MappingException;
-import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.map.*;
 import org.sfm.utils.RowHandler;
 
 import java.sql.ResultSet;
@@ -23,14 +19,14 @@ import java.util.stream.StreamSupport;
 
 public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
 
-    private final BreakDetectorFactory<ResultSet> breakDetectorFactory;
     private final Mapper<ResultSet, T> mapper;
     private final RowHandlerErrorHandler errorHandler;
+    private final MappingContextFactory<ResultSet> mappingContextFactory;
 
-    public JoinJdbcMapper(BreakDetectorFactory<ResultSet> breakDetectorFactory, Mapper<ResultSet, T> mapper, RowHandlerErrorHandler errorHandler) {
-        this.breakDetectorFactory = breakDetectorFactory;
+    public JoinJdbcMapper(Mapper<ResultSet, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) {
         this.mapper = mapper;
         this.errorHandler = errorHandler;
+        this.mappingContextFactory = mappingContextFactory;
     }
 
     @Override
@@ -39,35 +35,33 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
     }
 
     @Override
-    public T map(ResultSet source, MappingContext mappingContext) throws MappingException {
+    public T map(ResultSet source, MappingContext<ResultSet> mappingContext) throws MappingException {
         return mapper.map(source, mappingContext);
     }
 
     @Override
-    public void mapTo(ResultSet source, T target, MappingContext mappingContext) throws Exception {
-        mapper.mapTo(source, target, null);
+    public void mapTo(ResultSet source, T target, MappingContext<ResultSet> mappingContext) throws Exception {
+        mapper.mapTo(source, target, mappingContext);
     }
 
     @Override
 	public <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
 			throws SQLException, MappingException {
 
-        BreakDetector<ResultSet> breakDetector = breakDetectorFactory.newInstance();
-        MappingContext mappingContext = newMappingContext();
+        MappingContext<ResultSet> mappingContext = newMappingContext();
         T t = null;
 		while(rs.next()) {
-            if (breakDetector.isBreaking(rs)) {
-                callHandler(handler, t);
+            mappingContext.handle(rs);
+            if (mappingContext.broke(0)) {
+                if (t != null) {
+                    callHandler(handler, t);
+                }
                 t = map(rs, mappingContext);
             } else {
-                if (t == null) {
-                    t = map(rs, mappingContext);
-                } else {
-                    try {
-                        mapTo(rs, t, mappingContext);
-                    } catch(Exception e) {
-                        throw new MappingException(e.getMessage(), e);
-                    }
+                try {
+                    mapTo(rs, t, mappingContext);
+                } catch(Exception e) {
+                    throw new MappingException(e.getMessage(), e);
                 }
             }
 		}
@@ -78,8 +72,8 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
 		return handler;
 	}
 
-    private MappingContext newMappingContext() {
-        return null;
+    private MappingContext<ResultSet> newMappingContext() {
+        return mappingContextFactory.newContext();
     }
 
     private <H extends RowHandler<? super T>> void callHandler(H handler, T t) {
@@ -108,17 +102,15 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
     private class JoinOnResultSetIterator implements Iterator<T> {
 
         private final ResultSet rs;
-        private final MappingContext mappingContext;
+        private final MappingContext<ResultSet> mappingContext;
 
         private boolean isFetched;
         private boolean hasValue;
-        private final BreakDetector<ResultSet> resultSetBreakDetector;
         private T currentValue;
         private T nextValue;
 
         public JoinOnResultSetIterator(ResultSet rs) {
             this.rs = rs;
-            this.resultSetBreakDetector = JoinJdbcMapper.this.breakDetectorFactory.newInstance();
             this.mappingContext = newMappingContext();
         }
 
@@ -132,20 +124,21 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
             if (!isFetched) {
                 try {
                     while (rs.next()) {
-                        if (resultSetBreakDetector.isBreaking(rs)) {
-                            nextValue = JoinJdbcMapper.this.mapper.map(rs, mappingContext);
-                            hasValue = true;
-                            isFetched = true;
-                            return;
-                        } else {
+                        mappingContext.handle(rs);
+                        if (mappingContext.broke(0)) {
                             if (currentValue == null) {
                                 currentValue = JoinJdbcMapper.this.mapper.map(rs, mappingContext);
                             } else {
-                                try {
-                                    JoinJdbcMapper.this.mapper.mapTo(rs, currentValue, mappingContext);
-                                } catch (Exception e) {
-                                    throw new MappingException(e.getMessage(), e);
-                                }
+                                nextValue = JoinJdbcMapper.this.mapper.map(rs, mappingContext);
+                                hasValue = true;
+                                isFetched = true;
+                                return;
+                            }
+                        } else {
+                            try {
+                                JoinJdbcMapper.this.mapper.mapTo(rs, currentValue, mappingContext);
+                            } catch (Exception e) {
+                                throw new MappingException(e.getMessage(), e);
                             }
 
                         }
@@ -194,15 +187,13 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
 
     private class JoinOnJdbcSpliterator implements Spliterator<T> {
         private final ResultSet resultSet;
-        private final BreakDetector<ResultSet> resultSetBreakDetector;
 
         private T currentValue;
-        private final MappingContext mappingContext;
+        private final MappingContext<ResultSet> mappingContext;
 
 
         public JoinOnJdbcSpliterator(ResultSet resultSet) {
             this.resultSet = resultSet;
-            this.resultSetBreakDetector = JoinJdbcMapper.this.breakDetectorFactory.newInstance();
             this.mappingContext = newMappingContext();
         }
 
@@ -211,21 +202,19 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
             try {
 
                 while (resultSet.next()) {
-                    if (resultSetBreakDetector.isBreaking(resultSet)) {
-                        action.accept(currentValue);
+                    mappingContext.handle(resultSet);
+                    if (mappingContext.broke(0)) {
+                        if (currentValue != null) {
+                            action.accept(currentValue);
+                        }
                         currentValue = JoinJdbcMapper.this.mapper.map(resultSet, mappingContext);
                         return true;
                     } else {
-                        if (currentValue == null) {
-                            currentValue = JoinJdbcMapper.this.mapper.map(resultSet, mappingContext);
-                        } else {
-                            try {
-                                JoinJdbcMapper.this.mapper.mapTo(resultSet, currentValue, mappingContext);
-                            } catch (Exception e) {
-                                throw new MappingException(e.getMessage(), e);
-                            }
+                        try {
+                            JoinJdbcMapper.this.mapper.mapTo(resultSet, currentValue, mappingContext);
+                        } catch (Exception e) {
+                            throw new MappingException(e.getMessage(), e);
                         }
-
                     }
                 }
 

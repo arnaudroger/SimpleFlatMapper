@@ -56,4 +56,6 @@ public class SubPropertyMeta<O, P> extends PropertyMeta<O, P> {
             return subProperty.getType();
         }
     }
+
+
 }

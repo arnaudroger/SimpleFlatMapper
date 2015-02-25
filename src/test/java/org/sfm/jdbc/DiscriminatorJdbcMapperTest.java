@@ -13,8 +13,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+//IFJAVA8_START
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+//IFJAVA8_END
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

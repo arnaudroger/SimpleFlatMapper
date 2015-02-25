@@ -12,13 +12,13 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+//IFJAVA8_START
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-//IFJAVA8_START
 //IFJAVA8_END
+
 
 
 public final class DiscriminatorJdbcMapper<T> implements JdbcMapper<T> {

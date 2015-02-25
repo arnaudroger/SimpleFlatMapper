@@ -11,7 +11,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 //IFJAVA8_START
 //IFJAVA8_END
@@ -68,9 +72,7 @@ public final class DiscriminatorJdbcMapper<T> implements JdbcMapper<T> {
         while(rs.next()) {
             int index = getMapperIndex(rs);
             if (currentIndex != index) {
-                for(int i = 0; i < mappingContexts.length; i++) {
-                    mappingContexts[i].markAsBroken();
-                }
+                markAsBroken(mappingContexts);
             }
 
             final MappingContext<ResultSet> mappingContext = mappingContexts[index];
@@ -101,6 +103,12 @@ public final class DiscriminatorJdbcMapper<T> implements JdbcMapper<T> {
 
         return handles;
 	}
+
+    private void markAsBroken(MappingContext<ResultSet>[] mappingContexts) {
+        for(int i = 0; i < mappingContexts.length; i++) {
+            mappingContexts[i].markAsBroken();
+        }
+    }
 
 
     private <H extends RowHandler<? super T>> void callHandler(H handler, T t) {
@@ -137,22 +145,203 @@ public final class DiscriminatorJdbcMapper<T> implements JdbcMapper<T> {
     @Deprecated
 	public final Iterator<T> iterate(final ResultSet rs)
 			throws SQLException, MappingException {
-		return null;
+		return new DiscriminatorResultSetIterator(rs);
 	}
 
 	@Override
     @SuppressWarnings("deprecation")
     public final Iterator<T> iterator(final ResultSet rs)
 			throws SQLException, MappingException {
-		return null;
+		return iterate(rs);
 	}
-	
-	//IFJAVA8_START
-	@Override
-	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
-		return null;
-	}
-	//IFJAVA8_END
+
+    private class DiscriminatorResultSetIterator implements Iterator<T> {
+
+        private final ResultSet rs;
+        private final MappingContext<ResultSet>[] mappingContexts;
+
+        private boolean isFetched;
+        private boolean hasValue;
+        private T currentValue;
+        private T nextValue;
+        private int currentIndex = -1;
+
+        public DiscriminatorResultSetIterator(ResultSet rs) throws SQLException {
+            this.rs = rs;
+            this.mappingContexts = getMappingContexts(rs);
+        }
+
+        @Override
+        public boolean hasNext() {
+            fetch();
+            return hasValue;
+        }
+
+        private void fetch() {
+            if (!isFetched) {
+                try {
+                    while (rs.next()) {
+
+                        int index = getMapperIndex(rs);
+                        if (currentIndex != index) {
+                            markAsBroken(mappingContexts);
+                        }
+
+                        final MappingContext<ResultSet> mappingContext = mappingContexts[index];
+
+                        mappingContext.handle(rs);
+
+                        Mapper<ResultSet, T> mapper = mappers.get(index).getElement1();
+
+                        if (mappingContext.broke(0)) {
+                            if (currentValue == null) {
+                                currentValue = mapper.map(rs, mappingContext);
+                            } else {
+                                nextValue = mapper.map(rs, mappingContext);
+                                hasValue = true;
+                                isFetched = true;
+                                return;
+                            }
+                        } else {
+                            try {
+                               mapper.mapTo(rs, currentValue, mappingContext);
+                            } catch (Exception e) {
+                                throw new MappingException(e.getMessage(), e);
+                            }
+
+                        }
+                        currentIndex = index;
+                    }
+                } catch (SQLException e) {
+                    throw new MappingException(e.toString(), e);
+                }
+
+                if (currentValue != null) {
+                    hasValue = true;
+                    isFetched = true;
+                } else {
+                    hasValue = false;
+                    isFetched = true;
+                }
+            }
+        }
+
+        @Override
+        public T next() {
+            fetch();
+            if (hasValue) {
+                T v = currentValue;
+                currentValue = nextValue;
+                nextValue = null;
+                isFetched = false;
+                return v;
+            } else {
+                throw new NoSuchElementException("No more rows");
+            }
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+    }
+
+
+    //IFJAVA8_START
+    @Override
+    public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
+        return StreamSupport.stream(new DiscriminatorJdbcSpliterator(rs), false);
+    }
+
+    private class DiscriminatorJdbcSpliterator implements Spliterator<T> {
+        private final ResultSet resultSet;
+
+        private T currentValue;
+        private int currentIndex = -1;
+        private final MappingContext<ResultSet>[] mappingContexts;
+
+
+        public DiscriminatorJdbcSpliterator(ResultSet resultSet) throws SQLException {
+            this.resultSet = resultSet;
+            this.mappingContexts = getMappingContexts(resultSet);
+        }
+
+        @Override
+        public boolean tryAdvance(Consumer<? super T> action) {
+            try {
+
+                while (resultSet.next()) {
+
+                    int index = getMapperIndex(resultSet);
+                    if (currentIndex != index) {
+                        markAsBroken(mappingContexts);
+                    }
+
+                    final MappingContext<ResultSet> mappingContext = mappingContexts[index];
+
+                    Mapper<ResultSet, T> mapper = mappers.get(index).getElement1();
+
+                    mappingContext.handle(resultSet);
+                    if (mappingContext.broke(0)) {
+                        if (currentValue != null) {
+                            action.accept(currentValue);
+                        }
+                        currentValue = mapper.map(resultSet, mappingContext);
+                        currentIndex = index;
+                        return true;
+                    } else {
+                        try {
+                            mapper.mapTo(resultSet, currentValue, mappingContext);
+                        } catch (Exception e) {
+                            throw new MappingException(e.getMessage(), e);
+                        }
+                    }
+                    currentIndex = index;
+                }
+
+                if (currentValue != null) {
+                    action.accept(currentValue);
+                    currentValue = null;
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super T> action) {
+            try {
+                DiscriminatorJdbcMapper.this.forEach(resultSet, new RowHandler<T>() {
+                    @Override
+                    public void handle(T t) throws Exception {
+                        action.accept(t);
+                    }
+                });
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public Spliterator<T> trySplit() {
+            return null;
+        }
+
+        @Override
+        public long estimateSize() {
+            return Long.MAX_VALUE;
+        }
+
+        @Override
+        public int characteristics() {
+            return Spliterator.ORDERED | Spliterator.NONNULL;
+        }
+    }
+    //IFJAVA8_END
 
 
     private Mapper<ResultSet, T> getMapper(final ResultSet rs) throws MappingException, SQLException {
@@ -186,4 +375,7 @@ public final class DiscriminatorJdbcMapper<T> implements JdbcMapper<T> {
                 ", mappers=" + mappers +
                 '}';
     }
+
+
+
 }

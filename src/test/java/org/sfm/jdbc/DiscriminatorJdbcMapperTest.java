@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -49,17 +50,18 @@ public class DiscriminatorJdbcMapperTest {
         validatePersons(persons);
 
         //IFJAVA8_START
-//        validatePersons(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
-//
-//        validatePersons(mapper.stream(setUpResultSetMock()).limit(10).collect(Collectors.toList()));
+        validatePersons(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
+
+        final Stream<T> stream = mapper.stream(setUpResultSetMock());
+        validatePersons(stream.limit(10).collect(Collectors.toList()));
         //IFJAVA8_END
 
-//        Iterator<T> iterator = mapper.iterator(setUpResultSetMock());
-//        persons = new ArrayList<T>();
-//        while(iterator.hasNext()) {
-//            persons.add(iterator.next());
-//        }
-//        validatePersons(persons);
+        Iterator<T> iterator = mapper.iterator(setUpResultSetMock());
+        persons = new ArrayList<T>();
+        while(iterator.hasNext()) {
+            persons.add(iterator.next());
+        }
+        validatePersons(persons);
     }
 
 

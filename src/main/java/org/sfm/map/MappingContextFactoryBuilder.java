@@ -79,7 +79,7 @@ public class MappingContextFactoryBuilder<S, K> {
 
 
     private List<MappingContextFactoryBuilder<S, K>> getAllBuilders() {
-        List<MappingContextFactoryBuilder<S, K>> list = new ArrayList<>();
+        List<MappingContextFactoryBuilder<S, K>> list = new ArrayList<MappingContextFactoryBuilder<S, K>>();
 
         list.add(this);
 

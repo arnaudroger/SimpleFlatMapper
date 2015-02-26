@@ -3,6 +3,7 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.sfm.map.MappingContext;
 import org.sfm.utils.ListHandler;
 
 import java.sql.ResultSet;
@@ -29,7 +30,7 @@ public class DiscriminatorJdbcMapperTest {
 
 
     @Test
-    public void testDiscriminator() throws SQLException {
+    public void testDiscriminator() throws Exception {
         JdbcMapper<JoinJdbcMapperTest.Person> mapper =
                 JdbcMapperFactoryHelper.asm()
                 .addKeys("id", "students_id")
@@ -47,7 +48,7 @@ public class DiscriminatorJdbcMapperTest {
 
     }
 
-    private <T extends JoinJdbcMapperTest.Person> void validateMapper(JdbcMapper<T> mapper) throws SQLException {
+    private <T extends JoinJdbcMapperTest.Person> void validateMapper(JdbcMapper<T> mapper) throws Exception {
         List<T> persons = mapper.forEach(setUpResultSetMock(), new ListHandler<T>()).getList();
         validatePersons(persons);
 
@@ -64,6 +65,21 @@ public class DiscriminatorJdbcMapperTest {
             persons.add(iterator.next());
         }
         validatePersons(persons);
+
+        ResultSet rs = setUpResultSetMock();
+
+        rs.next();
+        MappingContext<ResultSet> mappingContext = mapper.newMappingContext(rs);
+        mappingContext.handle(rs);
+        final T professor = mapper.map(rs, mappingContext);
+        validateProfessorMap((JoinJdbcMapperTest.Professor)professor);
+        rs.next();
+        mappingContext.handle(rs);
+        rs.next();
+        mappingContext.handle(rs);
+        mapper.mapTo(rs, professor, mappingContext);
+
+        validateProfessorMapTo((JoinJdbcMapperTest.Professor)professor);
     }
 
 
@@ -91,6 +107,24 @@ public class DiscriminatorJdbcMapperTest {
 
 
     }
+
+
+    private <T extends JoinJdbcMapperTest.Professor<?>> void validateProfessorMap(T professor0) {
+        assertPersonEquals(1, "professor1", professor0);
+        assertEquals("has 2 students", 1, professor0.getStudents().size());
+        assertPersonEquals(3, "student3", professor0.getStudents().get(0));
+        assertArrayEquals(new Object[]{"phone31"}, professor0.getStudents().get(0).getPhones().toArray());
+    }
+    private <T extends JoinJdbcMapperTest.Professor<?>> void validateProfessorMapTo(T professor0) {
+        assertPersonEquals(1, "professor1", professor0);
+        assertEquals("has 2 students", 2, professor0.getStudents().size());
+        assertPersonEquals(3, "student3", professor0.getStudents().get(0));
+        assertArrayEquals(new Object[]{"phone31"}, professor0.getStudents().get(0).getPhones().toArray());
+        assertPersonEquals(4, "student4", professor0.getStudents().get(1));
+        assertArrayEquals(new Object[]{"phone41"}, professor0.getStudents().get(1).getPhones().toArray());
+
+    }
+
 
     private void assertPersonEquals(int id, String name, JoinJdbcMapperTest.Person person) {
         assertEquals(id, person.getId());

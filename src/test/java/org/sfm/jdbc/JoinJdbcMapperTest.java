@@ -182,9 +182,9 @@ public class JoinJdbcMapperTest {
 
         final ResultSet rs = setUpResultSetMock();
 
-        MappingContext<ResultSet> mappingContext = mapper.newMappingContext(rs);
 
         rs.next();
+        MappingContext<ResultSet> mappingContext = mapper.newMappingContext(rs);
         mappingContext.handle(rs);
         final T professor = mapper.map(rs, mappingContext);
         validateProfessorMap(professor);

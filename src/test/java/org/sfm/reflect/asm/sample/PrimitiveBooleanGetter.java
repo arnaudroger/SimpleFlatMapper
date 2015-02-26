@@ -3,7 +3,6 @@ package org.sfm.reflect.asm.sample;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.BooleanGetter;
-import org.sfm.reflect.primitive.IntGetter;
 
 public class PrimitiveBooleanGetter implements Getter<DbPrimitiveObjectWithSetter, Boolean>, BooleanGetter<DbPrimitiveObjectWithSetter> {
 

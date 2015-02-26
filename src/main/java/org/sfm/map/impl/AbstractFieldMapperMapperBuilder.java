@@ -34,7 +34,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 
 	protected final MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private FieldMapperErrorHandler<K> fieldMapperErrorHandler;
-    protected final MappingContextFactoryBuilder mappingContextFactoryBuilder;
+    protected final MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder;
 
     public AbstractFieldMapperMapperBuilder(final Type source,
                                             final ClassMeta<T> classMeta,
@@ -42,7 +42,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
                                             FieldMapperFactory<S, K, FieldMapperColumnDefinition<K, S>> fieldMapperFactory,
                                             ColumnDefinitionProvider<FieldMapperColumnDefinition<K, S>, K> columnDefinitions,
                                             PropertyNameMatcherFactory propertyNameMatcherFactory,
-                                            MapperBuilderErrorHandler mapperBuilderErrorHandler, MappingContextFactoryBuilder mappingContextFactoryBuilder) throws MapperBuildingException {
+                                            MapperBuilderErrorHandler mapperBuilderErrorHandler, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) throws MapperBuildingException {
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
         if (source == null) {
 			throw new NullPointerException("source is null");
@@ -133,7 +133,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
     private MappingContextFactoryBuilder getMapperContextFactoryBuilder(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties) {
         final List<K> subKeys = getSubKeys(properties);
 
-        MappingContextFactoryBuilder currentBuilder;
+        MappingContextFactoryBuilder<S, K> currentBuilder;
         if (subKeys.isEmpty()) {
             currentBuilder = mappingContextFactoryBuilder;
         } else {
@@ -187,7 +187,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
             final PropertyMeta<T, ?> property = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
             if (composedDefinition.isKey() && !property.isSubProperty()) {
                 mappingContextFactoryBuilder.addKey(key);
-            };
+            }
 		}
 	}
 

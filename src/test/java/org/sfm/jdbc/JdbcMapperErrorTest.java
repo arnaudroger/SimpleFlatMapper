@@ -78,7 +78,8 @@ public class JdbcMapperErrorTest {
 	}
 	
 	
-	@Test
+	@SuppressWarnings("unchecked")
+    @Test
 	public void testHandlerError() throws MappingException, SQLException {
 		
 		MyJdbcRawHandlerErrorHandler handler = new MyJdbcRawHandlerErrorHandler();

@@ -17,7 +17,7 @@ public class SfmResultSetHandlerFactory<T> implements ResultSetHandlerFactory<T>
 
     @Override
     public ResultSetHandler<T> newResultSetHandler(ResultSetMetaData resultSetMetaData) throws SQLException {
-        JdbcMapper<T> staticMapper = mapper.buildMapper(resultSetMetaData);
+        JdbcMapper<T> staticMapper = mapper.getMapper(resultSetMetaData);
         return new SfmResultSetHandler<T>(staticMapper);
     }
 

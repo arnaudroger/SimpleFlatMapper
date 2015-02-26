@@ -5,13 +5,8 @@ import org.sfm.beans.DbObject;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.tuples.Tuples;
 
-import java.util.List;
-
 import static org.junit.Assert.*;
 
-/**
- * Created by aroger on 05/12/14.
- */
 public class PropertyFinderTest {
 
 

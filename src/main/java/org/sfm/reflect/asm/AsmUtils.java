@@ -211,23 +211,7 @@ public class AsmUtils {
 
 			final Type[] types = parseTypes(sig.substring(indexOf+ 1, sig.length() - 1), genericTypeNames, target);
 			
-			return new ParameterizedType() {
-				
-				@Override
-				public Type getRawType() {
-					return rawType;
-				}
-				
-				@Override
-				public Type getOwnerType() {
-					return null;
-				}
-				
-				@Override
-				public Type[] getActualTypeArguments() {
-					return types;
-				}
-			};
+			return new ParameterizedTypeImpl(rawType, types);
 		}
 	}
 
@@ -358,4 +342,38 @@ public class AsmUtils {
 
 		return types;
 	}
+
+    private static class ParameterizedTypeImpl implements ParameterizedType {
+
+        private final Class<?> rawType;
+        private final Type[] types;
+
+        public ParameterizedTypeImpl(Class<?> rawType, Type[] types) {
+            this.rawType = rawType;
+            this.types = types;
+        }
+
+        @Override
+        public Type getRawType() {
+            return rawType;
+        }
+
+        @Override
+        public Type getOwnerType() {
+            return null;
+        }
+
+        @Override
+        public Type[] getActualTypeArguments() {
+            return types;
+        }
+
+        @Override
+        public String toString() {
+            return "ParameterizedTypeImpl{" +
+                    "rawType=" + rawType +
+                    ", types=" + Arrays.toString(types) +
+                    '}';
+        }
+    }
 }

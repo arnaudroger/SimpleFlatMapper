@@ -86,7 +86,7 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
     private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
         final ClassMeta<E> elementClassMeta = arrayClassMeta.getElementClassMeta();
 
-        PropertyMeta<E, Object> property = null;
+        PropertyMeta<E, Object> property;
 
         if (elementClassMeta != null) {
             property = elementClassMeta.newPropertyFinder().findProperty(propertyNameMatcher);

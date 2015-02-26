@@ -82,7 +82,7 @@ public class PropertyMappingsBuilderTest {
 
         assertTrue("Is sub property", propertyMeta.isSubProperty());
 
-        SubPropertyMeta<AnonymousElement, ?> subPropertyMeta = (SubPropertyMeta<AnonymousElement, ?>) propertyMeta;
+        @SuppressWarnings("unchecked") SubPropertyMeta<AnonymousElement, ?> subPropertyMeta = (SubPropertyMeta<AnonymousElement, ?>) propertyMeta;
 
         assertTrue(TypeHelper.isAssignable(List.class, subPropertyMeta.getOwnerProperty().getType()));
         assertTrue(subPropertyMeta.getSubProperty() instanceof ListElementPropertyMeta);

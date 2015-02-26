@@ -3,6 +3,7 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.sfm.map.MappingContext;
 import org.sfm.utils.ListHandler;
 
 import java.sql.ResultSet;
@@ -30,41 +31,45 @@ public class JoinJdbcMapperTest {
 
 
     @Test
-    public void testJoinTableFields() throws SQLException {
+    public void testJoinTableFields() throws Exception {
         validateMapper(asmJdbcMapperFactory.newMapper(ProfessorField.class));
     }
 
     @Test
-    public void testJoinTableGSNoAsm() throws SQLException {
+    public void testJoinTableGSNoAsm() throws Exception {
         validateMapper(noAsmJdbcMapperFactory.newMapper(ProfessorGS.class));
     }
 
 
     @Test
-    public void testJoinTableGS() throws SQLException {
+    public void testJoinTableGS() throws Exception {
         validateMapper(asmJdbcMapperFactory.newMapper(ProfessorGS.class));
     }
 
 
     @Test
-    public void testJoinTableGS2Joins() throws SQLException {
+    public void testJoinTableGS2Joins() throws Exception {
         validateMapper(asmJdbcMapperFactory.newMapper(ProfessorGS.class));
     }
 
     @Test
-    public void testJoinTableC() throws SQLException {
+    public void testJoinTableC() throws Exception {
         validateMapper(asmJdbcMapperFactory.newMapper(ProfessorC.class));
     }
 
 
     @Test
-    public void testJoinTableCNoAsm() throws SQLException {
-        validateMapper(noAsmJdbcMapperFactory.newMapper(ProfessorC.class));
+    public void testJoinTableCNoAsm() throws Exception {
+        final JdbcMapper<ProfessorC> mapper = noAsmJdbcMapperFactory.newMapper(ProfessorC.class);
+        validateMapper(mapper);
+
+        assertEquals("DynamicJdbcMapper{target=class org.sfm.jdbc.JoinJdbcMapperTest$ProfessorC, MapperCache{[{ColumnsMapperKey{[id, name, students_id, students_name, students_phones_value]},JoinJdbcMapper{mapper=JdbcMapperImpl{instantiator=InjectConstructorInstantiator{constructorDefinition=ConstructorDefinition{constructor=public org.sfm.jdbc.JoinJdbcMapperTest$ProfessorC(int,java.lang.String,java.util.List), parameters=[ConstructorParameter{name='id', type=int, resolvedType=int}, ConstructorParameter{name='name', type=class java.lang.String, resolvedType=class java.lang.String}, ConstructorParameter{name='students', type=interface java.util.List, resolvedType=ParameterizedTypeImpl{rawType=interface java.util.List, types=[class org.sfm.jdbc.JoinJdbcMapperTest$StudentC]}}]}}, fieldMappers=[]}}}]}}",
+                mapper.toString());
     }
 
 
     @Test
-    public void testJoinTableGSManualMapping() throws SQLException {
+    public void testJoinTableGSManualMapping() throws Exception {
         JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
                 .newBuilder(ProfessorGS.class)
                 .addKey("id")
@@ -158,7 +163,7 @@ public class JoinJdbcMapperTest {
         assertEquals(name, person.getName());
     }
 
-    private <T extends Professor<?>> void validateMapper(JdbcMapper<T> mapper) throws SQLException {
+    private <T extends Professor<?>> void validateMapper(JdbcMapper<T> mapper) throws Exception {
         List<T> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<T>()).getList();
         validateProfessors(professors);
 
@@ -174,6 +179,46 @@ public class JoinJdbcMapperTest {
             professors.add(iterator.next());
         }
         validateProfessors(professors);
+
+        final ResultSet rs = setUpResultSetMock();
+
+        MappingContext<ResultSet> mappingContext = mapper.newMappingContext(rs);
+
+        rs.next();
+        mappingContext.handle(rs);
+        final T professor = mapper.map(rs, mappingContext);
+        validateProfessorMap(professor);
+        rs.next();
+        mappingContext.handle(rs);
+        rs.next();
+        mappingContext.handle(rs);
+        mapper.mapTo(rs, professor, mappingContext);
+
+        validateProfessorMapTo(professor);
+
+
+
+    }
+
+    private <T extends Professor<?>> void validateProfessorMap(T professor0) {
+        assertPersonEquals(1, "professor1", professor0);
+        assertEquals("has 2 students", 1, professor0.getStudents().size());
+        assertPersonEquals(3, "student3", professor0.getStudents().get(0));
+        assertArrayEquals(new Object[]{"phone31"}, professor0.getStudents().get(0).getPhones().toArray());
+    }
+    private <T extends Professor<?>> void validateProfessorMapTo(T professor0) {
+        assertPersonEquals(1, "professor1", professor0);
+        assertEquals("has 2 students", 2, professor0.getStudents().size());
+        assertPersonEquals(3, "student3", professor0.getStudents().get(0));
+        assertArrayEquals(new Object[]{"phone31"}, professor0.getStudents().get(0).getPhones().toArray());
+        assertPersonEquals(4, "student4", professor0.getStudents().get(1));
+        assertArrayEquals(new Object[]{"phone41"}, professor0.getStudents().get(1).getPhones().toArray());
+
+    }
+
+
+    private <T extends Professor<?>> void validateProfessor(T professor) {
+        assertPersonEquals(1, "professor1", professor);
     }
 
     public static interface Person {

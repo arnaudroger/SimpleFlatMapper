@@ -64,8 +64,7 @@ public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + index;
-		result = prime * result
-				+ ((name == null) ? 0 : name.hashCode());
+		result = prime * result + (name.hashCode());
 		result = prime * result + sqlType;
 		return result;
 	}
@@ -80,11 +79,8 @@ public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 		JdbcColumnKey other = (JdbcColumnKey) obj;
 		if (index != other.index)
 			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
+        if (!name.equals(other.name))
+            return false;
 		if (sqlType != other.sqlType)
 			return false;
 		return true;

@@ -29,7 +29,7 @@ public final class AsmJdbcMapper extends AbstractJdbcMapperImpl<DbObject> {
 		mapper4 = (FieldMapperImpl<ResultSet, DbObject, ?>) mappers2[0];
 	}
 	
-	protected final void mapFields(ResultSet source, final DbObject target, MappingContext mappingContext) throws Exception {
+	protected final void mapFields(ResultSet source, final DbObject target, MappingContext<ResultSet> mappingContext) throws Exception {
 		mapper1.mapTo(source, target, mappingContext);
 		mapper2.mapTo(source, target, mappingContext);
 		mapper3.mapTo(source, target, mappingContext);

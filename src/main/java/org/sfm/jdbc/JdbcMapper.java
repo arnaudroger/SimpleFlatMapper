@@ -46,6 +46,5 @@ public interface JdbcMapper<T> extends Mapper<ResultSet, T> {
 	 */
 	//IFJAVA8_START
 	Stream<T> stream(ResultSet rs) throws SQLException, MappingException;
-	//IFJAVA8_END
-
+    //IFJAVA8_END
 }

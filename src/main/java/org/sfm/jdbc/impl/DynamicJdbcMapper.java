@@ -52,13 +52,13 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
     @Override
     public final T map(ResultSet source) throws MappingException {
-        return map(source, null);
+        return map(source, newMappingContext(source));
     }
 
     @Override
 	public final T map(final ResultSet source, final MappingContext<ResultSet> mappingContext) throws MappingException {
 		try {
-			final JdbcMapper<T> mapper = buildMapper(source.getMetaData());
+			final JdbcMapper<T> mapper = getMapper(source);
 			return mapper.map(source, mappingContext);
 		} catch(SQLException e) {
 			throw new SQLMappingException(e.getMessage(), e);
@@ -68,7 +68,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
     @Override
     public final void mapTo(final ResultSet source, final T target, final MappingContext<ResultSet> mappingContext) throws MappingException {
         try {
-            final JdbcMapper<T> mapper = buildMapper(source.getMetaData());
+            final JdbcMapper<T> mapper = getMapper(source);
             mapper.mapTo(source, target, mappingContext);
         } catch(SQLException e) {
             throw new SQLMappingException(e.getMessage(), e);
@@ -80,7 +80,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	@Override
 	public final <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handle)
 			throws SQLException, MappingException {
-		final JdbcMapper<T> mapper = buildMapper(rs.getMetaData());
+		final JdbcMapper<T> mapper = getMapper(rs);
 		return mapper.forEach(rs, handle);
 	}
 	
@@ -88,7 +88,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
     @Deprecated
 	public final Iterator<T> iterate(final ResultSet rs)
 			throws SQLException, MappingException {
-		final JdbcMapper<T> mapper = buildMapper(rs.getMetaData());
+		final JdbcMapper<T> mapper = getMapper(rs);
 		return mapper.iterator(rs);
 	}
 
@@ -102,14 +102,26 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
-		final JdbcMapper<T> mapper = buildMapper(rs.getMetaData());
+		final JdbcMapper<T> mapper = getMapper(rs);
 		return mapper.stream(rs);
 	}
-	//IFJAVA8_END
 
-	public JdbcMapper<T> buildMapper(final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
-		
-		final ColumnsMapperKey key = mapperKey(metaData);
+    @Override
+    public MappingContext<ResultSet> newMappingContext(ResultSet source) throws MappingException {
+        try {
+            return getMapper(source).newMappingContext(source);
+        } catch (SQLException e) {
+            throw new SQLMappingException(e.getMessage(), e);
+        }
+    }
+    //IFJAVA8_END
+
+	public JdbcMapper<T> getMapper(final ResultSet rs) throws MapperBuildingException, SQLException {
+        return getMapper(rs.getMetaData());
+    }
+
+    public JdbcMapper<T> getMapper(final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
+        final ColumnsMapperKey key = mapperKey(metaData);
 		
 		JdbcMapper<T> mapper = mapperCache.get(key);
 		

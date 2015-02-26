@@ -10,8 +10,6 @@ import org.junit.Test;
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.csv.ParsingContextFactoryBuilder;
-import org.sfm.map.ParsingContextProvider;
-
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

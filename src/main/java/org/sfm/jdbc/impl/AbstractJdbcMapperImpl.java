@@ -1,7 +1,6 @@
 package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.map.MappingContext;
 import org.sfm.map.MappingContextFactory;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
@@ -13,8 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 //IFJAVA8_START
-import java.util.Spliterator;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END
@@ -35,23 +32,14 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 	@Override
 	public final <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
 			throws SQLException, MappingException {
-        MappingContext<ResultSet> context = newMappingContext();
-		while(rs.next()) {
-			T t = map(rs, context);
-			try {
-				handler.handle(t);
-			} catch(Throwable error) {
-				errorHandler.handlerError(error, t);
-			}
-		}
-		return handler;
+        return JdbcMapperHelper.forEach(rs, handler, newMappingContext(rs), this, errorHandler);
 	}
 	
 	@Override
     @Deprecated
 	public Iterator<T> iterate(ResultSet rs) throws SQLException,
 			MappingException {
-		return new ResultSetIterator<T>(rs, this, newMappingContext());
+		return new ResultSetIterator<T>(rs, this, newMappingContext(rs));
 	}
 
 	@Override
@@ -64,61 +52,7 @@ public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<Resul
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
-		return StreamSupport.stream(new JdbcSpliterator<T>(rs, this, newMappingContext()), false);
+		return StreamSupport.stream(new ResultSetSpliterator<T>(rs, this, newMappingContext(rs)), false);
 	}
-
-	public static class JdbcSpliterator<T> implements Spliterator<T> {
-		private final ResultSet resultSet;
-		private final JdbcMapper<T> mapper;
-        private final MappingContext<ResultSet> mappingContext;
-
-		public JdbcSpliterator(ResultSet resultSet, JdbcMapper<T> mapper, MappingContext<ResultSet> mappingContext) {
-			this.resultSet = resultSet;
-			this.mapper = mapper;
-            this.mappingContext = mappingContext;
-        }
-
-		@Override
-		public boolean tryAdvance(Consumer<? super T> action) {
-			try {
-				if (resultSet.next()) {
-					action.accept(mapper.map(resultSet, mappingContext));
-					return true;
-				}
-			} catch (SQLException e) {
-				throw new RuntimeException(e);
-			}
-			return false;
-		}
-
-		@Override
-		public void forEachRemaining(Consumer<? super T> action) {
-			try {
-				mapper.forEach(resultSet, new RowHandler<T>() {
-					@Override
-					public void handle(T t) throws Exception {
-						action.accept(t);
-					}
-				});
-			} catch (SQLException e) {
-				throw new RuntimeException(e);
-			}
-		}
-
-		@Override
-		public Spliterator<T> trySplit() {
-			return null;
-		}
-
-		@Override
-		public long estimateSize() {
-			return Long.MAX_VALUE;
-		}
-
-		@Override
-		public int characteristics() {
-			return Spliterator.ORDERED | Spliterator.NONNULL;
-		}
-	}	//IFJAVA8_END
-
+    //IFJAVA8_END
 }

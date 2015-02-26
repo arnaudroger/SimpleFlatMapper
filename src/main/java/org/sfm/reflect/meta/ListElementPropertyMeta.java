@@ -1,7 +1,6 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.impl.NullGetter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.utils.BooleanSupplier;

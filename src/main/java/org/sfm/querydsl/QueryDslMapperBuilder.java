@@ -27,7 +27,7 @@ public final class QueryDslMapperBuilder<T>
 		this(reflectService.<T>getRootClassMeta(target), new QueryDslMappingContextFactoryBuilder());
 	}
 	
-	public QueryDslMapperBuilder(final ClassMeta<T> classMeta, MappingContextFactoryBuilder parentBuilder) throws MapperBuildingException {
+	public QueryDslMapperBuilder(final ClassMeta<T> classMeta, MappingContextFactoryBuilder<Tuple, TupleElementKey> parentBuilder) throws MapperBuildingException {
 		super(Tuple.class, classMeta, new TupleGetterFactory(),
                 new TupleFieldMapperFactory(new TupleGetterFactory()),
                 new IdentityFieldMapperColumnDefinitionProvider<TupleElementKey, Tuple>(),

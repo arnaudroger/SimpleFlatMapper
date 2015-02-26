@@ -3,7 +3,6 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.sfm.beans.DbEnumObject;
 import org.sfm.beans.DbObject;
-import org.sfm.beans.DbObject.Type;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;
 

@@ -4,7 +4,6 @@ import org.sfm.map.MappingContextFactoryBuilder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 public class JdbcMappingContextFactoryBuilder extends MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> {
     public JdbcMappingContextFactoryBuilder() {

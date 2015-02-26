@@ -29,26 +29,17 @@ public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements
 		this.errorHandler = errorHandler;
 	}
 
-	@Override
-	public <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
-			throws SQLException, MappingException {
-        MappingContext<ResultSet> mappingContext = newMappingContext();
-		while(rs.next()) {
-			T t = map(rs, mappingContext);
-			try {
-				handler.handle(t);
-			} catch(Throwable error) {
-				errorHandler.handlerError(error, t);
-			}
-		}
-		return handler;
-	}
+    @Override
+    public final <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
+            throws SQLException, MappingException {
+        return JdbcMapperHelper.forEach(rs, handler, newMappingContext(rs), this, errorHandler);
+    }
 
 	@Override
     @Deprecated
 	public Iterator<T> iterate(ResultSet rs) throws SQLException,
 			MappingException {
-		return new ResultSetIterator<T>(rs, this, newMappingContext());
+		return new ResultSetIterator<T>(rs, this, newMappingContext(rs));
 	}
 
     @Override
@@ -61,7 +52,7 @@ public final class JdbcMapperImpl<T> extends MapperImpl<ResultSet, T> implements
 	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
-		return StreamSupport.stream(new AbstractJdbcMapperImpl.JdbcSpliterator<T>(rs, this, newMappingContext()), false);
+		return StreamSupport.stream(new ResultSetSpliterator<T>(rs, this, newMappingContext(rs)), false);
 	}
 	//IFJAVA8_END
 }

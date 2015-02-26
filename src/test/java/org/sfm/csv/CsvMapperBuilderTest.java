@@ -14,7 +14,6 @@ import org.sfm.utils.ListHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.TimeZone;

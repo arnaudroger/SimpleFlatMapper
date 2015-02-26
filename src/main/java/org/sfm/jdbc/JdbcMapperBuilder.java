@@ -63,7 +63,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
     private JdbcMapper<T> buildMapper() {
         FieldMapper<ResultSet, T>[] fields = fields();
         Tuple2<FieldMapper<ResultSet, T>[], Instantiator<ResultSet, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
-        MappingContextFactory mappingContextFactory = mappingContextFactoryBuilder.newFactory();
+        MappingContextFactory<ResultSet> mappingContextFactory = mappingContextFactoryBuilder.newFactory();
         if (reflectionService.isAsmActivated()) {
 			try {
 				return reflectionService.getAsmFactory().createJdbcMapper(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), getTargetClass(), jdbcMapperErrorHandler, mappingContextFactory);

@@ -332,7 +332,8 @@
 							<source>1.6</source>
 							<target>1.6</target>
 							<excludes>
-								<exclude>**/org/sfm/sql2o/*</exclude>
+                                <exclude>**/org/sfm/sql2o/*</exclude>
+                                <exclude>**/org/sfm/**/*Spliterator*</exclude>
 							</excludes>
 						</configuration>
 
@@ -418,7 +419,12 @@
 						<configuration>
 							<source>1.7</source>
 							<target>1.7</target>
-						</configuration>
+
+                            <excludes>
+                                <exclude>**/org/sfm/**/*Spliterator*</exclude>
+                            </excludes>
+
+                        </configuration>
 					</plugin>
 				</plugins>
 			</build>

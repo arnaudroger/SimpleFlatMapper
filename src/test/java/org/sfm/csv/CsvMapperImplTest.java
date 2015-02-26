@@ -4,14 +4,12 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.csv.impl.CsvMapperImpl;
 import org.sfm.jdbc.DbHelper;
-import org.sfm.tuples.Tuple2;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Iterator;
 //IFJAVA8_START

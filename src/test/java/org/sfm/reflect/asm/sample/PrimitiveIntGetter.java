@@ -2,9 +2,7 @@ package org.sfm.reflect.asm.sample;
 
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.Setter;
 import org.sfm.reflect.primitive.IntGetter;
-import org.sfm.reflect.primitive.IntSetter;
 
 public class PrimitiveIntGetter implements Getter<DbPrimitiveObjectWithSetter, Integer>, IntGetter<DbPrimitiveObjectWithSetter> {
 

@@ -6,7 +6,6 @@ import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.meta.*;
-import org.sfm.utils.BooleanSupplier;
 import org.sfm.utils.ForEachCallBack;
 
 import java.lang.reflect.Type;

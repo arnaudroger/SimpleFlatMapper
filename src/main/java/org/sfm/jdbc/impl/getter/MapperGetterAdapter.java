@@ -1,6 +1,5 @@
 package org.sfm.jdbc.impl.getter;
 
-import com.mysema.query.sql.types.Null;
 import org.sfm.map.Mapper;
 import org.sfm.reflect.Getter;
 import org.sfm.utils.Predicate;

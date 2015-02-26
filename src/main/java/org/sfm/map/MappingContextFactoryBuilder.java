@@ -56,6 +56,7 @@ public class MappingContextFactoryBuilder<S, K> {
     public MappingContextFactory<S> newFactory() {
         List<MappingContextFactoryBuilder<S, K>> builders = getAllBuilders();
 
+        @SuppressWarnings("unchecked")
         BreakDetector<S>[] breakDetectors = new BreakDetector[builders.size()];
 
         for(int i = 0; i < builders.size(); i++) {
@@ -120,7 +121,7 @@ public class MappingContextFactoryBuilder<S, K> {
 
         @Override
         public boolean getBoolean() {
-            return target == null ? true : target.broke(index);
+            return target == null || target.broke(index);
         }
     }
 

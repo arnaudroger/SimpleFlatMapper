@@ -13,10 +13,9 @@ public final class TargetColumnsMapperKey {
 
 	@Override
 	public boolean equals(final Object obj) {
-		TargetColumnsMapperKey targetColumnsMapperKey = (TargetColumnsMapperKey)obj;
-		if (target != targetColumnsMapperKey.target) return false;
-        return Arrays.equals(columns, targetColumnsMapperKey.columns);
-	}
+        TargetColumnsMapperKey targetColumnsMapperKey = (TargetColumnsMapperKey) obj;
+        return target == targetColumnsMapperKey.target && Arrays.equals(columns, targetColumnsMapperKey.columns);
+    }
 
 	public String[] getColumns() {
 		return columns;

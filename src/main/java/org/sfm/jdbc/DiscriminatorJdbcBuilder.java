@@ -74,6 +74,13 @@ public class DiscriminatorJdbcBuilder<T> {
         public boolean test(String discriminatorValue) {
             return value == null ? discriminatorValue == null : value.equals(discriminatorValue);
         }
+
+        @Override
+        public String toString() {
+            return "DiscriminatorPredicate{" +
+                    "value='" + value + '\'' +
+                    '}';
+        }
     }
 
     public class DiscriminatorJdbcSubBuilder {

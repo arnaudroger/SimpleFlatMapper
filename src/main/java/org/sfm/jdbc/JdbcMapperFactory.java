@@ -59,7 +59,13 @@ public final class JdbcMapperFactory {
 		return this;
 	}
 
-	/**
+    public JdbcMapperFactory ignorePropertyNotFound() {
+        this.mapperBuilderErrorHandler = new IgnoreMapperBuilderErrorHandler();
+        return this;
+    }
+
+
+    /**
 	 * 
 	 * @param mapperBuilderErrorHandler
 	 * @return the factory
@@ -241,7 +247,7 @@ public final class JdbcMapperFactory {
     }
 
     public <T> DiscriminatorJdbcBuilder<T> newDiscriminator(String column, Class<T> root) {
-        return newDiscriminator(column, (Type)root);
+        return ignorePropertyNotFound().newDiscriminator(column, (Type)root);
     }
 
     public <T> DiscriminatorJdbcBuilder<T> newDiscriminator(String column, TypeReference<T> root) {

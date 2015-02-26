@@ -16,7 +16,7 @@ public final class RethrowMapperBuilderErrorHandler implements
 
 	@Override
 	public void propertyNotFound(final Type target, final String property) {
-		throw new MapperBuildingException("Setter for " + property + " on  " + target + " not found");
+		throw new MapperBuildingException("Injection point for " + property + " on  " + target + " not found");
 	}
 
 	@Override

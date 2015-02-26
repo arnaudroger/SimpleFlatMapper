@@ -16,4 +16,11 @@ public class MethodGetter<T, P> implements Getter<T, P> {
     public P get(T target) throws Exception {
         return (P) method.invoke(target);
     }
+
+    @Override
+    public String toString() {
+        return "MethodGetter{" +
+                "method=" + method +
+                '}';
+    }
 }

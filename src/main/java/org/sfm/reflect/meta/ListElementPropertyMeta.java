@@ -89,6 +89,11 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
             }
             return null;
         }
+
+        @Override
+        public String toString() {
+            return "LastIndexListGetter{}";
+        }
     }
 
 	private static class IndexListSetter<E> implements Setter<List<E>, E> {
@@ -115,6 +120,11 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
         @Override
         public void set(List<E> target, E value) throws Exception {
             target.add(value);
+        }
+
+        @Override
+        public String toString() {
+            return "AppendListSetter{}";
         }
     }
 

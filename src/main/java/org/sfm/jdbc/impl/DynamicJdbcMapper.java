@@ -105,6 +105,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		final JdbcMapper<T> mapper = getMapper(rs);
 		return mapper.stream(rs);
 	}
+    //IFJAVA8_END
 
     @Override
     public MappingContext<ResultSet> newMappingContext(ResultSet source) throws MappingException {
@@ -114,7 +115,6 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
             throw new SQLMappingException(e.getMessage(), e);
         }
     }
-    //IFJAVA8_END
 
 	public JdbcMapper<T> getMapper(final ResultSet rs) throws MapperBuildingException, SQLException {
         return getMapper(rs.getMetaData());

@@ -314,7 +314,7 @@
 							<replacements>
 								<replacement>
 									<token>//IFJAVA8_START</token>
-									<value>/*IFJAVA8_START </value>
+									<value>/*IFJAVA8_START</value>
 								</replacement>
 								<replacement>
 									<token>//IFJAVA8_END</token>

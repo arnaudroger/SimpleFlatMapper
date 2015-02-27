@@ -37,7 +37,7 @@ public final class AsmJdbcMapper extends AbstractJdbcMapperImpl<DbObject> {
 	}
 
     @Override
-    protected final void mapToFields(ResultSet source, DbObject target, MappingContext mappingContext) throws Exception {
+    protected final void mapToFields(ResultSet source, DbObject target, MappingContext<ResultSet> mappingContext) throws Exception {
         mapFields(source, target, mappingContext);
     }
 

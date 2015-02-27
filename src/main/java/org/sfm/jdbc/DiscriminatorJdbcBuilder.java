@@ -13,6 +13,11 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The builder is used to build a DiscriminatorJdbcMapper that will instantiate
+ * different types depending on the value of a specified field.
+ * @param <T> the root type of the mapper
+ */
 public class DiscriminatorJdbcBuilder<T> {
 
 
@@ -20,26 +25,57 @@ public class DiscriminatorJdbcBuilder<T> {
     private final JdbcMapperFactory jdbcMapperFactory;
     private List<DiscriminatorJdbcSubBuilder> builders = new ArrayList<DiscriminatorJdbcSubBuilder>();
 
-    public DiscriminatorJdbcBuilder(String column, Type type, JdbcMapperFactory jdbcMapperFactory) {
+    public DiscriminatorJdbcBuilder(String column,JdbcMapperFactory jdbcMapperFactory) {
         this.column = column;
         this.jdbcMapperFactory = jdbcMapperFactory;
     }
 
+    /**
+     * Add a discriminator value with its associated type.
+     * @param value the value
+     * @param type the type
+     * @return the current builder
+     */
     public DiscriminatorJdbcSubBuilder when(String value, Type type) {
-        final DiscriminatorJdbcSubBuilder subBuilder = new DiscriminatorJdbcSubBuilder(value, type);
+        return when(new DiscriminatorPredicate(value), type);
+    }
+
+    /**
+     * Add a discriminator matching predicate with its associated type.
+     * @param predicate the predicate
+     * @param type the type
+     * @return the current builder
+     */
+    public DiscriminatorJdbcSubBuilder when(Predicate<String> predicate, Type type) {
+        final DiscriminatorJdbcSubBuilder subBuilder = new DiscriminatorJdbcSubBuilder(predicate, type);
         builders.add(subBuilder);
         return subBuilder;
     }
-    public DiscriminatorJdbcSubBuilder when(String value, Class<T> clazz) {
-        return when(value, (Type)clazz);
+
+    /**
+     * Add a discriminator value with its associated class.
+     * @param value the value
+     * @param type the class
+     * @return the current builder
+     */
+    public DiscriminatorJdbcSubBuilder when(String value, Class<? extends T> type) {
+        return when(value, (Type)type);
     }
 
-    public DiscriminatorJdbcSubBuilder when(String value, TypeReference<T> clazz) {
-        return when(value, clazz.getType());
+    /**
+     * Add a discriminator value with its associated type specified by the type reference.
+     * @param value the value
+     * @param type the type reference
+     * @return the current builder
+     */
+    public DiscriminatorJdbcSubBuilder when(String value, TypeReference<? extends T> type) {
+        return when(value, type.getType());
     }
 
-
-
+    /**
+     *
+     * @return a new mapper based on the current state
+     */
     public JdbcMapper<T> mapper() {
 
         List<Tuple2<Predicate<String>, Mapper<ResultSet, T>>> mappers =
@@ -54,9 +90,7 @@ public class DiscriminatorJdbcBuilder<T> {
                 mapper = jdbcMapperFactory.newMapper(subBuilder.type);
             }
 
-            Predicate<String> predicate = new DiscriminatorPredicate(subBuilder.value);
-
-            mappers.add(new Tuple2<Predicate<String>, Mapper<ResultSet, T>>(predicate, mapper));
+            mappers.add(new Tuple2<Predicate<String>, Mapper<ResultSet, T>>(subBuilder.predicate, mapper));
         }
 
 
@@ -86,18 +120,31 @@ public class DiscriminatorJdbcBuilder<T> {
     public class DiscriminatorJdbcSubBuilder {
 
         private final Type type;
-        private final String value;
+        private final Predicate<String> predicate;
         private JdbcMapperBuilder<T> builder = null;
 
-        public DiscriminatorJdbcSubBuilder(String value, Type type) {
+        public DiscriminatorJdbcSubBuilder(Predicate<String> predicate, Type type) {
             this.type = type;
-            this.value = value;
+            this.predicate = predicate;
         }
 
+        /**
+         * Static column definition.
+         * @see org.sfm.jdbc.JdbcMapperBuilder
+         * @param column the column
+         * @return the current builder
+         */
         public DiscriminatorJdbcSubBuilder addMapping(String column) {
             return addMapping(column, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>identity());
         }
 
+        /**
+         * Static column definition.
+         * @see org.sfm.jdbc.JdbcMapperBuilder
+         * @param column the column
+         * @param columnDefinition the column definition
+         * @return the current builder
+         */
         public DiscriminatorJdbcSubBuilder addMapping(String column, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
             if (builder == null) {
                 builder = jdbcMapperFactory.newBuilder(type);
@@ -106,6 +153,14 @@ public class DiscriminatorJdbcBuilder<T> {
             return this;
         }
 
+        /**
+         * Static column definition.
+         * @see org.sfm.jdbc.JdbcMapperBuilder
+         * @param column the column
+         * @param index the column index
+         * @param columnDefinition the column definition
+         * @return the current builder
+         */
         public DiscriminatorJdbcSubBuilder addMapping(String column, int index, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
             if (builder == null) {
                 builder = jdbcMapperFactory.newBuilder(type);
@@ -114,18 +169,52 @@ public class DiscriminatorJdbcBuilder<T> {
             return this;
         }
 
+        /**
+         * @see org.sfm.jdbc.DiscriminatorJdbcBuilder
+         * @return return a DiscriminatorJdbcMapper based on the current state of the builder
+         */
         public JdbcMapper<T> mapper() {
             return DiscriminatorJdbcBuilder.this.mapper();
         }
 
+        /**
+         * Add a discriminator matching predicate with its associated type.
+         * @param value the value
+         * @param type the type
+         * @return the current builder
+         */
         public DiscriminatorJdbcSubBuilder when(String value, Type type) {
             return DiscriminatorJdbcBuilder.this.when(value, type);
         }
-        public DiscriminatorJdbcSubBuilder when(String value, Class<T> type) {
+
+        /**
+         * Add a discriminator value with its associated type.
+         * @param value the value
+         * @param type the type
+         * @return the current builder
+         */
+        public DiscriminatorJdbcSubBuilder when(String value, Class<? extends T> type) {
             return DiscriminatorJdbcBuilder.this.when(value, type);
         }
-        public DiscriminatorJdbcSubBuilder when(String value, TypeReference<T> type) {
+
+        /**
+         * Add a discriminator value with its associated type.
+         * @param value the value
+         * @param type the type
+         * @return the current builder
+         */
+        public DiscriminatorJdbcSubBuilder when(String value, TypeReference<? extends T> type) {
             return DiscriminatorJdbcBuilder.this.when(value, type);
+        }
+
+        /**
+         * Add a discriminator matching predicate with its associated type.
+         * @param predicate the predicate
+         * @param type the type
+         * @return the current builder
+         */
+        public DiscriminatorJdbcSubBuilder when(Predicate<String> predicate, Type type) {
+            return DiscriminatorJdbcBuilder.this.when(predicate, type);
         }
     }
 

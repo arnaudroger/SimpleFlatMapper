@@ -19,7 +19,7 @@ public class CsvColumnDefinitionTest {
         TimeZone tz = TimeZone.getTimeZone("Europe/Brussel");
         CellValueReaderFactory cellValueReaderFactory = new CellValueReaderFactory() {
             @Override
-            public CellValueReader getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder contextFactoryBuilder) {
+            public <P> CellValueReader<P> getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder contextFactoryBuilder) {
                 return null;
             }
 

@@ -17,7 +17,7 @@ public final class JdbcTemplateMapperFactory {
 		return new JdbcTemplateMapperFactory();
 	}
 	
-	private final JdbcMapperFactory jdbcMapperFactory = new JdbcMapperFactory();
+	private final JdbcMapperFactory jdbcMapperFactory = JdbcMapperFactory.newInstance();
 
 	public JdbcTemplateMapperFactory fieldMapperErrorHandler(FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler) {
 		jdbcMapperFactory.fieldMapperErrorHandler(fieldMapperErrorHandler);

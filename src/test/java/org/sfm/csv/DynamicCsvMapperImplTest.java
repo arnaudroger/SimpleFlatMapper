@@ -294,7 +294,6 @@ public class DynamicCsvMapperImplTest {
 			sb.append(sdf.format(new Date(i * 1000))).append("\n");
 		}
 		
-		final String str = sb.toString();
-		return str;
+		return sb.toString();
 	}
 }

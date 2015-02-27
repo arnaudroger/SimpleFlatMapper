@@ -17,13 +17,15 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Map;
 
-
+/**
+ *
+ */
 public final class JdbcMapperFactory {
 
 
     /**
 	 * instantiate a new JdbcMapperFactory
-	 * @return a new JdbcMapperFactory
+	 * @return a new instance JdbcMapperFactory
 	 */
 	public static JdbcMapperFactory newInstance() {
 		return new JdbcMapperFactory();
@@ -44,31 +46,33 @@ public final class JdbcMapperFactory {
 
     private ReflectionService reflectionService = null;
 
-
-
-	public JdbcMapperFactory() {
+	private JdbcMapperFactory() {
 	}
 
-	/**
-	 * 
-	 * @param fieldMapperErrorHandler 
-	 * @return the factory
-	 */
+    /**
+     * the FieldMapperErrorHandler is called when a error occurred when mapping a field from the source to the target.
+     * By default it just throw the Exception.
+     * @param fieldMapperErrorHandler the new FieldMapperErrorHandler
+     * @return the current factory
+     */
 	public JdbcMapperFactory fieldMapperErrorHandler(final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler) {
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		return this;
 	}
 
+    /**
+     * Change the mapperBuilderErrorHandler to an IgnoreMapperBuilderErrorHandler.
+     * @return the current factory
+     */
     public JdbcMapperFactory ignorePropertyNotFound() {
         this.mapperBuilderErrorHandler = new IgnoreMapperBuilderErrorHandler();
         return this;
     }
 
-
     /**
-	 * 
-	 * @param mapperBuilderErrorHandler
-	 * @return the factory
+	 * Set the new MapperBuilderErrorHandler. the MapperBuilderErrorHandler is called when an error occurred or a property is not found in the builder while creating the mapper.
+	 * @param mapperBuilderErrorHandler the MapperBuilderErrorHandler
+	 * @return the current factory
 	 */
 	public JdbcMapperFactory mapperBuilderErrorHandler(final MapperBuilderErrorHandler mapperBuilderErrorHandler) {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
@@ -76,14 +80,20 @@ public final class JdbcMapperFactory {
 	}
 
 
+    /**
+     * the RowHandlerErrorHandler is called when an exception is thrown by the RowHandler in the forEach call.
+     * @param rowHandlerErrorHandler the new RowHandlerErrorHandler
+     * @return the current factory
+     */
 	public JdbcMapperFactory rowHandlerErrorHandler(final RowHandlerErrorHandler rowHandlerErrorHandler) {
 		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
 		return this;
 	}
+
 	/**
 	 * 
-	 * @param useAsm false if you want to disable asm usage.
-	 * @return the factory
+	 * @param useAsm false if you want to disable asm generation of Mappers, Getter and Setter. This would be active by default if asm is present in a compatible version.
+	 * @return the current factory
 	 */
 	public JdbcMapperFactory useAsm(final boolean useAsm) {
 		this.useAsm = useAsm;
@@ -91,19 +101,29 @@ public final class JdbcMapperFactory {
 	}
 	
 	/**
-	 * @param disableAsm true if you want to disable asm.
+	 * @param disableAsm true if you want to disable asm for generation and to resolve constructor parameter names.
+     * @return the current factory
 	 */
 	public JdbcMapperFactory disableAsm(final boolean disableAsm) {
 		this.disableAsm = disableAsm;
 		return this;
 	}
 
-
+    /**
+     * Override the default implementation of the GetterFactory used to get access to value from the ResultSet.
+     * @param getterFactory the getterFactory
+     * @return the current factory
+     */
 	public JdbcMapperFactory getterFactory(final GetterFactory<ResultSet, JdbcColumnKey> getterFactory) {
 		this.getterFactory = getterFactory;
 		return this;
 	}
 
+    /**
+     * Override the default implementation of the ReflectionService.
+     * @param reflectionService the overriding instance
+     * @return the current factory
+     */
     public JdbcMapperFactory reflectionService(final ReflectionService reflectionService) {
         this.reflectionService = reflectionService;
         return this;
@@ -111,32 +131,40 @@ public final class JdbcMapperFactory {
 
 
 	/**
-	 * Will create a instance of mapper based on the metadata and the target class;
+	 * Will create a instance of JdbcMapper based on the specified metadata and the target class.
 	 * @param target the target class of the mapper
 	 * @param metaData the metadata to create the mapper from
 	 * @return a mapper that will map the data represented by the metadata to an instance of target
-	 * @throws MapperBuildingException
 	 */
-	public <T> JdbcMapper<T> newMapper(final Class<T> target, final ResultSetMetaData metaData) throws MapperBuildingException, SQLException {
+	public <T> JdbcMapper<T> newMapper(final Class<T> target, final ResultSetMetaData metaData) throws SQLException {
 		JdbcMapperBuilder<T> builder = newBuilder(target);
 		builder.addMapping(metaData);
 		return builder.mapper();
 	}
 	
 	/**
-	 * Will create a instance of ResultSetMapperBuilder 
-	 * @param target the target class of the mapper
-	 * @return a builder ready to instantiate a mapper or to be customized
-	 * @throws MapperBuildingException
+	 * Will create a instance of JdbcMapperBuilder on the specified target class.
+	 * @param target the target class
+	 * @return the builder
 	 */
 	public <T> JdbcMapperBuilder<T> newBuilder(final Class<T> target) {
 		return newBuilder((Type)target);
 	}
 
+    /**
+     * Will create a instance of JdbcMapperBuilder on the type T specified by the typeReference.
+     * @param target the typeReference
+     * @return the builder
+     */
     public <T> JdbcMapperBuilder<T> newBuilder(final TypeReference<T> target) {
         return newBuilder(target.getType());
     }
 
+    /**
+     * Will create a instance of JdbcMapperBuilder on the specified type.
+     * @param target the type
+     * @return the builder
+     */
     public <T> JdbcMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
 
@@ -148,75 +176,100 @@ public final class JdbcMapperFactory {
 	}
 
 	/**
-	 * 
-	 * @param target the targeted class for the mapper
-	 * @return a jdbc mapper that will map to the targeted class.
-	 * @throws MapperBuildingException
+	 * Will create a DynamicMapper on the specified target class.
+	 * @param target the class
+	 * @return the DynamicMapper
 	 */
-	public <T> JdbcMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
+	public <T> JdbcMapper<T> newMapper(final Class<T> target) {
 		return newMapper((Type)target);
 	}
 
-    public <T> JdbcMapper<T> newMapper(final TypeReference<T> target) throws MapperBuildingException {
+    /**
+     * Will create a DynamicMapper on the type specified by the TypeReference.
+     * @param target the TypeReference
+     * @return the DynamicMapper
+     */
+    public <T> JdbcMapper<T> newMapper(final TypeReference<T> target) {
         return newMapper(target.getType());
     }
 
-	public <T> JdbcMapper<T> newMapper(final Type target) throws MapperBuildingException {
+    /**
+     * Will create a DynamicMapper on the specified type.
+     * @param target the type
+     * @return the DynamicMapper
+     */
+	public <T> JdbcMapper<T> newMapper(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
 		return new DynamicJdbcMapper<T>(classMeta, fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, columnDefinitions, propertyNameMatcherFactory, failOnAsm);
 	}
 
 
 	/**
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
+	 * Associate an alias on the column key to rename to value.
+	 * @param key the column to rename
+	 * @param value then name to rename to
+	 * @return the current factory
 	 */
 	public JdbcMapperFactory addAlias(String key, String value) {
 		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>renameDefinition(value));
 	}
 
 	/**
-	 * 
-	 * @param key
-	 * @param fieldMapper
-	 * @return
+	 * Associate the specified FieldMapper for the specified column.
+	 * @param key the column
+	 * @param fieldMapper the fieldmapper
+	 * @return the current factory
 	 */
 	public JdbcMapperFactory addCustomFieldMapper(String key, FieldMapper<ResultSet, ?> fieldMapper) {
 		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customFieldMapperDefinition(fieldMapper));
 	}
 
-	public JdbcMapperFactory addCustomGetter(String key, Getter<ResultSet, Long> getter) {
+    /**
+     * Associate the specified Getter for the specified column.
+     * @param key the column
+     * @param getter the getter
+     * @return the current factory
+     */
+	public JdbcMapperFactory addCustomGetter(String key, Getter<ResultSet, ?> getter) {
 		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customGetter(getter));
 	}
 
+    /**
+     * Associate the specified columnDefinition to the specified column.
+     * @param key the column
+     * @param columnDefinition the columnDefinition
+     * @return the current factory
+     */
 	public JdbcMapperFactory addColumnDefinition(String key, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
 		return addColumnDefinition(new CaseInsensitiveFieldKeyNamePredicate(key), columnDefinition);
 	}
 
+    /**
+     * Associate the specified columnDefinition to the column matching the predicate.
+     * @param predicate the column predicate
+     * @param columnDefinition the columnDefinition
+     * @return the current factory
+     */
 	public JdbcMapperFactory addColumnDefinition(Predicate<? super JdbcColumnKey> predicate, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
 		columnDefinitions.addColumnDefinition(predicate, columnDefinition);
 		return this;
 	}
 
+    /**
+     * Override the default PropertyNameMatcherFactory with the specified factory.
+     * @param propertyNameMatcherFactory the factory
+     * @return the current factory
+     */
 	public JdbcMapperFactory propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		return this;
 	}
 
-	private <T> ClassMeta<T> getClassMeta(Type target) {
-		return getReflectionService().getRootClassMeta(target);
-	}
-
-    private ReflectionService getReflectionService() {
-        if (reflectionService != null) {
-            return reflectionService;
-        } else {
-            return ReflectionService.newInstance(disableAsm, useAsm);
-        }
-    }
-
+    /**
+     * Associate the aliases value to the column key.
+     * @param aliases the key value pair
+     * @return the current factory
+     */
     public JdbcMapperFactory addAliases(Map<String, String> aliases) {
 		for(Map.Entry<String, String> e : aliases.entrySet()) {
 			addAlias(e.getKey(), e.getValue());
@@ -224,15 +277,19 @@ public final class JdbcMapperFactory {
 		return this;
 	}
 
+    /**
+     * @param b true if we want the builder to fail on asm generation failure
+     * @return the current factory
+     */
     public JdbcMapperFactory failOnAsm(boolean b) {
         this.failOnAsm = b;
         return this;
     }
 
     /**
-     * Define keys use to detect when to break the 1-n join.
-     * @param columns name of the column to define as key
-     * @return this
+     * Mark the specified columns as keys.
+     * @param columns the columns
+     * @return  the current factory
      */
     public JdbcMapperFactory addKeys(String... columns) {
         for(String col : columns) {
@@ -241,20 +298,35 @@ public final class JdbcMapperFactory {
         return this;
     }
 
-    public <T> DiscriminatorJdbcBuilder<T> newDiscriminator(String column, Type root) {
+    /**
+     * Create a discriminator builder based on the specified column
+     * @param column the discriminator column
+     * @param <T> the root type of the mapper
+     * @return a builder to specify the type mapping
+     */
+    public <T> DiscriminatorJdbcBuilder<T> newDiscriminator(String column) {
+        ignorePropertyNotFound();
         addColumnDefinition(column, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>ignoreDefinition());
-        return new DiscriminatorJdbcBuilder<T>(column, root, this);
+        return new DiscriminatorJdbcBuilder<T>(column, this);
     }
 
-    public <T> DiscriminatorJdbcBuilder<T> newDiscriminator(String column, Class<T> root) {
-        return ignorePropertyNotFound().newDiscriminator(column, (Type)root);
-    }
-
-    public <T> DiscriminatorJdbcBuilder<T> newDiscriminator(String column, TypeReference<T> root) {
-        return newDiscriminator(column, root.getType());
-    }
-
+    /**
+     * @return the current RowHandlerErrorHandler
+     */
     public RowHandlerErrorHandler rowHandlerErrorHandler() {
         return rowHandlerErrorHandler;
+    }
+
+
+    private <T> ClassMeta<T> getClassMeta(Type target) {
+        return getReflectionService().getRootClassMeta(target);
+    }
+
+    private ReflectionService getReflectionService() {
+        if (reflectionService != null) {
+            return reflectionService;
+        } else {
+            return ReflectionService.newInstance(disableAsm, useAsm);
+        }
     }
 }

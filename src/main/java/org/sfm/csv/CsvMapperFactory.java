@@ -44,9 +44,9 @@ public final class CsvMapperFactory {
 	}
 
 	/**
-	 * 
-	 * @param fieldMapperErrorHandler 
-	 * @return the factory
+	 * Set a new FieldMapperErrorHandler. Use to handle thrown during the mapping of a field.
+	 * @param fieldMapperErrorHandler the FieldMapperErrorHandler
+	 * @return the current factory
 	 */
 	public CsvMapperFactory fieldMapperErrorHandler(final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler) {
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
@@ -54,15 +54,20 @@ public final class CsvMapperFactory {
 	}
 
 	/**
-	 * 
-	 * @param mapperBuilderErrorHandler
-	 * @return the factory
+	 * Set a new MapperBuilderErrorHandler. Use to handle to handle Mapper builder error when reading the header.
+	 * @param mapperBuilderErrorHandler the MapperBuilderErrorHandler
+	 * @return the current factory
 	 */
 	public CsvMapperFactory mapperBuilderErrorHandler(final MapperBuilderErrorHandler mapperBuilderErrorHandler) {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		return this;
 	}
 
+    /**
+     * Set a new RowHandlerErrorHandler. Use to handle error thrown by the RowHandler on the forEach call.
+     * @param rowHandlerErrorHandler the RowHandlerErrorHandler
+     * @return the current factory
+     */
 	public CsvMapperFactory rowHandlerErrorHandler(final RowHandlerErrorHandler rowHandlerErrorHandler) {
 		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
 		return this;

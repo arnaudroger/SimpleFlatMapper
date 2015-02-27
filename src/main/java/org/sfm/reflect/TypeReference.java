@@ -3,6 +3,16 @@ package org.sfm.reflect;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+/**
+ * That class is a way to define generic type without implementing the ParameterizedType.<br />
+ *
+ * By defining an anonymous instance of it the new class has access to the actual type argument T that the method getType() returns;<br>
+ * <code>
+ *     new TypeReference&lt;Tuple2&lt;String,Long&gt;&gt;(){}
+ * </code>
+ *
+ * @param <T> the targeted type
+ */
 public abstract class TypeReference<T>  {
 	private final Type _type;
 

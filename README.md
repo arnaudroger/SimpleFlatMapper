@@ -1,9 +1,7 @@
 [![Build Status](https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
-# Simple Flat Mapper (SFM) [v1.5.4](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.5.4)
-
-Next Release : [1.6.0](https://github.com/arnaudroger/SimpleFlatMapper/issues?q=milestone%3A1.6.0) focuses on 1-n support for jdbc and class discriminator support.
+# Simple Flat Mapper (SFM) [v1.6.0](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.6.0)
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 

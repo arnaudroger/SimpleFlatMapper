@@ -57,7 +57,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.5.4</version>
+			<version>1.6.0</version>
 		</dependency>
 ```
 
@@ -67,7 +67,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.5.4</version>
+			<version>1.6.0</version>
 			<classifier>jdk17</classifier>
 		</dependency>
 ```
@@ -78,7 +78,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.5.4</version>
+			<version>1.6.0</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 ```

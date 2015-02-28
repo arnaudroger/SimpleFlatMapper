@@ -5,6 +5,8 @@
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 
+[Now with 1-N support for JdbcMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-JdbcMapper-1-N-relationship)
+
 SFM provides fast and easy to use mapper for
 
 - [ResultSet aka micro ORM](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JdbcMapper)

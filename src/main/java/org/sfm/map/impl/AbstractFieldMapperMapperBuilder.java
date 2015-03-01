@@ -121,8 +121,6 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 
                 ConstructorPropertyMeta<T, ?> meta = (ConstructorPropertyMeta<T, ?>) e.getKey();
 
-
-
                 injections.put(meta.getConstructorParameter(), newMapperGetterAdapter(mapper, currentBuilder));
                 fieldMappers.add(newMapperFieldMapper(properties, meta, mapper, currentBuilder));
             }
@@ -167,6 +165,8 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		} else {
             final PropertyMeta<T, ?> property = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
             if (property != null && composedDefinition.isKey()) {
+                // any one to one key can use for the break detection.
+                // having only the object key matters only for null detection in sub objects.
                 if (isOneToOne(property)) {
                     mappingContextFactoryBuilder.addKey(key);
                 }
@@ -174,11 +174,11 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		}
 	}
 
-
+    // call use towards sub mapper
+    // the keys are initialised
 	protected <P> void addMapping(K columnKey, FieldMapperColumnDefinition<K, S> columnDefinition,  PropertyMeta<T, P> prop) {
 		propertyMappingsBuilder.addProperty(columnKey, columnDefinition, prop);
 	}
-
 
 	@SuppressWarnings("unchecked")
 	public final FieldMapper<S, T>[] fields() {

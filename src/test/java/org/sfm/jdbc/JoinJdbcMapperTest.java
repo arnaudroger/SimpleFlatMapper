@@ -136,21 +136,21 @@ public class JoinJdbcMapperTest {
 
     private void validateProfessors(List<? extends Professor<?>> professors) {
         assertEquals("we get 3 professors from the resultset", 3, professors.size());
-        final Professor<?> professor0 = professors.get(0);
+        final Professor<?> professor1 = professors.get(0);
 
-        assertPersonEquals(1, "professor1", professor0);
-        assertEquals("has 2 students", 2, professor0.getStudents().size());
-        assertPersonEquals(3, "student3", professor0.getStudents().get(0));
-        assertArrayEquals(new Object[]{"phone31", "phone32"}, professor0.getStudents().get(0).getPhones().toArray());
-        assertPersonEquals(4, "student4", professor0.getStudents().get(1));
-        assertArrayEquals(new Object[]{"phone41"}, professor0.getStudents().get(1).getPhones().toArray());
+        assertPersonEquals(1, "professor1", professor1);
+        assertEquals("has 2 students", 2, professor1.getStudents().size());
+        assertPersonEquals(3, "student3", professor1.getStudents().get(0));
+        assertArrayEquals(new Object[]{"phone31", "phone32"}, professor1.getStudents().get(0).getPhones().toArray());
+        assertPersonEquals(4, "student4", professor1.getStudents().get(1));
+        assertArrayEquals(new Object[]{"phone41"}, professor1.getStudents().get(1).getPhones().toArray());
 
 
-        final Professor<?> professor1 = professors.get(1);
-        assertPersonEquals(2, "professor2", professor1);
-        assertEquals("has 1 student", 1, professor1.getStudents().size());
-        assertPersonEquals(4, "student4", professor1.getStudents().get(0));
-        assertArrayEquals(new Object[]{"phone51", "phone52"}, professor1.getStudents().get(0).getPhones().toArray());
+        final Professor<?> professor2 = professors.get(1);
+        assertPersonEquals(2, "professor2", professor2);
+        assertEquals("has 1 student", 1, professor2.getStudents().size());
+        assertPersonEquals(4, "student4", professor2.getStudents().get(0));
+        assertArrayEquals(new Object[]{"phone51", "phone52"}, professor2.getStudents().get(0).getPhones().toArray());
 
         final Professor<?> professor3 = professors.get(2);
         assertPersonEquals(3, "professor3", professor3);

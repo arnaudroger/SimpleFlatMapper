@@ -87,9 +87,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
     public JdbcMapper<T> mapper() {
         JdbcMapper<T> mapper = buildMapper();
 
-        List<JdbcColumnKey> primaryKeys = getPrimaryKeys();
-
-        if (primaryKeys.isEmpty()) {
+        if (mappingContextFactoryBuilder.isEmpty()) {
             return mapper;
         } else {
             return new JoinJdbcMapper<T>(mapper, jdbcMapperErrorHandler, mappingContextFactoryBuilder.newFactory());

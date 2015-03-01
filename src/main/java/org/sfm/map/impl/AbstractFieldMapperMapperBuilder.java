@@ -132,14 +132,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 
     private MappingContextFactoryBuilder getMapperContextFactoryBuilder(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties) {
         final List<K> subKeys = getSubKeys(properties);
-
-        MappingContextFactoryBuilder<S, K> currentBuilder;
-        if (subKeys.isEmpty()) {
-            currentBuilder = mappingContextFactoryBuilder;
-        } else {
-            currentBuilder = mappingContextFactoryBuilder.newBuilder(subKeys);
-        }
-        return currentBuilder;
+        return mappingContextFactoryBuilder.newBuilder(subKeys, this);
     }
 
     @SuppressWarnings("unchecked")
@@ -160,18 +153,6 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
     }
 
     @SuppressWarnings("unchecked")
-    private List<K> getSubKeys(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties) {
-        List<K> keys = new ArrayList<K>();
-        for(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> pm : properties) {
-            SubPropertyMeta<T, ?> subPropertyMeta = (SubPropertyMeta<T, ?>) pm.getPropertyMeta();
-            if (pm.getColumnDefinition().isKey() &&  !subPropertyMeta.getSubProperty().isSubProperty()) {
-                keys.add(pm.getColumnKey());
-            }
-        }
-        return keys;
-    }
-
-    @SuppressWarnings("unchecked")
     private <P> Getter<S,P> newMapperGetterAdapter(Mapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> builder) {
         return new MapperGetterAdapter<S, P>((Mapper<S, P>)mapper, builder.nullChecker());
     }
@@ -185,8 +166,10 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 			_addMapper((FieldMapper<S, T>) columnDefinition.getCustomFieldMapper());
 		} else {
             final PropertyMeta<T, ?> property = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
-            if (property != null && composedDefinition.isKey() && !property.isSubProperty()) {
-                mappingContextFactoryBuilder.addKey(key);
+            if (property != null && composedDefinition.isKey()) {
+                if (isOneToOne(property)) {
+                    mappingContextFactoryBuilder.addKey(key);
+                }
             }
 		}
 	}
@@ -310,17 +293,57 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		this.fieldMapperErrorHandler = errorHandler;
 	}
 
-    protected List<K> getPrimaryKeys() {
-        final List<K> primaryKeys = new ArrayList<K>();
-        propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>>() {
-            @Override
-            public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> propertyMapping) {
-                if (propertyMapping.getColumnDefinition().isKey() && !propertyMapping.getPropertyMeta().isSubProperty()) {
-                    primaryKeys.add(propertyMapping.getColumnKey());
+    @SuppressWarnings("unchecked")
+    private List<K> getSubKeys(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties) {
+        List<K> keys = new ArrayList<K>();
+
+        // look for keys property of the object
+        for (PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> pm : properties) {
+            SubPropertyMeta<T, ?> subPropertyMeta = (SubPropertyMeta<T, ?>) pm.getPropertyMeta();
+            if (pm.getColumnDefinition().isKey() && !subPropertyMeta.getSubProperty().isSubProperty()) {
+                keys.add(pm.getColumnKey());
+            }
+        }
+
+        // no immediate key, look for a key defined on a non 1-n child
+        // Object {
+        //   key { date, num }
+        // }
+        if (keys.isEmpty()) {
+            PropertyMeta<T, ?> eligibleOwner = null;
+            for(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> pm : properties) {
+                SubPropertyMeta<T, ?> subPropertyMeta = (SubPropertyMeta<T, ?>) pm.getPropertyMeta();
+                if (pm.getColumnDefinition().isKey()) {
+                    if ((eligibleOwner == null && isOneToOne(subPropertyMeta))
+                            || subPropertyMeta.getOwnerProperty().equals(eligibleOwner)) {
+                        eligibleOwner = subPropertyMeta.getOwnerProperty();
+                        keys.add(pm.getColumnKey());
+                    }
                 }
             }
-        });
-        return primaryKeys;
+        }
+
+        return keys;
+    }
+    private boolean isOneToOne(PropertyMeta<T, ?> pm) {
+        if (pm.isSubProperty()) {
+            return isOneToOne((SubPropertyMeta<T, ?>) pm);
+        } else {
+            return true;
+        }
+    }
+    private boolean isOneToOne(SubPropertyMeta<T, ?> subPropertyMeta) {
+        PropertyMeta<?, ?> owner = subPropertyMeta.getOwnerProperty();
+        if (owner instanceof ListElementPropertyMeta) {
+            return false;
+        }
+
+        PropertyMeta<?, ?> subProp  = subPropertyMeta.getSubProperty();
+         if (subProp.isSubProperty()) {
+            return isOneToOne((SubPropertyMeta)subProp);
+        } else {
+            return true;
+        }
     }
 
 }

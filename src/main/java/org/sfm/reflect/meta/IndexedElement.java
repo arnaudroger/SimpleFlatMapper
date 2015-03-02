@@ -48,7 +48,4 @@ public class IndexedElement<T, E> {
         return assignedPath.contains(path);
     }
 
-    public boolean hasProperties() {
-        return !assignedPath.isEmpty();
-    }
 }

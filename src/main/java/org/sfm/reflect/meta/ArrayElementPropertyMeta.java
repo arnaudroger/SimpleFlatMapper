@@ -39,11 +39,6 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 	}
 
 	@Override
-	public boolean isPrimitive() {
-		return false;
-	}
-
-	@Override
 	public String getPath() {
 		return index + "." + getName();
 	}

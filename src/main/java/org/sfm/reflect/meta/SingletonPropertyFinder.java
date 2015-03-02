@@ -52,7 +52,7 @@ public class SingletonPropertyFinder<T> implements PropertyFinder<T> {
 			if (constructorDefinition != null) {
 				ConstructorParameter param = constructorDefinition.getParameters()[selectedParameters.size()];
 				selectedParameters.add(param.getName());
-				return propertyFinder.findProperty(propertyNameMatcher.newMatcher(param.getName()));
+				return propertyFinder.findConstructor(constructorDefinition);
 			}
 		}
 		return property;
@@ -89,5 +89,10 @@ public class SingletonPropertyFinder<T> implements PropertyFinder<T> {
 	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
 		return propertyFinder.getEligibleConstructorDefinitions();
 	}
+
+    @Override
+    public <E> ConstructorPropertyMeta<T, E> findConstructor(ConstructorDefinition<T> constructorDefinition) {
+        return propertyFinder.findConstructor(constructorDefinition);
+    }
 
 }

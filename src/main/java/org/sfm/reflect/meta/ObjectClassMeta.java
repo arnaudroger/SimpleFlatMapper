@@ -62,15 +62,11 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	private List<ConstructorPropertyMeta<T, ?>> listProperties(List<ConstructorDefinition<T>> constructorDefinitions) {
 		if (constructorDefinitions == null) return null;
 		
-		Set<String> properties = new HashSet<String>();
 		List<ConstructorPropertyMeta<T, ?>> constructorProperties = new ArrayList<ConstructorPropertyMeta<T, ?>>();
 		for(ConstructorDefinition<T> cd : constructorDefinitions) {
 			for(ConstructorParameter param : cd.getParameters()) {
 				String paramName = param.getName();
-				if (!properties.contains(paramName)) {
-					constructorProperties.add(constructorMeta(param, paramName));
-					properties.add(paramName);
-				}
+                constructorProperties.add(constructorMeta(param, paramName));
 			}
 		}
 		return constructorProperties;

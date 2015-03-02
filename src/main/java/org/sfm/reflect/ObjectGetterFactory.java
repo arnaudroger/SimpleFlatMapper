@@ -80,11 +80,7 @@ public final class ObjectGetterFactory {
 			}
 		}
 		
-		if (!Object.class.equals(target)) {
-			return lookForField(target.getSuperclass(), property);
-		}
-		
-		return null;
+		return lookForField(target.getSuperclass(), property);
 	}
 
 }

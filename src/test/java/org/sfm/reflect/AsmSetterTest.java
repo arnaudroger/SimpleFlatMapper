@@ -17,7 +17,7 @@ public class AsmSetterTest {
 	@Test
 	public void testSet() throws Exception {
 		Setter<Foo, String> setter = factory.createSetter(Foo.class.getDeclaredMethod("setFoo", String.class));
-		SetterTestHelper.validateFooSetter(setter);
+		SetterHelperTest.validateFooSetter(setter);
 	}
 
 	@Test

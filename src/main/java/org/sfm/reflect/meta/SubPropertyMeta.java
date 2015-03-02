@@ -57,5 +57,11 @@ public class SubPropertyMeta<O, P> extends PropertyMeta<O, P> {
         }
     }
 
-
+    @Override
+    public String toString() {
+        return "SubPropertyMeta{" +
+                "ownerProperty=" + ownerProperty +
+                ", subProperty=" + subProperty +
+                '}';
+    }
 }

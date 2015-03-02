@@ -112,9 +112,4 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 			return null;
 		}
 	}
-
-	@Override
-	public PropertyNameMatcher newMatcher(String name) {
-		return new DefaultPropertyNameMatcher(name, 0, exactMatch, caseSensitive);
-	}
 }

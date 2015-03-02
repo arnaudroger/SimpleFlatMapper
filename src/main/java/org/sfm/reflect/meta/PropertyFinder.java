@@ -10,4 +10,5 @@ public interface PropertyFinder<T> {
 
 	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions();
 
+    public <E> ConstructorPropertyMeta<T,E> findConstructor(ConstructorDefinition<T> constructorDefinition);
 }

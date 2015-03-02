@@ -6,7 +6,7 @@ import org.sfm.beans.Foo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class SetterTestHelper {
+public class SetterHelperTest {
 	public static void validateFooSetter(Setter<Foo, String> setter)
 			throws Exception {
 		Foo foo = new Foo();

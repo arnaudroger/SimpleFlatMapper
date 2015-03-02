@@ -53,6 +53,11 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
         public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
             return null;
         }
+
+        @Override
+        public <E> ConstructorPropertyMeta<T, E> findConstructor(ConstructorDefinition<T> constructorDefinition) {
+            return null;
+        }
     }
 
     public class DirectPropertyMeta<E> extends PropertyMeta<T, E> {
@@ -93,5 +98,10 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
         }
     }
 
-
+    @Override
+    public String toString() {
+        return "DirectClassMeta{" +
+                "target=" + target +
+                '}';
+    }
 }

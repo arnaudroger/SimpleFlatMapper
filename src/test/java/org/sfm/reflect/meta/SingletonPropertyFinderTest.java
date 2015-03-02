@@ -8,12 +8,18 @@ import static org.junit.Assert.assertEquals;
 public class SingletonPropertyFinderTest {
 
 
+    public static class  MyClass {
+        public MyClass(char[] value) {
+        }
+        public MyClass(String value) {
+        }
+    }
     @Test
     public void selectStringConstructorOverCharArray() {
-        ClassMeta<String> stringClassMeta =new ObjectClassMeta<String>(String.class, ReflectionService.newInstance());
-        SingletonPropertyFinder<String> pf = new SingletonPropertyFinder<String>(stringClassMeta);
+        ClassMeta<MyClass> stringClassMeta =new ObjectClassMeta<MyClass>(MyClass.class, ReflectionService.newInstance());
+        SingletonPropertyFinder<MyClass> pf = new SingletonPropertyFinder<MyClass>(stringClassMeta);
 
-        ConstructorPropertyMeta<String, ?> blop = (ConstructorPropertyMeta<String, ?>) pf.findProperty(new DefaultPropertyNameMatcher("value", 0, false, false));
+        ConstructorPropertyMeta<MyClass, ?> blop = (ConstructorPropertyMeta<MyClass, ?>) pf.findProperty(new DefaultPropertyNameMatcher("blop", 0, false, false));
 
         assertEquals(String.class, blop.getConstructorParameter().getType());
 

@@ -108,4 +108,9 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 		return constructorDefinitions;
 	}
 
+    @Override
+    public <E> ConstructorPropertyMeta<T, E> findConstructor(ConstructorDefinition<T> constructorDefinition) {
+        return null;
+    }
+
 }

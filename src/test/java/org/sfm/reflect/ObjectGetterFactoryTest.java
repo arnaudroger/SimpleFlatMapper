@@ -1,10 +1,7 @@
 package org.sfm.reflect;
 
 import org.junit.Test;
-import org.sfm.beans.DbFinalObject;
-import org.sfm.beans.DbFinalPrimitiveObject;
-import org.sfm.beans.DbObject;
-import org.sfm.beans.DbPublicObject;
+import org.sfm.beans.*;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.impl.MethodGetter;
 import org.sfm.reflect.primitive.*;
@@ -43,6 +40,13 @@ public class ObjectGetterFactoryTest {
         assertEquals(dbfo.getName(), asm.getGetter(DbFinalObject.class, "name").get(dbfo));
         assertFalse(asm.getGetter(DbFinalObject.class, "name") instanceof MethodGetter);
 
+    }
+
+    @Test
+    public void testExtension() throws Exception {
+        Foo foo = new Foo();
+        new ObjectSetterFactory(null).getSetter(Foo.class, "bar").set(foo, "bar");
+        assertEquals("bar", noAsm.getGetter(Foo.class, "bar").get(foo));
     }
 
     @SuppressWarnings("unchecked")

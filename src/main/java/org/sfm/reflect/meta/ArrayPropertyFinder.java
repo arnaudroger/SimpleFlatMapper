@@ -102,12 +102,6 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
                 return new IndexedColumn(elements.size(), propertyNameMatcher);
             }
         } else {
-            for (int i = 0; i < elements.size(); i++) {
-                IndexedElement element = elements.get(i);
-                if (!element.hasProperties()) {
-                    return new IndexedColumn(i, null);
-                }
-            }
             return new IndexedColumn(elements.size(), null);
         }
 		return null;
@@ -126,8 +120,8 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 		}
 	}
 
-	public int getLength() {
-		return elements.size();
-	}
-
+    @Override
+    public <E> ConstructorPropertyMeta<T, E> findConstructor(ConstructorDefinition<T> constructorDefinition) {
+        return null;
+    }
 }

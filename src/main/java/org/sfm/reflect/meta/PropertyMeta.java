@@ -3,7 +3,6 @@ package org.sfm.reflect.meta;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
-import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
 
@@ -67,10 +66,6 @@ public abstract class PropertyMeta<O, P> {
 
 	protected ClassMeta<P> newClassMeta() {
 		return reflectService.getClassMeta(getType(), false);
-	}
-
-	public boolean isPrimitive() {
-		return TypeHelper.isPrimitive(getType());
 	}
 
 	public boolean isConstructorProperty() {

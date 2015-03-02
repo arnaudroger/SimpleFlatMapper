@@ -18,4 +18,11 @@ public class JodaDateTimeResultSetGetter implements Getter<ResultSet, DateTime> 
     public DateTime get(ResultSet target) throws Exception {
         return new DateTime(getter.get(target));
     }
+
+    @Override
+    public String toString() {
+        return "JodaDateTimeResultSetGetter{" +
+                "getter=" + getter +
+                '}';
+    }
 }

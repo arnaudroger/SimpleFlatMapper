@@ -18,4 +18,11 @@ public class JodaLocalDateResultSetGetter implements Getter<ResultSet, LocalDate
     public LocalDate get(ResultSet target) throws Exception {
         return new LocalDate(getter.get(target));
     }
+
+    @Override
+    public String toString() {
+        return "JodaLocalDateResultSetGetter{" +
+                "getter=" + getter +
+                '}';
+    }
 }

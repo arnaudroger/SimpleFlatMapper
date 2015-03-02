@@ -22,7 +22,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public PropertyMeta<T, ?> findProperty(final PropertyNameMatcher propertyNameMatcher) {
+	public <E> PropertyMeta<T, E> findProperty(final PropertyNameMatcher propertyNameMatcher) {
 		// check for constructor
 		PropertyMeta<T, ?> prop = lookForConstructor(propertyNameMatcher);
 
@@ -46,10 +46,38 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 			removeNonMatching(constructorProperty.getConstructorParameter());
 		}
 
-		return prop;
+		return (PropertyMeta<T, E>) prop;
 	}
-	
-	private ConstructorPropertyMeta<T, ?> lookForConstructor(final PropertyNameMatcher propertyNameMatcher) {
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <E> ConstructorPropertyMeta<T, E> findConstructor(ConstructorDefinition<T> constructorDefinition) {
+        ConstructorPropertyMeta<T, ?> prop = lookForConstructor(constructorDefinition);
+
+        if (prop != null) {
+            removeNonMatching(prop.getConstructorParameter());
+        }
+
+        return (ConstructorPropertyMeta<T, E>) prop;
+    }
+
+
+
+    private ConstructorPropertyMeta<T, ?> lookForConstructor(final ConstructorDefinition<T> constructorDefinition) {
+        if (classMeta.getConstructorProperties() != null) {
+            ConstructorParameter parameter = constructorDefinition.getParameters()[0];
+            for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
+                if (prop.getName().equals(parameter.getName())
+                        && prop.getConstructorParameter().equals(parameter)) {
+                    return prop;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private ConstructorPropertyMeta<T, ?> lookForConstructor(final PropertyNameMatcher propertyNameMatcher) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
 				if (propertyNameMatcher.matches(prop.getColumn())
@@ -137,5 +165,6 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
 		return eligibleConstructorDefinitions;
 	}
+
 
 }

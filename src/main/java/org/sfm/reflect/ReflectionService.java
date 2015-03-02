@@ -15,20 +15,6 @@ import java.util.*;
 
 public class ReflectionService {
 
-	@SuppressWarnings("raw")
-	private static final Map<Type, List> predefinedConstructors = new HashMap<Type, List>();
-
-	static {
-		try {
-			predefinedConstructors.put(String.class, Arrays.asList(
-					new ConstructorDefinition<String>(String.class.getConstructor(String.class), new ConstructorParameter("value", String.class)),
-					new ConstructorDefinition<String>(String.class.getConstructor(char[].class), new ConstructorParameter("value", char[].class))
-			));
-		} catch (NoSuchMethodException e) {
-			throw new Error("Could not find new String(String)");
-		}
-	}
-
 	private final ObjectSetterFactory objectSetterFactory;
     private final ObjectGetterFactory objectGetterFactory;
 	private final InstantiatorFactory instantiatorFactory;
@@ -115,13 +101,7 @@ public class ReflectionService {
 	@SuppressWarnings("unchecked")
 	public <T> List<ConstructorDefinition<T>> extractConstructors(Type target) throws IOException {
 		List<ConstructorDefinition<T>> list;
-
-		if (predefinedConstructors.containsKey(target)) {
-            List constructorDefinitions = predefinedConstructors.get(target);
-            list = (List<ConstructorDefinition<T>>) constructorDefinitions;
-        } else if (TypeHelper.isEnum(target)) {
-            return Collections.emptyList();
-		} else if (isAsmPresent()) {
+        if (isAsmPresent()) {
 			list = AsmConstructorDefinitionFactory.extractConstructors(target);
 		} else {
 			list = ReflectionConstructorDefinitionFactory.extractConstructors(target);

@@ -17,10 +17,6 @@ public final class FieldGetter<T, P> implements Getter<T, P> {
 		return (P) field.get(target);
 	}
 
-	public Field getField() {
-		return field;
-	}
-
     @Override
     public String toString() {
         return "FieldSetter{" +

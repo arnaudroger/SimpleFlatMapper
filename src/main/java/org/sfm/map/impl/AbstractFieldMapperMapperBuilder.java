@@ -114,7 +114,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
             if (e.first().isConstructorProperty()) {
                 final List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties = e.second();
 
-                final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(properties);
+                final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(e.first(), properties);
 
                 final Mapper<S, ?> mapper = subPropertyMapper(e.first(), properties, currentBuilder);
 
@@ -127,9 +127,9 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		return new Tuple2<Map<ConstructorParameter, Getter<S, ?>>, FieldMapper<S, T>[]>(injections, fieldMappers.toArray(new FieldMapper[0]));
 	}
 
-    private MappingContextFactoryBuilder getMapperContextFactoryBuilder(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties) {
+    private MappingContextFactoryBuilder getMapperContextFactoryBuilder(PropertyMeta<?, ?> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties) {
         final List<K> subKeys = getSubKeys(properties);
-        return mappingContextFactoryBuilder.newBuilder(subKeys);
+        return mappingContextFactoryBuilder.newBuilder(subKeys, owner);
     }
 
     @SuppressWarnings("unchecked")
@@ -194,7 +194,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
         for(Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>>> e :
                 getSubPropertyPerOwner()) {
             if (!e.first().isConstructorProperty()) {
-                final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(e.second());
+                final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(e.first(), e.second());
                 final Mapper<S, ?> mapper = subPropertyMapper(e.first(), e.second(), currentBuilder);
                 fields.add(newMapperFieldMapper(e.second(), e.first(), mapper, currentBuilder));
             }

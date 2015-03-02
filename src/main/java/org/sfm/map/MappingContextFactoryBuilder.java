@@ -3,6 +3,8 @@ package org.sfm.map;
 
 import org.sfm.jdbc.impl.BreakDetector;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.meta.ListElementPropertyMeta;
+import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.BooleanProvider;
 import org.sfm.utils.Predicate;
 
@@ -19,18 +21,20 @@ public class MappingContextFactoryBuilder<S, K> {
     private final List<K> keys;
     private final KeySourceGetter<K, S> keySourceGetter;
     private final List<MappingContextFactoryBuilder<S, K>> children = new ArrayList<MappingContextFactoryBuilder<S, K>>();
+    private final PropertyMeta<?, ?> owner;
 
     public MappingContextFactoryBuilder(KeySourceGetter<K, S> keySourceGetter) {
-        this(new Counter(), new ArrayList<K>(), keySourceGetter, null);
+        this(new Counter(), new ArrayList<K>(), keySourceGetter, null, null);
     }
 
-    protected MappingContextFactoryBuilder(Counter counter, List<K> keys, KeySourceGetter<K, S> keySourceGetter, MappingContextFactoryBuilder<S, K> parent) {
+    protected MappingContextFactoryBuilder(Counter counter, List<K> keys, KeySourceGetter<K, S> keySourceGetter, MappingContextFactoryBuilder<S, K> parent, PropertyMeta<?, ?> owner) {
         this.counter = counter;
         this.currentIndex = counter.value;
         this.keys = keys;
         this.keySourceGetter = keySourceGetter;
         this.parent = parent;
         this.counter.value++;
+        this.owner = owner;
     }
 
     public void addKey(K key) {
@@ -55,8 +59,8 @@ public class MappingContextFactoryBuilder<S, K> {
         }
     }
 
-    public MappingContextFactoryBuilder<S, K> newBuilder(List<K> subKeys) {
-        MappingContextFactoryBuilder<S, K> subBuilder = new MappingContextFactoryBuilder<S, K>(counter, subKeys, keySourceGetter, this);
+    public MappingContextFactoryBuilder<S, K> newBuilder(List<K> subKeys, PropertyMeta<?, ?> owner) {
+        MappingContextFactoryBuilder<S, K> subBuilder = new MappingContextFactoryBuilder<S, K>(counter, subKeys, keySourceGetter, this, owner);
         children.add(subBuilder);
         return subBuilder;
     }
@@ -70,12 +74,13 @@ public class MappingContextFactoryBuilder<S, K> {
         List<MappingContextFactoryBuilder<S, K>> builders = getAllBuilders();
 
         if (builders.isEmpty()) {
-            return new MappingContextFactoryImpl<S>(new BreakDetector[0]);
+            return new MappingContextFactoryImpl<S>(new BreakDetector[0], null);
         }
 
         @SuppressWarnings("unchecked")
         BreakDetector<S>[] breakDetectors = new BreakDetector[builders.get(builders.size() -1).currentIndex + 1];
 
+        BreakDetector<S> rootDetector = null;
         for(int i = 0; i < builders.size(); i++) {
             final MappingContextFactoryBuilder<S, K> builder = builders.get(i);
             BreakDetector<S> parent = null;
@@ -84,10 +89,24 @@ public class MappingContextFactoryBuilder<S, K> {
             if (parentIndex != -1) {
                 parent = breakDetectors[parentIndex];
             }
-            breakDetectors[builder.currentIndex] = builder.newBreakDetector(parent);
+            final BreakDetector<S> detector = builder.newBreakDetector(parent);
+            breakDetectors[builder.currentIndex] = detector;
+            if (builder.currentIndex == 0 || (rootDetector == null && builder.isRootEligible())) {
+                rootDetector = detector;
+            }
         }
 
-        return new MappingContextFactoryImpl<S>(breakDetectors);
+        return new MappingContextFactoryImpl<S>(breakDetectors, rootDetector);
+    }
+
+    private boolean isRootEligible() {
+        if (owner instanceof ListElementPropertyMeta) {
+            return false;
+        } else if (parent != null) {
+            return parent.isRootEligible();
+        } else {
+            return true;
+        }
     }
 
     private int getParentNonEmptyIndex() {
@@ -225,14 +244,15 @@ public class MappingContextFactoryBuilder<S, K> {
 
     private static class MappingContextFactoryImpl<S> implements MappingContextFactory<S> {
         private final BreakDetector<S>[] breakDetectors;
-
-        public MappingContextFactoryImpl(BreakDetector<S>[] breakDetectors) {
+        private final BreakDetector<S> rootDetector;
+        public MappingContextFactoryImpl(BreakDetector<S>[] breakDetectors, BreakDetector<S> rootDetector) {
             this.breakDetectors = breakDetectors;
+            this.rootDetector = rootDetector;
         }
 
         @Override
         public MappingContext<S> newContext() {
-            return new MappingContext<S>(breakDetectors);
+            return new MappingContext<S>(breakDetectors, rootDetector);
         }
     }
 

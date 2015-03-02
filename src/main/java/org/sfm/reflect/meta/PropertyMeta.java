@@ -16,7 +16,6 @@ public abstract class PropertyMeta<O, P> {
 	private volatile Setter<O, P> setter;
     private volatile Getter<O, P> getter;
 	private volatile ClassMeta<P> classMeta;
-	private String path;
 
 	public PropertyMeta(String name, String column, ReflectionService reflectService) {
 		this.name = name;

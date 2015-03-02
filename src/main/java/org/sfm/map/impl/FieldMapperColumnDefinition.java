@@ -6,6 +6,8 @@ import org.sfm.map.FieldMapper;
 import org.sfm.map.GetterFactory;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -21,6 +23,7 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
     public abstract boolean isKey();
 
     public abstract FieldMapperColumnDefinition<K, S> addKey();
+    public abstract FieldMapperColumnDefinition<K, S> addKey(Predicate<PropertyMeta<?, ?>> appliesTo);
     public abstract FieldMapperColumnDefinition<K, S> addGetter(Getter<S, ?> getter);
     public abstract FieldMapperColumnDefinition<K, S> addGetterFactory(GetterFactory<S, K> getterFactory);
     public abstract FieldMapperColumnDefinition<K, S> addFieldMapper(FieldMapper<ResultSet, ?> mapper);
@@ -62,6 +65,14 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> key() {
         return new KeyColumnDefinition<K, S>();
+    }
+
+    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> key(Predicate<PropertyMeta<?, ?>> predicate) {
+        return new KeyColumnDefinition<K, S>(predicate);
+    }
+
+    public Predicate<PropertyMeta<?, ?>> appliesTo() {
+        return null;
     }
 
     static class IdentityColumnDefinition<K extends FieldKey<K>, S> extends FieldMapperColumnDefinition<K, S> {
@@ -113,6 +124,12 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         @Override
         public FieldMapperColumnDefinition<K, S> addKey() {
             FieldMapperColumnDefinition<K, S> columnDefinition = key();
+            return compose(columnDefinition);
+        }
+
+        @Override
+        public FieldMapperColumnDefinition<K, S> addKey(Predicate<PropertyMeta<?, ?>> appliesTo) {
+            FieldMapperColumnDefinition<K, S> columnDefinition = key(appliesTo);
             return compose(columnDefinition);
         }
 
@@ -342,6 +359,26 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
     }
 
     private static class KeyColumnDefinition<K extends FieldKey<K>, S> extends IdentityColumnDefinition<K, S> {
+
+        private final Predicate<PropertyMeta<?, ?>> appliesTo;
+
+        public KeyColumnDefinition() {
+            this( new Predicate<PropertyMeta<?, ?>>() {
+                @Override
+                public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                    return !propertyMeta.isSubProperty();
+                }
+            });
+        }
+        public KeyColumnDefinition(Predicate<PropertyMeta<?, ?>> predicate) {
+            this.appliesTo = predicate;
+        }
+
+
+        @Override
+        public Predicate<PropertyMeta<?, ?>> appliesTo() {
+            return appliesTo;
+        }
 
         @Override
         public boolean isKey() {

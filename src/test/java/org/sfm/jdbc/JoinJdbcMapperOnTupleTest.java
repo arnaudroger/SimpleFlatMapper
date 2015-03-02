@@ -48,7 +48,7 @@ public class JoinJdbcMapperOnTupleTest {
         }));
     }
 
-    private ResultSet setUpResultSetMock(String[] columns, Object[][] rows) throws SQLException {
+    private ResultSet setUpResultSetMock(final String[] columns, final Object[][] rows) throws SQLException {
         ResultSet rs = mock(ResultSet.class);
 
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);

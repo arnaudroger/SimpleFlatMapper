@@ -20,13 +20,26 @@ public class MappingContext<S> {
 
     public void handle(S source) {
         for(BreakDetector<S> bs : breakDetectors) {
-            bs.handle(source);
+            if (bs != null) {
+                bs.handle(source);
+            }
         }
     }
 
     public void markAsBroken() {
-        for(int i = 0; i < breakDetectors.length; i++) {
-            breakDetectors[i].markAsBroken();
+        for(BreakDetector<S> bs : breakDetectors) {
+            if (bs != null) {
+                bs.markAsBroken();
+            }
         }
+    }
+
+    public boolean rootBroke() {
+        for(int i = 0; i < breakDetectors.length; i++) {
+            if (breakDetectors[i] != null) {
+                return breakDetectors[i].isBroken();
+            }
+        }
+        return true;
     }
 }

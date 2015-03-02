@@ -14,7 +14,7 @@ import org.sfm.tuples.Tuple2;
 
 import java.lang.reflect.Type;
 
-public final class QueryDslMapperBuilder<T> 
+public final class QueryDslMapperBuilder<T>
 	extends AbstractFieldMapperMapperBuilder<Tuple, T, TupleElementKey> {
 
 
@@ -49,7 +49,7 @@ public final class QueryDslMapperBuilder<T>
 		return new QueryDslMapperBuilder<ST>(classMeta, mappingContextFactoryBuilder);
 	}
 
-	public <E> QueryDslMapperBuilder<T> addMapping(Expression<?> expression, int i) {
+    public <E> QueryDslMapperBuilder<T> addMapping(Expression<?> expression, int i) {
 		_addMapping(new TupleElementKey(expression, i), FieldMapperColumnDefinition.<TupleElementKey, Tuple>identity());
 		return this;
 	}

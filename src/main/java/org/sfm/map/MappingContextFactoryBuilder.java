@@ -4,9 +4,7 @@ package org.sfm.map;
 import org.sfm.jdbc.impl.BreakDetector;
 import org.sfm.reflect.Getter;
 import org.sfm.utils.BooleanProvider;
-import org.sfm.utils.FalseBooleanProvider;
 import org.sfm.utils.Predicate;
-import org.sfm.utils.TrueBooleanProvider;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,6 +30,7 @@ public class MappingContextFactoryBuilder<S, K> {
         this.keys = keys;
         this.keySourceGetter = keySourceGetter;
         this.parent = parent;
+        this.counter.value++;
     }
 
     public void addKey(K key) {
@@ -49,42 +48,58 @@ public class MappingContextFactoryBuilder<S, K> {
             if (parent != null) {
                 return parent.breakDetectorGetter();
             } else {
-                return new FalseGetterProvider();
+                return new RootGetterProvider<S>();
             }
         } else {
             return new BreakGetter<S>(currentIndex);
         }
     }
 
-    public MappingContextFactoryBuilder<S, K> newBuilder(List<K> subKeys, Object source) {
-        if (!subKeys.isEmpty()) {
-            counter.value++;
-        }
+    public MappingContextFactoryBuilder<S, K> newBuilder(List<K> subKeys) {
         MappingContextFactoryBuilder<S, K> subBuilder = new MappingContextFactoryBuilder<S, K>(counter, subKeys, keySourceGetter, this);
         children.add(subBuilder);
         return subBuilder;
     }
 
+    @SuppressWarnings("unchecked")
     public MappingContextFactory<S> newFactory() {
+        if (parent != null)  {
+            throw new IllegalStateException();
+        }
+
         List<MappingContextFactoryBuilder<S, K>> builders = getAllBuilders();
 
+        if (builders.isEmpty()) {
+            return new MappingContextFactoryImpl<S>(new BreakDetector[0]);
+        }
+
         @SuppressWarnings("unchecked")
-        BreakDetector<S>[] breakDetectors = new BreakDetector[builders.size()];
-        final int indexStart = builders.isEmpty() ? 0 : builders.get(0).currentIndex;
+        BreakDetector<S>[] breakDetectors = new BreakDetector[builders.get(builders.size() -1).currentIndex + 1];
 
         for(int i = 0; i < builders.size(); i++) {
             final MappingContextFactoryBuilder<S, K> builder = builders.get(i);
             BreakDetector<S> parent = null;
-            if (builder.parent != null) {
-                int parentIndex = builder.parent.currentIndex - indexStart;
-                if (parentIndex>=0) {
-                    parent = breakDetectors[parentIndex];
-                }
+            int parentIndex =  builder.getParentNonEmptyIndex();
+
+            if (parentIndex != -1) {
+                parent = breakDetectors[parentIndex];
             }
-            breakDetectors[builder.currentIndex - indexStart] = builder.newBreakDetector(parent);
+            breakDetectors[builder.currentIndex] = builder.newBreakDetector(parent);
         }
 
         return new MappingContextFactoryImpl<S>(breakDetectors);
+    }
+
+    private int getParentNonEmptyIndex() {
+        if (parent == null) {
+            return -1;
+        } else {
+            if (parent.isEmpty()) {
+                return parent.getParentNonEmptyIndex();
+            } else {
+                return parent.currentIndex;
+            }
+        }
     }
 
     private BreakDetector<S> newBreakDetector(BreakDetector<S> parent) {
@@ -110,6 +125,23 @@ public class MappingContextFactoryBuilder<S, K> {
         return keys.isEmpty();
     }
 
+    public boolean hasNoDependentKeys() {
+        if (!isEmpty()) {
+            return false;
+        }
+
+        for(MappingContextFactoryBuilder<S, K> builder : children) {
+            if (!builder.hasNoDependentKeys()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isRoot() {
+        return parent == null;
+    }
+
     private static class Counter {
         int value;
     }
@@ -126,14 +158,26 @@ public class MappingContextFactoryBuilder<S, K> {
         }
     }
 
-    private static class FalseGetterProvider<S> implements Getter<MappingContext<S>, BooleanProvider> {
+    private static class RootGetterProvider<S> implements Getter<MappingContext<S>, BooleanProvider> {
 
         @Override
         public BooleanProvider get(MappingContext<S> target) throws Exception {
-            return new TrueBooleanProvider();
+            return new RootBooleanProvider<S>(target);
         }
     }
 
+    private static class RootBooleanProvider<S> implements BooleanProvider {
+        private final MappingContext<S> target;
+
+        public RootBooleanProvider(MappingContext<S> target) {
+            this.target = target;
+        }
+
+        @Override
+        public boolean getBoolean() {
+            return target == null || target.rootBroke();
+        }
+    }
     private static class MappingContextBooleanProvider<S> implements BooleanProvider {
         private final MappingContext<S> target;
         private final int index;
@@ -243,5 +287,13 @@ public class MappingContextFactoryBuilder<S, K> {
             isBroken = true;
             lastValues = null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "MappingContextFactoryBuilder{" +
+                "currentIndex=" + currentIndex +
+                ", keys=" + keys +
+                '}';
     }
 }

@@ -200,7 +200,7 @@ public final class DiscriminatorJdbcMapper<T> implements JdbcMapper<T> {
 
                 currentMappingContext.handle(resultSet);
 
-                if (currentMappingContext.broke(0)) {
+                if (currentMappingContext.rootBroke()) {
                     if (currentValue != null) {
                         callHandler(rowHandler);
                         currentValue = currentMapper.map(resultSet, currentMappingContext);

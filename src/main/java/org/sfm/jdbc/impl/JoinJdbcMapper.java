@@ -21,12 +21,10 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
 
     private final JdbcMapper<T> mapper;
     private final RowHandlerErrorHandler errorHandler;
-    private final MappingContextFactory<ResultSet> mappingContextFactory;
 
-    public JoinJdbcMapper(JdbcMapper<T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) {
+    public JoinJdbcMapper(JdbcMapper<T> mapper, RowHandlerErrorHandler errorHandler) {
         this.mapper = mapper;
         this.errorHandler = errorHandler;
-        this.mappingContextFactory = mappingContextFactory;
     }
 
     @Override
@@ -63,8 +61,9 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
         return new JoinForEach<T>(mapper, newMappingContext(rs), errorHandler, rs);
     }
 
+    @Override
     public MappingContext<ResultSet> newMappingContext(ResultSet source) {
-        return mappingContextFactory.newContext();
+        return mapper.newMappingContext(source);
     }
 
     @Override
@@ -124,7 +123,7 @@ public final class JoinJdbcMapper<T> implements JdbcMapper<T> {
 
                 mappingContext.handle(resultSet);
 
-                if (mappingContext.broke(0)) {
+                if (mappingContext.rootBroke()) {
                     if (currentValue != null) {
                         callHandler(rowHandler);
                         currentValue = mapper.map(resultSet, mappingContext);

@@ -59,9 +59,7 @@ public class JoinJdbcMapperOnTupleTest {
 
         final Object[][] rows = new Object[][]{
                 {1, "professor1", 3, "student3"},
-                {1, "professor1", 3, "student3"},
                 {1, "professor1", 4, "student4"},
-                {2, "professor2", 4, "student4"},
                 {2, "professor2", 4, "student4"},
                 {3, "professor3", null, null}
         };

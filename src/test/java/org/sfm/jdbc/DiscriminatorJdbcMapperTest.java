@@ -63,31 +63,28 @@ public class DiscriminatorJdbcMapperTest {
 
         validateMapper(mapper);
 
-        assertEquals("DiscriminatorJdbcMapper{" +
-                "discriminatorColumn='person_type', " +
-                "mappers=[" +
+        assertEquals(
+        "DiscriminatorJdbcMapper{" +
+            "discriminatorColumn='person_type', " +
+            "mappers=[" +
                 "Tuple2{" +
                     "element0=DiscriminatorPredicate{value='student'}, " +
-                    "element1=DynamicJdbcMapper{target=class org.sfm.jdbc.JoinJdbcMapperTest$StudentGS, " +
-                    "MapperCache{[{ColumnsMapperKey{[person_type, id, name, students_id, students_name, students_phones_value]}," +
-                    "JoinJdbcMapper{mapper=JdbcMapperImpl{instantiator=StaticConstructorInstantiator{constructor=public org.sfm.jdbc.JoinJdbcMapperTest$StudentGS(), args=[]}, " +
-                    "fieldMappers=[IntFieldMapper{getter=IntResultSetGetter{column=2}, setter=IntMethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$StudentGS.setId(int)}}, " +
-                    "FieldMapperImpl{getter=StringResultSetGetter{column=3}, setter=MethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$StudentGS.setName(java.lang.String)}}]}}}]}}}, " +
+                    "element1=DynamicJdbcMapper{target=class org.sfm.jdbc.JoinJdbcMapperTest$StudentGS, MapperCache{" +
+                        "[{ColumnsMapperKey{[person_type, id, name, students_id, students_name, students_phones_value]}," +
+                        "JoinJdbcMapper{mapper=JdbcMapperImpl{instantiator=StaticConstructorInstantiator{constructor=public org.sfm.jdbc.JoinJdbcMapperTest$StudentGS(), args=[]}, " +
+                        "fieldMappers=[IntFieldMapper{getter=IntResultSetGetter{column=2}, setter=IntMethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$StudentGS.setId(int)}}, FieldMapperImpl{getter=StringResultSetGetter{column=3}, setter=MethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$StudentGS.setName(java.lang.String)}}]}}}]" +
+                    "}}" +
+                "}, " +
                 "Tuple2{" +
                     "element0=DiscriminatorPredicate{value='professor'}, " +
-                    "element1=DynamicJdbcMapper{target=class org.sfm.jdbc.JoinJdbcMapperTest$ProfessorGS, " +
-                    "MapperCache{[{ColumnsMapperKey{[person_type, id, name, students_id, students_name, students_phones_value]}," +
-                    "JoinJdbcMapper{mapper=JdbcMapperImpl{instantiator=StaticConstructorInstantiator{constructor=public org.sfm.jdbc.JoinJdbcMapperTest$ProfessorGS(), args=[]}, " +
-                    "fieldMappers=[IntFieldMapper{getter=IntResultSetGetter{column=2}, setter=IntMethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$ProfessorGS.setId(int)}}, " +
-                    "FieldMapperImpl{getter=StringResultSetGetter{column=3}, setter=MethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$ProfessorGS.setName(java.lang.String)}}, " +
-                    "MapperFieldMapper{" +
-                        "mapper=JdbcMapperImpl{instantiator=StaticConstructorInstantiator{constructor=public java.util.ArrayList(), args=[]}, " +
-                        "fieldMappers=[MapperFieldMapper{mapper=JoinJdbcMapper{mapper=JdbcMapperImpl{instantiator=StaticConstructorInstantiator{constructor=public org.sfm.jdbc.JoinJdbcMapperTest$StudentGS(), args=[]}, " +
-                            "fieldMappers=[IntFieldMapper{getter=IntResultSetGetter{column=4}, setter=IntMethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$StudentGS.setId(int)}}, " +
-                            "FieldMapperImpl{getter=StringResultSetGetter{column=5}, setter=MethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$StudentGS.setName(java.lang.String)}}, " +
-                            "MapperFieldMapper{mapper=JdbcMapperImpl{instantiator=StaticConstructorInstantiator{constructor=public java.util.ArrayList(), args=[]}, " +
-                            "fieldMappers=[FieldMapperImpl{getter=StringResultSetGetter{column=6}, setter=AppendListSetter{}}]}, propertySetter=MethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$StudentGS.setPhones(java.util.List)}, propertyGetter=MethodGetter{method=public java.util.List org.sfm.jdbc.JoinJdbcMapperTest$StudentGS.getPhones()}}]}}, " +
-                    "propertySetter=AppendListSetter{}, propertyGetter=LastIndexListGetter{}}]}, propertySetter=MethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$ProfessorGS.setStudents(java.util.List)}, propertyGetter=MethodGetter{method=public java.util.List org.sfm.jdbc.JoinJdbcMapperTest$ProfessorGS.getStudents()}}]}}}]}}}]}",
+                    "element1=DynamicJdbcMapper{target=class org.sfm.jdbc.JoinJdbcMapperTest$ProfessorGS, MapperCache{" +
+                        "[{ColumnsMapperKey{[person_type, id, name, students_id, students_name, students_phones_value]}," +
+                        "JoinJdbcMapper{mapper=JdbcMapperImpl{instantiator=StaticConstructorInstantiator{constructor=public org.sfm.jdbc.JoinJdbcMapperTest$ProfessorGS(), args=[]}, " +
+                        "fieldMappers=[IntFieldMapper{getter=IntResultSetGetter{column=2}, setter=IntMethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$ProfessorGS.setId(int)}}, FieldMapperImpl{getter=StringResultSetGetter{column=3}, setter=MethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$ProfessorGS.setName(java.lang.String)}}, MapperFieldMapper{mapper=JdbcMapperImpl{instantiator=StaticConstructorInstantiator{constructor=public java.util.ArrayList(), args=[]}, fieldMappers=[MapperFieldMapper{mapper=JdbcMapperImpl{instantiator=StaticConstructorInstantiator{constructor=public org.sfm.jdbc.JoinJdbcMapperTest$StudentGS(), args=[]}, fieldMappers=[IntFieldMapper{getter=IntResultSetGetter{column=4}, setter=IntMethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$StudentGS.setId(int)}}, FieldMapperImpl{getter=StringResultSetGetter{column=5}, setter=MethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$StudentGS.setName(java.lang.String)}}, MapperFieldMapper{mapper=JdbcMapperImpl{instantiator=StaticConstructorInstantiator{constructor=public java.util.ArrayList(), args=[]}, fieldMappers=[FieldMapperImpl{getter=StringResultSetGetter{column=6}, setter=AppendListSetter{}}]}, propertySetter=MethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$StudentGS.setPhones(java.util.List)}, propertyGetter=MethodGetter{method=public java.util.List org.sfm.jdbc.JoinJdbcMapperTest$StudentGS.getPhones()}}]}, propertySetter=AppendListSetter{}, propertyGetter=LastIndexListGetter{}}]}, propertySetter=MethodSetter{method=public void org.sfm.jdbc.JoinJdbcMapperTest$ProfessorGS.setStudents(java.util.List)}, propertyGetter=MethodGetter{method=public java.util.List org.sfm.jdbc.JoinJdbcMapperTest$ProfessorGS.getStudents()}}]}}}]" +
+                    "}}" +
+                "}" +
+            "]" +
+        "}",
                 mapper.toString());
 
     }

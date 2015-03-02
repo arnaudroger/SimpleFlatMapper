@@ -15,7 +15,6 @@ import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * @param <T> the targeted type of the mapper
@@ -87,18 +86,26 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
     public JdbcMapper<T> mapper() {
         JdbcMapper<T> mapper = buildMapper();
 
-        if (mappingContextFactoryBuilder.isEmpty()) {
+        if (!mappingContextFactoryBuilder.isRoot()
+                || mappingContextFactoryBuilder.hasNoDependentKeys()) {
             return mapper;
         } else {
-            return new JoinJdbcMapper<T>(mapper, jdbcMapperErrorHandler, mappingContextFactoryBuilder.newFactory());
+            return new JoinJdbcMapper<T>(mapper, jdbcMapperErrorHandler);
         }
     }
-
 
     private JdbcMapper<T> buildMapper() {
         FieldMapper<ResultSet, T>[] fields = fields();
         Tuple2<FieldMapper<ResultSet, T>[], Instantiator<ResultSet, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
-        MappingContextFactory<ResultSet> mappingContextFactory = mappingContextFactoryBuilder.newFactory();
+
+
+        MappingContextFactory<ResultSet> mappingContextFactory = null;
+
+        if (mappingContextFactoryBuilder.isRoot()) {
+            mappingContextFactory = mappingContextFactoryBuilder.newFactory();
+        }
+
+
         if (reflectionService.isAsmActivated()) {
             try {
                 return reflectionService.getAsmFactory().createJdbcMapper(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), getTargetClass(), jdbcMapperErrorHandler, mappingContextFactory);

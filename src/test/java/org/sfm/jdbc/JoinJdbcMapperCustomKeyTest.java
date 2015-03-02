@@ -47,7 +47,7 @@ public class JoinJdbcMapperCustomKeyTest {
                                 return jdbcColumnKey.getIndex() <= 2;
                             }
                         },
-                        FieldMapperColumnDefinition.key(
+                        FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>key(
                                 new Predicate<PropertyMeta<?, ?>>() {
                                     @Override
                                     public boolean test(PropertyMeta<?, ?> propertyMeta) {

@@ -175,4 +175,10 @@ public final class CsvMapperFactory {
 		return this;
 	}
 
+    public CsvMapperFactory addKeys(String... colummns) {
+        for(String col : colummns) {
+            addColumnDefinition(col, CsvColumnDefinition.key());
+        }
+        return this;
+    }
 }

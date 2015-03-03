@@ -1,22 +1,48 @@
 package org.sfm.map;
 
 
+import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.utils.Predicate;
+
 import java.lang.reflect.Type;
 
 public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends  ColumnDefinition<K, CD>> {
-    public abstract K rename(K key);
+    public K rename(K key) {
+        return key;
+    }
 
-    public abstract boolean hasCustomSource();
+    public boolean hasCustomSource() {
+        return false;
+    }
 
-    public abstract Type getCustomSourceReturnType();
+    public Type getCustomSourceReturnType() {
+        throw new UnsupportedOperationException();
+    }
 
-    public abstract boolean ignore();
+    public boolean ignore() {
+        return false;
+    }
+
+    public boolean isKey() {
+        return false;
+    }
+
+    public Predicate<PropertyMeta<?, ?>> appliesTo() {
+        return new Predicate<PropertyMeta<?, ?>>() {
+            @Override
+            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                return false;
+            }
+        };
+    }
 
     public abstract CD compose(CD columnDefinition);
 
     public abstract CD addRename(String name);
-
     public abstract CD addIgnore();
+
+    public abstract CD addKey();
+    public abstract CD addKey(Predicate<PropertyMeta<?, ?>> appliesTo);
 
     protected abstract void appendToStringBuilder(StringBuilder sb);
 

@@ -90,7 +90,7 @@ public class JoinJdbcMapperOnTupleTest {
         return rs;
     }
 
-    private void validateProfessors(List<Tuple2<Person, List<Person>>> professors) {
+    public static void validateProfessors(List<Tuple2<Person, List<Person>>> professors) {
         assertEquals("we get 3 professors from the resultset", 3, professors.size());
         Person professor = professors.get(0).getElement0();
         List<Person> students = professors.get(0).getElement1();
@@ -140,7 +140,7 @@ public class JoinJdbcMapperOnTupleTest {
 
     }
 
-    private void assertPersonEquals(int id, String name, Person person) {
+    public static void assertPersonEquals(int id, String name, Person person) {
         assertEquals(id, person.getId());
         assertEquals(name, person.getName());
     }

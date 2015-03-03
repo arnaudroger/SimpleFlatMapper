@@ -2,6 +2,8 @@ package org.sfm.csv;
 
 import org.sfm.map.ColumnDefinition;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.TimeZone;
@@ -13,6 +15,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
     public abstract CellValueReaderFactory getCustomCellValueReaderFactory();
     public abstract TimeZone getTimeZone();
     public abstract boolean hasCustomReaderFactory();
+
 
 
     public abstract CsvColumnDefinition addDateFormat(String dateFormatDef);
@@ -47,6 +50,13 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
 
     public static CsvColumnDefinition customCellValueReaderFactoryDefinition(final CellValueReaderFactory cellValueReaderFactory) {
         return new CustomCellValueReaderFactoryCsvColumnDefinition(cellValueReaderFactory);
+    }
+
+    public static CsvColumnDefinition key() {
+        return new KeyCsvColumnDefinition();
+    }
+    public static CsvColumnDefinition key(Predicate<PropertyMeta<?, ?>> appliesTo) {
+        return new KeyCsvColumnDefinition(appliesTo);
     }
 
     public static CsvColumnDefinition compose(final CsvColumnDefinition def1, final CsvColumnDefinition def2) {
@@ -112,6 +122,16 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
         @Override
         public CsvColumnDefinition addIgnore() {
             return compose(CsvColumnDefinition.ignoreDefinition());
+        }
+
+        @Override
+        public CsvColumnDefinition addKey() {
+            return compose(CsvColumnDefinition.key());
+        }
+
+        @Override
+        public CsvColumnDefinition addKey(Predicate<PropertyMeta<?, ?>> appliesTo) {
+            return compose(CsvColumnDefinition.key(appliesTo));
         }
 
         @Override
@@ -349,5 +369,39 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
         protected void appendToStringBuilder(StringBuilder sb) {
             sb.append("Ignore{}");
         }
+    }
+
+    private static class KeyCsvColumnDefinition extends IdentityCsvColumnDefinition {
+
+        private final Predicate<PropertyMeta<?, ?>> appliesTo;
+
+        public KeyCsvColumnDefinition() {
+            this( new Predicate<PropertyMeta<?, ?>>() {
+                @Override
+                public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                    return !propertyMeta.isSubProperty();
+                }
+            });
+        }
+        public KeyCsvColumnDefinition(Predicate<PropertyMeta<?, ?>> predicate) {
+            this.appliesTo = predicate;
+        }
+
+
+        @Override
+        public Predicate<PropertyMeta<?, ?>> appliesTo() {
+            return appliesTo;
+        }
+
+        @Override
+        public boolean isKey() {
+            return true;
+        }
+
+        @Override
+        protected void appendToStringBuilder(StringBuilder sb) {
+            sb.append("Key{}");
+        }
+
     }
 }

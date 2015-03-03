@@ -20,14 +20,10 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
     public abstract Getter<S, ?> getCustomGetter();
     public abstract GetterFactory<S, K> getCustomGetterFactory();
     public abstract boolean hasCustomFactory();
-    public abstract boolean isKey();
 
-    public abstract FieldMapperColumnDefinition<K, S> addKey();
-    public abstract FieldMapperColumnDefinition<K, S> addKey(Predicate<PropertyMeta<?, ?>> appliesTo);
     public abstract FieldMapperColumnDefinition<K, S> addGetter(Getter<S, ?> getter);
     public abstract FieldMapperColumnDefinition<K, S> addGetterFactory(GetterFactory<S, K> getterFactory);
     public abstract FieldMapperColumnDefinition<K, S> addFieldMapper(FieldMapper<ResultSet, ?> mapper);
-    public abstract FieldMapperColumnDefinition<K, S> compose(FieldMapperColumnDefinition<K, S> columnDefinition);
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> identity() {
         return new IdentityColumnDefinition<K, S>();
@@ -71,30 +67,7 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         return new KeyColumnDefinition<K, S>(predicate);
     }
 
-    public Predicate<PropertyMeta<?, ?>> appliesTo() {
-        return null;
-    }
-
     static class IdentityColumnDefinition<K extends FieldKey<K>, S> extends FieldMapperColumnDefinition<K, S> {
-        @Override
-        public K rename(K key) {
-            return key;
-        }
-
-        @Override
-        public boolean hasCustomSource() {
-            return false;
-        }
-
-        @Override
-        public Type getCustomSourceReturnType() {
-            throw new IllegalStateException();
-        }
-
-        @Override
-        public boolean ignore() {
-            return false;
-        }
 
         @Override
         public FieldMapper<?, ?> getCustomFieldMapper() {
@@ -113,11 +86,6 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
 
         @Override
         public boolean hasCustomFactory() {
-            return false;
-        }
-
-        @Override
-        public boolean isKey() {
             return false;
         }
 

@@ -134,7 +134,7 @@ public class JoinJdbcMapperTest {
         return rs;
     }
 
-    private void validateProfessors(List<? extends Professor<?>> professors) {
+    public static void validateProfessors(List<? extends Professor<?>> professors) {
         assertEquals("we get 3 professors from the resultset", 3, professors.size());
         final Professor<?> professor1 = professors.get(0);
 
@@ -158,7 +158,7 @@ public class JoinJdbcMapperTest {
 
     }
 
-    private void assertPersonEquals(int id, String name, Person person) {
+    public static void assertPersonEquals(int id, String name, Person person) {
         assertEquals(id, person.getId());
         assertEquals(name, person.getName());
     }

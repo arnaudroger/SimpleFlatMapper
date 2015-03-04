@@ -136,6 +136,7 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements IndexedC
             this.cellIndex = -1;
             hasData = false;
         }
+        breakDetector.reset();
     }
 
     private void callHandler() {

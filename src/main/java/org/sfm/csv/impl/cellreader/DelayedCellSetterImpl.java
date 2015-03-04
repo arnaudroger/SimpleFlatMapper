@@ -18,13 +18,18 @@ public class DelayedCellSetterImpl<T, P> implements DelayedCellSetter<T, P> {
 	}
 
 	@Override
-	public P getValue() {
+	public P consumeValue() {
 		P val = value;
 		value = null;
 		return val;
 	}
 
-	@Override
+    @Override
+    public P peekValue() {
+        return value;
+    }
+
+    @Override
 	public void set(T t) throws Exception {
 		P val = value;
 		value = null;

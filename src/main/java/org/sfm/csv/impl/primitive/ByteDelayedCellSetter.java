@@ -8,8 +8,9 @@ import org.sfm.reflect.primitive.ByteSetter;
 public class ByteDelayedCellSetter<T> implements DelayedCellSetter<T, Byte> {
 
 	private final ByteSetter<T> setter;
-	private byte value;
 	private final ByteCellValueReader reader;
+    private byte value;
+    private boolean isNull;
 
 	public ByteDelayedCellSetter(ByteSetter<T> setter, ByteCellValueReader reader) {
 		this.setter = setter;
@@ -17,21 +18,25 @@ public class ByteDelayedCellSetter<T> implements DelayedCellSetter<T, Byte> {
 	}
 
 	@Override
-	public Byte getValue() {
-		return getByte();
+	public Byte consumeValue() {
+		return isNull ? null : consumeByte();
 	}
 
-	public byte getByte() {
+    @Override
+    public Byte peekValue() {
+        return isNull ? null : value;
+    }
+
+    public byte consumeByte() {
 		byte v = value;
 		value = 0;
+        isNull = true;
 		return v;
 	}
 	
 	@Override
 	public void set(T t) throws Exception {
-		byte v = value;
-		value = 0;
-		setter.setByte(t, v);
+		setter.setByte(t, consumeByte());
 	}
 
 	@Override
@@ -41,6 +46,7 @@ public class ByteDelayedCellSetter<T> implements DelayedCellSetter<T, Byte> {
 
 	@Override
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
+        isNull = length == 0;
 		this.value = reader.readByte(chars, offset, length, parsingContext);
 	}
 

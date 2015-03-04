@@ -19,8 +19,9 @@ public class BreakDetectorImpl implements BreakDetector {
     public boolean isBroken(DelayedCellSetter<?, ?>[] delayedCellSetters) {
         if (!brokenCheck) {
             updateStatus(delayedCellSetters);
+            return broken;
         }
-        return broken;
+        return false;
     }
 
     private void updateStatus(DelayedCellSetter<?, ?>[] delayedCellSetters) {
@@ -33,14 +34,14 @@ public class BreakDetectorImpl implements BreakDetector {
     private Object[] getKeys(DelayedCellSetter<?, ?>[] delayedCellSetters) {
         Object[] currentKeys = new Object[keys.length];
         for(int i = 0; i < keys.length ; i++) {
-            currentKeys[i] = delayedCellSetters[keys[i].getIndex()].getValue();
+            currentKeys[i] = delayedCellSetters[keys[i].getIndex()].peekValue();
         }
         return currentKeys;
     }
 
     @Override
-    public boolean wasBroken() {
+    public void reset() {
         brokenCheck = false;
-        return brokenCheck;
+        broken = false;
     }
 }

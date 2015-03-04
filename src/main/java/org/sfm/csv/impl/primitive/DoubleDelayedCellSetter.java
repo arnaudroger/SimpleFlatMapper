@@ -10,6 +10,7 @@ public class DoubleDelayedCellSetter<T> implements DelayedCellSetter<T, Double> 
 	private final DoubleSetter<T> setter;
 	private final DoubleCellValueReader reader;
 	private double value;
+    private boolean isNull;
 
 	public DoubleDelayedCellSetter(DoubleSetter<T> setter, DoubleCellValueReader reader) {
 		this.setter = setter;
@@ -17,21 +18,25 @@ public class DoubleDelayedCellSetter<T> implements DelayedCellSetter<T, Double> 
 	}
 
 	@Override
-	public Double getValue() {
-		return getDouble();
+	public Double consumeValue() {
+		return isNull ? null : consumeDouble();
 	}
 
-	public double getDouble() {
+    @Override
+    public Double peekValue() {
+        return isNull ? null : value;
+    }
+
+    public double consumeDouble() {
 		double v = value;
 		value = 0;
+        isNull = true;
 		return v;
 	}
 	
 	@Override
 	public void set(T t) throws Exception {
-		double v = value;
-		value = 0;
-		setter.setDouble(t, v);
+		setter.setDouble(t, consumeValue());
 	}
 
 	@Override
@@ -41,6 +46,7 @@ public class DoubleDelayedCellSetter<T> implements DelayedCellSetter<T, Double> 
 
 	@Override
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
+        isNull = length == 0;
 		this.value = reader.readDouble(chars, offset, length, parsingContext);
 	}
 

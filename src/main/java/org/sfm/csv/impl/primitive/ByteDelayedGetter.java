@@ -14,7 +14,7 @@ public class ByteDelayedGetter<T> implements ByteGetter<DelayedCellSetter<T, ?>[
 	@SuppressWarnings("unchecked")
 	@Override
 	public byte getByte(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return ((ByteDelayedCellSetter<T>)target[index]).getByte();
+		return ((ByteDelayedCellSetter<T>)target[index]).consumeByte();
 	}
 
 	@Override

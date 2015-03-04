@@ -11,8 +11,7 @@ public class NullBreakDetector implements BreakDetector {
     }
 
     @Override
-    public boolean wasBroken() {
+    public void reset() {
         brokenCheck = false;
-        return true;
     }
 }

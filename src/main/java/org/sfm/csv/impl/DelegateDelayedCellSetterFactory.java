@@ -1,6 +1,5 @@
 package org.sfm.csv.impl;
 
-import org.sfm.csv.parser.CellConsumer;
 import org.sfm.utils.RowHandler;
 
 public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetterFactory<T, P> {
@@ -38,11 +37,16 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 		return new DelayedCellSetter<T, P>() {
 
 			@Override
-			public P getValue() {
+			public P consumeValue() {
 				return value;
 			}
 
-			@Override
+            @Override
+            public P peekValue() {
+                return value;
+            }
+
+            @Override
 			public void set(T t) throws Exception {
 				marker.getSetter().set(t, value);
 				
@@ -56,7 +60,6 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 			public void set(char[] chars, int offset, int length, ParsingContext parsingContext)
 					throws Exception {
 				handler.newCell(chars, offset, length, cellIndex);
-
 			}
 		};
 	}

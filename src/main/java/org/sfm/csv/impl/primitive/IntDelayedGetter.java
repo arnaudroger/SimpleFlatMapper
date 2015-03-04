@@ -14,7 +14,7 @@ public class IntDelayedGetter<T> implements IntGetter<DelayedCellSetter<T, ?>[]>
 	@SuppressWarnings("unchecked")
 	@Override
 	public int getInt(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return ((IntDelayedCellSetter<T>)target[index]).getInt();
+		return ((IntDelayedCellSetter<T>)target[index]).consumeInt();
 	}
 
 	@Override

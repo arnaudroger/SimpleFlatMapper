@@ -14,7 +14,7 @@ public class DoubleDelayedGetter<T> implements DoubleGetter<DelayedCellSetter<T,
 	@SuppressWarnings("unchecked")
 	@Override
 	public double getDouble(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return ((DoubleDelayedCellSetter<T>)target[index]).getDouble();
+		return ((DoubleDelayedCellSetter<T>)target[index]).consumeDouble();
 	}
 
 	@Override

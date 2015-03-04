@@ -10,6 +10,7 @@ public class IntDelayedCellSetter<T> implements DelayedCellSetter<T, Integer> {
 	private final IntSetter<T> setter;
 	private final IntegerCellValueReader reader;
 	private int value;
+    private boolean isNull;
 
 	public IntDelayedCellSetter(IntSetter<T> setter, IntegerCellValueReader reader) {
 		this.setter = setter;
@@ -17,21 +18,25 @@ public class IntDelayedCellSetter<T> implements DelayedCellSetter<T, Integer> {
 	}
 
 	@Override
-	public Integer getValue() {
-		return getInt();
+	public Integer consumeValue() {
+		return isNull ?  null : consumeInt();
 	}
 
-	public int getInt() {
+    @Override
+    public Integer peekValue() {
+        return isNull ? null : value;
+    }
+
+    public int consumeInt() {
 		int v = value;
 		value = 0;
+        isNull = true;
 		return v;
 	}
 	
 	@Override
 	public void set(T t) throws Exception {
-		int v = value;
-		value = 0;
-		setter.setInt(t, v);
+		setter.setInt(t, consumeInt());
 	}
 
 	@Override
@@ -41,6 +46,7 @@ public class IntDelayedCellSetter<T> implements DelayedCellSetter<T, Integer> {
 
 	@Override
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
+        isNull = length == 0;
 		this.value = reader.readInt(chars, offset, length, parsingContext);
 	}
 

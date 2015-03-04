@@ -10,6 +10,7 @@ public class BooleanDelayedCellSetter<T> implements DelayedCellSetter<T, Boolean
 	private final BooleanSetter<T> setter;
 	private final BooleanCellValueReader reader;
 	private boolean value;
+    private boolean isNull;
 
 	public BooleanDelayedCellSetter(BooleanSetter<T> setter, BooleanCellValueReader reader) {
 		this.setter = setter;
@@ -17,21 +18,25 @@ public class BooleanDelayedCellSetter<T> implements DelayedCellSetter<T, Boolean
 	}
 
 	@Override
-	public Boolean getValue() {
-		return getBoolean();
+	public Boolean consumeValue() {
+		return isNull ? null : consumeBoolean();
 	}
 
-	public boolean getBoolean() {
+    @Override
+    public Boolean peekValue() {
+        return isNull ? null : value;
+    }
+
+    public boolean consumeBoolean() {
 		boolean v = value;
 		value = false;
+        isNull = true;
 		return v;
 	}
 	
 	@Override
 	public void set(T t) throws Exception {
-		boolean v = value;
-		value = false;
-		setter.setBoolean(t, v);
+		setter.setBoolean(t, consumeBoolean());
 	}
 
 	@Override
@@ -41,6 +46,7 @@ public class BooleanDelayedCellSetter<T> implements DelayedCellSetter<T, Boolean
 
 	@Override
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
+        isNull = length == 0;
 		this.value = reader.readBoolean(chars, offset, length, parsingContext);
 	}
 

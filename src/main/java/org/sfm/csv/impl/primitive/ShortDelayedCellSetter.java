@@ -10,6 +10,7 @@ public class ShortDelayedCellSetter<T> implements DelayedCellSetter<T, Short> {
 	private final ShortSetter<T> setter;
 	private final ShortCellValueReader reader;
 	private short value;
+    private boolean isNull;
 
 	public ShortDelayedCellSetter(ShortSetter<T> setter, ShortCellValueReader reader) {
 		this.setter = setter;
@@ -17,21 +18,24 @@ public class ShortDelayedCellSetter<T> implements DelayedCellSetter<T, Short> {
 	}
 
 	@Override
-	public Short getValue() {
-		return getShort();
+	public Short consumeValue() {
+        return isNull ? null : getShort();
 	}
+
+    public Short peekValue() {
+        return isNull ? null : value;
+    }
 
 	public short getShort() {
 		short v = value;
 		value = 0;
+        isNull = true;
 		return v;
 	}
 	
 	@Override
 	public void set(T t) throws Exception {
-		short v = value;
-		value = 0;
-		setter.setShort(t, v);
+		setter.setShort(t, consumeValue());
 	}
 
 	@Override
@@ -41,7 +45,8 @@ public class ShortDelayedCellSetter<T> implements DelayedCellSetter<T, Short> {
 
 	@Override
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
-		this.value = reader.readShort(chars, offset, length, parsingContext);
+        isNull = length ==0;
+        this.value = reader.readShort(chars, offset, length, parsingContext);
 	}
 
     @Override

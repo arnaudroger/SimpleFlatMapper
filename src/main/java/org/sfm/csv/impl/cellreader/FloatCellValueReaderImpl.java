@@ -16,6 +16,7 @@ public final class FloatCellValueReaderImpl implements FloatCellValueReader {
 	}
 	
 	public static float parseFloat(char[] chars, int offset, int length) {
+        if (length == 0) return Float.NaN;
 		return Float.parseFloat(StringCellValueReader.readString(chars, offset, length));
 	}
 

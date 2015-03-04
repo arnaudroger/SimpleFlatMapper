@@ -14,7 +14,7 @@ public class BooleanDelayedGetter<T> implements BooleanGetter<DelayedCellSetter<
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean getBoolean(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return ((BooleanDelayedCellSetter<T>)target[index]).getBoolean();
+		return ((BooleanDelayedCellSetter<T>)target[index]).consumeBoolean();
 	}
 
 	@Override

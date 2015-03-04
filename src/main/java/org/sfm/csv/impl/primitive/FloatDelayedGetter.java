@@ -14,7 +14,7 @@ public class FloatDelayedGetter<T> implements FloatGetter<DelayedCellSetter<T, ?
 	@SuppressWarnings("unchecked")
 	@Override
 	public float getFloat(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return ((FloatDelayedCellSetter<T>)target[index]).getFloat();
+		return ((FloatDelayedCellSetter<T>)target[index]).consumeFloat();
 	}
 
 	@Override

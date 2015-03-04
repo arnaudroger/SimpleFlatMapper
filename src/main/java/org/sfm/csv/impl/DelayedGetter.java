@@ -12,7 +12,7 @@ public class DelayedGetter<T> implements Getter<DelayedCellSetter<T, ?>[], T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public T get(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return (T) target[index].getValue();
+		return (T) target[index].consumeValue();
 	}
 
     @Override

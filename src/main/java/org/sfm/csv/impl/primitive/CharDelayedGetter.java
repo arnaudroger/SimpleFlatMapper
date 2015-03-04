@@ -14,7 +14,7 @@ public class CharDelayedGetter<T> implements CharacterGetter<DelayedCellSetter<T
 	@SuppressWarnings("unchecked")
 	@Override
 	public char getCharacter(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return ((CharDelayedCellSetter<T>)target[index]).getCharacter();
+		return ((CharDelayedCellSetter<T>)target[index]).consumeCharacter();
 	}
 
 	@Override

@@ -10,6 +10,7 @@ public class LongDelayedCellSetter<T> implements DelayedCellSetter<T, Long> {
 	private final LongSetter<T> setter;
 	private final LongCellValueReader reader;
 	private long value;
+    private boolean isNull;
 
 	public LongDelayedCellSetter(LongSetter<T> setter, LongCellValueReader reader) {
 		this.setter = setter;
@@ -17,21 +18,25 @@ public class LongDelayedCellSetter<T> implements DelayedCellSetter<T, Long> {
 	}
 
 	@Override
-	public Long getValue() {
-		return getLong();
+	public Long consumeValue() {
+		return isNull ? null : consumeLong();
 	}
-	
-	public long getLong() {
+
+    @Override
+    public Long peekValue() {
+        return isNull ? null : value;
+    }
+
+    public long consumeLong() {
 		long v = value;
 		value = 0;
+        isNull = true;
 		return v;
 	}
 
 	@Override
 	public void set(T t) throws Exception {
-		long v = value;
-		value = 0;
-		setter.setLong(t, v);
+		setter.setLong(t, consumeLong());
 	}
 
 	@Override
@@ -41,6 +46,7 @@ public class LongDelayedCellSetter<T> implements DelayedCellSetter<T, Long> {
 
 	@Override
 	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
+        isNull = length == 0;
 		this.value = reader.readLong(chars, offset, length, parsingContext);
 	}
 

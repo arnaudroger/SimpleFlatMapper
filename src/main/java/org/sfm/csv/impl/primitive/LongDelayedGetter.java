@@ -14,7 +14,7 @@ public class LongDelayedGetter<T> implements LongGetter<DelayedCellSetter<T, ?>[
 	@SuppressWarnings("unchecked")
 	@Override
 	public long getLong(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return ((LongDelayedCellSetter<T>)target[index]).getLong();
+		return ((LongDelayedCellSetter<T>)target[index]).consumeLong();
 	}
 
 	@Override

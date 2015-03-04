@@ -1,6 +1,7 @@
 package org.sfm.csv.impl;
 
 import org.sfm.csv.*;
+import org.sfm.csv.parser.CellConsumer;
 import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.meta.ClassMeta;
@@ -70,7 +71,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	@Override
 	public <H extends RowHandler<? super T>> H forEach(CsvReader csvReader, H handle) throws IOException {
-		CsvMapperCellConsumer<T> mapperCellConsumer = getDelegateMapper(csvReader).newCellConsumer(handle);
+		CellConsumer mapperCellConsumer = getDelegateMapper(csvReader).newCellConsumer(handle);
 		csvReader.parseAll(mapperCellConsumer);
 		return handle;
 	}
@@ -82,7 +83,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	@Override
 	public <H extends RowHandler<? super T>> H forEach(CsvReader csvReader, H handle, int limit) throws IOException {
-		CsvMapperCellConsumer<T> mapperCellConsumer = getDelegateMapper(csvReader).newCellConsumer(handle);
+		CellConsumer mapperCellConsumer = getDelegateMapper(csvReader).newCellConsumer(handle);
 		csvReader.parseRows(mapperCellConsumer, limit);
 		return handle;
 	}

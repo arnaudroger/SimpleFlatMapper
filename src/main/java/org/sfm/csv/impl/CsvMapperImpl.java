@@ -5,7 +5,6 @@ import org.sfm.csv.CsvMapper;
 import org.sfm.csv.CsvParser;
 import org.sfm.csv.CsvReader;
 import org.sfm.csv.parser.CellConsumer;
-import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
@@ -198,11 +197,10 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	//IFJAVA8_END
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected CsvMapperCellConsumer<T> newCellConsumer(final RowHandler<? super T> handler) {
+	protected IndexedCellConsumer newCellConsumer(final RowHandler<? super T> handler) {
 
 		DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetters.length];
-		Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers = new HashMap<CsvMapper<?>, CsvMapperCellConsumer<?>>();
-
+        Map<CsvMapper<?>, IndexedCellConsumer> cellHandlers = new HashMap<CsvMapper<?>, IndexedCellConsumer>();
 
 		for(int i = 0; i < delayedCellSetters.length; i++) {
 			DelayedCellSetterFactory<T, ?> delayedCellSetterFactory = delayedCellSetters[i];
@@ -210,7 +208,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 				if (delayedCellSetterFactory instanceof DelegateMarkerDelayedCellSetter) {
 					DelegateMarkerDelayedCellSetter<T, ?> marker = (DelegateMarkerDelayedCellSetter<T, ?>) delayedCellSetterFactory;
 
-					CsvMapperCellConsumer<?> cellHandler = cellHandlers.get(marker.getMapper());
+                    IndexedCellConsumer cellHandler = cellHandlers.get(marker.getMapper());
 
 					DelegateDelayedCellSetterFactory<T, ?> delegateCellSetter;
 
@@ -233,13 +231,13 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 			if (setters[i] instanceof DelegateMarkerSetter) {
 				DelegateMarkerSetter<?> marker = (DelegateMarkerSetter<?>) setters[i];
 
-				CsvMapperCellConsumer<?> cellHandler = cellHandlers.get(marker.getMapper());
+                IndexedCellConsumer cellHandler = cellHandlers.get(marker.getMapper());
 
 				DelegateCellSetter<T> delegateCellSetter;
 
 				if(cellHandler == null) {
 					delegateCellSetter = new DelegateCellSetter<T>(marker, i + delayedCellSetters.length);
-					cellHandlers.put(marker.getMapper(), delegateCellSetter.getBytesCellHandler());
+					cellHandlers.put(marker.getMapper(), delegateCellSetter.getCellConsumer());
 				} else {
 					delegateCellSetter = new DelegateCellSetter<T>(marker, cellHandler, i + delayedCellSetters.length);
 				}
@@ -248,14 +246,24 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 				outSetters[i] = setters[i];
 			}
 		}
+        if (joinKeys.length == 0) {
+            return new CsvMapperCellConsumer<T>(instantiator,
+                    outDelayedCellSetters,
+                    outSetters, keys,
+                    fieldErrorHandler,
+                    rowHandlerErrorHandlers,
+                    handler,
+                    parsingContextFactory.newContext());
+        } else {
+            return new CsvMapperWithBreakDetectorCellConsumer<T>(instantiator,
+                    outDelayedCellSetters,
+                    outSetters, keys,
+                    fieldErrorHandler,
+                    rowHandlerErrorHandlers,
+                    handler,
+                    parsingContextFactory.newContext(), getBreakDetector());
 
-        return new CsvMapperCellConsumer<T>(instantiator,
-				outDelayedCellSetters,
-				outSetters, keys,
-				fieldErrorHandler,
-				rowHandlerErrorHandlers,
-				handler,
-				parsingContextFactory.newContext(), getBreakDetector());
+        }
 	}
 
     private BreakDetector getBreakDetector() {

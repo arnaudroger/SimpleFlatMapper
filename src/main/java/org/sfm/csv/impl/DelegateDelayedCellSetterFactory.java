@@ -1,11 +1,12 @@
 package org.sfm.csv.impl;
 
+import org.sfm.csv.parser.CellConsumer;
 import org.sfm.utils.RowHandler;
 
 public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetterFactory<T, P> {
 
 	private final DelegateMarkerDelayedCellSetter<T, P> marker;
-	private final CsvMapperCellConsumer<?> handler;
+	private final IndexedCellConsumer handler;
 	private final int cellIndex;
 	protected P value;
 	public DelegateDelayedCellSetterFactory(DelegateMarkerDelayedCellSetter<T, P> marker, int cellIndex) {
@@ -22,13 +23,13 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 
 	public DelegateDelayedCellSetterFactory(
 			DelegateMarkerDelayedCellSetter<T, P> marker,
-			CsvMapperCellConsumer<?> handler, int cellIndex) {
+			IndexedCellConsumer handler, int cellIndex) {
 		this.handler = handler;
 		this.marker = marker;
 		this.cellIndex = cellIndex;
 	}
 
-	public CsvMapperCellConsumer<?> getCellHandler() {
+	public IndexedCellConsumer getCellHandler() {
 		return handler;
 	}
 

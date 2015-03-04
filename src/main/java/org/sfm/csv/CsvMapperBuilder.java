@@ -281,7 +281,7 @@ public class CsvMapperBuilder<T> {
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private CellSetter<T>[] getSetters(final ParsingContextFactoryBuilder parsingContextFactoryBuilder, int delayedSetterEnd) {
+	private CellSetter<T>[] getSetters(final ParsingContextFactoryBuilder parsingContextFactoryBuilder, final int delayedSetterEnd) {
 		final Map<String, CsvMapperBuilder<?>> delegateMapperBuilders = new HashMap<String, CsvMapperBuilder<?>>();
 		
 		

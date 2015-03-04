@@ -17,7 +17,7 @@ public class CvsMapperJoinTest {
             + "2,professor2,4,student4,phone52\n"
             + "3,professor3,,,";
 
-  //  @Test
+    //@Test
     public void testProfessorGS() throws IOException {
         final CsvMapper<JoinJdbcMapperTest.ProfessorGS> mapper = CsvMapperFactory
                 .newInstance()

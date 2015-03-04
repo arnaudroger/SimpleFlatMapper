@@ -27,7 +27,7 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends  Column
         return false;
     }
 
-    public Predicate<PropertyMeta<?, ?>> appliesTo() {
+    public Predicate<PropertyMeta<?, ?>> keyAppliesTo() {
         return new Predicate<PropertyMeta<?, ?>>() {
             @Override
             public boolean test(PropertyMeta<?, ?> propertyMeta) {

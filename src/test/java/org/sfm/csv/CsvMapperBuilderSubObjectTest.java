@@ -2,6 +2,7 @@ package org.sfm.csv;
 
 import org.junit.Test;
 import org.sfm.beans.Db1DeepObject;
+import org.sfm.beans.Db1DeepPartialObject;
 import org.sfm.beans.DbFinal1DeepObject;
 import org.sfm.csv.impl.ParsingContext;
 import org.sfm.jdbc.DbHelper;
@@ -36,7 +37,7 @@ public class CsvMapperBuilderSubObjectTest {
     }
 
 	@Test
-	public void testMapDbObject() throws UnsupportedEncodingException, Exception {
+	public void testMapDbObject() throws Exception {
 		
 		CsvMapperBuilder<Db1DeepObject> builder = new CsvMapperBuilder<Db1DeepObject>(Db1DeepObject.class,  ReflectionService.newInstance(true, false));
 		addDbObjectFields(builder);
@@ -52,7 +53,7 @@ public class CsvMapperBuilderSubObjectTest {
 	}
 	
 	@Test
-	public void testMapDbFinalObject() throws UnsupportedEncodingException, Exception {
+	public void testMapDbFinalObject() throws  Exception {
 		
 		CsvMapperBuilder<DbFinal1DeepObject> builder = new CsvMapperBuilder<DbFinal1DeepObject>(DbFinal1DeepObject.class);
 		addDbObjectFields(builder);
@@ -66,8 +67,25 @@ public class CsvMapperBuilderSubObjectTest {
 		assertEquals("val!", o.getValue());
 		DbHelper.assertDbObjectMapping(o.getDbObject());
 	}
-	
-	public static Reader db1deepObjectCsvReader() throws UnsupportedEncodingException {
+
+    @Test
+    public void testMapDbPartialObject() throws UnsupportedEncodingException, Exception {
+
+        CsvMapperBuilder<Db1DeepPartialObject> builder = new CsvMapperBuilder<Db1DeepPartialObject>(Db1DeepPartialObject.class);
+        addDbObjectFields(builder);
+        CsvMapper<Db1DeepPartialObject> mapper = builder.mapper();
+
+        List<Db1DeepPartialObject> list = mapper.forEach(db1deepObjectCsvReader(), new ListHandler<Db1DeepPartialObject>()).getList();
+        assertEquals(1, list.size());
+
+        Db1DeepPartialObject o = list.get(0);
+        assertEquals(1234, o.getId());
+        assertEquals("val!", o.getValue());
+        DbHelper.assertDbObjectMapping(o.getDbObject());
+    }
+
+
+    public static Reader db1deepObjectCsvReader() throws UnsupportedEncodingException {
 			return new StringReader("1234,val!,1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4");
 	}
 	public void addDbObjectFields(CsvMapperBuilder<?> builder) {

@@ -5,10 +5,13 @@ import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
+import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ForEachCallBack;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CsvMapperBuilder<T> {
@@ -28,8 +31,6 @@ public class CsvMapperBuilder<T> {
 
 	private final PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition> propertyMappingsBuilder;
 	
-	private int syncSetterStart;
-
 	private String defaultDateFormat = "yyyy-MM-dd HH:mm:ss";
 
 	public CsvMapperBuilder(final Type target) {
@@ -101,9 +102,11 @@ public class CsvMapperBuilder<T> {
 
 	public final CsvMapper<T> mapper() {
         ParsingContextFactoryBuilder parsingContextFactoryBuilder = new ParsingContextFactoryBuilder(propertyMappingsBuilder.size());
-		return new CsvMapperImpl<T>(getInstantiator(),
-                buildDelayedSetters(parsingContextFactoryBuilder),
-                getSetters(parsingContextFactoryBuilder), getKeys(), parsingContextFactoryBuilder.newFactory(), fieldMapperErrorHandler, rowHandlerErrorHandler);
+
+        Tuple2<Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>>, Integer> constructorParams = buildConstructorParametersDelayedCellSetter();
+        return new CsvMapperImpl<T>(getInstantiator(constructorParams.first()),
+                buildDelayedSetters(parsingContextFactoryBuilder, constructorParams.second()),
+                getSetters(parsingContextFactoryBuilder, constructorParams.second()), getKeys(), getJoinKeys(), parsingContextFactoryBuilder.newFactory(), fieldMapperErrorHandler, rowHandlerErrorHandler);
 	}
 
 
@@ -111,11 +114,25 @@ public class CsvMapperBuilder<T> {
 		return propertyMappingsBuilder.getKeys().toArray(new CsvColumnKey[propertyMappingsBuilder.size()]);
 	}
 
-	private  Instantiator<DelayedCellSetter<T, ?>[], T>  getInstantiator() throws MapperBuildingException {
+    private CsvColumnKey[] getJoinKeys() {
+        final List<CsvColumnKey> keys = new ArrayList<CsvColumnKey>();
+
+        propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition>>() {
+            @Override
+            public void handle(PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition> pm) {
+                if (pm.getColumnDefinition().isKey() && pm.getColumnDefinition().keyAppliesTo().test(pm.getPropertyMeta())) {
+                    keys.add(pm.getColumnKey());
+                }
+            }
+        });
+        return keys.toArray(new CsvColumnKey[0]);
+    }
+
+	private  Instantiator<DelayedCellSetter<T, ?>[], T>  getInstantiator(Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>> params) throws MapperBuildingException {
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 
 		try {
-			return instantiatorFactory.getInstantiator(SOURCE, target, propertyMappingsBuilder, buildConstructorParametersDelayedCellSetter(), new GetterFactory<DelayedCellSetter<T, ?>[], CsvColumnKey>() {
+			return instantiatorFactory.getInstantiator(SOURCE, target, propertyMappingsBuilder, params, new GetterFactory<DelayedCellSetter<T, ?>[], CsvColumnKey>() {
                 final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
 
                 @Override
@@ -128,12 +145,13 @@ public class CsvMapperBuilder<T> {
 		}
 	}
 
-	private Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>> buildConstructorParametersDelayedCellSetter() {
+	private Tuple2<Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>>, Integer> buildConstructorParametersDelayedCellSetter() {
 		final Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>> constructorInjections = new HashMap<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>>();
 
-		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
+		int delayedSetterEnd =
+                propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
 			final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
-
+            int delayedSetterEnd;
 			@SuppressWarnings("unchecked")
 			@Override
 			public void handle(PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition> propMapping) {
@@ -142,14 +160,13 @@ public class CsvMapperBuilder<T> {
 				PropertyMeta<T, ?> meta = propMapping.getPropertyMeta();
 
 				if (meta == null) return;
-
 				final CsvColumnKey key = propMapping.getColumnKey();
 				if (meta.isConstructorProperty()) {
-                    syncSetterStart = Math.max(syncSetterStart, key.getIndex() + 1);
+                    delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
                     Getter<DelayedCellSetter<T, ?>[], ?> delayedGetter = cellSetterFactory.newDelayedGetter(key, meta.getType());
                     constructorInjections.put(((ConstructorPropertyMeta<T, ?>) meta).getConstructorParameter(), delayedGetter);
                 } else if (meta instanceof DirectClassMeta.DirectPropertyMeta) {
-                    syncSetterStart = Math.max(syncSetterStart, key.getIndex() + 1);
+                    delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
 				} else if (meta.isSubProperty()) {
 					SubPropertyMeta<T, ?> subMeta = (SubPropertyMeta<T, ?>) meta;
 					if  (subMeta.getOwnerProperty().isConstructorProperty()) {
@@ -158,21 +175,25 @@ public class CsvMapperBuilder<T> {
 							Getter<DelayedCellSetter<T, ?>[], ?> delayedGetter = cellSetterFactory.newDelayedGetter(key, constPropMeta.getType());
 							constructorInjections.put(constPropMeta.getConstructorParameter(), delayedGetter);
 						}
-						syncSetterStart = Math.max(syncSetterStart, key.getIndex() + 1);
-					}
-				}				
+						delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
+					} else if (propMapping.getColumnDefinition().isKey() && propMapping.getColumnDefinition().keyAppliesTo().test(propMapping.getPropertyMeta())) {
+                        delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
+                    }
+				} else if (propMapping.getColumnDefinition().isKey() && propMapping.getColumnDefinition().keyAppliesTo().test(propMapping.getPropertyMeta())) {
+                    delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
+                }
 			}
-		});
-		
-		return constructorInjections;
+		}).delayedSetterEnd;
+
+		return new Tuple2<Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>>, Integer>(constructorInjections, delayedSetterEnd);
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	private DelayedCellSetterFactory<T, ?>[] buildDelayedSetters(final ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
+	private DelayedCellSetterFactory<T, ?>[] buildDelayedSetters(final ParsingContextFactoryBuilder parsingContextFactoryBuilder, int delayedSetterEnd) {
 		
 		final Map<String, CsvMapperBuilder<?>> delegateMapperBuilders = new HashMap<String, CsvMapperBuilder<?>>();
 
-		final DelayedCellSetterFactory<T, ?>[] delayedSetters = new DelayedCellSetterFactory[syncSetterStart];
+		final DelayedCellSetterFactory<T, ?>[] delayedSetters = new DelayedCellSetterFactory[delayedSetterEnd];
 		
 		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
 			final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
@@ -210,7 +231,7 @@ public class CsvMapperBuilder<T> {
 				delegateMapperBuilder.addMapping(subPropertyMeta.getSubProperty(), key, columnDefinition);
 				
 			}
-		}, 0, syncSetterStart);
+		}, 0, delayedSetterEnd);
 		
 		
 		final Map<String, CsvMapper<?>> mappers = new HashMap<String, CsvMapper<?>>();
@@ -250,7 +271,7 @@ public class CsvMapperBuilder<T> {
 					delayedSetters[setterIndex] = new DelegateMarkerDelayedCellSetter<T, P>(mapper, subProp.getSetter());
 				}
 			}
-		}, 0, syncSetterStart);
+		}, 0, delayedSetterEnd);
 		
 		
 		return delayedSetters;
@@ -260,14 +281,14 @@ public class CsvMapperBuilder<T> {
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private CellSetter<T>[] getSetters(final ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
+	private CellSetter<T>[] getSetters(final ParsingContextFactoryBuilder parsingContextFactoryBuilder, int delayedSetterEnd) {
 		final Map<String, CsvMapperBuilder<?>> delegateMapperBuilders = new HashMap<String, CsvMapperBuilder<?>>();
 		
 		
-
+        // calculate maxindex
 		int maxIndex = propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
 
-			int maxIndex = syncSetterStart;
+			int maxIndex = delayedSetterEnd;
 			@Override
 			public void handle(PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition> propMapping) {
 				if (propMapping != null) {
@@ -294,10 +315,11 @@ public class CsvMapperBuilder<T> {
 					}
 				}
 			}
-		}, syncSetterStart).maxIndex;
+		}, delayedSetterEnd).maxIndex;
 
 
-		final CellSetter<T>[] setters = new CellSetter[maxIndex + 1 - syncSetterStart];
+        // builder se setters
+		final CellSetter<T>[] setters = new CellSetter[maxIndex + 1 - delayedSetterEnd];
 
 
 		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
@@ -325,12 +347,12 @@ public class CsvMapperBuilder<T> {
 						mapper = delegateMapperBuilder.mapper();
 						mappers.put(propName, mapper);
 					}
-					setters[propMapping.getColumnKey().getIndex()- syncSetterStart] = new DelegateMarkerSetter(mapper, ((SubPropertyMeta) prop).getOwnerProperty().getSetter());
+					setters[propMapping.getColumnKey().getIndex()- delayedSetterEnd] = new DelegateMarkerSetter(mapper, ((SubPropertyMeta) prop).getOwnerProperty().getSetter());
 				} else {
-					setters[propMapping.getColumnKey().getIndex()- syncSetterStart] = cellSetterFactory.getCellSetter(prop, propMapping.getColumnKey().getIndex(), propMapping.getColumnDefinition(), parsingContextFactoryBuilder);
+					setters[propMapping.getColumnKey().getIndex()- delayedSetterEnd] = cellSetterFactory.getCellSetter(prop, propMapping.getColumnKey().getIndex(), propMapping.getColumnDefinition(), parsingContextFactoryBuilder);
 				}
 			}
-		}, syncSetterStart);
+		}, delayedSetterEnd);
 		
 		
 		return setters;

@@ -5,6 +5,7 @@ import org.sfm.csv.CsvMapper;
 import org.sfm.csv.CsvParser;
 import org.sfm.csv.CsvReader;
 import org.sfm.csv.parser.CellConsumer;
+import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
@@ -26,6 +27,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	private final DelayedCellSetterFactory<T, ?>[] delayedCellSetters;
 	private final CellSetter<T>[] setters;
 	private final CsvColumnKey[] keys;
+    private final CsvColumnKey[] joinKeys;
 	
 	private final Instantiator<DelayedCellSetter<T, ?>[], T> instantiator;
 	private final FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler;
@@ -33,18 +35,19 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	private final ParsingContextFactory parsingContextFactory;
 
 	public CsvMapperImpl(Instantiator<DelayedCellSetter<T, ?>[], T> instantiator,
-			DelayedCellSetterFactory<T, ?>[] delayedCellSetters,
-			CellSetter<T>[] setters,
-			CsvColumnKey[] keys,
-			ParsingContextFactory parsingContextFactory,
-			FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
-			RowHandlerErrorHandler rowHandlerErrorHandlers) {
+                         DelayedCellSetterFactory<T, ?>[] delayedCellSetters,
+                         CellSetter<T>[] setters,
+                         CsvColumnKey[] keys,
+                         CsvColumnKey[] joinKeys, ParsingContextFactory parsingContextFactory,
+                         FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
+                         RowHandlerErrorHandler rowHandlerErrorHandlers) {
 		super();
 		this.instantiator = instantiator;
 		this.delayedCellSetters = delayedCellSetters;
 		this.setters = setters;
 		this.keys = keys;
-		this.fieldErrorHandler = fieldErrorHandler;
+        this.joinKeys = joinKeys;
+        this.fieldErrorHandler = fieldErrorHandler;
 		this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
 		this.parsingContextFactory = parsingContextFactory;
 	}
@@ -246,14 +249,22 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 			}
 		}
 
-		return new CsvMapperCellConsumer<T>(instantiator,
+        return new CsvMapperCellConsumer<T>(instantiator,
 				outDelayedCellSetters,
 				outSetters, keys,
 				fieldErrorHandler,
 				rowHandlerErrorHandlers,
 				handler,
-				parsingContextFactory.newContext());
+				parsingContextFactory.newContext(), getBreakDetector());
 	}
+
+    private BreakDetector getBreakDetector() {
+        if (joinKeys.length == 0) {
+            return new NullBreakDetector();
+        } else {
+            return new BreakDetectorImpl(joinKeys);
+        }
+    }
 
     @Override
     public String toString() {

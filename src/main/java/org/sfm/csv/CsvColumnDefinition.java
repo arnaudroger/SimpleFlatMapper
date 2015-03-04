@@ -232,6 +232,21 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
         }
 
         @Override
+        public boolean isKey() {
+            return def1.isKey() || def2.isKey();
+        }
+
+        @Override
+        public Predicate<PropertyMeta<?, ?>> keyAppliesTo() {
+            if (def1.isKey()) {
+                return def1.keyAppliesTo();
+            } else if (def2.isKey()) {
+                return def2.keyAppliesTo();
+            }
+            return super.keyAppliesTo();
+        }
+
+        @Override
         public TimeZone getTimeZone() {
             TimeZone tz = def2.getTimeZone();
             if (tz == null) {
@@ -239,6 +254,8 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
             }
             return tz;
         }
+
+
 
         @Override
         public boolean ignore() {
@@ -389,7 +406,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
 
 
         @Override
-        public Predicate<PropertyMeta<?, ?>> appliesTo() {
+        public Predicate<PropertyMeta<?, ?>> keyAppliesTo() {
             return appliesTo;
         }
 

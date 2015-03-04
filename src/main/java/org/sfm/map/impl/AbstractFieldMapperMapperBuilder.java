@@ -164,7 +164,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		} else {
             final PropertyMeta<T, ?> property = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
             if (property != null && composedDefinition.isKey()) {
-                if (composedDefinition.appliesTo().test(property)) {
+                if (composedDefinition.keyAppliesTo().test(property)) {
                     mappingContextFactoryBuilder.addKey(key);
                 }
             }
@@ -309,7 +309,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
         for (PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> pm : properties) {
             SubPropertyMeta<T, ?> subPropertyMeta = (SubPropertyMeta<T, ?>) pm.getPropertyMeta();
             if (pm.getColumnDefinition().isKey()) {
-                if (pm.getColumnDefinition().appliesTo().test(subPropertyMeta.getSubProperty())) {
+                if (pm.getColumnDefinition().keyAppliesTo().test(subPropertyMeta.getSubProperty())) {
                     keys.add(pm.getColumnKey());
                 }
             }

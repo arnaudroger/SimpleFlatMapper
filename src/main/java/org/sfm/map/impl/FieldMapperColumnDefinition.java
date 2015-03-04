@@ -217,6 +217,16 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
         }
 
         @Override
+        public Predicate<PropertyMeta<?, ?>> keyAppliesTo() {
+            if (def1.isKey()) {
+                return def1.keyAppliesTo();
+            } else if (def2.isKey()) {
+                return def2.keyAppliesTo();
+            }
+            return super.keyAppliesTo();
+        }
+
+        @Override
         protected void appendToStringBuilder(StringBuilder sb) {
             def1.appendToStringBuilder(sb);
             sb.append(", ");
@@ -344,7 +354,7 @@ public abstract class FieldMapperColumnDefinition<K extends FieldKey<K>, S> exte
 
 
         @Override
-        public Predicate<PropertyMeta<?, ?>> appliesTo() {
+        public Predicate<PropertyMeta<?, ?>> keyAppliesTo() {
             return appliesTo;
         }
 

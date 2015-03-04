@@ -17,7 +17,7 @@ public class CvsMapperJoinTest {
             + "2,professor2,4,student4,phone52\n"
             + "3,professor3,,,";
 
-    //@Test
+  //  @Test
     public void testProfessorGS() throws IOException {
         final CsvMapper<JoinJdbcMapperTest.ProfessorGS> mapper = CsvMapperFactory
                 .newInstance()
@@ -27,9 +27,9 @@ public class CvsMapperJoinTest {
                 .addMapping("name")
                 .addMapping("students_id")
                 .addMapping("students_name")
-                .addMapping("students_phones_value")
+              //  .addMapping("students_phones_value")
                 .mapper();
-        ;
+
 
         final List<JoinJdbcMapperTest.ProfessorGS> professors =
                 mapper.forEach(new StringReader(DATA), new ListHandler<JoinJdbcMapperTest.ProfessorGS>()).getList();

@@ -5,10 +5,10 @@ import org.sfm.utils.RowHandler;
 public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetterFactory<T, P> {
 
 	private final DelegateMarkerDelayedCellSetter<T, P> marker;
-	private final IndexedCellConsumer handler;
+	private final CsvMapperCellConsumer handler;
 	private final int cellIndex;
 	protected P value;
-	public DelegateDelayedCellSetterFactory(DelegateMarkerDelayedCellSetter<T, P> marker, int cellIndex) {
+	public DelegateDelayedCellSetterFactory(DelegateMarkerDelayedCellSetter<T, P> marker, int cellIndex, BreakDetector breakDetector) {
 		this.marker = marker;
 		this.handler = ((CsvMapperImpl<P>)marker.getMapper()).newCellConsumer(new RowHandler<P>() {
 			@Override
@@ -16,19 +16,19 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 				DelegateDelayedCellSetterFactory.this.value = t;
 			}
 
-		});
+		}, breakDetector);
 		this.cellIndex = cellIndex;
 	}
 
 	public DelegateDelayedCellSetterFactory(
 			DelegateMarkerDelayedCellSetter<T, P> marker,
-			IndexedCellConsumer handler, int cellIndex) {
+			CsvMapperCellConsumer handler, int cellIndex) {
 		this.handler = handler;
 		this.marker = marker;
 		this.cellIndex = cellIndex;
 	}
 
-	public IndexedCellConsumer getCellHandler() {
+	public CsvMapperCellConsumer getCellHandler() {
 		return handler;
 	}
 

@@ -18,7 +18,8 @@ public class BooleanCellSetter<T> implements CellSetter<T> {
 	@Override
 	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
 			throws Exception {
-		setter.setBoolean(target, reader.readBoolean(chars, offset, length, parsingContext));
+        if (target == null) return;
+        setter.setBoolean(target, reader.readBoolean(chars, offset, length, parsingContext));
 	}
 
     @Override

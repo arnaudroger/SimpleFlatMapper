@@ -18,7 +18,8 @@ public class FloatCellSetter<T> implements CellSetter<T> {
 	@Override
 	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
 			throws Exception {
-		setter.setFloat(target, reader.readFloat(chars, offset, length, parsingContext));
+        if (target == null) return;
+        setter.setFloat(target, reader.readFloat(chars, offset, length, parsingContext));
 	}
 
     @Override

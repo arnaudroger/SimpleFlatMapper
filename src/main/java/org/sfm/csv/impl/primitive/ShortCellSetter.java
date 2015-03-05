@@ -18,7 +18,8 @@ public class ShortCellSetter<T> implements CellSetter<T> {
 	@Override
 	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
 			throws Exception {
-		setter.setShort(target, reader.readShort(chars, offset, length, parsingContext));
+        if (target == null) return;
+        setter.setShort(target, reader.readShort(chars, offset, length, parsingContext));
 	}
 
     @Override

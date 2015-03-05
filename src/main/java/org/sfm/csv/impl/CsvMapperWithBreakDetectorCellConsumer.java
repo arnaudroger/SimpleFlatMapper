@@ -1,14 +1,17 @@
 package org.sfm.csv.impl;
 
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.csv.parser.CellConsumer;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
 
-public final class CsvMapperWithBreakDetectorCellConsumer<T> implements IndexedCellConsumer {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+public final class CsvMapperWithBreakDetectorCellConsumer<T> implements CsvMapperCellConsumer {
 
 	/**
 	 * mapping information
@@ -17,6 +20,7 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements IndexedC
 	private final DelayedCellSetter<T, ?>[] delayedCellSetters;
 	private final CellSetter<T>[] setters;
 	private final CsvColumnKey[] columns;
+
 
 	/**
 	 * error handling
@@ -33,17 +37,17 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements IndexedC
 	 */
 	private final ParsingContext parsingContext;
 
-	private final int flushIndex;
 	private final int totalLength;
+    private final CsvMapperWithBreakDetectorCellConsumer[] children;
 
 
-	private T currentInstance;
+    private T currentInstance;
 	private int cellIndex = 0;
-    private boolean hasData;
 
 
     private final BreakDetector breakDetector;
 
+    @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
     public CsvMapperWithBreakDetectorCellConsumer(
             Instantiator<DelayedCellSetter<T, ?>[], T> instantiator,
             DelayedCellSetter<T, ?>[] delayedCellSetters,
@@ -52,7 +56,7 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements IndexedC
             FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
             RowHandlerErrorHandler rowHandlerErrorHandlers,
             RowHandler<? super T> handler,
-            ParsingContext parsingContext, BreakDetector breakDetector) {
+            ParsingContext parsingContext, BreakDetector breakDetector, Collection<CsvMapperCellConsumer> children) {
 		super();
 		this.instantiator = instantiator;
 		this.delayedCellSetters = delayedCellSetters;
@@ -62,51 +66,53 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements IndexedC
 		this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
 		this.handler = handler;
         this.breakDetector = breakDetector;
-        this.flushIndex = lastNonNullSetter(delayedCellSetters, setters);
 		this.totalLength = delayedCellSetters.length + setters.length;
 		this.parsingContext = parsingContext;
+        this.children = children.toArray(new CsvMapperWithBreakDetectorCellConsumer[0]);
 	}
 
     @Override
     public void end() {
         endOfRow();
-        if (currentInstance != null) {
-            callHandler();
-        }
+        callHandler();
     }
 
     @Override
     public void newCell(char[] chars, int offset, int length) {
-        if (cellIndex == -1) {
-            return;
-        }
         newCell(chars, offset, length, cellIndex);
-        if (cellIndex != -1) {
-            cellIndex++;
+        updateStatus(cellIndex);
+        cellIndex++;
+    }
+
+    private void updateStatus(int cellIndex) {
+        if (breakDetector.updateStatus(delayedCellSetters, cellIndex)) {
+            createInstanceIfNeeded();
+        }
+        for(CsvMapperWithBreakDetectorCellConsumer consumer : children) {
+            consumer.updateStatus(cellIndex);
         }
     }
-	
-	@Override
+
+    @Override
 	public void endOfRow() {
-		flush();
-		cellIndex = 0;
+        for(CsvMapperCellConsumer child : children) {
+            child.endOfRow();
+        }
+
+        breakDetector.reset();
+        cellIndex = 0;
 	}
 	
     public void newCell(char[] chars, int offset, int length, int cellIndex) {
-        hasData = true;
+
         if (cellIndex < delayedCellSetters.length) {
             newCellForDelayedSetter(chars, offset, length, cellIndex);
         } else {
-            createInstanceIfNeeded();
             newCellForSetter(chars, offset, length, cellIndex);
-        }
-
-        if (cellIndex == flushIndex) {
-            flush();
         }
     }
 
-	private void newCellForDelayedSetter(char[] chars, int offset, int length, int cellIndex) {
+    private void newCellForDelayedSetter(char[] chars, int offset, int length, int cellIndex) {
 		try {
 			DelayedCellSetter<T, ?> delayedCellSetter = delayedCellSetters[cellIndex];
 			if (delayedCellSetter != null) {
@@ -130,21 +136,15 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements IndexedC
 		}
 	}
 
-    private void flush() {
-        if (hasData) {
-            createInstanceIfNeeded();
-            this.cellIndex = -1;
-            hasData = false;
-        }
-        breakDetector.reset();
-    }
-
     private void callHandler() {
-        try {
-            handler.handle(currentInstance);
-            currentInstance = null;
-        } catch (Exception e) {
-            rowHandlerErrorHandlers.handlerError(e, currentInstance);
+        if (currentInstance != null) {
+            try {
+                flushChildren();
+                handler.handle(currentInstance);
+                currentInstance = null;
+            } catch (Exception e) {
+                rowHandlerErrorHandlers.handlerError(e, currentInstance);
+            }
         }
     }
 
@@ -175,18 +175,15 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements IndexedC
     }
 
     private void createInstanceIfNeeded() {
-        if (breakDetector.isBroken(delayedCellSetters)) {
+        if (breakDetector.broken()
+                && breakDetector.isNotNull()) {
             createInstance();
         }
     }
 
-
-
     private void createInstance() {
         try {
-            if(currentInstance!= null) {
-                callHandler();
-            }
+            callHandler();
             currentInstance = instantiator.newInstance(delayedCellSetters);
             applyDelayedSetters();
         } catch (Exception e) {
@@ -194,24 +191,14 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements IndexedC
         }
     }
 
-    private static int lastNonNullSetter(
-            DelayedCellSetter<?, ?>[] dcs,
-            CellSetter<?>[] cs) {
-        int lastNonNull = -1;
+    public void flush() {
+        callHandler();
+    }
 
-        for(int i = 0; i < dcs.length; i++) {
-            if (dcs[i] != null) {
-                lastNonNull = i;
-            }
+    private void flushChildren() {
+        for(CsvMapperWithBreakDetectorCellConsumer child: children) {
+            child.flush();
         }
-
-        for(int i = 0; i < cs.length; i++) {
-            if (cs[i] != null) {
-                lastNonNull = i + dcs.length;
-            }
-        }
-
-        return lastNonNull;
     }
 
 }

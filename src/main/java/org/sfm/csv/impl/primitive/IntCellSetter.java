@@ -18,7 +18,8 @@ public class IntCellSetter<T> implements CellSetter<T> {
 	@Override
 	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
 			throws Exception {
-		setter.setInt(target, reader.readInt(chars, offset, length, parsingContext));
+        if (target == null) return;
+        setter.setInt(target, reader.readInt(chars, offset, length, parsingContext));
 	}
 
     @Override

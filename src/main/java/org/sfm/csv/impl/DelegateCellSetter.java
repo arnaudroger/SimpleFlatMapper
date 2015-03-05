@@ -6,12 +6,12 @@ import org.sfm.utils.RowHandler;
 public class DelegateCellSetter<T> implements CellSetter<T> {
 
 	private final DelegateMarkerSetter<?> marker;
-	private final IndexedCellConsumer handler;
+	private final CsvMapperCellConsumer handler;
 	private T target;
 	private final int cellIndex;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public DelegateCellSetter(DelegateMarkerSetter<?> marker, int cellIndex) {
+	public DelegateCellSetter(DelegateMarkerSetter<?> marker, int cellIndex, BreakDetector parentBreakDetector) {
 		this.marker = marker;
 		this.handler = ((CsvMapperImpl<?>)marker.getMapper()).newCellConsumer(new RowHandler() {
 			@Override
@@ -20,12 +20,12 @@ public class DelegateCellSetter<T> implements CellSetter<T> {
 				setter.set(target, t);
 			}
 
-		});
+		}, parentBreakDetector);
 		this.cellIndex = cellIndex;
 	}
 
 	public DelegateCellSetter(DelegateMarkerSetter<?> marker,
-                              IndexedCellConsumer handler,  int cellIndex) {
+                              CsvMapperCellConsumer handler,  int cellIndex) {
 		this.marker = marker;
 		this.handler = handler;
 		this.cellIndex = cellIndex;
@@ -38,7 +38,7 @@ public class DelegateCellSetter<T> implements CellSetter<T> {
 		this.handler.newCell(chars, offset, length, cellIndex);
 	}
 	
-	public IndexedCellConsumer getCellConsumer() {
+	public CsvMapperCellConsumer getCellConsumer() {
 		return handler;
 	}
 

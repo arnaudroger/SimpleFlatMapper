@@ -35,7 +35,7 @@ public final class CsvMapperCellConsumerImpl<T> implements CsvMapperCellConsumer
 	private final ParsingContext parsingContext;
 
 	private final int totalLength;
-    private final CsvMapperCellConsumer[] children;
+    private final CsvMapperCellConsumerImpl[] children;
 
 
     private T currentInstance;
@@ -60,43 +60,58 @@ public final class CsvMapperCellConsumerImpl<T> implements CsvMapperCellConsumer
 		this.handler = handler;
 		this.totalLength = delayedCellSetters.length + setters.length;
 		this.parsingContext = parsingContext;
-        this.children = children.toArray(new CsvMapperCellConsumer[0]);
+        this.children = children.toArray(new CsvMapperCellConsumerImpl[0]);
 	}
 	
 	@Override
 	public void endOfRow() {
-        for(CsvMapperCellConsumer child : children) {
-            child.endOfRow();
-        }
-		if (cellIndex > 0) {
-			T instance = currentInstance;
-			if (instance == null) {
-                instance = createInstance();
-            }
-			applyDelayedSetters(instance);
-			callHandler(instance);
+
+        componseInstance();
+
+        resetConsumer();
+
+
+    }
+
+    private void resetConsumer() {
+        for (CsvMapperCellConsumerImpl child : children) {
+            child.resetConsumer();
         }
         currentInstance = null;
         cellIndex = 0;
     }
 
+    private void componseInstance() {
+        for (CsvMapperCellConsumerImpl child : children) {
+            child.componseInstance();
+        }
+        if (cellIndex > 0) {
+            if (currentInstance == null) {
+                currentInstance = createInstance();
+            }
+            applyDelayedSetters();
+            callHandler();
+        }
+    }
 
-	private void callHandler(T instance) {
+
+    private void callHandler() {
+        if (handler == null) return;
 		try {
-			handler.handle(instance);
+			handler.handle(currentInstance);
 		} catch (Exception e) {
-			rowHandlerErrorHandlers.handlerError(e, instance);
+			rowHandlerErrorHandlers.handlerError(e, currentInstance);
 		}
 	}
 
-	private void applyDelayedSetters(T instance) {
+	private void applyDelayedSetters() {
 		for(int i = 0; i < delayedCellSetters.length; i++) {
 			DelayedCellSetter<T, ?> delayedSetter = delayedCellSetters[i];
 			if (delayedSetter != null && delayedSetter.isSettable()) {
 				try {
-					delayedSetter.set(instance);
+					delayedSetter.set(currentInstance);
 				} catch (Exception e) {
-					fieldErrorHandler.errorMappingField(getColumn(i), this, instance, e);
+					fieldErrorHandler.errorMappingField(getColumn(i), this, currentInstance, e);
 				}
 			}
 		}
@@ -155,6 +170,16 @@ public final class CsvMapperCellConsumerImpl<T> implements CsvMapperCellConsumer
 		}
         this.cellIndex = cellIndex + 1;
 	}
+
+    @Override
+    public BreakDetector getBreakDetector() {
+        return null;
+    }
+
+    @Override
+    public T getCurrentInstance() {
+        return currentInstance;
+    }
 
     private CsvColumnKey getColumn(int cellIndex) {
         for(CsvColumnKey key : columns) {

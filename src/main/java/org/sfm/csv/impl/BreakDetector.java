@@ -58,8 +58,12 @@ public class BreakDetector  {
     }
 
     public boolean isNotNull() {
-        statusCheck();
-        return isNotNull;
+        if (keys.length == 0) {
+            return true;
+        } else {
+            statusCheck();
+            return isNotNull;
+        }
     }
 
     private Object[] getKeys(DelayedCellSetter<?, ?>[] delayedCellSetters) {

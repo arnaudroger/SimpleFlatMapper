@@ -7,9 +7,7 @@ import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public final class CsvMapperWithBreakDetectorCellConsumer<T> implements CsvMapperCellConsumer {
 
@@ -44,6 +42,7 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements CsvMappe
     private T currentInstance;
 	private int cellIndex = 0;
 
+    private int rowNumber = 0;
 
     private final BreakDetector breakDetector;
 
@@ -73,43 +72,118 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements CsvMappe
 
     @Override
     public void end() {
-        endOfRow();
-        callHandler();
+        _endOfRow();
+        if (currentInstance != null) {
+            callHandler();
+        }
     }
 
     @Override
     public void newCell(char[] chars, int offset, int length) {
         newCell(chars, offset, length, cellIndex);
-        updateStatus(cellIndex);
-        cellIndex++;
+        updateStatus(cellIndex - 1);
     }
 
     private void updateStatus(int cellIndex) {
         if (breakDetector.updateStatus(delayedCellSetters, cellIndex)) {
-            createInstanceIfNeeded();
+            if (breakDetector.broken()) {
+                if (currentInstance != null) {
+                    callHandler();
+                    currentInstance = null;
+                }
+
+                for(CsvMapperWithBreakDetectorCellConsumer consumer : children) {
+                    consumer.updateStatus(cellIndex);
+                }
+
+                if (breakDetector.isNotNull()) {
+                    // force flush
+                    //preFlushChildren();
+                    currentInstance = createInstance();
+                }
+                return;
+            }
         }
+
         for(CsvMapperWithBreakDetectorCellConsumer consumer : children) {
             consumer.updateStatus(cellIndex);
         }
+
     }
+//
+//    private void preFlushChildren() {
+//        for (CsvMapperWithBreakDetectorCellConsumer child : children) {
+//            child.preFlush();
+//        }
+//    }
+//
+//    private void preFlush() {
+//        if (handler instanceof DelegateDelayedCellSetterFactory.DelegateRowHandler) {
+//            preFlushChildren();
+//            callHandler();
+//        }
+//    }
+
+//    private void flushChildren() {
+//        if(currentInstance != null) {
+//            for (CsvMapperWithBreakDetectorCellConsumer child : children) {
+//                child.flush();
+//            }
+//        }
+//    }
+//
+//    private void flush() {
+//        flushChildren();
+//        callHandlerOnBreak();
+//        breakDetector.reset();
+//    }
+
 
     @Override
 	public void endOfRow() {
-        for(CsvMapperCellConsumer child : children) {
-            child.endOfRow();
+        rowNumber ++;
+        _endOfRow();
+        breakDetectorreset();
+    }
+
+    private void breakDetectorreset() {
+        breakDetector.reset();
+        for(CsvMapperWithBreakDetectorCellConsumer child : children) {
+            child.breakDetectorreset();
+        }
+    }
+
+    private void _endOfRow() {
+        for(CsvMapperWithBreakDetectorCellConsumer child : children) {
+            child._endOfRow();
+            child.callHandler();
+        }
+        if (currentInstance != null) {
+            applyDelayedSetters();
         }
 
-        breakDetector.reset();
         cellIndex = 0;
-	}
-	
+    }
+
+
     public void newCell(char[] chars, int offset, int length, int cellIndex) {
 
         if (cellIndex < delayedCellSetters.length) {
             newCellForDelayedSetter(chars, offset, length, cellIndex);
-        } else {
+        } else if (breakDetector.isNotNull()) {
             newCellForSetter(chars, offset, length, cellIndex);
         }
+        this.cellIndex = cellIndex + 1;
+    }
+
+    @Override
+    public BreakDetector getBreakDetector() {
+        return breakDetector;
+    }
+
+    @Override
+    public T getCurrentInstance() {
+        return currentInstance;
     }
 
     private void newCellForDelayedSetter(char[] chars, int offset, int length, int cellIndex) {
@@ -136,32 +210,22 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements CsvMappe
 		}
 	}
 
-    private void callHandler() {
-        if (currentInstance != null) {
-            try {
-                flushChildren();
-                handler.handle(currentInstance);
-                currentInstance = null;
-            } catch (Exception e) {
-                rowHandlerErrorHandlers.handlerError(e, currentInstance);
-            }
-        }
-    }
-
     private void applyDelayedSetters() {
         for(int i = 0; i < delayedCellSetters.length; i++) {
             DelayedCellSetter<T, ?> delayedSetter = delayedCellSetters[i];
-            if (delayedSetter != null && delayedSetter.isSettable()) {
-                applyDelaySetter(i, delayedSetter);
+            if (delayedSetter != null) {
+                applyDelaySetter( delayedSetter);
             }
         }
     }
 
-    private void applyDelaySetter(int i, DelayedCellSetter<T, ?> delayedSetter) {
-        try {
-            delayedSetter.set(currentInstance);
-        } catch (Exception e) {
-            fieldErrorHandler.errorMappingField(getColumn(cellIndex), this, currentInstance, e);
+    private void applyDelaySetter(DelayedCellSetter<T, ?> delayedSetter) {
+        if (delayedSetter.isSettable()) {
+            try {
+                delayedSetter.set(currentInstance);
+            } catch (Exception e) {
+                fieldErrorHandler.errorMappingField(getColumn(cellIndex), this, currentInstance, e);
+            }
         }
     }
 
@@ -174,30 +238,35 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements CsvMappe
         return null;
     }
 
-    private void createInstanceIfNeeded() {
-        if (breakDetector.broken()
-                && breakDetector.isNotNull()) {
-            createInstance();
-        }
-    }
 
-    private void createInstance() {
+
+
+
+    private T createInstance() {
         try {
-            callHandler();
-            currentInstance = instantiator.newInstance(delayedCellSetters);
-            applyDelayedSetters();
+             return instantiator.newInstance(delayedCellSetters);
         } catch (Exception e) {
             throw new MappingException(e.getMessage(), e);
         }
     }
-
-    public void flush() {
-        callHandler();
-    }
-
-    private void flushChildren() {
-        for(CsvMapperWithBreakDetectorCellConsumer child: children) {
-            child.flush();
+//
+//    private void callHandlerOnBreak() {
+//        if (currentInstance != null) {
+//            try {
+//                handler.handle(currentInstance);
+//            } catch (Exception e) {
+//                rowHandlerErrorHandlers.handlerError(e, currentInstance);
+//            }
+//            currentInstance = null;
+//        }
+//    }
+    private void callHandler() {
+        if (currentInstance != null) {
+            try {
+                handler.handle(currentInstance);
+            } catch (Exception e) {
+                rowHandlerErrorHandlers.handlerError(e, currentInstance);
+            }
         }
     }
 

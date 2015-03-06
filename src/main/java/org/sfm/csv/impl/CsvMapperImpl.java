@@ -201,13 +201,13 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
     }
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
-	protected CsvMapperCellConsumer newCellConsumer(final RowHandler<? super T> handler, BreakDetector parentBreakDetector) {
+	protected CsvMapperCellConsumer<T> newCellConsumer(final RowHandler<? super T> handler, BreakDetector parentBreakDetector) {
 
         DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetters.length];
         Map<CsvMapper<?>, CsvMapperCellConsumer> cellHandlers = new HashMap<CsvMapper<?>, CsvMapperCellConsumer>();
         final BreakDetector breakDetector = newBreakDetector(parentBreakDetector, delayedCellSetters.length - 1);
 
-        for(int i = 0; i < delayedCellSetters.length; i++) {
+        for(int i = delayedCellSetters.length - 1; i >= 0 ; i--) {
             DelayedCellSetterFactory<T, ?> delayedCellSetterFactory = delayedCellSetters[i];
             if (delayedCellSetterFactory != null) {
                 if (delayedCellSetterFactory instanceof DelegateMarkerDelayedCellSetter) {
@@ -232,7 +232,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
 
         CellSetter<T>[] outSetters = new CellSetter[setters.length];
-        for(int i = 0; i < setters.length; i++) {
+        for(int i = setters.length - 1; i >= 0 ; i--) {
             if (setters[i] instanceof DelegateMarkerSetter) {
                 DelegateMarkerSetter<?> marker = (DelegateMarkerSetter<?>) setters[i];
 

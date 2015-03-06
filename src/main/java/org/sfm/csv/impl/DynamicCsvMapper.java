@@ -171,7 +171,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 
 	private CsvMapperImpl<T> buildMapper(ColumnsMapperKey key) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory, 0);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);
 		builder.rowHandlerErrorHandler(rowHandlerErrorHandler);

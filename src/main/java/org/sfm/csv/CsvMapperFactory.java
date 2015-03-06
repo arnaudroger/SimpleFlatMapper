@@ -145,7 +145,7 @@ public final class CsvMapperFactory {
 
     public <T> CsvMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory, 0);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.rowHandlerErrorHandler(rowHandlerErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);

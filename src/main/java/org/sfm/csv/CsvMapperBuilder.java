@@ -151,7 +151,7 @@ public class CsvMapperBuilder<T> {
 
 	private Tuple3<Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>>, Integer, Boolean> buildConstructorParametersDelayedCellSetter() {
 
-        final BuildConstrutorInjections<T> tbuildConstrutorInjections = new BuildConstrutorInjections<>();
+        final BuildConstrutorInjections<T> tbuildConstrutorInjections = new BuildConstrutorInjections<T>();
         propertyMappingsBuilder.forEachProperties(tbuildConstrutorInjections);
 
 		return new Tuple3<Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>>, Integer, Boolean>(tbuildConstrutorInjections.constructorInjections,

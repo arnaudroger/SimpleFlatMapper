@@ -7,7 +7,7 @@
 
 [Now with 1-N support for JdbcMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-JdbcMapper-1-N-relationship)
 
-[1.7](https://github.com/arnaudroger/SimpleFlatMapper/milestones/1.7.0) Will focus on porting the join and discriminator to the csv mapper.
+[1.7](https://github.com/arnaudroger/SimpleFlatMapper/milestones/1.7.0) Will focus on porting the join ~~and discriminator~~ to the csv mapper.
 
 SFM provides fast and easy to use mapper for
 

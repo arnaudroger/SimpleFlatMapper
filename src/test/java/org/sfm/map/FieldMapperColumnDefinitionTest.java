@@ -4,13 +4,13 @@ import org.junit.Test;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class FieldMapperColumnDefinitionTest {
 
@@ -49,8 +49,14 @@ public class FieldMapperColumnDefinitionTest {
                 return "FieldMapper";
             }
         };
+        final Predicate<PropertyMeta<?, ?>> appliesTo = new Predicate<PropertyMeta<?, ?>>() {
+            @Override
+            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                return false;
+            }
+        };
         FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> compose =
-                FieldMapperColumnDefinition.<JdbcColumnKey,ResultSet>identity().addRename("blop").addGetter(getter).addFieldMapper(fieldMapper).addGetterFactory(getterFactory);
+                FieldMapperColumnDefinition.<JdbcColumnKey,ResultSet>identity().addRename("blop").addGetter(getter).addFieldMapper(fieldMapper).addGetterFactory(getterFactory).addKey(appliesTo);
 
         assertEquals("blop", compose.rename(new JdbcColumnKey("bar", -1)).getName());
         assertEquals(fieldMapper, compose.getCustomFieldMapper());
@@ -64,6 +70,10 @@ public class FieldMapperColumnDefinitionTest {
 
         assertTrue(FieldMapperColumnDefinition.<JdbcColumnKey,ResultSet>identity().addIgnore().ignore());
 
-        assertEquals("ColumnDefinition{Rename{'blop'}, Getter{Getter}, FieldMapper{FieldMapper}, GetterFactory{GetterFactory}, Ignore{}}", compose.addIgnore().toString());
+        assertEquals("ColumnDefinition{Rename{'blop'}, Getter{Getter}, FieldMapper{FieldMapper}, GetterFactory{GetterFactory}, Key{}, Ignore{}}", compose.addIgnore().toString());
+
+        assertTrue(compose.isKey());
+        assertFalse(FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>identity().isKey());
+        assertSame(appliesTo, compose.keyAppliesTo());
     }
 }

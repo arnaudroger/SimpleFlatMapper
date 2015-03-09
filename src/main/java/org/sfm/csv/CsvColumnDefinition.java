@@ -249,7 +249,7 @@ public abstract class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey,
         @Override
         public TimeZone getTimeZone() {
             TimeZone tz = def2.getTimeZone();
-            if (tz == null) {
+            if (tz == null|| TimeZone.getDefault().equals(tz)) {
                 tz = def1.getTimeZone();
             }
             return tz;

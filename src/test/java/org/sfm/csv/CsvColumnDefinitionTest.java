@@ -3,13 +3,13 @@ package org.sfm.csv;
 
 import org.junit.Test;
 import org.sfm.csv.impl.ParsingContext;
+import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.TimeZone;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class CsvColumnDefinitionTest {
 
@@ -28,6 +28,12 @@ public class CsvColumnDefinitionTest {
                 return "CellValueReaderFactory";
             }
         };
+        final Predicate<PropertyMeta<?, ?>> appliesTo = new Predicate<PropertyMeta<?, ?>>() {
+            @Override
+            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                return false;
+            }
+        };
         CsvColumnDefinition compose = CsvColumnDefinition.IDENTITY.addDateFormat("yyyyMM").addRename("blop").addCustomReader(
                 new CellValueReader<Integer>() {
                     @Override
@@ -39,7 +45,7 @@ public class CsvColumnDefinitionTest {
                     public String toString() {
                         return "CellValueReader";
                     }
-                }).addCustomCellValueReaderFactory(cellValueReaderFactory).addTimeZone(tz);
+                }).addCustomCellValueReaderFactory(cellValueReaderFactory).addTimeZone(tz).addKey(appliesTo);
 
         assertEquals("blop", compose.rename(new CsvColumnKey("bar", -1)).getName());
         assertEquals("yyyyMM", compose.dateFormat());
@@ -53,9 +59,15 @@ public class CsvColumnDefinitionTest {
 
         assertTrue(CsvColumnDefinition.IDENTITY.addIgnore().ignore());
 
+        assertTrue(compose.isKey());
+        assertSame(appliesTo, compose.keyAppliesTo());
+
         assertEquals("ColumnDefinition{DateFormat{'yyyyMM'}," +
                 " Rename{'blop'}, CustomReader{CellValueReader}," +
                 " CellValueReaderFactory{CellValueReaderFactory}," +
-                " TimeZone{Greenwich Mean Time}, Ignore{}}", compose.addIgnore().toString());
+                " TimeZone{Greenwich Mean Time}, Key{}, Ignore{}}", compose.addIgnore().toString());
+
+
+
     }
 }

@@ -17,9 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 //IFJAVA8_END
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -154,6 +152,7 @@ public class JoinJdbcMapperTest {
 
         final Professor<?> professor3 = professors.get(2);
         assertPersonEquals(3, "professor3", professor3);
+        assertNotNull(professor3.getStudents());
         assertTrue("professor3 has no students", professor3.getStudents().isEmpty());
 
     }

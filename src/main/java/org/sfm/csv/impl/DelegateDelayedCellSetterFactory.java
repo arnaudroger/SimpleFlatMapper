@@ -56,7 +56,8 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 
         @Override
         public void set(T t) throws Exception {
-            if (breakDetector.broken()) {
+            if (breakDetector == null
+                    || (breakDetector.broken() && breakDetector.isNotNull())) {
                 setter.set(t, getValue());
             }
         }

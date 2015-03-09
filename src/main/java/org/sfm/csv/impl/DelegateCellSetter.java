@@ -7,20 +7,14 @@ public class DelegateCellSetter<T> implements CellSetter<T> {
 
 	private final DelegateMarkerSetter<?> marker;
 	private final CsvMapperCellConsumer handler;
-	private T target;
+    private final Setter setter;
 	private final int cellIndex;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public DelegateCellSetter(DelegateMarkerSetter<?> marker, int cellIndex, BreakDetector parentBreakDetector) {
 		this.marker = marker;
-		this.handler = ((CsvMapperImpl<?>)marker.getMapper()).newCellConsumer(new RowHandler() {
-			@Override
-			public void handle(Object t) throws Exception {
-				final Setter setter = DelegateCellSetter.this.marker.getSetter();
-				setter.set(target, t);
-			}
-
-		}, parentBreakDetector);
+		this.handler = ((CsvMapperImpl<?>)marker.getMapper()).newCellConsumer(null, parentBreakDetector);
+        this.setter = marker.getSetter();
 		this.cellIndex = cellIndex;
 	}
 
@@ -29,13 +23,17 @@ public class DelegateCellSetter<T> implements CellSetter<T> {
 		this.marker = marker;
 		this.handler = handler;
 		this.cellIndex = cellIndex;
+        this.setter = null;
 	}
 
 	@Override
 	public void set(T target, char[] chars, int offset, int length, ParsingContext context)
 			throws Exception {
-		this.target = target;
 		this.handler.newCell(chars, offset, length, cellIndex);
+        final BreakDetector breakDetector = handler.getBreakDetector();
+        if (setter != null && (breakDetector == null || (breakDetector.broken()&& breakDetector.isNotNull()))) {
+            setter.set(target, this.handler.getCurrentInstance());
+        }
 	}
 	
 	public CsvMapperCellConsumer getCellConsumer() {
@@ -47,7 +45,6 @@ public class DelegateCellSetter<T> implements CellSetter<T> {
         return "DelegateCellSetter{" +
                 "marker=" + marker +
                 ", handler=" + handler +
-                ", target=" + target +
                 ", cellIndex=" + cellIndex +
                 '}';
     }

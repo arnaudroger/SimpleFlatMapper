@@ -66,7 +66,7 @@ public final class CsvMapperCellConsumerImpl<T> implements CsvMapperCellConsumer
 	@Override
 	public void endOfRow() {
 
-        componseInstance();
+        composeInstance();
 
         resetConsumer();
 
@@ -81,17 +81,21 @@ public final class CsvMapperCellConsumerImpl<T> implements CsvMapperCellConsumer
         cellIndex = 0;
     }
 
-    private void componseInstance() {
+    private void composeInstance() {
         for (CsvMapperCellConsumerImpl child : children) {
-            child.componseInstance();
+            child.composeInstance();
         }
-        if (cellIndex > 0) {
+        if (hasData()) {
             if (currentInstance == null) {
                 currentInstance = createInstance();
             }
             applyDelayedSetters();
             callHandler();
         }
+    }
+
+    private boolean hasData() {
+        return cellIndex > 0;
     }
 
 

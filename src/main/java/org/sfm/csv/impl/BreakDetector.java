@@ -33,7 +33,7 @@ public class BreakDetector  {
     public boolean updateStatus(DelayedCellSetter<?, ?>[] delayedCellSetters, int cellIndex) {
         if (cellIndex == lastIndex) {
             if (brokenCheck) {
-                throw new IllegalArgumentException();
+                throw new IllegalStateException();
             }
             if (keys.length > 0) {
                 Object[] currentKeys = getKeys(delayedCellSetters);

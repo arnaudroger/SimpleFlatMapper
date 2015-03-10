@@ -24,8 +24,12 @@ public class AsmConstructorDefinitionFactory {
             cl = ClassLoader.getSystemClassLoader();
         }
 
-        final InputStream is = cl.getResourceAsStream(targetClass.getName().replace('.', '/') + ".class");
+        final String fileName = targetClass.getName().replace('.', '/') + ".class";
+        final InputStream is = cl.getResourceAsStream(fileName);
         try {
+            if (is == null) {
+                throw new IOException("Cannot find file " + fileName + " in " + cl);
+            }
             ClassReader classReader = new ClassReader(is);
             classReader.accept(new ClassVisitor(Opcodes.ASM5) {
                 List<String> genericTypeNames;

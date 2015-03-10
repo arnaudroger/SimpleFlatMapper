@@ -10,24 +10,37 @@ import java.lang.reflect.Type;
 
 public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
-	private final Method method;
+	private final Method setter;
+    private final Method getter;
 	private final Type type;
 
 	public MethodPropertyMeta(String name, String columnName, ReflectionService reflectService, Method method, Type type) {
 		super(name, columnName, reflectService);
-		this.method = method;
+		this.setter = method;
 		this.type = type;
+        this.getter = null;
 	}
+
+    public MethodPropertyMeta(String name, String columnName, ReflectionService reflectService, Method setter, Method getter, Type type) {
+        super(name, columnName, reflectService);
+        this.setter = setter;
+        this.getter = getter;
+        this.type = type;
+    }
 
 	@Override
 	protected Setter<T, P> newSetter() {
-		return reflectService.getObjectSetterFactory().getMethodSetter(method);
+		return reflectService.getObjectSetterFactory().getMethodSetter(setter);
 	}
 
     @SuppressWarnings("unchecked")
     @Override
     protected Getter<T, P> newGetter() {
-        return reflectService.getObjectGetterFactory().<T,P>getGetter((Class<? super T>) method.getDeclaringClass(), SetterHelper.getPropertyNameFromMethodName(method.getName()));
+        if (getter == null) {
+            return reflectService.getObjectGetterFactory().<T, P>getGetter((Class<? super T>) setter.getDeclaringClass(), SetterHelper.getPropertyNameFromMethodName(setter.getName()));
+        } else {
+            return reflectService.getObjectGetterFactory().<T, P>getMethodGetter(getter);
+        }
     }
 
     @Override
@@ -43,7 +56,8 @@ public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
     @Override
     public String toString() {
         return "MethodPropertyMeta{" +
-                "method=" + method +
+                "setter=" + setter +
+                ", getter=" + getter +
                 ", type=" + type +
                 '}';
     }

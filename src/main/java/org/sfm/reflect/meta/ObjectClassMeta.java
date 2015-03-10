@@ -34,8 +34,21 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.<T>toClass(target)));
 		this.properties = Collections.unmodifiableList(listProperties(reflectService, target));
 	}
-	
-	private Map<String, String> aliases(final ReflectionService reflectService, Class<T> target) {
+
+    public ObjectClassMeta(Type target,
+                           List<ConstructorDefinition<T>> constructorDefinitions,
+                           List<ConstructorPropertyMeta<T, ?>> constructorProperties,
+                           List<PropertyMeta<T, ?>> properties,
+                           ReflectionService reflectService) {
+        this.target = target;
+        this.properties = properties;
+        this.constructorProperties = constructorProperties;
+        this.constructorDefinitions = constructorDefinitions;
+        this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.<T>toClass(target)));
+        this.reflectService = reflectService;
+    }
+
+    private Map<String, String> aliases(final ReflectionService reflectService, Class<T> target) {
 		final Map<String, String> map = new HashMap<String, String>();
 		
 		ClassVisitor.visit(target, new FieldAndMethodCallBack() {

@@ -340,7 +340,6 @@
 							<excludes>
                                 <exclude>**/org/sfm/sql2o/*</exclude>
                                 <exclude>**/org/sfm/**/*Spliterator*</exclude>
-                                <exclude>**/org/sfm/reflect/fasttuple/**/*</exclude>
 							</excludes>
 						</configuration>
 

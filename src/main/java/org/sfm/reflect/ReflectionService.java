@@ -67,7 +67,9 @@ public class ReflectionService {
 			return new ArrayClassMeta<T, E>(clazz, clazz.getComponentType(), this);
 		} else if (Tuples.isTuple(target)) {
 			return new TupleClassMeta<T>(target, this);
-		}
+		} else if (isFastTuple(clazz)) {
+            return new FastTupleClassMeta<T>(target, this);
+        }
 		if (root) {
             if (isDirectType(target)) {
                 return new DirectClassMeta<T>(target, this);
@@ -82,6 +84,11 @@ public class ReflectionService {
 			}
 		}
 	}
+
+    private <T> boolean isFastTuple(Class<T> clazz) {
+        Class<?> superClass = clazz.getSuperclass();
+        return superClass != null && "com.boundary.tuple.FastTuple".equals(superClass.getName());
+    }
 
     private boolean isDirectType(Type target) {
         return TypeHelper.isJavaLang(target)|| TypeHelper.isEnum(target) || TypeHelper.areEquals(target, Date.class);
@@ -102,7 +109,12 @@ public class ReflectionService {
 	public <T> List<ConstructorDefinition<T>> extractConstructors(Type target) throws IOException {
 		List<ConstructorDefinition<T>> list;
         if (isAsmPresent()) {
-			list = AsmConstructorDefinitionFactory.extractConstructors(target);
+            try {
+                list = AsmConstructorDefinitionFactory.extractConstructors(target);
+            } catch(IOException e) {
+                // no access to class file
+                list = ReflectionConstructorDefinitionFactory.extractConstructors(target);
+            }
 		} else {
 			list = ReflectionConstructorDefinitionFactory.extractConstructors(target);
 		}

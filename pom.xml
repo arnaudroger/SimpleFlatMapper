@@ -344,8 +344,9 @@
 								<configuration>
 									<testExcludes>
 										<exclude>**/org/sfm/sql2o/*</exclude>
-                                        <exclude>**/org/sfm/reflect/fasttuple/**/*</exclude>
-									</testExcludes>
+                                        <exclude>**/org/sfm/tuples/fasttuple/**/*</exclude>
+                                        <exclude>**/org/sfm/tuples/jool/**/*</exclude>
+                                    </testExcludes>
 								</configuration>
 								<goals>
 									<goal>testCompile</goal>
@@ -432,7 +433,8 @@
                                 <phase>test-compile</phase>
                                 <configuration>
                                     <testExcludes>
-                                        <exclude>**/org/sfm/reflect/fasttuple/**/*</exclude>
+                                        <exclude>**/org/sfm/tuples/fasttuple/**/*</exclude>
+                                        <exclude>**/org/sfm/tuples/jool/**/*</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>
@@ -479,7 +481,7 @@
                                 <phase>test-compile</phase>
                                 <configuration>
                                     <testExcludes>
-                                        <exclude>**/org/sfm/reflect/fasttuple/**/*</exclude>
+                                        <exclude>**/org/sfm/tuples/fasttuple/**/*</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>

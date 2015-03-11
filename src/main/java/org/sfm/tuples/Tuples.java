@@ -9,7 +9,23 @@ public class Tuples {
 
     public static boolean isTuple(Type type) {
         Class<?> clazz = TypeHelper.toClass(type);
-        return Tuple2.class.isAssignableFrom(clazz);
+        if (Tuple2.class.isAssignableFrom(clazz)) {
+            return true;
+        } else {
+            return isJoolTuple(clazz);
+        }
+    }
+
+    private static boolean isJoolTuple(Class<?> clazz) {
+        while(clazz != null) {
+            for(Class<?> i : clazz.getInterfaces()) {
+                if ("org.jooq.lambda.tuple.Tuple".equals(i.getName())) {
+                    return true;
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return false;
     }
 
     public static ParameterizedType typeDef(final Type... types) {

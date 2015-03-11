@@ -1,69 +1,77 @@
 package org.sfm.tuples.jool;
 
-import com.boundary.tuple.FastTuple;
-import com.boundary.tuple.TupleSchema;
+import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Test;
+import org.sfm.csv.CsvParser;
 import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
-import org.sfm.reflect.meta.PropertyFinder;
-import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.reflect.TypeReference;
+import org.sfm.reflect.meta.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Iterator;
+
+import static org.junit.Assert.*;
 
 public class JoolTupleTest {
 
 
 
     @Test
-    public void testMetaDataOnFastTuple() throws Exception {
-        TupleSchema schema = TupleSchema.builder().
-                addField("fieldA", Long.TYPE).
-                addField("fieldB", Integer.TYPE).
-                addField("fieldC", Short.TYPE).
-                heapMemory().
-                build();
+    public void testMetaDataOnJoolTuple() throws Exception {
+
 
         //creates a new tuple allocated on the JVM heap
-        FastTuple tuple = schema.createTuple();
 
-        System.out.println("super " + tuple.getClass().getSuperclass().toString());
-        for(Class<?> clazz : tuple.getClass().getInterfaces()) {
+        System.out.println("super " + Tuple3.class.toString());
+        for(Class<?> clazz : Tuple3.class.getInterfaces()) {
             System.out.println("I " + clazz.toString());
 
         }
-        System.out.println(tuple.getClass().getClassLoader());
 
-        ClassMeta<FastTuple> cm = ReflectionService.newInstance().getClassMeta(tuple.getClass(), true);
+        ClassMeta<Tuple3<Long, Integer, Short>> cm =
+                ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple3<Long, Integer, Short>>(){}.getType(), false);
 
-        final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder();
+        final PropertyFinder<Tuple3<Long, Integer, Short>> propertyFinder = cm.newPropertyFinder();
 
-        final PropertyMeta<FastTuple, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldA", 0, true, true));
-        final PropertyMeta<FastTuple, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldB", 0, true, true));
-        final PropertyMeta<FastTuple, Short> fieldC = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldC", 0, true, true));
-        final PropertyMeta<FastTuple, ?> fieldD = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldD", 0, true, true));
+        final PropertyMeta<Tuple3<Long, Integer, Short>, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt0", 0, true, true));
+        final PropertyMeta<Tuple3<Long, Integer, Short>, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt1", 0, true, true));
+        final PropertyMeta<Tuple3<Long, Integer, Short>, Short> fieldC = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt2", 0, true, true));
+        final PropertyMeta<Tuple3<Long, Integer, Short>, ?> fieldD = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt3", 0, true, true));
 
         assertNotNull(fieldA);
         assertNotNull(fieldB);
         assertNotNull(fieldC);
         assertNull(fieldD);
 
+        Tuple3<Long, Integer, Short> tuple = new Tuple3<Long, Integer, Short>(6l, 7, (short)3);
 
-        fieldA.getSetter().set(tuple, 6l);
+        assertTrue(fieldA instanceof ConstructorPropertyMeta);
+        assertTrue(fieldB instanceof ConstructorPropertyMeta);
+        assertTrue(fieldC instanceof ConstructorPropertyMeta);
+
         assertEquals(6l, fieldA.getGetter().get(tuple).longValue());
-
-        fieldB.getSetter().set(tuple, 7);
         assertEquals(7, fieldB.getGetter().get(tuple).intValue());
-
-        fieldC.getSetter().set(tuple, (short)3);
         assertEquals(3, fieldC.getGetter().get(tuple).shortValue());
 
     }
 
     @Test
-    public void testCsvParser() {
+    public void testCsvParser() throws IOException {
+        final CsvParser.StaticMapToDSL<Tuple3<Long, Integer, Short>> mapToDSL = CsvParser.mapTo(new TypeReference<Tuple3<Long, Integer, Short>>() {
+        }).defaultHeaders();
+        final Iterator<Tuple3<Long, Integer, Short>> iterator = mapToDSL.iterator(new StringReader("6,7,3\n7,8,9"));
 
+        final Tuple3<Long, Integer, Short> tuple1 = iterator.next();
+
+        assertEquals(6l, tuple1.v1().longValue());
+        assertEquals(7, tuple1.v2().intValue());
+        assertEquals((short)3, tuple1.v3().shortValue());
+
+        final Tuple3<Long, Integer, Short> tuple2 = iterator.next();
+
+        assertEquals(7l, tuple2.v1().longValue());
+        assertEquals(8, tuple2.v2().intValue());
+        assertEquals((short)9, tuple2.v3().shortValue());
     }
 }

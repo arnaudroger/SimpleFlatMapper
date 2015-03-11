@@ -5,9 +5,11 @@ import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
 import org.sfm.reflect.ReflectionService;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class TupleClassMeta<T> implements ClassMeta<T> {
 
@@ -21,14 +23,41 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 		this.reflectionService = reflectionService;
 
 		try {
-			this.constructorDefinitions = reflectionService.extractConstructors(type);
+			this.constructorDefinitions = getConstructorDefinitions(type, reflectionService);
+
+            if (constructorDefinitions.size() != 1) {
+                throw new IllegalStateException("More than one eligible constructor");
+            }
 		} catch(Exception e) {
 			throw new MapperBuildingException(e.getMessage(), e);
 		}
 	}
 
+    private List<ConstructorDefinition<T>> getConstructorDefinitions(Type type, ReflectionService reflectionService) throws java.io.IOException {
+        final List<ConstructorDefinition<T>> definitions = reflectionService.extractConstructors(type);
 
-	@Override
+        if (definitions.size() == 1) return definitions;
+
+        ListIterator<ConstructorDefinition<T>> iterator = definitions.listIterator();
+        while(iterator.hasNext()) {
+            final ConstructorDefinition<T> definition = iterator.next();
+            if (!isTupleConstructor(type, definition)) {
+                iterator.remove();
+            }
+        }
+
+        return definitions;
+    }
+
+    private boolean isTupleConstructor(Type type, ConstructorDefinition<T> definition) {
+        if (type instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) type;
+            return pt.getActualTypeArguments().length == definition.getParameters().length;
+        }
+        return true;
+    }
+
+    @Override
 	public ReflectionService getReflectionService() {
 		return reflectionService;
 	}

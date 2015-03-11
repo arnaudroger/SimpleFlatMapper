@@ -31,18 +31,20 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 	}
 
 	private <E> IndexedElement<T, E> newIndexedElement(TupleClassMeta<T> tupleClassMeta, int i) {
-		Type resolvedType = ((ParameterizedType) tupleClassMeta.getType()).getActualTypeArguments()[i];
 		ConstructorPropertyMeta<T, E> prop =
-                newConstructorPropertyMeta(tupleClassMeta, i, resolvedType);
-		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(resolvedType, false);
+                newConstructorPropertyMeta(tupleClassMeta, i);
+		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(prop.getType(), false);
 		return new IndexedElement<T, E>(prop, classMeta);
 	}
 
-    private <E> ConstructorPropertyMeta<T, E> newConstructorPropertyMeta(TupleClassMeta<T> tupleClassMeta, int i, Type resolvedType) {
+    private <E> ConstructorPropertyMeta<T, E> newConstructorPropertyMeta(TupleClassMeta<T> tupleClassMeta, int i) {
         Class<T> tClass = TypeHelper.toClass(tupleClassMeta.getType());
-        return new ConstructorPropertyMeta<T, E>("element" + (i),
-            "element" + (i), 	tupleClassMeta.getReflectionService(),
-            new ConstructorParameter("element" + (i), Object.class, resolvedType), tClass);
+
+        final ConstructorParameter constructorParameter = constructorDefinitions.get(0).getParameters()[i];
+
+        return new ConstructorPropertyMeta<T, E>(constructorParameter.getName(),
+                constructorParameter.getName(), 	tupleClassMeta.getReflectionService(),
+                constructorParameter, tClass);
     }
 
     @Override

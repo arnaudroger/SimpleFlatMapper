@@ -23,7 +23,7 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
             constructorDefinitions.add(new ConstructorDefinition<T>(clazz.getConstructor()));
             final List<PropertyMeta<T, ?>> properties = getPropertyMetas(clazz, reflectionService);
             this.delegate = new ObjectClassMeta<T>(target,
-                    constructorDefinitions, new ArrayList<>(), properties, reflectionService);
+                    constructorDefinitions, new ArrayList<ConstructorPropertyMeta<T, ?>>(), properties, reflectionService);
             this.headers = getHeaders(clazz);
         } catch (NoSuchMethodException e) {
             throw new MapperBuildingException(e.getMessage(), e);
@@ -51,7 +51,7 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
         final ArrayList<PropertyMeta<T, ?>> propertyMetas = new ArrayList<PropertyMeta<T, ?>>();
 
         for(Method m : clazz.getDeclaredMethods()) {
-            if (m.getParameterCount() == 0) {
+            if (m.getParameterTypes().length == 0) {
                 String field = m.getName();
 
                 Method getter = m;

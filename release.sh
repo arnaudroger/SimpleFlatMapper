@@ -1,5 +1,5 @@
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre/
-mvn release:prepare
+mvn release:prepare -DignoreSnapshots=true
 cp release.properties tmp/release.properties
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre/
 mvn release:perform

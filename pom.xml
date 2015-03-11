@@ -3,7 +3,7 @@
 
 	<groupId>org.simpleflatmapper</groupId>
 	<artifactId>simpleFlatMapper</artifactId>
-	<version>1.6.2-SNAPSHOT</version>
+	<version>1.7.0</version>
 	<packaging>bundle</packaging>
 
 	<name>SimpleFlatMapper</name>

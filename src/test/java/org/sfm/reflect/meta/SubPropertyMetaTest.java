@@ -20,8 +20,8 @@ public class SubPropertyMetaTest {
         assertTrue(property instanceof SubPropertyMeta);
         assertTrue(property.isSubProperty());
         assertEquals("SubPropertyMeta{" +
-                "ownerProperty=MethodPropertyMeta{method=public void org.sfm.beans.Db1DeepObject.setDbObject(org.sfm.beans.DbObject), type=class org.sfm.beans.DbObject}, " +
-                "subProperty=MethodPropertyMeta{method=public void org.sfm.beans.DbObject.setName(java.lang.String), type=class java.lang.String}}", property.toString());
+                "ownerProperty=MethodPropertyMeta{setter=public void org.sfm.beans.Db1DeepObject.setDbObject(org.sfm.beans.DbObject), getter=null, type=class org.sfm.beans.DbObject}, " +
+                "subProperty=MethodPropertyMeta{setter=public void org.sfm.beans.DbObject.setName(java.lang.String), getter=null, type=class java.lang.String}}", property.toString());
 
         SubPropertyMeta<Db1DeepObject, String> subPropertyMeta = (SubPropertyMeta<Db1DeepObject, String>) property;
 

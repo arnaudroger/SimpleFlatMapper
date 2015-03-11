@@ -1,8 +1,6 @@
 package org.sfm.reflect.asm;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -21,13 +19,14 @@ class FactoryClassLoader extends ClassLoader {
  	}
 
 	private final Map<String, ClassInfo> classes = new HashMap<String, ClassInfo>();
+    private final List<ClassLoader> delegateClassLoader = new ArrayList<ClassLoader>();
 	private final Lock lock = new ReentrantLock();
 	
 	public FactoryClassLoader(final ClassLoader parent) {
 		super(parent);
 	}
 
-	public Class<?> registerClass(final String name, final byte[] bytes) {
+	public Class<?> registerClass(final String name, final byte[] bytes, ClassLoader classLoader) {
 		lock.lock();
 		try {
 			ClassInfo info = classes.get(name);
@@ -40,6 +39,9 @@ class FactoryClassLoader extends ClassLoader {
 				Class<?> clazz = defineClass(name, bytes, 0, bytes.length);
 				info = new ClassInfo(bytes, clazz);
 				classes.put(name, info);
+                if (classLoader != null && !isAlreadyAccessible(classLoader)) {
+                    delegateClassLoader.add(classLoader);
+                }
 			}
 			
 			return info.clazz;
@@ -47,4 +49,48 @@ class FactoryClassLoader extends ClassLoader {
 			lock.unlock();
 		}
 	}
+
+    private boolean isAlreadyAccessible(ClassLoader classLoader) {
+        if (isAccessibleFrom(classLoader, getParent())) {
+            return true;
+        }
+
+        for(ClassLoader cl : delegateClassLoader) {
+            if (isAccessibleFrom(classLoader, cl)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isAccessibleFrom(ClassLoader classLoader, ClassLoader from) {
+
+        ClassLoader parent = from;
+
+        while(parent != null) {
+            if (parent.equals(classLoader)) {
+                return true;
+            }
+            parent = parent.getParent();
+        }
+
+        return false;
+    }
+
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        try {
+            return super.findClass(name);
+        } catch(ClassNotFoundException e) {
+            for(ClassLoader cl : delegateClassLoader) {
+                try {
+                    return cl.loadClass(name);
+                } catch(ClassNotFoundException e2) {
+                    ///
+                }
+            }
+            throw e;
+        }
+    }
 }

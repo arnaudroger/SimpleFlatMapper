@@ -3,6 +3,7 @@ package org.sfm.reflect;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.meta.*;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 public class FastTupleClassMeta<T> implements ClassMeta<T> {
 
     private final ClassMeta<T> delegate;
+    private final String[] headers;
 
     public FastTupleClassMeta(Type target, ReflectionService reflectionService) {
 
@@ -22,9 +24,27 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
             final List<PropertyMeta<T, ?>> properties = getPropertyMetas(clazz, reflectionService);
             this.delegate = new ObjectClassMeta<T>(target,
                     constructorDefinitions, new ArrayList<>(), properties, reflectionService);
+            this.headers = getHeaders(clazz);
         } catch (NoSuchMethodException e) {
             throw new MapperBuildingException(e.getMessage(), e);
         }
+    }
+
+    private String[] getHeaders(Class<?> clazz) {
+        try {
+            clazz.getDeclaredField("unsafe");
+            return null;
+        } catch(NoSuchFieldException e) {
+            final Field[] declaredFields = clazz.getDeclaredFields();
+            String[] headers = new String[declaredFields.length];
+
+            for(int i = 0; i < declaredFields.length; i++) {
+                headers[i] = declaredFields[i].getName();
+            }
+
+            return headers;
+        }
+
     }
 
     private ArrayList<PropertyMeta<T, ?>> getPropertyMetas(Class<T> clazz, ReflectionService reflectionService) throws NoSuchMethodException {
@@ -67,6 +87,10 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
 
     @Override
     public String[] generateHeaders() {
-        return delegate.generateHeaders();
+        if (headers == null) {
+            throw new UnsupportedOperationException("Cannot generate headers on directMemory tuple");
+        }  else {
+            return headers;
+        }
     }
 }

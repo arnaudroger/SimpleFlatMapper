@@ -32,12 +32,16 @@ public class AsmFactory {
 		if (setter == null) {
 			final String className = generateClassNameForSetter(m);
 			final byte[] bytes = generateSetterByteCodes(m, className);
-			final Class<?> type = factoryClassLoader.registerClass(className, bytes);
-			setter = (Setter<T, P>) type.newInstance();
+            final Class<?> type = createClass(className, bytes, m.getDeclaringClass().getClassLoader());
+            setter = (Setter<T, P>) type.newInstance();
 			setterCache.putIfAbsent(m, setter);
 		}
 		return setter;
 	}
+
+    private Class<?> createClass(String className, byte[] bytes, ClassLoader declaringClassLoader) {
+        return factoryClassLoader.registerClass(className, bytes, declaringClassLoader);
+    }
 
     @SuppressWarnings("unchecked")
     public <T, P> Getter<T,P> createGetter(final Method m) throws Exception {
@@ -45,7 +49,7 @@ public class AsmFactory {
         if (getter == null) {
             final String className = generateClassNameForGetter(m);
             final byte[] bytes = generateGetterByteCodes(m, className);
-            final Class<?> type = factoryClassLoader.registerClass(className, bytes);
+            final Class<?> type = createClass(className, bytes, m.getDeclaringClass().getClassLoader());
             getter = (Getter<T, P>) type.newInstance();
             getterCache.putIfAbsent(m, getter);
         }
@@ -77,7 +81,7 @@ public class AsmFactory {
 		if (instantiatorType == null) {
 			final String className = generateClassNameForInstantiator(instantiatorKey);
 			final byte[] bytes = ConstructorBuilder.createEmptyConstructor(className, source, target);
-			instantiatorType = (Class<? extends Instantiator<?, ?>>) factoryClassLoader.registerClass(className, bytes);
+			instantiatorType = (Class<? extends Instantiator<?, ?>>) createClass(className, bytes, target.getClassLoader());
 			instantiatorCache.putIfAbsent(instantiatorKey, instantiatorType);
 		}
 		return  (Instantiator<S, T>) instantiatorType.newInstance();
@@ -90,7 +94,7 @@ public class AsmFactory {
 		if (instantiator == null) {
 			final String className = generateClassNameForInstantiator(instantiatorKey);
 			final byte[] bytes = InstantiatorBuilder.createInstantiator(className, source, constructorDefinition, injections);
-			instantiator = (Class<? extends Instantiator<?, ?>>) factoryClassLoader.registerClass(className, bytes);
+			instantiator = (Class<? extends Instantiator<?, ?>>) createClass(className, bytes, constructorDefinition.getConstructor().getDeclaringClass().getClassLoader());
 			instantiatorCache.put(instantiatorKey, instantiator);
 		}
 
@@ -106,7 +110,7 @@ public class AsmFactory {
 	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final FieldMapper<ResultSet, T>[] constructorMappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
 		final String className = generateClassNameForJdbcMapper(mappers, constructorMappers, ResultSet.class, target);
 		final byte[] bytes = JdbcMapperAsmBuilder.dump(className, mappers, constructorMappers, target);
-		final Class<?> type = factoryClassLoader.registerClass(className, bytes);
+        final Class<?> type = createClass(className, bytes, target.getClass().getClassLoader());
         final Constructor<?> constructor = type.getDeclaredConstructors()[0];
         return (JdbcMapper<T>) constructor.newInstance(mappers, constructorMappers, instantiator, errorHandler, mappingContextFactory);
 	}

@@ -138,13 +138,7 @@
 		</dependency>
 
 	</dependencies>
-<repositories>
-    <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-    </repository>
 
-</repositories>
 	<profiles>
 		<profile>
 			<id>travis</id>
@@ -371,14 +365,6 @@
 				<source.classifier>jdk17-sources</source.classifier>
 				<javadoc.classifier>jdk17-javadoc</javadoc.classifier>
 			</properties>
-            <dependencies>
-                <dependency>
-                    <groupId>com.github.boundary</groupId>
-                    <artifactId>fasttuple.fasttuple-core</artifactId>
-                    <version>0.1-SNAPSHOT</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
 			<build>
 				<plugins>
 					<plugin>
@@ -439,6 +425,21 @@
                             </excludes>
 
                         </configuration>
+
+                        <executions>
+                            <execution>
+                                <id>default-testCompile</id>
+                                <phase>test-compile</phase>
+                                <configuration>
+                                    <testExcludes>
+                                        <exclude>**/org/sfm/reflect/fasttuple/**/*</exclude>
+                                    </testExcludes>
+                                </configuration>
+                                <goals>
+                                    <goal>testCompile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
 					</plugin>
 				</plugins>
 			</build>
@@ -448,6 +449,9 @@
             <id>jdk18</id>
             <activation>
                 <jdk>1.8</jdk>
+                <property>
+                    <name>!fasttuple</name>
+                </property>
             </activation>
             <dependencies>
                 <dependency>
@@ -456,14 +460,91 @@
                     <version>0.9.6</version>
                     <scope>provided</scope>
                 </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.1</version>
+                        <configuration>
+                            <source>1.8</source>
+                            <target>1.8</target>
+
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <id>default-testCompile</id>
+                                <phase>test-compile</phase>
+                                <configuration>
+                                    <testExcludes>
+                                        <exclude>**/org/sfm/reflect/fasttuple/**/*</exclude>
+                                    </testExcludes>
+                                </configuration>
+                                <goals>
+                                    <goal>testCompile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>fasttuple</id>
+            <activation>
+                <jdk>1.8</jdk>
+                <property>
+                    <name>fasttuple</name>
+                </property>
+            </activation>
+
+            <dependencies>
                 <dependency>
-                    <groupId>com.github.boundary</groupId>
-                    <artifactId>fasttuple.fasttuple-core</artifactId>
+                    <groupId>org.jooq</groupId>
+                    <artifactId>jool</artifactId>
+                    <version>0.9.6</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.boundary</groupId>
+                    <artifactId>fasttuple-core</artifactId>
                     <version>0.1-SNAPSHOT</version>
                     <scope>provided</scope>
                 </dependency>
             </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.1</version>
+                        <configuration>
+                            <source>1.8</source>
+                            <target>1.8</target>
+
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <id>default-testCompile</id>
+                                <phase>test-compile</phase>
+                                <configuration>
+                                    <testExcludes>
+                                    </testExcludes>
+                                </configuration>
+                                <goals>
+                                    <goal>testCompile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
+
 	</profiles>
 
 	<distributionManagement>

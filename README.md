@@ -1,18 +1,18 @@
 [![Build Status](https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
-# Simple Flat Mapper (SFM) [v1.6.1](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.6.0)
+# Simple Flat Mapper (SFM) [v1.7.0](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.7.0)
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 
-[Now with 1-N support for JdbcMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-JdbcMapper-1-N-relationship)
-
-[1.7](https://github.com/arnaudroger/SimpleFlatMapper/milestones/1.7.0) Will focus on porting the join ~~and discriminator~~ to the csv mapper.
+Now with :
+- 1-N support for [JdbcMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-JdbcMapper-1-N-relationship) and [CsvMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-JdbcMapper-1-N-relationship)
+- Fasttuple and jOOL tuple support.
 
 SFM provides fast and easy to use mapper for
 
-- [ResultSet aka micro ORM](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JdbcMapper)
-- [Csv](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser#with-csvmapper)
+- [ResultSet aka micro ORM](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JdbcMapper) with discriminator field and 1-n support
+- [Csv](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser#with-csvmapper) with 1-n support
 - [Jooq and Sql2o](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SFM-Integration-in-Jooq) 
 - [SpringJdbcTemplate](src/main/java/org/sfm/jdbc/spring)
 - [QueryDSL](src/main/java/org/sfm/querydsl)
@@ -61,7 +61,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.6.1</version>
+			<version>1.7.0</version>
 		</dependency>
 ```
 
@@ -71,7 +71,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.6.1</version>
+			<version>1.7.0</version>
 			<classifier>jdk17</classifier>
 		</dependency>
 ```
@@ -82,7 +82,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.6.1</version>
+			<version>1.7.0</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 ```

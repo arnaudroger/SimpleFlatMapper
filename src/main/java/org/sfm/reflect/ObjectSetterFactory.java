@@ -7,6 +7,7 @@ import org.sfm.reflect.primitive.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 public final class ObjectSetterFactory {
 	
@@ -40,19 +41,31 @@ public final class ObjectSetterFactory {
 		}
 	}
 
-	public <T, P> FieldSetter<T, P> getFieldSetter(final Class<?> target, final String property) {
+	public <T, P> Setter<T, P> getFieldSetter(final Class<?> target, final String property) {
 		// look for field
 		final Field field = lookForField(target, property);
 		
 		if (field != null) {
-			field.setAccessible(true);
-			return new FieldSetter<T, P>(field);
+            return getFieldSetter(field);
 		} else {
 			return null;
 		}
 	}
 
-	private Method lookForMethod(final Class<?> target, final String property) {
+    private <T, P> Setter<T, P> getFieldSetter(Field field) {
+        if (asmFactory != null && Modifier.isPublic(field.getModifiers())) {
+            try {
+                return asmFactory.createSetter(field);
+            } catch(Exception e) {
+            }
+        }
+        if (!Modifier.isPublic(field.getModifiers())) {
+            field.setAccessible(true);
+        }
+        return new FieldSetter<T, P>(field);
+    }
+
+    private Method lookForMethod(final Class<?> target, final String property) {
         if (target == null)  return null;
 
 		for(Method m : target.getDeclaredMethods()) {

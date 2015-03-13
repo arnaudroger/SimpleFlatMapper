@@ -1,8 +1,7 @@
 package org.sfm.reflect;
 
 import org.junit.Test;
-import org.sfm.beans.DbPrimitiveObjectWithSetter;
-import org.sfm.beans.Foo;
+import org.sfm.beans.*;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.primitive.*;
 
@@ -13,7 +12,7 @@ public class AsmSetterTest {
 	AsmFactory factory = new AsmFactory(Thread.currentThread().getContextClassLoader());
 
 	DbPrimitiveObjectWithSetter object = new DbPrimitiveObjectWithSetter();
-	
+	DbPrimitiveObjectFields objectField = new DbPrimitiveObjectFields();
 	@Test
 	public void testSet() throws Exception {
 		Setter<Foo, String> setter = factory.createSetter(Foo.class.getDeclaredMethod("setFoo", String.class));
@@ -91,4 +90,86 @@ public class AsmSetterTest {
 		setter.setDouble(object, 3.144);
 		assertEquals(3.144, object.getpDouble(), 0);
 	}
+
+
+
+    @Test
+    public void testField() throws Exception {
+        Setter<FooField, String> setter = factory.createSetter(FooField.class.getDeclaredField("foo"));
+        SetterHelperTest.validateFooField(setter);
+        Setter<BarField, String> bar = factory.createSetter(FooField.class.getField("bar"));
+        SetterHelperTest.validateBarField(bar);
+    }
+
+    @Test
+    public void testFieldBoolean() throws Exception {
+        @SuppressWarnings("unchecked")
+        BooleanSetter<DbPrimitiveObjectFields> setter =
+                (BooleanSetter<DbPrimitiveObjectFields>) factory.createSetter(DbPrimitiveObjectFields.class.getDeclaredField("pBoolean"));
+        setter.setBoolean(objectField, true);
+        assertEquals(true, objectField.ispBoolean());
+    }
+
+    @Test
+    public void testFieldByte() throws Exception {
+        @SuppressWarnings("unchecked")
+        ByteSetter<DbPrimitiveObjectFields> setter =
+                (ByteSetter<DbPrimitiveObjectFields>) factory.createSetter(DbPrimitiveObjectFields.class.getDeclaredField("pByte"));
+        setter.setByte(objectField, (byte)0xc3);
+        assertEquals((byte)0xc3, objectField.getpByte());
+    }
+
+    @Test
+    public void testFieldCharacter() throws Exception {
+        @SuppressWarnings("unchecked")
+        CharacterSetter<DbPrimitiveObjectFields> setter =
+                (CharacterSetter<DbPrimitiveObjectFields>) factory.createSetter(DbPrimitiveObjectFields.class.getDeclaredField("pCharacter"));
+        setter.setCharacter(objectField, 'g');
+        assertEquals('g', objectField.getpCharacter());
+    }
+
+    @Test
+    public void testFieldShort() throws Exception {
+        @SuppressWarnings("unchecked")
+        ShortSetter<DbPrimitiveObjectFields> setter =
+                (ShortSetter<DbPrimitiveObjectFields>) factory.createSetter(DbPrimitiveObjectFields.class.getDeclaredField("pShort"));
+        setter.setShort(objectField, (short)33);
+        assertEquals((short)33, objectField.getpShort());
+    }
+
+    @Test
+    public void testFieldInt() throws Exception {
+        @SuppressWarnings("unchecked")
+        IntSetter<DbPrimitiveObjectFields> setter =
+                (IntSetter<DbPrimitiveObjectFields>) factory.createSetter(DbPrimitiveObjectFields.class.getDeclaredField("pInt"));
+        setter.setInt(objectField, 35);
+        assertEquals(35, objectField.getpInt());
+    }
+
+    @Test
+    public void testFieldLong() throws Exception {
+        @SuppressWarnings("unchecked")
+        LongSetter<DbPrimitiveObjectFields> setter =
+                (LongSetter<DbPrimitiveObjectFields>) factory.createSetter(DbPrimitiveObjectFields.class.getDeclaredField("pLong"));
+        setter.setLong(objectField, 35l);
+        assertEquals(35l, objectField.getpLong());
+    }
+
+    @Test
+    public void testFieldFloat() throws Exception {
+        @SuppressWarnings("unchecked")
+        FloatSetter<DbPrimitiveObjectFields> setter =
+                (FloatSetter<DbPrimitiveObjectFields>) factory.createSetter(DbPrimitiveObjectFields.class.getDeclaredField("pFloat"));
+        setter.setFloat(objectField, 3.14f);
+        assertEquals(3.14f, objectField.getpFloat(), 0);
+    }
+
+    @Test
+    public void testFieldDouble() throws Exception {
+        @SuppressWarnings("unchecked")
+        DoubleSetter<DbPrimitiveObjectFields> setter =
+                (DoubleSetter<DbPrimitiveObjectFields>) factory.createSetter(DbPrimitiveObjectFields.class.getDeclaredField("pDouble"));
+        setter.setDouble(objectField, 3.144);
+        assertEquals(3.144, objectField.getpDouble(), 0);
+    }
 }

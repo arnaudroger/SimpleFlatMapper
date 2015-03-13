@@ -7,6 +7,7 @@ import org.sfm.map.FieldMapper;
 import org.sfm.reflect.*;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.util.HashMap;
@@ -18,8 +19,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class AsmFactory {
 	private final FactoryClassLoader factoryClassLoader;
-	private final ConcurrentMap<Method, Setter<?, ?>> setterCache = new ConcurrentHashMap<Method, Setter<?, ?>>();
-    private final ConcurrentMap<Method, Getter<?, ?>> getterCache = new ConcurrentHashMap<Method, Getter<?, ?>>();
+	private final ConcurrentMap<Object, Setter<?, ?>> setterCache = new ConcurrentHashMap<Object, Setter<?, ?>>();
+    private final ConcurrentMap<Object, Getter<?, ?>> getterCache = new ConcurrentHashMap<Object, Getter<?, ?>>();
 	private final ConcurrentMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>> instantiatorCache = new ConcurrentHashMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>>();
 	
 	public AsmFactory(ClassLoader cl) {
@@ -39,12 +40,39 @@ public class AsmFactory {
 		return setter;
 	}
 
+    @SuppressWarnings("unchecked")
+    public <T, P> Setter<T,P> createSetter(Field field) throws Exception {
+        Setter<T,P> setter = (Setter<T, P>) setterCache.get(field);
+        if (setter == null) {
+            final String className = generateClassNameForSetter(field);
+            final byte[] bytes = generateSetterByteCodes(field, className);
+            final Class<?> type = createClass(className, bytes, field.getDeclaringClass().getClassLoader());
+            setter = (Setter<T, P>) type.newInstance();
+            setterCache.putIfAbsent(field, setter);
+        }
+        return setter;
+    }
+
+
     private Class<?> createClass(String className, byte[] bytes, ClassLoader declaringClassLoader) {
         return factoryClassLoader.registerClass(className, bytes, declaringClassLoader);
     }
 
     @SuppressWarnings("unchecked")
     public <T, P> Getter<T,P> createGetter(final Method m) throws Exception {
+        Getter<T,P> getter = (Getter<T, P>) getterCache.get(m);
+        if (getter == null) {
+            final String className = generateClassNameForGetter(m);
+            final byte[] bytes = generateGetterByteCodes(m, className);
+            final Class<?> type = createClass(className, bytes, m.getDeclaringClass().getClassLoader());
+            getter = (Getter<T, P>) type.newInstance();
+            getterCache.putIfAbsent(m, getter);
+        }
+        return getter;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T, P> Getter<T,P> createGetter(final Field m) throws Exception {
         Getter<T,P> getter = (Getter<T, P>) getterCache.get(m);
         if (getter == null) {
             final String className = generateClassNameForGetter(m);
@@ -65,6 +93,15 @@ public class AsmFactory {
         }
     }
 
+    private byte[] generateGetterByteCodes(final Field m, final String className) throws Exception {
+        final Class<?> propertyType = m.getType();
+        if (AsmUtils.primitivesClassAndWrapper.contains(propertyType)) {
+            return GetterBuilder.createPrimitiveGetter(className, m);
+        } else {
+            return GetterBuilder.createObjectGetter(className, m);
+        }
+    }
+
 	private byte[] generateSetterByteCodes(final Method m, final String className) throws Exception {
 		final Class<?> propertyType = m.getParameterTypes()[0];
 		if (AsmUtils.primitivesClassAndWrapper.contains(propertyType)) {
@@ -73,6 +110,15 @@ public class AsmFactory {
 			return SetterBuilder.createObjectSetter(className, m);
 		}
 	}
+
+    private byte[] generateSetterByteCodes(final Field m, final String className) throws Exception {
+        final Class<?> propertyType = m.getType();
+        if (AsmUtils.primitivesClassAndWrapper.contains(propertyType)) {
+            return SetterBuilder.createPrimitiveSetter(className, m);
+        } else {
+            return SetterBuilder.createObjectSetter(className, m);
+        }
+    }
 	
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> createEmptyArgsInstantiator(final Class<S> source, final Class<? extends T> target) throws Exception {
@@ -146,13 +192,25 @@ public class AsmFactory {
 					;
 	}
 
+    private String generateClassNameForSetter(final Field field) {
+        return "org.sfm.reflect.asm." + field.getDeclaringClass().getPackage().getName() +
+                ".AsmSetter" + field.getName()
+                + replaceArray(field.getDeclaringClass().getSimpleName())
+                + replaceArray(field.getType().getSimpleName())
+                ;
+    }
     private String generateClassNameForGetter(final Method m) {
         return "org.sfm.reflect.asm." + m.getDeclaringClass().getPackage().getName() +
                 ".AsmGetter" + m.getName()
                 + replaceArray(m.getDeclaringClass().getSimpleName())
                 ;
     }
-	
+    private String generateClassNameForGetter(final Field m) {
+        return "org.sfm.reflect.asm." + m.getDeclaringClass().getPackage().getName() +
+                ".AsmGetter" + m.getName()
+                + replaceArray(m.getDeclaringClass().getSimpleName())
+                ;
+    }
 	private <S, T> String generateClassNameForJdbcMapper(final FieldMapper<S, T>[] mappers,final FieldMapper<S, T>[] mappers2, final Class<S> source, final Class<T> target) {
 		return "org.sfm.reflect.asm." + getPackageName(target) +
 					".AsmMapper" + replaceArray(source.getSimpleName()) + "2" +  replaceArray(target.getSimpleName()) + mappers.length + "_"+ mappers2.length + "_" + classNumber.getAndIncrement();
@@ -163,4 +221,5 @@ public class AsmFactory {
         Package targetPackage = target.getPackage();
         return targetPackage != null ? targetPackage.getName() : ".null";
     }
+
 }

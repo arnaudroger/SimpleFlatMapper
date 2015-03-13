@@ -1,10 +1,7 @@
 package org.sfm.reflect;
 
 import org.junit.Test;
-import org.sfm.beans.Bar;
-import org.sfm.beans.DbPrimitiveObject;
-import org.sfm.beans.DbPrimitiveObjectWithSetter;
-import org.sfm.beans.Foo;
+import org.sfm.beans.*;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.impl.FieldSetter;
 import org.sfm.reflect.impl.MethodSetter;
@@ -65,6 +62,19 @@ public class ObjectSetterFactoryTest {
 		Setter<Foo, String> setter = nonAsmfactory.getSetter(Foo.class, "xxbar");
 		assertNull(setter);
 	}
+
+
+    @Test
+    public void testPublicFieldAreAsm() throws Exception {
+        Setter<FooField, String> setter = asmfactory.getSetter(FooField.class, "bar");
+        assertFalse(setter instanceof FieldSetter);
+
+        FooField ff = new FooField();
+
+        setter.set(ff, "bar1");
+
+        assertEquals("bar1", ff.bar);
+    }
 	
 	@Test
 	public void testToBooleanSetter() throws Exception {

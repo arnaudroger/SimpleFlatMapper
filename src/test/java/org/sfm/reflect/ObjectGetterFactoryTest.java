@@ -3,6 +3,7 @@ package org.sfm.reflect;
 import org.junit.Test;
 import org.sfm.beans.*;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.impl.FieldGetter;
 import org.sfm.reflect.impl.MethodGetter;
 import org.sfm.reflect.primitive.*;
 
@@ -39,6 +40,17 @@ public class ObjectGetterFactoryTest {
         assertFalse(asm.getGetter(DbObject.class, "name") instanceof MethodGetter);
         assertEquals(dbfo.getName(), asm.getGetter(DbFinalObject.class, "name").get(dbfo));
         assertFalse(asm.getGetter(DbFinalObject.class, "name") instanceof MethodGetter);
+
+    }
+
+    @Test
+    public void testObjectFieldGetterAsm() throws Exception {
+
+        Getter<FooField, Object> getter = asm.getGetter(FooField.class, "foo");
+        assertFalse(getter instanceof FieldGetter);
+        FooField ff = new FooField();
+        ff.foo = "foo1";
+        assertEquals("foo1", getter.get(ff));
 
     }
 

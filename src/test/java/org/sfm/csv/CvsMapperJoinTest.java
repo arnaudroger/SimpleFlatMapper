@@ -82,7 +82,7 @@ public class CvsMapperJoinTest {
                 .addMapping("students_id")
                 .addMapping("students_name")
                 .addMapping("students_phones_value")
-                .<T>mapper();
+                .mapper();
     }
 
     private CsvMapperFactory getCsvMapperFactory() {

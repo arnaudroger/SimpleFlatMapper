@@ -451,58 +451,7 @@
             <id>jdk18</id>
             <activation>
                 <jdk>1.8</jdk>
-                <property>
-                    <name>!fasttuple</name>
-                </property>
             </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jooq</groupId>
-                    <artifactId>jool</artifactId>
-                    <version>0.9.6</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.1</version>
-                        <configuration>
-                            <source>1.8</source>
-                            <target>1.8</target>
-
-                        </configuration>
-
-                        <executions>
-                            <execution>
-                                <id>default-testCompile</id>
-                                <phase>test-compile</phase>
-                                <configuration>
-                                    <testExcludes>
-                                        <exclude>**/org/sfm/tuples/fasttuple/**/*</exclude>
-                                    </testExcludes>
-                                </configuration>
-                                <goals>
-                                    <goal>testCompile</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>fasttuple</id>
-            <activation>
-                <jdk>1.8</jdk>
-                <property>
-                    <name>fasttuple</name>
-                </property>
-            </activation>
-
             <dependencies>
                 <dependency>
                     <groupId>org.jooq</groupId>
@@ -517,38 +466,15 @@
                     <scope>provided</scope>
                 </dependency>
             </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.1</version>
-                        <configuration>
-                            <source>1.8</source>
-                            <target>1.8</target>
-
-                        </configuration>
-
-                        <executions>
-                            <execution>
-                                <id>default-testCompile</id>
-                                <phase>test-compile</phase>
-                                <configuration>
-                                    <testExcludes>
-                                    </testExcludes>
-                                </configuration>
-                                <goals>
-                                    <goal>testCompile</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
-
 	</profiles>
 
+    <repositories>
+        <repository>
+            <id>simpleflatmapper-maven-repository</id>
+            <url>https://arnaudroger.github.io/SimpleFlatMapper/maven/repository</url>
+        </repository>
+    </repositories>
 	<distributionManagement>
 		<snapshotRepository>
 			<id>sonatype-nexus-snapshots</id>

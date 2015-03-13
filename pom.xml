@@ -362,6 +362,14 @@
 			<activation>
 				<jdk>1.7</jdk>
 			</activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.boundary</groupId>
+                    <artifactId>fasttuple-core</artifactId>
+                    <version>0.1-SNAPSHOT</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
 			<properties>
 				<source.classifier>jdk17-sources</source.classifier>
 				<javadoc.classifier>jdk17-javadoc</javadoc.classifier>
@@ -433,7 +441,6 @@
                                 <phase>test-compile</phase>
                                 <configuration>
                                     <testExcludes>
-                                        <exclude>**/org/sfm/tuples/fasttuple/**/*</exclude>
                                         <exclude>**/org/sfm/tuples/jool/**/*</exclude>
                                     </testExcludes>
                                 </configuration>

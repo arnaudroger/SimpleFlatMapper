@@ -6,7 +6,7 @@ public interface FieldMapper<S, T> {
 	 * @param source object to map from
 	 * @param target object to map to
      * @param context the mapping context
-	 * @throws Exception
+	 * @throws Exception if an exception occurs
 	 */
 	void mapTo(S source, T target, MappingContext<S> context) throws Exception;
 }

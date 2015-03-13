@@ -100,6 +100,7 @@ public final class CsvParser {
 	/**
 	 * @param reader the reader
 	 * @return a csv reader based on the default setup.
+     * @throws java.io.IOException if an error occurs reading the data
 	 */
 	public static CsvReader reader(Reader reader) throws IOException {
 		return schema().reader(reader);
@@ -198,8 +199,9 @@ public final class CsvParser {
          * Parse the content from the reader as a csv and call back the cellConsumer with the cell values.
          * @param reader the reader
          * @param cellConsumer the callback object for each cell value
+         * @param <CC> the type of the cell consumer
          * @return cellConsumer
-         * @throws java.io.IOException
+         * @throws java.io.IOException if and error occurs in the reader
          */
         public <CC extends CellConsumer> CC parse(Reader reader, CC cellConsumer) throws IOException {
             CsvReader csvreader = reader(reader);
@@ -216,7 +218,7 @@ public final class CsvParser {
          * Create a CsvReader and the specified reader. Will skip the number of specified rows.
          * @param reader the content
          * @return a CsvReader on the reader.
-         * @throws java.io.IOException
+         * @throws java.io.IOException if an io error occurs
          */
         public CsvReader reader(Reader reader) throws IOException {
             CsvReader csvReader = new CsvReader(reader, charConsumer());

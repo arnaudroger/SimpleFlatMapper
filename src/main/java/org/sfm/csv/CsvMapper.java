@@ -18,6 +18,7 @@ public interface CsvMapper<T> {
 	 * 
 	 * @param reader the reader
 	 * @param handle the callback instance
+     * @param <H> the row handler type
 	 * @return the callback instance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
@@ -31,6 +32,7 @@ public interface CsvMapper<T> {
 	 *
 	 * @param reader the reader
 	 * @param handle the callback instance
+     * @param <H> the row handler type
 	 * @return the callback instance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
@@ -45,6 +47,7 @@ public interface CsvMapper<T> {
 	 * @param reader the reader
 	 * @param handle the callback instance
 	 * @param skip the number of row to skip
+     * @param <H> the row handler type
 	 * @return the callback instance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
@@ -60,6 +63,7 @@ public interface CsvMapper<T> {
 	 * @param handle the callback instance
 	 * @param skip the number of row to skip
 	 * @param limit the number of row to process
+     * @param <H> the row handler type
 	 * @return the callback instance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
@@ -73,6 +77,7 @@ public interface CsvMapper<T> {
 	 * @param reader the reader
 	 * @param handle the callback instance
 	 * @param limit the number of row to process
+     * @param <H> the row handler type
 	 * @return the callback instance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
@@ -84,7 +89,7 @@ public interface CsvMapper<T> {
 	 * 
 	 * @param reader the reader
 	 * @return an iterator on the file
-	 * @throws IOException
+     * @throws IOException if an io error occurs
 	 */
 	Iterator<T> iterator(Reader reader) throws IOException;
 
@@ -96,7 +101,7 @@ public interface CsvMapper<T> {
 	 *
 	 * @param reader the reader
 	 * @return an iterator on the file
-	 * @throws IOException
+     * @throws IOException if an io error occurs
 	 */
 	Iterator<T> iterator(CsvReader reader) throws IOException;
 
@@ -109,7 +114,7 @@ public interface CsvMapper<T> {
 	 * @param reader the reader
 	 * @param skip the number of row to skip
 	 * @return an iterator on the file
-	 * @throws IOException
+     * @throws IOException if an io error occurs
 	 */
 	Iterator<T> iterator(Reader reader, int skip) throws IOException;
 
@@ -121,7 +126,7 @@ public interface CsvMapper<T> {
 	 * 
 	 * @param reader the reader
 	 * @return stream of T
-	 * @throws IOException
+     * @throws IOException if an io error occurs
 	 */
 	//IFJAVA8_START
 	Stream<T> stream(Reader reader) throws IOException;
@@ -131,7 +136,7 @@ public interface CsvMapper<T> {
 	 *
 	 * @param reader the reader
 	 * @return stream of T
-	 * @throws IOException
+     * @throws IOException if an io error occurs
 	 */
 	//IFJAVA8_START
 	Stream<T> stream(CsvReader reader) throws IOException;
@@ -143,7 +148,7 @@ public interface CsvMapper<T> {
 	 * @param reader the reader
 	 * @param skip the number of row to skip
 	 * @return stream of T
-	 * @throws IOException
+     * @throws IOException if an io error occurs
 	 */
 	//IFJAVA8_START
 	Stream<T> stream(Reader reader, int skip) throws IOException;

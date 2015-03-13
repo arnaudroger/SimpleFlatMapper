@@ -45,8 +45,10 @@ public final class CsvReader implements Iterable<String[]> {
 
 	/**
 	 * parse cvs
-	 * 
-	 * @throws IOException
+     * @param cellConsumer the consumer that the parser will callback
+	 * @param <CC> the cell consumer type
+     * @throws java.io.IOException if an io error occurs
+     * @return the cell consumer
 	 */
 	public <CC extends CellConsumer> CC parseAll(CC cellConsumer)
 			throws IOException {
@@ -60,8 +62,9 @@ public final class CsvReader implements Iterable<String[]> {
 
 	/**
 	 * parse cvs
-	 *
-	 * @throws IOException
+	 * @param cellConsumer the cell consumer
+     * @return true if there was data consumed
+	 * @throws IOException if io error occurs
 	 */
 	public boolean parseRow(CellConsumer cellConsumer)
 			throws IOException {

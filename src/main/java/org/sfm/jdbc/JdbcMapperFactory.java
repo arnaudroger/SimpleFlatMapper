@@ -134,7 +134,9 @@ public final class JdbcMapperFactory {
 	 * Will create a instance of JdbcMapper based on the specified metadata and the target class.
 	 * @param target the target class of the mapper
 	 * @param metaData the metadata to create the mapper from
+     * @param <T> the mapper target type
 	 * @return a mapper that will map the data represented by the metadata to an instance of target
+     * @throws java.sql.SQLException if an error occurs getting the metaData
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target, final ResultSetMetaData metaData) throws SQLException {
 		JdbcMapperBuilder<T> builder = newBuilder(target);
@@ -145,6 +147,7 @@ public final class JdbcMapperFactory {
 	/**
 	 * Will create a instance of JdbcMapperBuilder on the specified target class.
 	 * @param target the target class
+     * @param <T> the mapper target type
 	 * @return the builder
 	 */
 	public <T> JdbcMapperBuilder<T> newBuilder(final Class<T> target) {
@@ -154,6 +157,7 @@ public final class JdbcMapperFactory {
     /**
      * Will create a instance of JdbcMapperBuilder on the type T specified by the typeReference.
      * @param target the typeReference
+     * @param <T> the mapper target type
      * @return the builder
      */
     public <T> JdbcMapperBuilder<T> newBuilder(final TypeReference<T> target) {
@@ -163,6 +167,7 @@ public final class JdbcMapperFactory {
     /**
      * Will create a instance of JdbcMapperBuilder on the specified type.
      * @param target the type
+     * @param <T> the mapper target type
      * @return the builder
      */
     public <T> JdbcMapperBuilder<T> newBuilder(final Type target) {
@@ -178,7 +183,8 @@ public final class JdbcMapperFactory {
 	/**
 	 * Will create a DynamicMapper on the specified target class.
 	 * @param target the class
-	 * @return the DynamicMapper
+     * @param <T> the mapper target type
+     * @return the DynamicMapper
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) {
 		return newMapper((Type)target);
@@ -187,6 +193,7 @@ public final class JdbcMapperFactory {
     /**
      * Will create a DynamicMapper on the type specified by the TypeReference.
      * @param target the TypeReference
+     * @param <T> the mapper target type
      * @return the DynamicMapper
      */
     public <T> JdbcMapper<T> newMapper(final TypeReference<T> target) {
@@ -196,6 +203,7 @@ public final class JdbcMapperFactory {
     /**
      * Will create a DynamicMapper on the specified type.
      * @param target the type
+     * @param <T> the mapper target type
      * @return the DynamicMapper
      */
 	public <T> JdbcMapper<T> newMapper(final Type target) {

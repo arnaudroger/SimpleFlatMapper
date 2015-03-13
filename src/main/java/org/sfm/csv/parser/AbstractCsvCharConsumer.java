@@ -49,10 +49,6 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 		return currentState == IN_QUOTE;
 	}
 
-	/**
-	 *
-	 * @return true if endOfLine
-	 */
 	protected final boolean handleEndOfLineLF(int currentIndex, CellConsumer cellConsumer) {
 		if (!isInQuote()) {
 			if (currentState != IN_CR) {

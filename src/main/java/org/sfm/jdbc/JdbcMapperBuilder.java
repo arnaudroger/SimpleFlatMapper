@@ -27,7 +27,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 
     /**
      * Build a new JdbcMapperBuilder targeting the type specified by the TypeReference. The TypeReference
-     * allow you to provide a generic type with check of T<br />
+     * allow you to provide a generic type with check of T<br>
      * <code>new TypeReference&lt;List&lt;String&gt;&gt;() {}</code>
      *
      * @param target the TypeReference to the type T to map to
@@ -219,7 +219,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
      *
      * @param metaData the metaDAta
      * @return the current builder
-     * @throws SQLException
+     * @throws SQLException when an error occurs getting the metaData
      */
     public JdbcMapperBuilder<T> addMapping(final ResultSetMetaData metaData) throws SQLException {
         for (int i = 1; i <= metaData.getColumnCount(); i++) {

@@ -85,6 +85,7 @@ public final class CsvMapperFactory {
 	
 	/**
 	 * @param disableAsm true if you want to disable asm.
+     * @return the current factory
 	 */
 	public CsvMapperFactory disableAsm(final boolean disableAsm) {
 		this.disableAsm = disableAsm;
@@ -105,8 +106,9 @@ public final class CsvMapperFactory {
 	/**
 	 * 
 	 * @param target the targeted class for the mapper
+     * @param <T> the targeted type
 	 * @return a jdbc mapper that will map to the targeted class.
-	 * @throws MapperBuildingException
+	 * @throws MapperBuildingException if an error occurs building the mapper
 	 */
 	public <T> CsvMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
 		return newMapper((Type)target);
@@ -132,8 +134,9 @@ public final class CsvMapperFactory {
 	/**
 	 * Will create a instance of ResultSetMapperBuilder 
 	 * @param target the target class of the mapper
+     * @param <T> the targeted type
 	 * @return a builder ready to instantiate a mapper or to be customized
-	 * @throws MapperBuildingException
+     * @throws MapperBuildingException if an error occurs building the mapper
 	 */
 	public <T> CsvMapperBuilder<T> newBuilder(final Class<T> target) {
 		return newBuilder((Type)target);

@@ -366,7 +366,7 @@
                 <dependency>
                     <groupId>com.boundary</groupId>
                     <artifactId>fasttuple-core</artifactId>
-                    <version>0.1-SNAPSHOT</version>
+                    <version>0.1</version>
                     <scope>provided</scope>
                 </dependency>
             </dependencies>
@@ -469,7 +469,7 @@
                 <dependency>
                     <groupId>com.boundary</groupId>
                     <artifactId>fasttuple-core</artifactId>
-                    <version>0.1-SNAPSHOT</version>
+                    <version>0.1</version>
                     <scope>provided</scope>
                 </dependency>
             </dependencies>

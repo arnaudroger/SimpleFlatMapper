@@ -102,7 +102,7 @@ public class CsvParserTest {
 	}
 
 	@Test
-	public void testDSLWitStatichMapper() throws IOException {
+	public void testDSLWitStaticMapper() throws IOException {
 		Iterator<Tuple2<String, String>> iterator =  CsvParser.<Tuple2<String, String>>mapTo(Tuples.typeDef(String.class, String.class)).headers("0", "1").iterator(new StringReader("value1,value2"));
 
 		assertTrue(iterator.hasNext());
@@ -336,7 +336,7 @@ public class CsvParserTest {
 		// dsl call
 		testiterator(expectations, separator, quote, cr, dsl);
 
-		testSkipAnditerator(expectations, separator, quote, cr, dsl);
+		testSkipAndIterator(expectations, separator, quote, cr, dsl);
 
 		testReadRows(expectations, separator, quote, cr, dsl);
 
@@ -392,7 +392,7 @@ public class CsvParserTest {
 		assertArrayEquals(expectations, rows.toArray(new String[0][]));
 	}
 
-	private void testSkipAnditerator(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+	private void testSkipAndIterator(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
 
 		List<String[]> rows = new ArrayList<String[]>();
 		for(String[] row : dsl.skip(1).reader(createReader(expectations, separator, quote, cr))) {

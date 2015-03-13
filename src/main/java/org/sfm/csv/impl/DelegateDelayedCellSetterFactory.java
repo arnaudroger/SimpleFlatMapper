@@ -1,7 +1,6 @@
 package org.sfm.csv.impl;
 
 import org.sfm.reflect.Setter;
-import org.sfm.utils.RowHandler;
 
 public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetterFactory<T, P> {
 
@@ -22,7 +21,7 @@ public class DelegateDelayedCellSetterFactory<T, P> implements DelayedCellSetter
 
 	public DelegateDelayedCellSetterFactory(
 			DelegateMarkerDelayedCellSetter<T, P> marker,
-			CsvMapperCellConsumer handler, int cellIndex) {
+			CsvMapperCellConsumer<P> handler, int cellIndex) {
 		this.cellConsumer = handler;
 		this.marker = marker;
 		this.cellIndex = cellIndex;

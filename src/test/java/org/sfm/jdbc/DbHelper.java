@@ -29,7 +29,7 @@ public class DbHelper {
 				st.execute("insert into TEST_DB_OBJECT values(1, 'name 1', 'name1@mail.com', TIMESTAMP'2014-03-04 11:10:03', 2, 'type4')");
 				
 				
-				st.execute("create table db_extented_type("
+				st.execute("create table db_extended_type("
 						+ " bytes varbinary(10),"
 						+ " url varchar(100), "
 						+ " time TIME(6),"
@@ -39,7 +39,7 @@ public class DbHelper {
 						+ " stringArray VARCHAR(20) ARRAY DEFAULT ARRAY[],"
 						+ " stringList VARCHAR(20) ARRAY DEFAULT ARRAY[] )");
 				
-				PreparedStatement ps = c.prepareStatement("insert into db_extented_type values (?, 'https://github.com/arnaudroger/SimpleFlatMapper',"
+				PreparedStatement ps = c.prepareStatement("insert into db_extended_type values (?, 'https://github.com/arnaudroger/SimpleFlatMapper',"
 						+ "'07:08:09', '2014-11-02', 123.321, 123, ARRAY [ 'HOT', 'COLD' ], ARRAY [ 'COLD', 'FREEZING' ])");
 				try {
 					ps.setBytes(1, new byte[] { 'a', 'b', 'c' });

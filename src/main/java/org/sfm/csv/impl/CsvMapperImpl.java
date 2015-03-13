@@ -204,7 +204,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	protected CsvMapperCellConsumer<T> newCellConsumer(final RowHandler<? super T> handler, BreakDetector parentBreakDetector) {
 
         DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetters.length];
-        Map<CsvMapper<?>, CsvMapperCellConsumer> cellHandlers = new HashMap<CsvMapper<?>, CsvMapperCellConsumer>();
+        Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers = new HashMap<CsvMapper<?>, CsvMapperCellConsumer<?>>();
         final BreakDetector breakDetector = newBreakDetector(parentBreakDetector, delayedCellSetters.length - 1);
 
         for(int i = delayedCellSetters.length - 1; i >= 0 ; i--) {
@@ -234,18 +234,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
         CellSetter<T>[] outSetters = new CellSetter[setters.length];
         for(int i = setters.length - 1; i >= 0 ; i--) {
             if (setters[i] instanceof DelegateMarkerSetter) {
-                DelegateMarkerSetter<?> marker = (DelegateMarkerSetter<?>) setters[i];
-
-                CsvMapperCellConsumer cellHandler = cellHandlers.get(marker.getMapper());
-
-                DelegateCellSetter<T> delegateCellSetter;
-
-                if(cellHandler == null) {
-                    delegateCellSetter = new DelegateCellSetter<T>(marker, i + delayedCellSetters.length, breakDetector);
-                    cellHandlers.put(marker.getMapper(), delegateCellSetter.getCellConsumer());
-                } else {
-                    delegateCellSetter = new DelegateCellSetter<T>(marker, cellHandler, i + delayedCellSetters.length);
-                }
+                DelegateCellSetter<T, ?> delegateCellSetter = getDelegateCellSetter(cellHandlers, breakDetector, i);
                 outSetters[i] = delegateCellSetter;
             } else {
                 outSetters[i] = setters[i];
@@ -270,6 +259,23 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
         }
 	}
+
+    @SuppressWarnings("unchecked")
+    private <P> DelegateCellSetter<T, P> getDelegateCellSetter(Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers, BreakDetector breakDetector, int i) {
+        DelegateMarkerSetter<T, P> marker = (DelegateMarkerSetter<T, P>) setters[i];
+
+        CsvMapperCellConsumer<P> cellHandler = (CsvMapperCellConsumer<P>) cellHandlers.get(marker.getMapper());
+
+        DelegateCellSetter<T, P> delegateCellSetter;
+
+        if(cellHandler == null) {
+            delegateCellSetter = new DelegateCellSetter<T, P>(marker, i + delayedCellSetters.length, breakDetector);
+            cellHandlers.put(marker.getMapper(), delegateCellSetter.getCellConsumer());
+        } else {
+            delegateCellSetter = new DelegateCellSetter<T, P>(marker, cellHandler, i + delayedCellSetters.length);
+        }
+        return delegateCellSetter;
+    }
 
     private BreakDetector newBreakDetector(BreakDetector parentBreakDetector, int delayedSetterEnd) {
         if (parentBreakDetector != null || joinKeys.length > 0) {

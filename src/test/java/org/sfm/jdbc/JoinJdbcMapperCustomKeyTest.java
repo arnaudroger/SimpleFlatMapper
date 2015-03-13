@@ -1,27 +1,17 @@
 package org.sfm.jdbc;
 
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
-import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.PropertyMeta;
-import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.Predicate;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.sfm.jdbc.JoinJdbcMapperOnTupleTest.*;
 
 public class JoinJdbcMapperCustomKeyTest {

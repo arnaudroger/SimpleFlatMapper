@@ -5,10 +5,10 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;
-import org.sfm.beans.DbExtentedType;
+import org.sfm.beans.DbExtendedType;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.DbHelper;
-import org.sfm.jdbc.JdbcMapperDbExtentedTypeTest;
+import org.sfm.jdbc.JdbcMapperDbExtendedTypeTest;
 
 import java.sql.Connection;
 import java.util.List;
@@ -34,7 +34,7 @@ public class JooqMapperTest {
 	}
 	
 	@Test
-	public void testMapperDbExtentedType() throws Exception {
+	public void testMapperDbExtendedType() throws Exception {
 		Connection conn = DbHelper.objectDb();
 
 		DSLContext dsl = DSL
@@ -42,14 +42,14 @@ public class JooqMapperTest {
 						.set(SQLDialect.HSQLDB)
 						.set(new SfmRecordMapperProvider()));
 		
-		List<DbExtentedType> list = dsl.select()
-				.from("db_extented_type").fetchInto(DbExtentedType.class);
+		List<DbExtendedType> list = dsl.select()
+				.from("db_extended_type").fetchInto(DbExtendedType.class);
 		
 		
 		assertEquals(1, list.size());
-		DbExtentedType o = list.get(0);
+		DbExtendedType o = list.get(0);
 		
-		JdbcMapperDbExtentedTypeTest.assertDbExtended(o);
+		JdbcMapperDbExtendedTypeTest.assertDbExtended(o);
 		
 	}
 }

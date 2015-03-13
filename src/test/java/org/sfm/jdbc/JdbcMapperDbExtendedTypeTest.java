@@ -1,7 +1,7 @@
 package org.sfm.jdbc;
 
 import org.junit.Test;
-import org.sfm.beans.DbExtentedType;
+import org.sfm.beans.DbExtendedType;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.RowHandler;
 
@@ -16,30 +16,30 @@ import java.util.List;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-public class JdbcMapperDbExtentedTypeTest {
+public class JdbcMapperDbExtendedTypeTest {
 	
 	@Test
-	public void testMapExtentedType() throws Exception {
+	public void testMapExtendedType() throws Exception {
 		
-		final JdbcMapper<DbExtentedType> mapper = JdbcMapperFactoryHelper.asm().newMapper(DbExtentedType.class);
+		final JdbcMapper<DbExtendedType> mapper = JdbcMapperFactoryHelper.asm().newMapper(DbExtendedType.class);
 		
 		
 		DbHelper.testQuery(new RowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement t) throws Exception {
-				List<DbExtentedType> list = mapper.forEach(t.executeQuery(), new ListHandler<DbExtentedType>()).getList();
+				List<DbExtendedType> list = mapper.forEach(t.executeQuery(), new ListHandler<DbExtendedType>()).getList();
 				assertEquals(1, list.size());
-				DbExtentedType o = list.get(0);
+				DbExtendedType o = list.get(0);
 				assertDbExtended(o);
 
 				
 			}
 
 
-		}, "select * from db_extented_type");
+		}, "select * from db_extended_type");
 	}
 	@SuppressWarnings("deprecation")
-	public static void assertDbExtended(DbExtentedType o) {
+	public static void assertDbExtended(DbExtendedType o) {
 		assertArrayEquals(new byte[] { 'a', 'b', 'c' }, o.getBytes());
 		assertEquals(new BigInteger("123"), o.getBigInteger());
 		assertEquals(new BigDecimal("123.321").toString(), o.getBigDecimal().toString());

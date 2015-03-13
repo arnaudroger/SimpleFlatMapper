@@ -64,7 +64,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
     /**
      * @param classMeta                  the meta for the target class.
      * @param mapperBuilderErrorHandler  the error handler.
-     * @param columnDefinitions          the predefined ColumnDefninition.
+     * @param columnDefinitions          the predefined ColumnDefinition.
      * @param propertyNameMatcherFactory the PropertyNameMatcher factory.
      * @param getterFactory              the Getter factory.
      * @param failOnAsm                  should we fail on asm generation.

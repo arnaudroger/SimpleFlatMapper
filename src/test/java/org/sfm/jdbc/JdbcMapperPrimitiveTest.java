@@ -1,7 +1,7 @@
 package org.sfm.jdbc;
 
 import org.junit.Test;
-import org.sfm.beans.DbBoxedPrimitveObject;
+import org.sfm.beans.DbBoxedPrimitiveObject;
 import org.sfm.beans.DbFinalPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.PrimitiveObject;
@@ -39,13 +39,13 @@ public class JdbcMapperPrimitiveTest {
 	
 	@Test
 	public void testIndexedBoxedPrimitivesWithFieldAccess() throws Exception {
-		JdbcMapperBuilder<DbBoxedPrimitveObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbBoxedPrimitveObject.class);
+		JdbcMapperBuilder<DbBoxedPrimitiveObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbBoxedPrimitiveObject.class);
 		testIndexedPrimitives(builder);
 	}
 	
 	@Test
 	public void testIndexedPrimitivesWithFieldAccessNullValues() throws Exception {
-		JdbcMapperBuilder<DbBoxedPrimitveObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbBoxedPrimitveObject.class);
+		JdbcMapperBuilder<DbBoxedPrimitiveObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbBoxedPrimitiveObject.class);
 		testIndexedPrimitivesWithNull(builder);
 	}
 	
@@ -56,7 +56,7 @@ public class JdbcMapperPrimitiveTest {
 		addIndexedColumn(builder);		
 		testPrimitives(builder.mapper());
 	}
-	private void testIndexedPrimitivesWithNull(JdbcMapperBuilder<DbBoxedPrimitveObject> builder)
+	private void testIndexedPrimitivesWithNull(JdbcMapperBuilder<DbBoxedPrimitiveObject> builder)
 			throws SQLException, Exception {
 		addIndexedColumn(builder);		
 		testPrimitivesWithNullValues(builder.mapper());
@@ -100,7 +100,7 @@ public class JdbcMapperPrimitiveTest {
 	}
 	
 	public void testPrimitivesWithNullValues(
-			Mapper<ResultSet, DbBoxedPrimitveObject> mapper) throws SQLException, Exception {
+			Mapper<ResultSet, DbBoxedPrimitiveObject> mapper) throws SQLException, Exception {
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.wasNull()).thenReturn(true);
 		
@@ -113,7 +113,7 @@ public class JdbcMapperPrimitiveTest {
 		when(rs.getFloat(7)).thenReturn(0f);
 		when(rs.getDouble(8)).thenReturn(0d);
 		
-		DbBoxedPrimitveObject object = mapper.map(rs);
+		DbBoxedPrimitiveObject object = mapper.map(rs);
 		
 		assertNull(object.getoBoolean());
 		assertNull(object.getoByte());

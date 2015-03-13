@@ -35,7 +35,7 @@ public class CsvMapperOneConstructorTypeTest {
 			this.value = value;
 		}
 		
-		public SubObjectAmbiguity(String value, int ivalue) {
+		public SubObjectAmbiguity(String value, int iValue) {
 			this.value = value;
 		}
 	}

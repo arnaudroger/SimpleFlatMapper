@@ -3,7 +3,6 @@ package org.sfm.reflect;
 import org.junit.Test;
 import org.sfm.beans.DbPrimitiveObjectFields;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
-import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.beans.Foo;
 import org.sfm.beans.FooField;
 import org.sfm.reflect.asm.AsmFactory;

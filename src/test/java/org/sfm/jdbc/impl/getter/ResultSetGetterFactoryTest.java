@@ -165,7 +165,7 @@ public class ResultSetGetterFactoryTest {
 	}
 
 	@Test
-	public void testJavaUtilDateFromUdefined() throws Exception {
+	public void testJavaUtilDateFromUndefined() throws Exception {
 		java.util.Date date = new java.util.Date(13l);
 		when(resultSet.getObject(1)).thenReturn(date);
         Getter<ResultSet, Object> getter = factory.newGetter(java.util.Date.class, key(JdbcColumnKey.UNDEFINED_TYPE));

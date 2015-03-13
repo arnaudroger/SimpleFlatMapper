@@ -26,7 +26,7 @@ public final class FinalDbObjectInstantiator implements Instantiator<ResultSet, 
 		this.getter_email = (StringResultSetGetter) injections.get("email");
 		this.getter_name = (StringResultSetGetter) injections.get("name");
 		this.getter_typeOrdinal = (OrdinalEnumResultSetGetter<Type>) injections.get("typeOrdinal");
-		this.getter_typeName = (StringEnumResultSetGetter<Type>) injections.get("typeNmae");
+		this.getter_typeName = (StringEnumResultSetGetter<Type>) injections.get("typeName");
 	}
 	
 	@Override

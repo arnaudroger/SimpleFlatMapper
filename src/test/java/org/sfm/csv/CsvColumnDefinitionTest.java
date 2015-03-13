@@ -16,7 +16,7 @@ public class CsvColumnDefinitionTest {
     @Test
     public void testComposition() {
 
-        TimeZone tz = TimeZone.getTimeZone("Europe/Brussel");
+        TimeZone tz = TimeZone.getTimeZone("Europe/Brussels");
         CellValueReaderFactory cellValueReaderFactory = new CellValueReaderFactory() {
             @Override
             public <P> CellValueReader<P> getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder contextFactoryBuilder) {
@@ -65,7 +65,7 @@ public class CsvColumnDefinitionTest {
         assertEquals("ColumnDefinition{DateFormat{'yyyyMM'}," +
                 " Rename{'blop'}, CustomReader{CellValueReader}," +
                 " CellValueReaderFactory{CellValueReaderFactory}," +
-                " TimeZone{Greenwich Mean Time}, Key{}, Ignore{}}", compose.addIgnore().toString());
+                " TimeZone{Central European Time}, Key{}, Ignore{}}", compose.addIgnore().toString());
 
 
 

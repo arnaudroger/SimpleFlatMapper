@@ -175,8 +175,8 @@ public final class CsvMapperFactory {
 		return this;
 	}
 
-    public CsvMapperFactory addKeys(String... colummns) {
-        for(String col : colummns) {
+    public CsvMapperFactory addKeys(String... columns) {
+        for(String col : columns) {
             addColumnDefinition(col, CsvColumnDefinition.key());
         }
         return this;

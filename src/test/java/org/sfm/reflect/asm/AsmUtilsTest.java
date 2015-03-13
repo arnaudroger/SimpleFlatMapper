@@ -81,7 +81,7 @@ public class AsmUtilsTest {
 
 
 	@Test
-	public void extractContructorTypes() throws  Exception {
+	public void extractConstructorTypes() throws  Exception {
 		String types = "([CILjava/util/List<Lorg/sfm/beans/DbObject;>;TT1;Ljava/lang/String;)V";
 		assertEquals(Arrays.asList("[C", "I", "Ljava/util/List<Lorg/sfm/beans/DbObject;>;", "TT1;", "Ljava/lang/String;"), AsmUtils.extractConstructorTypeNames(types));
 	}

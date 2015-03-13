@@ -5,7 +5,6 @@ import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
-import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuple3;
 import org.sfm.utils.ForEachCallBack;
 
@@ -151,11 +150,11 @@ public class CsvMapperBuilder<T> {
 
 	private Tuple3<Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>>, Integer, Boolean> buildConstructorParametersDelayedCellSetter() {
 
-        final BuildConstrutorInjections<T> tbuildConstrutorInjections = new BuildConstrutorInjections<T>();
-        propertyMappingsBuilder.forEachProperties(tbuildConstrutorInjections);
+        final BuildConstructorInjections buildConstructorInjections = new BuildConstructorInjections();
+        propertyMappingsBuilder.forEachProperties(buildConstructorInjections);
 
-		return new Tuple3<Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>>, Integer, Boolean>(tbuildConstrutorInjections.constructorInjections,
-                tbuildConstrutorInjections.delayedSetterEnd, tbuildConstrutorInjections.hasKeys);
+		return new Tuple3<Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>>, Integer, Boolean>(buildConstructorInjections.constructorInjections,
+                buildConstructorInjections.delayedSetterEnd, buildConstructorInjections.hasKeys);
 	}
 
 
@@ -258,7 +257,7 @@ public class CsvMapperBuilder<T> {
 		final Map<String, CsvMapperBuilder<?>> delegateMapperBuilders = new HashMap<String, CsvMapperBuilder<?>>();
 		
 		
-        // calculate maxindex
+        // calculate maxIndex
 		int maxIndex = propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
 
 			int maxIndex = delayedSetterEnd;
@@ -296,7 +295,7 @@ public class CsvMapperBuilder<T> {
 
 
 		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
-			final Map<String, CsvMapper<?>> mappers = new HashMap<String, CsvMapper<?>>();
+			final Map<String, CsvMapperImpl<?>> mappers = new HashMap<String, CsvMapperImpl<?>>();
 			final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
 
 			@Override
@@ -312,20 +311,26 @@ public class CsvMapperBuilder<T> {
 				}
 
 				if (prop instanceof SubPropertyMeta) {
-					final String propName = ((SubPropertyMeta)prop).getOwnerProperty().getName();
-					
-					CsvMapper<?> mapper = mappers.get(propName);
-					if (mapper == null) {
-						CsvMapperBuilder<?> delegateMapperBuilder = delegateMapperBuilders .get(propName);
-						mapper = delegateMapperBuilder.mapper();
-						mappers.put(propName, mapper);
-					}
-					setters[propMapping.getColumnKey().getIndex()- delayedSetterEnd] = new DelegateMarkerSetter(mapper, ((SubPropertyMeta) prop).getOwnerProperty().getSetter());
+                    DelegateMarkerSetter<T, ?> delegateMarkerSetter = getDelegateMarkerSetter((SubPropertyMeta) prop);
+
+                    setters[propMapping.getColumnKey().getIndex()- delayedSetterEnd] = delegateMarkerSetter;
 				} else {
 					setters[propMapping.getColumnKey().getIndex()- delayedSetterEnd] = cellSetterFactory.getCellSetter(prop, propMapping.getColumnKey().getIndex(), propMapping.getColumnDefinition(), parsingContextFactoryBuilder);
 				}
 			}
-		}, delayedSetterEnd);
+
+            private <P> DelegateMarkerSetter<T, P> getDelegateMarkerSetter(SubPropertyMeta<T, ?> prop) {
+                final String propName = prop.getOwnerProperty().getName();
+
+                CsvMapperImpl<P> mapper = (CsvMapperImpl<P>) mappers.get(propName);
+                if (mapper == null) {
+                    CsvMapperBuilder<P> delegateMapperBuilder = (CsvMapperBuilder<P>) delegateMapperBuilders.get(propName);
+                    mapper = (CsvMapperImpl<P>) delegateMapperBuilder.mapper();
+                    mappers.put(propName, mapper);
+                }
+                return new DelegateMarkerSetter<T, P>(mapper, (Setter<T, P>)prop.getOwnerProperty().getSetter());
+            }
+        }, delayedSetterEnd);
 		
 		
 		return setters;
@@ -342,13 +347,13 @@ public class CsvMapperBuilder<T> {
 		return this;
 	}
 
-    private class BuildConstrutorInjections<T> implements ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>> {
+    private class BuildConstructorInjections implements ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>> {
         final CellSetterFactory cellSetterFactory;
         private final Map<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>> constructorInjections;
         int delayedSetterEnd;
         boolean hasKeys;
 
-        public BuildConstrutorInjections() {
+        public BuildConstructorInjections() {
             this.constructorInjections = new HashMap<ConstructorParameter, Getter<DelayedCellSetter<T, ?>[], ?>>();
             cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
             delayedSetterEnd = minDelayedSetter;

@@ -1,7 +1,6 @@
 package org.sfm.tuples.fasttuple;
 
 import com.boundary.tuple.FastTuple;
-import com.boundary.tuple.HeapTupleSchema;
 import com.boundary.tuple.TupleSchema;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +20,11 @@ import static org.junit.Assert.*;
 
 public class FastTupleTest {
 
-
-    private TupleSchema schema;
     private FastTuple tuple;
 
     @Before
     public void setUp() throws Exception {
-        schema = TupleSchema.builder().
+        TupleSchema schema = TupleSchema.builder().
                 addField("fieldA", Long.TYPE).
                 addField("fieldB", Integer.TYPE).
                 addField("fieldC", Short.TYPE).

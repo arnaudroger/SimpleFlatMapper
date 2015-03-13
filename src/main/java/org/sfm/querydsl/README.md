@@ -2,9 +2,9 @@ QueryDSL Jdbc
 ------
 
 ```java
-SQLQuery sqlquery = new SQLQueryImpl(conn, new HSQLDBTemplates());
+SQLQuery sqlQuery = new SQLQueryImpl(conn, new HSQLDBTemplates());
 try {
-	return sqlquery
+	return sqlQuery
 		.from(qTestDbObject)
 		.where(qTestDbObject.id.eq(1l))
 		.list(new QueryDslMappingProjection<DbObject>(DbObject.class, 

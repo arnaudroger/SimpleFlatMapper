@@ -55,7 +55,7 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements CsvMappe
             FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
             RowHandlerErrorHandler rowHandlerErrorHandlers,
             RowHandler<? super T> handler,
-            ParsingContext parsingContext, BreakDetector breakDetector, Collection<CsvMapperCellConsumer> children) {
+            ParsingContext parsingContext, BreakDetector breakDetector, Collection<CsvMapperCellConsumer<?>> children) {
 		super();
 		this.instantiator = instantiator;
 		this.delayedCellSetters = delayedCellSetters;

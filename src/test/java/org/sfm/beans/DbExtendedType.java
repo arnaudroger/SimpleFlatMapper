@@ -6,7 +6,7 @@ import java.net.URL;
 import java.sql.Time;
 import java.util.List;
 
-public class DbExtentedType {
+public class DbExtendedType {
 	
 	private byte[] bytes;
 	private URL url;

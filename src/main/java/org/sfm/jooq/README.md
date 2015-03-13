@@ -1,4 +1,4 @@
-Jooq
+jOOQ
 -----
 
 See [JdbcTemplateMapperFactoryTest](/src/test/java/org/sfm/jdbc/spring/JdbcTemplateMapperFactoryTest.java) for more examples.

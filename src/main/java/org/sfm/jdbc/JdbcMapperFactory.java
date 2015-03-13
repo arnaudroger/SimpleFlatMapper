@@ -217,7 +217,7 @@ public final class JdbcMapperFactory {
 	/**
 	 * Associate the specified FieldMapper for the specified column.
 	 * @param key the column
-	 * @param fieldMapper the fieldmapper
+	 * @param fieldMapper the fieldMapper
 	 * @return the current factory
 	 */
 	public JdbcMapperFactory addCustomFieldMapper(String key, FieldMapper<ResultSet, ?> fieldMapper) {

@@ -49,7 +49,7 @@ public final class CsvMapperCellConsumerImpl<T> implements CsvMapperCellConsumer
             FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
             RowHandlerErrorHandler rowHandlerErrorHandlers,
             RowHandler<? super T> handler,
-            ParsingContext parsingContext, Collection<CsvMapperCellConsumer> children) {
+            ParsingContext parsingContext, Collection<CsvMapperCellConsumer<?>> children) {
 		super();
 		this.instantiator = instantiator;
 		this.delayedCellSetters = delayedCellSetters;

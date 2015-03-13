@@ -115,7 +115,7 @@ public class JdbcMapperConstructorInjectionTest {
 	
 	
 	@Test
-	public void testChooseSmallestMatchingConstructoNoAsm() throws Exception {
+	public void testChooseSmallestMatchingConstructorNoAsm() throws Exception {
 		JdbcMapperBuilder<DbConstructorObject> builder = JdbcMapperFactoryHelper.noAsm().newBuilder(DbConstructorObject.class);
 		
 		builder.addMapping("prop1");

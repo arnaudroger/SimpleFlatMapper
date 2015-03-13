@@ -31,13 +31,13 @@ public class AsmFactoryTest {
 	static AsmFactory asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader());
 	
 	@Test
-	public void testCreateInstatiatorEmptyConstructor() throws Exception {
+	public void testCreateInstantiatorEmptyConstructor() throws Exception {
 		Instantiator<ResultSet, DbObject> instantiator = asmFactory.createEmptyArgsInstantiator(ResultSet.class, DbObject.class);
 		assertNotNull(instantiator.newInstance(null));
 		assertSame(instantiator.getClass(), asmFactory.createEmptyArgsInstantiator(ResultSet.class, DbObject.class).getClass());
 	}
 	@Test
-	public void testCreateInstatiatorFinalDbObjectInjectIdAndName() throws Exception {
+	public void testCreateInstantiatorFinalDbObjectInjectIdAndName() throws Exception {
 		ConstructorDefinition<DbFinalObject> constructorDefinition = AsmConstructorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0);
 		HashMap<ConstructorParameter, Getter<ResultSet, ?>> injections = new HashMap<ConstructorParameter, Getter<ResultSet, ?>>();
 		injections.put(new ConstructorParameter("id", long.class), new LongResultSetGetter(1));
@@ -70,7 +70,7 @@ public class AsmFactoryTest {
 	}
 	
 	@Test
-	public void testCreateInstatiatorFinalDbObjectNameAndType() throws Exception {
+	public void testCreateInstantiatorFinalDbObjectNameAndType() throws Exception {
 		HashMap<ConstructorParameter, Getter<ResultSet, ?>> injections = new HashMap<ConstructorParameter, Getter<ResultSet, ?>>();
 		injections.put(new ConstructorParameter("typeOrdinal", Type.class), new OrdinalEnumResultSetGetter<Type>(1, Type.class));
 		injections.put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));

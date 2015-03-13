@@ -1,6 +1,6 @@
 package org.sfm.beans;
 
-public class DbBoxedPrimitveObject implements PrimitiveObject {
+public class DbBoxedPrimitiveObject implements PrimitiveObject {
 	
 	protected Boolean pBoolean;
 	protected Byte pByte;

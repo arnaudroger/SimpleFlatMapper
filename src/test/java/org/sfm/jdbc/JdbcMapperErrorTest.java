@@ -42,7 +42,7 @@ public class JdbcMapperErrorTest {
 		public Foo prop;
 	}
 	@Test
-	public void testHandleMapperErrorgGetterNotFound() throws NoSuchMethodException, SecurityException, IOException {
+	public void testHandleMapperErrorGetterNotFound() throws NoSuchMethodException, SecurityException, IOException {
 		MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
 
 		JdbcMapperBuilder<MyClass> builder = JdbcMapperFactoryHelper.asm().mapperBuilderErrorHandler(errorHandler).newBuilder(MyClass.class);

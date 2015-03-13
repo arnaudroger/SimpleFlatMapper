@@ -16,14 +16,14 @@ import java.util.Random;
  * 
 
 Stable Result :
-Exectime String	 69714000	DirectStringSetter
-Exectime Number	 57298000	DirectIntSetter
-Exectime String	 68962000	SettersetStringMyClassString
-Exectime Number	 62507000	SettersetNumberMyClassint
-Exectime String	 97349000	MethodSetter
-Exectime Number	253535000	IntMethodSetter
-Exectime String	149487000	FieldSetter
-Exectime Number	123140000	IntFieldSetter
+ExecTime String	 69714000	DirectStringSetter
+ExecTime Number	 57298000	DirectIntSetter
+ExecTime String	 68962000	SettersetStringMyClassString
+ExecTime Number	 62507000	SettersetNumberMyClassint
+ExecTime String	 97349000	MethodSetter
+ExecTime Number	253535000	IntMethodSetter
+ExecTime String	149487000	FieldSetter
+ExecTime Number	123140000	IntFieldSetter
 
  *
  */
@@ -156,14 +156,14 @@ public class SetterPerfTest {
 		long startTime = System.nanoTime();
 		runStringIteration(stringSetter, EXECT_NB);
 		long elapsed = System.nanoTime()- startTime;
-		System.out.println("Exectime String\t" + elapsed+"\t"+ stringSetter.getClass().getSimpleName());
+		System.out.println("ExecTime String\t" + elapsed+"\t"+ stringSetter.getClass().getSimpleName());
 	}
 	private void runNumberTest(IntSetter<MyClass> numberSetter) throws Exception {
 		
 		long startTime = System.nanoTime();
 		runNumberIteration(numberSetter, EXECT_NB);
 		long elapsed = System.nanoTime()- startTime;
-		System.out.println("Exectime Number\t" + elapsed+"\t"+ numberSetter.getClass().getSimpleName());
+		System.out.println("ExecTime Number\t" + elapsed+"\t"+ numberSetter.getClass().getSimpleName());
 	}
 	
 	

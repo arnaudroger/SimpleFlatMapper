@@ -1,32 +1,31 @@
 package org.sfm.csv.impl;
 
 import org.sfm.reflect.Setter;
-import org.sfm.utils.RowHandler;
 
-public class DelegateCellSetter<T> implements CellSetter<T> {
+public class DelegateCellSetter<T, P> implements CellSetter<T> {
 
-	private final DelegateMarkerSetter<?> marker;
-	private final CsvMapperCellConsumer handler;
-    private final Setter setter;
+	private final DelegateMarkerSetter<T, P> marker;
+	private final CsvMapperCellConsumer<P> handler;
+    private final Setter<T, P> setter;
 	private final int cellIndex;
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public DelegateCellSetter(DelegateMarkerSetter<?> marker, int cellIndex, BreakDetector parentBreakDetector) {
+	@SuppressWarnings("unchecked")
+    public DelegateCellSetter(DelegateMarkerSetter<T, P> marker, int cellIndex, BreakDetector parentBreakDetector) {
 		this.marker = marker;
-		this.handler = ((CsvMapperImpl<?>)marker.getMapper()).newCellConsumer(null, parentBreakDetector);
-        this.setter = marker.getSetter();
+		this.handler = marker.getMapper().newCellConsumer(null, parentBreakDetector);
+        this.setter = (Setter<T, P>) marker.getSetter();
 		this.cellIndex = cellIndex;
 	}
 
-	public DelegateCellSetter(DelegateMarkerSetter<?> marker,
-                              CsvMapperCellConsumer handler,  int cellIndex) {
+	public DelegateCellSetter(DelegateMarkerSetter<T, P> marker,
+                              CsvMapperCellConsumer<P> handler,  int cellIndex) {
 		this.marker = marker;
 		this.handler = handler;
 		this.cellIndex = cellIndex;
         this.setter = null;
 	}
 
-	@Override
+    @Override
 	public void set(T target, char[] chars, int offset, int length, ParsingContext context)
 			throws Exception {
 		this.handler.newCell(chars, offset, length, cellIndex);

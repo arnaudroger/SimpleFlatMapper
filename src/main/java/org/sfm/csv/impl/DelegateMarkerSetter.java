@@ -1,14 +1,13 @@
 package org.sfm.csv.impl;
 
-import org.sfm.csv.CsvMapper;
 import org.sfm.reflect.Setter;
 
-public class DelegateMarkerSetter<T> implements CellSetter<T> {
+public class DelegateMarkerSetter<T, P> implements CellSetter<T> {
 
-	private final CsvMapper<?> mapper;
-	private final Setter<T, ?> setter;
+	private final CsvMapperImpl<P> mapper;
+	private final Setter<T, P> setter;
  
-	public DelegateMarkerSetter(CsvMapper<?> mapper, Setter<T, ?> setter) {
+	public DelegateMarkerSetter(CsvMapperImpl<P> mapper, Setter<T, P> setter) {
 		this.mapper = mapper;
 		this.setter = setter;
 	}
@@ -19,12 +18,12 @@ public class DelegateMarkerSetter<T> implements CellSetter<T> {
 		throw new UnsupportedOperationException();
 	}
 
-	public CsvMapper<?> getMapper() {
+	public CsvMapperImpl<P> getMapper() {
 		return mapper;
 	}
 
 
-	public Setter<T, ?> getSetter() {
+	public Setter<T, P> getSetter() {
 		return setter;
 	}
 

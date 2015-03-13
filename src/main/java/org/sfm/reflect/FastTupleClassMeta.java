@@ -25,27 +25,40 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
             final List<PropertyMeta<T, ?>> properties = getPropertyMetas(clazz, reflectionService);
             this.delegate = new ObjectClassMeta<T>(target,
                     constructorDefinitions, new ArrayList<ConstructorPropertyMeta<T, ?>>(), properties, reflectionService);
-            this.headers = getHeaders(clazz);
+            this.headers = getHeaders(clazz, properties);
         } catch (NoSuchMethodException e) {
             throw new MapperBuildingException(e.getMessage(), e);
         }
     }
 
-    private String[] getHeaders(Class<?> clazz) {
+    private String[] getHeaders(Class<?> clazz, List<PropertyMeta<T, ?>> properties) {
         try {
             clazz.getDeclaredField("unsafe");
             return null;
         } catch(NoSuchFieldException e) {
             final Field[] declaredFields = clazz.getDeclaredFields();
-            String[] headers = new String[declaredFields.length];
+            String[] headers = new String[properties.size()];
 
             for(int i = 0; i < declaredFields.length; i++) {
-                headers[i] = declaredFields[i].getName();
+
+                String name = declaredFields[i].getName();
+                if (isPresent(properties, name)) {
+                    headers[i] = name;
+                }
             }
 
             return headers;
         }
 
+    }
+
+    private boolean isPresent(List<PropertyMeta<T, ?>> properties, String name) {
+        for(PropertyMeta<T, ?> pm : properties) {
+            if (pm.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private ArrayList<PropertyMeta<T, ?>> getPropertyMetas(Class<T> clazz, ReflectionService reflectionService) throws NoSuchMethodException {

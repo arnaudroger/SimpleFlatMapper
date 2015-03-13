@@ -14,6 +14,7 @@ import org.sfm.reflect.meta.PropertyMeta;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import static org.junit.Assert.*;
@@ -63,8 +64,8 @@ public class FastTupleTest {
         fieldC.getSetter().set(tuple, (short)3);
         assertEquals(3, fieldC.getGetter().get(tuple).shortValue());
 
-
-        assertArrayEquals(new String[] {"fieldA", "fieldB", "fieldC"}, cm.generateHeaders());
+        System.out.println(Arrays.toString(cm.generateHeaders()));
+        assertArrayEquals(new String[]{"fieldA", "fieldB", "fieldC"}, cm.generateHeaders());
     }
 
     @Test

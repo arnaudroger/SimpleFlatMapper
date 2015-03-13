@@ -362,7 +362,18 @@ public final class CsvParser {
 			return new MapToDSL<T>(getDsl(), classMeta, mapToClass, newColumnDefinitionProvider(predicate, columnDefinition));
 		}
 
-		private CsvColumnDefinitionProviderImpl newColumnDefinitionProvider(Predicate<? super CsvColumnKey> predicate, CsvColumnDefinition columnDefinition) {
+        public MapWithDSL<T> addKeys(String... keys) {
+            List<Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>> definitions = columnDefinitionProvider.getDefinitions();
+
+            for(String key : keys) {
+                definitions.add(new Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>(new CaseInsensitiveFieldKeyNamePredicate(key),
+                        CsvColumnDefinition.key()));
+            }
+
+            return new MapToDSL<T>(getDsl(), classMeta, mapToClass, new CsvColumnDefinitionProviderImpl(definitions));
+        }
+
+        private CsvColumnDefinitionProviderImpl newColumnDefinitionProvider(Predicate<? super CsvColumnKey> predicate, CsvColumnDefinition columnDefinition) {
 			List<Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>> definitions = columnDefinitionProvider.getDefinitions();
 			definitions.add(new Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>(predicate, columnDefinition));
 			return new CsvColumnDefinitionProviderImpl(definitions);
@@ -376,6 +387,9 @@ public final class CsvParser {
 			return staticMapper().addMapping(column);
 		}
 
+        public StaticMapToDSL<T> addKey(String key) {
+            return staticMapper().addKey(key);
+        }
 		public StaticMapToDSL<T> addMapping(String column, CsvColumnDefinition columnDefinition) {
 			return staticMapper().addMapping(column, columnDefinition);
 		}
@@ -383,7 +397,9 @@ public final class CsvParser {
 		private StaticMapToDSL<T> staticMapper() {
 			return new StaticMapToDSL<T>(getDsl().skip(1), classMeta, mapToClass, Collections.<Tuple2<String,CsvColumnDefinition>>emptyList(), columnDefinitionProvider);
 		}
-	}
+
+
+    }
 
 	public static final class StaticMapToDSL<T> extends  MapWithDSL<T> {
 		private final ClassMeta<T> classMeta;
@@ -417,7 +433,11 @@ public final class CsvParser {
 			newColumns.add(new Tuple2<String, CsvColumnDefinition>(column, columnDefinition));
 			return new StaticMapToDSL<T>(getDsl(), classMeta, mapToClass, newColumns, columnDefinitionProvider);
 		}
-	}
+
+        public StaticMapToDSL<T> addKey(String key) {
+            return addMapping(key, CsvColumnDefinition.key());
+        }
+    }
 
 	public static class MapWithDSL<T> {
 		private final DSL dsl;

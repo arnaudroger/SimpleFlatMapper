@@ -32,13 +32,16 @@ public class CvsMapperJoinTest {
     }
 
     @Test
-    public void testStaticProfessorC() throws IOException {
-        final CsvMapper<JoinJdbcMapperTest.ProfessorC> mapper =
-                geStaticCsvMapper(getCsvMapperFactory(), JoinJdbcMapperTest.ProfessorC.class);
-
-        final List<JoinJdbcMapperTest.ProfessorC> professors =
-                mapper.forEach(new StringReader(DATA), new ListHandler<JoinJdbcMapperTest.ProfessorC>()).getList();
-
+    public void testStaticCsvParserDSL() throws IOException {
+        List<JoinJdbcMapperTest.ProfessorGS> professors =
+                CsvParser.mapTo(JoinJdbcMapperTest.ProfessorGS.class)
+                        .addKey("id")
+                        .addMapping("name")
+                        .addKey("students_id")
+                        .addMapping("students_name")
+                        .addMapping("students_phones_value")
+                        .forEach(new StringReader(HEADER_DATA), new ListHandler<JoinJdbcMapperTest.ProfessorGS>())
+                        .getList();
         JoinJdbcMapperTest.validateProfessors(professors);
     }
 
@@ -51,6 +54,29 @@ public class CvsMapperJoinTest {
 
         JoinJdbcMapperTest.validateProfessors(professors);
     }
+
+    @Test
+    public void testDynamicCsvParserDSL() throws IOException {
+        List<JoinJdbcMapperTest.ProfessorGS> professors =
+                CsvParser.mapTo(JoinJdbcMapperTest.ProfessorGS.class)
+                        .addKeys("id", "students_id")
+                        .forEach(new StringReader(HEADER_DATA), new ListHandler<JoinJdbcMapperTest.ProfessorGS>())
+                        .getList();
+        JoinJdbcMapperTest.validateProfessors(professors);
+    }
+
+
+    @Test
+    public void testStaticProfessorC() throws IOException {
+        final CsvMapper<JoinJdbcMapperTest.ProfessorC> mapper =
+                geStaticCsvMapper(getCsvMapperFactory(), JoinJdbcMapperTest.ProfessorC.class);
+
+        final List<JoinJdbcMapperTest.ProfessorC> professors =
+                mapper.forEach(new StringReader(DATA), new ListHandler<JoinJdbcMapperTest.ProfessorC>()).getList();
+
+        JoinJdbcMapperTest.validateProfessors(professors);
+    }
+
 
     @Test
     public void testDynamicProfessorC() throws IOException {

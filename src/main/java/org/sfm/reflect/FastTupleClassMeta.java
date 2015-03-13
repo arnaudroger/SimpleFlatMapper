@@ -5,6 +5,7 @@ import org.sfm.reflect.meta.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,7 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
         final ArrayList<PropertyMeta<T, ?>> propertyMetas = new ArrayList<PropertyMeta<T, ?>>();
 
         for(Method m : clazz.getDeclaredMethods()) {
-            if (m.getParameterTypes().length == 0) {
+            if (m.getParameterTypes().length == 0 && GetterHelper.methodModifiersMatches(m.getModifiers())) {
                 String field = m.getName();
 
                 Method getter = m;

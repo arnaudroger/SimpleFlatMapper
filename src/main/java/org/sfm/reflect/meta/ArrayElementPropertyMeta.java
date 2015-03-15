@@ -10,8 +10,8 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
 	private final int index;
 	private final ArrayClassMeta<T, E> arrayMetaData;
-	public ArrayElementPropertyMeta(String name,  String column, ReflectionService reflectService, int index, ArrayClassMeta<T, E> arrayMetaData) {
-		super(name, column, reflectService);
+	public ArrayElementPropertyMeta(String name,  ReflectionService reflectService, int index, ArrayClassMeta<T, E> arrayMetaData) {
+		super(name, reflectService);
         if (index < 0) throw new IllegalArgumentException("Invalid array index " + index);
 		this.index = index;
 		this.arrayMetaData = arrayMetaData;

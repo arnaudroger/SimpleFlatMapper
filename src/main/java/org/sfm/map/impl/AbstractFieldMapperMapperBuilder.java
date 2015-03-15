@@ -4,6 +4,7 @@ import org.sfm.jdbc.impl.getter.MapperGetterAdapter;
 import org.sfm.map.*;
 import org.sfm.map.impl.fieldmapper.MapperFieldMapper;
 import org.sfm.reflect.*;
+import org.sfm.reflect.impl.NullGetter;
 import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ForEachCallBack;
@@ -89,6 +90,8 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
             Map<ConstructorParameter, Getter<S, ?>> injections = constructorInjections.first();
             Instantiator<S, T> instantiator = instantiatorFactory.getInstantiator(source, target, propertyMappingsBuilder, injections, getterFactory);
             return new Tuple2<FieldMapper<S, T>[], Instantiator<S, T>>(constructorInjections.second(), instantiator);
+        } catch(RuntimeException e) {
+            throw e;
 		} catch(Exception e) {
 			throw new MapperBuildingException(e.getMessage(), e);
 		}
@@ -135,10 +138,14 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
     @SuppressWarnings("unchecked")
     private <P> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties, PropertyMeta<T, ?> meta, Mapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
 
+        final Getter<T, P> getter = (Getter<T, P>) meta.getGetter();
+        if (mappingContextFactoryBuilder.isEmpty() && getter instanceof NullGetter) {
+            throw new MapperBuildingException("Cannot get a getter on " + meta + " needed to work with join " + mappingContextFactoryBuilder);
+        }
         final MapperFieldMapper<S, T, P> fieldMapper =
                 new MapperFieldMapper<S, T, P>((Mapper<S, P>) mapper,
                         (Setter<T, P>) meta.getSetter(),
-                        (Getter<T, P>) meta.getGetter(),
+                        getter,
                         mappingContextFactoryBuilder.nullChecker(),
                         mappingContextFactoryBuilder.breakDetectorGetter());
 

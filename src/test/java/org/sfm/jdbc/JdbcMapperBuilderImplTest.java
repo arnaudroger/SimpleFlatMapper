@@ -61,7 +61,7 @@ public class JdbcMapperBuilderImplTest {
         try {
             builder.mapper();
             fail();
-        } catch(MapperBuildingException e) {
+        } catch(UnsupportedOperationException e) {
             // expected
         }
     }
@@ -93,14 +93,14 @@ public class JdbcMapperBuilderImplTest {
 		try {
 			builder.mapper();
 			fail("Expected exception");
-		} catch(MapperBuildingException e) {
+		} catch(UnsupportedOperationException e) {
 		}
 
 		asmPresent = false;
 		try {
 			builder.mapper();
 			fail("Expected exception");
-		} catch(MapperBuildingException e) {
+		} catch(UnsupportedOperationException e) {
 		}
 }
 

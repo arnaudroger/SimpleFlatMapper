@@ -79,7 +79,7 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
     }
 
     private <P> MethodPropertyMeta<T, P> newPropertyMethod(String field, Method getter, Method setter, ReflectionService reflectionService) {
-        return new MethodPropertyMeta<T, P>(field, field, reflectionService, setter, getter, getter.getGenericReturnType());
+        return new MethodPropertyMeta<T, P>(field, reflectionService, setter, getter, getter.getGenericReturnType());
     }
 
     @Override

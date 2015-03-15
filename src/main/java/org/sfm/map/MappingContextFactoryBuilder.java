@@ -314,6 +314,7 @@ public class MappingContextFactoryBuilder<S, K> {
         return "MappingContextFactoryBuilder{" +
                 "currentIndex=" + currentIndex +
                 ", keys=" + keys +
+                ", children=" + children +
                 '}';
     }
 }

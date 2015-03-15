@@ -14,8 +14,8 @@ public class FieldPropertyMeta<T, P> extends PropertyMeta<T, P> {
 	private final Field field;
 	private final Type type;
 
-	public FieldPropertyMeta(String name, String columnName, ReflectionService reflectService, Field field, Type type) {
-		super(name, columnName, reflectService);
+	public FieldPropertyMeta(String name, ReflectionService reflectService, Field field, Type type) {
+		super(name, reflectService);
 		this.field = field;
 		this.type = type;
 	}

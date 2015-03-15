@@ -14,15 +14,15 @@ public class MethodPropertyMeta<T, P> extends PropertyMeta<T, P> {
     private final Method getter;
 	private final Type type;
 
-	public MethodPropertyMeta(String name, String columnName, ReflectionService reflectService, Method method, Type type) {
-		super(name, columnName, reflectService);
+	public MethodPropertyMeta(String name, ReflectionService reflectService, Method method, Type type) {
+		super(name, reflectService);
 		this.setter = method;
 		this.type = type;
         this.getter = null;
 	}
 
-    public MethodPropertyMeta(String name, String columnName, ReflectionService reflectService, Method setter, Method getter, Type type) {
-        super(name, columnName, reflectService);
+    public MethodPropertyMeta(String name, ReflectionService reflectService, Method setter, Method getter, Type type) {
+        super(name, reflectService);
         this.setter = setter;
         this.getter = getter;
         this.type = type;

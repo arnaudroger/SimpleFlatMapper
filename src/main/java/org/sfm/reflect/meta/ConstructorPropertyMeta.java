@@ -1,6 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.reflect.*;
+import org.sfm.reflect.impl.NullGetter;
 import org.sfm.reflect.impl.NullSetter;
 
 import java.lang.reflect.Type;
@@ -9,8 +10,11 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
     private final Class<T> owner;
 
-    public ConstructorPropertyMeta(String name, String column, ReflectionService reflectService, ConstructorParameter constructorParameter, Class<T> owner) {
-		super(name, column, reflectService);
+    public ConstructorPropertyMeta(String name,
+                                   ReflectionService reflectService,
+                                   ConstructorParameter constructorParameter,
+                                   Class<T> owner) {
+		super(name, reflectService);
 		this.constructorParameter = constructorParameter;
         this.owner = owner;
 	}
@@ -24,7 +28,11 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
     @Override
     protected Getter<T, P> newGetter() {
-        return reflectService.getObjectGetterFactory().getGetter(owner, getName());
+        final Getter<T, P> getter = reflectService.getObjectGetterFactory().getGetter(owner, getName());
+        if (getter == null) {
+            return new NullGetter<T, P>();
+        }
+        return getter;
     }
 
     @Override

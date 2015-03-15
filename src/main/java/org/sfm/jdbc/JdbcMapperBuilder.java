@@ -111,6 +111,9 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
                 return reflectionService.getAsmFactory().createJdbcMapper(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), getTargetClass(), jdbcMapperErrorHandler, mappingContextFactory);
             } catch (Exception e) {
                 if (failOnAsm) {
+                    if (e instanceof RuntimeException) {
+                        throw ((RuntimeException)e);
+                    }
                     throw new MapperBuildingException(e.getMessage(), e);
                 } else {
                     return new JdbcMapperImpl<T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), jdbcMapperErrorHandler, mappingContextFactory);

@@ -26,8 +26,10 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		this.target = target;
 		this.reflectService = reflectService;
 		try {
-			this.constructorDefinitions = reflectService.extractConstructors(target);
-			this.constructorProperties = Collections.unmodifiableList(listProperties(constructorDefinitions));
+            this.constructorDefinitions = reflectService.extractConstructors(target);
+            this.constructorProperties = Collections.unmodifiableList(listProperties(constructorDefinitions));
+        } catch(RuntimeException e) {
+            throw e;
 		} catch(Exception e) {
 			throw new MapperBuildingException(e.getMessage(), e);
 		}
@@ -87,7 +89,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
     private <P> ConstructorPropertyMeta<T, P> constructorMeta(ConstructorParameter param, String paramName) {
         Class<T> tClass = TypeHelper.toClass(this.target);
-        return new ConstructorPropertyMeta<T, P>(paramName, paramName, reflectService, param, tClass);
+        return new ConstructorPropertyMeta<T, P>(paramName, reflectService, param, tClass);
     }
 
     private List<PropertyMeta<T, ?>> listProperties(final ReflectionService reflectService, Type targetType) {
@@ -112,7 +114,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
                         }
                     }
 
-					MethodPropertyMeta<T, Object> propertyMeta = new MethodPropertyMeta<T, Object>(propertyName, getAlias(propertyName), reflectService, method, resolvedType);
+					MethodPropertyMeta<T, Object> propertyMeta = new MethodPropertyMeta<T, Object>(propertyName, reflectService, method, resolvedType);
                     if (indexOfProperty == -1) {
                         properties.add(propertyMeta);
                     } else {
@@ -136,7 +138,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
                                 resolvedType = mappedType;
                             }
                         }
-						properties.add(new FieldPropertyMeta<T, Object>(field.getName(), getAlias(name), reflectService, field, resolvedType));
+						properties.add(new FieldPropertyMeta<T, Object>(field.getName(), reflectService, field, resolvedType));
                     }
 				}
 			}
@@ -155,7 +157,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	}
 
 
-	private String getAlias(String propertyName) {
+	protected String getAlias(String propertyName) {
 		String columnName = this.fieldAliases.get(propertyName);
 		if (columnName == null) {
 			columnName = propertyName;

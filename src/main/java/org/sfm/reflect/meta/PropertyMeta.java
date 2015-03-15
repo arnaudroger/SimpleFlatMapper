@@ -9,17 +9,15 @@ import java.lang.reflect.Type;
 
 public abstract class PropertyMeta<O, P> {
 	private final String name;
-	private final String column;
-	
+
 	protected final ReflectionService reflectService;
 	
 	private volatile Setter<O, P> setter;
     private volatile Getter<O, P> getter;
 	private volatile ClassMeta<P> classMeta;
 
-	public PropertyMeta(String name, String column, ReflectionService reflectService) {
+	public PropertyMeta(String name, ReflectionService reflectService) {
 		this.name = name;
-		this.column = column;
 		this.reflectService = reflectService;
 	}
 
@@ -46,10 +44,6 @@ public abstract class PropertyMeta<O, P> {
 
 	public final String getName() {
 		return name;
-	}
-
-	public final String getColumn() {
-		return column;
 	}
 
 	public abstract Type getType();

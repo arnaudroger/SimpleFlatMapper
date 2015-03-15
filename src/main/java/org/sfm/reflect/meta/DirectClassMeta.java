@@ -46,7 +46,7 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
 
         @Override
         public <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
-            return new DirectPropertyMeta<E>("direct", "direct", reflectService, target);
+            return new DirectPropertyMeta<E>("direct", reflectService, target);
         }
 
         @Override
@@ -63,8 +63,8 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
     public class DirectPropertyMeta<E> extends PropertyMeta<T, E> {
         private final Type type;
 
-        public DirectPropertyMeta(String name, String column, ReflectionService reflectService, Type type) {
-            super(name, column, reflectService);
+        public DirectPropertyMeta(String name, ReflectionService reflectService, Type type) {
+            super(name, reflectService);
             this.type = type;
         }
 

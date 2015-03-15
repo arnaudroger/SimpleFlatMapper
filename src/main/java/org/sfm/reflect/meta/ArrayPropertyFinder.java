@@ -69,10 +69,10 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 
     private PropertyMeta<T, E> newElementPropertyMeta(int index, String name) {
         if (arrayClassMeta.isArray()) {
-            return new ArrayElementPropertyMeta<T, E>(name, name,
+            return new ArrayElementPropertyMeta<T, E>(name,
                     arrayClassMeta.getReflectionService(), index, arrayClassMeta);
         } else {
-            return new ListElementPropertyMeta<T, E>(name, name,
+            return new ListElementPropertyMeta<T, E>(name,
                     arrayClassMeta.getReflectionService(), index, arrayClassMeta, new BooleanSupplier() {
 
                 @Override

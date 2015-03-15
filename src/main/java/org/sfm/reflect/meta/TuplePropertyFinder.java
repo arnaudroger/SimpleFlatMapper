@@ -40,8 +40,7 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 
         final ConstructorParameter constructorParameter = constructorDefinitions.get(0).getParameters()[i];
 
-        return new ConstructorPropertyMeta<T, E>(constructorParameter.getName(),
-                constructorParameter.getName(), 	tupleClassMeta.getReflectionService(),
+        return new ConstructorPropertyMeta<T, E>(constructorParameter.getName(), tupleClassMeta.getReflectionService(),
                 constructorParameter, tClass);
     }
 

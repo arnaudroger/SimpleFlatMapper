@@ -14,8 +14,8 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 	private final ArrayClassMeta<T, E> arrayMetaData;
     private final BooleanSupplier isVerticalList;
 
-    public ListElementPropertyMeta(String name, String column, ReflectionService reflectService, int index, ArrayClassMeta<T, E> arrayMetaData, BooleanSupplier isVerticalList) {
-		super(name, column, reflectService);
+    public ListElementPropertyMeta(String name, ReflectionService reflectService, int index, ArrayClassMeta<T, E> arrayMetaData, BooleanSupplier isVerticalList) {
+		super(name, reflectService);
 		this.index = index;
 		this.arrayMetaData = arrayMetaData;
         this.isVerticalList = isVerticalList;

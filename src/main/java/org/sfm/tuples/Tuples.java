@@ -16,7 +16,7 @@ public class Tuples {
         }
     }
 
-    private static boolean isJoolTuple(Class<?> clazz) {
+    public static boolean isJoolTuple(Class<?> clazz) {
         while(clazz != null) {
             for(Class<?> i : clazz.getInterfaces()) {
                 if ("org.jooq.lambda.tuple.Tuple".equals(i.getName())) {

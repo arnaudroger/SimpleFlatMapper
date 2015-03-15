@@ -86,6 +86,17 @@ The binaries are available in maven central. There is a build for
 			<classifier>jdk16</classifier>
 		</dependency>
 ```
+### Asm
+
+to benefit from the asm generation or constructor injection - otherwise the param name will be resolved to arg0,arg1,...,argn - you will also need the asm library.
+
+```xml
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>5.0.3</version>
+		</dependency
+```
 
 ### Quick Samples
 

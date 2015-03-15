@@ -1,5 +1,7 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.tuples.Tuple2;
+
 public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	private final String column;
 	private final int from;
@@ -112,4 +114,26 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 			return null;
 		}
 	}
+
+    @Override
+    public Tuple2<String, PropertyNameMatcher> speculativeMatch() {
+
+        int index = _speculativeMatch();
+
+        if (index != -1) {
+            return new Tuple2<String, PropertyNameMatcher>(column.substring(from, index), new DefaultPropertyNameMatcher(column, index, exactMatch, caseSensitive));
+        } else {
+            return null;
+        }
+    }
+
+    private int _speculativeMatch() {
+        for(int i = from; i < column.length(); i++) {
+            char c = column.charAt(i);
+            if (c == '_' || c == '.') {
+                return i;
+            }
+        }
+        return -1;
+    }
 }

@@ -3,9 +3,12 @@ package org.sfm.reflect.meta;
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.tuples.Tuple2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TuplePropertyFinder<T> implements PropertyFinder<T> {
@@ -16,6 +19,7 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 
     private final List<ConstructorDefinition<T>> constructorDefinitions;
 
+    private final Map<String, Integer> speculativesIndex = new HashMap<String, Integer>();
 
 	public TuplePropertyFinder(TupleClassMeta<T> tupleClassMeta) {
 		this.tupleClassMeta = tupleClassMeta;
@@ -53,6 +57,11 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 			indexedColumn = extrapolateIndex(propertyNameMatcher);
 		}
 
+        if (indexedColumn == null) {
+            indexedColumn = speculativeMatching(propertyNameMatcher, indexedColumn);
+
+        }
+
 		if (indexedColumn == null || calculateTupleIndex(indexedColumn) >= elements.size()) {
 			return null;
 		}
@@ -79,7 +88,26 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
 		return new SubPropertyMeta(tupleClassMeta.getReflectionService(), indexedElement.getPropertyMeta(), subProp);
 	}
 
-	private int calculateTupleIndex(IndexedColumn indexedColumn) {
+    private IndexedColumn speculativeMatching(PropertyNameMatcher propertyNameMatcher, IndexedColumn indexedColumn) {
+        // try to match against prefix
+        Tuple2<String, PropertyNameMatcher> speculativeMatch = propertyNameMatcher.speculativeMatch();
+
+        if (speculativeMatch != null) {
+            Integer index = speculativesIndex.get(speculativeMatch.first());
+
+            if (index == null) {
+                indexedColumn = extrapolateIndex(speculativeMatch.getElement1());
+                if (indexedColumn != null) {
+                    speculativesIndex.put(speculativeMatch.first(), indexedColumn.getIndexValue());
+                }
+            } else {
+                indexedColumn = new IndexedColumn(index, speculativeMatch.getElement1());
+            }
+        }
+        return indexedColumn;
+    }
+
+    private int calculateTupleIndex(IndexedColumn indexedColumn) {
 		return indexedColumn.getIndexValue();
 	}
 

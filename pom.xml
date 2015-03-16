@@ -72,50 +72,49 @@
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm</artifactId>
 			<version>5.0.3</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>4.0.6.RELEASE</version>
-			<scope>provided</scope>
+            <optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.persistence</artifactId>
 			<version>2.0.0</version>
-			<scope>provided</scope>
-		</dependency>
+            <optional>true</optional>
+        </dependency>
 		<dependency>
 			<groupId>org.sql2o</groupId>
 			<artifactId>sql2o</artifactId>
 			<version>1.5.3</version>
-			<scope>provided</scope>
-		</dependency>
+            <optional>true</optional>
+        </dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
 			<version>5.0.0</version>
-			<scope>provided</scope>
+            <optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.mysema.querydsl</groupId>
 			<artifactId>querydsl-sql</artifactId>
 			<version>3.6.2</version>
-			<scope>provided</scope>
+            <optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
 			<version>3.4.2</version>
-			<scope>provided</scope>
+            <optional>true</optional>
 		</dependency>
 
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.7</version>
-			<scope>provided</scope>
+            <optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -368,7 +367,7 @@
                     <groupId>com.boundary</groupId>
                     <artifactId>fasttuple-core</artifactId>
                     <version>0.1</version>
-                    <scope>provided</scope>
+                    <optional>true</optional>
                 </dependency>
             </dependencies>
 			<properties>
@@ -465,13 +464,13 @@
                     <groupId>org.jooq</groupId>
                     <artifactId>jool</artifactId>
                     <version>0.9.6</version>
-                    <scope>provided</scope>
+                    <optional>true</optional>
                 </dependency>
                 <dependency>
                     <groupId>com.boundary</groupId>
                     <artifactId>fasttuple-core</artifactId>
                     <version>0.1</version>
-                    <scope>provided</scope>
+                    <optional>true</optional>
                 </dependency>
             </dependencies>
         </profile>

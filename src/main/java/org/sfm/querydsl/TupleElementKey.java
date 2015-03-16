@@ -16,7 +16,7 @@ public class TupleElementKey implements FieldKey<TupleElementKey> {
 			@SuppressWarnings("rawtypes")
 			PathMetadata<?> metadata = ((Path) expression).getMetadata();
 			if (metadata.getPathType() == PathType.PROPERTY) {
-				name = metadata.getExpression().toString();
+				name = metadata.getElement().toString();
 			} else {
 				throw new MappingException("Unexpected expression " + expression);
 			}

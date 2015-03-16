@@ -2,7 +2,6 @@ package org.sfm.querydsl;
 
 import com.mysema.query.sql.HSQLDBTemplates;
 import com.mysema.query.sql.SQLQuery;
-import com.mysema.query.sql.SQLQueryImpl;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.DbHelper;
@@ -25,7 +24,7 @@ public class TestQueryDSL {
 		
 		Connection conn = DbHelper.objectDb();
 		
-		SQLQuery sqlquery = new SQLQueryImpl(conn, new HSQLDBTemplates());
+		SQLQuery sqlquery = new SQLQuery(conn, new HSQLDBTemplates());
 		try {
 			 List<DbObject> list = sqlquery.from(qTestDbObject).where(qTestDbObject.id.eq(1l)).list(new QueryDslMappingProjection<DbObject>(DbObject.class, qTestDbObject.id,
 					qTestDbObject.name, qTestDbObject.email, qTestDbObject.creationTime, qTestDbObject.typeName, qTestDbObject.typeOrdinal ));

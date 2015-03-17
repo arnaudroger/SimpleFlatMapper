@@ -3,31 +3,19 @@ package org.sfm.reflect.meta;
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
 import org.sfm.reflect.TypeHelper;
-import org.sfm.tuples.Tuple2;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TuplePropertyFinder<T> implements PropertyFinder<T> {
-
-	private final TupleClassMeta<T> tupleClassMeta;
-
-	private final List<IndexedElement<T, ?>> elements;
+public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
 
     private final List<ConstructorDefinition<T>> constructorDefinitions;
 
-    private final Map<String, Integer> speculativesIndex = new HashMap<String, Integer>();
+    public TuplePropertyFinder(TupleClassMeta<T> tupleClassMeta) {
+        super(tupleClassMeta);
+        this.constructorDefinitions = tupleClassMeta.getConstructorDefinitions();
 
-	public TuplePropertyFinder(TupleClassMeta<T> tupleClassMeta) {
-		this.tupleClassMeta = tupleClassMeta;
-		this.constructorDefinitions = tupleClassMeta.getConstructorDefinitions();
-
-		this.elements = new ArrayList<IndexedElement<T, ?>>();
-
-		for(int i = 0; i < tupleClassMeta.getTupleSize(); i++) {
+        for(int i = 0; i < tupleClassMeta.getTupleSize(); i++) {
 			elements.add(newIndexedElement(tupleClassMeta, i));
 		}
 	}
@@ -49,88 +37,33 @@ public class TuplePropertyFinder<T> implements PropertyFinder<T> {
     }
 
     @Override
-	public <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
-
-		IndexedColumn indexedColumn = propertyNameMatcher.matchesIndex();
-
-		if (indexedColumn == null) {
-			indexedColumn = extrapolateIndex(propertyNameMatcher);
-		}
-
-        if (indexedColumn == null) {
-            indexedColumn = speculativeMatching(propertyNameMatcher, indexedColumn);
-
-        }
-
-		if (indexedColumn == null || calculateTupleIndex(indexedColumn) >= elements.size()) {
-			return null;
-		}
-
-		IndexedElement indexedElement = elements.get(calculateTupleIndex(indexedColumn));
-
-		if (!indexedColumn.hasSubProperty()) {
-			return indexedElement.getPropertyMeta();
-		}
-
-		PropertyFinder<?> propertyFinder = indexedElement.getPropertyFinder();
-
-		if (propertyFinder == null) {
-			return null;
-		}
-
-		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getSubPropertyNameMatcher());
-		if (subProp == null) {
-			return null;
-		}
-
-		indexedElement.addProperty(subProp);
-
-		return new SubPropertyMeta(tupleClassMeta.getReflectionService(), indexedElement.getPropertyMeta(), subProp);
-	}
-
-    private IndexedColumn speculativeMatching(PropertyNameMatcher propertyNameMatcher, IndexedColumn indexedColumn) {
-        // try to match against prefix
-        Tuple2<String, PropertyNameMatcher> speculativeMatch = propertyNameMatcher.speculativeMatch();
-
-        if (speculativeMatch != null) {
-            Integer index = speculativesIndex.get(speculativeMatch.first());
-
-            if (index == null) {
-                indexedColumn = extrapolateIndex(speculativeMatch.getElement1());
-                if (indexedColumn != null) {
-                    speculativesIndex.put(speculativeMatch.first(), indexedColumn.getIndexValue());
-                }
-            } else {
-                indexedColumn = new IndexedColumn(index, speculativeMatch.getElement1());
-            }
-        }
-        return indexedColumn;
+    protected boolean isValidIndex(IndexedColumn indexedColumn) {
+        return indexedColumn.getIndexValue() < elements.size();
+    }
+    @Override
+    protected IndexedElement<T, ?> getIndexedElement(IndexedColumn indexedColumn) {
+        return elements.get(indexedColumn.getIndexValue());
     }
 
-    private int calculateTupleIndex(IndexedColumn indexedColumn) {
-		return indexedColumn.getIndexValue();
-	}
+    protected IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
+        for(int i = 0; i < elements.size(); i++) {
+            IndexedElement element = elements.get(i);
 
+            if (element.getElementClassMeta() != null) {
+                PropertyFinder<?> pf = element.getPropertyFinder();
+                PropertyMeta<?, Object> property = pf.findProperty(propertyNameMatcher);
+                if (property != null) {
+                    if (!element.hasProperty(property)) {
+                        return new IndexedColumn(i , propertyNameMatcher);
+                    }
+                }
 
-	private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
-		for(int i = 0; i < elements.size(); i++) {
-			IndexedElement element = elements.get(i);
+            }
+        }
+        return null;
+    }
 
-			if (element.getElementClassMeta() != null) {
-				PropertyFinder<?> pf = element.getPropertyFinder();
-				PropertyMeta<?, Object> property = pf.findProperty(propertyNameMatcher);
-				if (property != null) {
-					if (!element.hasProperty(property)) {
-						return new IndexedColumn(i , propertyNameMatcher);
-					}
-				}
-
-			}
-		}
-		return null;
-	}
-
-	@Override
+    @Override
 	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
 		return constructorDefinitions;
 	}

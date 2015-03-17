@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 
-public class CvsMapperJoinTest {
+public class CsvMapperJoinTest {
 
 
     private static final String DATA = "1,professor1,3,student3,phone31\n"

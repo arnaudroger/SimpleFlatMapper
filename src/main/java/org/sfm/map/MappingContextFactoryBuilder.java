@@ -234,7 +234,8 @@ public class MappingContextFactoryBuilder<S, K> {
                 }
                 return true;
             } catch(Exception e) {
-                return ErrorHelper.rethrow(e);
+                ErrorHelper.rethrow(e);
+                throw new IllegalStateException();
             }
         }
     }

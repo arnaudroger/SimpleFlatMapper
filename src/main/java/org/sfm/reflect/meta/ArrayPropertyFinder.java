@@ -11,63 +11,26 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
-
-	private final ArrayClassMeta<T, E> arrayClassMeta;
+public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 
 	private final List<IndexedElement<T, E>> elements = new ArrayList<IndexedElement<T, E>>();
 
 
     public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta) {
-        this.arrayClassMeta = arrayClassMeta;
+        super(arrayClassMeta);
     }
 
     @Override
-	public PropertyMeta<T, ?> findProperty(PropertyNameMatcher propertyNameMatcher) {
-		IndexedColumn indexedColumn;
-
-       indexedColumn = propertyNameMatcher.matchesIndex();
-
-		if (indexedColumn == null) {
-			indexedColumn = extrapolateIndex(propertyNameMatcher);
-		}
-
-		if (indexedColumn == null) {
-			return null;
-		}
-
-		IndexedElement<T, E> indexedElement = getIndexedElement(indexedColumn);
-
-		if (!indexedColumn.hasSubProperty()) {
-            indexedElement.addProperty(indexedElement.getPropertyMeta());
-			return indexedElement.getPropertyMeta();
-		}
-
-		PropertyFinder<?> propertyFinder = indexedElement.getPropertyFinder();
-
-		if (propertyFinder == null) {
-			return null;
-		}
-
-		PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getSubPropertyNameMatcher());
-		if (subProp == null) {
-			return null;
-		}
-
-		indexedElement.addProperty(subProp);
-
-		return new SubPropertyMeta(arrayClassMeta.getReflectionService(), indexedElement.getPropertyMeta(), subProp);
-	}
-
-    private IndexedElement<T, E> getIndexedElement(IndexedColumn indexedColumn) {
+    protected IndexedElement<T, E> getIndexedElement(IndexedColumn indexedColumn) {
         while (elements.size() <= indexedColumn.getIndexValue()) {
-            elements.add(new IndexedElement<T, E>(newElementPropertyMeta(elements.size(), "element" + elements.size()), arrayClassMeta.getElementClassMeta()));
+            elements.add(new IndexedElement<T, E>(newElementPropertyMeta(elements.size(), "element" + elements.size()), ((ArrayClassMeta<T, E>)classMeta).getElementClassMeta()));
         }
 
         return elements.get(indexedColumn.getIndexValue());
 	}
 
     private PropertyMeta<T, E> newElementPropertyMeta(int index, String name) {
+        ArrayClassMeta<T, E> arrayClassMeta = (ArrayClassMeta<T, E>) classMeta;
         if (arrayClassMeta.isArray()) {
             return new ArrayElementPropertyMeta<T, E>(name,
                     arrayClassMeta.getReflectionService(), index, arrayClassMeta);
@@ -83,8 +46,9 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
         }
     }
 
-    private IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
-        final ClassMeta<E> elementClassMeta = arrayClassMeta.getElementClassMeta();
+    @Override
+    protected IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
+        final ClassMeta<E> elementClassMeta = ((ArrayClassMeta)classMeta).getElementClassMeta();
 
         PropertyMeta<E, Object> property;
 
@@ -107,9 +71,14 @@ public class ArrayPropertyFinder<T, E> implements PropertyFinder<T> {
 		return null;
 	}
 
+    @Override
+    protected boolean isValidIndex(IndexedColumn indexedColumn) {
+        return indexedColumn.getIndexValue() >= 0;
+    }
+
 	@Override
 	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
-		if (List.class.isAssignableFrom(TypeHelper.toClass(this.arrayClassMeta.getType()))) {
+		if (List.class.isAssignableFrom(TypeHelper.toClass(classMeta.getType()))) {
 			try {
 				return Arrays.asList(new ConstructorDefinition<T>((Constructor<? extends T>) ArrayList.class.getConstructor()));
 			} catch (NoSuchMethodException e) {

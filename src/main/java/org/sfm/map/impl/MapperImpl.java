@@ -7,7 +7,7 @@ import org.sfm.reflect.Instantiator;
 
 import java.util.Arrays;
 
-public class MapperImpl<S, T> extends AbstractMapperImpl<S, T> {
+public class MapperImpl<S, T> extends AbstractMapper<S, T> {
 	
 	private final FieldMapper<S, T>[] fieldMappers;
 

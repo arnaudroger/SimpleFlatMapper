@@ -3,12 +3,12 @@ package org.sfm.map.impl;
 import org.sfm.map.*;
 import org.sfm.reflect.Instantiator;
 
-public abstract class AbstractMapperImpl<S, T> implements Mapper<S, T> {
+public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
 	
 	private final Instantiator<S, T> instantiator;
     private final MappingContextFactory<S> mappingContextFactory;
 	
-	public AbstractMapperImpl(final Instantiator<S, T> instantiator, MappingContextFactory<S> mappingContextFactory) {
+	public AbstractMapper(final Instantiator<S, T> instantiator, MappingContextFactory<S> mappingContextFactory) {
 		this.instantiator = instantiator;
         this.mappingContextFactory = mappingContextFactory;
     }

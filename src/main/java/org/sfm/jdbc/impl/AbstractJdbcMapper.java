@@ -4,7 +4,7 @@ import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.MappingContextFactory;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.impl.AbstractMapperImpl;
+import org.sfm.map.impl.AbstractMapper;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
 
@@ -18,13 +18,13 @@ import java.util.stream.StreamSupport;
 
 
 
-public abstract class AbstractJdbcMapperImpl<T> extends AbstractMapperImpl<ResultSet, T> implements JdbcMapper<T> {
+public abstract class AbstractJdbcMapper<T> extends AbstractMapper<ResultSet, T> implements JdbcMapper<T> {
 	
 	private final RowHandlerErrorHandler errorHandler; 
 	
-	public AbstractJdbcMapperImpl(final Instantiator<ResultSet, T> instantiator,
-                                  final RowHandlerErrorHandler errorHandler,
-                                  final MappingContextFactory<ResultSet> mappingContextFactory) {
+	public AbstractJdbcMapper(final Instantiator<ResultSet, T> instantiator,
+                              final RowHandlerErrorHandler errorHandler,
+                              final MappingContextFactory<ResultSet> mappingContextFactory) {
 		super(instantiator, mappingContextFactory);
 		this.errorHandler = errorHandler;
 	}

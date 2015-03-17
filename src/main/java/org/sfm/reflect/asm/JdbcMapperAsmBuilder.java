@@ -3,7 +3,7 @@ package org.sfm.reflect.asm;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.sfm.jdbc.impl.AbstractJdbcMapperImpl;
+import org.sfm.jdbc.impl.AbstractJdbcMapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingContextFactory;
 import org.sfm.map.RowHandlerErrorHandler;
@@ -16,7 +16,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class JdbcMapperAsmBuilder {
 
-	private static final String ABSTRACT_JDBC_MAPPER_IMPL_TYPE = AsmUtils.toType(AbstractJdbcMapperImpl.class);
+	private static final String ABSTRACT_JDBC_MAPPER_IMPL_TYPE = AsmUtils.toType(AbstractJdbcMapper.class);
 	private static final String FIELD_MAPPER_TYPE = AsmUtils.toType(FieldMapper.class);
 	private static final String INSTANTIATOR_TYPE = AsmUtils.toType(Instantiator.class);
 	private static final String ROW_HANDLER_ERROR_HANDLER_TYPE = AsmUtils.toType(RowHandlerErrorHandler.class);

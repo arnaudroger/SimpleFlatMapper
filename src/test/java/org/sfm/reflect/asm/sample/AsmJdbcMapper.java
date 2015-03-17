@@ -1,7 +1,7 @@
 package org.sfm.reflect.asm.sample;
 
 import org.sfm.beans.DbObject;
-import org.sfm.jdbc.impl.AbstractJdbcMapperImpl;
+import org.sfm.jdbc.impl.AbstractJdbcMapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingContextFactory;
 import org.sfm.map.RowHandlerErrorHandler;
@@ -13,7 +13,7 @@ import org.sfm.reflect.Instantiator;
 
 import java.sql.ResultSet;
 
-public final class AsmJdbcMapper extends AbstractJdbcMapperImpl<DbObject> {
+public final class AsmJdbcMapper extends AbstractJdbcMapper<DbObject> {
 
 	private final LongFieldMapper<ResultSet, DbObject> mapper1;
 	private final IntFieldMapper<ResultSet, DbObject> mapper2;

@@ -156,7 +156,7 @@ public class JdbcMapperAsmBuilder {
             mv.visitInsn(POP);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKESPECIAL, "org/sfm/map/impl/AbstractMapperImpl", "appendToStringBuilder", "(Ljava/lang/StringBuilder;)V", false);
+            mv.visitMethodInsn(INVOKESPECIAL, ABSTRACT_JDBC_MAPPER_IMPL_TYPE, "appendToStringBuilder", "(Ljava/lang/StringBuilder;)V", false);
 
             mv.visitVarInsn(ALOAD, 1);
 

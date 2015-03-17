@@ -6,6 +6,7 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.meta.ListElementPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.BooleanProvider;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.Predicate;
 
 import java.sql.SQLException;
@@ -233,7 +234,7 @@ public class MappingContextFactoryBuilder<S, K> {
                 }
                 return true;
             } catch(Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
+                return ErrorHelper.rethrow(e);
             }
         }
     }
@@ -293,7 +294,7 @@ public class MappingContextFactoryBuilder<S, K> {
                 }
                 return values;
             } catch (Exception e) {
-                throw new MappingException(e.getMessage(), e);
+                return ErrorHelper.rethrow(e);
             }
         }
 

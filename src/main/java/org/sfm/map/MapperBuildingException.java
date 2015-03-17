@@ -12,7 +12,4 @@ public class MapperBuildingException extends MappingException {
 		super(message);
 	}
 	
-	public MapperBuildingException(String message, Throwable t) {
-		super(message, t);
-	}
 }

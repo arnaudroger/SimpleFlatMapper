@@ -1,6 +1,7 @@
 package org.sfm.csv.parser;
 
 import org.sfm.csv.CsvReader;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class CsvStringArrayIterator implements Iterator<String[]> {
                 value = null;
                 reader.parseRow(cellConsumer);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                ErrorHelper.rethrow(e);
             }
             isFetched = true;
         }

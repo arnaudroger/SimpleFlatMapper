@@ -18,7 +18,7 @@ import org.sfm.reflect.ConstructorParameter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 
-import java.rmi.UnexpectedException;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.HashMap;
 
@@ -106,14 +106,15 @@ public class AsmFactoryTest {
 				new Instantiator<ResultSet, DbObject>() {
 					@Override
 					public DbObject newInstance(ResultSet s) throws Exception {
-						throw new UnexpectedException("Error");
+						throw new IOException("Error");
 					}
 				}, 
 				DbObject.class, new RethrowRowHandlerErrorHandler(), new JdbcMappingContextFactoryBuilder().newFactory());
 		
 		try {
 			jdbcMapper.map(null);
-		} catch(MappingException e) {
+		} catch(Exception e) {
+            assertTrue(e instanceof IOException);
 			// ok
 		} 
 	}
@@ -127,7 +128,7 @@ public class AsmFactoryTest {
 							@Override
 							public void mapTo(ResultSet source, DbObject target, MappingContext<ResultSet> mappingContext)
 									throws MappingException {
-								throw new MappingException("Expected ", null);
+								throw new MappingException("Expected ");
 							}
 						}
 				},

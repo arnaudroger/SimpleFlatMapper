@@ -34,11 +34,10 @@ public final class ObjectSetterFactory {
 			try {
 				return asmFactory.createSetter(method);
 			} catch(Exception e) {
-				return new MethodSetter<T, P>(method);
+                // ignore
 			}
-		} else {
-			return new MethodSetter<T, P>(method);
 		}
+        return new MethodSetter<T, P>(method);
 	}
 
 	public <T, P> Setter<T, P> getFieldSetter(final Class<?> target, final String property) {

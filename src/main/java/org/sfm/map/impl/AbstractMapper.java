@@ -2,6 +2,7 @@ package org.sfm.map.impl;
 
 import org.sfm.map.*;
 import org.sfm.reflect.Instantiator;
+import org.sfm.utils.ErrorHelper;
 
 public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
 	
@@ -25,7 +26,7 @@ public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
 			mapFields(source, target, mappingContext);
 			return target;
 		} catch(Exception e) {
-			throw new MappingException(e.getMessage(), e);
+            return ErrorHelper.rethrow(e);
 		}
 	}
 
@@ -34,7 +35,7 @@ public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
         try {
             mapToFields(source, target, mappingContext);
         } catch(Exception e) {
-            throw new MappingException(e.getMessage(), e);
+            ErrorHelper.rethrow(e);
         }
     }
 

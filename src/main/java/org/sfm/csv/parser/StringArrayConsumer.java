@@ -1,6 +1,7 @@
 package org.sfm.csv.parser;
 
 import org.sfm.csv.impl.cellreader.StringCellValueReader;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
 
 public final class StringArrayConsumer<RH extends RowHandler<String[]>> implements CellConsumer {
@@ -35,7 +36,7 @@ public final class StringArrayConsumer<RH extends RowHandler<String[]>> implemen
 			handler.handle(result);
 			currentIndex = 0;
 		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
+            ErrorHelper.rethrow(e);
 		}
 	}
 

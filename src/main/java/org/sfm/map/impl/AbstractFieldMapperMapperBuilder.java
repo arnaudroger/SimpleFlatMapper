@@ -7,6 +7,7 @@ import org.sfm.reflect.*;
 import org.sfm.reflect.impl.NullGetter;
 import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple2;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 
 import java.lang.reflect.Type;
@@ -90,10 +91,8 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
             Map<ConstructorParameter, Getter<S, ?>> injections = constructorInjections.first();
             Instantiator<S, T> instantiator = instantiatorFactory.getInstantiator(source, target, propertyMappingsBuilder, injections, getterFactory);
             return new Tuple2<FieldMapper<S, T>[], Instantiator<S, T>>(constructorInjections.second(), instantiator);
-        } catch(RuntimeException e) {
-            throw e;
 		} catch(Exception e) {
-			throw new MapperBuildingException(e.getMessage(), e);
+            return ErrorHelper.rethrow(e);
 		}
 	}
 

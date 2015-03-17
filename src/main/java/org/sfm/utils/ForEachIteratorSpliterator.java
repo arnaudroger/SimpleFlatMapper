@@ -20,10 +20,8 @@ public class ForEachIteratorSpliterator<T> implements Spliterator<T> {
                     action.accept(t);
                 }
             });
-        } catch (RuntimeException e) {
-            throw e;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return ErrorHelper.rethrow(e);
         }
     }
 
@@ -36,10 +34,8 @@ public class ForEachIteratorSpliterator<T> implements Spliterator<T> {
                     action.accept(t);
                 }
             });
-        } catch (RuntimeException e) {
-            throw e;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            ErrorHelper.rethrow(e);
         }
     }
 

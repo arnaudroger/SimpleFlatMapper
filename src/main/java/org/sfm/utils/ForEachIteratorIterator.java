@@ -1,7 +1,5 @@
 package org.sfm.utils;
 
-import org.sfm.map.MappingException;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -29,10 +27,8 @@ public class ForEachIteratorIterator<T> implements Iterator<T> {
         if (!isFetched) {
             try {
                 doFetch();
-            } catch (RuntimeException e) {
-                throw e;
             } catch (Exception e) {
-                throw new MappingException(e.toString(), e);
+                ErrorHelper.rethrow(e);
             }
         }
     }

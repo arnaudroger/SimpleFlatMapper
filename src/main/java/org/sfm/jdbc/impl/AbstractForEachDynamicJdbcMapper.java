@@ -2,15 +2,12 @@ package org.sfm.jdbc.impl;
 
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.utils.ForEachIterator;
-import org.sfm.utils.ForEachIteratorIterator;
-import org.sfm.utils.RowHandler;
+import org.sfm.utils.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 //IFJAVA8_START
-import org.sfm.utils.ForEachIteratorSpliterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END
@@ -33,7 +30,7 @@ public abstract class AbstractForEachDynamicJdbcMapper<T> extends AbstractDynami
             newForEachIterator(rs).forEach(handler);
             return handler;
         } catch(Exception e) {
-            return JdbcMapperHelper.rethrowSQLException(e);
+            return ErrorHelper.rethrow(e);
         }
 	}
 

@@ -6,6 +6,7 @@ import org.sfm.map.impl.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple3;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 
 import java.lang.reflect.Type;
@@ -144,7 +145,7 @@ public class CsvMapperBuilder<T> {
                 }
             });
 		} catch(Exception e) {
-			throw new MapperBuildingException(e.getMessage(), e);
+            return ErrorHelper.rethrow(e);
 		}
 	}
 

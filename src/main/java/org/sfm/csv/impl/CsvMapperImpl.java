@@ -9,6 +9,7 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
@@ -154,7 +155,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 			try {
 				csvReader.parseRow(cellConsumer);
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+                return ErrorHelper.rethrow(e);
 			}
 			if (current != null) {
 				action.accept(current);
@@ -174,7 +175,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
                     }
                 }));
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+                ErrorHelper.rethrow(e);
 			}
 		}
 

@@ -2,6 +2,7 @@ package org.sfm.jdbc.impl;
 
 import org.sfm.map.Mapper;
 import org.sfm.map.MappingContext;
+import org.sfm.utils.ErrorHelper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,7 +36,7 @@ public class ResultSetIterator<T> implements Iterator<T> {
 				hasValue = rs.next();
 				isFetched = true;
 			} catch(SQLException e) {
-				throw new RuntimeException(e);
+                ErrorHelper.rethrow(e);
 			}
 		}
 	}

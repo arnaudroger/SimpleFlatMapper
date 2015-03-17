@@ -1,7 +1,7 @@
 package org.sfm.reflect;
 
-import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.meta.*;
+import org.sfm.utils.ErrorHelper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,7 +26,8 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
                     constructorDefinitions, new ArrayList<ConstructorPropertyMeta<T, ?>>(), properties, reflectionService);
             this.headers = getHeaders(clazz, properties);
         } catch (NoSuchMethodException e) {
-            throw new MapperBuildingException(e.getMessage(), e);
+            ErrorHelper.rethrow(e);
+            throw new IllegalStateException();
         }
     }
 

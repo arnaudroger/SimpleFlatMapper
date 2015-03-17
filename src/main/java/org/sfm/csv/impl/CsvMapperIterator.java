@@ -2,6 +2,7 @@ package org.sfm.csv.impl;
 
 import org.sfm.csv.CsvReader;
 import org.sfm.csv.parser.CellConsumer;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class CsvMapperIterator<T> implements Iterator<T> {
 			reader.parseRow(cellConsumer);
 			isFetched = true;
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+            ErrorHelper.rethrow(e);
 		}
 	}
 

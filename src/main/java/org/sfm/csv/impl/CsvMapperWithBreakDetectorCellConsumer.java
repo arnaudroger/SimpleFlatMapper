@@ -2,9 +2,9 @@ package org.sfm.csv.impl;
 
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
 
 import java.util.Collection;
@@ -167,7 +167,7 @@ public final class CsvMapperWithBreakDetectorCellConsumer<T> implements CsvMappe
         try {
             return instantiator.newInstance(delayedCellSetters);
         } catch (Exception e) {
-            throw new MappingException(e.getMessage(), e);
+            return ErrorHelper.rethrow(e);
         }
     }
 

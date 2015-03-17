@@ -1,6 +1,5 @@
 package org.sfm.jdbc.impl;
 
-import org.sfm.jdbc.*;
 import org.sfm.map.*;
 import org.sfm.tuples.Tuple2;
 import org.sfm.utils.*;
@@ -8,9 +7,6 @@ import org.sfm.utils.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-//IFJAVA8_START
-
-//IFJAVA8_END
 
 
 
@@ -32,7 +28,7 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractForEachDynamicJdbc
         try {
             return getMapper(source).newMappingContext(source);
         } catch (SQLException e) {
-            throw new SQLMappingException(e);
+            return ErrorHelper.rethrow(e);
         }
     }
 

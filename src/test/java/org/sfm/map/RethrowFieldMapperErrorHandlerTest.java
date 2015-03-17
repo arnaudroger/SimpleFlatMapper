@@ -16,8 +16,8 @@ public class RethrowFieldMapperErrorHandlerTest {
 		try {
 			handler.errorMappingField("prop", this, this, error);
 			fail("Expected exception");
-		} catch(MappingException e) {
-			assertSame(error, e.getCause());
+		} catch(Exception e) {
+			assertSame(error, e);
 		}
 	}
 

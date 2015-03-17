@@ -4,6 +4,7 @@ import org.sfm.csv.parser.CellConsumer;
 import org.sfm.csv.parser.CsvCharConsumer;
 import org.sfm.csv.parser.CsvStringArrayIterator;
 import org.sfm.csv.parser.StringArrayConsumer;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
@@ -123,7 +124,7 @@ public final class CsvReader implements Iterable<String[]> {
 			try {
 				return reader.parseRow(new StringArrayConsumer<RowHandler<String[]>>((strings) -> action.accept(strings)));
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+               return ErrorHelper.rethrow(e);
 			}
 		}
 
@@ -132,7 +133,7 @@ public final class CsvReader implements Iterable<String[]> {
 			try {
 				reader.parseAll(new StringArrayConsumer<RowHandler<String[]>>((strings) -> action.accept(strings)));
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+                ErrorHelper.rethrow(e);
 			}
 		}
 

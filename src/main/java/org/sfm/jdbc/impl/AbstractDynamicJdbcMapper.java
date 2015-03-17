@@ -4,6 +4,7 @@ import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.Mapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
+import org.sfm.utils.ErrorHelper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,7 +22,7 @@ public abstract class AbstractDynamicJdbcMapper<T> implements JdbcMapper<T> {
         try {
             return getMapper(source).map(source, mappingContext);
         } catch(Exception e) {
-            return JdbcMapperHelper.rethrowOnlyRuntime(e);
+            return ErrorHelper.rethrow(e);
         }
     }
 

@@ -2,9 +2,7 @@ package org.sfm.jdbc.impl;
 
 
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.jdbc.SQLMappingException;
 import org.sfm.map.MappingContext;
-import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.utils.RowHandler;
 
@@ -27,26 +25,5 @@ public class JdbcMapperHelper {
         }
         return handler;
 
-    }
-
-    public static <T> T rethrowOnlyRuntime(Exception e) {
-        if (e instanceof RuntimeException) {
-            throw ((RuntimeException) e);
-        } else if (e instanceof  SQLException) {
-            throw new SQLMappingException(e.getMessage(), e);
-        } else {
-            throw new MappingException(e.getMessage(), e);
-        }
-
-    }
-
-    public static <T> T rethrowSQLException(Exception e) throws SQLException {
-        if (e instanceof RuntimeException) {
-            throw ((RuntimeException) e);
-        } else if(e instanceof SQLException) {
-            throw ((SQLException)e);
-        } else {
-            throw new MappingException(e.getMessage(), e);
-        }
     }
 }

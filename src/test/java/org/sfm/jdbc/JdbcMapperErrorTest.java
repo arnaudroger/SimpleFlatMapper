@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
@@ -67,14 +68,16 @@ public class JdbcMapperErrorTest {
 				new Instantiator<ResultSet, DbObject>() {
 					@Override
 					public DbObject newInstance(ResultSet s) throws Exception {
-						throw new UnsupportedOperationException();
+						throw new IOException();
 					}
 				}, new RethrowRowHandlerErrorHandler(), new JdbcMappingContextFactoryBuilder().newFactory());
 		
 		try {
 			mapper.map(null);
 			fail("Expected error");
-		} catch(MappingException e) {}
+		} catch(Exception e) {
+            assertTrue(e instanceof IOException);
+        }
 	}
 	
 	

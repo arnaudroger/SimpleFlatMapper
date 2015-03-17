@@ -2,6 +2,7 @@ package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.MappingContext;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
 
 import java.sql.ResultSet;
@@ -28,7 +29,7 @@ public class ResultSetSpliterator<T> implements Spliterator<T> {
                 return true;
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            ErrorHelper.rethrow(e);
         }
         return false;
     }
@@ -43,7 +44,7 @@ public class ResultSetSpliterator<T> implements Spliterator<T> {
                 }
             });
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            ErrorHelper.rethrow(e);
         }
     }
 

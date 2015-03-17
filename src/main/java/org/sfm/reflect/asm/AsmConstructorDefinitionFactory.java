@@ -4,6 +4,7 @@ import org.objectweb.asm.*;
 import org.sfm.reflect.ConstructorDefinition;
 import org.sfm.reflect.ConstructorParameter;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.utils.ErrorHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,7 +97,7 @@ public class AsmConstructorDefinitionFactory {
 
                                     constructors.add(new ConstructorDefinition<T>(targetClass.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new ConstructorParameter[parameters.size()])));
                                 } catch(Exception e) {
-                                    throw new Error("Unexpected error " + e, e);
+                                    ErrorHelper.rethrow(e);
                                 }
                             }
 

@@ -8,6 +8,7 @@ import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.MapperCache;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
 
 import java.sql.ResultSet;
@@ -82,7 +83,7 @@ public final class DynamicJdbcMapper<T> extends AbstractDynamicJdbcMapper<T> {
         try {
             return getMapper(source).newMappingContext(source);
         } catch(Exception e) {
-            return JdbcMapperHelper.rethrowOnlyRuntime(e);
+            return ErrorHelper.rethrow(e);
         }
     }
 

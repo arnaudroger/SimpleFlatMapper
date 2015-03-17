@@ -2,6 +2,7 @@ package org.sfm.reflect.meta;
 
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.*;
+import org.sfm.utils.ErrorHelper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -28,10 +29,9 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		try {
             this.constructorDefinitions = reflectService.extractConstructors(target);
             this.constructorProperties = Collections.unmodifiableList(listProperties(constructorDefinitions));
-        } catch(RuntimeException e) {
-            throw e;
 		} catch(Exception e) {
-			throw new MapperBuildingException(e.getMessage(), e);
+            ErrorHelper.rethrow(e);
+			throw new IllegalStateException();
 		}
 		this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.<T>toClass(target)));
 		this.properties = Collections.unmodifiableList(listProperties(reflectService, target));

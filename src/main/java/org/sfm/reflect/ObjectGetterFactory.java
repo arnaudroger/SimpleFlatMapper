@@ -33,11 +33,10 @@ public final class ObjectGetterFactory {
             try {
                 return asmFactory.createGetter(method);
             } catch(Exception e) {
-                return new MethodGetter<T, P>(method);
+                // ignore
             }
-        } else {
-            return new MethodGetter<T, P>(method);
         }
+        return new MethodGetter<T, P>(method);
 	}
 
 	public <T, P> Getter<T, P> getFieldGetter(final Class<?> target, final String property) {

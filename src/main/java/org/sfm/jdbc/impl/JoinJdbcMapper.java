@@ -7,11 +7,6 @@ import org.sfm.utils.RowHandler;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-//IFJAVA8_START
-
-//IFJAVA8_END
-
-
 
 public final class JoinJdbcMapper<T> extends AbstractForEachDynamicJdbcMapper<T> {
 

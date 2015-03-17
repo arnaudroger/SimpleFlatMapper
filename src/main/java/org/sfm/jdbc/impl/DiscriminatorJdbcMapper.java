@@ -7,43 +7,25 @@ import org.sfm.utils.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.List;
 //IFJAVA8_START
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+
 //IFJAVA8_END
 
 
 
-public final class DiscriminatorJdbcMapper<T> implements JdbcMapper<T> {
+public final class DiscriminatorJdbcMapper<T> extends AbstractForEachDynamicJdbcMapper<T> {
 
 
     private final String discriminatorColumn;
-	private final RowHandlerErrorHandler rowHandlerErrorHandler;
     private final List<Tuple2<Predicate<String>, Mapper<ResultSet, T>>> mappers;
 
     public DiscriminatorJdbcMapper(String discriminatorColumn, List<Tuple2<Predicate<String>, Mapper<ResultSet, T>>> mappers, RowHandlerErrorHandler rowHandlerErrorHandler) {
+        super(rowHandlerErrorHandler);
         this.discriminatorColumn = discriminatorColumn;
         this.mappers = mappers;
-        this.rowHandlerErrorHandler = rowHandlerErrorHandler;
     }
 
-
-    @Override
-    public final T map(ResultSet source) throws MappingException {
-        return map(source, null);
-    }
-
-    @Override
-	public final T map(final ResultSet source, final MappingContext<ResultSet> mappingContext) throws MappingException {
-		try {
-			final Mapper<ResultSet, ? extends T> mapper = getMapper(source);
-			return mapper.map(source, mappingContext);
-		} catch(SQLException e) {
-			throw new SQLMappingException(e.getMessage(), e);
-		}
-	}
 
     @Override
     public MappingContext<ResultSet> newMappingContext(ResultSet source) throws MappingException {
@@ -51,33 +33,6 @@ public final class DiscriminatorJdbcMapper<T> implements JdbcMapper<T> {
             return getMapper(source).newMappingContext(source);
         } catch (SQLException e) {
             throw new SQLMappingException(e);
-        }
-    }
-
-    @Override
-    public final void mapTo(final ResultSet source, final T target, final MappingContext<ResultSet> mappingContext) throws MappingException {
-        try {
-            final Mapper<ResultSet, T> mapper = getMapper(source);
-            mapper.mapTo(source, target, mappingContext);
-        } catch(SQLException e) {
-            throw new SQLMappingException(e.getMessage(), e);
-        } catch(Exception e) {
-            throw new MappingException(e.getMessage(), e);
-        }
-    }
-
-	@Override
-	public final <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
-			throws SQLException, MappingException {
-        try  {
-            newForEachIterator(rs).forEach(handler);
-            return handler;
-        } catch(RuntimeException e) {
-            throw e;
-        } catch(SQLException e) {
-            throw e;
-        } catch(Exception e) {
-            throw new MappingException(e.getMessage(), e);
         }
     }
 
@@ -94,39 +49,11 @@ public final class DiscriminatorJdbcMapper<T> implements JdbcMapper<T> {
         return mappingContexts;
     }
 
-    @Override
-    @Deprecated
-	public final Iterator<T> iterate(final ResultSet rs)
-			throws SQLException, MappingException {
-		return new ForEachIteratorIterator<T>(newForEachIterator(rs));
-	}
-
-    private DiscriminatorForEach<T> newForEachIterator(ResultSet rs) throws SQLException {
-        return new DiscriminatorForEach<T>(this, getMappingContexts(rs), rowHandlerErrorHandler, rs);
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public final Iterator<T> iterator(final ResultSet rs)
-			throws SQLException, MappingException {
-		return iterate(rs);
-	}
-
     private Mapper<ResultSet,T> getMapper(int index) {
         return mappers.get(index).getElement1();
     }
 
-
-    //IFJAVA8_START
-    @Override
-    public Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
-        return StreamSupport.stream(new ForEachIteratorSpliterator<T>(newForEachIterator(rs)), false);
-    }
-
-    //IFJAVA8_END
-
-
-    private Mapper<ResultSet, T> getMapper(final ResultSet rs) throws MappingException, SQLException {
+    protected Mapper<ResultSet, T> getMapper(final ResultSet rs) throws MappingException, SQLException {
         String value = rs.getString(discriminatorColumn);
 
         for(Tuple2<Predicate<String>, Mapper<ResultSet, T>> tm : mappers) {
@@ -150,6 +77,11 @@ public final class DiscriminatorJdbcMapper<T> implements JdbcMapper<T> {
         }
 		throw new MappingException("No mapper found for " + discriminatorColumn + " = " + value);
 	}
+
+
+    protected DiscriminatorForEach<T> newForEachIterator(ResultSet rs) throws SQLException {
+        return new DiscriminatorForEach<T>(this, getMappingContexts(rs), errorHandler, rs);
+    }
 
     @Override
     public String toString() {

@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
-# Simple Flat Mapper (SFM) [v1.7.2](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.7.1)
+# Simple Flat Mapper (SFM) [v1.7.3](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.7.1)
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 
@@ -61,7 +61,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.7.2</version>
+			<version>1.7.3</version>
 		</dependency>
 ```
 
@@ -71,7 +71,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.7.2</version>
+			<version>1.7.3</version>
 			<classifier>jdk17</classifier>
 		</dependency>
 ```
@@ -82,21 +82,13 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.7.2</version>
+			<version>1.7.3</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 ```
 ### Asm
 
-to benefit from the asm generation or constructor injection - otherwise the param name will be resolved to arg0,arg1,...,argn - you will also need the asm library.
-
-```xml
-		<dependency>
-			<groupId>org.ow2.asm</groupId>
-			<artifactId>asm</artifactId>
-			<version>5.0.3</version>
-		</dependency
-```
+Asm is now a non optional dependency in the pom. but it will still work without it so if you have a conflict issue with an old version of asm you can exclude it.
 
 ### Quick Samples
 

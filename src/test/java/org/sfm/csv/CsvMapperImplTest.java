@@ -3,6 +3,7 @@ package org.sfm.csv;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.csv.impl.CsvMapperImpl;
+import org.sfm.csv.impl.ParsingException;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.utils.RowHandler;
 
@@ -35,6 +36,24 @@ public class CsvMapperImplTest {
 				);
 	}
 
+
+
+    @Test
+    public void testCsvFieldMappingError() throws IOException {
+        CsvMapper<Integer> mapper = CsvMapperFactory.newInstance().newMapper(Integer.class);
+
+        final Iterator<Integer> iterator = mapper.iterator(new StringReader("value\n1\n2\nnnn"));
+
+        assertEquals(1, iterator.next().intValue());
+        assertEquals(2, iterator.next().intValue());
+
+        try {
+            iterator.next();
+        } catch(ParsingException e) {
+            System.out.println(e.toString());
+        }
+
+    }
 
 	@Test
 	public void testCsvForEach()

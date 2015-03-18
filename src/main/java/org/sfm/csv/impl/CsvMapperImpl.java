@@ -241,24 +241,15 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
                 outSetters[i] = setters[i];
             }
         }
-        if (breakDetector == null) {
-            return new CsvMapperCellConsumerImpl<T>(instantiator,
-                    outDelayedCellSetters,
-                    outSetters, keys,
-                    fieldErrorHandler,
-                    rowHandlerErrorHandlers,
-                    handler,
-                    parsingContextFactory.newContext(), cellHandlers.values());
-        } else {
-            return new CsvMapperWithBreakDetectorCellConsumer<T>(instantiator,
-                    outDelayedCellSetters,
-                    outSetters, keys,
-                    fieldErrorHandler,
-                    rowHandlerErrorHandlers,
-                    handler,
-                    parsingContextFactory.newContext(), breakDetector, cellHandlers.values());
 
-        }
+        return new CsvMapperCellConsumer<T>(instantiator,
+                outDelayedCellSetters,
+                outSetters, keys,
+                fieldErrorHandler,
+                rowHandlerErrorHandlers,
+                handler,
+                parsingContextFactory.newContext(), breakDetector, cellHandlers.values());
+
 	}
 
     @SuppressWarnings("unchecked")

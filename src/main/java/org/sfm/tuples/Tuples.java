@@ -9,11 +9,7 @@ public class Tuples {
 
     public static boolean isTuple(Type type) {
         Class<?> clazz = TypeHelper.toClass(type);
-        if (Tuple2.class.isAssignableFrom(clazz)) {
-            return true;
-        } else {
-            return isJoolTuple(clazz);
-        }
+        return Tuple2.class.isAssignableFrom(clazz) || isJoolTuple(clazz);
     }
 
     public static boolean isJoolTuple(Class<?> clazz) {

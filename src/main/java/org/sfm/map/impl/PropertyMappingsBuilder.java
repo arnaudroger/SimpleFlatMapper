@@ -121,19 +121,6 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
         }
 	}
 	
-	public void forEachSubProperties(ForEachCallBack<PropertyMapping<T, ?, K, D>> handler)  {
-		modifiable = false;
-
-        for (PropertyMapping<T, ?, K, D> property : properties) {
-            if (property != null) {
-                PropertyMeta<T, ?> propertyMeta = property.getPropertyMeta();
-                if (propertyMeta != null && propertyMeta.isSubProperty()) {
-                    handler.handle(property);
-                }
-            }
-        }
-	}
-
 	public <H extends ForEachCallBack<PropertyMapping<T, ?, K, D>>> H forEachProperties(H handler)  {
 		return forEachProperties(handler, -1 );
 	}

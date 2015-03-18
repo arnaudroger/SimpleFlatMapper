@@ -10,13 +10,14 @@ import java.util.Map;
 public abstract class AbstractIndexPropertyFinder<T> implements PropertyFinder<T> {
     protected final ClassMeta<T> classMeta;
     protected final List<IndexedElement<T, ?>> elements;
-    private final Map<String, Integer> speculativesIndex = new HashMap<String, Integer>();
+    private final Map<String, Integer> speculativeIndexes = new HashMap<String, Integer>();
 
     public AbstractIndexPropertyFinder(ClassMeta<T> classMeta) {
         this.elements = new ArrayList<IndexedElement<T, ?>>();
         this.classMeta = classMeta;
     }
 
+    @SuppressWarnings("unchecked")
     public <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
 
         IndexedColumn indexedColumn = propertyNameMatcher.matchesIndex();
@@ -26,7 +27,7 @@ public abstract class AbstractIndexPropertyFinder<T> implements PropertyFinder<T
         }
 
         if (indexedColumn == null) {
-            indexedColumn = speculativeMatching(propertyNameMatcher, indexedColumn);
+            indexedColumn = speculativeMatching(propertyNameMatcher);
         }
 
         if (indexedColumn == null || !isValidIndex(indexedColumn)) {
@@ -60,17 +61,18 @@ public abstract class AbstractIndexPropertyFinder<T> implements PropertyFinder<T
 
     protected abstract <E> IndexedElement<T,?> getIndexedElement(IndexedColumn indexedColumn);
 
-    private IndexedColumn speculativeMatching(PropertyNameMatcher propertyNameMatcher, IndexedColumn indexedColumn) {
+    private IndexedColumn speculativeMatching(PropertyNameMatcher propertyNameMatcher) {
         // try to match against prefix
         Tuple2<String, PropertyNameMatcher> speculativeMatch = propertyNameMatcher.speculativeMatch();
 
+        IndexedColumn indexedColumn = null;
         if (speculativeMatch != null) {
-            Integer index = speculativesIndex.get(speculativeMatch.first());
+            Integer index = speculativeIndexes.get(speculativeMatch.first());
 
             if (index == null) {
                 indexedColumn = extrapolateIndex(speculativeMatch.getElement1());
                 if (indexedColumn != null) {
-                    speculativesIndex.put(speculativeMatch.first(), indexedColumn.getIndexValue());
+                    speculativeIndexes.put(speculativeMatch.first(), indexedColumn.getIndexValue());
                 }
             } else {
                 indexedColumn = new IndexedColumn(index, speculativeMatch.getElement1());

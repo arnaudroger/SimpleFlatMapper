@@ -1,6 +1,7 @@
 package org.sfm.csv.impl;
 
 import org.sfm.csv.CellValueReader;
+import org.sfm.utils.ErrorHelper;
 
 import java.lang.reflect.Constructor;
 
@@ -20,7 +21,7 @@ public class ConstructorOnReader<T> implements CellValueReader<T> {
 		try {
 			return constructor.newInstance(innerReader.read(chars, offset, length, parsingContext));
 		} catch (Exception e) {
-			throw new ParsingException(e);
+            return ErrorHelper.rethrow(e);
 		}
 	}
 

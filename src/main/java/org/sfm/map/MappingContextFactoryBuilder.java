@@ -103,10 +103,8 @@ public class MappingContextFactoryBuilder<S, K> {
     private boolean isRootEligible() {
         if (owner instanceof ListElementPropertyMeta) {
             return false;
-        } else if (parent != null) {
-            return parent.isRootEligible();
         } else {
-            return true;
+            return parent == null || parent.isRootEligible();
         }
     }
 

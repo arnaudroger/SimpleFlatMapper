@@ -24,12 +24,13 @@ import java.util.stream.StreamSupport;
 
 
 public final class CsvMapperImpl<T> implements CsvMapper<T> {
-	private final DelayedCellSetterFactory<T, ?>[] delayedCellSetters;
-	private final CellSetter<T>[] setters;
+    private final Instantiator<DelayedCellSetter<T, ?>[], T> instantiator;
+    private final DelayedCellSetterFactory<T, ?>[] delayedCellSetters;
+    private final CellSetter<T>[] setters;
+
 	private final CsvColumnKey[] keys;
+
     private final CsvColumnKey[] joinKeys;
-	
-	private final Instantiator<DelayedCellSetter<T, ?>[], T> instantiator;
 	private final FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler;
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
 	private final ParsingContextFactory parsingContextFactory;
@@ -242,9 +243,9 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
             }
         }
 
-        return new CsvMapperCellConsumer<T>(instantiator,
-                outDelayedCellSetters,
-                outSetters, keys,
+        CsvMapperSetters<T> mapperSetters = new CsvMapperSetters<T>(instantiator, outDelayedCellSetters, outSetters, keys);
+
+        return new CsvMapperCellConsumer<T>(mapperSetters,
                 fieldErrorHandler,
                 rowHandlerErrorHandlers,
                 handler,

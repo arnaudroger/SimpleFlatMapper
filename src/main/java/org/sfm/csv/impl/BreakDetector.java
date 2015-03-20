@@ -30,13 +30,13 @@ public class BreakDetector  {
         return i;
     }
 
-    public boolean updateStatus(DelayedCellSetter<?, ?>[] delayedCellSetters, int cellIndex) {
+    public boolean updateStatus(CsvMapperSetters<?> mapperSetters, int cellIndex) {
         if (cellIndex == lastIndex) {
             if (brokenCheck) {
                 throw new IllegalStateException();
             }
             if (keys.length > 0) {
-                Object[] currentKeys = getKeys(delayedCellSetters);
+                Object[] currentKeys = getKeys(mapperSetters);
                 broken = lastKeys == null || !Arrays.equals(currentKeys, lastKeys);
                 lastKeys = currentKeys;
             }
@@ -66,11 +66,11 @@ public class BreakDetector  {
         }
     }
 
-    private Object[] getKeys(DelayedCellSetter<?, ?>[] delayedCellSetters) {
+    private Object[] getKeys(CsvMapperSetters<?> mapperSetters) {
         isNotNull = true;
         Object[] currentKeys = new Object[keys.length];
         for(int i = 0; i < keys.length ; i++) {
-            final Object o = delayedCellSetters[keys[i].getIndex()].peekValue();
+            final Object o = mapperSetters.getDelayedCellSetter(keys[i]).peekValue();
             isNotNull = isNotNull && o != null;
             currentKeys[i] = o;
         }

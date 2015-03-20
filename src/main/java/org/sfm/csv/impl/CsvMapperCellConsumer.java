@@ -4,66 +4,61 @@ import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.parser.CellConsumer;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.reflect.Instantiator;
-import org.sfm.utils.ErrorHelper;
+import org.sfm.utils.ForEachIndexedCallBack;
 import org.sfm.utils.RowHandler;
 
 import java.util.Collection;
 
 public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
-    /**
-     * mapping information
-     */
-    protected final Instantiator<DelayedCellSetter<T, ?>[], T> instantiator;
-    protected final DelayedCellSetter<T, ?>[] delayedCellSetters;
-    protected final CellSetter<T>[] setters;
-    protected final CsvColumnKey[] columns;
 
+    private final CsvMapperSetters<T> mapperSetters;
 
     /**
      * error handling
      */
     protected final FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler;
-    protected final RowHandlerErrorHandler rowHandlerErrorHandlers;
 
+
+    protected final RowHandlerErrorHandler rowHandlerErrorHandlers;
 
     protected final BreakDetector breakDetector;
 
     protected final RowHandler<? super T> handler;
-
     /**
      * parsing information
      */
     protected final ParsingContext parsingContext;
-    protected final int totalLength;
 
 
     protected final CsvMapperCellConsumer[] children;
     protected T currentInstance;
 
     protected int cellIndex = 0;
+    private final ForEachIndexedCallBack<DelayedCellSetter<T, ?>> delayedCellSetterForEachIndexedCallBack = new ForEachIndexedCallBack<DelayedCellSetter<T, ?>>() {
+        @Override
+        public void handle(DelayedCellSetter<T, ?> delayedCellSetter, int index) {
+            try {
+                delayedCellSetter.set(currentInstance);
+            } catch (Exception e) {
+                fieldErrorHandler.errorMappingField(mapperSetters.getColumn(index), this, currentInstance, e);
+            }
+        }
+    };;
 
     @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
     public CsvMapperCellConsumer(
-            Instantiator<DelayedCellSetter<T, ?>[], T> instantiator,
-            DelayedCellSetter<T, ?>[] delayedCellSetters,
-            CellSetter<T>[] setters,
-            CsvColumnKey[] columns,
+            CsvMapperSetters<T> csvMapperSetters,
             FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
             RowHandlerErrorHandler rowHandlerErrorHandlers,
             RowHandler<? super T> handler,
             ParsingContext parsingContext, BreakDetector breakDetector, Collection<CsvMapperCellConsumer<?>> children) {
         super();
-        this.instantiator = instantiator;
-        this.delayedCellSetters = delayedCellSetters;
-        this.setters = setters;
-        this.columns = columns;
+        this.mapperSetters = csvMapperSetters;
         this.fieldErrorHandler = fieldErrorHandler;
         this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
         this.handler = handler;
         this.breakDetector = breakDetector;
-        this.totalLength = delayedCellSetters.length + setters.length;
         this.parsingContext = parsingContext;
         this.children = children.toArray(new CsvMapperCellConsumer[0]);
     }
@@ -78,14 +73,6 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
         return currentInstance;
     }
 
-    protected final CsvColumnKey getColumn(int cellIndex) {
-        for (CsvColumnKey key : columns) {
-            if (key.getIndex() == cellIndex) {
-                return key;
-            }
-        }
-        return null;
-    }
 
     protected final boolean hasData() {
         return cellIndex > 0;
@@ -101,49 +88,27 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
         }
     }
 
-    private void applyDelayedSetters() {
-        for (int i = 0; i < delayedCellSetters.length; i++) {
-            DelayedCellSetter<T, ?> delayedSetter = delayedCellSetters[i];
-            if (delayedSetter != null && delayedSetter.isSettable()) {
-                try {
-                    delayedSetter.set(currentInstance);
-                } catch (Exception e) {
-                    fieldErrorHandler.errorMappingField(getColumn(i), this, currentInstance, e);
-                }
-            }
-        }
-    }
-
-    protected final T createInstance() {
-        try {
-            return instantiator.newInstance(delayedCellSetters);
-        } catch (Exception e) {
-            return ErrorHelper.rethrow(e);
-        }
-    }
 
     private void newCellForDelayedSetter(char[] chars, int offset, int length, int cellIndex) {
         try {
-            DelayedCellSetter<T, ?> delayedCellSetter = delayedCellSetters[cellIndex];
+            DelayedCellSetter<T, ?> delayedCellSetter = mapperSetters.getDelayedCellSetter(cellIndex);
             if (delayedCellSetter != null) {
                 delayedCellSetter.set(chars, offset, length, parsingContext);
             }
         } catch (Exception e) {
-            fieldErrorHandler.errorMappingField(getColumn(cellIndex), this, currentInstance, e);
+            fieldErrorHandler.errorMappingField(mapperSetters.getColumn(cellIndex), this, currentInstance, e);
         }
     }
 
     private void newCellForSetter(char[] chars, int offset, int length, int cellIndex) {
-        if (cellIndex < totalLength) {
             try {
-                CellSetter<T> cellSetter = setters[cellIndex - delayedCellSetters.length];
+                CellSetter<T> cellSetter = mapperSetters.getCellSetter(cellIndex);
                 if (cellSetter != null) {
                     cellSetter.set(currentInstance, chars, offset, length, parsingContext);
                 }
             } catch (Exception e) {
-                fieldErrorHandler.errorMappingField(getColumn(cellIndex), this, currentInstance, e);
+                fieldErrorHandler.errorMappingField(mapperSetters.getColumn(cellIndex), this, currentInstance, e);
             }
-        }
     }
 
     @Override
@@ -161,7 +126,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
     }
 
     public final void newCell(char[] chars, int offset, int length, int cellIndex) {
-        if (cellIndex < delayedCellSetters.length) {
+        if (mapperSetters.isDelayedSetter(cellIndex)) {
             newCellForDelayedSetter(chars, offset, length, cellIndex);
         } else if (isNotNull()) {
             newCellForSetter(chars, offset, length, cellIndex);
@@ -172,7 +137,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
     private boolean isNotNull() {
         if (breakDetector == null) {
             if (currentInstance == null) {
-                currentInstance = createInstance();
+                currentInstance = mapperSetters.createInstance();
             }
             return true;
         } else {
@@ -205,9 +170,12 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
                 }
 
                 if (currentInstance == null) {
-                    currentInstance = createInstance();
+                    currentInstance = mapperSetters.createInstance();
                 }
-                applyDelayedSetters();
+
+
+                mapperSetters.forEachSettableDelayedSetters(delayedCellSetterForEachIndexedCallBack);
+
                 if (breakDetector == null) {
                     callHandler();
                 }
@@ -230,7 +198,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
     private void updateBreakStatus(int cellIndex) {
 
-        if (breakDetector.updateStatus(delayedCellSetters, cellIndex)) {
+        if (breakDetector.updateStatus(mapperSetters, cellIndex)) {
             if (breakDetector.broken()) {
                 if (currentInstance != null) {
                     callHandler();
@@ -242,7 +210,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
                 if (breakDetector.isNotNull()) {
                     // force flush
                     //preFlushChildren();
-                    currentInstance = createInstance();
+                    currentInstance = mapperSetters.createInstance();
                 }
                 return;
             }

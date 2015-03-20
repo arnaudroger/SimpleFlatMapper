@@ -13,15 +13,73 @@ import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 //IFJAVA8_START
 import java.util.stream.Stream;
 //IFJAVA8_END
 
+/**
+ * CsvParser provides an fluent DSL to parse or map csv content.<p>
+ * It is possible to customize the quote char, the separator, skip lines,and specified the size of the buffer<br>
+ * <br>
+ * <code>
+ *     CsvParser
+ *     <br>&nbsp;&nbsp;&nbsp;&nbsp;.quote('\'')
+ *     <br>&nbsp;&nbsp;&nbsp;&nbsp;.separator(';')
+ *     <br>&nbsp;&nbsp;&nbsp;&nbsp;.skip(2)
+ *     <br>&nbsp;&nbsp;&nbsp;&nbsp;.bufferSize(256)
+ *     <br>&nbsp;&nbsp;&nbsp;&nbsp;.stream(new StringReader("1;1\n2;2\n3;3\n4;4\n5;5"))
+ *     <br>&nbsp;&nbsp;&nbsp;&nbsp;.map(Arrays::toString)
+ *     <br>&nbsp;&nbsp;&nbsp;&nbsp;.forEach(System.out::println);
+ *     <br>&nbsp;&nbsp;&nbsp;&nbsp;// output
+ *     <br>&nbsp;&nbsp;&nbsp;&nbsp;// [3, 3]
+ *     <br>&nbsp;&nbsp;&nbsp;&nbsp;// [4, 4]
+ *     <br>&nbsp;&nbsp;&nbsp;&nbsp;// [5, 5]
+ * </code>
+ * <br>
+ * <br>
+ *     the limit settings does not affect streams or iterator, only parse on DSL and forEach on the mapTo/mapWith DSL.
+ * <p>
+ * The DSL provides way to mapTo an object <br><br>
+ * <code>
+ *     CsvParser.mapTo(MyClass.class).stream(reader).forEach(System.out::println);<br>
+ * </code>
+ * <p>
+ *  using static mapping when no headers<br><br>
+ * <code>
+ *     CsvParser.mapTo(MyClass.class).addHeaders("id", "field").stream(reader).forEach(System.out::println);<br>
+ *     // using the addMapping<br>
+ *     CsvParser.mapTo(MyClass.class).addMapping("id").addMapping("field").stream(reader).forEach(System.out::println);<br>
+ * </code>
+ * <p>
+ *  using static mapping and ignoring source header<br><br>
+ * <code>
+ *     CsvParser.mapTo(MyClass.class).overrideHeaders("id", "field").stream(reader).forEach(System.out::println);<br>
+ *     // using the addMapping<br>
+ *     CsvParser.skip(1).mapTo(MyClass.class).addMapping("id").addMapping("field").stream(reader).forEach(System.out::println);<br>
+ * </code>
+ * <p>
+ *  or mapping with a predefined mapper.<br><br>
+ * <code>
+ *     CsvMapper&lt;MyClass&gt; mapper = CsvMapperFactory.newInstance().newMapper(MyClass.class);<br>
+ *     CsvParser.mapWith(mapper).stream(reader).forEach(System.out::println);<br>
+ * </code>
+ *
+ * <p>
+ *  Each call to the DSL return an immutable representation of the current setup. So that it is possible to cache step of the DSL without side effect.<br><br>
+ * <code>
+ *     CsvParser.DSL semiColumnParser = CsvParser.separator(';');<br>
+ *     <br>
+ *     try (Reader r = new FileReader(file)) {<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;// the limit does not modify to the semiColumnParser object<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;semiColumnParser.limit(3).stream(r);<br>
+ *     }
+ * </code>
+ *
+ *
+ */
 public final class CsvParser {
 
 	/**
@@ -127,6 +185,10 @@ public final class CsvParser {
 	}
 	//IFJAVA8_END
 
+    /**
+     * DSL for csv parsing.
+     * @see org.sfm.csv.CsvParser
+     */
 	public static final class DSL {
         private final char separatorChar;
         private final char quoteChar;
@@ -187,7 +249,7 @@ public final class CsvParser {
         }
 
         /**
-         * set the number of row to process.
+         * set the number of row to process. limit does not affect stream or iterator.
          * @param limit number of row to process
          * @return this
          */
@@ -319,7 +381,11 @@ public final class CsvParser {
 		}
 	}
 
-
+    /**
+     * DSL for csv mapping to a dynamic mapper.
+     * @see org.sfm.csv.CsvParser
+     * @see org.sfm.csv.CsvMapper
+     */
 	public static final class MapToDSL<T> extends  MapWithDSL<T> {
 		private final ClassMeta<T> classMeta;
 		private final Type mapToClass;
@@ -403,6 +469,11 @@ public final class CsvParser {
 
     }
 
+    /**
+     * DSL for csv mapping to a static mapper.
+     * @see org.sfm.csv.CsvParser
+     * @see org.sfm.csv.CsvMapper
+     */
 	public static final class StaticMapToDSL<T> extends  MapWithDSL<T> {
 		private final ClassMeta<T> classMeta;
 		private final Type mapToClass;
@@ -441,7 +512,12 @@ public final class CsvParser {
         }
     }
 
-	public static class MapWithDSL<T> {
+    /**
+     * DSL for csv mapping to a provided mapper.
+     * @see org.sfm.csv.CsvParser
+     * @see org.sfm.csv.CsvMapper
+     */
+    public static class MapWithDSL<T> {
 		private final DSL dsl;
 		private final CsvMapper<T> mapper;
 
@@ -469,7 +545,11 @@ public final class CsvParser {
 		}
 
         public final <H extends RowHandler<T>> H forEach(Reader reader, H rowHandler) throws IOException {
-            mapper.forEach(dsl.reader(reader), rowHandler);
+            if (dsl.limit == -1) {
+                mapper.forEach(dsl.reader(reader), rowHandler);
+            } else {
+                mapper.forEach(dsl.reader(reader), rowHandler, dsl.limit);
+            }
             return rowHandler;
         }
 
@@ -479,4 +559,16 @@ public final class CsvParser {
 		}
 		//IFJAVA8_END
 	}
+
+
+//    public static void main(String[] args) throws IOException {
+//        CsvParser
+//                .quote('\'')
+//                .separator(';')
+//                .skip(2)
+//                .bufferSize(256)
+//                .stream(new StringReader("1;1\n2;2\n3;3\n4;4\n5;5"))
+//                .map(Arrays::toString)
+//                .forEach(System.out::println);
+//    }
 }

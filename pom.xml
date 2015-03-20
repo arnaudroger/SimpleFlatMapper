@@ -65,6 +65,17 @@
 					</instructions>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.1</version>
+                <configuration>
+                    <classifier>${javadoc.classifier}</classifier>
+                    <header>
+                        <![CDATA[<a href="http://www.simpleflatmapper.org">SimpleFlatMapper</a> hosted on <a href="https://github.com/arnaudroger/SimpleFlatMapper">GitHub</a>]]>
+                    </header>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -226,9 +237,6 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>2.10.1</version>
-						<configuration>
-							<classifier>${javadoc.classifier}</classifier>
-						</configuration>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -473,6 +481,32 @@
                     <optional>true</optional>
                 </dependency>
             </dependencies>
+        </profile>
+
+        <profile>
+            <id>ga</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.1</version>
+                        <configuration>
+                            <classifier>${javadoc.classifier}</classifier>
+                            <footer><![CDATA[<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+    var pageTracker = _gat._getTracker("UA-59470416-1");
+    pageTracker._trackPageview();
+} catch(err) {}
+</script>]]></footer>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 	</profiles>
 

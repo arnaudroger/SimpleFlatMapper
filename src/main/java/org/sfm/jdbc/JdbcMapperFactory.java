@@ -18,6 +18,30 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
+ * JdbcMapperFactory allows you to customise the mappers and create an instance of it using a fluent syntax.
+ * <p>
+ * JdbcMapperFactory is not Thread-Safe but the mappers are.
+ * It is strongly advised to instantiate one mapper per class for the life of your application.
+ * <p>
+ * You can instantiate dynamic mapper which will use the ResultSetMetaData
+ * to figure out the list of the columns or a static one using a builder.
+ * <p>
+ * <code>
+ *     // create a dynamic mapper targeting MyClass<br>
+ *     JdbcMapperFactory<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;.newInstance()<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;.newMapper(MyClass.class);<br>
+ *     <br>
+ *     // create a static mapper targeting MyClass<br>
+ *     JdbcMapperFactory<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;.newInstance()<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;.newBuilder(MyClass.class)<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;.addMapping("id")<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;.addMapping("field1")<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;.addMapping("field2")<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;.mapper();<br>
+ *     <br>
+ * </code>
  *
  */
 public final class JdbcMapperFactory {

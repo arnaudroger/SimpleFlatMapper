@@ -1,10 +1,11 @@
 package org.sfm.csv.impl.primitive;
 
-import org.sfm.csv.impl.DelayedCellSetter;
+import org.sfm.csv.impl.AbstractTargetSetters;
+import org.sfm.csv.impl.TargetSetters;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.ShortGetter;
 
-public class ShortDelayedGetter<T> implements ShortGetter<DelayedCellSetter<T, ?>[]>, Getter<DelayedCellSetter<T, ?>[], Short> {
+public class ShortDelayedGetter<T> implements ShortGetter<AbstractTargetSetters<T>>, Getter<AbstractTargetSetters<T>, Short> {
 	private final int index;
 	
 	public ShortDelayedGetter(int index) {
@@ -13,12 +14,12 @@ public class ShortDelayedGetter<T> implements ShortGetter<DelayedCellSetter<T, ?
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public short getShort(DelayedCellSetter<T, ?>[] target) throws Exception {
-		return ((ShortDelayedCellSetter<T>)target[index]).getShort();
+	public short getShort(AbstractTargetSetters<T> target) throws Exception {
+		return ((ShortDelayedCellSetter<T>)target.getDelayedCellSetter(index)).getShort();
 	}
 
 	@Override
-	public Short get(DelayedCellSetter<T, ?>[] target) throws Exception {
+	public Short get(AbstractTargetSetters<T> target) throws Exception {
 		return getShort(target);
 	}
 

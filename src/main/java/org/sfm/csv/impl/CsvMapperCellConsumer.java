@@ -12,7 +12,7 @@ import java.util.Collection;
 public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
 
-    private final CsvMapperSetters<T> mapperSetters;
+    private final AbstractTargetSetters<T> mapperSetters;
 
     /**
      * error handling
@@ -48,13 +48,13 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
     @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
     public CsvMapperCellConsumer(
-            CsvMapperSetters<T> csvMapperSetters,
+            AbstractTargetSetters<T> targetSetters,
             FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
             RowHandlerErrorHandler rowHandlerErrorHandlers,
             RowHandler<? super T> handler,
             ParsingContext parsingContext, BreakDetector breakDetector, Collection<CsvMapperCellConsumer<?>> children) {
         super();
-        this.mapperSetters = csvMapperSetters;
+        this.mapperSetters = targetSetters;
         this.fieldErrorHandler = fieldErrorHandler;
         this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
         this.handler = handler;

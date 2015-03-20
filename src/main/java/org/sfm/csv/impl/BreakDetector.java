@@ -30,7 +30,7 @@ public class BreakDetector  {
         return i;
     }
 
-    public boolean updateStatus(CsvMapperSetters<?> mapperSetters, int cellIndex) {
+    public boolean updateStatus(AbstractTargetSetters<?> mapperSetters, int cellIndex) {
         if (cellIndex == lastIndex) {
             if (brokenCheck) {
                 throw new IllegalStateException();
@@ -66,7 +66,7 @@ public class BreakDetector  {
         }
     }
 
-    private Object[] getKeys(CsvMapperSetters<?> mapperSetters) {
+    private Object[] getKeys(AbstractTargetSetters<?> mapperSetters) {
         isNotNull = true;
         Object[] currentKeys = new Object[keys.length];
         for(int i = 0; i < keys.length ; i++) {

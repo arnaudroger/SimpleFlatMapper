@@ -3,9 +3,7 @@ package org.sfm.reflect;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.csv.CellValueReader;
-import org.sfm.csv.impl.DelayedCellSetter;
-import org.sfm.csv.impl.DelayedGetter;
-import org.sfm.csv.impl.ParsingContext;
+import org.sfm.csv.impl.*;
 import org.sfm.csv.impl.cellreader.DelayedCellSetterImpl;
 import org.sfm.reflect.asm.AsmFactory;
 
@@ -29,14 +27,14 @@ public class AsmInstantiatorTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testInstantiateStringWithCharArray() throws Exception {
-		HashMap<ConstructorParameter, Getter<DelayedCellSetter[], ?>> injections = new HashMap<ConstructorParameter, Getter<DelayedCellSetter[], ?>>();
+		HashMap<ConstructorParameter, Getter<TargetSetters<String>, ?>> injections = new HashMap<ConstructorParameter, Getter<TargetSetters<String>, ?>>();
 
 		ConstructorParameter parameter = new ConstructorParameter("arg0", char[].class);
 		DelayedGetter delayedGetter = new DelayedGetter(0);
 		injections.put(parameter, delayedGetter);
 
-		Instantiator<DelayedCellSetter[], String> instantiator =
-				factory.createInstantiator(DelayedCellSetter[].class,
+		Instantiator<TargetSetters<String>, String> instantiator =
+				factory.createInstantiator(TargetSetters.class,
 						new ConstructorDefinition<String>(String.class.getConstructor(char[].class), parameter),
 						injections);
 		DelayedCellSetterImpl delayedCellSetter = new DelayedCellSetterImpl(null, new CellValueReader() {
@@ -46,6 +44,9 @@ public class AsmInstantiatorTest {
 			}
 		});
 		delayedCellSetter.set(null, 0, 0, null);
-		assertNotNull(instantiator.newInstance(new DelayedCellSetter[]{delayedCellSetter}));
+
+        TargetSetters targetSetters = new TargetSetters(instantiator, new DelayedCellSetter[]{delayedCellSetter}, new CellSetter[]{}, null);
+
+		assertNotNull(instantiator.newInstance(targetSetters));
 	}
 }

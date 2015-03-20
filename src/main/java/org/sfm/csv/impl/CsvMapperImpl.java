@@ -25,7 +25,7 @@ import java.util.stream.StreamSupport;
 
 public final class CsvMapperImpl<T> implements CsvMapper<T> {
     private final Instantiator<AbstractTargetSetters<T>, T> instantiator;
-    private final DelayedCellSetterFactory<T, ?>[] delayedCellSetters;
+    private final DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories;
     private final CellSetter<T>[] setters;
 
 	private final CsvColumnKey[] keys;
@@ -35,8 +35,10 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
 	private final ParsingContextFactory parsingContextFactory;
 
+    private final boolean hasSetterMarker;
+
 	public CsvMapperImpl(Instantiator<AbstractTargetSetters<T>, T> instantiator,
-                         DelayedCellSetterFactory<T, ?>[] delayedCellSetters,
+                         DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories,
                          CellSetter<T>[] setters,
                          CsvColumnKey[] keys,
                          CsvColumnKey[] joinKeys, ParsingContextFactory parsingContextFactory,
@@ -44,16 +46,26 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
                          RowHandlerErrorHandler rowHandlerErrorHandlers) {
 		super();
 		this.instantiator = instantiator;
-		this.delayedCellSetters = delayedCellSetters;
+		this.delayedCellSetterFactories = delayedCellSetterFactories;
 		this.setters = setters;
 		this.keys = keys;
         this.joinKeys = joinKeys;
         this.fieldErrorHandler = fieldErrorHandler;
 		this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
 		this.parsingContextFactory = parsingContextFactory;
+        this.hasSetterMarker = hasSetterMarker(setters);
 	}
 
-	@Override
+    private boolean hasSetterMarker(CellSetter<T>[] setters) {
+        for(CellSetter<T> setter : setters) {
+            if (setter instanceof DelegateMarkerSetter) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
 	public final <H extends RowHandler<? super T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
 		return forEach(CsvParser.reader(reader), handler);
 	}
@@ -205,43 +217,18 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
         @SuppressWarnings({ "unchecked", "rawtypes" })
 	protected CsvMapperCellConsumer<T> newCellConsumer(final RowHandler<? super T> handler, BreakDetector parentBreakDetector) {
 
-        DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetters.length];
+        DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetterFactories.length];
         Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers = new HashMap<CsvMapper<?>, CsvMapperCellConsumer<?>>();
-        final BreakDetector breakDetector = newBreakDetector(parentBreakDetector, delayedCellSetters.length - 1);
+        final BreakDetector breakDetector = newBreakDetector(parentBreakDetector, delayedCellSetterFactories.length - 1);
 
-        for(int i = delayedCellSetters.length - 1; i >= 0 ; i--) {
-            DelayedCellSetterFactory<T, ?> delayedCellSetterFactory = delayedCellSetters[i];
+        for(int i = delayedCellSetterFactories.length - 1; i >= 0 ; i--) {
+            DelayedCellSetterFactory<T, ?> delayedCellSetterFactory = delayedCellSetterFactories[i];
             if (delayedCellSetterFactory != null) {
-                if (delayedCellSetterFactory instanceof DelegateMarkerDelayedCellSetter) {
-                    DelegateMarkerDelayedCellSetter<T, ?> marker = (DelegateMarkerDelayedCellSetter<T, ?>) delayedCellSetterFactory;
-
-                    CsvMapperCellConsumer cellHandler = cellHandlers.get(marker.getMapper());
-
-                    DelegateDelayedCellSetterFactory<T, ?> delegateCellSetter;
-
-                    if(cellHandler == null) {
-                        delegateCellSetter = new DelegateDelayedCellSetterFactory(marker, i, breakDetector);
-                        cellHandlers.put(marker.getMapper(), delegateCellSetter.getCellHandler());
-                    } else {
-                        delegateCellSetter = new DelegateDelayedCellSetterFactory(marker, cellHandler, i);
-                    }
-                    outDelayedCellSetters[i] =  delegateCellSetter.newCellSetter();
-                } else {
-                    outDelayedCellSetters[i] = delayedCellSetterFactory.newCellSetter();
-                }
+                outDelayedCellSetters[i] = delayedCellSetterFactory.newCellSetter(breakDetector, cellHandlers);
             }
         }
 
-
-        CellSetter<T>[] outSetters = new CellSetter[setters.length];
-        for(int i = setters.length - 1; i >= 0 ; i--) {
-            if (setters[i] instanceof DelegateMarkerSetter) {
-                DelegateCellSetter<T, ?> delegateCellSetter = getDelegateCellSetter(cellHandlers, breakDetector, i);
-                outSetters[i] = delegateCellSetter;
-            } else {
-                outSetters[i] = setters[i];
-            }
-        }
+        CellSetter<T>[] outSetters = getCellSetters(cellHandlers, breakDetector);
 
         AbstractTargetSetters<T> mapperSetters = new CsvMapperObjectSetters<T>(instantiator, outDelayedCellSetters, outSetters, keys);
 
@@ -253,19 +240,34 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
 	}
 
+    private CellSetter<T>[] getCellSetters(Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers, BreakDetector breakDetector) {
+        if (!hasSetterMarker) return setters;
+
+        CellSetter<T>[] outSetters = new CellSetter[setters.length];
+        for(int i = setters.length - 1; i >= 0 ; i--) {
+            if (setters[i] instanceof DelegateMarkerSetter) {
+                DelegateCellSetter<T, ?> delegateCellSetter = getDelegateCellSetter(cellHandlers, breakDetector, i);
+                outSetters[i] = delegateCellSetter;
+            } else {
+                outSetters[i] = setters[i];
+            }
+        }
+        return outSetters;
+    }
+
     @SuppressWarnings("unchecked")
     private <P> DelegateCellSetter<T, P> getDelegateCellSetter(Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers, BreakDetector breakDetector, int i) {
         DelegateMarkerSetter<T, P> marker = (DelegateMarkerSetter<T, P>) setters[i];
 
-        CsvMapperCellConsumer<P> cellHandler = (CsvMapperCellConsumer<P>) cellHandlers.get(marker.getMapper());
+        CsvMapperCellConsumer<P> cellConsumer = (CsvMapperCellConsumer<P>) cellHandlers.get(marker.getMapper());
 
         DelegateCellSetter<T, P> delegateCellSetter;
 
-        if(cellHandler == null) {
-            delegateCellSetter = new DelegateCellSetter<T, P>(marker, i + delayedCellSetters.length, breakDetector);
+        if(cellConsumer == null) {
+            delegateCellSetter = new DelegateCellSetter<T, P>(marker, i + delayedCellSetterFactories.length, breakDetector);
             cellHandlers.put(marker.getMapper(), delegateCellSetter.getCellConsumer());
         } else {
-            delegateCellSetter = new DelegateCellSetter<T, P>(marker, cellHandler, i + delayedCellSetters.length);
+            delegateCellSetter = new DelegateCellSetter<T, P>(marker, cellConsumer, i + delayedCellSetterFactories.length);
         }
         return delegateCellSetter;
     }
@@ -282,7 +284,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
     public String toString() {
         return "CsvMapperImpl{" +
                 "instantiator=" + instantiator +
-                ", delayedCellSetters=" + Arrays.toString(delayedCellSetters) +
+                ", delayedCellSetters=" + Arrays.toString(delayedCellSetterFactories) +
                 ", setters=" + Arrays.toString(setters) +
                 '}';
     }

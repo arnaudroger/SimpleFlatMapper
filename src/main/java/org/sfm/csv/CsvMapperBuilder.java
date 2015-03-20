@@ -236,9 +236,9 @@ public class CsvMapperBuilder<T> {
 				}
 
 				if (subProp instanceof ConstructorPropertyMeta) {
-					delayedSetters[setterIndex] = new DelegateMarkerDelayedCellSetter<T, P>(mapper);
+					delayedSetters[setterIndex] = new DelegateMarkerDelayedCellSetterFactory<T, P>(mapper, setterIndex);
 				} else {
-					delayedSetters[setterIndex] = new DelegateMarkerDelayedCellSetter<T, P>(mapper, subProp.getSetter());
+					delayedSetters[setterIndex] = new DelegateMarkerDelayedCellSetterFactory<T, P>(mapper, subProp.getSetter(), setterIndex);
 				}
 			}
 		}, 0, delayedSetterEnd);

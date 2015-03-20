@@ -1,9 +1,14 @@
 package org.sfm.csv.impl.primitive;
 
+import org.sfm.csv.CsvMapper;
+import org.sfm.csv.impl.BreakDetector;
+import org.sfm.csv.impl.CsvMapperCellConsumer;
 import org.sfm.csv.impl.DelayedCellSetter;
 import org.sfm.csv.impl.DelayedCellSetterFactory;
 import org.sfm.csv.impl.cellreader.ByteCellValueReader;
 import org.sfm.reflect.primitive.ByteSetter;
+
+import java.util.Map;
 
 public class ByteDelayedCellSetterFactory<T> implements DelayedCellSetterFactory<T, Byte> {
 
@@ -16,7 +21,7 @@ public class ByteDelayedCellSetterFactory<T> implements DelayedCellSetterFactory
 	}
 
 	@Override
-	public DelayedCellSetter<T, Byte> newCellSetter() {
+	public DelayedCellSetter<T, Byte> newCellSetter(BreakDetector breakDectector, Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers) {
 		return new ByteDelayedCellSetter<T>(setter, reader);
 	}
 

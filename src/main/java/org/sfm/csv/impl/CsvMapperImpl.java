@@ -243,7 +243,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
             }
         }
 
-        AbstractTargetSetters<T> mapperSetters = new TargetSetters<T>(instantiator, outDelayedCellSetters, outSetters, keys);
+        AbstractTargetSetters<T> mapperSetters = new CsvMapperObjectSetters<T>(instantiator, outDelayedCellSetters, outSetters, keys);
 
         return new CsvMapperCellConsumer<T>(mapperSetters,
                 fieldErrorHandler,

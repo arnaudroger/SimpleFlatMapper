@@ -5,7 +5,7 @@ import org.sfm.csv.CsvColumnKey;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.ForEachIndexedCallBack;
 
-public class TargetSetters<T> extends AbstractTargetSetters<T> {
+public class CsvMapperObjectSetters<T> extends AbstractTargetSetters<T> {
 
     /**
      * mapping information
@@ -14,7 +14,7 @@ public class TargetSetters<T> extends AbstractTargetSetters<T> {
     protected final CellSetter<T>[] setters;
 
 
-    public TargetSetters(Instantiator<AbstractTargetSetters<T>, T> instantiator, DelayedCellSetter<T, ?>[] delayedCellSetters, CellSetter<T>[] setters, CsvColumnKey[] columns) {
+    public CsvMapperObjectSetters(Instantiator<AbstractTargetSetters<T>, T> instantiator, DelayedCellSetter<T, ?>[] delayedCellSetters, CellSetter<T>[] setters, CsvColumnKey[] columns) {
         super(instantiator, columns, delayedCellSetters.length, setters.length);
         this.delayedCellSetters = delayedCellSetters;
         this.setters = setters;

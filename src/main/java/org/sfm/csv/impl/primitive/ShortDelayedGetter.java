@@ -1,7 +1,6 @@
 package org.sfm.csv.impl.primitive;
 
 import org.sfm.csv.impl.AbstractTargetSetters;
-import org.sfm.csv.impl.TargetSetters;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.ShortGetter;
 

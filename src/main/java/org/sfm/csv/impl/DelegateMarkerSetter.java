@@ -6,10 +6,12 @@ public class DelegateMarkerSetter<T, P> implements CellSetter<T> {
 
 	private final CsvMapperImpl<P> mapper;
 	private final Setter<T, P> setter;
+    private final int parent;
  
-	public DelegateMarkerSetter(CsvMapperImpl<P> mapper, Setter<T, P> setter) {
+	public DelegateMarkerSetter(CsvMapperImpl<P> mapper, Setter<T, P> setter, int parent) {
 		this.mapper = mapper;
 		this.setter = setter;
+        this.parent = parent;
 	}
 
 	@Override
@@ -22,10 +24,13 @@ public class DelegateMarkerSetter<T, P> implements CellSetter<T> {
 		return mapper;
 	}
 
-
 	public Setter<T, P> getSetter() {
 		return setter;
 	}
+
+    public int getParent() {
+        return parent;
+    }
 
     @Override
     public String toString() {

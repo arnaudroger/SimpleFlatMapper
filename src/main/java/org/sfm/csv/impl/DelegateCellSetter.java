@@ -11,6 +11,7 @@ public class DelegateCellSetter<T, P> implements CellSetter<T> {
 
 	@SuppressWarnings("unchecked")
     public DelegateCellSetter(DelegateMarkerSetter<T, P> marker, int cellIndex, BreakDetector parentBreakDetector) {
+        if (marker== null) throw new NullPointerException("marker is null");
 		this.marker = marker;
 		this.handler = marker.getMapper().newCellConsumer(null, parentBreakDetector);
         this.setter = (Setter<T, P>) marker.getSetter();
@@ -19,6 +20,8 @@ public class DelegateCellSetter<T, P> implements CellSetter<T> {
 
 	public DelegateCellSetter(DelegateMarkerSetter<T, P> marker,
                               CsvMapperCellConsumer<P> handler,  int cellIndex) {
+        if (handler== null) throw new NullPointerException("handler is null");
+        if (marker== null) throw new NullPointerException("marker is null");
 		this.marker = marker;
 		this.handler = handler;
 		this.cellIndex = cellIndex;

@@ -21,7 +21,7 @@ public class DelayedCellSetterFactoryImpl<T, P> implements DelayedCellSetterFact
 	}
 
 	@Override
-	public DelayedCellSetter<T, P> newCellSetter(BreakDetector breakDectector, Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers) {
+	public DelayedCellSetter<T, P> newCellSetter(BreakDetector breakDectector, CsvMapperCellConsumer<?>[] cellHandlers) {
 		return new DelayedCellSetterImpl<T, P>(setter, reader);
 	}
 

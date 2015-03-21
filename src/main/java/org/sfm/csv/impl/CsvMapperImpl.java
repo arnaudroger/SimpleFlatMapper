@@ -218,7 +218,8 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	protected CsvMapperCellConsumer<T> newCellConsumer(final RowHandler<? super T> handler, BreakDetector parentBreakDetector) {
 
         DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetterFactories.length];
-        Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers = new HashMap<CsvMapper<?>, CsvMapperCellConsumer<?>>();
+
+        CsvMapperCellConsumer<?>[] cellHandlers = new CsvMapperCellConsumer<?>[delayedCellSetterFactories.length + setters.length];
         final BreakDetector breakDetector = newBreakDetector(parentBreakDetector, delayedCellSetterFactories.length - 1);
 
         for(int i = delayedCellSetterFactories.length - 1; i >= 0 ; i--) {
@@ -236,17 +237,27 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
                 fieldErrorHandler,
                 rowHandlerErrorHandlers,
                 handler,
-                parsingContextFactory.newContext(), breakDetector, cellHandlers.values());
+                parsingContextFactory.newContext(), breakDetector, toList(cellHandlers));
 
 	}
 
-    private CellSetter<T>[] getCellSetters(Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers, BreakDetector breakDetector) {
+    private Collection<CsvMapperCellConsumer<?>> toList(CsvMapperCellConsumer<?>[] cellHandlers) {
+        List<CsvMapperCellConsumer<?>> consumers = new ArrayList<CsvMapperCellConsumer<?>>();
+        for(CsvMapperCellConsumer<?> consumer : cellHandlers) {
+            if (consumer != null) {
+                consumers.add(consumer);
+            }
+        }
+        return consumers;
+    }
+
+    private CellSetter<T>[] getCellSetters(CsvMapperCellConsumer<?>[] cellHandlers, BreakDetector breakDetector) {
         if (!hasSetterMarker) return setters;
 
         CellSetter<T>[] outSetters = new CellSetter[setters.length];
         for(int i = setters.length - 1; i >= 0 ; i--) {
             if (setters[i] instanceof DelegateMarkerSetter) {
-                DelegateCellSetter<T, ?> delegateCellSetter = getDelegateCellSetter(cellHandlers, breakDetector, i);
+                DelegateCellSetter<T, ?> delegateCellSetter = getDelegateCellSetter((DelegateMarkerSetter)setters[i], cellHandlers, breakDetector, i);
                 outSetters[i] = delegateCellSetter;
             } else {
                 outSetters[i] = setters[i];
@@ -256,20 +267,20 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private <P> DelegateCellSetter<T, P> getDelegateCellSetter(Map<CsvMapper<?>, CsvMapperCellConsumer<?>> cellHandlers, BreakDetector breakDetector, int i) {
-        DelegateMarkerSetter<T, P> marker = (DelegateMarkerSetter<T, P>) setters[i];
-
-        CsvMapperCellConsumer<P> cellConsumer = (CsvMapperCellConsumer<P>) cellHandlers.get(marker.getMapper());
-
-        DelegateCellSetter<T, P> delegateCellSetter;
-
-        if(cellConsumer == null) {
-            delegateCellSetter = new DelegateCellSetter<T, P>(marker, i + delayedCellSetterFactories.length, breakDetector);
-            cellHandlers.put(marker.getMapper(), delegateCellSetter.getCellConsumer());
+    private <P> DelegateCellSetter<T, P> getDelegateCellSetter(DelegateMarkerSetter marker, CsvMapperCellConsumer<?>[] cellHandlers, BreakDetector breakDetector, int i) {
+        final int parent = marker.getParent();
+        final int cellIndex = i + delayedCellSetterFactories.length;
+        if(parent == cellIndex) {
+            final DelegateCellSetter<T, P> tpDelegateCellSetter = new DelegateCellSetter<T, P>(marker, cellIndex, breakDetector);
+            cellHandlers[cellIndex] = tpDelegateCellSetter.getCellConsumer();
+            return tpDelegateCellSetter;
         } else {
-            delegateCellSetter = new DelegateCellSetter<T, P>(marker, cellConsumer, i + delayedCellSetterFactories.length);
+            final CsvMapperCellConsumer<?> cellHandler = cellHandlers[parent];
+            if (cellHandler==null) {
+                throw new NullPointerException("No cell handler on parent " + parent);
+            }
+            return new DelegateCellSetter<T, P>(marker, (CsvMapperCellConsumer<P>) cellHandler, cellIndex);
         }
-        return delegateCellSetter;
     }
 
     private BreakDetector newBreakDetector(BreakDetector parentBreakDetector, int delayedSetterEnd) {

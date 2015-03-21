@@ -5,6 +5,7 @@ import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
+import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuple3;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
@@ -160,6 +161,7 @@ public class CsvMapperBuilder<T> {
 	private DelayedCellSetterFactory<T, ?>[] buildDelayedSetters(final ParsingContextFactoryBuilder parsingContextFactoryBuilder, int delayedSetterEnd, boolean hasKeys) {
 
 		final Map<String, CsvMapperBuilder<?>> delegateMapperBuilders = new HashMap<String, CsvMapperBuilder<?>>();
+        final Map<String, Integer> propertyToMapperIndex = new HashMap<String, Integer>();
 
 		final DelayedCellSetterFactory<T, ?>[] delayedSetters = new DelayedCellSetterFactory[delayedSetterEnd];
 
@@ -198,6 +200,11 @@ public class CsvMapperBuilder<T> {
 					delegateMapperBuilders.put(propOwner.getName(), delegateMapperBuilder);
 				}
 
+                Integer currentIndex = propertyToMapperIndex.get(propOwner.getName());
+                if (currentIndex == null || currentIndex < key.getIndex()) {
+                    propertyToMapperIndex.put(propOwner.getName(), key.getIndex());
+                }
+
 				delegateMapperBuilder.addMapping(subPropertyMeta.getSubProperty(), key, columnDefinition);
 
 			}
@@ -215,32 +222,36 @@ public class CsvMapperBuilder<T> {
 				PropertyMeta<T, ?> prop = propMapping.getPropertyMeta();
 
 				if (prop.isSubProperty()) {
-					addSubPropertyDelayedSetter(delegateMapperBuilders,	delayedSetters, mappers, propMapping.getColumnKey().getIndex(), prop);
+					addSubPropertyDelayedSetter(delegateMapperBuilders,	delayedSetters, propMapping.getColumnKey().getIndex(), prop);
 				}
 			}
 
 			private <P> void addSubPropertyDelayedSetter(
 					Map<String, CsvMapperBuilder<?>> delegateMapperBuilders,
 					DelayedCellSetterFactory<T, ?>[] delayedSetters,
-					Map<String, CsvMapper<?>> mappers, int setterIndex,
+					int setterIndex,
 					PropertyMeta<T, P> prop) {
 				PropertyMeta<T, P> subProp = ((SubPropertyMeta<T, P>) prop).getOwnerProperty();
 
 				final String propName = subProp.getName();
 
 				CsvMapper<P> mapper = (CsvMapper<P>) mappers.get(propName);
-				if (mapper == null) {
-					CsvMapperBuilder<P> delegateMapperBuilder = (CsvMapperBuilder<P>) delegateMapperBuilders.get(propName);
-					mapper = delegateMapperBuilder.mapper();
-					mappers.put(propName, mapper);
+
+                if (mapper == null) {
+                    CsvMapperBuilder<P> delegateMapperBuilder = (CsvMapperBuilder<P>) delegateMapperBuilders.get(propName);
+                    mapper = delegateMapperBuilder.mapper();
+                    mappers.put(propName, mapper);
+                }
+
+                int indexOfMapper = propertyToMapperIndex.get(propName);
+                Setter<T, P> setter = null;
+
+                if (!subProp.isConstructorProperty()) {
+                    setter =  subProp.getSetter();
 				}
 
-				if (subProp instanceof ConstructorPropertyMeta) {
-					delayedSetters[setterIndex] = new DelegateMarkerDelayedCellSetterFactory<T, P>(mapper, setterIndex);
-				} else {
-					delayedSetters[setterIndex] = new DelegateMarkerDelayedCellSetterFactory<T, P>(mapper, subProp.getSetter(), setterIndex);
-				}
-			}
+                delayedSetters[setterIndex] = new DelegateMarkerDelayedCellSetterFactory<T, P>(mapper, setter, setterIndex, indexOfMapper);
+            }
 		}, 0, delayedSetterEnd);
 
 
@@ -253,8 +264,9 @@ public class CsvMapperBuilder<T> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private CellSetter<T>[] getSetters(final ParsingContextFactoryBuilder parsingContextFactoryBuilder, final int delayedSetterEnd) {
 		final Map<String, CsvMapperBuilder<?>> delegateMapperBuilders = new HashMap<String, CsvMapperBuilder<?>>();
-		
-		
+
+        final Map<String, Integer> propertyToMapperIndex = new HashMap<String, Integer>();
+
         // calculate maxIndex
 		int maxIndex = propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
 
@@ -278,7 +290,13 @@ public class CsvMapperBuilder<T> {
 								delegateMapperBuilder = new CsvMapperBuilder(propOwner.getType(), propOwner.getClassMeta(), mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory, minDelayedSetter);
 								delegateMapperBuilders.put(propOwner.getName(), delegateMapperBuilder);
 							}
-							
+
+
+                            Integer currentIndex = propertyToMapperIndex.get(propOwner.getName());
+                            if (currentIndex == null || currentIndex < key.getIndex()) {
+                                propertyToMapperIndex.put(propOwner.getName(), key.getIndex());
+                            }
+
 							delegateMapperBuilder.addMapping(((SubPropertyMeta) prop).getSubProperty(), key, propMapping.getColumnDefinition());
 							
 						}
@@ -326,7 +344,10 @@ public class CsvMapperBuilder<T> {
                     mapper = (CsvMapperImpl<P>) delegateMapperBuilder.mapper();
                     mappers.put(propName, mapper);
                 }
-                return new DelegateMarkerSetter<T, P>(mapper, (Setter<T, P>)prop.getOwnerProperty().getSetter());
+
+                int indexOfMapper = propertyToMapperIndex.get(propName);
+
+                return new DelegateMarkerSetter<T, P>(mapper, (Setter<T, P>)prop.getOwnerProperty().getSetter(), indexOfMapper);
             }
         }, delayedSetterEnd);
 		

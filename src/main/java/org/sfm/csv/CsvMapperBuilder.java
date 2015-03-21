@@ -106,9 +106,11 @@ public class CsvMapperBuilder<T> {
         ParsingContextFactoryBuilder parsingContextFactoryBuilder = new ParsingContextFactoryBuilder(propertyMappingsBuilder.size());
 
         Tuple3<Map<ConstructorParameter, Getter<AbstractTargetSetters<T>, ?>>, Integer, Boolean> constructorParams = buildConstructorParametersDelayedCellSetter();
-        return new CsvMapperImpl<T>(getInstantiator(constructorParams.first()),
+        final Instantiator<AbstractTargetSetters<T>, T> instantiator = getInstantiator(constructorParams.first());
+        final CsvColumnKey[] keys = getKeys();
+        return new CsvMapperImpl<T>(new TargetSettersFactory<T>(instantiator, keys),
                 buildDelayedSetters(parsingContextFactoryBuilder, constructorParams.second(), constructorParams.third()),
-                getSetters(parsingContextFactoryBuilder, constructorParams.second()), getKeys(), getJoinKeys(), parsingContextFactoryBuilder.newFactory(), fieldMapperErrorHandler, rowHandlerErrorHandler);
+                getSetters(parsingContextFactoryBuilder, constructorParams.second()), keys, getJoinKeys(), parsingContextFactoryBuilder.newFactory(), fieldMapperErrorHandler, rowHandlerErrorHandler);
 	}
 
 

@@ -37,7 +37,7 @@ public class CsvMapperBuilderTest {
         addDbObjectFields(builder);
         assertEquals(
                 "CsvMapperImpl{" +
-                "instantiator=StaticConstructorInstantiator{constructor=public org.sfm.beans.DbObject(), args=[]}, " +
+                "targetSettersFactory=TargetSettersFactory{instantiator=StaticConstructorInstantiator{constructor=public org.sfm.beans.DbObject(), args=[]}}, " +
                 "delayedCellSetters=[], " +
                 "setters=[LongCellSetter{setter=LongMethodSetter{method=public void org.sfm.beans.DbObject.setId(long)}, reader=LongCellValueReaderImpl{}}, " +
                         "CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setName(java.lang.String)}}, " +
@@ -53,7 +53,7 @@ public class CsvMapperBuilderTest {
         addDbObjectFields(builder);
         assertEquals(
                 "CsvMapperImpl{" +
-                        "instantiator=InjectConstructorInstantiator{" +
+                        "targetSettersFactory=TargetSettersFactory{instantiator=InjectConstructorInstantiator{" +
                             "constructorDefinition=ConstructorDefinition{constructor=public org.sfm.beans.DbFinalObject(long,java.lang.String,java.lang.String,java.util.Date,org.sfm.beans.DbObject$Type,org.sfm.beans.DbObject$Type), " +
                             "parameters=[" +
                                 "ConstructorParameter{name='id', type=long, resolvedType=long}, " +
@@ -61,7 +61,7 @@ public class CsvMapperBuilderTest {
                                 "ConstructorParameter{name='email', type=class java.lang.String, resolvedType=class java.lang.String}, " +
                                 "ConstructorParameter{name='creationTime', type=class java.util.Date, resolvedType=class java.util.Date}, " +
                                 "ConstructorParameter{name='typeOrdinal', type=class org.sfm.beans.DbObject$Type, resolvedType=class org.sfm.beans.DbObject$Type}, " +
-                                "ConstructorParameter{name='typeName', type=class org.sfm.beans.DbObject$Type, resolvedType=class org.sfm.beans.DbObject$Type}]}}, " +
+                                "ConstructorParameter{name='typeName', type=class org.sfm.beans.DbObject$Type, resolvedType=class org.sfm.beans.DbObject$Type}]}}}, " +
                         "delayedCellSetters=[" +
                         "LongDelayedCellSetterFactory{setter=null, reader=LongCellValueReaderImpl{}}, " +
                         "DelayedCellSetterFactoryImpl{reader=StringCellValueReader{}, setter=null}, " +

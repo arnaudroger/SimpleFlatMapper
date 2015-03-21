@@ -26,7 +26,6 @@ import java.util.stream.StreamSupport;
 public final class CsvMapperImpl<T> implements CsvMapper<T> {
     private static final DelayedCellSetter[] EMPTY_DELAYED_CELL_SETTERS = new DelayedCellSetter[0];
 
-    private final Instantiator<AbstractTargetSetters<T>, T> instantiator;
     private final DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories;
     private final CellSetter<T>[] setters;
 
@@ -36,11 +35,12 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	private final FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler;
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
 	private final ParsingContextFactory parsingContextFactory;
+    private final TargetSettersFactory<T> targetSettersFactory;
 
     private final boolean hasSetterSubProperties;
     private final boolean hasSubProperties;
 
-	public CsvMapperImpl(Instantiator<AbstractTargetSetters<T>, T> instantiator,
+	public CsvMapperImpl(TargetSettersFactory<T> targetSettersFactory,
                          DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories,
                          CellSetter<T>[] setters,
                          CsvColumnKey[] keys,
@@ -48,7 +48,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
                          FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
                          RowHandlerErrorHandler rowHandlerErrorHandlers) {
 		super();
-		this.instantiator = instantiator;
+		this.targetSettersFactory = targetSettersFactory;
 		this.delayedCellSetterFactories = delayedCellSetterFactories;
 		this.setters = setters;
 		this.keys = keys;
@@ -238,7 +238,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
         DelayedCellSetter<T, ?>[] outDelayedCellSetters = getDelayedCellSetters(cellHandlers, breakDetector);
         CellSetter<T>[] outSetters = getCellSetters(cellHandlers, breakDetector);
 
-        AbstractTargetSetters<T> mapperSetters = new CsvMapperObjectSetters<T>(instantiator, outDelayedCellSetters, outSetters, keys);
+        AbstractTargetSetters<T> mapperSetters = targetSettersFactory.newInstace(outDelayedCellSetters, outSetters);
 
         return new CsvMapperCellConsumer<T>(mapperSetters,
                 fieldErrorHandler,
@@ -329,7 +329,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
     @Override
     public String toString() {
         return "CsvMapperImpl{" +
-                "instantiator=" + instantiator +
+                "targetSettersFactory=" + targetSettersFactory +
                 ", delayedCellSetters=" + Arrays.toString(delayedCellSetterFactories) +
                 ", setters=" + Arrays.toString(setters) +
                 '}';

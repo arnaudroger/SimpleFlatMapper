@@ -27,14 +27,14 @@ public class AsmInstantiatorTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testInstantiateStringWithCharArray() throws Exception {
-		HashMap<ConstructorParameter, Getter<CsvMapperObjectSetters<String>, ?>> injections = new HashMap<ConstructorParameter, Getter<CsvMapperObjectSetters<String>, ?>>();
+		HashMap<ConstructorParameter, Getter<CsvCellHandlerImpl<String>, ?>> injections = new HashMap<ConstructorParameter, Getter<CsvCellHandlerImpl<String>, ?>>();
 
 		ConstructorParameter parameter = new ConstructorParameter("arg0", char[].class);
 		DelayedGetter delayedGetter = new DelayedGetter(0);
 		injections.put(parameter, delayedGetter);
 
-		Instantiator<CsvMapperObjectSetters<String>, String> instantiator =
-				factory.createInstantiator(CsvMapperObjectSetters.class,
+		Instantiator<CsvCellHandlerImpl<String>, String> instantiator =
+				factory.createInstantiator(CsvCellHandlerImpl.class,
 						new ConstructorDefinition<String>(String.class.getConstructor(char[].class), parameter),
 						injections);
 		DelayedCellSetterImpl delayedCellSetter = new DelayedCellSetterImpl(null, new CellValueReader() {
@@ -45,8 +45,8 @@ public class AsmInstantiatorTest {
 		});
 		delayedCellSetter.set(null, 0, 0, null);
 
-        CsvMapperObjectSetters csvMapperObjectSetters = new CsvMapperObjectSetters(instantiator, new DelayedCellSetter[]{delayedCellSetter}, new CellSetter[]{}, null);
+        CsvCellHandlerImpl targetSettersImpl = new CsvCellHandlerImpl(instantiator, new DelayedCellSetter[]{delayedCellSetter}, new CellSetter[]{}, null, null, null);
 
-		assertNotNull(instantiator.newInstance(csvMapperObjectSetters));
+		assertNotNull(instantiator.newInstance(targetSettersImpl));
 	}
 }

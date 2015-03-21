@@ -1,10 +1,10 @@
 package org.sfm.csv.impl.primitive;
 
-import org.sfm.csv.impl.AbstractTargetSetters;
+import org.sfm.csv.impl.CsvCellHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.IntGetter;
 
-public class IntDelayedGetter<T> implements IntGetter<AbstractTargetSetters<T>>, Getter<AbstractTargetSetters<T>, Integer> {
+public class IntDelayedGetter<T> implements IntGetter<CsvCellHandler<T>>, Getter<CsvCellHandler<T>, Integer> {
 	private final int index;
 	
 	public IntDelayedGetter(int index) {
@@ -13,12 +13,12 @@ public class IntDelayedGetter<T> implements IntGetter<AbstractTargetSetters<T>>,
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public int getInt(AbstractTargetSetters<T> target) throws Exception {
+	public int getInt(CsvCellHandler<T> target) throws Exception {
 		return ((IntDelayedCellSetter<T>)target.getDelayedCellSetter(index)).consumeInt();
 	}
 
 	@Override
-	public Integer get(AbstractTargetSetters<T> target) throws Exception {
+	public Integer get(CsvCellHandler<T> target) throws Exception {
 		return getInt(target);
 	}
 

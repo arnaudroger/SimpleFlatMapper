@@ -140,7 +140,7 @@ public final class CellSetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-    public <T, P> Getter<AbstractTargetSetters<T>, P> newDelayedGetter(CsvColumnKey key, Type type) {
+    public <T, P> Getter<CsvCellHandler<T>, P> newDelayedGetter(CsvColumnKey key, Type type) {
 		Class<?> clazz = TypeHelper.toClass(type);
 		Getter getter;
 		int columnIndex = key.getIndex();

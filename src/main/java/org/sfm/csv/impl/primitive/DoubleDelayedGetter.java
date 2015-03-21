@@ -1,10 +1,10 @@
 package org.sfm.csv.impl.primitive;
 
-import org.sfm.csv.impl.AbstractTargetSetters;
+import org.sfm.csv.impl.CsvCellHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.DoubleGetter;
 
-public class DoubleDelayedGetter<T> implements DoubleGetter<AbstractTargetSetters<T>>, Getter<AbstractTargetSetters<T>, Double> {
+public class DoubleDelayedGetter<T> implements DoubleGetter<CsvCellHandler<T>>, Getter<CsvCellHandler<T>, Double> {
 	private final int index;
 	
 	public DoubleDelayedGetter(int index) {
@@ -13,12 +13,12 @@ public class DoubleDelayedGetter<T> implements DoubleGetter<AbstractTargetSetter
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public double getDouble(AbstractTargetSetters<T> target) throws Exception {
+	public double getDouble(CsvCellHandler<T> target) throws Exception {
 		return ((DoubleDelayedCellSetter<T>)target.getDelayedCellSetter(index)).consumeDouble();
 	}
 
 	@Override
-	public Double get(AbstractTargetSetters<T> target) throws Exception {
+	public Double get(CsvCellHandler<T> target) throws Exception {
 		return getDouble(target);
 	}
 

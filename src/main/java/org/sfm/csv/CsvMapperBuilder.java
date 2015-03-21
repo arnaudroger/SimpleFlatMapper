@@ -5,7 +5,6 @@ import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
-import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuple3;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
@@ -105,12 +104,20 @@ public class CsvMapperBuilder<T> {
 	public final CsvMapper<T> mapper() {
         ParsingContextFactoryBuilder parsingContextFactoryBuilder = new ParsingContextFactoryBuilder(propertyMappingsBuilder.size());
 
-        Tuple3<Map<ConstructorParameter, Getter<AbstractTargetSetters<T>, ?>>, Integer, Boolean> constructorParams = buildConstructorParametersDelayedCellSetter();
-        final Instantiator<AbstractTargetSetters<T>, T> instantiator = getInstantiator(constructorParams.first());
+        Tuple3<Map<ConstructorParameter, Getter<CsvCellHandler<T>, ?>>, Integer, Boolean> constructorParams = buildConstructorParametersDelayedCellSetter();
+        final Instantiator<CsvCellHandler<T>, T> instantiator = getInstantiator(constructorParams.first());
         final CsvColumnKey[] keys = getKeys();
-        return new CsvMapperImpl<T>(new TargetSettersFactory<T>(instantiator, keys),
-                buildDelayedSetters(parsingContextFactoryBuilder, constructorParams.second(), constructorParams.third()),
-                getSetters(parsingContextFactoryBuilder, constructorParams.second()), keys, getJoinKeys(), parsingContextFactoryBuilder.newFactory(), fieldMapperErrorHandler, rowHandlerErrorHandler);
+
+        // will build the context factory builder
+        final CellSetter<T>[] setters = getSetters(parsingContextFactoryBuilder, constructorParams.second());
+        final DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories = buildDelayedSetters(parsingContextFactoryBuilder, constructorParams.second(), constructorParams.third());
+
+        // needs to happen last
+        final CsvCellHandlerFactory<T> csvCellHandlerFactory = new CsvCellHandlerFactory<T>(instantiator, keys, parsingContextFactoryBuilder.newFactory(), fieldMapperErrorHandler);
+
+        return new CsvMapperImpl<T>(csvCellHandlerFactory,
+                delayedCellSetterFactories,
+                setters, getJoinKeys(), rowHandlerErrorHandler);
 	}
 
 
@@ -132,15 +139,15 @@ public class CsvMapperBuilder<T> {
         return keys.toArray(new CsvColumnKey[0]);
     }
 
-	private  Instantiator<AbstractTargetSetters<T>, T>  getInstantiator(Map<ConstructorParameter, Getter<AbstractTargetSetters<T>, ?>> params) throws MapperBuildingException {
+	private  Instantiator<CsvCellHandler<T>, T>  getInstantiator(Map<ConstructorParameter, Getter<CsvCellHandler<T>, ?>> params) throws MapperBuildingException {
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 
 		try {
-			return instantiatorFactory.getInstantiator(new TypeReference<AbstractTargetSetters<T>>(){}.getType(), target, propertyMappingsBuilder, params, new GetterFactory<AbstractTargetSetters<T>, CsvColumnKey>() {
+			return instantiatorFactory.getInstantiator(new TypeReference<CsvCellHandler<T>>(){}.getType(), target, propertyMappingsBuilder, params, new GetterFactory<CsvCellHandler<T>, CsvColumnKey>() {
                 final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
 
                 @Override
-                public <P> Getter<AbstractTargetSetters<T>, P> newGetter(Type target, CsvColumnKey key) {
+                public <P> Getter<CsvCellHandler<T>, P> newGetter(Type target, CsvColumnKey key) {
                     return cellSetterFactory.newDelayedGetter(key, target);
                 }
             });
@@ -149,12 +156,12 @@ public class CsvMapperBuilder<T> {
 		}
 	}
 
-	private Tuple3<Map<ConstructorParameter, Getter<AbstractTargetSetters<T>, ?>>, Integer, Boolean> buildConstructorParametersDelayedCellSetter() {
+	private Tuple3<Map<ConstructorParameter, Getter<CsvCellHandler<T>, ?>>, Integer, Boolean> buildConstructorParametersDelayedCellSetter() {
 
         final BuildConstructorInjections buildConstructorInjections = new BuildConstructorInjections();
         propertyMappingsBuilder.forEachProperties(buildConstructorInjections);
 
-		return new Tuple3<Map<ConstructorParameter, Getter<AbstractTargetSetters<T>, ?>>, Integer, Boolean>(buildConstructorInjections.constructorInjections,
+		return new Tuple3<Map<ConstructorParameter, Getter<CsvCellHandler<T>, ?>>, Integer, Boolean>(buildConstructorInjections.constructorInjections,
                 buildConstructorInjections.delayedSetterEnd, buildConstructorInjections.hasKeys);
 	}
 
@@ -370,12 +377,12 @@ public class CsvMapperBuilder<T> {
 
     private class BuildConstructorInjections implements ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>> {
         final CellSetterFactory cellSetterFactory;
-        private final Map<ConstructorParameter, Getter<AbstractTargetSetters<T>, ?>> constructorInjections;
+        private final Map<ConstructorParameter, Getter<CsvCellHandler<T>, ?>> constructorInjections;
         int delayedSetterEnd;
         boolean hasKeys;
 
         public BuildConstructorInjections() {
-            this.constructorInjections = new HashMap<ConstructorParameter, Getter<AbstractTargetSetters<T>, ?>>();
+            this.constructorInjections = new HashMap<ConstructorParameter, Getter<CsvCellHandler<T>, ?>>();
             cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
             delayedSetterEnd = minDelayedSetter;
         }
@@ -393,7 +400,7 @@ public class CsvMapperBuilder<T> {
             final CsvColumnKey key = propMapping.getColumnKey();
             if (meta.isConstructorProperty()) {
                 delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
-                Getter<AbstractTargetSetters<T>, ?> delayedGetter = cellSetterFactory.newDelayedGetter(key, meta.getType());
+                Getter<CsvCellHandler<T>, ?> delayedGetter = cellSetterFactory.newDelayedGetter(key, meta.getType());
                 constructorInjections.put(((ConstructorPropertyMeta<T, ?>) meta).getConstructorParameter(), delayedGetter);
             } else if (meta instanceof DirectClassMeta.DirectPropertyMeta) {
                 delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
@@ -401,7 +408,7 @@ public class CsvMapperBuilder<T> {
                 SubPropertyMeta<T, ?> subMeta = (SubPropertyMeta<T, ?>) meta;
                 if (subMeta.getOwnerProperty().isConstructorProperty()) {
                     ConstructorPropertyMeta<?, ?> constPropMeta = (ConstructorPropertyMeta<?, ?>) subMeta.getOwnerProperty();
-                    Getter<AbstractTargetSetters<T>, ?> delayedGetter = cellSetterFactory.newDelayedGetter(key, constPropMeta.getType());
+                    Getter<CsvCellHandler<T>, ?> delayedGetter = cellSetterFactory.newDelayedGetter(key, constPropMeta.getType());
                     constructorInjections.put(constPropMeta.getConstructorParameter(), delayedGetter);
                     delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
                 } else if (propMapping.getColumnDefinition().isKey() && propMapping.getColumnDefinition().keyAppliesTo().test(propMapping.getPropertyMeta())) {

@@ -2,7 +2,7 @@ package org.sfm.csv.impl;
 
 import org.sfm.reflect.Getter;
 
-public class DelayedGetter<T> implements Getter<CsvMapperObjectSetters<?>, T> {
+public class DelayedGetter<T> implements Getter<CsvCellHandlerImpl<?>, T> {
 	private final int index;
 	
 	public DelayedGetter(int index) {
@@ -11,7 +11,7 @@ public class DelayedGetter<T> implements Getter<CsvMapperObjectSetters<?>, T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T get(CsvMapperObjectSetters<?> target) throws Exception {
+	public T get(CsvCellHandlerImpl<?> target) throws Exception {
 		return (T) target.getDelayedCellSetter(index).consumeValue();
 	}
 

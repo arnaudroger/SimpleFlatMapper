@@ -13,7 +13,6 @@ import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.util.*;
 //IFJAVA8_START

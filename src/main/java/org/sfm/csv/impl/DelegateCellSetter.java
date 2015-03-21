@@ -14,7 +14,7 @@ public class DelegateCellSetter<T, P> implements CellSetter<T> {
         if (marker== null) throw new NullPointerException("marker is null");
 		this.marker = marker;
 		this.handler = marker.getMapper().newCellConsumer(null, parentBreakDetector);
-        this.setter = (Setter<T, P>) marker.getSetter();
+        this.setter = marker.getSetter();
 		this.cellIndex = cellIndex;
 	}
 

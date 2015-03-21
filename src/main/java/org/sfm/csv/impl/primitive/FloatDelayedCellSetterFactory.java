@@ -1,14 +1,11 @@
 package org.sfm.csv.impl.primitive;
 
-import org.sfm.csv.CsvMapper;
 import org.sfm.csv.impl.BreakDetector;
 import org.sfm.csv.impl.CsvMapperCellConsumer;
 import org.sfm.csv.impl.DelayedCellSetter;
 import org.sfm.csv.impl.DelayedCellSetterFactory;
 import org.sfm.csv.impl.cellreader.FloatCellValueReader;
 import org.sfm.reflect.primitive.FloatSetter;
-
-import java.util.Map;
 
 public class FloatDelayedCellSetterFactory<T> implements DelayedCellSetterFactory<T, Float> {
 

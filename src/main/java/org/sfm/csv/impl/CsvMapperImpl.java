@@ -251,6 +251,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
         return consumers;
     }
 
+    @SuppressWarnings("unchecked")
     private CellSetter<T>[] getCellSetters(CsvMapperCellConsumer<?>[] cellHandlers, BreakDetector breakDetector) {
         if (!hasSetterMarker) return setters;
 

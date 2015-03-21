@@ -3,8 +3,6 @@ package org.sfm.csv.impl;
 import org.sfm.csv.CsvMapper;
 import org.sfm.reflect.Setter;
 
-import java.util.Map;
-
 public class DelegateMarkerDelayedCellSetterFactory<T, P> implements DelayedCellSetterFactory<T, P> {
 
 	private final CsvMapper<P> mapper;
@@ -27,7 +25,8 @@ public class DelegateMarkerDelayedCellSetterFactory<T, P> implements DelayedCell
 		return setter;
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	public DelayedCellSetter<T, P> newCellSetter(BreakDetector breakDetector, CsvMapperCellConsumer<?>[] cellHandlers) {
 
         if (parent == index) {

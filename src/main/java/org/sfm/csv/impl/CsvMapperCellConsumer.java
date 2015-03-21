@@ -44,7 +44,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
                 fieldErrorHandler.errorMappingField(mapperSetters.getColumn(index), this, currentInstance, e);
             }
         }
-    };;
+    };
 
     @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
     public CsvMapperCellConsumer(

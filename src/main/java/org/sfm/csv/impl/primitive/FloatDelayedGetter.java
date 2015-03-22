@@ -1,10 +1,10 @@
 package org.sfm.csv.impl.primitive;
 
-import org.sfm.csv.impl.CsvCellHandler;
+import org.sfm.csv.impl.CsvMapperCellHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.FloatGetter;
 
-public class FloatDelayedGetter<T> implements FloatGetter<CsvCellHandler<T>>, Getter<CsvCellHandler<T>, Float> {
+public class FloatDelayedGetter<T> implements FloatGetter<CsvMapperCellHandler<T>>, Getter<CsvMapperCellHandler<T>, Float> {
 	private final int index;
 	
 	public FloatDelayedGetter(int index) {
@@ -13,12 +13,12 @@ public class FloatDelayedGetter<T> implements FloatGetter<CsvCellHandler<T>>, Ge
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public float getFloat(CsvCellHandler<T> target) throws Exception {
+	public float getFloat(CsvMapperCellHandler<T> target) throws Exception {
 		return ((FloatDelayedCellSetter<T>)target.getDelayedCellSetter(index)).consumeFloat();
 	}
 
 	@Override
-	public Float get(CsvCellHandler<T> target) throws Exception {
+	public Float get(CsvMapperCellHandler<T> target) throws Exception {
 		return getFloat(target);
 	}
 

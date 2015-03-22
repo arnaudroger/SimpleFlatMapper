@@ -7,12 +7,12 @@ import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.reflect.Instantiator;
 
 public class AsmCsvCellHandlerFactory extends CsvCellHandlerFactory<DbObject> {
-    public AsmCsvCellHandlerFactory(Instantiator<CsvCellHandler<DbObject>, DbObject> instantiator, CsvColumnKey[] keys, ParsingContextFactory parsingContextFactory, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler) {
+    public AsmCsvCellHandlerFactory(Instantiator<CsvMapperCellHandler<DbObject>, DbObject> instantiator, CsvColumnKey[] keys, ParsingContextFactory parsingContextFactory, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler) {
         super(instantiator, keys, parsingContextFactory, fieldErrorHandler);
     }
 
     @Override
-    public CsvCellHandler<DbObject> newInstace(DelayedCellSetter<DbObject, ?>[] delayedSetters, CellSetter<DbObject>[] setters) {
-        return new AsmCsvCellHandler(instantiator, delayedSetters, setters, keys, parsingContextFactory.newContext(), fieldErrorHandler);
+    public CsvMapperCellHandler<DbObject> newInstace(DelayedCellSetter<DbObject, ?>[] delayedSetters, CellSetter<DbObject>[] setters) {
+        return new AsmCsvMapperCellHandler(instantiator, delayedSetters, setters, keys, parsingContextFactory.newContext(), fieldErrorHandler);
     }
 }

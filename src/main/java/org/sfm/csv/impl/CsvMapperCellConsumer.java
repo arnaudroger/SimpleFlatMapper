@@ -9,7 +9,7 @@ import java.util.Collection;
 public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
 
-    private final CsvCellHandler<T> mapperSetters;
+    private final CsvMapperCellHandler<T> mapperSetters;
 
 
 
@@ -25,12 +25,12 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
     @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
     public CsvMapperCellConsumer(
-            CsvCellHandler<T> csvCellHandler,
+            CsvMapperCellHandler<T> csvMapperCellHandler,
             RowHandlerErrorHandler rowHandlerErrorHandlers,
             RowHandler<? super T> handler,
             BreakDetector breakDetector, Collection<CsvMapperCellConsumer<?>> children) {
         super();
-        this.mapperSetters = csvCellHandler;
+        this.mapperSetters = csvMapperCellHandler;
         this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
         this.handler = handler;
         this.breakDetector = breakDetector;
@@ -79,9 +79,9 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
     public final void newCell(char[] chars, int offset, int length, int cellIndex) {
         if (mapperSetters.isDelayedSetter(cellIndex)) {
-            mapperSetters.newCellForDelayedSetter(chars, offset, length, cellIndex);
+            mapperSetters.delayedCellValue(chars, offset, length, cellIndex);
         } else if (isNotNull()) {
-            mapperSetters.newCellForSetter(chars, offset, length, cellIndex);
+            mapperSetters.cellValue(chars, offset, length, cellIndex);
         }
         this.cellIndex = cellIndex + 1;
     }

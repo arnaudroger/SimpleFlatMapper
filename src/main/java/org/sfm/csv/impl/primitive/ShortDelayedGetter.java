@@ -1,10 +1,10 @@
 package org.sfm.csv.impl.primitive;
 
-import org.sfm.csv.impl.CsvCellHandler;
+import org.sfm.csv.impl.CsvMapperCellHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.ShortGetter;
 
-public class ShortDelayedGetter<T> implements ShortGetter<CsvCellHandler<T>>, Getter<CsvCellHandler<T>, Short> {
+public class ShortDelayedGetter<T> implements ShortGetter<CsvMapperCellHandler<T>>, Getter<CsvMapperCellHandler<T>, Short> {
 	private final int index;
 	
 	public ShortDelayedGetter(int index) {
@@ -13,12 +13,12 @@ public class ShortDelayedGetter<T> implements ShortGetter<CsvCellHandler<T>>, Ge
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public short getShort(CsvCellHandler<T> target) throws Exception {
+	public short getShort(CsvMapperCellHandler<T> target) throws Exception {
 		return ((ShortDelayedCellSetter<T>)target.getDelayedCellSetter(index)).getShort();
 	}
 
 	@Override
-	public Short get(CsvCellHandler<T> target) throws Exception {
+	public Short get(CsvMapperCellHandler<T> target) throws Exception {
 		return getShort(target);
 	}
 

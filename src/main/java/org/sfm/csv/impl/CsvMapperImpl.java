@@ -228,7 +228,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
         DelayedCellSetter<T, ?>[] outDelayedCellSetters = getDelayedCellSetters(cellHandlers, breakDetector);
         CellSetter<T>[] outSetters = getCellSetters(cellHandlers, breakDetector);
 
-        CsvCellHandler<T> mapperSetters = csvCellHandlerFactory.newInstace(outDelayedCellSetters, outSetters);
+        CsvMapperCellHandler<T> mapperSetters = csvCellHandlerFactory.newInstace(outDelayedCellSetters, outSetters);
 
         return new CsvMapperCellConsumer<T>(mapperSetters,
                 rowHandlerErrorHandlers,

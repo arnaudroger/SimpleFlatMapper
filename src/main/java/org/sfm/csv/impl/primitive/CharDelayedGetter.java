@@ -1,10 +1,10 @@
 package org.sfm.csv.impl.primitive;
 
-import org.sfm.csv.impl.CsvCellHandler;
+import org.sfm.csv.impl.CsvMapperCellHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.CharacterGetter;
 
-public class CharDelayedGetter<T> implements CharacterGetter<CsvCellHandler<T>>, Getter<CsvCellHandler<T>, Character> {
+public class CharDelayedGetter<T> implements CharacterGetter<CsvMapperCellHandler<T>>, Getter<CsvMapperCellHandler<T>, Character> {
 	private final int index;
 	
 	public CharDelayedGetter(int index) {
@@ -13,12 +13,12 @@ public class CharDelayedGetter<T> implements CharacterGetter<CsvCellHandler<T>>,
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public char getCharacter(CsvCellHandler<T> target) throws Exception {
+	public char getCharacter(CsvMapperCellHandler<T> target) throws Exception {
 		return ((CharDelayedCellSetter<T>)target.getDelayedCellSetter(index)).consumeCharacter();
 	}
 
 	@Override
-	public Character get(CsvCellHandler<T> target) throws Exception {
+	public Character get(CsvMapperCellHandler<T> target) throws Exception {
 		return getCharacter(target);
 	}
 

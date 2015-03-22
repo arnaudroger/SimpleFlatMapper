@@ -128,16 +128,16 @@ public class CsvMapperBuilder<T> {
     ) {
 
         final ParsingContextFactory parsingContextFactory = parsingContextFactoryBuilder.newFactory();
-        if (reflectionService.getAsmFactory() == null) {
+        //if (reflectionService.getAsmFactory() == null) {
             return new CsvMapperCellHandlerFactory<T>(instantiator, keys, parsingContextFactory, fieldMapperErrorHandler);
-        } else {
-            try {
-                return reflectionService.getAsmFactory().<T>createCsvMapperCellHandler(target, delayedCellSetterFactories, setters,
-                        instantiator, keys, parsingContextFactory, fieldMapperErrorHandler);
-            } catch (Exception e) {
-                return ErrorHelper.rethrow(e);
-            }
-        }
+//        } else {
+//            try {
+//                return reflectionService.getAsmFactory().<T>createCsvMapperCellHandler(target, delayedCellSetterFactories, setters,
+//                        instantiator, keys, parsingContextFactory, fieldMapperErrorHandler);
+//            } catch (Exception e) {
+//                return ErrorHelper.rethrow(e);
+//            }
+//        }
     }
 
 

@@ -23,6 +23,11 @@ public class LongDelayedCellSetterFactory<T> implements DelayedCellSetterFactory
 	}
 
     @Override
+    public boolean hasSetter() {
+        return setter != null;
+    }
+
+    @Override
     public String toString() {
         return "LongDelayedCellSetterFactory{" +
                 "setter=" + setter +

@@ -23,6 +23,11 @@ public class DoubleDelayedCellSetterFactory<T> implements DelayedCellSetterFacto
 	}
 
     @Override
+    public boolean hasSetter() {
+        return setter != null;
+    }
+
+    @Override
     public String toString() {
         return "DoubleDelayedCellSetterFactory{" +
                 "setter=" + setter +

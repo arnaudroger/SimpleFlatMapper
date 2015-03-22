@@ -39,6 +39,11 @@ public class DelegateMarkerDelayedCellSetterFactory<T, P> implements DelayedCell
 	}
 
     @Override
+    public boolean hasSetter() {
+        return setter != null;
+    }
+
+    @Override
     public String toString() {
         return "DelegateMarkerDelayedCellSetter{" +
                 "mapper=" + mapper +

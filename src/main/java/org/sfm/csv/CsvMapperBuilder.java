@@ -113,15 +113,35 @@ public class CsvMapperBuilder<T> {
         final DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories = buildDelayedSetters(parsingContextFactoryBuilder, constructorParams.second(), constructorParams.third());
 
         // needs to happen last
-        final CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory = new CsvMapperCellHandlerFactory<T>(instantiator, keys, parsingContextFactoryBuilder.newFactory(), fieldMapperErrorHandler);
+        final CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory = newCsvMapperCellHandlerFactory(parsingContextFactoryBuilder, instantiator, keys, delayedCellSetterFactories, setters);
 
         return new CsvMapperImpl<T>(csvMapperCellHandlerFactory,
                 delayedCellSetterFactories,
                 setters, getJoinKeys(), rowHandlerErrorHandler);
 	}
 
+    private CsvMapperCellHandlerFactory<T> newCsvMapperCellHandlerFactory(ParsingContextFactoryBuilder parsingContextFactoryBuilder,
+                                                                          Instantiator<CsvMapperCellHandler<T>, T> instantiator,
+                                                                          CsvColumnKey[] keys,
+                                                                          DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories,
+                                                                          CellSetter<T>[] setters
+    ) {
 
-	private CsvColumnKey[] getKeys() {
+        final ParsingContextFactory parsingContextFactory = parsingContextFactoryBuilder.newFactory();
+        if (reflectionService.getAsmFactory() == null) {
+            return new CsvMapperCellHandlerFactory<T>(instantiator, keys, parsingContextFactory, fieldMapperErrorHandler);
+        } else {
+            try {
+                return reflectionService.getAsmFactory().<T>createCsvMapperCellHandler(target, delayedCellSetterFactories, setters,
+                        instantiator, keys, parsingContextFactory, fieldMapperErrorHandler);
+            } catch (Exception e) {
+                return ErrorHelper.rethrow(e);
+            }
+        }
+    }
+
+
+    private CsvColumnKey[] getKeys() {
 		return propertyMappingsBuilder.getKeys().toArray(new CsvColumnKey[propertyMappingsBuilder.size()]);
 	}
 

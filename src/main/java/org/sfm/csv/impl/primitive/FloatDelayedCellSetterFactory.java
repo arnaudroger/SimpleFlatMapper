@@ -23,6 +23,11 @@ public class FloatDelayedCellSetterFactory<T> implements DelayedCellSetterFactor
 	}
 
     @Override
+    public boolean hasSetter() {
+        return setter != null;
+    }
+
+    @Override
     public String toString() {
         return "FloatDelayedCellSetterFactory{" +
                 "setter=" + setter +

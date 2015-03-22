@@ -113,9 +113,9 @@ public class CsvMapperBuilder<T> {
         final DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories = buildDelayedSetters(parsingContextFactoryBuilder, constructorParams.second(), constructorParams.third());
 
         // needs to happen last
-        final CsvCellHandlerFactory<T> csvCellHandlerFactory = new CsvCellHandlerFactory<T>(instantiator, keys, parsingContextFactoryBuilder.newFactory(), fieldMapperErrorHandler);
+        final CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory = new CsvMapperCellHandlerFactory<T>(instantiator, keys, parsingContextFactoryBuilder.newFactory(), fieldMapperErrorHandler);
 
-        return new CsvMapperImpl<T>(csvCellHandlerFactory,
+        return new CsvMapperImpl<T>(csvMapperCellHandlerFactory,
                 delayedCellSetterFactories,
                 setters, getJoinKeys(), rowHandlerErrorHandler);
 	}

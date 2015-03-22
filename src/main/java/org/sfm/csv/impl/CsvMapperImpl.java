@@ -30,18 +30,18 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
     private final CsvColumnKey[] joinKeys;
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
-    private final CsvCellHandlerFactory<T> csvCellHandlerFactory;
+    private final CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory;
 
     private final boolean hasSetterSubProperties;
     private final boolean hasSubProperties;
 
-	public CsvMapperImpl(CsvCellHandlerFactory<T> csvCellHandlerFactory,
+	public CsvMapperImpl(CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory,
                          DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories,
                          CellSetter<T>[] setters,
                          CsvColumnKey[] joinKeys,
                          RowHandlerErrorHandler rowHandlerErrorHandlers) {
 		super();
-		this.csvCellHandlerFactory = csvCellHandlerFactory;
+		this.csvMapperCellHandlerFactory = csvMapperCellHandlerFactory;
 		this.delayedCellSetterFactories = delayedCellSetterFactories;
 		this.setters = setters;
         this.joinKeys = joinKeys;
@@ -228,7 +228,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
         DelayedCellSetter<T, ?>[] outDelayedCellSetters = getDelayedCellSetters(cellHandlers, breakDetector);
         CellSetter<T>[] outSetters = getCellSetters(cellHandlers, breakDetector);
 
-        CsvMapperCellHandler<T> mapperSetters = csvCellHandlerFactory.newInstace(outDelayedCellSetters, outSetters);
+        CsvMapperCellHandler<T> mapperSetters = csvMapperCellHandlerFactory.newInstace(outDelayedCellSetters, outSetters);
 
         return new CsvMapperCellConsumer<T>(mapperSetters,
                 rowHandlerErrorHandlers,
@@ -318,7 +318,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
     @Override
     public String toString() {
         return "CsvMapperImpl{" +
-                "targetSettersFactory=" + csvCellHandlerFactory +
+                "targetSettersFactory=" + csvMapperCellHandlerFactory +
                 ", delayedCellSetters=" + Arrays.toString(delayedCellSetterFactories) +
                 ", setters=" + Arrays.toString(setters) +
                 '}';

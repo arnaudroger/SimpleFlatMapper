@@ -242,7 +242,7 @@ public class JdbcMapperAsmBuilder {
 		
 		mv.visitVarInsn(ALOAD, 0);
 		mv.visitVarInsn(ALOAD, 1);
-		addIndex(mv, index);
+		AsmUtils.addIndex(mv, index);
 		mv.visitInsn(AALOAD);
 		mv.visitTypeInsn(CHECKCAST, AsmUtils.toType(mapperClass));
 		mv.visitFieldInsn(PUTFIELD, classType, "mapper" + index, toTargetTypeDeclaration(AsmUtils.toType(mapperClass)));
@@ -256,7 +256,7 @@ public class JdbcMapperAsmBuilder {
 
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 2);
-        addIndex(mv, index);
+        AsmUtils.addIndex(mv, index);
         mv.visitInsn(AALOAD);
         mv.visitTypeInsn(CHECKCAST, AsmUtils.toType(mapperClass));
         mv.visitFieldInsn(PUTFIELD, classType, "constructorMapper" + index, toTargetTypeDeclaration(AsmUtils.toType(mapperClass)));
@@ -290,28 +290,5 @@ public class JdbcMapperAsmBuilder {
     }
 
 
-    private static void addIndex(MethodVisitor mv, int i) {
-		switch(i) {
-		case 0:
-			mv.visitInsn(ICONST_0);
-			return;
-		case 1:
-			mv.visitInsn(ICONST_1);
-			return;
-		case 2:
-			mv.visitInsn(ICONST_2);
-			return;
-		case 3:
-			mv.visitInsn(ICONST_3);
-			return;
-		case 4:
-			mv.visitInsn(ICONST_4);
-			return;
-		case 5:
-			mv.visitInsn(ICONST_5);
-			return;
-		default:
-			mv.visitIntInsn(BIPUSH, i);
-		}
-	}
+
 }

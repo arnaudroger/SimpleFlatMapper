@@ -2,6 +2,7 @@ package org.sfm.reflect.asm;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.TypeHelper;
 
 import java.io.File;
@@ -343,6 +344,11 @@ public class AsmUtils {
 		return types;
 	}
 
+    public static String toDeclaredLType(Class<?> clazz) {
+        return toDeclaredLType(toType(clazz));
+    }
+
+
     private static class ParameterizedTypeImpl implements ParameterizedType {
 
         private final Class<?> rawType;
@@ -374,6 +380,31 @@ public class AsmUtils {
                     "rawType=" + rawType +
                     ", types=" + Arrays.toString(types) +
                     '}';
+        }
+    }
+
+    public static void addIndex(MethodVisitor mv, int i) {
+        switch(i) {
+            case 0:
+                mv.visitInsn(ICONST_0);
+                return;
+            case 1:
+                mv.visitInsn(ICONST_1);
+                return;
+            case 2:
+                mv.visitInsn(ICONST_2);
+                return;
+            case 3:
+                mv.visitInsn(ICONST_3);
+                return;
+            case 4:
+                mv.visitInsn(ICONST_4);
+                return;
+            case 5:
+                mv.visitInsn(ICONST_5);
+                return;
+            default:
+                mv.visitIntInsn(BIPUSH, i);
         }
     }
 }

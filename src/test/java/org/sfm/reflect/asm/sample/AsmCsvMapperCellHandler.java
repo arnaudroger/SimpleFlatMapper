@@ -52,20 +52,32 @@ public class AsmCsvMapperCellHandler extends CsvMapperCellHandler<DbObject> {
     @Override
     public void applyDelayedSetters() {
         try {
-            delayedCellSetter0.set(currentInstance);
+            applyDelayedCellSetter0();
         } catch(Exception e) {
             fieldError(0, e);
         }
         try {
-            delayedCellSetter1.set(currentInstance);
+            applyDelayedCellSetter1();
         } catch(Exception e) {
             fieldError(1, e);
         }
         try {
-            delayedCellSetter2.set(currentInstance);
+            applyDelayedCellSetter2();
         } catch(Exception e) {
             fieldError(2, e);
         }
+    }
+
+    private void applyDelayedCellSetter2() throws Exception {
+        delayedCellSetter2.set(currentInstance);
+    }
+
+    private void applyDelayedCellSetter1() throws Exception {
+        delayedCellSetter1.set(currentInstance);
+    }
+
+    private void applyDelayedCellSetter0() throws Exception {
+        delayedCellSetter0.set(currentInstance);
     }
 
     @Override

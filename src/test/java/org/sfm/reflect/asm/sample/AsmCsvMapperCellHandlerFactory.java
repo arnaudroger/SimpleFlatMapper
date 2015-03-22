@@ -6,8 +6,8 @@ import org.sfm.csv.impl.*;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.reflect.Instantiator;
 
-public class AsmCsvCellHandlerFactory extends CsvCellHandlerFactory<DbObject> {
-    public AsmCsvCellHandlerFactory(Instantiator<CsvMapperCellHandler<DbObject>, DbObject> instantiator, CsvColumnKey[] keys, ParsingContextFactory parsingContextFactory, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler) {
+public class AsmCsvMapperCellHandlerFactory extends CsvMapperCellHandlerFactory<DbObject> {
+    public AsmCsvMapperCellHandlerFactory(Instantiator<CsvMapperCellHandler<DbObject>, DbObject> instantiator, CsvColumnKey[] keys, ParsingContextFactory parsingContextFactory, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler) {
         super(instantiator, keys, parsingContextFactory, fieldErrorHandler);
     }
 

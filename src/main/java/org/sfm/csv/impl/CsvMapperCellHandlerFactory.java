@@ -4,14 +4,14 @@ import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.reflect.Instantiator;
 
-public class CsvCellHandlerFactory<T> {
+public class CsvMapperCellHandlerFactory<T> {
 
     protected final Instantiator<CsvMapperCellHandler<T>, T> instantiator;
     protected final CsvColumnKey[] keys;
     protected final ParsingContextFactory parsingContextFactory;
     protected final FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler;
 
-    public CsvCellHandlerFactory(Instantiator<CsvMapperCellHandler<T>, T> instantiator, CsvColumnKey[] keys, ParsingContextFactory parsingContextFactory, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler) {
+    public CsvMapperCellHandlerFactory(Instantiator<CsvMapperCellHandler<T>, T> instantiator, CsvColumnKey[] keys, ParsingContextFactory parsingContextFactory, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler) {
         this.instantiator = instantiator;
         this.keys = keys;
         this.parsingContextFactory = parsingContextFactory;

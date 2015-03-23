@@ -13,6 +13,40 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Provide integration point with Spring JdbcTemplate.
+ * <p>
+ * It implements {@link org.springframework.jdbc.core.RowMapper}, {@link org.springframework.jdbc.core.PreparedStatementCallback} and {@link org.springframework.jdbc.core.ResultSetExtractor}.
+ * Because some JdbcTemplate template signature match against a few of those type you might need to downcast, declare the variable with a specific type or use the type specific method in {@link org.sfm.jdbc.spring.JdbcTemplateMapperFactory}.
+ *
+ * <p>
+ *
+ * <code>
+ * class MyDao {
+ * &nbsp;&nbsp;&nbsp;&nbsp;private final JdbcTemplateMapper&lt;DbObject&gt; mapper =
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JdbcTemplateMapperFactory.newInstance().newMapper(DbObject.class);
+ * &nbsp;&nbsp;&nbsp;&nbsp;private final RowMapper&lt;DbObject&gt; rowMapper = mapper;
+ *
+ * &nbsp;&nbsp;&nbsp;&nbsp;public void doSomething() {
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;DbObject&gt; results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, rowMapper);
+ * &nbsp;&nbsp;&nbsp;&nbsp;}
+ *
+ * &nbsp;&nbsp;&nbsp;&nbsp;public void doSomethingElse() {
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;template
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.query(TEST_DB_OBJECT_QUERY,
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mapper.newResultSetExtractor((o) -> System.out.println(o.toString())));
+ * &nbsp;&nbsp;&nbsp;&nbsp;}
+ * }
+ *</code>
+ *
+ * @param <T> the mapped type
+ * @see org.sfm.jdbc.JdbcMapperFactory
+ * @see org.sfm.jdbc.JdbcMapper
+ * @see org.sfm.jdbc.spring.JdbcTemplateMapperFactory#newPreparedStatementCallback(Class)
+ * @see org.sfm.jdbc.spring.JdbcTemplateMapperFactory#newResultSetExtractor(Class)
+ * @see org.sfm.jdbc.spring.JdbcTemplateMapperFactory#newRowMapper(Class)
+ *
+ */
 public final class JdbcTemplateMapper<T> implements RowMapper<T>, PreparedStatementCallback<List<T>>, ResultSetExtractor<List<T>> {
 	private final JdbcMapper<T> mapper;
 	
@@ -35,6 +69,12 @@ public final class JdbcTemplateMapper<T> implements RowMapper<T>, PreparedStatem
 			rs.close();
 		}
 	}
+
+    @Override
+    public List<T> extractData(ResultSet rs) throws SQLException,
+            DataAccessException {
+        return mapper.forEach(rs, new ListHandler<T>()).getList();
+    }
 	
 	public <H extends RowHandler<T>> PreparedStatementCallback<H> newPreparedStatementCallback(final H handler) {
 		return new PreparedStatementCallback<H>() {
@@ -63,9 +103,5 @@ public final class JdbcTemplateMapper<T> implements RowMapper<T>, PreparedStatem
 		};
 	}
 
-	@Override
-	public List<T> extractData(ResultSet rs) throws SQLException,
-			DataAccessException {
-		return mapper.forEach(rs, new ListHandler<T>()).getList();
-	}
+
 }

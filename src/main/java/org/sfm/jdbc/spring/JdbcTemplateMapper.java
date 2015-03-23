@@ -34,7 +34,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;&nbsp;public void doSomethingElse() {
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;template
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.query(TEST_DB_OBJECT_QUERY,
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mapper.newResultSetExtractor((o) -> System.out.println(o.toString())));
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mapper.newResultSetExtractor((o) -&gt; System.out.println(o.toString())));
  * &nbsp;&nbsp;&nbsp;&nbsp;}
  * }
  *</code>

@@ -172,7 +172,7 @@ public class AsmFactory {
         final String className = generateClassCsvMapperCellHandler(target, delayedCellSetterFactories, setters);
         final String factoryName = className + "Factory";
         final byte[] bytes = CsvMapperCellHandlerBuilder.<T>createTargetSetterClass(className, delayedCellSetterFactories, setters, target);
-        final byte[] bytesFactory = CsvMapperCellHandlerBuilder.<T>createTargetSetterFactory(factoryName, className, target);
+        final byte[] bytesFactory = CsvMapperCellHandlerBuilder.createTargetSetterFactory(factoryName, className, target);
         final Class<?> type = createClass(className, bytes, target.getClass().getClassLoader());
         final Class<?> typeFactory = createClass(factoryName, bytesFactory, target.getClass().getClassLoader());
 

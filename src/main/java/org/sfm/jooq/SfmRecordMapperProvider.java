@@ -30,7 +30,7 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 			mapperCache.add(key, mapper);
 		}
 		
-		return new RecordMapperWrapper<R, E>(mapper);
+		return new JooqRecordMapperWrapper<R, E>(mapper);
 	}
 
 	

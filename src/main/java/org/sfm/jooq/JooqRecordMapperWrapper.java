@@ -4,11 +4,11 @@ import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.sfm.map.Mapper;
 
-public class RecordMapperWrapper<R extends Record, E> implements RecordMapper<R, E> {
+public class JooqRecordMapperWrapper<R extends Record, E> implements RecordMapper<R, E> {
 
 	private final Mapper<Record, E> mapper;
 
-	public RecordMapperWrapper(Mapper<Record, E> mapper) {
+	public JooqRecordMapperWrapper(Mapper<Record, E> mapper) {
 		this.mapper = mapper;
 	}
 

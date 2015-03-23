@@ -57,8 +57,9 @@ public final class CsvMapperFactory {
 
 	private boolean useAsm = true;
 	private boolean disableAsm = false;
-	
-	private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
+    private boolean useAsmForCellHandler = false;
+
+    private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
 	
 	private String defaultDateFormat = "yyyy-MM-dd HH:mm:ss";
 
@@ -106,8 +107,18 @@ public final class CsvMapperFactory {
 		this.useAsm = useAsm;
 		return this;
 	}
-	
-	/**
+
+    /**
+     * activate the new asm optimisation. disable by default
+     * @param useAsmForCellHandler activate asm for cell handler
+     * @return the factory
+     */
+    public CsvMapperFactory useAsmForCellHandler(final boolean useAsmForCellHandler) {
+        this.useAsmForCellHandler = useAsmForCellHandler;
+        return this;
+    }
+
+    /**
 	 * @param disableAsm true if you want to disable asm.
      * @return the current factory
 	 */
@@ -147,7 +158,8 @@ public final class CsvMapperFactory {
 		return new DynamicCsvMapper<T>(target,
 				classMeta,
 				fieldMapperErrorHandler, mapperBuilderErrorHandler,
-				rowHandlerErrorHandler, defaultDateFormat, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory);
+				rowHandlerErrorHandler, defaultDateFormat, columnDefinitions,
+                propertyNameMatcherFactory, cellValueReaderFactory, useAsmForCellHandler);
 	}
 
 	private <T> ClassMeta<T> getClassMeta(Type target) {
@@ -172,7 +184,10 @@ public final class CsvMapperFactory {
 
     public <T> CsvMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory, 0);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta,
+                mapperBuilderErrorHandler, columnDefinitions,
+                propertyNameMatcherFactory, cellValueReaderFactory,
+                0, useAsmForCellHandler);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.rowHandlerErrorHandler(rowHandlerErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);

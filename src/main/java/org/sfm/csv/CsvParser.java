@@ -394,7 +394,7 @@ public final class CsvParser {
 			this(dsl, ReflectionService.newInstance().<T>getRootClassMeta(mapToClass), mapToClass, new CsvColumnDefinitionProviderImpl());
 		}
 		private MapToDSL(DSL dsl, ClassMeta<T> classMeta, Type mapToClass, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
-			super(dsl, new DynamicCsvMapper<T>(mapToClass, classMeta, columnDefinitionProvider));
+			super(dsl, new DynamicCsvMapper<T>(mapToClass, classMeta, columnDefinitionProvider, false));
 			this.mapToClass = mapToClass;
 			this.classMeta = classMeta;
 			this.columnDefinitionProvider = columnDefinitionProvider;
@@ -489,7 +489,7 @@ public final class CsvParser {
 		}
 
 		private static <T> CsvMapper<T> newStaticMapper(Type mapToClass, ClassMeta<T> classMeta, List<Tuple2<String, CsvColumnDefinition>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
-			CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(mapToClass, classMeta, columnDefinitionProvider);
+			CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(mapToClass, classMeta, columnDefinitionProvider, false);
 			for(Tuple2<String, CsvColumnDefinition> col: columns) {
 				builder.addMapping(col.first(), col.second());
 			}

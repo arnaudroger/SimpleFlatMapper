@@ -36,12 +36,15 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	private final ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitions;
 	private final CellValueReaderFactory cellValueReaderFactory;
+    private final boolean useAsmForCellHandler;
 
-	public DynamicCsvMapper(final Type target, final ClassMeta<T> classMeta,
+    public DynamicCsvMapper(final Type target, final ClassMeta<T> classMeta,
 							final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler,
 							final MapperBuilderErrorHandler mapperBuilderErrorHandler, RowHandlerErrorHandler rowHandlerErrorHandler, String defaultDateFormat,
 							ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitions,
-							PropertyNameMatcherFactory propertyNameMatcherFactory, CellValueReaderFactory cellValueReaderFactory) {
+							PropertyNameMatcherFactory propertyNameMatcherFactory, CellValueReaderFactory cellValueReaderFactory,
+                            boolean useAsmForCellHandler
+    ) {
 		if (classMeta == null) {
 			throw new NullPointerException("classMeta is null");
 		}
@@ -57,11 +60,12 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		this.columnDefinitions = columnDefinitions;
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.cellValueReaderFactory = cellValueReaderFactory;
+        this.useAsmForCellHandler = useAsmForCellHandler;
 	}
 
-	public DynamicCsvMapper(Type target, ClassMeta<T> classMeta, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitionProvider) {
+	public DynamicCsvMapper(Type target, ClassMeta<T> classMeta, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitionProvider, boolean useAsmForCellHandler) {
 		this(target, classMeta, new RethrowFieldMapperErrorHandler<CsvColumnKey>(), new RethrowMapperBuilderErrorHandler(), new RethrowRowHandlerErrorHandler(), "yyyy-MM-dd HH:mm:ss",
-				columnDefinitionProvider, new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl());
+				columnDefinitionProvider, new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl(), useAsmForCellHandler);
 	}
 
 	@Override
@@ -171,7 +175,8 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 
 	private CsvMapperImpl<T> buildMapper(ColumnsMapperKey key) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory, 0);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler,
+                columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory, 0, useAsmForCellHandler);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);
 		builder.rowHandlerErrorHandler(rowHandlerErrorHandler);

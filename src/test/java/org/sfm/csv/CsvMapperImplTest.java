@@ -227,10 +227,7 @@ public class CsvMapperImplTest {
     public void testEnumRoot() throws IOException {
         CsvMapperBuilder<TypeRoot> builder = new CsvMapperBuilder<TypeRoot>(TypeRoot.class);
         builder.addMapping("c1");
-
         CsvMapper<TypeRoot> mapper = builder.mapper();
-
-
         assertEquals(TypeRoot.type1, mapper.iterator(new StringReader("0")).next());
     }
 

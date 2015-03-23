@@ -57,7 +57,6 @@ public final class CsvMapperFactory {
 
 	private boolean useAsm = true;
 	private boolean disableAsm = false;
-    private boolean useAsmForCellHandler = false;
 
     private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
 	
@@ -109,16 +108,6 @@ public final class CsvMapperFactory {
 	}
 
     /**
-     * activate the new asm optimisation. disable by default
-     * @param useAsmForCellHandler activate asm for cell handler
-     * @return the factory
-     */
-    public CsvMapperFactory useAsmForCellHandler(final boolean useAsmForCellHandler) {
-        this.useAsmForCellHandler = useAsmForCellHandler;
-        return this;
-    }
-
-    /**
 	 * @param disableAsm true if you want to disable asm.
      * @return the current factory
 	 */
@@ -159,7 +148,7 @@ public final class CsvMapperFactory {
 				classMeta,
 				fieldMapperErrorHandler, mapperBuilderErrorHandler,
 				rowHandlerErrorHandler, defaultDateFormat, columnDefinitions,
-                propertyNameMatcherFactory, cellValueReaderFactory, useAsmForCellHandler);
+                propertyNameMatcherFactory, cellValueReaderFactory);
 	}
 
 	private <T> ClassMeta<T> getClassMeta(Type target) {
@@ -187,7 +176,7 @@ public final class CsvMapperFactory {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta,
                 mapperBuilderErrorHandler, columnDefinitions,
                 propertyNameMatcherFactory, cellValueReaderFactory,
-                0, useAsmForCellHandler);
+                0);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.rowHandlerErrorHandler(rowHandlerErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);

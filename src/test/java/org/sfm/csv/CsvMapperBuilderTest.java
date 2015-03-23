@@ -77,12 +77,6 @@ public class CsvMapperBuilderTest {
 	}
 
     @Test
-    public void testMapDbObjectAsm() throws Exception {
-        testMapDbObject(csvMapperFactory.useAsmForCellHandler(true).newBuilder(DbObject.class));
-    }
-
-
-    @Test
 	public void testMapDbObjectNoAsm() throws Exception {
 		testMapDbObject(csvMapperFactory.disableAsm(true).newBuilder(DbObject.class));
 	}
@@ -143,12 +137,6 @@ public class CsvMapperBuilderTest {
 		testMapFinalDbObject(builder);
 	}
 
-    @Test
-    public void testMapFinalDbObjectAsm() throws Exception {
-        CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.useAsmForCellHandler(true).newBuilder(DbFinalObject.class);
-        testMapFinalDbObject(builder);
-    }
-
 	@Test
 	public void testMapFinalDbObjectNoAsm() throws Exception {
 		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.useAsm(false).newBuilder(DbFinalObject.class);
@@ -170,11 +158,7 @@ public class CsvMapperBuilderTest {
 		CsvMapperBuilder<DbPartialFinalObject> builder = csvMapperFactory.newBuilder(DbPartialFinalObject.class);
 		testMapPartialFinalDbObject(builder);
 	}
-    @Test
-    public void testMapPartialFinalDbObjectAsm() throws Exception {
-        CsvMapperBuilder<DbPartialFinalObject> builder = csvMapperFactory.useAsmForCellHandler(true).newBuilder(DbPartialFinalObject.class);
-        testMapPartialFinalDbObject(builder);
-    }
+
 	@Test
 	public void testMapPartialFinalDbObjectNoAsm() throws Exception {
 		CsvMapperBuilder<DbPartialFinalObject> builder = csvMapperFactory.useAsm(false).newBuilder(DbPartialFinalObject.class);

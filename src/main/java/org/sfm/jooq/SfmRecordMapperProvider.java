@@ -5,6 +5,10 @@ import org.sfm.map.Mapper;
 import org.sfm.map.impl.MapperCache;
 import org.sfm.map.impl.TargetColumnsMapperKey;
 
+/**
+ * Integration point with jooq.<p>
+ * Provide a JooqRecordMapper backed by an Sfm {@link org.jooq.Record} {@link org.sfm.map.Mapper}
+ */
 public class SfmRecordMapperProvider implements RecordMapperProvider {
 
 	private final MapperCache<TargetColumnsMapperKey, Mapper<Record, ?>> mapperCache = new MapperCache<TargetColumnsMapperKey, Mapper<Record, ?>>();

@@ -27,8 +27,8 @@ public class AsmCsvMapperCellHandler extends CsvMapperCellHandler<DbObject> {
         delayedCellSetter2 = delayedCellSetters[2];
 
         setter3 = setters[0];
-        setter4 = setters[1];
-        setter5 = setters[2];
+        setter4 = setters[Short.MAX_VALUE];
+        setter5 = setters[Integer.MAX_VALUE];
     }
 
     @Override

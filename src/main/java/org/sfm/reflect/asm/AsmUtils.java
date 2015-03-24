@@ -404,7 +404,13 @@ public class AsmUtils {
                 mv.visitInsn(ICONST_5);
                 return;
             default:
-                mv.visitIntInsn(BIPUSH, i);
+                if (i <= Byte.MAX_VALUE) {
+                    mv.visitIntInsn(BIPUSH, i);
+                } else if (i <= Short.MAX_VALUE) {
+                    mv.visitIntInsn(SIPUSH, i);
+                } else {
+                    mv.visitLdcInsn(i);
+                }
         }
     }
 }

@@ -22,21 +22,21 @@ import java.util.List;
  * <p>
  *
  * <code>
- * class MyDao {
- * &nbsp;&nbsp;&nbsp;&nbsp;private final JdbcTemplateMapper&lt;DbObject&gt; mapper =
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JdbcTemplateMapperFactory.newInstance().newMapper(DbObject.class);
- * &nbsp;&nbsp;&nbsp;&nbsp;private final RowMapper&lt;DbObject&gt; rowMapper = mapper;
- *
- * &nbsp;&nbsp;&nbsp;&nbsp;public void doSomething() {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;DbObject&gt; results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, rowMapper);
- * &nbsp;&nbsp;&nbsp;&nbsp;}
- *
- * &nbsp;&nbsp;&nbsp;&nbsp;public void doSomethingElse() {
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;template
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.query(TEST_DB_OBJECT_QUERY,
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mapper.newResultSetExtractor((o) -&gt; System.out.println(o.toString())));
- * &nbsp;&nbsp;&nbsp;&nbsp;}
- * }
+ * class MyDao {<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;private final JdbcTemplateMapper&lt;DbObject&gt; mapper =<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JdbcTemplateMapperFactory.newInstance().newMapper(DbObject.class);<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;private final RowMapper&lt;DbObject&gt; rowMapper = mapper;<br>
+ *<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;public void doSomething() {<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;DbObject&gt; results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, rowMapper);<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+ *<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;public void doSomethingElse() {<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;template<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.query(TEST_DB_OBJECT_QUERY,<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mapper.newResultSetExtractor((o) -&gt; System.out.println(o.toString())));<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+ * }<br>
  *</code>
  *
  * @param <T> the mapped type

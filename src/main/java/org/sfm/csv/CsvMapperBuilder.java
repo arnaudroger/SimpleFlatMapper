@@ -17,6 +17,7 @@ import java.util.Map;
 
 public class CsvMapperBuilder<T> {
 
+    private static final int NO_ASM_CSV_HANDLER_THRESHOLD = 240; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
     public static final boolean DEFAULT_USE_ASM_FOR_CELL_HANDLER = true;
     private final CellValueReaderFactory cellValueReaderFactory;
 	private FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<CsvColumnKey>();
@@ -136,7 +137,7 @@ public class CsvMapperBuilder<T> {
     ) {
 
         final ParsingContextFactory parsingContextFactory = parsingContextFactoryBuilder.newFactory();
-        if (reflectionService.getAsmFactory() == null) {
+        if (reflectionService.getAsmFactory() == null || keys.length >= NO_ASM_CSV_HANDLER_THRESHOLD) {
             return new CsvMapperCellHandlerFactory<T>(instantiator, keys, parsingContextFactory, fieldMapperErrorHandler);
         } else {
             try {

@@ -31,6 +31,7 @@ public final class DynamicJdbcMapper<T> extends AbstractDynamicJdbcMapper<T> {
 	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
 	private final RowHandlerErrorHandler rowHandlerErrorHandler;
     private final boolean failOnAsm;
+    private final int asmMapperNbFieldsLimit;
 
     private final MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache = new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
 
@@ -40,7 +41,8 @@ public final class DynamicJdbcMapper<T> extends AbstractDynamicJdbcMapper<T> {
 							 RowHandlerErrorHandler rowHandlerErrorHandler,
 							 final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions,
 							 PropertyNameMatcherFactory propertyNameMatcherFactory,
-                             boolean failOnAsm) {
+                             boolean failOnAsm,
+                             int asmMapperNbFieldsLimit) {
 		this.classMeta = classMeta;
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
@@ -48,6 +50,7 @@ public final class DynamicJdbcMapper<T> extends AbstractDynamicJdbcMapper<T> {
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
         this.failOnAsm = failOnAsm;
+        this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
 	}
 
 
@@ -98,7 +101,9 @@ public final class DynamicJdbcMapper<T> extends AbstractDynamicJdbcMapper<T> {
 		JdbcMapper<T> mapper = mapperCache.get(key);
 		
 		if (mapper == null) {
-			final JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler,columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory(), failOnAsm, new JdbcMappingContextFactoryBuilder());
+			final JdbcMapperBuilder<T> builder =
+                    new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler,columnDefinitions, propertyNameMatcherFactory,
+                            new ResultSetGetterFactory(), failOnAsm, asmMapperNbFieldsLimit, new JdbcMappingContextFactoryBuilder());
 
 			builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);

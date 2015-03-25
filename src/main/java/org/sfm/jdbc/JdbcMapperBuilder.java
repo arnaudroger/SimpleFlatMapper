@@ -22,9 +22,12 @@ import java.sql.SQLException;
  */
 public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey> {
 
+    public static final int NO_ASM_MAPPER_THRESHOLD = 792; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
+
     private int calculatedIndex = 1;
     private RowHandlerErrorHandler jdbcMapperErrorHandler = new RethrowRowHandlerErrorHandler();
     private final boolean failOnAsm;
+    private final int asmMapperNbFieldsLimit;
 
     /**
      * Build a new JdbcMapperBuilder targeting the type specified by the TypeReference. The TypeReference
@@ -59,6 +62,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
                 new DefaultPropertyNameMatcherFactory(),
                 new ResultSetGetterFactory(),
                 false,
+                NO_ASM_MAPPER_THRESHOLD,
                 new JdbcMappingContextFactoryBuilder());
     }
 
@@ -74,10 +78,11 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
     public JdbcMapperBuilder(final ClassMeta<T> classMeta, final MapperBuilderErrorHandler mapperBuilderErrorHandler,
                              final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions,
                              PropertyNameMatcherFactory propertyNameMatcherFactory,
-                             GetterFactory<ResultSet, JdbcColumnKey> getterFactory, boolean failOnAsm,
+                             GetterFactory<ResultSet, JdbcColumnKey> getterFactory, boolean failOnAsm, int asmMapperNbFieldsLimit,
                              MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
         super(ResultSet.class, classMeta, getterFactory, new ResultSetFieldMapperFactory(getterFactory), columnDefinitions, propertyNameMatcherFactory, mapperBuilderErrorHandler, parentBuilder);
         this.failOnAsm = failOnAsm;
+        this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
     }
 
     /**
@@ -107,7 +112,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
         }
 
 
-        if (reflectionService.isAsmActivated()) {
+        if (isEligibleForAsmMapper()) {
             try {
                 return reflectionService.getAsmFactory().createJdbcMapper(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), getTargetClass(), jdbcMapperErrorHandler, mappingContextFactory);
             } catch (Exception e) {
@@ -120,6 +125,11 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
         } else {
             return new JdbcMapperImpl<T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), jdbcMapperErrorHandler, mappingContextFactory);
         }
+    }
+
+    private boolean isEligibleForAsmMapper() {
+        return reflectionService.isAsmActivated()
+                && propertyMappingsBuilder.size() < asmMapperNbFieldsLimit;
     }
 
     /**
@@ -232,7 +242,8 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 
     @Override
     protected <ST> AbstractFieldMapperMapperBuilder<ResultSet, ST, JdbcColumnKey> newSubBuilder(Type type, ClassMeta<ST> classMeta, MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> mappingContextFactoryBuilder) {
-        return new JdbcMapperBuilder<ST>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, new ResultSetGetterFactory(), failOnAsm, mappingContextFactoryBuilder);
+        return new JdbcMapperBuilder<ST>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory,
+                new ResultSetGetterFactory(), failOnAsm, asmMapperNbFieldsLimit, mappingContextFactoryBuilder);
     }
 
     /**

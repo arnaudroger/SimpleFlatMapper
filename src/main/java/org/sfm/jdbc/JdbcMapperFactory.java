@@ -67,6 +67,7 @@ public final class JdbcMapperFactory {
 
     private boolean disableAsm = false;
     private boolean failOnAsm = false;
+    private int asmMapperNbFieldsLimit = JdbcMapperBuilder.NO_ASM_MAPPER_THRESHOLD;
 
     private ReflectionService reflectionService = null;
 
@@ -197,7 +198,10 @@ public final class JdbcMapperFactory {
     public <T> JdbcMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
 
-		JdbcMapperBuilder<T> builder = new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory, getterFactory, failOnAsm, new JdbcMappingContextFactoryBuilder());
+		JdbcMapperBuilder<T> builder =
+                new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler, columnDefinitions,
+                        propertyNameMatcherFactory, getterFactory, failOnAsm, asmMapperNbFieldsLimit,
+                        new JdbcMappingContextFactoryBuilder());
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
@@ -232,7 +236,8 @@ public final class JdbcMapperFactory {
      */
 	public <T> JdbcMapper<T> newMapper(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
-		return new DynamicJdbcMapper<T>(classMeta, fieldMapperErrorHandler, mapperBuilderErrorHandler, rowHandlerErrorHandler, columnDefinitions, propertyNameMatcherFactory, failOnAsm);
+		return new DynamicJdbcMapper<T>(classMeta, fieldMapperErrorHandler, mapperBuilderErrorHandler,
+                rowHandlerErrorHandler, columnDefinitions, propertyNameMatcherFactory, failOnAsm, asmMapperNbFieldsLimit);
 	}
 
 
@@ -315,6 +320,18 @@ public final class JdbcMapperFactory {
      */
     public JdbcMapperFactory failOnAsm(boolean b) {
         this.failOnAsm = b;
+        return this;
+    }
+
+    /**
+     * change the number of fields threshold after which an asm mapper is not generated.
+     * <p>
+     * the default value is calculated from the benchmark results, currently 240.
+     * @param asmMapperNbFieldsLimit the limit after which it does not use asm for the mapper.
+     * @return the factory
+     */
+    public JdbcMapperFactory asmMapperNbFieldsLimit(final int asmMapperNbFieldsLimit) {
+        this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
         return this;
     }
 

@@ -57,6 +57,8 @@ public final class CsvMapperFactory {
 
 	private boolean useAsm = true;
 	private boolean disableAsm = false;
+    private boolean failOnAsm = false;
+    private int asmMapperNbFieldsLimit = CsvMapperBuilder.NO_ASM_CSV_HANDLER_THRESHOLD;
 
     private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
 	
@@ -108,6 +110,28 @@ public final class CsvMapperFactory {
 	}
 
     /**
+     *
+     * @param failOnAsm true if don't want to recover from an asm generation failure of the mapper
+     * @return the factory
+     */
+    public CsvMapperFactory failOnAsm(final boolean failOnAsm) {
+        this.failOnAsm = failOnAsm;
+        return this;
+    }
+
+    /**
+     * change the number of fields threshold after which an asm mapper is not generated.
+     * <p>
+     * the default value is calculated from the benchmark results, currently 240.
+     * @param asmMapperNbFieldsLimit the limit after which it does not use asm for the mapper.
+     * @return the factory
+     */
+    public CsvMapperFactory asmMapperNbFieldsLimit(final int asmMapperNbFieldsLimit) {
+        this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
+        return this;
+    }
+
+    /**
 	 * @param disableAsm true if you want to disable asm.
      * @return the current factory
 	 */
@@ -148,7 +172,7 @@ public final class CsvMapperFactory {
 				classMeta,
 				fieldMapperErrorHandler, mapperBuilderErrorHandler,
 				rowHandlerErrorHandler, defaultDateFormat, columnDefinitions,
-                propertyNameMatcherFactory, cellValueReaderFactory);
+                propertyNameMatcherFactory, cellValueReaderFactory, failOnAsm, asmMapperNbFieldsLimit);
 	}
 
 	private <T> ClassMeta<T> getClassMeta(Type target) {
@@ -176,7 +200,7 @@ public final class CsvMapperFactory {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta,
                 mapperBuilderErrorHandler, columnDefinitions,
                 propertyNameMatcherFactory, cellValueReaderFactory,
-                0);
+                0, failOnAsm, asmMapperNbFieldsLimit);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.rowHandlerErrorHandler(rowHandlerErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);

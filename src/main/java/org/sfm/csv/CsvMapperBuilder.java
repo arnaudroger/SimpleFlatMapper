@@ -17,8 +17,7 @@ import java.util.Map;
 
 public class CsvMapperBuilder<T> {
 
-    private static final int NO_ASM_CSV_HANDLER_THRESHOLD = 240; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
-    public static final boolean DEFAULT_USE_ASM_FOR_CELL_HANDLER = true;
+    public static final int NO_ASM_CSV_HANDLER_THRESHOLD = 240; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
     private final CellValueReaderFactory cellValueReaderFactory;
 	private FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<CsvColumnKey>();
 
@@ -36,6 +35,10 @@ public class CsvMapperBuilder<T> {
 	private String defaultDateFormat = "yyyy-MM-dd HH:mm:ss";
 
 
+    private final boolean failOnAsm;
+    private final int asmMapperNbFieldsLimit;
+
+
     public CsvMapperBuilder(final Type target) {
 		this(target, ReflectionService.newInstance());
 	}
@@ -46,13 +49,13 @@ public class CsvMapperBuilder<T> {
 	}
 
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta) {
-		this(target, classMeta, new IdentityCsvColumnDefinitionProvider(), DEFAULT_USE_ASM_FOR_CELL_HANDLER);
+		this(target, classMeta, new IdentityCsvColumnDefinitionProvider());
 	}
 
-	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitionProvider, boolean useAsmForCellHandler) {
+	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitionProvider) {
 		this(target, classMeta, new RethrowMapperBuilderErrorHandler(),
                 columnDefinitionProvider, new DefaultPropertyNameMatcherFactory(),
-                new CellValueReaderFactoryImpl(), 0);
+                new CellValueReaderFactoryImpl(), 0, false, NO_ASM_CSV_HANDLER_THRESHOLD);
 	}
 
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta,
@@ -60,7 +63,9 @@ public class CsvMapperBuilder<T> {
                             ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitions,
                             PropertyNameMatcherFactory propertyNameMatcherFactory,
                             CellValueReaderFactory cellValueReaderFactory,
-                            int minDelayedSetter) throws MapperBuildingException {
+                            int minDelayedSetter,
+                            boolean failOnAsm,
+                            int asmMapperNbFieldsLimit) throws MapperBuildingException {
 		this.target = target;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
         this.minDelayedSetter = minDelayedSetter;
@@ -69,6 +74,8 @@ public class CsvMapperBuilder<T> {
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.columnDefinitions = columnDefinitions;
 		this.cellValueReaderFactory = cellValueReaderFactory;
+        this.failOnAsm = failOnAsm;
+        this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
 	}
 
 	public final CsvMapperBuilder<T> addMapping(final String columnKey) {
@@ -137,16 +144,25 @@ public class CsvMapperBuilder<T> {
     ) {
 
         final ParsingContextFactory parsingContextFactory = parsingContextFactoryBuilder.newFactory();
-        if (reflectionService.getAsmFactory() == null || keys.length >= NO_ASM_CSV_HANDLER_THRESHOLD) {
-            return new CsvMapperCellHandlerFactory<T>(instantiator, keys, parsingContextFactory, fieldMapperErrorHandler);
-        } else {
+        if (isEligibleForAsmHandler()) {
             try {
                 return reflectionService.getAsmFactory().<T>createCsvMapperCellHandler(target, delayedCellSetterFactories, setters,
                         instantiator, keys, parsingContextFactory, fieldMapperErrorHandler);
             } catch (Exception e) {
-                return ErrorHelper.rethrow(e);
+                if (failOnAsm) {
+                    return ErrorHelper.rethrow(e);
+                } else {
+                    return new CsvMapperCellHandlerFactory<T>(instantiator, keys, parsingContextFactory, fieldMapperErrorHandler);
+                }
             }
+        } else {
+            return new CsvMapperCellHandlerFactory<T>(instantiator, keys, parsingContextFactory, fieldMapperErrorHandler);
         }
+    }
+
+    private boolean isEligibleForAsmHandler() {
+        return reflectionService.getAsmFactory() != null
+                &&  this.propertyMappingsBuilder.size() < asmMapperNbFieldsLimit;
     }
 
 
@@ -236,7 +252,7 @@ public class CsvMapperBuilder<T> {
 				if (delegateMapperBuilder == null) {
 					delegateMapperBuilder = new CsvMapperBuilder<P>(propOwner.getType(), propOwner.getClassMeta(),
                             mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory,
-                            cellValueReaderFactory, newMinDelayedSetter);
+                            cellValueReaderFactory, newMinDelayedSetter, failOnAsm, asmMapperNbFieldsLimit);
 					delegateMapperBuilders.put(propOwner.getName(), delegateMapperBuilder);
 				}
 
@@ -329,7 +345,7 @@ public class CsvMapperBuilder<T> {
 							if (delegateMapperBuilder == null) {
 								delegateMapperBuilder = new CsvMapperBuilder(propOwner.getType(), propOwner.getClassMeta(),
                                         mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory,
-                                        cellValueReaderFactory, minDelayedSetter);
+                                        cellValueReaderFactory, minDelayedSetter, failOnAsm, asmMapperNbFieldsLimit);
 								delegateMapperBuilders.put(propOwner.getName(), delegateMapperBuilder);
 							}
 

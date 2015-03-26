@@ -12,7 +12,7 @@ public class AsmCsvMapperCellHandlerFactory extends CsvMapperCellHandlerFactory<
     }
 
     @Override
-    public CsvMapperCellHandler<DbObject> newInstace(DelayedCellSetter<DbObject, ?>[] delayedSetters, CellSetter<DbObject>[] setters) {
+    public CsvMapperCellHandler<DbObject> newInstance(DelayedCellSetter<DbObject, ?>[] delayedSetters, CellSetter<DbObject>[] setters) {
         return new AsmCsvMapperCellHandler(instantiator, delayedSetters, setters, keys, parsingContextFactory.newContext(), fieldErrorHandler);
     }
 }

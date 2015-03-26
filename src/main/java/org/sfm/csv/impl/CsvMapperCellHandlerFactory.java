@@ -18,7 +18,7 @@ public class CsvMapperCellHandlerFactory<T> {
         this.fieldErrorHandler = fieldErrorHandler;
     }
 
-    public CsvMapperCellHandler<T> newInstace(DelayedCellSetter<T, ?>[] delayedSetters, CellSetter<T>[] setters) {
+    public CsvMapperCellHandler<T> newInstance(DelayedCellSetter<T, ?>[] delayedSetters, CellSetter<T>[] setters) {
         return new CsvMapperCellHandlerImpl(instantiator, delayedSetters, setters, keys, parsingContextFactory.newContext(), fieldErrorHandler);
     }
 

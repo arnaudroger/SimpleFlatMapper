@@ -57,7 +57,7 @@ public class CsvMapperDateFormatTest {
 	}
 	
 	@Test
-	public void testErrorHandler() throws ParseException, MappingException, IOException {
+	public void testErrorHandlerAsm() throws ParseException, MappingException, IOException {
 		
 		@SuppressWarnings("unchecked")
 		FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = mock(FieldMapperErrorHandler.class);
@@ -70,8 +70,27 @@ public class CsvMapperDateFormatTest {
 		assertNull(list.get(0).date1);
 		assertNull(list.get(0).date2);
 		
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 0)), any(), isNull(), any(Exception.class));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 1)), any(), same(list.get(0)), any(Exception.class));
+	}
+
+	@Test
+	public void testErrorHandlerNoAsm() throws ParseException, MappingException, IOException {
+
+		@SuppressWarnings("unchecked")
+		FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = mock(FieldMapperErrorHandler.class);
+		CsvMapper<ObjectWithDate> mapper = CsvMapperFactory.newInstance().useAsm(false).fieldMapperErrorHandler(fieldMapperErrorHandler).newMapper(ObjectWithDate.class);
+
+		String data = "date1,date2\nwrong date,wrong date";
+		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListHandler<ObjectWithDate>()).getList();
+		assertEquals(1, list.size());
+
+		assertNull(list.get(0).date1);
+		assertNull(list.get(0).date2);
+
 		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 0)), any(),isNull(), any(Exception.class));
 		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 1)), any(),same(list.get(0)), any(Exception.class));
 	}
+
 
 }

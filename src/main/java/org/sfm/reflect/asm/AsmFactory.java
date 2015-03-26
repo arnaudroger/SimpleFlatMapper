@@ -167,11 +167,12 @@ public class AsmFactory {
 
     @SuppressWarnings("unchecked")
     public <T> CsvMapperCellHandlerFactory<T> createCsvMapperCellHandler(Type target, DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories, CellSetter<T>[] setters,
-                                                                         Instantiator<CsvMapperCellHandler<T>, T> instantiator, CsvColumnKey[] keys, ParsingContextFactory parsingContextFactory, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler
+                                                                         Instantiator<CsvMapperCellHandler<T>, T> instantiator, CsvColumnKey[] keys, ParsingContextFactory parsingContextFactory, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
+                                                                         boolean ignoreException
                                                                          ) throws Exception {
         final String className = generateClassCsvMapperCellHandler(target, delayedCellSetterFactories, setters);
         final String factoryName = className + "Factory";
-        final byte[] bytes = CsvMapperCellHandlerBuilder.<T>createTargetSetterClass(className, delayedCellSetterFactories, setters, target);
+        final byte[] bytes = CsvMapperCellHandlerBuilder.<T>createTargetSetterClass(className, delayedCellSetterFactories, setters, target, ignoreException);
         final byte[] bytesFactory = CsvMapperCellHandlerBuilder.createTargetSetterFactory(factoryName, className, target);
         final Class<?> type = createClass(className, bytes, target.getClass().getClassLoader());
         final Class<?> typeFactory = createClass(factoryName, bytesFactory, target.getClass().getClassLoader());

@@ -149,7 +149,7 @@ public class CsvMapperBuilder<T> {
                 return reflectionService.getAsmFactory().<T>createCsvMapperCellHandler(target, delayedCellSetterFactories, setters,
                         instantiator, keys, parsingContextFactory, fieldMapperErrorHandler, fieldMapperErrorHandler instanceof RethrowFieldMapperErrorHandler);
             } catch (Exception e) {
-                if (failOnAsm) {
+                if (failOnAsm || true) {
                     return ErrorHelper.rethrow(e);
                 } else {
                     return new CsvMapperCellHandlerFactory<T>(instantiator, keys, parsingContextFactory, fieldMapperErrorHandler);

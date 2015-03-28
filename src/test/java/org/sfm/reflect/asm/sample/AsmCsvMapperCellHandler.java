@@ -101,7 +101,8 @@ public class AsmCsvMapperCellHandler extends CsvMapperCellHandler<DbObject> {
 
 
     private void _cellValue(char[] chars, int offset, int length, int cellIndex) throws Exception {
-        switch (cellIndex) {
+        int i = (cellIndex << 2) - 1;
+        switch (i) {
             case 3: setter3.set(currentInstance, chars, offset, length, parsingContext); break;
             case 4: setter4.set(currentInstance, chars, offset, length, parsingContext); break;
             case 5: setter5.set(currentInstance, chars, offset, length, parsingContext); break;
@@ -110,13 +111,39 @@ public class AsmCsvMapperCellHandler extends CsvMapperCellHandler<DbObject> {
 
     @Override
     public Object peekDelayedCellSetterValue(CsvColumnKey key) {
-        switch (key.getIndex()) {
-            case 0: return delayedCellSetter0.peekValue();
-            case 1: return delayedCellSetter0.peekValue();
-            case 2: return delayedCellSetter0.peekValue();
+        final int index = key.getIndex();
+        return _peekDelayedCellSetterValue(index);
+    }
+
+    private Object _peekDelayedCellSetterValue(int index) {
+        int si = index >> 1;
+
+        switch (si) {
+            case 0: return _peekDelayedCellSetterValue02(index);
+            case 1: return _peekDelayedCellSetterValue23(index);
         }
+        return null;
+    }
+
+    private Object _peekDelayedCellSetterValue02(int index) {
+        switch (index) {
+            case 0:
+                return delayedCellSetter0.peekValue();
+            case 1:
+                return delayedCellSetter1.peekValue();
+        }
+
+        return null;
+    }
+    private Object _peekDelayedCellSetterValue23(int index) {
+        switch (index) {
+            case 2:
+                return delayedCellSetter2.peekValue();
+        }
+
         return null;
     }
 
 
 }
+

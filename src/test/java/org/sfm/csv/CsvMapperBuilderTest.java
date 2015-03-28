@@ -28,6 +28,7 @@ public class CsvMapperBuilderTest {
 	@Before
 	public void setUp() {
 		csvMapperFactory = new CsvMapperFactory();
+		csvMapperFactory.failOnAsm(true);
 	}
 
 

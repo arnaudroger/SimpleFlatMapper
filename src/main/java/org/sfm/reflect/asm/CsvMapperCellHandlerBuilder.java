@@ -56,16 +56,16 @@ public class CsvMapperCellHandlerBuilder {
 
 
         appendDelayedCellValue(delayedCellSetters, ignoreException, cw, classType);
-        append_delayedCellValue(delayedCellSetters, cw, classType, "", maxMethodSize);
+        append_delayedCellValue(delayedCellSetters, cw, classType, maxMethodSize);
 
         appendCellValue(setters, ignoreException, cw, classType);
-        append_cellValue(delayedCellSetters, setters, cw, classType, "", maxMethodSize);
+        append_cellValue(delayedCellSetters, setters, cw, classType, maxMethodSize);
 
-        appendApplyDelayedSetter(delayedCellSetters, ignoreException, cw, classType, "", maxMethodSize);
+        appendApplyDelayedSetter(delayedCellSetters, ignoreException, cw, classType, maxMethodSize);
         appendApplyDelayedCellSetterN(delayedCellSetters, cw, classType);
 
-        appendGetDelayedCellSetter(delayedCellSetters, cw, targetType, classType, "", maxMethodSize);
-        appendPeekDelayedCellSetterValue(delayedCellSetters, cw, classType, "", maxMethodSize);
+        appendGetDelayedCellSetter(delayedCellSetters, cw, targetType, classType, maxMethodSize);
+        appendPeekDelayedCellSetterValue(delayedCellSetters, cw, classType, maxMethodSize);
 
         cw.visitEnd();
 
@@ -74,99 +74,312 @@ public class CsvMapperCellHandlerBuilder {
 
     }
 
-    private static <T> void appendPeekDelayedCellSetterValue(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, ClassWriter cw, String classType, String suffix, int maxMethodSize) {
-        MethodVisitor mv;
-        mv = cw.visitMethod(ACC_PUBLIC, "peekDelayedCellSetterValue", "(L" + AsmUtils.toType(CsvColumnKey.class) + ";)Ljava/lang/Object;", null, null);
-        mv.visitCode();
+    private static <T> void append_cellValue(final DelayedCellSetterFactory<T, ?>[] delayedCellSetters, final CellSetter<T>[] setters, ClassWriter cw, final String classType, final int maxMethodSize) {
 
-        if (delayedCellSetters.length != 0) {
-            mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKEVIRTUAL, AsmUtils.toType(CsvColumnKey.class), "getIndex", "()I", false);
+        ShardingHelper.shard(setters.length, maxMethodSize, new AbstractMethodDispatchShardCallBack<T>(cw, classType, maxMethodSize ) {
+            @Override
+            protected void appendLeafSwitch(MethodVisitor mv, int start, int end) {
+                Label defaultLabel = new Label();
+                Label[] labels = newLabels(end - start);
+                mv.visitTableSwitchInsn(delayedCellSetters.length + start, delayedCellSetters.length + end - 1, defaultLabel, labels);
 
-            final int switchStart = 0;
-            final int switchEnd = delayedCellSetters.length;
+                for (int i = start; i < end; i++) {
 
-            appendPeekDelayedCellSetterValueSwitch(delayedCellSetters, classType, mv, switchStart, switchEnd);
-        }
-        mv.visitInsn(ACONST_NULL);
-        mv.visitInsn(ARETURN);
-        mv.visitMaxs(1, 2);
-        mv.visitEnd();
-    }
-
-    private static <T> void appendPeekDelayedCellSetterValueSwitch(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, String classType, MethodVisitor mv, int switchStart, int switchEnd) {
-        Label defaultLabel = new Label();
-        Label[] labels = new Label[switchStart - switchEnd];
-        for (int i = 0; i < labels.length; i++) {
-            labels[i] = new Label();
-        }
-        mv.visitTableSwitchInsn(switchStart, switchEnd - 1, defaultLabel, labels);
-
-        for (int i = 0; i < delayedCellSetters.length; i++) {
-            mv.visitLabel(labels[i -switchStart]);
-            mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            if (delayedCellSetters[i] != null) {
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, classType, "delayedCellSetter" + i, "L" + DELAYED_CELL_SETTER_TYPE + ";");
-                mv.visitMethodInsn(INVOKEINTERFACE, DELAYED_CELL_SETTER_TYPE, "peekValue", "()Ljava/lang/Object;", true);
-                mv.visitInsn(ARETURN);
-            } else if (i < (delayedCellSetters.length - 1)) {
-                mv.visitInsn(ACONST_NULL);
-                mv.visitInsn(ARETURN);
+                    mv.visitLabel(labels[i - start]);
+                    mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                    if (setters[i] != null) {
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitFieldInsn(GETFIELD, classType, "setter" + i, "L" + CELL_SETTER_TYPE + ";");
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitFieldInsn(GETFIELD, classType, "currentInstance", "Ljava/lang/Object;");
+                        mv.visitVarInsn(ALOAD, 1);
+                        mv.visitVarInsn(ILOAD, 2);
+                        mv.visitVarInsn(ILOAD, 3);
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitFieldInsn(GETFIELD, classType, "parsingContext", AsmUtils.toDeclaredLType(ParsingContext.class));
+                        mv.visitMethodInsn(INVOKEINTERFACE, CELL_SETTER_TYPE, "set", "(Ljava/lang/Object;[CIIL" + AsmUtils.toType(ParsingContext.class) + ";)V", true);
+                    }
+                    if (i < (end - 1)) {
+                        mv.visitJumpInsn(GOTO, defaultLabel);
+                    }
+                }
+                mv.visitLabel(defaultLabel);
+                mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
             }
-        }
-        mv.visitLabel(defaultLabel);
-        mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-    }
 
-    private static <T> void append_cellValue(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, CellSetter<T>[] setters, ClassWriter cw, String classType, String suffix, int maxMethodSize) {
-        MethodVisitor mv;
-        mv = cw.visitMethod(ACC_PRIVATE, "_cellValue", "([CIII)V", null, new String[]{"java/lang/Exception"});
-        mv.visitCode();
+            @Override
+            protected int maxArgIndex() {
+                return 4;
+            }
 
-        if (setters.length != 0) {
-
-            int switchStart = 0;
-            int switchEnd = setters.length;
-
-            appendCellValueSwitch(delayedCellSetters, setters, classType, mv, switchStart, switchEnd);
-        }
-        mv.visitInsn(RETURN);
-        mv.visitMaxs(6, 5);
-        mv.visitEnd();
-    }
-
-    private static <T> void appendCellValueSwitch(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, CellSetter<T>[] setters, String classType, MethodVisitor mv, int switchStart, int switchEnd) {
-        mv.visitVarInsn(ILOAD, 4);
-        Label defaultLabel = new Label();
-        Label[] labels = new Label[switchEnd - switchStart];
-        for (int i = 0; i < labels.length; i++) {
-            labels[i] = new Label();
-        }
-        mv.visitTableSwitchInsn(delayedCellSetters.length + switchStart, delayedCellSetters.length + switchEnd - 1, defaultLabel, labels);
-
-        for (int i = switchStart; i < switchEnd; i++) {
-
-            mv.visitLabel(labels[i - switchStart]);
-            mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            if (setters[i] != null) {
+            @Override
+            protected void loadArguments(MethodVisitor mv) {
                 mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, classType, "setter" + i, "L" + CELL_SETTER_TYPE + ";");
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, classType, "currentInstance", "Ljava/lang/Object;");
                 mv.visitVarInsn(ALOAD, 1);
                 mv.visitVarInsn(ILOAD, 2);
                 mv.visitVarInsn(ILOAD, 3);
+                mv.visitVarInsn(ILOAD, 4);
+            }
+
+            @Override
+            protected int argIndex() {
+                return 4;
+            }
+
+            @Override
+            protected String name() {
+                return "_cellValue";
+            }
+
+            @Override
+            protected String signature() {
+                return "([CIII)V";
+            }
+
+            @Override
+            protected int leafStart() {
+                return delayedCellSetters.length;
+            }
+
+            @Override
+            protected void appendDebugInfo(MethodVisitor mv, Label startLabel, Label endLabel) {
+                mv.visitLocalVariable("this", "Lorg/sfm/reflect/asm/sample/AsmCsvMapperCellHandler;", null, startLabel, endLabel, 0);
+                mv.visitLocalVariable("chars", "[C", null, startLabel, endLabel, 1);
+                mv.visitLocalVariable("offset", "I", null, startLabel, endLabel, 2);
+                mv.visitLocalVariable("length", "I", null, startLabel, endLabel, 3);
+                mv.visitLocalVariable("cellIndex", "I", null, startLabel, endLabel, 4);
+            }
+        });
+
+    }
+
+    private static <T> void appendPeekDelayedCellSetterValue(final DelayedCellSetterFactory<T, ?>[] delayedCellSetters, final ClassWriter cw, final String classType, final int maxMethodSize) {
+
+        ShardingHelper.shard(delayedCellSetters.length, maxMethodSize, new AbstractMethodDispatchShardCallBack<T>(cw, classType, maxMethodSize ) {
+            @Override
+            protected void appendLeafSwitch(MethodVisitor mv, int start, int end) {
+                Label defaultLabel = new Label();
+                Label[] labels = newLabels(end - start);
+                mv.visitTableSwitchInsn(start, end - 1, defaultLabel, labels);
+
+                for (int i = start; i < end; i++) {
+                    mv.visitLabel(labels[i -start]);
+                    mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                    if (delayedCellSetters[i] != null) {
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitFieldInsn(GETFIELD, classType, "delayedCellSetter" + i, "L" + DELAYED_CELL_SETTER_TYPE + ";");
+                        mv.visitMethodInsn(INVOKEINTERFACE, DELAYED_CELL_SETTER_TYPE, "peekValue", "()Ljava/lang/Object;", true);
+                        mv.visitInsn(ARETURN);
+                    } else if (i < (delayedCellSetters.length - 1)) {
+                        mv.visitInsn(ACONST_NULL);
+                        mv.visitInsn(ARETURN);
+                    }
+                }
+                mv.visitLabel(defaultLabel);
+                mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+            }
+
+            @Override
+            protected int maxArgIndex() {
+                return 1;
+            }
+
+            @Override
+            protected void loadArguments(MethodVisitor mv) {
                 mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, classType, "parsingContext", AsmUtils.toDeclaredLType(ParsingContext.class));
-                mv.visitMethodInsn(INVOKEINTERFACE, CELL_SETTER_TYPE, "set", "(Ljava/lang/Object;[CIIL" + AsmUtils.toType(ParsingContext.class) + ";)V", true);
+                mv.visitVarInsn(ILOAD, 1);
             }
-            if (i < (switchEnd - 1)) {
-                mv.visitJumpInsn(GOTO, defaultLabel);
+
+            @Override
+            protected int argIndex() {
+                return 1;
             }
+
+            @Override
+            protected String name() {
+                return "_peekDelayedCellSetterValue";
+            }
+
+            @Override
+            protected String signature() {
+                return "(I)Ljava/lang/Object;";
+            }
+        });
+
+        MethodVisitor mv;
+        mv = cw.visitMethod(ACC_PUBLIC, "peekDelayedCellSetterValue" , "(L" + AsmUtils.toType(CsvColumnKey.class) + ";)Ljava/lang/Object;", null, null);
+        mv.visitCode();
+
+        mv.visitVarInsn(ALOAD, 1);
+        mv.visitMethodInsn(INVOKEVIRTUAL, AsmUtils.toType(CsvColumnKey.class), "getIndex", "()I", false);
+        mv.visitVarInsn(ISTORE, 2);
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitVarInsn(ILOAD, 2);
+        mv.visitMethodInsn(INVOKESPECIAL, classType, "_peekDelayedCellSetterValue", "(I)Ljava/lang/Object;", false);
+
+
+        mv.visitInsn(ARETURN);
+        mv.visitMaxs(1, 2);
+        mv.visitEnd();
+
+    }
+    private static <T> void append_delayedCellValue(final DelayedCellSetterFactory<T, ?>[] delayedCellSetters, final ClassWriter cw, final String classType, final int maxMethodSize) {
+
+
+        ShardingHelper.shard(delayedCellSetters.length, maxMethodSize, new AbstractMethodDispatchShardCallBack<T>(cw, classType, maxMethodSize ) {
+            @Override
+            protected void appendLeafSwitch(MethodVisitor mv, int start, int end) {
+                Label defaultLabel = new Label();
+                Label[] labels = newLabels(end - start);
+                mv.visitTableSwitchInsn(start, end - 1, defaultLabel, labels);
+
+                for (int i = start; i < end; i++) {
+                    mv.visitLabel(labels[i - start]);
+                    mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                    if (delayedCellSetters[i] != null) {
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitFieldInsn(GETFIELD, classType, "delayedCellSetter" + i, "L" + DELAYED_CELL_SETTER_TYPE + ";");
+                        mv.visitVarInsn(ALOAD, 1);
+                        mv.visitVarInsn(ILOAD, 2);
+                        mv.visitVarInsn(ILOAD, 3);
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitFieldInsn(GETFIELD, classType, "parsingContext", AsmUtils.toDeclaredLType(ParsingContext.class));
+                        mv.visitMethodInsn(INVOKEINTERFACE, DELAYED_CELL_SETTER_TYPE, "set", "([CIIL" + AsmUtils.toType(ParsingContext.class) + ";)V", true);
+                    }
+                    if (i < (end - 1)) {
+                        mv.visitJumpInsn(GOTO, defaultLabel);
+                    }
+                }
+                mv.visitLabel(defaultLabel);
+                mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);            }
+
+            @Override
+            protected void loadArguments(MethodVisitor mv) {
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitVarInsn(ILOAD, 2);
+                mv.visitVarInsn(ILOAD, 3);
+                mv.visitVarInsn(ILOAD, 4);
+            }
+
+            @Override
+            protected int maxArgIndex() {
+                return 4;
+            }
+
+            @Override
+            protected int argIndex() {
+                return 4;
+            }
+
+            @Override
+            protected String name() {
+                return "_delayedCellValue";
+            }
+
+            @Override
+            protected String signature() {
+                return "([CIII)V";
+            }
+        });
+    }
+
+    private static <T> void appendApplyDelayedSetter(final DelayedCellSetterFactory<T, ?>[] delayedCellSetters, final boolean ignoreException, final ClassWriter cw, final String classType, final int maxMethodSize) {
+        ShardingHelper.shard(delayedCellSetters.length, maxMethodSize, new ShardingHelper.ShardCallBack() {
+            @Override
+            public void leafDispatch(String suffix, int start, int end) {
+                MethodVisitor mv;
+                mv = cw.visitMethod(ACC_PUBLIC, "applyDelayedSetters" + suffix, "()V", null, null);
+                mv.visitCode();
+
+                if (end - start > 0) {
+
+                    if (!ignoreException) {
+                        Label[] labels = newLabels((3 * getNbNonNullSettersWithSetters(delayedCellSetters, start, end)) + 1);
+                        for (int i = start, j = 0; i < end; i++) {
+                            if (delayedCellSetters[i] != null && delayedCellSetters[i].hasSetter()) {
+                                mv.visitTryCatchBlock(labels[j], labels[j + 1], labels[j + 2], "java/lang/Exception");
+                                j += 3;
+                            }
+                        }
+
+                        for (int i = start, j = 0; i < end; i++) {
+                            if (delayedCellSetters[i] != null && delayedCellSetters[i].hasSetter()) {
+                                mv.visitLabel(labels[j]);
+                                if (j > 0) {
+                                    mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                                }
+                                mv.visitVarInsn(ALOAD, 0);
+                                mv.visitMethodInsn(INVOKESPECIAL, classType, "applyDelayedCellSetter" + i, "()V", false);
+                                mv.visitLabel(labels[j + 1]);
+                                mv.visitJumpInsn(GOTO, labels[j + 3]);
+                                mv.visitLabel(labels[j + 2]);
+                                mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{"java/lang/Exception"});
+                                mv.visitVarInsn(ASTORE, 1);
+                                mv.visitVarInsn(ALOAD, 0);
+                                AsmUtils.addIndex(mv, i);
+                                mv.visitVarInsn(ALOAD, 1);
+                                mv.visitMethodInsn(INVOKEVIRTUAL, classType, "fieldError", "(ILjava/lang/Exception;)V", false);
+
+                                j += 3;
+                            }
+                        }
+                        mv.visitLabel(labels[labels.length - 1]);
+                        mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                    } else {
+                        for (int i = start, j = 0; i < end; i++) {
+                            if (delayedCellSetters[i] != null && delayedCellSetters[i].hasSetter()) {
+                                mv.visitVarInsn(ALOAD, 0);
+                                mv.visitMethodInsn(INVOKESPECIAL, classType, "applyDelayedCellSetter" + i, "()V", false);
+                            }
+                        }
+                    }
+                }
+                mv.visitInsn(RETURN);
+                mv.visitMaxs(3, 2);
+                mv.visitEnd();
+            }
+
+            @Override
+            public void nodeDispatch(String suffix, int divide, int start, int end) {
+                MethodVisitor mv;
+                mv = cw.visitMethod(ACC_PUBLIC, "applyDelayedSetters" + suffix, "()V", null, new String[]{"java/lang/Exception"});
+                mv.visitCode();
+
+                final int powerOfTwo = Integer.numberOfTrailingZeros(divide);
+
+                int sStart = start >> powerOfTwo;
+                int sEnd = end >> powerOfTwo;
+
+                int left = end - (sEnd << powerOfTwo);
+                if (left > 0) {
+                    sEnd ++;
+                }
+
+                for (int i = sStart; i < sEnd; i++) {
+
+                    int estart = i * divide;
+                    int eend = Math.min(end, (i+1) * divide);
+
+                    mv.visitVarInsn(ALOAD, 0);
+                    mv.visitMethodInsn(INVOKESPECIAL, classType, "applyDelayedSetters"+ (divide/maxMethodSize) + "n" + estart + "t" + eend, "()V" , false);
+
+
+                }
+
+                mv.visitInsn(RETURN);
+                mv.visitMaxs(6, 5);
+                mv.visitEnd();
+            }
+        });
+    }
+
+    private static Label[] newLabels(int ll) {
+        Label[] labels = new Label[ll];
+        for (int i = 0; i < labels.length; i++) {
+            labels[i] = new Label();
         }
-        mv.visitLabel(defaultLabel);
-        mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+        return labels;
     }
 
     private static <T> void appendApplyDelayedCellSetterN(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, ClassWriter cw, String classType) {
@@ -185,62 +398,6 @@ public class CsvMapperCellHandlerBuilder {
                 mv.visitEnd();
             }
         }
-    }
-
-    private static <T> void appendApplyDelayedSetter(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, boolean ignoreException, ClassWriter cw, String classType, String suffix, int maxMethodSize) {
-        MethodVisitor mv;
-        mv = cw.visitMethod(ACC_PUBLIC, "applyDelayedSetters", "()V", null, null);
-        mv.visitCode();
-
-        if (delayedCellSetters.length != 0) {
-
-            Label[] labels = new Label[(3 * getNbNonNullSettersWithSetters(delayedCellSetters)) + 1];
-
-            for (int i = 0; i < labels.length; i++) {
-                labels[i] = new Label();
-            }
-
-            for (int i = 0, j = 0; i < delayedCellSetters.length; i++) {
-                if (delayedCellSetters[i] != null && delayedCellSetters[i].hasSetter()) {
-                    mv.visitTryCatchBlock(labels[j], labels[j + 1], labels[j + 2], "java/lang/Exception");
-                    j+= 3;
-                }
-            }
-
-
-            for (int i = 0, j = 0; i < delayedCellSetters.length; i++) {
-                if (delayedCellSetters[i] != null && delayedCellSetters[i].hasSetter()) {
-                    if (ignoreException) {
-                        mv.visitVarInsn(ALOAD, 0);
-                        mv.visitMethodInsn(INVOKESPECIAL, classType, "applyDelayedCellSetter" + i, "()V", false);
-                    } else {
-                        mv.visitLabel(labels[j]);
-                        if (j > 0) {
-                            mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-                        }
-                        mv.visitVarInsn(ALOAD, 0);
-                        mv.visitMethodInsn(INVOKESPECIAL, classType, "applyDelayedCellSetter" + i, "()V", false);
-                        mv.visitLabel(labels[j + 1]);
-                        mv.visitJumpInsn(GOTO, labels[j + 3]);
-                        mv.visitLabel(labels[j + 2]);
-                        mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{"java/lang/Exception"});
-                        mv.visitVarInsn(ASTORE, 1);
-                        mv.visitVarInsn(ALOAD, 0);
-                        AsmUtils.addIndex(mv, i);
-                        mv.visitVarInsn(ALOAD, 1);
-                        mv.visitMethodInsn(INVOKEVIRTUAL, classType, "fieldError", "(ILjava/lang/Exception;)V", false);
-
-                    }
-
-                    j+= 3;
-                }
-            }
-            mv.visitLabel(labels[labels.length - 1]);
-            mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-        }
-        mv.visitInsn(RETURN);
-        mv.visitMaxs(3, 2);
-        mv.visitEnd();
     }
 
     private static <T> void appendCellValue(CellSetter<T>[] setters, boolean ignoreException, ClassWriter cw, String classType) {
@@ -380,57 +537,8 @@ public class CsvMapperCellHandlerBuilder {
         }
     }
 
-    private static <T> void append_delayedCellValue(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, ClassWriter cw, String classType, String suffix, int limit) {
 
-
-
-        MethodVisitor mv;
-        mv = cw.visitMethod(ACC_PRIVATE, "_delayedCellValue" + suffix, "([CIII)V", null, new String[]{"java/lang/Exception"});
-        mv.visitCode();
-
-        if (delayedCellSetters.length != 0) {
-            final int switchStart = 0;
-            final int switchEnd = delayedCellSetters.length;
-
-            appendDelayedCellValueSwitch(delayedCellSetters, classType, mv, switchStart, switchEnd);
-        }
-        mv.visitInsn(RETURN);
-        mv.visitMaxs(5, 5);
-        mv.visitEnd();
-    }
-
-    private static <T> void appendDelayedCellValueSwitch(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, String classType, MethodVisitor mv, int switchStart, int switchEnd) {
-        mv.visitVarInsn(ILOAD, 4);
-
-        Label defaultLabel = new Label();
-        Label[] labels = new Label[switchEnd - switchStart];
-        for (int i = 0; i < labels.length; i++) {
-            labels[i] = new Label();
-        }
-        mv.visitTableSwitchInsn(switchStart, switchEnd - 1, defaultLabel, labels);
-
-        for (int i = switchStart; i < switchEnd; i++) {
-            mv.visitLabel(labels[i - switchStart]);
-            mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            if (delayedCellSetters[i] != null) {
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, classType, "delayedCellSetter" + i, "L" + DELAYED_CELL_SETTER_TYPE + ";");
-                mv.visitVarInsn(ALOAD, 1);
-                mv.visitVarInsn(ILOAD, 2);
-                mv.visitVarInsn(ILOAD, 3);
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, classType, "parsingContext", AsmUtils.toDeclaredLType(ParsingContext.class));
-                mv.visitMethodInsn(INVOKEINTERFACE, DELAYED_CELL_SETTER_TYPE, "set", "([CIIL" + AsmUtils.toType(ParsingContext.class) + ";)V", true);
-            }
-            if (i < (switchEnd - 1)) {
-                mv.visitJumpInsn(GOTO, defaultLabel);
-            }
-        }
-        mv.visitLabel(defaultLabel);
-        mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-    }
-
-    private static <T> void appendGetDelayedCellSetter(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, ClassWriter cw, String targetType, String classType, String suffix, int maxMethodSize) {
+    private static <T> void appendGetDelayedCellSetter(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, ClassWriter cw, String targetType, String classType, int maxMethodSize) {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "getDelayedCellSetter", "(I)L" +  DELAYED_CELL_SETTER_TYPE + ";",
                 "(I)L" + DELAYED_CELL_SETTER_TYPE + "<L" + targetType + ";*>;", null);
@@ -451,10 +559,7 @@ public class CsvMapperCellHandlerBuilder {
     private static <T> void appendGetDelayedCellSetterSwitch(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, String classType, MethodVisitor mv, int switchStart, int switchEnd) {
         mv.visitVarInsn(ILOAD, 1);
         Label defaultLabel = new Label();
-        Label[] labels = new Label[switchEnd - switchStart];
-        for (int i = 0; i < labels.length; i++) {
-            labels[i] = new Label();
-        }
+        Label[] labels = newLabels(switchEnd - switchStart);
         mv.visitTableSwitchInsn(switchStart, switchEnd - 1, defaultLabel, labels);
 
         for (int i = switchStart; i < switchEnd; i++) {
@@ -464,7 +569,7 @@ public class CsvMapperCellHandlerBuilder {
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitFieldInsn(GETFIELD, classType, "delayedCellSetter" + i, "L" + DELAYED_CELL_SETTER_TYPE + ";");
             } else {
-                mv.visitVarInsn(ALOAD, ACONST_NULL);
+                mv.visitInsn(ACONST_NULL);
             }
             mv.visitInsn(ARETURN);
         }
@@ -491,22 +596,13 @@ public class CsvMapperCellHandlerBuilder {
         mv.visitMethodInsn(INVOKESPECIAL, classType, "_delayedCellValue", "([CIII)V", false);
     }
 
-    private static <T> int getNbNonNullSettersWithSetters(DelayedCellSetterFactory<T, ?>[] delayedCellSetters) {
+    private static <T> int getNbNonNullSettersWithSetters(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, int start, int end) {
         int n = 0;
-        for(int i = 0; i < delayedCellSetters.length; i++) {
+        for(int i = start; i < end; i++) {
             if (delayedCellSetters[i] != null && delayedCellSetters[i].hasSetter()) n++;
         }
         return n;
     }
-
-    private static <T> int getNbNonNullSetters(DelayedCellSetterFactory<T, ?>[] delayedCellSetters) {
-        int n = 0;
-        for(int i = 0; i < delayedCellSetters.length; i++) {
-            if (delayedCellSetters[i] != null) n++;
-        }
-        return n;
-    }
-
 
     public static byte[] createTargetSetterFactory(String factoryName, String className, Type target) throws Exception {
 
@@ -595,5 +691,141 @@ public class CsvMapperCellHandlerBuilder {
         cw.visitEnd();
 
         return cw.toByteArray();
+    }
+
+
+    private static abstract class AbstractMethodDispatchShardCallBack<T> implements ShardingHelper.ShardCallBack {
+        private final ClassWriter cw;
+        private final String classType;
+        private final int maxMethodSize;
+
+        public AbstractMethodDispatchShardCallBack(ClassWriter cw, String classType, int maxMethodSize) {
+            this.cw = cw;
+            this.classType = classType;
+            this.maxMethodSize = maxMethodSize;
+        }
+
+        @Override
+        public void leafDispatch(String suffix, int start, int end) {
+            MethodVisitor mv;
+            mv = cw.visitMethod(ACC_PUBLIC, name() + suffix, signature(), null, null);
+            mv.visitCode();
+
+            if (end - start > 0) {
+                mv.visitVarInsn(ILOAD, argIndex());
+                appendLeafSwitch(mv, start, end);
+
+            }
+            if (isVoid()) {
+                mv.visitInsn(RETURN);
+            } else {
+                mv.visitInsn(ACONST_NULL);
+                mv.visitInsn(ARETURN);
+            }
+            mv.visitMaxs(1, 2);
+            mv.visitEnd();
+        }
+
+        protected abstract void appendLeafSwitch(MethodVisitor mv, int start, int end);
+
+
+        @Override
+        public void nodeDispatch(String suffix, int divide, int start, int end) {
+            MethodVisitor mv;
+            mv = cw.visitMethod(ACC_PRIVATE, name() + suffix, signature(), null, null);
+            mv.visitCode();
+            Label startLabel = new Label();
+            mv.visitLabel(startLabel);
+            final int powerOfTwo = Integer.numberOfTrailingZeros(divide);
+
+            int sStart = start >> powerOfTwo;
+            int sEnd = end >> powerOfTwo;
+
+            int left = end - (sEnd << powerOfTwo);
+            if (left > 0) {
+                sEnd ++;
+            }
+
+
+            Label[] labels = newLabels(sEnd - sStart);
+            Label defaultLabel = new Label();
+
+            mv.visitVarInsn(ILOAD, argIndex());
+
+            int sub = leafStart();
+            if (sub != 0) {
+                AsmUtils.addIndex(mv, sub);
+                mv.visitInsn(ISUB);
+            }
+
+            AsmUtils.addIndex(mv, powerOfTwo);
+            mv.visitInsn(ISHR);
+
+            mv.visitVarInsn(ISTORE, maxArgIndex() + 1);
+            mv.visitVarInsn(ILOAD, maxArgIndex() + 1);
+            mv.visitTableSwitchInsn(sStart, sEnd - 1, defaultLabel, labels);
+
+            for (int i = sStart; i < sEnd; i++) {
+
+                int estart = i << powerOfTwo;
+                int eend = Math.min(end, (i+1) << powerOfTwo);
+
+                mv.visitLabel(labels[i - sStart]);
+                if ( i == start) {
+                    mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{Opcodes.INTEGER}, 0, null);
+                } else {
+                    mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                }
+
+                loadArguments(mv);
+                mv.visitMethodInsn(INVOKESPECIAL, classType, name() + (divide / maxMethodSize) + "n" + estart + "t" + eend, signature(), false);
+
+                if (isVoid()) {
+                    if (i < (sEnd - 1)) {
+                        mv.visitJumpInsn(GOTO, defaultLabel);
+                    }
+                } else {
+                    mv.visitInsn(ARETURN);
+                }
+
+            }
+
+            mv.visitLabel(defaultLabel);
+            mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+
+            if (isVoid()) {
+                mv.visitInsn(RETURN);
+            } else {
+                mv.visitInsn(ACONST_NULL);
+                mv.visitInsn(ARETURN);
+            }
+
+            Label endLabel = new Label();
+            mv.visitLabel(endLabel);
+            appendDebugInfo(mv, startLabel, endLabel);
+            mv.visitMaxs(6, 5);
+            mv.visitEnd();
+        }
+
+        protected int leafStart() {
+            return 0;
+        }
+
+        protected abstract int maxArgIndex();
+
+        protected void appendDebugInfo(MethodVisitor mv, Label startLabel, Label endLabel) {
+        }
+
+        protected abstract void loadArguments(MethodVisitor mv);
+
+        protected abstract int argIndex();
+
+        private boolean isVoid() {
+            return signature().endsWith("V");
+        }
+
+        protected abstract String name();
+
+        protected abstract String signature();
     }
 }

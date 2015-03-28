@@ -33,12 +33,13 @@ public class CsvMapperJoinTest {
 
     @Test
     public void testStaticCsvParserDSL() throws IOException {
+        final CsvParser.StaticMapToDSL<JoinJdbcMapperTest.ProfessorGS> professorGSStaticMapToDSL = CsvParser.mapTo(JoinJdbcMapperTest.ProfessorGS.class)
+                .addKey("id")
+                .addMapping("name")
+                .addKey("students_id")
+                .addMapping("students_name");
         List<JoinJdbcMapperTest.ProfessorGS> professors =
-                CsvParser.mapTo(JoinJdbcMapperTest.ProfessorGS.class)
-                        .addKey("id")
-                        .addMapping("name")
-                        .addKey("students_id")
-                        .addMapping("students_name")
+                professorGSStaticMapToDSL
                         .addMapping("students_phones_value")
                         .forEach(new StringReader(HEADER_DATA), new ListHandler<JoinJdbcMapperTest.ProfessorGS>())
                         .getList();

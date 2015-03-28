@@ -5,7 +5,9 @@ public class ShardingHelper {
 
 
     public static void shard(int nb, int maxSize, ShardCallBack callBack) {
-        if (nb < maxSize) {
+        if (nb == 0) {
+            callBack.leafDispatch("", 0, 0);
+        } else if (nb < maxSize) {
             callBack.leafDispatch("", 0, nb);
         } else {
 
@@ -13,30 +15,34 @@ public class ShardingHelper {
             int currentDivider = 1;
 
             while(currentSize > 0) {
-
+                int nextSize = currentSize /maxSize;
                 int i = 0;
                 do {
-                    int end = Math.min(nb, i + (currentDivider * maxSize) - 1);
+                    int pEnd = i + (currentDivider * maxSize);
+
+                    int end = Math.min(nb, pEnd);
+
+
                     if (currentSize == nb) {
-                        callBack.leafDispatch("l" + i + "t" + end, i, end);
-                    } else if (currentSize < maxSize) {
+                        callBack.leafDispatch(currentDivider + "n" + i + "t" + end, i, end);
+                    } else if (nextSize == 0) {
                         callBack.nodeDispatch("", currentDivider, i, end);
                     } else {
-                        callBack.nodeDispatch("n" + i + "t" + end, currentDivider, i, end);
+                        callBack.nodeDispatch(currentDivider + "n" + i + "t" + end, currentDivider, i, end);
                     }
-                    i += maxSize;
-                } while( i <= nb);
+                    i += (currentDivider * maxSize);
+                } while( i < nb);
 
 
                 currentDivider = currentDivider * maxSize;
-                currentSize /= maxSize;
+                currentSize = nextSize;
             }
 
 
         }
     }
 
-    public static interface ShardCallBack {
+    public interface ShardCallBack {
 
         void leafDispatch(String suffix, int start, int end);
 

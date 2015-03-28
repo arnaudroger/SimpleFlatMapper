@@ -114,7 +114,7 @@ public class CsvMapperJoinTest {
 
     private CsvMapperFactory getCsvMapperFactory() {
         return CsvMapperFactory
-                .newInstance().useAsm(false)
+                .newInstance().useAsm(false).failOnAsm(true)
                 .addKeys("id", "students_id");
     }
 

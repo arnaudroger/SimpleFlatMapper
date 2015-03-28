@@ -55,7 +55,7 @@ public class CsvMapperBuilder<T> {
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitionProvider) {
 		this(target, classMeta, new RethrowMapperBuilderErrorHandler(),
                 columnDefinitionProvider, new DefaultPropertyNameMatcherFactory(),
-                new CellValueReaderFactoryImpl(), 0, false, NO_ASM_CSV_HANDLER_THRESHOLD);
+                new CellValueReaderFactoryImpl(), 0, false, -1);
 	}
 
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta,

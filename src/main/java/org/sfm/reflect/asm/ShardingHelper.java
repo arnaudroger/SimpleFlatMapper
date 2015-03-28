@@ -13,9 +13,12 @@ public class ShardingHelper {
 
             int currentSize = nb;
             int currentDivider = 1;
-
-            while(currentSize > 0) {
+            boolean root = false;
+            while(!root) {
                 int nextSize = currentSize /maxSize;
+
+                root = (nb -  nextSize * (currentDivider * maxSize)) == 0 ?  nextSize <= 1 : nextSize <= 0;
+
                 int i = 0;
                 do {
                     int pEnd = i + (currentDivider * maxSize);
@@ -25,7 +28,7 @@ public class ShardingHelper {
 
                     if (currentSize == nb) {
                         callBack.leafDispatch(currentDivider + "n" + i + "t" + end, i, end);
-                    } else if (nextSize == 0) {
+                    } else if (root) {
                         callBack.nodeDispatch("", currentDivider, i, end);
                     } else {
                         callBack.nodeDispatch(currentDivider + "n" + i + "t" + end, currentDivider, i, end);

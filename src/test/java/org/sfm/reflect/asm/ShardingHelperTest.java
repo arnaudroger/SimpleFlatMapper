@@ -26,11 +26,11 @@ public class ShardingHelperTest {
     @Test
     public void testShardingWhen4_2() {
         ShardingHelper.ShardCallBack callBack = mock(ShardingHelper.ShardCallBack.class);
-//        ShardingHelper.shard(4, 2, callBack);
-//        verify(callBack).leafDispatch("1n0t2", 0, 2);
-//        verify(callBack).leafDispatch("1n2t4", 2, 4);
-//
-//        verify(callBack).nodeDispatch("", 2, 0, 4);
+        ShardingHelper.shard(4, 2, callBack);
+        verify(callBack).leafDispatch("1n0t2", 0, 2);
+        verify(callBack).leafDispatch("1n2t4", 2, 4);
+
+        verify(callBack).nodeDispatch("", 2, 0, 4);
     }
 
     @Test

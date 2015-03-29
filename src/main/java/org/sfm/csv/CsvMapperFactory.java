@@ -59,6 +59,7 @@ public final class CsvMapperFactory {
 	private boolean disableAsm = false;
     private boolean failOnAsm = false;
     private int asmMapperNbFieldsLimit = CsvMapperBuilder.NO_ASM_CSV_HANDLER_THRESHOLD;
+	private int maxMethodSize = CsvMapperBuilder.CSV_MAX_METHOD_SIZE;
 
     private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
 	
@@ -131,6 +132,15 @@ public final class CsvMapperFactory {
         return this;
     }
 
+	/**
+	 * Number needs to be a power of 2, do not use if you don't know what it does.
+	 * @param maxMethodSize the max method size, needs be a power of 2.
+	 * @return the factory.
+	 */
+	public CsvMapperFactory maxMethodSize(final int maxMethodSize) {
+		this.maxMethodSize = maxMethodSize;
+		return this;
+	}
     /**
 	 * @param disableAsm true if you want to disable asm.
      * @return the current factory
@@ -172,7 +182,8 @@ public final class CsvMapperFactory {
 				classMeta,
 				fieldMapperErrorHandler, mapperBuilderErrorHandler,
 				rowHandlerErrorHandler, defaultDateFormat, columnDefinitions,
-                propertyNameMatcherFactory, cellValueReaderFactory, failOnAsm, asmMapperNbFieldsLimit);
+                propertyNameMatcherFactory, cellValueReaderFactory,
+				failOnAsm, asmMapperNbFieldsLimit, maxMethodSize);
 	}
 
 	private <T> ClassMeta<T> getClassMeta(Type target) {
@@ -200,7 +211,7 @@ public final class CsvMapperFactory {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta,
                 mapperBuilderErrorHandler, columnDefinitions,
                 propertyNameMatcherFactory, cellValueReaderFactory,
-                0, failOnAsm, asmMapperNbFieldsLimit);
+                0, failOnAsm, asmMapperNbFieldsLimit, maxMethodSize);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.rowHandlerErrorHandler(rowHandlerErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);

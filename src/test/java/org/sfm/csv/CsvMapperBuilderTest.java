@@ -24,28 +24,31 @@ import static org.mockito.Mockito.verify;
 
 public class CsvMapperBuilderTest {
 	private CsvMapperFactory csvMapperFactory;
+	private CsvMapperFactory csvMapperFactoryNoAsm;
+	private CsvMapperFactory csvMapperFactoryLowSharding;
 
 	@Before
 	public void setUp() {
-		csvMapperFactory = new CsvMapperFactory();
-		csvMapperFactory.failOnAsm(true);
+		csvMapperFactory = CsvMapperFactory.newInstance().failOnAsm(true);
+		csvMapperFactoryNoAsm = CsvMapperFactory.newInstance().useAsm(false);
+		csvMapperFactoryLowSharding = CsvMapperFactory.newInstance().failOnAsm(true).maxMethodSize(2);
 	}
 
 
     @Test
-    public void testStaticMapperDbObjectToString() throws Exception {
-        CsvMapperBuilder<DbObject> builder = csvMapperFactory.disableAsm(true).newBuilder(DbObject.class);
+    public void testStaticMapperDbObjectToStringNoAsm() throws Exception {
+        CsvMapperBuilder<DbObject> builder = csvMapperFactoryNoAsm.newBuilder(DbObject.class);
         addDbObjectFields(builder);
         assertEquals(
-                "CsvMapperImpl{" +
-                "targetSettersFactory=TargetSettersFactory{instantiator=StaticConstructorInstantiator{constructor=public org.sfm.beans.DbObject(), args=[]}}, " +
-                "delayedCellSetters=[], " +
-                "setters=[LongCellSetter{setter=LongMethodSetter{method=public void org.sfm.beans.DbObject.setId(long)}, reader=LongCellValueReaderImpl{}}, " +
-                        "CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setName(java.lang.String)}}, " +
-                        "CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setEmail(java.lang.String)}}, " +
-                        "CellSetterImpl{reader=DateCellValueReader{index=3, timeZone=Greenwich Mean Time, pattern='yyyy-MM-dd HH:mm:ss'}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setCreationTime(java.util.Date)}}, " +
-                        "CellSetterImpl{reader=EnumCellValueReader{enumClass=class org.sfm.beans.DbObject$Type}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setTypeOrdinal(org.sfm.beans.DbObject$Type)}}, " +
-                        "CellSetterImpl{reader=EnumCellValueReader{enumClass=class org.sfm.beans.DbObject$Type}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setTypeName(org.sfm.beans.DbObject$Type)}}]}", builder.mapper().toString());
+				"CsvMapperImpl{" +
+						"targetSettersFactory=TargetSettersFactory{instantiator=StaticConstructorInstantiator{constructor=public org.sfm.beans.DbObject(), args=[]}}, " +
+						"delayedCellSetters=[], " +
+						"setters=[LongCellSetter{setter=LongMethodSetter{method=public void org.sfm.beans.DbObject.setId(long)}, reader=LongCellValueReaderImpl{}}, " +
+						"CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setName(java.lang.String)}}, " +
+						"CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setEmail(java.lang.String)}}, " +
+						"CellSetterImpl{reader=DateCellValueReader{index=3, timeZone=Greenwich Mean Time, pattern='yyyy-MM-dd HH:mm:ss'}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setCreationTime(java.util.Date)}}, " +
+						"CellSetterImpl{reader=EnumCellValueReader{enumClass=class org.sfm.beans.DbObject$Type}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setTypeOrdinal(org.sfm.beans.DbObject$Type)}}, " +
+						"CellSetterImpl{reader=EnumCellValueReader{enumClass=class org.sfm.beans.DbObject$Type}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setTypeName(org.sfm.beans.DbObject$Type)}}]}", builder.mapper().toString());
     }
 
     @Test
@@ -77,9 +80,14 @@ public class CsvMapperBuilderTest {
 		testMapDbObject(csvMapperFactory.newBuilder(DbObject.class));
 	}
 
-    @Test
+	@Test
+	public void testMapDbObjectSharding() throws Exception {
+		testMapDbObject(csvMapperFactoryLowSharding.newBuilder(DbObject.class));
+	}
+
+	@Test
 	public void testMapDbObjectNoAsm() throws Exception {
-		testMapDbObject(csvMapperFactory.disableAsm(true).newBuilder(DbObject.class));
+		testMapDbObject(csvMapperFactoryNoAsm.newBuilder(DbObject.class));
 	}
 
 	private void testMapDbObject(CsvMapperBuilder<DbObject> builder)
@@ -139,8 +147,14 @@ public class CsvMapperBuilderTest {
 	}
 
 	@Test
+	public void testMapFinalDbObjectSharding() throws Exception {
+		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactoryLowSharding.newBuilder(DbFinalObject.class);
+		testMapFinalDbObject(builder);
+	}
+
+ 	@Test
 	public void testMapFinalDbObjectNoAsm() throws Exception {
-		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.useAsm(false).newBuilder(DbFinalObject.class);
+		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactoryNoAsm.newBuilder(DbFinalObject.class);
 		testMapFinalDbObject(builder);
 	}
 
@@ -162,13 +176,19 @@ public class CsvMapperBuilderTest {
 
 	@Test
 	public void testMapPartialFinalDbObjectNoAsm() throws Exception {
-		CsvMapperBuilder<DbPartialFinalObject> builder = csvMapperFactory.useAsm(false).newBuilder(DbPartialFinalObject.class);
+		CsvMapperBuilder<DbPartialFinalObject> builder = csvMapperFactoryNoAsm.newBuilder(DbPartialFinalObject.class);
+		testMapPartialFinalDbObject(builder);
+	}
+
+	@Test
+	public void testMapPartialFinalDbObjectLowSharding() throws Exception {
+		CsvMapperBuilder<DbPartialFinalObject> builder = csvMapperFactoryLowSharding.newBuilder(DbPartialFinalObject.class);
 		testMapPartialFinalDbObject(builder);
 	}
 
 	@Test
 	public void testMapFinalDbObjectDisableAsm() throws Exception {
-		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.disableAsm(true).newBuilder(DbFinalObject.class);
+		CsvMapperBuilder<DbFinalObject> builder = CsvMapperFactory.newInstance().disableAsm(true).newBuilder(DbFinalObject.class);
 		try {
 			addDbObjectFields(builder);
 			fail("Expect failure");

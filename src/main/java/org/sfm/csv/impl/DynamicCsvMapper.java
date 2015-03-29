@@ -39,13 +39,14 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
     private final boolean failOnAsm;
     private final int asmMapperNbFieldsLimit;
+	private final int maxMethodSize;
 
-    public DynamicCsvMapper(final Type target, final ClassMeta<T> classMeta,
+	public DynamicCsvMapper(final Type target, final ClassMeta<T> classMeta,
 							final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler,
 							final MapperBuilderErrorHandler mapperBuilderErrorHandler, RowHandlerErrorHandler rowHandlerErrorHandler, String defaultDateFormat,
 							ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitions,
 							PropertyNameMatcherFactory propertyNameMatcherFactory, CellValueReaderFactory cellValueReaderFactory,
-                            boolean failOnAsm, int asmMapperNbFieldsLimit
+                            boolean failOnAsm, int asmMapperNbFieldsLimit, int maxMethodSize
     ) {
 		if (classMeta == null) {
 			throw new NullPointerException("classMeta is null");
@@ -64,11 +65,12 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		this.cellValueReaderFactory = cellValueReaderFactory;
         this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
         this.failOnAsm = failOnAsm;
+		this.maxMethodSize = maxMethodSize;
 	}
 
 	public DynamicCsvMapper(Type target, ClassMeta<T> classMeta, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitionProvider) {
 		this(target, classMeta, new RethrowFieldMapperErrorHandler<CsvColumnKey>(), new RethrowMapperBuilderErrorHandler(), new RethrowRowHandlerErrorHandler(), "yyyy-MM-dd HH:mm:ss",
-				columnDefinitionProvider, new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl(), false, -1);
+				columnDefinitionProvider, new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl(), false, -1, CsvMapperBuilder.CSV_MAX_METHOD_SIZE);
 	}
 
 	@Override
@@ -179,7 +181,8 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	private CsvMapperImpl<T> buildMapper(ColumnsMapperKey key) {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler,
-                columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory, 0, failOnAsm, asmMapperNbFieldsLimit);
+                columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory, 0,
+				failOnAsm, asmMapperNbFieldsLimit, maxMethodSize);
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.setDefaultDateFormat(defaultDateFormat);
 		builder.rowHandlerErrorHandler(rowHandlerErrorHandler);

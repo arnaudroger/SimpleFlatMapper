@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CsvMapperBuilder<T> {
-
+	public static final int CSV_MAX_METHOD_SIZE = 128;
     public static final int NO_ASM_CSV_HANDLER_THRESHOLD = 4096; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
     private final CellValueReaderFactory cellValueReaderFactory;
 	private FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = new RethrowFieldMapperErrorHandler<CsvColumnKey>();
@@ -37,7 +37,7 @@ public class CsvMapperBuilder<T> {
 
     private final boolean failOnAsm;
     private final int asmMapperNbFieldsLimit;
-
+	private final int maxMethodSize;
 
     public CsvMapperBuilder(final Type target) {
 		this(target, ReflectionService.newInstance());
@@ -55,7 +55,7 @@ public class CsvMapperBuilder<T> {
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitionProvider) {
 		this(target, classMeta, new RethrowMapperBuilderErrorHandler(),
                 columnDefinitionProvider, new DefaultPropertyNameMatcherFactory(),
-                new CellValueReaderFactoryImpl(), 0, false, -1);
+                new CellValueReaderFactoryImpl(), 0, false, -1, CSV_MAX_METHOD_SIZE);
 	}
 
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta,
@@ -65,7 +65,7 @@ public class CsvMapperBuilder<T> {
                             CellValueReaderFactory cellValueReaderFactory,
                             int minDelayedSetter,
                             boolean failOnAsm,
-                            int asmMapperNbFieldsLimit) throws MapperBuildingException {
+                            int asmMapperNbFieldsLimit, int maxMethodSize) throws MapperBuildingException {
 		this.target = target;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
         this.minDelayedSetter = minDelayedSetter;
@@ -76,6 +76,7 @@ public class CsvMapperBuilder<T> {
 		this.cellValueReaderFactory = cellValueReaderFactory;
         this.failOnAsm = failOnAsm;
         this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
+		this.maxMethodSize = maxMethodSize;
 	}
 
 	public final CsvMapperBuilder<T> addMapping(final String columnKey) {
@@ -146,8 +147,10 @@ public class CsvMapperBuilder<T> {
         final ParsingContextFactory parsingContextFactory = parsingContextFactoryBuilder.newFactory();
         if (isEligibleForAsmHandler()) {
             try {
-                return reflectionService.getAsmFactory().<T>createCsvMapperCellHandler(target, delayedCellSetterFactories, setters,
-                        instantiator, keys, parsingContextFactory, fieldMapperErrorHandler, fieldMapperErrorHandler instanceof RethrowFieldMapperErrorHandler);
+                return reflectionService.getAsmFactory()
+						.<T>createCsvMapperCellHandler(target, delayedCellSetterFactories, setters,
+                        instantiator, keys, parsingContextFactory, fieldMapperErrorHandler,
+								fieldMapperErrorHandler instanceof RethrowFieldMapperErrorHandler, maxMethodSize);
             } catch (Exception e) {
                 if (failOnAsm || true) {
                     return ErrorHelper.rethrow(e);
@@ -252,7 +255,8 @@ public class CsvMapperBuilder<T> {
 				if (delegateMapperBuilder == null) {
 					delegateMapperBuilder = new CsvMapperBuilder<P>(propOwner.getType(), propOwner.getClassMeta(),
                             mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory,
-                            cellValueReaderFactory, newMinDelayedSetter, failOnAsm, asmMapperNbFieldsLimit);
+                            cellValueReaderFactory, newMinDelayedSetter,
+							failOnAsm, asmMapperNbFieldsLimit, maxMethodSize);
 					delegateMapperBuilders.put(propOwner.getName(), delegateMapperBuilder);
 				}
 
@@ -345,7 +349,8 @@ public class CsvMapperBuilder<T> {
 							if (delegateMapperBuilder == null) {
 								delegateMapperBuilder = new CsvMapperBuilder(propOwner.getType(), propOwner.getClassMeta(),
                                         mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory,
-                                        cellValueReaderFactory, minDelayedSetter, failOnAsm, asmMapperNbFieldsLimit);
+                                        cellValueReaderFactory, minDelayedSetter,
+										failOnAsm, asmMapperNbFieldsLimit, maxMethodSize);
 								delegateMapperBuilders.put(propOwner.getName(), delegateMapperBuilder);
 							}
 

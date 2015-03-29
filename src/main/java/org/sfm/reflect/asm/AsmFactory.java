@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class AsmFactory {
-    public static final int CSV_MAX_METHOD_SIZE = 128;
     private final FactoryClassLoader factoryClassLoader;
 	private final ConcurrentMap<Object, Setter<?, ?>> setterCache = new ConcurrentHashMap<Object, Setter<?, ?>>();
     private final ConcurrentMap<Object, Getter<?, ?>> getterCache = new ConcurrentHashMap<Object, Getter<?, ?>>();
@@ -167,15 +166,20 @@ public class AsmFactory {
 	}
 
     @SuppressWarnings("unchecked")
-    public <T> CsvMapperCellHandlerFactory<T> createCsvMapperCellHandler(Type target, DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories, CellSetter<T>[] setters,
-                                                                         Instantiator<CsvMapperCellHandler<T>, T> instantiator, CsvColumnKey[] keys, ParsingContextFactory parsingContextFactory, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
-                                                                         boolean ignoreException
+    public <T> CsvMapperCellHandlerFactory<T> createCsvMapperCellHandler(Type target,
+                                                                         DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories, CellSetter<T>[] setters,
+                                                                         Instantiator<CsvMapperCellHandler<T>, T> instantiator,
+                                                                         CsvColumnKey[] keys,
+                                                                         ParsingContextFactory parsingContextFactory,
+                                                                         FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
+                                                                         boolean ignoreException,
+                                                                         int maxMethodSize
                                                                          ) throws Exception {
         final String className = generateClassCsvMapperCellHandler(target, delayedCellSetterFactories, setters);
         final String factoryName = className + "Factory";
-        final byte[] bytes = CsvMapperCellHandlerBuilder.<T>createTargetSetterClass(className, delayedCellSetterFactories, setters, target, ignoreException, CSV_MAX_METHOD_SIZE);
+        final byte[] bytes = CsvMapperCellHandlerBuilder.<T>createTargetSetterClass(className, delayedCellSetterFactories, setters, target, ignoreException, maxMethodSize);
         final byte[] bytesFactory = CsvMapperCellHandlerBuilder.createTargetSetterFactory(factoryName, className, target);
-        final Class<?> type = createClass(className, bytes, target.getClass().getClassLoader());
+        createClass(className, bytes, target.getClass().getClassLoader());
         final Class<?> typeFactory = createClass(factoryName, bytesFactory, target.getClass().getClassLoader());
 
         return (CsvMapperCellHandlerFactory<T>) typeFactory

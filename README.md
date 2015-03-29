@@ -5,6 +5,8 @@
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 
+If u use the CsvParser Dsl to do CsvMapping you will need to cache the DSL for reuse to avoid creating new classes on every parsing. I will disable asm on CsvParser to avoid that, asm still will be available via the CsvMapperFactory.
+
 Now with :
 - 1-N support for [JdbcMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-JdbcMapper-1-N-relationship) and [CsvMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-CsvMapper-1-N-relationship)
 - Fasttuple and jOOL tuple support.

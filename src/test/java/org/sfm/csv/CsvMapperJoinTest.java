@@ -32,6 +32,17 @@ public class CsvMapperJoinTest {
     }
 
     @Test
+    public void testStaticProfessorGSSharding() throws IOException {
+        final CsvMapper<JoinJdbcMapperTest.ProfessorGS> mapper =
+                geStaticCsvMapper(getCsvShardingMapperFactory(), JoinJdbcMapperTest.ProfessorGS.class);
+
+        final List<JoinJdbcMapperTest.ProfessorGS> professors =
+                mapper.forEach(new StringReader(DATA), new ListHandler<JoinJdbcMapperTest.ProfessorGS>()).getList();
+
+        JoinJdbcMapperTest.validateProfessors(professors);
+    }
+
+    @Test
     public void testStaticCsvParserDSL() throws IOException {
         final CsvParser.StaticMapToDSL<JoinJdbcMapperTest.ProfessorGS> professorGSStaticMapToDSL = CsvParser.mapTo(JoinJdbcMapperTest.ProfessorGS.class)
                 .addKey("id")
@@ -49,6 +60,16 @@ public class CsvMapperJoinTest {
     @Test
     public void testDynamicProfessorGS() throws IOException {
         final CsvMapperFactory mapperFactory = getCsvMapperFactory();
+
+        final List<JoinJdbcMapperTest.ProfessorGS> professors =
+                mapperFactory.newMapper(JoinJdbcMapperTest.ProfessorGS.class).forEach(new StringReader(HEADER_DATA), new ListHandler<JoinJdbcMapperTest.ProfessorGS>()).getList();
+
+        JoinJdbcMapperTest.validateProfessors(professors);
+    }
+
+    @Test
+    public void testDynamicProfessorGSSharding() throws IOException {
+        final CsvMapperFactory mapperFactory = getCsvShardingMapperFactory();
 
         final List<JoinJdbcMapperTest.ProfessorGS> professors =
                 mapperFactory.newMapper(JoinJdbcMapperTest.ProfessorGS.class).forEach(new StringReader(HEADER_DATA), new ListHandler<JoinJdbcMapperTest.ProfessorGS>()).getList();
@@ -78,10 +99,30 @@ public class CsvMapperJoinTest {
         JoinJdbcMapperTest.validateProfessors(professors);
     }
 
+    @Test
+    public void testStaticProfessorCSharding() throws IOException {
+        final CsvMapper<JoinJdbcMapperTest.ProfessorC> mapper =
+                geStaticCsvMapper(getCsvShardingMapperFactory(), JoinJdbcMapperTest.ProfessorC.class);
+
+        final List<JoinJdbcMapperTest.ProfessorC> professors =
+                mapper.forEach(new StringReader(DATA), new ListHandler<JoinJdbcMapperTest.ProfessorC>()).getList();
+
+        JoinJdbcMapperTest.validateProfessors(professors);
+    }
 
     @Test
     public void testDynamicProfessorC() throws IOException {
         final CsvMapperFactory mapperFactory = getCsvMapperFactory();
+
+        final List<JoinJdbcMapperTest.ProfessorC> professors =
+                mapperFactory.newMapper(JoinJdbcMapperTest.ProfessorC.class).forEach(new StringReader(HEADER_DATA), new ListHandler<JoinJdbcMapperTest.ProfessorC>()).getList();
+
+        JoinJdbcMapperTest.validateProfessors(professors);
+    }
+
+    @Test
+    public void testDynamicProfessorCSharding() throws IOException {
+        final CsvMapperFactory mapperFactory = getCsvShardingMapperFactory();
 
         final List<JoinJdbcMapperTest.ProfessorC> professors =
                 mapperFactory.newMapper(JoinJdbcMapperTest.ProfessorC.class).forEach(new StringReader(HEADER_DATA), new ListHandler<JoinJdbcMapperTest.ProfessorC>()).getList();
@@ -114,8 +155,11 @@ public class CsvMapperJoinTest {
 
     private CsvMapperFactory getCsvMapperFactory() {
         return CsvMapperFactory
-                .newInstance().useAsm(false).failOnAsm(true)
+                .newInstance().useAsm(false)
+                .failOnAsm(true)
                 .addKeys("id", "students_id");
     }
-
+    private CsvMapperFactory getCsvShardingMapperFactory() {
+        return getCsvMapperFactory().maxMethodSize(2);
+    }
 }

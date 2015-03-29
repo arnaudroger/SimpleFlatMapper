@@ -21,6 +21,7 @@ public class CsvMapperDateFormatTest {
 	public static class ObjectWithDate {
 		private final Date date1;
 		private Date date2;
+		private Date date3;
 		public ObjectWithDate(Date date1) {
 			this.date1 = date1;
 		}
@@ -33,7 +34,14 @@ public class CsvMapperDateFormatTest {
 		public Date getDate1() {
 			return date1;
 		}
-		
+
+		public Date getDate3() {
+			return date3;
+		}
+
+		public void setDate3(Date date3) {
+			this.date3 = date3;
+		}
 	}
 	@Test
 	public void testSetCustomDateFormat() throws ParseException, MappingException, IOException {
@@ -63,15 +71,17 @@ public class CsvMapperDateFormatTest {
 		FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = mock(FieldMapperErrorHandler.class);
 		CsvMapper<ObjectWithDate> mapper = CsvMapperFactory.newInstance().fieldMapperErrorHandler(fieldMapperErrorHandler).newMapper(ObjectWithDate.class);
 		
-		String data = "date1,date2\nwrong date,wrong date";
+		String data = "date3,date1,date2\nwrong date,wrong date,wrong date";
 		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListHandler<ObjectWithDate>()).getList();
 		assertEquals(1, list.size());
 		
 		assertNull(list.get(0).date1);
 		assertNull(list.get(0).date2);
-		
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 0)), any(), isNull(), any(Exception.class));
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 1)), any(), same(list.get(0)), any(Exception.class));
+		assertNull(list.get(0).date3);
+
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date3", 0)), any(), isNull(), any(Exception.class));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 1)), any(), isNull(), any(Exception.class));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 2)), any(), same(list.get(0)), any(Exception.class));
 	}
 
 	@Test
@@ -81,15 +91,17 @@ public class CsvMapperDateFormatTest {
 		FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler = mock(FieldMapperErrorHandler.class);
 		CsvMapper<ObjectWithDate> mapper = CsvMapperFactory.newInstance().useAsm(false).fieldMapperErrorHandler(fieldMapperErrorHandler).newMapper(ObjectWithDate.class);
 
-		String data = "date1,date2\nwrong date,wrong date";
+		String data = "date3,date1,date2\nwrong date,wrong date,wrong date";
 		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListHandler<ObjectWithDate>()).getList();
 		assertEquals(1, list.size());
 
 		assertNull(list.get(0).date1);
 		assertNull(list.get(0).date2);
+		assertNull(list.get(0).date3);
 
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 0)), any(),isNull(), any(Exception.class));
-		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 1)), any(),same(list.get(0)), any(Exception.class));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date3", 0)), any(), isNull(), any(Exception.class));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date1", 1)), any(), isNull(), any(Exception.class));
+		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 2)), any(),same(list.get(0)), any(Exception.class));
 	}
 
 

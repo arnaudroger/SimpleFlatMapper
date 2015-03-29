@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
-# Simple Flat Mapper (SFM) [v1.7.5](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.7.5)
+# Simple Flat Mapper (SFM) [v1.7.6](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.7.6)
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 
@@ -63,7 +63,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.7.5</version>
+			<version>1.7.6</version>
 		</dependency>
 ```
 
@@ -73,7 +73,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.7.5</version>
+			<version>1.7.6</version>
 			<classifier>jdk17</classifier>
 		</dependency>
 ```
@@ -84,7 +84,7 @@ The binaries are available in maven central. There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.7.5</version>
+			<version>1.7.6</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 ```

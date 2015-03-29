@@ -7,7 +7,7 @@ public class ShardingHelper {
     public static void shard(int nb, int maxSize, ShardCallBack callBack) {
         if (nb == 0) {
             callBack.leafDispatch("", 0, 0);
-        } else if (nb < maxSize) {
+        } else if (nb <= maxSize) {
             callBack.leafDispatch("", 0, nb);
         } else {
 

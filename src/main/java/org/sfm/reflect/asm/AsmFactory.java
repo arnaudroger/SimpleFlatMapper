@@ -22,7 +22,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class AsmFactory {
-	private final FactoryClassLoader factoryClassLoader;
+    public static final int CSV_MAX_METHOD_SIZE = 128;
+    private final FactoryClassLoader factoryClassLoader;
 	private final ConcurrentMap<Object, Setter<?, ?>> setterCache = new ConcurrentHashMap<Object, Setter<?, ?>>();
     private final ConcurrentMap<Object, Getter<?, ?>> getterCache = new ConcurrentHashMap<Object, Getter<?, ?>>();
 	private final ConcurrentMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>> instantiatorCache = new ConcurrentHashMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>>();
@@ -172,7 +173,7 @@ public class AsmFactory {
                                                                          ) throws Exception {
         final String className = generateClassCsvMapperCellHandler(target, delayedCellSetterFactories, setters);
         final String factoryName = className + "Factory";
-        final byte[] bytes = CsvMapperCellHandlerBuilder.<T>createTargetSetterClass(className, delayedCellSetterFactories, setters, target, ignoreException, 16);
+        final byte[] bytes = CsvMapperCellHandlerBuilder.<T>createTargetSetterClass(className, delayedCellSetterFactories, setters, target, ignoreException, CSV_MAX_METHOD_SIZE);
         final byte[] bytesFactory = CsvMapperCellHandlerBuilder.createTargetSetterFactory(factoryName, className, target);
         final Class<?> type = createClass(className, bytes, target.getClass().getClassLoader());
         final Class<?> typeFactory = createClass(factoryName, bytesFactory, target.getClass().getClassLoader());

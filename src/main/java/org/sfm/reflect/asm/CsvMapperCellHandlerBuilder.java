@@ -52,7 +52,7 @@ public class CsvMapperCellHandlerBuilder {
                 fv.visitEnd();
             }
         }
-        appendInit(delayedCellSetters, setters, cw, targetType, classType);
+        appendInit(delayedCellSetters, setters, cw, targetType, classType, maxMethodSize);
 
 
         appendDelayedCellValue(delayedCellSetters, ignoreException, cw, classType);
@@ -466,7 +466,7 @@ public class CsvMapperCellHandlerBuilder {
         mv.visitEnd();
     }
 
-    private static <T> void appendInit(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, CellSetter<T>[] setters, ClassWriter cw, String targetType, String classType) {
+    private static <T> void appendInit(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, CellSetter<T>[] setters, ClassWriter cw, String targetType, String classType, int maxSize) {
         MethodVisitor mv;// constructor
         {
             mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(" +
@@ -497,14 +497,26 @@ public class CsvMapperCellHandlerBuilder {
             mv.visitVarInsn(ALOAD, 6);
             mv.visitMethodInsn(INVOKESPECIAL, CSV_CELL_MAPPER_TYPE, "<init>",
                     "(" +
-                    AsmUtils.toDeclaredLType(Instantiator.class) +
-                    AsmUtils.toDeclaredLType(CsvColumnKey[].class) +
-                    "I" +
-                    "I" +
-                    AsmUtils.toDeclaredLType(ParsingContext.class) +
-                    AsmUtils.toDeclaredLType(FieldMapperErrorHandler.class) +
-                    ")V", false);
+                            AsmUtils.toDeclaredLType(Instantiator.class) +
+                            AsmUtils.toDeclaredLType(CsvColumnKey[].class) +
+                            "I" +
+                            "I" +
+                            AsmUtils.toDeclaredLType(ParsingContext.class) +
+                            AsmUtils.toDeclaredLType(FieldMapperErrorHandler.class) +
+                            ")V", false);
 
+
+            ShardingHelper.shard(delayedCellSetters.length, maxSize, new ShardingHelper.ShardCallBack() {
+                @Override
+                public void leafDispatch(String suffix, int start, int end) {
+
+                }
+
+                @Override
+                public void nodeDispatch(String suffix, int divide, int start, int end) {
+
+                }
+            });
             for(int i = 0; i < delayedCellSetters.length; i++) {
                 if (delayedCellSetters[i] != null) {
                     mv.visitVarInsn(ALOAD, 0);

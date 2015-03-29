@@ -33,6 +33,16 @@ public class ShardingHelperTest {
         verify(callBack).nodeDispatch("", 2, 0, 4);
     }
 
+
+    @Test
+    public void testShardingWhen16() {
+        ShardingHelper.ShardCallBack callBack = mock(ShardingHelper.ShardCallBack.class);
+        ShardingHelper.shard(16, 16, callBack);
+
+        verify(callBack).leafDispatch("", 0, 16);
+    }
+
+
     @Test
     public void testShardingWhen5_2() {
         ShardingHelper.ShardCallBack callBack = mock(ShardingHelper.ShardCallBack.class);

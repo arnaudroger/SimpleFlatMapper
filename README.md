@@ -49,7 +49,7 @@ The Csv Mapper is about 30% faster than jackson-csv.
 
 The Jooq integration give you a mapping to object for almost no cost.
 
-[More details.](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Performance-Java-7)
+[Mysql Benchmark](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-In-Memory-Mysql), [In Mem HsqlDb](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-In-Memory-HsqlDb)
 
 ## Getting Started
 

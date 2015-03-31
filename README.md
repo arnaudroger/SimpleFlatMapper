@@ -45,7 +45,7 @@ The Jdbc Mapper is the fastest on the market. Adding a maximum of 5% over pure j
 fastest would be Roma that add between 10 and 15%. MyBatis and Hibernate adds more that 70% climbing quickly to 150%
 for bigger queries.
 
-The Csv Mapper is about 30% faster than jackson-csv.
+The Csv Mapper is about 30% faster than jackson-csv see [Csv Benchmark](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Csv-Performace).
 
 The Jooq integration give you a mapping to object for almost no cost.
 

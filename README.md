@@ -41,11 +41,12 @@ SFM also supports Constructor injection and respect the semantic of final fields
 
 ## How Fast?
 
-The Jdbc Mapper is the fastest on the market. Adding a maximum of 5% over pure jdbc on a query to a local Mysql. The next
-fastest would be Roma that add between 10 and 15%. MyBatis and Hibernate adds more that 70% climbing quickly to 150%
-for bigger queries.
+The Jdbc Mapper is the fastest mapper that I benchmarked.
+On a local Mysql it adds a less than of 4% over pure jdbc. 
+The next fastest would be Roma that add between 10 and 15% - number to be confirmed, the main reason being the column name based instead of index access of the value in the resultSet -. 
+MyBatis and Hibernate adds more than 65% for 100 rows ... 115% and 95% for 1000 rows.
 
-The Csv Mapper is about 30% faster than jackson-csv see [Csv Benchmark](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Csv-Performace).
+The Csv Parser is about 25% faster than jackson-csv for 1000 rows, 40% for the mapper  see [Csv Benchmark](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Csv-Performance).
 
 The Jooq integration give you a mapping to object for almost no cost.
 

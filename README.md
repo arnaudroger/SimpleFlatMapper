@@ -19,7 +19,7 @@ SFM provides fast and easy to use mapper for
 - [SpringJdbcTemplate](src/main/java/org/sfm/jdbc/spring)
 - [QueryDSL](src/main/java/org/sfm/querydsl)
 
-It also provides one of the fastest [csv parser](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser) available [See CsvParserComparaison fork](https://github.com/arnaudroger/csv-parsers-comparison).
+It also provides one of the fastest [csv parser](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser) available [See Csv Benchmark](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Csv-Performance).
 
 The API is lambda friendly and the java 8 jars expose the mapped in form of Stream.
 

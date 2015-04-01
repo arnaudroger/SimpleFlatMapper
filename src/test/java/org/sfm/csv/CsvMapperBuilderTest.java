@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPartialFinalObject;
+import org.sfm.csv.impl.CsvMapperImpl;
 import org.sfm.jdbc.DbHelper;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
@@ -246,7 +247,7 @@ public class CsvMapperBuilderTest {
         assertEquals("v0", next.first());
         assertEquals("v1", next.second());
     }
-	
+
 	public static void addDbObjectFields(CsvMapperBuilder<?> builder) {
 		builder.addMapping("id")
 		.addMapping("name")
@@ -255,4 +256,6 @@ public class CsvMapperBuilderTest {
 		.addMapping("typeOrdinal")
 		.addMapping("typeName");
 	}
+
+
 }

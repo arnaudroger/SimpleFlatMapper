@@ -30,7 +30,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
     private final CsvColumnKey[] joinKeys;
 	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
-    private final CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory;
+    protected final CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory;
 
     private final boolean hasSetterSubProperties;
     private final boolean hasSubProperties;

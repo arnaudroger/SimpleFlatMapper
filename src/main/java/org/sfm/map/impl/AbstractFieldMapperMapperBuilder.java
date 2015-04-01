@@ -31,8 +31,6 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	private final List<FieldMapper<S, T>> additionalMappers = new ArrayList<FieldMapper<S, T>>();
 	protected final PropertyNameMatcherFactory propertyNameMatcherFactory;
 
-	private final FieldMapperColumnDefinition<K, S> identity = FieldMapperColumnDefinition.identity();
-
 	protected final MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private FieldMapperErrorHandler<K> fieldMapperErrorHandler;
     protected final MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder;

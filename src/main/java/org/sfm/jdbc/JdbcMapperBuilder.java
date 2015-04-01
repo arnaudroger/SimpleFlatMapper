@@ -23,6 +23,7 @@ import java.sql.SQLException;
 public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey> {
 
     public static final int NO_ASM_MAPPER_THRESHOLD = 792; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
+    public static final JdbcColumnKey[] EMPTY_COLUMNKEYS = new JdbcColumnKey[0];
 
     private int calculatedIndex = 1;
     private RowHandlerErrorHandler jdbcMapperErrorHandler = new RethrowRowHandlerErrorHandler();
@@ -114,7 +115,11 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
 
         if (isEligibleForAsmMapper()) {
             try {
-                return reflectionService.getAsmFactory().createJdbcMapper(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), getTargetClass(), jdbcMapperErrorHandler, mappingContextFactory);
+                return reflectionService.getAsmFactory().createJdbcMapper(
+                        getKeys(),
+                        fields, constructorFieldMappersAndInstantiator.first(),
+                        constructorFieldMappersAndInstantiator.second(),
+                        getTargetClass(), jdbcMapperErrorHandler, mappingContextFactory);
             } catch (Exception e) {
                 if (failOnAsm) {
                     return ErrorHelper.rethrow(e);
@@ -125,6 +130,10 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
         } else {
             return new JdbcMapperImpl<T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), jdbcMapperErrorHandler, mappingContextFactory);
         }
+    }
+
+    private JdbcColumnKey[] getKeys() {
+        return propertyMappingsBuilder.getKeys().toArray(EMPTY_COLUMNKEYS);
     }
 
     private boolean isEligibleForAsmMapper() {

@@ -18,11 +18,13 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class AsmUtils {
 
-	public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
+	public static final String ASM_DUMP_TARGET_DIR = "asm.dump.target.dir";
 
+	public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 	public static String toType(final Type target) {
 		return toType(TypeHelper.toClass(target));
 	}
+
 	public static String toType(final Class<?> target) {
 		if (target.isPrimitive()) {
 			return primitivesType.get(target);
@@ -33,8 +35,8 @@ public class AsmUtils {
 	public static String toType(final String name) {
 		return name.replace('.', '/');
 	}
-	
 	static final Map<Class<?>, Class<?>> wrappers = new HashMap<Class<?>, Class<?>>();
+
 	static {
 		wrappers.put(boolean.class, Boolean.class);
 		wrappers.put(byte.class, Byte.class);
@@ -45,8 +47,8 @@ public class AsmUtils {
 		wrappers.put(long.class, Long.class);
 		wrappers.put(short.class, Short.class);
 	}
-	
 	static final Map<Class<?>, String> primitivesType = new HashMap<Class<?>, String>();
+
 	static {
 		primitivesType.put(boolean.class, "Z");
 		primitivesType.put(byte.class, "B");
@@ -57,8 +59,8 @@ public class AsmUtils {
 		primitivesType.put(long.class, "J");
 		primitivesType.put(short.class, "S");
 	}
-	
 	static final Map<String, String> stringToPrimitivesType = new HashMap<String, String>();
+
 	static {
 		stringToPrimitivesType.put("Boolean", "Z");
 		stringToPrimitivesType.put("Byte", "B");
@@ -69,8 +71,8 @@ public class AsmUtils {
 		stringToPrimitivesType.put("Long", "J");
 		stringToPrimitivesType.put("Short", "S");
 	}
-	
 	static final Map<Class<?>, Integer> loadOps = new HashMap<Class<?>, Integer>();
+
 	static {
 		loadOps.put(boolean.class, ILOAD);
 		loadOps.put(byte.class, ILOAD);
@@ -81,8 +83,8 @@ public class AsmUtils {
 		loadOps.put(long.class, LLOAD);
 		loadOps.put(short.class, ILOAD);
 	}
+	static final Map<Class<?>, Integer> returnOps = new HashMap<Class<?>, Integer>();
 
-    static final Map<Class<?>, Integer> returnOps = new HashMap<Class<?>, Integer>();
     static {
         returnOps.put(boolean.class, IRETURN);
         returnOps.put(byte.class, IRETURN);
@@ -93,7 +95,6 @@ public class AsmUtils {
         returnOps.put(long.class, LRETURN);
         returnOps.put(short.class, IRETURN);
     }
-
 	static final Map<Class<?>, Integer> defaultValue = new HashMap<Class<?>, Integer>();
 	static {
 		defaultValue.put(boolean.class, ICONST_0);
@@ -106,15 +107,17 @@ public class AsmUtils {
 		defaultValue.put(short.class, ICONST_0);
 	}
 	static final Set<Class<?>> primitivesClassAndWrapper = new HashSet<Class<?>>();
+
+
 	static {
 		primitivesClassAndWrapper.addAll(wrappers.keySet());
 		primitivesClassAndWrapper.addAll(wrappers.values());
 	}
-	
-	
+
 	static File targetDir = null;
+
 	static {
-		String targetDirStr = System.getProperty("asm.dump.target.dir");
+		String targetDirStr = System.getProperty(ASM_DUMP_TARGET_DIR);
 		if (targetDirStr != null) {
 			targetDir = new File(targetDirStr);
 			targetDir.mkdirs();

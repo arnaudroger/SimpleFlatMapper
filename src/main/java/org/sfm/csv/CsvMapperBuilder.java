@@ -55,7 +55,7 @@ public class CsvMapperBuilder<T> {
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitionProvider) {
 		this(target, classMeta, new RethrowMapperBuilderErrorHandler(),
                 columnDefinitionProvider, new DefaultPropertyNameMatcherFactory(),
-                new CellValueReaderFactoryImpl(), 0, false, -1, CSV_MAX_METHOD_SIZE);
+                new CellValueReaderFactoryImpl(), 0, false, NO_ASM_CSV_HANDLER_THRESHOLD, CSV_MAX_METHOD_SIZE);
 	}
 
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta,
@@ -150,7 +150,7 @@ public class CsvMapperBuilder<T> {
                 return reflectionService.getAsmFactory()
 						.<T>createCsvMapperCellHandler(target, delayedCellSetterFactories, setters,
                         instantiator, keys, parsingContextFactory, fieldMapperErrorHandler,
-								fieldMapperErrorHandler instanceof RethrowFieldMapperErrorHandler, maxMethodSize);
+								 maxMethodSize);
             } catch (Exception e) {
                 if (failOnAsm || true) {
                     return ErrorHelper.rethrow(e);

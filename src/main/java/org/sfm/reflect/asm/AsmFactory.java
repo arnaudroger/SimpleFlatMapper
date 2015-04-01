@@ -1,12 +1,15 @@
 package org.sfm.reflect.asm;
 
 import org.sfm.csv.CsvColumnKey;
+import org.sfm.csv.CsvMapper;
 import org.sfm.csv.impl.*;
+import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingContextFactory;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.FieldMapper;
+import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
 import org.sfm.reflect.*;
 
 import java.lang.reflect.Constructor;
@@ -26,7 +29,9 @@ public class AsmFactory {
 	private final ConcurrentMap<Object, Setter<?, ?>> setterCache = new ConcurrentHashMap<Object, Setter<?, ?>>();
     private final ConcurrentMap<Object, Getter<?, ?>> getterCache = new ConcurrentHashMap<Object, Getter<?, ?>>();
 	private final ConcurrentMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>> instantiatorCache = new ConcurrentHashMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>>();
-	
+    private final ConcurrentMap<JdbcMapperKey, Class<? extends JdbcMapper<?>>> jdbcMapperCache = new ConcurrentHashMap<JdbcMapperKey, Class<? extends JdbcMapper<?>>>();
+    private final ConcurrentMap<CsvMapperKey, Class<? extends CsvMapperCellHandlerFactory<?>>> csvMapperCache = new ConcurrentHashMap<CsvMapperKey, Class<? extends CsvMapperCellHandlerFactory<?>>>();
+
 	public AsmFactory(ClassLoader cl) {
 		factoryClassLoader = new FactoryClassLoader(cl);
 	}
@@ -157,10 +162,24 @@ public class AsmFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> JdbcMapper<T> createJdbcMapper(final FieldMapper<ResultSet, T>[] mappers, final FieldMapper<ResultSet, T>[] constructorMappers, final Instantiator<ResultSet, T> instantiator, final Class<T> target, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
-		final String className = generateClassNameForJdbcMapper(mappers, constructorMappers, ResultSet.class, target);
-		final byte[] bytes = JdbcMapperAsmBuilder.dump(className, mappers, constructorMappers, target);
-        final Class<?> type = createClass(className, bytes, target.getClass().getClassLoader());
+	public <T> JdbcMapper<T> createJdbcMapper(final JdbcColumnKey[] keys,
+                                                final FieldMapper<ResultSet, T>[] mappers,
+                                              final FieldMapper<ResultSet, T>[] constructorMappers,
+                                              final Instantiator<ResultSet, T> instantiator,
+                                              final Class<T> target,
+                                              RowHandlerErrorHandler errorHandler,
+                                              MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
+
+        JdbcMapperKey key = new JdbcMapperKey(keys, mappers, constructorMappers, instantiator, target);
+        Class<JdbcMapper<T>> type = (Class<JdbcMapper<T>>) jdbcMapperCache.get(key);
+        if (type == null) {
+
+            final String className = generateClassNameForJdbcMapper(mappers, constructorMappers, ResultSet.class, target);
+            final byte[] bytes = JdbcMapperAsmBuilder.dump(className, mappers, constructorMappers, target);
+
+            type = (Class<JdbcMapper<T>>) createClass(className, bytes, target.getClass().getClassLoader());
+            jdbcMapperCache.put(key, type);
+        }
         final Constructor<?> constructor = type.getDeclaredConstructors()[0];
         return (JdbcMapper<T>) constructor.newInstance(mappers, constructorMappers, instantiator, errorHandler, mappingContextFactory);
 	}
@@ -172,15 +191,23 @@ public class AsmFactory {
                                                                          CsvColumnKey[] keys,
                                                                          ParsingContextFactory parsingContextFactory,
                                                                          FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
-                                                                         boolean ignoreException,
                                                                          int maxMethodSize
                                                                          ) throws Exception {
-        final String className = generateClassCsvMapperCellHandler(target, delayedCellSetterFactories, setters);
-        final String factoryName = className + "Factory";
-        final byte[] bytes = CsvMapperCellHandlerBuilder.<T>createTargetSetterClass(className, delayedCellSetterFactories, setters, target, ignoreException, maxMethodSize);
-        final byte[] bytesFactory = CsvMapperCellHandlerBuilder.createTargetSetterFactory(factoryName, className, target);
-        createClass(className, bytes, target.getClass().getClassLoader());
-        final Class<?> typeFactory = createClass(factoryName, bytesFactory, target.getClass().getClassLoader());
+
+        CsvMapperKey key = new CsvMapperKey(keys, setters, delayedCellSetterFactories, instantiator, target, fieldErrorHandler, maxMethodSize);
+
+        Class<? extends CsvMapperCellHandlerFactory<?>> typeFactory = csvMapperCache.get(key);
+
+        if (typeFactory == null) {
+            final String className = generateClassNameCsvMapperCellHandler(target, delayedCellSetterFactories, setters);
+            final String factoryName = className + "Factory";
+            final byte[] bytes = CsvMapperCellHandlerBuilder.<T>createTargetSetterClass(className, delayedCellSetterFactories, setters, target, fieldErrorHandler == null || fieldErrorHandler instanceof RethrowFieldMapperErrorHandler, maxMethodSize);
+            final byte[] bytesFactory = CsvMapperCellHandlerBuilder.createTargetSetterFactory(factoryName, className, target);
+            createClass(className, bytes, target.getClass().getClassLoader());
+            typeFactory = (Class<? extends CsvMapperCellHandlerFactory<?>>) createClass(factoryName, bytesFactory, target.getClass().getClassLoader());
+
+            csvMapperCache.put(key, typeFactory);
+        }
 
         return (CsvMapperCellHandlerFactory<T>) typeFactory
                 .getConstructor(Instantiator.class, CsvColumnKey[].class, ParsingContextFactory.class, FieldMapperErrorHandler.class)
@@ -189,34 +216,34 @@ public class AsmFactory {
 
     }
 
-    private <T> String generateClassCsvMapperCellHandler(Type target, DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories, CellSetter<T>[] setters) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append( "org.sfm.reflect.asm.")
-                .append(TypeHelper.toClass(target).getPackage().getName())
-                .append(".CsvMapperCellHandler").append(TypeHelper.toClass(target).getSimpleName());
-        sb.append("_").append(Integer.toString(delayedCellSetterFactories.length));
-        sb.append("_").append(Integer.toString(setters.length));
-        sb.append(Long.toHexString(classNumber.getAndIncrement()));
-        return sb.toString();    }
-
-
     private final AtomicLong classNumber = new AtomicLong();
 	
 	private String generateClassNameForInstantiator(final InstantiatorKey key) {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append( "org.sfm.reflect.asm.")
-		.append(key.getConstructor().getDeclaringClass().getPackage().getName())
+		.append(getPackageName(key.getConstructor().getDeclaringClass()))
 		.append(".AsmInstantiator").append(key.getConstructor().getDeclaringClass().getSimpleName());
-		String[] injectedParams = key.getInjectedParams();
-		if (injectedParams != null) {
-			for(String str : injectedParams) {
-				sb.append(str.substring(0, Math.min(str.length(), 3)));
-			}
-		}
-		sb.append(replaceArray(key.getSource().getSimpleName()));
-		sb.append(Long.toHexString(classNumber.getAndIncrement()));
+        sb.append("From");
+        sb.append(replaceArray(key.getSource().getSimpleName()));
+
+        String[] injectedParams = key.getInjectedParams();
+        if (injectedParams != null && injectedParams.length > 0) {
+            sb.append("Into");
+            int e = Math.min(16, injectedParams.length);
+            for(int i = 0; i < e; i++) {
+                if (i!=0) {
+                    sb.append("And");
+                }
+                sb.append(injectedParams[i]);
+            }
+
+            int l = injectedParams.length - e;
+            if (l >0) {
+                sb.append("And").append(Integer.toString(l)).append("More");
+            }
+        }
+		sb.append("_I").append(Long.toHexString(classNumber.getAndIncrement()));
 		return sb.toString();
 	}
 
@@ -225,41 +252,82 @@ public class AsmFactory {
 	}
 
 	private String generateClassNameForSetter(final Method m) {
-		return "org.sfm.reflect.asm." + m.getDeclaringClass().getPackage().getName() + 
-					".AsmSetter" + m.getName()
+		return "org.sfm.reflect.asm." + getPackageName(m.getDeclaringClass()) +
+					".AsmMethodSetter"
 					 + replaceArray(m.getDeclaringClass().getSimpleName())
+                     +"_" + m.getName()+ "_"
 					 + replaceArray(m.getParameterTypes()[0].getSimpleName())
 					;
 	}
 
     private String generateClassNameForSetter(final Field field) {
-        return "org.sfm.reflect.asm." + field.getDeclaringClass().getPackage().getName() +
-                ".AsmSetter" + field.getName()
+        return "org.sfm.reflect.asm." + getPackageName(field.getDeclaringClass()) +
+                ".AsmFieldSetter"
                 + replaceArray(field.getDeclaringClass().getSimpleName())
+                + "_"
+                + field.getName()
+                + "_"
                 + replaceArray(field.getType().getSimpleName())
                 ;
     }
     private String generateClassNameForGetter(final Method m) {
-        return "org.sfm.reflect.asm." + m.getDeclaringClass().getPackage().getName() +
-                ".AsmGetter" + m.getName()
+        return "org.sfm.reflect.asm." + getPackageName(m.getDeclaringClass()) +
+                ".AsmMethodGetter"
                 + replaceArray(m.getDeclaringClass().getSimpleName())
+                + "_"
+                + m.getName()
                 ;
     }
     private String generateClassNameForGetter(final Field m) {
-        return "org.sfm.reflect.asm." + m.getDeclaringClass().getPackage().getName() +
-                ".AsmGetter" + m.getName()
+        return "org.sfm.reflect.asm." + getPackageName(m.getDeclaringClass()) +
+                ".AsmFieldGetter"
                 + replaceArray(m.getDeclaringClass().getSimpleName())
+                + "_"
+                + m.getName()
                 ;
     }
-	private <S, T> String generateClassNameForJdbcMapper(final FieldMapper<S, T>[] mappers,final FieldMapper<S, T>[] mappers2, final Class<S> source, final Class<T> target) {
-		return "org.sfm.reflect.asm." + getPackageName(target) +
-					".AsmMapper" + replaceArray(source.getSimpleName()) + "2" +  replaceArray(target.getSimpleName()) + mappers.length + "_"+ mappers2.length + "_" + classNumber.getAndIncrement();
-	}
 
-    private <T> String getPackageName(Class<T> target) {
+    private <T> String generateClassNameCsvMapperCellHandler(Type target, DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories, CellSetter<T>[] setters) {
+        StringBuilder sb = new StringBuilder();
 
-        Package targetPackage = target.getPackage();
-        return targetPackage != null ? targetPackage.getName() : ".null";
+        sb.append( "org.sfm.reflect.asm.")
+                .append(getPackageName(target))
+                .append(".AsmCsvMapperCellHandlerTo").append(TypeHelper.toClass(target).getSimpleName());
+        if (delayedCellSetterFactories.length > 0) {
+            sb.append("DS").append(Integer.toString(delayedCellSetterFactories.length));
+        }
+        if (setters.length > 0) {
+            sb.append("S").append(Integer.toString(setters.length));
+        }
+        sb.append("_I").append(Long.toHexString(classNumber.getAndIncrement()));
+        return sb.toString();
+    }
+
+	private <S, T> String generateClassNameForJdbcMapper(final FieldMapper<S, T>[] mappers,final FieldMapper<S, T>[] constructorMappers, final Class<S> source, final Class<T> target) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("org.sfm.reflect.asm.");
+        sb.append(getPackageName(target));
+        sb.append(".AsmMapperFrom").append(replaceArray(source.getSimpleName()));
+        sb.append("To").append(replaceArray(target.getSimpleName()));
+
+        if (constructorMappers.length > 0) {
+            sb.append("ConstInj").append(constructorMappers.length);
+        }
+
+        if (mappers.length > 0) {
+            sb.append("Inj").append(mappers.length);
+        }
+
+        sb.append("_I").append(Long.toHexString(classNumber.getAndIncrement()));
+
+        return sb.toString();
+    }
+
+    private <T> String getPackageName(Type target) {
+
+        Package targetPackage = TypeHelper.toClass(target).getPackage();
+        return targetPackage != null ? targetPackage.getName() : ".none";
     }
 
 }

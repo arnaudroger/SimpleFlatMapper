@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
+import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.JdbcMappingContextFactoryBuilder;
 import org.sfm.jdbc.impl.getter.LongResultSetGetter;
@@ -99,8 +100,8 @@ public class AsmFactoryTest {
 	
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testAsmJdbcMapperFailedInstantiator() throws NoSuchMethodException, SecurityException, Exception {
-		JdbcMapper<DbObject> jdbcMapper = asmFactory.createJdbcMapper(
+	public void testAsmJdbcMapperFailedInstantiator() throws Exception {
+		JdbcMapper<DbObject> jdbcMapper = asmFactory.createJdbcMapper(new JdbcColumnKey[0],
 				(FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {},
                 (FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {},
 				new Instantiator<ResultSet, DbObject>() {
@@ -121,8 +122,8 @@ public class AsmFactoryTest {
 	
 	@Test
 	@SuppressWarnings("unchecked")
-	public void testAsmJdbcMapperFailedGetter() throws NoSuchMethodException, SecurityException, Exception {
-		JdbcMapper<DbObject> jdbcMapper = asmFactory.createJdbcMapper(
+	public void testAsmJdbcMapperFailedGetter() throws Exception {
+		JdbcMapper<DbObject> jdbcMapper = asmFactory.createJdbcMapper(new JdbcColumnKey[0],
 				(FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {
 						new FieldMapper<ResultSet, DbObject>() {
 							@Override

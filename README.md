@@ -50,7 +50,7 @@ The Csv Parser is about 25% faster than jackson-csv for 1000 rows, 40% for the m
 
 The Jooq integration give you a mapping to object for almost no cost.
 
-[Mysql Benchmark](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-In-Memory-Mysql), [In Mem HsqlDb](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-In-Memory-HsqlDb)
+[Mysql Benchmark](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-Local-Mysql), [In Mem HsqlDb](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-In-Memory-HsqlDb)
 
 ## Getting Started
 

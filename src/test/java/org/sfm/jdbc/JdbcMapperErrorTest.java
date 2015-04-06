@@ -39,7 +39,7 @@ public class JdbcMapperErrorTest {
 		
 	}
 	
-	static class MyClass {
+	public static class MyClass {
 		public Foo prop;
 	}
 	@Test

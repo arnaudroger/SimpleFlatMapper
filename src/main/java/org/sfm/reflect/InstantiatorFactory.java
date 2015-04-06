@@ -54,6 +54,7 @@ public class InstantiatorFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<InstantiatorDefinition> constructors, Map<Parameter, Getter<S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
 		final InstantiatorDefinition instantiatorDefinition = getSmallerConstructor(constructors);
 
@@ -69,8 +70,6 @@ public class InstantiatorFactory {
 				// fall back on reflection
 			}
 		}
-		
-		constructor.setAccessible(true);
 		
 		if (constructor.getParameterTypes().length == 0) {
 			return new StaticConstructorInstantiator<S, T>(constructor, EMPTY_ARGS); 

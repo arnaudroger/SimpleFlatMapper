@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
+import org.sfm.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
 
@@ -15,9 +16,47 @@ import static org.junit.Assert.assertEquals;
 
 public class ReflectionInstantiatorDefinitionFactoryTest {
 
+
+	public static class ObjectWithFactoryMethod {
+		public static ObjectWithFactoryMethod valueOf(String value) {
+			return null;
+		}
+
+		public static Object valueOf(int value) {
+			return null;
+		}
+
+		private ObjectWithFactoryMethod(){
+		}
+	}
+
+	@Test
+	public void testExtractStaticFactoryMethod() throws NoSuchMethodException {
+		List<InstantiatorDefinition> factoryMethod = ReflectionInstantiatorDefinitionFactory.extractDefinitions(ObjectWithFactoryMethod.class);
+		assertEquals(1, factoryMethod.size());
+
+		InstantiatorDefinition id = factoryMethod.get(0);
+
+		assertEquals(ObjectWithFactoryMethod.class.getMethod("valueOf", String.class), id.getExecutable());
+		assertEquals(1, id.getParameters().length);
+		assertEquals(new Parameter("arg0", String.class), id.getParameters()[0]);
+	}
+
+	@Test
+	public void testExtractStaticFactoryMethodAsm() throws NoSuchMethodException, IOException {
+		List<InstantiatorDefinition> factoryMethod = AsmInstantiatorDefinitionFactory.extractDefinitions(ObjectWithFactoryMethod.class);
+		assertEquals(1, factoryMethod.size());
+
+		InstantiatorDefinition id = factoryMethod.get(0);
+
+		assertEquals(ObjectWithFactoryMethod.class.getMethod("valueOf", String.class), id.getExecutable());
+		assertEquals(1, id.getParameters().length);
+		assertEquals(new Parameter("value", String.class), id.getParameters()[0]);
+	}
+
 	@Test
 	public void testExtractConstructorsDbObject() throws IOException, NoSuchMethodException, SecurityException {
-		List<InstantiatorDefinition> dbObjectConstructors = ReflectionInstantiatorDefinitionFactory.extractConstructors(DbObject.class);
+		List<InstantiatorDefinition> dbObjectConstructors = ReflectionInstantiatorDefinitionFactory.extractDefinitions(DbObject.class);
 		assertEquals(1, dbObjectConstructors.size());
 		assertEquals(0, dbObjectConstructors.get(0).getParameters().length);
 		assertEquals(DbObject.class.getConstructor(), dbObjectConstructors.get(0).getExecutable());
@@ -27,7 +66,7 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 	@Test
 	public void testExtractConstructorsFinalDbObject() throws IOException, NoSuchMethodException, SecurityException {
 
-		List<InstantiatorDefinition> finalDbObjectConstructors = ReflectionInstantiatorDefinitionFactory.extractConstructors(DbFinalObject.class);
+		List<InstantiatorDefinition> finalDbObjectConstructors = ReflectionInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class);
 		assertEquals(1, finalDbObjectConstructors.size());
 		assertEquals(6, finalDbObjectConstructors.get(0).getParameters().length);
 		
@@ -54,7 +93,7 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 	@Test
 	public void testExtractConstructorsTuple2() throws IOException, NoSuchMethodException, SecurityException {
 
-		List<InstantiatorDefinition> finalDbObjectConstructors = ReflectionInstantiatorDefinitionFactory.extractConstructors(Tuples.typeDef(String.class, DbObject.class));
+		List<InstantiatorDefinition> finalDbObjectConstructors = ReflectionInstantiatorDefinitionFactory.extractDefinitions(Tuples.typeDef(String.class, DbObject.class));
 		assertEquals(1, finalDbObjectConstructors.size());
 		assertEquals(2, finalDbObjectConstructors.get(0).getParameters().length);
 

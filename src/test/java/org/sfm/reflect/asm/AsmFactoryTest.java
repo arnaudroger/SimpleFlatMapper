@@ -39,7 +39,7 @@ public class AsmFactoryTest {
 	}
 	@Test
 	public void testCreateInstantiatorFinalDbObjectInjectIdAndName() throws Exception {
-		InstantiatorDefinition instantiatorDefinition = AsmInstantiatorDefinitionFactory.extractConstructors(DbFinalObject.class).get(0);
+		InstantiatorDefinition instantiatorDefinition = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class).get(0);
 		HashMap<Parameter, Getter<ResultSet, ?>> injections = new HashMap<Parameter, Getter<ResultSet, ?>>();
 		injections.put(new Parameter("id", long.class), new LongResultSetGetter(1));
 		injections.put(new Parameter("name", String.class), new StringResultSetGetter(2));
@@ -77,7 +77,7 @@ public class AsmFactoryTest {
 		injections.put(new Parameter("name", String.class), new StringResultSetGetter(2));
 
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
-				AsmInstantiatorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0),
+				AsmInstantiatorDefinitionFactory.<DbFinalObject>extractDefinitions(DbFinalObject.class).get(0),
 				injections
 		);
 		

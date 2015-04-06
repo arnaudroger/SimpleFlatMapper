@@ -1,41 +1,56 @@
 package org.sfm.reflect;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReflectionInstantiatorDefinitionFactory {
 
     @SuppressWarnings("unchecked")
-    public static <T> List<InstantiatorDefinition> extractConstructors(Type target) {
-        Class<T> clazz = TypeHelper.toClass(target);
+    public static List<InstantiatorDefinition> extractDefinitions(Type target) {
+        Class<?> clazz = TypeHelper.toClass(target);
         List<InstantiatorDefinition> instantiatorDefinitions = new ArrayList<InstantiatorDefinition>();
 
         for(Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-            InstantiatorDefinition definition = new InstantiatorDefinition(constructor, getConstructorParameters(constructor, target));
-            instantiatorDefinitions.add(definition);
+            if (Modifier.isPublic(constructor.getModifiers())) {
+                InstantiatorDefinition definition = new InstantiatorDefinition(constructor, getParameters(constructor, target));
+                instantiatorDefinitions.add(definition);
+            }
         }
 
+        for(Method m : clazz.getDeclaredMethods()) {
+            if (Modifier.isPublic(m.getModifiers())
+                && Modifier.isStatic(m.getModifiers())
+                && clazz.isAssignableFrom(m.getReturnType())) {
+                InstantiatorDefinition definition = new InstantiatorDefinition(m, getParameters(m, target));
+                instantiatorDefinitions.add(definition);
+            }
+        }
 
         return instantiatorDefinitions;
     }
 
-    private static Parameter[] getConstructorParameters(Constructor<?> constructor, Type target) {
-        Parameter[] parameters = new Parameter[constructor.getParameterTypes().length];
-        TypeVariable<Class<Object>>[] typeParameters = TypeHelper.toClass(target).getTypeParameters();
+    private static Parameter[] getParameters(Constructor<?> constructor, Type target) {
+        return buildParameters(target, constructor.getParameterTypes(), constructor.getGenericParameterTypes(), TypeHelper.toClass(target).getTypeParameters());
+    }
+
+
+    private static Parameter[] getParameters(Method method, Type target) {
+        return buildParameters(target, method.getParameterTypes(), method.getGenericParameterTypes(), TypeHelper.toClass(target).getTypeParameters());
+    }
+
+    private static Parameter[] buildParameters(Type target, Class<?>[] parameterTypes, Type[] parameterGenericTypes, TypeVariable<Class<Object>>[] targetClassTypeParameters) {
+        Parameter[] parameters = new Parameter[parameterTypes.length];
 
         for(int i = 0; i < parameters.length; i++) {
-            String name = getName(i, constructor);
-            Type paramType = constructor.getGenericParameterTypes()[i];
+            Type paramType = parameterGenericTypes[i];
+            String name = getName(i);
             Type resolvedParamType = null;
             if (paramType instanceof TypeVariable) {
                 TypeVariable<?> tv = (TypeVariable<?>) paramType;
-                paramType = constructor.getParameterTypes()[i];
-                ParameterizedType pt = (ParameterizedType) target;
-                for (TypeVariable<Class<Object>> typeParameter : typeParameters) {
+                paramType = parameterTypes[i];
+                ParameterizedType pt = (ParameterizedType)target;
+                for (TypeVariable<Class<Object>> typeParameter : targetClassTypeParameters) {
                     if (typeParameter.getName().equals(tv.getName())) {
                         resolvedParamType = pt.getActualTypeArguments()[i];
                         break;
@@ -51,7 +66,8 @@ public class ReflectionInstantiatorDefinitionFactory {
         return parameters;
     }
 
-    private static String getName(int i, Constructor<?> constructor) {
+
+    private static String getName(int i) {
         return "arg" + i;
     }
 }

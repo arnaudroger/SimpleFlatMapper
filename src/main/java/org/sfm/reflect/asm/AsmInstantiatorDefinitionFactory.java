@@ -1,5 +1,6 @@
 package org.sfm.reflect.asm;
 
+import com.sun.org.apache.xpath.internal.compiler.OpCodes;
 import org.objectweb.asm.*;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
@@ -8,6 +9,8 @@ import org.sfm.utils.ErrorHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +18,7 @@ import java.util.List;
 
 public class AsmInstantiatorDefinitionFactory {
 
-    public static List<InstantiatorDefinition> extractConstructors(final Type target) throws IOException {
+    public static List<InstantiatorDefinition> extractDefinitions(final Type target) throws IOException {
         final List<InstantiatorDefinition> constructors = new ArrayList<InstantiatorDefinition>();
 
         final Class<?> targetClass = TypeHelper.toClass(target);
@@ -47,11 +50,13 @@ public class AsmInstantiatorDefinitionFactory {
 
                 @Override
                 public MethodVisitor visitMethod(int access,
-                                                 String name,
+                                                 final String methodName,
                                                  String desc,
                                                  String signature,
                                                  String[] exceptions) {
-                    if ("<init>".equals(name)) {
+                    final boolean isConstructor = "<init>".equals(methodName);
+                    if ((Opcodes.ACC_PUBLIC & access) == Opcodes.ACC_PUBLIC
+                            && (isConstructor || (Opcodes.ACC_STATIC & access) == Opcodes.ACC_STATIC)) {
                         final List<String> descTypes = AsmUtils.extractConstructorTypeNames(desc);
                         final List<String> genericTypes;
                         final List<String> names = new ArrayList<String>();
@@ -59,6 +64,19 @@ public class AsmInstantiatorDefinitionFactory {
                             genericTypes = AsmUtils.extractConstructorTypeNames(signature);
                         } else {
                             genericTypes = descTypes;
+                        }
+
+                        if (!isConstructor) {
+                            if (descTypes.size() > 1) {
+                                try {
+                                    final Type genericType = AsmUtils.toGenericType(descTypes.get(descTypes.size() - 1), genericTypeNames, target);
+                                    if (!targetClass.isAssignableFrom(TypeHelper.toClass(genericType))) {
+                                        return null;
+                                    }
+                                } catch (ClassNotFoundException e) {
+                                    return null;
+                                }
+                            } else return null;
                         }
 
                         return new MethodVisitor(Opcodes.ASM5) {
@@ -87,7 +105,8 @@ public class AsmInstantiatorDefinitionFactory {
                                 try {
                                     final List<Parameter> parameters = new ArrayList<Parameter>();
 
-                                    for(int i = 0; i < descTypes.size(); i ++) {
+                                    int l = descTypes.size() - (isConstructor ? 0 : 1);
+                                    for(int i = 0; i < l; i ++) {
                                         String name = "arg" + i;
                                         if (i < names.size()) {
                                             name =names.get(i);
@@ -95,7 +114,14 @@ public class AsmInstantiatorDefinitionFactory {
                                         parameters.add(createParameter(name, descTypes.get(i), genericTypes.get(i)));
                                     }
 
-                                    constructors.add(new InstantiatorDefinition(targetClass.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new Parameter[parameters.size()])));
+                                    final Member executable;
+
+                                    if (isConstructor) {
+                                        executable = targetClass.getDeclaredConstructor(toTypeArray(parameters));
+                                    } else {
+                                        executable = targetClass.getDeclaredMethod(methodName, toTypeArray(parameters));
+                                    }
+                                    constructors.add(new InstantiatorDefinition(executable, parameters.toArray(new Parameter[parameters.size()])));
                                 } catch(Exception e) {
                                     ErrorHelper.rethrow(e);
                                 }

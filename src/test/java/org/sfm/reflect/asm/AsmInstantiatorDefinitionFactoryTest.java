@@ -18,7 +18,7 @@ public class AsmInstantiatorDefinitionFactoryTest {
 
 	@Test
 	public void testExtractConstructorsDbObject() throws IOException, NoSuchMethodException, SecurityException {
-		List<InstantiatorDefinition> dbObjectConstructors = AsmInstantiatorDefinitionFactory.extractConstructors(DbObject.class);
+		List<InstantiatorDefinition> dbObjectConstructors = AsmInstantiatorDefinitionFactory.extractDefinitions(DbObject.class);
 		assertEquals(1, dbObjectConstructors.size());
 		assertEquals(0, dbObjectConstructors.get(0).getParameters().length);
 		assertEquals(DbObject.class.getConstructor(), dbObjectConstructors.get(0).getExecutable());
@@ -28,7 +28,7 @@ public class AsmInstantiatorDefinitionFactoryTest {
 	@Test
 	public void testExtractConstructorsFinalDbObject() throws IOException, NoSuchMethodException, SecurityException {
 
-		List<InstantiatorDefinition> finalDbObjectConstructors = AsmInstantiatorDefinitionFactory.extractConstructors(DbFinalObject.class);
+		List<InstantiatorDefinition> finalDbObjectConstructors = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class);
 		assertEquals(1, finalDbObjectConstructors.size());
 		assertEquals(6, finalDbObjectConstructors.get(0).getParameters().length);
 		
@@ -55,7 +55,7 @@ public class AsmInstantiatorDefinitionFactoryTest {
 	@Test
 	public void testExtractConstructorsTuple2() throws IOException, NoSuchMethodException, SecurityException {
 
-		List<InstantiatorDefinition> finalDbObjectConstructors = AsmInstantiatorDefinitionFactory.extractConstructors(Tuples.typeDef(String.class, DbObject.class));
+		List<InstantiatorDefinition> finalDbObjectConstructors = AsmInstantiatorDefinitionFactory.extractDefinitions(Tuples.typeDef(String.class, DbObject.class));
 		assertEquals(1, finalDbObjectConstructors.size());
 		assertEquals(2, finalDbObjectConstructors.get(0).getParameters().length);
 

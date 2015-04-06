@@ -305,6 +305,9 @@ public class AsmUtils {
 		for(int i = 1; i < sig.length() -2 ; i++) {
 			char c = sig.charAt(i);
 			switch (c) {
+				case ')':
+					currentStart = i + 1;
+					break;
 				case '[':
 					break;
 				case 'T':

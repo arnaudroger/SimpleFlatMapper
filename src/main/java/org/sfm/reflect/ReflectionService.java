@@ -109,13 +109,13 @@ public class ReflectionService {
 		List<InstantiatorDefinition> list;
         if (isAsmPresent()) {
             try {
-                list = AsmInstantiatorDefinitionFactory.extractConstructors(target);
+                list = AsmInstantiatorDefinitionFactory.extractDefinitions(target);
             } catch(IOException e) {
                 // no access to class file
-                list = ReflectionInstantiatorDefinitionFactory.extractConstructors(target);
+                list = ReflectionInstantiatorDefinitionFactory.extractDefinitions(target);
             }
 		} else {
-			list = ReflectionInstantiatorDefinitionFactory.extractConstructors(target);
+			list = ReflectionInstantiatorDefinitionFactory.extractDefinitions(target);
 		}
 		return list;
 	}

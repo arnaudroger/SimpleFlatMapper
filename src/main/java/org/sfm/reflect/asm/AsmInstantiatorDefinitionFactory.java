@@ -56,7 +56,9 @@ public class AsmInstantiatorDefinitionFactory {
                                                  String[] exceptions) {
                     final boolean isConstructor = "<init>".equals(methodName);
                     if ((Opcodes.ACC_PUBLIC & access) == Opcodes.ACC_PUBLIC
-                            && (isConstructor || (Opcodes.ACC_STATIC & access) == Opcodes.ACC_STATIC)) {
+                            && (isConstructor
+                            || ((Opcodes.ACC_STATIC & access) == Opcodes.ACC_STATIC
+                                && !desc.endsWith("V")))) {
                         final List<String> descTypes = AsmUtils.extractConstructorTypeNames(desc);
                         final List<String> genericTypes;
                         final List<String> names = new ArrayList<String>();
@@ -67,7 +69,7 @@ public class AsmInstantiatorDefinitionFactory {
                         }
 
                         if (!isConstructor) {
-                            if (descTypes.size() > 1) {
+                            if (descTypes.size() > 0) {
                                 try {
                                     final Type genericType = AsmUtils.toGenericType(descTypes.get(descTypes.size() - 1), genericTypeNames, target);
                                     if (!targetClass.isAssignableFrom(TypeHelper.toClass(genericType))) {

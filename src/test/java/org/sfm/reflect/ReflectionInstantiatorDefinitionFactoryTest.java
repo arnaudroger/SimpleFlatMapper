@@ -26,6 +26,9 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 			return null;
 		}
 
+		public static void doNothing(ObjectWithFactoryMethod value) {
+		}
+
 		private ObjectWithFactoryMethod(){
 		}
 	}

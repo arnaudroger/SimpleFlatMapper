@@ -35,14 +35,14 @@ public class InstantiatorFactoryTest {
 
 	@Test
 	public void testInstantiateConstructorWithArgsAllPr() throws Exception {
-		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(null).getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class, AsmConstructorDefinitionFactory.<DbFinalPrimitiveObject>extractConstructors(DbFinalPrimitiveObject.class), new HashMap<ConstructorParameter, Getter<ResultSet, ?>>(), true);
+		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(null).getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class, AsmConstructorDefinitionFactory.<DbFinalPrimitiveObject>extractConstructors(DbFinalPrimitiveObject.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null);
 		Assert.assertNotNull(object);
 	}
 
 	@Test
 	public void testInstantiateConstructorWithArgsAllPrAsm() throws Exception {
-		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(new AsmFactory(Thread.currentThread().getContextClassLoader())).getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class,AsmConstructorDefinitionFactory.<DbFinalPrimitiveObject>extractConstructors(DbFinalPrimitiveObject.class), new HashMap<ConstructorParameter, Getter<ResultSet, ?>>(), true);
+		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(new AsmFactory(Thread.currentThread().getContextClassLoader())).getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class,AsmConstructorDefinitionFactory.<DbFinalPrimitiveObject>extractConstructors(DbFinalPrimitiveObject.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null);
 		Assert.assertNotNull(object);
 	}

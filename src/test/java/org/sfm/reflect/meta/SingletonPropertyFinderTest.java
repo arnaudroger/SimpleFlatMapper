@@ -21,7 +21,7 @@ public class SingletonPropertyFinderTest {
 
         ConstructorPropertyMeta<MyClass, ?> blop = (ConstructorPropertyMeta<MyClass, ?>) pf.findProperty(new DefaultPropertyNameMatcher("blop", 0, false, false));
 
-        assertEquals(String.class, blop.getConstructorParameter().getType());
+        assertEquals(String.class, blop.getParameter().getType());
 
     }
 }

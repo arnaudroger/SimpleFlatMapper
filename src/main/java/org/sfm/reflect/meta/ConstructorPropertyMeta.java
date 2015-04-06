@@ -12,14 +12,14 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
     public ConstructorPropertyMeta(String name,
                                    ReflectionService reflectService,
-                                   ConstructorParameter constructorParameter,
+                                   Parameter parameter,
                                    Class<T> owner) {
 		super(name, reflectService);
-		this.constructorParameter = constructorParameter;
+		this.parameter = parameter;
         this.owner = owner;
 	}
 
-	private final ConstructorParameter constructorParameter;
+	private final Parameter parameter;
 	
 	@Override
 	protected Setter<T, P> newSetter() {
@@ -37,11 +37,11 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
     @Override
 	public Type getType() {
-		return constructorParameter.getResolvedType();
+		return parameter.getGenericType();
 	}
 
-	public ConstructorParameter getConstructorParameter() {
-		return constructorParameter;
+	public Parameter getParameter() {
+		return parameter;
 	}
 	
 	public boolean isConstructorProperty() {
@@ -57,7 +57,7 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
     public String toString() {
         return "ConstructorPropertyMeta{" +
                 "owner=" + owner +
-                ", constructorParameter=" + constructorParameter +
+                ", constructorParameter=" + parameter +
                 '}';
     }
 }

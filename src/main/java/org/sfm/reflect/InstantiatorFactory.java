@@ -27,12 +27,12 @@ public class InstantiatorFactory {
 	}
 
 
-	public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap, org.sfm.map.GetterFactory<S, K> getterFactory) throws NoSuchMethodException {
+	public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<Parameter, Getter<S, ?>> constructorParameterGetterMap, org.sfm.map.GetterFactory<S, K> getterFactory) throws NoSuchMethodException {
 		return  getInstantiator(source, target, propertyMappingsBuilder, constructorParameterGetterMap, getterFactory, true);
 	}
 
 	@SuppressWarnings("unchecked")
-    public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<ConstructorParameter, Getter<S, ?>> constructorParameterGetterMap, final org.sfm.map.GetterFactory<S, K> getterFactory,  boolean useAsmIfEnabled) throws NoSuchMethodException {
+    public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<Parameter, Getter<S, ?>> constructorParameterGetterMap, final org.sfm.map.GetterFactory<S, K> getterFactory,  boolean useAsmIfEnabled) throws NoSuchMethodException {
 
         if (propertyMappingsBuilder.isDirectProperty()) {
             Getter getter = propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K, D>>() {
@@ -54,7 +54,7 @@ public class InstantiatorFactory {
 		}
 	}
 
-	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<ConstructorDefinition<T>> constructors, Map<ConstructorParameter, Getter<S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
+	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<ConstructorDefinition<T>> constructors, Map<Parameter, Getter<S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
 		final ConstructorDefinition<T> constructorDefinition = getSmallerConstructor(constructors);
 
 		if (constructorDefinition == null) {

@@ -1,7 +1,7 @@
 package org.sfm.reflect.impl;
 
 import org.sfm.reflect.ConstructorDefinition;
-import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.Parameter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 
@@ -12,7 +12,7 @@ public final class InjectConstructorInstantiator<S, T> implements Instantiator<S
 	private final ConstructorDefinition<T> constructorDefinition;
 	private final ArgumentBuilder<S, T> argBuilder;
 
-	public InjectConstructorInstantiator(ConstructorDefinition<T> constructorDefinition, Map<ConstructorParameter, Getter<S, ?>> injections) {
+	public InjectConstructorInstantiator(ConstructorDefinition<T> constructorDefinition, Map<Parameter, Getter<S, ?>> injections) {
 		this.constructorDefinition = constructorDefinition;
 		this.argBuilder = new ArgumentBuilder<S, T>(constructorDefinition, injections);
 	}

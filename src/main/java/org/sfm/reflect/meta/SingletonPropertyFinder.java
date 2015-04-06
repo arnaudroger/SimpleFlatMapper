@@ -1,7 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ConstructorDefinition;
-import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.Parameter;
 import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
@@ -50,7 +50,7 @@ public class SingletonPropertyFinder<T> implements PropertyFinder<T> {
 			ConstructorDefinition<T> constructorDefinition = readerFriendlyConstructor( propertyFinder.getEligibleConstructorDefinitions());
 
 			if (constructorDefinition != null) {
-				ConstructorParameter param = constructorDefinition.getParameters()[selectedParameters.size()];
+				Parameter param = constructorDefinition.getParameters()[selectedParameters.size()];
 				selectedParameters.add(param.getName());
 				return propertyFinder.findConstructor(constructorDefinition);
 			}

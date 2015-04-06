@@ -79,7 +79,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		
 		List<ConstructorPropertyMeta<T, ?>> constructorProperties = new ArrayList<ConstructorPropertyMeta<T, ?>>();
 		for(ConstructorDefinition<T> cd : constructorDefinitions) {
-			for(ConstructorParameter param : cd.getParameters()) {
+			for(Parameter param : cd.getParameters()) {
 				String paramName = param.getName();
                 constructorProperties.add(constructorMeta(param, paramName));
 			}
@@ -87,7 +87,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return constructorProperties;
 	}
 
-    private <P> ConstructorPropertyMeta<T, P> constructorMeta(ConstructorParameter param, String paramName) {
+    private <P> ConstructorPropertyMeta<T, P> constructorMeta(Parameter param, String paramName) {
         Class<T> tClass = TypeHelper.toClass(this.target);
         return new ConstructorPropertyMeta<T, P>(paramName, reflectService, param, tClass);
     }

@@ -15,7 +15,7 @@ import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
 import org.sfm.reflect.ConstructorDefinition;
-import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.Parameter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 
@@ -40,9 +40,9 @@ public class AsmFactoryTest {
 	@Test
 	public void testCreateInstantiatorFinalDbObjectInjectIdAndName() throws Exception {
 		ConstructorDefinition<DbFinalObject> constructorDefinition = AsmConstructorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0);
-		HashMap<ConstructorParameter, Getter<ResultSet, ?>> injections = new HashMap<ConstructorParameter, Getter<ResultSet, ?>>();
-		injections.put(new ConstructorParameter("id", long.class), new LongResultSetGetter(1));
-		injections.put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
+		HashMap<Parameter, Getter<ResultSet, ?>> injections = new HashMap<Parameter, Getter<ResultSet, ?>>();
+		injections.put(new Parameter("id", long.class), new LongResultSetGetter(1));
+		injections.put(new Parameter("name", String.class), new StringResultSetGetter(2));
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
 				constructorDefinition,
 				injections
@@ -72,9 +72,9 @@ public class AsmFactoryTest {
 	
 	@Test
 	public void testCreateInstantiatorFinalDbObjectNameAndType() throws Exception {
-		HashMap<ConstructorParameter, Getter<ResultSet, ?>> injections = new HashMap<ConstructorParameter, Getter<ResultSet, ?>>();
-		injections.put(new ConstructorParameter("typeOrdinal", Type.class), new OrdinalEnumResultSetGetter<Type>(1, Type.class));
-		injections.put(new ConstructorParameter("name", String.class), new StringResultSetGetter(2));
+		HashMap<Parameter, Getter<ResultSet, ?>> injections = new HashMap<Parameter, Getter<ResultSet, ?>>();
+		injections.put(new Parameter("typeOrdinal", Type.class), new OrdinalEnumResultSetGetter<Type>(1, Type.class));
+		injections.put(new Parameter("name", String.class), new StringResultSetGetter(2));
 
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
 				AsmConstructorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0),

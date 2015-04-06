@@ -2,7 +2,7 @@ package org.sfm.reflect.meta;
 
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.ConstructorDefinition;
-import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.Parameter;
 
 import java.util.*;
 
@@ -37,13 +37,13 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 					
 				} else {
 					ConstructorPropertyMeta<T, ?> constructorProperty = (ConstructorPropertyMeta<T, ?>) ((SubPropertyMeta<T, ?>)prop).getOwnerProperty();
-					removeNonMatching(constructorProperty.getConstructorParameter());
+					removeNonMatching(constructorProperty.getParameter());
 				}
 			}
 			
 		} else {
 			ConstructorPropertyMeta<T, ?> constructorProperty = (ConstructorPropertyMeta<T, ?>) prop;
-			removeNonMatching(constructorProperty.getConstructorParameter());
+			removeNonMatching(constructorProperty.getParameter());
 		}
 
 		return (PropertyMeta<T, E>) prop;
@@ -55,7 +55,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
         ConstructorPropertyMeta<T, ?> prop = lookForConstructor(constructorDefinition);
 
         if (prop != null) {
-            removeNonMatching(prop.getConstructorParameter());
+            removeNonMatching(prop.getParameter());
         }
 
         return (ConstructorPropertyMeta<T, E>) prop;
@@ -65,10 +65,10 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 
     private ConstructorPropertyMeta<T, ?> lookForConstructor(final ConstructorDefinition<T> constructorDefinition) {
         if (classMeta.getConstructorProperties() != null) {
-            ConstructorParameter parameter = constructorDefinition.getParameters()[0];
+            Parameter parameter = constructorDefinition.getParameters()[0];
             for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
                 if (prop.getName().equals(parameter.getName())
-                        && prop.getConstructorParameter().equals(parameter)) {
+                        && prop.getParameter().equals(parameter)) {
                     return prop;
                 }
             }
@@ -81,7 +81,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 		if (classMeta.getConstructorProperties() != null) {
 			for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
 				if (propertyNameMatcher.matches(getColumnName(prop))
-						&& hasConstructorMatching(prop.getConstructorParameter())) {
+						&& hasConstructorMatching(prop.getParameter())) {
 					return prop;
 				}
 			}
@@ -104,7 +104,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 		if (classMeta.getConstructorProperties() != null) {
 			for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
 				PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(getColumnName(prop));
-				if (subPropMatcher != null && hasConstructorMatching(prop.getConstructorParameter())) {
+				if (subPropMatcher != null && hasConstructorMatching(prop.getParameter())) {
 					PropertyMeta<?, ?> subProp = lookForSubProperty(subPropMatcher, prop);
 					if (subProp != null) {
 						return new SubPropertyMeta(classMeta.getReflectionService(), prop, subProp);
@@ -147,7 +147,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
     }
 
 
-    private void removeNonMatching(ConstructorParameter param) {
+    private void removeNonMatching(Parameter param) {
 		ListIterator<ConstructorDefinition<T>> li = eligibleConstructorDefinitions.listIterator();
 		while(li.hasNext()){
 			ConstructorDefinition<T> cd = li.next();
@@ -157,7 +157,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 		}
 	}
 	
-	private boolean hasConstructorMatching(ConstructorParameter param) {
+	private boolean hasConstructorMatching(Parameter param) {
 		for(ConstructorDefinition<T> cd : eligibleConstructorDefinitions) {
 			if (cd.hasParam(param)) {
 				return true;

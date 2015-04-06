@@ -1,7 +1,7 @@
 package org.sfm.reflect.asm;
 
 import org.sfm.reflect.ConstructorDefinition;
-import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.Parameter;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
@@ -21,13 +21,13 @@ public class InstantiatorKey {
 	public InstantiatorKey(Class<?> target, Class<?> source) throws NoSuchMethodException, SecurityException {
 		this(target.getConstructor(), null, source);
 	}
-	public InstantiatorKey(ConstructorDefinition<?> constructorDefinition,	Set<ConstructorParameter>  injections, Class<?> source) {
+	public InstantiatorKey(ConstructorDefinition<?> constructorDefinition,	Set<Parameter>  injections, Class<?> source) {
 		this(constructorDefinition.getConstructor(), toParamNameS(injections), source);
 	}
-	private static String[] toParamNameS(Set<ConstructorParameter> keySet) {
+	private static String[] toParamNameS(Set<Parameter> keySet) {
 		String[] names = new String[keySet.size()];
 		int i = 0;
-		for(ConstructorParameter param : keySet) {
+		for(Parameter param : keySet) {
 			names[i++] = param.getName();
 		}
 		Arrays.sort(names);

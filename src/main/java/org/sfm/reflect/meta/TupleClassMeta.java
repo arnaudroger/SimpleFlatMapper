@@ -2,7 +2,7 @@ package org.sfm.reflect.meta;
 
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.ConstructorDefinition;
-import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.Parameter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.tuples.Tuples;
@@ -48,14 +48,14 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
     }
 
     private ConstructorDefinition<T> respecifyParameterNames(ConstructorDefinition<T> definition) {
-        final ConstructorParameter[] parameters = definition.getParameters();
+        final Parameter[] parameters = definition.getParameters();
         if (parameters.length > 0 && parameters[0].getName().equals("arg0")) {
 
-            ConstructorParameter[] newParams = new ConstructorParameter[parameters.length];
+            Parameter[] newParams = new Parameter[parameters.length];
             final ElementNameGenerator nameGenerator = elementNameGenerator(definition.getConstructor().getDeclaringClass());
 
             for(int i = 0; i < parameters.length; i++) {
-                newParams[i] = new ConstructorParameter(nameGenerator.name(i), parameters[i].getType(), parameters[i].getResolvedType());
+                newParams[i] = new Parameter(nameGenerator.name(i), parameters[i].getType(), parameters[i].getGenericType());
             }
 
             return new ConstructorDefinition<T>(definition.getConstructor(), newParams);
@@ -94,9 +94,9 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
         ElementNameGenerator nameGenerator = new SFMTupleNameGenerator();
 
 		int i = 0;
-		for(ConstructorParameter cp : constructorDefinition.getParameters()) {
+		for(Parameter cp : constructorDefinition.getParameters()) {
             String prefix = nameGenerator.name(i);
-			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getResolvedType(), false);
+			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getGenericType(), false);
 
 			if (classMeta != null) {
 				for(String prop : classMeta.generateHeaders()) {

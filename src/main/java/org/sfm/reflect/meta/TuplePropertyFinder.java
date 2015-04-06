@@ -1,7 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.reflect.ConstructorDefinition;
-import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.Parameter;
 import org.sfm.reflect.TypeHelper;
 
 import java.util.List;
@@ -30,10 +30,10 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
     private <E> ConstructorPropertyMeta<T, E> newConstructorPropertyMeta(TupleClassMeta<T> tupleClassMeta, int i) {
         Class<T> tClass = TypeHelper.toClass(tupleClassMeta.getType());
 
-        final ConstructorParameter constructorParameter = constructorDefinitions.get(0).getParameters()[i];
+        final Parameter parameter = constructorDefinitions.get(0).getParameters()[i];
 
-        return new ConstructorPropertyMeta<T, E>(constructorParameter.getName(), tupleClassMeta.getReflectionService(),
-                constructorParameter, tClass);
+        return new ConstructorPropertyMeta<T, E>(parameter.getName(), tupleClassMeta.getReflectionService(),
+                parameter, tClass);
     }
 
     @Override

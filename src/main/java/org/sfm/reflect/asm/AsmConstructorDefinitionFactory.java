@@ -2,7 +2,7 @@ package org.sfm.reflect.asm;
 
 import org.objectweb.asm.*;
 import org.sfm.reflect.ConstructorDefinition;
-import org.sfm.reflect.ConstructorParameter;
+import org.sfm.reflect.Parameter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.utils.ErrorHelper;
 
@@ -85,7 +85,7 @@ public class AsmConstructorDefinitionFactory {
                             @Override
                             public void visitEnd() {
                                 try {
-                                    final List<ConstructorParameter> parameters = new ArrayList<ConstructorParameter>();
+                                    final List<Parameter> parameters = new ArrayList<Parameter>();
 
                                     for(int i = 0; i < descTypes.size(); i ++) {
                                         String name = "arg" + i;
@@ -95,21 +95,21 @@ public class AsmConstructorDefinitionFactory {
                                         parameters.add(createParameter(name, descTypes.get(i), genericTypes.get(i)));
                                     }
 
-                                    constructors.add(new ConstructorDefinition<T>(targetClass.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new ConstructorParameter[parameters.size()])));
+                                    constructors.add(new ConstructorDefinition<T>(targetClass.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new Parameter[parameters.size()])));
                                 } catch(Exception e) {
                                     ErrorHelper.rethrow(e);
                                 }
                             }
 
-                            private Class<?>[] toTypeArray(List<ConstructorParameter> parameters) {
+                            private Class<?>[] toTypeArray(List<Parameter> parameters) {
                                 Class<?>[] types = new Class<?>[parameters.size()];
                                 for(int i = 0; i < types.length; i++) {
-                                    types[i] = TypeHelper.toClass(parameters.get(i).getType());
+                                    types[i] = parameters.get(i).getType();
                                 }
                                 return types;
                             }
 
-                            private ConstructorParameter createParameter(String name,
+                            private Parameter createParameter(String name,
                                                                          String desc, String signature) {
                                 try {
 
@@ -118,7 +118,7 @@ public class AsmConstructorDefinitionFactory {
                                     if (signature != null) {
                                         genericType = AsmUtils.toGenericType(signature, genericTypeNames, target);
                                     }
-                                    return new ConstructorParameter(name, basicType, genericType);
+                                    return new Parameter(name, TypeHelper.toClass(basicType), genericType);
                                 } catch (ClassNotFoundException e) {
                                     throw new Error("Unexpected error " + e, e);
                                 }

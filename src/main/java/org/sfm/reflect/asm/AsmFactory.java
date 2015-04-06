@@ -1,7 +1,6 @@
 package org.sfm.reflect.asm;
 
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.csv.CsvMapper;
 import org.sfm.csv.impl.*;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapper;
@@ -143,7 +142,7 @@ public class AsmFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> createInstantiator(final Class<?> source, final ConstructorDefinition<T> constructorDefinition, final Map<ConstructorParameter, Getter<S, ?>> injections) throws Exception {
+	public <S, T> Instantiator<S, T> createInstantiator(final Class<?> source, final ConstructorDefinition<T> constructorDefinition, final Map<Parameter, Getter<S, ?>> injections) throws Exception {
 		InstantiatorKey instantiatorKey = new InstantiatorKey(constructorDefinition, injections.keySet(), source);
 		Class<? extends Instantiator<?, ?>> instantiator = instantiatorCache.get(instantiatorKey);
 		if (instantiator == null) {
@@ -154,7 +153,7 @@ public class AsmFactory {
 		}
 
 		Map<String, Getter<S, ?>> getterPerName = new HashMap<String, Getter<S, ?>>();
-		for(Entry<ConstructorParameter, Getter<S, ?>> e : injections.entrySet()) {
+		for(Entry<Parameter, Getter<S, ?>> e : injections.entrySet()) {
 			getterPerName.put(e.getKey().getName(), e.getValue());
 		}
 

@@ -2,31 +2,32 @@ package org.sfm.reflect;
 
 import java.lang.reflect.Type;
 
-public final class ConstructorParameter {
+public final class Parameter {
 	private final String name;
-	private final Type type;
-	private final Type resolvedType;
+	private final Class<?> type;
+	private final Type genericType;
 
-	public ConstructorParameter(String name, Type type, Type resolvedType) {
+	public Parameter(String name, Class<?> type, Type genericType) {
 		super();
 		this.name = name;
 		this.type = type;
-		this.resolvedType = resolvedType;
+		this.genericType = genericType;
 	}
 
-	public ConstructorParameter(String id, Type type) {
+	public Parameter(String id, Class<?> type) {
 		this(id, type, type);
 	}
 
 	public String getName() {
 		return name;
 	}
-	public Type getType() {
+
+	public Class<?> getType() {
 		return type;
 	}
 
-	public Type getResolvedType() {
-		return resolvedType;
+	public Type getGenericType() {
+		return genericType;
 	}
 
 	@Override
@@ -45,7 +46,7 @@ public final class ConstructorParameter {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ConstructorParameter other = (ConstructorParameter) obj;
+		Parameter other = (Parameter) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -64,7 +65,7 @@ public final class ConstructorParameter {
         return "ConstructorParameter{" +
                 "name='" + name + '\'' +
                 ", type=" + type +
-                ", resolvedType=" + resolvedType +
+                ", resolvedType=" + genericType +
                 '}';
     }
 }

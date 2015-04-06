@@ -5,9 +5,9 @@ import java.util.Arrays;
 
 public final class ConstructorDefinition<T> {
 	private final Constructor<? extends T> constructor;
-	private final ConstructorParameter[] parameters;
+	private final Parameter[] parameters;
 	public ConstructorDefinition(Constructor<? extends T> constructor,
-			ConstructorParameter... parameters) {
+			Parameter... parameters) {
 		super();
 		this.constructor = constructor;
 		this.parameters = parameters;
@@ -15,13 +15,13 @@ public final class ConstructorDefinition<T> {
 	public Constructor<? extends T> getConstructor() {
 		return constructor;
 	}
-	public ConstructorParameter[] getParameters() {
+	public Parameter[] getParameters() {
 		return parameters;
 	}
 
 
-	public boolean hasParam(ConstructorParameter param) {
-		for (ConstructorParameter p : parameters) {
+	public boolean hasParam(Parameter param) {
+		for (Parameter p : parameters) {
 			if (p.equals(param)) {
 				return true;
 			}

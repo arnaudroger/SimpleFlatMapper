@@ -61,8 +61,8 @@ public class ReflectionConstructorDefinitionFactoryTest {
 		assertEquals(Object.class, finalDbObjectConstructors.get(0).getParameters()[0].getType());
 		assertEquals(Object.class, finalDbObjectConstructors.get(0).getParameters()[1].getType());
 
-		assertEquals(String.class, finalDbObjectConstructors.get(0).getParameters()[0].getResolvedType());
-		assertEquals(DbObject.class, finalDbObjectConstructors.get(0).getParameters()[1].getResolvedType());
+		assertEquals(String.class, finalDbObjectConstructors.get(0).getParameters()[0].getGenericType());
+		assertEquals(DbObject.class, finalDbObjectConstructors.get(0).getParameters()[1].getGenericType());
 
 		assertEquals("arg0", finalDbObjectConstructors.get(0).getParameters()[0].getName());
 		assertEquals("arg1", finalDbObjectConstructors.get(0).getParameters()[1].getName());

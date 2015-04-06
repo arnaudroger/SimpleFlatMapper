@@ -85,8 +85,8 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 		try {
-            Tuple2<Map<ConstructorParameter, Getter<S, ?>>, FieldMapper<S, T>[]> constructorInjections = constructorInjections();
-            Map<ConstructorParameter, Getter<S, ?>> injections = constructorInjections.first();
+            Tuple2<Map<Parameter, Getter<S, ?>>, FieldMapper<S, T>[]> constructorInjections = constructorInjections();
+            Map<Parameter, Getter<S, ?>> injections = constructorInjections.first();
             Instantiator<S, T> instantiator = instantiatorFactory.getInstantiator(source, target, propertyMappingsBuilder, injections, getterFactory);
             return new Tuple2<FieldMapper<S, T>[], Instantiator<S, T>>(constructorInjections.second(), instantiator);
 		} catch(Exception e) {
@@ -95,8 +95,8 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	}
 
 	@SuppressWarnings("unchecked")
-    private Tuple2<Map<ConstructorParameter, Getter<S, ?>>, FieldMapper<S, T>[]> constructorInjections() {
-		final Map<ConstructorParameter, Getter<S, ?>> injections = new HashMap<ConstructorParameter, Getter<S, ?>>();
+    private Tuple2<Map<Parameter, Getter<S, ?>>, FieldMapper<S, T>[]> constructorInjections() {
+		final Map<Parameter, Getter<S, ?>> injections = new HashMap<Parameter, Getter<S, ?>>();
 		final List<FieldMapper<S, T>> fieldMappers = new ArrayList<FieldMapper<S, T>>();
 		propertyMappingsBuilder.forEachConstructorProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K, S>>>() {
 			@SuppressWarnings("unchecked")
@@ -104,8 +104,8 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t) {
 				PropertyMeta<T, ?> pm  = t.getPropertyMeta();
                 ConstructorPropertyMeta<T, ?> cProp = (ConstructorPropertyMeta<T, ?>) pm;
-                ConstructorParameter constructorParameter = cProp.getConstructorParameter();
-                injections.put(constructorParameter, getterFor(t, constructorParameter.getResolvedType()));
+                Parameter parameter = cProp.getParameter();
+                injections.put(parameter, getterFor(t, parameter.getGenericType()));
 			}
 		});
 
@@ -120,11 +120,11 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 
                 ConstructorPropertyMeta<T, ?> meta = (ConstructorPropertyMeta<T, ?>) e.first();
 
-                injections.put(meta.getConstructorParameter(), newMapperGetterAdapter(mapper, currentBuilder));
+                injections.put(meta.getParameter(), newMapperGetterAdapter(mapper, currentBuilder));
                 fieldMappers.add(newMapperFieldMapper(properties, meta, mapper, currentBuilder));
             }
         }
-		return new Tuple2<Map<ConstructorParameter, Getter<S, ?>>, FieldMapper<S, T>[]>(injections, fieldMappers.toArray(new FieldMapper[0]));
+		return new Tuple2<Map<Parameter, Getter<S, ?>>, FieldMapper<S, T>[]>(injections, fieldMappers.toArray(new FieldMapper[0]));
 	}
 
     private MappingContextFactoryBuilder getMapperContextFactoryBuilder(PropertyMeta<?, ?> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties) {

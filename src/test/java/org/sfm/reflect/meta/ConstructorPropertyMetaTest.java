@@ -19,7 +19,7 @@ public class ConstructorPropertyMetaTest {
 
         assertEquals("ConstructorPropertyMeta{" +
                 "owner=class org.sfm.beans.DbFinalObject, " +
-                "constructorParameter=ConstructorParameter{name='name', type=class java.lang.String, resolvedType=class java.lang.String}}",
+                "constructorParameter=Parameter{name='name', type=class java.lang.String, resolvedType=class java.lang.String}}",
                 property.toString());
         property.newSetter().set(o, "jj");
         assertEquals("nn", property.newGetter().get(o));

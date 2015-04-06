@@ -62,7 +62,7 @@ public final class Parameter {
 
     @Override
     public String toString() {
-        return "ConstructorParameter{" +
+        return "Parameter{" +
                 "name='" + name + '\'' +
                 ", type=" + type +
                 ", resolvedType=" + genericType +

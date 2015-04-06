@@ -14,12 +14,12 @@ import static org.objectweb.asm.Opcodes.*;
 public class InstantiatorBuilder {
 
 	public static <S,T>  byte[] createInstantiator(final String className, final Class<?> sourceClass,
-			 final ConstructorDefinition<T> constructorDefinition,final Map<Parameter, Getter<S, ?>> injections) throws Exception {
+			 final InstantiatorDefinition instantiatorDefinition,final Map<Parameter, Getter<S, ?>> injections) throws Exception {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
 		FieldVisitor fv;
 
-		Class<? extends T> targetClass= constructorDefinition.getConstructor().getDeclaringClass();
+		Class<?> targetClass= instantiatorDefinition.getExecutable().getDeclaringClass();
 		
 		String targetType = AsmUtils.toType(targetClass);
 		String sourceType = AsmUtils.toType(sourceClass);
@@ -29,7 +29,7 @@ public class InstantiatorBuilder {
         cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType, "Ljava/lang/Object;L" + instantiatorType + "<L"	+ targetType + ";>;", "java/lang/Object",
 				new String[] { instantiatorType });
 
-        Parameter[] parameters = constructorDefinition.getParameters();
+        Parameter[] parameters = instantiatorDefinition.getParameters();
 
         for(Entry<Parameter, Getter<S, ?>> entry : injections.entrySet()) {
             fv = cw.visitField(ACC_FINAL, "getter_" + entry.getKey().getName(), "L" + AsmUtils.toType(entry.getValue().getClass()) +";", null, null);

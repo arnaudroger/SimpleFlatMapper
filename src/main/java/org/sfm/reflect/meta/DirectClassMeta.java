@@ -1,7 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.map.MapperBuildingException;
-import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
@@ -50,12 +50,12 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
         }
 
         @Override
-        public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
+        public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
             return null;
         }
 
         @Override
-        public <E> ConstructorPropertyMeta<T, E> findConstructor(ConstructorDefinition<T> constructorDefinition) {
+        public <E> ConstructorPropertyMeta<T, E> findConstructor(InstantiatorDefinition instantiatorDefinition) {
             return null;
         }
     }

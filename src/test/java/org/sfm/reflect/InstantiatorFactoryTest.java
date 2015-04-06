@@ -3,7 +3,7 @@ package org.sfm.reflect;
 import org.junit.Assert;
 import org.junit.Test;
 import org.sfm.beans.DbFinalPrimitiveObject;
-import org.sfm.reflect.asm.AsmConstructorDefinitionFactory;
+import org.sfm.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.sfm.reflect.asm.AsmFactory;
 
 import java.sql.ResultSet;
@@ -35,14 +35,14 @@ public class InstantiatorFactoryTest {
 
 	@Test
 	public void testInstantiateConstructorWithArgsAllPr() throws Exception {
-		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(null).getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class, AsmConstructorDefinitionFactory.<DbFinalPrimitiveObject>extractConstructors(DbFinalPrimitiveObject.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(null).getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class, AsmInstantiatorDefinitionFactory.<DbFinalPrimitiveObject>extractConstructors(DbFinalPrimitiveObject.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null);
 		Assert.assertNotNull(object);
 	}
 
 	@Test
 	public void testInstantiateConstructorWithArgsAllPrAsm() throws Exception {
-		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(new AsmFactory(Thread.currentThread().getContextClassLoader())).getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class,AsmConstructorDefinitionFactory.<DbFinalPrimitiveObject>extractConstructors(DbFinalPrimitiveObject.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(new AsmFactory(Thread.currentThread().getContextClassLoader())).getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class, AsmInstantiatorDefinitionFactory.<DbFinalPrimitiveObject>extractConstructors(DbFinalPrimitiveObject.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null);
 		Assert.assertNotNull(object);
 	}

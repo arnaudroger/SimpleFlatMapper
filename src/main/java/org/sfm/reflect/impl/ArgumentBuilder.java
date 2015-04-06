@@ -1,6 +1,6 @@
 package org.sfm.reflect.impl;
 
-import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
@@ -72,10 +72,9 @@ public final class ArgumentBuilder<S, T> {
 	
 	
 	private final Getter<S, ?>[] getters;
-	@SuppressWarnings("unchecked")
-	public ArgumentBuilder(ConstructorDefinition<T> constructorDefinition,
+	public ArgumentBuilder(InstantiatorDefinition instantiatorDefinition,
 			Map<Parameter, Getter<S, ?>> injections) {
-		Parameter[] parameters = constructorDefinition.getParameters();
+		Parameter[] parameters = instantiatorDefinition.getParameters();
 		getters = new Getter[parameters.length];
 		for (int i = 0; i < getters.length; i++) {
 			Parameter param = parameters[i];

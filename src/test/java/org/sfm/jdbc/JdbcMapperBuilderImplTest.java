@@ -76,7 +76,7 @@ public class JdbcMapperBuilderImplTest {
 					@Override
 					public <S, T> Instantiator<S, T> getInstantiator(Type target,
 							Class<?> source,
-							List<ConstructorDefinition<T>> constructors,
+							List<InstantiatorDefinition> constructors,
 							Map<Parameter, Getter<S, ?>> injections, boolean useAsm)
 							throws SecurityException {
 						throw new UnsupportedOperationException();

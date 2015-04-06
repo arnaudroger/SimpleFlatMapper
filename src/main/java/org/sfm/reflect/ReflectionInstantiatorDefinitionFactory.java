@@ -7,20 +7,20 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReflectionConstructorDefinitionFactory {
+public class ReflectionInstantiatorDefinitionFactory {
 
     @SuppressWarnings("unchecked")
-    public static <T> List<ConstructorDefinition<T>> extractConstructors(Type target) {
+    public static <T> List<InstantiatorDefinition> extractConstructors(Type target) {
         Class<T> clazz = TypeHelper.toClass(target);
-        List<ConstructorDefinition<T>> constructorDefinitions = new ArrayList<ConstructorDefinition<T>>();
+        List<InstantiatorDefinition> instantiatorDefinitions = new ArrayList<InstantiatorDefinition>();
 
         for(Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-            ConstructorDefinition definition = new ConstructorDefinition(constructor, getConstructorParameters(constructor, target));
-            constructorDefinitions.add(definition);
+            InstantiatorDefinition definition = new InstantiatorDefinition(constructor, getConstructorParameters(constructor, target));
+            instantiatorDefinitions.add(definition);
         }
 
 
-        return constructorDefinitions;
+        return instantiatorDefinitions;
     }
 
     private static Parameter[] getConstructorParameters(Constructor<?> constructor, Type target) {

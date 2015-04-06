@@ -1,18 +1,18 @@
 package org.sfm.reflect.asm;
 
-import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.Set;
 
 public class InstantiatorKey {
-	private final Constructor<?> constructor;
+	private final Member constructor;
 	private final String[] injectedParams;
 	private final Class<?> source;
 	
-	public InstantiatorKey(Constructor<?> constructor, String[] injectedParams,  Class<?> source) {
+	public InstantiatorKey(Member constructor, String[] injectedParams,  Class<?> source) {
 		super();
 		this.constructor = constructor;
 		this.injectedParams = injectedParams;
@@ -21,8 +21,8 @@ public class InstantiatorKey {
 	public InstantiatorKey(Class<?> target, Class<?> source) throws NoSuchMethodException, SecurityException {
 		this(target.getConstructor(), null, source);
 	}
-	public InstantiatorKey(ConstructorDefinition<?> constructorDefinition,	Set<Parameter>  injections, Class<?> source) {
-		this(constructorDefinition.getConstructor(), toParamNameS(injections), source);
+	public InstantiatorKey(InstantiatorDefinition instantiatorDefinition,	Set<Parameter>  injections, Class<?> source) {
+		this(instantiatorDefinition.getExecutable(), toParamNameS(injections), source);
 	}
 	private static String[] toParamNameS(Set<Parameter> keySet) {
 		String[] names = new String[keySet.size()];
@@ -66,7 +66,7 @@ public class InstantiatorKey {
 			return false;
 		return true;
 	}
-	public Constructor<?> getConstructor() {
+	public Member getConstructor() {
 		return constructor;
 	}
 	public String[] getInjectedParams() {

@@ -35,7 +35,7 @@ public class AsmInstantiatorTest {
 
 		Instantiator<CsvMapperCellHandlerImpl<String>, String> instantiator =
 				factory.createInstantiator(CsvMapperCellHandlerImpl.class,
-						new ConstructorDefinition<String>(String.class.getConstructor(char[].class), parameter),
+						new InstantiatorDefinition(String.class.getConstructor(char[].class), parameter),
 						injections);
 		DelayedCellSetterImpl delayedCellSetter = new DelayedCellSetterImpl(null, new CellValueReader() {
 			@Override

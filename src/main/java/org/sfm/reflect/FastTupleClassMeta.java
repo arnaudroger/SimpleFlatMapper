@@ -19,11 +19,11 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
 
         try {
             Class<T> clazz = TypeHelper.toClass(target);
-            final List<ConstructorDefinition<T>> constructorDefinitions = new ArrayList<ConstructorDefinition<T>>();
-            constructorDefinitions.add(new ConstructorDefinition<T>(clazz.getConstructor()));
+            final List<InstantiatorDefinition> instantiatorDefinitions = new ArrayList<InstantiatorDefinition>();
+            instantiatorDefinitions.add(new InstantiatorDefinition(clazz.getConstructor()));
             final List<PropertyMeta<T, ?>> properties = getPropertyMetas(clazz, reflectionService);
             this.delegate = new ObjectClassMeta<T>(target,
-                    constructorDefinitions, new ArrayList<ConstructorPropertyMeta<T, ?>>(), properties, reflectionService);
+                    instantiatorDefinitions, new ArrayList<ConstructorPropertyMeta<T, ?>>(), properties, reflectionService);
             this.headers = getHeaders(clazz, properties);
         } catch (NoSuchMethodException e) {
             ErrorHelper.rethrow(e);

@@ -14,7 +14,7 @@ import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
-import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
@@ -39,12 +39,12 @@ public class AsmFactoryTest {
 	}
 	@Test
 	public void testCreateInstantiatorFinalDbObjectInjectIdAndName() throws Exception {
-		ConstructorDefinition<DbFinalObject> constructorDefinition = AsmConstructorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0);
+		InstantiatorDefinition instantiatorDefinition = AsmInstantiatorDefinitionFactory.extractConstructors(DbFinalObject.class).get(0);
 		HashMap<Parameter, Getter<ResultSet, ?>> injections = new HashMap<Parameter, Getter<ResultSet, ?>>();
 		injections.put(new Parameter("id", long.class), new LongResultSetGetter(1));
 		injections.put(new Parameter("name", String.class), new StringResultSetGetter(2));
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
-				constructorDefinition,
+				instantiatorDefinition,
 				injections
 		);
 		
@@ -65,7 +65,7 @@ public class AsmFactoryTest {
 
 
 		assertSame(instantiator.getClass(), asmFactory.createInstantiator(ResultSet.class,
-				constructorDefinition,
+				instantiatorDefinition,
 				injections
 		).getClass());
 	}
@@ -77,7 +77,7 @@ public class AsmFactoryTest {
 		injections.put(new Parameter("name", String.class), new StringResultSetGetter(2));
 
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
-				AsmConstructorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0),
+				AsmInstantiatorDefinitionFactory.<DbFinalObject>extractConstructors(DbFinalObject.class).get(0),
 				injections
 		);
 		

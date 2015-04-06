@@ -47,7 +47,7 @@ public class ArrayMetaDataTest {
 
         assertEquals("ListElementPropertyMeta{index=1}", bb.toString());
 
-        assertEquals(ArrayList.class.getConstructor(), propertyFinder.getEligibleConstructorDefinitions().get(0).getConstructor());
+        assertEquals(ArrayList.class.getConstructor(), propertyFinder.getEligibleInstantiatorDefinitions().get(0).getExecutable());
         assertNull(propertyFinder.findConstructor(null));
 
         try {
@@ -74,7 +74,7 @@ public class ArrayMetaDataTest {
         assertEquals("aa", meta.newGetter().get(list));
 
         assertEquals("ArrayElementPropertyMeta{index=0}", bb.toString());
-        assertTrue(propertyFinder.getEligibleConstructorDefinitions().isEmpty());
+        assertTrue(propertyFinder.getEligibleInstantiatorDefinitions().isEmpty());
 
     }
 }

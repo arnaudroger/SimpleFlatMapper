@@ -1,7 +1,7 @@
 package org.sfm.reflect.asm;
 
 import org.objectweb.asm.*;
-import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.utils.ErrorHelper;
@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class AsmConstructorDefinitionFactory {
+public class AsmInstantiatorDefinitionFactory {
 
-    public static <T> List<ConstructorDefinition<T>> extractConstructors(final Type target) throws IOException {
-        final List<ConstructorDefinition<T>> constructors = new ArrayList<ConstructorDefinition<T>>();
+    public static List<InstantiatorDefinition> extractConstructors(final Type target) throws IOException {
+        final List<InstantiatorDefinition> constructors = new ArrayList<InstantiatorDefinition>();
 
-        final Class<T> targetClass = TypeHelper.toClass(target);
+        final Class<?> targetClass = TypeHelper.toClass(target);
 
         ClassLoader cl = targetClass.getClassLoader();
         if (cl == null) {
@@ -95,7 +95,7 @@ public class AsmConstructorDefinitionFactory {
                                         parameters.add(createParameter(name, descTypes.get(i), genericTypes.get(i)));
                                     }
 
-                                    constructors.add(new ConstructorDefinition<T>(targetClass.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new Parameter[parameters.size()])));
+                                    constructors.add(new InstantiatorDefinition(targetClass.getDeclaredConstructor(toTypeArray(parameters)), parameters.toArray(new Parameter[parameters.size()])));
                                 } catch(Exception e) {
                                     ErrorHelper.rethrow(e);
                                 }

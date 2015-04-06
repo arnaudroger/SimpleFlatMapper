@@ -1,6 +1,6 @@
 package org.sfm.reflect.meta;
 
-import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.InstantiatorDefinition;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ public interface PropertyFinder<T> {
 
 	public <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher);
 
-	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions();
+	public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions();
 
-    public <E> ConstructorPropertyMeta<T,E> findConstructor(ConstructorDefinition<T> constructorDefinition);
+    public <E> ConstructorPropertyMeta<T,E> findConstructor(InstantiatorDefinition instantiatorDefinition);
 }

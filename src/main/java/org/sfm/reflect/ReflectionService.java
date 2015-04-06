@@ -1,6 +1,6 @@
 package org.sfm.reflect;
 
-import org.sfm.reflect.asm.AsmConstructorDefinitionFactory;
+import org.sfm.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.AsmHelper;
 import org.sfm.reflect.meta.*;
@@ -105,18 +105,17 @@ public class ReflectionService {
 		return aliasProvider.getAliasForField(field);
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T> List<ConstructorDefinition<T>> extractConstructors(Type target) throws IOException {
-		List<ConstructorDefinition<T>> list;
+	public List<InstantiatorDefinition> extractConstructors(Type target) throws IOException {
+		List<InstantiatorDefinition> list;
         if (isAsmPresent()) {
             try {
-                list = AsmConstructorDefinitionFactory.extractConstructors(target);
+                list = AsmInstantiatorDefinitionFactory.extractConstructors(target);
             } catch(IOException e) {
                 // no access to class file
-                list = ReflectionConstructorDefinitionFactory.extractConstructors(target);
+                list = ReflectionInstantiatorDefinitionFactory.extractConstructors(target);
             }
 		} else {
-			list = ReflectionConstructorDefinitionFactory.extractConstructors(target);
+			list = ReflectionInstantiatorDefinitionFactory.extractConstructors(target);
 		}
 		return list;
 	}

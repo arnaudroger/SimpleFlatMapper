@@ -50,21 +50,21 @@ public class InstantiatorFactory {
 		if (TypeHelper.isArray(target)) {
 			return getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentType(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, K, D>()).maxIndex + 1);
 		} else {
-			return getInstantiator(target, TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getEligibleConstructorDefinitions(), constructorParameterGetterMap,useAsmIfEnabled);
+			return getInstantiator(target, TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getEligibleInstantiatorDefinitions(), constructorParameterGetterMap,useAsmIfEnabled);
 		}
 	}
 
-	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<ConstructorDefinition<T>> constructors, Map<Parameter, Getter<S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
-		final ConstructorDefinition<T> constructorDefinition = getSmallerConstructor(constructors);
+	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<InstantiatorDefinition> constructors, Map<Parameter, Getter<S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
+		final InstantiatorDefinition instantiatorDefinition = getSmallerConstructor(constructors);
 
-		if (constructorDefinition == null) {
+		if (instantiatorDefinition == null) {
 			throw new IllegalArgumentException("No constructor available for " + target);
 		}
-		Constructor<? extends T> constructor = constructorDefinition.getConstructor();
+		Constructor<? extends T> constructor = (Constructor<? extends T>) instantiatorDefinition.getExecutable();
 		
 		if (asmFactory != null && Modifier.isPublic(constructor.getModifiers()) && useAsmIfEnabled) {
 			try {
-				return asmFactory.createInstantiator(source, constructorDefinition, injections);
+				return asmFactory.createInstantiator(source, instantiatorDefinition, injections);
 			} catch (Exception e) {
 				// fall back on reflection
 			}
@@ -75,18 +75,18 @@ public class InstantiatorFactory {
 		if (constructor.getParameterTypes().length == 0) {
 			return new StaticConstructorInstantiator<S, T>(constructor, EMPTY_ARGS); 
 		} else {
-			return new InjectConstructorInstantiator<S, T>(constructorDefinition, injections);
+			return new InjectConstructorInstantiator<S, T>(instantiatorDefinition, injections);
 		}
 	}
 
-	private <T> ConstructorDefinition<T> getSmallerConstructor(final List<ConstructorDefinition<T>> constructors) {
+	private InstantiatorDefinition getSmallerConstructor(final List<InstantiatorDefinition> constructors) {
         if (constructors == null) {
             return null;
         }
 
-		ConstructorDefinition<T> selectedConstructor = null;
+		InstantiatorDefinition selectedConstructor = null;
 		
-		for(ConstructorDefinition<T> c : constructors) {
+		for(InstantiatorDefinition c : constructors) {
 			if (selectedConstructor == null || (c.getParameters().length < selectedConstructor.getParameters().length)) {
 				selectedConstructor = c;
 			}

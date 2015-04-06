@@ -1,6 +1,6 @@
 package org.sfm.reflect.meta;
 
-import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.TypeHelper;
 
@@ -47,21 +47,21 @@ public class SingletonPropertyFinder<T> implements PropertyFinder<T> {
 		PropertyMeta<T, E> property = propertyFinder.findProperty(propertyNameMatcher);
 
 		if (property == null && selectedParameters.isEmpty()) {
-			ConstructorDefinition<T> constructorDefinition = readerFriendlyConstructor( propertyFinder.getEligibleConstructorDefinitions());
+			InstantiatorDefinition instantiatorDefinition = readerFriendlyConstructor( propertyFinder.getEligibleInstantiatorDefinitions());
 
-			if (constructorDefinition != null) {
-				Parameter param = constructorDefinition.getParameters()[selectedParameters.size()];
+			if (instantiatorDefinition != null) {
+				Parameter param = instantiatorDefinition.getParameters()[selectedParameters.size()];
 				selectedParameters.add(param.getName());
-				return propertyFinder.findConstructor(constructorDefinition);
+				return propertyFinder.findConstructor(instantiatorDefinition);
 			}
 		}
 		return property;
 	}
 
-	protected ConstructorDefinition<T> readerFriendlyConstructor(List<ConstructorDefinition<T>> eligibleConstructorDefinitions) {
-		ConstructorDefinition<T> selected = null;
+	protected InstantiatorDefinition readerFriendlyConstructor(List<InstantiatorDefinition> eligibleInstantiatorDefinitions) {
+		InstantiatorDefinition selected = null;
 
-		for(ConstructorDefinition<T> def : eligibleConstructorDefinitions) {
+		for(InstantiatorDefinition def : eligibleInstantiatorDefinitions) {
 			if (def.getParameters().length == 1) {
 				if (selected == null
 						|| prefersFirstType(def.getParameters()[0].getType(), selected.getParameters()[0].getType()))
@@ -86,13 +86,13 @@ public class SingletonPropertyFinder<T> implements PropertyFinder<T> {
 
 
 	@Override
-	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
-		return propertyFinder.getEligibleConstructorDefinitions();
+	public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
+		return propertyFinder.getEligibleInstantiatorDefinitions();
 	}
 
     @Override
-    public <E> ConstructorPropertyMeta<T, E> findConstructor(ConstructorDefinition<T> constructorDefinition) {
-        return propertyFinder.findConstructor(constructorDefinition);
+    public <E> ConstructorPropertyMeta<T, E> findConstructor(InstantiatorDefinition instantiatorDefinition) {
+        return propertyFinder.findConstructor(instantiatorDefinition);
     }
 
 }

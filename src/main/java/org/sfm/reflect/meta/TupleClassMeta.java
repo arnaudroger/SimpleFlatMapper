@@ -1,13 +1,14 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.map.MapperBuildingException;
-import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.tuples.Tuples;
 import org.sfm.utils.ErrorHelper;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -20,26 +21,26 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private final ReflectionService reflectionService;
 	private final Type type;
-	private final ConstructorDefinition<T> constructorDefinition;
+	private final InstantiatorDefinition instantiatorDefinition;
 
 	public TupleClassMeta(Type type, ReflectionService reflectionService) {
 		this.type = type;
 		this.reflectionService = reflectionService;
 
 		try {
-            this.constructorDefinition = getConstructorDefinition(type, reflectionService);
+            this.instantiatorDefinition = getInstantiatorDefinition(type, reflectionService);
 		} catch(Exception e) {
             ErrorHelper.rethrow(e);
             throw new IllegalStateException();
 		}
 	}
 
-    private ConstructorDefinition<T> getConstructorDefinition(Type type, ReflectionService reflectionService) throws java.io.IOException {
-        final List<ConstructorDefinition<T>> definitions = reflectionService.extractConstructors(type);
+    private InstantiatorDefinition getInstantiatorDefinition(Type type, ReflectionService reflectionService) throws java.io.IOException {
+        final List<InstantiatorDefinition> definitions = reflectionService.extractConstructors(type);
 
-        ListIterator<ConstructorDefinition<T>> iterator = definitions.listIterator();
+        ListIterator<InstantiatorDefinition> iterator = definitions.listIterator();
         while(iterator.hasNext()) {
-            final ConstructorDefinition<T> definition = iterator.next();
+            final InstantiatorDefinition definition = iterator.next();
             if (isTupleConstructor(type, definition)) {
                 return respecifyParameterNames(definition);
             }
@@ -47,24 +48,24 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
         throw new MapperBuildingException("Cannot find eligible constructor definition for " + type);
     }
 
-    private ConstructorDefinition<T> respecifyParameterNames(ConstructorDefinition<T> definition) {
+    private InstantiatorDefinition respecifyParameterNames(InstantiatorDefinition definition) {
         final Parameter[] parameters = definition.getParameters();
         if (parameters.length > 0 && parameters[0].getName().equals("arg0")) {
 
             Parameter[] newParams = new Parameter[parameters.length];
-            final ElementNameGenerator nameGenerator = elementNameGenerator(definition.getConstructor().getDeclaringClass());
+            final ElementNameGenerator nameGenerator = elementNameGenerator(definition.getExecutable().getDeclaringClass());
 
             for(int i = 0; i < parameters.length; i++) {
                 newParams[i] = new Parameter(nameGenerator.name(i), parameters[i].getType(), parameters[i].getGenericType());
             }
 
-            return new ConstructorDefinition<T>(definition.getConstructor(), newParams);
+            return new InstantiatorDefinition((Constructor<? extends T>) definition.getExecutable(), newParams);
 
         }
         return definition;
     }
 
-    private boolean isTupleConstructor(Type type, ConstructorDefinition<T> definition) {
+    private boolean isTupleConstructor(Type type, InstantiatorDefinition definition) {
         if (type instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) type;
             return pt.getActualTypeArguments().length == definition.getParameters().length;
@@ -94,7 +95,7 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
         ElementNameGenerator nameGenerator = new SFMTupleNameGenerator();
 
 		int i = 0;
-		for(Parameter cp : constructorDefinition.getParameters()) {
+		for(Parameter cp : instantiatorDefinition.getParameters()) {
             String prefix = nameGenerator.name(i);
 			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getGenericType(), false);
 
@@ -123,12 +124,12 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
     }
 
 
-    public List<ConstructorDefinition<T>> getConstructorDefinitions() {
-		return Arrays.asList(constructorDefinition);
+    public List<InstantiatorDefinition> getInstantiatorDefinitions() {
+		return Arrays.asList(instantiatorDefinition);
 	}
 
 	public int getTupleSize() {
-		return constructorDefinition.getParameters().length;
+		return instantiatorDefinition.getParameters().length;
 	}
 
 

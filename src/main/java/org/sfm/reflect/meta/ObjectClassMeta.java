@@ -15,7 +15,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private final List<PropertyMeta<T, ?>> properties;
 	private final List<ConstructorPropertyMeta<T, ?>> constructorProperties;
-	private final List<ConstructorDefinition<T>> constructorDefinitions;
+	private final List<InstantiatorDefinition> instantiatorDefinitions;
 
 	
 	private final ReflectionService reflectService;
@@ -27,8 +27,8 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		this.target = target;
 		this.reflectService = reflectService;
 		try {
-            this.constructorDefinitions = reflectService.extractConstructors(target);
-            this.constructorProperties = Collections.unmodifiableList(listProperties(constructorDefinitions));
+            this.instantiatorDefinitions = reflectService.extractConstructors(target);
+            this.constructorProperties = Collections.unmodifiableList(listProperties(instantiatorDefinitions));
 		} catch(Exception e) {
             ErrorHelper.rethrow(e);
 			throw new IllegalStateException();
@@ -38,14 +38,14 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	}
 
     public ObjectClassMeta(Type target,
-                           List<ConstructorDefinition<T>> constructorDefinitions,
+                           List<InstantiatorDefinition> instantiatorDefinitions,
                            List<ConstructorPropertyMeta<T, ?>> constructorProperties,
                            List<PropertyMeta<T, ?>> properties,
                            ReflectionService reflectService) {
         this.target = target;
         this.properties = properties;
         this.constructorProperties = constructorProperties;
-        this.constructorDefinitions = constructorDefinitions;
+        this.instantiatorDefinitions = instantiatorDefinitions;
         this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.<T>toClass(target)));
         this.reflectService = reflectService;
     }
@@ -74,11 +74,11 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return map;
 	}
 
-	private List<ConstructorPropertyMeta<T, ?>> listProperties(List<ConstructorDefinition<T>> constructorDefinitions) {
-		if (constructorDefinitions == null) return null;
+	private List<ConstructorPropertyMeta<T, ?>> listProperties(List<InstantiatorDefinition> instantiatorDefinitions) {
+		if (instantiatorDefinitions == null) return null;
 		
 		List<ConstructorPropertyMeta<T, ?>> constructorProperties = new ArrayList<ConstructorPropertyMeta<T, ?>>();
-		for(ConstructorDefinition<T> cd : constructorDefinitions) {
+		for(InstantiatorDefinition cd : instantiatorDefinitions) {
 			for(Parameter param : cd.getParameters()) {
 				String paramName = param.getName();
                 constructorProperties.add(constructorMeta(param, paramName));
@@ -165,8 +165,8 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return columnName;
 	}
 
-	List<ConstructorDefinition<T>> getConstructorDefinitions() {
-		return constructorDefinitions;
+	List<InstantiatorDefinition> getInstantiatorDefinitions() {
+		return instantiatorDefinitions;
 	}
 
 	List<PropertyMeta<T, ?>> getProperties() {

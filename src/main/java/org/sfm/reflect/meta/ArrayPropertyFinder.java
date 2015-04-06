@@ -1,6 +1,6 @@
 package org.sfm.reflect.meta;
 
-import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.utils.BooleanSupplier;
 
@@ -77,10 +77,10 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
     }
 
 	@Override
-	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
+	public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
 		if (List.class.isAssignableFrom(TypeHelper.toClass(classMeta.getType()))) {
 			try {
-				return Arrays.asList(new ConstructorDefinition<T>((Constructor<? extends T>) ArrayList.class.getConstructor()));
+				return Arrays.asList(new InstantiatorDefinition((Constructor<? extends T>) ArrayList.class.getConstructor()));
 			} catch (NoSuchMethodException e) {
 				throw new Error("Unexpected error " + e, e);
 			}
@@ -90,7 +90,7 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 	}
 
     @Override
-    public <E> ConstructorPropertyMeta<T, E> findConstructor(ConstructorDefinition<T> constructorDefinition) {
+    public <E> ConstructorPropertyMeta<T, E> findConstructor(InstantiatorDefinition instantiatorDefinition) {
         return null;
     }
 }

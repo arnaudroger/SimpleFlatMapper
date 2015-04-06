@@ -1,24 +1,25 @@
 package org.sfm.reflect;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
 import java.util.Arrays;
 
-public final class ConstructorDefinition<T> {
-	private final Constructor<? extends T> constructor;
+public final class InstantiatorDefinition {
+	private final Member executable;
 	private final Parameter[] parameters;
-	public ConstructorDefinition(Constructor<? extends T> constructor,
-			Parameter... parameters) {
+	public InstantiatorDefinition(Member executable,
+								  Parameter... parameters) {
 		super();
-		this.constructor = constructor;
+		this.executable = executable;
 		this.parameters = parameters;
 	}
-	public Constructor<? extends T> getConstructor() {
-		return constructor;
+
+	public Member getExecutable() {
+		return executable;
 	}
+
 	public Parameter[] getParameters() {
 		return parameters;
 	}
-
 
 	public boolean hasParam(Parameter param) {
 		for (Parameter p : parameters) {
@@ -31,8 +32,8 @@ public final class ConstructorDefinition<T> {
 
     @Override
     public String toString() {
-        return "ConstructorDefinition{" +
-                "constructor=" + constructor +
+        return "InstantiatorDefinition{" +
+                "executable=" + executable +
                 ", parameters=" + Arrays.toString(parameters) +
                 '}';
     }

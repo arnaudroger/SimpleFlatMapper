@@ -142,13 +142,13 @@ public class AsmFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> createInstantiator(final Class<?> source, final ConstructorDefinition<T> constructorDefinition, final Map<Parameter, Getter<S, ?>> injections) throws Exception {
-		InstantiatorKey instantiatorKey = new InstantiatorKey(constructorDefinition, injections.keySet(), source);
+	public <S, T> Instantiator<S, T> createInstantiator(final Class<?> source, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, Getter<S, ?>> injections) throws Exception {
+		InstantiatorKey instantiatorKey = new InstantiatorKey(instantiatorDefinition, injections.keySet(), source);
 		Class<? extends Instantiator<?, ?>> instantiator = instantiatorCache.get(instantiatorKey);
 		if (instantiator == null) {
 			final String className = generateClassNameForInstantiator(instantiatorKey);
-			final byte[] bytes = InstantiatorBuilder.createInstantiator(className, source, constructorDefinition, injections);
-			instantiator = (Class<? extends Instantiator<?, ?>>) createClass(className, bytes, constructorDefinition.getConstructor().getDeclaringClass().getClassLoader());
+			final byte[] bytes = InstantiatorBuilder.createInstantiator(className, source, instantiatorDefinition, injections);
+			instantiator = (Class<? extends Instantiator<?, ?>>) createClass(className, bytes, instantiatorDefinition.getExecutable().getDeclaringClass().getClassLoader());
 			instantiatorCache.put(instantiatorKey, instantiator);
 		}
 

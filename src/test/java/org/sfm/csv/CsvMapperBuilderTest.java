@@ -59,14 +59,14 @@ public class CsvMapperBuilderTest {
         assertEquals(
                 "CsvMapperImpl{" +
                         "targetSettersFactory=TargetSettersFactory{instantiator=InjectConstructorInstantiator{" +
-                            "constructorDefinition=ConstructorDefinition{constructor=public org.sfm.beans.DbFinalObject(long,java.lang.String,java.lang.String,java.util.Date,org.sfm.beans.DbObject$Type,org.sfm.beans.DbObject$Type), " +
+                            "instantiatorDefinition=InstantiatorDefinition{executable=public org.sfm.beans.DbFinalObject(long,java.lang.String,java.lang.String,java.util.Date,org.sfm.beans.DbObject$Type,org.sfm.beans.DbObject$Type), " +
                             "parameters=[" +
-                                "ConstructorParameter{name='id', type=long, resolvedType=long}, " +
-                                "ConstructorParameter{name='name', type=class java.lang.String, resolvedType=class java.lang.String}, " +
-                                "ConstructorParameter{name='email', type=class java.lang.String, resolvedType=class java.lang.String}, " +
-                                "ConstructorParameter{name='creationTime', type=class java.util.Date, resolvedType=class java.util.Date}, " +
-                                "ConstructorParameter{name='typeOrdinal', type=class org.sfm.beans.DbObject$Type, resolvedType=class org.sfm.beans.DbObject$Type}, " +
-                                "ConstructorParameter{name='typeName', type=class org.sfm.beans.DbObject$Type, resolvedType=class org.sfm.beans.DbObject$Type}]}}}, " +
+                                "Parameter{name='id', type=long, resolvedType=long}, " +
+                                "Parameter{name='name', type=class java.lang.String, resolvedType=class java.lang.String}, " +
+                                "Parameter{name='email', type=class java.lang.String, resolvedType=class java.lang.String}, " +
+                                "Parameter{name='creationTime', type=class java.util.Date, resolvedType=class java.util.Date}, " +
+                                "Parameter{name='typeOrdinal', type=class org.sfm.beans.DbObject$Type, resolvedType=class org.sfm.beans.DbObject$Type}, " +
+                                "Parameter{name='typeName', type=class org.sfm.beans.DbObject$Type, resolvedType=class org.sfm.beans.DbObject$Type}]}}}, " +
                         "delayedCellSetters=[" +
                         "LongDelayedCellSetterFactory{setter=null, reader=LongCellValueReaderImpl{}}, " +
                         "DelayedCellSetterFactoryImpl{reader=StringCellValueReader{}, setter=null}, " +

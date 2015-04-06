@@ -1,20 +1,20 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.map.MapperBuildingException;
-import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 
 import java.util.*;
 
 final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	
-	private final List<ConstructorDefinition<T>> eligibleConstructorDefinitions;
+	private final List<InstantiatorDefinition> eligibleInstantiatorDefinitions;
 	private final ObjectClassMeta<T> classMeta;
 	private final Map<String, PropertyFinder<?>> subPropertyFinders = new HashMap<String, PropertyFinder<?>>();
 
     ObjectPropertyFinder(ObjectClassMeta<T> classMeta) throws MapperBuildingException {
 		this.classMeta = classMeta;
-		this.eligibleConstructorDefinitions = classMeta.getConstructorDefinitions() != null ? new ArrayList<ConstructorDefinition<T>>(classMeta.getConstructorDefinitions()) : null;
+		this.eligibleInstantiatorDefinitions = classMeta.getInstantiatorDefinitions() != null ? new ArrayList<InstantiatorDefinition>(classMeta.getInstantiatorDefinitions()) : null;
 	}
 
 	/* (non-Javadoc)
@@ -51,8 +51,8 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E> ConstructorPropertyMeta<T, E> findConstructor(ConstructorDefinition<T> constructorDefinition) {
-        ConstructorPropertyMeta<T, ?> prop = lookForConstructor(constructorDefinition);
+    public <E> ConstructorPropertyMeta<T, E> findConstructor(InstantiatorDefinition instantiatorDefinition) {
+        ConstructorPropertyMeta<T, ?> prop = lookForConstructor(instantiatorDefinition);
 
         if (prop != null) {
             removeNonMatching(prop.getParameter());
@@ -63,9 +63,9 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 
 
 
-    private ConstructorPropertyMeta<T, ?> lookForConstructor(final ConstructorDefinition<T> constructorDefinition) {
+    private ConstructorPropertyMeta<T, ?> lookForConstructor(final InstantiatorDefinition instantiatorDefinition) {
         if (classMeta.getConstructorProperties() != null) {
-            Parameter parameter = constructorDefinition.getParameters()[0];
+            Parameter parameter = instantiatorDefinition.getParameters()[0];
             for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
                 if (prop.getName().equals(parameter.getName())
                         && prop.getParameter().equals(parameter)) {
@@ -148,9 +148,9 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 
 
     private void removeNonMatching(Parameter param) {
-		ListIterator<ConstructorDefinition<T>> li = eligibleConstructorDefinitions.listIterator();
+		ListIterator<InstantiatorDefinition> li = eligibleInstantiatorDefinitions.listIterator();
 		while(li.hasNext()){
-			ConstructorDefinition<T> cd = li.next();
+			InstantiatorDefinition cd = li.next();
 			if (!cd.hasParam(param)) {
 				li.remove();
 			}
@@ -158,7 +158,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	}
 	
 	private boolean hasConstructorMatching(Parameter param) {
-		for(ConstructorDefinition<T> cd : eligibleConstructorDefinitions) {
+		for(InstantiatorDefinition cd : eligibleInstantiatorDefinitions) {
 			if (cd.hasParam(param)) {
 				return true;
 			}
@@ -167,8 +167,8 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 	}
 
 	@Override
-	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
-		return eligibleConstructorDefinitions;
+	public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
+		return eligibleInstantiatorDefinitions;
 	}
 
 

@@ -1,6 +1,6 @@
 package org.sfm.reflect.meta;
 
-import org.sfm.reflect.ConstructorDefinition;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.TypeHelper;
 
@@ -9,11 +9,11 @@ import java.util.List;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
 
-    private final List<ConstructorDefinition<T>> constructorDefinitions;
+    private final List<InstantiatorDefinition> instantiatorDefinitions;
 
     public TuplePropertyFinder(TupleClassMeta<T> tupleClassMeta) {
         super(tupleClassMeta);
-        this.constructorDefinitions = tupleClassMeta.getConstructorDefinitions();
+        this.instantiatorDefinitions = tupleClassMeta.getInstantiatorDefinitions();
 
         for(int i = 0; i < tupleClassMeta.getTupleSize(); i++) {
 			elements.add(newIndexedElement(tupleClassMeta, i));
@@ -30,7 +30,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
     private <E> ConstructorPropertyMeta<T, E> newConstructorPropertyMeta(TupleClassMeta<T> tupleClassMeta, int i) {
         Class<T> tClass = TypeHelper.toClass(tupleClassMeta.getType());
 
-        final Parameter parameter = constructorDefinitions.get(0).getParameters()[i];
+        final Parameter parameter = instantiatorDefinitions.get(0).getParameters()[i];
 
         return new ConstructorPropertyMeta<T, E>(parameter.getName(), tupleClassMeta.getReflectionService(),
                 parameter, tClass);
@@ -64,12 +64,12 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
     }
 
     @Override
-	public List<ConstructorDefinition<T>> getEligibleConstructorDefinitions() {
-		return constructorDefinitions;
+	public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
+		return instantiatorDefinitions;
 	}
 
     @Override
-    public <E> ConstructorPropertyMeta<T, E> findConstructor(ConstructorDefinition<T> constructorDefinition) {
+    public <E> ConstructorPropertyMeta<T, E> findConstructor(InstantiatorDefinition instantiatorDefinition) {
         return null;
     }
 

@@ -6,7 +6,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.sfm.reflect.*;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.Map;

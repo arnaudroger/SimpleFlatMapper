@@ -65,6 +65,10 @@ public class ReflectionService {
 			return new ArrayClassMeta<T, E>(ArrayList.class, pt.getActualTypeArguments()[0], this);
 		} else if (clazz.isArray()) {
 			return new ArrayClassMeta<T, E>(clazz, clazz.getComponentType(), this);
+			//JAVA8_START
+		} else if (Optional.class.isAssignableFrom(clazz)) {
+			return new OptionalClassMeta<T>(target, this);
+			//JAVA8_END
 		} else if (Tuples.isTuple(target)) {
 			return new TupleClassMeta<T>(target, this);
 		} else if (isFastTuple(clazz)) {

@@ -1,7 +1,10 @@
 package org.sfm.reflect.asm;
 
+import com.sun.org.apache.xpath.internal.compiler.OpCodes;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.signature.SignatureReader;
+import org.objectweb.asm.signature.SignatureVisitor;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.TypeHelper;
 
@@ -298,53 +301,132 @@ public class AsmUtils {
 		return types.toArray(EMPTY_TYPE_ARRAY);
 	}
 
-	public static List<String> extractConstructorTypeNames(String sig) {
-		List<String> types = new ArrayList<String>();
-		int currentStart = 1;
-		for(int i = 1; i < sig.length() -2 ; i++) {
-			char c = sig.charAt(i);
-			switch (c) {
-				case ')':
-					currentStart = i + 1;
-					break;
-				case '[':
-					break;
-				case 'T':
-				case 'L':
+	public static List<String> extractTypeNames(String sig) {
+		final List<String> types = new ArrayList<String>();
 
-					int genericLevel = 0;
-					i++;
-					while(c != ';' || genericLevel != 0) {
-						switch(c) {
-							case '<':
-								genericLevel++;
-								break;
-							case '>':
-								genericLevel--;
-								break;
-						}
+		SignatureReader reader = new SignatureReader(sig);
+		reader.accept(new SignatureVisitor(Opcodes.ASM5) {
 
-						i ++;
-						c = sig.charAt(i);
+			//TypeSignature =
+			// visitBaseType | visitTypeVariable | visitArrayType | ( visitClassType visitTypeArgument* ( visitInnerClassType visitTypeArgument* )* visitEnd ) )
+
+			class AppendType extends SignatureVisitor {
+
+				StringBuilder sb = new StringBuilder();
+				int l = 0;
+				public AppendType() {
+					super(Opcodes.ASM5);
+				}
+
+				@Override
+				public void visitBaseType(char descriptor) {
+					if (descriptor != 'V') {
+						sb.append(descriptor);
+						visitEnd();
 					}
-					types.add(sig.substring(currentStart, i + 1));
-					currentStart = i + 1;
-					break;
+				}
 
+				@Override
+				public void visitTypeVariable(String name) {
+					sb.append("T");
+					sb.append(name);
+					visitEnd();
+				}
 
-				case 'Z':
-				case 'B':
-				case 'C':
-				case 'D':
-				case 'F':
-				case 'I':
-				case 'J':
-				case 'S':
-					types.add(sig.substring(currentStart, i +1));
-					currentStart = i + 1;
-					break;
+				@Override
+				public SignatureVisitor visitArrayType() {
+					sb.append("[");
+					return this;
+				}
+
+				@Override
+				public void visitClassType(String name) {
+					sb.append("L");
+					sb.append(name);
+					visitEnd();
+				}
+
+				@Override
+				public void visitInnerClassType(String name) {
+					visitClassType(name);
+				}
+
+				@Override
+				public void visitTypeArgument() {
+					System.out.println("visitTypeArgument");
+				}
+
+				@Override
+				public SignatureVisitor visitTypeArgument(char wildcard) {
+					l++;
+					if (sb.length() == 0) {
+						String t = types.remove(types.size() - 1);
+						if (t.endsWith(";")) {
+							t = t.substring(0, t.length() -1);
+						}
+						sb.append(t);
+						sb.append("<");
+					}
+					if  (wildcard != '=') {
+						sb.append(wildcard);
+					}
+					return this;
+				}
+
+				@Override
+				public void visitEnd() {
+					if (l == 0) {
+						flush();
+					} else {
+						sb.append(";>");
+						l--;
+					}
+				}
+
+				private void flush() {
+					if (sb.length() >0) {
+						if (sb.charAt(0) == 'L' || sb.charAt(0) == 'T') {
+							sb.append(";");
+						}
+						types.add(sb.toString());
+
+						sb = new StringBuilder();
+					}
+				}
 			}
-		}
+
+			@Override
+			public void visitFormalTypeParameter(String name) {
+				System.out.println(name);
+			}
+
+			@Override
+			public SignatureVisitor visitClassBound() {
+				return super.visitInterfaceBound();
+			}
+
+			@Override
+			public SignatureVisitor visitInterfaceBound() {
+				return super.visitInterfaceBound();
+			}
+
+			@Override
+			public SignatureVisitor visitParameterType() {
+				return new AppendType();
+			}
+
+			@Override
+			public SignatureVisitor visitReturnType() {
+				return new AppendType();
+			}
+
+			@Override
+			public SignatureVisitor visitExceptionType() {
+				return new AppendType();
+			}
+		});
+
+
 
 		return types;
 	}

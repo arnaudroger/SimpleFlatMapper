@@ -58,7 +58,7 @@ public class AsmUtilsTest {
 		assertEquals(String.class, AsmUtils.toGenericType("TT1;", Arrays.asList("T0", "T1"), new ParameterizedType() {
 			@Override
 			public Type[] getActualTypeArguments() {
-				return new Type[] {Long.class, String.class};
+				return new Type[]{Long.class, String.class};
 			}
 
 			@Override
@@ -75,18 +75,23 @@ public class AsmUtilsTest {
 
 	@Test
 	public void extractGenericTypeName() throws  Exception {
-		Assert.assertArrayEquals(new String[] { "T1", "T2", "O"},
-				AsmUtils.extractGenericTypeNames("<T1:Ljava.lang.Object;T2:Ljava.lang.Object;O:java.lang.Object>Ljava.lang.Object;").toArray(new String[] {}));
+		Assert.assertArrayEquals(new String[]{"T1", "T2", "O"},
+				AsmUtils.extractGenericTypeNames("<T1:Ljava.lang.Object;T2:Ljava.lang.Object;O:java.lang.Object>Ljava.lang.Object;").toArray(new String[]{}));
 	}
 
 
 	@Test
 	public void extractConstructorTypes() throws  Exception {
 		String types = "([CILjava/util/List<Lorg/sfm/beans/DbObject;>;TT1;Ljava/lang/String;)V";
-		assertEquals(Arrays.asList("[C", "I", "Ljava/util/List<Lorg/sfm/beans/DbObject;>;", "TT1;", "Ljava/lang/String;"), AsmUtils.extractConstructorTypeNames(types));
+		assertEquals(Arrays.asList("[C", "I", "Ljava/util/List<Lorg/sfm/beans/DbObject;>;", "TT1;", "Ljava/lang/String;"),
+				AsmUtils.extractTypeNames(types));
 	}
 
-
+	@Test
+	public void extractMethodTypesOptional() throws  Exception {
+		String types = "<T:Ljava/lang/Object;>(TT;)Ljava/util/Optional<TT;>;";
+		assertEquals(Arrays.asList("TT;", "Ljava/util/Optional<TT;>;"),AsmUtils.extractTypeNames(types));
+	}
 
 
 }

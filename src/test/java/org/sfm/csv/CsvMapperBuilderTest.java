@@ -42,7 +42,7 @@ public class CsvMapperBuilderTest {
         addDbObjectFields(builder);
         assertEquals(
 				"CsvMapperImpl{" +
-						"targetSettersFactory=TargetSettersFactory{instantiator=StaticConstructorInstantiator{constructor=public org.sfm.beans.DbObject(), args=[]}}, " +
+						"targetSettersFactory=TargetSettersFactory{instantiator=EmptyConstructorInstantiator{constructor=public org.sfm.beans.DbObject()}}, " +
 						"delayedCellSetters=[], " +
 						"setters=[LongCellSetter{setter=LongMethodSetter{method=public void org.sfm.beans.DbObject.setId(long)}, reader=LongCellValueReaderImpl{}}, " +
 						"CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setName(java.lang.String)}}, " +

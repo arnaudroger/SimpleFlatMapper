@@ -5,26 +5,23 @@ import org.sfm.reflect.Instantiator;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
-public final class StaticConstructorInstantiator<S, T> implements Instantiator<S, T> {
+public final class EmptyConstructorInstantiator<S, T> implements Instantiator<S, T> {
 	
 	private final Constructor<? extends T> constructor;
-	private final Object[] args;
-	
-	public StaticConstructorInstantiator(final Constructor<? extends T> constructor, final Object[] args) {
+
+	public EmptyConstructorInstantiator(final Constructor<? extends T> constructor) {
 		this.constructor = constructor;
-		this.args = args;
 	}
 
 	@Override
 	public T newInstance(S s) throws Exception {
-		return constructor.newInstance(args);
+		return constructor.newInstance();
 	}
 
     @Override
     public String toString() {
-        return "StaticConstructorInstantiator{" +
+        return "EmptyConstructorInstantiator{" +
                 "constructor=" + constructor +
-                ", args=" + Arrays.toString(args) +
                 '}';
     }
 }

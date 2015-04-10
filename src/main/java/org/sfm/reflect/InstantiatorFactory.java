@@ -6,14 +6,13 @@ import org.sfm.map.FieldKey;
 import org.sfm.map.impl.PropertyMapping;
 import org.sfm.map.impl.PropertyMappingsBuilder;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.impl.EmptyStaticMethodInstantiator;
 import org.sfm.reflect.impl.InjectConstructorInstantiator;
-import org.sfm.reflect.impl.StaticConstructorInstantiator;
+import org.sfm.reflect.impl.EmptyConstructorInstantiator;
+import org.sfm.reflect.impl.InjectStaticMethodInstantiator;
 import org.sfm.utils.ForEachCallBack;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.List;
 import java.util.Map;
 
@@ -61,21 +60,36 @@ public class InstantiatorFactory {
 		if (instantiatorDefinition == null) {
 			throw new IllegalArgumentException("No constructor available for " + target);
 		}
-		Constructor<? extends T> constructor = (Constructor<? extends T>) instantiatorDefinition.getExecutable();
+		Member executable = instantiatorDefinition.getExecutable();
 		
-		if (asmFactory != null && Modifier.isPublic(constructor.getModifiers()) && useAsmIfEnabled) {
+		if (asmFactory != null && Modifier.isPublic(executable.getModifiers()) && useAsmIfEnabled) {
 			try {
 				return asmFactory.createInstantiator(source, instantiatorDefinition, injections);
 			} catch (Exception e) {
 				// fall back on reflection
 			}
 		}
-		
-		if (constructor.getParameterTypes().length == 0) {
-			return new StaticConstructorInstantiator<S, T>(constructor, EMPTY_ARGS); 
+
+		if (executable instanceof Constructor) {
+			Constructor<? extends T> c = (Constructor<? extends T>) executable;
+			if (c.getParameterTypes().length == 0) {
+				return new EmptyConstructorInstantiator<S, T>(c);
+			} else {
+				return new InjectConstructorInstantiator<S, T>(instantiatorDefinition, injections);
+			}
+		} else if (executable instanceof Method){
+			Method m = (Method) executable;
+			if (m.getParameterTypes().length == 0) {
+				return new EmptyStaticMethodInstantiator<S, T>(m);
+			} else {
+				return new InjectStaticMethodInstantiator<S, T>(instantiatorDefinition, injections);
+			}
+
 		} else {
-			return new InjectConstructorInstantiator<S, T>(instantiatorDefinition, injections);
+			throw new IllegalArgumentException("Unsupported executable type " + executable);
 		}
+
+
 	}
 
 	private InstantiatorDefinition getSmallerConstructor(final List<InstantiatorDefinition> constructors) {

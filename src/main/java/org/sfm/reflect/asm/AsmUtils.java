@@ -8,10 +8,7 @@ import org.sfm.reflect.TypeHelper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
+import java.lang.reflect.*;
 import java.util.*;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -46,6 +43,7 @@ public class AsmUtils {
 		wrappers.put(int.class, Integer.class);
 		wrappers.put(long.class, Long.class);
 		wrappers.put(short.class, Short.class);
+		wrappers.put(void.class, Void.class);
 	}
 	static final Map<Class<?>, String> primitivesType = new HashMap<Class<?>, String>();
 
@@ -58,6 +56,7 @@ public class AsmUtils {
 		primitivesType.put(int.class, "I");
 		primitivesType.put(long.class, "J");
 		primitivesType.put(short.class, "S");
+		primitivesType.put(void.class, "V");
 	}
 	static final Map<String, String> stringToPrimitivesType = new HashMap<String, String>();
 
@@ -351,11 +350,28 @@ public class AsmUtils {
 	}
 
     public static String toDeclaredLType(Class<?> clazz) {
+		if (clazz.isPrimitive()) {
+			return primitivesType.get(clazz);
+		}
         return toDeclaredLType(toType(clazz));
     }
 
+	public static String toSignature(Method exec) {
+		StringBuilder sb = new StringBuilder();
 
-    private static class ParameterizedTypeImpl implements ParameterizedType {
+		sb.append("(");
+		for(Class<?> clazz : exec.getParameterTypes()) {
+			sb.append(AsmUtils.toDeclaredLType(clazz));
+		}
+		sb.append(")");
+
+		sb.append(AsmUtils.toDeclaredLType(exec.getReturnType()));
+
+		return sb.toString();
+	}
+
+
+	private static class ParameterizedTypeImpl implements ParameterizedType {
 
         private final Class<?> rawType;
         private final Type[] types;

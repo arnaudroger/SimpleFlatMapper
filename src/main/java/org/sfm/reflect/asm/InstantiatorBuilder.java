@@ -5,6 +5,10 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.sfm.reflect.*;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -140,7 +144,17 @@ public class InstantiatorBuilder {
 
                 }
             }
-			mv.visitMethodInsn(INVOKESPECIAL, targetType, "<init>", "(" + sb.toString() + ")V", false);
+
+            Member exec = instantiatorDefinition.getExecutable();
+            if (exec instanceof Constructor) {
+                mv.visitMethodInsn(INVOKESPECIAL, targetType, "<init>", "(" + sb.toString() + ")V", false);
+            } else {
+                mv.visitMethodInsn(INVOKESTATIC, targetType, exec.getName(),
+                        AsmUtils.toSignature((Method)exec)
+                        , false);
+
+            }
+
 			mv.visitInsn(ARETURN);
 			mv.visitMaxs(3 , 2);
 			mv.visitEnd();

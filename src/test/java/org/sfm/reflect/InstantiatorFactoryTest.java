@@ -1,51 +1,80 @@
 package org.sfm.reflect;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.sfm.beans.DbFinalPrimitiveObject;
 import org.sfm.reflect.asm.AsmInstantiatorDefinitionFactory;
-import org.sfm.reflect.asm.AsmFactory;
 
 import java.sql.ResultSet;
 import java.util.HashMap;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 public class InstantiatorFactoryTest {
 
-	static class MyClass {
-		@SuppressWarnings("unused")
-		private Object obj;
-		@SuppressWarnings("unused")
-		private int value;
+	public static final ReflectionService DISABLE_ASM = ReflectionService
+			.disableAsm();
+	public static final ReflectionService ASM = ReflectionService
+			.newInstance();
 
-		@SuppressWarnings("unused")
-		private MyClass(Object obj) {
-			throw new UnsupportedOperationException();
-		}
-		public MyClass(Object obj, int value) {
-			this.obj = obj;
-			this.value = value;
+
+	public static class MyClassWithFactoryMethod {
+
+		private MyClassWithFactoryMethod(){
 		}
 
-		public MyClass(Object obj, int value, int v) {
-			throw new UnsupportedOperationException();
-		}
 
+		public static MyClassWithFactoryMethod valueOf(String val) {
+			return new MyClassWithFactoryMethod();
+		}
 	}
-	
+
+
+
 
 	@Test
 	public void testInstantiateConstructorWithArgsAllPr() throws Exception {
-		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(null).getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class, AsmInstantiatorDefinitionFactory.<DbFinalPrimitiveObject>extractDefinitions(DbFinalPrimitiveObject.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+
+		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator =
+				DISABLE_ASM.getInstantiatorFactory().getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class,
+						AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalPrimitiveObject.class),
+						new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null);
-		Assert.assertNotNull(object);
+		assertNotNull(object);
 	}
 
 	@Test
 	public void testInstantiateConstructorWithArgsAllPrAsm() throws Exception {
-		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator = new InstantiatorFactory(new AsmFactory(Thread.currentThread().getContextClassLoader())).getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class, AsmInstantiatorDefinitionFactory.<DbFinalPrimitiveObject>extractDefinitions(DbFinalPrimitiveObject.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator =
+				ASM.getInstantiatorFactory().getInstantiator(DbFinalPrimitiveObject.class,
+						ResultSet.class,
+						AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalPrimitiveObject.class),
+						new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null);
-		Assert.assertNotNull(object);
+		assertNotNull(object);
 	}
 
+	@Test
+	public void testInstantiateWithFactoryMethod() throws Exception {
+		final Instantiator<ResultSet, MyClassWithFactoryMethod> instantiator = ASM.getInstantiatorFactory().getInstantiator(MyClassWithFactoryMethod.class, ResultSet.class, ASM.extractConstructors(MyClassWithFactoryMethod.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+
+		assertTrue(instantiator.getClass().getSimpleName().startsWith("Asm"));
+		final MyClassWithFactoryMethod object = instantiator.newInstance(null);
+		assertNotNull(object);
+
+	}
+	@Test
+	public void testInstantiateWithFactoryMethodNoAsm() throws Exception {
+		final Instantiator<ResultSet, MyClassWithFactoryMethod> instantiator = DISABLE_ASM.getInstantiatorFactory().getInstantiator(MyClassWithFactoryMethod.class, ResultSet.class, DISABLE_ASM.extractConstructors(MyClassWithFactoryMethod.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+
+		assertFalse(instantiator.getClass().getSimpleName().startsWith("Asm"));
+		final MyClassWithFactoryMethod object = instantiator.newInstance(null);
+		assertNotNull(object);
+	}
+
+	@Test
+	public void testInstantiateCheckTakeConstructorFirst() throws Exception {
+	}
 	
 }

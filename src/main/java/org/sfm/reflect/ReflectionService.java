@@ -137,6 +137,10 @@ public class ReflectionService {
 		return new ReflectionService(asmPresent, useAsmGeneration, asmPresent && useAsmGeneration ? _asmFactory  : null);
 	}
 
+	public static ReflectionService disableAsm() {
+		return newInstance(true, false);
+	}
+
 	private static boolean cannotSeeSetterFromContextClassLoader() {
 		try {
 			Class.forName(Setter.class.getName(), false, Thread.currentThread().getContextClassLoader());

@@ -31,6 +31,16 @@ public class InstantiatorFactoryTest {
 	}
 
 
+	public static class MyClassWithFactoryMethodAndConstructor {
+
+		public MyClassWithFactoryMethodAndConstructor(String v1, String v2){
+		}
+
+		public static MyClassWithFactoryMethodAndConstructor valueOf(String val) {
+			throw new UnsupportedOperationException();
+		}
+	}
+
 
 
 	@Test
@@ -75,6 +85,12 @@ public class InstantiatorFactoryTest {
 
 	@Test
 	public void testInstantiateCheckTakeConstructorFirst() throws Exception {
+
+		final Instantiator<ResultSet, MyClassWithFactoryMethodAndConstructor> instantiator =
+				ASM.getInstantiatorFactory().getInstantiator(MyClassWithFactoryMethodAndConstructor.class, ResultSet.class, ASM.extractConstructors(MyClassWithFactoryMethodAndConstructor.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+
+		final MyClassWithFactoryMethodAndConstructor object = instantiator.newInstance(null);
+		assertNotNull(object);
 	}
 	
 }

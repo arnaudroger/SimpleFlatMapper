@@ -100,7 +100,7 @@ public class InstantiatorFactory {
 		InstantiatorDefinition selectedConstructor = null;
 		
 		for(InstantiatorDefinition c : constructors) {
-			if (selectedConstructor == null || (c.getParameters().length < selectedConstructor.getParameters().length)) {
+			if (selectedConstructor == null || c.compareTo(selectedConstructor) < 0) {
 				selectedConstructor = c;
 			}
 		}

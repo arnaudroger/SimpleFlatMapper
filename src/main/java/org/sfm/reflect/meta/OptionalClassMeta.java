@@ -21,6 +21,8 @@ public class OptionalClassMeta<T> implements ClassMeta<T> {
 	private final Type type;
 	private final InstantiatorDefinition instantiatorDefinition;
     private final ConstructorPropertyMeta<T, ?> propertyMeta;
+	private final ClassMeta<T> innerMeta;
+
 
 	public OptionalClassMeta(Type type, ReflectionService reflectionService) {
 		this.type = type;
@@ -29,6 +31,7 @@ public class OptionalClassMeta<T> implements ClassMeta<T> {
 		try {
             this.instantiatorDefinition = getInstantiatorDefinition(type);
             this.propertyMeta = new ConstructorPropertyMeta<>("value", reflectionService, instantiatorDefinition.getParameters()[0], TypeHelper.toClass(type));
+			this.innerMeta = reflectionService.getClassMeta(instantiatorDefinition.getParameters()[0].getGenericType(), false);
 		} catch(Exception e) {
             ErrorHelper.rethrow(e);
             throw new IllegalStateException();
@@ -80,10 +83,9 @@ public class OptionalClassMeta<T> implements ClassMeta<T> {
 		return strings.toArray(EMPTY_STRING_ARRAY);
 	}
 
-
-    public Type getTargetType() {
-        return  ((ParameterizedType) type).getActualTypeArguments()[0];
-    }
+	public ClassMeta<T> getInnerMeta() {
+		return innerMeta;
+	}
 
     public PropertyMeta<T, ?> getProperty() {
         return propertyMeta;

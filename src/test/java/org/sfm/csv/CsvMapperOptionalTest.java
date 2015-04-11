@@ -15,6 +15,7 @@ import org.sfm.utils.ListHandler;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.ParseException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -33,20 +34,6 @@ public class CsvMapperOptionalTest {
 		csvMapperFactoryNoAsm = CsvMapperFactory.newInstance().useAsm(false);
 	}
 
-
-    @Test
-    public void testStaticMapperDbObjectToStringNoAsm() throws Exception {
-        CsvMapperBuilder<Optional<DbObject>> builder = csvMapperFactoryNoAsm.newBuilder(new TypeReference<Optional<DbObject>>() {
-		}.getType());
-        addDbObjectFields(builder);
-    }
-
-    @Test
-    public void testStaticMapperDbFinalObjectToString() throws Exception {
-        CsvMapperBuilder<Optional<DbObject>> builder = csvMapperFactory.useAsm(false).newBuilder(new TypeReference<Optional<DbFinalObject>>(){}.getType());
-        addDbObjectFields(builder);
-    }
-
     @Test
 	public void testMapDbObject() throws Exception {
 		testMapDbObject(csvMapperFactory.newBuilder(new TypeReference<Optional<DbFinalObject>>(){}.getType()));
@@ -57,16 +44,48 @@ public class CsvMapperOptionalTest {
 		testMapDbObject(csvMapperFactoryNoAsm.newBuilder(new TypeReference<Optional<DbFinalObject>>(){}.getType()));
 	}
 
+    @Test
+    public void testMapOptionalInteger() throws IOException {
+        final CsvMapper<Optional<Integer>> mapper = CsvMapperFactory.newInstance().newBuilder(new TypeReference<Optional<Integer>>() {
+        }).addMapping("str1").mapper();
+
+        final Iterator<Optional<Integer>> iterator = mapper.iterator(new StringReader("1\n\n2"));
+
+
+        Optional<Integer> optional = iterator.next();
+
+        assertEquals(1, optional.get().intValue());
+        optional = iterator.next();
+
+        assertFalse(optional.isPresent());
+
+        optional = iterator.next();
+        assertEquals(2, optional.get().intValue());
+
+        assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void testMapOptionIntegerTwoPropFails() {
+        try {
+            CsvMapperFactory.newInstance().newBuilder(new TypeReference<Optional<Integer>>() {
+            }).addMapping("str1").addMapping("str2");
+            fail();
+        } catch(MapperBuildingException e) {
+            // expecter
+        }
+    }
+
 	private void testMapDbObject(CsvMapperBuilder<Optional<DbFinalObject>> builder)
 			throws IOException, ParseException {
 		addDbObjectFields(builder);
 		CsvMapper<Optional<DbFinalObject>> mapper = builder.mapper();
-		
+
 		List<Optional<DbFinalObject>> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<Optional<DbFinalObject>>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0).get());
     }
-	
+
     @Test
     public void testMapTypeReferenceDynamic() throws IOException {
         Tuple2<String, String> next = CsvMapperFactory

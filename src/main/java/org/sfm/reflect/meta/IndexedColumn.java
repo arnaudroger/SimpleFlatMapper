@@ -18,7 +18,4 @@ public class IndexedColumn {
         return subPropertyNameMatcher;
     }
 
-    public boolean hasSubProperty() {
-        return subPropertyNameMatcher != null;
-    }
 }

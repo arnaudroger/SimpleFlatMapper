@@ -1,9 +1,12 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.List;
 
 public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 
@@ -50,5 +53,13 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
         return TypeHelper.isArray(type);
     }
 
+	@Override
+	public boolean isLeaf() {
+		return false;
+	}
 
+	@Override
+	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
+		return Collections.emptyList();
+	}
 }

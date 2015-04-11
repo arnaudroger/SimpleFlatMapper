@@ -165,7 +165,8 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return columnName;
 	}
 
-	List<InstantiatorDefinition> getInstantiatorDefinitions() {
+	@Override
+	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
 		return instantiatorDefinitions;
 	}
 
@@ -213,7 +214,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
         if (classMeta != null) {
             for(String prop : classMeta.generateHeaders()) {
-                String name = prefix + "_" + prop;
+                String name = prop.length() == 0 ? prefix : prefix + "_" + prop;
                 if (!properties.contains(name)) {
                     properties.add(name);
                 }
@@ -224,4 +225,9 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
             }
         }
     }
+
+	@Override
+	public boolean isLeaf() {
+		return false;
+	}
 }

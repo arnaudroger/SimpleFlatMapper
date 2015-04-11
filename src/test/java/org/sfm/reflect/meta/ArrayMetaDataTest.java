@@ -14,7 +14,8 @@ public class ArrayMetaDataTest {
 
     @Test
     public void testListOfString() throws Exception {
-        ClassMeta<Object> classMeta = ReflectionService.newInstance().getRootClassMeta(new TypeReference<List<String>>() {
+        ClassMeta<Object> classMeta = ReflectionService.newInstance()
+                .getRootClassMeta(new TypeReference<List<String>>() {
         }.getType());
 
         assertTrue(classMeta instanceof ArrayClassMeta);
@@ -36,7 +37,6 @@ public class ArrayMetaDataTest {
 
         assertTrue(bb instanceof ListElementPropertyMeta);
         ListElementPropertyMeta<Object, Object> meta = (ListElementPropertyMeta<Object, Object>) bb;
-
         assertEquals(1, meta.getIndex());
 
 

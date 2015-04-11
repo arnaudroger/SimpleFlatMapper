@@ -45,21 +45,6 @@ public class CsvMapperOneConstructorTypeTest {
 		CsvMapperBuilder<MyObject> builder = new CsvMapperBuilder<MyObject>(MyObject.class, ReflectionService.newInstance(false, false));
 		testMatchConstructor(builder);
 	}
-
-	@Test
-	public void testCantCreateTypeFromAmbiguousConstructor() throws Exception {
-
-		CsvMapperBuilder<MyObjectAmbiguity> builder = new CsvMapperBuilder<MyObjectAmbiguity>(MyObjectAmbiguity.class, ReflectionService.newInstance(false, false));
-		
-		try {
-			builder.addMapping("prop").mapper();
-			fail("Cannot map with ambiguous constructor");
-		} catch(Exception e) {
-			// expected
-		}
-	}
-
-	
 	
 	private void testMatchConstructor(CsvMapperBuilder<MyObject> builder)
 			throws MappingException, IOException {

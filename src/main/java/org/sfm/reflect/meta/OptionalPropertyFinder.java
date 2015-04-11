@@ -13,17 +13,18 @@ public class OptionalPropertyFinder<T> implements PropertyFinder<T> {
     private final OptionalClassMeta<T> tupleClassMeta;
     private final PropertyFinder<?> propertyFinder;
     private int nbProp = 0;
+    private final ClassMeta<T> innerMeta;
 
     public OptionalPropertyFinder(OptionalClassMeta<T> tupleClassMeta) {
         this.tupleClassMeta = tupleClassMeta;
-        final ClassMeta<T> innerMeta = tupleClassMeta.getInnerMeta();
+        innerMeta = tupleClassMeta.getInnerMeta();
         this.propertyFinder = innerMeta != null ? innerMeta.newPropertyFinder() : null;
 	}
 
 
     @Override
     public <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
-        if (propertyFinder != null) {
+        if (!innerMeta.isLeaf()) {
             final PropertyMeta<?, Object> property = propertyFinder.findProperty(propertyNameMatcher);
 
             if (property != null) {

@@ -14,12 +14,13 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
 
     private final ClassMeta<T> delegate;
     private final String[] headers;
+    private final List<InstantiatorDefinition> instantiatorDefinitions;
 
     public FastTupleClassMeta(Type target, ReflectionService reflectionService) {
 
         try {
             Class<T> clazz = TypeHelper.toClass(target);
-            final List<InstantiatorDefinition> instantiatorDefinitions = new ArrayList<InstantiatorDefinition>();
+            instantiatorDefinitions = new ArrayList<InstantiatorDefinition>();
             instantiatorDefinitions.add(new InstantiatorDefinition(clazz.getConstructor()));
             final List<PropertyMeta<T, ?>> properties = getPropertyMetas(clazz, reflectionService);
             this.delegate = new ObjectClassMeta<T>(target,
@@ -106,4 +107,15 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
             return headers;
         }
     }
+
+    @Override
+    public boolean isLeaf() {
+        return false;
+    }
+
+    @Override
+    public List<InstantiatorDefinition> getInstantiatorDefinitions() {
+        return instantiatorDefinitions;
+    }
+
 }

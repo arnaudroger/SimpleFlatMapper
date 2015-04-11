@@ -19,7 +19,7 @@ public class CsvMapperCellHandlerFactory<T> {
     }
 
     public CsvMapperCellHandler<T> newInstance(DelayedCellSetter<T, ?>[] delayedSetters, CellSetter<T>[] setters) {
-        return new CsvMapperCellHandlerImpl(instantiator, delayedSetters, setters, keys, parsingContextFactory.newContext(), fieldErrorHandler);
+        return new CsvMapperCellHandlerImpl<T>(instantiator, delayedSetters, setters, keys, parsingContextFactory.newContext(), fieldErrorHandler);
     }
 
     @Override

@@ -45,20 +45,7 @@ public class JdbcMapperOneConstructorTypeTest {
 		testMatchConstructor(builder);
 	}
 
-	@Test
-	public void testCantCreateTypeFromAmbiguousConstructor() throws Exception {
 
-		JdbcMapperBuilder<MyObjectAmbiguity> builder = JdbcMapperFactoryHelper.disableAsm().newBuilder(MyObjectAmbiguity.class);
-		
-		try {
-			builder.addMapping("prop").mapper();
-			fail("Cannot map with ambiguous constructor");
-		} catch(Exception e) {
-			// expected
-		}
-	}
-
-	
 	@Test
 	public void testCanCreateTypeFromUnambiguousConstructorAsm() throws Exception {
 		JdbcMapperBuilder<MyObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(MyObject.class);

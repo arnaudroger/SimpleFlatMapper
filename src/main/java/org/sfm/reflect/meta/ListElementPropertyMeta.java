@@ -53,7 +53,7 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
 	@Override
 	public String getPath() {
-		return index + "." + getName();
+		return getName();
 	}
 
     private static class IndexListGetter<E> implements Getter<List<E>, E> {

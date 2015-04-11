@@ -52,21 +52,16 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 
         PropertyMeta<E, Object> property;
 
-        if (elementClassMeta != null) {
-            property = elementClassMeta.newPropertyFinder().findProperty(propertyNameMatcher);
-            if (property != null) {
-
-                for (int i = 0; i < elements.size(); i++) {
-                    IndexedElement element = elements.get(i);
-                    if (!element.hasProperty(property)) {
-                        return new IndexedColumn(i, propertyNameMatcher);
-                    }
+        property = elementClassMeta.newPropertyFinder().findProperty(propertyNameMatcher);
+        if (property != null) {
+            for (int i = 0; i < elements.size(); i++) {
+                IndexedElement element = elements.get(i);
+                if (!element.hasProperty(property)) {
+                    return new IndexedColumn(i, propertyNameMatcher);
                 }
-
-                return new IndexedColumn(elements.size(), propertyNameMatcher);
             }
-        } else {
-            return new IndexedColumn(elements.size(), null);
+
+            return new IndexedColumn(elements.size(), propertyNameMatcher);
         }
 		return null;
 	}

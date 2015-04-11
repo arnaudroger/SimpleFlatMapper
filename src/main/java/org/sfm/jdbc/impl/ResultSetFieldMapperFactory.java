@@ -9,6 +9,8 @@ import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.impl.*;
 import org.sfm.map.impl.fieldmapper.*;
 import org.sfm.reflect.*;
+import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.PropertyMeta;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
@@ -71,8 +73,9 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
                            FieldMapperErrorHandler<JdbcColumnKey> errorHandler,
                            MapperBuilderErrorHandler mappingErrorHandler) {
 
-		final Type propertyType = propertyMapping.getPropertyMeta().getType();
-		final Setter<T, ? super P> setter = propertyMapping.getPropertyMeta().getSetter();
+		final PropertyMeta<T, P> propertyMeta = propertyMapping.getPropertyMeta();
+		final Type propertyType = propertyMeta.getType();
+		final Setter<T, ? super P> setter = propertyMeta.getSetter();
 		final JdbcColumnKey key = propertyMapping.getColumnKey();
 		final Class<P> type = TypeHelper.toClass(propertyType);
 
@@ -93,29 +96,16 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 			getter = getterFactory.newGetter(propertyType, key);
 		}
 		if (getter == null) {
-			// check if has a one arg construct
-			final Constructor<?>[] constructors = type.getConstructors();
-			if (constructors != null && constructors.length == 1 && constructors[0].getParameterTypes().length == 1) {
-				@SuppressWarnings("unchecked")
-				final Constructor<? extends P> constructor = (Constructor<P>) constructors[0];
-				getter = getterFactory.newGetter(constructor.getParameterTypes()[0], key);
-				
-				if (getter != null) {
-					getter = new ConstructorOnGetter<ResultSet, P>(constructor, getter);
-				}
-			} else if (key.getSqlType() != JdbcColumnKey.UNDEFINED_TYPE) {
-				Class<?> targetType = getTargetTypeFromSqlType(key.getSqlType());
-				if (targetType != null) {
-					try {
-						@SuppressWarnings("unchecked")
-						Constructor<? extends P> constructor = (Constructor<? extends P>) type.getConstructor(targetType);
-						getter = getterFactory.newGetter(targetType, key);
-						
-						if (getter != null) {
-							getter = new ConstructorOnGetter<ResultSet, P>(constructor, getter);
-						}
-					} catch (Exception e) {
-						// ignore 
+			final ClassMeta<P> classMeta = propertyMeta.getClassMeta();
+			for(InstantiatorDefinition id : classMeta.getInstantiatorDefinitions()) {
+				if (id.getParameters().length == 1) {
+					final Type sourceType = id.getParameters()[0].getGenericType();
+					getter = getterFactory.newGetter(sourceType, key);
+					if (getter != null) {
+						Instantiator instantiator =
+								classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
+						getter = new InstantiatorOnGetter(instantiator, getter);
+						break;
 					}
 				}
 			}

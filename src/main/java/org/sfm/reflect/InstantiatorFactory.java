@@ -13,6 +13,7 @@ import org.sfm.reflect.impl.InjectStaticMethodInstantiator;
 import org.sfm.utils.ForEachCallBack;
 
 import java.lang.reflect.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,8 +61,14 @@ public class InstantiatorFactory {
 		if (instantiatorDefinition == null) {
 			throw new IllegalArgumentException("No constructor available for " + target);
 		}
+		return newInstantiator(source, injections, useAsmIfEnabled, instantiatorDefinition);
+
+
+	}
+
+	private <S, T> Instantiator<S, T> newInstantiator(Class<?> source, Map<Parameter, Getter<S, ?>> injections, boolean useAsmIfEnabled, InstantiatorDefinition instantiatorDefinition) {
 		Member executable = instantiatorDefinition.getExecutable();
-		
+
 		if (asmFactory != null && Modifier.isPublic(executable.getModifiers()) && useAsmIfEnabled) {
 			try {
 				return asmFactory.createInstantiator(source, instantiatorDefinition, injections);
@@ -88,8 +95,6 @@ public class InstantiatorFactory {
 		} else {
 			throw new IllegalArgumentException("Unsupported executable type " + executable);
 		}
-
-
 	}
 
 	private InstantiatorDefinition getSmallerConstructor(final List<InstantiatorDefinition> constructors) {
@@ -112,6 +117,11 @@ public class InstantiatorFactory {
 		return new ArrayInstantiator<S, T>(elementType, length);
 	}
 
+	public <S, T> Instantiator<S, T> getOneArgIdentityInstantiator(InstantiatorDefinition id) {
+		Map<Parameter, Getter<S, ?>> injections = new HashMap<Parameter, Getter<S, ?>>();
+		injections.put(id.getParameters()[0], new IdentityGetter());
+		return newInstantiator(id.getParameters()[0].getType(), injections, true, id);
+	}
 
 
 	private static final class ArrayInstantiator<S, T> implements Instantiator<S, T> {

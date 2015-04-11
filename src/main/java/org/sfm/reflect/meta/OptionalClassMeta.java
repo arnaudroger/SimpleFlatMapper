@@ -70,12 +70,8 @@ public class OptionalClassMeta<T> implements ClassMeta<T> {
 		for(Parameter cp : instantiatorDefinition.getParameters()) {
 			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getGenericType(), false);
 
-			if (classMeta != null) {
-				for(String prop : classMeta.generateHeaders()) {
-					strings.add(prop);
-				}
-			} else {
-				strings.add("value");
+			for(String prop : classMeta.generateHeaders()) {
+				strings.add(prop);
 			}
 
 			i++;
@@ -90,4 +86,16 @@ public class OptionalClassMeta<T> implements ClassMeta<T> {
     public PropertyMeta<T, ?> getProperty() {
         return propertyMeta;
     }
+
+	@Override
+	public boolean isLeaf() {
+		return false;
+	}
+
+	@Override
+	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
+		return Arrays.asList(instantiatorDefinition);
+	}
+
+
 }

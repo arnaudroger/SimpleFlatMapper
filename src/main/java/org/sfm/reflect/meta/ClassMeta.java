@@ -1,16 +1,22 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 public interface ClassMeta<T> {
 
-	public ReflectionService getReflectionService();
+	ReflectionService getReflectionService();
 
-	public PropertyFinder<T> newPropertyFinder();
+	PropertyFinder<T> newPropertyFinder();
 
-	public Type getType();
+	Type getType();
 
 	String[] generateHeaders();
+
+	boolean isLeaf();
+
+	List<InstantiatorDefinition> getInstantiatorDefinitions();
 }

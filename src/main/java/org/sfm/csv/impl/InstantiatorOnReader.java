@@ -1,17 +1,16 @@
 package org.sfm.csv.impl;
 
 import org.sfm.csv.CellValueReader;
+import org.sfm.reflect.Instantiator;
 import org.sfm.utils.ErrorHelper;
 
-import java.lang.reflect.Constructor;
+public class InstantiatorOnReader<S, T> implements CellValueReader<T> {
+	private final Instantiator<S, T> instantiator;
+	private final CellValueReader<S> innerReader;
 
-public class ConstructorOnReader<T> implements CellValueReader<T> {
-	private final Constructor<T> constructor;
-	private final CellValueReader<?> innerReader;
-
-	public ConstructorOnReader(Constructor<T> constructor,
-			CellValueReader<?> innerReader) {
-		this.constructor = constructor;
+	public InstantiatorOnReader(Instantiator<S, T> constructor,
+								CellValueReader<S> innerReader) {
+		this.instantiator = constructor;
 		this.innerReader = innerReader;
 	}
 
@@ -19,7 +18,7 @@ public class ConstructorOnReader<T> implements CellValueReader<T> {
 	public T read(char[] chars, int offset, int length,
 			ParsingContext parsingContext) {
 		try {
-			return constructor.newInstance(innerReader.read(chars, offset, length, parsingContext));
+			return instantiator.newInstance(innerReader.read(chars, offset, length, parsingContext));
 		} catch (Exception e) {
             return ErrorHelper.rethrow(e);
 		}
@@ -28,7 +27,7 @@ public class ConstructorOnReader<T> implements CellValueReader<T> {
     @Override
     public String toString() {
         return "ConstructorOnReader{" +
-                "constructor=" + constructor +
+                "constructor=" + instantiator +
                 ", innerReader=" + innerReader +
                 '}';
     }

@@ -233,9 +233,7 @@ public class CsvMapperBuilder<T> {
 					PropertyMeta<T, ?> prop = propMapping.getPropertyMeta();
 					CsvColumnKey key = propMapping.getColumnKey();
 					if (prop != null) {
-						if (prop.isConstructorProperty() || prop instanceof  DirectClassMeta.DirectPropertyMeta) {
-							delayedSetters[propMapping.getColumnKey().getIndex()] = cellSetterFactory.getDelayedCellSetter(prop.getType(), key.getIndex(), propMapping.getColumnDefinition(), parsingContextFactoryBuilder);
-						}  else if (prop.isSubProperty()) {
+						if (prop.isSubProperty()) {
 							addSubProperty(delegateMapperBuilders, prop, key, propMapping.getColumnDefinition());
 						}else {
 							delayedSetters[propMapping.getColumnKey().getIndex()] =  cellSetterFactory.getDelayedCellSetter(prop, key.getIndex(), propMapping.getColumnDefinition(), parsingContextFactoryBuilder);

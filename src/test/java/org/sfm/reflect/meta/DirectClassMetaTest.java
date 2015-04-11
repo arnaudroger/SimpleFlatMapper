@@ -2,6 +2,7 @@ package org.sfm.reflect.meta;
 
 import org.junit.Test;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.impl.NullSetter;
 
 import static org.junit.Assert.*;
 
@@ -29,21 +30,11 @@ public class DirectClassMetaTest {
             // expected
         }
 
-        try {
-            property.newSetter();
-            fail("expected exception");
-        } catch(Exception e) {
-            // expected
-        }
+        assertTrue(NullSetter.isNull(property.newSetter()));
 
-        try {
-            direct.generateHeaders();
-            fail("expected exception");
-        } catch(Exception e) {
-            // expected
-        }
+        assertArrayEquals(new String[] {""},  direct.generateHeaders());
 
-        assertEquals("direct", property.getPath());
+        assertEquals(".", property.getPath());
 
     }
 }

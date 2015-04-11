@@ -101,7 +101,8 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 
 			if (classMeta != null) {
 				for(String prop : classMeta.generateHeaders()) {
-					strings.add(prefix + "_" + prop);
+                    String name = prop.length() == 0 ? prefix : prefix + "_" + prop;
+                    strings.add(name);
 				}
 			} else {
 				strings.add(prefix);
@@ -133,8 +134,8 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 	}
 
 
-    static interface ElementNameGenerator {
-        public String name(int i);
+    interface ElementNameGenerator {
+        String name(int i);
     }
 
     static class SFMTupleNameGenerator implements ElementNameGenerator {
@@ -148,5 +149,8 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
         }
     }
 
-
+    @Override
+    public boolean isLeaf() {
+        return false;
+    }
 }

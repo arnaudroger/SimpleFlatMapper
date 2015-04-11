@@ -36,8 +36,8 @@ public abstract class AbstractIndexPropertyFinder<T> implements PropertyFinder<T
 
         IndexedElement<T, E> indexedElement = (IndexedElement<T, E>) getIndexedElement(indexedColumn);
 
-        if (!indexedColumn.hasSubProperty()) {
-            indexedElement.addProperty(indexedElement.getPropertyMeta());
+        if (indexedElement.getElementClassMeta().isLeaf() || indexedColumn.getSubPropertyNameMatcher() == null) {
+            indexedElement.addProperty(".");
             return indexedElement.getPropertyMeta();
         }
 

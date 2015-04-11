@@ -69,11 +69,32 @@ public class CsvMapperOptionalTest {
     public void testMapOptionIntegerTwoPropFails() {
         try {
             CsvMapperFactory.newInstance().newBuilder(new TypeReference<Optional<Integer>>() {
-            }).addMapping("str1").addMapping("str2");
+            })
+            .addMapping("str1")
+            .addMapping("str2");
             fail();
         } catch(MapperBuildingException e) {
             // expecter
         }
+    }
+
+    @Test
+    public void testMapListOptionInteger() throws IOException {
+        final CsvMapper<List<Optional<Integer>>> mapper = CsvMapperFactory.newInstance().newBuilder(new TypeReference<List<Optional<Integer>>>() {
+        })
+        .addMapping("v0")
+        .addMapping("v1")
+        .mapper();
+
+        final Iterator<List<Optional<Integer>>> iterator = mapper.iterator(new StringReader("1,2\n3"));
+        List<Optional<Integer>> optionalList = iterator.next();
+        assertEquals(2, optionalList.size());
+        assertEquals(1, optionalList.get(0).get().intValue());
+        assertEquals(2, optionalList.get(1).get().intValue());
+
+        optionalList = iterator.next();
+        assertEquals(1, optionalList.size());
+        assertEquals(3, optionalList.get(0).get().intValue());
     }
 
 	private void testMapDbObject(CsvMapperBuilder<Optional<DbFinalObject>> builder)

@@ -74,15 +74,11 @@ public class ReflectionService {
 		} else if (isFastTuple(clazz)) {
             return new FastTupleClassMeta<T>(target, this);
         }
-		if (root) {
-            if (isDirectType(target)) {
-                return new DirectClassMeta<T>(target, this);
-            } else {
-                return new SingletonClassMeta<T>(new ObjectClassMeta<T>(target, this));
-            }
+		if (isDirectType(target)) {
+			return new DirectClassMeta<T>(target, this);
 		} else {
-			if (isDirectType(target)) {
-				return null;
+			if (root) {
+				return new SingletonClassMeta<T>(new ObjectClassMeta<T>(target, this));
 			} else {
 				return new ObjectClassMeta<T>(target, this);
 			}
@@ -121,6 +117,9 @@ public class ReflectionService {
 		} else {
 			list = ReflectionInstantiatorDefinitionFactory.extractDefinitions(target);
 		}
+
+		Collections.sort(list);
+
 		return list;
 	}
 

@@ -3,6 +3,7 @@ package org.sfm.reflect;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.impl.FieldSetter;
 import org.sfm.reflect.impl.MethodSetter;
+import org.sfm.reflect.impl.NullSetter;
 import org.sfm.reflect.primitive.*;
 
 import java.lang.reflect.Field;
@@ -102,7 +103,7 @@ public final class ObjectSetterFactory {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T, P> BooleanSetter<T> toBooleanSetter(final Setter<T, P> setter) {
-		if (setter == null) {
+		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof BooleanSetter) {
 			return (BooleanSetter<T>) setter;
@@ -114,9 +115,14 @@ public final class ObjectSetterFactory {
 			throw new IllegalArgumentException("Invalid type " + setter);
 		}
 	}
+
+	private static boolean isNullSetter(Setter<?, ?> setter) {
+		return setter == null || setter instanceof NullSetter;
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T, P> ByteSetter<T> toByteSetter(final Setter<T, P> setter) {
-		if (setter == null) {
+		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof ByteSetter) {
 			return (ByteSetter<T>) setter;
@@ -130,7 +136,7 @@ public final class ObjectSetterFactory {
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T, P> CharacterSetter<T> toCharacterSetter(final Setter<T, P> setter) {
-		if (setter == null) {
+		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof CharacterSetter) {
 			return (CharacterSetter<T>) setter;
@@ -145,7 +151,7 @@ public final class ObjectSetterFactory {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T, P> ShortSetter<T> toShortSetter(final Setter<T, P> setter) {
-		if (setter == null) {
+		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof ShortSetter) {
 			return (ShortSetter<T>) setter;
@@ -160,7 +166,7 @@ public final class ObjectSetterFactory {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T, P> IntSetter<T> toIntSetter(final Setter<T, P> setter) {
-		if (setter == null) {
+		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof IntSetter) {
 			return (IntSetter<T>) setter;
@@ -175,7 +181,7 @@ public final class ObjectSetterFactory {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T, P> LongSetter<T> toLongSetter(final Setter<T, P> setter) {
-		if (setter == null) {
+		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof LongSetter) {
 			return (LongSetter<T>) setter;
@@ -190,7 +196,7 @@ public final class ObjectSetterFactory {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T, P> FloatSetter<T> toFloatSetter(final Setter<T, P> setter) {
-		if (setter == null) {
+		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof FloatSetter) {
 			return (FloatSetter<T>) setter;
@@ -205,7 +211,7 @@ public final class ObjectSetterFactory {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T, P> DoubleSetter<T> toDoubleSetter(final Setter<T, P> setter) {
-		if (setter == null) {
+		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof DoubleSetter) {
 			return (DoubleSetter<T>) setter;

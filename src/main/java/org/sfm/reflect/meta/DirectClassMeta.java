@@ -5,14 +5,17 @@ import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
+import org.sfm.reflect.impl.NullSetter;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 
 public final class DirectClassMeta<T> implements ClassMeta<T> {
 
 
-	private final ReflectionService reflectService;
+    public static final String[] HEADERS = new String[]{""};
+    private final ReflectionService reflectService;
 	private final Type target;
 
 	public DirectClassMeta(Type target, ReflectionService reflectService) throws MapperBuildingException {
@@ -38,9 +41,18 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
 
     @Override
     public String[] generateHeaders() {
-        throw new UnsupportedOperationException();
+        return HEADERS;
     }
 
+    @Override
+    public boolean isLeaf() {
+        return true;
+    }
+
+    @Override
+    public List<InstantiatorDefinition> getInstantiatorDefinitions() {
+        return Collections.emptyList();
+    }
 
     public class DirectPropertyFinder implements PropertyFinder<T> {
 
@@ -71,7 +83,7 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
 
         @Override
         protected Setter<T, E> newSetter() {
-            throw new UnsupportedOperationException();
+            return NullSetter.setter();
         }
 
         @Override
@@ -87,7 +99,7 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
 
         @Override
         public String getPath() {
-            return getName();
+            return ".";
         }
 
         @Override

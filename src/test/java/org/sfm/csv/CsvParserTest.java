@@ -334,7 +334,7 @@ public class CsvParserTest {
 		testSkipThenParseRow(expectations, separator, quote, cr, dsl);
 
 		// dsl call
-		testiterator(expectations, separator, quote, cr, dsl);
+		testIterator(expectations, separator, quote, cr, dsl);
 
 		testSkipAndIterator(expectations, separator, quote, cr, dsl);
 
@@ -382,7 +382,7 @@ public class CsvParserTest {
 		assertArrayEquals(toSubArray(expectations, 0, 1), rows.toArray(new String[0][]));
 	}
 
-	private void testiterator(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
+	private void testIterator(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
 
 		List<String[]> rows = new ArrayList<String[]>();
 		for(String[] row : dsl.reader(createReader(expectations, separator, quote, cr))) {

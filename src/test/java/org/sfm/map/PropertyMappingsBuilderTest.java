@@ -33,7 +33,7 @@ public class PropertyMappingsBuilderTest {
     @Test
     public void testStringInArray() {
 
-        final ClassMeta<AnonymousElement> classMeta = ReflectionService.newInstance().getClassMeta(AnonymousElement.class, true);
+        final ClassMeta<AnonymousElement> classMeta = ReflectionService.newInstance().getClassMeta(AnonymousElement.class);
         PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition> builder =
                 new PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition>(
                         classMeta,
@@ -52,7 +52,7 @@ public class PropertyMappingsBuilderTest {
     //@Test causes issue with jdbc array
     public void testAnonymousInArray() {
 
-        final ClassMeta<AnonymousElement> classMeta = ReflectionService.newInstance().getClassMeta(AnonymousElement.class, true);
+        final ClassMeta<AnonymousElement> classMeta = ReflectionService.newInstance().getClassMeta(AnonymousElement.class);
         PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition> builder2 =
                 new PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition>(
                         classMeta,

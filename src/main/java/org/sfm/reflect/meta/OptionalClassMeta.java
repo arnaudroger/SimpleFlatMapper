@@ -31,7 +31,7 @@ public class OptionalClassMeta<T> implements ClassMeta<T> {
 		try {
             this.instantiatorDefinition = getInstantiatorDefinition(type);
             this.propertyMeta = new ConstructorPropertyMeta<>("value", reflectionService, instantiatorDefinition.getParameters()[0], TypeHelper.toClass(type));
-			this.innerMeta = reflectionService.getClassMeta(instantiatorDefinition.getParameters()[0].getGenericType(), false);
+			this.innerMeta = reflectionService.getClassMeta(instantiatorDefinition.getParameters()[0].getGenericType());
 		} catch(Exception e) {
             ErrorHelper.rethrow(e);
             throw new IllegalStateException();
@@ -68,7 +68,7 @@ public class OptionalClassMeta<T> implements ClassMeta<T> {
 		List<String> strings = new ArrayList<String>();
 		int i = 0;
 		for(Parameter cp : instantiatorDefinition.getParameters()) {
-			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getGenericType(), false);
+			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getGenericType());
 
 			for(String prop : classMeta.generateHeaders()) {
 				strings.add(prop);

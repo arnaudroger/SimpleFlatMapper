@@ -13,7 +13,7 @@ public class PropertyFinderTest {
     @Test
     public void testFindElementOnArray() {
 
-        ClassMeta<DbObject[]> classMeta = ReflectionService.newInstance().getRootClassMeta(DbObject[].class);
+        ClassMeta<DbObject[]> classMeta = ReflectionService.newInstance().getClassMeta(DbObject[].class);
 
         PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder();
 
@@ -53,7 +53,7 @@ public class PropertyFinderTest {
 
     @Test
     public void testFindElementOnTuple() {
-        ClassMeta<DbObject[]> classMeta = ReflectionService.newInstance().getRootClassMeta(Tuples.typeDef(String.class, DbObject.class, DbObject.class));
+        ClassMeta<DbObject[]> classMeta = ReflectionService.newInstance().getClassMeta(Tuples.typeDef(String.class, DbObject.class, DbObject.class));
 
         PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder();
 
@@ -88,7 +88,7 @@ public class PropertyFinderTest {
     // https://github.com/arnaudroger/SimpleFlatMapper/issues/56
     @Test
     public void testArrayElementConstructorInjectionWithIncompatibleConstructorUseCompatibleOutlay() {
-        ClassMeta<ObjectWithIncompatibleConstructor[]> classMeta = ReflectionService.newInstance().getRootClassMeta(ObjectWithIncompatibleConstructor[].class);
+        ClassMeta<ObjectWithIncompatibleConstructor[]> classMeta = ReflectionService.newInstance().getClassMeta(ObjectWithIncompatibleConstructor[].class);
 
         PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder();
 
@@ -100,7 +100,7 @@ public class PropertyFinderTest {
 
     @Test
     public void testArrayElementConstructorInjectionWithIncompatibleConstructorUseIncompatibleOutlay() {
-        ClassMeta<ObjectWithIncompatibleConstructor[]> classMeta = ReflectionService.newInstance().getRootClassMeta(ObjectWithIncompatibleConstructor[].class);
+        ClassMeta<ObjectWithIncompatibleConstructor[]> classMeta = ReflectionService.newInstance().getClassMeta(ObjectWithIncompatibleConstructor[].class);
 
         PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder();
 

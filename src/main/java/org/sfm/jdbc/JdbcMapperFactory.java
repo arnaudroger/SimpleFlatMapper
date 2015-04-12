@@ -368,7 +368,7 @@ public final class JdbcMapperFactory {
 
 
     private <T> ClassMeta<T> getClassMeta(Type target) {
-        return getReflectionService().getRootClassMeta(target);
+        return getReflectionService().getClassMeta(target);
     }
 
     private ReflectionService getReflectionService() {

@@ -10,7 +10,7 @@ public class DirectClassMetaTest {
 
     @Test
     public void testDirect() {
-        ClassMeta<String> direct = ReflectionService.newInstance().getRootClassMeta(String.class);
+        ClassMeta<String> direct = ReflectionService.newInstance().getClassMeta(String.class);
 
         assertTrue(direct instanceof DirectClassMeta);
         assertEquals("DirectClassMeta{target=class java.lang.String}", direct.toString());

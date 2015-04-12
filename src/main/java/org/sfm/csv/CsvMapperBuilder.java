@@ -45,7 +45,7 @@ public class CsvMapperBuilder<T> {
 	
 	@SuppressWarnings("unchecked")
 	public CsvMapperBuilder(final Type target, ReflectionService reflectionService) {
-		this(target, (ClassMeta<T>)reflectionService.getRootClassMeta(target));
+		this(target, (ClassMeta<T>)reflectionService.getClassMeta(target));
 	}
 
 	public CsvMapperBuilder(final Type target, final ClassMeta<T> classMeta) {

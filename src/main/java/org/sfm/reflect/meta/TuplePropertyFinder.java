@@ -23,7 +23,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
 	private <E> IndexedElement<T, E> newIndexedElement(TupleClassMeta<T> tupleClassMeta, int i) {
 		ConstructorPropertyMeta<T, E> prop =
                 newConstructorPropertyMeta(tupleClassMeta, i);
-		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(prop.getType(), false);
+		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(prop.getType());
 		return new IndexedElement<T, E>(prop, classMeta);
 	}
 

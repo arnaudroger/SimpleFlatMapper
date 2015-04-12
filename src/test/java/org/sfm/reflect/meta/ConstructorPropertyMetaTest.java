@@ -11,7 +11,7 @@ public class ConstructorPropertyMetaTest {
 
     @Test
     public void testMeta() throws Exception {
-        ClassMeta<DbFinalObject> classMeta = ReflectionService.newInstance().getRootClassMeta(DbFinalObject.class);
+        ClassMeta<DbFinalObject> classMeta = ReflectionService.newInstance().getClassMeta(DbFinalObject.class);
 
         PropertyMeta<DbFinalObject, Object> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("name", 0, false, false));
 

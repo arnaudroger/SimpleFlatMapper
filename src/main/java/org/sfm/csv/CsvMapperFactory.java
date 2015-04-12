@@ -187,7 +187,7 @@ public final class CsvMapperFactory {
 	}
 
 	private <T> ClassMeta<T> getClassMeta(Type target) {
-		return ReflectionService.newInstance(disableAsm, useAsm).getRootClassMeta(target);
+		return ReflectionService.newInstance(disableAsm, useAsm).getClassMeta(target);
 	}
 
 

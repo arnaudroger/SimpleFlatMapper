@@ -23,7 +23,7 @@ public class JooqMapperBuilder<R extends Record, E> extends
 	
 	@SuppressWarnings("unchecked")
 	public JooqMapperBuilder(final Type target, ReflectionService reflectService) throws MapperBuildingException {
-		this(reflectService.<E>getRootClassMeta(target), new JooqMappingContextFactoryBuilder<R>());
+		this(reflectService.<E>getClassMeta(target), new JooqMappingContextFactoryBuilder<R>());
 	}
 	
 	public JooqMapperBuilder(final ClassMeta<E> classMeta, MappingContextFactoryBuilder<R, JooqFieldKey> mappingContextFactoryBuilder) throws MapperBuildingException {

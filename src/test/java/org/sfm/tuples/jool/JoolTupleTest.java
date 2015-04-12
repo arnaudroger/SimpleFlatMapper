@@ -30,7 +30,7 @@ public class JoolTupleTest {
         }
 
         ClassMeta<Tuple3<Long, Integer, Short>> cm =
-                ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple3<Long, Integer, Short>>(){}.getType(), false);
+                ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple3<Long, Integer, Short>>(){}.getType());
 
         final PropertyFinder<Tuple3<Long, Integer, Short>> propertyFinder = cm.newPropertyFinder();
 

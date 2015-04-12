@@ -18,11 +18,11 @@ public class TuplesClassMetaTest {
         String[] names = {"element0_id", "element0_name", "element0_email", "element0_creationTime", "element0_typeOrdinal", "element0_typeName", "element1"};
         assertArrayEquals(
                 names,
-                ReflectionService.newInstance().getRootClassMeta(Tuples.typeDef(DbObject.class, String.class)).generateHeaders());
+                ReflectionService.newInstance().getClassMeta(Tuples.typeDef(DbObject.class, String.class)).generateHeaders());
     }
 
 
-    ClassMeta<Tuple2<Foo, Foo>> classMeta = ReflectionService.newInstance().getRootClassMeta(new TypeReference<Tuple2<Foo, Foo>>() {}.getType());
+    ClassMeta<Tuple2<Foo, Foo>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple2<Foo, Foo>>() {}.getType());
 
     @Test
     public void testIndexStartingAtZero() {

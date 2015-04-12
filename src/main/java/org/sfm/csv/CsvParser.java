@@ -391,7 +391,7 @@ public final class CsvParser {
 		private final CsvColumnDefinitionProviderImpl columnDefinitionProvider;
 
 		public MapToDSL(DSL dsl, Type mapToClass) {
-			this(dsl, ReflectionService.newInstance().<T>getRootClassMeta(mapToClass), mapToClass, new CsvColumnDefinitionProviderImpl());
+			this(dsl, ReflectionService.newInstance().<T>getClassMeta(mapToClass), mapToClass, new CsvColumnDefinitionProviderImpl());
 		}
 		private MapToDSL(DSL dsl, ClassMeta<T> classMeta, Type mapToClass, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 			super(dsl, new DynamicCsvMapper<T>(mapToClass, classMeta, columnDefinitionProvider));

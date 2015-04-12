@@ -15,10 +15,10 @@ public class ObjectClassMetaTest {
         String[] names = {"id", "name", "email", "creationTime", "typeOrdinal", "typeName"};
         assertArrayEquals(
                 names,
-                ReflectionService.newInstance().getRootClassMeta(DbFinalObject.class).generateHeaders());
+                ReflectionService.newInstance().getClassMeta(DbFinalObject.class).generateHeaders());
         assertArrayEquals(
                 names,
-                ReflectionService.newInstance().getRootClassMeta(DbObject.class).generateHeaders());
+                ReflectionService.newInstance().getClassMeta(DbObject.class).generateHeaders());
     }
 
     public static class MyClass{
@@ -54,6 +54,6 @@ public class ObjectClassMetaTest {
         String[] names = {"id", "o_id", "o_name", "o_email", "o_creationTime", "o_typeOrdinal", "o_typeName"};
         assertArrayEquals(
                 names,
-                ReflectionService.newInstance().getRootClassMeta(MyClass.class).generateHeaders());
+                ReflectionService.newInstance().getClassMeta(MyClass.class).generateHeaders());
     }
 }

@@ -57,7 +57,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
      * @param reflectService the ReflectionService
      */
     public JdbcMapperBuilder(final Type target, ReflectionService reflectService) {
-        this(reflectService.<T>getRootClassMeta(target),
+        this(reflectService.<T>getClassMeta(target),
                 new RethrowMapperBuilderErrorHandler(),
                 new IdentityFieldMapperColumnDefinitionProvider<JdbcColumnKey, ResultSet>(),
                 new DefaultPropertyNameMatcherFactory(),

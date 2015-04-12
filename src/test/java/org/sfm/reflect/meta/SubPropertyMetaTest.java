@@ -13,7 +13,7 @@ public class SubPropertyMetaTest {
 
     @Test
     public void testSubProperty() {
-        ClassMeta<Db1DeepObject> classMeta = ReflectionService.newInstance().getRootClassMeta(Db1DeepObject.class);
+        ClassMeta<Db1DeepObject> classMeta = ReflectionService.newInstance().getClassMeta(Db1DeepObject.class);
 
         PropertyMeta<Db1DeepObject, String> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false));
 

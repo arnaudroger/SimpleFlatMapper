@@ -231,4 +231,11 @@ public class CsvMapperImplTest {
         assertEquals(TypeRoot.type1, mapper.iterator(new StringReader("0")).next());
     }
 
+	@Test
+	public void testStringRoot() throws IOException {
+		CsvMapperBuilder<String> builder = new CsvMapperBuilder<String>(String.class);
+		builder.addMapping("c1");
+		CsvMapper<String> mapper = builder.mapper();
+		assertEquals("0", mapper.iterator(new StringReader("0")).next());
+	}
 }

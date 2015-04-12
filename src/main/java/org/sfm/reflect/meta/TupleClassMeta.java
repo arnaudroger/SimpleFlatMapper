@@ -97,7 +97,7 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 		int i = 0;
 		for(Parameter cp : instantiatorDefinition.getParameters()) {
             String prefix = nameGenerator.name(i);
-			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getGenericType(), false);
+			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getGenericType());
 
 			if (classMeta != null) {
 				for(String prop : classMeta.generateHeaders()) {

@@ -12,6 +12,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class ReflectionService {
 
@@ -23,6 +25,8 @@ public class ReflectionService {
 
 	private final boolean asmPresent;
 	private final boolean asmActivated;
+
+	private final ConcurrentMap<Type, ClassMeta<?>> metaCache = new ConcurrentHashMap<Type, ClassMeta<?>>();
 
 	public ReflectionService(final boolean asmPresent, final boolean asmActivated, final AsmFactory asmFactory) {
 		this.asmPresent = asmPresent;
@@ -57,14 +61,24 @@ public class ReflectionService {
 		return asmFactory;
 	}
 
-	public <T, E> ClassMeta<T> getClassMeta(Type target, boolean root) {
+	@SuppressWarnings("unchecked")
+	public <T> ClassMeta<T> getClassMeta(Type target) {
+		ClassMeta<T> meta = (ClassMeta<T>) metaCache.get(target);
+		if (meta == null) {
+			meta = newClassMeta(target);
+			metaCache.putIfAbsent(target, meta);
+		}
+		return meta;
+	}
+
+	private <T> ClassMeta<T> newClassMeta(Type target) {
 		Class<T> clazz = TypeHelper.toClass(target);
-		
+
 		if (List.class.isAssignableFrom(clazz)) {
 			ParameterizedType pt = (ParameterizedType) target;
-			return new ArrayClassMeta<T, E>(ArrayList.class, pt.getActualTypeArguments()[0], this);
+			return newArrayListMeta(pt.getActualTypeArguments()[0]);
 		} else if (clazz.isArray()) {
-			return new ArrayClassMeta<T, E>(clazz, clazz.getComponentType(), this);
+			return newArrayMeta(clazz);
 			//IFJAVA8_START
 		} else if (Optional.class.isAssignableFrom(clazz)) {
 			return new OptionalClassMeta<T>(target, this);
@@ -77,15 +91,19 @@ public class ReflectionService {
 		if (isDirectType(target)) {
 			return new DirectClassMeta<T>(target, this);
 		} else {
-			if (root) {
-				return new SingletonClassMeta<T>(new ObjectClassMeta<T>(target, this));
-			} else {
-				return new ObjectClassMeta<T>(target, this);
-			}
+			return new ObjectClassMeta<T>(target, this);
 		}
 	}
 
-    private <T> boolean isFastTuple(Class<T> clazz) {
+	private <T, E> ClassMeta<T> newArrayMeta(Class<T> clazz) {
+		return new ArrayClassMeta<T, E>(clazz, clazz.getComponentType(), this);
+	}
+
+	private <T, E> ClassMeta<T> newArrayListMeta(Type elementTarget) {
+		return new ArrayClassMeta<T, E>(ArrayList.class, elementTarget, this);
+	}
+
+	private <T> boolean isFastTuple(Class<T> clazz) {
         Class<?> superClass = clazz.getSuperclass();
         return superClass != null && "com.boundary.tuple.FastTuple".equals(superClass.getName());
     }
@@ -93,10 +111,6 @@ public class ReflectionService {
     private boolean isDirectType(Type target) {
         return TypeHelper.isJavaLang(target)|| TypeHelper.isEnum(target) || TypeHelper.areEquals(target, Date.class);
     }
-
-    public <T> ClassMeta<T> getRootClassMeta(Type mapToClass) {
-		return getClassMeta(mapToClass, true);
-	}
 
 	public String getColumnName(Method method) {
 		return aliasProvider.getAliasForMethod(method);

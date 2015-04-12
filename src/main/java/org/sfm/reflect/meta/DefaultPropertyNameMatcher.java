@@ -136,4 +136,8 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
         }
         return -1;
     }
+
+	public static PropertyNameMatcher of(String value) {
+		return new DefaultPropertyNameMatcher(value, 0, false, false);
+	}
 }

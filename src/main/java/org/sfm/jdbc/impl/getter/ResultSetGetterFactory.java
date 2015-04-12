@@ -20,6 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+
+//IFJAVA8_START
+import org.sfm.jdbc.impl.getter.time.JavaLocalDateResultSetGetter;
+import java.time.*;
+//IFJAVA8_END
 public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey>{
 
 	public static final GetterFactory<ResultSet, JdbcColumnKey> DATE_GETTER_FACTORY = new GetterFactory<ResultSet, JdbcColumnKey>() {
@@ -301,6 +306,24 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				return (Getter<ResultSet, P>) new SqlArrayResultSetGetter(key.getIndex());
 			}
 		});
+
+		//IFJAVA8_START
+		factoryPerType.put(LocalDate.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new JavaLocalDateResultSetGetter(key);
+			}
+		});
+		factoryPerType.put(LocalDateTime.class, null);
+		factoryPerType.put(LocalTime.class, null);
+		factoryPerType.put(OffsetDateTime.class, null);
+		factoryPerType.put(OffsetTime.class, null);
+		factoryPerType.put(ZonedDateTime.class, null);
+		factoryPerType.put(Instant.class, null);
+		factoryPerType.put(Year.class, null);
+		factoryPerType.put(YearMonth.class, null);
+		//IFJAVA8_END
 	}
 
 	@SuppressWarnings("unchecked")

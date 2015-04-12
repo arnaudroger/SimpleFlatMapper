@@ -343,6 +343,8 @@
                                 <exclude>**/org/sfm/sql2o/*</exclude>
                                 <exclude>**/org/sfm/**/*Spliterator*</exclude>
 								<exclude>**/org/sfm/**/*Optional*</exclude>
+								<exclude>**/org/sfm/jdbc/impl/getter/time/*</exclude>
+								<exclude>**/org/sfm/csv/impl/cellreader/time/*</exclude>
 							</excludes>
 						</configuration>
 
@@ -442,6 +444,8 @@
                             <excludes>
                                 <exclude>**/org/sfm/**/*Spliterator*</exclude>
 								<exclude>**/org/sfm/**/*Optional*</exclude>
+								<exclude>**/org/sfm/jdbc/impl/getter/time/*</exclude>
+								<exclude>**/org/sfm/csv/impl/cellreader/time/*</exclude>
                             </excludes>
 
                         </configuration>

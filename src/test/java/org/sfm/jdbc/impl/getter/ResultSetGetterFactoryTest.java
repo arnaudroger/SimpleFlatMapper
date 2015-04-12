@@ -17,6 +17,12 @@ import java.net.URL;
 import java.sql.*;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+
+//IFJAVA8_START
+import java.time.Instant;
+import java.time.ZoneId;
+//IFJAVA8_END
+
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -271,4 +277,18 @@ public class ResultSetGetterFactoryTest {
         assertEquals(cal, getter.get(resultSet));
         assertEquals("CalendarResultSetGetter{dateGetter=TimestampResultSetGetter{column=1}}", getter.toString());
 	}
+
+
+	//IFJAVA8_START
+	@Test
+	public void testJavaLocalDate() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		Date ts = new Date(cal.getTimeInMillis());
+		when(resultSet.getObject(1)).thenReturn(ts);
+		Getter<ResultSet, java.time.LocalDate> getter = factory.<java.time.LocalDate>newGetter(java.time.LocalDate.class, key(Types.DATE));
+		java.time.LocalDate dt = getter.get(resultSet);
+		assertEquals(Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault()).toLocalDate(), dt);
+		assertEquals("JavaLocalDateResultSetGetter{column=1}", getter.toString());
+	}
+	//IFJAVA8_END
 }

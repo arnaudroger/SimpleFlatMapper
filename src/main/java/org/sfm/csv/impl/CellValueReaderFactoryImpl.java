@@ -13,6 +13,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+//IFJAVA8_START
+import java.time.LocalDate;
+import org.sfm.csv.impl.cellreader.time.JavaLocalDateCellValueReader;
+//IFJAVA8_END
 
 public final class CellValueReaderFactoryImpl implements CellValueReaderFactory {
 
@@ -47,9 +51,13 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 		CellValueReader<P> reader;
 
 		if (propertyClass.equals(Date.class)) {
-            DateCellValueReader dateCellValueReader = new DateCellValueReader(index, columnDefinition.dateFormat(), columnDefinition.getTimeZone());
-            reader = (CellValueReader<P>) dateCellValueReader;
-            parsingContextFactoryBuilder.addParsingContextProvider(index, dateCellValueReader);
+			DateCellValueReader dateCellValueReader = new DateCellValueReader(index, columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+			reader = (CellValueReader<P>) dateCellValueReader;
+			parsingContextFactoryBuilder.addParsingContextProvider(index, dateCellValueReader);
+		//IFJAVA8_START
+		} else if (propertyClass.equals(LocalDate.class)) {
+			reader = (CellValueReader<P>) new JavaLocalDateCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+		//IFJAVA8_END
 		} else if (Calendar.class.equals(propertyClass)) {
             CalendarCellValueReader calendarCellValueReader = new CalendarCellValueReader(index, columnDefinition.dateFormat(), columnDefinition.getTimeZone());
             reader = (CellValueReader<P>) calendarCellValueReader;

@@ -329,12 +329,48 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				return (Getter<ResultSet, P>) new JavaLocalTimeResultSetGetter(key);
 			}
 		});
-		factoryPerType.put(OffsetDateTime.class, null);
-		factoryPerType.put(OffsetTime.class, null);
-		factoryPerType.put(ZonedDateTime.class, null);
-		factoryPerType.put(Instant.class, null);
-		factoryPerType.put(Year.class, null);
-		factoryPerType.put(YearMonth.class, null);
+		factoryPerType.put(OffsetDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new JavaOffsetDateTimeResultSetGetter(key);
+			}
+		});
+		factoryPerType.put(OffsetTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new JavaOffsetTimeResultSetGetter(key);
+			}
+		});
+		factoryPerType.put(ZonedDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new JavaZonedDateTimeResultSetGetter(key);
+			}
+		});
+		factoryPerType.put(Instant.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new JavaInstantResultSetGetter(key);
+			}
+		});
+		factoryPerType.put(Year.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new JavaYearResultSetGetter(key);
+			}
+		});
+		factoryPerType.put(YearMonth.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new JavaYearMonthResultSetGetter(key);
+			}
+		});
 		//IFJAVA8_END
 	}
 

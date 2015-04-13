@@ -19,8 +19,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 
 //IFJAVA8_START
-import java.time.Instant;
-import java.time.ZoneId;
+import java.time.*;
 //IFJAVA8_END
 
 import java.util.*;
@@ -311,6 +310,76 @@ public class ResultSetGetterFactoryTest {
 		java.time.LocalTime dt = getter.get(resultSet);
 		assertEquals(Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault()).toLocalTime(), dt);
 		assertEquals("JavaLocalTimeResultSetGetter{column=1}", getter.toString());
+	}
+
+	@Test
+	public void testJavaOffsetDateTime() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		Timestamp ts = new Timestamp(cal.getTimeInMillis());
+		when(resultSet.getObject(1)).thenReturn(ts);
+		Getter<ResultSet, java.time.OffsetDateTime> getter = factory.<java.time.OffsetDateTime>newGetter(java.time.OffsetDateTime.class, key(Types.TIMESTAMP));
+		java.time.OffsetDateTime dt = getter.get(resultSet);
+		final Instant instant = Instant.ofEpochMilli(ts.getTime());
+		assertEquals(instant.atOffset(ZoneId.systemDefault().getRules().getOffset(instant)), dt);
+		assertEquals("JavaOffsetDateTimeResultSetGetter{column=1}", getter.toString());
+	}
+
+	@Test
+	public void testJavaOffsetTime() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		Timestamp ts = new Timestamp(cal.getTimeInMillis());
+		when(resultSet.getObject(1)).thenReturn(ts);
+		Getter<ResultSet, java.time.OffsetTime> getter = factory.<java.time.OffsetTime>newGetter(java.time.OffsetTime.class, key(Types.TIME));
+		java.time.OffsetTime dt = getter.get(resultSet);
+		final Instant instant = Instant.ofEpochMilli(ts.getTime());
+		assertEquals(instant.atOffset(ZoneId.systemDefault().getRules().getOffset(instant)).toOffsetTime(), dt);
+		assertEquals("JavaOffsetTimeResultSetGetter{column=1}", getter.toString());
+	}
+
+	@Test
+	public void testJavaZonedDateTime() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		Timestamp ts = new Timestamp(cal.getTimeInMillis());
+		when(resultSet.getObject(1)).thenReturn(ts);
+		Getter<ResultSet, java.time.ZonedDateTime> getter = factory.<java.time.ZonedDateTime>newGetter(java.time.ZonedDateTime.class, key(Types.TIMESTAMP));
+		java.time.ZonedDateTime dt = getter.get(resultSet);
+		final Instant instant = Instant.ofEpochMilli(ts.getTime());
+		assertEquals(instant.atZone(ZoneId.systemDefault()), dt);
+		assertEquals("JavaZonedDateTimeResultSetGetter{column=1}", getter.toString());
+	}
+
+	@Test
+	public void testJavaInstant() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		Timestamp ts = new Timestamp(cal.getTimeInMillis());
+		when(resultSet.getObject(1)).thenReturn(ts);
+		Getter<ResultSet, java.time.Instant> getter = factory.<java.time.Instant>newGetter(java.time.Instant.class, key(Types.TIMESTAMP));
+		java.time.Instant dt = getter.get(resultSet);
+		final Instant instant = Instant.ofEpochMilli(ts.getTime());
+		assertEquals(instant, dt);
+		assertEquals("JavaInstantResultSetGetter{column=1}", getter.toString());
+	}
+
+	@Test
+	public void testJavaYearMonth() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		Date ts = new Date(cal.getTimeInMillis());
+		when(resultSet.getObject(1)).thenReturn(ts);
+		Getter<ResultSet, java.time.YearMonth> getter = factory.<java.time.YearMonth>newGetter(java.time.YearMonth.class, key(Types.TIMESTAMP));
+		java.time.YearMonth dt = getter.get(resultSet);
+		final Instant instant = Instant.ofEpochMilli(ts.getTime());
+		final ZonedDateTime dateTime = instant.atZone(ZoneId.systemDefault());
+		assertEquals(YearMonth.from(dateTime), dt);
+		assertEquals("JavaYearMonthResultSetGetter{column=1}", getter.toString());
+	}
+
+	@Test
+	public void testJavaYear() throws Exception {
+		when(resultSet.getObject(1)).thenReturn(new Integer(2029));
+		Getter<ResultSet, java.time.Year> getter = factory.<java.time.Year>newGetter(java.time.Year.class, key(Types.INTEGER));
+		java.time.Year dt = getter.get(resultSet);
+		assertEquals(Year.of(2029), dt);
+		assertEquals("JavaYearResultSetGetter{column=1}", getter.toString());
 	}
 
 

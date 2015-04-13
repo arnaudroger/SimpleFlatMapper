@@ -5,23 +5,23 @@ import org.sfm.reflect.Getter;
 
 import java.sql.ResultSet;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 
-public class JavaLocalDateResultSetGetter implements Getter<ResultSet, LocalDate> {
+public class JavaLocalDateTimeResultSetGetter implements Getter<ResultSet, LocalDateTime> {
     private final int index;
     private final ZoneId zone;
 
-    public JavaLocalDateResultSetGetter(JdbcColumnKey key) {
+    public JavaLocalDateTimeResultSetGetter(JdbcColumnKey key) {
         this.index = key.getIndex();
         this.zone = ZoneId.systemDefault();
     }
 
     @Override
-    public LocalDate get(ResultSet target) throws Exception {
+    public LocalDateTime get(ResultSet target) throws Exception {
         Object o = target.getObject(index);
 
         if (o == null) {
@@ -29,23 +29,23 @@ public class JavaLocalDateResultSetGetter implements Getter<ResultSet, LocalDate
         }
 
         if (o instanceof Date) {
-            return Instant.ofEpochMilli(((Date) o).getTime()).atZone(zone).toLocalDate();
+            return Instant.ofEpochMilli(((Date) o).getTime()).atZone(zone).toLocalDateTime();
         }
 
-        if (o instanceof LocalDate) {
-            return (LocalDate) o;
+        if (o instanceof LocalDateTime) {
+            return (LocalDateTime) o;
         }
 
         if (o instanceof TemporalAccessor) {
-            return LocalDate.from((TemporalAccessor) o);
+            return LocalDateTime.from((TemporalAccessor) o);
         }
 
-        throw new IllegalArgumentException("Cannot convert " + o + " to LocalDate");
+        throw new IllegalArgumentException("Cannot convert " + o + " to LocalDateTime");
     }
 
     @Override
     public String toString() {
-        return "JavaLocalDateResultSetGetter{" +
+        return "JavaLocalDateTimeResultSetGetter{" +
                 "column=" + index +
                 '}';
     }

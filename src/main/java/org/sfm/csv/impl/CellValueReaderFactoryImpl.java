@@ -15,7 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 //IFJAVA8_START
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import org.sfm.csv.impl.cellreader.time.JavaLocalDateCellValueReader;
+import org.sfm.csv.impl.cellreader.time.JavaLocalDateTimeCellValueReader;
+import org.sfm.csv.impl.cellreader.time.JavaLocalTimeCellValueReader;
 //IFJAVA8_END
 
 public final class CellValueReaderFactoryImpl implements CellValueReaderFactory {
@@ -57,6 +61,10 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 		//IFJAVA8_START
 		} else if (propertyClass.equals(LocalDate.class)) {
 			reader = (CellValueReader<P>) new JavaLocalDateCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+		} else if (propertyClass.equals(LocalDateTime.class)) {
+			reader = (CellValueReader<P>) new JavaLocalDateTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+		} else if (propertyClass.equals(LocalTime.class)) {
+			reader = (CellValueReader<P>) new JavaLocalTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
 		//IFJAVA8_END
 		} else if (Calendar.class.equals(propertyClass)) {
             CalendarCellValueReader calendarCellValueReader = new CalendarCellValueReader(index, columnDefinition.dateFormat(), columnDefinition.getTimeZone());

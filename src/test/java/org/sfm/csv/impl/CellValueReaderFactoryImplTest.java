@@ -92,6 +92,24 @@ public class CellValueReaderFactoryImplTest {
         assertEquals(localDate, reader.read(date.toCharArray(), 0, date.length(), null));
     }
 
+    @Test
+    public void testJavaLocalTime() throws Exception {
+        String date = "12:03:56";
+        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("HH:mm:ss");
+        java.time.LocalTime localTime = java.time.LocalTime.parse(date, yyyyMMdd);
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.LocalTime.class, 0, CsvColumnDefinition.dateFormatDefinition("HH:mm:ss"), null);
+        assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
+    }
+
+
+    @Test
+    public void testJavaLocalDateTime() throws Exception {
+        String date = "20150128 12:03:56";
+        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
+        java.time.LocalDateTime localTime = java.time.LocalDateTime.parse(date, yyyyMMdd);
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.LocalDateTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd HH:mm:ss"), null);
+        assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
+    }
     //IFJAVA8_END
 
 }

@@ -290,5 +290,29 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault()).toLocalDate(), dt);
 		assertEquals("JavaLocalDateResultSetGetter{column=1}", getter.toString());
 	}
+
+	@Test
+	public void testJavaLocalDateTime() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		Timestamp ts = new Timestamp(cal.getTimeInMillis());
+		when(resultSet.getObject(1)).thenReturn(ts);
+		Getter<ResultSet, java.time.LocalDateTime> getter = factory.<java.time.LocalDateTime>newGetter(java.time.LocalDateTime.class, key(Types.TIMESTAMP));
+		java.time.LocalDateTime dt = getter.get(resultSet);
+		assertEquals(Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime(), dt);
+		assertEquals("JavaLocalDateTimeResultSetGetter{column=1}", getter.toString());
+	}
+
+	@Test
+	public void testJavaLocalTime() throws Exception {
+		Calendar cal = Calendar.getInstance();
+		Time ts = new Time(cal.getTimeInMillis());
+		when(resultSet.getObject(1)).thenReturn(ts);
+		Getter<ResultSet, java.time.LocalTime> getter = factory.<java.time.LocalTime>newGetter(java.time.LocalTime.class, key(Types.TIME));
+		java.time.LocalTime dt = getter.get(resultSet);
+		assertEquals(Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault()).toLocalTime(), dt);
+		assertEquals("JavaLocalTimeResultSetGetter{column=1}", getter.toString());
+	}
+
+
 	//IFJAVA8_END
 }

@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 
 
 //IFJAVA8_START
-import org.sfm.jdbc.impl.getter.time.JavaLocalDateResultSetGetter;
+import org.sfm.jdbc.impl.getter.time.*;
 import java.time.*;
 //IFJAVA8_END
 public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey>{
@@ -315,8 +315,20 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				return (Getter<ResultSet, P>) new JavaLocalDateResultSetGetter(key);
 			}
 		});
-		factoryPerType.put(LocalDateTime.class, null);
-		factoryPerType.put(LocalTime.class, null);
+		factoryPerType.put(LocalDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new JavaLocalDateTimeResultSetGetter(key);
+			}
+		});
+		factoryPerType.put(LocalTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+				return (Getter<ResultSet, P>) new JavaLocalTimeResultSetGetter(key);
+			}
+		});
 		factoryPerType.put(OffsetDateTime.class, null);
 		factoryPerType.put(OffsetTime.class, null);
 		factoryPerType.put(ZonedDateTime.class, null);

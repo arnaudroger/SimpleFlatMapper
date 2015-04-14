@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 //IFJAVA8_START
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 //IFJAVA8_END
 
@@ -108,6 +109,60 @@ public class CellValueReaderFactoryImplTest {
         final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
         java.time.LocalDateTime localTime = java.time.LocalDateTime.parse(date, yyyyMMdd);
         CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.LocalDateTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd HH:mm:ss"), null);
+        assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
+    }
+
+    @Test
+    public void testJavaZonedDateTime() throws Exception {
+        String date = "20150128 12:03:56 PST";
+        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss z");;
+        java.time.ZonedDateTime localTime = java.time.ZonedDateTime.parse(date, yyyyMMdd);
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.ZonedDateTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd HH:mm:ss z"), null);
+        assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
+    }
+
+    @Test
+    public void testJavaOffsetDateTime() throws Exception {
+        String date = "20150128 12:03:56+01";
+        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ssx").withZone(ZoneId.systemDefault());
+        java.time.OffsetDateTime localTime = java.time.OffsetDateTime.parse(date, yyyyMMdd);
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.OffsetDateTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd HH:mm:ssx"), null);
+        assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
+    }
+
+    @Test
+    public void testJavaOffsetTime() throws Exception {
+        String date = "20150128 12:03:56+01";
+        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ssx").withZone(ZoneId.systemDefault());
+        java.time.OffsetTime localTime = java.time.OffsetTime.parse(date, yyyyMMdd);
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.OffsetTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd HH:mm:ssx"), null);
+        assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
+    }
+
+    @Test
+    public void testJavaInstant() throws Exception {
+        String date = "20150128 12:03:56";
+        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss").withZone(ZoneId.systemDefault());
+        java.time.Instant localTime = java.time.ZonedDateTime.parse(date, yyyyMMdd).toInstant();
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.Instant.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd HH:mm:ss"), null);
+        assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
+    }
+
+    @Test
+    public void testJavaYear() throws Exception {
+        String date = "20150128";
+        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.systemDefault());;
+        java.time.Year localTime = java.time.Year.parse(date, yyyyMMdd);
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.Year.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"), null);
+        assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
+    }
+
+    @Test
+    public void testJavaYearMonth() throws Exception {
+        String date = "20150128";
+        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.systemDefault());;
+        java.time.YearMonth localTime = java.time.YearMonth.parse(date, yyyyMMdd);
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.YearMonth.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"), null);
         assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
     }
     //IFJAVA8_END

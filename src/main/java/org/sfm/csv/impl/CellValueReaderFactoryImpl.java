@@ -14,12 +14,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 //IFJAVA8_START
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import org.sfm.csv.impl.cellreader.time.JavaLocalDateCellValueReader;
-import org.sfm.csv.impl.cellreader.time.JavaLocalDateTimeCellValueReader;
-import org.sfm.csv.impl.cellreader.time.JavaLocalTimeCellValueReader;
+import java.time.*;
+import org.sfm.csv.impl.cellreader.time.*;
 //IFJAVA8_END
 
 public final class CellValueReaderFactoryImpl implements CellValueReaderFactory {
@@ -65,6 +61,18 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 			reader = (CellValueReader<P>) new JavaLocalDateTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
 		} else if (propertyClass.equals(LocalTime.class)) {
 			reader = (CellValueReader<P>) new JavaLocalTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+		} else if (propertyClass.equals(ZonedDateTime.class)) {
+			reader = (CellValueReader<P>) new JavaZonedDateTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+		} else if (propertyClass.equals(OffsetTime.class)) {
+			reader = (CellValueReader<P>) new JavaOffsetTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+		} else if (propertyClass.equals(OffsetDateTime.class)) {
+			reader = (CellValueReader<P>) new JavaOffsetDateTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+		} else if (propertyClass.equals(Instant.class)) {
+			reader = (CellValueReader<P>) new JavaInstantCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+		} else if (propertyClass.equals(Year.class)) {
+			reader = (CellValueReader<P>) new JavaYearCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+		} else if (propertyClass.equals(YearMonth.class)) {
+			reader = (CellValueReader<P>) new JavaYearMonthCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
 		//IFJAVA8_END
 		} else if (Calendar.class.equals(propertyClass)) {
             CalendarCellValueReader calendarCellValueReader = new CalendarCellValueReader(index, columnDefinition.dateFormat(), columnDefinition.getTimeZone());

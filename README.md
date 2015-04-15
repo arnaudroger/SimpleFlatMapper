@@ -19,6 +19,13 @@ SFM provides fast and easy to use mapper for
 - [SpringJdbcTemplate](src/main/java/org/sfm/jdbc/spring)
 - [QueryDSL](src/main/java/org/sfm/querydsl)
 
+All with 
+
+- Constructor injection.
+- Factory method injection.
+- Setter and Field injection.
+- Java 8 Lambdas, Optional and Time support.
+
 It also provides one of the fastest [csv parser](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser) available [See Csv Benchmark](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Csv-Performance).
 
 The API is lambda friendly and the java 8 jars expose the mapped in form of Stream.

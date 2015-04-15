@@ -282,34 +282,77 @@ public class ResultSetGetterFactoryTest {
 	//IFJAVA8_START
 	@Test
 	public void testJavaLocalDate() throws Exception {
-		Calendar cal = Calendar.getInstance();
-		Date ts = new Date(cal.getTimeInMillis());
-		when(resultSet.getObject(1)).thenReturn(ts);
 		Getter<ResultSet, java.time.LocalDate> getter = factory.<java.time.LocalDate>newGetter(java.time.LocalDate.class, key(Types.DATE), FieldMapperColumnDefinition.identity());
-		java.time.LocalDate dt = getter.get(resultSet);
-		assertEquals(Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault()).toLocalDate(), dt);
+
+
+		Date ts = new Date(System.currentTimeMillis());
+		final ZonedDateTime zonedDateTime = Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault());
+		final java.time.LocalDate expected = zonedDateTime.toLocalDate();
+
+		when(resultSet.getObject(1))
+				.thenReturn(ts, // sql
+						zonedDateTime.toLocalDateTime(), // local datetime
+						zonedDateTime.toLocalDateTime().toLocalDate(), // local date
+						zonedDateTime, // zoned date time
+						zonedDateTime.toOffsetDateTime() // offset time
+				);
+
+		assertEquals(expected, getter.get(resultSet));
+		assertEquals(expected, getter.get(resultSet));
+
+		assertEquals(expected, getter.get(resultSet));
+		assertEquals(expected, getter.get(resultSet));
+
+		assertEquals(expected, getter.get(resultSet));
+
 		assertEquals("JavaLocalDateResultSetGetter{column=1}", getter.toString());
 	}
 
 	@Test
 	public void testJavaLocalDateTime() throws Exception {
-		Calendar cal = Calendar.getInstance();
-		Timestamp ts = new Timestamp(cal.getTimeInMillis());
-		when(resultSet.getObject(1)).thenReturn(ts);
+		Timestamp ts = new Timestamp(System.currentTimeMillis());
+		final ZonedDateTime zonedDateTime = Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault());
+		final java.time.LocalDateTime localDateTime = zonedDateTime.toLocalDateTime();
+
+		when(resultSet.getObject(1)).thenReturn(ts,
+				zonedDateTime.toLocalDateTime(), // local datetime
+				zonedDateTime, // zoned date time
+				zonedDateTime.toOffsetDateTime() // offset time
+		);
+
 		Getter<ResultSet, java.time.LocalDateTime> getter = factory.<java.time.LocalDateTime>newGetter(java.time.LocalDateTime.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
-		java.time.LocalDateTime dt = getter.get(resultSet);
-		assertEquals(Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime(), dt);
+
+		assertEquals(localDateTime, getter.get(resultSet));
+		assertEquals(localDateTime, getter.get(resultSet));
+		assertEquals(localDateTime, getter.get(resultSet));
+		assertEquals(localDateTime, getter.get(resultSet));
+
 		assertEquals("JavaLocalDateTimeResultSetGetter{column=1}", getter.toString());
 	}
 
 	@Test
 	public void testJavaLocalTime() throws Exception {
-		Calendar cal = Calendar.getInstance();
-		Time ts = new Time(cal.getTimeInMillis());
-		when(resultSet.getObject(1)).thenReturn(ts);
+		Time ts = new Time(System.currentTimeMillis());
+		final ZonedDateTime zonedDateTime = Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault());
+		final java.time.LocalTime localTime = zonedDateTime.toLocalTime();
+
+		when(resultSet.getObject(1)).thenReturn(ts,
+				zonedDateTime.toLocalDateTime(), // local datetime
+				zonedDateTime.toLocalTime(),
+				zonedDateTime, // zoned date time
+				zonedDateTime.toOffsetDateTime(), // offset time
+				zonedDateTime.toOffsetDateTime().toOffsetTime()
+		);
+
 		Getter<ResultSet, java.time.LocalTime> getter = factory.<java.time.LocalTime>newGetter(java.time.LocalTime.class, key(Types.TIME), FieldMapperColumnDefinition.identity());
-		java.time.LocalTime dt = getter.get(resultSet);
-		assertEquals(Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault()).toLocalTime(), dt);
+
+		assertEquals(localTime, getter.get(resultSet));
+		assertEquals(localTime, getter.get(resultSet));
+		assertEquals(localTime, getter.get(resultSet));
+		assertEquals(localTime, getter.get(resultSet));
+		assertEquals(localTime, getter.get(resultSet));
+		assertEquals(localTime, getter.get(resultSet));
+
 		assertEquals("JavaLocalTimeResultSetGetter{column=1}", getter.toString());
 	}
 
@@ -317,11 +360,19 @@ public class ResultSetGetterFactoryTest {
 	public void testJavaOffsetDateTime() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		Timestamp ts = new Timestamp(cal.getTimeInMillis());
-		when(resultSet.getObject(1)).thenReturn(ts);
-		Getter<ResultSet, java.time.OffsetDateTime> getter = factory.<java.time.OffsetDateTime>newGetter(java.time.OffsetDateTime.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
-		java.time.OffsetDateTime dt = getter.get(resultSet);
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
-		assertEquals(instant.atOffset(ZoneId.systemDefault().getRules().getOffset(instant)), dt);
+		final OffsetDateTime offsetDateTime = instant.atOffset(ZoneId.systemDefault().getRules().getOffset(instant));
+
+		when(resultSet.getObject(1)).thenReturn(ts,
+				offsetDateTime.toLocalDateTime(),
+				offsetDateTime.toZonedDateTime(),
+				offsetDateTime);
+
+		Getter<ResultSet, java.time.OffsetDateTime> getter = factory.<java.time.OffsetDateTime>newGetter(java.time.OffsetDateTime.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
+		assertEquals(offsetDateTime, getter.get(resultSet));
+		assertEquals(offsetDateTime, getter.get(resultSet));
+		assertEquals(offsetDateTime, getter.get(resultSet));
+		assertEquals(offsetDateTime, getter.get(resultSet));
 		assertEquals("JavaOffsetDateTimeResultSetGetter{column=1}", getter.toString());
 	}
 
@@ -329,11 +380,25 @@ public class ResultSetGetterFactoryTest {
 	public void testJavaOffsetTime() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		Timestamp ts = new Timestamp(cal.getTimeInMillis());
-		when(resultSet.getObject(1)).thenReturn(ts);
-		Getter<ResultSet, java.time.OffsetTime> getter = factory.<java.time.OffsetTime>newGetter(java.time.OffsetTime.class, key(Types.TIME), FieldMapperColumnDefinition.identity());
-		java.time.OffsetTime dt = getter.get(resultSet);
+
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
-		assertEquals(instant.atOffset(ZoneId.systemDefault().getRules().getOffset(instant)).toOffsetTime(), dt);
+		final OffsetDateTime offsetDateTime = instant.atOffset(ZoneId.systemDefault().getRules().getOffset(instant));
+		final OffsetTime offsetTime = offsetDateTime.toOffsetTime();
+
+		when(resultSet.getObject(1)).thenReturn(ts,
+				offsetDateTime.toLocalDateTime(),
+				offsetDateTime.toZonedDateTime(),
+				offsetDateTime,
+				offsetDateTime.toOffsetTime());
+
+		Getter<ResultSet, java.time.OffsetTime> getter = factory.<java.time.OffsetTime>newGetter(java.time.OffsetTime.class, key(Types.TIME), FieldMapperColumnDefinition.identity());
+
+		assertEquals(offsetTime, getter.get(resultSet));
+		assertEquals(offsetTime, getter.get(resultSet));
+		assertEquals(offsetTime, getter.get(resultSet));
+		assertEquals(offsetTime, getter.get(resultSet));
+		assertEquals(offsetTime, getter.get(resultSet));
+
 		assertEquals("JavaOffsetTimeResultSetGetter{column=1}", getter.toString());
 	}
 
@@ -341,11 +406,21 @@ public class ResultSetGetterFactoryTest {
 	public void testJavaZonedDateTime() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		Timestamp ts = new Timestamp(cal.getTimeInMillis());
-		when(resultSet.getObject(1)).thenReturn(ts);
-		Getter<ResultSet, java.time.ZonedDateTime> getter = factory.<java.time.ZonedDateTime>newGetter(java.time.ZonedDateTime.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
-		java.time.ZonedDateTime dt = getter.get(resultSet);
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
-		assertEquals(instant.atZone(ZoneId.systemDefault()), dt);
+		final ZonedDateTime zonedDateTime = instant.atZone(ZoneId.systemDefault());
+
+		when(resultSet.getObject(1)).thenReturn(ts,
+				zonedDateTime.toLocalDateTime(),
+				zonedDateTime,
+				zonedDateTime.toOffsetDateTime());
+
+		Getter<ResultSet, java.time.ZonedDateTime> getter = factory.<java.time.ZonedDateTime>newGetter(java.time.ZonedDateTime.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
+
+		assertEquals(zonedDateTime, getter.get(resultSet));
+		assertEquals(zonedDateTime, getter.get(resultSet));
+		assertEquals(zonedDateTime, getter.get(resultSet));
+		assertEquals(zonedDateTime.toOffsetDateTime().toZonedDateTime(), getter.get(resultSet));
+
 		assertEquals("JavaZonedDateTimeResultSetGetter{column=1}", getter.toString());
 	}
 

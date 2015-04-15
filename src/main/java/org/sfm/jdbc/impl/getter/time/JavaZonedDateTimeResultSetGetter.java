@@ -4,9 +4,7 @@ import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.reflect.Getter;
 
 import java.sql.ResultSet;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
@@ -34,6 +32,14 @@ public class JavaZonedDateTimeResultSetGetter implements Getter<ResultSet, Zoned
 
         if (o instanceof ZonedDateTime) {
             return (ZonedDateTime) o;
+        }
+
+        if (o instanceof LocalDateTime) {
+            return ((LocalDateTime)o).atZone(zone);
+        }
+
+        if (o instanceof OffsetDateTime) {
+            return ((OffsetDateTime)o).toZonedDateTime();
         }
 
         if (o instanceof TemporalAccessor) {

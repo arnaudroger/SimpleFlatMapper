@@ -6,6 +6,7 @@ import org.sfm.reflect.Getter;
 import java.sql.ResultSet;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
@@ -34,6 +35,14 @@ public class JavaLocalDateResultSetGetter implements Getter<ResultSet, LocalDate
 
         if (o instanceof LocalDate) {
             return (LocalDate) o;
+        }
+
+        if (o instanceof LocalDateTime) {
+            return ((LocalDateTime)o).toLocalDate();
+        }
+
+        if (o instanceof Instant) {
+            return ((Instant)o).atZone(zone).toLocalDate();
         }
 
         if (o instanceof TemporalAccessor) {

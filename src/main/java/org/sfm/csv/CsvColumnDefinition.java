@@ -2,7 +2,7 @@ package org.sfm.csv;
 
 import org.sfm.csv.column.CustomReaderFactoryProperty;
 import org.sfm.csv.column.CustomReaderProperty;
-import org.sfm.map.column.ColumnDefinitionImpl;
+import org.sfm.map.ColumnDefinition;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.TimeZoneProperty;
@@ -12,7 +12,7 @@ import org.sfm.utils.Predicate;
 import java.lang.reflect.Type;
 import java.util.TimeZone;
 
-public class CsvColumnDefinition extends ColumnDefinitionImpl<CsvColumnKey, CsvColumnDefinition> {
+public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColumnDefinition> {
 
     public static final CsvColumnDefinition IDENTITY = new CsvColumnDefinition(new ColumnProperty[0]);
 

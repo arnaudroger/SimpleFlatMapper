@@ -2,6 +2,7 @@ package org.sfm.csv;
 
 import org.sfm.csv.impl.*;
 import org.sfm.map.*;
+import org.sfm.map.ColumnDefinition;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
@@ -195,7 +196,7 @@ public class CsvMapperBuilder<T> {
                 final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
 
                 @Override
-                public <P> Getter<CsvMapperCellHandler<T>, P> newGetter(Type target, CsvColumnKey key) {
+                public <P> Getter<CsvMapperCellHandler<T>, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
                     return cellSetterFactory.newDelayedGetter(key, target);
                 }
             });

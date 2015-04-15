@@ -5,6 +5,7 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObjectWithAlias;
 import org.sfm.map.*;
+import org.sfm.map.ColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;
@@ -228,7 +229,7 @@ public class JdbcMapperFactoryTest {
 		JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.asm().getterFactory(new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return new Getter() {
 					@Override
 					public Object get(Object target) throws Exception {

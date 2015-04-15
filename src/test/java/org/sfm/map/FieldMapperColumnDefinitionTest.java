@@ -19,7 +19,7 @@ public class FieldMapperColumnDefinitionTest {
     public void testCompose() throws Exception {
         GetterFactory<ResultSet, JdbcColumnKey> getterFactory = new GetterFactory<ResultSet, JdbcColumnKey>() {
             @Override
-            public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+            public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
                 return null;
             }
 

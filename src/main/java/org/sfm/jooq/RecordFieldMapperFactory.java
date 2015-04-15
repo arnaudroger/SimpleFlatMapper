@@ -28,7 +28,7 @@ public class RecordFieldMapperFactory<R extends Record> implements
 		final Setter<T, P> setter = propertyMapping.getPropertyMeta().getSetter();
 		final JooqFieldKey key = propertyMapping.getColumnKey();
 
-		Getter<R, P> getter = getterFactory.newGetter(propertyType, key);
+		Getter<R, P> getter = getterFactory.newGetter(propertyType, key, propertyMapping.getColumnDefinition());
 		if (getter == null) {
 			mapperErrorHandler.getterNotFound("Could not find getter for " + key + " type " + propertyType);
 		}

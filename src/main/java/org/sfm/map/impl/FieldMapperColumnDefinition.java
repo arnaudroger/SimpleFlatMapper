@@ -1,5 +1,6 @@
 package org.sfm.map.impl;
 
+import org.sfm.map.ColumnDefinition;
 import org.sfm.map.FieldKey;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.GetterFactory;
@@ -10,7 +11,7 @@ import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 
-public class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends ColumnDefinitionImpl<K, FieldMapperColumnDefinition<K, S>> {
+public class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends ColumnDefinition<K, FieldMapperColumnDefinition<K, S>> {
 
     private static final FieldMapperColumnDefinition IDENTITY = new FieldMapperColumnDefinition(new ColumnProperty[0]);
 

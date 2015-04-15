@@ -6,6 +6,7 @@ import org.sfm.jooq.getter.EnumRecordOrdinalGetter;
 import org.sfm.jooq.getter.RecordGetter;
 import org.sfm.jooq.getter.RecordGetterWithConverter;
 import org.sfm.map.GetterFactory;
+import org.sfm.map.ColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.utils.conv.Converter;
@@ -18,7 +19,7 @@ public class RecordGetterFactory<R extends Record> implements
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public <P> Getter<R, P> newGetter(Type genericType, JooqFieldKey key) {
+	public <P> Getter<R, P> newGetter(Type genericType, JooqFieldKey key, ColumnDefinition<?, ?> columnDefinition) {
 		Class<P> propertyClass = TypeHelper.toClass(genericType);
 		if (Enum.class.isAssignableFrom(propertyClass)) {
 			Class<?> columnType = key.getField().getType();

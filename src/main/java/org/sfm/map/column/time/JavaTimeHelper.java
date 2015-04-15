@@ -1,6 +1,6 @@
 package org.sfm.map.column.time;
 
-import org.sfm.map.column.ColumnDefinitionImpl;
+import org.sfm.map.ColumnDefinition;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.TimeZoneProperty;
 import org.sfm.map.column.joda.JodaDateTimeFormatterProperty;
@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 
 public class JavaTimeHelper {
 
-    public static DateTimeFormatter getDateTimeFormatter(ColumnDefinitionImpl<?, ?> columnDefinition) {
+    public static DateTimeFormatter getDateTimeFormatter(ColumnDefinition<?, ?> columnDefinition) {
         DateTimeFormatter dtf;
 
         if (columnDefinition.has(JodaDateTimeFormatterProperty.class)) {
@@ -21,13 +21,19 @@ public class JavaTimeHelper {
             throw new IllegalArgumentException("No date format pattern specified");
         }
 
-       if (columnDefinition.has(TimeZoneProperty.class))
-           dtf = dtf.withZone(columnDefinition.lookFor(TimeZoneProperty.class).getTimeZone().toZoneId());
-       else {
-           dtf = dtf.withZone(ZoneId.systemDefault());
-        }
+        dtf = dtf.withZone(getZoneId(columnDefinition));
 
         return dtf;
+    }
+
+    public static ZoneId getZoneId(ColumnDefinition<?, ?> columnDefinition) {
+        if (columnDefinition.has(JavaZoneIdProperty.class)) {
+            return columnDefinition.lookFor(JavaZoneIdProperty.class).getZoneId();
+        } else if (columnDefinition.has(TimeZoneProperty.class)) {
+            return columnDefinition.lookFor(TimeZoneProperty.class).getTimeZone().toZoneId();
+        }
+
+        return ZoneId.systemDefault();
     }
 
 }

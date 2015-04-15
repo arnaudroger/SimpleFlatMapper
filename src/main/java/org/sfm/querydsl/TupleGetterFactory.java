@@ -2,6 +2,7 @@ package org.sfm.querydsl;
 
 import com.mysema.query.Tuple;
 import org.sfm.map.GetterFactory;
+import org.sfm.map.ColumnDefinition;
 import org.sfm.querydsl.getter.EnumTupleNamedIndexedGetter;
 import org.sfm.querydsl.getter.EnumTupleOrdinalIndexedGetter;
 import org.sfm.querydsl.getter.TupleIndexedGetter;
@@ -14,7 +15,7 @@ public final class TupleGetterFactory implements GetterFactory<Tuple, TupleEleme
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public <P> Getter<Tuple, P> newGetter(Type genericType, TupleElementKey key) {
+	public <P> Getter<Tuple, P> newGetter(Type genericType, TupleElementKey key, ColumnDefinition<?, ?> columnDefinition) {
 		
 		Class<Object> propertyClass = TypeHelper.toClass(genericType);
 		if (Enum.class.isAssignableFrom(propertyClass)) {

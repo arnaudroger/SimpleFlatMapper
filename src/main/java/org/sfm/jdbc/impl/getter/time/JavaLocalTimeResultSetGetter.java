@@ -15,9 +15,9 @@ public class JavaLocalTimeResultSetGetter implements Getter<ResultSet, LocalTime
     private final int index;
     private final ZoneId zone;
 
-    public JavaLocalTimeResultSetGetter(JdbcColumnKey key) {
+    public JavaLocalTimeResultSetGetter(JdbcColumnKey key, ZoneId zoneId) {
         this.index = key.getIndex();
-        this.zone = ZoneId.systemDefault();
+        this.zone = zoneId;
     }
 
     @Override

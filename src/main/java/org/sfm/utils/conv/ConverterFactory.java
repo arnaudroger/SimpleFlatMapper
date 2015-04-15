@@ -2,6 +2,8 @@ package org.sfm.utils.conv;
 
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
+import org.sfm.map.ColumnDefinition;
+import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
@@ -85,13 +87,13 @@ public class ConverterFactory {
 
 	@SuppressWarnings("unchecked")
 	private static <F, P, E> Converter<F, P> newArrayConverter(Type eltType) {
-		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(eltType, new JdbcColumnKey("elt", 2));
+		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(eltType, new JdbcColumnKey("elt", 2), FieldMapperColumnDefinition.identity());
 		if (elementGetter == null) return null;
 		return (Converter<F, P>)new ArrayConverter<E>((Class<E>) TypeHelper.toClass(eltType), elementGetter);
 	}
 	@SuppressWarnings("unchecked")
 	private static <F, P, E> Converter<F, P> newArrayToListConverter(Type eltType) {
-		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(eltType, new JdbcColumnKey("elt", 2));
+		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(eltType, new JdbcColumnKey("elt", 2), FieldMapperColumnDefinition.identity());
 		if (elementGetter == null) return null;
 		return (Converter<F, P>)new ArrayToListConverter<E>(elementGetter);
 	}

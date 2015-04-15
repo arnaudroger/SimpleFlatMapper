@@ -4,6 +4,7 @@ import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.getter.joda.JodaTimeGetterHelper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.GetterFactory;
+import org.sfm.map.ColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
@@ -22,6 +23,7 @@ import java.util.Map.Entry;
 
 
 //IFJAVA8_START
+import org.sfm.map.column.time.JavaTimeHelper;
 import org.sfm.jdbc.impl.getter.time.*;
 import java.time.*;
 //IFJAVA8_END
@@ -30,7 +32,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 	public static final GetterFactory<ResultSet, JdbcColumnKey> DATE_GETTER_FACTORY = new GetterFactory<ResultSet, JdbcColumnKey>() {
 		@SuppressWarnings("unchecked")
 		@Override
-		public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+		public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 			switch (key.getSqlType()) {
 				case JdbcColumnKey.UNDEFINED_TYPE:
 					return (Getter<ResultSet, P>) new UndefinedDateResultSetGetter(key.getIndex());
@@ -49,7 +51,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			GetterFactory<ResultSet, JdbcColumnKey> {
 		@SuppressWarnings("unchecked")
 		@Override
-		public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+		public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 			switch(key.getSqlType() ) {
 			case Types.NCHAR:
 			case Types.NVARCHAR:
@@ -65,7 +67,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 	public static final GetterFactory<ResultSet, JdbcColumnKey> ENUM_GETTER_FACTORY = new GetterFactory<ResultSet, JdbcColumnKey>() {
 		@SuppressWarnings("unchecked")
 		@Override
-		public <P> Getter<ResultSet, P> newGetter(Type type, JdbcColumnKey key) {
+		public <P> Getter<ResultSet, P> newGetter(Type type, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 			@SuppressWarnings("rawtypes")
 			Class<? extends Enum> enumClass = TypeHelper.toClass(type);
 			return (Getter<ResultSet, P>) newEnumGetter(enumClass, key);
@@ -110,8 +112,8 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(java.util.Calendar.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
-				Getter<ResultSet, Date> dateGetter = DATE_GETTER_FACTORY.newGetter(Date.class, key);
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+				Getter<ResultSet, Date> dateGetter = DATE_GETTER_FACTORY.newGetter(Date.class, key, columnDefinition);
 				return (Getter<ResultSet, P>) new CalendarResultSetGetter(dateGetter);
 			}
 		});
@@ -119,7 +121,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(java.sql.Date.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new DateResultSetGetter(key.getIndex());
 			}
 		});
@@ -127,7 +129,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(java.sql.Timestamp.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new TimestampResultSetGetter(key.getIndex());
 			}
 		});
@@ -135,7 +137,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(java.sql.Time.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new TimeResultSetGetter(key.getIndex());
 			}
 		});
@@ -143,70 +145,70 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(Boolean.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new BooleanResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(Byte.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new ByteResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(Character.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new CharacterResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(Short.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new ShortResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(Integer.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new IntResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(Long.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new LongResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(Float.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new FloatResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(Double.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new DoubleResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(BigInteger.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new BigIntegerResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(BigDecimal.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new BigDecimalResultSetGetter(key.getIndex());
 			}
 		});
@@ -214,7 +216,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(URL.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				if (key.getSqlType() == Types.DATALINK) {
 					return (Getter<ResultSet, P>) new UrlResultSetGetter(key.getIndex());
 				} else {
@@ -226,7 +228,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(byte[].class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new ByteArrayResultSetGetter(key.getIndex());
 			}
 		});
@@ -234,7 +236,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(InputStream.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new InputStreamResultSetGetter(key.getIndex());
 			}
 		});
@@ -242,7 +244,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(Blob.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new BlobResultSetGetter(key.getIndex());
 			}
 		});
@@ -250,7 +252,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(Reader.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				switch (key.getSqlType()) {
 					case Types.LONGNVARCHAR:
 					case Types.NCHAR:
@@ -266,7 +268,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(Clob.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new ClobResultSetGetter(key.getIndex());
 			}
 		});
@@ -274,35 +276,35 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(NClob.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new NClobResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(Ref.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new RefResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(RowId.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new RowIdResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(SQLXML.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new SQLXMLResultSetGetter(key.getIndex());
 			}
 		});
 		factoryPerType.put(Array.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new SqlArrayResultSetGetter(key.getIndex());
 			}
 		});
@@ -311,64 +313,64 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(LocalDate.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
-				return (Getter<ResultSet, P>) new JavaLocalDateResultSetGetter(key);
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+				return (Getter<ResultSet, P>) new JavaLocalDateResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
 			}
 		});
 		factoryPerType.put(LocalDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
-				return (Getter<ResultSet, P>) new JavaLocalDateTimeResultSetGetter(key);
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+				return (Getter<ResultSet, P>) new JavaLocalDateTimeResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
 			}
 		});
 		factoryPerType.put(LocalTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
-				return (Getter<ResultSet, P>) new JavaLocalTimeResultSetGetter(key);
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+				return (Getter<ResultSet, P>) new JavaLocalTimeResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
 			}
 		});
 		factoryPerType.put(OffsetDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
-				return (Getter<ResultSet, P>) new JavaOffsetDateTimeResultSetGetter(key);
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+				return (Getter<ResultSet, P>) new JavaOffsetDateTimeResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
 			}
 		});
 		factoryPerType.put(OffsetTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
-				return (Getter<ResultSet, P>) new JavaOffsetTimeResultSetGetter(key);
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+				return (Getter<ResultSet, P>) new JavaOffsetTimeResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
 			}
 		});
 		factoryPerType.put(ZonedDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
-				return (Getter<ResultSet, P>) new JavaZonedDateTimeResultSetGetter(key);
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+				return (Getter<ResultSet, P>) new JavaZonedDateTimeResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
 			}
 		});
 		factoryPerType.put(Instant.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new JavaInstantResultSetGetter(key);
 			}
 		});
 		factoryPerType.put(Year.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
-				return (Getter<ResultSet, P>) new JavaYearResultSetGetter(key);
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+				return (Getter<ResultSet, P>) new JavaYearResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
 			}
 		});
 		factoryPerType.put(YearMonth.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
-				return (Getter<ResultSet, P>) new JavaYearMonthResultSetGetter(key);
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+				return (Getter<ResultSet, P>) new JavaYearMonthResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
 			}
 		});
 		//IFJAVA8_END
@@ -377,7 +379,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 	@SuppressWarnings("unchecked")
 	@Override
 	public <P> Getter<ResultSet, P> newGetter(Type genericType,
-			JdbcColumnKey key) {
+											  JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 		
 		Class<?> clazz = TypeHelper.wrap(TypeHelper.toClass(genericType));
 
@@ -388,10 +390,10 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		if (key.getSqlType() == Types.ARRAY) {
 			if (clazz.isArray()) {
 				Class<?> elementType = clazz.getComponentType();
-				return (Getter<ResultSet, P>) newArrayGetter(elementType, key);
+				return (Getter<ResultSet, P>) newArrayGetter(elementType, key, columnDefinition);
 			} else if (TypeHelper.isAssignable(List.class, genericType)) {
 				Type elementType = TypeHelper.getComponentType(genericType);
-				return (Getter<ResultSet, P>) newArrayListGetter(elementType, key);
+				return (Getter<ResultSet, P>) newArrayListGetter(elementType, key, columnDefinition);
 			}
 		}
 		
@@ -415,15 +417,15 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		
 		Getter<ResultSet, P> getter;
 		if (getterFactory != null) {
-			getter = (Getter<ResultSet, P>) getterFactory.newGetter(genericType, key);
+			getter = (Getter<ResultSet, P>) getterFactory.newGetter(genericType, key, columnDefinition);
 		} else {
-			getter = (Getter<ResultSet, P>) JodaTimeGetterHelper.getGetter(genericType, key);
+			getter = (Getter<ResultSet, P>) JodaTimeGetterHelper.getGetter(genericType, key, columnDefinition);
 		}
 		return getter;
 	}
 
-	private <E> Getter<ResultSet, E[]> newArrayGetter(Class<E> elementType, JdbcColumnKey key) {
-		Getter<ResultSet, E> elementGetter = newGetter(elementType, new JdbcColumnKey("elt", 2));
+	private <E> Getter<ResultSet, E[]> newArrayGetter(Class<E> elementType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+		Getter<ResultSet, E> elementGetter = newGetter(elementType, new JdbcColumnKey("elt", 2), columnDefinition);
 		
 		if (elementGetter != null) {
 			return new ArrayResultSetGetter<E>(key.getIndex(), elementType, elementGetter);
@@ -432,8 +434,8 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		return null;
 	}
 	
-	private <E> Getter<ResultSet, List<E>> newArrayListGetter(Type elementType, JdbcColumnKey key) {
-		Getter<ResultSet, E> elementGetter = newGetter(elementType, new JdbcColumnKey("elt", 2));
+	private <E> Getter<ResultSet, List<E>> newArrayListGetter(Type elementType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+		Getter<ResultSet, E> elementGetter = newGetter(elementType, new JdbcColumnKey("elt", 2), columnDefinition);
 		
 		if (elementGetter != null) {
 			return new ArrayToListResultSetGetter<E>(key.getIndex(), elementGetter);

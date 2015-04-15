@@ -93,14 +93,14 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
         }
 
 		if (getter == null) {
-			getter = getterFactory.newGetter(propertyType, key);
+			getter = getterFactory.newGetter(propertyType, key, propertyMapping.getColumnDefinition());
 		}
 		if (getter == null) {
 			final ClassMeta<P> classMeta = propertyMeta.getClassMeta();
 			for(InstantiatorDefinition id : classMeta.getInstantiatorDefinitions()) {
 				if (id.getParameters().length == 1) {
 					final Type sourceType = id.getParameters()[0].getGenericType();
-					getter = getterFactory.newGetter(sourceType, key);
+					getter = getterFactory.newGetter(sourceType, key, null);
 					if (getter != null) {
 						Instantiator instantiator =
 								classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);

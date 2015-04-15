@@ -283,7 +283,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		Getter<S, ?> getter = t.getColumnDefinition().getCustomGetter();
 
 		if (getter == null) {
-			getter = getterFactory.newGetter(paramType, t.getColumnKey());
+			getter = getterFactory.newGetter(paramType, t.getColumnKey(), t.getColumnDefinition());
 		}
 		if (getter == null) {
 			mapperBuilderErrorHandler.getterNotFound("Could not find getter for " + t.getColumnKey() + " type " + paramType);

@@ -15,9 +15,9 @@ public class JavaOffsetDateTimeResultSetGetter implements Getter<ResultSet, Offs
     private final int index;
     private final ZoneId zone;
 
-    public JavaOffsetDateTimeResultSetGetter(JdbcColumnKey key) {
+    public JavaOffsetDateTimeResultSetGetter(JdbcColumnKey key, ZoneId zoneId) {
         this.index = key.getIndex();
-        this.zone = ZoneId.systemDefault();
+        this.zone = zoneId;
     }
 
     @Override

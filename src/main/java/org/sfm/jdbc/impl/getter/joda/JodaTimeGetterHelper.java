@@ -2,6 +2,7 @@ package org.sfm.jdbc.impl.getter.joda;
 
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
+import org.sfm.map.ColumnDefinition;
 import org.sfm.map.impl.JodaTimeClasses;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
@@ -13,10 +14,10 @@ import java.util.Date;
 public class JodaTimeGetterHelper {
 
 
-    public static Getter<ResultSet, ?> getGetter(Type type, JdbcColumnKey key) {
+    public static Getter<ResultSet, ?> getGetter(Type type, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
         Class<?> clazz = TypeHelper.toClass(type);
 
-        Getter<ResultSet, ? extends Date> getter = ResultSetGetterFactory.DATE_GETTER_FACTORY.newGetter(java.util.Date.class, key);
+        Getter<ResultSet, ? extends Date> getter = ResultSetGetterFactory.DATE_GETTER_FACTORY.newGetter(java.util.Date.class, key, columnDefinition);
 
         if (JodaTimeClasses.isJodaDateTime(clazz)) {
             return new JodaDateTimeResultSetGetter(getter);

@@ -1,50 +1,127 @@
 package org.sfm.map;
 
 
+import org.sfm.map.column.ColumnProperty;
+import org.sfm.map.column.IgnoreProperty;
+import org.sfm.map.column.KeyProperty;
+import org.sfm.map.column.RenameProperty;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
-public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends  ColumnDefinition<K, CD>> {
+public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnDefinition<K, CD>> {
+
+    public static final Predicate<PropertyMeta<?, ?>> DEFAULT_APPLIES_TO = new Predicate<PropertyMeta<?, ?>>() {
+        @Override
+        public boolean test(PropertyMeta<?, ?> propertyMeta) {
+            return false;
+        }
+    };
+    private final ColumnProperty[] properties;
+
+    protected ColumnDefinition(ColumnProperty[] properties) {
+        if (properties == null) throw new NullPointerException();
+        this.properties = properties;
+    }
+
+
     public K rename(K key) {
+        RenameProperty rp = lookFor(RenameProperty.class);
+        if (rp != null) {
+            return key.alias(rp.getName());
+        }
         return key;
     }
 
-    public boolean hasCustomSource() {
-        return false;
-    }
-
-    public Type getCustomSourceReturnType() {
-        throw new UnsupportedOperationException();
-    }
-
     public boolean ignore() {
-        return false;
+        return has(IgnoreProperty.class);
+    }
+
+    public boolean has(Class<? extends ColumnProperty> clazz) {
+        return lookFor(clazz) != null;
     }
 
     public boolean isKey() {
-        return false;
+        return has(KeyProperty.class);
     }
 
     public Predicate<PropertyMeta<?, ?>> keyAppliesTo() {
-        return new Predicate<PropertyMeta<?, ?>>() {
-            @Override
-            public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                return false;
-            }
-        };
+        KeyProperty kp = lookFor(KeyProperty.class);
+
+        if (kp != null) {
+            return kp.getAppliesTo();
+        }
+
+        return DEFAULT_APPLIES_TO;
     }
 
-    public abstract CD compose(CD columnDefinition);
+    public CD compose(CD columnDefinition) {
+        if (columnDefinition == null) throw new NullPointerException();
+        ColumnDefinition cdi = columnDefinition;
+        ColumnProperty[] properties = new ColumnProperty[this.properties.length + cdi.properties.length];
+        System.arraycopy(cdi.properties, 0, properties, 0, cdi.properties.length);
+        System.arraycopy(this.properties, 0, properties, cdi.properties.length, this.properties.length);
+        return newColumnDefinition(properties);
+    }
 
-    public abstract CD addRename(String name);
-    public abstract CD addIgnore();
+    public CD add(ColumnProperty property) {
+        if (property == null) throw new NullPointerException();
+        ColumnProperty[] properties = new ColumnProperty[this.properties.length + 1];
+        System.arraycopy(this.properties, 0, properties, 0, this.properties.length);
+        properties[this.properties.length] = property;
+        return newColumnDefinition(properties);
+    }
 
-    public abstract CD addKey();
-    public abstract CD addKey(Predicate<PropertyMeta<?, ?>> appliesTo);
+    @SuppressWarnings("unchecked")
+    public <T> T lookFor(Class<T> propClass) {
+        for(ColumnProperty cp : properties) {
+            if (cp != null && propClass.equals(cp.getClass())) {
+                return (T) cp;
+            }
+        }
+        return null;
+    }
 
-    protected abstract void appendToStringBuilder(StringBuilder sb);
+    protected abstract CD newColumnDefinition(ColumnProperty[] properties);
+
+    public CD addRename(String name) {
+        return add(new RenameProperty(name));
+    }
+
+    public CD addIgnore() {
+        return add(new IgnoreProperty());
+    }
+
+    public CD addKey() {
+        return add(new KeyProperty());
+    }
+
+    public CD addKey(Predicate<PropertyMeta<?, ?>> appliesTo) {
+        return add(new KeyProperty(appliesTo));
+    }
+
+    protected void appendToStringBuilder(StringBuilder sb) {
+        for (int i = 0; i < properties.length; i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append(properties[i].toString());
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ColumnDefinition)) return false;
+
+        ColumnDefinition<?, ?> that = (ColumnDefinition<?, ?>) o;
+
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(properties, that.properties);
+
+    }
 
     public String toString() {
         StringBuilder sb  = new StringBuilder();
@@ -54,5 +131,18 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends  Column
         sb.append("}");
 
         return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(properties);
+    }
+
+    public boolean hasCustomSource() {
+        return false;
+    }
+
+    public Type getCustomSourceReturnType() {
+        throw new UnsupportedOperationException();
     }
 }

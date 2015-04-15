@@ -28,7 +28,7 @@ public final class TupleFieldMapperFactory implements FieldMapperFactory<Tuple, 
 		final Setter<T, P> setter = propertyMapping.getPropertyMeta().getSetter();
 		final TupleElementKey key = propertyMapping.getColumnKey();
 
-		Getter<Tuple, P> getter = getterFactory.newGetter(propertyType, key);
+		Getter<Tuple, P> getter = getterFactory.newGetter(propertyType, key, propertyMapping.getColumnDefinition());
 		if (getter == null) {
 			mappingErrorHandler.getterNotFound("Could not find getter for " + key + " type " + propertyType);
 		}

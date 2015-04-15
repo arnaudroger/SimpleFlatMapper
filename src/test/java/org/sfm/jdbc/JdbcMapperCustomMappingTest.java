@@ -7,6 +7,7 @@ import org.sfm.map.GetterFactory;
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
+import org.sfm.map.ColumnDefinition;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.utils.RowHandler;
@@ -173,7 +174,7 @@ public class JdbcMapperCustomMappingTest {
                                 FieldMapperColumnDefinition.customGetterFactory(new GetterFactory<ResultSet, JdbcColumnKey>() {
                                     @SuppressWarnings("unchecked")
                                     @Override
-                                    public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key) {
+                                    public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
                                         return (Getter<ResultSet, P>) new Getter<ResultSet, Long>() {
                                             @Override
                                             public Long get(ResultSet target) throws Exception {

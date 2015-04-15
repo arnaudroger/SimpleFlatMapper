@@ -13,9 +13,9 @@ public class JavaYearResultSetGetter implements Getter<ResultSet, Year> {
     private final int index;
     private final ZoneId zone;
 
-    public JavaYearResultSetGetter(JdbcColumnKey key) {
+    public JavaYearResultSetGetter(JdbcColumnKey key, ZoneId zoneId) {
         this.index = key.getIndex();
-        this.zone = ZoneId.systemDefault();
+        this.zone = zoneId;
     }
 
     @Override

@@ -3,13 +3,13 @@ package org.sfm.map.column.joda;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.sfm.map.column.ColumnDefinitionImpl;
+import org.sfm.map.ColumnDefinition;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.TimeZoneProperty;
 
 public class JodaHelper {
 
-    public static DateTimeFormatter getDateTimeFormatter(ColumnDefinitionImpl<?, ?> columnDefinition) {
+    public static DateTimeFormatter getDateTimeFormatter(ColumnDefinition<?, ?> columnDefinition) {
         DateTimeFormatter dtf;
 
         if (columnDefinition.has(JodaDateTimeFormatterProperty.class)) {

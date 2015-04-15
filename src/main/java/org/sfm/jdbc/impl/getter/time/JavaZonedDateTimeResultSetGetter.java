@@ -15,9 +15,9 @@ public class JavaZonedDateTimeResultSetGetter implements Getter<ResultSet, Zoned
     private final int index;
     private final ZoneId zone;
 
-    public JavaZonedDateTimeResultSetGetter(JdbcColumnKey key) {
+    public JavaZonedDateTimeResultSetGetter(JdbcColumnKey key, ZoneId zoneId) {
         this.index = key.getIndex();
-        this.zone = ZoneId.systemDefault();
+        this.zone = zoneId;
     }
 
     @Override

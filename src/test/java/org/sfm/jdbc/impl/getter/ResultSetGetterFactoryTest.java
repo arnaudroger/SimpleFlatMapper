@@ -32,6 +32,7 @@ import static org.mockito.Mockito.when;
 
 public class ResultSetGetterFactoryTest {
 
+	public static final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> IDENTITY = FieldMapperColumnDefinition.identity();
 	ResultSetGetterFactory factory;
 	ResultSet resultSet;
 	
@@ -44,29 +45,29 @@ public class ResultSetGetterFactoryTest {
 	@Test
 	public void testNString() throws Exception {
 		when(resultSet.getNString(1)).thenReturn("value");
-		assertEquals("value", factory.newGetter(String.class, key(Types.NCHAR), FieldMapperColumnDefinition.identity()).get(resultSet));
-		assertEquals("value", factory.newGetter(String.class, key(Types.NCLOB), FieldMapperColumnDefinition.identity()).get(resultSet));
-		assertEquals("value", factory.newGetter(String.class, key(Types.NVARCHAR), FieldMapperColumnDefinition.identity()).get(resultSet));
+		assertEquals("value", factory.newGetter(String.class, key(Types.NCHAR), IDENTITY).get(resultSet));
+		assertEquals("value", factory.newGetter(String.class, key(Types.NCLOB), IDENTITY).get(resultSet));
+		assertEquals("value", factory.newGetter(String.class, key(Types.NVARCHAR), IDENTITY).get(resultSet));
 	}
 	
 	@Test
 	public void testEnumNString() throws Exception {
 		when(resultSet.getNString(1)).thenReturn("type4");
-		assertEquals(DbObject.Type.type4, factory.newGetter(DbObject.Type.class, key(Types.NCHAR), FieldMapperColumnDefinition.identity()).get(resultSet));
-		assertEquals(DbObject.Type.type4, factory.newGetter(DbObject.Type.class, key(Types.NCLOB), FieldMapperColumnDefinition.identity()).get(resultSet));
-		assertEquals(DbObject.Type.type4, factory.newGetter(DbObject.Type.class, key(Types.NVARCHAR), FieldMapperColumnDefinition.identity()).get(resultSet));
+		assertEquals(DbObject.Type.type4, factory.newGetter(DbObject.Type.class, key(Types.NCHAR), IDENTITY).get(resultSet));
+		assertEquals(DbObject.Type.type4, factory.newGetter(DbObject.Type.class, key(Types.NCLOB), IDENTITY).get(resultSet));
+		assertEquals(DbObject.Type.type4, factory.newGetter(DbObject.Type.class, key(Types.NVARCHAR), IDENTITY).get(resultSet));
 
 		when(resultSet.getString(1)).thenReturn("type3");
-		assertEquals(DbObject.Type.type3, factory.newGetter(DbObject.Type.class, key(Types.CHAR), FieldMapperColumnDefinition.identity()).get(resultSet));
-		assertEquals(DbObject.Type.type3, factory.newGetter(DbObject.Type.class, key(Types.CLOB), FieldMapperColumnDefinition.identity()).get(resultSet));
-		assertEquals(DbObject.Type.type3, factory.newGetter(DbObject.Type.class, key(Types.VARCHAR), FieldMapperColumnDefinition.identity()).get(resultSet));
+		assertEquals(DbObject.Type.type3, factory.newGetter(DbObject.Type.class, key(Types.CHAR), IDENTITY).get(resultSet));
+		assertEquals(DbObject.Type.type3, factory.newGetter(DbObject.Type.class, key(Types.CLOB), IDENTITY).get(resultSet));
+		assertEquals(DbObject.Type.type3, factory.newGetter(DbObject.Type.class, key(Types.VARCHAR), IDENTITY).get(resultSet));
 	}
 
 	@Test
 	public void testBlob() throws Exception {
 		Blob blob = mock(Blob.class);
 		when(resultSet.getBlob(1)).thenReturn(blob);
-        Getter<ResultSet, Object> getter = factory.newGetter(Blob.class, key(Types.BLOB), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(Blob.class, key(Types.BLOB), IDENTITY);
         assertEquals(blob, getter.get(resultSet));
         assertEquals("BlobResultSetGetter{column=1}", getter.toString());
 	}
@@ -75,7 +76,7 @@ public class ResultSetGetterFactoryTest {
 	public void testClob() throws Exception {
 		Clob blob = mock(Clob.class);
 		when(resultSet.getClob(1)).thenReturn(blob);
-        Getter<ResultSet, Object> getter = factory.newGetter(Clob.class, key(Types.CLOB), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(Clob.class, key(Types.CLOB), IDENTITY);
         assertEquals(blob, getter.get(resultSet));
         assertEquals("ClobResultSetGetter{column=1}", getter.toString());
 	}
@@ -84,7 +85,7 @@ public class ResultSetGetterFactoryTest {
 	public void testReader() throws Exception {
 		Reader blob = mock(Reader.class);
 		when(resultSet.getCharacterStream(1)).thenReturn(blob);
-        Getter<ResultSet, Object> getter = factory.newGetter(Reader.class, key(Types.CLOB), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(Reader.class, key(Types.CLOB), IDENTITY);
         assertEquals(blob, getter.get(resultSet));
         assertEquals("ReaderResultSetGetter{column=1}", getter.toString());
 	}
@@ -93,7 +94,7 @@ public class ResultSetGetterFactoryTest {
 	public void testNClob() throws Exception {
 		NClob blob = mock(NClob.class);
 		when(resultSet.getNClob(1)).thenReturn(blob);
-        Getter<ResultSet, Object> getter = factory.newGetter(NClob.class, key(Types.NCLOB), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(NClob.class, key(Types.NCLOB), IDENTITY);
         assertEquals(blob, getter.get(resultSet));
         assertEquals("NClobResultSetGetter{column=1}", getter.toString());
 	}
@@ -102,7 +103,7 @@ public class ResultSetGetterFactoryTest {
 	public void testNReader() throws Exception {
 		Reader blob = mock(Reader.class);
 		when(resultSet.getNCharacterStream(1)).thenReturn(blob);
-        Getter<ResultSet, Object> getter = factory.newGetter(Reader.class, key(Types.NCLOB), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(Reader.class, key(Types.NCLOB), IDENTITY);
         assertEquals(blob, getter.get(resultSet));
         assertEquals("NReaderResultSetGetter{column=1}", getter.toString());
 	}
@@ -111,7 +112,7 @@ public class ResultSetGetterFactoryTest {
 	public void testInputStream() throws Exception {
 		InputStream inputStream = mock(InputStream.class);
 		when(resultSet.getBinaryStream(1)).thenReturn(inputStream);
-        Getter<ResultSet, Object> getter = factory.newGetter(InputStream.class, key(Types.BLOB), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(InputStream.class, key(Types.BLOB), IDENTITY);
         assertEquals(inputStream, getter.get(resultSet));
         assertEquals("InputStreamResultSetGetter{column=1}", getter.toString());
 	}
@@ -120,7 +121,7 @@ public class ResultSetGetterFactoryTest {
 	public void testRef() throws Exception {
 		Ref ref = mock(Ref.class);
 		when(resultSet.getRef(1)).thenReturn(ref);
-        Getter<ResultSet, Object> getter = factory.newGetter(Ref.class, key(Types.REF), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(Ref.class, key(Types.REF), IDENTITY);
         assertEquals(ref, getter.get(resultSet));
         assertEquals("RefResultSetGetter{column=1}", getter.toString());
 	}
@@ -129,7 +130,7 @@ public class ResultSetGetterFactoryTest {
 	public void testRowId() throws Exception {
 		RowId rowId = mock(RowId.class);
 		when(resultSet.getRowId(1)).thenReturn(rowId);
-        Getter<ResultSet, Object> getter = factory.newGetter(RowId.class, key(Types.ROWID), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(RowId.class, key(Types.ROWID), IDENTITY);
         assertEquals(rowId, getter.get(resultSet));
         assertEquals("RowIdResultSetGetter{column=1}", getter.toString());
 	}
@@ -138,7 +139,7 @@ public class ResultSetGetterFactoryTest {
 	public void testSqlArray() throws Exception {
 		Array array = mock(Array.class);
 		when(resultSet.getArray(1)).thenReturn(array);
-        Getter<ResultSet, Object> getter = factory.newGetter(Array.class, key(Types.ARRAY), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(Array.class, key(Types.ARRAY), IDENTITY);
         assertEquals(array, getter.get(resultSet));
         assertEquals("SqlArrayResultSetGetter{column=1}", getter.toString());
 	}
@@ -147,7 +148,7 @@ public class ResultSetGetterFactoryTest {
 	public void testSqlXml() throws Exception {
 		SQLXML sqlxml = mock(SQLXML.class);
 		when(resultSet.getSQLXML(1)).thenReturn(sqlxml);
-        Getter<ResultSet, Object> getter = factory.newGetter(SQLXML.class, key(Types.SQLXML), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(SQLXML.class, key(Types.SQLXML), IDENTITY);
         assertEquals(sqlxml, getter.get(resultSet));
         assertEquals("SQLXMLResultSetGetter{column=1}", getter.toString());
 	}
@@ -156,7 +157,7 @@ public class ResultSetGetterFactoryTest {
 	public void testUrl() throws Exception {
 		URL url = new URL("http://url.net");
 		when(resultSet.getURL(1)).thenReturn(url);
-        Getter<ResultSet, Object> getter = factory.newGetter(URL.class, key(Types.DATALINK), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(URL.class, key(Types.DATALINK), IDENTITY);
         assertEquals(url, getter.get(resultSet));
         assertEquals("UrlResultSetGetter{column=1}", getter.toString());
 	}
@@ -165,7 +166,7 @@ public class ResultSetGetterFactoryTest {
 	public void testUrlFromString() throws Exception {
 		URL url = new URL("http://url.net");
 		when(resultSet.getString(1)).thenReturn("http://url.net");
-        Getter<ResultSet, Object> getter = factory.newGetter(URL.class, key(Types.VARCHAR), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(URL.class, key(Types.VARCHAR), IDENTITY);
         assertEquals(url, getter.get(resultSet));
         assertEquals("UrlFromStringResultSetGetter{column=1}", getter.toString());
 	}
@@ -174,7 +175,7 @@ public class ResultSetGetterFactoryTest {
 	public void testJavaUtilDateFromUndefined() throws Exception {
 		java.util.Date date = new java.util.Date(13l);
 		when(resultSet.getObject(1)).thenReturn(date);
-        Getter<ResultSet, Object> getter = factory.newGetter(java.util.Date.class, key(JdbcColumnKey.UNDEFINED_TYPE), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(java.util.Date.class, key(JdbcColumnKey.UNDEFINED_TYPE), IDENTITY);
         assertEquals(date, getter.get(resultSet));
 		when(resultSet.getObject(1)).thenReturn(131l);
 		assertEquals(new java.util.Date(131l), getter.get(resultSet));
@@ -185,8 +186,8 @@ public class ResultSetGetterFactoryTest {
 	public void testTime() throws Exception {
 		Time time = new Time(10000);
 		when(resultSet.getTime(1)).thenReturn(time);
-		assertEquals(time, factory.newGetter(Time.class, key(JdbcColumnKey.UNDEFINED_TYPE), FieldMapperColumnDefinition.identity()).get(resultSet));
-        Getter<ResultSet, Object> getter = factory.newGetter(java.util.Date.class, key(Types.TIME), FieldMapperColumnDefinition.identity());
+		assertEquals(time, factory.newGetter(Time.class, key(JdbcColumnKey.UNDEFINED_TYPE), IDENTITY).get(resultSet));
+        Getter<ResultSet, Object> getter = factory.newGetter(java.util.Date.class, key(Types.TIME), IDENTITY);
         assertEquals(time, getter.get(resultSet));
         assertEquals("TimeResultSetGetter{column=1}", getter.toString());
 	}
@@ -195,8 +196,8 @@ public class ResultSetGetterFactoryTest {
 	public void testTimestamp() throws Exception {
 		Timestamp time = new Timestamp(10000);
 		when(resultSet.getTimestamp(1)).thenReturn(time);
-		assertEquals(time, factory.newGetter(Timestamp.class, key(JdbcColumnKey.UNDEFINED_TYPE), FieldMapperColumnDefinition.identity()).get(resultSet));
-        Getter<ResultSet, Object> getter = factory.newGetter(java.util.Date.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
+		assertEquals(time, factory.newGetter(Timestamp.class, key(JdbcColumnKey.UNDEFINED_TYPE), IDENTITY).get(resultSet));
+        Getter<ResultSet, Object> getter = factory.newGetter(java.util.Date.class, key(Types.TIMESTAMP), IDENTITY);
         assertEquals(time, getter.get(resultSet));
         assertEquals("TimestampResultSetGetter{column=1}", getter.toString());
 	}
@@ -204,8 +205,8 @@ public class ResultSetGetterFactoryTest {
 	public void testSqlDate() throws Exception {
 		java.sql.Date time = new Date(10000);
 		when(resultSet.getDate(1)).thenReturn(time);
-		assertEquals(time, factory.newGetter(Date.class, key(JdbcColumnKey.UNDEFINED_TYPE), FieldMapperColumnDefinition.identity()).get(resultSet));
-        Getter<ResultSet, Object> getter = factory.newGetter(java.util.Date.class, key(Types.DATE), FieldMapperColumnDefinition.identity());
+		assertEquals(time, factory.newGetter(Date.class, key(JdbcColumnKey.UNDEFINED_TYPE), IDENTITY).get(resultSet));
+        Getter<ResultSet, Object> getter = factory.newGetter(java.util.Date.class, key(Types.DATE), IDENTITY);
         assertEquals(time, getter.get(resultSet));
         assertEquals("DateResultSetGetter{column=1}", getter.toString());
 	}
@@ -213,7 +214,7 @@ public class ResultSetGetterFactoryTest {
 	public void testObject() throws Exception {
 		Object object = new Object();
 		when(resultSet.getObject(1)).thenReturn(object);
-        Getter<ResultSet, Object> getter = factory.newGetter(Object.class, key(JdbcColumnKey.UNDEFINED_TYPE), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Object> getter = factory.newGetter(Object.class, key(JdbcColumnKey.UNDEFINED_TYPE), IDENTITY);
         assertEquals(object, getter.get(resultSet));
         assertEquals("ObjectResultSetGetter{column=1}", getter.toString());
 	}
@@ -228,7 +229,7 @@ public class ResultSetGetterFactoryTest {
 		Calendar cal = Calendar.getInstance();
 		Timestamp ts = new Timestamp(cal.getTimeInMillis());
 		when(resultSet.getTimestamp(1)).thenReturn(ts);
-        Getter<ResultSet, DateTime> getter = factory.<DateTime>newGetter(DateTime.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, DateTime> getter = factory.<DateTime>newGetter(DateTime.class, key(Types.TIMESTAMP), IDENTITY);
         DateTime dt = getter.get(resultSet);
 		assertTrue(new DateTime(cal).isEqual(dt));
         assertEquals("JodaDateTimeResultSetGetter{getter=TimestampResultSetGetter{column=1}}", getter.toString());
@@ -238,7 +239,7 @@ public class ResultSetGetterFactoryTest {
 		Calendar cal = Calendar.getInstance();
 		Date ts = new Date(cal.getTimeInMillis());
 		when(resultSet.getDate(1)).thenReturn(ts);
-        Getter<ResultSet, LocalDate> getter = factory.<LocalDate>newGetter(LocalDate.class, key(Types.DATE), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, LocalDate> getter = factory.<LocalDate>newGetter(LocalDate.class, key(Types.DATE), IDENTITY);
         LocalDate dt = getter.get(resultSet);
 		assertTrue(new LocalDate(cal).isEqual(dt));
         assertEquals("JodaLocalDateResultSetGetter{getter=DateResultSetGetter{column=1}}", getter.toString());
@@ -248,7 +249,7 @@ public class ResultSetGetterFactoryTest {
 		Calendar cal = Calendar.getInstance();
 		Timestamp ts = new Timestamp(cal.getTimeInMillis());
 		when(resultSet.getTimestamp(1)).thenReturn(ts);
-        Getter<ResultSet, LocalDateTime> getter = factory.<LocalDateTime>newGetter(LocalDateTime.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, LocalDateTime> getter = factory.<LocalDateTime>newGetter(LocalDateTime.class, key(Types.TIMESTAMP), IDENTITY);
         LocalDateTime dt = getter.get(resultSet);
 		assertTrue(new LocalDateTime(cal).isEqual(dt));
         assertEquals("JodaLocalDateTimeResultSetGetter{getter=TimestampResultSetGetter{column=1}}", getter.toString());
@@ -258,7 +259,7 @@ public class ResultSetGetterFactoryTest {
 		Calendar cal = Calendar.getInstance();
 		Time ts = new Time(cal.getTimeInMillis());
 		when(resultSet.getTime(1)).thenReturn(ts);
-        Getter<ResultSet, LocalTime> getter = factory.<LocalTime>newGetter(LocalTime.class, key(Types.TIME), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, LocalTime> getter = factory.<LocalTime>newGetter(LocalTime.class, key(Types.TIME), IDENTITY);
         LocalTime dt = getter.get(resultSet);
 		assertTrue(new LocalTime(cal).isEqual(dt));
         assertEquals("JodaLocalTimeResultSetGetter{getter=TimeResultSetGetter{column=1}}", getter.toString());
@@ -273,7 +274,7 @@ public class ResultSetGetterFactoryTest {
 
 		when(resultSet.getTimestamp(1)).thenReturn(new Timestamp(dd.getTime()));
 
-        Getter<ResultSet, Calendar> getter = factory.<Calendar>newGetter(Calendar.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
+        Getter<ResultSet, Calendar> getter = factory.<Calendar>newGetter(Calendar.class, key(Types.TIMESTAMP), IDENTITY);
         assertEquals(cal, getter.get(resultSet));
         assertEquals("CalendarResultSetGetter{dateGetter=TimestampResultSetGetter{column=1}}", getter.toString());
 	}
@@ -282,7 +283,7 @@ public class ResultSetGetterFactoryTest {
 	//IFJAVA8_START
 	@Test
 	public void testJavaLocalDate() throws Exception {
-		Getter<ResultSet, java.time.LocalDate> getter = factory.<java.time.LocalDate>newGetter(java.time.LocalDate.class, key(Types.DATE), FieldMapperColumnDefinition.identity());
+		Getter<ResultSet, java.time.LocalDate> getter = factory.<java.time.LocalDate>newGetter(java.time.LocalDate.class, key(Types.DATE), IDENTITY);
 
 
 		Date ts = new Date(System.currentTimeMillis());
@@ -320,7 +321,7 @@ public class ResultSetGetterFactoryTest {
 				zonedDateTime.toOffsetDateTime() // offset time
 		);
 
-		Getter<ResultSet, java.time.LocalDateTime> getter = factory.<java.time.LocalDateTime>newGetter(java.time.LocalDateTime.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
+		Getter<ResultSet, java.time.LocalDateTime> getter = factory.<java.time.LocalDateTime>newGetter(java.time.LocalDateTime.class, key(Types.TIMESTAMP), IDENTITY);
 
 		assertEquals(localDateTime, getter.get(resultSet));
 		assertEquals(localDateTime, getter.get(resultSet));
@@ -344,7 +345,7 @@ public class ResultSetGetterFactoryTest {
 				zonedDateTime.toOffsetDateTime().toOffsetTime()
 		);
 
-		Getter<ResultSet, java.time.LocalTime> getter = factory.<java.time.LocalTime>newGetter(java.time.LocalTime.class, key(Types.TIME), FieldMapperColumnDefinition.identity());
+		Getter<ResultSet, java.time.LocalTime> getter = factory.<java.time.LocalTime>newGetter(java.time.LocalTime.class, key(Types.TIME), IDENTITY);
 
 		assertEquals(localTime, getter.get(resultSet));
 		assertEquals(localTime, getter.get(resultSet));
@@ -368,7 +369,7 @@ public class ResultSetGetterFactoryTest {
 				offsetDateTime.toZonedDateTime(),
 				offsetDateTime);
 
-		Getter<ResultSet, java.time.OffsetDateTime> getter = factory.<java.time.OffsetDateTime>newGetter(java.time.OffsetDateTime.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
+		Getter<ResultSet, java.time.OffsetDateTime> getter = factory.<java.time.OffsetDateTime>newGetter(java.time.OffsetDateTime.class, key(Types.TIMESTAMP), IDENTITY);
 		assertEquals(offsetDateTime, getter.get(resultSet));
 		assertEquals(offsetDateTime, getter.get(resultSet));
 		assertEquals(offsetDateTime, getter.get(resultSet));
@@ -391,7 +392,7 @@ public class ResultSetGetterFactoryTest {
 				offsetDateTime,
 				offsetDateTime.toOffsetTime());
 
-		Getter<ResultSet, java.time.OffsetTime> getter = factory.<java.time.OffsetTime>newGetter(java.time.OffsetTime.class, key(Types.TIME), FieldMapperColumnDefinition.identity());
+		Getter<ResultSet, java.time.OffsetTime> getter = factory.<java.time.OffsetTime>newGetter(java.time.OffsetTime.class, key(Types.TIME), IDENTITY);
 
 		assertEquals(offsetTime, getter.get(resultSet));
 		assertEquals(offsetTime, getter.get(resultSet));
@@ -414,7 +415,7 @@ public class ResultSetGetterFactoryTest {
 				zonedDateTime,
 				zonedDateTime.toOffsetDateTime());
 
-		Getter<ResultSet, java.time.ZonedDateTime> getter = factory.<java.time.ZonedDateTime>newGetter(java.time.ZonedDateTime.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
+		Getter<ResultSet, java.time.ZonedDateTime> getter = factory.<java.time.ZonedDateTime>newGetter(java.time.ZonedDateTime.class, key(Types.TIMESTAMP), IDENTITY);
 
 		assertEquals(zonedDateTime, getter.get(resultSet));
 		assertEquals(zonedDateTime, getter.get(resultSet));
@@ -429,7 +430,7 @@ public class ResultSetGetterFactoryTest {
 		Calendar cal = Calendar.getInstance();
 		Timestamp ts = new Timestamp(cal.getTimeInMillis());
 		when(resultSet.getObject(1)).thenReturn(ts);
-		Getter<ResultSet, java.time.Instant> getter = factory.<java.time.Instant>newGetter(java.time.Instant.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
+		Getter<ResultSet, java.time.Instant> getter = factory.<java.time.Instant>newGetter(java.time.Instant.class, key(Types.TIMESTAMP), IDENTITY);
 		java.time.Instant dt = getter.get(resultSet);
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
 		assertEquals(instant, dt);
@@ -441,7 +442,7 @@ public class ResultSetGetterFactoryTest {
 		Calendar cal = Calendar.getInstance();
 		Date ts = new Date(cal.getTimeInMillis());
 		when(resultSet.getObject(1)).thenReturn(ts);
-		Getter<ResultSet, java.time.YearMonth> getter = factory.<java.time.YearMonth>newGetter(java.time.YearMonth.class, key(Types.TIMESTAMP), FieldMapperColumnDefinition.identity());
+		Getter<ResultSet, java.time.YearMonth> getter = factory.<java.time.YearMonth>newGetter(java.time.YearMonth.class, key(Types.TIMESTAMP), IDENTITY);
 		java.time.YearMonth dt = getter.get(resultSet);
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
 		final ZonedDateTime dateTime = instant.atZone(ZoneId.systemDefault());
@@ -452,7 +453,7 @@ public class ResultSetGetterFactoryTest {
 	@Test
 	public void testJavaYear() throws Exception {
 		when(resultSet.getObject(1)).thenReturn(new Integer(2029));
-		Getter<ResultSet, java.time.Year> getter = factory.<java.time.Year>newGetter(java.time.Year.class, key(Types.INTEGER), FieldMapperColumnDefinition.identity());
+		Getter<ResultSet, java.time.Year> getter = factory.<java.time.Year>newGetter(java.time.Year.class, key(Types.INTEGER), IDENTITY);
 		java.time.Year dt = getter.get(resultSet);
 		assertEquals(Year.of(2029), dt);
 		assertEquals("JavaYearResultSetGetter{column=1}", getter.toString());

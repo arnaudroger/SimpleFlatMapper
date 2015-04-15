@@ -110,6 +110,6 @@ public class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends Colum
 
     @Override
     protected FieldMapperColumnDefinition<K, S> newColumnDefinition(ColumnProperty[] properties) {
-        return new FieldMapperColumnDefinition<>(properties);
+        return new FieldMapperColumnDefinition<K, S>(properties);
     }
 }

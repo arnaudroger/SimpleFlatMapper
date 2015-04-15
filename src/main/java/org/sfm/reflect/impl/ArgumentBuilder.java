@@ -72,6 +72,8 @@ public final class ArgumentBuilder<S, T> {
 	
 	
 	private final Getter<S, ?>[] getters;
+
+	@SuppressWarnings("unchecked")
 	public ArgumentBuilder(InstantiatorDefinition instantiatorDefinition,
 			Map<Parameter, Getter<S, ?>> injections) {
 		Parameter[] parameters = instantiatorDefinition.getParameters();

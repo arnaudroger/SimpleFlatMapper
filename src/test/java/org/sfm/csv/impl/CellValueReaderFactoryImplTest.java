@@ -115,7 +115,7 @@ public class CellValueReaderFactoryImplTest {
     @Test
     public void testJavaZonedDateTime() throws Exception {
         String date = "20150128 12:03:56 PST";
-        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss z");;
+        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss z");
         java.time.ZonedDateTime localTime = java.time.ZonedDateTime.parse(date, yyyyMMdd);
         CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.ZonedDateTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd HH:mm:ss z"), null);
         assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
@@ -151,7 +151,7 @@ public class CellValueReaderFactoryImplTest {
     @Test
     public void testJavaYear() throws Exception {
         String date = "20150128";
-        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.systemDefault());;
+        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.systemDefault());
         java.time.Year localTime = java.time.Year.parse(date, yyyyMMdd);
         CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.Year.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"), null);
         assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
@@ -160,7 +160,7 @@ public class CellValueReaderFactoryImplTest {
     @Test
     public void testJavaYearMonth() throws Exception {
         String date = "20150128";
-        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.systemDefault());;
+        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.systemDefault());
         java.time.YearMonth localTime = java.time.YearMonth.parse(date, yyyyMMdd);
         CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.YearMonth.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"), null);
         assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));

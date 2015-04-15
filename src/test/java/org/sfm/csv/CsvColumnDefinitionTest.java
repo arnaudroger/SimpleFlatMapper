@@ -34,7 +34,7 @@ public class CsvColumnDefinitionTest {
                 return false;
             }
         };
-        CsvColumnDefinition compose = CsvColumnDefinition.IDENTITY.addDateFormat("yyyyMM").addRename("blop").addCustomReader(
+        CsvColumnDefinition compose = CsvColumnDefinition.identity().addDateFormat("yyyyMM").addRename("blop").addCustomReader(
                 new CellValueReader<Integer>() {
                     @Override
                     public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {
@@ -57,7 +57,7 @@ public class CsvColumnDefinitionTest {
         assertFalse(compose.ignore());
         assertEquals(Integer.class, compose.getCustomSourceReturnType());
 
-        assertTrue(CsvColumnDefinition.IDENTITY.addIgnore().ignore());
+        assertTrue(CsvColumnDefinition.identity().addIgnore().ignore());
 
         assertTrue(compose.isKey());
         assertSame(appliesTo, compose.keyAppliesTo());

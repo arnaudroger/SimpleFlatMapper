@@ -6,9 +6,9 @@ import org.sfm.csv.impl.ParsingException;
 
 public final class IntegerCellValueReaderImpl implements IntegerCellValueReader {
 
-	private final static char CZERO = '0';
-	private final static char CNINE = '9';
-	private final static char CNEGSIGN = '-';
+	private final static char C_ZERO = '0';
+	private final static char C_NINE = '9';
+	private final static char C_NEG_SIGN = '-';
 
 	@Override
 	public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {
@@ -26,10 +26,10 @@ public final class IntegerCellValueReaderImpl implements IntegerCellValueReader 
 		boolean negative = false;
 		for(int i = offset; i < offset + length; i++) {
 			char b = chars[i];
-			if (b >= CZERO && b <= CNINE) {
-				n  = n * 10 +  chars[i] - CZERO;
+			if (b >= C_ZERO && b <= C_NINE) {
+				n  = n * 10 +  chars[i] - C_ZERO;
 			} else {
-				if (b == CNEGSIGN && i == offset) {
+				if (b == C_NEG_SIGN && i == offset) {
 					negative = true;
 				} else {
 					throw new ParsingException("Cannot parse " + new String(chars, offset, length) + " as an int");

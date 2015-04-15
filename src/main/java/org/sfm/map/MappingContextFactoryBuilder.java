@@ -234,8 +234,8 @@ public class MappingContextFactoryBuilder<S, K> {
         }
     }
 
-    public static interface KeySourceGetter<K, S> {
-        public Object getValue(K key, S source) throws SQLException;
+    public interface KeySourceGetter<K, S> {
+        Object getValue(K key, S source) throws SQLException;
     }
 
     private static class MappingContextFactoryImpl<S> implements MappingContextFactory<S> {

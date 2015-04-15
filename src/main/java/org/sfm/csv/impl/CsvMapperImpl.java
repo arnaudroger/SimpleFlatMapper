@@ -245,6 +245,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private DelayedCellSetter<T, ?>[] buildDelayedCellSetters(CsvMapperCellConsumer<?>[] cellHandlers, BreakDetector breakDetector) {
         DelayedCellSetter<T, ?>[] outDelayedCellSetters = new DelayedCellSetter[delayedCellSetterFactories.length];
         for(int i = delayedCellSetterFactories.length - 1; i >= 0 ; i--) {
@@ -277,6 +278,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private CellSetter<T>[] rebuildCellSetters(CsvMapperCellConsumer<?>[] cellHandlers, BreakDetector breakDetector) {
         CellSetter<T>[] outSetters = new CellSetter[setters.length];
         for(int i = setters.length - 1; i >= 0 ; i--) {

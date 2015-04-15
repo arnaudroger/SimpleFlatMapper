@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 //IFJAVA8_START
 import java.time.*;
+import org.sfm.map.column.time.*;
 import org.sfm.csv.impl.cellreader.time.*;
 //IFJAVA8_END
 
@@ -56,23 +57,23 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 			parsingContextFactoryBuilder.addParsingContextProvider(index, dateCellValueReader);
 		//IFJAVA8_START
 		} else if (propertyClass.equals(LocalDate.class)) {
-			reader = (CellValueReader<P>) new JavaLocalDateCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+			reader = (CellValueReader<P>) new JavaLocalDateCellValueReader(JavaTimeHelper.getDateTimeFormatter(columnDefinition));
 		} else if (propertyClass.equals(LocalDateTime.class)) {
-			reader = (CellValueReader<P>) new JavaLocalDateTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+			reader = (CellValueReader<P>) new JavaLocalDateTimeCellValueReader(JavaTimeHelper.getDateTimeFormatter(columnDefinition));
 		} else if (propertyClass.equals(LocalTime.class)) {
-			reader = (CellValueReader<P>) new JavaLocalTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+			reader = (CellValueReader<P>) new JavaLocalTimeCellValueReader(JavaTimeHelper.getDateTimeFormatter(columnDefinition));
 		} else if (propertyClass.equals(ZonedDateTime.class)) {
-			reader = (CellValueReader<P>) new JavaZonedDateTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+			reader = (CellValueReader<P>) new JavaZonedDateTimeCellValueReader(JavaTimeHelper.getDateTimeFormatter(columnDefinition));
 		} else if (propertyClass.equals(OffsetTime.class)) {
-			reader = (CellValueReader<P>) new JavaOffsetTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+			reader = (CellValueReader<P>) new JavaOffsetTimeCellValueReader(JavaTimeHelper.getDateTimeFormatter(columnDefinition));
 		} else if (propertyClass.equals(OffsetDateTime.class)) {
-			reader = (CellValueReader<P>) new JavaOffsetDateTimeCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+			reader = (CellValueReader<P>) new JavaOffsetDateTimeCellValueReader(JavaTimeHelper.getDateTimeFormatter(columnDefinition));
 		} else if (propertyClass.equals(Instant.class)) {
-			reader = (CellValueReader<P>) new JavaInstantCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+			reader = (CellValueReader<P>) new JavaInstantCellValueReader(JavaTimeHelper.getDateTimeFormatter(columnDefinition));
 		} else if (propertyClass.equals(Year.class)) {
-			reader = (CellValueReader<P>) new JavaYearCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+			reader = (CellValueReader<P>) new JavaYearCellValueReader(JavaTimeHelper.getDateTimeFormatter(columnDefinition));
 		} else if (propertyClass.equals(YearMonth.class)) {
-			reader = (CellValueReader<P>) new JavaYearMonthCellValueReader(columnDefinition.dateFormat(), columnDefinition.getTimeZone());
+			reader = (CellValueReader<P>) new JavaYearMonthCellValueReader(JavaTimeHelper.getDateTimeFormatter(columnDefinition));
 		//IFJAVA8_END
 		} else if (Calendar.class.equals(propertyClass)) {
             CalendarCellValueReader calendarCellValueReader = new CalendarCellValueReader(index, columnDefinition.dateFormat(), columnDefinition.getTimeZone());

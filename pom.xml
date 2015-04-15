@@ -345,6 +345,7 @@
 								<exclude>**/org/sfm/**/*Optional*</exclude>
 								<exclude>**/org/sfm/jdbc/impl/getter/time/*</exclude>
 								<exclude>**/org/sfm/csv/impl/cellreader/time/*</exclude>
+								<exclude>**/org/sfm/map/column/time/*</exclude>
 							</excludes>
 						</configuration>
 
@@ -358,6 +359,7 @@
                                         <exclude>**/org/sfm/tuples/fasttuple/**/*</exclude>
                                         <exclude>**/org/sfm/tuples/jool/**/*</exclude>
 										<exclude>**/org/sfm/**/*Optional*</exclude>
+										<exclude>**/org/sfm/map/column/time/*</exclude>
                                     </testExcludes>
 								</configuration>
 								<goals>
@@ -446,6 +448,7 @@
 								<exclude>**/org/sfm/**/*Optional*</exclude>
 								<exclude>**/org/sfm/jdbc/impl/getter/time/*</exclude>
 								<exclude>**/org/sfm/csv/impl/cellreader/time/*</exclude>
+								<exclude>**/org/sfm/map/column/time/*</exclude>
                             </excludes>
 
                         </configuration>
@@ -458,6 +461,7 @@
                                     <testExcludes>
                                         <exclude>**/org/sfm/tuples/jool/**/*</exclude>
 										<exclude>**/org/sfm/**/*Optional*</exclude>
+										<exclude>**/org/sfm/map/column/time/*</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>

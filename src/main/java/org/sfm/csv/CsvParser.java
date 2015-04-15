@@ -416,7 +416,7 @@ public final class CsvParser {
 		private List<Tuple2<String, CsvColumnDefinition>> getColumnDefinitions(String[] headers) {
 			List<Tuple2<String,CsvColumnDefinition>> columns = new ArrayList<Tuple2<String, CsvColumnDefinition>>();
 			for(String header : headers) {
-				columns.add(new Tuple2<String, CsvColumnDefinition>(header, CsvColumnDefinition.IDENTITY));
+				columns.add(new Tuple2<String, CsvColumnDefinition>(header, CsvColumnDefinition.identity()));
 			}
 			return columns;
 		}
@@ -497,7 +497,7 @@ public final class CsvParser {
 		}
 
 		public StaticMapToDSL<T> addMapping(String column) {
-			return addMapping(column, CsvColumnDefinition.IDENTITY);
+			return addMapping(column, CsvColumnDefinition.identity());
 		}
 
 		public StaticMapToDSL<T> addMapping(String column, CsvColumnDefinition columnDefinition) {

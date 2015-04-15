@@ -4,10 +4,7 @@ import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.impl.CellSetter;
 import org.sfm.csv.impl.CsvMapperCellHandler;
 import org.sfm.csv.impl.DelayedCellSetterFactory;
-import org.sfm.jdbc.JdbcColumnKey;
-import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.impl.FieldErrorHandlerMapper;
 import org.sfm.reflect.Instantiator;
 
 import java.lang.reflect.Type;

@@ -48,6 +48,7 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
         throw new MapperBuildingException("Cannot find eligible constructor definition for " + type);
     }
 
+    @SuppressWarnings("unchecked")
     private InstantiatorDefinition respecifyParameterNames(InstantiatorDefinition definition) {
         final Parameter[] parameters = definition.getParameters();
         if (parameters.length > 0 && parameters[0].getName().equals("arg0")) {

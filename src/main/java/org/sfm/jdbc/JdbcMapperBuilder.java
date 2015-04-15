@@ -23,7 +23,7 @@ import java.sql.SQLException;
 public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey> {
 
     public static final int NO_ASM_MAPPER_THRESHOLD = 792; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
-    public static final JdbcColumnKey[] EMPTY_COLUMNKEYS = new JdbcColumnKey[0];
+    public static final JdbcColumnKey[] EMPTY_COLUMN_KEYS = new JdbcColumnKey[0];
 
     private int calculatedIndex = 1;
     private RowHandlerErrorHandler jdbcMapperErrorHandler = new RethrowRowHandlerErrorHandler();
@@ -133,7 +133,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
     }
 
     private JdbcColumnKey[] getKeys() {
-        return propertyMappingsBuilder.getKeys().toArray(EMPTY_COLUMNKEYS);
+        return propertyMappingsBuilder.getKeys().toArray(EMPTY_COLUMN_KEYS);
     }
 
     private boolean isEligibleForAsmMapper() {

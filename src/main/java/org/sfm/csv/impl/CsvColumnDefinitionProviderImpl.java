@@ -24,7 +24,7 @@ public class CsvColumnDefinitionProviderImpl extends AbstractColumnDefinitionPro
 
     @Override
     protected CsvColumnDefinition identity() {
-        return CsvColumnDefinition.IDENTITY;
+        return CsvColumnDefinition.identity();
     }
 
     public List<Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>> getDefinitions() {

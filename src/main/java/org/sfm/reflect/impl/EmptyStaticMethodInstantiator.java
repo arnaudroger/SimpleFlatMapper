@@ -2,7 +2,6 @@ package org.sfm.reflect.impl;
 
 import org.sfm.reflect.Instantiator;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 public final class EmptyStaticMethodInstantiator<S, T> implements Instantiator<S, T> {
@@ -15,6 +14,7 @@ public final class EmptyStaticMethodInstantiator<S, T> implements Instantiator<S
 		this.declaringClass = method.getDeclaringClass();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T newInstance(S s) throws Exception {
 		return (T) method.invoke(declaringClass);

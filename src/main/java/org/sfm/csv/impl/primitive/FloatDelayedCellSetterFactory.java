@@ -18,7 +18,7 @@ public class FloatDelayedCellSetterFactory<T> implements DelayedCellSetterFactor
 	}
 
 	@Override
-	public DelayedCellSetter<T, Float> newCellSetter(BreakDetector breakDectector, CsvMapperCellConsumer<?>[] cellHandlers) {
+	public DelayedCellSetter<T, Float> newCellSetter(BreakDetector breakDetector, CsvMapperCellConsumer<?>[] cellHandlers) {
 		return new FloatDelayedCellSetter<T>(setter, reader);
 	}
 

@@ -7,6 +7,6 @@ import org.sfm.map.ColumnDefinitionProvider;
 public class IdentityCsvColumnDefinitionProvider implements ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> {
     @Override
     public CsvColumnDefinition getColumnDefinition(CsvColumnKey key) {
-return CsvColumnDefinition.IDENTITY;
+        return CsvColumnDefinition.identity();
 }
 }

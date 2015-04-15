@@ -1,11 +1,9 @@
 package org.sfm.reflect.asm;
 
-import com.sun.org.apache.xpath.internal.compiler.OpCodes;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
-import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.TypeHelper;
 
 import java.io.File;

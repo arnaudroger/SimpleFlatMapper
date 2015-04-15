@@ -17,7 +17,9 @@ public class DateCellValueReader implements CellValueReader<Date>, ParsingContex
     private final TimeZone timeZone;
     private final String pattern;
 	public DateCellValueReader(int index, String pattern, TimeZone timeZone) {
-		this.index = index;
+        if (timeZone == null) throw new NullPointerException();
+        if (pattern == null) throw new NullPointerException();
+        this.index = index;
         this.timeZone = timeZone;
         this.pattern = pattern;
 	}

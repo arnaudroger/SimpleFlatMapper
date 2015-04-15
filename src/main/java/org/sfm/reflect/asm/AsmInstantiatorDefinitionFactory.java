@@ -1,6 +1,5 @@
 package org.sfm.reflect.asm;
 
-import com.sun.org.apache.xpath.internal.compiler.OpCodes;
 import org.objectweb.asm.*;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
@@ -9,7 +8,6 @@ import org.sfm.utils.ErrorHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Type;
 import java.util.ArrayList;

@@ -12,7 +12,6 @@ import org.sfm.reflect.*;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyMeta;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -67,6 +66,7 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T, P> FieldMapper<ResultSet, T> newFieldMapper(PropertyMapping<T, P, JdbcColumnKey ,
                             FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> propertyMapping,

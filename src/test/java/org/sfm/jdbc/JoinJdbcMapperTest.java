@@ -220,16 +220,16 @@ public class JoinJdbcMapperTest {
         assertPersonEquals(1, "professor1", professor);
     }
 
-    public static interface Person {
+    public interface Person {
         int getId();
         String getName();
     }
 
-    public static interface Student  extends Person {
+    public interface Student  extends Person {
         List<String> getPhones();
     }
 
-    public static interface Professor<T extends Student> extends Person {
+    public interface Professor<T extends Student> extends Person {
         List<T> getStudents();
     }
     public static class StudentField implements Student {

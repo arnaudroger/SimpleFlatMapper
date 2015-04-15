@@ -3,7 +3,6 @@ package org.sfm.reflect.impl;
 import org.sfm.reflect.Instantiator;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 
 public final class EmptyConstructorInstantiator<S, T> implements Instantiator<S, T> {
 	

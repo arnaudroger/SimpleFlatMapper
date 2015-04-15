@@ -66,6 +66,7 @@ public class InstantiatorFactory {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private <S, T> Instantiator<S, T> newInstantiator(Class<?> source, Map<Parameter, Getter<S, ?>> injections, boolean useAsmIfEnabled, InstantiatorDefinition instantiatorDefinition) {
 		Member executable = instantiatorDefinition.getExecutable();
 
@@ -117,6 +118,7 @@ public class InstantiatorFactory {
 		return new ArrayInstantiator<S, T>(elementType, length);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> getOneArgIdentityInstantiator(InstantiatorDefinition id) {
 		Map<Parameter, Getter<S, ?>> injections = new HashMap<Parameter, Getter<S, ?>>();
 		injections.put(id.getParameters()[0], new IdentityGetter());

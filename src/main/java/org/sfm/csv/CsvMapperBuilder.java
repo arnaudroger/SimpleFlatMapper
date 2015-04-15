@@ -92,7 +92,7 @@ public class CsvMapperBuilder<T> {
 	}
 
 	public final CsvMapperBuilder<T> addMapping(final String columnKey, int columnIndex) {
-		return addMapping(new CsvColumnKey(columnKey, columnIndex), CsvColumnDefinition.IDENTITY);
+		return addMapping(new CsvColumnKey(columnKey, columnIndex), CsvColumnDefinition.identity());
 	}
 	
 	public final CsvMapperBuilder<T> addMapping(final CsvColumnKey key, final CsvColumnDefinition columnDefinition) {

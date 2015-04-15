@@ -18,7 +18,7 @@ public class BooleanDelayedCellSetterFactory<T> implements DelayedCellSetterFact
 	}
 
 	@Override
-	public DelayedCellSetter<T, Boolean> newCellSetter(BreakDetector breakDectector, CsvMapperCellConsumer<?>[]  cellHandlers) {
+	public DelayedCellSetter<T, Boolean> newCellSetter(BreakDetector breakDetector, CsvMapperCellConsumer<?>[]  cellHandlers) {
 		return new BooleanDelayedCellSetter<T>(setter, reader);
 	}
 

@@ -4,17 +4,14 @@ import org.sfm.csv.CellValueReader;
 import org.sfm.csv.impl.ParsingContext;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.TimeZone;
-
 
 public class JavaOffsetDateTimeCellValueReader implements CellValueReader<OffsetDateTime> {
 
     private final DateTimeFormatter formatter;
 
-    public JavaOffsetDateTimeCellValueReader(String format, TimeZone timeZone) {
-        formatter = DateTimeFormatter.ofPattern(format).withZone(ZoneId.of(timeZone.getID()));
+    public JavaOffsetDateTimeCellValueReader(DateTimeFormatter formatter) {
+        this.formatter = formatter;
     }
 
     @Override

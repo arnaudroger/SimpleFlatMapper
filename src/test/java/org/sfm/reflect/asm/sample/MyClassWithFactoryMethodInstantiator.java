@@ -1,6 +1,5 @@
 package org.sfm.reflect.asm.sample;
 
-import org.sfm.beans.DbObject;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorFactoryTest;
 

@@ -1,8 +1,6 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.reflect.InstantiatorDefinition;
-import org.sfm.reflect.Parameter;
-import org.sfm.reflect.TypeHelper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +20,7 @@ public class OptionalPropertyFinder<T> implements PropertyFinder<T> {
 	}
 
 
+    @SuppressWarnings("unchecked")
     @Override
     public <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
         if (!innerMeta.isLeaf()) {
@@ -38,6 +37,7 @@ public class OptionalPropertyFinder<T> implements PropertyFinder<T> {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private <E> PropertyMeta<T, E> getSubPropertyMeta(PropertyMeta<E, ?> property) {
         return new SubPropertyMeta<T, E>(tupleClassMeta.getReflectionService(), (PropertyMeta<T, E>) tupleClassMeta.getProperty(), property);
     }

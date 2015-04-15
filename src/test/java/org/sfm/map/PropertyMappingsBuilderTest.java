@@ -41,7 +41,7 @@ public class PropertyMappingsBuilderTest {
                         new RethrowMapperBuilderErrorHandler()
                 );
 
-        builder.addProperty(new CsvColumnKey("phones_value", 0), CsvColumnDefinition.IDENTITY);
+        builder.addProperty(new CsvColumnKey("phones_value", 0), CsvColumnDefinition.identity());
 
 
         assertIsPhonesElement(builder);
@@ -60,7 +60,7 @@ public class PropertyMappingsBuilderTest {
                         new RethrowMapperBuilderErrorHandler()
                 );
 
-        builder2.addProperty(new CsvColumnKey("phones", 0), CsvColumnDefinition.IDENTITY);
+        builder2.addProperty(new CsvColumnKey("phones", 0), CsvColumnDefinition.identity());
 
         assertIsPhonesElement(builder2);
 

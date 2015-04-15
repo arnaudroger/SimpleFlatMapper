@@ -5,7 +5,6 @@ import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.impl.*;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.reflect.Instantiator;
-import org.sfm.reflect.Setter;
 
 import java.lang.reflect.Type;
 
@@ -327,7 +326,7 @@ public class CsvMapperCellHandlerBuilder {
                         mv.visitLabel(labels[labels.length - 1]);
                         mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
                     } else {
-                        for (int i = start, j = 0; i < end; i++) {
+                        for (int i = start; i < end; i++) {
                             if (delayedCellSetters[i] != null && delayedCellSetters[i].hasSetter()) {
                                 mv.visitVarInsn(ALOAD, 0);
                                 mv.visitMethodInsn(INVOKESPECIAL, classType, "applyDelayedCellSetter" + i, "()V", false);

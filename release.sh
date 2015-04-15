@@ -1,3 +1,4 @@
+#!/bin/bash
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre/
 mvn release:prepare
 cp release.properties tmp/release.properties

@@ -22,6 +22,7 @@ public final class InjectStaticMethodInstantiator<S, T> implements Instantiator<
 		this.instantiatorDefinition = instantiatorDefinition;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T newInstance(S s) throws Exception {
 		return (T) method.invoke(declaringClass, argBuilder.build(s));

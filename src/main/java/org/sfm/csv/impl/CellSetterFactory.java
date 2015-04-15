@@ -12,7 +12,6 @@ import org.sfm.reflect.impl.NullSetter;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyMeta;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 
 public final class CellSetterFactory {

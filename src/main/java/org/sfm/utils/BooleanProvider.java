@@ -1,5 +1,5 @@
 package org.sfm.utils;
 
 public interface BooleanProvider {
-    public boolean getBoolean();
+    boolean getBoolean();
 }

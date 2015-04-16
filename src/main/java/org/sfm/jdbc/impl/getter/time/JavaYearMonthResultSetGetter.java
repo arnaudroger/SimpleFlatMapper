@@ -38,10 +38,6 @@ public class JavaYearMonthResultSetGetter implements Getter<ResultSet, YearMonth
             return YearMonth.of(year, month);
         }
 
-        if (o instanceof YearMonth) {
-            return (YearMonth) o;
-        }
-
         if (o instanceof TemporalAccessor) {
             return YearMonth.from((TemporalAccessor) o);
         }

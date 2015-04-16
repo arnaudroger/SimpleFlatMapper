@@ -28,10 +28,6 @@ public class JavaInstantResultSetGetter implements Getter<ResultSet, Instant> {
             return Instant.ofEpochMilli(((Date) o).getTime());
         }
 
-        if (o instanceof Instant) {
-            return (Instant) o;
-        }
-
         if (o instanceof TemporalAccessor) {
             return Instant.from((TemporalAccessor) o);
         }

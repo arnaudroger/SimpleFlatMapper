@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class GenerateTuplesTest {
 
@@ -35,6 +36,17 @@ public class GenerateTuplesTest {
         StringWriter stringWriter = new StringWriter();
         GenerateTuples.generateTuple(stringWriter,4, 5, true);
         assertEquals(getContent("src/main/java/org/sfm/tuples/Tuple5.java"), stringWriter.toString());
+    }
+
+    @Test
+    public void testNth() {
+        assertEquals("sixth", GenerateTuples.getThName(5));
+        assertEquals("seventh", GenerateTuples.getThName(6));
+        assertEquals("eighth", GenerateTuples.getThName(7));
+        assertEquals("ninth", GenerateTuples.getThName(8));
+        assertEquals("tenth", GenerateTuples.getThName(9));
+
+        assertNull(GenerateTuples.getThName(10));
     }
 
     private String getContent(String file) throws IOException {

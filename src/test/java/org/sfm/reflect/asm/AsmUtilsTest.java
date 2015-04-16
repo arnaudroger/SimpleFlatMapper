@@ -4,12 +4,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.sfm.reflect.TypeHelper;
 
+import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AsmUtilsTest {
 
@@ -93,5 +95,16 @@ public class AsmUtilsTest {
 		assertEquals(Arrays.asList("TT;", "Ljava/util/Optional<TT;>;"),AsmUtils.extractTypeNames(types));
 	}
 
+	@Test
+	public void writeToClass() throws Exception {
+		File dir = new File("target/asm-classes-dump-test");
+		File f = new File(dir, "test/MyClass.class");
+		if (f.exists()) f.delete();
+
+		AsmUtils.writeClassToFileInDir("test.MyClass", new byte[]{0, 1, 2, 3}, dir);
+
+		assertTrue(f.exists());
+		assertTrue(f.length() == 4);
+	}
 
 }

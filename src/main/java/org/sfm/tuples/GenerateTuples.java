@@ -198,7 +198,7 @@ public class GenerateTuples {
         writer.append("}\n");
     }
 
-    private static String getThName(int i) {
+    public static String getThName(int i) {
         switch (i) {
             case 0: return "first";
             case 1: return "second";
@@ -215,11 +215,9 @@ public class GenerateTuples {
     }
 
     public static void main(String[] args) throws IOException {
-
         for(int i = 2; i <= 32; i++) {
             write(i);
         }
-
     }
 
     private static void write(int i) throws IOException {

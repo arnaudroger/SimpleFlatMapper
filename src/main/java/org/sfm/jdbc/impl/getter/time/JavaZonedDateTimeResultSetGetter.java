@@ -38,10 +38,6 @@ public class JavaZonedDateTimeResultSetGetter implements Getter<ResultSet, Zoned
             return ((LocalDateTime)o).atZone(zone);
         }
 
-        if (o instanceof OffsetDateTime) {
-            return ((OffsetDateTime)o).toZonedDateTime();
-        }
-
         if (o instanceof TemporalAccessor) {
             return ZonedDateTime.from((TemporalAccessor) o);
         }

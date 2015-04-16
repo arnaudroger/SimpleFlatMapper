@@ -41,10 +41,6 @@ public class JavaLocalDateResultSetGetter implements Getter<ResultSet, LocalDate
             return ((LocalDateTime)o).toLocalDate();
         }
 
-        if (o instanceof Instant) {
-            return ((Instant)o).atZone(zone).toLocalDate();
-        }
-
         if (o instanceof TemporalAccessor) {
             return LocalDate.from((TemporalAccessor) o);
         }

@@ -39,8 +39,12 @@ public class JavaOffsetTimeResultSetGetter implements Getter<ResultSet, OffsetTi
             return ((LocalDateTime)o).atZone(zone).toOffsetDateTime().toOffsetTime();
         }
 
+        if (o instanceof LocalTime) {
+            return ((LocalTime)o).atOffset(zone.getRules().getStandardOffset(Instant.now()));
+        }
+
         if (o instanceof TemporalAccessor) {
-            return OffsetTime.from((TemporalAccessor) o);
+            return OffsetTime.from((TemporalAccessor)o);
         }
 
         throw new IllegalArgumentException("Cannot convert " + o + " to OffsetTime");

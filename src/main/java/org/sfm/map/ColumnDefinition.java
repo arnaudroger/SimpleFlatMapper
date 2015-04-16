@@ -111,18 +111,6 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ColumnDefinition)) return false;
-
-        ColumnDefinition<?, ?> that = (ColumnDefinition<?, ?>) o;
-
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(properties, that.properties);
-
-    }
-
     public String toString() {
         StringBuilder sb  = new StringBuilder();
 
@@ -133,16 +121,6 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
         return sb.toString();
     }
 
-    @Override
-    public int hashCode() {
-        return Arrays.hashCode(properties);
-    }
-
-    public boolean hasCustomSource() {
-        return false;
-    }
-
-    public Type getCustomSourceReturnType() {
-        throw new UnsupportedOperationException();
-    }
+    public abstract boolean hasCustomSource();
+    public abstract Type getCustomSourceReturnType();
 }

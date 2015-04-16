@@ -35,10 +35,6 @@ public class JavaYearResultSetGetter implements Getter<ResultSet, Year> {
             return Year.of(((Number)o).intValue());
         }
 
-        if (o instanceof Year) {
-            return (Year) o;
-        }
-
         if (o instanceof TemporalAccessor) {
             return Year.from((TemporalAccessor) o);
         }

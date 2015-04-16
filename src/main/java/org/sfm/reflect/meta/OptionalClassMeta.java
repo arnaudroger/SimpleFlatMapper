@@ -61,18 +61,7 @@ public class OptionalClassMeta<T> implements ClassMeta<T> {
 
 	@Override
 	public String[] generateHeaders() {
-		List<String> strings = new ArrayList<String>();
-		int i = 0;
-		for(Parameter cp : instantiatorDefinition.getParameters()) {
-			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getGenericType());
-
-			for(String prop : classMeta.generateHeaders()) {
-				strings.add(prop);
-			}
-
-			i++;
-		}
-		return strings.toArray(EMPTY_STRING_ARRAY);
+		return innerMeta.generateHeaders();
 	}
 
 	public ClassMeta<T> getInnerMeta() {

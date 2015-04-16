@@ -131,20 +131,24 @@ public class AsmUtils {
 	}
 	
 	public static byte[] writeClassToFile (final String className, final byte[] bytes) throws IOException {
+		return writeClassToFileInDir(className, bytes,  AsmUtils.targetDir);
+	}
+
+	public static byte[] writeClassToFileInDir(String className, byte[] bytes, File targetDir) throws IOException {
 		if (targetDir != null) {
 			final int lastIndex = className.lastIndexOf('.');
 			final String filename = className.substring(lastIndex + 1) + ".class";
 			final String directory = className.substring(0, lastIndex).replace('.', '/');
 			final File packageDir = new File(targetDir, directory);
 			packageDir.mkdirs();
-			
+
 			final FileOutputStream fos = new FileOutputStream(new File(packageDir, filename ));
 			try {
 				fos.write(bytes);
 			} finally {
 				fos.close();
 			}
-		}		
+		}
 		return bytes;
 	}
 

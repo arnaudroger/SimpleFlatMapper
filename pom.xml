@@ -128,6 +128,13 @@
             <optional>true</optional>
 		</dependency>
 
+		<!--<dependency>-->
+			<!--<groupId>org.hibernate</groupId>-->
+			<!--<artifactId>hibernate-core</artifactId>-->
+			<!--<version>4.3.6.Final</version>-->
+			<!--<optional>true</optional>-->
+		<!--</dependency>-->
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

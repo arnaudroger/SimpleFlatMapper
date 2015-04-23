@@ -16,10 +16,10 @@ public class DoubleCellSetter<T> implements CellSetter<T> {
 	}
 	
 	@Override
-	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
+	public void set(T target, CharSequence value, ParsingContext parsingContext)
 			throws Exception {
         if (target == null) return;
-        setter.setDouble(target, reader.readDouble(chars, offset, length, parsingContext));
+        setter.setDouble(target, reader.readDouble(value, parsingContext));
 	}
 
     @Override

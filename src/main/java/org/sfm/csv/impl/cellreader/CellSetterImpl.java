@@ -17,9 +17,9 @@ public final class CellSetterImpl<T, P> implements CellSetter<T> {
 	}
 
 	@Override
-	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
-        final P value = reader.read(chars, offset, length, parsingContext);
-        setter.set(target, value);
+	public void set(T target, CharSequence value, ParsingContext parsingContext) throws Exception {
+        final P p = reader.read(value, parsingContext);
+        setter.set(target, p);
 	}
 
     @Override

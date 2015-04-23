@@ -16,10 +16,10 @@ public class BooleanCellSetter<T> implements CellSetter<T> {
 	}
 	
 	@Override
-	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
+	public void set(T target, CharSequence value, ParsingContext parsingContext)
 			throws Exception {
         if (target == null) return;
-        setter.setBoolean(target, reader.readBoolean(chars, offset, length, parsingContext));
+        setter.setBoolean(target, reader.readBoolean(value, parsingContext));
 	}
 
     @Override

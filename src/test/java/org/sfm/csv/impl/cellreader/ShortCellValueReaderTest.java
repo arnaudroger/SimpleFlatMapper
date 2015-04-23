@@ -23,9 +23,8 @@ public class ShortCellValueReaderTest {
 	
 	@Test
 	public void testInvalidShort() throws UnsupportedEncodingException {
-		final char[] chars = "Nan".toCharArray();
 		try {
-			reader.read(chars, 0, chars.length, null);
+			reader.read("Nan", null);
 			fail("Expect exception");
 		} catch(ParsingException e){
 			// expected
@@ -34,12 +33,11 @@ public class ShortCellValueReaderTest {
 
 	@Test
 	public void testReadEmptyStringReturnNull() {
-		assertNull(reader.read(new char[10], 2, 0, null));
+		assertNull(reader.read("", null));
 	}
 
 	private void testReadShort(int i) throws UnsupportedEncodingException {
-		final char[] chars = ("_" + Integer.toString(i) + "_").toCharArray();
-		assertEquals(i, reader.read(chars, 1, chars.length-2, null).shortValue());
+		assertEquals(i, reader.read(Integer.toString(i), null).shortValue());
 	}
 
 }

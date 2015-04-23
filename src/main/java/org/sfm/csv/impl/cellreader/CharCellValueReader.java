@@ -5,5 +5,5 @@ import org.sfm.csv.impl.ParsingContext;
 
 
 public interface CharCellValueReader extends CellValueReader<Character> {
-    char readChar(char[] bytes, int offset, int length, ParsingContext parsingContext);
+    char readChar(CharSequence value, ParsingContext parsingContext);
 }

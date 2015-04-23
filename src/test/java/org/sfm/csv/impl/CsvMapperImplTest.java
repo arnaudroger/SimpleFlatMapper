@@ -20,7 +20,7 @@ public class CsvMapperImplTest {
         final CsvMapperImpl<DbObject> mapper1 = (CsvMapperImpl<DbObject>) CsvMapperFactory.newInstance().newBuilder(DbObject.class).addMapping("id").addMapping("name").addMapping("email").mapper();
         final CsvMapperImpl<DbObject> mapper2 = (CsvMapperImpl<DbObject>) CsvMapperFactory.newInstance().newBuilder(DbObject.class).addMapping("id", CsvColumnDefinition.customReaderDefinition(new CellValueReader<Long>() {
             @Override
-            public Long read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+            public Long read(CharSequence value, ParsingContext parsingContext) {
                 return 23l;
             }
         })).addMapping("name").addMapping("email").mapper();

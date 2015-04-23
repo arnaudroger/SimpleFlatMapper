@@ -1,5 +1,5 @@
 package org.sfm.csv.impl;
 
 public interface CellSetter<T> {
-	void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception;
+	void set(T target, CharSequence value, ParsingContext parsingContext) throws Exception;
 }

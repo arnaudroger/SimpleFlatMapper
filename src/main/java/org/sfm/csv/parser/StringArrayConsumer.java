@@ -15,11 +15,11 @@ public final class StringArrayConsumer<RH extends RowHandler<String[]>> implemen
 	}
 
 	@Override
-	public void newCell(char[] chars, int offset, int length) {
+	public void newCell(CharSequence value) {
 		if (currentIndex >= currentRow.length) {
 			doubleSize();
 		}
-		currentRow[currentIndex++] = StringCellValueReader.readString(chars, offset, length);
+		currentRow[currentIndex++] = StringCellValueReader.readString(value);
 	}
 
 	private void doubleSize() {

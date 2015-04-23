@@ -11,28 +11,28 @@ public final class IntegerCellValueReaderImpl implements IntegerCellValueReader 
 	private final static char C_NEG_SIGN = '-';
 
 	@Override
-	public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {
-		if (length == 0) return null;
-		return readInt(chars, offset, length, parsingContext);
+	public Integer read(CharSequence value, ParsingContext parsingContext) {
+		if (value.length() == 0) return null;
+		return readInt(value, parsingContext);
 	}
 
 	@Override
-	public int readInt(char[] chars, int offset, int length, ParsingContext parsingContext) {
-		return parseInt(chars, offset, length);
+	public int readInt(CharSequence value, ParsingContext parsingContext) {
+		return parseInt(value);
 	}
 
-	public static int parseInt(char[] chars, int offset, int length) {
+	public static int parseInt(CharSequence value) {
 		int n = 0;
 		boolean negative = false;
-		for(int i = offset; i < offset + length; i++) {
-			char b = chars[i];
+		for(int i = 0; i < value.length(); i++) {
+			char b = value.charAt(i);
 			if (b >= C_ZERO && b <= C_NINE) {
-				n  = n * 10 +  chars[i] - C_ZERO;
+				n  = n * 10 +  b - C_ZERO;
 			} else {
-				if (b == C_NEG_SIGN && i == offset) {
+				if (b == C_NEG_SIGN && i == 0) {
 					negative = true;
 				} else {
-					throw new ParsingException("Cannot parse " + new String(chars, offset, length) + " as an int");
+					throw new ParsingException("Cannot parse " + value + " as an int");
 				}
 			}
 		}

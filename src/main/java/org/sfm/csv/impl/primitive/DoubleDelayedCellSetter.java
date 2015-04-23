@@ -45,9 +45,9 @@ public class DoubleDelayedCellSetter<T> implements DelayedCellSetter<T, Double> 
 	}
 
 	@Override
-	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
-        isNull = length == 0;
-		this.value = reader.readDouble(chars, offset, length, parsingContext);
+	public void set(CharSequence value, ParsingContext parsingContext) throws Exception {
+        isNull = value.length() == 0;
+		this.value = reader.readDouble(value, parsingContext);
 	}
 
     @Override

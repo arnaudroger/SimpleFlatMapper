@@ -15,8 +15,8 @@ public class JavaYearMonthCellValueReader implements CellValueReader<YearMonth> 
     }
 
     @Override
-    public YearMonth read(char[] chars, int offset, int length, ParsingContext parsingContext) {
-        return YearMonth.parse(new String(chars, offset, length), formatter);
+    public YearMonth read(CharSequence value, ParsingContext parsingContext) {
+        return YearMonth.parse(value, formatter);
     }
 
 }

@@ -55,9 +55,9 @@ public class DelegateDelayedCellSetter<T, P> implements DelayedCellSetter<T, P> 
         return setter != null;
     }
 
-    public void set(char[] chars, int offset, int length, ParsingContext parsingContext)
+    public void set(CharSequence value, ParsingContext parsingContext)
             throws Exception {
-        cellConsumer.newCell(chars, offset, length, cellIndex);
+        cellConsumer.newCell(value, cellIndex);
     }
 
     @Override

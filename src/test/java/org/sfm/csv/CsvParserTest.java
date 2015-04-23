@@ -268,7 +268,7 @@ public class CsvParserTest {
 	public void testDSLMapWithCustomDefinition() throws  Exception {
 		Iterator<Tuple2<String, String>> iterator = CsvParser.mapTo(String.class, String.class).columnDefinition("1", CsvColumnDefinition.customReaderDefinition(new CellValueReader<String>() {
 			@Override
-			public String read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+			public String read(CharSequence value, ParsingContext parsingContext) {
 				return "c1";
 			}
 		})).iterator(new StringReader("0,1\nv0,v1"));
@@ -285,7 +285,7 @@ public class CsvParserTest {
 				.addMapping("0")
 				.addMapping("1", CsvColumnDefinition.customReaderDefinition(new CellValueReader<String>() {
 					@Override
-					public String read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+					public String read(CharSequence value, ParsingContext parsingContext) {
 						return "c1";
 					}
 				})).iterator(new StringReader("0,1\nv0,v1"));
@@ -512,8 +512,8 @@ public class CsvParserTest {
 		final List<String> currentRow = new ArrayList<String>();
 
 		@Override
-		public void newCell(char[] chars, int offset, int length) {
-			currentRow.add(new String(chars, offset, length));
+		public void newCell(CharSequence value) {
+			currentRow.add(String.valueOf(value));
 		}
 
 		@Override

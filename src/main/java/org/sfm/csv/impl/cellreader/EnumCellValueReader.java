@@ -21,20 +21,20 @@ public class EnumCellValueReader<E extends Enum<E>> implements CellValueReader<E
 	}
 
 	@Override
-	public E read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+	public E read(CharSequence value, ParsingContext parsingContext) {
 		
-		int n = parsePositiveNumber(chars, offset, length);
+		int n = parsePositiveNumber(value);
 		if (n >= 0 && n < values.length) {
 			return values[n];
 		} else {
-			return Enum.valueOf(enumClass, stringCellValueReader.read(chars, offset, length, parsingContext));
+			return Enum.valueOf(enumClass, stringCellValueReader.read(value, parsingContext));
 		}
 	}
 	
-	private int parsePositiveNumber(char[] chars, int offset, int length) {
+	private int parsePositiveNumber(CharSequence value) {
 		int n = 0;
-		for(int i = offset; i< offset + length ; i++) {
-			char b = chars[i];
+		for(int i = 0; i< value.length() ; i++) {
+			char b = value.charAt(i);
 			if (b >= CZERO && b <= CNINE) {
 				n = n * 10 + b - CZERO;
 			} else {

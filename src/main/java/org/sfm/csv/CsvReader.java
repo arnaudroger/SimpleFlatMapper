@@ -24,7 +24,7 @@ public final class CsvReader implements Iterable<String[]> {
 	private final static CellConsumer DUMMY_CONSUMER = new CellConsumer() {
 
 		@Override
-		public void newCell(char[] chars, int offset, int length) {
+		public void newCell(CharSequence value) {
 		}
 
 		@Override

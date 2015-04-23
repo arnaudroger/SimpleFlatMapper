@@ -23,7 +23,7 @@ public class CsvMapperBuilderSubObjectTest {
         CsvMapperBuilder<Db1DeepObject> builder = new CsvMapperBuilder<Db1DeepObject>(Db1DeepObject.class,  ReflectionService.newInstance(true, false));
         CsvColumnDefinition columnDefinition = CsvColumnDefinition.customReaderDefinition(new CellValueReader<String>() {
             @Override
-            public String read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+            public String read(CharSequence value, ParsingContext parsingContext) {
                 return "cv1";
             }
         });

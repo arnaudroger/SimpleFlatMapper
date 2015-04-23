@@ -39,11 +39,11 @@ public class AsmInstantiatorTest {
 						injections);
 		DelayedCellSetterImpl delayedCellSetter = new DelayedCellSetterImpl(null, new CellValueReader() {
 			@Override
-			public char[] read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+			public char[] read(CharSequence value, ParsingContext parsingContext) {
 				return new char[]{'h'};
 			}
 		});
-		delayedCellSetter.set(null, 0, 0, null);
+		delayedCellSetter.set("", null);
 
         CsvMapperCellHandlerImpl targetSettersImpl = new CsvMapperCellHandlerImpl(instantiator, new DelayedCellSetter[]{delayedCellSetter}, new CellSetter[]{}, null, null, null);
 

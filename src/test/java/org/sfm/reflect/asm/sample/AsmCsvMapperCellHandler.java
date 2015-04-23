@@ -32,18 +32,18 @@ public class AsmCsvMapperCellHandler extends CsvMapperCellHandler<DbObject> {
     }
 
     @Override
-    public void delayedCellValue(char[] chars, int offset, int length, int cellIndex) {
+    public void delayedCellValue(CharSequence value, int cellIndex) {
         try {
-            _delayedCellValue(chars, offset, length, cellIndex);
+            _delayedCellValue(value, cellIndex);
         } catch(Exception e) {
             fieldError(cellIndex, e);
         }
     }
 
     @Override
-    public void cellValue(char[] chars, int offset, int length, int cellIndex) {
+    public void cellValue(CharSequence value, int cellIndex) {
         try {
-            _cellValue(chars, offset, length, cellIndex);
+            _cellValue(value, cellIndex);
         } catch(Exception e) {
             fieldError(cellIndex, e);
         }
@@ -90,22 +90,22 @@ public class AsmCsvMapperCellHandler extends CsvMapperCellHandler<DbObject> {
         return null;
     }
 
-    private void _delayedCellValue(char[] chars, int offset, int length, int cellIndex) throws Exception {
+    private void _delayedCellValue(CharSequence value, int cellIndex) throws Exception {
         switch (cellIndex) {
-            case 0: delayedCellSetter0.set(chars, offset, length, parsingContext); break;
-            case 1: delayedCellSetter1.set(chars, offset, length, parsingContext); break;
-            case 2: delayedCellSetter2.set(chars, offset, length, parsingContext); break;
+            case 0: delayedCellSetter0.set(value, parsingContext); break;
+            case 1: delayedCellSetter1.set(value, parsingContext); break;
+            case 2: delayedCellSetter2.set(value, parsingContext); break;
         }
     }
 
 
 
-    private void _cellValue(char[] chars, int offset, int length, int cellIndex) throws Exception {
+    private void _cellValue(CharSequence value, int cellIndex) throws Exception {
         int i = (cellIndex << 2) - 1;
         switch (i) {
-            case 3: setter3.set(currentInstance, chars, offset, length, parsingContext); break;
-            case 4: setter4.set(currentInstance, chars, offset, length, parsingContext); break;
-            case 5: setter5.set(currentInstance, chars, offset, length, parsingContext); break;
+            case 3: setter3.set(currentInstance, value, parsingContext); break;
+            case 4: setter4.set(currentInstance, value, parsingContext); break;
+            case 5: setter5.set(currentInstance, value, parsingContext); break;
         }
     }
 

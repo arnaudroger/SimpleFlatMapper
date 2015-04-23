@@ -13,8 +13,8 @@ public class JodaDateTimeCellValueReader implements CellValueReader<DateTime> {
         this.fmt = fmt;
     }
 
-    public DateTime read(char[] chars, int offset, int length, ParsingContext parsingContext) {
-        if (length == 0) return null;
-        return fmt .parseDateTime(StringCellValueReader.readString(chars, offset, length));
+    public DateTime read(CharSequence value, ParsingContext parsingContext) {
+        if (value.length() == 0) return null;
+        return fmt .parseDateTime(StringCellValueReader.readString(value));
     }
 }

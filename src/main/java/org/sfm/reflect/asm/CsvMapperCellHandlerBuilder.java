@@ -92,11 +92,9 @@ public class CsvMapperCellHandlerBuilder {
                         mv.visitVarInsn(ALOAD, 0);
                         mv.visitFieldInsn(GETFIELD, classType, "currentInstance", "Ljava/lang/Object;");
                         mv.visitVarInsn(ALOAD, 1);
-                        mv.visitVarInsn(ILOAD, 2);
-                        mv.visitVarInsn(ILOAD, 3);
                         mv.visitVarInsn(ALOAD, 0);
                         mv.visitFieldInsn(GETFIELD, classType, "parsingContext", AsmUtils.toDeclaredLType(ParsingContext.class));
-                        mv.visitMethodInsn(INVOKEINTERFACE, CELL_SETTER_TYPE, "set", "(Ljava/lang/Object;[CIIL" + AsmUtils.toType(ParsingContext.class) + ";)V", true);
+                        mv.visitMethodInsn(INVOKEINTERFACE, CELL_SETTER_TYPE, "set", "(Ljava/lang/Object;Ljava/lang/CharSequence;L" + AsmUtils.toType(ParsingContext.class) + ";)V", true);
                     }
                     if (i < (end - 1)) {
                         mv.visitJumpInsn(GOTO, defaultLabel);
@@ -108,7 +106,7 @@ public class CsvMapperCellHandlerBuilder {
 
             @Override
             protected int maxArgIndex() {
-                return 4;
+                return 2;
             }
 
             @Override
@@ -116,13 +114,11 @@ public class CsvMapperCellHandlerBuilder {
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitVarInsn(ALOAD, 1);
                 mv.visitVarInsn(ILOAD, 2);
-                mv.visitVarInsn(ILOAD, 3);
-                mv.visitVarInsn(ILOAD, 4);
             }
 
             @Override
             protected int argIndex() {
-                return 4;
+                return 2;
             }
 
             @Override
@@ -132,7 +128,7 @@ public class CsvMapperCellHandlerBuilder {
 
             @Override
             protected String signature() {
-                return "([CIII)V";
+                return "(Ljava/lang/CharSequence;I)V";
             }
 
             @Override
@@ -143,10 +139,8 @@ public class CsvMapperCellHandlerBuilder {
             @Override
             protected void appendDebugInfo(MethodVisitor mv, Label startLabel, Label endLabel) {
                 mv.visitLocalVariable("this", "Lorg/sfm/reflect/asm/sample/AsmCsvMapperCellHandler;", null, startLabel, endLabel, 0);
-                mv.visitLocalVariable("chars", "[C", null, startLabel, endLabel, 1);
-                mv.visitLocalVariable("offset", "I", null, startLabel, endLabel, 2);
-                mv.visitLocalVariable("length", "I", null, startLabel, endLabel, 3);
-                mv.visitLocalVariable("cellIndex", "I", null, startLabel, endLabel, 4);
+                mv.visitLocalVariable("value", "Ljava/lang/CharSequence;", null, startLabel, endLabel, 1);
+                mv.visitLocalVariable("cellIndex", "I", null, startLabel, endLabel, 2);
             }
         });
 
@@ -239,11 +233,9 @@ public class CsvMapperCellHandlerBuilder {
                         mv.visitVarInsn(ALOAD, 0);
                         mv.visitFieldInsn(GETFIELD, classType, "delayedCellSetter" + i, "L" + DELAYED_CELL_SETTER_TYPE + ";");
                         mv.visitVarInsn(ALOAD, 1);
-                        mv.visitVarInsn(ILOAD, 2);
-                        mv.visitVarInsn(ILOAD, 3);
                         mv.visitVarInsn(ALOAD, 0);
                         mv.visitFieldInsn(GETFIELD, classType, "parsingContext", AsmUtils.toDeclaredLType(ParsingContext.class));
-                        mv.visitMethodInsn(INVOKEINTERFACE, DELAYED_CELL_SETTER_TYPE, "set", "([CIIL" + AsmUtils.toType(ParsingContext.class) + ";)V", true);
+                        mv.visitMethodInsn(INVOKEINTERFACE, DELAYED_CELL_SETTER_TYPE, "set", "(Ljava/lang/CharSequence;L" + AsmUtils.toType(ParsingContext.class) + ";)V", true);
                     }
                     if (i < (end - 1)) {
                         mv.visitJumpInsn(GOTO, defaultLabel);
@@ -257,18 +249,16 @@ public class CsvMapperCellHandlerBuilder {
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitVarInsn(ALOAD, 1);
                 mv.visitVarInsn(ILOAD, 2);
-                mv.visitVarInsn(ILOAD, 3);
-                mv.visitVarInsn(ILOAD, 4);
             }
 
             @Override
             protected int maxArgIndex() {
-                return 4;
+                return 2;
             }
 
             @Override
             protected int argIndex() {
-                return 4;
+                return 2;
             }
 
             @Override
@@ -278,7 +268,7 @@ public class CsvMapperCellHandlerBuilder {
 
             @Override
             protected String signature() {
-                return "([CIII)V";
+                return "(Ljava/lang/CharSequence;I)V";
             }
         });
     }
@@ -401,7 +391,7 @@ public class CsvMapperCellHandlerBuilder {
 
     private static <T> void appendCellValue(CellSetter<T>[] setters, boolean ignoreException, ClassWriter cw, String classType) {
         MethodVisitor mv;
-        mv = cw.visitMethod(ACC_PUBLIC, "cellValue", "([CIII)V", null, null);
+        mv = cw.visitMethod(ACC_PUBLIC, "cellValue", "(Ljava/lang/CharSequence;I)V", null, null);
         mv.visitCode();
         if (setters.length != 0) {
             if (ignoreException) {
@@ -418,10 +408,10 @@ public class CsvMapperCellHandlerBuilder {
                 mv.visitJumpInsn(GOTO, l3);
                 mv.visitLabel(l2);
                 mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{"java/lang/Exception"});
-                mv.visitVarInsn(ASTORE, 5);
+                mv.visitVarInsn(ASTORE, 3);
                 mv.visitVarInsn(ALOAD, 0);
-                mv.visitVarInsn(ILOAD, 4);
-                mv.visitVarInsn(ALOAD, 5);
+                mv.visitVarInsn(ILOAD, 2);
+                mv.visitVarInsn(ALOAD, 3);
                 mv.visitMethodInsn(INVOKEVIRTUAL, classType, "fieldError", "(ILjava/lang/Exception;)V", false);
                 mv.visitLabel(l3);
                 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
@@ -434,7 +424,7 @@ public class CsvMapperCellHandlerBuilder {
 
     private static <T> void appendDelayedCellValue(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, boolean ignoreException, ClassWriter cw, String classType) {
         MethodVisitor mv;
-        mv = cw.visitMethod(ACC_PUBLIC, "delayedCellValue", "([CIII)V", null, null);
+        mv = cw.visitMethod(ACC_PUBLIC, "delayedCellValue", "(Ljava/lang/CharSequence;I)V", null, null);
         mv.visitCode();
         if (delayedCellSetters.length != 0) {
             if (ignoreException) {
@@ -451,10 +441,10 @@ public class CsvMapperCellHandlerBuilder {
                 mv.visitJumpInsn(GOTO, l3);
                 mv.visitLabel(l2);
                 mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{"java/lang/Exception"});
-                mv.visitVarInsn(ASTORE, 5);
+                mv.visitVarInsn(ASTORE, 3);
                 mv.visitVarInsn(ALOAD, 0);
-                mv.visitVarInsn(ILOAD, 4);
-                mv.visitVarInsn(ALOAD, 5);
+                mv.visitVarInsn(ILOAD, 2);
+                mv.visitVarInsn(ALOAD, 3);
                 mv.visitMethodInsn(INVOKEVIRTUAL, classType, "fieldError", "(ILjava/lang/Exception;)V", false);
                 mv.visitLabel(l3);
                 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
@@ -593,18 +583,14 @@ public class CsvMapperCellHandlerBuilder {
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 1);
         mv.visitVarInsn(ILOAD, 2);
-        mv.visitVarInsn(ILOAD, 3);
-        mv.visitVarInsn(ILOAD, 4);
-        mv.visitMethodInsn(INVOKESPECIAL, classType, "_cellValue", "([CIII)V", false);
+        mv.visitMethodInsn(INVOKESPECIAL, classType, "_cellValue", "(Ljava/lang/CharSequence;I)V", false);
     }
 
     private static void callDelayedCellValue(MethodVisitor mv, String classType) {
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 1);
         mv.visitVarInsn(ILOAD, 2);
-        mv.visitVarInsn(ILOAD, 3);
-        mv.visitVarInsn(ILOAD, 4);
-        mv.visitMethodInsn(INVOKESPECIAL, classType, "_delayedCellValue", "([CIII)V", false);
+        mv.visitMethodInsn(INVOKESPECIAL, classType, "_delayedCellValue", "(Ljava/lang/CharSequence;I)V", false);
     }
 
     private static <T> int getNbNonNullSettersWithSetters(DelayedCellSetterFactory<T, ?>[] delayedCellSetters, int start, int end) {

@@ -28,9 +28,9 @@ public abstract class CsvMapperCellHandler<T> {
         this.delayedCellSettersLength = delayedCellSettersLength;
     }
 
-    public abstract void delayedCellValue(char[] chars, int offset, int length, int cellIndex);
+    public abstract void delayedCellValue(CharSequence value, int cellIndex);
 
-    public abstract void cellValue(char[] chars, int offset, int length, int cellIndex);
+    public abstract void cellValue(CharSequence value, int cellIndex);
 
     public abstract void applyDelayedSetters();
 

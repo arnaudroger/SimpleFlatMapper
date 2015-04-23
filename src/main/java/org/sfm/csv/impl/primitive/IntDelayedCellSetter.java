@@ -45,9 +45,9 @@ public class IntDelayedCellSetter<T> implements DelayedCellSetter<T, Integer> {
 	}
 
 	@Override
-	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
-        isNull = length == 0;
-		this.value = reader.readInt(chars, offset, length, parsingContext);
+	public void set(CharSequence value, ParsingContext parsingContext) throws Exception {
+        isNull = value.length() == 0;
+		this.value = reader.readInt(value, parsingContext);
 	}
 
     @Override

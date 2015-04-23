@@ -8,12 +8,12 @@ public final class StringCellValueReader implements CellValueReader<String> {
 
 
 	@Override
-	public String read(char[] chars, int offset, int length, ParsingContext parsingContext) {
-		return readString(chars, offset, length);
+	public String read(CharSequence value, ParsingContext parsingContext) {
+		return readString(value);
 	}
 
-	public static String readString(char[] chars, int offset, int length) {
-		return new String(chars, offset, length);
+	public static String readString(CharSequence value) {
+		return String.valueOf(value);
 	}
 
     @Override

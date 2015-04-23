@@ -21,8 +21,8 @@ public final class ColumnsMapperKeyBuilderCellConsumer<T> implements CellConsume
 	}
 
 	@Override
-	public void newCell(char[] chars, int offset, int length) {
-		columns.add(StringCellValueReader.readString(chars, offset, length));
+	public void newCell(CharSequence value) {
+		columns.add(StringCellValueReader.readString(value));
 	}
 
 	@Override

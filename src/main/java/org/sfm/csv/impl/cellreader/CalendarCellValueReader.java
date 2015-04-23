@@ -17,8 +17,8 @@ public class CalendarCellValueReader implements CellValueReader<Calendar>, Parsi
 	}
 	
 	@Override
-	public Calendar read(char[] chars, int offset, int length, ParsingContext parsingContext) {
-		Date date = reader.read(chars, offset, length, parsingContext);
+	public Calendar read(CharSequence value, ParsingContext parsingContext) {
+		Date date = reader.read(value, parsingContext);
 		if (date != null) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);

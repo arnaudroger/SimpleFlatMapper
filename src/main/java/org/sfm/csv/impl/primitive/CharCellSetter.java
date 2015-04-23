@@ -16,10 +16,10 @@ public class CharCellSetter<T> implements CellSetter<T> {
 	}
 	
 	@Override
-	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
+	public void set(T target, CharSequence value, ParsingContext parsingContext)
 			throws Exception {
         if (target == null) return;
-        setter.setCharacter(target, reader.readChar(chars, offset, length, parsingContext));
+        setter.setCharacter(target, reader.readChar(value, parsingContext));
 	}
 
     @Override

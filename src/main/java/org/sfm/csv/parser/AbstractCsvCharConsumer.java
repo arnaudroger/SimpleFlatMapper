@@ -1,5 +1,7 @@
 package org.sfm.csv.parser;
 
+import org.sfm.csv.impl.MutableCharSequence;
+
 import java.io.IOException;
 import java.io.Reader;
 
@@ -11,6 +13,7 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 	private static final int TURN_OFF_IN_CR_MASK = ~IN_CR;
 	private static final int ALL_QUOTES = QUOTE | IN_QUOTE;
 	protected final CharBuffer csvBuffer;
+	protected final MutableCharSequence charSequence = new MutableCharSequence();
 
 	protected int _currentIndex;
 	private int currentState = NONE;
@@ -94,7 +97,12 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 			length = unescape(charBuffer, start, length);
 		}
 
-		cellConsumer.newCell(charBuffer, start, length);
+		charSequence.setValue(charBuffer);
+		charSequence.setStart(start);
+		charSequence.setLength(length);
+
+		cellConsumer.newCell(charSequence);
+
 		csvBuffer.mark(currentIndex + 1);
 		currentState = NONE;
 	}

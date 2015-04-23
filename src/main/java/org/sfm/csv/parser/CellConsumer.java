@@ -1,7 +1,7 @@
 package org.sfm.csv.parser;
 
 public interface CellConsumer {
-	void newCell(char[] chars, int offset, int length);
+	void newCell(CharSequence value);
 	void endOfRow();
 	void end();
 }

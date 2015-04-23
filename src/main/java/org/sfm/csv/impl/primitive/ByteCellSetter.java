@@ -16,10 +16,10 @@ public class ByteCellSetter<T> implements CellSetter<T> {
 	}
 	
 	@Override
-	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
+	public void set(T target, CharSequence value, ParsingContext parsingContext)
 			throws Exception {
         if (target == null) return;
-        setter.setByte(target, reader.readByte(chars, offset, length, parsingContext));
+        setter.setByte(target, reader.readByte(value, parsingContext));
 	}
 
     @Override

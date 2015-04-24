@@ -16,10 +16,10 @@ public class FloatCellSetter<T> implements CellSetter<T> {
 	}
 	
 	@Override
-	public void set(T target, CharSequence value, ParsingContext parsingContext)
+	public void set(T target, char[] chars, int offset, int length, ParsingContext parsingContext)
 			throws Exception {
         if (target == null) return;
-        setter.setFloat(target, reader.readFloat(value, parsingContext));
+        setter.setFloat(target, reader.readFloat(chars, offset, length, parsingContext));
 	}
 
     @Override

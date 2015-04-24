@@ -12,13 +12,13 @@ public class IntegerCellValueReaderUnbox implements IntegerCellValueReader {
     }
 
     @Override
-    public int readInt(CharSequence value, ParsingContext parsingContext) {
-        return read(value, parsingContext);
+    public int readInt(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        return read(chars, offset, length, parsingContext);
     }
 
     @Override
-    public Integer read(CharSequence value, ParsingContext parsingContext) {
-        return reader.read(value, parsingContext);
+    public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        return reader.read(chars, offset, length, parsingContext);
     }
 
     @Override

@@ -42,9 +42,9 @@ public class DelayedCellSetterImpl<T, P> implements DelayedCellSetter<T, P> {
 	}
 	
 	@Override
-	public void set(CharSequence value, ParsingContext parsingContext)
+	public void set(char[] chars, int offset, int length, ParsingContext parsingContext)
 			throws Exception {
-		this.value = reader.read(value, parsingContext);
+		value = reader.read(chars, offset, length, parsingContext);
 	}
 
     @Override

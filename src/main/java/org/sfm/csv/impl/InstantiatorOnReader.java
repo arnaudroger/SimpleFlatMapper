@@ -15,10 +15,10 @@ public class InstantiatorOnReader<S, T> implements CellValueReader<T> {
 	}
 
 	@Override
-	public T read(CharSequence value,
+	public T read(char[] chars, int offset, int length,
 			ParsingContext parsingContext) {
 		try {
-			return instantiator.newInstance(innerReader.read(value, parsingContext));
+			return instantiator.newInstance(innerReader.read(chars, offset, length, parsingContext));
 		} catch (Exception e) {
             return ErrorHelper.rethrow(e);
 		}

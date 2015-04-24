@@ -5,18 +5,18 @@ import org.sfm.csv.impl.ParsingContext;
 public final class DoubleCellValueReaderImpl implements DoubleCellValueReader {
 
 	@Override
-	public Double read(CharSequence value, ParsingContext parsingContext) {
-		if (value.length() == 0) return null;
-		return readDouble(value, parsingContext);
+	public Double read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+		if (length == 0) return null;
+		return readDouble(chars, offset, length, parsingContext);
 	}
 
 	@Override
-	public double readDouble(CharSequence value, ParsingContext parsingContext) {
-		return parseDouble(value);
+	public double readDouble(char[] chars, int offset, int length, ParsingContext parsingContext) {
+		return parseDouble(chars, offset, length);
 	}
-	public static double parseDouble(CharSequence value) {
-        if (value.length() == 0) return Double.NaN;
-        return Double.parseDouble(StringCellValueReader.readString(value));
+	public static double parseDouble(char[] chars, int offset, int length) {
+        if (length == 0) return Double.NaN;
+        return Double.parseDouble(StringCellValueReader.readString(chars, offset, length));
 	}
 
     @Override

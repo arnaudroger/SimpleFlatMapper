@@ -45,9 +45,9 @@ public class ByteDelayedCellSetter<T> implements DelayedCellSetter<T, Byte> {
 	}
 
 	@Override
-	public void set(CharSequence value, ParsingContext parsingContext) throws Exception {
-        isNull = value.length() == 0;
-		this.value = reader.readByte(value, parsingContext);
+	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
+        isNull = length == 0;
+		this.value = reader.readByte(chars, offset, length, parsingContext);
 	}
 
     @Override

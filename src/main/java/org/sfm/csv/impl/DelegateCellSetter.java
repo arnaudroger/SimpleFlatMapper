@@ -29,9 +29,9 @@ public class DelegateCellSetter<T, P> implements CellSetter<T> {
 	}
 
     @Override
-	public void set(T target, CharSequence value, ParsingContext context)
+	public void set(T target, char[] chars, int offset, int length, ParsingContext context)
 			throws Exception {
-		this.handler.newCell(value, cellIndex);
+		this.handler.newCell(chars, offset, length, cellIndex);
         final BreakDetector breakDetector = handler.getBreakDetector();
         if (setter != null && (breakDetector == null || (breakDetector.broken()&& breakDetector.isNotNull()))) {
             setter.set(target, this.handler.getCurrentInstance());

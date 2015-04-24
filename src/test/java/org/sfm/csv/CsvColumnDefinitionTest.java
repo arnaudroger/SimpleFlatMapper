@@ -37,7 +37,7 @@ public class CsvColumnDefinitionTest {
         CsvColumnDefinition compose = CsvColumnDefinition.identity().addDateFormat("yyyyMM").addRename("blop").addCustomReader(
                 new CellValueReader<Integer>() {
                     @Override
-                    public Integer read(CharSequence value, ParsingContext parsingContext) {
+                    public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                         return 3;
                     }
 
@@ -49,7 +49,7 @@ public class CsvColumnDefinitionTest {
 
         assertEquals("blop", compose.rename(new CsvColumnKey("bar", -1)).getName());
         assertEquals("yyyyMM", compose.dateFormat());
-        assertEquals(new Integer(3), compose.getCustomReader().read(null, null));
+        assertEquals(new Integer(3), compose.getCustomReader().read(null, 0, 0, null));
         assertEquals(cellValueReaderFactory, compose.getCustomCellValueReaderFactory());
         assertEquals(tz, compose.getTimeZone());
 

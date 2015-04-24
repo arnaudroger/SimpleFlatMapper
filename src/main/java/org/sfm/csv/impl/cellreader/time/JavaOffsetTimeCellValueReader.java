@@ -15,8 +15,8 @@ public class JavaOffsetTimeCellValueReader implements CellValueReader<OffsetTime
     }
 
     @Override
-    public OffsetTime read(CharSequence value, ParsingContext parsingContext) {
-        return OffsetTime.parse(value, formatter);
+    public OffsetTime read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        return OffsetTime.parse(new String(chars, offset, length), formatter);
     }
 
 }

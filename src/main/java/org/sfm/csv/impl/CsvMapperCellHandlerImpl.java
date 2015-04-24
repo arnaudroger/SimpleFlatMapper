@@ -23,11 +23,11 @@ public final class CsvMapperCellHandlerImpl<T> extends CsvMapperCellHandler<T> {
     }
 
     @Override
-    public void delayedCellValue(CharSequence value, int cellIndex) {
+    public void delayedCellValue(char[] chars, int offset, int length, int cellIndex) {
         try {
             DelayedCellSetter<T, ?> delayedCellSetter = delayedCellSetters[cellIndex];
             if (delayedCellSetter != null) {
-                delayedCellSetter.set(value, parsingContext);
+                delayedCellSetter.set(chars, offset, length, parsingContext);
             }
         } catch (Exception e) {
             fieldError(cellIndex, e);
@@ -35,11 +35,11 @@ public final class CsvMapperCellHandlerImpl<T> extends CsvMapperCellHandler<T> {
     }
 
     @Override
-    public void cellValue(CharSequence value, int cellIndex) {
+    public void cellValue(char[] chars, int offset, int length, int cellIndex) {
         try {
             CellSetter<T> cellSetter = getCellSetter(cellIndex);
             if (cellSetter != null) {
-                cellSetter.set(currentInstance, value, parsingContext);
+                cellSetter.set(currentInstance, chars, offset, length, parsingContext);
             }
         } catch (Exception e) {
             fieldError(cellIndex, e);

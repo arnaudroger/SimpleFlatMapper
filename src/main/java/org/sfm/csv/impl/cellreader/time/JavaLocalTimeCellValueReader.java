@@ -15,8 +15,8 @@ public class JavaLocalTimeCellValueReader implements CellValueReader<LocalTime> 
     }
 
     @Override
-    public LocalTime read(CharSequence value, ParsingContext parsingContext) {
-        return LocalTime.parse(value, formatter);
+    public LocalTime read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        return LocalTime.parse(new String(chars, offset, length), formatter);
     }
 
 }

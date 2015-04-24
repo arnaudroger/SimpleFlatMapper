@@ -16,8 +16,8 @@ public class JavaInstantCellValueReader implements CellValueReader<Instant> {
     }
 
     @Override
-    public Instant read(CharSequence value, ParsingContext parsingContext) {
-        return ZonedDateTime.parse(value, formatter).toInstant();
+    public Instant read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        return ZonedDateTime.parse(new String(chars, offset, length), formatter).toInstant();
     }
 
 }

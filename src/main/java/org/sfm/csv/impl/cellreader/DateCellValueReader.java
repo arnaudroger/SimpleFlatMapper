@@ -25,10 +25,10 @@ public class DateCellValueReader implements CellValueReader<Date>, ParsingContex
 	}
 	
 	@Override
-	public Date read(CharSequence value, ParsingContext parsingContext) {
-		if (value.length() == 0) return null;
+	public Date read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+		if (length == 0) return null;
 
-		String str = StringCellValueReader.readString(value);
+		String str = StringCellValueReader.readString(chars, offset, length);
 		try {
 			DateFormat df = (DateFormat) parsingContext.getContext(index);
 			return df.parse(str);

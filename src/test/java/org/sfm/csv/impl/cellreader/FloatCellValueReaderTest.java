@@ -22,8 +22,9 @@ public class FloatCellValueReaderTest {
 	
 	@Test
 	public void testInvalidFloat() throws UnsupportedEncodingException {
+		final char[] chars = "ddd".toCharArray();
 		try {
-			reader.read("ddd", null);
+			reader.read(chars, 0, chars.length, null);
 			fail("Expect exception");
 		} catch(NumberFormatException e){
 			// expected
@@ -32,11 +33,12 @@ public class FloatCellValueReaderTest {
 
 	@Test
 	public void testReadEmptyStringReturnNull() {
-		assertNull(reader.read("", null));
+		assertNull(reader.read(new char[10], 2, 0, null));
 	}
 
 	private void testReadFloat(float i) throws UnsupportedEncodingException {
-		assertEquals(i, reader.read(Float.toString(i), null).floatValue(), 0);
+		final char[] chars = ("_" + Float.toString(i) + "_").toCharArray();
+		assertEquals(i, reader.read(chars, 1, chars.length-2, null).floatValue(), 0);
 	}
 
 }

@@ -4,5 +4,5 @@ import org.sfm.csv.CellValueReader;
 import org.sfm.csv.impl.ParsingContext;
 
 public interface ShortCellValueReader extends CellValueReader<Short> {
-    short readShort(CharSequence value, ParsingContext parsingContext);
+    short readShort(char[] chars, int offset, int length, ParsingContext parsingContext);
 }

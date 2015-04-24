@@ -45,9 +45,9 @@ public class LongDelayedCellSetter<T> implements DelayedCellSetter<T, Long> {
 	}
 
 	@Override
-	public void set(CharSequence value, ParsingContext parsingContext) throws Exception {
-        isNull = value.length() == 0;
-		this.value = reader.readLong(value, parsingContext);
+	public void set(char[] chars, int offset, int length, ParsingContext parsingContext) throws Exception {
+        isNull = length == 0;
+		this.value = reader.readLong(chars, offset, length, parsingContext);
 	}
 
     @Override

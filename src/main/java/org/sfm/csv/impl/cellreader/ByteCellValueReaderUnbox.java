@@ -12,13 +12,13 @@ public class ByteCellValueReaderUnbox implements ByteCellValueReader {
     }
 
     @Override
-    public byte readByte(CharSequence value, ParsingContext parsingContext) {
-        return read(value, parsingContext);
+    public byte readByte(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        return read(chars, offset, length, parsingContext);
     }
 
     @Override
-    public Byte read(CharSequence value, ParsingContext parsingContext) {
-        return reader.read(value, parsingContext);
+    public Byte read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        return reader.read(chars, offset, length, parsingContext);
     }
 
     @Override

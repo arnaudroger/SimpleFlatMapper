@@ -5,14 +5,14 @@ import org.sfm.csv.impl.ParsingContext;
 public final class CharCellValueReaderImpl implements CharCellValueReader {
 
 	@Override
-	public Character read(CharSequence value, ParsingContext parsingContext) {
-		if (value.length() == 0) return null;
-		return readChar(value, parsingContext);
+	public Character read(char[] bytes, int offset, int length, ParsingContext parsingContext) {
+		if (length == 0) return null;
+		return readChar(bytes, offset, length, parsingContext);
 	}
 
 	@Override
-	public char readChar(CharSequence value, ParsingContext parsingContext) {
-		return (char) IntegerCellValueReaderImpl.parseInt(value);
+	public char readChar(char[] bytes, int offset, int length, ParsingContext parsingContext) {
+		return (char) IntegerCellValueReaderImpl.parseInt(bytes, offset, length);
 	}
 
     @Override

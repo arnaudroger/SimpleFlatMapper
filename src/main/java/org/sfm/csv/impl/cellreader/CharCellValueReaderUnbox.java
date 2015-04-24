@@ -13,13 +13,13 @@ public class CharCellValueReaderUnbox implements CharCellValueReader {
 
 
     @Override
-    public char readChar(CharSequence value, ParsingContext parsingContext) {
-        return read(value, parsingContext);
+    public char readChar(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        return read(chars, offset, length, parsingContext);
     }
 
     @Override
-    public Character read(CharSequence value, ParsingContext parsingContext) {
-        return reader.read(value, parsingContext);
+    public Character read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        return reader.read(chars, offset, length, parsingContext);
     }
 
     @Override

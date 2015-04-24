@@ -5,22 +5,22 @@ import org.sfm.csv.impl.ParsingContext;
 public final class BooleanCellValueReaderImpl implements BooleanCellValueReader {
 
 	@Override
-	public Boolean read(CharSequence value, ParsingContext parsingContext) {
-		if (value.length() == 0) return null;
-		return readBoolean(value, parsingContext);
+	public Boolean read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+		if (length == 0) return null;
+		return readBoolean(chars, offset, length, parsingContext);
 	}
 
 	@Override
-	public boolean readBoolean(CharSequence value, ParsingContext parsingContext) {
-		return parseBoolean(value);
+	public boolean readBoolean(char[] chars, int offset, int length, ParsingContext parsingContext) {
+		return parseBoolean(chars, offset, length);
 	}
 
-	public static boolean parseBoolean(CharSequence value) {
-		switch (value.length()) {
+	public static boolean parseBoolean(char[] chars, int offset, int length) {
+		switch (length) {
 		case 0:
 			return false;
 		case 1:
-			switch (value.charAt(0)) {
+			switch (chars[offset]) {
 			case 0:
 			case '0':
 			case 'F':
@@ -32,17 +32,17 @@ public final class BooleanCellValueReaderImpl implements BooleanCellValueReader 
 				return true;
 			}
 		case 2:
-			if ((value.charAt(0) == 'N' ||value.charAt(0) == 'n')
-				&& (value.charAt(1) == 'O' ||value.charAt(1) == 'o')) {
+			if ((chars[offset] == 'N' || chars[offset] == 'n')
+				&& (chars[offset + 1] == 'O' || chars[offset + 1] == 'o')) {
 				return false;
 			}
 		case 5:
 			if (
-				(value.charAt(0) == 'F' || value.charAt(0) == 'f')
-				&& (value.charAt(1) == 'A' || value.charAt(1) == 'a')
-				&& (value.charAt(2) == 'L' || value.charAt(2) == 'l')
-				&& (value.charAt(3) == 'S' || value.charAt(3) == 's')
-				&& (value.charAt(4) == 'E' || value.charAt(4) == 'e')
+				(chars[offset] == 'F' || chars[offset] == 'f')
+				&& (chars[offset + 1] == 'A' || chars[offset + 1] == 'a')
+				&& (chars[offset + 2] == 'L' || chars[offset + 2] == 'l')
+				&& (chars[offset + 3] == 'S' || chars[offset + 3] == 's')
+				&& (chars[offset + 4] == 'E' || chars[offset + 4] == 'e')
 				) {
 					return false;
 				}

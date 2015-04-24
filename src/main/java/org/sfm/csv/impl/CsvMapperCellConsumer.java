@@ -71,17 +71,17 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
 
     @Override
-    public final void newCell(CharSequence value) {
+    public final void newCell(char[] chars, int offset, int length) {
         int index = cellIndex;
-        newCell(value, index);
+        newCell(chars, offset, length, index);
         afterNewCell(index);
     }
 
-    public final void newCell(CharSequence value, int cellIndex) {
+    public final void newCell(char[] chars, int offset, int length, int cellIndex) {
         if (mapperSetters.isDelayedSetter(cellIndex)) {
-            mapperSetters.delayedCellValue(value, cellIndex);
+            mapperSetters.delayedCellValue(chars, offset, length, cellIndex);
         } else if (isNotNull()) {
-            mapperSetters.cellValue(value, cellIndex);
+            mapperSetters.cellValue(chars, offset, length, cellIndex);
         }
         this.cellIndex = cellIndex + 1;
     }

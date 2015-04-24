@@ -11,28 +11,28 @@ public final class LongCellValueReaderImpl implements LongCellValueReader {
 	private final static char C_NEG_SIGN = '-';
 	
 	@Override
-	public Long read(CharSequence value, ParsingContext parsingContext) {
-		if (value.length() == 0) return null;
-		return readLong(value, parsingContext);
+	public Long read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+		if (length == 0) return null;
+		return readLong(chars, offset, length, parsingContext);
 	}
 
 	@Override
-	public long readLong(CharSequence value, ParsingContext parsingContext) {
-		return parseLong(value);
+	public long readLong(char[] chars, int offset, int length, ParsingContext parsingContext) {
+		return parseLong(chars, offset, length);
 	}
 
-	public static long parseLong(CharSequence value) {
+	public static long parseLong(char[] chars, int offset, int length) {
 		long n = 0;
 		boolean negative = false;
-		for(int i = 0; i < value.length(); i++) {
-			char b = value.charAt(i);
+		for(int i = offset; i < offset + length; i++) {
+			char b = chars[i];
 			if (b >= C_ZERO && b <= C_NINE) {
-				n  = n * 10 +  b - C_ZERO;
+				n  = n * 10 +  chars[i] - C_ZERO;
 			} else {
-				if (b == C_NEG_SIGN && i == 0) {
+				if (b == C_NEG_SIGN && i == offset) {
 					negative = true;
 				} else {
-					throw new ParsingException("Cannot parse " + value + " as an int");
+					throw new ParsingException("Cannot parse " + new String(chars, offset, length) + " as an int");
 				}
 			}
 		}

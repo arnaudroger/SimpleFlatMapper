@@ -34,7 +34,7 @@ public class CsvMapperCustomReaderTest {
                 .addCustomValueReader("id", new CellValueReader<String>() {
 
                     @Override
-                    public String read(CharSequence value,
+                    public String read(char[] chars, int offset, int length,
                                        ParsingContext parsingContext) {
                         return "dddd";
                     }
@@ -42,7 +42,7 @@ public class CsvMapperCustomReaderTest {
                 .addCustomValueReader("typeName", new CellValueReader<String>() {
 
                     @Override
-                    public String read(CharSequence value,
+                    public String read(char[] chars, int offset, int length,
                                        ParsingContext parsingContext) {
                         return "dddd";
                     }
@@ -68,7 +68,7 @@ public class CsvMapperCustomReaderTest {
         CsvMapperBuilder<DbObject> builder = csvMapperFactory.addCustomValueReader("id", new CellValueReader<Long>() {
 
             @Override
-            public Long read(CharSequence value,
+            public Long read(char[] chars, int offset, int length,
                              ParsingContext parsingContext) {
                 return 0x5677al;
             }
@@ -87,7 +87,7 @@ public class CsvMapperCustomReaderTest {
         CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.addCustomValueReader("id", new CellValueReader<Long>() {
 
             @Override
-            public Long read(CharSequence value,
+            public Long read(char[] chars, int offset, int length,
                              ParsingContext parsingContext) {
                 return 0x5677al;
             }
@@ -110,7 +110,7 @@ public class CsvMapperCustomReaderTest {
             .addMapping("p_boolean",
                     CsvColumnDefinition.customReaderDefinition(new CellValueReader<Boolean>() {
                                                                    @Override
-                                                                   public Boolean read(CharSequence value, ParsingContext parsingContext) {
+                                                                   public Boolean read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                        return true;
                                                                    }
                                                                }
@@ -118,7 +118,7 @@ public class CsvMapperCustomReaderTest {
             .addMapping("p_byte",
                     CsvColumnDefinition.customReaderDefinition(new CellValueReader<Byte>() {
                                                                    @Override
-                                                                   public Byte read(CharSequence value, ParsingContext parsingContext) {
+                                                                   public Byte read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                        return 35;
                                                                    }
                                                                }
@@ -126,7 +126,7 @@ public class CsvMapperCustomReaderTest {
             .addMapping("p_character",
                     CsvColumnDefinition.customReaderDefinition(new CellValueReader<Character>() {
                                                                    @Override
-                                                                   public Character read(CharSequence value, ParsingContext parsingContext) {
+                                                                   public Character read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                        return 37;
                                                                    }
                                                                }
@@ -134,7 +134,7 @@ public class CsvMapperCustomReaderTest {
             .addMapping("p_short",
                     CsvColumnDefinition.customReaderDefinition(new CellValueReader<Short>() {
                                                                    @Override
-                                                                   public Short read(CharSequence value, ParsingContext parsingContext) {
+                                                                   public Short read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                        return 39;
                                                                    }
                                                                }
@@ -142,7 +142,7 @@ public class CsvMapperCustomReaderTest {
             .addMapping("p_int",
                 CsvColumnDefinition.customReaderDefinition(new CellValueReader<Integer>() {
                                                                @Override
-                                                               public Integer read(CharSequence value, ParsingContext parsingContext) {
+                                                               public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                    return 0x76666;
                                                                }
                                                            }
@@ -150,7 +150,7 @@ public class CsvMapperCustomReaderTest {
             .addMapping("p_long",
                     CsvColumnDefinition.customReaderDefinition(new CellValueReader<Long>() {
                                                                    @Override
-                                                                   public Long read(CharSequence value, ParsingContext parsingContext) {
+                                                                   public Long read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                        return 0xf76666l;
                                                                    }
                                                                }
@@ -158,7 +158,7 @@ public class CsvMapperCustomReaderTest {
             .addMapping("p_float",
                     CsvColumnDefinition.customReaderDefinition(new CellValueReader<Float>() {
                                                                    @Override
-                                                                   public Float read(CharSequence value, ParsingContext parsingContext) {
+                                                                   public Float read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                        return 3.14f;
                                                                    }
                                                                }
@@ -166,7 +166,7 @@ public class CsvMapperCustomReaderTest {
             .addMapping("p_double",
                     CsvColumnDefinition.customReaderDefinition(new CellValueReader<Double>() {
                                                                    @Override
-                                                                   public Double read(CharSequence value, ParsingContext parsingContext) {
+                                                                   public Double read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                        return 3.1526;
                                                                    }
                                                                }
@@ -193,12 +193,12 @@ public class CsvMapperCustomReaderTest {
                         .addMapping("p_boolean",
                                 CsvColumnDefinition.customReaderDefinition(new BooleanCellValueReader() {
                                                                                @Override
-                                                                               public Boolean read(CharSequence value, ParsingContext parsingContext) {
+                                                                               public Boolean read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return true;
                                                                                }
 
                                                                                @Override
-                                                                               public boolean readBoolean(CharSequence value, ParsingContext parsingContext) {
+                                                                               public boolean readBoolean(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return true;
                                                                                }
                                                                            }
@@ -206,12 +206,12 @@ public class CsvMapperCustomReaderTest {
                         .addMapping("p_byte",
                                 CsvColumnDefinition.customReaderDefinition(new ByteCellValueReader() {
                                                                                @Override
-                                                                               public Byte read(CharSequence value, ParsingContext parsingContext) {
+                                                                               public Byte read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 35;
                                                                                }
 
                                                                                @Override
-                                                                               public byte readByte(CharSequence value, ParsingContext parsingContext) {
+                                                                               public byte readByte(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 35;
                                                                                }
                                                                            }
@@ -219,12 +219,12 @@ public class CsvMapperCustomReaderTest {
                         .addMapping("p_character",
                                 CsvColumnDefinition.customReaderDefinition(new CharCellValueReader() {
                                                                                @Override
-                                                                               public Character read(CharSequence value, ParsingContext parsingContext) {
+                                                                               public Character read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 37;
                                                                                }
 
                                                                                @Override
-                                                                               public char readChar(CharSequence value, ParsingContext parsingContext) {
+                                                                               public char readChar(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 37;
                                                                                }
                                                                            }
@@ -232,12 +232,12 @@ public class CsvMapperCustomReaderTest {
                         .addMapping("p_short",
                                 CsvColumnDefinition.customReaderDefinition(new ShortCellValueReader() {
                                                                                @Override
-                                                                               public Short read(CharSequence value, ParsingContext parsingContext) {
+                                                                               public Short read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 39;
                                                                                }
 
                                                                                @Override
-                                                                               public short readShort(CharSequence value, ParsingContext parsingContext) {
+                                                                               public short readShort(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 39;
                                                                                }
                                                                            }
@@ -245,12 +245,12 @@ public class CsvMapperCustomReaderTest {
                         .addMapping("p_int",
                                 CsvColumnDefinition.customReaderDefinition(new IntegerCellValueReader() {
                                                                                @Override
-                                                                               public Integer read(CharSequence value, ParsingContext parsingContext) {
+                                                                               public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 0x76666;
                                                                                }
 
                                                                                @Override
-                                                                               public int readInt(CharSequence value, ParsingContext parsingContext) {
+                                                                               public int readInt(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 0x76666;
                                                                                }
                                                                            }
@@ -258,12 +258,12 @@ public class CsvMapperCustomReaderTest {
                         .addMapping("p_long",
                                 CsvColumnDefinition.customReaderDefinition(new LongCellValueReader() {
                                                                                @Override
-                                                                               public long readLong(CharSequence value, ParsingContext parsingContext) {
+                                                                               public long readLong(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 0xf76666l;
                                                                                }
 
                                                                                @Override
-                                                                               public Long read(CharSequence value, ParsingContext parsingContext) {
+                                                                               public Long read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 0xf76666l;
                                                                                }
                                                                            }
@@ -271,12 +271,12 @@ public class CsvMapperCustomReaderTest {
                         .addMapping("p_float",
                                 CsvColumnDefinition.customReaderDefinition(new FloatCellValueReader() {
                                                                                @Override
-                                                                               public Float read(CharSequence value, ParsingContext parsingContext) {
+                                                                               public Float read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 3.14f;
                                                                                }
 
                                                                                @Override
-                                                                               public float readFloat(CharSequence value, ParsingContext parsingContext) {
+                                                                               public float readFloat(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 3.14f;
                                                                                }
                                                                            }
@@ -284,12 +284,12 @@ public class CsvMapperCustomReaderTest {
                         .addMapping("p_double",
                                 CsvColumnDefinition.customReaderDefinition(new DoubleCellValueReader() {
                                                                                @Override
-                                                                               public Double read(CharSequence value, ParsingContext parsingContext) {
+                                                                               public Double read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 3.1526;
                                                                                }
 
                                                                                @Override
-                                                                               public double readDouble(CharSequence value, ParsingContext parsingContext) {
+                                                                               public double readDouble(char[] chars, int offset, int length, ParsingContext parsingContext) {
                                                                                    return 3.1526;
                                                                                }
                                                                            }
@@ -322,7 +322,7 @@ public class CsvMapperCustomReaderTest {
             public <P> CellValueReader<P> getReader(Type propertyType, final int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder builder) {
                 return (CellValueReader<P>) new CellValueReader<String>() {
                     @Override
-                    public String read(CharSequence value, ParsingContext parsingContext) {
+                    public String read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                         return "g" + index;
                     }
                 };

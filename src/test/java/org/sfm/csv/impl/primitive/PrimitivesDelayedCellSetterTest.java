@@ -19,15 +19,15 @@ public class PrimitivesDelayedCellSetterTest {
 		Setter<DbPrimitiveObjectWithSetter, Boolean> setter = objectSetterFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pBoolean");
 		BooleanDelayedCellSetter<DbPrimitiveObjectWithSetter> bsetter = 
 				new BooleanDelayedCellSetter<DbPrimitiveObjectWithSetter>(ObjectSetterFactory.toBooleanSetter(setter), new BooleanCellValueReaderImpl());
-		bsetter.set("true", null);
+		bsetter.set("true".toCharArray(), 0, 4, null);
 		assertTrue(bsetter.consumeValue());
 		
-		bsetter.set("true", null);
+		bsetter.set("true".toCharArray(), 0, 4, null);
 		DbPrimitiveObjectWithSetter o = new DbPrimitiveObjectWithSetter();
 		bsetter.set(o);
 		assertTrue(o.ispBoolean());
 
-        bsetter.set("", null);
+        bsetter.set("".toCharArray(), 0, 0, null);
         assertNull(bsetter.consumeValue());
 
     }
@@ -38,15 +38,15 @@ public class PrimitivesDelayedCellSetterTest {
 		ByteDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new ByteDelayedCellSetter<DbPrimitiveObjectWithSetter>(
 						ObjectSetterFactory.toByteSetter(byteSetter), new ByteCellValueReaderImpl());
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Byte((byte)13), setter.consumeValue());
 		
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		DbPrimitiveObjectWithSetter o = new DbPrimitiveObjectWithSetter();
 		setter.set(o);
 		assertEquals((byte)13, o.getpByte());
 
-        setter.set("", null);
+        setter.set("".toCharArray(), 0, 0, null);
         assertNull(setter.consumeValue());
 
     }
@@ -57,15 +57,15 @@ public class PrimitivesDelayedCellSetterTest {
 		CharDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new CharDelayedCellSetter<DbPrimitiveObjectWithSetter>(
 						ObjectSetterFactory.toCharacterSetter(charSetter), new CharCellValueReaderImpl());
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Character((char)13), setter.consumeValue());
 		
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		DbPrimitiveObjectWithSetter o = new DbPrimitiveObjectWithSetter();
 		setter.set(o);
 		assertEquals((char)13, o.getpCharacter());
 
-        setter.set("", null);
+        setter.set("".toCharArray(), 0, 0, null);
         assertNull(setter.consumeValue());
 
     }
@@ -76,15 +76,15 @@ public class PrimitivesDelayedCellSetterTest {
 		ShortDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new ShortDelayedCellSetter<DbPrimitiveObjectWithSetter>(
 						ObjectSetterFactory.toShortSetter(shortSetter), new ShortCellValueReaderImpl());
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Short((short)13), setter.consumeValue());
 		
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		DbPrimitiveObjectWithSetter o = new DbPrimitiveObjectWithSetter();
 		setter.set(o);
 		assertEquals((short)13, o.getpShort());
 
-        setter.set("", null);
+        setter.set("".toCharArray(), 0, 0, null);
         assertNull(setter.consumeValue());
 
     }
@@ -95,15 +95,15 @@ public class PrimitivesDelayedCellSetterTest {
 		IntDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new IntDelayedCellSetter<DbPrimitiveObjectWithSetter>(
 						ObjectSetterFactory.toIntSetter(intSetter), new IntegerCellValueReaderImpl());
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Integer(13), setter.consumeValue());
 		
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		DbPrimitiveObjectWithSetter o = new DbPrimitiveObjectWithSetter();
 		setter.set(o);
 		assertEquals(13, o.getpInt());
 
-        setter.set("", null);
+        setter.set("".toCharArray(), 0, 0, null);
         assertNull(setter.consumeValue());
 
     }
@@ -114,15 +114,15 @@ public class PrimitivesDelayedCellSetterTest {
 		LongDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new LongDelayedCellSetter<DbPrimitiveObjectWithSetter>(
 						ObjectSetterFactory.toLongSetter(longSetter), new LongCellValueReaderImpl());
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Long(13), setter.consumeValue());
 		
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		DbPrimitiveObjectWithSetter o = new DbPrimitiveObjectWithSetter();
 		setter.set(o);
 		assertEquals(13, o.getpLong());
 
-        setter.set("", null);
+        setter.set("".toCharArray(), 0, 0, null);
         assertNull(setter.consumeValue());
 
     }
@@ -133,15 +133,15 @@ public class PrimitivesDelayedCellSetterTest {
 		FloatDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new FloatDelayedCellSetter<DbPrimitiveObjectWithSetter>(
 						ObjectSetterFactory.toFloatSetter(floatSetter), new FloatCellValueReaderImpl());
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Float(13), setter.consumeValue());
 		
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		DbPrimitiveObjectWithSetter o = new DbPrimitiveObjectWithSetter();
 		setter.set(o);
 		assertEquals(13, o.getpFloat(), 0);
 
-        setter.set("", null);
+        setter.set("".toCharArray(), 0, 0, null);
         assertNull(setter.consumeValue());
 
     }
@@ -152,15 +152,15 @@ public class PrimitivesDelayedCellSetterTest {
 		DoubleDelayedCellSetter<DbPrimitiveObjectWithSetter> setter = 
 				new DoubleDelayedCellSetter<DbPrimitiveObjectWithSetter>(
 						ObjectSetterFactory.toDoubleSetter(doubleSetter), new DoubleCellValueReaderImpl());
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		assertEquals(new Double(13), setter.consumeValue());
 		
-		setter.set("13", null);
+		setter.set("13".toCharArray(), 0, 2, null);
 		DbPrimitiveObjectWithSetter o = new DbPrimitiveObjectWithSetter();
 		setter.set(o);
 		assertEquals(13, o.getpDouble(), 0);
 
-        setter.set("", null);
+        setter.set("".toCharArray(), 0, 0, null);
         assertNull(setter.consumeValue());
 
     }

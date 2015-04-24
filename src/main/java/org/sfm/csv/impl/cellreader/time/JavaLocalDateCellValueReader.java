@@ -15,8 +15,8 @@ public class JavaLocalDateCellValueReader implements CellValueReader<LocalDate> 
     }
 
     @Override
-    public LocalDate read(CharSequence value, ParsingContext parsingContext) {
-        return LocalDate.parse(value, formatter);
+    public LocalDate read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        return LocalDate.parse(new String(chars, offset, length), formatter);
     }
 
 }

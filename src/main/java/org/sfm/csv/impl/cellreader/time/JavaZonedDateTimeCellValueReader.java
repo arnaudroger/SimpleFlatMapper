@@ -15,8 +15,8 @@ public class JavaZonedDateTimeCellValueReader implements CellValueReader<ZonedDa
     }
 
     @Override
-    public ZonedDateTime read(CharSequence value, ParsingContext parsingContext) {
-        return ZonedDateTime.parse(value, formatter);
+    public ZonedDateTime read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        return ZonedDateTime.parse(new String(chars, offset, length), formatter);
     }
 
 }

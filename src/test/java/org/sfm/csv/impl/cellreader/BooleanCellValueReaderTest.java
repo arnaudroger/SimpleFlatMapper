@@ -26,11 +26,12 @@ public class BooleanCellValueReaderTest {
 
 	@Test
 	public void testReadEmptyStringReturnNull() {
-		assertNull(reader.read("", null));
+		assertNull(reader.read(new char[10], 2, 0, null));
 	}
 
 	private void testReadBoolean(Boolean expected, String str) throws UnsupportedEncodingException {
-		assertEquals(expected, reader.read(str, null));
+		final char[] chars = ("_" + str+ "_").toCharArray();
+		assertEquals(expected, reader.read(chars, 1, chars.length-2, null));
 	}
 
 

@@ -21,7 +21,7 @@ public class CsvMapperCustomReaderFactoryTest {
                 return new CellValueReader<P>() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public P read(CharSequence value, ParsingContext parsingContext) {
+                    public P read(char[] chars, int offset, int length, ParsingContext parsingContext) {
                         return (P) "Hello!";
                     }
                 };

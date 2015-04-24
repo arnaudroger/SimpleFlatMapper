@@ -20,7 +20,8 @@ public class StringArrayConsumerTest {
     public void testNewCell() throws Exception {
         StringArrayConsumer<MyRowHandler> consumer = new StringArrayConsumer<MyRowHandler>(new MyRowHandler());
         for(int i = 0; i < 20; i ++) {
-            consumer.newCell(Integer.toString(i));
+            char[] chars = Integer.toString(i).toCharArray();
+            consumer.newCell(chars, 0 , chars.length);
         }
 
         consumer.end();

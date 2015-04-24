@@ -15,8 +15,8 @@ public class JavaYearCellValueReader implements CellValueReader<Year> {
     }
 
     @Override
-    public Year read(CharSequence value, ParsingContext parsingContext) {
-        return Year.parse(value, formatter);
+    public Year read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        return Year.parse(new String(chars, offset, length), formatter);
     }
 
 }

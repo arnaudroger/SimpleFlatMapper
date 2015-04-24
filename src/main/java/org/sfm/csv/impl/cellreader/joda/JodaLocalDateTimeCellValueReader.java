@@ -14,8 +14,8 @@ public class JodaLocalDateTimeCellValueReader implements CellValueReader<LocalDa
     }
 
     @Override
-    public LocalDateTime read(CharSequence value, ParsingContext parsingContext) {
-        if (value.length() == 0) return null;
-        return fmt .parseLocalDateTime(StringCellValueReader.readString(value));
+    public LocalDateTime read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+        if (length == 0) return null;
+        return fmt .parseLocalDateTime(StringCellValueReader.readString(chars, offset, length));
     }
 }

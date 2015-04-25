@@ -19,7 +19,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	}
 
 	@Override
-	public boolean matches(final String property) {
+	public boolean matches(final CharSequence property) {
 		return _partialMatch(property) == column.length();
 	}
 
@@ -54,7 +54,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		return new IndexedColumn(index, subPropertyNameMatcher);
 	}
 
-	private int _partialMatch(final String property) {
+	private int _partialMatch(final CharSequence property) {
 		int indexColumn = from;
 		int indexProperty = 0;
 		boolean nextToUpperCase = false;
@@ -106,7 +106,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	}
 	
 	@Override
-	public PropertyNameMatcher partialMatch(final String property) {
+	public PropertyNameMatcher partialMatch(final CharSequence property) {
 		int index = _partialMatch(property);
 		if (index != -1) {
 			return new DefaultPropertyNameMatcher(column, index, exactMatch, caseSensitive);

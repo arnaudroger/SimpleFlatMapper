@@ -137,6 +137,11 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
         return -1;
     }
 
+	@Override
+	public String toString() {
+		return column.substring(from, column.length());
+	}
+
 	public static PropertyNameMatcher of(String value) {
 		return new DefaultPropertyNameMatcher(value, 0, false, false);
 	}

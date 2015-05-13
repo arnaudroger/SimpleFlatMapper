@@ -2,7 +2,6 @@ package org.sfm.utils.conv;
 
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
-import org.sfm.map.ColumnDefinition;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
@@ -78,9 +77,9 @@ public class ConverterFactory {
 		} else if (TypeHelper.isClass(outType, URL.class)) {
 			return  (Converter<F, P>)new StringToURLConverter<F>();
 		}  else if (TypeHelper.isArray(outType)) {
-			return  newArrayConverter(TypeHelper.getComponentType(outType));
+			return  newArrayConverter(TypeHelper.getComponentTypeOfListOrArray(outType));
 		} else if (TypeHelper.isAssignable(List.class, outType)) {
-			return  newArrayToListConverter(TypeHelper.getComponentType(outType));
+			return  newArrayToListConverter(TypeHelper.getComponentTypeOfListOrArray(outType));
 		}
 		return null;
 	}

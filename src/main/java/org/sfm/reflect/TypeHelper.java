@@ -1,10 +1,13 @@
 package org.sfm.reflect;
 
+import org.sfm.tuples.Tuple2;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TypeHelper {
@@ -81,13 +84,72 @@ public class TypeHelper {
 		return TypeHelper.toClass(outType).isArray();
 	}
 
-	public static Type getComponentType(Type outType) {
+	public static Type getComponentTypeOfListOrArray(Type outType) {
 		Class<?> target = toClass(outType);
 		if (target.isArray()) {
 			return toClass(outType).getComponentType();
 		} else if (outType instanceof ParameterizedType) {
 			ParameterizedType pt = (ParameterizedType) outType;
-			return pt.getActualTypeArguments()[0];
+			Type rt = pt.getRawType();
+
+			if (rt.equals(List.class)) {
+				return pt.getActualTypeArguments()[0];
+			}
+		} else if (outType instanceof Class) {
+			Type cc = outType;
+
+			while(cc != null) {
+				Type lt = getGenericInterface(cc, List.class);
+				if (lt != null && cc instanceof ParameterizedType) {
+					return ((ParameterizedType) cc).getActualTypeArguments()[0];
+				}
+				cc = getGenericSuperType(cc);
+			}
+		}
+		return null;
+	}
+
+	public static Tuple2<Type, Type> getKeyValueTypeOfMap(Type outType) {
+		if (outType instanceof ParameterizedType) {
+			ParameterizedType pt = (ParameterizedType) outType;
+			Type rt = pt.getRawType();
+
+			if (rt.equals(Map.class)) {
+				return new Tuple2<Type, Type>(pt.getActualTypeArguments()[0], pt.getActualTypeArguments()[1]);
+			}
+		} else if (outType instanceof Class) {
+			Type cc = outType;
+
+			while(cc != null) {
+				Type lt = getGenericInterface(cc, Map.class);
+				if (lt != null && cc instanceof ParameterizedType) {
+					return new Tuple2<Type, Type>(((ParameterizedType) cc).getActualTypeArguments()[0], ((ParameterizedType) cc).getActualTypeArguments()[1]);
+				}
+				cc = getGenericSuperType(cc);
+			}
+		}
+		return null;
+	}
+
+
+	private static Type getGenericInterface(Type t, Class<?> i) {
+		if (t instanceof Class) {
+			for(Type it : ((Class) t).getGenericInterfaces()) {
+				if (isAssignable(i, it)) {
+					return it;
+				}
+			}
+		} else if (t instanceof ParameterizedType) {
+			return getGenericInterface(((ParameterizedType) t).getRawType(), i);
+		}
+		return null;
+	}
+
+	public static Type getGenericSuperType(Type t) {
+		if (t instanceof Class) {
+			return ((Class) t).getGenericSuperclass();
+		} else if (t instanceof ParameterizedType) {
+			return getGenericSuperType(((ParameterizedType) t).getRawType());
 		}
 		return null;
 	}

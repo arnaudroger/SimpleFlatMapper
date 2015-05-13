@@ -15,7 +15,9 @@ import org.sfm.utils.ListHandler;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.ParseException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import static org.junit.Assert.*;
@@ -83,6 +85,47 @@ public class CsvMapperBuilderTest {
 	@Test
 	public void testMapDbObjectSharding() throws Exception {
 		testMapDbObject(csvMapperFactoryLowSharding.newBuilder(DbObject.class));
+	}
+
+	@Test
+	public void testMapToMapStringString() throws Exception {
+		final CsvMapper<Map<String, String>> mapper = csvMapperFactory.newBuilder(new TypeReference<Map<String, String>>() {
+		}).addMapping("key1").addMapping("key2").mapper();
+
+		final Iterator<Map<String, String>> iterator = mapper.iterator(new StringReader("v1,v2\na1"));
+		Map<String, String> map;
+
+		map = iterator.next();
+		assertEquals("v1", map.get("key1"));
+		assertEquals("v2", map.get("key2"));
+
+		map = iterator.next();
+
+		assertEquals("a1", map.get("key1"));
+		assertEquals(null, map.get("key2"));
+
+	}
+	@Test
+	public void testMapToMapStringInteger() throws Exception {
+		final CsvMapperBuilder<Map<String, Integer>> builder = csvMapperFactory.newBuilder(new TypeReference<Map<String, Integer>>() {
+		});
+		final CsvMapper<Map<String, Integer>> mapper =
+				builder
+					.addMapping("key1")
+					.addMapping("key2")
+					.mapper();
+
+		final Iterator<Map<String, Integer>> iterator = mapper.iterator(new StringReader("3,12\n4"));
+		Map<String, Integer> map;
+
+		map = iterator.next();
+		assertEquals(Integer.valueOf(3), map.get("key1"));
+		assertEquals(Integer.valueOf(12), map.get("key2"));
+
+		map = iterator.next();
+
+		assertEquals(Integer.valueOf(4), map.get("key1"));
+		assertEquals(null, map.get("key2"));
 	}
 
 	@Test

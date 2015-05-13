@@ -1,0 +1,68 @@
+package org.sfm.reflect.meta;
+
+import org.sfm.reflect.InstantiatorDefinition;
+import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.TypeHelper;
+
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
+
+	private final ReflectionService reflectionService;
+	private final Type valueType;
+	private final Type keyType;
+	private final ClassMeta<V> valueClassMeta;
+	private final Type type;
+
+	public MapClassMeta(Type type, Type keyType, Type valueType, ReflectionService reflectionService) {
+		this.type = type;
+		this.valueType = valueType;
+		this.keyType = keyType;
+		this.reflectionService = reflectionService;
+		this.valueClassMeta = reflectionService.getClassMeta(valueType);
+	}
+
+	public ClassMeta<V> getValueClassMeta() {
+		return valueClassMeta;
+	}
+	
+	public Type getValueType() {
+		return valueType;
+	}
+
+	@Override
+	public ReflectionService getReflectionService() {
+		return reflectionService;
+	}
+
+	@Override
+	public PropertyFinder<M> newPropertyFinder() {
+		return new MapPropertyFinder<M, K, V>(valueClassMeta);
+	}
+
+	public Type getType() {
+		return type;
+	}
+
+	@Override
+	public String[] generateHeaders() {
+		throw new UnsupportedOperationException("Cannot generate headers for map");
+	}
+
+    public boolean isArray() {
+        return false;
+    }
+
+	@Override
+	public boolean isLeaf() {
+		return false;
+	}
+
+	@Override
+	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
+		return Collections.emptyList();
+	}
+}

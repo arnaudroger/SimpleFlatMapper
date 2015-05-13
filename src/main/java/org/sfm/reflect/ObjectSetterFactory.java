@@ -10,6 +10,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+/**
+ *
+ */
 public final class ObjectSetterFactory {
 	
 	private final AsmFactory asmFactory;
@@ -17,8 +20,16 @@ public final class ObjectSetterFactory {
 	public ObjectSetterFactory(final AsmFactory asmFactory) {
 		this.asmFactory = asmFactory;
 	}
-	
-	public <T, P, C extends T> Setter<T, P> getSetter(final Class<C> target, final String property) {
+
+	/**
+	 *
+	 * @param target
+	 * @param property
+	 * @param <T>
+	 * @param <P>
+	 * @return
+	 */
+	public <T, P> Setter<T, P> getSetter(final Class<? extends T> target, final String property) {
 		// first look for method
 		final Method method = lookForMethod(target, property);
 		final Setter<T, P> setter;
@@ -30,6 +41,13 @@ public final class ObjectSetterFactory {
 		return setter;
 	}
 
+	/**
+	 *
+	 * @param method
+	 * @param <T>
+	 * @param <P>
+	 * @return
+	 */
 	public <T, P> Setter<T, P> getMethodSetter(final Method method) {
 		if (asmFactory != null) {
 			try {

@@ -1,15 +1,16 @@
 package org.sfm.reflect;
 
+import com.mysema.query.sql.types.Null;
 import org.sfm.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.AsmHelper;
 import org.sfm.reflect.meta.*;
+import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,9 +64,11 @@ public class ReflectionService {
 
 	@SuppressWarnings("unchecked")
 	public <T> ClassMeta<T> getClassMeta(Type target) {
+		if (target == null) throw new NullPointerException("type is null");
 		ClassMeta<T> meta = (ClassMeta<T>) metaCache.get(target);
 		if (meta == null) {
 			meta = newClassMeta(target);
+			if (meta == null) throw new NullPointerException("meta is null");
 			metaCache.putIfAbsent(target, meta);
 		}
 		return meta;
@@ -74,9 +77,10 @@ public class ReflectionService {
 	private <T> ClassMeta<T> newClassMeta(Type target) {
 		Class<T> clazz = TypeHelper.toClass(target);
 
-		if (List.class.isAssignableFrom(clazz)) {
-			ParameterizedType pt = (ParameterizedType) target;
-			return newArrayListMeta(pt.getActualTypeArguments()[0]);
+		if (Map.class.isAssignableFrom(clazz)) {
+			return (ClassMeta<T>) newMapMeta(target);
+		} else if (List.class.isAssignableFrom(clazz)) {
+			return newArrayListMeta(target);
 		} else if (clazz.isArray()) {
 			return newArrayMeta(clazz);
 			//IFJAVA8_START
@@ -95,12 +99,16 @@ public class ReflectionService {
 		}
 	}
 
+	private <K, V> ClassMeta<Map<K,V>> newMapMeta(Type type) {
+		Tuple2<Type, Type> types = TypeHelper.getKeyValueTypeOfMap(type);
+		return new MapClassMeta<Map<K, V>, K, V>(type, types.first(), types.second(), this);
+	}
 	private <T, E> ClassMeta<T> newArrayMeta(Class<T> clazz) {
 		return new ArrayClassMeta<T, E>(clazz, clazz.getComponentType(), this);
 	}
 
-	private <T, E> ClassMeta<T> newArrayListMeta(Type elementTarget) {
-		return new ArrayClassMeta<T, E>(ArrayList.class, elementTarget, this);
+	private <T, E> ClassMeta<T> newArrayListMeta(Type type) {
+		return new ArrayClassMeta<T, E>(ArrayList.class, TypeHelper.getComponentTypeOfListOrArray(type), this);
 	}
 
 	private <T> boolean isFastTuple(Class<T> clazz) {

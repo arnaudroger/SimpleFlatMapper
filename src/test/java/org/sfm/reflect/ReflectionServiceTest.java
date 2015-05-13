@@ -1,14 +1,15 @@
 package org.sfm.reflect;
 
 import org.junit.Test;
+import org.sfm.reflect.meta.ArrayClassMeta;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.tuples.Tuple2;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
+import java.util.ArrayList;
+
+import static org.junit.Assert.*;
 
 public class ReflectionServiceTest {
 
@@ -39,6 +40,21 @@ public class ReflectionServiceTest {
         final PropertyMeta<Node, Object> propertyMeta = cm.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("parent_parent_parent"));
         assertNotNull(propertyMeta);
         assertNotNull(cm);
+    }
+
+
+    @Test
+    public void testListSubClass() {
+        final ClassMeta<?> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<StringList>() {
+        }.getType());
+
+        ArrayClassMeta<?, ?> acm = (ArrayClassMeta<?, ?>) classMeta;
+
+        assertEquals(String.class, acm.getElementTarget());
+    }
+
+    public static class StringList extends ArrayList<String> {
+
     }
 
     public static class Node {

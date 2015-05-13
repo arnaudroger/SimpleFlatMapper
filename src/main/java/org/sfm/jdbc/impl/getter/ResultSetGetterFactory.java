@@ -392,7 +392,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				Class<?> elementType = clazz.getComponentType();
 				return (Getter<ResultSet, P>) newArrayGetter(elementType, key, columnDefinition);
 			} else if (TypeHelper.isAssignable(List.class, genericType)) {
-				Type elementType = TypeHelper.getComponentType(genericType);
+				Type elementType = TypeHelper.getComponentTypeOfListOrArray(genericType);
 				return (Getter<ResultSet, P>) newArrayListGetter(elementType, key, columnDefinition);
 			}
 		}

@@ -3,6 +3,8 @@ package org.sfm.reflect.meta;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.utils.conv.Converter;
+import org.sfm.utils.conv.ConverterFactory;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -13,14 +15,17 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	private final ReflectionService reflectionService;
 	private final Type valueType;
-	private final Type keyType;
+	private final Converter<CharSequence, K> keyConverter;
 	private final ClassMeta<V> valueClassMeta;
 	private final Type type;
 
 	public MapClassMeta(Type type, Type keyType, Type valueType, ReflectionService reflectionService) {
 		this.type = type;
 		this.valueType = valueType;
-		this.keyType = keyType;
+		this.keyConverter = ConverterFactory.getConverter(CharSequence.class, keyType);
+		if (keyConverter == null) {
+			throw new IllegalArgumentException("Unsupported key type " + keyType);
+		}
 		this.reflectionService = reflectionService;
 		this.valueClassMeta = reflectionService.getClassMeta(valueType);
 	}
@@ -40,7 +45,7 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	@Override
 	public PropertyFinder<M> newPropertyFinder() {
-		return new MapPropertyFinder<M, K, V>(valueClassMeta);
+		return new MapPropertyFinder<M, K, V>(valueClassMeta, keyConverter);
 	}
 
 	public Type getType() {

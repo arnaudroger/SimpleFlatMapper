@@ -105,6 +105,7 @@ public class CsvMapperBuilderTest {
 		assertEquals(null, map.get("key2"));
 
 	}
+
 	@Test
 	public void testMapToMapStringInteger() throws Exception {
 		final CsvMapperBuilder<Map<String, Integer>> builder = csvMapperFactory.newBuilder(new TypeReference<Map<String, Integer>>() {
@@ -126,6 +127,25 @@ public class CsvMapperBuilderTest {
 
 		assertEquals(Integer.valueOf(4), map.get("key1"));
 		assertEquals(null, map.get("key2"));
+	}
+
+	@Test
+	public void testMapToMapIntegerToInteger() throws Exception {
+		final CsvMapperBuilder<Map<Integer, Integer>> builder = csvMapperFactory.newBuilder(new TypeReference<Map<Integer, Integer>>() {
+		});
+		final CsvMapper<Map<Integer, Integer>> mapper =
+				builder
+						.addMapping("1")
+						.addMapping("2")
+						.mapper();
+
+		final Iterator<Map<Integer, Integer>> iterator = mapper.iterator(new StringReader("3,12"));
+		Map<Integer, Integer> map;
+
+		map = iterator.next();
+		assertEquals(Integer.valueOf(3), map.get(1));
+		assertEquals(Integer.valueOf(12), map.get(2));
+
 	}
 
 	@Test

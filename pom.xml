@@ -484,7 +484,7 @@
         <profile>
             <id>jdk18</id>
             <activation>
-                <jdk>1.8</jdk>
+                <jdk>[1.8,)</jdk>
             </activation>
             <dependencies>
                 <dependency>

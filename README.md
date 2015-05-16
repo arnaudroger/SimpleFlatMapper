@@ -4,7 +4,7 @@
 [![JavaDoc](https://img.shields.io/badge/javadoc-1.8.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/simpleFlatMapper)
 [![License](https://img.shields.io/github/license/arnaudroger/simpleFlatMapper.svg)](https://raw.githubusercontent.com/arnaudroger/SimpleFlatMapper/master/LICENSE)
 
-![Java 6](https://img.shields.io/badge/java-6-orange.svg)(java-6)![Java 7](https://img.shields.io/badge/java-7-green.svg)(java-7)![Java 8](https://img.shields.io/badge/java-8-brightgreen.svg)(java-8)
+[![Java 6](https://img.shields.io/badge/java-6-orange.svg)](#java-6)[![Java 7](https://img.shields.io/badge/java-7-green.svg)](#java-7)[![Java 8](https://img.shields.io/badge/java-8-brightgreen.svg)](#java-8)
 # Simple Flat Mapper (SFM) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.8.0)
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)

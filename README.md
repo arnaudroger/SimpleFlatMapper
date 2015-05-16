@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
+[![Build Status](https://img.shields.io/travis/arnaudroger/SimpleFlatMapper.svg)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/simpleFlatMapper/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/simpleFlatMapper)
+[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/simpleFlatMapper.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/simpleFlatMapper)
 [![JavaDoc](https://img.shields.io/badge/javadoc-1.8.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/simpleFlatMapper)
 [![License](https://img.shields.io/github/license/arnaudroger/simpleFlatMapper.svg)](https://raw.githubusercontent.com/arnaudroger/SimpleFlatMapper/master/LICENSE)
 

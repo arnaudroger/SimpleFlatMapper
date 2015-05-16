@@ -4,7 +4,7 @@
 [![JavaDoc](https://img.shields.io/badge/javadoc-1.8.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/simpleFlatMapper)
 [![License](https://img.shields.io/github/license/arnaudroger/simpleFlatMapper.svg)](https://raw.githubusercontent.com/arnaudroger/SimpleFlatMapper/master/LICENSE)
 
-# Simple Flat Mapper (SFM) [v1.8.0](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.8.0)
+# Simple Flat Mapper (SFM) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.8.0)
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 
@@ -66,7 +66,9 @@ The Jooq integration give you a mapping to object for almost no cost.
 
 ### Binaries
 
-The binaries are available in maven central. There is a build for
+The binaries are available in maven central. 
+[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/simpleFlatMapper.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/simpleFlatMapper)
+There is a build for
 
 #### Java 8
 

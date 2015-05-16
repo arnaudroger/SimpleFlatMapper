@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/arnaudroger/SimpleFlatMapper.svg?branch=master)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/simpleFlatMapper/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/simpleFlatMapper)
+[![JavaDoc](https://img.shields.io/badge/javadoc-1.8.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/simpleFlatMapper)
+[![License](https://img.shields.io/github/license/arnaudroger/simpleFlatMapper.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 # Simple Flat Mapper (SFM) [v1.8.0](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.8.0)
 

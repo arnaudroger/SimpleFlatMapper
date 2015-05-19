@@ -2,6 +2,9 @@ package org.sfm.reflect.meta;
 
 import org.sfm.tuples.Tuple2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	private final String column;
 	private final int from;
@@ -102,9 +105,13 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	}
 
 	private boolean ignoreCharacter(final char charColumn) {
-		return !exactMatch && (charColumn == '_' || charColumn == ' ' || charColumn == '.');
+		return !exactMatch && isSeparatorChar(charColumn);
 	}
-	
+
+	private boolean isSeparatorChar(char charColumn) {
+		return charColumn == '_' || charColumn == ' ' || charColumn == '.';
+	}
+
 	@Override
 	public PropertyNameMatcher partialMatch(final CharSequence property) {
 		int index = _partialMatch(property);
@@ -127,7 +134,29 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
         }
     }
 
-    private int _speculativeMatch() {
+	@Override
+	public List<Tuple2<PropertyNameMatcher, PropertyNameMatcher>> keyValuePairs() {
+		List<Tuple2<PropertyNameMatcher, PropertyNameMatcher>> keyValuePairs = new ArrayList<Tuple2<PropertyNameMatcher, PropertyNameMatcher>>();
+
+
+		keyValuePairs.add(
+				new Tuple2<PropertyNameMatcher, PropertyNameMatcher>(
+						new DefaultPropertyNameMatcher(column, from, exactMatch, caseSensitive),
+						new DefaultPropertyNameMatcher("", 0, exactMatch, caseSensitive)
+				));
+		for(int i = column.length() - 1; i >= from; i--) {
+			char c = column.charAt(i);
+			if (isSeparatorChar(c)) {
+				PropertyNameMatcher key = new DefaultPropertyNameMatcher(column.substring(from, i), 0, exactMatch, caseSensitive);
+				PropertyNameMatcher value = new DefaultPropertyNameMatcher(column, from + i + 1, exactMatch, caseSensitive);
+				keyValuePairs.add(new Tuple2<PropertyNameMatcher, PropertyNameMatcher>(key, value));
+			}
+		}
+
+		return keyValuePairs;
+	}
+
+	private int _speculativeMatch() {
         for(int i = from; i < column.length(); i++) {
             char c = column.charAt(i);
             if (c == '_' || c == '.') {

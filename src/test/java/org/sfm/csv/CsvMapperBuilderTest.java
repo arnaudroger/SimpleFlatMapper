@@ -149,6 +149,33 @@ public class CsvMapperBuilderTest {
 	}
 
 	@Test
+	public void testMapToMapStringToDbObject() throws Exception {
+		final CsvMapperBuilder<Map<String, DbObject>> builder = csvMapperFactory.newBuilder(new TypeReference<Map<String, DbObject>>() {
+		});
+		final CsvMapper<Map<String, DbObject>> mapper =
+				builder
+						.addMapping("key1_id")
+						.addMapping("key1_name")
+						.addMapping("key2_2_id")
+						.addMapping("key2_2_name")
+						.mapper();
+
+		final Iterator<Map<String, DbObject>> iterator = mapper.iterator(new StringReader("1,name1,2,name2"));
+		Map<String, DbObject> map;
+
+		map = iterator.next();
+
+		DbObject o = map.get("key1");
+		assertEquals(1, o.getId());
+		assertEquals("name1", o.getName());
+
+		o = map.get("key2_2");
+		assertEquals(2, o.getId());
+		assertEquals("name2", o.getName());
+
+	}
+
+	@Test
 	public void testMapDbObjectNoAsm() throws Exception {
 		testMapDbObject(csvMapperFactoryNoAsm.newBuilder(DbObject.class));
 	}

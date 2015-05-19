@@ -2,6 +2,8 @@ package org.sfm.reflect.meta;
 
 import org.sfm.tuples.Tuple2;
 
+import java.util.List;
+
 
 /**
  *
@@ -33,4 +35,6 @@ public interface PropertyNameMatcher {
      * @return
      */
     Tuple2<String,PropertyNameMatcher> speculativeMatch();
+
+    List<Tuple2<PropertyNameMatcher, PropertyNameMatcher>> keyValuePairs();
 }

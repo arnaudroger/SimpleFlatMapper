@@ -4,6 +4,7 @@ package org.sfm.map;
 import org.sfm.jdbc.impl.BreakDetector;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.meta.ListElementPropertyMeta;
+import org.sfm.reflect.meta.MapElementPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.BooleanProvider;
 import org.sfm.utils.ErrorHelper;
@@ -101,7 +102,9 @@ public class MappingContextFactoryBuilder<S, K> {
     }
 
     private boolean isRootEligible() {
-        return !(owner instanceof ListElementPropertyMeta) && (parent == null || parent.isRootEligible());
+        return !(owner instanceof ListElementPropertyMeta)
+                && !(owner instanceof MapElementPropertyMeta)
+                && (parent == null || parent.isRootEligible());
     }
 
     private int getParentNonEmptyIndex() {

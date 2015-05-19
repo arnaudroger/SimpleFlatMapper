@@ -40,6 +40,10 @@ public class MapElementPropertyMeta<T extends Map<K, V>, K, V> extends PropertyM
 		return key + "." + getName();
 	}
 
+	public K getKey() {
+		return key;
+	}
+
 
 	private static class MapSetter<T extends  Map<K, V>, K, V> implements Setter<T, V> {
 		private final K key;

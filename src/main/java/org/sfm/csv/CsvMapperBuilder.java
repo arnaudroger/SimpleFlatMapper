@@ -464,7 +464,10 @@ public class CsvMapperBuilder<T> {
                     Getter<CsvMapperCellHandler<T>, ?> delayedGetter = cellSetterFactory.newDelayedGetter(key, constPropMeta.getType());
                     constructorInjections.put(constPropMeta.getParameter(), delayedGetter);
                     delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
-                } else if (propMapping.getColumnDefinition().isKey() && propMapping.getColumnDefinition().keyAppliesTo().test(propMapping.getPropertyMeta())) {
+                } else if (
+						(propMapping.getColumnDefinition().isKey()
+						&& propMapping.getColumnDefinition().keyAppliesTo().test(propMapping.getPropertyMeta()))
+						|| subMeta.getSubProperty() instanceof DirectClassMeta.DirectPropertyMeta) {
                     delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
                 }
             } else if (propMapping.getColumnDefinition().isKey() && propMapping.getColumnDefinition().keyAppliesTo().test(propMapping.getPropertyMeta())) {

@@ -11,10 +11,12 @@ import java.util.*;
 public class MapPropertyFinder<T extends Map<K, V>, K, V> implements PropertyFinder<T> {
 
     private final ClassMeta<V> valueMetaData;
+    private final ClassMeta<T> mapMeta;
     private final Converter<CharSequence, K> keyConverter;
     private Map<PropertyNameMatcher, PropertyFinder<V>> finders = new HashMap<PropertyNameMatcher, PropertyFinder<V>>();
 
-    public MapPropertyFinder(ClassMeta<V> valueMetaData, Converter<CharSequence, K> keyConverter) {
+    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<CharSequence, K> keyConverter) {
+        this.mapMeta = mapMeta;
         this.valueMetaData = valueMetaData;
         this.keyConverter = keyConverter;
     }
@@ -66,13 +68,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> implements PropertyFin
 
     @Override
     public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
-
-        try {
-            return Arrays.asList(new InstantiatorDefinition(HashMap.class.getConstructor()));
-        } catch (NoSuchMethodException e) {
-            throw new Error("Unexpected error " + e, e);
-        }
-
+        return mapMeta.getInstantiatorDefinitions();
     }
 
     @Override

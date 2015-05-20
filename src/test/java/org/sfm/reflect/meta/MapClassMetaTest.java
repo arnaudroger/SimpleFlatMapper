@@ -3,14 +3,15 @@ package org.sfm.reflect.meta;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class MapClassMetaTest {
 
@@ -46,6 +47,37 @@ public class MapClassMetaTest {
         MapElementPropertyMeta<?, ?, ?> idMeta = (MapElementPropertyMeta<?, ?, ?>) k_kv_k_id;
         assertEquals("k_kv_k_id", idMeta.getKey());
 
+
+    }
+
+    @Test
+    public void testUseHashMapOnMap() throws NoSuchMethodException {
+        final ClassMeta<Map<String, String>> classMeta =
+                ReflectionService.newInstance().getClassMeta(new TypeReference<Map<String, String>>() {}.getType());
+
+        hasOneInstantiatorDefinitionWithEmptyConstructorOnImpl(classMeta, HashMap.class);
+
+    }
+
+    private void hasOneInstantiatorDefinitionWithEmptyConstructorOnImpl(ClassMeta<?> classMeta, Class<?> impl) throws NoSuchMethodException {
+        assertTrue(classMeta instanceof MapClassMeta);
+        final List<InstantiatorDefinition> instantiatorDefinitions = classMeta.getInstantiatorDefinitions();
+
+        assertEquals(1, instantiatorDefinitions.size());
+        final InstantiatorDefinition instantiatorDefinition = instantiatorDefinitions.get(0);
+
+        assertEquals(0, instantiatorDefinition.getParameters().length);
+        assertEquals(impl.getConstructor(), instantiatorDefinition.getExecutable());
+    }
+
+
+    @Test
+    public void testUseConcurrentHashMapOnConcurrentMap() {
+
+    }
+
+    @Test
+    public void testUseSpecifiedImplType() {
 
     }
 }

@@ -7,9 +7,7 @@ import org.sfm.utils.conv.Converter;
 import org.sfm.utils.conv.ConverterFactory;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
@@ -45,7 +43,7 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	@Override
 	public PropertyFinder<M> newPropertyFinder() {
-		return new MapPropertyFinder<M, K, V>(valueClassMeta, keyConverter);
+		return new MapPropertyFinder<M, K, V>(this, valueClassMeta, keyConverter);
 	}
 
 	public Type getType() {
@@ -68,6 +66,10 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	@Override
 	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
-		return Collections.emptyList();
+		try {
+			return Arrays.asList(new InstantiatorDefinition(HashMap.class.getConstructor()));
+		} catch (NoSuchMethodException e) {
+			throw new Error("Unexpected error " + e, e);
+		}
 	}
 }

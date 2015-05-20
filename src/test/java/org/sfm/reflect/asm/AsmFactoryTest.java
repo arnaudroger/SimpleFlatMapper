@@ -22,6 +22,7 @@ import org.sfm.reflect.Instantiator;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -76,8 +77,9 @@ public class AsmFactoryTest {
 		injections.put(new Parameter("typeOrdinal", Type.class), new OrdinalEnumResultSetGetter<Type>(1, Type.class));
 		injections.put(new Parameter("name", String.class), new StringResultSetGetter(2));
 
+		List<InstantiatorDefinition> instantiatorDefinitions = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class);
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
-				AsmInstantiatorDefinitionFactory.<DbFinalObject>extractDefinitions(DbFinalObject.class).get(0),
+				instantiatorDefinitions.get(0),
 				injections
 		);
 		

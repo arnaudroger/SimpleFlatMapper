@@ -3,12 +3,14 @@ package org.sfm.tuples.jool;
 import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Test;
 import org.sfm.csv.CsvParser;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.*;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Type;
 import java.util.Iterator;
 
 import static org.junit.Assert.*;
@@ -74,4 +76,27 @@ public class JoolTupleTest {
         assertEquals(8, tuple2.v2().intValue());
         assertEquals((short)9, tuple2.v3().shortValue());
     }
+
+    @Test
+    public void testGenerateHeadersJoolTuple() {
+        String[] names = {"element0", "element1"};
+        ClassMeta<Object> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<org.jooq.lambda.tuple.Tuple2<String, String>>() {
+        }.getType());
+        assertArrayEquals(
+                names,
+                classMeta.generateHeaders());
+    }
+    @Test
+    public void testFindPropertyNoAsmJool() {
+        Type type = new TypeReference<org.jooq.lambda.tuple.Tuple2<String, String>>() {}.getType();
+
+        ClassMeta<org.jooq.lambda.tuple.Tuple2<String, String>> classMeta = ReflectionService.disableAsm().getClassMeta(type);
+
+        InstantiatorDefinition instantiatorDefinition = classMeta.getInstantiatorDefinitions().get(0);
+
+        assertEquals("v1", instantiatorDefinition.getParameters()[0].getName());
+        assertEquals("v2", instantiatorDefinition.getParameters()[1].getName());
+        assertEquals(2, instantiatorDefinition.getParameters().length);
+    }
+
 }

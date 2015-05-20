@@ -43,15 +43,7 @@ public class TuplesClassMetaTest {
                 ReflectionService.newInstance().getClassMeta(Tuples.typeDef(DbObject.class, String.class)).generateHeaders());
     }
 
-    @Test
-    public void testGenerateHeadersJoolTuple() {
-        String[] names = {"element0", "element1"};
-        ClassMeta<Object> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<org.jooq.lambda.tuple.Tuple2<String, String>>() {
-        }.getType());
-        assertArrayEquals(
-                names,
-                classMeta.generateHeaders());
-    }
+
 
     @Test
     public void testFindPropertyNoAsm() {
@@ -65,18 +57,7 @@ public class TuplesClassMetaTest {
         assertEquals("element1", instantiatorDefinition.getParameters()[1].getName());
         assertEquals(2, instantiatorDefinition.getParameters().length);
     }
-    @Test
-    public void testFindPropertyNoAsmJool() {
-        Type type = new TypeReference<org.jooq.lambda.tuple.Tuple2<String, String>>() {}.getType();
 
-        ClassMeta<org.jooq.lambda.tuple.Tuple2<String, String>> classMeta = ReflectionService.disableAsm().getClassMeta(type);
-
-        InstantiatorDefinition instantiatorDefinition = classMeta.getInstantiatorDefinitions().get(0);
-
-        assertEquals("v1", instantiatorDefinition.getParameters()[0].getName());
-        assertEquals("v2", instantiatorDefinition.getParameters()[1].getName());
-        assertEquals(2, instantiatorDefinition.getParameters().length);
-    }
 
     ClassMeta<Tuple2<Foo, Foo>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple2<Foo, Foo>>() {}.getType());
 

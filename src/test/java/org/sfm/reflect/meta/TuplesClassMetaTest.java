@@ -3,24 +3,80 @@ package org.sfm.reflect.meta;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.Foo;
+import org.sfm.map.MapperBuildingException;
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
 
+import java.lang.reflect.Type;
+
 import static org.junit.Assert.*;
 
 public class TuplesClassMetaTest {
 
+    @Test
+    public void isNotLeaf() {
+        assertFalse(classMeta.isLeaf());
+    }
 
     @Test
-    public void testGenerateHeaders() {
+    public void failOnNoConstructorMatchingType() {
+        Type type = new TypeReference<MyTuple<String, String>>() {}.getType();
+
+        try {
+            new TupleClassMeta<MyTuple<String, String>>(type, ReflectionService.newInstance());
+            fail();
+        }  catch (MapperBuildingException e) {
+            // expect
+        }
+    }
+
+    static class MyTuple<T1, T2> {
+    }
+    @Test
+    public void testGenerateHeadersOnDbObjectString() {
         String[] names = {"element0_id", "element0_name", "element0_email", "element0_creationTime", "element0_typeOrdinal", "element0_typeName", "element1"};
         assertArrayEquals(
                 names,
                 ReflectionService.newInstance().getClassMeta(Tuples.typeDef(DbObject.class, String.class)).generateHeaders());
     }
 
+    @Test
+    public void testGenerateHeadersJoolTuple() {
+        String[] names = {"element0", "element1"};
+        ClassMeta<Object> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<org.jooq.lambda.tuple.Tuple2<String, String>>() {
+        }.getType());
+        assertArrayEquals(
+                names,
+                classMeta.generateHeaders());
+    }
+
+    @Test
+    public void testFindPropertyNoAsm() {
+        Type type = new TypeReference<Tuple2<String, String>>() {}.getType();
+
+        ClassMeta<Tuple2<String, String>> classMeta = ReflectionService.disableAsm().getClassMeta(type);
+
+        InstantiatorDefinition instantiatorDefinition = classMeta.getInstantiatorDefinitions().get(0);
+
+        assertEquals("element0", instantiatorDefinition.getParameters()[0].getName());
+        assertEquals("element1", instantiatorDefinition.getParameters()[1].getName());
+        assertEquals(2, instantiatorDefinition.getParameters().length);
+    }
+    @Test
+    public void testFindPropertyNoAsmJool() {
+        Type type = new TypeReference<org.jooq.lambda.tuple.Tuple2<String, String>>() {}.getType();
+
+        ClassMeta<org.jooq.lambda.tuple.Tuple2<String, String>> classMeta = ReflectionService.disableAsm().getClassMeta(type);
+
+        InstantiatorDefinition instantiatorDefinition = classMeta.getInstantiatorDefinitions().get(0);
+
+        assertEquals("v1", instantiatorDefinition.getParameters()[0].getName());
+        assertEquals("v2", instantiatorDefinition.getParameters()[1].getName());
+        assertEquals(2, instantiatorDefinition.getParameters().length);
+    }
 
     ClassMeta<Tuple2<Foo, Foo>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple2<Foo, Foo>>() {}.getType());
 
@@ -65,18 +121,6 @@ public class TuplesClassMetaTest {
     private PropertyNameMatcher newMatcher(String name) {
         return new DefaultPropertyNameMatcher(name, 0, false, false);
     }
-
-//    @Test
-//    public void testIndexStartingAtOne() {
-//        final PropertyFinder<Tuple2<Foo, Foo>> propertyFinder = classMeta.newPropertyFinder();
-//
-//        final PropertyMeta<Tuple2<Foo, Foo>, String> t0_foo = propertyFinder.findProperty(newMatcher("t1_foo"));
-//        final PropertyMeta<Tuple2<Foo, Foo>, String> t0_bar = propertyFinder.findProperty(newMatcher("t1_bar"));
-//        final PropertyMeta<Tuple2<Foo, Foo>, String> t1_foo = propertyFinder.findProperty(newMatcher("t2_foo"));
-//        final PropertyMeta<Tuple2<Foo, Foo>, String> t1_bar = propertyFinder.findProperty(newMatcher("t2_bar"));
-//        validate(t0_foo, t0_bar, t1_foo, t1_bar);
-//
-//    }
 
     @Test
     public void testIndexStartingFlexiblePrefix() {

@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  * <code>
  *     CsvMapper mapper = CsvMapperFactory<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.newInstance()<br>
- *     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.newMapper(Myclass.class);<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.newMapper(MyClass.class);<br>
  *     try (FileReader reader : new FileReader(file)) {<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;mapper.stream(reader).forEach(System.out::println);<br>
  *     }
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * Or Using the {@link org.sfm.csv.CsvParser} DSL<br><br>
  * <code>
  *     try (FileReader reader : new FileReader(file)) {<br>
- *     &nbsp;&nbsp;&nbsp;&nbsp;CsvParser.mapTo(Myclass.class).stream(reader).forEach(System.out::println);<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;CsvParser.mapTo(MyClass.class).stream(reader).forEach(System.out::println);<br>
  *     }
  * </code>
  * <p>

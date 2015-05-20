@@ -48,7 +48,6 @@ public class ArrayMetaDataTest {
         assertEquals("ListElementPropertyMeta{index=1}", bb.toString());
 
         assertEquals(ArrayList.class.getConstructor(), propertyFinder.getEligibleInstantiatorDefinitions().get(0).getExecutable());
-        assertNull(propertyFinder.findConstructor(null));
 
         try {
             classMeta.generateHeaders();

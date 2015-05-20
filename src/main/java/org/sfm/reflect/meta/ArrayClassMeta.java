@@ -4,9 +4,12 @@ import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 
@@ -14,12 +17,42 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	private final Type elementTarget;
 	private final ClassMeta<E> elementClassMeta;
 	private final Type type;
+	private final InstantiatorDefinition constructor;
 
 	public ArrayClassMeta(Type type, Type elementTarget, ReflectionService reflectionService) {
 		this.type = type;
 		this.elementTarget = elementTarget;
 		this.reflectionService = reflectionService;
 		this.elementClassMeta = reflectionService.getClassMeta(elementTarget);
+		this.constructor = getConstructor(type);
+	}
+
+	private InstantiatorDefinition getConstructor(Type type) {
+
+		if (TypeHelper.isArray(type)) {
+			return null;
+		} else {
+			Class<?> implClass = findListImpl(type);
+			try {
+				return new InstantiatorDefinition(implClass.getDeclaredConstructor());
+			} catch (NoSuchMethodException e) {
+				throw new IllegalArgumentException("No empty constructor for " + implClass);
+			}
+		}
+	}
+
+	private Class<?> findListImpl(Type type) {
+		Class<?> clazz = TypeHelper.toClass(type);
+
+		if (clazz.isInterface()) {
+			if (List.class.equals(clazz)) {
+				return ArrayList.class;
+			}
+		} else if (!Modifier.isAbstract(clazz.getModifiers())) {
+			return clazz;
+		}
+
+		throw new IllegalArgumentException("No known List impl for " + type);
 	}
 
 	public ClassMeta<E> getElementClassMeta() {
@@ -60,6 +93,10 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 
 	@Override
 	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
-		return Collections.emptyList();
+		if (constructor != null) {
+			return Arrays.asList(constructor);
+		} else {
+			return Collections.emptyList();
+		}
 	}
 }

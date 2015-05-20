@@ -17,18 +17,18 @@ public class PrimitivesDelayedCellSetterTest {
 	@Test
 	public void testBooleanGetSetValue() throws Exception {
 		Setter<DbPrimitiveObjectWithSetter, Boolean> setter = objectSetterFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pBoolean");
-		BooleanDelayedCellSetter<DbPrimitiveObjectWithSetter> bsetter = 
+		BooleanDelayedCellSetter<DbPrimitiveObjectWithSetter> bSetter =
 				new BooleanDelayedCellSetter<DbPrimitiveObjectWithSetter>(ObjectSetterFactory.toBooleanSetter(setter), new BooleanCellValueReaderImpl());
-		bsetter.set("true".toCharArray(), 0, 4, null);
-		assertTrue(bsetter.consumeValue());
+		bSetter.set("true".toCharArray(), 0, 4, null);
+		assertTrue(bSetter.consumeValue());
 		
-		bsetter.set("true".toCharArray(), 0, 4, null);
+		bSetter.set("true".toCharArray(), 0, 4, null);
 		DbPrimitiveObjectWithSetter o = new DbPrimitiveObjectWithSetter();
-		bsetter.set(o);
+		bSetter.set(o);
 		assertTrue(o.ispBoolean());
 
-        bsetter.set("".toCharArray(), 0, 0, null);
-        assertNull(bsetter.consumeValue());
+        bSetter.set("".toCharArray(), 0, 0, null);
+        assertNull(bSetter.consumeValue());
 
     }
 

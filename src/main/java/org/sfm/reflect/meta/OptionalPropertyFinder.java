@@ -46,9 +46,4 @@ public class OptionalPropertyFinder<T> implements PropertyFinder<T> {
     public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
         return Arrays.asList(tupleClassMeta.getInstantiatorDefinition());
     }
-
-    @Override
-    public <E> ConstructorPropertyMeta<T, E> findConstructor(InstantiatorDefinition instantiatorDefinition) {
-        return null;
-    }
 }

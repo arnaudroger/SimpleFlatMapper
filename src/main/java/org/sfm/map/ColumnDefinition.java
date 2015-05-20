@@ -9,7 +9,6 @@ import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 
 public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnDefinition<K, CD>> {
 

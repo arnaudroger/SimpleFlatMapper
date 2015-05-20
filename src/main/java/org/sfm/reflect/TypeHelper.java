@@ -5,10 +5,8 @@ import org.sfm.tuples.Tuple2;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.rmi.UnexpectedException;
+import java.util.*;
 
 public class TypeHelper {
 
@@ -88,51 +86,28 @@ public class TypeHelper {
 		Class<?> target = toClass(outType);
 		if (target.isArray()) {
 			return toClass(outType).getComponentType();
-		} else if (outType instanceof ParameterizedType) {
-			ParameterizedType pt = (ParameterizedType) outType;
-			Type rt = pt.getRawType();
-
-			if (rt.equals(List.class)) {
-				return pt.getActualTypeArguments()[0];
-			}
-		} else if (outType instanceof Class) {
-			Type cc = outType;
-
-			while(cc != null) {
-				Type lt = getGenericInterface(cc, List.class);
-				if (lt != null && cc instanceof ParameterizedType) {
-					return ((ParameterizedType) cc).getActualTypeArguments()[0];
-				}
-				cc = getGenericSuperType(cc);
+		} else  {
+			Type[] parameterTypes = getGenericParameterForClass(outType, Collection.class);
+			if (parameterTypes != null) {
+				return parameterTypes[0];
 			}
 		}
 		return null;
 	}
 
 	public static Tuple2<Type, Type> getKeyValueTypeOfMap(Type outType) {
-		if (outType instanceof ParameterizedType) {
-			ParameterizedType pt = (ParameterizedType) outType;
-			Type rt = pt.getRawType();
-
-			if (rt.equals(Map.class)) {
-				return new Tuple2<Type, Type>(pt.getActualTypeArguments()[0], pt.getActualTypeArguments()[1]);
-			}
-		} else if (outType instanceof Class) {
-			Type cc = outType;
-
-			while(cc != null) {
-				Type lt = getGenericInterface(cc, Map.class);
-				if (lt != null && cc instanceof ParameterizedType) {
-					return new Tuple2<Type, Type>(((ParameterizedType) cc).getActualTypeArguments()[0], ((ParameterizedType) cc).getActualTypeArguments()[1]);
-				}
-				cc = getGenericSuperType(cc);
-			}
+		Type[] parameterTypes = getGenericParameterForClass(outType, Map.class);
+		if (parameterTypes != null) {
+			return new Tuple2<Type, Type>(parameterTypes[0], parameterTypes[1]);
 		}
 		return null;
 	}
 
 
 	private static Type getGenericInterface(Type t, Class<?> i) {
+		if (TypeHelper.areEquals(t, i)) {
+			return t;
+		}
 		if (t instanceof Class) {
 			for(Type it : ((Class) t).getGenericInterfaces()) {
 				if (isAssignable(i, it)) {
@@ -145,7 +120,7 @@ public class TypeHelper {
 		return null;
 	}
 
-	public static Type getGenericSuperType(Type t) {
+	private static Type getGenericSuperType(Type t) {
 		if (t instanceof Class) {
 			return ((Class) t).getGenericSuperclass();
 		} else if (t instanceof ParameterizedType) {
@@ -205,4 +180,48 @@ public class TypeHelper {
     public static boolean areEquals(Type target, Class<?> clazz) {
         return clazz.equals(TypeHelper.toClass(target));
     }
+
+	public static Type[] getGenericParameterForClass(Type type, Class<?> interfaceClass) {
+
+		if (isAssignable(interfaceClass, type)) {
+			// first look for the interface
+			Type genericInterface = getGenericInterface(type, interfaceClass);
+
+			final Type[] types;
+			if (genericInterface != null) {
+				if (genericInterface instanceof ParameterizedType) {
+					types = ((ParameterizedType) genericInterface).getActualTypeArguments();
+				} else {
+					throw new IllegalStateException("type " + type + " is not a ParameterizedType");
+				}
+			} else {
+				types = getGenericParameterForClass(TypeHelper.getGenericSuperType(type), interfaceClass);
+			}
+			resolveTypeVariables(type, types);
+			return types;
+		} else {
+			throw new IllegalArgumentException("type " + type + " does not implement/extends " + interfaceClass);
+		}
+	}
+
+	private static void resolveTypeVariables(Type source, Type[] types) {
+		for(int i = 0; i < types.length; i++) {
+            Type t = types[i];
+            if (t instanceof TypeVariable) {
+                types[i] = resolveTypeVariable(source, (TypeVariable) t);
+            }
+        }
+	}
+
+	public static Type resolveTypeVariable(Type type, TypeVariable t) {
+		TypeVariable<Class<Object>>[] typeParameters = TypeHelper.toClass(type).getTypeParameters();
+
+		for(int i = 0; i < typeParameters.length; i++) {
+			TypeVariable<Class<Object>> typeVariable = typeParameters[i];
+			if (typeVariable.getName().equals(t.getName())) {
+				return ((ParameterizedType)type).getActualTypeArguments()[i];
+			}
+		}
+		return type;
+	}
 }

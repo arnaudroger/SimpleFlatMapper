@@ -17,7 +17,6 @@ public class DirectClassMetaTest {
 
         PropertyMeta<String, Object> property = direct.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("bbb", 0, true, true));
 
-        assertNull(direct.newPropertyFinder().findConstructor(null));
         assertNull(direct.newPropertyFinder().getEligibleInstantiatorDefinitions());
 
         assertTrue(property instanceof DirectClassMeta.DirectPropertyMeta);

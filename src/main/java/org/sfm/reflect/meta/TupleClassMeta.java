@@ -92,7 +92,6 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 	public String[] generateHeaders() {
 		List<String> strings = new ArrayList<String>();
 
-
         ElementNameGenerator nameGenerator = new SFMTupleNameGenerator();
 
 		int i = 0;
@@ -100,14 +99,10 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
             String prefix = nameGenerator.name(i);
 			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getGenericType());
 
-			if (classMeta != null) {
-				for(String prop : classMeta.generateHeaders()) {
-                    String name = prop.length() == 0 ? prefix : prefix + "_" + prop;
-                    strings.add(name);
-				}
-			} else {
-				strings.add(prefix);
-			}
+            for(String prop : classMeta.generateHeaders()) {
+                String name = prop.length() == 0 ? prefix : prefix + "_" + prop;
+                strings.add(name);
+            }
 
 			i++;
 		}

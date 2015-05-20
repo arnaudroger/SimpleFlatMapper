@@ -2,7 +2,6 @@ package org.sfm.csv;
 
 import org.sfm.csv.impl.*;
 import org.sfm.map.*;
-import org.sfm.map.ColumnDefinition;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;

@@ -108,7 +108,7 @@ public class ReflectionService {
 	}
 
 	private <T, E> ClassMeta<T> newArrayListMeta(Type type) {
-		return new ArrayClassMeta<T, E>(ArrayList.class, TypeHelper.getComponentTypeOfListOrArray(type), this);
+		return new ArrayClassMeta<T, E>(type, TypeHelper.getComponentTypeOfListOrArray(type), this);
 	}
 
 	private <T> boolean isFastTuple(Class<T> clazz) {

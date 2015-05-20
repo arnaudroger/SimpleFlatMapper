@@ -7,9 +7,12 @@ import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static org.junit.Assert.*;
 
@@ -51,13 +54,80 @@ public class MapClassMetaTest {
     }
 
     @Test
-    public void testUseHashMapOnMap() throws NoSuchMethodException {
-        final ClassMeta<Map<String, String>> classMeta =
-                ReflectionService.newInstance().getClassMeta(new TypeReference<Map<String, String>>() {}.getType());
+    public void testFailOnAbstractMap() throws Exception {
+        try {
+            ReflectionService.newInstance().getClassMeta(new TypeReference<AbstractMap<String, String>>() {}.getType());
+            fail();
+        } catch(IllegalArgumentException e) {
+            // expected
+        }
+    }
 
-        hasOneInstantiatorDefinitionWithEmptyConstructorOnImpl(classMeta, HashMap.class);
+    @Test
+    public void testFailOnAbstractOnImplWithNoEmptyConstructor() throws Exception {
+        try {
+            ReflectionService.newInstance().getClassMeta(NoEmptyConstructorMap.class);
+            fail();
+        } catch(IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testFailOnUnsupportedConverter() throws Exception {
+        try {
+            ReflectionService.newInstance().getClassMeta(new TypeReference<Map<Map<String, String>, String>>() {}.getType());
+            fail();
+        } catch(IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testUseHashMapOnMap() throws NoSuchMethodException {
+        typeMetaHasTheSpecifiedClassEmptyConstructor(
+                new TypeReference<Map<String, String>>() {},
+                HashMap.class);
 
     }
+
+    @Test
+    public void testUseConcurrentHashMapOnConcurrentMap() throws NoSuchMethodException {
+        typeMetaHasTheSpecifiedClassEmptyConstructor(
+                new TypeReference<ConcurrentMap<String, String>>() {},
+                ConcurrentHashMap.class);
+    }
+
+    @Test
+    public void testUseSpecifiedImplType() throws NoSuchMethodException {
+        typeMetaHasTheSpecifiedClassEmptyConstructor(
+                new TypeReference<MyHashMap>() {},
+                MyHashMap.class);
+    }
+
+    static class MyHashMap extends HashMap<String, String> {
+
+    }
+
+
+
+    private void typeMetaHasTheSpecifiedClassEmptyConstructor(TypeReference<?> typeReference, Class<?> impl) throws NoSuchMethodException {
+        final ClassMeta<Map<String, String>> classMeta =
+                ReflectionService.newInstance().getClassMeta(typeReference.getType());
+
+        assertEquals(typeReference.getType(), classMeta.getType());
+        assertFalse(classMeta.isLeaf());
+
+        try {
+            classMeta.generateHeaders();
+            fail();
+        }  catch (UnsupportedOperationException e) {
+        }
+
+        hasOneInstantiatorDefinitionWithEmptyConstructorOnImpl(classMeta, impl);
+    }
+
+
 
     private void hasOneInstantiatorDefinitionWithEmptyConstructorOnImpl(ClassMeta<?> classMeta, Class<?> impl) throws NoSuchMethodException {
         assertTrue(classMeta instanceof MapClassMeta);
@@ -67,17 +137,12 @@ public class MapClassMetaTest {
         final InstantiatorDefinition instantiatorDefinition = instantiatorDefinitions.get(0);
 
         assertEquals(0, instantiatorDefinition.getParameters().length);
-        assertEquals(impl.getConstructor(), instantiatorDefinition.getExecutable());
+        assertEquals(impl.getDeclaredConstructor(), instantiatorDefinition.getExecutable());
     }
 
 
-    @Test
-    public void testUseConcurrentHashMapOnConcurrentMap() {
-
-    }
-
-    @Test
-    public void testUseSpecifiedImplType() {
-
+    static class NoEmptyConstructorMap extends HashMap<String, String> {
+        public NoEmptyConstructorMap(int i) {
+        }
     }
 }

@@ -70,22 +70,4 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
     protected boolean isValidIndex(IndexedColumn indexedColumn) {
         return indexedColumn.getIndexValue() >= 0;
     }
-
-	@Override
-	public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
-		if (List.class.isAssignableFrom(TypeHelper.toClass(classMeta.getType()))) {
-			try {
-				return Arrays.asList(new InstantiatorDefinition((Constructor<? extends T>) ArrayList.class.getConstructor()));
-			} catch (NoSuchMethodException e) {
-				throw new Error("Unexpected error " + e, e);
-			}
-		} else {
-			return Collections.emptyList();
-		}
-	}
-
-    @Override
-    public <E> ConstructorPropertyMeta<T, E> findConstructor(InstantiatorDefinition instantiatorDefinition) {
-        return null;
-    }
 }

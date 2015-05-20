@@ -70,9 +70,4 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> implements PropertyFin
     public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
         return mapMeta.getInstantiatorDefinitions();
     }
-
-    @Override
-    public <E> ConstructorPropertyMeta<T, E> findConstructor(InstantiatorDefinition instantiatorDefinition) {
-        return null;
-    }
 }

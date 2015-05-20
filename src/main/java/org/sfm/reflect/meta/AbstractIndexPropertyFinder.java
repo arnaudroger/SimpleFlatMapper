@@ -1,5 +1,6 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.tuples.Tuple2;
 
 import java.util.ArrayList;
@@ -82,4 +83,9 @@ public abstract class AbstractIndexPropertyFinder<T> implements PropertyFinder<T
     }
 
     protected abstract IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher);
+
+    @Override
+    public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
+        return classMeta.getInstantiatorDefinitions();
+    }
 }

@@ -49,34 +49,6 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 		return (PropertyMeta<T, E>) prop;
 	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <E> ConstructorPropertyMeta<T, E> findConstructor(InstantiatorDefinition instantiatorDefinition) {
-        ConstructorPropertyMeta<T, ?> prop = lookForConstructor(instantiatorDefinition);
-
-        if (prop != null) {
-            removeNonMatching(prop.getParameter());
-        }
-
-        return (ConstructorPropertyMeta<T, E>) prop;
-    }
-
-
-
-    private ConstructorPropertyMeta<T, ?> lookForConstructor(final InstantiatorDefinition instantiatorDefinition) {
-        if (classMeta.getConstructorProperties() != null) {
-            Parameter parameter = instantiatorDefinition.getParameters()[0];
-            for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
-                if (prop.getName().equals(parameter.getName())
-                        && prop.getParameter().equals(parameter)) {
-                    return prop;
-                }
-            }
-        }
-
-        return null;
-    }
-
     private ConstructorPropertyMeta<T, ?> lookForConstructor(final PropertyNameMatcher propertyNameMatcher) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {

@@ -55,7 +55,6 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
     }
 
     public class DirectPropertyFinder implements PropertyFinder<T> {
-
         @Override
         public <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
             return new DirectPropertyMeta<E>("direct", reflectService, target);
@@ -63,11 +62,6 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
 
         @Override
         public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
-            return null;
-        }
-
-        @Override
-        public <E> ConstructorPropertyMeta<T, E> findConstructor(InstantiatorDefinition instantiatorDefinition) {
             return null;
         }
     }

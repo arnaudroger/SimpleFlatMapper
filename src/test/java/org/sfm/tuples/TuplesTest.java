@@ -27,48 +27,48 @@ public class TuplesTest {
         }
     }
 
-    Tuple2<String, String> aabb = new Tuple2<String, String>("aa", "bb");
-    Tuple3<String, String, String> aabbcc = aabb.tuple3("cc");
-    Tuple4<String, String, String, String> aabbccdd = aabbcc.tuple4("dd");
-    Tuple5<String, String, String, String, String> aabbccddee = aabbccdd.tuple5("ee");
+    Tuple2<String, String> tuple2 = new Tuple2<String, String>("aa", "bb");
+    Tuple3<String, String, String> tuple3 = tuple2.tuple3("cc");
+    Tuple4<String, String, String, String> tuple4 = tuple3.tuple4("dd");
+    Tuple5<String, String, String, String, String> tuple5 = tuple4.tuple5("ee");
     @Test
     public void testTuple2() {
-        assertEquals(new Tuple2<String, String>("aa", "bb"), aabb);
-        assertEquals(new Tuple2<String, String>("aa", "bb").hashCode(), aabb.hashCode());
-        assertNotEquals(new Tuple2<String, String>("aa", "bbb"), aabb);
-        assertNotEquals(new Tuple2<String, String>("aa", "bbb").hashCode(), aabb.hashCode());
-        assertNotEquals(new Tuple2<String, String>("aaa", "bb"), aabb);
-        assertEquals("Tuple2{element0=aa, element1=bb}", aabb.toString());
+        assertEquals(new Tuple2<String, String>("aa", "bb"), tuple2);
+        assertEquals(new Tuple2<String, String>("aa", "bb").hashCode(), tuple2.hashCode());
+        assertNotEquals(new Tuple2<String, String>("aa", "bbb"), tuple2);
+        assertNotEquals(new Tuple2<String, String>("aa", "bbb").hashCode(), tuple2.hashCode());
+        assertNotEquals(new Tuple2<String, String>("aaa", "bb"), tuple2);
+        assertEquals("Tuple2{element0=aa, element1=bb}", tuple2.toString());
     }
 
     @Test
     public void testTuple3() {
-        assertEquals(aabb.tuple3("cc"), aabbcc);
-        assertNotEquals(aabb.tuple3("ccc"), aabbcc);
-        assertEquals(aabb.tuple3("cc").hashCode(), aabbcc.hashCode());
-        assertNotEquals(aabb.tuple3("ccc").hashCode(), aabbcc.hashCode());
-        assertNotEquals(aabb, aabbcc);
-        assertEquals("Tuple3{element0=aa, element1=bb, element2=cc}", aabbcc.toString());
+        assertEquals(tuple2.tuple3("cc"), tuple3);
+        assertNotEquals(tuple2.tuple3("ccc"), tuple3);
+        assertEquals(tuple2.tuple3("cc").hashCode(), tuple3.hashCode());
+        assertNotEquals(tuple2.tuple3("ccc").hashCode(), tuple3.hashCode());
+        assertNotEquals(tuple2, tuple3);
+        assertEquals("Tuple3{element0=aa, element1=bb, element2=cc}", tuple3.toString());
     }
 
     @Test
     public void testTuple4() {
-        assertEquals(aabbcc.tuple4("dd"), aabbccdd);
-        assertNotEquals(aabbcc.tuple4("ddd"), aabbccdd);
-        assertEquals(aabbcc.tuple4("dd").hashCode(), aabbccdd.hashCode());
-        assertNotEquals(aabbcc.tuple4("ddd").hashCode(), aabbccdd.hashCode());
-        assertNotEquals(aabbcc, aabbccdd);
-        assertEquals("Tuple4{element0=aa, element1=bb, element2=cc, element3=dd}", aabbccdd.toString());
+        assertEquals(tuple3.tuple4("dd"), tuple4);
+        assertNotEquals(tuple3.tuple4("ddd"), tuple4);
+        assertEquals(tuple3.tuple4("dd").hashCode(), tuple4.hashCode());
+        assertNotEquals(tuple3.tuple4("ddd").hashCode(), tuple4.hashCode());
+        assertNotEquals(tuple3, tuple4);
+        assertEquals("Tuple4{element0=aa, element1=bb, element2=cc, element3=dd}", tuple4.toString());
     }
 
     @Test
     public void testTuple5() {
-        assertEquals(aabbccdd.tuple5("ee"), aabbccddee);
-        assertNotEquals(aabbccdd.tuple5("eee"), aabbccddee);
-        assertEquals(aabbccdd.tuple5("ee").hashCode(), aabbccddee.hashCode());
-        assertNotEquals(aabbccdd.tuple5("eee").hashCode(), aabbccddee.hashCode());
-        assertNotEquals(aabbccdd, aabbccddee);
-        assertEquals("Tuple5{element0=aa, element1=bb, element2=cc, element3=dd, element4=ee}", aabbccddee.toString());
+        assertEquals(tuple4.tuple5("ee"), tuple5);
+        assertNotEquals(tuple4.tuple5("eee"), tuple5);
+        assertEquals(tuple4.tuple5("ee").hashCode(), tuple5.hashCode());
+        assertNotEquals(tuple4.tuple5("eee").hashCode(), tuple5.hashCode());
+        assertNotEquals(tuple4, tuple5);
+        assertEquals("Tuple5{element0=aa, element1=bb, element2=cc, element3=dd, element4=ee}", tuple5.toString());
     }
 
     @Test

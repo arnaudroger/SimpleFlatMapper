@@ -1,6 +1,5 @@
 #!/bin/bash
-java8
-mvn release:prepare
+java8 mvn release:prepare
 cp release.properties tmp/release.properties
 java8
 mvn release:perform

@@ -66,7 +66,7 @@ public class PropertyMappingsBuilderTest {
 
     }
 
-
+    @SuppressWarnings("unchecked")
     private void assertIsPhonesElement(PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition> builder) {
         final List<PropertyMapping<AnonymousElement, ?, CsvColumnKey, CsvColumnDefinition>> props = new ArrayList<PropertyMapping<AnonymousElement, ?, CsvColumnKey, CsvColumnDefinition>>();
         builder.forEachProperties(new ForEachCallBack<PropertyMapping<AnonymousElement, ?, CsvColumnKey, CsvColumnDefinition>>() {
@@ -82,9 +82,9 @@ public class PropertyMappingsBuilderTest {
 
         assertTrue("Is sub property", propertyMeta.isSubProperty());
 
-        @SuppressWarnings("unchecked") SubPropertyMeta<AnonymousElement, ?> subPropertyMeta = (SubPropertyMeta<AnonymousElement, ?>) propertyMeta;
+        SubPropertyMeta<AnonymousElement, ?, ?> subPropertyMeta = (SubPropertyMeta<AnonymousElement, ?, ?>) propertyMeta;
 
-        assertTrue(TypeHelper.isAssignable(List.class, subPropertyMeta.getOwnerProperty().getType()));
+        assertTrue(TypeHelper.isAssignable(List.class, subPropertyMeta.getOwnerProperty().getPropertyType()));
         assertTrue(subPropertyMeta.getSubProperty() instanceof ListElementPropertyMeta);
     }
 }

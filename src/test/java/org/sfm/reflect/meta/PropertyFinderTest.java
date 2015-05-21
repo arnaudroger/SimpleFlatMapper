@@ -25,17 +25,17 @@ public class PropertyFinderTest {
 
         propEltId = propertyFinder.findProperty(matcher("id"));
         assertNotNull(propEltId);
-        assertEquals(1, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?>) propEltId).getOwnerProperty()).getIndex());
+        assertEquals(1, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?, ?>) propEltId).getOwnerProperty()).getIndex());
 
 
         propEltId = propertyFinder.findProperty(matcher("id"));
         assertNotNull(propEltId);
-        assertEquals(3, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?>) propEltId).getOwnerProperty()).getIndex());
+        assertEquals(3, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?, ?>) propEltId).getOwnerProperty()).getIndex());
 
 
         propEltId = propertyFinder.findProperty(matcher("name"));
         assertNotNull(propEltId);
-        assertEquals(0, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?>) propEltId).getOwnerProperty()).getIndex());
+        assertEquals(0, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?, ?>) propEltId).getOwnerProperty()).getIndex());
 
         propEltId = propertyFinder.findProperty(matcher("2_notid"));
         assertNull(propEltId);

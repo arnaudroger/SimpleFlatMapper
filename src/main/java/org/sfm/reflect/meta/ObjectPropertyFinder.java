@@ -36,7 +36,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 					prop = lookForSubProperty(propertyNameMatcher);
 					
 				} else {
-					ConstructorPropertyMeta<T, ?> constructorProperty = (ConstructorPropertyMeta<T, ?>) ((SubPropertyMeta<T, ?>)prop).getOwnerProperty();
+					ConstructorPropertyMeta<T, ?> constructorProperty = (ConstructorPropertyMeta<T, ?>) ((SubPropertyMeta<T, ?, ?>)prop).getOwnerProperty();
 					removeNonMatching(constructorProperty.getParameter());
 				}
 			}
@@ -107,7 +107,7 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 			final PropertyMeta<T, ?> prop) {
 		PropertyFinder<?> subPropertyFinder = subPropertyFinders.get(getColumnName(prop));
 		if (subPropertyFinder == null) {
-			subPropertyFinder = prop.getClassMeta().newPropertyFinder();
+			subPropertyFinder = prop.getPropertyClassMeta().newPropertyFinder();
 			subPropertyFinders.put(prop.getName(), subPropertyFinder);
 		}
 

@@ -30,7 +30,7 @@ public class MapElementPropertyMeta<T extends Map<K, V>, K, V> extends PropertyM
     }
 
     @Override
-	public Type getType() {
+	public Type getPropertyType() {
 		return valueMetaData.getType();
 	}
 

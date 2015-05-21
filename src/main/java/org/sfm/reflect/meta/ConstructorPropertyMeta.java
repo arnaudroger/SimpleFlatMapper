@@ -36,7 +36,7 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
     }
 
     @Override
-	public Type getType() {
+	public Type getPropertyType() {
 		return parameter.getGenericType();
 	}
 

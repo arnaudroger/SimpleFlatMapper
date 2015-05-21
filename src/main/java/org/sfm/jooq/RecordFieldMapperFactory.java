@@ -24,7 +24,7 @@ public class RecordFieldMapperFactory<R extends Record> implements
 	public <T, P> FieldMapper<R, T> newFieldMapper(PropertyMapping<T, P, JooqFieldKey , FieldMapperColumnDefinition<JooqFieldKey, R>> propertyMapping, FieldMapperErrorHandler<JooqFieldKey> errorHandler,
 			MapperBuilderErrorHandler mapperErrorHandler) {
 
-		final Type propertyType = propertyMapping.getPropertyMeta().getType();
+		final Type propertyType = propertyMapping.getPropertyMeta().getPropertyType();
 		final Setter<T, P> setter = propertyMapping.getPropertyMeta().getSetter();
 		final JooqFieldKey key = propertyMapping.getColumnKey();
 

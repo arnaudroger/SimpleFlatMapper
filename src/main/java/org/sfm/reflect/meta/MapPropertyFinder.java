@@ -51,13 +51,17 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> implements PropertyFin
         return null;
     }
 
-    public <E> PropertyMeta<T, E> newSubPropertyMeta(PropertyNameMatcher keyMatcher, PropertyMeta propertyMeta) throws Exception {
-        final PropertyMeta<T, E> keyProperty = newKeyProperty(keyMatcher);
-        final SubPropertyMeta<T, E> subPropertyMeta = new SubPropertyMeta<T, E>(valueMetaData.getReflectionService(), keyProperty, propertyMeta);
+    private <E> PropertyMeta<T, E> newSubPropertyMeta(PropertyNameMatcher keyMatcher, PropertyMeta<V, ?> propertyMeta) throws Exception {
+        final PropertyMeta<T, V> keyProperty = newKeyProperty(keyMatcher);
+        final SubPropertyMeta<T, V, E> subPropertyMeta =
+                new SubPropertyMeta<T, V, E>(
+                        valueMetaData.getReflectionService(),
+                        keyProperty,
+                        (PropertyMeta<V, E>) propertyMeta);
         return subPropertyMeta;
     }
 
-    public <E> PropertyMeta<T, E> newKeyProperty(PropertyNameMatcher propertyNameMatcher) throws Exception {
+    private <E> PropertyMeta<T, E> newKeyProperty(PropertyNameMatcher propertyNameMatcher) throws Exception {
         return (PropertyMeta<T, E>)
                 new MapElementPropertyMeta<T, K, V>(
                         propertyNameMatcher,

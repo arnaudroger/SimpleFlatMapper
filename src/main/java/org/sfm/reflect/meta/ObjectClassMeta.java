@@ -210,7 +210,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
     private void extractProperties(List<String> properties, PropertyMeta<T, ?> cpm) {
         String prefix = cpm.getName();
-        ClassMeta<?> classMeta = cpm.getClassMeta();
+        ClassMeta<?> classMeta = cpm.getPropertyClassMeta();
 
         if (classMeta != null) {
             for(String prop : classMeta.generateHeaders()) {

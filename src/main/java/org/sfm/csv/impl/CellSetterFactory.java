@@ -221,9 +221,9 @@ public final class CellSetterFactory {
 
 
     public <T, P> CellSetter<T> getCellSetter(PropertyMeta<T, P> prop, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
-		Class<? extends P> propertyClass = (Class<? extends P>) TypeHelper.toClass(prop.getType());
+		Class<? extends P> propertyClass = (Class<? extends P>) TypeHelper.toClass(prop.getPropertyType());
 
-		CellValueReader<? extends P> reader = getReader(prop.getClassMeta(), index, columnDefinition, parsingContextFactoryBuilder);
+		CellValueReader<? extends P> reader = getReader(prop.getPropertyClassMeta(), index, columnDefinition, parsingContextFactoryBuilder);
 
 		if (propertyClass.isPrimitive()) {
 			return getPrimitiveCellSetter(propertyClass, reader, getSetter(prop));
@@ -233,9 +233,9 @@ public final class CellSetterFactory {
 	}
 
     public <T, P> DelayedCellSetterFactory<T, P> getDelayedCellSetter(PropertyMeta<T, P> prop, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
-		Class<? extends P> propertyClass = TypeHelper.toClass(prop.getType());
+		Class<? extends P> propertyClass = TypeHelper.toClass(prop.getPropertyType());
 
-		CellValueReader<? extends P> reader = getReader(prop.getClassMeta(), index, columnDefinition, parsingContextFactoryBuilder);
+		CellValueReader<? extends P> reader = getReader(prop.getPropertyClassMeta(), index, columnDefinition, parsingContextFactoryBuilder);
 
 		if (propertyClass.isPrimitive()) {
 			return getPrimitiveDelayedCellSetter(propertyClass, reader, getSetter(prop));

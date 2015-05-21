@@ -39,7 +39,7 @@ public class InstantiatorFactory {
                 public Getter getter;
                 @Override
                 public void handle(PropertyMapping<T, ?, K, D> propertyMapping) {
-                    getter = getterFactory.newGetter(propertyMapping.getPropertyMeta().getType(), propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition());
+                    getter = getterFactory.newGetter(propertyMapping.getPropertyMeta().getPropertyType(), propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition());
                 }
             }).getter;
 

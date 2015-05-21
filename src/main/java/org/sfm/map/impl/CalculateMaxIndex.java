@@ -18,7 +18,7 @@ public final class CalculateMaxIndex<T, K extends FieldKey<K>, D extends ColumnD
 		if (e != null) {
 			PropertyMeta<T, ?> propMeta = e.getPropertyMeta();
 			if (propMeta.isSubProperty()) {
-				propMeta = ((SubPropertyMeta<T, ?>)propMeta).getOwnerProperty();
+				propMeta = ((SubPropertyMeta<T, ?, ?>)propMeta).getOwnerProperty();
 			}
 			
 			if (propMeta instanceof ArrayElementPropertyMeta<?, ?>) {

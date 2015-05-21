@@ -87,7 +87,7 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
         }
 
         @Override
-        public Type getType() {
+        public Type getPropertyType() {
             return type;
         }
 

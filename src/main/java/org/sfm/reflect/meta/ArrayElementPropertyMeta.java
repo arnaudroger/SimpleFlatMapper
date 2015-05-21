@@ -30,7 +30,7 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
     }
 
     @Override
-	public Type getType() {
+	public Type getPropertyType() {
 		return arrayMetaData.getElementTarget();
 	}
 

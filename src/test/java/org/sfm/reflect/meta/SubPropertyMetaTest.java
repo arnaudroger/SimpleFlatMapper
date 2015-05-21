@@ -8,6 +8,7 @@ import org.sfm.reflect.ReflectionService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class SubPropertyMetaTest {
 
@@ -23,16 +24,24 @@ public class SubPropertyMetaTest {
                 "ownerProperty=MethodPropertyMeta{setter=public void org.sfm.beans.Db1DeepObject.setDbObject(org.sfm.beans.DbObject), getter=null, type=class org.sfm.beans.DbObject}, " +
                 "subProperty=MethodPropertyMeta{setter=public void org.sfm.beans.DbObject.setName(java.lang.String), getter=null, type=class java.lang.String}}", property.toString());
 
-        SubPropertyMeta<Db1DeepObject, String> subPropertyMeta = (SubPropertyMeta<Db1DeepObject, String>) property;
+        SubPropertyMeta<Db1DeepObject, DbObject, String> subPropertyMeta = (SubPropertyMeta<Db1DeepObject, DbObject, String>) property;
 
-        assertEquals(DbObject.class, subPropertyMeta.getType());
-        assertEquals(String.class, subPropertyMeta.getLeafType());
+        assertEquals(String.class, subPropertyMeta.getPropertyType());
 
         assertEquals("dbObject.name", subPropertyMeta.getPath());
-        assertEquals(subPropertyMeta.getOwnerProperty().newGetter(), subPropertyMeta.newGetter());
-        assertEquals(subPropertyMeta.getOwnerProperty().newSetter(), subPropertyMeta.newSetter());
-        assertEquals(subPropertyMeta.getOwnerProperty().getClassMeta(), subPropertyMeta.newClassMeta());
 
+        try {
+            subPropertyMeta.newGetter();
+            fail();
+        } catch(UnsupportedOperationException e) {
+        }
+        try {
+            subPropertyMeta.newSetter();
+            fail();
+        } catch(UnsupportedOperationException e) {
+        }
 
+        ClassMeta<?> meta = subPropertyMeta.newPropertyClassMeta();
+        assertEquals(String.class, meta.getType());
     }
 }

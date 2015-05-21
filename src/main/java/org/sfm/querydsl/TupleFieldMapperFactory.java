@@ -24,7 +24,7 @@ public final class TupleFieldMapperFactory implements FieldMapperFactory<Tuple, 
 	public <T, P> FieldMapper<Tuple, T> newFieldMapper(PropertyMapping<T, P, TupleElementKey , FieldMapperColumnDefinition<TupleElementKey, Tuple>> propertyMapping, FieldMapperErrorHandler<TupleElementKey> errorHandler,
 													   MapperBuilderErrorHandler mappingErrorHandler) {
 
-		final Type propertyType = propertyMapping.getPropertyMeta().getType();
+		final Type propertyType = propertyMapping.getPropertyMeta().getPropertyType();
 		final Setter<T, P> setter = propertyMapping.getPropertyMeta().getSetter();
 		final TupleElementKey key = propertyMapping.getColumnKey();
 

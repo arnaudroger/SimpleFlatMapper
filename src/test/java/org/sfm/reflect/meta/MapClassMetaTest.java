@@ -26,13 +26,13 @@ public class MapClassMetaTest {
         final PropertyFinder<Map<String, DbObject>> mapPropertyFinder = classMeta.newPropertyFinder();
 
         assertNull(mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_noprop")));
-        final SubPropertyMeta<?, ?> k_kv_k_id =
-                (SubPropertyMeta<?, ?>) mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_id"));
+        final SubPropertyMeta<?, ?, ?> k_kv_k_id =
+                (SubPropertyMeta<?, ?, ?>) mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_id"));
         assertNotNull(k_kv_k_id);
         MapElementPropertyMeta<?, ?, ?> idMeta = (MapElementPropertyMeta<?, ?, ?>) k_kv_k_id.getOwnerProperty();
         assertEquals("k_kv_k", idMeta.getKey());
 
-        final SubPropertyMeta<Map<String, DbObject>, Object> k_kv_k_creation_time = (SubPropertyMeta<Map<String, DbObject>, Object>) mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_creation_time"));
+        final SubPropertyMeta<Map<String, DbObject>, DbObject, Object> k_kv_k_creation_time = (SubPropertyMeta<Map<String, DbObject>, DbObject, Object>) mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_creation_time"));
         assertNotNull(k_kv_k_creation_time);
         MapElementPropertyMeta<?, ?, ?> creationTimeMeta = (MapElementPropertyMeta<?, ?, ?>) k_kv_k_creation_time.getOwnerProperty();
         assertEquals("k_kv_k", creationTimeMeta.getKey());

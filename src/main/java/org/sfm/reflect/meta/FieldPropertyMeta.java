@@ -33,7 +33,7 @@ public class FieldPropertyMeta<T, P> extends PropertyMeta<T, P> {
     }
 
     @Override
-	public Type getType() {
+	public Type getPropertyType() {
 		return type;
 	}
 

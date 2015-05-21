@@ -60,12 +60,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 	public <P> void addProperty(final K key, final D columnDefinition, final PropertyMeta<T, P> prop) {
 		if (columnDefinition.hasCustomSource()) {
-            Type type;
-            if (prop.isSubProperty()) {
-                type = ((SubPropertyMeta<T, P>)prop).getLeafType();
-            } else {
-                type = prop.getType();
-            }
+            Type type = prop.getPropertyType();
 
             if (!checkTypeCompatibility(key, columnDefinition.getCustomSourceReturnType(), type)) {
 				properties.add(null);

@@ -6,39 +6,47 @@ import org.sfm.reflect.Setter;
 
 import java.lang.reflect.Type;
 
-public class SubPropertyMeta<O, P> extends PropertyMeta<O, P> {
-	private final PropertyMeta<O, P> ownerProperty;
-	private final PropertyMeta<P, ?> subProperty;
+/**
+ *
+ * @param <O> the root property owner type
+ * @param <I> the intermediate owner type
+ * @param <P> the property type
+ */
+public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
+	private final PropertyMeta<O, I> ownerProperty;
+	private final PropertyMeta<I, P> subProperty;
 	
-	public SubPropertyMeta(ReflectionService reflectService, PropertyMeta<O, P> property, PropertyMeta<P, ?> subProperty) {
+	public SubPropertyMeta(ReflectionService reflectService, PropertyMeta<O, I> property, PropertyMeta<I, P> subProperty) {
 		super(property.getName(), reflectService);
 		this.ownerProperty = property;
 		this.subProperty = subProperty;
 	}
 	@Override
 	protected Setter<O, P> newSetter() {
-		return ownerProperty.newSetter();
+		throw new UnsupportedOperationException();
 	}
 
     @Override
     protected Getter<O, P> newGetter() {
-        return ownerProperty.newGetter();
+		throw new UnsupportedOperationException();
     }
 
-    @Override
-	public Type getType() {
-		return ownerProperty.getType();
+	@Override
+	protected ClassMeta<P> newPropertyClassMeta() {
+		return subProperty.getPropertyClassMeta();
 	}
-	public PropertyMeta<O, P> getOwnerProperty() {
+
+    @Override
+	public Type getPropertyType() {
+		return subProperty.getPropertyType();
+	}
+	public PropertyMeta<O, I> getOwnerProperty() {
 		return ownerProperty;
 	}
-	public PropertyMeta<P, ?> getSubProperty() {
+	public PropertyMeta<I, P> getSubProperty() {
 		return subProperty;
 	}
-	@Override
-	protected ClassMeta<P> newClassMeta() {
-		return ownerProperty.getClassMeta();
-	}
+
 	@Override
 	public boolean isSubProperty() {
 		return true;
@@ -47,15 +55,6 @@ public class SubPropertyMeta<O, P> extends PropertyMeta<O, P> {
 	public String getPath() {
 		return getOwnerProperty().getPath() + "." + subProperty.getPath();
 	}
-
-    @SuppressWarnings("unchecked")
-    public Type getLeafType() {
-        if (subProperty.isSubProperty()) {
-            return ((SubPropertyMeta<P,?>)subProperty).getLeafType();
-        } else {
-            return subProperty.getType();
-        }
-    }
 
     @Override
     public String toString() {

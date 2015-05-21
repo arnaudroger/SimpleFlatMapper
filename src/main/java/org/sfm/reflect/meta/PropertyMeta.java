@@ -6,7 +6,11 @@ import org.sfm.reflect.Setter;
 
 import java.lang.reflect.Type;
 
-
+/**
+ *
+ * @param <O> the type of the property owner
+ * @param <P> the type of the property
+ */
 public abstract class PropertyMeta<O, P> {
 	private final String name;
 
@@ -46,19 +50,19 @@ public abstract class PropertyMeta<O, P> {
 		return name;
 	}
 
-	public abstract Type getType();
+	public abstract Type getPropertyType();
 
-	public final ClassMeta<P> getClassMeta() {
+	public final ClassMeta<P> getPropertyClassMeta() {
 		ClassMeta<P> meta = classMeta;
 		if (meta == null) {
-			meta = newClassMeta();
+			meta = newPropertyClassMeta();
 			classMeta = meta;
 		}
 		return meta;
 	}
 
-	protected ClassMeta<P> newClassMeta() {
-		return reflectService.getClassMeta(getType());
+	protected ClassMeta<P> newPropertyClassMeta() {
+		return reflectService.getClassMeta(getPropertyType());
 	}
 
 	public boolean isConstructorProperty() {

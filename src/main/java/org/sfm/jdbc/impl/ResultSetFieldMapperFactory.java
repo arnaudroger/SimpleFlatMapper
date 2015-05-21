@@ -74,7 +74,7 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
                            MapperBuilderErrorHandler mappingErrorHandler) {
 
 		final PropertyMeta<T, P> propertyMeta = propertyMapping.getPropertyMeta();
-		final Type propertyType = propertyMeta.getType();
+		final Type propertyType = propertyMeta.getPropertyType();
 		final Setter<T, ? super P> setter = propertyMeta.getSetter();
 		final JdbcColumnKey key = propertyMapping.getColumnKey();
 		final Class<P> type = TypeHelper.toClass(propertyType);
@@ -96,7 +96,7 @@ public final class ResultSetFieldMapperFactory implements FieldMapperFactory<Res
 			getter = getterFactory.newGetter(propertyType, key, propertyMapping.getColumnDefinition());
 		}
 		if (getter == null) {
-			final ClassMeta<P> classMeta = propertyMeta.getClassMeta();
+			final ClassMeta<P> classMeta = propertyMeta.getPropertyClassMeta();
 			for(InstantiatorDefinition id : classMeta.getInstantiatorDefinitions()) {
 				if (id.getParameters().length == 1) {
 					final Type sourceType = id.getParameters()[0].getGenericType();

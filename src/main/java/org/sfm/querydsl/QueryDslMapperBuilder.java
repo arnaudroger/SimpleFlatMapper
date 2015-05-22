@@ -7,6 +7,7 @@ import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.MappingContextFactoryBuilder;
 import org.sfm.map.impl.*;
+import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
@@ -29,7 +30,7 @@ public final class QueryDslMapperBuilder<T>
 	
 	public QueryDslMapperBuilder(final ClassMeta<T> classMeta, MappingContextFactoryBuilder<Tuple, TupleElementKey> parentBuilder) throws MapperBuildingException {
 		super(Tuple.class, classMeta, new TupleGetterFactory(),
-                new TupleFieldMapperFactory(new TupleGetterFactory()),
+                new FieldMapperFactory<Tuple, TupleElementKey>(new TupleGetterFactory()),
                 new IdentityFieldMapperColumnDefinitionProvider<TupleElementKey, Tuple>(),
                 new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler(), parentBuilder);
 	}

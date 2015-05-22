@@ -2,33 +2,25 @@ package org.sfm.jdbc;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.jdbc.impl.ResultSetFieldMapperFactory;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
-import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.PropertyMapping;
 import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
+import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
 import org.sfm.map.impl.fieldmapper.LongFieldMapper;
 import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.ObjectSetterFactory;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyMeta;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
-import java.sql.Types;
-import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ResultSetFieldMapperFactoryTest {
 	
-	ObjectSetterFactory objectSetterFactory = new ObjectSetterFactory(null);
-	ResultSetFieldMapperFactory factory = new ResultSetFieldMapperFactory(new ResultSetGetterFactory());
-	private FieldMapperErrorHandler<JdbcColumnKey> errorHandler;
+	FieldMapperFactory<ResultSet, JdbcColumnKey> factory = new FieldMapperFactory<ResultSet, JdbcColumnKey>(new ResultSetGetterFactory());
 
 	@Test
 	public void testPrimitiveField() {
@@ -39,44 +31,13 @@ public class ResultSetFieldMapperFactoryTest {
 		FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> identity = FieldMapperColumnDefinition.identity();
 		PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> propertyMapping = new PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>>(id, new JdbcColumnKey("id", 1), identity);
 		FieldMapper<ResultSet, DbObject> fieldMapper = factory.newFieldMapper(
-				propertyMapping, errorHandler, new RethrowMapperBuilderErrorHandler());
+				propertyMapping, new RethrowMapperBuilderErrorHandler());
 		
 		assertTrue(fieldMapper instanceof LongFieldMapper);
 
 		PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> propertyMapping1 = new PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>>(id, new JdbcColumnKey("id", 0), identity);
-		fieldMapper = factory.newFieldMapper(propertyMapping1, errorHandler, new RethrowMapperBuilderErrorHandler());
+		fieldMapper = factory.newFieldMapper(propertyMapping1, new RethrowMapperBuilderErrorHandler());
 		assertTrue(fieldMapper instanceof LongFieldMapper);
 
 	}
-
-	@Test
-	public void testSqlTypeToJavaType() {
-		assertEquals(String.class, factory.getTargetTypeFromSqlType(Types.LONGNVARCHAR));
-		assertEquals(String.class, factory.getTargetTypeFromSqlType(Types.LONGVARCHAR));
-		assertEquals(String.class, factory.getTargetTypeFromSqlType(Types.VARCHAR));
-		assertEquals(String.class, factory.getTargetTypeFromSqlType(Types.NVARCHAR));
-		assertEquals(String.class, factory.getTargetTypeFromSqlType(Types.CHAR));
-		assertEquals(String.class, factory.getTargetTypeFromSqlType(Types.NCHAR));
-		assertEquals(String.class, factory.getTargetTypeFromSqlType(Types.CLOB));
-		assertEquals(String.class, factory.getTargetTypeFromSqlType(Types.NCLOB));
-
-		assertEquals(Long.class, factory.getTargetTypeFromSqlType(Types.BIGINT));
-		assertEquals(Integer.class, factory.getTargetTypeFromSqlType(Types.INTEGER));
-		assertEquals(Short.class, factory.getTargetTypeFromSqlType(Types.SMALLINT));
-		assertEquals(Byte.class, factory.getTargetTypeFromSqlType(Types.TINYINT));
-
-		assertEquals(Float.class, factory.getTargetTypeFromSqlType(Types.FLOAT));
-		assertEquals(Double.class, factory.getTargetTypeFromSqlType(Types.DOUBLE));
-
-		assertEquals(Boolean.class, factory.getTargetTypeFromSqlType(Types.BOOLEAN));
-		assertEquals(Date.class, factory.getTargetTypeFromSqlType(Types.DATE));
-		assertEquals(Date.class, factory.getTargetTypeFromSqlType(Types.TIMESTAMP));
-
-		assertEquals(BigDecimal.class, factory.getTargetTypeFromSqlType(Types.NUMERIC));
-
-
-
-	}
-
-
 }

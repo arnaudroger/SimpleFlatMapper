@@ -3,6 +3,7 @@ package org.sfm.reflect;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.impl.FieldGetter;
 import org.sfm.reflect.impl.MethodGetter;
+import org.sfm.reflect.primitive.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -97,6 +98,78 @@ public final class ObjectGetterFactory {
 		}
 		
 		return lookForField(target.getSuperclass(), property);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T, P> BooleanGetter<T> toBooleanGetter(final Getter<T, P> getter) {
+		if (getter instanceof BooleanGetter) {
+			return (BooleanGetter<T>) getter;
+		} else {
+			return new BoxedBooleanGetter<T>((Getter<T, Boolean>) getter);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T, P> IntGetter<T> toIntGetter(Getter<T, P> getter) {
+		if (getter instanceof IntGetter) {
+			return (IntGetter<T>) getter;
+		} else {
+			return new BoxedIntGetter<T>((Getter<T, Integer>) getter);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T, P> LongGetter<T> toLongGetter(Getter<T, P> getter) {
+		if (getter instanceof LongGetter) {
+			return (LongGetter<T>) getter;
+		} else {
+			return new BoxedLongGetter<T>((Getter<T, Long>) getter);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T, P> FloatGetter<T> toFloatGetter(Getter<T, P> getter) {
+		if (getter instanceof FloatGetter) {
+			return (FloatGetter<T>) getter;
+		} else {
+			return new BoxedFloatGetter<T>((Getter<T, Float>) getter);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T, P> DoubleGetter<T> toDoubleGetter(Getter<T, P> getter) {
+		if (getter instanceof DoubleGetter) {
+			return (DoubleGetter<T>) getter;
+		} else {
+			return new BoxedDoubleGetter<T>((Getter<T, Double>) getter);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T, P> ByteGetter<T> toByteGetter(Getter<T, P> getter) {
+		if (getter instanceof ByteGetter) {
+			return (ByteGetter<T>) getter;
+		} else {
+			return new BoxedByteGetter<T>((Getter<T, Byte>) getter);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T, P> ShortGetter<T> toShortGetter(Getter<T, P> getter) {
+		if (getter instanceof ShortGetter) {
+			return (ShortGetter<T>) getter;
+		} else {
+			return new BoxedShortGetter<T>((Getter<T, Short>) getter);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T, P> CharacterGetter<T> toCharGetter(Getter<T, P> getter) {
+		if (getter instanceof CharacterGetter) {
+			return (CharacterGetter<T>) getter;
+		} else {
+			return new BoxedCharacterGetter<T>((Getter<T, Character>) getter);
+		}
 	}
 
 }

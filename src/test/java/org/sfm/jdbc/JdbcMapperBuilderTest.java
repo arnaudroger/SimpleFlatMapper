@@ -5,7 +5,9 @@ import org.sfm.beans.DbObject;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
+import org.sfm.map.impl.LogFieldMapperErrorHandler;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.primitive.LongGetter;
 import org.sfm.utils.ListHandler;
 
 import java.sql.ResultSet;
@@ -37,15 +39,11 @@ public class JdbcMapperBuilderTest {
 
 		JdbcMapper<DbObject> mapper1 = JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper();
 		JdbcMapper<DbObject> mapper2 = JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper();
-		final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition = FieldMapperColumnDefinition.customGetter(new Getter<ResultSet, Long>() {
-			@Override
-			public Long get(ResultSet target) throws Exception {
-				return 3l;
-			}
-		});
+		final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition = FieldMapperColumnDefinition.customGetter(new StaticLongGetter<ResultSet>(3));
 		JdbcMapper<DbObject> mapper3 =
-				JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class).addMapping("id",
-						columnDefinition).addMapping("name").mapper();
+				JdbcMapperFactoryHelper.asm().fieldMapperErrorHandler(new LogFieldMapperErrorHandler<JdbcColumnKey>()).newBuilder(DbObject.class).addMapping("id",
+						columnDefinition).addMapping("name")
+						.mapper();
 
 		assertNotSame(mapper1, mapper2);
 		assertSame(mapper1.getClass(), mapper2.getClass());
@@ -55,5 +53,24 @@ public class JdbcMapperBuilderTest {
 		assertTrue(mapper2.getClass().getSimpleName().startsWith("AsmMapperFrom"));
 		assertTrue(mapper3.getClass().getSimpleName().startsWith("AsmMapperFrom"));
 
+	}
+
+	static class StaticLongGetter<T> implements LongGetter<T>, Getter<T, Long> {
+
+		private final long l;
+
+		StaticLongGetter(long l) {
+			this.l = l;
+		}
+
+		@Override
+		public Long get(T target) throws Exception {
+			return l;
+		}
+
+		@Override
+		public long getLong(T target) throws Exception {
+			return l;
+		}
 	}
 }

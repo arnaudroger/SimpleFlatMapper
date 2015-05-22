@@ -11,6 +11,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.primitive.IntGetter;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -42,7 +43,16 @@ public class ResultSetGetterFactoryTest {
 		factory = new ResultSetGetterFactory();
 		resultSet = mock(ResultSet.class);
 	}
-	
+
+	@Test
+	public void testInt() throws  Exception {
+		when(resultSet.getInt(1)).thenReturn(13);
+		IntGetter<ResultSet> intGetter = (IntGetter<ResultSet>) (factory.newGetter(Integer.class, key(Types.NUMERIC), IDENTITY));
+		assertEquals(13, intGetter.getInt(resultSet));
+		intGetter = (IntGetter<ResultSet>) (factory.newGetter(int.class, key(Types.NUMERIC), IDENTITY));
+		assertEquals(13, intGetter.getInt(resultSet));
+	}
+
 	@Test
 	public void testNString() throws Exception {
 		when(resultSet.getNString(1)).thenReturn("value");

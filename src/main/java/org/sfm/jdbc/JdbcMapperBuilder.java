@@ -4,6 +4,7 @@ import org.sfm.jdbc.impl.*;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.impl.*;
+import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
@@ -81,7 +82,7 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
                              PropertyNameMatcherFactory propertyNameMatcherFactory,
                              GetterFactory<ResultSet, JdbcColumnKey> getterFactory, boolean failOnAsm, int asmMapperNbFieldsLimit,
                              MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
-        super(ResultSet.class, classMeta, getterFactory, new ResultSetFieldMapperFactory(getterFactory), columnDefinitions, propertyNameMatcherFactory, mapperBuilderErrorHandler, parentBuilder);
+        super(ResultSet.class, classMeta, getterFactory, new FieldMapperFactory<ResultSet, JdbcColumnKey>(getterFactory), columnDefinitions, propertyNameMatcherFactory, mapperBuilderErrorHandler, parentBuilder);
         this.failOnAsm = failOnAsm;
         this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
     }

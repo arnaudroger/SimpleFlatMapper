@@ -2,6 +2,7 @@ package org.sfm.map.impl;
 
 import org.sfm.jdbc.impl.getter.MapperGetterAdapter;
 import org.sfm.map.*;
+import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
 import org.sfm.map.impl.fieldmapper.MapperFieldMapper;
 import org.sfm.reflect.*;
 import org.sfm.reflect.impl.NullGetter;
@@ -21,7 +22,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	private final Type source;
 	private final Type target;
 
-	private final FieldMapperFactory<S, K, FieldMapperColumnDefinition<K, S>> fieldMapperFactory;
+	private final FieldMapperFactory<S, K> fieldMapperFactory;
 	private final GetterFactory<S, K> getterFactory;
 
 	protected final PropertyMappingsBuilder<T, K,FieldMapperColumnDefinition<K, S>> propertyMappingsBuilder;
@@ -38,7 +39,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
     public AbstractFieldMapperMapperBuilder(final Type source,
                                             final ClassMeta<T> classMeta,
                                             GetterFactory<S, K> getterFactory,
-                                            FieldMapperFactory<S, K, FieldMapperColumnDefinition<K, S>> fieldMapperFactory,
+                                            FieldMapperFactory<S, K> fieldMapperFactory,
                                             ColumnDefinitionProvider<FieldMapperColumnDefinition<K, S>, K> columnDefinitions,
                                             PropertyNameMatcherFactory propertyNameMatcherFactory,
                                             MapperBuilderErrorHandler mapperBuilderErrorHandler, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) throws MapperBuildingException {
@@ -270,7 +271,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		FieldMapper<S, T> fieldMapper = (FieldMapper<S, T>) t.getColumnDefinition().getCustomFieldMapper();
 
 		if (fieldMapper == null) {
-			fieldMapper = fieldMapperFactory.newFieldMapper(t, fieldMapperErrorHandler, mapperBuilderErrorHandler);
+			fieldMapper = fieldMapperFactory.newFieldMapper(t, mapperBuilderErrorHandler);
 		}
 
 		if (fieldMapperErrorHandler != null && fieldMapper != null) {

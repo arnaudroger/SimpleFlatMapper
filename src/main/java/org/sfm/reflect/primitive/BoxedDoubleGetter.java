@@ -1,0 +1,27 @@
+package org.sfm.reflect.primitive;
+
+import org.sfm.reflect.Getter;
+
+public class BoxedDoubleGetter<T> implements DoubleGetter<T>, Getter<T, Double> {
+
+
+    private final Getter<T, Double> delegate;
+
+    public BoxedDoubleGetter(Getter<T, Double> delegate) {
+        this.delegate = delegate;
+    }
+
+    @Override
+    public double getDouble(T target) throws Exception {
+        final Double value = get(target);
+        if (value != null) {
+            return value.doubleValue();
+        }
+        return 0;
+    }
+
+    @Override
+    public Double get(T target) throws Exception {
+        return delegate.get(target);
+    }
+}

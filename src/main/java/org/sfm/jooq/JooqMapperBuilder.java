@@ -6,6 +6,7 @@ import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.MappingContextFactoryBuilder;
 import org.sfm.map.impl.*;
+import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
@@ -27,7 +28,7 @@ public class JooqMapperBuilder<R extends Record, E> extends
 	}
 	
 	public JooqMapperBuilder(final ClassMeta<E> classMeta, MappingContextFactoryBuilder<R, JooqFieldKey> mappingContextFactoryBuilder) throws MapperBuildingException {
-		super(Record.class, classMeta, new RecordGetterFactory<R>(), new RecordFieldMapperFactory<R>(new RecordGetterFactory<R>()), new IdentityFieldMapperColumnDefinitionProvider<JooqFieldKey, R>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler(), mappingContextFactoryBuilder);
+		super(Record.class, classMeta, new RecordGetterFactory<R>(), new FieldMapperFactory<R, JooqFieldKey>(new RecordGetterFactory<R>()), new IdentityFieldMapperColumnDefinitionProvider<JooqFieldKey, R>(), new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler(), mappingContextFactoryBuilder);
 	}
 
 	@Override

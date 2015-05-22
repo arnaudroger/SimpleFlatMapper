@@ -43,8 +43,14 @@ public class JooqMapperBuilder<R extends Record, E> extends
 	
 	@Override
 	public Mapper<R, E> mapper() {
-        Tuple2<FieldMapper<R, E>[], Instantiator<R, E>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
-        return new MapperImpl<R, E>(fields(), constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactoryBuilder.newFactory());
+        Tuple2<FieldMapper<R, E>[], Instantiator<R, E>> constructorFieldMappersAndInstantiator =
+				getConstructorFieldMappersAndInstantiator();
+        return
+			new MapperImpl<R, E>(
+				fields(),
+				constructorFieldMappersAndInstantiator.first(),
+				constructorFieldMappersAndInstantiator.second(),
+				mappingContextFactoryBuilder.newFactory());
 	}
 
 }

@@ -8,6 +8,7 @@ import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.LogFieldMapperErrorHandler;
+import org.sfm.map.impl.MapperImpl;
 import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
@@ -64,13 +65,13 @@ public class JdbcMapperErrorTest {
 	
 	@Test
 	public void testInstantiatorError() {
-		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<DbObject>(null, null,
+		MapperImpl<ResultSet, DbObject> mapper = new MapperImpl<ResultSet, DbObject>(null, null,
 				new Instantiator<ResultSet, DbObject>() {
 					@Override
 					public DbObject newInstance(ResultSet s) throws Exception {
 						throw new IOException();
 					}
-				}, new RethrowRowHandlerErrorHandler(), new JdbcMappingContextFactoryBuilder().newFactory());
+				},  new JdbcMappingContextFactoryBuilder().newFactory());
 		
 		try {
 			mapper.map(null);
@@ -88,13 +89,19 @@ public class JdbcMapperErrorTest {
 		MyJdbcRawHandlerErrorHandler handler = new MyJdbcRawHandlerErrorHandler();
 		@SuppressWarnings("unchecked")
 		FieldMapper<ResultSet, DbObject>[] fields = new FieldMapper[] {};
-		JdbcMapperImpl<DbObject> mapper = new JdbcMapperImpl<DbObject>(fields, new FieldMapper[] {},
-                new Instantiator<ResultSet, DbObject>() {
-					@Override
-					public DbObject newInstance(ResultSet s) throws Exception {
-						return new DbObject();
-					}
-				}, handler, new JdbcMappingContextFactoryBuilder().newFactory());
+		JdbcMapperImpl<DbObject> mapper =
+			new JdbcMapperImpl<DbObject>(
+				new MapperImpl<>(
+					fields,
+					new FieldMapper[] {},
+                	new Instantiator<ResultSet, DbObject>() {
+						@Override
+						public DbObject newInstance(ResultSet s) throws Exception {
+							return new DbObject();
+						}
+					},
+					new JdbcMappingContextFactoryBuilder().newFactory()),
+				handler);
 		final Error error = new Error();
 		
 		ResultSet rs = mock(ResultSet.class);

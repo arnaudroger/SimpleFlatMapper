@@ -161,13 +161,13 @@ public class AsmFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> JdbcMapper<T> createJdbcMapper(final JdbcColumnKey[] keys,
-                                                final FieldMapper<ResultSet, T>[] mappers,
-                                              final FieldMapper<ResultSet, T>[] constructorMappers,
-                                              final Instantiator<ResultSet, T> instantiator,
-                                              final Class<T> target,
-                                              RowHandlerErrorHandler errorHandler,
-                                              MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
+	public <T> JdbcMapper<T> createMapper(final JdbcColumnKey[] keys,
+                                          final FieldMapper<ResultSet, T>[] mappers,
+                                          final FieldMapper<ResultSet, T>[] constructorMappers,
+                                          final Instantiator<ResultSet, T> instantiator,
+                                          final Class<T> target,
+                                          RowHandlerErrorHandler errorHandler,
+                                          MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
 
         JdbcMapperKey key = new JdbcMapperKey(keys, mappers, constructorMappers, instantiator, target);
         Class<JdbcMapper<T>> type = (Class<JdbcMapper<T>>) jdbcMapperCache.get(key);

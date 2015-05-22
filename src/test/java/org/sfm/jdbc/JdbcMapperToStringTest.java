@@ -21,10 +21,7 @@ public class JdbcMapperToStringTest {
         JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.noAsm()
                 .newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper();
 
-        assertEquals("JdbcMapperImpl{" +
-                "instantiator=EmptyConstructorInstantiator{constructor=public org.sfm.beans.DbObject()}, " +
-                "fieldMappers=[LongFieldMapper{getter=LongResultSetGetter{column=1}, setter=LongMethodSetter{method=public void org.sfm.beans.DbObject.setId(long)}}, " +
-                "FieldMapperImpl{getter=StringResultSetGetter{column=2}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setName(java.lang.String)}}]}", mapper.toString());
+        assertTrue(mapper.toString().startsWith("JdbcMapperImpl{MapperImpl{instantiator=EmptyConstructorInstantiator"));
     }
 
     @Test
@@ -34,10 +31,7 @@ public class JdbcMapperToStringTest {
 
         String input = mapper.toString();
 
-        assertTrue(Pattern.matches("AsmMapperFromResultSetToDbObjectInj2_I[a-z0-9]+\\{" +
-                "instantiator=AsmInstantiatorDbObjectFromResultSet_I[a-z0-9]+\\{\\}, " +
-                "mapper0=LongFieldMapper\\{getter=LongResultSetGetter\\{column=1\\}, setter=AsmMethodSetterDbObject_setId_long\\{\\}\\}, " +
-                "mapper1=FieldMapperImpl\\{getter=StringResultSetGetter\\{column=2\\}, setter=AsmMethodSetterDbObject_setName_String\\{\\}\\}\\}", input));
+        assertTrue(input.startsWith("JdbcMapperImpl{AsmMapperFromResultSetToDbObjectInj2_I"));
     }
 
 
@@ -55,9 +49,6 @@ public class JdbcMapperToStringTest {
         mapper.iterator(rs);
 
 
-        assertEquals("DynamicJdbcMapper{target=class org.sfm.beans.DbObject, " +
-                "MapperCache{[{ColumnsMapperKey{[id]}," +
-                "JdbcMapperImpl{instantiator=EmptyConstructorInstantiator{constructor=public org.sfm.beans.DbObject()}, " +
-                "fieldMappers=[LongFieldMapper{getter=LongResultSetGetter{column=1}, setter=LongMethodSetter{method=public void org.sfm.beans.DbObject.setId(long)}}]}}]}}", mapper.toString());
+        assertTrue(mapper.toString().startsWith("DynamicJdbcMapper{target=class org.sfm.beans.DbObject, "));
     }
 }

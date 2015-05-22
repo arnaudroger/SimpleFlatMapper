@@ -39,7 +39,7 @@ public class JdbcMapperBuilderImplTest {
 		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(true, true, new AsmFactory(Thread.currentThread().getContextClassLoader()) {
 
             @Override
-            public <T> JdbcMapper<T> createJdbcMapper(JdbcColumnKey[] keys, FieldMapper<ResultSet, T>[] mappers, FieldMapper<ResultSet, T>[] constructorMappers, Instantiator<ResultSet, T> instantiator, Class<T> target, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
+            public <T> JdbcMapper<T> createMapper(JdbcColumnKey[] keys, FieldMapper<ResultSet, T>[] mappers, FieldMapper<ResultSet, T>[] constructorMappers, Instantiator<ResultSet, T> instantiator, Class<T> target, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
                 throw new UnsupportedOperationException();
             }
 		})).newBuilder(DbObject.class);
@@ -53,7 +53,7 @@ public class JdbcMapperBuilderImplTest {
         JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().reflectionService(new ReflectionService(true, true, new AsmFactory(Thread.currentThread().getContextClassLoader()) {
 
             @Override
-            public <T> JdbcMapper<T> createJdbcMapper(JdbcColumnKey[] keys, FieldMapper<ResultSet, T>[] mappers, FieldMapper<ResultSet, T>[] constructorMappers, Instantiator<ResultSet, T> instantiator, Class<T> target, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
+            public <T> JdbcMapper<T> createMapper(JdbcColumnKey[] keys, FieldMapper<ResultSet, T>[] mappers, FieldMapper<ResultSet, T>[] constructorMappers, Instantiator<ResultSet, T> instantiator, Class<T> target, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
                 throw new UnsupportedOperationException();
             }
         })).newBuilder(DbObject.class);

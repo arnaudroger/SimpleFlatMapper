@@ -113,10 +113,11 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
             mappingContextFactory = mappingContextFactoryBuilder.newFactory();
         }
 
+        Mapper<ResultSet, T> mapper;
 
         if (isEligibleForAsmMapper()) {
             try {
-                return reflectionService.getAsmFactory().createJdbcMapper(
+                mapper = reflectionService.getAsmFactory().createMapper(
                         getKeys(),
                         fields, constructorFieldMappersAndInstantiator.first(),
                         constructorFieldMappersAndInstantiator.second(),
@@ -125,12 +126,13 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
                 if (failOnAsm) {
                     return ErrorHelper.rethrow(e);
                 } else {
-                    return new JdbcMapperImpl<T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), jdbcMapperErrorHandler, mappingContextFactory);
+                    mapper = new MapperImpl<ResultSet, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
                 }
             }
         } else {
-            return new JdbcMapperImpl<T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), jdbcMapperErrorHandler, mappingContextFactory);
+            mapper = new MapperImpl<ResultSet, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
         }
+        return new JdbcMapperImpl<T>(mapper, jdbcMapperErrorHandler);
     }
 
     private JdbcColumnKey[] getKeys() {

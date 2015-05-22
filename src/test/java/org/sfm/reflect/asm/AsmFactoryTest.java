@@ -103,15 +103,15 @@ public class AsmFactoryTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testAsmJdbcMapperFailedInstantiator() throws Exception {
-		JdbcMapper<DbObject> jdbcMapper = asmFactory.createJdbcMapper(new JdbcColumnKey[0],
-				(FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {},
-                (FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {},
+		JdbcMapper<DbObject> jdbcMapper = asmFactory.createMapper(new JdbcColumnKey[0],
+				(FieldMapper<ResultSet, DbObject>[]) new FieldMapper[]{},
+				(FieldMapper<ResultSet, DbObject>[]) new FieldMapper[]{},
 				new Instantiator<ResultSet, DbObject>() {
 					@Override
 					public DbObject newInstance(ResultSet s) throws Exception {
 						throw new IOException("Error");
 					}
-				}, 
+				},
 				DbObject.class, new RethrowRowHandlerErrorHandler(), new JdbcMappingContextFactoryBuilder().newFactory());
 		
 		try {
@@ -125,8 +125,8 @@ public class AsmFactoryTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testAsmJdbcMapperFailedGetter() throws Exception {
-		JdbcMapper<DbObject> jdbcMapper = asmFactory.createJdbcMapper(new JdbcColumnKey[0],
-				(FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {
+		JdbcMapper<DbObject> jdbcMapper = asmFactory.createMapper(new JdbcColumnKey[0],
+				(FieldMapper<ResultSet, DbObject>[]) new FieldMapper[]{
 						new FieldMapper<ResultSet, DbObject>() {
 							@Override
 							public void mapTo(ResultSet source, DbObject target, MappingContext<ResultSet> mappingContext)
@@ -135,13 +135,13 @@ public class AsmFactoryTest {
 							}
 						}
 				},
-                (FieldMapper<ResultSet, DbObject>[])new FieldMapper[] {},
+				(FieldMapper<ResultSet, DbObject>[]) new FieldMapper[]{},
 				new Instantiator<ResultSet, DbObject>() {
 					@Override
 					public DbObject newInstance(ResultSet s) throws Exception {
 						return new DbObject();
 					}
-				}, 
+				},
 				DbObject.class, new RethrowRowHandlerErrorHandler(), new JdbcMappingContextFactoryBuilder().newFactory());
 		
 		try {

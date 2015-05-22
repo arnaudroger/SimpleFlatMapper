@@ -2,14 +2,20 @@ package org.sfm.jdbc;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.jdbc.impl.JdbcMapperImpl;
+import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.LogFieldMapperErrorHandler;
+import org.sfm.map.impl.MapperImpl;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.ObjectGetterFactory;
+import org.sfm.reflect.impl.FieldGetter;
 import org.sfm.reflect.primitive.LongGetter;
 import org.sfm.utils.ListHandler;
 
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -35,15 +41,15 @@ public class JdbcMapperBuilderTest {
 	}
 
 	@Test
-	public void testAsmFactoryJdbcMapperCache() {
+	public void testAsmFactoryJdbcMapperCache() throws Exception {
 
-		JdbcMapper<DbObject> mapper1 = JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper();
-		JdbcMapper<DbObject> mapper2 = JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper();
+		Mapper<ResultSet, DbObject> mapper1 = getSubMapper(JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper());
+		Mapper<ResultSet, DbObject> mapper2 = getSubMapper(JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class).addMapping("id").addMapping("name").mapper());
 		final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition = FieldMapperColumnDefinition.customGetter(new StaticLongGetter<ResultSet>(3));
-		JdbcMapper<DbObject> mapper3 =
+		Mapper<ResultSet, DbObject> mapper3 = getSubMapper(
 				JdbcMapperFactoryHelper.asm().fieldMapperErrorHandler(new LogFieldMapperErrorHandler<JdbcColumnKey>()).newBuilder(DbObject.class).addMapping("id",
 						columnDefinition).addMapping("name")
-						.mapper();
+						.mapper());
 
 		assertNotSame(mapper1, mapper2);
 		assertSame(mapper1.getClass(), mapper2.getClass());
@@ -53,6 +59,14 @@ public class JdbcMapperBuilderTest {
 		assertTrue(mapper2.getClass().getSimpleName().startsWith("AsmMapperFrom"));
 		assertTrue(mapper3.getClass().getSimpleName().startsWith("AsmMapperFrom"));
 
+	}
+
+	private Mapper<ResultSet, DbObject> getSubMapper(JdbcMapper<DbObject> mapper) throws Exception {
+		final Field field = JdbcMapperImpl.class.getDeclaredField("mapper");
+		field.setAccessible(true);
+		return
+				new FieldGetter<JdbcMapper<?>, MapperImpl<ResultSet, DbObject>>(field)
+						.get((JdbcMapperImpl) mapper);
 	}
 
 	static class StaticLongGetter<T> implements LongGetter<T>, Getter<T, Long> {

@@ -91,7 +91,7 @@ public class JdbcMapperErrorTest {
 		FieldMapper<ResultSet, DbObject>[] fields = new FieldMapper[] {};
 		JdbcMapperImpl<DbObject> mapper =
 			new JdbcMapperImpl<DbObject>(
-				new MapperImpl<>(
+				new MapperImpl<ResultSet, DbObject>(
 					fields,
 					new FieldMapper[] {},
                 	new Instantiator<ResultSet, DbObject>() {

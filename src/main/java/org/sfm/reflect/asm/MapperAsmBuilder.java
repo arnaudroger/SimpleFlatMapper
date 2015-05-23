@@ -3,20 +3,20 @@ package org.sfm.reflect.asm;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.sfm.jdbc.impl.AbstractJdbcMapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingContextFactory;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.FieldMapper;
+import org.sfm.map.impl.AbstractMapper;
 import org.sfm.reflect.Instantiator;
 
 import java.sql.ResultSet;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class JdbcMapperAsmBuilder {
+public class MapperAsmBuilder {
 
-	private static final String ABSTRACT_JDBC_MAPPER_IMPL_TYPE = AsmUtils.toType(AbstractJdbcMapper.class);
+	private static final String ABSTRACT_JDBC_MAPPER_IMPL_TYPE = AsmUtils.toType(AbstractMapper.class);
 	private static final String FIELD_MAPPER_TYPE = AsmUtils.toType(FieldMapper.class);
 	private static final String INSTANTIATOR_TYPE = AsmUtils.toType(Instantiator.class);
 	private static final String ROW_HANDLER_ERROR_HANDLER_TYPE = AsmUtils.toType(RowHandlerErrorHandler.class);
@@ -25,11 +25,16 @@ public class JdbcMapperAsmBuilder {
 
     private static final String mappingContextFactory = AsmUtils.toType(MappingContextFactory.class);
 
-    public static <S,T> byte[] dump (final String className, final FieldMapper<S, T>[] mappers, final FieldMapper<S, T>[] constructorMappers, final Class<T> target) throws Exception {
+    public static <S,T> byte[] dump (
+            final String className,
+            final FieldMapper<S, T>[] mappers,
+            final FieldMapper<S, T>[] constructorMappers,
+            final Class<S> sourceClass,
+            final Class<T> target
+    ) throws Exception {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         MethodVisitor mv;
 
-        Class<ResultSet> sourceClass = ResultSet.class;
         final String targetType = AsmUtils.toType(target);
         final String sourceType = AsmUtils.toType(sourceClass);
         final String classType = AsmUtils.toType(className);
@@ -48,23 +53,19 @@ public class JdbcMapperAsmBuilder {
                             "([L" + FIELD_MAPPER_TYPE + ";"
                             + "[L" + FIELD_MAPPER_TYPE + ";L"
                             + INSTANTIATOR_TYPE + ";L"
-                            + ROW_HANDLER_ERROR_HANDLER_TYPE + ";L"
                             + mappingContextFactory + ";)V",
                             "([L" + FIELD_MAPPER_TYPE +"<L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ">;[L"
                             + FIELD_MAPPER_TYPE +"<L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ">;L"
                             + INSTANTIATOR_TYPE + "<" + toTargetTypeDeclaration(targetType) + ">;L"
-                            + ROW_HANDLER_ERROR_HANDLER_TYPE + ";L"
                             + mappingContextFactory + "<L" + sourceType + ";>"
                             + ";)V", null);
 
 			mv.visitCode();
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitVarInsn(ALOAD, 3);
-			mv.visitVarInsn(ALOAD, 4);
-            mv.visitVarInsn(ALOAD, 5);
+            mv.visitVarInsn(ALOAD, 4);
 			mv.visitMethodInsn(INVOKESPECIAL, ABSTRACT_JDBC_MAPPER_IMPL_TYPE, "<init>",
                     "(L" + INSTANTIATOR_TYPE + ";L"
-                            + ROW_HANDLER_ERROR_HANDLER_TYPE +  ";L"
                             + mappingContextFactory +";)V", false);
 			
 			

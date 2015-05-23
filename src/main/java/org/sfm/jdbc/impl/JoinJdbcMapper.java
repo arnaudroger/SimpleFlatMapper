@@ -10,9 +10,9 @@ import java.sql.SQLException;
 
 public final class JoinJdbcMapper<T> extends AbstractForEachDynamicJdbcMapper<T> {
 
-    private final JdbcMapper<T> mapper;
+    private final Mapper<ResultSet, T> mapper;
 
-    public JoinJdbcMapper(JdbcMapper<T> mapper, RowHandlerErrorHandler errorHandler) {
+    public JoinJdbcMapper(Mapper<ResultSet, T> mapper, RowHandlerErrorHandler errorHandler) {
         super(errorHandler);
         this.mapper = mapper;
     }

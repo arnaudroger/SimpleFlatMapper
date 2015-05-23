@@ -32,16 +32,7 @@ public final class QueryDslMapperBuilder<T>
 		super(Tuple.class, classMeta, new TupleGetterFactory(),
                 new FieldMapperFactory<Tuple, TupleElementKey>(new TupleGetterFactory()),
                 new IdentityFieldMapperColumnDefinitionProvider<TupleElementKey, Tuple>(),
-                new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler(), parentBuilder);
-	}
-
-	@Override
-	public Mapper<Tuple, T> mapper() {
-        Tuple2<FieldMapper<Tuple, T>[], Instantiator<Tuple, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
-        return new MapperImpl<Tuple, T>(fields(),
-                constructorFieldMappersAndInstantiator.first(),
-                constructorFieldMappersAndInstantiator.second(),
-                mappingContextFactoryBuilder.newFactory());
+                new DefaultPropertyNameMatcherFactory(), new RethrowMapperBuilderErrorHandler(), parentBuilder, false, AbstractFieldMapperMapperBuilder.NO_ASM_MAPPER_THRESHOLD);
 	}
 
 	@Override

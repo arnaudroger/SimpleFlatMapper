@@ -5,13 +5,10 @@ import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
-import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
-import org.sfm.tuples.Tuple2;
-import org.sfm.utils.ErrorHelper;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -23,13 +20,9 @@ import java.sql.SQLException;
  */
 public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey> {
 
-    public static final int NO_ASM_MAPPER_THRESHOLD = 792; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
-    public static final JdbcColumnKey[] EMPTY_COLUMN_KEYS = new JdbcColumnKey[0];
-
     private int calculatedIndex = 1;
+
     private RowHandlerErrorHandler jdbcMapperErrorHandler = new RethrowRowHandlerErrorHandler();
-    private final boolean failOnAsm;
-    private final int asmMapperNbFieldsLimit;
 
     /**
      * Build a new JdbcMapperBuilder targeting the type specified by the TypeReference. The TypeReference
@@ -82,9 +75,16 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
                              PropertyNameMatcherFactory propertyNameMatcherFactory,
                              GetterFactory<ResultSet, JdbcColumnKey> getterFactory, boolean failOnAsm, int asmMapperNbFieldsLimit,
                              MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
-        super(ResultSet.class, classMeta, getterFactory, new FieldMapperFactory<ResultSet, JdbcColumnKey>(getterFactory), columnDefinitions, propertyNameMatcherFactory, mapperBuilderErrorHandler, parentBuilder);
-        this.failOnAsm = failOnAsm;
-        this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
+        super(
+                ResultSet.class,
+                classMeta,
+                getterFactory,
+                new FieldMapperFactory<ResultSet, JdbcColumnKey>(getterFactory),
+                columnDefinitions,
+                propertyNameMatcherFactory,
+                mapperBuilderErrorHandler,
+                parentBuilder,
+                failOnAsm, asmMapperNbFieldsLimit);
     }
 
     /**
@@ -92,56 +92,14 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
      */
     @Override
     public JdbcMapper<T> mapper() {
-        JdbcMapper<T> mapper = buildMapper();
+        Mapper<ResultSet, T> mapper = super.mapper();
 
         if (!mappingContextFactoryBuilder.isRoot()
                 || mappingContextFactoryBuilder.hasNoDependentKeys()) {
-            return mapper;
+            return new JdbcMapperImpl<T>(mapper, jdbcMapperErrorHandler);
         } else {
             return new JoinJdbcMapper<T>(mapper, jdbcMapperErrorHandler);
         }
-    }
-
-    private JdbcMapper<T> buildMapper() {
-        FieldMapper<ResultSet, T>[] fields = fields();
-        Tuple2<FieldMapper<ResultSet, T>[], Instantiator<ResultSet, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
-
-
-        MappingContextFactory<ResultSet> mappingContextFactory = null;
-
-        if (mappingContextFactoryBuilder.isRoot()) {
-            mappingContextFactory = mappingContextFactoryBuilder.newFactory();
-        }
-
-        Mapper<ResultSet, T> mapper;
-
-        if (isEligibleForAsmMapper()) {
-            try {
-                mapper = reflectionService.getAsmFactory().createMapper(
-                        getKeys(),
-                        fields, constructorFieldMappersAndInstantiator.first(),
-                        constructorFieldMappersAndInstantiator.second(),
-                        getTargetClass(), jdbcMapperErrorHandler, mappingContextFactory);
-            } catch (Exception e) {
-                if (failOnAsm) {
-                    return ErrorHelper.rethrow(e);
-                } else {
-                    mapper = new MapperImpl<ResultSet, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
-                }
-            }
-        } else {
-            mapper = new MapperImpl<ResultSet, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
-        }
-        return new JdbcMapperImpl<T>(mapper, jdbcMapperErrorHandler);
-    }
-
-    private JdbcColumnKey[] getKeys() {
-        return propertyMappingsBuilder.getKeys().toArray(EMPTY_COLUMN_KEYS);
-    }
-
-    private boolean isEligibleForAsmMapper() {
-        return reflectionService.isAsmActivated()
-                && propertyMappingsBuilder.size() < asmMapperNbFieldsLimit;
     }
 
     /**

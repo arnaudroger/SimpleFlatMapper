@@ -35,28 +35,31 @@ public class JdbcMapperBuilderImplTest {
 	
 	@Test
 	public void testAsmFailureOnJdbcMapper() {
-		
-		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(true, true, new AsmFactory(Thread.currentThread().getContextClassLoader()) {
 
-            @Override
-            public <T> JdbcMapper<T> createMapper(JdbcColumnKey[] keys, FieldMapper<ResultSet, T>[] mappers, FieldMapper<ResultSet, T>[] constructorMappers, Instantiator<ResultSet, T> instantiator, Class<T> target, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
-                throw new UnsupportedOperationException();
-            }
-		})).newBuilder(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(true, true, newAsmFactoryFailsOnJdbcMapper())).newBuilder(DbObject.class);
 		
 		assertTrue(builder.mapper() instanceof JdbcMapperImpl);
 	}
 
-    @Test
+	public AsmFactory newAsmFactoryFailsOnJdbcMapper() {
+		return new AsmFactory(Thread.currentThread().getContextClassLoader()) {
+                public <S, T> Mapper<S, T> createMapper(final FieldKey<?>[] keys,
+                                                                                final FieldMapper<S, T>[] mappers,
+                                                                                final FieldMapper<S, T>[] constructorMappers,
+                                                                                final Instantiator<S, T> instantiator,
+                                                                                final Class<S> source,
+                                                                                final Class<T> target,
+                                                                                MappingContextFactory<S> mappingContextFactory) throws Exception {
+                    throw new UnsupportedOperationException();
+                }
+
+
+                };
+	}
+
+	@Test
     public void testAsmFailureOnJdbcMapperFailOnAsm() {
-
-        JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().reflectionService(new ReflectionService(true, true, new AsmFactory(Thread.currentThread().getContextClassLoader()) {
-
-            @Override
-            public <T> JdbcMapper<T> createMapper(JdbcColumnKey[] keys, FieldMapper<ResultSet, T>[] mappers, FieldMapper<ResultSet, T>[] constructorMappers, Instantiator<ResultSet, T> instantiator, Class<T> target, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
-                throw new UnsupportedOperationException();
-            }
-        })).newBuilder(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().reflectionService(new ReflectionService(true, true, newAsmFactoryFailsOnJdbcMapper())).newBuilder(DbObject.class);
 
         try {
             builder.mapper();

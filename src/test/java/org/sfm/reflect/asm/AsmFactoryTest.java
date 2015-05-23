@@ -10,6 +10,7 @@ import org.sfm.jdbc.JdbcMappingContextFactoryBuilder;
 import org.sfm.jdbc.impl.getter.LongResultSetGetter;
 import org.sfm.jdbc.impl.getter.OrdinalEnumResultSetGetter;
 import org.sfm.jdbc.impl.getter.StringResultSetGetter;
+import org.sfm.map.Mapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
@@ -103,7 +104,8 @@ public class AsmFactoryTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testAsmJdbcMapperFailedInstantiator() throws Exception {
-		JdbcMapper<DbObject> jdbcMapper = asmFactory.createMapper(new JdbcColumnKey[0],
+		Mapper<ResultSet, DbObject> jdbcMapper =
+				asmFactory.createMapper(new JdbcColumnKey[0],
 				(FieldMapper<ResultSet, DbObject>[]) new FieldMapper[]{},
 				(FieldMapper<ResultSet, DbObject>[]) new FieldMapper[]{},
 				new Instantiator<ResultSet, DbObject>() {
@@ -111,8 +113,8 @@ public class AsmFactoryTest {
 					public DbObject newInstance(ResultSet s) throws Exception {
 						throw new IOException("Error");
 					}
-				},
-				DbObject.class, new RethrowRowHandlerErrorHandler(), new JdbcMappingContextFactoryBuilder().newFactory());
+				},ResultSet.class,
+				DbObject.class, new JdbcMappingContextFactoryBuilder().newFactory());
 		
 		try {
 			jdbcMapper.map(null);
@@ -125,7 +127,7 @@ public class AsmFactoryTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testAsmJdbcMapperFailedGetter() throws Exception {
-		JdbcMapper<DbObject> jdbcMapper = asmFactory.createMapper(new JdbcColumnKey[0],
+		Mapper<ResultSet, DbObject> jdbcMapper = asmFactory.createMapper(new JdbcColumnKey[0],
 				(FieldMapper<ResultSet, DbObject>[]) new FieldMapper[]{
 						new FieldMapper<ResultSet, DbObject>() {
 							@Override
@@ -141,8 +143,8 @@ public class AsmFactoryTest {
 					public DbObject newInstance(ResultSet s) throws Exception {
 						return new DbObject();
 					}
-				},
-				DbObject.class, new RethrowRowHandlerErrorHandler(), new JdbcMappingContextFactoryBuilder().newFactory());
+				}, ResultSet.class,
+				DbObject.class,  new JdbcMappingContextFactoryBuilder().newFactory());
 		
 		try {
 			jdbcMapper.map(null);

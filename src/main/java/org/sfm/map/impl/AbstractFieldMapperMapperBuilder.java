@@ -1,5 +1,8 @@
 package org.sfm.map.impl;
 
+import org.sfm.jdbc.JdbcColumnKey;
+import org.sfm.jdbc.JdbcMapper;
+import org.sfm.jdbc.impl.JdbcMapperImpl;
 import org.sfm.jdbc.impl.getter.MapperGetterAdapter;
 import org.sfm.map.*;
 import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
@@ -11,15 +14,17 @@ import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.ResultSet;
+import java.util.*;
 
 public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
-	private final Type source;
+    public static final int NO_ASM_MAPPER_THRESHOLD = 792; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
+    private static final FieldKey[] FIELD_KEYS = new FieldKey[0];
+
+    private final Class<S> source;
 	private final Type target;
 
 	private final FieldMapperFactory<S, K> fieldMapperFactory;
@@ -33,17 +38,26 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 	protected final PropertyNameMatcherFactory propertyNameMatcherFactory;
 
 	protected final MapperBuilderErrorHandler mapperBuilderErrorHandler;
-	private FieldMapperErrorHandler<K> fieldMapperErrorHandler;
+    private FieldMapperErrorHandler<K> fieldMapperErrorHandler;
     protected final MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder;
 
-    public AbstractFieldMapperMapperBuilder(final Type source,
-                                            final ClassMeta<T> classMeta,
-                                            GetterFactory<S, K> getterFactory,
-                                            FieldMapperFactory<S, K> fieldMapperFactory,
-                                            ColumnDefinitionProvider<FieldMapperColumnDefinition<K, S>, K> columnDefinitions,
-                                            PropertyNameMatcherFactory propertyNameMatcherFactory,
-                                            MapperBuilderErrorHandler mapperBuilderErrorHandler, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) throws MapperBuildingException {
+    protected final boolean failOnAsm;
+    protected final int asmMapperNbFieldsLimit;
+
+    public AbstractFieldMapperMapperBuilder(
+            final Class<S> source,
+            final ClassMeta<T> classMeta,
+            GetterFactory<S, K> getterFactory,
+            FieldMapperFactory<S, K> fieldMapperFactory,
+            ColumnDefinitionProvider<FieldMapperColumnDefinition<K, S>, K> columnDefinitions,
+            PropertyNameMatcherFactory propertyNameMatcherFactory,
+            MapperBuilderErrorHandler mapperBuilderErrorHandler,
+            MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder,
+            boolean failOnAsm,
+            int asmMapperNbFieldsLimit) throws MapperBuildingException {
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
+        this.failOnAsm = failOnAsm;
+        this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
         if (source == null) {
 			throw new NullPointerException("source is null");
 		}
@@ -299,7 +313,55 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 
 	protected abstract <ST> AbstractFieldMapperMapperBuilder<S, ST, K> newSubBuilder(Type type, ClassMeta<ST> classMeta, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder);
 
-    public abstract Mapper<S, T> mapper();
+
+    public Mapper<S, T> mapper() {
+        FieldMapper<S, T>[] fields = fields();
+        Tuple2<FieldMapper<S, T>[], Instantiator<S, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
+
+
+        MappingContextFactory<S> mappingContextFactory = null;
+
+        if (mappingContextFactoryBuilder.isRoot()) {
+            mappingContextFactory = mappingContextFactoryBuilder.newFactory();
+        }
+
+        Mapper<S, T> mapper;
+
+        if (isEligibleForAsmMapper()) {
+            try {
+                mapper =
+                        reflectionService
+                                .getAsmFactory()
+                                .createMapper(
+                                        getKeys(),
+                                        fields, constructorFieldMappersAndInstantiator.first(),
+                                        constructorFieldMappersAndInstantiator.second(),
+                                        source,
+                                        getTargetClass(),
+                                        mappingContextFactory
+                                );
+            } catch (Exception e) {
+                if (failOnAsm) {
+                    return ErrorHelper.rethrow(e);
+                } else {
+                    mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
+                }
+            }
+        } else {
+            mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
+        }
+        return mapper;
+    }
+
+    private FieldKey<?>[] getKeys() {
+        return propertyMappingsBuilder.getKeys().toArray(FIELD_KEYS);
+    }
+
+    private boolean isEligibleForAsmMapper() {
+        return reflectionService.isAsmActivated()
+                && propertyMappingsBuilder.size() < asmMapperNbFieldsLimit;
+    }
+
 
 	protected void setFieldMapperErrorHandler(
 			FieldMapperErrorHandler<K> errorHandler) {

@@ -4,10 +4,7 @@ import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.impl.*;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MappingContextFactory;
-import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.map.FieldMapper;
+import org.sfm.map.*;
 import org.sfm.map.impl.RethrowFieldMapperErrorHandler;
 import org.sfm.reflect.*;
 
@@ -15,7 +12,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,7 +24,7 @@ public class AsmFactory {
 	private final ConcurrentMap<Object, Setter<?, ?>> setterCache = new ConcurrentHashMap<Object, Setter<?, ?>>();
     private final ConcurrentMap<Object, Getter<?, ?>> getterCache = new ConcurrentHashMap<Object, Getter<?, ?>>();
 	private final ConcurrentMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>> instantiatorCache = new ConcurrentHashMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>>();
-    private final ConcurrentMap<JdbcMapperKey, Class<? extends JdbcMapper<?>>> jdbcMapperCache = new ConcurrentHashMap<JdbcMapperKey, Class<? extends JdbcMapper<?>>>();
+    private final ConcurrentMap<MapperKey, Class<? extends JdbcMapper<?>>> jdbcMapperCache = new ConcurrentHashMap<MapperKey, Class<? extends JdbcMapper<?>>>();
     private final ConcurrentMap<CsvMapperKey, Class<? extends CsvMapperCellHandlerFactory<?>>> csvMapperCache = new ConcurrentHashMap<CsvMapperKey, Class<? extends CsvMapperCellHandlerFactory<?>>>();
 
 	public AsmFactory(ClassLoader cl) {
@@ -161,26 +157,26 @@ public class AsmFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> JdbcMapper<T> createMapper(final JdbcColumnKey[] keys,
-                                          final FieldMapper<ResultSet, T>[] mappers,
-                                          final FieldMapper<ResultSet, T>[] constructorMappers,
-                                          final Instantiator<ResultSet, T> instantiator,
+	public <S, T> Mapper<S, T> createMapper(final FieldKey<?>[] keys,
+                                          final FieldMapper<S, T>[] mappers,
+                                          final FieldMapper<S, T>[] constructorMappers,
+                                          final Instantiator<S, T> instantiator,
+                                          final Class<S> source,
                                           final Class<T> target,
-                                          RowHandlerErrorHandler errorHandler,
-                                          MappingContextFactory<ResultSet> mappingContextFactory) throws Exception {
+                                          MappingContextFactory<S> mappingContextFactory) throws Exception {
 
-        JdbcMapperKey key = new JdbcMapperKey(keys, mappers, constructorMappers, instantiator, target);
+        MapperKey key = new MapperKey(keys, mappers, constructorMappers, instantiator, target);
         Class<JdbcMapper<T>> type = (Class<JdbcMapper<T>>) jdbcMapperCache.get(key);
         if (type == null) {
 
-            final String className = generateClassNameForJdbcMapper(mappers, constructorMappers, ResultSet.class, target);
-            final byte[] bytes = JdbcMapperAsmBuilder.dump(className, mappers, constructorMappers, target);
+            final String className = generateClassNameForJdbcMapper(mappers, constructorMappers, source, target);
+            final byte[] bytes = MapperAsmBuilder.dump(className, mappers, constructorMappers, source, target);
 
             type = (Class<JdbcMapper<T>>) createClass(className, bytes, target.getClass().getClassLoader());
             jdbcMapperCache.put(key, type);
         }
         final Constructor<?> constructor = type.getDeclaredConstructors()[0];
-        return (JdbcMapper<T>) constructor.newInstance(mappers, constructorMappers, instantiator, errorHandler, mappingContextFactory);
+        return (Mapper<S, T>) constructor.newInstance(mappers, constructorMappers, instantiator, mappingContextFactory);
 	}
 
     @SuppressWarnings("unchecked")

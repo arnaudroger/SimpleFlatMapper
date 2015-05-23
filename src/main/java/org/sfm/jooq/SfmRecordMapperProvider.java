@@ -23,7 +23,7 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 		Mapper<Record, E> mapper = (Mapper<Record, E>) mapperCache.get(key);
 		
 		if (mapper == null) {
-			JooqMapperBuilder<Record, E> mapperBuilder = new JooqMapperBuilder<Record, E>(type);
+			JooqMapperBuilder<E> mapperBuilder = new JooqMapperBuilder<E>(type);
 			
 			int i = 0;
 			for(Field<?> field : recordType.fields()) {

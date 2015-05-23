@@ -1,25 +1,26 @@
 package org.sfm.reflect.asm;
 
 import org.sfm.jdbc.JdbcColumnKey;
+import org.sfm.map.FieldKey;
 import org.sfm.map.FieldMapper;
 import org.sfm.reflect.Instantiator;
 
 import java.util.Arrays;
 
-public class JdbcMapperKey {
+public class MapperKey<K extends  FieldKey<K>> {
 
-    private final JdbcColumnKey[] keys;
+    private final K[] keys;
     private final Class<?>[] fieldMappers;
     private final Class<?>[] constructorFieldMappers;
     private final Class<?> instantiator;
     private final Class<?> target;
 
 
-    public JdbcMapperKey(JdbcColumnKey[] keys,
-                         FieldMapper<?, ?>[] fieldMappers,
-                         FieldMapper<?, ?>[] constructorFieldMappers,
-                         Instantiator<?, ?> instantiator,
-                         Class<?> target) {
+    public MapperKey(K[] keys,
+                     FieldMapper<?, ?>[] fieldMappers,
+                     FieldMapper<?, ?>[] constructorFieldMappers,
+                     Instantiator<?, ?> instantiator,
+                     Class<?> target) {
         this.keys = keys;
         this.fieldMappers = getClassArray(fieldMappers);
         this.constructorFieldMappers = getClassArray(constructorFieldMappers);
@@ -52,7 +53,7 @@ public class JdbcMapperKey {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JdbcMapperKey that = (JdbcMapperKey) o;
+        MapperKey that = (MapperKey) o;
 
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
         if (!Arrays.equals(keys, that.keys)) return false;

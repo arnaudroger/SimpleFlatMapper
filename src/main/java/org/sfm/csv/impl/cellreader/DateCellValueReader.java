@@ -11,17 +11,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public class DateCellValueReader implements CellValueReader<Date>, ParsingContextProvider {
 	
 	private final int index;
     private final TimeZone timeZone;
     private final String pattern;
 	public DateCellValueReader(int index, String pattern, TimeZone timeZone) {
-        if (timeZone == null) throw new NullPointerException();
-        if (pattern == null) throw new NullPointerException();
         this.index = index;
-        this.timeZone = timeZone;
-        this.pattern = pattern;
+        this.timeZone = requireNonNull("timeZone", timeZone);
+        this.pattern = requireNonNull("pattern", pattern);
 	}
 	
 	@Override

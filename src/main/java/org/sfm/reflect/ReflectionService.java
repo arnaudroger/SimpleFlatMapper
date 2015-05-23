@@ -16,6 +16,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public class ReflectionService {
 
 	private final ObjectSetterFactory objectSetterFactory;
@@ -64,11 +66,11 @@ public class ReflectionService {
 
 	@SuppressWarnings("unchecked")
 	public <T> ClassMeta<T> getClassMeta(Type target) {
-		if (target == null) throw new NullPointerException("type is null");
+		requireNonNull("target", target);
 		ClassMeta<T> meta = (ClassMeta<T>) metaCache.get(target);
 		if (meta == null) {
 			meta = newClassMeta(target);
-			if (meta == null) throw new NullPointerException("meta is null");
+			requireNonNull("meta", meta);
 			metaCache.putIfAbsent(target, meta);
 		}
 		return meta;

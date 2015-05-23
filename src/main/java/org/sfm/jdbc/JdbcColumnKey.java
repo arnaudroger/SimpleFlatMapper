@@ -2,6 +2,8 @@ package org.sfm.jdbc;
 
 import org.sfm.map.FieldKey;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 
 	public static final int UNDEFINED_TYPE = -99999;
@@ -12,24 +14,21 @@ public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 	private final JdbcColumnKey parent;
 
 	public JdbcColumnKey(String columnName, int columnIndex) {
-        if (columnName == null)  throw new NullPointerException("ColumnName is null");
-		this.name = columnName;
+		this.name = requireNonNull("columnName", columnName);
 		this.index = columnIndex;
 		this.sqlType = UNDEFINED_TYPE;
 		this.parent = null;
 	}
 
 	public JdbcColumnKey(String columnName, int columnIndex, int sqlType) {
-        if (columnName == null)  throw new NullPointerException("ColumnName is null");
-		this.name = columnName;
+		this.name = requireNonNull("columnName", columnName);
 		this.index = columnIndex;
 		this.sqlType = sqlType;
 		this.parent = null;
 	}
 
 	public JdbcColumnKey(String columnName, int columnIndex, int sqlType, JdbcColumnKey parent) {
-        if (columnName == null)  throw new NullPointerException("ColumnName is null");
-		this.name = columnName;
+		this.name = requireNonNull("columnName", columnName);
 		this.index = columnIndex;
 		this.sqlType = sqlType;
 		this.parent = parent;

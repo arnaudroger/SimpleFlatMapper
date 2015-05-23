@@ -1,8 +1,5 @@
 package org.sfm.map.impl;
 
-import org.sfm.jdbc.JdbcColumnKey;
-import org.sfm.jdbc.JdbcMapper;
-import org.sfm.jdbc.impl.JdbcMapperImpl;
 import org.sfm.jdbc.impl.getter.MapperGetterAdapter;
 import org.sfm.map.*;
 import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
@@ -14,10 +11,10 @@ import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
-import java.sql.ResultSet;
 import java.util.*;
+
+import static org.sfm.utils.Asserts.requireNonNull;
 
 public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
@@ -58,37 +55,15 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
         this.failOnAsm = failOnAsm;
         this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
-        if (source == null) {
-			throw new NullPointerException("source is null");
-		}
-		if (classMeta == null) {
-			throw new NullPointerException("classMeta is null");
-		}
-		if (getterFactory == null) {
-			throw new NullPointerException("getterFactory is null");
-		}
-		if (fieldMapperFactory == null) {
-			throw new NullPointerException("fieldMapperFactory is null");
-		}
-		if (columnDefinitions == null) {
-			throw new NullPointerException("columnDefinitions is null");
-		}
-		if (propertyNameMatcherFactory == null) {
-			throw new NullPointerException("propertyNameMatcherFactory is null");
-		}
-		if (mapperBuilderErrorHandler == null) {
-			throw new NullPointerException("mapperBuilderErrorHandler is null");
-		}
-		this.source = source;
-		this.getterFactory = getterFactory;
-		this.fieldMapperFactory = fieldMapperFactory;
+		this.source = requireNonNull("source", source);
+		this.getterFactory = requireNonNull("getterFactory", getterFactory);
+		this.fieldMapperFactory = requireNonNull("fieldMapperFactory", fieldMapperFactory);
 		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K, S>>(classMeta, propertyNameMatcherFactory, mapperBuilderErrorHandler);
-		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
-		this.target = classMeta.getType();
-		this.reflectionService = classMeta.getReflectionService();
-		this.columnDefinitions = columnDefinitions;
-		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-
+		this.propertyNameMatcherFactory = requireNonNull("propertyNameMatcherFactory", propertyNameMatcherFactory);
+		this.target = requireNonNull("classMeta", classMeta).getType();
+		this.reflectionService = requireNonNull("classMeta", classMeta).getReflectionService();
+		this.columnDefinitions = requireNonNull("columnDefinitions", columnDefinitions);
+		this.mapperBuilderErrorHandler = requireNonNull("mapperBuilderErrorHandler", mapperBuilderErrorHandler);
 	}
 
 	protected Class<T> getTargetClass() {

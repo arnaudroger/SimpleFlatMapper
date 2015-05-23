@@ -2,6 +2,8 @@ package org.sfm.csv.impl;
 
 import org.sfm.reflect.Setter;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public class DelegateCellSetter<T, P> implements CellSetter<T> {
 
 	private final DelegateMarkerSetter<T, P> marker;
@@ -11,8 +13,7 @@ public class DelegateCellSetter<T, P> implements CellSetter<T> {
 
 	@SuppressWarnings("unchecked")
     public DelegateCellSetter(DelegateMarkerSetter<T, P> marker, int cellIndex, BreakDetector parentBreakDetector) {
-        if (marker== null) throw new NullPointerException("marker is null");
-		this.marker = marker;
+		this.marker = requireNonNull("marker",  marker);
 		this.handler = marker.getMapper().newCellConsumer(null, parentBreakDetector);
         this.setter = marker.getSetter();
 		this.cellIndex = cellIndex;
@@ -20,10 +21,8 @@ public class DelegateCellSetter<T, P> implements CellSetter<T> {
 
 	public DelegateCellSetter(DelegateMarkerSetter<T, P> marker,
                               CsvMapperCellConsumer<P> handler,  int cellIndex) {
-        if (handler== null) throw new NullPointerException("handler is null");
-        if (marker== null) throw new NullPointerException("marker is null");
-		this.marker = marker;
-		this.handler = handler;
+		this.marker = requireNonNull("marker", marker);
+		this.handler = requireNonNull("handler",handler);
 		this.cellIndex = cellIndex;
         this.setter = null;
 	}

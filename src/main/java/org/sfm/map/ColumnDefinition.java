@@ -10,6 +10,8 @@ import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnDefinition<K, CD>> {
 
     public static final Predicate<PropertyMeta<?, ?>> DEFAULT_APPLIES_TO = new Predicate<PropertyMeta<?, ?>>() {
@@ -21,8 +23,7 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
     private final ColumnProperty[] properties;
 
     protected ColumnDefinition(ColumnProperty[] properties) {
-        if (properties == null) throw new NullPointerException();
-        this.properties = properties;
+        this.properties = requireNonNull("properties", properties);
     }
 
 
@@ -57,8 +58,7 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
     }
 
     public CD compose(CD columnDefinition) {
-        if (columnDefinition == null) throw new NullPointerException();
-        ColumnDefinition cdi = columnDefinition;
+        ColumnDefinition cdi = requireNonNull("columnDefinition", columnDefinition);
         ColumnProperty[] properties = new ColumnProperty[this.properties.length + cdi.properties.length];
         System.arraycopy(cdi.properties, 0, properties, 0, cdi.properties.length);
         System.arraycopy(this.properties, 0, properties, cdi.properties.length, this.properties.length);
@@ -66,7 +66,7 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
     }
 
     public CD add(ColumnProperty property) {
-        if (property == null) throw new NullPointerException();
+        requireNonNull("property", property);
         ColumnProperty[] properties = new ColumnProperty[this.properties.length + 1];
         System.arraycopy(this.properties, 0, properties, 0, this.properties.length);
         properties[this.properties.length] = property;

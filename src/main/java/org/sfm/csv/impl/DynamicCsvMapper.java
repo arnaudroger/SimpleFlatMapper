@@ -16,6 +16,8 @@ import java.util.Iterator;
 //IFJAVA8_START
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static org.sfm.utils.Asserts.requireNonNull;
 //IFJAVA8_END
 
 public final class DynamicCsvMapper<T> implements CsvMapper<T> {
@@ -48,14 +50,8 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 							PropertyNameMatcherFactory propertyNameMatcherFactory, CellValueReaderFactory cellValueReaderFactory,
                             boolean failOnAsm, int asmMapperNbFieldsLimit, int maxMethodSize
     ) {
-		if (classMeta == null) {
-			throw new NullPointerException("classMeta is null");
-		}
-		if (target == null) {
-			throw new NullPointerException("classMeta is null");
-		}
-		this.classMeta = classMeta;
-		this.target = target;
+		this.classMeta = requireNonNull("classMeta", classMeta);
+		this.target = requireNonNull("target", target);
 		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.rowHandlerErrorHandler = rowHandlerErrorHandler;

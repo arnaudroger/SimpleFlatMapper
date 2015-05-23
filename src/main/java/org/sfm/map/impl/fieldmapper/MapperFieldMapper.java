@@ -8,6 +8,8 @@ import org.sfm.reflect.Setter;
 import org.sfm.utils.BooleanProvider;
 import org.sfm.utils.Predicate;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public final class MapperFieldMapper<S, T, P> implements FieldMapper<S, T> {
 
 	private final Mapper<S, P> mapper;
@@ -17,26 +19,11 @@ public final class MapperFieldMapper<S, T, P> implements FieldMapper<S, T> {
     private final Getter<MappingContext<S>, BooleanProvider> breakDetectorProvider;
 
     public MapperFieldMapper(Mapper<S, P> mapper, Setter<T, P> propertySetter, Getter<T, P> propertyGetter, Predicate<S> nullChecker, Getter<MappingContext<S>, BooleanProvider> breakDetectorProvider) {
-        if (mapper == null) {
-            throw new NullPointerException("mapper is null");
-        }
-        if (propertySetter == null) {
-            throw new NullPointerException("propertySetter is null");
-        }
-        if (propertyGetter == null) {
-            throw new NullPointerException("propertyGetter is null");
-        }
-        if (nullChecker == null) {
-            throw new NullPointerException("nullCheck is null");
-        }
-        if (breakDetectorProvider == null) {
-            throw new NullPointerException("breakDetectorProvider is null");
-        }
-        this.mapper = mapper;
-        this.propertySetter = propertySetter;
-        this.propertyGetter = propertyGetter;
-        this.nullChecker = nullChecker;
-        this.breakDetectorProvider = breakDetectorProvider;
+        this.mapper = requireNonNull("mapper", mapper);
+        this.propertySetter = requireNonNull("propertySetter", propertySetter);
+        this.propertyGetter = requireNonNull("propertyGetter", propertyGetter);
+        this.nullChecker = requireNonNull("nullChecker", nullChecker);
+        this.breakDetectorProvider = requireNonNull("breakDetectorProvider", breakDetectorProvider);
     }
 
     @Override

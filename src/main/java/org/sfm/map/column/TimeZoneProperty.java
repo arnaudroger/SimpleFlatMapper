@@ -3,13 +3,14 @@ package org.sfm.map.column;
 
 import java.util.TimeZone;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public class TimeZoneProperty implements ColumnProperty {
     private final TimeZone timeZone;
 
 
     public TimeZoneProperty(TimeZone timeZone) {
-        if (timeZone == null) throw new NullPointerException();
-        this.timeZone = timeZone;
+        this.timeZone = requireNonNull("timeZone", timeZone);
     }
 
     public TimeZone getTimeZone() {

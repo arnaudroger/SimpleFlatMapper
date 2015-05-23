@@ -4,6 +4,8 @@ package org.sfm.map.column;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.Predicate;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public class KeyProperty implements ColumnProperty {
     private static final Predicate<PropertyMeta<?, ?>> DEFAULT_PREDICATE = new Predicate<PropertyMeta<?, ?>>() {
         @Override
@@ -14,8 +16,7 @@ public class KeyProperty implements ColumnProperty {
     private final Predicate<PropertyMeta<?, ?>> appliesTo;
 
     public KeyProperty(Predicate<PropertyMeta<?, ?>> appliesTo) {
-        if (appliesTo == null) throw new NullPointerException();
-        this.appliesTo = appliesTo;
+        this.appliesTo = requireNonNull("appliesTo", appliesTo);
     }
     public KeyProperty() {
        this(DEFAULT_PREDICATE);

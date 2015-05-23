@@ -5,6 +5,8 @@ import org.sfm.tuples.Tuple2;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	private final String column;
 	private final int from;
@@ -13,9 +15,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	private final boolean caseSensitive;
 
 	public DefaultPropertyNameMatcher(String column, int from, boolean exactMatch, boolean caseSensitive) {
-        if (column == null)
-            throw new NullPointerException("column is null");
-		this.column = column;
+		this.column = requireNonNull("column", column);
 		this.from = from;
 		this.exactMatch = exactMatch;
 		this.caseSensitive = caseSensitive;

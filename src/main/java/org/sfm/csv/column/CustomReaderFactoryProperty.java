@@ -4,12 +4,13 @@ package org.sfm.csv.column;
 import org.sfm.csv.CellValueReaderFactory;
 import org.sfm.map.column.ColumnProperty;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public class CustomReaderFactoryProperty implements ColumnProperty {
     private final CellValueReaderFactory readerFactory;
 
     public CustomReaderFactoryProperty(CellValueReaderFactory readerFactory) {
-        if (readerFactory == null) throw new NullPointerException();
-        this.readerFactory = readerFactory;
+        this.readerFactory = requireNonNull("readerFactory", readerFactory);
     }
 
     public CellValueReaderFactory getReaderFactory() {

@@ -1,11 +1,12 @@
 package org.sfm.map.column;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public class RenameProperty implements ColumnProperty {
     private final String name;
 
     public RenameProperty(String name) {
-        if (name == null) throw new NullPointerException();
-        this.name = name;
+        this.name = requireNonNull("name", name);
     }
 
     public String getName() {

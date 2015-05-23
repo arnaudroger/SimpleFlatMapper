@@ -1,12 +1,13 @@
 package org.sfm.map.column;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public class DateFormatProperty implements ColumnProperty {
 
     private final String pattern;
 
     public DateFormatProperty(String pattern) {
-        if (pattern == null) throw new NullPointerException();
-        this.pattern = pattern;
+        this.pattern = requireNonNull("pattern", pattern);
     }
 
     public String getPattern() {

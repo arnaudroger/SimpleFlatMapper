@@ -7,12 +7,13 @@ import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
 public class CustomReaderProperty implements ColumnProperty {
     private final CellValueReader<?> reader;
 
     public CustomReaderProperty(CellValueReader<?> reader) {
-        if (reader == null) throw new NullPointerException();
-        this.reader = reader;
+        this.reader = requireNonNull("reader",reader);
     }
 
     public CellValueReader<?> getReader() {

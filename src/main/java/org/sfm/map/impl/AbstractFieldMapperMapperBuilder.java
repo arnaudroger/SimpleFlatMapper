@@ -161,11 +161,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
                         mappingContextFactoryBuilder.nullChecker(),
                         mappingContextFactoryBuilder.breakDetectorGetter());
 
-        if (fieldMapperErrorHandler != null) {
-            return new FieldErrorHandlerMapper<S, T, K>(properties.get(0).getColumnKey(), fieldMapper, fieldMapperErrorHandler);
-        } else {
-            return fieldMapper;
-        }
+        return wrapFieldMapperWithErrorHandler(properties.get(0), fieldMapper );
     }
 
     @SuppressWarnings("unchecked")
@@ -288,13 +284,19 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 			fieldMapper = fieldMapperFactory.newFieldMapper(t, mapperBuilderErrorHandler);
 		}
 
-		if (fieldMapperErrorHandler != null && fieldMapper != null) {
-			fieldMapper = new FieldErrorHandlerMapper<S, T, K>(t.getColumnKey(), fieldMapper, fieldMapperErrorHandler);
-		}
-		return fieldMapper;
+        return wrapFieldMapperWithErrorHandler(t, fieldMapper);
 	}
 
-	private Getter<S, ?> getterFor(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t, Type paramType) {
+    private <P> FieldMapper<S, T> wrapFieldMapperWithErrorHandler(final PropertyMapping<T, P, K, FieldMapperColumnDefinition<K, S>> t, final FieldMapper<S, T> fieldMapper) {
+        if (fieldMapperErrorHandler != null
+            && !(fieldMapperErrorHandler instanceof RethrowFieldMapperErrorHandler)
+            && fieldMapper != null) {
+            return new FieldErrorHandlerMapper<S, T, K>(t.getColumnKey(), fieldMapper, fieldMapperErrorHandler);
+        }
+        return fieldMapper;
+    }
+
+    private Getter<S, ?> getterFor(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t, Type paramType) {
 		Getter<S, ?> getter = t.getColumnDefinition().getCustomGetter();
 
 		if (getter == null) {

@@ -16,7 +16,7 @@ import java.util.*;
 
 import static org.sfm.utils.Asserts.requireNonNull;
 
-public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
+public class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     public static final int NO_ASM_MAPPER_THRESHOLD = 792; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
     private static final FieldKey[] FIELD_KEYS = new FieldKey[0];
@@ -41,7 +41,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
     protected final boolean failOnAsm;
     protected final int asmMapperNbFieldsLimit;
 
-    public AbstractFieldMapperMapperBuilder(
+    public FieldMapperMapperBuilder(
             final Class<S> source,
             final ClassMeta<T> classMeta,
             GetterFactory<S, K> getterFactory,
@@ -241,7 +241,7 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 
     @SuppressWarnings("unchecked")
     private <P> Mapper<S, P> subPropertyMapper(PropertyMeta<T, P> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
-        final AbstractFieldMapperMapperBuilder<S, P, K> builder = newSubBuilder(owner.getPropertyType(), owner.getPropertyClassMeta(), mappingContextFactoryBuilder);
+        final FieldMapperMapperBuilder<S, P, K> builder = newSubBuilder(owner.getPropertyClassMeta(), mappingContextFactoryBuilder);
 
         for(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> pm : properties) {
             final SubPropertyMeta<T, P,  ?> propertyMeta = (SubPropertyMeta<T, P,  ?>) pm.getPropertyMeta();
@@ -288,7 +288,19 @@ public abstract class AbstractFieldMapperMapperBuilder<S, T, K extends FieldKey<
 		additionalMappers.add(mapper);
 	}
 
-	protected abstract <ST> AbstractFieldMapperMapperBuilder<S, ST, K> newSubBuilder(Type type, ClassMeta<ST> classMeta, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder);
+	protected final <ST> FieldMapperMapperBuilder<S, ST, K> newSubBuilder(ClassMeta<ST> classMeta, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+        return new FieldMapperMapperBuilder<S, ST, K>(
+                source,
+                classMeta,
+                getterFactory,
+                fieldMapperFactory,
+                columnDefinitions,
+                propertyNameMatcherFactory,
+                mapperBuilderErrorHandler,
+                mappingContextFactoryBuilder,
+                failOnAsm,
+                asmMapperNbFieldsLimit);
+    }
 
 
     public Mapper<S, T> mapper() {

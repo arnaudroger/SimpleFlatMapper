@@ -18,7 +18,7 @@ import java.sql.SQLException;
 /**
  * @param <T> the targeted type of the mapper
  */
-public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey> {
+public final class JdbcMapperBuilder<T> extends FieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey> {
 
     private int calculatedIndex = 1;
 
@@ -208,12 +208,6 @@ public final class JdbcMapperBuilder<T> extends AbstractFieldMapperMapperBuilder
         }
 
         return this;
-    }
-
-    @Override
-    protected <ST> AbstractFieldMapperMapperBuilder<ResultSet, ST, JdbcColumnKey> newSubBuilder(Type type, ClassMeta<ST> classMeta, MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> mappingContextFactoryBuilder) {
-        return new JdbcMapperBuilder<ST>(classMeta, mapperBuilderErrorHandler, columnDefinitions, propertyNameMatcherFactory,
-                new ResultSetGetterFactory(), failOnAsm, asmMapperNbFieldsLimit, mappingContextFactoryBuilder);
     }
 
     /**

@@ -44,7 +44,7 @@ public class ObjectGetterFactoryTest {
 
     @Test
     public void testBytePrimitiveAsmIsByteGetter() throws Exception {
-        final Getter<?, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pByte");
+        final Getter<DbFinalPrimitiveObject, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pByte");
         assertTrue(getter instanceof ByteGetter);
         assertSame(getter, ObjectGetterFactory.toByteGetter(getter));
         assertEquals(dbFinalPrimitiveObject.getpByte(), ((ByteGetter)getter).getByte(dbFinalPrimitiveObject));
@@ -61,7 +61,7 @@ public class ObjectGetterFactoryTest {
 
     @Test
     public void testCharPrimitiveAsmIsCharGetter() throws Exception {
-        final Getter<?, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pChar");
+        final Getter<DbFinalPrimitiveObject, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pChar");
         assertTrue(getter instanceof CharacterGetter);
         assertSame(getter, ObjectGetterFactory.toCharGetter(getter));
         assertEquals(dbFinalPrimitiveObject.getpCharacter(), ((CharacterGetter)getter).getCharacter(dbFinalPrimitiveObject));
@@ -78,7 +78,7 @@ public class ObjectGetterFactoryTest {
 
     @Test
     public void testShortPrimitiveAsmIsShortGetter() throws Exception {
-        final Getter<?, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pShort");
+        final Getter<DbFinalPrimitiveObject, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pShort");
         assertTrue(getter instanceof ShortGetter);
         assertSame(getter, ObjectGetterFactory.toShortGetter(getter));
         assertEquals(dbFinalPrimitiveObject.getpShort(), ((ShortGetter)getter).getShort(dbFinalPrimitiveObject));
@@ -96,7 +96,7 @@ public class ObjectGetterFactoryTest {
 
     @Test
     public void testIntPrimitiveAsmIsIntGetter() throws Exception {
-        final Getter<?, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pInt");
+        final Getter<DbFinalPrimitiveObject, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pInt");
         assertTrue(getter instanceof IntGetter);
         assertSame(getter, ObjectGetterFactory.toIntGetter(getter));
         assertEquals(dbFinalPrimitiveObject.getpInt(), ((IntGetter)getter).getInt(dbFinalPrimitiveObject));
@@ -115,7 +115,7 @@ public class ObjectGetterFactoryTest {
 
     @Test
     public void testLongPrimitiveAsmIsLongGetter() throws Exception {
-        final Getter<?, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pLong");
+        final Getter<DbFinalPrimitiveObject, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pLong");
         assertTrue(getter instanceof LongGetter);
         assertSame(getter, ObjectGetterFactory.toLongGetter(getter));
         assertEquals(dbFinalPrimitiveObject.getpLong(), ((LongGetter)getter).getLong(dbFinalPrimitiveObject));
@@ -133,7 +133,7 @@ public class ObjectGetterFactoryTest {
 
     @Test
     public void testFloatPrimitiveAsmIsFloatGetter() throws Exception {
-        final Getter<?, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pFloat");
+        final Getter<DbFinalPrimitiveObject, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pFloat");
         assertTrue(getter instanceof FloatGetter);
         assertSame(getter, ObjectGetterFactory.toFloatGetter(getter));
         assertEquals(dbFinalPrimitiveObject.getpFloat(), ((FloatGetter)getter).getFloat(dbFinalPrimitiveObject), 0.0001);
@@ -152,7 +152,7 @@ public class ObjectGetterFactoryTest {
 
     @Test
     public void testDoublePrimitiveAsmIsDoubleGetter() throws Exception {
-        final Getter<?, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pDouble");
+        final Getter<DbFinalPrimitiveObject, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pDouble");
         assertTrue(getter instanceof DoubleGetter);
         assertSame(getter, ObjectGetterFactory.toDoubleGetter(getter));
         assertEquals(dbFinalPrimitiveObject.getpDouble(), ((DoubleGetter)getter).getDouble(dbFinalPrimitiveObject), 0.0001);
@@ -170,7 +170,7 @@ public class ObjectGetterFactoryTest {
 
     @Test
     public void testBooleanPrimitiveAsmIsBooleanGetter() throws Exception {
-        final Getter<?, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pBoolean");
+        final Getter<DbFinalPrimitiveObject, ?> getter = asm.getGetter(DbFinalPrimitiveObject.class, "pBoolean");
         assertTrue(getter instanceof BooleanGetter);
         assertSame(getter, ObjectGetterFactory.toBooleanGetter(getter));
         assertEquals(dbFinalPrimitiveObject.ispBoolean(), ((BooleanGetter)getter).getBoolean(dbFinalPrimitiveObject));

@@ -16,9 +16,9 @@ import java.util.Iterator;
 //IFJAVA8_START
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+//IFJAVA8_END
 
 import static org.sfm.utils.Asserts.requireNonNull;
-//IFJAVA8_END
 
 public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	

@@ -186,6 +186,226 @@ public class ObjectGetterFactoryTest {
 
     }
 
+    @Test
+    public void testBoxedBooleanAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propBoolean");
+        assertFalse(getter instanceof BooleanGetter);
+        final BooleanGetter<DbBoxed> pGetter = ObjectGetterFactory.toBooleanGetter(getter);
+        assertTrue(pGetter instanceof BooleanGetter);
+        assertEquals(false, pGetter.getBoolean(new DbBoxed()));
+    }
+
+    @Test
+    public void testBoxedBooleanNoAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propBoolean");
+        assertFalse(getter instanceof BooleanGetter);
+        final BooleanGetter<DbBoxed> pGetter = ObjectGetterFactory.toBooleanGetter(getter);
+        assertTrue(pGetter instanceof BooleanGetter);
+        assertEquals(false, pGetter.getBoolean(new DbBoxed()));
+    }
+
+    @Test
+    public void testBoxedByteAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propByte");
+        assertFalse(getter instanceof ByteGetter);
+        final ByteGetter<DbBoxed> pGetter = ObjectGetterFactory.toByteGetter(getter);
+        assertTrue(pGetter instanceof ByteGetter);
+        assertEquals(0, pGetter.getByte(new DbBoxed()));
+    }
+
+    @Test
+    public void testBoxedByteNoAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propByte");
+        assertFalse(getter instanceof ByteGetter);
+        final ByteGetter<DbBoxed> pGetter = ObjectGetterFactory.toByteGetter(getter);
+        assertTrue(pGetter instanceof ByteGetter);
+        assertEquals(0, pGetter.getByte(new DbBoxed()));
+    }
+
+    @Test
+    public void testBoxedCharacterAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propCharacter");
+        assertFalse(getter instanceof CharacterGetter);
+        final CharacterGetter<DbBoxed> pGetter = ObjectGetterFactory.toCharGetter(getter);
+        assertTrue(pGetter instanceof CharacterGetter);
+        assertEquals(0, pGetter.getCharacter(new DbBoxed()));
+    }
+
+    @Test
+    public void testBoxedCharacterNoAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propCharacter");
+        assertFalse(getter instanceof CharacterGetter);
+        final CharacterGetter<DbBoxed> pGetter = ObjectGetterFactory.toCharGetter(getter);
+        assertTrue(pGetter instanceof CharacterGetter);
+        assertEquals(0, pGetter.getCharacter(new DbBoxed()));
+    }
+
+    @Test
+    public void testBoxedShortAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propShort");
+        assertFalse(getter instanceof ShortGetter);
+        final ShortGetter<DbBoxed> pGetter = ObjectGetterFactory.toShortGetter(getter);
+        assertTrue(pGetter instanceof ShortGetter);
+        assertEquals(0, pGetter.getShort(new DbBoxed()));
+    }
+
+    @Test
+    public void testBoxedShortNoAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propShort");
+        assertFalse(getter instanceof ShortGetter);
+        final ShortGetter<DbBoxed> pGetter = ObjectGetterFactory.toShortGetter(getter);
+        assertTrue(pGetter instanceof ShortGetter);
+        assertEquals(0, pGetter.getShort(new DbBoxed()));
+    }
+
+
+    @Test
+    public void testBoxedIntegerAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propInt");
+        assertFalse(getter instanceof IntGetter);
+        final IntGetter<DbBoxed> intGetter = ObjectGetterFactory.toIntGetter(getter);
+        assertTrue(intGetter instanceof IntGetter);
+        assertEquals(0, intGetter.getInt(new DbBoxed()));
+    }
+
+    @Test
+    public void testBoxedIntegerNoAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propInt");
+        assertFalse(getter instanceof IntGetter);
+        final IntGetter<DbBoxed> intGetter = ObjectGetterFactory.toIntGetter(getter);
+        assertTrue(intGetter instanceof IntGetter);
+        assertEquals(0, intGetter.getInt(new DbBoxed()));
+    }
+
+    @Test
+    public void testBoxedLongAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propLong");
+        assertFalse(getter instanceof LongGetter);
+        final LongGetter<DbBoxed> pGetter = ObjectGetterFactory.toLongGetter(getter);
+        assertTrue(pGetter instanceof LongGetter);
+        assertEquals(0, pGetter.getLong(new DbBoxed()));
+    }
+
+    @Test
+    public void testBoxedLongNoAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propLong");
+        assertFalse(getter instanceof LongGetter);
+        final LongGetter<DbBoxed> pGetter = ObjectGetterFactory.toLongGetter(getter);
+        assertTrue(pGetter instanceof LongGetter);
+        assertEquals(0, pGetter.getLong(new DbBoxed()));
+    }
+
+    @Test
+    public void testBoxedFloatAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propFloat");
+        assertFalse(getter instanceof FloatGetter);
+        final FloatGetter<DbBoxed> pGetter = ObjectGetterFactory.toFloatGetter(getter);
+        assertTrue(pGetter instanceof FloatGetter);
+        assertEquals(0.00, pGetter.getFloat(new DbBoxed()), 0.00001);
+    }
+
+    @Test
+    public void testBoxedFloatNoAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propFloat");
+        assertFalse(getter instanceof FloatGetter);
+        final FloatGetter<DbBoxed> pGetter = ObjectGetterFactory.toFloatGetter(getter);
+        assertTrue(pGetter instanceof FloatGetter);
+        assertEquals(0.0, pGetter.getFloat(new DbBoxed()), 0.00001);
+    }
+
+    @Test
+    public void testBoxedDoubleAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propDouble");
+        assertFalse(getter instanceof DoubleGetter);
+        final DoubleGetter<DbBoxed> pGetter = ObjectGetterFactory.toDoubleGetter(getter);
+        assertTrue(pGetter instanceof DoubleGetter);
+        assertEquals(0.0, pGetter.getDouble(new DbBoxed()), 0.0001);
+    }
+
+    @Test
+    public void testBoxedDoubleNoAsm() throws Exception {
+        final Getter<DbBoxed, ?> getter = asm.getGetter(DbBoxed.class, "propDouble");
+        assertFalse(getter instanceof DoubleGetter);
+        final DoubleGetter<DbBoxed> pGetter = ObjectGetterFactory.toDoubleGetter(getter);
+        assertTrue(pGetter instanceof DoubleGetter);
+        assertEquals(0.0, pGetter.getDouble(new DbBoxed()), 0.00001);
+    }
+
+
+    public static class DbBoxed {
+        Boolean propBoolean;
+        Byte propByte;
+        Character propCharacter;
+        Short propShort;
+        Integer propInt;
+        Long propLong;
+        Float propFloat;
+        Double propDouble;
+
+        public Integer getPropInt() {
+            return propInt;
+        }
+
+        public void setPropInt(Integer propInt) {
+            this.propInt = propInt;
+        }
+
+        public Long getPropLong() {
+            return propLong;
+        }
+
+        public void setPropLong(Long propLong) {
+            this.propLong = propLong;
+        }
+
+        public Boolean getPropBoolean() {
+            return propBoolean;
+        }
+
+        public void setPropBoolean(Boolean propBoolean) {
+            this.propBoolean = propBoolean;
+        }
+
+        public Byte getPropByte() {
+            return propByte;
+        }
+
+        public void setPropByte(Byte propByte) {
+            this.propByte = propByte;
+        }
+
+        public Character getPropCharacter() {
+            return propCharacter;
+        }
+
+        public void setPropCharacter(Character propCharacter) {
+            this.propCharacter = propCharacter;
+        }
+
+        public Short getPropShort() {
+            return propShort;
+        }
+
+        public void setPropShort(Short propShort) {
+            this.propShort = propShort;
+        }
+
+        public Float getPropFloat() {
+            return propFloat;
+        }
+
+        public void setPropFloat(Float propFloat) {
+            this.propFloat = propFloat;
+        }
+
+        public Double getPropDouble() {
+            return propDouble;
+        }
+
+        public void setPropDouble(Double propDouble) {
+            this.propDouble = propDouble;
+        }
+    }
 
     @Test
     public void testObjectFieldGetterAsm() throws Exception {

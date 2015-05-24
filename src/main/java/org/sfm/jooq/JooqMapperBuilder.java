@@ -1,11 +1,11 @@
 package org.sfm.jooq;
 
 import org.jooq.Record;
+import org.sfm.map.GetterFactory;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.MappingContextFactoryBuilder;
 import org.sfm.map.impl.*;
-import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 
@@ -13,6 +13,19 @@ import java.lang.reflect.Type;
 
 
 public class JooqMapperBuilder<E>  {
+
+	public static final FieldMapperSource<Record, JooqFieldKey> FIELD_MAPPER_SOURCE =
+			new FieldMapperSource<Record, JooqFieldKey>() {
+				@Override
+				public Class<Record> source() {
+					return Record.class;
+				}
+
+				@Override
+				public GetterFactory<Record, JooqFieldKey> getterFactory() {
+					return new RecordGetterFactory<Record>();
+				}
+			};
 
 	private final FieldMapperMapperBuilder<Record, E, JooqFieldKey> fieldMapperMapperBuilder;
 
@@ -28,9 +41,8 @@ public class JooqMapperBuilder<E>  {
 	public JooqMapperBuilder(final ClassMeta<E> classMeta, MappingContextFactoryBuilder<Record, JooqFieldKey> mappingContextFactoryBuilder) throws MapperBuildingException {
 		fieldMapperMapperBuilder =
 				new FieldMapperMapperBuilder<Record, E, JooqFieldKey>(
-					Record.class,
+					FIELD_MAPPER_SOURCE,
 					classMeta,
-					new RecordGetterFactory<Record>(),
 					new IdentityFieldMapperColumnDefinitionProvider<JooqFieldKey, Record>(),
 					new DefaultPropertyNameMatcherFactory(),
 					new RethrowMapperBuilderErrorHandler(),

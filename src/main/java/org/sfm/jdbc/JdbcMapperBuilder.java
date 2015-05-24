@@ -4,7 +4,6 @@ import org.sfm.jdbc.impl.*;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.impl.*;
-import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
@@ -19,6 +18,9 @@ import java.sql.SQLException;
  * @param <T> the targeted type of the mapper
  */
 public final class JdbcMapperBuilder<T> {
+
+    public static final FieldMapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
+            new FieldMapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class, new ResultSetGetterFactory());
 
     private int calculatedIndex = 1;
 
@@ -78,9 +80,8 @@ public final class JdbcMapperBuilder<T> {
                              MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
         this.fieldMapperMapperBuilder =
                 new FieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey>(
-                        ResultSet.class,
+                        FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
                         classMeta,
-                        getterFactory,
                         columnDefinitions,
                         propertyNameMatcherFactory,
                         mapperBuilderErrorHandler,

@@ -21,11 +21,9 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
     public static final int NO_ASM_MAPPER_THRESHOLD = 792; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
     private static final FieldKey[] FIELD_KEYS = new FieldKey[0];
 
-    private final Class<S> source;
 	private final Type target;
 
 	private final FieldMapperFactory<S, K> fieldMapperFactory;
-	private final GetterFactory<S, K> getterFactory;
 
 	protected final PropertyMappingsBuilder<T, K,FieldMapperColumnDefinition<K, S>> propertyMappingsBuilder;
 	protected final ReflectionService reflectionService;
@@ -35,6 +33,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 	protected final PropertyNameMatcherFactory propertyNameMatcherFactory;
 
 	protected final MapperBuilderErrorHandler mapperBuilderErrorHandler;
+    private final FieldMapperSource<S, K> fieldMapperSource;
     private FieldMapperErrorHandler<K> fieldMapperErrorHandler;
     protected final MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder;
 
@@ -42,9 +41,8 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
     protected final int asmMapperNbFieldsLimit;
 
     public FieldMapperMapperBuilder(
-            final Class<S> source,
+            final FieldMapperSource<S, K> fieldMapperSource,
             final ClassMeta<T> classMeta,
-            GetterFactory<S, K> getterFactory,
             ColumnDefinitionProvider<FieldMapperColumnDefinition<K, S>, K> columnDefinitions,
             PropertyNameMatcherFactory propertyNameMatcherFactory,
             MapperBuilderErrorHandler mapperBuilderErrorHandler,
@@ -54,9 +52,8 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
         this.failOnAsm = failOnAsm;
         this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
-		this.source = requireNonNull("source", source);
-		this.getterFactory = requireNonNull("getterFactory", getterFactory);
-		this.fieldMapperFactory = new FieldMapperFactory<S, K>(getterFactory);
+		this.fieldMapperSource = requireNonNull("fieldMapperSource", fieldMapperSource);
+		this.fieldMapperFactory = new FieldMapperFactory<S, K>(fieldMapperSource.getterFactory());
 		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K, S>>(classMeta, propertyNameMatcherFactory, mapperBuilderErrorHandler);
 		this.propertyNameMatcherFactory = requireNonNull("propertyNameMatcherFactory", propertyNameMatcherFactory);
 		this.target = requireNonNull("classMeta", classMeta).getType();
@@ -105,7 +102,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
                                         getKeys(),
                                         fields, constructorFieldMappersAndInstantiator.first(),
                                         constructorFieldMappersAndInstantiator.second(),
-                                        source,
+                                        fieldMapperSource.source(),
                                         getTargetClass(),
                                         mappingContextFactory
                                 );
@@ -142,7 +139,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 		try {
             Tuple2<Map<Parameter, Getter<S, ?>>, FieldMapper<S, T>[]> constructorInjections = constructorInjections();
             Map<Parameter, Getter<S, ?>> injections = constructorInjections.first();
-            Instantiator<S, T> instantiator = instantiatorFactory.getInstantiator(source, target, propertyMappingsBuilder, injections, getterFactory);
+            Instantiator<S, T> instantiator = instantiatorFactory.getInstantiator(fieldMapperSource.source(), target, propertyMappingsBuilder, injections, fieldMapperSource.getterFactory());
             return new Tuple2<FieldMapper<S, T>[], Instantiator<S, T>>(constructorInjections.second(), instantiator);
 		} catch(Exception e) {
             return ErrorHelper.rethrow(e);
@@ -323,7 +320,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 		Getter<S, ?> getter = t.getColumnDefinition().getCustomGetter();
 
 		if (getter == null) {
-			getter = getterFactory.newGetter(paramType, t.getColumnKey(), t.getColumnDefinition());
+			getter = fieldMapperSource.getterFactory().newGetter(paramType, t.getColumnKey(), t.getColumnDefinition());
 		}
 		if (getter == null) {
 			mapperBuilderErrorHandler.getterNotFound("Could not find getter for " + t.getColumnKey() + " type " + paramType);
@@ -338,9 +335,8 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     private final <ST> FieldMapperMapperBuilder<S, ST, K> newSubBuilder(ClassMeta<ST> classMeta, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
         return new FieldMapperMapperBuilder<S, ST, K>(
-                source,
+                fieldMapperSource,
                 classMeta,
-                getterFactory,
                 columnDefinitions,
                 propertyNameMatcherFactory,
                 mapperBuilderErrorHandler,

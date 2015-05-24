@@ -16,7 +16,7 @@ import java.util.*;
 
 import static org.sfm.utils.Asserts.requireNonNull;
 
-public class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
+public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     public static final int NO_ASM_MAPPER_THRESHOLD = 792; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
     private static final FieldKey[] FIELD_KEYS = new FieldKey[0];
@@ -66,12 +66,78 @@ public class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 		this.mapperBuilderErrorHandler = requireNonNull("mapperBuilderErrorHandler", mapperBuilderErrorHandler);
 	}
 
-	protected Class<T> getTargetClass() {
+    @SuppressWarnings("unchecked")
+    public final  FieldMapperMapperBuilder<S, T, K> addMapping(K key, final FieldMapperColumnDefinition<K, S> columnDefinition) {
+        final FieldMapperColumnDefinition<K, S> composedDefinition = FieldMapperColumnDefinition.compose(columnDefinition, columnDefinitions.getColumnDefinition(key));
+        final K mappedColumnKey = composedDefinition.rename(key);
+
+        if (columnDefinition.getCustomFieldMapper() != null) {
+            addMapper((FieldMapper<S, T>) columnDefinition.getCustomFieldMapper());
+        } else {
+            final PropertyMeta<T, ?> property = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
+            if (property != null && composedDefinition.isKey()) {
+                if (composedDefinition.keyAppliesTo().test(property)) {
+                    mappingContextFactoryBuilder.addKey(key);
+                }
+            }
+        }
+        return this;
+    }
+
+    public Mapper<S, T> mapper() {
+        FieldMapper<S, T>[] fields = fields();
+        Tuple2<FieldMapper<S, T>[], Instantiator<S, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
+
+
+        MappingContextFactory<S> mappingContextFactory = null;
+
+        if (mappingContextFactoryBuilder.isRoot()) {
+            mappingContextFactory = mappingContextFactoryBuilder.newFactory();
+        }
+
+        Mapper<S, T> mapper;
+
+        if (isEligibleForAsmMapper()) {
+            try {
+                mapper =
+                        reflectionService
+                                .getAsmFactory()
+                                .createMapper(
+                                        getKeys(),
+                                        fields, constructorFieldMappersAndInstantiator.first(),
+                                        constructorFieldMappersAndInstantiator.second(),
+                                        source,
+                                        getTargetClass(),
+                                        mappingContextFactory
+                                );
+            } catch (Exception e) {
+                if (failOnAsm) {
+                    return ErrorHelper.rethrow(e);
+                } else {
+                    mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
+                }
+            }
+        } else {
+            mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
+        }
+        return mapper;
+    }
+
+    public void setFieldMapperErrorHandler(
+            FieldMapperErrorHandler<K> errorHandler) {
+        this.fieldMapperErrorHandler = errorHandler;
+    }
+
+    public boolean hasJoin() {
+        return mappingContextFactoryBuilder.isRoot()
+                && !mappingContextFactoryBuilder.hasNoDependentKeys();
+    }
+	private Class<T> getTargetClass() {
 		return TypeHelper.toClass(target);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected Tuple2<FieldMapper<S,T>[], Instantiator<S, T>> getConstructorFieldMappersAndInstantiator() throws MapperBuildingException {
+    private Tuple2<FieldMapper<S,T>[], Instantiator<S, T>> getConstructorFieldMappersAndInstantiator() throws MapperBuildingException {
 
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 		try {
@@ -144,31 +210,14 @@ public class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         return new MapperGetterAdapter<S, P>((Mapper<S, P>)mapper, builder.nullChecker());
     }
 
-	@SuppressWarnings("unchecked")
-	protected void _addMapping(K key, final FieldMapperColumnDefinition<K, S> columnDefinition) {
-		final FieldMapperColumnDefinition<K, S> composedDefinition = FieldMapperColumnDefinition.compose(columnDefinition, columnDefinitions.getColumnDefinition(key));
-		final K mappedColumnKey = composedDefinition.rename(key);
-
-		if (columnDefinition.getCustomFieldMapper() != null) {
-			_addMapper((FieldMapper<S, T>) columnDefinition.getCustomFieldMapper());
-		} else {
-            final PropertyMeta<T, ?> property = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
-            if (property != null && composedDefinition.isKey()) {
-                if (composedDefinition.keyAppliesTo().test(property)) {
-                    mappingContextFactoryBuilder.addKey(key);
-                }
-            }
-		}
-	}
-
     // call use towards sub mapper
     // the keys are initialised
-	protected <P> void addMapping(K columnKey, FieldMapperColumnDefinition<K, S> columnDefinition,  PropertyMeta<T, P> prop) {
+    private <P> void addMapping(K columnKey, FieldMapperColumnDefinition<K, S> columnDefinition,  PropertyMeta<T, P> prop) {
 		propertyMappingsBuilder.addProperty(columnKey, columnDefinition, prop);
 	}
 
 	@SuppressWarnings("unchecked")
-	public final FieldMapper<S, T>[] fields() {
+	private final FieldMapper<S, T>[] fields() {
 		final List<FieldMapper<S, T>> fields = new ArrayList<FieldMapper<S, T>>();
 
 		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K, S>>>() {
@@ -284,11 +333,11 @@ public class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 	}
 
 
-	protected void _addMapper(FieldMapper<S, T> mapper) {
+    public void addMapper(FieldMapper<S, T> mapper) {
 		additionalMappers.add(mapper);
 	}
 
-	protected final <ST> FieldMapperMapperBuilder<S, ST, K> newSubBuilder(ClassMeta<ST> classMeta, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+    private final <ST> FieldMapperMapperBuilder<S, ST, K> newSubBuilder(ClassMeta<ST> classMeta, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
         return new FieldMapperMapperBuilder<S, ST, K>(
                 source,
                 classMeta,
@@ -303,44 +352,7 @@ public class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
 
-    public Mapper<S, T> mapper() {
-        FieldMapper<S, T>[] fields = fields();
-        Tuple2<FieldMapper<S, T>[], Instantiator<S, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
 
-
-        MappingContextFactory<S> mappingContextFactory = null;
-
-        if (mappingContextFactoryBuilder.isRoot()) {
-            mappingContextFactory = mappingContextFactoryBuilder.newFactory();
-        }
-
-        Mapper<S, T> mapper;
-
-        if (isEligibleForAsmMapper()) {
-            try {
-                mapper =
-                        reflectionService
-                                .getAsmFactory()
-                                .createMapper(
-                                        getKeys(),
-                                        fields, constructorFieldMappersAndInstantiator.first(),
-                                        constructorFieldMappersAndInstantiator.second(),
-                                        source,
-                                        getTargetClass(),
-                                        mappingContextFactory
-                                );
-            } catch (Exception e) {
-                if (failOnAsm) {
-                    return ErrorHelper.rethrow(e);
-                } else {
-                    mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
-                }
-            }
-        } else {
-            mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
-        }
-        return mapper;
-    }
 
     private FieldKey<?>[] getKeys() {
         return propertyMappingsBuilder.getKeys().toArray(FIELD_KEYS);
@@ -350,12 +362,6 @@ public class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         return reflectionService.isAsmActivated()
                 && propertyMappingsBuilder.size() < asmMapperNbFieldsLimit;
     }
-
-
-	protected void setFieldMapperErrorHandler(
-			FieldMapperErrorHandler<K> errorHandler) {
-		this.fieldMapperErrorHandler = errorHandler;
-	}
 
     @SuppressWarnings("unchecked")
     private List<K> getSubKeys(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties) {

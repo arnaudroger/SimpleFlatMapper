@@ -67,7 +67,7 @@ public final class JdbcMapperFactory {
 
     private boolean disableAsm = false;
     private boolean failOnAsm = false;
-    private int asmMapperNbFieldsLimit = JdbcMapperBuilder.NO_ASM_MAPPER_THRESHOLD;
+    private int asmMapperNbFieldsLimit = FieldMapperMapperBuilder.NO_ASM_MAPPER_THRESHOLD;
 
     private ReflectionService reflectionService = null;
 

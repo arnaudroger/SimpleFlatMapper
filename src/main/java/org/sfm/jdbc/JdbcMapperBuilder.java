@@ -18,11 +18,12 @@ import java.sql.SQLException;
 /**
  * @param <T> the targeted type of the mapper
  */
-public final class JdbcMapperBuilder<T> extends FieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey> {
+public final class JdbcMapperBuilder<T> {
 
     private int calculatedIndex = 1;
 
     private RowHandlerErrorHandler jdbcMapperErrorHandler = new RethrowRowHandlerErrorHandler();
+    private final FieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey> fieldMapperMapperBuilder;
 
     /**
      * Build a new JdbcMapperBuilder targeting the type specified by the TypeReference. The TypeReference
@@ -57,7 +58,7 @@ public final class JdbcMapperBuilder<T> extends FieldMapperMapperBuilder<ResultS
                 new DefaultPropertyNameMatcherFactory(),
                 new ResultSetGetterFactory(),
                 false,
-                NO_ASM_MAPPER_THRESHOLD,
+                FieldMapperMapperBuilder.NO_ASM_MAPPER_THRESHOLD,
                 new JdbcMappingContextFactoryBuilder());
     }
 
@@ -75,30 +76,30 @@ public final class JdbcMapperBuilder<T> extends FieldMapperMapperBuilder<ResultS
                              PropertyNameMatcherFactory propertyNameMatcherFactory,
                              GetterFactory<ResultSet, JdbcColumnKey> getterFactory, boolean failOnAsm, int asmMapperNbFieldsLimit,
                              MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
-        super(
-                ResultSet.class,
-                classMeta,
-                getterFactory,
-                new FieldMapperFactory<ResultSet, JdbcColumnKey>(getterFactory),
-                columnDefinitions,
-                propertyNameMatcherFactory,
-                mapperBuilderErrorHandler,
-                parentBuilder,
-                failOnAsm, asmMapperNbFieldsLimit);
+        this.fieldMapperMapperBuilder =
+                new FieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey>(
+                        ResultSet.class,
+                        classMeta,
+                        getterFactory,
+                        new FieldMapperFactory<ResultSet, JdbcColumnKey>(getterFactory),
+                        columnDefinitions,
+                        propertyNameMatcherFactory,
+                        mapperBuilderErrorHandler,
+                        parentBuilder,
+                        failOnAsm, asmMapperNbFieldsLimit
+                );
     }
 
     /**
      * @return a new instance of the mapper based on the current state of the builder.
      */
-    @Override
     public JdbcMapper<T> mapper() {
-        Mapper<ResultSet, T> mapper = super.mapper();
+        Mapper<ResultSet, T> mapper = fieldMapperMapperBuilder.mapper();
 
-        if (!mappingContextFactoryBuilder.isRoot()
-                || mappingContextFactoryBuilder.hasNoDependentKeys()) {
-            return new JdbcMapperImpl<T>(mapper, jdbcMapperErrorHandler);
-        } else {
+        if (fieldMapperMapperBuilder.hasJoin()) {
             return new JoinJdbcMapper<T>(mapper, jdbcMapperErrorHandler);
+        } else {
+            return new JdbcMapperImpl<T>(mapper, jdbcMapperErrorHandler);
         }
     }
 
@@ -164,7 +165,7 @@ public final class JdbcMapperBuilder<T> extends FieldMapperMapperBuilder<ResultS
      * @return the current builder
      */
     public JdbcMapperBuilder<T> addMapper(FieldMapper<ResultSet, T> mapper) {
-        _addMapper(mapper);
+        fieldMapperMapperBuilder.addMapper(mapper);
         return this;
     }
 
@@ -191,7 +192,7 @@ public final class JdbcMapperBuilder<T> extends FieldMapperMapperBuilder<ResultS
      * @return the current builder
      */
     public JdbcMapperBuilder<T> addMapping(final String column, final int index, final int sqlType, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
-        _addMapping(new JdbcColumnKey(column, index, sqlType), columnDefinition);
+        fieldMapperMapperBuilder.addMapping(new JdbcColumnKey(column, index, sqlType), columnDefinition);
         return this;
     }
 
@@ -217,7 +218,7 @@ public final class JdbcMapperBuilder<T> extends FieldMapperMapperBuilder<ResultS
      * @return the current builder
      */
     public JdbcMapperBuilder<T> fieldMapperErrorHandler(FieldMapperErrorHandler<JdbcColumnKey> errorHandler) {
-        setFieldMapperErrorHandler(errorHandler);
+        fieldMapperMapperBuilder.setFieldMapperErrorHandler(errorHandler);
         return this;
     }
 

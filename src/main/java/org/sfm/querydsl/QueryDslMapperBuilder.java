@@ -31,7 +31,6 @@ public final class QueryDslMapperBuilder<T> {
 						Tuple.class,
 						classMeta,
 						new TupleGetterFactory(),
-                		new FieldMapperFactory<Tuple, TupleElementKey>(new TupleGetterFactory()),
                 		new IdentityFieldMapperColumnDefinitionProvider<TupleElementKey, Tuple>(),
              		    new DefaultPropertyNameMatcherFactory(),
 						new RethrowMapperBuilderErrorHandler(),

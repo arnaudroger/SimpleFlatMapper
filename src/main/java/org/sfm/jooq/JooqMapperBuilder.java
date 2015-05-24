@@ -31,8 +31,6 @@ public class JooqMapperBuilder<E>  {
 					Record.class,
 					classMeta,
 					new RecordGetterFactory<Record>(),
-					new FieldMapperFactory<Record, JooqFieldKey>(
-							new RecordGetterFactory<Record>()),
 					new IdentityFieldMapperColumnDefinitionProvider<JooqFieldKey, Record>(),
 					new DefaultPropertyNameMatcherFactory(),
 					new RethrowMapperBuilderErrorHandler(),

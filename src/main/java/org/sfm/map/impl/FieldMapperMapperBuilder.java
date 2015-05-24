@@ -45,7 +45,6 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
             final Class<S> source,
             final ClassMeta<T> classMeta,
             GetterFactory<S, K> getterFactory,
-            FieldMapperFactory<S, K> fieldMapperFactory,
             ColumnDefinitionProvider<FieldMapperColumnDefinition<K, S>, K> columnDefinitions,
             PropertyNameMatcherFactory propertyNameMatcherFactory,
             MapperBuilderErrorHandler mapperBuilderErrorHandler,
@@ -57,7 +56,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
 		this.source = requireNonNull("source", source);
 		this.getterFactory = requireNonNull("getterFactory", getterFactory);
-		this.fieldMapperFactory = requireNonNull("fieldMapperFactory", fieldMapperFactory);
+		this.fieldMapperFactory = new FieldMapperFactory<S, K>(getterFactory);
 		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K, S>>(classMeta, propertyNameMatcherFactory, mapperBuilderErrorHandler);
 		this.propertyNameMatcherFactory = requireNonNull("propertyNameMatcherFactory", propertyNameMatcherFactory);
 		this.target = requireNonNull("classMeta", classMeta).getType();
@@ -342,7 +341,6 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
                 source,
                 classMeta,
                 getterFactory,
-                fieldMapperFactory,
                 columnDefinitions,
                 propertyNameMatcherFactory,
                 mapperBuilderErrorHandler,

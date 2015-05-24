@@ -81,7 +81,6 @@ public final class JdbcMapperBuilder<T> {
                         ResultSet.class,
                         classMeta,
                         getterFactory,
-                        new FieldMapperFactory<ResultSet, JdbcColumnKey>(getterFactory),
                         columnDefinitions,
                         propertyNameMatcherFactory,
                         mapperBuilderErrorHandler,

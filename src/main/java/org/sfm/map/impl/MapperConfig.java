@@ -6,6 +6,8 @@ import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import static org.sfm.utils.Asserts.requireNonNull;
 
 public final class MapperConfig<S, K extends FieldKey<K>> {
+    public static final int NO_ASM_MAPPER_THRESHOLD = 792; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
+
 
     public static <S, K extends FieldKey<K>> MapperConfig<S, K> config() {
         return new MapperConfig<S, K>(
@@ -13,7 +15,7 @@ public final class MapperConfig<S, K extends FieldKey<K>> {
                 new DefaultPropertyNameMatcherFactory(),
                 new RethrowMapperBuilderErrorHandler(),
                 false,
-                FieldMapperMapperBuilder.NO_ASM_MAPPER_THRESHOLD);
+                NO_ASM_MAPPER_THRESHOLD);
     }
 
     private final ColumnDefinitionProvider<FieldMapperColumnDefinition<K, S>, K> columnDefinitions;

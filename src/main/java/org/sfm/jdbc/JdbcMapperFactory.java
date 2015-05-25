@@ -67,7 +67,7 @@ public final class JdbcMapperFactory {
 
     private boolean disableAsm = false;
     private boolean failOnAsm = false;
-    private int asmMapperNbFieldsLimit = FieldMapperMapperBuilder.NO_ASM_MAPPER_THRESHOLD;
+    private int asmMapperNbFieldsLimit = MapperConfig.NO_ASM_MAPPER_THRESHOLD;
 
     private ReflectionService reflectionService = null;
 
@@ -199,14 +199,27 @@ public final class JdbcMapperFactory {
 		ClassMeta<T> classMeta = getClassMeta(target);
 
 		JdbcMapperBuilder<T> builder =
-                new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler, columnDefinitions,
-                        propertyNameMatcherFactory, getterFactory, failOnAsm, asmMapperNbFieldsLimit,
+                new JdbcMapperBuilder<T>(
+						classMeta,
+						mapperConfig(),
+						getterFactory,
                         new JdbcMappingContextFactoryBuilder());
 		
 		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 		builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
 		return builder;
 	}
+
+	private MapperConfig<ResultSet, JdbcColumnKey> mapperConfig() {
+		return MapperConfig
+				.<ResultSet, JdbcColumnKey>config()
+				.columnDefinitions(columnDefinitions)
+				.mapperBuilderErrorHandler(mapperBuilderErrorHandler)
+				.propertyNameMatcherFactory(propertyNameMatcherFactory)
+				.failOnAsm(failOnAsm)
+				.asmMapperNbFieldsLimit(asmMapperNbFieldsLimit);
+	}
+
 
 	/**
 	 * Will create a DynamicMapper on the specified target class.

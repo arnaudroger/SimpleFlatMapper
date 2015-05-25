@@ -18,7 +18,6 @@ import static org.sfm.utils.Asserts.requireNonNull;
 
 public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
-    public static final int NO_ASM_MAPPER_THRESHOLD = 792; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
     private static final FieldKey[] FIELD_KEYS = new FieldKey[0];
 
 	private final Type target;

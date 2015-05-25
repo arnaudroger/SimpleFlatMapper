@@ -7,7 +7,6 @@ import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -55,40 +54,25 @@ public final class JdbcMapperBuilder<T> {
      */
     public JdbcMapperBuilder(final Type target, ReflectionService reflectService) {
         this(reflectService.<T>getClassMeta(target),
-                new RethrowMapperBuilderErrorHandler(),
-                new IdentityFieldMapperColumnDefinitionProvider<JdbcColumnKey, ResultSet>(),
-                new DefaultPropertyNameMatcherFactory(),
+                MapperConfig.<ResultSet, JdbcColumnKey>config(),
                 new ResultSetGetterFactory(),
-                false,
-                FieldMapperMapperBuilder.NO_ASM_MAPPER_THRESHOLD,
                 new JdbcMappingContextFactoryBuilder());
     }
 
     /**
      * @param classMeta                  the meta for the target class.
-     * @param mapperBuilderErrorHandler  the error handler.
-     * @param columnDefinitions          the predefined ColumnDefinition.
-     * @param propertyNameMatcherFactory the PropertyNameMatcher factory.
+     * @param mapperConfig               the mapperConfig.
      * @param getterFactory              the Getter factory.
-     * @param failOnAsm                  should we fail on asm generation.
      * @param parentBuilder              the parent builder, null if none.
      */
-    public JdbcMapperBuilder(final ClassMeta<T> classMeta, final MapperBuilderErrorHandler mapperBuilderErrorHandler,
-                             final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions,
-                             PropertyNameMatcherFactory propertyNameMatcherFactory,
-                             GetterFactory<ResultSet, JdbcColumnKey> getterFactory, boolean failOnAsm, int asmMapperNbFieldsLimit,
+    public JdbcMapperBuilder(final ClassMeta<T> classMeta, MapperConfig<ResultSet, JdbcColumnKey> mapperConfig,
+                             GetterFactory<ResultSet, JdbcColumnKey> getterFactory,
                              MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
         this.fieldMapperMapperBuilder =
                 new FieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey>(
                         FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
                         classMeta,
-                        MapperConfig
-                                .<ResultSet, JdbcColumnKey>config()
-                                .columnDefinitions(columnDefinitions)
-                                .propertyNameMatcherFactory(propertyNameMatcherFactory)
-                                .mapperBuilderErrorHandler(mapperBuilderErrorHandler)
-                                .failOnAsm(failOnAsm)
-                                .asmMapperNbFieldsLimit(asmMapperNbFieldsLimit),
+                        mapperConfig,
                         parentBuilder
                 );
     }

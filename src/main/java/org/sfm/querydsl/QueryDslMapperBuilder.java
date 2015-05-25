@@ -42,7 +42,7 @@ public final class QueryDslMapperBuilder<T> {
 				new FieldMapperMapperBuilder<Tuple, T, TupleElementKey>(
 						FIELD_MAPPER_SOURCE,
 						classMeta,
-						MapperConfig.config(),
+						MapperConfig.<Tuple, TupleElementKey>config(),
 						parentBuilder);
 	}
 

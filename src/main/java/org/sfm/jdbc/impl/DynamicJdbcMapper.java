@@ -6,6 +6,7 @@ import org.sfm.map.*;
 import org.sfm.map.impl.ColumnsMapperKey;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.MapperCache;
+import org.sfm.map.impl.MapperConfig;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.ErrorHelper;
@@ -102,8 +103,11 @@ public final class DynamicJdbcMapper<T> extends AbstractDynamicJdbcMapper<T> {
 		
 		if (mapper == null) {
 			final JdbcMapperBuilder<T> builder =
-                    new JdbcMapperBuilder<T>(classMeta, mapperBuilderErrorHandler,columnDefinitions, propertyNameMatcherFactory,
-                            new ResultSetGetterFactory(), failOnAsm, asmMapperNbFieldsLimit, new JdbcMappingContextFactoryBuilder());
+                    new JdbcMapperBuilder<T>(
+							classMeta,
+							mapperConfig(),
+                            new ResultSetGetterFactory(),
+							new JdbcMappingContextFactoryBuilder());
 
 			builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
 			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
@@ -114,7 +118,17 @@ public final class DynamicJdbcMapper<T> extends AbstractDynamicJdbcMapper<T> {
 		}
 		return mapper;
 	}
-	
+
+	private MapperConfig<ResultSet, JdbcColumnKey> mapperConfig() {
+		return MapperConfig
+                .<ResultSet, JdbcColumnKey>config()
+                .columnDefinitions(columnDefinitions)
+                .mapperBuilderErrorHandler(mapperBuilderErrorHandler)
+                .propertyNameMatcherFactory(propertyNameMatcherFactory)
+                .failOnAsm(failOnAsm)
+                .asmMapperNbFieldsLimit(asmMapperNbFieldsLimit);
+	}
+
 	private static ColumnsMapperKey mapperKey(final ResultSetMetaData metaData) throws SQLException {
 		final String[] columns = new String[metaData.getColumnCount()];
 		

@@ -24,6 +24,19 @@ import static org.junit.Assert.*;
 
 public class JdbcMapperBuilderTest {
 
+	@Test
+	public void testInstantiateBuilderOnType() throws SQLException {
+		JdbcMapperBuilder<DbObject> builder = new JdbcMapperBuilder<DbObject>(DbObject.class);
+		builder.addMapping("id").addMapping("name");
+
+		final JdbcMapper<DbObject> mapper = builder.mapper();
+		List<DbObject> l = mapper.forEach(new MockDbObjectResultSet(1), new ListHandler<DbObject>()).getList();
+
+		assertEquals(1, l.size());
+		assertEquals(1, l.get(0).getId());
+		assertEquals("name1", l.get(0).getName());
+
+	}
 	
 	@Test
 	public void testWithWrongColumn() throws MappingException, SQLException {

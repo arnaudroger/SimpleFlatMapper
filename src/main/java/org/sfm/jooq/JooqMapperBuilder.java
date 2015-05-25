@@ -14,8 +14,8 @@ import java.lang.reflect.Type;
 
 public class JooqMapperBuilder<E>  {
 
-	public static final FieldMapperSource<Record, JooqFieldKey> FIELD_MAPPER_SOURCE =
-			new FieldMapperSource<Record, JooqFieldKey>() {
+	public static final MapperSource<Record, JooqFieldKey> FIELD_MAPPER_SOURCE =
+			new MapperSource<Record, JooqFieldKey>() {
 				@Override
 				public Class<Record> source() {
 					return Record.class;
@@ -43,12 +43,8 @@ public class JooqMapperBuilder<E>  {
 				new FieldMapperMapperBuilder<Record, E, JooqFieldKey>(
 					FIELD_MAPPER_SOURCE,
 					classMeta,
-					new IdentityFieldMapperColumnDefinitionProvider<JooqFieldKey, Record>(),
-					new DefaultPropertyNameMatcherFactory(),
-					new RethrowMapperBuilderErrorHandler(),
-					mappingContextFactoryBuilder,
-					false,
-					FieldMapperMapperBuilder.NO_ASM_MAPPER_THRESHOLD);
+					MapperConfig.config(),
+					mappingContextFactoryBuilder);
 	}
 
     public JooqMapperBuilder<E> addField(JooqFieldKey key) {

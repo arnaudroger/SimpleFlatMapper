@@ -13,8 +13,8 @@ import org.sfm.reflect.meta.ClassMeta;
 import java.lang.reflect.Type;
 
 public final class QueryDslMapperBuilder<T> {
-	public static final FieldMapperSource<Tuple, TupleElementKey> FIELD_MAPPER_SOURCE =
-			new FieldMapperSource<Tuple, TupleElementKey>() {
+	public static final MapperSource<Tuple, TupleElementKey> FIELD_MAPPER_SOURCE =
+			new MapperSource<Tuple, TupleElementKey>() {
 				@Override
 				public Class<Tuple> source() {
 					return Tuple.class;
@@ -42,12 +42,8 @@ public final class QueryDslMapperBuilder<T> {
 				new FieldMapperMapperBuilder<Tuple, T, TupleElementKey>(
 						FIELD_MAPPER_SOURCE,
 						classMeta,
-                		new IdentityFieldMapperColumnDefinitionProvider<TupleElementKey, Tuple>(),
-             		    new DefaultPropertyNameMatcherFactory(),
-						new RethrowMapperBuilderErrorHandler(),
-						parentBuilder,
-						false,
-						FieldMapperMapperBuilder.NO_ASM_MAPPER_THRESHOLD);
+						MapperConfig.config(),
+						parentBuilder);
 	}
 
     public <E> QueryDslMapperBuilder<T> addMapping(Expression<?> expression, int i) {

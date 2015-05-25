@@ -19,8 +19,8 @@ import java.sql.SQLException;
  */
 public final class JdbcMapperBuilder<T> {
 
-    public static final FieldMapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
-            new FieldMapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class, new ResultSetGetterFactory());
+    public static final MapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
+            new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class, new ResultSetGetterFactory());
 
     private int calculatedIndex = 1;
 
@@ -82,11 +82,14 @@ public final class JdbcMapperBuilder<T> {
                 new FieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey>(
                         FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
                         classMeta,
-                        columnDefinitions,
-                        propertyNameMatcherFactory,
-                        mapperBuilderErrorHandler,
-                        parentBuilder,
-                        failOnAsm, asmMapperNbFieldsLimit
+                        MapperConfig
+                                .<ResultSet, JdbcColumnKey>config()
+                                .columnDefinitions(columnDefinitions)
+                                .propertyNameMatcherFactory(propertyNameMatcherFactory)
+                                .mapperBuilderErrorHandler(mapperBuilderErrorHandler)
+                                .failOnAsm(failOnAsm)
+                                .asmMapperNbFieldsLimit(asmMapperNbFieldsLimit),
+                        parentBuilder
                 );
     }
 

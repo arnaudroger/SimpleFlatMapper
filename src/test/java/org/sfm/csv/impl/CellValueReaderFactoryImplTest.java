@@ -10,8 +10,6 @@ import org.junit.Test;
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.csv.ParsingContextFactoryBuilder;
-import org.sfm.map.column.joda.JodaDateTimeFormatterProperty;
-import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,7 +18,9 @@ import java.util.Date;
 //IFJAVA8_START
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
 //IFJAVA8_END
+import org.sfm.map.column.joda.JodaDateTimeFormatterProperty;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

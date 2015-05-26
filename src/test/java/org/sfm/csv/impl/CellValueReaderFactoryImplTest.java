@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.csv.ParsingContextFactoryBuilder;
+import org.sfm.map.column.joda.JodaDateTimeFormatterProperty;
+import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -75,6 +77,15 @@ public class CellValueReaderFactoryImplTest {
         assertEquals(localDateTime, reader.read(date.toCharArray(), 0, date.length(), null));
     }
     @Test
+    public void testJodaLocalDateTimeWithDateTimeFormatter() {
+        String date = "20150128";
+        final org.joda.time.format.DateTimeFormatter yyyyMMdd = DateTimeFormat.forPattern("yyyyMMdd");
+        LocalDateTime localDateTime = yyyyMMdd.parseLocalDateTime(date);
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(LocalDateTime.class, 0, CsvColumnDefinition.IDENTITY.add(new JodaDateTimeFormatterProperty(yyyyMMdd)), null);
+        assertEquals(localDateTime, reader.read(date.toCharArray(), 0, date.length(), null));
+    }
+
+    @Test
     public void testJodaLocalTime() {
         String date = "20150128";
         LocalTime localTime = DateTimeFormat.forPattern("yyyyMMdd").parseLocalTime(date);
@@ -111,6 +122,17 @@ public class CellValueReaderFactoryImplTest {
         CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.LocalDateTime.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd HH:mm:ss"), null);
         assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
     }
+
+
+    @Test
+    public void testJavaLocalDateTimeWithDateTimeFormatter() throws Exception {
+        String date = "20150128 12:03:56";
+        final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
+        java.time.LocalDateTime localTime = java.time.LocalDateTime.parse(date, yyyyMMdd);
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.LocalDateTime.class, 0, CsvColumnDefinition.IDENTITY.add(new JavaDateTimeFormatterProperty(yyyyMMdd)), null);
+        assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
+    }
+
 
     @Test
     public void testJavaZonedDateTime() throws Exception {

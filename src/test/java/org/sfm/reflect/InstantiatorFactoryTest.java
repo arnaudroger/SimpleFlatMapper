@@ -30,6 +30,18 @@ public class InstantiatorFactoryTest {
 		}
 	}
 
+	public static class MyClassWithEmptyFactoryMethod {
+
+		private MyClassWithEmptyFactoryMethod(){
+		}
+
+
+		public static MyClassWithEmptyFactoryMethod valueOf() {
+			return new MyClassWithEmptyFactoryMethod();
+		}
+	}
+
+
 
 	public static class MyClassWithFactoryMethodAndConstructor {
 
@@ -83,6 +95,14 @@ public class InstantiatorFactoryTest {
 		assertNotNull(object);
 	}
 
+	@Test
+	public void testInstantiateWithEmptyFactoryMethodNoAsm() throws Exception {
+		final Instantiator<ResultSet, MyClassWithEmptyFactoryMethod> instantiator = DISABLE_ASM.getInstantiatorFactory().getInstantiator(MyClassWithEmptyFactoryMethod.class, ResultSet.class, DISABLE_ASM.extractConstructors(MyClassWithEmptyFactoryMethod.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+
+		assertFalse(instantiator.getClass().getSimpleName().startsWith("Asm"));
+		final MyClassWithEmptyFactoryMethod object = instantiator.newInstance(null);
+		assertNotNull(object);
+	}
 	@Test
 	public void testInstantiateCheckTakeConstructorFirst() throws Exception {
 

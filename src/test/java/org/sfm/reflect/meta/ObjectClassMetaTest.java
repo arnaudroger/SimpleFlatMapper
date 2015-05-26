@@ -56,4 +56,6 @@ public class ObjectClassMetaTest {
                 names,
                 ReflectionService.newInstance().getClassMeta(MyClass.class).generateHeaders());
     }
+
+
 }

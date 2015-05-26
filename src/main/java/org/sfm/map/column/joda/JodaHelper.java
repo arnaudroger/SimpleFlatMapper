@@ -20,15 +20,26 @@ public class JodaHelper {
             throw new IllegalArgumentException("No date format pattern specified");
         }
 
-        if (columnDefinition.has(JodaDateTimeZoneProperty.class)) {
-            dtf = dtf.withZone(columnDefinition.lookFor(JodaDateTimeZoneProperty.class).getZone());
-        } else if (columnDefinition.has(TimeZoneProperty.class)) {
-            dtf = dtf.withZone(DateTimeZone.forTimeZone(columnDefinition.lookFor(TimeZoneProperty.class).getTimeZone()));
-        } else {
+
+        final DateTimeZone dateTimeZone = getDateTimeZone(columnDefinition);
+
+        if (dateTimeZone != null) {
+            dtf = dtf.withZone(dateTimeZone);
+        } else if (dtf.getZone() == null) {
             dtf = dtf.withZone(DateTimeZone.getDefault());
         }
 
         return dtf;
+    }
+
+    public static DateTimeZone getDateTimeZone(ColumnDefinition<?, ?> columnDefinition) {
+        if (columnDefinition.has(JodaDateTimeZoneProperty.class)) {
+            return columnDefinition.lookFor(JodaDateTimeZoneProperty.class).getZone();
+        } else if (columnDefinition.has(TimeZoneProperty.class)) {
+            return DateTimeZone.forTimeZone(columnDefinition.lookFor(TimeZoneProperty.class).getTimeZone());
+        }
+
+        return null;
     }
 
 }

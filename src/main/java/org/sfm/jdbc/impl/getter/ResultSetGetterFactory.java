@@ -314,42 +314,42 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaLocalDateResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
+				return (Getter<ResultSet, P>) new JavaLocalDateResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
 			}
 		});
 		factoryPerType.put(LocalDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaLocalDateTimeResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
+				return (Getter<ResultSet, P>) new JavaLocalDateTimeResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
 			}
 		});
 		factoryPerType.put(LocalTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaLocalTimeResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
+				return (Getter<ResultSet, P>) new JavaLocalTimeResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
 			}
 		});
 		factoryPerType.put(OffsetDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaOffsetDateTimeResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
+				return (Getter<ResultSet, P>) new JavaOffsetDateTimeResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
 			}
 		});
 		factoryPerType.put(OffsetTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaOffsetTimeResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
+				return (Getter<ResultSet, P>) new JavaOffsetTimeResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
 			}
 		});
 		factoryPerType.put(ZonedDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaZonedDateTimeResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
+				return (Getter<ResultSet, P>) new JavaZonedDateTimeResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
 			}
 		});
 		factoryPerType.put(Instant.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
@@ -363,14 +363,14 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaYearResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
+				return (Getter<ResultSet, P>) new JavaYearResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
 			}
 		});
 		factoryPerType.put(YearMonth.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaYearMonthResultSetGetter(key, JavaTimeHelper.getZoneId(columnDefinition));
+				return (Getter<ResultSet, P>) new JavaYearMonthResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
 			}
 		});
 		//IFJAVA8_END

@@ -6,9 +6,15 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.sfm.reflect.Getter;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class PoiStringGetter implements Getter<Row, String> {
 
     private final int index;
+
+    private final DataFormatter dataFormater = new DataFormatter();
+    private Lock lock = new ReentrantLock();
 
     public PoiStringGetter(int index) {
         this.index = index;
@@ -19,8 +25,9 @@ public class PoiStringGetter implements Getter<Row, String> {
         final Cell cell = target.getCell(index);
         if (cell != null) {
             switch(cell.getCellType()) {
+                case Cell.CELL_TYPE_BOOLEAN:
                 case Cell.CELL_TYPE_NUMERIC:
-                    return formatedNumber(cell);
+                    return formatCell(cell);
                 default:
                 return cell.getStringCellValue();
             }
@@ -29,8 +36,17 @@ public class PoiStringGetter implements Getter<Row, String> {
         }
     }
 
-    private String formatedNumber(Cell cell) {
-        DataFormatter df = new DataFormatter();
-        return df.formatCellValue(cell);
+
+    /*
+     * hopefully lock will not be contented.
+     * really need to cache dataFormater or will be very costly.
+     */
+    private String formatCell(Cell cell) {
+        lock.lock();
+        try {
+            return dataFormater.formatCellValue(cell);
+        } finally {
+            lock.unlock();
+        }
     }
 }

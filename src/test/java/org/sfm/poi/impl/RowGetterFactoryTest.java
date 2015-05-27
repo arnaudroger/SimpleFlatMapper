@@ -1,6 +1,5 @@
 package org.sfm.poi.impl;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.junit.Test;
@@ -9,6 +8,7 @@ import org.sfm.csv.CsvColumnKey;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -30,8 +30,10 @@ public class RowGetterFactoryTest {
     DataFormat dataFormat = wb.createDataFormat();
 
     CellStyle twoDigitCellFormat = wb.createCellStyle();
+    CellStyle dateCellFormat = wb.createCellStyle();
     {
         twoDigitCellFormat.setDataFormat(dataFormat.getFormat("#.##"));
+        dateCellFormat.setDataFormat(dataFormat.getFormat("dd/MM/yyyy"));
     }
 
     @Test
@@ -47,6 +49,21 @@ public class RowGetterFactoryTest {
         cell.setCellValue(3.1456);
         cell.setCellStyle(twoDigitCellFormat);
         assertEquals("3.15", getter.get(row));
+    }
+
+    @Test
+    public void testGetStringOnDateCell() throws Exception {
+        final Getter<Row, String> getter = rowGetterFactory.newGetter(String.class, key, CsvColumnDefinition.IDENTITY);
+        cell.setCellValue(new SimpleDateFormat("yyyyMMdd").parse("20150527"));
+        cell.setCellStyle(dateCellFormat);
+        assertEquals("27/05/2015", getter.get(row));
+    }
+
+    @Test
+    public void testGetStringOnBooleanCell() throws Exception {
+        final Getter<Row, String> getter = rowGetterFactory.newGetter(String.class, key, CsvColumnDefinition.IDENTITY);
+        cell.setCellValue(true);
+        assertEquals("true", getter.get(row));
     }
 
     @Test

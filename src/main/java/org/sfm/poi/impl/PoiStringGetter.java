@@ -13,7 +13,7 @@ public class PoiStringGetter implements Getter<Row, String> {
 
     private final int index;
 
-    private final DataFormatter dataFormater = new DataFormatter();
+    private final DataFormatter dataFormatter = new DataFormatter();
     private Lock lock = new ReentrantLock();
 
     public PoiStringGetter(int index) {
@@ -44,7 +44,7 @@ public class PoiStringGetter implements Getter<Row, String> {
     private String formatCell(Cell cell) {
         lock.lock();
         try {
-            return dataFormater.formatCellValue(cell);
+            return dataFormatter.formatCellValue(cell);
         } finally {
             lock.unlock();
         }

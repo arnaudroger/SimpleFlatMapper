@@ -78,6 +78,14 @@ public class RowGetterFactory implements GetterFactory<Row, CsvColumnKey> {
             }
         });
 
+        getterFactories.put(Boolean.class, new GetterFactory<Row, CsvColumnKey>() {
+            @Override
+            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+                return (Getter<Row, P>) new PoiBooleanGetter(key.getIndex());
+            }
+        });
+
+
         getterFactories.put(byte.class, getterFactories.get(Byte.class));
         getterFactories.put(char.class, getterFactories.get(Character.class));
         getterFactories.put(short.class, getterFactories.get(Short.class));
@@ -85,6 +93,7 @@ public class RowGetterFactory implements GetterFactory<Row, CsvColumnKey> {
         getterFactories.put(long.class, getterFactories.get(Long.class));
         getterFactories.put(float.class, getterFactories.get(Float.class));
         getterFactories.put(double.class, getterFactories.get(Double.class));
+        getterFactories.put(boolean.class, getterFactories.get(Boolean.class));
     }
 
     @SuppressWarnings("unchecked")

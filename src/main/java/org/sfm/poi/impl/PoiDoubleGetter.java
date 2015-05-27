@@ -17,7 +17,7 @@ public class PoiDoubleGetter implements Getter<Row, Double>, DoubleGetter<Row> {
     @Override
     public Double get(Row target) throws Exception {
         final Cell cell = target.getCell(index);
-        if (cell != null) {
+        if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK) {
             return cell.getNumericCellValue();
         } else {
             return null;

@@ -44,7 +44,8 @@ import java.util.Map;
  * </code>
  *
  */
-public final class JdbcMapperFactory {
+public final class JdbcMapperFactory
+		extends AbstractMapperFactory<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcMapperFactory> {
 
 
     /**
@@ -55,105 +56,22 @@ public final class JdbcMapperFactory {
 		return new JdbcMapperFactory();
 	}
 
-	private FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler = null;
-
-    private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
-    private RowHandlerErrorHandler rowHandlerErrorHandler = new RethrowRowHandlerErrorHandler();
-    private FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey, ResultSet> columnDefinitions = new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey, ResultSet>();
-	private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
 
     private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = new ResultSetGetterFactory();
-	private boolean useAsm = true;
-
-    private boolean disableAsm = false;
-    private boolean failOnAsm = false;
-    private int asmMapperNbFieldsLimit = MapperConfig.NO_ASM_MAPPER_THRESHOLD;
-
-    private ReflectionService reflectionService = null;
 
 	private JdbcMapperFactory() {
-	}
-
-    /**
-     * the FieldMapperErrorHandler is called when a error occurred when mapping a field from the source to the target.
-     * By default it just throw the Exception.
-     * @param fieldMapperErrorHandler the new FieldMapperErrorHandler
-     * @return the current factory
-     */
-	public JdbcMapperFactory fieldMapperErrorHandler(final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler) {
-		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
-		return this;
-	}
-
-    /**
-     * Change the mapperBuilderErrorHandler to an IgnoreMapperBuilderErrorHandler.
-     * @return the current factory
-     */
-    public JdbcMapperFactory ignorePropertyNotFound() {
-        this.mapperBuilderErrorHandler = new IgnoreMapperBuilderErrorHandler();
-        return this;
-    }
-
-    /**
-	 * Set the new MapperBuilderErrorHandler. the MapperBuilderErrorHandler is called when an error occurred or a property is not found in the builder while creating the mapper.
-	 * @param mapperBuilderErrorHandler the MapperBuilderErrorHandler
-	 * @return the current factory
-	 */
-	public JdbcMapperFactory mapperBuilderErrorHandler(final MapperBuilderErrorHandler mapperBuilderErrorHandler) {
-		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-		return this;
-	}
-
-
-    /**
-     * the RowHandlerErrorHandler is called when an exception is thrown by the RowHandler in the forEach call.
-     * @param rowHandlerErrorHandler the new RowHandlerErrorHandler
-     * @return the current factory
-     */
-	public JdbcMapperFactory rowHandlerErrorHandler(final RowHandlerErrorHandler rowHandlerErrorHandler) {
-		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
-		return this;
+		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey, ResultSet>(), FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>identity());
 	}
 
 	/**
-	 * 
-	 * @param useAsm false if you want to disable asm generation of Mappers, Getter and Setter. This would be active by default if asm is present in a compatible version.
+	 * Override the default implementation of the GetterFactory used to get access to value from the ResultSet.
+	 * @param getterFactory the getterFactory
 	 * @return the current factory
 	 */
-	public JdbcMapperFactory useAsm(final boolean useAsm) {
-		this.useAsm = useAsm;
-		return this;
-	}
-	
-	/**
-	 * @param disableAsm true if you want to disable asm for generation and to resolve constructor parameter names.
-     * @return the current factory
-	 */
-	public JdbcMapperFactory disableAsm(final boolean disableAsm) {
-		this.disableAsm = disableAsm;
-		return this;
-	}
-
-    /**
-     * Override the default implementation of the GetterFactory used to get access to value from the ResultSet.
-     * @param getterFactory the getterFactory
-     * @return the current factory
-     */
 	public JdbcMapperFactory getterFactory(final GetterFactory<ResultSet, JdbcColumnKey> getterFactory) {
 		this.getterFactory = getterFactory;
 		return this;
 	}
-
-    /**
-     * Override the default implementation of the ReflectionService.
-     * @param reflectionService the overriding instance
-     * @return the current factory
-     */
-    public JdbcMapperFactory reflectionService(final ReflectionService reflectionService) {
-        this.reflectionService = reflectionService;
-        return this;
-    }
-
 
 	/**
 	 * Will create a instance of JdbcMapper based on the specified metadata and the target class.
@@ -205,21 +123,8 @@ public final class JdbcMapperFactory {
 						getterFactory,
                         new JdbcMappingContextFactoryBuilder());
 		
-		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
-		builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
 		return builder;
 	}
-
-	private MapperConfig<ResultSet, JdbcColumnKey> mapperConfig() {
-		return MapperConfig
-				.<ResultSet, JdbcColumnKey>config()
-				.columnDefinitions(columnDefinitions)
-				.mapperBuilderErrorHandler(mapperBuilderErrorHandler)
-				.propertyNameMatcherFactory(propertyNameMatcherFactory)
-				.failOnAsm(failOnAsm)
-				.asmMapperNbFieldsLimit(asmMapperNbFieldsLimit);
-	}
-
 
 	/**
 	 * Will create a DynamicMapper on the specified target class.
@@ -249,20 +154,9 @@ public final class JdbcMapperFactory {
      */
 	public <T> JdbcMapper<T> newMapper(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
-		return new DynamicJdbcMapper<T>(classMeta, fieldMapperErrorHandler, mapperBuilderErrorHandler,
-                rowHandlerErrorHandler, columnDefinitions, propertyNameMatcherFactory, failOnAsm, asmMapperNbFieldsLimit);
+		return new DynamicJdbcMapper<T>(classMeta, mapperConfig());
 	}
 
-
-	/**
-	 * Associate an alias on the column key to rename to value.
-	 * @param key the column to rename
-	 * @param value then name to rename to
-	 * @return the current factory
-	 */
-	public JdbcMapperFactory addAlias(String key, String value) {
-		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>renameDefinition(value));
-	}
 
 	/**
 	 * Associate the specified FieldMapper for the specified column.
@@ -284,81 +178,6 @@ public final class JdbcMapperFactory {
 		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customGetter(getter));
 	}
 
-    /**
-     * Associate the specified columnDefinition to the specified column.
-     * @param key the column
-     * @param columnDefinition the columnDefinition
-     * @return the current factory
-     */
-	public JdbcMapperFactory addColumnDefinition(String key, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
-		return addColumnDefinition(new CaseInsensitiveFieldKeyNamePredicate(key), columnDefinition);
-	}
-
-    /**
-     * Associate the specified columnDefinition to the column matching the predicate.
-     * @param predicate the column predicate
-     * @param columnDefinition the columnDefinition
-     * @return the current factory
-     */
-	public JdbcMapperFactory addColumnDefinition(Predicate<? super JdbcColumnKey> predicate, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
-		columnDefinitions.addColumnDefinition(predicate, columnDefinition);
-		return this;
-	}
-
-    /**
-     * Override the default PropertyNameMatcherFactory with the specified factory.
-     * @param propertyNameMatcherFactory the factory
-     * @return the current factory
-     */
-	public JdbcMapperFactory propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
-		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
-		return this;
-	}
-
-    /**
-     * Associate the aliases value to the column key.
-     * @param aliases the key value pair
-     * @return the current factory
-     */
-    public JdbcMapperFactory addAliases(Map<String, String> aliases) {
-		for(Map.Entry<String, String> e : aliases.entrySet()) {
-			addAlias(e.getKey(), e.getValue());
-		}
-		return this;
-	}
-
-    /**
-     * @param b true if we want the builder to fail on asm generation failure
-     * @return the current factory
-     */
-    public JdbcMapperFactory failOnAsm(boolean b) {
-        this.failOnAsm = b;
-        return this;
-    }
-
-    /**
-     * change the number of fields threshold after which an asm mapper is not generated.
-     * <p>
-     * the default value is calculated from the benchmark results, currently 240.
-     * @param asmMapperNbFieldsLimit the limit after which it does not use asm for the mapper.
-     * @return the factory
-     */
-    public JdbcMapperFactory asmMapperNbFieldsLimit(final int asmMapperNbFieldsLimit) {
-        this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
-        return this;
-    }
-
-    /**
-     * Mark the specified columns as keys.
-     * @param columns the columns
-     * @return  the current factory
-     */
-    public JdbcMapperFactory addKeys(String... columns) {
-        for(String col : columns) {
-            addColumnDefinition(col, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>key());
-        }
-        return this;
-    }
 
     /**
      * Create a discriminator builder based on the specified column
@@ -370,25 +189,5 @@ public final class JdbcMapperFactory {
         ignorePropertyNotFound();
         addColumnDefinition(column, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>ignoreDefinition());
         return new DiscriminatorJdbcBuilder<T>(column, this);
-    }
-
-    /**
-     * @return the current RowHandlerErrorHandler
-     */
-    public RowHandlerErrorHandler rowHandlerErrorHandler() {
-        return rowHandlerErrorHandler;
-    }
-
-
-    private <T> ClassMeta<T> getClassMeta(Type target) {
-        return getReflectionService().getClassMeta(target);
-    }
-
-    private ReflectionService getReflectionService() {
-        if (reflectionService != null) {
-            return reflectionService;
-        } else {
-            return ReflectionService.newInstance(disableAsm, useAsm);
-        }
     }
 }

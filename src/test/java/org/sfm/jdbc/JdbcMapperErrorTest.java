@@ -58,9 +58,12 @@ public class JdbcMapperErrorTest {
 	
 	@Test
 	public void setChangeFieldMapperErrorHandler() throws NoSuchMethodException, SecurityException, IOException {
-		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder =
+				JdbcMapperFactoryHelper
+						.asm()
+						.fieldMapperErrorHandler(new LogFieldMapperErrorHandler<JdbcColumnKey>())
+						.newBuilder(DbObject.class);
 		builder.addMapping("id");
-		builder.fieldMapperErrorHandler(new LogFieldMapperErrorHandler<JdbcColumnKey>());
 	}
 	
 	@Test

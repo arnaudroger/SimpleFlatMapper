@@ -25,35 +25,14 @@ public final class DynamicJdbcMapper<T> extends AbstractDynamicJdbcMapper<T> {
 
 	private final ClassMeta<T> classMeta;
 
-	private final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler;
-
-	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
-	private final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions;
-	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
-	private final RowHandlerErrorHandler rowHandlerErrorHandler;
-    private final boolean failOnAsm;
-    private final int asmMapperNbFieldsLimit;
-
     private final MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache = new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
 
-	public DynamicJdbcMapper(final ClassMeta<T> classMeta,
-							 final FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler,
-							 final MapperBuilderErrorHandler mapperBuilderErrorHandler,
-							 RowHandlerErrorHandler rowHandlerErrorHandler,
-							 final ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcColumnKey> columnDefinitions,
-							 PropertyNameMatcherFactory propertyNameMatcherFactory,
-                             boolean failOnAsm,
-                             int asmMapperNbFieldsLimit) {
-		this.classMeta = classMeta;
-		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
-		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-		this.columnDefinitions = columnDefinitions;
-		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
-		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
-        this.failOnAsm = failOnAsm;
-        this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
-	}
+	private final MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> mapperConfig;
 
+	public DynamicJdbcMapper(final ClassMeta<T> classMeta, MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> mapperConfig) {
+		this.classMeta = classMeta;
+		this.mapperConfig = mapperConfig;
+	}
 
 	@Override
 	public final <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handle)
@@ -105,28 +84,16 @@ public final class DynamicJdbcMapper<T> extends AbstractDynamicJdbcMapper<T> {
 			final JdbcMapperBuilder<T> builder =
                     new JdbcMapperBuilder<T>(
 							classMeta,
-							mapperConfig(),
+							mapperConfig,
                             new ResultSetGetterFactory(),
 							new JdbcMappingContextFactoryBuilder());
 
-			builder.jdbcMapperErrorHandler(rowHandlerErrorHandler);
-			builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
 			builder.addMapping(metaData);
 			
 			mapper = builder.mapper();
 			mapperCache.add(key, mapper);
 		}
 		return mapper;
-	}
-
-	private MapperConfig<ResultSet, JdbcColumnKey> mapperConfig() {
-		return MapperConfig
-                .<ResultSet, JdbcColumnKey>config()
-                .columnDefinitions(columnDefinitions)
-                .mapperBuilderErrorHandler(mapperBuilderErrorHandler)
-                .propertyNameMatcherFactory(propertyNameMatcherFactory)
-                .failOnAsm(failOnAsm)
-                .asmMapperNbFieldsLimit(asmMapperNbFieldsLimit);
 	}
 
 	private static ColumnsMapperKey mapperKey(final ResultSetMetaData metaData) throws SQLException {

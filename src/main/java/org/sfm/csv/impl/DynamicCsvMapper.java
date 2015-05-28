@@ -23,50 +23,32 @@ import static org.sfm.utils.Asserts.requireNonNull;
 public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	
 	private final ClassMeta<T> classMeta;
+
 	private final Type target;
 
-	private final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler;
-
-	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
-	private final RowHandlerErrorHandler rowHandlerErrorHandler;
-	
 	private final String defaultDateFormat;
-	private final PropertyNameMatcherFactory propertyNameMatcherFactory;
+
+	private final CellValueReaderFactory cellValueReaderFactory;
+
+	private final MapperConfig<CsvColumnKey, CsvColumnDefinition> mapperConfig;
 
 	private final MapperCache<ColumnsMapperKey, CsvMapperImpl<T>> mapperCache = new MapperCache<ColumnsMapperKey, CsvMapperImpl<T>>();
 
-
-	private final ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitions;
-	private final CellValueReaderFactory cellValueReaderFactory;
-
-    private final boolean failOnAsm;
-    private final int asmMapperNbFieldsLimit;
-	private final int maxMethodSize;
-
-	public DynamicCsvMapper(final Type target, final ClassMeta<T> classMeta,
-							final FieldMapperErrorHandler<CsvColumnKey> fieldMapperErrorHandler,
-							final MapperBuilderErrorHandler mapperBuilderErrorHandler, RowHandlerErrorHandler rowHandlerErrorHandler, String defaultDateFormat,
-							ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitions,
-							PropertyNameMatcherFactory propertyNameMatcherFactory, CellValueReaderFactory cellValueReaderFactory,
-                            boolean failOnAsm, int asmMapperNbFieldsLimit, int maxMethodSize
+	public DynamicCsvMapper(final Type target,
+							final ClassMeta<T> classMeta,
+							String defaultDateFormat,
+							CellValueReaderFactory cellValueReaderFactory,
+							MapperConfig<CsvColumnKey, CsvColumnDefinition> mapperConfig
     ) {
 		this.classMeta = requireNonNull("classMeta", classMeta);
 		this.target = requireNonNull("target", target);
-		this.fieldMapperErrorHandler = fieldMapperErrorHandler;
-		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
 		this.defaultDateFormat = defaultDateFormat;
-		this.columnDefinitions = columnDefinitions;
-		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
+		this.mapperConfig = mapperConfig;
 		this.cellValueReaderFactory = cellValueReaderFactory;
-        this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
-        this.failOnAsm = failOnAsm;
-		this.maxMethodSize = maxMethodSize;
 	}
 
 	public DynamicCsvMapper(Type target, ClassMeta<T> classMeta, ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> columnDefinitionProvider) {
-		this(target, classMeta, new RethrowFieldMapperErrorHandler<CsvColumnKey>(), new RethrowMapperBuilderErrorHandler(), new RethrowRowHandlerErrorHandler(), "yyyy-MM-dd HH:mm:ss",
-				columnDefinitionProvider, new DefaultPropertyNameMatcherFactory(), new CellValueReaderFactoryImpl(), false, CsvMapperBuilder.NO_ASM_CSV_HANDLER_THRESHOLD, CsvMapperBuilder.CSV_MAX_METHOD_SIZE);
+		this(target, classMeta,  "yyyy-MM-dd HH:mm:ss", new CellValueReaderFactoryImpl(), MapperConfig.<CsvColumnKey, CsvColumnDefinition>config(columnDefinitionProvider));
 	}
 
 	@Override
@@ -176,12 +158,8 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 
 	private CsvMapperImpl<T> buildMapper(ColumnsMapperKey key) {
-		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, mapperBuilderErrorHandler,
-                columnDefinitions, propertyNameMatcherFactory, cellValueReaderFactory, 0,
-				failOnAsm, asmMapperNbFieldsLimit, maxMethodSize);
-		builder.fieldMapperErrorHandler(fieldMapperErrorHandler);
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, 0,  cellValueReaderFactory, mapperConfig);
 		builder.setDefaultDateFormat(defaultDateFormat);
-		builder.rowHandlerErrorHandler(rowHandlerErrorHandler);
 		for(String col : key.getColumns()) {
 			builder.addMapping(col);
 		}

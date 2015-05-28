@@ -21,10 +21,11 @@ public final class JdbcMapperBuilder<T> {
     public static final MapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
             new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class, new ResultSetGetterFactory());
 
-    private int calculatedIndex = 1;
-
-    private RowHandlerErrorHandler jdbcMapperErrorHandler = new RethrowRowHandlerErrorHandler();
     private final FieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey> fieldMapperMapperBuilder;
+
+    private final MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> mapperConfig;
+
+    private int calculatedIndex = 1;
 
     /**
      * Build a new JdbcMapperBuilder targeting the type specified by the TypeReference. The TypeReference
@@ -54,7 +55,7 @@ public final class JdbcMapperBuilder<T> {
      */
     public JdbcMapperBuilder(final Type target, ReflectionService reflectService) {
         this(reflectService.<T>getClassMeta(target),
-                MapperConfig.<ResultSet, JdbcColumnKey>config(),
+                MapperConfig.<ResultSet, JdbcColumnKey>fieldMapperConfig(),
                 new ResultSetGetterFactory(),
                 new JdbcMappingContextFactoryBuilder());
     }
@@ -65,9 +66,11 @@ public final class JdbcMapperBuilder<T> {
      * @param getterFactory              the Getter factory.
      * @param parentBuilder              the parent builder, null if none.
      */
-    public JdbcMapperBuilder(final ClassMeta<T> classMeta, MapperConfig<ResultSet, JdbcColumnKey> mapperConfig,
-                             GetterFactory<ResultSet, JdbcColumnKey> getterFactory,
-                             MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
+    public JdbcMapperBuilder(
+             final ClassMeta<T> classMeta,
+             MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> mapperConfig,
+             GetterFactory<ResultSet, JdbcColumnKey> getterFactory,
+             MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
         this.fieldMapperMapperBuilder =
                 new FieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey>(
                         FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
@@ -75,6 +78,7 @@ public final class JdbcMapperBuilder<T> {
                         mapperConfig,
                         parentBuilder
                 );
+        this.mapperConfig = mapperConfig;
     }
 
     /**
@@ -84,9 +88,9 @@ public final class JdbcMapperBuilder<T> {
         Mapper<ResultSet, T> mapper = fieldMapperMapperBuilder.mapper();
 
         if (fieldMapperMapperBuilder.hasJoin()) {
-            return new JoinJdbcMapper<T>(mapper, jdbcMapperErrorHandler);
+            return new JoinJdbcMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler());
         } else {
-            return new JdbcMapperImpl<T>(mapper, jdbcMapperErrorHandler);
+            return new JdbcMapperImpl<T>(mapper, mapperConfig.rowHandlerErrorHandler());
         }
     }
 
@@ -197,26 +201,4 @@ public final class JdbcMapperBuilder<T> {
 
         return this;
     }
-
-    /**
-     * the FieldMapperErrorHandler is called when a error occurred when mapping a field from the source to the target.
-     * By default it just throw the Exception.
-     * @param errorHandler the new FieldMapperErrorHandler
-     * @return the current builder
-     */
-    public JdbcMapperBuilder<T> fieldMapperErrorHandler(FieldMapperErrorHandler<JdbcColumnKey> errorHandler) {
-        fieldMapperMapperBuilder.setFieldMapperErrorHandler(errorHandler);
-        return this;
-    }
-
-    /**
-     * the RowHandlerErrorHandler is called when an exception is thrown by the RowHandler in the forEach call.
-     * @param jdbcMapperErrorHandler the new RowHandlerErrorHandler
-     * @return the current builder
-     */
-    public JdbcMapperBuilder<T> jdbcMapperErrorHandler(RowHandlerErrorHandler jdbcMapperErrorHandler) {
-        this.jdbcMapperErrorHandler = jdbcMapperErrorHandler;
-        return this;
-    }
-
 }

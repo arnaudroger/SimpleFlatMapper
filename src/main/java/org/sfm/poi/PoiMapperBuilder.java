@@ -29,7 +29,7 @@ public class PoiMapperBuilder<T> {
                     return new RowGetterFactory();
                 }
             };
-    private static final MapperConfig<Row, CsvColumnKey> MAPPER_CONFIG = MapperConfig.<Row, CsvColumnKey>fieldMapperConfig();
+    private static final MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> MAPPER_CONFIG = MapperConfig.<Row, CsvColumnKey>fieldMapperConfig();
 
     private final FieldMapperMapperBuilder<Row, T, CsvColumnKey> builder;
     private int currentColumn = 0;

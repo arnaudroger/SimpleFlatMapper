@@ -30,15 +30,14 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 	private final List<FieldMapper<S, T>> additionalMappers = new ArrayList<FieldMapper<S, T>>();
 
     private final MapperSource<S, K> mapperSource;
-    private final MapperConfig<S, K> mapperConfig;
-    private FieldMapperErrorHandler<K> fieldMapperErrorHandler;
+    private final MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig;
     protected final MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder;
 
 
     public FieldMapperMapperBuilder(
             final MapperSource<S, K> mapperSource,
             final ClassMeta<T> classMeta,
-            final MapperConfig<S, K> mapperConfig,
+            final MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig,
             MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) throws MapperBuildingException {
         this.mapperSource = requireNonNull("fieldMapperSource", mapperSource);
         this.mapperConfig = requireNonNull("mapperConfig", mapperConfig);
@@ -50,8 +49,8 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 	}
 
     @SuppressWarnings("unchecked")
-    public final  FieldMapperMapperBuilder<S, T, K> addMapping(K key, final FieldMapperColumnDefinition<K, S> columnDefinition) {
-        final FieldMapperColumnDefinition<K, S> composedDefinition = FieldMapperColumnDefinition.compose(columnDefinition, mapperConfig.columnDefinitions().getColumnDefinition(key));
+    public final FieldMapperMapperBuilder<S, T, K> addMapping(K key, final FieldMapperColumnDefinition<K, S> columnDefinition) {
+        final FieldMapperColumnDefinition<K, S> composedDefinition = columnDefinition.compose(mapperConfig.columnDefinitions().getColumnDefinition(key));
         final K mappedColumnKey = composedDefinition.rename(key);
 
         if (columnDefinition.getCustomFieldMapper() != null) {
@@ -104,11 +103,6 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
             mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
         }
         return mapper;
-    }
-
-    public void setFieldMapperErrorHandler(
-            FieldMapperErrorHandler<K> errorHandler) {
-        this.fieldMapperErrorHandler = errorHandler;
     }
 
     public boolean hasJoin() {
@@ -295,10 +289,8 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 	}
 
     private <P> FieldMapper<S, T> wrapFieldMapperWithErrorHandler(final PropertyMapping<T, P, K, FieldMapperColumnDefinition<K, S>> t, final FieldMapper<S, T> fieldMapper) {
-        if (fieldMapperErrorHandler != null
-            && !(fieldMapperErrorHandler instanceof RethrowFieldMapperErrorHandler)
-            && fieldMapper != null) {
-            return new FieldErrorHandlerMapper<S, T, K>(t.getColumnKey(), fieldMapper, fieldMapperErrorHandler);
+        if (fieldMapper != null && mapperConfig.hasFieldMapperErrorHandler()) {
+            return new FieldErrorHandlerMapper<S, T, K>(t.getColumnKey(), fieldMapper, mapperConfig.fieldMapperErrorHandler());
         }
         return fieldMapper;
     }

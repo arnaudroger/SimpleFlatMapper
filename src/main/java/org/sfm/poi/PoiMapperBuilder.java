@@ -44,25 +44,7 @@ public class PoiMapperBuilder<T> {
                     ReflectionService.newInstance().<T>getClassMeta(target),
                 MAPPER_CONFIG,
                 new MappingContextFactoryBuilder<Row, CsvColumnKey>(
-                        new MappingContextFactoryBuilder.KeySourceGetter<CsvColumnKey, Row>() {
-                            @Override
-                            public Object getValue(CsvColumnKey key, Row source) throws SQLException {
-                                final Cell cell = source.getCell(key.getIndex());
-                                if (cell != null) {
-                                    switch (cell.getCellType()) {
-                                        case Cell.CELL_TYPE_BLANK:
-                                            return "";
-                                        case Cell.CELL_TYPE_BOOLEAN:
-                                            return cell.getBooleanCellValue();
-                                        case Cell.CELL_TYPE_NUMERIC:
-                                            return cell.getNumericCellValue();
-                                        default:
-                                            return cell.getStringCellValue();
-                                    }
-                                }
-                                return null;
-                            }
-                        })
+                        new CsvColumnKeyRowKeySourceGetter())
         );
     }
 
@@ -77,5 +59,25 @@ public class PoiMapperBuilder<T> {
 
     public PoiMapper<T> mapper() {
         return new PoiMapper<T>(builder.mapper());
+    }
+
+    public static class CsvColumnKeyRowKeySourceGetter implements MappingContextFactoryBuilder.KeySourceGetter<CsvColumnKey, Row> {
+        @Override
+        public Object getValue(CsvColumnKey key, Row source) throws SQLException {
+            final Cell cell = source.getCell(key.getIndex());
+            if (cell != null) {
+                switch (cell.getCellType()) {
+                    case Cell.CELL_TYPE_BLANK:
+                        return "";
+                    case Cell.CELL_TYPE_BOOLEAN:
+                        return cell.getBooleanCellValue();
+                    case Cell.CELL_TYPE_NUMERIC:
+                        return cell.getNumericCellValue();
+                    default:
+                        return cell.getStringCellValue();
+                }
+            }
+            return null;
+        }
     }
 }

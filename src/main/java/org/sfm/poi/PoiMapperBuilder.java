@@ -41,7 +41,7 @@ public class PoiMapperBuilder<T> {
         builder =
             new FieldMapperMapperBuilder<Row, T, CsvColumnKey>(
                 MAPPER_SOURCE,
-                ReflectionService.newInstance().getClassMeta(target),
+                    ReflectionService.newInstance().<T>getClassMeta(target),
                 MAPPER_CONFIG,
                 new MappingContextFactoryBuilder<Row, CsvColumnKey>(
                         new MappingContextFactoryBuilder.KeySourceGetter<CsvColumnKey, Row>() {

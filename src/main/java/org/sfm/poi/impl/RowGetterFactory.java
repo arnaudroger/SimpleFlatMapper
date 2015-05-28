@@ -106,6 +106,8 @@ public class RowGetterFactory implements GetterFactory<Row, CsvColumnKey> {
 
         if (rowGetterFactory != null) {
             return rowGetterFactory.newGetter(target, key, columnDefinition);
+        } else if (TypeHelper.isEnum(target)) {
+            return new PoiEnumGetter(key.getIndex(), TypeHelper.toClass(target));
         }
 
         return null;

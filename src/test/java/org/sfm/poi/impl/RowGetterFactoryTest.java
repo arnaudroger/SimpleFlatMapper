@@ -3,6 +3,7 @@ package org.sfm.poi.impl;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.junit.Test;
+import org.sfm.beans.DbObject;
 import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.reflect.Getter;
@@ -278,6 +279,43 @@ public class RowGetterFactoryTest {
     @Test
     public void testGetDateOnNullCell() throws Exception {
         final Getter<Row, Date> getter = rowGetterFactory.newGetter(Date.class, noCellKey, CsvColumnDefinition.IDENTITY);
+        assertNull(getter.get(row));
+    }
+
+    @Test
+    public void testGetEnumOnString() throws Exception {
+        final Getter<Row, DbObject.Type> getter = rowGetterFactory.newGetter(DbObject.Type.class, key, CsvColumnDefinition.IDENTITY);
+        cell.setCellValue("type1");
+        assertEquals(DbObject.Type.type1, getter.get(row));
+    }
+
+    @Test
+    public void testGetEnumOnNumber() throws Exception {
+        final Getter<Row, DbObject.Type> getter = rowGetterFactory.newGetter(DbObject.Type.class, key, CsvColumnDefinition.IDENTITY);
+        cell.setCellValue(1);
+        assertEquals(DbObject.Type.type2, getter.get(row));
+    }
+    @Test
+    public void testGetEnumOnBoolean() throws Exception {
+        final Getter<Row, DbObject.Type> getter = rowGetterFactory.newGetter(DbObject.Type.class, key, CsvColumnDefinition.IDENTITY);
+        cell.setCellValue(true);
+        try {
+            getter.get(row);
+            fail();
+        } catch(Exception e) {
+
+        }
+    }
+
+    @Test
+    public void testGetEnumOnBlank() throws Exception {
+        final Getter<Row, DbObject.Type> getter = rowGetterFactory.newGetter(DbObject.Type.class, blankCellKey, CsvColumnDefinition.IDENTITY);
+        assertNull(getter.get(row));
+    }
+
+    @Test
+    public void testGetEnumOnNull() throws Exception {
+        final Getter<Row, DbObject.Type> getter = rowGetterFactory.newGetter(DbObject.Type.class, noCellKey, CsvColumnDefinition.IDENTITY);
         assertNull(getter.get(row));
     }
 }

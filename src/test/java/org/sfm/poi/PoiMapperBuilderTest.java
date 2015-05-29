@@ -81,7 +81,7 @@ public class PoiMapperBuilderTest {
 
     @Test
     public void testMapDbObjectFromRow() {
-        PoiMapperBuilder<DbObject> builder = new PoiMapperBuilder<DbObject>(DbObject.class);
+        PoiMapperBuilder<DbObject> builder = PoiMapperFactory.newInstance().newBuilder(DbObject.class);
 
         builder
                 .addMapping("id")

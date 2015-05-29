@@ -6,45 +6,31 @@ import org.apache.poi.ss.usermodel.Row;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.MappingContextFactoryBuilder;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
-import org.sfm.map.impl.FieldMapperMapperBuilder;
-import org.sfm.map.impl.MapperConfig;
-import org.sfm.map.impl.MapperSource;
+import org.sfm.map.impl.*;
 import org.sfm.poi.impl.RowGetterFactory;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.meta.ClassMeta;
 
 import java.lang.reflect.Type;
 import java.sql.SQLException;
 
 public class PoiMapperBuilder<T> {
-    private static final MapperSource<Row, CsvColumnKey> MAPPER_SOURCE =
-            new MapperSource<Row, CsvColumnKey>() {
-                @Override
-                public Class<Row> source() {
-                    return Row.class;
-                }
 
-                @Override
-                public GetterFactory<Row, CsvColumnKey> getterFactory() {
-                    return new RowGetterFactory();
-                }
-            };
-    private static final MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> MAPPER_CONFIG = MapperConfig.<Row, CsvColumnKey>fieldMapperConfig();
+    public static final MapperSourceImpl<Row, CsvColumnKey> FIELD_MAPPER_SOURCE =
+            new MapperSourceImpl<Row, CsvColumnKey>(Row.class, new RowGetterFactory());
 
     private final FieldMapperMapperBuilder<Row, T, CsvColumnKey> builder;
     private int currentColumn = 0;
 
-    public PoiMapperBuilder(Class<T> target) {
-        this((Type) target);
-    }
-    public PoiMapperBuilder(Type target) {
+    public PoiMapperBuilder(ClassMeta<T> classMeta,
+                            MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> mapperConfig,
+                            GetterFactory<Row, CsvColumnKey> getterFactory) {
         builder =
             new FieldMapperMapperBuilder<Row, T, CsvColumnKey>(
-                MAPPER_SOURCE,
-                    ReflectionService.newInstance().<T>getClassMeta(target),
-                MAPPER_CONFIG,
-                new MappingContextFactoryBuilder<Row, CsvColumnKey>(
-                        new CsvColumnKeyRowKeySourceGetter())
+                FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
+                classMeta,
+                mapperConfig,
+                new MappingContextFactoryBuilder<Row, CsvColumnKey>(new CsvColumnKeyRowKeySourceGetter())
         );
     }
 

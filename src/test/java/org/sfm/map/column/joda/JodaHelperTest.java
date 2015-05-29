@@ -14,16 +14,16 @@ public class JodaHelperTest {
     private static final DateTimeZone CHICAGO_TZ = DateTimeZone.forID("America/Chicago");
     private static final DateTimeZone NY_TZ = DateTimeZone.forID("America/New_York");
 
+    @SuppressWarnings("EmptyCatchBlock")
     @Test
     public void testFormatterFailWhenEmpty() {
         try {
             JodaHelper.getDateTimeFormatter(CsvColumnDefinition.IDENTITY);
             fail();
-        } catch(IllegalArgumentException e) {
-
-        }
+        } catch(IllegalArgumentException e) {}
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     public void testFormatterFromString() {
         final DateTimeFormatter yyyyMMdd = JodaHelper.getDateTimeFormatter(CsvColumnDefinition.IDENTITY.addDateFormat("yyyyMMdd"));

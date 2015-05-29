@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.MappingContextFactoryBuilder;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.impl.*;
 import org.sfm.poi.impl.RowGetterFactory;
 import org.sfm.reflect.meta.ClassMeta;
@@ -18,6 +19,7 @@ public class PoiMapperBuilder<T> {
             new MapperSourceImpl<Row, CsvColumnKey>(Row.class, new RowGetterFactory());
 
     private final FieldMapperMapperBuilder<Row, T, CsvColumnKey> builder;
+    private final MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> mapperConfig;
     private int currentColumn = 0;
 
     public PoiMapperBuilder(ClassMeta<T> classMeta,
@@ -30,6 +32,7 @@ public class PoiMapperBuilder<T> {
                 mapperConfig,
                 new MappingContextFactoryBuilder<Row, CsvColumnKey>(new CsvColumnKeyRowKeySourceGetter())
         );
+        this.mapperConfig = mapperConfig;
     }
 
     public PoiMapperBuilder<T> addMapping(String columnName) {
@@ -42,7 +45,7 @@ public class PoiMapperBuilder<T> {
     }
 
     public PoiMapper<T> mapper() {
-        return new PoiMapper<T>(builder.mapper());
+        return new PoiMapper<T>(builder.mapper(), mapperConfig.rowHandlerErrorHandler());
     }
 
     public static class CsvColumnKeyRowKeySourceGetter implements MappingContextFactoryBuilder.KeySourceGetter<CsvColumnKey, Row> {

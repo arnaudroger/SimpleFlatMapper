@@ -6,8 +6,10 @@ import org.sfm.map.AbstractMapperFactory;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.FieldMapperColumnDefinitionProviderImpl;
+import org.sfm.map.impl.MapperConfig;
 import org.sfm.poi.impl.RowGetterFactory;
 import org.sfm.reflect.TypeReference;
+import org.sfm.reflect.meta.ClassMeta;
 
 import java.lang.reflect.Type;
 
@@ -37,7 +39,9 @@ public class PoiMapperFactory extends AbstractMapperFactory<CsvColumnKey, FieldM
     }
 
     public <T> PoiMapperBuilder<T> newBuilder(Type type) {
-        return  new PoiMapperBuilder<T>(getClassMeta(type), mapperConfig(), getterFactory);
+        MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> mapperConfig = mapperConfig();
+        ClassMeta<T> classMeta = getClassMeta(type);
+        return  new PoiMapperBuilder<T>(classMeta, mapperConfig, getterFactory);
     }
 
 

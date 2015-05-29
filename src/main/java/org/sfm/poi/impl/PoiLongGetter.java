@@ -4,7 +4,6 @@ package org.sfm.poi.impl;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.primitive.DoubleGetter;
 import org.sfm.reflect.primitive.LongGetter;
 
 public class PoiLongGetter implements Getter<Row, Long>, LongGetter<Row> {

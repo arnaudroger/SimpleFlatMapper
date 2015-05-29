@@ -8,10 +8,8 @@ import org.sfm.map.GetterFactory;
 import org.sfm.map.MappingContextFactoryBuilder;
 import org.sfm.map.impl.*;
 import org.sfm.poi.impl.RowGetterFactory;
-import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 
-import java.lang.reflect.Type;
 import java.sql.SQLException;
 
 public class PoiMapperBuilder<T> {

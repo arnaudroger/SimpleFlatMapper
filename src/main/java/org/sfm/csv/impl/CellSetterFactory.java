@@ -48,7 +48,7 @@ public final class CellSetterFactory {
 		if (reader instanceof DoubleCellValueReader)  {
 			return (DoubleCellValueReader) reader;
 		} else {
-			return new DoubleCellValueReaderUnbox((CellValueReader<Double>) reader);
+			return new BoxedDoubleCellValueReader((CellValueReader<Double>) reader);
 		}
 	}
 
@@ -57,7 +57,7 @@ public final class CellSetterFactory {
 		if (reader instanceof FloatCellValueReader)  {
 			return (FloatCellValueReader) reader;
 		} else {
-			return new FloatCellValueReaderUnbox((CellValueReader<Float>) reader);
+			return new BoxedFloatCellValueReader((CellValueReader<Float>) reader);
 		}
 	}
 
@@ -66,7 +66,7 @@ public final class CellSetterFactory {
 		if (reader instanceof LongCellValueReader)  {
 			return (LongCellValueReader) reader;
 		} else {
-			return new LongCellValueReaderUnbox((CellValueReader<Long>) reader);
+			return new BoxedLongCellValueReader((CellValueReader<Long>) reader);
 		}
 	}
 
@@ -75,7 +75,7 @@ public final class CellSetterFactory {
 		if (reader instanceof IntegerCellValueReader)  {
 			return (IntegerCellValueReader) reader;
 		} else {
-			return new IntegerCellValueReaderUnbox((CellValueReader<Integer>) reader);
+			return new BoxedIntegerCellValueReader((CellValueReader<Integer>) reader);
 		}
 	}
 
@@ -84,7 +84,7 @@ public final class CellSetterFactory {
 		if (reader instanceof ShortCellValueReader)  {
 			return (ShortCellValueReader) reader;
 		} else {
-			return new ShortCellValueReaderUnbox((CellValueReader<Short>) reader);
+			return new BoxedShortCellValueReader((CellValueReader<Short>) reader);
 		}
 	}
 
@@ -93,7 +93,7 @@ public final class CellSetterFactory {
 		if (reader instanceof CharCellValueReader)  {
 			return (CharCellValueReader) reader;
 		} else {
-			return new CharCellValueReaderUnbox((CellValueReader<Character>) reader);
+			return new BoxedCharCellValueReader((CellValueReader<Character>) reader);
 		}
 	}
 
@@ -102,7 +102,7 @@ public final class CellSetterFactory {
 		if (reader instanceof ByteCellValueReader)  {
 			return (ByteCellValueReader) reader;
 		} else {
-			return new ByteCellValueReaderUnbox((CellValueReader<Byte>) reader);
+			return new BoxedByteCellValueReader((CellValueReader<Byte>) reader);
 		}
 	}
 
@@ -111,7 +111,7 @@ public final class CellSetterFactory {
 		if (reader instanceof BooleanCellValueReader)  {
 			return (BooleanCellValueReader) reader;
 		} else {
-			return new BooleanCellValueReaderUnbox((CellValueReader<Boolean>) reader);
+			return new BoxedBooleanCellValueReader((CellValueReader<Boolean>) reader);
 		}
 	}
 

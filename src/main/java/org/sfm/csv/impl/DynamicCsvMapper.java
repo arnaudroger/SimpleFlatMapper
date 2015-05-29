@@ -5,7 +5,6 @@ import org.sfm.csv.parser.CellConsumer;
 import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;

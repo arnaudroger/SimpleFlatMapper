@@ -10,6 +10,7 @@ import org.sfm.reflect.primitive.*;
 
 import static org.junit.Assert.assertEquals;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class AsmGetterTest {
 
 	AsmFactory factory = new AsmFactory(Thread.currentThread().getContextClassLoader());

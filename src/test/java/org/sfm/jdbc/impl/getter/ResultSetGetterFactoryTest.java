@@ -44,6 +44,7 @@ public class ResultSetGetterFactoryTest {
 		resultSet = mock(ResultSet.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testInt() throws  Exception {
 		when(resultSet.getInt(1)).thenReturn(13);

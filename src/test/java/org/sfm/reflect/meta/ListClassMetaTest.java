@@ -2,14 +2,11 @@ package org.sfm.reflect.meta;
 
 
 import org.junit.Test;
-import org.sfm.beans.DbObject;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import static org.junit.Assert.*;
 

@@ -14,6 +14,7 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("unchecked")
 public class RowGetterFactoryTest {
 
     RowGetterFactory rowGetterFactory = new RowGetterFactory();

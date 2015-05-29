@@ -10,7 +10,6 @@ import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.LogFieldMapperErrorHandler;
 import org.sfm.map.impl.MapperImpl;
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.ObjectGetterFactory;
 import org.sfm.reflect.impl.FieldGetter;
 import org.sfm.reflect.primitive.LongGetter;
 import org.sfm.utils.ListHandler;

@@ -9,7 +9,6 @@ import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.LogFieldMapperErrorHandler;
 import org.sfm.map.impl.MapperImpl;
-import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
 

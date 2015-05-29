@@ -4,7 +4,6 @@ package org.sfm.poi.impl;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.primitive.ByteGetter;
 import org.sfm.reflect.primitive.CharacterGetter;
 
 public class PoiCharacterGetter implements Getter<Row, Character>, CharacterGetter<Row> {

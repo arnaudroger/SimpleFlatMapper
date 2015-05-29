@@ -1,10 +1,7 @@
 package org.sfm.reflect.meta;
 
-import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.TypeHelper;
-
-import java.util.List;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {

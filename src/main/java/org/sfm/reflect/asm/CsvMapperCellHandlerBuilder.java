@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
 
 import static org.objectweb.asm.Opcodes.*;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class CsvMapperCellHandlerBuilder {
 
     public static final String DELAYED_CELL_SETTER_TYPE = AsmUtils.toType(DelayedCellSetter.class);

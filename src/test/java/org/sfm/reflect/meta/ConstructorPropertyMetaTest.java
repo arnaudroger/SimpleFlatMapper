@@ -2,7 +2,6 @@ package org.sfm.reflect.meta;
 
 
 import org.junit.Test;
-import org.sfm.beans.DbFinalObject;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.impl.NullSetter;
 

@@ -1,6 +1,5 @@
 package org.sfm.reflect;
 
-import com.mysema.query.sql.types.Null;
 import org.sfm.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.asm.AsmHelper;
@@ -76,6 +75,7 @@ public class ReflectionService {
 		return meta;
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T> ClassMeta<T> newClassMeta(Type target) {
 		Class<T> clazz = TypeHelper.toClass(target);
 

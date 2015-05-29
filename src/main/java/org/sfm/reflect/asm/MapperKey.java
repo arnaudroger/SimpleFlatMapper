@@ -1,6 +1,5 @@
 package org.sfm.reflect.asm;
 
-import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.FieldKey;
 import org.sfm.map.FieldMapper;
 import org.sfm.reflect.Instantiator;

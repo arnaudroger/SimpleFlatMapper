@@ -3,10 +3,10 @@ package org.sfm.csv.impl.cellreader;
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.impl.ParsingContext;
 
-public class BooleanCellValueReaderUnbox implements BooleanCellValueReader {
+public class BoxedBooleanCellValueReader implements BooleanCellValueReader {
     private final CellValueReader<Boolean> reader;
 
-    public BooleanCellValueReaderUnbox(CellValueReader<Boolean> customReader) {
+    public BoxedBooleanCellValueReader(CellValueReader<Boolean> customReader) {
         this.reader = customReader;
     }
 
@@ -22,7 +22,7 @@ public class BooleanCellValueReaderUnbox implements BooleanCellValueReader {
 
     @Override
     public String toString() {
-        return "BooleanCellValueReaderUnbox{" +
+        return "BoxedBooleanCellValueReader{" +
                 "reader=" + reader +
                 '}';
     }

@@ -2,7 +2,6 @@ package org.sfm.reflect.asm;
 
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.impl.*;
-import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.*;
 import org.sfm.map.impl.RethrowFieldMapperErrorHandler;

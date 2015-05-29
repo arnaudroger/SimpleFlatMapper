@@ -5,17 +5,13 @@ import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.PropertyNameMatcherFactory;
-import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Map;
 
 /**
  * JdbcMapperFactory allows you to customise the mappers and create an instance of it using a fluent syntax.

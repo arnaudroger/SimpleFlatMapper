@@ -5,7 +5,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.BooleanGetter;
-import org.sfm.reflect.primitive.DoubleGetter;
 
 public class PoiBooleanGetter implements Getter<Row, Boolean>, BooleanGetter<Row> {
 

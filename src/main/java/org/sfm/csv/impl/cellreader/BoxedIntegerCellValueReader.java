@@ -4,10 +4,10 @@ import org.sfm.csv.CellValueReader;
 import org.sfm.csv.impl.ParsingContext;
 
 
-public class IntegerCellValueReaderUnbox implements IntegerCellValueReader {
+public class BoxedIntegerCellValueReader implements IntegerCellValueReader {
     private final CellValueReader<Integer> reader;
 
-    public IntegerCellValueReaderUnbox(CellValueReader<Integer> customReader) {
+    public BoxedIntegerCellValueReader(CellValueReader<Integer> customReader) {
         this.reader = customReader;
     }
 
@@ -23,7 +23,7 @@ public class IntegerCellValueReaderUnbox implements IntegerCellValueReader {
 
     @Override
     public String toString() {
-        return "IntegerCellValueReaderUnbox{" +
+        return "BoxedIntegerCellValueReader{" +
                 "reader=" + reader +
                 '}';
     }

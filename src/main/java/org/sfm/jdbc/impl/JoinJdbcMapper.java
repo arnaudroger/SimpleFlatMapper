@@ -1,6 +1,5 @@
 package org.sfm.jdbc.impl;
 
-import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.*;
 import org.sfm.utils.ForEachIterator;
 import org.sfm.utils.RowHandler;

@@ -8,7 +8,6 @@ import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.MapperCache;
 import org.sfm.map.impl.MapperConfig;
 import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
 

@@ -4,7 +4,6 @@ package org.sfm.poi.impl;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.primitive.DoubleGetter;
 import org.sfm.reflect.primitive.FloatGetter;
 
 public class PoiFloatGetter implements Getter<Row, Float>, FloatGetter<Row> {

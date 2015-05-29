@@ -5,12 +5,9 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingContextFactory;
-import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.AbstractMapper;
 import org.sfm.reflect.Instantiator;
-
-import java.sql.ResultSet;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -19,7 +16,6 @@ public class MapperAsmBuilder {
 	private static final String ABSTRACT_JDBC_MAPPER_IMPL_TYPE = AsmUtils.toType(AbstractMapper.class);
 	private static final String FIELD_MAPPER_TYPE = AsmUtils.toType(FieldMapper.class);
 	private static final String INSTANTIATOR_TYPE = AsmUtils.toType(Instantiator.class);
-	private static final String ROW_HANDLER_ERROR_HANDLER_TYPE = AsmUtils.toType(RowHandlerErrorHandler.class);
 
     private static final String mappingContextType = AsmUtils.toType(MappingContext.class);
 

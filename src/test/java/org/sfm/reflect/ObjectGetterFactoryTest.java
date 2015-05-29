@@ -9,6 +9,7 @@ import org.sfm.reflect.primitive.*;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("unchecked")
 public class ObjectGetterFactoryTest {
 
     private ObjectGetterFactory asm = new ObjectGetterFactory(new AsmFactory(getClass().getClassLoader()));

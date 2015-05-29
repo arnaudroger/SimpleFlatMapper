@@ -4,26 +4,27 @@ import org.sfm.csv.CellValueReader;
 import org.sfm.csv.impl.ParsingContext;
 
 
-public class ByteCellValueReaderUnbox implements ByteCellValueReader {
-    private final CellValueReader<Byte> reader;
+public class BoxedShortCellValueReader implements ShortCellValueReader {
+    private final CellValueReader<Short> reader;
 
-    public ByteCellValueReaderUnbox(CellValueReader<Byte> customReader) {
+    public BoxedShortCellValueReader(CellValueReader<Short> customReader) {
         this.reader = customReader;
     }
 
+
     @Override
-    public byte readByte(char[] chars, int offset, int length, ParsingContext parsingContext) {
+    public short readShort(char[] chars, int offset, int length, ParsingContext parsingContext) {
         return read(chars, offset, length, parsingContext);
     }
 
     @Override
-    public Byte read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+    public Short read(char[] chars, int offset, int length, ParsingContext parsingContext) {
         return reader.read(chars, offset, length, parsingContext);
     }
 
     @Override
     public String toString() {
-        return "ByteCellValueReaderUnbox{" +
+        return "BoxedShortCellValueReader{" +
                 "reader=" + reader +
                 '}';
     }

@@ -3,7 +3,6 @@ package org.sfm.map.column.time;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.TimeZoneProperty;
-import org.sfm.map.column.joda.JodaDateTimeFormatterProperty;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;

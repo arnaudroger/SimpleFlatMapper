@@ -1,7 +1,5 @@
 package org.sfm.map.impl;
 
-import org.sfm.csv.CsvColumnDefinition;
-import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.*;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 

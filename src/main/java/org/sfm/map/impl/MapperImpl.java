@@ -2,7 +2,6 @@ package org.sfm.map.impl;
 
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MappingContext;
-import org.sfm.map.MappingContextFactory;
 import org.sfm.reflect.Instantiator;
 
 import java.util.Arrays;

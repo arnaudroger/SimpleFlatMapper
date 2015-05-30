@@ -1,6 +1,5 @@
 package org.sfm.map.impl;
 
-import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.getter.MapperGetterAdapter;
 import org.sfm.map.*;
 import org.sfm.map.impl.fieldmapper.FieldMapperFactory;

@@ -2,7 +2,6 @@ package org.sfm.jdbc;
 
 
 import org.sfm.jdbc.impl.DiscriminatorJdbcMapper;
-import org.sfm.map.Mapper;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;

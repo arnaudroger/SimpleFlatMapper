@@ -4,7 +4,6 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.sfm.map.MappingContext;
-import org.sfm.map.MappingContextFactory;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.impl.AbstractMapper;
 import org.sfm.reflect.Instantiator;

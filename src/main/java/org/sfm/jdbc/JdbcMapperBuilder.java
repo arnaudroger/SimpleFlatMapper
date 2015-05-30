@@ -1,6 +1,5 @@
 package org.sfm.jdbc;
 
-import org.sfm.csv.CsvColumnKey;
 import org.sfm.jdbc.impl.*;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;

@@ -1,7 +1,9 @@
 package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.JdbcMapper;
+import org.sfm.map.Mapper;
 import org.sfm.map.MappingContext;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
 
@@ -12,10 +14,10 @@ import java.util.function.Consumer;
 
 public class ResultSetSpliterator<T> implements Spliterator<T> {
     private final ResultSet resultSet;
-    private final JdbcMapper<T> mapper;
+    private final Mapper<ResultSet, T> mapper;
     private final MappingContext<ResultSet> mappingContext;
 
-    public ResultSetSpliterator(ResultSet resultSet, JdbcMapper<T> mapper, MappingContext<ResultSet> mappingContext) {
+    public ResultSetSpliterator(ResultSet resultSet, Mapper<ResultSet, T> mapper, MappingContext<ResultSet> mappingContext) {
         this.resultSet = resultSet;
         this.mapper = mapper;
         this.mappingContext = mappingContext;
@@ -37,12 +39,9 @@ public class ResultSetSpliterator<T> implements Spliterator<T> {
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
         try {
-            mapper.forEach(resultSet, new RowHandler<T>() {
-                @Override
-                public void handle(T t) throws Exception {
-                    action.accept(t);
-                }
-            });
+            while(resultSet.next()) {
+                action.accept(mapper.map(resultSet, mappingContext));
+            }
         } catch (SQLException e) {
             ErrorHelper.rethrow(e);
         }

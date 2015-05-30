@@ -60,10 +60,10 @@ import java.util.stream.Stream;
  *     CsvParser.skip(1).mapTo(MyClass.class).addMapping("id").addMapping("field").stream(reader).forEach(System.out::println);<br>
  * </code>
  * <p>
- *  or mapping with a predefined mapper.<br><br>
+ *  or mapping with a predefined jdbcMapper.<br><br>
  * <code>
- *     CsvMapper&lt;MyClass&gt; mapper = CsvMapperFactory.newInstance().newMapper(MyClass.class);<br>
- *     CsvParser.mapWith(mapper).stream(reader).forEach(System.out::println);<br>
+ *     CsvMapper&lt;MyClass&gt; jdbcMapper = CsvMapperFactory.newInstance().newMapper(MyClass.class);<br>
+ *     CsvParser.mapWith(jdbcMapper).stream(reader).forEach(System.out::println);<br>
  * </code>
  *
  * <p>
@@ -163,15 +163,8 @@ public final class CsvParser {
 		return schema().reader(reader);
 	}
 
-	@SuppressWarnings("deprecation")
-    @Deprecated
-	public static Iterator<String[]> iterate(Reader reader) throws IOException {
-		return schema().iterate(reader);
-	}
-
-    @SuppressWarnings("deprecation")
 	public static Iterator<String[]> iterator(Reader reader) throws IOException {
-		return iterate(reader);
+		return schema().iterator(reader);
 	}
 
 	public static <CC extends CellConsumer> CC parse(Reader reader, CC cellConsumer) throws IOException {
@@ -287,15 +280,9 @@ public final class CsvParser {
             return csvReader;
         }
 
-		@Deprecated
-        public Iterator<String[]> iterate(Reader reader) throws IOException {
+        public Iterator<String[]> iterator(Reader reader) throws IOException {
             return reader(reader).iterator();
         }
-
-        @SuppressWarnings("deprecation")
-		public Iterator<String[]> iterator(Reader reader) throws IOException {
-			return iterate(reader);
-		}
 
 		public <T> MapToDSL<T> mapTo(Type target) {
 			return new MapToDSL<T>(this, target);
@@ -381,7 +368,7 @@ public final class CsvParser {
 	}
 
     /**
-     * DSL for csv mapping to a dynamic mapper.
+     * DSL for csv mapping to a dynamic jdbcMapper.
      * @see org.sfm.csv.CsvParser
      * @see org.sfm.csv.CsvMapper
      */
@@ -469,7 +456,7 @@ public final class CsvParser {
     }
 
     /**
-     * DSL for csv mapping to a static mapper.
+     * DSL for csv mapping to a static jdbcMapper.
      * @see org.sfm.csv.CsvParser
      * @see org.sfm.csv.CsvMapper
      */
@@ -512,7 +499,7 @@ public final class CsvParser {
     }
 
     /**
-     * DSL for csv mapping to a provided mapper.
+     * DSL for csv mapping to a provided jdbcMapper.
      * @see org.sfm.csv.CsvParser
      * @see org.sfm.csv.CsvMapper
      */
@@ -533,15 +520,10 @@ public final class CsvParser {
             return mapper;
         }
 
-		@Deprecated
-		public final Iterator<T> iterate(Reader reader) throws IOException {
+		public final Iterator<T> iterator(Reader reader) throws IOException {
 			return mapper.iterator(dsl.reader(reader));
 		}
 
-        @SuppressWarnings("deprecation")
-		public final Iterator<T> iterator(Reader reader) throws IOException {
-			return iterate(reader);
-		}
 
         public final <H extends RowHandler<T>> H forEach(Reader reader, H rowHandler) throws IOException {
             if (dsl.limit == -1) {

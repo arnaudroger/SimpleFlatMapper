@@ -17,11 +17,11 @@ import java.util.stream.Stream;
  * <p>
  * Using {@link org.sfm.csv.CsvMapperFactory}<br><br>
  * <code>
- *     CsvMapper mapper = CsvMapperFactory<br>
+ *     CsvMapper jdbcMapper = CsvMapperFactory<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.newInstance()<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.newMapper(MyClass.class);<br>
  *     try (FileReader reader : new FileReader(file)) {<br>
- *     &nbsp;&nbsp;&nbsp;&nbsp;mapper.stream(reader).forEach(System.out::println);<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;jdbcMapper.stream(reader).forEach(System.out::println);<br>
  *     }
  * </code>
  * <p>
@@ -39,7 +39,7 @@ import java.util.stream.Stream;
  * <code>
  *     try (FileReader reader : new FileReader(file)) {<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;CsvReader csvReader = CsvParser.quote('\'').separator(';').skip(2).limit(5).reader(reader);<br>
- *     &nbsp;&nbsp;&nbsp;&nbsp;mapper.stream(csvReader).forEach(System.out::println);<br>
+ *     &nbsp;&nbsp;&nbsp;&nbsp;jdbcMapper.stream(csvReader).forEach(System.out::println);<br>
  *     }
  * </code>
  *
@@ -55,7 +55,7 @@ public interface CsvMapper<T> {
 	 * <p>
      * The method will return the handler passed as an argument so you can easily chain the calls like <br>
      * <code>
-     *     List&lt;T&gt; list = mapper.forEach(reader, new ListHandler&lt;T&gt;()).getList();
+     *     List&lt;T&gt; list = jdbcMapper.forEach(reader, new ListHandler&lt;T&gt;()).getList();
      * </code>
      * <br>
 	 * 
@@ -136,9 +136,6 @@ public interface CsvMapper<T> {
 	 */
 	Iterator<T> iterator(Reader reader) throws IOException;
 
-	@Deprecated
-	Iterator<T> iterate(Reader reader) throws IOException;
-
 	/**
 	 * Will return an iterator on the reader that will return a mapped object for each row.
 	 *
@@ -147,9 +144,6 @@ public interface CsvMapper<T> {
      * @throws IOException if an io error occurs
 	 */
 	Iterator<T> iterator(CsvReader reader) throws IOException;
-
-	@Deprecated
-	Iterator<T> iterate(CsvReader reader) throws IOException;
 
 	/**
 	 * Will return an iterator on the reader that will return a mapped object for each row.
@@ -160,9 +154,6 @@ public interface CsvMapper<T> {
      * @throws IOException if an io error occurs
 	 */
 	Iterator<T> iterator(Reader reader, int skip) throws IOException;
-
-	@Deprecated
-	Iterator<T> iterate(Reader reader, int skip) throws IOException;
 
 	/**
 	 * Will return a Stream of T

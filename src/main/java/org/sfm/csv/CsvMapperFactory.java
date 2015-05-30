@@ -11,18 +11,18 @@ import java.lang.reflect.Type;
 
 /**
  * CsvMapperFactory is not Thread-Safe but the mappers are.
- * It is strongly advised to instantiate one mapper per class for the life of your application.
+ * It is strongly advised to instantiate one jdbcMapper per class for the life of your application.
  * <p>
- * You can instantiate dynamic mapper which will use the first line of the csv file
+ * You can instantiate dynamic jdbcMapper which will use the first line of the csv file
  * to figure out the list of the columns or a static one using a builder.
  * <p>
  * <code>
- *     // create a dynamic mapper targeting MyClass<br>
+ *     // create a dynamic jdbcMapper targeting MyClass<br>
  *     CsvMapperFactory<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;.newInstance()<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;.newMapper(MyClass.class);<br>
  *     <br>
- *     // create a static mapper targeting MyClass<br>
+ *     // create a static jdbcMapper targeting MyClass<br>
  *     CsvMapperFactory<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;.newInstance()<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;.newBuilder(MyClass.class)<br>
@@ -67,10 +67,10 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 
 	/**
 	 * 
-	 * @param target the targeted class for the mapper
+	 * @param target the targeted class for the jdbcMapper
      * @param <T> the targeted type
-	 * @return a jdbc mapper that will map to the targeted class.
-	 * @throws MapperBuildingException if an error occurs building the mapper
+	 * @return a jdbc jdbcMapper that will map to the targeted class.
+	 * @throws MapperBuildingException if an error occurs building the jdbcMapper
 	 */
 	public <T> CsvMapper<T> newMapper(final Class<T> target) throws MapperBuildingException {
 		return newMapper((Type)target);
@@ -92,10 +92,10 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 
 	/**
 	 * Will create a instance of ResultSetMapperBuilder 
-	 * @param target the target class of the mapper
+	 * @param target the target class of the jdbcMapper
      * @param <T> the targeted type
-	 * @return a builder ready to instantiate a mapper or to be customized
-     * @throws MapperBuildingException if an error occurs building the mapper
+	 * @return a builder ready to instantiate a jdbcMapper or to be customized
+     * @throws MapperBuildingException if an error occurs building the jdbcMapper
 	 */
 	public <T> CsvMapperBuilder<T> newBuilder(final Class<T> target) {
 		return newBuilder((Type)target);

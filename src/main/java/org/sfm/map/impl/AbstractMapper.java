@@ -7,11 +7,9 @@ import org.sfm.utils.ErrorHelper;
 public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
 	
 	private final Instantiator<S, T> instantiator;
-    private final MappingContextFactory<S> mappingContextFactory;
-	
-	public AbstractMapper(final Instantiator<S, T> instantiator, MappingContextFactory<S> mappingContextFactory) {
+
+	public AbstractMapper(final Instantiator<S, T> instantiator) {
 		this.instantiator = instantiator;
-        this.mappingContextFactory = mappingContextFactory;
     }
 
     @Override
@@ -37,11 +35,6 @@ public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
         } catch(Exception e) {
             ErrorHelper.rethrow(e);
         }
-    }
-
-    @Override
-    public final MappingContext<S> newMappingContext(S source) {
-        return mappingContextFactory.newContext();
     }
 
     protected abstract void mapFields(final S source, final T target, final MappingContext<S> mappingContext) throws Exception;

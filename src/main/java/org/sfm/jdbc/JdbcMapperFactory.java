@@ -17,18 +17,18 @@ import java.sql.SQLException;
  * JdbcMapperFactory allows you to customise the mappers and create an instance of it using a fluent syntax.
  * <p>
  * JdbcMapperFactory is not Thread-Safe but the mappers are.
- * It is strongly advised to instantiate one mapper per class for the life of your application.
+ * It is strongly advised to instantiate one jdbcMapper per class for the life of your application.
  * <p>
- * You can instantiate dynamic mapper which will use the ResultSetMetaData
+ * You can instantiate dynamic jdbcMapper which will use the ResultSetMetaData
  * to figure out the list of the columns or a static one using a builder.
  * <p>
  * <code>
- *     // create a dynamic mapper targeting MyClass<br>
+ *     // create a dynamic jdbcMapper targeting MyClass<br>
  *     JdbcMapperFactory<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;.newInstance()<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;.newMapper(MyClass.class);<br>
  *     <br>
- *     // create a static mapper targeting MyClass<br>
+ *     // create a static jdbcMapper targeting MyClass<br>
  *     JdbcMapperFactory<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;.newInstance()<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;.newBuilder(MyClass.class)<br>
@@ -71,10 +71,10 @@ public final class JdbcMapperFactory
 
 	/**
 	 * Will create a instance of JdbcMapper based on the specified metadata and the target class.
-	 * @param target the target class of the mapper
-	 * @param metaData the metadata to create the mapper from
-     * @param <T> the mapper target type
-	 * @return a mapper that will map the data represented by the metadata to an instance of target
+	 * @param target the target class of the jdbcMapper
+	 * @param metaData the metadata to create the jdbcMapper from
+     * @param <T> the jdbcMapper target type
+	 * @return a jdbcMapper that will map the data represented by the metadata to an instance of target
      * @throws java.sql.SQLException if an error occurs getting the metaData
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target, final ResultSetMetaData metaData) throws SQLException {
@@ -86,7 +86,7 @@ public final class JdbcMapperFactory
 	/**
 	 * Will create a instance of JdbcMapperBuilder on the specified target class.
 	 * @param target the target class
-     * @param <T> the mapper target type
+     * @param <T> the jdbcMapper target type
 	 * @return the builder
 	 */
 	public <T> JdbcMapperBuilder<T> newBuilder(final Class<T> target) {
@@ -96,7 +96,7 @@ public final class JdbcMapperFactory
     /**
      * Will create a instance of JdbcMapperBuilder on the type T specified by the typeReference.
      * @param target the typeReference
-     * @param <T> the mapper target type
+     * @param <T> the jdbcMapper target type
      * @return the builder
      */
     public <T> JdbcMapperBuilder<T> newBuilder(final TypeReference<T> target) {
@@ -106,7 +106,7 @@ public final class JdbcMapperFactory
     /**
      * Will create a instance of JdbcMapperBuilder on the specified type.
      * @param target the type
-     * @param <T> the mapper target type
+     * @param <T> the jdbcMapper target type
      * @return the builder
      */
     public <T> JdbcMapperBuilder<T> newBuilder(final Type target) {
@@ -125,7 +125,7 @@ public final class JdbcMapperFactory
 	/**
 	 * Will create a DynamicMapper on the specified target class.
 	 * @param target the class
-     * @param <T> the mapper target type
+     * @param <T> the jdbcMapper target type
      * @return the DynamicMapper
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) {
@@ -135,7 +135,7 @@ public final class JdbcMapperFactory
     /**
      * Will create a DynamicMapper on the type specified by the TypeReference.
      * @param target the TypeReference
-     * @param <T> the mapper target type
+     * @param <T> the jdbcMapper target type
      * @return the DynamicMapper
      */
     public <T> JdbcMapper<T> newMapper(final TypeReference<T> target) {
@@ -145,12 +145,12 @@ public final class JdbcMapperFactory
     /**
      * Will create a DynamicMapper on the specified type.
      * @param target the type
-     * @param <T> the mapper target type
+     * @param <T> the jdbcMapper target type
      * @return the DynamicMapper
      */
 	public <T> JdbcMapper<T> newMapper(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
-		return new DynamicJdbcMapper<T>(classMeta, mapperConfig());
+		return new DynamicJdbcMapper<T>(classMeta, mapperConfig(), getterFactory);
 	}
 
 
@@ -178,7 +178,7 @@ public final class JdbcMapperFactory
     /**
      * Create a discriminator builder based on the specified column
      * @param column the discriminator column
-     * @param <T> the root type of the mapper
+     * @param <T> the root type of the jdbcMapper
      * @return a builder to specify the type mapping
      */
     public <T> DiscriminatorJdbcBuilder<T> newDiscriminator(String column) {

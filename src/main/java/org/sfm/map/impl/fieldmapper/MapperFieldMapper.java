@@ -19,7 +19,7 @@ public final class MapperFieldMapper<S, T, P> implements FieldMapper<S, T> {
     private final Getter<MappingContext<S>, BooleanProvider> breakDetectorProvider;
 
     public MapperFieldMapper(Mapper<S, P> mapper, Setter<T, P> propertySetter, Getter<T, P> propertyGetter, Predicate<S> nullChecker, Getter<MappingContext<S>, BooleanProvider> breakDetectorProvider) {
-        this.mapper = requireNonNull("mapper", mapper);
+        this.mapper = requireNonNull("jdbcMapper", mapper);
         this.propertySetter = requireNonNull("propertySetter", propertySetter);
         this.propertyGetter = requireNonNull("propertyGetter", propertyGetter);
         this.nullChecker = requireNonNull("nullChecker", nullChecker);
@@ -47,7 +47,7 @@ public final class MapperFieldMapper<S, T, P> implements FieldMapper<S, T> {
     @Override
     public String toString() {
         return "MapperFieldMapper{" +
-                "mapper=" + mapper +
+                "jdbcMapper=" + mapper +
                 ", propertySetter=" + propertySetter +
                 ", propertyGetter=" + propertyGetter +
                 '}';

@@ -2,7 +2,7 @@ package org.sfm.jdbc;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.jdbc.impl.JdbcMapperImpl;
+import org.sfm.jdbc.impl.StaticJdbcMapper;
 import org.sfm.map.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.asm.AsmFactory;
@@ -34,14 +34,14 @@ public class JdbcMapperBuilderImplTest {
 
 	
 	@Test
-	public void testAsmFailureOnJdbcMapper() {
+	public void testAsmFailureOnmapper() {
 
-		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(true, true, newAsmFactoryFailsOnJdbcMapper())).newBuilder(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(true, true, newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
 		
-		assertTrue(builder.mapper() instanceof JdbcMapperImpl);
+		assertTrue(builder.mapper() instanceof StaticJdbcMapper);
 	}
 
-	public AsmFactory newAsmFactoryFailsOnJdbcMapper() {
+	public AsmFactory newAsmFactoryFailsOnmapper() {
 		return new AsmFactory(Thread.currentThread().getContextClassLoader()) {
                 public <S, T> Mapper<S, T> createMapper(final FieldKey<?>[] keys,
                                                                                 final FieldMapper<S, T>[] mappers,
@@ -59,7 +59,7 @@ public class JdbcMapperBuilderImplTest {
 
 	@Test
     public void testAsmFailureOnJdbcMapperFailOnAsm() {
-		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().reflectionService(new ReflectionService(true, true, newAsmFactoryFailsOnJdbcMapper())).newBuilder(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().reflectionService(new ReflectionService(true, true, newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
 
         try {
             builder.mapper();

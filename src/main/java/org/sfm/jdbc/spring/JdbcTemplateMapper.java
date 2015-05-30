@@ -23,9 +23,9 @@ import java.util.List;
  *
  * <code>
  * class MyDao {<br>
- * &nbsp;&nbsp;&nbsp;&nbsp;private final JdbcTemplateMapper&lt;DbObject&gt; mapper =<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;private final JdbcTemplateMapper&lt;DbObject&gt; jdbcMapper =<br>
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JdbcTemplateMapperFactory.newInstance().newMapper(DbObject.class);<br>
- * &nbsp;&nbsp;&nbsp;&nbsp;private final RowMapper&lt;DbObject&gt; rowMapper = mapper;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;private final RowMapper&lt;DbObject&gt; rowMapper = jdbcMapper;<br>
  *<br>
  * &nbsp;&nbsp;&nbsp;&nbsp;public void doSomething() {<br>
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;DbObject&gt; results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, rowMapper);<br>
@@ -34,7 +34,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;&nbsp;public void doSomethingElse() {<br>
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;template<br>
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.query(TEST_DB_OBJECT_QUERY,<br>
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mapper.newResultSetExtractor((o) -&gt; System.out.println(o.toString())));<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jdbcMapper.newResultSetExtractor((o) -&gt; System.out.println(o.toString())));<br>
  * &nbsp;&nbsp;&nbsp;&nbsp;}<br>
  * }<br>
  *</code>

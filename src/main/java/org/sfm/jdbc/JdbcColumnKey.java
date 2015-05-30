@@ -1,6 +1,11 @@
 package org.sfm.jdbc;
 
+import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.FieldKey;
+import org.sfm.map.impl.ColumnsMapperKey;
+
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 
 import static org.sfm.utils.Asserts.requireNonNull;
 
@@ -90,6 +95,17 @@ public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 		return new JdbcColumnKey(alias, index, sqlType, this);
 	}
 
+	public static JdbcColumnKey of(ResultSetMetaData metaData, int columnIndex) throws SQLException {
+		return new JdbcColumnKey(metaData.getColumnLabel(columnIndex), columnIndex, metaData.getColumnType(columnIndex));
+	}
 
+	public static ColumnsMapperKey<JdbcColumnKey> mapperKey(ResultSetMetaData metaData)  throws  SQLException {
+		JdbcColumnKey[] keys = new JdbcColumnKey[metaData.getColumnCount()];
 
+		for(int i = 1; i <= metaData.getColumnCount(); i++) {
+			keys[i - 1] = of(metaData, i);
+		}
+
+		return new ColumnsMapperKey<JdbcColumnKey>(keys);
+	}
 }

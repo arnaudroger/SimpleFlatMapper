@@ -175,7 +175,7 @@ public class AsmFactory {
             jdbcMapperCache.put(key, type);
         }
         final Constructor<?> constructor = type.getDeclaredConstructors()[0];
-        return (Mapper<S, T>) constructor.newInstance(mappers, constructorMappers, instantiator, mappingContextFactory);
+        return (Mapper<S, T>) constructor.newInstance(mappers, constructorMappers, instantiator);
 	}
 
     @SuppressWarnings("unchecked")

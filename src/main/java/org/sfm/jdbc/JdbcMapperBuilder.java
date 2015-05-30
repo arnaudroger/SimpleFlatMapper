@@ -1,5 +1,6 @@
 package org.sfm.jdbc;
 
+import org.sfm.csv.CsvColumnKey;
 import org.sfm.jdbc.impl.*;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
@@ -14,7 +15,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
- * @param <T> the targeted type of the mapper
+ * @param <T> the targeted type of the jdbcMapper
  */
 public final class JdbcMapperBuilder<T> {
 
@@ -24,6 +25,7 @@ public final class JdbcMapperBuilder<T> {
     private final FieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey> fieldMapperMapperBuilder;
 
     private final MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> mapperConfig;
+    private final MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> mappingContextFactoryBuilder;
 
     private int calculatedIndex = 1;
 
@@ -79,18 +81,20 @@ public final class JdbcMapperBuilder<T> {
                         parentBuilder
                 );
         this.mapperConfig = mapperConfig;
+        this.mappingContextFactoryBuilder = parentBuilder;
     }
 
     /**
-     * @return a new instance of the mapper based on the current state of the builder.
+     * @return a new instance of the jdbcMapper based on the current state of the builder.
      */
     public JdbcMapper<T> mapper() {
         Mapper<ResultSet, T> mapper = fieldMapperMapperBuilder.mapper();
 
+        StaticJdbcMapper<T> staticJdbcMapper = new StaticJdbcMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
         if (fieldMapperMapperBuilder.hasJoin()) {
-            return new JoinJdbcMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler());
+            return new JoinJdbcMapper<T>(staticJdbcMapper, mapperConfig.rowHandlerErrorHandler());
         } else {
-            return new JdbcMapperImpl<T>(mapper, mapperConfig.rowHandlerErrorHandler());
+            return staticJdbcMapper;
         }
     }
 
@@ -152,7 +156,7 @@ public final class JdbcMapperBuilder<T> {
     /**
      * append a FieldMapper to the mapping list.
      *
-     * @param mapper the field mapper
+     * @param mapper the field jdbcMapper
      * @return the current builder
      */
     public JdbcMapperBuilder<T> addMapper(FieldMapper<ResultSet, T> mapper) {
@@ -199,6 +203,11 @@ public final class JdbcMapperBuilder<T> {
             addMapping(metaData.getColumnLabel(i), i, metaData.getColumnType(i));
         }
 
+        return this;
+    }
+
+    public JdbcMapperBuilder<T> addMapping(JdbcColumnKey key, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
+        fieldMapperMapperBuilder.addMapping(key, columnDefinition);
         return this;
     }
 }

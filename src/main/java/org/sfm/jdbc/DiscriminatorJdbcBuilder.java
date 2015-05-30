@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * The builder is used to build a DiscriminatorJdbcMapper that will instantiate
  * different types depending on the value of a specified field.
- * @param <T> the root type of the mapper
+ * @param <T> the root type of the jdbcMapper
  */
 public class DiscriminatorJdbcBuilder<T> {
 
@@ -74,15 +74,15 @@ public class DiscriminatorJdbcBuilder<T> {
 
     /**
      *
-     * @return a new mapper based on the current state
+     * @return a new jdbcMapper based on the current state
      */
     public JdbcMapper<T> mapper() {
 
-        List<Tuple2<Predicate<String>, Mapper<ResultSet, T>>> mappers =
-                new ArrayList<Tuple2<Predicate<String>, Mapper<ResultSet, T>>>();
+        List<Tuple2<Predicate<String>, JdbcMapper<T>>> mappers =
+                new ArrayList<Tuple2<Predicate<String>, JdbcMapper<T>>>();
 
         for(DiscriminatorJdbcSubBuilder subBuilder : builders) {
-            Mapper<ResultSet, T> mapper;
+            JdbcMapper<T> mapper;
 
             if (subBuilder.builder != null) {
                 mapper = subBuilder.builder.mapper();
@@ -90,7 +90,7 @@ public class DiscriminatorJdbcBuilder<T> {
                 mapper = jdbcMapperFactory.newMapper(subBuilder.type);
             }
 
-            mappers.add(new Tuple2<Predicate<String>, Mapper<ResultSet, T>>(subBuilder.predicate, mapper));
+            mappers.add(new Tuple2<Predicate<String>, JdbcMapper<T>>(subBuilder.predicate, mapper));
         }
 
 

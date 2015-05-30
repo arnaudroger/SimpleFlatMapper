@@ -1,5 +1,6 @@
 package org.sfm.jdbc.impl;
 
+import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.*;
 import org.sfm.tuples.Tuple2;
 import org.sfm.utils.*;
@@ -14,50 +15,44 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractForEachDynamicJdbc
 
 
     private final String discriminatorColumn;
-    private final List<Tuple2<Predicate<String>, Mapper<ResultSet, T>>> mappers;
+    private final List<Tuple2<Predicate<String>, JdbcMapper<T>>> mappers;
 
-    public DiscriminatorJdbcMapper(String discriminatorColumn, List<Tuple2<Predicate<String>, Mapper<ResultSet, T>>> mappers, RowHandlerErrorHandler rowHandlerErrorHandler) {
+    public DiscriminatorJdbcMapper(String discriminatorColumn, List<Tuple2<Predicate<String>, JdbcMapper<T>>> mappers, RowHandlerErrorHandler rowHandlerErrorHandler) {
         super(rowHandlerErrorHandler);
         this.discriminatorColumn = discriminatorColumn;
         this.mappers = mappers;
     }
-
-
-    @Override
-    public MappingContext<ResultSet> newMappingContext(ResultSet source) throws MappingException {
-        try {
-            return getMapper(source).newMappingContext(source);
-        } catch (SQLException e) {
-            return ErrorHelper.rethrow(e);
-        }
-    }
-
 
     private MappingContext<ResultSet>[] getMappingContexts(ResultSet rs) throws SQLException {
         @SuppressWarnings("unchecked")
         MappingContext<ResultSet>[] mappingContexts = new MappingContext[mappers.size()];
 
         int i = 0;
-        for(Tuple2<Predicate<String>, Mapper<ResultSet, T>> tm : mappers) {
+        for(Tuple2<Predicate<String>, JdbcMapper<T>> tm : mappers) {
             mappingContexts[i] = tm.getElement1().newMappingContext(rs);
             i++;
         }
         return mappingContexts;
     }
 
-    private Mapper<ResultSet,T> getMapper(int index) {
+    private JdbcMapper<T> getMapper(int index) {
         return mappers.get(index).getElement1();
     }
 
-    protected Mapper<ResultSet, T> getMapper(final ResultSet rs) throws MappingException, SQLException {
-        String value = rs.getString(discriminatorColumn);
+    @Override
+    protected JdbcMapper<T> getMapper(final ResultSet rs) throws MappingException {
+        try {
+            String value = rs.getString(discriminatorColumn);
 
-        for(Tuple2<Predicate<String>, Mapper<ResultSet, T>> tm : mappers) {
-            if (tm.first().test(value)) {
-                return tm.second();
+            for (Tuple2<Predicate<String>, JdbcMapper<T>> tm : mappers) {
+                if (tm.first().test(value)) {
+                    return tm.second();
+                }
             }
+            throw new MappingException("No jdbcMapper found for " + discriminatorColumn + " = " + value);
+        } catch(SQLException e) {
+            return ErrorHelper.rethrow(e);
         }
-        throw new MappingException("No mapper found for " + discriminatorColumn + " = " + value);
     }
 
     private int getMapperIndex(final ResultSet rs) throws MappingException, SQLException {
@@ -65,13 +60,13 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractForEachDynamicJdbc
         String value = rs.getString(discriminatorColumn);
 
         int i = 0;
-        for(Tuple2<Predicate<String>, Mapper<ResultSet, T>> tm : mappers) {
+        for(Tuple2<Predicate<String>, JdbcMapper<T>> tm : mappers) {
             if (tm.first().test(value)) {
                 return i;
             }
             i++;
         }
-		throw new MappingException("No mapper found for " + discriminatorColumn + " = " + value);
+		throw new MappingException("No jdbcMapper found for " + discriminatorColumn + " = " + value);
 	}
 
 
@@ -87,7 +82,6 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractForEachDynamicJdbc
                 '}';
     }
 
-
     private static class DiscriminatorForEach<T> implements ForEachIterator<T> {
 
         private final DiscriminatorJdbcMapper<T> mapper;
@@ -98,7 +92,7 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractForEachDynamicJdbc
         private final ResultSet resultSet;
         private int currentMapperIndex = -1;
         private T currentValue;
-        private Mapper<ResultSet, T> currentMapper;
+        private JdbcMapper<T> currentMapper;
         private MappingContext<ResultSet> currentMappingContext;
 
 

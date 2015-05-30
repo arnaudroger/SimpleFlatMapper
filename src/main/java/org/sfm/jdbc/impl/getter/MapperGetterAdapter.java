@@ -12,7 +12,7 @@ public final class MapperGetterAdapter<S, P> implements Getter<S, P> {
     private final Predicate<S> nullChecker;
 	
 	public MapperGetterAdapter(Mapper<S, P> mapper, Predicate<S> nullChecker) {
-		this.mapper = requireNonNull("mapper", mapper);
+		this.mapper = requireNonNull("jdbcMapper", mapper);
         this.nullChecker = requireNonNull("nullChecker", nullChecker);
     }
 
@@ -27,7 +27,7 @@ public final class MapperGetterAdapter<S, P> implements Getter<S, P> {
     @Override
     public String toString() {
         return "MapperGetterAdapter{" +
-                "mapper=" + mapper +
+                "jdbcMapper=" + mapper +
                 '}';
     }
 }

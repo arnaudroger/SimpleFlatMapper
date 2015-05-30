@@ -1,5 +1,6 @@
 package org.sfm.jdbc.impl;
 
+import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.*;
 import org.sfm.utils.ForEachIterator;
 import org.sfm.utils.RowHandler;
@@ -9,31 +10,26 @@ import java.sql.SQLException;
 
 public final class JoinJdbcMapper<T> extends AbstractForEachDynamicJdbcMapper<T> {
 
-    private final Mapper<ResultSet, T> mapper;
+    private final JdbcMapper<T> mapper;
 
-    public JoinJdbcMapper(Mapper<ResultSet, T> mapper, RowHandlerErrorHandler errorHandler) {
+    public JoinJdbcMapper(JdbcMapper<T> mapper, RowHandlerErrorHandler errorHandler) {
         super(errorHandler);
         this.mapper = mapper;
     }
 
     @Override
-    protected Mapper<ResultSet, T> getMapper(ResultSet source) throws SQLException {
+    protected JdbcMapper<T> getMapper(ResultSet source) {
         return mapper;
     }
 
     @Override
-    protected JoinForEach<T> newForEachIterator(ResultSet rs) {
+    protected JoinForEach<T> newForEachIterator(ResultSet rs) throws SQLException {
         return new JoinForEach<T>(mapper, newMappingContext(rs), errorHandler, rs);
-    }
-
-    @Override
-    public MappingContext<ResultSet> newMappingContext(ResultSet source) {
-        return mapper.newMappingContext(source);
     }
 
     private static class JoinForEach<T> implements ForEachIterator<T> {
 
-        private final Mapper<ResultSet, T> mapper;
+        private final JdbcMapper<T> mapper;
         private final MappingContext<ResultSet> mappingContext;
         private final RowHandlerErrorHandler rowHandlerErrorHandler;
 
@@ -41,7 +37,7 @@ public final class JoinJdbcMapper<T> extends AbstractForEachDynamicJdbcMapper<T>
         private final ResultSet resultSet;
         private T currentValue;
 
-        private JoinForEach(Mapper<ResultSet, T> mapper, MappingContext<ResultSet> mappingContext, RowHandlerErrorHandler rowHandlerErrorHandler, ResultSet resultSet) {
+        private JoinForEach(JdbcMapper<T> mapper, MappingContext<ResultSet> mappingContext, RowHandlerErrorHandler rowHandlerErrorHandler, ResultSet resultSet) {
             this.mapper = mapper;
             this.mappingContext = mappingContext;
             this.rowHandlerErrorHandler = rowHandlerErrorHandler;
@@ -101,7 +97,7 @@ public final class JoinJdbcMapper<T> extends AbstractForEachDynamicJdbcMapper<T>
     @Override
     public String toString() {
         return "JoinJdbcMapper{" +
-                "mapper=" + mapper +
+                "jdbcMapper=" + mapper +
                 '}';
     }
 }

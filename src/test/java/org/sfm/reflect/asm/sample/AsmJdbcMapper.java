@@ -21,7 +21,7 @@ public final class AsmJdbcMapper extends AbstractMapper<ResultSet, DbObject> {
 	
 	@SuppressWarnings("unchecked")
 	public AsmJdbcMapper(FieldMapper<ResultSet, DbObject>[] mappers, FieldMapper<ResultSet, DbObject>[] mappers2, Instantiator<ResultSet, DbObject> instantiator, MappingContextFactory<ResultSet> mappingContextFactory) {
-		super(instantiator, mappingContextFactory);
+		super(instantiator);
 		mapper1 = (LongFieldMapper<ResultSet, DbObject>) mappers[0];
 		mapper2 = (IntFieldMapper<ResultSet, DbObject>) mappers[2];
 		mapper3 = (FieldMapperImpl<ResultSet, DbObject, ?>) mappers[3];

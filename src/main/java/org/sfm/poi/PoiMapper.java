@@ -3,10 +3,7 @@ package org.sfm.poi;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.sfm.map.Mapper;
-import org.sfm.map.MappingContext;
-import org.sfm.map.MappingException;
-import org.sfm.map.RowHandlerErrorHandler;
+import org.sfm.map.*;
 import org.sfm.poi.impl.SheetIterator;
 import org.sfm.utils.RowHandler;
 
@@ -24,10 +21,12 @@ public class PoiMapper<T> implements Mapper<Row, T> {
     private final int startRow = 0;
 
     private final RowHandlerErrorHandler rowHandlerErrorHandler;
+    private final MappingContextFactory<Row> mappingContextFactory;
 
-    public PoiMapper(Mapper<Row, T> mapper, RowHandlerErrorHandler rowHandlerErrorHandler) {
+    public PoiMapper(Mapper<Row, T> mapper, RowHandlerErrorHandler rowHandlerErrorHandler, MappingContextFactory<Row> mappingContextFactory) {
         this.mapper = mapper;
         this.rowHandlerErrorHandler = rowHandlerErrorHandler;
+        this.mappingContextFactory = mappingContextFactory;
     }
 
     public Iterator<T> iterator(Sheet sheet) {
@@ -35,16 +34,15 @@ public class PoiMapper<T> implements Mapper<Row, T> {
     }
 
     public Iterator<T> iterator(int startRow, Sheet sheet) {
-        return new SheetIterator<T>(this, startRow, sheet, newMappingContext(null));
+        return new SheetIterator<T>(this, startRow, sheet, newMappingContext());
     }
-
 
     public <RH extends RowHandler<T>> RH forEach(Sheet sheet, RH rowHandler) {
         return forEach(startRow, sheet, rowHandler);
     }
 
     public <RH extends RowHandler<T>> RH forEach(int startRow, Sheet sheet, RH rowHandler) {
-        MappingContext<Row> mappingContext = newMappingContext(null);
+        MappingContext<Row> mappingContext = newMappingContext();
         for(int rowNum = startRow; rowNum <= sheet.getLastRowNum(); rowNum++) {
             T object = map(sheet.getRow(rowNum), mappingContext);
             try {
@@ -62,7 +60,7 @@ public class PoiMapper<T> implements Mapper<Row, T> {
     }
 
     public Stream<T> stream(int startRow, Sheet sheet) {
-        return StreamSupport.stream(new SheetSpliterator<T>(this, startRow, sheet, newMappingContext(null)), false);
+        return StreamSupport.stream(new SheetSpliterator<T>(this, startRow, sheet, newMappingContext()), false);
     }
     //IFJAVA8_END
 
@@ -78,12 +76,11 @@ public class PoiMapper<T> implements Mapper<Row, T> {
     }
 
     @Override
-    public MappingContext<Row> newMappingContext(Row source) throws MappingException {
-        return mapper.newMappingContext(source);
-    }
-
-    @Override
     public void mapTo(Row source, T target, MappingContext<Row> context) throws Exception {
         mapper.mapTo(source, target, context);
+    }
+
+    private MappingContext<Row> newMappingContext() {
+        return mappingContextFactory.newContext();
     }
 }

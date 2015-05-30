@@ -19,8 +19,6 @@ public class MapperAsmBuilder {
 
     private static final String mappingContextType = AsmUtils.toType(MappingContext.class);
 
-    private static final String mappingContextFactory = AsmUtils.toType(MappingContextFactory.class);
-
     public static <S,T> byte[] dump (
             final String className,
             final FieldMapper<S, T>[] mappers,
@@ -48,21 +46,16 @@ public class MapperAsmBuilder {
 			mv = cw.visitMethod(ACC_PUBLIC, "<init>",
                             "([L" + FIELD_MAPPER_TYPE + ";"
                             + "[L" + FIELD_MAPPER_TYPE + ";L"
-                            + INSTANTIATOR_TYPE + ";L"
-                            + mappingContextFactory + ";)V",
+                            + INSTANTIATOR_TYPE + ";)V",
                             "([L" + FIELD_MAPPER_TYPE +"<L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ">;[L"
                             + FIELD_MAPPER_TYPE +"<L" + sourceType + ";" + toTargetTypeDeclaration(targetType) + ">;L"
-                            + INSTANTIATOR_TYPE + "<" + toTargetTypeDeclaration(targetType) + ">;L"
-                            + mappingContextFactory + "<L" + sourceType + ";>"
-                            + ";)V", null);
+                            + INSTANTIATOR_TYPE + "<" + toTargetTypeDeclaration(targetType) + ">;;)V", null);
 
 			mv.visitCode();
 			mv.visitVarInsn(ALOAD, 0);
 			mv.visitVarInsn(ALOAD, 3);
-            mv.visitVarInsn(ALOAD, 4);
 			mv.visitMethodInsn(INVOKESPECIAL, ABSTRACT_JDBC_MAPPER_IMPL_TYPE, "<init>",
-                    "(L" + INSTANTIATOR_TYPE + ";L"
-                            + mappingContextFactory +";)V", false);
+                    "(L" + INSTANTIATOR_TYPE + ";)V", false);
 			
 			
 			for(int i = 0; i < mappers.length; i++) {
@@ -158,7 +151,7 @@ public class MapperAsmBuilder {
             mv.visitVarInsn(ALOAD, 1);
 
             for(int i = 0; i < mappers.length; i++) {
-                String mapperName =  ", mapper" + i + "=";
+                String mapperName =  ", jdbcMapper" + i + "=";
                 String mapper = String.valueOf(mappers[i]);
 
                 mv.visitLdcInsn(mapperName);
@@ -209,7 +202,7 @@ public class MapperAsmBuilder {
 
     private static <S, T> void generateMappingCall(MethodVisitor mv,
 			FieldMapper<S, T> mapper, int index, String classType, String sourceType, String targetType) {
-        generateMappingCall(mv, mapper, index, classType, sourceType, targetType, "mapper");
+        generateMappingCall(mv, mapper, index, classType, sourceType, targetType, "jdbcMapper");
 	}
     private static <S, T> void generateConstructorMappingCall(MethodVisitor mv,
                                                               FieldMapper<S, T> mapper, int index, String classType, String sourceType, String targetType) {
@@ -242,7 +235,7 @@ public class MapperAsmBuilder {
 		AsmUtils.addIndex(mv, index);
 		mv.visitInsn(AALOAD);
 		mv.visitTypeInsn(CHECKCAST, AsmUtils.toType(mapperClass));
-		mv.visitFieldInsn(PUTFIELD, classType, "mapper" + index, toTargetTypeDeclaration(AsmUtils.toType(mapperClass)));
+		mv.visitFieldInsn(PUTFIELD, classType, "jdbcMapper" + index, toTargetTypeDeclaration(AsmUtils.toType(mapperClass)));
 
 	}
 
@@ -268,7 +261,7 @@ public class MapperAsmBuilder {
 		FieldVisitor fv;
 		Class<?> mapperClass = AsmUtils.getPublicOrInterfaceClass(mapper.getClass());
 		
-		fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, "mapper" + index, toTargetTypeDeclaration(AsmUtils.toType(mapperClass)), toTargetTypeDeclaration(AsmUtils.toTypeWithParam(mapperClass)), null);
+		fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, "jdbcMapper" + index, toTargetTypeDeclaration(AsmUtils.toType(mapperClass)), toTargetTypeDeclaration(AsmUtils.toTypeWithParam(mapperClass)), null);
 		fv.visitEnd();
 
 	}

@@ -13,18 +13,18 @@ import java.util.Map;
  * JdbcMapperFactory allows you to customise the mappers and create an instance of it using a fluent syntax.
  * <p>
  * JdbcMapperFactory is not Thread-Safe but the mappers are.
- * It is strongly advised to instantiate one mapper per class for the life of your application.
+ * It is strongly advised to instantiate one jdbcMapper per class for the life of your application.
  * <p>
- * You can instantiate dynamic mapper which will use the ResultSetMetaData
+ * You can instantiate dynamic jdbcMapper which will use the ResultSetMetaData
  * to figure out the list of the columns or a static one using a builder.
  * <p>
  * <code>
- *     // create a dynamic mapper targeting MyClass<br>
+ *     // create a dynamic jdbcMapper targeting MyClass<br>
  *     JdbcMapperFactory<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;.newInstance()<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;.newMapper(MyClass.class);<br>
  *     <br>
- *     // create a static mapper targeting MyClass<br>
+ *     // create a static jdbcMapper targeting MyClass<br>
  *     JdbcMapperFactory<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;.newInstance()<br>
  *     &nbsp;&nbsp;&nbsp;&nbsp;.newBuilder(MyClass.class)<br>
@@ -85,7 +85,7 @@ public abstract class AbstractMapperFactory<K extends FieldKey<K>, CD extends Co
     }
 
     /**
-	 * Set the new MapperBuilderErrorHandler. the MapperBuilderErrorHandler is called when an error occurred or a property is not found in the builder while creating the mapper.
+	 * Set the new MapperBuilderErrorHandler. the MapperBuilderErrorHandler is called when an error occurred or a property is not found in the builder while creating the jdbcMapper.
 	 * @param mapperBuilderErrorHandler the MapperBuilderErrorHandler
 	 * @return the current factory
 	 */
@@ -211,10 +211,10 @@ public abstract class AbstractMapperFactory<K extends FieldKey<K>, CD extends Co
     }
 
     /**
-     * change the number of fields threshold after which an asm mapper is not generated.
+     * change the number of fields threshold after which an asm jdbcMapper is not generated.
      * <p>
      * the default value is calculated from the benchmark results, currently 240.
-     * @param asmMapperNbFieldsLimit the limit after which it does not use asm for the mapper.
+     * @param asmMapperNbFieldsLimit the limit after which it does not use asm for the jdbcMapper.
      * @return the factory
      */
     public final MF asmMapperNbFieldsLimit(final int asmMapperNbFieldsLimit) {

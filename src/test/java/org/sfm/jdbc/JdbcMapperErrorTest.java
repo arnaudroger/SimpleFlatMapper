@@ -3,7 +3,7 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.Foo;
-import org.sfm.jdbc.impl.JdbcMapperImpl;
+import org.sfm.jdbc.impl.StaticJdbcMapper;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
@@ -73,7 +73,7 @@ public class JdbcMapperErrorTest {
 					public DbObject newInstance(ResultSet s) throws Exception {
 						throw new IOException();
 					}
-				},  new JdbcMappingContextFactoryBuilder().newFactory());
+				});
 		
 		try {
 			mapper.map(null);
@@ -91,8 +91,8 @@ public class JdbcMapperErrorTest {
 		MyJdbcRawHandlerErrorHandler handler = new MyJdbcRawHandlerErrorHandler();
 		@SuppressWarnings("unchecked")
 		FieldMapper<ResultSet, DbObject>[] fields = new FieldMapper[] {};
-		JdbcMapperImpl<DbObject> mapper =
-			new JdbcMapperImpl<DbObject>(
+		StaticJdbcMapper<DbObject> mapper =
+			new StaticJdbcMapper<DbObject>(
 				new MapperImpl<ResultSet, DbObject>(
 					fields,
 					new FieldMapper[] {},
@@ -101,9 +101,8 @@ public class JdbcMapperErrorTest {
 						public DbObject newInstance(ResultSet s) throws Exception {
 							return new DbObject();
 						}
-					},
-					new JdbcMappingContextFactoryBuilder().newFactory()),
-				handler);
+					}),
+					handler, new JdbcMappingContextFactoryBuilder().newFactory());
 		final Error error = new Error();
 		
 		ResultSet rs = mock(ResultSet.class);

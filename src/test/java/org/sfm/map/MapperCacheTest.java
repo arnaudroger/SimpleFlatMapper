@@ -1,6 +1,7 @@
 package org.sfm.map;
 
 import org.junit.Test;
+import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.impl.ColumnsMapperKey;
 import org.sfm.map.impl.MapperCache;
 
@@ -14,8 +15,8 @@ public class MapperCacheTest {
 
 	@Test
 	public void testMapperCache() throws SQLException, ParseException, Exception {
-		MapperCache<ColumnsMapperKey, Object> cache = new MapperCache<ColumnsMapperKey, Object>();
-		ColumnsMapperKey key = new ColumnsMapperKey("col1", "col2");
+		MapperCache<ColumnsMapperKey<CsvColumnKey>, Object> cache = new MapperCache<ColumnsMapperKey<CsvColumnKey>, Object>();
+		ColumnsMapperKey key = new ColumnsMapperKey(new CsvColumnKey("col1", 1), new CsvColumnKey("col2", 2));
 		Object delegate = cache.get(key);
 		assertNull(delegate);
 		delegate = new Object();

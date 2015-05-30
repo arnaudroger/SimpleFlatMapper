@@ -1,5 +1,6 @@
 package org.sfm.csv.impl;
 
+import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.impl.cellreader.StringCellValueReader;
 import org.sfm.csv.parser.CellConsumer;
 import org.sfm.map.impl.ColumnsMapperKey;
@@ -11,7 +12,9 @@ public final class ColumnsMapperKeyBuilderCellConsumer<T> implements CellConsume
 	/**
 	 * 
 	 */
-	private final List<String> columns = new ArrayList<String>();
+	private final List<CsvColumnKey> columns = new ArrayList<CsvColumnKey>();
+
+	private int index = 0;
 
 	public ColumnsMapperKeyBuilderCellConsumer() {
 	}
@@ -22,7 +25,8 @@ public final class ColumnsMapperKeyBuilderCellConsumer<T> implements CellConsume
 
 	@Override
 	public void newCell(char[] chars, int offset, int length) {
-		columns.add(StringCellValueReader.readString(chars, offset, length));
+		columns.add(new CsvColumnKey(StringCellValueReader.readString(chars, offset, length), index));
+		index++;
 	}
 
 	@Override
@@ -30,6 +34,6 @@ public final class ColumnsMapperKeyBuilderCellConsumer<T> implements CellConsume
 	}
 
 	public ColumnsMapperKey getKey() {
-		return new ColumnsMapperKey(columns.toArray(new String[columns.size()]));
+		return new ColumnsMapperKey(columns.toArray(new CsvColumnKey[columns.size()]));
 	}
 }

@@ -48,7 +48,7 @@ public class DynamicJdbcMapperTest {
 	}
 
 	@Test
-	public void testResultSetMapperIterate()
+	public void testResultSetMapperIterator()
 			throws Exception {
 		DbHelper.testDbObjectFromDb(new RowHandler<PreparedStatement>() {
 			@Override

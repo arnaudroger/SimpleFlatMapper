@@ -1,5 +1,6 @@
 package org.sfm.map.impl;
 
+import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.getter.MapperGetterAdapter;
 import org.sfm.map.*;
 import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
@@ -96,11 +97,11 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
                 if (mapperConfig.failOnAsm()) {
                     return ErrorHelper.rethrow(e);
                 } else {
-                    mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
+                    mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second());
                 }
             }
         } else {
-            mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second(), mappingContextFactory);
+            mapper = new MapperImpl<S, T>(fields, constructorFieldMappersAndInstantiator.first(), constructorFieldMappersAndInstantiator.second());
         }
         return mapper;
     }
@@ -179,7 +180,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
                         mappingContextFactoryBuilder.nullChecker(),
                         mappingContextFactoryBuilder.breakDetectorGetter());
 
-        return wrapFieldMapperWithErrorHandler(properties.get(0), fieldMapper );
+        return wrapFieldMapperWithErrorHandler(properties.get(0), fieldMapper);
     }
 
     @SuppressWarnings("unchecked")
@@ -187,7 +188,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         return new MapperGetterAdapter<S, P>((Mapper<S, P>)mapper, builder.nullChecker());
     }
 
-    // call use towards sub mapper
+    // call use towards sub jdbcMapper
     // the keys are initialised
     private <P> void addMapping(K columnKey, FieldMapperColumnDefinition<K, S> columnDefinition,  PropertyMeta<T, P> prop) {
 		propertyMappingsBuilder.addProperty(columnKey, columnDefinition, prop);
@@ -348,4 +349,5 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
         return keys;
     }
+
 }

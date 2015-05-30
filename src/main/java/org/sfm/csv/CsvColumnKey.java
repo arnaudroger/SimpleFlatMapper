@@ -2,6 +2,9 @@ package org.sfm.csv;
 
 import org.sfm.map.FieldKey;
 
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+
 public class CsvColumnKey implements FieldKey<CsvColumnKey> {
 	private final String name;
 	private final int index;

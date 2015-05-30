@@ -80,45 +80,22 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 
 	@Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public Iterator<T> iterate(Reader reader) throws IOException {
+    public Iterator<T> iterator(Reader reader) throws IOException {
 		CsvReader csvReader = CsvParser.reader(reader);
-		return iterate(csvReader);
+		return iterator(csvReader);
 	}
 
 	@Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-	public Iterator<T> iterate(CsvReader csvReader) throws IOException {
+	public Iterator<T> iterator(CsvReader csvReader) throws IOException {
 		CsvMapperImpl<T> mapper = getDelegateMapper(csvReader);
 		return new CsvMapperIterator<T>(csvReader, mapper);
 	}
 
 	@Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-	public Iterator<T> iterate(Reader reader, int skip) throws IOException {
-		return iterate(CsvParser.skip(skip).reader(reader));
-	}
-
-	@SuppressWarnings("deprecation")
-    @Override
-	public Iterator<T> iterator(Reader reader) throws IOException {
-		return iterate(reader);
-	}
-
-    @SuppressWarnings("deprecation")
-	@Override
-	public Iterator<T> iterator(CsvReader csvReader) throws IOException {
-		return iterate(csvReader);
-	}
-
-    @SuppressWarnings("deprecation")
-	@Override
 	public Iterator<T> iterator(Reader reader, int skip) throws IOException {
-		return iterate(reader, skip);
+		return iterator(CsvParser.skip(skip).reader(reader));
 	}
+
 
 	private CsvMapperImpl<T> getDelegateMapper(CsvReader reader) throws IOException {
 		ColumnsMapperKeyBuilderCellConsumer keyBuilderCellConsumer = new ColumnsMapperKeyBuilderCellConsumer();
@@ -147,7 +124,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	//IFJAVA8_END
 
-	protected CsvMapperImpl<T> getCsvMapper(ColumnsMapperKey key) {
+	protected CsvMapperImpl<T> getCsvMapper(ColumnsMapperKey<CsvColumnKey>  key) {
 		CsvMapperImpl<T> csvMapperImpl = mapperCache.get(key);
 		if (csvMapperImpl == null) {
 			csvMapperImpl = buildMapper(key);
@@ -156,11 +133,11 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		return csvMapperImpl;
 	}
 
-	private CsvMapperImpl<T> buildMapper(ColumnsMapperKey key) {
+	private CsvMapperImpl<T> buildMapper(ColumnsMapperKey<CsvColumnKey> key) {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, 0,  cellValueReaderFactory, mapperConfig);
 		builder.setDefaultDateFormat(defaultDateFormat);
-		for(String col : key.getColumns()) {
-			builder.addMapping(col);
+		for(CsvColumnKey col : key.getColumns()) {
+			builder.addMapping(col, CsvColumnDefinition.identity());
 		}
 		return (CsvMapperImpl<T>)builder.mapper();
 	}

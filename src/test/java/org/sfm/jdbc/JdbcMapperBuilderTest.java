@@ -2,7 +2,7 @@ package org.sfm.jdbc;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.jdbc.impl.JdbcMapperImpl;
+import org.sfm.jdbc.impl.StaticJdbcMapper;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
@@ -74,11 +74,11 @@ public class JdbcMapperBuilderTest {
 	}
 
 	private Mapper<ResultSet, DbObject> getSubMapper(JdbcMapper<DbObject> mapper) throws Exception {
-		final Field field = JdbcMapperImpl.class.getDeclaredField("mapper");
+		final Field field = StaticJdbcMapper.class.getDeclaredField("mapper");
 		field.setAccessible(true);
 		return
 				new FieldGetter<JdbcMapper<?>, MapperImpl<ResultSet, DbObject>>(field)
-						.get((JdbcMapperImpl) mapper);
+						.get((StaticJdbcMapper) mapper);
 	}
 
 	static class StaticLongGetter<T> implements LongGetter<T>, Getter<T, Long> {

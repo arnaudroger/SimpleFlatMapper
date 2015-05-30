@@ -1,21 +1,35 @@
 package org.sfm.map.impl;
 
+import org.sfm.map.FieldKey;
+
 import java.util.Arrays;
 
-public final class ColumnsMapperKey {
+import static org.sfm.utils.Asserts.requireNonNull;
 
-	private final String[] columns;
-	public ColumnsMapperKey(final String... columns) {
+public final class ColumnsMapperKey<K extends FieldKey<K>> {
+
+	private final K[] columns;
+	public ColumnsMapperKey(final K... columns) {
+		requireNonNull("columns", columns);
 		this.columns = columns;
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
-		final String[] otherColumns = ((ColumnsMapperKey)obj).columns;
-        return Arrays.equals(columns, otherColumns);
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ColumnsMapperKey<?> that = (ColumnsMapperKey<?>) o;
+
+		return Arrays.equals(columns, that.columns);
 	}
 
-	public String[] getColumns() {
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(columns);
+	}
+
+	public K[] getColumns() {
 		return columns;
 	}
 

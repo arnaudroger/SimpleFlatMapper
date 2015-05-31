@@ -17,8 +17,8 @@ import org.sfm.utils.RowHandler;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-//IFJAVA8_START
 import java.util.List;
+//IFJAVA8_START
 import java.util.stream.Stream;
 //IFJAVA8_END
 

@@ -54,6 +54,8 @@ public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, Fiel
     }
 
     public <T> SheetMapper<T> newMapper(Type type) {
-        return new DynamicSheetMapper<T>(getClassMeta(type), mapperConfig(), getterFactory);
+        ClassMeta<T> classMeta = getClassMeta(type);
+        MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> mapperConfig = mapperConfig();
+        return new DynamicSheetMapper<T>(classMeta, mapperConfig, getterFactory);
     }
 }

@@ -20,14 +20,15 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 
 	private final ClassMeta<T> classMeta;
 
-    private final MapperCache<ColumnsMapperKey, JdbcMapper<T>> mapperCache =
-			new MapperCache<ColumnsMapperKey, JdbcMapper<T>>();
+    private final MapperCache<MapperKey, JdbcMapper<T>> mapperCache = new MapperCache<MapperKey, JdbcMapper<T>>();
 
 	private final MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> mapperConfig;
+
 	private final GetterFactory<ResultSet,JdbcColumnKey> getterFactory;
 
 	public DynamicJdbcMapper(final ClassMeta<T> classMeta,
-							 MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> mapperConfig, GetterFactory<ResultSet, JdbcColumnKey> getterFactory) {
+							 MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> mapperConfig,
+							 GetterFactory<ResultSet, JdbcColumnKey> getterFactory) {
 		this.classMeta = classMeta;
 		this.mapperConfig = mapperConfig;
 		this.getterFactory = getterFactory;
@@ -89,11 +90,11 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 		return getJdbcMapper(JdbcColumnKey.mapperKey(resultSetMetaData));
 	}
 
-	protected ColumnsMapperKey<JdbcColumnKey> getMapperKey(ResultSet rs) throws SQLException {
+	protected MapperKey<JdbcColumnKey> getMapperKey(ResultSet rs) throws SQLException {
 		return JdbcColumnKey.mapperKey(rs.getMetaData());
 	}
 
-	private JdbcMapper<T> getJdbcMapper(ColumnsMapperKey<JdbcColumnKey> key) throws SQLException {
+	private JdbcMapper<T> getJdbcMapper(MapperKey<JdbcColumnKey> key) throws SQLException {
 		JdbcMapper<T> mapper = mapperCache.get(key);
 
 		if (mapper == null) {

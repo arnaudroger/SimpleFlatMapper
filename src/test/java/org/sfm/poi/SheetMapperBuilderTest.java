@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.csv.CsvColumnKey;
+import org.sfm.poi.impl.StaticSheetMapper;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -15,13 +16,13 @@ import java.util.Date;
 import static org.junit.Assert.*;
 
 
-public class PoiMapperBuilderTest {
+public class SheetMapperBuilderTest {
 
     Workbook workbook;
     Sheet sheet;
     Row row;
     Date now = new Date();
-    PoiMapperBuilder.CsvColumnKeyRowKeySourceGetter keySourceGetter = new PoiMapperBuilder.CsvColumnKeyRowKeySourceGetter();
+    SheetMapperBuilder.CsvColumnKeyRowKeySourceGetter keySourceGetter = new SheetMapperBuilder.CsvColumnKeyRowKeySourceGetter();
 
     @Before
     public void setUp(){
@@ -80,7 +81,7 @@ public class PoiMapperBuilderTest {
 
     @Test
     public void testMapDbObjectFromRow() {
-        PoiMapperBuilder<DbObject> builder = PoiMapperFactory.newInstance().newBuilder(DbObject.class);
+        SheetMapperBuilder<DbObject> builder = SheetMapperFactory.newInstance().newBuilder(DbObject.class);
 
         builder
                 .addMapping("id")
@@ -90,7 +91,7 @@ public class PoiMapperBuilderTest {
                 .addMapping("type_ordinal")
                 .addMapping("type_name");
 
-        PoiMapper<DbObject> mapper = builder.mapper();
+        StaticSheetMapper<DbObject> mapper = builder.mapper();
 
 
         final DbObject dbObject = mapper.map(row);

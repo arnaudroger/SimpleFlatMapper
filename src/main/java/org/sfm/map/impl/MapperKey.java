@@ -6,10 +6,10 @@ import java.util.Arrays;
 
 import static org.sfm.utils.Asserts.requireNonNull;
 
-public final class ColumnsMapperKey<K extends FieldKey<K>> {
+public final class MapperKey<K extends FieldKey<K>> {
 
 	private final K[] columns;
-	public ColumnsMapperKey(final K... columns) {
+	public MapperKey(final K... columns) {
 		requireNonNull("columns", columns);
 		this.columns = columns;
 	}
@@ -19,7 +19,7 @@ public final class ColumnsMapperKey<K extends FieldKey<K>> {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		ColumnsMapperKey<?> that = (ColumnsMapperKey<?>) o;
+		MapperKey<?> that = (MapperKey<?>) o;
 
 		return Arrays.equals(columns, that.columns);
 	}
@@ -35,7 +35,7 @@ public final class ColumnsMapperKey<K extends FieldKey<K>> {
 
     @Override
     public String toString() {
-        return "ColumnsMapperKey{" + Arrays.toString(columns) +
+        return "MapperKey{" + Arrays.toString(columns) +
                 '}';
     }
 }

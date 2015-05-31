@@ -1,7 +1,7 @@
 package org.sfm.jdbc;
 
 import org.sfm.map.FieldKey;
-import org.sfm.map.impl.ColumnsMapperKey;
+import org.sfm.map.impl.MapperKey;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -98,13 +98,13 @@ public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 		return new JdbcColumnKey(metaData.getColumnLabel(columnIndex), columnIndex, metaData.getColumnType(columnIndex));
 	}
 
-	public static ColumnsMapperKey<JdbcColumnKey> mapperKey(ResultSetMetaData metaData)  throws  SQLException {
+	public static MapperKey<JdbcColumnKey> mapperKey(ResultSetMetaData metaData)  throws  SQLException {
 		JdbcColumnKey[] keys = new JdbcColumnKey[metaData.getColumnCount()];
 
 		for(int i = 1; i <= metaData.getColumnCount(); i++) {
 			keys[i - 1] = of(metaData, i);
 		}
 
-		return new ColumnsMapperKey<JdbcColumnKey>(keys);
+		return new MapperKey<JdbcColumnKey>(keys);
 	}
 }

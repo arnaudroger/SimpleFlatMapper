@@ -31,7 +31,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	private final MapperConfig<CsvColumnKey, CsvColumnDefinition> mapperConfig;
 
-	private final MapperCache<ColumnsMapperKey, CsvMapperImpl<T>> mapperCache = new MapperCache<ColumnsMapperKey, CsvMapperImpl<T>>();
+	private final MapperCache<MapperKey, CsvMapperImpl<T>> mapperCache = new MapperCache<MapperKey, CsvMapperImpl<T>>();
 
 	public DynamicCsvMapper(final Type target,
 							final ClassMeta<T> classMeta,
@@ -124,7 +124,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	//IFJAVA8_END
 
-	protected CsvMapperImpl<T> getCsvMapper(ColumnsMapperKey<CsvColumnKey>  key) {
+	protected CsvMapperImpl<T> getCsvMapper(MapperKey<CsvColumnKey> key) {
 		CsvMapperImpl<T> csvMapperImpl = mapperCache.get(key);
 		if (csvMapperImpl == null) {
 			csvMapperImpl = buildMapper(key);
@@ -133,7 +133,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		return csvMapperImpl;
 	}
 
-	private CsvMapperImpl<T> buildMapper(ColumnsMapperKey<CsvColumnKey> key) {
+	private CsvMapperImpl<T> buildMapper(MapperKey<CsvColumnKey> key) {
 		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(target, classMeta, 0,  cellValueReaderFactory, mapperConfig);
 		builder.setDefaultDateFormat(defaultDateFormat);
 		for(CsvColumnKey col : key.getColumns()) {

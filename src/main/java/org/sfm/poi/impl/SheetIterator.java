@@ -2,20 +2,20 @@ package org.sfm.poi.impl;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.sfm.map.Mapper;
 import org.sfm.map.MappingContext;
-import org.sfm.poi.PoiMapper;
 
 import java.util.Iterator;
 
 public class SheetIterator<T> implements Iterator<T> {
 
-    private final PoiMapper<T> mapper;
+    private final Mapper<Row, T> mapper;
     private final Sheet sheet;
     private final MappingContext<Row> mappingContext;
 
     private int rowNum;
 
-    public SheetIterator(PoiMapper<T> mapper, int startRow, Sheet sheet, MappingContext<Row> mappingContext) {
+    public SheetIterator(Mapper<Row, T> mapper, int startRow, Sheet sheet, MappingContext<Row> mappingContext) {
         this.mapper = mapper;
         this.rowNum = startRow;
         this.sheet = sheet;

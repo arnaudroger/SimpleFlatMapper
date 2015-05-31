@@ -8,11 +8,12 @@ import org.sfm.map.GetterFactory;
 import org.sfm.map.MappingContextFactoryBuilder;
 import org.sfm.map.impl.*;
 import org.sfm.poi.impl.RowGetterFactory;
+import org.sfm.poi.impl.StaticSheetMapper;
 import org.sfm.reflect.meta.ClassMeta;
 
 import java.sql.SQLException;
 
-public class PoiMapperBuilder<T> {
+public class SheetMapperBuilder<T> {
 
     public static final MapperSourceImpl<Row, CsvColumnKey> FIELD_MAPPER_SOURCE =
             new MapperSourceImpl<Row, CsvColumnKey>(Row.class, new RowGetterFactory());
@@ -22,9 +23,9 @@ public class PoiMapperBuilder<T> {
     private final MappingContextFactoryBuilder<Row, CsvColumnKey> mappingContextFactoryBuilder;
     private int currentColumn = 0;
 
-    public PoiMapperBuilder(ClassMeta<T> classMeta,
-                            MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> mapperConfig,
-                            GetterFactory<Row, CsvColumnKey> getterFactory) {
+    public SheetMapperBuilder(ClassMeta<T> classMeta,
+                              MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> mapperConfig,
+                              GetterFactory<Row, CsvColumnKey> getterFactory) {
         this.mappingContextFactoryBuilder = new MappingContextFactoryBuilder<Row, CsvColumnKey>(new CsvColumnKeyRowKeySourceGetter());
         builder =
             new FieldMapperMapperBuilder<Row, T, CsvColumnKey>(
@@ -36,17 +37,22 @@ public class PoiMapperBuilder<T> {
         this.mapperConfig = mapperConfig;
     }
 
-    public PoiMapperBuilder<T> addMapping(String columnName) {
+    public SheetMapperBuilder<T> addMapping(String columnName) {
         return addMapping(columnName, currentColumn++, FieldMapperColumnDefinition.<CsvColumnKey, Row>identity());
     }
 
-    public PoiMapperBuilder<T> addMapping(String columnName, int columnIndex, FieldMapperColumnDefinition<CsvColumnKey, Row> definition) {
+    public SheetMapperBuilder<T> addMapping(String columnName, int columnIndex, FieldMapperColumnDefinition<CsvColumnKey, Row> definition) {
         builder.addMapping(new CsvColumnKey(columnName, columnIndex), definition);
         return this;
     }
 
-    public PoiMapper<T> mapper() {
-        return new PoiMapper<T>(builder.mapper(), mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
+    public StaticSheetMapper<T> mapper() {
+        return new StaticSheetMapper<T>(builder.mapper(), mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
+    }
+
+    public SheetMapperBuilder<T> addMapping(CsvColumnKey k, FieldMapperColumnDefinition<CsvColumnKey, Row> columnDefinition) {
+        builder.addMapping(k, columnDefinition);
+        return this;
     }
 
     public static class CsvColumnKeyRowKeySourceGetter implements MappingContextFactoryBuilder.KeySourceGetter<CsvColumnKey, Row> {

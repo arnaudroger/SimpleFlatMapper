@@ -3,7 +3,7 @@ package org.sfm.csv.impl;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.impl.cellreader.StringCellValueReader;
 import org.sfm.csv.parser.CellConsumer;
-import org.sfm.map.impl.ColumnsMapperKey;
+import org.sfm.map.impl.MapperKey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public final class ColumnsMapperKeyBuilderCellConsumer<T> implements CellConsume
 	public void end() {
 	}
 
-	public ColumnsMapperKey getKey() {
-		return new ColumnsMapperKey(columns.toArray(new CsvColumnKey[columns.size()]));
+	public MapperKey<CsvColumnKey> getKey() {
+		return new MapperKey<CsvColumnKey>(columns.toArray(new CsvColumnKey[columns.size()]));
 	}
 }

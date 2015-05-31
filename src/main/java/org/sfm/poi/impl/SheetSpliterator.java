@@ -4,20 +4,19 @@ package org.sfm.poi.impl;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.sfm.map.MappingContext;
-import org.sfm.poi.PoiMapper;
 
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
 public class SheetSpliterator<T> implements Spliterator<T> {
 
-    private final PoiMapper<T> mapper;
+    private final StaticSheetMapper<T> mapper;
     private final Sheet sheet;
     private final MappingContext<Row> mappingContext;
 
     private int rowNum;
 
-    public SheetSpliterator(PoiMapper<T> mapper, int startRow, Sheet sheet, MappingContext<Row> mappingContext) {
+    public SheetSpliterator(StaticSheetMapper<T> mapper, int startRow, Sheet sheet, MappingContext<Row> mappingContext) {
         this.mapper = mapper;
         this.rowNum = startRow;
         this.sheet = sheet;

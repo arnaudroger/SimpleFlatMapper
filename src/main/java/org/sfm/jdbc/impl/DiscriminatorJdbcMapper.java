@@ -2,8 +2,11 @@ package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.*;
+import org.sfm.map.impl.DiscriminatorEnumerable;
 import org.sfm.tuples.Tuple2;
+import org.sfm.tuples.Tuple3;
 import org.sfm.utils.*;
+import org.sfm.utils.conv.Converter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +14,7 @@ import java.util.List;
 
 
 
-public final class DiscriminatorJdbcMapper<T> extends AbstractForEachDynamicJdbcMapper<T> {
+public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableJdbcMapper<T> {
 
 
     private final String discriminatorColumn;
@@ -70,8 +73,27 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractForEachDynamicJdbc
 	}
 
 
-    protected DiscriminatorForEach<T> newForEachIterator(ResultSet rs) throws SQLException {
-        return new DiscriminatorForEach<T>(this, getMappingContexts(rs), errorHandler, rs);
+    protected DiscriminatorEnumerable<ResultSet, T> newEnumarableOfT(ResultSet rs) throws SQLException {
+        @SuppressWarnings("unchecked") Tuple3<Predicate<ResultSet>, Mapper<ResultSet, T>, MappingContext<ResultSet>>[] mapperDiscriminators =
+                new Tuple3[this.mappers.size()];
+
+        for(int i = 0; i < mapperDiscriminators.length; i++) {
+
+            Tuple2<Predicate<String>, JdbcMapper<T>> mapper = mappers.get(i);
+
+            Predicate<ResultSet> discriminatorPredicate = new DiscriminatorPredicate(discriminatorColumn, mapper.first());
+
+            mapperDiscriminators[i] =
+                    new Tuple3<Predicate<ResultSet>, Mapper<ResultSet, T>, MappingContext<ResultSet>>(
+                            discriminatorPredicate,
+                            mapper.second(),
+                            mapper.second().newMappingContext(rs));
+        }
+
+        return new DiscriminatorEnumerable<ResultSet, T>(
+                mapperDiscriminators,
+                new ResultSetEnumarable(rs),
+                new ErrorMessageConverter(discriminatorColumn));
     }
 
     @Override
@@ -82,99 +104,37 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractForEachDynamicJdbc
                 '}';
     }
 
-    private static class DiscriminatorForEach<T> implements ForEachIterator<T> {
 
-        private final DiscriminatorJdbcMapper<T> mapper;
-        private final MappingContext<ResultSet>[] mappingContexts;
-        private final RowHandlerErrorHandler rowHandlerErrorHandler;
+    private static class DiscriminatorPredicate implements Predicate<ResultSet> {
+        private String discriminatorColumn;
+        private Predicate<String> predicate;
 
-
-        private final ResultSet resultSet;
-        private int currentMapperIndex = -1;
-        private T currentValue;
-        private JdbcMapper<T> currentMapper;
-        private MappingContext<ResultSet> currentMappingContext;
-
-
-        public DiscriminatorForEach(DiscriminatorJdbcMapper<T> mapper,
-                                    MappingContext<ResultSet>[] mappingContexts,
-                                    RowHandlerErrorHandler rowHandlerErrorHandler, ResultSet resultSet) {
-            this.mapper = mapper;
-            this.mappingContexts = mappingContexts;
-            this.rowHandlerErrorHandler = rowHandlerErrorHandler;
-            this.resultSet = resultSet;
+        public DiscriminatorPredicate(String discriminatorColumn, Predicate<String> predicate) {
+            this.discriminatorColumn = discriminatorColumn;
+            this.predicate = predicate;
         }
 
         @Override
-        public boolean next(RowHandler<? super T> rowHandler) throws Exception {
-            return forEach(true, rowHandler);
-        }
-
-        @Override
-        public void forEach(RowHandler<? super T> rowHandler) throws Exception {
-            forEach(false, rowHandler);
-        }
-
-        private boolean forEach(boolean stopOnNext, RowHandler<? super T> rowHandler) throws Exception {
-            while (resultSet.next()) {
-
-                checkMapper();
-
-                currentMappingContext.handle(resultSet);
-
-                if (currentMappingContext.rootBroke()) {
-                    if (currentValue != null) {
-                        callHandler(rowHandler);
-                        currentValue = currentMapper.map(resultSet, currentMappingContext);
-                        if (stopOnNext) {
-                            return true;
-                        }
-                    } else {
-                        currentValue = currentMapper.map(resultSet, currentMappingContext);
-                    }
-                } else {
-                    currentMapper.mapTo(resultSet, currentValue, currentMappingContext);
-                }
-            }
-
-            if (currentValue != null) {
-                callHandler(rowHandler);
-                currentValue = null;
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        private void callHandler(RowHandler<? super T> rowHandler) throws Exception {
+        public boolean test(ResultSet resultSet) {
             try {
-                rowHandler.handle(currentValue);
-            } catch(Exception e) {
-                rowHandlerErrorHandler.handlerError(e, currentValue);
-            }
-
-        }
-
-        private void checkMapper() throws java.sql.SQLException {
-            int mapperIndex = mapper.getMapperIndex(resultSet);
-            if (currentMapperIndex != mapperIndex) {
-                mapperChange(mapperIndex);
-            }
-        }
-
-        private void mapperChange(int newMapperIndex) {
-            markAsBroken(mappingContexts);
-            currentMapper = this.mapper.getMapper(newMapperIndex);
-            currentMappingContext = mappingContexts[newMapperIndex];
-            currentMapperIndex = newMapperIndex;
-        }
-
-        private void markAsBroken(MappingContext<ResultSet>[] mappingContexts) {
-            for(int i = 0; i < mappingContexts.length; i++) {
-                mappingContexts[i].markAsBroken();
+                return predicate.test(resultSet.getString(discriminatorColumn));
+            } catch (SQLException e) {
+                ErrorHelper.rethrow(e);
+                return false;
             }
         }
     }
 
+    private static class ErrorMessageConverter implements Converter<ResultSet, String> {
+        private final String discriminatorColumn;
 
+        private ErrorMessageConverter(String discriminatorColumn) {
+            this.discriminatorColumn = discriminatorColumn;
+        }
+
+        @Override
+        public String convert(ResultSet in) throws Exception {
+            return " column " + discriminatorColumn + " = " + in.getObject(discriminatorColumn);
+        }
+    }
 }

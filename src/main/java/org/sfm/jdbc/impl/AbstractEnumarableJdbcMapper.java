@@ -16,11 +16,11 @@ import java.util.stream.StreamSupport;
 
 
 
-public abstract class AbstractForEachDynamicJdbcMapper<T> implements JdbcMapper<T> {
+public abstract class AbstractEnumarableJdbcMapper<T> implements JdbcMapper<T> {
 
     protected final RowHandlerErrorHandler errorHandler;
 
-    public AbstractForEachDynamicJdbcMapper(RowHandlerErrorHandler errorHandler) {
+    public AbstractEnumarableJdbcMapper(RowHandlerErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
     }
     @Override
@@ -42,25 +42,29 @@ public abstract class AbstractForEachDynamicJdbcMapper<T> implements JdbcMapper<
 	public final <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
 			throws SQLException, MappingException {
         try  {
-            newForEachIterator(rs).forEach(handler);
+
+            Enumarable<T> enumarable = newEnumarableOfT(rs);
+            while(enumarable.next()) {
+                handler.handle(enumarable.currentValue());
+            }
             return handler;
         } catch(Exception e) {
             return ErrorHelper.rethrow(e);
         }
 	}
 
-    protected abstract ForEachIterator<T> newForEachIterator(ResultSet rs) throws SQLException;
+    protected abstract Enumarable<T> newEnumarableOfT(ResultSet rs) throws SQLException;
 
     @Override
 	public final Iterator<T> iterator(ResultSet rs) throws SQLException,
 			MappingException {
-		return new ForEachIteratorIterator<T>(newForEachIterator(rs));
+		return new EnumarableIterator<T>(newEnumarableOfT(rs));
 	}
 
     //IFJAVA8_START
 	@Override
 	public final Stream<T> stream(ResultSet rs) throws SQLException, MappingException {
-		return StreamSupport.stream(new ForEachIteratorSpliterator<T>(newForEachIterator(rs)), false);
+		return StreamSupport.stream(new EnumarableSpliterator<T>(newEnumarableOfT(rs)), false);
 	}
     //IFJAVA8_END
 

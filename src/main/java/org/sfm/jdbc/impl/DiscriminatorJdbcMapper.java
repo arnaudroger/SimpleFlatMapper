@@ -26,22 +26,6 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableJdbcMapp
         this.mappers = mappers;
     }
 
-    private MappingContext<ResultSet>[] getMappingContexts(ResultSet rs) throws SQLException {
-        @SuppressWarnings("unchecked")
-        MappingContext<ResultSet>[] mappingContexts = new MappingContext[mappers.size()];
-
-        int i = 0;
-        for(Tuple2<Predicate<String>, JdbcMapper<T>> tm : mappers) {
-            mappingContexts[i] = tm.getElement1().newMappingContext(rs);
-            i++;
-        }
-        return mappingContexts;
-    }
-
-    private JdbcMapper<T> getMapper(int index) {
-        return mappers.get(index).getElement1();
-    }
-
     @Override
     protected JdbcMapper<T> getMapper(final ResultSet rs) throws MappingException {
         try {
@@ -57,21 +41,6 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableJdbcMapp
             return ErrorHelper.rethrow(e);
         }
     }
-
-    private int getMapperIndex(final ResultSet rs) throws MappingException, SQLException {
-
-        String value = rs.getString(discriminatorColumn);
-
-        int i = 0;
-        for(Tuple2<Predicate<String>, JdbcMapper<T>> tm : mappers) {
-            if (tm.first().test(value)) {
-                return i;
-            }
-            i++;
-        }
-		throw new MappingException("No jdbcMapper found for " + discriminatorColumn + " = " + value);
-	}
-
 
     protected DiscriminatorEnumerable<ResultSet, T> newEnumarableOfT(ResultSet rs) throws SQLException {
         @SuppressWarnings("unchecked") Tuple3<Predicate<ResultSet>, Mapper<ResultSet, T>, MappingContext<ResultSet>>[] mapperDiscriminators =

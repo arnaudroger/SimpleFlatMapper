@@ -244,7 +244,7 @@ public class ResultSetGetterFactoryTest {
         Getter<ResultSet, DateTime> getter = factory.<DateTime>newGetter(DateTime.class, key(Types.TIMESTAMP), IDENTITY);
         DateTime dt = getter.get(resultSet);
 		assertTrue(new DateTime(cal).isEqual(dt));
-        assertEquals("JodaDateTimeResultSetGetter{getter=TimestampResultSetGetter{column=1}}", getter.toString());
+        assertEquals("JodaDateTimeFromDateGetter{getter=TimestampResultSetGetter{column=1}}", getter.toString());
 	}
 	@Test
 	public void testJodaLocalDate() throws Exception {
@@ -254,7 +254,7 @@ public class ResultSetGetterFactoryTest {
         Getter<ResultSet, LocalDate> getter = factory.<LocalDate>newGetter(LocalDate.class, key(Types.DATE), IDENTITY);
         LocalDate dt = getter.get(resultSet);
 		assertTrue(new LocalDate(cal).isEqual(dt));
-        assertEquals("JodaLocalDateResultSetGetter{getter=DateResultSetGetter{column=1}}", getter.toString());
+        assertEquals("JodaLocalDateFromDateGetter{getter=DateResultSetGetter{column=1}}", getter.toString());
 	}
 	@Test
 	public void testJodaLocalDateTime() throws Exception {
@@ -264,7 +264,7 @@ public class ResultSetGetterFactoryTest {
         Getter<ResultSet, LocalDateTime> getter = factory.<LocalDateTime>newGetter(LocalDateTime.class, key(Types.TIMESTAMP), IDENTITY);
         LocalDateTime dt = getter.get(resultSet);
 		assertTrue(new LocalDateTime(cal).isEqual(dt));
-        assertEquals("JodaLocalDateTimeResultSetGetter{getter=TimestampResultSetGetter{column=1}}", getter.toString());
+        assertEquals("JodaLocalDateTimeFromDateGetter{getter=TimestampResultSetGetter{column=1}}", getter.toString());
 	}
 	@Test
 	public void testJodaLocalTime() throws Exception {
@@ -321,7 +321,7 @@ public class ResultSetGetterFactoryTest {
 
 		assertNull(getter.get(resultSet));
 
-		assertEquals("JavaLocalDateResultSetGetter{column=1}", getter.toString());
+		assertEquals("JavaLocalDateFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -345,7 +345,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(localDateTime, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
 
-		assertEquals("JavaLocalDateTimeResultSetGetter{column=1}", getter.toString());
+		assertEquals("JavaLocalDateTimeFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -373,7 +373,7 @@ public class ResultSetGetterFactoryTest {
 		assertNull(getter.get(resultSet));
 
 
-		assertEquals("JavaLocalTimeResultSetGetter{column=1}", getter.toString());
+		assertEquals("JavaLocalTimeFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -396,7 +396,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(offsetDateTime, getter.get(resultSet));
 		assertEquals(offsetDateTime, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
-		assertEquals("JavaOffsetDateTimeResultSetGetter{column=1}", getter.toString());
+		assertEquals("JavaOffsetDateTimeFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -426,7 +426,7 @@ public class ResultSetGetterFactoryTest {
 		assertNull(getter.get(resultSet));
 
 
-		assertEquals("JavaOffsetTimeResultSetGetter{column=1}", getter.toString());
+		assertEquals("JavaOffsetTimeFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -450,7 +450,7 @@ public class ResultSetGetterFactoryTest {
 		assertNull(getter.get(resultSet));
 
 
-		assertEquals("JavaZonedDateTimeResultSetGetter{column=1}", getter.toString());
+		assertEquals("JavaZonedDateTimeFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -465,7 +465,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(instant, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
 
-		assertEquals("JavaInstantResultSetGetter{column=1}", getter.toString());
+		assertEquals("JavaInstantFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -480,7 +480,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(YearMonth.from(dateTime), getter.get(resultSet));
 		assertNull(getter.get(resultSet));
 
-		assertEquals("JavaYearMonthResultSetGetter{column=1}", getter.toString());
+		assertEquals("JavaYearMonthFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -494,7 +494,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(Year.of(2029), getter.get(resultSet));
 		assertNull(getter.get(resultSet));
 
-		assertEquals("JavaYearResultSetGetter{column=1}", getter.toString());
+		assertEquals("JavaYearFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 

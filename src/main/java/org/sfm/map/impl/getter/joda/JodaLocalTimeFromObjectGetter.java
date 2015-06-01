@@ -1,21 +1,20 @@
-package org.sfm.jdbc.impl.getter.joda;
+package org.sfm.map.impl.getter.joda;
 
 import org.joda.time.LocalTime;
 import org.sfm.reflect.Getter;
 
-import java.sql.ResultSet;
 import java.util.Date;
 
 
-public class JodaLocalTimeResultSetGetter implements Getter<ResultSet, LocalTime> {
-    private final Getter<ResultSet, ? extends Date> getter;
+public class JodaLocalTimeFromObjectGetter<S> implements Getter<S, LocalTime> {
+    private final Getter<S, ? extends Date> getter;
 
-    public JodaLocalTimeResultSetGetter(Getter<ResultSet, ? extends Date> getter) {
+    public JodaLocalTimeFromObjectGetter(Getter<S, ? extends Date> getter) {
         this.getter = getter;
     }
 
     @Override
-    public LocalTime get(ResultSet target) throws Exception {
+    public LocalTime get(S target) throws Exception {
         return new LocalTime(getter.get(target));
     }
 

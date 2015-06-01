@@ -1,24 +1,23 @@
-package org.sfm.jdbc.impl.getter.time;
+package org.sfm.map.impl.getter.time;
 
-import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.reflect.Getter;
 
-import java.sql.ResultSet;
 import java.time.Instant;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 
-public class JavaInstantResultSetGetter implements Getter<ResultSet, Instant> {
-    private final int index;
+public class JavaInstantFromObjectGetter<S> implements Getter<S, Instant> {
 
-    public JavaInstantResultSetGetter(JdbcColumnKey key) {
-        this.index = key.getIndex();
+    private final Getter<S, ?> getter;
+
+    public JavaInstantFromObjectGetter(Getter<S, ?> getter) {
+        this.getter = getter;
     }
 
     @Override
-    public Instant get(ResultSet target) throws Exception {
-        Object o = target.getObject(index);
+    public Instant get(S target) throws Exception {
+        Object o = getter.get(target);
 
         if (o == null) {
             return null;
@@ -41,8 +40,8 @@ public class JavaInstantResultSetGetter implements Getter<ResultSet, Instant> {
 
     @Override
     public String toString() {
-        return "JavaInstantResultSetGetter{" +
-                "column=" + index +
+        return "JavaInstantFromObjectGetter{" +
+                "getter=" + getter +
                 '}';
     }
 }

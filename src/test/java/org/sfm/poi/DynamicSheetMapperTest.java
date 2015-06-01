@@ -20,27 +20,15 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-public class SheetMapperTest {
+public class DynamicSheetMapperTest {
 
 
-    Sheet staticSheet;
     Sheet dynamicSheet;
-    SheetMapper<DbObject> staticSheetMapper;
+
     SheetMapper<DbObject> dynamicSheetMapper;
     @Before
     public void setUp(){
         Workbook wb = new HSSFWorkbook();
-        staticSheet = wb.createSheet();
-
-        for(int i = 0; i < 3; i++) {
-            Row row = staticSheet.createRow(i);
-            row.createCell(0).setCellValue(i);
-            row.createCell(1).setCellValue("name" + i);
-            row.createCell(2).setCellValue("email" + i);
-            row.createCell(3).setCellValue(new Date(i * 10000 ));
-            row.createCell(4).setCellValue(DbObject.Type.values()[i].ordinal());
-            row.createCell(5).setCellValue(DbObject.Type.values()[i].name());
-        }
 
         dynamicSheet = wb.createSheet();
 
@@ -64,27 +52,11 @@ public class SheetMapperTest {
 
 
 
-        staticSheetMapper =
-            SheetMapperFactory
-                .newInstance()
-                .newBuilder(DbObject.class)
-                .addMapping("id")
-                .addMapping("name")
-                .addMapping("email")
-                .addMapping("creation_time")
-                .addMapping("type_ordinal")
-                .addMapping("type_name")
-                .mapper();
         dynamicSheetMapper =
                 SheetMapperFactory.newInstance().newMapper(DbObject.class);
 
     }
 
-    @Test
-    public void iteratorOnSheetFrom0WithStaticMapper() {
-        Iterator<DbObject> iterator = staticSheetMapper.iterator(staticSheet);
-        testIteratorHasExpectedValue(iterator);
-    }
 
     @Test
     public void iteratorOnSheetFrom0WithDynamicMapper() {
@@ -92,21 +64,6 @@ public class SheetMapperTest {
         testIteratorHasExpectedValue(iterator);
     }
 
-
-    @Test
-    public void forEachOnSheetFrom0WithStaticMapper() {
-        int row = staticSheetMapper.forEach(staticSheet, new RowHandler<DbObject>() {
-            int row = 0;
-
-            @Override
-            public void handle(DbObject dbObject) throws Exception {
-                assertDbObject(row, dbObject);
-                row++;
-            }
-        }).row;
-
-        assertEquals(3, row);
-    }
 
 
     @Test
@@ -125,15 +82,6 @@ public class SheetMapperTest {
     }
 
     //IFJAVA8_START
-    @Test
-    public void streamOnSheetFrom0WithStreamWithStaticMapper() {
-
-        List<DbObject> list = staticSheetMapper.stream(staticSheet).collect(Collectors.toList());
-        assertEquals(3, list.size());
-        assertDbObject(0, list.get(0));
-        assertDbObject(1, list.get(1));
-        assertDbObject(2, list.get(2));
-    }
 
     @Test
     public void streamOnSheetFrom0WithStreamWithDynamicMapper() {
@@ -143,14 +91,6 @@ public class SheetMapperTest {
         assertDbObject(0, list.get(0));
         assertDbObject(1, list.get(1));
         assertDbObject(2, list.get(2));
-    }
-
-    @Test
-    public void streamOnSheetFrom0WithStreamWithLimitAndStaticMapper() {
-        List<DbObject> list = staticSheetMapper.stream(staticSheet).limit(2).collect(Collectors.toList());
-        assertEquals(2, list.size());
-        assertDbObject(0, list.get(0));
-        assertDbObject(1, list.get(1));
     }
 
     @Test

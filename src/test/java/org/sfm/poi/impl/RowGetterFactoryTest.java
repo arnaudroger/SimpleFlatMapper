@@ -2,6 +2,7 @@ package org.sfm.poi.impl;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.csv.CsvColumnDefinition;
@@ -10,6 +11,10 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.*;
 
 import java.text.SimpleDateFormat;
+//IFJAVA8_START
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+//IFJAVA8_END
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -319,4 +324,34 @@ public class RowGetterFactoryTest {
         final Getter<Row, DbObject.Type> getter = rowGetterFactory.newGetter(DbObject.Type.class, noCellKey, CsvColumnDefinition.IDENTITY);
         assertNull(getter.get(row));
     }
+
+    @Test
+    public void testJodaDateTimeOnDateCell() throws Exception {
+        final Getter<Row, DateTime> getter = rowGetterFactory.newGetter(DateTime.class, key, CsvColumnDefinition.IDENTITY);
+        Date now = new Date();
+        cell.setCellValue(now);
+        assertEquals(now, getter.get(row).toDate());
+    }
+
+    @Test
+    public void testJodaDateTimeOnBlankCell() throws Exception {
+        final Getter<Row, Date> getter = rowGetterFactory.newGetter(Date.class, key, CsvColumnDefinition.IDENTITY);
+        assertNull(getter.get(row));
+    }
+
+    //IFJAVA8_START
+    @Test
+    public void testJavaLocalDateTimeOnDAteCell() throws Exception {
+        final Getter<Row, LocalDateTime> getter = rowGetterFactory.newGetter(LocalDateTime.class, key, CsvColumnDefinition.IDENTITY);
+        Date now = new Date();
+        cell.setCellValue(now);
+        assertEquals(LocalDateTime.ofInstant(now.toInstant(), ZoneId.systemDefault()), getter.get(row));
+    }
+
+    @Test
+    public void testJavaLocalDateTimeOnBlankCell() throws Exception {
+        final Getter<Row, LocalDateTime> getter = rowGetterFactory.newGetter(LocalDateTime.class, key, CsvColumnDefinition.IDENTITY);
+        assertNull(getter.get(row));
+    }
+    //IFJAVA8_END
 }

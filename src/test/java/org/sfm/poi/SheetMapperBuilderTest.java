@@ -8,8 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.csv.CsvColumnKey;
+import org.sfm.map.Mapper;
 import org.sfm.poi.impl.StaticSheetMapper;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -91,7 +93,7 @@ public class SheetMapperBuilderTest {
                 .addMapping("type_ordinal")
                 .addMapping("type_name");
 
-        StaticSheetMapper<DbObject> mapper = builder.mapper();
+        RowMapper<DbObject> mapper = builder.mapper();
 
 
         final DbObject dbObject = mapper.map(row);

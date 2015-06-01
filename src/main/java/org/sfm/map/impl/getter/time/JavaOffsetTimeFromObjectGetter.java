@@ -1,26 +1,24 @@
-package org.sfm.jdbc.impl.getter.time;
+package org.sfm.map.impl.getter.time;
 
-import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.reflect.Getter;
 
-import java.sql.ResultSet;
 import java.time.*;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 
-public class JavaOffsetTimeResultSetGetter implements Getter<ResultSet, OffsetTime> {
-    private final int index;
+public class JavaOffsetTimeFromObjectGetter<S> implements Getter<S, OffsetTime> {
+    private final Getter<S, ?> getter;
     private final ZoneId zone;
 
-    public JavaOffsetTimeResultSetGetter(JdbcColumnKey key, ZoneId zoneId) {
-        this.index = key.getIndex();
+    public JavaOffsetTimeFromObjectGetter(Getter<S, ?> getter, ZoneId zoneId) {
+        this.getter = getter;
         this.zone = zoneId;
     }
 
     @Override
-    public OffsetTime get(ResultSet target) throws Exception {
-        Object o = target.getObject(index);
+    public OffsetTime get(S target) throws Exception {
+        Object o = getter.get(target);
 
         if (o == null) {
             return null;
@@ -52,8 +50,8 @@ public class JavaOffsetTimeResultSetGetter implements Getter<ResultSet, OffsetTi
 
     @Override
     public String toString() {
-        return "JavaOffsetTimeResultSetGetter{" +
-                "column=" + index +
+        return "JavaOffsetTimeFromObjectGetter{" +
+                "getter=" + getter +
                 '}';
     }
 }

@@ -4,9 +4,10 @@ package org.sfm.poi.impl;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.sfm.map.*;
+import org.sfm.map.impl.JoinEnumarable;
 import org.sfm.poi.RowMapper;
-import org.sfm.poi.SheetMapper;
-import org.sfm.poi.impl.SheetIterator;
+import org.sfm.utils.Enumarable;
+import org.sfm.utils.EnumarableIterator;
 import org.sfm.utils.RowHandler;
 
 import java.util.Iterator;
@@ -14,10 +15,9 @@ import java.util.Iterator;
 //IFJAVA8_START
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import org.sfm.poi.impl.SheetSpliterator;
 //IFJAVA8_END
 
-public class StaticSheetMapper<T> implements RowMapper<T> {
+public class JoinSheetMapper<T> implements RowMapper<T> {
 
     private final Mapper<Row, T> mapper;
     private final int startRow = 0;
@@ -25,7 +25,7 @@ public class StaticSheetMapper<T> implements RowMapper<T> {
     private final RowHandlerErrorHandler rowHandlerErrorHandler;
     private final MappingContextFactory<Row> mappingContextFactory;
 
-    public StaticSheetMapper(Mapper<Row, T> mapper, RowHandlerErrorHandler rowHandlerErrorHandler, MappingContextFactory<Row> mappingContextFactory) {
+    public JoinSheetMapper(Mapper<Row, T> mapper, RowHandlerErrorHandler rowHandlerErrorHandler, MappingContextFactory<Row> mappingContextFactory) {
         this.mapper = mapper;
         this.rowHandlerErrorHandler = rowHandlerErrorHandler;
         this.mappingContextFactory = mappingContextFactory;
@@ -38,7 +38,11 @@ public class StaticSheetMapper<T> implements RowMapper<T> {
 
     @Override
     public Iterator<T> iterator(int startRow, Sheet sheet) {
-        return new SheetIterator<T>(this, startRow, sheet, newMappingContext());
+        return new EnumarableIterator<T>(enumerable(startRow, sheet, newMappingContext()));
+    }
+
+    private Enumarable<T> enumerable(int startRow, Sheet sheet, MappingContext<Row> mappingContext) {
+        return new JoinEnumarable<Row, T>(mapper, mappingContext, new RowEnumarable(startRow, sheet));
     }
 
     @Override
@@ -49,14 +53,17 @@ public class StaticSheetMapper<T> implements RowMapper<T> {
     @Override
     public <RH extends RowHandler<T>> RH forEach(int startRow, Sheet sheet, RH rowHandler) {
         MappingContext<Row> mappingContext = newMappingContext();
-        for(int rowNum = startRow; rowNum <= sheet.getLastRowNum(); rowNum++) {
-            T object = map(sheet.getRow(rowNum), mappingContext);
+
+        Enumarable<T> enumarable = enumerable(startRow, sheet, mappingContext);
+
+        while(enumarable.next()) {
             try {
-                rowHandler.handle(object);
+                rowHandler.handle(enumarable.currentValue());
             } catch(Exception e) {
-                rowHandlerErrorHandler.handlerError(e, object);
+                rowHandlerErrorHandler.handlerError(e, enumarable.currentValue());
             }
         }
+
         return rowHandler;
     }
 
@@ -68,7 +75,7 @@ public class StaticSheetMapper<T> implements RowMapper<T> {
 
     @Override
     public Stream<T> stream(int startRow, Sheet sheet) {
-        return StreamSupport.stream(new SheetSpliterator<T>(this, startRow, sheet, newMappingContext()), false);
+        return StreamSupport.stream(new EnumarableSpliterator<T>(enumerable(startRow, sheet, newMappingContext())), false);
     }
     //IFJAVA8_END
 

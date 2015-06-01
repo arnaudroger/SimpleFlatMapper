@@ -1,7 +1,7 @@
 package org.sfm.jdbc.impl.getter;
 
 import org.sfm.jdbc.JdbcColumnKey;
-import org.sfm.jdbc.impl.getter.joda.JodaTimeGetterHelper;
+import org.sfm.map.impl.getter.joda.JodaTimeGetterFactory;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.ColumnDefinition;
@@ -23,8 +23,7 @@ import java.util.Map.Entry;
 
 
 //IFJAVA8_START
-import org.sfm.map.column.time.JavaTimeHelper;
-import org.sfm.jdbc.impl.getter.time.*;
+import org.sfm.map.impl.getter.time.*;
 import java.time.*;
 //IFJAVA8_END
 public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey>{
@@ -104,6 +103,8 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 
 	private static final Map<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>> factoryPerType =
 		new HashMap<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>>();
+	private static final JodaTimeGetterFactory<ResultSet, JdbcColumnKey> jodaTimeGetterFactory;
+
 	static {
 		factoryPerType.put(String.class, new StringResultSetGetterFactory());
 		factoryPerType.put(Date.class, DATE_GETTER_FACTORY);
@@ -310,70 +311,27 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		});
 
 		//IFJAVA8_START
-		factoryPerType.put(LocalDate.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+		GetterFactory<ResultSet, JdbcColumnKey> objectGetterFactory = new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaLocalDateResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
+				return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
 			}
-		});
-		factoryPerType.put(LocalDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaLocalDateTimeResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
-			}
-		});
-		factoryPerType.put(LocalTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaLocalTimeResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
-			}
-		});
-		factoryPerType.put(OffsetDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaOffsetDateTimeResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
-			}
-		});
-		factoryPerType.put(OffsetTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaOffsetTimeResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
-			}
-		});
-		factoryPerType.put(ZonedDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaZonedDateTimeResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
-			}
-		});
-		factoryPerType.put(Instant.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaInstantResultSetGetter(key);
-			}
-		});
-		factoryPerType.put(Year.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaYearResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
-			}
-		});
-		factoryPerType.put(YearMonth.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-				return (Getter<ResultSet, P>) new JavaYearMonthResultSetGetter(key, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
-			}
-		});
+		};
+		JavaTimeGetterFactory<ResultSet, JdbcColumnKey> javaTimeGetterFactory =
+				new JavaTimeGetterFactory<ResultSet, JdbcColumnKey>(objectGetterFactory);
+		factoryPerType.put(LocalDate.class, javaTimeGetterFactory);
+		factoryPerType.put(LocalDateTime.class, javaTimeGetterFactory);
+		factoryPerType.put(LocalTime.class, javaTimeGetterFactory);
+		factoryPerType.put(OffsetDateTime.class, javaTimeGetterFactory);
+		factoryPerType.put(OffsetTime.class, javaTimeGetterFactory);
+		factoryPerType.put(ZonedDateTime.class, javaTimeGetterFactory);
+		factoryPerType.put(Instant.class, javaTimeGetterFactory);
+		factoryPerType.put(Year.class, javaTimeGetterFactory);
+		factoryPerType.put(YearMonth.class, javaTimeGetterFactory);
 		//IFJAVA8_END
+
+		jodaTimeGetterFactory = new JodaTimeGetterFactory<ResultSet, JdbcColumnKey>(factoryPerType.get(Date.class));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -419,7 +377,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		if (getterFactory != null) {
 			getter = (Getter<ResultSet, P>) getterFactory.newGetter(genericType, key, columnDefinition);
 		} else {
-			getter = (Getter<ResultSet, P>) JodaTimeGetterHelper.getGetter(genericType, key, columnDefinition);
+			getter = (Getter<ResultSet, P>) jodaTimeGetterFactory.newGetter(genericType, key, columnDefinition);
 		}
 		return getter;
 	}

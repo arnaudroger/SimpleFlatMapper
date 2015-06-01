@@ -1,26 +1,25 @@
-package org.sfm.jdbc.impl.getter.time;
+package org.sfm.map.impl.getter.time;
 
-import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.reflect.Getter;
 
-import java.sql.ResultSet;
 import java.time.*;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 
-public class JavaYearMonthResultSetGetter implements Getter<ResultSet, YearMonth> {
-    private final int index;
+public class JavaYearMonthFromObjectGetter<S> implements Getter<S, YearMonth> {
+
+    private final Getter<S, ?> getter;
     private final ZoneId zone;
 
-    public JavaYearMonthResultSetGetter(JdbcColumnKey key, ZoneId zoneId) {
-        this.index = key.getIndex();
+    public JavaYearMonthFromObjectGetter(Getter<S, ?> getter, ZoneId zoneId) {
+        this.getter = getter;
         this.zone = zoneId;
     }
 
     @Override
-    public YearMonth get(ResultSet target) throws Exception {
-        Object o = target.getObject(index);
+    public YearMonth get(S target) throws Exception {
+        Object o = getter.get(target);
 
         if (o == null) {
             return null;
@@ -47,8 +46,8 @@ public class JavaYearMonthResultSetGetter implements Getter<ResultSet, YearMonth
 
     @Override
     public String toString() {
-        return "JavaYearMonthResultSetGetter{" +
-                "column=" + index +
+        return "JavaYearMonthFromObjectGetter{" +
+                "getter=" + getter +
                 '}';
     }
 }

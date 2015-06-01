@@ -79,6 +79,14 @@ public class JoinJdbcMapperTest {
         validateMapper(mapper);
     }
 
+    public static final Object[][] ROWS = new Object[][]{
+            {1, "professor1", 3, "student3", "phone31"},
+            {1, "professor1", 3, "student3", "phone32"},
+            {1, "professor1", 4, "student4", "phone41"},
+            {2, "professor2", 4, "student4", "phone51"},
+            {2, "professor2", 4, "student4", "phone52"},
+            {3, "professor3", null, null, null}
+    };
 
     private ResultSet setUpResultSetMock() throws SQLException {
         ResultSet rs = mock(ResultSet.class);
@@ -100,25 +108,18 @@ public class JoinJdbcMapperTest {
 
         final AtomicInteger ai = new AtomicInteger();
 
-        final Object[][] rows = new Object[][]{
-                {1, "professor1", 3, "student3", "phone31"},
-                {1, "professor1", 3, "student3", "phone32"},
-                {1, "professor1", 4, "student4", "phone41"},
-                {2, "professor2", 4, "student4", "phone51"},
-                {2, "professor2", 4, "student4", "phone52"},
-                {3, "professor3", null, null, null}
-        };
+
 
         when(rs.next()).then(new Answer<Boolean>() {
             @Override
             public Boolean answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return ai.getAndIncrement() < rows.length;
+                return ai.getAndIncrement() < ROWS.length;
             }
         });
         final Answer<Object> getValue = new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                final Object[] row = rows[ai.get() - 1];
+                final Object[] row = ROWS[ai.get() - 1];
                 final Integer col = -1 + (Integer) invocationOnMock.getArguments()[0];
                 return (row[col]);
             }

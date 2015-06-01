@@ -1,9 +1,7 @@
-package org.sfm.jdbc.impl.getter.time;
+package org.sfm.map.impl.getter.time;
 
-import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.reflect.Getter;
 
-import java.sql.ResultSet;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,18 +10,18 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 
-public class JavaLocalDateResultSetGetter implements Getter<ResultSet, LocalDate> {
-    private final int index;
+public class JavaLocalDateFromObjectGetter<S> implements Getter<S, LocalDate> {
+    private final Getter<S, ?> getter;
     private final ZoneId zone;
 
-    public JavaLocalDateResultSetGetter(JdbcColumnKey key, ZoneId zoneId) {
-        this.index = key.getIndex();
+    public JavaLocalDateFromObjectGetter(Getter<S, ?> getter, ZoneId zoneId) {
+        this.getter = getter;
         this.zone = zoneId;
     }
 
     @Override
-    public LocalDate get(ResultSet target) throws Exception {
-        Object o = target.getObject(index);
+    public LocalDate get(S target) throws Exception {
+        Object o = getter.get(target);
 
         if (o == null) {
             return null;
@@ -50,8 +48,8 @@ public class JavaLocalDateResultSetGetter implements Getter<ResultSet, LocalDate
 
     @Override
     public String toString() {
-        return "JavaLocalDateResultSetGetter{" +
-                "column=" + index +
+        return "JavaLocalDateFromObjectGetter{" +
+                "getter=" + getter +
                 '}';
     }
 }

@@ -28,15 +28,19 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableJdbcMapp
 
     @Override
     protected JdbcMapper<T> getMapper(final ResultSet rs) throws MappingException {
-        try {
-            String value = rs.getString(discriminatorColumn);
+        String value = getDiscriminatorValue(rs);
 
-            for (Tuple2<Predicate<String>, JdbcMapper<T>> tm : mappers) {
-                if (tm.first().test(value)) {
-                    return tm.second();
-                }
+        for (Tuple2<Predicate<String>, JdbcMapper<T>> tm : mappers) {
+            if (tm.first().test(value)) {
+                return tm.second();
             }
-            throw new MappingException("No jdbcMapper found for " + discriminatorColumn + " = " + value);
+        }
+        throw new MappingException("No jdbcMapper found for " + discriminatorColumn + " = " + value);
+    }
+
+    private String getDiscriminatorValue(ResultSet rs) {
+        try {
+            return rs.getString(discriminatorColumn);
         } catch(SQLException e) {
             return ErrorHelper.rethrow(e);
         }
@@ -73,6 +77,10 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableJdbcMapp
                 '}';
     }
 
+    @Override
+    public MappingContext<ResultSet> newMappingContext(ResultSet rs) {
+        return getMapper(rs).newMappingContext(rs);
+    }
 
     private static class DiscriminatorPredicate implements Predicate<ResultSet> {
         private String discriminatorColumn;

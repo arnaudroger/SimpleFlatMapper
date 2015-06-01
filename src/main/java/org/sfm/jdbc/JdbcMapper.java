@@ -73,5 +73,11 @@ public interface JdbcMapper<T> extends Mapper<ResultSet, T> {
 	Stream<T> stream(ResultSet rs) throws SQLException, MappingException;
 	//IFJAVA8_END
 
-	 MappingContext<ResultSet> newMappingContext(ResultSet rs) throws SQLException;
+
+	/**
+	 *
+	 * @param rs the result set
+	 * @return a new mapping context valid for that resultSet
+	 */
+	MappingContext<ResultSet> newMappingContext(ResultSet rs);
 }

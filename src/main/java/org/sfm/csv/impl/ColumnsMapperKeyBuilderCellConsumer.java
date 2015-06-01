@@ -8,7 +8,7 @@ import org.sfm.map.impl.MapperKey;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class ColumnsMapperKeyBuilderCellConsumer<T> implements CellConsumer {
+public final class ColumnsMapperKeyBuilderCellConsumer implements CellConsumer {
 	/**
 	 * 
 	 */

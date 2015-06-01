@@ -89,11 +89,10 @@ public final class JdbcMapperBuilder<T> {
     public JdbcMapper<T> mapper() {
         Mapper<ResultSet, T> mapper = fieldMapperMapperBuilder.mapper();
 
-        StaticJdbcMapper<T> staticJdbcMapper = new StaticJdbcMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
         if (fieldMapperMapperBuilder.hasJoin()) {
-            return new JoinJdbcMapper<T>(staticJdbcMapper, mapperConfig.rowHandlerErrorHandler());
+            return new JoinJdbcMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
         } else {
-            return staticJdbcMapper;
+            return new StaticJdbcMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
         }
     }
 

@@ -41,11 +41,6 @@ public final class StaticJdbcMapper<T> implements JdbcMapper<T> {
 		mapper.mapTo(rs, target, context);
 	}
 
-	@Override
-	public MappingContext<ResultSet> newMappingContext(ResultSet rs) throws SQLException {
-		return mappingContextFactory.newContext();
-	}
-
 	public <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
 			throws SQLException, MappingException {
 		MappingContext<ResultSet> context = newMappingContext();
@@ -71,6 +66,11 @@ public final class StaticJdbcMapper<T> implements JdbcMapper<T> {
 		return StreamSupport.stream(spliterator, false);
 	}
 	//IFJAVA8_END
+
+	@Override
+	public MappingContext<ResultSet> newMappingContext(ResultSet rs) {
+		return newMappingContext();
+	}
 
 	private MappingContext<ResultSet> newMappingContext() {
 		return mappingContextFactory.newContext();

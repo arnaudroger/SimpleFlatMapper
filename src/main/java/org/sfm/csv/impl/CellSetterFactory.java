@@ -220,7 +220,8 @@ public final class CellSetterFactory {
 	}
 
 
-    public <T, P> CellSetter<T> getCellSetter(PropertyMeta<T, P> prop, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
+    @SuppressWarnings("unchecked")
+	public <T, P> CellSetter<T> getCellSetter(PropertyMeta<T, P> prop, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
 		Class<? extends P> propertyClass = (Class<? extends P>) TypeHelper.toClass(prop.getPropertyType());
 
 		CellValueReader<? extends P> reader = getReader(prop.getPropertyClassMeta(), index, columnDefinition, parsingContextFactoryBuilder);

@@ -194,7 +194,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 	}
 
 	@SuppressWarnings("unchecked")
-	private final FieldMapper<S, T>[] fields() {
+	private FieldMapper<S, T>[] fields() {
 		final List<FieldMapper<S, T>> fields = new ArrayList<FieldMapper<S, T>>();
 
 		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K, S>>>() {
@@ -312,7 +312,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 		additionalMappers.add(mapper);
 	}
 
-    private final <ST> FieldMapperMapperBuilder<S, ST, K> newSubBuilder(ClassMeta<ST> classMeta, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+    private <ST> FieldMapperMapperBuilder<S, ST, K> newSubBuilder(ClassMeta<ST> classMeta, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
         return new FieldMapperMapperBuilder<S, ST, K>(
                 mapperSource,
                 classMeta,

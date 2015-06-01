@@ -1,6 +1,7 @@
 package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.JdbcMapper;
+import org.sfm.map.Mapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;
@@ -68,11 +69,6 @@ public abstract class AbstractEnumarableJdbcMapper<T> implements JdbcMapper<T> {
 	}
     //IFJAVA8_END
 
-    protected abstract JdbcMapper<T> getMapper(final ResultSet rs);
-
-    @Override
-    public MappingContext<ResultSet> newMappingContext(ResultSet rs) throws SQLException {
-        return getMapper(rs).newMappingContext(rs);
-    }
+    protected abstract Mapper<ResultSet, T> getMapper(final ResultSet rs);
 
 }

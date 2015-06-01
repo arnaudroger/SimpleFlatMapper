@@ -13,6 +13,7 @@ import org.sfm.utils.RowHandler;
 import java.util.Iterator;
 
 //IFJAVA8_START
+import org.sfm.utils.EnumarableSpliterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END

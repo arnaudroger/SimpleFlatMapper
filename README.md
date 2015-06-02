@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/simpleFlatMapper.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/simpleFlatMapper)
-[![JavaDoc](https://img.shields.io/badge/javadoc-1.8.1-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/simpleFlatMapper)
+[![JavaDoc](https://img.shields.io/badge/javadoc-1.9.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/simpleFlatMapper)
 [![License](https://img.shields.io/github/license/arnaudroger/simpleFlatMapper.svg)](https://raw.githubusercontent.com/arnaudroger/SimpleFlatMapper/master/LICENSE)
 
 [![Java 6](https://img.shields.io/badge/java-6-orange.svg)](#java-6)[![Java 7](https://img.shields.io/badge/java-7-green.svg)](#java-7)[![Java 8](https://img.shields.io/badge/java-8-brightgreen.svg)](#java-8)
@@ -7,7 +7,7 @@
 [![Build Status](https://img.shields.io/travis/arnaudroger/SimpleFlatMapper.svg)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
-# Simple Flat Mapper (SFM) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.8.1)
+# Simple Flat Mapper (SFM) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.9.0)
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 
@@ -16,12 +16,15 @@ If u use the CsvParser Dsl with version 1.7.4 or 1.7.5 to do CsvMapping you will
 Now with :
 - 1-N support for [JdbcMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-JdbcMapper-1-N-relationship) and [CsvMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-CsvMapper-1-N-relationship)
 - Fasttuple and jOOL tuple support.
+- Java8 time api
+- Excel POI
 
 SFM provides fast and easy to use mapper for
 
 - [ResultSet aka micro ORM](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JdbcMapper) with discriminator field and 1-n support
 - [Csv](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser#with-csvmapper) with 1-n support
-- [Jooq and Sql2o](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SFM-Integration-in-Jooq) 
+- [Excel POI](src/main/java/org/sfm/poi) with 1-n support
+- [Jooq and Sql2o](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SFM-Integration-in-Jooq)
 - [SpringJdbcTemplate](src/main/java/org/sfm/jdbc/spring)
 - [QueryDSL](src/main/java/org/sfm/querydsl)
 
@@ -79,7 +82,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.8.1</version>
+			<version>1.9.0</version>
 		</dependency>
 ```
 
@@ -89,7 +92,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.8.1</version>
+			<version>1.9.0</version>
 			<classifier>jdk17</classifier>
 		</dependency>
 ```
@@ -100,7 +103,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.8.1</version>
+			<version>1.9.0</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 ```

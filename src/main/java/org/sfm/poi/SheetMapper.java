@@ -44,13 +44,15 @@ public interface SheetMapper<T> {
      */
     <RH extends RowHandler<T>> RH forEach(int startRow, Sheet sheet, RH rowHandler);
 
-    //IFJAVA8_START
+
     /**
      *
      * @param sheet the sheet to map from
      * @return a stream on mapped instance of T
      */
+    //IFJAVA8_START
     Stream<T> stream(Sheet sheet);
+    //IFJAVA8_END
 
     /**
      *
@@ -58,6 +60,7 @@ public interface SheetMapper<T> {
      * @param sheet the sheet to map from
      * @return a stream on mapped instance of T
      */
+    //IFJAVA8_START
     Stream<T> stream(int startRow, Sheet sheet);
     //IFJAVA8_END
 }

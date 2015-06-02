@@ -25,15 +25,19 @@ public class SheetSpliterator<T> implements Spliterator<T> {
 
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
-        for(int i = rowNum; i <= sheet.getLastRowNum(); i++) {
-            action.accept(mapper.map(sheet.getRow(i), mappingContext));
+        Sheet lSheet = this.sheet;
+        StaticSheetMapper<T> lMapper = this.mapper;
+        MappingContext<Row> lMappingContext = this.mappingContext;
+        for(int i = rowNum; i <= lSheet.getLastRowNum(); i++) {
+            action.accept(lMapper.map(lSheet.getRow(i), lMappingContext));
         }
     }
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
-        if (rowNum <= sheet.getLastRowNum()) {
-            action.accept(mapper.map(sheet.getRow(rowNum), mappingContext));
+        Sheet lSheet = this.sheet;
+        if (rowNum <= lSheet.getLastRowNum()) {
+            action.accept(mapper.map(lSheet.getRow(rowNum), mappingContext));
             rowNum++;
             return true;
         }

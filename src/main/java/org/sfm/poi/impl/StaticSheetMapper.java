@@ -49,8 +49,9 @@ public class StaticSheetMapper<T> implements RowMapper<T> {
     @Override
     public <RH extends RowHandler<T>> RH forEach(int startRow, Sheet sheet, RH rowHandler) {
         MappingContext<Row> mappingContext = newMappingContext();
+        Mapper<Row, T> lMapper = this.mapper;
         for(int rowNum = startRow; rowNum <= sheet.getLastRowNum(); rowNum++) {
-            T object = map(sheet.getRow(rowNum), mappingContext);
+            T object = lMapper.map(sheet.getRow(rowNum), mappingContext);
             try {
                 rowHandler.handle(object);
             } catch(Exception e) {

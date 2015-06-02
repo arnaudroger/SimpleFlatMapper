@@ -1,7 +1,6 @@
 package org.sfm.poi;
 
 
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.GetterFactory;
@@ -9,11 +8,10 @@ import org.sfm.map.Mapper;
 import org.sfm.map.MappingContextFactoryBuilder;
 import org.sfm.map.impl.*;
 import org.sfm.poi.impl.JoinSheetMapper;
+import org.sfm.poi.impl.CsvColumnKeyRowKeySourceGetter;
 import org.sfm.poi.impl.RowGetterFactory;
 import org.sfm.poi.impl.StaticSheetMapper;
 import org.sfm.reflect.meta.ClassMeta;
-
-import java.sql.SQLException;
 
 public class SheetMapperBuilder<T> {
 
@@ -39,19 +37,41 @@ public class SheetMapperBuilder<T> {
         this.mapperConfig = mapperConfig;
     }
 
+    /**
+     *
+     * @param columnName the name of the column to map
+     * @return this instance
+     */
     public SheetMapperBuilder<T> addMapping(String columnName) {
         return addMapping(columnName, FieldMapperColumnDefinition.<CsvColumnKey, Row>identity());
     }
 
+    /**
+     *
+     * @param columnName the name of the column to map
+     * @param definition the column definition
+     * @return this instance
+     */
     public SheetMapperBuilder<T> addMapping(String columnName, FieldMapperColumnDefinition<CsvColumnKey, Row> definition) {
         return addMapping(columnName, currentColumn++, definition);
     }
 
+    /**
+     *
+     * @param columnName the name of the column to map
+     * @param columnIndex the index of the column
+     * @param definition the column definition
+     * @return this instance
+     */
     public SheetMapperBuilder<T> addMapping(String columnName, int columnIndex, FieldMapperColumnDefinition<CsvColumnKey, Row> definition) {
         builder.addMapping(new CsvColumnKey(columnName, columnIndex), definition);
         return this;
     }
 
+    /**
+     *
+     * @return a new instance of RowMapper<T>
+     */
     public RowMapper<T> mapper() {
         Mapper<Row, T> mapper = builder.mapper();
 
@@ -62,32 +82,23 @@ public class SheetMapperBuilder<T> {
         }
     }
 
+    /**
+     *
+     * @param k the column key
+     * @param columnDefinition the column definition
+     * @return this instance
+     */
     public SheetMapperBuilder<T> addMapping(CsvColumnKey k, FieldMapperColumnDefinition<CsvColumnKey, Row> columnDefinition) {
         builder.addMapping(k, columnDefinition);
         return this;
     }
 
+    /**
+     *
+     * @param column the column to add as a key
+     * @return this instance
+     */
     public SheetMapperBuilder<T> addKey(String column) {
         return addMapping(column, FieldMapperColumnDefinition.<CsvColumnKey, Row>key());
-    }
-
-    public static class CsvColumnKeyRowKeySourceGetter implements MappingContextFactoryBuilder.KeySourceGetter<CsvColumnKey, Row> {
-        @Override
-        public Object getValue(CsvColumnKey key, Row source) throws SQLException {
-            final Cell cell = source.getCell(key.getIndex());
-            if (cell != null) {
-                switch (cell.getCellType()) {
-                    case Cell.CELL_TYPE_BLANK:
-                        return null;
-                    case Cell.CELL_TYPE_BOOLEAN:
-                        return cell.getBooleanCellValue();
-                    case Cell.CELL_TYPE_NUMERIC:
-                        return cell.getNumericCellValue();
-                    default:
-                        return cell.getStringCellValue();
-                }
-            }
-            return null;
-        }
     }
 }

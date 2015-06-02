@@ -22,9 +22,10 @@ public class ResultSetSpliterator<T> implements Spliterator<T> {
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
+        ResultSet lResultSet = this.resultSet;
         try {
-            if (resultSet.next()) {
-                action.accept(mapper.map(resultSet, mappingContext));
+            if (lResultSet.next()) {
+                action.accept(mapper.map(lResultSet, mappingContext));
                 return true;
             }
         } catch (SQLException e) {
@@ -35,9 +36,12 @@ public class ResultSetSpliterator<T> implements Spliterator<T> {
 
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
+        ResultSet lResultSet = this.resultSet;
+        Mapper<ResultSet, T> lMapper = this.mapper;
+        MappingContext<ResultSet> lMappingContext = this.mappingContext;
         try {
-            while(resultSet.next()) {
-                action.accept(mapper.map(resultSet, mappingContext));
+            while(lResultSet.next()) {
+                action.accept(lMapper.map(lResultSet, lMappingContext));
             }
         } catch (SQLException e) {
             ErrorHelper.rethrow(e);

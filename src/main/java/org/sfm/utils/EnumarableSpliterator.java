@@ -13,8 +13,9 @@ public class EnumarableSpliterator<T> implements Spliterator<T> {
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
-        if (enumarable.next()) {
-            action.accept(enumarable.currentValue());
+        Enumarable<T> lEnumarable = this.enumarable;
+        if (lEnumarable.next()) {
+            action.accept(lEnumarable.currentValue());
             return true;
         } else {
             return false;
@@ -23,8 +24,9 @@ public class EnumarableSpliterator<T> implements Spliterator<T> {
 
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
-        while(enumarable.next()) {
-            action.accept(enumarable.currentValue());
+        Enumarable<T> lEnumarable = this.enumarable;
+        while(lEnumarable.next()) {
+            action.accept(lEnumarable.currentValue());
         }
     }
 

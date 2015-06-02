@@ -44,8 +44,9 @@ public final class StaticJdbcMapper<T> implements JdbcMapper<T> {
 	public <H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
 			throws SQLException, MappingException {
 		MappingContext<ResultSet> context = newMappingContext();
+		Mapper<ResultSet, T> lMapper = this.mapper;
 		while(rs.next()) {
-			T t = mapper.map(rs, context);
+			T t = lMapper.map(rs, context);
 			try {
 				handler.handle(t);
 			} catch(Throwable error) {

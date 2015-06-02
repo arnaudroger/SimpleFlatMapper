@@ -54,7 +54,7 @@ public interface JdbcMapper<T> extends Mapper<ResultSet, T> {
 			throws SQLException, MappingException;
 
 	/**
-	 *
+	 * 
 	 * @param rs the result set
 	 * @return an iterator that will return a map object for each row of the result set.
      * @throws SQLException if sql error occurs

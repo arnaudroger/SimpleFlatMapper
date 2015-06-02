@@ -320,9 +320,6 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
                 mappingContextFactoryBuilder);
     }
 
-
-
-
     private FieldKey<?>[] getKeys() {
         return propertyMappingsBuilder.getKeys().toArray(FIELD_KEYS);
     }

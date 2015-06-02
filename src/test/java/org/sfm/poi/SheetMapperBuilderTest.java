@@ -8,10 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.map.Mapper;
-import org.sfm.poi.impl.StaticSheetMapper;
-
-import java.sql.ResultSet;
+import org.sfm.poi.impl.CsvColumnKeyRowKeySourceGetter;
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -24,7 +21,7 @@ public class SheetMapperBuilderTest {
     Sheet sheet;
     Row row;
     Date now = new Date();
-    SheetMapperBuilder.CsvColumnKeyRowKeySourceGetter keySourceGetter = new SheetMapperBuilder.CsvColumnKeyRowKeySourceGetter();
+    CsvColumnKeyRowKeySourceGetter keySourceGetter = new CsvColumnKeyRowKeySourceGetter();
 
     @Before
     public void setUp(){

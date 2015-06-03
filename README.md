@@ -23,7 +23,7 @@ SFM provides fast and easy to use mapper for
 
 - [ResultSet aka micro ORM](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JdbcMapper) with discriminator field and 1-n support
 - [Csv](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser#with-csvmapper) with 1-n support
-- [Excel POI](src/main/java/org/sfm/poi) with 1-n support
+- [Excel POI](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Excel-Mapper) with 1-n support
 - [Jooq and Sql2o](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SFM-Integration-in-Jooq)
 - [SpringJdbcTemplate](src/main/java/org/sfm/jdbc/spring)
 - [QueryDSL](src/main/java/org/sfm/querydsl)

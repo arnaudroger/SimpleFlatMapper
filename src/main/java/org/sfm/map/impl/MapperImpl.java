@@ -20,7 +20,9 @@ public class MapperImpl<S, T> extends AbstractMapper<S, T> {
         this.constructorMappers = constructorMappers;
 	}
 
-	protected final void mapFields(final S source, final T target, final MappingContext<S> mappingContext) throws Exception {
+
+
+    protected final void mapFields(final S source, final T target, final MappingContext<S> mappingContext) throws Exception {
         for (FieldMapper<S, T> fieldMapper : fieldMappers) {
             fieldMapper.mapTo(source, target, mappingContext);
         }

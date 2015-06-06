@@ -9,6 +9,10 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.utils.RowHandler;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -26,8 +30,9 @@ public class DynamicSheetMapperTest {
     Sheet dynamicSheet;
 
     SheetMapper<DbObject> dynamicSheetMapper;
+
     @Before
-    public void setUp(){
+    public void setUp() {
         Workbook wb = new HSSFWorkbook();
 
         dynamicSheet = wb.createSheet();
@@ -40,16 +45,15 @@ public class DynamicSheetMapperTest {
         header.createCell(4).setCellValue("type_ordinal");
         header.createCell(5).setCellValue("type_name")
         ;
-        for(int i = 0; i < 3; i++) {
-            Row row = dynamicSheet.createRow(i +1);
+        for (int i = 0; i < 3; i++) {
+            Row row = dynamicSheet.createRow(i + 1);
             row.createCell(0).setCellValue(i);
             row.createCell(1).setCellValue("name" + i);
             row.createCell(2).setCellValue("email" + i);
-            row.createCell(3).setCellValue(new Date(i * 10000 ));
+            row.createCell(3).setCellValue(new Date(i * 10000));
             row.createCell(4).setCellValue(DbObject.Type.values()[i].ordinal());
             row.createCell(5).setCellValue(DbObject.Type.values()[i].name());
         }
-
 
 
         dynamicSheetMapper =
@@ -63,7 +67,6 @@ public class DynamicSheetMapperTest {
         Iterator<DbObject> iterator = dynamicSheetMapper.iterator(dynamicSheet);
         testIteratorHasExpectedValue(iterator);
     }
-
 
 
     @Test

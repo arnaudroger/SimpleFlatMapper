@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 public class CsvMapperBuilder<T> {
-	public static final int CSV_MAX_METHOD_SIZE = 128;
-    public static final int NO_ASM_CSV_HANDLER_THRESHOLD = 4096; // see https://github.com/arnaudroger/SimpleFlatMapper/issues/152
 
 	private final Type target;
 	private final ReflectionService reflectionService;

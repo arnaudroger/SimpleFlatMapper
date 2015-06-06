@@ -70,7 +70,7 @@ public class SheetMapperBuilder<T> {
 
     /**
      *
-     * @return a new instance of RowMapper<T>
+     * @return a new instance of RowMapper&lt;T&gt;
      */
     public RowMapper<T> mapper() {
         Mapper<Row, T> mapper = builder.mapper();

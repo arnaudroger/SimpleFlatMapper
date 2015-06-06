@@ -11,6 +11,8 @@
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 
+!Concurrency issue #183 for join mapper fixed in 1.9.1
+
 If u use the CsvParser Dsl with version 1.7.4 or 1.7.5 to do CsvMapping you will need to cache the DSL for reuse to avoid creating new classes on every parsing.
 
 Now with :

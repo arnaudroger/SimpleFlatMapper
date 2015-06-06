@@ -78,7 +78,7 @@ public class DiscriminatorJdbcMapperTest {
 
 
         try {
-            JdbcMapper<JoinJdbcMapperTest.Person> mapper =
+            final JdbcMapper<JoinJdbcMapperTest.Person> mapper =
                     JdbcMapperFactoryHelper.noAsm()
                             .addKeys("id", "students_id")
                             .<JoinJdbcMapperTest.Person>newDiscriminator("person_type")

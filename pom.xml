@@ -3,7 +3,7 @@
 
 	<groupId>org.simpleflatmapper</groupId>
 	<artifactId>simpleFlatMapper</artifactId>
-	<version>1.9.1</version>
+	<version>1.9.2-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<name>SimpleFlatMapper</name>
@@ -31,7 +31,7 @@
 		<url>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</url>
 		<connection>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</connection>
 		<developerConnection>scm:git:git@github.com:arnaudroger/SimpleFlatMapper.git</developerConnection>
-	  <tag>simpleFlatMapper-1.9.1</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<properties>

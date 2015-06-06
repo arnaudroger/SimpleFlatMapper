@@ -4,9 +4,13 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.Mapper;
+import org.sfm.map.column.DateFormatProperty;
+import org.sfm.map.column.EnumOrdinalFormatProperty;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.MapperConfig;
 import org.sfm.reflect.ReflectionService;
+
+import java.text.SimpleDateFormat;
 
 import static org.junit.Assert.*;
 
@@ -23,15 +27,19 @@ public class CsvWriterBuilderTest {
                 builder.addColumn("id")
                         .addColumn("name")
                         .addColumn("email")
+                        .addColumn("creation_time", new DateFormatProperty("dd/MM/yyyy HH:mm:ss"))
+                        .addColumn("type_ordinal", new EnumOrdinalFormatProperty())
+                        .addColumn("type_name")
                         .mapper();
 
         DbObject dbObject = new DbObject();
         dbObject.setId(13);
         dbObject.setEmail("email");
         dbObject.setName("name");
+        dbObject.setCreationTime(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse("06/06/2015 17:46:23"));
+        dbObject.setTypeOrdinal(DbObject.Type.type2);
+        dbObject.setTypeName(DbObject.Type.type3);
 
-        StringBuilder sb = new StringBuilder();
-
-        assertEquals("13,name,email\r\n", mapper.map(dbObject).toString());
+        assertEquals("13,name,email,06/06/2015 17:46:23,1,type3\r\n", mapper.map(dbObject).toString());
     }
 }

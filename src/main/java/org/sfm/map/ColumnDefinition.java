@@ -65,11 +65,11 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
         return newColumnDefinition(properties);
     }
 
-    public CD add(ColumnProperty property) {
-        requireNonNull("property", property);
-        ColumnProperty[] properties = new ColumnProperty[this.properties.length + 1];
+    public CD add(ColumnProperty... props) {
+        requireNonNull("properties", props);
+        ColumnProperty[] properties = new ColumnProperty[this.properties.length + props.length];
         System.arraycopy(this.properties, 0, properties, 0, this.properties.length);
-        properties[this.properties.length] = property;
+        System.arraycopy(props, 0, properties, this.properties.length, props.length);
         return newColumnDefinition(properties);
     }
 

@@ -1,5 +1,6 @@
 package org.sfm.map.impl;
 
+import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.FieldKey;
 import org.sfm.map.FieldMapper;
@@ -112,4 +113,6 @@ public class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends Colum
     protected FieldMapperColumnDefinition<K, S> newColumnDefinition(ColumnProperty[] properties) {
         return new FieldMapperColumnDefinition<K, S>(properties);
     }
+
+
 }

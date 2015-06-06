@@ -121,7 +121,7 @@ public class CsvWriterBuilder<T> {
         Setter<Appendable, ? super P> setter = null;
 
         if (TypeHelper.isEnum(type) && columnDefinition.has(EnumOrdinalFormatProperty.class)) {
-            setter = (Setter<Appendable, ? super P>) new EnumOrdinalAppendableSetter(cellWriter);
+            setter = (Setter) new EnumOrdinalAppendableSetter(cellWriter);
         }
 
         Format format = null;

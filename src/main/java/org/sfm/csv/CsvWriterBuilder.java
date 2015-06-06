@@ -137,7 +137,7 @@ public class CsvWriterBuilder<T> {
 
         if (format != null) {
             final Format f = format;
-            return new FormattingAppender<>(getter, new Getter<MappingContext<T>, Format>() {
+            return new FormattingAppender<T>(getter, new Getter<MappingContext<T>, Format>() {
                 @Override
                 public Format get(MappingContext<T> target) throws Exception {
                     return f;

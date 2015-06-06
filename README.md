@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/simpleFlatMapper.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/simpleFlatMapper)
-[![JavaDoc](https://img.shields.io/badge/javadoc-1.9.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/simpleFlatMapper)
+[![JavaDoc](https://img.shields.io/badge/javadoc-1.9.1-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/simpleFlatMapper)
 [![License](https://img.shields.io/github/license/arnaudroger/simpleFlatMapper.svg)](https://raw.githubusercontent.com/arnaudroger/SimpleFlatMapper/master/LICENSE)
 
 [![Java 6](https://img.shields.io/badge/java-6-orange.svg)](#java-6)[![Java 7](https://img.shields.io/badge/java-7-green.svg)](#java-7)[![Java 8](https://img.shields.io/badge/java-8-brightgreen.svg)](#java-8)
@@ -84,7 +84,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.9.0</version>
+			<version>1.9.1</version>
 		</dependency>
 ```
 
@@ -94,7 +94,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.9.0</version>
+			<version>1.9.1</version>
 			<classifier>jdk17</classifier>
 		</dependency>
 ```
@@ -105,7 +105,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.9.0</version>
+			<version>1.9.1</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 ```

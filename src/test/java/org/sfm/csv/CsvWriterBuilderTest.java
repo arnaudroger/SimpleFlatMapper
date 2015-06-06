@@ -14,7 +14,7 @@ public class CsvWriterBuilderTest {
     @Test
     public void testWriteCsvOnDbObject() throws Exception {
         MapperConfig<CsvColumnKey,FieldMapperColumnDefinition<CsvColumnKey,DbObject>> config =
-                MapperConfig.fieldMapperConfig();
+                MapperConfig.<DbObject, CsvColumnKey>fieldMapperConfig();
         CsvWriterBuilder<DbObject> builder = new CsvWriterBuilder<DbObject>(DbObject.class,
                 ReflectionService.disableAsm(), config);
 

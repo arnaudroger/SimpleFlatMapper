@@ -1,12 +1,16 @@
 package org.sfm.csv;
 
 
+import org.sfm.csv.impl.writer.CellSeparatorAppender;
+import org.sfm.csv.impl.writer.CsvCellWriter;
+import org.sfm.csv.impl.writer.EndOfRowAppender;
+import org.sfm.csv.impl.writer.ObjectAppendableSetter;
 import org.sfm.map.FieldMapper;
+import org.sfm.map.Mapper;
 import org.sfm.map.impl.*;
 import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.Setter;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.utils.ForEachCallBack;
 
@@ -48,10 +52,13 @@ public class CsvWriterBuilder<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public FieldMapper<T, Appendable> mapper() {
+    public Mapper<T, Appendable> mapper() {
 
         final List<FieldMapper<T, Appendable>> mappers = new ArrayList<FieldMapper<T, Appendable>>();
 
+        final CsvCellWriter cellWriter = new CsvCellWriter();
+
+        final CellSeparatorAppender<T> cellSeparatorAppender = new CellSeparatorAppender<T>(cellWriter);
         propertyMappingsBuilder.forEachProperties(
                 new ForEachCallBack<PropertyMapping<T, ?, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey, T>>>() {
                     private boolean first = true;
@@ -60,35 +67,28 @@ public class CsvWriterBuilder<T> {
                         FieldMapperImpl<T, Appendable, Object> fieldMapper =
                                 new FieldMapperImpl<T, Appendable, Object>(
                                         pm.getPropertyMeta().getGetter(),
-                                        new AppendableSetter(first));
+                                        new ObjectAppendableSetter(cellWriter));
+                        if (!first) {
+                            mappers.add(cellSeparatorAppender);
+                        }
                         mappers.add(fieldMapper);
                         first = false;
                     }
                 }
         );
+        mappers.add(new EndOfRowAppender<T>(cellWriter));
 
         return new MapperImpl<T, Appendable>(
                 mappers.toArray(new FieldMapper[0]),
                 new FieldMapper[0],
-                new Instantiator<T, Appendable>() {
-            @Override
-            public Appendable newInstance(T o) throws Exception {
-                throw new UnsupportedOperationException();
-            }
-        });
+                STRING_BUILDER_INSTANTIATOR);
     }
 
-    private static class AppendableSetter implements Setter<Appendable, Object> {
-        private final boolean first;
-
-        private AppendableSetter(boolean first) {
-            this.first = first;
-        }
-
+    private static final AppendableInstantiator STRING_BUILDER_INSTANTIATOR = new AppendableInstantiator();
+    private static class AppendableInstantiator implements Instantiator<Object, Appendable> {
         @Override
-        public void set(Appendable target, Object value) throws Exception {
-            if (!first) target.append(',');
-            target.append(String.valueOf(value));
+        public Appendable newInstance(Object o) throws Exception {
+            return new StringBuilder();
         }
     }
 }

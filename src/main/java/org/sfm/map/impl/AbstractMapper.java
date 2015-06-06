@@ -6,9 +6,9 @@ import org.sfm.utils.ErrorHelper;
 
 public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
 	
-	private final Instantiator<S, T> instantiator;
+	private final Instantiator<? super S, T> instantiator;
 
-	public AbstractMapper(final Instantiator<S, T> instantiator) {
+	public AbstractMapper(final Instantiator<? super S, T> instantiator) {
 		this.instantiator = instantiator;
     }
 

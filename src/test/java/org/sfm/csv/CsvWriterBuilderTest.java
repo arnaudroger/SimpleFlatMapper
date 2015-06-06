@@ -3,6 +3,7 @@ package org.sfm.csv;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.map.FieldMapper;
+import org.sfm.map.Mapper;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.MapperConfig;
 import org.sfm.reflect.ReflectionService;
@@ -18,7 +19,7 @@ public class CsvWriterBuilderTest {
         CsvWriterBuilder<DbObject> builder = new CsvWriterBuilder<DbObject>(DbObject.class,
                 ReflectionService.disableAsm(), config);
 
-        FieldMapper<DbObject, Appendable> mapper =
+        Mapper<DbObject, Appendable> mapper =
                 builder.addColumn("id")
                         .addColumn("name")
                         .addColumn("email")
@@ -31,8 +32,6 @@ public class CsvWriterBuilderTest {
 
         StringBuilder sb = new StringBuilder();
 
-        mapper.mapTo(dbObject, sb, null);
-
-        assertEquals("13,name,email", sb.toString());
+        assertEquals("13,name,email\r\n", mapper.map(dbObject).toString());
     }
 }

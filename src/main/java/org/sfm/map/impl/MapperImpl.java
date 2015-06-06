@@ -14,7 +14,7 @@ public class MapperImpl<S, T> extends AbstractMapper<S, T> {
 
     public MapperImpl(final FieldMapper<S, T>[] fieldMappers,
                       final FieldMapper<S, T>[] constructorMappers,
-                      final Instantiator<S, T> instantiator) {
+                      final Instantiator<? super S, T> instantiator) {
 		super(instantiator);
 		this.fieldMappers = fieldMappers;
         this.constructorMappers = constructorMappers;

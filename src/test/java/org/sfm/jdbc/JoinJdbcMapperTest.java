@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 //IFJAVA8_START
 import java.util.stream.Collectors;
@@ -64,8 +65,32 @@ public class JoinJdbcMapperTest {
         assertTrue(mapper.toString().startsWith("DynamicJdbcMapper{target=class org.sfm.jdbc.JoinJdbcMapperTest$ProfessorC"));
     }
 
-
     @Test
+    public void testJoinTableCNoAsmMultiThread() throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+        try {
+            final JdbcMapper<ProfessorC> mapper = noAsmJdbcMapperFactory.newMapper(ProfessorC.class);
+
+            List<Future<Object>> futures  = new ArrayList<Future<Object>>(100);
+            for (int i = 0; i <300; i++) {
+                futures.add(executor.submit(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        validateMapper(mapper);
+                        return null;
+                    }
+                }));
+            }
+
+            for(Future<Object> f : futures) {
+                f.get();
+            }
+        } finally {
+            executor.shutdown();
+        }
+    }
+
+        @Test
     public void testJoinTableGSManualMapping() throws Exception {
         JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
                 .newBuilder(ProfessorGS.class)

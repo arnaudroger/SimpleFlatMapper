@@ -76,29 +76,24 @@ public class MappingContextFactoryBuilder<S, K> {
         List<MappingContextFactoryBuilder<S, K>> builders = getAllBuilders();
 
         if (builders.isEmpty()) {
-            return new MappingContextFactoryImpl<S>(new BreakDetector[0], null);
+            return new MappingContextFactoryImpl<S, K>(null, -1);
         }
 
         @SuppressWarnings("unchecked")
-        BreakDetector<S>[] breakDetectors = new BreakDetector[builders.get(builders.size() -1).currentIndex + 1];
+        KeysDefinition<S, K>[] breakDetectors = new KeysDefinition[builders.get(builders.size() -1).currentIndex + 1];
 
-        BreakDetector<S> rootDetector = null;
+        int rootDetector = -1;
         for(int i = 0; i < builders.size(); i++) {
             final MappingContextFactoryBuilder<S, K> builder = builders.get(i);
-            BreakDetector<S> parent = null;
-            int parentIndex =  builder.getParentNonEmptyIndex();
 
-            if (parentIndex != -1) {
-                parent = breakDetectors[parentIndex];
-            }
-            final BreakDetector<S> detector = builder.newBreakDetector(parent);
+            final KeysDefinition<S, K> detector = builder.newKeysDefinition(builder.getParentNonEmptyIndex());
             breakDetectors[builder.currentIndex] = detector;
-            if (builder.currentIndex == 0 || (rootDetector == null && builder.isRootEligible())) {
-                rootDetector = detector;
+            if (builder.currentIndex == 0 || (rootDetector == -1 && builder.isRootEligible())) {
+                rootDetector = builder.currentIndex;
             }
         }
 
-        return new MappingContextFactoryImpl<S>(breakDetectors, rootDetector);
+        return new MappingContextFactoryImpl<S, K>(breakDetectors, rootDetector);
     }
 
     private boolean isRootEligible() {
@@ -119,8 +114,8 @@ public class MappingContextFactoryBuilder<S, K> {
         }
     }
 
-    private BreakDetector<S> newBreakDetector(BreakDetector<S> parent) {
-        return new BreakDetectorImpl<S, K>(keys, keySourceGetter, parent);
+    private KeysDefinition<S, K> newKeysDefinition(int parent) {
+        return new KeysDefinition<S, K>(keys, keySourceGetter, parent);
     }
 
 
@@ -241,50 +236,56 @@ public class MappingContextFactoryBuilder<S, K> {
         Object getValue(K key, S source) throws SQLException;
     }
 
-    private static class MappingContextFactoryImpl<S> implements MappingContextFactory<S> {
-        private final BreakDetector<S>[] breakDetectors;
-        private final BreakDetector<S> rootDetector;
-        public MappingContextFactoryImpl(BreakDetector<S>[] breakDetectors, BreakDetector<S> rootDetector) {
+    private static class MappingContextFactoryImpl<S, K> implements MappingContextFactory<S> {
+        private final KeysDefinition<S, K>[] breakDetectors;
+        private final int rootDetector;
+        public MappingContextFactoryImpl(KeysDefinition<S, K>[] breakDetectors, int rootDetector) {
             this.breakDetectors = breakDetectors;
             this.rootDetector = rootDetector;
         }
 
         @Override
         public MappingContext<S> newContext() {
-            return new MappingContext<S>(breakDetectors, rootDetector);
+            return new MappingContext<S>(newBreakDetectors(breakDetectors), rootDetector);
+        }
+
+        private BreakDetector<S>[] newBreakDetectors(KeysDefinition<S, K>[] definitions) {
+            if (definitions == null) return null;
+
+            BreakDetector<S>[] breakDetectors = new BreakDetector[definitions.length];
+
+            for(int i = 0; i < definitions.length; i++) {
+                KeysDefinition<S, K> definition = definitions[i];
+                if (definition != null) {
+                    breakDetectors[i] = newBreakDetector(definition, definition.getParentIndex() != -1 ? breakDetectors[definition.getParentIndex()] : null);
+                }
+            }
+
+
+            return breakDetectors;
+        }
+
+        private BreakDetector<S> newBreakDetector(KeysDefinition<S, K> definition, BreakDetector<S> parent) {
+            return new BreakDetectorImpl<S, K>(definition, parent);
         }
     }
 
-    private static class BreakDetectorImpl<S, K> implements BreakDetector<S> {
+    private static class KeysDefinition<S, K> {
         private final KeySourceGetter<K, S> keySourceGetter;
         private final List<K> keys;
-        private final BreakDetector<S> parent;
+        private final int parentIndex;
 
-        private Object[] lastValues;
-        private boolean isBroken = true;
-
-        public BreakDetectorImpl(List<K> keys, KeySourceGetter<K, S> keySourceGetter, BreakDetector<S> parent) {
+        public KeysDefinition(List<K> keys, KeySourceGetter<K, S> keySourceGetter, int parentIndex) {
             this.keys = keys;
             this.keySourceGetter = keySourceGetter;
-            this.parent = parent;
+            this.parentIndex = parentIndex;
         }
 
-        @Override
-        public void handle(S source) throws MappingException {
-            if (keys.isEmpty()) {
-                return;
-            }
-
-            Object[] newValues = getValues(source);
-
-            isBroken = (parent != null && parent.isBroken())
-                    || lastValues == null
-                    || !Arrays.equals(lastValues, newValues);
-
-            lastValues = newValues;
+        public boolean isEmpty() {
+            return keys.isEmpty();
         }
 
-        private Object[] getValues(S source) {
+        public Object[] getValues(S source) {
             try {
                 Object[] values = new Object[keys.size()];
                 for (int i = 0; i < values.length; i++) {
@@ -294,6 +295,40 @@ public class MappingContextFactoryBuilder<S, K> {
             } catch (Exception e) {
                 return ErrorHelper.rethrow(e);
             }
+        }
+
+        public int getParentIndex() {
+            return parentIndex;
+        }
+    }
+
+    private static class BreakDetectorImpl<S, K> implements BreakDetector<S> {
+
+        private final KeysDefinition<S, K> definition;
+        private final BreakDetector<S> parent;
+        private Object[] lastValues;
+
+        private boolean isBroken = true;
+
+
+        public BreakDetectorImpl(KeysDefinition<S, K> definition, BreakDetector<S> parent) {
+            this.definition = definition;
+            this.parent = parent;
+        }
+
+        @Override
+        public void handle(S source) throws MappingException {
+            if (definition.isEmpty()) {
+                return;
+            }
+
+            Object[] newValues = definition.getValues(source);
+
+            isBroken = (parent != null && parent.isBroken())
+                    || lastValues == null
+                    || !Arrays.equals(lastValues, newValues);
+
+            lastValues = newValues;
         }
 
         @Override

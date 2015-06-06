@@ -7,17 +7,18 @@ public class MappingContext<S> {
     private final BreakDetector<S>[] breakDetectors;
     private final BreakDetector<S> rootDetector;
 
-    public MappingContext(BreakDetector<S>[] breakDetectors, BreakDetector<S> rootDetector) {
+    public MappingContext(BreakDetector<S>[] breakDetectors, int rootDetector) {
         this.breakDetectors = breakDetectors;
-        this.rootDetector = rootDetector;
+        this.rootDetector = rootDetector == -1 ? null : breakDetectors[rootDetector];
     }
 
     public BreakDetector<S> getBreakDetector(int i) {
-        return breakDetectors[i];
+        return breakDetectors != null ? breakDetectors[i] : null;
     }
 
     public boolean broke(int i) {
-        return getBreakDetector(i).isBroken();
+        BreakDetector<S> breakDetector = getBreakDetector(i);
+        return breakDetector == null || breakDetector.isBroken();
     }
 
     public boolean rootBroke() {
@@ -25,6 +26,7 @@ public class MappingContext<S> {
     }
 
     public void handle(S source) {
+        if (breakDetectors == null) return;
         for(BreakDetector<S> bs : breakDetectors) {
             if (bs != null) {
                 bs.handle(source);
@@ -33,6 +35,7 @@ public class MappingContext<S> {
     }
 
     public void markAsBroken() {
+        if (breakDetectors == null) return;
         for(BreakDetector<S> bs : breakDetectors) {
             if (bs != null) {
                 bs.markAsBroken();

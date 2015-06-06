@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 //IFJAVA8_START
 import java.util.stream.Collectors;
@@ -66,6 +70,39 @@ public class DiscriminatorJdbcMapperTest {
 
         assertTrue(mapper.toString().startsWith("DiscriminatorJdbcMapper{discriminatorColumn='person_type', mappers=["));
 
+    }
+
+    @Test
+    public void testJoinTableCNoAsmMultiThread() throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+
+
+        try {
+            JdbcMapper<JoinJdbcMapperTest.Person> mapper =
+                    JdbcMapperFactoryHelper.noAsm()
+                            .addKeys("id", "students_id")
+                            .<JoinJdbcMapperTest.Person>newDiscriminator("person_type")
+                            .when("student", JoinJdbcMapperTest.StudentGS.class)
+                            .when("professor", JoinJdbcMapperTest.ProfessorGS.class)
+                            .mapper();
+
+            List<Future<Object>> futures  = new ArrayList<Future<Object>>(100);
+            for (int i = 0; i <300; i++) {
+                futures.add(executor.submit(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        validateMapper(mapper);
+                        return null;
+                    }
+                }));
+            }
+
+            for(Future<Object> f : futures) {
+                f.get();
+            }
+        } finally {
+            executor.shutdown();
+        }
     }
 
     private <T extends JoinJdbcMapperTest.Person> void validateMapper(JdbcMapper<T> mapper) throws Exception {

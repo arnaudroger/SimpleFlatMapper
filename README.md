@@ -8,8 +8,8 @@
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
 ## notable issues
-* Concurrency issue [#183](https://github.com/arnaudroger/SimpleFlatMapper/issues/183) for join mapper fixed in 1.9.1
-* To many classes generated with CsvParser Dsl with version 1.7.4 and 1.7.5 if you don't cache the DSL object fixed in 1.7.6.
+* Concurrency issue [#183](https://github.com/arnaudroger/SimpleFlatMapper/issues/183) for join mapper fixed in [1.9.1](https://github.com/arnaudroger/SimpleFlatMapper/issues?q=milestone%3A1.9.1)
+* To many classes generated with CsvParser Dsl with version 1.7.4 and 1.7.5 if you don't cache the DSL object. asm disabled in  [1.7.6](https://github.com/arnaudroger/SimpleFlatMapper/issues?q=milestone%3A1.7.6) and proper class cache in [1.7.7](https://github.com/arnaudroger/SimpleFlatMapper/issues?q=milestone%3A1.7.7). issues [#154](https://github.com/arnaudroger/SimpleFlatMapper/issues/154) [#156](https://github.com/arnaudroger/SimpleFlatMapper/issues/156)
 
 # Simple Flat Mapper (SFM) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.9.1)
 

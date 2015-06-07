@@ -11,9 +11,9 @@
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 
+# notable issues
 ## Concurrency issue [#183](https://github.com/arnaudroger/SimpleFlatMapper/issues/183) for join mapper fixed in 1.9.1
-
-If u use the CsvParser Dsl with version 1.7.4 or 1.7.5 to do CsvMapping you will need to cache the DSL for reuse to avoid creating new classes on every parsing.
+## To many classes generated with CsvParser Dsl with version 1.7.4 and 1.7.5 if you don't cache the DSL object fixed in 1.7.6.
 
 Now with :
 - 1-N support for [JdbcMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-JdbcMapper-1-N-relationship) and [CsvMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-CsvMapper-1-N-relationship)

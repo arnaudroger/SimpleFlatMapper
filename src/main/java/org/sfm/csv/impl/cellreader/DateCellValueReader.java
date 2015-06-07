@@ -16,12 +16,11 @@ import static org.sfm.utils.Asserts.requireNonNull;
 public class DateCellValueReader implements CellValueReader<Date>, ParsingContextProvider {
 	
 	private final int index;
-    private final TimeZone timeZone;
-    private final String pattern;
+    private final SimpleDateFormat sdf;
 	public DateCellValueReader(int index, String pattern, TimeZone timeZone) {
         this.index = index;
-        this.timeZone = requireNonNull("timeZone", timeZone);
-        this.pattern = requireNonNull("pattern", pattern);
+        this.sdf =  new SimpleDateFormat(pattern);
+        this.sdf.setTimeZone(requireNonNull("timeZone", timeZone));
 	}
 	
 	@Override
@@ -39,17 +38,15 @@ public class DateCellValueReader implements CellValueReader<Date>, ParsingContex
 
     @Override
     public Object newContext() {
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        sdf.setTimeZone(timeZone);
-        return sdf;
+        return sdf.clone();
     }
 
     @Override
     public String toString() {
         return "DateCellValueReader{" +
                 "index=" + index +
-                ", timeZone=" + timeZone.getDisplayName() +
-                ", pattern='" + pattern + '\'' +
+                ", timeZone=" + sdf.getTimeZone().getDisplayName() +
+                ", pattern='" + sdf.toPattern() + '\'' +
                 '}';
     }
 }

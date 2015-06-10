@@ -12,6 +12,6 @@ public class CharacterAppendableSetter implements CharacterSetter<Appendable> {
 
     @Override
     public void setCharacter(Appendable target, char value) throws Exception {
-        target.append(Character.toString(value));
+        cellWriter.writeChar(value, target);
     }
 }

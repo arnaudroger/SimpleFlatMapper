@@ -12,6 +12,6 @@ public class IntegerAppendableSetter implements IntSetter<Appendable> {
 
     @Override
     public void setInt(Appendable target, int value) throws Exception {
-        target.append(Integer.toString(value));
+        cellWriter.writeInt(value, target);
     }
 }

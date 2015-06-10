@@ -12,6 +12,6 @@ public class LongAppendableSetter implements LongSetter<Appendable> {
 
     @Override
     public void setLong(Appendable target, long value) throws Exception {
-        target.append(Long.toString(value));
+        cellWriter.writeLong(value, target);
     }
 }

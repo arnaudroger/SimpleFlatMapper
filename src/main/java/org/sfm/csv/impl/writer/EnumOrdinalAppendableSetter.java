@@ -11,6 +11,6 @@ public class EnumOrdinalAppendableSetter  implements Setter<Appendable, Enum> {
 
     @Override
     public void set(Appendable target, Enum value) throws Exception {
-        cellWriter.writerInt(value.ordinal(), target);
+        cellWriter.writeInt(value.ordinal(), target);
     }
 }

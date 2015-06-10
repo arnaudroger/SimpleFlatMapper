@@ -12,6 +12,6 @@ public class ByteAppendableSetter implements ByteSetter<Appendable> {
 
     @Override
     public void setByte(Appendable target, byte value) throws Exception {
-        target.append(Byte.toString(value));
+        cellWriter.writeByte(value, target);
     }
 }

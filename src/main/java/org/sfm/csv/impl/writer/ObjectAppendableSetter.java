@@ -12,6 +12,8 @@ public class ObjectAppendableSetter implements Setter<Appendable, Object> {
 
     @Override
     public void set(Appendable target, Object value) throws Exception {
-        target.append(String.valueOf(value));
+        if (value != null) {
+            cellWriter.writeCharSequence(String.valueOf(value), target);
+        }
     }
 }

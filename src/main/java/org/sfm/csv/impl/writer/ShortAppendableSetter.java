@@ -12,6 +12,6 @@ public class ShortAppendableSetter implements ShortSetter<Appendable> {
 
     @Override
     public void setShort(Appendable target, short value) throws Exception {
-        target.append(Short.toString(value));
+        cellWriter.writeShort(value, target);
     }
 }

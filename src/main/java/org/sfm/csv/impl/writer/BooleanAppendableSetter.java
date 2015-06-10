@@ -12,6 +12,6 @@ public class BooleanAppendableSetter implements BooleanSetter<Appendable> {
 
     @Override
     public void setBoolean(Appendable target, boolean value) throws Exception {
-        target.append(Boolean.toString(value));
+        cellWriter.writeBoolean(value, target);
     }
 }

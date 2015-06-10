@@ -12,6 +12,6 @@ public class FloatAppendableSetter implements FloatSetter<Appendable> {
 
     @Override
     public void setFloat(Appendable target, float value) throws Exception {
-        target.append(Float.toString(value));
+        cellWriter.writeFloat(value, target);
     }
 }

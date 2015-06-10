@@ -12,6 +12,6 @@ public class DoubleAppendableSetter implements DoubleSetter<Appendable> {
 
     @Override
     public void setDouble(Appendable target, double value) throws Exception {
-        target.append(Double.toString(value));
+        cellWriter.writeDouble(value, target);
     }
 }

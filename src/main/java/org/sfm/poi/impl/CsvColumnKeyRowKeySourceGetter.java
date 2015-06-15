@@ -3,11 +3,11 @@ package org.sfm.poi.impl;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.map.MappingContextFactoryBuilder;
+import org.sfm.map.impl.keys.KeySourceGetter;
 
 import java.sql.SQLException;
 
-public class CsvColumnKeyRowKeySourceGetter implements MappingContextFactoryBuilder.KeySourceGetter<CsvColumnKey, Row> {
+public class CsvColumnKeyRowKeySourceGetter implements KeySourceGetter<CsvColumnKey, Row> {
     @Override
     public Object getValue(CsvColumnKey key, Row source) throws SQLException {
         final Cell cell = source.getCell(key.getIndex());

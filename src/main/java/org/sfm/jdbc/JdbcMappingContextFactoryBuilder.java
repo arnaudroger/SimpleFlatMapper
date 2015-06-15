@@ -1,6 +1,7 @@
 package org.sfm.jdbc;
 
-import org.sfm.map.MappingContextFactoryBuilder;
+import org.sfm.map.impl.MappingContextFactoryBuilder;
+import org.sfm.map.impl.keys.KeySourceGetter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

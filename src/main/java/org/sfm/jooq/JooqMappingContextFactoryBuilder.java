@@ -1,7 +1,8 @@
 package org.sfm.jooq;
 
 import org.jooq.Record;
-import org.sfm.map.MappingContextFactoryBuilder;
+import org.sfm.map.impl.MappingContextFactoryBuilder;
+import org.sfm.map.impl.keys.KeySourceGetter;
 
 import java.sql.SQLException;
 

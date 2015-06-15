@@ -5,7 +5,7 @@ import com.mysema.query.types.Expression;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
-import org.sfm.map.MappingContextFactoryBuilder;
+import org.sfm.map.impl.MappingContextFactoryBuilder;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;

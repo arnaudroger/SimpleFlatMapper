@@ -1,14 +1,14 @@
-package org.sfm.map.impl.keys;
+package org.sfm.map.impl.context;
 
 import org.sfm.jdbc.impl.BreakDetector;
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingContextFactory;
 
-public class MappingContextFactoryImpl<S, K> implements MappingContextFactory<S> {
+public class BreakDetectorMappingContextFactory<S, K> implements MappingContextFactory<S> {
     private final KeysDefinition<S, K>[] keyDefinitions;
     private final int rootDetector;
 
-    public MappingContextFactoryImpl(KeysDefinition<S, K>[] keyDefinitions, int rootDetector) {
+    public BreakDetectorMappingContextFactory(KeysDefinition<S, K>[] keyDefinitions, int rootDetector) {
         this.keyDefinitions = keyDefinitions;
         this.rootDetector = rootDetector;
     }

@@ -9,13 +9,17 @@ import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.EnumOrdinalFormatProperty;
 import org.sfm.map.impl.*;
+import org.sfm.map.impl.context.KeySourceGetter;
+import org.sfm.map.impl.context.MappingContextFactoryBuilder;
 import org.sfm.map.impl.fieldmapper.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.primitive.*;
 import org.sfm.utils.ForEachCallBack;
+import org.sfm.utils.Supplier;
 
 import java.lang.reflect.Type;
+import java.sql.SQLException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,36 +73,52 @@ public class CsvWriterBuilder<T> {
 
         final CsvCellWriter cellWriter = new CsvCellWriter();
 
+        final MappingContextFactoryBuilder mappingContextFactoryBuilder = new MappingContextFactoryBuilder(new KeySourceGetter<CsvColumnKey, T>() {
+            @Override
+            public Object getValue(CsvColumnKey key, T source) throws SQLException {
+                throw new UnsupportedOperationException();
+            }
+        });
+
         final CellSeparatorAppender<T> cellSeparatorAppender = new CellSeparatorAppender<T>(cellWriter);
         propertyMappingsBuilder.forEachProperties(
                 new ForEachCallBack<PropertyMapping<T, ?, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey, T>>>() {
-                    private boolean first = true;
+                    int i = 0;
                     @Override
                     public void handle(PropertyMapping<T, ?, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey, T>> pm) {
                         Getter<T, ?> getter = pm.getPropertyMeta().getGetter();
                         FieldMapper<T, Appendable> fieldMapper =
-                                newFieldWriter(pm.getPropertyMeta().getPropertyType(), getter, cellWriter, pm.getColumnDefinition());
-                        if (!first) {
+                                newFieldWriter(pm.getPropertyMeta().getPropertyType(), getter, cellWriter, pm.getColumnDefinition(), i, mappingContextFactoryBuilder);
+                        if (i > 0) {
                             mappers.add(cellSeparatorAppender);
                         }
                         mappers.add(fieldMapper);
-                        first = false;
+                        i++;
                     }
                 }
         );
         mappers.add(new EndOfRowAppender<T>(cellWriter));
 
-        return new MapperImpl<T, Appendable>(
+        MapperImpl<T, Appendable> mapper = new MapperImpl<T, Appendable>(
                 mappers.toArray(new FieldMapper[0]),
                 new FieldMapper[0],
                 STRING_BUILDER_INSTANTIATOR);
+
+        if (mappingContextFactoryBuilder.hasSuppliers()) {
+            return
+                    new ContextualMapper(mappingContextFactoryBuilder.newFactory(),
+                            mapper);
+        } else {
+            return mapper;
+        }
     }
 
     @SuppressWarnings("unchecked")
     protected <P> FieldMapper<T, Appendable> newFieldWriter(Type type,
                                                             Getter<T, P> getter,
                                                             CsvCellWriter cellWriter,
-                                                            FieldMapperColumnDefinition<CsvColumnKey, T> columnDefinition) {
+                                                            FieldMapperColumnDefinition<CsvColumnKey, T> columnDefinition,
+                                                            int index, MappingContextFactoryBuilder builder) {
         if (TypeHelper.isPrimitive(type)) {
             if (getter instanceof BooleanGetter) {
                 return new BooleanFieldMapper<T, Appendable>((BooleanGetter) getter, new BooleanAppendableSetter(cellWriter));
@@ -137,12 +157,13 @@ public class CsvWriterBuilder<T> {
 
         if (format != null) {
             final Format f = format;
-            return new FormattingAppender<T>(getter, new Getter<MappingContext<T>, Format>() {
+            builder.addSupplier(index, new Supplier<Format>() {
                 @Override
-                public Format get(MappingContext<T> target) throws Exception {
-                    return f;
+                public Format get() {
+                    return (Format) f.clone();
                 }
             });
+            return new FormattingAppender<T>(getter, new MappingContextFormatGetter<T>(index));
         }
 
         if (setter == null) {
@@ -156,6 +177,19 @@ public class CsvWriterBuilder<T> {
         @Override
         public Appendable newInstance(Object o) throws Exception {
             return new StringBuilder();
+        }
+    }
+
+    private static class MappingContextFormatGetter<T> implements Getter<MappingContext<T>, Format> {
+        private final int index;
+
+        public MappingContextFormatGetter(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public Format get(MappingContext<T> target) throws Exception {
+            return target.context(index);
         }
     }
 }

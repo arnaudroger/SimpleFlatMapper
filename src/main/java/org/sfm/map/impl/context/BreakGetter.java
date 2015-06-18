@@ -1,7 +1,6 @@
-package org.sfm.map.impl.keys;
+package org.sfm.map.impl.context;
 
 import org.sfm.map.MappingContext;
-import org.sfm.map.impl.MappingContextFactoryBuilder;
 import org.sfm.reflect.Getter;
 import org.sfm.utils.BooleanProvider;
 

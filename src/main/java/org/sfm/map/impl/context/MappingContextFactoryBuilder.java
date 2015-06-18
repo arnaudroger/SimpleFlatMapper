@@ -1,15 +1,15 @@
-package org.sfm.map.impl;
+package org.sfm.map.impl.context;
 
 
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingContextFactory;
-import org.sfm.map.impl.keys.*;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.meta.ListElementPropertyMeta;
 import org.sfm.reflect.meta.MapElementPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.BooleanProvider;
 import org.sfm.utils.Predicate;
+import org.sfm.utils.Supplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ public class MappingContextFactoryBuilder<S, K> {
     private final List<K> keys;
     private final KeySourceGetter<K, S> keySourceGetter;
     private final List<MappingContextFactoryBuilder<S, K>> children = new ArrayList<MappingContextFactoryBuilder<S, K>>();
+    private final List<Supplier<?>> suppliers = new ArrayList<Supplier<?>>();
     private final PropertyMeta<?, ?> owner;
 
     public MappingContextFactoryBuilder(KeySourceGetter<K, S> keySourceGetter) {
@@ -42,6 +43,13 @@ public class MappingContextFactoryBuilder<S, K> {
         if (!keys.contains(key)) {
             keys.add(key);
         }
+    }
+
+    public void addSupplier(int index, Supplier<?> supplier) {
+        while(suppliers.size() <= index) {
+            suppliers.add(null);
+        }
+        suppliers.set(index, supplier);
     }
 
     public Predicate<S> nullChecker() {
@@ -74,25 +82,32 @@ public class MappingContextFactoryBuilder<S, K> {
 
         List<MappingContextFactoryBuilder<S, K>> builders = getAllBuilders();
 
-        if (builders.isEmpty()) {
-            return new MappingContextFactoryImpl<S, K>(null, -1);
+        if (builders.isEmpty() && suppliers.isEmpty()) {
+            return MappingContext.EMPTY_FACTORY;
         }
 
-        @SuppressWarnings("unchecked")
-        KeysDefinition<S, K>[] keyDefinions = new KeysDefinition[builders.get(builders.size() -1).currentIndex + 1];
+        if (!builders.isEmpty()) {
+            KeysDefinition<S, K>[] keyDefinions = new KeysDefinition[builders.get(builders.size() - 1).currentIndex + 1];
 
-        int rootDetector = -1;
-        for(int i = 0; i < builders.size(); i++) {
-            final MappingContextFactoryBuilder<S, K> builder = builders.get(i);
+            int rootDetector = -1;
+            for (int i = 0; i < builders.size(); i++) {
+                final MappingContextFactoryBuilder<S, K> builder = builders.get(i);
 
-            final KeysDefinition<S, K> keyDefinition = builder.newKeysDefinition(builder.getParentNonEmptyIndex());
-            keyDefinions[builder.currentIndex] = keyDefinition;
-            if (builder.currentIndex == 0 || (rootDetector == -1 && builder.isEligibleAsRootKey())) {
-                rootDetector = builder.currentIndex;
+                final KeysDefinition<S, K> keyDefinition = builder.newKeysDefinition(builder.getParentNonEmptyIndex());
+                keyDefinions[builder.currentIndex] = keyDefinition;
+                if (builder.currentIndex == 0 || (rootDetector == -1 && builder.isEligibleAsRootKey())) {
+                    rootDetector = builder.currentIndex;
+                }
             }
+
+            return new BreakDetectorMappingContextFactory<S, K>(keyDefinions, rootDetector);
         }
 
-        return new MappingContextFactoryImpl<S, K>(keyDefinions, rootDetector);
+        if (!suppliers.isEmpty()) {
+            return new ValuedMapperContextFactory<S>(suppliers);
+        }
+
+        throw new IllegalStateException();
     }
 
     private boolean isEligibleAsRootKey() {
@@ -151,6 +166,10 @@ public class MappingContextFactoryBuilder<S, K> {
 
     public boolean isRoot() {
         return parent == null;
+    }
+
+    public boolean hasSuppliers() {
+        return !suppliers.isEmpty();
     }
 
     private static class Counter {

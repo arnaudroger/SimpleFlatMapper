@@ -3,7 +3,7 @@ package org.sfm.poi.impl;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.map.impl.keys.KeySourceGetter;
+import org.sfm.map.impl.context.KeySourceGetter;
 
 import java.sql.SQLException;
 

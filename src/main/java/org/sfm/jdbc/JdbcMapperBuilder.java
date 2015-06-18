@@ -4,6 +4,7 @@ import org.sfm.jdbc.impl.*;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.impl.*;
+import org.sfm.map.impl.context.MappingContextFactoryBuilder;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;

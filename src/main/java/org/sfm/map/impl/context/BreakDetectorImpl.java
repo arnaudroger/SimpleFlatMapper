@@ -1,8 +1,7 @@
-package org.sfm.map.impl.keys;
+package org.sfm.map.impl.context;
 
 import org.sfm.jdbc.impl.BreakDetector;
 import org.sfm.map.MappingException;
-import org.sfm.map.impl.MappingContextFactoryBuilder;
 
 import java.util.Arrays;
 

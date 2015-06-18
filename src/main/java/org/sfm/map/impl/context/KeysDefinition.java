@@ -1,4 +1,4 @@
-package org.sfm.map.impl.keys;
+package org.sfm.map.impl.context;
 
 import org.sfm.utils.ErrorHelper;
 

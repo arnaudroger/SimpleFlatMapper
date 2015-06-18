@@ -1,9 +1,9 @@
-package org.sfm.map.impl.keys;
+package org.sfm.map.impl.context;
 
 import org.sfm.jdbc.impl.BreakDetector;
 import org.sfm.map.MappingContext;
 
-public class BreakDetectorMappingContext<S> implements MappingContext<S> {
+public class BreakDetectorMappingContext<S> extends MappingContext<S> {
 
     private final BreakDetector<S>[] breakDetectors;
     private final BreakDetector<S> rootDetector;
@@ -44,5 +44,8 @@ public class BreakDetectorMappingContext<S> implements MappingContext<S> {
         }
     }
 
-
+    @Override
+    public <T> T context(int i) {
+        return null;
+    }
 }

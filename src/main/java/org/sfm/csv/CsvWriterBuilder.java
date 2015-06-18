@@ -86,9 +86,12 @@ public class CsvWriterBuilder<T> {
                     int i = 0;
                     @Override
                     public void handle(PropertyMapping<T, ?, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey, T>> pm) {
-                        Getter<T, ?> getter = pm.getPropertyMeta().getGetter();
                         FieldMapper<T, Appendable> fieldMapper =
-                                newFieldWriter(pm.getPropertyMeta().getPropertyType(), getter, cellWriter, pm.getColumnDefinition(), i, mappingContextFactoryBuilder);
+                                newFieldWriter(
+                                        pm,
+                                        i,
+                                        cellWriter,
+                                        mappingContextFactoryBuilder);
                         if (i > 0) {
                             mappers.add(cellSeparatorAppender);
                         }
@@ -114,11 +117,15 @@ public class CsvWriterBuilder<T> {
     }
 
     @SuppressWarnings("unchecked")
-    protected <P> FieldMapper<T, Appendable> newFieldWriter(Type type,
-                                                            Getter<T, P> getter,
+    protected <P> FieldMapper<T, Appendable> newFieldWriter(PropertyMapping<T, P, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey, T>> pm,
+                                                            int index,
                                                             CsvCellWriter cellWriter,
-                                                            FieldMapperColumnDefinition<CsvColumnKey, T> columnDefinition,
-                                                            int index, MappingContextFactoryBuilder builder) {
+                                                            MappingContextFactoryBuilder builder
+    ) {
+
+        Type type = pm.getPropertyMeta().getPropertyType();
+        Getter<T, ? extends P> getter = pm.getPropertyMeta().getGetter();
+        FieldMapperColumnDefinition<CsvColumnKey, T> columnDefinition = pm.getColumnDefinition();
         if (TypeHelper.isPrimitive(type)) {
             if (getter instanceof BooleanGetter) {
                 return new BooleanFieldMapper<T, Appendable>((BooleanGetter) getter, new BooleanAppendableSetter(cellWriter));
@@ -169,6 +176,7 @@ public class CsvWriterBuilder<T> {
         if (setter == null) {
             setter = new ObjectAppendableSetter(cellWriter);
         }
+
         return new FieldMapperImpl<T, Appendable, P>(getter, setter);
     }
 

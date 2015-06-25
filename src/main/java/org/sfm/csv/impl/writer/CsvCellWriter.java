@@ -3,79 +3,65 @@ package org.sfm.csv.impl.writer;
 
 import java.io.IOException;
 
-public class CsvCellWriter {
+public class CsvCellWriter implements CellWriter {
 
-    public void writeBoolean(boolean b, Appendable appendable) throws IOException {
-        appendCharSequence(Boolean.toString(b), appendable);
+    public static final CsvCellWriter DEFAULT_WRITER = new CsvCellWriter(',', '"', false, "\r\n");
+
+    private final boolean alwaysEscape;
+    private final char separator;
+    private final char quote;
+    private final String endOfLine;
+
+    public CsvCellWriter(char separator, char quote, boolean alwaysEscape, String endOfLine) {
+        this.separator = separator;
+        this.quote = quote;
+        this.alwaysEscape = alwaysEscape;
+        this.endOfLine = endOfLine;
     }
 
-    public void writeByte(byte b, Appendable appendable) throws IOException {
-        appendCharSequence(Byte.toString(b), appendable);
-    }
-
-    public void writeChar(char c, Appendable appendable) throws IOException {
-        appendCharSequence(Character.toString(c), appendable);
-    }
-
-    public void writeShort(short s, Appendable appendable) throws IOException {
-        appendCharSequence(Short.toString(s), appendable);
-    }
-
-    public void writeInt(int i, Appendable appendable) throws IOException {
-        appendCharSequence(Integer.toString(i), appendable);
-    }
-
-    public void writeLong(long l, Appendable appendable) throws IOException {
-        appendCharSequence(Long.toString(l), appendable);
-    }
-
-    public void writeFloat(float f, Appendable appendable) throws IOException {
-        appendCharSequence(Float.toString(f), appendable);
-    }
-
-    public void writeDouble(double d, Appendable appendable) throws IOException {
-        appendCharSequence(Double.toString(d), appendable);
-    }
-
-    public void writeCharSequence(CharSequence sequence, Appendable appendable) throws IOException {
-        if (needsEscaping(sequence)) {
+    @Override
+    public void writeValue(CharSequence sequence, Appendable appendable) throws IOException {
+        if (alwaysEscape || needsEscaping(sequence)) {
             escapeCharSequence(sequence, appendable);
         } else {
-            appendCharSequence(sequence, appendable);
+            appendable.append(sequence);
         }
     }
 
     private boolean needsEscaping(CharSequence sequence) {
         for(int i = 0; i < sequence.length(); i++) {
             char c = sequence.charAt(i);
-            if (c == '"' || c == ',' || c == '\r' || c == '\n') {
+            if (isASpecialCharacter(c)) {
                 return true;
             }
         }
         return false;
     }
 
-    private void appendCharSequence(CharSequence sequence, Appendable appendable) throws IOException {
-        appendable.append(sequence);
+    private boolean isASpecialCharacter(char c) {
+        return c == quote || c == separator || endOfLine.indexOf(c) != -1;
     }
 
     private void escapeCharSequence(CharSequence sequence, Appendable appendable) throws IOException {
-        appendable.append('"');
+        char quote = this.quote;
+        appendable.append(quote);
         for(int i = 0; i < sequence.length(); i++) {
             char c = sequence.charAt(i);
             appendable.append(c);
-            if (c == '"') {
-                appendable.append('"');
+            if (c == quote) {
+                appendable.append(quote);
             }
         }
-        appendable.append('"');
+        appendable.append(quote);
     }
 
+    @Override
     public void nextCell(Appendable target) throws IOException {
-        target.append(',');
+        target.append(separator);
     }
 
+    @Override
     public void endOfRow(Appendable target) throws IOException {
-        appendCharSequence("\r\n", target);
+        target.append(endOfLine);
     }
 }

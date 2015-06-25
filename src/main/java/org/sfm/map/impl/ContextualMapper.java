@@ -10,9 +10,13 @@ public class ContextualMapper<S, T> implements Mapper<S, T> {
     private final MappingContextFactory<S> mappingContextFactory;
     private final Mapper<S, T> delegate;
 
-    public ContextualMapper(MappingContextFactory<S> mappingContextFactory, Mapper<S, T> delegate) {
+    public ContextualMapper(Mapper<S, T> delegate, MappingContextFactory<S> mappingContextFactory) {
         this.delegate = delegate;
         this.mappingContextFactory = mappingContextFactory;
+    }
+
+    public MappingContext<S> newMappingContext() {
+        return mappingContextFactory.newContext();
     }
 
     @Override

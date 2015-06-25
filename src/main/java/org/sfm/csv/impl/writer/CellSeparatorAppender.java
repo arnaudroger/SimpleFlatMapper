@@ -2,15 +2,13 @@ package org.sfm.csv.impl.writer;
 
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MappingContext;
-import org.sfm.reflect.Setter;
-import org.sfm.reflect.primitive.*;
 
 public class CellSeparatorAppender<T>
         implements FieldMapper<T, Appendable> {
 
-    private final CsvCellWriter cellWriter;
+    private final CellWriter cellWriter;
 
-    public CellSeparatorAppender(CsvCellWriter cellWriter) {
+    public CellSeparatorAppender(CellWriter cellWriter) {
         this.cellWriter = cellWriter;
     }
 

@@ -216,15 +216,34 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
             for(String prop : classMeta.generateHeaders()) {
                 String name = prop.length() == 0 ? prefix : prefix + "_" + prop;
                 if (!properties.contains(name)) {
-                    properties.add(name);
+                    properties.add(formatName(name));
                 }
             }
         } else {
             if (!properties.contains(prefix)) {
-                properties.add(prefix);
+                properties.add(formatName(prefix));
             }
         }
     }
+
+	private String formatName(String name) {
+		StringBuilder sb = new StringBuilder(name.length());
+		boolean lastWasUpperCase = false;
+		for(int i = 0; i < name.length(); i++) {
+			char c = name.charAt(i);
+
+			if (Character.isUpperCase(c)) {
+				if (!lastWasUpperCase) {
+					sb.append('_');
+				}
+				sb.append(Character.toLowerCase(c));
+			} else {
+				lastWasUpperCase = false;
+				sb.append(c);
+			}
+		}
+		return sb.toString();
+	}
 
 	@Override
 	public boolean isLeaf() {

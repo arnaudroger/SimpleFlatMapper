@@ -4,14 +4,14 @@ import org.sfm.reflect.primitive.IntSetter;
 
 public class IntegerAppendableSetter implements IntSetter<Appendable> {
 
-    private final CsvCellWriter cellWriter;
+    private final CellWriter cellWriter;
 
-    public IntegerAppendableSetter(CsvCellWriter cellWriter) {
+    public IntegerAppendableSetter(CellWriter cellWriter) {
         this.cellWriter = cellWriter;
     }
 
     @Override
     public void setInt(Appendable target, int value) throws Exception {
-        cellWriter.writeInt(value, target);
+        cellWriter.writeValue(Integer.toString(value), target);
     }
 }

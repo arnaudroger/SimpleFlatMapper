@@ -4,14 +4,14 @@ import org.sfm.reflect.primitive.FloatSetter;
 
 public class FloatAppendableSetter implements FloatSetter<Appendable> {
 
-    private final CsvCellWriter cellWriter;
+    private final CellWriter cellWriter;
 
-    public FloatAppendableSetter(CsvCellWriter cellWriter) {
+    public FloatAppendableSetter(CellWriter cellWriter) {
         this.cellWriter = cellWriter;
     }
 
     @Override
     public void setFloat(Appendable target, float value) throws Exception {
-        cellWriter.writeFloat(value, target);
+        cellWriter.writeValue(Float.toString(value), target);
     }
 }

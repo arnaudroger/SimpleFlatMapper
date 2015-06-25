@@ -37,7 +37,7 @@ public class TuplesClassMetaTest {
     }
     @Test
     public void testGenerateHeadersOnDbObjectString() {
-        String[] names = {"element0_id", "element0_name", "element0_email", "element0_creationTime", "element0_typeOrdinal", "element0_typeName", "element1"};
+        String[] names = {"element0_id", "element0_name", "element0_email", "element0_creation_time", "element0_type_ordinal", "element0_type_name", "element1"};
         assertArrayEquals(
                 names,
                 ReflectionService.newInstance().getClassMeta(Tuples.typeDef(DbObject.class, String.class)).generateHeaders());

@@ -4,14 +4,14 @@ import org.sfm.reflect.primitive.BooleanSetter;
 
 public class BooleanAppendableSetter implements BooleanSetter<Appendable> {
 
-    private final CsvCellWriter cellWriter;
+    private final CellWriter cellWriter;
 
-    public BooleanAppendableSetter(CsvCellWriter cellWriter) {
+    public BooleanAppendableSetter(CellWriter cellWriter) {
         this.cellWriter = cellWriter;
     }
 
     @Override
     public void setBoolean(Appendable target, boolean value) throws Exception {
-        cellWriter.writeBoolean(value, target);
+        cellWriter.writeValue(Boolean.toString(value), target);
     }
 }

@@ -6,9 +6,9 @@ import org.sfm.map.MappingContext;
 public class EndOfRowAppender<S>
         implements FieldMapper<S, Appendable> {
 
-    private final CsvCellWriter cellWriter;
+    private final CellWriter cellWriter;
 
-    public EndOfRowAppender(CsvCellWriter cellWriter) {
+    public EndOfRowAppender(CellWriter cellWriter) {
         this.cellWriter = cellWriter;
     }
 

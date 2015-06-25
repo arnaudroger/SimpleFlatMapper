@@ -4,14 +4,14 @@ import org.sfm.reflect.primitive.CharacterSetter;
 
 public class CharacterAppendableSetter implements CharacterSetter<Appendable> {
 
-    private final CsvCellWriter cellWriter;
+    private final CellWriter cellWriter;
 
-    public CharacterAppendableSetter(CsvCellWriter cellWriter) {
+    public CharacterAppendableSetter(CellWriter cellWriter) {
         this.cellWriter = cellWriter;
     }
 
     @Override
     public void setCharacter(Appendable target, char value) throws Exception {
-        cellWriter.writeChar(value, target);
+        cellWriter.writeValue(Character.toString(value), target);
     }
 }

@@ -4,14 +4,14 @@ import org.sfm.reflect.primitive.ByteSetter;
 
 public class ByteAppendableSetter implements ByteSetter<Appendable> {
 
-    private final CsvCellWriter cellWriter;
+    private final CellWriter cellWriter;
 
-    public ByteAppendableSetter(CsvCellWriter cellWriter) {
+    public ByteAppendableSetter(CellWriter cellWriter) {
         this.cellWriter = cellWriter;
     }
 
     @Override
     public void setByte(Appendable target, byte value) throws Exception {
-        cellWriter.writeByte(value, target);
+        cellWriter.writeValue(Byte.toString(value), target);
     }
 }

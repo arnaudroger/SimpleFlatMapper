@@ -12,7 +12,7 @@ public class ObjectClassMetaTest {
 
     @Test
     public void testGenerateHeaders() {
-        String[] names = {"id", "name", "email", "creationTime", "typeOrdinal", "typeName"};
+        String[] names = {"id", "name", "email", "creation_time", "type_ordinal", "type_name"};
         assertArrayEquals(
                 names,
                 ReflectionService.newInstance().getClassMeta(DbFinalObject.class).generateHeaders());
@@ -51,7 +51,7 @@ public class ObjectClassMetaTest {
     }
     @Test
     public void testGenerateHeadersWithConstructorAndSetterProperty() {
-        String[] names = {"id", "o_id", "o_name", "o_email", "o_creationTime", "o_typeOrdinal", "o_typeName"};
+        String[] names = {"id", "o_id", "o_name", "o_email", "o_creation_time", "o_type_ordinal", "o_type_name"};
         assertArrayEquals(
                 names,
                 ReflectionService.newInstance().getClassMeta(MyClass.class).generateHeaders());

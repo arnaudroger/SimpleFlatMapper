@@ -4,14 +4,14 @@ import org.sfm.reflect.primitive.LongSetter;
 
 public class LongAppendableSetter implements LongSetter<Appendable> {
 
-    private final CsvCellWriter cellWriter;
+    private final CellWriter cellWriter;
 
-    public LongAppendableSetter(CsvCellWriter cellWriter) {
+    public LongAppendableSetter(CellWriter cellWriter) {
         this.cellWriter = cellWriter;
     }
 
     @Override
     public void setLong(Appendable target, long value) throws Exception {
-        cellWriter.writeLong(value, target);
+        cellWriter.writeValue(Long.toString(value), target);
     }
 }

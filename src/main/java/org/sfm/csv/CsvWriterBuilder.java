@@ -1,7 +1,7 @@
 package org.sfm.csv;
 
 
-import org.sfm.csv.impl.DefaultFieldAppenderFactory;
+import org.sfm.csv.impl.writer.DefaultFieldAppenderFactory;
 import org.sfm.csv.impl.writer.*;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.column.ColumnProperty;
@@ -22,7 +22,7 @@ public class CsvWriterBuilder<T> {
     private final MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>> mapperConfig;
 
     private final PropertyMappingsBuilder<T, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey, T>> propertyMappingsBuilder;
-    private final DefaultFieldAppenderFactory<T> fieldAppenderFactory;
+    private final DefaultFieldAppenderFactory fieldAppenderFactory;
     private final CellWriter cellWriter;
     private final ClassMeta<T> classMeta;
 
@@ -31,7 +31,7 @@ public class CsvWriterBuilder<T> {
     public CsvWriterBuilder(
             ClassMeta<T> classMeta,
             MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>> mapperConfig,
-            DefaultFieldAppenderFactory<T> fieldAppenderFactory,
+            DefaultFieldAppenderFactory fieldAppenderFactory,
             CellWriter cellWriter) {
         this.fieldAppenderFactory = fieldAppenderFactory;
         this.cellWriter = cellWriter;

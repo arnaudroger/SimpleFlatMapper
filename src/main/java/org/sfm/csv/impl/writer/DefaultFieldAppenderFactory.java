@@ -1,7 +1,7 @@
-package org.sfm.csv.impl;
+package org.sfm.csv.impl.writer;
 
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.csv.impl.writer.*;
+import org.sfm.map.ColumnDefinition;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.column.DateFormatProperty;
@@ -22,14 +22,14 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class DefaultFieldAppenderFactory<T> {
+public class DefaultFieldAppenderFactory {
 
     private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     private static final DefaultFieldAppenderFactory DEFAULT_FIELD_APPENDER_FACTORY = new DefaultFieldAppenderFactory();
 
     @SuppressWarnings("unchecked")
-    public static <T> DefaultFieldAppenderFactory<T> instance() {
+    public static DefaultFieldAppenderFactory instance() {
         return DEFAULT_FIELD_APPENDER_FACTORY;
     }
 
@@ -37,14 +37,15 @@ public class DefaultFieldAppenderFactory<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public <P> FieldMapper<T, Appendable> newFieldAppender(
-            PropertyMapping<T, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>> pm,
+    public <T, P> FieldMapper<T, Appendable> newFieldAppender(
+            PropertyMapping<T, P, CsvColumnKey, ? extends ColumnDefinition<CsvColumnKey, ?>> pm,
             CellWriter cellWriter,
             MappingContextFactoryBuilder builder) {
+        if (pm == null) throw new NullPointerException("pm is null");
 
         Type type = pm.getPropertyMeta().getPropertyType();
         Getter<T, ? extends P> getter = pm.getPropertyMeta().getGetter();
-        FieldMapperColumnDefinition<CsvColumnKey, T> columnDefinition = pm.getColumnDefinition();
+        ColumnDefinition<CsvColumnKey, ?> columnDefinition = pm.getColumnDefinition();
         if (TypeHelper.isPrimitive(type) && !columnDefinition.has(FormatProperty.class)) {
             if (getter instanceof BooleanGetter) {
                 return new BooleanFieldMapper<T, Appendable>((BooleanGetter) getter, new BooleanAppendableSetter(cellWriter));

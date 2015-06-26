@@ -123,7 +123,7 @@ public class CsvWriterBuilder<T> {
     public static <T> CsvWriterBuilder<T> newBuilder(ClassMeta<T> classMeta, CellWriter cellWriter) {
         MapperConfig<CsvColumnKey,FieldMapperColumnDefinition<CsvColumnKey,T>> config =
                 MapperConfig.<T, CsvColumnKey>fieldMapperConfig();
-        DefaultFieldAppenderFactory appenderFactory = DefaultFieldAppenderFactory.<T>instance();
+        DefaultFieldAppenderFactory appenderFactory = DefaultFieldAppenderFactory.instance();
         CsvWriterBuilder<T> builder =
                 new CsvWriterBuilder<T>(
                         classMeta,

@@ -103,7 +103,7 @@ public class CsvWriterBuilder<T> {
 
 
     public CsvWriterBuilder<T> defaultHeaders() {
-        for(String column : classMeta.generateHeaders()) {
+        for (String column : classMeta.generateHeaders()) {
             addColumn(column);
         }
         return this;

@@ -372,7 +372,7 @@ public final class CsvParser {
      * @see org.sfm.csv.CsvParser
      * @see org.sfm.csv.CsvMapper
      */
-	public static final class MapToDSL<T> extends  MapWithDSL<T> {
+	public static final class MapToDSL<T> extends MapWithDSL<T> {
 		private final ClassMeta<T> classMeta;
 		private final Type mapToClass;
 		private final CsvColumnDefinitionProviderImpl columnDefinitionProvider;

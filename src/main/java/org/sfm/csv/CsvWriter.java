@@ -32,12 +32,13 @@ public class CsvWriter<T>  {
         this.mappingContext = mappingContext;
     }
 
-    public void append(T value) throws IOException {
+    public CsvWriter<T> append(T value) throws IOException {
         try {
             mapper.mapTo(value, appendable, mappingContext);
         } catch(Exception e) {
             ErrorHelper.rethrow(e);
         }
+        return this;
     }
 
     public static <T> CsvWriterDSL<T> from(Class<T> type) {

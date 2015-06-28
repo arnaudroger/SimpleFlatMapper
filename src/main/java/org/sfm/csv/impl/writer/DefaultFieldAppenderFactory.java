@@ -1,13 +1,17 @@
 package org.sfm.csv.impl.writer;
 
 import org.sfm.csv.CsvColumnKey;
+//IFJAVA8_START
+import org.sfm.csv.impl.writer.time.JavaTimeFormattingAppender;
+import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
+import java.time.temporal.TemporalAccessor;
+//IFJAVA8_END
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.EnumOrdinalFormatProperty;
 import org.sfm.map.column.FormatProperty;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.PropertyMapping;
 import org.sfm.map.impl.context.MappingContextFactoryBuilder;
 import org.sfm.map.impl.fieldmapper.*;
@@ -84,6 +88,12 @@ public class DefaultFieldAppenderFactory {
             }
             format = new SimpleDateFormat(df);
         }
+        //IFJAVA8_START
+        else if (TypeHelper.isAssignable(TemporalAccessor.class, type)
+                && columnDefinition.has(JavaDateTimeFormatterProperty.class)) {
+            return new JavaTimeFormattingAppender<T>((Getter<T, ? extends TemporalAccessor>) getter, columnDefinition.lookFor(JavaDateTimeFormatterProperty.class).getFormatter(), cellWriter);
+        }
+        //IFJAVA8_END
 
         if (format != null) {
             final Format f = format;

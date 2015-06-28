@@ -30,6 +30,16 @@ public class CsvWriterTest {
     }
 
     @Test
+    public void testWriterSkipHeader() throws ParseException, IOException {
+        StringWriter sw = new StringWriter();
+        CsvWriter.from(DbObject.class).skipHeaders().to(sw).append(newDbObject());
+        assertEquals(
+                        "13,name,email,2015-06-06 17:46:23,type2,type3\r\n",
+                sw.toString());
+    }
+
+
+    @Test
     public void testWriterWithManualHeaders() throws ParseException, IOException {
         StringWriter sw = new StringWriter();
         CsvWriter.from(DbObject.class).columns("id", "name").to(sw).append(newDbObject());

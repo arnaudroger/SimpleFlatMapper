@@ -74,7 +74,7 @@ public class DefaultFieldAppenderFactoryTest {
 
     @Test
     public void testJodaDateTime() throws  Exception {
-        testFieldMapperForClassAndProp("2014-06-07T14:04:06.008+01:00", "dateTime", jodaObjectClassMeta, jodaObject);
+        testFieldMapperForClassAndProp(jodaObject.dateTime.toString(), "dateTime", jodaObjectClassMeta, jodaObject);
     }
 
     @Test

@@ -11,12 +11,14 @@ public class CsvCellWriter implements CellWriter {
     private final char separator;
     private final char quote;
     private final String endOfLine;
+    private final char[] specialCharacters;
 
     public CsvCellWriter(char separator, char quote, boolean alwaysEscape, String endOfLine) {
         this.separator = separator;
         this.quote = quote;
         this.alwaysEscape = alwaysEscape;
         this.endOfLine = endOfLine;
+        this.specialCharacters = (endOfLine + quote + separator).toCharArray();
     }
 
     @Override
@@ -29,17 +31,15 @@ public class CsvCellWriter implements CellWriter {
     }
 
     private boolean needsEscaping(CharSequence sequence) {
+        char[] specialCharacters = this.specialCharacters;
         for(int i = 0; i < sequence.length(); i++) {
             char c = sequence.charAt(i);
-            if (isASpecialCharacter(c)) {
-                return true;
+            for(int j = 0; j < specialCharacters.length; j++) {
+                char s = specialCharacters[j];
+                if (c == s) return true;
             }
         }
         return false;
-    }
-
-    private boolean isASpecialCharacter(char c) {
-        return c == quote || c == separator || endOfLine.indexOf(c) != -1;
     }
 
     private void escapeCharSequence(CharSequence sequence, Appendable appendable) throws IOException {

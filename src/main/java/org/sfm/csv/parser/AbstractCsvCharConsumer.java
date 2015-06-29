@@ -35,7 +35,7 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 	 * use bit mask to testing if == IN_CR
 	 */
 	protected final void turnOffCrFlag() {
-		currentState = currentState & TURN_OFF_IN_CR_MASK;
+		currentState &= TURN_OFF_IN_CR_MASK;
 	}
 
 	protected final void newCellIfNotInQuote(int currentIndex, CellConsumer cellConsumer) {
@@ -80,7 +80,7 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 		if (isAllConsumedFromMark(currentIndex)) {
 			currentState = IN_QUOTE;
 		} else {
-			currentState = currentState ^ ALL_QUOTES;
+			currentState ^= ALL_QUOTES;
 		}
 	}
 
@@ -121,9 +121,8 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 		return (bufferIndex) <  (csvBuffer.getMark() + 1)  ;
 	}
 
-	private int unescape(char[] chars, int offset, int length) {
+	private int unescape(final char[] chars, final int offset, final int length) {
 		final char quoteChar = quoteChar();
-
 
 		int j = offset + 1;
 		boolean notEscaped = true;

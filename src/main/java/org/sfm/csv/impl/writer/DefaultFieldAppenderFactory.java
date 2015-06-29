@@ -112,7 +112,7 @@ public class DefaultFieldAppenderFactory {
                     return (Format) f.clone();
                 }
             });
-            return new FormattingAppender<T>(getter, new MappingContextFormatGetter<T>(pm.getColumnKey().getIndex()));
+            return new FormattingAppender<T>(getter, new MappingContextFormatGetter<T>(pm.getColumnKey().getIndex()), cellWriter);
         }
 
         if (setter == null) {

@@ -3,7 +3,7 @@ package org.sfm.csv.impl.writer;
 
 import java.io.IOException;
 
-public class CsvCellWriter implements CellWriter {
+public final class CsvCellWriter implements CellWriter {
 
     public static final CsvCellWriter DEFAULT_WRITER = new CsvCellWriter(',', '"', false, "\r\n");
 
@@ -64,4 +64,20 @@ public class CsvCellWriter implements CellWriter {
     public void endOfRow(Appendable target) throws IOException {
         target.append(endOfLine);
     }
+
+    public CsvCellWriter separator(char separator) {
+        return new CsvCellWriter(separator, quote, alwaysEscape, endOfLine);
+    }
+    public CsvCellWriter quote(char quote) {
+        return new CsvCellWriter(separator, quote, alwaysEscape, endOfLine);
+    }
+
+    public CsvCellWriter alwaysEscape(boolean alwaysEscape) {
+        return new CsvCellWriter(separator, quote, alwaysEscape, endOfLine);
+    }
+
+    public CsvCellWriter endOfLine(String endOfLine) {
+        return new CsvCellWriter(separator, quote, alwaysEscape, endOfLine);
+    }
+
 }

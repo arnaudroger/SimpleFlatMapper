@@ -2,14 +2,21 @@ package org.sfm.csv;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.csv.impl.writer.CellWriter;
+import org.sfm.csv.impl.writer.CsvCellWriter;
+import org.sfm.csv.impl.writer.DefaultFieldAppenderFactory;
+import org.sfm.map.*;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.EnumOrdinalFormatProperty;
+import org.sfm.map.impl.PropertyMapping;
+import org.sfm.map.impl.context.MappingContextFactoryBuilder;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -38,6 +45,14 @@ public class CsvWriterTest {
                 sw.toString());
     }
 
+    @Test
+    public void testWriterWithCustomizedCellWriter() throws ParseException, IOException {
+        StringWriter sw = new StringWriter();
+        CsvWriter.from(DbObject.class).cellWriter(CsvCellWriter.DEFAULT_WRITER.separator('\t').quote('\'').alwaysEscape(true).endOfLine("\n")).to(sw).append(newDbObject());
+        assertEquals(
+                "'id'\t'name'\t'email'\t'creation_time'\t'type_ordinal'\t'type_name'\n'13'\t'name'\t'email'\t'2015-06-06 17:46:23'\t'type2'\t'type3'\n",
+                sw.toString());
+    }
 
     @Test
     public void testWriterWithManualHeaders() throws ParseException, IOException {
@@ -47,6 +62,75 @@ public class CsvWriterTest {
                 "id,name\r\n" +
                         "13,name\r\n",
                 sw.toString());
+    }
+
+    @Test
+    public void testWriterWithManualHeadersAfterSkipHeaders() throws ParseException, IOException {
+        StringWriter sw = new StringWriter();
+        CsvWriter.from(DbObject.class).skipHeaders().columns("id", "name").to(sw).append(newDbObject());
+        assertEquals(
+                "13,name\r\n",
+                sw.toString());
+    }
+
+    @Test
+    public void testWriterWithOneManualColumnWithFormat() throws  Exception {
+        StringWriter sw = new StringWriter();
+        CsvWriter.from(DbObject.class).skipHeaders().column("creation_time", new SimpleDateFormat("yyyyMMdd")).to(sw).append(newDbObject());
+        assertEquals(
+                "20150606\r\n",
+                sw.toString());
+
+    }
+
+    @Test
+    public void testWriterFailOnInvalidColumn() throws  Exception {
+        try {
+            CsvWriter.from(DbObject.class).columns("nonexistent");
+            fail();
+        } catch(MapperBuildingException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testWriterWithCustomMapperConfig() throws  Exception {
+        CsvWriter.CsvWriterDSL<DbObject> from = CsvWriter.from(DbObject.class);
+        from = from.mapperConfig(from.mapperConfig().mapperBuilderErrorHandler(new MapperBuilderErrorHandler() {
+            @Override
+            public void getterNotFound(String msg) {
+            }
+
+            @Override
+            public void propertyNotFound(Type target, String property) {
+            }
+
+            @Override
+            public void customFieldError(FieldKey<?> key, String message) {
+            }
+        }));
+
+        from.columns("nonexistent");
+    }
+
+    @Test
+    public void testWriterWithCustomFieldFactory() throws  Exception {
+        StringWriter sw = new StringWriter();
+        CsvWriter.from(DbObject.class).fieldAppenderFactory(new DefaultFieldAppenderFactory() {
+            @Override
+            public <T, P> FieldMapper<T, Appendable> newFieldAppender(PropertyMapping<T, P, CsvColumnKey, ? extends ColumnDefinition<CsvColumnKey, ?>> pm, CellWriter cellWriter, MappingContextFactoryBuilder builder) {
+                return new FieldMapper<T, Appendable>() {
+                    @Override
+                    public void mapTo(T source, Appendable target, MappingContext<T> context) throws Exception {
+                        target.append("t");
+                    }
+                };
+            }
+        }).skipHeaders().to(sw).append(newDbObject());
+        assertEquals(
+                "t,t,t,t,t,t\r\n",
+                sw.toString());
+
     }
 
     @Test
@@ -78,6 +162,17 @@ public class CsvWriterTest {
         try {
             CsvWriter.from(new TypeReference<List<String>>() {
             }).to(new StringWriter());
+            fail();
+        } catch(IllegalStateException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testFailOnListWithDefaultHeaderAndSkipHeaders() throws IOException {
+        try {
+            CsvWriter.from(new TypeReference<List<String>>() {
+            }).skipHeaders().to(new StringWriter());
             fail();
         } catch(IllegalStateException e) {
             // expected

@@ -13,10 +13,12 @@ public class FormattingAppender<S> implements FieldMapper<S, Appendable> {
 
     private final Getter<S, ?> getter;
     private final Getter<MappingContext<S>, Format> formatAccessor;
+    private final CellWriter cellWriter;
 
-    public FormattingAppender(Getter<S, ?> getter, Getter<MappingContext<S>, Format> formatAccessor) {
+    public FormattingAppender(Getter<S, ?> getter, Getter<MappingContext<S>, Format> formatAccessor, CellWriter cellWriter) {
         this.getter = getter;
         this.formatAccessor = formatAccessor;
+        this.cellWriter = cellWriter;
     }
 
     @Override
@@ -25,7 +27,7 @@ public class FormattingAppender<S> implements FieldMapper<S, Appendable> {
         if (o != null) {
             Format format = formatAccessor.get(context);
             requireNonNull("Format in mapping context", format);
-            target.append(format.format(o));
+            cellWriter.writeValue(format.format(o), target);
         }
     }
 }

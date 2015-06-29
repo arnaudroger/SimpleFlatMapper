@@ -112,7 +112,7 @@ public class AsmFactoryTest {
 						throw new IOException("Error");
 					}
 				},ResultSet.class,
-				DbObject.class, new JdbcMappingContextFactoryBuilder().newFactory());
+				DbObject.class);
 		
 		try {
 			jdbcMapper.map(null);
@@ -142,7 +142,7 @@ public class AsmFactoryTest {
 						return new DbObject();
 					}
 				}, ResultSet.class,
-				DbObject.class,  new JdbcMappingContextFactoryBuilder().newFactory());
+				DbObject.class);
 		
 		try {
 			jdbcMapper.map(null);

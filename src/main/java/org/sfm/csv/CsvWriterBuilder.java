@@ -3,13 +3,16 @@ package org.sfm.csv;
 
 import org.sfm.csv.impl.writer.DefaultFieldAppenderFactory;
 import org.sfm.csv.impl.writer.*;
+import org.sfm.map.FieldKey;
 import org.sfm.map.FieldMapper;
+import org.sfm.map.Mapper;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.impl.*;
 import org.sfm.map.impl.context.KeySourceGetter;
 import org.sfm.map.impl.context.MappingContextFactoryBuilder;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 
 import java.sql.SQLException;
@@ -92,14 +95,45 @@ public class CsvWriterBuilder<T> {
         );
         mappers.add(new EndOfRowAppender<T>(cellWriter));
 
-        MapperImpl<T, Appendable> mapper = new MapperImpl<T, Appendable>(
-                mappers.toArray(new FieldMapper[0]),
-                new FieldMapper[0],
-                STRING_BUILDER_INSTANTIATOR);
+
+        Mapper<T, Appendable> mapper;
+        FieldMapper[] fields = mappers.toArray(new FieldMapper[0]);
+        if (mappers.size() < 256) {
+            try {
+                mapper =
+                        reflectionService
+                                .getAsmFactory()
+                                .<T, Appendable>createMapper(
+                                        getKeys(),
+                                        fields,
+                                        new FieldMapper[0],
+                                        STRING_BUILDER_INSTANTIATOR,
+                                        TypeHelper.<T>toClass(classMeta.getType()),
+                                       Appendable.class
+                                );
+            } catch (Exception e) {
+                if (mapperConfig.failOnAsm()) {
+                    return ErrorHelper.rethrow(e);
+                } else {
+                    mapper = new MapperImpl<T, Appendable>(fields, new FieldMapper[0], STRING_BUILDER_INSTANTIATOR);
+                }
+            }
+
+        } else {
+            mapper = new MapperImpl<T, Appendable>(
+                    fields,
+                    new FieldMapper[0],
+                    STRING_BUILDER_INSTANTIATOR);
+        }
 
         return
             new ContextualMapper<T, Appendable>(mapper, mappingContextFactoryBuilder.newFactory());
     }
+
+    private FieldKey<?>[] getKeys() {
+        return propertyMappingsBuilder.getKeys().toArray(new FieldKey[0]);
+    }
+
 
 
     public CsvWriterBuilder<T> defaultHeaders() {

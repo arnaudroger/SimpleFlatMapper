@@ -43,13 +43,13 @@ public class JdbcMapperBuilderImplTest {
 
 	public AsmFactory newAsmFactoryFailsOnmapper() {
 		return new AsmFactory(Thread.currentThread().getContextClassLoader()) {
-                public <S, T> Mapper<S, T> createMapper(final FieldKey<?>[] keys,
+			@Override
+			public <S, T> Mapper<S, T> createMapper(final FieldKey<?>[] keys,
                                                                                 final FieldMapper<S, T>[] mappers,
                                                                                 final FieldMapper<S, T>[] constructorMappers,
-                                                                                final Instantiator<S, T> instantiator,
+                                                                                final Instantiator<? super S, T> instantiator,
                                                                                 final Class<S> source,
-                                                                                final Class<T> target,
-                                                                                MappingContextFactory<S> mappingContextFactory) throws Exception {
+                                                                                final Class<T> target) throws Exception {
                     throw new UnsupportedOperationException();
                 }
 

@@ -1,56 +1,32 @@
 package org.sfm.map.impl;
 
+import java.lang.reflect.Type;
+
 public class JodaTimeClasses {
 
-    private static final Class<?> dateTimeClass;
 
-    private static final Class<?> localDateClass;
+    public static final String ORG_JODA_TIME_DATE_TIME = "org.joda.time.DateTime";
 
-    private static final Class<?> localDateTimeClass;
+    public static final String ORG_JODA_TIME_LOCAL_DATE = "org.joda.time.LocalDate";
 
-    private static final Class<?> localTimeClass;
+    public static final String ORG_JODA_TIME_LOCAL_DATE_TIME = "org.joda.time.LocalDateTime";
 
-    static {
-        Class<?> clazz = null;
-        try {
-             clazz = Class.forName("org.joda.time.DateTime");
-        } catch (ClassNotFoundException e) {
-        }
-        dateTimeClass = clazz;
+    public static final String ORG_JODA_TIME_LOCAL_TIME = "org.joda.time.LocalTime";
 
-        clazz = null;
-        try {
-            clazz = Class.forName("org.joda.time.LocalDate");
-        } catch (ClassNotFoundException e) {
-        }
-        localDateClass = clazz;
-
-        clazz = null;
-        try {
-            clazz = Class.forName("org.joda.time.LocalDateTime");
-        } catch (ClassNotFoundException e) {
-        }
-        localDateTimeClass = clazz;
-
-        clazz = null;
-        try {
-            clazz = Class.forName("org.joda.time.LocalTime");
-        } catch (ClassNotFoundException e) {
-        }
-        localTimeClass = clazz;
-
+    public static boolean isJoda(Type target) {
+        return target.getTypeName().startsWith("org.joda.time");
     }
 
-    public static boolean isJodaDateTime(Class<?> target) {
-        return dateTimeClass != null && dateTimeClass.equals(target);
+    public static boolean isJodaDateTime(Type target) {
+        return ORG_JODA_TIME_DATE_TIME.equals(target.getTypeName());
     }
-    public static boolean isJodaLocalDateTime(Class<?> target) {
-        return localDateTimeClass != null && localDateTimeClass.equals(target);
+    public static boolean isJodaLocalDateTime(Type target) {
+        return ORG_JODA_TIME_LOCAL_DATE_TIME.equals(target.getTypeName());
     }
-    public static boolean isJodaLocalDate(Class<?> target) {
-        return localDateClass != null && localDateClass.equals(target);
+    public static boolean isJodaLocalDate(Type target) {
+        return ORG_JODA_TIME_LOCAL_DATE.equals(target.getTypeName());
     }
-    public static boolean isJodaLocalTime(Class<?> target) {
-        return localTimeClass != null && localTimeClass.equals(target);
+    public static boolean isJodaLocalTime(Type target) {
+        return ORG_JODA_TIME_LOCAL_TIME.equals(target.getTypeName());
     }
  }

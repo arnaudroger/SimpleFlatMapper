@@ -1,14 +1,21 @@
 package org.sfm.csv.impl.writer;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.beans.DbPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.map.ColumnDefinition;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MappingContextFactory;
+import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.FormatProperty;
+import org.sfm.map.column.joda.JodaDateTimeFormatterProperty;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.PropertyMapping;
 import org.sfm.map.impl.context.KeySourceGetter;
@@ -24,8 +31,6 @@ import java.text.DecimalFormat;
 import static org.junit.Assert.*;
 
 public class DefaultFieldAppenderFactoryTest {
-
-
 
     private DefaultFieldAppenderFactory defaultFieldAppenderFactory = DefaultFieldAppenderFactory.instance();
 
@@ -48,33 +53,78 @@ public class DefaultFieldAppenderFactoryTest {
         dbPrimitiveObject.setpShort((short) 17);
     }
 
+
+    static class JodaObject  {
+        public DateTime dateTime;
+        public LocalDate localDate;
+        public LocalDateTime localDateTime;
+        public LocalTime localTime;
+    }
+
+    JodaObject jodaObject = new JodaObject();
+
+    {
+        jodaObject.dateTime = ISODateTimeFormat.dateTime().parseDateTime("2014-06-07T15:04:06.008+02:00");
+        jodaObject.localDate = jodaObject.dateTime.toLocalDate();
+        jodaObject.localDateTime = jodaObject.dateTime.toLocalDateTime();
+        jodaObject.localTime = jodaObject.dateTime.toLocalTime();
+    }
+
+    ClassMeta<JodaObject> jodaObjectClassMeta = ReflectionService.newInstance().getClassMeta(JodaObject.class);
+
+    @Test
+    public void testJodaDateTime() throws  Exception {
+        testFieldMapperForClassAndProp("2014-06-07T14:04:06.008+01:00", "dateTime", jodaObjectClassMeta, jodaObject);
+    }
+
+    @Test
+    public void testJodaDateTimeWithFormater() throws  Exception {
+        MappingContextFactoryBuilder<JodaObject, CsvColumnKey> builder = getMappingContextBuilder();
+        FieldMapperColumnDefinition<CsvColumnKey, JodaObject> format = FieldMapperColumnDefinition.<CsvColumnKey, JodaObject>identity().add(new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("yyyyMMdd")));
+        FieldMapper<JodaObject, Appendable> fieldMapper =
+                defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
+                        CsvCellWriter.DEFAULT_WRITER, builder);
+        testFieldMapper("20140607", fieldMapper, jodaObject, builder.newFactory());
+    }
+
+    @Test
+    public void testJodaDateTimeWithDateFormat() throws  Exception {
+        MappingContextFactoryBuilder<JodaObject, CsvColumnKey> builder = getMappingContextBuilder();
+        FieldMapperColumnDefinition<CsvColumnKey, JodaObject> format = FieldMapperColumnDefinition.<CsvColumnKey, JodaObject>identity().add(new DateFormatProperty("yyyyMMdd"));
+        FieldMapper<JodaObject, Appendable> fieldMapper =
+                defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
+                        CsvCellWriter.DEFAULT_WRITER, builder);
+        testFieldMapper("20140607", fieldMapper, jodaObject, builder.newFactory());
+    }
+
+
     @Test
     public void testBooleanAppender() throws Exception {
-        testFieldMapperForClassAndProp("true", "pBoolean", dbPrimitiveObjectClassMeta);
+        testFieldMapperForClassAndPropPrimitives("true", "pBoolean");
     }
     @Test
     public void testByteAppender() throws Exception {
-        testFieldMapperForClassAndProp("13", "pByte", dbPrimitiveObjectClassMeta);
+        testFieldMapperForClassAndPropPrimitives("13", "pByte");
     }
     @Test
     public void testCharAppender() throws Exception {
-        testFieldMapperForClassAndProp("14", "pCharacter", dbPrimitiveObjectClassMeta);
+        testFieldMapperForClassAndPropPrimitives("14", "pCharacter");
     }
     @Test
     public void testShortAppender() throws Exception {
-        testFieldMapperForClassAndProp("17", "pShort", dbPrimitiveObjectClassMeta);
+        testFieldMapperForClassAndPropPrimitives("17", "pShort");
     }
     @Test
     public void testFloatAppender() throws Exception {
-        testFieldMapperForClassAndProp("3.1", "pFloat", dbPrimitiveObjectClassMeta);
+        testFieldMapperForClassAndPropPrimitives("3.1", "pFloat");
     }
     @Test
     public void testIntegerAppender() throws Exception {
-        testFieldMapperForClassAndProp("15", "pInt", dbPrimitiveObjectClassMeta);
+        testFieldMapperForClassAndPropPrimitives("15", "pInt");
     }
     @Test
     public void testDoubleAppender() throws Exception {
-        testFieldMapperForClassAndProp("3.14", "pDouble", dbPrimitiveObjectClassMeta);
+        testFieldMapperForClassAndPropPrimitives("3.14", "pDouble");
     }
 
     @Test
@@ -84,16 +134,19 @@ public class DefaultFieldAppenderFactoryTest {
         FieldMapper<DbPrimitiveObjectWithSetter, Appendable> fieldMapper =
                 defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping("pDouble", dbPrimitiveObjectClassMeta, format),
                         CsvCellWriter.DEFAULT_WRITER, builder);
-        testFieldMapper("3.1", fieldMapper, dbPrimitiveObject, builder.newFactory());    }
+        testFieldMapper("3.1", fieldMapper, dbPrimitiveObject, builder.newFactory());
+    }
     @Test
     public void testLongAppender() throws Exception {
-        testFieldMapperForClassAndProp("16", "pLong", dbPrimitiveObjectClassMeta);
+        testFieldMapperForClassAndPropPrimitives("16", "pLong");
     }
-
-    public void testFieldMapperForClassAndProp(String expected, String propName, ClassMeta<DbPrimitiveObjectWithSetter> classMeta) throws Exception {
-        MappingContextFactoryBuilder<DbPrimitiveObjectWithSetter, CsvColumnKey> builder = getMappingContextBuilder();
-        FieldMapper<DbPrimitiveObjectWithSetter, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping(propName, classMeta), CsvCellWriter.DEFAULT_WRITER, builder);
-        testFieldMapper(expected, fieldMapper, dbPrimitiveObject, builder.newFactory());
+    public void testFieldMapperForClassAndPropPrimitives(String expected, String propName) throws Exception {
+        testFieldMapperForClassAndProp(expected, propName, dbPrimitiveObjectClassMeta, dbPrimitiveObject);
+    }
+    public <T> void testFieldMapperForClassAndProp(String expected, String propName, ClassMeta<T> classMeta, T object) throws Exception {
+        MappingContextFactoryBuilder<T, CsvColumnKey> builder = getMappingContextBuilder();
+        FieldMapper<T, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping(propName, classMeta), CsvCellWriter.DEFAULT_WRITER, builder);
+        testFieldMapper(expected, fieldMapper, object, builder.newFactory());
     }
 
     private <T> void testFieldMapper(String expected, FieldMapper<T, Appendable> fieldMapper, T source, MappingContextFactory<T> dbObjectMappingContextFactory) throws Exception {

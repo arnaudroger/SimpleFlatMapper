@@ -71,13 +71,6 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         FieldMapper<S, T>[] fields = fields();
         Tuple2<FieldMapper<S, T>[], Instantiator<S, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
 
-
-        MappingContextFactory<S> mappingContextFactory = null;
-
-        if (mappingContextFactoryBuilder.isRoot()) {
-            mappingContextFactory = mappingContextFactoryBuilder.newFactory();
-        }
-
         Mapper<S, T> mapper;
 
         if (isEligibleForAsmMapper()) {
@@ -90,8 +83,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
                                         fields, constructorFieldMappersAndInstantiator.first(),
                                         constructorFieldMappersAndInstantiator.second(),
                                         mapperSource.source(),
-                                        getTargetClass(),
-                                        mappingContextFactory
+                                        getTargetClass()
                                 );
             } catch (Exception e) {
                 if (mapperConfig.failOnAsm()) {

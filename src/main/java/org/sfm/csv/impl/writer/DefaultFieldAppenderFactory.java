@@ -6,12 +6,14 @@ import org.sfm.csv.impl.writer.time.JavaTimeFormattingAppender;
 import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
 import java.time.temporal.TemporalAccessor;
 //IFJAVA8_END
+import org.sfm.map.column.joda.JodaDateTimeFormatterProperty;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.EnumOrdinalFormatProperty;
 import org.sfm.map.column.FormatProperty;
+import org.sfm.map.impl.JodaTimeClasses;
 import org.sfm.map.impl.PropertyMapping;
 import org.sfm.map.impl.context.MappingContextFactoryBuilder;
 import org.sfm.map.impl.fieldmapper.*;
@@ -94,6 +96,13 @@ public class DefaultFieldAppenderFactory {
             return new JavaTimeFormattingAppender<T>((Getter<T, ? extends TemporalAccessor>) getter, columnDefinition.lookFor(JavaDateTimeFormatterProperty.class).getFormatter(), cellWriter);
         }
         //IFJAVA8_END
+        else if (JodaTimeClasses.isJoda(type)) {
+            if (columnDefinition.has(JodaDateTimeFormatterProperty.class)) {
+                return new JodaTimeFormattingAppender<T>(getter, columnDefinition.lookFor(JodaDateTimeFormatterProperty.class).getFormatter(), cellWriter);
+            } else if (columnDefinition.has(DateFormatProperty.class)) {
+                return new JodaTimeFormattingAppender<T>(getter, columnDefinition.lookFor(DateFormatProperty.class).getPattern(), cellWriter);
+            }
+        }
 
         if (format != null) {
             final Format f = format;

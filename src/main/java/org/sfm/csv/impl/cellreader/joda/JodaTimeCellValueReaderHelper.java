@@ -14,6 +14,7 @@ public class JodaTimeCellValueReaderHelper {
     public static CellValueReader<?> getReader(Type type, CsvColumnDefinition columnDefinition) {
         Class<?> clazz = TypeHelper.toClass(type);
 
+
         if (JodaTimeClasses.isJodaDateTime(clazz)) {
             return new JodaDateTimeCellValueReader(JodaHelper.getDateTimeFormatter(columnDefinition));
         }

@@ -6,6 +6,7 @@ import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.csv.impl.cellreader.*;
 import org.sfm.csv.impl.cellreader.joda.JodaTimeCellValueReaderHelper;
 import org.sfm.csv.ParsingContextFactoryBuilder;
+import org.sfm.map.impl.JodaTimeClasses;
 import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
@@ -49,7 +50,7 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 	public <P> CellValueReader<P> getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
 		Class<? extends P> propertyClass =  TypeHelper.toClass(propertyType);
 
-		CellValueReader<P> reader;
+		CellValueReader<P> reader = null;
 
 		if (propertyClass.equals(Date.class)) {
 			DateCellValueReader dateCellValueReader = new DateCellValueReader(index, columnDefinition.dateFormat(), columnDefinition.getTimeZone());
@@ -81,7 +82,7 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
             parsingContextFactoryBuilder.addParsingContextProvider(index, calendarCellValueReader);
 		}  else if (Enum.class.isAssignableFrom(propertyClass)) {
 			reader = new EnumCellValueReader(propertyClass);
-		} else {
+		} else if (JodaTimeClasses.isJoda(propertyClass)){
 			reader = (CellValueReader<P>) JodaTimeCellValueReaderHelper.getReader(propertyClass, columnDefinition);
 		}
 

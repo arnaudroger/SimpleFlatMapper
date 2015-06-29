@@ -1,5 +1,7 @@
 package org.sfm.map.impl;
 
+import org.sfm.reflect.TypeHelper;
+
 import java.lang.reflect.Type;
 
 public class JodaTimeClasses {
@@ -14,19 +16,23 @@ public class JodaTimeClasses {
     public static final String ORG_JODA_TIME_LOCAL_TIME = "org.joda.time.LocalTime";
 
     public static boolean isJoda(Type target) {
-        return target.getTypeName().startsWith("org.joda.time");
+        return getTypeName(target).startsWith("org.joda.time");
+    }
+
+    private static String getTypeName(Type target) {
+        return TypeHelper.toClass(target).getName();
     }
 
     public static boolean isJodaDateTime(Type target) {
-        return ORG_JODA_TIME_DATE_TIME.equals(target.getTypeName());
+        return ORG_JODA_TIME_DATE_TIME.equals(getTypeName(target));
     }
     public static boolean isJodaLocalDateTime(Type target) {
-        return ORG_JODA_TIME_LOCAL_DATE_TIME.equals(target.getTypeName());
+        return ORG_JODA_TIME_LOCAL_DATE_TIME.equals(getTypeName(target));
     }
     public static boolean isJodaLocalDate(Type target) {
-        return ORG_JODA_TIME_LOCAL_DATE.equals(target.getTypeName());
+        return ORG_JODA_TIME_LOCAL_DATE.equals(getTypeName(target));
     }
     public static boolean isJodaLocalTime(Type target) {
-        return ORG_JODA_TIME_LOCAL_TIME.equals(target.getTypeName());
+        return ORG_JODA_TIME_LOCAL_TIME.equals(getTypeName(target));
     }
  }

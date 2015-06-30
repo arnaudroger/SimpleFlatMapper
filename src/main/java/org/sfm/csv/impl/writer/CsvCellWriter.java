@@ -18,7 +18,14 @@ public final class CsvCellWriter implements CellWriter {
         this.quote = quote;
         this.alwaysEscape = alwaysEscape;
         this.endOfLine = endOfLine;
-        this.specialCharacters = (endOfLine + quote + separator).toCharArray();
+        this.specialCharacters = (getSpecialCharacterForEndOfLine(endOfLine) + quote + separator).toCharArray();
+    }
+
+    private String getSpecialCharacterForEndOfLine(String endOfLine) {
+        if ("\n".equals(endOfLine) || "\r".equals(endOfLine)) {
+            return "\r\n";
+        }
+        return endOfLine;
     }
 
     @Override
@@ -80,4 +87,7 @@ public final class CsvCellWriter implements CellWriter {
         return new CsvCellWriter(separator, quote, alwaysEscape, endOfLine);
     }
 
+    public CellWriter alwaysEscape() {
+        return alwaysEscape(true);
+    }
 }

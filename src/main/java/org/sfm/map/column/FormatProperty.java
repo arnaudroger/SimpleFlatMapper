@@ -8,7 +8,7 @@ public class FormatProperty implements ColumnProperty {
     private final Format format;
 
     public FormatProperty(Format format) {
-        this.format = format;
+        this.format = (Format) format.clone();
     }
 
     public Format format() {

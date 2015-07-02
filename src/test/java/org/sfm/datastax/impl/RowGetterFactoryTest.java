@@ -1,5 +1,6 @@
 package org.sfm.datastax.impl;
 
+import com.datastax.driver.core.GettableData;
 import com.datastax.driver.core.Row;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,14 +21,20 @@ public class RowGetterFactoryTest {
 
     DatastaxColumnKey columnKey = new DatastaxColumnKey("na", 1);
 
-    Row row;
+    GettableData row;
     @Before
     public void setUp() {
-        row = mock(Row.class);
+        row = mock(GettableData.class);
         when(row.getInt(1)).thenReturn(12);
         when(row.getLong(1)).thenReturn(13l);
         when(row.getFloat(1)).thenReturn(14.4f);
         when(row.getDouble(1)).thenReturn(15.4);
+        when(row.getString(1)).thenReturn("str");
+    }
+
+    @Test
+    public void testStringGetter() throws Exception {
+        assertEquals("str", new RowGetterFactory().newGetter(String.class, columnKey, null).get(row));
     }
 
     @Test
@@ -37,7 +44,7 @@ public class RowGetterFactoryTest {
 
     @Test
     public void testLongGetterPrimitive() throws Exception {
-        assertEquals(13l, ((LongGetter<Row>)new RowGetterFactory().newGetter(long.class, columnKey, null)).getLong(row));
+        assertEquals(13l, ((LongGetter<GettableData>) new RowGetterFactory().newGetter(long.class, columnKey, null)).getLong(row));
     }
 
     @Test
@@ -53,7 +60,7 @@ public class RowGetterFactoryTest {
 
     @Test
     public void testIntGetterPrimitive() throws Exception {
-        assertEquals(12, ((IntGetter<Row>)new RowGetterFactory().newGetter(int.class, columnKey, null)).getInt(row));
+        assertEquals(12, ((IntGetter<GettableData>)new RowGetterFactory().newGetter(int.class, columnKey, null)).getInt(row));
     }
 
     @Test
@@ -69,7 +76,7 @@ public class RowGetterFactoryTest {
 
     @Test
     public void testFloatGetterPrimitive() throws Exception {
-        assertEquals(14.4f, ((FloatGetter<Row>)new RowGetterFactory().newGetter(float.class, columnKey, null)).getFloat(row), 0.001);
+        assertEquals(14.4f, ((FloatGetter<GettableData>)new RowGetterFactory().newGetter(float.class, columnKey, null)).getFloat(row), 0.001);
     }
 
     @Test
@@ -85,7 +92,7 @@ public class RowGetterFactoryTest {
 
     @Test
     public void testDoubleGetterPrimitive() throws Exception {
-        assertEquals(15.4, ((DoubleGetter<Row>) new RowGetterFactory().newGetter(double.class, columnKey, null)).getDouble(row), 0.001);
+        assertEquals(15.4, ((DoubleGetter<GettableData>) new RowGetterFactory().newGetter(double.class, columnKey, null)).getDouble(row), 0.001);
     }
 
     @Test

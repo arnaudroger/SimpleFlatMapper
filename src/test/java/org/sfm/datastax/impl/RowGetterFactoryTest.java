@@ -6,10 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.primitive.DoubleGetter;
-import org.sfm.reflect.primitive.FloatGetter;
-import org.sfm.reflect.primitive.IntGetter;
-import org.sfm.reflect.primitive.LongGetter;
+import org.sfm.reflect.primitive.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -30,11 +27,28 @@ public class RowGetterFactoryTest {
         when(row.getFloat(1)).thenReturn(14.4f);
         when(row.getDouble(1)).thenReturn(15.4);
         when(row.getString(1)).thenReturn("str");
+        when(row.getBool(1)).thenReturn(Boolean.TRUE);
     }
 
     @Test
     public void testStringGetter() throws Exception {
         assertEquals("str", new RowGetterFactory().newGetter(String.class, columnKey, null).get(row));
+    }
+
+    @Test
+    public void testBooleanGetterOnNonNullValue() throws Exception {
+        assertEquals(true, new RowGetterFactory().newGetter(Boolean.class, columnKey, null).get(row));
+    }
+
+    @Test
+    public void testBooleanGetterPrimitive() throws Exception {
+        assertEquals(true, ((BooleanGetter<GettableData>) new RowGetterFactory().newGetter(boolean.class, columnKey, null)).getBoolean(row));
+    }
+
+    @Test
+    public void testBooleanGetterOnNullValue() throws Exception {
+        when(row.isNull(1)).thenReturn(true);
+        assertEquals(null, new RowGetterFactory().newGetter(Boolean.class, columnKey, null).get(row));
     }
 
     @Test

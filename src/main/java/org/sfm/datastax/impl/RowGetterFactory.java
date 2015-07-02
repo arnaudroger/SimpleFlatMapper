@@ -26,6 +26,9 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
         if (TypeHelper.isClass(target, Double.class) || TypeHelper.isClass(target, double.class)) {
             return (Getter<GettableData, P>) new DatastaxDoubleGetter(key.getIndex());
         }
+        if (TypeHelper.isClass(target, boolean.class) || TypeHelper.isClass(target, Boolean.class)) {
+            return (Getter<GettableData, P>) new DatastaxBooleanGetter(key.getIndex());
+        }
         if (TypeHelper.isClass(target, String.class)) {
             return (Getter<GettableData, P>) new DatastaxStringGetter(key.getIndex());
         }

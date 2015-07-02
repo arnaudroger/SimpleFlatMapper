@@ -10,7 +10,9 @@ import org.sfm.reflect.primitive.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.InetAddress;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -37,6 +39,18 @@ public class RowGetterFactoryTest {
         when(row.getDate(1)).thenReturn(date);
         when(row.getDecimal(1)).thenReturn(new BigDecimal("2.123"));
         when(row.getVarint(1)).thenReturn(new BigInteger("234"));
+        when(row.getInet(1)).thenReturn(InetAddress.getLoopbackAddress());
+        when(row.getUUID(1)).thenReturn(new UUID(23, 23));
+    }
+
+    @Test
+    public void testUUIDGetter() throws Exception {
+        assertEquals(InetAddress.getLoopbackAddress(), new RowGetterFactory().newGetter(InetAddress.class, columnKey, null).get(row));
+    }
+
+    @Test
+    public void testInetAddressGetter() throws Exception {
+        assertEquals(InetAddress.getLoopbackAddress(), new RowGetterFactory().newGetter(InetAddress.class, columnKey, null).get(row));
     }
 
     @Test

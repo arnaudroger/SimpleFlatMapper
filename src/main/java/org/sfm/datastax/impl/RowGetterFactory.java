@@ -10,7 +10,9 @@ import org.sfm.reflect.TypeHelper;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.InetAddress;
 import java.util.Date;
+import java.util.UUID;
 
 public class RowGetterFactory implements GetterFactory<GettableData, DatastaxColumnKey> {
 
@@ -43,6 +45,12 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
         }
         if (TypeHelper.isClass(target, BigInteger.class)) {
             return (Getter<GettableData, P>) new DatastaxBigIntegerGetter(key.getIndex());
+        }
+        if (TypeHelper.isClass(target, UUID.class)) {
+            return (Getter<GettableData, P>) new DatastaxUUIDGetter(key.getIndex());
+        }
+        if (TypeHelper.isClass(target, InetAddress.class)) {
+            return (Getter<GettableData, P>) new DatastaxInetAddressGetter(key.getIndex());
         }
         return null;
     }

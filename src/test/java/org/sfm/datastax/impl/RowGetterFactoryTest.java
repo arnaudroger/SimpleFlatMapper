@@ -8,6 +8,8 @@ import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.*;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -33,6 +35,18 @@ public class RowGetterFactoryTest {
         when(row.getString(1)).thenReturn("str");
         when(row.getBool(1)).thenReturn(Boolean.TRUE);
         when(row.getDate(1)).thenReturn(date);
+        when(row.getDecimal(1)).thenReturn(new BigDecimal("2.123"));
+        when(row.getVarint(1)).thenReturn(new BigInteger("234"));
+    }
+
+    @Test
+    public void testBigDecimalGetter() throws Exception {
+        assertEquals(new BigDecimal("2.123"), new RowGetterFactory().newGetter(BigDecimal.class, columnKey, null).get(row));
+    }
+
+    @Test
+    public void testBigIntegerGetter() throws Exception {
+        assertEquals(new BigInteger("234"), new RowGetterFactory().newGetter(BigInteger.class, columnKey, null).get(row));
     }
 
     @Test

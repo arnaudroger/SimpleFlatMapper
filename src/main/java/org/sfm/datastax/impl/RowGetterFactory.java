@@ -8,6 +8,8 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 public class RowGetterFactory implements GetterFactory<GettableData, DatastaxColumnKey> {
@@ -35,6 +37,12 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
         }
         if (TypeHelper.isClass(target, boolean.class) || TypeHelper.isClass(target, Boolean.class)) {
             return (Getter<GettableData, P>) new DatastaxBooleanGetter(key.getIndex());
+        }
+        if (TypeHelper.isClass(target, BigDecimal.class)) {
+            return (Getter<GettableData, P>) new DatastaxBigDecimalGetter(key.getIndex());
+        }
+        if (TypeHelper.isClass(target, BigInteger.class)) {
+            return (Getter<GettableData, P>) new DatastaxBigIntegerGetter(key.getIndex());
         }
         return null;
     }

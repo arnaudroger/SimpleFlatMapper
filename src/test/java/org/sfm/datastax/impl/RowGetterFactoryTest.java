@@ -10,7 +10,9 @@ import org.sfm.reflect.primitive.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -28,7 +30,7 @@ public class RowGetterFactoryTest {
 
     Date date = new Date();
     @Before
-    public void setUp() {
+    public void setUp() throws UnknownHostException {
         row = mock(GettableData.class);
         when(row.getInt(1)).thenReturn(12);
         when(row.getLong(1)).thenReturn(13l);
@@ -39,18 +41,18 @@ public class RowGetterFactoryTest {
         when(row.getDate(1)).thenReturn(date);
         when(row.getDecimal(1)).thenReturn(new BigDecimal("2.123"));
         when(row.getVarint(1)).thenReturn(new BigInteger("234"));
-        when(row.getInet(1)).thenReturn(InetAddress.getLoopbackAddress());
+        when(row.getInet(1)).thenReturn(InetAddress.getByName("192.168.0.1"));
         when(row.getUUID(1)).thenReturn(new UUID(23, 23));
     }
 
     @Test
     public void testUUIDGetter() throws Exception {
-        assertEquals(InetAddress.getLoopbackAddress(), new RowGetterFactory().newGetter(InetAddress.class, columnKey, null).get(row));
+        assertEquals(new UUID(23, 23), new RowGetterFactory().newGetter(UUID.class, columnKey, null).get(row));
     }
 
     @Test
     public void testInetAddressGetter() throws Exception {
-        assertEquals(InetAddress.getLoopbackAddress(), new RowGetterFactory().newGetter(InetAddress.class, columnKey, null).get(row));
+        assertEquals(InetAddress.getByName("192.168.0.1"), new RowGetterFactory().newGetter(InetAddress.class, columnKey, null).get(row));
     }
 
     @Test

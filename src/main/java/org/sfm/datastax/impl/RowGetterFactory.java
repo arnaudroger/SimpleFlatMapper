@@ -8,12 +8,19 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 
 public class RowGetterFactory implements GetterFactory<GettableData, DatastaxColumnKey> {
 
     @SuppressWarnings("unchecked")
     @Override
     public <P> Getter<GettableData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+        if (TypeHelper.isClass(target, String.class)) {
+            return (Getter<GettableData, P>) new DatastaxStringGetter(key.getIndex());
+        }
+        if (TypeHelper.isClass(target, Date.class)) {
+            return (Getter<GettableData, P>) new DatastaxDateGetter(key.getIndex());
+        }
         if (TypeHelper.isClass(target, Long.class) || TypeHelper.isClass(target, long.class)) {
             return (Getter<GettableData, P>) new DatastaxLongGetter(key.getIndex());
         }
@@ -28,9 +35,6 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
         }
         if (TypeHelper.isClass(target, boolean.class) || TypeHelper.isClass(target, Boolean.class)) {
             return (Getter<GettableData, P>) new DatastaxBooleanGetter(key.getIndex());
-        }
-        if (TypeHelper.isClass(target, String.class)) {
-            return (Getter<GettableData, P>) new DatastaxStringGetter(key.getIndex());
         }
         return null;
     }

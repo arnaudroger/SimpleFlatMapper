@@ -8,6 +8,8 @@ import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.*;
 
+import java.util.Date;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -19,6 +21,8 @@ public class RowGetterFactoryTest {
     DatastaxColumnKey columnKey = new DatastaxColumnKey("na", 1);
 
     GettableData row;
+
+    Date date = new Date();
     @Before
     public void setUp() {
         row = mock(GettableData.class);
@@ -28,6 +32,12 @@ public class RowGetterFactoryTest {
         when(row.getDouble(1)).thenReturn(15.4);
         when(row.getString(1)).thenReturn("str");
         when(row.getBool(1)).thenReturn(Boolean.TRUE);
+        when(row.getDate(1)).thenReturn(date);
+    }
+
+    @Test
+    public void testDateGetter() throws Exception {
+        assertEquals(date, new RowGetterFactory().newGetter(Date.class, columnKey, null).get(row));
     }
 
     @Test

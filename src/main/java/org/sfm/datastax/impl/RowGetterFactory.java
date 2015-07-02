@@ -20,6 +20,12 @@ public class RowGetterFactory implements GetterFactory<Row, DatastaxColumnKey> {
         if (TypeHelper.isClass(target, Integer.class) || TypeHelper.isClass(target, int.class)) {
             return (Getter<Row, P>) new IntegerRowGetter(key.getIndex());
         }
+        if (TypeHelper.isClass(target, Float.class) || TypeHelper.isClass(target, float.class)) {
+            return (Getter<Row, P>) new FloatRowGetter(key.getIndex());
+        }
+        if (TypeHelper.isClass(target, Double.class) || TypeHelper.isClass(target, double.class)) {
+            return (Getter<Row, P>) new DoubleRowGetter(key.getIndex());
+        }
         return null;
     }
 }

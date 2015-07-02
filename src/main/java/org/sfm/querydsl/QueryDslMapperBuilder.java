@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 
 public final class QueryDslMapperBuilder<T> {
 	public static final MapperSource<Tuple, TupleElementKey> FIELD_MAPPER_SOURCE =
-			new MapperSourceImpl<>(Tuple.class, new TupleGetterFactory());
+			new MapperSourceImpl<Tuple, TupleElementKey>(Tuple.class, new TupleGetterFactory());
 
 	private final FieldMapperMapperBuilder<Tuple, T, TupleElementKey> fieldMapperMapperBuilder;
 

@@ -14,18 +14,7 @@ import java.lang.reflect.Type;
 
 public class JooqMapperBuilder<E>  {
 
-	public static final MapperSource<Record, JooqFieldKey> FIELD_MAPPER_SOURCE =
-			new MapperSource<Record, JooqFieldKey>() {
-				@Override
-				public Class<Record> source() {
-					return Record.class;
-				}
-
-				@Override
-				public GetterFactory<Record, JooqFieldKey> getterFactory() {
-					return new RecordGetterFactory<Record>();
-				}
-			};
+	public static final MapperSource<Record, JooqFieldKey> FIELD_MAPPER_SOURCE = new MapperSourceImpl<>(Record.class, new RecordGetterFactory<Record>());
 
 	private final FieldMapperMapperBuilder<Record, E, JooqFieldKey> fieldMapperMapperBuilder;
 

@@ -1,5 +1,6 @@
 package org.sfm.map.impl;
 
+import org.apache.poi.ss.usermodel.Row;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.FieldKey;
@@ -108,11 +109,12 @@ public class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends Colum
         return FieldMapperColumnDefinition.<K,S>identity().addKey(predicate);
     }
 
-
     @Override
     protected FieldMapperColumnDefinition<K, S> newColumnDefinition(ColumnProperty[] properties) {
-        return new FieldMapperColumnDefinition<K, S>(properties);
+        return FieldMapperColumnDefinition.<K, S>of(properties);
     }
 
-
+    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> of(ColumnProperty[] properties) {
+        return new FieldMapperColumnDefinition<K, S>(properties);
+    }
 }

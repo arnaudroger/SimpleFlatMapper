@@ -3,6 +3,7 @@ package org.sfm.jdbc;
 import org.sfm.jdbc.impl.*;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
+import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.impl.*;
 import org.sfm.map.impl.context.MappingContextFactoryBuilder;
 import org.sfm.reflect.ReflectionService;
@@ -130,6 +131,17 @@ public final class JdbcMapperBuilder<T> {
     }
 
     /**
+     * add a new mapping to the specified column with the specified columnDefinition and an undefined type. The index is incremented for each non indexed column mapping.
+     *
+     * @param column           the column name
+     * @param properties the definition
+     * @return the current builder
+     */
+    public JdbcMapperBuilder<T> addMapping(final String column, final ColumnProperty... properties) {
+        return addMapping(column, calculatedIndex++, properties);
+    }
+
+    /**
      * add a new mapping to the specified column with the specified index and an undefined type.
      *
      * @param column the column name
@@ -150,6 +162,18 @@ public final class JdbcMapperBuilder<T> {
      */
     public JdbcMapperBuilder<T> addMapping(String column, int index, final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
         return addMapping(column, index, JdbcColumnKey.UNDEFINED_TYPE, columnDefinition);
+    }
+
+    /**
+     * add a new mapping to the specified column with the specified index, specified column definition and an undefined type.
+     *
+     * @param column           the column name
+     * @param index            the column index
+     * @param properties the column properties
+     * @return the current builder
+     */
+    public JdbcMapperBuilder<T> addMapping(String column, int index, final ColumnProperty... properties) {
+        return addMapping(column, index, JdbcColumnKey.UNDEFINED_TYPE, properties);
     }
 
     /**
@@ -186,8 +210,20 @@ public final class JdbcMapperBuilder<T> {
      * @return the current builder
      */
     public JdbcMapperBuilder<T> addMapping(final String column, final int index, final int sqlType, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
-        fieldMapperMapperBuilder.addMapping(new JdbcColumnKey(column, index, sqlType), columnDefinition);
-        return this;
+        return addMapping(new JdbcColumnKey(column, index, sqlType), columnDefinition);
+    }
+
+    /**
+     * add a new mapping to the specified column with the specified index,  the specified type.
+     *
+     * @param column           the column name
+     * @param index            the column index
+     * @param sqlType          the column type, @see java.sql.Types
+     * @param properties the column properties
+     * @return the current builder
+     */
+    public JdbcMapperBuilder<T> addMapping(final String column, final int index, final int sqlType, ColumnProperty... properties) {
+        return addMapping(new JdbcColumnKey(column, index, sqlType), properties);
     }
 
     /**
@@ -207,6 +243,11 @@ public final class JdbcMapperBuilder<T> {
 
     public JdbcMapperBuilder<T> addMapping(JdbcColumnKey key, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
         fieldMapperMapperBuilder.addMapping(key, columnDefinition);
+        return this;
+    }
+
+    public JdbcMapperBuilder<T> addMapping(JdbcColumnKey key, ColumnProperty... properties) {
+        fieldMapperMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>of(properties));
         return this;
     }
 }

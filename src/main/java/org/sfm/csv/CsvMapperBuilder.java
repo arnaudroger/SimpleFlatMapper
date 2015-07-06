@@ -2,6 +2,7 @@ package org.sfm.csv;
 
 import org.sfm.csv.impl.*;
 import org.sfm.map.*;
+import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
@@ -64,6 +65,10 @@ public class CsvMapperBuilder<T> {
 		return addMapping(columnKey, propertyMappingsBuilder.size());
 	}
 
+	public final CsvMapperBuilder<T> addMapping(final String columnKey, int columnIndex) {
+		return addMapping(new CsvColumnKey(columnKey, columnIndex), CsvColumnDefinition.identity());
+	}
+
 	public final CsvMapperBuilder<T> addMapping(final String columnKey, final CsvColumnDefinition columnDefinition) {
 		return addMapping(columnKey, propertyMappingsBuilder.size(), columnDefinition);
 	}
@@ -72,10 +77,6 @@ public class CsvMapperBuilder<T> {
 		return addMapping(new CsvColumnKey(columnKey, columnIndex), columnDefinition);
 	}
 
-	public final CsvMapperBuilder<T> addMapping(final String columnKey, int columnIndex) {
-		return addMapping(new CsvColumnKey(columnKey, columnIndex), CsvColumnDefinition.identity());
-	}
-	
 	public final CsvMapperBuilder<T> addMapping(final CsvColumnKey key, final CsvColumnDefinition columnDefinition) {
 		final CsvColumnDefinition composedDefinition = CsvColumnDefinition.compose(getColumnDefinition(key), columnDefinition);
 		final CsvColumnKey mappedColumnKey = composedDefinition.rename(key);
@@ -85,6 +86,17 @@ public class CsvMapperBuilder<T> {
 		return this;
 	}
 
+	public final CsvMapperBuilder<T> addMapping(final String columnKey, final ColumnProperty... properties) {
+		return addMapping(columnKey, propertyMappingsBuilder.size(), properties);
+	}
+
+	public final CsvMapperBuilder<T> addMapping(final String columnKey, int columnIndex, final ColumnProperty... properties) {
+		return addMapping(new CsvColumnKey(columnKey, columnIndex), properties);
+	}
+
+	public final CsvMapperBuilder<T> addMapping(final CsvColumnKey key, final ColumnProperty... properties) {
+		return addMapping(key, CsvColumnDefinition.of(properties));
+	}
 
 	private <P> void addMapping(PropertyMeta<T, P> propertyMeta, final CsvColumnKey key, final CsvColumnDefinition columnDefinition) {
 		propertyMappingsBuilder.addProperty(key, columnDefinition, propertyMeta);
@@ -294,9 +306,6 @@ public class CsvMapperBuilder<T> {
 		return delayedSetters;
 	}
 
-
-	
-	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private CellSetter<T>[] getSetters(final ParsingContextFactoryBuilder parsingContextFactoryBuilder, final int delayedSetterEnd) {
 		final Map<String, CsvMapperBuilder<?>> delegateMapperBuilders = new HashMap<String, CsvMapperBuilder<?>>();

@@ -22,7 +22,7 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
 
     @Override
     protected CsvColumnDefinition newColumnDefinition(ColumnProperty[] properties) {
-        return new CsvColumnDefinition(properties);
+        return CsvColumnDefinition.of(properties);
     }
 
     public String dateFormat() {
@@ -126,4 +126,7 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
         return def1.compose(def2);
     }
 
+    public static CsvColumnDefinition of(ColumnProperty... properties) {
+        return new CsvColumnDefinition(properties);
+    }
 }

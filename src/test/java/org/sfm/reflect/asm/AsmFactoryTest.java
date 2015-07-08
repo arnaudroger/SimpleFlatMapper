@@ -40,7 +40,7 @@ public class AsmFactoryTest {
 	@Test
 	public void testCreateInstantiatorFinalDbObjectInjectIdAndName() throws Exception {
 		InstantiatorDefinition instantiatorDefinition = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class).get(0);
-		HashMap<Parameter, Getter<ResultSet, ?>> injections = new HashMap<Parameter, Getter<ResultSet, ?>>();
+		HashMap<Parameter, Getter<? super ResultSet, ?>> injections = new HashMap<Parameter, Getter<? super ResultSet, ?>>();
 		injections.put(new Parameter("id", long.class), new LongResultSetGetter(1));
 		injections.put(new Parameter("name", String.class), new StringResultSetGetter(2));
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
@@ -72,7 +72,7 @@ public class AsmFactoryTest {
 	
 	@Test
 	public void testCreateInstantiatorFinalDbObjectNameAndType() throws Exception {
-		HashMap<Parameter, Getter<ResultSet, ?>> injections = new HashMap<Parameter, Getter<ResultSet, ?>>();
+		HashMap<Parameter, Getter<? super ResultSet, ?>> injections = new HashMap<Parameter, Getter<? super ResultSet, ?>>();
 		injections.put(new Parameter("typeOrdinal", Type.class), new OrdinalEnumResultSetGetter<Type>(1, Type.class));
 		injections.put(new Parameter("name", String.class), new StringResultSetGetter(2));
 
@@ -129,7 +129,7 @@ public class AsmFactoryTest {
 				(FieldMapper<ResultSet, DbObject>[]) new FieldMapper[]{
 						new FieldMapper<ResultSet, DbObject>() {
 							@Override
-							public void mapTo(ResultSet source, DbObject target, MappingContext<ResultSet> mappingContext)
+							public void mapTo(ResultSet source, DbObject target, MappingContext<? super ResultSet> mappingContext)
 									throws MappingException {
 								throw new MappingException("Expected ");
 							}

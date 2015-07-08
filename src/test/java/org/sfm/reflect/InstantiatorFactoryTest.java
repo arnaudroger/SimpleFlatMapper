@@ -61,7 +61,7 @@ public class InstantiatorFactoryTest {
 		Instantiator<ResultSet, DbFinalPrimitiveObject> instantiator =
 				DISABLE_ASM.getInstantiatorFactory().getInstantiator(DbFinalPrimitiveObject.class, ResultSet.class,
 						AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalPrimitiveObject.class),
-						new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+						new HashMap<Parameter, Getter<? super ResultSet, ?>>(), true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null);
 		assertNotNull(object);
 	}
@@ -72,14 +72,14 @@ public class InstantiatorFactoryTest {
 				ASM.getInstantiatorFactory().getInstantiator(DbFinalPrimitiveObject.class,
 						ResultSet.class,
 						AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalPrimitiveObject.class),
-						new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+						new HashMap<Parameter, Getter<? super ResultSet, ?>>(), true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null);
 		assertNotNull(object);
 	}
 
 	@Test
 	public void testInstantiateWithFactoryMethod() throws Exception {
-		final Instantiator<ResultSet, MyClassWithFactoryMethod> instantiator = ASM.getInstantiatorFactory().getInstantiator(MyClassWithFactoryMethod.class, ResultSet.class, ASM.extractConstructors(MyClassWithFactoryMethod.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+		final Instantiator<ResultSet, MyClassWithFactoryMethod> instantiator = ASM.getInstantiatorFactory().getInstantiator(MyClassWithFactoryMethod.class, ResultSet.class, ASM.extractConstructors(MyClassWithFactoryMethod.class), new HashMap<Parameter, Getter<? super ResultSet, ?>>(), true);
 
 		assertTrue(instantiator.getClass().getSimpleName().startsWith("Asm"));
 		final MyClassWithFactoryMethod object = instantiator.newInstance(null);
@@ -88,7 +88,7 @@ public class InstantiatorFactoryTest {
 	}
 	@Test
 	public void testInstantiateWithFactoryMethodNoAsm() throws Exception {
-		final Instantiator<ResultSet, MyClassWithFactoryMethod> instantiator = DISABLE_ASM.getInstantiatorFactory().getInstantiator(MyClassWithFactoryMethod.class, ResultSet.class, DISABLE_ASM.extractConstructors(MyClassWithFactoryMethod.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+		final Instantiator<ResultSet, MyClassWithFactoryMethod> instantiator = DISABLE_ASM.getInstantiatorFactory().getInstantiator(MyClassWithFactoryMethod.class, ResultSet.class, DISABLE_ASM.extractConstructors(MyClassWithFactoryMethod.class), new HashMap<Parameter, Getter<? super ResultSet, ?>>(), true);
 
 		assertFalse(instantiator.getClass().getSimpleName().startsWith("Asm"));
 		final MyClassWithFactoryMethod object = instantiator.newInstance(null);
@@ -97,7 +97,7 @@ public class InstantiatorFactoryTest {
 
 	@Test
 	public void testInstantiateWithEmptyFactoryMethodNoAsm() throws Exception {
-		final Instantiator<ResultSet, MyClassWithEmptyFactoryMethod> instantiator = DISABLE_ASM.getInstantiatorFactory().getInstantiator(MyClassWithEmptyFactoryMethod.class, ResultSet.class, DISABLE_ASM.extractConstructors(MyClassWithEmptyFactoryMethod.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+		final Instantiator<ResultSet, MyClassWithEmptyFactoryMethod> instantiator = DISABLE_ASM.getInstantiatorFactory().getInstantiator(MyClassWithEmptyFactoryMethod.class, ResultSet.class, DISABLE_ASM.extractConstructors(MyClassWithEmptyFactoryMethod.class), new HashMap<Parameter, Getter<? super ResultSet, ?>>(), true);
 
 		assertFalse(instantiator.getClass().getSimpleName().startsWith("Asm"));
 		final MyClassWithEmptyFactoryMethod object = instantiator.newInstance(null);
@@ -107,7 +107,7 @@ public class InstantiatorFactoryTest {
 	public void testInstantiateCheckTakeConstructorFirst() throws Exception {
 
 		final Instantiator<ResultSet, MyClassWithFactoryMethodAndConstructor> instantiator =
-				ASM.getInstantiatorFactory().getInstantiator(MyClassWithFactoryMethodAndConstructor.class, ResultSet.class, ASM.extractConstructors(MyClassWithFactoryMethodAndConstructor.class), new HashMap<Parameter, Getter<ResultSet, ?>>(), true);
+				ASM.getInstantiatorFactory().getInstantiator(MyClassWithFactoryMethodAndConstructor.class, ResultSet.class, ASM.extractConstructors(MyClassWithFactoryMethodAndConstructor.class), new HashMap<Parameter, Getter<? super ResultSet, ?>>(), true);
 
 		final MyClassWithFactoryMethodAndConstructor object = instantiator.newInstance(null);
 		assertNotNull(object);

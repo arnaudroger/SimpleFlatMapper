@@ -2,6 +2,7 @@ package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.*;
+import org.sfm.map.impl.AbstractEnumarableDelegateMapper;
 import org.sfm.map.impl.DiscriminatorEnumerable;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuple3;
@@ -14,7 +15,7 @@ import java.util.List;
 
 
 
-public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableJdbcMapper<T> {
+public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableDelegateMapper<ResultSet, ResultSet, T, SQLException> implements JdbcMapper<T> {
 
 
     private final String discriminatorColumn;
@@ -114,4 +115,5 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableJdbcMapp
             return " column " + discriminatorColumn + " = " + in.getObject(discriminatorColumn);
         }
     }
+
 }

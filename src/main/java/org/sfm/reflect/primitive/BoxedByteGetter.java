@@ -5,9 +5,9 @@ import org.sfm.reflect.Getter;
 public class BoxedByteGetter<T> implements ByteGetter<T>, Getter<T, Byte> {
 
 
-    private final Getter<T, Byte> delegate;
+    private final Getter<? super T, Byte> delegate;
 
-    public BoxedByteGetter(Getter<T, Byte> delegate) {
+    public BoxedByteGetter(Getter<? super T, Byte> delegate) {
         this.delegate = delegate;
     }
 

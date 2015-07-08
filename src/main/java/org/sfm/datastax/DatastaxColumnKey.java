@@ -12,8 +12,6 @@ import static org.sfm.utils.Asserts.requireNonNull;
 
 public class DatastaxColumnKey implements FieldKey<DatastaxColumnKey> {
 
-	public static final int UNDEFINED_TYPE = -99999;
-
 	private final String name;
 	private final int index;
 	private final DataType sqlType;

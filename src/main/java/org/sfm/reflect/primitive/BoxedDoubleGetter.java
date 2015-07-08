@@ -5,9 +5,9 @@ import org.sfm.reflect.Getter;
 public class BoxedDoubleGetter<T> implements DoubleGetter<T>, Getter<T, Double> {
 
 
-    private final Getter<T, Double> delegate;
+    private final Getter<? super T, Double> delegate;
 
-    public BoxedDoubleGetter(Getter<T, Double> delegate) {
+    public BoxedDoubleGetter(Getter<? super T, Double> delegate) {
         this.delegate = delegate;
     }
 

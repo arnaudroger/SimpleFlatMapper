@@ -18,7 +18,7 @@ public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
     }
 
     @Override
-	public final T map(final S source, final MappingContext<S> mappingContext) throws MappingException {
+	public final T map(final S source, final MappingContext<? super S> mappingContext) throws MappingException {
 		try {
 			final T target = instantiator.newInstance(source);
 			mapFields(source, target, mappingContext);
@@ -29,7 +29,7 @@ public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
 	}
 
     @Override
-    public final void mapTo(final S source, final T target, final MappingContext<S> mappingContext) throws MappingException {
+    public final void mapTo(final S source, final T target, final MappingContext<? super S> mappingContext) throws MappingException {
         try {
             mapToFields(source, target, mappingContext);
         } catch(Exception e) {
@@ -37,9 +37,9 @@ public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
         }
     }
 
-    protected abstract void mapFields(final S source, final T target, final MappingContext<S> mappingContext) throws Exception;
+    protected abstract void mapFields(final S source, final T target, final MappingContext<? super S> mappingContext) throws Exception;
 
-    protected abstract void mapToFields(final S source, final T target, final MappingContext<S> mappingContext) throws Exception;
+    protected abstract void mapToFields(final S source, final T target, final MappingContext<? super S> mappingContext) throws Exception;
 
     protected void appendToStringBuilder(StringBuilder sb) {
         sb.append("instantiator=").append(String.valueOf(instantiator));

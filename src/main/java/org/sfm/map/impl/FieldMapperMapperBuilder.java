@@ -30,13 +30,13 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 	
 	private final List<FieldMapper<S, T>> additionalMappers = new ArrayList<FieldMapper<S, T>>();
 
-    private final MapperSource<S, K> mapperSource;
+    private final MapperSource<? super S, K> mapperSource;
     private final MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig;
     protected final MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder;
 
 
     public FieldMapperMapperBuilder(
-            final MapperSource<S, K> mapperSource,
+            final MapperSource<? super S, K> mapperSource,
             final ClassMeta<T> classMeta,
             final MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig,
             MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) throws MapperBuildingException {
@@ -111,8 +111,8 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
 		InstantiatorFactory instantiatorFactory = reflectionService.getInstantiatorFactory();
 		try {
-            Tuple2<Map<Parameter, Getter<S, ?>>, FieldMapper<S, T>[]> constructorInjections = constructorInjections();
-            Map<Parameter, Getter<S, ?>> injections = constructorInjections.first();
+            Tuple2<Map<Parameter, Getter<? super S, ?>>, FieldMapper<S, T>[]> constructorInjections = constructorInjections();
+            Map<Parameter, Getter<? super S, ?>> injections = constructorInjections.first();
             Instantiator<S, T> instantiator = instantiatorFactory.getInstantiator(mapperSource.source(), target, propertyMappingsBuilder, injections, mapperSource.getterFactory());
             return new Tuple2<FieldMapper<S, T>[], Instantiator<S, T>>(constructorInjections.second(), instantiator);
 		} catch(Exception e) {
@@ -121,8 +121,8 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 	}
 
 	@SuppressWarnings("unchecked")
-    private Tuple2<Map<Parameter, Getter<S, ?>>, FieldMapper<S, T>[]> constructorInjections() {
-		final Map<Parameter, Getter<S, ?>> injections = new HashMap<Parameter, Getter<S, ?>>();
+    private Tuple2<Map<Parameter, Getter<? super S, ?>>, FieldMapper<S, T>[]> constructorInjections() {
+		final Map<Parameter, Getter<? super S, ?>> injections = new HashMap<Parameter, Getter<? super S, ?>>();
 		final List<FieldMapper<S, T>> fieldMappers = new ArrayList<FieldMapper<S, T>>();
 		propertyMappingsBuilder.forEachConstructorProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K, S>>>() {
 			@SuppressWarnings("unchecked")
@@ -150,7 +150,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
                 fieldMappers.add(newMapperFieldMapper(properties, meta, mapper, currentBuilder));
             }
         }
-		return new Tuple2<Map<Parameter, Getter<S, ?>>, FieldMapper<S, T>[]>(injections, fieldMappers.toArray(new FieldMapper[0]));
+		return new Tuple2<Map<Parameter, Getter<? super S, ?>>, FieldMapper<S, T>[]>(injections, fieldMappers.toArray(new FieldMapper[0]));
 	}
 
     private MappingContextFactoryBuilder getMapperContextFactoryBuilder(PropertyMeta<?, ?> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties) {
@@ -288,8 +288,8 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         return fieldMapper;
     }
 
-    private Getter<S, ?> getterFor(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t, Type paramType) {
-		Getter<S, ?> getter = t.getColumnDefinition().getCustomGetter();
+    private Getter<? super S, ?> getterFor(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t, Type paramType) {
+		Getter<? super S, ?> getter = t.getColumnDefinition().getCustomGetter();
 
 		if (getter == null) {
 			getter = mapperSource.getterFactory().newGetter(paramType, t.getColumnKey(), t.getColumnDefinition());

@@ -137,7 +137,7 @@ public class AsmFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> createInstantiator(final Class<?> source, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, Getter<S, ?>> injections) throws Exception {
+	public <S, T> Instantiator<S, T> createInstantiator(final Class<?> source, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, Getter<? super S, ?>> injections) throws Exception {
 		InstantiatorKey instantiatorKey = new InstantiatorKey(instantiatorDefinition, injections.keySet(), source);
 		Class<? extends Instantiator<?, ?>> instantiator = instantiatorCache.get(instantiatorKey);
 		if (instantiator == null) {
@@ -147,8 +147,8 @@ public class AsmFactory {
 			instantiatorCache.put(instantiatorKey, instantiator);
 		}
 
-		Map<String, Getter<S, ?>> getterPerName = new HashMap<String, Getter<S, ?>>();
-		for(Entry<Parameter, Getter<S, ?>> e : injections.entrySet()) {
+		Map<String, Getter<? super S, ?>> getterPerName = new HashMap<String, Getter<? super S, ?>>();
+		for(Entry<Parameter, Getter<? super S, ?>> e : injections.entrySet()) {
 			getterPerName.put(e.getKey().getName(), e.getValue());
 		}
 
@@ -160,7 +160,7 @@ public class AsmFactory {
                                           final FieldMapper<S, T>[] mappers,
                                           final FieldMapper<S, T>[] constructorMappers,
                                           final Instantiator<? super S, T> instantiator,
-                                          final Class<S> source,
+                                          final Class<? super S> source,
                                           final Class<T> target) throws Exception {
 
         MapperKey key = new MapperKey(keys, mappers, constructorMappers, instantiator, target);
@@ -296,7 +296,7 @@ public class AsmFactory {
         return sb.toString();
     }
 
-	private <S, T> String generateClassNameForJdbcMapper(final FieldMapper<S, T>[] mappers,final FieldMapper<S, T>[] constructorMappers, final Class<S> source, final Class<T> target) {
+	private <S, T> String generateClassNameForJdbcMapper(final FieldMapper<S, T>[] mappers,final FieldMapper<S, T>[] constructorMappers, final Class<? super S> source, final Class<T> target) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("org.sfm.reflect.asm.");

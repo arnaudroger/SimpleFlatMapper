@@ -123,7 +123,7 @@ public class DefaultFieldAppenderFactory {
     }
 
 
-    private static class MappingContextFormatGetter<T> implements Getter<MappingContext<T>, Format> {
+    private static class MappingContextFormatGetter<T> implements Getter<MappingContext<? super T>, Format> {
         private final int index;
 
         public MappingContextFormatGetter(int index) {
@@ -131,7 +131,7 @@ public class DefaultFieldAppenderFactory {
         }
 
         @Override
-        public Format get(MappingContext<T> target) throws Exception {
+        public Format get(MappingContext<? super T> target) throws Exception {
             return target.context(index);
         }
     }

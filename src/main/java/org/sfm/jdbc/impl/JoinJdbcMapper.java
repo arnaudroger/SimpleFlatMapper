@@ -1,13 +1,15 @@
 package org.sfm.jdbc.impl;
 
+import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.*;
+import org.sfm.map.impl.AbstractEnumarableDelegateMapper;
 import org.sfm.map.impl.JoinEnumarable;
 import org.sfm.utils.Enumarable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public final class JoinJdbcMapper<T> extends AbstractEnumarableJdbcMapper<T> {
+public final class JoinJdbcMapper<T> extends AbstractEnumarableDelegateMapper<ResultSet, ResultSet, T, SQLException> implements JdbcMapper<T> {
 
     private final Mapper<ResultSet, T> mapper;
     private final MappingContextFactory<ResultSet> mappingContextFactory;
@@ -32,4 +34,5 @@ public final class JoinJdbcMapper<T> extends AbstractEnumarableJdbcMapper<T> {
     public MappingContext<ResultSet> newMappingContext(ResultSet rs) {
         return mappingContextFactory.newContext();
     }
+
 }

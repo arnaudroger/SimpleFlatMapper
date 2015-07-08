@@ -5,9 +5,9 @@ import org.sfm.reflect.Getter;
 public class BoxedBooleanGetter<T> implements BooleanGetter<T>, Getter<T, Boolean> {
 
 
-    private final Getter<T, Boolean> delegate;
+    private final Getter<? super T, Boolean> delegate;
 
-    public BoxedBooleanGetter(Getter<T, Boolean> delegate) {
+    public BoxedBooleanGetter(Getter<? super T, Boolean> delegate) {
         this.delegate = delegate;
     }
 

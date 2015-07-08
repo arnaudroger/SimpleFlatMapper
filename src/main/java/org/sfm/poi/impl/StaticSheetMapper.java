@@ -80,12 +80,12 @@ public class StaticSheetMapper<T> implements RowMapper<T> {
     }
 
     @Override
-    public T map(Row source, MappingContext<Row> context) throws MappingException {
+    public T map(Row source, MappingContext<? super Row> context) throws MappingException {
         return mapper.map(source, context);
     }
 
     @Override
-    public void mapTo(Row source, T target, MappingContext<Row> context) throws Exception {
+    public void mapTo(Row source, T target, MappingContext<? super Row> context) throws Exception {
         mapper.mapTo(source, target, context);
     }
 

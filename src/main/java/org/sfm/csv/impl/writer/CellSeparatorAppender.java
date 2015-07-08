@@ -13,7 +13,7 @@ public class CellSeparatorAppender<T>
     }
 
     @Override
-    public void mapTo(T source, Appendable target, MappingContext<T> context) throws Exception {
+    public void mapTo(T source, Appendable target, MappingContext<? super T> context) throws Exception {
         cellWriter.nextCell(target);
     }
 }

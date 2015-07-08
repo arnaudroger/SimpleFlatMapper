@@ -40,7 +40,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	}
 
 	@Override
-	public T map(ResultSet source, MappingContext<ResultSet> context) throws MappingException {
+	public T map(ResultSet source, MappingContext<? super ResultSet> context) throws MappingException {
 		return getJdbcMapper(source).map(source, context);
 	}
 
@@ -50,7 +50,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	}
 
 	@Override
-	public void mapTo(ResultSet source, T target, MappingContext<ResultSet> context) throws Exception {
+	public void mapTo(ResultSet source, T target, MappingContext<? super ResultSet> context) throws Exception {
 		getJdbcMapper(source).mapTo(source, target, context);
 	}
 

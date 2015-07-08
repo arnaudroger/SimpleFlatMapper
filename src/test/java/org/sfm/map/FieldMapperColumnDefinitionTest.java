@@ -41,7 +41,7 @@ public class FieldMapperColumnDefinitionTest {
         };
         FieldMapper<ResultSet, Object> fieldMapper = new FieldMapper<ResultSet, Object>() {
             @Override
-            public void mapTo(ResultSet source, Object target, MappingContext<ResultSet> mappingContext) throws Exception {
+            public void mapTo(ResultSet source, Object target, MappingContext<? super ResultSet> mappingContext) throws Exception {
             }
 
             @Override

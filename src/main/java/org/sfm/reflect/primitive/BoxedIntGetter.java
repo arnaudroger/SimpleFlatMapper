@@ -5,9 +5,9 @@ import org.sfm.reflect.Getter;
 public class BoxedIntGetter<T> implements IntGetter<T>, Getter<T, Integer> {
 
 
-    private final Getter<T, Integer> delegate;
+    private final Getter<? super T, Integer> delegate;
 
-    public BoxedIntGetter(Getter<T, Integer> delegate) {
+    public BoxedIntGetter(Getter<? super T, Integer> delegate) {
         this.delegate = delegate;
     }
 

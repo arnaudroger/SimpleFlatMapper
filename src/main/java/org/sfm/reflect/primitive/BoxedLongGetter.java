@@ -5,9 +5,9 @@ import org.sfm.reflect.Getter;
 public class BoxedLongGetter<T> implements LongGetter<T>, Getter<T, Long> {
 
 
-    private final Getter<T, Long> delegate;
+    private final Getter<? super T, Long> delegate;
 
-    public BoxedLongGetter(Getter<T, Long> delegate) {
+    public BoxedLongGetter(Getter<? super T, Long> delegate) {
         this.delegate = delegate;
     }
 

@@ -11,14 +11,14 @@ import java.lang.reflect.Type;
 
 public final class FieldMapperFactory<S, K extends FieldKey<K>>  {
 
-	private final GetterFactory<S, K> getterFactory;
+	private final GetterFactory<? super S, K> getterFactory;
 
-	public FieldMapperFactory(GetterFactory<S, K> getterFactory) {
+	public FieldMapperFactory(GetterFactory<? super S, K> getterFactory) {
 		this.getterFactory = getterFactory;
 	}
 
 
-	private <T, P> FieldMapper<S, T> primitiveIndexedFieldMapper(final Class<P> type, final Setter<T, ? super P> setter, final Getter<S, ? extends P> getter) {
+	private <T, P> FieldMapper<S, T> primitiveIndexedFieldMapper(final Class<P> type, final Setter<T, ? super P> setter, final Getter<? super S, ? extends P> getter) {
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<S, T>(
 					ObjectGetterFactory.toBooleanGetter(getter),
@@ -69,10 +69,10 @@ public final class FieldMapperFactory<S, K extends FieldKey<K>>  {
 		final Class<P> type = TypeHelper.toClass(propertyType);
 
         @SuppressWarnings("unchecked")
-		Getter<S, ? extends P> getter = (Getter<S, ? extends P>) propertyMapping.getColumnDefinition().getCustomGetter();
+		Getter<? super S, ? extends P> getter = (Getter<? super S, ? extends P>) propertyMapping.getColumnDefinition().getCustomGetter();
 
 
-        GetterFactory<S, K> getterFactory = this.getterFactory;
+        GetterFactory<? super S, K> getterFactory = this.getterFactory;
 
         if (propertyMapping.getColumnDefinition().hasCustomFactory()) {
             getterFactory = propertyMapping.getColumnDefinition().getCustomGetterFactory();

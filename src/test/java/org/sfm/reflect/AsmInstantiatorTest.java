@@ -27,7 +27,7 @@ public class AsmInstantiatorTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testInstantiateStringWithCharArray() throws Exception {
-		HashMap<Parameter, Getter<CsvMapperCellHandlerImpl<String>, ?>> injections = new HashMap<Parameter, Getter<CsvMapperCellHandlerImpl<String>, ?>>();
+		HashMap<Parameter, Getter<? super CsvMapperCellHandlerImpl<String>, ?>> injections = new HashMap<Parameter, Getter<? super CsvMapperCellHandlerImpl<String>, ?>>();
 
 		Parameter parameter = new Parameter("arg0", char[].class);
 		DelayedGetter delayedGetter = new DelayedGetter(0);

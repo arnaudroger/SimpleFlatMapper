@@ -3,10 +3,10 @@ package org.sfm.map.impl.context;
 import org.sfm.map.MappingContext;
 import org.sfm.utils.BooleanProvider;
 
-public class RootBreakGetter<S> implements BooleanProvider {
-    private final MappingContext<S> target;
+public class RootBreakGetter implements BooleanProvider {
+    private final MappingContext<?> target;
 
-    public RootBreakGetter(MappingContext<S> target) {
+    public RootBreakGetter(MappingContext<?> target) {
         this.target = target;
     }
 

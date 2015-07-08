@@ -8,7 +8,7 @@ import org.sfm.utils.ErrorHelper;
 public class JoinEnumarable<S, T> implements Enumarable<T> {
 
     private final Mapper<S, T> mapper;
-    private final MappingContext<S> mappingContext;
+    private final MappingContext<? super S> mappingContext;
 
 
     private final Enumarable<S> sourceEnumarable;
@@ -16,7 +16,7 @@ public class JoinEnumarable<S, T> implements Enumarable<T> {
     private T nextValue;
 
     public JoinEnumarable(Mapper<S, T> mapper,
-                          MappingContext<S> mappingContext,
+                          MappingContext<? super S> mappingContext,
                           Enumarable<S> sourceEnumarable) {
         this.mapper = mapper;
         this.mappingContext = mappingContext;

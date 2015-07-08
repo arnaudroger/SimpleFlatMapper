@@ -13,7 +13,7 @@ public class EndOfRowAppender<S>
     }
 
     @Override
-    public void mapTo(S source, Appendable target, MappingContext<S> context) throws Exception {
+    public void mapTo(S source, Appendable target, MappingContext<? super S> context) throws Exception {
         cellWriter.endOfRow(target);
     }
 }

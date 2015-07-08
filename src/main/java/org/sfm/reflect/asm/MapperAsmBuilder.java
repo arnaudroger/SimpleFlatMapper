@@ -22,7 +22,7 @@ public class MapperAsmBuilder {
             final String className,
             final FieldMapper<S, T>[] mappers,
             final FieldMapper<S, T>[] constructorMappers,
-            final Class<S> sourceClass,
+            final Class<? super S> sourceClass,
             final Class<T> target
     ) throws Exception {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);

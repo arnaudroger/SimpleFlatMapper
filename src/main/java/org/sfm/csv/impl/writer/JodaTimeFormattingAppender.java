@@ -27,7 +27,7 @@ public class JodaTimeFormattingAppender<T> implements FieldMapper<T, Appendable>
     }
 
     @Override
-    public void mapTo(T source, Appendable target, MappingContext<T> context) throws Exception {
+    public void mapTo(T source, Appendable target, MappingContext<? super T> context) throws Exception {
         cellWriter.writeValue(formatter.print(getter.get(source)), target);
     }
 }

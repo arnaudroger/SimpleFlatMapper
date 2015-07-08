@@ -22,14 +22,14 @@ public class MapperImpl<S, T> extends AbstractMapper<S, T> {
 
 
 
-    protected final void mapFields(final S source, final T target, final MappingContext<S> mappingContext) throws Exception {
+    protected final void mapFields(final S source, final T target, final MappingContext<? super S> mappingContext) throws Exception {
         for (FieldMapper<S, T> fieldMapper : fieldMappers) {
             fieldMapper.mapTo(source, target, mappingContext);
         }
 	}
 
     @Override
-    protected final void mapToFields(S source, T target, final MappingContext<S> mappingContext) throws Exception {
+    protected final void mapToFields(S source, T target, final MappingContext<? super S> mappingContext) throws Exception {
         for (FieldMapper<S, T> constructorMapper : constructorMappers) {
             constructorMapper.mapTo(source, target, mappingContext);
         }

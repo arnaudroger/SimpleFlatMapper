@@ -32,12 +32,12 @@ public final class StaticJdbcMapper<T> implements JdbcMapper<T> {
 	}
 
 	@Override
-	public T map(ResultSet rs, MappingContext<ResultSet> context) throws MappingException {
+	public T map(ResultSet rs, MappingContext<? super ResultSet> context) throws MappingException {
 		return mapper.map(rs, context);
 	}
 
 	@Override
-	public void mapTo(ResultSet rs, T target, MappingContext<ResultSet> context) throws Exception {
+	public void mapTo(ResultSet rs, T target, MappingContext<? super ResultSet> context) throws Exception {
 		mapper.mapTo(rs, target, context);
 	}
 

@@ -17,7 +17,7 @@ import static org.objectweb.asm.Opcodes.*;
 public class InstantiatorBuilder {
 
 	public static <S,T>  byte[] createInstantiator(final String className, final Class<?> sourceClass,
-			 final InstantiatorDefinition instantiatorDefinition,final Map<Parameter, Getter<S, ?>> injections) throws Exception {
+			 final InstantiatorDefinition instantiatorDefinition,final Map<Parameter, Getter<? super S, ?>> injections) throws Exception {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
 		FieldVisitor fv;
@@ -34,7 +34,7 @@ public class InstantiatorBuilder {
 
         Parameter[] parameters = instantiatorDefinition.getParameters();
 
-        for(Entry<Parameter, Getter<S, ?>> entry : injections.entrySet()) {
+        for(Entry<Parameter, Getter<? super S, ?>> entry : injections.entrySet()) {
             fv = cw.visitField(ACC_FINAL, "getter_" + entry.getKey().getName(), "L" + AsmUtils.toType(entry.getValue().getClass()) +";", null, null);
             fv.visitEnd();
         }
@@ -48,7 +48,7 @@ public class InstantiatorBuilder {
 
 
 
-            for(Entry<Parameter, Getter<S, ?>> entry : injections.entrySet()) {
+            for(Entry<Parameter, Getter<? super S, ?>> entry : injections.entrySet()) {
                 String name = entry.getKey().getName();
                 String getterType = AsmUtils.toType(entry.getValue().getClass());
 
@@ -77,7 +77,7 @@ public class InstantiatorBuilder {
 			StringBuilder sb = new StringBuilder();
 
             for (Parameter p : parameters) {
-                Getter<S, ?> getter = injections.get(p);
+                Getter<? super S, ?> getter = injections.get(p);
 
 
                 String propertyType = AsmUtils.toType(p.getType());
@@ -199,7 +199,7 @@ public class InstantiatorBuilder {
                 mv.visitLdcInsn(parameter);
                 mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
 
-                Getter<S, ?> getter = injections.get(parameters[i]);
+                Getter<? super S, ?> getter = injections.get(parameters[i]);
 
                 String getterName =  ", parameter" + i + "=";
                 String getterString = String.valueOf(getter);

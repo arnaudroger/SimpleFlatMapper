@@ -56,7 +56,7 @@ public class MappingContextFactoryBuilder<S, K> {
         return new NullChecker<S, K>(keys, keySourceGetter);
     }
 
-    public Getter<MappingContext<S>, BooleanProvider> breakDetectorGetter() {
+    public Getter<MappingContext<? super S>, BooleanProvider> breakDetectorGetter() {
         if (isEmpty()) {
             if (parent != null) {
                 return parent.breakDetectorGetter();

@@ -17,7 +17,7 @@ public final class BooleanFieldMapper<S, T> implements FieldMapper<S, T> {
 
 
 	@Override
-	public void mapTo(final S source, final T target, final MappingContext<S> mappingContext) throws Exception {
+	public void mapTo(final S source, final T target, final MappingContext<? super S> mappingContext) throws Exception {
 		setter.setBoolean(target, getter.getBoolean(source));
 	}
 

@@ -71,16 +71,16 @@ public final class ArgumentBuilder<S, T> {
 	}
 	
 	
-	private final Getter<S, ?>[] getters;
+	private final Getter<? super S, ?>[] getters;
 
 	@SuppressWarnings("unchecked")
 	public ArgumentBuilder(InstantiatorDefinition instantiatorDefinition,
-			Map<Parameter, Getter<S, ?>> injections) {
+			Map<Parameter, Getter<? super S, ?>> injections) {
 		Parameter[] parameters = instantiatorDefinition.getParameters();
 		getters = new Getter[parameters.length];
 		for (int i = 0; i < getters.length; i++) {
 			Parameter param = parameters[i];
-			Getter<S, ?> getter = injections.get(param);
+			Getter<? super S, ?> getter = injections.get(param);
 			if (getter == null) {
 				if (TypeHelper.isPrimitive(param.getType())) {
 					getter = DEFAULT_GETTERS.get(param.getType());

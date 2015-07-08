@@ -25,12 +25,12 @@ public class ContextualMapper<S, T> implements Mapper<S, T> {
     }
 
     @Override
-    public T map(S source, MappingContext<S> context) throws MappingException {
+    public T map(S source, MappingContext<? super S> context) throws MappingException {
         return delegate.map(source, context);
     }
 
     @Override
-    public void mapTo(S source, T target, MappingContext<S> context) throws Exception {
+    public void mapTo(S source, T target, MappingContext<? super S> context) throws Exception {
         delegate.mapTo(source, target, context);
     }
 }

@@ -16,7 +16,7 @@ public final class FloatFieldMapper<S, T> implements FieldMapper<S, T> {
 	}
 
 	@Override
-	public void mapTo(final S source, final T target, final MappingContext<S> context) throws Exception {
+	public void mapTo(final S source, final T target, final MappingContext<? super S> context) throws Exception {
         setter.setFloat(target, getter.getFloat(source));
 	}
 

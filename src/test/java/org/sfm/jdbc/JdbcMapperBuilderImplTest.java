@@ -24,7 +24,7 @@ public class JdbcMapperBuilderImplTest {
 		JdbcMapper<DbObject> mapper = builder.addMapper(new FieldMapper<ResultSet, DbObject>() {
 			
 			@Override
-			public void mapTo(ResultSet source, DbObject target, MappingContext<ResultSet> mappingContext) throws MappingException {
+			public void mapTo(ResultSet source, DbObject target, MappingContext<? super ResultSet> mappingContext) throws MappingException {
 				target.setId(33);
 			}
 		}).mapper();
@@ -48,7 +48,7 @@ public class JdbcMapperBuilderImplTest {
                                                                                 final FieldMapper<S, T>[] mappers,
                                                                                 final FieldMapper<S, T>[] constructorMappers,
                                                                                 final Instantiator<? super S, T> instantiator,
-                                                                                final Class<S> source,
+                                                                                final Class<? super S> source,
                                                                                 final Class<T> target) throws Exception {
                     throw new UnsupportedOperationException();
                 }
@@ -80,7 +80,7 @@ public class JdbcMapperBuilderImplTest {
 					public <S, T> Instantiator<S, T> getInstantiator(Type target,
 							Class<?> source,
 							List<InstantiatorDefinition> constructors,
-							Map<Parameter, Getter<S, ?>> injections, boolean useAsm)
+							Map<Parameter, Getter<? super S, ?>> injections, boolean useAsm)
 							throws SecurityException {
 						throw new UnsupportedOperationException();
 					}

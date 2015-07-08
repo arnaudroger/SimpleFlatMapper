@@ -121,7 +121,7 @@ public class CsvWriterTest {
             public <T, P> FieldMapper<T, Appendable> newFieldAppender(PropertyMapping<T, P, CsvColumnKey, ? extends ColumnDefinition<CsvColumnKey, ?>> pm, CellWriter cellWriter, MappingContextFactoryBuilder builder) {
                 return new FieldMapper<T, Appendable>() {
                     @Override
-                    public void mapTo(T source, Appendable target, MappingContext<T> context) throws Exception {
+                    public void mapTo(T source, Appendable target, MappingContext<? super T> context) throws Exception {
                         target.append("t");
                     }
                 };

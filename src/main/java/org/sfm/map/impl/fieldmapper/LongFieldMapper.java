@@ -16,7 +16,7 @@ public final class LongFieldMapper<S, T> implements FieldMapper<S, T> {
 	}
 
 	@Override
-	public void mapTo(final S source, final T target, final MappingContext<S> mappingContext) throws Exception {
+	public void mapTo(final S source, final T target, final MappingContext<? super S> mappingContext) throws Exception {
 		setter.setLong(target, getter.getLong(source));
 	}
 

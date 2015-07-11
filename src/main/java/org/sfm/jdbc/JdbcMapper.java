@@ -35,6 +35,54 @@ import java.util.stream.Stream;
 public interface JdbcMapper<T> extends Mapper<ResultSet, T>, EnumarableMapper<ResultSet, T, SQLException> {
 
 	/**
+	 * map source object to a new instance of T
+	 * @param rs the resultSet
+	 * @return a new mapped instance of T
+	 * @throws MappingException if an exception occurs
+	 */
+	T map(ResultSet rs) throws MappingException;
+
+	/**
+	 * Loop over the resultSet, map each row to a new instance of T and call back the handler
+	 *<p>
+	 * The method will return the handler passed as an argument so you can easily chain the calls like <br>
+	 * <code>
+	 *     List&lt;T&gt; list = jdbcMapper.forEach(rs, new ListHandler&lt;T&gt;()).getList();
+	 * </code>
+	 * <br>
+	 *
+	 * @param rs the resultSet
+	 * @param handler the handler that will get the callback
+	 * @param <H> the row handler type
+	 * @return the handler passed in
+	 * @throws SQLException if sql error occurs
+	 * @throws MappingException if an error occurs during the mapping
+	 *
+	 */
+	<H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
+			throws SQLException, MappingException;
+
+	/**
+	 *
+	 * @param rs the result set
+	 * @return an iterator that will return a map object for each row of the result set.
+	 * @throws SQLException if sql error occurs
+	 * @throws MappingException if an error occurs during the mapping
+	 */
+	Iterator<T> iterator(ResultSet rs)
+			throws SQLException, MappingException;
+	/**
+	 *
+	 * @param rs the result set
+	 * @return a stream that will contain a map object for each row of the result set.
+	 * @throws SQLException if sql error occurs
+	 * @throws MappingException if an error occurs during the mapping
+	 */
+	//IFJAVA8_START
+	Stream<T> stream(ResultSet rs) throws SQLException, MappingException;
+	//IFJAVA8_END
+
+	/**
 	 *
 	 * @param rs the result set
 	 * @return a new mapping context valid for that resultSet

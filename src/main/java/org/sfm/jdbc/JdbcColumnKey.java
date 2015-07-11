@@ -2,13 +2,16 @@ package org.sfm.jdbc;
 
 import org.sfm.map.FieldKey;
 import org.sfm.map.impl.MapperKey;
+import org.sfm.map.impl.TypeAffinity;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Date;
 
 import static org.sfm.utils.Asserts.requireNonNull;
 
-public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
+public class JdbcColumnKey implements FieldKey<JdbcColumnKey>, TypeAffinity {
 
 	public static final int UNDEFINED_TYPE = -99999;
 
@@ -106,5 +109,35 @@ public class JdbcColumnKey implements FieldKey<JdbcColumnKey> {
 		}
 
 		return new MapperKey<JdbcColumnKey>(keys);
+	}
+
+	@Override
+	public Class<?>[] getAffinities() {
+		switch (sqlType) {
+			case Types.VARCHAR:
+			case Types.LONGVARCHAR:
+			case Types.NVARCHAR:
+			case Types.LONGNVARCHAR:
+				return new Class[] { String.class };
+			case Types.BIGINT:
+				return new Class[] { Long.class, Integer.class, Number.class};
+			case Types.SMALLINT:
+			case Types.INTEGER:
+				return new Class[] { Integer.class, Long.class, Number.class};
+			case Types.DECIMAL:
+			case Types.DOUBLE:
+				return new Class[] { Double.class, Float.class, Number.class};
+			case Types.FLOAT:
+				return new Class[] { Float.class, Double.class, Number.class};
+			case Types.NUMERIC:
+				return new Class[] { Double.class, Long.class, Number.class};
+			case Types.BOOLEAN:
+				return new Class[] { Boolean.class, Integer.class, Long.class, Number.class};
+			case Types.TIMESTAMP:
+			case Types.DATE:
+			case Types.TIME:
+				return new Class[] { Date.class, Long.class};
+		}
+		return null;
 	}
 }

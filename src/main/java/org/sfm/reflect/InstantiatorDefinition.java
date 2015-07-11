@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 
 public final class InstantiatorDefinition implements Comparable<InstantiatorDefinition> {
 	private final Member executable;
@@ -74,5 +75,26 @@ public final class InstantiatorDefinition implements Comparable<InstantiatorDefi
 
 	private boolean isValueOf(String name) {
 		return name.equals("valueOf") || name.equals("of") || name.equals("newInstance");
+	}
+
+
+	public static InstantiatorDefinition lookForCompatibleOneArgument(Collection<InstantiatorDefinition> col, CompatibilityScorer scorer) {
+		InstantiatorDefinition current = null;
+		int currentScore = -1;
+
+		for(InstantiatorDefinition id : col ) {
+			if (id.getParameters().length == 1) {
+				int score = scorer.score(id);
+				if (score > currentScore) {
+					current = id;
+					currentScore = score;
+				}
+			}
+		}
+		return current;
+	}
+
+	public interface CompatibilityScorer {
+		int score(InstantiatorDefinition id);
 	}
 }

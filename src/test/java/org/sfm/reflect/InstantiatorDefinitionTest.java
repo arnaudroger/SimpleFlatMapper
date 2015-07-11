@@ -5,7 +5,10 @@ import org.junit.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class InstantiatorDefinitionTest {
@@ -54,4 +57,51 @@ public class InstantiatorDefinitionTest {
         assertCompare(new InstantiatorDefinition(valueOfMethod, parameter), new InstantiatorDefinition(valueOfMethod,parameter, parameter));
 
     }
+
+    @Test
+    public void testLookForCompatibleOneArgumentReturnBestScore() {
+        InstantiatorDefinition id1 = new InstantiatorDefinition(c, parameter);
+        InstantiatorDefinition id2 = new InstantiatorDefinition(c, parameter);
+
+        InstantiatorDefinition sid = InstantiatorDefinition.lookForCompatibleOneArgument(
+                Arrays.asList(id1, id2),
+                new InstantiatorDefinition.CompatibilityScorer() {
+                    int i;
+                    @Override
+                    public int score(InstantiatorDefinition id) {
+                        return i++;
+                    }
+                });
+        assertSame(sid, id2);
+
+
+
+        sid = InstantiatorDefinition.lookForCompatibleOneArgument(
+                Arrays.asList(id1, id2),
+                new InstantiatorDefinition.CompatibilityScorer() {
+                    int i = 10;
+                    @Override
+                    public int score(InstantiatorDefinition id) {
+                        return i--;
+                    }
+                });
+
+        assertSame(sid, id1);
+    }
+
+    @Test
+    public void testLookForCompatibleOneArgumentIgnoreNegativeScore() {
+        InstantiatorDefinition id1 = new InstantiatorDefinition(c, parameter);
+
+        InstantiatorDefinition sid = InstantiatorDefinition.lookForCompatibleOneArgument(
+                Arrays.asList(id1),
+                new InstantiatorDefinition.CompatibilityScorer() {
+                    @Override
+                    public int score(InstantiatorDefinition id) {
+                        return -1;
+                    }
+                });
+        assertNull(sid);
+    }
+
 }

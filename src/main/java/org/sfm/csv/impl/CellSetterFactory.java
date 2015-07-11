@@ -13,8 +13,28 @@ import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyMeta;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 
 public final class CellSetterFactory {
+
+
+	public static final InstantiatorDefinition.CompatibilityScorer COMPATIBILITY_SCORER = new InstantiatorDefinition.CompatibilityScorer() {
+		@Override
+		public int score(InstantiatorDefinition id) {
+			Class<?> type = TypeHelper.toBoxedClass(id.getParameters()[0].getType());
+
+			if (type == String.class || type == CharSequence.class) {
+				return 10;
+			}
+			if (Number.class.isAssignableFrom(type)) {
+				return 9;
+			}
+			if (Date.class.isAssignableFrom(type)) {
+				return 8;
+			}
+			return 0;
+		}
+	};
 
 	private final CellValueReaderFactory cellValueReaderFactory;
 
@@ -186,32 +206,19 @@ public final class CellSetterFactory {
         }
 
 		if (reader == null) {
-			for(InstantiatorDefinition id : propertyType.getInstantiatorDefinitions()) {
-				if (id.getParameters().length == 1) {
-					final Type sourceType = id.getParameters()[0].getGenericType();
-					reader = factory.getReader(sourceType, index, columnDefinition, parsingContextFactoryBuilder);
-					if (reader != null) {
-						Instantiator instantiator =
-								propertyType.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
-						return
-								new InstantiatorOnReader(instantiator, reader);
-					}
+			InstantiatorDefinition id = InstantiatorDefinition.lookForCompatibleOneArgument(propertyType.getInstantiatorDefinitions(), COMPATIBILITY_SCORER);
+
+			if (id != null) {
+				final Type sourceType = id.getParameters()[0].getGenericType();
+				reader = factory.getReader(sourceType, index, columnDefinition, parsingContextFactoryBuilder);
+				if (reader != null) {
+					Instantiator instantiator =
+							propertyType.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
+					return
+							new InstantiatorOnReader(instantiator, reader);
 				}
 			}
 		}
-
-//		if (reader == null && false) {
-//			// check if has a one arg construct
-//			final Constructor<?>[] constructors = propertyType.getConstructors();
-//			if (constructors != null && constructors.length == 1 && constructors[0].getParameterTypes().length == 1) {
-//				final Constructor<P> constructor = (Constructor<P>) constructors[0];
-//				CellValueReader<?> innerReader = factory.<P>getReader(constructor.getParameterTypes()[0], index, columnDefinition, parsingContextFactoryBuilder);
-//
-//				if (innerReader != null) {
-//					reader = new ConstructorOnReader<P>(constructor, innerReader);
-//				}
-//			}
-//		}
 
 		if (reader == null) {
 			throw new ParsingException("No cell reader for " + propertyType);

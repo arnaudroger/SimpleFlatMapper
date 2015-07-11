@@ -3,6 +3,7 @@ package org.sfm.map.impl.fieldmapper;
 import org.sfm.map.*;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.PropertyMapping;
+import org.sfm.map.impl.TypeAffinity;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyMeta;
@@ -83,16 +84,19 @@ public final class FieldMapperFactory<S, K extends FieldKey<K>>  {
 		}
 		if (getter == null) {
 			final ClassMeta<P> classMeta = propertyMeta.getPropertyClassMeta();
-			for(InstantiatorDefinition id : classMeta.getInstantiatorDefinitions()) {
-				if (id.getParameters().length == 1) {
-					final Type sourceType = id.getParameters()[0].getGenericType();
-					getter = getterFactory.newGetter(sourceType, key, null);
-					if (getter != null) {
-						Instantiator instantiator =
-								classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
-						getter = new InstantiatorOnGetter(instantiator, getter);
-						break;
-					}
+
+
+			InstantiatorDefinition.CompatibilityScorer scorer = getCompatibilityScorer(key);
+			InstantiatorDefinition id = InstantiatorDefinition.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(),
+					scorer);
+
+			if (id != null) {
+				final Type sourceType = id.getParameters()[0].getGenericType();
+				getter = getterFactory.newGetter(sourceType, key, null);
+				if (getter != null) {
+					Instantiator instantiator =
+							classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
+					getter = new InstantiatorOnGetter(instantiator, getter);
 				}
 			}
 		}
@@ -105,6 +109,55 @@ public final class FieldMapperFactory<S, K extends FieldKey<K>>  {
 			}
 
 			return new FieldMapperImpl<S, T, P>(getter, setter);
+		}
+	}
+
+	private InstantiatorDefinition.CompatibilityScorer getCompatibilityScorer(K key) {
+		if (key instanceof TypeAffinity) {
+			TypeAffinity ta = (TypeAffinity) key;
+			Class<?>[] affinities = ta.getAffinities();
+
+			if (affinities != null && affinities.length > 0) {
+				return new TypeAffinityCompatibilityScorer(affinities);
+			}
+		}
+		return new DefaultCompatibilityScorer();
+	}
+
+	private static class DefaultCompatibilityScorer implements InstantiatorDefinition.CompatibilityScorer {
+		@Override
+        public int score(InstantiatorDefinition id) {
+			Package aPackage = id.getParameters()[0].getType().getPackage();
+			if (aPackage != null && aPackage.getName().equals("java.lang")) {
+				return 1;
+			}
+            return 0;
+        }
+	}
+
+	private static class TypeAffinityCompatibilityScorer implements InstantiatorDefinition.CompatibilityScorer {
+		private final Class<?>[] classes;
+
+		private TypeAffinityCompatibilityScorer(Class<?>[] classes) {
+			this.classes = classes;
+		}
+
+		@Override
+		public int score(InstantiatorDefinition id) {
+			Class<?> paramType = TypeHelper.toBoxedClass(id.getParameters()[0].getType());
+
+			for(int i = 0; i < classes.length; i++) {
+				Class<?> c = classes[i];
+				if (paramType.isAssignableFrom(c)) {
+					return classes.length - 1 + 1;
+				}
+			}
+
+			Package aPackage = paramType.getPackage();
+			if (aPackage != null && aPackage.getName().equals("java.lang")) {
+				return 1;
+			}
+			return 0;
 		}
 	}
 }

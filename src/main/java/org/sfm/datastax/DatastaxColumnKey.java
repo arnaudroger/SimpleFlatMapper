@@ -4,13 +4,14 @@ import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.DataType;
 import org.sfm.map.FieldKey;
 import org.sfm.map.impl.MapperKey;
+import org.sfm.map.impl.TypeAffinity;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import static org.sfm.utils.Asserts.requireNonNull;
 
-public class DatastaxColumnKey implements FieldKey<DatastaxColumnKey> {
+public class DatastaxColumnKey implements FieldKey<DatastaxColumnKey>, TypeAffinity {
 
 	private final String name;
 	private final int index;
@@ -104,5 +105,13 @@ public class DatastaxColumnKey implements FieldKey<DatastaxColumnKey> {
 		}
 
 		return new MapperKey<DatastaxColumnKey>(keys);
+	}
+
+	@Override
+	public Class<?>[] getAffinities() {
+		if (sqlType != null) {
+			return new Class<?>[] {sqlType.asJavaClass()};
+		}
+		return null;
 	}
 }

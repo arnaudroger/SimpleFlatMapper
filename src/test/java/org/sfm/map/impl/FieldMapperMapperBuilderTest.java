@@ -26,7 +26,7 @@ public class FieldMapperMapperBuilderTest {
     public void testAnonymousParameterWithDifferentType() throws Exception {
 
         ClassMeta<MyObjectWithInner> classMeta = ReflectionService.disableAsm().getClassMeta(MyObjectWithInner.class);
-        FieldMapperFactory<ResultSet, JdbcColumnKey> factory = new FieldMapperFactory<>(new ResultSetGetterFactory());
+        FieldMapperFactory<ResultSet, JdbcColumnKey> factory = new FieldMapperFactory<ResultSet, JdbcColumnKey>(new ResultSetGetterFactory());
 
         PropertyMeta<MyObjectWithInner, MultiConstructorObject> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("prop"));
         FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> identity = FieldMapperColumnDefinition.identity();

@@ -115,7 +115,10 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				Getter<ResultSet, Date> dateGetter = DATE_GETTER_FACTORY.newGetter(Date.class, key, columnDefinition);
-				return (Getter<ResultSet, P>) new CalendarResultSetGetter(dateGetter);
+				if (dateGetter != null) {
+					return (Getter<ResultSet, P>) new CalendarResultSetGetter(dateGetter);
+				}
+				return null;
 			}
 		});
 

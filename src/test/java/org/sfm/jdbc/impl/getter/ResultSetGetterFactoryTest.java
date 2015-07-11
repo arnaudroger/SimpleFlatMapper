@@ -291,6 +291,11 @@ public class ResultSetGetterFactoryTest {
         assertEquals("CalendarResultSetGetter{dateGetter=TimestampResultSetGetter{column=1}}", getter.toString());
 	}
 
+	@Test
+	public void testCalendarOnInvalidType() throws Exception {
+		Getter<ResultSet, Calendar> getter = factory.<Calendar>newGetter(Calendar.class, key(Types.VARCHAR), IDENTITY);
+		assertNull(getter);
+	}
 
 	//IFJAVA8_START
 	@Test

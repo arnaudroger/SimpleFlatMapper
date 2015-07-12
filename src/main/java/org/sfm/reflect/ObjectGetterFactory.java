@@ -101,7 +101,7 @@ public final class ObjectGetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> BooleanGetter<T> toBooleanGetter(final Getter<? super T, P> getter) {
+	public static <T, P> BooleanGetter<T> toBooleanGetter(final Getter<? super T, ? extends P> getter) {
 		if (getter instanceof BooleanGetter) {
 			return (BooleanGetter<T>) getter;
 		} else {
@@ -110,7 +110,7 @@ public final class ObjectGetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> IntGetter<T> toIntGetter(Getter<? super T, P> getter) {
+	public static <T, P> IntGetter<T> toIntGetter(Getter<? super T, ? extends P> getter) {
 		if (getter instanceof IntGetter) {
 			return (IntGetter<T>) getter;
 		} else {
@@ -119,7 +119,7 @@ public final class ObjectGetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> LongGetter<T> toLongGetter(Getter<? super T, P> getter) {
+	public static <T, P> LongGetter<T> toLongGetter(Getter<? super T, ? extends P> getter) {
 		if (getter instanceof LongGetter) {
 			return (LongGetter<T>) getter;
 		} else {
@@ -128,7 +128,7 @@ public final class ObjectGetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> FloatGetter<T> toFloatGetter(Getter<? super T, P> getter) {
+	public static <T, P> FloatGetter<T> toFloatGetter(Getter<? super T, ? extends P> getter) {
 		if (getter instanceof FloatGetter) {
 			return (FloatGetter<T>) getter;
 		} else {
@@ -137,7 +137,7 @@ public final class ObjectGetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> DoubleGetter<T> toDoubleGetter(Getter<? super T, P> getter) {
+	public static <T, P> DoubleGetter<T> toDoubleGetter(Getter<? super T, ? extends P> getter) {
 		if (getter instanceof DoubleGetter) {
 			return (DoubleGetter<T>) getter;
 		} else {
@@ -146,7 +146,7 @@ public final class ObjectGetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> ByteGetter<T> toByteGetter(Getter<? super T, P> getter) {
+	public static <T, P> ByteGetter<T> toByteGetter(Getter<? super T, ? extends P> getter) {
 		if (getter instanceof ByteGetter) {
 			return (ByteGetter<T>) getter;
 		} else {
@@ -155,7 +155,7 @@ public final class ObjectGetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> ShortGetter<T> toShortGetter(Getter<? super T, P> getter) {
+	public static <T, P> ShortGetter<T> toShortGetter(Getter<? super T, ? extends P> getter) {
 		if (getter instanceof ShortGetter) {
 			return (ShortGetter<T>) getter;
 		} else {
@@ -164,7 +164,7 @@ public final class ObjectGetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> CharacterGetter<T> toCharGetter(Getter<? super T, P> getter) {
+	public static <T, P> CharacterGetter<T> toCharGetter(Getter<? super T, ? extends P> getter) {
 		if (getter instanceof CharacterGetter) {
 			return (CharacterGetter<T>) getter;
 		} else {

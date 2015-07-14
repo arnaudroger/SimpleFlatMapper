@@ -6,6 +6,7 @@ import org.sfm.map.impl.MapperConfig;
 import org.sfm.map.impl.MapperKey;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.utils.ErrorHelper;
+import org.sfm.utils.OneArgumentFactory;
 import org.sfm.utils.RowHandler;
 import java.util.Iterator;
 
@@ -14,22 +15,16 @@ import java.util.stream.Stream;
 //IFJAVA8_END
 
 
-public final class DynamicMapper<R, S, T, E extends Exception, K extends FieldKey<K>> implements SetRowMapper<R, S, T, E> {
+public final class DynamicSetRowMapper<R, S, T, E extends Exception, K extends FieldKey<K>> implements SetRowMapper<R, S, T, E> {
 
-	private final ClassMeta<T> classMeta;
 
     private final MapperCache<MapperKey<K>, SetRowMapper<R, S, T, E>> mapperCache = new MapperCache<MapperKey<K>, SetRowMapper<R, S, T, E>>();
 
-	private final MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig;
+	private final OneArgumentFactory<MapperKey<K>, SetRowMapper<R, S, T, E>> mapperFactory;
 
-	private final GetterFactory<S, K> getterFactory;
 
-	public DynamicMapper(final ClassMeta<T> classMeta,
-						 MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig,
-						 GetterFactory<S, K> getterFactory) {
-		this.classMeta = classMeta;
-		this.mapperConfig = mapperConfig;
-		this.getterFactory = getterFactory;
+	public DynamicSetRowMapper(OneArgumentFactory<MapperKey<K>, SetRowMapper<R, S, T, E>> mapperFactory) {
+		this.mapperFactory = mapperFactory;
 	}
 
 	@Override
@@ -89,11 +84,10 @@ public final class DynamicMapper<R, S, T, E extends Exception, K extends FieldKe
 
 	@Override
 	public String toString() {
-		return "DynamicMapper{target=" + classMeta.getType()
+		return "DynamicMapper{mapperFactory=" + mapperFactory
 				+  ", " + mapperCache +
 				'}';
 	}
-
 
 	protected MapperKey<K> getMapperKeyForSet(S rs) throws E {
 		return null;
@@ -104,21 +98,8 @@ public final class DynamicMapper<R, S, T, E extends Exception, K extends FieldKe
 
 	private SetRowMapper<R, S, T, E> getMapper(MapperKey<K> key) throws E {
 		SetRowMapper<R, S, T, E> mapper = mapperCache.get(key);
-
 		if (mapper == null) {
-//			final JdbcMapperBuilder<T> builder =
-//					new JdbcMapperBuilder<T>(
-//							classMeta,
-//							mapperConfig,
-//							getterFactory,
-//							new JdbcMappingContextFactoryBuilder());
-//
-//			for(K k : key.getColumns()) {
-//				builder.addMapping(k, FieldMapperColumnDefinition.<K, S>identity());
-//			}
-//
-//			mapper = builder.mapper();
-
+			mapper = mapperFactory.newInstance(key);
 			mapperCache.add(key, mapper);
 		}
 		return mapper;

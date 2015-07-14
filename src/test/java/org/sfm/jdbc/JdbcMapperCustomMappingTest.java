@@ -8,7 +8,7 @@ import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.ColumnDefinition;
-import org.sfm.map.column.CustomGetterProperty;
+import org.sfm.map.column.GetterProperty;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.utils.RowHandler;
@@ -139,7 +139,7 @@ public class JdbcMapperCustomMappingTest {
 		final JdbcMapper<DbObject> mapper =
 				JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class)
 						.addMapping("id",
-								new CustomGetterProperty(new Getter<ResultSet, Long>() {
+								new GetterProperty(new Getter<ResultSet, Long>() {
 									@Override
 									public Long get(ResultSet target) throws Exception {
 										return 1l;

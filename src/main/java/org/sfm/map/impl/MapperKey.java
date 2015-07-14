@@ -9,6 +9,7 @@ import static org.sfm.utils.Asserts.requireNonNull;
 public final class MapperKey<K extends FieldKey<K>> {
 
 	private final K[] columns;
+	@SuppressWarnings("unchecked")
 	public MapperKey(final K... columns) {
 		requireNonNull("columns", columns);
 		this.columns = columns;

@@ -3,6 +3,7 @@ package org.sfm.csv.bug;
 import org.junit.Test;
 import org.sfm.csv.CsvMapperFactory;
 import org.sfm.csv.CsvParser;
+import org.sfm.csv.CsvWriter;
 import org.sfm.csv.impl.ParsingException;
 
 import java.io.IOException;
@@ -24,6 +25,19 @@ public class Bug206 {
         MyClass o = dsl.iterator(new StringReader("id,p1_p2\n1,2014-01-01 11:11:11")).next();
         assertEquals(1, o.id);
         assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2014-01-01 11:11:11"), o.p1.p2);
+    }
+
+    @Test
+    public void testCanWriteDateInSubObject() throws IOException, ParseException {
+        StringBuilder sb = new StringBuilder();
+        MyClass myObject = new MyClass();
+        myObject.id = 1;
+        myObject.p1 = new MyClass2();
+        myObject.p1.p2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2014-01-01 11:11:11");
+
+        CsvWriter.from(MyClass.class).to(sb).append(myObject);
+
+        assertEquals("id,p1_p2\r\n1,2014-01-01 11:11:11\r\n", sb.toString());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.GetterOnGetter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 
@@ -28,7 +29,7 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 
     @Override
     protected Getter<O, P> newGetter() {
-		throw new UnsupportedOperationException();
+		return new GetterOnGetter<O, I, P>(ownerProperty.getGetter(), subProperty.getGetter());
     }
 
 	@Override

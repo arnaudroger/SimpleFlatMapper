@@ -13,7 +13,7 @@ import static org.junit.Assert.fail;
 public class SubPropertyMetaTest {
 
     @Test
-    public void testSubProperty() {
+    public void testSubProperty() throws Exception {
         ClassMeta<Db1DeepObject> classMeta = ReflectionService.newInstance().getClassMeta(Db1DeepObject.class);
 
         PropertyMeta<Db1DeepObject, String> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false));
@@ -30,11 +30,10 @@ public class SubPropertyMetaTest {
 
         assertEquals("dbObject.name", subPropertyMeta.getPath());
 
-        try {
-            subPropertyMeta.newGetter();
-            fail();
-        } catch(UnsupportedOperationException e) {
-        }
+        Db1DeepObject object = new Db1DeepObject();
+        object.setDbObject(new DbObject());
+        object.getDbObject().setName("n1");
+        assertEquals("n1", subPropertyMeta.newGetter().get(object));
         try {
             subPropertyMeta.newSetter();
             fail();

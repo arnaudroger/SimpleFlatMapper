@@ -120,7 +120,7 @@ public final class ObjectSetterFactory {
 	
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T, P> BooleanSetter<T> toBooleanSetter(final Setter<T, P> setter) {
+	public static <T, P> BooleanSetter<T> toBooleanSetter(final Setter<T, ? super P> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof BooleanSetter) {
@@ -139,7 +139,7 @@ public final class ObjectSetterFactory {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T, P> ByteSetter<T> toByteSetter(final Setter<T, P> setter) {
+	public static <T, P> ByteSetter<T> toByteSetter(final Setter<T, ? super P> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof ByteSetter) {
@@ -153,7 +153,7 @@ public final class ObjectSetterFactory {
 		}
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T, P> CharacterSetter<T> toCharacterSetter(final Setter<T, P> setter) {
+	public static <T, P> CharacterSetter<T> toCharacterSetter(final Setter<T, ? super P> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof CharacterSetter) {
@@ -168,7 +168,7 @@ public final class ObjectSetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T, P> ShortSetter<T> toShortSetter(final Setter<T, P> setter) {
+	public static <T, P> ShortSetter<T> toShortSetter(final Setter<T, ? super P> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof ShortSetter) {
@@ -183,7 +183,7 @@ public final class ObjectSetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T, P> IntSetter<T> toIntSetter(final Setter<T, P> setter) {
+	public static <T, P> IntSetter<T> toIntSetter(final Setter<T, ? super P> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof IntSetter) {
@@ -198,7 +198,7 @@ public final class ObjectSetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T, P> LongSetter<T> toLongSetter(final Setter<T, P> setter) {
+	public static <T, P> LongSetter<T> toLongSetter(final Setter<T, ? super P> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof LongSetter) {
@@ -213,7 +213,7 @@ public final class ObjectSetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T, P> FloatSetter<T> toFloatSetter(final Setter<T, P> setter) {
+	public static <T, P> FloatSetter<T> toFloatSetter(final Setter<T, ? super P> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof FloatSetter) {
@@ -228,7 +228,7 @@ public final class ObjectSetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T, P> DoubleSetter<T> toDoubleSetter(final Setter<T, P> setter) {
+	public static <T, P> DoubleSetter<T> toDoubleSetter(final Setter<T, ? super P> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof DoubleSetter) {

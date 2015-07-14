@@ -1,12 +1,13 @@
 package org.sfm.jdbc;
 
-import org.sfm.jdbc.impl.DynamicJdbcMapper;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.utils.UnaryFactory;
+import org.sfm.utils.UnaryFactoryWithException;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -41,7 +42,12 @@ import java.sql.SQLException;
  *
  */
 public final class JdbcMapperFactory
-		extends AbstractMapperFactory<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>, JdbcMapperFactory> {
+		extends AbstractSetRowMapperFactory<JdbcColumnKey,
+		FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>,
+		ResultSet,
+		ResultSet,
+		SQLException,
+		JdbcMapperFactory> {
 
 
     /**
@@ -132,15 +138,15 @@ public final class JdbcMapperFactory
      */
     public <T> JdbcMapperBuilder<T> newBuilder(final Type target) {
 		ClassMeta<T> classMeta = getClassMeta(target);
+		return newBuilder(classMeta);
+	}
 
-		JdbcMapperBuilder<T> builder =
-                new JdbcMapperBuilder<T>(
+	public <T> JdbcMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
+		return new JdbcMapperBuilder<T>(
 						classMeta,
 						mapperConfig(),
 						getterFactory,
                         new JdbcMappingContextFactoryBuilder());
-		
-		return builder;
 	}
 
 	/**
@@ -150,7 +156,7 @@ public final class JdbcMapperFactory
      * @return the DynamicMapper
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) {
-		return newMapper((Type)target);
+		return newMapper((Type) target);
 	}
 
     /**
@@ -170,11 +176,57 @@ public final class JdbcMapperFactory
      * @return the DynamicMapper
      */
 	public <T> JdbcMapper<T> newMapper(final Type target) {
-		ClassMeta<T> classMeta = getClassMeta(target);
-		return new DynamicJdbcMapper<T>(classMeta, mapperConfig(), getterFactory);
+		final SetRowMapper<ResultSet, ResultSet, Object, SQLException> setRowMapper = mapTo(target);
+		return (JdbcMapper<T>) setRowMapper;
 	}
 
-    /**
+	@Override
+	protected <T> SetRowMapper<ResultSet, ResultSet, T, SQLException> newSetRowMapper(
+			UnaryFactory<MapperKey<JdbcColumnKey>, SetRowMapper<ResultSet, ResultSet, T, SQLException>> mapperFactory,
+			UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> keyFromRowFactory,
+			UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> keyFromSetFactory) {
+		return new DynamicJdbcSetRowMapper<T>(mapperFactory, keyFromRowFactory, keyFromSetFactory);
+	}
+
+	private static class DynamicJdbcSetRowMapper<T>
+			extends DynamicSetRowMapper<ResultSet, ResultSet, T, SQLException, JdbcColumnKey>
+			implements DynamicJdbcMapper<T> {
+
+		public DynamicJdbcSetRowMapper(
+				UnaryFactory<MapperKey<JdbcColumnKey>, SetRowMapper<ResultSet, ResultSet, T, SQLException>> mapperFactory,
+				UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> mapperKeyFromRow,
+				UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> mapperKeyFromSet) {
+			super(mapperFactory, mapperKeyFromRow, mapperKeyFromSet);
+		}
+
+
+		@Override
+		public JdbcMapper<T> getMapper(ResultSetMetaData metaData) throws SQLException {
+			return (JdbcMapper<T>) getMapper(JdbcColumnKey.mapperKey(metaData));
+		}
+
+		@Override
+		public String toString() {
+			return "DynamicJdbcSetRowMapper{}";
+		}
+	}
+
+	@Override
+	protected UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> newKeyFromSetFactory() {
+		return new MapperKeyFactory();
+	}
+
+	@Override
+	protected UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> newKeyFromRowFactory() {
+		return newKeyFromSetFactory();
+	}
+
+	@Override
+	protected <T> UnaryFactory<MapperKey<JdbcColumnKey>, SetRowMapper<ResultSet,ResultSet,T,SQLException>> newMapperFactory(ClassMeta<T> classMeta) {
+		return new SetRowMapperFactory<>(classMeta);
+	}
+
+	/**
      * Create a discriminator builder based on the specified column
      * @param column the discriminator column
      * @param <T> the root type of the jdbcMapper
@@ -185,4 +237,29 @@ public final class JdbcMapperFactory
         addColumnDefinition(column, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>ignoreDefinition());
         return new DiscriminatorJdbcBuilder<T>(column, this);
     }
+
+	private static class MapperKeyFactory implements UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> {
+		@Override
+        public MapperKey<JdbcColumnKey> newInstance(ResultSet set) throws SQLException {
+            return JdbcColumnKey.mapperKey(set.getMetaData());
+        }
+	}
+
+	private class SetRowMapperFactory<T> implements UnaryFactory<MapperKey<JdbcColumnKey>, SetRowMapper<ResultSet,ResultSet,T,SQLException>> {
+		private final ClassMeta<T> classMeta;
+
+		public SetRowMapperFactory(ClassMeta<T> classMeta) {
+			this.classMeta = classMeta;
+		}
+
+		@Override
+        public SetRowMapper<ResultSet,ResultSet,T,SQLException> newInstance(MapperKey<JdbcColumnKey> jdbcColumnKeyMapperKey) {
+            final JdbcMapperBuilder<T> builder = newBuilder(classMeta);
+
+            for(JdbcColumnKey key : jdbcColumnKeyMapperKey.getColumns()) {
+                builder.addMapping(key);
+            }
+            return builder.mapper();
+        }
+	}
 }

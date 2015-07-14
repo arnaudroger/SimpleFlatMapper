@@ -1,11 +1,12 @@
-package org.sfm.map;
+package org.sfm.map.impl;
 
-import org.sfm.map.impl.*;
+import org.sfm.map.*;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
+import org.sfm.utils.UnaryFactory;
 import org.sfm.utils.Predicate;
-import org.sfm.utils.TargetType;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -40,7 +41,10 @@ import java.util.Map;
 // I don't really like using inheritance but did not see any other way
 // to avoid rewriting a lot of delegate method...
 @SuppressWarnings("unchecked")
-public abstract class AbstractMapperFactory<K extends FieldKey<K>, CD extends ColumnDefinition<K, CD>, MF extends AbstractMapperFactory<K, CD, MF>> {
+public abstract class AbstractMapperFactory<
+		K extends FieldKey<K>,
+		CD extends ColumnDefinition<K, CD>,
+		MF extends AbstractMapperFactory<K, CD, MF>> {
 
 
 	private FieldMapperErrorHandler<K> fieldMapperErrorHandler = null;
@@ -65,7 +69,7 @@ public abstract class AbstractMapperFactory<K extends FieldKey<K>, CD extends Co
 		this.identity = identity;
 	}
 
-    /**
+	/**
      * the FieldMapperErrorHandler is called when a error occurred when mapping a field from the source to the target.
      * By default it just throw the Exception.
      * @param fieldMapperErrorHandler the new FieldMapperErrorHandler

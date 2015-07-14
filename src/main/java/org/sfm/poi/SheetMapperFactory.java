@@ -2,7 +2,7 @@ package org.sfm.poi;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.map.AbstractMapperFactory;
+import org.sfm.map.impl.AbstractMapperFactory;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.map.impl.FieldMapperColumnDefinitionProviderImpl;

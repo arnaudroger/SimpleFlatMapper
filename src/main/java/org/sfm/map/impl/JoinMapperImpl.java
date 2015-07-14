@@ -5,17 +5,15 @@ import org.sfm.map.MappingContext;
 import org.sfm.map.MappingContextFactory;
 import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.utils.Enumarable;
-import org.sfm.utils.OneArgumentFactory;
-
-import java.sql.ResultSet;
+import org.sfm.utils.UnaryFactory;
 
 public class JoinMapperImpl<R, S, T, E extends Exception> extends AbstractEnumarableDelegateMapper<R, S, T, E> {
 
     private final Mapper<R, T> mapper;
     private final MappingContextFactory<? super R> mappingContextFactory;
-    private final OneArgumentFactory<S, Enumarable<R>> factory;
+    private final UnaryFactory<S, Enumarable<R>> factory;
 
-    public JoinMapperImpl(Mapper<R, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super R> mappingContextFactory, OneArgumentFactory<S, Enumarable<R>> factory) {
+    public JoinMapperImpl(Mapper<R, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super R> mappingContextFactory, UnaryFactory<S, Enumarable<R>> factory) {
         super(errorHandler);
         this.mapper = mapper;
         this.mappingContextFactory = mappingContextFactory;

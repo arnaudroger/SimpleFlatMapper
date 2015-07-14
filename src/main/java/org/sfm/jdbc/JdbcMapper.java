@@ -1,9 +1,7 @@
 package org.sfm.jdbc;
 
-import org.sfm.map.EnumarableMapper;
-import org.sfm.map.Mapper;
-import org.sfm.map.MappingContext;
-import org.sfm.map.MappingException;
+import org.jooq.SQL;
+import org.sfm.map.*;
 import org.sfm.utils.RowHandler;
 
 import java.sql.ResultSet;
@@ -32,7 +30,7 @@ import java.util.stream.Stream;
  * @param <T> the type that the jdbcMapper is mapping to
  * @see org.sfm.jdbc.JdbcMapperFactory
  */
-public interface JdbcMapper<T> extends Mapper<ResultSet, T>, EnumarableMapper<ResultSet, T, SQLException> {
+public interface JdbcMapper<T> extends SetRowMapper<ResultSet, ResultSet, T, SQLException> {
 
 	/**
 	 * map source object to a new instance of T
@@ -87,5 +85,5 @@ public interface JdbcMapper<T> extends Mapper<ResultSet, T>, EnumarableMapper<Re
 	 * @param rs the result set
 	 * @return a new mapping context valid for that resultSet
 	 */
-	MappingContext<? super ResultSet> newMappingContext(ResultSet rs);
+	MappingContext<? super ResultSet> newMappingContext(ResultSet rs) throws SQLException;
 }

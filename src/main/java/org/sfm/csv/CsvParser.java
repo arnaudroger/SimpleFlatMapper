@@ -3,7 +3,7 @@ package org.sfm.csv;
 import org.sfm.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.csv.parser.*;
-import org.sfm.map.CaseInsensitiveFieldKeyNamePredicate;
+import org.sfm.map.impl.CaseInsensitiveFieldKeyNamePredicate;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;

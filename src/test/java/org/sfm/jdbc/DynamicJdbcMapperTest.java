@@ -3,7 +3,6 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
-import org.sfm.jdbc.impl.DynamicJdbcMapper;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.RowHandler;
 
@@ -28,10 +27,10 @@ import static org.junit.Assert.*;
 
 public class DynamicJdbcMapperTest {
 	
-	final DynamicJdbcMapper<DbObject> mapper;
+	final JdbcMapper<DbObject> mapper;
 	
 	public DynamicJdbcMapperTest() throws NoSuchMethodException, SecurityException, SQLException {
-		mapper = (DynamicJdbcMapper<DbObject>) JdbcMapperFactoryHelper.noAsm().newMapper(DbObject.class);
+		mapper = JdbcMapperFactoryHelper.noAsm().newMapper(DbObject.class);
 	}
 	
 	@Test
@@ -116,7 +115,7 @@ public class DynamicJdbcMapperTest {
 	private static final int NBFUTURE = 10000;
 	@Test
 	public void testMultipleThread() throws InterruptedException, ExecutionException {
-		final DynamicJdbcMapper<DbObject> mapper = (DynamicJdbcMapper<DbObject>) JdbcMapperFactoryHelper.asm().newMapper(DbObject.class);
+		final JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.asm().newMapper(DbObject.class);
 		
 		ExecutorService service = Executors.newFixedThreadPool(4);
 		final AtomicLong sumOfAllIds = new AtomicLong();

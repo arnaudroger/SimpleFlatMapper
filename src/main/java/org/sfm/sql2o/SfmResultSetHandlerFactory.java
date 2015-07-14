@@ -1,7 +1,7 @@
 package org.sfm.sql2o;
 
+import org.sfm.jdbc.DynamicJdbcMapper;
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.jdbc.impl.DynamicJdbcMapper;
 import org.sql2o.ResultSetHandler;
 import org.sql2o.ResultSetHandlerFactory;
 

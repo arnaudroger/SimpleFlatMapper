@@ -1,7 +1,9 @@
-package org.sfm.map;
+package org.sfm.map.impl;
 
+import org.sfm.map.FieldKey;
+import org.sfm.map.FieldMapper;
+import org.sfm.map.Mapper;
 import org.sfm.map.column.ColumnProperty;
-import org.sfm.map.impl.*;
 import org.sfm.map.impl.context.MappingContextFactoryBuilder;
 import org.sfm.reflect.meta.ClassMeta;
 

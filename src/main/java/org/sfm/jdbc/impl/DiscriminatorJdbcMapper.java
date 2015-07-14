@@ -79,7 +79,7 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableDelegate
     }
 
     @Override
-    public MappingContext<? super ResultSet> newMappingContext(ResultSet rs) {
+    public MappingContext<? super ResultSet> newMappingContext(ResultSet rs) throws SQLException {
         return getMapper(rs).newMappingContext(rs);
     }
 

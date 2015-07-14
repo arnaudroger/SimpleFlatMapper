@@ -1,7 +1,8 @@
 package org.sfm.sql2o;
 
+import org.sfm.jdbc.DynamicJdbcMapper;
+import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.JdbcMapperFactory;
-import org.sfm.jdbc.impl.DynamicJdbcMapper;
 import org.sfm.map.impl.DefaultPropertyNameMatcherFactory;
 import org.sql2o.DefaultResultSetHandlerFactoryBuilder;
 import org.sql2o.ResultSetHandlerFactory;
@@ -29,9 +30,7 @@ public class SfmResultSetHandlerFactoryBuilder extends DefaultResultSetHandlerFa
             jdbcMapperFactory.addAliases(columnMappings);
         }
 
-        DynamicJdbcMapper<E> dynamicJdbcMapper = (DynamicJdbcMapper<E>)
-                jdbcMapperFactory
-                        .newMapper(aClass);
+        DynamicJdbcMapper<E> dynamicJdbcMapper = (DynamicJdbcMapper<E>)jdbcMapperFactory.newMapper(aClass);
         return new SfmResultSetHandlerFactory<E>(dynamicJdbcMapper);
     }
 }

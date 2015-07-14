@@ -6,5 +6,8 @@ jdk:
   - openjdk7
   - openjdk6
 
+env:
+  - 
+
 after_success:
   - mvn -P travis jacoco:report coveralls:jacoco

@@ -62,7 +62,7 @@ public class JoinJdbcMapperTest {
         final JdbcMapper<ProfessorC> mapper = noAsmJdbcMapperFactory.newMapper(ProfessorC.class);
         validateMapper(mapper);
 
-        assertTrue(mapper.toString().startsWith("DynamicJdbcMapper{target=class org.sfm.jdbc.JoinJdbcMapperTest$ProfessorC"));
+        assertNotNull(mapper.toString());
     }
 
     @Test

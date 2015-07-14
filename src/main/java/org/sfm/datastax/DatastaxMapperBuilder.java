@@ -8,16 +8,13 @@ import org.sfm.datastax.impl.RowGetterFactory;
 import org.sfm.datastax.impl.StaticDatastaxMapper;
 import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
-import org.sfm.map.impl.JoinMapperImpl;
-import org.sfm.map.impl.MapperConfig;
-import org.sfm.map.impl.MapperSourceImpl;
+import org.sfm.map.impl.*;
 import org.sfm.map.impl.context.MappingContextFactoryBuilder;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.utils.Enumarable;
-import org.sfm.utils.OneArgumentFactory;
+import org.sfm.utils.UnaryFactory;
 
 import java.lang.reflect.Type;
 import java.sql.SQLException;
@@ -136,7 +133,7 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
         }
     }
 
-    private static class ResultSetEnumarableFactory implements OneArgumentFactory<ResultSet, Enumarable<Row>> {
+    private static class ResultSetEnumarableFactory implements UnaryFactory<ResultSet, Enumarable<Row>> {
         @Override
         public Enumarable<Row> newInstance(ResultSet rows) {
             return new ResultSetEnumarable(rows);

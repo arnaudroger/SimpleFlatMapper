@@ -10,7 +10,7 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.utils.Enumarable;
-import org.sfm.utils.OneArgumentFactory;
+import org.sfm.utils.UnaryFactory;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -149,7 +149,7 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
         }
     }
 
-    private static class ResultSetEnumarableFactory implements OneArgumentFactory<ResultSet, Enumarable<ResultSet>> {
+    private static class ResultSetEnumarableFactory implements UnaryFactory<ResultSet, Enumarable<ResultSet>> {
         @Override
         public Enumarable<ResultSet> newInstance(ResultSet rows) {
             return new ResultSetEnumarable(rows);

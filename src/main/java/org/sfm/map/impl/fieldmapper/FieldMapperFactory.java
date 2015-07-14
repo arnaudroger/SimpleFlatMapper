@@ -22,36 +22,36 @@ public final class FieldMapperFactory<S, K extends FieldKey<K>>  {
 	private <T, P> FieldMapper<S, T> primitiveIndexedFieldMapper(final Class<P> type, final Setter<T, ? super P> setter, final Getter<? super S, ? extends P> getter) {
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<S, T>(
-					ObjectGetterFactory.toBooleanGetter(getter),
-					ObjectSetterFactory.toBooleanSetter(setter));
+					ObjectGetterFactory.<S, P>toBooleanGetter(getter),
+					ObjectSetterFactory.<T, P>toBooleanSetter(setter));
 		} else if (type.equals(Integer.TYPE)) {
 			return new IntFieldMapper<S, T>(
-					ObjectGetterFactory.toIntGetter(getter),
-					ObjectSetterFactory.toIntSetter(setter));
+					ObjectGetterFactory.<S, P>toIntGetter(getter),
+					ObjectSetterFactory.<T, P>toIntSetter(setter));
 		} else if (type.equals(Long.TYPE)) {
 			return new LongFieldMapper<S, T>(
-					ObjectGetterFactory.toLongGetter(getter),
-					ObjectSetterFactory.toLongSetter(setter));
+					ObjectGetterFactory.<S, P>toLongGetter(getter),
+					ObjectSetterFactory.<T, P>toLongSetter(setter));
 		} else if (type.equals(Float.TYPE)) {
 			return new FloatFieldMapper<S, T>(
-					ObjectGetterFactory.toFloatGetter(getter),
-					ObjectSetterFactory.toFloatSetter(setter));
+					ObjectGetterFactory.<S, P>toFloatGetter(getter),
+					ObjectSetterFactory.<T, P>toFloatSetter(setter));
 		} else if (type.equals(Double.TYPE)) {
 			return new DoubleFieldMapper<S, T>(
-					ObjectGetterFactory.toDoubleGetter(getter),
-					ObjectSetterFactory.toDoubleSetter(setter));
+					ObjectGetterFactory.<S, P>toDoubleGetter(getter),
+					ObjectSetterFactory.<T, P>toDoubleSetter(setter));
 		} else if (type.equals(Byte.TYPE)) {
 			return new ByteFieldMapper<S, T>(
-					ObjectGetterFactory.toByteGetter(getter),
-					ObjectSetterFactory.toByteSetter(setter));
+					ObjectGetterFactory.<S, P>toByteGetter(getter),
+					ObjectSetterFactory.<T, P>toByteSetter(setter));
 		} else if (type.equals(Character.TYPE)) {
 			return new CharacterFieldMapper<S, T>(
-					ObjectGetterFactory.toCharGetter(getter),
-					ObjectSetterFactory.toCharacterSetter(setter));
+					ObjectGetterFactory.<S, P>toCharGetter(getter),
+					ObjectSetterFactory.<T, P>toCharacterSetter(setter));
 		} else if (type.equals(Short.TYPE)) {
 			return new ShortFieldMapper<S, T>(
-					ObjectGetterFactory.toShortGetter(getter),
-					ObjectSetterFactory.toShortSetter(setter));
+					ObjectGetterFactory.<S, P>toShortGetter(getter),
+					ObjectSetterFactory.<T, P>toShortSetter(setter));
 		} else {
 			throw new UnsupportedOperationException("Type " + type
 					+ " is not primitive");

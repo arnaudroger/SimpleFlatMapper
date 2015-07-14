@@ -7,9 +7,9 @@ import org.sfm.map.impl.MapperKey;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
+import java.util.Iterator;
 
 //IFJAVA8_START
-import java.util.Iterator;
 import java.util.stream.Stream;
 //IFJAVA8_END
 

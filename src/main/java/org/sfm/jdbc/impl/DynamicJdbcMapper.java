@@ -75,7 +75,7 @@ public final class DynamicJdbcMapper<T> implements JdbcMapper<T> {
 	//IFJAVA8_END
 
 	@Override
-	public MappingContext<ResultSet> newMappingContext(ResultSet rs) {
+	public MappingContext<? super ResultSet> newMappingContext(ResultSet rs) {
 		return getJdbcMapper(rs).newMappingContext(rs);
 	}
 

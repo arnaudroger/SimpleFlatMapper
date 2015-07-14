@@ -69,6 +69,27 @@ public final class JdbcMapperFactory
 		return this;
 	}
 
+
+	/**
+	 * Associate the specified FieldMapper for the specified column.
+	 * @param key the column
+	 * @param fieldMapper the fieldMapper
+	 * @return the current factory
+	 */
+	public JdbcMapperFactory addCustomFieldMapper(String key, FieldMapper<ResultSet, ?> fieldMapper) {
+		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customFieldMapperDefinition(fieldMapper));
+	}
+
+	/**
+	 * Associate the specified Getter for the specified column.
+	 * @param key the column
+	 * @param getter the getter
+	 * @return the current factory
+	 */
+	public JdbcMapperFactory addCustomGetter(String key, Getter<ResultSet, ?> getter) {
+		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customGetter(getter));
+	}
+
 	/**
 	 * Will create a instance of JdbcMapper based on the specified metadata and the target class.
 	 * @param target the target class of the jdbcMapper
@@ -152,28 +173,6 @@ public final class JdbcMapperFactory
 		ClassMeta<T> classMeta = getClassMeta(target);
 		return new DynamicJdbcMapper<T>(classMeta, mapperConfig(), getterFactory);
 	}
-
-
-	/**
-	 * Associate the specified FieldMapper for the specified column.
-	 * @param key the column
-	 * @param fieldMapper the fieldMapper
-	 * @return the current factory
-	 */
-	public JdbcMapperFactory addCustomFieldMapper(String key, FieldMapper<ResultSet, ?> fieldMapper) {
-		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customFieldMapperDefinition(fieldMapper));
-	}
-
-    /**
-     * Associate the specified Getter for the specified column.
-     * @param key the column
-     * @param getter the getter
-     * @return the current factory
-     */
-	public JdbcMapperFactory addCustomGetter(String key, Getter<ResultSet, ?> getter) {
-		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customGetter(getter));
-	}
-
 
     /**
      * Create a discriminator builder based on the specified column

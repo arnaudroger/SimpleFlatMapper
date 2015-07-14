@@ -11,18 +11,18 @@ import org.sfm.utils.conv.Converter;
 
 public class DiscriminatorEnumerable<S, T> implements Enumarable<T> {
 
-    private final Tuple3<Predicate<S>, Mapper<S, T>, MappingContext<S>>[] discriminatorMappers;
+    private final Tuple3<Predicate<S>, Mapper<S, T>, MappingContext<? super S>>[] discriminatorMappers;
     private final Enumarable<S> sourceEnumarable;
     private final Converter<S, String> errorMessageGenerator;
 
     private T currentValue;
     private T nextValue;
     private Mapper<S, T> currentMapper;
-    private MappingContext<S> currentMappingContext;
+    private MappingContext<? super S> currentMappingContext;
 
 
     public DiscriminatorEnumerable(
-            Tuple3<Predicate<S>, Mapper<S, T>, MappingContext<S>>[] discriminatorMappers,
+            Tuple3<Predicate<S>, Mapper<S, T>, MappingContext<? super S>>[] discriminatorMappers,
             Enumarable<S> sourceEnumarable,
             Converter<S, String> errorMessageGenerator) {
         this.discriminatorMappers = discriminatorMappers;
@@ -66,7 +66,7 @@ public class DiscriminatorEnumerable<S, T> implements Enumarable<T> {
     }
 
     private void checkMapper() throws java.sql.SQLException {
-        for(Tuple3<Predicate<S>, Mapper<S, T>, MappingContext<S>> pmm : discriminatorMappers ) {
+        for(Tuple3<Predicate<S>, Mapper<S, T>, MappingContext<? super S>> pmm : discriminatorMappers ) {
             if (pmm.first().test(sourceEnumarable.currentValue())) {
                 if (pmm.second() != currentMapper) {
                     markAsBroken();
@@ -90,7 +90,7 @@ public class DiscriminatorEnumerable<S, T> implements Enumarable<T> {
     }
 
     private void markAsBroken() {
-        for(Tuple3<Predicate<S>, Mapper<S, T>, MappingContext<S>> pmm : discriminatorMappers ) {
+        for(Tuple3<Predicate<S>, Mapper<S, T>, MappingContext<? super S>> pmm : discriminatorMappers ) {
            pmm.third().markAsBroken();
         }
     }

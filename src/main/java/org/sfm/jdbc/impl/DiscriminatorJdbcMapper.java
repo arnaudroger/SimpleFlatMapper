@@ -48,7 +48,7 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableDelegate
     }
 
     protected DiscriminatorEnumerable<ResultSet, T> newEnumarableOfT(ResultSet rs) throws SQLException {
-        @SuppressWarnings("unchecked") Tuple3<Predicate<ResultSet>, Mapper<ResultSet, T>, MappingContext<ResultSet>>[] mapperDiscriminators =
+        @SuppressWarnings("unchecked") Tuple3<Predicate<ResultSet>, Mapper<ResultSet, T>, MappingContext<? super ResultSet>>[] mapperDiscriminators =
                 new Tuple3[this.mappers.size()];
 
         for(int i = 0; i < mapperDiscriminators.length; i++) {
@@ -58,7 +58,7 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableDelegate
             Predicate<ResultSet> discriminatorPredicate = new DiscriminatorPredicate(discriminatorColumn, mapper.first());
 
             mapperDiscriminators[i] =
-                    new Tuple3<Predicate<ResultSet>, Mapper<ResultSet, T>, MappingContext<ResultSet>>(
+                    new Tuple3<Predicate<ResultSet>, Mapper<ResultSet, T>, MappingContext<? super ResultSet>>(
                             discriminatorPredicate,
                             mapper.second(),
                             mapper.second().newMappingContext(rs));
@@ -79,7 +79,7 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableDelegate
     }
 
     @Override
-    public MappingContext<ResultSet> newMappingContext(ResultSet rs) {
+    public MappingContext<? super ResultSet> newMappingContext(ResultSet rs) {
         return getMapper(rs).newMappingContext(rs);
     }
 

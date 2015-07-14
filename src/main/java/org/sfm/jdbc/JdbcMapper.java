@@ -87,5 +87,5 @@ public interface JdbcMapper<T> extends Mapper<ResultSet, T>, EnumarableMapper<Re
 	 * @param rs the result set
 	 * @return a new mapping context valid for that resultSet
 	 */
-	MappingContext<ResultSet> newMappingContext(ResultSet rs);
+	MappingContext<? super ResultSet> newMappingContext(ResultSet rs);
 }

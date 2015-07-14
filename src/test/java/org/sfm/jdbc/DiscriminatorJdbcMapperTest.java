@@ -126,7 +126,7 @@ public class DiscriminatorJdbcMapperTest {
         ResultSet rs = setUpResultSetMock();
 
         rs.next();
-        MappingContext<ResultSet> mappingContext = mapper.newMappingContext(rs);
+        MappingContext<? super ResultSet> mappingContext = mapper.newMappingContext(rs);
         mappingContext.handle(rs);
         final T professor = mapper.map(rs, mappingContext);
         validateProfessorMap((JoinJdbcMapperTest.Professor)professor);

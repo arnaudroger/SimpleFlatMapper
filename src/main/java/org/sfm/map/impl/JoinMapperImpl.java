@@ -1,37 +1,43 @@
 package org.sfm.map.impl;
 
-import org.sfm.jdbc.JdbcMapper;
-import org.sfm.jdbc.impl.ResultSetEnumarable;
-import org.sfm.map.*;
+import org.sfm.map.Mapper;
+import org.sfm.map.MappingContext;
+import org.sfm.map.MappingContextFactory;
+import org.sfm.map.RowHandlerErrorHandler;
 import org.sfm.utils.Enumarable;
+import org.sfm.utils.OneArgumentFactory;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
-public final class JoinMapperImpl<T> extends AbstractEnumarableDelegateMapper<ResultSet, ResultSet, T, SQLException> implements JdbcMapper<T> {
+public class JoinMapperImpl<R, S, T, E extends Exception> extends AbstractEnumarableDelegateMapper<R, S, T, E> {
 
-    private final Mapper<ResultSet, T> mapper;
-    private final MappingContextFactory<ResultSet> mappingContextFactory;
+    private final Mapper<R, T> mapper;
+    private final MappingContextFactory<? super R> mappingContextFactory;
+    private final OneArgumentFactory<S, Enumarable<R>> factory;
 
-    public JoinMapperImpl(Mapper<ResultSet, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<ResultSet> mappingContextFactory) {
+    public JoinMapperImpl(Mapper<R, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super R> mappingContextFactory, OneArgumentFactory<S, Enumarable<R>> factory) {
         super(errorHandler);
         this.mapper = mapper;
         this.mappingContextFactory = mappingContextFactory;
+        this.factory = factory;
     }
 
+
     @Override
-    protected Mapper<ResultSet, T> getMapper(ResultSet source) {
+    protected final Mapper<R, T> getMapper(R source) {
         return mapper;
     }
 
     @Override
-    protected Enumarable<T> newEnumarableOfT(ResultSet rs) throws SQLException {
-        return new JoinEnumarable<ResultSet, T>(mapper, mappingContextFactory.newContext(), new ResultSetEnumarable(rs));
+    protected final Enumarable<T> newEnumarableOfT(S source) throws E {
+        return new JoinEnumarable<R, T>(mapper,  mappingContextFactory.newContext(), newSourceEnumarable(source));
     }
 
-    @Override
-    public MappingContext<ResultSet> newMappingContext(ResultSet rs) {
+    private final Enumarable<R> newSourceEnumarable(S source) {
+        return factory.newInstance(source);
+    }
+
+    public MappingContext<? super R> newMappingContext() {
         return mappingContextFactory.newContext();
     }
-
 }

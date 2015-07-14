@@ -12,7 +12,7 @@ import org.sfm.reflect.meta.ClassMeta;
 import java.lang.reflect.Type;
 
 
-public class JooqMapperBuilder<E>  {
+public class JooqMapperBuilder<E> {
 
 	public static final MapperSource<Record, JooqFieldKey> FIELD_MAPPER_SOURCE = new MapperSourceImpl<Record, JooqFieldKey>(Record.class, new RecordGetterFactory<Record>());
 

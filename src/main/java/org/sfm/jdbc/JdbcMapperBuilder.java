@@ -9,6 +9,8 @@ import org.sfm.map.impl.context.MappingContextFactoryBuilder;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.utils.Enumarable;
+import org.sfm.utils.OneArgumentFactory;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -18,17 +20,11 @@ import java.sql.SQLException;
 /**
  * @param <T> the targeted type of the jdbcMapper
  */
-public final class JdbcMapperBuilder<T> {
+public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet, T, JdbcColumnKey, JdbcMapper<T>, JdbcMapperBuilder<T>>{
 
     public static final MapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
             new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class, new ResultSetGetterFactory());
 
-    private final FieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey> fieldMapperMapperBuilder;
-
-    private final MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> mapperConfig;
-    private final MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> mappingContextFactoryBuilder;
-
-    private int calculatedIndex = 1;
 
     /**
      * Build a new JdbcMapperBuilder targeting the type specified by the TypeReference. The TypeReference
@@ -74,118 +70,9 @@ public final class JdbcMapperBuilder<T> {
              MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> mapperConfig,
              GetterFactory<ResultSet, JdbcColumnKey> getterFactory,
              MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
-        this.fieldMapperMapperBuilder =
-                new FieldMapperMapperBuilder<ResultSet, T, JdbcColumnKey>(
-                        FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
-                        classMeta,
-                        mapperConfig,
-                        parentBuilder
-                );
-        this.mapperConfig = mapperConfig;
-        this.mappingContextFactoryBuilder = parentBuilder;
+        super(classMeta, parentBuilder, mapperConfig, FIELD_MAPPER_SOURCE.getterFactory(getterFactory), 1);
     }
 
-    /**
-     * @return a new instance of the jdbcMapper based on the current state of the builder.
-     */
-    public JdbcMapper<T> mapper() {
-        Mapper<ResultSet, T> mapper = fieldMapperMapperBuilder.mapper();
-
-        if (fieldMapperMapperBuilder.hasJoin()) {
-            return new JoinJdbcMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
-        } else {
-            return new StaticJdbcMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
-        }
-    }
-
-    /**
-     * add a new mapping to the specified column with a key column definition and an undefined type.
-     * The index is incremented for each non indexed column mapping.
-     *
-     * @param column the column name
-     * @return the current builder
-     */
-    public JdbcMapperBuilder<T> addKey(String column) {
-        return addMapping(column, calculatedIndex++, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>key());
-    }
-
-    /**
-     * add a new mapping to the specified column with an undefined type. The index is incremented for each non indexed column mapping.
-     *
-     * @param column the column name
-     * @return the current builder
-     */
-    public JdbcMapperBuilder<T> addMapping(String column) {
-        return addMapping(column, calculatedIndex++);
-    }
-
-    /**
-     * add a new mapping to the specified column with the specified columnDefinition and an undefined type. The index is incremented for each non indexed column mapping.
-     *
-     * @param column           the column name
-     * @param columnDefinition the definition
-     * @return the current builder
-     */
-    public JdbcMapperBuilder<T> addMapping(final String column, final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
-        return addMapping(column, calculatedIndex++, columnDefinition);
-    }
-
-    /**
-     * add a new mapping to the specified column with the specified columnDefinition and an undefined type. The index is incremented for each non indexed column mapping.
-     *
-     * @param column           the column name
-     * @param properties the definition
-     * @return the current builder
-     */
-    public JdbcMapperBuilder<T> addMapping(final String column, final ColumnProperty... properties) {
-        return addMapping(column, calculatedIndex++, properties);
-    }
-
-    /**
-     * add a new mapping to the specified column with the specified index and an undefined type.
-     *
-     * @param column the column name
-     * @param index  the column index
-     * @return the current builder
-     */
-    public JdbcMapperBuilder<T> addMapping(String column, int index) {
-        return addMapping(column, index, JdbcColumnKey.UNDEFINED_TYPE);
-    }
-
-    /**
-     * add a new mapping to the specified column with the specified index, specified column definition and an undefined type.
-     *
-     * @param column           the column name
-     * @param index            the column index
-     * @param columnDefinition the column definition
-     * @return the current builder
-     */
-    public JdbcMapperBuilder<T> addMapping(String column, int index, final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
-        return addMapping(column, index, JdbcColumnKey.UNDEFINED_TYPE, columnDefinition);
-    }
-
-    /**
-     * add a new mapping to the specified column with the specified index, specified column definition and an undefined type.
-     *
-     * @param column           the column name
-     * @param index            the column index
-     * @param properties the column properties
-     * @return the current builder
-     */
-    public JdbcMapperBuilder<T> addMapping(String column, int index, final ColumnProperty... properties) {
-        return addMapping(column, index, JdbcColumnKey.UNDEFINED_TYPE, properties);
-    }
-
-    /**
-     * append a FieldMapper to the mapping list.
-     *
-     * @param mapper the field jdbcMapper
-     * @return the current builder
-     */
-    public JdbcMapperBuilder<T> addMapper(FieldMapper<ResultSet, T> mapper) {
-        fieldMapperMapperBuilder.addMapper(mapper);
-        return this;
-    }
 
     /**
      * add a new mapping to the specified column with the specified index and the specified type.
@@ -241,13 +128,35 @@ public final class JdbcMapperBuilder<T> {
         return this;
     }
 
-    public JdbcMapperBuilder<T> addMapping(JdbcColumnKey key, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
-        fieldMapperMapperBuilder.addMapping(key, columnDefinition);
-        return this;
+    @Override
+    protected JdbcColumnKey key(String column, int index) {
+        return new JdbcColumnKey(column, index);
     }
 
-    public JdbcMapperBuilder<T> addMapping(JdbcColumnKey key, ColumnProperty... properties) {
-        fieldMapperMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>of(properties));
-        return this;
+    @Override
+    protected JdbcMapper<T> newJoinJdbcMapper(Mapper<ResultSet, T> mapper) {
+        return new JoinDatastaxMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
+    }
+
+    private static class JoinDatastaxMapper<T> extends  JoinMapperImpl<ResultSet, ResultSet, T, SQLException> implements JdbcMapper<T> {
+        public JoinDatastaxMapper(Mapper<ResultSet, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super ResultSet> mappingContextFactory) {
+            super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
+        }
+
+        @Override
+        public MappingContext<? super ResultSet> newMappingContext(ResultSet rs) {
+            return newMappingContext();
+        }
+    }
+
+    private static class ResultSetEnumarableFactory implements OneArgumentFactory<ResultSet, Enumarable<ResultSet>> {
+        @Override
+        public Enumarable<ResultSet> newInstance(ResultSet rows) {
+            return new ResultSetEnumarable(rows);
+        }
+    }
+    @Override
+    protected JdbcMapper<T> newStaticJdbcMapper(Mapper<ResultSet, T> mapper) {
+        return new StaticJdbcMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 }

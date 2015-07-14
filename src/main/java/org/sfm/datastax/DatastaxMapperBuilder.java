@@ -1,25 +1,23 @@
 package org.sfm.datastax;
 
-import com.datastax.driver.core.ColumnDefinitions;
-import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.GettableData;
-import com.datastax.driver.core.Row;
+import com.datastax.driver.core.*;
+import com.datastax.driver.core.exceptions.DriverException;
 import org.sfm.datastax.impl.DatastaxMappingContextFactoryBuilder;
-import org.sfm.datastax.impl.JoinDatastaxMapper;
+import org.sfm.datastax.impl.ResultSetEnumarable;
 import org.sfm.datastax.impl.RowGetterFactory;
 import org.sfm.datastax.impl.StaticDatastaxMapper;
-import org.sfm.map.FieldMapper;
-import org.sfm.map.GetterFactory;
-import org.sfm.map.Mapper;
+import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
-import org.sfm.map.impl.FieldMapperMapperBuilder;
+import org.sfm.map.impl.JoinMapperImpl;
 import org.sfm.map.impl.MapperConfig;
 import org.sfm.map.impl.MapperSourceImpl;
 import org.sfm.map.impl.context.MappingContextFactoryBuilder;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.utils.Enumarable;
+import org.sfm.utils.OneArgumentFactory;
 
 import java.lang.reflect.Type;
 import java.sql.SQLException;
@@ -27,17 +25,11 @@ import java.sql.SQLException;
 /**
  * @param <T> the targeted type of the jdbcMapper
  */
-public final class DatastaxMapperBuilder<T> {
+public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T, DatastaxColumnKey, DatastaxMapper<T>, DatastaxMapperBuilder<T>> {
 
     public static final MapperSourceImpl<GettableData, DatastaxColumnKey> FIELD_MAPPER_SOURCE =
             new MapperSourceImpl<GettableData, DatastaxColumnKey>(GettableData.class, new RowGetterFactory());
 
-    private final FieldMapperMapperBuilder<Row, T, DatastaxColumnKey> fieldMapperMapperBuilder;
-
-    private final MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey, Row>> mapperConfig;
-    private final MappingContextFactoryBuilder<Row, DatastaxColumnKey> mappingContextFactoryBuilder;
-
-    private int calculatedIndex = 1;
 
     /**
      * Build a new DatastaxMapperBuilder targeting the type specified by the TypeReference. The TypeReference
@@ -83,95 +75,9 @@ public final class DatastaxMapperBuilder<T> {
             MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey, Row>> mapperConfig,
             GetterFactory<GettableData, DatastaxColumnKey> getterFactory,
             MappingContextFactoryBuilder<Row, DatastaxColumnKey> parentBuilder) {
-        this.fieldMapperMapperBuilder =
-                new FieldMapperMapperBuilder<Row, T, DatastaxColumnKey>(
-                        FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
-                        classMeta,
-                        mapperConfig,
-                        parentBuilder
-                );
-        this.mapperConfig = mapperConfig;
-        this.mappingContextFactoryBuilder = parentBuilder;
+        super(classMeta, parentBuilder, mapperConfig, FIELD_MAPPER_SOURCE.getterFactory(getterFactory), 0);
     }
 
-    /**
-     * @return a new instance of the jdbcMapper based on the current state of the builder.
-     */
-    public DatastaxMapper<T> mapper() {
-        Mapper<Row, T> mapper = fieldMapperMapperBuilder.mapper();
-
-        if (fieldMapperMapperBuilder.hasJoin()) {
-            return new JoinDatastaxMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
-        } else {
-            return new StaticDatastaxMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
-        }
-    }
-
-    /**
-     * add a new mapping to the specified column with a key column definition and an undefined type.
-     * The index is incremented for each non indexed column mapping.
-     *
-     * @param column the column name
-     * @return the current builder
-     */
-    public DatastaxMapperBuilder<T> addKey(String column) {
-        return addMapping(column, calculatedIndex++, new ColumnProperty[0]);
-    }
-
-    /**
-     * add a new mapping to the specified column with an undefined type. The index is incremented for each non indexed column mapping.
-     *
-     * @param column the column name
-     * @return the current builder
-     */
-    public DatastaxMapperBuilder<T> addMapping(String column) {
-        return addMapping(column, calculatedIndex++);
-    }
-
-    /**
-     * add a new mapping to the specified column with the specified columnDefinition and an undefined type. The index is incremented for each non indexed column mapping.
-     *
-     * @param column           the column name
-     * @param properties the definition
-     * @return the current builder
-     */
-    public DatastaxMapperBuilder<T> addMapping(final String column, final ColumnProperty... properties) {
-        return addMapping(column, calculatedIndex++, properties);
-    }
-
-    /**
-     * add a new mapping to the specified column with the specified index and an undefined type.
-     *
-     * @param column the column name
-     * @param index  the column index
-     * @return the current builder
-     */
-    public DatastaxMapperBuilder<T> addMapping(String column, int index) {
-        return addMapping(column, index, (DataType)null);
-    }
-
-    /**
-     * add a new mapping to the specified column with the specified index, specified column definition and an undefined type.
-     *
-     * @param column           the column name
-     * @param index            the column index
-     * @param properties the column properties
-     * @return the current builder
-     */
-    public DatastaxMapperBuilder<T> addMapping(String column, int index, final ColumnProperty... properties) {
-        return addMapping(column, index, null, properties);
-    }
-
-    /**
-     * append a FieldMapper to the mapping list.
-     *
-     * @param mapper the field jdbcMapper
-     * @return the current builder
-     */
-    public DatastaxMapperBuilder<T> addMapper(FieldMapper<Row, T> mapper) {
-        fieldMapperMapperBuilder.addMapper(mapper);
-        return this;
-    }
 
     /**
      * add a new mapping to the specified column with the specified index and the specified type.
@@ -214,8 +120,31 @@ public final class DatastaxMapperBuilder<T> {
         return this;
     }
 
-    public DatastaxMapperBuilder<T> addMapping(DatastaxColumnKey key, ColumnProperty... properties) {
-        fieldMapperMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<DatastaxColumnKey, Row>of(properties));
-        return this;
+    @Override
+    protected DatastaxColumnKey key(String column, int index) {
+        return new DatastaxColumnKey(column, index);
+    }
+
+    @Override
+    protected DatastaxMapper<T> newJoinJdbcMapper(Mapper<Row, T> mapper) {
+        return new JoinDatastaxMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
+    }
+
+    private static class JoinDatastaxMapper<T> extends  JoinMapperImpl<Row, ResultSet, T, DriverException> implements DatastaxMapper<T> {
+        public JoinDatastaxMapper(Mapper<Row, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
+            super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
+        }
+    }
+
+    private static class ResultSetEnumarableFactory implements OneArgumentFactory<ResultSet, Enumarable<Row>> {
+        @Override
+        public Enumarable<Row> newInstance(ResultSet rows) {
+            return new ResultSetEnumarable(rows);
+        }
+    }
+
+    @Override
+    protected DatastaxMapper<T> newStaticJdbcMapper(Mapper<Row, T> mapper) {
+        return new StaticDatastaxMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 }

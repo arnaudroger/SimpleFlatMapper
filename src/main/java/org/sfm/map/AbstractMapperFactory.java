@@ -5,6 +5,7 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.Predicate;
+import org.sfm.utils.TargetType;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -146,7 +147,6 @@ public abstract class AbstractMapperFactory<K extends FieldKey<K>, CD extends Co
 				.rowHandlerErrorHandler(rowHandlerErrorHandler)
 				.maxMethodSize(maxMethodSize);
 	}
-
 
 	/**
 	 * Associate an alias on the column key to rename to value.

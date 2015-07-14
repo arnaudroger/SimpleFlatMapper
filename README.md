@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/simpleFlatMapper.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/simpleFlatMapper)
-[![JavaDoc](https://img.shields.io/badge/javadoc-1.10.2-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/simpleFlatMapper)
+[![JavaDoc](https://img.shields.io/badge/javadoc-1.10.3-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/simpleFlatMapper)
 [![License](https://img.shields.io/github/license/arnaudroger/simpleFlatMapper.svg)](https://raw.githubusercontent.com/arnaudroger/SimpleFlatMapper/master/LICENSE)
 
 [![Java 6](https://img.shields.io/badge/java-6-orange.svg)](#java-6)[![Java 7](https://img.shields.io/badge/java-7-green.svg)](#java-7)[![Java 8](https://img.shields.io/badge/java-8-brightgreen.svg)](#java-8)
@@ -11,7 +11,7 @@
 * Concurrency issue [#183](https://github.com/arnaudroger/SimpleFlatMapper/issues/183) for join mapper fixed in [1.9.1](https://github.com/arnaudroger/SimpleFlatMapper/issues?q=milestone%3A1.9.1)
 * To many classes generated with CsvParser Dsl with version 1.7.4 and 1.7.5 if you don't cache the DSL object. asm disabled in  [1.7.6](https://github.com/arnaudroger/SimpleFlatMapper/issues?q=milestone%3A1.7.6) and proper class cache in [1.7.7](https://github.com/arnaudroger/SimpleFlatMapper/issues?q=milestone%3A1.7.7). issues [#154](https://github.com/arnaudroger/SimpleFlatMapper/issues/154) [#156](https://github.com/arnaudroger/SimpleFlatMapper/issues/156)
 
-# Simple Flat Mapper (SFM) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.10.2)
+# Simple Flat Mapper (SFM) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.10.3)
 
 [Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 
@@ -85,7 +85,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.10.2</version>
+			<version>1.10.3</version>
 		</dependency>
 ```
 
@@ -95,7 +95,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.10.2</version>
+			<version>1.10.3</version>
 			<classifier>jdk17</classifier>
 		</dependency>
 ```
@@ -106,7 +106,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>simpleFlatMapper</artifactId>
-			<version>1.10.2</version>
+			<version>1.10.3</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 ```

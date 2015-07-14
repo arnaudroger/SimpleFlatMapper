@@ -53,6 +53,9 @@ public abstract class CsvMapperCellHandler<T> {
 
 
     protected final void fieldError(int cellIndex, Exception e) {
+        if (fieldErrorHandler == null) {
+            ErrorHelper.rethrow(e);
+        }
         fieldErrorHandler.errorMappingField(getColumn(cellIndex), this, currentInstance, e);
     }
 

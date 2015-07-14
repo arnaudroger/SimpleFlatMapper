@@ -62,10 +62,11 @@ public class CsvColumnDefinitionTest {
         assertTrue(compose.isKey());
         assertSame(appliesTo, compose.keyAppliesTo());
 
-        assertEquals("ColumnDefinition{DateFormat{'yyyyMM'}," +
+        final String toString = compose.addIgnore().toString();
+        assertTrue(toString.startsWith("ColumnDefinition{DateFormat{'yyyyMM'}," +
                 " Rename{'blop'}, CustomReader{CellValueReader}," +
                 " CellValueReaderFactory{CellValueReaderFactory}," +
-                " TimeZone{Central European Time}, Key{}, Ignore{}}", compose.addIgnore().toString());
+                " TimeZone{Central European"));
 
 
 

@@ -112,7 +112,7 @@ public class CsvMapperBuilder<T> {
 	}
 
 	public final CsvMapper<T> mapper() {
-        ParsingContextFactoryBuilder parsingContextFactoryBuilder = new ParsingContextFactoryBuilder(propertyMappingsBuilder.size());
+        ParsingContextFactoryBuilder parsingContextFactoryBuilder = new ParsingContextFactoryBuilder(propertyMappingsBuilder.maxIndex() + 1);
 
         Tuple3<Map<Parameter, Getter<? super CsvMapperCellHandler<T>, ?>>, Integer, Boolean> constructorParams = buildConstructorParametersDelayedCellSetter();
         final Instantiator<CsvMapperCellHandler<T>, T> instantiator = getInstantiator(constructorParams.first());

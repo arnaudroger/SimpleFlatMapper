@@ -156,4 +156,14 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
     public boolean isDirectProperty() {
         return  (properties.size() == 1 && properties.get(0) != null && properties.get(0).getPropertyMeta() instanceof DirectClassMeta.DirectPropertyMeta);
     }
+
+	public int maxIndex() {
+		int i = -1;
+		for (PropertyMapping<T, ?, K, D> prop : properties) {
+			if (prop != null) {
+				i = Math.max(i, prop.getColumnKey().getIndex());
+			}
+		}
+		return i;
+	}
 }

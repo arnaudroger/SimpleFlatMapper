@@ -106,18 +106,18 @@ public final class DynamicMapper<R, S, T, E extends Exception, K extends FieldKe
 		SetRowMapper<R, S, T, E> mapper = mapperCache.get(key);
 
 		if (mapper == null) {
-			final JdbcMapperBuilder<T> builder =
-					new JdbcMapperBuilder<T>(
-							classMeta,
-							mapperConfig,
-							getterFactory,
-							new JdbcMappingContextFactoryBuilder());
-
-			for(K k : key.getColumns()) {
-				builder.addMapping(k, FieldMapperColumnDefinition.<K, S>identity());
-			}
-
-			mapper = builder.mapper();
+//			final JdbcMapperBuilder<T> builder =
+//					new JdbcMapperBuilder<T>(
+//							classMeta,
+//							mapperConfig,
+//							getterFactory,
+//							new JdbcMappingContextFactoryBuilder());
+//
+//			for(K k : key.getColumns()) {
+//				builder.addMapping(k, FieldMapperColumnDefinition.<K, S>identity());
+//			}
+//
+//			mapper = builder.mapper();
 
 			mapperCache.add(key, mapper);
 		}

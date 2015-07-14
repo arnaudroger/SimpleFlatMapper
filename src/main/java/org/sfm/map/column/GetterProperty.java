@@ -6,11 +6,11 @@ import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
 
-public class CustomGetterProperty implements ColumnProperty {
+public class GetterProperty implements ColumnProperty {
 
     private final Getter<?, ?> getter;
 
-    public CustomGetterProperty(Getter<?, ?> getter) {
+    public GetterProperty(Getter<?, ?> getter) {
         this.getter = getter;
     }
 

@@ -5,15 +5,17 @@ import org.sfm.map.Mapper;
 import org.sfm.map.impl.MapperCache;
 import org.sfm.map.impl.TargetColumnsMapperKey;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 /**
  * Integration point with jooq.<p>
  * Provide a JooqRecordMapper backed by an Sfm {@link org.jooq.Record} {@link org.sfm.map.Mapper}
  */
 public class SfmRecordMapperProvider implements RecordMapperProvider {
 
-	private final MapperCache<TargetColumnsMapperKey, Mapper<Record, ?>> mapperCache = new MapperCache<TargetColumnsMapperKey, Mapper<Record, ?>>();
+	private final ConcurrentMap<TargetColumnsMapperKey, Mapper<Record, ?>> mapperCache = new ConcurrentHashMap<TargetColumnsMapperKey, Mapper<Record, ?>>();
 
-	
 	@Override
 	public <R extends Record, E> RecordMapper<R, E> provide(RecordType<R> recordType, Class<? extends E> type) {
 		
@@ -31,7 +33,7 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 			}
 			
 			mapper = mapperBuilder.mapper();
-			mapperCache.add(key, mapper);
+			mapperCache.putIfAbsent(key, mapper);
 		}
 		
 		return new JooqRecordMapperWrapper<R, E>(mapper);
@@ -47,5 +49,4 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 		
 		return new TargetColumnsMapperKey(type, columns);
 	}
-
 }

@@ -1,17 +1,19 @@
 package org.sfm.map.impl;
 
+import org.sfm.map.FieldKey;
+
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class MapperCache<K, M> {
+public final class MapperCache<K extends FieldKey<K>, M> {
 
 	@SuppressWarnings("unchecked")
 	private final AtomicReference<CacheEntry<K, M>[]> mapperCache = new AtomicReference<CacheEntry<K, M>[]>(new CacheEntry[0]);
 	
-	private static final class CacheEntry<K, M> {
-		final K key;
+	private static final class CacheEntry<K extends FieldKey<K>, M> {
+		final MapperKey<K> key;
 		final M mapper;
-		CacheEntry(final K key, final M mapper) {
+		CacheEntry(final MapperKey<K> key, final M mapper) {
 			this.key = key;
 			this.mapper = mapper;
 		}
@@ -24,7 +26,7 @@ public final class MapperCache<K, M> {
         }
     }
 	@SuppressWarnings("unchecked")
-	public void add(final K key, final M mapper) {
+	public void add(final MapperKey<K> key, final M mapper) {
 		CacheEntry<K, M>[] entries;
 		CacheEntry<K, M>[] newEntries;
 		do {
@@ -45,7 +47,7 @@ public final class MapperCache<K, M> {
 		} while(!mapperCache.compareAndSet(entries, newEntries));
 	}
 
-	public M get(K key) {
+	public M get(MapperKey<K> key) {
 		final CacheEntry<K, M>[] entries = mapperCache.get();
         for (final CacheEntry<K, M> entry : entries) {
             if (entry.key.equals(key)) {

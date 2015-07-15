@@ -14,8 +14,8 @@ import static org.junit.Assert.assertSame;
 public class MapperCacheTest {
 
 	@Test
-	public void testMapperCache() throws SQLException, ParseException, Exception {
-		MapperCache<MapperKey<CsvColumnKey>, Object> cache = new MapperCache<MapperKey<CsvColumnKey>, Object>();
+	public void testMapperCache() throws Exception {
+		MapperCache<CsvColumnKey, Object> cache = new MapperCache<CsvColumnKey, Object>();
 		MapperKey<CsvColumnKey> key = new MapperKey<CsvColumnKey> (new CsvColumnKey("col1", 1), new CsvColumnKey("col2", 2));
 		Object delegate = cache.get(key);
 		assertNull(delegate);

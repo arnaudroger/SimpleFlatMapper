@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 public class DynamicSetRowMapper<R, S, T, E extends Exception, K extends FieldKey<K>> implements SetRowMapper<R, S, T, E> {
 
 
-    private final MapperCache<MapperKey<K>, SetRowMapper<R, S, T, E>> mapperCache = new MapperCache<MapperKey<K>, SetRowMapper<R, S, T, E>>();
+    private final MapperCache<K, SetRowMapper<R, S, T, E>> mapperCache = new MapperCache<K, SetRowMapper<R, S, T, E>>();
 
 	private final UnaryFactory<MapperKey<K>, SetRowMapper<R, S, T, E>> mapperFactory;
 

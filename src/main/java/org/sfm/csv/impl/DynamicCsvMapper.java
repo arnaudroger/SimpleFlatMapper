@@ -31,7 +31,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	private final MapperConfig<CsvColumnKey, CsvColumnDefinition> mapperConfig;
 
-	private final MapperCache<MapperKey, CsvMapperImpl<T>> mapperCache = new MapperCache<MapperKey, CsvMapperImpl<T>>();
+	private final MapperCache<CsvColumnKey, CsvMapperImpl<T>> mapperCache = new MapperCache<CsvColumnKey, CsvMapperImpl<T>>();
 
 	public DynamicCsvMapper(final Type target,
 							final ClassMeta<T> classMeta,

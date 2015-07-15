@@ -28,7 +28,7 @@ public class DynamicSheetMapper<T> implements SheetMapper<T> {
     private final int startRow = 0;
 
 
-    private final MapperCache<MapperKey<CsvColumnKey>, SheetMapper<T>> mapperCache = new MapperCache<MapperKey<CsvColumnKey>, SheetMapper<T>>();
+    private final MapperCache<CsvColumnKey, SheetMapper<T>> mapperCache = new MapperCache<CsvColumnKey, SheetMapper<T>>();
     private final ClassMeta<T> classMeta;
     private final MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> mapperConfig;
     private final GetterFactory<Row, CsvColumnKey> getterFactory;

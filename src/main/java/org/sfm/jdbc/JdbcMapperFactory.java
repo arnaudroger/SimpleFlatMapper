@@ -223,7 +223,7 @@ public final class JdbcMapperFactory
 
 	@Override
 	protected <T> UnaryFactory<MapperKey<JdbcColumnKey>, SetRowMapper<ResultSet,ResultSet,T,SQLException>> newMapperFactory(ClassMeta<T> classMeta) {
-		return new SetRowMapperFactory<>(classMeta);
+		return new SetRowMapperFactory<T>(classMeta);
 	}
 
 	/**

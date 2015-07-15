@@ -292,6 +292,8 @@
                             <includes>
                                 <include>src/main/java/org/sfm/**/*</include>
                                 <include>src/test/java/org/sfm/**/*</include>
+                                <include>*/src/main/java/org/sfm/**/*</include>
+                                <include>*/src/test/java/org/sfm/**/*</include>
                             </includes>
                             <excludes>
                                 <exclude>target/**</exclude>

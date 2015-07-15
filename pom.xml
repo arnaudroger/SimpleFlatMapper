@@ -1,407 +1,357 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.simpleflatmapper</groupId>
-	<artifactId>simpleFlatMapper</artifactId>
-	<version>1.10.4-SNAPSHOT</version>
-	<packaging>bundle</packaging>
+    <groupId>org.simpleflatmapper</groupId>
+    <artifactId>sfm-parent</artifactId>
+    <version>1.10.4-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-	<name>SimpleFlatMapper</name>
-	<url>http://github.com/arnaudroger/SimpleFlatMapper</url>
+    <name>sfm-parent</name>
+    <url>http://github.com/arnaudroger/SimpleFlatMapper</url>
 
-	<description>Java library to map flat record - ResultSet, csv - to java object with minimum configuration and low footprint.</description>
+    <description>Java library to map flat record - ResultSet, csv - to java object with minimum configuration and low
+        footprint.
+    </description>
 
-	<developers>
-		<developer>
-			<id>arnaudroger</id>
-			<name>Arnaud Roger</name>
-			<email>arnaud.roger@gmail.com</email>
-		</developer>
-	</developers>
+    <developers>
+        <developer>
+            <id>arnaudroger</id>
+            <name>Arnaud Roger</name>
+            <email>arnaud.roger@gmail.com</email>
+        </developer>
+    </developers>
 
-	<licenses>
-		<license>
-			<name>The MIT License (MIT)</name>
-			<url>http://opensource.org/licenses/MIT</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+    <licenses>
+        <license>
+            <name>The MIT License (MIT)</name>
+            <url>http://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
-	<scm>
-		<url>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</url>
-		<connection>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</connection>
-		<developerConnection>scm:git:git@github.com:arnaudroger/SimpleFlatMapper.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+    <scm>
+        <url>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</url>
+        <connection>scm:git:git://github.com/arnaudroger/SimpleFlatMapper.git</connection>
+        <developerConnection>scm:git:git@github.com:arnaudroger/SimpleFlatMapper.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<source.classifier>sources</source.classifier>
-		<javadoc.classifier>javadoc</javadoc.classifier>
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <source.classifier>sources</source.classifier>
+        <javadoc.classifier>javadoc</javadoc.classifier>
+    </properties>
 
-	<build>
-		<plugins>
-		
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.5.0</version>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Export-Package>org.sfm.map,org.sfm.jdbc,org.sfm.osgi,org.sfm.utils</Export-Package>
-						<Import-Package>*;resolution:=optional</Import-Package>
-						<Bundle-Activator>org.sfm.osgi.SfmBundleActivator</Bundle-Activator>
-					</instructions>
-				</configuration>
-			</plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.1</version>
-                <configuration>
-                    <classifier>${javadoc.classifier}</classifier>
-                    <header>
-                        <![CDATA[<a href="http://www.simpleflatmapper.org">SimpleFlatMapper</a> hosted on <a href="https://github.com/arnaudroger/SimpleFlatMapper">GitHub</a>]]>
-                    </header>
-                </configuration>
-            </plugin>
-		</plugins>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.ow2.asm</groupId>
-			<artifactId>asm-all</artifactId>
-			<version>5.0.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>4.1.6.RELEASE</version>
-            <optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>javax.persistence</artifactId>
-			<version>2.1.0</version>
+    <modules>
+        <module>sfm</module>
+        <module>sfm-datastax</module>
+        <module>sfm-jooq</module>
+        <module>sfm-poi</module>
+        <module>sfm-querydsl</module>
+        <module>sfm-sql2o</module>
+        <module>sfm-springjdbc</module>
+        <module>sfm-test</module>
+    </modules>
+
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>2.5.0</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <instructions>
+                            <Export-Package>!*.impl,org.sfm.*</Export-Package>
+                            <Import-Package>*;optional=true;resolution:=optional,*</Import-Package>
+                        </instructions>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.1</version>
+                    <configuration>
+                        <classifier>${javadoc.classifier}</classifier>
+                        <header>
+                            <![CDATA[<a href="http://www.simpleflatmapper.org">SimpleFlatMapper</a> hosted on <a href="https://github.com/arnaudroger/SimpleFlatMapper">GitHub</a>]]>
+                        </header>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-all</artifactId>
+            <version>5.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.8</version>
             <optional>true</optional>
         </dependency>
-		<dependency>
-			<groupId>org.sql2o</groupId>
-			<artifactId>sql2o</artifactId>
-			<version>1.5.4</version>
-            <optional>true</optional>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
         </dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-			<version>6.0.0</version>
-            <optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.mysema.querydsl</groupId>
-			<artifactId>querydsl-sql</artifactId>
-			<version>3.6.4</version>
-            <optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.jooq</groupId>
-			<artifactId>jooq</artifactId>
-			<version>3.6.2</version>
-            <optional>true</optional>
-		</dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.3.2</version>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.8</version>
-            <optional>true</optional>
-		</dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>2.0.2-beta</version>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>3.12</version>
-			<optional>true</optional>
-		</dependency>
+    </dependencies>
 
-		<dependency>
-			<groupId>com.datastax.cassandra</groupId>
-			<artifactId>cassandra-driver-core</artifactId>
-			<version>2.1.6</version>
-			<optional>true</optional>
+    <profiles>
+        <profile>
+            <id>travis</id>
+            <activation>
+                <property>
+                    <name>env.TRAVIS</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>2.2.0</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.7.1.201405082137</version>
+                        <executions>
+                            <execution>
+                                <id>jacoco-initialize</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>jacoco-site</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <configuration>
+                            <passphrase>${gpg.passphrase}</passphrase>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <configuration>
+                            <classifier>${source.classifier}</classifier>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>2.5.1</version>
+                        <configuration>
+                            <goals>deploy nexus-staging:release</goals>
+                            <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.2</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>sonatype-nexus-staging</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
-		<!--<dependency>-->
-			<!--<groupId>org.hibernate</groupId>-->
-			<!--<artifactId>hibernate-core</artifactId>-->
-			<!--<version>4.3.6.Final</version>-->
-			<!--<optional>true</optional>-->
-		<!--</dependency>-->
+        <profile>
+            <id>jdk16</id>
+            <activation>
+                <jdk>1.6</jdk>
+            </activation>
+            <properties>
+                <source.classifier>jdk16-sources</source.classifier>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+            </properties>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>2.3.2</version>
-			<scope>test</scope>
-		</dependency>
+            <build>
+                <pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>maven-bundle-plugin</artifactId>
+                        <configuration>
+                            <classifier>jdk16</classifier>
+                            <instructions>
+                                <Export-Package>org.sfm.map,org.sfm.jdbc,org.sfm.osgi,org.sfm.utils</Export-Package>
+                            </instructions>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>replacer</artifactId>
+                        <version>1.5.2</version>
+                        <executions>
+                            <execution>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <includes>
+                                <include>src/main/java/org/sfm/**/*</include>
+                                <include>src/test/java/org/sfm/**/*</include>
+                            </includes>
+                            <excludes>
+                                <exclude>target/**</exclude>
+                            </excludes>
+                            <replacements>
+                                <replacement>
+                                    <token>//IFJAVA8_START</token>
+                                    <value>/*IFJAVA8_START</value>
+                                </replacement>
+                                <replacement>
+                                    <token>//IFJAVA8_END</token>
+                                    <value>IFJAVA8_END*/</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </plugin>
 
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>2.0.2-beta</version>
-			<scope>test</scope>
-		</dependency>
-
-	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>travis</id>
-			<activation>
-				<property>
-					<name>env.TRAVIS</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eluder.coveralls</groupId>
-						<artifactId>coveralls-maven-plugin</artifactId>
-						<version>2.2.0</version>
-					</plugin>
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.7.1.201405082137</version>
-						<executions>
-							<execution>
-								<id>jacoco-initialize</id>
-								<goals>
-									<goal>prepare-agent</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>jacoco-site</id>
-								<phase>package</phase>
-								<goals>
-									<goal>report</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<id>release-sign-artifacts</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.4</version>
-						<configuration>
-							<passphrase>${gpg.passphrase}</passphrase>
-						</configuration>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<version>2.2.1</version>
-						<configuration>
-							<classifier>${source.classifier}</classifier>
-						</configuration>
-						<executions>
-							<execution>
-								<id>attach-sources</id>
-								<goals>
-									<goal>jar-no-fork</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.10.1</version>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-release-plugin</artifactId>
-						<version>2.5.1</version>
-						<configuration>
-							<goals>deploy nexus-staging:release</goals>
-							<arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.2</version>
-						<extensions>true</extensions>
-						<configuration>
-							<serverId>sonatype-nexus-staging</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<id>jdk16</id>
-			<activation>
-				<jdk>1.6</jdk>
-			</activation>
-			<properties>
-				<source.classifier>jdk16-sources</source.classifier>
-				<maven.javadoc.skip>true</maven.javadoc.skip>
-			</properties>
-
-			<build>
-				<plugins>
-					<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<configuration>
-							<classifier>jdk16</classifier>
-												<instructions>
-						<Export-Package>org.sfm.map,org.sfm.jdbc,org.sfm.osgi,org.sfm.utils</Export-Package>
-						<Import-Package>*;resolution:=optional</Import-Package>
-						<Bundle-Activator>org.sfm.osgi.SfmBundleActivator</Bundle-Activator>
-					</instructions>
-				</configuration>
-			</plugin>
-					<plugin>
-						<artifactId>maven-jar-plugin</artifactId>
-						<configuration>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-						<version>1.5.2</version>
-						          <executions>                
-			                <execution>
-			                    <phase>process-sources</phase>
-			                    <goals>
-			                        <goal>replace</goal>
-			                    </goals>
-			                </execution>
-			            </executions>
-						<configuration>
-							<includes>
-								<include>src/main/java/org/sfm/**/*</include>
-								<include>src/test/java/org/sfm/**/*</include>
-							</includes>
-							<excludes>
-								<exclude>target/**</exclude>
-							</excludes>
-							<replacements>
-								<replacement>
-									<token>//IFJAVA8_START</token>
-									<value>/*IFJAVA8_START</value>
-								</replacement>
-								<replacement>
-									<token>//IFJAVA8_END</token>
-									<value>IFJAVA8_END*/</value>
-								</replacement>
-							</replacements>
-						</configuration>
-					</plugin>
-				
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.1</version>
-						<configuration>
-							<source>1.6</source>
-							<target>1.6</target>
-							<excludes>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.1</version>
+                        <configuration>
+                            <source>1.6</source>
+                            <target>1.6</target>
+                            <excludes>
                                 <exclude>**/org/sfm/sql2o/*</exclude>
                                 <exclude>**/org/sfm/**/*Spliterator*</exclude>
-								<exclude>**/org/sfm/**/*Optional*</exclude>
-								<exclude>**/org/sfm/**/time/*</exclude>
-							</excludes>
-						</configuration>
+                                <exclude>**/org/sfm/**/*Optional*</exclude>
+                                <exclude>**/org/sfm/**/time/*</exclude>
+                            </excludes>
+                        </configuration>
 
-						<executions>
-							<execution>
-								<id>default-testCompile</id>
-								<phase>test-compile</phase>
-								<configuration>
-									<testExcludes>
-										<exclude>**/org/sfm/sql2o/*</exclude>
+                        <executions>
+                            <execution>
+                                <id>default-testCompile</id>
+                                <phase>test-compile</phase>
+                                <configuration>
+                                    <testExcludes>
+                                        <exclude>**/org/sfm/sql2o/*</exclude>
                                         <exclude>**/org/sfm/tuples/fasttuple/**/*</exclude>
                                         <exclude>**/org/sfm/tuples/jool/**/*</exclude>
-										<exclude>**/org/sfm/**/*Optional*</exclude>
-										<exclude>**/org/sfm/**/time/*</exclude>
+                                        <exclude>**/org/sfm/**/*Optional*</exclude>
+                                        <exclude>**/org/sfm/**/time/*</exclude>
                                     </testExcludes>
-								</configuration>
-								<goals>
-									<goal>testCompile</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>jdk17</id>
-			<activation>
-				<jdk>1.7</jdk>
-			</activation>
+                                </configuration>
+                                <goals>
+                                    <goal>testCompile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>jdk17</id>
+            <activation>
+                <jdk>1.7</jdk>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>com.boundary</groupId>
@@ -410,69 +360,70 @@
                     <optional>true</optional>
                 </dependency>
             </dependencies>
-			<properties>
-				<source.classifier>jdk17-sources</source.classifier>
-				<maven.javadoc.skip>true</maven.javadoc.skip>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<configuration>
-							<classifier>jdk17</classifier>
-												<instructions>
-						<Export-Package>org.sfm.map,org.sfm.jdbc,org.sfm.osgi,org.sfm.utils</Export-Package>
-						<Import-Package>*;resolution:=optional</Import-Package>
-						<Bundle-Activator>org.sfm.osgi.SfmBundleActivator</Bundle-Activator>
-					</instructions>
-				</configuration>
-			</plugin>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-						<version>1.5.2</version>
-						          <executions>                
-			                <execution>
-			                    <phase>process-sources</phase>
-			                    <goals>
-			                        <goal>replace</goal>
-			                    </goals>
-			                </execution>
-			            </executions>
-						<configuration>
-							<includes>
-								<include>src/main/java/org/sfm/**/*</include>
-								<include>src/test/java/org/sfm/**/*</include>
-							</includes>
-							<excludes>
-								<exclude>target/**</exclude>
-							</excludes>
-							<replacements>
-								<replacement>
-									<token>//IFJAVA8_START</token>
-									<value>/*IFJAVA8_START </value>
-								</replacement>
-								<replacement>
-									<token>//IFJAVA8_END</token>
-									<value>IFJAVA8_END*/</value>
-								</replacement>
-							</replacements>
-						</configuration>
-					</plugin>
-				
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.1</version>
-						<configuration>
-							<source>1.7</source>
-							<target>1.7</target>
+            <properties>
+                <source.classifier>jdk17-sources</source.classifier>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+            </properties>
+            <build>
+                <pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>maven-bundle-plugin</artifactId>
+                        <configuration>
+                            <classifier>jdk17</classifier>
+                            <instructions>
+                                <Export-Package>org.sfm.map,org.sfm.jdbc,org.sfm.osgi,org.sfm.utils</Export-Package>
+                            </instructions>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>replacer</artifactId>
+                        <version>1.5.2</version>
+                        <executions>
+                            <execution>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <includes>
+                                <include>src/main/java/org/sfm/**/*</include>
+                                <include>src/test/java/org/sfm/**/*</include>
+                                <include>*/src/main/java/org/sfm/**/*</include>
+                                <include>*/src/test/java/org/sfm/**/*</include>
+                            </includes>
+                            <excludes>
+                                <exclude>target/**</exclude>
+                            </excludes>
+                            <replacements>
+                                <replacement>
+                                    <token>//IFJAVA8_START</token>
+                                    <value>/*IFJAVA8_START</value>
+                                </replacement>
+                                <replacement>
+                                    <token>//IFJAVA8_END</token>
+                                    <value>IFJAVA8_END*/</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.1</version>
+                        <configuration>
+                            <source>1.7</source>
+                            <target>1.7</target>
 
                             <excludes>
                                 <exclude>**/org/sfm/**/*Spliterator*</exclude>
-								<exclude>**/org/sfm/**/*Optional*</exclude>
-								<exclude>**/org/sfm/**/time/*</exclude>
+                                <exclude>**/org/sfm/**/*Optional*</exclude>
+                                <exclude>**/org/sfm/**/time/*</exclude>
                             </excludes>
 
                         </configuration>
@@ -484,8 +435,8 @@
                                 <configuration>
                                     <testExcludes>
                                         <exclude>**/org/sfm/tuples/jool/**/*</exclude>
-										<exclude>**/org/sfm/**/*Optional*</exclude>
-										<exclude>**/org/sfm/**/time/*</exclude>
+                                        <exclude>**/org/sfm/**/*Optional*</exclude>
+                                        <exclude>**/org/sfm/**/time/*</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>
@@ -493,10 +444,11 @@
                                 </goals>
                             </execution>
                         </executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+                    </plugin>
+                </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
 
         <profile>
             <id>jdk18</id>
@@ -522,29 +474,31 @@
         <profile>
             <id>ga</id>
             <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.1</version>
-                        <configuration>
-                            <classifier>${javadoc.classifier}</classifier>
-                            <footer><![CDATA[<script type="text/javascript">
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script type="text/javascript">
-try {
-    var pageTracker = _gat._getTracker("UA-59470416-1");
-    pageTracker._trackPageview();
-} catch(err) {}
-</script>]]></footer>
-                        </configuration>
-                    </plugin>
-                </plugins>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>2.10.1</version>
+                            <configuration>
+                                <classifier>${javadoc.classifier}</classifier>
+                                <footer><![CDATA[<script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+        try {
+        var pageTracker = _gat._getTracker("UA-59470416-1");
+        pageTracker._trackPageview();
+        } catch(err) {}
+        </script>]]></footer>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
             </build>
         </profile>
-	</profiles>
+    </profiles>
 
     <repositories>
         <repository>
@@ -552,16 +506,16 @@ try {
             <url>https://arnaudroger.github.io/SimpleFlatMapper/maven/repository</url>
         </repository>
     </repositories>
-	<distributionManagement>
-		<snapshotRepository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus snapshot repository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>sonatype-nexus-staging</id>
-			<name>Sonatype Nexus release repository</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus snapshot repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Sonatype Nexus release repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 </project>

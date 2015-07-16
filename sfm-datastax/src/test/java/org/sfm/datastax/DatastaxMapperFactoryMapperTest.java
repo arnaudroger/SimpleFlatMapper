@@ -33,7 +33,7 @@ public class DatastaxMapperFactoryMapperTest extends AbstractCassandraUnit4TestC
                 Cluster
                     .builder()
                     .addContactPointsWithPorts(
-                            Arrays.asList(new InetSocketAddress(InetAddress.getLoopbackAddress(), 9142)))
+                            Arrays.asList(new InetSocketAddress("localhost", 9142)))
                         .build();
             Metadata metadata = cluster.getMetadata();
 

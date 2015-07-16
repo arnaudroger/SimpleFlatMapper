@@ -57,7 +57,7 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
             return (Getter<GettableData, P>) new DatastaxInetAddressGetter(key.getIndex());
         }
         if (TypeHelper.isEnum(target)) {
-            final Getter<GettableData, ? extends Enum<?>> getter = enumGetter(key, TypeHelper.toClass(target));
+            final Getter getter = enumGetter(key, TypeHelper.toClass(target));
             if (getter != null) {
                 return (Getter<GettableData, P>)getter;
             }

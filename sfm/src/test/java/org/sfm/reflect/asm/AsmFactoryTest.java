@@ -5,14 +5,14 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.jdbc.JdbcColumnKey;
-import org.sfm.jdbc.JdbcMappingContextFactoryBuilder;
+import org.sfm.jdbc.impl.getter.IntResultSetGetter;
 import org.sfm.jdbc.impl.getter.LongResultSetGetter;
-import org.sfm.jdbc.impl.getter.OrdinalEnumResultSetGetter;
 import org.sfm.jdbc.impl.getter.StringResultSetGetter;
 import org.sfm.map.Mapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
+import org.sfm.map.impl.getter.OrdinalEnumGetter;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.Getter;
@@ -73,7 +73,7 @@ public class AsmFactoryTest {
 	@Test
 	public void testCreateInstantiatorFinalDbObjectNameAndType() throws Exception {
 		HashMap<Parameter, Getter<? super ResultSet, ?>> injections = new HashMap<Parameter, Getter<? super ResultSet, ?>>();
-		injections.put(new Parameter("typeOrdinal", Type.class), new OrdinalEnumResultSetGetter<Type>(1, Type.class));
+		injections.put(new Parameter("typeOrdinal", Type.class), new OrdinalEnumGetter<ResultSet, Type>(new IntResultSetGetter(1), Type.class));
 		injections.put(new Parameter("name", String.class), new StringResultSetGetter(2));
 
 		List<InstantiatorDefinition> instantiatorDefinitions = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class);

@@ -113,6 +113,9 @@ public class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends Colum
     }
 
     public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> of(ColumnProperty[] properties) {
+        if (properties == null || properties.length == 0) {
+            return IDENTITY;
+        }
         return new FieldMapperColumnDefinition<K, S>(properties);
     }
 }

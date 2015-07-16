@@ -1,9 +1,13 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.GettableData;
+import com.datastax.driver.core.ResultSet;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.GetterFactory;
+import org.sfm.map.impl.getter.EnumUnspeficiedTypeGetter;
+import org.sfm.map.impl.getter.OrdinalEnumGetter;
+import org.sfm.map.impl.getter.StringEnumGetter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
@@ -51,6 +55,28 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
         }
         if (TypeHelper.isClass(target, InetAddress.class)) {
             return (Getter<GettableData, P>) new DatastaxInetAddressGetter(key.getIndex());
+        }
+        if (TypeHelper.isEnum(target)) {
+            final Getter<GettableData, ? extends Enum<?>> getter = enumGetter(key, TypeHelper.toClass(target));
+            if (getter != null) {
+                return (Getter<GettableData, P>)getter;
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <E extends Enum<E>> Getter<GettableData, E> enumGetter(DatastaxColumnKey key, Class<?> enumClass) {
+
+        if (key.getDateType() != null) {
+            final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+            if (Number.class.isAssignableFrom(javaClass)) {
+                return new OrdinalEnumGetter<GettableData, E>(new DatastaxIntegerGetter(key.getIndex()), (Class<E>)enumClass);
+            } else if (String.class.equals(javaClass)) {
+                return new StringEnumGetter<GettableData, E>(new DatastaxStringGetter(key.getIndex()), (Class<E>)enumClass);
+            }
+        } else {
+            return new EnumUnspeficiedTypeGetter<GettableData, E>(new DatastaxObjectGetter(key.getIndex()), (Class<E>)enumClass);
         }
         return null;
     }

@@ -1,25 +1,25 @@
-package org.sfm.jdbc.impl.getter;
+package org.sfm.map.impl.getter;
 
 import org.sfm.reflect.EnumHelper;
 import org.sfm.reflect.Getter;
 
 import java.sql.ResultSet;
 
-public final class EnumResultSetGetter<E extends Enum<E>> implements  Getter<ResultSet, E> {
+public final class EnumUnspeficiedTypeGetter<R, E extends Enum<E>> implements  Getter<R, E> {
 
-	private final int columnIndex;
+	private final Getter<R, ?> getter;
 	private final Class<E> enumType;
 	private final E[] values;
 	
-	public EnumResultSetGetter(final int column, final Class<E> enumType)  {
-		this.columnIndex = column;
+	public EnumUnspeficiedTypeGetter(Getter<R, ?> getter, final Class<E> enumType)  {
+		this.getter = getter;
 		this.enumType = enumType;
 		this.values = EnumHelper.getValues(enumType);
 	}
 
 	@Override
-	public E get(final ResultSet target) throws Exception {
-		final Object o = target.getObject(columnIndex);
+	public E get(final R target) throws Exception {
+		final Object o = getter.get(target);
 		if (o instanceof Number) {
 			return values[((Number) o).intValue()];
 		} else {
@@ -29,8 +29,8 @@ public final class EnumResultSetGetter<E extends Enum<E>> implements  Getter<Res
 
     @Override
     public String toString() {
-        return "EnumResultSetGetter{" +
-                "columnIndex=" + columnIndex +
+        return "EnumUnspeficiedTypeGetter{" +
+                "getter=" + getter +
                 ", enumType=" + enumType +
                 '}';
     }

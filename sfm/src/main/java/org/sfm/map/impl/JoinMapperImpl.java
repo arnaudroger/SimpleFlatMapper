@@ -38,4 +38,10 @@ public class JoinMapperImpl<R, S, T, E extends Exception> extends AbstractEnumar
     public MappingContext<? super R> newMappingContext() {
         return mappingContextFactory.newContext();
     }
+
+
+    public MappingContext<? super R> newMappingContext(R row) {
+        return newMappingContext();
+    }
+
 }

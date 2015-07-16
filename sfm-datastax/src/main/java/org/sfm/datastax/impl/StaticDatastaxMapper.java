@@ -2,6 +2,7 @@ package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
+import com.datastax.driver.core.exceptions.DriverException;
 import org.sfm.datastax.DatastaxMapper;
 import org.sfm.map.*;
 import org.sfm.utils.RowHandler;
@@ -76,5 +77,10 @@ public final class StaticDatastaxMapper<T> implements DatastaxMapper<T> {
 	@Override
 	public String toString() {
 		return "StaticJdbcMapper{" + mapper + '}';
+	}
+
+	@Override
+	public MappingContext<? super Row> newMappingContext(Row rs) throws DriverException {
+		return newMappingContext();
 	}
 }

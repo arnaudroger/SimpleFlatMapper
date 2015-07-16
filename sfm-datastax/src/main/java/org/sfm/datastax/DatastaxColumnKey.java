@@ -93,15 +93,15 @@ public class DatastaxColumnKey implements FieldKey<DatastaxColumnKey>, TypeAffin
 		return new DatastaxColumnKey(alias, index, sqlType, this);
 	}
 
-	public static DatastaxColumnKey of(ColumnDefinitions metaData, int column) throws SQLException {
+	public static DatastaxColumnKey of(ColumnDefinitions metaData, int column) {
 		return new DatastaxColumnKey(metaData.getName(column), column , metaData.getType(column));
 	}
 
-	public static MapperKey<DatastaxColumnKey> mapperKey(ColumnDefinitions metaData)  throws  SQLException {
+	public static MapperKey<DatastaxColumnKey> mapperKey(ColumnDefinitions metaData) {
 		DatastaxColumnKey[] keys = new DatastaxColumnKey[metaData.size()];
 
-		for(int i = 1; i <= metaData.size(); i++) {
-			keys[i - 1] = of(metaData, i);
+		for(int i = 0; i < metaData.size(); i++) {
+			keys[i] = of(metaData, i);
 		}
 
 		return new MapperKey<DatastaxColumnKey>(keys);

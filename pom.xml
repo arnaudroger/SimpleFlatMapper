@@ -357,14 +357,6 @@
             <activation>
                 <jdk>1.7</jdk>
             </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.boundary</groupId>
-                    <artifactId>fasttuple-core</artifactId>
-                    <version>0.1</version>
-                    <optional>true</optional>
-                </dependency>
-            </dependencies>
             <properties>
                 <source.classifier>jdk17-sources</source.classifier>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
@@ -453,27 +445,6 @@
                 </plugins>
                 </pluginManagement>
             </build>
-        </profile>
-
-        <profile>
-            <id>jdk18</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jooq</groupId>
-                    <artifactId>jool</artifactId>
-                    <version>0.9.6</version>
-                    <optional>true</optional>
-                </dependency>
-                <dependency>
-                    <groupId>com.boundary</groupId>
-                    <artifactId>fasttuple-core</artifactId>
-                    <version>0.1</version>
-                    <optional>true</optional>
-                </dependency>
-            </dependencies>
         </profile>
 
         <profile>

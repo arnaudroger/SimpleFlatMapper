@@ -98,6 +98,17 @@
 		</profile>
 		<profile>
 			<id>jdk17</id>
+			<activation>
+				<jdk>1.7</jdk>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>com.boundary</groupId>
+					<artifactId>fasttuple-core</artifactId>
+					<version>0.1</version>
+					<optional>true</optional>
+				</dependency>
+			</dependencies>
 			<build>
 				<plugins>
 					<plugin>
@@ -107,6 +118,38 @@
 					<plugin>
 						<groupId>com.google.code.maven-replacer-plugin</groupId>
 						<artifactId>replacer</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>jdk8</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.jooq</groupId>
+					<artifactId>jool</artifactId>
+					<version>0.9.6</version>
+					<optional>true</optional>
+				</dependency>
+				<dependency>
+					<groupId>com.boundary</groupId>
+					<artifactId>fasttuple-core</artifactId>
+					<version>0.1</version>
+					<optional>true</optional>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.felix</groupId>
+						<artifactId>maven-bundle-plugin</artifactId>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>

@@ -1,28 +1,28 @@
-package org.sfm.jdbc.impl.getter;
+package org.sfm.map.impl.getter;
 
 import org.sfm.reflect.Getter;
 
 import java.sql.ResultSet;
 
-public final class StringEnumResultSetGetter<E extends Enum<E>> implements Getter<ResultSet, E> {
+public final class StringEnumGetter<R, E extends Enum<E>> implements Getter<R, E> {
 
 	private final Class<E> enumType;
-	private final Getter<ResultSet, String> stringGetter;
+	private final Getter<R, String> stringGetter;
 	
-	public StringEnumResultSetGetter(final Getter<ResultSet, String> stringGetter, final Class<E> enumType)  {
+	public StringEnumGetter(final Getter<R, String> stringGetter, final Class<E> enumType)  {
 		this.stringGetter = stringGetter;
 		this.enumType = enumType;
 	}
 
 	@Override
-	public E get(final ResultSet target) throws Exception {
+	public E get(final R target) throws Exception {
 		final String o = stringGetter.get(target);
 		return (E) Enum.valueOf(enumType, String.valueOf(o));
 	}
 
     @Override
     public String toString() {
-        return "StringEnumResultSetGetter{" +
+        return "StringEnumGetter{" +
                 "enumType=" + enumType +
                 ", stringGetter=" + stringGetter +
                 '}';

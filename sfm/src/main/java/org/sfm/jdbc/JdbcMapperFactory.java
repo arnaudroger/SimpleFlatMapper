@@ -42,11 +42,8 @@ import java.sql.SQLException;
  *
  */
 public final class JdbcMapperFactory
-		extends AbstractSetRowMapperFactory<JdbcColumnKey,
+		extends AbstractMapperFactory<JdbcColumnKey,
 		FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>,
-		ResultSet,
-		ResultSet,
-		SQLException,
 		JdbcMapperFactory> {
 
 
@@ -176,16 +173,8 @@ public final class JdbcMapperFactory
      * @return the DynamicMapper
      */
 	public <T> JdbcMapper<T> newMapper(final Type target) {
-		final SetRowMapper<ResultSet, ResultSet, Object, SQLException> setRowMapper = mapTo(target);
-		return (JdbcMapper<T>) setRowMapper;
-	}
-
-	@Override
-	protected <T> SetRowMapper<ResultSet, ResultSet, T, SQLException> newSetRowMapper(
-			UnaryFactory<MapperKey<JdbcColumnKey>, SetRowMapper<ResultSet, ResultSet, T, SQLException>> mapperFactory,
-			UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> keyFromRowFactory,
-			UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> keyFromSetFactory) {
-		return new DynamicJdbcSetRowMapper<T>(mapperFactory, keyFromRowFactory, keyFromSetFactory);
+		final ClassMeta<T> classMeta = getClassMeta(target);
+		return new DynamicJdbcSetRowMapper<T>(new SetRowMapperFactory<T>(classMeta),  new MapperKeyFactory(),  new MapperKeyFactory());
 	}
 
 	private static class DynamicJdbcSetRowMapper<T>
@@ -209,21 +198,6 @@ public final class JdbcMapperFactory
 		public String toString() {
 			return "DynamicJdbcSetRowMapper{}";
 		}
-	}
-
-	@Override
-	protected UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> newKeyFromSetFactory() {
-		return new MapperKeyFactory();
-	}
-
-	@Override
-	protected UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> newKeyFromRowFactory() {
-		return newKeyFromSetFactory();
-	}
-
-	@Override
-	protected <T> UnaryFactory<MapperKey<JdbcColumnKey>, SetRowMapper<ResultSet,ResultSet,T,SQLException>> newMapperFactory(ClassMeta<T> classMeta) {
-		return new SetRowMapperFactory<T>(classMeta);
 	}
 
 	/**

@@ -1,6 +1,9 @@
 package org.sfm.jdbc.impl.getter;
 
 import org.sfm.jdbc.JdbcColumnKey;
+import org.sfm.map.impl.getter.EnumUnspeficiedTypeGetter;
+import org.sfm.map.impl.getter.OrdinalEnumGetter;
+import org.sfm.map.impl.getter.StringEnumGetter;
 import org.sfm.map.impl.getter.joda.JodaTimeGetterFactory;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.GetterFactory;
@@ -76,23 +79,23 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			int column = key.getIndex();
 			switch (key.getSqlType()) {
 				case JdbcColumnKey.UNDEFINED_TYPE:
-					return new EnumResultSetGetter<P>(column, type);
+					return new EnumUnspeficiedTypeGetter<ResultSet, P>(new ObjectResultSetGetter(column), type);
 				case Types.BIGINT:
 				case Types.INTEGER:
 				case Types.NUMERIC:
 				case Types.SMALLINT:
 				case Types.TINYINT:
-					return new OrdinalEnumResultSetGetter<P>(column, type);
+					return new OrdinalEnumGetter<ResultSet, P>(new IntResultSetGetter(column), type);
 				case Types.CHAR:
 				case Types.LONGVARCHAR:
 				case Types.VARCHAR:
 				case Types.CLOB:
-					return new StringEnumResultSetGetter<P>(new StringResultSetGetter(column), type);
+					return new StringEnumGetter<ResultSet, P>(new StringResultSetGetter(column), type);
 				case Types.LONGNVARCHAR:
 				case Types.NCHAR:
 				case Types.NVARCHAR:
 				case Types.NCLOB:
-					return new StringEnumResultSetGetter<P>(new NStringResultSetGetter(column), type);
+					return new StringEnumGetter<ResultSet, P>(new NStringResultSetGetter(column), type);
 				default:
 					throw new MapperBuildingException("Incompatible type " + key.getSqlType() + " with enum");
 			}

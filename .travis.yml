@@ -10,4 +10,4 @@ env:
   - 
 
 after_success:
-  - mvn -P travis jacoco:report coveralls:jacoco
+  - mvn -P travis jacoco:report coveralls:report

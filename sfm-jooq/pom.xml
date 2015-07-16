@@ -56,6 +56,17 @@
 	</dependencies>
 	<profiles>
 		<profile>
+			<id>travis</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
 			<id>jdk16</id>
 			<build>
 				<plugins>

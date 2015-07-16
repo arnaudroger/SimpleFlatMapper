@@ -137,32 +137,35 @@
                     <value>true</value>
                 </property>
             </activation>
+
             <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jacoco</groupId>
+                            <artifactId>jacoco-maven-plugin</artifactId>
+                            <version>0.7.2.201409121644</version>
+                            <executions>
+                                <execution>
+                                    <id>prepare-agent</id>
+                                    <goals>
+                                        <goal>prepare-agent</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
                 <plugins>
                     <plugin>
                         <groupId>org.eluder.coveralls</groupId>
                         <artifactId>coveralls-maven-plugin</artifactId>
-                        <version>2.2.0</version>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.7.1.201405082137</version>
-                        <executions>
-                            <execution>
-                                <id>jacoco-initialize</id>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>jacoco-site</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>report</goal>
-                                </goals>
-                            </execution>
-                        </executions>
+                        <version>3.1.0</version>
+                        <configuration>
+                            <jacocoReports>
+                                <param>${project.reporting.outputDirectory}/${project.version}/jacoco</param>
+                            </jacocoReports>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

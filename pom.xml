@@ -340,6 +340,7 @@
                                         <exclude>**/org/sfm/tuples/jool/**/*</exclude>
                                         <exclude>**/org/sfm/**/*Optional*</exclude>
                                         <exclude>**/org/sfm/**/time/*</exclude>
+                                        <exclude>**/org/sfm/datastax/*</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>

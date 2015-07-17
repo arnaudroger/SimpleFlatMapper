@@ -1,4 +1,4 @@
-package org.sfm.map.impl;
+package org.sfm.jooq;
 
 import java.util.Arrays;
 

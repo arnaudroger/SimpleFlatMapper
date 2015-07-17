@@ -2,8 +2,6 @@ package org.sfm.jooq;
 
 import org.jooq.*;
 import org.sfm.map.Mapper;
-import org.sfm.map.impl.MapperCache;
-import org.sfm.map.impl.TargetColumnsMapperKey;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

@@ -2,7 +2,6 @@ package org.sfm.jdbc;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.jdbc.impl.StaticJdbcMapper;
 import org.sfm.map.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.asm.AsmFactory;
@@ -37,8 +36,9 @@ public class JdbcMapperBuilderImplTest {
 	public void testAsmFailureOnmapper() {
 
 		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(true, true, newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
-		
-		assertTrue(builder.mapper() instanceof StaticJdbcMapper);
+
+		final JdbcMapper<DbObject> mapper = builder.mapper();
+		assertTrue(mapper instanceof JdbcMapperBuilder.StaticJdbcSetRowMapper);
 	}
 
 	public AsmFactory newAsmFactoryFailsOnmapper() {

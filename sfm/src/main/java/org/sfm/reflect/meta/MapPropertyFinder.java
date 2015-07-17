@@ -13,7 +13,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> implements PropertyFin
     private final ClassMeta<V> valueMetaData;
     private final ClassMeta<T> mapMeta;
     private final Converter<CharSequence, K> keyConverter;
-    private Map<PropertyNameMatcher, PropertyFinder<V>> finders = new HashMap<PropertyNameMatcher, PropertyFinder<V>>();
+    private final Map<PropertyNameMatcher, PropertyFinder<V>> finders = new HashMap<PropertyNameMatcher, PropertyFinder<V>>();
 
     public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<CharSequence, K> keyConverter) {
         this.mapMeta = mapMeta;

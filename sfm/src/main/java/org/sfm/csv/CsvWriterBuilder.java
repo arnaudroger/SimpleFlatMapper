@@ -1,7 +1,6 @@
 package org.sfm.csv;
 
 
-import org.sfm.csv.impl.writer.DefaultFieldAppenderFactory;
 import org.sfm.csv.impl.writer.*;
 import org.sfm.map.FieldKey;
 import org.sfm.map.FieldMapper;

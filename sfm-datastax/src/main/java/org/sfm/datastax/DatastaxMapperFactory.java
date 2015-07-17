@@ -20,7 +20,7 @@ import java.lang.reflect.Type;
 
 public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey, Row>, DatastaxMapperFactory> {
 
-    GetterFactory<GettableData, DatastaxColumnKey> getterFactory = new RowGetterFactory();
+    private GetterFactory<GettableData, DatastaxColumnKey> getterFactory = new RowGetterFactory();
 
     private DatastaxMapperFactory() {
         super(new FieldMapperColumnDefinitionProviderImpl<DatastaxColumnKey, Row>(), FieldMapperColumnDefinition.<DatastaxColumnKey, Row>identity());

@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class TestQueryDSL {
+public class QueryDSLTest {
 	QTestDbObject qTestDbObject = new QTestDbObject("o");
 	
 	@Test

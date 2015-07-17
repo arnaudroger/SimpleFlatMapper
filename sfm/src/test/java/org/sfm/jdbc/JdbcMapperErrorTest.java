@@ -3,7 +3,6 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.Foo;
-import org.sfm.jdbc.impl.StaticJdbcMapper;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
@@ -91,8 +90,8 @@ public class JdbcMapperErrorTest {
 		MyJdbcRawHandlerErrorHandler handler = new MyJdbcRawHandlerErrorHandler();
 		@SuppressWarnings("unchecked")
 		FieldMapper<ResultSet, DbObject>[] fields = new FieldMapper[] {};
-		StaticJdbcMapper<DbObject> mapper =
-			new StaticJdbcMapper<DbObject>(
+		JdbcMapperBuilder.StaticJdbcSetRowMapper<DbObject> mapper =
+			new JdbcMapperBuilder.StaticJdbcSetRowMapper<DbObject>(
 				new MapperImpl<ResultSet, DbObject>(
 					fields,
 					new FieldMapper[] {},

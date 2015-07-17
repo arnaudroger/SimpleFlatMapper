@@ -69,4 +69,10 @@ public class ConverterFactoryTest {
         assertNull(getConverter(Document.class, SAXParser.class));
     }
 
+
+    @Test
+    public void testArrayConverter() {
+
+    }
+
 }

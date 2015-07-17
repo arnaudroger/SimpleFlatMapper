@@ -22,7 +22,7 @@ public class DiscriminatorJdbcBuilder<T> {
 
     private final String column;
     private final JdbcMapperFactory jdbcMapperFactory;
-    private List<DiscriminatorJdbcSubBuilder> builders = new ArrayList<DiscriminatorJdbcSubBuilder>();
+    private final List<DiscriminatorJdbcSubBuilder> builders = new ArrayList<DiscriminatorJdbcSubBuilder>();
 
     public DiscriminatorJdbcBuilder(String column,JdbcMapperFactory jdbcMapperFactory) {
         this.column = column;

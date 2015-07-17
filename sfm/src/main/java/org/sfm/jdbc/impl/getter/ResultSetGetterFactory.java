@@ -1,7 +1,7 @@
 package org.sfm.jdbc.impl.getter;
 
 import org.sfm.jdbc.JdbcColumnKey;
-import org.sfm.map.impl.getter.EnumUnspeficiedTypeGetter;
+import org.sfm.map.impl.getter.EnumUnspecifiedTypeGetter;
 import org.sfm.map.impl.getter.OrdinalEnumGetter;
 import org.sfm.map.impl.getter.StringEnumGetter;
 import org.sfm.map.impl.getter.joda.JodaTimeGetterFactory;
@@ -79,7 +79,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			int column = key.getIndex();
 			switch (key.getSqlType()) {
 				case JdbcColumnKey.UNDEFINED_TYPE:
-					return new EnumUnspeficiedTypeGetter<ResultSet, P>(new ObjectResultSetGetter(column), type);
+					return new EnumUnspecifiedTypeGetter<ResultSet, P>(new ObjectResultSetGetter(column), type);
 				case Types.BIGINT:
 				case Types.INTEGER:
 				case Types.NUMERIC:

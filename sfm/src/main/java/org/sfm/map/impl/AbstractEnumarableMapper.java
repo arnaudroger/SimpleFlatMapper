@@ -21,17 +21,22 @@ public abstract class AbstractEnumarableMapper<S, T, E extends Exception> implem
 
     @Override
 	public final <H extends RowHandler<? super T>> H forEach(final S source, final H handler)
-			throws MappingException {
-        try  {
-            Enumarable<T> enumarable = newEnumarableOfT(source);
-            while(enumarable.next()) {
-                handler.handle(enumarable.currentValue());
-            }
-            return handler;
-        } catch(Exception e) {
-            return ErrorHelper.rethrow(e);
+			throws E, MappingException {
+        final Enumarable<T> enumarable = newEnumarableOfT(source);
+        while(enumarable.next()) {
+            final T t = enumarable.currentValue();
+            handleT(handler, t);
         }
+        return handler;
 	}
+
+    public <H extends RowHandler<? super T>> void handleT(H handler, T t) {
+        try {
+            handler.handle(t);
+        } catch(Throwable e) {
+            errorHandler.handlerError(e, t);
+        }
+    }
 
     @Override
 	public final Iterator<T> iterator(S source) throws MappingException, E {

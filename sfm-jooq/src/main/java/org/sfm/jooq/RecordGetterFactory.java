@@ -42,11 +42,13 @@ public class RecordGetterFactory<R extends Record> implements
 	
 	private <P, F> Getter<R, P> newRecordGetterWithConverter(Class<F> inType, Type outType, int index) {
 		Converter<F, P> converter = ConverterFactory.getConverter(inType, outType);
+		if (converter == null) {
+			converter = JooqConverterFactory.getConverter(inType, outType);
+		}
 		if (converter != null) {
 			return new RecordGetterWithConverter<R, P, F>(index, converter);
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 }

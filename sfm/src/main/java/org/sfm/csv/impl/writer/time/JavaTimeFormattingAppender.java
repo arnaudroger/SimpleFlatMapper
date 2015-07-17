@@ -5,12 +5,8 @@ import org.sfm.map.FieldMapper;
 import org.sfm.map.MappingContext;
 import org.sfm.reflect.Getter;
 
-import java.text.Format;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
-
-import static org.sfm.utils.Asserts.requireNonNull;
-
 
 public class JavaTimeFormattingAppender<T> implements FieldMapper<T, Appendable> {
     private final DateTimeFormatter formatter;

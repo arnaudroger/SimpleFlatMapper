@@ -2,8 +2,6 @@ package org.sfm.map.impl.getter;
 
 import org.sfm.reflect.Getter;
 
-import java.sql.ResultSet;
-
 public final class StringEnumGetter<R, E extends Enum<E>> implements Getter<R, E> {
 
 	private final Class<E> enumType;

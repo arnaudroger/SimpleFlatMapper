@@ -28,7 +28,7 @@ public class JoinMapperImpl<R, S, T, E extends Exception> extends AbstractEnumar
 
     @Override
     protected final Enumarable<T> newEnumarableOfT(S source) throws E {
-        return new JoinEnumarable<R, T>(mapper,  mappingContextFactory.newContext(), newSourceEnumarable(source));
+        return new JoinMapperEnumarable<R, T>(mapper,  mappingContextFactory.newContext(), newSourceEnumarable(source));
     }
 
     private final Enumarable<R> newSourceEnumarable(S source) {

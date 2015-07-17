@@ -4,7 +4,7 @@ package org.sfm.poi.impl;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.sfm.map.*;
-import org.sfm.map.impl.JoinEnumarable;
+import org.sfm.map.impl.JoinMapperEnumarable;
 import org.sfm.poi.RowMapper;
 import org.sfm.utils.Enumarable;
 import org.sfm.utils.EnumarableIterator;
@@ -43,7 +43,7 @@ public class JoinSheetMapper<T> implements RowMapper<T> {
     }
 
     private Enumarable<T> enumerable(int startRow, Sheet sheet, MappingContext<Row> mappingContext) {
-        return new JoinEnumarable<Row, T>(mapper, mappingContext, new RowEnumarable(startRow, sheet));
+        return new JoinMapperEnumarable<Row, T>(mapper, mappingContext, new RowEnumarable(startRow, sheet));
     }
 
     @Override

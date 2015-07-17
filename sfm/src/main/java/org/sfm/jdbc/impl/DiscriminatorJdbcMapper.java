@@ -84,8 +84,8 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableDelegate
     }
 
     private static class DiscriminatorPredicate implements Predicate<ResultSet> {
-        private String discriminatorColumn;
-        private Predicate<String> predicate;
+        private final String discriminatorColumn;
+        private final Predicate<String> predicate;
 
         public DiscriminatorPredicate(String discriminatorColumn, Predicate<String> predicate) {
             this.discriminatorColumn = discriminatorColumn;

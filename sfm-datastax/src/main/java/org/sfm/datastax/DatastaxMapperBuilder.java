@@ -5,7 +5,6 @@ import com.datastax.driver.core.exceptions.DriverException;
 import org.sfm.datastax.impl.DatastaxMappingContextFactoryBuilder;
 import org.sfm.datastax.impl.ResultSetEnumarable;
 import org.sfm.datastax.impl.RowGetterFactory;
-import org.sfm.datastax.impl.StaticDatastaxMapper;
 import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.impl.*;
@@ -77,19 +76,6 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
 
 
     /**
-     * add a new mapping to the specified column with the specified index and the specified type.
-     *
-     * @param column  the column name
-     * @param index   the column index
-     * @param dataType the column type, @see java.sql.Types
-     * @return the current builder
-     */
-    public DatastaxMapperBuilder<T> addMapping(final String column, final int index, final DataType dataType) {
-        addMapping(column, index, dataType, new ColumnProperty[0]);
-        return this;
-    }
-
-    /**
      * add a new mapping to the specified column with the specified index,  the specified type.
      *
      * @param column           the column name
@@ -143,5 +129,12 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
     @Override
     protected DatastaxMapper<T> newStaticJdbcMapper(Mapper<Row, T> mapper) {
         return new StaticDatastaxMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
+    }
+
+    public static class StaticDatastaxMapper<T> extends StaticSetRowMapper<Row, ResultSet, T, DriverException> implements DatastaxMapper<T> {
+
+        public StaticDatastaxMapper(Mapper<Row, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
+            super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
+        }
     }
 }

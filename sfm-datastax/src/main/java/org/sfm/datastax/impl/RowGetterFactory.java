@@ -1,11 +1,10 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.GettableData;
-import com.datastax.driver.core.ResultSet;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.GetterFactory;
-import org.sfm.map.impl.getter.EnumUnspeficiedTypeGetter;
+import org.sfm.map.impl.getter.EnumUnspecifiedTypeGetter;
 import org.sfm.map.impl.getter.OrdinalEnumGetter;
 import org.sfm.map.impl.getter.StringEnumGetter;
 import org.sfm.reflect.Getter;
@@ -76,7 +75,7 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
                 return new StringEnumGetter<GettableData, E>(new DatastaxStringGetter(key.getIndex()), (Class<E>)enumClass);
             }
         } else {
-            return new EnumUnspeficiedTypeGetter<GettableData, E>(new DatastaxObjectGetter(key.getIndex()), (Class<E>)enumClass);
+            return new EnumUnspecifiedTypeGetter<GettableData, E>(new DatastaxObjectGetter(key.getIndex()), (Class<E>)enumClass);
         }
         return null;
     }

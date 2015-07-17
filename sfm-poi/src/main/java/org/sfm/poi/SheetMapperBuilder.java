@@ -3,7 +3,6 @@ package org.sfm.poi;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.map.impl.AbstractMapperBuilder;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.Mapper;
 import org.sfm.map.impl.context.MappingContextFactoryBuilder;

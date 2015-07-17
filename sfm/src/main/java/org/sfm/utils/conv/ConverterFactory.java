@@ -132,10 +132,6 @@ public class ConverterFactory {
 			return (Converter<F, P>) numberConverters.get(TypeHelper.wrap(outType));
 		} else if (TypeHelper.isClass(outType, URL.class)) {
 			return  (Converter<F, P>)new StringToURLConverter<F>();
-		}  else if (TypeHelper.isArray(outType)) {
-			return  newArrayConverter(TypeHelper.getComponentTypeOfListOrArray(outType));
-		} else if (TypeHelper.isAssignable(List.class, outType)) {
-			return  newArrayToListConverter(TypeHelper.getComponentTypeOfListOrArray(outType));
 		} else if (TypeHelper.isAssignable(CharSequence.class, inType)) {
 			if (TypeHelper.isAssignable(Enum.class, outType)) {
 				return new CharSequenceToEnumConverter(TypeHelper.toClass(outType));
@@ -145,22 +141,6 @@ public class ConverterFactory {
 		}
 		return null;
 	}
-
-	@SuppressWarnings("unchecked")
-	private static <F, P, E> Converter<F, P> newArrayConverter(Type eltType) {
-		final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> identity = FieldMapperColumnDefinition.identity();
-		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(eltType, new JdbcColumnKey("elt", 2), identity);
-		if (elementGetter == null) return null;
-		return (Converter<F, P>)new ArrayConverter<E>((Class<E>) TypeHelper.toClass(eltType), elementGetter);
-	}
-	@SuppressWarnings("unchecked")
-	private static <F, P, E> Converter<F, P> newArrayToListConverter(Type eltType) {
-		final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> identity = FieldMapperColumnDefinition.identity();
-		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(eltType, new JdbcColumnKey("elt", 2), identity);
-		if (elementGetter == null) return null;
-		return (Converter<F, P>)new ArrayToListConverter<E>(elementGetter);
-	}
-
 
 	static class CharSequenceToEnumConverter<E extends Enum<E>> implements Converter<CharSequence, E> {
 		private final Class<E> enumClass;

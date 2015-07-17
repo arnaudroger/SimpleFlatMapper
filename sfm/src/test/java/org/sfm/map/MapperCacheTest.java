@@ -5,9 +5,6 @@ import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.impl.MapperKey;
 import org.sfm.map.impl.MapperCache;
 
-import java.sql.SQLException;
-import java.text.ParseException;
-
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 

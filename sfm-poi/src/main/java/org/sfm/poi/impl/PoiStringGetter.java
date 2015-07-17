@@ -14,7 +14,7 @@ public class PoiStringGetter implements Getter<Row, String> {
     private final int index;
 
     private final DataFormatter dataFormatter = new DataFormatter();
-    private Lock lock = new ReentrantLock();
+    private final Lock lock = new ReentrantLock();
 
     public PoiStringGetter(int index) {
         this.index = index;

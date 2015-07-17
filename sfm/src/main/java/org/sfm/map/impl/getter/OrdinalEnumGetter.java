@@ -4,7 +4,6 @@ import org.sfm.reflect.EnumHelper;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.IntGetter;
 
-import java.sql.ResultSet;
 import java.util.Arrays;
 
 public final class OrdinalEnumGetter<R, E extends Enum<E>> implements  Getter<R, E> {

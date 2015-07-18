@@ -11,6 +11,7 @@ import org.sfm.beans.DbObject;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -27,25 +28,76 @@ public class DatastaxMapperFactoryMapperTest extends AbstractCassandraUnit4TestC
 
     @Test
     public void testConnectWithDatastax() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+                final DatastaxMapper<DbObject> mapper = DatastaxMapperFactory.newInstance().newMapper(DbObject.class);
+
+                ResultSet rs = session.execute("select id, name, email, creation_time, type_ordinal, type_name from dbobjects");
+
+                final Iterator<DbObject> iterator = mapper.iterator(rs);
+
+                DbObject next = iterator.next();
+
+                assertEquals(1, next.getId());
+                assertEquals("Arnaud Roger", next.getName());
+                assertEquals("arnaud.roger@gmail.com", next.getEmail());
+                assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2012-10-02 12:10:10"), next.getCreationTime());
+                assertEquals(DbObject.Type.type2, next.getTypeOrdinal());
+                assertEquals(DbObject.Type.type3, next.getTypeName());
+
+                assertFalse(iterator.hasNext());
+
+                rs = session.execute("select id, name from dbobjects");
+
+                next = mapper.iterator(rs).next();
+
+                assertEquals(1, next.getId());
+                assertEquals("Arnaud Roger", next.getName());
+                assertNull(next.getEmail());
+                assertNull(next.getCreationTime());
+                assertNull(next.getTypeOrdinal());
+                assertNull(next.getTypeName());
+
+                rs = session.execute("select id, email from dbobjects");
+
+                next = mapper.iterator(rs).next();
+
+                assertEquals(1, next.getId());
+                assertNull(next.getName());
+                assertEquals("arnaud.roger@gmail.com", next.getEmail());
+                assertNull(next.getCreationTime());
+                assertNull(next.getTypeOrdinal());
+                assertNull(next.getTypeName());
+
+                rs = session.execute("select id, type_ordinal from dbobjects");
+
+                next = mapper.iterator(rs).next();
+
+                assertEquals(1, next.getId());
+                assertNull(next.getName());
+                assertNull(next.getEmail());
+                assertNull(next.getCreationTime());
+                assertEquals(DbObject.Type.type2, next.getTypeOrdinal());
+                assertNull(next.getTypeName());
+
+            }
+        });
+    }
+
+    private void testInSession(Callback callback) throws Exception {
         Cluster cluster = null;
         try {
             cluster =
-                Cluster
-                    .builder()
-                    .addContactPointsWithPorts(
-                            Arrays.asList(new InetSocketAddress("localhost", 9142)))
-                        .build();
+                    Cluster
+                            .builder()
+                            .addContactPointsWithPorts(
+                                    Arrays.asList(new InetSocketAddress("localhost", 9142)))
+                            .build();
             Metadata metadata = cluster.getMetadata();
 
             assertEquals("Test Cluster", metadata.getClusterName());
 
-            for(KeyspaceMetadata km : metadata.getKeyspaces()) {
-                if (!"system".equals(km.getName()) && !"system_traces".equals(km.getName())) {
-                    for (TableMetadata t : km.getTables()) {
-                        System.out.println(km.getName() + ":" + t.getName());
-                    }
-                }
-            }
 
             Session session =  null;
 
@@ -61,17 +113,10 @@ public class DatastaxMapperFactoryMapperTest extends AbstractCassandraUnit4TestC
                             "type_ordinal int," +
                             "type_name varchar)");
 
-                    session.execute("insert into dbobjects(id, name, email, creation_time, type_ordinal, type_name) values(1, 'Arnaud Roger', 'arnaud.roger@gmail.com', '2012-10-2 12:10:10', 1, 'type2')");
+                    session.execute("insert into dbobjects(id, name, email, creation_time, type_ordinal, type_name) values(1, 'Arnaud Roger', 'arnaud.roger@gmail.com', '2012-10-2 12:10:10', 1, 'type3')");
                 }
 
-                ResultSet rs = session.execute("select id, name, email, creation_time, type_ordinal, type_name from dbobjects");
-
-                final DatastaxMapper<DbObject> mapper = DatastaxMapperFactory.newInstance().newMapper(DbObject.class);
-
-                final Iterator<DbObject> iterator = mapper.iterator(rs);
-
-                final DbObject next = iterator.next();
-
+                callback.call(session);
             } finally {
                 if (session != null) session.close();
             }
@@ -80,6 +125,9 @@ public class DatastaxMapperFactoryMapperTest extends AbstractCassandraUnit4TestC
             if (cluster != null)
                 cluster.close();
         }
+    }
 
+    interface Callback {
+        void call(Session session) throws Exception;
     }
 }

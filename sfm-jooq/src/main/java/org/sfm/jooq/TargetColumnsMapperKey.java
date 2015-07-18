@@ -16,14 +16,4 @@ public final class TargetColumnsMapperKey {
         TargetColumnsMapperKey targetColumnsMapperKey = (TargetColumnsMapperKey) obj;
         return target == targetColumnsMapperKey.target && Arrays.equals(columns, targetColumnsMapperKey.columns);
     }
-
-	public String[] getColumns() {
-		return columns;
-	}
-
-	public Class<?> getTarget() {
-		return target;
-	}
-	
-	
 }

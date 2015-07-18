@@ -2,16 +2,21 @@ package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableData;
+import com.datastax.driver.core.Row;
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.datastax.DatastaxColumnKey;
+import org.sfm.map.impl.FieldMapperColumnDefinition;
+import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.UUID;
 
@@ -177,5 +182,23 @@ public class RowGetterFactoryTest {
     @Test
     public void testEnumGetterOnUnspecifiedStringType() throws Exception {
         assertEquals(DbObject.Type.type2, new RowGetterFactory().newGetter(DbObject.Type.class, columnKey4, null).get(row));
+    }
+
+    //IFJAVA8_START
+
+    @Test
+    public void testJava8Time() throws Exception {
+        final FieldMapperColumnDefinition<DatastaxColumnKey, Row> identity = FieldMapperColumnDefinition.<DatastaxColumnKey, Row>identity();
+        final Getter<GettableData, LocalDateTime> gettableDataObjectGetter = new RowGetterFactory().newGetter(LocalDateTime.class, columnKey, identity);
+        assertEquals(date, Date.from(gettableDataObjectGetter.get(row).atZone(ZoneId.systemDefault()).toInstant()));
+    }
+
+    //IFJAVA8_END
+
+    @Test
+    public void testJodaTime() throws Exception {
+        final FieldMapperColumnDefinition<DatastaxColumnKey, Row> identity = FieldMapperColumnDefinition.<DatastaxColumnKey, Row>identity();
+        final Getter<GettableData, org.joda.time.LocalDateTime> gettableDataObjectGetter = new RowGetterFactory().newGetter(org.joda.time.LocalDateTime.class, columnKey, identity);
+        assertEquals(date, gettableDataObjectGetter.get(row).toDate());
     }
 }

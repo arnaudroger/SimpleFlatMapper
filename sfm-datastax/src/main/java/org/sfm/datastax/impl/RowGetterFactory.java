@@ -1,12 +1,15 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.GettableData;
+import org.sfm.csv.CsvColumnKey;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.impl.getter.EnumUnspecifiedTypeGetter;
 import org.sfm.map.impl.getter.OrdinalEnumGetter;
 import org.sfm.map.impl.getter.StringEnumGetter;
+import org.sfm.map.impl.getter.joda.JodaTimeGetterFactory;
+import org.sfm.map.impl.getter.time.JavaTimeGetterFactory;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
@@ -14,45 +17,77 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.time.*;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class RowGetterFactory implements GetterFactory<GettableData, DatastaxColumnKey> {
 
+    private final HashMap<Class<?>, GetterFactory<GettableData, DatastaxColumnKey>> getterFactories = new HashMap<Class<?>, GetterFactory<GettableData, DatastaxColumnKey>>();
+    private final GetterFactory<GettableData, DatastaxColumnKey> dateGetterFactory = new GetterFactory<GettableData, DatastaxColumnKey>() {
+        @Override
+        public <P> Getter<GettableData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+            return (Getter<GettableData, P>) new DatastaxDateGetter(key.getIndex());
+        }
+    };
+
+    private JodaTimeGetterFactory<GettableData, DatastaxColumnKey> jodaTimeGetterFactory;
+
+    public RowGetterFactory() {
+        //IFJAVA8_START
+        JavaTimeGetterFactory<GettableData, DatastaxColumnKey> javaTimeGetterFactory =
+                new JavaTimeGetterFactory<GettableData, DatastaxColumnKey>(dateGetterFactory);
+        getterFactories.put(LocalDate.class, javaTimeGetterFactory);
+        getterFactories.put(LocalDateTime.class, javaTimeGetterFactory);
+        getterFactories.put(LocalTime.class, javaTimeGetterFactory);
+        getterFactories.put(OffsetDateTime.class, javaTimeGetterFactory);
+        getterFactories.put(OffsetTime.class, javaTimeGetterFactory);
+        getterFactories.put(ZonedDateTime.class, javaTimeGetterFactory);
+        getterFactories.put(Instant.class, javaTimeGetterFactory);
+        getterFactories.put(Year.class, javaTimeGetterFactory);
+        getterFactories.put(YearMonth.class, javaTimeGetterFactory);
+        //IFJAVA8_END
+
+        jodaTimeGetterFactory = new JodaTimeGetterFactory<GettableData, DatastaxColumnKey>(dateGetterFactory);
+
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <P> Getter<GettableData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-        if (TypeHelper.isClass(target, String.class)) {
+        Class<?> targetClass = TypeHelper.toClass(target);
+        if (String.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxStringGetter(key.getIndex());
         }
-        if (TypeHelper.isClass(target, Date.class)) {
+        if (Date.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxDateGetter(key.getIndex());
         }
-        if (TypeHelper.isClass(target, Long.class) || TypeHelper.isClass(target, long.class)) {
+        if (Long.class.equals(targetClass) || long.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxLongGetter(key.getIndex());
         }
-        if (TypeHelper.isClass(target, Integer.class) || TypeHelper.isClass(target, int.class)) {
+        if (Integer.class.equals(targetClass) || int.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxIntegerGetter(key.getIndex());
         }
-        if (TypeHelper.isClass(target, Float.class) || TypeHelper.isClass(target, float.class)) {
+        if (Float.class.equals(targetClass) || float.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxFloatGetter(key.getIndex());
         }
-        if (TypeHelper.isClass(target, Double.class) || TypeHelper.isClass(target, double.class)) {
+        if (Double.class.equals(targetClass) || double.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxDoubleGetter(key.getIndex());
         }
-        if (TypeHelper.isClass(target, boolean.class) || TypeHelper.isClass(target, Boolean.class)) {
+        if (boolean.class.equals(targetClass) || Boolean.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxBooleanGetter(key.getIndex());
         }
-        if (TypeHelper.isClass(target, BigDecimal.class)) {
+        if (BigDecimal.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxBigDecimalGetter(key.getIndex());
         }
-        if (TypeHelper.isClass(target, BigInteger.class)) {
+        if (BigInteger.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxBigIntegerGetter(key.getIndex());
         }
-        if (TypeHelper.isClass(target, UUID.class)) {
+        if (UUID.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxUUIDGetter(key.getIndex());
         }
-        if (TypeHelper.isClass(target, InetAddress.class)) {
+        if (InetAddress.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxInetAddressGetter(key.getIndex());
         }
         if (TypeHelper.isEnum(target)) {
@@ -61,6 +96,19 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
                 return (Getter<GettableData, P>)getter;
             }
         }
+
+        final GetterFactory<GettableData, DatastaxColumnKey> rowGetterFactory = getterFactories.get(targetClass);
+
+        if (rowGetterFactory != null) {
+            return rowGetterFactory.newGetter(target, key, columnDefinition);
+        }
+
+        final Getter<GettableData, P> getter = jodaTimeGetterFactory.newGetter(target, key, columnDefinition);
+
+        if (getter != null) {
+            return getter;
+        }
+
         return null;
     }
 

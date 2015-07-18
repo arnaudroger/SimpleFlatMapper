@@ -16,7 +16,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class InstantiatorBuilder {
 
-	public static <S,T>  byte[] createInstantiator(final String className, final Class<?> sourceClass,
+	public static <S>  byte[] createInstantiator(final String className, final Class<?> sourceClass,
 			 final InstantiatorDefinition instantiatorDefinition,final Map<Parameter, Getter<? super S, ?>> injections) throws Exception {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
@@ -25,7 +25,7 @@ public class InstantiatorBuilder {
 		Class<?> targetClass= instantiatorDefinition.getExecutable().getDeclaringClass();
 		
 		String targetType = AsmUtils.toType(targetClass);
-		String sourceType = AsmUtils.toType(sourceClass);
+		String sourceType = AsmUtils.toWrapperType(sourceClass);
         String classType = AsmUtils.toType(className);
         String instantiatorType = AsmUtils.toType(Instantiator.class);
 

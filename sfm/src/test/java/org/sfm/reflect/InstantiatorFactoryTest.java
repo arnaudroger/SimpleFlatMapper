@@ -30,6 +30,19 @@ public class InstantiatorFactoryTest {
 		}
 	}
 
+
+	public static class MyClassWithFactoryMethodPrimitiveType {
+
+		private MyClassWithFactoryMethodPrimitiveType(){
+		}
+
+
+		public static MyClassWithFactoryMethodPrimitiveType valueOf(long val) {
+			return new MyClassWithFactoryMethodPrimitiveType();
+		}
+	}
+
+
 	public static class MyClassWithEmptyFactoryMethod {
 
 		private MyClassWithEmptyFactoryMethod(){
@@ -77,6 +90,17 @@ public class InstantiatorFactoryTest {
 		assertNotNull(object);
 	}
 
+
+	@Test
+	public void testInstantiateConstructorWithFactoryMethodWithPrimitiveAsm() throws Exception {
+		Instantiator<Long, MyClassWithFactoryMethodPrimitiveType> instantiator =
+				ASM.getInstantiatorFactory().getInstantiator(MyClassWithFactoryMethodPrimitiveType.class,
+						long.class,
+						AsmInstantiatorDefinitionFactory.extractDefinitions(MyClassWithFactoryMethodPrimitiveType.class),
+						new HashMap<Parameter, Getter<? super Long, ?>>(), true);
+		MyClassWithFactoryMethodPrimitiveType object = instantiator.newInstance(1l);
+		assertNotNull(object);
+	}
 	@Test
 	public void testInstantiateWithFactoryMethod() throws Exception {
 		final Instantiator<ResultSet, MyClassWithFactoryMethod> instantiator = ASM.getInstantiatorFactory().getInstantiator(MyClassWithFactoryMethod.class, ResultSet.class, ASM.extractConstructors(MyClassWithFactoryMethod.class), new HashMap<Parameter, Getter<? super ResultSet, ?>>(), true);

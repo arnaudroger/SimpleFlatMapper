@@ -250,7 +250,10 @@ public class AsmUtils {
 		return "L" + sourceType + ";";
 	}
 	public static Class<?> toWrapperClass(Type type) {
-		return wrappers.get(TypeHelper.toClass(type));
+		final Class<?> clazz = TypeHelper.toClass(type);
+		if (clazz.isPrimitive()) {
+			return wrappers.get(clazz);
+		} else return clazz;
 	}
 	public static String toWrapperType(Type type) {
 		return toType(toWrapperClass(type));

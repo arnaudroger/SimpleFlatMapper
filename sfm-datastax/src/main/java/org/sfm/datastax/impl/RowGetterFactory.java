@@ -1,7 +1,6 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.GettableData;
-import org.sfm.csv.CsvColumnKey;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.map.ColumnDefinition;
 import org.sfm.map.GetterFactory;
@@ -9,7 +8,6 @@ import org.sfm.map.impl.getter.EnumUnspecifiedTypeGetter;
 import org.sfm.map.impl.getter.OrdinalEnumGetter;
 import org.sfm.map.impl.getter.StringEnumGetter;
 import org.sfm.map.impl.getter.joda.JodaTimeGetterFactory;
-import org.sfm.map.impl.getter.time.JavaTimeGetterFactory;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
@@ -17,7 +15,10 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
+//IFJAVA8_START
+import org.sfm.map.impl.getter.time.JavaTimeGetterFactory;
 import java.time.*;
+//IFJAVA8_END
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;

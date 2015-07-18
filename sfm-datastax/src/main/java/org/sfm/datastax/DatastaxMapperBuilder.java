@@ -19,46 +19,13 @@ import java.lang.reflect.Type;
 import java.sql.SQLException;
 
 /**
+ * @see DatastaxMapperFactory
  * @param <T> the targeted type of the jdbcMapper
  */
 public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T, DatastaxColumnKey, DatastaxMapper<T>, DatastaxMapperBuilder<T>> {
 
     public static final MapperSourceImpl<GettableData, DatastaxColumnKey> FIELD_MAPPER_SOURCE =
             new MapperSourceImpl<GettableData, DatastaxColumnKey>(GettableData.class, new RowGetterFactory());
-
-
-    /**
-     * Build a new DatastaxMapperBuilder targeting the type specified by the TypeReference. The TypeReference
-     * allow you to provide a generic type with check of T<br>
-     * <code>new TypeReference&lt;List&lt;String&gt;&gt;() {}</code>
-     *
-     * @param target the TypeReference to the type T to map to
-     */
-    public DatastaxMapperBuilder(final TypeReference<T> target) {
-        this(target.getType());
-    }
-
-    /**
-     * Build a new DatastaxMapperBuilder targeting the specified type.
-     *
-     * @param target the type
-     */
-    public DatastaxMapperBuilder(final Type target) {
-        this(target, ReflectionService.newInstance());
-    }
-
-    /**
-     * Build a new DatastaxMapperBuilder targeting the specified type with the specified ReflectionService.
-     *
-     * @param target         the type
-     * @param reflectService the ReflectionService
-     */
-    public DatastaxMapperBuilder(final Type target, ReflectionService reflectService) {
-        this(reflectService.<T>getClassMeta(target),
-                MapperConfig.<Row, DatastaxColumnKey>fieldMapperConfig(),
-                new RowGetterFactory(),
-                new DatastaxMappingContextFactoryBuilder());
-    }
 
     /**
      * @param classMeta                  the meta for the target class.

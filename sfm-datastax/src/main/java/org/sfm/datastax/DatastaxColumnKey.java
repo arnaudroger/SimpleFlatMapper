@@ -45,7 +45,7 @@ public class DatastaxColumnKey implements FieldKey<DatastaxColumnKey>, TypeAffin
 	}
 
 	@Override
-	public int getIndex() {
+ 	public int getIndex() {
 		return index;
 	}
 
@@ -108,9 +108,13 @@ public class DatastaxColumnKey implements FieldKey<DatastaxColumnKey>, TypeAffin
 	}
 
 	@Override
-	public Class<?>[] getAffinities() {
+	public Class<?>[] getAffinities()     {
 		if (sqlType != null) {
-			return new Class<?>[] {sqlType.asJavaClass()};
+			final Class<?> aClass = sqlType.asJavaClass();
+			if (Number.class.isAssignableFrom(aClass)) {
+				return new Class<?>[] { aClass, Number.class };
+			}
+			return new Class<?>[] {aClass};
 		}
 		return null;
 	}

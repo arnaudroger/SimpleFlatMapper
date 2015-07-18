@@ -148,8 +148,8 @@ public final class FieldMapperFactory<S, K extends FieldKey<K>>  {
 
 			for(int i = 0; i < classes.length; i++) {
 				Class<?> c = classes[i];
-				if (paramType.isAssignableFrom(c)) {
-					return classes.length - 1 + 1;
+				if (c.isAssignableFrom(paramType)) {
+					return classes.length - i + 10;
 				}
 			}
 

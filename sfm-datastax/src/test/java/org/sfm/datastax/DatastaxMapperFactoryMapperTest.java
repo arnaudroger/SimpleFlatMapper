@@ -8,6 +8,7 @@ import org.cassandraunit.dataset.json.ClassPathJsonDataSet;
 import org.cassandraunit.dataset.yaml.ClassPathYamlDataSet;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.beans.TestAffinityObject;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -27,7 +28,7 @@ public class DatastaxMapperFactoryMapperTest extends AbstractCassandraUnit4TestC
 
 
     @Test
-    public void testConnectWithDatastax() throws Exception {
+    public void testDynamicMapper() throws Exception {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
@@ -84,6 +85,48 @@ public class DatastaxMapperFactoryMapperTest extends AbstractCassandraUnit4TestC
             }
         });
     }
+
+    @Test
+    public void testAlias() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+                final DatastaxMapper<DbObject> mapper = DatastaxMapperFactory.newInstance().addAlias("firstname", "name").newMapper(DbObject.class);
+                ResultSet rs = session.execute("select id, email as firstname from dbobjects");
+
+                final Iterator<DbObject> iterator = mapper.iterator(rs);
+
+                DbObject o = iterator.next();
+
+                assertEquals(1, o.getId());
+                assertEquals("arnaud.roger@gmail.com", o.getName());
+
+            }
+        });
+    }
+
+    @Test
+    public void testTypeAffinity() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+                final DatastaxMapper<TestAffinityObject> mapper = DatastaxMapperFactory.newInstance().newMapper(TestAffinityObject.class);
+                ResultSet rs = session.execute("select id as fromInt, email as fromString from dbobjects");
+
+                final Iterator<TestAffinityObject> iterator = mapper.iterator(rs);
+
+                TestAffinityObject o = iterator.next();
+
+                assertEquals(1, o.fromInt.i);
+                assertNull(o.fromInt.str);
+                assertEquals("arnaud.roger@gmail.com", o.fromString.str);
+                assertEquals(0, o.fromString.i);
+
+            }
+        });
+    }
+
+
 
     private void testInSession(Callback callback) throws Exception {
         Cluster cluster = null;

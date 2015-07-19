@@ -65,7 +65,7 @@
                     <configuration>
                         <instructions>
                             <Export-Package>org.sfm.*</Export-Package>
-                            <Import-Package>*;optional=true;resolution:=optional,*</Import-Package>
+                            <Import-Package>*</Import-Package>
                         </instructions>
                     </configuration>
                 </plugin>
@@ -189,7 +189,7 @@
                             <classifier>jdk16</classifier>
                             <instructions>
                                 <Export-Package>org.sfm.*</Export-Package>
-                                <Import-Package>*;optional=true;resolution:=optional,*</Import-Package>
+                                <Import-Package>*</Import-Package>
                             </instructions>
                         </configuration>
                     </plugin>
@@ -291,7 +291,7 @@
                             <classifier>jdk17</classifier>
                             <instructions>
                                 <Export-Package>org.sfm.*</Export-Package>
-                                <Import-Package>*;optional=true;resolution:=optional,*</Import-Package>
+                                <Import-Package>javax.persistence;resolution:=optional,org.joda.*;resolution:=optional,!org.objectweb.*,*</Import-Package>
                             </instructions>
                         </configuration>
                     </plugin>

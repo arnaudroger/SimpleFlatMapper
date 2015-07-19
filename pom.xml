@@ -189,7 +189,7 @@
                             <classifier>jdk16</classifier>
                             <instructions>
                                 <Export-Package>org.sfm.*</Export-Package>
-                                <Import-Package>*</Import-Package>
+                                <Import-Package>!org.objectweb.*,!org.sfm.test.*,javax.persistence;resolution:=optional,org.joda.*;resolution:=optional,*</Import-Package>
                             </instructions>
                         </configuration>
                     </plugin>
@@ -291,7 +291,7 @@
                             <classifier>jdk17</classifier>
                             <instructions>
                                 <Export-Package>org.sfm.*</Export-Package>
-                                <Import-Package>javax.persistence;resolution:=optional,org.joda.*;resolution:=optional,!org.objectweb.*,*</Import-Package>
+                                <Import-Package>!org.objectweb.*,!org.sfm.test.*,javax.persistence;resolution:=optional,org.joda.*;resolution:=optional,*</Import-Package>
                             </instructions>
                         </configuration>
                     </plugin>
@@ -364,6 +364,28 @@
                         </executions>
                     </plugin>
                 </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>jdk18</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.felix</groupId>
+                            <artifactId>maven-bundle-plugin</artifactId>
+                            <configuration>
+                                <instructions>
+                                    <Export-Package>org.sfm.*</Export-Package>
+                                    <Import-Package>!org.objectweb.*,!org.sfm.test.*,javax.persistence;resolution:=optional,org.joda.*;resolution:=optional,*</Import-Package>
+                                </instructions>
+                            </configuration>
+                        </plugin>
+                    </plugins>
                 </pluginManagement>
             </build>
         </profile>

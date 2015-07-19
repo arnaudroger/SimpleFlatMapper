@@ -64,7 +64,7 @@
                     <extensions>true</extensions>
                     <configuration>
                         <instructions>
-                            <Export-Package>!*.impl,org.sfm.*</Export-Package>
+                            <Export-Package>org.sfm.*</Export-Package>
                             <Import-Package>*;optional=true;resolution:=optional,*</Import-Package>
                         </instructions>
                     </configuration>
@@ -188,7 +188,8 @@
                         <configuration>
                             <classifier>jdk16</classifier>
                             <instructions>
-                                <Export-Package>org.sfm.map,org.sfm.jdbc,org.sfm.osgi,org.sfm.utils</Export-Package>
+                                <Export-Package>org.sfm.*</Export-Package>
+                                <Import-Package>*;optional=true;resolution:=optional,*</Import-Package>
                             </instructions>
                         </configuration>
                     </plugin>
@@ -289,7 +290,8 @@
                         <configuration>
                             <classifier>jdk17</classifier>
                             <instructions>
-                                <Export-Package>org.sfm.map,org.sfm.jdbc,org.sfm.osgi,org.sfm.utils</Export-Package>
+                                <Export-Package>org.sfm.*</Export-Package>
+                                <Import-Package>*;optional=true;resolution:=optional,*</Import-Package>
                             </instructions>
                         </configuration>
                     </plugin>

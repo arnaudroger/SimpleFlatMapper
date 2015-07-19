@@ -78,6 +78,9 @@
 		</profile>
 		<profile>
 			<id>jdk16</id>
+			<properties>
+				<skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>

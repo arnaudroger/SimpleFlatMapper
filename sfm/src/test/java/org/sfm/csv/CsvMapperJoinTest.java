@@ -1,7 +1,7 @@
 package org.sfm.csv;
 
 import org.junit.Test;
-import org.sfm.jdbc.JoinTest;
+import org.sfm.test.jdbc.JoinTest;
 import org.sfm.utils.ListHandler;
 
 import java.io.IOException;

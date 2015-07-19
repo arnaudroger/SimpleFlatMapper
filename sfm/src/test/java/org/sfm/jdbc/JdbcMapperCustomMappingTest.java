@@ -11,6 +11,8 @@ import org.sfm.map.ColumnDefinition;
 import org.sfm.map.column.GetterProperty;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
+import org.sfm.test.jdbc.DbHelper;
+import org.sfm.test.jdbc.TestRowHandler;
 
 import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
@@ -34,7 +36,7 @@ public class JdbcMapperCustomMappingTest {
 				r.next();
 				DbHelper.assertDbObjectMapping(mapper.map(r));
 			}
-			
+
 		}, DbHelper.TEST_DB_OBJECT_QUERY.replace("id,", "id as not_id_column,"));
 	}
 	

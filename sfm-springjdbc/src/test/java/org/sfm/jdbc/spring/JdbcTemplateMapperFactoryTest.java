@@ -3,7 +3,7 @@ package org.sfm.jdbc.spring;
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.jdbc.DbHelper;
+import org.sfm.test.jdbc.DbHelper;
 import org.sfm.utils.ListHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;

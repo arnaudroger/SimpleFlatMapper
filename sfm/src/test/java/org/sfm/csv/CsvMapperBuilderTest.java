@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPartialFinalObject;
-import org.sfm.jdbc.DbHelper;
+import org.sfm.test.jdbc.DbHelper;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.TypeReference;

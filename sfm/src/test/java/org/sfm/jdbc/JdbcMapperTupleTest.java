@@ -1,6 +1,8 @@
 package org.sfm.jdbc;
 
 import org.junit.Test;
+import org.sfm.test.jdbc.DbHelper;
+import org.sfm.test.jdbc.TestRowHandler;
 import org.sfm.tuples.*;
 import org.sfm.utils.ListHandler;
 
@@ -26,7 +28,7 @@ public class JdbcMapperTupleTest {
 					@Override
 					public void handle(PreparedStatement preparedStatement) throws Exception {
 						ResultSet rs = preparedStatement.executeQuery();
-						try  {
+						try {
 							List<Tuple2<String, String>> list = mapper.forEach(rs, new ListHandler<Tuple2<String, String>>()).getList();
 
 							assertEquals(1, list.size());
@@ -35,7 +37,10 @@ public class JdbcMapperTupleTest {
 							assertEquals("1", tuple2.getElement0());
 							assertEquals("2", tuple2.getElement1());
 						} finally {
-							try { rs.close(); } catch (Exception e) {}
+							try {
+								rs.close();
+							} catch (Exception e) {
+							}
 						}
 					}
 				},

@@ -3,7 +3,7 @@ package org.sfm.csv;
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
-import org.sfm.jdbc.DbHelper;
+import org.sfm.test.jdbc.DbHelper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;

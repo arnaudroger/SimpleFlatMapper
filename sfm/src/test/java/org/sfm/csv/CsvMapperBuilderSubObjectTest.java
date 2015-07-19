@@ -5,7 +5,7 @@ import org.sfm.beans.Db1DeepObject;
 import org.sfm.beans.Db1DeepPartialObject;
 import org.sfm.beans.DbFinal1DeepObject;
 import org.sfm.csv.impl.ParsingContext;
-import org.sfm.jdbc.DbHelper;
+import org.sfm.test.jdbc.DbHelper;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.utils.ListHandler;
 

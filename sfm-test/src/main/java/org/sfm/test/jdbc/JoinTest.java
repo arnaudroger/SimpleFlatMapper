@@ -1,4 +1,4 @@
-package org.sfm.jdbc;
+package org.sfm.test.jdbc;
 
 import java.util.List;
 

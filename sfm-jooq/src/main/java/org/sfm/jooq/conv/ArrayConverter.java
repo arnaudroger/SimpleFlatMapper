@@ -1,6 +1,7 @@
-package org.sfm.utils.conv;
+package org.sfm.jooq.conv;
 
 import org.sfm.reflect.Getter;
+import org.sfm.utils.conv.Converter;
 
 import java.sql.Array;
 import java.sql.ResultSet;

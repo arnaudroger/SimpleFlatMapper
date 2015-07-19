@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.csv.impl.CsvMapperImpl;
 import org.sfm.csv.impl.ParsingException;
-import org.sfm.jdbc.DbHelper;
+import org.sfm.test.jdbc.DbHelper;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;

@@ -1,11 +1,11 @@
-package org.sfm.jdbc;
+package org.sfm.test.jdbc;
 
 import org.junit.Assert;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObjectWithAlias;
 import org.sfm.beans.DbPartialFinalObject;
-import org.sfm.utils.DateHelper;
+import org.sfm.test.DateHelper;
 
 import java.sql.*;
 import java.text.ParseException;

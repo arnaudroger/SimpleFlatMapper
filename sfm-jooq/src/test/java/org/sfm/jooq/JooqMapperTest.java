@@ -7,7 +7,7 @@ import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;
 import org.sfm.beans.DbExtendedType;
 import org.sfm.beans.DbObject;
-import org.sfm.jdbc.DbHelper;
+import org.sfm.test.jdbc.DbHelper;
 
 import java.sql.Connection;
 import java.util.List;

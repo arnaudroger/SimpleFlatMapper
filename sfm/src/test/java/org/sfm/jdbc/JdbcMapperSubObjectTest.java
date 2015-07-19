@@ -6,6 +6,8 @@ import org.sfm.beans.Db2DeepObject;
 import org.sfm.beans.DbFinal1DeepObject;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
+import org.sfm.test.jdbc.DbHelper;
+import org.sfm.test.jdbc.TestRowHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -39,7 +41,7 @@ public class JdbcMapperSubObjectTest {
 			public void handle(PreparedStatement t) throws Exception {
 				ResultSet rs = t.executeQuery();
 				rs.next();
-				
+
 				Db1DeepObject object = mapper.map(rs);
 				assertEquals(33, object.getId());
 				assertEquals("value", object.getValue());

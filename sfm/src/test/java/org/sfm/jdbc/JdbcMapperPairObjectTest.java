@@ -5,6 +5,8 @@ import org.sfm.beans.Bar;
 import org.sfm.beans.Foo;
 import org.sfm.beans.Pair;
 import org.sfm.reflect.TypeReference;
+import org.sfm.test.jdbc.DbHelper;
+import org.sfm.test.jdbc.TestRowHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

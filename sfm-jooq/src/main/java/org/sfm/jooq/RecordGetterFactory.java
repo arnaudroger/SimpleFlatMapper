@@ -1,6 +1,7 @@
 package org.sfm.jooq;
 
 import org.jooq.Record;
+import org.sfm.jooq.conv.JooqConverterFactory;
 import org.sfm.jooq.getter.EnumRecordNamedGetter;
 import org.sfm.jooq.getter.EnumRecordOrdinalGetter;
 import org.sfm.jooq.getter.RecordGetter;

@@ -6,7 +6,7 @@ import org.sfm.beans.DbListObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.beans.DbPartialFinalObject;
-import org.sfm.jdbc.DbHelper;
+import org.sfm.test.jdbc.DbHelper;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.RowHandler;
 

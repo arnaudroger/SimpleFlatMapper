@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Before;
 import org.junit.Test;
-import org.sfm.jdbc.JoinTest;
+import org.sfm.test.jdbc.JoinTest;
 import org.sfm.utils.ListHandler;
 
 import java.util.ArrayList;

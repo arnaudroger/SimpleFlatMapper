@@ -1,7 +1,9 @@
-package org.sfm.jooq;
+package org.sfm.jooq.conv;
 
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
+import org.sfm.jooq.conv.ArrayConverter;
+import org.sfm.jooq.conv.ArrayToListConverter;
 import org.sfm.map.impl.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;

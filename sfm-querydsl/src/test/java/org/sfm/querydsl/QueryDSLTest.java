@@ -4,7 +4,7 @@ import com.mysema.query.sql.HSQLDBTemplates;
 import com.mysema.query.sql.SQLQuery;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.jdbc.DbHelper;
+import org.sfm.test.jdbc.DbHelper;
 
 import java.sql.Connection;
 import java.util.List;

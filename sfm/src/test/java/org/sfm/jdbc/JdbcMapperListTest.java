@@ -6,6 +6,8 @@ import org.sfm.beans.DbListObject;
 import org.sfm.beans.DbListOfString;
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.TypeReference;
+import org.sfm.test.jdbc.DbHelper;
+import org.sfm.test.jdbc.TestRowHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -1,4 +1,4 @@
-package org.sfm.utils;
+package org.sfm.test;
 
 import java.text.DateFormat;
 import java.text.ParseException;

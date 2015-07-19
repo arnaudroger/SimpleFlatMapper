@@ -2,6 +2,8 @@ package org.sfm.jdbc;
 
 import org.junit.Test;
 import org.sfm.beans.Db1GenericObject;
+import org.sfm.test.jdbc.DbHelper;
+import org.sfm.test.jdbc.TestRowHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

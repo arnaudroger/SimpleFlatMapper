@@ -3,6 +3,8 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
+import org.sfm.test.jdbc.DbHelper;
+import org.sfm.test.jdbc.TestRowHandler;
 import org.sfm.utils.ListHandler;
 
 import java.sql.PreparedStatement;

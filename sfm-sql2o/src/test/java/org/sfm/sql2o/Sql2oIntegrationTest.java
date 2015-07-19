@@ -2,7 +2,7 @@ package org.sfm.sql2o;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.jdbc.DbHelper;
+import org.sfm.test.jdbc.DbHelper;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.sql2o.Query;
 import org.sql2o.Sql2o;

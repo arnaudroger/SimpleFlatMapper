@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sfm.map.MappingContext;
+import org.sfm.test.jdbc.JoinTest;
 import org.sfm.utils.ListHandler;
 
 import java.sql.ResultSet;

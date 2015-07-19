@@ -7,6 +7,8 @@ import org.sfm.beans.DbObjectWithAlias;
 import org.sfm.map.*;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeReference;
+import org.sfm.test.jdbc.DbHelper;
+import org.sfm.test.jdbc.TestRowHandler;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
 import org.sfm.utils.ListHandler;

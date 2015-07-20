@@ -9,7 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.JdbcColumnKey;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
+import org.sfm.jdbc.ResultSetGetterFactory;
+import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.IntGetter;
 

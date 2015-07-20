@@ -5,6 +5,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.map.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.InstantiatorFactory;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;

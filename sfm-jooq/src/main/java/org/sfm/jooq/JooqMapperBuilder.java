@@ -1,11 +1,14 @@
 package org.sfm.jooq;
 
 import org.jooq.Record;
-import org.sfm.map.GetterFactory;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperBuildingException;
-import org.sfm.map.impl.context.MappingContextFactoryBuilder;
-import org.sfm.map.impl.*;
+import org.sfm.map.MapperConfig;
+import org.sfm.map.mapper.FieldMapperMapperBuilder;
+import org.sfm.map.mapper.MapperSource;
+import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.context.MappingContextFactoryBuilder;
+import org.sfm.map.mapper.MapperSourceImpl;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 

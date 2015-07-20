@@ -1,7 +1,7 @@
 package org.sfm.csv.impl.cellreader;
 
 import org.sfm.csv.CellValueReader;
-import org.sfm.csv.impl.ParsingContext;
+import org.sfm.csv.ParsingContext;
 
 public class BoxedBooleanCellValueReader implements BooleanCellValueReader {
     private final CellValueReader<Boolean> reader;

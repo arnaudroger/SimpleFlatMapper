@@ -3,6 +3,7 @@ package org.sfm.csv.impl.writer;
 import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.sfm.csv.CellWriter;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MappingContext;
 import org.sfm.reflect.Getter;
@@ -20,6 +21,7 @@ public class JodaTimeFormattingAppender<T> implements FieldMapper<T, Appendable>
         this.cellWriter = cellWriter;
     }
 
+    @SuppressWarnings("unchecked")
     public JodaTimeFormattingAppender(Getter<T, ?> getter, String pattern, CellWriter cellWriter) {
         this.getter = (Getter<T, ? extends ReadableInstant>)getter;
         this.formatter = DateTimeFormat.forPattern(pattern);

@@ -1,5 +1,6 @@
 package org.sfm.csv.impl;
 
+import org.sfm.csv.mapper.CsvMapperCellHandler;
 import org.sfm.reflect.Getter;
 
 public class DelayedGetter<T> implements Getter<CsvMapperCellHandler<?>, T> {

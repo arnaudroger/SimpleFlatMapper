@@ -1,7 +1,6 @@
 package org.sfm.csv;
 
 import org.junit.Test;
-import org.sfm.csv.impl.ParsingContext;
 import org.sfm.csv.parser.CellConsumer;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.*;

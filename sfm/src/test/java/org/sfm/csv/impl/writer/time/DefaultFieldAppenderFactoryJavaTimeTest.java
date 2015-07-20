@@ -1,26 +1,22 @@
 package org.sfm.csv.impl.writer.time;
 
 import org.junit.Test;
-import org.sfm.beans.DbObject;
-import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.impl.writer.CsvCellWriter;
-import org.sfm.csv.impl.writer.DefaultFieldAppenderFactory;
+import org.sfm.csv.DefaultFieldAppenderFactory;
 import org.sfm.map.FieldMapper;
-import org.sfm.map.MappingContextFactory;
-import org.sfm.map.column.FormatProperty;
+import org.sfm.map.context.MappingContextFactory;
 import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
-import org.sfm.map.impl.PropertyMapping;
-import org.sfm.map.impl.context.KeySourceGetter;
-import org.sfm.map.impl.context.MappingContextFactoryBuilder;
+import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.mapper.PropertyMapping;
+import org.sfm.map.context.KeySourceGetter;
+import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyMeta;
 
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 

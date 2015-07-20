@@ -1,10 +1,9 @@
 package org.sfm.datastax.impl;
 
-import com.datastax.driver.core.GettableData;
 import com.datastax.driver.core.Row;
 import org.sfm.datastax.DatastaxColumnKey;
-import org.sfm.map.impl.context.KeySourceGetter;
-import org.sfm.map.impl.context.MappingContextFactoryBuilder;
+import org.sfm.map.context.KeySourceGetter;
+import org.sfm.map.context.MappingContextFactoryBuilder;
 
 public class DatastaxMappingContextFactoryBuilder extends MappingContextFactoryBuilder<Row, DatastaxColumnKey> {
     public DatastaxMappingContextFactoryBuilder() {

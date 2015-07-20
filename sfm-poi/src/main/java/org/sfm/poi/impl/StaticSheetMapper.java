@@ -4,9 +4,8 @@ package org.sfm.poi.impl;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.sfm.map.*;
+import org.sfm.map.context.MappingContextFactory;
 import org.sfm.poi.RowMapper;
-import org.sfm.poi.SheetMapper;
-import org.sfm.poi.impl.SheetIterator;
 import org.sfm.utils.RowHandler;
 
 import java.util.Iterator;
@@ -14,7 +13,6 @@ import java.util.Iterator;
 //IFJAVA8_START
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import org.sfm.poi.impl.SheetSpliterator;
 //IFJAVA8_END
 
 public class StaticSheetMapper<T> implements RowMapper<T> {

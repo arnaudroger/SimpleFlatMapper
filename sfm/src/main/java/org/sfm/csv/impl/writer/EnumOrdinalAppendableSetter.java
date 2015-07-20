@@ -1,5 +1,6 @@
 package org.sfm.csv.impl.writer;
 
+import org.sfm.csv.CellWriter;
 import org.sfm.reflect.Setter;
 
 public class EnumOrdinalAppendableSetter  implements Setter<Appendable, Enum> {

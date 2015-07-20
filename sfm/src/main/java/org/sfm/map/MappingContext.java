@@ -1,5 +1,7 @@
 package org.sfm.map;
 
+import org.sfm.map.context.MappingContextFactory;
+
 public class MappingContext<S> {
 
     public static final MappingContext INSTANCE = new MappingContext();

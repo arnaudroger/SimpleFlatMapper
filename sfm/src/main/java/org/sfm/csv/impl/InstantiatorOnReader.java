@@ -1,6 +1,7 @@
 package org.sfm.csv.impl;
 
 import org.sfm.csv.CellValueReader;
+import org.sfm.csv.ParsingContext;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.ErrorHelper;
 

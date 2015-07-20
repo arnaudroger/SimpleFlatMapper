@@ -2,7 +2,7 @@ package org.sfm.querydsl;
 
 import com.mysema.query.Tuple;
 import org.sfm.map.GetterFactory;
-import org.sfm.map.ColumnDefinition;
+import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.querydsl.getter.EnumTupleNamedIndexedGetter;
 import org.sfm.querydsl.getter.EnumTupleOrdinalIndexedGetter;
 import org.sfm.querydsl.getter.TupleIndexedGetter;

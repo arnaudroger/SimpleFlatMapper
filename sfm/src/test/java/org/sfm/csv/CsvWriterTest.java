@@ -2,14 +2,13 @@ package org.sfm.csv;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.csv.impl.writer.CellWriter;
 import org.sfm.csv.impl.writer.CsvCellWriter;
-import org.sfm.csv.impl.writer.DefaultFieldAppenderFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.EnumOrdinalFormatProperty;
-import org.sfm.map.impl.PropertyMapping;
-import org.sfm.map.impl.context.MappingContextFactoryBuilder;
+import org.sfm.map.mapper.PropertyMapping;
+import org.sfm.map.context.MappingContextFactoryBuilder;
+import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
@@ -76,7 +75,9 @@ public class CsvWriterTest {
     @Test
     public void testWriterWithOneManualColumnWithFormat() throws  Exception {
         StringWriter sw = new StringWriter();
-        CsvWriter.from(DbObject.class).skipHeaders().column("creation_time", new SimpleDateFormat("yyyyMMdd")).to(sw).append(newDbObject());
+        final CsvWriter.CsvWriterDSL<DbObject> dbObjectCsvWriterDSL = CsvWriter.from(DbObject.class).skipHeaders();
+        final CsvWriter<DbObject> to = dbObjectCsvWriterDSL.column("creation_time", new SimpleDateFormat("yyyyMMdd")).to(sw);
+        to.append(newDbObject());
         assertEquals(
                 "20150606\r\n",
                 sw.toString());

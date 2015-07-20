@@ -1,7 +1,8 @@
 package org.sfm.map.impl;
 
-import org.sfm.map.ColumnDefinition;
+import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.FieldKey;
+import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.meta.ArrayElementPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.meta.SubPropertyMeta;

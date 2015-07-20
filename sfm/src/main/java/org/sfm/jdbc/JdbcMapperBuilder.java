@@ -1,11 +1,15 @@
 package org.sfm.jdbc;
 
 import org.sfm.jdbc.impl.*;
-import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
-import org.sfm.map.impl.*;
-import org.sfm.map.impl.context.MappingContextFactoryBuilder;
+import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.context.MappingContextFactory;
+import org.sfm.map.context.MappingContextFactoryBuilder;
+import org.sfm.map.mapper.AbstractMapperBuilder;
+import org.sfm.map.mapper.JoinMapperImpl;
+import org.sfm.map.mapper.MapperSourceImpl;
+import org.sfm.map.mapper.StaticSetRowMapper;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
@@ -20,9 +24,9 @@ import java.sql.SQLException;
 /**
  * @param <T> the targeted type of the jdbcMapper
  */
-public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet, T, JdbcColumnKey, JdbcMapper<T>, JdbcMapperBuilder<T>>{
+public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet, T, JdbcColumnKey, JdbcMapper<T>, JdbcMapperBuilder<T>> {
 
-    public static final MapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
+    private static final MapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
             new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class, new ResultSetGetterFactory());
 
 
@@ -138,7 +142,7 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
         return new JoinDatastaxMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 
-    public static class JoinDatastaxMapper<T> extends  JoinMapperImpl<ResultSet, ResultSet, T, SQLException> implements JdbcMapper<T> {
+    public static class JoinDatastaxMapper<T> extends JoinMapperImpl<ResultSet, ResultSet, T, SQLException> implements JdbcMapper<T> {
         public JoinDatastaxMapper(Mapper<ResultSet, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super ResultSet> mappingContextFactory) {
             super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
         }

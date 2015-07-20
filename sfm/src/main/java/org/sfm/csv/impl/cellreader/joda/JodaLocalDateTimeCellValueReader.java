@@ -3,7 +3,7 @@ package org.sfm.csv.impl.cellreader.joda;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.sfm.csv.CellValueReader;
-import org.sfm.csv.impl.ParsingContext;
+import org.sfm.csv.ParsingContext;
 import org.sfm.csv.impl.cellreader.StringCellValueReader;
 
 public class JodaLocalDateTimeCellValueReader implements CellValueReader<LocalDateTime> {

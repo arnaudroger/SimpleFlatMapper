@@ -40,6 +40,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <source.classifier>sources</source.classifier>
         <javadoc.classifier>javadoc</javadoc.classifier>
+        <jar.classifier />
     </properties>
 
     <modules>
@@ -53,22 +54,9 @@
         <module>sfm-test</module>
     </modules>
 
-
     <build>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <version>2.5.0</version>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <instructions>
-                            <Export-Package>org.sfm.*</Export-Package>
-                            <Import-Package>*</Import-Package>
-                        </instructions>
-                    </configuration>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -177,27 +165,12 @@
             <properties>
                 <source.classifier>jdk16-sources</source.classifier>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
+                <jar.classifier>jdk16</jar.classifier>
             </properties>
 
             <build>
                 <pluginManagement>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.felix</groupId>
-                        <artifactId>maven-bundle-plugin</artifactId>
-                        <configuration>
-                            <classifier>jdk16</classifier>
-                            <instructions>
-                                <Export-Package>org.sfm.*</Export-Package>
-                                <Import-Package>!org.objectweb.*,!org.sfm.test.*,javax.persistence;resolution:=optional,org.joda.*;resolution:=optional,*</Import-Package>
-                            </instructions>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <configuration>
-                        </configuration>
-                    </plugin>
                     <plugin>
                         <groupId>com.google.code.maven-replacer-plugin</groupId>
                         <artifactId>replacer</artifactId>
@@ -280,21 +253,11 @@
             <properties>
                 <source.classifier>jdk17-sources</source.classifier>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
+                <jar.classifier>jdk17</jar.classifier>
             </properties>
             <build>
                 <pluginManagement>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.felix</groupId>
-                        <artifactId>maven-bundle-plugin</artifactId>
-                        <configuration>
-                            <classifier>jdk17</classifier>
-                            <instructions>
-                                <Export-Package>org.sfm.*</Export-Package>
-                                <Import-Package>!org.objectweb.*,!org.sfm.test.*,javax.persistence;resolution:=optional,org.joda.*;resolution:=optional,*</Import-Package>
-                            </instructions>
-                        </configuration>
-                    </plugin>
                     <plugin>
                         <groupId>com.google.code.maven-replacer-plugin</groupId>
                         <artifactId>replacer</artifactId>
@@ -364,28 +327,6 @@
                         </executions>
                     </plugin>
                 </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-        <profile>
-            <id>jdk18</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.felix</groupId>
-                            <artifactId>maven-bundle-plugin</artifactId>
-                            <configuration>
-                                <instructions>
-                                    <Export-Package>org.sfm.*</Export-Package>
-                                    <Import-Package>!org.objectweb.*,!org.sfm.test.*,javax.persistence;resolution:=optional,org.joda.*;resolution:=optional,*</Import-Package>
-                                </instructions>
-                            </configuration>
-                        </plugin>
-                    </plugins>
                 </pluginManagement>
             </build>
         </profile>
@@ -466,33 +407,6 @@
                         </configuration>
                     </plugin>
                 </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>ga</id>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>2.10.1</version>
-                            <configuration>
-                                <classifier>${javadoc.classifier}</classifier>
-                                <footer><![CDATA[<script type="text/javascript">
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-        </script>
-        <script type="text/javascript">
-        try {
-        var pageTracker = _gat._getTracker("UA-59470416-1");
-        pageTracker._trackPageview();
-        } catch(err) {}
-        </script>]]></footer>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
             </build>
         </profile>
     </profiles>

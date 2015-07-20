@@ -1,14 +1,14 @@
 package org.sfm.reflect;
 
-import org.sfm.map.ColumnDefinition;
+import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.impl.CalculateMaxIndex;
 import org.sfm.map.FieldKey;
-import org.sfm.map.impl.PropertyMapping;
-import org.sfm.map.impl.PropertyMappingsBuilder;
+import org.sfm.map.mapper.PropertyMapping;
+import org.sfm.map.mapper.PropertyMappingsBuilder;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.impl.EmptyConstructorInstantiator;
 import org.sfm.reflect.impl.EmptyStaticMethodInstantiator;
 import org.sfm.reflect.impl.InjectConstructorInstantiator;
-import org.sfm.reflect.impl.EmptyConstructorInstantiator;
 import org.sfm.reflect.impl.InjectStaticMethodInstantiator;
 import org.sfm.utils.ForEachCallBack;
 
@@ -27,12 +27,12 @@ public class InstantiatorFactory {
 	}
 
 
-	public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<Parameter, Getter<? super S, ?>> constructorParameterGetterMap, org.sfm.map.GetterFactory<? super S, K> getterFactory) throws NoSuchMethodException {
+	public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<org.sfm.reflect.Parameter, Getter<? super S, ?>> constructorParameterGetterMap, org.sfm.map.GetterFactory<? super S, K> getterFactory) throws NoSuchMethodException {
 		return  getInstantiator(source, target, propertyMappingsBuilder, constructorParameterGetterMap, getterFactory, true);
 	}
 
 	@SuppressWarnings("unchecked")
-    public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<Parameter, Getter<? super S, ?>> constructorParameterGetterMap, final org.sfm.map.GetterFactory<? super S, K> getterFactory,  boolean useAsmIfEnabled) throws NoSuchMethodException {
+    public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> Instantiator<S,T> getInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<org.sfm.reflect.Parameter, Getter<? super S, ?>> constructorParameterGetterMap, final org.sfm.map.GetterFactory<? super S, K> getterFactory,  boolean useAsmIfEnabled) throws NoSuchMethodException {
 
         if (propertyMappingsBuilder.isDirectProperty()) {
             Getter getter = propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K, D>>() {
@@ -55,7 +55,7 @@ public class InstantiatorFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<InstantiatorDefinition> constructors, Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
+	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<InstantiatorDefinition> constructors, Map<org.sfm.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
 		final InstantiatorDefinition instantiatorDefinition = getSmallerConstructor(constructors);
 
 		if (instantiatorDefinition == null) {
@@ -67,7 +67,7 @@ public class InstantiatorFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <S, T> Instantiator<S, T> newInstantiator(Class<?> source, Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled, InstantiatorDefinition instantiatorDefinition) {
+	private <S, T> Instantiator<S, T> newInstantiator(Class<?> source, Map<org.sfm.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled, InstantiatorDefinition instantiatorDefinition) {
 		Member executable = instantiatorDefinition.getExecutable();
 
 		if (asmFactory != null && Modifier.isPublic(executable.getModifiers()) && useAsmIfEnabled) {
@@ -120,7 +120,7 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> getOneArgIdentityInstantiator(InstantiatorDefinition id) {
-		Map<Parameter, Getter<? super S, ?>> injections = new HashMap<Parameter, Getter<? super S, ?>>();
+		Map<org.sfm.reflect.Parameter, Getter<? super S, ?>> injections = new HashMap<org.sfm.reflect.Parameter, Getter<? super S, ?>>();
 		injections.put(id.getParameters()[0], new IdentityGetter());
 		return newInstantiator(id.getParameters()[0].getType(), injections, true, id);
 	}

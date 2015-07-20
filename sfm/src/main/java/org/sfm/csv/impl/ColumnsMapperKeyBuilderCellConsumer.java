@@ -3,7 +3,7 @@ package org.sfm.csv.impl;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.impl.cellreader.StringCellValueReader;
 import org.sfm.csv.parser.CellConsumer;
-import org.sfm.map.impl.MapperKey;
+import org.sfm.map.mapper.MapperKey;
 
 import java.util.ArrayList;
 import java.util.List;

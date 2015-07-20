@@ -3,7 +3,7 @@ package org.sfm.csv.impl;
 
 import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.map.impl.AbstractColumnDefinitionProvider;
+import org.sfm.map.mapper.AbstractColumnDefinitionProvider;
 import org.sfm.tuples.Tuple2;
 import org.sfm.utils.Predicate;
 

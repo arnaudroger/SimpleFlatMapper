@@ -3,12 +3,12 @@ package org.sfm.poi.impl;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.map.ColumnDefinition;
+import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.GetterFactory;
-import org.sfm.map.impl.getter.joda.JodaTimeGetterFactory;
+import org.sfm.map.getter.joda.JodaTimeGetterFactory;
 
 //IFJAVA8_START
-import org.sfm.map.impl.getter.time.JavaTimeGetterFactory;
+import org.sfm.map.getter.time.JavaTimeGetterFactory;
 import java.time.*;
 //IFJAVA8_END
 import org.sfm.reflect.Getter;

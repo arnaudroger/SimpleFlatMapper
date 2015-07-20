@@ -2,9 +2,9 @@ package org.sfm.reflect.asm.sample;
 
 import org.sfm.beans.DbObject;
 import org.sfm.map.MappingContext;
-import org.sfm.map.MappingContextFactory;
+import org.sfm.map.context.MappingContextFactory;
 import org.sfm.map.FieldMapper;
-import org.sfm.map.impl.AbstractMapper;
+import org.sfm.map.mapper.AbstractMapper;
 import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
 import org.sfm.map.impl.fieldmapper.IntFieldMapper;
 import org.sfm.map.impl.fieldmapper.LongFieldMapper;

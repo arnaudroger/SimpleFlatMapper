@@ -4,8 +4,8 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.jdbc.impl.getter.LongResultSetGetter;
 import org.sfm.jdbc.impl.getter.StringResultSetGetter;
-import org.sfm.map.impl.getter.OrdinalEnumGetter;
-import org.sfm.map.impl.getter.StringEnumGetter;
+import org.sfm.map.getter.OrdinalEnumGetter;
+import org.sfm.map.getter.StringEnumGetter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 

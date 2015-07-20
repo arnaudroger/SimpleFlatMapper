@@ -1,8 +1,8 @@
 package org.sfm.csv.impl.cellreader;
 
 import org.sfm.csv.CellValueReader;
-import org.sfm.csv.impl.CellSetter;
-import org.sfm.csv.impl.ParsingContext;
+import org.sfm.csv.mapper.CellSetter;
+import org.sfm.csv.ParsingContext;
 import org.sfm.reflect.Setter;
 
 public final class CellSetterImpl<T, P> implements CellSetter<T> {

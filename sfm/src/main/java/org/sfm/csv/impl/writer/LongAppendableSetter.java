@@ -1,5 +1,6 @@
 package org.sfm.csv.impl.writer;
 
+import org.sfm.csv.CellWriter;
 import org.sfm.reflect.primitive.LongSetter;
 
 public class LongAppendableSetter implements LongSetter<Appendable> {

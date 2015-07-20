@@ -3,7 +3,6 @@ package org.sfm.map.impl;
 import org.sfm.map.Mapper;
 import org.sfm.map.MappingContext;
 import org.sfm.utils.Enumarable;
-import org.sfm.utils.ErrorHelper;
 
 public class StaticMapperEnumarable<S, T> implements Enumarable<T> {
 

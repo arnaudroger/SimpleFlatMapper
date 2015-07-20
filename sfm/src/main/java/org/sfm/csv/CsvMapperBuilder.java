@@ -1,10 +1,18 @@
 package org.sfm.csv;
 
 import org.sfm.csv.impl.*;
+import org.sfm.csv.mapper.CellSetter;
+import org.sfm.csv.mapper.CsvMapperCellHandler;
+import org.sfm.csv.mapper.CsvMapperCellHandlerFactory;
+import org.sfm.csv.mapper.DelayedCellSetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
-import org.sfm.map.impl.*;
+import org.sfm.map.mapper.PropertyMapping;
+import org.sfm.map.mapper.PropertyMappingsBuilder;
+import org.sfm.map.mapper.ColumnDefinition;
+import org.sfm.map.mapper.ColumnDefinitionProvider;
 import org.sfm.reflect.*;
+import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple3;
 import org.sfm.utils.ErrorHelper;
@@ -157,7 +165,7 @@ public class CsvMapperBuilder<T> {
     }
 
     private boolean isEligibleForAsmHandler() {
-        return reflectionService.getAsmFactory() != null
+        return reflectionService.hasAsmFactory()
                 &&  this.propertyMappingsBuilder.size() < mapperConfig.asmMapperNbFieldsLimit();
     }
 

@@ -7,7 +7,7 @@ import org.sfm.jooq.getter.EnumRecordOrdinalGetter;
 import org.sfm.jooq.getter.RecordGetter;
 import org.sfm.jooq.getter.RecordGetterWithConverter;
 import org.sfm.map.GetterFactory;
-import org.sfm.map.ColumnDefinition;
+import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.utils.conv.Converter;

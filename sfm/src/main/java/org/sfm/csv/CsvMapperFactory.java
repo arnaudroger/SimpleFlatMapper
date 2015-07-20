@@ -4,7 +4,7 @@ import org.sfm.csv.impl.CellValueReaderFactoryImpl;
 import org.sfm.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.sfm.csv.impl.DynamicCsvMapper;
 import org.sfm.map.*;
-import org.sfm.map.impl.AbstractMapperFactory;
+import org.sfm.map.mapper.AbstractMapperFactory;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 

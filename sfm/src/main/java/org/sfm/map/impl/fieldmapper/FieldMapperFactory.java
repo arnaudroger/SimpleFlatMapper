@@ -1,9 +1,9 @@
 package org.sfm.map.impl.fieldmapper;
 
 import org.sfm.map.*;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
-import org.sfm.map.impl.PropertyMapping;
-import org.sfm.map.impl.TypeAffinity;
+import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.mapper.PropertyMapping;
+import org.sfm.map.mapper.TypeAffinity;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyMeta;

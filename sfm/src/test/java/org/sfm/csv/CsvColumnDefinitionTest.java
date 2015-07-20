@@ -2,7 +2,6 @@ package org.sfm.csv;
 
 
 import org.junit.Test;
-import org.sfm.csv.impl.ParsingContext;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.Predicate;
 

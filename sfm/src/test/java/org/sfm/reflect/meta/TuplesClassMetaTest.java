@@ -33,6 +33,7 @@ public class TuplesClassMetaTest {
         }
     }
 
+    @SuppressWarnings("unused")
     static class MyTuple<T1, T2> {
     }
     @Test
@@ -85,9 +86,9 @@ public class TuplesClassMetaTest {
         assertIs("element0", "bar", t0_bar);
 
         assertNotNull(t1_foo);
-        assertIs("element0", "foo", t0_foo);
+        assertIs("element1", "foo", t1_foo);
         assertNotNull(t1_foo);
-        assertIs("element0", "bar", t0_bar);
+        assertIs("element1", "bar", t1_bar);
 
     }
 

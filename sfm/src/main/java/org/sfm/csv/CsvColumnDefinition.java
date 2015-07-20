@@ -2,7 +2,7 @@ package org.sfm.csv;
 
 import org.sfm.csv.column.CustomReaderFactoryProperty;
 import org.sfm.csv.column.CustomReaderProperty;
-import org.sfm.map.ColumnDefinition;
+import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.TimeZoneProperty;

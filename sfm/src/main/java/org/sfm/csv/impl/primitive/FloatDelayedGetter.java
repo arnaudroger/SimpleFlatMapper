@@ -1,6 +1,6 @@
 package org.sfm.csv.impl.primitive;
 
-import org.sfm.csv.impl.CsvMapperCellHandler;
+import org.sfm.csv.mapper.CsvMapperCellHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.FloatGetter;
 

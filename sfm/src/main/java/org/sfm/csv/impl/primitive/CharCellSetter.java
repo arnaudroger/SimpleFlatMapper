@@ -1,7 +1,7 @@
 package org.sfm.csv.impl.primitive;
 
-import org.sfm.csv.impl.CellSetter;
-import org.sfm.csv.impl.ParsingContext;
+import org.sfm.csv.mapper.CellSetter;
+import org.sfm.csv.ParsingContext;
 import org.sfm.csv.impl.cellreader.CharCellValueReader;
 import org.sfm.reflect.primitive.CharacterSetter;
 

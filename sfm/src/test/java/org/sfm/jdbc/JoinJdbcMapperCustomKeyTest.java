@@ -1,7 +1,7 @@
 package org.sfm.jdbc;
 
 import org.junit.Test;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
+import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.ListHandler;
 import org.sfm.utils.Predicate;

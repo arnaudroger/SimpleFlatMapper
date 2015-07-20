@@ -3,11 +3,8 @@ package org.sfm.datastax;
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.DataType;
 import org.sfm.map.FieldKey;
-import org.sfm.map.impl.MapperKey;
-import org.sfm.map.impl.TypeAffinity;
-
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import org.sfm.map.mapper.MapperKey;
+import org.sfm.map.mapper.TypeAffinity;
 
 import static org.sfm.utils.Asserts.requireNonNull;
 

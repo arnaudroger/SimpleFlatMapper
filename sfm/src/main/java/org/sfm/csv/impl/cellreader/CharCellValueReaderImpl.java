@@ -1,6 +1,6 @@
 package org.sfm.csv.impl.cellreader;
 
-import org.sfm.csv.impl.ParsingContext;
+import org.sfm.csv.ParsingContext;
 
 public final class CharCellValueReaderImpl implements CharCellValueReader {
 

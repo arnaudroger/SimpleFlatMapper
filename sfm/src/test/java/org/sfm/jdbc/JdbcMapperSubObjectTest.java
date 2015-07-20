@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.sfm.beans.Db1DeepObject;
 import org.sfm.beans.Db2DeepObject;
 import org.sfm.beans.DbFinal1DeepObject;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
+import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.test.jdbc.DbHelper;
 import org.sfm.test.jdbc.TestRowHandler;

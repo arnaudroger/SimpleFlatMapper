@@ -1,8 +1,8 @@
 package org.sfm.querydsl;
 
 import com.mysema.query.Tuple;
-import org.sfm.map.impl.context.MappingContextFactoryBuilder;
-import org.sfm.map.impl.context.KeySourceGetter;
+import org.sfm.map.context.MappingContextFactoryBuilder;
+import org.sfm.map.context.KeySourceGetter;
 
 import java.sql.SQLException;
 

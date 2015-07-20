@@ -1,5 +1,7 @@
 package org.sfm.csv.impl;
 
+import org.sfm.csv.ParsingContext;
+import org.sfm.csv.mapper.CellSetter;
 import org.sfm.reflect.Setter;
 
 public class DelegateMarkerSetter<T, P> implements CellSetter<T> {

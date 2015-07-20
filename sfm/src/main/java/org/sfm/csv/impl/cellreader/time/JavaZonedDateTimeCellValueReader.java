@@ -1,7 +1,7 @@
 package org.sfm.csv.impl.cellreader.time;
 
 import org.sfm.csv.CellValueReader;
-import org.sfm.csv.impl.ParsingContext;
+import org.sfm.csv.ParsingContext;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;

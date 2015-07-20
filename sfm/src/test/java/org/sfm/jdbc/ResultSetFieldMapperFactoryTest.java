@@ -2,11 +2,10 @@ package org.sfm.jdbc;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.FieldMapper;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
-import org.sfm.map.impl.PropertyMapping;
-import org.sfm.map.impl.RethrowMapperBuilderErrorHandler;
+import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.mapper.PropertyMapping;
+import org.sfm.map.error.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
 import org.sfm.map.impl.fieldmapper.LongFieldMapper;
 import org.sfm.reflect.ReflectionService;

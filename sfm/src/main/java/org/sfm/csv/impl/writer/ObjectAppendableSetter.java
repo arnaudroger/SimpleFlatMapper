@@ -1,5 +1,6 @@
 package org.sfm.csv.impl.writer;
 
+import org.sfm.csv.CellWriter;
 import org.sfm.reflect.Setter;
 
 public class ObjectAppendableSetter implements Setter<Appendable, Object> {

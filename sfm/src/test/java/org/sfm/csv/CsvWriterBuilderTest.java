@@ -5,8 +5,8 @@ import org.sfm.beans.DbObject;
 import org.sfm.map.Mapper;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.EnumOrdinalFormatProperty;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
-import org.sfm.map.impl.MapperConfig;
+import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.MapperConfig;
 
 import static org.junit.Assert.*;
 

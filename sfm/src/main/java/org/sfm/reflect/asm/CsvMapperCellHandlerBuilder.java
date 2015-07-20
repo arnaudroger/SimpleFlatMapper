@@ -2,7 +2,9 @@ package org.sfm.reflect.asm;
 
 import org.objectweb.asm.*;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.csv.impl.*;
+import org.sfm.csv.ParsingContext;
+import org.sfm.csv.ParsingContextFactory;
+import org.sfm.csv.mapper.*;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.reflect.Instantiator;
 
@@ -76,7 +78,7 @@ public class CsvMapperCellHandlerBuilder {
 
     private static <T> void append_cellValue(final DelayedCellSetterFactory<T, ?>[] delayedCellSetters, final CellSetter<T>[] setters, ClassWriter cw, final String classType, final int maxMethodSize) {
 
-        ShardingHelper.shard(setters.length, maxMethodSize, new AbstractMethodDispatchShardCallBack<T>(cw, classType, maxMethodSize ) {
+        ShardingHelper.shard(setters.length, maxMethodSize, new AbstractMethodDispatchShardCallBack<T>(cw, classType, maxMethodSize) {
             @Override
             protected void appendLeafSwitch(MethodVisitor mv, int start, int end) {
                 Label defaultLabel = new Label();

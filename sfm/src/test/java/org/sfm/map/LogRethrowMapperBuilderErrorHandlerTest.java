@@ -1,15 +1,15 @@
 package org.sfm.map;
 
 import org.junit.Test;
-import org.sfm.map.impl.LogRethrowMapperBuilderErrorHandler;
+import org.sfm.map.error.LogMapperBuilderErrorHandler;
 
 public class LogRethrowMapperBuilderErrorHandlerTest {
 
 	@Test
 	public void test() {
-		LogRethrowMapperBuilderErrorHandler handler = new LogRethrowMapperBuilderErrorHandler();
+		LogMapperBuilderErrorHandler handler = new LogMapperBuilderErrorHandler();
 		handler.getterNotFound("hello");
-		handler.propertyNotFound(LogRethrowMapperBuilderErrorHandler.class, "prop");
+		handler.propertyNotFound(LogMapperBuilderErrorHandler.class, "prop");
 	}
 
 }

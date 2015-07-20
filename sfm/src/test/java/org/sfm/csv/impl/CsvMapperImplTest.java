@@ -5,6 +5,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.csv.CellValueReader;
 import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.csv.CsvMapperFactory;
+import org.sfm.csv.ParsingContext;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;

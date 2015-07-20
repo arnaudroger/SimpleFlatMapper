@@ -1,6 +1,6 @@
 package org.sfm.csv.impl.writer.time;
 
-import org.sfm.csv.impl.writer.CellWriter;
+import org.sfm.csv.CellWriter;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MappingContext;
 import org.sfm.reflect.Getter;

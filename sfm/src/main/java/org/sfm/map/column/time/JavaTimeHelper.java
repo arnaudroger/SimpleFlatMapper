@@ -1,6 +1,6 @@
 package org.sfm.map.column.time;
 
-import org.sfm.map.ColumnDefinition;
+import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.TimeZoneProperty;
 

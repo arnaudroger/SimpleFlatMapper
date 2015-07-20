@@ -1,8 +1,8 @@
 package org.sfm.jdbc;
 
 import org.sfm.map.FieldKey;
-import org.sfm.map.impl.MapperKey;
-import org.sfm.map.impl.TypeAffinity;
+import org.sfm.map.mapper.MapperKey;
+import org.sfm.map.mapper.TypeAffinity;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

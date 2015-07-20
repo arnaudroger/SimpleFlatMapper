@@ -3,7 +3,6 @@ package org.sfm.csv;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.csv.impl.ParsingContext;
 
 import java.io.IOException;
 import java.io.StringReader;

@@ -2,13 +2,15 @@ package org.sfm.csv;
 
 
 import org.sfm.csv.impl.writer.*;
-import org.sfm.map.FieldKey;
-import org.sfm.map.FieldMapper;
-import org.sfm.map.Mapper;
+import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
-import org.sfm.map.impl.*;
-import org.sfm.map.impl.context.KeySourceGetter;
-import org.sfm.map.impl.context.MappingContextFactoryBuilder;
+import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.context.KeySourceGetter;
+import org.sfm.map.context.MappingContextFactoryBuilder;
+import org.sfm.map.mapper.ContextualMapper;
+import org.sfm.map.mapper.MapperImpl;
+import org.sfm.map.mapper.PropertyMapping;
+import org.sfm.map.mapper.PropertyMappingsBuilder;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.utils.ErrorHelper;
@@ -61,7 +63,7 @@ public class CsvWriterBuilder<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public ContextualMapper<T, Appendable> mapper() {
+    public Mapper<T, Appendable> mapper() {
 
         final List<FieldMapper<T, Appendable>> mappers = new ArrayList<FieldMapper<T, Appendable>>();
 

@@ -1,15 +1,13 @@
 package org.sfm.csv;
 
-import org.sfm.csv.impl.writer.CellWriter;
 import org.sfm.csv.impl.writer.CsvCellWriter;
-import org.sfm.csv.impl.writer.DefaultFieldAppenderFactory;
 import org.sfm.map.Mapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FormatProperty;
-import org.sfm.map.impl.ContextualMapper;
-import org.sfm.map.impl.FieldMapperColumnDefinition;
-import org.sfm.map.impl.MapperConfig;
+import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.MapperConfig;
+import org.sfm.map.mapper.ContextualMapper;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
@@ -116,7 +114,7 @@ public class CsvWriter<T>  {
         MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>> mapperConfig = MapperConfig.<T, CsvColumnKey>fieldMapperConfig();
         try {
             builder.defaultHeaders();
-            ContextualMapper<T, Appendable> mapper = builder.mapper();
+            ContextualMapper<T, Appendable> mapper = (ContextualMapper<T, Appendable>) builder.mapper();
             return new DefaultCsvWriterDSL<T>(
                     CsvWriter.<T>toColumnDefinitions(classMeta.generateHeaders()),
                     cellWriter,
@@ -157,7 +155,7 @@ public class CsvWriter<T>  {
         protected final MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>> mapperConfig;
         protected final boolean skipHeaders;
 
-        public CsvWriterDSL(
+        private CsvWriterDSL(
                 Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey, T>>[] columns,
                 CellWriter cellWriter,
                 ContextualMapper<T, Appendable> mapper,
@@ -302,7 +300,7 @@ public class CsvWriter<T>  {
                 builder.addColumn(col.first(), col.second());
             }
 
-            ContextualMapper<T, Appendable> mapper = builder.mapper();
+            ContextualMapper<T, Appendable> mapper = (ContextualMapper<T, Appendable>) builder.mapper();
 
             return new CsvWriterDSL<T>(columns, cellWriter, mapper, classMeta, fieldAppenderFactory, mapperConfig, skipHeaders);
         }
@@ -321,7 +319,7 @@ public class CsvWriter<T>  {
                 builder.addColumn(col.first(), col.second());
             }
 
-            ContextualMapper<T, Appendable> mapper = builder.mapper();
+            ContextualMapper<T, Appendable> mapper = (ContextualMapper<T, Appendable>) builder.mapper();
 
             return newCsvWriterDSL(columns, cellWriter, mapper, classMeta, fieldAppenderFactory, mapperConfig, skipHeaders);
         }
@@ -362,7 +360,7 @@ public class CsvWriter<T>  {
 
     public static class DefaultCsvWriterDSL<T> extends CsvWriterDSL<T> {
 
-        public DefaultCsvWriterDSL(
+        private DefaultCsvWriterDSL(
                 Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey, T>>[] columns,
                 CellWriter cellWriter,
                 ContextualMapper<T, Appendable> mapper,

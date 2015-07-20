@@ -2,20 +2,21 @@ package org.sfm.datastax;
 
 import com.datastax.driver.core.*;
 import com.datastax.driver.core.exceptions.DriverException;
-import org.sfm.datastax.impl.DatastaxMappingContextFactoryBuilder;
 import org.sfm.datastax.impl.ResultSetEnumarable;
 import org.sfm.datastax.impl.RowGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
-import org.sfm.map.impl.*;
-import org.sfm.map.impl.context.MappingContextFactoryBuilder;
-import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.TypeReference;
+import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.context.MappingContextFactory;
+import org.sfm.map.context.MappingContextFactoryBuilder;
+import org.sfm.map.mapper.AbstractMapperBuilder;
+import org.sfm.map.mapper.JoinMapperImpl;
+import org.sfm.map.mapper.MapperSourceImpl;
+import org.sfm.map.mapper.StaticSetRowMapper;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.utils.Enumarable;
 import org.sfm.utils.UnaryFactory;
 
-import java.lang.reflect.Type;
 import java.sql.SQLException;
 
 /**
@@ -80,7 +81,7 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
         return new JoinDatastaxMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 
-    private static class JoinDatastaxMapper<T> extends  JoinMapperImpl<Row, ResultSet, T, DriverException> implements DatastaxMapper<T> {
+    private static class JoinDatastaxMapper<T> extends JoinMapperImpl<Row, ResultSet, T, DriverException> implements DatastaxMapper<T> {
         public JoinDatastaxMapper(Mapper<Row, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
             super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
         }

@@ -2,12 +2,12 @@ package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.GettableData;
 import org.sfm.datastax.DatastaxColumnKey;
-import org.sfm.map.ColumnDefinition;
+import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.GetterFactory;
-import org.sfm.map.impl.getter.EnumUnspecifiedTypeGetter;
-import org.sfm.map.impl.getter.OrdinalEnumGetter;
-import org.sfm.map.impl.getter.StringEnumGetter;
-import org.sfm.map.impl.getter.joda.JodaTimeGetterFactory;
+import org.sfm.map.getter.EnumUnspecifiedTypeGetter;
+import org.sfm.map.getter.OrdinalEnumGetter;
+import org.sfm.map.getter.StringEnumGetter;
+import org.sfm.map.getter.joda.JodaTimeGetterFactory;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 //IFJAVA8_START
-import org.sfm.map.impl.getter.time.JavaTimeGetterFactory;
+import org.sfm.map.getter.time.JavaTimeGetterFactory;
 import java.time.*;
 //IFJAVA8_END
 import java.util.Date;
@@ -27,6 +27,7 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
 
     private final HashMap<Class<?>, GetterFactory<GettableData, DatastaxColumnKey>> getterFactories = new HashMap<Class<?>, GetterFactory<GettableData, DatastaxColumnKey>>();
     private final GetterFactory<GettableData, DatastaxColumnKey> dateGetterFactory = new GetterFactory<GettableData, DatastaxColumnKey>() {
+        @SuppressWarnings("unchecked")
         @Override
         public <P> Getter<GettableData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
             return (Getter<GettableData, P>) new DatastaxDateGetter(key.getIndex());

@@ -1,6 +1,8 @@
 package org.sfm.csv.impl.writer;
 
 
+import org.sfm.csv.CellWriter;
+
 import java.io.IOException;
 
 public final class CsvCellWriter implements CellWriter {

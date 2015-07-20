@@ -12,7 +12,7 @@ import org.sfm.map.Mapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
-import org.sfm.map.impl.getter.OrdinalEnumGetter;
+import org.sfm.map.getter.OrdinalEnumGetter;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.Getter;

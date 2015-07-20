@@ -1,5 +1,9 @@
 package org.sfm.csv.impl;
 
+import org.sfm.csv.ParsingContext;
+import org.sfm.csv.mapper.BreakDetector;
+import org.sfm.csv.mapper.CsvMapperCellConsumer;
+import org.sfm.csv.mapper.DelayedCellSetter;
 import org.sfm.reflect.Setter;
 
 public class DelegateDelayedCellSetter<T, P> implements DelayedCellSetter<T, P> {

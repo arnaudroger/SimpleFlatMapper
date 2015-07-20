@@ -2,7 +2,7 @@ package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.*;
-import org.sfm.map.impl.AbstractEnumarableDelegateMapper;
+import org.sfm.map.mapper.AbstractEnumarableDelegateMapper;
 import org.sfm.map.impl.DiscriminatorEnumerable;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuple3;

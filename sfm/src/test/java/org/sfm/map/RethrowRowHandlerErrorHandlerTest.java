@@ -1,7 +1,7 @@
 package org.sfm.map;
 
 import org.junit.Test;
-import org.sfm.map.impl.RethrowRowHandlerErrorHandler;
+import org.sfm.map.error.RethrowRowHandlerErrorHandler;
 
 import static org.junit.Assert.assertSame;
 

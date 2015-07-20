@@ -2,8 +2,8 @@ package org.sfm.map;
 
 import org.junit.Test;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.map.impl.MapperKey;
-import org.sfm.map.impl.MapperCache;
+import org.sfm.map.mapper.MapperCache;
+import org.sfm.map.mapper.MapperKey;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;

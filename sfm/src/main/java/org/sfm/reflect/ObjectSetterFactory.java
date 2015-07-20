@@ -21,14 +21,6 @@ public final class ObjectSetterFactory {
 		this.asmFactory = asmFactory;
 	}
 
-	/**
-	 *
-	 * @param target
-	 * @param property
-	 * @param <T>
-	 * @param <P>
-	 * @return
-	 */
 	public <T, P> Setter<T, P> getSetter(final Class<? extends T> target, final String property) {
 		// first look for method
 		final Method method = lookForMethod(target, property);
@@ -41,13 +33,6 @@ public final class ObjectSetterFactory {
 		return setter;
 	}
 
-	/**
-	 *
-	 * @param method
-	 * @param <T>
-	 * @param <P>
-	 * @return
-	 */
 	public <T, P> Setter<T, P> getMethodSetter(final Method method) {
 		if (asmFactory != null) {
 			try {

@@ -1,5 +1,6 @@
 package org.sfm.csv.impl.writer;
 
+import org.sfm.csv.CellWriter;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MappingContext;
 

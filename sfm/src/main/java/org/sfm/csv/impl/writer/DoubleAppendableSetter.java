@@ -1,5 +1,6 @@
 package org.sfm.csv.impl.writer;
 
+import org.sfm.csv.CellWriter;
 import org.sfm.reflect.primitive.DoubleSetter;
 
 public class DoubleAppendableSetter implements DoubleSetter<Appendable> {

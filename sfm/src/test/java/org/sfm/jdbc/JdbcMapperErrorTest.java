@@ -6,8 +6,8 @@ import org.sfm.beans.Foo;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
-import org.sfm.map.impl.LogFieldMapperErrorHandler;
-import org.sfm.map.impl.MapperImpl;
+import org.sfm.map.error.LogFieldMapperErrorHandler;
+import org.sfm.map.mapper.MapperImpl;
 import org.sfm.reflect.Instantiator;
 import org.sfm.utils.RowHandler;
 

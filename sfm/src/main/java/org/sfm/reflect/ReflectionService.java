@@ -181,5 +181,9 @@ public class ReflectionService {
     public ObjectGetterFactory getObjectGetterFactory() {
         return objectGetterFactory;
     }
+
+	public boolean hasAsmFactory() {
+		return asmFactory != null;
+	}
 }
  

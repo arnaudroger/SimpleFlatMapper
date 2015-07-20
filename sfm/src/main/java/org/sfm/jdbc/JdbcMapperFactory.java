@@ -1,8 +1,11 @@
 package org.sfm.jdbc;
 
-import org.sfm.jdbc.impl.getter.ResultSetGetterFactory;
 import org.sfm.map.*;
-import org.sfm.map.impl.*;
+import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.mapper.AbstractMapperFactory;
+import org.sfm.map.mapper.DynamicSetRowMapper;
+import org.sfm.map.mapper.FieldMapperColumnDefinitionProviderImpl;
+import org.sfm.map.mapper.MapperKey;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
@@ -43,8 +46,8 @@ import java.sql.SQLException;
  */
 public final class JdbcMapperFactory
 		extends AbstractMapperFactory<JdbcColumnKey,
-		FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>,
-		JdbcMapperFactory> {
+                FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>,
+                JdbcMapperFactory> {
 
 
     /**

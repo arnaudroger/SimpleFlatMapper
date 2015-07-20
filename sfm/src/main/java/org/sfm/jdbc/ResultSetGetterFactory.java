@@ -1,6 +1,5 @@
 package org.sfm.jdbc;
 
-import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.getter.*;
 import org.sfm.map.getter.EnumUnspecifiedTypeGetter;
 import org.sfm.map.getter.OrdinalEnumGetter;
@@ -8,7 +7,6 @@ import org.sfm.map.getter.StringEnumGetter;
 import org.sfm.map.getter.joda.JodaTimeGetterFactory;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.GetterFactory;
-import org.sfm.map.getter.time.JavaTimeGetterFactory;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
@@ -29,6 +27,7 @@ import java.util.Map.Entry;
 
 //IFJAVA8_START
 import java.time.*;
+import org.sfm.map.getter.time.JavaTimeGetterFactory;
 //IFJAVA8_END
 public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey>{
 

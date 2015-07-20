@@ -1,0 +1,9 @@
+bundle:install mvn:org.simpleflatmapper/sfm/1.11b2-SNAPSHOT
+bundle:install mvn:org.simpleflatmapper/sfm-datastax/1.11b2-SNAPSHOT
+bundle:install mvn:org.simpleflatmapper/sfm-jooq/1.11b2-SNAPSHOT
+bundle:install mvn:org.simpleflatmapper/sfm-poi/1.11b2-SNAPSHOT
+bundle:install mvn:org.simpleflatmapper/sfm-querydsl/1.11b2-SNAPSHOT
+bundle:install mvn:org.simpleflatmapper/sfm-springjdbc/1.11b2-SNAPSHOT
+bundle:install mvn:org.simpleflatmapper/sfm-sql2o/1.11b2-SNAPSHOT
+bundle:install mvn:org.simpleflatmapper/sfm-osgitest/0.0.1
+bundle:install wrap:mvn:org.apache.poi/poi/3.12

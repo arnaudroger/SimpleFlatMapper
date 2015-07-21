@@ -127,6 +127,11 @@ public class RowGetterFactoryTest {
     }
 
     @Test
+    public void testIntOnLongDatatype() throws  Exception {
+        assertEquals(13, new RowGetterFactory().newGetter(Integer.class, columnKey.datatype(DataType.bigint()), null).get(row));
+    }
+
+    @Test
     public void testIntGetterPrimitive() throws Exception {
         assertEquals(12, ((IntGetter<GettableData>)new RowGetterFactory().newGetter(int.class, columnKey, null)).getInt(row));
     }

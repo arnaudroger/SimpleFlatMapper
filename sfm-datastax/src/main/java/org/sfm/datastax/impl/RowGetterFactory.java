@@ -53,6 +53,108 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
 
         jodaTimeGetterFactory = new JodaTimeGetterFactory<GettableData, DatastaxColumnKey>(dateGetterFactory);
 
+
+        getterFactories.put(Short.class, new GetterFactory<GettableData, DatastaxColumnKey>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Getter<GettableData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                if (javaClass != null && Number.class.isAssignableFrom(javaClass)) {
+                    return (Getter<GettableData, P>) new DatastaxGenericShortGetter(key.getIndex(), key.getDateType());
+                }
+                return null;
+            }
+        });
+        getterFactories.put(short.class, getterFactories.get(Short.class));
+
+        getterFactories.put(Integer.class, new GetterFactory<GettableData, DatastaxColumnKey>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Getter<GettableData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                if (javaClass == null || javaClass.equals(Integer.class)) {
+                    return (Getter<GettableData, P>) new DatastaxIntegerGetter(key.getIndex());
+                } else if (Number.class.isAssignableFrom(javaClass)) {
+                    return (Getter<GettableData, P>) new DatastaxGenericIntegerGetter(key.getIndex(), key.getDateType());
+                }
+                return null;
+            }
+        });
+        getterFactories.put(int.class, getterFactories.get(Integer.class));
+
+        getterFactories.put(Long.class, new GetterFactory<GettableData, DatastaxColumnKey>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Getter<GettableData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                if (javaClass == null || javaClass.equals(Long.class)) {
+                    return (Getter<GettableData, P>) new DatastaxLongGetter(key.getIndex());
+                } else if (Number.class.isAssignableFrom(javaClass)) {
+                    return (Getter<GettableData, P>) new DatastaxGenericLongGetter(key.getIndex(), key.getDateType());
+                }
+                return null;
+            }
+        });
+        getterFactories.put(long.class, getterFactories.get(Long.class));
+
+        getterFactories.put(Float.class, new GetterFactory<GettableData, DatastaxColumnKey>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Getter<GettableData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                if (javaClass == null || javaClass.equals(Float.class)) {
+                    return (Getter<GettableData, P>) new DatastaxFloatGetter(key.getIndex());
+                } else if (Number.class.isAssignableFrom(javaClass)) {
+                    return (Getter<GettableData, P>) new DatastaxGenericFloatGetter(key.getIndex(), key.getDateType());
+                }
+                return null;
+            }
+        });
+        getterFactories.put(float.class, getterFactories.get(Float.class));
+
+        getterFactories.put(Double.class, new GetterFactory<GettableData, DatastaxColumnKey>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Getter<GettableData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                if (javaClass == null || javaClass.equals(Double.class)) {
+                    return (Getter<GettableData, P>) new DatastaxDoubleGetter(key.getIndex());
+                } else if (Number.class.isAssignableFrom(javaClass)) {
+                    return (Getter<GettableData, P>) new DatastaxGenericDoubleGetter(key.getIndex(), key.getDateType());
+                }
+                return null;
+            }
+        });
+        getterFactories.put(double.class, getterFactories.get(Double.class));
+
+        getterFactories.put(BigInteger.class, new GetterFactory<GettableData, DatastaxColumnKey>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Getter<GettableData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                if (javaClass == null || javaClass.equals(BigInteger.class)) {
+                    return (Getter<GettableData, P>) new DatastaxBigIntegerGetter(key.getIndex());
+                } else if (Number.class.isAssignableFrom(javaClass)) {
+                    return (Getter<GettableData, P>) new DatastaxGenericBigIntegerGetter(key.getIndex(), key.getDateType());
+                }
+                return null;
+            }
+        });
+
+        getterFactories.put(BigDecimal.class, new GetterFactory<GettableData, DatastaxColumnKey>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Getter<GettableData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                if (javaClass == null || javaClass.equals(BigDecimal.class)) {
+                    return (Getter<GettableData, P>) new DatastaxBigDecimalGetter(key.getIndex());
+                } else if (Number.class.isAssignableFrom(javaClass)) {
+                    return (Getter<GettableData, P>) new DatastaxGenericBigDecimalGetter(key.getIndex(), key.getDateType());
+                }
+                return null;
+            }
+        });
+
     }
 
     @SuppressWarnings("unchecked")
@@ -65,27 +167,11 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
         if (Date.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxDateGetter(key.getIndex());
         }
-        if (Long.class.equals(targetClass) || long.class.equals(targetClass)) {
-            return (Getter<GettableData, P>) new DatastaxLongGetter(key.getIndex());
-        }
-        if (Integer.class.equals(targetClass) || int.class.equals(targetClass)) {
-            return (Getter<GettableData, P>) new DatastaxIntegerGetter(key.getIndex());
-        }
-        if (Float.class.equals(targetClass) || float.class.equals(targetClass)) {
-            return (Getter<GettableData, P>) new DatastaxFloatGetter(key.getIndex());
-        }
-        if (Double.class.equals(targetClass) || double.class.equals(targetClass)) {
-            return (Getter<GettableData, P>) new DatastaxDoubleGetter(key.getIndex());
-        }
+
         if (boolean.class.equals(targetClass) || Boolean.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxBooleanGetter(key.getIndex());
         }
-        if (BigDecimal.class.equals(targetClass)) {
-            return (Getter<GettableData, P>) new DatastaxBigDecimalGetter(key.getIndex());
-        }
-        if (BigInteger.class.equals(targetClass)) {
-            return (Getter<GettableData, P>) new DatastaxBigIntegerGetter(key.getIndex());
-        }
+
         if (UUID.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxUUIDGetter(key.getIndex());
         }

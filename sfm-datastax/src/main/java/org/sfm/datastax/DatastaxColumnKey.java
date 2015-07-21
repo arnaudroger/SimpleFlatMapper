@@ -115,4 +115,8 @@ public class DatastaxColumnKey implements FieldKey<DatastaxColumnKey>, TypeAffin
 		}
 		return null;
 	}
+
+	public DatastaxColumnKey datatype(DataType datatype) {
+		return new DatastaxColumnKey(this.getName(), this.index, datatype, parent);
+	}
 }

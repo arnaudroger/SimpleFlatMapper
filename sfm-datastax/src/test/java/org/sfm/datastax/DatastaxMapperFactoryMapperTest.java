@@ -1,19 +1,11 @@
 package org.sfm.datastax;
 
 import com.datastax.driver.core.*;
-import org.cassandraunit.AbstractCassandraUnit4TestCase;
-import org.cassandraunit.CassandraUnit;
-import org.cassandraunit.dataset.DataSet;
-import org.cassandraunit.dataset.json.ClassPathJsonDataSet;
-import org.cassandraunit.dataset.yaml.ClassPathYamlDataSet;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.TestAffinityObject;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import static org.junit.Assert.*;
@@ -27,7 +19,7 @@ public class DatastaxMapperFactoryMapperTest extends AbstractDatastaxTest {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
-                final DatastaxMapper<DbObject> mapper = DatastaxMapperFactory.newInstance().newMapper(DbObject.class);
+                final DatastaxMapper<DbObject> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObject.class);
 
                 ResultSet rs = session.execute("select id, name, email, creation_time, type_ordinal, type_name from dbobjects");
 
@@ -86,7 +78,7 @@ public class DatastaxMapperFactoryMapperTest extends AbstractDatastaxTest {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
-                final DatastaxMapper<DbObject> mapper = DatastaxMapperFactory.newInstance().addAlias("firstname", "name").newMapper(DbObject.class);
+                final DatastaxMapper<DbObject> mapper = DatastaxMapperFactory.newInstance().addAlias("firstname", "name").mapTo(DbObject.class);
                 ResultSet rs = session.execute("select id, email as firstname from dbobjects");
 
                 final Iterator<DbObject> iterator = mapper.iterator(rs);
@@ -105,7 +97,7 @@ public class DatastaxMapperFactoryMapperTest extends AbstractDatastaxTest {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
-                final DatastaxMapper<TestAffinityObject> mapper = DatastaxMapperFactory.newInstance().newMapper(TestAffinityObject.class);
+                final DatastaxMapper<TestAffinityObject> mapper = DatastaxMapperFactory.newInstance().mapTo(TestAffinityObject.class);
                 ResultSet rs = session.execute("select id as fromInt, email as fromString from dbobjects");
 
                 final Iterator<TestAffinityObject> iterator = mapper.iterator(rs);

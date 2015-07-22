@@ -2,7 +2,6 @@ package org.sfm.datastax;
 
 import com.datastax.driver.core.Session;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -31,7 +30,7 @@ public class DatastaxNumberTest extends AbstractDatastaxTest {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
-                final FloatObject nObject = DatastaxMapperFactory.newInstance().newMapper(FloatObject.class).iterator(session.execute("select * from test_number")).next();
+                final FloatObject nObject = DatastaxMapperFactory.newInstance().mapTo(FloatObject.class).iterator(session.execute("select * from test_number")).next();
 
                 assertEquals(1.0, nObject.bi, 0.001);
                 assertEquals(2.0, nObject.i, 0.001);
@@ -59,7 +58,7 @@ public class DatastaxNumberTest extends AbstractDatastaxTest {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
-                final DoubleObject nObject = DatastaxMapperFactory.newInstance().newMapper(DoubleObject.class).iterator(session.execute("select * from test_number")).next();
+                final DoubleObject nObject = DatastaxMapperFactory.newInstance().mapTo(DoubleObject.class).iterator(session.execute("select * from test_number")).next();
 
                 assertEquals(1.0, nObject.bi, 0.001);
                 assertEquals(2.0, nObject.i, 0.001);
@@ -88,7 +87,7 @@ public class DatastaxNumberTest extends AbstractDatastaxTest {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
-                final BigDecimalObject nObject = DatastaxMapperFactory.newInstance().newMapper(BigDecimalObject.class).iterator(session.execute("select * from test_number")).next();
+                final BigDecimalObject nObject = DatastaxMapperFactory.newInstance().mapTo(BigDecimalObject.class).iterator(session.execute("select * from test_number")).next();
 
                 assertEquals(1.0, nObject.bi.doubleValue(), 0.001);
                 assertEquals(2.0, nObject.i.doubleValue(), 0.001);
@@ -114,7 +113,7 @@ public class DatastaxNumberTest extends AbstractDatastaxTest {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
-                final ShortObject nObject = DatastaxMapperFactory.newInstance().newMapper(ShortObject.class).iterator(session.execute("select * from test_number")).next();
+                final ShortObject nObject = DatastaxMapperFactory.newInstance().mapTo(ShortObject.class).iterator(session.execute("select * from test_number")).next();
 
                 assertEquals(1, nObject.bi);
                 assertEquals(2, nObject.i);
@@ -143,7 +142,7 @@ public class DatastaxNumberTest extends AbstractDatastaxTest {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
-                final IntObject nObject = DatastaxMapperFactory.newInstance().newMapper(IntObject.class).iterator(session.execute("select * from test_number")).next();
+                final IntObject nObject = DatastaxMapperFactory.newInstance().mapTo(IntObject.class).iterator(session.execute("select * from test_number")).next();
 
                 assertEquals(1, nObject.bi);
                 assertEquals(2, nObject.i);
@@ -171,7 +170,7 @@ public class DatastaxNumberTest extends AbstractDatastaxTest {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
-                final LongObject nObject = DatastaxMapperFactory.newInstance().newMapper(LongObject.class).iterator(session.execute("select * from test_number")).next();
+                final LongObject nObject = DatastaxMapperFactory.newInstance().mapTo(LongObject.class).iterator(session.execute("select * from test_number")).next();
 
                 assertEquals(1, nObject.bi);
                 assertEquals(2, nObject.i);
@@ -200,7 +199,7 @@ public class DatastaxNumberTest extends AbstractDatastaxTest {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
-                final BigIntegerObject nObject = DatastaxMapperFactory.newInstance().newMapper(BigIntegerObject.class).iterator(session.execute("select * from test_number")).next();
+                final BigIntegerObject nObject = DatastaxMapperFactory.newInstance().mapTo(BigIntegerObject.class).iterator(session.execute("select * from test_number")).next();
 
                 assertEquals(1, nObject.bi.longValue());
                 assertEquals(2, nObject.i.longValue());

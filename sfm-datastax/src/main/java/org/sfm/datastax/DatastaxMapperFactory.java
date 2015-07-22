@@ -52,13 +52,13 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
                 new DatastaxMappingContextFactoryBuilder());
     }
 
-    public <T> DatastaxMapper<T> newMapper(Class<T> type) {
-        return newMapper((Type)type);
+    public <T> DatastaxMapper<T> mapTo(Class<T> type) {
+        return mapTo((Type) type);
     }
-    public <T> DatastaxMapper<T> newMapper(TypeReference<T> type) {
-        return newMapper(type.getType());
+    public <T> DatastaxMapper<T> mapTo(TypeReference<T> type) {
+        return mapTo(type.getType());
     }
-    public <T> DatastaxMapper<T> newMapper(Type type) {
+    public <T> DatastaxMapper<T> mapTo(Type type) {
         final ClassMeta<T> classMeta = getClassMeta(type);
         return new DynamicDatastaxSetRowMapper<T>(new MapperFactory<T>(classMeta), new MapperKeyFromRowFactory(), new MapperKeyFromSet());
     }

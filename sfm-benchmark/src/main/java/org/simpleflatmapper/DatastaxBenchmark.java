@@ -50,6 +50,9 @@ import java.util.List;
 Benchmark                          Mode  Cnt   Score   Error  Units
 DatastaxBenchmark.datastaxMapper  thrpt   20  22.120 ± 0.233  ops/s
 DatastaxBenchmark.sfmMapper       thrpt   20  29.294 ± 0.438  ops/s
+Benchmark                         Mode  Cnt  Score    Error  Units
+DatastaxBenchmark.datastaxMapper  avgt   20  0.045 ±  0.001   s/op
+DatastaxBenchmark.sfmMapper       avgt   20  0.034 ±  0.001   s/op
 
  */
 @State(Scope.Benchmark)

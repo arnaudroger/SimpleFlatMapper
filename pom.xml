@@ -53,7 +53,6 @@
         <module>sfm-sql2o</module>
         <module>sfm-springjdbc</module>
         <module>sfm-test</module>
-    <module>sfm-benchmark</module>
   </modules>
 
     <build>

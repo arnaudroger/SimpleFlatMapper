@@ -7,7 +7,7 @@
 [![Build Status](https://img.shields.io/travis/arnaudroger/SimpleFlatMapper.svg)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
-# what's to come 1.11.0
+# New in 2.0.0... a lot of documenation update needed
 * modularization, jooq, sql2o, querydsl, poi will have their own package, making the dep management easier
 * cassandra datastax support
 

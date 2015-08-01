@@ -124,6 +124,7 @@
                     <name>env.TRAVIS</name>
                     <value>true</value>
                 </property>
+                <jdk>1.8</jdk>
             </activation>
 
             <build>

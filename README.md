@@ -10,13 +10,19 @@
 
 # Simple Flat Mapper (SFM) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v2.0)
 
-SimpleFlatMapper is a library that provide fast, easy to use mapping from flat structure to object.
+SimpleFlatMapper is a library that provide
+* [performant](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-Local-Mysql)
+* easy to use
+* flexible
+mappers and abstraction to create pull mappers easiky.
 
-The [main module](sfm) provides support for Csv and Jdbc.
-* Csv
-* Jdbc
+The [main module](sfm) provides support for
+ * [CSV Parser](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser)
+ * [CSV Mapper](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser#with-csvmapper)
+ * [CSV Writter](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvWriter)
+ * [Jdbc Mapper](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JdbcMapper)
 
-The CsvParser included is also one of the fastest available in java.
+The CsvParser included is also one of the [fastest](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Csv-Performance) available in java.
 
 There are also modules to support integration with external libraries
 

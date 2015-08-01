@@ -30,7 +30,7 @@ The mappers supports
  * List and Array mapping
  * No configuration needed
 
-See (Property Mapping wiki)[https://github.com/arnaudroger/SimpleFlatMapper/wiki/Property-Mapping] for more details.
+See [Property Mapping Wiki](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Property-Mapping) for more details.
 
 |Module|||
 |------|-----|-----|

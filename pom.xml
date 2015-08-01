@@ -422,6 +422,13 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>dev</id>
+            <modules>
+                <module>sfm-benchmark</module>
+                <module>sfm-osgitest</module>
+            </modules>
+        </profile>
     </profiles>
 
     <repositories>

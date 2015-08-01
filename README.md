@@ -7,73 +7,11 @@
 [![Build Status](https://img.shields.io/travis/arnaudroger/SimpleFlatMapper.svg)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
-# New in 2.0.0... a lot of documenation update needed
-* modularization, jooq, sql2o, querydsl, poi will have their own package, making the dep management easier
-* cassandra datastax support
 
-## notable issues
-* Concurrency issue [#183](https://github.com/arnaudroger/SimpleFlatMapper/issues/183) for join mapper fixed in [1.9.1](https://github.com/arnaudroger/SimpleFlatMapper/issues?q=milestone%3A1.9.1)
-* To many classes generated with CsvParser Dsl with version 1.7.4 and 1.7.5 if you don't cache the DSL object. asm disabled in  [1.7.6](https://github.com/arnaudroger/SimpleFlatMapper/issues?q=milestone%3A1.7.6) and proper class cache in [1.7.7](https://github.com/arnaudroger/SimpleFlatMapper/issues?q=milestone%3A1.7.7). issues [#154](https://github.com/arnaudroger/SimpleFlatMapper/issues/154) [#156](https://github.com/arnaudroger/SimpleFlatMapper/issues/156)
+# Simple Flat Mapper (SFM) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v2.0)
 
-# Simple Flat Mapper (SFM) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-v1.10.3)
 
-[Javadoc](http://arnaudroger.github.io/SimpleFlatMapper/javadoc/)
 
-Now with :
-- 1-N support for [JdbcMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-JdbcMapper-1-N-relationship) and [CsvMapping](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-CsvMapper-1-N-relationship)
-- Fasttuple and jOOL tuple support.
-- Java8 time api
-- Excel POI
-- [CsvWriter](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvWriter)
-
-SFM provides fast and easy to use mapper for
-
-- [ResultSet aka micro ORM](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JdbcMapper) with discriminator field and 1-n support
-- [Csv](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser#with-csvmapper) with 1-n support
-- [Excel POI](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Excel-Mapper) with 1-n support
-- [Jooq and Sql2o](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SFM-Integration-in-Jooq)
-- [SpringJdbcTemplate](src/main/java/org/sfm/jdbc/spring)
-- [QueryDSL](src/main/java/org/sfm/querydsl)
-
-All with 
-
-- Constructor injection.
-- Factory method injection.
-- Setter and Field injection.
-- Java 8 Lambdas, Optional and Time support.
-
-It also provides one of the fastest [csv parser](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser) available [See Csv Benchmark](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Csv-Performance).
-
-The API is lambda friendly and the java 8 jars expose the mapped in form of Stream.
-
-## Why?
-
-SFM focuses on simplicity of use and performance. Current ORM Mapping solution are intrusive and/or quite slow -
-can easily double your retrieval time in prod like setups, and Hibernate cache won't save you either because it
-still needs to inflate the object from a tuple.
-
-SFM is a library and does not force a framework on you it plugs on top of jdbc, jooq, java io, spring jdbc.
-
-SFM makes also the assumption that it should be able to figure out the mapping rule without you being explicit about it.
-Object will most of the time match the structure of a query or a csv. But it still allow you to customized the mapping
-definition. [More details.](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Property-Mapping)
-
-SFM also supports Constructor injection and respect the semantic of final fields.
-
-[More storyfied Why.](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Why-extended-version)
-
-## How Fast?
-
-The Jdbc Mapper is the fastest mapper that I benchmarked.
-On a local Mysql it adds a less than of 4% over pure jdbc. 
-The next fastest would be Roma that add between 10 and 15% - number to be confirmed, the main reason being the column name based instead of index access of the value in the resultSet -. 
-MyBatis and Hibernate adds more than 65% for 100 rows ... 115% and 95% for 1000 rows.
-
-The Csv Parser is about 25% faster than jackson-csv for 1000 rows, 40% for the mapper  see [Csv Benchmark](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Csv-Performance).
-
-The Jooq integration give you a mapping to object for almost no cost.
-
-[Mysql Benchmark](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-Local-Mysql), [In Mem HsqlDb](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-In-Memory-HsqlDb)
 
 ## Getting Started
 
@@ -115,11 +53,12 @@ There is a build for
 		</dependency>
 ```
 
-### Other modules
-* sfm-datastax [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-datastax.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-datastax)
-[![JavaDoc](https://img.shields.io/badge/javadoc-2.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-datastax)
-* sfm-jooq [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-jooq.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-jooq)
-[![JavaDoc](https://img.shields.io/badge/javadoc-2.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jooq)
+### Extensions
+
+|Module|||
+|------|-----|-----|
+|[sfm-datastax](sfm-datastax)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-datastax.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-datastax)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-datastax)
+|[sfm-jooq](sfm-jooq)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-jooq.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-jooq)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jooq)
 * sfm-poi [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-poi.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-poi)
 [![JavaDoc](https://img.shields.io/badge/javadoc-2.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-poi)
 * sfm-querydsl [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-querydsl.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-querydsl)
@@ -128,10 +67,6 @@ There is a build for
 [![JavaDoc](https://img.shields.io/badge/javadoc-2.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-springjdbc)
 * sfm-sql2o [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-sql2o.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-sql2o)
 [![JavaDoc](https://img.shields.io/badge/javadoc-2.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
-
-### Asm
-
-Asm is now a non optional dependency in the pom. but it will still work without it so if you have a conflict issue with an old version of asm you can exclude it.
 
 ### Quick Samples
 

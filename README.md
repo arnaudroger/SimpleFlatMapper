@@ -87,7 +87,8 @@ There is a build for
 
 ```java
 public class MyDao {
-	JdbcMapper<MyObject> mapper = JdbcMapperFactory.newInstance().newMapper(MyObject.class);
+	JdbcMapper<MyObject> mapper =
+		JdbcMapperFactory.newInstance().newMapper(MyObject.class);
 
 	public List<MyObject> findAll() throws SQLException {
 		try (Connection conn = getConnection();

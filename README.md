@@ -38,6 +38,8 @@ The mappers supports
 
 See [Property Mapping Wiki](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Property-Mapping) for more details.
 
+If you encounter any problem with the mapping don't hesitate to [create an issue](https://github.com/arnaudroger/SimpleFlatMapper/issues/new).
+
 |Module|||
 |------|-----|-----|
 |[Cassandra Datastax driver](sfm-datastax)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-datastax.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-datastax)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-datastax)

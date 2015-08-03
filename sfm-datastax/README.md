@@ -21,6 +21,9 @@
 
     ...
 
-        ResultSet rs = session.execute("select id, name, email, creation_time, type_ordinal, type_name from dbobjects");
+        ResultSet rs =
+            session.execute(
+                "select id, name, email, creation_time, type_ordinal, type_name"
+                + " from dbobjects");
         final Iterator<DbObject> iterator = mapper.iterator(rs);
 ```

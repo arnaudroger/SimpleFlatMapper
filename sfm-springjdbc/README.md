@@ -15,7 +15,7 @@
 
 ## Create mapper
 
-See [JdbcTemplateMapperFactoryTest](/src/test/java/org/sfm/jdbc/spring/JdbcTemplateMapperFactoryTest.java) for more examples.
+See [JdbcTemplateMapperFactoryTest](/sfm-springjdbc/src/test/java/org/sfm/jdbc/spring/JdbcTemplateMapperFactoryTest.java) for more examples.
 
 ```java
 class MyDao {

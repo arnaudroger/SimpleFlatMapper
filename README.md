@@ -58,7 +58,7 @@ The binaries are available in maven central.
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm)
 There is a build for
 
-#### Java 8
+#### Java 8/9
 
 ```xml
 		<dependency>

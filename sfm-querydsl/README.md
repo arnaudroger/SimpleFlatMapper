@@ -2,3 +2,13 @@
 [![JavaDoc](https://img.shields.io/badge/javadoc-2.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-querydsl)
 
 # QueryDSL integration
+
+## Add dependency
+
+```xml
+		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>sfm-querydsl</artifactId>
+			<version>2.0</version>
+		</dependency>
+```

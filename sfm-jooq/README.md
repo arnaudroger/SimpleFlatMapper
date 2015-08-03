@@ -3,6 +3,15 @@
 
 # jOOQ integration
 
+## Add dependency
+
+```xml
+		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>sfm-jooq</artifactId>
+			<version>2.0</version>
+		</dependency>
+```
 
 ## SFM as a RecordMapperProvider
 

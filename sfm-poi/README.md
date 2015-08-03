@@ -3,6 +3,15 @@
 
 # POI Excel Integration
 
+## Add dependency
+
+```xml
+		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>sfm-poi</artifactId>
+			<version>2.0</version>
+		</dependency>
+```
 ## Quick start
 
 ```java

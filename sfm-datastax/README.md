@@ -17,7 +17,8 @@
 
 ```java
 
-    final DatastaxMapper<DbObject> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObject.class);
+    final DatastaxMapper<DbObject> mapper =
+        DatastaxMapperFactory.newInstance().mapTo(DbObject.class);
 
     ...
 

@@ -1,6 +1,7 @@
 package org.sfm.datastax;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
 import org.cassandraunit.AbstractCassandraUnit4TestCase;
@@ -37,7 +38,8 @@ public class AbstractDatastaxTest extends AbstractCassandraUnit4TestCase {
             try {
                 session = cluster.connect("sfm");
 
-                if (cluster.getMetadata().getKeyspace("sfm").getTable("dbobjects") == null) {
+                KeyspaceMetadata sfm = cluster.getMetadata().getKeyspace("sfm");
+                if (sfm.getTable("dbobjects") == null) {
                     session.execute("create table dbobjects (" +
                             "id bigint primary key, " +
                             "name varchar, " +
@@ -47,6 +49,11 @@ public class AbstractDatastaxTest extends AbstractCassandraUnit4TestCase {
                             "type_name varchar)");
 
                     session.execute("insert into dbobjects(id, name, email, creation_time, type_ordinal, type_name) values(1, 'Arnaud Roger', 'arnaud.roger@gmail.com', '2012-10-2 12:10:10', 1, 'type3')");
+                }
+
+                if (sfm.getTable("dbobjects_set") == null) {
+                    session.execute("create table dbobjects_set(id bigint primary key, emails set<text>)");
+                    session.execute("insert into dbobjects_set(id, emails) values(1, {'a@a', 'b@b'})");
                 }
 
                 callback.call(session);

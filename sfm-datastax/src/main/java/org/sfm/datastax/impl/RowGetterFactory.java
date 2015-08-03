@@ -17,10 +17,13 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 //IFJAVA8_START
 import org.sfm.map.getter.time.JavaTimeGetterFactory;
+
+import javax.lang.model.element.TypeElement;
 import java.time.*;
 //IFJAVA8_END
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.UUID;
 
 public class RowGetterFactory implements GetterFactory<GettableData, DatastaxColumnKey> {
@@ -178,6 +181,13 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
         if (InetAddress.class.equals(targetClass)) {
             return (Getter<GettableData, P>) new DatastaxInetAddressGetter(key.getIndex());
         }
+
+        if (Set.class.equals(targetClass)) {
+            Type elementType = TypeHelper.getComponentTypeOfListOrArray(target);
+            return new DatastaxSetGetter(key.getIndex(), TypeHelper.toClass(elementType));
+
+        }
+
         if (TypeHelper.isEnum(target)) {
             final Getter<GettableData, ? extends Enum> getter = enumGetter(key, TypeHelper.toClass(target));
             if (getter != null) {

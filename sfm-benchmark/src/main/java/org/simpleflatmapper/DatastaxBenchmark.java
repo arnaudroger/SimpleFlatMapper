@@ -113,7 +113,7 @@ public class DatastaxBenchmark {
 
     @Benchmark
     public List<SimpleObject> sfmMapper() {
-        return sfmMapper.forEach(getResultSet(), new ListHandler<>()).getList();
+        return sfmMapper.forEach(getResultSet(), new ListHandler<SimpleObject>()).getList();
     }
 
     public static void main(String[] args) throws InterruptedException, TTransportException, ConfigurationException, IOException {

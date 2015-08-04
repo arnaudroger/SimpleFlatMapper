@@ -1,11 +1,11 @@
 package org.sfm.datastax.impl;
 
-import com.datastax.driver.core.GettableData;
+import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
 
 import java.util.Set;
 
-public class DatastaxSetGetter<T> implements Getter<GettableData, Set<T>> {
+public class DatastaxSetGetter<T> implements Getter<GettableByIndexData, Set<T>> {
 
     private final int index;
     private final Class<T> type;
@@ -16,7 +16,7 @@ public class DatastaxSetGetter<T> implements Getter<GettableData, Set<T>> {
     }
 
     @Override
-    public Set<T> get(GettableData target) throws Exception {
+    public Set<T> get(GettableByIndexData target) throws Exception {
 
         return target.getSet(index, type);
     }

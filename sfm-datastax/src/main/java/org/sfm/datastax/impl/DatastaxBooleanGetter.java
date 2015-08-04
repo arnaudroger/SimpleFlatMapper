@@ -1,10 +1,10 @@
 package org.sfm.datastax.impl;
 
-import com.datastax.driver.core.GettableData;
+import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.BooleanGetter;
 
-public class DatastaxBooleanGetter implements BooleanGetter<GettableData>, Getter<GettableData, Boolean> {
+public class DatastaxBooleanGetter implements BooleanGetter<GettableByIndexData>, Getter<GettableByIndexData, Boolean> {
 
     private final int index;
 
@@ -13,7 +13,7 @@ public class DatastaxBooleanGetter implements BooleanGetter<GettableData>, Gette
     }
 
     @Override
-    public Boolean get(GettableData target) throws Exception {
+    public Boolean get(GettableByIndexData target) throws Exception {
         if (target.isNull(index)) {
             return null;
         }
@@ -21,7 +21,7 @@ public class DatastaxBooleanGetter implements BooleanGetter<GettableData>, Gette
     }
 
     @Override
-    public boolean getBoolean(GettableData target) throws Exception {
+    public boolean getBoolean(GettableByIndexData target) throws Exception {
         return target.getBool(index);
     }
 }

@@ -25,8 +25,8 @@ import java.sql.SQLException;
  */
 public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T, DatastaxColumnKey, DatastaxMapper<T>, DatastaxMapperBuilder<T>> {
 
-    public static final MapperSourceImpl<GettableData, DatastaxColumnKey> FIELD_MAPPER_SOURCE =
-            new MapperSourceImpl<GettableData, DatastaxColumnKey>(GettableData.class, new RowGetterFactory());
+    public static final MapperSourceImpl<GettableByIndexData, DatastaxColumnKey> FIELD_MAPPER_SOURCE =
+            new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, new RowGetterFactory());
 
     /**
      * @param classMeta                  the meta for the target class.
@@ -37,7 +37,7 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
     public DatastaxMapperBuilder(
             final ClassMeta<T> classMeta,
             MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey, Row>> mapperConfig,
-            GetterFactory<GettableData, DatastaxColumnKey> getterFactory,
+            GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory,
             MappingContextFactoryBuilder<Row, DatastaxColumnKey> parentBuilder) {
         super(classMeta, parentBuilder, mapperConfig, FIELD_MAPPER_SOURCE.getterFactory(getterFactory), 0);
     }

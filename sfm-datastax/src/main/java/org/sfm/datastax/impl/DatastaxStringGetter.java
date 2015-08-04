@@ -1,9 +1,9 @@
 package org.sfm.datastax.impl;
 
-import com.datastax.driver.core.GettableData;
+import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
 
-public class DatastaxStringGetter implements Getter<GettableData, String> {
+public class DatastaxStringGetter implements Getter<GettableByIndexData, String> {
 
     private final int index;
 
@@ -12,7 +12,7 @@ public class DatastaxStringGetter implements Getter<GettableData, String> {
     }
 
     @Override
-    public String get(GettableData target) throws Exception {
+    public String get(GettableByIndexData target) throws Exception {
         return target.getString(index);
     }
 }

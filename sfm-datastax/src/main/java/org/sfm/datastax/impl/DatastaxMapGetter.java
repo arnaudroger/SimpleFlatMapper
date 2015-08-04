@@ -1,12 +1,12 @@
 package org.sfm.datastax.impl;
 
-import com.datastax.driver.core.GettableData;
+import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
 
 import java.util.List;
 import java.util.Map;
 
-public class DatastaxMapGetter<K, V> implements Getter<GettableData, Map<K, V>> {
+public class DatastaxMapGetter<K, V> implements Getter<GettableByIndexData, Map<K, V>> {
 
     private final int index;
     private final Class<K> keyType;
@@ -19,7 +19,7 @@ public class DatastaxMapGetter<K, V> implements Getter<GettableData, Map<K, V>> 
     }
 
     @Override
-    public Map<K, V> get(GettableData target) throws Exception {
+    public Map<K, V> get(GettableByIndexData target) throws Exception {
         return target.getMap(index, keyType, valueType);
     }
 }

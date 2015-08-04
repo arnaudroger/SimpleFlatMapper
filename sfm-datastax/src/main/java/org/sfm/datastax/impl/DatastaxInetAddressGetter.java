@@ -1,12 +1,12 @@
 package org.sfm.datastax.impl;
 
-import com.datastax.driver.core.GettableData;
+import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
 
 import java.net.InetAddress;
 import java.util.UUID;
 
-public class DatastaxInetAddressGetter implements Getter<GettableData, InetAddress> {
+public class DatastaxInetAddressGetter implements Getter<GettableByIndexData, InetAddress> {
 
     private final int index;
 
@@ -15,7 +15,7 @@ public class DatastaxInetAddressGetter implements Getter<GettableData, InetAddre
     }
 
     @Override
-    public InetAddress get(GettableData target) throws Exception {
+    public InetAddress get(GettableByIndexData target) throws Exception {
         return target.getInet(index);
     }
 }

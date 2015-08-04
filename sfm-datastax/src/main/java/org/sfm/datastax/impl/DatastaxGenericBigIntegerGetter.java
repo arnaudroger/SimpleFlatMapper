@@ -1,13 +1,13 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.GettableData;
+import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.ShortGetter;
 
 import java.math.BigInteger;
 
-public class DatastaxGenericBigIntegerGetter implements Getter<GettableData, BigInteger> {
+public class DatastaxGenericBigIntegerGetter implements Getter<GettableByIndexData, BigInteger> {
 
     private final int index;
     private final DataType.Name dataTypeName;
@@ -34,7 +34,7 @@ public class DatastaxGenericBigIntegerGetter implements Getter<GettableData, Big
     }
 
     @Override
-    public BigInteger get(GettableData target) throws Exception {
+    public BigInteger get(GettableByIndexData target) throws Exception {
         if (target.isNull(index)) {
             return null;
         }

@@ -66,6 +66,11 @@ public class AbstractDatastaxTest extends AbstractCassandraUnit4TestCase {
                     session.execute("insert into dbobjects_map(id, emails) values(1, { 10 : 'a@a', 23 : 'b@b'})");
                 }
 
+                if (sfm.getTable("dbobjects_tuple") == null) {
+                    session.execute("create table dbobjects_tuple(id bigint primary key, t frozen <tuple<text, bigint, int>>)");
+                    session.execute("insert into dbobjects_tuple(id, t) values(1, ('t1', 12, 13))");
+                }
+
                 callback.call(session);
             } finally {
                 if (session != null) session.close();

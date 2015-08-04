@@ -1,13 +1,12 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.GettableData;
+import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
-public class DatastaxGenericBigDecimalGetter implements Getter<GettableData, BigDecimal> {
+public class DatastaxGenericBigDecimalGetter implements Getter<GettableByIndexData, BigDecimal> {
 
     private final int index;
     private final DataType.Name dataTypeName;
@@ -34,7 +33,7 @@ public class DatastaxGenericBigDecimalGetter implements Getter<GettableData, Big
     }
 
     @Override
-    public BigDecimal get(GettableData target) throws Exception {
+    public BigDecimal get(GettableByIndexData target) throws Exception {
         if (target.isNull(index)) {
             return null;
         }

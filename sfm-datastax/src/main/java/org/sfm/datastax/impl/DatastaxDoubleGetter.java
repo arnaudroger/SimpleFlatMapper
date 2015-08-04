@@ -1,10 +1,10 @@
 package org.sfm.datastax.impl;
 
-import com.datastax.driver.core.GettableData;
+import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.DoubleGetter;
 
-public class DatastaxDoubleGetter implements DoubleGetter<GettableData>, Getter<GettableData, Double> {
+public class DatastaxDoubleGetter implements DoubleGetter<GettableByIndexData>, Getter<GettableByIndexData, Double> {
 
     private final int index;
 
@@ -13,7 +13,7 @@ public class DatastaxDoubleGetter implements DoubleGetter<GettableData>, Getter<
     }
 
     @Override
-    public Double get(GettableData target) throws Exception {
+    public Double get(GettableByIndexData target) throws Exception {
         if (target.isNull(index)) {
             return null;
         }
@@ -21,7 +21,7 @@ public class DatastaxDoubleGetter implements DoubleGetter<GettableData>, Getter<
     }
 
     @Override
-    public double getDouble(GettableData target) throws Exception {
+    public double getDouble(GettableByIndexData target) throws Exception {
         return target.getDouble(index);
     }
 }

@@ -1,6 +1,7 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.DataType;
+import com.datastax.driver.core.GettableByIndexData;
 import com.datastax.driver.core.GettableData;
 import com.datastax.driver.core.Row;
 import org.junit.Before;
@@ -196,7 +197,7 @@ public class RowGetterFactoryTest {
     @Test
     public void testJava8Time() throws Exception {
         final FieldMapperColumnDefinition<DatastaxColumnKey, Row> identity = FieldMapperColumnDefinition.<DatastaxColumnKey, Row>identity();
-        final Getter<GettableData, LocalDateTime> gettableDataObjectGetter = new RowGetterFactory().newGetter(LocalDateTime.class, columnKey, identity);
+        final Getter<GettableByIndexData, LocalDateTime> gettableDataObjectGetter = new RowGetterFactory().newGetter(LocalDateTime.class, columnKey, identity);
         assertEquals(date, Date.from(gettableDataObjectGetter.get(row).atZone(ZoneId.systemDefault()).toInstant()));
     }
 
@@ -205,7 +206,7 @@ public class RowGetterFactoryTest {
     @Test
     public void testJodaTime() throws Exception {
         final FieldMapperColumnDefinition<DatastaxColumnKey, Row> identity = FieldMapperColumnDefinition.<DatastaxColumnKey, Row>identity();
-        final Getter<GettableData, org.joda.time.LocalDateTime> gettableDataObjectGetter = new RowGetterFactory().newGetter(org.joda.time.LocalDateTime.class, columnKey, identity);
+        final Getter<GettableByIndexData, org.joda.time.LocalDateTime> gettableDataObjectGetter = new RowGetterFactory().newGetter(org.joda.time.LocalDateTime.class, columnKey, identity);
         assertEquals(date, gettableDataObjectGetter.get(row).toDate());
     }
 }

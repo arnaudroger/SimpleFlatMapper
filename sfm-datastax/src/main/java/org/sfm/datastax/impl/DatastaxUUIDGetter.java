@@ -1,11 +1,11 @@
 package org.sfm.datastax.impl;
 
-import com.datastax.driver.core.GettableData;
+import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
 
 import java.util.UUID;
 
-public class DatastaxUUIDGetter implements Getter<GettableData, UUID> {
+public class DatastaxUUIDGetter implements Getter<GettableByIndexData, UUID> {
 
     private final int index;
 
@@ -14,7 +14,7 @@ public class DatastaxUUIDGetter implements Getter<GettableData, UUID> {
     }
 
     @Override
-    public UUID get(GettableData target) throws Exception {
+    public UUID get(GettableByIndexData target) throws Exception {
         return target.getUUID(index);
     }
 }

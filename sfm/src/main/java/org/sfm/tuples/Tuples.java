@@ -8,11 +8,15 @@ import java.lang.reflect.Type;
 public class Tuples {
 
     public static boolean isTuple(Type type) {
-        Class<?> clazz = TypeHelper.toClass(type);
-        return Tuple2.class.isAssignableFrom(clazz) || isJoolTuple(clazz);
+        return isSfmTuple(type) || isJoolTuple(type);
     }
 
-    public static boolean isJoolTuple(Class<?> clazz) {
+    public static boolean isSfmTuple(Type type) {
+        return Tuple2.class.isAssignableFrom(TypeHelper.toClass(type));
+    }
+
+    public static boolean isJoolTuple(Type type) {
+        Class<?> clazz = TypeHelper.toClass(type);
         while(clazz != null) {
             for(Class<?> i : clazz.getInterfaces()) {
                 if ("org.jooq.lambda.tuple.Tuple".equals(i.getName())) {

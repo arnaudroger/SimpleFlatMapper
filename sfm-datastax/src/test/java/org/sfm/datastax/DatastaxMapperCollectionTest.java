@@ -3,10 +3,7 @@ package org.sfm.datastax;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import org.junit.Test;
-import org.sfm.datastax.beans.DbObjectsWithCollection;
-import org.sfm.datastax.beans.DbObjectsWithList;
-import org.sfm.datastax.beans.DbObjectsWithMap;
-import org.sfm.datastax.beans.DbObjectsWithSet;
+import org.sfm.datastax.beans.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -82,6 +79,29 @@ public class DatastaxMapperCollectionTest extends AbstractDatastaxTest {
             }
         });
     }
+
+    @Test
+    public void testMapListIntToListLong() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+                final DatastaxMapper<DbObjectsWithListLong> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObjectsWithListLong.class);
+
+                ResultSet rs = session.execute("select id, l from dbobjects_listint");
+
+                final Iterator<DbObjectsWithListLong> iterator = mapper.iterator(rs);
+
+                DbObjectsWithListLong next = iterator.next();
+
+                assertEquals(1, next.getId());
+                assertEquals(Arrays.asList(Long.valueOf(13), Long.valueOf(14)), next.getL());
+
+                assertFalse(iterator.hasNext());
+
+            }
+        });
+    }
+
 
     @Test
     public void testMapListToCollection() throws Exception {

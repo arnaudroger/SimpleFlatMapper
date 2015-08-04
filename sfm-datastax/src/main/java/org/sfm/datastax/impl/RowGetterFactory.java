@@ -23,6 +23,9 @@ import org.sfm.tuples.Tuples;
 
 //IFJAVA8_START
 import org.sfm.map.getter.time.JavaTimeGetterFactory;
+import org.sfm.utils.conv.Converter;
+import org.sfm.utils.conv.ConverterFactory;
+
 import java.time.*;
 //IFJAVA8_END
 import java.util.*;
@@ -64,9 +67,9 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             @SuppressWarnings("unchecked")
             @Override
             public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                final Class<?> javaClass = key.getDataType() != null ? key.getDataType().asJavaClass() : null;
                 if (javaClass != null && Number.class.isAssignableFrom(javaClass)) {
-                    return (Getter<GettableByIndexData, P>) new DatastaxGenericShortGetter(key.getIndex(), key.getDateType());
+                    return (Getter<GettableByIndexData, P>) new DatastaxGenericShortGetter(key.getIndex(), key.getDataType());
                 }
                 return null;
             }
@@ -77,11 +80,11 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             @SuppressWarnings("unchecked")
             @Override
             public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                final Class<?> javaClass = key.getDataType() != null ? key.getDataType().asJavaClass() : null;
                 if (javaClass == null || javaClass.equals(Integer.class)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxIntegerGetter(key.getIndex());
                 } else if (Number.class.isAssignableFrom(javaClass)) {
-                    return (Getter<GettableByIndexData, P>) new DatastaxGenericIntegerGetter(key.getIndex(), key.getDateType());
+                    return (Getter<GettableByIndexData, P>) new DatastaxGenericIntegerGetter(key.getIndex(), key.getDataType());
                 }
                 return null;
             }
@@ -92,11 +95,11 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             @SuppressWarnings("unchecked")
             @Override
             public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                final Class<?> javaClass = key.getDataType() != null ? key.getDataType().asJavaClass() : null;
                 if (javaClass == null || javaClass.equals(Long.class)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxLongGetter(key.getIndex());
                 } else if (Number.class.isAssignableFrom(javaClass)) {
-                    return (Getter<GettableByIndexData, P>) new DatastaxGenericLongGetter(key.getIndex(), key.getDateType());
+                    return (Getter<GettableByIndexData, P>) new DatastaxGenericLongGetter(key.getIndex(), key.getDataType());
                 }
                 return null;
             }
@@ -107,11 +110,11 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             @SuppressWarnings("unchecked")
             @Override
             public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                final Class<?> javaClass = key.getDataType() != null ? key.getDataType().asJavaClass() : null;
                 if (javaClass == null || javaClass.equals(Float.class)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxFloatGetter(key.getIndex());
                 } else if (Number.class.isAssignableFrom(javaClass)) {
-                    return (Getter<GettableByIndexData, P>) new DatastaxGenericFloatGetter(key.getIndex(), key.getDateType());
+                    return (Getter<GettableByIndexData, P>) new DatastaxGenericFloatGetter(key.getIndex(), key.getDataType());
                 }
                 return null;
             }
@@ -122,11 +125,11 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             @SuppressWarnings("unchecked")
             @Override
             public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                final Class<?> javaClass = key.getDataType() != null ? key.getDataType().asJavaClass() : null;
                 if (javaClass == null || javaClass.equals(Double.class)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxDoubleGetter(key.getIndex());
                 } else if (Number.class.isAssignableFrom(javaClass)) {
-                    return (Getter<GettableByIndexData, P>) new DatastaxGenericDoubleGetter(key.getIndex(), key.getDateType());
+                    return (Getter<GettableByIndexData, P>) new DatastaxGenericDoubleGetter(key.getIndex(), key.getDataType());
                 }
                 return null;
             }
@@ -137,11 +140,11 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             @SuppressWarnings("unchecked")
             @Override
             public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                final Class<?> javaClass = key.getDataType() != null ? key.getDataType().asJavaClass() : null;
                 if (javaClass == null || javaClass.equals(BigInteger.class)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxBigIntegerGetter(key.getIndex());
                 } else if (Number.class.isAssignableFrom(javaClass)) {
-                    return (Getter<GettableByIndexData, P>) new DatastaxGenericBigIntegerGetter(key.getIndex(), key.getDateType());
+                    return (Getter<GettableByIndexData, P>) new DatastaxGenericBigIntegerGetter(key.getIndex(), key.getDataType());
                 }
                 return null;
             }
@@ -151,11 +154,11 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             @SuppressWarnings("unchecked")
             @Override
             public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-                final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+                final Class<?> javaClass = key.getDataType() != null ? key.getDataType().asJavaClass() : null;
                 if (javaClass == null || javaClass.equals(BigDecimal.class)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxBigDecimalGetter(key.getIndex());
                 } else if (Number.class.isAssignableFrom(javaClass)) {
-                    return (Getter<GettableByIndexData, P>) new DatastaxGenericBigDecimalGetter(key.getIndex(), key.getDateType());
+                    return (Getter<GettableByIndexData, P>) new DatastaxGenericBigDecimalGetter(key.getIndex(), key.getDataType());
                 }
                 return null;
             }
@@ -192,17 +195,47 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
         if (Collection.class.isAssignableFrom(targetClass)) {
 
             Type elementType = TypeHelper.getComponentTypeOfListOrArray(target);
-            Class<?> dataTypeClass = key.getDateType() != null ? key.getDateType().asJavaClass() : Object.class;
-
-            if (Set.class.equals(dataTypeClass)) {
-                if (targetClass.isAssignableFrom(dataTypeClass)) {
-                    return new DatastaxSetGetter(key.getIndex(), TypeHelper.toClass(elementType));
+            Class<?> dataTypeClass = Object.class;
+            Class<?> dataTypeElt = null;
+            if (key.getDataType() != null) {
+                DataType dataType = key.getDataType();
+                dataTypeClass = dataType.asJavaClass();
+                if (dataType.isCollection()) {
+                    dataTypeElt = key.getDataType().getTypeArguments().get(0).asJavaClass();
                 }
+            } else {
+                dataTypeElt = TypeHelper.toClass(elementType);
             }
-            if (List.class.equals(dataTypeClass)) {
-                if (targetClass.isAssignableFrom(dataTypeClass)) {
-                    return new DatastaxListGetter(key.getIndex(), TypeHelper.toClass(elementType));
+
+            if (dataTypeElt != null) {
+                if (TypeHelper.areEquals(elementType, dataTypeElt)) {
+                    if (Set.class.equals(dataTypeClass)) {
+                        if (targetClass.isAssignableFrom(dataTypeClass)) {
+                            return new DatastaxSetGetter(key.getIndex(), TypeHelper.toClass(elementType));
+                        }
+                    }
+                    if (List.class.equals(dataTypeClass)) {
+                        if (targetClass.isAssignableFrom(dataTypeClass)) {
+                            return new DatastaxListGetter(key.getIndex(), TypeHelper.toClass(elementType));
+                        }
+                    }
+                } else {
+                    Converter<?, ?> converter = ConverterFactory.getConverter(dataTypeElt, elementType);
+
+                    if (converter != null) {
+                        if (Set.class.equals(dataTypeClass)) {
+                            if (targetClass.isAssignableFrom(dataTypeClass)) {
+                                return new DatastaxSetWithConverterGetter(key.getIndex(), dataTypeElt, converter);
+                            }
+                        }
+                        if (List.class.equals(dataTypeClass)) {
+                            if (targetClass.isAssignableFrom(dataTypeClass)) {
+                                return new DatastaxListWithConverterGetter(key.getIndex(), dataTypeElt, converter);
+                            }
+                        }
+                    }
                 }
+
             }
         }
         if (Map.class.equals(targetClass)) {
@@ -211,8 +244,8 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
         }
 
         if (Tuples.isTuple(target)) {
-            if (key.getDateType() != null && key.getDateType() instanceof TupleType) {
-                TupleType tt = (TupleType) key.getDateType();
+            if (key.getDataType() != null && key.getDataType() instanceof TupleType) {
+                TupleType tt = (TupleType) key.getDataType();
 
                 List<DataType> typeArguments = tt.getTypeArguments();
 
@@ -244,8 +277,8 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             return getter;
         }
 
-        if (key.getDateType() != null && key.getDateType() instanceof UserType) {
-            UserType ut = (UserType) key.getDateType();
+        if (key.getDataType() != null && key.getDataType() instanceof UserType) {
+            UserType ut = (UserType) key.getDataType();
             return (Getter<GettableByIndexData, P>) DatastaxUDTGetter.newInstance(datastaxMapperFactory, target, ut, key.getIndex());
         }
 
@@ -255,8 +288,8 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
     @SuppressWarnings("unchecked")
     public <E extends Enum<E>> Getter<GettableByIndexData, E> enumGetter(DatastaxColumnKey key, Class<?> enumClass) {
 
-        if (key.getDateType() != null) {
-            final Class<?> javaClass = key.getDateType() != null ? key.getDateType().asJavaClass() : null;
+        if (key.getDataType() != null) {
+            final Class<?> javaClass = key.getDataType() != null ? key.getDataType().asJavaClass() : null;
             if (Number.class.isAssignableFrom(javaClass)) {
                 return new OrdinalEnumGetter<GettableByIndexData, E>(new DatastaxIntegerGetter(key.getIndex()), (Class<E>)enumClass);
             } else if (String.class.equals(javaClass)) {

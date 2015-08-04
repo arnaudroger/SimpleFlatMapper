@@ -46,7 +46,7 @@ public class DatastaxColumnKey implements FieldKey<DatastaxColumnKey>, TypeAffin
 		return index;
 	}
 
-	public DataType getDateType() {
+	public DataType getDataType() {
 		return sqlType;
 	}
 

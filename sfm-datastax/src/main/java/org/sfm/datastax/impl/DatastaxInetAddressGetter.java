@@ -4,7 +4,6 @@ import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
 
 import java.net.InetAddress;
-import java.util.UUID;
 
 public class DatastaxInetAddressGetter implements Getter<GettableByIndexData, InetAddress> {
 

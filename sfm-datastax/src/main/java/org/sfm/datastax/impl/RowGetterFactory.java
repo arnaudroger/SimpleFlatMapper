@@ -3,6 +3,7 @@ package org.sfm.datastax.impl;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
 import com.datastax.driver.core.TupleType;
+import com.datastax.driver.core.TupleValue;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.GetterFactory;
@@ -182,6 +183,10 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
         }
         if (InetAddress.class.equals(targetClass)) {
             return (Getter<GettableByIndexData, P>) new DatastaxInetAddressGetter(key.getIndex());
+        }
+
+        if (TupleValue.class.equals(targetClass)) {
+            return (Getter<GettableByIndexData, P>) new DatastaxTupleValueGetter(key.getIndex());
         }
 
         if (Collection.class.isAssignableFrom(targetClass)) {

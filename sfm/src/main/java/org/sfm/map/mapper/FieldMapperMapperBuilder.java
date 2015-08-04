@@ -8,7 +8,6 @@ import org.sfm.map.impl.FieldErrorHandlerMapper;
 import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
 import org.sfm.map.impl.fieldmapper.MapperFieldMapper;
 import org.sfm.reflect.*;
-import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.impl.NullGetter;
 import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple2;
@@ -35,14 +34,14 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     private final MapperSource<? super S, K> mapperSource;
     private final MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig;
-    protected final MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder;
+    protected final MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder;
 
 
     public FieldMapperMapperBuilder(
             final MapperSource<? super S, K> mapperSource,
             final ClassMeta<T> classMeta,
             final MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig,
-            MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) throws MapperBuildingException {
+            MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder) throws MapperBuildingException {
         this.mapperSource = requireNonNull("fieldMapperSource", mapperSource);
         this.mapperConfig = requireNonNull("mapperConfig", mapperConfig);
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;

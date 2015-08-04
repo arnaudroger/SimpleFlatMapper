@@ -3,7 +3,6 @@ package org.sfm.datastax.impl;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import org.sfm.utils.Enumarable;
-import org.sfm.utils.ErrorHelper;
 
 
 public class ResultSetEnumarable implements Enumarable<Row> {

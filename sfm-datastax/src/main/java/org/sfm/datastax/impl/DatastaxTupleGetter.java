@@ -1,58 +1,45 @@
 package org.sfm.datastax.impl;
 
-import com.datastax.driver.core.GettableByIndexData;
+import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
 import com.datastax.driver.core.TupleType;
 import org.sfm.datastax.DatastaxColumnKey;
+import org.sfm.datastax.DatastaxMapperFactory;
+import org.sfm.map.Mapper;
+import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.mapper.FieldMapperMapperBuilder;
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.Instantiator;
-import org.sfm.reflect.TypeHelper;
 import org.sfm.tuples.Tuple2;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
 
 public class DatastaxTupleGetter<T extends Tuple2<?, ?>> implements Getter<GettableByIndexData, T> {
-    private final Instantiator<GettableByIndexData, T> instantiator;
+    private final Mapper<GettableByIndexData, T> mapper;
     private final int index;
 
-    public DatastaxTupleGetter(Instantiator<GettableByIndexData, T> instantiator, int index) {
-        this.instantiator = instantiator;
+    public DatastaxTupleGetter(Mapper<GettableByIndexData, T> mapper, int index) {
+        this.mapper = mapper;
         this.index = index;
     }
 
     @Override
     public T get(GettableByIndexData target) throws Exception {
-        return instantiator.newInstance(target.getTupleValue(index));
+        return mapper.map(target.getTupleValue(index));
     }
 
     @SuppressWarnings("unchecked")
-    public static <P extends  Tuple2<?, ?>> Getter<GettableByIndexData, P> newInstance(Type target, TupleType tt, int index, RowGetterFactory rowGetterFactory) {
+    public static <P extends  Tuple2<?, ?>> Getter<GettableByIndexData, P> newInstance(DatastaxMapperFactory factory, Type target,  TupleType tt, int index) {
+        FieldMapperMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> builder =
+                DatastaxUDTGetter.newFieldMapperBuilder(factory, target);
 
-        final Class<P> tupleClass = TypeHelper.toClass(target);
-        final Constructor<P> constructor = (Constructor<P>) tupleClass.getConstructors()[0];
-        final Getter<GettableByIndexData, ?>[] getters = new Getter[constructor.getParameterCount()];
-
-        final ParameterizedType pt = (ParameterizedType) target;
-
-        for(int i = 0; i < getters.length; i ++) {
-            getters[i] = rowGetterFactory.newGetter(pt.getActualTypeArguments()[i], new DatastaxColumnKey("elt" + i, i, tt.getComponentTypes().get(i)), null);
+        List<DataType> componentTypes = tt.getComponentTypes();
+        for(int i = 0; i < componentTypes.size(); i++) {
+            FieldMapperColumnDefinition<DatastaxColumnKey, GettableByIndexData> identity = FieldMapperColumnDefinition.identity();
+            builder.addMapping(new DatastaxColumnKey("elt" + i, i, componentTypes.get(i)),
+                    identity);
         }
 
-        Instantiator<GettableByIndexData, P> instantiator = new Instantiator<GettableByIndexData, P>() {
-            @Override
-            public P newInstance(GettableByIndexData gettableData) throws Exception {
-
-                Object[] args = new Object[getters.length];
-
-                for (int i = 0; i < args.length; i++) {
-                    args[i] = getters[i].get(gettableData);
-                }
-
-                return constructor.newInstance(args);
-            }
-        };
-        return new DatastaxTupleGetter<P>(instantiator, index);
+        return new DatastaxTupleGetter<P>(builder.mapper(), index);
     }
 }

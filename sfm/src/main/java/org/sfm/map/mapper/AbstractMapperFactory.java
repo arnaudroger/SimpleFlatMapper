@@ -115,7 +115,7 @@ public abstract class AbstractMapperFactory<
         return (MF) this;
     }
 
-	protected final MapperConfig<K, CD> mapperConfig() {
+	public final MapperConfig<K, CD> mapperConfig() {
 		return MapperConfig
 				.<K, CD>config(columnDefinitions)
 				.mapperBuilderErrorHandler(mapperBuilderErrorHandler)
@@ -233,7 +233,7 @@ public abstract class AbstractMapperFactory<
     }
 
 
-    protected final <T> ClassMeta<T> getClassMeta(Type target) {
+    public final <T> ClassMeta<T> getClassMeta(Type target) {
         return getReflectionService().getClassMeta(target);
     }
 

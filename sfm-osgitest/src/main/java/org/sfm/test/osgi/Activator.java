@@ -9,7 +9,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
 import org.sfm.csv.CsvMapperFactory;
-import org.sfm.poi.SheetMapper;
 import org.sfm.poi.SheetMapperFactory;
 
 import java.io.StringReader;

@@ -21,9 +21,9 @@ public class StaticSheetMapper<T> implements RowMapper<T> {
     private final int startRow = 0;
 
     private final RowHandlerErrorHandler rowHandlerErrorHandler;
-    private final MappingContextFactory<Row> mappingContextFactory;
+    private final MappingContextFactory<? super Row> mappingContextFactory;
 
-    public StaticSheetMapper(Mapper<Row, T> mapper, RowHandlerErrorHandler rowHandlerErrorHandler, MappingContextFactory<Row> mappingContextFactory) {
+    public StaticSheetMapper(Mapper<Row, T> mapper, RowHandlerErrorHandler rowHandlerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
         this.mapper = mapper;
         this.rowHandlerErrorHandler = rowHandlerErrorHandler;
         this.mappingContextFactory = mappingContextFactory;
@@ -46,7 +46,7 @@ public class StaticSheetMapper<T> implements RowMapper<T> {
 
     @Override
     public <RH extends RowHandler<T>> RH forEach(int startRow, Sheet sheet, RH rowHandler) {
-        MappingContext<Row> mappingContext = newMappingContext();
+        MappingContext<? super Row> mappingContext = newMappingContext();
         Mapper<Row, T> lMapper = this.mapper;
         for(int rowNum = startRow; rowNum <= sheet.getLastRowNum(); rowNum++) {
             T object = lMapper.map(sheet.getRow(rowNum), mappingContext);
@@ -87,7 +87,7 @@ public class StaticSheetMapper<T> implements RowMapper<T> {
         mapper.mapTo(source, target, context);
     }
 
-    private MappingContext<Row> newMappingContext() {
+    private MappingContext<? super Row> newMappingContext() {
         return mappingContextFactory.newContext();
     }
 }

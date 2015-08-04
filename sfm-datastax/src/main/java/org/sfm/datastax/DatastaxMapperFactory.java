@@ -1,7 +1,6 @@
 package org.sfm.datastax;
 
 import com.datastax.driver.core.GettableByIndexData;
-import com.datastax.driver.core.GettableData;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.exceptions.DriverException;
@@ -22,7 +21,7 @@ import java.lang.reflect.Type;
 
 public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey, Row>, DatastaxMapperFactory> {
 
-    private GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory = new RowGetterFactory();
+    private GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory = new RowGetterFactory(this);
 
     private DatastaxMapperFactory() {
         super(new FieldMapperColumnDefinitionProviderImpl<DatastaxColumnKey, Row>(), FieldMapperColumnDefinition.<DatastaxColumnKey, Row>identity());

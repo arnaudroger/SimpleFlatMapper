@@ -1,10 +1,8 @@
 package org.sfm.datastax.impl;
 
-import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.GettableByIndexData;
-import com.datastax.driver.core.TupleType;
-import com.datastax.driver.core.TupleValue;
+import com.datastax.driver.core.*;
 import org.sfm.datastax.DatastaxColumnKey;
+import org.sfm.datastax.DatastaxMapperFactory;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.getter.EnumUnspecifiedTypeGetter;
@@ -32,17 +30,19 @@ import java.util.*;
 public class RowGetterFactory implements GetterFactory<GettableByIndexData, DatastaxColumnKey> {
 
     private final HashMap<Class<?>, GetterFactory<GettableByIndexData, DatastaxColumnKey>> getterFactories = new HashMap<Class<?>, GetterFactory<GettableByIndexData, DatastaxColumnKey>>();
-    private final GetterFactory<GettableByIndexData, DatastaxColumnKey> dateGetterFactory = new GetterFactory<GettableByIndexData, DatastaxColumnKey>() {
-        @SuppressWarnings("unchecked")
-        @Override
-        public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-            return (Getter<GettableByIndexData, P>) new DatastaxDateGetter(key.getIndex());
-        }
-    };
+    private final DatastaxMapperFactory datastaxMapperFactory;
 
     private JodaTimeGetterFactory<GettableByIndexData, DatastaxColumnKey> jodaTimeGetterFactory;
 
-    public RowGetterFactory() {
+    public RowGetterFactory(DatastaxMapperFactory datastaxMapperFactory) {
+        this.datastaxMapperFactory = datastaxMapperFactory;
+        GetterFactory<GettableByIndexData, DatastaxColumnKey> dateGetterFactory = new GetterFactory<GettableByIndexData, DatastaxColumnKey>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+                return (Getter<GettableByIndexData, P>) new DatastaxDateGetter(key.getIndex());
+            }
+        };
         //IFJAVA8_START
         JavaTimeGetterFactory<GettableByIndexData, DatastaxColumnKey> javaTimeGetterFactory =
                 new JavaTimeGetterFactory<GettableByIndexData, DatastaxColumnKey>(dateGetterFactory);
@@ -210,7 +210,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             return new DatastaxMapGetter(key.getIndex(), TypeHelper.toClass(keyValueTypeOfMap.first()), TypeHelper.toClass(keyValueTypeOfMap.second()));
         }
 
-        if (Tuples.isSfmTuple(target)) {
+        if (Tuples.isTuple(target)) {
             if (key.getDateType() != null && key.getDateType() instanceof TupleType) {
                 TupleType tt = (TupleType) key.getDateType();
 
@@ -219,7 +219,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                 TypeVariable<? extends Class<?>>[] typeParameters = targetClass.getTypeParameters();
 
                 if (typeArguments.size() <= typeParameters.length) {
-                    return (Getter<GettableByIndexData, P>) DatastaxTupleGetter.newInstance(target, tt, key.getIndex(), this);
+                    return (Getter<GettableByIndexData, P>) DatastaxTupleGetter.newInstance(datastaxMapperFactory, target, tt, key.getIndex());
                 }
 
             }
@@ -242,6 +242,11 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
 
         if (getter != null) {
             return getter;
+        }
+
+        if (key.getDateType() != null && key.getDateType() instanceof UserType) {
+            UserType ut = (UserType) key.getDateType();
+            return (Getter<GettableByIndexData, P>) DatastaxUDTGetter.newInstance(datastaxMapperFactory, target, ut, key.getIndex());
         }
 
         return null;

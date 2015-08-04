@@ -4,7 +4,6 @@ import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.FloatGetter;
-import org.sfm.reflect.primitive.ShortGetter;
 
 public class DatastaxGenericFloatGetter implements FloatGetter<GettableByIndexData>, Getter<GettableByIndexData, Float> {
 

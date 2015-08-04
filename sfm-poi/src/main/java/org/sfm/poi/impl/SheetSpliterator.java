@@ -12,11 +12,11 @@ public class SheetSpliterator<T> implements Spliterator<T> {
 
     private final StaticSheetMapper<T> mapper;
     private final Sheet sheet;
-    private final MappingContext<Row> mappingContext;
+    private final MappingContext<? super Row> mappingContext;
 
     private int rowNum;
 
-    public SheetSpliterator(StaticSheetMapper<T> mapper, int startRow, Sheet sheet, MappingContext<Row> mappingContext) {
+    public SheetSpliterator(StaticSheetMapper<T> mapper, int startRow, Sheet sheet, MappingContext<? super Row> mappingContext) {
         this.mapper = mapper;
         this.rowNum = startRow;
         this.sheet = sheet;
@@ -27,7 +27,7 @@ public class SheetSpliterator<T> implements Spliterator<T> {
     public void forEachRemaining(Consumer<? super T> action) {
         Sheet lSheet = this.sheet;
         StaticSheetMapper<T> lMapper = this.mapper;
-        MappingContext<Row> lMappingContext = this.mappingContext;
+        MappingContext<? super Row> lMappingContext = this.mappingContext;
         for(int i = rowNum; i <= lSheet.getLastRowNum(); i++) {
             action.accept(lMapper.map(lSheet.getRow(i), lMappingContext));
         }

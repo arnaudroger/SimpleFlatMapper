@@ -18,7 +18,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     private final FieldMapperMapperBuilder<S, T, K> fieldMapperMapperBuilder;
 
     protected final MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig;
-    protected final MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder;
+    protected final MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder;
 
     private int calculatedIndex;
 
@@ -31,7 +31,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
      */
     public AbstractMapperBuilder(
             final ClassMeta<T> classMeta,
-            MappingContextFactoryBuilder<S, K> parentBuilder,
+            MappingContextFactoryBuilder<? super S, K> parentBuilder,
             MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig,
             MapperSource<? super S, K> mapperSource, int startIndex) {
         this.fieldMapperMapperBuilder =

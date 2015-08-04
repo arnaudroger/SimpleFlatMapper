@@ -12,7 +12,6 @@ import org.sfm.map.mapper.PropertyMappingsBuilder;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.ColumnDefinitionProvider;
 import org.sfm.reflect.*;
-import org.sfm.reflect.InstantiatorFactory;
 import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple3;
 import org.sfm.utils.ErrorHelper;

@@ -3,7 +3,6 @@ package org.sfm.datastax.impl;
 import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
 
-import java.util.List;
 import java.util.Map;
 
 public class DatastaxMapGetter<K, V> implements Getter<GettableByIndexData, Map<K, V>> {

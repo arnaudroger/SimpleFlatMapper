@@ -71,6 +71,11 @@ public class AbstractDatastaxTest extends AbstractCassandraUnit4TestCase {
                     session.execute("insert into dbobjects_tuple(id, t) values(1, ('t1', 12, 13))");
                 }
 
+                if (sfm.getTable("dbobjects_udt") == null) {
+                    session.execute("create type mytype ( str text, l bigint )");
+                    session.execute("create table dbobjects_udt(id bigint primary key, t frozen <mytype>)");
+                    session.execute("insert into dbobjects_udt(id, t) values(1, {str : 't1', l : 12})");
+                }
                 callback.call(session);
             } finally {
                 if (session != null) session.close();

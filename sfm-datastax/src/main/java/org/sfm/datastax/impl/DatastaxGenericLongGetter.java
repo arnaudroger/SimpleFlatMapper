@@ -3,7 +3,6 @@ package org.sfm.datastax.impl;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.primitive.IntGetter;
 import org.sfm.reflect.primitive.LongGetter;
 
 public class DatastaxGenericLongGetter implements LongGetter<GettableByIndexData>, Getter<GettableByIndexData, Long> {

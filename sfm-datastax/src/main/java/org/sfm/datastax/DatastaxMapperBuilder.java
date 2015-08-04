@@ -3,7 +3,6 @@ package org.sfm.datastax;
 import com.datastax.driver.core.*;
 import com.datastax.driver.core.exceptions.DriverException;
 import org.sfm.datastax.impl.ResultSetEnumarable;
-import org.sfm.datastax.impl.RowGetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
@@ -25,9 +24,6 @@ import java.sql.SQLException;
  */
 public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T, DatastaxColumnKey, DatastaxMapper<T>, DatastaxMapperBuilder<T>> {
 
-    public static final MapperSourceImpl<GettableByIndexData, DatastaxColumnKey> FIELD_MAPPER_SOURCE =
-            new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, new RowGetterFactory());
-
     /**
      * @param classMeta                  the meta for the target class.
      * @param mapperConfig               the mapperConfig.
@@ -38,8 +34,8 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
             final ClassMeta<T> classMeta,
             MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey, Row>> mapperConfig,
             GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory,
-            MappingContextFactoryBuilder<Row, DatastaxColumnKey> parentBuilder) {
-        super(classMeta, parentBuilder, mapperConfig, FIELD_MAPPER_SOURCE.getterFactory(getterFactory), 0);
+            MappingContextFactoryBuilder<GettableByIndexData, DatastaxColumnKey> parentBuilder) {
+        super(classMeta, parentBuilder, mapperConfig, new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, getterFactory), 0);
     }
 
 

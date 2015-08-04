@@ -11,11 +11,11 @@ public class SheetIterator<T> implements Iterator<T> {
 
     private final Mapper<Row, T> mapper;
     private final Sheet sheet;
-    private final MappingContext<Row> mappingContext;
+    private final MappingContext<? super Row> mappingContext;
 
     private int rowNum;
 
-    public SheetIterator(Mapper<Row, T> mapper, int startRow, Sheet sheet, MappingContext<Row> mappingContext) {
+    public SheetIterator(Mapper<Row, T> mapper, int startRow, Sheet sheet, MappingContext<? super Row> mappingContext) {
         this.mapper = mapper;
         this.rowNum = startRow;
         this.sheet = sheet;

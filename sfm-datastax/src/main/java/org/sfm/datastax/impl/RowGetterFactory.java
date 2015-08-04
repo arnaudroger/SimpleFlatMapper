@@ -17,14 +17,12 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 //IFJAVA8_START
 import org.sfm.map.getter.time.JavaTimeGetterFactory;
+import org.sfm.tuples.Tuple2;
 
 import javax.lang.model.element.TypeElement;
 import java.time.*;
 //IFJAVA8_END
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class RowGetterFactory implements GetterFactory<GettableData, DatastaxColumnKey> {
 
@@ -182,10 +180,25 @@ public class RowGetterFactory implements GetterFactory<GettableData, DatastaxCol
             return (Getter<GettableData, P>) new DatastaxInetAddressGetter(key.getIndex());
         }
 
-        if (Set.class.equals(targetClass)) {
-            Type elementType = TypeHelper.getComponentTypeOfListOrArray(target);
-            return new DatastaxSetGetter(key.getIndex(), TypeHelper.toClass(elementType));
+        if (Collection.class.isAssignableFrom(targetClass)) {
 
+            Type elementType = TypeHelper.getComponentTypeOfListOrArray(target);
+            Class<?> dataTypeClass = key.getDateType() != null ? key.getDateType().asJavaClass() : Object.class;
+
+            if (Set.class.equals(dataTypeClass)) {
+                if (targetClass.isAssignableFrom(dataTypeClass)) {
+                    return new DatastaxSetGetter(key.getIndex(), TypeHelper.toClass(elementType));
+                }
+            }
+            if (List.class.equals(dataTypeClass)) {
+                if (targetClass.isAssignableFrom(dataTypeClass)) {
+                    return new DatastaxListGetter(key.getIndex(), TypeHelper.toClass(elementType));
+                }
+            }
+        }
+        if (Map.class.equals(targetClass)) {
+            Tuple2<Type, Type> keyValueTypeOfMap = TypeHelper.getKeyValueTypeOfMap(target);
+            return new DatastaxMapGetter(key.getIndex(), TypeHelper.toClass(keyValueTypeOfMap.first()), TypeHelper.toClass(keyValueTypeOfMap.second()));
         }
 
         if (TypeHelper.isEnum(target)) {

@@ -56,6 +56,16 @@ public class AbstractDatastaxTest extends AbstractCassandraUnit4TestCase {
                     session.execute("insert into dbobjects_set(id, emails) values(1, {'a@a', 'b@b'})");
                 }
 
+                if (sfm.getTable("dbobjects_list") == null) {
+                    session.execute("create table dbobjects_list(id bigint primary key, emails list<text>)");
+                    session.execute("insert into dbobjects_list(id, emails) values(1, ['a@a', 'b@b'])");
+                }
+
+                if (sfm.getTable("dbobjects_map") == null) {
+                    session.execute("create table dbobjects_map(id bigint primary key, emails map<int, text>)");
+                    session.execute("insert into dbobjects_map(id, emails) values(1, { 10 : 'a@a', 23 : 'b@b'})");
+                }
+
                 callback.call(session);
             } finally {
                 if (session != null) session.close();

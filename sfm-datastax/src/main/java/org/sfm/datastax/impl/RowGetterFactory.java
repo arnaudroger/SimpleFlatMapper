@@ -220,7 +220,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                         }
                     }
                 } else {
-                    Converter<?, ?> converter = ConverterFactory.getConverter(dataTypeElt, elementType);
+                    Converter<?, ?> converter = getConverter(elementType, dataTypeElt);
 
                     if (converter != null) {
                         if (Set.class.equals(dataTypeClass)) {
@@ -240,7 +240,32 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
         }
         if (Map.class.equals(targetClass)) {
             Tuple2<Type, Type> keyValueTypeOfMap = TypeHelper.getKeyValueTypeOfMap(target);
-            return new DatastaxMapGetter(key.getIndex(), TypeHelper.toClass(keyValueTypeOfMap.first()), TypeHelper.toClass(keyValueTypeOfMap.second()));
+
+            Class<?> dtKeyType = null;
+            Class<?> dtValueType = null;
+            if (key.getDataType() != null) {
+                List<DataType> typeArguments = key.getDataType().getTypeArguments();
+                if (typeArguments.size() == 2) {
+                    dtKeyType = typeArguments.get(0).asJavaClass();
+                    dtValueType = typeArguments.get(1).asJavaClass();
+                }
+            } else {
+                dtKeyType = TypeHelper.toClass(keyValueTypeOfMap.first());
+                dtValueType = TypeHelper.toClass(keyValueTypeOfMap.second());
+            }
+            if (dtKeyType != null && dtValueType != null) {
+                if (TypeHelper.areEquals(keyValueTypeOfMap.first(), dtKeyType)
+                        && TypeHelper.areEquals(keyValueTypeOfMap.second(), dtValueType)) {
+                    return new DatastaxMapGetter(key.getIndex(), TypeHelper.toClass(keyValueTypeOfMap.first()), TypeHelper.toClass(keyValueTypeOfMap.second()));
+                } else {
+                    Converter<?, ?> keyConverter = getConverter(keyValueTypeOfMap.first(), dtKeyType);
+                    Converter<?, ?> valueConverter = getConverter(keyValueTypeOfMap.second(), dtValueType);
+
+                    if (keyConverter != null && valueConverter != null) {
+                        return new DatastaxMapWithConverterGetter(key.getIndex(), dtKeyType, dtValueType, keyConverter, valueConverter);
+                    }
+                }
+            }
         }
 
         if (Tuples.isTuple(target)) {
@@ -283,6 +308,10 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
         }
 
         return null;
+    }
+
+    private Converter<?, ?> getConverter(Type elementType, Class<?> dataTypeElt) {
+        return ConverterFactory.getConverter(dataTypeElt, elementType);
     }
 
     @SuppressWarnings("unchecked")

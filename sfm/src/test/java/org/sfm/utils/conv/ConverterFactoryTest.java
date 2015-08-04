@@ -2,6 +2,7 @@ package org.sfm.utils.conv;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.csv.impl.writer.ObjectAppendableSetter;
 
 import javax.swing.text.Document;
 import javax.xml.parsers.SAXParser;
@@ -35,7 +36,12 @@ public class ConverterFactoryTest {
                 getConverter(Integer.class, Double.class).convert(13));
         assertEquals(new BigDecimal(13),
                 getConverter(Integer.class, BigDecimal.class).convert(13));
+    }
 
+    @Test
+    public void testIdentity() throws Exception {
+        Object o = new Object();
+        assertSame(o, getConverter(Object.class, Object.class).convert(o));
     }
 
     @Test

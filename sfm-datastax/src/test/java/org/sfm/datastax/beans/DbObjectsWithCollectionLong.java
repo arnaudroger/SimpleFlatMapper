@@ -1,10 +1,10 @@
 package org.sfm.datastax.beans;
 
-import java.util.List;
+import java.util.Collection;
 
-public class DbObjectsWithListLong {
+public class DbObjectsWithCollectionLong {
     private long id;
-    private List<Long> l;
+    private Collection<Long> l;
 
     public long getId() {
         return id;
@@ -14,11 +14,11 @@ public class DbObjectsWithListLong {
         this.id = id;
     }
 
-    public List<Long> getL() {
+    public Collection<Long> getL() {
         return l;
     }
 
-    public void setL(List<Long> l) {
+    public void setL(Collection<Long> l) {
         this.l = l;
     }
 }

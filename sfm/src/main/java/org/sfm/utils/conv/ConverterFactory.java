@@ -120,7 +120,9 @@ public class ConverterFactory {
 	}
 	@SuppressWarnings("unchecked")
 	public static <P, F> Converter<F, P> getConverter(Class<F> inType, Type outType) {
-		if (outType.equals(String.class)) {
+		if (TypeHelper.areEquals(outType, inType)) {
+			return (Converter<F, P>) new IdentityConverter<F>();
+		} else if (outType.equals(String.class)) {
 			return (Converter<F, P>) new ToStringConverter<F>();
 		} else if (TypeHelper.isNumber(outType) && TypeHelper.isNumber(inType)) {
 			return (Converter<F, P>) numberConverters.get(TypeHelper.wrap(outType));

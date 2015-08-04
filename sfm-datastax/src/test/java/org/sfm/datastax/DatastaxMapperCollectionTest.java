@@ -59,6 +59,28 @@ public class DatastaxMapperCollectionTest extends AbstractDatastaxTest {
     }
 
     @Test
+    public void testMapSetIntToSetLong() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+                final DatastaxMapper<DbObjectsWithCollectionLong> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObjectsWithCollectionLong.class);
+
+                ResultSet rs = session.execute("select id, l from dbobjects_setint");
+
+                final Iterator<DbObjectsWithCollectionLong> iterator = mapper.iterator(rs);
+
+                DbObjectsWithCollectionLong next = iterator.next();
+
+                assertEquals(1, next.getId());
+                assertEquals(new HashSet<Long>(Arrays.asList(Long.valueOf(13), Long.valueOf(14))), next.getL());
+
+                assertFalse(iterator.hasNext());
+
+            }
+        });
+    }
+
+    @Test
     public void testMapListToList() throws Exception {
         testInSession(new Callback() {
             @Override
@@ -85,13 +107,13 @@ public class DatastaxMapperCollectionTest extends AbstractDatastaxTest {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
-                final DatastaxMapper<DbObjectsWithListLong> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObjectsWithListLong.class);
+                final DatastaxMapper<DbObjectsWithCollectionLong> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObjectsWithCollectionLong.class);
 
                 ResultSet rs = session.execute("select id, l from dbobjects_listint");
 
-                final Iterator<DbObjectsWithListLong> iterator = mapper.iterator(rs);
+                final Iterator<DbObjectsWithCollectionLong> iterator = mapper.iterator(rs);
 
-                DbObjectsWithListLong next = iterator.next();
+                DbObjectsWithCollectionLong next = iterator.next();
 
                 assertEquals(1, next.getId());
                 assertEquals(Arrays.asList(Long.valueOf(13), Long.valueOf(14)), next.getL());
@@ -148,5 +170,26 @@ public class DatastaxMapperCollectionTest extends AbstractDatastaxTest {
             }
         });
     }
+    @Test
+    public void testMapMapWithConverter() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+                final DatastaxMapper<DbObjectsWithMapLongLong> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObjectsWithMapLongLong.class);
 
+                ResultSet rs = session.execute("select id, ll from dbobjects_mapll");
+
+                final Iterator<DbObjectsWithMapLongLong> iterator = mapper.iterator(rs);
+
+                DbObjectsWithMapLongLong next = iterator.next();
+
+                assertEquals(1, next.getId());
+                assertEquals(new Long(100l), next.getLl().get(new Long(10l)));
+                assertEquals(new Long(200l), next.getLl().get(new Long(20l)));
+
+                assertFalse(iterator.hasNext());
+
+            }
+        });
+    }
 }

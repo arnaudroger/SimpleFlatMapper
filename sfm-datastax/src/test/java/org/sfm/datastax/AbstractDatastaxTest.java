@@ -66,6 +66,11 @@ public class AbstractDatastaxTest extends AbstractCassandraUnit4TestCase {
                     session.execute("insert into dbobjects_map(id, emails) values(1, { 10 : 'a@a', 23 : 'b@b'})");
                 }
 
+                if (sfm.getTable("dbobjects_mapll") == null) {
+                    session.execute("create table dbobjects_mapll(id bigint primary key, ll map<int, int>)");
+                    session.execute("insert into dbobjects_mapll(id, ll) values(1, { 10 : 100, 20 : 200})");
+                }
+
                 if (sfm.getTable("dbobjects_tuple") == null) {
                     session.execute("create table dbobjects_tuple(id bigint primary key, t frozen <tuple<text, bigint, int>>)");
                     session.execute("insert into dbobjects_tuple(id, t) values(1, ('t1', 12, 13))");
@@ -84,6 +89,10 @@ public class AbstractDatastaxTest extends AbstractCassandraUnit4TestCase {
                 if (sfm.getTable("dbobjects_listint") == null) {
                     session.execute("create table dbobjects_listint(id bigint primary key, l list<int>)");
                     session.execute("insert into dbobjects_listint(id, l) values(1,  [13, 14])");
+                }
+                if (sfm.getTable("dbobjects_setint") == null) {
+                    session.execute("create table dbobjects_setint(id bigint primary key, l set<int>)");
+                    session.execute("insert into dbobjects_setint(id, l) values(1,  {13, 14})");
                 }
                 callback.call(session);
             } finally {

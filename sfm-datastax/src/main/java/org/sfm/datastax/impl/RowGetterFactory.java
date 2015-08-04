@@ -197,11 +197,13 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             Type elementType = TypeHelper.getComponentTypeOfListOrArray(target);
             Class<?> dataTypeClass = Object.class;
             Class<?> dataTypeElt = null;
+            DataType dtElt = null;
             if (key.getDataType() != null) {
                 DataType dataType = key.getDataType();
                 dataTypeClass = dataType.asJavaClass();
                 if (dataType.isCollection()) {
-                    dataTypeElt = key.getDataType().getTypeArguments().get(0).asJavaClass();
+                    dtElt = key.getDataType().getTypeArguments().get(0);
+                    dataTypeElt = dtElt.asJavaClass();
                 }
             } else {
                 dataTypeElt = TypeHelper.toClass(elementType);
@@ -220,7 +222,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                         }
                     }
                 } else {
-                    Converter<?, ?> converter = getConverter(elementType, dataTypeElt);
+                    Converter<?, ?> converter = getConverter(elementType, dataTypeElt, dtElt);
 
                     if (converter != null) {
                         if (Set.class.equals(dataTypeClass)) {
@@ -243,11 +245,15 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
 
             Class<?> dtKeyType = null;
             Class<?> dtValueType = null;
+            DataType dtKey = null;
+            DataType dtValue = null;
             if (key.getDataType() != null) {
                 List<DataType> typeArguments = key.getDataType().getTypeArguments();
                 if (typeArguments.size() == 2) {
-                    dtKeyType = typeArguments.get(0).asJavaClass();
-                    dtValueType = typeArguments.get(1).asJavaClass();
+                    dtKey = typeArguments.get(0);
+                    dtKeyType = dtKey.asJavaClass();
+                    dtValue = typeArguments.get(1);
+                    dtValueType = dtValue.asJavaClass();
                 }
             } else {
                 dtKeyType = TypeHelper.toClass(keyValueTypeOfMap.first());
@@ -258,8 +264,8 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                         && TypeHelper.areEquals(keyValueTypeOfMap.second(), dtValueType)) {
                     return new DatastaxMapGetter(key.getIndex(), TypeHelper.toClass(keyValueTypeOfMap.first()), TypeHelper.toClass(keyValueTypeOfMap.second()));
                 } else {
-                    Converter<?, ?> keyConverter = getConverter(keyValueTypeOfMap.first(), dtKeyType);
-                    Converter<?, ?> valueConverter = getConverter(keyValueTypeOfMap.second(), dtValueType);
+                    Converter<?, ?> keyConverter = getConverter(keyValueTypeOfMap.first(), dtKeyType, dtKey);
+                    Converter<?, ?> valueConverter = getConverter(keyValueTypeOfMap.second(), dtValueType, dtValue);
 
                     if (keyConverter != null && valueConverter != null) {
                         return new DatastaxMapWithConverterGetter(key.getIndex(), dtKeyType, dtValueType, keyConverter, valueConverter);
@@ -310,7 +316,16 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
         return null;
     }
 
-    private Converter<?, ?> getConverter(Type elementType, Class<?> dataTypeElt) {
+    @SuppressWarnings("unchecked")
+    private Converter<?, ?> getConverter(Type elementType,  Class<?> dataTypeElt, DataType dtElt) {
+        if (dtElt != null) {
+            if (UDTValue.class.equals(dataTypeElt)) {
+                return new ConverterMapper(DatastaxUDTGetter.newUDTMapper(elementType, (UserType) dtElt, datastaxMapperFactory));
+            }
+            if (TupleValue.class.equals(dataTypeElt)) {
+                return new ConverterMapper(DatastaxTupleGetter.newTupleMapper(elementType, (TupleType) dtElt, datastaxMapperFactory));
+            }
+        }
         return ConverterFactory.getConverter(dataTypeElt, elementType);
     }
 

@@ -31,6 +31,11 @@ public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
 
     @SuppressWarnings("unchecked")
     public static <P> Getter<GettableByIndexData, P> newInstance(DatastaxMapperFactory factory, Type target,  UserType tt, int index) {
+        Mapper<GettableByIndexData, P> mapper = newUDTMapper(target, tt, factory);
+        return new DatastaxUDTGetter<P>(mapper, index);
+    }
+
+    public static <P> Mapper<GettableByIndexData, P> newUDTMapper(Type target, UserType tt, DatastaxMapperFactory factory) {
         FieldMapperMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> builder = newFieldMapperBuilder(factory, target);
 
         Iterator<UserType.Field> iterator = tt.iterator();
@@ -42,7 +47,7 @@ public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
             i ++;
         }
 
-        return new DatastaxUDTGetter<P>(builder.mapper(), index);
+        return builder.mapper();
     }
 
     public static <P> FieldMapperMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> newFieldMapperBuilder(DatastaxMapperFactory factory, Type target) {

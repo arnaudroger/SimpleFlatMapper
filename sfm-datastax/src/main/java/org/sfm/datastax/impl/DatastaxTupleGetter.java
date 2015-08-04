@@ -30,6 +30,11 @@ public class DatastaxTupleGetter<T extends Tuple2<?, ?>> implements Getter<Getta
 
     @SuppressWarnings("unchecked")
     public static <P extends  Tuple2<?, ?>> Getter<GettableByIndexData, P> newInstance(DatastaxMapperFactory factory, Type target,  TupleType tt, int index) {
+        Mapper<GettableByIndexData, P> mapper = newTupleMapper(target, tt, factory);
+        return new DatastaxTupleGetter<P>(mapper, index);
+    }
+
+    public static <P extends Tuple2<?, ?>> Mapper<GettableByIndexData, P> newTupleMapper(Type target, TupleType tt, DatastaxMapperFactory factory) {
         FieldMapperMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> builder =
                 DatastaxUDTGetter.newFieldMapperBuilder(factory, target);
 
@@ -40,6 +45,6 @@ public class DatastaxTupleGetter<T extends Tuple2<?, ?>> implements Getter<Getta
                     identity);
         }
 
-        return new DatastaxTupleGetter<P>(builder.mapper(), index);
+        return builder.mapper();
     }
 }

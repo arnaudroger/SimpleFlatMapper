@@ -4,6 +4,7 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import org.junit.Test;
 import org.sfm.datastax.beans.*;
+import org.sfm.tuples.Tuple2;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -79,7 +80,29 @@ public class DatastaxMapperCollectionTest extends AbstractDatastaxTest {
             }
         });
     }
+    @Test
+    public void testMapSetUDT() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+                final DatastaxMapper<DbObjectsWithCollectionUDT> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObjectsWithCollectionUDT.class);
 
+                ResultSet rs = session.execute("select id, l from dbobjects_setudt");
+
+                final Iterator<DbObjectsWithCollectionUDT> iterator = mapper.iterator(rs);
+
+                DbObjectsWithCollectionUDT next = iterator.next();
+
+                assertEquals(1, next.getId());
+                DbObjectsWithCollectionUDT.MyType myType = next.getL().iterator().next();
+                assertEquals("t1", myType.str);
+                assertEquals(12, myType.l);
+
+                assertFalse(iterator.hasNext());
+
+            }
+        });
+    }
     @Test
     public void testMapListToList() throws Exception {
         testInSession(new Callback() {
@@ -124,6 +147,53 @@ public class DatastaxMapperCollectionTest extends AbstractDatastaxTest {
         });
     }
 
+    @Test
+    public void testMapListUDT() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+                final DatastaxMapper<DbObjectsWithCollectionUDT> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObjectsWithCollectionUDT.class);
+
+                ResultSet rs = session.execute("select id, l from dbobjects_listudt");
+
+                final Iterator<DbObjectsWithCollectionUDT> iterator = mapper.iterator(rs);
+
+                DbObjectsWithCollectionUDT next = iterator.next();
+
+                assertEquals(1, next.getId());
+                DbObjectsWithCollectionUDT.MyType myType = next.getL().iterator().next();
+                assertEquals("t1", myType.str);
+                assertEquals(12, myType.l);
+
+                assertFalse(iterator.hasNext());
+
+            }
+        });
+    }
+
+    @Test
+    public void testMapListTuple() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+                final DatastaxMapper<DbObjectsWithCollectionTuple> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObjectsWithCollectionTuple.class);
+
+                ResultSet rs = session.execute("select id, l from dbobjects_listtuple");
+
+                final Iterator<DbObjectsWithCollectionTuple> iterator = mapper.iterator(rs);
+
+                DbObjectsWithCollectionTuple next = iterator.next();
+
+                assertEquals(1, next.getId());
+                Tuple2<String, Long> tuple2 = next.getL().iterator().next();
+                assertEquals("t1", tuple2.first());
+                assertEquals(new Long(12), tuple2.second());
+
+                assertFalse(iterator.hasNext());
+
+            }
+        });
+    }
 
     @Test
     public void testMapListToCollection() throws Exception {
@@ -186,6 +256,30 @@ public class DatastaxMapperCollectionTest extends AbstractDatastaxTest {
                 assertEquals(1, next.getId());
                 assertEquals(new Long(100l), next.getLl().get(new Long(10l)));
                 assertEquals(new Long(200l), next.getLl().get(new Long(20l)));
+
+                assertFalse(iterator.hasNext());
+
+            }
+        });
+    }
+
+    @Test
+    public void testMapMapWithUDT() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+                final DatastaxMapper<DbObjectsWithMapUDT> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObjectsWithMapUDT.class);
+
+                ResultSet rs = session.execute("select id, l from dbobjects_mapudt");
+
+                final Iterator<DbObjectsWithMapUDT> iterator = mapper.iterator(rs);
+
+                DbObjectsWithMapUDT next = iterator.next();
+
+                assertEquals(1, next.getId());
+                DbObjectsWithMapUDT.MyType myType = next.getL().get(2);
+                assertEquals("t1", myType.str);
+                assertEquals(12, myType.l);
 
                 assertFalse(iterator.hasNext());
 

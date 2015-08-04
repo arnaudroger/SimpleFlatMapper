@@ -94,6 +94,22 @@ public class AbstractDatastaxTest extends AbstractCassandraUnit4TestCase {
                     session.execute("create table dbobjects_setint(id bigint primary key, l set<int>)");
                     session.execute("insert into dbobjects_setint(id, l) values(1,  {13, 14})");
                 }
+                if (sfm.getTable("dbobjects_listudt") == null) {
+                    session.execute("create table dbobjects_listudt(id bigint primary key, l list<frozen <mytype>>)");
+                    session.execute("insert into dbobjects_listudt(id, l) values(1,  [ {str : 't1', l : 12}])");
+                }
+                if (sfm.getTable("dbobjects_listtuple") == null) {
+                    session.execute("create table dbobjects_listtuple(id bigint primary key, l list<frozen <tuple<text, bigint>>>)");
+                    session.execute("insert into dbobjects_listtuple(id, l) values(1,  [ ( 't1',  12)])");
+                }
+                if (sfm.getTable("dbobjects_setudt") == null) {
+                    session.execute("create table dbobjects_setudt(id bigint primary key, l set<frozen <mytype>>)");
+                    session.execute("insert into dbobjects_setudt(id, l) values(1,  {{str : 't1', l : 12}})");
+                }
+                if (sfm.getTable("dbobjects_mapudt") == null) {
+                    session.execute("create table dbobjects_mapudt(id bigint primary key, l map<int, frozen <mytype>>)");
+                    session.execute("insert into dbobjects_mapudt(id, l) values(1,  {2 : {str : 't1', l : 12}})");
+                }
                 callback.call(session);
             } finally {
                 if (session != null) session.close();

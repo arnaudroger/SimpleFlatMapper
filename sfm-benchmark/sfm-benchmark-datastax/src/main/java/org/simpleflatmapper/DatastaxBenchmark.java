@@ -74,20 +74,25 @@ public class DatastaxBenchmark {
                         .addContactPointsWithPorts(
                                 Arrays.asList(new InetSocketAddress("localhost", 9042)))
                         .build();
-        session = cluster.connect("test");
 
-        session.execute("create table if not exists test_table  (id bigint primary key, year_started int, name varchar, email varchar)");
+        if (cluster.getMetadata().getKeyspace("testsfm") == null) {
+            cluster.connect().execute("create keyspace testsfm WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 }");
+        }
 
-        if (session.execute("select * from test_table").isExhausted()) {
+        this.session = cluster.connect("testsfm");
+
+        this.session.execute("create table if not exists test_table  (id bigint primary key, year_started int, name varchar, email varchar)");
+
+        if (this.session.execute("select * from test_table").isExhausted()) {
             for( int i  = 0; i < 10000; i++) {
-                session.execute("insert into test_table(id, year_started, name, email) values (" + i +", 1978, 'Arnaud Roger', 'arnaud.roger@gmail.com')");
+                this.session.execute("insert into test_table(id, year_started, name, email) values (" + i + ", 1978, 'Arnaud Roger', 'arnaud.roger@gmail.com')");
             }
         }
 
-        datastaxMapper = new MappingManager(session).mapper(SimpleObject.class);
+        datastaxMapper = new MappingManager(this.session).mapper(SimpleObject.class);
         sfmMapper = DatastaxMapperFactory.newInstance().mapTo(SimpleObject.class);
 
-        preparedStatement = session.prepare("select id, year_started, name, email from test_table ");
+        preparedStatement = this.session.prepare("select id, year_started, name, email from test_table ");
 
     }
 

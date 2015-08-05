@@ -6,6 +6,6 @@ import org.openjdk.jmh.annotations.State;
 
 @State(Scope.Benchmark)
 public class LimitParam {
-	@Param(value={"1", "10", "100", "1000", "10000", "100000", "1000000"})
+	@Param(value={"1", "10", "100", "1000"})
 	public int limit;
 }

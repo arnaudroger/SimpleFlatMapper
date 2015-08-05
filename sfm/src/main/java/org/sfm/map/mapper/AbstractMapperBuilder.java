@@ -17,7 +17,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
 
     private final FieldMapperMapperBuilder<S, T, K> fieldMapperMapperBuilder;
 
-    protected final MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig;
+    protected final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
     protected final MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder;
 
     private int calculatedIndex;
@@ -32,7 +32,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     public AbstractMapperBuilder(
             final ClassMeta<T> classMeta,
             MappingContextFactoryBuilder<? super S, K> parentBuilder,
-            MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig,
+            MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
             MapperSource<? super S, K> mapperSource, int startIndex) {
         this.fieldMapperMapperBuilder =
                 new FieldMapperMapperBuilder<S, T, K>(
@@ -67,7 +67,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
      * @return the current builder
      */
     public final B addKey(String column) {
-        return addMapping(column, calculatedIndex++, FieldMapperColumnDefinition.<K, S>key());
+        return addMapping(column, calculatedIndex++, FieldMapperColumnDefinition.<K>key());
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
      * @param columnDefinition the definition
      * @return the current builder
      */
-    public final B addMapping(final String column, final FieldMapperColumnDefinition<K, S> columnDefinition) {
+    public final B addMapping(final String column, final FieldMapperColumnDefinition<K> columnDefinition) {
         return addMapping(column, calculatedIndex++, columnDefinition);
     }
 
@@ -121,7 +121,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
      * @param columnDefinition the column definition
      * @return the current builder
      */
-    public final B addMapping(String column, int index, final FieldMapperColumnDefinition<K, S> columnDefinition) {
+    public final B addMapping(String column, int index, final FieldMapperColumnDefinition<K> columnDefinition) {
         return addMapping(key(column, index), columnDefinition);
     }
 
@@ -151,14 +151,14 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
 
 
     @SuppressWarnings("unchecked")
-    public final B addMapping(K key, FieldMapperColumnDefinition<K, S> columnDefinition) {
+    public final B addMapping(K key, FieldMapperColumnDefinition<K> columnDefinition) {
         fieldMapperMapperBuilder.addMapping(key, columnDefinition);
         return (B) this;
     }
 
     @SuppressWarnings("unchecked")
     public final B addMapping(K key, ColumnProperty... properties) {
-        fieldMapperMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<K, S>of(properties));
+        fieldMapperMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<K>of(properties));
         return (B) this;
     }
 

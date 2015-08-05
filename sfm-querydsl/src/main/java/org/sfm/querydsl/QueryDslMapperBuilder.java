@@ -40,7 +40,7 @@ public final class QueryDslMapperBuilder<T> {
 	}
 
     public <E> QueryDslMapperBuilder<T> addMapping(Expression<?> expression, int i) {
-		fieldMapperMapperBuilder.addMapping(new TupleElementKey(expression, i), FieldMapperColumnDefinition.<TupleElementKey, Tuple>identity());
+		fieldMapperMapperBuilder.addMapping(new TupleElementKey(expression, i), FieldMapperColumnDefinition.<TupleElementKey>identity());
 		return this;
 	}
 

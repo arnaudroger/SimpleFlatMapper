@@ -134,7 +134,7 @@ public class DiscriminatorJdbcBuilder<T> {
          * @return the current builder
          */
         public DiscriminatorJdbcSubBuilder addMapping(String column) {
-            return addMapping(column, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>identity());
+            return addMapping(column, FieldMapperColumnDefinition.<JdbcColumnKey>identity());
         }
 
         /**
@@ -144,7 +144,7 @@ public class DiscriminatorJdbcBuilder<T> {
          * @param columnDefinition the column definition
          * @return the current builder
          */
-        public DiscriminatorJdbcSubBuilder addMapping(String column, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
+        public DiscriminatorJdbcSubBuilder addMapping(String column, FieldMapperColumnDefinition<JdbcColumnKey> columnDefinition) {
             if (builder == null) {
                 builder = jdbcMapperFactory.newBuilder(type);
             }
@@ -160,7 +160,7 @@ public class DiscriminatorJdbcBuilder<T> {
          * @param columnDefinition the column definition
          * @return the current builder
          */
-        public DiscriminatorJdbcSubBuilder addMapping(String column, int index, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
+        public DiscriminatorJdbcSubBuilder addMapping(String column, int index, FieldMapperColumnDefinition<JdbcColumnKey> columnDefinition) {
             if (builder == null) {
                 builder = jdbcMapperFactory.newBuilder(type);
             }

@@ -80,7 +80,7 @@ public class DefaultFieldAppenderFactoryTest {
     @Test
     public void testJodaDateTimeWithFormater() throws  Exception {
         MappingContextFactoryBuilder<JodaObject, CsvColumnKey> builder = getMappingContextBuilder();
-        FieldMapperColumnDefinition<CsvColumnKey, JodaObject> format = FieldMapperColumnDefinition.<CsvColumnKey, JodaObject>identity().add(new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("yyyyMMdd")));
+        FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("yyyyMMdd")));
         FieldMapper<JodaObject, Appendable> fieldMapper =
                 defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
                         CsvCellWriter.DEFAULT_WRITER, builder);
@@ -90,7 +90,7 @@ public class DefaultFieldAppenderFactoryTest {
     @Test
     public void testJodaDateTimeWithDateFormat() throws  Exception {
         MappingContextFactoryBuilder<JodaObject, CsvColumnKey> builder = getMappingContextBuilder();
-        FieldMapperColumnDefinition<CsvColumnKey, JodaObject> format = FieldMapperColumnDefinition.<CsvColumnKey, JodaObject>identity().add(new DateFormatProperty("yyyyMMdd"));
+        FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new DateFormatProperty("yyyyMMdd"));
         FieldMapper<JodaObject, Appendable> fieldMapper =
                 defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
                         CsvCellWriter.DEFAULT_WRITER, builder);
@@ -130,7 +130,7 @@ public class DefaultFieldAppenderFactoryTest {
     @Test
     public void testDoubleWithFormatterAppender() throws Exception {
         MappingContextFactoryBuilder<DbPrimitiveObjectWithSetter, CsvColumnKey> builder = getMappingContextBuilder();
-        FieldMapperColumnDefinition<CsvColumnKey, DbPrimitiveObjectWithSetter> format = FieldMapperColumnDefinition.<CsvColumnKey, DbPrimitiveObjectWithSetter>identity().add(new FormatProperty(new DecimalFormat("0.0")));
+        FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new FormatProperty(new DecimalFormat("0.0")));
         FieldMapper<DbPrimitiveObjectWithSetter, Appendable> fieldMapper =
                 defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping("pDouble", dbPrimitiveObjectClassMeta, format),
                         CsvCellWriter.DEFAULT_WRITER, builder);
@@ -155,14 +155,14 @@ public class DefaultFieldAppenderFactoryTest {
         assertEquals(expected, sb.toString());
     }
 
-    private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>> newPropertyMapping(String col, ClassMeta<T> classMeta) {
-        return newPropertyMapping(col, classMeta, FieldMapperColumnDefinition.<CsvColumnKey, T>identity());
+    private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> newPropertyMapping(String col, ClassMeta<T> classMeta) {
+        return newPropertyMapping(col, classMeta, FieldMapperColumnDefinition.<CsvColumnKey>identity());
     }
 
-    private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>> newPropertyMapping(String col, ClassMeta<T> classMeta, FieldMapperColumnDefinition<CsvColumnKey, T> columnDefinition) {
+    private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> newPropertyMapping(String col, ClassMeta<T> classMeta, FieldMapperColumnDefinition<CsvColumnKey> columnDefinition) {
         PropertyMeta<T, String> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(col));
         if (propertyMeta == null) throw new IllegalArgumentException("cannot find prop " + col);
-        return new PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>>(
+        return new PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>(
                 propertyMeta,
                 new CsvColumnKey(col, 1),
                 columnDefinition);

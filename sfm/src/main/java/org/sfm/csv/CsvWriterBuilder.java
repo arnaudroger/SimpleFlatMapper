@@ -23,9 +23,9 @@ import java.util.List;
 public class CsvWriterBuilder<T> {
 
     private final ReflectionService reflectionService;
-    private final MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>> mapperConfig;
+    private final MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig;
 
-    private final PropertyMappingsBuilder<T, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey, T>> propertyMappingsBuilder;
+    private final PropertyMappingsBuilder<T, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey>> propertyMappingsBuilder;
     private final DefaultFieldAppenderFactory fieldAppenderFactory;
     private final CellWriter cellWriter;
     private final ClassMeta<T> classMeta;
@@ -34,7 +34,7 @@ public class CsvWriterBuilder<T> {
 
     public CsvWriterBuilder(
             ClassMeta<T> classMeta,
-            MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>> mapperConfig,
+            MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
             DefaultFieldAppenderFactory fieldAppenderFactory,
             CellWriter cellWriter) {
         this.fieldAppenderFactory = fieldAppenderFactory;
@@ -42,7 +42,7 @@ public class CsvWriterBuilder<T> {
         this.reflectionService = classMeta.getReflectionService();
         this.mapperConfig = mapperConfig;
         this.propertyMappingsBuilder =
-                new PropertyMappingsBuilder<T, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey, T>>(
+                new PropertyMappingsBuilder<T, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey>>(
                         classMeta,
                         mapperConfig.propertyNameMatcherFactory(),
                         mapperConfig.mapperBuilderErrorHandler());
@@ -50,15 +50,15 @@ public class CsvWriterBuilder<T> {
     }
 
     public CsvWriterBuilder<T> addColumn(String column) {
-        return addColumn(column, FieldMapperColumnDefinition.<CsvColumnKey, T>identity());
+        return addColumn(column, FieldMapperColumnDefinition.<CsvColumnKey>identity());
 
     }
-    public CsvWriterBuilder<T> addColumn(String column,  FieldMapperColumnDefinition<CsvColumnKey, T> columnDefinition) {
+    public CsvWriterBuilder<T> addColumn(String column,  FieldMapperColumnDefinition<CsvColumnKey> columnDefinition) {
         propertyMappingsBuilder.addProperty(new CsvColumnKey(column, currentIndex++), columnDefinition);
         return this;
     }
     public CsvWriterBuilder<T> addColumn(String column, ColumnProperty... properties) {
-        propertyMappingsBuilder.addProperty(new CsvColumnKey(column, currentIndex++), FieldMapperColumnDefinition.<CsvColumnKey, T>identity().add(properties));
+        propertyMappingsBuilder.addProperty(new CsvColumnKey(column, currentIndex++), FieldMapperColumnDefinition.<CsvColumnKey>identity().add(properties));
         return this;
     }
 
@@ -77,10 +77,10 @@ public class CsvWriterBuilder<T> {
 
         final CellSeparatorAppender<T> cellSeparatorAppender = new CellSeparatorAppender<T>(cellWriter);
         propertyMappingsBuilder.forEachProperties(
-                new ForEachCallBack<PropertyMapping<T, ?, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey, T>>>() {
+                new ForEachCallBack<PropertyMapping<T, ?, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey>>>() {
                     int i = 0;
                     @Override
-                    public void handle(PropertyMapping<T, ?, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey, T>> pm) {
+                    public void handle(PropertyMapping<T, ?, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey>> pm) {
                         FieldMapper<T, Appendable> fieldMapper =
                                 fieldAppenderFactory.newFieldAppender(
                                         pm,
@@ -156,7 +156,7 @@ public class CsvWriterBuilder<T> {
     }
 
     public static <T> CsvWriterBuilder<T> newBuilder(ClassMeta<T> classMeta, CellWriter cellWriter) {
-        MapperConfig<CsvColumnKey,FieldMapperColumnDefinition<CsvColumnKey,T>> config =
+        MapperConfig<CsvColumnKey,FieldMapperColumnDefinition<CsvColumnKey>> config =
                 MapperConfig.<T, CsvColumnKey>fieldMapperConfig();
         DefaultFieldAppenderFactory appenderFactory = DefaultFieldAppenderFactory.instance();
         CsvWriterBuilder<T> builder =

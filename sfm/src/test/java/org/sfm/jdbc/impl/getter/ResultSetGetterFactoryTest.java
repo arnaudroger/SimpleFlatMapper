@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 
 public class ResultSetGetterFactoryTest {
 
-	public static final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> IDENTITY = FieldMapperColumnDefinition.identity();
+	public static final FieldMapperColumnDefinition<JdbcColumnKey> IDENTITY = FieldMapperColumnDefinition.identity();
 	ResultSetGetterFactory factory;
 	ResultSet resultSet;
 	

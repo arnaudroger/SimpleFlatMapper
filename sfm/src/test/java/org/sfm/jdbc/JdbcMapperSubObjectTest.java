@@ -55,7 +55,7 @@ public class JdbcMapperSubObjectTest {
     public void testMapInnerObjectWithColumnDefinition() throws Exception {
         JdbcMapperBuilder<Db1DeepObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(Db1DeepObject.class);
 
-        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition = FieldMapperColumnDefinition.customGetter(new Getter<ResultSet, String>() {
+        FieldMapperColumnDefinition<JdbcColumnKey> columnDefinition = FieldMapperColumnDefinition.customGetter(new Getter<ResultSet, String>() {
             @Override
             public String get(ResultSet target) throws Exception {
                 return "ov1";

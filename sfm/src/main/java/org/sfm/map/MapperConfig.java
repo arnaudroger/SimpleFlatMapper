@@ -17,8 +17,8 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
     public static final int MAX_METHOD_SIZE = 128;
 
 
-    public static <S, K extends FieldKey<K>> MapperConfig<K, FieldMapperColumnDefinition<K, S>> fieldMapperConfig() {
-        return new MapperConfig<K, FieldMapperColumnDefinition<K, S>>(
+    public static <S, K extends FieldKey<K>> MapperConfig<K, FieldMapperColumnDefinition<K>> fieldMapperConfig() {
+        return new MapperConfig<K, FieldMapperColumnDefinition<K>>(
                 new IdentityFieldMapperColumnDefinitionProvider<K, S>(),
                 new DefaultPropertyNameMatcherFactory(),
                 new RethrowMapperBuilderErrorHandler(),

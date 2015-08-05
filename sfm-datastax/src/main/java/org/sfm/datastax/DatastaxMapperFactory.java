@@ -19,12 +19,12 @@ import org.sfm.utils.UnaryFactoryWithException;
 
 import java.lang.reflect.Type;
 
-public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey, Row>, DatastaxMapperFactory> {
+public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>, DatastaxMapperFactory> {
 
     private GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory = new RowGetterFactory(this);
 
     private DatastaxMapperFactory() {
-        super(new FieldMapperColumnDefinitionProviderImpl<DatastaxColumnKey, Row>(), FieldMapperColumnDefinition.<DatastaxColumnKey, Row>identity());
+        super(new FieldMapperColumnDefinitionProviderImpl<DatastaxColumnKey>(), FieldMapperColumnDefinition.<DatastaxColumnKey>identity());
     }
 
     public static DatastaxMapperFactory newInstance() {

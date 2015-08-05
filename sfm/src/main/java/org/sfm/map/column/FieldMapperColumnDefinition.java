@@ -10,7 +10,7 @@ import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 
-public class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends ColumnDefinition<K, FieldMapperColumnDefinition<K, S>> {
+public class FieldMapperColumnDefinition<K extends FieldKey<K>> extends ColumnDefinition<K, FieldMapperColumnDefinition<K>> {
 
     private static final FieldMapperColumnDefinition IDENTITY = new FieldMapperColumnDefinition(new ColumnProperty[0]);
 
@@ -27,10 +27,10 @@ public class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends Colum
     }
 
     @SuppressWarnings("unchecked")
-    public Getter<S, ?> getCustomGetter() {
+    public Getter<?, ?> getCustomGetter() {
         final GetterProperty property = lookFor(GetterProperty.class);
         if (property != null) {
-            return (Getter<S, ?>) property.getGetter();
+            return (Getter<?, ?>) property.getGetter();
         }
         return null;
     }
@@ -46,10 +46,10 @@ public class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends Colum
     }
 
     @SuppressWarnings("unchecked")
-    public GetterFactory<S, K> getCustomGetterFactory(){
+    public GetterFactory<?, K> getCustomGetterFactory(){
         final GetterFactoryProperty property = lookFor(GetterFactoryProperty.class);
         if (property != null) {
-            return (GetterFactory<S, K>) property.getGetterFactory();
+            return (GetterFactory<?, K>) property.getGetterFactory();
         }
         return null;
     }
@@ -58,64 +58,64 @@ public class FieldMapperColumnDefinition<K extends FieldKey<K>, S> extends Colum
         return has(GetterFactoryProperty.class);
     }
 
-    public FieldMapperColumnDefinition<K, S> addGetter(Getter<S, ?> getter) {
+    public FieldMapperColumnDefinition<K> addGetter(Getter<?, ?> getter) {
         return add(new GetterProperty(getter));
     }
-    public FieldMapperColumnDefinition<K, S> addGetterFactory(GetterFactory<S, K> getterFactory) {
+    public FieldMapperColumnDefinition<K> addGetterFactory(GetterFactory<?, K> getterFactory) {
         return add(new GetterFactoryProperty(getterFactory));
 
     }
-    public FieldMapperColumnDefinition<K, S> addFieldMapper(FieldMapper<S, ?> mapper){
+    public FieldMapperColumnDefinition<K> addFieldMapper(FieldMapper<?, ?> mapper){
         return add(new FieldMapperProperty(mapper));
     }
 
     @SuppressWarnings("unchecked")
-    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> identity() {
+    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> identity() {
         return IDENTITY;
     }
 
-    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> compose(final FieldMapperColumnDefinition<K, S> def1, final FieldMapperColumnDefinition<K, S> def2) {
+    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> compose(final FieldMapperColumnDefinition<K> def1, final FieldMapperColumnDefinition<K> def2) {
         return def1.compose(def2);
     }
 
-    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customFieldMapperDefinition(final FieldMapper<S, ?> mapper) {
-        return FieldMapperColumnDefinition.<K,S>identity().addFieldMapper(mapper);
+    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> customFieldMapperDefinition(final FieldMapper<?, ?> mapper) {
+        return FieldMapperColumnDefinition.<K>identity().addFieldMapper(mapper);
     }
 
-    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customGetter(final Getter<S, ?> getter) {
-        return FieldMapperColumnDefinition.<K,S>identity().addGetter(getter);
+    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> customGetter(final Getter<?, ?> getter) {
+        return FieldMapperColumnDefinition.<K>identity().addGetter(getter);
     }
 
-    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> customGetterFactory(final GetterFactory<S, K> getterFactory) {
-        return FieldMapperColumnDefinition.<K,S>identity().addGetterFactory(getterFactory);
+    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> customGetterFactory(final GetterFactory<?, K> getterFactory) {
+        return FieldMapperColumnDefinition.<K>identity().addGetterFactory(getterFactory);
     }
 
-    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> renameDefinition(final String name) {
-        return FieldMapperColumnDefinition.<K,S>identity().addRename(name);
+    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> renameDefinition(final String name) {
+        return FieldMapperColumnDefinition.<K>identity().addRename(name);
     }
 
-    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> ignoreDefinition() {
-        return FieldMapperColumnDefinition.<K,S>identity().addIgnore();
+    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> ignoreDefinition() {
+        return FieldMapperColumnDefinition.<K>identity().addIgnore();
     }
 
-    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> key() {
-        return FieldMapperColumnDefinition.<K,S>identity().addKey();
+    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> key() {
+        return FieldMapperColumnDefinition.<K>identity().addKey();
     }
 
-    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> key(Predicate<PropertyMeta<?, ?>> predicate) {
-        return FieldMapperColumnDefinition.<K,S>identity().addKey(predicate);
+    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> key(Predicate<PropertyMeta<?, ?>> predicate) {
+        return FieldMapperColumnDefinition.<K>identity().addKey(predicate);
     }
 
     @Override
-    protected FieldMapperColumnDefinition<K, S> newColumnDefinition(ColumnProperty[] properties) {
-        return FieldMapperColumnDefinition.<K, S>of(properties);
+    protected FieldMapperColumnDefinition<K> newColumnDefinition(ColumnProperty[] properties) {
+        return FieldMapperColumnDefinition.<K>of(properties);
     }
 
     @SuppressWarnings("unchecked")
-    public static <K extends FieldKey<K>, S> FieldMapperColumnDefinition<K, S> of(ColumnProperty[] properties) {
+    public static <K extends FieldKey<K>> FieldMapperColumnDefinition<K> of(ColumnProperty[] properties) {
         if (properties == null || properties.length == 0) {
             return IDENTITY;
         }
-        return new FieldMapperColumnDefinition<K, S>(properties);
+        return new FieldMapperColumnDefinition<K>(properties);
     }
 }

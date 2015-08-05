@@ -32,9 +32,9 @@ public class FieldMapperMapperBuilderTest {
         FieldMapperFactory<ResultSet, JdbcColumnKey> factory = new FieldMapperFactory<ResultSet, JdbcColumnKey>(new ResultSetGetterFactory());
 
         PropertyMeta<MyObjectWithInner, MultiConstructorObject> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("prop"));
-        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> identity = FieldMapperColumnDefinition.identity();
-        PropertyMapping<MyObjectWithInner, MultiConstructorObject, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> propertyMapping =
-                new PropertyMapping<MyObjectWithInner, MultiConstructorObject, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>>(
+        FieldMapperColumnDefinition<JdbcColumnKey> identity = FieldMapperColumnDefinition.identity();
+        PropertyMapping<MyObjectWithInner, MultiConstructorObject, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> propertyMapping =
+                new PropertyMapping<MyObjectWithInner, MultiConstructorObject, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(
                         propertyMeta, new JdbcColumnKey("prop", 1, Types.TIMESTAMP), identity);
         FieldMapper<ResultSet, MyObjectWithInner> fieldMapper = factory.newFieldMapper(propertyMapping, new RethrowMapperBuilderErrorHandler());
 

@@ -60,7 +60,7 @@ public final class FieldMapperFactory<S, K extends FieldKey<K>>  {
 
 	@SuppressWarnings("unchecked")
 	public <T, P> FieldMapper<S, T> newFieldMapper(PropertyMapping<T, P, K ,
-                            FieldMapperColumnDefinition<K, S>> propertyMapping,
+                            FieldMapperColumnDefinition<K>> propertyMapping,
                            MapperBuilderErrorHandler mappingErrorHandler) {
 
 		final PropertyMeta<T, P> propertyMeta = propertyMapping.getPropertyMeta();
@@ -76,7 +76,7 @@ public final class FieldMapperFactory<S, K extends FieldKey<K>>  {
         GetterFactory<? super S, K> getterFactory = this.getterFactory;
 
         if (propertyMapping.getColumnDefinition().hasCustomFactory()) {
-            getterFactory = propertyMapping.getColumnDefinition().getCustomGetterFactory();
+            getterFactory = (GetterFactory<? super S, K>) propertyMapping.getColumnDefinition().getCustomGetterFactory();
         }
 
 		if (getter == null) {

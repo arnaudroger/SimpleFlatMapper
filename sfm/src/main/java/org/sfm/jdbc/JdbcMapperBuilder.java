@@ -71,7 +71,7 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
      */
     public JdbcMapperBuilder(
              final ClassMeta<T> classMeta,
-             MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>> mapperConfig,
+             MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig,
              GetterFactory<ResultSet, JdbcColumnKey> getterFactory,
              MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
         super(classMeta, parentBuilder, mapperConfig, FIELD_MAPPER_SOURCE.getterFactory(getterFactory), 1);
@@ -87,7 +87,7 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
      * @return the current builder
      */
     public JdbcMapperBuilder<T> addMapping(final String column, final int index, final int sqlType) {
-        addMapping(column, index, sqlType, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>identity());
+        addMapping(column, index, sqlType, FieldMapperColumnDefinition.<JdbcColumnKey>identity());
         return this;
     }
 
@@ -100,7 +100,7 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
      * @param columnDefinition the column definition
      * @return the current builder
      */
-    public JdbcMapperBuilder<T> addMapping(final String column, final int index, final int sqlType, FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> columnDefinition) {
+    public JdbcMapperBuilder<T> addMapping(final String column, final int index, final int sqlType, FieldMapperColumnDefinition<JdbcColumnKey> columnDefinition) {
         return addMapping(new JdbcColumnKey(column, index, sqlType), columnDefinition);
     }
 

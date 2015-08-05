@@ -32,7 +32,7 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
      */
     public DatastaxMapperBuilder(
             final ClassMeta<T> classMeta,
-            MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey, Row>> mapperConfig,
+            MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig,
             GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory,
             MappingContextFactoryBuilder<GettableByIndexData, DatastaxColumnKey> parentBuilder) {
         super(classMeta, parentBuilder, mapperConfig, new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, getterFactory), 0);

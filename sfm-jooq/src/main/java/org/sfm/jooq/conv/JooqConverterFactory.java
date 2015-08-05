@@ -28,14 +28,14 @@ public class JooqConverterFactory {
 
 	@SuppressWarnings("unchecked")
 	private static <F, P, E> Converter<F, P> newArrayConverter(Type eltType) {
-		final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> identity = FieldMapperColumnDefinition.identity();
+		final FieldMapperColumnDefinition<JdbcColumnKey> identity = FieldMapperColumnDefinition.identity();
 		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(eltType, new JdbcColumnKey("elt", 2), identity);
 		if (elementGetter == null) return null;
 		return (Converter<F, P>)new ArrayConverter<E>((Class<E>) TypeHelper.toClass(eltType), elementGetter);
 	}
 	@SuppressWarnings("unchecked")
 	private static <F, P, E> Converter<F, P> newArrayToListConverter(Type eltType) {
-		final FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> identity = FieldMapperColumnDefinition.identity();
+		final FieldMapperColumnDefinition<JdbcColumnKey> identity = FieldMapperColumnDefinition.identity();
 		Getter<ResultSet, E> elementGetter = new ResultSetGetterFactory().newGetter(eltType, new JdbcColumnKey("elt", 2), identity);
 		if (elementGetter == null) return null;
 		return (Converter<F, P>)new ArrayToListConverter<E>(elementGetter);

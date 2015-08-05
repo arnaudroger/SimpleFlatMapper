@@ -46,7 +46,7 @@ import java.sql.SQLException;
  */
 public final class JdbcMapperFactory
 		extends AbstractMapperFactory<JdbcColumnKey,
-                FieldMapperColumnDefinition<JdbcColumnKey, ResultSet>,
+                FieldMapperColumnDefinition<JdbcColumnKey>,
                 JdbcMapperFactory> {
 
 
@@ -62,7 +62,7 @@ public final class JdbcMapperFactory
     private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = new ResultSetGetterFactory();
 
 	private JdbcMapperFactory() {
-		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey, ResultSet>(), FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>identity());
+		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(), FieldMapperColumnDefinition.<JdbcColumnKey>identity());
 	}
 
 	/**
@@ -83,7 +83,7 @@ public final class JdbcMapperFactory
 	 * @return the current factory
 	 */
 	public JdbcMapperFactory addCustomFieldMapper(String key, FieldMapper<ResultSet, ?> fieldMapper) {
-		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customFieldMapperDefinition(fieldMapper));
+		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey>customFieldMapperDefinition(fieldMapper));
 	}
 
 	/**
@@ -93,7 +93,7 @@ public final class JdbcMapperFactory
 	 * @return the current factory
 	 */
 	public JdbcMapperFactory addCustomGetter(String key, Getter<ResultSet, ?> getter) {
-		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>customGetter(getter));
+		return addColumnDefinition(key, FieldMapperColumnDefinition.<JdbcColumnKey>customGetter(getter));
 	}
 
 	/**
@@ -211,7 +211,7 @@ public final class JdbcMapperFactory
      */
     public <T> DiscriminatorJdbcBuilder<T> newDiscriminator(String column) {
         ignorePropertyNotFound();
-        addColumnDefinition(column, FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>ignoreDefinition());
+        addColumnDefinition(column, FieldMapperColumnDefinition.<JdbcColumnKey>ignoreDefinition());
         return new DiscriminatorJdbcBuilder<T>(column, this);
     }
 

@@ -42,7 +42,7 @@ public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
         int i = 0;
         while(iterator.hasNext()) {
             UserType.Field f = iterator.next();
-            FieldMapperColumnDefinition<DatastaxColumnKey, GettableByIndexData> identity = FieldMapperColumnDefinition.identity();
+            FieldMapperColumnDefinition<DatastaxColumnKey> identity = FieldMapperColumnDefinition.identity();
             builder.addMapping(new DatastaxColumnKey(f.getName(), i, f.getType()), identity);
             i ++;
         }
@@ -51,13 +51,13 @@ public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
     }
 
     public static <P> FieldMapperMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> newFieldMapperBuilder(DatastaxMapperFactory factory, Type target) {
-        MapperConfig mapperConfig = factory.mapperConfig();
+        MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config = factory.mapperConfig();
         MapperSourceImpl<GettableByIndexData, DatastaxColumnKey> mapperSource = new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, new RowGetterFactory(factory));
         ClassMeta<P> classMeta = factory.getClassMeta(target);
         return new FieldMapperMapperBuilder<GettableByIndexData, P, DatastaxColumnKey>(
                 mapperSource,
                 classMeta,
-                mapperConfig,
+                config,
                 new DatastaxMappingContextFactoryBuilder()
                 );
     }

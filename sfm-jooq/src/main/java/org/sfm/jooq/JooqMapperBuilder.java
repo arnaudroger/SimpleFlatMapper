@@ -40,7 +40,7 @@ public class JooqMapperBuilder<E> {
 	}
 
     public JooqMapperBuilder<E> addField(JooqFieldKey key) {
-		fieldMapperMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<JooqFieldKey, Record>identity());
+		fieldMapperMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<JooqFieldKey>identity());
 		return this;
 	}
 

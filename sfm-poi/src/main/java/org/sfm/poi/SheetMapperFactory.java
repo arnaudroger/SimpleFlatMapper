@@ -14,7 +14,7 @@ import org.sfm.reflect.meta.ClassMeta;
 
 import java.lang.reflect.Type;
 
-public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>, SheetMapperFactory> {
+public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>, SheetMapperFactory> {
 
     private GetterFactory<Row, CsvColumnKey> getterFactory = new RowGetterFactory();
 
@@ -27,7 +27,7 @@ public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, Fiel
     }
 
     private SheetMapperFactory() {
-        super(new FieldMapperColumnDefinitionProviderImpl<CsvColumnKey, Row>(), FieldMapperColumnDefinition.<CsvColumnKey, Row>identity());
+        super(new FieldMapperColumnDefinitionProviderImpl<CsvColumnKey>(), FieldMapperColumnDefinition.<CsvColumnKey>identity());
     }
 
     /**
@@ -67,7 +67,7 @@ public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, Fiel
      * @return a builder on the specified type
      */
     public <T> SheetMapperBuilder<T> newBuilder(Type type) {
-        MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> mapperConfig = mapperConfig();
+        MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig = mapperConfig();
         ClassMeta<T> classMeta = getClassMeta(type);
         return  new SheetMapperBuilder<T>(classMeta, mapperConfig, getterFactory);
     }
@@ -100,7 +100,7 @@ public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, Fiel
      */
     public <T> SheetMapper<T> newMapper(Type type) {
         ClassMeta<T> classMeta = getClassMeta(type);
-        MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> mapperConfig = mapperConfig();
+        MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig = mapperConfig();
         return new DynamicSheetMapper<T>(classMeta, mapperConfig, getterFactory);
     }
 }

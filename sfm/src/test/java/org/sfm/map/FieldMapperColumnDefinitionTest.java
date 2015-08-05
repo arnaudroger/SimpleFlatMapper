@@ -56,8 +56,8 @@ public class FieldMapperColumnDefinitionTest {
                 return false;
             }
         };
-        FieldMapperColumnDefinition<JdbcColumnKey, ResultSet> compose =
-                FieldMapperColumnDefinition.<JdbcColumnKey,ResultSet>identity().addRename("blop").addGetter(getter).addFieldMapper(fieldMapper).addGetterFactory(getterFactory).addKey(appliesTo);
+        FieldMapperColumnDefinition<JdbcColumnKey> compose =
+                FieldMapperColumnDefinition.<JdbcColumnKey>identity().addRename("blop").addGetter(getter).addFieldMapper(fieldMapper).addGetterFactory(getterFactory).addKey(appliesTo);
 
         assertEquals("blop", compose.rename(new JdbcColumnKey("bar", -1)).getName());
         assertEquals(fieldMapper, compose.getCustomFieldMapper());
@@ -69,12 +69,12 @@ public class FieldMapperColumnDefinitionTest {
         assertFalse(compose.ignore());
         assertEquals(Integer.class, compose.getCustomSourceReturnType());
 
-        assertTrue(FieldMapperColumnDefinition.<JdbcColumnKey,ResultSet>identity().addIgnore().ignore());
+        assertTrue(FieldMapperColumnDefinition.<JdbcColumnKey>identity().addIgnore().ignore());
 
         assertEquals("ColumnDefinition{Rename{'blop'}, Getter{Getter}, FieldMapper{FieldMapper}, GetterFactory{GetterFactory}, Key{}, Ignore{}}", compose.addIgnore().toString());
 
         assertTrue(compose.isKey());
-        assertFalse(FieldMapperColumnDefinition.<JdbcColumnKey, ResultSet>identity().isKey());
+        assertFalse(FieldMapperColumnDefinition.<JdbcColumnKey>identity().isKey());
         assertSame(appliesTo, compose.keyAppliesTo());
     }
 }

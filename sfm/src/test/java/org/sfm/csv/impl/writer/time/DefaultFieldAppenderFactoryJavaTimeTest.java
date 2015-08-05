@@ -115,7 +115,7 @@ public class DefaultFieldAppenderFactoryJavaTimeTest {
     public void testLocalDateTimeWithFormaterAppender() throws Exception {
         MappingContextFactoryBuilder<JavaTimeObject, CsvColumnKey> builder = getMappingContextBuilder();
         FieldMapper<JavaTimeObject, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldAppender(
-                newPropertyMapping("localDateTime", javaTimeObjectClassMeta, FieldMapperColumnDefinition.<CsvColumnKey, JavaTimeObject>identity().add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("dd/MM/yyyy")))),
+                newPropertyMapping("localDateTime", javaTimeObjectClassMeta, FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("dd/MM/yyyy")))),
                 CsvCellWriter.DEFAULT_WRITER, builder);
         testFieldMapper("03/12/2011", fieldMapper, javaTimeObject, builder.newFactory());
 
@@ -133,14 +133,14 @@ public class DefaultFieldAppenderFactoryJavaTimeTest {
         assertEquals(expected, sb.toString());
     }
 
-    private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>> newPropertyMapping(String col, ClassMeta<T> classMeta) {
-        return newPropertyMapping(col, classMeta, FieldMapperColumnDefinition.<CsvColumnKey, T>identity());
+    private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> newPropertyMapping(String col, ClassMeta<T> classMeta) {
+        return newPropertyMapping(col, classMeta, FieldMapperColumnDefinition.<CsvColumnKey>identity());
     }
 
-    private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>> newPropertyMapping(String col, ClassMeta<T> classMeta, FieldMapperColumnDefinition<CsvColumnKey, T> columnDefinition) {
+    private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> newPropertyMapping(String col, ClassMeta<T> classMeta, FieldMapperColumnDefinition<CsvColumnKey> columnDefinition) {
         PropertyMeta<T, String> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(col));
         if (propertyMeta == null) throw new IllegalArgumentException("cannot find prop " + col);
-        return new PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, T>>(
+        return new PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>(
                 propertyMeta,
                 new CsvColumnKey(col, 1),
                 columnDefinition);

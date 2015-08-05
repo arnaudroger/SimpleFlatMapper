@@ -29,12 +29,12 @@ public class DynamicSheetMapper<T> implements SheetMapper<T> {
 
     private final MapperCache<CsvColumnKey, SheetMapper<T>> mapperCache = new MapperCache<CsvColumnKey, SheetMapper<T>>();
     private final ClassMeta<T> classMeta;
-    private final MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> mapperConfig;
+    private final MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig;
     private final GetterFactory<Row, CsvColumnKey> getterFactory;
 
     public DynamicSheetMapper(
             ClassMeta<T> classMeta,
-            MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> mapperConfig,
+            MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
             GetterFactory<Row, CsvColumnKey> getterFactory) {
         this.classMeta = classMeta;
         this.mapperConfig = mapperConfig;
@@ -101,7 +101,7 @@ public class DynamicSheetMapper<T> implements SheetMapper<T> {
                             getterFactory);
 
             for(CsvColumnKey k : key.getColumns()) {
-                builder.addMapping(k, FieldMapperColumnDefinition.<CsvColumnKey, Row>identity());
+                builder.addMapping(k, FieldMapperColumnDefinition.<CsvColumnKey>identity());
             }
 
             mapper = builder.mapper();

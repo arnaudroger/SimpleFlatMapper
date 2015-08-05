@@ -23,7 +23,7 @@ public class SheetMapperBuilder<T> extends AbstractMapperBuilder<Row, T, CsvColu
 
 
     public SheetMapperBuilder(ClassMeta<T> classMeta,
-                              MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey, Row>> mapperConfig,
+                              MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
                               GetterFactory<Row, CsvColumnKey> getterFactory) {
         super(classMeta, new MappingContextFactoryBuilder<Row, CsvColumnKey>(new CsvColumnKeyRowKeySourceGetter()), mapperConfig, FIELD_MAPPER_SOURCE.getterFactory(getterFactory), 0);
     }

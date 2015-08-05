@@ -27,33 +27,33 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
 	private final FieldMapperFactory<S, K> fieldMapperFactory;
 
-	protected final PropertyMappingsBuilder<T, K,FieldMapperColumnDefinition<K, S>> propertyMappingsBuilder;
+	protected final PropertyMappingsBuilder<T, K,FieldMapperColumnDefinition<K>> propertyMappingsBuilder;
 	protected final ReflectionService reflectionService;
 	
 	private final List<FieldMapper<S, T>> additionalMappers = new ArrayList<FieldMapper<S, T>>();
 
     private final MapperSource<? super S, K> mapperSource;
-    private final MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig;
+    private final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
     protected final MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder;
 
 
     public FieldMapperMapperBuilder(
             final MapperSource<? super S, K> mapperSource,
             final ClassMeta<T> classMeta,
-            final MapperConfig<K, FieldMapperColumnDefinition<K, S>> mapperConfig,
+            final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
             MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder) throws MapperBuildingException {
         this.mapperSource = requireNonNull("fieldMapperSource", mapperSource);
         this.mapperConfig = requireNonNull("mapperConfig", mapperConfig);
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
 		this.fieldMapperFactory = new FieldMapperFactory<S, K>(mapperSource.getterFactory());
-		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K, S>>(classMeta, mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler());
+		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K>>(classMeta, mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler());
 		this.target = requireNonNull("classMeta", classMeta).getType();
 		this.reflectionService = requireNonNull("classMeta", classMeta).getReflectionService();
 	}
 
     @SuppressWarnings("unchecked")
-    public final FieldMapperMapperBuilder<S, T, K> addMapping(K key, final FieldMapperColumnDefinition<K, S> columnDefinition) {
-        final FieldMapperColumnDefinition<K, S> composedDefinition = columnDefinition.compose(mapperConfig.columnDefinitions().getColumnDefinition(key));
+    public final FieldMapperMapperBuilder<S, T, K> addMapping(K key, final FieldMapperColumnDefinition<K> columnDefinition) {
+        final FieldMapperColumnDefinition<K> composedDefinition = columnDefinition.compose(mapperConfig.columnDefinitions().getColumnDefinition(key));
         final K mappedColumnKey = composedDefinition.rename(key);
 
         if (columnDefinition.getCustomFieldMapper() != null) {
@@ -126,10 +126,10 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
     private Tuple2<Map<Parameter, Getter<? super S, ?>>, FieldMapper<S, T>[]> constructorInjections() {
 		final Map<Parameter, Getter<? super S, ?>> injections = new HashMap<Parameter, Getter<? super S, ?>>();
 		final List<FieldMapper<S, T>> fieldMappers = new ArrayList<FieldMapper<S, T>>();
-		propertyMappingsBuilder.forEachConstructorProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K, S>>>() {
+		propertyMappingsBuilder.forEachConstructorProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K>>>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t) {
+			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> t) {
 				PropertyMeta<T, ?> pm  = t.getPropertyMeta();
                 ConstructorPropertyMeta<T, ?> cProp = (ConstructorPropertyMeta<T, ?>) pm;
                 Parameter parameter = cProp.getParameter();
@@ -137,10 +137,10 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 			}
 		});
 
-        for(Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>>> e :
+        for(Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>> e :
                 getSubPropertyPerOwner()) {
             if (e.first().isConstructorProperty()) {
-                final List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties = e.second();
+                final List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties = e.second();
 
                 final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(e.first(), properties);
 
@@ -155,13 +155,13 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 		return new Tuple2<Map<Parameter, Getter<? super S, ?>>, FieldMapper<S, T>[]>(injections, fieldMappers.toArray(new FieldMapper[0]));
 	}
 
-    private MappingContextFactoryBuilder getMapperContextFactoryBuilder(PropertyMeta<?, ?> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties) {
+    private MappingContextFactoryBuilder getMapperContextFactoryBuilder(PropertyMeta<?, ?> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties) {
         final List<K> subKeys = getSubKeys(properties);
         return mappingContextFactoryBuilder.newBuilder(subKeys, owner);
     }
 
     @SuppressWarnings("unchecked")
-    private <P> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties, PropertyMeta<T, ?> meta, Mapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+    private <P> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, PropertyMeta<T, ?> meta, Mapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
 
         final Getter<T, P> getter = (Getter<T, P>) meta.getGetter();
         if (mappingContextFactoryBuilder.isEmpty() && getter instanceof NullGetter) {
@@ -184,7 +184,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     // call use towards sub jdbcMapper
     // the keys are initialised
-    private <P> void addMapping(K columnKey, FieldMapperColumnDefinition<K, S> columnDefinition,  PropertyMeta<T, P> prop) {
+    private <P> void addMapping(K columnKey, FieldMapperColumnDefinition<K> columnDefinition,  PropertyMeta<T, P> prop) {
 		propertyMappingsBuilder.addProperty(columnKey, columnDefinition, prop);
 	}
 
@@ -192,9 +192,9 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 	private FieldMapper<S, T>[] fields() {
 		final List<FieldMapper<S, T>> fields = new ArrayList<FieldMapper<S, T>>();
 
-		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K, S>>>() {
+		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K>>>() {
 			@Override
-			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t) {
+			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> t) {
 				if (t == null) return;
 				PropertyMeta<T, ?> meta = t.getPropertyMeta();
 				if (meta == null || (meta instanceof DirectClassMeta.DirectPropertyMeta)) return;
@@ -204,7 +204,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 			}
 		});
 
-        for(Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>>> e :
+        for(Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>> e :
                 getSubPropertyPerOwner()) {
             if (!e.first().isConstructorProperty()) {
                 final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(e.first(), e.second());
@@ -221,15 +221,15 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 	}
 
 
-    private List<Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>>>> getSubPropertyPerOwner() {
+    private List<Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>>> getSubPropertyPerOwner() {
 
-        final List<Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>>>> subPropertiesList = new ArrayList<Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>>>>();
+        final List<Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>>> subPropertiesList = new ArrayList<Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>>>();
 
-        propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K, S>>>() {
+        propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K>>>() {
 
             @SuppressWarnings("unchecked")
             @Override
-            public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t) {
+            public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> t) {
                 if (t == null) return;
                 PropertyMeta<T, ?> meta = t.getPropertyMeta();
                 if (meta == null) return;
@@ -237,18 +237,18 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
                     addSubProperty(t, (SubPropertyMeta<T, ?, ?>) meta, t.getColumnKey());
                 }
             }
-            private <P> void addSubProperty(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> pm,  SubPropertyMeta<T, ?, ?> subPropertyMeta, K key) {
+            private <P> void addSubProperty(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm,  SubPropertyMeta<T, ?, ?> subPropertyMeta, K key) {
                 PropertyMeta<T, ?> propertyOwner = subPropertyMeta.getOwnerProperty();
-                List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> props = getList(propertyOwner);
+                List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> props = getList(propertyOwner);
                 if (props == null) {
-                    props = new ArrayList<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>>();
-                    subPropertiesList.add(new Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>>>(propertyOwner, props));
+                    props = new ArrayList<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>();
+                    subPropertiesList.add(new Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>>(propertyOwner, props));
                 }
                 props.add(pm);
             }
 
-            private List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> getList(PropertyMeta<?, ?> owner) {
-                for(Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>>> tuple : subPropertiesList) {
+            private List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> getList(PropertyMeta<?, ?> owner) {
+                for(Tuple2<PropertyMeta<T, ?>, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>> tuple : subPropertiesList) {
                     if (tuple.first().equals(owner)) {
                         return tuple.second();
                     }
@@ -261,10 +261,10 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private <P> Mapper<S, P> subPropertyMapper(PropertyMeta<T, P> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+    private <P> Mapper<S, P> subPropertyMapper(PropertyMeta<T, P> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
         final FieldMapperMapperBuilder<S, P, K> builder = newSubBuilder(owner.getPropertyClassMeta(), mappingContextFactoryBuilder);
 
-        for(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> pm : properties) {
+        for(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm : properties) {
             final SubPropertyMeta<T, P,  ?> propertyMeta = (SubPropertyMeta<T, P,  ?>) pm.getPropertyMeta();
             final PropertyMeta<P, ?> subProperty = ((SubPropertyMeta<T, P, ?>) propertyMeta).getSubProperty();
             builder.addMapping(pm.getColumnKey(), pm.getColumnDefinition(), subProperty);
@@ -273,7 +273,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
 	@SuppressWarnings("unchecked")
-	protected <P> FieldMapper<S, T> newFieldMapper(PropertyMapping<T, P, K, FieldMapperColumnDefinition<K, S>> t) {
+	protected <P> FieldMapper<S, T> newFieldMapper(PropertyMapping<T, P, K, FieldMapperColumnDefinition<K>> t) {
 		FieldMapper<S, T> fieldMapper = (FieldMapper<S, T>) t.getColumnDefinition().getCustomFieldMapper();
 
 		if (fieldMapper == null) {
@@ -283,15 +283,16 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         return wrapFieldMapperWithErrorHandler(t, fieldMapper);
 	}
 
-    private <P> FieldMapper<S, T> wrapFieldMapperWithErrorHandler(final PropertyMapping<T, P, K, FieldMapperColumnDefinition<K, S>> t, final FieldMapper<S, T> fieldMapper) {
+    private <P> FieldMapper<S, T> wrapFieldMapperWithErrorHandler(final PropertyMapping<T, P, K, FieldMapperColumnDefinition<K>> t, final FieldMapper<S, T> fieldMapper) {
         if (fieldMapper != null && mapperConfig.hasFieldMapperErrorHandler()) {
             return new FieldErrorHandlerMapper<S, T, K>(t.getColumnKey(), fieldMapper, mapperConfig.fieldMapperErrorHandler());
         }
         return fieldMapper;
     }
 
-    private Getter<? super S, ?> getterFor(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> t, Type paramType) {
-		Getter<? super S, ?> getter = t.getColumnDefinition().getCustomGetter();
+    @SuppressWarnings("unchecked")
+    private Getter<? super S, ?> getterFor(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> t, Type paramType) {
+		Getter<? super S, ?> getter = (Getter<? super S, ?>) t.getColumnDefinition().getCustomGetter();
 
 		if (getter == null) {
 			getter = mapperSource.getterFactory().newGetter(paramType, t.getColumnKey(), t.getColumnDefinition());
@@ -325,11 +326,11 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     @SuppressWarnings("unchecked")
-    private List<K> getSubKeys(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>>> properties) {
+    private List<K> getSubKeys(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties) {
         List<K> keys = new ArrayList<K>();
 
         // look for keys property of the object
-        for (PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K, S>> pm : properties) {
+        for (PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm : properties) {
             SubPropertyMeta<T, ?, ?> subPropertyMeta = (SubPropertyMeta<T, ?, ?>) pm.getPropertyMeta();
             if (pm.getColumnDefinition().isKey()) {
                 if (pm.getColumnDefinition().keyAppliesTo().test(subPropertyMeta.getSubProperty())) {

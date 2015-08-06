@@ -47,7 +47,7 @@ If you encounter any problem with the mapping don't hesitate to [create an issue
 |[Poi Excel Spreadsheet](sfm-poi)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-poi.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-poi)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.1-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-poi)
 |[Query DSL](sfm-querydsl)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-querydsl.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-querydsl)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.1-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-querydsl)
 |[Spring JDBC](sfm-springjdbc)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-springjdbc.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-springjdbc)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.1-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-springjdbc)
-|[SQL2o](sfm-sql2o)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-sql2o.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-sql2o)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.1-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
+|[SQL2o](sfm-sql2o), no java6 |[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-sql2o.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-sql2o)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.1-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
 
 
 ## Getting Started

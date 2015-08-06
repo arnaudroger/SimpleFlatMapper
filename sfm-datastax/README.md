@@ -3,6 +3,11 @@
 
 # Datastax integration
 
+## What about the Datastax Mapper
+* SFM is at about 20% faster
+* More flexible
+* No configuration
+
 ## Add dependency
 
 ```xml

@@ -61,9 +61,9 @@ public class DatastaxBenchmark {
     Cluster cluster;
     Session session;
 
-    Mapper<SimpleObject> datastaxMapper;
+    Mapper<Object4Fields> datastaxMapper;
 
-    DatastaxMapper<SimpleObject> sfmMapper;
+    DatastaxMapper<Object4Fields> sfmMapper;
      PreparedStatement preparedStatement;
 
     @Setup
@@ -83,14 +83,16 @@ public class DatastaxBenchmark {
 
         this.session.execute("create table if not exists test_table  (id bigint primary key, year_started int, name varchar, email varchar)");
 
+
+
         if (this.session.execute("select * from test_table").isExhausted()) {
             for( int i  = 0; i < 10000; i++) {
                 this.session.execute("insert into test_table(id, year_started, name, email) values (" + i + ", 1978, 'Arnaud Roger', 'arnaud.roger@gmail.com')");
             }
         }
 
-        datastaxMapper = new MappingManager(this.session).mapper(SimpleObject.class);
-        sfmMapper = DatastaxMapperFactory.newInstance().mapTo(SimpleObject.class);
+        datastaxMapper = new MappingManager(this.session).mapper(Object4Fields.class);
+        sfmMapper = DatastaxMapperFactory.newInstance().mapTo(Object4Fields.class);
 
         preparedStatement = this.session.prepare("select id, year_started, name, email from test_table ");
 
@@ -107,7 +109,7 @@ public class DatastaxBenchmark {
     }
 
     @Benchmark
-    public List<SimpleObject> datastaxMapper() {
+    public List<Object4Fields> datastaxMapper() {
         return datastaxMapper.map(getResultSet()).all();
     }
 
@@ -117,8 +119,8 @@ public class DatastaxBenchmark {
 
 
     @Benchmark
-    public List<SimpleObject> sfmMapper() {
-        return sfmMapper.forEach(getResultSet(), new ListHandler<SimpleObject>()).getList();
+    public List<Object4Fields> sfmMapper() {
+        return sfmMapper.forEach(getResultSet(), new ListHandler<Object4Fields>()).getList();
     }
 
     public static void main(String[] args) throws InterruptedException, TTransportException, ConfigurationException, IOException {

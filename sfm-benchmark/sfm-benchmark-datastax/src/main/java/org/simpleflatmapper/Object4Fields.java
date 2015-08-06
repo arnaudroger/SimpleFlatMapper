@@ -5,7 +5,7 @@ import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 
 @Table(keyspace = "test", name = "test_table")
-public class SimpleObject {
+public class Object4Fields {
         @PartitionKey
         private long id;
 
@@ -42,7 +42,7 @@ public class SimpleObject {
 
     @Override
     public String toString() {
-        return "SimpleObject{" +
+        return "Object4Fields{" +
                 "id=" + id +
                 ", yearStarted=" + yearStarted +
                 ", name='" + name + '\'' +

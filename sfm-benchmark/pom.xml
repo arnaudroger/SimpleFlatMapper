@@ -46,7 +46,7 @@
         <jmh.version>1.10.3</jmh.version>
         <javac.target>1.8</javac.target>
         <uberjar.name>benchmarks</uberjar.name>
-        <sfm.version>2.1-SNAPSHOT</sfm.version>
+        <sfm.version>2.2-SNAPSHOT</sfm.version>
     </properties>
 
     <modules>

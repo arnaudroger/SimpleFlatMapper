@@ -9,5 +9,5 @@ function java6 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-6-oracle/jre/bin/java;export JAVA_HOME=/usr/lib/jvm/java-6-oracle
 }
 
-git reset --hard && java8 && mvn clean install -Pdev && java7  && mvn clean install -Pdev && java6 && mvn clean install -Pdev && git reset --hard 
+git reset --hard && java8 && mvn clean install -Pdev && java7  && mvn clean install  && java6 && mvn clean install  && git reset --hard 
 

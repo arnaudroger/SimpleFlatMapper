@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.sfm.test.jdbc.DbHelper;
 import org.sfm.test.jdbc.TestRowHandler;
 import org.sfm.tuples.*;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,7 +29,7 @@ public class JdbcMapperTupleTest {
 					public void handle(PreparedStatement preparedStatement) throws Exception {
 						ResultSet rs = preparedStatement.executeQuery();
 						try {
-							List<Tuple2<String, String>> list = mapper.forEach(rs, new ListHandler<Tuple2<String, String>>()).getList();
+							List<Tuple2<String, String>> list = mapper.forEach(rs, new ListCollectorHandler<Tuple2<String, String>>()).getList();
 
 							assertEquals(1, list.size());
 
@@ -65,7 +65,7 @@ public class JdbcMapperTupleTest {
 					public void handle(PreparedStatement preparedStatement) throws Exception {
 						ResultSet rs = preparedStatement.executeQuery();
 						try  {
-							List<Tuple3<String, String, Long>> list = mapper.forEach(rs, new ListHandler<Tuple3<String, String, Long>>()).getList();
+							List<Tuple3<String, String, Long>> list = mapper.forEach(rs, new ListCollectorHandler<Tuple3<String, String, Long>>()).getList();
 
 							assertEquals(1, list.size());
 
@@ -100,7 +100,7 @@ public class JdbcMapperTupleTest {
 					public void handle(PreparedStatement preparedStatement) throws Exception {
 						ResultSet rs = preparedStatement.executeQuery();
 						try  {
-							List<Tuple4<String, String, Long, Integer>> list = mapper.forEach(rs, new ListHandler<Tuple4<String, String, Long, Integer>>()).getList();
+							List<Tuple4<String, String, Long, Integer>> list = mapper.forEach(rs, new ListCollectorHandler<Tuple4<String, String, Long, Integer>>()).getList();
 
 							assertEquals(1, list.size());
 
@@ -137,7 +137,7 @@ public class JdbcMapperTupleTest {
 					public void handle(PreparedStatement preparedStatement) throws Exception {
 						ResultSet rs = preparedStatement.executeQuery();
 						try  {
-							List<Tuple5<String, String, Long, Integer, Float>> list = mapper.forEach(rs, new ListHandler<Tuple5<String, String, Long, Integer, Float>>()).getList();
+							List<Tuple5<String, String, Long, Integer, Float>> list = mapper.forEach(rs, new ListCollectorHandler<Tuple5<String, String, Long, Integer, Float>>()).getList();
 
 							assertEquals(1, list.size());
 

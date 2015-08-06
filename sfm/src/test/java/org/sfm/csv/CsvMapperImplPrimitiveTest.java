@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -66,7 +66,7 @@ public class CsvMapperImplPrimitiveTest {
 
 		CsvMapper<DbPrimitiveObjectWithSetter> mapper = builder.mapper();
 		
-		List<DbPrimitiveObjectWithSetter> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbPrimitiveObjectWithSetter>()).getList();
+		List<DbPrimitiveObjectWithSetter> list = mapper.forEach(dbObjectCsvReader(), new ListCollectorHandler<DbPrimitiveObjectWithSetter>()).getList();
 		assertEquals(1, list.size());
 		assertDbPrimitiveObject(list.get(0));
 
@@ -80,7 +80,7 @@ public class CsvMapperImplPrimitiveTest {
 
 		CsvMapper<DbFinalPrimitiveObject> mapper = builder.mapper();
 		
-		List<DbFinalPrimitiveObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbFinalPrimitiveObject>()).getList();
+		List<DbFinalPrimitiveObject> list = mapper.forEach(dbObjectCsvReader(), new ListCollectorHandler<DbFinalPrimitiveObject>()).getList();
 		assertEquals(1, list.size());
 		assertDbPrimitiveObject(list.get(0));
 	}

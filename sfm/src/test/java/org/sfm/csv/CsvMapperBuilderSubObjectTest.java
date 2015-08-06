@@ -6,7 +6,7 @@ import org.sfm.beans.Db1DeepPartialObject;
 import org.sfm.beans.DbFinal1DeepObject;
 import org.sfm.test.jdbc.DbHelper;
 import org.sfm.reflect.ReflectionService;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -42,7 +42,7 @@ public class CsvMapperBuilderSubObjectTest {
 		addDbObjectFields(builder);
 		CsvMapper<Db1DeepObject> mapper = builder.mapper();
 		
-		List<Db1DeepObject> list = mapper.forEach(db1deepObjectCsvReader(), new ListHandler<Db1DeepObject>()).getList();
+		List<Db1DeepObject> list = mapper.forEach(db1deepObjectCsvReader(), new ListCollectorHandler<Db1DeepObject>()).getList();
 		assertEquals(1, list.size());
 		
 		Db1DeepObject o = list.get(0);
@@ -58,7 +58,7 @@ public class CsvMapperBuilderSubObjectTest {
 		addDbObjectFields(builder);
 		CsvMapper<DbFinal1DeepObject> mapper = builder.mapper();
 		
-		List<DbFinal1DeepObject> list = mapper.forEach(db1deepObjectCsvReader(), new ListHandler<DbFinal1DeepObject>()).getList();
+		List<DbFinal1DeepObject> list = mapper.forEach(db1deepObjectCsvReader(), new ListCollectorHandler<DbFinal1DeepObject>()).getList();
 		assertEquals(1, list.size());
 		
 		DbFinal1DeepObject o = list.get(0);
@@ -74,7 +74,7 @@ public class CsvMapperBuilderSubObjectTest {
         addDbObjectFields(builder);
         CsvMapper<Db1DeepPartialObject> mapper = builder.mapper();
 
-        List<Db1DeepPartialObject> list = mapper.forEach(db1deepObjectCsvReader(), new ListHandler<Db1DeepPartialObject>()).getList();
+        List<Db1DeepPartialObject> list = mapper.forEach(db1deepObjectCsvReader(), new ListCollectorHandler<Db1DeepPartialObject>()).getList();
         assertEquals(1, list.size());
 
         Db1DeepPartialObject o = list.get(0);

@@ -3,7 +3,7 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.reflect.meta.PropertyMeta;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 import org.sfm.utils.Predicate;
 
 import java.sql.ResultSet;
@@ -60,7 +60,7 @@ public class JoinJdbcMapperCustomKeyTest {
                                 {"t1", 2, "t12", "p121"}
                         });
 
-        final List<Person> list = mapper.forEach(rs, new ListHandler<Person>()).getList();
+        final List<Person> list = mapper.forEach(rs, new ListCollectorHandler<Person>()).getList();
 
         assertEquals(2, list.size());
         assertEquals("t1", list.get(0).key.tag);

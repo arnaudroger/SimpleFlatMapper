@@ -10,7 +10,7 @@ import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -185,7 +185,7 @@ public class CsvMapperBuilderTest {
 		addDbObjectFields(builder);
 		CsvMapper<DbObject> mapper = builder.mapper();
 		
-		List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollectorHandler<DbObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
     }
@@ -197,7 +197,7 @@ public class CsvMapperBuilderTest {
 		builder.addMapping("email", 2);
 		CsvMapper<DbObject> mapper = builder.mapper();
 		
-		List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollectorHandler<DbObject>()).getList();
 		assertEquals(1, list.size());
 		
 		DbObject o = list.get(0);
@@ -218,7 +218,7 @@ public class CsvMapperBuilderTest {
 		builder.addMapping("email");
 		CsvMapper<DbObject> mapper = builder.mapper();
 		
-		List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollectorHandler<DbObject>()).getList();
 		assertEquals(1, list.size());
 		
 		DbObject o = list.get(0);
@@ -254,7 +254,7 @@ public class CsvMapperBuilderTest {
 		
 		CsvMapper<DbFinalObject> mapper = builder.mapper();
 		
-		List<DbFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbFinalObject>()).getList();
+		List<DbFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollectorHandler<DbFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
@@ -308,7 +308,7 @@ public class CsvMapperBuilderTest {
 		
 		CsvMapper<DbPartialFinalObject> mapper = builder.mapper();
 		
-		List<DbPartialFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbPartialFinalObject>()).getList();
+		List<DbPartialFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollectorHandler<DbPartialFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}

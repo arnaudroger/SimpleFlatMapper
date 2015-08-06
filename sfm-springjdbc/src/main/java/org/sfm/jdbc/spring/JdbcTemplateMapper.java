@@ -1,7 +1,7 @@
 package org.sfm.jdbc.spring;
 
 import org.sfm.jdbc.JdbcMapper;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 import org.sfm.utils.RowHandler;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
@@ -73,7 +73,7 @@ public final class JdbcTemplateMapper<T> implements RowMapper<T>, PreparedStatem
     @Override
     public List<T> extractData(ResultSet rs) throws SQLException,
             DataAccessException {
-        return mapper.forEach(rs, new ListHandler<T>()).getList();
+        return mapper.forEach(rs, new ListCollectorHandler<T>()).getList();
     }
 	
 	public <H extends RowHandler<T>> PreparedStatementCallback<H> newPreparedStatementCallback(final H handler) {

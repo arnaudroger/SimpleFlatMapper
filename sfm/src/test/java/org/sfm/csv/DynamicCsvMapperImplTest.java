@@ -7,7 +7,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.beans.DbPartialFinalObject;
 import org.sfm.test.jdbc.DbHelper;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 import org.sfm.utils.RowHandler;
 
 import java.io.Reader;
@@ -57,7 +57,7 @@ public class DynamicCsvMapperImplTest {
 	public void testDbObject() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 
-		List<DbObject> list = mapper.forEach(dbObjectCsvReader3Lines(), new ListHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(dbObjectCsvReader3Lines(), new ListCollectorHandler<DbObject>()).getList();
 		assertEquals(2, list.size());
 		DbHelper.assertDbObjectMapping(1, list.get(0));
 		DbHelper.assertDbObjectMapping(2, list.get(1));
@@ -67,7 +67,7 @@ public class DynamicCsvMapperImplTest {
 	public void testDbObjectWithSkip() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 
-		List<DbObject> list = mapper.forEach(dbObjectCsvReader3LinesWithLineToSkip(), new ListHandler<DbObject>(),1).getList();
+		List<DbObject> list = mapper.forEach(dbObjectCsvReader3LinesWithLineToSkip(), new ListCollectorHandler<DbObject>(),1).getList();
 		assertEquals(2, list.size());
 		DbHelper.assertDbObjectMapping(1, list.get(0));
 		DbHelper.assertDbObjectMapping(2, list.get(1));
@@ -78,7 +78,7 @@ public class DynamicCsvMapperImplTest {
 	public void testDbObjectWithSkipAndLimit() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 		
-		List<DbObject> list = mapper.forEach(dbObjectCsvReader3LinesWithLineToSkip(), new ListHandler<DbObject>(),1,1).getList();
+		List<DbObject> list = mapper.forEach(dbObjectCsvReader3LinesWithLineToSkip(), new ListCollectorHandler<DbObject>(),1,1).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
@@ -87,7 +87,7 @@ public class DynamicCsvMapperImplTest {
 	public void testFinalDbObject() throws Exception {
 		CsvMapper<DbFinalObject> mapper = CsvMapperFactory.newInstance().newMapper(DbFinalObject.class);
 
-		List<DbFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbFinalObject>()).getList();
+		List<DbFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListCollectorHandler<DbFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 		
@@ -97,7 +97,7 @@ public class DynamicCsvMapperImplTest {
 	public void testPartialFinalDbObject() throws Exception {
 		CsvMapper<DbPartialFinalObject> mapper = CsvMapperFactory.newInstance().newMapper(DbPartialFinalObject.class);
 		
-		List<DbPartialFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListHandler<DbPartialFinalObject>()).getList();
+		List<DbPartialFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListCollectorHandler<DbPartialFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 		
@@ -210,7 +210,7 @@ public class DynamicCsvMapperImplTest {
 		CsvMapper<DbListObject> mapper = CsvMapperFactory.newInstance().newMapper(DbListObject.class);
 		
 		
-		List<DbListObject> list = mapper.forEach(new StringReader(CSV_LIST), new ListHandler<DbListObject>()).getList();
+		List<DbListObject> list = mapper.forEach(new StringReader(CSV_LIST), new ListCollectorHandler<DbListObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0).getObjects().get(0));
 

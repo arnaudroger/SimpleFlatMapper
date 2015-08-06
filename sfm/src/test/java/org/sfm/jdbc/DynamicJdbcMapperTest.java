@@ -5,7 +5,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
 import org.sfm.test.jdbc.DbHelper;
 import org.sfm.test.jdbc.TestRowHandler;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 import org.sfm.utils.RowHandler;
 
 import java.sql.PreparedStatement;
@@ -41,7 +41,7 @@ public class DynamicJdbcMapperTest {
 		DbHelper.testDbObjectFromDb(new TestRowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				List<DbObject> objects = mapper.forEach(ps.executeQuery(), new ListHandler<DbObject>()).getList();
+				List<DbObject> objects = mapper.forEach(ps.executeQuery(), new ListCollectorHandler<DbObject>()).getList();
 				assertEquals(1, objects.size());
 				DbHelper.assertDbObjectMapping(objects.get(0));
 			}

@@ -39,7 +39,7 @@ import org.apache.thrift.transport.TTransportException;
 import org.openjdk.jmh.annotations.*;
 import org.sfm.datastax.DatastaxMapper;
 import org.sfm.datastax.DatastaxMapperFactory;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -120,7 +120,7 @@ public class DatastaxBenchmark {
 
     @Benchmark
     public List<Object4Fields> sfmMapper() {
-        return sfmMapper.forEach(getResultSet(), new ListHandler<Object4Fields>()).getList();
+        return sfmMapper.forEach(getResultSet(), new ListCollectorHandler<Object4Fields>()).getList();
     }
 
     public static void main(String[] args) throws InterruptedException, TTransportException, ConfigurationException, IOException {

@@ -5,7 +5,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sfm.map.MappingContext;
 import org.sfm.test.jdbc.JoinTest;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -152,7 +152,7 @@ public class JoinJdbcMapperTest {
 
 
     private <T extends JoinTest.Professor<?>> void validateMapper(JdbcMapper<T> mapper) throws Exception {
-        List<T> professors = mapper.forEach(setUpResultSetMock(), new ListHandler<T>()).getList();
+        List<T> professors = mapper.forEach(setUpResultSetMock(), new ListCollectorHandler<T>()).getList();
         JoinTest.validateProfessors(professors);
 
         //IFJAVA8_START

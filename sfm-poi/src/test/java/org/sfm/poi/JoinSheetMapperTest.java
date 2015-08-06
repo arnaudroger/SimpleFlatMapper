@@ -8,7 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.test.jdbc.JoinTest;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -77,7 +77,7 @@ public class JoinSheetMapperTest {
                 joinSheetMapper
                         .forEach(
                                 joinSheet,
-                                new ListHandler<JoinTest.ProfessorGS>()
+                                new ListCollectorHandler<JoinTest.ProfessorGS>()
                         ).getList()
         );
 

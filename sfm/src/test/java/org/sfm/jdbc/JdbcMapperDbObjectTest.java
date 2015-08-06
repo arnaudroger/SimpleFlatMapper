@@ -5,7 +5,7 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.test.jdbc.DbHelper;
 import org.sfm.test.jdbc.TestRowHandler;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.sql.PreparedStatement;
 import java.util.Iterator;
@@ -47,7 +47,7 @@ public class JdbcMapperDbObjectTest {
 		DbHelper.testDbObjectFromDb(new TestRowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				List<DbFinalObject> objects = mapper.forEach(ps.executeQuery(), new ListHandler<DbFinalObject>()).getList();
+				List<DbFinalObject> objects = mapper.forEach(ps.executeQuery(), new ListCollectorHandler<DbFinalObject>()).getList();
 				assertEquals(1, objects.size());
 				DbHelper.assertDbObjectMapping(objects.get(0));
 			}
@@ -58,7 +58,7 @@ public class JdbcMapperDbObjectTest {
 		DbHelper.testDbObjectFromDb(new TestRowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				List<DbObject> objects = mapper.forEach(ps.executeQuery(), new ListHandler<DbObject>()).getList();
+				List<DbObject> objects = mapper.forEach(ps.executeQuery(), new ListCollectorHandler<DbObject>()).getList();
 				assertEquals(1, objects.size());
 				DbHelper.assertDbObjectMapping(objects.get(0));
 			}

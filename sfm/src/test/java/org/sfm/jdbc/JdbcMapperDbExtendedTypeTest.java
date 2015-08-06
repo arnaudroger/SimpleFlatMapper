@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.sfm.beans.DbExtendedType;
 import org.sfm.test.jdbc.DbHelper;
 import org.sfm.test.jdbc.TestRowHandler;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.sql.PreparedStatement;
 import java.util.List;
@@ -23,7 +23,7 @@ public class JdbcMapperDbExtendedTypeTest {
 		DbHelper.testQuery(new TestRowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement t) throws Exception {
-				List<DbExtendedType> list = mapper.forEach(t.executeQuery(), new ListHandler<DbExtendedType>()).getList();
+				List<DbExtendedType> list = mapper.forEach(t.executeQuery(), new ListCollectorHandler<DbExtendedType>()).getList();
 				assertEquals(1, list.size());
 				DbExtendedType o = list.get(0);
 				assertDbExtended(o);

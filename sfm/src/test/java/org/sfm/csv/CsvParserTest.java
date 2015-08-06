@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.sfm.csv.parser.CellConsumer;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.*;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 import org.sfm.utils.Predicate;
 
 import java.io.CharArrayReader;
@@ -257,7 +257,7 @@ public class CsvParserTest {
     @Test
     public void testDSLMapToForEach() throws IOException {
         List<Tuple2<String, String>> list = CsvParser.mapTo(String.class, String.class)
-                .headers("0", "1").forEach(new StringReader("value1,value2\nvalue3"), new ListHandler<Tuple2<String, String>>()).getList();
+                .headers("0", "1").forEach(new StringReader("value1,value2\nvalue3"), new ListCollectorHandler<Tuple2<String, String>>()).getList();
 
         assertArrayEquals(new Object[] { new Tuple2<String, String>("value1", "value2"), new Tuple2<String, String>("value3", null)}, list.toArray());
     }
@@ -367,7 +367,7 @@ public class CsvParserTest {
 
 	private void testReadRows(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
 		List<String[]> rows =
-				dsl.reader(createReader(expectations, separator, quote, cr)).read(new ListHandler<String[]>()).getList();
+				dsl.reader(createReader(expectations, separator, quote, cr)).read(new ListCollectorHandler<String[]>()).getList();
 
 		assertArrayEquals(expectations, rows.toArray(new String[0][]));
 	}
@@ -376,7 +376,7 @@ public class CsvParserTest {
 
 	private void testReadRowsWithLimit(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
 		List<String[]> rows =
-				dsl.reader(createReader(expectations, separator, quote, cr)).read(new ListHandler<String[]>(), 1).getList();
+				dsl.reader(createReader(expectations, separator, quote, cr)).read(new ListCollectorHandler<String[]>(), 1).getList();
 
 		assertArrayEquals(toSubArray(expectations, 0, 1), rows.toArray(new String[0][]));
 	}

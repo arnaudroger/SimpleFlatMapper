@@ -3,7 +3,7 @@ package org.sfm.csv;
 import org.junit.Test;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingException;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -57,7 +57,7 @@ public class CsvMapperDateFormatTest {
 		String data = "date1,date2\n" + strDate + "," + strDate;
 		
 		
-		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListHandler<ObjectWithDate>()).getList();
+		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollectorHandler<ObjectWithDate>()).getList();
 		assertEquals(1, list.size());
 		
 		assertEquals(date, list.get(0).date1);
@@ -72,7 +72,7 @@ public class CsvMapperDateFormatTest {
 		CsvMapper<ObjectWithDate> mapper = CsvMapperFactory.newInstance().fieldMapperErrorHandler(fieldMapperErrorHandler).newMapper(ObjectWithDate.class);
 		
 		String data = "date3,date1,date2\nwrong date,wrong date,wrong date";
-		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListHandler<ObjectWithDate>()).getList();
+		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollectorHandler<ObjectWithDate>()).getList();
 		assertEquals(1, list.size());
 		
 		assertNull(list.get(0).date1);
@@ -92,7 +92,7 @@ public class CsvMapperDateFormatTest {
 		CsvMapper<ObjectWithDate> mapper = CsvMapperFactory.newInstance().useAsm(false).fieldMapperErrorHandler(fieldMapperErrorHandler).newMapper(ObjectWithDate.class);
 
 		String data = "date3,date1,date2\nwrong date,wrong date,wrong date";
-		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListHandler<ObjectWithDate>()).getList();
+		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollectorHandler<ObjectWithDate>()).getList();
 		assertEquals(1, list.size());
 
 		assertNull(list.get(0).date1);

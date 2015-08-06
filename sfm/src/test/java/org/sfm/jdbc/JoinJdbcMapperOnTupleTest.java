@@ -5,7 +5,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -165,7 +165,7 @@ public class JoinJdbcMapperOnTupleTest {
         }
 
         final JdbcMapper<Tuple2<Person, List<Person>>> mapper = builder.mapper();
-        List<Tuple2<Person, List<Person>>> professors = mapper.forEach(setUpResultSetMock(columns, rows), new ListHandler<Tuple2<Person, List<Person>>>()).getList();
+        List<Tuple2<Person, List<Person>>> professors = mapper.forEach(setUpResultSetMock(columns, rows), new ListCollectorHandler<Tuple2<Person, List<Person>>>()).getList();
         validateProfessors(professors);
     }
 
@@ -181,7 +181,7 @@ public class JoinJdbcMapperOnTupleTest {
         }
 
         final JdbcMapper<Tuple2<List<Person>, Person>> mapper = builder.mapper();
-        List<Tuple2<List<Person>, Person>> professors = mapper.forEach(setUpResultSetMock(columns, rowsInverted), new ListHandler<Tuple2<List<Person>, Person>>()).getList();
+        List<Tuple2<List<Person>, Person>> professors = mapper.forEach(setUpResultSetMock(columns, rowsInverted), new ListCollectorHandler<Tuple2<List<Person>, Person>>()).getList();
         validateProfessorsInverted(professors);
     }
 

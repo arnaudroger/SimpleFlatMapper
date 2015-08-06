@@ -3,7 +3,7 @@ package org.sfm.csv;
 import org.junit.Test;
 import org.sfm.map.MappingException;
 import org.sfm.reflect.ReflectionService;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -50,6 +50,6 @@ public class CsvMapperOneConstructorTypeTest {
 		builder.addMapping("prop");
 		CsvMapper<MyObject> mapper = builder.mapper();
 		
-		assertEquals("value", mapper.forEach(new StringReader("value"), new ListHandler<MyObject>()).getList().get(0).prop.value);
+		assertEquals("value", mapper.forEach(new StringReader("value"), new ListCollectorHandler<MyObject>()).getList().get(0).prop.value);
 	}
 }

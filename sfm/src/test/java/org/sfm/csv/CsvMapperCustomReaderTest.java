@@ -8,7 +8,7 @@ import org.sfm.beans.DbPrimitiveObject;
 import org.sfm.csv.impl.cellreader.*;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 import org.sfm.utils.Predicate;
 
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class CsvMapperCustomReaderTest {
         CsvMapperBuilderTest.addDbObjectFields(builder);
 
         CsvMapper<DbObject> mapper = builder.mapper();
-        List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbObject>()).getList();
+        List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollectorHandler<DbObject>()).getList();
         assertEquals(1, list.size());
         assertEquals(0x5677al, list.get(0).getId());
         assertEquals("name 1", list.get(0).getName());
@@ -94,7 +94,7 @@ public class CsvMapperCustomReaderTest {
         CsvMapperBuilderTest.addDbObjectFields(builder);
 
         CsvMapper<DbFinalObject> mapper = builder.mapper();
-        List<DbFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<DbFinalObject>()).getList();
+        List<DbFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollectorHandler<DbFinalObject>()).getList();
         assertEquals(1, list.size());
         assertEquals(0x5677al, list.get(0).getId());
         assertEquals("name 1", list.get(0).getName());

@@ -11,7 +11,7 @@ import org.sfm.map.mapper.MapperImpl;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.impl.FieldGetter;
 import org.sfm.reflect.primitive.LongGetter;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -28,7 +28,7 @@ public class JdbcMapperBuilderTest {
 		builder.addMapping("id").addMapping("name");
 
 		final JdbcMapper<DbObject> mapper = builder.mapper();
-		List<DbObject> l = mapper.forEach(new MockDbObjectResultSet(1), new ListHandler<DbObject>()).getList();
+		List<DbObject> l = mapper.forEach(new MockDbObjectResultSet(1), new ListCollectorHandler<DbObject>()).getList();
 
 		assertEquals(1, l.size());
 		assertEquals(1, l.get(0).getId());
@@ -43,7 +43,7 @@ public class JdbcMapperBuilderTest {
 		
 		JdbcMapper<DbObject> mapper = builder.mapper();
 		
-		List<DbObject> l = mapper.forEach(new MockDbObjectResultSet(1), new ListHandler<DbObject>()).getList();
+		List<DbObject> l = mapper.forEach(new MockDbObjectResultSet(1), new ListCollectorHandler<DbObject>()).getList();
 		
 		assertEquals(1, l.size());
 		assertEquals(0, l.get(0).getId());

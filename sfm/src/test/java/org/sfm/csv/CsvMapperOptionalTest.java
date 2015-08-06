@@ -7,7 +7,7 @@ import org.sfm.test.jdbc.DbHelper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -97,7 +97,7 @@ public class CsvMapperOptionalTest {
 		addDbObjectFields(builder);
 		CsvMapper<Optional<DbFinalObject>> mapper = builder.mapper();
 
-		List<Optional<DbFinalObject>> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListHandler<Optional<DbFinalObject>>()).getList();
+		List<Optional<DbFinalObject>> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollectorHandler<Optional<DbFinalObject>>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0).get());
     }

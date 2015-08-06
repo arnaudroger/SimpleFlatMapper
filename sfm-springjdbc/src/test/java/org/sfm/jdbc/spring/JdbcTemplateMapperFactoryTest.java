@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.test.jdbc.DbHelper;
-import org.sfm.utils.ListHandler;
+import org.sfm.utils.ListCollectorHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -51,7 +51,7 @@ public class JdbcTemplateMapperFactoryTest {
 		List<DbObject> results = 
 			template
 				.execute(DbHelper.TEST_DB_OBJECT_QUERY, 
-						mapper.newPreparedStatementCallback(new ListHandler<DbObject>())).getList();
+						mapper.newPreparedStatementCallback(new ListCollectorHandler<DbObject>())).getList();
 		DbHelper.assertDbObjectMapping(results.get(0));
 	}
 	@Test
@@ -60,7 +60,7 @@ public class JdbcTemplateMapperFactoryTest {
 		List<DbObject> results = 
 			template
 				.query(DbHelper.TEST_DB_OBJECT_QUERY, 
-						mapper.newResultSetExtractor(new ListHandler<DbObject>())).getList();
+						mapper.newResultSetExtractor(new ListCollectorHandler<DbObject>())).getList();
 		DbHelper.assertDbObjectMapping(results.get(0));
 	}
 }

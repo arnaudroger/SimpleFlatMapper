@@ -3,7 +3,6 @@ package org.sfm.datastax.impl;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
 import com.datastax.driver.core.GettableData;
-import com.datastax.driver.core.Row;
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
@@ -50,6 +49,7 @@ public class RowGetterFactoryTest {
         when(row.getDouble(1)).thenReturn(15.4);
         when(row.getString(1)).thenReturn("str");
         when(row.getString(2)).thenReturn("type2");
+        when(row.getString(3)).thenReturn(new UUID(23, 24).toString());
         when(row.getBool(1)).thenReturn(Boolean.TRUE);
         when(row.getDate(1)).thenReturn(date);
         when(row.getDecimal(1)).thenReturn(new BigDecimal("2.123"));
@@ -63,6 +63,10 @@ public class RowGetterFactoryTest {
     @Test
     public void testUUIDGetter() throws Exception {
         assertEquals(new UUID(23, 23), new RowGetterFactory(null).newGetter(UUID.class, columnKey, null).get(row));
+    }
+    @Test
+    public void testUUIDGetterOnString() throws Exception {
+        assertEquals(new UUID(23, 24), new RowGetterFactory(null).newGetter(UUID.class, columnKey(3, DataType.text()), null).get(row));
     }
 
     @Test
@@ -88,6 +92,11 @@ public class RowGetterFactoryTest {
     @Test
     public void testStringGetter() throws Exception {
         assertEquals("str", new RowGetterFactory(null).newGetter(String.class, columnKey, null).get(row));
+    }
+
+    @Test
+    public void testStringGetterOnUUID() throws Exception {
+        assertEquals(new UUID(23, 23).toString(), new RowGetterFactory(null).newGetter(String.class, columnKey(DataType.uuid()), null).get(row));
     }
 
     @Test
@@ -209,4 +218,12 @@ public class RowGetterFactoryTest {
         final Getter<GettableByIndexData, org.joda.time.LocalDateTime> gettableDataObjectGetter = new RowGetterFactory(null).newGetter(org.joda.time.LocalDateTime.class, columnKey, identity);
         assertEquals(date, gettableDataObjectGetter.get(row).toDate());
     }
+
+    private DatastaxColumnKey columnKey(DataType type) {
+        return new DatastaxColumnKey(columnKey.getName(), columnKey.getIndex(), type);
+    }
+    private DatastaxColumnKey columnKey(int index, DataType type) {
+        return new DatastaxColumnKey(columnKey.getName(), index, type);
+    }
+
 }

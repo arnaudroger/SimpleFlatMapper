@@ -164,15 +164,39 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             }
         });
 
+        getterFactories.put(String.class, new GetterFactory<GettableByIndexData, DatastaxColumnKey>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+                if (key.getDataType() == null || String.class.equals(key.getDataType().asJavaClass())) {
+                    return (Getter<GettableByIndexData, P>) new DatastaxStringGetter(key.getIndex());
+                } else {
+                    Getter<GettableByIndexData, ?> getter = RowGetterFactory.this.newGetter(key.getDataType().asJavaClass(), key, columnDefinition);
+                    if (getter != null) {
+                        return (Getter<GettableByIndexData, P>) new DatastaxToStringGetter(getter);
+                    }
+                }
+                return null;
+            }
+        });
+
+        getterFactories.put(UUID.class, new GetterFactory<GettableByIndexData, DatastaxColumnKey>() {
+            @Override
+            public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+                if (key.getDataType() == null || UUID.class.equals(key.getDataType().asJavaClass())) {
+                    return (Getter<GettableByIndexData, P>) new DatastaxUUIDGetter(key.getIndex());
+                } else if (String.class.equals(key.getDataType().asJavaClass())){
+                    return (Getter<GettableByIndexData, P>) new DatastaxUUIDFromStringGetter(key.getIndex());
+                }
+                return null;
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
         Class<?> targetClass = TypeHelper.toClass(target);
-        if (String.class.equals(targetClass)) {
-            return (Getter<GettableByIndexData, P>) new DatastaxStringGetter(key.getIndex());
-        }
         if (Date.class.equals(targetClass)) {
             return (Getter<GettableByIndexData, P>) new DatastaxDateGetter(key.getIndex());
         }
@@ -181,9 +205,6 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             return (Getter<GettableByIndexData, P>) new DatastaxBooleanGetter(key.getIndex());
         }
 
-        if (UUID.class.equals(targetClass)) {
-            return (Getter<GettableByIndexData, P>) new DatastaxUUIDGetter(key.getIndex());
-        }
         if (InetAddress.class.equals(targetClass)) {
             return (Getter<GettableByIndexData, P>) new DatastaxInetAddressGetter(key.getIndex());
         }

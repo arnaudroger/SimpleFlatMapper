@@ -10,7 +10,7 @@ function java6 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-6-oracle/jre/bin/java;export JAVA_HOME=/usr/lib/jvm/java-6-oracle
 }
 java8
-mvn release:prepare
+mvn release:prepare -Pdev
 cp release.properties tmp/release.properties
 java8
 mvn release:perform

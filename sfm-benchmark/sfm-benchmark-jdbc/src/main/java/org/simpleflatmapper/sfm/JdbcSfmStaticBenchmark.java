@@ -6,8 +6,10 @@ import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.reflect.asm.AsmHelper;
 import org.sfm.utils.RowHandler;
-import org.simpleflatmapper.beans.SmallBenchmarkObject;
+import org.simpleflatmapper.beans.MappedObject16;
+import org.simpleflatmapper.beans.MappedObject4;
 import org.simpleflatmapper.db.ConnectionParam;
+import org.simpleflatmapper.db.ResultSetHandler;
 import org.simpleflatmapper.jdbc.JdbcManualBenchmark;
 import org.simpleflatmapper.param.LimitParam;
 
@@ -18,8 +20,8 @@ import java.sql.ResultSet;
 @State(Scope.Benchmark)
 public class JdbcSfmStaticBenchmark {
 
-	private JdbcMapper<SmallBenchmarkObject> mapper;
-	
+	private JdbcMapper<MappedObject4> mapper4;
+	private JdbcMapper<MappedObject16> mapper16;
 
 	@Setup
 	public void init() {
@@ -27,34 +29,60 @@ public class JdbcSfmStaticBenchmark {
 			throw new RuntimeException("Asm not present or incompatible");
 		}
 
-		mapper = JdbcMapperFactory.newInstance().newBuilder(SmallBenchmarkObject.class)
+		mapper4 = JdbcMapperFactory.newInstance().newBuilder(MappedObject4.class)
 				.addMapping("id")
 				.addMapping("name")
 				.addMapping("email")
 				.addMapping("year_started").mapper();
+		mapper16 = JdbcMapperFactory.newInstance().newBuilder(MappedObject16.class)
+				.addMapping("id")
+				.addMapping("name")
+				.addMapping("email")
+				.addMapping("year_started")
+				.addMapping("field5")
+				.addMapping("field6")
+				.addMapping("field7")
+				.addMapping("field8")
+				.addMapping("field9")
+				.addMapping("field10")
+				.addMapping("field11")
+				.addMapping("field12")
+				.addMapping("field13")
+				.addMapping("field14")
+				.addMapping("field15")
+				.addMapping("field16")
+				.mapper();
 	}
 
-	@SuppressWarnings("JpaQueryApiInspection")
 	@Benchmark
-	public void testQuery(ConnectionParam connectionParam, LimitParam limitParam, final Blackhole blackhole) throws Exception {
-		Connection conn = connectionParam.getConnection();
-		try {
-			PreparedStatement ps = conn.prepareStatement(JdbcManualBenchmark.SELECT_BENCHMARK_OBJ_WITH_LIMIT);
-			try {
-				ps.setInt(1, limitParam.limit);
-				ResultSet rs = ps.executeQuery();
-				mapper.forEach(rs, new RowHandler<SmallBenchmarkObject>() {
+	public void _04Fields(ConnectionParam connectionParam, LimitParam limitParam, final Blackhole blackhole) throws Exception {
+		connectionParam.executeStatement(JdbcManualBenchmark.SELECT_BENCHMARK_OBJ_WITH_LIMIT,
+				new ResultSetHandler() {
 					@Override
-					public void handle(SmallBenchmarkObject smallBenchmarkObject) throws Exception {
-						blackhole.consume(smallBenchmarkObject);
+					public void handle(ResultSet rs) throws Exception {
+						mapper4.forEach(rs, new RowHandler<MappedObject4>() {
+							@Override
+							public void handle(MappedObject4 mappedObject4) throws Exception {
+								blackhole.consume(mappedObject4);
+							}
+						});
 					}
-				});
-			}finally {
-				ps.close();
-			}
-		}finally {
-			conn.close();
-		}
+				}, limitParam.limit);
+	}
+	@Benchmark
+	public void _16Fields(ConnectionParam connectionParam, LimitParam limitParam, final Blackhole blackhole) throws Exception {
+		connectionParam.executeStatement(JdbcManualBenchmark.SELECT_BIG_OBJ_WITH_LIMIT,
+				new ResultSetHandler() {
+					@Override
+					public void handle(ResultSet rs) throws Exception {
+						mapper16.forEach(rs, new RowHandler<MappedObject16>() {
+							@Override
+							public void handle(MappedObject16 mappedObject4) throws Exception {
+								blackhole.consume(mappedObject4);
+							}
+						});
+					}
+				}, limitParam.limit);
 	}
 	
 	

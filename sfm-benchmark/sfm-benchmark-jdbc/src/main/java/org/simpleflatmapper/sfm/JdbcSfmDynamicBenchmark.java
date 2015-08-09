@@ -6,8 +6,10 @@ import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.reflect.asm.AsmHelper;
 import org.sfm.utils.RowHandler;
-import org.simpleflatmapper.beans.SmallBenchmarkObject;
+import org.simpleflatmapper.beans.MappedObject16;
+import org.simpleflatmapper.beans.MappedObject4;
 import org.simpleflatmapper.db.ConnectionParam;
+import org.simpleflatmapper.db.ResultSetHandler;
 import org.simpleflatmapper.jdbc.JdbcManualBenchmark;
 import org.simpleflatmapper.param.LimitParam;
 
@@ -18,35 +20,46 @@ import java.sql.ResultSet;
 @State(Scope.Benchmark)
 public class JdbcSfmDynamicBenchmark {
 
-	private JdbcMapper<SmallBenchmarkObject> mapper;
+	private JdbcMapper<MappedObject4> mapper4;
+	private JdbcMapper<MappedObject16> mapper16;
 	@Setup
 	public void init() {
 		if (! AsmHelper.isAsmPresent()) {
 			throw new RuntimeException("Asm not present or incompatible");
 		}
 		
-		mapper = JdbcMapperFactory.newInstance().newMapper(SmallBenchmarkObject.class);
+		mapper4 = JdbcMapperFactory.newInstance().newMapper(MappedObject4.class);
+		mapper16 = JdbcMapperFactory.newInstance().newMapper(MappedObject16.class);
 	}
 
 	@Benchmark
-	public void testQuery(ConnectionParam connectionParam, LimitParam limitParam, final Blackhole blackhole) throws Exception {
-		Connection conn = connectionParam.getConnection();
-		try {
-			PreparedStatement ps = conn.prepareStatement(JdbcManualBenchmark.SELECT_BENCHMARK_OBJ_WITH_LIMIT);
-			try {
-				ps.setInt(1, limitParam.limit);
-				ResultSet rs = ps.executeQuery();
-				mapper.forEach(rs, new RowHandler<SmallBenchmarkObject>() {
+	public void _04Fields(ConnectionParam connectionParam, LimitParam limitParam, final Blackhole blackhole) throws Exception {
+		connectionParam.executeStatement(JdbcManualBenchmark.SELECT_BENCHMARK_OBJ_WITH_LIMIT,
+				new ResultSetHandler() {
 					@Override
-					public void handle(SmallBenchmarkObject smallBenchmarkObject) throws Exception {
-						blackhole.consume(smallBenchmarkObject);
+					public void handle(ResultSet rs) throws Exception {
+						mapper4.forEach(rs, new RowHandler<MappedObject4>() {
+							@Override
+							public void handle(MappedObject4 mappedObject4) throws Exception {
+								blackhole.consume(mappedObject4);
+							}
+						});
 					}
-				});
-			}finally {
-				ps.close();
-			}
-		}finally {
-			conn.close();
-		}
+				}, limitParam.limit);
+	}
+	@Benchmark
+	public void _16Fields(ConnectionParam connectionParam, LimitParam limitParam, final Blackhole blackhole) throws Exception {
+		connectionParam.executeStatement(JdbcManualBenchmark.SELECT_BIG_OBJ_WITH_LIMIT,
+				new ResultSetHandler() {
+					@Override
+					public void handle(ResultSet rs) throws Exception {
+						mapper16.forEach(rs, new RowHandler<MappedObject16>() {
+							@Override
+							public void handle(MappedObject16 mappedObject4) throws Exception {
+								blackhole.consume(mappedObject4);
+							}
+						});
+					}
+				}, limitParam.limit);
 	}
 }

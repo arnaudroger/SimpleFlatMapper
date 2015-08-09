@@ -8,7 +8,7 @@ import org.springframework.jdbc.roma.impl.service.RowMapperService;
 
 public class RomaMapperFactory {
 	
-	public static RowMapper<SmallBenchmarkObject> getRowMapper() {
+	public static RowMapper<MappedObject4> getRowMapper() {
 		
 		GenericApplicationContext appContext = new GenericApplicationContext();
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(appContext);
@@ -16,6 +16,6 @@ public class RomaMapperFactory {
 		reader.loadBeanDefinitions(new ClassPathResource("roma-context.xml"));
 		appContext.refresh();
 		RowMapperService rowMapperService = appContext.getBean(RowMapperService.class);
-		return rowMapperService.getRowMapper(SmallBenchmarkObject.class);
+		return rowMapperService.getRowMapper(MappedObject4.class);
 	}
 }

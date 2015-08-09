@@ -3,7 +3,7 @@ package org.simpleflatmapper.spring;
 
 import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperField;
 
-public class SmallBenchmarkObject {
+public class MappedObject4 {
 	
 
 	@RowMapperField(columnName="ID")
@@ -43,7 +43,7 @@ public class SmallBenchmarkObject {
 	}
 	@Override
 	public String toString() {
-		return "SmallBenchmarkObject [id=" + id + ", yearStarted="
+		return "MappedObject4 [id=" + id + ", yearStarted="
 				+ yearStarted + ", name=" + name + ", email=" + email + "]";
 	}
 	

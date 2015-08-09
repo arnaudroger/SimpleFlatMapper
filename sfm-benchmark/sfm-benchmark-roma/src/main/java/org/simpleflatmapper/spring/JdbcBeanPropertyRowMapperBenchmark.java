@@ -16,11 +16,11 @@ import java.sql.ResultSet;
 @State(Scope.Benchmark)
 public class JdbcBeanPropertyRowMapperBenchmark {
 	
-	private BeanPropertyRowMapper<SmallBenchmarkObject> mapper;
+	private BeanPropertyRowMapper<MappedObject4> mapper;
 	
 	@Setup
 	public void init() {
-		mapper = new BeanPropertyRowMapper<SmallBenchmarkObject>(SmallBenchmarkObject.class);
+		mapper = new BeanPropertyRowMapper<MappedObject4>(MappedObject4.class);
 	}
 	
 	@Benchmark

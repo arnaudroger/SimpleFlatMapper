@@ -9,15 +9,13 @@ import org.simpleflatmapper.db.ConnectionParam;
 import org.simpleflatmapper.param.LimitParam;
 import org.springframework.jdbc.core.RowMapper;
 
-import javax.naming.NamingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 @State(Scope.Benchmark)
 public class JdbcRomaBenchmark {
-	private RowMapper<SmallBenchmarkObject> mapper ;
+	private RowMapper<MappedObject4> mapper ;
 
 	@Setup
 	public void init() {

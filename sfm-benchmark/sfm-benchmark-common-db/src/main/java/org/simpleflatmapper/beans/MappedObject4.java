@@ -1,6 +1,6 @@
 package org.simpleflatmapper.beans;
 
-public class SmallBenchmarkObject {
+public class MappedObject4 {
 
 	private long id;
 
@@ -33,7 +33,7 @@ public class SmallBenchmarkObject {
 	}
 	@Override
 	public String toString() {
-		return "SmallBenchmarkObject [id=" + id + ", yearStarted="
+		return "MappedObject4 [id=" + id + ", yearStarted="
 				+ yearStarted + ", name=" + name + ", email=" + email + "]";
 	}
 	

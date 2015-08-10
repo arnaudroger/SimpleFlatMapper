@@ -6,41 +6,53 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.infra.Blackhole;
 import org.simpleflatmapper.db.ConnectionParam;
+import org.simpleflatmapper.db.ResultSetHandler;
 import org.simpleflatmapper.param.LimitParam;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.roma.impl.service.RowMapperService;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 @State(Scope.Benchmark)
 public class JdbcRomaBenchmark {
-	private RowMapper<MappedObject4> mapper ;
+	private RowMapper<MappedObject4> mapper4;
+	private RowMapper<MappedObject16> mapper16;
 
 	@Setup
 	public void init() {
-		this.mapper = RomaMapperFactory.getRowMapper();
+		RowMapperService rowMapperService = RomaMapperFactory.getRowMapperService();
+		this.mapper4 = rowMapperService.getRowMapper(MappedObject4.class);
+		this.mapper16 = rowMapperService.getRowMapper(MappedObject16.class);
 	}
 
 	@Benchmark
-	public void testQuery(ConnectionParam connectionHolder, LimitParam limit, final Blackhole blackhole) throws Exception {
-		Connection conn = connectionHolder.getConnection();
-		try {
-			PreparedStatement ps = conn.prepareStatement("SELECT id, name, email, year_started FROM test_small_benchmark_object LIMIT ?");
-			try {
-				ps.setInt(1, limit.limit);
-				ResultSet rs = ps.executeQuery();
-				int i = 0;
-				while(rs.next()) {
-					Object o = mapper.mapRow(rs, i);
-					blackhole.consume(o);
-					i++;
-				}
-			}finally {
-				ps.close();
-			}
-		} finally {
-			conn.close();
-		}
+	public void _04Fields(ConnectionParam connectionHolder, LimitParam limit, final Blackhole blackhole) throws Exception {
+		connectionHolder.executeStatement(org.simpleflatmapper.beans.MappedObject4.SELECT_WITH_LIMIT,
+				new ResultSetHandler() {
+					@Override
+					public void handle(ResultSet rs) throws Exception {
+						int i = 0;
+						while(rs.next()) {
+							Object o = mapper4.mapRow(rs, i);
+							blackhole.consume(o);
+							i++;
+						}
+					}
+				}, limit.limit);
+	}
+	@Benchmark
+	public void _16Fields(ConnectionParam connectionHolder, LimitParam limit, final Blackhole blackhole) throws Exception {
+		connectionHolder.executeStatement(org.simpleflatmapper.beans.MappedObject16.SELECT_WITH_LIMIT,
+				new ResultSetHandler() {
+					@Override
+					public void handle(ResultSet rs) throws Exception {
+						int i = 0;
+						while(rs.next()) {
+							Object o = mapper16.mapRow(rs, i);
+							blackhole.consume(o);
+							i++;
+						}
+					}
+				}, limit.limit);
 	}
 }

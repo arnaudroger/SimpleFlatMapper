@@ -16,9 +16,6 @@ import java.sql.ResultSet;
 
 @State(Scope.Benchmark)
 public class JdbcManualBenchmark {
-	public static final String SELECT_BENCHMARK_OBJ_WITH_LIMIT = "SELECT * FROM test_small_benchmark_object LIMIT ?";
-	public static final String SELECT_BIG_OBJ_WITH_LIMIT = "SELECT * FROM TEST_BENCHMARK_OBJECT_16 LIMIT ?";
-
 	private RowMapper<MappedObject4> mapper4;
 	private RowMapper<MappedObject16> mapper16;
 
@@ -68,7 +65,7 @@ public class JdbcManualBenchmark {
 	@Benchmark
 	public void _04Fields(ConnectionParam connectionHolder, LimitParam limit, final Blackhole blackhole) throws Exception {
 		connectionHolder.executeStatement(
-				SELECT_BENCHMARK_OBJ_WITH_LIMIT,
+				MappedObject4.SELECT_WITH_LIMIT,
 				new ResultSetHandler() {
 					@Override
 					public void handle(ResultSet rs) throws Exception {
@@ -85,7 +82,7 @@ public class JdbcManualBenchmark {
 	@Benchmark
 	public void _16Fields(ConnectionParam connectionHolder, LimitParam limit, final Blackhole blackhole) throws Exception {
 		connectionHolder.executeStatement(
-				SELECT_BIG_OBJ_WITH_LIMIT,
+				MappedObject16.SELECT_WITH_LIMIT,
 				new ResultSetHandler() {
 					@Override
 					public void handle(ResultSet rs) throws Exception {

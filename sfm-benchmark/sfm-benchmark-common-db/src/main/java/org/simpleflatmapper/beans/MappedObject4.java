@@ -1,6 +1,7 @@
 package org.simpleflatmapper.beans;
 
 public class MappedObject4 {
+	public static final String SELECT_WITH_LIMIT = "SELECT * FROM test_small_benchmark_object LIMIT ?";
 
 	private long id;
 

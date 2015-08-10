@@ -1,21 +1,32 @@
-package org.simpleflatmapper.beans;
+package org.simpleflatmapper.spring;
+
+import org.springframework.jdbc.roma.api.config.provider.annotation.RowMapperField;
 
 public class MappedObject16 extends MappedObject4 {
-	public static final String SELECT_WITH_LIMIT = "SELECT * FROM TEST_BENCHMARK_OBJECT_16 LIMIT ?";
 
+	@RowMapperField(columnName="FIELD5")
 	private short field5;
+	@RowMapperField(columnName="FIELD6")
 	private int field6;
+	@RowMapperField(columnName="FIELD7")
 	private long field7;
+	@RowMapperField(columnName="FIELD8")
 	private float field8;
+	@RowMapperField(columnName="FIELD9")
 	private double field9;
-
+	@RowMapperField(columnName="FIELD10")
 	private short field10;
+	@RowMapperField(columnName="FIELD11")
 	private int field11;
+	@RowMapperField(columnName="FIELD12")
 	private long field12;
+	@RowMapperField(columnName="FIELD13")
 	private float field13;
+	@RowMapperField(columnName="FIELD14")
 	private double field14;
-
+	@RowMapperField(columnName="FIELD15")
 	private int field15;
+	@RowMapperField(columnName="FIELD16")
 	private int field16;
 
 

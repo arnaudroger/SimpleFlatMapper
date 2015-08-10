@@ -34,7 +34,7 @@ public class JdbcSfmDynamicBenchmark {
 
 	@Benchmark
 	public void _04Fields(ConnectionParam connectionParam, LimitParam limitParam, final Blackhole blackhole) throws Exception {
-		connectionParam.executeStatement(JdbcManualBenchmark.SELECT_BENCHMARK_OBJ_WITH_LIMIT,
+		connectionParam.executeStatement(MappedObject4.SELECT_WITH_LIMIT,
 				new ResultSetHandler() {
 					@Override
 					public void handle(ResultSet rs) throws Exception {
@@ -49,7 +49,7 @@ public class JdbcSfmDynamicBenchmark {
 	}
 	@Benchmark
 	public void _16Fields(ConnectionParam connectionParam, LimitParam limitParam, final Blackhole blackhole) throws Exception {
-		connectionParam.executeStatement(JdbcManualBenchmark.SELECT_BIG_OBJ_WITH_LIMIT,
+		connectionParam.executeStatement(MappedObject16.SELECT_WITH_LIMIT,
 				new ResultSetHandler() {
 					@Override
 					public void handle(ResultSet rs) throws Exception {

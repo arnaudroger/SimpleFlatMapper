@@ -14,6 +14,7 @@ public class MappedObject4 {
 	@RowMapperField(columnName = "NAME")
 	private String name;
 	@RowMapperField(columnName="EMAIL")
+
 	private String email;
 
 	public long getId() {

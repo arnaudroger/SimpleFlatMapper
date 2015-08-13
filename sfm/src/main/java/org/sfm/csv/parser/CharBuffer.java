@@ -7,11 +7,14 @@ public final class CharBuffer {
 
 
 	private char[] buffer;
-	private int bufferLength;
+	private int bufferSize;
 
 	private int mark;
 
-	public CharBuffer(final int bufferSize) {
+	private final int maxBufferSize;
+
+	public CharBuffer(final int bufferSize, int maxBufferLength) {
+		this.maxBufferSize = maxBufferLength;
 		this.buffer = new char[bufferSize];
 	}
 	
@@ -20,9 +23,9 @@ public final class CharBuffer {
 	}
 	
 	public boolean fillBuffer(Reader reader) throws IOException {
-		int length = reader.read(buffer, bufferLength, buffer.length- bufferLength);
+		int length = reader.read(buffer, bufferSize, buffer.length - bufferSize);
 		if (length != -1) {
-			bufferLength += length;
+			bufferSize += length;
 			return true;
 		} else {
 			return false;
@@ -30,20 +33,25 @@ public final class CharBuffer {
 	}
 
 
-	public int shiftBufferToMark() {
+	public int shiftBufferToMark() throws BufferOverflowException {
 		// shift buffer consumer data
-		int newLength = Math.max(bufferLength - mark, 0);
+		int usedLength = Math.max(bufferSize - mark, 0);
 
 		// if buffer tight double the size
-		if (newLength <= (bufferLength >> 1)) {
-			System.arraycopy(buffer, mark, buffer, 0, newLength);
+		if (usedLength <= (bufferSize >> 1)) {
+			System.arraycopy(buffer, mark, buffer, 0, usedLength);
 		} else {
+			int newBufferSize = Math.min(maxBufferSize, buffer.length << 1);
+
+			if (newBufferSize == usedLength) {
+				throw new BufferOverflowException("The content in the csv cell exceed the maxSizeBuffer " + maxBufferSize + ", see CsvParser.DSL.maxSizeBuffer(int) to change the default value");
+			}
 			// double buffer size
-			char[] newBuffer = new char[buffer.length << 1];
-			System.arraycopy(buffer, mark, newBuffer, 0, newLength);
+			char[] newBuffer = new char[newBufferSize];
+			System.arraycopy(buffer, mark, newBuffer, 0, usedLength);
 			buffer = newBuffer;
 		}
-		bufferLength = newLength;
+		bufferSize = usedLength;
 
 		int m = mark;
 		mark = 0;
@@ -65,7 +73,7 @@ public final class CharBuffer {
 		return buffer[bufferIndex];
 	}
 
-	public int getBufferLength() {
-		return bufferLength;
+	public int getBufferSize() {
+		return bufferSize;
 	}
 }

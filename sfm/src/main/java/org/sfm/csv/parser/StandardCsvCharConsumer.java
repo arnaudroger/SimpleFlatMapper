@@ -32,7 +32,7 @@ public final class StandardCsvCharConsumer extends AbstractCsvCharConsumer {
 	@Override
 	public boolean nextRow(CellConsumer cellConsumer) {
 
-		int bufferLength = csvBuffer.getBufferLength();
+		int bufferLength = csvBuffer.getBufferSize();
 		for(int index = _currentIndex; index  < bufferLength; index++) {
 
 			char character = csvBuffer.getChar(index);

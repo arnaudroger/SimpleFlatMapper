@@ -94,6 +94,10 @@ public final class CsvParser {
 		return schema().bufferSize(size);
 	}
 
+	public static DSL maxBufferSize(int size) {
+		return schema().maxBufferSize(size);
+	}
+
 	public static DSL quote(char c) {
 		return schema().quote(c);
 	}
@@ -182,11 +186,14 @@ public final class CsvParser {
      * @see org.sfm.csv.CsvParser
      */
 	public static final class DSL {
-        private final char separatorChar;
+		public static final int DEFAULT_MAX_BUFFER_SIZE_8M = 1 << 23;
+
+		private final char separatorChar;
         private final char quoteChar;
         private final int bufferSize;
         private final int skip;
         private final int limit;
+		private final int maxBufferSize;
 
 		private DSL() {
 			separatorChar = ',';
@@ -194,14 +201,16 @@ public final class CsvParser {
 			bufferSize = 8192;
 			skip = 0;
 			limit = -1;
+			maxBufferSize = DEFAULT_MAX_BUFFER_SIZE_8M;
 		}
 
-		public DSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit) {
+		public DSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize) {
 			this.separatorChar = separatorChar;
 			this.quoteChar = quoteChar;
 			this.bufferSize = bufferSize;
 			this.skip = skip;
 			this.limit = limit;
+			this.maxBufferSize = maxBufferSize;
 		}
 
 		/**
@@ -210,7 +219,7 @@ public final class CsvParser {
          * @return this
          */
         public DSL separator(char c) {
-			return new DSL(c, quoteChar, bufferSize, skip, limit);
+			return new DSL(c, quoteChar, bufferSize, skip, limit, maxBufferSize);
         }
 
         /**
@@ -219,7 +228,7 @@ public final class CsvParser {
          * @return this
          */
         public DSL quote(char c) {
-			return new DSL(separatorChar, c, bufferSize, skip, limit);
+			return new DSL(separatorChar, c, bufferSize, skip, limit, maxBufferSize);
         }
 
         /**
@@ -228,7 +237,7 @@ public final class CsvParser {
          * @return this
          */
         public DSL bufferSize(int size) {
-			return new DSL(separatorChar, quoteChar, size, skip, limit);
+			return new DSL(separatorChar, quoteChar, size, skip, limit, maxBufferSize);
         }
 
         /**
@@ -237,7 +246,7 @@ public final class CsvParser {
          * @return this
          */
         public DSL skip(int skip) {
-			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit);
+			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize);
         }
 
         /**
@@ -246,8 +255,17 @@ public final class CsvParser {
          * @return this
          */
         public DSL limit(int limit) {
-			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit);
+			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize);
         }
+
+		/**
+		 * set the maximum size of the content the parser will handle before failing to avoid OOM.
+		 * @param maxBufferSize the maximum size the buffer will grow, default 8M
+		 * @return this
+		 */
+		public DSL maxBufferSize(int maxBufferSize) {
+			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize);
+		}
 
         /**
          * Parse the content from the reader as a csv and call back the cellConsumer with the cell values.
@@ -335,7 +353,7 @@ public final class CsvParser {
         //IFJAVA8_END
 
         private CsvCharConsumer charConsumer() {
-            CharBuffer charBuffer = new CharBuffer(bufferSize);
+            CharBuffer charBuffer = new CharBuffer(bufferSize, maxBufferSize);
 
             if (separatorChar == ',' && quoteChar == '"') {
                 return new StandardCsvCharConsumer(charBuffer);

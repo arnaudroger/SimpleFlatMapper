@@ -21,7 +21,7 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 
 	@Override
 	public final void parseAll(CellConsumer cellConsumer) {
-		int bufferLength = csvBuffer.getBufferLength();
+		int bufferLength = csvBuffer.getBufferSize();
 		for(int i = _currentIndex; i  < bufferLength; i++) {
 			char c = csvBuffer.getChar(i);
 			consumeOneChar(c, i, cellConsumer);

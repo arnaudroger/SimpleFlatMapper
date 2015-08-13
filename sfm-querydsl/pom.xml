@@ -6,7 +6,7 @@
 
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
-		<version>2.2</version>
+		<version>2.3-SNAPSHOT</version>
 		<artifactId>sfm-parent</artifactId>
 	</parent>
 
@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm</artifactId>
-			<version>2.2</version>
+			<version>2.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mysema.querydsl</groupId>
@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-test</artifactId>
-			<version>2.2</version>
+			<version>2.3-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

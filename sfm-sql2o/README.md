@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-sql2o.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-sql2o)
-[![JavaDoc](https://img.shields.io/badge/javadoc-2.1-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
+[![JavaDoc](https://img.shields.io/badge/javadoc-2.2-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
 
 # sql2o integration
 

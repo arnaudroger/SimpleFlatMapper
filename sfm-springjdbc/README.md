@@ -19,8 +19,8 @@ See [JdbcTemplateMapperFactoryTest](/sfm-springjdbc/src/test/java/org/sfm/jdbc/s
 
 ```java
 class MyDao {
-	private final JdbcTemplateMapper<DbObject> mapper =
-		JdbcTemplateMapperFactory.newInstance().newMapper(DbObject.class);
+	private final RowMapper<DbObject> mapper =
+		JdbcTemplateMapperFactory.newInstance().newRowMapper(DbObject.class);
 
 	public void doSomething() {
 		List<DbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);

@@ -9,7 +9,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-springjdbc</artifactId>
-			<version>2.1</version>
+			<version>2.2</version>
 		</dependency>
 ```
 

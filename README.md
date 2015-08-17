@@ -64,7 +64,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm</artifactId>
-			<version>2.1</version>
+			<version>2.2</version>
 		</dependency>
 ```
 
@@ -74,7 +74,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm</artifactId>
-			<version>2.1</version>
+			<version>2.2</version>
 			<classifier>jdk17</classifier>
 		</dependency>
 ```
@@ -85,7 +85,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm</artifactId>
-			<version>2.1</version>
+			<version>2.2</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 ```

@@ -10,7 +10,7 @@
 		<version>2.3-SNAPSHOT</version>
 	</parent>
 
-	<description>Java library to map flat record - ResultSet, csv - to java object with minimum configuration and low footprint.</description>
+	<description>Sql2o supports.</description>
 
 	<licenses>
 		<license>

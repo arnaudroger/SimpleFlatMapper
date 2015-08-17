@@ -14,8 +14,7 @@
     <name>sfm-benchmark</name>
     <url>http://github.com/arnaudroger/SimpleFlatMapper</url>
 
-    <description>Java library to map flat record - ResultSet, csv - to java object with minimum configuration and low
-        footprint.
+    <description>SFM Benchmarks.
     </description>
 
     <developers>
@@ -53,6 +52,7 @@
         <module>sfm-benchmark-batoo</module>
         <module>sfm-benchmark-common</module>
         <module>sfm-benchmark-common-db</module>
+        <module>sfm-benchmark-common-jpa</module>
         <module>sfm-benchmark-csv</module>
         <module>sfm-benchmark-datastax</module>
         <module>sfm-benchmark-eclipselink</module>

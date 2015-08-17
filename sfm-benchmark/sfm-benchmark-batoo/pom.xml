@@ -44,6 +44,26 @@ THE POSSIBILITY OF SUCH DAMAGE.
     <name>sfm-benchmark-batoo</name>
 
     <dependencies>
+        <dependency>
+            <groupId>org.batoo.jpa</groupId>
+            <artifactId>batoo-jpa</artifactId>
+            <version>2.0.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.simpleflatmapper</groupId>
+            <artifactId>sfm-benchmark-common-jpa</artifactId>
+            <version>2.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>catalina</artifactId>
+            <version>6.0.20</version>
+        </dependency>
     </dependencies>
 
     <build>

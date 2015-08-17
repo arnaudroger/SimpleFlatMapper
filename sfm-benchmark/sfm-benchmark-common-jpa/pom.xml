@@ -38,36 +38,26 @@ THE POSSIBILITY OF SUCH DAMAGE.
     </parent>
 
     <groupId>org.simpleflatmapper</groupId>
-    <artifactId>sfm-benchmark-common-db</artifactId>
+    <artifactId>sfm-benchmark-common-jpa</artifactId>
     <packaging>jar</packaging>
 
-    <name>sfm-benchmark-common-db</name>
+    <name>sfm-benchmark-common-jpa</name>
 
     <dependencies>
         <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>2.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>2.3.2</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.36</version>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.187</version>
-        </dependency>
-        <dependency>
             <groupId>org.simpleflatmapper</groupId>
-            <artifactId>sfm-benchmark-common</artifactId>
+            <artifactId>sfm-benchmark-common-db</artifactId>
             <version>2.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>1.0.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.0.0.GA</version>
         </dependency>
     </dependencies>
 

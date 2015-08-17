@@ -54,11 +54,6 @@ THE POSSIBILITY OF SUCH DAMAGE.
             <artifactId>sfm-benchmark-common-db</artifactId>
             <version>2.3-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.simpleflatmapper</groupId>
-            <artifactId>sfm-benchmark-common</artifactId>
-            <version>2.3-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
     <build>

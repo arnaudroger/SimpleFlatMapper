@@ -14,6 +14,34 @@ import org.simpleflatmapper.param.LimitParam;
 
 import java.sql.ResultSet;
 
+/*
+Benchmark                                  (db)  (limit)   Mode  Cnt        Score        Error  Units
+o.s.jdbc.JdbcManualBenchmark._04Fields       H2        1  thrpt   20  2756228.712 ± 154235.112  ops/s
+o.s.jdbc.JdbcManualBenchmark._04Fields       H2       10  thrpt   20  1041612.403 ±  68936.146  ops/s
+o.s.jdbc.JdbcManualBenchmark._04Fields       H2      100  thrpt   20   153813.834 ±  10129.339  ops/s
+o.s.jdbc.JdbcManualBenchmark._04Fields       H2     1000  thrpt   20    15753.537 ±    545.082  ops/s
+o.s.jdbc.JdbcManualBenchmark._16Fields       H2        1  thrpt   20  1381933.078 ±  99518.858  ops/s
+o.s.jdbc.JdbcManualBenchmark._16Fields       H2       10  thrpt   20   319305.664 ±  26296.415  ops/s
+o.s.jdbc.JdbcManualBenchmark._16Fields       H2      100  thrpt   20    38335.997 ±   3255.070  ops/s
+o.s.jdbc.JdbcManualBenchmark._16Fields       H2     1000  thrpt   20     3998.312 ±    179.955  ops/s
+o.s.sfm.JdbcSfmDynamicBenchmark._04Fields    H2        1  thrpt   20  1685787.795 ± 105675.406  ops/s
+o.s.sfm.JdbcSfmDynamicBenchmark._04Fields    H2       10  thrpt   20   704580.729 ±  37947.689  ops/s
+o.s.sfm.JdbcSfmDynamicBenchmark._04Fields    H2      100  thrpt   20   110332.643 ±   6753.233  ops/s
+o.s.sfm.JdbcSfmDynamicBenchmark._04Fields    H2     1000  thrpt   20    12204.286 ±    898.711  ops/s
+o.s.sfm.JdbcSfmDynamicBenchmark._16Fields    H2        1  thrpt   20   660804.909 ±  50039.235  ops/s
+o.s.sfm.JdbcSfmDynamicBenchmark._16Fields    H2       10  thrpt   20   208976.163 ±  12108.967  ops/s
+o.s.sfm.JdbcSfmDynamicBenchmark._16Fields    H2      100  thrpt   20    32331.790 ±    383.428  ops/s
+o.s.sfm.JdbcSfmDynamicBenchmark._16Fields    H2     1000  thrpt   20     3274.331 ±    127.009  ops/s
+o.s.sfm.JdbcSfmStaticBenchmark._04Fields     H2        1  thrpt   20  2418654.404 ± 190531.372  ops/s
+o.s.sfm.JdbcSfmStaticBenchmark._04Fields     H2       10  thrpt   20   826200.614 ±  79170.704  ops/s
+o.s.sfm.JdbcSfmStaticBenchmark._04Fields     H2      100  thrpt   20   117513.263 ±   9081.209  ops/s
+o.s.sfm.JdbcSfmStaticBenchmark._04Fields     H2     1000  thrpt   20    11820.698 ±    891.242  ops/s
+o.s.sfm.JdbcSfmStaticBenchmark._16Fields     H2        1  thrpt   20  1244043.513 ±  77917.986  ops/s
+o.s.sfm.JdbcSfmStaticBenchmark._16Fields     H2       10  thrpt   20   270888.863 ±  19701.639  ops/s
+o.s.sfm.JdbcSfmStaticBenchmark._16Fields     H2      100  thrpt   20    29801.096 ±   1437.297  ops/s
+o.s.sfm.JdbcSfmStaticBenchmark._16Fields     H2     1000  thrpt   20     3115.672 ±    222.970  ops/s
+
+ */
 @State(Scope.Benchmark)
 public class JdbcManualBenchmark {
 	private RowMapper<MappedObject4> mapper4;

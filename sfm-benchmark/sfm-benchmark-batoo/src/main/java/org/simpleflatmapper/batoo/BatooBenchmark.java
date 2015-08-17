@@ -27,6 +27,19 @@ import org.simpleflatmapper.param.LimitParam;
  * 
  *
  */
+
+/*
+Benchmark                 (db)  (limit)   Mode  Cnt       Score      Error  Units
+BatooBenchmark._04Fields    H2        1  thrpt   20  424105.769 ± 7998.794  ops/s
+BatooBenchmark._04Fields    H2       10  thrpt   20  184095.607 ± 2349.584  ops/s
+BatooBenchmark._04Fields    H2      100  thrpt   20   26205.799 ±  371.146  ops/s
+BatooBenchmark._04Fields    H2     1000  thrpt   20    2667.718 ±   56.348  ops/s
+BatooBenchmark._16Fields    H2        1  thrpt   20  172638.194 ± 3858.660  ops/s
+BatooBenchmark._16Fields    H2       10  thrpt   20   64638.056 ± 4692.277  ops/s
+BatooBenchmark._16Fields    H2      100  thrpt   20    8910.878 ±  731.142  ops/s
+BatooBenchmark._16Fields    H2     1000  thrpt   20     916.999 ±   40.375  ops/s
+
+ */
 public class BatooBenchmark {
 
 	private EntityManagerFactory sf;

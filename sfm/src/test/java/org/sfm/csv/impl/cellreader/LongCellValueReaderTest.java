@@ -20,7 +20,12 @@ public class LongCellValueReaderTest {
 		testReadLong(Long.MIN_VALUE);
 		testReadLong(Long.MAX_VALUE);
 	}
-	
+
+	@Test
+	public void testReadLongWithSpace() {
+		assertEquals(12345l, readLong(" 1 2 345"));
+	}
+
 	@Test
 	public void testInvalidLong() throws UnsupportedEncodingException {
 		final char[] chars = "Nan".toCharArray();
@@ -38,8 +43,12 @@ public class LongCellValueReaderTest {
 	}
 
 	private void testReadLong(long l) throws UnsupportedEncodingException {
-		final char[] chars = ("_" + Long.toString(l) + "_").toCharArray();
-		assertEquals(l, reader.read(chars, 1, chars.length -2, null).longValue());
+		assertEquals(l, readLong(Long.toString(l)));
+	}
+
+	private long readLong(String string) {
+		final char[] chars = ("_" + string + "_").toCharArray();
+		return reader.read(chars, 1, chars.length - 2, null).longValue();
 	}
 
 }

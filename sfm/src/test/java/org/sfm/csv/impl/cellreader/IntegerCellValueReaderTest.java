@@ -33,13 +33,22 @@ public class IntegerCellValueReaderTest {
 	}
 
 	@Test
+	public void testReadIntWithSpace() {
+		assertEquals(12345, readInt(" 1 2 345"));
+	}
+
+	@Test
 	public void testReadEmptyStringReturnNull() {
 		assertNull(reader.read(new char[10], 2, 0, null));
 	}
 
 	private void testReadInt(int i) throws UnsupportedEncodingException {
-		final char[] chars = ("_" + Integer.toString(i) + "_").toCharArray();
-		assertEquals(i, reader.read(chars, 1, chars.length-2, null).intValue());
+		assertEquals(i, readInt(Integer.toString(i)));
+	}
+
+	private int readInt(String string) {
+		final char[] chars = ("_" + string + "_").toCharArray();
+		return reader.read(chars, 1, chars.length - 2, null).intValue();
 	}
 
 }

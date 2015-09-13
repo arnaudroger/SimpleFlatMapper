@@ -31,8 +31,8 @@ public final class LongCellValueReaderImpl implements LongCellValueReader {
 			} else {
 				if (b == C_NEG_SIGN && i == offset) {
 					negative = true;
-				} else {
-					throw new ParsingException("Cannot parse " + new String(chars, offset, length) + " as an int");
+				} else if (b != ' ') {
+					throw new ParsingException("Cannot parse " + new String(chars, offset, length) + " as a long");
 				}
 			}
 		}

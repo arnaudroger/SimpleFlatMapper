@@ -31,7 +31,7 @@ public final class IntegerCellValueReaderImpl implements IntegerCellValueReader 
 			} else {
 				if (b == C_NEG_SIGN && i == offset) {
 					negative = true;
-				} else {
+				} else if (b != ' '){
 					throw new ParsingException("Cannot parse " + new String(chars, offset, length) + " as an int");
 				}
 			}

@@ -19,7 +19,7 @@ public class SfmResultSetHandlerFactoryBuilder extends DefaultResultSetHandlerFa
 
         boolean exactMatch = !isAutoDeriveColumnNames();
 
-        DefaultPropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory(exactMatch, isCaseSensitive());
+        DefaultPropertyNameMatcherFactory propertyNameMatcherFactory = DefaultPropertyNameMatcherFactory.DEFAULT.exactMatch(exactMatch).caseSensitive(isCaseSensitive());
         Map<String, String> columnMappings = getColumnMappings();
 
         JdbcMapperFactory jdbcMapperFactory = JdbcMapperFactory

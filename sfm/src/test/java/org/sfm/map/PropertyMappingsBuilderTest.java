@@ -37,7 +37,7 @@ public class PropertyMappingsBuilderTest {
         PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition> builder =
                 new PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition>(
                         classMeta,
-                        new DefaultPropertyNameMatcherFactory(),
+                        DefaultPropertyNameMatcherFactory.DEFAULT,
                         new RethrowMapperBuilderErrorHandler()
                 );
 
@@ -56,7 +56,7 @@ public class PropertyMappingsBuilderTest {
         PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition> builder2 =
                 new PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition>(
                         classMeta,
-                        new DefaultPropertyNameMatcherFactory(),
+                        DefaultPropertyNameMatcherFactory.DEFAULT,
                         new RethrowMapperBuilderErrorHandler()
                 );
 

@@ -34,7 +34,7 @@ public abstract class AbstractMapperFactory<
     private boolean failOnAsm = false;
     private int asmMapperNbFieldsLimit = MapperConfig.NO_ASM_MAPPER_THRESHOLD;
 
-	private PropertyNameMatcherFactory propertyNameMatcherFactory = new DefaultPropertyNameMatcherFactory();
+	private PropertyNameMatcherFactory propertyNameMatcherFactory = DefaultPropertyNameMatcherFactory.DEFAULT;
 
     private ReflectionService reflectionService = null;
 	private int maxMethodSize = MapperConfig.MAX_METHOD_SIZE;

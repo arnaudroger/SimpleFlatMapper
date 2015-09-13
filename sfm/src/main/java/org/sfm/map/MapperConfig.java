@@ -20,7 +20,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
     public static <S, K extends FieldKey<K>> MapperConfig<K, FieldMapperColumnDefinition<K>> fieldMapperConfig() {
         return new MapperConfig<K, FieldMapperColumnDefinition<K>>(
                 new IdentityFieldMapperColumnDefinitionProvider<K, S>(),
-                new DefaultPropertyNameMatcherFactory(),
+                DefaultPropertyNameMatcherFactory.DEFAULT,
                 new RethrowMapperBuilderErrorHandler(),
                 false,
                 NO_ASM_MAPPER_THRESHOLD,
@@ -31,7 +31,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
     public static <K extends FieldKey<K>, CD extends ColumnDefinition<K, CD>> MapperConfig<K, CD> config(ColumnDefinitionProvider<CD, K> columnDefinitionProvider) {
         return new MapperConfig<K, CD>(
                 columnDefinitionProvider,
-                new DefaultPropertyNameMatcherFactory(),
+                DefaultPropertyNameMatcherFactory.DEFAULT,
                 new RethrowMapperBuilderErrorHandler(),
                 false,
                 NO_ASM_MAPPER_THRESHOLD,

@@ -12,7 +12,7 @@ public class FloatCellValueReaderTest {
 
 	FloatCellValueReaderImpl reader = new FloatCellValueReaderImpl();
 	@Test
-	public void testReadInt() throws UnsupportedEncodingException {
+	public void testReadFloat() throws UnsupportedEncodingException {
 		testReadFloat(0);
 		testReadFloat(12345.33f);
 		testReadFloat(-12345.33f);
@@ -32,13 +32,22 @@ public class FloatCellValueReaderTest {
 	}
 
 	@Test
+	public void testFloatWithLeadingSpace() {
+		assertEquals(1.234, readFloat(" 1.234"), 0.00001);
+	}
+
+	@Test
 	public void testReadEmptyStringReturnNull() {
 		assertNull(reader.read(new char[10], 2, 0, null));
 	}
 
 	private void testReadFloat(float i) throws UnsupportedEncodingException {
-		final char[] chars = ("_" + Float.toString(i) + "_").toCharArray();
-		assertEquals(i, reader.read(chars, 1, chars.length-2, null).floatValue(), 0);
+		assertEquals(i, readFloat(Float.toString(i)), 0);
+	}
+
+	private float readFloat(String string) {
+		final char[] chars = ("_" + string + "_").toCharArray();
+		return reader.read(chars, 1, chars.length - 2, null).floatValue();
 	}
 
 }

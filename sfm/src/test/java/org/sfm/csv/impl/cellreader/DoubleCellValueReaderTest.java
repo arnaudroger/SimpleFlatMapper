@@ -12,7 +12,7 @@ public class DoubleCellValueReaderTest {
 
 	DoubleCellValueReaderImpl reader = new DoubleCellValueReaderImpl();
 	@Test
-	public void testReadInt() throws UnsupportedEncodingException {
+	public void testReadDouble() throws UnsupportedEncodingException {
 		testReadDouble(0);
 		testReadDouble(12345.33);
 		testReadDouble(-12345.33);
@@ -32,13 +32,22 @@ public class DoubleCellValueReaderTest {
 	}
 
 	@Test
+	public void testDoubleWithLeadingSpace() {
+		assertEquals(1.234, readDouble(" 1.234"), 0.00001);
+	}
+
+	@Test
 	public void testReadEmptyStringReturnNull() {
 		assertNull(reader.read(new char[10], 2, 0, null));
 	}
 
 	private void testReadDouble(double i) throws UnsupportedEncodingException {
-		final char[] chars = ("_" + Double.toString(i) + "_").toCharArray();
-		assertEquals(i, reader.read(chars, 1, chars.length-2, null).doubleValue(), 0);
+		assertEquals(i, readDouble(Double.toString(i)), 0);
+	}
+
+	private double readDouble(String string) {
+		final char[] chars = ("_" + string + "_").toCharArray();
+		return reader.read(chars, 1, chars.length - 2, null).doubleValue();
 	}
 
 }

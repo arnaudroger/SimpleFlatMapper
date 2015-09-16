@@ -129,7 +129,7 @@ public class CsvMapperOptionalTest {
 		builder.addMapping("id")
 		.addMapping("name")
 		.addMapping("email")
-		.addMapping("creationTime", CsvColumnDefinition.timeZoneDefinition(TimeZone.getTimeZone("Europe/London")))
+		.addMapping("creationTime")
 		.addMapping("typeOrdinal")
 		.addMapping("typeName");
 	}

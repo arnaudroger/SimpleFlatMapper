@@ -147,7 +147,7 @@ public class CsvWriterBuilder<T> {
     private static final AppendableInstantiator STRING_BUILDER_INSTANTIATOR = new AppendableInstantiator();
 
     public static <T> CsvWriterBuilder<T> newBuilder(Class<T> clazz) {
-        ClassMeta<T> classMeta = ReflectionService.disableAsm().getClassMeta(clazz);
+        ClassMeta<T> classMeta = ReflectionService.newInstance().getClassMeta(clazz);
         return CsvWriterBuilder.newBuilder(classMeta);
     }
 

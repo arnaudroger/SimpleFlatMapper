@@ -491,7 +491,7 @@ public class ResultSetGetterFactoryTest {
 
 	@Test
 	public void testJavaYear() throws Exception {
-		java.time.LocalDateTime ldt = java.time.LocalDateTime.of(2029, 1, 1, 1, 1, 1);
+		java.time.LocalDateTime ldt = java.time.LocalDateTime.of(2029, 1, 2, 1, 1, 1);
 
 		when(resultSet.getObject(1)).thenReturn(2029, ldt, new Date(ldt.toInstant(ZoneOffset.ofHours(0)).toEpochMilli()), null);
 		Getter<ResultSet, java.time.Year> getter = factory.<java.time.Year>newGetter(java.time.Year.class, key(Types.INTEGER), IDENTITY);

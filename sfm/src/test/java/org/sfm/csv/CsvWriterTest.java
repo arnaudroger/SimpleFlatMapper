@@ -115,26 +115,6 @@ public class CsvWriterTest {
     }
 
     @Test
-    public void testWriterWithCustomFieldFactory() throws  Exception {
-        StringWriter sw = new StringWriter();
-        CsvWriter.from(DbObject.class).fieldAppenderFactory(new DefaultFieldAppenderFactory() {
-            @Override
-            public <T, P> FieldMapper<T, Appendable> newFieldAppender(PropertyMapping<T, P, CsvColumnKey, ? extends ColumnDefinition<CsvColumnKey, ?>> pm, CellWriter cellWriter, MappingContextFactoryBuilder builder) {
-                return new FieldMapper<T, Appendable>() {
-                    @Override
-                    public void mapTo(T source, Appendable target, MappingContext<? super T> context) throws Exception {
-                        target.append("t");
-                    }
-                };
-            }
-        }).skipHeaders().to(sw).append(newDbObject());
-        assertEquals(
-                "t,t,t,t,t,t\r\n",
-                sw.toString());
-
-    }
-
-    @Test
     public void testWriterWithFormatter() throws ParseException, IOException {
         StringWriter sw = new StringWriter();
         CsvWriter.from(DbObject.class)

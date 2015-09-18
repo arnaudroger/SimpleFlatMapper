@@ -7,6 +7,7 @@ import org.sfm.csv.impl.writer.time.JavaTimeFormattingAppender;
 import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
 import java.time.temporal.TemporalAccessor;
 //IFJAVA8_END
+import org.sfm.map.FieldMapperToSourceFactory;
 import org.sfm.map.column.joda.JodaDateTimeFormatterProperty;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.FieldMapper;
@@ -29,24 +30,20 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class DefaultFieldAppenderFactory {
+public class FieldMapperToAppendableFactory implements FieldMapperToSourceFactory<Appendable, CsvColumnKey> {
 
     private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    private static final DefaultFieldAppenderFactory DEFAULT_FIELD_APPENDER_FACTORY = new DefaultFieldAppenderFactory();
+    private final CellWriter cellWriter;
 
-    @SuppressWarnings("unchecked")
-    public static DefaultFieldAppenderFactory instance() {
-        return DEFAULT_FIELD_APPENDER_FACTORY;
+    public FieldMapperToAppendableFactory(CellWriter cellWriter) {
+        this.cellWriter = cellWriter;
     }
 
-    public DefaultFieldAppenderFactory() {
-    }
-
+    @Override
     @SuppressWarnings("unchecked")
-    public <T, P> FieldMapper<T, Appendable> newFieldAppender(
+    public <T, P> FieldMapper<T, Appendable> newFieldMapperToSource(
             PropertyMapping<T, P, CsvColumnKey, ? extends ColumnDefinition<CsvColumnKey, ?>> pm,
-            CellWriter cellWriter,
             MappingContextFactoryBuilder builder) {
         if (pm == null) throw new NullPointerException("pm is null");
 

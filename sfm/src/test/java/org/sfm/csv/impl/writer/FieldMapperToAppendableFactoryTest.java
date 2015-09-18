@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.csv.DefaultFieldAppenderFactory;
+import org.sfm.csv.FieldMapperToAppendableFactory;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.context.MappingContextFactory;
 import org.sfm.map.column.DateFormatProperty;
@@ -30,9 +30,9 @@ import java.text.DecimalFormat;
 
 import static org.junit.Assert.*;
 
-public class DefaultFieldAppenderFactoryTest {
+public class FieldMapperToAppendableFactoryTest {
 
-    private DefaultFieldAppenderFactory defaultFieldAppenderFactory = DefaultFieldAppenderFactory.instance();
+    private FieldMapperToAppendableFactory defaultFieldAppenderFactory = new FieldMapperToAppendableFactory(CsvCellWriter.DEFAULT_WRITER);
 
     private ClassMeta<DbObject> dbObjectClassMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
     private ClassMeta<DbPrimitiveObjectWithSetter> dbPrimitiveObjectClassMeta = ReflectionService.newInstance().getClassMeta(DbPrimitiveObjectWithSetter.class);
@@ -82,8 +82,8 @@ public class DefaultFieldAppenderFactoryTest {
         MappingContextFactoryBuilder<JodaObject, CsvColumnKey> builder = getMappingContextBuilder();
         FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("yyyyMMdd")));
         FieldMapper<JodaObject, Appendable> fieldMapper =
-                defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
-                        CsvCellWriter.DEFAULT_WRITER, builder);
+                defaultFieldAppenderFactory.newFieldMapperToSource(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
+                        builder);
         testFieldMapper("20140607", fieldMapper, jodaObject, builder.newFactory());
     }
 
@@ -92,8 +92,8 @@ public class DefaultFieldAppenderFactoryTest {
         MappingContextFactoryBuilder<JodaObject, CsvColumnKey> builder = getMappingContextBuilder();
         FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new DateFormatProperty("yyyyMMdd"));
         FieldMapper<JodaObject, Appendable> fieldMapper =
-                defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
-                        CsvCellWriter.DEFAULT_WRITER, builder);
+                defaultFieldAppenderFactory.newFieldMapperToSource(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
+                        builder);
         testFieldMapper("20140607", fieldMapper, jodaObject, builder.newFactory());
     }
 
@@ -132,8 +132,8 @@ public class DefaultFieldAppenderFactoryTest {
         MappingContextFactoryBuilder<DbPrimitiveObjectWithSetter, CsvColumnKey> builder = getMappingContextBuilder();
         FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new FormatProperty(new DecimalFormat("0.0")));
         FieldMapper<DbPrimitiveObjectWithSetter, Appendable> fieldMapper =
-                defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping("pDouble", dbPrimitiveObjectClassMeta, format),
-                        CsvCellWriter.DEFAULT_WRITER, builder);
+                defaultFieldAppenderFactory.newFieldMapperToSource(newPropertyMapping("pDouble", dbPrimitiveObjectClassMeta, format),
+                        builder);
         testFieldMapper("3.1", fieldMapper, dbPrimitiveObject, builder.newFactory());
     }
     @Test
@@ -145,7 +145,7 @@ public class DefaultFieldAppenderFactoryTest {
     }
     public <T> void testFieldMapperForClassAndProp(String expected, String propName, ClassMeta<T> classMeta, T object) throws Exception {
         MappingContextFactoryBuilder<T, CsvColumnKey> builder = getMappingContextBuilder();
-        FieldMapper<T, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping(propName, classMeta), CsvCellWriter.DEFAULT_WRITER, builder);
+        FieldMapper<T, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldMapperToSource(newPropertyMapping(propName, classMeta), builder);
         testFieldMapper(expected, fieldMapper, object, builder.newFactory());
     }
 

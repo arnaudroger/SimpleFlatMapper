@@ -1,11 +1,10 @@
 package org.sfm.jdbc;
 
 
-import org.sfm.csv.CellWriter;
-import org.sfm.csv.CsvColumnKey;
 import org.sfm.jdbc.impl.setter.LongPreparedStatementSetter;
 import org.sfm.jdbc.impl.setter.StringPreparedStatementSetter;
 import org.sfm.map.FieldMapper;
+import org.sfm.map.FieldMapperToSourceFactory;
 import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
 import org.sfm.map.impl.fieldmapper.LongFieldMapper;
@@ -18,12 +17,12 @@ import org.sfm.reflect.primitive.LongGetter;
 import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 
-public class PreparedStatementFieldMapperFactory {
+public class PreparedStatementFieldMapperFactory implements FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey> {
 
     private static final PreparedStatementFieldMapperFactory INSTANCE = new PreparedStatementFieldMapperFactory();
 
     @SuppressWarnings("unchecked")
-    public <T, P> FieldMapper<T, PreparedStatement> newFieldAppender(
+    public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(
             PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm,
             MappingContextFactoryBuilder builder) {
 

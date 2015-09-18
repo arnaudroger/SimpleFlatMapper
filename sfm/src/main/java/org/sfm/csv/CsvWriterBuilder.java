@@ -20,122 +20,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CsvWriterBuilder<T> {
+public class CsvWriterBuilder<T> extends AbstractWriterBuilder<Appendable, T, CsvColumnKey, CsvWriterBuilder<T>> {
 
-    private final ReflectionService reflectionService;
-    private final MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig;
-
-    private final PropertyMappingsBuilder<T, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey>> propertyMappingsBuilder;
-    private final DefaultFieldAppenderFactory fieldAppenderFactory;
     private final CellWriter cellWriter;
-    private final ClassMeta<T> classMeta;
-
-    private int currentIndex = 0;
+    private final CellSeparatorAppender<T> cellSeparatorAppender;
 
     public CsvWriterBuilder(
             ClassMeta<T> classMeta,
             MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
-            DefaultFieldAppenderFactory fieldAppenderFactory,
+            FieldMapperToSourceFactory<Appendable, CsvColumnKey> fieldAppenderFactory,
             CellWriter cellWriter) {
-        this.fieldAppenderFactory = fieldAppenderFactory;
+        super(classMeta, Appendable.class, mapperConfig, fieldAppenderFactory);
         this.cellWriter = cellWriter;
-        this.reflectionService = classMeta.getReflectionService();
-        this.mapperConfig = mapperConfig;
-        this.propertyMappingsBuilder =
-                new PropertyMappingsBuilder<T, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey>>(
-                        classMeta,
-                        mapperConfig.propertyNameMatcherFactory(),
-                        mapperConfig.mapperBuilderErrorHandler());
-        this.classMeta = classMeta;
+        this.cellSeparatorAppender = new CellSeparatorAppender<T>(cellWriter);
     }
-
-    public CsvWriterBuilder<T> addColumn(String column) {
-        return addColumn(column, FieldMapperColumnDefinition.<CsvColumnKey>identity());
-
-    }
-    public CsvWriterBuilder<T> addColumn(String column,  FieldMapperColumnDefinition<CsvColumnKey> columnDefinition) {
-        propertyMappingsBuilder.addProperty(new CsvColumnKey(column, currentIndex++), columnDefinition);
-        return this;
-    }
-    public CsvWriterBuilder<T> addColumn(String column, ColumnProperty... properties) {
-        propertyMappingsBuilder.addProperty(new CsvColumnKey(column, currentIndex++), FieldMapperColumnDefinition.<CsvColumnKey>identity().add(properties));
-        return this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public Mapper<T, Appendable> mapper() {
-
-        final List<FieldMapper<T, Appendable>> mappers = new ArrayList<FieldMapper<T, Appendable>>();
-
-
-        final MappingContextFactoryBuilder mappingContextFactoryBuilder = new MappingContextFactoryBuilder(new KeySourceGetter<CsvColumnKey, T>() {
-            @Override
-            public Object getValue(CsvColumnKey key, T source) throws SQLException {
-                throw new UnsupportedOperationException();
-            }
-        });
-
-        final CellSeparatorAppender<T> cellSeparatorAppender = new CellSeparatorAppender<T>(cellWriter);
-        propertyMappingsBuilder.forEachProperties(
-                new ForEachCallBack<PropertyMapping<T, ?, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey>>>() {
-                    int i = 0;
-                    @Override
-                    public void handle(PropertyMapping<T, ?, CsvColumnKey,  FieldMapperColumnDefinition<CsvColumnKey>> pm) {
-                        FieldMapper<T, Appendable> fieldMapper =
-                                fieldAppenderFactory.newFieldAppender(
-                                        pm,
-                                        cellWriter,
-                                        mappingContextFactoryBuilder);
-                        if (i > 0) {
-                            mappers.add(cellSeparatorAppender);
-                        }
-                        mappers.add(fieldMapper);
-                        i++;
-                    }
-                }
-        );
-        mappers.add(new EndOfRowAppender<T>(cellWriter));
-
-
-        Mapper<T, Appendable> mapper;
-        FieldMapper[] fields = mappers.toArray(new FieldMapper[0]);
-        if (mappers.size() < 256) {
-            try {
-                mapper =
-                        reflectionService
-                                .getAsmFactory()
-                                .<T, Appendable>createMapper(
-                                        getKeys(),
-                                        fields,
-                                        new FieldMapper[0],
-                                        STRING_BUILDER_INSTANTIATOR,
-                                        TypeHelper.<T>toClass(classMeta.getType()),
-                                       Appendable.class
-                                );
-            } catch (Exception e) {
-                if (mapperConfig.failOnAsm()) {
-                    return ErrorHelper.rethrow(e);
-                } else {
-                    mapper = new MapperImpl<T, Appendable>(fields, new FieldMapper[0], STRING_BUILDER_INSTANTIATOR);
-                }
-            }
-
-        } else {
-            mapper = new MapperImpl<T, Appendable>(
-                    fields,
-                    new FieldMapper[0],
-                    STRING_BUILDER_INSTANTIATOR);
-        }
-
-        return
-            new ContextualMapper<T, Appendable>(mapper, mappingContextFactoryBuilder.newFactory());
-    }
-
-    private FieldKey<?>[] getKeys() {
-        return propertyMappingsBuilder.getKeys().toArray(new FieldKey[0]);
-    }
-
-
 
     public CsvWriterBuilder<T> defaultHeaders() {
         for (String column : classMeta.generateHeaders()) {
@@ -143,8 +41,6 @@ public class CsvWriterBuilder<T> {
         }
         return this;
     }
-
-    private static final AppendableInstantiator STRING_BUILDER_INSTANTIATOR = new AppendableInstantiator();
 
     public static <T> CsvWriterBuilder<T> newBuilder(Class<T> clazz) {
         ClassMeta<T> classMeta = ReflectionService.newInstance().getClassMeta(clazz);
@@ -158,7 +54,7 @@ public class CsvWriterBuilder<T> {
     public static <T> CsvWriterBuilder<T> newBuilder(ClassMeta<T> classMeta, CellWriter cellWriter) {
         MapperConfig<CsvColumnKey,FieldMapperColumnDefinition<CsvColumnKey>> config =
                 MapperConfig.<T, CsvColumnKey>fieldMapperConfig();
-        DefaultFieldAppenderFactory appenderFactory = DefaultFieldAppenderFactory.instance();
+        FieldMapperToAppendableFactory appenderFactory = new FieldMapperToAppendableFactory(cellWriter);
         CsvWriterBuilder<T> builder =
                 new CsvWriterBuilder<T>(
                         classMeta,
@@ -168,9 +64,31 @@ public class CsvWriterBuilder<T> {
         return builder;
     }
 
-    private static class AppendableInstantiator implements Instantiator<Object, Appendable> {
+    @Override
+    protected Instantiator<T, Appendable> getInstantiator() {
+        return new AppendableInstantiator<T>();
+    }
+
+    @Override
+    protected CsvColumnKey newKey(String column, int i) {
+        return new CsvColumnKey(column, i);
+    }
+
+    @Override
+    protected void preFieldProcess(List<FieldMapper<T, Appendable>> fieldMappers, PropertyMapping<T, ?, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm) {
+        if (pm.getColumnKey().getIndex() > 0) {
+            fieldMappers.add(cellSeparatorAppender);
+        }
+    }
+
+    @Override
+    protected void postMapperProcess(List<FieldMapper<T, Appendable>> fieldMappers) {
+        fieldMappers.add(new EndOfRowAppender<T>(cellWriter));
+    }
+
+    private static class AppendableInstantiator<T> implements Instantiator<T, Appendable> {
         @Override
-        public Appendable newInstance(Object o) throws Exception {
+        public Appendable newInstance(T o) throws Exception {
             return new StringBuilder();
         }
     }

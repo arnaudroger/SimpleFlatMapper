@@ -3,7 +3,7 @@ package org.sfm.csv.impl.writer.time;
 import org.junit.Test;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.impl.writer.CsvCellWriter;
-import org.sfm.csv.DefaultFieldAppenderFactory;
+import org.sfm.csv.FieldMapperToAppendableFactory;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.context.MappingContextFactory;
 import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
@@ -22,9 +22,9 @@ import java.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.assertEquals;
 
-public class DefaultFieldAppenderFactoryJavaTimeTest {
+public class FieldMapperToAppendableFactoryJavaTimeTest {
 
-    private DefaultFieldAppenderFactory defaultFieldAppenderFactory = DefaultFieldAppenderFactory.instance();
+    private FieldMapperToAppendableFactory defaultFieldAppenderFactory = new FieldMapperToAppendableFactory(CsvCellWriter.DEFAULT_WRITER);
 
     private ClassMeta<JavaTimeObject> javaTimeObjectClassMeta = ReflectionService.newInstance().getClassMeta(JavaTimeObject.class);
 
@@ -114,16 +114,16 @@ public class DefaultFieldAppenderFactoryJavaTimeTest {
     @Test
     public void testLocalDateTimeWithFormaterAppender() throws Exception {
         MappingContextFactoryBuilder<JavaTimeObject, CsvColumnKey> builder = getMappingContextBuilder();
-        FieldMapper<JavaTimeObject, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldAppender(
+        FieldMapper<JavaTimeObject, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldMapperToSource(
                 newPropertyMapping("localDateTime", javaTimeObjectClassMeta, FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("dd/MM/yyyy")))),
-                CsvCellWriter.DEFAULT_WRITER, builder);
+                builder);
         testFieldMapper("03/12/2011", fieldMapper, javaTimeObject, builder.newFactory());
 
     }
 
     public void testFieldMapperForClassAndProp(String expected, String propName, ClassMeta<JavaTimeObject> classMeta) throws Exception {
         MappingContextFactoryBuilder<JavaTimeObject, CsvColumnKey> builder = getMappingContextBuilder();
-        FieldMapper<JavaTimeObject, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldAppender(newPropertyMapping(propName, classMeta), CsvCellWriter.DEFAULT_WRITER, builder);
+        FieldMapper<JavaTimeObject, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldMapperToSource(newPropertyMapping(propName, classMeta), builder);
         testFieldMapper(expected, fieldMapper, javaTimeObject, builder.newFactory());
     }
 

@@ -73,8 +73,14 @@ public class PreparedStatementFieldMapperFactoryTest {
     }
 
     @Test
-    public void testMapInt() {
+    public void testMapInt() throws Exception {
+        newFieldMapperAndMapToPS(new StaticIntGetter<Object>(2), int.class);
+        newFieldMapperAndMapToPS(new StaticGetter<Object, Integer>(3), Integer.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Integer>(), Integer.class);
 
+        verify(ps).setInt(1, 2);
+        verify(ps).setInt(2, 3);
+        verify(ps).setNull(3, Types.INTEGER);
     }
 
     @Test

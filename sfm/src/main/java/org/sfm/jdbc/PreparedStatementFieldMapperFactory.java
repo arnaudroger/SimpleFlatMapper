@@ -93,6 +93,23 @@ public class PreparedStatementFieldMapperFactory implements FieldMapperToSourceF
             });
         factoryPerClass.put(Short.class, factoryPerClass.get(short.class));
 
+        factoryPerClass.put(int.class,
+                new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                        Getter<T, P> getter = pm.getPropertyMeta().getGetter();
+                        IntegerPreparedStatementSetter preparedStatementSetter = new IntegerPreparedStatementSetter(pm.getColumnKey().getIndex());
+
+                        if ((getter instanceof IntGetter)) {
+                            return new IntFieldMapper<T, PreparedStatement>((IntGetter<T>) getter, preparedStatementSetter);
+                        } else {
+                            return new FieldMapperImpl<T, PreparedStatement, Integer>((Getter<? super T, ? extends Integer>) getter, preparedStatementSetter);
+                        }
+                    }
+                });
+        factoryPerClass.put(Integer.class, factoryPerClass.get(int.class));
+
         factoryPerClass.put(long.class,
                 new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
                     @SuppressWarnings("unchecked")

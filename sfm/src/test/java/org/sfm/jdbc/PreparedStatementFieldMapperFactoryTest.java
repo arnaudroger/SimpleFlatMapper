@@ -6,10 +6,7 @@ import org.sfm.map.FieldMapper;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.impl.NullGetter;
-import org.sfm.reflect.impl.StaticBooleanGetter;
-import org.sfm.reflect.impl.StaticByteGetter;
-import org.sfm.reflect.impl.StaticGetter;
+import org.sfm.reflect.impl.*;
 import org.sfm.reflect.meta.PropertyMeta;
 
 import java.sql.PreparedStatement;
@@ -54,8 +51,14 @@ public class PreparedStatementFieldMapperFactoryTest {
     }
 
     @Test
-    public void testMapChar() {
+    public void testMapChar() throws Exception {
+        newFieldMapperAndMapToPS(new StaticCharacterGetter<Object>((char)2), char.class);
+        newFieldMapperAndMapToPS(new StaticGetter<Object, Character>((char) 3), Character.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Character>(), Character.class);
 
+        verify(ps).setInt(1, 2);
+        verify(ps).setInt(2, 3);
+        verify(ps).setNull(3, Types.INTEGER);
     }
 
     @Test

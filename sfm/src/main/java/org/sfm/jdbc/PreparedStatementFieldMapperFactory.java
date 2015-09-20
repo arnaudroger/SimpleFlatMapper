@@ -1,23 +1,18 @@
 package org.sfm.jdbc;
 
 
-import org.sfm.jdbc.impl.setter.BooleanPreparedStatementSetter;
-import org.sfm.jdbc.impl.setter.BytePreparedStatementSetter;
-import org.sfm.jdbc.impl.setter.LongPreparedStatementSetter;
-import org.sfm.jdbc.impl.setter.StringPreparedStatementSetter;
+import org.sfm.jdbc.impl.setter.*;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperToSourceFactory;
 import org.sfm.map.context.MappingContextFactoryBuilder;
-import org.sfm.map.impl.fieldmapper.BooleanFieldMapper;
-import org.sfm.map.impl.fieldmapper.ByteFieldMapper;
-import org.sfm.map.impl.fieldmapper.FieldMapperImpl;
-import org.sfm.map.impl.fieldmapper.LongFieldMapper;
+import org.sfm.map.impl.fieldmapper.*;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.primitive.BooleanGetter;
 import org.sfm.reflect.primitive.ByteGetter;
+import org.sfm.reflect.primitive.CharacterGetter;
 import org.sfm.reflect.primitive.LongGetter;
 
 import java.lang.reflect.Type;
@@ -66,6 +61,23 @@ public class PreparedStatementFieldMapperFactory implements FieldMapperToSourceF
                     }
                 });
         factoryPerClass.put(Byte.class, factoryPerClass.get(byte.class));
+
+        factoryPerClass.put(char.class,
+                new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                        Getter<T, P> getter = pm.getPropertyMeta().getGetter();
+                        CharacterPreparedStatementSetter preparedStatementSetter = new CharacterPreparedStatementSetter(pm.getColumnKey().getIndex());
+
+                        if ((getter instanceof CharacterGetter)) {
+                            return new CharacterFieldMapper<T, PreparedStatement>((CharacterGetter<T>) getter, preparedStatementSetter);
+                        } else {
+                            return new FieldMapperImpl<T, PreparedStatement, Character>((Getter<? super T, ? extends Character>) getter, preparedStatementSetter);
+                        }
+                    }
+                });
+        factoryPerClass.put(Character.class, factoryPerClass.get(char.class));
 
         factoryPerClass.put(long.class,
                 new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {

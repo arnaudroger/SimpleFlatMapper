@@ -10,10 +10,7 @@ import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
-import org.sfm.reflect.primitive.BooleanGetter;
-import org.sfm.reflect.primitive.ByteGetter;
-import org.sfm.reflect.primitive.CharacterGetter;
-import org.sfm.reflect.primitive.LongGetter;
+import org.sfm.reflect.primitive.*;
 
 import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
@@ -78,6 +75,23 @@ public class PreparedStatementFieldMapperFactory implements FieldMapperToSourceF
                     }
                 });
         factoryPerClass.put(Character.class, factoryPerClass.get(char.class));
+
+        factoryPerClass.put(short.class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    Getter<T, P> getter = pm.getPropertyMeta().getGetter();
+                    ShortPreparedStatementSetter preparedStatementSetter = new ShortPreparedStatementSetter(pm.getColumnKey().getIndex());
+
+                    if ((getter instanceof ShortGetter)) {
+                        return new ShortFieldMapper<T, PreparedStatement>((ShortGetter<T>) getter, preparedStatementSetter);
+                    } else {
+                        return new FieldMapperImpl<T, PreparedStatement, Short>((Getter<? super T, ? extends Short>) getter, preparedStatementSetter);
+                    }
+                }
+            });
+        factoryPerClass.put(Short.class, factoryPerClass.get(short.class));
 
         factoryPerClass.put(long.class,
                 new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {

@@ -62,8 +62,14 @@ public class PreparedStatementFieldMapperFactoryTest {
     }
 
     @Test
-    public void testMapShort() {
+    public void testMapShort() throws Exception {
+        newFieldMapperAndMapToPS(new StaticShortGetter<Object>((short)2), short.class);
+        newFieldMapperAndMapToPS(new StaticGetter<Object, Short>((short) 3), Short.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Short>(), Short.class);
 
+        verify(ps).setShort(1, (short) 2);
+        verify(ps).setShort(2, (short) 3);
+        verify(ps).setNull(3, Types.SMALLINT);
     }
 
     @Test

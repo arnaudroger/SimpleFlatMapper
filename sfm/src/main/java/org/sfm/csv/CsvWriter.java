@@ -1,6 +1,7 @@
 package org.sfm.csv;
 
 import org.sfm.csv.impl.writer.CsvCellWriter;
+import org.sfm.csv.mapper.FieldMapperToAppendableFactory;
 import org.sfm.map.Mapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.column.ColumnProperty;

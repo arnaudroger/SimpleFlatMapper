@@ -3,7 +3,7 @@ package org.sfm.csv.impl.writer.time;
 import org.junit.Test;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.impl.writer.CsvCellWriter;
-import org.sfm.csv.FieldMapperToAppendableFactory;
+import org.sfm.csv.mapper.FieldMapperToAppendableFactory;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.context.MappingContextFactory;
 import org.sfm.map.column.time.JavaDateTimeFormatterProperty;

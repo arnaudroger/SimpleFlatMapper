@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.csv.FieldMapperToAppendableFactory;
+import org.sfm.csv.mapper.FieldMapperToAppendableFactory;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.context.MappingContextFactory;
 import org.sfm.map.column.DateFormatProperty;
@@ -34,7 +34,6 @@ public class FieldMapperToAppendableFactoryTest {
 
     private FieldMapperToAppendableFactory defaultFieldAppenderFactory = new FieldMapperToAppendableFactory(CsvCellWriter.DEFAULT_WRITER);
 
-    private ClassMeta<DbObject> dbObjectClassMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
     private ClassMeta<DbPrimitiveObjectWithSetter> dbPrimitiveObjectClassMeta = ReflectionService.newInstance().getClassMeta(DbPrimitiveObjectWithSetter.class);
 
     DbObject dbObject = new DbObject();

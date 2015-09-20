@@ -1,5 +1,7 @@
-package org.sfm.csv;
+package org.sfm.csv.mapper;
 
+import org.sfm.csv.CellWriter;
+import org.sfm.csv.CsvColumnKey;
 import org.sfm.csv.impl.writer.*;
 
 //IFJAVA8_START

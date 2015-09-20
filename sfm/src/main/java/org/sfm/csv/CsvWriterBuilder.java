@@ -2,22 +2,13 @@ package org.sfm.csv;
 
 
 import org.sfm.csv.impl.writer.*;
+import org.sfm.csv.mapper.FieldMapperToAppendableFactory;
 import org.sfm.map.*;
-import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.context.KeySourceGetter;
-import org.sfm.map.context.MappingContextFactoryBuilder;
-import org.sfm.map.mapper.ContextualMapper;
-import org.sfm.map.mapper.MapperImpl;
 import org.sfm.map.mapper.PropertyMapping;
-import org.sfm.map.mapper.PropertyMappingsBuilder;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.utils.ErrorHelper;
-import org.sfm.utils.ForEachCallBack;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CsvWriterBuilder<T> extends AbstractWriterBuilder<Appendable, T, CsvColumnKey, CsvWriterBuilder<T>> {

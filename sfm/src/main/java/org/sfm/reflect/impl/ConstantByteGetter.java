@@ -3,10 +3,10 @@ package org.sfm.reflect.impl;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.ByteGetter;
 
-public class StaticByteGetter<T> implements ByteGetter, Getter<T, Byte> {
+public class ConstantByteGetter<T> implements ByteGetter, Getter<T, Byte> {
     private final byte value;
 
-    public StaticByteGetter(byte value) {
+    public ConstantByteGetter(byte value) {
         this.value = value;
     }
 

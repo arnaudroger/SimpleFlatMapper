@@ -3,10 +3,10 @@ package org.sfm.reflect.impl;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.CharacterGetter;
 
-public class StaticCharacterGetter<T> implements CharacterGetter, Getter<T, Character> {
+public class ConstantCharacterGetter<T> implements CharacterGetter, Getter<T, Character> {
     private final char value;
 
-    public StaticCharacterGetter(char value) {
+    public ConstantCharacterGetter(char value) {
         this.value = value;
     }
 

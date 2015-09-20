@@ -30,8 +30,8 @@ public class PreparedStatementFieldMapperFactoryTest {
 
     @Test
     public void testMapBoolean() throws Exception {
-        newFieldMapperAndMapToPS(new StaticBooleanGetter<Object>(true), boolean.class);
-        newFieldMapperAndMapToPS(new StaticGetter<Object, Boolean>(false), Boolean.class);
+        newFieldMapperAndMapToPS(new ConstantBooleanGetter<Object>(true), boolean.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Boolean>(false), Boolean.class);
         newFieldMapperAndMapToPS(new NullGetter<Object, Boolean>(), Boolean.class);
 
         verify(ps).setBoolean(1, true);
@@ -41,8 +41,8 @@ public class PreparedStatementFieldMapperFactoryTest {
 
     @Test
     public void testMapByte() throws Exception {
-        newFieldMapperAndMapToPS(new StaticByteGetter<Object>((byte)2), byte.class);
-        newFieldMapperAndMapToPS(new StaticGetter<Object, Byte>((byte) 3), Byte.class);
+        newFieldMapperAndMapToPS(new ConstantByteGetter<Object>((byte)2), byte.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Byte>((byte) 3), Byte.class);
         newFieldMapperAndMapToPS(new NullGetter<Object, Byte>(), Byte.class);
 
         verify(ps).setByte(1, (byte) 2);
@@ -52,8 +52,8 @@ public class PreparedStatementFieldMapperFactoryTest {
 
     @Test
     public void testMapChar() throws Exception {
-        newFieldMapperAndMapToPS(new StaticCharacterGetter<Object>((char)2), char.class);
-        newFieldMapperAndMapToPS(new StaticGetter<Object, Character>((char) 3), Character.class);
+        newFieldMapperAndMapToPS(new ConstantCharacterGetter<Object>((char)2), char.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Character>((char) 3), Character.class);
         newFieldMapperAndMapToPS(new NullGetter<Object, Character>(), Character.class);
 
         verify(ps).setInt(1, 2);
@@ -63,8 +63,8 @@ public class PreparedStatementFieldMapperFactoryTest {
 
     @Test
     public void testMapShort() throws Exception {
-        newFieldMapperAndMapToPS(new StaticShortGetter<Object>((short)2), short.class);
-        newFieldMapperAndMapToPS(new StaticGetter<Object, Short>((short) 3), Short.class);
+        newFieldMapperAndMapToPS(new ConstantShortGetter<Object>((short)2), short.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Short>((short) 3), Short.class);
         newFieldMapperAndMapToPS(new NullGetter<Object, Short>(), Short.class);
 
         verify(ps).setShort(1, (short) 2);
@@ -74,8 +74,8 @@ public class PreparedStatementFieldMapperFactoryTest {
 
     @Test
     public void testMapInt() throws Exception {
-        newFieldMapperAndMapToPS(new StaticIntGetter<Object>(2), int.class);
-        newFieldMapperAndMapToPS(new StaticGetter<Object, Integer>(3), Integer.class);
+        newFieldMapperAndMapToPS(new ConstantIntGetter<Object>(2), int.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Integer>(3), Integer.class);
         newFieldMapperAndMapToPS(new NullGetter<Object, Integer>(), Integer.class);
 
         verify(ps).setInt(1, 2);
@@ -84,8 +84,14 @@ public class PreparedStatementFieldMapperFactoryTest {
     }
 
     @Test
-    public void testMapLong() {
+    public void testMapLong() throws Exception {
+        newFieldMapperAndMapToPS(new ConstantLongGetter<Object>((long)2), long.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Long>((long) 3), Long.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Long>(), Long.class);
 
+        verify(ps).setLong(1, (long) 2);
+        verify(ps).setLong(2, (long) 3);
+        verify(ps).setNull(3, Types.BIGINT);
     }
 
     @Test

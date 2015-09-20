@@ -3,10 +3,10 @@ package org.sfm.reflect.impl;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.BooleanGetter;
 
-public class StaticBooleanGetter<T> implements BooleanGetter, Getter<T, Boolean> {
+public class ConstantBooleanGetter<T> implements BooleanGetter, Getter<T, Boolean> {
     private final boolean value;
 
-    public StaticBooleanGetter(boolean value) {
+    public ConstantBooleanGetter(boolean value) {
         this.value = value;
     }
 

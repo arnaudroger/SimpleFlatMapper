@@ -95,13 +95,25 @@ public class PreparedStatementFieldMapperFactoryTest {
     }
 
     @Test
-    public void testMapFloat() {
+    public void testMapFloat() throws Exception {
+        newFieldMapperAndMapToPS(new ConstantFloatGetter<Object>((float)2), float.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Float>((float) 3), Float.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Float>(), Float.class);
 
+        verify(ps).setFloat(1, (float) 2);
+        verify(ps).setFloat(2, (float) 3);
+        verify(ps).setNull(3, Types.FLOAT);
     }
 
     @Test
-    public void testMapDouble() {
+    public void testMapDouble() throws Exception {
+        newFieldMapperAndMapToPS(new ConstantDoubleGetter<Object>((double)2), double.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Double>((double) 3), Double.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Double>(), Double.class);
 
+        verify(ps).setDouble(1, (double) 2);
+        verify(ps).setDouble(2, (double) 3);
+        verify(ps).setNull(3, Types.DOUBLE);
     }
 
     @Test

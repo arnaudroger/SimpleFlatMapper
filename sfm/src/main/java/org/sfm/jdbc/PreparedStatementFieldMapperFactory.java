@@ -127,6 +127,40 @@ public class PreparedStatementFieldMapperFactory implements FieldMapperToSourceF
                 });
         factoryPerClass.put(Long.class, factoryPerClass.get(long.class));
 
+        factoryPerClass.put(float.class,
+                new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                        Getter<T, P> getter = pm.getPropertyMeta().getGetter();
+                        FloatPreparedStatementSetter preparedStatementSetter = new FloatPreparedStatementSetter(pm.getColumnKey().getIndex());
+
+                        if ((getter instanceof FloatGetter)) {
+                            return new FloatFieldMapper<T, PreparedStatement>((FloatGetter<T>) getter, preparedStatementSetter);
+                        } else {
+                            return new FieldMapperImpl<T, PreparedStatement, Float>((Getter<? super T, ? extends Float>) getter, preparedStatementSetter);
+                        }
+                    }
+                });
+        factoryPerClass.put(Float.class, factoryPerClass.get(float.class));
+
+        factoryPerClass.put(double.class,
+                new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                        Getter<T, P> getter = pm.getPropertyMeta().getGetter();
+                        DoublePreparedStatementSetter preparedStatementSetter = new DoublePreparedStatementSetter(pm.getColumnKey().getIndex());
+
+                        if ((getter instanceof DoubleGetter)) {
+                            return new DoubleFieldMapper<T, PreparedStatement>((DoubleGetter<T>) getter, preparedStatementSetter);
+                        } else {
+                            return new FieldMapperImpl<T, PreparedStatement, Double>((Getter<? super T, ? extends Double>) getter, preparedStatementSetter);
+                        }
+                    }
+                });
+        factoryPerClass.put(Double.class, factoryPerClass.get(double.class));
+
         factoryPerClass.put(String.class,
             new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
                 @Override

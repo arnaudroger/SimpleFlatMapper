@@ -9,11 +9,15 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.impl.*;
 import org.sfm.reflect.meta.PropertyMeta;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -130,6 +134,26 @@ public class PreparedStatementFieldMapperFactoryTest {
     }
 
     @Test
+    public void testMapSqlDate() throws Exception {
+        final java.sql.Date date = new java.sql.Date(new Date().getTime());
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, java.sql.Date>(date), java.sql.Date.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, java.sql.Date>(), java.sql.Date.class);
+
+        verify(ps).setDate(1, date);
+        verify(ps).setNull(2, Types.DATE);
+    }
+
+    @Test
+    public void testMapTimestamp() throws Exception {
+        final Timestamp date = new Timestamp(new Date().getTime());
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Timestamp>(date), Timestamp.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Timestamp>(), Timestamp.class);
+
+        verify(ps).setTimestamp(1, date);
+        verify(ps).setNull(2, Types.TIMESTAMP);
+    }
+
+    @Test
     public void testMapCalendar() throws Exception {
         final Date date = new Date();
         final Calendar cal = Calendar.getInstance();
@@ -153,13 +177,13 @@ public class PreparedStatementFieldMapperFactoryTest {
 
 
     @Test
-    public void testMapUUID() {
+    public void testMapURL() throws Exception {
+        URL url = new URL("https://github.com/arnaudroger/SimpleFlatMapper/");
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, URL>(url), URL.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, URL>(), URL.class);
 
-    }
-
-    @Test
-    public void testMapURL() {
-
+        verify(ps).setURL(1, url);
+        verify(ps).setNull(2, Types.DATALINK);
     }
 
 

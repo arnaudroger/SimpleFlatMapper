@@ -18,6 +18,7 @@ import org.sfm.reflect.primitive.*;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.sql.PreparedStatement;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
@@ -207,6 +208,16 @@ public class PreparedStatementFieldMapperFactory implements FieldMapperToSourceF
                     return new FieldMapperImpl<T, PreparedStatement, java.sql.Date>(
                             (Getter<T, ? extends java.sql.Date>) pm.getPropertyMeta().getGetter(),
                             new DatePreparedStatementSetter(pm.getColumnKey().getIndex()));
+                }
+            });
+        factoryPerClass.put(Time.class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    return new FieldMapperImpl<T, PreparedStatement, Time>(
+                            (Getter<T, ? extends Time>) pm.getPropertyMeta().getGetter(),
+                            new TimePreparedStatementSetter(pm.getColumnKey().getIndex()));
                 }
             });
         factoryPerClass.put(Calendar.class,

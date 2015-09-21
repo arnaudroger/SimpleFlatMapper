@@ -11,10 +11,7 @@ import org.sfm.reflect.meta.PropertyMeta;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -151,6 +148,16 @@ public class PreparedStatementFieldMapperFactoryTest {
 
         verify(ps).setTimestamp(1, date);
         verify(ps).setNull(2, Types.TIMESTAMP);
+    }
+
+    @Test
+    public void testMapTime() throws Exception {
+        final Time date = new Time(new Date().getTime());
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Time>(date), Time.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Time>(), Time.class);
+
+        verify(ps).setTime(1, date);
+        verify(ps).setNull(2, Types.TIME);
     }
 
     @Test

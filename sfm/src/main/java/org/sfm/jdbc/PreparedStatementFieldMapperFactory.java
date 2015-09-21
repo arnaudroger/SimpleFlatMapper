@@ -1,6 +1,8 @@
 package org.sfm.jdbc;
 
 
+import org.sfm.jdbc.impl.convert.CalendarToTimestampConverter;
+import org.sfm.jdbc.impl.convert.UtilDateToTimestampConverter;
 import org.sfm.jdbc.impl.setter.*;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperToSourceFactory;
@@ -9,11 +11,15 @@ import org.sfm.map.impl.fieldmapper.*;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.GetterWithConverter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.primitive.*;
 
 import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -169,6 +175,30 @@ public class PreparedStatementFieldMapperFactory implements FieldMapperToSourceF
                             new StringPreparedStatementSetter(pm.getColumnKey().getIndex()));
                 }
             });
+        factoryPerClass.put(Date.class,
+                new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                        return new FieldMapperImpl<T, PreparedStatement, Timestamp>(
+                                new GetterWithConverter<T, Date, Timestamp>(
+                                        new UtilDateToTimestampConverter(),
+                                        (Getter<T, Date>) pm.getPropertyMeta().getGetter()),
+                                new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                    }
+                });
+        factoryPerClass.put(Calendar.class,
+                new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                        return new FieldMapperImpl<T, PreparedStatement, Timestamp>(
+                                new GetterWithConverter<T, Calendar, Timestamp>(
+                                        new CalendarToTimestampConverter(),
+                                        (Getter<T, Calendar>) pm.getPropertyMeta().getGetter()),
+                                new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                    }
+                });
     }
 
     @SuppressWarnings("unchecked")

@@ -10,7 +10,10 @@ import org.sfm.reflect.impl.*;
 import org.sfm.reflect.meta.PropertyMeta;
 
 import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Calendar;
+import java.util.Date;
 
 import static org.mockito.Mockito.*;
 
@@ -117,18 +120,35 @@ public class PreparedStatementFieldMapperFactoryTest {
     }
 
     @Test
-    public void testMapDate() {
+    public void testMapDateNoSqlType() throws Exception {
+        final Date date = new Date();
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Date>(date), Date.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Date>(), Date.class);
 
+        verify(ps).setTimestamp(1, new Timestamp(date.getTime()));
+        verify(ps).setNull(2, Types.TIMESTAMP);
     }
 
     @Test
-    public void testMapCalendar() {
+    public void testMapCalendar() throws Exception {
+        final Date date = new Date();
+        final Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
 
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Calendar>(cal), Calendar.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Calendar>(), Calendar.class);
+
+        verify(ps).setTimestamp(1, new Timestamp(date.getTime()));
+        verify(ps).setNull(2, Types.TIMESTAMP);
     }
 
     @Test
-    public void testMapString() {
+    public void testMapString() throws Exception {
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, String>("xyz"), String.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, String>(), String.class);
 
+        verify(ps).setString(1, "xyz");
+        verify(ps).setNull(2, Types.VARCHAR);
     }
 
 

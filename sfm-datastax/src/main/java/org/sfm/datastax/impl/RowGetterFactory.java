@@ -181,6 +181,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
         });
 
         getterFactories.put(UUID.class, new GetterFactory<GettableByIndexData, DatastaxColumnKey>() {
+            @SuppressWarnings("unchecked")
             @Override
             public <P> Getter<GettableByIndexData, P> newGetter(Type target, DatastaxColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
                 if (key.getDataType() == null || UUID.class.equals(key.getDataType().asJavaClass())) {

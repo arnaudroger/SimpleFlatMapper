@@ -170,6 +170,7 @@ public class PreparedStatementFieldMapperFactory implements FieldMapperToSourceF
 
         factoryPerClass.put(String.class,
             new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
                 @Override
                 public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
                     return new FieldMapperImpl<T, PreparedStatement, String>((Getter<? super T, ? extends String>) pm.getPropertyMeta().getGetter(),

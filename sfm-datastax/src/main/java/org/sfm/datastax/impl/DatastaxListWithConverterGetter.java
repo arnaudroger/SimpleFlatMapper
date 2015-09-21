@@ -5,9 +5,7 @@ import org.sfm.reflect.Getter;
 import org.sfm.utils.conv.Converter;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class DatastaxListWithConverterGetter<I, T> implements Getter<GettableByIndexData, List<T>> {
 

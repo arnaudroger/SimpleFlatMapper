@@ -8,7 +8,6 @@ import org.sfm.tuples.Tuple2;
 import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -52,10 +52,12 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
         return addColumn(column, FieldMapperColumnDefinition.<K>identity());
 
     }
+    @SuppressWarnings("unchecked")
     public B addColumn(String column,  FieldMapperColumnDefinition<K> columnDefinition) {
         propertyMappingsBuilder.addProperty(newKey(column, currentIndex++), columnDefinition);
         return (B) this;
     }
+    @SuppressWarnings("unchecked")
     public B addColumn(String column, ColumnProperty... properties) {
         propertyMappingsBuilder.addProperty(newKey(column, currentIndex++), FieldMapperColumnDefinition.<K>identity().add(properties));
         return (B) this;

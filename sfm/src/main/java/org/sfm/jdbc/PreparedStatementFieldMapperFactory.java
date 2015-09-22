@@ -1,8 +1,10 @@
 package org.sfm.jdbc;
 
 
+import org.joda.time.DateTime;
 import org.sfm.jdbc.impl.convert.CalendarToTimestampConverter;
 import org.sfm.jdbc.impl.convert.UtilDateToTimestampConverter;
+import org.sfm.jdbc.impl.convert.joda.JodaDateTimeToTimestampConverter;
 import org.sfm.jdbc.impl.setter.*;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperToSourceFactory;
@@ -343,20 +345,43 @@ public class PreparedStatementFieldMapperFactory implements FieldMapperToSourceF
             });
     }
 
+    private static final FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey> jodaTimeFieldMapperToSourceFactory =
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.DateTime.class)) {
+                        TimestampPreparedStatementSetter setter = new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex());
+                        Getter<T, Timestamp> getter =
+                                new GetterWithConverter<T, DateTime, Timestamp>(
+                                        new JodaDateTimeToTimestampConverter(),
+                                        (Getter<? super T, ? extends DateTime>) pm.getPropertyMeta().getGetter()
+                                );
+                        return new FieldMapperImpl<T, PreparedStatement, Timestamp>(getter, setter);
+                    }
+                    return null;
+                }
+            };
+
     @SuppressWarnings("unchecked")
     public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(
             PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm,
             MappingContextFactoryBuilder builder) {
+        FieldMapper<T, PreparedStatement> fieldMapper = null;
 
         Type propertyType = pm.getPropertyMeta().getPropertyType();
 
         FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey> fieldMapperToSourceFactory = factoryPerClass.get(TypeHelper.toClass(propertyType));
 
         if (fieldMapperToSourceFactory != null) {
-            return fieldMapperToSourceFactory.newFieldMapperToSource(pm, builder);
+            fieldMapper = fieldMapperToSourceFactory.newFieldMapperToSource(pm, builder);
         }
 
-        return null;
+        if (fieldMapper == null) {
+            fieldMapper = jodaTimeFieldMapperToSourceFactory.newFieldMapperToSource(pm, builder);
+        }
+
+        return fieldMapper;
     }
 
     public static PreparedStatementFieldMapperFactory instance() {

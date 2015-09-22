@@ -18,7 +18,6 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.Date;
 
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 public class PreparedStatementFieldMapperFactoryTest {
@@ -304,6 +303,17 @@ public class PreparedStatementFieldMapperFactoryTest {
 
         verify(ps).setArray(1, value);
         verify(ps).setNull(2, Types.ARRAY);
+    }
+
+    @Test
+    public void testJodaDateTime() throws Exception {
+        org.joda.time.DateTime value = new org.joda.time.DateTime();
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.DateTime>(value), org.joda.time.DateTime.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, org.joda.time.DateTime>(), org.joda.time.DateTime.class);
+
+        verify(ps).setTimestamp(1, new Timestamp(value.getMillis()));
+        verify(ps).setNull(2, Types.TIMESTAMP);
     }
 
     @Test

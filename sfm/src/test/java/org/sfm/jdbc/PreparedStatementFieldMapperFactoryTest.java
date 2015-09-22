@@ -9,13 +9,16 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.impl.*;
 import org.sfm.reflect.meta.PropertyMeta;
 
-import java.net.MalformedURLException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 public class PreparedStatementFieldMapperFactoryTest {
@@ -193,7 +196,125 @@ public class PreparedStatementFieldMapperFactoryTest {
         verify(ps).setNull(2, Types.DATALINK);
     }
 
+    @Test
+    public void testBigDecimal() throws Exception {
+        BigDecimal value = new BigDecimal("234.45");
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, BigDecimal>(value), BigDecimal.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, BigDecimal>(), BigDecimal.class);
 
+        verify(ps).setBigDecimal(1, value);
+        verify(ps).setNull(2, Types.NUMERIC);
+    }
+
+    @Test
+    public void testInputStream() throws Exception {
+        InputStream value = new ByteArrayInputStream(new byte[] { 1, 2, 3, 4 });
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, InputStream>(value), InputStream.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, InputStream>(), InputStream.class);
+
+        verify(ps).setBinaryStream(1, value);
+        verify(ps).setNull(2, Types.BINARY);
+    }
+
+    @Test
+    public void testBlob() throws Exception {
+        Blob value = mock(Blob.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Blob>(value), Blob.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Blob>(), Blob.class);
+
+        verify(ps).setBlob(1, value);
+        verify(ps).setNull(2, Types.BINARY);
+    }
+
+    @Test
+    public void testBytes() throws Exception {
+        byte[] value = new byte[] { 1, 2, 3, 4 };
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, byte[]>(value), byte[].class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, byte[]>(), byte[].class);
+
+        verify(ps).setBytes(1, value);
+        verify(ps).setNull(2, Types.BINARY);
+    }
+
+    @Test
+    public void testRef() throws Exception {
+        Ref value = mock(Ref.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Ref>(value), Ref.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Ref>(), Ref.class);
+
+        verify(ps).setRef(1, value);
+        verify(ps).setNull(2, Types.REF);
+    }
+
+    @Test
+    public void testReader() throws Exception {
+        Reader value = mock(Reader.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Reader>(value), Reader.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Reader>(), Reader.class);
+
+        verify(ps).setCharacterStream(1, value);
+        verify(ps).setNull(2, Types.VARCHAR);
+    }
+
+    @Test
+    public void testClob() throws Exception {
+        Clob value = mock(Clob.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Clob>(value), Clob.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Clob>(), Clob.class);
+
+        verify(ps).setClob(1, value);
+        verify(ps).setNull(2, Types.CLOB);
+    }
+
+    @Test
+    public void testNClob() throws Exception {
+        NClob value = mock(NClob.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, NClob>(value), NClob.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, NClob>(), NClob.class);
+
+        verify(ps).setNClob(1, value);
+        verify(ps).setNull(2, Types.NCLOB);
+    }
+
+    @Test
+    public void testRowId() throws Exception {
+        RowId value = mock(RowId.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, RowId>(value), RowId.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, RowId>(), RowId.class);
+
+        verify(ps).setRowId(1, value);
+        verify(ps).setNull(2, Types.ROWID);
+    }
+
+    @Test
+    public void testSQLXML() throws Exception {
+        SQLXML value = mock(SQLXML.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, SQLXML>(value), SQLXML.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, SQLXML>(), SQLXML.class);
+
+        verify(ps).setSQLXML(1, value);
+        verify(ps).setNull(2, Types.SQLXML);
+    }
+
+    @Test
+    public void testArray() throws Exception {
+        Array value = mock(Array.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Array>(value), Array.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, Array>(), Array.class);
+
+        verify(ps).setArray(1, value);
+        verify(ps).setNull(2, Types.ARRAY);
+    }
+
+    @Test
+    public void testJodaTime() throws Exception {
+//        fail();
+    }
+
+    @Test
+    public void testJavaTime() throws Exception {
+//        fail();
+    }
 
     protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz) throws Exception {
         FieldMapper<T, PreparedStatement> fieldMapper = factory.newFieldMapperToSource(newPropertyMapping(getter, clazz), null);

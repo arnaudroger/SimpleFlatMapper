@@ -15,11 +15,12 @@ import org.sfm.reflect.GetterWithConverter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.primitive.*;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.PreparedStatement;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -239,6 +240,105 @@ public class PreparedStatementFieldMapperFactory implements FieldMapperToSourceF
                 public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
                     return new FieldMapperImpl<T, PreparedStatement, URL>((Getter<? super T, ? extends URL>) pm.getPropertyMeta().getGetter(),
                             new URLPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                }
+            });
+        factoryPerClass.put(Ref.class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    return new FieldMapperImpl<T, PreparedStatement, Ref>((Getter<? super T, ? extends Ref>) pm.getPropertyMeta().getGetter(),
+                            new RefPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                }
+            });
+        factoryPerClass.put(BigDecimal.class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    return new FieldMapperImpl<T, PreparedStatement, BigDecimal>((Getter<? super T, ? extends BigDecimal>) pm.getPropertyMeta().getGetter(),
+                            new BigDecimalPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                }
+            });
+        factoryPerClass.put(Array.class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    return new FieldMapperImpl<T, PreparedStatement, Array>((Getter<? super T, ? extends Array>) pm.getPropertyMeta().getGetter(),
+                            new ArrayPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                }
+            });
+        factoryPerClass.put(byte[].class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    return new FieldMapperImpl<T, PreparedStatement, byte[]>((Getter<? super T, byte[]>) pm.getPropertyMeta().getGetter(),
+                            new BytesPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                }
+            });
+        factoryPerClass.put(NClob.class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    return new FieldMapperImpl<T, PreparedStatement, NClob>((Getter<? super T, ? extends NClob>) pm.getPropertyMeta().getGetter(),
+                            new NClobPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                }
+            });
+        factoryPerClass.put(RowId.class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    return new FieldMapperImpl<T, PreparedStatement, RowId>((Getter<? super T, ? extends RowId>) pm.getPropertyMeta().getGetter(),
+                            new RowIdPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                }
+            });
+        factoryPerClass.put(Blob.class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    return new FieldMapperImpl<T, PreparedStatement, Blob>((Getter<? super T, ? extends Blob>) pm.getPropertyMeta().getGetter(),
+                            new BlobPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                }
+            });
+        factoryPerClass.put(Clob.class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    return new FieldMapperImpl<T, PreparedStatement, Clob>((Getter<? super T, ? extends Clob>) pm.getPropertyMeta().getGetter(),
+                            new ClobPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                }
+            });
+        factoryPerClass.put(InputStream.class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    return new FieldMapperImpl<T, PreparedStatement, InputStream>((Getter<? super T, ? extends InputStream>) pm.getPropertyMeta().getGetter(),
+                            new InputStreamPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                }
+            });
+        factoryPerClass.put(Reader.class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    return new FieldMapperImpl<T, PreparedStatement, Reader>((Getter<? super T, ? extends Reader>) pm.getPropertyMeta().getGetter(),
+                            new ReaderPreparedStatementSetter(pm.getColumnKey().getIndex()));
+                }
+            });
+        factoryPerClass.put(SQLXML.class,
+            new FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <T, P> FieldMapper<T, PreparedStatement> newFieldMapperToSource(PropertyMapping<T, P, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm, MappingContextFactoryBuilder builder) {
+                    return new FieldMapperImpl<T, PreparedStatement, SQLXML>((Getter<? super T, ? extends SQLXML>) pm.getPropertyMeta().getGetter(),
+                            new SQLXMLPreparedStatementSetter(pm.getColumnKey().getIndex()));
                 }
             });
     }

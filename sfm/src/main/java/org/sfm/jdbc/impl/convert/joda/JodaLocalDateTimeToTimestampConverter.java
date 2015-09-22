@@ -1,21 +1,20 @@
 package org.sfm.jdbc.impl.convert.joda;
 
-import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
 import org.sfm.utils.conv.Converter;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 public class JodaLocalDateTimeToTimestampConverter implements Converter<LocalDateTime, Timestamp> {
-    private final ZoneOffset offset;
+    private final DateTimeZone dateTimeZone;
 
-    public JodaLocalDateTimeToTimestampConverter(ZoneOffset offset) {
-        this.offset = offset;
+    public JodaLocalDateTimeToTimestampConverter(DateTimeZone dateTimeZone) {
+        this.dateTimeZone = dateTimeZone;
     }
 
     @Override
     public Timestamp convert(LocalDateTime in) throws Exception {
-        return new Timestamp(in.toInstant(offset).toEpochMilli());
+        return new Timestamp(in.toDateTime(dateTimeZone).getMillis());
     }
 }

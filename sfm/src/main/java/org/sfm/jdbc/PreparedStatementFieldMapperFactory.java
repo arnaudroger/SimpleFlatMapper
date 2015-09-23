@@ -2,12 +2,19 @@ package org.sfm.jdbc;
 
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 import org.sfm.jdbc.impl.convert.CalendarToTimestampConverter;
 import org.sfm.jdbc.impl.convert.UtilDateToTimestampConverter;
 import org.sfm.jdbc.impl.convert.joda.JodaDateTimeToTimestampConverter;
+import org.sfm.jdbc.impl.convert.joda.JodaLocalDateTimeToTimestampConverter;
+import org.sfm.jdbc.impl.convert.joda.JodaLocalDateToDateConverter;
+import org.sfm.jdbc.impl.convert.joda.JodaLocalTimeToTimeConverter;
 import org.sfm.jdbc.impl.setter.*;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.FieldMapperToSourceFactory;
+import org.sfm.map.column.joda.JodaHelper;
 import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.map.impl.fieldmapper.*;
 import org.sfm.map.mapper.ColumnDefinition;
@@ -358,7 +365,32 @@ public class PreparedStatementFieldMapperFactory implements FieldMapperToSourceF
                                         (Getter<? super T, ? extends DateTime>) pm.getPropertyMeta().getGetter()
                                 );
                         return new FieldMapperImpl<T, PreparedStatement, Timestamp>(getter, setter);
+                    } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.LocalDateTime.class)) {
+                        TimestampPreparedStatementSetter setter = new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex());
+                        Getter<T, Timestamp> getter =
+                                new GetterWithConverter<T, LocalDateTime, Timestamp>(
+                                        new JodaLocalDateTimeToTimestampConverter(JodaHelper.getDateTimeZone(pm.getColumnDefinition())),
+                                        (Getter<? super T, ? extends LocalDateTime>) pm.getPropertyMeta().getGetter()
+                                );
+                        return new FieldMapperImpl<T, PreparedStatement, Timestamp>(getter, setter);
+                    } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.LocalDate.class)) {
+                        DatePreparedStatementSetter setter = new DatePreparedStatementSetter(pm.getColumnKey().getIndex());
+                        Getter<T, java.sql.Date> getter =
+                                new GetterWithConverter<T, LocalDate, java.sql.Date>(
+                                        new JodaLocalDateToDateConverter(),
+                                        (Getter<? super T, ? extends LocalDate>) pm.getPropertyMeta().getGetter()
+                                );
+                        return new FieldMapperImpl<T, PreparedStatement, java.sql.Date>(getter, setter);
+                    } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.LocalTime.class)) {
+                        TimePreparedStatementSetter setter = new TimePreparedStatementSetter(pm.getColumnKey().getIndex());
+                        Getter<T, Time> getter =
+                                new GetterWithConverter<T, LocalTime, Time>(
+                                        new JodaLocalTimeToTimeConverter(JodaHelper.getDateTimeZone(pm.getColumnDefinition())),
+                                        (Getter<? super T, ? extends LocalTime>) pm.getPropertyMeta().getGetter()
+                                );
+                        return new FieldMapperImpl<T, PreparedStatement, Time>(getter, setter);
                     }
+
                     return null;
                 }
             };

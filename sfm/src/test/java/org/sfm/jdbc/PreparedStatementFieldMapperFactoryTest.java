@@ -1,9 +1,12 @@
 package org.sfm.jdbc;
 
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.map.FieldMapper;
+import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.impl.*;
@@ -17,6 +20,7 @@ import java.net.URL;
 import java.sql.*;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import static org.mockito.Mockito.*;
 
@@ -317,8 +321,39 @@ public class PreparedStatementFieldMapperFactoryTest {
     }
 
     @Test
-    public void testJodaTime() throws Exception {
-//        fail();
+    public void testJodaLocalDateTime() throws Exception {
+        org.joda.time.LocalDateTime value = new org.joda.time.LocalDateTime();
+        DateTimeZone dateTimeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.LocalDateTime>(value), org.joda.time.LocalDateTime.class, new JodaDateTimeZoneProperty(dateTimeZone));
+        newFieldMapperAndMapToPS(new NullGetter<Object, org.joda.time.LocalDateTime>(), org.joda.time.LocalDateTime.class);
+
+        verify(ps).setTimestamp(1, new Timestamp(value.toDateTime(dateTimeZone).getMillis()));
+        verify(ps).setNull(2, Types.TIMESTAMP);
+    }
+
+    @Test
+    public void testJodaLocalTime() throws Exception {
+        org.joda.time.LocalTime value = new org.joda.time.LocalTime();
+        DateTimeZone dateTimeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.LocalTime>(value), org.joda.time.LocalTime.class, new JodaDateTimeZoneProperty(dateTimeZone));
+        newFieldMapperAndMapToPS(new NullGetter<Object, org.joda.time.LocalTime>(), org.joda.time.LocalTime.class);
+
+        verify(ps).setTime(1, new Time(value.toDateTimeToday(dateTimeZone).getMillis()));
+        verify(ps).setNull(2, Types.TIME);
+    }
+
+    @Test
+    public void testJodaLocaDate() throws Exception {
+        org.joda.time.LocalDate value = new org.joda.time.LocalDate();
+        DateTimeZone dateTimeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.LocalDate>(value), org.joda.time.LocalDate.class, new JodaDateTimeZoneProperty(dateTimeZone));
+        newFieldMapperAndMapToPS(new NullGetter<Object, org.joda.time.LocalDate>(), org.joda.time.LocalDate.class);
+
+        verify(ps).setDate(1, new java.sql.Date(value.toDate().getTime()));
+        verify(ps).setNull(2, Types.DATE);
     }
 
     @Test
@@ -326,13 +361,13 @@ public class PreparedStatementFieldMapperFactoryTest {
 //        fail();
     }
 
-    protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz) throws Exception {
-        FieldMapper<T, PreparedStatement> fieldMapper = factory.newFieldMapperToSource(newPropertyMapping(getter, clazz), null);
+    protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, ColumnProperty... properties) throws Exception {
+        FieldMapper<T, PreparedStatement> fieldMapper = factory.newFieldMapperToSource(newPropertyMapping(getter, clazz, properties), null);
         fieldMapper.mapTo(null, ps, null);
     }
 
     @SuppressWarnings("unchecked")
-    private <T, P> PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> newPropertyMapping(Getter<T, P> getter, Class<P> clazz) {
+    private <T, P> PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> newPropertyMapping(Getter<T, P> getter, Class<P> clazz, ColumnProperty... properties) {
         PropertyMeta<T, P> propertyMeta = mock(PropertyMeta.class);
         when(propertyMeta.getGetter()).thenReturn(getter);
         when(propertyMeta.getPropertyType()).thenReturn(clazz);
@@ -340,7 +375,7 @@ public class PreparedStatementFieldMapperFactoryTest {
                 new PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(
                         propertyMeta,
                         new JdbcColumnKey("col", index++),
-                        FieldMapperColumnDefinition.<JdbcColumnKey>identity());
+                        FieldMapperColumnDefinition.<JdbcColumnKey>of(properties));
     }
 
 

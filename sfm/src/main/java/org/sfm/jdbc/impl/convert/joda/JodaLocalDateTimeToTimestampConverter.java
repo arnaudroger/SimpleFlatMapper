@@ -15,6 +15,7 @@ public class JodaLocalDateTimeToTimestampConverter implements Converter<LocalDat
 
     @Override
     public Timestamp convert(LocalDateTime in) throws Exception {
+        if (in == null) return null;
         return new Timestamp(in.toDateTime(dateTimeZone).getMillis());
     }
 }

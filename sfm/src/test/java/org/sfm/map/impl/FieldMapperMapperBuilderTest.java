@@ -5,9 +5,10 @@ import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.ResultSetGetterFactory;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.error.RethrowMapperBuilderErrorHandler;
+import org.sfm.map.impl.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
+import org.sfm.map.impl.fieldmapper.ConstantSourceFieldMapperFactory;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
@@ -29,14 +30,14 @@ public class FieldMapperMapperBuilderTest {
     public void testAnonymousParameterWithDifferentType() throws Exception {
 
         ClassMeta<MyObjectWithInner> classMeta = ReflectionService.disableAsm().getClassMeta(MyObjectWithInner.class);
-        FieldMapperFactory<ResultSet, JdbcColumnKey> factory = new FieldMapperFactory<ResultSet, JdbcColumnKey>(new ResultSetGetterFactory());
+        ConstantSourceFieldMapperFactory<ResultSet, JdbcColumnKey> factory = new ConstantSourceFieldMapperFactoryImpl<ResultSet, JdbcColumnKey>(new ResultSetGetterFactory());
 
         PropertyMeta<MyObjectWithInner, MultiConstructorObject> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("prop"));
         FieldMapperColumnDefinition<JdbcColumnKey> identity = FieldMapperColumnDefinition.identity();
         PropertyMapping<MyObjectWithInner, MultiConstructorObject, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> propertyMapping =
                 new PropertyMapping<MyObjectWithInner, MultiConstructorObject, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(
                         propertyMeta, new JdbcColumnKey("prop", 1, Types.TIMESTAMP), identity);
-        FieldMapper<ResultSet, MyObjectWithInner> fieldMapper = factory.newFieldMapper(propertyMapping, new RethrowMapperBuilderErrorHandler());
+        FieldMapper<ResultSet, MyObjectWithInner> fieldMapper = factory.newFieldMapper(propertyMapping, null, new RethrowMapperBuilderErrorHandler());
 
         MyObjectWithInner o = new MyObjectWithInner();
         ResultSet rs = mock(ResultSet.class);

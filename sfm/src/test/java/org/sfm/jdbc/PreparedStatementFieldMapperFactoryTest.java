@@ -7,6 +7,10 @@ import org.sfm.map.FieldMapper;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
+//IFJAVA8_START
+import org.sfm.map.column.time.JavaZoneIdProperty;
+//IFJAVA8_END
+import org.sfm.map.impl.ConstantTargetFieldMapperFactorImpl;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.impl.*;
@@ -18,6 +22,11 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
+
+//IFJAVA8_START
+import java.time.ZoneId;
+//IFJAVA8_END
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -26,14 +35,14 @@ import static org.mockito.Mockito.*;
 
 public class PreparedStatementFieldMapperFactoryTest {
 
-    private PreparedStatementFieldMapperFactory factory;
+    private ConstantTargetFieldMapperFactorImpl factory;
 
     private PreparedStatement ps;
 
     private int index;
     @Before
     public void setUp() {
-        factory = PreparedStatementFieldMapperFactory.instance();
+        factory = ConstantTargetFieldMapperFactorImpl.instance();
         ps = mock(PreparedStatement.class);
         index = 1;
     }
@@ -356,13 +365,22 @@ public class PreparedStatementFieldMapperFactoryTest {
         verify(ps).setNull(2, Types.DATE);
     }
 
+    //IFJAVA8_START
     @Test
-    public void testJavaTime() throws Exception {
-//        fail();
+    public void testJavaLocalDateTime() throws Exception {
+        java.time.LocalDateTime value = java.time.LocalDateTime.now();
+        java.time.ZoneId zoneId = ZoneId.of("America/Los_Angeles");
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, java.time.LocalDateTime>(value),  java.time.LocalDateTime.class, new JavaZoneIdProperty(zoneId));
+        newFieldMapperAndMapToPS(new NullGetter<Object, java.time.LocalDateTime>(), java.time.LocalDateTime.class);
+
+        verify(ps).setTimestamp(1, new Timestamp(value.atZone(zoneId).toInstant().toEpochMilli()));
+        verify(ps).setNull(2, Types.TIMESTAMP);
     }
+    //IFJAVA8_END
 
     protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, ColumnProperty... properties) throws Exception {
-        FieldMapper<T, PreparedStatement> fieldMapper = factory.newFieldMapperToSource(newPropertyMapping(getter, clazz, properties), null);
+        FieldMapper<T, PreparedStatement> fieldMapper = factory.newFieldMapper(newPropertyMapping(getter, clazz, properties), null, null);
         fieldMapper.mapTo(null, ps, null);
     }
 

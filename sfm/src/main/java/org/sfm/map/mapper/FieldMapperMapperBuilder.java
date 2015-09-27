@@ -5,7 +5,8 @@ import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.map.impl.FieldErrorHandlerMapper;
-import org.sfm.map.impl.fieldmapper.FieldMapperFactory;
+import org.sfm.map.impl.fieldmapper.ConstantSourceFieldMapperFactory;
+import org.sfm.map.impl.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
 import org.sfm.map.impl.fieldmapper.MapperFieldMapper;
 import org.sfm.reflect.*;
 import org.sfm.reflect.impl.NullGetter;
@@ -25,7 +26,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
 	private final Type target;
 
-	private final FieldMapperFactory<S, K> fieldMapperFactory;
+	private final ConstantSourceFieldMapperFactory<S, K> fieldMapperFactory;
 
 	protected final PropertyMappingsBuilder<T, K,FieldMapperColumnDefinition<K>> propertyMappingsBuilder;
 	protected final ReflectionService reflectionService;
@@ -45,7 +46,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         this.mapperSource = requireNonNull("fieldMapperSource", mapperSource);
         this.mapperConfig = requireNonNull("mapperConfig", mapperConfig);
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
-		this.fieldMapperFactory = new FieldMapperFactory<S, K>(mapperSource.getterFactory());
+		this.fieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<S, K>(mapperSource.getterFactory());
 		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K>>(classMeta, mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler());
 		this.target = requireNonNull("classMeta", classMeta).getType();
 		this.reflectionService = requireNonNull("classMeta", classMeta).getReflectionService();
@@ -277,7 +278,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 		FieldMapper<S, T> fieldMapper = (FieldMapper<S, T>) t.getColumnDefinition().getCustomFieldMapper();
 
 		if (fieldMapper == null) {
-			fieldMapper = fieldMapperFactory.newFieldMapper(t, mapperConfig.mapperBuilderErrorHandler());
+			fieldMapper = fieldMapperFactory.newFieldMapper(t, mappingContextFactoryBuilder, mapperConfig.mapperBuilderErrorHandler());
 		}
 
         return wrapFieldMapperWithErrorHandler(t, fieldMapper);

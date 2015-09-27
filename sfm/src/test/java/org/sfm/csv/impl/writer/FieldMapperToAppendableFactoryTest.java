@@ -81,8 +81,8 @@ public class FieldMapperToAppendableFactoryTest {
         MappingContextFactoryBuilder<JodaObject, CsvColumnKey> builder = getMappingContextBuilder();
         FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("yyyyMMdd")));
         FieldMapper<JodaObject, Appendable> fieldMapper =
-                defaultFieldAppenderFactory.newFieldMapperToSource(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
-                        builder);
+                defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
+                        builder, null);
         testFieldMapper("20140607", fieldMapper, jodaObject, builder.newFactory());
     }
 
@@ -91,8 +91,8 @@ public class FieldMapperToAppendableFactoryTest {
         MappingContextFactoryBuilder<JodaObject, CsvColumnKey> builder = getMappingContextBuilder();
         FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new DateFormatProperty("yyyyMMdd"));
         FieldMapper<JodaObject, Appendable> fieldMapper =
-                defaultFieldAppenderFactory.newFieldMapperToSource(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
-                        builder);
+                defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
+                        builder, null);
         testFieldMapper("20140607", fieldMapper, jodaObject, builder.newFactory());
     }
 
@@ -131,8 +131,8 @@ public class FieldMapperToAppendableFactoryTest {
         MappingContextFactoryBuilder<DbPrimitiveObjectWithSetter, CsvColumnKey> builder = getMappingContextBuilder();
         FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new FormatProperty(new DecimalFormat("0.0")));
         FieldMapper<DbPrimitiveObjectWithSetter, Appendable> fieldMapper =
-                defaultFieldAppenderFactory.newFieldMapperToSource(newPropertyMapping("pDouble", dbPrimitiveObjectClassMeta, format),
-                        builder);
+                defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping("pDouble", dbPrimitiveObjectClassMeta, format),
+                        builder, null);
         testFieldMapper("3.1", fieldMapper, dbPrimitiveObject, builder.newFactory());
     }
     @Test
@@ -144,7 +144,7 @@ public class FieldMapperToAppendableFactoryTest {
     }
     public <T> void testFieldMapperForClassAndProp(String expected, String propName, ClassMeta<T> classMeta, T object) throws Exception {
         MappingContextFactoryBuilder<T, CsvColumnKey> builder = getMappingContextBuilder();
-        FieldMapper<T, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldMapperToSource(newPropertyMapping(propName, classMeta), builder);
+        FieldMapper<T, Appendable> fieldMapper = defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping(propName, classMeta), builder, null);
         testFieldMapper(expected, fieldMapper, object, builder.newFactory());
     }
 

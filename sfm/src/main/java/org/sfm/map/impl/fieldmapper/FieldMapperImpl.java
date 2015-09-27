@@ -5,14 +5,17 @@ import org.sfm.map.MappingContext;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
 
+import static org.sfm.utils.Asserts.requireNonNull;
+
+
 public final class FieldMapperImpl<S, T, P> implements FieldMapper<S, T> {
 	
 	private final Getter<? super S, ? extends P> getter;
 	private final Setter<T, ? super P> setter;
 	
 	public FieldMapperImpl(final Getter<? super S, ? extends P> getter, final Setter<T, ? super P> setter) {
-		this.getter = getter;
-		this.setter = setter;
+		this.getter = requireNonNull("getter", getter);
+		this.setter = requireNonNull("setter", setter);
 	}
 	
 	@Override

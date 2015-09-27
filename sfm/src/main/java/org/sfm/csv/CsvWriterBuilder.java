@@ -5,6 +5,7 @@ import org.sfm.csv.impl.writer.*;
 import org.sfm.csv.mapper.FieldMapperToAppendableFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.impl.fieldmapper.ConstantTargetFieldMapperFactory;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.ClassMeta;
@@ -19,7 +20,7 @@ public class CsvWriterBuilder<T> extends AbstractWriterBuilder<Appendable, T, Cs
     public CsvWriterBuilder(
             ClassMeta<T> classMeta,
             MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
-            FieldMapperToSourceFactory<Appendable, CsvColumnKey> fieldAppenderFactory,
+            ConstantTargetFieldMapperFactory<Appendable, CsvColumnKey> fieldAppenderFactory,
             CellWriter cellWriter) {
         super(classMeta, Appendable.class, mapperConfig, fieldAppenderFactory);
         this.cellWriter = cellWriter;

@@ -5,6 +5,7 @@ import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.context.KeySourceGetter;
 import org.sfm.map.context.MappingContextFactoryBuilder;
+import org.sfm.map.impl.fieldmapper.ConstantTargetFieldMapperFactory;
 import org.sfm.map.mapper.ContextualMapper;
 import org.sfm.map.mapper.MapperImpl;
 import org.sfm.map.mapper.PropertyMapping;
@@ -26,7 +27,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
     private final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
 
     private final PropertyMappingsBuilder<T, K,  FieldMapperColumnDefinition<K>> propertyMappingsBuilder;
-    private final FieldMapperToSourceFactory<S, K> fieldAppenderFactory;
+    private final ConstantTargetFieldMapperFactory<S, K> fieldAppenderFactory;
     protected final ClassMeta<T> classMeta;
     private final Class<S> sourceClass;
 
@@ -35,7 +36,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
     public AbstractWriterBuilder(
             ClassMeta<T> classMeta,
             Class<S> sourceClass, MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
-            FieldMapperToSourceFactory<S, K> fieldAppenderFactory) {
+            ConstantTargetFieldMapperFactory<S, K> fieldAppenderFactory) {
         this.sourceClass = sourceClass;
         this.fieldAppenderFactory = fieldAppenderFactory;
         this.reflectionService = classMeta.getReflectionService();
@@ -82,9 +83,10 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
                     public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm) {
                         preFieldProcess(mappers, pm);
                         FieldMapper<T, S> fieldMapper =
-                                fieldAppenderFactory.newFieldMapperToSource(
+                                fieldAppenderFactory.newFieldMapper(
                                         pm,
-                                        mappingContextFactoryBuilder);
+                                        mappingContextFactoryBuilder,
+                                        mapperConfig.mapperBuilderErrorHandler());
                         mappers.add(fieldMapper);
                         postFieldProcess(mappers, pm);
                     }

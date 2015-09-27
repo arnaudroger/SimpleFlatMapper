@@ -2,6 +2,7 @@ package org.sfm.map.impl.fieldmapper;
 
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.map.mapper.TypeAffinity;
 import org.sfm.reflect.*;
@@ -10,11 +11,11 @@ import org.sfm.reflect.meta.PropertyMeta;
 
 import java.lang.reflect.Type;
 
-public final class FieldMapperFactory<S, K extends FieldKey<K>>  {
+public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>> implements ConstantSourceFieldMapperFactory<S,K> {
 
 	private final GetterFactory<? super S, K> getterFactory;
 
-	public FieldMapperFactory(GetterFactory<? super S, K> getterFactory) {
+	public ConstantSourceFieldMapperFactoryImpl(GetterFactory<? super S, K> getterFactory) {
 		this.getterFactory = getterFactory;
 	}
 
@@ -58,10 +59,12 @@ public final class FieldMapperFactory<S, K extends FieldKey<K>>  {
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public <T, P> FieldMapper<S, T> newFieldMapper(PropertyMapping<T, P, K ,
-                            FieldMapperColumnDefinition<K>> propertyMapping,
-                           MapperBuilderErrorHandler mappingErrorHandler) {
+	public <T, P> FieldMapper<S, T> newFieldMapper(PropertyMapping<T, P, K,
+			FieldMapperColumnDefinition<K>> propertyMapping,
+												   MappingContextFactoryBuilder contextFactoryBuilder,
+												   MapperBuilderErrorHandler mappingErrorHandler) {
 
 		final PropertyMeta<T, P> propertyMeta = propertyMapping.getPropertyMeta();
 		final Type propertyType = propertyMeta.getPropertyType();

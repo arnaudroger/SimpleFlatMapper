@@ -5,6 +5,8 @@ import org.sfm.csv.CellWriter;
 import org.sfm.csv.impl.writer.CsvCellWriter;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.impl.ConstantTargetFieldMapperFactorImpl;
+import org.sfm.map.impl.fieldmapper.ConstantTargetFieldMapperFactory;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
@@ -16,7 +18,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
     public PreparedStatementMapperBuilder(
             ClassMeta<T> classMeta,
             MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig,
-            FieldMapperToSourceFactory<PreparedStatement, JdbcColumnKey> preparedStatementFieldMapperFactory) {
+            ConstantTargetFieldMapperFactory<PreparedStatement, JdbcColumnKey> preparedStatementFieldMapperFactory) {
         super(classMeta, PreparedStatement.class, mapperConfig, preparedStatementFieldMapperFactory);
     }
 
@@ -35,7 +37,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
         PreparedStatementMapperBuilder<T> builder =
                 new PreparedStatementMapperBuilder<T>(
                         classMeta,
-                        config, PreparedStatementFieldMapperFactory.instance());
+                        config, ConstantTargetFieldMapperFactorImpl.instance());
         return builder;
     }
 

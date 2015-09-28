@@ -24,6 +24,7 @@ import java.net.URL;
 import java.sql.*;
 
 //IFJAVA8_START
+import java.time.LocalDate;
 import java.time.ZoneId;
 //IFJAVA8_END
 
@@ -365,6 +366,16 @@ public class PreparedStatementFieldMapperFactoryTest {
         verify(ps).setNull(2, Types.DATE);
     }
 
+    @Test
+    public void testJodaInstant() throws Exception {
+        org.joda.time.Instant value = new org.joda.time.Instant();
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.Instant>(value), org.joda.time.Instant.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, org.joda.time.Instant>(), org.joda.time.Instant.class);
+
+        verify(ps).setTimestamp(1, new java.sql.Timestamp(value.getMillis()));
+        verify(ps).setNull(2, Types.TIMESTAMP);
+    }
     //IFJAVA8_START
     @Test
     public void testJavaLocalDateTime() throws Exception {
@@ -375,6 +386,74 @@ public class PreparedStatementFieldMapperFactoryTest {
         newFieldMapperAndMapToPS(new NullGetter<Object, java.time.LocalDateTime>(), java.time.LocalDateTime.class);
 
         verify(ps).setTimestamp(1, new Timestamp(value.atZone(zoneId).toInstant().toEpochMilli()));
+        verify(ps).setNull(2, Types.TIMESTAMP);
+    }
+
+    @Test
+    public void testJavaLocalDate() throws Exception {
+        java.time.LocalDate value = java.time.LocalDate.now();
+        java.time.ZoneId zoneId = ZoneId.of("America/Los_Angeles");
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, java.time.LocalDate>(value),  java.time.LocalDate.class, new JavaZoneIdProperty(zoneId));
+        newFieldMapperAndMapToPS(new NullGetter<Object, java.time.LocalDate>(), java.time.LocalDate.class);
+
+        verify(ps).setDate(1, new java.sql.Date(value.atStartOfDay(zoneId).toInstant().toEpochMilli()));
+        verify(ps).setNull(2, Types.DATE);
+    }
+
+    @Test
+    public void testJavaLocalTime() throws Exception {
+        java.time.LocalTime value = java.time.LocalTime.now();
+        java.time.ZoneId zoneId = ZoneId.of("America/Los_Angeles");
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, java.time.LocalTime>(value),  java.time.LocalTime.class, new JavaZoneIdProperty(zoneId));
+        newFieldMapperAndMapToPS(new NullGetter<Object, java.time.LocalTime>(), java.time.LocalTime.class);
+
+        verify(ps).setTime(1, new Time(value.atDate(LocalDate.now()).atZone(zoneId).toInstant().toEpochMilli()));
+        verify(ps).setNull(2, Types.TIME);
+    }
+
+    @Test
+    public void testJavaZonedDateTime() throws Exception {
+        java.time.ZonedDateTime value = java.time.ZonedDateTime.now();
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, java.time.ZonedDateTime>(value),  java.time.ZonedDateTime.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, java.time.ZonedDateTime>(), java.time.ZonedDateTime.class);
+
+        verify(ps).setTimestamp(1, new Timestamp(value.toInstant().toEpochMilli()));
+        verify(ps).setNull(2, Types.TIMESTAMP);
+    }
+
+    @Test
+    public void testJavaOffsetDateTime() throws Exception {
+        java.time.OffsetDateTime value = java.time.OffsetDateTime.now();
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, java.time.OffsetDateTime>(value),  java.time.OffsetDateTime.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, java.time.OffsetDateTime>(), java.time.OffsetDateTime.class);
+
+        verify(ps).setTimestamp(1, new Timestamp(value.toInstant().toEpochMilli()));
+        verify(ps).setNull(2, Types.TIMESTAMP);
+    }
+
+    @Test
+    public void testJavaOffsetTime() throws Exception {
+        java.time.OffsetTime value = java.time.OffsetTime.now();
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, java.time.OffsetTime>(value),  java.time.OffsetTime.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, java.time.OffsetTime>(), java.time.OffsetTime.class);
+
+        verify(ps).setTime(1, new Time(value.atDate(LocalDate.now()).toInstant().toEpochMilli()));
+        verify(ps).setNull(2, Types.TIME);
+    }
+
+    @Test
+    public void testJavaInstant() throws Exception {
+        java.time.Instant value = java.time.Instant.now();
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, java.time.Instant>(value),  java.time.Instant.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, java.time.Instant>(), java.time.Instant.class);
+
+        verify(ps).setTimestamp(1, new Timestamp(value.toEpochMilli()));
         verify(ps).setNull(2, Types.TIMESTAMP);
     }
     //IFJAVA8_END

@@ -3,6 +3,7 @@ package org.sfm.jdbc;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
+import org.sfm.jdbc.impl.PreparedStatementSetterFactory;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
@@ -10,7 +11,8 @@ import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
 //IFJAVA8_START
 import org.sfm.map.column.time.JavaZoneIdProperty;
 //IFJAVA8_END
-import org.sfm.map.impl.ConstantTargetFieldMapperFactorImpl;
+import org.sfm.map.impl.fieldmapper.ConstantTargetFieldMapperFactory;
+import org.sfm.map.mapper.ConstantTargetFieldMapperFactorImpl;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.impl.*;
@@ -37,14 +39,14 @@ import static org.mockito.Mockito.*;
 
 public class PreparedStatementFieldMapperFactoryTest {
 
-    private ConstantTargetFieldMapperFactorImpl factory;
+    private ConstantTargetFieldMapperFactory<PreparedStatement, JdbcColumnKey> factory;
 
     private PreparedStatement ps;
 
     private int index;
     @Before
     public void setUp() {
-        factory = ConstantTargetFieldMapperFactorImpl.instance();
+        factory = ConstantTargetFieldMapperFactorImpl.instance(new PreparedStatementSetterFactory());
         ps = mock(PreparedStatement.class);
         index = 1;
     }

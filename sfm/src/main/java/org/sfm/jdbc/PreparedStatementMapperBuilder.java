@@ -3,9 +3,10 @@ package org.sfm.jdbc;
 
 import org.sfm.csv.CellWriter;
 import org.sfm.csv.impl.writer.CsvCellWriter;
+import org.sfm.jdbc.impl.PreparedStatementSetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.impl.ConstantTargetFieldMapperFactorImpl;
+import org.sfm.map.mapper.ConstantTargetFieldMapperFactorImpl;
 import org.sfm.map.impl.fieldmapper.ConstantTargetFieldMapperFactory;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
@@ -37,7 +38,8 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
         PreparedStatementMapperBuilder<T> builder =
                 new PreparedStatementMapperBuilder<T>(
                         classMeta,
-                        config, ConstantTargetFieldMapperFactorImpl.instance());
+                        config,
+                        ConstantTargetFieldMapperFactorImpl.instance(new PreparedStatementSetterFactory()));
         return builder;
     }
 

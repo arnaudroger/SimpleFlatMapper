@@ -342,6 +342,16 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
                                 new ConvertValuePreparedStatementSetter<java.time.OffsetTime, Time>(
                                         new TimePreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JavaOffsetTimeToTimeConverter());
+                    } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.YearMonth.class)) {
+                        return (Setter<PreparedStatement, P>)
+                                new ConvertValuePreparedStatementSetter<java.time.YearMonth, java.sql.Date>(
+                                        new DatePreparedStatementSetter(pm.getColumnKey().getIndex()),
+                                        new JavaYearMonthToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
+                    } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.Year.class)) {
+                        return (Setter<PreparedStatement, P>)
+                                new ConvertValuePreparedStatementSetter<java.time.Year, java.sql.Date>(
+                                        new DatePreparedStatementSetter(pm.getColumnKey().getIndex()),
+                                        new JavaYearToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     }
 
                     return null;

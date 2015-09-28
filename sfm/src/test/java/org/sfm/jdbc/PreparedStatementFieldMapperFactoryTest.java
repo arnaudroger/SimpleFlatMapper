@@ -25,6 +25,7 @@ import java.sql.*;
 
 //IFJAVA8_START
 import java.time.LocalDate;
+import java.time.MonthDay;
 import java.time.ZoneId;
 //IFJAVA8_END
 
@@ -455,6 +456,30 @@ public class PreparedStatementFieldMapperFactoryTest {
 
         verify(ps).setTimestamp(1, new Timestamp(value.toEpochMilli()));
         verify(ps).setNull(2, Types.TIMESTAMP);
+    }
+
+    @Test
+    public void testJavaYearMonth() throws Exception {
+        java.time.YearMonth value = java.time.YearMonth.now();
+        java.time.ZoneId zoneId = ZoneId.of("America/Los_Angeles");
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, java.time.YearMonth>(value),  java.time.YearMonth.class, new JavaZoneIdProperty(zoneId));
+        newFieldMapperAndMapToPS(new NullGetter<Object, java.time.YearMonth>(), java.time.YearMonth.class);
+
+        verify(ps).setDate(1, new java.sql.Date(value.atDay(1).atStartOfDay(zoneId).toInstant().toEpochMilli()));
+        verify(ps).setNull(2, Types.DATE);
+    }
+
+    @Test
+    public void testJavaYear() throws Exception {
+        java.time.Year value = java.time.Year.now();
+        java.time.ZoneId zoneId = ZoneId.of("America/Los_Angeles");
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, java.time.Year>(value),  java.time.Year.class, new JavaZoneIdProperty(zoneId));
+        newFieldMapperAndMapToPS(new NullGetter<Object, java.time.Year>(), java.time.Year.class);
+
+        verify(ps).setDate(1, new java.sql.Date(value.atMonthDay(MonthDay.now()).atStartOfDay(zoneId).toInstant().toEpochMilli()));
+        verify(ps).setNull(2, Types.DATE);
     }
     //IFJAVA8_END
 

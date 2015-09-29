@@ -359,6 +359,7 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
             };
     //IFJAVA8_END
 
+    @SuppressWarnings("unchecked")
     @Override
     public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> arg) {
         Setter<PreparedStatement, P> setter = null;
@@ -366,6 +367,21 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
         SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> setterFactory = this.factoryPerClass.get(TypeHelper.toClass(propertyType));
         if (setterFactory != null) {
             setter = setterFactory.getSetter(arg);
+        }
+
+        if (TypeHelper.isEnum(propertyType)) {
+            switch (arg.getColumnKey().getSqlType()) {
+                case Types.VARCHAR:
+                case Types.CHAR:
+                case Types.CLOB:
+                case Types.LONGNVARCHAR:
+                case Types.LONGVARCHAR:
+                case Types.NCHAR:
+                case Types.NCLOB:
+                case Types.NVARCHAR:
+                    return (Setter<PreparedStatement, P>) new StringEnumPreparedStatementSetter(arg.getColumnKey().getIndex());
+            }
+            return (Setter<PreparedStatement, P>) new OrdinalEnumPreparedStatementSetter(arg.getColumnKey().getIndex());
         }
 
         if (setter == null) {

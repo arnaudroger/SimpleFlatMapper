@@ -129,9 +129,20 @@ public class AbstractDatastaxTest  {
                 session.execute("insert into dbobjects_mapudt(id, l) values(1,  {2 : {str : 't1', l : 12}})");
             }
             callback.call(session);
+
+
         } finally {
+            try {
+                tearDown(session);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
             if (session != null) session.close();
         }
+
+    }
+
+    protected void tearDown(Session session) {
 
     }
 

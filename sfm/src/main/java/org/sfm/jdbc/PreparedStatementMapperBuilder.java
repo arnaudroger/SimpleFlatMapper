@@ -1,8 +1,6 @@
 package org.sfm.jdbc;
 
 
-import org.sfm.csv.CellWriter;
-import org.sfm.csv.impl.writer.CsvCellWriter;
 import org.sfm.jdbc.impl.PreparedStatementSetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
@@ -29,10 +27,6 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
     }
 
     public static <T> PreparedStatementMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
-        return PreparedStatementMapperBuilder.newBuilder(classMeta, CsvCellWriter.DEFAULT_WRITER);
-    }
-
-    public static <T> PreparedStatementMapperBuilder<T> newBuilder(ClassMeta<T> classMeta, CellWriter cellWriter) {
         MapperConfig<JdbcColumnKey,FieldMapperColumnDefinition<JdbcColumnKey>> config =
                 MapperConfig.<T, JdbcColumnKey>fieldMapperConfig();
         PreparedStatementMapperBuilder<T> builder =

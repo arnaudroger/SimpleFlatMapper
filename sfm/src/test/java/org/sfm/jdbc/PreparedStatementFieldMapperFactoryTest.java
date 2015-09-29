@@ -3,6 +3,7 @@ package org.sfm.jdbc;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
+import org.sfm.beans.DbObject;
 import org.sfm.jdbc.impl.PreparedStatementSetterFactory;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.column.ColumnProperty;
@@ -35,6 +36,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 public class PreparedStatementFieldMapperFactoryTest {
@@ -49,6 +51,26 @@ public class PreparedStatementFieldMapperFactoryTest {
         factory = ConstantTargetFieldMapperFactorImpl.instance(new PreparedStatementSetterFactory());
         ps = mock(PreparedStatement.class);
         index = 1;
+    }
+
+    @Test
+    public void testEnumOrdinal() throws Exception {
+        final DbObject.Type type = DbObject.Type.type3;
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, DbObject.Type>(type), DbObject.Type.class);
+        newFieldMapperAndMapToPS(new NullGetter<Object, DbObject.Type>(), DbObject.Type.class);
+
+        verify(ps).setInt(1, type.ordinal());
+        verify(ps).setNull(2, Types.INTEGER);
+    }
+
+    @Test
+    public void testEnumString() throws Exception {
+        final DbObject.Type type = DbObject.Type.type3;
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, DbObject.Type>(type), DbObject.Type.class, Types.VARCHAR);
+        newFieldMapperAndMapToPS(new NullGetter<Object, DbObject.Type>(), DbObject.Type.class, Types.VARCHAR);
+
+        verify(ps).setString(1, type.name());
+        verify(ps).setNull(2, Types.VARCHAR);
     }
 
     @Test
@@ -486,19 +508,22 @@ public class PreparedStatementFieldMapperFactoryTest {
     //IFJAVA8_END
 
     protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, ColumnProperty... properties) throws Exception {
-        FieldMapper<T, PreparedStatement> fieldMapper = factory.newFieldMapper(newPropertyMapping(getter, clazz, properties), null, null);
+        newFieldMapperAndMapToPS(getter, clazz, JdbcColumnKey.UNDEFINED_TYPE, properties);
+    }
+    protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, int sqlType, ColumnProperty... properties) throws Exception {
+        FieldMapper<T, PreparedStatement> fieldMapper = factory.newFieldMapper(newPropertyMapping(getter, clazz, sqlType, properties), null, null);
         fieldMapper.mapTo(null, ps, null);
     }
 
     @SuppressWarnings("unchecked")
-    private <T, P> PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> newPropertyMapping(Getter<T, P> getter, Class<P> clazz, ColumnProperty... properties) {
+    private <T, P> PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> newPropertyMapping(Getter<T, P> getter, Class<P> clazz, int sqltype, ColumnProperty... properties) {
         PropertyMeta<T, P> propertyMeta = mock(PropertyMeta.class);
         when(propertyMeta.getGetter()).thenReturn(getter);
         when(propertyMeta.getPropertyType()).thenReturn(clazz);
         return
                 new PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(
                         propertyMeta,
-                        new JdbcColumnKey("col", index++),
+                        new JdbcColumnKey("col", index++, sqltype),
                         FieldMapperColumnDefinition.<JdbcColumnKey>of(properties));
     }
 

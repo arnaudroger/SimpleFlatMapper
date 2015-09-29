@@ -57,5 +57,32 @@ public class DbObject {
 				+ ", creationTime=" + creationTime + ", typeOrdinal="
 				+ typeOrdinal + ", typeName=" + typeName + "]";
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		DbObject dbObject = (DbObject) o;
+
+		if (id != dbObject.id) return false;
+		if (name != null ? !name.equals(dbObject.name) : dbObject.name != null) return false;
+		if (email != null ? !email.equals(dbObject.email) : dbObject.email != null) return false;
+		if (creationTime != null ? !creationTime.equals(dbObject.creationTime) : dbObject.creationTime != null)
+			return false;
+		if (typeOrdinal != dbObject.typeOrdinal) return false;
+		return typeName == dbObject.typeName;
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = (int) (id ^ (id >>> 32));
+		result = 31 * result + (name != null ? name.hashCode() : 0);
+		result = 31 * result + (email != null ? email.hashCode() : 0);
+		result = 31 * result + (creationTime != null ? creationTime.hashCode() : 0);
+		result = 31 * result + (typeOrdinal != null ? typeOrdinal.hashCode() : 0);
+		result = 31 * result + (typeName != null ? typeName.hashCode() : 0);
+		return result;
+	}
 }

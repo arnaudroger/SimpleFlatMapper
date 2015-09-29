@@ -65,6 +65,12 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
     }
 
     @SuppressWarnings("unchecked")
+    public B addColumn(K key, ColumnProperty... properties) {
+        propertyMappingsBuilder.addProperty(key, FieldMapperColumnDefinition.<K>identity().add(properties));
+        return (B) this;
+    }
+
+    @SuppressWarnings("unchecked")
     public Mapper<T, S> mapper() {
 
         final List<FieldMapper<T, S>> mappers = new ArrayList<FieldMapper<T, S>>();

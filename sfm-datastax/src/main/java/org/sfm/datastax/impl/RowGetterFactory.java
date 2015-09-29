@@ -3,6 +3,7 @@ package org.sfm.datastax.impl;
 import com.datastax.driver.core.*;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.datastax.DatastaxMapperFactory;
+import org.sfm.datastax.impl.getter.*;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.getter.EnumUnspecifiedTypeGetter;

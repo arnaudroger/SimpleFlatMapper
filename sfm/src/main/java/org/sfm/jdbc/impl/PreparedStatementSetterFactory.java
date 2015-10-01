@@ -351,7 +351,7 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
                                         new JavaOffsetTimeToTimeConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.YearMonth.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, YearMonth, java.sql.Date>(
+                                new ConvertDelegateSetter<PreparedStatement, java.time.YearMonth, java.sql.Date>(
                                         new DatePreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JavaYearMonthToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.Year.class)) {

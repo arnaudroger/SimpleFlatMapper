@@ -13,6 +13,7 @@ import org.sfm.jdbc.impl.convert.joda.*;
 //IFJAVA8_START
 import org.sfm.jdbc.impl.convert.time.*;
 import org.sfm.map.column.time.JavaTimeHelper;
+import java.time.*;
 //IFJAVA8_END
 
 import org.sfm.jdbc.impl.setter.*;
@@ -30,8 +31,6 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
-import java.time.*;
-import java.time.YearMonth;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;

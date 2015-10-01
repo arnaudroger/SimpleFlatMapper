@@ -1,18 +1,19 @@
 package org.sfm.datastax.impl.setter;
 
 import com.datastax.driver.core.BoundStatement;
+import com.datastax.driver.core.SettableData;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.primitive.LongSetter;
 
-public class StringBoundStatementSetter implements Setter<BoundStatement, String> {
+public class StringSettableDataSetter implements Setter<SettableData, String> {
     private final int index;
 
-    public StringBoundStatementSetter(int index) {
+    public StringSettableDataSetter(int index) {
         this.index = index;
     }
 
     @Override
-    public void set(BoundStatement target, String value) throws Exception {
+    public void set(SettableData target, String value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

@@ -1,23 +1,24 @@
 package org.sfm.datastax.impl.setter;
 
 import com.datastax.driver.core.BoundStatement;
+import com.datastax.driver.core.SettableData;
 import org.sfm.reflect.Setter;
 
 import java.util.Date;
 
-public class StringEnumBoundStatementSetter implements Setter<BoundStatement, Enum<?>> {
+public class OrdinalEnumSettableDataSetter implements Setter<SettableData, Enum<?>> {
     private final int index;
 
-    public StringEnumBoundStatementSetter(int index) {
+    public OrdinalEnumSettableDataSetter(int index) {
         this.index = index;
     }
 
     @Override
-    public void set(BoundStatement target, Enum<?> value) throws Exception {
+    public void set(SettableData target, Enum<?> value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {
-            target.setString(index, value.name());
+            target.setInt(index, value.ordinal());
         }
     }
 }

@@ -2,7 +2,8 @@ package org.sfm.datastax;
 
 
 import com.datastax.driver.core.BoundStatement;
-import org.sfm.datastax.impl.BoundStatementSetterFactory;
+import com.datastax.driver.core.SettableData;
+import org.sfm.datastax.impl.SettableDataSetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.mapper.ConstantTargetFieldMapperFactorImpl;
@@ -11,33 +12,34 @@ import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 
-public class BoundStatementMapperBuilder<T> extends AbstractWriterBuilder<BoundStatement, T, DatastaxColumnKey, BoundStatementMapperBuilder<T>> {
+public class SettableDataMapperBuilder<T> extends AbstractWriterBuilder<SettableData, T, DatastaxColumnKey, SettableDataMapperBuilder<T>> {
 
-    public BoundStatementMapperBuilder(
+    public SettableDataMapperBuilder(
             ClassMeta<T> classMeta,
             MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig,
-            ConstantTargetFieldMapperFactory<BoundStatement, DatastaxColumnKey> BoundStatementFieldMapperFactory) {
-        super(classMeta, BoundStatement.class, mapperConfig, BoundStatementFieldMapperFactory);
+            ConstantTargetFieldMapperFactory<SettableData, DatastaxColumnKey> fieldMapperFactory) {
+        super(classMeta, SettableData.class, mapperConfig, fieldMapperFactory);
     }
 
-    public static <T> BoundStatementMapperBuilder<T> newBuilder(Class<T> clazz) {
+    public static <T> SettableDataMapperBuilder<T> newBuilder(Class<T> clazz) {
         ClassMeta<T> classMeta = ReflectionService.newInstance().getClassMeta(clazz);
-        return BoundStatementMapperBuilder.newBuilder(classMeta);
+        return SettableDataMapperBuilder.newBuilder(classMeta);
     }
 
-    public static <T> BoundStatementMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
+    public static <T> SettableDataMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
         MapperConfig<DatastaxColumnKey,FieldMapperColumnDefinition<DatastaxColumnKey>> config =
                 MapperConfig.<T, DatastaxColumnKey>fieldMapperConfig();
-        BoundStatementMapperBuilder<T> builder =
-                new BoundStatementMapperBuilder<T>(
+
+        SettableDataMapperBuilder<T> builder =
+                new SettableDataMapperBuilder<T>(
                         classMeta,
                         config,
-                        ConstantTargetFieldMapperFactorImpl.instance(new BoundStatementSetterFactory()));
+                        ConstantTargetFieldMapperFactorImpl.instance(new SettableDataSetterFactory()));
         return builder;
     }
 
     @Override
-    protected Instantiator<T, BoundStatement> getInstantiator() {
+    protected Instantiator<T, SettableData> getInstantiator() {
         return new NullInstantiator<T>();
     }
 
@@ -46,7 +48,7 @@ public class BoundStatementMapperBuilder<T> extends AbstractWriterBuilder<BoundS
         return new DatastaxColumnKey(column, i);
     }
 
-    private static class NullInstantiator<T> implements Instantiator<T, BoundStatement> {
+    private static class NullInstantiator<T> implements Instantiator<T, SettableData> {
         @Override
         public BoundStatement newInstance(T o) throws Exception {
             throw new UnsupportedOperationException();

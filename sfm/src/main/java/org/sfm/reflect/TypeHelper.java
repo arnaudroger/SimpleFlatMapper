@@ -168,6 +168,10 @@ public class TypeHelper {
         return clazz.isEnum();
     }
 
+	public static Class<?> toBoxedClass(Type type) {
+		return TypeHelper.toBoxedClass(toClass(type));
+	}
+
 	public static Class<?> toBoxedClass(Class<?> target) {
 		if (target.isPrimitive()) {
 			return wrappers.get(target);
@@ -179,6 +183,9 @@ public class TypeHelper {
     public static boolean areEquals(Type target, Class<?> clazz) {
         return clazz.equals(TypeHelper.toClass(target));
     }
+	public static boolean areEquals(Type target, Type clazz) {
+		return TypeHelper.toClass(clazz).equals(TypeHelper.toClass(target));
+	}
 
 	public static Type[] getGenericParameterForClass(Type type, Class<?> interfaceClass) {
 

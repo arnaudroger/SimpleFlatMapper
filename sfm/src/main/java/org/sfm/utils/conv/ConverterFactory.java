@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class ConverterFactory {
 
@@ -17,48 +18,66 @@ public class ConverterFactory {
 		numberConverters.put(Byte.class, new Converter<Number, Byte>() {
 			@Override
 			public Byte convert(Number in) {
+				if (in == null) return null;
 				return in.byteValue();
 			}
+			public String toString() { return "NumberToByte"; }
 		});
 		numberConverters.put(Short.class, new Converter<Number, Short>() {
 			@Override
 			public Short convert(Number in) {
+				if (in == null) return null;
 				return in.shortValue();
 			}
+			public String toString() { return "NumberToShort"; }
 		});
 		numberConverters.put(Integer.class, new Converter<Number, Integer>() {
 			@Override
 			public Integer convert(Number in) {
+				if (in == null) return null;
 				return in.intValue();
 			}
+			public String toString() { return "NumberToInteger"; }
 		});
 		numberConverters.put(Long.class, new Converter<Number, Long>() {
 			@Override
 			public Long convert(Number in) {
+				if (in == null) return null;
 				return in.longValue();
 			}
+			public String toString() { return "NumberToLong"; }
 		});
 		numberConverters.put(Float.class, new Converter<Number, Float>() {
 			@Override
 			public Float convert(Number in) {
+				if (in == null) return null;
 				return in.floatValue();
 			}
+			public String toString() { return "NumberToFloat"; }
 		});
 		numberConverters.put(Double.class, new Converter<Number, Double>() {
 			@Override
 			public Double convert(Number in) {
+				if (in == null) return null;
 				return in.doubleValue();
 			}
+			public String toString() { return "NumberToDouble"; }
 		});
 		numberConverters.put(BigDecimal.class, new Converter<Number, BigDecimal>() {
 			@Override
 			public BigDecimal convert(Number in) {
+				if (in == null) return null;
 				return new BigDecimal(in.doubleValue());
 			}
+			public String toString() { return "NumberToBigDecimal"; }
 		});
 		numberConverters.put(BigInteger.class, new Converter<Number, BigInteger>() {
 			@Override
-			public BigInteger convert(Number in) { return new BigInteger(String.valueOf(in));}
+			public BigInteger convert(Number in) {
+				if (in == null) return null;
+				return new BigInteger(String.valueOf(in));
+			}
+			public String toString() { return "NumberToBigInteger"; }
 		});
 	}
 
@@ -67,51 +86,75 @@ public class ConverterFactory {
 		charSequenceConverters.put(String.class, new Converter<CharSequence, String>() {
 			@Override
 			public String convert(CharSequence in) throws Exception {
+				if (in == null) return null;
 				return in.toString();
 			}
+			public String toString() { return "CharSequenceToString"; }
 		});
 		charSequenceConverters.put(Byte.class, new Converter<CharSequence, Byte>() {
 			@Override
 			public Byte convert(CharSequence in) throws Exception {
+				if (in == null) return null;
 				return Byte.valueOf(in.toString());
 			}
+			public String toString() { return "CharSequenceToByte"; }
 		});
 		charSequenceConverters.put(Character.class, new Converter<CharSequence, Character>() {
 			@Override
 			public Character convert(CharSequence in) throws Exception {
+				if (in == null) return null;
 				return Character.valueOf((char) Integer.parseInt(in.toString()));
 			}
+			public String toString() { return "CharSequenceToCharacter"; }
 		});
 		charSequenceConverters.put(Short.class, new Converter<CharSequence, Short>() {
 			@Override
 			public Short convert(CharSequence in) throws Exception {
+				if (in == null) return null;
 				return Short.valueOf(in.toString());
 			}
+			public String toString() { return "CharSequenceToShort"; }
 		});
 		charSequenceConverters.put(Integer.class, new Converter<CharSequence, Integer>() {
 			@Override
 			public Integer convert(CharSequence in) throws Exception {
+				if (in == null) return null;
 				return Integer.valueOf(in.toString());
 			}
+			public String toString() { return "CharSequenceToInteger"; }
 		});
 
 		charSequenceConverters.put(Long.class, new Converter<CharSequence, Long>() {
 			@Override
 			public Long convert(CharSequence in) throws Exception {
+				if (in == null) return null;
 				return Long.valueOf(in.toString());
 			}
+			public String toString() { return "CharSequenceToLong"; }
 		});
 		charSequenceConverters.put(Float.class, new Converter<CharSequence, Float>() {
 			@Override
 			public Float convert(CharSequence in) throws Exception {
+				if (in == null) return null;
 				return Float.valueOf(in.toString());
 			}
+			public String toString() { return "CharSequenceToFloat"; }
 		});
 		charSequenceConverters.put(Double.class, new Converter<CharSequence, Double>() {
 			@Override
 			public Double convert(CharSequence in) throws Exception {
+				if (in == null) return null;
 				return Double.valueOf(in.toString());
 			}
+			public String toString() { return "CharSequenceToDouble"; }
+		});
+		charSequenceConverters.put(UUID.class, new Converter<CharSequence, UUID>() {
+			@Override
+			public UUID convert(CharSequence in) throws Exception {
+				if (in == null) return null;
+				return UUID.fromString(in.toString());
+			}
+			public String toString() { return "CharSequenceToUUID"; }
 		});
 	}
 

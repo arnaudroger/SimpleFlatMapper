@@ -1,5 +1,10 @@
 package org.sfm.jdbc.impl;
 
+import org.joda.time.*;
+import org.joda.time.Instant;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.convert.CalendarToTimestampConverter;
 import org.sfm.jdbc.impl.convert.UtilDateToTimestampConverter;
@@ -14,6 +19,7 @@ import org.sfm.jdbc.impl.setter.*;
 import org.sfm.map.column.joda.JodaHelper;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
+import org.sfm.map.setter.ConvertDelegateSetter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.TypeHelper;
@@ -24,6 +30,8 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
+import java.time.*;
+import java.time.YearMonth;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -127,7 +135,7 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
                     @SuppressWarnings("unchecked")
                     @Override
                     public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new ConvertValuePreparedStatementSetter<Date, Timestamp>(
+                        return (Setter<PreparedStatement, P>) new ConvertDelegateSetter<PreparedStatement, Date, Timestamp>(
                                 new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
                                 new UtilDateToTimestampConverter()
                         );
@@ -162,7 +170,7 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
                     @SuppressWarnings("unchecked")
                     @Override
                     public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new ConvertValuePreparedStatementSetter<Calendar, Timestamp>(
+                        return (Setter<PreparedStatement, P>) new ConvertDelegateSetter<PreparedStatement, Calendar, Timestamp>(
                                 new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
                                 new CalendarToTimestampConverter()
                         );
@@ -273,27 +281,27 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
                 public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
                     if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.DateTime.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<org.joda.time.DateTime, Timestamp>(
+                                new ConvertDelegateSetter<PreparedStatement, DateTime, Timestamp>(
                                         new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JodaDateTimeToTimestampConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.LocalDateTime.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<org.joda.time.LocalDateTime, Timestamp>(
+                                new ConvertDelegateSetter<PreparedStatement, LocalDateTime, Timestamp>(
                                         new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JodaLocalDateTimeToTimestampConverter(JodaHelper.getDateTimeZone(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.LocalDate.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<org.joda.time.LocalDate, java.sql.Date>(
+                                new ConvertDelegateSetter<PreparedStatement, LocalDate, java.sql.Date>(
                                         new DatePreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JodaLocalDateToDateConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.LocalTime.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<org.joda.time.LocalTime, Time>(
+                                new ConvertDelegateSetter<PreparedStatement, LocalTime, Time>(
                                         new TimePreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JodaLocalTimeToTimeConverter(JodaHelper.getDateTimeZone(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.Instant.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<org.joda.time.Instant, Timestamp>(
+                                new ConvertDelegateSetter<PreparedStatement, Instant, Timestamp>(
                                         new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JodaInstantToTimestampConverter());
                     }
@@ -309,47 +317,47 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
                 public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
                     if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.LocalDateTime.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<java.time.LocalDateTime, Timestamp>(
+                                new ConvertDelegateSetter<PreparedStatement, java.time.LocalDateTime, Timestamp>(
                                         new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JavaLocalDateTimeToTimestampConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.LocalDate.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<java.time.LocalDate, java.sql.Date>(
+                                new ConvertDelegateSetter<PreparedStatement, java.time.LocalDate, java.sql.Date>(
                                         new DatePreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JavaLocalDateToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.LocalTime.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<java.time.LocalTime, Time>(
+                                new ConvertDelegateSetter<PreparedStatement, java.time.LocalTime, Time>(
                                         new TimePreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JavaLocalTimeToTimeConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.Instant.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<java.time.Instant, Timestamp>(
+                                new ConvertDelegateSetter<PreparedStatement, java.time.Instant, Timestamp>(
                                         new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JavaInstantToTimestampConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.ZonedDateTime.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<java.time.ZonedDateTime, Timestamp>(
+                                new ConvertDelegateSetter<PreparedStatement, ZonedDateTime, Timestamp>(
                                         new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JavaZonedDateTimeToTimestampConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.OffsetDateTime.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<java.time.OffsetDateTime, Timestamp>(
+                                new ConvertDelegateSetter<PreparedStatement, OffsetDateTime, Timestamp>(
                                         new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JavaOffsetDateTimeToTimestampConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.OffsetTime.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<java.time.OffsetTime, Time>(
+                                new ConvertDelegateSetter<PreparedStatement, OffsetTime, Time>(
                                         new TimePreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JavaOffsetTimeToTimeConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.YearMonth.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<java.time.YearMonth, java.sql.Date>(
+                                new ConvertDelegateSetter<PreparedStatement, YearMonth, java.sql.Date>(
                                         new DatePreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JavaYearMonthToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.Year.class)) {
                         return (Setter<PreparedStatement, P>)
-                                new ConvertValuePreparedStatementSetter<java.time.Year, java.sql.Date>(
+                                new ConvertDelegateSetter<PreparedStatement, Year, java.sql.Date>(
                                         new DatePreparedStatementSetter(pm.getColumnKey().getIndex()),
                                         new JavaYearToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     }

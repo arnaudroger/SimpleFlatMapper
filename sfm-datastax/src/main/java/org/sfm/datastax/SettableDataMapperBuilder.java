@@ -28,7 +28,7 @@ public class SettableDataMapperBuilder<T> extends AbstractWriterBuilder<Settable
 
     public static <T> SettableDataMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
         MapperConfig<DatastaxColumnKey,FieldMapperColumnDefinition<DatastaxColumnKey>> config =
-                MapperConfig.<T, DatastaxColumnKey>fieldMapperConfig();
+                MapperConfig.<DatastaxColumnKey>fieldMapperConfig();
 
         SettableDataMapperBuilder<T> builder =
                 new SettableDataMapperBuilder<T>(

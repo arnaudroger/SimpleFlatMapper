@@ -45,7 +45,7 @@ public class CsvWriterBuilder<T> extends AbstractWriterBuilder<Appendable, T, Cs
 
     public static <T> CsvWriterBuilder<T> newBuilder(ClassMeta<T> classMeta, CellWriter cellWriter) {
         MapperConfig<CsvColumnKey,FieldMapperColumnDefinition<CsvColumnKey>> config =
-                MapperConfig.<T, CsvColumnKey>fieldMapperConfig();
+                MapperConfig.<CsvColumnKey>fieldMapperConfig();
         FieldMapperToAppendableFactory appenderFactory = new FieldMapperToAppendableFactory(cellWriter);
         CsvWriterBuilder<T> builder =
                 new CsvWriterBuilder<T>(

@@ -35,7 +35,7 @@ public class JooqMapperBuilder<E> {
 				new FieldMapperMapperBuilder<Record, E, JooqFieldKey>(
 					FIELD_MAPPER_SOURCE,
 					classMeta,
-					MapperConfig.<Record, JooqFieldKey>fieldMapperConfig(),
+					MapperConfig.<JooqFieldKey>fieldMapperConfig(),
 					mappingContextFactoryBuilder);
 	}
 

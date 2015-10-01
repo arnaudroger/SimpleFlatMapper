@@ -34,10 +34,13 @@ import static org.mockito.Mockito.when;
 public class SettableDataSetterFactoryTest {
 
 
-    SettableDataSetterFactory factory = new SettableDataSetterFactory(MapperConfig.fieldMapperConfig(), ReflectionService.newInstance());
+    private final MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig = MapperConfig.<DatastaxColumnKey>fieldMapperConfig();
+    private final ReflectionService reflectionService = ReflectionService.newInstance();
+    SettableDataSetterFactory factory = new SettableDataSetterFactory(mapperConfig, reflectionService);
     private int index;
 
     SettableData statement;
+
     @Before
     public void setUp() {
         statement = mock(BoundStatement.class);
@@ -76,7 +79,7 @@ public class SettableDataSetterFactoryTest {
         TupleValue bd = tupleType.newValue("vvv", 15);
 
         Setter<SettableByIndexData, Tuple2> setter = factory.getSetter(newPM(new TypeReference<Tuple2<String, Integer>>() {}.getType(), tupleType));
-        setter.set(statement, new Tuple2<>("vvv", 15));
+        setter.set(statement, new Tuple2<String, Integer>("vvv", 15));
         setter.set(statement, null);
 
         verify(statement).setTupleValue(0, bd);

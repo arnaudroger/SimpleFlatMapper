@@ -58,6 +58,6 @@ public class TupleSettableDataSetter<T extends Tuple2<?, ?>> implements Setter<S
     public static <T> SettableDataMapperBuilder<T> newFieldMapperBuilder(MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config,
                                                                          ReflectionService reflectionService,  Type target) {
         ClassMeta<T> classMeta = reflectionService.getClassMeta(target);
-        return new SettableDataMapperBuilder<>(classMeta, config, ConstantTargetFieldMapperFactorImpl.instance(new SettableDataSetterFactory(config, reflectionService)));
+        return new SettableDataMapperBuilder<T>(classMeta, config, ConstantTargetFieldMapperFactorImpl.instance(new SettableDataSetterFactory(config, reflectionService)));
     }
 }

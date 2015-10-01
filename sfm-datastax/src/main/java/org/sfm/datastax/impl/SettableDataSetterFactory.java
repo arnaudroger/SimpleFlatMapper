@@ -9,11 +9,11 @@ import org.sfm.jdbc.impl.convert.joda.*;
 
 //IFJAVA8_START
 import org.sfm.jdbc.impl.convert.time.*;
-import org.sfm.map.MapperConfig;
-import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.column.time.JavaTimeHelper;
 //IFJAVA8_END
 
+import org.sfm.map.MapperConfig;
+import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.column.joda.JodaHelper;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;

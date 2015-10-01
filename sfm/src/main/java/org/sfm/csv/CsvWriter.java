@@ -112,7 +112,7 @@ public class CsvWriter<T>  {
         CsvWriterBuilder<T> builder = CsvWriterBuilder
                 .newBuilder(classMeta, cellWriter);
 
-        MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig = MapperConfig.<T, CsvColumnKey>fieldMapperConfig();
+        MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig = MapperConfig.<CsvColumnKey>fieldMapperConfig();
         try {
             builder.defaultHeaders();
             ContextualMapper<T, Appendable> mapper = (ContextualMapper<T, Appendable>) builder.mapper();

@@ -28,7 +28,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
 
     public static <T> PreparedStatementMapperBuilder<T> newBuilder(ClassMeta<T> classMeta) {
         MapperConfig<JdbcColumnKey,FieldMapperColumnDefinition<JdbcColumnKey>> config =
-                MapperConfig.<T, JdbcColumnKey>fieldMapperConfig();
+                MapperConfig.<JdbcColumnKey>fieldMapperConfig();
         PreparedStatementMapperBuilder<T> builder =
                 new PreparedStatementMapperBuilder<T>(
                         classMeta,

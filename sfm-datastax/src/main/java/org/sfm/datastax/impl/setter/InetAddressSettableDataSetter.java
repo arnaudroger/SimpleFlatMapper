@@ -1,11 +1,11 @@
 package org.sfm.datastax.impl.setter;
 
-import com.datastax.driver.core.SettableData;
+import com.datastax.driver.core.SettableByIndexData;
 import org.sfm.reflect.Setter;
 
 import java.net.InetAddress;
 
-public class InetAddressSettableDataSetter implements Setter<SettableData, InetAddress> {
+public class InetAddressSettableDataSetter implements Setter<SettableByIndexData, InetAddress> {
     private final int index;
 
     public InetAddressSettableDataSetter(int index) {
@@ -13,7 +13,7 @@ public class InetAddressSettableDataSetter implements Setter<SettableData, InetA
     }
 
     @Override
-    public void set(SettableData target, InetAddress value) throws Exception {
+    public void set(SettableByIndexData target, InetAddress value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

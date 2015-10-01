@@ -1,12 +1,9 @@
 package org.sfm.datastax.impl.setter;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.SettableData;
+import com.datastax.driver.core.SettableByIndexData;
 import org.sfm.reflect.Setter;
 
-import java.util.Date;
-
-public class OrdinalEnumSettableDataSetter implements Setter<SettableData, Enum<?>> {
+public class OrdinalEnumSettableDataSetter implements Setter<SettableByIndexData, Enum<?>> {
     private final int index;
 
     public OrdinalEnumSettableDataSetter(int index) {
@@ -14,7 +11,7 @@ public class OrdinalEnumSettableDataSetter implements Setter<SettableData, Enum<
     }
 
     @Override
-    public void set(SettableData target, Enum<?> value) throws Exception {
+    public void set(SettableByIndexData target, Enum<?> value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

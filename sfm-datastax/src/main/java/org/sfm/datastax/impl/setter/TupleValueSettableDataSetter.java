@@ -1,12 +1,10 @@
 package org.sfm.datastax.impl.setter;
 
-import com.datastax.driver.core.SettableData;
+import com.datastax.driver.core.SettableByIndexData;
 import com.datastax.driver.core.TupleValue;
 import org.sfm.reflect.Setter;
 
-import java.util.Date;
-
-public class TupleValueSettableDataSetter implements Setter<SettableData, TupleValue> {
+public class TupleValueSettableDataSetter implements Setter<SettableByIndexData, TupleValue> {
     private final int index;
 
     public TupleValueSettableDataSetter(int index) {
@@ -14,7 +12,7 @@ public class TupleValueSettableDataSetter implements Setter<SettableData, TupleV
     }
 
     @Override
-    public void set(SettableData target, TupleValue value) throws Exception {
+    public void set(SettableByIndexData target, TupleValue value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

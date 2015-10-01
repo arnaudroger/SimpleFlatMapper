@@ -1,13 +1,11 @@
 package org.sfm.datastax.impl.setter;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.SettableData;
+import com.datastax.driver.core.SettableByIndexData;
 import org.sfm.reflect.Setter;
-import org.sfm.reflect.primitive.FloatSetter;
 
 import java.math.BigDecimal;
 
-public class BigDecimalSettableDataSetter implements Setter<SettableData, BigDecimal> {
+public class BigDecimalSettableDataSetter implements Setter<SettableByIndexData, BigDecimal> {
     private final int index;
 
     public BigDecimalSettableDataSetter(int index) {
@@ -15,7 +13,7 @@ public class BigDecimalSettableDataSetter implements Setter<SettableData, BigDec
     }
 
     @Override
-    public void set(SettableData target, BigDecimal value) throws Exception {
+    public void set(SettableByIndexData target, BigDecimal value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

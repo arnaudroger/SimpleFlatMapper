@@ -1,13 +1,10 @@
 package org.sfm.datastax.impl.setter;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.SettableData;
+import com.datastax.driver.core.SettableByIndexData;
 import org.sfm.reflect.Setter;
-import org.sfm.reflect.primitive.FloatSetter;
-
 import java.util.UUID;
 
-public class UUIDSettableDataSetter implements Setter<SettableData, UUID> {
+public class UUIDSettableDataSetter implements Setter<SettableByIndexData, UUID> {
     private final int index;
 
     public UUIDSettableDataSetter(int index) {
@@ -15,7 +12,7 @@ public class UUIDSettableDataSetter implements Setter<SettableData, UUID> {
     }
 
     @Override
-    public void set(SettableData target, UUID value) throws Exception {
+    public void set(SettableByIndexData target, UUID value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

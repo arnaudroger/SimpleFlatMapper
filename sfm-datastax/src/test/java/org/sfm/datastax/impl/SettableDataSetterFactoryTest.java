@@ -4,17 +4,22 @@ import com.datastax.driver.core.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.datastax.DatastaxColumnKey;
+import org.sfm.map.MapperConfig;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
+import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
+import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.primitive.DoubleSetter;
 import org.sfm.reflect.primitive.FloatSetter;
 import org.sfm.reflect.primitive.IntSetter;
 import org.sfm.reflect.primitive.LongSetter;
+import org.sfm.tuples.Tuple2;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -22,7 +27,6 @@ import java.util.Date;
 import java.util.UUID;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,7 +34,7 @@ import static org.mockito.Mockito.when;
 public class SettableDataSetterFactoryTest {
 
 
-    SettableDataSetterFactory factory = new SettableDataSetterFactory();
+    SettableDataSetterFactory factory = new SettableDataSetterFactory(MapperConfig.fieldMapperConfig(), ReflectionService.newInstance());
     private int index;
 
     SettableData statement;
@@ -65,11 +69,25 @@ public class SettableDataSetterFactoryTest {
 //        fail();
 //    }
 
+
+    @Test
+    public void testTuple() throws Exception {
+        TupleType tupleType = TupleType.of(DataType.text(), DataType.cint());
+        TupleValue bd = tupleType.newValue("vvv", 15);
+
+        Setter<SettableByIndexData, Tuple2> setter = factory.getSetter(newPM(new TypeReference<Tuple2<String, Integer>>() {}.getType(), tupleType));
+        setter.set(statement, new Tuple2<>("vvv", 15));
+        setter.set(statement, null);
+
+        verify(statement).setTupleValue(0, bd);
+        verify(statement).setToNull(0);
+    }
+
     @Test
     public void testTupleValue() throws Exception {
         TupleValue bd = mock(TupleValue.class);
 
-        Setter<SettableData, TupleValue> setter = factory.getSetter(newPM(TupleValue.class, TupleType.of(DataType.text(), DataType.text())));
+        Setter<SettableByIndexData, TupleValue> setter = factory.getSetter(newPM(TupleValue.class, TupleType.of(DataType.text(), DataType.text())));
         setter.set(statement, bd);
         setter.set(statement, null);
 
@@ -81,7 +99,7 @@ public class SettableDataSetterFactoryTest {
     public void testBigDecimal() throws Exception {
         BigDecimal bd = new BigDecimal("3.33");
 
-        Setter<SettableData, BigDecimal> setter = factory.getSetter(newPM(BigDecimal.class, DataType.decimal()));
+        Setter<SettableByIndexData, BigDecimal> setter = factory.getSetter(newPM(BigDecimal.class, DataType.decimal()));
         setter.set(statement, bd);
         setter.set(statement, null);
 
@@ -93,7 +111,7 @@ public class SettableDataSetterFactoryTest {
     public void testBigInteger() throws Exception {
         BigInteger bi = new BigInteger("333");
 
-        Setter<SettableData, BigInteger> setter = factory.getSetter(newPM(BigInteger.class, DataType.varint()));
+        Setter<SettableByIndexData, BigInteger> setter = factory.getSetter(newPM(BigInteger.class, DataType.varint()));
         setter.set(statement, bi);
         setter.set(statement, null);
 
@@ -105,7 +123,7 @@ public class SettableDataSetterFactoryTest {
     public void testInetAddress() throws Exception {
         InetAddress inetAddress = InetAddress.getByAddress(new byte[] {127, 0, 0, 1});
 
-        Setter<SettableData, InetAddress> setter = factory.getSetter(newPM(InetAddress.class, DataType.inet()));
+        Setter<SettableByIndexData, InetAddress> setter = factory.getSetter(newPM(InetAddress.class, DataType.inet()));
         setter.set(statement, inetAddress);
         setter.set(statement, null);
 
@@ -119,7 +137,7 @@ public class SettableDataSetterFactoryTest {
     public void testUUID() throws Exception {
         UUID value = UUID.randomUUID();
 
-        Setter<SettableData, UUID> setter = factory.getSetter(newPM(UUID.class, DataType.uuid()));
+        Setter<SettableByIndexData, UUID> setter = factory.getSetter(newPM(UUID.class, DataType.uuid()));
         setter.set(statement, value);
         setter.set(statement, null);
 
@@ -131,7 +149,7 @@ public class SettableDataSetterFactoryTest {
     public void testUUIDFromString() throws Exception {
         UUID value = UUID.randomUUID();
 
-        Setter<SettableData, String> setter = factory.getSetter(newPM(String.class, DataType.uuid()));
+        Setter<SettableByIndexData, String> setter = factory.getSetter(newPM(String.class, DataType.uuid()));
         setter.set(statement, value.toString());
         setter.set(statement, null);
 
@@ -141,7 +159,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testFloatSetter() throws Exception {
-        Setter<SettableData, Float> setter = factory.getSetter(newPM(float.class, DataType.cfloat()));
+        Setter<SettableByIndexData, Float> setter = factory.getSetter(newPM(float.class, DataType.cfloat()));
         assertTrue(setter instanceof FloatSetter);
 
         setter.set(statement, 3.0f);
@@ -153,7 +171,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testDoubleSetter() throws Exception {
-        Setter<SettableData, Double> setter = factory.getSetter(newPM(double.class, DataType.cdouble()));
+        Setter<SettableByIndexData, Double> setter = factory.getSetter(newPM(double.class, DataType.cdouble()));
         assertTrue(setter instanceof DoubleSetter);
 
         setter.set(statement, 3.0);
@@ -165,7 +183,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testIntSetter() throws Exception {
-        Setter<SettableData, Integer> setter = factory.getSetter(newPM(int.class, DataType.cint()));
+        Setter<SettableByIndexData, Integer> setter = factory.getSetter(newPM(int.class, DataType.cint()));
         assertTrue(setter instanceof IntSetter);
 
         setter.set(statement, 3);
@@ -177,7 +195,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testIntSetterWithLongSource() throws Exception {
-        Setter<SettableData, Long> setter = factory.getSetter(newPM(long.class, DataType.cint()));
+        Setter<SettableByIndexData, Long> setter = factory.getSetter(newPM(long.class, DataType.cint()));
 
         setter.set(statement, 3l);
         setter.set(statement, null);
@@ -188,7 +206,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testLongSetterWithIntSource() throws Exception {
-        Setter<SettableData, Integer> setter = factory.getSetter(newPM(int.class, DataType.bigint()));
+        Setter<SettableByIndexData, Integer> setter = factory.getSetter(newPM(int.class, DataType.bigint()));
         setter.set(statement, 3);
         setter.set(statement, null);
 
@@ -198,7 +216,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testLongSetter() throws Exception {
-        Setter<SettableData, Long> setter = factory.getSetter(newPM(long.class, DataType.bigint()));
+        Setter<SettableByIndexData, Long> setter = factory.getSetter(newPM(long.class, DataType.bigint()));
         assertTrue(setter instanceof LongSetter);
 
         setter.set(statement, 3l);
@@ -211,7 +229,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testStringSetter() throws Exception {
-        Setter<SettableData, String> setter = factory.getSetter(newPM(String.class, DataType.text()));
+        Setter<SettableByIndexData, String> setter = factory.getSetter(newPM(String.class, DataType.text()));
 
         setter.set(statement, "str");
         setter.set(statement, null);
@@ -222,7 +240,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void tesDate() throws Exception {
-        Setter<SettableData, Date> setter = factory.getSetter(newPM(Date.class, DataType.timestamp()));
+        Setter<SettableByIndexData, Date> setter = factory.getSetter(newPM(Date.class, DataType.timestamp()));
 
         Date date = new Date();
 
@@ -233,7 +251,7 @@ public class SettableDataSetterFactoryTest {
         verify(statement).setToNull(0);
     }
 
-    private <T, P> PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> newPM(Class<P> clazz, DataType datatype, ColumnProperty... properties) {
+    private <T, P> PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> newPM(Type clazz, DataType datatype, ColumnProperty... properties) {
         PropertyMeta<T, P> propertyMeta = mock(PropertyMeta.class);
         when(propertyMeta.getPropertyType()).thenReturn(clazz);
         return

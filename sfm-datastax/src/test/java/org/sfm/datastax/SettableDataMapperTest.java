@@ -31,7 +31,7 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
                     builder.addColumn(new DatastaxColumnKey(variables.getName(i), i, variables.getType(i)));
                 }
 
-                Mapper<DbObject, SettableData> mapper = builder.mapper();
+                Mapper<DbObject, SettableByIndexData> mapper = builder.mapper();
 
                 DbObject dbObject = new DbObject();
                 dbObject.setId(2666l);

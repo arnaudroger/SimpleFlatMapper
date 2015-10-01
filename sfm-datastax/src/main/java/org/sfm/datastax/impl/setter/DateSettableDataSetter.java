@@ -1,12 +1,11 @@
 package org.sfm.datastax.impl.setter;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.SettableData;
+import com.datastax.driver.core.SettableByIndexData;
 import org.sfm.reflect.Setter;
 
 import java.util.Date;
 
-public class DateSettableDataSetter implements Setter<SettableData, Date> {
+public class DateSettableDataSetter implements Setter<SettableByIndexData, Date> {
     private final int index;
 
     public DateSettableDataSetter(int index) {
@@ -14,7 +13,7 @@ public class DateSettableDataSetter implements Setter<SettableData, Date> {
     }
 
     @Override
-    public void set(SettableData target, Date value) throws Exception {
+    public void set(SettableByIndexData target, Date value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

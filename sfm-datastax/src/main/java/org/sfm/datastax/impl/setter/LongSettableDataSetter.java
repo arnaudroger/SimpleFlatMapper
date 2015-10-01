@@ -1,10 +1,10 @@
 package org.sfm.datastax.impl.setter;
 
-import com.datastax.driver.core.SettableData;
+import com.datastax.driver.core.SettableByIndexData;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.primitive.LongSetter;
 
-public class LongSettableDataSetter implements Setter<SettableData, Long>, LongSetter<SettableData> {
+public class LongSettableDataSetter implements Setter<SettableByIndexData, Long>, LongSetter<SettableByIndexData> {
     private final int index;
 
     public LongSettableDataSetter(int index) {
@@ -12,12 +12,12 @@ public class LongSettableDataSetter implements Setter<SettableData, Long>, LongS
     }
 
     @Override
-    public void setLong(SettableData target, long value) throws Exception {
+    public void setLong(SettableByIndexData target, long value) throws Exception {
         target.setLong(index, value);
     }
 
     @Override
-    public void set(SettableData target, Long value) throws Exception {
+    public void set(SettableByIndexData target, Long value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

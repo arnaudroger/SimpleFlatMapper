@@ -2,7 +2,7 @@ package org.sfm.datastax;
 
 
 import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.SettableData;
+import com.datastax.driver.core.SettableByIndexData;
 import org.sfm.datastax.impl.SettableDataSetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
@@ -12,13 +12,13 @@ import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 
-public class SettableDataMapperBuilder<T> extends AbstractWriterBuilder<SettableData, T, DatastaxColumnKey, SettableDataMapperBuilder<T>> {
+public class SettableDataMapperBuilder<T> extends AbstractWriterBuilder<SettableByIndexData, T, DatastaxColumnKey, SettableDataMapperBuilder<T>> {
 
     public SettableDataMapperBuilder(
             ClassMeta<T> classMeta,
             MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig,
-            ConstantTargetFieldMapperFactory<SettableData, DatastaxColumnKey> fieldMapperFactory) {
-        super(classMeta, SettableData.class, mapperConfig, fieldMapperFactory);
+            ConstantTargetFieldMapperFactory<SettableByIndexData, DatastaxColumnKey> fieldMapperFactory) {
+        super(classMeta, SettableByIndexData.class, mapperConfig, fieldMapperFactory);
     }
 
     public static <T> SettableDataMapperBuilder<T> newBuilder(Class<T> clazz) {
@@ -34,12 +34,12 @@ public class SettableDataMapperBuilder<T> extends AbstractWriterBuilder<Settable
                 new SettableDataMapperBuilder<T>(
                         classMeta,
                         config,
-                        ConstantTargetFieldMapperFactorImpl.instance(new SettableDataSetterFactory()));
+                        ConstantTargetFieldMapperFactorImpl.instance(new SettableDataSetterFactory(config, classMeta.getReflectionService())));
         return builder;
     }
 
     @Override
-    protected Instantiator<T, SettableData> getInstantiator() {
+    protected Instantiator<T, SettableByIndexData> getInstantiator() {
         return new NullInstantiator<T>();
     }
 
@@ -48,7 +48,7 @@ public class SettableDataMapperBuilder<T> extends AbstractWriterBuilder<Settable
         return new DatastaxColumnKey(column, i);
     }
 
-    private static class NullInstantiator<T> implements Instantiator<T, SettableData> {
+    private static class NullInstantiator<T> implements Instantiator<T, SettableByIndexData> {
         @Override
         public BoundStatement newInstance(T o) throws Exception {
             throw new UnsupportedOperationException();

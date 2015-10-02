@@ -2,19 +2,15 @@ package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.*;
 import org.sfm.datastax.DatastaxColumnKey;
+import org.sfm.datastax.impl.getter.DatastaxTupleGetter;
 import org.sfm.datastax.impl.setter.*;
-import org.sfm.jdbc.impl.convert.CalendarToTimestampConverter;
-import org.sfm.jdbc.impl.convert.UtilDateToTimestampConverter;
-import org.sfm.jdbc.impl.convert.joda.*;
 
 //IFJAVA8_START
-import org.sfm.jdbc.impl.convert.time.*;
-import org.sfm.map.column.time.JavaTimeHelper;
 //IFJAVA8_END
 
+import org.sfm.map.Mapper;
 import org.sfm.map.MapperConfig;
 import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.column.joda.JodaHelper;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.map.setter.ConvertDelegateSetter;
@@ -22,6 +18,7 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
 import org.sfm.utils.conv.Converter;
 import org.sfm.utils.conv.ConverterFactory;
@@ -30,10 +27,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 public class SettableDataSetterFactory
@@ -192,7 +186,7 @@ public class SettableDataSetterFactory
             setter = setterFactory.getSetter(arg);
 
             if (!TypeHelper.areEquals(TypeHelper.toBoxedClass(type), TypeHelper.toBoxedClass(propertyType))) {
-                Converter<?, ?> converter = ConverterFactory.getConverter(TypeHelper.toClass(propertyType), type);
+                Converter<?, ?> converter = getConverter(type, TypeHelper.toClass(propertyType), arg.getColumnKey().getDataType());
                 if (converter != null) {
                     setter = (Setter<SettableByIndexData, P>) new ConvertDelegateSetter<SettableByIndexData, Object, P>(setter, (Converter<Object, P>) converter);
                 } else {
@@ -210,7 +204,22 @@ public class SettableDataSetterFactory
                 } else {
                     setter = (Setter<SettableByIndexData, P>) UDTObjectSettableDataSetter.newInstance(propertyType, (UserType)arg.getColumnKey().getDataType(), arg.getColumnKey().getIndex(),  mapperConfig, reflectionService);
                 }
+            } else if (TypeHelper.isAssignable(List.class, type) && TypeHelper.isAssignable(List.class, propertyType)) {
+
+                DataType dataTypeElt = arg.getColumnKey().getDataType().getTypeArguments().get(0);
+                Class<?> dEltType = dataTypeElt.asJavaClass();
+                Type lEltType = TypeHelper.getComponentTypeOfListOrArray(propertyType);
+                if (TypeHelper.areEquals(lEltType, dEltType)) {
+                    setter = new ListSettableDataSetter(arg.getColumnKey().getIndex());
+                } else {
+                    Converter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt);
+                    if (converter != null) {
+                        setter = new ListWithConverterSettableDataSetter(arg.getColumnKey().getIndex(), converter);
+                    }
+                }
             }
+
+
         }
 
         if (setter == null) {
@@ -225,5 +234,20 @@ public class SettableDataSetterFactory
 
 
         return setter;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Converter<?, ?> getConverter(Type elementType,  Class<?> dataTypeElt, DataType dtElt) {
+        if (dtElt != null) {
+            if (UDTValue.class.equals(dataTypeElt)) {
+                Mapper mapper = UDTObjectSettableDataSetter.newUDTMapper(elementType, (UserType) dtElt, mapperConfig, reflectionService);
+                return new ConverterToUDTValueMapper(mapper, (UserType) dtElt);
+            }
+            if (TupleValue.class.equals(dataTypeElt)) {
+                Mapper mapper = TupleSettableDataSetter.newTupleMapper(elementType, (TupleType) dtElt, mapperConfig, reflectionService);
+                return new ConverterToTupleValueMapper(mapper, (TupleType) dtElt);
+            }
+        }
+        return ConverterFactory.getConverter(dataTypeElt, elementType);
     }
 }

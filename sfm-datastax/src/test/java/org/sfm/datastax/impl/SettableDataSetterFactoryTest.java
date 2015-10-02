@@ -28,10 +28,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -59,15 +56,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testUDT() throws Exception {
-        UserType.Field id = newField("id", DataType.bigint());
-        UserType.Field name = newField("name", DataType.text());
-        UserType.Field email = newField("email", DataType.text());
-        UserType.Field creationTime =  newField("creation_time", DataType.timestamp());
-        UserType.Field typeName = newField("type_name", DataType.text());
-        UserType.Field typeOrdinal = newField("type_ordinal", DataType.cint());
-
-
-        UserType ut = newUserType(id, name, email, creationTime, typeName, typeOrdinal);
+        UserType ut = newDBObjectUserType();
 
         Setter<SettableByIndexData, DbObject> setter = factory.getSetter(newPM(DbObject.class, ut));
 
@@ -79,10 +68,32 @@ public class SettableDataSetterFactoryTest {
         verify(statement).setUDTValue(eq(0), argumentCaptor.capture());
 
         UDTValue value = argumentCaptor.getValue();
-        assertEquals(object.getId(), value.getLong(0));
+
+        assertUdtEqualsDbObject(value, object);
 
         setter.set(statement, null);
         verify(statement).setToNull(0);
+    }
+
+    protected void assertUdtEqualsDbObject(UDTValue value, DbObject object) {
+        assertEquals(object.getId(), value.getLong(0));
+        assertEquals(object.getName(), value.getString(1));
+        assertEquals(object.getEmail(), value.getString(2));
+        assertEquals(object.getCreationTime(), value.getDate(3));
+        assertEquals(object.getTypeName().name(), value.getString(4));
+        assertEquals(object.getTypeOrdinal().ordinal(), value.getInt(5));
+    }
+
+    protected UserType newDBObjectUserType() throws Exception {
+        UserType.Field id = newField("id", DataType.bigint());
+        UserType.Field name = newField("name", DataType.text());
+        UserType.Field email = newField("email", DataType.text());
+        UserType.Field creationTime =  newField("creation_time", DataType.timestamp());
+        UserType.Field typeName = newField("type_name", DataType.text());
+        UserType.Field typeOrdinal = newField("type_ordinal", DataType.cint());
+
+
+        return newUserType(id, name, email, creationTime, typeName, typeOrdinal);
     }
 
     private UserType newUserType(UserType.Field... fields) throws Exception {
@@ -109,21 +120,42 @@ public class SettableDataSetterFactoryTest {
         verify(statement).setUDTValue(0, bd);
         verify(statement).setToNull(0);
     }
-    //
-//    @Test
-//    public void testTuple() throws Exception {
-//        fail();
-//    }
-//
 //    @Test
 //    public void testSet() throws Exception {
 //        fail();
 //    }
 //
-//    @Test
-//    public void testList() throws Exception {
-//        fail();
-//    }
+    @Test
+    public void testList() throws Exception {
+        List<String> values = Arrays.asList("v1", "v2");
+        Setter<SettableByIndexData, List<String>> setter = factory.getSetter(newPM(new TypeReference<List<String>>() {}.getType(), DataType.list(DataType.text())));
+
+        setter.set(statement, values);
+        setter.set(statement, null);
+
+        verify(statement).setList(0, values);
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testListOfUDT() throws Exception {
+        UserType ut = newDBObjectUserType();
+
+        List<DbObject> values = Arrays.asList(DbObject.newInstance(), DbObject.newInstance());
+        Setter<SettableByIndexData, List<DbObject>> setter = factory.getSetter(newPM(new TypeReference<List<DbObject>>() {}.getType(), DataType.list(ut)));
+
+        setter.set(statement, values);
+        setter.set(statement, null);
+
+        ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+
+        verify(statement).setList(eq(0), captor.capture());
+
+        assertUdtEqualsDbObject((UDTValue) captor.getValue().get(0), values.get(0));
+        assertUdtEqualsDbObject((UDTValue) captor.getValue().get(1), values.get(1));
+
+        verify(statement).setToNull(0);
+    }
 //
 //    @Test
 //    public void testMap() throws Exception {

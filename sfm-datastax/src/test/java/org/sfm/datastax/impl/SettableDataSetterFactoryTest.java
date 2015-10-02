@@ -1,8 +1,11 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.*;
+import com.datastax.driver.core.schemabuilder.UDTType;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.sfm.beans.DbObject;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.map.MapperConfig;
 import org.sfm.map.column.ColumnProperty;
@@ -19,14 +22,21 @@ import org.sfm.reflect.primitive.IntSetter;
 import org.sfm.reflect.primitive.LongSetter;
 import org.sfm.tuples.Tuple2;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,11 +57,59 @@ public class SettableDataSetterFactoryTest {
         index = 0;
     }
 
-//    @Test
-//    public void testUDT() throws Exception {
-//        fail();
-//    }
-//
+    @Test
+    public void testUDT() throws Exception {
+        UserType.Field id = newField("id", DataType.bigint());
+        UserType.Field name = newField("name", DataType.text());
+        UserType.Field email = newField("email", DataType.text());
+        UserType.Field creationTime =  newField("creation_time", DataType.timestamp());
+        UserType.Field typeName = newField("type_name", DataType.text());
+        UserType.Field typeOrdinal = newField("type_ordinal", DataType.cint());
+
+
+        UserType ut = newUserType(id, name, email, creationTime, typeName, typeOrdinal);
+
+        Setter<SettableByIndexData, DbObject> setter = factory.getSetter(newPM(DbObject.class, ut));
+
+        DbObject object = DbObject.newInstance();
+
+        setter.set(statement, object);
+
+        ArgumentCaptor<UDTValue> argumentCaptor = ArgumentCaptor.forClass(UDTValue.class);
+        verify(statement).setUDTValue(eq(0), argumentCaptor.capture());
+
+        UDTValue value = argumentCaptor.getValue();
+        assertEquals(object.getId(), value.getLong(0));
+
+        setter.set(statement, null);
+        verify(statement).setToNull(0);
+    }
+
+    private UserType newUserType(UserType.Field... fields) throws Exception {
+        Constructor<?> constructor = UserType.class.getDeclaredConstructor(String.class, String.class, Collection.class);
+        constructor.setAccessible(true);
+        return (UserType) constructor.newInstance("ks", "name", Arrays.asList(fields));
+
+    }
+    private UserType.Field newField(String name, DataType type) throws Exception {
+        Constructor<?> constructor = UserType.Field.class.getDeclaredConstructor(String.class, DataType.class);
+        constructor.setAccessible(true);
+        return (UserType.Field) constructor.newInstance(name, type);
+    }
+
+    @Test
+    public void testUDTValue() throws Exception {
+        UDTValue bd = mock(UDTValue.class);
+        UserType udtType = mock(UserType.class);
+
+        Setter<SettableByIndexData, UDTValue> setter = factory.getSetter(newPM(UDTValue.class, udtType));
+        setter.set(statement, bd);
+        setter.set(statement, null);
+
+        verify(statement).setUDTValue(0, bd);
+        verify(statement).setToNull(0);
+    }
+    //
 //    @Test
 //    public void testTuple() throws Exception {
 //        fail();

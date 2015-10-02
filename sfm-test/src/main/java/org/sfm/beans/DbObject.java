@@ -1,9 +1,21 @@
 package org.sfm.beans;
 
 import java.util.Date;
+import java.util.Random;
 
 public class DbObject {
-	
+
+	public static DbObject newInstance() {
+		DbObject object = new DbObject();
+		object.setId(System.currentTimeMillis());
+		object.setName("name" + Long.toHexString(object.getId()));
+		object.setEmail("email" + Long.toHexString(object.getId()));
+		object.setCreationTime(new Date());
+		object.setTypeName(Type.values()[(int)(object.getId() % 4l)]);
+		object.setTypeOrdinal(Type.values()[(int)(object.getId() % 4l)]);
+		return object;
+	}
+
 	public enum Type {
 		type1, type2, type3, type4
 	}

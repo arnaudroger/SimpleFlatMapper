@@ -1,0 +1,23 @@
+package org.sfm.datastax.impl.setter;
+
+import com.datastax.driver.core.SettableByIndexData;
+import com.datastax.driver.core.TupleValue;
+import com.datastax.driver.core.UDTValue;
+import org.sfm.reflect.Setter;
+
+public class UDTValueSettableDataSetter implements Setter<SettableByIndexData, UDTValue> {
+    private final int index;
+
+    public UDTValueSettableDataSetter(int index) {
+        this.index = index;
+    }
+
+    @Override
+    public void set(SettableByIndexData target, UDTValue value) throws Exception {
+        if (value == null) {
+            target.setToNull(index);
+        } else {
+            target.setUDTValue(index, value);
+        }
+    }
+}

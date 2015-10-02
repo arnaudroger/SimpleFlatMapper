@@ -204,6 +204,12 @@ public class SettableDataSetterFactory
         if (setter == null) {
             if (Tuples.isTuple(propertyType) && TypeHelper.areEquals(type, TupleValue.class)) {
                 setter = (Setter<SettableByIndexData, P>) TupleSettableDataSetter.newInstance(propertyType, (TupleType)arg.getColumnKey().getDataType(), arg.getColumnKey().getIndex(), mapperConfig, reflectionService);
+            } else if (arg.getColumnKey().getDataType() instanceof UserType) {
+                if (propertyType.equals(UDTValue.class)) {
+                    setter = (Setter<SettableByIndexData, P>) new UDTValueSettableDataSetter(arg.getColumnKey().getIndex());
+                } else {
+                    setter = (Setter<SettableByIndexData, P>) UDTObjectSettableDataSetter.newInstance(propertyType, (UserType)arg.getColumnKey().getDataType(), arg.getColumnKey().getIndex(),  mapperConfig, reflectionService);
+                }
             }
         }
 

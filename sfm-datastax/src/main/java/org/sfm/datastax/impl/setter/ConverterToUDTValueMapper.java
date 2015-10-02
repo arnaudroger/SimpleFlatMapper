@@ -17,6 +17,7 @@ public class ConverterToUDTValueMapper<I> implements Converter<I, UDTValue> {
 
     @Override
     public UDTValue convert(I in) throws Exception {
+        if (in == null) return null;
         UDTValue udtValue = userType.newValue();
         mapper.mapTo(in, udtValue, null);
         return udtValue;

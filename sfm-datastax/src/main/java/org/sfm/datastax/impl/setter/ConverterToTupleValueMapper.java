@@ -17,6 +17,7 @@ public class ConverterToTupleValueMapper<I> implements Converter<I, TupleValue> 
 
     @Override
     public TupleValue convert(I in) throws Exception {
+        if (in == null) return null;
         TupleValue tv = tupleType.newValue();
         mapper.mapTo(in, tv, null);
         return tv;

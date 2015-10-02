@@ -186,7 +186,7 @@ public class SettableDataSetterFactory
             setter = setterFactory.getSetter(arg);
 
             if (!TypeHelper.areEquals(TypeHelper.toBoxedClass(type), TypeHelper.toBoxedClass(propertyType))) {
-                Converter<?, ?> converter = getConverter(type, TypeHelper.toClass(propertyType), arg.getColumnKey().getDataType());
+                Converter<?, ?> converter = getConverter(propertyType, TypeHelper.toClass(type), arg.getColumnKey().getDataType());
                 if (converter != null) {
                     setter = (Setter<SettableByIndexData, P>) new ConvertDelegateSetter<SettableByIndexData, Object, P>(setter, (Converter<Object, P>) converter);
                 } else {
@@ -217,8 +217,35 @@ public class SettableDataSetterFactory
                         setter = new ListWithConverterSettableDataSetter(arg.getColumnKey().getIndex(), converter);
                     }
                 }
-            }
+            } else if (TypeHelper.isAssignable(Set.class, type) && TypeHelper.isAssignable(Set.class, propertyType)) {
 
+                DataType dataTypeElt = arg.getColumnKey().getDataType().getTypeArguments().get(0);
+                Class<?> dEltType = dataTypeElt.asJavaClass();
+                Type lEltType = TypeHelper.getComponentTypeOfListOrArray(propertyType);
+                if (TypeHelper.areEquals(lEltType, dEltType)) {
+                    setter = new SetSettableDataSetter(arg.getColumnKey().getIndex());
+                } else {
+                    Converter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt);
+                    if (converter != null) {
+                        setter = new SetWithConverterSettableDataSetter(arg.getColumnKey().getIndex(), converter);
+                    }
+                }
+            } else if (TypeHelper.isAssignable(Map.class, type) && TypeHelper.isAssignable(Map.class, propertyType)) {
+
+                DataType dtKeyType = arg.getColumnKey().getDataType().getTypeArguments().get(0);
+                DataType dtValueType = arg.getColumnKey().getDataType().getTypeArguments().get(1);
+
+                Tuple2<Type, Type> keyValueTypeOfMap = TypeHelper.getKeyValueTypeOfMap(propertyType);
+
+                if (areSame(dtKeyType, keyValueTypeOfMap.getElement0()) && areSame(dtValueType, keyValueTypeOfMap.getElement1())) {
+                    setter = new MapSettableDataSetter(arg.getColumnKey().getIndex());
+                } else {
+                    setter = new MapWithConverterSettableDataSetter(arg.getColumnKey().getIndex(),
+                            getConverter(keyValueTypeOfMap.getElement0(), dtKeyType.asJavaClass(), dtKeyType),
+                            getConverter(keyValueTypeOfMap.getElement1(), dtValueType.asJavaClass(), dtValueType)
+                            );
+                }
+            }
 
         }
 
@@ -236,6 +263,10 @@ public class SettableDataSetterFactory
         return setter;
     }
 
+    private boolean areSame(DataType dtKeyType, Type element0) {
+        return TypeHelper.areEquals(element0, dtKeyType.asJavaClass());
+    }
+
     @SuppressWarnings("unchecked")
     private Converter<?, ?> getConverter(Type elementType,  Class<?> dataTypeElt, DataType dtElt) {
         if (dtElt != null) {
@@ -248,6 +279,6 @@ public class SettableDataSetterFactory
                 return new ConverterToTupleValueMapper(mapper, (TupleType) dtElt);
             }
         }
-        return ConverterFactory.getConverter(dataTypeElt, elementType);
+        return ConverterFactory.getConverter(TypeHelper.toClass(elementType), dataTypeElt);
     }
 }

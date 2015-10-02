@@ -120,11 +120,57 @@ public class SettableDataSetterFactoryTest {
         verify(statement).setUDTValue(0, bd);
         verify(statement).setToNull(0);
     }
-//    @Test
-//    public void testSet() throws Exception {
-//        fail();
-//    }
-//
+    @Test
+    public void testSet() throws Exception {
+        Set<String> values = new HashSet<String>(Arrays.asList("v1", "v2"));
+        Setter<SettableByIndexData, Set<String>> setter = factory.getSetter(newPM(new TypeReference<Set<String>>() {}.getType(), DataType.set(DataType.text())));
+
+        setter.set(statement, values);
+        setter.set(statement, null);
+
+        verify(statement).setSet(0, values);
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testSetOfTuple() throws Exception {
+        TupleType ut = TupleType.of(DataType.text(), DataType.cint());
+
+        Set<Tuple2<String, Integer>> values =
+                new HashSet<Tuple2<String, Integer>>(
+                        Arrays.asList(new Tuple2<String, Integer>("aa", 1),
+                                new Tuple2<String, Integer>("bb", 2))) ;
+        Setter<SettableByIndexData, Set<Tuple2<String, Integer>>> setter = factory.getSetter(newPM(new TypeReference<Set<Tuple2<String, Integer>>>() {}.getType(), DataType.set(ut)));
+
+        setter.set(statement, values);
+        setter.set(statement, null);
+
+        ArgumentCaptor<Set> captor = ArgumentCaptor.forClass(Set.class);
+
+        verify(statement).setSet(eq(0), captor.capture());
+
+        Set value = captor.getValue();
+        assertEquals(2, value.size());
+
+        for(Object o : value) {
+            TupleValue tv = (TupleValue) o;
+            String str = tv.getString(0);
+            int i = tv.getInt(1);
+            switch (i) {
+                case 1:
+                    assertEquals("aa", str);
+                    break;
+                case 2:
+                    assertEquals("bb", str);
+                    break;
+                default: fail();
+            }
+        }
+
+        verify(statement).setToNull(0);
+    }
+
+
     @Test
     public void testList() throws Exception {
         List<String> values = Arrays.asList("v1", "v2");
@@ -156,11 +202,51 @@ public class SettableDataSetterFactoryTest {
 
         verify(statement).setToNull(0);
     }
-//
-//    @Test
-//    public void testMap() throws Exception {
-//        fail();
-//    }
+
+    @Test
+    public void testMap() throws Exception {
+        DataType map = DataType.map(DataType.text(), DataType.text());
+
+        Map<String, String> values = new HashMap<String, String>();
+        values.put("aa", "bb");
+
+        Setter<SettableByIndexData, Map<String, String>> setter = factory.getSetter(newPM(new TypeReference<Map<String, String>>() {}.getType(), map));
+
+        setter.set(statement, values);
+        setter.set(statement, null);
+
+        verify(statement).setMap(0, values);
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testMapWithConverter() throws Exception {
+        TupleType ut = TupleType.of(DataType.text(), DataType.cint());
+
+        DataType map = DataType.map(DataType.text(), ut);
+
+        Map<Integer, Tuple2<String, Integer>> values = new HashMap<Integer, Tuple2<String, Integer>>();
+        values.put(1, new Tuple2<String, Integer>("aa", 2));
+
+        Setter<SettableByIndexData, Map<Integer, Tuple2<String, Integer>>> setter = factory.getSetter(newPM(new TypeReference<Map<Integer, Tuple2<String, Integer>>>() {}.getType(), map));
+
+        setter.set(statement, values);
+        setter.set(statement, null);
+
+        ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
+
+        verify(statement).setMap(eq(0), captor.capture());
+
+        Map value = captor.getValue();
+
+        assertEquals(1, value.size());
+        TupleValue tv = (TupleValue) value.get("1");
+        assertEquals("aa", tv.getString(0));
+        assertEquals(2, tv.getInt(1));
+
+        verify(statement).setToNull(0);
+    }
+
 
 
     @Test

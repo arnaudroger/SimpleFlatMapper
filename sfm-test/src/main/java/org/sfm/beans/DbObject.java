@@ -1,7 +1,6 @@
 package org.sfm.beans;
 
 import java.util.Date;
-import java.util.Random;
 
 public class DbObject {
 

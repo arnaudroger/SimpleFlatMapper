@@ -1,11 +1,9 @@
 package org.sfm.jdbc;
 
+import org.sfm.jdbc.impl.PreparedStatementSetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.mapper.AbstractMapperFactory;
-import org.sfm.map.mapper.DynamicSetRowMapper;
-import org.sfm.map.mapper.FieldMapperColumnDefinitionProviderImpl;
-import org.sfm.map.mapper.MapperKey;
+import org.sfm.map.mapper.*;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
@@ -150,10 +148,33 @@ public final class JdbcMapperFactory
 	}
 
 	/**
+	 *
+	 * @param target the type
+	 * @param <T> the type
+	 * @return a builder to create a mapper from target to PreparedStatement
+	 */
+	public <T> PreparedStatementMapperBuilder<T> buildFrom(final Class<T> target) {
+		return buildFrom((Type) target);
+	}
+
+	public <T> PreparedStatementMapperBuilder<T> buildFrom(final Type target) {
+		ClassMeta<T> classMeta = getClassMeta(target);
+		return buildFrom(classMeta);
+	}
+
+	public <T> PreparedStatementMapperBuilder<T> buildFrom(final TypeReference<T> target) {
+		return buildFrom(target.getType());
+	}
+
+	public <T> PreparedStatementMapperBuilder<T> buildFrom(final ClassMeta<T> classMeta) {
+		return new PreparedStatementMapperBuilder<T>(classMeta, mapperConfig(), ConstantTargetFieldMapperFactorImpl.instance(new PreparedStatementSetterFactory()));
+	}
+
+	/**
 	 * Will create a DynamicMapper on the specified target class.
 	 * @param target the class
-     * @param <T> the jdbcMapper target type
-     * @return the DynamicMapper
+	 * @param <T> the jdbcMapper target type
+	 * @return the DynamicMapper
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target) {
 		return newMapper((Type) target);

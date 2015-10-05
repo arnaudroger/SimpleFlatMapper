@@ -4,9 +4,7 @@ import com.datastax.driver.core.SettableByIndexData;
 import org.sfm.reflect.Setter;
 import org.sfm.utils.conv.Converter;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class SetWithConverterSettableDataSetter<I, O> implements Setter<SettableByIndexData, Set<I>> {

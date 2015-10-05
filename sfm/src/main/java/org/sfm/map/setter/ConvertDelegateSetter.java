@@ -3,8 +3,6 @@ package org.sfm.map.setter;
 import org.sfm.reflect.Setter;
 import org.sfm.utils.conv.Converter;
 
-import java.sql.PreparedStatement;
-
 public class ConvertDelegateSetter<T, I, O> implements Setter<T, I> {
     private final Setter<T, O> setter;
     private final Converter<I, O> converter;

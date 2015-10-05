@@ -2,11 +2,7 @@ package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.*;
 import org.sfm.datastax.DatastaxColumnKey;
-import org.sfm.datastax.impl.getter.DatastaxTupleGetter;
 import org.sfm.datastax.impl.setter.*;
-
-//IFJAVA8_START
-//IFJAVA8_END
 
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperConfig;

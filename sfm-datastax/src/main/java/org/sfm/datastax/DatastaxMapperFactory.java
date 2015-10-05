@@ -52,6 +52,17 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
                 new DatastaxMappingContextFactoryBuilder());
     }
 
+    public <T> DatastaxBinder<T> mapFrom(Class<T> type) {
+        return mapFrom((Type) type);
+    }
+    public <T> DatastaxBinder<T> mapFrom(TypeReference<T> type) {
+        return mapFrom(type.getType());
+    }
+    public <T> DatastaxBinder<T> mapFrom(Type type) {
+        final ClassMeta<T> classMeta = getClassMeta(type);
+        return new DatastaxBinder<T>(classMeta, mapperConfig());
+    }
+
     public <T> DatastaxMapper<T> mapTo(Class<T> type) {
         return mapTo((Type) type);
     }

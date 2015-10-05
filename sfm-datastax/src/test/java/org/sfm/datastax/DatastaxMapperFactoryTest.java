@@ -1,6 +1,7 @@
 package org.sfm.datastax;
 
 import com.datastax.driver.core.*;
+import com.datastax.driver.core.ResultSet;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.TestAffinityObject;
@@ -11,7 +12,7 @@ import java.util.Iterator;
 import static org.junit.Assert.*;
 
 
-public class DatastaxMapperFactoryMapperTest extends AbstractDatastaxTest {
+public class DatastaxMapperFactoryTest extends AbstractDatastaxTest {
 
 
     @Test
@@ -112,6 +113,4 @@ public class DatastaxMapperFactoryMapperTest extends AbstractDatastaxTest {
             }
         });
     }
-
-
 }

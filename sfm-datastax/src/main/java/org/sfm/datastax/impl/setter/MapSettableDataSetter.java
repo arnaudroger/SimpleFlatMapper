@@ -4,7 +4,6 @@ import com.datastax.driver.core.SettableByIndexData;
 import org.sfm.reflect.Setter;
 
 import java.util.Map;
-import java.util.Set;
 
 public class MapSettableDataSetter<K, V> implements Setter<SettableByIndexData, Map<K, V>> {
     private final int index;

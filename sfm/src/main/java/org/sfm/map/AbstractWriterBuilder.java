@@ -157,5 +157,4 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
         return propertyMappingsBuilder.getKeys().toArray(new FieldKey[0]);
     }
 
-
 }

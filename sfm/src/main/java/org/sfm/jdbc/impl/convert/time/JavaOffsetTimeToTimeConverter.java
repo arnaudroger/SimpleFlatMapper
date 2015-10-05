@@ -4,9 +4,7 @@ import org.sfm.utils.conv.Converter;
 
 import java.sql.Time;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.OffsetTime;
-import java.time.ZoneId;
 
 public class JavaOffsetTimeToTimeConverter implements Converter<OffsetTime, Time> {
     @Override

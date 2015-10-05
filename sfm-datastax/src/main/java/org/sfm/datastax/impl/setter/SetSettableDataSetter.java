@@ -3,7 +3,6 @@ package org.sfm.datastax.impl.setter;
 import com.datastax.driver.core.SettableByIndexData;
 import org.sfm.reflect.Setter;
 
-import java.util.List;
 import java.util.Set;
 
 public class SetSettableDataSetter<E> implements Setter<SettableByIndexData, Set<E>> {

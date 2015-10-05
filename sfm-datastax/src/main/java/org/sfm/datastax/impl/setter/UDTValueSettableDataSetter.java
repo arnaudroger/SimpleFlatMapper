@@ -1,7 +1,6 @@
 package org.sfm.datastax.impl.setter;
 
 import com.datastax.driver.core.SettableByIndexData;
-import com.datastax.driver.core.TupleValue;
 import com.datastax.driver.core.UDTValue;
 import org.sfm.reflect.Setter;
 

@@ -2,7 +2,6 @@ package org.sfm.jdbc.impl.setter;
 
 import org.sfm.reflect.Setter;
 
-import java.io.Reader;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLXML;

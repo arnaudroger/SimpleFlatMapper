@@ -17,12 +17,11 @@ public class PreparedStatementMapperBuilderTest {
     @Test
     public void testMapDbObjectToStatement() throws Exception {
         Mapper<DbObject, PreparedStatement> mapper =
-                PreparedStatementMapperBuilder
-                        .newBuilder(DbObject.class)
+                JdbcMapperFactory.newInstance().buildFrom(DbObject.class)
                         .addColumn("id")
                         .addColumn("name")
                         .addColumn("email")
-//                        .addColumn("creation_time")
+                        .addColumn("creation_time")
                         .mapper();
 
         PreparedStatement ps = mock(PreparedStatement.class);
@@ -38,7 +37,7 @@ public class PreparedStatementMapperBuilderTest {
         verify(ps).setLong(1, 123);
         verify(ps).setString(2, "name");
         verify(ps).setString(3, "email");
-//        verify(ps).setTimestamp(4, new Timestamp(dbObject.getCreationTime().getTime()));
+        verify(ps).setTimestamp(4, new Timestamp(dbObject.getCreationTime().getTime()));
     }
 
 }

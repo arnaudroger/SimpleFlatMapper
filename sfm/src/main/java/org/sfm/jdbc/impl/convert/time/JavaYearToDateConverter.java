@@ -5,7 +5,6 @@ import org.sfm.utils.conv.Converter;
 import java.sql.Date;
 import java.time.MonthDay;
 import java.time.Year;
-import java.time.YearMonth;
 import java.time.ZoneId;
 
 public class JavaYearToDateConverter implements Converter<Year, Date> {

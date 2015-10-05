@@ -11,7 +11,6 @@ import org.sfm.map.mapper.ConstantTargetFieldMapperFactorImpl;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.tuples.Tuple2;
 
 import java.lang.reflect.Type;
 import java.util.Iterator;

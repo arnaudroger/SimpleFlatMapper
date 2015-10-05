@@ -13,6 +13,8 @@ import static org.junit.Assert.assertFalse;
 
 public class SettableDataMapperTest extends AbstractDatastaxTest {
 
+    DbObject dbObject = DbObject.newInstance();
+
     @Test
     public void testInsertDbObjects() throws Exception {
         testInSession(new Callback() {
@@ -22,23 +24,23 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
                 PreparedStatement preparedStatement = session.prepare("insert into " +
                         "dbobjects(id, name, email, creation_time, type_ordinal, type_name) " +
                         "values(?, ?, ?, ?, ?, ?)");
-                DbObject dbObject = DbObject.newInstance();
 
                 DatastaxBinder<DbObject> datastaxBinder = DatastaxMapperFactory.newInstance().mapFrom(DbObject.class);
 
                 session.execute(datastaxBinder.mapTo(dbObject, preparedStatement));
 
                 DatastaxMapper<DbObject> dbObjectDatastaxMapper = DatastaxMapperFactory.newInstance().mapTo(DbObject.class);
-                DbObject actual = dbObjectDatastaxMapper.iterator(session.execute(session.prepare("select * from dbobjects where id = ?").bind(dbObject.getId()))).next();
+                BoundStatement boundStatement = session.prepare("select * from dbobjects where id = ?").bind(dbObject.getId());
+                ResultSet execute = session.execute(boundStatement);
+                DbObject actual = dbObjectDatastaxMapper.iterator(execute).next();
                 assertEquals(dbObject, actual);
 
-                session.execute(session.prepare("delete from dbobjects where id = ?").bind(dbObject.getId()));
             }
         });
     }
 
     @Override
     protected void tearDown(Session session) {
-        session.execute("DELETE FROM dbobjects where id = 2666");
+        session.execute(session.prepare("delete from dbobjects where id = ?").bind(dbObject.getId()));
     }
 }

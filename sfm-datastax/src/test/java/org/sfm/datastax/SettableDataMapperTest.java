@@ -78,9 +78,4 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
         });
     }
 
-    @Override
-    protected void tearDown(Session session) {
-        session.execute(session.prepare("delete from dbobjects where id = ?").bind(dbObjects.get(0).getId()));
-        session.execute(session.prepare("delete from dbobjects where id = ?").bind(dbObjects.get(1).getId()));
-    }
 }

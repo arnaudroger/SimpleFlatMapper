@@ -28,8 +28,11 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
 
                 session.execute(datastaxBinder.mapTo(dbObject, preparedStatement));
 
-                DbObject actual = DatastaxMapperFactory.newInstance().mapTo(DbObject.class).iterator(session.execute("select * from dbobjects")).next();
+                DatastaxMapper<DbObject> dbObjectDatastaxMapper = DatastaxMapperFactory.newInstance().mapTo(DbObject.class);
+                DbObject actual = dbObjectDatastaxMapper.iterator(session.execute("select * from dbobjects")).next();
                 assertEquals(dbObject, actual);
+
+                session.execute(session.prepare("delete from dbobjects where id = ?").bind(dbObject.getId()));
             }
         });
     }

@@ -12,6 +12,7 @@ import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.BeforeClass;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
@@ -145,6 +146,12 @@ public class AbstractDatastaxTest  {
             m.setAccessible(true);
             System.out.println("varchar codec = " + m.invoke(DataType.varchar(), ProtocolVersion.V3));
             System.out.println("bigint codec = " + m.invoke(DataType.bigint(), ProtocolVersion.V3));
+            
+            Field f = Class.forName("com.datastax.driver.core.TypeCodec").getDeclaredField("primitiveCodecs");
+            f.setAccessible(true);
+
+            System.out.println("primitiveCodecs = " + f.get(null));
+            
             throw e;
         } finally {
             try {

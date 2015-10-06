@@ -137,6 +137,7 @@ public class AbstractDatastaxTest  {
                 session.execute("insert into dbobjects_mapudt(id, l) values(1,  {2 : {str : 't1', l : 12}})");
             }
 
+            Thread.sleep(200);
             callback.call(session);
 
 

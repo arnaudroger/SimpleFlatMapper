@@ -41,7 +41,7 @@
         PreparedStatement preparedStatement = session.prepare(
            "insert into " +
            "dbobjects(id, name, email, creation_time, type_ordinal, type_name) " +
-           "values(?, ?, ?, ?, ?, ?)
+           "values(?, ?, ?, ?, ?, ?)"
         );
 
         session.execute(datastaxBinder.mapTo(dbObjects, preparedStatement));

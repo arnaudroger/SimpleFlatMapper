@@ -29,6 +29,8 @@ public class AbstractDatastaxTest  {
     @BeforeClass
     public static void startCassandra() throws InterruptedException, TTransportException, ConfigurationException, IOException {
         if (!isStarted) {
+            printInfo();
+
             EmbeddedCassandraServerHelper.startEmbeddedCassandra(10000L);
             isStarted = true;
 
@@ -142,22 +144,7 @@ public class AbstractDatastaxTest  {
             callback.call(session);
 
         } catch(NullPointerException e) {
-            Method m  = DataType.class.getDeclaredMethod("codec", ProtocolVersion.class);
-            m.setAccessible(true);
-            System.out.println("varchar codec = " + m.invoke(DataType.varchar(), ProtocolVersion.V3));
-            System.out.println("bigint codec = " + m.invoke(DataType.bigint(), ProtocolVersion.V3));
-            
-            Field f = Class.forName("com.datastax.driver.core.TypeCodec").getDeclaredField("primitiveCodecs");
-            f.setAccessible(true);
-
-            System.out.println("primitiveCodecs = " + f.get(null));
-
-            Class<?> longCondec = Class.forName("com.datastax.driver.core.TypeCodec$LongCodec");
-
-            Field instance = longCondec.getDeclaredField("instance");
-            instance.setAccessible(true);
-
-            System.out.println("LongCodec.instance = " + instance.get(null));
+            printInfo();
 
             throw e;
         } finally {
@@ -169,6 +156,25 @@ public class AbstractDatastaxTest  {
             if (session != null) session.close();
         }
 
+    }
+
+    private static void printInfo() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException, ClassNotFoundException {
+        Method m  = DataType.class.getDeclaredMethod("codec", ProtocolVersion.class);
+        m.setAccessible(true);
+        System.out.println("varchar codec = " + m.invoke(DataType.varchar(), ProtocolVersion.V3));
+        System.out.println("bigint codec = " + m.invoke(DataType.bigint(), ProtocolVersion.V3));
+
+        Field f = Class.forName("com.datastax.driver.core.TypeCodec").getDeclaredField("primitiveCodecs");
+        f.setAccessible(true);
+
+        System.out.println("primitiveCodecs = " + f.get(null));
+
+        Class<?> longCondec = Class.forName("com.datastax.driver.core.TypeCodec$LongCodec");
+
+        Field instance = longCondec.getDeclaredField("instance");
+        instance.setAccessible(true);
+
+        System.out.println("LongCodec.instance = " + instance.get(null));
     }
 
     protected void tearDown(Session session) {

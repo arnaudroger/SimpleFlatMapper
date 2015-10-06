@@ -166,7 +166,7 @@ public class AbstractDatastaxTest  {
             Object longCodeInstance = instance.get(null);
             System.out.println("LongCodec.instance = " + longCodeInstance);
 
-            if (!o.containsKey(DataType.Name.BIGINT)) {
+            if (o.get(DataType.Name.BIGINT) == null) {
                 o.put(DataType.Name.BIGINT, longCodeInstance);
                 o.put(DataType.Name.COUNTER, longCodeInstance);
 

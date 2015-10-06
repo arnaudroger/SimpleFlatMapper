@@ -151,7 +151,14 @@ public class AbstractDatastaxTest  {
             f.setAccessible(true);
 
             System.out.println("primitiveCodecs = " + f.get(null));
-            
+
+            Class<?> longCondec = Class.forName("com.datastax.driver.core.TypeCodec$LongCodec");
+
+            Field instance = longCondec.getDeclaredField("instance");
+            instance.setAccessible(true);
+
+            System.out.println("LongCodec.instance = " + f.get(null));
+
             throw e;
         } finally {
             try {

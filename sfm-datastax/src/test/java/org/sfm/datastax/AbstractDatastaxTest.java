@@ -1,9 +1,6 @@
 package org.sfm.datastax;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.Metadata;
-import com.datastax.driver.core.Session;
+import com.datastax.driver.core.*;
 import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.AbstractCassandraUnit4TestCase;
@@ -16,6 +13,7 @@ import org.junit.BeforeClass;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 
@@ -142,7 +140,11 @@ public class AbstractDatastaxTest  {
 
             callback.call(session);
 
-
+        } catch(NullPointerException e) {
+            Method m  = DataType.class.getDeclaredMethod("codec", ProtocolVersion.class);
+            System.out.println("varchar codec = " + m.invoke(DataType.varchar(), ProtocolVersion.V3));
+            System.out.println("bigint codec = " + m.invoke(DataType.bigint(), ProtocolVersion.V3));
+            throw e;
         } finally {
             try {
                 tearDown(session);

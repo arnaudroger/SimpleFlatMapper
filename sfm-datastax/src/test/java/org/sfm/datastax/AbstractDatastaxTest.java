@@ -164,11 +164,7 @@ public class AbstractDatastaxTest  {
             System.out.println("PRINT CONNENDRUM");
 
 
-            Class<?> longCondec = Class.forName("com.datastax.driver.core.TypeCodec$LongCodec");
 
-            Field instance = longCondec.getDeclaredField("instance");
-            instance.setAccessible(true);
-            System.out.println("LongCodec.instance = " + instance.get(null));
 
 
             Field f = Class.forName("com.datastax.driver.core.TypeCodec").getDeclaredField("primitiveCodecs");
@@ -176,6 +172,11 @@ public class AbstractDatastaxTest  {
 
             System.out.println("primitiveCodecs = " + f.get(null));
 
+            Class<?> longCondec = Class.forName("com.datastax.driver.core.TypeCodec$LongCodec");
+
+            Field instance = longCondec.getDeclaredField("instance");
+            instance.setAccessible(true);
+            System.out.println("LongCodec.instance = " + instance.get(null));
 
         } catch(Throwable e ) {
             System.err.println("Ooops ... " + e);

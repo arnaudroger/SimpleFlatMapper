@@ -28,9 +28,7 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
             @Override
             public void call(Session session) throws Exception {
 
-                PreparedStatement preparedStatement = session.prepare("insert into " +
-                        "dbobjects(id, name, email, creation_time, type_ordinal, type_name) " +
-                        "values(?, ?, ?, ?, ?, ?)");
+                PreparedStatement preparedStatement = session.prepare(QUERY);
 
                 DatastaxBinder<DbObject> datastaxBinder = DatastaxMapperFactory.newInstance().mapFrom(DbObject.class);
 
@@ -74,6 +72,32 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
                 checkObjectInserted(session, 0);
                 checkObjectInserted(session, 1);
 
+            }
+        });
+    }
+
+    @Test
+    public void testUpdateDbObjectsBatch() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+
+
+                PreparedStatement preparedStatement = session.prepare(QUERY);
+
+                DatastaxBinder<DbObject> datastaxBinder = DatastaxMapperFactory.newInstance().mapFrom(DbObject.class);
+
+                DbObject value = dbObjects.get(0);
+
+                session.execute(datastaxBinder.mapTo(value, preparedStatement));
+                checkObjectInserted(session, 0);
+
+                PreparedStatement updateStatement = session.prepare("UPDATE dbobjects SET name = ? WHERE id = ?");
+                value.setName("newname");
+
+                session.execute(datastaxBinder.mapTo(value, updateStatement));
+
+                checkObjectInserted(session, 0);
             }
         });
     }

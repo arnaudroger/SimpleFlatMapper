@@ -6,7 +6,6 @@ import org.sfm.csv.mapper.CellSetter;
 import org.sfm.csv.mapper.CsvMapperCellHandler;
 import org.sfm.csv.mapper.CsvMapperCellHandlerFactory;
 import org.sfm.csv.mapper.DelayedCellSetterFactory;
-import org.sfm.jdbc.JdbcMapper;
 import org.sfm.map.*;
 import org.sfm.map.error.RethrowFieldMapperErrorHandler;
 import org.sfm.reflect.*;
@@ -27,7 +26,7 @@ public class AsmFactory {
 	private final ConcurrentMap<Object, Setter<?, ?>> setterCache = new ConcurrentHashMap<Object, Setter<?, ?>>();
     private final ConcurrentMap<Object, Getter<?, ?>> getterCache = new ConcurrentHashMap<Object, Getter<?, ?>>();
 	private final ConcurrentMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>> instantiatorCache = new ConcurrentHashMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>>();
-    private final ConcurrentMap<MapperKey, Class<? extends JdbcMapper<?>>> jdbcMapperCache = new ConcurrentHashMap<MapperKey, Class<? extends JdbcMapper<?>>>();
+    private final ConcurrentMap<MapperKey, Class<? extends Mapper<?, ?>>> fieldMapperCache = new ConcurrentHashMap<MapperKey, Class<? extends Mapper<?, ?>>>();
     private final ConcurrentMap<CsvMapperKey, Class<? extends CsvMapperCellHandlerFactory<?>>> csvMapperCache = new ConcurrentHashMap<CsvMapperKey, Class<? extends CsvMapperCellHandlerFactory<?>>>();
 
 
@@ -169,14 +168,14 @@ public class AsmFactory {
                                           final Class<T> target) throws Exception {
 
         MapperKey key = new MapperKey(keys, mappers, constructorMappers, instantiator, target);
-        Class<JdbcMapper<T>> type = (Class<JdbcMapper<T>>) jdbcMapperCache.get(key);
+        Class<Mapper<S, T>> type = (Class<Mapper<S, T>>) fieldMapperCache.get(key);
         if (type == null) {
 
-            final String className = generateClassNameForJdbcMapper(mappers, constructorMappers, source, target);
+            final String className = generateClassNameForFieldMapper(mappers, constructorMappers, source, target);
             final byte[] bytes = MapperAsmBuilder.dump(className, mappers, constructorMappers, source, target);
 
-            type = (Class<JdbcMapper<T>>) createClass(className, bytes, target.getClass().getClassLoader());
-            jdbcMapperCache.put(key, type);
+            type = (Class<Mapper<S, T>>) createClass(className, bytes, target.getClass().getClassLoader());
+            fieldMapperCache.put(key, type);
         }
         final Constructor<?> constructor = type.getDeclaredConstructors()[0];
         return (Mapper<S, T>) constructor.newInstance(mappers, constructorMappers, instantiator);
@@ -303,7 +302,7 @@ public class AsmFactory {
     }
 
 
-	private <S, T> String generateClassNameForJdbcMapper(final FieldMapper<S, T>[] mappers,final FieldMapper<S, T>[] constructorMappers, final Class<? super S> source, final Class<T> target) {
+	private <S, T> String generateClassNameForFieldMapper(final FieldMapper<S, T>[] mappers, final FieldMapper<S, T>[] constructorMappers, final Class<? super S> source, final Class<T> target) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("org.sfm.reflect.asm.");

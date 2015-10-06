@@ -158,23 +158,28 @@ public class AbstractDatastaxTest  {
 
     }
 
-    private static void printInfo() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException, ClassNotFoundException {
-        Method m  = DataType.class.getDeclaredMethod("codec", ProtocolVersion.class);
-        m.setAccessible(true);
-        System.out.println("varchar codec = " + m.invoke(DataType.varchar(), ProtocolVersion.V3));
-        System.out.println("bigint codec = " + m.invoke(DataType.bigint(), ProtocolVersion.V3));
+    private static void printInfo() {
+        try {
+            Method m = DataType.class.getDeclaredMethod("codec", ProtocolVersion.class);
+            m.setAccessible(true);
+            System.out.println("varchar codec = " + m.invoke(DataType.varchar(), ProtocolVersion.V3));
+            System.out.println("bigint codec = " + m.invoke(DataType.bigint(), ProtocolVersion.V3));
 
-        Field f = Class.forName("com.datastax.driver.core.TypeCodec").getDeclaredField("primitiveCodecs");
-        f.setAccessible(true);
+            Field f = Class.forName("com.datastax.driver.core.TypeCodec").getDeclaredField("primitiveCodecs");
+            f.setAccessible(true);
 
-        System.out.println("primitiveCodecs = " + f.get(null));
+            System.out.println("primitiveCodecs = " + f.get(null));
 
-        Class<?> longCondec = Class.forName("com.datastax.driver.core.TypeCodec$LongCodec");
+            Class<?> longCondec = Class.forName("com.datastax.driver.core.TypeCodec$LongCodec");
 
-        Field instance = longCondec.getDeclaredField("instance");
-        instance.setAccessible(true);
+            Field instance = longCondec.getDeclaredField("instance");
+            instance.setAccessible(true);
 
-        System.out.println("LongCodec.instance = " + instance.get(null));
+            System.out.println("LongCodec.instance = " + instance.get(null));
+        } catch(Throwable e ) {
+            System.err.println("Ooops ... " + e);
+            e.printStackTrace();
+        }
     }
 
     protected void tearDown(Session session) {

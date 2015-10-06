@@ -32,4 +32,18 @@
                 "select id, name, email, creation_time, type_ordinal, type_name"
                 + " from dbobjects");
         final Iterator<DbObject> iterator = mapper.iterator(rs);
+
+
+    final DatastaxBinder<DbObject> datastaxBinder =
+        DatastaxMapperFactory.newInstance().mapFrom(DbObject.class);
+
+    ...
+        PreparedStatement preparedStatement = session.prepare(
+           "insert into " +
+           "dbobjects(id, name, email, creation_time, type_ordinal, type_name) " +
+           "values(?, ?, ?, ?, ?, ?)
+        );
+
+        session.execute(datastaxBinder.mapTo(dbObjects, preparedStatement));
+
 ```

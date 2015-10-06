@@ -39,6 +39,7 @@ public class AbstractDatastaxTest  {
                             .addContactPointsWithPorts(
                                     Arrays.asList(new InetSocketAddress("localhost", 9142)))
                             .build();
+
             Metadata metadata = cluster.getMetadata();
 
             assertEquals("Test Cluster", metadata.getClusterName());
@@ -55,6 +56,8 @@ public class AbstractDatastaxTest  {
             }
 
             session = cluster.connect("sfm");
+
+            session.init();
 
             KeyspaceMetadata sfm = cluster.getMetadata().getKeyspace("sfm");
             if (sfm.getTable("dbobjects") == null) {
@@ -137,7 +140,6 @@ public class AbstractDatastaxTest  {
                 session.execute("insert into dbobjects_mapudt(id, l) values(1,  {2 : {str : 't1', l : 12}})");
             }
 
-            Thread.sleep(200);
             callback.call(session);
 
 

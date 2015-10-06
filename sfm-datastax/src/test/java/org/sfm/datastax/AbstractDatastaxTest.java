@@ -3,20 +3,14 @@ package org.sfm.datastax;
 import com.datastax.driver.core.*;
 import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.thrift.transport.TTransportException;
-import org.cassandraunit.AbstractCassandraUnit4TestCase;
-import org.cassandraunit.BaseCassandraUnit;
-import org.cassandraunit.CassandraUnit;
-import org.cassandraunit.dataset.DataSet;
-import org.cassandraunit.dataset.yaml.ClassPathYamlDataSet;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.BeforeClass;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,7 +24,7 @@ public class AbstractDatastaxTest  {
     public static void startCassandra() throws InterruptedException, TTransportException, ConfigurationException, IOException {
         if (!isStarted) {
             System.out.println("Starting Cassandra");
-            printInfo();
+            fixTypeCodec();
 
             EmbeddedCassandraServerHelper.startEmbeddedCassandra(10000L);
             isStarted = true;
@@ -143,11 +137,6 @@ public class AbstractDatastaxTest  {
             }
 
             callback.call(session);
-
-        } catch(NullPointerException e) {
-            printInfo();
-
-            throw e;
         } finally {
             try {
                 tearDown(session);
@@ -159,24 +148,32 @@ public class AbstractDatastaxTest  {
 
     }
 
-    private static void printInfo() {
+    private static void fixTypeCodec() {
         try {
             System.out.println("PRINT CONNENDRUM");
-
-
-
 
 
             Field f = Class.forName("com.datastax.driver.core.TypeCodec").getDeclaredField("primitiveCodecs");
             f.setAccessible(true);
 
-            System.out.println("primitiveCodecs = " + f.get(null));
+            Map o = (Map) f.get(null);
+            System.out.println("primitiveCodecs = " + o);
 
-            Class<?> longCondec = Class.forName("com.datastax.driver.core.TypeCodec$LongCodec");
+            Class<?> longCodec = Class.forName("com.datastax.driver.core.TypeCodec$LongCodec");
 
-            Field instance = longCondec.getDeclaredField("instance");
+            Field instance = longCodec.getDeclaredField("instance");
             instance.setAccessible(true);
-            System.out.println("LongCodec.instance = " + instance.get(null));
+            Object longCodeInstance = instance.get(null);
+            System.out.println("LongCodec.instance = " + longCodeInstance);
+
+            if (!o.containsKey(DataType.Name.BIGINT)) {
+                o.put(DataType.Name.BIGINT, longCodeInstance);
+                o.put(DataType.Name.COUNTER, longCodeInstance);
+
+                o = (Map) f.get(null);
+                System.out.println("primitiveCodecs = " + o);
+            }
+
 
         } catch(Throwable e ) {
             System.err.println("Ooops ... " + e);

@@ -157,7 +157,7 @@ public class AbstractDatastaxTest  {
             Field instance = longCondec.getDeclaredField("instance");
             instance.setAccessible(true);
 
-            System.out.println("LongCodec.instance = " + f.get(null));
+            System.out.println("LongCodec.instance = " + instance.get(null));
 
             throw e;
         } finally {

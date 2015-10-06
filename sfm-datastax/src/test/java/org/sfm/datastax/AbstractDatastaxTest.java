@@ -142,6 +142,7 @@ public class AbstractDatastaxTest  {
 
         } catch(NullPointerException e) {
             Method m  = DataType.class.getDeclaredMethod("codec", ProtocolVersion.class);
+            m.setAccessible(true);
             System.out.println("varchar codec = " + m.invoke(DataType.varchar(), ProtocolVersion.V3));
             System.out.println("bigint codec = " + m.invoke(DataType.bigint(), ProtocolVersion.V3));
             throw e;

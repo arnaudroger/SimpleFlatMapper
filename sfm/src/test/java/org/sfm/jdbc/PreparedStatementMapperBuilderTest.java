@@ -40,4 +40,34 @@ public class PreparedStatementMapperBuilderTest {
         verify(ps).setTimestamp(4, new Timestamp(dbObject.getCreationTime().getTime()));
     }
 
+
+    public static class DMClass {
+        private Date time;
+
+        public Date getTime() {
+            return time;
+        }
+
+        public void setTime(Date time) {
+            this.time = time;
+        }
+    }
+
+    @Test
+    public void testDirectMeta() throws Exception {
+        PreparedStatementMapperBuilder<DMClass> mapperBuilder = JdbcMapperFactory.newInstance().buildFrom(DMClass.class);
+        mapperBuilder.addColumn("time_bucket");
+
+        Mapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
+
+        DMClass dmClass = new DMClass();
+        dmClass.setTime(new Date());
+
+        PreparedStatement ps = mock(PreparedStatement.class);
+
+        mapper.mapTo(dmClass, ps, null);
+
+        verify(ps).setTimestamp(1, new Timestamp(dmClass.getTime().getTime()));
+    }
+
 }

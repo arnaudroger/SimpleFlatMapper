@@ -1,6 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.junit.Test;
+import org.sfm.reflect.IdentityGetter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.impl.NullSetter;
 
@@ -20,14 +21,9 @@ public class DirectClassMetaTest {
         assertNull(direct.newPropertyFinder().getEligibleInstantiatorDefinitions());
 
         assertTrue(property instanceof DirectClassMeta.DirectPropertyMeta);
-        assertEquals("DirectPropertyMeta{type=class java.lang.String}", property.toString());
+        assertEquals("DirectPropertyMeta{type=class java.lang.String,name=direct}", property.toString());
 
-        try {
-            property.newGetter();
-            fail("expected exception");
-        } catch(Exception e) {
-            // expected
-        }
+        assertTrue(property.newGetter() instanceof IdentityGetter);
 
         assertTrue(NullSetter.isNull(property.newSetter()));
 

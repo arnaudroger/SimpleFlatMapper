@@ -1,10 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.map.MapperBuildingException;
-import org.sfm.reflect.InstantiatorDefinition;
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.Setter;
+import org.sfm.reflect.*;
 import org.sfm.reflect.impl.NullSetter;
 
 import java.lang.reflect.Type;
@@ -15,6 +12,7 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
 
 
     public static final String[] HEADERS = new String[]{""};
+    public static final IdentityGetter IDENTITY_GETTER = new IdentityGetter();
     private final ReflectionService reflectService;
 	private final Type target;
 
@@ -80,9 +78,10 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
             return NullSetter.setter();
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         protected Getter<T, E> newGetter() {
-            throw new UnsupportedOperationException();
+            return (Getter<T, E>) IDENTITY_GETTER;
 
         }
 
@@ -100,6 +99,7 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
         public String toString() {
             return "DirectPropertyMeta{" +
                     "type=" + type +
+                    ",name=" + getName() +
                     '}';
         }
     }

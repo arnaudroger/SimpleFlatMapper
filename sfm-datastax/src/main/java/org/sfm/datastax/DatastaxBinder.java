@@ -48,7 +48,7 @@ public class DatastaxBinder<T> {
         return mapper;
     }
 
-    public Statement mapTo(T value, PreparedStatement preparedStatement) throws Exception {
+    public Statement mapTo(T value, PreparedStatement preparedStatement) {
         BoundStatementMapper<T> statementMapper = mapTo(preparedStatement);
         BoundStatement boundStatement = preparedStatement.bind();
         return statementMapper.mapTo(value, boundStatement);

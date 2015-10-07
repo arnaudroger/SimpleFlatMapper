@@ -16,20 +16,31 @@ import java.lang.reflect.Type;
 public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 	private final PropertyMeta<O, I> ownerProperty;
 	private final PropertyMeta<I, P> subProperty;
-	
+	private final GetterOnGetter<O, I, P> getter;
+
 	public SubPropertyMeta(ReflectionService reflectService, PropertyMeta<O, I> property, PropertyMeta<I, P> subProperty) {
 		super(property.getName(), reflectService);
 		this.ownerProperty = property;
 		this.subProperty = subProperty;
+		this.getter = new GetterOnGetter<O, I, P>(ownerProperty.getGetter(), subProperty.getGetter());
 	}
 	@Override
-	protected Setter<O, P> newSetter() {
-		throw new UnsupportedOperationException();
+	public Setter<O, P> getSetter() {
+		if (subProperty.getSetter() != null && ownerProperty.getGetter() != null) {
+			return new Setter<O, P>() {
+				@Override
+				public void set(O target, P value) throws Exception {
+					subProperty.getSetter().set(ownerProperty.getGetter().get(target), value);
+				}
+			};
+		} else {
+			return null;
+		}
 	}
 
     @Override
-    protected Getter<O, P> newGetter() {
-		return new GetterOnGetter<O, I, P>(ownerProperty.getGetter(), subProperty.getGetter());
+    public Getter<O, P> getGetter() {
+		return getter;
     }
 
 	@Override

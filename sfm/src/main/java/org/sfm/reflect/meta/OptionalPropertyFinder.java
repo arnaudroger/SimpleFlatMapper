@@ -4,8 +4,9 @@ import org.sfm.reflect.InstantiatorDefinition;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-public class OptionalPropertyFinder<T> implements PropertyFinder<T> {
+public class OptionalPropertyFinder<T> implements PropertyFinder<Optional<T>> {
 
 
     private final OptionalClassMeta<T> tupleClassMeta;
@@ -22,7 +23,7 @@ public class OptionalPropertyFinder<T> implements PropertyFinder<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
+    public <E> PropertyMeta<Optional<T>, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
         if (!innerMeta.isLeaf()) {
             final PropertyMeta<T, ?> property = propertyFinder.findProperty(propertyNameMatcher);
 
@@ -31,17 +32,17 @@ public class OptionalPropertyFinder<T> implements PropertyFinder<T> {
             }
         } else if (nbProp == 0){
             nbProp++;
-            return (PropertyMeta<T, E>) tupleClassMeta.getProperty();
+            return (PropertyMeta<Optional<T>, E>) tupleClassMeta.getProperty();
         }
 
         return null;
     }
 
     @SuppressWarnings("unchecked")
-    private <I, E> PropertyMeta<T, E> getSubPropertyMeta(PropertyMeta<I, ?> property) {
-        return new SubPropertyMeta<T, I, E>(
+    private <I, E> PropertyMeta<Optional<T>, E> getSubPropertyMeta(PropertyMeta<I, ?> property) {
+        return new SubPropertyMeta<Optional<T>, I, E>(
                 tupleClassMeta.getReflectionService(),
-                (PropertyMeta<T, I>)tupleClassMeta.getProperty(),
+                (PropertyMeta<Optional<T>, I>)tupleClassMeta.getProperty(),
                 (PropertyMeta<I, E>)property);
     }
 

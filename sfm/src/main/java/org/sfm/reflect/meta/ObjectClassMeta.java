@@ -2,12 +2,12 @@ package org.sfm.reflect.meta;
 
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.*;
+import org.sfm.reflect.Parameter;
+import org.sfm.reflect.impl.FieldGetter;
+import org.sfm.reflect.impl.FieldSetter;
 import org.sfm.utils.ErrorHelper;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
+import java.lang.reflect.*;
 import java.util.*;
 
 public final class ObjectClassMeta<T> implements ClassMeta<T> {
@@ -28,7 +28,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		this.reflectService = reflectService;
 		try {
             this.instantiatorDefinitions = reflectService.extractConstructors(target);
-            this.constructorProperties = Collections.unmodifiableList(listProperties(instantiatorDefinitions));
+            this.constructorProperties = listProperties(instantiatorDefinitions);
 		} catch(Exception e) {
             ErrorHelper.rethrow(e);
 			throw new IllegalStateException();
@@ -104,46 +104,71 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 				if (SetterHelper.methodModifiersMatches(method.getModifiers()) && SetterHelper.isSetter(name)) {
 					final String propertyName = SetterHelper.getPropertyNameFromMethodName(name);
 
-                    int indexOfProperty = findProperty(properties, propertyName);
-					Type resolvedType = method.getGenericParameterTypes()[0];
+					Setter<T, Object> methodSetter = reflectService.getObjectSetterFactory().getMethodSetter(method);
+					register(propertyName,
+							method.getGenericParameterTypes()[0],
+							null,
+							methodSetter);
+				} else if (GetterHelper.methodModifiersMatches(method.getModifiers()) && GetterHelper.isGetter(name)) {
+					final String propertyName = SetterHelper.getPropertyNameFromMethodName(name);
 
-                    if (resolvedType instanceof TypeVariable) {
-                        Type mappedType = typeVariableTypeMap.get(resolvedType);
-                        if (mappedType != null) {
-                            resolvedType = mappedType;
-                        }
-                    }
-
-					MethodPropertyMeta<T, Object> propertyMeta = new MethodPropertyMeta<T, Object>(propertyName, reflectService, method, resolvedType);
-                    if (indexOfProperty == -1) {
-                        properties.add(propertyMeta);
-                    } else {
-                        properties.set(indexOfProperty, propertyMeta);
-                    }
+					Getter<T, Object> methodGetter = reflectService.getObjectGetterFactory().getMethodGetter(method);
+					register(propertyName,
+							method.getReturnType(),
+							methodGetter,
+							null);
 				}
 			}
-			
+
+			@SuppressWarnings("unchecked")
+			private <P> void register(String propertyName, Type type, Getter<T, P> getter, Setter<T, P> setter) {
+
+				if (type instanceof TypeVariable) {
+					Type mappedType = typeVariableTypeMap.get(type);
+					if (mappedType != null) {
+						type = mappedType;
+					}
+				}
+
+
+				int indexOfProperty = findProperty(constructorProperties, propertyName);
+
+				if (indexOfProperty != -1) {
+					ConstructorPropertyMeta<T, P> constructorPropertyMeta = (ConstructorPropertyMeta<T, P>) constructorProperties.get(indexOfProperty);
+					if (getter != null) {
+						constructorProperties.set(indexOfProperty, constructorPropertyMeta.getter(getter));
+					}
+				} else {
+					indexOfProperty = findProperty(properties, propertyName);
+					if (indexOfProperty == -1) {
+						properties.add(new ObjectPropertyMeta<T, P>(propertyName, reflectService, type, getter, setter));
+					} else {
+						ObjectPropertyMeta<T, P> meta = (ObjectPropertyMeta<T, P>) properties.get(indexOfProperty);
+						properties.set(indexOfProperty, meta.getterSetter(getter, setter));
+					}
+				}
+			}
+
 			@Override
 			public void field(Field field) {
 				final String name = field.getName();
-				if (SetterHelper.fieldModifiersMatches(field.getModifiers())) {
-                    int indexOfProperty = findProperty(properties, name);
-                    if (indexOfProperty == -1) {
+				if (!Modifier.isStatic(field.getModifiers())) {
+					Getter<T, Object> getter = reflectService.getObjectGetterFactory().getFieldGetter(field);
+					Setter<T, Object> setter = null;
 
-						Type resolvedType = field.getGenericType();
+					if (!Modifier.isFinal(field.getModifiers())) {
+						setter = reflectService.getObjectSetterFactory().getFieldSetter(field);
+					}
 
-                        if (resolvedType instanceof  TypeVariable) {
-                            Type mappedType = typeVariableTypeMap.get(resolvedType);
-                            if (mappedType != null) {
-                                resolvedType = mappedType;
-                            }
-                        }
-						properties.add(new FieldPropertyMeta<T, Object>(field.getName(), reflectService, field, resolvedType));
-                    }
+
+					register(name,
+							field.getGenericType(),
+							getter,
+							setter);
 				}
 			}
 
-            private int findProperty(List<PropertyMeta<T, ?>> properties, String name) {
+            private int findProperty(List<? extends PropertyMeta<T, ?>> properties, String name) {
                 for(int i = 0; i < properties.size(); i++) {
                     if (properties.get(i).getName().equals(name)) {
                         return i;

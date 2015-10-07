@@ -9,30 +9,40 @@ import java.lang.reflect.Type;
 public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
     private final Class<T> owner;
+    private final Setter<T, P> setter = new NullSetter<T, P>();
+    private final Getter<T, P> getter;
+    private final Parameter parameter;
 
     public ConstructorPropertyMeta(String name,
                                    ReflectionService reflectService,
                                    Parameter parameter,
                                    Class<T> owner) {
+        this(name, reflectService, parameter, owner, new NullGetter<T, P>());
+    }
+
+    public ConstructorPropertyMeta(String name,
+                                   ReflectionService reflectService,
+                                   Parameter parameter,
+                                   Class<T> owner, Getter<T, P> getter) {
 		super(name, reflectService);
 		this.parameter = parameter;
         this.owner = owner;
-	}
+        this.getter = getter;
+    }
 
-	private final Parameter parameter;
-	
+
 	@Override
-	protected Setter<T, P> newSetter() {
-		return new NullSetter<T, P>();
+	public Setter<T, P> getSetter() {
+        return setter;
 	}
 
     @Override
-    protected Getter<T, P> newGetter() {
-        final Getter<T, P> getter = reflectService.getObjectGetterFactory().getGetter(owner, getName());
-        if (getter == null) {
-            return new NullGetter<T, P>();
-        }
+    public Getter<T, P> getGetter() {
         return getter;
+    }
+
+    public ConstructorPropertyMeta<T, P> getter(Getter<T, P> getter) {
+        return new ConstructorPropertyMeta<T, P>(getName(), reflectService, parameter, owner, getter);
     }
 
     @Override

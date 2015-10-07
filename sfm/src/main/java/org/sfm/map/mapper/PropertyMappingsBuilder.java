@@ -6,6 +6,7 @@ import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.meta.*;
 import org.sfm.utils.ForEachCallBack;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -24,10 +25,13 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 	protected boolean modifiable = true;
 
+	private final Predicate<PropertyMeta<?, ?>> isValidMeta;
+
 	public PropertyMappingsBuilder(final ClassMeta<T> classMeta,
 								   final PropertyNameMatcherFactory propertyNameMatcherFactory,
-								   final MapperBuilderErrorHandler mapperBuilderErrorHandler) throws MapperBuildingException {
+								   final MapperBuilderErrorHandler mapperBuilderErrorHandler, Predicate<PropertyMeta<?, ?>> isValidMeta) throws MapperBuildingException {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
+		this.isValidMeta = isValidMeta;
 		this.propertyFinder = classMeta.newPropertyFinder();
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.classMeta = classMeta;
@@ -47,7 +51,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		@SuppressWarnings("unchecked")
 		final PropertyMeta<T, P> prop = (PropertyMeta<T, P>) propertyFinder.findProperty(propertyNameMatcherFactory.newInstance(key));
 
-		if (prop == null) {
+		if (prop == null || !isValidMeta.test(prop)) {
 			mapperBuilderErrorHandler.propertyNotFound(classMeta.getType(), key.getName());
 			properties.add(null);
             return null;

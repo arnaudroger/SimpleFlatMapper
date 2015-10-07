@@ -5,7 +5,7 @@ import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.context.KeySourceGetter;
 import org.sfm.map.context.MappingContextFactoryBuilder;
-import org.sfm.map.impl.fieldmapper.ConstantTargetFieldMapperFactory;
+import org.sfm.map.mapper.ConstantTargetFieldMapperFactory;
 import org.sfm.map.mapper.ContextualMapper;
 import org.sfm.map.mapper.MapperImpl;
 import org.sfm.map.mapper.PropertyMapping;
@@ -14,8 +14,10 @@ import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
+import org.sfm.utils.Predicate;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,7 +47,12 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
                 new PropertyMappingsBuilder<T, K,  FieldMapperColumnDefinition<K>>(
                         classMeta,
                         mapperConfig.propertyNameMatcherFactory(),
-                        mapperConfig.mapperBuilderErrorHandler());
+                        mapperConfig.mapperBuilderErrorHandler(), new Predicate<PropertyMeta<?, ?>>() {
+                    @Override
+                    public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                        return propertyMeta.getGetter() != null;
+                    }
+                });
         this.classMeta = classMeta;
     }
 

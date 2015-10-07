@@ -12,7 +12,7 @@ import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
 //IFJAVA8_START
 import org.sfm.map.column.time.JavaZoneIdProperty;
 //IFJAVA8_END
-import org.sfm.map.impl.fieldmapper.ConstantTargetFieldMapperFactory;
+import org.sfm.map.mapper.ConstantTargetFieldMapperFactory;
 import org.sfm.map.mapper.ConstantTargetFieldMapperFactorImpl;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;

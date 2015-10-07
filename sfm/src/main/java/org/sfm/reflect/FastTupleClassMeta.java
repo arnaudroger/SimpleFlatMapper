@@ -71,7 +71,7 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
 
                 Method setter = clazz.getDeclaredMethod(field, m.getReturnType());
 
-                MethodPropertyMeta<T, ?> propertyMeta = newPropertyMethod(field, m, setter, reflectionService);
+                ObjectPropertyMeta<T, ?> propertyMeta = newPropertyMethod(field, m, setter, reflectionService);
                 propertyMetas.add(propertyMeta);
             }
         }
@@ -80,8 +80,13 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
         return propertyMetas;
     }
 
-    private <P> MethodPropertyMeta<T, P> newPropertyMethod(String field, Method getter, Method setter, ReflectionService reflectionService) {
-        return new MethodPropertyMeta<T, P>(field, reflectionService, setter, getter, getter.getGenericReturnType());
+    private <P> ObjectPropertyMeta<T, P> newPropertyMethod(String field, Method getter, Method setter, ReflectionService reflectionService) {
+        Getter<T, P> methodGetter = reflectionService.getObjectGetterFactory().getMethodGetter(getter);
+        Setter<T, P> methodSetter = reflectionService.getObjectSetterFactory().getMethodSetter(setter);
+        return new ObjectPropertyMeta<T, P>(field, reflectionService,
+                getter.getGenericReturnType(),
+                methodGetter,
+                methodSetter);
     }
 
     @Override

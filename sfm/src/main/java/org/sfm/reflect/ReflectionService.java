@@ -87,7 +87,7 @@ public class ReflectionService {
 			return newArrayMeta(clazz);
 			//IFJAVA8_START
 		} else if (Optional.class.isAssignableFrom(clazz)) {
-			return new OptionalClassMeta<T>(target, this);
+			return new OptionalClassMeta(target, this);
 			//IFJAVA8_END
 		} else if (Tuples.isTuple(target)) {
 			return new TupleClassMeta<T>(target, this);

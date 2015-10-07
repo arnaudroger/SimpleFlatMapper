@@ -10,23 +10,27 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
 	private final int index;
 	private final ArrayClassMeta<T, E> arrayMetaData;
+	private final Setter<T, E> setter;
+	private final Getter<T, E> getter;
+
+	@SuppressWarnings("unchecked")
 	public ArrayElementPropertyMeta(String name,  ReflectionService reflectService, int index, ArrayClassMeta<T, E> arrayMetaData) {
 		super(name, reflectService);
         if (index < 0) throw new IllegalArgumentException("Invalid array index " + index);
 		this.index = index;
 		this.arrayMetaData = arrayMetaData;
+		setter = (Setter<T, E>) new IndexArraySetter<E>(index);
+		getter = (Getter<T, E>) new IndexArrayGetter<E>(index);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	protected Setter<T, E> newSetter() {
-        return (Setter<T, E>) new IndexArraySetter<E>(index);
+	public Setter<T, E> getSetter() {
+        return setter;
 	}
 
-    @SuppressWarnings("unchecked")
     @Override
-    protected Getter<T, E> newGetter() {
-        return (Getter<T, E>) new IndexArrayGetter<E>(index);
+    public Getter<T, E> getGetter() {
+        return getter;
     }
 
     @Override

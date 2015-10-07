@@ -16,8 +16,6 @@ public abstract class PropertyMeta<O, P> {
 
 	protected final ReflectionService reflectService;
 	
-	private volatile Setter<O, P> setter;
-    private volatile Getter<O, P> getter;
 	private volatile ClassMeta<P> classMeta;
 
 	public PropertyMeta(String name, ReflectionService reflectService) {
@@ -25,26 +23,9 @@ public abstract class PropertyMeta<O, P> {
 		this.reflectService = reflectService;
 	}
 
-	public final Setter<O, P> getSetter() {
-		Setter<O, P> lSetter = setter;
-		if (lSetter == null) {
-			lSetter = newSetter();
-			setter = lSetter;
-		}
-		return lSetter;
-	}
+	public abstract Setter<O, P> getSetter();
 
-    public final Getter<O, P> getGetter() {
-        Getter<O, P> lGetter = getter;
-        if (lGetter == null) {
-            lGetter = newGetter();
-            getter = lGetter;
-        }
-        return lGetter;
-    }
-
-	protected abstract Setter<O, P> newSetter();
-    protected abstract Getter<O, P> newGetter();
+    public abstract Getter<O, P> getGetter();
 
 	public final String getName() {
 		return name;

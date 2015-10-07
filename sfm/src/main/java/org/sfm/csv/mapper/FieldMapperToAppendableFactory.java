@@ -18,6 +18,7 @@ import org.sfm.map.MappingContext;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.EnumOrdinalFormatProperty;
 import org.sfm.map.column.FormatProperty;
+import org.sfm.map.mapper.ConstantTargetFieldMapperFactory;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.map.impl.JodaTimeClasses;

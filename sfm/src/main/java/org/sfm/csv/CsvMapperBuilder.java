@@ -16,6 +16,7 @@ import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple3;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -63,7 +64,14 @@ public class CsvMapperBuilder<T> {
 		this.target = target;
         this.minDelayedSetter = minDelayedSetter;
         this.reflectionService = classMeta.getReflectionService();
-		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition>(classMeta, mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler());
+		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition>(classMeta,
+				mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler(),
+				new Predicate<PropertyMeta<?, ?>>() {
+					@Override
+					public boolean test(PropertyMeta<?, ?> propertyMeta) {
+						return propertyMeta.getSetter() != null;
+					}
+				});
 		this.cellValueReaderFactory = cellValueReaderFactory;
 		this.mapperConfig = mapperConfig;
 	}

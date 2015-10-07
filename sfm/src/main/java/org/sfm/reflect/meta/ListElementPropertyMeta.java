@@ -23,7 +23,7 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Setter<T, E> newSetter() {
+	public Setter<T, E> getSetter() {
 		if (isVerticalList.getAsBoolean()) {
             return (Setter<T, E>) new AppendListSetter<E>();
         } else {
@@ -33,7 +33,7 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Getter<T, E> newGetter() {
+    public Getter<T, E> getGetter() {
         if (isVerticalList.getAsBoolean()) {
             return (Getter<T, E>) new LastIndexListGetter<E>();
         } else {

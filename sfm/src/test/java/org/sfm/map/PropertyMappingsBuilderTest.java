@@ -15,6 +15,7 @@ import org.sfm.reflect.meta.ListElementPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.meta.SubPropertyMeta;
 import org.sfm.utils.ForEachCallBack;
+import org.sfm.utils.Predicate;
 
 
 import java.util.ArrayList;
@@ -38,8 +39,13 @@ public class PropertyMappingsBuilderTest {
                 new PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition>(
                         classMeta,
                         DefaultPropertyNameMatcherFactory.DEFAULT,
-                        new RethrowMapperBuilderErrorHandler()
-                );
+                        new RethrowMapperBuilderErrorHandler(),
+                        new Predicate<PropertyMeta<?, ?>>() {
+                            @Override
+                            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                                return true;
+                            }
+                        });
 
         builder.addProperty(new CsvColumnKey("phones_value", 0), CsvColumnDefinition.identity());
 
@@ -57,8 +63,13 @@ public class PropertyMappingsBuilderTest {
                 new PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition>(
                         classMeta,
                         DefaultPropertyNameMatcherFactory.DEFAULT,
-                        new RethrowMapperBuilderErrorHandler()
-                );
+                        new RethrowMapperBuilderErrorHandler(),
+                        new Predicate<PropertyMeta<?, ?>>() {
+                            @Override
+                            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                                return true;
+                            }
+                        });
 
         builder2.addProperty(new CsvColumnKey("phones", 0), CsvColumnDefinition.identity());
 

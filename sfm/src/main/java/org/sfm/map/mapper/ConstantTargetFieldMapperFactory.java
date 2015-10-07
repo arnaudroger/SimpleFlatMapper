@@ -1,4 +1,4 @@
-package org.sfm.map.impl.fieldmapper;
+package org.sfm.map.mapper;
 
 import org.sfm.map.FieldKey;
 import org.sfm.map.FieldMapper;

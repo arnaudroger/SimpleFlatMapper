@@ -32,4 +32,8 @@ public class GetterHelper {
             return name.substring(3, 4).toLowerCase() + name.substring(4);
         }
 	}
+
+	public static boolean isGetter(String name) {
+		return  (name.length() > 3 && name.startsWith("get")) || (name.length() > 2 && name.startsWith("is"));
+	}
 }

@@ -20,9 +20,8 @@ public class SubPropertyMetaTest {
 
         assertTrue(property instanceof SubPropertyMeta);
         assertTrue(property.isSubProperty());
-        assertEquals("SubPropertyMeta{" +
-                "ownerProperty=MethodPropertyMeta{setter=public void org.sfm.beans.Db1DeepObject.setDbObject(org.sfm.beans.DbObject), getter=null, type=class org.sfm.beans.DbObject}, " +
-                "subProperty=MethodPropertyMeta{setter=public void org.sfm.beans.DbObject.setName(java.lang.String), getter=null, type=class java.lang.String}}", property.toString());
+        assertTrue(property.toString().startsWith("SubPropertyMeta{" +
+                "ownerProperty=ObjectPropertyMeta{"));
 
         SubPropertyMeta<Db1DeepObject, DbObject, String> subPropertyMeta = (SubPropertyMeta<Db1DeepObject, DbObject, String>) property;
 
@@ -32,13 +31,8 @@ public class SubPropertyMetaTest {
 
         Db1DeepObject object = new Db1DeepObject();
         object.setDbObject(new DbObject());
-        object.getDbObject().setName("n1");
-        assertEquals("n1", subPropertyMeta.newGetter().get(object));
-        try {
-            subPropertyMeta.newSetter();
-            fail();
-        } catch(UnsupportedOperationException e) {
-        }
+        subPropertyMeta.getSetter().set(object, "n1");
+        assertEquals("n1", subPropertyMeta.getGetter().get(object));
 
         ClassMeta<?> meta = subPropertyMeta.newPropertyClassMeta();
         assertEquals(String.class, meta.getType());

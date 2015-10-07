@@ -14,6 +14,7 @@ import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -47,7 +48,15 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         this.mapperConfig = requireNonNull("mapperConfig", mapperConfig);
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
 		this.fieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<S, K>(mapperSource.getterFactory());
-		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K>>(classMeta, mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler());
+		this.propertyMappingsBuilder =
+                new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K>>(classMeta,
+                        mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler(),
+                        new Predicate<PropertyMeta<?, ?>>() {
+                            @Override
+                            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                                return propertyMeta.getSetter() != null;
+                            }
+                        });
 		this.target = requireNonNull("classMeta", classMeta).getType();
 		this.reflectionService = requireNonNull("classMeta", classMeta).getReflectionService();
 	}

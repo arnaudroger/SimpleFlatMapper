@@ -11,22 +11,25 @@ public class MapElementPropertyMeta<T extends Map<K, V>, K, V> extends PropertyM
 
 	private final ClassMeta<V> valueMetaData;
 	private final K key;
+	private final MapSetter<T, K, V> setter;
+	private final MapGetter<T, K, V> getter;
+
 	public MapElementPropertyMeta(PropertyNameMatcher propertyNameMatcher, ReflectionService reflectService, ClassMeta<V> valueMetaData, K key) {
 		super(propertyNameMatcher.toString(), reflectService);
 		this.valueMetaData = valueMetaData;
 		this.key = key;
+		setter = new MapSetter<T, K, V>(key);
+		getter = new MapGetter<T, K, V>(key);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	protected Setter<T, V> newSetter() {
-        return new MapSetter<T, K, V>(key);
+	public Setter<T, V> getSetter() {
+        return setter;
 	}
 
-    @SuppressWarnings("unchecked")
     @Override
-    protected Getter<T, V> newGetter() {
-        return new MapGetter<T, K, V>(key);
+    public Getter<T, V> getGetter() {
+        return getter;
     }
 
     @Override

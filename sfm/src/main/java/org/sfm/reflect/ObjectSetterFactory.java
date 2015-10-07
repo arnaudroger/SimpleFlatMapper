@@ -55,7 +55,7 @@ public final class ObjectSetterFactory {
 		}
 	}
 
-    private <T, P> Setter<T, P> getFieldSetter(Field field) {
+    public <T, P> Setter<T, P> getFieldSetter(Field field) {
         if (asmFactory != null && Modifier.isPublic(field.getModifiers())) {
             try {
                 return asmFactory.createSetter(field);

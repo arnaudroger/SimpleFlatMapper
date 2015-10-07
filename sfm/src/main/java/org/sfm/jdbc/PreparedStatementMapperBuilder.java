@@ -3,7 +3,7 @@ package org.sfm.jdbc;
 
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.impl.fieldmapper.ConstantTargetFieldMapperFactory;
+import org.sfm.map.mapper.ConstantTargetFieldMapperFactory;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.meta.ClassMeta;
 

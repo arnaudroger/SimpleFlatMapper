@@ -74,13 +74,13 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
 
 
         @Override
-        protected Setter<T, E> newSetter() {
+        public Setter<T, E> getSetter() {
             return NullSetter.setter();
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        protected Getter<T, E> newGetter() {
+        public Getter<T, E> getGetter() {
             return (Getter<T, E>) IDENTITY_GETTER;
 
         }

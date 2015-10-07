@@ -51,6 +51,10 @@ public class PreparedStatementMapperBuilderTest {
         public void setTime(Date time) {
             this.time = time;
         }
+
+        public String getValue() {
+            return "value";
+        }
     }
 
     @Test
@@ -69,5 +73,19 @@ public class PreparedStatementMapperBuilderTest {
 
         verify(ps).setTimestamp(1, new Timestamp(dmClass.getTime().getTime()));
     }
+    @Test
+    public void testGetterOnlyMethod() throws Exception {
+        PreparedStatementMapperBuilder<DMClass> mapperBuilder = JdbcMapperFactory.newInstance().buildFrom(DMClass.class);
+        mapperBuilder.addColumn("value");
 
+        Mapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
+
+        DMClass dmClass = new DMClass();
+
+        PreparedStatement ps = mock(PreparedStatement.class);
+
+        mapper.mapTo(dmClass, ps, null);
+
+        verify(ps).setString(1, "value");
+    }
 }

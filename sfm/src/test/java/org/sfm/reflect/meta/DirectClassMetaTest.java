@@ -23,9 +23,9 @@ public class DirectClassMetaTest {
         assertTrue(property instanceof DirectClassMeta.DirectPropertyMeta);
         assertEquals("DirectPropertyMeta{type=class java.lang.String,name=direct}", property.toString());
 
-        assertTrue(property.newGetter() instanceof IdentityGetter);
+        assertTrue(property.getGetter() instanceof IdentityGetter);
 
-        assertTrue(NullSetter.isNull(property.newSetter()));
+        assertTrue(NullSetter.isNull(property.getSetter()));
 
         assertArrayEquals(new String[] {""},  direct.generateHeaders());
 

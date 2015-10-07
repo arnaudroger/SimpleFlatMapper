@@ -1,22 +1,18 @@
 package org.sfm.reflect.meta;
 
-import org.sfm.reflect.InstantiatorDefinition;
-import org.sfm.reflect.Parameter;
-import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.TypeHelper;
+import org.sfm.reflect.*;
 import org.sfm.utils.ErrorHelper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class OptionalClassMeta<T> implements ClassMeta<T> {
+public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 
-    public static final String[] EMPTY_STRING_ARRAY = new String[0];
     private final ReflectionService reflectionService;
 	private final Type type;
 	private final InstantiatorDefinition instantiatorDefinition;
-    private final ConstructorPropertyMeta<T, ?> propertyMeta;
+    private final ConstructorPropertyMeta<Optional<T>, ?> propertyMeta;
 	private final ClassMeta<T> innerMeta;
 
 
@@ -26,7 +22,10 @@ public class OptionalClassMeta<T> implements ClassMeta<T> {
 
 		try {
             this.instantiatorDefinition = getInstantiatorDefinition(type);
-            this.propertyMeta = new ConstructorPropertyMeta<>("value", reflectionService, instantiatorDefinition.getParameters()[0], TypeHelper.toClass(type));
+			this.propertyMeta = new ConstructorPropertyMeta<>("value",
+					reflectionService,
+					instantiatorDefinition.getParameters()[0],
+					TypeHelper.toClass(type), new OptionalGetter<>());
 			this.innerMeta = reflectionService.getClassMeta(instantiatorDefinition.getParameters()[0].getGenericType());
 		} catch(Exception e) {
             ErrorHelper.rethrow(e);
@@ -51,7 +50,7 @@ public class OptionalClassMeta<T> implements ClassMeta<T> {
 	}
 
 	@Override
-	public PropertyFinder<T> newPropertyFinder() {
+	public PropertyFinder<Optional<T>> newPropertyFinder() {
 		return new OptionalPropertyFinder<T>(this);
 	}
 
@@ -68,7 +67,7 @@ public class OptionalClassMeta<T> implements ClassMeta<T> {
 		return innerMeta;
 	}
 
-    public PropertyMeta<T, ?> getProperty() {
+    public PropertyMeta<Optional<T>, ?> getProperty() {
         return propertyMeta;
     }
 
@@ -83,4 +82,10 @@ public class OptionalClassMeta<T> implements ClassMeta<T> {
 	}
 
 
+	private class OptionalGetter<T> implements Getter<Optional<T>, Object> {
+		@Override
+        public Object get(Optional<T> target) throws Exception {
+            return target.orElse(null);
+        }
+	}
 }

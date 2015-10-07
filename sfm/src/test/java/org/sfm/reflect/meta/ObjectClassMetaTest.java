@@ -6,6 +6,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.reflect.ReflectionService;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ObjectClassMetaTest {
 
@@ -21,6 +22,23 @@ public class ObjectClassMetaTest {
                 ReflectionService.newInstance().getClassMeta(DbObject.class).generateHeaders());
     }
 
+    @Test
+    public void testGetterOnly() {
+        ClassMeta<Object> classMeta = ReflectionService.newInstance().getClassMeta(GetterOnly.class);
+
+        assertNotNull(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("string")));
+
+    }
+
+    public static class GetterOnly {
+        public String getString() {
+            return "value";
+        }
+
+        public int intValue() {
+            return 3;
+        }
+    }
     public static class MyClass{
         private String id;
 
@@ -48,6 +66,7 @@ public class ObjectClassMetaTest {
         public void setO(DbObject o) {
             this.o = o;
         }
+
     }
     @Test
     public void testGenerateHeadersWithConstructorAndSetterProperty() {

@@ -54,15 +54,15 @@ public final class ObjectGetterFactory {
 		}
 	}
 
-    private <T, P> Getter<T, P> getFieldGetter(Field field) {
+    public <T, P> Getter<T, P> getFieldGetter(Field field) {
 
-        if (asmFactory != null && Modifier.isPublic(field.getModifiers())) {
+        if (asmFactory != null && Modifier.isPublic(field.getModifiers()) && Modifier.isPublic(field.getDeclaringClass().getModifiers())) {
             try {
                 return asmFactory.createGetter(field);
             } catch(Exception e) {}
         }
 
-        if (!Modifier.isPublic(field.getModifiers())) {
+        if (!Modifier.isPublic(field.getModifiers()) || ! Modifier.isPublic(field.getDeclaringClass().getModifiers())) {
             field.setAccessible(true);
         }
         return new FieldGetter<T, P>(field);

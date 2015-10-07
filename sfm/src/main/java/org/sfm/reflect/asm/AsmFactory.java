@@ -266,18 +266,16 @@ public class AsmFactory {
 	}
 
 	private String generateClassNameForSetter(final Method m) {
-		return "org.sfm.reflect.asm." + getPackageName(m.getDeclaringClass()) +
-					".AsmMethodSetter"
-					 + replaceArray(m.getDeclaringClass().getSimpleName())
+		return "org.sfm.reflect.asm." + (m.getDeclaringClass().getCanonicalName())
+					 + "AsmMethodSetter"
                      +"_" + m.getName()+ "_"
 					 + replaceArray(m.getParameterTypes()[0].getSimpleName())
 					;
 	}
 
     private String generateClassNameForSetter(final Field field) {
-        return "org.sfm.reflect.asm." + getPackageName(field.getDeclaringClass()) +
-                ".AsmFieldSetter"
-                + replaceArray(field.getDeclaringClass().getSimpleName())
+        return "org.sfm.reflect.asm." + (field.getDeclaringClass().getCanonicalName())
+                + "AsmFieldSetter"
                 + "_"
                 + field.getName()
                 + "_"
@@ -285,17 +283,15 @@ public class AsmFactory {
                 ;
     }
     private String generateClassNameForGetter(final Method m) {
-        return "org.sfm.reflect.asm." + getPackageName(m.getDeclaringClass()) +
-                ".AsmMethodGetter"
-                + replaceArray(m.getDeclaringClass().getSimpleName())
+        return "org.sfm.reflect.asm." + (m.getDeclaringClass().getCanonicalName())
+                + "AsmMethodGetter"
                 + "_"
                 + m.getName()
                 ;
     }
     private String generateClassNameForGetter(final Field m) {
-        return "org.sfm.reflect.asm." + getPackageName(m.getDeclaringClass()) +
-                ".AsmFieldGetter"
-                + replaceArray(m.getDeclaringClass().getSimpleName())
+        return "org.sfm.reflect.asm." + (m.getDeclaringClass().getCanonicalName())
+                + "AsmFieldGetter"
                 + "_"
                 + m.getName()
                 ;

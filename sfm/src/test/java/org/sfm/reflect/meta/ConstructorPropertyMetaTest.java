@@ -16,19 +16,13 @@ public class ConstructorPropertyMetaTest {
     @Test
     public void testSetterIsNullSetter() throws Exception {
         PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false));
-        assertTrue(property.newSetter() instanceof NullSetter);
+        assertTrue(property.getSetter() instanceof NullSetter);
     }
 
     @Test
     public void testGetValueIfGetterAvailable() throws Exception {
         PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false));
         assertEquals("v1", property.getGetter().get(cObject));
-    }
-
-    @Test
-    public void testGetValueReturnNullIfNoGetter() throws Exception {
-        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("p2", 0, false, false));
-        assertEquals(null, property.getGetter().get(cObject));
     }
 
     @Test

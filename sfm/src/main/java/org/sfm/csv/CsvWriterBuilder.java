@@ -5,7 +5,7 @@ import org.sfm.csv.impl.writer.*;
 import org.sfm.csv.mapper.FieldMapperToAppendableFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.impl.fieldmapper.ConstantTargetFieldMapperFactory;
+import org.sfm.map.mapper.ConstantTargetFieldMapperFactory;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.ClassMeta;

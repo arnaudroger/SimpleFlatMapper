@@ -86,7 +86,9 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
         final K mappedColumnKey = composedDefinition.rename(key);
 
         if (composedDefinition.has(ConstantValueProperty.class)) {
-            staticValues.add(new Tuple2<K, FieldMapperColumnDefinition<K>>(key, composedDefinition));
+            ConstantValueProperty staticValueProperty = composedDefinition.lookFor(ConstantValueProperty.class);
+            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<T, Object>(key.getName(), reflectionService, staticValueProperty.getType(), new ConstantGetter<T, Object>(staticValueProperty.getValue()), null);
+            propertyMappingsBuilder.addProperty(key, columnDefinition, meta);
         } else {
             propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
         }
@@ -105,13 +107,6 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
                 throw new UnsupportedOperationException();
             }
         });
-
-        for(Tuple2<K, FieldMapperColumnDefinition<K>> staticProperty : staticValues) {
-            ConstantValueProperty staticValueProperty = staticProperty.second().lookFor(ConstantValueProperty.class);
-            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<T, Object>(staticProperty.first().getName(), reflectionService, staticValueProperty.getType(), new ConstantGetter<T, Object>(staticValueProperty.getValue()), null);
-            PropertyMapping<T, Object, K, FieldMapperColumnDefinition<K>> pm = new PropertyMapping<T, Object, K, FieldMapperColumnDefinition<K>>(meta, staticProperty.first(), staticProperty.second());
-            mappers.add(fieldAppenderFactory.newFieldMapper(pm, mappingContextFactoryBuilder, mapperConfig.mapperBuilderErrorHandler()));
-        }
 
         propertyMappingsBuilder.forEachProperties(
                 new ForEachCallBack<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>() {

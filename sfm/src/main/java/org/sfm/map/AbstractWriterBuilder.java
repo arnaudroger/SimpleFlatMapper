@@ -108,7 +108,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
 
         for(Tuple2<K, FieldMapperColumnDefinition<K>> staticProperty : staticValues) {
             ConstantValueProperty staticValueProperty = staticProperty.second().lookFor(ConstantValueProperty.class);
-            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<>(staticProperty.first().getName(), reflectionService, staticValueProperty.getType(), new ConstantGetter<T, Object>(staticValueProperty.getValue()), null);
+            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<T, Object>(staticProperty.first().getName(), reflectionService, staticValueProperty.getType(), new ConstantGetter<T, Object>(staticValueProperty.getValue()), null);
             PropertyMapping<T, Object, K, FieldMapperColumnDefinition<K>> pm = new PropertyMapping<T, Object, K, FieldMapperColumnDefinition<K>>(meta, staticProperty.first(), staticProperty.second());
             mappers.add(fieldAppenderFactory.newFieldMapper(pm, mappingContextFactoryBuilder, mapperConfig.mapperBuilderErrorHandler()));
         }

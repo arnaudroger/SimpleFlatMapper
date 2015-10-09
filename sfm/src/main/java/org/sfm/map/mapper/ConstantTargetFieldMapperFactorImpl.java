@@ -26,15 +26,19 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
             PropertyMapping<S, P, K, FieldMapperColumnDefinition<K>> pm,
             MappingContextFactoryBuilder contextFactoryBuilder,
             MapperBuilderErrorHandler mappingErrorHandler) {
-        FieldMapper<S, T> fieldMapper = null;
 
-        Type propertyType = pm.getPropertyMeta().getPropertyType();
+        Getter<S, P> getter;
 
-        Getter<S, P> getter = pm.getPropertyMeta().getGetter();
+        Getter<?, ?> customGetter = pm.getColumnDefinition().getCustomGetter();
+        if (customGetter != null) {
+            getter = (Getter<S, P>) customGetter;
+        } else {
+            getter = pm.getPropertyMeta().getGetter();
+        }
 
         Setter<T, P> setter = setterFactory.getSetter(pm);
 
-        if (TypeHelper.isPrimitive(propertyType)) {
+        if (TypeHelper.isPrimitive(pm.getPropertyMeta().getPropertyType())) {
             if (getter instanceof BooleanGetter && setter instanceof BooleanSetter) {
                 return new BooleanFieldMapper<S, T>((BooleanGetter<S>)getter, (BooleanSetter<T>) setter);
             } else if (getter instanceof ByteGetter && setter instanceof ByteSetter) {

@@ -49,9 +49,18 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
     public <S, P> FieldMapper<S, Appendable> newFieldMapper(PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm, MappingContextFactoryBuilder builder, MapperBuilderErrorHandler mappingErrorHandler) {
         if (pm == null) throw new NullPointerException("pm is null");
 
-        Type type = pm.getPropertyMeta().getPropertyType();
-        Getter<S, ? extends P> getter = pm.getPropertyMeta().getGetter();
+        Getter<S, ? extends P> getter;
+
+        Getter<?, ?> customGetter = pm.getColumnDefinition().getCustomGetter();
+        if (customGetter != null) {
+            getter = (Getter<S, P>) customGetter;
+        } else {
+            getter = pm.getPropertyMeta().getGetter();
+        }
+
+
         ColumnDefinition<CsvColumnKey, ?> columnDefinition = pm.getColumnDefinition();
+        Type type = pm.getPropertyMeta().getPropertyType();
         if (TypeHelper.isPrimitive(type) && !columnDefinition.has(FormatProperty.class)) {
             if (getter instanceof BooleanGetter) {
                 return new BooleanFieldMapper<S, Appendable>((BooleanGetter) getter, new BooleanAppendableSetter(cellWriter));

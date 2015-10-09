@@ -3,7 +3,9 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.map.Mapper;
+import org.sfm.map.column.GetterProperty;
 import org.sfm.map.column.RenameProperty;
+import org.sfm.reflect.Getter;
 
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
@@ -91,10 +93,10 @@ public class PreparedStatementMapperBuilderTest {
     }
 
     @Test
-    public void testGlobalColumnProperty() throws Exception {
+    public void testRename() throws Exception {
 
         PreparedStatementMapperBuilder<DMClass> mapperBuilder = JdbcMapperFactory.newInstance()
-                .addColumnProperty("val", new RenameProperty("value"))
+                .addAlias("val", "value")
                 .buildFrom(DMClass.class);
         mapperBuilder.addColumn("val");
 
@@ -107,6 +109,32 @@ public class PreparedStatementMapperBuilderTest {
         mapper.mapTo(dmClass, ps, null);
 
         verify(ps).setString(1, "value");
+
+    }
+
+
+    @Test
+    public void testCustomGetter() throws Exception {
+
+        PreparedStatementMapperBuilder<DMClass> mapperBuilder = JdbcMapperFactory.newInstance()
+                .addColumnProperty("value", new GetterProperty(new Getter<Object, String>() {
+                    @Override
+                    public String get(Object target) throws Exception {
+                        return "value2";
+                    }
+                }))
+                .buildFrom(DMClass.class);
+        mapperBuilder.addColumn("value");
+
+        Mapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
+
+        DMClass dmClass = new DMClass();
+
+        PreparedStatement ps = mock(PreparedStatement.class);
+
+        mapper.mapTo(dmClass, ps, null);
+
+        verify(ps).setString(1, "value2");
 
     }
 }

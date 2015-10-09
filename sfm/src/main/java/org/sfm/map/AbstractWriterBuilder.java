@@ -77,7 +77,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
     public B addColumn(K key,   FieldMapperColumnDefinition<K> columnDefinition) {
         final FieldMapperColumnDefinition<K> composedDefinition = columnDefinition.compose(mapperConfig.columnDefinitions().getColumnDefinition(key));
         final K mappedColumnKey = composedDefinition.rename(key);
-        propertyMappingsBuilder.addProperty(mappedColumnKey, columnDefinition);
+        propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
         return (B) this;
     }
 

@@ -4,15 +4,13 @@ import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.map.Mapper;
 import org.sfm.map.column.GetterProperty;
-import org.sfm.map.column.RenameProperty;
-import org.sfm.map.column.StaticValueProperty;
+import org.sfm.map.column.ConstantValueProperty;
 import org.sfm.reflect.Getter;
 
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -142,7 +140,7 @@ public class PreparedStatementMapperBuilderTest {
     @Test
     public void testCustomGetterOnNonExistantProp() throws Exception {
         PreparedStatementMapperBuilder<Object> mapperBuilder = JdbcMapperFactory.newInstance()
-                .addColumnProperty("text", new StaticValueProperty<String>("value2", String.class))
+                .addColumnProperty("text", new ConstantValueProperty<String>("value2", String.class))
                 .buildFrom(Object.class);
         mapperBuilder.addColumn("text");
 

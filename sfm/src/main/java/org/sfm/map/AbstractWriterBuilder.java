@@ -3,7 +3,7 @@ package org.sfm.map;
 
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.column.StaticValueProperty;
+import org.sfm.map.column.ConstantValueProperty;
 import org.sfm.map.context.KeySourceGetter;
 import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.map.mapper.ConstantTargetFieldMapperFactory;
@@ -85,7 +85,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
         final FieldMapperColumnDefinition<K> composedDefinition = columnDefinition.compose(mapperConfig.columnDefinitions().getColumnDefinition(key));
         final K mappedColumnKey = composedDefinition.rename(key);
 
-        if (composedDefinition.has(StaticValueProperty.class)) {
+        if (composedDefinition.has(ConstantValueProperty.class)) {
             staticValues.add(new Tuple2<K, FieldMapperColumnDefinition<K>>(key, composedDefinition));
         } else {
             propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
@@ -107,7 +107,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
         });
 
         for(Tuple2<K, FieldMapperColumnDefinition<K>> staticProperty : staticValues) {
-            StaticValueProperty staticValueProperty = staticProperty.second().lookFor(StaticValueProperty.class);
+            ConstantValueProperty staticValueProperty = staticProperty.second().lookFor(ConstantValueProperty.class);
             PropertyMeta<T, Object> meta = new ObjectPropertyMeta<>(staticProperty.first().getName(), reflectionService, staticValueProperty.getType(), new ConstantGetter<T, Object>(staticValueProperty.getValue()), null);
             PropertyMapping<T, Object, K, FieldMapperColumnDefinition<K>> pm = new PropertyMapping<T, Object, K, FieldMapperColumnDefinition<K>>(meta, staticProperty.first(), staticProperty.second());
             mappers.add(fieldAppenderFactory.newFieldMapper(pm, mappingContextFactoryBuilder, mapperConfig.mapperBuilderErrorHandler()));

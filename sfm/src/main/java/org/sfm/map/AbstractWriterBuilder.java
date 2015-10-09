@@ -60,20 +60,24 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
         return addColumn(column, FieldMapperColumnDefinition.<K>identity());
 
     }
-    @SuppressWarnings("unchecked")
-    public B addColumn(String column,  FieldMapperColumnDefinition<K> columnDefinition) {
-        propertyMappingsBuilder.addProperty(newKey(column, currentIndex++), columnDefinition);
-        return (B) this;
-    }
-    @SuppressWarnings("unchecked")
+
     public B addColumn(String column, ColumnProperty... properties) {
-        propertyMappingsBuilder.addProperty(newKey(column, currentIndex++), FieldMapperColumnDefinition.<K>identity().add(properties));
-        return (B) this;
+        return addColumn(newKey(column, currentIndex++), properties);
+    }
+
+    public B addColumn(K key, ColumnProperty... properties) {
+        return addColumn(key, FieldMapperColumnDefinition.<K>identity().add(properties));
+    }
+
+    public B addColumn(String column,  FieldMapperColumnDefinition<K> columnDefinition) {
+        return addColumn(newKey(column, currentIndex++), columnDefinition);
     }
 
     @SuppressWarnings("unchecked")
-    public B addColumn(K key, ColumnProperty... properties) {
-        propertyMappingsBuilder.addProperty(key, FieldMapperColumnDefinition.<K>identity().add(properties));
+    public B addColumn(K key,   FieldMapperColumnDefinition<K> columnDefinition) {
+        final FieldMapperColumnDefinition<K> composedDefinition = columnDefinition.compose(mapperConfig.columnDefinitions().getColumnDefinition(key));
+        final K mappedColumnKey = composedDefinition.rename(key);
+        propertyMappingsBuilder.addProperty(mappedColumnKey, columnDefinition);
         return (B) this;
     }
 

@@ -3,9 +3,11 @@ package org.sfm.csv.impl;
 
 import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.csv.CsvColumnKey;
+import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.mapper.AbstractColumnDefinitionProvider;
 import org.sfm.tuples.Tuple2;
 import org.sfm.utils.Predicate;
+import org.sfm.utils.UnaryFactory;
 
 import java.util.List;
 
@@ -13,8 +15,9 @@ public class CsvColumnDefinitionProviderImpl extends AbstractColumnDefinitionPro
     public CsvColumnDefinitionProviderImpl(){
     }
 
-    public CsvColumnDefinitionProviderImpl(List<Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>> definitions) {
-        super(definitions);
+    public CsvColumnDefinitionProviderImpl(List<Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>> definitions,
+                                           List<Tuple2<Predicate<? super CsvColumnKey>, UnaryFactory<? super CsvColumnKey, ColumnProperty>>> properties) {
+        super(definitions, properties);
     }
 
     @Override
@@ -27,7 +30,6 @@ public class CsvColumnDefinitionProviderImpl extends AbstractColumnDefinitionPro
         return CsvColumnDefinition.identity();
     }
 
-    public List<Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>> getDefinitions() {
-        return definitions;
-    }
+
+
 }

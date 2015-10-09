@@ -3,6 +3,7 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.map.Mapper;
+import org.sfm.map.column.RenameProperty;
 
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
@@ -87,5 +88,25 @@ public class PreparedStatementMapperBuilderTest {
         mapper.mapTo(dmClass, ps, null);
 
         verify(ps).setString(1, "value");
+    }
+
+    @Test
+    public void testGlobalColumnProperty() throws Exception {
+
+        PreparedStatementMapperBuilder<DMClass> mapperBuilder = JdbcMapperFactory.newInstance()
+                .addColumnProperty("val", new RenameProperty("value"))
+                .buildFrom(DMClass.class);
+        mapperBuilder.addColumn("val");
+
+        Mapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
+
+        DMClass dmClass = new DMClass();
+
+        PreparedStatement ps = mock(PreparedStatement.class);
+
+        mapper.mapTo(dmClass, ps, null);
+
+        verify(ps).setString(1, "value");
+
     }
 }

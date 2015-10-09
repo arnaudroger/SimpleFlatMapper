@@ -1,13 +1,16 @@
 package org.sfm.map.mapper;
 
 import org.sfm.map.*;
+import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.error.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.error.RethrowRowHandlerErrorHandler;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
+import org.sfm.utils.ConstantUnaryFactory;
 import org.sfm.utils.Predicate;
+import org.sfm.utils.UnaryFactory;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -158,7 +161,44 @@ public abstract class AbstractMapperFactory<
 		return (MF) this;
 	}
 
-    /**
+	/**
+	 * Associate the specified columnProperties to the column matching the predicate.
+	 * @param name the column predicate
+	 * @param properties the properties
+	 * @return the current factory
+	 */
+	public final MF addColumnProperty(String name, ColumnProperty... properties) {
+		for(ColumnProperty property : properties) {
+			columnDefinitions.addColumnProperty(new CaseInsensitiveFieldKeyNamePredicate(name), new ConstantUnaryFactory<K, ColumnProperty>(property));
+		}
+		return (MF) this;
+	}
+
+	/**
+	 * Associate the specified columnProperties to the column matching the predicate.
+	 * @param predicate the column predicate
+	 * @param properties the properties
+	 * @return the current factory
+	 */
+	public final MF addColumnProperty(Predicate<? super K> predicate, ColumnProperty... properties) {
+		for(ColumnProperty property : properties) {
+			columnDefinitions.addColumnProperty(predicate, new ConstantUnaryFactory<K, ColumnProperty>(property));
+		}
+		return (MF) this;
+	}
+
+	/**
+	 * Associate the specified columnProperties to the column matching the predicate.
+	 * @param predicate the column predicate
+	 * @param propertyFactory the properties
+	 * @return the current factory
+	 */
+	public final MF addColumnProperty(Predicate<? super K> predicate, UnaryFactory<K, ColumnProperty> propertyFactory) {
+		columnDefinitions.addColumnProperty(predicate, propertyFactory);
+		return (MF) this;
+	}
+
+	/**
      * Override the default PropertyNameMatcherFactory with the specified factory.
      * @param propertyNameMatcherFactory the factory
      * @return the current factory

@@ -442,13 +442,13 @@ public final class CsvParser {
                         CsvColumnDefinition.key()));
             }
 
-            return new MapToDSL<T>(getDsl(), classMeta, mapToClass, new CsvColumnDefinitionProviderImpl(definitions));
+            return new MapToDSL<T>(getDsl(), classMeta, mapToClass, new CsvColumnDefinitionProviderImpl(definitions, columnDefinitionProvider.getProperties()));
         }
 
         private CsvColumnDefinitionProviderImpl newColumnDefinitionProvider(Predicate<? super CsvColumnKey> predicate, CsvColumnDefinition columnDefinition) {
 			List<Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>> definitions = columnDefinitionProvider.getDefinitions();
 			definitions.add(new Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>(predicate, columnDefinition));
-			return new CsvColumnDefinitionProviderImpl(definitions);
+			return new CsvColumnDefinitionProviderImpl(definitions, columnDefinitionProvider.getProperties());
 		}
 
 		public StaticMapToDSL<T> overrideWithDefaultHeaders() {

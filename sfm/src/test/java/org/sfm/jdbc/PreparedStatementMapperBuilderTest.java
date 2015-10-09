@@ -5,6 +5,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.map.Mapper;
 import org.sfm.map.column.GetterProperty;
 import org.sfm.map.column.RenameProperty;
+import org.sfm.map.column.StaticValueProperty;
 import org.sfm.reflect.Getter;
 
 import java.sql.PreparedStatement;
@@ -114,7 +115,7 @@ public class PreparedStatementMapperBuilderTest {
 
 
     @Test
-    public void testCustomGetter() throws Exception {
+         public void testCustomGetter() throws Exception {
 
         PreparedStatementMapperBuilder<DMClass> mapperBuilder = JdbcMapperFactory.newInstance()
                 .addColumnProperty("value", new GetterProperty(new Getter<Object, String>() {
@@ -133,6 +134,24 @@ public class PreparedStatementMapperBuilderTest {
         PreparedStatement ps = mock(PreparedStatement.class);
 
         mapper.mapTo(dmClass, ps, null);
+
+        verify(ps).setString(1, "value2");
+
+    }
+
+    @Test
+    public void testCustomGetterOnNonExistantProp() throws Exception {
+        PreparedStatementMapperBuilder<Object> mapperBuilder = JdbcMapperFactory.newInstance()
+                .addColumnProperty("text", new StaticValueProperty<String>("value2", String.class))
+                .buildFrom(Object.class);
+        mapperBuilder.addColumn("text");
+
+        Mapper<Object, PreparedStatement> mapper = mapperBuilder.mapper();
+
+
+        PreparedStatement ps = mock(PreparedStatement.class);
+
+        mapper.mapTo(new Object(), ps, null);
 
         verify(ps).setString(1, "value2");
 

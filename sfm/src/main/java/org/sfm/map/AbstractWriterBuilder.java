@@ -3,6 +3,7 @@ package org.sfm.map;
 
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.column.StaticValueProperty;
 import org.sfm.map.context.KeySourceGetter;
 import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.map.mapper.ConstantTargetFieldMapperFactory;
@@ -13,8 +14,11 @@ import org.sfm.map.mapper.PropertyMappingsBuilder;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.reflect.impl.ConstantGetter;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.ObjectPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 import org.sfm.utils.Predicate;
@@ -29,11 +33,13 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
     private final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
 
     private final PropertyMappingsBuilder<T, K,  FieldMapperColumnDefinition<K>> propertyMappingsBuilder;
+
     private final ConstantTargetFieldMapperFactory<S, K> fieldAppenderFactory;
     protected final ClassMeta<T> classMeta;
     private final Class<S> sourceClass;
 
     private int currentIndex = getStartingIndex();
+    private List<Tuple2<K, FieldMapperColumnDefinition<K>>> staticValues;
 
     public AbstractWriterBuilder(
             ClassMeta<T> classMeta,
@@ -54,6 +60,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
                     }
                 });
         this.classMeta = classMeta;
+        staticValues = new ArrayList<Tuple2<K, FieldMapperColumnDefinition<K>>>();
     }
 
     public B addColumn(String column) {
@@ -77,7 +84,12 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
     public B addColumn(K key,   FieldMapperColumnDefinition<K> columnDefinition) {
         final FieldMapperColumnDefinition<K> composedDefinition = columnDefinition.compose(mapperConfig.columnDefinitions().getColumnDefinition(key));
         final K mappedColumnKey = composedDefinition.rename(key);
-        propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
+
+        if (composedDefinition.has(StaticValueProperty.class)) {
+            staticValues.add(new Tuple2<K, FieldMapperColumnDefinition<K>>(key, composedDefinition));
+        } else {
+            propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
+        }
         return (B) this;
     }
 
@@ -93,6 +105,13 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
                 throw new UnsupportedOperationException();
             }
         });
+
+        for(Tuple2<K, FieldMapperColumnDefinition<K>> staticProperty : staticValues) {
+            StaticValueProperty staticValueProperty = staticProperty.second().lookFor(StaticValueProperty.class);
+            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<>(staticProperty.first().getName(), reflectionService, staticValueProperty.getType(), new ConstantGetter<T, Object>(staticValueProperty.getValue()), null);
+            PropertyMapping<T, Object, K, FieldMapperColumnDefinition<K>> pm = new PropertyMapping<T, Object, K, FieldMapperColumnDefinition<K>>(meta, staticProperty.first(), staticProperty.second());
+            mappers.add(fieldAppenderFactory.newFieldMapper(pm, mappingContextFactoryBuilder, mapperConfig.mapperBuilderErrorHandler()));
+        }
 
         propertyMappingsBuilder.forEachProperties(
                 new ForEachCallBack<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>>() {

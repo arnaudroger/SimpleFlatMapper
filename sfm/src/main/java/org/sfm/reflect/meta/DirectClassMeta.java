@@ -102,6 +102,12 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
                     ",name=" + getName() +
                     '}';
         }
+
+        @Override
+        public boolean isDirect() {
+            return true;
+        }
+
     }
 
     @Override

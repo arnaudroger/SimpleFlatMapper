@@ -66,7 +66,7 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
         final ArrayList<PropertyMeta<T, ?>> propertyMetas = new ArrayList<PropertyMeta<T, ?>>();
 
         for(Method m : clazz.getDeclaredMethods()) {
-            if (m.getParameterTypes().length == 0 && GetterHelper.methodModifiersMatches(m.getModifiers())) {
+            if (m.getParameterTypes().length == 0 && GetterHelper.isPublicMember(m.getModifiers())) {
                 String field = m.getName();
 
                 Method setter = clazz.getDeclaredMethod(field, m.getReturnType());
@@ -85,8 +85,8 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
         Setter<T, P> methodSetter = reflectionService.getObjectSetterFactory().getMethodSetter(setter);
         return new ObjectPropertyMeta<T, P>(field, reflectionService,
                 getter.getGenericReturnType(),
-                methodGetter,
-                methodSetter);
+                ScoredGetter.of(methodGetter, 1),
+                ScoredSetter.of(methodSetter, 1));
     }
 
     @Override

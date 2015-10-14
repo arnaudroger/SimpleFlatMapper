@@ -10,8 +10,6 @@ import org.sfm.map.impl.fieldmapper.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.primitive.*;
 
-import java.lang.reflect.Type;
-
 public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> implements ConstantTargetFieldMapperFactory<T, K> {
 
     private final SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory;

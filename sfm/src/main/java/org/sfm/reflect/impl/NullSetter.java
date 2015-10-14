@@ -7,8 +7,7 @@ public class NullSetter<T, P> implements Setter<T, P> {
 
     public static final NullSetter NULL_SETTER = new NullSetter();
 
-    public static boolean isNull(Object setter) {
-        return setter == null || setter instanceof NullSetter;
+    private NullSetter() {
     }
 
     @Override
@@ -22,5 +21,9 @@ public class NullSetter<T, P> implements Setter<T, P> {
     @SuppressWarnings("unchecked")
     public static <T, E> Setter<T, E> setter() {
         return NULL_SETTER;
+    }
+
+    public static boolean isNull(Setter<?,?> setter) {
+        return setter == null || setter == NULL_SETTER;
     }
 }

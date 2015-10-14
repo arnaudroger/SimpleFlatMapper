@@ -10,6 +10,7 @@ import org.sfm.map.impl.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
 import org.sfm.map.impl.fieldmapper.MapperFieldMapper;
 import org.sfm.reflect.*;
 import org.sfm.reflect.impl.NullGetter;
+import org.sfm.reflect.impl.NullSetter;
 import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ErrorHelper;
@@ -51,12 +52,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 		this.propertyMappingsBuilder =
                 new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K>>(classMeta,
                         mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler(),
-                        new Predicate<PropertyMeta<?, ?>>() {
-                            @Override
-                            public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                                return propertyMeta.getSetter() != null;
-                            }
-                        });
+                        new PropertyWithSetter());
 		this.target = requireNonNull("classMeta", classMeta).getType();
 		this.reflectionService = requireNonNull("classMeta", classMeta).getReflectionService();
 	}

@@ -13,8 +13,10 @@ import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.map.mapper.PropertyMappingsBuilder;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.ScoredGetter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.impl.ConstantGetter;
+import org.sfm.reflect.impl.NullGetter;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ObjectPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;
@@ -56,7 +58,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
                         mapperConfig.mapperBuilderErrorHandler(), new Predicate<PropertyMeta<?, ?>>() {
                     @Override
                     public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                        return propertyMeta.getGetter() != null;
+                        return !NullGetter.isNull(propertyMeta.getGetter());
                     }
                 });
         this.classMeta = classMeta;
@@ -87,7 +89,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
 
         if (composedDefinition.has(ConstantValueProperty.class)) {
             ConstantValueProperty staticValueProperty = composedDefinition.lookFor(ConstantValueProperty.class);
-            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<T, Object>(key.getName(), reflectionService, staticValueProperty.getType(), new ConstantGetter<T, Object>(staticValueProperty.getValue()), null);
+            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<T, Object>(key.getName(), reflectionService, staticValueProperty.getType(), ScoredGetter.of(new ConstantGetter<T, Object>(staticValueProperty.getValue()), 1), null);
             propertyMappingsBuilder.addProperty(key, columnDefinition, meta);
         } else {
             propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);

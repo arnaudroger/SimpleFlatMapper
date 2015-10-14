@@ -1,10 +1,11 @@
 package org.sfm.reflect;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public class GetterHelper {
 
-	public static boolean methodModifiersMatches(final int modifiers) {
+	public static boolean isPublicMember(final int modifiers) {
 		return !Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers);
 	}
 
@@ -28,12 +29,27 @@ public class GetterHelper {
 	public static String getPropertyNameFromMethodName(final String name) {
         if (name.startsWith("is")) {
             return name.substring(2, 3).toLowerCase() + name.substring(3);
-        } else {
+        } else if (name.startsWith("get")){
             return name.substring(3, 4).toLowerCase() + name.substring(4);
-        }
+        } else {
+			return name;
+		}
 	}
 
-	public static boolean isGetter(String name) {
-		return  (name.length() > 3 && name.startsWith("get")) || (name.length() > 2 && name.startsWith("is"));
+	public static boolean isGetter(Method method) {
+		return GetterHelper.isPublicMember(method.getModifiers())
+				&& (method.getParameterTypes() == null ||  method.getParameterTypes().length == 0)
+				&& !method.getReturnType().equals(void.class)
+				&& !isToString(method)
+				&& !isHashcode(method);
+	}
+
+	private static boolean isToString(Method method) {
+		return method.getName() == "toString" && method.getReturnType().equals(String.class)
+				&& (method.getParameterTypes() == null ||  method.getParameterTypes().length == 0);
+	}
+	private static boolean isHashcode(Method method) {
+		return method.getName() == "hashCode" && method.getReturnType().equals(int.class)
+				&& (method.getParameterTypes() == null ||  method.getParameterTypes().length == 0);
 	}
 }

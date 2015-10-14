@@ -1,9 +1,6 @@
 package org.sfm.reflect.meta;
 
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.Setter;
-import org.sfm.reflect.SetterHelper;
+import org.sfm.reflect.*;
 import org.sfm.reflect.impl.FieldGetter;
 import org.sfm.reflect.impl.FieldSetter;
 
@@ -12,11 +9,11 @@ import java.lang.reflect.Type;
 
 public class ObjectPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
-	private final Setter<T, P> setter;
-    private final Getter<T, P> getter;
+	private final ScoredSetter<T, P> setter;
+    private final ScoredGetter<T, P> getter;
 	private final Type type;
 
-	public ObjectPropertyMeta(String name, ReflectionService reflectService, Type type, Getter<T, P> getter, Setter<T, P> setter) {
+	public ObjectPropertyMeta(String name, ReflectionService reflectService, Type type, ScoredGetter<T, P> getter, ScoredSetter<T, P> setter) {
 		super(name, reflectService);
 		this.type = type;
         this.getter = getter;
@@ -24,28 +21,18 @@ public class ObjectPropertyMeta<T, P> extends PropertyMeta<T, P> {
 	}
 
 
-    public PropertyMeta<T, P> getterSetter(Getter<T, P> getter, Setter<T, P> setter) {
-        Setter<T, P> newSetter = this.setter;
-        if (this.setter == null || (this.setter instanceof FieldSetter && setter != null)) {
-            newSetter = setter;
-        }
-
-        Getter<T, P> newGetter = this.getter;
-        if (this.getter == null || (this.getter instanceof FieldGetter && getter != null)) {
-            newGetter = getter;
-        }
-
-        return new ObjectPropertyMeta<T, P>(getName(), reflectService, type, newGetter, newSetter);
+    public PropertyMeta<T, P> getterSetter(ScoredGetter<T, P> getter, ScoredSetter<T, P> setter) {
+        return new ObjectPropertyMeta<T, P>(getName(), reflectService, type, this.getter.best(getter), this.setter.best(setter));
     }
 
 	@Override
 	public Setter<T, P> getSetter() {
-		return setter;
+		return setter.getSetter();
 	}
 
     @Override
     public Getter<T, P> getGetter() {
-        return getter;
+        return getter.getGetter();
     }
 
     @Override

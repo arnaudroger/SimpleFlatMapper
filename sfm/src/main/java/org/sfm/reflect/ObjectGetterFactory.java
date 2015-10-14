@@ -33,13 +33,17 @@ public final class ObjectGetterFactory {
 	}
 
 	public <T, P> Getter<T, P> getMethodGetter(final Method method) {
-        if (asmFactory != null) {
+		boolean accessible = Modifier.isPublic(method.getModifiers()) && Modifier.isPublic(method.getDeclaringClass().getModifiers());
+		if (asmFactory != null && accessible) {
             try {
                 return asmFactory.createGetter(method);
             } catch(Exception e) {
                 // ignore
             }
         }
+		if (!accessible) {
+			method.setAccessible(true);
+		}
         return new MethodGetter<T, P>(method);
 	}
 
@@ -56,13 +60,14 @@ public final class ObjectGetterFactory {
 
     public <T, P> Getter<T, P> getFieldGetter(Field field) {
 
-        if (asmFactory != null && Modifier.isPublic(field.getModifiers()) && Modifier.isPublic(field.getDeclaringClass().getModifiers())) {
+		boolean accessible = Modifier.isPublic(field.getModifiers()) && Modifier.isPublic(field.getDeclaringClass().getModifiers());
+		if (asmFactory != null && accessible) {
             try {
                 return asmFactory.createGetter(field);
             } catch(Exception e) {}
         }
 
-        if (!Modifier.isPublic(field.getModifiers()) || ! Modifier.isPublic(field.getDeclaringClass().getModifiers())) {
+        if (!accessible) {
             field.setAccessible(true);
         }
         return new FieldGetter<T, P>(field);
@@ -72,7 +77,7 @@ public final class ObjectGetterFactory {
         if (target == null)  return null;
 
 		for(Method m : target.getDeclaredMethods()) {
-			if(GetterHelper.methodModifiersMatches(m.getModifiers())
+			if(GetterHelper.isPublicMember(m.getModifiers())
 					&& GetterHelper.methodNameMatchesProperty(m.getName(), property)) {
 				return m;
 			}

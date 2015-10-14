@@ -1,12 +1,13 @@
 package org.sfm.reflect;
 
+import org.junit.Test;
 import org.sfm.beans.Bar;
 import org.sfm.beans.BarField;
 import org.sfm.beans.Foo;
 import org.sfm.beans.FooField;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 public class SetterHelperTest {
 	public static void validateFooSetter(Setter<Foo, String> setter)
@@ -39,4 +40,49 @@ public class SetterHelperTest {
         setter.set(foo, "BarValue");
         assertEquals("BarValue", foo.bar);
     }
-}
+
+	@Test
+	public void testIsSetterOnSetMethodVoid() throws NoSuchMethodException {
+		assertTrue(SetterHelper.isSetter(Setters.class.getMethod("setValue", String.class)));
+	}
+
+	@Test
+	public void testIsSetterOnMethodVoidOneArg() throws NoSuchMethodException {
+		assertTrue(SetterHelper.isSetter(Setters.class.getMethod("value", String.class)));
+	}
+
+	@Test
+	public void testIsSetterOnMethodSetterReturnSameInstance() throws NoSuchMethodException {
+		assertTrue(SetterHelper.isSetter(Setters.class.getMethod("valueBuilder", String.class)));
+	}
+
+	@Test
+	public void testIsSetterOnMethodSetterReturnDiffType() throws NoSuchMethodException {
+		assertFalse(SetterHelper.isSetter(Setters.class.getMethod("setValueReturn", String.class)));
+	}
+
+	@Test
+	public void testIsSetterOnSetMethodArgs() throws NoSuchMethodException {
+		assertFalse(SetterHelper.isSetter(Setters.class.getMethod("setValueArgs", String.class, String.class)));
+	}
+
+
+	public static class Setters {
+		public void setValue(String value) {
+		}
+
+		public void setValueArgs(String str, String str2) {
+		}
+
+		public void value(String value) {
+
+		}
+
+		public String setValueReturn(String value) {
+			return null;
+		}
+
+		public Setters valueBuilder(String val) {
+			return this;
+		}
+	}}

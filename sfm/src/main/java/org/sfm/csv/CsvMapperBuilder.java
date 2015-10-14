@@ -7,16 +7,12 @@ import org.sfm.csv.mapper.CsvMapperCellHandlerFactory;
 import org.sfm.csv.mapper.DelayedCellSetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
-import org.sfm.map.mapper.PropertyMapping;
-import org.sfm.map.mapper.PropertyMappingsBuilder;
-import org.sfm.map.mapper.ColumnDefinition;
-import org.sfm.map.mapper.ColumnDefinitionProvider;
+import org.sfm.map.mapper.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple3;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
-import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -66,12 +62,7 @@ public class CsvMapperBuilder<T> {
         this.reflectionService = classMeta.getReflectionService();
 		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition>(classMeta,
 				mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler(),
-				new Predicate<PropertyMeta<?, ?>>() {
-					@Override
-					public boolean test(PropertyMeta<?, ?> propertyMeta) {
-						return propertyMeta.getSetter() != null;
-					}
-				});
+				new PropertyWithSetter());
 		this.cellValueReaderFactory = cellValueReaderFactory;
 		this.mapperConfig = mapperConfig;
 	}
@@ -421,7 +412,7 @@ public class CsvMapperBuilder<T> {
 		return setters;
 	}
 
-    private class BuildConstructorInjections implements ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>> {
+	private class BuildConstructorInjections implements ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>> {
         final CellSetterFactory cellSetterFactory;
         private final Map<Parameter, Getter<? super CsvMapperCellHandler<T>, ?>> constructorInjections;
         int delayedSetterEnd;

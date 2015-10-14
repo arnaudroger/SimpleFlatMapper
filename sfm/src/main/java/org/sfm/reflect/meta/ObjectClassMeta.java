@@ -5,6 +5,8 @@ import org.sfm.reflect.*;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.impl.FieldGetter;
 import org.sfm.reflect.impl.FieldSetter;
+import org.sfm.reflect.impl.NullGetter;
+import org.sfm.reflect.impl.NullSetter;
 import org.sfm.utils.ErrorHelper;
 
 import java.lang.reflect.*;
@@ -101,27 +103,27 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			@Override
 			public void method(Method method) {
 				final String name = method.getName();
-				if (SetterHelper.methodModifiersMatches(method.getModifiers()) && SetterHelper.isSetter(name)) {
+				if (SetterHelper.isSetter(method)) {
 					final String propertyName = SetterHelper.getPropertyNameFromMethodName(name);
 
 					Setter<T, Object> methodSetter = reflectService.getObjectSetterFactory().getMethodSetter(method);
 					register(propertyName,
 							method.getGenericParameterTypes()[0],
-							null,
-							methodSetter);
-				} else if (GetterHelper.methodModifiersMatches(method.getModifiers()) && GetterHelper.isGetter(name)) {
-					final String propertyName = SetterHelper.getPropertyNameFromMethodName(name);
+							ScoredGetter.<T, Object>nullGetter(),
+							ScoredSetter.ofMethod(method, methodSetter));
+				} else if (GetterHelper.isGetter(method)) {
+					final String propertyName = GetterHelper.getPropertyNameFromMethodName(name);
 
 					Getter<T, Object> methodGetter = reflectService.getObjectGetterFactory().getMethodGetter(method);
 					register(propertyName,
 							method.getReturnType(),
-							methodGetter,
-							null);
+							ScoredGetter.ofMethod(method, methodGetter),
+							ScoredSetter.<T, Object>nullSetter());
 				}
 			}
 
 			@SuppressWarnings("unchecked")
-			private <P> void register(String propertyName, Type type, Getter<T, P> getter, Setter<T, P> setter) {
+			private <P> void register(String propertyName, Type type, ScoredGetter<T, P> getter, ScoredSetter<T, P> setter) {
 
 				if (type instanceof TypeVariable) {
 					Type mappedType = typeVariableTypeMap.get(type);
@@ -135,7 +137,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
 				if (indexOfProperty != -1) {
 					ConstructorPropertyMeta<T, P> constructorPropertyMeta = (ConstructorPropertyMeta<T, P>) constructorProperties.get(indexOfProperty);
-					if (getter != null) {
+					if (getter != null && constructorPropertyMeta.getPropertyType().equals(type)) {
 						constructorProperties.set(indexOfProperty, constructorPropertyMeta.getter(getter));
 					}
 				} else {
@@ -144,7 +146,9 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 						properties.add(new ObjectPropertyMeta<T, P>(propertyName, reflectService, type, getter, setter));
 					} else {
 						ObjectPropertyMeta<T, P> meta = (ObjectPropertyMeta<T, P>) properties.get(indexOfProperty);
-						properties.set(indexOfProperty, meta.getterSetter(getter, setter));
+						if (meta.getPropertyType().equals(type)) {
+							properties.set(indexOfProperty, meta.getterSetter(getter, setter));
+						}
 					}
 				}
 			}
@@ -153,11 +157,13 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			public void field(Field field) {
 				final String name = field.getName();
 				if (!Modifier.isStatic(field.getModifiers())) {
-					Getter<T, Object> getter = reflectService.getObjectGetterFactory().getFieldGetter(field);
-					Setter<T, Object> setter = null;
+					ScoredGetter<T, Object> getter = ScoredGetter.<T, Object>ofField(field, reflectService.getObjectGetterFactory().<T, Object>getFieldGetter(field));
+					ScoredSetter<T, Object> setter;
 
 					if (!Modifier.isFinal(field.getModifiers())) {
-						setter = reflectService.getObjectSetterFactory().getFieldSetter(field);
+						setter = ScoredSetter.<T, Object>ofField(field, reflectService.getObjectSetterFactory().<T, Object>getFieldSetter(field));
+					} else {
+						setter = ScoredSetter.<T, Object>nullSetter();
 					}
 
 

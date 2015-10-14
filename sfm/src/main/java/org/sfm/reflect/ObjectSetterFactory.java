@@ -34,12 +34,16 @@ public final class ObjectSetterFactory {
 	}
 
 	public <T, P> Setter<T, P> getMethodSetter(final Method method) {
-		if (asmFactory != null) {
+		boolean accessible = Modifier.isPublic(method.getModifiers()) && Modifier.isPublic(method.getDeclaringClass().getModifiers());
+		if (asmFactory != null && accessible) {
 			try {
 				return asmFactory.createSetter(method);
 			} catch(Exception e) {
                 // ignore
 			}
+		}
+		if (!accessible) {
+			method.setAccessible(true);
 		}
         return new MethodSetter<T, P>(method);
 	}
@@ -56,13 +60,14 @@ public final class ObjectSetterFactory {
 	}
 
     public <T, P> Setter<T, P> getFieldSetter(Field field) {
-        if (asmFactory != null && Modifier.isPublic(field.getModifiers())) {
+		boolean accessible = Modifier.isPublic(field.getModifiers()) && Modifier.isPublic(field.getDeclaringClass().getModifiers());
+		if (asmFactory != null && accessible) {
             try {
                 return asmFactory.createSetter(field);
             } catch(Exception e) {
             }
         }
-        if (!Modifier.isPublic(field.getModifiers())) {
+        if (!accessible) {
             field.setAccessible(true);
         }
         return new FieldSetter<T, P>(field);
@@ -72,7 +77,7 @@ public final class ObjectSetterFactory {
         if (target == null)  return null;
 
 		for(Method m : target.getDeclaredMethods()) {
-			if(SetterHelper.methodModifiersMatches(m.getModifiers())
+			if(SetterHelper.isSetter(m)
 					&& SetterHelper.methodNameMatchesProperty(m.getName(), property)) {
 				return m;
 			}

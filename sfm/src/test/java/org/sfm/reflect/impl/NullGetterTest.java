@@ -8,11 +8,11 @@ import static org.junit.Assert.*;
 
     @Test
     public void testToString() throws Exception {
-        assertEquals("NullGetter{}", new NullGetter<Object, Object>().toString());
+        assertEquals("NullGetter{}", NullGetter.<Object, Object>getter().toString());
     }
 
     @Test
     public void testGet() throws Exception {
-        assertNull(new NullGetter<Object, Object>().get(null));
+        assertNull(NullGetter.<Object, Object>getter().get(null));
     }
 }

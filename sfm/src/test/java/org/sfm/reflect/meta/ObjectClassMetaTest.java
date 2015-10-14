@@ -6,6 +6,7 @@ import org.sfm.beans.DbObject;
 import org.sfm.reflect.ReflectionService;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class ObjectClassMetaTest {
@@ -28,6 +29,63 @@ public class ObjectClassMetaTest {
 
         assertNotNull(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("string")));
 
+    }
+
+    @Test
+    public void testFieldWithImcompatibleGetterType() throws Exception {
+        IncompatibleGetter target = new IncompatibleGetter();
+        target.value = "aa";
+
+        ClassMeta<IncompatibleGetter> meta = ReflectionService.newInstance().getClassMeta(IncompatibleGetter.class);
+
+        PropertyMeta<IncompatibleGetter, Object> pm = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"));
+
+        assertEquals("aa", pm.getGetter().get(target));
+    }
+
+
+    @Test
+    public void testGetterBetterThanName() throws Exception {
+        GetterBetterThanName target = new GetterBetterThanName();
+
+        ClassMeta<GetterBetterThanName> meta = ReflectionService.newInstance().getClassMeta(GetterBetterThanName.class);
+
+        PropertyMeta<GetterBetterThanName, Object> pm = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"));
+
+        assertEquals("getValue", pm.getGetter().get(target));
+    }
+    @Test
+    public void testGetterSetterWithoutPrefix() throws Exception {
+        UnprefixedBean target = new UnprefixedBean();
+
+        ClassMeta<UnprefixedBean> meta =
+                ReflectionService.newInstance()
+                        .getClassMeta(UnprefixedBean.class);
+
+        PropertyMeta<UnprefixedBean, Object> pm = meta
+                .newPropertyFinder()
+                .findProperty(DefaultPropertyNameMatcher.of("value"));
+
+        assertNotNull(pm);
+        pm.getSetter().set(target, "aa");
+        assertEquals("aa", pm.getGetter().get(target));
+    }
+
+    public static class GetterBetterThanName {
+        public String getValue() {
+            return "getValue";
+        }
+        public String value() {
+            return "value";
+        }
+    }
+
+    public static class IncompatibleGetter {
+        private String value;
+
+        public int getValue() {
+            return 1;
+        }
     }
 
     public static class GetterOnly {
@@ -77,4 +135,14 @@ public class ObjectClassMetaTest {
     }
 
 
+    private class UnprefixedBean {
+        private String alt;
+        private int elt;
+        public void value(String value) {
+            this.alt = value;
+        }
+        public String value() {
+            return alt;
+        }
+    }
 }

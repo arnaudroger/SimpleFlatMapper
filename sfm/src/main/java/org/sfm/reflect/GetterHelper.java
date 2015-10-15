@@ -2,6 +2,7 @@ package org.sfm.reflect;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 
 public class GetterHelper {
 
@@ -51,5 +52,9 @@ public class GetterHelper {
 	private static boolean isHashcode(Method method) {
 		return method.getName() == "hashCode" && method.getReturnType().equals(int.class)
 				&& (method.getParameterTypes() == null ||  method.getParameterTypes().length == 0);
+	}
+
+	public static boolean isCompatible(Type targetType, Type returnType) {
+		return TypeHelper.isAssignable(targetType, returnType);
 	}
 }

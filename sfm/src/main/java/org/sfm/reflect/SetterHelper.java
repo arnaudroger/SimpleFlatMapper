@@ -2,6 +2,7 @@ package org.sfm.reflect;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 
 public class SetterHelper {
 
@@ -40,5 +41,9 @@ public class SetterHelper {
 	private static boolean isEquals(Method method) {
 		return method.getName() == "equals" && method.getReturnType().equals(boolean.class)
 				&& method.getParameterTypes() != null &&  method.getParameterTypes().length == 1;
+	}
+
+	public static boolean isCompatible(Type propertyType, Type settableType) {
+		return TypeHelper.isAssignable(propertyType, settableType);
 	}
 }

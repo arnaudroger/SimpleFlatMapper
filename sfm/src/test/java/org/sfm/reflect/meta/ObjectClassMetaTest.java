@@ -5,6 +5,10 @@ import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.ReflectionService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -71,6 +75,42 @@ public class ObjectClassMetaTest {
         assertEquals("aa", pm.getGetter().get(target));
     }
 
+    @Test
+    public void testFieldWithCompatibleGetterType() throws Exception {
+        CompatibleGetter target = new CompatibleGetter();
+
+        ClassMeta<CompatibleGetter> meta = ReflectionService.newInstance().getClassMeta(CompatibleGetter.class);
+
+        PropertyMeta<CompatibleGetter, Object> pm = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"));
+
+        assertEquals(Arrays.asList("aa"), pm.getGetter().get(target));
+
+        PropertyMeta<CompatibleGetter, Object> pm2 = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value2"));
+
+        assertEquals(2, pm2.getGetter().get(target));
+
+    }
+
+    @Test
+    public void testFieldWithCompatibleSetterType() throws Exception {
+        CompatibleGetter target = new CompatibleGetter();
+
+        ClassMeta<CompatibleGetter> meta = ReflectionService.newInstance().getClassMeta(CompatibleGetter.class);
+
+        PropertyMeta<CompatibleGetter, Object> pm = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"));
+
+
+        pm.getSetter().set(target, null);
+
+        assertEquals(Arrays.asList("bb"), target.value);
+
+        PropertyMeta<CompatibleGetter, Object> pm2 = meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value2"));
+
+        pm2.getSetter().set(target, 2);
+        assertEquals(3, target.value2);
+
+    }
+
     public static class GetterBetterThanName {
         public String getValue() {
             return "getValue";
@@ -85,6 +125,28 @@ public class ObjectClassMetaTest {
 
         public int getValue() {
             return 1;
+        }
+    }
+
+    public static class CompatibleGetter {
+        private List<String> value;
+        private Number value2;
+
+
+        public List getValue() {
+            return Arrays.asList("aa");
+        }
+
+        public void setValue(ArrayList list) {
+            this.value = Arrays.asList("bb");
+        }
+
+        public Integer getValue2() {
+            return 2;
+        }
+
+        public void setValue2(int o) {
+            value2 = 3;
         }
     }
 

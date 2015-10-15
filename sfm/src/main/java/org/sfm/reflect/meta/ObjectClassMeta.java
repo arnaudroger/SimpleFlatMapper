@@ -137,7 +137,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
 				if (indexOfProperty != -1) {
 					ConstructorPropertyMeta<T, P> constructorPropertyMeta = (ConstructorPropertyMeta<T, P>) constructorProperties.get(indexOfProperty);
-					if (getter != null && constructorPropertyMeta.getPropertyType().equals(type)) {
+					if (getter != null && GetterHelper.isCompatible(constructorPropertyMeta.getPropertyType(), type)) {
 						constructorProperties.set(indexOfProperty, constructorPropertyMeta.getter(getter));
 					}
 				} else {
@@ -146,9 +146,11 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 						properties.add(new ObjectPropertyMeta<T, P>(propertyName, reflectService, type, getter, setter));
 					} else {
 						ObjectPropertyMeta<T, P> meta = (ObjectPropertyMeta<T, P>) properties.get(indexOfProperty);
-						if (meta.getPropertyType().equals(type)) {
-							properties.set(indexOfProperty, meta.getterSetter(getter, setter));
-						}
+
+						ScoredGetter<T, P> compatibleGetter = GetterHelper.isCompatible(meta.getPropertyType(), type) ? getter : ScoredGetter.nullGetter();
+						ScoredSetter<T, P> compatibleSetter = SetterHelper.isCompatible(meta.getPropertyType(), type) ? setter : ScoredSetter.nullSetter();
+						properties.set(indexOfProperty,
+								meta.getterSetter(compatibleGetter, compatibleSetter));
 					}
 				}
 			}

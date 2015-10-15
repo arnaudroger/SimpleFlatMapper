@@ -154,8 +154,12 @@ public class TypeHelper {
 		return toClass(outType).equals(class1);
 	}
 
+	public static boolean isAssignable(Type type, Type from) {
+		return isAssignable(TypeHelper.toBoxedClass(type), from);
+	}
+
 	public static boolean isAssignable(Class<?> class1, Type from) {
-		return class1.isAssignableFrom(toClass(from));
+		return class1.isAssignableFrom(toBoxedClass(from));
 	}
 
 	public static boolean isJavaLang(Type target) {

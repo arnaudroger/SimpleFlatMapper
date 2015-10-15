@@ -147,8 +147,8 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 					} else {
 						ObjectPropertyMeta<T, P> meta = (ObjectPropertyMeta<T, P>) properties.get(indexOfProperty);
 
-						ScoredGetter<T, P> compatibleGetter = GetterHelper.isCompatible(meta.getPropertyType(), type) ? getter : ScoredGetter.nullGetter();
-						ScoredSetter<T, P> compatibleSetter = SetterHelper.isCompatible(meta.getPropertyType(), type) ? setter : ScoredSetter.nullSetter();
+						ScoredGetter<T, P> compatibleGetter = GetterHelper.isCompatible(meta.getPropertyType(), type) ? getter : ScoredGetter.<T, P>nullGetter();
+						ScoredSetter<T, P> compatibleSetter = SetterHelper.isCompatible(meta.getPropertyType(), type) ? setter : ScoredSetter.<T, P>nullSetter();
 						properties.set(indexOfProperty,
 								meta.getterSetter(compatibleGetter, compatibleSetter));
 					}

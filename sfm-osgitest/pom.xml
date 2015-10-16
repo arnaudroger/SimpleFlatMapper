@@ -5,7 +5,7 @@
 	<artifactId>sfm-osgitest</artifactId>
 	<packaging>bundle</packaging>
 
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.5-SNAPSHOT</version>
 
 	<licenses>
 		<license>
@@ -46,7 +46,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-poi</artifactId>
-			<version>2.4-SNAPSHOT</version>
+			<version>2.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>

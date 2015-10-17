@@ -14,7 +14,7 @@ SimpleFlatMapper is a library that provide
 * [performant](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-Local-Mysql)
 * easy to use
 * flexible
-mappers and abstraction to create pull mappers easiky.
+mappers and abstraction to create pull mappers easily.
 
 The [main module](sfm) provides support for
  * [CSV Parser](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser)

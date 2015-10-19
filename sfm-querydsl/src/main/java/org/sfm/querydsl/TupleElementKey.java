@@ -49,4 +49,25 @@ public class TupleElementKey implements FieldKey<TupleElementKey> {
 				", name='" + name + '\'' +
 				'}';
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		TupleElementKey that = (TupleElementKey) o;
+
+		if (index != that.index) return false;
+		if (!expression.equals(that.expression)) return false;
+		return name.equals(that.name);
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = expression.hashCode();
+		result = 31 * result + index;
+		result = 31 * result + name.hashCode();
+		return result;
+	}
 }

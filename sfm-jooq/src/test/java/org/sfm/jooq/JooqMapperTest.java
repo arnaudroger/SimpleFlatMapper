@@ -1,7 +1,6 @@
 package org.sfm.jooq;
 
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;
@@ -13,8 +12,28 @@ import java.sql.Connection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class JooqMapperTest {
+
+	@Test
+	public void testCacheMapper() {
+		SfmRecordMapperProvider recordMapperProvider = new SfmRecordMapperProvider();
+		RecordType rt = mock(RecordType.class);
+		Field field1 = mock(Field.class);
+		when(field1.getName()).thenReturn("id");
+		when(field1.getType()).thenReturn(long.class);
+		when(rt.size()).thenReturn(1);
+		when(rt.fields()).thenReturn(new Field[] {field1});
+
+		JooqRecordMapperWrapper provider1 =
+				(JooqRecordMapperWrapper) recordMapperProvider.<Record, DbObject>provide(rt, DbObject.class);
+		JooqRecordMapperWrapper provider2 =
+				(JooqRecordMapperWrapper) recordMapperProvider.<Record, DbObject>provide(rt, DbObject.class);
+		assertSame(provider1.getMapper(), provider2.getMapper());
+	}
 
 	@Test
 	public void testMapperDbObject() throws Exception {

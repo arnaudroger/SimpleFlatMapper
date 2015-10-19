@@ -17,4 +17,7 @@ public class JooqRecordMapperWrapper<R extends Record, E> implements RecordMappe
 		return mapper.map(record);
 	}
 
+	public Mapper<Record, E> getMapper() {
+		return mapper;
+	}
 }

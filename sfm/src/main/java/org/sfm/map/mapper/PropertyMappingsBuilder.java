@@ -29,7 +29,8 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 	public PropertyMappingsBuilder(final ClassMeta<T> classMeta,
 								   final PropertyNameMatcherFactory propertyNameMatcherFactory,
-								   final MapperBuilderErrorHandler mapperBuilderErrorHandler, Predicate<PropertyMeta<?, ?>> isValidMeta) throws MapperBuildingException {
+								   final MapperBuilderErrorHandler mapperBuilderErrorHandler,
+								   final Predicate<PropertyMeta<?, ?>> isValidMeta) throws MapperBuildingException {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.isValidMeta = isValidMeta;
 		this.propertyFinder = classMeta.newPropertyFinder();

@@ -16,14 +16,12 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.ScoredGetter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.impl.ConstantGetter;
-import org.sfm.reflect.impl.NullGetter;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ObjectPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
-import org.sfm.utils.Predicate;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -55,12 +53,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
                 new PropertyMappingsBuilder<T, K,  FieldMapperColumnDefinition<K>>(
                         classMeta,
                         mapperConfig.propertyNameMatcherFactory(),
-                        mapperConfig.mapperBuilderErrorHandler(), new Predicate<PropertyMeta<?, ?>>() {
-                    @Override
-                    public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                        return !NullGetter.isNull(propertyMeta.getGetter());
-                    }
-                });
+                        mapperConfig.mapperBuilderErrorHandler(), new PropertyWithGetter());
         this.classMeta = classMeta;
         staticValues = new ArrayList<Tuple2<K, FieldMapperColumnDefinition<K>>>();
     }

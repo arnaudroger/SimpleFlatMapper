@@ -10,12 +10,31 @@ import org.sfm.map.mapper.PropertyMappingsBuilder;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 import org.springframework.jdbc.core.StatementCreatorUtils;
+import org.springframework.jdbc.core.namedparam.ParsedSql;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 public final class SqlParameterSourceBuilder<T> {
+
+
     private final PropertyMappingsBuilder<T, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> builder;
     private int index = 1;
+
+    private static final Field paramNamesField;
+    static {
+        Field f = null;
+        try {
+            f = ParsedSql.class.getDeclaredField("parameterNames");
+            f.setAccessible(true);
+        } catch (Exception e) {
+            // ignore
+        }
+        paramNamesField = f;
+    }
 
     public SqlParameterSourceBuilder(Class<T> target) {
         this(ReflectionService.newInstance().<T>getClassMeta(target));
@@ -33,6 +52,23 @@ public final class SqlParameterSourceBuilder<T> {
     public SqlParameterSourceBuilder<T> add(String column) {
         builder.addProperty(new JdbcColumnKey(column, index++), FieldMapperColumnDefinition.<JdbcColumnKey>identity());
         return this;
+    }
+
+    public StaticSqlParameters<T> build(ParsedSql parsedSql) {
+        if (paramNamesField == null) {
+            throw new IllegalArgumentException("Unable to gain access to paramNames field in parsedSql");
+        }
+
+        try {
+            List<String> names = (List<String>) paramNamesField.get(parsedSql);
+
+            for(String name : names) {
+                add(name);
+            }
+        } catch (IllegalAccessException e) {
+            ErrorHelper.rethrow(e);
+        }
+        return build();
     }
 
     @SuppressWarnings("unchecked")

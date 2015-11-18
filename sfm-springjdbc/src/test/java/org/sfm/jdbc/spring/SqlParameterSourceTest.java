@@ -45,7 +45,8 @@ public class SqlParameterSourceTest {
 
     @Test
     public void testDynamicParams(){
-        DynamicSqlParameters<DbObject> parameters = new DynamicSqlParameters<DbObject>(ReflectionService.newInstance().getClassMeta(DbObject.class));
+        DynamicSqlParameters<DbObject> parameters =
+                new DynamicSqlParameters<DbObject>(ReflectionService.newInstance().<DbObject>getClassMeta(DbObject.class));
 
         testMapping(parameters);
 

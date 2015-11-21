@@ -1,5 +1,7 @@
 package org.sfm.jdbc.spring;
 
+import java.util.Arrays;
+
 public final class ArrayPlaceHolderValueGetterSource<T> implements PlaceHolderValueGetterSource<T> {
 
     private final PlaceHolderValueGetter<T>[] parameters;
@@ -18,7 +20,8 @@ public final class ArrayPlaceHolderValueGetterSource<T> implements PlaceHolderVa
         return null;
     }
 
-    public PlaceHolderValueGetter<T>[] getParameters() {
-        return parameters;
+    @Override
+    public Iterable<PlaceHolderValueGetter<T>> getParameters() {
+        return Arrays.asList(parameters);
     }
 }

@@ -67,7 +67,7 @@ public final class SqlParameterSourceBuilder<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public ArrayPlaceHolderValueGetterSource<T> buildSource() {
+    public PlaceHolderValueGetterSource<T> buildSource() {
         final PlaceHolderValueGetter<T>[] parameters = new PlaceHolderValueGetter[builder.size()];
         builder.forEachProperties(
                 new ForEachCallBack<PropertyMapping<T,?,JdbcColumnKey,FieldMapperColumnDefinition<JdbcColumnKey>>>(){
@@ -83,7 +83,10 @@ public final class SqlParameterSourceBuilder<T> {
                     }
                 });
 
-        return new ArrayPlaceHolderValueGetterSource<T>(parameters);
+        return parameters.length > 10
+                ? new ArrayPlaceHolderValueGetterSource<T>(parameters)
+                : new MapPlaceHolderValueGetterSource<T>(parameters)
+                ;
     }
 
     public SqlParameterSourceFactory<T> buildFactory() {

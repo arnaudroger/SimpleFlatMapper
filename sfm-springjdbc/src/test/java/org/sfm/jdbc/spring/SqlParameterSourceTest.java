@@ -15,19 +15,18 @@ public class SqlParameterSourceTest {
     public void testParseSql() {
         String sql = "INSERT INTO table VALUES(:id, :name, :email)";
 
-        SqlParameterSourceBuilder<DbObject> parameterSourceBuilder = new SqlParameterSourceBuilder<DbObject>(DbObject.class);
-
         ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(sql);
 
-        StaticSqlParameters<DbObject> sqlParameters = parameterSourceBuilder.build(parsedSql);
+        SqlParameterSourceFactory<DbObject> sqlParameters =
+                JdbcTemplateMapperFactory.newInstance().newSqlParameterSourceFactory(DbObject.class, parsedSql);
 
         testMapping(sqlParameters);
     }
 
-    protected void testMapping(SqlParameters<DbObject> sqlParameters) {
+    protected void testMapping(SqlParameterSourceFactory<DbObject> sqlParameterSourceFactory) {
         DbObject dbObject = getDbObject();
 
-        SqlParameterSource parameterSource = sqlParameters.value(dbObject);
+        SqlParameterSource parameterSource = sqlParameterSourceFactory.newSqlParameterSource(dbObject);
 
         assertEquals(12345l, parameterSource.getValue("id"));
         assertEquals("name", parameterSource.getValue("name"));
@@ -45,13 +44,8 @@ public class SqlParameterSourceTest {
 
     @Test
     public void testDynamicParams(){
-        DynamicSqlParameters<DbObject> parameters =
-                new DynamicSqlParameters<DbObject>(ReflectionService.newInstance().<DbObject>getClassMeta(DbObject.class));
-
-        testMapping(parameters);
-
-
+        SqlParameterSourceFactory<DbObject> parameterSourceFactory =
+                JdbcTemplateMapperFactory.newInstance().newSqlParameterSourceFactory(DbObject.class);
+        testMapping(parameterSourceFactory);
     }
-
-
 }

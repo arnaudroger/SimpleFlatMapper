@@ -39,7 +39,6 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
     private final Class<S> sourceClass;
 
     private int currentIndex = getStartingIndex();
-    private List<Tuple2<K, FieldMapperColumnDefinition<K>>> staticValues;
 
     public AbstractWriterBuilder(
             ClassMeta<T> classMeta,
@@ -55,7 +54,6 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
                         mapperConfig.propertyNameMatcherFactory(),
                         mapperConfig.mapperBuilderErrorHandler(), new PropertyWithGetter());
         this.classMeta = classMeta;
-        staticValues = new ArrayList<Tuple2<K, FieldMapperColumnDefinition<K>>>();
     }
 
     public B addColumn(String column) {

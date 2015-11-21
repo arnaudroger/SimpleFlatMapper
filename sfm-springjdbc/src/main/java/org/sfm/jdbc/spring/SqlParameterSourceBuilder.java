@@ -36,11 +36,6 @@ public final class SqlParameterSourceBuilder<T> {
         paramNamesField = f;
     }
 
-    public SqlParameterSourceBuilder(Class<T> target) {
-        this(ReflectionService.newInstance().<T>getClassMeta(target));
-    }
-
-
     public SqlParameterSourceBuilder(ClassMeta<T> classMeta) {
         builder = new PropertyMappingsBuilder<T, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(classMeta,
                 DefaultPropertyNameMatcherFactory.DEFAULT, new
@@ -54,7 +49,7 @@ public final class SqlParameterSourceBuilder<T> {
         return this;
     }
 
-    public StaticSqlParameters<T> build(ParsedSql parsedSql) {
+    public SqlParameterSourceFactory<T> buildFactory(ParsedSql parsedSql) {
         if (paramNamesField == null) {
             throw new IllegalArgumentException("Unable to gain access to paramNames field in parsedSql");
         }
@@ -68,19 +63,19 @@ public final class SqlParameterSourceBuilder<T> {
         } catch (IllegalAccessException e) {
             ErrorHelper.rethrow(e);
         }
-        return build();
+        return buildFactory();
     }
 
     @SuppressWarnings("unchecked")
-    public StaticSqlParameters<T> build() {
-        final PlaceHolder<T>[] parameters = new PlaceHolder[builder.size()];
+    public ArrayPlaceHolderValueGetterSource<T> buildSource() {
+        final PlaceHolderValueGetter<T>[] parameters = new PlaceHolderValueGetter[builder.size()];
         builder.forEachProperties(
                 new ForEachCallBack<PropertyMapping<T,?,JdbcColumnKey,FieldMapperColumnDefinition<JdbcColumnKey>>>(){
                     int i = 0;
                     @Override
                     public void handle(PropertyMapping<T, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
-                        PlaceHolder parameter =
-                                new PlaceHolder(pm.getColumnKey().getName(),
+                        PlaceHolderValueGetter parameter =
+                                new PlaceHolderValueGetter(pm.getColumnKey().getName(),
                                         StatementCreatorUtils.javaTypeToSqlParameterType(TypeHelper.toClass(pm.getPropertyMeta().getPropertyType())),
                                         null, pm.getPropertyMeta().getGetter());
                         parameters[i] = parameter;
@@ -88,6 +83,10 @@ public final class SqlParameterSourceBuilder<T> {
                     }
                 });
 
-        return new StaticSqlParameters<T>(parameters);
+        return new ArrayPlaceHolderValueGetterSource<T>(parameters);
+    }
+
+    public SqlParameterSourceFactory<T> buildFactory() {
+        return new SqlParameterSourceFactory<T>(buildSource());
     }
 }

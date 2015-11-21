@@ -15,7 +15,7 @@ public class DefaultPropertyNameMatcherFactory implements PropertyNameMatcherFac
     private final boolean exactMatch;
     private final boolean caseSensitive;
 
-    private DefaultPropertyNameMatcherFactory(boolean exactMatch, boolean caseSensitive) {
+    public DefaultPropertyNameMatcherFactory(boolean exactMatch, boolean caseSensitive) {
         this.exactMatch = exactMatch;
         this.caseSensitive = caseSensitive;
     }

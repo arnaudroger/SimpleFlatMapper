@@ -95,7 +95,7 @@ public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcC
 	}
 
 	public <T> SqlParameterSourceFactory<T> newSqlParameterSourceFactory(Type target) {
-		return new SqlParameterSourceFactory<T>(new DynamicPlaceHolderValueGetterSource<T>(this.<T>getClassMeta(target)));
+		return new SqlParameterSourceFactory<T>(new DynamicPlaceHolderValueGetterSource<T>(this.<T>getClassMeta(target), mapperConfig()));
 	}
 
 	public <T> SqlParameterSourceFactory<T> newSqlParameterSourceFactory(TypeReference<T> target) {
@@ -107,7 +107,7 @@ public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcC
 	}
 
 	public <T> SqlParameterSourceFactory<T> newSqlParameterSourceFactory(Type target, ParsedSql parsedSql) {
-		SqlParameterSourceBuilder<T> builder = new SqlParameterSourceBuilder<T>(this.<T>getClassMeta(target));
+		SqlParameterSourceBuilder<T> builder = new SqlParameterSourceBuilder<T>(this.<T>getClassMeta(target), mapperConfig());
 		return builder.buildFactory(parsedSql);
 	}
 

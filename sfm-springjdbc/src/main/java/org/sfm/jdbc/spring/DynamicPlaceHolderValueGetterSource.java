@@ -1,5 +1,8 @@
 package org.sfm.jdbc.spring;
 
+import org.sfm.jdbc.JdbcColumnKey;
+import org.sfm.map.MapperConfig;
+import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.reflect.meta.ClassMeta;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -8,10 +11,12 @@ public class DynamicPlaceHolderValueGetterSource<T> implements PlaceHolderValueG
 
     private final AtomicReference<PlaceHolderValueGetterSource<T>> delegate;
     private final ClassMeta<T> classMeta;
+    private final MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig;
 
     @SuppressWarnings("unchecked")
-    public DynamicPlaceHolderValueGetterSource(ClassMeta<T> classMeta) {
+    public DynamicPlaceHolderValueGetterSource(ClassMeta<T> classMeta, MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig) {
         this.classMeta = classMeta;
+        this.mapperConfig = mapperConfig;
         this.delegate = new AtomicReference<PlaceHolderValueGetterSource<T>>(new ArrayPlaceHolderValueGetterSource<T>(new PlaceHolderValueGetter[0]));
     }
 
@@ -37,7 +42,7 @@ public class DynamicPlaceHolderValueGetterSource<T> implements PlaceHolderValueG
     }
 
     private PlaceHolderValueGetterSource<T> addColumn(PlaceHolderValueGetterSource<T> ssp, String column) {
-        SqlParameterSourceBuilder<T> builder = new SqlParameterSourceBuilder<T>(classMeta);
+        SqlParameterSourceBuilder<T> builder = new SqlParameterSourceBuilder<T>(classMeta, mapperConfig);
         for(PlaceHolderValueGetter<T> ph : ssp.getParameters()) {
             builder.add(ph.getColumn());
         }

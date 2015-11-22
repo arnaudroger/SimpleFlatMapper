@@ -2,6 +2,7 @@ package org.sfm.jdbc.spring;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.map.column.ConstantValueProperty;
 import org.sfm.reflect.ReflectionService;
 import org.springframework.jdbc.core.namedparam.NamedParameterUtils;
 import org.springframework.jdbc.core.namedparam.ParsedSql;
@@ -47,5 +48,34 @@ public class SqlParameterSourceTest {
         SqlParameterSourceFactory<DbObject> parameterSourceFactory =
                 JdbcTemplateMapperFactory.newInstance().newSqlParameterSourceFactory(DbObject.class);
         testMapping(parameterSourceFactory);
+    }
+
+    @Test
+    public void testAlias(){
+        SqlParameterSourceFactory<DbObject> parameterSourceFactory =
+                JdbcTemplateMapperFactory.newInstance().addAlias("e", "email").newSqlParameterSourceFactory(DbObject.class);
+        DbObject dbObject = getDbObject();
+
+        SqlParameterSource parameterSource = parameterSourceFactory.newSqlParameterSource(dbObject);
+
+        assertEquals(12345l, parameterSource.getValue("id"));
+        assertEquals("name", parameterSource.getValue("name"));
+        assertEquals("email", parameterSource.getValue("e"));
+        assertEquals("email", parameterSource.getValue("email"));
+
+    }
+
+    @Test
+    public void testConstantValue() {
+        SqlParameterSourceFactory<DbObject> parameterSourceFactory =
+                JdbcTemplateMapperFactory
+                        .newInstance()
+                        .addColumnProperty("id", new ConstantValueProperty<Long>(-3l, Long.class))
+                        .newSqlParameterSourceFactory(DbObject.class);
+
+        SqlParameterSource parameterSource = parameterSourceFactory.newSqlParameterSource(new DbObject());
+
+        assertEquals(-3l, parameterSource.getValue("id"));
+
     }
 }

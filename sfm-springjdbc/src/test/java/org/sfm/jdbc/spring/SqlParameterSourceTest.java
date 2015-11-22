@@ -8,6 +8,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterUtils;
 import org.springframework.jdbc.core.namedparam.ParsedSql;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertEquals;
 
 public class SqlParameterSourceTest {
@@ -63,6 +65,29 @@ public class SqlParameterSourceTest {
         assertEquals("email", parameterSource.getValue("e"));
         assertEquals("email", parameterSource.getValue("email"));
 
+    }
+
+
+    @Test
+    public void testSource() {
+        SqlParameterSourceFactory<DbObject> parameterSourceFactory =
+                JdbcTemplateMapperFactory.newInstance().newSqlParameterSourceFactory(DbObject.class);
+
+        DbObject[] dbObjects = new DbObject[10];
+        for(int i = 0; i < dbObjects.length; i++ ) {
+            dbObjects[i] = new DbObject();
+            dbObjects[i].setId(i);
+        }
+
+        validate(parameterSourceFactory.newSqlParameterSources(dbObjects));
+        validate(parameterSourceFactory.newSqlParameterSources(Arrays.asList(dbObjects)));
+
+    }
+
+    private void validate(SqlParameterSource[] sqlParameterSources) {
+        for(int i = 0; i < sqlParameterSources.length; i++) {
+            assertEquals((long)i, sqlParameterSources[i].getValue("id"));
+        }
     }
 
     @Test

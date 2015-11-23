@@ -33,3 +33,25 @@ class MyDao {
 	}
 }
 ```
+
+## SqlParameterSource
+
+```java
+class MyDao {
+	private final SqlParameterSourceFactory<DbObject> parameterSourceFactory =
+		JdbcTemplateMapperFactory.newInstance().newSqlParameterSourceFactory(DbObject.class);
+
+	public void insertObject(DbObject object) {
+        template.update(
+            "INSERT INTO DBOBJECTS(id, name, email) VALUES(:id, :name, :email)",
+            parameterSourceFactory.newSqlParameterSource(object));
+
+	}
+
+	public void insertObjects(Collection<DbObject> objects) {
+        template.batchUpdate(
+            "INSERT INTO DBOBJECTS(id, name, email) VALUES(:id, :name, :email)",
+            parameterSourceFactory.newSqlParameterSources(objects));
+	}
+}
+```

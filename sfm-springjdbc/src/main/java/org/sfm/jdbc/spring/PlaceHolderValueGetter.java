@@ -3,7 +3,7 @@ package org.sfm.jdbc.spring;
 import org.sfm.reflect.Getter;
 import org.sfm.utils.ErrorHelper;
 
-public final class PlaceHolder<T> {
+public final class PlaceHolderValueGetter<T> {
 
     private final String column;
     private final int sqlType;
@@ -11,7 +11,7 @@ public final class PlaceHolder<T> {
     private final Getter<T, ?> getter;
 
 
-    public PlaceHolder(String column, int sqlType, String typeName, Getter<T, ?> getter) {
+    public PlaceHolderValueGetter(String column, int sqlType, String typeName, Getter<T, ?> getter) {
         this.column = column;
         this.sqlType = sqlType;
         this.typeName = typeName;

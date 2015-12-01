@@ -140,4 +140,8 @@ public class JdbcColumnKey implements FieldKey<JdbcColumnKey>, TypeAffinity {
 		}
 		return null;
 	}
+
+	public String getOrginalName() {
+		return parent != null ? parent.getOrginalName() : getName();
+	}
 }

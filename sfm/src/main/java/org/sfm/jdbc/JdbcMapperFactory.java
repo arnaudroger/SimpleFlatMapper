@@ -56,8 +56,16 @@ public final class JdbcMapperFactory
 		return new JdbcMapperFactory();
 	}
 
+	public static JdbcMapperFactory newInstance(
+			AbstractMapperFactory<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>, ?> config) {
+		return new JdbcMapperFactory(config);
+	}
 
-    private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = new ResultSetGetterFactory();
+	private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = new ResultSetGetterFactory();
+
+	private JdbcMapperFactory(AbstractMapperFactory<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>, ?> config) {
+		super(config);
+	}
 
 	private JdbcMapperFactory() {
 		super(new FieldMapperColumnDefinitionProviderImpl<JdbcColumnKey>(), FieldMapperColumnDefinition.<JdbcColumnKey>identity());
@@ -201,7 +209,7 @@ public final class JdbcMapperFactory
 		return new DynamicJdbcSetRowMapper<T>(new SetRowMapperFactory<T>(classMeta),  new MapperKeyFactory(),  new MapperKeyFactory());
 	}
 
-	private static class DynamicJdbcSetRowMapper<T>
+	public static class DynamicJdbcSetRowMapper<T>
 			extends DynamicSetRowMapper<ResultSet, ResultSet, T, SQLException, JdbcColumnKey>
 			implements DynamicJdbcMapper<T> {
 

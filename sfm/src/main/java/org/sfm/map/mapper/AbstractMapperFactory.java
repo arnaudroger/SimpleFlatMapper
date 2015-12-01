@@ -1,7 +1,9 @@
 package org.sfm.map.mapper;
 
+import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
+import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.error.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.error.RethrowRowHandlerErrorHandler;
 import org.sfm.map.impl.*;
@@ -41,6 +43,19 @@ public abstract class AbstractMapperFactory<
 
     private ReflectionService reflectionService = null;
 	private int maxMethodSize = MapperConfig.MAX_METHOD_SIZE;
+
+
+	public AbstractMapperFactory(AbstractMapperFactory<K, CD, ?> config) {
+		this.columnDefinitions = config.columnDefinitions;
+		this.identity = config.identity;
+		this.useAsm = config.useAsm;
+		this.failOnAsm = config.failOnAsm;
+		this.asmMapperNbFieldsLimit = config.asmMapperNbFieldsLimit;
+		this.propertyNameMatcherFactory = config.propertyNameMatcherFactory;
+		this.reflectionService = config.reflectionService;
+		this.maxMethodSize = config.maxMethodSize;
+	}
+
 
 	public AbstractMapperFactory(AbstractColumnDefinitionProvider<CD, K> columnDefinitions, CD identity) {
 		this.columnDefinitions = columnDefinitions;

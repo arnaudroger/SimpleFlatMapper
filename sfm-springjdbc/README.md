@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-springjdbc.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-springjdbc)
-[![JavaDoc](https://img.shields.io/badge/javadoc-2.4-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-springjdbc)
+[![JavaDoc](https://img.shields.io/badge/javadoc-2.5.2-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-springjdbc)
 
 # Spring JDBC integration
 
@@ -9,7 +9,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-springjdbc</artifactId>
-			<version>2.4</version>
+			<version>2.5.2</version>
 		</dependency>
 ```
 
@@ -30,6 +30,28 @@ class MyDao {
 		 template
 		 	.query(TEST_DB_OBJECT_QUERY,
 		 		mapper.newResultSetExtractor((o) -> System.out.println(o.toString())));
+	}
+}
+```
+
+## SqlParameterSource
+
+```java
+class MyDao {
+	private final SqlParameterSourceFactory<DbObject> parameterSourceFactory =
+		JdbcTemplateMapperFactory.newInstance().newSqlParameterSourceFactory(DbObject.class);
+
+	public void insertObject(DbObject object) {
+        template.update(
+            "INSERT INTO DBOBJECTS(id, name, email) VALUES(:id, :name, :email)",
+            parameterSourceFactory.newSqlParameterSource(object));
+
+	}
+
+	public void insertObjects(Collection<DbObject> objects) {
+        template.batchUpdate(
+            "INSERT INTO DBOBJECTS(id, name, email) VALUES(:id, :name, :email)",
+            parameterSourceFactory.newSqlParameterSources(objects));
 	}
 }
 ```

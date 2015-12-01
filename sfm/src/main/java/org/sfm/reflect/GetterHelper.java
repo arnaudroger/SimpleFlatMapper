@@ -42,7 +42,13 @@ public class GetterHelper {
 				&& (method.getParameterTypes() == null ||  method.getParameterTypes().length == 0)
 				&& !method.getReturnType().equals(void.class)
 				&& !isToString(method)
-				&& !isHashcode(method);
+				&& !isHashcode(method)
+				&& !isTransient(method);
+	}
+
+	private static boolean isTransient(Method method) {
+		return method.getAnnotation(java.beans.Transient.class) == null
+				&& method.getAnnotation(javax.persistence.Transient.class) == null;
 	}
 
 	private static boolean isToString(Method method) {

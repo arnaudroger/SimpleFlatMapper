@@ -43,11 +43,6 @@ public class GetterHelper {
 				&& !method.getReturnType().equals(void.class)
 				&& !isToString(method)
 				&& !isHashcode(method)
-				&& !isTransient(method);
-	}
-
-	private static boolean isTransient(Method method) {
-		return method.getAnnotation(java.beans.Transient.class) == null
 				&& method.getAnnotation(javax.persistence.Transient.class) == null;
 	}
 

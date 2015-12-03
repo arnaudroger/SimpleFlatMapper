@@ -46,8 +46,8 @@ public class GetterHelperTest {
     }
 
 
-
     public static class Getters {
+
         public String getValue() {
             return null;
         }

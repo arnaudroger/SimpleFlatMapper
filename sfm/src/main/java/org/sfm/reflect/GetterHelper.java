@@ -6,8 +6,11 @@ import java.lang.reflect.Type;
 
 public class GetterHelper {
 
+	public static final int SYNTHETIC = 0x00001000;
+
 	public static boolean isPublicMember(final int modifiers) {
-		return !Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers);
+		return !Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)
+				&& (modifiers & SYNTHETIC) == 0;
 	}
 
 	public static boolean methodNameMatchesProperty(final String name, final String property) {

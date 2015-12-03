@@ -60,4 +60,47 @@ public class ReflectionServiceTest {
     public static class Node {
         public Node parent;
     }
+
+    @Test
+    public void testGetterOnInterfaceCall() throws Exception {
+        IGetters value = new IGetters();
+        value.setId(1223);
+        value.setName("Rudolph");
+
+        ClassMeta<IGetters> meta = ReflectionService.newInstance().getClassMeta(IGetters.class);
+
+
+        assertEquals("Rudolph", meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("name")).getGetter().get(value));
+
+
+
+    }
+
+
+    public interface Named<T> {
+        T getName();
+    }
+
+
+    public static class IGetters implements Named<String> {
+        private int id;
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
 }

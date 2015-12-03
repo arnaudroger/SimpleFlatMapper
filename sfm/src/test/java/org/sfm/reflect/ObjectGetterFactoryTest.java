@@ -5,6 +5,8 @@ import org.sfm.beans.*;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.impl.FieldGetter;
 import org.sfm.reflect.impl.MethodGetter;
+import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.primitive.*;
 
 import static org.junit.Assert.*;
@@ -425,6 +427,7 @@ public class ObjectGetterFactoryTest {
         new ObjectSetterFactory(null).getSetter(Foo.class, "bar").set(foo, "bar");
         assertEquals("bar", noAsm.getGetter(Foo.class, "bar").get(foo));
     }
+
 
 
 }

@@ -42,18 +42,12 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
     }
 
     protected void checkObjectInserted(Session session, int i) {
-        try {
-            DbObject object = dbObjects.get(i);
-            DatastaxMapper<DbObject> dbObjectDatastaxMapper = DatastaxMapperFactory.newInstance().mapTo(DbObject.class);
-            BoundStatement boundStatement = session.prepare("select * from dbobjects where id = ?").bind(object.getId());
-            ResultSet execute = session.execute(boundStatement);
-            DbObject actual = dbObjectDatastaxMapper.iterator(execute).next();
-            assertEquals(object, actual);
-        } catch(NoSuchElementException e) {
-            session.execute("select id from dbobjects").forEach((r) -> System.out.println("r = " + r));
-            dbObjects.forEach((d) -> System.out.println("d = " + d.getId()));
-            throw e;
-        }
+        DbObject object = dbObjects.get(i);
+        DatastaxMapper<DbObject> dbObjectDatastaxMapper = DatastaxMapperFactory.newInstance().mapTo(DbObject.class);
+        BoundStatement boundStatement = session.prepare("select * from dbobjects where id = ?").bind(object.getId());
+        ResultSet execute = session.execute(boundStatement);
+        DbObject actual = dbObjectDatastaxMapper.iterator(execute).next();
+        assertEquals(object, actual);
     }
 
 
@@ -78,8 +72,6 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
                 Statement statement = datastaxBinder.mapTo(dbObjects, preparedStatement);
 
                 statement.enableTracing();
-                System.out.println("statement = " + statement);
-                session.execute(statement).forEach((r) -> System.out.println("batchinsert = " + r));
 
                 checkObjectInserted(session, 0);
                 checkObjectInserted(session, 1);

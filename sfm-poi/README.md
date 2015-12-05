@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-poi.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-poi)
-[![JavaDoc](https://img.shields.io/badge/javadoc-2.5.2-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-poi)
+[![JavaDoc](https://img.shields.io/badge/javadoc-2.5.3-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-poi)
 
 # POI Excel Integration
 
@@ -9,7 +9,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-poi</artifactId>
-			<version>2.5.2</version>
+			<version>2.5.3</version>
 		</dependency>
 ```
 ## Quick start

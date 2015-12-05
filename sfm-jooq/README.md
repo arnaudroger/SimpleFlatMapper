@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-jooq.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-jooq)
-[![JavaDoc](https://img.shields.io/badge/javadoc-2.5.3-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jooq)
+[![JavaDoc](https://img.shields.io/badge/javadoc-2.5.4-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jooq)
 
 # jOOQ integration
 
@@ -9,7 +9,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-jooq</artifactId>
-			<version>2.5.3</version>
+			<version>2.5.4</version>
 		</dependency>
 ```
 

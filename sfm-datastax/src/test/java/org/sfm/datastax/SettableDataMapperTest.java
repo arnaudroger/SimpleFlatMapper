@@ -42,13 +42,18 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
     }
 
     protected void checkObjectInserted(Session session, int i) {
-        DbObject object = dbObjects.get(i);
-        DatastaxMapper<DbObject> dbObjectDatastaxMapper = DatastaxMapperFactory.newInstance().mapTo(DbObject.class);
-        LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1000));
-        BoundStatement boundStatement = session.prepare("select * from dbobjects where id = ?").bind(object.getId());
-        ResultSet execute = session.execute(boundStatement);
-        DbObject actual = dbObjectDatastaxMapper.iterator(execute).next();
-        assertEquals(object, actual);
+        try {
+            DbObject object = dbObjects.get(i);
+            DatastaxMapper<DbObject> dbObjectDatastaxMapper = DatastaxMapperFactory.newInstance().mapTo(DbObject.class);
+            BoundStatement boundStatement = session.prepare("select * from dbobjects where id = ?").bind(object.getId());
+            ResultSet execute = session.execute(boundStatement);
+            DbObject actual = dbObjectDatastaxMapper.iterator(execute).next();
+            assertEquals(object, actual);
+        } catch(NoSuchElementException e) {
+            session.execute("select id from dbobjects").forEach((r) -> System.out.println("r = " + r));
+            dbObjects.forEach((d) -> System.out.println("d = " + d.getId()));
+            throw e;
+        }
     }
 
 
@@ -67,10 +72,14 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
 
                 PreparedStatement preparedStatement = session.prepare(bs);
 
-                DatastaxBinder<List<DbObject>> datastaxBinder = DatastaxMapperFactory.newInstance().mapFrom(new TypeReference<List<DbObject>>() {
+                DatastaxBinder<List<DbObject>> datastaxBinder = DatastaxMapperFactory.newInstance().disableAsm(true).mapFrom(new TypeReference<List<DbObject>>() {
                 });
 
-                session.execute(datastaxBinder.mapTo(dbObjects, preparedStatement));
+                Statement statement = datastaxBinder.mapTo(dbObjects, preparedStatement);
+
+                statement.enableTracing();
+                System.out.println("statement = " + statement);
+                session.execute(statement).forEach((r) -> System.out.println("batchinsert = " + r));
 
                 checkObjectInserted(session, 0);
                 checkObjectInserted(session, 1);

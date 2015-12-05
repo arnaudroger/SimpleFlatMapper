@@ -18,4 +18,12 @@ public class GetterOnGetter<O, I, P> implements Getter<O, P> {
         }
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "GetterOnGetter{" +
+                "g1=" + g1 +
+                ", g2=" + g2 +
+                '}';
+    }
 }

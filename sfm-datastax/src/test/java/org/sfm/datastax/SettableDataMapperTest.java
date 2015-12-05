@@ -10,6 +10,8 @@ import org.sfm.reflect.TypeReference;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -42,6 +44,7 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
     protected void checkObjectInserted(Session session, int i) {
         DbObject object = dbObjects.get(i);
         DatastaxMapper<DbObject> dbObjectDatastaxMapper = DatastaxMapperFactory.newInstance().mapTo(DbObject.class);
+        LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1000));
         BoundStatement boundStatement = session.prepare("select * from dbobjects where id = ?").bind(object.getId());
         ResultSet execute = session.execute(boundStatement);
         DbObject actual = dbObjectDatastaxMapper.iterator(execute).next();

@@ -11,3 +11,7 @@ env:
 
 after_success:
   - mvn -P travis jacoco:report coveralls:report
+
+
+before_install:
+    echo "127.0.0.1 "hostname | sudo tee /etc/hosts

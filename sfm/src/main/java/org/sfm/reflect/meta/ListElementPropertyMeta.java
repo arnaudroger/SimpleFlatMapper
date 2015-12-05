@@ -34,11 +34,7 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
     @SuppressWarnings("unchecked")
     @Override
     public Getter<T, E> getGetter() {
-        if (isVerticalList.getAsBoolean()) {
-            return (Getter<T, E>) new LastIndexListGetter<E>();
-        } else {
-            return (Getter<T, E>) new IndexListGetter<E>(index);
-        }
+        return (Getter<T, E>) new IndexListGetter<E>(index);
     }
 
     @Override
@@ -69,25 +65,6 @@ public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
                 return  target.get(index);
             }
             return null;
-        }
-    }
-
-    private static class LastIndexListGetter<E> implements Getter<List<E>, E> {
-
-        private LastIndexListGetter() {
-        }
-
-        @Override
-        public E get(List<E> target) throws Exception {
-            if (!target.isEmpty()) {
-                return  target.get(target.size() - 1);
-            }
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            return "LastIndexListGetter{}";
         }
     }
 

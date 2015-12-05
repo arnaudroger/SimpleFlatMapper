@@ -72,6 +72,7 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
                 Statement statement = datastaxBinder.mapTo(dbObjects, preparedStatement);
 
                 statement.enableTracing();
+                session.execute(statement);
 
                 checkObjectInserted(session, 0);
                 checkObjectInserted(session, 1);

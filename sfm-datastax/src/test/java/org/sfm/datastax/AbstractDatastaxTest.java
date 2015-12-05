@@ -26,7 +26,7 @@ public class AbstractDatastaxTest  {
             System.out.println("Starting Cassandra");
             fixTypeCodec();
 
-            EmbeddedCassandraServerHelper.startEmbeddedCassandra(10000L);
+            EmbeddedCassandraServerHelper.startEmbeddedCassandra(300_000L);
             isStarted = true;
 
             cluster =

@@ -30,6 +30,7 @@ The mappers supports
  * Constructor injection
  * Method injection
  * Field injection
+ * Value Object support
  * ASM acceleration
  * Sub Object Mapping
  * Tuple support including [jOOL](https://github.com/jOOQ/jOOL) tuples ans [Fasttuple](https://github.com/boundary/fasttuple)

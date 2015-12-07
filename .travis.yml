@@ -7,10 +7,10 @@ jdk:
   - openjdk6
 
 env:
-  - 
+  - TRAVISBUILD=true
 
 after_success:
-  - mvn -P travis jacoco:report coveralls:report
+  - mvn -P travis,!dev jacoco:report coveralls:report
 
 
 before_install:

@@ -407,7 +407,8 @@
         <profile>
             <id>dev</id>
             <modules>
-                <module>sfm-osgitest</module>
+                <module>sfm-test-osgi</module>
+		<module>sfm-test-lombok</module>
             </modules>
         </profile>
     </profiles>

@@ -406,9 +406,16 @@
         </profile>
         <profile>
             <id>dev</id>
+            <activation>
+                <property>
+                    <name>env.TRAVIS</name>
+                    <value>true</value>
+                </property>
+                <jdk>1.8</jdk>
+            </activation>
             <modules>
                 <module>sfm-test-osgi</module>
-		<module>sfm-test-lombok</module>
+                <module>sfm-test-lombok</module>
             </modules>
         </profile>
     </profiles>

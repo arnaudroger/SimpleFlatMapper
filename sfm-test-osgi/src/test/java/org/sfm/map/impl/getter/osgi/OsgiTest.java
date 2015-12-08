@@ -10,12 +10,6 @@ import org.sfm.csv.CsvParser;
 import org.sfm.poi.SheetMapper;
 
 import java.io.*;
-import java.net.URL;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
-import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
 
 /**
  * Created by aroger on 08/12/15.

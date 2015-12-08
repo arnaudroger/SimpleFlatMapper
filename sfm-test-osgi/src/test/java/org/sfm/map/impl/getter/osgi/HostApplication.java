@@ -14,6 +14,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.jar.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
 
 public class HostApplication
 {
@@ -81,24 +82,80 @@ public class HostApplication
     }
 
 
-    public void deployBundleWithClass(Class<?> aClass) throws BundleException {
+    public void deployBundleWithClass(Class<?> aClass) throws BundleException, IOException {
         URL resource = Thread.currentThread().getContextClassLoader().getResource(aClass.getName().replace('.', '/') + ".class");
 
         if (resource == null) {
             throw new RuntimeException("Could not find resource for " + aClass);
         }
+
+        Bundle b;
         if ("jar".equals(resource.getProtocol())) {
             String file = resource.getFile();
             file = file.substring(0, file.indexOf('!'));
 
-            Bundle b = install(file);
+            b = install(file);
 
-            b.start();
-
-            debugBundle(b);
         } else {
-            throw new RuntimeException("No jar " + resource);
+            int indexOfTarget = resource.getFile().indexOf("target/classes");
+            if (indexOfTarget >= 0) {
+                File root = new File(resource.getFile().substring(0, indexOfTarget + "target/classes".length()));
+
+                System.out.println("root = " + root);
+
+
+
+
+
+                File tmp = File.createTempFile("tmp", "jar");
+
+                Manifest man;
+                try (FileInputStream is = new FileInputStream(new File(root, "META-INF/MANIFEST.MF"))) {
+                    man = new Manifest(is);
+                }
+
+                try (FileOutputStream fos = new FileOutputStream(tmp);
+                    JarOutputStream jarOutputStream = new JarOutputStream(fos, man)) {
+
+                    Files.walk(Paths.get(root.getPath())).forEach((p) -> {
+                      if (Files.isRegularFile(p) && !p.endsWith("MANIFEST.MF")) {
+                        ZipEntry zipEntry = new ZipEntry(p.toString().substring(root.getPath().length() + 1));
+                          try {
+                              jarOutputStream.putNextEntry(zipEntry);
+                              Files.copy(p, jarOutputStream);
+
+                          } catch (IOException e) {
+                              e.printStackTrace();
+                          }
+
+                      }
+                    });
+
+                }
+
+
+                b = install("file:" + tmp.getPath());
+
+
+            } else {
+                throw  new RuntimeException("Cannot build jar");
+            }
+
+
         }
+        b.start();
+
+        ClassLoader classLoader = b.adapt(BundleWiring.class).getClassLoader();
+
+        try {
+            Class<?> aClass1 = classLoader.loadClass(aClass.getName());
+            System.out.println("aClass1 = " + aClass1);
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        debugBundle(b);
     }
 
     public void deployWrapBundleWithClass(Class<?> aClass) throws BundleException, IOException {
@@ -169,7 +226,15 @@ public class HostApplication
 
 
             b.start();
+            ClassLoader classLoader = b.adapt(BundleWiring.class).getClassLoader();
 
+            try {
+                Class<?> aClass1 = classLoader.loadClass(aClass.getName());
+                System.out.println("aClass1 = " + aClass1);
+
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
             debugBundle(b);
 
         } else {

@@ -27,18 +27,6 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<version>2.5.4</version>
-				<configuration>
-					<instructions>
-						<Export-Package>!*</Export-Package>
-						<Bundle-Activator>org.sfm.test.osgi.Activator</Bundle-Activator>
-					</instructions>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 

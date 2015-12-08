@@ -1,4 +1,4 @@
-package org.sfm.test.osgi;
+package org.sfm.map.impl.getter.osgi;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;

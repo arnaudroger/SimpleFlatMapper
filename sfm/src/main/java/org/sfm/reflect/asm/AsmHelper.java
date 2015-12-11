@@ -9,7 +9,7 @@ public class AsmHelper {
 	@SuppressWarnings("SpellCheckingInspection")
 	private static boolean _isAsmPresent() {
 		try {
-			return !Class.forName("org.objectweb.asm.ClassVisitor").isInterface();
+			return !Class.forName("org.objectweb.asm.ClassVisitor", false, AsmHelper.class.getClassLoader()).isInterface();
 		} catch(Exception e) {
 			return false;
 		}

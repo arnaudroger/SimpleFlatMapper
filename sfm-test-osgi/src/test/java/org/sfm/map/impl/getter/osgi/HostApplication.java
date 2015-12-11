@@ -252,4 +252,7 @@ public class HostApplication
     }
 
 
+    public Bundle install(String location, InputStream is) throws BundleException {
+        return m_activator.getContext().installBundle(location, is);
+    }
 }

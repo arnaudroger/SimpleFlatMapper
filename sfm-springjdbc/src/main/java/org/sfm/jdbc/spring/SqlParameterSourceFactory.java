@@ -30,11 +30,13 @@ public class SqlParameterSourceFactory<T> {
     }
 
     public SqlParameterSource[] newSqlParameterSources(T[] values) {
-        ArrayList<SqlParameterSource> sources = new ArrayList<SqlParameterSource>();
-       for(T value : values) {
-            sources.add(newSqlParameterSource(value));
+        SqlParameterSource[] sources = new SqlParameterSource[values.length];
+
+        for(int i = 0; i < values.length; i++) {
+            T value = values[i];
+            sources[i] = newSqlParameterSource(value);
         }
-        return sources.toArray(new SqlParameterSource[sources.size()]);
+        return sources;
     }
 
 }

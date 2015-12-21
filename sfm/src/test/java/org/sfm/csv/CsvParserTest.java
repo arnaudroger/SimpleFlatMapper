@@ -5,10 +5,13 @@ import org.sfm.csv.parser.BufferOverflowException;
 import org.sfm.csv.parser.CellConsumer;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.*;
+import org.sfm.utils.CloseableIterator;
 import org.sfm.utils.ListCollectorHandler;
 import org.sfm.utils.Predicate;
 
 import java.io.CharArrayReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -582,6 +585,27 @@ public class CsvParserTest {
 		assertEquals("long field", row[1]);
 
 	}
+
+	@Test
+	public void testIterateFromFile() throws IOException {
+		File file = File.createTempFile("test", ".csv");
+
+		FileWriter writer = new FileWriter(file);
+		try {
+			writer.write("1,2");
+		} finally {
+			writer.close();
+		}
+
+		CloseableIterator<String[]> iterator = CsvParser.iterator(file);
+		try {
+			assertArrayEquals(new String[]{"1", "2"}, iterator.next());
+		} finally {
+			iterator.close();
+		}
+
+	}
+
 	public static class MyScalaClass {
 		public String myField;
 		public java.util.Date secondField;

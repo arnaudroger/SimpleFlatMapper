@@ -1,0 +1,58 @@
+package org.sfm.csv;
+
+import org.sfm.csv.parser.CellConsumer;
+import org.sfm.utils.RowHandler;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.stream.Stream;
+
+public class CloseableCsvReader implements Closeable, Iterable<String[]> {
+
+    private final CsvReader delegate;
+    private final Closeable resource;
+
+    public CloseableCsvReader(CsvReader delegate, Closeable resource) {
+        this.delegate = delegate;
+        this.resource = resource;
+    }
+
+    public <CC extends CellConsumer> CC parseAll(CC cellConsumer) throws IOException {
+        return delegate.parseAll(cellConsumer);
+    }
+
+    public boolean parseRow(CellConsumer cellConsumer) throws IOException {
+        return delegate.parseRow(cellConsumer);
+    }
+
+    public void skipRows(int n) throws IOException {
+        delegate.skipRows(n);
+    }
+
+    public <CC extends CellConsumer> CC parseRows(CC cellConsumer, int limit) throws IOException {
+        return delegate.parseRows(cellConsumer, limit);
+    }
+
+    public <RH extends RowHandler<String[]>> RH read(RH handler) throws IOException {
+        return delegate.read(handler);
+    }
+
+    public <RH extends RowHandler<String[]>> RH read(RH handler, int limit) throws IOException {
+        return delegate.read(handler, limit);
+    }
+
+    @Override
+    public Iterator<String[]> iterator() {
+        return delegate.iterator();
+    }
+
+    public Stream<String[]> stream() {
+        return delegate.stream();
+    }
+
+    @Override
+    public void close() throws IOException {
+        resource.close();
+    }
+}

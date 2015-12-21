@@ -8,12 +8,18 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.tuples.*;
+import org.sfm.utils.CloseableIterator;
+import org.sfm.utils.IOFunction;
 import org.sfm.utils.Predicate;
 import org.sfm.utils.RowHandler;
 
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.nio.file.Path;
 import java.util.*;
 //IFJAVA8_START
 import java.util.stream.Stream;
@@ -175,9 +181,26 @@ public final class CsvParser {
 		return schema().parse(reader, cellConsumer);
 	}
 
+	public static CloseableCsvReader reader(File file) throws IOException {
+		return schema().reader(file);
+	}
+
+	public static CloseableIterator<String[]> iterator(File file) throws IOException {
+		return schema().iterator(file);
+	}
+
+
+	public static <CC extends CellConsumer> CC parse(File file, CC cellConsumer) throws IOException {
+		return schema().parse(file, cellConsumer);
+	}
+
 	//IFJAVA8_START
 	public static Stream<String[]> stream(Reader r) throws IOException {
 		return schema().stream(r);
+	}
+
+	public static Stream<String[]> stream(File file) throws IOException {
+		return schema().stream(file);
 	}
 	//IFJAVA8_END
 
@@ -286,6 +309,20 @@ public final class CsvParser {
             }
         }
 
+
+		public <CC extends CellConsumer> CC parse(File file, CC cellConsumer) throws IOException {
+			Reader reader = new FileReader(file);
+			try {
+				return parse(reader, cellConsumer);
+			} finally {
+				try {
+					reader.close();
+				} catch(IOException e) {
+					// ignore
+				}
+			}
+		}
+
         /**
          * Create a CsvReader and the specified reader. Will skip the number of specified rows.
          * @param reader the content
@@ -298,9 +335,17 @@ public final class CsvParser {
             return csvReader;
         }
 
+		public CloseableCsvReader reader(File file) throws IOException {
+			return onReader(file, CREATE_CLOSEABLE_CSV_READER);
+		}
+
         public Iterator<String[]> iterator(Reader reader) throws IOException {
             return reader(reader).iterator();
         }
+
+		public CloseableIterator<String[]> iterator(File file) throws IOException {
+			return onReader(file, CREATE_CLOSEABLE_ITERATOR);
+		}
 
 		public <T> MapToDSL<T> mapTo(Type target) {
 			return new MapToDSL<T>(this, target);
@@ -350,6 +395,13 @@ public final class CsvParser {
         public Stream<String[]> stream(Reader reader) throws IOException {
 			return reader(reader).stream();
 		}
+
+		public Stream<String[]> stream(File file) throws IOException {
+			return onReader(file, CREATE_CLOSEABLE_STREAM);
+		}
+
+		private final IOFunction<Reader, Stream<String[]>> CREATE_CLOSEABLE_STREAM =
+				reader -> stream(reader).onClose(() -> { try { reader.close(); } catch (IOException e) { /* ignore*/ } });
         //IFJAVA8_END
 
         private CsvCharConsumer charConsumer() {
@@ -542,8 +594,25 @@ public final class CsvParser {
 			return mapper.iterator(dsl.reader(reader));
 		}
 
+		public final CloseableIterator<T> iterator(File file) throws IOException {
+			return onReader(file, new IOFunction<Reader, CloseableIterator<T>>() {
+				@Override
+				public CloseableIterator<T> apply(Reader reader) throws IOException {
+					return new CloseableIterator<T>(iterator(reader), reader);
+				}
+			});
+		}
 
-        public final <H extends RowHandler<T>> H forEach(Reader reader, H rowHandler) throws IOException {
+		public final <H extends RowHandler<T>> H forEach(File file, H rowHandler) throws IOException {
+			Reader reader = new FileReader(file);
+			try {
+				return forEach(reader, rowHandler);
+			} finally {
+				try { reader.close(); } catch (IOException e) { /* IGNORE */ }
+			}
+		}
+
+		public final <H extends RowHandler<T>> H forEach(Reader reader, H rowHandler) throws IOException {
             if (dsl.limit == -1) {
                 mapper.forEach(dsl.reader(reader), rowHandler);
             } else {
@@ -556,18 +625,51 @@ public final class CsvParser {
 		public final Stream<T> stream(Reader reader) throws IOException {
 			return mapper.stream(dsl.reader(reader));
 		}
+
+		public final Stream<T> stream(File file) throws IOException {
+			return onReader(file, new IOFunction<Reader, Stream<T>>() {
+				@Override
+				public Stream<T> apply(Reader reader) throws IOException {
+					return stream(reader).onClose(() -> {
+						try {
+							reader.close();
+						} catch (IOException e) {
+							// ignore
+						}
+					});
+				}
+			});
+		}
 		//IFJAVA8_END
 	}
 
+	private static final IOFunction<Reader, CloseableCsvReader> CREATE_CLOSEABLE_CSV_READER =
+			new IOFunction<Reader, CloseableCsvReader>() {
+				@Override
+				public CloseableCsvReader apply(Reader reader) throws IOException {
+					return new CloseableCsvReader(reader(reader), reader);
+				}
+			};
+	private static final IOFunction<Reader, CloseableIterator<String[]>> CREATE_CLOSEABLE_ITERATOR =
+			new IOFunction<Reader, CloseableIterator<String[]>>() {
+				@Override
+				public CloseableIterator<String[]> apply(Reader reader) throws IOException {
+					return new CloseableIterator<String[]>(iterator(reader), reader);
+				}
+			};
 
-//    public static void main(String[] args) throws IOException {
-//        CsvParser
-//                .quote('\'')
-//                .separator(';')
-//                .skip(2)
-//                .bufferSize(256)
-//                .stream(new StringReader("1;1\n2;2\n3;3\n4;4\n5;5"))
-//                .map(Arrays::toString)
-//                .forEach(System.out::println);
-//    }
+
+	private static <R> R onReader(File file, IOFunction<Reader, R> IOFunction) throws IOException {
+		Reader reader = new FileReader(file);
+		try {
+			return IOFunction.apply(reader);
+		} catch(IOException ioe) {
+			try {
+				reader.close();
+			} catch(IOException ioe2) {
+				// ignore
+			}
+			throw ioe;
+		}
+	}
 }

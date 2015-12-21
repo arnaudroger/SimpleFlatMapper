@@ -135,7 +135,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
                                         TypeHelper.<T>toClass(classMeta.getType()),
                                         sourceClass
                                 );
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 if (mapperConfig.failOnAsm()) {
                     return ErrorHelper.rethrow(e);
                 } else {

@@ -37,7 +37,7 @@ public final class ObjectGetterFactory {
 		if (asmFactory != null && accessible) {
             try {
                 return asmFactory.createGetter(method);
-            } catch(Exception e) {
+            } catch(Throwable e) {
                 // ignore
             }
         }
@@ -64,7 +64,7 @@ public final class ObjectGetterFactory {
 		if (asmFactory != null && accessible) {
             try {
                 return asmFactory.createGetter(field);
-            } catch(Exception e) {}
+            } catch(Throwable e) {}
         }
 
         if (!accessible) {

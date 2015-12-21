@@ -38,7 +38,7 @@ public final class ObjectSetterFactory {
 		if (asmFactory != null && accessible) {
 			try {
 				return asmFactory.createSetter(method);
-			} catch(Exception e) {
+			} catch(Throwable e) {
                 // ignore
 			}
 		}
@@ -64,7 +64,7 @@ public final class ObjectSetterFactory {
 		if (asmFactory != null && accessible) {
             try {
                 return asmFactory.createSetter(field);
-            } catch(Exception e) {
+            } catch(Throwable e) {
             }
         }
         if (!accessible) {

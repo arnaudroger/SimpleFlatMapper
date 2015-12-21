@@ -93,7 +93,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
                                         mapperSource.source(),
                                         getTargetClass()
                                 );
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 if (mapperConfig.failOnAsm()) {
                     return ErrorHelper.rethrow(e);
                 } else {

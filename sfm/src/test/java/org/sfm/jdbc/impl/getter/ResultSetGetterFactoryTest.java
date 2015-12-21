@@ -308,7 +308,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(object, getter.get(resultSet));
 	}
 
-	static class SQLDataImpl implements SQLData {
+	public static class SQLDataImpl implements SQLData {
 
 		@Override
 		public String getSQLTypeName() throws SQLException {

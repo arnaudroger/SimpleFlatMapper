@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.impl.PreparedStatementSetterFactory;
+import org.sfm.jdbc.impl.getter.ResultSetGetterFactoryTest;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
@@ -343,6 +344,19 @@ public class PreparedStatementFieldMapperFactoryTest {
         verify(ps).setArray(1, value);
         verify(ps).setNull(2, Types.ARRAY);
     }
+
+
+    @Test
+    public void testSQLData() throws Exception {
+        ResultSetGetterFactoryTest.SQLDataImpl value = new ResultSetGetterFactoryTest.SQLDataImpl();
+
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, ResultSetGetterFactoryTest.SQLDataImpl>(value), ResultSetGetterFactoryTest.SQLDataImpl.class);
+        newFieldMapperAndMapToPS(NullGetter.<Object, ResultSetGetterFactoryTest.SQLDataImpl>getter(), ResultSetGetterFactoryTest.SQLDataImpl.class);
+
+        verify(ps).setObject(1, value);
+        verify(ps).setNull(2, Types.JAVA_OBJECT);
+    }
+
 
     @Test
     public void testJodaDateTime() throws Exception {

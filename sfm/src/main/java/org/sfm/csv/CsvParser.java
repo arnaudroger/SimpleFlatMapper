@@ -13,13 +13,11 @@ import org.sfm.utils.IOFunction;
 import org.sfm.utils.Predicate;
 import org.sfm.utils.RowHandler;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
-import java.nio.file.Path;
 import java.util.*;
 //IFJAVA8_START
 import java.util.stream.Stream;

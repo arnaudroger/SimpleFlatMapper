@@ -298,6 +298,34 @@ public class ResultSetGetterFactoryTest {
 		assertNull(getter);
 	}
 
+	@Test
+	public void testSQLData() throws Exception {
+		Getter<ResultSet, SQLDataImpl> getter = factory.<SQLDataImpl>newGetter(SQLDataImpl.class, key(Types.JAVA_OBJECT), IDENTITY);
+
+		SQLDataImpl object = new SQLDataImpl();
+		when(resultSet.getObject(1)).thenReturn(object);
+
+		assertEquals(object, getter.get(resultSet));
+	}
+
+	static class SQLDataImpl implements SQLData {
+
+		@Override
+		public String getSQLTypeName() throws SQLException {
+			return "MyName";
+		}
+
+		@Override
+		public void readSQL(SQLInput stream, String typeName) throws SQLException {
+
+		}
+
+		@Override
+		public void writeSQL(SQLOutput stream) throws SQLException {
+
+		}
+	}
+
 	//IFJAVA8_START
 	@Test
 	public void testJavaLocalDate() throws Exception {
@@ -502,7 +530,6 @@ public class ResultSetGetterFactoryTest {
 
 		assertEquals("JavaYearFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
-
 
 	//IFJAVA8_END
 }

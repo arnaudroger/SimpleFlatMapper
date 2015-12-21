@@ -401,6 +401,10 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
         }
         //IFJAVA8_END
 
+        if (setter == null && TypeHelper.isAssignable(SQLData.class, propertyType)) {
+            setter = (Setter<PreparedStatement, P>) new ObjectPreparedStatementSetter(arg.getColumnKey().getIndex());
+        }
+
 
         return setter;
     }

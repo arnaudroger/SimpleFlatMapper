@@ -385,6 +385,13 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		} else {
 			getter = (Getter<ResultSet, P>) jodaTimeGetterFactory.newGetter(genericType, key, columnDefinition);
 		}
+
+		if (getter == null) {
+			if (SQLData.class.isAssignableFrom(clazz) || key.getSqlType() == Types.JAVA_OBJECT) {
+				return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
+			}
+		}
+
 		return getter;
 	}
 

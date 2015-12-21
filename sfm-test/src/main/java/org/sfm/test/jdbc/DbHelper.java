@@ -107,8 +107,8 @@ public class DbHelper {
 				+ " email varchar(100),"
 				+ " creation_Time timestamp, type_ordinal int, type_name varchar(10)  )");
 	}
-	
-	
+
+
 	private static Connection newHsqlDbConnection() throws SQLException {
 		return DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", "");
 	}

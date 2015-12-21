@@ -401,7 +401,7 @@ public final class CsvParser {
 		}
 
 		private final IOFunction<Reader, Stream<String[]>> CREATE_CLOSEABLE_STREAM =
-				reader -> stream(reader).onClose(() -> { try { reader.close(); } catch (IOException e) { /* ignore*/ } });
+				reader -> stream(reader).onClose(() -> { try { reader.close(); } catch (IOException e) {} });
         //IFJAVA8_END
 
         private CsvCharConsumer charConsumer() {
@@ -608,7 +608,7 @@ public final class CsvParser {
 			try {
 				return forEach(reader, rowHandler);
 			} finally {
-				try { reader.close(); } catch (IOException e) { /* IGNORE */ }
+				try { reader.close(); } catch (IOException e) { }
 			}
 		}
 

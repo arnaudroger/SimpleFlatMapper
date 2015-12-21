@@ -24,6 +24,11 @@ public class CloseableIterator<E> implements Iterator<E>, Closeable {
     }
 
     @Override
+    public void remove() {
+        delegate.remove();
+    }
+
+    @Override
     public E next() {
         return delegate.next();
     }

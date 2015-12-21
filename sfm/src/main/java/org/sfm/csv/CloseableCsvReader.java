@@ -6,7 +6,9 @@ import org.sfm.utils.RowHandler;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
+//IFJAVA8_START
 import java.util.stream.Stream;
+//IFJAVA8_END
 
 public class CloseableCsvReader implements Closeable, Iterable<String[]> {
 
@@ -47,9 +49,12 @@ public class CloseableCsvReader implements Closeable, Iterable<String[]> {
         return delegate.iterator();
     }
 
+
+    //IFJAVA8_START
     public Stream<String[]> stream() {
         return delegate.stream();
     }
+    //IFJAVA8_END
 
     @Override
     public void close() throws IOException {

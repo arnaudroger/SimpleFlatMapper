@@ -17,7 +17,7 @@ public class NamedSqlQueryTest {
         assertEquals("col2", namedSqlQuery.getParameter(1).getName());
 
         assertEquals("INSERT INTO table(col1, col2) values(?, ?)",
-                namedSqlQuery.toSqlQuery().getQuery());
+                namedSqlQuery.toSqlQuery());
 
     }
     @Test
@@ -49,7 +49,7 @@ public class NamedSqlQueryTest {
                         "and upper(lower(d)) = ? " +
                         "and upper(lower(e)) = upper(lower(?)) " +
                         "and lower(f) = upper(lower(?))",
-                namedSqlQuery.toSqlQuery().getQuery());
+                namedSqlQuery.toSqlQuery());
 
     }
 
@@ -64,7 +64,7 @@ public class NamedSqlQueryTest {
         assertEquals("field2", namedSqlQuery.getParameter(1).getName());
 
         assertEquals("SELECT * FROM table where field = ? and field2 = ?",
-                namedSqlQuery.toSqlQuery().getQuery());
+                namedSqlQuery.toSqlQuery());
 
     }
 
@@ -79,7 +79,7 @@ public class NamedSqlQueryTest {
         assertEquals("field2", namedSqlQuery.getParameter(1).getName());
 
         assertEquals("SELECT * FROM table where field = ? and field = ?",
-                namedSqlQuery.toSqlQuery().getQuery());
+                namedSqlQuery.toSqlQuery());
 
     }
 
@@ -94,7 +94,7 @@ public class NamedSqlQueryTest {
         assertEquals("field2", namedSqlQuery.getParameter(0).getName());
 
         assertEquals("?",
-                namedSqlQuery.toSqlQuery().getQuery());
+                namedSqlQuery.toSqlQuery());
 
     }
 
@@ -108,7 +108,7 @@ public class NamedSqlQueryTest {
         assertEquals(0, namedSqlQuery.getParametersSize());
 
         assertEquals("select 1 from dual",
-                namedSqlQuery.toSqlQuery().getQuery());
+                namedSqlQuery.toSqlQuery());
 
     }
 }

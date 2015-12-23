@@ -57,8 +57,8 @@ public class PreparedStatementFieldMapperFactoryTest {
     @Test
     public void testEnumOrdinal() throws Exception {
         final DbObject.Type type = DbObject.Type.type3;
-        newFieldMapperAndMapToPS(new ConstantGetter<Object, DbObject.Type>(type), DbObject.Type.class);
-        newFieldMapperAndMapToPS(NullGetter.<Object, DbObject.Type>getter(), DbObject.Type.class);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, DbObject.Type>(type), DbObject.Type.class, Types.NUMERIC);
+        newFieldMapperAndMapToPS(NullGetter.<Object, DbObject.Type>getter(), DbObject.Type.class, Types.NUMERIC);
 
         verify(ps).setInt(1, type.ordinal());
         verify(ps).setNull(2, Types.INTEGER);
@@ -67,8 +67,8 @@ public class PreparedStatementFieldMapperFactoryTest {
     @Test
     public void testEnumString() throws Exception {
         final DbObject.Type type = DbObject.Type.type3;
-        newFieldMapperAndMapToPS(new ConstantGetter<Object, DbObject.Type>(type), DbObject.Type.class, Types.VARCHAR);
-        newFieldMapperAndMapToPS(NullGetter.<Object, DbObject.Type>getter(), DbObject.Type.class, Types.VARCHAR);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, DbObject.Type>(type), DbObject.Type.class);
+        newFieldMapperAndMapToPS(NullGetter.<Object, DbObject.Type>getter(), DbObject.Type.class);
 
         verify(ps).setString(1, type.name());
         verify(ps).setNull(2, Types.VARCHAR);

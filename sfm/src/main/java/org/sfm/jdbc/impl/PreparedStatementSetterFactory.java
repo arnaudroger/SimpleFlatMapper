@@ -378,17 +378,18 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
 
         if (TypeHelper.isEnum(propertyType)) {
             switch (arg.getColumnKey().getSqlType()) {
-                case Types.VARCHAR:
-                case Types.CHAR:
-                case Types.CLOB:
-                case Types.LONGNVARCHAR:
-                case Types.LONGVARCHAR:
-                case Types.NCHAR:
-                case Types.NCLOB:
-                case Types.NVARCHAR:
-                    return (Setter<PreparedStatement, P>) new StringEnumPreparedStatementSetter(arg.getColumnKey().getIndex());
+                case Types.NUMERIC:
+                case Types.BIGINT:
+                case Types.INTEGER:
+                case Types.DECIMAL:
+                case Types.DOUBLE:
+                case Types.FLOAT:
+                case Types.SMALLINT:
+                case Types.REAL:
+                case Types.TINYINT:
+                    return (Setter<PreparedStatement, P>) new OrdinalEnumPreparedStatementSetter(arg.getColumnKey().getIndex());
             }
-            return (Setter<PreparedStatement, P>) new OrdinalEnumPreparedStatementSetter(arg.getColumnKey().getIndex());
+            return (Setter<PreparedStatement, P>) new StringEnumPreparedStatementSetter(arg.getColumnKey().getIndex());
         }
 
         if (setter == null) {

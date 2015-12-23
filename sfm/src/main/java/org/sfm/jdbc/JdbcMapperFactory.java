@@ -178,6 +178,23 @@ public final class JdbcMapperFactory
 		return new PreparedStatementMapperBuilder<T>(classMeta, mapperConfig(), ConstantTargetFieldMapperFactorImpl.instance(new PreparedStatementSetterFactory()));
 	}
 
+	public <T> PreparedStatementMapperBuilder<T> from(final Class<T> target) {
+		return buildFrom(target);
+	}
+
+	public <T> PreparedStatementMapperBuilder<T> from(final Type target) {
+		return buildFrom(target);
+	}
+
+	public <T> PreparedStatementMapperBuilder<T> from(final TypeReference<T> target) {
+		return buildFrom(target);
+	}
+
+	public <T> PreparedStatementMapperBuilder<T> from(final ClassMeta<T> classMeta) {
+		return buildFrom(classMeta);
+	}
+
+
 	/**
 	 * Will create a DynamicMapper on the specified target class.
 	 * @param target the class

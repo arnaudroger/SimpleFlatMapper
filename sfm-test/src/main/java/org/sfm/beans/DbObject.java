@@ -1,17 +1,19 @@
 package org.sfm.beans;
 
 import java.util.Date;
+import java.util.Random;
 
 public class DbObject {
 
+	private static Random random = new Random();
 	public static DbObject newInstance() {
 		DbObject object = new DbObject();
-		object.setId(System.currentTimeMillis());
+		object.setId(random.nextInt());
 		object.setName("name" + Long.toHexString(object.getId()));
 		object.setEmail("email" + Long.toHexString(object.getId()));
 		object.setCreationTime(new Date());
-		object.setTypeName(Type.values()[(int)(object.getId() % 4l)]);
-		object.setTypeOrdinal(Type.values()[(int)(object.getId() % 4l)]);
+		object.setTypeName(Type.values()[(int)(Math.abs(object.getId()) % 4l)]);
+		object.setTypeOrdinal(Type.values()[(int)(Math.abs(object.getId()) % 4l)]);
 		return object;
 	}
 

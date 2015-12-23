@@ -35,7 +35,7 @@ public class NamedSqlQuery implements ParameterizedQuery {
                 sqlParameters.toArray(new NamedParameter[sqlParameters.size()]));
     }
 
-    public SqlQuery toSqlQuery() {
+    public String toSqlQuery() {
         StringBuilder sb = new StringBuilder(sql.length());
 
         int start = 0;
@@ -48,7 +48,7 @@ public class NamedSqlQuery implements ParameterizedQuery {
 
         sb.append(sql, start, sql.length());
 
-        return new SqlQuery(sb.toString(), parameters);
+        return sb.toString();
     }
 
     public int getParametersSize() {

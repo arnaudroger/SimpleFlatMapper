@@ -62,7 +62,7 @@ public class CsvWriterBuilder<T> extends AbstractWriterBuilder<Appendable, T, Cs
     }
 
     @Override
-    protected CsvColumnKey newKey(String column, int i) {
+    protected CsvColumnKey newKey(String column, int i, FieldMapperColumnDefinition<CsvColumnKey> columnDefinition) {
         return new CsvColumnKey(column, i);
     }
 

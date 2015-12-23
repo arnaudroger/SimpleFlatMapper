@@ -24,7 +24,7 @@ public class SettableDataMapperBuilder<T> extends AbstractWriterBuilder<Settable
     }
 
     @Override
-    protected DatastaxColumnKey newKey(String column, int i) {
+    protected DatastaxColumnKey newKey(String column, int i, FieldMapperColumnDefinition<DatastaxColumnKey> columnDefinition) {
         return new DatastaxColumnKey(column, i);
     }
 

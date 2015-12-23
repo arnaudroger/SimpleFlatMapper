@@ -19,7 +19,6 @@ import org.sfm.reflect.impl.ConstantGetter;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ObjectPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;
-import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 
@@ -30,7 +29,7 @@ import java.util.List;
 public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B extends AbstractWriterBuilder<S, T, K , B>> {
 
     private final ReflectionService reflectionService;
-    private final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
+    protected final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
 
     private final PropertyMappingsBuilder<T, K,  FieldMapperColumnDefinition<K>> propertyMappingsBuilder;
 
@@ -62,7 +61,8 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
     }
 
     public B addColumn(String column, ColumnProperty... properties) {
-        return addColumn(newKey(column, currentIndex++), properties);
+        FieldMapperColumnDefinition<K> columnDefinition = FieldMapperColumnDefinition.of(properties);
+        return addColumn(newKey(column, currentIndex++, columnDefinition), columnDefinition);
     }
 
     public B addColumn(K key, ColumnProperty... properties) {
@@ -70,7 +70,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
     }
 
     public B addColumn(String column,  FieldMapperColumnDefinition<K> columnDefinition) {
-        return addColumn(newKey(column, currentIndex++), columnDefinition);
+        return addColumn(newKey(column, currentIndex++, columnDefinition), columnDefinition);
     }
 
     @SuppressWarnings("unchecked")
@@ -169,7 +169,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
 
     protected abstract Instantiator<T, S> getInstantiator();
 
-    protected abstract K newKey(String column, int i);
+    protected abstract K newKey(String column, int i, FieldMapperColumnDefinition<K> columnDefinition);
 
     private FieldKey<?>[] getKeys() {
         return propertyMappingsBuilder.getKeys().toArray(new FieldKey[0]);

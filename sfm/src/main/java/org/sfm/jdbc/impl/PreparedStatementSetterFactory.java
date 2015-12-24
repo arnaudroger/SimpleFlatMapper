@@ -370,7 +370,7 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
     public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> arg) {
         PrepareStatementIndexedSetter setter = getIndexedSetter(arg);
         if (setter != null) {
-            return new PreparedStatementSetterImpl<>(arg.getColumnKey().getIndex(), setter);
+            return new PreparedStatementSetterImpl<P>(arg.getColumnKey().getIndex(), setter);
         } else return null;
     }
 

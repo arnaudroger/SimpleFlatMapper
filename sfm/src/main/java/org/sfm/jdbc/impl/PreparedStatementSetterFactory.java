@@ -20,7 +20,6 @@ import org.sfm.jdbc.impl.setter.*;
 import org.sfm.map.column.joda.JodaHelper;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
-import org.sfm.map.setter.ConvertDelegateSetter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.TypeHelper;
@@ -37,271 +36,271 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PreparedStatementSetterFactory implements SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> {
-    private final Map<Class<?>, SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>> factoryPerClass =
-            new HashMap<Class<?>, SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>>();
+    private final Map<Class<?>, Factory> factoryPerClass =
+            new HashMap<Class<?>, Factory>();
 
     {
         factoryPerClass.put(boolean.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new BooleanPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new BooleanPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Boolean.class, factoryPerClass.get(boolean.class));
 
         factoryPerClass.put(byte.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new BytePreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new BytePreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Byte.class, factoryPerClass.get(byte.class));
 
         factoryPerClass.put(char.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new CharacterPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new CharacterPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Character.class, factoryPerClass.get(char.class));
 
         factoryPerClass.put(short.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new ShortPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new ShortPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Short.class, factoryPerClass.get(short.class));
 
         factoryPerClass.put(int.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new IntegerPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new IntegerPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Integer.class, factoryPerClass.get(int.class));
 
         factoryPerClass.put(long.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new LongPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new LongPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Long.class, factoryPerClass.get(long.class));
 
         factoryPerClass.put(float.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new FloatPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new FloatPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Float.class, factoryPerClass.get(float.class));
 
         factoryPerClass.put(double.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new DoublePreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new DoublePreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Double.class, factoryPerClass.get(double.class));
 
         factoryPerClass.put(String.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new StringPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new StringPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Date.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new ConvertDelegateSetter<PreparedStatement, Date, Timestamp>(
-                                new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new ConvertDelegateIndexedSetter<Date, Timestamp>(
+                                new TimestampPreparedStatementIndexedSetter(),
                                 new UtilDateToTimestampConverter()
                         );
                     }
                 });
         factoryPerClass.put(Timestamp.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new TimestampPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(java.sql.Date.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new DatePreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new DatePreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Time.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new TimePreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new TimePreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Calendar.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new ConvertDelegateSetter<PreparedStatement, Calendar, Timestamp>(
-                                new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new ConvertDelegateIndexedSetter<Calendar, Timestamp>(
+                                new TimestampPreparedStatementIndexedSetter(),
                                 new CalendarToTimestampConverter()
                         );
                     }
                 });
         factoryPerClass.put(URL.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new URLPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new URLPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Ref.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new RefPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new RefPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(BigDecimal.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new BigDecimalPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new BigDecimalPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Array.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new ArrayPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new ArrayPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(byte[].class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new BytesPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new BytesPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(NClob.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new NClobPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new NClobPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(RowId.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new RowIdPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new RowIdPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Blob.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new BlobPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new BlobPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Clob.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new ClobPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new ClobPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(InputStream.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new InputStreamPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new InputStreamPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(Reader.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new ReaderPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new ReaderPreparedStatementIndexedSetter();
                     }
                 });
         factoryPerClass.put(SQLXML.class,
-                new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+                new Factory() {
                     @SuppressWarnings("unchecked")
                     @Override
-                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                        return (Setter<PreparedStatement, P>) new SQLXMLPreparedStatementSetter(pm.getColumnKey().getIndex());
+                    public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        return (PrepareStatementIndexedSetter<P>) new SQLXMLPreparedStatementIndexedSetter();
                     }
                 });
     }
 
-    private final SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> jodaTimeFieldMapperToSourceFactory =
-            new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+    private final Factory jodaTimeFieldMapperToSourceFactory =
+            new Factory() {
                 @SuppressWarnings("unchecked")
                 @Override
-                public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
                     if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.DateTime.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, DateTime, Timestamp>(
-                                        new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<DateTime, Timestamp>(
+                                        new TimestampPreparedStatementIndexedSetter(),
                                         new JodaDateTimeToTimestampConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.LocalDateTime.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, LocalDateTime, Timestamp>(
-                                        new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<LocalDateTime, Timestamp>(
+                                        new TimestampPreparedStatementIndexedSetter(),
                                         new JodaLocalDateTimeToTimestampConverter(JodaHelper.getDateTimeZone(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.LocalDate.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, LocalDate, java.sql.Date>(
-                                        new DatePreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<LocalDate, java.sql.Date>(
+                                        new DatePreparedStatementIndexedSetter(),
                                         new JodaLocalDateToDateConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.LocalTime.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, LocalTime, Time>(
-                                        new TimePreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<LocalTime, Time>(
+                                        new TimePreparedStatementIndexedSetter(),
                                         new JodaLocalTimeToTimeConverter(JodaHelper.getDateTimeZone(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.Instant.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, Instant, Timestamp>(
-                                        new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<Instant, Timestamp>(
+                                         new TimestampPreparedStatementIndexedSetter(),
                                         new JodaInstantToTimestampConverter());
                     }
                     return null;
@@ -309,55 +308,55 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
             };
 
     //IFJAVA8_START
-    private final SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> javaTimeFieldMapperToSourceFactory =
-            new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>>() {
+    private final Factory javaTimeFieldMapperToSourceFactory =
+            new Factory() {
                 @SuppressWarnings("unchecked")
                 @Override
-                public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                public <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
                     if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.LocalDateTime.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, java.time.LocalDateTime, Timestamp>(
-                                        new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<java.time.LocalDateTime, Timestamp>(
+                                        new TimestampPreparedStatementIndexedSetter(),
                                         new JavaLocalDateTimeToTimestampConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.LocalDate.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, java.time.LocalDate, java.sql.Date>(
-                                        new DatePreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<java.time.LocalDate, java.sql.Date>(
+                                        new DatePreparedStatementIndexedSetter(),
                                         new JavaLocalDateToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.LocalTime.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, java.time.LocalTime, Time>(
-                                        new TimePreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<java.time.LocalTime, Time>(
+                                        new TimePreparedStatementIndexedSetter(),
                                         new JavaLocalTimeToTimeConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.Instant.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, java.time.Instant, Timestamp>(
-                                        new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<java.time.Instant, Timestamp>(
+                                        new TimestampPreparedStatementIndexedSetter(),
                                         new JavaInstantToTimestampConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.ZonedDateTime.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, ZonedDateTime, Timestamp>(
-                                        new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<ZonedDateTime, Timestamp>(
+                                        new TimestampPreparedStatementIndexedSetter(),
                                         new JavaZonedDateTimeToTimestampConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.OffsetDateTime.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, OffsetDateTime, Timestamp>(
-                                        new TimestampPreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<OffsetDateTime, Timestamp>(
+                                        new TimestampPreparedStatementIndexedSetter(),
                                         new JavaOffsetDateTimeToTimestampConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.OffsetTime.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, OffsetTime, Time>(
-                                        new TimePreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<OffsetTime, Time>(
+                                        new TimePreparedStatementIndexedSetter(),
                                         new JavaOffsetTimeToTimeConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.YearMonth.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, java.time.YearMonth, java.sql.Date>(
-                                        new DatePreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<java.time.YearMonth, java.sql.Date>(
+                                        new DatePreparedStatementIndexedSetter(),
                                         new JavaYearMonthToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.Year.class)) {
-                        return (Setter<PreparedStatement, P>)
-                                new ConvertDelegateSetter<PreparedStatement, Year, java.sql.Date>(
-                                        new DatePreparedStatementSetter(pm.getColumnKey().getIndex()),
+                        return (PrepareStatementIndexedSetter<P>)
+                                new ConvertDelegateIndexedSetter<Year, java.sql.Date>(
+                                        new DatePreparedStatementIndexedSetter(),
                                         new JavaYearToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     }
 
@@ -369,11 +368,18 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
     @SuppressWarnings("unchecked")
     @Override
     public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> arg) {
-        Setter<PreparedStatement, P> setter = null;
+        PrepareStatementIndexedSetter setter = getIndexedSetter(arg);
+        if (setter != null) {
+            return new PreparedStatementSetterImpl<>(arg.getColumnKey().getIndex(), setter);
+        } else return null;
+    }
+
+    public PrepareStatementIndexedSetter getIndexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> arg) {
+        PrepareStatementIndexedSetter setter = null;
         Type propertyType = arg.getPropertyMeta().getPropertyType();
-        SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> setterFactory = this.factoryPerClass.get(TypeHelper.toClass(propertyType));
+        Factory setterFactory = this.factoryPerClass.get(TypeHelper.toClass(propertyType));
         if (setterFactory != null) {
-            setter = setterFactory.getSetter(arg);
+            setter = setterFactory.indexedSetter(arg);
         }
 
         if (TypeHelper.isEnum(propertyType)) {
@@ -387,26 +393,31 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
                 case Types.SMALLINT:
                 case Types.REAL:
                 case Types.TINYINT:
-                    return (Setter<PreparedStatement, P>) new OrdinalEnumPreparedStatementSetter(arg.getColumnKey().getIndex());
+                   setter = new OrdinalEnumPreparedStatementIndexedSetter();
+                    break;
+                default:
+                    setter = new StringEnumPreparedStatementIndexedSetter();
             }
-            return (Setter<PreparedStatement, P>) new StringEnumPreparedStatementSetter(arg.getColumnKey().getIndex());
         }
 
         if (setter == null) {
-            setter = jodaTimeFieldMapperToSourceFactory.getSetter(arg);
+            setter = jodaTimeFieldMapperToSourceFactory.indexedSetter(arg);
         }
 
         //IFJAVA8_START
         if (setter == null) {
-            setter = javaTimeFieldMapperToSourceFactory.getSetter(arg);
+            setter = javaTimeFieldMapperToSourceFactory.indexedSetter(arg);
         }
         //IFJAVA8_END
 
         if (setter == null && TypeHelper.isAssignable(SQLData.class, propertyType)) {
-            setter = (Setter<PreparedStatement, P>) new ObjectPreparedStatementSetter(arg.getColumnKey().getIndex());
+            setter = new ObjectPreparedStatementIndexedSetter();
         }
-
-
         return setter;
     }
+
+    interface Factory {
+        <P> PrepareStatementIndexedSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm);
+    }
+
 }

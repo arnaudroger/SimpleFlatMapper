@@ -7,15 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class ClobPreparedStatementSetter implements Setter<PreparedStatement, Clob> {
-    private final int columnIndex;
-
-    public ClobPreparedStatementSetter(int columnIndex) {
-        this.columnIndex = columnIndex;
-    }
+public class ClobPreparedStatementIndexedSetter implements PrepareStatementIndexedSetter<Clob> {
 
     @Override
-    public void set(PreparedStatement target, Clob value) throws SQLException {
+    public void set(PreparedStatement target, Clob value, int columnIndex) throws SQLException {
         if (value == null) {
             target.setNull(columnIndex, Types.CLOB);
         } else {

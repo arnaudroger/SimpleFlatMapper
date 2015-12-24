@@ -4,27 +4,23 @@ import org.sfm.reflect.Setter;
 import org.sfm.reflect.primitive.ByteSetter;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Types;
 
 public class BytePreparedStatementSetter implements Setter<PreparedStatement, Byte>, ByteSetter<PreparedStatement> {
+
     private final int columnIndex;
+    private final BytePreparedStatementIndexedSetter setter = new BytePreparedStatementIndexedSetter();
 
     public BytePreparedStatementSetter(int columnIndex) {
         this.columnIndex = columnIndex;
     }
 
     @Override
-    public void set(PreparedStatement target, Byte value) throws SQLException {
-        if (value != null) {
-            target.setByte(columnIndex, value);
-        } else {
-            target.setNull(columnIndex, Types.TINYINT);
-        }
+    public void setByte(PreparedStatement target, byte value) throws Exception {
+        setter.setByte(target, value, columnIndex);
     }
 
     @Override
-    public void setByte(PreparedStatement target, byte value) throws Exception {
-        target.setByte(columnIndex, value);
+    public void set(PreparedStatement target, Byte value) throws Exception {
+        setter.set(target, value, columnIndex);
     }
 }

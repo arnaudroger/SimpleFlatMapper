@@ -1,8 +1,5 @@
 package org.sfm.map.impl.getter.osgi;
 
-/**
- * Created by aroger on 12/12/2015.
- */
 public class TestClass {
     private final String name;
     private final int id;

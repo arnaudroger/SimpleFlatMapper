@@ -6,9 +6,6 @@ import org.sfm.csv.CsvParser;
 
 import java.io.StringReader;
 
-/**
- * Created by aroger on 11/12/2015.
- */
 public class CsvActivator implements BundleActivator {
     @Override
     public void start(BundleContext context) throws Exception {

@@ -30,7 +30,6 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
-import java.time.YearMonth;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -351,7 +350,7 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
                                         new JavaOffsetTimeToTimeConverter());
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.YearMonth.class)) {
                         return (PreparedStatementIndexSetter<P>)
-                                new ConvertDelegateIndexSetter<YearMonth, java.sql.Date>(
+                                new ConvertDelegateIndexSetter<java.time.YearMonth, java.sql.Date>(
                                         new DatePreparedStatementIndexSetter(),
                                         new JavaYearMonthToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.Year.class)) {

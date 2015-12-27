@@ -53,7 +53,7 @@ public class PreparedStatementMultiIndexMapper<T> implements PreparedStatementMa
 
     }
 
-    private PreparedStatement _prepare(Connection connection, T value) throws SQLException {
+    private PreparedStatement _prepare(final Connection connection, final T value) throws SQLException {
         String sql = query.toSqlQuery(new SizeSupplier() {
             @Override
             public int getSize(int columnIndex) {

@@ -106,7 +106,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
 
 
         if (hasMultiIndex) {
-            return new PreparedStatementMultiIndexMapper<>(query, buildIndexFieldMapper());
+            return new PreparedStatementMultiIndexMapper<T>(query, buildIndexFieldMapper());
         } else {
             return new PreparedStatementMapperDelegate<T>(query, mapper());
         }

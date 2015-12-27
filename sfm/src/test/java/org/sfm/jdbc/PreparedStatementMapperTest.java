@@ -87,10 +87,32 @@ public class PreparedStatementMapperTest {
 
     }
 
+    @Test
+    public void testSelectWithInArray() throws SQLException {
+        NamedSqlQuery selectInListQuery = NamedSqlQuery.parse("select * from Table where name = ? and id in (?) ");
+        PreparedStatementMapper<QueryParamArray> selectInListMapper = jdbcMapperFactory.from(QueryParamArray.class).to(selectInListQuery);
+        Connection conn = mock(Connection.class);
+        PreparedStatement mps = mock(PreparedStatement.class);
+
+        QueryParamArray value = new QueryParamArray();
+        value.name = "nannme";
+        value.id = new int[] { 3334, 3336 };
+
+        when(conn.prepareStatement("select * from Table where name = ? and id in (?, ?) ")).thenReturn(mps);
+
+        PreparedStatement ps = selectInListMapper.prepareAndBind(conn, value);
+
+        assertSame(mps, ps);
+        verify(mps).setString(1, "nannme");
+        verify(mps).setInt(2, 3334);
+        verify(mps).setInt(3, 3336);
+
+    }
+
 
     public static class QueryParamArray {
-        private String name;
-        private int[] ids;
+        public String name;
+        public int[] id;
     }
 
     public static class QueryParamList {

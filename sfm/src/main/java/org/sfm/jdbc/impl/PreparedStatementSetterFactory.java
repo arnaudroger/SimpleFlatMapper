@@ -368,10 +368,32 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
 
     @SuppressWarnings("unchecked")
     @Override
-    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> arg) {
-        PreparedStatementIndexSetter setter = getIndexedSetter(arg);
+    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+        int columnIndex = pm.getColumnKey().getIndex();
+
+        if (TypeHelper.isPrimitive(pm.getPropertyMeta().getPropertyType())) {
+            Class<?> clazz = TypeHelper.toBoxedClass(pm.getPropertyMeta().getPropertyType());
+            if (Byte.class.equals(clazz)) {
+                return (Setter<PreparedStatement, P>) new BytePreparedStatementSetter(columnIndex);
+            } else if (Character.class.equals(clazz)) {
+                return (Setter<PreparedStatement, P>) new CharacterPreparedStatementSetter(columnIndex);
+            } else if (Short.class.equals(clazz)) {
+                return (Setter<PreparedStatement, P>) new ShortPreparedStatementSetter(columnIndex);
+            } else if (Integer.class.equals(clazz)) {
+                return (Setter<PreparedStatement, P>) new IntegerPreparedStatementSetter(columnIndex);
+            } else if (Long.class.equals(clazz)) {
+                return (Setter<PreparedStatement, P>) new LongPreparedStatementSetter(columnIndex);
+            } else if (Double.class.equals(clazz)) {
+                return (Setter<PreparedStatement, P>) new DoublePreparedStatementSetter(columnIndex);
+            } else if (Float.class.equals(clazz)) {
+                return (Setter<PreparedStatement, P>) new FloatPreparedStatementSetter(columnIndex);
+            }
+        }
+
+        PreparedStatementIndexSetter setter = getIndexedSetter(pm);
+
         if (setter != null) {
-            return new PreparedStatementSetterImpl<P>(arg.getColumnKey().getIndex(), setter);
+            return new PreparedStatementSetterImpl<P>(columnIndex, setter);
         } else return null;
     }
 

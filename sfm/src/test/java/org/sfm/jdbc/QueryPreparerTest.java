@@ -2,7 +2,6 @@ package org.sfm.jdbc;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.jdbc.impl.PreparedStatementMapperDelegate;
 import org.sfm.jdbc.named.NamedSqlQuery;
 import org.sfm.test.jdbc.DbHelper;
 
@@ -19,7 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class PreparedStatementMapperTest {
+public class QueryPreparerTest {
 
     JdbcMapperFactory jdbcMapperFactory = JdbcMapperFactory
             .newInstance()
@@ -29,11 +28,11 @@ public class PreparedStatementMapperTest {
         NamedSqlQuery insertQuery = NamedSqlQuery.parse("INSERT INTO test_db_object(id, name, email, creation_time, type_ordinal, type_name) values(?, ?, ?, ?, ?, ?) ");
         NamedSqlQuery selectQuery = NamedSqlQuery.parse("select id, name, email, creation_time, type_ordinal, type_name from TEST_DB_OBJECT where id = ? ");
 
-        PreparedStatementMapper<DbObject> insertPreparedStatementMapper =
+        QueryPreparer<DbObject> insertQueryPreparer =
                 jdbcMapperFactory
                         .from(DbObject.class).to(insertQuery);
 
-        PreparedStatementMapper<DbObject> selectPreparedStatementMapper =
+        QueryPreparer<DbObject> selectQueryPreparer =
                 jdbcMapperFactory.from(DbObject.class).to(selectQuery);
 
 
@@ -41,14 +40,14 @@ public class PreparedStatementMapperTest {
 
         Connection connection = DbHelper.objectDb();
         try {
-            PreparedStatement ps = insertPreparedStatementMapper.prepareAndBind(connection, dbObject);
+            PreparedStatement ps = insertQueryPreparer.prepare(connection).bind(dbObject);
             try {
                 ps.execute();
             } finally {
                 ps.close();
             }
 
-            ps = selectPreparedStatementMapper.prepareAndBind(connection, dbObject);
+            ps = selectQueryPreparer.prepare(connection).bind(dbObject);
             try {
                 ps.setLong(1, dbObject.getId());
 
@@ -68,7 +67,7 @@ public class PreparedStatementMapperTest {
     @Test
     public void testSelectWithInList() throws SQLException {
         NamedSqlQuery selectInListQuery = NamedSqlQuery.parse("select * from Table where name in (?) and id = ? ");
-        PreparedStatementMapper<QueryParamList> selectInListMapper = jdbcMapperFactory.from(QueryParamList.class).to(selectInListQuery);
+        QueryPreparer<QueryParamList> selectInListMapper = jdbcMapperFactory.from(QueryParamList.class).to(selectInListQuery);
         Connection conn = mock(Connection.class);
         PreparedStatement mps = mock(PreparedStatement.class);
 
@@ -78,7 +77,7 @@ public class PreparedStatementMapperTest {
 
         when(conn.prepareStatement("select * from Table where name in (?, ?) and id = ? ")).thenReturn(mps);
 
-        PreparedStatement ps = selectInListMapper.prepareAndBind(conn, value);
+        PreparedStatement ps = selectInListMapper.prepare(conn).bind(value);
 
         assertSame(mps, ps);
         verify(mps).setString(1, "name1");
@@ -90,7 +89,7 @@ public class PreparedStatementMapperTest {
     @Test
     public void testSelectWithInArray() throws SQLException {
         NamedSqlQuery selectInListQuery = NamedSqlQuery.parse("select * from Table where name = ? and id in (?) ");
-        PreparedStatementMapper<QueryParamArray> selectInListMapper = jdbcMapperFactory.from(QueryParamArray.class).to(selectInListQuery);
+        QueryPreparer<QueryParamArray> selectInListMapper = jdbcMapperFactory.from(QueryParamArray.class).to(selectInListQuery);
         Connection conn = mock(Connection.class);
         PreparedStatement mps = mock(PreparedStatement.class);
 
@@ -100,7 +99,7 @@ public class PreparedStatementMapperTest {
 
         when(conn.prepareStatement("select * from Table where name = ? and id in (?, ?) ")).thenReturn(mps);
 
-        PreparedStatement ps = selectInListMapper.prepareAndBind(conn, value);
+        PreparedStatement ps = selectInListMapper.prepare(conn).bind(value);
 
         assertSame(mps, ps);
         verify(mps).setString(1, "nannme");

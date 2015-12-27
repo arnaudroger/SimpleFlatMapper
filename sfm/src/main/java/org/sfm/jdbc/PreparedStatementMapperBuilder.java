@@ -3,9 +3,9 @@ package org.sfm.jdbc;
 
 import org.sfm.jdbc.impl.CollectionMultiIndexFieldMapper;
 import org.sfm.jdbc.impl.MultiIndexFieldMapper;
+import org.sfm.jdbc.impl.MultiIndexQueryPreparer;
 import org.sfm.jdbc.impl.SingleMultiIndexFieldMapper;
-import org.sfm.jdbc.impl.PreparedStatementMapperDelegate;
-import org.sfm.jdbc.impl.PreparedStatementMultiIndexMapper;
+import org.sfm.jdbc.impl.MapperQueryPreparer;
 import org.sfm.jdbc.impl.PreparedStatementSetterFactory;
 import org.sfm.jdbc.impl.setter.PreparedStatementIndexSetter;
 import org.sfm.jdbc.named.NamedSqlQuery;
@@ -78,7 +78,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
         return 1;
     }
 
-    public PreparedStatementMapper<T> to(NamedSqlQuery query) {
+    public QueryPreparer<T> to(NamedSqlQuery query) {
 
         PreparedStatementMapperBuilder<T> builder =
                 new PreparedStatementMapperBuilder<T>(this);
@@ -86,7 +86,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
         return builder.preparedStatementMapper(query);
     }
 
-    private PreparedStatementMapper<T> preparedStatementMapper(NamedSqlQuery query) {
+    private QueryPreparer<T> preparedStatementMapper(NamedSqlQuery query) {
 
         for(int i = 0; i < query.getParametersSize(); i++) {
             addColumn(query.getParameter(i).getName());
@@ -106,9 +106,9 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
 
 
         if (hasMultiIndex) {
-            return new PreparedStatementMultiIndexMapper<T>(query, buildIndexFieldMapper());
+            return new MultiIndexQueryPreparer<T>(query, buildIndexFieldMapper());
         } else {
-            return new PreparedStatementMapperDelegate<T>(query, mapper());
+            return new MapperQueryPreparer<T>(query, mapper());
         }
     }
     private boolean isMultiIndex(PropertyMeta<?, ?> propertyMeta) {

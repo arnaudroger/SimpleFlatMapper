@@ -14,7 +14,7 @@ import java.util.Date;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class PreparedStatementMapperBuilderTest {
+public class QueryPreparerBuilderTest {
 
     @Test
     public void testMapDbObjectToStatement() throws Exception {

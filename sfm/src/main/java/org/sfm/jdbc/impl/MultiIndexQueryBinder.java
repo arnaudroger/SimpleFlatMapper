@@ -1,6 +1,6 @@
 package org.sfm.jdbc.impl;
 
-import org.sfm.jdbc.PreparedStatementMapper;
+import org.sfm.jdbc.QueryBinder;
 import org.sfm.jdbc.SizeSupplier;
 import org.sfm.jdbc.named.NamedSqlQuery;
 import org.sfm.utils.Asserts;
@@ -10,50 +10,45 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class PreparedStatementMultiIndexMapper<T> implements PreparedStatementMapper<T> {
+public class MultiIndexQueryBinder<T> implements QueryBinder<T> {
     private final NamedSqlQuery query;
-
     private final MultiIndexFieldMapper<T, ?>[] fields;
+    private final Connection connection;
 
 
-    public PreparedStatementMultiIndexMapper(NamedSqlQuery query, MultiIndexFieldMapper<T, ?>[] fields) {
+    protected MultiIndexQueryBinder(NamedSqlQuery query, MultiIndexFieldMapper<T, ?>[] fields, Connection connection) {
+        this.connection = connection;
         this.query = Asserts.requireNonNull("query", query);
         this.fields = Asserts.requireNonNull("fields", fields);
     }
 
-
     @Override
-    public PreparedStatement prepare(Connection connection) throws SQLException {
-        throw new UnsupportedOperationException("Unknown Collection/Array size need to used prepareAndBind");
-    }
-
-    @Override
-    public void bind(PreparedStatement ps, T value) throws SQLException {
-        throw new UnsupportedOperationException("Unknown Collection/Array size need to used prepareAndBind");
-    }
-
-    @Override
-    public PreparedStatement prepareAndBind(Connection connection, T value) throws SQLException {
-        PreparedStatement ps = _prepare(connection, value);
-        _bind(ps, value);
-        return ps;
-    }
-
-    private void _bind(PreparedStatement ps, T value) {
+    public PreparedStatement bind(T value) throws SQLException {
+        PreparedStatement ps = createPreparedStatement(value);
         try {
             int columnIndex = 0;
-
             for(int i = 0; i < fields.length; i++) {
                 columnIndex += fields[i].map(ps, value, columnIndex);
             }
-
+            return ps;
         } catch (Exception e) {
+            try  {
+                ps.close();
+            } catch(SQLException sqle) {
+                // IGNORE
+            }
             ErrorHelper.rethrow(e);
+            return null;
         }
 
     }
 
-    private PreparedStatement _prepare(final Connection connection, final T value) throws SQLException {
+    @Override
+    public void bindTo(T value, PreparedStatement ps) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    private PreparedStatement createPreparedStatement(final T value) throws SQLException {
         String sql = query.toSqlQuery(new SizeSupplier() {
             @Override
             public int getSize(int columnIndex) {

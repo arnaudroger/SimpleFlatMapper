@@ -1,6 +1,5 @@
 package org.sfm.jdbc.impl.setter;
 
-import org.sfm.jdbc.impl.setter.LongPreparedStatementIndexedSetter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.primitive.LongSetter;
 
@@ -9,7 +8,7 @@ import java.sql.PreparedStatement;
 public class LongPreparedStatementSetter implements Setter<PreparedStatement, Long>, LongSetter<PreparedStatement> {
 
     private final int columnIndex;
-    private final LongPreparedStatementIndexedSetter setter = new LongPreparedStatementIndexedSetter();
+    private final LongPreparedStatementIndexSetter setter = new LongPreparedStatementIndexSetter();
 
     public LongPreparedStatementSetter(int columnIndex) {
         this.columnIndex = columnIndex;

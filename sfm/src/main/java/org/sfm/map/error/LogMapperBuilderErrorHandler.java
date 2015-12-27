@@ -12,7 +12,7 @@ public final class LogMapperBuilderErrorHandler implements
 	private final Logger logger = Logger.getLogger(getClass().getName());
 
 	@Override
-	public void getterNotFound(final String msg) {
+	public void accessorNotFound(final String msg) {
 		logger.log(Level.WARNING, msg);
 	}
 

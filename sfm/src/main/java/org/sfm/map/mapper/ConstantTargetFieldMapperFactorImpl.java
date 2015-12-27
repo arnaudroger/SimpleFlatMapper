@@ -57,11 +57,11 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
         }
 
         if (getter == null) {
-            mappingErrorHandler.getterNotFound("Could not find getter for " + pm);
+            mappingErrorHandler.accessorNotFound("Could not find getter for " + pm);
             return null;
         }
         if (setter == null) {
-            mappingErrorHandler.getterNotFound("Could not find setter for " + pm);
+            mappingErrorHandler.accessorNotFound("Could not find setter for " + pm);
             return null;
         }
         return new FieldMapperImpl<S, T, P>(getter, setter);

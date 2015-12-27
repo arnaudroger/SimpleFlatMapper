@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 public class BytePreparedStatementSetter implements Setter<PreparedStatement, Byte>, ByteSetter<PreparedStatement> {
 
     private final int columnIndex;
-    private final BytePreparedStatementIndexedSetter setter = new BytePreparedStatementIndexedSetter();
+    private final BytePreparedStatementIndexSetter setter = new BytePreparedStatementIndexSetter();
 
     public BytePreparedStatementSetter(int columnIndex) {
         this.columnIndex = columnIndex;

@@ -51,7 +51,7 @@ public class JdbcMapperErrorTest {
 		
 		builder.mapper();
 		
-		verify(errorHandler).getterNotFound("Could not find getter for ColumnKey [columnName=prop, columnIndex=1, sqlType=-99999] type class org.sfm.beans.Foo");
+		verify(errorHandler).accessorNotFound("Could not find getter for ColumnKey [columnName=prop, columnIndex=1, sqlType=-99999] type class org.sfm.beans.Foo");
 	}
 	
 	@Test

@@ -15,10 +15,10 @@ public interface MapperBuilderErrorHandler {
 		}
 
 		@Override
-		public void getterNotFound(String msg) {
+		public void accessorNotFound(String msg) {
 		}
 	};
-	void getterNotFound(String msg);
+	void accessorNotFound(String msg);
 	void propertyNotFound(Type target, String property);
 	void customFieldError(FieldKey<?> key, String message);
 }

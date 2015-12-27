@@ -1,5 +1,6 @@
 package org.sfm.jdbc.named;
 
+import org.sfm.jdbc.SizeSupplier;
 import org.sfm.utils.Asserts;
 
 import java.util.ArrayList;
@@ -7,6 +8,13 @@ import java.util.List;
 
 public class NamedSqlQuery implements ParameterizedQuery {
 
+
+    private static final SizeSupplier DEFAULT_SIZE_SUPPLIER = new SizeSupplier() {
+        @Override
+        public int getSize(int columnIndex) {
+            return 1;
+        }
+    };
 
     private final String sql;
     private final NamedParameter[] parameters;
@@ -35,20 +43,37 @@ public class NamedSqlQuery implements ParameterizedQuery {
                 sqlParameters.toArray(new NamedParameter[sqlParameters.size()]));
     }
 
+
     public String toSqlQuery() {
+        return toSqlQuery(DEFAULT_SIZE_SUPPLIER);
+    }
+
+    public String toSqlQuery(SizeSupplier sizeSupplier) {
         StringBuilder sb = new StringBuilder(sql.length());
 
         int start = 0;
 
-        for(NamedParameter sqlParameter : parameters) {
+        for(int i = 0; i < parameters.length; i++) {
+            NamedParameter sqlParameter = parameters[i];
+
             sb.append(sql, start, sqlParameter.getPosition().getStart());
-            sb.append("?");
+            appendParam(sizeSupplier, sb, i);
+
             start = sqlParameter.getPosition().getEnd();
         }
 
         sb.append(sql, start, sql.length());
 
         return sb.toString();
+    }
+
+    public void appendParam(SizeSupplier sizeSupplier, StringBuilder sb, int index) {
+        int size = sizeSupplier.getSize(index);
+
+        for(int i = 0; i < size; i++) {
+            if (i != 0) sb.append(", ");
+            sb.append("?");
+        }
     }
 
     public int getParametersSize() {

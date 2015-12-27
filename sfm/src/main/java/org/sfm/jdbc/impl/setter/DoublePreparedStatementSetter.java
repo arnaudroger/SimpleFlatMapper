@@ -1,6 +1,5 @@
 package org.sfm.jdbc.impl.setter;
 
-import org.sfm.jdbc.impl.setter.DoublePreparedStatementIndexedSetter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.primitive.DoubleSetter;
 
@@ -9,7 +8,7 @@ import java.sql.PreparedStatement;
 public class DoublePreparedStatementSetter implements Setter<PreparedStatement, Double>, DoubleSetter<PreparedStatement> {
 
     private final int columnIndex;
-    private final DoublePreparedStatementIndexedSetter setter = new DoublePreparedStatementIndexedSetter();
+    private final DoublePreparedStatementIndexSetter setter = new DoublePreparedStatementIndexSetter();
 
     public DoublePreparedStatementSetter(int columnIndex) {
         this.columnIndex = columnIndex;

@@ -2,6 +2,7 @@ package org.sfm.jdbc;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.jdbc.impl.PreparedStatementMapperDelegate;
 import org.sfm.jdbc.named.NamedSqlQuery;
 import org.sfm.test.jdbc.DbHelper;
 
@@ -64,27 +65,27 @@ public class PreparedStatementMapperTest {
     }
 
 
-//    @Test
-//    public void testSelectWithInList() throws SQLException {
-//        NamedSqlQuery selectInListQuery = NamedSqlQuery.parse("select * from Table where name in (?) and id = ? ");
-//        PreparedStatementMapper<QueryParamList> selectInListMapper = jdbcMapperFactory.from(QueryParamList.class).to(selectInListQuery);
-//        Connection conn = mock(Connection.class);
-//        PreparedStatement mps = mock(PreparedStatement.class);
-//
-//        QueryParamList value = new QueryParamList();
-//        value.name = Arrays.asList("name1", "name2");
-//        value.id = 3334;
-//
-//        when(conn.prepareStatement("select * from Table where name in (?, ?) and id = ? ")).thenReturn(mps);
-//
-//        PreparedStatement ps = selectInListMapper.prepareAndBind(conn, value);
-//
-//        assertSame(mps, ps);
-//        verify(mps).setString(1, "name1");
-//        verify(mps).setString(2, "name2");
-//        verify(mps).setInt(3, 3334);
-//
-//    }
+    @Test
+    public void testSelectWithInList() throws SQLException {
+        NamedSqlQuery selectInListQuery = NamedSqlQuery.parse("select * from Table where name in (?) and id = ? ");
+        PreparedStatementMapper<QueryParamList> selectInListMapper = jdbcMapperFactory.from(QueryParamList.class).to(selectInListQuery);
+        Connection conn = mock(Connection.class);
+        PreparedStatement mps = mock(PreparedStatement.class);
+
+        QueryParamList value = new QueryParamList();
+        value.name = Arrays.asList("name1", "name2");
+        value.id = 3334;
+
+        when(conn.prepareStatement("select * from Table where name in (?, ?) and id = ? ")).thenReturn(mps);
+
+        PreparedStatement ps = selectInListMapper.prepareAndBind(conn, value);
+
+        assertSame(mps, ps);
+        verify(mps).setString(1, "name1");
+        verify(mps).setString(2, "name2");
+        verify(mps).setInt(3, 3334);
+
+    }
 
 
     public static class QueryParamArray {

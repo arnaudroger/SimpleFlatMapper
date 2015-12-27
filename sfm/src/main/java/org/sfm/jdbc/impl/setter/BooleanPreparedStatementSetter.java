@@ -1,6 +1,5 @@
 package org.sfm.jdbc.impl.setter;
 
-import org.sfm.jdbc.impl.setter.BooleanPreparedStatementIndexedSetter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.primitive.BooleanSetter;
 
@@ -9,7 +8,7 @@ import java.sql.PreparedStatement;
 public class BooleanPreparedStatementSetter implements Setter<PreparedStatement, Boolean>, BooleanSetter<PreparedStatement> {
 
     private final int columnIndex;
-    private final BooleanPreparedStatementIndexedSetter setter = new BooleanPreparedStatementIndexedSetter();
+    private final BooleanPreparedStatementIndexSetter setter = new BooleanPreparedStatementIndexSetter();
 
     public BooleanPreparedStatementSetter(int columnIndex) {
         this.columnIndex = columnIndex;

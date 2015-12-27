@@ -11,7 +11,7 @@ public class RethrowMapperBuilderErrorHandlerTest {
 	public void testGetterNotFound() {
 		RethrowMapperBuilderErrorHandler handler = new RethrowMapperBuilderErrorHandler();
 		try {
-			handler.getterNotFound("prop");
+			handler.accessorNotFound("prop");
 			fail("Expected exception");
 		} catch(MapperBuildingException e) {
 		}

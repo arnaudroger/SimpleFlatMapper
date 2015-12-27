@@ -31,9 +31,9 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
     private final ReflectionService reflectionService;
     protected final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
 
-    private final PropertyMappingsBuilder<T, K,  FieldMapperColumnDefinition<K>> propertyMappingsBuilder;
+    protected final PropertyMappingsBuilder<T, K,  FieldMapperColumnDefinition<K>> propertyMappingsBuilder;
 
-    private final ConstantTargetFieldMapperFactory<S, K> fieldAppenderFactory;
+    protected final ConstantTargetFieldMapperFactory<S, K> fieldAppenderFactory;
     protected final ClassMeta<T> classMeta;
     private final Class<S> sourceClass;
 

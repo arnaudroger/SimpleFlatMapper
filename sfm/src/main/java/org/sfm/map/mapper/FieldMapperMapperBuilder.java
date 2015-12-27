@@ -10,12 +10,10 @@ import org.sfm.map.impl.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
 import org.sfm.map.impl.fieldmapper.MapperFieldMapper;
 import org.sfm.reflect.*;
 import org.sfm.reflect.impl.NullGetter;
-import org.sfm.reflect.impl.NullSetter;
 import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
-import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -304,7 +302,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 			getter = mapperSource.getterFactory().newGetter(paramType, t.getColumnKey(), t.getColumnDefinition());
 		}
 		if (getter == null) {
-            mapperConfig.mapperBuilderErrorHandler().getterNotFound("Could not find getter for " + t.getColumnKey() + " type " + paramType);
+            mapperConfig.mapperBuilderErrorHandler().accessorNotFound("Could not find getter for " + t.getColumnKey() + " type " + paramType);
 		}
 		return getter;
 	}

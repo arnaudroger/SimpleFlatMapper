@@ -16,6 +16,10 @@ public class PropertyMapping<T, P, K extends FieldKey<K>, D extends ColumnDefini
 		this.columnDefinition = columnDefinition;
 	}
 
+	public <TT, PP> PropertyMapping<TT, PP, K, D> propertyMeta(PropertyMeta<TT, PP> propertyMeta) {
+		return new PropertyMapping<TT, PP, K, D>(propertyMeta, columnKey, columnDefinition);
+	}
+
 	public PropertyMeta<T, P> getPropertyMeta() {
 		return propertyMeta;
 	}

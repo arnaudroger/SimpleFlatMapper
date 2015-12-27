@@ -99,7 +99,7 @@ public class CsvWriterTest {
         CsvWriter.CsvWriterDSL<DbObject> from = CsvWriter.from(DbObject.class);
         from = from.mapperConfig(from.mapperConfig().mapperBuilderErrorHandler(new MapperBuilderErrorHandler() {
             @Override
-            public void getterNotFound(String msg) {
+            public void accessorNotFound(String msg) {
             }
 
             @Override

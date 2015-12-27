@@ -1,6 +1,5 @@
 package org.sfm.jdbc.impl.setter;
 
-import org.sfm.jdbc.impl.setter.ShortPreparedStatementIndexedSetter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.primitive.ShortSetter;
 
@@ -9,7 +8,7 @@ import java.sql.PreparedStatement;
 public class ShortPreparedStatementSetter implements Setter<PreparedStatement, Short>, ShortSetter<PreparedStatement> {
 
     private final int columnIndex;
-    private final ShortPreparedStatementIndexedSetter setter = new ShortPreparedStatementIndexedSetter();
+    private final ShortPreparedStatementIndexSetter setter = new ShortPreparedStatementIndexSetter();
 
     public ShortPreparedStatementSetter(int columnIndex) {
         this.columnIndex = columnIndex;

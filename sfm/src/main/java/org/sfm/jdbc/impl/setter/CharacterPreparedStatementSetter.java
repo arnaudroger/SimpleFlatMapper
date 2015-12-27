@@ -1,6 +1,5 @@
 package org.sfm.jdbc.impl.setter;
 
-import org.sfm.jdbc.impl.setter.CharacterPreparedStatementIndexedSetter;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.primitive.CharacterSetter;
 
@@ -9,7 +8,7 @@ import java.sql.PreparedStatement;
 public class CharacterPreparedStatementSetter implements Setter<PreparedStatement, Character>, CharacterSetter<PreparedStatement> {
 
     private final int columnIndex;
-    private final CharacterPreparedStatementIndexedSetter setter = new CharacterPreparedStatementIndexedSetter();
+    private final CharacterPreparedStatementIndexSetter setter = new CharacterPreparedStatementIndexSetter();
 
     public CharacterPreparedStatementSetter(int columnIndex) {
         this.columnIndex = columnIndex;

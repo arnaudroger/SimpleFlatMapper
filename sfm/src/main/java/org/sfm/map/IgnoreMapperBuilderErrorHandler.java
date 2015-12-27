@@ -5,7 +5,7 @@ import java.lang.reflect.Type;
 
 public class IgnoreMapperBuilderErrorHandler implements MapperBuilderErrorHandler {
     @Override
-    public void getterNotFound(final String msg) {
+    public void accessorNotFound(final String msg) {
         throw new MapperBuildingException(msg);
     }
 

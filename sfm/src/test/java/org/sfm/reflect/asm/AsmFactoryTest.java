@@ -41,8 +41,8 @@ public class AsmFactoryTest {
 	public void testCreateInstantiatorFinalDbObjectInjectIdAndName() throws Exception {
 		InstantiatorDefinition instantiatorDefinition = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class).get(0);
 		HashMap<Parameter, Getter<? super ResultSet, ?>> injections = new HashMap<Parameter, Getter<? super ResultSet, ?>>();
-		injections.put(new Parameter("id", long.class), new LongResultSetGetter(1));
-		injections.put(new Parameter("name", String.class), new StringResultSetGetter(2));
+		injections.put(new Parameter(0, "id", long.class), new LongResultSetGetter(1));
+		injections.put(new Parameter(1, "name", String.class), new StringResultSetGetter(2));
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
 				instantiatorDefinition,
 				injections
@@ -73,8 +73,8 @@ public class AsmFactoryTest {
 	@Test
 	public void testCreateInstantiatorFinalDbObjectNameAndType() throws Exception {
 		HashMap<Parameter, Getter<? super ResultSet, ?>> injections = new HashMap<Parameter, Getter<? super ResultSet, ?>>();
-		injections.put(new Parameter("typeOrdinal", Type.class), new OrdinalEnumGetter<ResultSet, Type>(new IntResultSetGetter(1), Type.class));
-		injections.put(new Parameter("name", String.class), new StringResultSetGetter(2));
+		injections.put(new Parameter(4, "typeOrdinal", Type.class), new OrdinalEnumGetter<ResultSet, Type>(new IntResultSetGetter(1), Type.class));
+		injections.put(new Parameter(1, "name", String.class), new StringResultSetGetter(2));
 
 		List<InstantiatorDefinition> instantiatorDefinitions = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class);
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,

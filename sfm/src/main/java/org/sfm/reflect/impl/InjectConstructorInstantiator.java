@@ -11,12 +11,12 @@ import java.util.Map;
 public final class InjectConstructorInstantiator<S, T> implements Instantiator<S, T> {
 
 	private final Constructor<? extends T> constructor;
-	private final ArgumentBuilder<S, T> argBuilder;
+	private final ArgumentBuilder<S> argBuilder;
 	private final InstantiatorDefinition instantiatorDefinition;
 
 	@SuppressWarnings("unchecked")
 	public InjectConstructorInstantiator(InstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections) {
-		this.argBuilder = new ArgumentBuilder<S, T>(instantiatorDefinition, injections);
+		this.argBuilder = new ArgumentBuilder<S>(instantiatorDefinition, injections);
 		this.constructor = (Constructor<? extends T>) instantiatorDefinition.getExecutable();
 		this.instantiatorDefinition = instantiatorDefinition;
 	}

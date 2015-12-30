@@ -112,7 +112,7 @@ public class AsmInstantiatorDefinitionFactory {
                                         if (i < names.size()) {
                                             name =names.get(i);
                                         }
-                                        parameters.add(createParameter(name, descTypes.get(i), genericTypes.get(i)));
+                                        parameters.add(createParameter(i, name, descTypes.get(i), genericTypes.get(i)));
                                     }
 
                                     final Member executable;
@@ -136,7 +136,7 @@ public class AsmInstantiatorDefinitionFactory {
                                 return types;
                             }
 
-                            private Parameter createParameter(String name,
+                            private Parameter createParameter(int index, String name,
                                                                          String desc, String signature) {
                                 try {
 
@@ -145,7 +145,7 @@ public class AsmInstantiatorDefinitionFactory {
                                     if (signature != null) {
                                         genericType = AsmUtils.toGenericType(signature, genericTypeNames, target);
                                     }
-                                    return new Parameter(name, TypeHelper.toClass(basicType), genericType);
+                                    return new Parameter(index, name, TypeHelper.toClass(basicType), genericType);
                                 } catch (ClassNotFoundException e) {
                                     throw new Error("Unexpected error " + e, e);
                                 }

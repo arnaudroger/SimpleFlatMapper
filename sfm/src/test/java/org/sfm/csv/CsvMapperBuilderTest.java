@@ -277,12 +277,7 @@ public class CsvMapperBuilderTest {
 	@Test
 	public void testMapFinalDbObjectDisableAsm() throws Exception {
 		CsvMapperBuilder<DbFinalObject> builder = CsvMapperFactory.newInstance().disableAsm(true).newBuilder(DbFinalObject.class);
-		try {
-			addDbObjectFields(builder);
-			fail("Expect failure");
-		} catch(MapperBuildingException e) {
-			// expected
-		}
+		addDbObjectFields(builder);
 	}
 	
 	@Test

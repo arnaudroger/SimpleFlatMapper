@@ -204,13 +204,24 @@ public class JdbcMapperConstructorInjectionTest {
 	public void testConstructorNoAsmAndNoAsmLinb() throws Exception {
 		JdbcMapperBuilder<DbConstructorObject> builder = JdbcMapperFactoryHelper.disableAsm().newBuilder(DbConstructorObject.class);
 
-		try {
-			builder.addMapping("prop1");
-			builder.addMapping("prop2");
-			fail("Expect exception");
-		} catch(Exception e) {
-			// expected
-		}
+		builder.addMapping("prop1");
+		builder.addMapping("prop3");
+
+		JdbcMapper<DbConstructorObject> mapper = builder.mapper();
+
+		Timestamp ts = new Timestamp(System.currentTimeMillis());
+
+		ResultSet rs = mock(ResultSet.class);
+		when(rs.getString(1)).thenReturn("propValue1");
+		when(rs.getTimestamp(2)).thenReturn(ts);
+		when(rs.getObject(2)).thenReturn(ts);
+
+		DbConstructorObject  o = mapper.map(rs);
+
+		assertEquals("propValue1", o.getProp1());
+		assertNull(o.getProp2());
+		assertEquals(ts, o.getProp3());
+		assertEquals(2, o.getC());
 	}
 	
 	

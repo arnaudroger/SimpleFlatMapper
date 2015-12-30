@@ -3,10 +3,7 @@ package org.sfm.reflect.meta;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.*;
 import org.sfm.reflect.Parameter;
-import org.sfm.reflect.impl.FieldGetter;
-import org.sfm.reflect.impl.FieldSetter;
-import org.sfm.reflect.impl.NullGetter;
-import org.sfm.reflect.impl.NullSetter;
+import org.sfm.reflect.impl.ParamNameDeductor;
 import org.sfm.utils.ErrorHelper;
 
 import java.lang.reflect.*;
@@ -29,10 +26,10 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		this.target = target;
 		this.reflectService = reflectService;
 		try {
-            this.instantiatorDefinitions = reflectService.extractConstructors(target);
-            this.constructorProperties = listProperties(instantiatorDefinitions);
+			this.instantiatorDefinitions = reflectService.extractConstructors(target);
+			this.constructorProperties = listConstructorProperties(instantiatorDefinitions);
 		} catch(Exception e) {
-            ErrorHelper.rethrow(e);
+			ErrorHelper.rethrow(e);
 			throw new IllegalStateException();
 		}
 		this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.<T>toClass(target)));
@@ -76,14 +73,23 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return map;
 	}
 
-	private List<ConstructorPropertyMeta<T, ?>> listProperties(List<InstantiatorDefinition> instantiatorDefinitions) {
+	private List<ConstructorPropertyMeta<T, ?>> listConstructorProperties(List<InstantiatorDefinition> instantiatorDefinitions) {
 		if (instantiatorDefinitions == null) return null;
 		
 		List<ConstructorPropertyMeta<T, ?>> constructorProperties = new ArrayList<ConstructorPropertyMeta<T, ?>>();
+
+		ParamNameDeductor<T> paramNameDeductor = null;
 		for(InstantiatorDefinition cd : instantiatorDefinitions) {
 			for(Parameter param : cd.getParameters()) {
 				String paramName = param.getName();
-                constructorProperties.add(constructorMeta(param, paramName));
+
+				if (paramName == null) {
+					if (paramNameDeductor == null) {
+						paramNameDeductor = new ParamNameDeductor<T>(TypeHelper.<T>toClass(target));
+					}
+					paramName = paramNameDeductor.findParamName(cd, param);
+				}
+				constructorProperties.add(constructorMeta(param, paramName));
 			}
 		}
 		return constructorProperties;
@@ -178,7 +184,9 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
             private int findProperty(List<? extends PropertyMeta<T, ?>> properties, String name) {
                 for(int i = 0; i < properties.size(); i++) {
-                    if (properties.get(i).getName().equals(name)) {
+					PropertyMeta<T, ?> propertyMeta = properties.get(i);
+					String propertyMetaName = propertyMeta.getName();
+					if (propertyMetaName != null && propertyMetaName.equals(name)) {
                         return i;
                     }
                 }

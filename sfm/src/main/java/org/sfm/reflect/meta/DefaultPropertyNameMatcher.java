@@ -23,7 +23,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 
 	@Override
 	public boolean matches(final CharSequence property) {
-		return _partialMatch(property) == column.length();
+		return property != null && _partialMatch(property) == column.length();
 	}
 
 	@Override

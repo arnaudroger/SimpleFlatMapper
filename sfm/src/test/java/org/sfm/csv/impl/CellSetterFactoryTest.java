@@ -34,6 +34,6 @@ public class CellSetterFactoryTest {
     }
 
     private InstantiatorDefinition newID(Class<?> clazz) {
-        return new InstantiatorDefinition(null, new Parameter("xx", clazz));
+        return new InstantiatorDefinition(null, new Parameter(0, "xx", clazz));
     }
 }

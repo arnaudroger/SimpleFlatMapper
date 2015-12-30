@@ -32,7 +32,7 @@ public class AsmInstantiatorTest {
 	public void testInstantiateStringWithCharArray() throws Exception {
 		HashMap<Parameter, Getter<? super CsvMapperCellHandlerImpl<String>, ?>> injections = new HashMap<Parameter, Getter<? super CsvMapperCellHandlerImpl<String>, ?>>();
 
-		Parameter parameter = new Parameter("arg0", char[].class);
+		Parameter parameter = new Parameter(0, "arg0", char[].class);
 		DelayedGetter delayedGetter = new DelayedGetter(0);
 		injections.put(parameter, delayedGetter);
 

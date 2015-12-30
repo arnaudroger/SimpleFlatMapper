@@ -24,7 +24,7 @@ public class InstantiatorDefinitionTest {
         c = InstantiatorDefinitionTest.class.getConstructor();
         setUpMethod = InstantiatorDefinitionTest.class.getMethod("setUp");
         valueOfMethod = InstantiatorDefinitionTest.class.getMethod("valueOf");
-        parameter = new Parameter("i0", String.class);
+        parameter = new Parameter(0, "i0", String.class);
     }
 
     public void valueOf() {

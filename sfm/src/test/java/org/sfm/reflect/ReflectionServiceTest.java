@@ -1,8 +1,11 @@
 package org.sfm.reflect;
 
 import org.junit.Test;
+import org.sfm.beans.DbFinalObject;
+import org.sfm.beans.DbObject;
 import org.sfm.reflect.meta.ArrayClassMeta;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.ConstructorPropertyMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.tuples.Tuple2;
@@ -75,6 +78,15 @@ public class ReflectionServiceTest {
 
 
     }
+
+    @Test
+    public void testDisableAsmResolvedConstructorParamName() {
+        ClassMeta<DbFinalObject> classMeta = ReflectionService.disableAsm().getClassMeta(DbFinalObject.class);
+
+        PropertyMeta<DbFinalObject, ?> property = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("id"));
+        assertTrue(property.isConstructorProperty());
+    }
+
 
 
     public interface Named<T> {

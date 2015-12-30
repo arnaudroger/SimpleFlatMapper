@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class ReflectionInstantiatorDefinitionFactoryTest {
 
@@ -42,7 +43,7 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 
 		assertEquals(ObjectWithFactoryMethod.class.getMethod("valueOf", String.class), id.getExecutable());
 		assertEquals(1, id.getParameters().length);
-		assertEquals(new Parameter("arg0", String.class), id.getParameters()[0]);
+		assertEquals(new Parameter(0, null, String.class), id.getParameters()[0]);
 	}
 
 	@Test
@@ -54,7 +55,7 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 
 		assertEquals(ObjectWithFactoryMethod.class.getMethod("valueOf", String.class), id.getExecutable());
 		assertEquals(1, id.getParameters().length);
-		assertEquals(new Parameter("value", String.class), id.getParameters()[0]);
+		assertEquals(new Parameter(0, "value", String.class), id.getParameters()[0]);
 	}
 
 	@Test
@@ -80,12 +81,12 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		assertEquals(Type.class, finalDbObjectConstructors.get(0).getParameters()[4].getType());
 		assertEquals(Type.class, finalDbObjectConstructors.get(0).getParameters()[5].getType());
 
-		assertEquals("arg0", finalDbObjectConstructors.get(0).getParameters()[0].getName());
-		assertEquals("arg1", finalDbObjectConstructors.get(0).getParameters()[1].getName());
-		assertEquals("arg2", finalDbObjectConstructors.get(0).getParameters()[2].getName());
-		assertEquals("arg3", finalDbObjectConstructors.get(0).getParameters()[3].getName());
-		assertEquals("arg4", finalDbObjectConstructors.get(0).getParameters()[4].getName());
-		assertEquals("arg5", finalDbObjectConstructors.get(0).getParameters()[5].getName());
+		assertNull(finalDbObjectConstructors.get(0).getParameters()[0].getName());
+		assertNull(finalDbObjectConstructors.get(0).getParameters()[1].getName());
+		assertNull(finalDbObjectConstructors.get(0).getParameters()[2].getName());
+		assertNull(finalDbObjectConstructors.get(0).getParameters()[3].getName());
+		assertNull(finalDbObjectConstructors.get(0).getParameters()[4].getName());
+		assertNull(finalDbObjectConstructors.get(0).getParameters()[5].getName());
 
 		
 		assertEquals(DbFinalObject.class.getConstructor(long.class, String.class, String.class, Date.class, Type.class, Type.class), finalDbObjectConstructors.get(0).getExecutable());
@@ -106,8 +107,8 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		assertEquals(String.class, finalDbObjectConstructors.get(0).getParameters()[0].getGenericType());
 		assertEquals(DbObject.class, finalDbObjectConstructors.get(0).getParameters()[1].getGenericType());
 
-		assertEquals("arg0", finalDbObjectConstructors.get(0).getParameters()[0].getName());
-		assertEquals("arg1", finalDbObjectConstructors.get(0).getParameters()[1].getName());
+		assertNull(finalDbObjectConstructors.get(0).getParameters()[0].getName());
+		assertNull(finalDbObjectConstructors.get(0).getParameters()[1].getName());
 
 		assertEquals(Tuple2.class.getConstructor(Object.class, Object.class), finalDbObjectConstructors.get(0).getExecutable());
 

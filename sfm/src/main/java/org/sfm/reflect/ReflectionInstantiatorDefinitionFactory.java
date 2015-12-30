@@ -44,7 +44,6 @@ public class ReflectionInstantiatorDefinitionFactory {
 
         for(int i = 0; i < parameters.length; i++) {
             Type paramType = parameterGenericTypes[i];
-            String name = getName(i);
             Type resolvedParamType = null;
             if (paramType instanceof TypeVariable) {
                 TypeVariable<?> tv = (TypeVariable<?>) paramType;
@@ -60,14 +59,9 @@ public class ReflectionInstantiatorDefinitionFactory {
             if (resolvedParamType == null) {
                 resolvedParamType = paramType;
             }
-            parameters[i] = new Parameter(name, TypeHelper.toClass(paramType), resolvedParamType);
+            parameters[i] = new Parameter(i, null, TypeHelper.toClass(paramType), resolvedParamType);
         }
 
         return parameters;
-    }
-
-
-    private static String getName(int i) {
-        return "arg" + i;
     }
 }

@@ -8,7 +8,7 @@ import org.sfm.reflect.TypeHelper;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class ArgumentBuilder<S, T> {
+public final class ArgumentBuilder<S> {
 
 	@SuppressWarnings("rawtypes")
 	private static final Getter NULL_GETTER = new Getter() {

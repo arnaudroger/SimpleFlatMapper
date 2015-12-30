@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 public class InstantiatorFactory {
-	private static final Object[] EMPTY_ARGS = new Object[]{};
-
 	private final AsmFactory asmFactory;
 	
 	public InstantiatorFactory(final AsmFactory asmFactory) {

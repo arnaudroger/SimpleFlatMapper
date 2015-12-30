@@ -51,13 +51,13 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
     @SuppressWarnings("unchecked")
     private InstantiatorDefinition respecifyParameterNames(InstantiatorDefinition definition) {
         final Parameter[] parameters = definition.getParameters();
-        if (parameters.length > 0 && parameters[0].getName().equals("arg0")) {
+        if (parameters.length > 0 && parameters[0].getName() == null) {
 
             Parameter[] newParams = new Parameter[parameters.length];
             final ElementNameGenerator nameGenerator = elementNameGenerator(definition.getExecutable().getDeclaringClass());
 
             for(int i = 0; i < parameters.length; i++) {
-                newParams[i] = new Parameter(nameGenerator.name(i), parameters[i].getType(), parameters[i].getGenericType());
+                newParams[i] = new Parameter(i, nameGenerator.name(i), parameters[i].getType(), parameters[i].getGenericType());
             }
 
             return new InstantiatorDefinition((Constructor<? extends T>) definition.getExecutable(), newParams);

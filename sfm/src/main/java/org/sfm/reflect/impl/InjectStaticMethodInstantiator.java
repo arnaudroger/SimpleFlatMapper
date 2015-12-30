@@ -12,11 +12,11 @@ public final class InjectStaticMethodInstantiator<S, T> implements Instantiator<
 
 	private final Method method;
 	private final Class<?> declaringClass;
-	private final ArgumentBuilder<S, T> argBuilder;
+	private final ArgumentBuilder<S> argBuilder;
 	private final InstantiatorDefinition instantiatorDefinition;
 
 	public InjectStaticMethodInstantiator(InstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections) {
-		this.argBuilder = new ArgumentBuilder<S, T>(instantiatorDefinition, injections);
+		this.argBuilder = new ArgumentBuilder<S>(instantiatorDefinition, injections);
 		this.method = (Method) instantiatorDefinition.getExecutable();
 		this.declaringClass = method.getDeclaringClass();
 		this.instantiatorDefinition = instantiatorDefinition;

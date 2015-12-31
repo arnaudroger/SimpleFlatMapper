@@ -4,11 +4,13 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.utils.Asserts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -207,4 +209,64 @@ public class ObjectClassMetaTest {
             return alt;
         }
     }
+
+
+    @Test
+    public void testResolveConstructorParamWithDeductor() {
+        ClassMeta<Object> classMeta = ReflectionService.disableAsm().getClassMeta(StringObject.class);
+
+        assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value")).isConstructorProperty());
+
+    }
+
+    @Test
+    public void testResolveConstructorParamWithDeductorNoNull() {
+        ClassMeta<Object> classMeta = ReflectionService.disableAsm().getClassMeta(NonNullContainer.class);
+
+        assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value")).isConstructorProperty());
+        assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value2")).isConstructorProperty());
+
+    }
+
+    @Test
+    public void testResolveConstructorParamWithDeductorNoNullInParam() {
+        ClassMeta<Object> classMeta = ReflectionService.disableAsm().getClassMeta(TwoStringObjectNonNull.class);
+
+        assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value")).isConstructorProperty());
+        assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value2")).isConstructorProperty());
+
+    }
+
+    public static class StringObject {
+        private final String value;
+
+        public StringObject(String value) {
+            this.value = value;
+        }
+
+    }
+
+    public static class TwoStringObjectNonNull {
+        private final String value;
+        private final String value2;
+
+        public TwoStringObjectNonNull(String value, String value2) {
+            this.value = Asserts.requireNonNull("value", value);
+            this.value2 = Asserts.requireNonNull("value2", value2);;
+        }
+
+    }
+
+    public static class NonNullContainer {
+        private final TwoStringObjectNonNull value;
+        private final TwoStringObjectNonNull value2;
+
+
+        public NonNullContainer(TwoStringObjectNonNull value, TwoStringObjectNonNull value2) {
+            this.value = Asserts.requireNonNull("", value);
+            this.value2 = Asserts.requireNonNull("", value2);
+        }
+    }
+
+
 }

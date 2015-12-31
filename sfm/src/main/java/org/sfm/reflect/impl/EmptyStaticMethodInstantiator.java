@@ -1,7 +1,9 @@
 package org.sfm.reflect.impl;
 
 import org.sfm.reflect.Instantiator;
+import org.sfm.utils.ErrorHelper;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public final class EmptyStaticMethodInstantiator<S, T> implements Instantiator<S, T> {
@@ -17,7 +19,11 @@ public final class EmptyStaticMethodInstantiator<S, T> implements Instantiator<S
 	@SuppressWarnings("unchecked")
 	@Override
 	public T newInstance(S s) throws Exception {
-		return (T) method.invoke(declaringClass);
+		try {
+			return (T) method.invoke(declaringClass);
+		} catch(InvocationTargetException e) {
+			return ErrorHelper.rethrow(e.getCause());
+		}
 	}
 
     @Override

@@ -4,8 +4,10 @@ import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
+import org.sfm.utils.ErrorHelper;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 public final class InjectConstructorInstantiator<S, T> implements Instantiator<S, T> {
@@ -23,7 +25,11 @@ public final class InjectConstructorInstantiator<S, T> implements Instantiator<S
 
 	@Override
 	public T newInstance(S s) throws Exception {
-		return constructor.newInstance(argBuilder.build(s));
+		try {
+			return constructor.newInstance(argBuilder.build(s));
+		} catch(InvocationTargetException e) {
+			return ErrorHelper.rethrow(e.getCause());
+		}
 	}
 
     @Override

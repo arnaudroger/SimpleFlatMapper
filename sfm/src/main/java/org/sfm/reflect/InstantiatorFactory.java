@@ -59,13 +59,13 @@ public class InstantiatorFactory {
 		if (instantiatorDefinition == null) {
 			throw new IllegalArgumentException("No constructor available for " + target);
 		}
-		return newInstantiator(source, injections, useAsmIfEnabled, instantiatorDefinition);
+		return getInstantiator(instantiatorDefinition, source, injections, useAsmIfEnabled);
 
 
 	}
 
 	@SuppressWarnings("unchecked")
-	private <S, T> Instantiator<S, T> newInstantiator(Class<?> source, Map<org.sfm.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled, InstantiatorDefinition instantiatorDefinition) {
+	public <S, T> Instantiator<S, T> getInstantiator(InstantiatorDefinition instantiatorDefinition, Class<?> source, Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
 		Member executable = instantiatorDefinition.getExecutable();
 
 		if (asmFactory != null && Modifier.isPublic(executable.getModifiers()) && useAsmIfEnabled) {
@@ -96,7 +96,7 @@ public class InstantiatorFactory {
 		}
 	}
 
-	private InstantiatorDefinition getSmallerConstructor(final List<InstantiatorDefinition> constructors) {
+	public static  InstantiatorDefinition getSmallerConstructor(final List<InstantiatorDefinition> constructors) {
         if (constructors == null) {
             return null;
         }
@@ -120,7 +120,7 @@ public class InstantiatorFactory {
 	public <S, T> Instantiator<S, T> getOneArgIdentityInstantiator(InstantiatorDefinition id) {
 		Map<org.sfm.reflect.Parameter, Getter<? super S, ?>> injections = new HashMap<org.sfm.reflect.Parameter, Getter<? super S, ?>>();
 		injections.put(id.getParameters()[0], new IdentityGetter());
-		return newInstantiator(id.getParameters()[0].getType(), injections, true, id);
+		return getInstantiator(id, id.getParameters()[0].getType(), injections, true);
 	}
 
 

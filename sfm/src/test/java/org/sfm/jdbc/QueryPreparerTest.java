@@ -63,7 +63,6 @@ public class QueryPreparerTest {
         }
     }
 
-
     @Test
     public void testSelectWithInList() throws SQLException {
         NamedSqlQuery selectInListQuery = NamedSqlQuery.parse("select * from Table where name in (?) and id = ? ");

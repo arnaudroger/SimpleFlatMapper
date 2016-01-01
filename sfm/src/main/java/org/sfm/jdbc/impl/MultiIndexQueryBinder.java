@@ -14,12 +14,14 @@ public class MultiIndexQueryBinder<T> implements QueryBinder<T> {
     private final NamedSqlQuery query;
     private final MultiIndexFieldMapper<T, ?>[] fields;
     private final Connection connection;
+    private final String[] generatedKeys;
 
 
-    protected MultiIndexQueryBinder(NamedSqlQuery query, MultiIndexFieldMapper<T, ?>[] fields, Connection connection) {
+    protected MultiIndexQueryBinder(NamedSqlQuery query, MultiIndexFieldMapper<T, ?>[] fields, String[] generatedKeys, Connection connection) {
         this.connection = connection;
         this.query = Asserts.requireNonNull("query", query);
         this.fields = Asserts.requireNonNull("fields", fields);
+        this.generatedKeys = generatedKeys;
     }
 
     @Override
@@ -56,7 +58,11 @@ public class MultiIndexQueryBinder<T> implements QueryBinder<T> {
             }
         });
 
-        return connection.prepareStatement(sql);
+        if (generatedKeys != null) {
+            return connection.prepareStatement(sql, generatedKeys);
+        } else {
+            return connection.prepareStatement(sql);
+        }
     }
 
 }

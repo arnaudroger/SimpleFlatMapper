@@ -10,21 +10,19 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class MapperQueryBinder<T> implements QueryBinder<T> {
-    private final Mapper<T, PreparedStatement> mapper;
+    private final MapperQueryPreparer<T> queryPreparer;
     private final Connection connection;
-    private final NamedSqlQuery sqlQuery;
 
-    public MapperQueryBinder(Mapper<T, PreparedStatement> mapper, Connection connection, NamedSqlQuery sqlQuery) {
-        this.mapper = mapper;
+    public MapperQueryBinder(MapperQueryPreparer<T> queryPreparer, Connection connection) {
+        this.queryPreparer = queryPreparer;
         this.connection = connection;
-        this.sqlQuery = sqlQuery;
     }
 
     @Override
     public PreparedStatement bind(T value) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery.toSqlQuery());
+        PreparedStatement preparedStatement = queryPreparer.prepareStatement(connection);
         try {
-            mapper.mapTo(value, preparedStatement, null);
+            queryPreparer.mapper().mapTo(value, preparedStatement, null);
             return preparedStatement;
         } catch(Exception t) {
             try {
@@ -41,7 +39,7 @@ public class MapperQueryBinder<T> implements QueryBinder<T> {
     @Override
     public void bindTo(T value, PreparedStatement ps) throws SQLException {
         try {
-            mapper.mapTo(value, ps, null);
+            queryPreparer.mapper().mapTo(value, ps, null);
         } catch (Exception e) {
             ErrorHelper.rethrow(e);
         }

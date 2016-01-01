@@ -79,14 +79,18 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
     }
 
     public QueryPreparer<T> to(NamedSqlQuery query) {
+        return to(query, null);
+    }
+
+    public QueryPreparer<T> to(NamedSqlQuery query, String[] generatedKeys) {
 
         PreparedStatementMapperBuilder<T> builder =
                 new PreparedStatementMapperBuilder<T>(this);
 
-        return builder.preparedStatementMapper(query);
+        return builder.preparedStatementMapper(query, generatedKeys);
     }
 
-    private QueryPreparer<T> preparedStatementMapper(NamedSqlQuery query) {
+    private QueryPreparer<T> preparedStatementMapper(NamedSqlQuery query, String[] generatedKeys) {
 
         for(int i = 0; i < query.getParametersSize(); i++) {
             addColumn(query.getParameter(i).getName());
@@ -106,11 +110,12 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
 
 
         if (hasMultiIndex) {
-            return new MultiIndexQueryPreparer<T>(query, buildIndexFieldMapper());
+            return new MultiIndexQueryPreparer<T>(query, buildIndexFieldMapper(), generatedKeys);
         } else {
-            return new MapperQueryPreparer<T>(query, mapper());
+            return new MapperQueryPreparer<T>(query, mapper(), generatedKeys);
         }
     }
+
     private boolean isMultiIndex(PropertyMeta<?, ?> propertyMeta) {
         return
                 TypeHelper.isArray(propertyMeta.getPropertyType())

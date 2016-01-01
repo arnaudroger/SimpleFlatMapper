@@ -1,14 +1,12 @@
 package org.sfm.jdbc;
 
-import org.sfm.jdbc.named.NamedSqlQuery;
+import org.sfm.utils.ErrorHelper;
+import org.sfm.utils.RowHandler;
 
-import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.List;
 
 public class Crud<T, K> {
 
@@ -17,28 +15,51 @@ public class Crud<T, K> {
     private final QueryPreparer<K> selectQueryPreparer;
     private final QueryPreparer<K> deleteQueryPreparer;
     private final JdbcMapper<T> selectQueryMapper;
+    private final JdbcMapper<K> keyMapper;
 
     public Crud(QueryPreparer<T> insertQueryPreparer,
                 QueryPreparer<T> updateQueryPreparer,
                 QueryPreparer<K> selectQueryPreparer,
                 JdbcMapper<T> selectQueryMapper,
-                QueryPreparer<K> deleteQueryPreparer) {
+                QueryPreparer<K> deleteQueryPreparer, JdbcMapper<K> keyMapper) {
         this.insertQueryPreparer = insertQueryPreparer;
         this.updateQueryPreparer = updateQueryPreparer;
         this.selectQueryPreparer = selectQueryPreparer;
         this.deleteQueryPreparer = deleteQueryPreparer;
         this.selectQueryMapper = selectQueryMapper;
+        this.keyMapper = keyMapper;
     }
 
     public void create(Connection connection, T value) throws SQLException {
+        create(connection, value, null);
+    }
+
+    public <RH extends RowHandler<? super K>> RH create(Connection connection, T value, RH keyConsumer) throws SQLException {
         PreparedStatement preparedStatement = insertQueryPreparer.prepare(connection).bind(value);
         try {
             preparedStatement.executeUpdate();
+            handeGeneratedKeys(keyConsumer, preparedStatement);
+            return  keyConsumer;
         } finally {
             try { preparedStatement.close(); }
             catch (SQLException e) {
                 // IGNORE
             }
+        }
+    }
+
+    private void handeGeneratedKeys(RowHandler<? super K> keyConsumer, PreparedStatement preparedStatement) throws SQLException {
+        ResultSet keys = preparedStatement.getGeneratedKeys();
+        try {
+            if (keys.next()) {
+                try {
+                    keyConsumer.handle(keyMapper.map(keys));
+                } catch (Exception e) {
+                    ErrorHelper.rethrow(e);
+                }
+            }
+        } finally {
+            keys.close();
         }
     }
 

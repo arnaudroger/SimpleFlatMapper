@@ -1,6 +1,7 @@
 package org.sfm.jdbc;
 
 import org.sfm.jdbc.named.NamedSqlQuery;
+import org.sfm.map.column.KeyProperty;
 
 import java.lang.reflect.Type;
 import java.sql.Connection;
@@ -33,8 +34,13 @@ public class CrudDSL<T, K> {
                 JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance(jdbcMapperFactory);
 
                 for(int i = 0; i < resultSetMetaData.getColumnCount(); i++) {
-                    mapperFactory.addColumnProperty(resultSetMetaData.getColumnName(i+1), SqlTypeColumnProperty.of(resultSetMetaData.getColumnType(i + 1)));
+                    String columnName = resultSetMetaData.getColumnName(i + 1);
+                    mapperFactory.addColumnProperty(columnName, SqlTypeColumnProperty.of(resultSetMetaData.getColumnType(i + 1)));
+                    if (primaryKeys.contains(columnName)) {
+                        mapperFactory.addColumnProperty(columnName, new KeyProperty());
+                    }
                 }
+
                 if (primaryKeys.isEmpty()) throw new IllegalArgumentException("No primary keys defined on " + table);
                 return newInstance(target, keyTarget, mapperFactory, resultSetMetaData, primaryKeys);
 
@@ -69,7 +75,16 @@ public class CrudDSL<T, K> {
                 buildUpdate(target, resultSetMetaData, primaryKeys, jdbcMapperFactory),
                 buildSelect(keyTarget, resultSetMetaData, primaryKeys, jdbcMapperFactory),
                 buildSelectMapper(target, resultSetMetaData, jdbcMapperFactory),
-                buildDelete(keyTarget, resultSetMetaData, primaryKeys, jdbcMapperFactory));
+                buildDelete(keyTarget, resultSetMetaData, primaryKeys, jdbcMapperFactory),
+                buildKeyMapper(keyTarget, primaryKeys, jdbcMapperFactory));
+    }
+
+    private JdbcMapper<K> buildKeyMapper(Type keyTarget, List<String> primaryKeys, JdbcMapperFactory jdbcMapperFactory) {
+        JdbcMapperBuilder<K> mapperBuilder = jdbcMapperFactory.newBuilder(keyTarget);
+        for(String column : primaryKeys) {
+            mapperBuilder.addMapping(column);
+        }
+        return mapperBuilder.mapper();
     }
 
     private JdbcMapper<T> buildSelectMapper(Type target, ResultSetMetaData resultSetMetaData, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
@@ -77,24 +92,36 @@ public class CrudDSL<T, K> {
     }
 
     private QueryPreparer<T> buildInsert(Type target, ResultSetMetaData resultSetMetaData, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+        List<String> generatedKeys = new ArrayList<String>();
+
         StringBuilder sb = new StringBuilder("INSERT INTO ");
         sb.append(resultSetMetaData.getTableName(1));
         sb.append("(");
+        boolean first = true;
         for(int i = 0; i < resultSetMetaData.getColumnCount(); i++) {
-            if (i > 0) {
-                sb.append(", ");
+            if (!resultSetMetaData.isAutoIncrement(i + 1)) {
+                if (!first) {
+                    sb.append(", ");
+                }
+                sb.append(resultSetMetaData.getColumnName(i + 1));
+                first = false;
+            } else {
+                generatedKeys.add(resultSetMetaData.getColumnName(i + 1));
             }
-            sb.append(resultSetMetaData.getColumnName(i + 1));
         }
         sb.append(") VALUES(");
+        first = true;
         for(int i = 0; i < resultSetMetaData.getColumnCount(); i++) {
-            if (i > 0) {
-                sb.append(", ");
+            if (!resultSetMetaData.isAutoIncrement(i + 1)) {
+                if (!first) {
+                    sb.append(", ");
+                }
+                sb.append("?");
+                first = false;
             }
-            sb.append("?");
         }
         sb.append(")");
-        return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb));
+        return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb), generatedKeys.isEmpty() ? null :  generatedKeys.toArray(new String[generatedKeys.size()]));
     }
 
     private QueryPreparer<T> buildUpdate(Type target, ResultSetMetaData resultSetMetaData, List<String> primaryKeys, JdbcMapperFactory jdbcMapperFactory) throws SQLException {

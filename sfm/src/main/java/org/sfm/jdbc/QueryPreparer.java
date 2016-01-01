@@ -1,5 +1,8 @@
 package org.sfm.jdbc;
 
+import org.sfm.map.Mapper;
+
+import java.net.Socket;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -14,7 +17,6 @@ public interface QueryPreparer<T> {
      */
     QueryBinder<T> prepare(Connection connection) throws SQLException;
 
-
     /**
      * Will create a PreparedStatement based on the query.
      * If any parameters is a List or an array it will throw an UnsupportedOperationException.
@@ -25,5 +27,13 @@ public interface QueryPreparer<T> {
      */
     PreparedStatement prepareStatement(Connection connection) throws SQLException;
 
+
+    /**
+     * Will create a PreparedStatement mapper on the query.
+     * If any parameters is a List or an array it will throw an UnsupportedOperationException.
+     * @return the mapper
+     * @throws UnsupportedOperationException if a parameter is an array or a List
+     */
+    Mapper<T, PreparedStatement> mapper();
 
 }

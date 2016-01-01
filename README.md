@@ -21,6 +21,7 @@ The [main module](sfm) provides support for
  * [CSV Mapper](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvParser#with-csvmapper)
  * [CSV Writter](https://github.com/arnaudroger/SimpleFlatMapper/wiki/CsvWriter)
  * [Jdbc Mapper](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JdbcMapper)
+ * [Jdbc Crud](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Crud)
 
 The CsvParser included is also one of the [fastest](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Csv-Performance) available in java.
 

@@ -8,6 +8,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ *
+ * @param <T> the target type
+ * @param <K> the key type
+ */
 public class Crud<T, K> {
 
     private final QueryPreparer<T> insertQueryPreparer;
@@ -30,10 +35,26 @@ public class Crud<T, K> {
         this.keyMapper = keyMapper;
     }
 
+    /**
+     * insert value into the db through the specified connection.
+     * @param connection the connection
+     * @param value the value
+     * @throws SQLException if an error occurs
+     */
     public void create(Connection connection, T value) throws SQLException {
         create(connection, value, null);
     }
 
+    /**
+     * insert value into the db through the specified connection.
+     * Callback keyConsumer with the generated key if one was.
+     * @param connection the connection
+     * @param value the value
+     * @param keyConsumer the key consumer
+     * @param <RH> the type of keyConsumer
+     * @return the keyConsumer
+     * @throws SQLException
+     */
     public <RH extends RowHandler<? super K>> RH create(Connection connection, T value, RH keyConsumer) throws SQLException {
         PreparedStatement preparedStatement = insertQueryPreparer.prepare(connection).bind(value);
         try {
@@ -66,6 +87,13 @@ public class Crud<T, K> {
     }
 
 
+    /**
+     * retrieve the object with the specified key.
+     * @param connection the connection
+     * @param key the key
+     * @return the object or null if not found
+     * @throws SQLException if an error occurs
+     */
     public T read(Connection connection, K key) throws SQLException {
         PreparedStatement preparedStatement = selectQueryPreparer.prepare(connection).bind(key);
         try {
@@ -82,6 +110,12 @@ public class Crud<T, K> {
         }
     }
 
+    /**
+     * update the object.
+     * @param connection the connection
+     * @param value the object
+     * @throws SQLException if an error occurs
+     */
     public void update(Connection connection, T value) throws SQLException {
         PreparedStatement preparedStatement = updateQueryPreparer.prepare(connection).bind(value);
         try {
@@ -94,6 +128,12 @@ public class Crud<T, K> {
         }
     }
 
+    /**
+     * delete the object with the specified key.
+     * @param connection the connection
+     * @param key the key
+     * @throws SQLException if an error occurs
+     */
     public void delete(Connection connection, K key) throws SQLException {
         PreparedStatement preparedStatement = deleteQueryPreparer.prepare(connection).bind(key);
         try {

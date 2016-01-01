@@ -49,6 +49,8 @@ public class CrudTest {
             objectCrud.delete(connection, key);
             assertNull(objectCrud.read(connection, key));
 
+            objectCrud.create(connection, DbObject.newInstance());
+
 
         } finally {
             connection.close();
@@ -94,6 +96,7 @@ public class CrudTest {
             objectCrud.delete(connection, key);
             assertNull(objectCrud.read(connection, key));
 
+            objectCrud.create(connection, DbObject.newInstance());
 
         } finally {
             connection.close();

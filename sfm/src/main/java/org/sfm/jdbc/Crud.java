@@ -38,7 +38,9 @@ public class Crud<T, K> {
         PreparedStatement preparedStatement = insertQueryPreparer.prepare(connection).bind(value);
         try {
             preparedStatement.executeUpdate();
-            handeGeneratedKeys(keyConsumer, preparedStatement);
+            if (keyConsumer != null) {
+                handeGeneratedKeys(keyConsumer, preparedStatement);
+            }
             return  keyConsumer;
         } finally {
             try { preparedStatement.close(); }

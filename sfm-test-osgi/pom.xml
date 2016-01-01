@@ -5,7 +5,7 @@
 	<artifactId>sfm-test-osgi</artifactId>
 	<packaging>jar</packaging>
 
-	<version>2.6.2</version>
+	<version>2.6.3-SNAPSHOT</version>
 
 	<properties>
 		<sfm.version>2.6-SNAPSHOT</sfm.version>
@@ -36,12 +36,12 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm</artifactId>
-			<version>2.6.2</version>
+			<version>2.6.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-poi</artifactId>
-			<version>2.6.2</version>
+			<version>2.6.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>

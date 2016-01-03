@@ -12,12 +12,12 @@ import java.sql.SQLException;
 
 public class MultiIndexQueryBinder<T> implements QueryBinder<T> {
     private final NamedSqlQuery query;
-    private final MultiIndexFieldMapper<T, ?>[] fields;
+    private final MultiIndexFieldMapper<T>[] fields;
     private final Connection connection;
     private final String[] generatedKeys;
 
 
-    protected MultiIndexQueryBinder(NamedSqlQuery query, MultiIndexFieldMapper<T, ?>[] fields, String[] generatedKeys, Connection connection) {
+    protected MultiIndexQueryBinder(NamedSqlQuery query, MultiIndexFieldMapper<T>[] fields, String[] generatedKeys, Connection connection) {
         this.connection = connection;
         this.query = Asserts.requireNonNull("query", query);
         this.fields = Asserts.requireNonNull("fields", fields);

@@ -13,10 +13,10 @@ public class MultiIndexQueryPreparer<T> implements QueryPreparer<T> {
 
 
     private final NamedSqlQuery query;
-    private final MultiIndexFieldMapper<T, ?>[] multiIndexFieldMappers;
+    private final MultiIndexFieldMapper<T>[] multiIndexFieldMappers;
     private final String[] generatedKeys;
 
-    public MultiIndexQueryPreparer(NamedSqlQuery query, MultiIndexFieldMapper<T, ?>[] multiIndexFieldMappers, String[] generatedKeys) {
+    public MultiIndexQueryPreparer(NamedSqlQuery query, MultiIndexFieldMapper<T>[] multiIndexFieldMappers, String[] generatedKeys) {
         this.query = query;
         this.multiIndexFieldMappers = multiIndexFieldMappers;
         this.generatedKeys = generatedKeys;

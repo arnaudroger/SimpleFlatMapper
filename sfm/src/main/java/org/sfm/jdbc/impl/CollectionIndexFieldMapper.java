@@ -8,13 +8,13 @@ import org.sfm.utils.ErrorHelper;
 
 import java.sql.PreparedStatement;
 
-public class CollectionMultiIndexFieldMapper<T, C, P> implements MultiIndexFieldMapper<T,P> {
+public class CollectionIndexFieldMapper<T, C, P> implements MultiIndexFieldMapper<T> {
     private final PreparedStatementIndexSetter<P> setter;
     private final Getter<T, C> collectionGetter;
     private final IntGetter<? super C> sizeGetter;
     private final IndexedGetter<C, P> indexedGetter;
 
-    public CollectionMultiIndexFieldMapper(PreparedStatementIndexSetter<P> setter, Getter<T, C> collectionGetter, IntGetter<? super C> sizeGetter, IndexedGetter<C, P> indexedGetter) {
+    public CollectionIndexFieldMapper(PreparedStatementIndexSetter<P> setter, Getter<T, C> collectionGetter, IntGetter<? super C> sizeGetter, IndexedGetter<C, P> indexedGetter) {
         this.setter = setter;
         this.collectionGetter = collectionGetter;
         this.sizeGetter = sizeGetter;

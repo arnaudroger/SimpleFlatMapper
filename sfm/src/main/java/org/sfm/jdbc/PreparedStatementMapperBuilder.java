@@ -1,10 +1,10 @@
 package org.sfm.jdbc;
 
 
-import org.sfm.jdbc.impl.CollectionMultiIndexFieldMapper;
+import org.sfm.jdbc.impl.CollectionIndexFieldMapper;
 import org.sfm.jdbc.impl.MultiIndexFieldMapper;
 import org.sfm.jdbc.impl.MultiIndexQueryPreparer;
-import org.sfm.jdbc.impl.SingleMultiIndexFieldMapper;
+import org.sfm.jdbc.impl.SingleIndexFieldMapper;
 import org.sfm.jdbc.impl.MapperQueryPreparer;
 import org.sfm.jdbc.impl.PreparedStatementSetterFactory;
 import org.sfm.jdbc.impl.setter.PreparedStatementIndexSetter;
@@ -110,7 +110,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
 
 
         if (hasMultiIndex) {
-            return new MultiIndexQueryPreparer<T>(query, buildIndexFieldMapper(), generatedKeys);
+            return new MultiIndexQueryPreparer<T>(query, buildIndexFieldMappers(), generatedKeys);
         } else {
             return new MapperQueryPreparer<T>(query, mapper(), generatedKeys);
         }
@@ -123,8 +123,8 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
     }
 
     @SuppressWarnings("unchecked")
-    private MultiIndexFieldMapper<T, ?>[] buildIndexFieldMapper() {
-        final List<MultiIndexFieldMapper<T, ?>> fields = new ArrayList<MultiIndexFieldMapper<T, ?>>();
+    public MultiIndexFieldMapper<T>[] buildIndexFieldMappers() {
+        final List<MultiIndexFieldMapper<T>> fields = new ArrayList<MultiIndexFieldMapper<T>>();
 
         propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>>() {
             final PreparedStatementSetterFactory setterFactory = new PreparedStatementSetterFactory();
@@ -138,7 +138,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
                 }
             }
 
-            private <P, C> MultiIndexFieldMapper<T, P> newCollectionFieldMapper(PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
+            private <P, C> MultiIndexFieldMapper<T> newCollectionFieldMapper(PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
 
                 PropertyMeta<T, ?> propertyMeta = pm.getPropertyMeta();
 
@@ -165,12 +165,12 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
                     mapperConfig.mapperBuilderErrorHandler().accessorNotFound("Could not find setter for " + pm);
                 }
 
-                return new CollectionMultiIndexFieldMapper<T, C, P>(setter, collectionGetter, sizeGetter, indexedGetter);
+                return new CollectionIndexFieldMapper<T, C, P>(setter, collectionGetter, sizeGetter, indexedGetter);
             }
 
-            private <P> MultiIndexFieldMapper<T, P> newFieldMapper(PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
+            private <P> MultiIndexFieldMapper<T> newFieldMapper(PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
                 final PreparedStatementIndexSetter indexedSetter = setterFactory.getIndexedSetter(pm);
-                return new SingleMultiIndexFieldMapper<T, P>(indexedSetter, pm.getPropertyMeta().getGetter());
+                return new SingleIndexFieldMapper<T, P>(indexedSetter, pm.getPropertyMeta().getGetter());
             }
         });
 

@@ -1,5 +1,6 @@
 package org.sfm.jdbc;
 
+import org.sfm.jdbc.impl.KeyTupleQueryPreparer;
 import org.sfm.jdbc.named.NamedSqlQuery;
 import org.sfm.map.column.KeyProperty;
 
@@ -74,9 +75,17 @@ public class CrudDSL<T, K> {
                 buildInsert(target, resultSetMetaData, jdbcMapperFactory),
                 buildUpdate(target, resultSetMetaData, primaryKeys, jdbcMapperFactory),
                 buildSelect(keyTarget, resultSetMetaData, primaryKeys, jdbcMapperFactory),
-                buildSelectMapper(target, resultSetMetaData, jdbcMapperFactory),
+                buildKeyTupleQueryPreparer(keyTarget, primaryKeys, jdbcMapperFactory), buildSelectMapper(target, resultSetMetaData, jdbcMapperFactory),
                 buildDelete(keyTarget, resultSetMetaData, primaryKeys, jdbcMapperFactory),
-                buildKeyMapper(keyTarget, primaryKeys, jdbcMapperFactory));
+                buildKeyMapper(keyTarget, primaryKeys, jdbcMapperFactory), resultSetMetaData.getTableName(1));
+    }
+
+    private KeyTupleQueryPreparer<K> buildKeyTupleQueryPreparer(Type keyTarget, List<String> primaryKeys, JdbcMapperFactory jdbcMapperFactory) {
+        PreparedStatementMapperBuilder<K> builder = jdbcMapperFactory.from(keyTarget);
+        for(String str : primaryKeys) {
+            builder.addColumn(str);
+        }
+        return new KeyTupleQueryPreparer<K>(builder.buildIndexFieldMappers(), primaryKeys.toArray(new String[primaryKeys.size()]));
     }
 
     private JdbcMapper<K> buildKeyMapper(Type keyTarget, List<String> primaryKeys, JdbcMapperFactory jdbcMapperFactory) {
@@ -162,7 +171,7 @@ public class CrudDSL<T, K> {
         sb.append(" WHERE ");
         for(int i = 0; i < primaryKeys.size(); i++) {
             if (i > 0) {
-                sb.append(", ");
+                sb.append("AND ");
             }
             sb.append(primaryKeys.get(i));
             sb.append(" = ? ");

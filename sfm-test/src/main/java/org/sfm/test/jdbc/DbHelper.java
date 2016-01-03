@@ -113,6 +113,12 @@ public class DbHelper {
 				+ " name varchar(100), "
 				+ " email varchar(100),"
 				+ " creation_Time timestamp, type_ordinal int, type_name varchar(10)  )");
+
+		st.execute("create table test_db_object_ckey("
+				+ " id bigint,"
+				+ " name varchar(100), "
+				+ " email varchar(100),"
+				+ " creation_Time timestamp, type_ordinal int, type_name varchar(10), primary key(id, name)  )");
 	}
 
 

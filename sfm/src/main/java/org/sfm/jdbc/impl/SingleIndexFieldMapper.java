@@ -5,11 +5,11 @@ import org.sfm.reflect.Getter;
 
 import java.sql.PreparedStatement;
 
-public class SingleMultiIndexFieldMapper<T, P> implements MultiIndexFieldMapper<T,P> {
+public class SingleIndexFieldMapper<T, P> implements MultiIndexFieldMapper<T> {
     private final PreparedStatementIndexSetter<P> setter;
     private final Getter<T, P> getter;
 
-    public SingleMultiIndexFieldMapper(PreparedStatementIndexSetter<P> setter, Getter<T, P> getter) {
+    public SingleIndexFieldMapper(PreparedStatementIndexSetter<P> setter, Getter<T, P> getter) {
         this.setter = setter;
         this.getter = getter;
     }

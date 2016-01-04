@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 public class CrudTest {
 
 
-    @Parameterized.Parameters
+    @Parameterized.Parameters(name = "db:{0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
                 {DbHelper.TargetDB.HSQLDB}, {DbHelper.TargetDB.MYSQL}
@@ -83,7 +83,7 @@ public class CrudTest {
                 }
             });
 
-            assertEquals(values, objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(values, objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
 
 
             int i = 333;
@@ -94,12 +94,12 @@ public class CrudTest {
 
             objectCrud.update(connection, values);
 
-            assertEquals(values, objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(values, objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
 
 
             objectCrud.delete(connection, keys);
 
-            assertEquals(Collections.emptyList(), objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(Collections.emptyList(), objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
 
         } finally {
             connection.close();
@@ -211,7 +211,7 @@ public class CrudTest {
 
             objectCrud.create(connection, values);
 
-            assertEquals(values, objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(values, objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
 
 
             int i = 333;
@@ -222,15 +222,24 @@ public class CrudTest {
 
             objectCrud.update(connection, values);
 
-            assertEquals(values, objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(values, objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
 
 
             objectCrud.delete(connection, keys);
 
-            assertEquals(Collections.emptyList(), objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(Collections.<DbObject>emptyList(), objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
         } finally {
             connection.close();
         }
+    }
+
+    private void assertCollectionEquals(List<DbObject> objects, List<DbObject> list) {
+        assertEquals(objects.size(), list.size());
+
+        for(DbObject v: objects) {
+            assertTrue(list.contains(v));
+        }
+
     }
 
 }

@@ -11,7 +11,7 @@ public class DbObject {
 		object.setId(random.nextInt());
 		object.setName("name" + Long.toHexString(object.getId()));
 		object.setEmail("email" + Long.toHexString(object.getId()));
-		object.setCreationTime(new Date());
+		object.setCreationTime(new Date((System.currentTimeMillis() / 1000) * 1000));
 		object.setTypeName(Type.values()[(int)(Math.abs(object.getId()) % 4l)]);
 		object.setTypeOrdinal(Type.values()[(int)(Math.abs(object.getId()) % 4l)]);
 		return object;
@@ -81,7 +81,7 @@ public class DbObject {
 		if (id != dbObject.id) return false;
 		if (name != null ? !name.equals(dbObject.name) : dbObject.name != null) return false;
 		if (email != null ? !email.equals(dbObject.email) : dbObject.email != null) return false;
-		if (creationTime != null ? creationTime.getTime() != dbObject.creationTime.getTime() : dbObject.creationTime != null)
+		if (creationTime != null ? !creationTime.equals(dbObject.creationTime) : dbObject.creationTime != null)
 			return false;
 		if (typeOrdinal != dbObject.typeOrdinal) return false;
 		return typeName == dbObject.typeName;

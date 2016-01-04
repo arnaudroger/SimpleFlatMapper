@@ -33,20 +33,20 @@ public class MysqlDbHelper {
 				+ " id bigint primary key,"
 				+ " name varchar(100), "
 				+ " email varchar(100),"
-				+ " creation_Time DATETIME(6), type_ordinal int, type_name varchar(10)  )");
+				+ " creation_Time DATETIME, type_ordinal int, type_name varchar(10)  )");
 
 
 		st.execute("create table IF NOT EXISTS test_db_object_autoinc("
 				+ " id bigint AUTO_INCREMENT primary key,"
 				+ " name varchar(100), "
 				+ " email varchar(100),"
-				+ " creation_Time DATETIME(6), type_ordinal int, type_name varchar(10)  )");
+				+ " creation_Time DATETIME, type_ordinal int, type_name varchar(10)  )");
 
 		st.execute("create table IF NOT EXISTS test_db_object_ckey("
 				+ " id bigint,"
 				+ " name varchar(100), "
 				+ " email varchar(100),"
-				+ " creation_Time DATETIME(6), type_ordinal int, type_name varchar(10), primary key(id, name)  )");
+				+ " creation_Time DATETIME, type_ordinal int, type_name varchar(10), primary key(id, name)  )");
 	}
 
 

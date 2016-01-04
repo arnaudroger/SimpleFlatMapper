@@ -19,15 +19,15 @@ import java.util.List;
  */
 public class Crud<T, K> {
 
-    private final QueryPreparer<T> insertQueryPreparer;
-    private final QueryPreparer<T> updateQueryPreparer;
-    private final QueryPreparer<K> selectQueryPreparer;
-    private final QueryPreparer<K> deleteQueryPreparer;
-    private final KeyTupleQueryPreparer<K> keyTupleQueryPreparer;
-    private final JdbcMapper<T> selectQueryMapper;
-    private final JdbcMapper<K> keyMapper;
-    private final String table;
-    private final boolean hasGeneratedKeys;
+    protected final QueryPreparer<T> insertQueryPreparer;
+    protected final QueryPreparer<T> updateQueryPreparer;
+    protected final QueryPreparer<K> selectQueryPreparer;
+    protected final QueryPreparer<K> deleteQueryPreparer;
+    protected final KeyTupleQueryPreparer<K> keyTupleQueryPreparer;
+    protected final JdbcMapper<T> selectQueryMapper;
+    protected final JdbcMapper<K> keyMapper;
+    protected final String table;
+    protected final boolean hasGeneratedKeys;
 
     public Crud(QueryPreparer<T> insertQueryPreparer,
                 QueryPreparer<T> updateQueryPreparer,
@@ -116,7 +116,7 @@ public class Crud<T, K> {
         return keyConsumer;
     }
 
-    private void handeGeneratedKeys(RowHandler<? super K> keyConsumer, PreparedStatement preparedStatement) throws SQLException {
+    protected void handeGeneratedKeys(RowHandler<? super K> keyConsumer, PreparedStatement preparedStatement) throws SQLException {
         ResultSet keys = preparedStatement.getGeneratedKeys();
         try {
             while (keys.next()) {

@@ -3,6 +3,7 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.ArgumentCaptor;
 import org.sfm.beans.DbObject;
 import org.sfm.test.jdbc.DbHelper;
 import org.sfm.utils.ListCollectorHandler;
@@ -44,12 +45,16 @@ public class MysqlCrudTest {
             Connection mockConnection = mock(Connection.class);
 
             PreparedStatement preparedStatement = mock(PreparedStatement.class);
-            when(mockConnection.prepareStatement(anyString())).thenReturn(preparedStatement);
+
+            ArgumentCaptor<String> queryCapture = ArgumentCaptor.forClass(String.class);
+
+            when(mockConnection.prepareStatement(queryCapture.capture())).thenReturn(preparedStatement);
 
             objectCrud.create(mockConnection, Arrays.asList(DbObject.newInstance(), DbObject.newInstance()));
 
 
-            verify(mockConnection).prepareStatement("INSERT INTO test_db_object(id, name, email, creation_Time, type_ordinal, type_name) VALUES(?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?)");
+            assertEquals("INSERT INTO test_db_object(id, name, email, creation_Time, type_ordinal, type_name) VALUES(?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?)".toLowerCase(),
+                    queryCapture.getValue().toLowerCase());
             verify(preparedStatement, never()).addBatch();
             verify(preparedStatement, never()).executeBatch();
             verify(preparedStatement).executeUpdate();

@@ -25,20 +25,20 @@ public class MysqlDbHelper {
 
 	
 	private static void createDbObject(Statement st) throws SQLException {
-		st.execute("create table IF NOT EXISTS test_db_object("
+		st.execute("create table IF NOT EXISTS TEST_DB_OBJECT("
 				+ " id bigint primary key,"
 				+ " name varchar(100), "
 				+ " email varchar(100),"
 				+ " creation_Time DATETIME, type_ordinal int, type_name varchar(10)  )");
 
 
-		st.execute("create table IF NOT EXISTS test_db_object_autoinc("
+		st.execute("create table IF NOT EXISTS TEST_DB_OBJECT_AUTOINC("
 				+ " id bigint AUTO_INCREMENT primary key,"
 				+ " name varchar(100), "
 				+ " email varchar(100),"
 				+ " creation_Time DATETIME, type_ordinal int, type_name varchar(10)  )");
 
-		st.execute("create table IF NOT EXISTS test_db_object_ckey("
+		st.execute("create table IF NOT EXISTS TEST_DB_OBJECT_CKEY("
 				+ " id bigint,"
 				+ " name varchar(100), "
 				+ " email varchar(100),"

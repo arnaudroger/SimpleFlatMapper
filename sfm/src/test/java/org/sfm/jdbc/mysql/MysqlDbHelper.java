@@ -6,23 +6,19 @@ import java.sql.*;
 
 public class MysqlDbHelper {
 	
-	private static volatile boolean objectDb;
-	
+
 	public static Connection objectDb() throws SQLException {
 		Connection c = newMysqlDbConnection();
 		
-		if (!objectDb) {
-			Statement st = c.createStatement();
-			
-			try {
-				createDbObject(st);
+		Statement st = c.createStatement();
 
-			} finally {
-				st.close();
-			}
+		try {
+			createDbObject(st);
+
+		} finally {
+			st.close();
 		}
-	
-		objectDb = true;
+
 		return c;
 	}
 

@@ -27,12 +27,13 @@ public class Crud<T, K> {
     private final JdbcMapper<T> selectQueryMapper;
     private final JdbcMapper<K> keyMapper;
     private final String table;
+    private final boolean hasGeneratedKeys;
 
     public Crud(QueryPreparer<T> insertQueryPreparer,
                 QueryPreparer<T> updateQueryPreparer,
                 QueryPreparer<K> selectQueryPreparer,
                 KeyTupleQueryPreparer<K> keyTupleQueryPreparer, JdbcMapper<T> selectQueryMapper,
-                QueryPreparer<K> deleteQueryPreparer, JdbcMapper<K> keyMapper, String table) {
+                QueryPreparer<K> deleteQueryPreparer, JdbcMapper<K> keyMapper, String table, boolean hasGeneratedKeys) {
         this.insertQueryPreparer = insertQueryPreparer;
         this.updateQueryPreparer = updateQueryPreparer;
         this.selectQueryPreparer = selectQueryPreparer;
@@ -41,6 +42,7 @@ public class Crud<T, K> {
         this.selectQueryMapper = selectQueryMapper;
         this.keyMapper = keyMapper;
         this.table = table;
+        this.hasGeneratedKeys = hasGeneratedKeys;
     }
 
     /**
@@ -73,7 +75,7 @@ public class Crud<T, K> {
         PreparedStatement preparedStatement = insertQueryPreparer.prepare(connection).bind(value);
         try {
             preparedStatement.executeUpdate();
-            if (keyConsumer != null) {
+            if (hasGeneratedKeys && keyConsumer != null) {
                 handeGeneratedKeys(keyConsumer, preparedStatement);
             }
             return keyConsumer;

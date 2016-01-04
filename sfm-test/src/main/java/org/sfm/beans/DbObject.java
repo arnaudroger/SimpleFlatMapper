@@ -81,7 +81,7 @@ public class DbObject {
 		if (id != dbObject.id) return false;
 		if (name != null ? !name.equals(dbObject.name) : dbObject.name != null) return false;
 		if (email != null ? !email.equals(dbObject.email) : dbObject.email != null) return false;
-		if (creationTime != null ? !creationTime.equals(dbObject.creationTime) : dbObject.creationTime != null)
+		if (creationTime != null ? creationTime.getTime() != dbObject.creationTime.getTime() : dbObject.creationTime != null)
 			return false;
 		if (typeOrdinal != dbObject.typeOrdinal) return false;
 		return typeName == dbObject.typeName;

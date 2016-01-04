@@ -77,7 +77,17 @@ public class CrudDSL<T, K> {
                 buildSelect(keyTarget, resultSetMetaData, primaryKeys, jdbcMapperFactory),
                 buildKeyTupleQueryPreparer(keyTarget, primaryKeys, jdbcMapperFactory), buildSelectMapper(target, resultSetMetaData, jdbcMapperFactory),
                 buildDelete(keyTarget, resultSetMetaData, primaryKeys, jdbcMapperFactory),
-                buildKeyMapper(keyTarget, primaryKeys, jdbcMapperFactory), resultSetMetaData.getTableName(1));
+                buildKeyMapper(keyTarget, primaryKeys, jdbcMapperFactory), resultSetMetaData.getTableName(1),
+                hasGeneratedKeys(resultSetMetaData));
+    }
+
+    private boolean hasGeneratedKeys(ResultSetMetaData resultSetMetaData) throws SQLException {
+        for(int i = 0; i < resultSetMetaData.getColumnCount(); i++) {
+            if (resultSetMetaData.isAutoIncrement(i + 1)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private KeyTupleQueryPreparer<K> buildKeyTupleQueryPreparer(Type keyTarget, List<String> primaryKeys, JdbcMapperFactory jdbcMapperFactory) {

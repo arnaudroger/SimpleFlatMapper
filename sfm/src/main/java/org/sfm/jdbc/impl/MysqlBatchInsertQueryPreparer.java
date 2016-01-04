@@ -52,7 +52,7 @@ public class MysqlBatchInsertQueryPreparer<T> {
             sb.append(")");
 
         }
-        if (generatedKeys == null) {
+        if (generatedKeys.length == 0) {
             return connection.prepareStatement(sb.toString());
         } else {
             return connection.prepareStatement(sb.toString(), generatedKeys);

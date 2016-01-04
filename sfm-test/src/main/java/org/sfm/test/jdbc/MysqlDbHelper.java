@@ -1,4 +1,4 @@
-package org.sfm.jdbc.mysql;
+package org.sfm.test.jdbc;
 
 
 import java.sql.*;

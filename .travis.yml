@@ -2,6 +2,7 @@ language: java
 
 services:
   - mysql
+  - postgresql
 
 jdk:
   - oraclejdk8
@@ -21,3 +22,4 @@ before_install:
 
 before_script:
   - mysql -e 'create database sfm;'
+  - psql -c 'create database sfm;' -U postgres

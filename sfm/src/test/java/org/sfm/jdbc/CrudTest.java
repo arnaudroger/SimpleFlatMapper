@@ -1,6 +1,8 @@
 package org.sfm.jdbc;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.sfm.beans.DbObject;
 import org.sfm.test.jdbc.DbHelper;
 import org.sfm.utils.ListCollectorHandler;
@@ -10,16 +12,29 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
+@RunWith(Parameterized.class)
 public class CrudTest {
 
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                {DbHelper.TargetDB.HSQLDB}, {DbHelper.TargetDB.MYSQL}
+                , {DbHelper.TargetDB.POSTGRESQL}
+        });
+    }
+
+    @Parameterized.Parameter
+    public DbHelper.TargetDB targetDB;
     @Test
     public void testDbObjectCrudAutoInc() throws SQLException {
-        Connection connection = DbHelper.objectDb();
+        Connection connection = DbHelper.getDbConnection(targetDB);
         try {
             Crud<DbObject, Long> objectCrud =
                     JdbcMapperFactory.newInstance().<DbObject, Long>crud(DbObject.class, Long.class).table(connection, "TEST_DB_OBJECT_AUTOINC");
@@ -93,7 +108,7 @@ public class CrudTest {
 
     @Test
     public void testDbObjectCrud() throws SQLException {
-        Connection connection = DbHelper.objectDb();
+        Connection connection = DbHelper.getDbConnection(targetDB);
         try {
             Crud<DbObject, Long> objectCrud =
                     JdbcMapperFactory.newInstance().<DbObject, Long>crud(DbObject.class, Long.class).table(connection, "TEST_DB_OBJECT");
@@ -144,7 +159,7 @@ public class CrudTest {
     }
     @Test
     public void testCompositeKey() throws SQLException {
-        Connection connection = DbHelper.objectDb();
+        Connection connection = DbHelper.getDbConnection(targetDB);
         try {
             Crud<DbObject, CKEY> objectCrud =
                     JdbcMapperFactory.newInstance().<DbObject, CKEY>crud(DbObject.class, CKEY.class).table(connection, "TEST_DB_OBJECT_CKEY");

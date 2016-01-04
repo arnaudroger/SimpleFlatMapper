@@ -12,10 +12,26 @@ import java.text.ParseException;
 
 
 public class DbHelper {
+
+	public enum TargetDB {
+		HSQLDB, MYSQL, POSTGRESQL
+	}
 	
 	public static final String TEST_DB_OBJECT_QUERY = "select id, name, email, creation_time, type_ordinal, type_name from TEST_DB_OBJECT where id = 1 ";
 	private static boolean objectDb;
-	
+
+	public static Connection getDbConnection(TargetDB targetDB) throws SQLException {
+		switch (targetDB) {
+			case HSQLDB:
+				return objectDb();
+			case MYSQL:
+				return MysqlDbHelper.objectDb();
+			case POSTGRESQL:
+				return PostgresDbHelper.objectDb();
+		}
+		throw new IllegalArgumentException();
+	}
+
 	public static Connection objectDb() throws SQLException {
 		Connection c = newHsqlDbConnection();
 		

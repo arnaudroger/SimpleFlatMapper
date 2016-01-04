@@ -12,17 +12,19 @@ public class MysqlBatchInsertQueryPreparer<T> {
 
     private final String table;
     private final String[] columns;
+    private final String[] generatedKeys;
     private final MultiIndexFieldMapper<T>[] multiIndexFieldMappers;
 
 
-    public MysqlBatchInsertQueryPreparer(String table, String[] columns, MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
+    public MysqlBatchInsertQueryPreparer(String table, String[] columns, String[] generatedKeys, MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
         this.table = table;
         this.columns = columns;
+        this.generatedKeys = generatedKeys;
         this.multiIndexFieldMappers = multiIndexFieldMappers;
     }
 
     public PreparedStatement prepareStatement(Connection connection, int size) throws SQLException {
-        StringBuilder sb = new StringBuilder("INSERT INTO TABLE ");
+        StringBuilder sb = new StringBuilder("INSERT INTO ");
         sb.append(table).append("(");
 
         for(int j = 0; j < columns.length; j++) {
@@ -50,12 +52,15 @@ public class MysqlBatchInsertQueryPreparer<T> {
             sb.append(")");
 
         }
-
-        return connection.prepareStatement(sb.toString());
+        if (generatedKeys == null) {
+            return connection.prepareStatement(sb.toString());
+        } else {
+            return connection.prepareStatement(sb.toString(), generatedKeys);
+        }
     }
 
     public void bindTo(PreparedStatement preparedStatement, Collection<T> values) throws Exception {
-        int i = 1;
+        int i = 0;
         for(T value : values) {
             for(int j = 0; j < multiIndexFieldMappers.length; j++ ) {
                 multiIndexFieldMappers[j].map(preparedStatement, value, i);

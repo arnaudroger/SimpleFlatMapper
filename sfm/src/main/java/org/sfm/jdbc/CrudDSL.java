@@ -1,11 +1,14 @@
 package org.sfm.jdbc;
 
 import org.sfm.jdbc.impl.KeyTupleQueryPreparer;
+import org.sfm.jdbc.impl.MysqlBatchInsertQueryPreparer;
+import org.sfm.jdbc.impl.MysqlCrud;
 import org.sfm.jdbc.named.NamedSqlQuery;
 import org.sfm.map.column.KeyProperty;
 
 import java.lang.reflect.Type;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -43,7 +46,7 @@ public class CrudDSL<T, K> {
                 }
 
                 if (primaryKeys.isEmpty()) throw new IllegalArgumentException("No primary keys defined on " + table);
-                return newInstance(target, keyTarget, mapperFactory, resultSetMetaData, primaryKeys);
+                return newInstance(target, keyTarget, mapperFactory, resultSetMetaData, primaryKeys, connection.getMetaData());
 
             } finally {
                 resultSet.close();
@@ -70,15 +73,47 @@ public class CrudDSL<T, K> {
             Type target,
             Type keyTarget,
             JdbcMapperFactory jdbcMapperFactory,
-            ResultSetMetaData resultSetMetaData, List<String> primaryKeys) throws SQLException {
-        return new Crud<T, K>(
-                buildInsert(target, resultSetMetaData, jdbcMapperFactory),
-                buildUpdate(target, resultSetMetaData, primaryKeys, jdbcMapperFactory),
-                buildSelect(keyTarget, resultSetMetaData, primaryKeys, jdbcMapperFactory),
-                buildKeyTupleQueryPreparer(keyTarget, primaryKeys, jdbcMapperFactory), buildSelectMapper(target, resultSetMetaData, jdbcMapperFactory),
-                buildDelete(keyTarget, resultSetMetaData, primaryKeys, jdbcMapperFactory),
-                buildKeyMapper(keyTarget, primaryKeys, jdbcMapperFactory), resultSetMetaData.getTableName(1),
-                hasGeneratedKeys(resultSetMetaData));
+            ResultSetMetaData resultSetMetaData,
+            List<String> primaryKeys,
+            DatabaseMetaData metaData) throws SQLException {
+        QueryPreparer<T> insert = buildInsert(target, resultSetMetaData, jdbcMapperFactory);
+        QueryPreparer<T> update = buildUpdate(target, resultSetMetaData, primaryKeys, jdbcMapperFactory);
+        QueryPreparer<K> select = buildSelect(keyTarget, resultSetMetaData, primaryKeys, jdbcMapperFactory);
+        KeyTupleQueryPreparer<K> keyTupleQueryPreparer = buildKeyTupleQueryPreparer(keyTarget, primaryKeys, jdbcMapperFactory);
+        JdbcMapper<T> selectMapper = buildSelectMapper(target, resultSetMetaData, jdbcMapperFactory);
+        QueryPreparer<K> delete = buildDelete(keyTarget, resultSetMetaData, primaryKeys, jdbcMapperFactory);
+        JdbcMapper<K> keyMapper = buildKeyMapper(keyTarget, primaryKeys, jdbcMapperFactory);
+        boolean hasGeneratedKeys = hasGeneratedKeys(resultSetMetaData);
+
+        if (!isMysql(metaData)) {
+
+            return new Crud<T, K>(
+                    insert,
+                    update,
+                    select,
+                    keyTupleQueryPreparer,
+                    selectMapper,
+                    delete,
+                    keyMapper,
+                    resultSetMetaData.getTableName(1),
+                    hasGeneratedKeys);
+        } else {
+            return new MysqlCrud<T, K>(
+                    insert,
+                    update,
+                    select,
+                    keyTupleQueryPreparer,
+                    selectMapper,
+                    delete,
+                    keyMapper,
+                    resultSetMetaData.getTableName(1),
+                    hasGeneratedKeys,
+                    buildMysqlBatchInsert(target, resultSetMetaData, jdbcMapperFactory));
+        }
+    }
+
+    private boolean isMysql(DatabaseMetaData metaData) throws SQLException {
+        return "MySQL".equals(metaData.getDatabaseProductName());
     }
 
     private boolean hasGeneratedKeys(ResultSetMetaData resultSetMetaData) throws SQLException {
@@ -108,6 +143,28 @@ public class CrudDSL<T, K> {
 
     private JdbcMapper<T> buildSelectMapper(Type target, ResultSetMetaData resultSetMetaData, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         return jdbcMapperFactory.<T>newBuilder(target).addMapping(resultSetMetaData).mapper();
+    }
+
+
+    private MysqlBatchInsertQueryPreparer<T> buildMysqlBatchInsert(Type target, ResultSetMetaData resultSetMetaData, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+        List<String> generatedKeys = new ArrayList<String>();
+        List<String> insertColumns = new ArrayList<String>();
+        PreparedStatementMapperBuilder<T> statementMapperBuilder = jdbcMapperFactory.<T>from(target);
+        for(int i = 0; i < resultSetMetaData.getColumnCount(); i++) {
+            if (!resultSetMetaData.isAutoIncrement(i + 1)) {
+                String columnName = resultSetMetaData.getColumnName(i + 1);
+                insertColumns.add(columnName);
+                statementMapperBuilder.addColumn(columnName);
+            } else {
+                generatedKeys.add(resultSetMetaData.getColumnName(i + 1));
+            }
+        }
+
+        return new MysqlBatchInsertQueryPreparer<T>(
+                resultSetMetaData.getTableName(1),
+                insertColumns.toArray(new String[insertColumns.size()]),
+                generatedKeys.toArray(new String[generatedKeys.size()]),
+                statementMapperBuilder.buildIndexFieldMappers());
     }
 
     private QueryPreparer<T> buildInsert(Type target, ResultSetMetaData resultSetMetaData, JdbcMapperFactory jdbcMapperFactory) throws SQLException {

@@ -99,7 +99,7 @@ public class CrudTest {
 
             objectCrud.delete(connection, keys);
 
-            assertCollectionEquals(Collections.emptyList(), objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(Collections.<DbObject>emptyList(), objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
 
         } finally {
             connection.close();

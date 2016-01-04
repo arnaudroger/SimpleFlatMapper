@@ -21,15 +21,19 @@ public class DbHelper {
 	private static boolean objectDb;
 
 	public static Connection getDbConnection(TargetDB targetDB) throws SQLException {
-		switch (targetDB) {
-			case HSQLDB:
-				return objectDb();
-			case MYSQL:
-				return MysqlDbHelper.objectDb();
-			case POSTGRESQL:
-				return PostgresDbHelper.objectDb();
+		try {
+			switch (targetDB) {
+				case HSQLDB:
+					return objectDb();
+				case MYSQL:
+					return MysqlDbHelper.objectDb();
+				case POSTGRESQL:
+					return PostgresDbHelper.objectDb();
+			}
+		} catch(Exception e) {
+			// ignore
 		}
-		throw new IllegalArgumentException();
+		return null;
 	}
 
 	public static Connection objectDb() throws SQLException {

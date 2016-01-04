@@ -35,6 +35,7 @@ public class CrudTest {
     @Test
     public void testDbObjectCrudAutoInc() throws SQLException {
         Connection connection = DbHelper.getDbConnection(targetDB);
+        if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
         try {
             Crud<DbObject, Long> objectCrud =
                     JdbcMapperFactory.newInstance().<DbObject, Long>crud(DbObject.class, Long.class).table(connection, "TEST_DB_OBJECT_AUTOINC");
@@ -109,6 +110,7 @@ public class CrudTest {
     @Test
     public void testDbObjectCrud() throws SQLException {
         Connection connection = DbHelper.getDbConnection(targetDB);
+        if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
         try {
             Crud<DbObject, Long> objectCrud =
                     JdbcMapperFactory.newInstance().<DbObject, Long>crud(DbObject.class, Long.class).table(connection, "TEST_DB_OBJECT");
@@ -160,6 +162,8 @@ public class CrudTest {
     @Test
     public void testCompositeKey() throws SQLException {
         Connection connection = DbHelper.getDbConnection(targetDB);
+        if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
+
         try {
             Crud<DbObject, CKEY> objectCrud =
                     JdbcMapperFactory.newInstance().<DbObject, CKEY>crud(DbObject.class, CKEY.class).table(connection, "TEST_DB_OBJECT_CKEY");

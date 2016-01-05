@@ -12,5 +12,7 @@ public class DatabaseMeta {
         this.minorVersion = minorVersion;
     }
 
-
+    public boolean isMysql() {
+        return "MySQL".equals(product);
+    }
 }

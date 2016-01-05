@@ -628,5 +628,13 @@ public class CsvParserTest {
 		it = CsvParser.iterator(new StringReader("345,\"\",543"));
 		strings = it.next();
 		assertArrayEquals(new String[]{"345", "", "543"}, strings);
+
+		it = CsvParser.iterator(new StringReader("\"\"\""));
+		strings = it.next();
+		assertArrayEquals(new String[]{"\""}, strings);
+
+		it = CsvParser.iterator(new StringReader("\"\"\"\""));
+		strings = it.next();
+		assertArrayEquals(new String[]{"\""}, strings);
 	}
 }

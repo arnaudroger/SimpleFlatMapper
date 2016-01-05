@@ -139,7 +139,7 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 		}
 
 		// if last is not quote add to shifted char
-		if (chars[(lastCharacter)] != quoteChar) {
+		if (chars[(lastCharacter)] != quoteChar || !notEscaped) {
 			chars[shiftedIndex++] = chars[(lastCharacter)];
 		}
 

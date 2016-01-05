@@ -610,4 +610,23 @@ public class CsvParserTest {
 		public String myField;
 		public java.util.Date secondField;
 	}
+
+	@Test
+	public void test264() throws IOException {
+		Iterator<String[]> it = CsvParser.iterator(new StringReader("\" \""));
+		String[] strings = it.next();
+		assertArrayEquals(new String[]{" "}, strings);
+
+		it = CsvParser.iterator(new StringReader("\"\""));
+		strings = it.next();
+		assertArrayEquals(new String[]{""}, strings);
+
+		it = CsvParser.iterator(new StringReader("345,\"\""));
+		strings = it.next();
+		assertArrayEquals(new String[]{"345", ""}, strings);
+
+		it = CsvParser.iterator(new StringReader("345,\"\",543"));
+		strings = it.next();
+		assertArrayEquals(new String[]{"345", "", "543"}, strings);
+	}
 }

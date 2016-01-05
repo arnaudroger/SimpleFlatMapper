@@ -90,8 +90,8 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 		int length = currentIndex - start;
 
 		if (charBuffer[start] == quoteChar()) {
-			start ++;
 			length = unescape(charBuffer, start, length);
+			start++;
 		}
 
 		cellConsumer.newCell(charBuffer, start, length);
@@ -124,20 +124,25 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 	private int unescape(final char[] chars, final int offset, final int length) {
 		final char quoteChar = quoteChar();
 
-		int j = offset + 1;
+		int start = offset + 1;
+		int shiftedIndex = start;
 		boolean notEscaped = true;
 
-		for(int i = offset + 1; i < offset + length -1; i++) {
+		int lastCharacter = offset + length - 1;
+
+		// copy chars apart from escape chars
+		for(int i = start; i < lastCharacter; i++) {
 			notEscaped = chars[i] != quoteChar || !notEscaped;
 			if (notEscaped) {
-				chars[j++] = chars[i];
+				chars[shiftedIndex++] = chars[i];
 			}
 		}
 
-		if (chars[offset + length -1] != quoteChar) {
-			chars[j++] = chars[offset + length -1];
+		// if last is not quote add to shifted char
+		if (chars[(lastCharacter)] != quoteChar) {
+			chars[shiftedIndex++] = chars[(lastCharacter)];
 		}
 
-		return j - offset - 1;
+		return shiftedIndex - start;
 	}
 }

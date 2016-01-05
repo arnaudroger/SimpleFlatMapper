@@ -256,7 +256,7 @@ public class CrudTest {
                 .table(connection, "TEST_DB_OBJECT");
 
         connection.createStatement().execute("TRUNCATE TABLE TEST_DB_OBJECT");
-        List<DbObject> objects = new ArrayList<>(10000);
+        List<DbObject> objects = new ArrayList<DbObject>(10000);
         for(int i = 0; i < 65001; i++) {
             DbObject e = DbObject.newInstance();
             e.setId(i + 1);

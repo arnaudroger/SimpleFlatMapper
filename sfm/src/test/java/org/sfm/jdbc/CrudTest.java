@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.sfm.beans.DbObject;
 import org.sfm.test.jdbc.DbHelper;
+import org.sfm.test.jdbc.MysqlDbHelper;
 import org.sfm.utils.ListCollectorHandler;
 import org.sfm.utils.RowHandler;
 
@@ -243,6 +244,26 @@ public class CrudTest {
         for(DbObject v: objects) {
             assertTrue(list.contains(v));
         }
+
+    }
+
+    public static void main(String[] args) throws SQLException {
+        Connection connection = MysqlDbHelper.objectDb();
+
+        Crud<DbObject, Long> crud = JdbcMapperFactory
+                .newInstance()
+                .crud(DbObject.class, Long.class)
+                .table(connection, "TEST_DB_OBJECT");
+
+        connection.createStatement().execute("TRUNCATE TABLE TEST_DB_OBJECT");
+        List<DbObject> objects = new ArrayList<>(10000);
+        for(int i = 0; i < 65001; i++) {
+            DbObject e = DbObject.newInstance();
+            e.setId(i + 1);
+            objects.add(e);
+        }
+
+        crud.create(connection, objects);
 
     }
 

@@ -76,7 +76,7 @@ public class Crud<T, K> {
         try {
             preparedStatement.executeUpdate();
             if (hasGeneratedKeys && keyConsumer != null) {
-                handeGeneratedKeys(keyConsumer, preparedStatement);
+                handleGeneratedKeys(keyConsumer, preparedStatement);
             }
             return keyConsumer;
         } finally {
@@ -100,8 +100,8 @@ public class Crud<T, K> {
             }
 
             preparedStatement.executeBatch();
-            if (keyConsumer != null) {
-                handeGeneratedKeys(keyConsumer, preparedStatement);
+            if (hasGeneratedKeys && keyConsumer != null) {
+                handleGeneratedKeys(keyConsumer, preparedStatement);
             }
             return keyConsumer;
         } catch(Exception e) {
@@ -116,7 +116,7 @@ public class Crud<T, K> {
         return keyConsumer;
     }
 
-    protected void handeGeneratedKeys(RowHandler<? super K> keyConsumer, PreparedStatement preparedStatement) throws SQLException {
+    protected void handleGeneratedKeys(RowHandler<? super K> keyConsumer, PreparedStatement preparedStatement) throws SQLException {
         ResultSet keys = preparedStatement.getGeneratedKeys();
         try {
             while (keys.next()) {

@@ -219,7 +219,11 @@ public final class JdbcMapperFactory
 		return new CrudDSL<T, K>(target, keyTarget, JdbcMapperFactory.newInstance(this));
 	}
 
-    /**
+	public <T, K> CrudDSL<T, K> crud(final Class<T> target, final Class<K> keyTarget) {
+		return crud((Type)target, (Type)keyTarget);
+	}
+
+	/**
      * Will create a DynamicMapper on the specified type.
      * @param target the type
      * @param <T> the jdbcMapper target type

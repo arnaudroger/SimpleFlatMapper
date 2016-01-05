@@ -64,6 +64,7 @@ public class MysqlDbHelper {
 		System.out.println("product name  = " + connection.getMetaData().getDatabaseMajorVersion());
 		System.out.println("product name  = " + connection.getMetaData().getDatabaseMinorVersion());
 
+
 	}
 
 

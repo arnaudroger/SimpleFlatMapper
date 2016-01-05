@@ -1,8 +1,10 @@
 package org.sfm.jdbc;
 
+import org.sfm.jdbc.impl.BatchInsertQueryExecutor;
 import org.sfm.jdbc.impl.KeyTupleQueryPreparer;
-import org.sfm.jdbc.impl.MysqlBatchInsertQueryPreparer;
+import org.sfm.jdbc.impl.MysqlBatchInsertQueryExecutor;
 import org.sfm.jdbc.impl.MysqlCrud;
+import org.sfm.jdbc.impl.SizeAdjusterBatchInsertQueryExecutor;
 import org.sfm.jdbc.named.NamedSqlQuery;
 import org.sfm.map.column.KeyProperty;
 
@@ -146,7 +148,7 @@ public class CrudDSL<T, K> {
     }
 
 
-    private MysqlBatchInsertQueryPreparer<T> buildMysqlBatchInsert(Type target, ResultSetMetaData resultSetMetaData, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+    private BatchInsertQueryExecutor<T> buildMysqlBatchInsert(Type target, ResultSetMetaData resultSetMetaData, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         List<String> generatedKeys = new ArrayList<String>();
         List<String> insertColumns = new ArrayList<String>();
         PreparedStatementMapperBuilder<T> statementMapperBuilder = jdbcMapperFactory.<T>from(target);
@@ -160,11 +162,13 @@ public class CrudDSL<T, K> {
             }
         }
 
-        return new MysqlBatchInsertQueryPreparer<T>(
+        MysqlBatchInsertQueryExecutor<T> queryExecutor = new MysqlBatchInsertQueryExecutor<T>(
                 resultSetMetaData.getTableName(1),
                 insertColumns.toArray(new String[insertColumns.size()]),
                 generatedKeys.toArray(new String[generatedKeys.size()]),
                 statementMapperBuilder.buildIndexFieldMappers());
+        return
+                new SizeAdjusterBatchInsertQueryExecutor<T>(queryExecutor);
     }
 
     private QueryPreparer<T> buildInsert(Type target, ResultSetMetaData resultSetMetaData, JdbcMapperFactory jdbcMapperFactory) throws SQLException {

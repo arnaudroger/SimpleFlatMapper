@@ -26,6 +26,7 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
     protected final QueryPreparer<T> updateQueryPreparer;
     protected final QueryPreparer<K> selectQueryPreparer;
     protected final QueryPreparer<K> deleteQueryPreparer;
+    protected final QueryPreparer<T> upsertQueryPreparer;
     protected final KeyTupleQueryPreparer<K> keyTupleQueryPreparer;
     protected final JdbcMapper<T> selectQueryMapper;
     protected final JdbcMapper<K> keyMapper;
@@ -35,11 +36,15 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
     public DefaultCrud(QueryPreparer<T> insertQueryPreparer,
                        QueryPreparer<T> updateQueryPreparer,
                        QueryPreparer<K> selectQueryPreparer,
-                       KeyTupleQueryPreparer<K> keyTupleQueryPreparer, JdbcMapper<T> selectQueryMapper,
-                       QueryPreparer<K> deleteQueryPreparer, JdbcMapper<K> keyMapper, String table, boolean hasGeneratedKeys) {
+                       QueryPreparer<T> upsertQueryPreparer,
+                       KeyTupleQueryPreparer<K> keyTupleQueryPreparer,
+                       JdbcMapper<T> selectQueryMapper,
+                       QueryPreparer<K> deleteQueryPreparer,
+                       JdbcMapper<K> keyMapper, String table, boolean hasGeneratedKeys) {
         this.insertQueryPreparer = insertQueryPreparer;
         this.updateQueryPreparer = updateQueryPreparer;
         this.selectQueryPreparer = selectQueryPreparer;
+        this.upsertQueryPreparer = upsertQueryPreparer;
         this.keyTupleQueryPreparer = keyTupleQueryPreparer;
         this.deleteQueryPreparer = deleteQueryPreparer;
         this.selectQueryMapper = selectQueryMapper;
@@ -96,10 +101,14 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
 
     @Override
     public <RH extends RowHandler<? super K>> RH create(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
+        QueryPreparer<T> queryPreparer = this.insertQueryPreparer;
+        return executeQueryPreparer(connection, values, keyConsumer, queryPreparer);
+    }
 
-        PreparedStatement preparedStatement = insertQueryPreparer.prepareStatement(connection);
+    private <RH extends RowHandler<? super K>> RH executeQueryPreparer(Connection connection, Collection<T> values, RH keyConsumer, QueryPreparer<T> queryPreparer) throws SQLException {
+        PreparedStatement preparedStatement = queryPreparer.prepareStatement(connection);
         try {
-            Mapper<T, PreparedStatement> mapper = insertQueryPreparer.mapper();
+            Mapper<T, PreparedStatement> mapper = queryPreparer.mapper();
 
             for (T value : values) {
                 mapper.mapTo(value, preparedStatement, null);
@@ -277,7 +286,7 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
      */
     @Override
     public void createOrUpdate(Connection connection, T value) throws SQLException {
-        throw new UnsupportedOperationException();
+        createOrUpdate(connection, value, null);
     }
 
     /**
@@ -289,7 +298,30 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
      */
     @Override
     public void createOrUpdate(Connection connection, Collection<T> values) throws SQLException {
-        throw new UnsupportedOperationException();
+        createOrUpdate(connection, values, null);
+    }
+
+    @Override
+    public <RH extends RowHandler<? super K>> RH createOrUpdate(Connection connection, T value, RH keyConsumer) throws SQLException {
+        PreparedStatement preparedStatement = upsertQueryPreparer.prepare(connection).bind(value);
+        try {
+            preparedStatement.executeUpdate();
+            if (hasGeneratedKeys && keyConsumer != null) {
+                handleGeneratedKeys(keyConsumer, preparedStatement);
+            }
+            return keyConsumer;
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                // IGNORE
+            }
+        }
+    }
+
+    @Override
+    public <RH extends RowHandler<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
+        return executeQueryPreparer(connection, values, (RH) keyConsumer, upsertQueryPreparer);
     }
 }
 

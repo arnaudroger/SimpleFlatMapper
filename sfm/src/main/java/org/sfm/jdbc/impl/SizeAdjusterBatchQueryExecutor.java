@@ -12,11 +12,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class SizeAdjusterBatchInsertQueryExecutor<T> implements BatchInsertQueryExecutor<T> {
-    private final BatchInsertQueryExecutor<T> delegate;
+public class SizeAdjusterBatchQueryExecutor<T> implements BatchQueryExecutor<T> {
+    private final BatchQueryExecutor<T> delegate;
     private final AtomicInteger batchSize = new AtomicInteger(Integer.MAX_VALUE);
 
-    public SizeAdjusterBatchInsertQueryExecutor(BatchInsertQueryExecutor<T> delegate) {
+    public SizeAdjusterBatchQueryExecutor(BatchQueryExecutor<T> delegate) {
         this.delegate = delegate;
     }
 

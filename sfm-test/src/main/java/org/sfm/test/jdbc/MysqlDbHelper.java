@@ -43,6 +43,21 @@ public class MysqlDbHelper {
 				+ " name varchar(100), "
 				+ " email varchar(100),"
 				+ " creation_Time DATETIME, type_ordinal int, type_name varchar(10), primary key(id, name)  )");
+
+		st.execute("create table IF NOT EXISTS TEST_DB_OBJECT_AUTOINC_NAMEINDEX("
+				+ " id bigint AUTO_INCREMENT primary key,"
+				+ " name varchar(100), "
+				+ " email varchar(100),"
+				+ " creation_Time DATETIME, type_ordinal int, type_name varchar(10)  )");
+		try {
+			st.execute("create unique index nameindex on TEST_DB_OBJECT_AUTOINC_NAMEINDEX(name)");
+		} catch(Exception e) {
+			// IGNORE
+		}
+		st.execute("TRUNCATE TEST_DB_OBJECT");
+		st.execute("TRUNCATE TEST_DB_OBJECT_AUTOINC");
+		st.execute("TRUNCATE TEST_DB_OBJECT_CKEY");
+		st.execute("TRUNCATE TEST_DB_OBJECT_AUTOINC_NAMEINDEX");
 	}
 
 

@@ -15,4 +15,13 @@ public class DatabaseMeta {
     public boolean isMysql() {
         return "MySQL".equals(product);
     }
+
+    @Override
+    public String toString() {
+        return "DatabaseMeta{" +
+                "product='" + product + '\'' +
+                ", majorVersion=" + majorVersion +
+                ", minorVersion=" + minorVersion +
+                '}';
+    }
 }

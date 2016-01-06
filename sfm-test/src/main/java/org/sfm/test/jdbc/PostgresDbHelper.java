@@ -50,6 +50,10 @@ public class PostgresDbHelper {
 				+ " name varchar(100), "
 				+ " email varchar(100),"
 				+ " creation_Time timestamp, type_ordinal int, type_name varchar(10), primary key(id, name)  )");
+
+		st.execute("TRUNCATE TEST_DB_OBJECT");
+		st.execute("TRUNCATE TEST_DB_OBJECT_AUTOINC");
+		st.execute("TRUNCATE TEST_DB_OBJECT_CKEY");
 	}
 
 

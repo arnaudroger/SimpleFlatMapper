@@ -32,4 +32,8 @@ public interface Crud<T, K> {
     void createOrUpdate(Connection connection, T value) throws SQLException;
 
     void createOrUpdate(Connection connection, Collection<T> values) throws SQLException;
+
+    <RH extends RowHandler<? super K>> RH createOrUpdate(Connection connection, T value, RH keyConsumer) throws SQLException;
+
+    <RH extends RowHandler<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException;
 }

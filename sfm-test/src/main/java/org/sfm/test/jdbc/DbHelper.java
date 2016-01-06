@@ -31,6 +31,7 @@ public class DbHelper {
 					return PostgresDbHelper.objectDb();
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			// ignore
 		}
 		return null;

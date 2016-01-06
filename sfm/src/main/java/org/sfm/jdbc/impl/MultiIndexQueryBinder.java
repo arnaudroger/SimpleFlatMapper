@@ -58,7 +58,7 @@ public class MultiIndexQueryBinder<T> implements QueryBinder<T> {
             }
         });
 
-        if (generatedKeys != null) {
+        if (generatedKeys != null && generatedKeys.length > 0) {
             return connection.prepareStatement(sql, generatedKeys);
         } else {
             return connection.prepareStatement(sql);

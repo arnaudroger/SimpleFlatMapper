@@ -2,13 +2,14 @@ package org.sfm.beans;
 
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class DbObject {
 
-	private static Random random = new Random();
+	private static AtomicLong random = new AtomicLong(10000);
 	public static DbObject newInstance() {
 		DbObject object = new DbObject();
-		object.setId(random.nextInt());
+		object.setId(random.incrementAndGet());
 		object.setName("name" + Long.toHexString(object.getId()));
 		object.setEmail("email" + Long.toHexString(object.getId()));
 		object.setCreationTime(new Date((System.currentTimeMillis() / 1000) * 1000));

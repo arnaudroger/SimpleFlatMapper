@@ -20,17 +20,22 @@ public class CrudFactory {
             CrudMeta<T, K> crudMeta,
             JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance(jdbcMapperFactory);
+        return createCrud(target, keyTarget, crudMeta, mapperFactory);
+
+    }
+
+    private static <T, K> Crud<T, K> createCrud(Type target, Type keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory mapperFactory) throws SQLException {
         crudMeta.addColumnProperties(mapperFactory);
 
-        QueryPreparer<T> insert = buildInsert(target, crudMeta, jdbcMapperFactory);
-        QueryPreparer<T> update = buildUpdate(target, crudMeta, jdbcMapperFactory);
-        QueryPreparer<K> select = buildSelect(keyTarget, crudMeta, jdbcMapperFactory);
-        QueryPreparer<K> delete = buildDelete(keyTarget, crudMeta, jdbcMapperFactory);
+        QueryPreparer<T> insert = buildInsert(target, crudMeta, mapperFactory);
+        QueryPreparer<T> update = buildUpdate(target, crudMeta, mapperFactory);
+        QueryPreparer<K> select = buildSelect(keyTarget, crudMeta, mapperFactory);
+        QueryPreparer<K> delete = buildDelete(keyTarget, crudMeta, mapperFactory);
 
-        KeyTupleQueryPreparer<K> keyTupleQueryPreparer = buildKeyTupleQueryPreparer(keyTarget, crudMeta, jdbcMapperFactory);
+        KeyTupleQueryPreparer<K> keyTupleQueryPreparer = buildKeyTupleQueryPreparer(keyTarget, crudMeta, mapperFactory);
 
-        JdbcMapper<T> selectMapper = buildSelectMapper(target, crudMeta, jdbcMapperFactory);
-        JdbcMapper<K> keyMapper = buildKeyMapper(keyTarget, crudMeta, jdbcMapperFactory);
+        JdbcMapper<T> selectMapper = buildSelectMapper(target, crudMeta, mapperFactory);
+        JdbcMapper<K> keyMapper = buildKeyMapper(keyTarget, crudMeta, mapperFactory);
 
         boolean hasGeneratedKeys = crudMeta.hasGeneratedKeys();
 
@@ -38,19 +43,26 @@ public class CrudFactory {
                 insert,
                 update,
                 select,
+                newUpsertPreparer(target, crudMeta, mapperFactory),
                 keyTupleQueryPreparer,
                 selectMapper,
                 delete,
                 keyMapper,
                 crudMeta.getTable(),
                 hasGeneratedKeys);
-        if (crudMeta.getDatabaseMeta().isMysql()) {
-            return new MysqlCrud<T, K>(
-                    defaultCrud,
-                    buildMysqlBatchInsert(target, crudMeta, jdbcMapperFactory));
-        }
-        return defaultCrud;
 
+        if (crudMeta.getDatabaseMeta().isMysql()) {
+            return MysqlCrudFactory.newInstance(target, keyTarget, crudMeta, mapperFactory, defaultCrud);
+        }
+
+        return defaultCrud;
+    }
+
+    private static <T, K> QueryPreparer<T> newUpsertPreparer(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory mapperFactory) {
+        if (crudMeta.getDatabaseMeta().isMysql()) {
+            return MysqlCrudFactory.buildMysqlUpsert(target, crudMeta, mapperFactory);
+        }
+        return new UnsupportedQueryPreparer<T>("Upsert Not Supported on " + crudMeta.getDatabaseMeta());
     }
 
 
@@ -91,30 +103,6 @@ public class CrudFactory {
             i++;
         }
         return mapperBuilder.mapper();
-    }
-
-
-    private static <T, K> BatchInsertQueryExecutor<T> buildMysqlBatchInsert(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
-        List<String> generatedKeys = new ArrayList<String>();
-        List<String> insertColumns = new ArrayList<String>();
-        PreparedStatementMapperBuilder<T> statementMapperBuilder = jdbcMapperFactory.<T>from(target);
-        for(ColumnMeta cm : crudMeta.getColumnMetas()) {
-            if (!cm.isGenerated()) {
-                String columnName = cm.getColumn();
-                insertColumns.add(columnName);
-                statementMapperBuilder.addColumn(columnName);
-            } else {
-                generatedKeys.add(cm.getColumn());
-            }
-        }
-
-        MysqlBatchInsertQueryExecutor<T> queryExecutor = new MysqlBatchInsertQueryExecutor<T>(
-                crudMeta.getTable(),
-                insertColumns.toArray(new String[insertColumns.size()]),
-                generatedKeys.toArray(new String[generatedKeys.size()]),
-                statementMapperBuilder.buildIndexFieldMappers());
-        return
-                new SizeAdjusterBatchInsertQueryExecutor<T>(queryExecutor);
     }
 
     private static <T, K> QueryPreparer<T> buildInsert(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {

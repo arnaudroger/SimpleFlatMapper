@@ -7,6 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
 
-public interface BatchInsertQueryExecutor<T> {
+public interface BatchQueryExecutor<T> {
     void insert(Connection connection, Collection<T> values, RowHandler<PreparedStatement> postExecute) throws SQLException;
 }

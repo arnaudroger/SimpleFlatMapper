@@ -8,16 +8,23 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
 
-public class MysqlBatchInsertQueryExecutor<T> implements BatchInsertQueryExecutor<T> {
+public class MysqlBatchInsertQueryExecutor<T> implements BatchQueryExecutor<T> {
 
     private final String table;
-    private final String[] columns;
+    private final String[] insertColumns;
+    private final String[] updateColumns;
     private final String[] generatedKeys;
     private final MultiIndexFieldMapper<T>[] multiIndexFieldMappers;
 
-    public MysqlBatchInsertQueryExecutor(String table, String[] columns, String[] generatedKeys, MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
+    public MysqlBatchInsertQueryExecutor(
+            String table,
+            String[] insertColumns,
+            String[] updateColumns,
+            String[] generatedKeys,
+            MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
         this.table = table;
-        this.columns = columns;
+        this.insertColumns = insertColumns;
+        this.updateColumns = updateColumns;
         this.generatedKeys = generatedKeys;
         this.multiIndexFieldMappers = multiIndexFieldMappers;
     }
@@ -40,26 +47,49 @@ public class MysqlBatchInsertQueryExecutor<T> implements BatchInsertQueryExecuto
         }
     }
 
-    private PreparedStatement prepareStatement(Connection connection, int size) throws SQLException {
-        StringBuilder sb = new StringBuilder("INSERT INTO ");
-        sb.append(table).append("(");
+    private PreparedStatement prepareStatement(Connection connection, int batchSize) throws SQLException {
+        StringBuilder sb = createQuery(batchSize);
+        if (generatedKeys.length == 0) {
+            return connection.prepareStatement(sb.toString());
+        } else {
+            return connection.prepareStatement(sb.toString(), generatedKeys);
+        }
+    }
 
-        for(int j = 0; j < columns.length; j++) {
-            if (j > 0) {
-                sb.append(", ");
-            }
-            sb.append(columns[j]);
+    private StringBuilder createQuery(int size) {
+        StringBuilder sb = new StringBuilder();
+
+        insertInto(sb);
+        values(size, sb);
+        if (updateColumns != null) {
+            onDuplicateKeys(sb);
         }
 
-        sb.append(") VALUES");
+        return sb;
+    }
 
+    private void onDuplicateKeys(StringBuilder sb) {
+        sb.append(" ON DUPLICATE KEY UPDATE ");
+        for(int i = 0; i < updateColumns.length; i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append(updateColumns[i])
+              .append(" = VALUES(")
+              .append(updateColumns[i])
+              .append(")");
+        }
+    }
+
+    private void values(int size, StringBuilder sb) {
+        sb.append(" VALUES");
         for(int i = 0; i < size; i++) {
             if (i > 0) {
                 sb.append(", ");
             }
             sb.append("(");
 
-            for(int j = 0; j < columns.length; j++) {
+            for(int j = 0; j < insertColumns.length; j++) {
                 if (j > 0) {
                     sb.append(", ");
                 }
@@ -69,18 +99,27 @@ public class MysqlBatchInsertQueryExecutor<T> implements BatchInsertQueryExecuto
             sb.append(")");
 
         }
-        if (generatedKeys.length == 0) {
-            return connection.prepareStatement(sb.toString());
-        } else {
-            return connection.prepareStatement(sb.toString(), generatedKeys);
+    }
+
+    private void insertInto(StringBuilder sb) {
+        sb.append("INSERT INTO ");
+        sb.append(table).append("(");
+
+        for(int j = 0; j < insertColumns.length; j++) {
+            if (j > 0) {
+                sb.append(", ");
+            }
+            sb.append(insertColumns[j]);
         }
+
+        sb.append(")");
     }
 
     private void bindTo(PreparedStatement preparedStatement, Collection<T> values) throws Exception {
         int i = 0;
         for(T value : values) {
-            for(int j = 0; j < multiIndexFieldMappers.length; j++ ) {
-                multiIndexFieldMappers[j].map(preparedStatement, value, i);
+            for (MultiIndexFieldMapper<T> multiIndexFieldMapper : multiIndexFieldMappers) {
+                multiIndexFieldMapper.map(preparedStatement, value, i);
                 i++;
             }
         }

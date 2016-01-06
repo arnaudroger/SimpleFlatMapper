@@ -46,10 +46,6 @@ public class CrudMeta<T, K> {
         return false;
     }
 
-    public boolean isMysql() {
-        return false;
-    }
-
     public static <T, K> CrudMeta<T, K> of(Connection connection, String table) throws SQLException {
         Statement statement = connection.createStatement();
         try {

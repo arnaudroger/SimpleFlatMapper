@@ -1,7 +1,6 @@
 package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.Crud;
-import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.QueryPreparer;
 import org.sfm.utils.RowHandler;
 
@@ -12,13 +11,17 @@ import java.util.Collection;
 import java.util.List;
 
 public class MysqlCrud<T, K> implements Crud<T, K> {
-    private final BatchInsertQueryExecutor<T> batchInsertQueryExecutor;
+    private final BatchQueryExecutor<T> batchQueryExecutor;
+    private final BatchQueryExecutor<T> batchUpsertQueryExecutor;
+
     private final DefaultCrud<T, K> delegate;
 
     public MysqlCrud(DefaultCrud<T, K> delegate,
-                     BatchInsertQueryExecutor<T> batchInsertQueryPreparer) {
+                     BatchQueryExecutor<T> batchInsertQueryPreparer,
+                     BatchQueryExecutor<T> batchUpsertQueryExecutor) {
         this.delegate = delegate;
-        this.batchInsertQueryExecutor = batchInsertQueryPreparer;
+        this.batchQueryExecutor = batchInsertQueryPreparer;
+        this.batchUpsertQueryExecutor = batchUpsertQueryExecutor;
     }
 
     @Override
@@ -38,7 +41,7 @@ public class MysqlCrud<T, K> implements Crud<T, K> {
 
     @Override
     public <RH extends RowHandler<? super K>> RH create(Connection connection, Collection<T> values, final RH keyConsumer) throws SQLException {
-        batchInsertQueryExecutor.insert(connection, values, new RowHandler<PreparedStatement>() {
+        batchQueryExecutor.insert(connection, values, new RowHandler<PreparedStatement>() {
             @Override
             public void handle(PreparedStatement preparedStatement) throws Exception {
                 if (delegate.hasGeneratedKeys && keyConsumer != null) {
@@ -80,12 +83,22 @@ public class MysqlCrud<T, K> implements Crud<T, K> {
     }
 
     @Override
-    public void createOrUpdate(Connection connection, T value) throws SQLException {
+         public void createOrUpdate(Connection connection, T value) throws SQLException {
         delegate.createOrUpdate(connection, value);
     }
 
     @Override
     public void createOrUpdate(Connection connection, Collection<T> values) throws SQLException {
         delegate.createOrUpdate(connection, values);
+    }
+
+    @Override
+    public <RH extends RowHandler<? super K>> RH  createOrUpdate(Connection connection, T value, RH keyConsumer) throws SQLException {
+        return delegate.createOrUpdate(connection, value, keyConsumer);
+    }
+
+    @Override
+    public <RH extends RowHandler<? super K>> RH  createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
+        return delegate.createOrUpdate(connection, values, keyConsumer);
     }
 }

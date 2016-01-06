@@ -4,6 +4,7 @@ import com.mysql.jdbc.PacketTooBigException;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.sfm.beans.DbObject;
+import org.sfm.jdbc.impl.DefaultCrud;
 import org.sfm.test.jdbc.DbHelper;
 
 import java.sql.Connection;

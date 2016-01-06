@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.sfm.beans.DbObject;
+import org.sfm.jdbc.impl.DefaultCrud;
 import org.sfm.test.jdbc.DbHelper;
 import org.sfm.test.jdbc.MysqlDbHelper;
 import org.sfm.utils.ListCollectorHandler;

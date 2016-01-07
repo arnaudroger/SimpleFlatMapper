@@ -4,9 +4,6 @@ services:
   - mysql
   - postgresql
 
-addons:
-  postgresql: "9.5"
-
 jdk:
   - oraclejdk8
   - oraclejdk7

@@ -95,7 +95,7 @@ public class MysqlCrudTest {
     @Test
     public void testBatchUpsertOnDb() throws SQLException {
         Connection connection = DbHelper.getDbConnection(DbHelper.TargetDB.MYSQL);
-
+        if (connection == null) { System.err.println("Db MySQL not available"); return; }
         try {
             Crud<DbObject, Long> objectCrud =
                     JdbcMapperFactory.newInstance().<DbObject, Long>crud(DbObject.class, Long.class).table(connection, "TEST_DB_OBJECT");
@@ -125,7 +125,7 @@ public class MysqlCrudTest {
     @Test
     public void testUpsert() throws SQLException {
         Connection connection = DbHelper.getDbConnection(DbHelper.TargetDB.MYSQL);
-
+        if (connection == null) { System.err.println("Db MySQL not available"); return; }
         try {
             Crud<DbObject, Long> objectCrud =
                     JdbcMapperFactory.newInstance().<DbObject, Long>crud(DbObject.class, Long.class).table(connection, "TEST_DB_OBJECT");
@@ -149,7 +149,7 @@ public class MysqlCrudTest {
     @Test
     public void testUpsertAutoIncUniqueIndexOnIndex() throws SQLException {
         Connection connection = DbHelper.getDbConnection(DbHelper.TargetDB.MYSQL);
-
+        if (connection == null) { System.err.println("Db MySQL not available"); return; }
         try {
             Crud<DbObject, Long> objectCrud =
                     JdbcMapperFactory.newInstance().<DbObject, Long>crud(DbObject.class, Long.class).table(connection, "TEST_DB_OBJECT_AUTOINC_NAMEINDEX");

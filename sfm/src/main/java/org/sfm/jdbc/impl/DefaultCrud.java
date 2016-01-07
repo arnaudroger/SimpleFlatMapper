@@ -3,7 +3,6 @@ package org.sfm.jdbc.impl;
 import org.sfm.jdbc.Crud;
 import org.sfm.jdbc.JdbcMapper;
 import org.sfm.jdbc.QueryPreparer;
-import org.sfm.jdbc.impl.KeyTupleQueryPreparer;
 import org.sfm.map.Mapper;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
@@ -20,7 +19,7 @@ import java.util.List;
  * @param <T> the target type
  * @param <K> the key type
  */
-public class DefaultCrud<T, K> implements Crud<T,K> {
+public final class DefaultCrud<T, K> implements Crud<T,K> {
 
     protected final QueryPreparer<T> insertQueryPreparer;
     protected final QueryPreparer<T> updateQueryPreparer;
@@ -66,68 +65,12 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
 
     @Override
     public <RH extends RowHandler<? super K>> RH create(Connection connection, T value, RH keyConsumer) throws SQLException {
-        PreparedStatement preparedStatement = insertQueryPreparer.prepare(connection).bind(value);
-        try {
-            preparedStatement.executeUpdate();
-            if (hasGeneratedKeys && keyConsumer != null) {
-                handleGeneratedKeys(keyConsumer, preparedStatement);
-            }
-            return keyConsumer;
-        } finally {
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                // IGNORE
-            }
-        }
+        return executeQueryPreparer(connection, value, keyConsumer, insertQueryPreparer);
     }
 
     @Override
     public <RH extends RowHandler<? super K>> RH create(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
-        QueryPreparer<T> queryPreparer = this.insertQueryPreparer;
-        return executeQueryPreparer(connection, values, keyConsumer, queryPreparer);
-    }
-
-    private <RH extends RowHandler<? super K>> RH executeQueryPreparer(Connection connection, Collection<T> values, RH keyConsumer, QueryPreparer<T> queryPreparer) throws SQLException {
-        PreparedStatement preparedStatement = queryPreparer.prepareStatement(connection);
-        try {
-            Mapper<T, PreparedStatement> mapper = queryPreparer.mapper();
-
-            for (T value : values) {
-                mapper.mapTo(value, preparedStatement, null);
-                preparedStatement.addBatch();
-            }
-
-            preparedStatement.executeBatch();
-            if (hasGeneratedKeys && keyConsumer != null) {
-                handleGeneratedKeys(keyConsumer, preparedStatement);
-            }
-            return keyConsumer;
-        } catch(Exception e) {
-            ErrorHelper.rethrow(e);
-        } finally {
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                // IGNORE
-            }
-        }
-        return keyConsumer;
-    }
-
-    protected void handleGeneratedKeys(RowHandler<? super K> keyConsumer, PreparedStatement preparedStatement) throws SQLException {
-        ResultSet keys = preparedStatement.getGeneratedKeys();
-        try {
-            while (keys.next()) {
-                try {
-                    keyConsumer.handle(keyMapper.map(keys));
-                } catch (Exception e) {
-                    ErrorHelper.rethrow(e);
-                }
-            }
-        } finally {
-            keys.close();
-        }
+        return executeQueryPreparerInBatchMode(connection, values, keyConsumer, insertQueryPreparer);
     }
 
     @Override
@@ -179,38 +122,12 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
      */
     @Override
     public void update(Connection connection, T value) throws SQLException {
-        PreparedStatement preparedStatement = updateQueryPreparer.prepare(connection).bind(value);
-        try {
-            preparedStatement.executeUpdate();
-        } finally {
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                // IGNORE
-            }
-        }
+        executeQueryPreparer(connection, value, null, updateQueryPreparer);
     }
 
     @Override
     public void update(Connection connection, Collection<T> values) throws SQLException {
-        PreparedStatement preparedStatement = updateQueryPreparer.prepareStatement(connection);
-        try {
-            Mapper<T, PreparedStatement> mapper = updateQueryPreparer.mapper();
-
-            for (T value : values) {
-                mapper.mapTo(value, preparedStatement, null);
-                preparedStatement.addBatch();
-            }
-            preparedStatement.executeBatch();
-        } catch(Exception e) {
-            ErrorHelper.rethrow(e);
-        } finally {
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                // IGNORE
-            }
-        }
+        executeQueryPreparerInBatchMode(connection, values, null, updateQueryPreparer);
     }
 
     /**
@@ -222,16 +139,7 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
      */
     @Override
     public void delete(Connection connection, K key) throws SQLException {
-        PreparedStatement preparedStatement = deleteQueryPreparer.prepare(connection).bind(key);
-        try {
-            preparedStatement.executeUpdate();
-        } finally {
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                // IGNORE
-            }
-        }
+        executeQueryPreparer(connection, key, null, deleteQueryPreparer);
     }
 
     @Override
@@ -264,7 +172,43 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
 
     @Override
     public <RH extends RowHandler<? super K>> RH createOrUpdate(Connection connection, T value, RH keyConsumer) throws SQLException {
-        PreparedStatement preparedStatement = upsertQueryPreparer.prepare(connection).bind(value);
+        return executeQueryPreparer(connection, value, keyConsumer, upsertQueryPreparer);
+    }
+
+    @Override
+    public <RH extends RowHandler<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
+        return executeQueryPreparerInBatchMode(connection, values, keyConsumer, upsertQueryPreparer);
+    }
+
+    protected <RH extends RowHandler<? super K>> RH executeQueryPreparerInBatchMode(Connection connection, Collection<T> values, RH keyConsumer, QueryPreparer<T> queryPreparer) throws SQLException {
+        PreparedStatement preparedStatement = queryPreparer.prepareStatement(connection);
+        try {
+            Mapper<T, PreparedStatement> mapper = queryPreparer.mapper();
+
+            for (T value : values) {
+                mapper.mapTo(value, preparedStatement, null);
+                preparedStatement.addBatch();
+            }
+
+            preparedStatement.executeBatch();
+            if (hasGeneratedKeys && keyConsumer != null) {
+                handleGeneratedKeys(keyConsumer, preparedStatement);
+            }
+            return keyConsumer;
+        } catch(Exception e) {
+            ErrorHelper.rethrow(e);
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                // IGNORE
+            }
+        }
+        return keyConsumer;
+    }
+
+    protected <RH extends RowHandler<? super K>, QPT> RH executeQueryPreparer(Connection connection, QPT value, RH keyConsumer, QueryPreparer<QPT> queryPreparer) throws SQLException {
+        PreparedStatement preparedStatement = queryPreparer.prepare(connection).bind(value);
         try {
             preparedStatement.executeUpdate();
             if (hasGeneratedKeys && keyConsumer != null) {
@@ -279,10 +223,19 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
             }
         }
     }
-
-    @Override
-    public <RH extends RowHandler<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
-        return executeQueryPreparer(connection, values, (RH) keyConsumer, upsertQueryPreparer);
+    protected void handleGeneratedKeys(RowHandler<? super K> keyConsumer, PreparedStatement preparedStatement) throws SQLException {
+        ResultSet keys = preparedStatement.getGeneratedKeys();
+        try {
+            while (keys.next()) {
+                try {
+                    keyConsumer.handle(keyMapper.map(keys));
+                } catch (Exception e) {
+                    ErrorHelper.rethrow(e);
+                }
+            }
+        } finally {
+            keys.close();
+        }
     }
 }
 

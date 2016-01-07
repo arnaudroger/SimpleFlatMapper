@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class MysqlCrudTest {
 
     @Test
-    public void testBatchInsert() throws SQLException {
+    public void testBatchInsertCreateOneQuery() throws SQLException {
         Connection connection = DbHelper.getDbConnection(DbHelper.TargetDB.MYSQL);
         if (connection == null) { System.err.println("Db MySQL not available"); return; }
         try {
@@ -56,9 +56,44 @@ public class MysqlCrudTest {
             connection.close();
         }
     }
+    @Test
+    public void testBatchUpsertCreateOneQuery() throws SQLException {
+        Connection connection = DbHelper.getDbConnection(DbHelper.TargetDB.MYSQL);
+        if (connection == null) { System.err.println("Db MySQL not available"); return; }
+        try {
+            Crud<DbObject, Long> objectCrud =
+                    JdbcMapperFactory.newInstance().<DbObject, Long>crud(DbObject.class, Long.class).table(connection, "TEST_DB_OBJECT");
+
+            Connection mockConnection = mock(Connection.class);
+
+            PreparedStatement preparedStatement = mock(PreparedStatement.class);
+
+            ArgumentCaptor<String> queryCapture = ArgumentCaptor.forClass(String.class);
+
+            when(mockConnection.prepareStatement(queryCapture.capture())).thenReturn(preparedStatement);
+
+            objectCrud.createOrUpdate(mockConnection, Arrays.asList(DbObject.newInstance(), DbObject.newInstance()));
+
+
+            assertEquals(("INSERT INTO test_db_object(id, name, email, creation_Time, type_ordinal, type_name) " +
+                            "VALUES(?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?) " +
+                            "ON DUPLICATE KEY UPDATE name = VALUES(name), " +
+                    "email = VALUES(email)," +
+                    " creation_Time = VALUES(creation_Time), " +
+                    "type_ordinal = VALUES(type_ordinal), " +
+                    "type_name = VALUES(type_name)").toLowerCase(),
+                    queryCapture.getValue().toLowerCase());
+
+            verify(preparedStatement, never()).addBatch();
+            verify(preparedStatement, never()).executeBatch();
+            verify(preparedStatement).executeUpdate();
+        } finally {
+            connection.close();
+        }
+    }
 
     @Test
-    public void testBatchUpsert() throws SQLException {
+    public void testBatchUpsertOnDb() throws SQLException {
         Connection connection = DbHelper.getDbConnection(DbHelper.TargetDB.MYSQL);
 
         try {

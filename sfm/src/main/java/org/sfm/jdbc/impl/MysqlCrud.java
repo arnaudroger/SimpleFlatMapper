@@ -1,7 +1,6 @@
 package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.Crud;
-import org.sfm.jdbc.QueryPreparer;
 import org.sfm.utils.RowHandler;
 
 import java.sql.Connection;
@@ -10,8 +9,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-public class MysqlCrud<T, K> implements Crud<T, K> {
-    private final BatchQueryExecutor<T> batchQueryExecutor;
+public final class MysqlCrud<T, K> implements Crud<T, K> {
+    private final BatchQueryExecutor<T> batchInsertQueryExecutor;
     private final BatchQueryExecutor<T> batchUpsertQueryExecutor;
 
     private final DefaultCrud<T, K> delegate;
@@ -20,7 +19,7 @@ public class MysqlCrud<T, K> implements Crud<T, K> {
                      BatchQueryExecutor<T> batchInsertQueryPreparer,
                      BatchQueryExecutor<T> batchUpsertQueryExecutor) {
         this.delegate = delegate;
-        this.batchQueryExecutor = batchInsertQueryPreparer;
+        this.batchInsertQueryExecutor = batchInsertQueryPreparer;
         this.batchUpsertQueryExecutor = batchUpsertQueryExecutor;
     }
 
@@ -41,7 +40,7 @@ public class MysqlCrud<T, K> implements Crud<T, K> {
 
     @Override
     public <RH extends RowHandler<? super K>> RH create(Connection connection, Collection<T> values, final RH keyConsumer) throws SQLException {
-        batchQueryExecutor.insert(connection, values, new RowHandler<PreparedStatement>() {
+        batchInsertQueryExecutor.insert(connection, values, new RowHandler<PreparedStatement>() {
             @Override
             public void handle(PreparedStatement preparedStatement) throws Exception {
                 if (delegate.hasGeneratedKeys && keyConsumer != null) {
@@ -83,13 +82,13 @@ public class MysqlCrud<T, K> implements Crud<T, K> {
     }
 
     @Override
-         public void createOrUpdate(Connection connection, T value) throws SQLException {
+    public void createOrUpdate(Connection connection, T value) throws SQLException {
         delegate.createOrUpdate(connection, value);
     }
 
     @Override
     public void createOrUpdate(Connection connection, Collection<T> values) throws SQLException {
-        delegate.createOrUpdate(connection, values);
+        createOrUpdate(connection, values, null);
     }
 
     @Override
@@ -99,6 +98,14 @@ public class MysqlCrud<T, K> implements Crud<T, K> {
 
     @Override
     public <RH extends RowHandler<? super K>> RH  createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
-        return delegate.createOrUpdate(connection, values, keyConsumer);
+        batchUpsertQueryExecutor.insert(connection, values, new RowHandler<PreparedStatement>() {
+            @Override
+            public void handle(PreparedStatement preparedStatement) throws Exception {
+                if (delegate.hasGeneratedKeys && keyConsumer != null) {
+                    delegate.handleGeneratedKeys(keyConsumer, preparedStatement);
+                }
+            }
+        });
+        return keyConsumer;
     }
 }

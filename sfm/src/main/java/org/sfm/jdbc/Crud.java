@@ -7,7 +7,11 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-
+/**
+ *
+ * @param <T> the target type
+ * @param <K> the key type
+ */
 public interface Crud<T, K> {
     /**
      * insert value into the db through the specified connection.
@@ -18,6 +22,13 @@ public interface Crud<T, K> {
      */
     void create(Connection connection, T value) throws SQLException;
 
+    /**
+     * insert values into the db through the specified connection.
+     *
+     * @param connection the connection
+     * @param values      the values
+     * @throws SQLException if an error occurs
+     */
     void create(Connection connection, Collection<T> values) throws SQLException;
 
     /**
@@ -33,6 +44,17 @@ public interface Crud<T, K> {
      */
     <RH extends RowHandler<? super K>> RH create(Connection connection, T value, RH keyConsumer) throws SQLException;
 
+    /**
+     * insert values into the db through the specified connection.
+     * Callback keyConsumer for the generated keys.
+     *
+     * @param connection  the connection
+     * @param values       the values
+     * @param keyConsumer the key consumer
+     * @param <RH>        the type of keyConsumer
+     * @return the keyConsumer
+     * @throws SQLException
+     */
     <RH extends RowHandler<? super K>> RH create(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException;
 
     /**
@@ -45,6 +67,14 @@ public interface Crud<T, K> {
      */
     T read(Connection connection, K key) throws SQLException;
 
+    /**
+     * retrieve the objects with the specified keys and pass them to the rowHandler.
+     *
+     * @param connection the connection
+     * @param keys       the keys
+     * @param rowHandler the handler that is callback for each row
+     * @throws SQLException if an error occurs
+     */
     <RH extends RowHandler<? super T>> RH read(Connection connection, Collection<K> keys, RH rowHandler) throws SQLException;
 
     /**
@@ -56,6 +86,13 @@ public interface Crud<T, K> {
      */
     void update(Connection connection, T value) throws SQLException;
 
+    /**
+     * update the objects.
+     *
+     * @param connection the connection
+     * @param values      the objects
+     * @throws SQLException if an error occurs
+     */
     void update(Connection connection, Collection<T> values) throws SQLException;
 
     /**
@@ -67,6 +104,13 @@ public interface Crud<T, K> {
      */
     void delete(Connection connection, K key) throws SQLException;
 
+    /**
+     * delete the objects with the specified keys.
+     *
+     * @param connection the connection
+     * @param keys       the keys
+     * @throws SQLException if an error occurs
+     */
     void delete(Connection connection, List<K> keys) throws SQLException;
 
     /**

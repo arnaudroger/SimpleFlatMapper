@@ -14,11 +14,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-/**
- *
- * @param <T> the target type
- * @param <K> the key type
- */
 public final class DefaultCrud<T, K> implements Crud<T,K> {
 
     protected final QueryPreparer<T> insertQueryPreparer;
@@ -51,7 +46,6 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
         this.table = table;
         this.hasGeneratedKeys = hasGeneratedKeys;
     }
-
 
     @Override
     public void create(Connection connection, T value) throws SQLException {
@@ -113,13 +107,6 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
     }
 
 
-    /**
-     * update the object.
-     *
-     * @param connection the connection
-     * @param value      the object
-     * @throws SQLException if an error occurs
-     */
     @Override
     public void update(Connection connection, T value) throws SQLException {
         executeQueryPreparer(connection, value, null, updateQueryPreparer);
@@ -130,13 +117,6 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
         executeQueryPreparerInBatchMode(connection, values, null, updateQueryPreparer);
     }
 
-    /**
-     * delete the object with the specified key.
-     *
-     * @param connection the connection
-     * @param key        the key
-     * @throws SQLException if an error occurs
-     */
     @Override
     public void delete(Connection connection, K key) throws SQLException {
         executeQueryPreparer(connection, key, null, deleteQueryPreparer);

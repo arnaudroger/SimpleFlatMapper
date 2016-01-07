@@ -97,7 +97,7 @@ public final class MysqlCrud<T, K> implements Crud<T, K> {
     }
 
     @Override
-    public <RH extends RowHandler<? super K>> RH  createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
+    public <RH extends RowHandler<? super K>> RH  createOrUpdate(Connection connection, Collection<T> values, final RH keyConsumer) throws SQLException {
         batchUpsertQueryExecutor.insert(connection, values, new RowHandler<PreparedStatement>() {
             @Override
             public void handle(PreparedStatement preparedStatement) throws Exception {

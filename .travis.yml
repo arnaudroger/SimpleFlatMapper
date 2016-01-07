@@ -4,19 +4,13 @@ sudo: required
 
 services:
   - mysql
+  - postgresql
 
 jdk:
   - oraclejdk8
   - oraclejdk7
   - openjdk7
   - openjdk6
-
-addons:
-  apt:
-    packages:
-    - postgresql-9.5
-    - postgresql-contrib-9.5
-  postgresql: 9.5
 
 env:
   - TRAVISBUILD=true
@@ -26,10 +20,8 @@ after_success:
 
 
 before_install:
-    echo "127.0.0.1    $HOSTNAME" | sudo tee -a /etc/hosts
+  echo "127.0.0.1    $HOSTNAME" | sudo tee -a /etc/hosts
 
 before_script:
   - mysql -e 'create database sfm;'
-  - sudo cp /etc/postgresql/9.4/main/pg_hba.conf /etc/postgresql/9.5/main/pg_hba.conf
-  - sudo /etc/init.d/postgresql restart
   - psql -c 'create database sfm;' -U postgres

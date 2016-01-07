@@ -54,6 +54,8 @@ public class CrudFactory {
 
         if (crudMeta.getDatabaseMeta().isMysql()) {
             return MysqlCrudFactory.newInstance(target, keyTarget, crudMeta, mapperFactory, defaultCrud);
+        } else if (crudMeta.getDatabaseMeta().isPostgresSql()) {
+            return PostgresqlCrudFactory.newInstance(target, keyTarget, crudMeta, mapperFactory, defaultCrud);
         }
 
         return defaultCrud;
@@ -61,9 +63,9 @@ public class CrudFactory {
 
     private static <T, K> QueryPreparer<T> buildUpsert(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory mapperFactory) {
         if (crudMeta.getDatabaseMeta().isMysql()) {
-            return MysqlCrudFactory.buildMysqlUpsert(target, crudMeta, mapperFactory);
+            return MysqlCrudFactory.buildUpsert(target, crudMeta, mapperFactory);
         } else if (crudMeta.getDatabaseMeta().isPostgresSql() && crudMeta.getDatabaseMeta().isVersionMet(9, 5)) {
-            return PostgresqlCrudFactory.buildMysqlUpsert(target, crudMeta, mapperFactory);
+            return PostgresqlCrudFactory.buildUpsert(target, crudMeta, mapperFactory);
         }
         return new UnsupportedQueryPreparer<T>("Upsert Not Supported on " + crudMeta.getDatabaseMeta());
     }

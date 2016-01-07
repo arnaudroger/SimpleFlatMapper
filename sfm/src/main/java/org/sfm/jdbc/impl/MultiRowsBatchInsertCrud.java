@@ -9,15 +9,15 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-public final class MysqlCrud<T, K> implements Crud<T, K> {
+public final class MultiRowsBatchInsertCrud<T, K> implements Crud<T, K> {
     private final BatchQueryExecutor<T> batchInsertQueryExecutor;
     private final BatchQueryExecutor<T> batchUpsertQueryExecutor;
 
     private final DefaultCrud<T, K> delegate;
 
-    public MysqlCrud(DefaultCrud<T, K> delegate,
-                     BatchQueryExecutor<T> batchInsertQueryPreparer,
-                     BatchQueryExecutor<T> batchUpsertQueryExecutor) {
+    public MultiRowsBatchInsertCrud(DefaultCrud<T, K> delegate,
+                                    BatchQueryExecutor<T> batchInsertQueryPreparer,
+                                    BatchQueryExecutor<T> batchUpsertQueryExecutor) {
         this.delegate = delegate;
         this.batchInsertQueryExecutor = batchInsertQueryPreparer;
         this.batchUpsertQueryExecutor = batchUpsertQueryExecutor;

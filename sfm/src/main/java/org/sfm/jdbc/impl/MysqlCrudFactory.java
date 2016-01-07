@@ -14,14 +14,14 @@ import java.util.List;
 public class MysqlCrudFactory {
 
     public static <T, K> Crud<T, K> newInstance(Type target, Type keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory, DefaultCrud<T, K> defaultCrud) throws SQLException {
-        return new MysqlCrud<T, K>(
+        return new MultiRowsBatchInsertCrud<T, K>(
                 defaultCrud,
-                buildMysqlBatchInsert(target, crudMeta, jdbcMapperFactory, false),
-                buildMysqlBatchInsert(target, crudMeta, jdbcMapperFactory, true));
+                buildBatchInsert(target, crudMeta, jdbcMapperFactory, false),
+                buildBatchInsert(target, crudMeta, jdbcMapperFactory, true));
 
     }
 
-    private static <T, K> BatchQueryExecutor<T> buildMysqlBatchInsert(
+    private static <T, K> BatchQueryExecutor<T> buildBatchInsert(
             Type target,
             CrudMeta<T, K> crudMeta,
             JdbcMapperFactory jdbcMapperFactory,
@@ -56,7 +56,7 @@ public class MysqlCrudFactory {
                 new SizeAdjusterBatchQueryExecutor<T>(queryExecutor);
     }
 
-    public static <T, K> QueryPreparer<T> buildMysqlUpsert(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) {
+    public static <T, K> QueryPreparer<T> buildUpsert(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) {
         List<String> generatedKeys = new ArrayList<String>();
         StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO ");

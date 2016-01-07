@@ -26,7 +26,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class MysqlCrudTest {
+public class MultiRowsBatchInsertCrudTest {
 
     @Test
     public void testBatchInsertCreateOneQuery() throws SQLException {

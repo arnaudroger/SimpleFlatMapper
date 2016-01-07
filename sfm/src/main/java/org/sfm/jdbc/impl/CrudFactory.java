@@ -31,6 +31,7 @@ public class CrudFactory {
         QueryPreparer<T> update = buildUpdate(target, crudMeta, mapperFactory);
         QueryPreparer<K> select = buildSelect(keyTarget, crudMeta, mapperFactory);
         QueryPreparer<K> delete = buildDelete(keyTarget, crudMeta, mapperFactory);
+        QueryPreparer<T> upsert = buildUpsert(target, crudMeta, mapperFactory);
 
         KeyTupleQueryPreparer<K> keyTupleQueryPreparer = buildKeyTupleQueryPreparer(keyTarget, crudMeta, mapperFactory);
 
@@ -43,7 +44,7 @@ public class CrudFactory {
                 insert,
                 update,
                 select,
-                newUpsertPreparer(target, crudMeta, mapperFactory),
+                upsert,
                 keyTupleQueryPreparer,
                 selectMapper,
                 delete,
@@ -58,9 +59,11 @@ public class CrudFactory {
         return defaultCrud;
     }
 
-    private static <T, K> QueryPreparer<T> newUpsertPreparer(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory mapperFactory) {
+    private static <T, K> QueryPreparer<T> buildUpsert(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory mapperFactory) {
         if (crudMeta.getDatabaseMeta().isMysql()) {
             return MysqlCrudFactory.buildMysqlUpsert(target, crudMeta, mapperFactory);
+        } else if (crudMeta.getDatabaseMeta().isPostgresSql() && crudMeta.getDatabaseMeta().isVersionMet(9, 5)) {
+            return PostgresqlCrudFactory.buildMysqlUpsert(target, crudMeta, mapperFactory);
         }
         return new UnsupportedQueryPreparer<T>("Upsert Not Supported on " + crudMeta.getDatabaseMeta());
     }

@@ -20,6 +20,7 @@ public class PostgresqlCrudTest {
     public void testBatchUpsertOnDb() throws SQLException {
         Connection connection = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
         if (connection == null) { System.err.println("Db Postgresql not available"); return; }
+        System.out.println("connection = " + connection.getMetaData().getDatabaseMajorVersion()  + "." + connection.getMetaData().getDatabaseMinorVersion());
         if (connection.getMetaData().getDatabaseMajorVersion() != 9 || connection.getMetaData().getDatabaseMinorVersion() < 5)
             { System.err.println("Db Postgresql 9.5 not available"); return; }
         try {
@@ -50,7 +51,7 @@ public class PostgresqlCrudTest {
 
     @Test
     public void testUpsert() throws SQLException {
-        Connection connection = DbHelper.getDbConnection(DbHelper.TargetDB.MYSQL);
+        Connection connection = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
         if (connection == null) { System.err.println("Db MySQL not available"); return; }
         if (connection.getMetaData().getDatabaseMajorVersion() != 9 || connection.getMetaData().getDatabaseMinorVersion() < 5)
         { System.err.println("Db Postgresql 9.5 not available"); return; }

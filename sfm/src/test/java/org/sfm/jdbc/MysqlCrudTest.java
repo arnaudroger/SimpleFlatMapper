@@ -17,9 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -37,8 +35,6 @@ public class MysqlCrudTest {
         try {
             Crud<DbObject, Long> objectCrud =
                     JdbcMapperFactory.newInstance().<DbObject, Long>crud(DbObject.class, Long.class).table(connection, "TEST_DB_OBJECT");
-
-
 
             Connection mockConnection = mock(Connection.class);
 
@@ -68,6 +64,23 @@ public class MysqlCrudTest {
         try {
             Crud<DbObject, Long> objectCrud =
                     JdbcMapperFactory.newInstance().<DbObject, Long>crud(DbObject.class, Long.class).table(connection, "TEST_DB_OBJECT");
+
+            DbObject object1 = DbObject.newInstance();
+            DbObject object2 = DbObject.newInstance();
+
+            objectCrud.create(connection, object1);
+
+            object1.setName("BatchUpdate");
+            object2.setName("BatchUpdate");
+
+            objectCrud.createOrUpdate(connection, Arrays.<DbObject>asList(object1, object2));
+
+            ResultSet resultSet = connection.createStatement().executeQuery("SELECT count(*) FROM TEST_DB_OBJECT WHERE name = 'BatchUpdate'");
+            assertTrue(resultSet.next());
+            assertEquals(2, resultSet.getInt(1));
+
+            assertEquals(object1, objectCrud.read(connection, object1.getId()));
+            assertEquals(object2, objectCrud.read(connection, object2.getId()));
 
         } finally {
             connection.close();
@@ -119,6 +132,8 @@ public class MysqlCrudTest {
             object.setEmail("Updated Email " + key);
 
             key = objectCrud.createOrUpdate(connection, object, new KeyCapture<Long>()).getKey();
+
+            System.out.println("key = " + key + " current id " + object.getId());
 
             ResultSet resultSet = connection.createStatement().executeQuery("SELECT count(*) FROM TEST_DB_OBJECT_AUTOINC_NAMEINDEX WHERE email = '" + object.getEmail() + "'");
             assertTrue(resultSet.next());

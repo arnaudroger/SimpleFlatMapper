@@ -53,13 +53,7 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
         this.hasGeneratedKeys = hasGeneratedKeys;
     }
 
-    /**
-     * insert value into the db through the specified connection.
-     *
-     * @param connection the connection
-     * @param value      the value
-     * @throws SQLException if an error occurs
-     */
+
     @Override
     public void create(Connection connection, T value) throws SQLException {
         create(connection, value, null);
@@ -70,17 +64,6 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
         create(connection, values, null);
     }
 
-    /**
-     * insert value into the db through the specified connection.
-     * Callback keyConsumer with the generated key if one was.
-     *
-     * @param connection  the connection
-     * @param value       the value
-     * @param keyConsumer the key consumer
-     * @param <RH>        the type of keyConsumer
-     * @return the keyConsumer
-     * @throws SQLException
-     */
     @Override
     public <RH extends RowHandler<? super K>> RH create(Connection connection, T value, RH keyConsumer) throws SQLException {
         PreparedStatement preparedStatement = insertQueryPreparer.prepare(connection).bind(value);
@@ -147,15 +130,6 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
         }
     }
 
-
-    /**
-     * retrieve the object with the specified key.
-     *
-     * @param connection the connection
-     * @param key        the key
-     * @return the object or null if not found
-     * @throws SQLException if an error occurs
-     */
     @Override
     public T read(Connection connection, K key) throws SQLException {
         PreparedStatement preparedStatement = selectQueryPreparer.prepare(connection).bind(key);
@@ -277,25 +251,12 @@ public class DefaultCrud<T, K> implements Crud<T,K> {
         }
     }
 
-    /**
-     * UPSERT only supported on Mysql
-     * @param connection the connection
-     * @param value the value
-     * @throws SQLException
-     * @throws UnsupportedOperationException
-     */
+
     @Override
     public void createOrUpdate(Connection connection, T value) throws SQLException {
         createOrUpdate(connection, value, null);
     }
 
-    /**
-     * UPSERT only supported on Mysql
-     * @param connection the connection
-     * @param values the values
-     * @throws SQLException
-     * @throws UnsupportedOperationException
-     */
     @Override
     public void createOrUpdate(Connection connection, Collection<T> values) throws SQLException {
         createOrUpdate(connection, values, null);

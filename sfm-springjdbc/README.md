@@ -55,3 +55,21 @@ class MyDao {
 	}
 }
 ```
+
+## Crud
+
+```java
+class MyDao {
+	JdbcTemplateCrud<DbObject, Long> objectCrud =
+			JdbcTemplateMapperFactory.newInstance()
+					.<DbObject, Long>crud(DbObject.class, Long.class).to(template, "TEST_DB_OBJECT");
+
+	public void insertObject(DbObject object) {
+        crud.create(object);
+	}
+
+	public void insertObjects(Collection<DbObject> objects) {
+		crud.create(objects);
+	}
+}
+```

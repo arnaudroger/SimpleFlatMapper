@@ -114,4 +114,8 @@ public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcC
 	public <T> SqlParameterSourceFactory<T> newSqlParameterSourceFactory(TypeReference<T> target, ParsedSql parsedSql) {
 		return newSqlParameterSourceFactory(target.getType(), parsedSql);
 	}
+
+	public <T, K> JdbcTemplateCrudDSL<T, K> from(Type target, Type keyTarget) {
+		return new JdbcTemplateCrudDSL<T, K>(this, target, keyTarget);
+	}
 }

@@ -1,6 +1,7 @@
 package org.sfm.datastax;
 
 import com.datastax.driver.core.ColumnDefinitions;
+import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.DataType;
 import org.sfm.map.FieldKey;
 import org.sfm.map.mapper.MapperKey;
@@ -92,6 +93,10 @@ public class DatastaxColumnKey implements FieldKey<DatastaxColumnKey>, TypeAffin
 
 	public static DatastaxColumnKey of(ColumnDefinitions metaData, int column) {
 		return new DatastaxColumnKey(metaData.getName(column), column , metaData.getType(column));
+	}
+
+	public static DatastaxColumnKey of(ColumnMetadata metaData, int column) {
+		return new DatastaxColumnKey(metaData.getName(), column , metaData.getType());
 	}
 
 	public static MapperKey<DatastaxColumnKey> mapperKey(ColumnDefinitions metaData) {

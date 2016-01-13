@@ -38,7 +38,8 @@ public class DatastaxBinder<T> {
     }
 
     protected BoundStatementMapper<T> createMapper(MapperKey<DatastaxColumnKey> mapperKey) {
-        BoundStatementMapper mapper;SettableDataMapperBuilder<T> settableDataMapperBuilder = new SettableDataMapperBuilder<T>(classMeta, config,
+        BoundStatementMapper mapper;
+        SettableDataMapperBuilder<T> settableDataMapperBuilder = new SettableDataMapperBuilder<T>(classMeta, config,
                 ConstantTargetFieldMapperFactorImpl.instance(new SettableDataSetterFactory(config, classMeta.getReflectionService())));
         for(DatastaxColumnKey columnKey : mapperKey.getColumns()) {
             settableDataMapperBuilder.addColumn(columnKey);

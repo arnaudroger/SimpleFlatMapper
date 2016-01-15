@@ -8,4 +8,5 @@ public interface CellWriter {
     void nextCell(Appendable target) throws IOException;
 
     void endOfRow(Appendable target) throws IOException;
+
 }

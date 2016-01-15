@@ -6,9 +6,6 @@ import org.sfm.csv.impl.writer.CsvCellWriter;
 import org.sfm.map.*;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.EnumOrdinalFormatProperty;
-import org.sfm.map.mapper.PropertyMapping;
-import org.sfm.map.context.MappingContextFactoryBuilder;
-import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
@@ -24,6 +21,27 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class CsvWriterTest {
+
+
+    @Test
+    public void testWriterCustomCellWriter() throws ParseException, IOException {
+        StringWriter sw = new StringWriter();
+        CsvWriter.from(DbObject.class).separator('\t').quote('\'').alwaysEscape().endOfLine("\n").to(sw).append(newDbObject());
+        assertEquals(
+                "\'id\'\t\'name\'\t\'email\'\t\'creation_time\'\t\'type_ordinal\'\t\'type_name\'\n" +
+                        "\'13\'\t\'name\'\t\'email\'\t\'2015-06-06 17:46:23\'\t\'type2\'\t\'type3\'\n",
+                sw.toString());
+    }
+
+    @Test
+    public void testWriterCustomSeparator() throws ParseException, IOException {
+        StringWriter sw = new StringWriter();
+        CsvWriter.from(DbObject.class).separator('\t').to(sw).append(newDbObject());
+        assertEquals(
+                "id\tname\temail\tcreation_time\ttype_ordinal\ttype_name\r\n" +
+                        "13\tname\temail\t2015-06-06 17:46:23\ttype2\ttype3\r\n",
+                sw.toString());
+    }
 
     @Test
     public void testWriterDefaultBehaviour() throws ParseException, IOException {

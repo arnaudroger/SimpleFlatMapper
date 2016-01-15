@@ -92,4 +92,5 @@ public final class CsvCellWriter implements CellWriter {
     public CellWriter alwaysEscape() {
         return alwaysEscape(true);
     }
+
 }

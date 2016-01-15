@@ -260,6 +260,34 @@ public class CsvWriter<T>  {
             return newMapDSL(classMeta, columns, mapperConfig, cellWriter, skipHeaders);
         }
 
+        public CsvWriterDSL<T> separator(char separator) {
+            if (cellWriter instanceof CsvCellWriter) {
+                return newMapDSL(classMeta, columns, mapperConfig, ((CsvCellWriter)cellWriter).separator(separator), skipHeaders);
+            }
+            throw new IllegalStateException("Custom cell writer set, cannot use dsl to alter it");
+        }
+
+        public CsvWriterDSL<T> quote(char quote) {
+            if (cellWriter instanceof CsvCellWriter) {
+                return newMapDSL(classMeta, columns, mapperConfig, ((CsvCellWriter)cellWriter).quote(quote), skipHeaders);
+            }
+            throw new IllegalStateException("Custom cell writer set, cannot use dsl to alter it");
+        }
+
+        public CsvWriterDSL<T> endOfLine(String endOfLine) {
+            if (cellWriter instanceof CsvCellWriter) {
+                return newMapDSL(classMeta, columns, mapperConfig, ((CsvCellWriter)cellWriter).endOfLine(endOfLine), skipHeaders);
+            }
+            throw new IllegalStateException("Custom cell writer set, cannot use dsl to alter it");
+        }
+
+        public CsvWriterDSL<T> alwaysEscape() {
+            if (cellWriter instanceof CsvCellWriter) {
+                return newMapDSL(classMeta, columns, mapperConfig, ((CsvCellWriter)cellWriter).alwaysEscape(), skipHeaders);
+            }
+            throw new IllegalStateException("Custom cell writer set, cannot use dsl to alter it");
+        }
+
         /**
          * Create a new DSL object identical to the current one except it will not append the headers to the appendable.
          * @return the new DSL

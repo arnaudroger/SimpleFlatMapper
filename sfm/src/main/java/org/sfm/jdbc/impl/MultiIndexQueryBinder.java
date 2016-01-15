@@ -1,5 +1,6 @@
 package org.sfm.jdbc.impl;
 
+import org.sfm.jdbc.MultiIndexFieldMapper;
 import org.sfm.jdbc.QueryBinder;
 import org.sfm.jdbc.SizeSupplier;
 import org.sfm.jdbc.named.NamedSqlQuery;

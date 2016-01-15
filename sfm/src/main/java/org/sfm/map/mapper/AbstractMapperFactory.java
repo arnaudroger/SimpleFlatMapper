@@ -1,9 +1,7 @@
 package org.sfm.map.mapper;
 
-import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
-import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.error.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.error.RethrowRowHandlerErrorHandler;
 import org.sfm.map.impl.*;

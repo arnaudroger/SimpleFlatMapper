@@ -2,7 +2,6 @@ package org.sfm.jdbc;
 
 import org.sfm.jdbc.impl.CrudFactory;
 import org.sfm.jdbc.impl.CrudMeta;
-import org.sfm.jdbc.impl.DefaultCrud;
 
 import java.lang.reflect.Type;
 import java.sql.Connection;

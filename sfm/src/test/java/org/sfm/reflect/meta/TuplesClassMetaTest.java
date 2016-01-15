@@ -92,6 +92,7 @@ public class TuplesClassMetaTest {
 
     }
 
+    @SuppressWarnings("unchecked")
     private void assertIs(String elementName, String prop, PropertyMeta<Tuple2<Foo, Foo>, String> propertyMeta) {
         assertTrue(propertyMeta.isSubProperty());
         SubPropertyMeta<Tuple2<Foo, Foo>, Foo, String> subPropertyMeta = (SubPropertyMeta<Tuple2<Foo, Foo>, Foo, String>) propertyMeta;

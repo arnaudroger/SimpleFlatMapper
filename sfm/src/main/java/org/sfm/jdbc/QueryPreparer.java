@@ -2,7 +2,6 @@ package org.sfm.jdbc;
 
 import org.sfm.map.Mapper;
 
-import java.net.Socket;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

@@ -1,4 +1,4 @@
-package org.sfm.jdbc.impl;
+package org.sfm.jdbc;
 
 import java.sql.PreparedStatement;
 

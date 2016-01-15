@@ -1,5 +1,7 @@
 package org.sfm.jdbc.impl;
 
+import org.sfm.jdbc.MultiIndexFieldMapper;
+
 public final class MysqlBatchInsertQueryExecutor<T> extends AbstractBatchInsertQueryExecutor<T> {
 
     public MysqlBatchInsertQueryExecutor(

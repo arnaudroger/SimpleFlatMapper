@@ -7,7 +7,7 @@ import org.sfm.utils.conv.Converter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListWithConverterSettableDataSetter<I, O> implements Setter<SettableByIndexData, List<I>> {
+public class ListWithConverterSettableDataSetter<I, O> implements Setter<SettableByIndexData<?>, List<I>> {
     private final int index;
     private final Converter<I, O> converter;
 
@@ -17,7 +17,7 @@ public class ListWithConverterSettableDataSetter<I, O> implements Setter<Settabl
     }
 
     @Override
-    public void set(SettableByIndexData target, List<I> value) throws Exception {
+    public void set(SettableByIndexData<?> target, List<I> value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

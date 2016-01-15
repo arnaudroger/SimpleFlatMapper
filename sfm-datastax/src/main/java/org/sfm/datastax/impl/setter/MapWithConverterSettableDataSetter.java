@@ -7,7 +7,7 @@ import org.sfm.utils.conv.Converter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MapWithConverterSettableDataSetter<KI, KO, VI, VO> implements Setter<SettableByIndexData, Map<KI, VI>> {
+public class MapWithConverterSettableDataSetter<KI, KO, VI, VO> implements Setter<SettableByIndexData<?>, Map<KI, VI>> {
     private final int index;
     private final Converter<KI, KO> keyConverter;
     private final Converter<VI, VO> valueConverter;
@@ -19,7 +19,7 @@ public class MapWithConverterSettableDataSetter<KI, KO, VI, VO> implements Sette
     }
 
     @Override
-    public void set(SettableByIndexData target, Map<KI, VI> value) throws Exception {
+    public void set(SettableByIndexData<?> target, Map<KI, VI> value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

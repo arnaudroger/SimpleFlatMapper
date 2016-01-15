@@ -72,6 +72,7 @@ public class DbExtendedType {
 	}
 
 
+	@SuppressWarnings("deprecation")
 	public static void assertDbExtended(DbExtendedType o) {
 		assertArrayEquals(new byte[] { 'a', 'b', 'c' }, o.getBytes());
 		assertEquals(new BigInteger("123"), o.getBigInteger());

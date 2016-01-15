@@ -1,5 +1,6 @@
 package org.sfm.jdbc.impl;
 
+import org.sfm.jdbc.MultiIndexFieldMapper;
 import org.sfm.utils.ErrorHelper;
 
 import java.sql.Connection;

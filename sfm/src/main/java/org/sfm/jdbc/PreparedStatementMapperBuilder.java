@@ -2,7 +2,6 @@ package org.sfm.jdbc;
 
 
 import org.sfm.jdbc.impl.CollectionIndexFieldMapper;
-import org.sfm.jdbc.impl.MultiIndexFieldMapper;
 import org.sfm.jdbc.impl.MultiIndexQueryPreparer;
 import org.sfm.jdbc.impl.SingleIndexFieldMapper;
 import org.sfm.jdbc.impl.MapperQueryPreparer;

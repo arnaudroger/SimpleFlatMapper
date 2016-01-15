@@ -20,6 +20,7 @@ public class MapClassMetaTest {
 
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testFindPropertyStringDbObject() {
         final ClassMeta<Map<String, DbObject>> classMeta =
                 ReflectionService.newInstance().getClassMeta(new TypeReference<Map<String, DbObject>>() {}.getType());

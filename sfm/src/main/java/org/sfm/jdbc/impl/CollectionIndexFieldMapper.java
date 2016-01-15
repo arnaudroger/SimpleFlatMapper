@@ -1,5 +1,6 @@
 package org.sfm.jdbc.impl;
 
+import org.sfm.jdbc.MultiIndexFieldMapper;
 import org.sfm.jdbc.impl.setter.PreparedStatementIndexSetter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.IndexedGetter;

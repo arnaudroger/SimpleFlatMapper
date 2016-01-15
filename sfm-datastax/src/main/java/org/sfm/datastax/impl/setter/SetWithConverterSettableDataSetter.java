@@ -7,7 +7,7 @@ import org.sfm.utils.conv.Converter;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SetWithConverterSettableDataSetter<I, O> implements Setter<SettableByIndexData, Set<I>> {
+public class SetWithConverterSettableDataSetter<I, O> implements Setter<SettableByIndexData<?>, Set<I>> {
     private final int index;
     private final Converter<I, O> converter;
 
@@ -17,7 +17,7 @@ public class SetWithConverterSettableDataSetter<I, O> implements Setter<Settable
     }
 
     @Override
-    public void set(SettableByIndexData target, Set<I> value) throws Exception {
+    public void set(SettableByIndexData<?> target, Set<I> value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

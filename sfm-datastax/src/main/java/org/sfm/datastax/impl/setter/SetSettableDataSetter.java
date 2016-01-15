@@ -5,7 +5,7 @@ import org.sfm.reflect.Setter;
 
 import java.util.Set;
 
-public class SetSettableDataSetter<E> implements Setter<SettableByIndexData, Set<E>> {
+public class SetSettableDataSetter<E> implements Setter<SettableByIndexData<?>, Set<E>> {
     private final int index;
 
     public SetSettableDataSetter(int index) {
@@ -13,7 +13,7 @@ public class SetSettableDataSetter<E> implements Setter<SettableByIndexData, Set
     }
 
     @Override
-    public void set(SettableByIndexData target, Set<E> value) throws Exception {
+    public void set(SettableByIndexData<?> target, Set<E> value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

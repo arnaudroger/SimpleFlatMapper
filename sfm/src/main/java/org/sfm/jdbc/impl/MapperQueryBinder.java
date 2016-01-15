@@ -1,8 +1,6 @@
 package org.sfm.jdbc.impl;
 
 import org.sfm.jdbc.QueryBinder;
-import org.sfm.jdbc.named.NamedSqlQuery;
-import org.sfm.map.Mapper;
 import org.sfm.utils.ErrorHelper;
 
 import java.sql.Connection;

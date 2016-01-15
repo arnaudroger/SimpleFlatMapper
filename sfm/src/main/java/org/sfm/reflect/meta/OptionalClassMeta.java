@@ -82,7 +82,7 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 	}
 
 
-	private class OptionalGetter<T> implements Getter<Optional<T>, Object> {
+	private static class OptionalGetter<T> implements Getter<Optional<T>, Object> {
 		@Override
         public Object get(Optional<T> target) throws Exception {
             return target.orElse(null);

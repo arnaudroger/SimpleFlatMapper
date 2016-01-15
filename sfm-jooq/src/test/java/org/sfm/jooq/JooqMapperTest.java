@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 public class JooqMapperTest {
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testCacheMapper() {
 		SfmRecordMapperProvider recordMapperProvider = new SfmRecordMapperProvider();
 		RecordType rt = mock(RecordType.class);

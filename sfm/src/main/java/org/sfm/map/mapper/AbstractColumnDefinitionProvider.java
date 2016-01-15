@@ -5,7 +5,6 @@ import org.sfm.map.FieldKey;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.tuples.Tuple2;
 import org.sfm.utils.Predicate;
-import org.sfm.utils.Supplier;
 import org.sfm.utils.UnaryFactory;
 
 import java.util.ArrayList;

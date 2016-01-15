@@ -5,8 +5,6 @@ import org.sfm.beans.*;
 import org.sfm.reflect.asm.AsmFactory;
 import org.sfm.reflect.impl.FieldGetter;
 import org.sfm.reflect.impl.MethodGetter;
-import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.primitive.*;
 
 import static org.junit.Assert.*;

@@ -13,6 +13,7 @@ import static org.junit.Assert.fail;
 public class SubPropertyMetaTest {
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSubProperty() throws Exception {
         ClassMeta<Db1DeepObject> classMeta = ReflectionService.newInstance().getClassMeta(Db1DeepObject.class);
 

@@ -5,7 +5,7 @@ import org.sfm.reflect.Setter;
 
 import java.util.Map;
 
-public class MapSettableDataSetter<K, V> implements Setter<SettableByIndexData, Map<K, V>> {
+public class MapSettableDataSetter<K, V> implements Setter<SettableByIndexData<?>, Map<K, V>> {
     private final int index;
 
     public MapSettableDataSetter(int index) {
@@ -13,7 +13,7 @@ public class MapSettableDataSetter<K, V> implements Setter<SettableByIndexData, 
     }
 
     @Override
-    public void set(SettableByIndexData target, Map<K, V> value) throws Exception {
+    public void set(SettableByIndexData<?> target, Map<K, V> value) throws Exception {
         if (value == null) {
             target.setToNull(index);
         } else {

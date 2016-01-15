@@ -3,7 +3,9 @@ package org.sfm.map.impl.getter.osgi;
 import org.apache.commons.io.IOUtils;
 import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.util.FelixConstants;
+import org.apache.felix.resolver.Activator;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.BundleWiring;
@@ -23,10 +25,10 @@ public class HostApplication
 
     public HostApplication() throws IOException {
         // Create a configuration property map.
-        Map config = new HashMap();
+        Map<String, Object> config = new HashMap<String, Object>();
         // Create host activator;
         m_activator = new HostActivator();
-        List list = new ArrayList();
+        List<BundleActivator> list = new ArrayList<BundleActivator>();
         list.add(m_activator);
         config.put(FelixConstants.SYSTEMBUNDLE_ACTIVATORS_PROP, list);
         config.put(FelixConstants.FRAMEWORK_STORAGE, "target/felix");

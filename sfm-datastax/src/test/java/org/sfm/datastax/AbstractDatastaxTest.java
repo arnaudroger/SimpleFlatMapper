@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
+@SuppressWarnings("ALL")
 public class AbstractDatastaxTest  {
 
     static boolean isStarted = false;
@@ -148,6 +149,7 @@ public class AbstractDatastaxTest  {
 
     }
 
+    @SuppressWarnings("unchecked")
     private static void fixTypeCodec() {
         try {
             System.out.println("PRINT CONNENDRUM");
@@ -167,6 +169,7 @@ public class AbstractDatastaxTest  {
             System.out.println("LongCodec.instance = " + longCodeInstance);
 
             if (o.get(DataType.Name.BIGINT) == null) {
+                //noinspection unchecked,unchecked,unchecked
                 o.put(DataType.Name.BIGINT, longCodeInstance);
                 o.put(DataType.Name.COUNTER, longCodeInstance);
 

@@ -3,6 +3,7 @@ package org.sfm.datastax.impl;
 import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.TableMetadata;
+import com.datastax.driver.core.querybuilder.*;
 import org.sfm.datastax.BoundStatementMapper;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.datastax.DatastaxCrud;
@@ -12,7 +13,6 @@ import org.sfm.datastax.DatastaxMapperFactory;
 import org.sfm.datastax.SettableDataMapperBuilder;
 
 import java.lang.reflect.Type;
-import java.sql.SQLException;
 import java.util.List;
 
 public class DatastaxCrudFactory {
@@ -30,101 +30,95 @@ public class DatastaxCrudFactory {
                                                         TableMetadata tableMetadata,
                                                         Session session,
                                                         DatastaxMapperFactory mapperFactory) {
-        BoundStatementMapper<T> insertSetter = insertSetter(target, tableMetadata, mapperFactory);
-        BoundStatementMapper<K> keySetter = keySetter(keyTarget, tableMetadata, mapperFactory);
         DatastaxMapper<T> selectMapper = selectMapper(target, tableMetadata, mapperFactory);
         return new DatastaxCrud<T, K>(
                 session.prepare(insertQuery(tableMetadata)),
+                session.prepare(insertQuery(tableMetadata, "TTL", "TIMESTAMP")),
+                session.prepare(insertQuery(tableMetadata, "TTL" )),
+                session.prepare(insertQuery(tableMetadata, "TIMESTAMP")),
                 session.prepare(readQuery(tableMetadata)),
                 session.prepare(deleteQuery(tableMetadata)),
-                insertSetter,
-                keySetter,
-                selectMapper);
+                session.prepare(deleteQueryWithTimestamp(tableMetadata)),
+                DatastaxCrudFactory.<T>insertSetter(target, tableMetadata, mapperFactory, 0),
+                DatastaxCrudFactory.<K>keySetter(keyTarget, tableMetadata, mapperFactory, 0),
+                DatastaxCrudFactory.<K>keySetter(keyTarget, tableMetadata, mapperFactory, 1),
+                selectMapper,
+                tableMetadata.getColumns().size());
     }
 
     private static String deleteQuery(TableMetadata tableMetadata) {
-        StringBuilder sb = new StringBuilder("DELETE FROM ");
+        Delete delete = QueryBuilder.delete().from(tableMetadata);
 
-        sb.append(tableMetadata.getName());
-
-        sb.append(" WHERE ");
+        Delete.Where where = delete.where();
 
         List<ColumnMetadata> columns = tableMetadata.getPrimaryKey();
 
-        boolean first = true;
         for(ColumnMetadata column : columns) {
-            if (! first) {
-                sb.append(" and ");
-            }
-            sb.append(column.getName()).append(" = ?");
-            first = false;
+            where.and(QueryBuilder.eq(column.getName(), QueryBuilder.bindMarker()));
         }
 
-        return sb.toString();
+        return delete.toString();
     }
+
+    private static String deleteQueryWithTimestamp(TableMetadata tableMetadata) {
+        Delete delete = QueryBuilder.delete().from(tableMetadata);
+
+        delete.using(QueryBuilder.timestamp(QueryBuilder.bindMarker()));
+
+        Delete.Where where = delete.where();
+
+        List<ColumnMetadata> columns = tableMetadata.getPrimaryKey();
+
+        for(ColumnMetadata column : columns) {
+            where.and(QueryBuilder.eq(column.getName(), QueryBuilder.bindMarker()));
+        }
+
+        return delete.toString();
+    }
+
 
     private static String readQuery(TableMetadata tableMetadata) {
-        StringBuilder sb = new StringBuilder("SELECT ");
+
+        Select.Selection select = QueryBuilder.select();
 
 
         List<ColumnMetadata> columns = tableMetadata.getColumns();
 
-        boolean first = true;
         for(ColumnMetadata column : columns) {
-            if (! first) {
-                sb.append(", ");
-            }
-            sb.append(column.getName());
-
-            first = false;
+            select.column(column.getName());
         }
 
-        sb.append(" FROM ");
-        sb.append(tableMetadata.getName());
-
-        sb.append(" WHERE ");
+        Select.Where where = select.from(tableMetadata).where();
 
         columns = tableMetadata.getPrimaryKey();
-
-        first = true;
         for(ColumnMetadata column : columns) {
-            if (! first) {
-                sb.append(", ");
-            }
-            sb.append(column.getName()).append(" = ?");
-            first = false;
+            where.and(QueryBuilder.eq(column.getName(), QueryBuilder.bindMarker()));
         }
 
-        return sb.toString();
+        return where.toString();
     }
 
-    private static String insertQuery(TableMetadata tableMetadata) {
-        StringBuilder sb = new StringBuilder("INSERT INTO ");
+    private static String insertQuery(TableMetadata tableMetadata, String... options) {
+        Insert insert = QueryBuilder.insertInto(tableMetadata);
 
-        sb.append(tableMetadata.getName()).append("(");
+        if (options != null) {
+            Insert.Options using = insert.using();
+            for (String option : options) {
+                if ("TTL".equals(option)) {
+                    using.and(QueryBuilder.ttl(QueryBuilder.bindMarker()));
+                } else {
+                    using.and(QueryBuilder.timestamp(QueryBuilder.bindMarker()));
+                }
+            }
+        }
 
         List<ColumnMetadata> columns = tableMetadata.getColumns();
 
-        boolean first = true;
         for(ColumnMetadata column : columns) {
-            if (! first) {
-                sb.append(", ");
-            }
-            sb.append(column.getName());
-
-            first = false;
+            insert.value(column.getName(), QueryBuilder.bindMarker());
         }
 
-        sb.append(") VALUES(");
-
-        for(int i = 0; i < columns.size(); i++) {
-            if (i > 0) {
-                sb.append(", ");
-            }
-            sb.append("?");
-        }
-        sb.append(")");
-        return sb.toString();
+        return insert.toString();
     }
 
 
@@ -137,18 +131,18 @@ public class DatastaxCrudFactory {
         return mapperBuilder.mapper();
     }
 
-    private static <K> BoundStatementMapper<K> keySetter(Type keyTarget, TableMetadata tableMetadata, DatastaxMapperFactory mapperFactory) {
+    private static <K> BoundStatementMapper<K> keySetter(Type keyTarget, TableMetadata tableMetadata, DatastaxMapperFactory mapperFactory, int offset) {
         SettableDataMapperBuilder<K> mapperBuilder = mapperFactory.newBuilderFrom(keyTarget);
-        int i = 0;
+        int i = offset;
         for(ColumnMetadata columnMetadata : tableMetadata.getPrimaryKey()) {
             mapperBuilder.addColumn(DatastaxColumnKey.of(columnMetadata, i++));
         }
         return new BoundStatementMapper<K>(mapperBuilder.mapper());
     }
 
-    private static <T> BoundStatementMapper<T> insertSetter(Type target, TableMetadata tableMetadata, DatastaxMapperFactory mapperFactory) {
+    private static <T> BoundStatementMapper<T> insertSetter(Type target, TableMetadata tableMetadata, DatastaxMapperFactory mapperFactory, int offset) {
         SettableDataMapperBuilder<T> mapperBuilder = mapperFactory.newBuilderFrom(target);
-        int i = 0;
+        int i = offset;
         for(ColumnMetadata columnMetadata : tableMetadata.getColumns()) {
             mapperBuilder.addColumn(DatastaxColumnKey.of(columnMetadata, i++));
         }

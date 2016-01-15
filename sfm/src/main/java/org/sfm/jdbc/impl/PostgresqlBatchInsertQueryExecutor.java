@@ -1,5 +1,7 @@
 package org.sfm.jdbc.impl;
 
+import org.sfm.jdbc.MultiIndexFieldMapper;
+
 public final class PostgresqlBatchInsertQueryExecutor<T> extends AbstractBatchInsertQueryExecutor<T> {
 
     private final String[] keys;

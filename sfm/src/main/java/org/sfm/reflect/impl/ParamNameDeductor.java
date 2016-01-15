@@ -14,14 +14,10 @@ import org.sfm.reflect.meta.ClassVisitor;
 import org.sfm.reflect.meta.FieldAndMethodCallBack;
 import org.sfm.tuples.Tuple2;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,18 +115,20 @@ public class ParamNameDeductor<T> {
         primitivesNeutralValue.put(double.class, (double) 0);
     }
 
-    private <T> T markValue(Type type) throws Exception {
+    @SuppressWarnings("unchecked")
+    private <V> V markValue(Type type) throws Exception {
         if (TypeHelper.isPrimitive(type)) {
-            return (T) primitivesMarkValue.get(type);
-        } else if (TypeHelper.areEquals(type, String.class)) {
-            return (T) "1";
+            return (V) primitivesMarkValue.get(type);
+        }
+        else if (TypeHelper.areEquals(type, String.class)) {
+            return (V) "1";
         } else if (TypeHelper.isAssignable(Enum.class, type)) {
             Enum[] values = EnumHelper.getValues(TypeHelper.<Enum>toClass(type));
-            return (T) (values.length > 1 ? values[1] : values[0]);
+            return (V) (values.length > 1 ? values[1] : values[0]);
         } else {
             InstantiatorDefinition instantiatorDefinition = InstantiatorFactory.getSmallerConstructor(ReflectionInstantiatorDefinitionFactory.extractDefinitions(type));
 
-            Instantiator<Object, T> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, true), false);
+            Instantiator<Object, V> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, true), false);
             try {
                 return instantiator.newInstance(null);
             } catch (NullPointerException e) {
@@ -140,21 +138,22 @@ public class ParamNameDeductor<T> {
         }
     }
 
-    private <T> T neutralValue(Type type, boolean allowNull) throws Exception {
+    @SuppressWarnings("unchecked")
+    private <V> V neutralValue(Type type, boolean allowNull) throws Exception {
         if (TypeHelper.isPrimitive(type)) {
-            return (T) primitivesNeutralValue.get(type);
+            return (V) primitivesNeutralValue.get(type);
         }
         if (allowNull)  return null;
 
         if (TypeHelper.areEquals(type, String.class)) {
-            return (T) "0";
+            return (V) "0";
         } else if (TypeHelper.isAssignable(Enum.class, type)) {
             Enum[] values = EnumHelper.getValues(TypeHelper.<Enum>toClass(type));
-            return (T) values[0];
+            return (V) values[0];
         } else {
             InstantiatorDefinition instantiatorDefinition = InstantiatorFactory.getSmallerConstructor(ReflectionInstantiatorDefinitionFactory.extractDefinitions(type));
 
-            Instantiator<Object, T> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, true), false);
+            Instantiator<Object, V> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, true), false);
             try {
                 return instantiator.newInstance(null);
             } catch (NullPointerException e) {

@@ -13,14 +13,16 @@ public class MapperKey<K extends  FieldKey<K>> {
     private final Class<?>[] constructorFieldMappers;
     private final Class<?> instantiator;
     private final Class<?> target;
+    private final Class<?> source;
 
 
     public MapperKey(K[] keys,
                      FieldMapper<?, ?>[] fieldMappers,
                      FieldMapper<?, ?>[] constructorFieldMappers,
                      Instantiator<?, ?> instantiator,
-                     Class<?> target) {
+                     Class<?> target, Class<?> source) {
         this.keys = keys;
+        this.source = source;
         this.fieldMappers = getClassArray(fieldMappers);
         this.constructorFieldMappers = getClassArray(constructorFieldMappers);
         this.instantiator = getClass(instantiator);
@@ -52,26 +54,28 @@ public class MapperKey<K extends  FieldKey<K>> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        MapperKey that = (MapperKey) o;
+        MapperKey<?> mapperKey = (MapperKey<?>) o;
 
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        if (!Arrays.equals(keys, that.keys)) return false;
+        if (!Arrays.equals(keys, mapperKey.keys)) return false;
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        if (!Arrays.equals(fieldMappers, that.fieldMappers)) return false;
+        if (!Arrays.equals(fieldMappers, mapperKey.fieldMappers)) return false;
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        if (!Arrays.equals(constructorFieldMappers, that.constructorFieldMappers)) return false;
-        if (instantiator != null ? !instantiator.equals(that.instantiator) : that.instantiator != null) return false;
-        return !(target != null ? !target.equals(that.target) : that.target != null);
+        if (!Arrays.equals(constructorFieldMappers, mapperKey.constructorFieldMappers)) return false;
+        if (!instantiator.equals(mapperKey.instantiator)) return false;
+        if (!target.equals(mapperKey.target)) return false;
+        return source.equals(mapperKey.source);
 
     }
 
     @Override
     public int hashCode() {
-        int result = keys != null ? Arrays.hashCode(keys) : 0;
-        result = 31 * result + (fieldMappers != null ? Arrays.hashCode(fieldMappers) : 0);
-        result = 31 * result + (constructorFieldMappers != null ? Arrays.hashCode(constructorFieldMappers) : 0);
-        result = 31 * result + (instantiator != null ? instantiator.hashCode() : 0);
-        result = 31 * result + (target != null ? target.hashCode() : 0);
+        int result = Arrays.hashCode(keys);
+        result = 31 * result + Arrays.hashCode(fieldMappers);
+        result = 31 * result + Arrays.hashCode(constructorFieldMappers);
+        result = 31 * result + instantiator.hashCode();
+        result = 31 * result + target.hashCode();
+        result = 31 * result + source.hashCode();
         return result;
     }
 }

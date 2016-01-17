@@ -167,7 +167,7 @@ public class AsmFactory {
                                           final Class<? super S> source,
                                           final Class<T> target) throws Exception {
 
-        MapperKey key = new MapperKey(keys, mappers, constructorMappers, instantiator, target);
+        MapperKey key = new MapperKey(keys, mappers, constructorMappers, instantiator, target, source);
         Class<Mapper<S, T>> type = (Class<Mapper<S, T>>) fieldMapperCache.get(key);
         if (type == null) {
 

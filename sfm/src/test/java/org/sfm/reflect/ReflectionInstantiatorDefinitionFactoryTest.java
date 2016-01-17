@@ -61,7 +61,7 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 	@Test
 	public void testExtractConstructorsDbObject() throws IOException, NoSuchMethodException, SecurityException {
 		List<InstantiatorDefinition> dbObjectConstructors = ReflectionInstantiatorDefinitionFactory.extractDefinitions(DbObject.class);
-		assertEquals(3, dbObjectConstructors.size());
+		assertEquals(2, dbObjectConstructors.size());
 		assertEquals(0, dbObjectConstructors.get(0).getParameters().length);
 		assertEquals(DbObject.class.getConstructor(), dbObjectConstructors.get(0).getExecutable());
 		

@@ -4,8 +4,10 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.annotations.Table;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.datastax.beans.DbObjectWithAlias;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class DatastaxCrudTest extends AbstractDatastaxTest {
@@ -130,10 +132,41 @@ public class DatastaxCrudTest extends AbstractDatastaxTest {
 
     }
 
+    @Test
+    public void testCrudWithAlias() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+                DatastaxCrud<DbObjectWithAlias, Long> crud =
+                        DatastaxMapperFactory.newInstance().crud(DbObjectWithAlias.class, Long.class).to(session, "dbobjects");
+
+
+                final DbObject object = DbObject.newInstance();
+
+                final DatastaxCrud<DbObject, Long> crud2 =
+                        DatastaxMapperFactory.newInstance().crud(DbObject.class, Long.class).to(session, "dbobjects");
+
+                crud2.save(object);
+
+
+                DbObjectWithAlias dbObjectWithAlias = crud.read(object.getId());
+
+                assertNotNull(dbObjectWithAlias);
+
+                assertEquals(object.getId(), dbObjectWithAlias.getIdWithAlias());
+                assertEquals(object.getCreationTime(), dbObjectWithAlias.getCreationTimeWithAlias());
+                assertEquals(object.getEmail(), dbObjectWithAlias.getEmailWithAlias());
+                assertEquals(object.getName(), dbObjectWithAlias.getNameWithAlias());
+            }
+        });
+    }
+
     @Table(keyspace = "sfm", name = "dbobjects")
     public static class DbObjectTable extends DbObject {
     }
 
     public static class DbObjects extends DbObject {
     }
+
+
 }

@@ -1,28 +1,54 @@
 package org.sfm.reflect.meta;
 
 import javax.persistence.Column;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AliasProviderFactory {
-	private static boolean _isJpaPresent() {
-		try {
-			return Column.class != null;
-		} catch(Throwable e) {
-			return false;
-		}
+
+	private static AtomicReference<CurrentAliasProvider> currentAliasProvider =
+			new AtomicReference<CurrentAliasProvider>(
+					new CurrentAliasProvider(
+							new DefaultAliasProvider(), new AliasProvider[0]));
+
+	private static AliasProvider[] registered = new AliasProvider[0];
+
+	public static AliasProvider getAliasProvider() {
+		return currentAliasProvider.get().aliasProvider;
 	}
-	
-	private static final AliasProvider aliasProvider;
-	
-	static {
-		if (_isJpaPresent()) {
-			aliasProvider = new JpaAliasProvider();
+
+	public static void register(AliasProvider aliasProvider) {
+		CurrentAliasProvider cap;
+		CurrentAliasProvider newCap;
+		do {
+			cap = currentAliasProvider.get();
+
+			AliasProvider[] newRegistered = new AliasProvider[registered.length + 1];
+			System.arraycopy(registered, 0, newRegistered, 0, registered.length);
+			newRegistered[newRegistered.length - 1]  = aliasProvider;
+
+			AliasProvider aggAliasProvider = aggAliasProvider(newRegistered);
+
+			newCap = new CurrentAliasProvider(aggAliasProvider, newRegistered);
+		} while(! currentAliasProvider.compareAndSet(cap, newCap));
+	}
+
+	private static AliasProvider aggAliasProvider(AliasProvider[] registered) {
+		if (registered.length == 0) {
+			return new DefaultAliasProvider();
+		} else if (registered.length == 1) {
+			return registered[0];
 		} else {
-			aliasProvider = new DefaultAliasProvider();
+			return new ArrayAliasProvider(registered);
 		}
 	}
 
-	
-	public static AliasProvider getAliasProvider() {
-		return aliasProvider;
+	private static class CurrentAliasProvider {
+		AliasProvider aliasProvider;
+		AliasProvider[] registered;
+
+		public CurrentAliasProvider(AliasProvider aliasProvider, AliasProvider[] registered) {
+			this.aliasProvider = aliasProvider;
+			this.registered = registered;
+		}
 	}
 }

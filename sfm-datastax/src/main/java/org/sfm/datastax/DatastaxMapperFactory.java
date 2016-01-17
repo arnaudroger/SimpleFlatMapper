@@ -7,6 +7,7 @@ import com.datastax.driver.core.exceptions.DriverException;
 import org.sfm.datastax.impl.DatastaxMappingContextFactoryBuilder;
 import org.sfm.datastax.impl.RowGetterFactory;
 import org.sfm.datastax.impl.SettableDataSetterFactory;
+import org.sfm.datastax.impl.mapping.DatastaxAliasProvider;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
@@ -17,12 +18,17 @@ import org.sfm.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 import org.sfm.map.mapper.MapperKey;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.JpaAliasProvider;
 import org.sfm.utils.UnaryFactory;
 import org.sfm.utils.UnaryFactoryWithException;
 
 import java.lang.reflect.Type;
 
 public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>, DatastaxMapperFactory> {
+
+    static {
+        DatastaxAliasProvider.registers();
+    }
 
     private GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory = new RowGetterFactory(this);
 

@@ -41,6 +41,7 @@ public class AliasProviderTest {
 
     @Test
     public void testFactoryJPAPresent() {
+        JpaAliasProvider.registers();
         assertEquals(JpaAliasProvider.class, AliasProviderFactory.getAliasProvider().getClass());
     }
     @Test
@@ -78,6 +79,8 @@ public class AliasProviderTest {
         };
         Thread.currentThread().setContextClassLoader(cl);
         try {
+            Class<?> jpa = cl.loadClass(JpaAliasProvider.class.getName());
+            jpa.getDeclaredMethod("registers").invoke(null);
 
             Class<?> factory = cl.loadClass(AliasProviderFactory.class.getName());
 

@@ -49,7 +49,7 @@ public class AbstractDatastaxTest  {
         try {
 
             if (cluster.getMetadata().getKeyspace("sfm") == null) {
-                cluster.newSession().execute("create keyspace sfm WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 }");
+                cluster.newSession().execute("create schema sfm WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 }");
             }
 
             session = cluster.connect("sfm");

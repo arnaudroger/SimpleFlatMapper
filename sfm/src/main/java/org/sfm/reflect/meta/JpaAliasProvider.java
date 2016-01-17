@@ -26,4 +26,27 @@ public class JpaAliasProvider implements AliasProvider {
 		return alias;
 	}
 
+	@Override
+	public Table getTable(Class<?> target) {
+		Table table = Table.NULL;
+		javax.persistence.Table annotation = target.getAnnotation(javax.persistence.Table.class);
+		if (annotation != null) {
+			table = new Table(annotation.catalog(), annotation.schema(), annotation.name());
+		}
+		return table;
+	}
+
+	public static void registers() {
+		if (_isJpaPresent()) {
+			AliasProviderFactory.register(new JpaAliasProvider());
+		}
+	}
+
+	private static boolean _isJpaPresent() {
+		try {
+			return Column.class != null;
+		} catch(Throwable e) {
+			return false;
+		}
+	}
 }

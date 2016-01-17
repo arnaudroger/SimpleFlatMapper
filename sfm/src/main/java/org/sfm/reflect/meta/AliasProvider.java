@@ -9,4 +9,6 @@ public interface AliasProvider {
 
 	String getAliasForField(Field field);
 
+	Table getTable(Class<?> target);
+
 }

@@ -14,4 +14,9 @@ public class DefaultAliasProvider implements AliasProvider {
 	public String getAliasForField(Field field) {
 		return null;
 	}
+
+	@Override
+	public Table getTable(Class<?> target) {
+		return Table.NULL;
+	}
 }

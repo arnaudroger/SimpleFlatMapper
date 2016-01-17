@@ -3,8 +3,8 @@ package org.sfm.datastax;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.TableMetadata;
 import org.sfm.datastax.impl.DatastaxCrudFactory;
-import org.sfm.datastax.impl.KeyspaceTable;
-import org.sfm.datastax.impl.DatastaxMappingFactory;
+import org.sfm.reflect.meta.AliasProviderFactory;
+import org.sfm.reflect.meta.Table;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyNameMatcher;
@@ -24,14 +24,14 @@ public class DatastaxCrudDSL<T, K> {
 
 
     public DatastaxCrud<T, K> to(Session session) {
-        KeyspaceTable keyspaceTable =
-                DatastaxMappingFactory
-                    .getDatastaxMapping()
-                        .lookForKeySpaceTable(TypeHelper.toClass(targetType));
-        return to(session, keyspace(session, keyspaceTable), table(session, keyspaceTable, targetType));
+        Table table =
+                AliasProviderFactory
+                        .getAliasProvider()
+                        .getTable(TypeHelper.toClass(targetType));
+        return to(session, keyspace(session, table), table(session, table, targetType));
     }
 
-    private String table(Session session, KeyspaceTable keyspaceTable, Type targetType) {
+    private String table(Session session, Table keyspaceTable, Type targetType) {
         String table = keyspaceTable.table();
 
         if (table == null) {
@@ -48,8 +48,8 @@ public class DatastaxCrudDSL<T, K> {
         throw new IllegalArgumentException("No table define on type " + targetType);
     }
 
-    private String keyspace(Session session, KeyspaceTable keyspaceTable) {
-        String keyspace = keyspaceTable.keyspace();
+    private String keyspace(Session session, Table table) {
+        String keyspace = table.schema();
         if (keyspace == null) {
             keyspace = session.getLoggedKeyspace();
         }
@@ -57,10 +57,10 @@ public class DatastaxCrudDSL<T, K> {
     }
 
     public DatastaxCrud<T, K> to(Session session, String table) {
-        KeyspaceTable keyspaceTable =
-                DatastaxMappingFactory
-                        .getDatastaxMapping()
-                        .lookForKeySpaceTable(TypeHelper.toClass(targetType));
+        Table keyspaceTable =
+                AliasProviderFactory
+                        .getAliasProvider()
+                        .getTable(TypeHelper.toClass(targetType));
 
         return to(session, keyspace(session, keyspaceTable), table);
     }

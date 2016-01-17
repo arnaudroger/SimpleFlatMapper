@@ -7,6 +7,7 @@ import org.sfm.map.mapper.*;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.JpaAliasProvider;
 import org.sfm.utils.UnaryFactory;
 import org.sfm.utils.UnaryFactoryWithException;
 
@@ -47,6 +48,9 @@ public final class JdbcMapperFactory
                 FieldMapperColumnDefinition<JdbcColumnKey>,
                 JdbcMapperFactory> {
 
+	static {
+		JpaAliasProvider.registers();
+	}
 
     /**
 	 * instantiate a new JdbcMapperFactory

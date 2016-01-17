@@ -43,7 +43,7 @@ public class DatastaxCrudFactory {
                 DatastaxCrudFactory.<K>keySetter(keyTarget, tableMetadata, mapperFactory, 0),
                 DatastaxCrudFactory.<K>keySetter(keyTarget, tableMetadata, mapperFactory, 1),
                 selectMapper,
-                tableMetadata.getColumns().size());
+                tableMetadata.getColumns().size(), session);
     }
 
     private static String deleteQuery(TableMetadata tableMetadata) {

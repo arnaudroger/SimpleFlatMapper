@@ -9,6 +9,10 @@ public class DbObject {
 	private static AtomicLong random = new AtomicLong(10000);
 	public static DbObject newInstance() {
 		DbObject object = new DbObject();
+		return newInstance(object);
+	}
+
+	public static <T extends DbObject> T newInstance(T object) {
 		object.setId(random.incrementAndGet());
 		object.setName("name" + Long.toHexString(object.getId()));
 		object.setEmail("email" + Long.toHexString(object.getId()));

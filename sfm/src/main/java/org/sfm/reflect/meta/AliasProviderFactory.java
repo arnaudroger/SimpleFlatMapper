@@ -1,12 +1,12 @@
 package org.sfm.reflect.meta;
 
+import javax.persistence.Column;
+
 public class AliasProviderFactory {
 	private static boolean _isJpaPresent() {
 		try {
-			Class.forName("javax.persistence.Column");
-			Class.forName("javax.persistence.Column");
-			return true;
-		} catch(Exception e) {
+			return Column.class != null;
+		} catch(Throwable e) {
 			return false;
 		}
 	}

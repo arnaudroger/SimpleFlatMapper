@@ -31,6 +31,8 @@ public class DatastaxCrud<T, K> {
     private final DatastaxMapper<T> selectMapper;
     private final int numberOfColumns;
 
+    private final Session session;
+
     public DatastaxCrud(
             PreparedStatement insertQuery,
             PreparedStatement insertQueryWithTtlAndTimestamp,
@@ -42,7 +44,8 @@ public class DatastaxCrud<T, K> {
             BoundStatementMapper<T> insertSetter,
             BoundStatementMapper<K> keySetter,
             BoundStatementMapper<K> keySetterWith1Option,
-            DatastaxMapper<T> selectMapper, int numberOfColumns) {
+            DatastaxMapper<T> selectMapper, int numberOfColumns,
+            Session session) {
         this.readQuery = readQuery;
         this.deleteQuery = deleteQuery;
         this.insertQuery = insertQuery;
@@ -55,49 +58,50 @@ public class DatastaxCrud<T, K> {
         this.keySetterWith1Option = keySetterWith1Option;
         this.selectMapper = selectMapper;
         this.numberOfColumns = numberOfColumns;
+        this.session = session;
     }
 
-    public void save(Session session, T value) {
-        saveAsync(session, value).getUninterruptibly();
+    public void save(T value) {
+        saveAsync(value).getUninterruptibly();
     }
 
-    public void save(Session session, T value, int ttl, long timestamp) {
-        saveAsync(session, value, ttl, timestamp).getUninterruptibly();
+    public void save(T value, int ttl, long timestamp) {
+        saveAsync(value, ttl, timestamp).getUninterruptibly();
     }
 
-    public void saveWithTtl(Session session, T value, int ttl) {
-        saveWithTtlAsync(session, value, ttl).getUninterruptibly();
+    public void saveWithTtl(T value, int ttl) {
+        saveWithTtlAsync(value, ttl).getUninterruptibly();
     }
 
-    public void saveWithTimestamp(Session session, T value, long timestamp) {
-        saveWithTimestampAsync(session, value, timestamp).getUninterruptibly();
+    public void saveWithTimestamp(T value, long timestamp) {
+        saveWithTimestampAsync(value, timestamp).getUninterruptibly();
     }
 
-    public UninterruptibleFuture<Void> saveAsync(Session session, T value) {
-        BoundStatement boundStatement = saveQuery(session, value);
+    public UninterruptibleFuture<Void> saveAsync(T value) {
+        BoundStatement boundStatement = saveQuery(value);
         return new NoResultFuture(session.executeAsync(boundStatement));
     }
 
-    public UninterruptibleFuture<Void> saveAsync(Session session, T value, int ttl, long timestamp) {
-        BoundStatement boundStatement = saveQuery(session, value, ttl, timestamp);
+    public UninterruptibleFuture<Void> saveAsync(T value, int ttl, long timestamp) {
+        BoundStatement boundStatement = saveQuery(value, ttl, timestamp);
         return new NoResultFuture(session.executeAsync(boundStatement));
     }
 
-    public UninterruptibleFuture<Void> saveWithTtlAsync(Session session, T value, int ttl) {
-        BoundStatement boundStatement = saveQueryWithTtl(session, value, ttl);
+    public UninterruptibleFuture<Void> saveWithTtlAsync(T value, int ttl) {
+        BoundStatement boundStatement = saveQueryWithTtl(value, ttl);
         return new NoResultFuture(session.executeAsync(boundStatement));
     }
 
-    public UninterruptibleFuture<Void> saveWithTimestampAsync(Session session, T value, long timestamp) {
-        BoundStatement boundStatement = saveQueryWithTimestamp(session, value, timestamp);
+    public UninterruptibleFuture<Void> saveWithTimestampAsync(T value, long timestamp) {
+        BoundStatement boundStatement = saveQueryWithTimestamp(value, timestamp);
         return new NoResultFuture(session.executeAsync(boundStatement));
     }
 
-    public BoundStatement saveQuery(Session session, T value) {
+    public BoundStatement saveQuery(T value) {
         return insertSetter.mapTo(value, insertQuery.bind());
     }
 
-    public BoundStatement saveQuery(Session session, T value, int ttl, long timestamp) {
+    public BoundStatement saveQuery(T value, int ttl, long timestamp) {
         BoundStatement boundStatement = insertQueryWithTtlAndTimestamp.bind();
 
         insertSetter.mapTo(value, boundStatement);
@@ -108,7 +112,7 @@ public class DatastaxCrud<T, K> {
         return boundStatement;
     }
 
-    public BoundStatement saveQueryWithTtl(Session session, T value, int ttl) {
+    public BoundStatement saveQueryWithTtl(T value, int ttl) {
         BoundStatement boundStatement = insertQueryWithTtl.bind();
         insertSetter.mapTo(value, boundStatement);
 
@@ -117,7 +121,7 @@ public class DatastaxCrud<T, K> {
         return boundStatement;
     }
 
-    public BoundStatement saveQueryWithTimestamp(Session session, T value, long timestamp) {
+    public BoundStatement saveQueryWithTimestamp(T value, long timestamp) {
         BoundStatement boundStatement = insertQueryWithTimestamp.bind();
         insertSetter.mapTo(value, boundStatement);
 
@@ -126,41 +130,41 @@ public class DatastaxCrud<T, K> {
         return boundStatement;
     }
 
-    public T read(Session session, K key) {
-        return readAsync(session, key).getUninterruptibly();
+    public T read(K key) {
+        return readAsync(key).getUninterruptibly();
     }
 
-    public UninterruptibleFuture<T> readAsync(Session session, K key) {
+    public UninterruptibleFuture<T> readAsync(K key) {
         BoundStatement boundStatement = keySetter.mapTo(key, readQuery.bind());
         return new OneResultFuture<T>(session.executeAsync(boundStatement), selectMapper);
     }
 
-    public void delete(Session session, K key) {
-        deleteAsync(session, key).getUninterruptibly();
+    public void delete(K key) {
+        deleteAsync(key).getUninterruptibly();
     }
 
-    public void delete(Session session, K key, long timestamp) {
-        deleteAsync(session, key, timestamp).getUninterruptibly();
+    public void delete(K key, long timestamp) {
+        deleteAsync(key, timestamp).getUninterruptibly();
     }
 
-    public UninterruptibleFuture<Void> deleteAsync(Session session, K key, long timestamp) {
-        BoundStatement boundStatement = deleteQuery(session, key, timestamp);
+    public UninterruptibleFuture<Void> deleteAsync(K key, long timestamp) {
+        BoundStatement boundStatement = deleteQuery(key, timestamp);
         ResultSetFuture resultSetFuture = session.executeAsync(boundStatement);
         return new NoResultFuture(resultSetFuture);
     }
 
-    public UninterruptibleFuture<Void> deleteAsync(Session session, K key) {
-        BoundStatement boundStatement = deleteQuery(session, key);
+    public UninterruptibleFuture<Void> deleteAsync(K key) {
+        BoundStatement boundStatement = deleteQuery(key);
         ResultSetFuture resultSetFuture = session.executeAsync(boundStatement);
 
         return new NoResultFuture(resultSetFuture);
     }
 
-    public BoundStatement deleteQuery(Session session, K key) {
+    public BoundStatement deleteQuery(K key) {
         return keySetter.mapTo(key, deleteQuery.bind());
     }
 
-    public BoundStatement deleteQuery(Session session, K key, long timestamp) {
+    public BoundStatement deleteQuery(K key, long timestamp) {
         BoundStatement boundStatement = deleteQueryWithTimestamp.bind();
         boundStatement.setLong(0, timestamp);
         return keySetterWith1Option.mapTo(key, boundStatement);

@@ -35,9 +35,9 @@ public class DatastaxCrudDSL<T, K> {
         String table = keyspaceTable.table();
 
         if (table == null) {
-            PropertyNameMatcher pm = DefaultPropertyNameMatcher.of(TypeHelper.toClass(targetType).getSimpleName());
+            final String className = TypeHelper.toClass(targetType).getSimpleName();
             for(TableMetadata metadata : session.getCluster().getMetadata().getKeyspace(keyspace(session, keyspaceTable)).getTables()) {
-                if (pm.matches(metadata.getName())) {
+                if (DefaultPropertyNameMatcher.of(metadata.getName()).matches(className)) {
                     return metadata.getName();
                 }
             }

@@ -10,6 +10,7 @@ import org.sfm.test.jdbc.MysqlDbHelper;
 import org.sfm.utils.ListCollectorHandler;
 import org.sfm.utils.RowHandler;
 
+import javax.persistence.Table;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -117,44 +118,82 @@ public class CrudTest {
             Crud<DbObject, Long> objectCrud =
                     JdbcMapperFactory.newInstance().<DbObject, Long>crud(DbObject.class, Long.class).table(connection, "TEST_DB_OBJECT");
 
-            DbObject object = DbObject.newInstance();
-
-
-            assertNull(objectCrud.read(connection, object.getId()));
-
-            // create
-            Long key =
-                    objectCrud.create(connection, object, new RowHandler<Long>() {
-                        Long key;
-                        @Override
-                        public void handle(Long aLong) throws Exception {
-                            key = aLong;
-                        }
-                    }).key;
-
-            assertNull(key);
-
-
-            key = object.getId();
-            // read
-            assertEquals(object, objectCrud.read(connection, key));
-
-            object.setName("Udpdated");
-
-            // update
-            objectCrud.update(connection, object);
-            assertEquals(object, objectCrud.read(connection, key));
-
-            // delete
-            objectCrud.delete(connection, key);
-            assertNull(objectCrud.read(connection, key));
-
-            objectCrud.create(connection, DbObject.newInstance());
+            checkCrudDbObject(connection, objectCrud, DbObject.newInstance());
 
         } finally {
             connection.close();
         }
     }
+
+    @Test
+    public void testDbObjectCrudTable() throws SQLException {
+        Connection connection = DbHelper.getDbConnection(targetDB);
+        if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
+        try {
+            Crud<DbObjectTable, Long> objectCrud =
+                    JdbcMapperFactory.newInstance().<DbObjectTable, Long>crud(DbObjectTable.class, Long.class).to(connection);
+
+            checkCrudDbObject(connection, objectCrud, DbObject.newInstance(new DbObjectTable()));
+
+        } finally {
+            connection.close();
+        }
+    }
+    @Test
+    public void testDbObjectCrudTestDbObject() throws SQLException {
+        Connection connection = DbHelper.getDbConnection(targetDB);
+        if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
+        try {
+            Crud<TestDbObject, Long> objectCrud =
+                    JdbcMapperFactory.newInstance().<TestDbObject, Long>crud(TestDbObject.class, Long.class).to(connection);
+
+            checkCrudDbObject(connection, objectCrud, DbObject.newInstance(new TestDbObject()));
+
+        } finally {
+            connection.close();
+        }
+    }
+
+    @Table(name = "TEST_DB_OBJECT")
+    public static class DbObjectTable extends DbObject {
+    }
+
+    public static class TestDbObject extends DbObject {
+    }
+
+    private <T extends DbObject> void checkCrudDbObject(Connection connection, Crud<T, Long> objectCrud, T object) throws SQLException {
+        assertNull(objectCrud.read(connection, object.getId()));
+
+        // create
+        Long key =
+                objectCrud.create(connection, object, new RowHandler<Long>() {
+                    Long key;
+                    @Override
+                    public void handle(Long aLong) throws Exception {
+                        key = aLong;
+                    }
+                }).key;
+
+        assertNull(key);
+
+
+        key = object.getId();
+        // read
+        assertEquals(object, objectCrud.read(connection, key));
+
+        object.setName("Udpdated");
+
+        // update
+        objectCrud.update(connection, object);
+        assertEquals(object, objectCrud.read(connection, key));
+
+        // delete
+        objectCrud.delete(connection, key);
+        assertNull(objectCrud.read(connection, key));
+
+        objectCrud.create(connection, object);
+    }
+
 
     public static class CKEY {
         public long id;

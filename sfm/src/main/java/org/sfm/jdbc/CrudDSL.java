@@ -44,7 +44,7 @@ public class CrudDSL<T, K> {
         }
 
         if (table.table() == null) {
-            final ResultSet tables = connection.getMetaData().getTables(connection.getCatalog(), connection.getSchema(), null, null);
+            final ResultSet tables = connection.getMetaData().getTables(connection.getCatalog(), null, null, null);
             final String className = TypeHelper.toClass(target).getSimpleName();
             try {
                 while(tables.next()) {

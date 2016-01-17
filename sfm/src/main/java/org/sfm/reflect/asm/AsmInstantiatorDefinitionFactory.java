@@ -143,7 +143,10 @@ public class AsmInstantiatorDefinitionFactory {
                                     Type basicType = AsmUtils.toGenericType(desc, genericTypeNames, target);
                                     Type genericType = basicType;
                                     if (signature != null) {
-                                        genericType = AsmUtils.toGenericType(signature, genericTypeNames, target);
+                                        Type type = AsmUtils.toGenericType(signature, genericTypeNames, target);
+                                        if (type != null) {
+                                            genericType = type;
+                                        }
                                     }
                                     return new Parameter(index, name, TypeHelper.toClass(basicType), genericType);
                                 } catch (ClassNotFoundException e) {

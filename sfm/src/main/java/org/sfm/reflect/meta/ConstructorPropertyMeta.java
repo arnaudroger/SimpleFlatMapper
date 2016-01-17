@@ -11,24 +11,30 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
     private final Setter<T, P> setter = NullSetter.setter();
     private final ScoredGetter<T, P> scoredGetter;
     private final Parameter parameter;
+    private final InstantiatorDefinition instantiatorDefinition;
 
     public ConstructorPropertyMeta(String name,
                                    ReflectionService reflectService,
                                    Parameter parameter,
-                                   Class<T> owner) {
-        this(name, reflectService, parameter, owner, ScoredGetter.<T, P>nullGetter());
+                                   Class<T> owner, InstantiatorDefinition instantiatorDefinition) {
+        this(name, reflectService, parameter, owner, ScoredGetter.<T, P>nullGetter(), instantiatorDefinition);
     }
 
     public ConstructorPropertyMeta(String name,
                                    ReflectionService reflectService,
                                    Parameter parameter,
-                                   Class<T> owner, ScoredGetter<T, P> scoredGetter) {
+                                   Class<T> owner, ScoredGetter<T, P> scoredGetter,
+                                   InstantiatorDefinition instantiatorDefinition) {
 		super(name, reflectService);
 		this.parameter = parameter;
         this.owner = owner;
         this.scoredGetter = scoredGetter;
+        this.instantiatorDefinition = instantiatorDefinition;
     }
 
+    public int getConstructorParameterSize() {
+        return instantiatorDefinition.getParameters().length;
+    }
 
 	@Override
 	public Setter<T, P> getSetter() {
@@ -42,7 +48,7 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
     public ConstructorPropertyMeta<T, P> getter(ScoredGetter<T, P> getter) {
         if (getter.isBetterThan(this.scoredGetter)) {
-            return new ConstructorPropertyMeta<T, P>(getName(), reflectService, parameter, owner, getter);
+            return new ConstructorPropertyMeta<T, P>(getName(), reflectService, parameter, owner, getter, instantiatorDefinition);
         } else {
             return this;
         }

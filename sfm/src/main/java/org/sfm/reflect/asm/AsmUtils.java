@@ -207,7 +207,8 @@ public class AsmUtils {
 			if (target instanceof  ParameterizedType) {
 				return ((ParameterizedType) target).getActualTypeArguments()[indexOfParam];
 			} else {
-				throw new IllegalArgumentException("Cannot resolve generic type " + sig + " from non ParameterizedType " + target);
+				// meethod parameter
+				return null;
 			}
 		}
 		
@@ -358,7 +359,6 @@ public class AsmUtils {
 
 				@Override
 				public void visitTypeArgument() {
-					System.out.println("visitTypeArgument");
 				}
 
 				@Override
@@ -402,7 +402,6 @@ public class AsmUtils {
 
 			@Override
 			public void visitFormalTypeParameter(String name) {
-				System.out.println(name);
 			}
 
 			@Override

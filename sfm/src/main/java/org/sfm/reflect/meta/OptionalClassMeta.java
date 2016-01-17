@@ -25,7 +25,7 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 			this.propertyMeta = new ConstructorPropertyMeta<>("value",
 					reflectionService,
 					instantiatorDefinition.getParameters()[0],
-					TypeHelper.toClass(type), new ScoredGetter<>(Integer.MAX_VALUE, new OptionalGetter<>()));
+					TypeHelper.toClass(type), new ScoredGetter<>(Integer.MAX_VALUE, new OptionalGetter<>()), instantiatorDefinition);
 			this.innerMeta = reflectionService.getClassMeta(instantiatorDefinition.getParameters()[0].getGenericType());
 		} catch(Exception e) {
             ErrorHelper.rethrow(e);

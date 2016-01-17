@@ -89,15 +89,15 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 					}
 					paramName = paramNameDeductor.findParamName(cd, param);
 				}
-				constructorProperties.add(constructorMeta(param, paramName));
+				constructorProperties.add(constructorMeta(param, paramName, cd));
 			}
 		}
 		return constructorProperties;
 	}
 
-    private <P> ConstructorPropertyMeta<T, P> constructorMeta(Parameter param, String paramName) {
+    private <P> ConstructorPropertyMeta<T, P> constructorMeta(Parameter param, String paramName, InstantiatorDefinition instantiatorDefinition) {
         Class<T> tClass = TypeHelper.toClass(this.target);
-        return new ConstructorPropertyMeta<T, P>(paramName, reflectService, param, tClass);
+        return new ConstructorPropertyMeta<T, P>(paramName, reflectService, param, tClass, instantiatorDefinition);
     }
 
     private List<PropertyMeta<T, ?>> listProperties(final ReflectionService reflectService, Type targetType) {
@@ -239,7 +239,11 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		List<String> strings = new ArrayList<String>();
 
 		for(PropertyMeta<T, ?> cpm : constructorProperties) {
-            extractProperties(strings, cpm);
+			// ignore constructor properties of same type with 1 arg, copy constructor
+			if (((ConstructorPropertyMeta)cpm ).getConstructorParameterSize() > 1
+					|| cpm.getPropertyClassMeta() != this) {
+				extractProperties(strings, cpm);
+			}
 		}
 
         for(PropertyMeta<T, ?> cpm : properties) {

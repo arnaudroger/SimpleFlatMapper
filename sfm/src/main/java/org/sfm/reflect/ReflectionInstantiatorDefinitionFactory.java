@@ -48,11 +48,13 @@ public class ReflectionInstantiatorDefinitionFactory {
             if (paramType instanceof TypeVariable) {
                 TypeVariable<?> tv = (TypeVariable<?>) paramType;
                 paramType = parameterTypes[i];
-                ParameterizedType pt = (ParameterizedType)target;
-                for (TypeVariable<Class<Object>> typeParameter : targetClassTypeParameters) {
-                    if (typeParameter.getName().equals(tv.getName())) {
-                        resolvedParamType = pt.getActualTypeArguments()[i];
-                        break;
+                if (target instanceof ParameterizedType) {
+                    ParameterizedType pt = (ParameterizedType) target;
+                    for (TypeVariable<Class<Object>> typeParameter : targetClassTypeParameters) {
+                        if (typeParameter.getName().equals(tv.getName())) {
+                            resolvedParamType = pt.getActualTypeArguments()[i];
+                            break;
+                        }
                     }
                 }
             }

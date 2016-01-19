@@ -122,7 +122,7 @@ public class AsmInstantiatorDefinitionFactory {
                                     } else {
                                         executable = targetClass.getDeclaredMethod(methodName, toTypeArray(parameters));
                                     }
-                                    constructors.add(new InstantiatorDefinition(executable, parameters.toArray(new Parameter[parameters.size()])));
+                                    constructors.add(new InstantiatorDefinition(executable, parameters.toArray(new Parameter[0])));
                                 } catch(Exception e) {
                                     ErrorHelper.rethrow(e);
                                 }

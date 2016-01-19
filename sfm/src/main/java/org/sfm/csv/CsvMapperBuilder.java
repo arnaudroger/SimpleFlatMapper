@@ -169,7 +169,7 @@ public class CsvMapperBuilder<T> {
 
 
     private CsvColumnKey[] getKeys() {
-		return propertyMappingsBuilder.getKeys().toArray(new CsvColumnKey[propertyMappingsBuilder.size()]);
+		return propertyMappingsBuilder.getKeys().toArray(new CsvColumnKey[0]);
 	}
 
     private CsvColumnKey[] getJoinKeys() {

@@ -221,7 +221,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 			fields.add(mapper);
 		}
 		
-		return fields.toArray(new FieldMapper[fields.size()]);
+		return fields.toArray(new FieldMapper[0]);
 	}
 
 

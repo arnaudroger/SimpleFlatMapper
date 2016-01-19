@@ -47,9 +47,9 @@ public class MysqlCrudFactory {
 
         MysqlBatchInsertQueryExecutor<T> queryExecutor = new MysqlBatchInsertQueryExecutor<T>(
                 crudMeta.getTable(),
-                insertColumns.toArray(new String[insertColumns.size()]),
-                onDuplicateKeyUpdate ? updateColumns.toArray(new String[updateColumns.size()]) : null,
-                generatedKeys.toArray(new String[generatedKeys.size()]),
+                insertColumns.toArray(new String[0]),
+                onDuplicateKeyUpdate ? updateColumns.toArray(new String[0]) : null,
+                generatedKeys.toArray(new String[0]),
                 statementMapperBuilder.buildIndexFieldMappers());
 
         return
@@ -101,6 +101,6 @@ public class MysqlCrudFactory {
             }
         }
 
-        return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb), generatedKeys.toArray(new String[generatedKeys.size()]));
+        return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb), generatedKeys.toArray(new String[0]));
     }
 }

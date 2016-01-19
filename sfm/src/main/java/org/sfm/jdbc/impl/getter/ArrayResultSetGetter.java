@@ -32,7 +32,7 @@ public final class ArrayResultSetGetter<E> implements Getter<ResultSet, E[]> {
 			rs.close();
 		}
 		
-		E[] eltArray = (E[]) java.lang.reflect.Array.newInstance(elementType, list.size());
+		E[] eltArray = (E[]) java.lang.reflect.Array.newInstance(elementType, 0);
 		return list.toArray(eltArray);
 	}
 

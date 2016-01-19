@@ -33,7 +33,7 @@ public class ArrayConverter<E> implements Converter<Array, E[]> {
 		}
 		
 		@SuppressWarnings("unchecked")
-		E[] elements = (E[]) java.lang.reflect.Array.newInstance(elementClass, list.size());
+		E[] elements = (E[]) java.lang.reflect.Array.newInstance(elementClass, 0);
 		return list.toArray(elements);
 	}
 

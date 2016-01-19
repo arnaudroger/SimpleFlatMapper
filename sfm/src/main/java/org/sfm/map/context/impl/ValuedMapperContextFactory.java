@@ -10,7 +10,7 @@ public class ValuedMapperContextFactory<S> implements MappingContextFactory<S> {
     private final Supplier<?>[] suppliers;
 
     public ValuedMapperContextFactory(List<Supplier<?>> suppliers) {
-        this.suppliers = suppliers.toArray(new Supplier[suppliers.size()]);
+        this.suppliers = suppliers.toArray(new Supplier[0]);
 
     }
 

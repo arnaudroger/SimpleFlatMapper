@@ -173,6 +173,6 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
             }
         });
 
-        return fields.toArray(new MultiIndexFieldMapper[fields.size()]);
+        return fields.toArray(new MultiIndexFieldMapper[0]);
     }
 }

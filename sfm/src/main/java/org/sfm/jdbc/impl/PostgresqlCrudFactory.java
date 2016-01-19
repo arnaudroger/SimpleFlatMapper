@@ -50,10 +50,10 @@ public class PostgresqlCrudFactory {
 
         PostgresqlBatchInsertQueryExecutor<T> queryExecutor = new PostgresqlBatchInsertQueryExecutor<T>(
                 crudMeta.getTable(),
-                insertColumns.toArray(new String[insertColumns.size()]),
-                onDuplicateKeyUpdate ? updateColumns.toArray(new String[updateColumns.size()]) : null,
-                generatedKeys.toArray(new String[generatedKeys.size()]),
-                keys.toArray(new String[keys.size()]),
+                insertColumns.toArray(new String[0]),
+                onDuplicateKeyUpdate ? updateColumns.toArray(new String[0]) : null,
+                generatedKeys.toArray(new String[0]),
+                keys.toArray(new String[0]),
                 statementMapperBuilder.buildIndexFieldMappers());
 
         return queryExecutor;
@@ -116,6 +116,6 @@ public class PostgresqlCrudFactory {
             }
         }
 
-        return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb), generatedKeys.toArray(new String[generatedKeys.size()]));
+        return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb), generatedKeys.toArray(new String[0]));
     }
 }

@@ -19,7 +19,7 @@ public class TupleBuilder {
     }
 
     public Tuple toTuple(int end) {
-        return new Tuple(word, arguments.toArray(new Symbol[arguments.size()]), new Position(start, end));
+        return new Tuple(word, arguments.toArray(new Symbol[0]), new Position(start, end));
     }
 
     public int size() {

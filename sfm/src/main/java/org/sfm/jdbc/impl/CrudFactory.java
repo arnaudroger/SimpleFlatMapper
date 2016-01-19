@@ -83,7 +83,7 @@ public class CrudFactory {
                 i++;
             }
         }
-        return new KeyTupleQueryPreparer<K>(builder.buildIndexFieldMappers(), primaryKeys.toArray(new String[primaryKeys.size()]));
+        return new KeyTupleQueryPreparer<K>(builder.buildIndexFieldMappers(), primaryKeys.toArray(new String[0]));
     }
 
     private static <T, K>JdbcMapper<K> buildKeyMapper(Type keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) {
@@ -140,7 +140,7 @@ public class CrudFactory {
             }
         }
         sb.append(")");
-        return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb), generatedKeys.isEmpty() ? null :  generatedKeys.toArray(new String[generatedKeys.size()]));
+        return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb), generatedKeys.isEmpty() ? null :  generatedKeys.toArray(new String[0]));
     }
 
     private static <T, K> QueryPreparer<T> buildUpdate(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {

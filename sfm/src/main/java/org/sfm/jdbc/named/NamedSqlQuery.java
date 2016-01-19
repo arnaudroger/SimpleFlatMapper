@@ -40,7 +40,7 @@ public class NamedSqlQuery implements ParameterizedQuery {
 
         return new NamedSqlQuery(
                 charSequence.toString(),
-                sqlParameters.toArray(new NamedParameter[sqlParameters.size()]));
+                sqlParameters.toArray(new NamedParameter[0]));
     }
 
 

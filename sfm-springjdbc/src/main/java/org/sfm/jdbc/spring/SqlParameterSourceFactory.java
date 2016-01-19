@@ -26,7 +26,7 @@ public class SqlParameterSourceFactory<T> {
         while(values.hasNext()) {
             sources.add(newSqlParameterSource(values.next()));
         }
-        return sources.toArray(new SqlParameterSource[sources.size()]);
+        return sources.toArray(new SqlParameterSource[0]);
     }
 
     public SqlParameterSource[] newSqlParameterSources(T[] values) {

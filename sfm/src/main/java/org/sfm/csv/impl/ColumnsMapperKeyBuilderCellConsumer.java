@@ -34,6 +34,6 @@ public final class ColumnsMapperKeyBuilderCellConsumer implements CellConsumer {
 	}
 
 	public MapperKey<CsvColumnKey> getKey() {
-		return new MapperKey<CsvColumnKey>(columns.toArray(new CsvColumnKey[columns.size()]));
+		return new MapperKey<CsvColumnKey>(columns.toArray(new CsvColumnKey[0]));
 	}
 }

@@ -85,7 +85,7 @@ public class DynamicSheetMapper<T> implements SheetMapper<T> {
             }
         }
 
-        return getPoiMapper(new MapperKey<CsvColumnKey>(keys.toArray(new CsvColumnKey[keys.size()])));
+        return getPoiMapper(new MapperKey<CsvColumnKey>(keys.toArray(new CsvColumnKey[0])));
 
 
     }

@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 public class ArrayAliasProvider implements AliasProvider {
     private final AliasProvider[] providers;
 
-    public ArrayAliasProvider(AliasProvider[] providers) {
+    public ArrayAliasProvider(AliasProvider... providers) {
         this.providers = providers;
     }
 

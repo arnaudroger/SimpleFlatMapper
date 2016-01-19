@@ -587,7 +587,7 @@ public class CsvParserTest {
 	}
 
 	@Test
-	public void testIterateFromFile() throws IOException {
+	public void testIterateStringsFromFile() throws IOException {
 		File file = File.createTempFile("test", ".csv");
 
 		FileWriter writer = new FileWriter(file);
@@ -605,6 +605,48 @@ public class CsvParserTest {
 		}
 
 	}
+
+	@Test
+	public void testIterateObjectFromFile() throws IOException {
+		File file = File.createTempFile("test", ".csv");
+
+		FileWriter writer = new FileWriter(file);
+		try {
+			writer.write("value\n1");
+		} finally {
+			writer.close();
+		}
+
+		CloseableIterator<Long> iterator = CsvParser.mapTo(Long.class).iterator(file);
+		try {
+			assertEquals(1l, iterator.next().longValue());
+		} finally {
+			iterator.close();
+		}
+
+	}
+
+	@Test
+	public void testCsvReaderFromFile() throws IOException {
+		File file = File.createTempFile("test", ".csv");
+
+		FileWriter writer = new FileWriter(file);
+		try {
+			writer.write("value");
+		} finally {
+			writer.close();
+		}
+
+		CloseableCsvReader reader = CsvParser.reader(file);
+		try {
+			Iterator<String[]> iterator = reader.iterator();
+			assertArrayEquals(new String[] {"value"}, iterator.next());
+		} finally {
+			reader.close();
+		}
+
+	}
+
 
 	public static class MyScalaClass {
 		public String myField;

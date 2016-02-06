@@ -8,13 +8,12 @@ import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static org.sfm.reflect.ReflectionInstantiatorDefinitionFactory.areParameterNamePresent;
 import static org.sfm.utils.Asserts.requireNonNull;
 
 public class ReflectionService {
@@ -131,7 +130,9 @@ public class ReflectionService {
 
 	public List<InstantiatorDefinition> extractConstructors(Type target) throws IOException {
 		List<InstantiatorDefinition> list;
-        if (isAsmPresent()) {
+
+        if (isAsmPresent()
+				&& !ReflectionInstantiatorDefinitionFactory.areParameterNamePresent(target)) {
             try {
                 list = AsmInstantiatorDefinitionFactory.extractDefinitions(target);
             } catch(IOException e) {

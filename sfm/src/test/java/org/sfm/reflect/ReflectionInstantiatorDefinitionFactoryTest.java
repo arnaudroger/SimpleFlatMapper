@@ -8,7 +8,9 @@ import org.sfm.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -114,5 +116,56 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 
 	}
 
+
+	//IFJAVA8_START
+	@Test
+	public void testClassWithParamName() throws ClassNotFoundException, IOException {
+		final ClassLoader original = getClass().getClassLoader();
+		ClassLoader cl = new ClassLoader(ClassLoader.getSystemClassLoader().getParent()) {
+			@Override
+			protected Class<?> findClass(String name) throws ClassNotFoundException {
+				InputStream resourceAsStream = original.getResourceAsStream(name.replace(".", "/") + ".class");
+				if (resourceAsStream == null) {
+					throw new ClassNotFoundException(name);
+				}
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				try {
+					int i;
+					while((i = resourceAsStream.read()) != -1) {
+						bos.write(i);
+					}
+					byte[] bytes = bos.toByteArray();
+					return defineClass(name, bytes, 0, bytes.length);
+				} catch (IOException e) {
+					throw new ClassNotFoundException(e.getMessage(), e);
+				} finally {
+					try {
+						resourceAsStream.close();
+					} catch (IOException e) {
+					}
+				}
+
+			}
+		};
+
+		final Class<?> classWithParameter = cl.loadClass("p.ClassParameter");
+		final Class<?> classWithoutParameter = cl.loadClass("p.ClassNoNameParameter");
+
+		List<InstantiatorDefinition> instantiatorDefinitions = ReflectionService.newInstance().extractConstructors(classWithParameter);
+
+		assertEquals(1, instantiatorDefinitions.size());
+		assertEquals(2, instantiatorDefinitions.get(0).getParameters().length);
+		assertEquals("name", instantiatorDefinitions.get(0).getParameters()[0].getName());
+		assertEquals("value", instantiatorDefinitions.get(0).getParameters()[1].getName());
+
+
+		instantiatorDefinitions = ReflectionService.newInstance().extractConstructors(classWithoutParameter);
+
+		assertEquals(1, instantiatorDefinitions.size());
+		assertEquals(2, instantiatorDefinitions.get(0).getParameters().length);
+		assertNull(instantiatorDefinitions.get(0).getParameters()[0].getName());
+		assertNull(instantiatorDefinitions.get(0).getParameters()[1].getName());
+	}
+	//IFJAVA8_END
 
 }

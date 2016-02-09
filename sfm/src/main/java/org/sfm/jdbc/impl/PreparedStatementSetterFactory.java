@@ -1,14 +1,8 @@
 package org.sfm.jdbc.impl;
 
-import org.joda.time.*;
-import org.joda.time.Instant;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.convert.CalendarToTimestampConverter;
 import org.sfm.jdbc.impl.convert.UtilDateToTimestampConverter;
-import org.sfm.jdbc.impl.convert.joda.*;
 
 //IFJAVA8_START
 import org.sfm.jdbc.impl.convert.time.*;
@@ -17,7 +11,7 @@ import java.time.*;
 //IFJAVA8_END
 
 import org.sfm.jdbc.impl.setter.*;
-import org.sfm.map.column.joda.JodaHelper;
+import org.sfm.map.impl.JodaTimeClasses;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Setter;
@@ -273,39 +267,7 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
     }
 
     private final Factory jodaTimeFieldMapperToSourceFactory =
-            new Factory() {
-                @SuppressWarnings("unchecked")
-                @Override
-                public <P> PreparedStatementIndexSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-                    if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.DateTime.class)) {
-                        return (PreparedStatementIndexSetter<P>)
-                                new ConvertDelegateIndexSetter<DateTime, Timestamp>(
-                                        new TimestampPreparedStatementIndexSetter(),
-                                        new JodaDateTimeToTimestampConverter());
-                    } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.LocalDateTime.class)) {
-                        return (PreparedStatementIndexSetter<P>)
-                                new ConvertDelegateIndexSetter<LocalDateTime, Timestamp>(
-                                        new TimestampPreparedStatementIndexSetter(),
-                                        new JodaLocalDateTimeToTimestampConverter(JodaHelper.getDateTimeZone(pm.getColumnDefinition())));
-                    } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.LocalDate.class)) {
-                        return (PreparedStatementIndexSetter<P>)
-                                new ConvertDelegateIndexSetter<LocalDate, java.sql.Date>(
-                                        new DatePreparedStatementIndexSetter(),
-                                        new JodaLocalDateToDateConverter());
-                    } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.LocalTime.class)) {
-                        return (PreparedStatementIndexSetter<P>)
-                                new ConvertDelegateIndexSetter<LocalTime, Time>(
-                                        new TimePreparedStatementIndexSetter(),
-                                        new JodaLocalTimeToTimeConverter(JodaHelper.getDateTimeZone(pm.getColumnDefinition())));
-                    } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), org.joda.time.Instant.class)) {
-                        return (PreparedStatementIndexSetter<P>)
-                                new ConvertDelegateIndexSetter<Instant, Timestamp>(
-                                         new TimestampPreparedStatementIndexSetter(),
-                                        new JodaInstantToTimestampConverter());
-                    }
-                    return null;
-                }
-            };
+            new JodaTimePreparedStatementFactory();
 
     //IFJAVA8_START
     private final Factory javaTimeFieldMapperToSourceFactory =
@@ -423,7 +385,7 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
             }
         }
 
-        if (setter == null) {
+        if (setter == null && JodaTimeClasses.isJoda(arg.getPropertyMeta().getPropertyType())) {
             setter = jodaTimeFieldMapperToSourceFactory.indexedSetter(arg);
         }
 
@@ -439,7 +401,7 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
         return setter;
     }
 
-    interface Factory {
+    public interface Factory {
         <P> PreparedStatementIndexSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm);
     }
 

@@ -1,0 +1,36 @@
+Benchmark                                    (maxColumns)  (size)   Mode  Samples         Score  Score error  Units
+o.s.m.ArrayMapperCacheBenchmark.testGet                10       1  thrpt       20  17451893.978   173012.254  ops/s
+o.s.m.ArrayMapperCacheBenchmark.testGet                10      10  thrpt       20  13952140.119   108676.158  ops/s
+o.s.m.ArrayMapperCacheBenchmark.testGet                10      20  thrpt       20  11741827.018   117917.140  ops/s
+o.s.m.ArrayMapperCacheBenchmark.testGet                10      30  thrpt       20  10171941.762    75383.544  ops/s
+o.s.m.ArrayMapperCacheBenchmark.testGet                10      50  thrpt       20   8099307.994   109566.520  ops/s
+o.s.m.ArrayMapperCacheBenchmark.testGet                10     100  thrpt       20   5346161.135   121120.848  ops/s
+
+o.s.m.Sorted2MapperCacheBenchmark.testGet              10       1  thrpt       20  14051873.014   317780.459  ops/s
+o.s.m.Sorted2MapperCacheBenchmark.testGet              10      10  thrpt       20  13999422.119   236848.433  ops/s
+o.s.m.Sorted2MapperCacheBenchmark.testGet              10      20  thrpt       20  12326243.788    84836.918  ops/s
+o.s.m.Sorted2MapperCacheBenchmark.testGet              10      30  thrpt       20  12184954.187   169888.137  ops/s
+o.s.m.Sorted2MapperCacheBenchmark.testGet              10      50  thrpt       20  12058625.401   125466.725  ops/s
+o.s.m.Sorted2MapperCacheBenchmark.testGet              10     100  thrpt       20  11164669.385    67176.402  ops/s
+
+o.s.m.CHMMapperCacheBenchmark.testGet                  10       1  thrpt       20  13088428.116   381171.011  ops/s
+o.s.m.CHMMapperCacheBenchmark.testGet                  10      10  thrpt       20  11665126.653   220229.982  ops/s
+o.s.m.CHMMapperCacheBenchmark.testGet                  10      20  thrpt       20  11160625.428   102566.609  ops/s
+o.s.m.CHMMapperCacheBenchmark.testGet                  10      30  thrpt       20  10652179.388    79156.033  ops/s
+o.s.m.CHMMapperCacheBenchmark.testGet                  10      50  thrpt       20   9293800.760    70501.923  ops/s
+o.s.m.CHMMapperCacheBenchmark.testGet                  10     100  thrpt       20   8701774.309    76193.533  ops/s
+
+o.s.m.HMMapperCacheBenchmark.testGet                   10       1  thrpt       20  12409572.952   186647.665  ops/s
+o.s.m.HMMapperCacheBenchmark.testGet                   10      10  thrpt       20  12285982.606   112425.888  ops/s
+o.s.m.HMMapperCacheBenchmark.testGet                   10      20  thrpt       20  11684649.991   157319.022  ops/s
+o.s.m.HMMapperCacheBenchmark.testGet                   10      30  thrpt       20  10982183.359   165656.615  ops/s
+o.s.m.HMMapperCacheBenchmark.testGet                   10      50  thrpt       20   9550063.088   223358.274  ops/s
+o.s.m.HMMapperCacheBenchmark.testGet                   10     100  thrpt       20   9194115.127   248165.544  ops/s
+
+
+o.s.m.SortedMapperCacheBenchmark.testGet               10       1  thrpt       20  14124382.571    87632.759  ops/s
+o.s.m.SortedMapperCacheBenchmark.testGet               10      10  thrpt       20  12764345.267   122591.645  ops/s
+o.s.m.SortedMapperCacheBenchmark.testGet               10      20  thrpt       20  11845728.394   122551.222  ops/s
+o.s.m.SortedMapperCacheBenchmark.testGet               10      30  thrpt       20  11234859.288   101831.142  ops/s
+o.s.m.SortedMapperCacheBenchmark.testGet               10      50  thrpt       20   9581802.874    70065.113  ops/s
+o.s.m.SortedMapperCacheBenchmark.testGet               10     100  thrpt       20   8667544.434    56941.326  ops/s

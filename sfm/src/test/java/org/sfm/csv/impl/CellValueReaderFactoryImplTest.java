@@ -18,6 +18,8 @@ import java.util.Date;
 //IFJAVA8_START
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
 import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
 //IFJAVA8_END
 import org.sfm.map.column.joda.JodaDateTimeFormatterProperty;
@@ -40,6 +42,15 @@ public class CellValueReaderFactoryImplTest {
         CellValueReader<?> reader = cellValueReaderFactory.getReader(Object.class, 1, null, null);
         String object = "string";
         assertEquals(object, reader.read(object.toCharArray(), 0, object.length(), null));
+    }
+
+    @Test
+    public void testUUID() {
+        UUID uuid = UUID.randomUUID();
+
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(UUID.class, 0, CsvColumnDefinition.identity(), null);
+        final char[] chars = uuid.toString().toCharArray();
+        assertEquals(uuid, reader.read(chars, 0, chars.length, null));
     }
 
     @Test

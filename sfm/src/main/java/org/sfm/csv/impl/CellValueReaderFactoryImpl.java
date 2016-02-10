@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 //IFJAVA8_START
 import java.time.*;
+import java.util.UUID;
+
 import org.sfm.map.column.time.*;
 import org.sfm.csv.impl.cellreader.time.*;
 //IFJAVA8_END
@@ -85,6 +87,8 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 			reader = new EnumCellValueReader(propertyClass);
 		} else if (JodaTimeClasses.isJoda(propertyClass)){
 			reader = (CellValueReader<P>) JodaTimeCellValueReaderHelper.getReader(propertyClass, columnDefinition);
+		} else if (UUID.class.equals(propertyClass)) {
+			reader = (CellValueReader<P>) new UUIDCellValueReader();
 		}
 
 		if (reader == null) {

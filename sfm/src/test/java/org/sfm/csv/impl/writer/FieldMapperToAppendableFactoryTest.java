@@ -27,6 +27,7 @@ import org.sfm.reflect.meta.PropertyMeta;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 
@@ -60,6 +61,10 @@ public class FieldMapperToAppendableFactoryTest {
         public LocalTime localTime;
     }
 
+    static class UUIDObject {
+        public UUID uuid;
+    }
+
     JodaObject jodaObject = new JodaObject();
 
     {
@@ -70,6 +75,16 @@ public class FieldMapperToAppendableFactoryTest {
     }
 
     ClassMeta<JodaObject> jodaObjectClassMeta = ReflectionService.newInstance().getClassMeta(JodaObject.class);
+
+
+    @Test
+    public void testUUID() throws  Exception {
+        UUID uuid = UUID.randomUUID();
+        UUIDObject object = new UUIDObject();
+        object.uuid = uuid;
+        testFieldMapperForClassAndProp(uuid.toString(), "uuid",
+                ReflectionService.newInstance().getClassMeta(UUIDObject.class), object);
+    }
 
     @Test
     public void testJodaDateTime() throws  Exception {

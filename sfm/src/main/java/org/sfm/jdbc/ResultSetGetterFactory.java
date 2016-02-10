@@ -1,9 +1,12 @@
 package org.sfm.jdbc;
 
 import org.sfm.jdbc.impl.getter.*;
+import org.sfm.map.getter.BytesUUIDGetter;
 import org.sfm.map.getter.EnumUnspecifiedTypeGetter;
 import org.sfm.map.getter.OrdinalEnumGetter;
 import org.sfm.map.getter.StringEnumGetter;
+import org.sfm.map.getter.StringUUIDGetter;
+import org.sfm.map.getter.UUIDUnspecifiedTypeGetter;
 import org.sfm.map.getter.joda.JodaTimeGetterFactory;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.GetterFactory;
@@ -23,10 +26,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 
 //IFJAVA8_START
 import java.time.*;
+
 import org.sfm.map.getter.time.JavaTimeGetterFactory;
 //IFJAVA8_END
 public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey>{
@@ -313,6 +318,33 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
 				return (Getter<ResultSet, P>) new SqlArrayResultSetGetter(key.getIndex());
+			}
+		});
+		factoryPerType.put(UUID.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+				switch (key.getSqlType()) {
+					case JdbcColumnKey.UNDEFINED_TYPE:
+						return (Getter<ResultSet, P>)
+								new UUIDUnspecifiedTypeGetter<ResultSet>(new ObjectResultSetGetter(key.getIndex()));
+					case Types.CHAR:
+					case Types.LONGVARCHAR:
+					case Types.VARCHAR:
+					case Types.CLOB:
+						return (Getter<ResultSet, P>) new StringUUIDGetter<ResultSet>(new StringResultSetGetter(key.getIndex()));
+					case Types.LONGNVARCHAR:
+					case Types.NCHAR:
+					case Types.NVARCHAR:
+					case Types.NCLOB:
+						return (Getter<ResultSet, P>) new StringUUIDGetter<ResultSet>(new NStringResultSetGetter(key.getIndex()));
+					case Types.BINARY:
+					case Types.LONGVARBINARY:
+					case Types.VARBINARY:
+						return (Getter<ResultSet, P>) new BytesUUIDGetter<ResultSet>(new ByteArrayResultSetGetter(key.getIndex()));
+					default:
+						throw new MapperBuildingException("Incompatible type " + key.getSqlType() + " with enum");
+				}
 			}
 		});
 

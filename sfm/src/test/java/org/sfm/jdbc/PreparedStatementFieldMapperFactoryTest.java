@@ -19,6 +19,7 @@ import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.impl.*;
 import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.utils.UUIDHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -36,6 +37,7 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
@@ -415,6 +417,28 @@ public class PreparedStatementFieldMapperFactoryTest {
         verify(ps).setTimestamp(1, new java.sql.Timestamp(value.getMillis()));
         verify(ps).setNull(2, Types.TIMESTAMP);
     }
+
+    @Test
+    public void testUUIDString() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, UUID>(uuid),  UUID.class);
+        newFieldMapperAndMapToPS(NullGetter.<Object, UUID>getter(), UUID.class);
+
+        verify(ps).setString(1, uuid.toString());
+        verify(ps).setNull(2, Types.VARCHAR);
+    }
+
+
+    @Test
+    public void testUUIDBinary() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, UUID>(uuid), UUID.class, Types.BINARY);
+        newFieldMapperAndMapToPS(NullGetter.<Object, UUID>getter(), UUID.class, Types.BINARY);
+
+        verify(ps).setBytes(1, UUIDHelper.toBytes(uuid));
+        verify(ps).setNull(2, Types.BINARY);
+    }
+
     //IFJAVA8_START
     @Test
     public void testJavaLocalDateTime() throws Exception {

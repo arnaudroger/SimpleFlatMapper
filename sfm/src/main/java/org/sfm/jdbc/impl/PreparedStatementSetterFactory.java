@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class PreparedStatementSetterFactory implements SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> {
     private final Map<Class<?>, Factory> factoryPerClass =
@@ -262,6 +263,21 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
                     @Override
                     public <P> PreparedStatementIndexSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
                         return (PreparedStatementIndexSetter<P>) new SQLXMLPreparedStatementIndexSetter();
+                    }
+                });
+
+        factoryPerClass.put(UUID.class,
+                new Factory() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public <P> PreparedStatementIndexSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+                        switch (pm.getColumnKey().getSqlType()) {
+                            case Types.BINARY:
+                            case Types.VARBINARY:
+                            case Types.LONGVARBINARY:
+                                return (PreparedStatementIndexSetter<P>) new UUIDBinaryPreparedStatementIndexSetter();
+                        }
+                        return (PreparedStatementIndexSetter<P>) new UUIDStringPreparedStatementIndexSetter();
                     }
                 });
     }

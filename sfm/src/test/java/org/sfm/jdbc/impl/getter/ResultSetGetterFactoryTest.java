@@ -13,7 +13,9 @@ import org.sfm.jdbc.ResultSetGetterFactory;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.IntGetter;
+import org.sfm.utils.UUIDHelper;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
@@ -532,4 +534,39 @@ public class ResultSetGetterFactoryTest {
 	}
 
 	//IFJAVA8_END
+
+
+	@Test
+	public void testUUIDUndefinedType() throws Exception {
+		UUID uuid = UUID.randomUUID();
+
+		when(resultSet.getObject(1)).thenReturn(
+				uuid.toString(),
+				UUIDHelper.toBytes(uuid),
+				new ByteArrayInputStream(UUIDHelper.toBytes(uuid)));
+		final Getter<ResultSet, UUID> getter = factory.<UUID>newGetter(UUID.class, key(JdbcColumnKey.UNDEFINED_TYPE), IDENTITY);
+
+		assertEquals(uuid, getter.get(resultSet));
+		assertEquals(uuid, getter.get(resultSet));
+	}
+
+	@Test
+	public void testUUIDString() throws Exception {
+		UUID uuid = UUID.randomUUID();
+
+		when(resultSet.getString(1)).thenReturn(uuid.toString());
+		final Getter<ResultSet, UUID> getter = factory.<UUID>newGetter(UUID.class, key(Types.VARCHAR), IDENTITY);
+
+		assertEquals(uuid, getter.get(resultSet));
+	}
+
+	@Test
+	public void testUUIDBytes() throws Exception {
+		UUID uuid = UUID.randomUUID();
+
+		when(resultSet.getBytes(1)).thenReturn(UUIDHelper.toBytes(uuid));
+		final Getter<ResultSet, UUID> getter = factory.<UUID>newGetter(UUID.class, key(Types.BINARY), IDENTITY);
+
+		assertEquals(uuid, getter.get(resultSet));
+	}
 }

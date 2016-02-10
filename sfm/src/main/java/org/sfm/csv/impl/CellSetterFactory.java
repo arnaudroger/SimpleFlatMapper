@@ -192,31 +192,27 @@ public final class CellSetterFactory {
 	}
 
 	@SuppressWarnings({"unchecked" })
-	private <P> CellValueReader<P> getReader(ClassMeta<P> propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
+	private <P> CellValueReader<P> getReader(ClassMeta<P> classMeta, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
 		CellValueReader<P> reader = null;
 
 		if (columnDefinition.hasCustomSource()) {
 			reader = (CellValueReader<P>) columnDefinition.getCustomReader();
 		}
 
-        CellValueReaderFactory factory = cellValueReaderFactory;
-        if (columnDefinition.hasCustomReaderFactory()) {
-            factory = columnDefinition.getCustomCellValueReaderFactory();
-        }
-
+		final Type propertyType = classMeta.getType();
         if (reader == null) {
-            reader = factory.getReader(propertyType.getType(), index, columnDefinition, parsingContextFactoryBuilder);
+			reader = cellValueReaderFromFactory(propertyType, index, columnDefinition, parsingContextFactoryBuilder);
         }
 
 		if (reader == null) {
-			InstantiatorDefinition id = InstantiatorDefinition.lookForCompatibleOneArgument(propertyType.getInstantiatorDefinitions(), COMPATIBILITY_SCORER);
+			InstantiatorDefinition id = InstantiatorDefinition.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(), COMPATIBILITY_SCORER);
 
 			if (id != null) {
 				final Type sourceType = id.getParameters()[0].getGenericType();
-				reader = factory.getReader(sourceType, index, columnDefinition, parsingContextFactoryBuilder);
+				reader = cellValueReaderFromFactory(sourceType, index, columnDefinition, parsingContextFactoryBuilder);
 				if (reader != null) {
 					Instantiator instantiator =
-							propertyType.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
+							classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
 					return
 							new InstantiatorOnReader(instantiator, reader);
 				}
@@ -224,13 +220,26 @@ public final class CellSetterFactory {
 		}
 
 		if (reader == null) {
-			throw new ParsingException("No cell reader for " + propertyType);
+			throw new ParsingException("No cell reader for " + classMeta);
 		}
 		return reader;
 	}
 
+	private <P> CellValueReader<P> cellValueReaderFromFactory(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
+		CellValueReader<P> reader = null;
+		if (columnDefinition.hasCustomReaderFactory()) {
+            CellValueReaderFactory factory = columnDefinition.getCustomCellValueReaderFactory();
+            reader = factory.getReader(propertyType, index, columnDefinition, parsingContextFactoryBuilder);
+        }
 
-    @SuppressWarnings("unchecked")
+		if (reader == null) {
+            reader = cellValueReaderFactory.getReader(propertyType, index, columnDefinition, parsingContextFactoryBuilder);
+        }
+		return reader;
+	}
+
+
+	@SuppressWarnings("unchecked")
 	public <T, P> CellSetter<T> getCellSetter(PropertyMeta<T, P> prop, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
 		Class<? extends P> propertyClass = (Class<? extends P>) TypeHelper.toClass(prop.getPropertyType());
 

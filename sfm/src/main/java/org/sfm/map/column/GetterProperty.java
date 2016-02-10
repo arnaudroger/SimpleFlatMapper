@@ -23,7 +23,6 @@ public class GetterProperty implements ColumnProperty {
         return paramTypesForInterface != null ? paramTypesForInterface[1] : null;
     }
 
-    @Override
     public String toString() {
         return "Getter{Getter}";
     }

@@ -75,19 +75,12 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
         @SuppressWarnings("unchecked")
 		Getter<? super S, ? extends P> getter = (Getter<? super S, ? extends P>) propertyMapping.getColumnDefinition().getCustomGetter();
 
-
-        GetterFactory<? super S, K> getterFactory = this.getterFactory;
-
-        if (propertyMapping.getColumnDefinition().hasCustomFactory()) {
-            getterFactory = (GetterFactory<? super S, K>) propertyMapping.getColumnDefinition().getCustomGetterFactory();
-        }
-
 		if (getter == null) {
-			getter = getterFactory.newGetter(propertyType, key, propertyMapping.getColumnDefinition());
+			getter = getterFromFactory(propertyMapping, propertyType);
 		}
+
 		if (getter == null) {
 			final ClassMeta<P> classMeta = propertyMeta.getPropertyClassMeta();
-
 
 			InstantiatorDefinition.CompatibilityScorer scorer = getCompatibilityScorer(key);
 			InstantiatorDefinition id = InstantiatorDefinition.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(),
@@ -95,7 +88,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 			if (id != null) {
 				final Type sourceType = id.getParameters()[0].getGenericType();
-				getter = getterFactory.newGetter(sourceType, key, null);
+				getter = getterFromFactory(propertyMapping, sourceType);
 				if (getter != null) {
 					Instantiator instantiator =
 							classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
@@ -113,6 +106,19 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 			return new FieldMapperImpl<S, T, P>(getter, setter);
 		}
+	}
+
+	private <T, P> Getter<? super S, ? extends P> getterFromFactory(PropertyMapping<T, P, K, FieldMapperColumnDefinition<K>> propertyMapping, Type propertyType) {
+		Getter<? super S, ? extends P> getter = null;
+		if (propertyMapping.getColumnDefinition().hasCustomFactory()) {
+            GetterFactory<? super S, K> cGetterFactory = (GetterFactory<? super S, K>) propertyMapping.getColumnDefinition().getCustomGetterFactory();
+            getter = cGetterFactory.newGetter(propertyType, propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition());
+        }
+
+		if (getter == null) {
+            getter = getterFactory.newGetter(propertyType, propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition());
+        }
+		return getter;
 	}
 
 	private InstantiatorDefinition.CompatibilityScorer getCompatibilityScorer(K key) {

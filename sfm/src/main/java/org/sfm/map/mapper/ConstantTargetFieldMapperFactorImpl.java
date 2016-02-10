@@ -5,6 +5,8 @@ import org.sfm.map.FieldKey;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.column.SetterFactoryProperty;
+import org.sfm.map.column.SetterProperty;
 import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.map.impl.fieldmapper.*;
 import org.sfm.reflect.*;
@@ -34,7 +36,26 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
             getter = pm.getPropertyMeta().getGetter();
         }
 
-        Setter<T, P> setter = setterFactory.getSetter(pm);
+        Setter<T, P> setter = null;
+
+        final SetterProperty setterProperty = pm.getColumnDefinition().lookFor(SetterProperty.class);
+        if (setterProperty != null) {
+            setter = (Setter<T, P>) setterProperty.getSetter();
+        }
+
+        if (setter == null){
+            final SetterFactoryProperty setterFactoryProperty = pm.getColumnDefinition().lookFor(SetterFactoryProperty.class);
+            if (setterFactoryProperty != null) {
+                final SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory =
+                        (SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>>) setterFactoryProperty.getSetterFactory();
+                setter = setterFactory.getSetter(pm);
+            }
+
+            if (setter == null){
+                setter = setterFactory.getSetter(pm);
+            }
+        }
+
 
         if (TypeHelper.isPrimitive(pm.getPropertyMeta().getPropertyType())) {
             if (getter instanceof BooleanGetter && setter instanceof BooleanSetter) {

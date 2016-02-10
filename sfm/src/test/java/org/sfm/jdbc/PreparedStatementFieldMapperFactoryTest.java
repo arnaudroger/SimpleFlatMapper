@@ -5,18 +5,24 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
 import org.sfm.jdbc.impl.PreparedStatementSetterFactory;
+import org.sfm.jdbc.impl.getter.ObjectResultSetGetter;
 import org.sfm.jdbc.impl.getter.ResultSetGetterFactoryTest;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.column.SetterFactoryProperty;
+import org.sfm.map.column.SetterProperty;
 import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
 //IFJAVA8_START
 import org.sfm.map.column.time.JavaZoneIdProperty;
 //IFJAVA8_END
+import org.sfm.map.error.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.mapper.ConstantTargetFieldMapperFactory;
 import org.sfm.map.mapper.ConstantTargetFieldMapperFactorImpl;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.Setter;
+import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.impl.*;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.UUIDHelper;
@@ -439,6 +445,38 @@ public class PreparedStatementFieldMapperFactoryTest {
         verify(ps).setNull(2, Types.BINARY);
     }
 
+    @Test
+    public void testCustomSetter() throws Exception {
+        Object o = new Object();
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Object>(o), Object.class, new SetterProperty(new Setter<PreparedStatement, Object>() {
+            @Override
+            public void set(PreparedStatement target, Object value) throws Exception {
+                ps.setString(35, "aa");
+            }
+        }));
+
+        verify(ps).setString(35, "aa");
+    }
+
+    @Test
+    public void testCustomSetterFactory() throws Exception {
+        Object o = new Object();
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, Object>(o), Object.class,
+                new SetterFactoryProperty(new SetterFactory<PreparedStatement, PropertyMapping<?, ?, ?, ?>>() {
+                    @Override
+                    public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, ?, ?> arg) {
+                        return new Setter<PreparedStatement, P>() {
+                            @Override
+                            public void set(PreparedStatement target, P value) throws Exception {
+                                ps.setString(36, "bb");
+                            }
+                        };
+                    }
+                }));
+
+        verify(ps).setString(36, "bb");
+    }
+
     //IFJAVA8_START
     @Test
     public void testJavaLocalDateTime() throws Exception {
@@ -549,7 +587,7 @@ public class PreparedStatementFieldMapperFactoryTest {
         newFieldMapperAndMapToPS(getter, clazz, JdbcColumnKey.UNDEFINED_TYPE, properties);
     }
     protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, int sqlType, ColumnProperty... properties) throws Exception {
-        FieldMapper<T, PreparedStatement> fieldMapper = factory.newFieldMapper(newPropertyMapping(getter, clazz, sqlType, properties), null, null);
+        FieldMapper<T, PreparedStatement> fieldMapper = factory.newFieldMapper(newPropertyMapping(getter, clazz, sqlType, properties), null, new RethrowMapperBuilderErrorHandler());
         fieldMapper.mapTo(null, ps, null);
     }
 

@@ -14,9 +14,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 //IFJAVA8_START
 import java.time.*;
-import java.util.UUID;
 
 import org.sfm.map.column.time.*;
 import org.sfm.csv.impl.cellreader.time.*;

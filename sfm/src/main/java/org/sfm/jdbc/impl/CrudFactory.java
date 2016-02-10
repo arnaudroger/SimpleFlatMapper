@@ -7,6 +7,7 @@ import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.jdbc.PreparedStatementMapperBuilder;
 import org.sfm.jdbc.QueryPreparer;
 import org.sfm.jdbc.named.NamedSqlQuery;
+import org.sfm.reflect.meta.ClassMeta;
 
 import java.lang.reflect.Type;
 import java.sql.SQLException;
@@ -15,8 +16,8 @@ import java.util.List;
 
 public class CrudFactory {
     public static <T, K> Crud<T, K> newInstance(
-            Type target,
-            Type keyTarget,
+            ClassMeta<T> target,
+            ClassMeta<K>  keyTarget,
             CrudMeta<T, K> crudMeta,
             JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance(jdbcMapperFactory);
@@ -24,7 +25,7 @@ public class CrudFactory {
 
     }
 
-    private static <T, K> Crud<T, K> createCrud(Type target, Type keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory mapperFactory) throws SQLException {
+    private static <T, K> Crud<T, K> createCrud(ClassMeta<T> target, ClassMeta<K> keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory mapperFactory) throws SQLException {
         crudMeta.addColumnProperties(mapperFactory);
 
         QueryPreparer<T> insert = buildInsert(target, crudMeta, mapperFactory);
@@ -61,7 +62,7 @@ public class CrudFactory {
         return defaultCrud;
     }
 
-    private static <T, K> QueryPreparer<T> buildUpsert(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory mapperFactory) {
+    private static <T, K> QueryPreparer<T> buildUpsert(ClassMeta<T>  target, CrudMeta<T, K> crudMeta, JdbcMapperFactory mapperFactory) {
         if (crudMeta.getDatabaseMeta().isMysql()) {
             return MysqlCrudFactory.buildUpsert(target, crudMeta, mapperFactory);
         } else if (crudMeta.getDatabaseMeta().isPostgresSql() && crudMeta.getDatabaseMeta().isVersionMet(9, 5)) {
@@ -71,7 +72,7 @@ public class CrudFactory {
     }
 
 
-    private static <T, K> KeyTupleQueryPreparer<K> buildKeyTupleQueryPreparer(Type keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) {
+    private static <T, K> KeyTupleQueryPreparer<K> buildKeyTupleQueryPreparer(ClassMeta<K>  keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) {
         PreparedStatementMapperBuilder<K> builder = jdbcMapperFactory.from(keyTarget);
         List<String> primaryKeys = new ArrayList<String>();
 
@@ -86,7 +87,7 @@ public class CrudFactory {
         return new KeyTupleQueryPreparer<K>(builder.buildIndexFieldMappers(), primaryKeys.toArray(new String[0]));
     }
 
-    private static <T, K>JdbcMapper<K> buildKeyMapper(Type keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) {
+    private static <T, K>JdbcMapper<K> buildKeyMapper(ClassMeta<K>  keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) {
         JdbcMapperBuilder<K> mapperBuilder = jdbcMapperFactory.newBuilder(keyTarget);
 
         int i = 1;
@@ -99,7 +100,7 @@ public class CrudFactory {
         return mapperBuilder.mapper();
     }
 
-    private static <T, K> JdbcMapper<T> buildSelectMapper(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+    private static <T, K> JdbcMapper<T> buildSelectMapper(ClassMeta<T>  target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         JdbcMapperBuilder<T> mapperBuilder = jdbcMapperFactory.<T>newBuilder(target);
 
         int i = 1;
@@ -110,7 +111,7 @@ public class CrudFactory {
         return mapperBuilder.mapper();
     }
 
-    private static <T, K> QueryPreparer<T> buildInsert(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+    private static <T, K> QueryPreparer<T> buildInsert(ClassMeta<T> target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         List<String> generatedKeys = new ArrayList<String>();
 
         StringBuilder sb = new StringBuilder("INSERT INTO ");
@@ -143,7 +144,7 @@ public class CrudFactory {
         return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb), generatedKeys.isEmpty() ? null :  generatedKeys.toArray(new String[0]));
     }
 
-    private static <T, K> QueryPreparer<T> buildUpdate(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+    private static <T, K> QueryPreparer<T> buildUpdate(ClassMeta<T> target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         StringBuilder sb = new StringBuilder("UPDATE ");
         sb.append(crudMeta.getTable());
         sb.append(" SET ");
@@ -163,14 +164,14 @@ public class CrudFactory {
         return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb));
     }
 
-    private static <T, K> QueryPreparer<K> buildSelect(Type keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+    private static <T, K> QueryPreparer<K> buildSelect(ClassMeta<K> keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         StringBuilder sb = new StringBuilder("SELECT * FROM ");
         sb.append(crudMeta.getTable());
         addWhereOnPrimaryKeys(crudMeta, sb);
         return jdbcMapperFactory.<K>from(keyTarget).to(NamedSqlQuery.parse(sb));
     }
 
-    private static <T, K> QueryPreparer<K> buildDelete(Type keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+    private static <T, K> QueryPreparer<K> buildDelete(ClassMeta<K> keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         StringBuilder sb = new StringBuilder("DELETE FROM ");
         sb.append(crudMeta.getTable());
         addWhereOnPrimaryKeys(crudMeta, sb);

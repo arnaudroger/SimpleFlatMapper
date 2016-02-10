@@ -1,6 +1,7 @@
 package org.sfm.reflect.asm;
 
 import org.objectweb.asm.*;
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.TypeHelper;
@@ -122,7 +123,7 @@ public class AsmInstantiatorDefinitionFactory {
                                     } else {
                                         executable = targetClass.getDeclaredMethod(methodName, toTypeArray(parameters));
                                     }
-                                    constructors.add(new InstantiatorDefinition(executable, parameters.toArray(new Parameter[0])));
+                                    constructors.add(new ExecutableInstantiatorDefinition(executable, parameters.toArray(new Parameter[0])));
                                 } catch(Exception e) {
                                     ErrorHelper.rethrow(e);
                                 }

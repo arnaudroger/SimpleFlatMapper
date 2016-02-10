@@ -1,6 +1,7 @@
 package org.sfm.csv.impl;
 
 import org.junit.Test;
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 
@@ -34,6 +35,6 @@ public class CellSetterFactoryTest {
     }
 
     private InstantiatorDefinition newID(Class<?> clazz) {
-        return new InstantiatorDefinition(null, new Parameter(0, "xx", clazz));
+        return new ExecutableInstantiatorDefinition(null, new Parameter(0, "xx", clazz));
     }
 }

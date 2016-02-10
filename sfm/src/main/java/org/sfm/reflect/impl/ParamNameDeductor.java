@@ -1,6 +1,7 @@
 package org.sfm.reflect.impl;
 
 import org.sfm.reflect.EnumHelper;
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.GetterHelper;
 import org.sfm.reflect.Instantiator;

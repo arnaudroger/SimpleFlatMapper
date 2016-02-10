@@ -1,6 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.map.MapperBuildingException;
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 

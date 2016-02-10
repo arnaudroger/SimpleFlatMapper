@@ -43,7 +43,7 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
             setter = (Setter<T, P>) setterProperty.getSetter();
         }
 
-        if (setter == null){
+        if (setter == null) {
             final SetterFactoryProperty setterFactoryProperty = pm.getColumnDefinition().lookFor(SetterFactoryProperty.class);
             if (setterFactoryProperty != null) {
                 final SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory =
@@ -55,7 +55,6 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
                 setter = setterFactory.getSetter(pm);
             }
         }
-
 
         if (TypeHelper.isPrimitive(pm.getPropertyMeta().getPropertyType())) {
             if (getter instanceof BooleanGetter && setter instanceof BooleanSetter) {

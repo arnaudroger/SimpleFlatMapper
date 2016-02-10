@@ -4,6 +4,7 @@ import org.sfm.jdbc.impl.CrudFactory;
 import org.sfm.jdbc.impl.CrudMeta;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.meta.AliasProviderFactory;
+import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyNameMatcher;
 import org.sfm.reflect.meta.Table;
@@ -14,11 +15,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CrudDSL<T, K> {
-    private final Type target;
-    private final Type keyTarget;
+    private final ClassMeta<T> target;
+    private final ClassMeta<K> keyTarget;
     private final JdbcMapperFactory jdbcMapperFactory;
 
-    public CrudDSL(Type target, Type keyTarget, JdbcMapperFactory jdbcMapperFactory) {
+    public CrudDSL(ClassMeta<T> target, ClassMeta<K> keyTarget, JdbcMapperFactory jdbcMapperFactory) {
         this.target = target;
         this.keyTarget = keyTarget;
         this.jdbcMapperFactory = jdbcMapperFactory;
@@ -35,8 +36,9 @@ public class CrudDSL<T, K> {
         return CrudFactory.newInstance(target, keyTarget, crudMeta, jdbcMapperFactory);
     }
 
-    private String getTable(Connection connection, Type target) throws SQLException {
-        Table table = AliasProviderFactory.getAliasProvider().getTable(TypeHelper.toClass(target));
+    private String getTable(Connection connection, ClassMeta<T> target) throws SQLException {
+        final Class<Object> targetClass = TypeHelper.toClass(target.getType());
+        Table table = AliasProviderFactory.getAliasProvider().getTable(targetClass);
 
         StringBuilder sb = new StringBuilder();
         if (table.schema() != null && table.schema().length() > 0) {
@@ -45,7 +47,7 @@ public class CrudDSL<T, K> {
 
         if (table.table() == null) {
             final ResultSet tables = connection.getMetaData().getTables(connection.getCatalog(), null, null, null);
-            final String className = TypeHelper.toClass(target).getSimpleName();
+            final String className = TypeHelper.toClass(targetClass).getSimpleName();
             try {
                 while(tables.next()) {
                     String tableName = tables.getString("TABLE_NAME");

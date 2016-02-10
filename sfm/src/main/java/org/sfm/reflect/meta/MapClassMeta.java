@@ -1,5 +1,6 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
@@ -86,6 +87,6 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	@Override
 	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
-		return Arrays.asList(new InstantiatorDefinition(constructor));
+		return Arrays.<InstantiatorDefinition>asList(new ExecutableInstantiatorDefinition(constructor));
 	}
 }

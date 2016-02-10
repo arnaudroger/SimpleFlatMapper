@@ -3,6 +3,7 @@ package org.sfm.reflect.meta;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
@@ -135,7 +136,7 @@ public class MapClassMetaTest {
         final List<InstantiatorDefinition> instantiatorDefinitions = classMeta.getInstantiatorDefinitions();
 
         assertEquals(1, instantiatorDefinitions.size());
-        final InstantiatorDefinition instantiatorDefinition = instantiatorDefinitions.get(0);
+        final ExecutableInstantiatorDefinition instantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinitions.get(0);
 
         assertEquals(0, instantiatorDefinition.getParameters().length);
         assertEquals(impl.getDeclaredConstructor(), instantiatorDefinition.getExecutable());

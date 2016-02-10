@@ -13,6 +13,7 @@ import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
 import org.sfm.map.FieldMapper;
 import org.sfm.map.getter.OrdinalEnumGetter;
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.Getter;
@@ -39,7 +40,8 @@ public class AsmFactoryTest {
 	}
 	@Test
 	public void testCreateInstantiatorFinalDbObjectInjectIdAndName() throws Exception {
-		InstantiatorDefinition instantiatorDefinition = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class).get(0);
+		ExecutableInstantiatorDefinition instantiatorDefinition =
+				(ExecutableInstantiatorDefinition) AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class).get(0);
 		HashMap<Parameter, Getter<? super ResultSet, ?>> injections = new HashMap<Parameter, Getter<? super ResultSet, ?>>();
 		injections.put(new Parameter(0, "id", long.class), new LongResultSetGetter(1));
 		injections.put(new Parameter(1, "name", String.class), new StringResultSetGetter(2));
@@ -78,7 +80,7 @@ public class AsmFactoryTest {
 
 		List<InstantiatorDefinition> instantiatorDefinitions = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class);
 		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
-				instantiatorDefinitions.get(0),
+				(ExecutableInstantiatorDefinition) instantiatorDefinitions.get(0),
 				injections
 		);
 		

@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
@@ -21,7 +22,7 @@ public class AsmInstantiatorDefinitionFactoryTest {
 		List<InstantiatorDefinition> dbObjectConstructors = AsmInstantiatorDefinitionFactory.extractDefinitions(DbObject.class);
 		assertEquals(3, dbObjectConstructors.size());
 		assertEquals(0, dbObjectConstructors.get(0).getParameters().length);
-		assertEquals(DbObject.class.getConstructor(), dbObjectConstructors.get(0).getExecutable());
+		assertEquals(DbObject.class.getConstructor(), ((ExecutableInstantiatorDefinition)dbObjectConstructors.get(0)).getExecutable());
 		
 	}
 	
@@ -47,7 +48,8 @@ public class AsmInstantiatorDefinitionFactoryTest {
 		assertEquals("typeName", finalDbObjectConstructors.get(0).getParameters()[5].getName());
 
 		
-		assertEquals(DbFinalObject.class.getConstructor(long.class, String.class, String.class, Date.class, Type.class, Type.class), finalDbObjectConstructors.get(0).getExecutable());
+		assertEquals(DbFinalObject.class.getConstructor(long.class, String.class, String.class, Date.class, Type.class, Type.class),
+				((ExecutableInstantiatorDefinition)finalDbObjectConstructors.get(0)).getExecutable());
 
 	}
 
@@ -68,7 +70,8 @@ public class AsmInstantiatorDefinitionFactoryTest {
 		assertEquals("element0", finalDbObjectConstructors.get(0).getParameters()[0].getName());
 		assertEquals("element1", finalDbObjectConstructors.get(0).getParameters()[1].getName());
 
-		assertEquals(Tuple2.class.getConstructor(Object.class, Object.class), finalDbObjectConstructors.get(0).getExecutable());
+		assertEquals(Tuple2.class.getConstructor(Object.class, Object.class),
+				((ExecutableInstantiatorDefinition)finalDbObjectConstructors.get(0)).getExecutable());
 
 	}
 

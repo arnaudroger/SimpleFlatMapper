@@ -82,8 +82,8 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		if (getter == null) {
 			final ClassMeta<P> classMeta = propertyMeta.getPropertyClassMeta();
 
-			InstantiatorDefinition.CompatibilityScorer scorer = getCompatibilityScorer(key);
-			InstantiatorDefinition id = InstantiatorDefinition.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(),
+			InstantiatorDefinitions.CompatibilityScorer scorer = getCompatibilityScorer(key);
+			InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(),
 					scorer);
 
 			if (id != null) {
@@ -121,7 +121,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		return getter;
 	}
 
-	private InstantiatorDefinition.CompatibilityScorer getCompatibilityScorer(K key) {
+	private InstantiatorDefinitions.CompatibilityScorer getCompatibilityScorer(K key) {
 		if (key instanceof TypeAffinity) {
 			TypeAffinity ta = (TypeAffinity) key;
 			Class<?>[] affinities = ta.getAffinities();
@@ -133,7 +133,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		return new DefaultCompatibilityScorer();
 	}
 
-	private static class DefaultCompatibilityScorer implements InstantiatorDefinition.CompatibilityScorer {
+	private static class DefaultCompatibilityScorer implements InstantiatorDefinitions.CompatibilityScorer {
 		@Override
         public int score(InstantiatorDefinition id) {
 			Package aPackage = id.getParameters()[0].getType().getPackage();
@@ -144,7 +144,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
         }
 	}
 
-	private static class TypeAffinityCompatibilityScorer implements InstantiatorDefinition.CompatibilityScorer {
+	private static class TypeAffinityCompatibilityScorer implements InstantiatorDefinitions.CompatibilityScorer {
 		private final Class<?>[] classes;
 
 		private TypeAffinityCompatibilityScorer(Class<?>[] classes) {

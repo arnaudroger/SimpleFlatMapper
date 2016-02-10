@@ -41,7 +41,7 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		List<InstantiatorDefinition> factoryMethod = ReflectionInstantiatorDefinitionFactory.extractDefinitions(ObjectWithFactoryMethod.class);
 		assertEquals(1, factoryMethod.size());
 
-		InstantiatorDefinition id = factoryMethod.get(0);
+		ExecutableInstantiatorDefinition id = (ExecutableInstantiatorDefinition) factoryMethod.get(0);
 
 		assertEquals(ObjectWithFactoryMethod.class.getMethod("valueOf", String.class), id.getExecutable());
 		assertEquals(1, id.getParameters().length);
@@ -53,7 +53,7 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		List<InstantiatorDefinition> factoryMethod = AsmInstantiatorDefinitionFactory.extractDefinitions(ObjectWithFactoryMethod.class);
 		assertEquals(1, factoryMethod.size());
 
-		InstantiatorDefinition id = factoryMethod.get(0);
+		ExecutableInstantiatorDefinition id = (ExecutableInstantiatorDefinition) factoryMethod.get(0);
 
 		assertEquals(ObjectWithFactoryMethod.class.getMethod("valueOf", String.class), id.getExecutable());
 		assertEquals(1, id.getParameters().length);
@@ -65,7 +65,7 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		List<InstantiatorDefinition> dbObjectConstructors = ReflectionInstantiatorDefinitionFactory.extractDefinitions(DbObject.class);
 		assertEquals(3, dbObjectConstructors.size());
 		assertEquals(0, dbObjectConstructors.get(0).getParameters().length);
-		assertEquals(DbObject.class.getConstructor(), dbObjectConstructors.get(0).getExecutable());
+		assertEquals(DbObject.class.getConstructor(), ((ExecutableInstantiatorDefinition)dbObjectConstructors.get(0)).getExecutable());
 		
 	}
 	
@@ -91,7 +91,8 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		assertNull(finalDbObjectConstructors.get(0).getParameters()[5].getName());
 
 		
-		assertEquals(DbFinalObject.class.getConstructor(long.class, String.class, String.class, Date.class, Type.class, Type.class), finalDbObjectConstructors.get(0).getExecutable());
+		assertEquals(DbFinalObject.class.getConstructor(long.class, String.class, String.class, Date.class, Type.class, Type.class),
+				((ExecutableInstantiatorDefinition)finalDbObjectConstructors.get(0)).getExecutable());
 
 	}
 
@@ -112,7 +113,8 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		assertNull(finalDbObjectConstructors.get(0).getParameters()[0].getName());
 		assertNull(finalDbObjectConstructors.get(0).getParameters()[1].getName());
 
-		assertEquals(Tuple2.class.getConstructor(Object.class, Object.class), finalDbObjectConstructors.get(0).getExecutable());
+		assertEquals(Tuple2.class.getConstructor(Object.class, Object.class),
+				((ExecutableInstantiatorDefinition)finalDbObjectConstructors.get(0)).getExecutable());
 
 	}
 
@@ -151,7 +153,7 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		final Class<?> classWithParameter = cl.loadClass("p.ClassParameter");
 		final Class<?> classWithoutParameter = cl.loadClass("p.ClassNoNameParameter");
 
-		List<InstantiatorDefinition> instantiatorDefinitions = ReflectionService.newInstance().extractConstructors(classWithParameter);
+		List<InstantiatorDefinition> instantiatorDefinitions = ReflectionService.newInstance().extractInstantiator(classWithParameter);
 
 		assertEquals(1, instantiatorDefinitions.size());
 		assertEquals(2, instantiatorDefinitions.get(0).getParameters().length);
@@ -159,7 +161,7 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		assertEquals("value", instantiatorDefinitions.get(0).getParameters()[1].getName());
 
 
-		instantiatorDefinitions = ReflectionService.newInstance().extractConstructors(classWithoutParameter);
+		instantiatorDefinitions = ReflectionService.newInstance().extractInstantiator(classWithoutParameter);
 
 		assertEquals(1, instantiatorDefinitions.size());
 		assertEquals(2, instantiatorDefinitions.get(0).getParameters().length);

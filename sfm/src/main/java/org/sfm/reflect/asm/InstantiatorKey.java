@@ -1,6 +1,6 @@
 package org.sfm.reflect.asm;
 
-import org.sfm.reflect.InstantiatorDefinition;
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 
 import java.lang.reflect.Member;
@@ -21,7 +21,7 @@ public class InstantiatorKey {
 	public InstantiatorKey(Class<?> target, Class<?> source) throws NoSuchMethodException, SecurityException {
 		this(target.getConstructor(), null, source);
 	}
-	public InstantiatorKey(InstantiatorDefinition instantiatorDefinition,	Set<Parameter>  injections, Class<?> source) {
+	public InstantiatorKey(ExecutableInstantiatorDefinition instantiatorDefinition, Set<Parameter>  injections, Class<?> source) {
 		this(instantiatorDefinition.getExecutable(), toParamNameS(injections), source);
 	}
 	private static String[] toParamNameS(Set<Parameter> keySet) {

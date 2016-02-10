@@ -6,12 +6,14 @@ import org.sfm.map.error.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.error.RethrowRowHandlerErrorHandler;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
 import org.sfm.utils.ConstantUnaryFactory;
 import org.sfm.utils.Predicate;
 import org.sfm.utils.UnaryFactory;
 
+import java.lang.reflect.Member;
 import java.lang.reflect.Type;
 import java.util.Map;
 
@@ -286,11 +288,32 @@ public abstract class AbstractMapperFactory<
     }
 
 
+	public final <T> ClassMeta<T> getClassMeta(TypeReference<T> target) {
+		return getClassMeta(target.getType());
+	}
+
+	public final <T> ClassMeta<T> getClassMeta(Class<T> target) {
+		return getClassMeta((Type)target);
+	}
+
     public final <T> ClassMeta<T> getClassMeta(Type target) {
         return getReflectionService().getClassMeta(target);
     }
 
-    private ReflectionService getReflectionService() {
+	public final <T> ClassMeta<T> getClassMetaWithExtraInstantiator(TypeReference<T> target, Member instantiator) {
+		return getClassMetaWithExtraInstantiator(target.getType(), instantiator);
+	}
+
+	public final <T> ClassMeta<T> getClassMetaWithExtraInstantiator(Class<T> target, Member instantiator) {
+		return getClassMetaWithExtraInstantiator((Type) target, instantiator);
+	}
+
+	public final <T> ClassMeta<T> getClassMetaWithExtraInstantiator(Type target, Member instantiator) {
+		return getReflectionService().getClassMetaExtraInstantiator(target, instantiator);
+	}
+
+
+	private ReflectionService getReflectionService() {
         if (reflectionService != null) {
             return reflectionService;
         } else {

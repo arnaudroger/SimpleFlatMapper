@@ -1,6 +1,7 @@
 package org.sfm.reflect.meta;
 
 import org.sfm.map.MapperBuildingException;
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.ReflectionService;
@@ -36,20 +37,20 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 	}
 
     private InstantiatorDefinition getInstantiatorDefinition(Type type, ReflectionService reflectionService) throws java.io.IOException {
-        final List<InstantiatorDefinition> definitions = reflectionService.extractConstructors(type);
+        final List<InstantiatorDefinition> definitions = reflectionService.extractInstantiator(type);
 
         ListIterator<InstantiatorDefinition> iterator = definitions.listIterator();
         while(iterator.hasNext()) {
             final InstantiatorDefinition definition = iterator.next();
             if (isTupleConstructor(type, definition)) {
-                return respecifyParameterNames(definition);
+                return respecifyParameterNames((ExecutableInstantiatorDefinition)definition);
             }
         }
         throw new MapperBuildingException("Cannot find eligible constructor definition for " + type);
     }
 
     @SuppressWarnings("unchecked")
-    private InstantiatorDefinition respecifyParameterNames(InstantiatorDefinition definition) {
+    private InstantiatorDefinition respecifyParameterNames(ExecutableInstantiatorDefinition definition) {
         final Parameter[] parameters = definition.getParameters();
         if (parameters.length > 0 && parameters[0].getName() == null) {
 
@@ -60,14 +61,14 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
                 newParams[i] = new Parameter(i, nameGenerator.name(i), parameters[i].getType(), parameters[i].getGenericType());
             }
 
-            return new InstantiatorDefinition((Constructor<? extends T>) definition.getExecutable(), newParams);
+            return new ExecutableInstantiatorDefinition((Constructor<? extends T>) definition.getExecutable(), newParams);
 
         }
         return definition;
     }
 
     private boolean isTupleConstructor(Type type, InstantiatorDefinition definition) {
-        if (type instanceof ParameterizedType) {
+        if (type instanceof ParameterizedType && definition.getType() != InstantiatorDefinition.Type.BUILDER) {
             ParameterizedType pt = (ParameterizedType) type;
             return pt.getActualTypeArguments().length == definition.getParameters().length;
         }

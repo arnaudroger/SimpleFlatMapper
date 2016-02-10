@@ -35,7 +35,7 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 
     private InstantiatorDefinition getInstantiatorDefinition(Type type) throws NoSuchMethodException {
         ParameterizedType pt = (ParameterizedType) type;
-        InstantiatorDefinition id = new InstantiatorDefinition(Optional.class.getMethod("ofNullable", Object.class),
+        InstantiatorDefinition id = new ExecutableInstantiatorDefinition(Optional.class.getMethod("ofNullable", Object.class),
                 new Parameter(0, "value", Object.class, pt.getActualTypeArguments()[0]));
         return id;
     }

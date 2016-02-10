@@ -2,6 +2,7 @@ package org.sfm.reflect.meta;
 
 
 import org.junit.Test;
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 
@@ -47,7 +48,8 @@ public class ArrayMetaDataTest {
 
         assertEquals("ListElementPropertyMeta{index=1}", bb.toString());
 
-        assertEquals(ArrayList.class.getConstructor(), propertyFinder.getEligibleInstantiatorDefinitions().get(0).getExecutable());
+        assertEquals(ArrayList.class.getConstructor(),
+                ((ExecutableInstantiatorDefinition)propertyFinder.getEligibleInstantiatorDefinitions().get(0)).getExecutable());
 
         try {
             classMeta.generateHeaders();

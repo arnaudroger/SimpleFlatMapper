@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.sfm.jdbc.JdbcMapperBuilder;
 import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.jdbc.PreparedStatementMapperBuilder;
+import org.sfm.reflect.meta.ClassMeta;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -19,4 +20,17 @@ public class TestMapFooBar {
         assertNotNull(buildFrom.addColumn("foo").addColumn("bar").addColumn("crux").buildIndexFieldMappers());
     }
 
+
+    @Test
+    public void mapFooBarNoBuilderLink() throws NoSuchMethodException {
+        final JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance();
+        final ClassMeta<FoobarValueNoBuilderLink> meta =
+                mapperFactory
+                        .getClassMetaWithExtraInstantiator(
+                                FoobarValueNoBuilderLink.class,
+                                ImmutableFoobarValueNoBuilderLink.class.getMethod("builder"));
+        final JdbcMapperBuilder<FoobarValueNoBuilderLink> builder =
+                mapperFactory.newBuilder(meta);
+        assertNotNull(builder.addKey("foo").addKey("bar").addKey("crux").mapper());
+    }
 }

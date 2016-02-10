@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static org.sfm.reflect.ReflectionInstantiatorDefinitionFactory.areParameterNamePresent;
 import static org.sfm.utils.Asserts.requireNonNull;
 
 public class ReflectionService {
@@ -100,6 +99,10 @@ public class ReflectionService {
 		}
 	}
 
+	public <T> ClassMeta<T> getClassMetaExtraInstantiator(Type target, Member builderInstantiator) {
+		return new ObjectClassMeta<T>(target, builderInstantiator, this);
+	}
+
 	private <K, V> ClassMeta<Map<K,V>> newMapMeta(Type type) {
 		Tuple2<Type, Type> types = TypeHelper.getKeyValueTypeOfMap(type);
 		return new MapClassMeta<Map<K, V>, K, V>(type, types.first(), types.second(), this);
@@ -128,7 +131,11 @@ public class ReflectionService {
 		return aliasProvider.getAliasForField(field);
 	}
 
-	public List<InstantiatorDefinition> extractConstructors(Type target) throws IOException {
+	public List<InstantiatorDefinition> extractInstantiator(Type target) throws IOException {
+		return extractInstantiator(target, null);
+	}
+
+	public List<InstantiatorDefinition> extractInstantiator(Type target, Member extraInstantiator) throws IOException {
 		List<InstantiatorDefinition> list;
 
         if (isAsmPresent()
@@ -143,7 +150,23 @@ public class ReflectionService {
 			list = ReflectionInstantiatorDefinitionFactory.extractDefinitions(target);
 		}
 
-		Collections.sort(list);
+		if (extraInstantiator == null) {
+			list.addAll(BuilderInstantiatorDefinitionFactory.extractDefinitions(target));
+		} else {
+			if (extraInstantiator instanceof Method && TypeHelper.areEquals(target, ((Method)extraInstantiator).getGenericReturnType())) {
+				// factory method
+
+			} else {
+				final BuilderInstantiatorDefinition builder =
+						BuilderInstantiatorDefinitionFactory.getDefinitionForBuilder(extraInstantiator, target);
+				if (builder == null) {
+					throw new IllegalArgumentException("Could not find any setters or build method on builder " + extraInstantiator);
+				}
+				list.add(builder);
+			}
+		}
+
+		Collections.sort(list, InstantiatorDefinitions.COMPARATOR);
 
 		return list;
 	}
@@ -186,5 +209,7 @@ public class ReflectionService {
 	public boolean hasAsmFactory() {
 		return asmFactory != null;
 	}
+
+
 }
  

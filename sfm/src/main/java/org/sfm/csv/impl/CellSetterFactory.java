@@ -21,7 +21,7 @@ import java.util.Date;
 public final class CellSetterFactory {
 
 
-	public static final InstantiatorDefinition.CompatibilityScorer COMPATIBILITY_SCORER = new InstantiatorDefinition.CompatibilityScorer() {
+	public static final InstantiatorDefinitions.CompatibilityScorer COMPATIBILITY_SCORER = new InstantiatorDefinitions.CompatibilityScorer() {
 		@Override
 		public int score(InstantiatorDefinition id) {
 			Class<?> type = TypeHelper.toBoxedClass(id.getParameters()[0].getType());
@@ -205,7 +205,7 @@ public final class CellSetterFactory {
         }
 
 		if (reader == null) {
-			InstantiatorDefinition id = InstantiatorDefinition.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(), COMPATIBILITY_SCORER);
+			InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(), COMPATIBILITY_SCORER);
 
 			if (id != null) {
 				final Type sourceType = id.getParameters()[0].getGenericType();
@@ -237,7 +237,6 @@ public final class CellSetterFactory {
         }
 		return reader;
 	}
-
 
 	@SuppressWarnings("unchecked")
 	public <T, P> CellSetter<T> getCellSetter(PropertyMeta<T, P> prop, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {

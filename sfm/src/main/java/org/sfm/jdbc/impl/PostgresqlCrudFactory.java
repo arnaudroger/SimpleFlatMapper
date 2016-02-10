@@ -5,6 +5,7 @@ import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.jdbc.PreparedStatementMapperBuilder;
 import org.sfm.jdbc.QueryPreparer;
 import org.sfm.jdbc.named.NamedSqlQuery;
+import org.sfm.reflect.meta.ClassMeta;
 
 import java.lang.reflect.Type;
 import java.sql.SQLException;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class PostgresqlCrudFactory {
 
-    public static <T, K> Crud<T, K> newInstance(Type target, Type keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory, DefaultCrud<T, K> defaultCrud) throws SQLException {
+    public static <T, K> Crud<T, K> newInstance(ClassMeta<T>  target, ClassMeta<K>  keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory, DefaultCrud<T, K> defaultCrud) throws SQLException {
         return new MultiRowsBatchInsertCrud<T, K>(
                 defaultCrud,
                 buildBatchInsert(target, crudMeta, jdbcMapperFactory, false),
@@ -22,7 +23,7 @@ public class PostgresqlCrudFactory {
     }
 
     private static <T, K> BatchQueryExecutor<T> buildBatchInsert(
-            Type target,
+            ClassMeta<T> target,
             CrudMeta<T, K> crudMeta,
             JdbcMapperFactory jdbcMapperFactory,
             boolean onDuplicateKeyUpdate) throws SQLException {
@@ -59,7 +60,7 @@ public class PostgresqlCrudFactory {
         return queryExecutor;
     }
 
-    public static <T, K> QueryPreparer<T> buildUpsert(Type target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) {
+    public static <T, K> QueryPreparer<T> buildUpsert(ClassMeta<T> target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) {
         List<String> generatedKeys = new ArrayList<String>();
         StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO ");

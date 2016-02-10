@@ -220,6 +220,10 @@ public final class JdbcMapperFactory
     }
 
 	public <T, K> CrudDSL<T, K> crud(final Type target, final Type keyTarget) {
+		return crud(this.<T>getClassMeta(target), this.<K>getClassMeta(keyTarget));
+	}
+
+	public <T, K> CrudDSL<T, K> crud(final ClassMeta<T> target, final ClassMeta<K> keyTarget) {
 		return new CrudDSL<T, K>(target, keyTarget, JdbcMapperFactory.newInstance(this));
 	}
 

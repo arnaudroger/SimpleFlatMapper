@@ -32,40 +32,40 @@ public class InstantiatorDefinitionTest {
 
     @Test
     public void testCompareConstructorSize() {
-        assertCompare(new InstantiatorDefinition(c, parameter), new InstantiatorDefinition(c, parameter, parameter));
+        assertCompare(new ExecutableInstantiatorDefinition(c, parameter), new ExecutableInstantiatorDefinition(c, parameter, parameter));
     }
 
-    private void assertCompare(InstantiatorDefinition i0, InstantiatorDefinition i1) {
-        assertTrue(i0.compareTo(i1) < 0);
-        assertTrue(i1.compareTo(i0) > 0);
-        assertTrue(i1.compareTo(i1) == 0);
+    private void assertCompare(ExecutableInstantiatorDefinition i0, ExecutableInstantiatorDefinition i1) {
+        assertTrue(InstantiatorDefinitions.COMPARATOR.compare(i0, i1) < 0);
+        assertTrue(InstantiatorDefinitions.COMPARATOR.compare(i1, i0) > 0);
+        assertTrue(InstantiatorDefinitions.COMPARATOR.compare(i1, i1) == 0);
     }
 
 
     @Test
     public void testCompareConstructorOverMethod() {
-        assertCompare(new InstantiatorDefinition(c, parameter, parameter), new InstantiatorDefinition(valueOfMethod,parameter));
+        assertCompare(new ExecutableInstantiatorDefinition(c, parameter, parameter), new ExecutableInstantiatorDefinition(valueOfMethod,parameter));
     }
 
     @Test
     public void testCompareMethodValueOfOverOther() {
-        assertCompare(new InstantiatorDefinition(valueOfMethod, parameter, parameter), new InstantiatorDefinition(setUpMethod,parameter));
+        assertCompare(new ExecutableInstantiatorDefinition(valueOfMethod, parameter, parameter), new ExecutableInstantiatorDefinition(setUpMethod,parameter));
     }
 
     @Test
     public void testCompareMethodSize() {
-        assertCompare(new InstantiatorDefinition(valueOfMethod, parameter), new InstantiatorDefinition(valueOfMethod,parameter, parameter));
+        assertCompare(new ExecutableInstantiatorDefinition(valueOfMethod, parameter), new ExecutableInstantiatorDefinition(valueOfMethod,parameter, parameter));
 
     }
 
     @Test
     public void testLookForCompatibleOneArgumentReturnBestScore() {
-        InstantiatorDefinition id1 = new InstantiatorDefinition(c, parameter);
-        InstantiatorDefinition id2 = new InstantiatorDefinition(c, parameter);
+        InstantiatorDefinition id1 = new ExecutableInstantiatorDefinition(c, parameter);
+        InstantiatorDefinition id2 = new ExecutableInstantiatorDefinition(c, parameter);
 
-        InstantiatorDefinition sid = InstantiatorDefinition.lookForCompatibleOneArgument(
+        InstantiatorDefinition sid = InstantiatorDefinitions.lookForCompatibleOneArgument(
                 Arrays.asList(id1, id2),
-                new InstantiatorDefinition.CompatibilityScorer() {
+                new InstantiatorDefinitions.CompatibilityScorer() {
                     int i;
                     @Override
                     public int score(InstantiatorDefinition id) {
@@ -76,9 +76,9 @@ public class InstantiatorDefinitionTest {
 
 
 
-        sid = InstantiatorDefinition.lookForCompatibleOneArgument(
+        sid = InstantiatorDefinitions.lookForCompatibleOneArgument(
                 Arrays.asList(id1, id2),
-                new InstantiatorDefinition.CompatibilityScorer() {
+                new InstantiatorDefinitions.CompatibilityScorer() {
                     int i = 10;
                     @Override
                     public int score(InstantiatorDefinition id) {
@@ -91,11 +91,11 @@ public class InstantiatorDefinitionTest {
 
     @Test
     public void testLookForCompatibleOneArgumentIgnoreNegativeScore() {
-        InstantiatorDefinition id1 = new InstantiatorDefinition(c, parameter);
+        InstantiatorDefinition id1 = new ExecutableInstantiatorDefinition(c, parameter);
 
-        InstantiatorDefinition sid = InstantiatorDefinition.lookForCompatibleOneArgument(
+        InstantiatorDefinition sid = InstantiatorDefinitions.lookForCompatibleOneArgument(
                 Arrays.asList(id1),
-                new InstantiatorDefinition.CompatibilityScorer() {
+                new InstantiatorDefinitions.CompatibilityScorer() {
                     @Override
                     public int score(InstantiatorDefinition id) {
                         return -1;

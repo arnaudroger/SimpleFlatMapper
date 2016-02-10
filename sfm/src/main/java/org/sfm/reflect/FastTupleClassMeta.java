@@ -21,7 +21,7 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
         try {
             Class<T> clazz = TypeHelper.toClass(target);
             instantiatorDefinitions = new ArrayList<InstantiatorDefinition>();
-            instantiatorDefinitions.add(new InstantiatorDefinition(clazz.getConstructor()));
+            instantiatorDefinitions.add(new ExecutableInstantiatorDefinition(clazz.getConstructor()));
             final List<PropertyMeta<T, ?>> properties = getPropertyMetas(clazz, reflectionService);
             this.delegate = new ObjectClassMeta<T>(target,
                     instantiatorDefinitions, new ArrayList<ConstructorPropertyMeta<T, ?>>(), properties, reflectionService);

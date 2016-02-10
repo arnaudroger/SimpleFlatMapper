@@ -21,12 +21,15 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	private final Type target;
 
 	private final Map<String, String> fieldAliases;
-	
 	public ObjectClassMeta(Type target, ReflectionService reflectService) throws MapperBuildingException {
+		this(target, null, reflectService);
+	}
+
+	public ObjectClassMeta(Type target, Member builderInstantiator, ReflectionService reflectService) throws MapperBuildingException {
 		this.target = target;
 		this.reflectService = reflectService;
 		try {
-			this.instantiatorDefinitions = reflectService.extractConstructors(target);
+			this.instantiatorDefinitions = reflectService.extractInstantiator(target, builderInstantiator);
 			this.constructorProperties = listConstructorProperties(instantiatorDefinitions);
 		} catch(Exception e) {
 			ErrorHelper.rethrow(e);

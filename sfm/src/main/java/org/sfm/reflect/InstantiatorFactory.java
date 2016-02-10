@@ -6,10 +6,13 @@ import org.sfm.map.FieldKey;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.map.mapper.PropertyMappingsBuilder;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.impl.BuilderInstantiator;
 import org.sfm.reflect.impl.EmptyConstructorInstantiator;
 import org.sfm.reflect.impl.EmptyStaticMethodInstantiator;
 import org.sfm.reflect.impl.InjectConstructorInstantiator;
 import org.sfm.reflect.impl.InjectStaticMethodInstantiator;
+import org.sfm.reflect.impl.ParamNameDeductor;
+import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ForEachCallBack;
 
 import java.lang.reflect.*;
@@ -66,37 +69,73 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> getInstantiator(InstantiatorDefinition instantiatorDefinition, Class<?> source, Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
-		Member executable = instantiatorDefinition.getExecutable();
 
-		if (asmFactory != null && Modifier.isPublic(executable.getModifiers()) && useAsmIfEnabled) {
-			try {
-				return asmFactory.createInstantiator(source, instantiatorDefinition, injections);
-			} catch (Exception e) {
-				// fall back on reflection
+		if (asmFactory != null  && useAsmIfEnabled && instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
+			ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
+			Member executable = executableInstantiatorDefinition.getExecutable();
+			if (Modifier.isPublic(executable.getModifiers())) {
+				try {
+					return asmFactory.createInstantiator(source, executableInstantiatorDefinition, injections);
+				} catch (Exception e) {
+					// fall back on reflection
+				}
 			}
 		}
 
-		if (executable instanceof Constructor) {
-			Constructor<? extends T> c = (Constructor<? extends T>) executable;
-			if (c.getParameterTypes().length == 0) {
-				return new EmptyConstructorInstantiator<S, T>(c);
-			} else {
-				return new InjectConstructorInstantiator<S, T>(instantiatorDefinition, injections);
-			}
-		} else if (executable instanceof Method){
-			Method m = (Method) executable;
-			if (m.getParameterTypes().length == 0) {
-				return new EmptyStaticMethodInstantiator<S, T>(m);
-			} else {
-				return new InjectStaticMethodInstantiator<S, T>(instantiatorDefinition, injections);
-			}
-
-		} else {
-			throw new IllegalArgumentException("Unsupported executable type " + executable);
+		switch (instantiatorDefinition.getType()) {
+			case CONSTRUCTOR:
+				return constructorInstantiator((ExecutableInstantiatorDefinition)instantiatorDefinition, injections);
+			case METHOD:
+				return methodInstantiator((ExecutableInstantiatorDefinition)instantiatorDefinition, injections);
+			case BUILDER:
+				return builderInstantiator((BuilderInstantiatorDefinition)instantiatorDefinition, injections, useAsmIfEnabled);
+			default:
+				throw new IllegalArgumentException("Unsupported executable type " + instantiatorDefinition);
 		}
 	}
 
-	public static  InstantiatorDefinition getSmallerConstructor(final List<InstantiatorDefinition> constructors) {
+	@SuppressWarnings("unchecked")
+	private <S, T> Instantiator<S, T> builderInstantiator(BuilderInstantiatorDefinition instantiatorDefinition,
+														  Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
+
+		final Instantiator<Void, ?> buildInstantiator =
+				getInstantiator(instantiatorDefinition.getBuilderInstantiator(), Void.class,
+				 new HashMap<Parameter, Getter<? super Void, ?>>(), useAsmIfEnabled);
+		Tuple2<Method, Getter<? super S, ?>>[] arguments = new Tuple2[injections.size()];
+
+		int i = 0;
+		for(Map.Entry<Parameter, Getter<? super S, ?>> e : injections.entrySet()) {
+			arguments[i++] = new Tuple2<Method, Getter<? super S, ?>>(instantiatorDefinition.getSetters().get(e.getKey()), e.getValue());
+		}
+
+		return new BuilderInstantiator<S, T>(buildInstantiator, arguments, instantiatorDefinition.getBuildMethod());
+	}
+
+	private <S, T> Instantiator<S, T> methodInstantiator(
+			ExecutableInstantiatorDefinition instantiatorDefinition,
+			Map<Parameter, Getter<? super S, ?>> injections) {
+		Method m = (Method) instantiatorDefinition.getExecutable();
+		if (m.getParameterTypes().length == 0) {
+			return new EmptyStaticMethodInstantiator<S, T>(m);
+		} else {
+			return new InjectStaticMethodInstantiator<S, T>(instantiatorDefinition, injections);
+		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	private <S, T> Instantiator<S, T> constructorInstantiator(
+			ExecutableInstantiatorDefinition instantiatorDefinition,
+			Map<Parameter, Getter<? super S, ?>> injections) {
+		Constructor<? extends T> c = (Constructor<? extends T>) instantiatorDefinition.getExecutable();
+		if (c.getParameterTypes().length == 0) {
+			return new EmptyConstructorInstantiator<S, T>(c);
+		} else {
+			return new InjectConstructorInstantiator<S, T>(instantiatorDefinition, injections);
+		}
+	}
+
+	public static InstantiatorDefinition getSmallerConstructor(final List<InstantiatorDefinition> constructors) {
         if (constructors == null) {
             return null;
         }
@@ -104,7 +143,7 @@ public class InstantiatorFactory {
 		InstantiatorDefinition selectedConstructor = null;
 		
 		for(InstantiatorDefinition c : constructors) {
-			if (selectedConstructor == null || c.compareTo(selectedConstructor) < 0) {
+			if (selectedConstructor == null || InstantiatorDefinitions.COMPARATOR.compare(c, selectedConstructor) < 0) {
 				selectedConstructor = c;
 			}
 		}

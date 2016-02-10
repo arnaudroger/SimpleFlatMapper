@@ -17,12 +17,12 @@ import static org.objectweb.asm.Opcodes.*;
 public class InstantiatorBuilder {
 
 	public static <S>  byte[] createInstantiator(final String className, final Class<?> sourceClass,
-			 final InstantiatorDefinition instantiatorDefinition,final Map<Parameter, Getter<? super S, ?>> injections) throws Exception {
+                                                 final ExecutableInstantiatorDefinition instantiatorDefinition, final Map<Parameter, Getter<? super S, ?>> injections) throws Exception {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
 		FieldVisitor fv;
 
-		Class<?> targetClass= instantiatorDefinition.getExecutable().getDeclaringClass();
+		Class<?> targetClass= getTargetClass(instantiatorDefinition);
 		
 		String targetType = AsmUtils.toType(targetClass);
 		String sourceType = AsmUtils.toWrapperType(sourceClass);
@@ -148,7 +148,7 @@ public class InstantiatorBuilder {
             if (exec instanceof Constructor) {
                 mv.visitMethodInsn(INVOKESPECIAL, targetType, "<init>", "(" + sb.toString() + ")V", false);
             } else {
-                mv.visitMethodInsn(INVOKESTATIC, targetType, exec.getName(),
+                mv.visitMethodInsn(INVOKESTATIC, AsmUtils.toType(((Method)exec).getDeclaringClass()), exec.getName(),
                         AsmUtils.toSignature((Method)exec)
                         , false);
 
@@ -224,4 +224,14 @@ public class InstantiatorBuilder {
 
 		return AsmUtils.writeClassToFile(className, cw.toByteArray());
 	}
+
+    private static Class<?> getTargetClass(ExecutableInstantiatorDefinition instantiatorDefinition) {
+
+        final Member executable = instantiatorDefinition.getExecutable();
+        if (executable instanceof Constructor) {
+            return executable.getDeclaringClass();
+        } else {
+            return ((Method)executable).getReturnType();
+        }
+    }
 }

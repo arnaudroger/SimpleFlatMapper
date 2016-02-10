@@ -1,5 +1,6 @@
 package org.sfm.reflect.impl;
 
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
 import org.sfm.reflect.InstantiatorDefinition;
@@ -17,7 +18,7 @@ public final class InjectStaticMethodInstantiator<S, T> implements Instantiator<
 	private final ArgumentBuilder<S> argBuilder;
 	private final InstantiatorDefinition instantiatorDefinition;
 
-	public InjectStaticMethodInstantiator(InstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections) {
+	public InjectStaticMethodInstantiator(ExecutableInstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections) {
 		this.argBuilder = new ArgumentBuilder<S>(instantiatorDefinition, injections);
 		this.method = (Method) instantiatorDefinition.getExecutable();
 		this.declaringClass = method.getDeclaringClass();

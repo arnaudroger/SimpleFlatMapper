@@ -1,5 +1,6 @@
 package org.sfm.reflect.meta;
 
+import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeHelper;
@@ -31,7 +32,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 		} else {
 			Class<?> implClass = findListImpl(type);
 			try {
-				return new InstantiatorDefinition(implClass.getDeclaredConstructor());
+				return new ExecutableInstantiatorDefinition(implClass.getDeclaredConstructor());
 			} catch (NoSuchMethodException e) {
 				throw new IllegalArgumentException("No empty constructor for " + implClass);
 			}

@@ -123,7 +123,8 @@ public class InstantiatorFactory {
 
 		int i = 0;
 		for(Map.Entry<Parameter, Getter<? super S, ?>> e : injections.entrySet()) {
-			final Tuple2<Method, Getter<? super S, ?>> arguments = new Tuple2<>(instantiatorDefinition.getSetters().get(e.getKey()), e.getValue());
+			final Tuple2<Method, Getter<? super S, ?>> arguments =
+					new Tuple2<Method, Getter<? super S, ?>>(instantiatorDefinition.getSetters().get(e.getKey()), e.getValue());
 			if (Void.TYPE.equals(arguments.first().getReturnType())) {
 				unchainedArguments.add(arguments);
 			} else {

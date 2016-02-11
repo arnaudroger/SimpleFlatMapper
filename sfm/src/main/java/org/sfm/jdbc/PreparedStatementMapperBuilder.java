@@ -24,6 +24,7 @@ import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.primitive.IntGetter;
+import org.sfm.utils.ErrorDoc;
 import org.sfm.utils.ForEachCallBack;
 
 import java.sql.PreparedStatement;
@@ -161,7 +162,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
                 PreparedStatementIndexSetter<P> setter = setterFactory.getIndexedSetter(pm.propertyMeta(childProperty));
 
                 if (setter == null) {
-                    mapperConfig.mapperBuilderErrorHandler().accessorNotFound("Could not find setter for " + pm);
+                    mapperConfig.mapperBuilderErrorHandler().accessorNotFound("Could not find setter for " + pm + " See " + ErrorDoc.toUrl("PS_SETTER_NOT_FOUND"));
                 }
 
                 return new CollectionIndexFieldMapper<T, C, P>(setter, collectionGetter, sizeGetter, indexedGetter);

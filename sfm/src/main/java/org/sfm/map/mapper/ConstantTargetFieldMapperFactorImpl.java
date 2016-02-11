@@ -11,6 +11,7 @@ import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.map.impl.fieldmapper.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.primitive.*;
+import org.sfm.utils.ErrorDoc;
 
 public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> implements ConstantTargetFieldMapperFactory<T, K> {
 
@@ -77,11 +78,13 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
         }
 
         if (getter == null) {
-            mappingErrorHandler.accessorNotFound("Could not find getter for " + pm);
+            mappingErrorHandler.accessorNotFound("Could not find getter for "
+                    + pm + " See " + ErrorDoc.toUrl("CTFM_GETTER_NOT_FOUND"));
             return null;
         }
         if (setter == null) {
-            mappingErrorHandler.accessorNotFound("Could not find setter for " + pm);
+            mappingErrorHandler.accessorNotFound("Could not find setter for " + pm
+                    + " See " + ErrorDoc.toUrl("STFM_GETTER_NOT_FOUND"));
             return null;
         }
         return new FieldMapperImpl<S, T, P>(getter, setter);

@@ -3,6 +3,7 @@ package org.sfm.map.error;
 import org.sfm.map.FieldKey;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
+import org.sfm.utils.ErrorDoc;
 
 import java.lang.reflect.Type;
 
@@ -16,7 +17,8 @@ public final class RethrowMapperBuilderErrorHandler implements
 
 	@Override
 	public void propertyNotFound(final Type target, final String property) {
-		throw new MapperBuildingException("Injection point for " + property + " on  " + target + " not found");
+		throw new MapperBuildingException("Injection point for " + property + " on  " + target + " not found "
+				+ " See " + ErrorDoc.toUrl("PROPERTY_NOT_FOUND"));
 	}
 
 	@Override

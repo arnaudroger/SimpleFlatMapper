@@ -8,6 +8,7 @@ import org.sfm.map.mapper.TypeAffinity;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.utils.ErrorDoc;
 
 import java.lang.reflect.Type;
 
@@ -97,7 +98,8 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 			}
 		}
 		if (getter == null) {
-			mappingErrorHandler.accessorNotFound("Could not find getter for " + key + " type " + propertyType);
+			mappingErrorHandler.accessorNotFound("Could not find getter for " + key + " type " + propertyType
+					+ " See " + ErrorDoc.toUrl("CSFM_GETTER_NOT_FOUND"));
 			return null;
 		} else {
 			if (type.isPrimitive() ) {

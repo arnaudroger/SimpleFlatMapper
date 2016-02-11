@@ -12,6 +12,7 @@ import org.sfm.reflect.*;
 import org.sfm.reflect.impl.NullGetter;
 import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple2;
+import org.sfm.utils.ErrorDoc;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 
@@ -302,7 +303,9 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 			getter = mapperSource.getterFactory().newGetter(paramType, t.getColumnKey(), t.getColumnDefinition());
 		}
 		if (getter == null) {
-            mapperConfig.mapperBuilderErrorHandler().accessorNotFound("Could not find getter for " + t.getColumnKey() + " type " + paramType);
+            mapperConfig.mapperBuilderErrorHandler()
+                    .accessorNotFound("Could not find getter for " + t.getColumnKey() + " type "
+                            + paramType + " See " + ErrorDoc.toUrl("FMMB_GETTER_NOT_FOUND"));
 		}
 		return getter;
 	}

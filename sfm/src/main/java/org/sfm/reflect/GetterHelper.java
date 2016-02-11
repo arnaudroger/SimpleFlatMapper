@@ -31,11 +31,11 @@ public class GetterHelper {
 	}
 	
 	public static String getPropertyNameFromMethodName(final String name) {
-        if (name.startsWith("is")) {
-            return name.substring(2, 3).toLowerCase() + name.substring(3);
-        } else if (name.startsWith("get")){
-            return name.substring(3, 4).toLowerCase() + name.substring(4);
-        } else {
+		if (name.startsWith("get") && name.length() > 3)  {
+			return name.substring(3, 4).toLowerCase() + name.substring(4);
+		} else if (name.startsWith("is") && name.length() > 2) {
+			return name.substring(2, 3).toLowerCase() + name.substring(3);
+		} else {
 			return name;
 		}
 	}

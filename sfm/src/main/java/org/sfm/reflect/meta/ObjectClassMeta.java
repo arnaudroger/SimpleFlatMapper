@@ -60,7 +60,15 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			public void method(Method method) {
 				String alias = reflectService.getColumnName(method);
 				if (alias != null) {
-					map.put(SetterHelper.getPropertyNameFromMethodName(method.getName()), alias);
+					final String name;
+					if (SetterHelper.isSetter(method)) {
+						name = SetterHelper.getPropertyNameFromMethodName(method.getName());
+					} else if (GetterHelper.isGetter(method)) {
+						name = GetterHelper.getPropertyNameFromMethodName(method.getName());
+					} else {
+						throw new IllegalArgumentException("Annotation on non accessor method " + method);
+					}
+					map.put(name, alias);
 				}
 			}
 			

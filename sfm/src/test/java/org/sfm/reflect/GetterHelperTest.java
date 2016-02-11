@@ -45,6 +45,16 @@ public class GetterHelperTest {
         assertFalse(GetterHelper.isGetter(Getters.class.getMethod("valueVoid")));
     }
 
+    @Test
+    public void testGetterName() {
+        assertEquals("name", GetterHelper.getPropertyNameFromMethodName("getName"));
+        assertEquals("setName", GetterHelper.getPropertyNameFromMethodName("setName"));
+        assertEquals("set", GetterHelper.getPropertyNameFromMethodName("set"));
+        assertEquals("get", GetterHelper.getPropertyNameFromMethodName("get"));
+        assertEquals("name", GetterHelper.getPropertyNameFromMethodName("isName"));
+        assertEquals("is", GetterHelper.getPropertyNameFromMethodName("is"));
+    }
+
 
     public static class Getters {
 

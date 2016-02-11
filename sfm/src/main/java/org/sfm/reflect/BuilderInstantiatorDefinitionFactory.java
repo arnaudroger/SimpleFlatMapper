@@ -67,14 +67,14 @@ public class BuilderInstantiatorDefinitionFactory {
                 Type returnType = m.getGenericReturnType();
                 if (TypeHelper.areEquals(returnType, builderType) && m.getParameterTypes().length == 1) {
                     // setter
-                    Parameter p = new Parameter(i++, m.getName(), m.getParameterTypes()[0], m.getGenericParameterTypes()[0]);
+                    Parameter p = new Parameter(i++, SetterHelper.getPropertyNameFromMethodName(m.getName()), m.getParameterTypes()[0], m.getGenericParameterTypes()[0]);
                     setters.put(p, m);
                 } else if (TypeHelper.areEquals(returnType, target) && m.getParameterTypes().length == 0) {
                     // build function
                     if (buildMethod != null) {
                         throw new IllegalStateException("Duplicate potential build method " + buildMethod + " and " + m);
                     }
-                    buildMethod= m;
+                    buildMethod = m;
                 }
             }
         }

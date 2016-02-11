@@ -136,20 +136,24 @@ public class AsmUtils {
 
 	public static byte[] writeClassToFileInDir(String className, byte[] bytes, File targetDir) throws IOException {
 		if (targetDir != null) {
-			final int lastIndex = className.lastIndexOf('.');
-			final String filename = className.substring(lastIndex + 1) + ".class";
-			final String directory = className.substring(0, lastIndex).replace('.', '/');
-			final File packageDir = new File(targetDir, directory);
-			packageDir.mkdirs();
-
-			final FileOutputStream fos = new FileOutputStream(new File(packageDir, filename ));
-			try {
-				fos.write(bytes);
-			} finally {
-				fos.close();
-			}
+			_writeClassToFileInDir(className, bytes, targetDir);
 		}
 		return bytes;
+	}
+
+	private static void _writeClassToFileInDir(String className, byte[] bytes, File targetDir) throws IOException {
+		final int lastIndex = className.lastIndexOf('.');
+		final String filename = className.substring(lastIndex + 1) + ".class";
+		final String directory = className.substring(0, lastIndex).replace('.', '/');
+		final File packageDir = new File(targetDir, directory);
+		packageDir.mkdirs();
+
+		final FileOutputStream fos = new FileOutputStream(new File(packageDir, filename ));
+		try {
+            fos.write(bytes);
+        } finally {
+            fos.close();
+        }
 	}
 
 	public static String toTypeWithParam(Class<?> class1) {

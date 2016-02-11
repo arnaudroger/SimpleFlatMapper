@@ -141,13 +141,24 @@ public class AsmFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> createInstantiator(final Class<?> source, final ExecutableInstantiatorDefinition instantiatorDefinition, final Map<Parameter, Getter<? super S, ?>> injections) throws Exception {
-		InstantiatorKey instantiatorKey = new InstantiatorKey(instantiatorDefinition, injections.keySet(), source);
+	public <S, T> Instantiator<S, T> createInstantiator(final Class<?> source, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, Getter<? super S, ?>> injections) throws Exception {
+		InstantiatorKey instantiatorKey = new InstantiatorKey(instantiatorDefinition, injections, source);
 		Class<? extends Instantiator<?, ?>> instantiator = instantiatorCache.get(instantiatorKey);
+        Instantiator<Void, ?> builderInstantiator = null;
 		if (instantiator == null) {
 			final String className = generateClassNameForInstantiator(instantiatorKey);
-			final byte[] bytes = InstantiatorBuilder.createInstantiator(className, source, instantiatorDefinition, injections);
-			instantiator = (Class<? extends Instantiator<?, ?>>) createClass(className, bytes, instantiatorDefinition.getExecutable().getDeclaringClass().getClassLoader());
+			final byte[] bytes;
+            if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
+                bytes = InstantiatorBuilder.createInstantiator(className, source, (ExecutableInstantiatorDefinition)instantiatorDefinition, injections);
+            }  else {
+                builderInstantiator = createInstantiator(Void.class, ((BuilderInstantiatorDefinition)instantiatorDefinition).getBuilderInstantiator(), new HashMap<Parameter, Getter<? super Void, ?>>());
+                bytes = InstantiatorBuilder.createInstantiator(
+                        className,
+                        source,
+                        builderInstantiator,
+                        (BuilderInstantiatorDefinition)instantiatorDefinition, injections);
+            }
+			instantiator = (Class<? extends Instantiator<?, ?>>) createClass(className, bytes, instantiatorKey.getDeclaringClass().getClassLoader());
 			instantiatorCache.put(instantiatorKey, instantiator);
 		}
 
@@ -156,7 +167,11 @@ public class AsmFactory {
 			getterPerName.put(e.getKey().getName(), e.getValue());
 		}
 
-		return (Instantiator<S, T>) instantiator.getConstructor(Map.class).newInstance(getterPerName);
+        if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
+            return (Instantiator<S, T>) instantiator.getConstructor(Map.class).newInstance(getterPerName);
+        } else {
+            return (Instantiator<S, T>) instantiator.getConstructor(Map.class, Instantiator.class).newInstance(getterPerName, builderInstantiator);
+        }
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -236,8 +251,8 @@ public class AsmFactory {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append( "org.sfm.reflect.asm.")
-		.append(getPackageName(key.getConstructor().getDeclaringClass()))
-		.append(".AsmInstantiator").append(key.getConstructor().getDeclaringClass().getSimpleName());
+		.append(getPackageName(key.getDeclaringClass()))
+		.append(".AsmInstantiator").append(key.getDeclaringClass().getSimpleName());
         sb.append("From");
         sb.append(replaceArray(key.getSource().getSimpleName()));
 

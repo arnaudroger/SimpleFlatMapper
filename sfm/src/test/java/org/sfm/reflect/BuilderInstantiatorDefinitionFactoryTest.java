@@ -2,6 +2,7 @@ package org.sfm.reflect;
 
 import org.junit.Test;
 import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.reflect.impl.BuilderInstantiator;
 import org.sfm.reflect.impl.ConstantGetter;
 import org.sfm.reflect.impl.ConstantIntGetter;
 
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class BuilderInstantiatorDefinitionFactoryTest {
 
@@ -49,10 +51,77 @@ public class BuilderInstantiatorDefinitionFactoryTest {
         params.put(parameters[1], new ConstantGetter<Void, Object>("myname"));
         params.put(parameters[0], new ConstantIntGetter<Void>(3));
 
-        final ClassBuilderWithMethod o = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()))
-                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true)
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+        final ClassBuilderWithMethod o = instantiator
+                .newInstance(null);
+        assertFalse((instantiator instanceof BuilderInstantiator));
+
+        assertEquals("myname", o.getName());
+        assertEquals(3, o.getId());
+    }
+
+    @Test
+    public void testBuilderFromMethodNoAsm() throws Exception {
+        final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
+
+        assertEquals(1, instantiatorDefinitions.size());
+
+        BuilderInstantiatorDefinition b = (BuilderInstantiatorDefinition) instantiatorDefinitions.get(0);
+
+        final Parameter[] parameters = b.getParameters();
+
+        Arrays.sort(parameters, new Comparator<Parameter>() {
+            @Override
+            public int compare(Parameter o1, Parameter o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        Map<Parameter, Getter<? super Void, ?>> params = new HashMap<Parameter, Getter<? super Void, ?>>();
+
+        params.put(parameters[1], new ConstantGetter<Void, Object>("myname"));
+        params.put(parameters[0], new ConstantIntGetter<Void>(3));
+
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
+        final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+        final ClassBuilderWithMethod o = instantiator
                 .newInstance(null);
 
+        assertEquals("myname", o.getName());
+        assertEquals(3, o.getId());
+    }
+
+
+    @Test
+    public void testBuilderFromMethodAsmBoxing() throws Exception {
+        final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
+
+        assertEquals(1, instantiatorDefinitions.size());
+
+        BuilderInstantiatorDefinition b = (BuilderInstantiatorDefinition) instantiatorDefinitions.get(0);
+
+        final Parameter[] parameters = b.getParameters();
+
+        Arrays.sort(parameters, new Comparator<Parameter>() {
+            @Override
+            public int compare(Parameter o1, Parameter o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        Map<Parameter, Getter<? super Void, ?>> params = new HashMap<Parameter, Getter<? super Void, ?>>();
+
+        params.put(parameters[1], new ConstantGetter<Void, Object>("myname"));
+        params.put(parameters[0], new ConstantGetter<Void, Integer>(3));
+
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+        final ClassBuilderWithMethod o = instantiator
+                .newInstance(null);
+
+        assertFalse((instantiator instanceof BuilderInstantiator));
         assertEquals("myname", o.getName());
         assertEquals(3, o.getId());
     }

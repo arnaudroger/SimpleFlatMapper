@@ -11,8 +11,8 @@ import org.sfm.reflect.impl.EmptyConstructorInstantiator;
 import org.sfm.reflect.impl.EmptyStaticMethodInstantiator;
 import org.sfm.reflect.impl.InjectConstructorInstantiator;
 import org.sfm.reflect.impl.InjectStaticMethodInstantiator;
-import org.sfm.reflect.impl.ParamNameDeductor;
 import org.sfm.tuples.Tuple2;
+import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 
 import java.lang.reflect.*;
@@ -22,9 +22,16 @@ import java.util.Map;
 
 public class InstantiatorFactory {
 	private final AsmFactory asmFactory;
+
+	private final boolean failOnAsmError;
 	
 	public InstantiatorFactory(final AsmFactory asmFactory) {
+		this(asmFactory, false);
+	}
+
+	public InstantiatorFactory(AsmFactory asmFactory, boolean faileOnAsmError) {
 		this.asmFactory = asmFactory;
+		this.failOnAsmError = faileOnAsmError;
 	}
 
 
@@ -69,15 +76,24 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> getInstantiator(InstantiatorDefinition instantiatorDefinition, Class<?> source, Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
-
-		if (asmFactory != null  && useAsmIfEnabled && instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
-			ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
-			Member executable = executableInstantiatorDefinition.getExecutable();
-			if (Modifier.isPublic(executable.getModifiers())) {
+		if (asmFactory != null  && useAsmIfEnabled) {
+			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
+				ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
+				Member executable = executableInstantiatorDefinition.getExecutable();
+				if (Modifier.isPublic(executable.getModifiers())) {
+					try {
+						return asmFactory.createInstantiator(source, executableInstantiatorDefinition, injections);
+					} catch (Exception e) {
+						// fall back on reflection
+						if (failOnAsmError) ErrorHelper.rethrow(e);
+					}
+				}
+			} else {
 				try {
-					return asmFactory.createInstantiator(source, executableInstantiatorDefinition, injections);
+					return asmFactory.createInstantiator(source, (BuilderInstantiatorDefinition)instantiatorDefinition, injections);
 				} catch (Exception e) {
 					// fall back on reflection
+					if (failOnAsmError) ErrorHelper.rethrow(e);
 				}
 			}
 		}

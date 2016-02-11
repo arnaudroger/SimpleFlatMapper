@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class BuilderInstantiatorDefinitionFactoryTest {
 
@@ -34,7 +35,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
 
         final Parameter[] parameters = b.getParameters();
 
-        assertEquals(2, parameters.length);
+        assertEquals(3, parameters.length);
 
         Arrays.sort(parameters, new Comparator<Parameter>() {
             @Override
@@ -127,42 +128,123 @@ public class BuilderInstantiatorDefinitionFactoryTest {
     }
 
 
+    @Test
+    public void testBuilderFromMethodVoid() throws Exception {
+        final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
+
+        assertEquals(1, instantiatorDefinitions.size());
+
+        BuilderInstantiatorDefinition b = (BuilderInstantiatorDefinition) instantiatorDefinitions.get(0);
+
+        final Parameter[] parameters = b.getParameters();
+
+        Arrays.sort(parameters, new Comparator<Parameter>() {
+            @Override
+            public int compare(Parameter o1, Parameter o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        Map<Parameter, Getter<? super Void, ?>> params = new HashMap<Parameter, Getter<? super Void, ?>>();
+
+        params.put(parameters[2], new ConstantGetter<Void, Object>("zrux"));
+        params.put(parameters[0], new ConstantGetter<Void, Integer>(3));
+
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+        final ClassBuilderWithMethod o = instantiator
+                .newInstance(null);
+
+        assertFalse((instantiator instanceof BuilderInstantiator));
+        assertEquals(3, o.getId());
+        assertEquals("zrux", o.getZrux());
+    }
+
+    @Test
+    public void testBuilderFromMethodVoidNoAsm() throws Exception {
+        final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
+
+        assertEquals(1, instantiatorDefinitions.size());
+
+        BuilderInstantiatorDefinition b = (BuilderInstantiatorDefinition) instantiatorDefinitions.get(0);
+
+        final Parameter[] parameters = b.getParameters();
+
+        Arrays.sort(parameters, new Comparator<Parameter>() {
+            @Override
+            public int compare(Parameter o1, Parameter o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        Map<Parameter, Getter<? super Void, ?>> params = new HashMap<Parameter, Getter<? super Void, ?>>();
+
+        params.put(parameters[2], new ConstantGetter<Void, Object>("zrux"));
+        params.put(parameters[0], new ConstantGetter<Void, Integer>(3));
+
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null, true);
+        final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+        final ClassBuilderWithMethod o = instantiator
+                .newInstance(null);
+
+        assertTrue((instantiator instanceof BuilderInstantiator));
+        assertEquals(3, o.getId());
+        assertEquals("zrux", o.getZrux());
+    }
     public static abstract class ClassBuilderWithMethod {
 
         public abstract String getName();
         public abstract int getId();
+        public abstract String getZrux();
 
         public static Builder builder() {
             return new Builder();
         }
 
         public static class Builder {
-            private String name;
-            private int id;
+            private final String name;
+            private final int id;
+            private String zrux;
+
+            private Builder() {
+                name = null;
+                id = 0;
+                zrux = null;
+            }
+
+            public Builder(String name, int id, String zrux) {
+                this.name = name;
+                this.id = id;
+                this.zrux = zrux;
+            }
 
 
             public Builder id(int id) {
-                this.id = id;
-                return this;
+                return new Builder(name, id, zrux);
             }
 
             public Builder name(String name) {
-                this.name = name;
-                return this;
+                return new Builder(name, id, zrux);
+            }
+
+            public void zrux(String zrux) {
+                this.zrux = zrux;
             }
 
             public ClassBuilderWithMethod build() {
-                return new ClassBuilderWithMethodImpl(name, id);
+                return new ClassBuilderWithMethodImpl(name, id, zrux);
             }
         }
 
         private static class ClassBuilderWithMethodImpl extends ClassBuilderWithMethod {
             private final String name;
+            private final String zrux;
             private final int id;
 
-            private ClassBuilderWithMethodImpl(String name, int id) {
+            private ClassBuilderWithMethodImpl(String name, int id, String zrux) {
                 this.name = name;
                 this.id = id;
+                this.zrux = zrux;
             }
 
             @Override
@@ -173,6 +255,11 @@ public class BuilderInstantiatorDefinitionFactoryTest {
             @Override
             public int getId() {
                 return id;
+            }
+
+            @Override
+            public String getZrux() {
+                return zrux;
             }
         }
 

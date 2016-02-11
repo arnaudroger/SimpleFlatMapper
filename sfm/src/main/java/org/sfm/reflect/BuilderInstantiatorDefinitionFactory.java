@@ -63,9 +63,10 @@ public class BuilderInstantiatorDefinitionFactory {
         int i = 0;
 
         for(Method m : TypeHelper.toClass(builderType).getMethods()) {
-            if (!Modifier.isStatic(m.getModifiers())) {
+            if (!Modifier.isStatic(m.getModifiers()) && Object.class != m.getDeclaringClass()) {
                 Type returnType = m.getGenericReturnType();
-                if (TypeHelper.areEquals(returnType, builderType) && m.getParameterTypes().length == 1) {
+                if ((TypeHelper.areEquals(returnType, void.class)
+                    ||TypeHelper.areEquals(returnType, builderType)) && m.getParameterTypes().length == 1) {
                     // setter
                     Parameter p = new Parameter(i++, SetterHelper.getPropertyNameFromMethodName(m.getName()), m.getParameterTypes()[0], m.getGenericParameterTypes()[0]);
                     setters.put(p, m);

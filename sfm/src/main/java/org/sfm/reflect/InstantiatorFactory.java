@@ -16,6 +16,7 @@ import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 
 import java.lang.reflect.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,21 +111,30 @@ public class InstantiatorFactory {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
 	private <S, T> Instantiator<S, T> builderInstantiator(BuilderInstantiatorDefinition instantiatorDefinition,
 														  Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
 
 		final Instantiator<Void, ?> buildInstantiator =
 				getInstantiator(instantiatorDefinition.getBuilderInstantiator(), Void.class,
 				 new HashMap<Parameter, Getter<? super Void, ?>>(), useAsmIfEnabled);
-		Tuple2<Method, Getter<? super S, ?>>[] arguments = new Tuple2[injections.size()];
+		List<Tuple2<Method, Getter<? super S, ?>>> chainedArguments = new ArrayList<Tuple2<Method, Getter<? super S, ?>>>();
+		List<Tuple2<Method, Getter<? super S, ?>>> unchainedArguments = new ArrayList<Tuple2<Method, Getter<? super S, ?>>>();
 
 		int i = 0;
 		for(Map.Entry<Parameter, Getter<? super S, ?>> e : injections.entrySet()) {
-			arguments[i++] = new Tuple2<Method, Getter<? super S, ?>>(instantiatorDefinition.getSetters().get(e.getKey()), e.getValue());
+			final Tuple2<Method, Getter<? super S, ?>> arguments = new Tuple2<>(instantiatorDefinition.getSetters().get(e.getKey()), e.getValue());
+			if (Void.TYPE.equals(arguments.first().getReturnType())) {
+				unchainedArguments.add(arguments);
+			} else {
+				chainedArguments.add(arguments);
+			}
 		}
 
-		return new BuilderInstantiator<S, T>(buildInstantiator, arguments, instantiatorDefinition.getBuildMethod());
+		return new BuilderInstantiator<S, T>(buildInstantiator,
+				chainedArguments.toArray(new Tuple2[0]),
+				unchainedArguments.toArray(new Tuple2[0]),
+				instantiatorDefinition.getBuildMethod());
 	}
 
 	private <S, T> Instantiator<S, T> methodInstantiator(

@@ -260,12 +260,12 @@ public class InstantiatorBuilder {
         final String builderType = AsmUtils.toType(builderClass);
         mv.visitTypeInsn(CHECKCAST, builderType);
 
+        mv.visitVarInsn(ASTORE, 2);
 
         for (Entry<Parameter, Method> e : setters.entrySet()) {
-
+            mv.visitVarInsn(ALOAD, 2);
             Parameter p = e.getKey();
             Getter<? super S, ?> getter = injections.get(p);
-
 
             String propertyType = AsmUtils.toType(p.getType());
 
@@ -322,9 +322,13 @@ public class InstantiatorBuilder {
 
                 AsmUtils.invoke(mv, TypeHelper.toClass(builderClass), e.getValue().getName(),
                         AsmUtils.toSignature(e.getValue()));
+
+                if (!Void.TYPE.equals(e.getValue().getReturnType())) {
+                    mv.visitVarInsn(ASTORE, 2);
+                }
             }
         }
-
+        mv.visitVarInsn(ALOAD, 2);
         AsmUtils.invoke(mv, TypeHelper.toClass(builderClass),
                 instantiatorDefinition.getBuildMethod().getName(),
                 AsmUtils.toSignature(instantiatorDefinition.getBuildMethod()));

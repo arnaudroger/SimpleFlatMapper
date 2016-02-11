@@ -24,6 +24,9 @@ public final class BuilderInstantiator implements Instantiator<ResultSet, Builde
 	
 	@Override
 	public BuilderInstantiatorDefinitionFactoryTest.ClassBuilderWithMethod newInstance(ResultSet source) throws Exception {
-		return builderInstantiator.newInstance(null).id(getter_id.getInt(source)).name(getter_name.get(source)).build();
+		BuilderInstantiatorDefinitionFactoryTest.ClassBuilderWithMethod.Builder builder = builderInstantiator.newInstance(null);
+		builder = builder.id(getter_id.getInt(source));
+		builder.name(getter_name.get(source));
+		return builder.build();
 	}
 }

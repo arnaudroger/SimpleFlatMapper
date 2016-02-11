@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm)
-[![JavaDoc](https://img.shields.io/badge/javadoc-2.7.6-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm)
+[![JavaDoc](https://img.shields.io/badge/javadoc-2.8-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm)
 [![License](https://img.shields.io/github/license/arnaudroger/simpleFlatMapper.svg)](https://raw.githubusercontent.com/arnaudroger/SimpleFlatMapper/master/LICENSE)
 
 [![Java 6](https://img.shields.io/badge/java-6-orange.svg)](#java-6)[![Java 7](https://img.shields.io/badge/java-7-green.svg)](#java-7)[![Java 8](https://img.shields.io/badge/java-8-brightgreen.svg)](#java-8)[![Java 9-b72](https://img.shields.io/badge/java-9-brightgreen.svg)](#java-8)
@@ -44,12 +44,12 @@ If you encounter any problem with the mapping don't hesitate to [create an issue
 
 |Module|||
 |------|-----|-----|
-|[Cassandra Datastax driver](sfm-datastax)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-datastax.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-datastax)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.7.6-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-datastax)
-|[jOOQ](sfm-jooq)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-jooq.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-jooq)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.7.6-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jooq)
-|[Poi Excel Spreadsheet](sfm-poi)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-poi.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-poi)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.7.6-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-poi)
-|[Query DSL](sfm-querydsl)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-querydsl.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-querydsl)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.7.6-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-querydsl)
-|[Spring JDBC](sfm-springjdbc)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-springjdbc.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-springjdbc)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.7.6-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-springjdbc)
-|[SQL2o](sfm-sql2o), no java6 |[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-sql2o.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-sql2o)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.7.6-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
+|[Cassandra Datastax driver](sfm-datastax)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-datastax.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-datastax)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.8-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-datastax)
+|[jOOQ](sfm-jooq)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-jooq.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-jooq)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.8-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jooq)
+|[Poi Excel Spreadsheet](sfm-poi)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-poi.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-poi)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.8-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-poi)
+|[Query DSL](sfm-querydsl)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-querydsl.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-querydsl)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.8-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-querydsl)
+|[Spring JDBC](sfm-springjdbc)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-springjdbc.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-springjdbc)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.8-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-springjdbc)
+|[SQL2o](sfm-sql2o), no java6 |[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-sql2o.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-sql2o)|[![JavaDoc](https://img.shields.io/badge/javadoc-2.8-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
 
 
 ## Getting Started
@@ -66,7 +66,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm</artifactId>
-			<version>2.7.6</version>
+			<version>2.8</version>
 		</dependency>
 ```
 
@@ -76,7 +76,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm</artifactId>
-			<version>2.7.6</version>
+			<version>2.8</version>
 			<classifier>jdk17</classifier>
 		</dependency>
 ```
@@ -87,7 +87,7 @@ There is a build for
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm</artifactId>
-			<version>2.7.6</version>
+			<version>2.8</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 ```

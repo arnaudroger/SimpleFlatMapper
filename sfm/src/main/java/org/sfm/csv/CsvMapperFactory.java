@@ -82,9 +82,13 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
     }
 
     public <T> CsvMapper<T> newMapper(final Type target) throws MapperBuildingException {
-		ClassMeta<T> classMeta = getClassMeta(target);
+		final ClassMeta<T> classMeta = getClassMeta(target);
+		return newMapper(classMeta);
+	}
+
+	public <T> CsvMapper<T> newMapper(final ClassMeta<T> classMeta) throws MapperBuildingException {
 		return new DynamicCsvMapper<T>(
-				target,
+				classMeta.getType(),
 				classMeta,
 				defaultDateFormat,
 				cellValueReaderFactory,
@@ -107,9 +111,13 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
     }
 
     public <T> CsvMapperBuilder<T> newBuilder(final Type target) {
-		ClassMeta<T> classMeta = getClassMeta(target);
+		final ClassMeta<T> classMeta = getClassMeta(target);
+		return newBuilder(classMeta);
+	}
+
+	public <T> CsvMapperBuilder<T> newBuilder(final ClassMeta<T> classMeta) {
 		CsvMapperBuilder<T> builder =
-				new CsvMapperBuilder<T>(target, classMeta,0, cellValueReaderFactory, mapperConfig());
+				new CsvMapperBuilder<T>(classMeta.getType(), classMeta,0, cellValueReaderFactory, mapperConfig());
 		builder.setDefaultDateFormat(defaultDateFormat);
 		return builder;
 	}

@@ -5,9 +5,9 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPartialFinalObject;
+import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.test.jdbc.DbHelper;
 import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple2;
 import org.sfm.utils.ListCollectorHandler;
@@ -18,7 +18,6 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -337,6 +336,29 @@ public class CsvMapperBuilderTest {
 		.addMapping("creationTime")
 				.addMapping("typeOrdinal")
 		.addMapping("typeName");
+	}
+
+
+	@Test
+	public void testFactoryMethodOnDifferentClass() throws IOException, NoSuchMethodException {
+		final ClassMeta<IClass> classMeta = csvMapperFactory.getClassMetaWithExtraInstantiator(IClass.class, IClassFactory.class.getMethod("of", String.class));
+		final IClass iClass = csvMapperFactory.newMapper(classMeta).iterator(new StringReader("value\nval")).next();
+		assertEquals("val", iClass.value);
+	}
+
+	public static class IClass {
+		private final String value;
+
+		private IClass(String value) {
+			this.value = value;
+		}
+
+	}
+
+	public static class IClassFactory {
+		public static IClass of(String value) {
+			return new IClass(value);
+		}
 	}
 
 

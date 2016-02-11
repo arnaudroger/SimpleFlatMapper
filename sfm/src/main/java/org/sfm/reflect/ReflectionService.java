@@ -155,7 +155,7 @@ public class ReflectionService {
 		} else {
 			if (extraInstantiator instanceof Method && TypeHelper.areEquals(target, ((Method)extraInstantiator).getGenericReturnType())) {
 				// factory method
-
+				list.add(ReflectionInstantiatorDefinitionFactory.definition(((Method)extraInstantiator)));
 			} else {
 				final BuilderInstantiatorDefinition builder =
 						BuilderInstantiatorDefinitionFactory.getDefinitionForBuilder(extraInstantiator, target);

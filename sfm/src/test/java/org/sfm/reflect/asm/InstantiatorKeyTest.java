@@ -39,7 +39,7 @@ public class InstantiatorKeyTest {
         return createTuple2(param, Getter.class);
     }
     private Tuple2<String, Class>[] createTuple2(String param, Class<?> getterClass) {
-        return new Tuple2[] {new Tuple2<>(param, getterClass)};
+        return new Tuple2[] {new Tuple2<String, Class<?>>(param, getterClass)};
     }
 
     @Test

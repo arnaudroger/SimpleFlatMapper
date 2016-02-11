@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<artifactId>sfm-parent</artifactId>
-		<version>2.7.7-SNAPSHOT</version>
+		<version>2.8</version>
 	</parent>
 
 	<description>Cassandra Datastax SFM supports.</description>
@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm</artifactId>
-			<version>2.7.7-SNAPSHOT</version>
+			<version>2.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cassandraunit</groupId>
@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-test</artifactId>
-			<version>2.7.7-SNAPSHOT</version>
+			<version>2.8</version>
 			<scope>test</scope>
 		</dependency>
 		<!--<dependency>-->

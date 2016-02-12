@@ -128,7 +128,7 @@ public final class SortedMapperCache<K extends FieldKey<K>, M> implements IMappe
 
     public static void main(String[] args) {
         final IMapperCache<JdbcColumnKey, Object> mapperCache = CacheType.SARRAY.newCache();
-        final IMapperCache<JdbcColumnKey, Object> mapperCache2 = CacheType.TS2ARRAY_NULL.newCache();
+        final IMapperCache<JdbcColumnKey, Object> mapperCache2 = CacheType.TS2ARRAY.newCache();
 
 
         final List<MapperKey<JdbcColumnKey>> mapperKeys = Utils.generateKeys(30, 10);

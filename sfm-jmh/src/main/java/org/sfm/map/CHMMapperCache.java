@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public final class CHMMapperCache<K extends FieldKey<K>, M> {
+public final class CHMMapperCache<K extends FieldKey<K>, M> implements IMapperCache<K, M> {
 
 	@SuppressWarnings("unchecked")
 	private final ConcurrentMap<MapperKey<K>, M> map = new ConcurrentHashMap<>();
@@ -20,7 +20,12 @@ public final class CHMMapperCache<K extends FieldKey<K>, M> {
 		return map.get(key);
 	}
 
-    @Override
+	@Override
+	public int size() {
+		return map.size();
+	}
+
+	@Override
     public String toString() {
         return "CHMMapperCache{" + map +
                 '}';

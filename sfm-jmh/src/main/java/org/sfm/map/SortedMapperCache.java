@@ -1,88 +1,160 @@
 package org.sfm.map;
 
+import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.mapper.MapperKey;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class SortedMapperCache<K extends FieldKey<K>, M> {
+public final class SortedMapperCache<K extends FieldKey<K>, M> implements IMapperCache<K, M> {
 
-	private final Comparator<MapperKey<K>> comparator;
-	@SuppressWarnings("unchecked")
-	private final AtomicReference<Entries<K>> mapperCache = new AtomicReference<Entries<K>>(new Entries<K>(0));
+    private static final int BSEARCH_THRESHOLD = 0;
 
-	public SortedMapperCache(Comparator<MapperKey<K>> comparator) {
-		this.comparator = comparator;
-	}
+    private final Comparator<CacheEntry<K, M>> comparator;
+    @SuppressWarnings("unchecked")
+    private final AtomicReference<CacheEntry<K, M>[]> mapperCache = new AtomicReference<CacheEntry<K, M>[]>(new CacheEntry[0]);
 
-	@SuppressWarnings("unchecked")
-	public void add(final MapperKey<K> key, final M mapper) {
-		Entries<K> entries;
-		Entries<K> newEntries;
-		do {
-			entries = mapperCache.get();
+    public SortedMapperCache(Comparator<MapperKey<K>> comparator) {
+        this.comparator = comparator == null ? null : new CacheEntryComparator<>(comparator);
+    }
 
-			final int i = findKey(key, entries);
-
-			if (i >= 0) {
-				return;
-			}
-
-			int insertionPoint = -1 - i;
-
-			newEntries = insertEntry(key, mapper, entries, insertionPoint);
-
-		} while(!mapperCache.compareAndSet(entries, newEntries));
-	}
-
-	private Entries<K> insertEntry(MapperKey<K> key, M mapper, Entries<K> entries, int insertionPoint) {
-		Entries<K> newEntries;
-		newEntries = new Entries<>(entries.keys.length + 1);
-
-		System.arraycopy(entries.keys, 0, newEntries.keys, 0, insertionPoint);
-		System.arraycopy(entries.values, 0, newEntries.values, 0, insertionPoint);
-
-		newEntries.keys[insertionPoint] = key;
-		newEntries.values[insertionPoint] = mapper;
-
-		System.arraycopy(entries.keys, insertionPoint, newEntries.keys, insertionPoint + 1, entries.keys.length - insertionPoint);
-		System.arraycopy(entries.values, insertionPoint, newEntries.values, insertionPoint + 1, entries.keys.length - insertionPoint);
-		return newEntries;
-	}
-
-	public M get(MapperKey<K> key) {
-		return bSearch(key, mapperCache.get());
-	}
-
-	private M bSearch(MapperKey<K> key, Entries<K> entries) {
-		final int i = findKey(key, entries);
-		if (i >= 0) {
-            return (M) entries.values[i];
+    private static final class CacheEntry<K extends FieldKey<K>, M> {
+        final MapperKey<K> key;
+        final M mapper;
+        CacheEntry(final MapperKey<K> key, final M mapper) {
+            this.key = key;
+            this.mapper = mapper;
         }
-		return null;
-	}
 
-	private int findKey(MapperKey<K> key, Entries<K> entries) {
-		return Arrays.binarySearch(entries.keys, key, comparator);
-	}
+        @Override
+        public String toString() {
+            return "{" +  key +
+                    "," + mapper +
+                    '}';
+        }
+    }
+    @SuppressWarnings("unchecked")
+    public void add(final MapperKey<K> key, final M mapper) {
+        CacheEntry<K, M>[] entries;
+        CacheEntry<K, M>[] newEntries;
+        do {
+            entries = mapperCache.get();
+            for (CacheEntry<K, M> entry : entries) {
+                if (entry.key.equals(key)) {
+                    // already added
+                    return;
+                }
+            }
+
+            newEntries = new CacheEntry[entries.length + 1];
+
+            System.arraycopy(entries, 0, newEntries, 0, entries.length);
+            newEntries[entries.length] = new CacheEntry<K, M>(key, mapper);
+
+            Arrays.sort(newEntries, comparator);
+
+        } while(!mapperCache.compareAndSet(entries, newEntries));
 
 
-	private static class Entries<K extends FieldKey<K>> {
-		private MapperKey<K>[] keys;
-		private Object[] values;
+    }
+
+    private CacheEntry<K, M>[] insertEntry(CacheEntry<K, M> entry, CacheEntry<K, M>[] entries, int insertionPoint) {
+        CacheEntry<K, M>[] newEntries = new CacheEntry[entries.length + 1];
+        System.arraycopy(entries, 0, newEntries, 0, insertionPoint);
+        newEntries[insertionPoint] = entry;
+        System.arraycopy(entries, insertionPoint, newEntries, insertionPoint + 1, entries.length - insertionPoint);
+        return newEntries;
+    }
+
+    public M get(MapperKey<K> key) {
+        final CacheEntry<K, M>[] entries = mapperCache.get();
+
+        return bSearch(key, entries);
+    }
+
+    @Override
+    public int size() {
+        return mapperCache.get().length;
+    }
+
+    private M bSearch(MapperKey<K> key, CacheEntry<K, M>[] entries) {
+        final int i = Arrays.binarySearch(entries, new CacheEntry<K, M>(key, null), comparator);
+        if (i >= 0) {
+            return entries[i].mapper;
+        }
+        return null;
+    }
+
+    private int findKey(MapperKey<K> key, CacheEntry<K, M>[] entries) {
+        if (comparator == null || entries.length < BSEARCH_THRESHOLD) {
+            return findKeyIterativeSearch(key, entries);
+        } else {
+            return findKeyBSearch(key, entries);
+        }
+    }
+
+    private int findKeyIterativeSearch(MapperKey<K> key, CacheEntry<K, M>[] entries) {
+        return - entries.length - 1;
+    }
+
+    private int findKeyBSearch(MapperKey<K> key, CacheEntry<K, M>[] entries) {
+        return Arrays.binarySearch(entries, new CacheEntry<K, M>(key, null), comparator);
+    }
+
+    @Override
+    public String toString() {
+        return "SortedMapperCache{" + Arrays.toString(mapperCache.get()) +
+                '}';
+    }
+
+    private static class CacheEntryComparator<K extends FieldKey<K>, M> implements Comparator<CacheEntry<K, M>> {
+        private final Comparator<MapperKey<K>> comparator;
+
+        public CacheEntryComparator(Comparator<MapperKey<K>> comparator) {
+            this.comparator = comparator;
+        }
+
+        @Override
+        public int compare(CacheEntry<K, M> o1, CacheEntry<K, M> o2) {
+            return comparator.compare(o1.key, o2.key);
+        }
+    }
+
+    public static void main(String[] args) {
+        final IMapperCache<JdbcColumnKey, Object> mapperCache = CacheType.SARRAY.newCache();
+        final IMapperCache<JdbcColumnKey, Object> mapperCache2 = CacheType.TS2ARRAY_NULL.newCache();
 
 
-		Entries(int size) {
-			this.keys = new MapperKey[size];
-			this.values = new Object[size];
-		}
-	}
+        final List<MapperKey<JdbcColumnKey>> mapperKeys = Utils.generateKeys(30, 10);
+        final Map<MapperKey<JdbcColumnKey>, Object> objects = new HashMap<>();
 
-	@Override
-	public String toString() {
-		return "SortedMapperCache{" +
-				"mapperCache=" + Arrays.toString(mapperCache.get().keys) +
-				'}';
-	}
+        for(MapperKey<JdbcColumnKey> key : mapperKeys) {
+            Object o = objects.getOrDefault(key, new Object());
+            mapperCache.add(key, o);
+            mapperCache2.add(key, o);
+            objects.put(key, o);
+        }
+
+        System.out.println("objects = " + objects.size());
+        System.out.println("mapperCache = " + mapperCache.size());
+        System.out.println("mapperCache2 = " + mapperCache2.size());
+
+        for(MapperKey<JdbcColumnKey> key : mapperKeys) {
+            Object o = objects.get(key);
+            if (o != mapperCache.get(key)) {
+                throw new IllegalArgumentException();
+            }
+            if (o != mapperCache2.get(key)) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+
+    }
 }

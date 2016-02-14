@@ -4,6 +4,7 @@ import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Statement;
+import org.sfm.datastax.impl.DatastaxColumnKeyComparator;
 import org.sfm.datastax.impl.SettableDataSetterFactory;
 import org.sfm.map.MapperConfig;
 import org.sfm.map.column.FieldMapperColumnDefinition;
@@ -16,7 +17,8 @@ public class DatastaxBinder<T> {
     private final MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config;
     private final ClassMeta<T> classMeta;
 
-    private final MapperCache<DatastaxColumnKey, BoundStatementMapper<T>> cache = new MapperCache<DatastaxColumnKey, BoundStatementMapper<T>>();
+    private final MapperCache<DatastaxColumnKey, BoundStatementMapper<T>> cache =
+            new MapperCache<DatastaxColumnKey, BoundStatementMapper<T>>(new DatastaxColumnKeyComparator());
 
     public DatastaxBinder(ClassMeta<T> classMeta, MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config) {
         this.classMeta = classMeta;

@@ -1,7 +1,7 @@
 package org.sfm.map.mapper;
 
 import org.sfm.map.FieldKey;
-import org.sfm.map.mapper.MapperKey;
+import org.sfm.map.impl.MapperKeyComparator;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -13,12 +13,10 @@ public final class MapperCache<K extends FieldKey<K>, M> {
 	@SuppressWarnings("unchecked")
 	private final AtomicReference<SortedEntries<K>> sortedEntries;
 
-	public MapperCache() {
-		this(null);
-	}
-
-	public MapperCache(Comparator<MapperKey<K>> comparator) {
-		this.sortedEntries = new AtomicReference<SortedEntries<K>>(new SortedEntries<K>(0, false, comparator));
+	public MapperCache(Comparator<? super K> comparator) {
+		this.sortedEntries =
+				new AtomicReference<SortedEntries<K>>(
+						new SortedEntries<K>(0, new MapperKeyComparator<K>(comparator)));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -56,11 +54,11 @@ public final class MapperCache<K extends FieldKey<K>, M> {
 		private final boolean bsearch;
 		private final Comparator<MapperKey<K>> comparator;
 
-		SortedEntries(int size, boolean bsearch, Comparator<MapperKey<K>> comparator) {
+		SortedEntries(int size, Comparator<MapperKey<K>> comparator) {
 			this.comparator = comparator;
 			this.keys = new MapperKey[size];
 			this.values = new Object[size];
-			this.bsearch = bsearch;
+			this.bsearch =  size > SIZE_THRESHOLD;
 		}
 
 		Object search(MapperKey<K> key) {
@@ -97,9 +95,8 @@ public final class MapperCache<K extends FieldKey<K>, M> {
 		}
 
 		SortedEntries<K> insertEntry(MapperKey<K> key, Object mapper, int insertionPoint) {
-			final boolean bSearch = comparator != null && (keys.length + 1) > SIZE_THRESHOLD;
 
-			SortedEntries<K> newEntries = new SortedEntries<K>(keys.length + 1, bSearch, comparator);
+			SortedEntries<K> newEntries = new SortedEntries<K>(keys.length + 1, comparator);
 
 			System.arraycopy(keys, 0, newEntries.keys, 0, insertionPoint);
 			System.arraycopy(values, 0, newEntries.values, 0, insertionPoint);
@@ -116,7 +113,7 @@ public final class MapperCache<K extends FieldKey<K>, M> {
 
 	@Override
 	public String toString() {
-		return "Sorted2ArraysMapperCache{" +
+		return "MapperCache{" +
 				"sortedEntries=" + Arrays.toString(sortedEntries.get().keys) +
 				'}';
 	}

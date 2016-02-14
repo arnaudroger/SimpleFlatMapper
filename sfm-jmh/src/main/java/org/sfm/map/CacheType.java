@@ -1,6 +1,9 @@
 package org.sfm.map;
 
 import org.sfm.jdbc.JdbcColumnKey;
+import org.sfm.jdbc.impl.JdbcColumnKeyComparator;
+import org.sfm.map.impl.AbstractMapperKeyComparator;
+import org.sfm.map.impl.MapperKeyComparator;
 import org.sfm.map.mapper.MapperKey;
 
 import java.util.Comparator;
@@ -22,7 +25,7 @@ public enum CacheType {
     S2ARRAY {
         @Override
         IMapperCache<JdbcColumnKey, Object> newCache() {
-            return new Sorted2ArraysMapperCache<>(COMPARATOR);
+            return new S2ArraysMapperCache<>(COMPARATOR);
         }
     },
     T2ARRAY {
@@ -40,7 +43,7 @@ public enum CacheType {
     TS2ARRAY_NULL {
         @Override
         IMapperCache<JdbcColumnKey, Object> newCache() {
-            return new TS2ArraysMapperCache<>(null);
+            return new TS2NArraysMapperCache<>(null);
         }
     },
     SARRAY {
@@ -56,29 +59,10 @@ public enum CacheType {
     abstract IMapperCache<JdbcColumnKey, Object> newCache();
 
 
-    private static class MapperKeyComparator implements Comparator<MapperKey<JdbcColumnKey>> {
+    private static class MapperKeyComparatorImpl extends AbstractMapperKeyComparator<JdbcColumnKey> {
+
         @Override
-        public int compare(MapperKey<JdbcColumnKey> m1, MapperKey<JdbcColumnKey> m2) {
-            JdbcColumnKey[] keys1 = m1.getColumns();
-            JdbcColumnKey[] keys2 = m2.getColumns();
-            return compareKeys(keys1, keys2);
-        }
-
-        private int compareKeys(JdbcColumnKey[] keys1, JdbcColumnKey[] keys2) {
-            int d = keys1.length - keys2.length;
-            if (d != 0){
-                return d;
-            }
-            for(int i = 0; i < keys1.length; i++) {
-                d = compareKey(keys1[i], keys2[i]);
-                if (d!= 0) {
-                    return d;
-                }
-            }
-            return d;
-        }
-
-        private int compareKey(JdbcColumnKey key1, JdbcColumnKey key2) {
+        protected int compareKey(JdbcColumnKey key1, JdbcColumnKey key2) {
             int d = key1.getName().compareTo(key2.getName());
             if (d != 0) {
                 return d;
@@ -86,6 +70,6 @@ public enum CacheType {
             return key1.getSqlType() - key2.getSqlType();
         }
     }
-    private static final Comparator<MapperKey<JdbcColumnKey>> COMPARATOR = new MapperKeyComparator();
+    private static final Comparator<MapperKey<JdbcColumnKey>> COMPARATOR = new MapperKeyComparator(new JdbcColumnKeyComparator());
 
 }

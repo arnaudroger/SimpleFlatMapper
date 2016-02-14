@@ -3,6 +3,7 @@ package org.sfm.csv.impl;
 import org.sfm.csv.*;
 import org.sfm.csv.parser.CellConsumer;
 import org.sfm.map.*;
+import org.sfm.map.impl.FieldKeyComparator;
 import org.sfm.map.mapper.ColumnDefinitionProvider;
 import org.sfm.map.mapper.MapperCache;
 import org.sfm.map.mapper.MapperKey;
@@ -33,7 +34,8 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 
 	private final MapperConfig<CsvColumnKey, CsvColumnDefinition> mapperConfig;
 
-	private final MapperCache<CsvColumnKey, CsvMapperImpl<T>> mapperCache = new MapperCache<CsvColumnKey, CsvMapperImpl<T>>();
+	private final MapperCache<CsvColumnKey, CsvMapperImpl<T>> mapperCache =
+			new MapperCache<CsvColumnKey, CsvMapperImpl<T>>(new FieldKeyComparator());
 
 	public DynamicCsvMapper(final Type target,
 							final ClassMeta<T> classMeta,

@@ -9,6 +9,7 @@ import org.sfm.utils.UnaryFactory;
 import org.sfm.utils.RowHandler;
 import org.sfm.utils.UnaryFactoryWithException;
 
+import java.util.Comparator;
 import java.util.Iterator;
 
 //IFJAVA8_START
@@ -19,7 +20,7 @@ import java.util.stream.Stream;
 public class DynamicSetRowMapper<R, S, T, E extends Exception, K extends FieldKey<K>> implements SetRowMapper<R, S, T, E> {
 
 
-    private final MapperCache<K, SetRowMapper<R, S, T, E>> mapperCache = new MapperCache<K, SetRowMapper<R, S, T, E>>();
+    private final MapperCache<K, SetRowMapper<R, S, T, E>> mapperCache;
 
 	private final UnaryFactory<MapperKey<K>, SetRowMapper<R, S, T, E>> mapperFactory;
 
@@ -30,10 +31,12 @@ public class DynamicSetRowMapper<R, S, T, E extends Exception, K extends FieldKe
 	public DynamicSetRowMapper(
 			UnaryFactory<MapperKey<K>, SetRowMapper<R, S, T, E>> mapperFactory,
 			UnaryFactoryWithException<R, MapperKey<K>, E> mapperKeyFromRow,
-			UnaryFactoryWithException<S, MapperKey<K>, E> mapperKeyFromSet) {
+			UnaryFactoryWithException<S, MapperKey<K>, E> mapperKeyFromSet,
+			Comparator<K> keyComparator) {
 		this.mapperFactory = mapperFactory;
 		this.mapperKeyFromRow = mapperKeyFromRow;
 		this.mapperKeyFromSet = mapperKeyFromSet;
+		this.mapperCache = new MapperCache<K, SetRowMapper<R, S, T, E>>(keyComparator);
 	}
 
 	@Override

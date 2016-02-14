@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.impl.FieldKeyComparator;
 import org.sfm.map.mapper.MapperKey;
 import org.sfm.map.mapper.MapperCache;
 import org.sfm.poi.SheetMapper;
@@ -27,7 +28,8 @@ public class DynamicSheetMapper<T> implements SheetMapper<T> {
     private final int startRow = 0;
 
 
-    private final MapperCache<CsvColumnKey, SheetMapper<T>> mapperCache = new MapperCache<CsvColumnKey, SheetMapper<T>>();
+    private final MapperCache<CsvColumnKey, SheetMapper<T>> mapperCache =
+            new MapperCache<CsvColumnKey, SheetMapper<T>>(new FieldKeyComparator());
     private final ClassMeta<T> classMeta;
     private final MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig;
     private final GetterFactory<Row, CsvColumnKey> getterFactory;

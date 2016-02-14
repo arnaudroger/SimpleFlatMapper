@@ -9,6 +9,7 @@ import static org.sfm.utils.Asserts.requireNonNull;
 public final class MapperKey<K extends FieldKey<K>> {
 
 	private final K[] columns;
+
 	@SuppressWarnings("unchecked")
 	public MapperKey(final K... columns) {
 		requireNonNull("columns", columns);
@@ -17,11 +18,7 @@ public final class MapperKey<K extends FieldKey<K>> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
 		MapperKey<?> that = (MapperKey<?>) o;
-
 		return Arrays.equals(columns, that.columns);
 	}
 

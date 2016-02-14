@@ -33,6 +33,18 @@ o.s.m.MapperCacheBenchmark.testGet         TS2ARRAY            10      10  thrpt
 o.s.m.MapperCacheBenchmark.testGet         TS2ARRAY            10      50  thrpt       20   9636776.010    66417.146  ops/s
 o.s.m.MapperCacheBenchmark.testGet         TS2ARRAY            10     100  thrpt       20   9105677.738   128316.475  ops/s
 
+Benchmark                             (cacheType)  (maxColumns)  (size)   Mode  Samples         Score  Score error  Units
+o.s.m.MapperCacheBenchmark.testGet       TS2ARRAY            10       1  thrpt       20  18940908.511   179107.456  ops/s
+o.s.m.MapperCacheBenchmark.testGet       TS2ARRAY            10     100  thrpt       20   9213391.809   112312.878  ops/s
+o.s.m.MapperCacheBenchmark.testGet        T2ARRAY            10       1  thrpt       20  18966549.614   174014.969  ops/s
+o.s.m.MapperCacheBenchmark.testGet        T2ARRAY            10     100  thrpt       20   6783199.023    79461.092  ops/s
+o.s.m.MapperCacheBenchmark.testGet        S2ARRAY            10       1  thrpt       20  14902909.682   119227.204  ops/s
+o.s.m.MapperCacheBenchmark.testGet        S2ARRAY            10     100  thrpt       20   9243773.521   121338.405  ops/s
+
+Benchmark                             (cacheType)  (maxColumns)  (size)   Mode  Samples        Score  Score error  Units
+o.s.m.MapperCacheBenchmark.testGet       TS2ARRAY            10     100  thrpt       20  9221596.297   105364.246  ops/s
+o.s.m.MapperCacheBenchmark.testGet        S2ARRAY            10     100  thrpt       20  9433599.825    89594.025  ops/s
+B
 
 o.s.m.MapperCacheBenchmark.testGet           SARRAY            10       1  thrpt       20  12289045.001   132318.191  ops/s
 o.s.m.MapperCacheBenchmark.testGet           SARRAY            10      10  thrpt       20  10095838.825    68625.772  ops/s

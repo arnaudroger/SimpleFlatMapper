@@ -6,13 +6,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class TS2ArraysMapperCache<K extends FieldKey<K>, M> implements IMapperCache<K, M> {
+public final class TS2NArraysMapperCache<K extends FieldKey<K>, M> implements IMapperCache<K, M> {
 
 	private static final int SIZE_THRESHOLD = 32;
 	@SuppressWarnings("unchecked")
 	private final AtomicReference<SortedEntries<K>> sortedEntries;
 
-	public TS2ArraysMapperCache(Comparator<MapperKey<K>> comparator) {
+	public TS2NArraysMapperCache(Comparator<MapperKey<K>> comparator) {
 		this.sortedEntries = new AtomicReference<SortedEntries<K>>(new SortedEntries<K>(0, false, comparator));
 	}
 
@@ -89,11 +89,15 @@ public final class TS2ArraysMapperCache<K extends FieldKey<K>, M> implements IMa
 		}
 
 		private int findInsertionPoint(MapperKey<K> key) {
-			return Arrays.binarySearch(keys, key, comparator);
+			if (comparator == null) {
+				return iFindKey(key);
+			} else {
+				return Arrays.binarySearch(keys, key, comparator);
+			}
 		}
 
 		SortedEntries<K> insertEntry(MapperKey<K> key, Object mapper, int insertionPoint) {
-			final boolean bSearch = (keys.length + 1) > SIZE_THRESHOLD;
+			final boolean bSearch = comparator != null && (keys.length + 1) > SIZE_THRESHOLD;
 
 			SortedEntries<K> newEntries = new SortedEntries<K>(keys.length + 1, bSearch, comparator);
 

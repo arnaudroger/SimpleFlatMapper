@@ -75,6 +75,19 @@
 					</instructions>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.1.9</version>
+				<configuration>
+					<targetClasses>
+						<param>org.sfm.*</param>
+					</targetClasses>
+					<targetTests>
+						<param>org.sfm.*</param>
+					</targetTests>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>

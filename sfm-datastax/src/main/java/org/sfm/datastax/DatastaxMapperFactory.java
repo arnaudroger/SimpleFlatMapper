@@ -4,11 +4,11 @@ import com.datastax.driver.core.GettableByIndexData;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.exceptions.DriverException;
+import org.sfm.datastax.impl.DatastaxColumnKeyComparator;
 import org.sfm.datastax.impl.DatastaxMappingContextFactoryBuilder;
 import org.sfm.datastax.impl.RowGetterFactory;
 import org.sfm.datastax.impl.SettableDataSetterFactory;
 import org.sfm.datastax.impl.mapping.DatastaxAliasProvider;
-import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.mapper.AbstractMapperFactory;
@@ -18,7 +18,6 @@ import org.sfm.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 import org.sfm.map.mapper.MapperKey;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.JpaAliasProvider;
 import org.sfm.utils.UnaryFactory;
 import org.sfm.utils.UnaryFactoryWithException;
 
@@ -150,6 +149,6 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
                 UnaryFactory<MapperKey<DatastaxColumnKey>, SetRowMapper<Row, ResultSet, T, DriverException>> mapperFactory,
                 UnaryFactoryWithException<Row, MapperKey<DatastaxColumnKey>, DriverException> mapperKeyFromRow,
                 UnaryFactoryWithException<ResultSet, MapperKey<DatastaxColumnKey>, DriverException> mapperKeyFromSet) {
-            super(mapperFactory, mapperKeyFromRow, mapperKeyFromSet);        }
+            super(mapperFactory, mapperKeyFromRow, mapperKeyFromSet, new DatastaxColumnKeyComparator());        }
     }
 }

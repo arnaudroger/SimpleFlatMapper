@@ -6,14 +6,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class TS2ArraysMapperCache<K extends FieldKey<K>, M> implements IMapperCache<K, M> {
+public final class S2ArraysMapperCache<K extends FieldKey<K>, M> implements IMapperCache<K, M> {
 
 	private static final int SIZE_THRESHOLD = 32;
 	@SuppressWarnings("unchecked")
 	private final AtomicReference<SortedEntries<K>> sortedEntries;
 
-	public TS2ArraysMapperCache(Comparator<MapperKey<K>> comparator) {
-		this.sortedEntries = new AtomicReference<SortedEntries<K>>(new SortedEntries<K>(0, false, comparator));
+	public S2ArraysMapperCache(Comparator<MapperKey<K>> comparator) {
+		this.sortedEntries = new AtomicReference<SortedEntries<K>>(new SortedEntries<K>(0, comparator));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -23,7 +23,7 @@ public final class TS2ArraysMapperCache<K extends FieldKey<K>, M> implements IMa
 		do {
 			sortedEntries = this.sortedEntries.get();
 
-			final int i = sortedEntries.findInsertionPoint(key);
+			final int i = sortedEntries.findKey(key);
 
 			if (i >= 0) {
 				if (!key.equals(sortedEntries.keys[i])) {
@@ -53,14 +53,12 @@ public final class TS2ArraysMapperCache<K extends FieldKey<K>, M> implements IMa
 	public static class SortedEntries<K extends FieldKey<K>> {
 		private final MapperKey<K>[] keys;
 		private final Object[] values;
-		private final boolean bsearch;
 		private final Comparator<MapperKey<K>> comparator;
 
-		SortedEntries(int size, boolean bsearch, Comparator<MapperKey<K>> comparator) {
+		SortedEntries(int size, Comparator<MapperKey<K>> comparator) {
 			this.comparator = comparator;
 			this.keys = new MapperKey[size];
 			this.values = new Object[size];
-			this.bsearch = bsearch;
 		}
 
 		Object search(MapperKey<K> key) {
@@ -72,30 +70,12 @@ public final class TS2ArraysMapperCache<K extends FieldKey<K>, M> implements IMa
 		}
 
 		int findKey(MapperKey<K> key) {
-			if (bsearch) {
-				return Arrays.binarySearch(keys, key, comparator);
-			} else {
-				return iFindKey(key);
-			}
-		}
-
-		private int iFindKey(MapperKey<K> key) {
-			for(int i = 0; i < keys.length; i++) {
-				if (key.equals(keys[i])) {
-					return i;
-				}
-			}
-			return - keys.length - 1;
-		}
-
-		private int findInsertionPoint(MapperKey<K> key) {
 			return Arrays.binarySearch(keys, key, comparator);
 		}
 
-		SortedEntries<K> insertEntry(MapperKey<K> key, Object mapper, int insertionPoint) {
-			final boolean bSearch = (keys.length + 1) > SIZE_THRESHOLD;
 
-			SortedEntries<K> newEntries = new SortedEntries<K>(keys.length + 1, bSearch, comparator);
+		SortedEntries<K> insertEntry(MapperKey<K> key, Object mapper, int insertionPoint) {
+			SortedEntries<K> newEntries = new SortedEntries<K>(keys.length + 1, comparator);
 
 			System.arraycopy(keys, 0, newEntries.keys, 0, insertionPoint);
 			System.arraycopy(values, 0, newEntries.values, 0, insertionPoint);

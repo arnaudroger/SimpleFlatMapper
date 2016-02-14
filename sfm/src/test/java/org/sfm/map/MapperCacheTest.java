@@ -2,12 +2,13 @@ package org.sfm.map;
 
 import org.junit.Test;
 import org.sfm.csv.CsvColumnKey;
-import org.sfm.map.impl.FieldKeyComparator;
+import org.sfm.map.mapper.FieldKeyComparator;
 import org.sfm.map.mapper.MapperCache;
 import org.sfm.map.mapper.MapperKey;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 public class MapperCacheTest {
 
@@ -21,4 +22,18 @@ public class MapperCacheTest {
 		cache.add(key, delegate);
 		assertSame(delegate, cache.get(key));
 	}
+
+
+//	@Test
+//	public void testMapperCacheWithCsvColumnKey() {
+//		fail();
+//	}
+//	@Test
+//	public void testMapperCacheWithJdbcColumnKey() {
+//		fail();
+//	}
+//	@Test
+//	public void testMapperCacheWithDatastaxColumnKey() {
+//		fail();
+//	}
 }

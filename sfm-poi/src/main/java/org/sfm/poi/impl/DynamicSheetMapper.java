@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.impl.FieldKeyComparator;
+import org.sfm.map.mapper.FieldKeyComparator;
 import org.sfm.map.mapper.MapperKey;
 import org.sfm.map.mapper.MapperCache;
 import org.sfm.poi.SheetMapper;

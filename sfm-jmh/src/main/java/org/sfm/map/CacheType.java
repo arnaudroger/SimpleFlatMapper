@@ -2,9 +2,8 @@ package org.sfm.map;
 
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.JdbcColumnKeyComparator;
-import org.sfm.map.impl.AbstractMapperKeyComparator;
-import org.sfm.map.impl.MapperKeyComparator;
 import org.sfm.map.mapper.MapperKey;
+import org.sfm.map.mapper.MapperKeyComparator;
 
 import java.util.Comparator;
 
@@ -59,17 +58,6 @@ public enum CacheType {
     abstract IMapperCache<JdbcColumnKey, Object> newCache();
 
 
-    private static class MapperKeyComparatorImpl extends AbstractMapperKeyComparator<JdbcColumnKey> {
-
-        @Override
-        protected int compareKey(JdbcColumnKey key1, JdbcColumnKey key2) {
-            int d = key1.getName().compareTo(key2.getName());
-            if (d != 0) {
-                return d;
-            }
-            return key1.getSqlType() - key2.getSqlType();
-        }
-    }
     private static final Comparator<MapperKey<JdbcColumnKey>> COMPARATOR = new MapperKeyComparator(new JdbcColumnKeyComparator());
 
 }

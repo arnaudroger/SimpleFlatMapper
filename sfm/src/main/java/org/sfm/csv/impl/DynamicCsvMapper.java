@@ -3,7 +3,7 @@ package org.sfm.csv.impl;
 import org.sfm.csv.*;
 import org.sfm.csv.parser.CellConsumer;
 import org.sfm.map.*;
-import org.sfm.map.impl.FieldKeyComparator;
+import org.sfm.map.mapper.FieldKeyComparator;
 import org.sfm.map.mapper.ColumnDefinitionProvider;
 import org.sfm.map.mapper.MapperCache;
 import org.sfm.map.mapper.MapperKey;

@@ -1,7 +1,6 @@
 package org.sfm.map.mapper;
 
 import org.sfm.map.FieldKey;
-import org.sfm.map.impl.MapperKeyComparator;
 
 import java.util.Arrays;
 import java.util.Comparator;

@@ -64,6 +64,14 @@
 			<artifactId>sfm</artifactId>
 			<version>2.9-SNAPSHOT</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>sfm</artifactId>
+			<version>2.9-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.cassandraunit</groupId>
 			<artifactId>cassandra-unit</artifactId>

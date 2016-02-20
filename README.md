@@ -31,7 +31,7 @@ The mappers supports
  * Constructor injection
  * Method injection
  * Field injection
- * [Builder Pattern](https://github.com/arnaudroger/SimpleFlatMapper/wiki/BuilderPattern) - like [Immutables](http://immutables.github.io/) -
+ * [Builder Pattern](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Property-Mapping#builder-pattern) - like [Immutables](http://immutables.github.io/) -
  * Value Object support
  * ASM acceleration
  * Sub Object Mapping

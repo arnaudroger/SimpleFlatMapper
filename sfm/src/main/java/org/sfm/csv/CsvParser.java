@@ -413,6 +413,9 @@ public final class CsvParser {
 
         }
 
+		public int maxBufferSize() {
+			return maxBufferSize;
+		}
 
 		public int bufferSize() {
 			return bufferSize;

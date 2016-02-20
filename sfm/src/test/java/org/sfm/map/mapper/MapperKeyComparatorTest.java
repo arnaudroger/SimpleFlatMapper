@@ -36,7 +36,7 @@ public class MapperKeyComparatorTest {
     }
 
     public static <K extends FieldKey<K>> MapperKey<K>[] generateKeys(KeyProducer<K> producer) throws Exception {
-        ListCollectorHandler<MapperKey<K>> collector = new ListCollectorHandler<>();
+        ListCollectorHandler<MapperKey<K>> collector = new ListCollectorHandler<MapperKey<K>>();
 
         for(int i = 0; i < 1000; i++) {
             producer.produces(collector, names(random));

@@ -11,52 +11,29 @@ import java.util.Date;
 
 import static org.sfm.utils.Asserts.requireNonNull;
 
-public class JdbcColumnKey implements FieldKey<JdbcColumnKey>, TypeAffinity {
+public final class JdbcColumnKey extends FieldKey<JdbcColumnKey> implements TypeAffinity {
 
 	public static final int UNDEFINED_TYPE = -99999;
 
-	private final String name;
-	private final int index;
 	private final int sqlType;
-	private final JdbcColumnKey parent;
 
-	public JdbcColumnKey(String columnName, int columnIndex) {
-		this.name = requireNonNull("columnName", columnName);
-		this.index = columnIndex;
+	public JdbcColumnKey(String name, int index) {
+		super(name, index);
 		this.sqlType = UNDEFINED_TYPE;
-		this.parent = null;
 	}
 
-	public JdbcColumnKey(String columnName, int columnIndex, int sqlType) {
-		this.name = requireNonNull("columnName", columnName);
-		this.index = columnIndex;
+	public JdbcColumnKey(String name, int index, int sqlType) {
+		super(name, index);
 		this.sqlType = sqlType;
-		this.parent = null;
 	}
 
-	public JdbcColumnKey(String columnName, int columnIndex, int sqlType, JdbcColumnKey parent) {
-		this.name = requireNonNull("columnName", columnName);
-		this.index = columnIndex;
+	public JdbcColumnKey(String name, int index, int sqlType, JdbcColumnKey parent) {
+		super(name, index, parent);
 		this.sqlType = sqlType;
-		this.parent = parent;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public int getIndex() {
-		return index;
 	}
 
 	public int getSqlType() {
 		return sqlType;
-	}
-
-	public JdbcColumnKey getParent() {
-		return parent;
 	}
 
 	@Override
@@ -66,30 +43,22 @@ public class JdbcColumnKey implements FieldKey<JdbcColumnKey>, TypeAffinity {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + index;
-		result = prime * result + (name.hashCode());
-		result = prime * result + sqlType;
-		return result;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+
+		JdbcColumnKey that = (JdbcColumnKey) o;
+
+		return sqlType == that.sqlType;
+
 	}
+
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		JdbcColumnKey other = (JdbcColumnKey) obj;
-		if (index != other.index)
-			return false;
-        if (!name.equals(other.name))
-            return false;
-		if (sqlType != other.sqlType)
-			return false;
-		return true;
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + sqlType;
+		return result;
 	}
 
 	@Override

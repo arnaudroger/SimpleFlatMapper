@@ -7,22 +7,24 @@ import org.openjdk.jmh.annotations.State;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.mapper.MapperKey;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 
 @State(Scope.Benchmark)
 public class ParamCache {
 
-    @Param(value = {"ARRAY", "SARRAY", "T2ARRAY", "TS2ARRAY_NULL", "TS2ARRAY", "CHM", "S2ARRAY" })
-    private CacheType cacheType;
+    @Param(value = {"ARRAY", "SARRAY", "T2ARRAY",  "S2ARRAY", "TS2ARRAY", "CHM"})
+    public CacheType cacheType;
 
     IMapperCache<JdbcColumnKey, Object> mapperCache;
 
     List<MapperKey<JdbcColumnKey>> keys;
 
     @Param("10")
-    private int maxColumns;
-    @Param({"1", "10", "50","100"})
-    private int size;
+    public int maxColumns;
+    @Param({"1", "10", "50","100", "500", "2000"})
+    public int size;
 
     @Setup
     public void setUp() {
@@ -31,5 +33,13 @@ public class ParamCache {
         for (MapperKey<JdbcColumnKey> key : keys) {
             mapperCache.add(Utils.duplicateKey(key), new Object());
         }
+    }
+
+    public static void main( String[] args ) throws UnknownHostException
+    {
+        long start = System.currentTimeMillis();
+        InetAddress localHost = InetAddress.getLocalHost();
+        System.out.println(localHost);
+        System.out.println(System.currentTimeMillis() - start);
     }
 }

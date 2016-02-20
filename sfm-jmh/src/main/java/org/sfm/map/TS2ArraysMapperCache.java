@@ -1,6 +1,7 @@
 package org.sfm.map;
 
 import org.sfm.map.mapper.MapperKey;
+import org.sfm.map.mapper.MapperKeyComparator;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -8,12 +9,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class TS2ArraysMapperCache<K extends FieldKey<K>, M> implements IMapperCache<K, M> {
 
-	private static final int SIZE_THRESHOLD = 32;
+	private static final int SIZE_THRESHOLD = 60;
 	@SuppressWarnings("unchecked")
 	private final AtomicReference<SortedEntries<K>> sortedEntries;
 
-	public TS2ArraysMapperCache(Comparator<MapperKey<K>> comparator) {
-		this.sortedEntries = new AtomicReference<SortedEntries<K>>(new SortedEntries<K>(0, false, comparator));
+	public TS2ArraysMapperCache(MapperKeyComparator<K> comparator) {
+		this.sortedEntries = new AtomicReference<SortedEntries<K>>(new SortedEntries<K>(0, comparator));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -54,13 +55,13 @@ public final class TS2ArraysMapperCache<K extends FieldKey<K>, M> implements IMa
 		private final MapperKey<K>[] keys;
 		private final Object[] values;
 		private final boolean bsearch;
-		private final Comparator<MapperKey<K>> comparator;
+		private final MapperKeyComparator<K> comparator;
 
-		SortedEntries(int size, boolean bsearch, Comparator<MapperKey<K>> comparator) {
+		SortedEntries(int size, MapperKeyComparator<K> comparator) {
 			this.comparator = comparator;
 			this.keys = new MapperKey[size];
 			this.values = new Object[size];
-			this.bsearch = bsearch;
+			this.bsearch = size > SIZE_THRESHOLD;
 		}
 
 		Object search(MapperKey<K> key) {
@@ -95,7 +96,7 @@ public final class TS2ArraysMapperCache<K extends FieldKey<K>, M> implements IMa
 		SortedEntries<K> insertEntry(MapperKey<K> key, Object mapper, int insertionPoint) {
 			final boolean bSearch = (keys.length + 1) > SIZE_THRESHOLD;
 
-			SortedEntries<K> newEntries = new SortedEntries<K>(keys.length + 1, bSearch, comparator);
+			SortedEntries<K> newEntries = new SortedEntries<K>(keys.length + 1, comparator);
 
 			System.arraycopy(keys, 0, newEntries.keys, 0, insertionPoint);
 			System.arraycopy(values, 0, newEntries.values, 0, insertionPoint);

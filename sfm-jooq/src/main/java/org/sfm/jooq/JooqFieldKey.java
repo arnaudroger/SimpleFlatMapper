@@ -3,28 +3,22 @@ package org.sfm.jooq;
 import org.jooq.Field;
 import org.sfm.map.FieldKey;
 
-public class JooqFieldKey implements FieldKey<JooqFieldKey> {
+public class JooqFieldKey extends FieldKey<JooqFieldKey> {
 	private final Field<?> field;
-	private final int index;
 
 	public JooqFieldKey(Field<?> field, int index) {
+		super(field.getName(), index);
 		this.field = field;
-		this.index = index;
 	}
 
-	@Override
-	public String getName() {
-		return field.getName();
-	}
-
-	@Override
-	public int getIndex() {
-		return index;
+	public JooqFieldKey(String alias, Field<?> field, int index, JooqFieldKey parent) {
+		super(alias, index, parent);
+		this.field = field;
 	}
 
 	@Override
 	public JooqFieldKey alias(String alias) {
-		throw new UnsupportedOperationException();
+		return new JooqFieldKey(alias, field, index, this);
 	}
 
 	public Field<?> getField() {

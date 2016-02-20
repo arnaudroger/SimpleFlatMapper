@@ -32,7 +32,7 @@ public class DynamicSetRowMapper<R, S, T, E extends Exception, K extends FieldKe
 			UnaryFactory<MapperKey<K>, SetRowMapper<R, S, T, E>> mapperFactory,
 			UnaryFactoryWithException<R, MapperKey<K>, E> mapperKeyFromRow,
 			UnaryFactoryWithException<S, MapperKey<K>, E> mapperKeyFromSet,
-			Comparator<K> keyComparator) {
+			MapperKeyComparator<K> keyComparator) {
 		this.mapperFactory = mapperFactory;
 		this.mapperKeyFromRow = mapperKeyFromRow;
 		this.mapperKeyFromSet = mapperKeyFromSet;

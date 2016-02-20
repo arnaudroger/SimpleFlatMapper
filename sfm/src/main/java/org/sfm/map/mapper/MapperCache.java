@@ -8,14 +8,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class MapperCache<K extends FieldKey<K>, M> {
 
-	private static final int SIZE_THRESHOLD = 32;
+	private static final int SIZE_THRESHOLD = 60;
 	@SuppressWarnings("unchecked")
 	private final AtomicReference<SortedEntries<K>> sortedEntries;
 
-	public MapperCache(Comparator<? super K> comparator) {
+	public MapperCache(MapperKeyComparator<K> comparator) {
 		this.sortedEntries =
 				new AtomicReference<SortedEntries<K>>(
-						new SortedEntries<K>(0, new MapperKeyComparator<K>(comparator)));
+						new SortedEntries<K>(0, comparator));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -47,13 +47,13 @@ public final class MapperCache<K extends FieldKey<K>, M> {
 		return (M) sortedEntries.get().search(key);
 	}
 
-	private static class SortedEntries<K extends FieldKey<K>> {
+	private static final class SortedEntries<K extends FieldKey<K>> {
 		private final MapperKey<K>[] keys;
 		private final Object[] values;
 		private final boolean bsearch;
-		private final Comparator<MapperKey<K>> comparator;
+		private final MapperKeyComparator<K> comparator;
 
-		SortedEntries(int size, Comparator<MapperKey<K>> comparator) {
+		SortedEntries(int size, MapperKeyComparator<K> comparator) {
 			this.comparator = comparator;
 			this.keys = new MapperKey[size];
 			this.values = new Object[size];

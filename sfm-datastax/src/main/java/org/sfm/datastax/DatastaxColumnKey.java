@@ -7,88 +7,66 @@ import org.sfm.map.FieldKey;
 import org.sfm.map.mapper.MapperKey;
 import org.sfm.map.mapper.TypeAffinity;
 
-import static org.sfm.utils.Asserts.requireNonNull;
+public final class DatastaxColumnKey extends FieldKey<DatastaxColumnKey> implements TypeAffinity {
 
-public class DatastaxColumnKey implements FieldKey<DatastaxColumnKey>, TypeAffinity {
-
-	private final String name;
-	private final int index;
-	private final DataType sqlType;
+	private final DataType dataType;
 	private final DatastaxColumnKey parent;
 
-	public DatastaxColumnKey(String columnName, int columnIndex) {
-		this.name = requireNonNull("columnName", columnName);
-		this.index = columnIndex;
-		this.sqlType = null;
+	public DatastaxColumnKey(String name, int index) {
+		super(name, index);
+		this.dataType = null;
 		this.parent = null;
 	}
 
-	public DatastaxColumnKey(String columnName, int columnIndex, DataType sqlType) {
-		this.name = requireNonNull("columnName", columnName);
-		this.index = columnIndex;
-		this.sqlType = sqlType;
+	public DatastaxColumnKey(String name, int index, DataType dataType) {
+		super(name, index);
+		this.dataType = dataType;
 		this.parent = null;
 	}
 
-	public DatastaxColumnKey(String columnName, int columnIndex, DataType sqlType, DatastaxColumnKey parent) {
-		this.name = requireNonNull("columnName", columnName);
-		this.index = columnIndex;
-		this.sqlType = sqlType;
+	public DatastaxColumnKey(String name, int index, DataType dataType, DatastaxColumnKey parent) {
+		super(name, index);
+		this.dataType = dataType;
 		this.parent = parent;
 	}
 
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
- 	public int getIndex() {
-		return index;
-	}
-
 	public DataType getDataType() {
-		return sqlType;
+		return dataType;
 	}
 
-	public DatastaxColumnKey getParent() {
-		return parent;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		DatastaxColumnKey that = (DatastaxColumnKey) o;
-
-		if (index != that.index) return false;
-		if (!name.equals(that.name)) return false;
-		return !(sqlType != null ? !sqlType.equals(that.sqlType) : that.sqlType != null);
-
-	}
-
-	@Override
-	public int hashCode() {
-		int result = name.hashCode();
-		result = 31 * result + index;
-		result = 31 * result + (sqlType != null ? sqlType.hashCode() : 0);
-		return result;
-	}
 
 	@Override
 	public String toString() {
 		return "DatastaxColumnKey{" +
 				"name='" + name + '\'' +
 				", index=" + index +
-				", sqlType=" + sqlType +
+				", dataType=" + dataType +
 				", parent=" + parent +
 				'}';
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+
+		DatastaxColumnKey that = (DatastaxColumnKey) o;
+
+		return dataType != null ? dataType.equals(that.dataType) : that.dataType == null;
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + (dataType != null ? dataType.hashCode() : 0);
+		return result;
+	}
+
+	@Override
 	public DatastaxColumnKey alias(String alias) {
-		return new DatastaxColumnKey(alias, index, sqlType, this);
+		return new DatastaxColumnKey(alias, index, dataType, this);
 	}
 
 	public static DatastaxColumnKey of(ColumnDefinitions metaData, int column) {
@@ -111,8 +89,8 @@ public class DatastaxColumnKey implements FieldKey<DatastaxColumnKey>, TypeAffin
 
 	@Override
 	public Class<?>[] getAffinities()     {
-		if (sqlType != null) {
-			final Class<?> aClass = sqlType.asJavaClass();
+		if (dataType != null) {
+			final Class<?> aClass = dataType.asJavaClass();
 			if (Number.class.isAssignableFrom(aClass)) {
 				return new Class<?>[] { aClass, Number.class };
 			}

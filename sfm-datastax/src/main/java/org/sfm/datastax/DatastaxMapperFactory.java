@@ -4,7 +4,7 @@ import com.datastax.driver.core.GettableByIndexData;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.exceptions.DriverException;
-import org.sfm.datastax.impl.DatastaxColumnKeyComparator;
+import org.sfm.datastax.impl.DatastaxMapperKeyComparator;
 import org.sfm.datastax.impl.DatastaxMappingContextFactoryBuilder;
 import org.sfm.datastax.impl.RowGetterFactory;
 import org.sfm.datastax.impl.SettableDataSetterFactory;
@@ -149,6 +149,6 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
                 UnaryFactory<MapperKey<DatastaxColumnKey>, SetRowMapper<Row, ResultSet, T, DriverException>> mapperFactory,
                 UnaryFactoryWithException<Row, MapperKey<DatastaxColumnKey>, DriverException> mapperKeyFromRow,
                 UnaryFactoryWithException<ResultSet, MapperKey<DatastaxColumnKey>, DriverException> mapperKeyFromSet) {
-            super(mapperFactory, mapperKeyFromRow, mapperKeyFromSet, new DatastaxColumnKeyComparator());        }
+            super(mapperFactory, mapperKeyFromRow, mapperKeyFromSet, DatastaxMapperKeyComparator.INSTANCE);        }
     }
 }

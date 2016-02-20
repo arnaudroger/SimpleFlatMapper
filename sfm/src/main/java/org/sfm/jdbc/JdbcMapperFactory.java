@@ -1,6 +1,5 @@
 package org.sfm.jdbc;
 
-import org.sfm.jdbc.impl.JdbcColumnKeyComparator;
 import org.sfm.jdbc.impl.PreparedStatementSetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
@@ -251,7 +250,7 @@ public final class JdbcMapperFactory
 				UnaryFactory<MapperKey<JdbcColumnKey>, SetRowMapper<ResultSet, ResultSet, T, SQLException>> mapperFactory,
 				UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> mapperKeyFromRow,
 				UnaryFactoryWithException<ResultSet, MapperKey<JdbcColumnKey>, SQLException> mapperKeyFromSet) {
-			super(mapperFactory, mapperKeyFromRow, mapperKeyFromSet, new JdbcColumnKeyComparator());
+			super(mapperFactory, mapperKeyFromRow, mapperKeyFromSet, MapperKeyComparator.jdbcColumnKeyComparator());
 		}
 
 

@@ -17,9 +17,24 @@ public final class MapperKey<K extends FieldKey<K>> {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		MapperKey<?> that = (MapperKey<?>) o;
-		return Arrays.equals(columns, that.columns);
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MapperKey<?> that = (MapperKey<?>) obj;
+		return equals(columns, that.columns);
+	}
+
+	private boolean equals(K[] c1, FieldKey<?>[] c2) {
+		if (c1.length != c2.length)
+			return false;
+		for(int i = 0; i < c1.length; i++) {
+			if (!c1[i].equals(c2[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override

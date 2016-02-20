@@ -1,11 +1,7 @@
 package org.sfm.map;
 
 import org.sfm.jdbc.JdbcColumnKey;
-import org.sfm.jdbc.impl.JdbcColumnKeyComparator;
-import org.sfm.map.mapper.MapperKey;
 import org.sfm.map.mapper.MapperKeyComparator;
-
-import java.util.Comparator;
 
 public enum CacheType {
 
@@ -15,12 +11,13 @@ public enum CacheType {
             return new ArrayMapperCache<>();
         }
     },
-    CHM {
+    SARRAY {
         @Override
         IMapperCache<JdbcColumnKey, Object> newCache() {
-            return new CHMMapperCache<>();
+            return new SortedMapperCache<>(COMPARATOR);
         }
     },
+
     S2ARRAY {
         @Override
         IMapperCache<JdbcColumnKey, Object> newCache() {
@@ -39,18 +36,12 @@ public enum CacheType {
             return new TS2ArraysMapperCache<>(COMPARATOR);
         }
     },
-    TS2ARRAY_NULL {
+    CHM {
         @Override
         IMapperCache<JdbcColumnKey, Object> newCache() {
-            return new TS2NArraysMapperCache<>(null);
+            return new CHMMapperCache<>();
         }
     },
-    SARRAY {
-        @Override
-        IMapperCache<JdbcColumnKey, Object> newCache() {
-            return new SortedMapperCache<>(COMPARATOR);
-        }
-    }
 
     ;
 
@@ -58,6 +49,6 @@ public enum CacheType {
     abstract IMapperCache<JdbcColumnKey, Object> newCache();
 
 
-    private static final Comparator<MapperKey<JdbcColumnKey>> COMPARATOR = new MapperKeyComparator(new JdbcColumnKeyComparator());
+    private static final MapperKeyComparator<JdbcColumnKey> COMPARATOR = MapperKeyComparator.jdbcColumnKeyComparator();
 
 }

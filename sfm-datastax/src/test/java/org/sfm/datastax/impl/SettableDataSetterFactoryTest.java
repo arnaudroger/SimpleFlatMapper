@@ -1,7 +1,6 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.*;
-import com.datastax.driver.core.schemabuilder.UDTType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -12,7 +11,6 @@ import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
-import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.TypeReference;
@@ -24,13 +22,15 @@ import org.sfm.reflect.primitive.LongSetter;
 import org.sfm.tuples.Tuple2;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
+
+//IFJAVA8_START
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+//IFJAVA8_END
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;

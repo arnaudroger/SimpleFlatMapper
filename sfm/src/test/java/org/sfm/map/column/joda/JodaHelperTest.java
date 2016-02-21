@@ -59,17 +59,17 @@ public class JodaHelperTest {
     }
     @Test
     public void testGetDateTimeZoneWithNone() {
-        assertEquals(null, JodaHelper.getDateTimeZone(CsvColumnDefinition.IDENTITY));
+        assertEquals(DateTimeZone.getDefault(), JodaHelper.getDateTimeZoneOrDefault(CsvColumnDefinition.IDENTITY));
     }
 
     @Test
     public void testGetDateTimeZoneFromTimeZone() {
-        assertEquals(CHICAGO_TZ, JodaHelper.getDateTimeZone(CsvColumnDefinition.IDENTITY.addTimeZone(TimeZone.getTimeZone("America/Chicago"))));
+        assertEquals(CHICAGO_TZ, JodaHelper.getDateTimeZoneOrDefault(CsvColumnDefinition.IDENTITY.addTimeZone(TimeZone.getTimeZone("America/Chicago"))));
     }
 
     @Test
     public void testGetDateTimeZoneFromDateTimeZone() {
-        assertEquals(CHICAGO_TZ, JodaHelper.getDateTimeZone(CsvColumnDefinition.IDENTITY.add(new JodaDateTimeZoneProperty(CHICAGO_TZ))));
+        assertEquals(CHICAGO_TZ, JodaHelper.getDateTimeZoneOrDefault(CsvColumnDefinition.IDENTITY.add(new JodaDateTimeZoneProperty(CHICAGO_TZ))));
     }
 
 }

@@ -12,6 +12,7 @@ import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
+import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.TypeReference;
@@ -28,6 +29,8 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -428,6 +431,36 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, null);
 
         verify(statement).setDate(0, date);
+        verify(statement).setToNull(0);
+    }
+
+    //IFJAVA8_START
+
+    @Test
+    public void testJava8Time() throws Exception {
+        Setter<SettableByIndexData, LocalDateTime> setter = factory.getSetter(newPM(LocalDateTime.class, DataType.timestamp()));
+
+        LocalDateTime ldt = LocalDateTime.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant()));
+        verify(statement).setToNull(0);
+    }
+
+    //IFJAVA8_END
+
+    @Test
+    public void testJodaTime() throws Exception {
+        Setter<SettableByIndexData, org.joda.time.LocalDateTime> setter = factory.getSetter(newPM(org.joda.time.LocalDateTime.class, DataType.timestamp()));
+
+        org.joda.time.LocalDateTime ldt = org.joda.time.LocalDateTime.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, ldt.toDate(TimeZone.getDefault()));
         verify(statement).setToNull(0);
     }
 

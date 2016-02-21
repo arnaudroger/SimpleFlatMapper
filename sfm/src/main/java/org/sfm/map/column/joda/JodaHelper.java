@@ -21,7 +21,7 @@ public class JodaHelper {
         }
 
 
-        final DateTimeZone dateTimeZone = getDateTimeZone(columnDefinition);
+        final DateTimeZone dateTimeZone = _dateTimeZone(columnDefinition);
 
         if (dateTimeZone != null) {
             dtf = dtf.withZone(dateTimeZone);
@@ -32,7 +32,7 @@ public class JodaHelper {
         return dtf;
     }
 
-    public static DateTimeZone getDateTimeZone(ColumnDefinition<?, ?> columnDefinition) {
+    private static DateTimeZone _dateTimeZone(ColumnDefinition<?, ?> columnDefinition) {
         if (columnDefinition.has(JodaDateTimeZoneProperty.class)) {
             return columnDefinition.lookFor(JodaDateTimeZoneProperty.class).getZone();
         } else if (columnDefinition.has(TimeZoneProperty.class)) {
@@ -40,6 +40,12 @@ public class JodaHelper {
         }
 
         return null;
+    }
+
+    public static DateTimeZone getDateTimeZoneOrDefault(ColumnDefinition<?, ?> columnDefinition) {
+        final DateTimeZone dateTimeZone = _dateTimeZone(columnDefinition);
+
+        return dateTimeZone == null ? DateTimeZone.getDefault() : dateTimeZone;
     }
 
 }

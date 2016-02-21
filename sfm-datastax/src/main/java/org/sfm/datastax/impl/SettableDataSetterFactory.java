@@ -1,12 +1,20 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.*;
+import org.joda.time.DateTimeZone;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.datastax.impl.setter.*;
 
+import org.sfm.jdbc.impl.convert.joda.JodaDateTimeTojuDateConverter;
+import org.sfm.jdbc.impl.convert.joda.JodaInstantTojuDateConverter;
+import org.sfm.jdbc.impl.convert.joda.JodaLocalDateTimeTojuDateConverter;
+import org.sfm.jdbc.impl.convert.joda.JodaLocalDateTojuDateConverter;
+import org.sfm.jdbc.impl.convert.joda.JodaLocalTimeTojuDateConverter;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperConfig;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.column.joda.JodaHelper;
+import org.sfm.map.impl.JodaTimeClasses;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.map.setter.ConvertDelegateSetter;
@@ -23,6 +31,12 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
+
+//IFJAVA8_START
+import org.sfm.map.column.time.JavaTimeHelper;
+import java.time.*;
+import org.sfm.jdbc.impl.convert.time.*;
+//IFJAVA8_END
 import java.util.*;
 
 
@@ -136,7 +150,29 @@ public class SettableDataSetterFactory
                 @SuppressWarnings("unchecked")
                 @Override
                 public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> pm) {
-                    return null;
+
+
+                    final DateSettableDataSetter setter = new DateSettableDataSetter(pm.getColumnKey().getIndex());
+                    final Type propertyType = pm.getPropertyMeta().getPropertyType();
+                    Converter<P, Date> converter = null;
+                    final DateTimeZone dateTimeZone = JodaHelper.getDateTimeZoneOrDefault(pm.getColumnDefinition());
+                    if (JodaTimeClasses.isJodaLocalDateTime(propertyType)) {
+                        converter = (Converter<P, Date>) new JodaLocalDateTimeTojuDateConverter(dateTimeZone);
+                    } else if (JodaTimeClasses.isJodaLocalDate(propertyType)) {
+                        converter = (Converter<P, Date>) new JodaLocalDateTojuDateConverter();
+                    } else if (JodaTimeClasses.isJodaDateTime(propertyType)) {
+                        converter = (Converter<P, Date>) new JodaDateTimeTojuDateConverter();
+                    } else if (JodaTimeClasses.isJodaInstant(propertyType)) {
+                        converter = (Converter<P, Date>) new JodaInstantTojuDateConverter();
+                    } else if (JodaTimeClasses.isJodaLocalTime(propertyType)) {
+                        converter = (Converter<P, Date>) new JodaLocalTimeTojuDateConverter(dateTimeZone);
+                    }
+                    if (converter != null) {
+                        return new ConvertDelegateSetter<SettableByIndexData, P, Date>(setter, converter);
+                    } else {
+                        return null;
+                    }
+
                 }
             };
 
@@ -146,7 +182,34 @@ public class SettableDataSetterFactory
                 @SuppressWarnings("unchecked")
                 @Override
                 public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> pm) {
-                    return null;
+                    final DateSettableDataSetter setter = new DateSettableDataSetter(pm.getColumnKey().getIndex());
+                    final Type propertyType = pm.getPropertyMeta().getPropertyType();
+                    Converter<P, Date> converter = null;
+                    final ZoneId dateTimeZone = JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition());
+                    if (TypeHelper.areEquals(propertyType, LocalDateTime.class)) {
+                        converter = (Converter<P, Date>) new JavaLocalDateTimeTojuDateConverter(dateTimeZone);
+                    } else if (TypeHelper.areEquals(propertyType, LocalDate.class)) {
+                        converter = (Converter<P, Date>) new JavaLocalDateTojuDateConverter(dateTimeZone);
+                    } else if (TypeHelper.areEquals(propertyType, ZonedDateTime.class)) {
+                        converter = (Converter<P, Date>) new JavaZonedDateTimeTojuDateConverter();
+                    } else if (TypeHelper.areEquals(propertyType, Instant.class)) {
+                        converter = (Converter<P, Date>) new JavaInstantTojuDateConverter();
+                    } else if (TypeHelper.areEquals(propertyType, LocalTime.class)) {
+                        converter = (Converter<P, Date>) new JavaLocalTimeTojuDateConverter(dateTimeZone);
+                    } else if (TypeHelper.areEquals(propertyType, OffsetDateTime.class)) {
+                        converter = (Converter<P, Date>) new JavaOffsetDateTimeTojuDateConverter();
+                    } else if (TypeHelper.areEquals(propertyType, OffsetTime.class)) {
+                        converter = (Converter<P, Date>) new JavaOffsetTimeTojuDateConverter();
+                    } else if (TypeHelper.areEquals(propertyType, Year.class)) {
+                        converter = (Converter<P, Date>) new JavaYearTojuDateConverter(dateTimeZone);
+                    } else if (TypeHelper.areEquals(propertyType, YearMonth.class)) {
+                        converter = (Converter<P, Date>) new JavaYearMonthTojuDateConverter(dateTimeZone);
+                    }
+                    if (converter != null) {
+                        return new ConvertDelegateSetter<SettableByIndexData, P, Date>(setter, converter);
+                    } else {
+                        return null;
+                    }
                 }
             };
     //IFJAVA8_END

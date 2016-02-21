@@ -33,7 +33,7 @@ public class JodaTimePreparedStatementFactory implements PreparedStatementSetter
             return (PreparedStatementIndexSetter<P>)
                     new ConvertDelegateIndexSetter<LocalDateTime, Timestamp>(
                             new TimestampPreparedStatementIndexSetter(),
-                            new JodaLocalDateTimeToTimestampConverter(JodaHelper.getDateTimeZone(pm.getColumnDefinition())));
+                            new JodaLocalDateTimeToTimestampConverter(JodaHelper.getDateTimeZoneOrDefault(pm.getColumnDefinition())));
         } else if (JodaTimeClasses.isJodaLocalDate(pm.getPropertyMeta().getPropertyType())) {
             return (PreparedStatementIndexSetter<P>)
                     new ConvertDelegateIndexSetter<LocalDate, java.sql.Date>(
@@ -43,7 +43,7 @@ public class JodaTimePreparedStatementFactory implements PreparedStatementSetter
             return (PreparedStatementIndexSetter<P>)
                     new ConvertDelegateIndexSetter<LocalTime, Time>(
                             new TimePreparedStatementIndexSetter(),
-                            new JodaLocalTimeToTimeConverter(JodaHelper.getDateTimeZone(pm.getColumnDefinition())));
+                            new JodaLocalTimeToTimeConverter(JodaHelper.getDateTimeZoneOrDefault(pm.getColumnDefinition())));
         } else if (JodaTimeClasses.isJodaInstant(pm.getPropertyMeta().getPropertyType())) {
             return (PreparedStatementIndexSetter<P>)
                     new ConvertDelegateIndexSetter<Instant, Timestamp>(

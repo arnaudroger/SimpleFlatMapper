@@ -302,6 +302,26 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 		if (getter == null) {
 			getter = mapperSource.getterFactory().newGetter(paramType, t.getColumnKey(), t.getColumnDefinition());
 		}
+
+        if (getter == null) {
+            final ClassMeta<?> classMeta = t.getPropertyMeta().getPropertyClassMeta();
+
+            InstantiatorDefinitions.CompatibilityScorer scorer = InstantiatorDefinitions.getCompatibilityScorer(t.getColumnKey());
+            InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(),
+                    scorer);
+
+            if (id != null) {
+                final Type sourceType = id.getParameters()[0].getGenericType();
+                getter = getterFor(t, sourceType);
+                if (getter != null) {
+                    Instantiator instantiator =
+                            classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
+                    getter = new InstantiatorOnGetter(instantiator, getter);
+                }
+            }
+
+        }
+
 		if (getter == null) {
             mapperConfig.mapperBuilderErrorHandler()
                     .accessorNotFound("Could not find getter for " + t.getColumnKey() + " type "

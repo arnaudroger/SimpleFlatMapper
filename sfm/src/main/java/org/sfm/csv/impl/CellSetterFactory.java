@@ -10,6 +10,7 @@ import org.sfm.csv.ParsingContextFactoryBuilder;
 import org.sfm.csv.mapper.CellSetter;
 import org.sfm.csv.mapper.CsvMapperCellHandler;
 import org.sfm.csv.mapper.DelayedCellSetterFactory;
+import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.*;
 import org.sfm.reflect.impl.NullSetter;
 import org.sfm.reflect.meta.ClassMeta;
@@ -220,7 +221,7 @@ public final class CellSetterFactory {
 		}
 
 		if (reader == null) {
-			throw new ParsingException("No cell reader for " + classMeta);
+			throw new MapperBuildingException("No cell reader for " + classMeta);
 		}
 		return reader;
 	}

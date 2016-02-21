@@ -20,7 +20,7 @@ public class FieldSetterTest {
 		FieldSetter<Foo, String> setter = new FieldSetter<Foo, String>(fooField);
 		
 		SetterHelperTest.validateFooSetter(setter);
-        assertEquals("FieldSetter{field=private java.lang.String org.sfm.beans.Foo.foo}", setter.toString());
+        assertEquals("FieldSetter{field=private java.lang.String org.sfm.beans.FooC.foo}", setter.toString());
 	}
 
 	DbPrimitiveObject object = new DbPrimitiveObject();

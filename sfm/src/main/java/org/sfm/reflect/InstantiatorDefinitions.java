@@ -1,6 +1,9 @@
 package org.sfm.reflect;
 
 
+import org.sfm.map.FieldKey;
+import org.sfm.map.mapper.TypeAffinity;
+
 import java.util.Collection;
 import java.util.Comparator;
 
@@ -54,6 +57,55 @@ public class InstantiatorDefinitions {
             }
         }
         return current;
+    }
+
+    public static InstantiatorDefinitions.CompatibilityScorer getCompatibilityScorer(FieldKey<?> key) {
+        if (key instanceof TypeAffinity) {
+            TypeAffinity ta = (TypeAffinity) key;
+            Class<?>[] affinities = ta.getAffinities();
+
+            if (affinities != null && affinities.length > 0) {
+                return new TypeAffinityCompatibilityScorer(affinities);
+            }
+        }
+        return new DefaultCompatibilityScorer();
+    }
+
+    private static class DefaultCompatibilityScorer implements InstantiatorDefinitions.CompatibilityScorer {
+        @Override
+        public int score(InstantiatorDefinition id) {
+            Package aPackage = id.getParameters()[0].getType().getPackage();
+            if (aPackage != null && aPackage.getName().equals("java.lang")) {
+                return 1;
+            }
+            return 0;
+        }
+    }
+
+    private static class TypeAffinityCompatibilityScorer implements InstantiatorDefinitions.CompatibilityScorer {
+        private final Class<?>[] classes;
+
+        private TypeAffinityCompatibilityScorer(Class<?>[] classes) {
+            this.classes = classes;
+        }
+
+        @Override
+        public int score(InstantiatorDefinition id) {
+            Class<?> paramType = TypeHelper.toBoxedClass(id.getParameters()[0].getType());
+
+            for(int i = 0; i < classes.length; i++) {
+                Class<?> c = classes[i];
+                if (c.isAssignableFrom(paramType)) {
+                    return classes.length - i + 10;
+                }
+            }
+
+            Package aPackage = paramType.getPackage();
+            if (aPackage != null && aPackage.getName().equals("java.lang")) {
+                return 1;
+            }
+            return 0;
+        }
     }
 
     public interface CompatibilityScorer {

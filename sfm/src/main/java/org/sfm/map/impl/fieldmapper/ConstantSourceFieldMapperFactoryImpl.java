@@ -83,7 +83,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		if (getter == null) {
 			final ClassMeta<P> classMeta = propertyMeta.getPropertyClassMeta();
 
-			InstantiatorDefinitions.CompatibilityScorer scorer = getCompatibilityScorer(key);
+			InstantiatorDefinitions.CompatibilityScorer scorer = InstantiatorDefinitions.getCompatibilityScorer(key);
 			InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(),
 					scorer);
 
@@ -123,52 +123,5 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		return getter;
 	}
 
-	private InstantiatorDefinitions.CompatibilityScorer getCompatibilityScorer(K key) {
-		if (key instanceof TypeAffinity) {
-			TypeAffinity ta = (TypeAffinity) key;
-			Class<?>[] affinities = ta.getAffinities();
 
-			if (affinities != null && affinities.length > 0) {
-				return new TypeAffinityCompatibilityScorer(affinities);
-			}
-		}
-		return new DefaultCompatibilityScorer();
-	}
-
-	private static class DefaultCompatibilityScorer implements InstantiatorDefinitions.CompatibilityScorer {
-		@Override
-        public int score(InstantiatorDefinition id) {
-			Package aPackage = id.getParameters()[0].getType().getPackage();
-			if (aPackage != null && aPackage.getName().equals("java.lang")) {
-				return 1;
-			}
-            return 0;
-        }
-	}
-
-	private static class TypeAffinityCompatibilityScorer implements InstantiatorDefinitions.CompatibilityScorer {
-		private final Class<?>[] classes;
-
-		private TypeAffinityCompatibilityScorer(Class<?>[] classes) {
-			this.classes = classes;
-		}
-
-		@Override
-		public int score(InstantiatorDefinition id) {
-			Class<?> paramType = TypeHelper.toBoxedClass(id.getParameters()[0].getType());
-
-			for(int i = 0; i < classes.length; i++) {
-				Class<?> c = classes[i];
-				if (c.isAssignableFrom(paramType)) {
-					return classes.length - i + 10;
-				}
-			}
-
-			Package aPackage = paramType.getPackage();
-			if (aPackage != null && aPackage.getName().equals("java.lang")) {
-				return 1;
-			}
-			return 0;
-		}
-	}
 }

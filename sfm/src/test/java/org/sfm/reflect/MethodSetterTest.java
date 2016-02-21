@@ -15,7 +15,7 @@ public class MethodSetterTest {
 	public void testSet() throws Exception {
 		MethodSetter<Foo, String> setter = new MethodSetter<Foo, String>(Foo.class.getDeclaredMethod("setFoo", String.class));
 		SetterHelperTest.validateFooSetter(setter);
-        assertEquals("MethodSetter{method=public void org.sfm.beans.Foo.setFoo(java.lang.String)}", setter.toString());
+        assertEquals("MethodSetter{method=public void org.sfm.beans.FooC.setFoo(java.lang.String)}", setter.toString());
 	}
 	
 	DbPrimitiveObjectWithSetter object = new DbPrimitiveObjectWithSetter();

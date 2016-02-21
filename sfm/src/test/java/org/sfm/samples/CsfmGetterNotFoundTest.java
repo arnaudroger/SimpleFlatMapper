@@ -15,7 +15,7 @@ import java.sql.ResultSet;
 
 import static org.junit.Assert.fail;
 
-public class CsfmGetterNotFound {
+public class CsfmGetterNotFoundTest {
 
 
     /*
@@ -51,10 +51,23 @@ public class CsfmGetterNotFound {
         }
     }
 
+    public static class Crux {
+        private final FooC foo;
+
+        public Crux(FooC foo) {
+            this.foo = foo;
+        }
+
+        public FooC getFoo() {
+            return foo;
+        }
+    }
+
     @Test
     public void jdbcMapperExtrapolateGetterFromConstructor() {
         JdbcMapperFactory.newInstance().newBuilder(FooC.class).addMapping("bar").mapper();
         JdbcMapperFactory.newInstance().newBuilder(FooS.class).addMapping("bar").mapper();
+        JdbcMapperFactory.newInstance().newBuilder(Crux.class).addMapping("foo").mapper();
     }
 
 
@@ -62,6 +75,7 @@ public class CsfmGetterNotFound {
     public void csvMapperExtrapolateGetterFromConstructor() {
         CsvMapperFactory.newInstance().newBuilder(FooC.class).addMapping("bar").mapper();
         CsvMapperFactory.newInstance().newBuilder(FooS.class).addMapping("bar").mapper();
+        CsvMapperFactory.newInstance().newBuilder(Crux.class).addMapping("foo").mapper();
     }
 
     /*

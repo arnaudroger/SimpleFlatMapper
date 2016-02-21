@@ -6,6 +6,8 @@ import org.sfm.csv.impl.writer.*;
 
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.column.SetterFactoryProperty;
+import org.sfm.map.column.SetterProperty;
 //IFJAVA8_START
 import org.sfm.csv.impl.writer.time.JavaTimeFormattingAppender;
 import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
@@ -25,7 +27,12 @@ import org.sfm.map.impl.JodaTimeClasses;
 import org.sfm.map.impl.fieldmapper.*;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Setter;
+import org.sfm.reflect.SetterFactory;
+import org.sfm.reflect.SetterOnGetter;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.ObjectClassMeta;
+import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.primitive.*;
 import org.sfm.utils.Supplier;
 
@@ -125,10 +132,58 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
         }
 
         if (setter == null) {
-            setter = new ObjectAppendableSetter(cellWriter);
+            setter = getSetter(pm, cellWriter);
         }
 
         return new FieldMapperImpl<S, Appendable, P>(getter, setter);
+    }
+
+    private <S, P> Setter<Appendable, ? super P> getSetter(PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm, CellWriter cellWriter) {
+
+        final SetterProperty setterProperty = pm.getColumnDefinition().lookFor(SetterProperty.class);
+
+        if (setterProperty != null) {
+            return new CellWriterSetterWrapper(cellWriter, setterProperty.getSetter());
+        }
+
+        Setter<Appendable, ?> setter = setterFromFactory(pm);
+
+        if (setter != null) {
+            return new CellWriterSetterWrapper(cellWriter, setter);
+        } else {
+            return new ObjectAppendableSetter(cellWriter);
+        }
+    }
+
+    private <S, P> Setter<Appendable, ?> setterFromFactory(PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm) {
+        Setter<Appendable, ?> setter = null;
+
+        final SetterFactoryProperty setterFactoryProperty = pm.getColumnDefinition().lookFor(SetterFactoryProperty.class);
+        if (setterFactoryProperty != null) {
+            final SetterFactory<Appendable, PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>> setterFactory =
+                    (SetterFactory<Appendable, PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>>) setterFactoryProperty.getSetterFactory();
+            setter = (Setter<Appendable, ?>) setterFactory.getSetter(pm);
+
+
+        }
+
+        final ClassMeta<P> classMeta = pm.getPropertyMeta().getPropertyClassMeta();
+        if (classMeta instanceof ObjectClassMeta) {
+            ObjectClassMeta<P> ocm = (ObjectClassMeta<P>) classMeta;
+            if (ocm.getNumberOfProperties() == 1) {
+                PropertyMeta<P, ?> subProp = ocm.getFirstProperty();
+
+                Setter<Appendable, Object> subSetter = (Setter<Appendable, Object>) setterFromFactory(pm.propertyMeta(subProp));
+
+                if (subSetter != null) {
+                    setter = new SetterOnGetter<Appendable, Object, P>(subSetter, (Getter<P, Object>) subProp.getGetter());
+                } else {
+                    return new ObjectToStringSetter<P>(subProp.getGetter());
+                }
+
+            }
+        }
+        return setter;
     }
 
 

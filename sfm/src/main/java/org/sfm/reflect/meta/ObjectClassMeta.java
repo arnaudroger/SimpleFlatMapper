@@ -305,4 +305,18 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	public boolean isLeaf() {
 		return false;
 	}
+
+	public int getNumberOfProperties() {
+		return constructorProperties.size() + properties.size();
+	}
+
+	public PropertyMeta<T, ?> getFirstProperty() {
+		if (!constructorProperties.isEmpty()) {
+			return constructorProperties.get(0);
+		}
+		if (!properties.isEmpty()) {
+			return properties.get(0);
+		}
+		return null;
+	}
 }

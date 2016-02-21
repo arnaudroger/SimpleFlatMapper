@@ -10,6 +10,9 @@ import org.sfm.map.column.SetterProperty;
 import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.map.impl.fieldmapper.*;
 import org.sfm.reflect.*;
+import org.sfm.reflect.meta.ClassMeta;
+import org.sfm.reflect.meta.ObjectClassMeta;
+import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.primitive.*;
 import org.sfm.utils.ErrorDoc;
 
@@ -45,16 +48,7 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
         }
 
         if (setter == null) {
-            final SetterFactoryProperty setterFactoryProperty = pm.getColumnDefinition().lookFor(SetterFactoryProperty.class);
-            if (setterFactoryProperty != null) {
-                final SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory =
-                        (SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>>) setterFactoryProperty.getSetterFactory();
-                setter = setterFactory.getSetter(pm);
-            }
-
-            if (setter == null){
-                setter = setterFactory.getSetter(pm);
-            }
+            setter = setterFromFactory(pm);
         }
 
         if (TypeHelper.isPrimitive(pm.getPropertyMeta().getPropertyType())) {
@@ -88,6 +82,39 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
             return null;
         }
         return new FieldMapperImpl<S, T, P>(getter, setter);
+    }
+
+    private <S, P> Setter<T, P> setterFromFactory(PropertyMapping<S, ?, K, FieldMapperColumnDefinition<K>> pm) {
+        Setter<T, P> setter = null;
+        final SetterFactoryProperty setterFactoryProperty = pm.getColumnDefinition().lookFor(SetterFactoryProperty.class);
+        if (setterFactoryProperty != null) {
+            final SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory =
+                    (SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>>)
+                            setterFactoryProperty.getSetterFactory();
+            setter = setterFactory.getSetter(pm);
+        }
+
+        if (setter == null){
+            setter = setterFactory.getSetter(pm);
+        }
+
+        if (setter == null) {
+            final ClassMeta<?> propertyClassMeta = pm.getPropertyMeta().getPropertyClassMeta();
+            if (propertyClassMeta instanceof ObjectClassMeta) {
+                ObjectClassMeta<P> ocm = (ObjectClassMeta<P>) propertyClassMeta;
+
+                if (ocm.getNumberOfProperties() == 1) {
+                    PropertyMeta<P, ?> subProp = ocm.getFirstProperty();
+
+                    Setter<T, Object> subSetter = setterFromFactory(pm.propertyMeta(subProp));
+
+                    if (subSetter != null) {
+                        return new SetterOnGetter<T, Object, P>(subSetter, (Getter<P, Object>) subProp.getGetter());
+                    }
+                }
+            }
+        }
+        return setter;
     }
 
     public static <T, K extends FieldKey<K>> ConstantTargetFieldMapperFactory<T, K> instance(

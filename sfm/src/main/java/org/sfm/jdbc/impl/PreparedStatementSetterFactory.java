@@ -348,8 +348,10 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
     public <P> Setter<PreparedStatement, P> getSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
         int columnIndex = pm.getColumnKey().getIndex();
 
-        if (TypeHelper.isPrimitive(pm.getPropertyMeta().getPropertyType())) {
-            Class<?> clazz = TypeHelper.toBoxedClass(pm.getPropertyMeta().getPropertyType());
+        Type type = pm.getPropertyMeta().getPropertyType();
+
+        if (TypeHelper.isPrimitive(type)) {
+            Class<?> clazz = TypeHelper.toBoxedClass(type);
             if (Byte.class.equals(clazz)) {
                 return (Setter<PreparedStatement, P>) new BytePreparedStatementSetter(columnIndex);
             } else if (Character.class.equals(clazz)) {
@@ -367,15 +369,14 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
             }
         }
 
-        PreparedStatementIndexSetter setter = getIndexedSetter(pm);
+        PreparedStatementIndexSetter setter = getIndexedSetter(pm, type);
 
         if (setter != null) {
             return new PreparedStatementSetterImpl<P>(columnIndex, setter);
         } else return null;
     }
 
-    public PreparedStatementIndexSetter getIndexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> arg) {
-        Type propertyType = arg.getPropertyMeta().getPropertyType();
+    public PreparedStatementIndexSetter getIndexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> arg, Type propertyType) {
 
         PreparedStatementIndexSetter setter = null;
         Factory setterFactory = this.factoryPerClass.get(TypeHelper.toClass(propertyType));
@@ -401,7 +402,7 @@ public class PreparedStatementSetterFactory implements SetterFactory<PreparedSta
             }
         }
 
-        if (setter == null && JodaTimeClasses.isJoda(arg.getPropertyMeta().getPropertyType())) {
+        if (setter == null && JodaTimeClasses.isJoda(propertyType)) {
             setter = jodaTimeFieldMapperToSourceFactory.indexedSetter(arg);
         }
 

@@ -159,7 +159,8 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
 
                 PropertyMeta<C, P> childProperty = (PropertyMeta<C, P>) pm.getPropertyMeta().getPropertyClassMeta().newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("0"));
 
-                PreparedStatementIndexSetter<P> setter = setterFactory.getIndexedSetter(pm.propertyMeta(childProperty));
+                final PropertyMapping<C, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pmchildProperttMeta = pm.propertyMeta(childProperty);
+                PreparedStatementIndexSetter<P> setter = setterFactory.getIndexedSetter(pmchildProperttMeta, pmchildProperttMeta.getPropertyMeta().getPropertyType());
 
                 if (setter == null) {
                     mapperConfig.mapperBuilderErrorHandler().accessorNotFound("Could not find setter for " + pm + " See " + ErrorDoc.toUrl("PS_SETTER_NOT_FOUND"));
@@ -169,7 +170,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
             }
 
             private <P> MultiIndexFieldMapper<T> newFieldMapper(PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
-                final PreparedStatementIndexSetter indexedSetter = setterFactory.getIndexedSetter(pm);
+                final PreparedStatementIndexSetter indexedSetter = setterFactory.getIndexedSetter(pm, pm.getPropertyMeta().getPropertyType());
                 return new SingleIndexFieldMapper<T, P>(indexedSetter, pm.getPropertyMeta().getGetter());
             }
         });

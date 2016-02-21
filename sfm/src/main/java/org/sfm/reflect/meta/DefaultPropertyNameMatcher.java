@@ -174,4 +174,8 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	public static PropertyNameMatcher of(String value) {
 		return new DefaultPropertyNameMatcher(value, 0, false, false);
 	}
+
+	public static PropertyNameMatcher exact(String value) {
+		return new DefaultPropertyNameMatcher(value, 0, true, true);
+	}
 }

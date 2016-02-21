@@ -160,6 +160,7 @@ public class SettableDataSetterFactory
     @Override
     public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
         Setter<SettableByIndexData, P> setter = null;
+
         Type propertyType = arg.getPropertyMeta().getPropertyType();
 
         Type type = arg.getColumnKey().getDataType().asJavaClass();

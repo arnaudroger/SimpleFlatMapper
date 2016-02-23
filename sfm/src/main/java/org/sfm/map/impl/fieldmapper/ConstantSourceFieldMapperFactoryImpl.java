@@ -81,23 +81,6 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		}
 
 		if (getter == null) {
-			final ClassMeta<P> classMeta = propertyMeta.getPropertyClassMeta();
-
-			InstantiatorDefinitions.CompatibilityScorer scorer = InstantiatorDefinitions.getCompatibilityScorer(key);
-			InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(),
-					scorer);
-
-			if (id != null) {
-				final Type sourceType = id.getParameters()[0].getGenericType();
-				getter = getterFromFactory(propertyMapping, sourceType);
-				if (getter != null) {
-					Instantiator instantiator =
-							classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
-					getter = new InstantiatorOnGetter(instantiator, getter);
-				}
-			}
-		}
-		if (getter == null) {
 			mappingErrorHandler.accessorNotFound("Could not find getter for " + key + " type " + propertyType
 					+ " See " + ErrorDoc.toUrl("CSFM_GETTER_NOT_FOUND"));
 			return null;
@@ -120,6 +103,25 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		if (getter == null) {
             getter = getterFactory.newGetter(propertyType, propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition());
         }
+
+		if (getter == null) {
+			final ClassMeta<P> classMeta = propertyMapping.getPropertyMeta().getPropertyClassMeta();
+
+			InstantiatorDefinitions.CompatibilityScorer scorer = InstantiatorDefinitions.getCompatibilityScorer(propertyMapping.getColumnKey());
+			InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(),
+					scorer);
+
+			if (id != null) {
+				final Type sourceType = id.getParameters()[0].getGenericType();
+				getter = getterFromFactory(propertyMapping, sourceType);
+				if (getter != null) {
+					Instantiator instantiator =
+							classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
+					getter = new InstantiatorOnGetter(instantiator, getter);
+				}
+			}
+		}
+
 		return getter;
 	}
 

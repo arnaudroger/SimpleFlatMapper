@@ -1,20 +1,28 @@
 package org.sfm.jdbc;
 
 
+import org.sfm.csv.impl.writer.ObjectToStringSetter;
 import org.sfm.jdbc.impl.CollectionIndexFieldMapper;
 import org.sfm.jdbc.impl.MultiIndexQueryPreparer;
 import org.sfm.jdbc.impl.SingleIndexFieldMapper;
 import org.sfm.jdbc.impl.MapperQueryPreparer;
 import org.sfm.jdbc.impl.PreparedStatementSetterFactory;
 import org.sfm.jdbc.impl.setter.PreparedStatementIndexSetter;
+import org.sfm.jdbc.impl.setter.PreparedStatementIndexSetterOnGetter;
 import org.sfm.jdbc.named.NamedSqlQuery;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.column.IndexedSetterFactoryProperty;
+import org.sfm.map.column.IndexedSetterProperty;
 import org.sfm.map.mapper.ConstantTargetFieldMapperFactory;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.IndexedGetter;
+import org.sfm.reflect.IndexedSetter;
+import org.sfm.reflect.IndexedSetterFactory;
 import org.sfm.reflect.Instantiator;
+import org.sfm.reflect.Setter;
+import org.sfm.reflect.SetterOnGetter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.impl.ArrayIndexedGetter;
 import org.sfm.reflect.impl.ArraySizeGetter;
@@ -22,6 +30,7 @@ import org.sfm.reflect.impl.ListIndexedGetter;
 import org.sfm.reflect.impl.ListSizeGetter;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
+import org.sfm.reflect.meta.ObjectClassMeta;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.primitive.IntGetter;
 import org.sfm.utils.ErrorDoc;
@@ -160,18 +169,69 @@ public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<Pre
                 PropertyMeta<C, P> childProperty = (PropertyMeta<C, P>) pm.getPropertyMeta().getPropertyClassMeta().newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("0"));
 
                 final PropertyMapping<C, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pmchildProperttMeta = pm.propertyMeta(childProperty);
-                PreparedStatementIndexSetter<P> setter = setterFactory.getIndexedSetter(pmchildProperttMeta, pmchildProperttMeta.getPropertyMeta().getPropertyType());
+
+
+                IndexedSetter<PreparedStatement, P> setter = getSetter(pmchildProperttMeta);
+
+
+
+                return new CollectionIndexFieldMapper<T, C, P>(setter, collectionGetter, sizeGetter, indexedGetter);
+            }
+
+            private <P, C> IndexedSetter<PreparedStatement, P> getSetter(PropertyMapping<C, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
+                IndexedSetter<PreparedStatement, P> setter =  null;
+
+                IndexedSetterProperty indexedSetterProperty = pm.getColumnDefinition().lookFor(IndexedSetterProperty.class);
+                if (indexedSetterProperty != null) {
+                    setter = (IndexedSetter<PreparedStatement, P>) indexedSetterProperty.getIndexedSetter();
+                }
+
+                if (setter == null) {
+                    setter = indexedSetterFactory(pm);
+                }
 
                 if (setter == null) {
                     mapperConfig.mapperBuilderErrorHandler().accessorNotFound("Could not find setter for " + pm + " See " + ErrorDoc.toUrl("PS_SETTER_NOT_FOUND"));
                 }
 
-                return new CollectionIndexFieldMapper<T, C, P>(setter, collectionGetter, sizeGetter, indexedGetter);
+                return setter;
+
+            }
+
+            private <P, C> IndexedSetter<PreparedStatement, P> indexedSetterFactory(PropertyMapping<C, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
+                IndexedSetter<PreparedStatement, P> setter = null;
+
+                final IndexedSetterFactoryProperty indexedSetterPropertyFactory = pm.getColumnDefinition().lookFor(IndexedSetterFactoryProperty.class);
+                if (indexedSetterPropertyFactory != null) {
+                    IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>> setterFactory = (IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>>) indexedSetterPropertyFactory.getIndexedSetterFactory();
+                    setter = setterFactory.getIndexedSetter(pm);
+                }
+
+                if (setter == null) {
+                    setter = setterFactory.getIndexedSetter(pm);
+                }
+                if (setter == null) {
+                    final ClassMeta<P> classMeta = pm.getPropertyMeta().getPropertyClassMeta();
+                    if (classMeta instanceof ObjectClassMeta) {
+                        ObjectClassMeta<P> ocm = (ObjectClassMeta<P>) classMeta;
+                        if (ocm.getNumberOfProperties() == 1) {
+                            PropertyMeta<P, ?> subProp = ocm.getFirstProperty();
+
+                            final PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> subPropertyMapping = pm.propertyMeta(subProp);
+                            IndexedSetter<PreparedStatement, ?> subSetter =  indexedSetterFactory(subPropertyMapping);
+
+                            if (subSetter != null) {
+                                setter = new PreparedStatementIndexSetterOnGetter<Object, P>((PreparedStatementIndexSetter<Object>) subSetter, (Getter<P, Object>) subProp.getGetter());
+                            }
+
+                        }
+                    }
+                }
+                return setter;
             }
 
             private <P> MultiIndexFieldMapper<T> newFieldMapper(PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
-                final PreparedStatementIndexSetter indexedSetter = setterFactory.getIndexedSetter(pm, pm.getPropertyMeta().getPropertyType());
-                return new SingleIndexFieldMapper<T, P>(indexedSetter, pm.getPropertyMeta().getGetter());
+                return new SingleIndexFieldMapper<T, P>(getSetter(pm), pm.getPropertyMeta().getGetter());
             }
         });
 

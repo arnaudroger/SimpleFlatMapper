@@ -23,7 +23,7 @@ import java.sql.Timestamp;
 public class JodaTimePreparedStatementFactory implements PreparedStatementSetterFactory.Factory {
     @SuppressWarnings("unchecked")
     @Override
-    public <P> PreparedStatementIndexSetter<P> indexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
+    public <P> PreparedStatementIndexSetter<P> getIndexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
         if (JodaTimeClasses.isJodaDateTime(pm.getPropertyMeta().getPropertyType())) {
             return (PreparedStatementIndexSetter<P>)
                     new ConvertDelegateIndexSetter<DateTime, Timestamp>(

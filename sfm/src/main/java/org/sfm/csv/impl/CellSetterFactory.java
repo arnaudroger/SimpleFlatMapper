@@ -10,12 +10,14 @@ import org.sfm.csv.ParsingContextFactoryBuilder;
 import org.sfm.csv.mapper.CellSetter;
 import org.sfm.csv.mapper.CsvMapperCellHandler;
 import org.sfm.csv.mapper.DelayedCellSetterFactory;
+import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.reflect.*;
 import org.sfm.reflect.impl.NullSetter;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
 import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.utils.ErrorDoc;
 
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -42,9 +44,11 @@ public final class CellSetterFactory {
 	};
 
 	private final CellValueReaderFactory cellValueReaderFactory;
+	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
 
-	public CellSetterFactory(CellValueReaderFactory cellValueReaderFactory) {
+	public CellSetterFactory(CellValueReaderFactory cellValueReaderFactory, MapperBuilderErrorHandler mapperBuilderErrorHandler) {
 		this.cellValueReaderFactory = cellValueReaderFactory;
+		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 	}
 	
 	public <T,P> CellSetter<T> getPrimitiveCellSetter(Class<?> clazz, CellValueReader<? extends P> reader,  Setter<T, ? super P> setter) {
@@ -206,8 +210,10 @@ public final class CellSetterFactory {
         }
 
 		if (reader == null) {
-			throw new MapperBuildingException("No cell reader for " + pm);
+			mapperBuilderErrorHandler.accessorNotFound("Could not find reader for "
+					+ pm + " See " + ErrorDoc.toUrl("CSFM_GETTER_NOT_FOUND"));
 		}
+
 		return reader;
 	}
 

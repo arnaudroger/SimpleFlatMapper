@@ -7,10 +7,14 @@ import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.column.GetterProperty;
+import org.sfm.map.column.IndexedSetterFactoryProperty;
+import org.sfm.map.column.IndexedSetterProperty;
 import org.sfm.map.column.SetterFactoryProperty;
 import org.sfm.map.column.SetterProperty;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.IndexedSetter;
+import org.sfm.reflect.IndexedSetterFactory;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 
@@ -177,6 +181,45 @@ public class CtfmSetterNotFoundTest {
                 .mapper();
     }
 
+    @Test
+    public void jdbcMapperExtrapolateOverrideIndexedSetter() {
+        JdbcMapperFactory
+                .newInstance()
+                .addColumnProperty("bar", new IndexedSetterProperty(new IndexedSetter<PreparedStatement, Bar2Prop>() {
+
+                    @Override
+                    public void set(PreparedStatement target, Bar2Prop value, int index) throws Exception {
+                        target.setString(index, value.getVal());
+                        target.setInt(index + 1, value.getI());
+                    }
+                }))
+                .buildFrom(Foo2.class)
+                .addColumn("bar")
+                .mapper();
+    }
+    @Test
+    public void jdbcMapperExtrapolateOverrideIndexedSetterFactory() {
+        JdbcMapperFactory
+                .newInstance()
+                .addColumnProperty("bar",
+                        new IndexedSetterFactoryProperty(
+                                new IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>>() {
+                                    @Override
+                                    public <P> IndexedSetter<PreparedStatement, P> getIndexedSetter(final PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> arg) {
+                                        return (IndexedSetter<PreparedStatement, P>) new IndexedSetter<PreparedStatement, Bar2Prop>() {
+                                            @Override
+                                            public void set(PreparedStatement target, Bar2Prop value, int index) throws Exception {
+                                                target.setString(index, value.getVal());
+                                                target.setInt(index + 1, value.getI());
+                                            }
+                                        };
+                                    }
+                                }
+                        ))
+                .buildFrom(Foo2.class)
+                .addColumn("bar")
+                .mapper();
+    }
 
     /*
      * the csv writer will use the toString method of the object.

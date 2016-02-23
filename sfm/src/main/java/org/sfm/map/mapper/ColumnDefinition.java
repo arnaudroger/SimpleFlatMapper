@@ -77,7 +77,7 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
     @SuppressWarnings("unchecked")
     public <T> T lookFor(Class<T> propClass) {
         for(ColumnProperty cp : properties) {
-            if (cp != null && propClass.equals(cp.getClass())) {
+            if (cp != null && propClass.isInstance(cp)) {
                 return (T) cp;
             }
         }

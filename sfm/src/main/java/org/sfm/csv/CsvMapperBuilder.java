@@ -196,7 +196,7 @@ public class CsvMapperBuilder<T> {
 					propertyMappingsBuilder,
 					params,
 					new GetterFactory<CsvMapperCellHandler<T>, CsvColumnKey>() {
-						final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
+						final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory, mapperConfig.mapperBuilderErrorHandler());
 
 						@Override
 						public <P> Getter<CsvMapperCellHandler<T>, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
@@ -229,7 +229,7 @@ public class CsvMapperBuilder<T> {
         final int newMinDelayedSetter = minDelayedSetter != 0 ? minDelayedSetter : hasKeys ? delayedSetterEnd : 0;
 
 		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
-			final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
+			final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory, mapperConfig.mapperBuilderErrorHandler());
 
 			@Override
 			public void handle(PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition> propMapping) {
@@ -369,7 +369,7 @@ public class CsvMapperBuilder<T> {
 
 		propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>>() {
 			final Map<String, CsvMapperImpl<?>> mappers = new HashMap<String, CsvMapperImpl<?>>();
-			final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
+			final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory, mapperConfig.mapperBuilderErrorHandler());
 
 			@Override
 			public void handle(PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition> propMapping) {
@@ -420,7 +420,7 @@ public class CsvMapperBuilder<T> {
 
         public BuildConstructorInjections() {
             this.constructorInjections = new HashMap<Parameter, Getter<? super CsvMapperCellHandler<T>, ?>>();
-            cellSetterFactory = new CellSetterFactory(cellValueReaderFactory);
+            cellSetterFactory = new CellSetterFactory(cellValueReaderFactory, mapperConfig.mapperBuilderErrorHandler());
             delayedSetterEnd = minDelayedSetter;
         }
 

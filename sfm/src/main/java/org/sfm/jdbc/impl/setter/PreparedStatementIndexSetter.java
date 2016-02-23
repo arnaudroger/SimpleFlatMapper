@@ -1,9 +1,11 @@
 package org.sfm.jdbc.impl.setter;
 
+import org.sfm.reflect.IndexedSetter;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public interface PreparedStatementIndexSetter<T> {
+public interface PreparedStatementIndexSetter<T> extends IndexedSetter<PreparedStatement, T> {
 
     /**
      *

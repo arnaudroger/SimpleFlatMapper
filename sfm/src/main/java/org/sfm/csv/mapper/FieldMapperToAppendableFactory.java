@@ -163,24 +163,25 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
             final SetterFactory<Appendable, PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>> setterFactory =
                     (SetterFactory<Appendable, PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>>) setterFactoryProperty.getSetterFactory();
             setter = (Setter<Appendable, ?>) setterFactory.getSetter(pm);
-
-
         }
 
-        final ClassMeta<P> classMeta = pm.getPropertyMeta().getPropertyClassMeta();
-        if (classMeta instanceof ObjectClassMeta) {
-            ObjectClassMeta<P> ocm = (ObjectClassMeta<P>) classMeta;
-            if (ocm.getNumberOfProperties() == 1) {
-                PropertyMeta<P, ?> subProp = ocm.getFirstProperty();
 
-                Setter<Appendable, Object> subSetter = (Setter<Appendable, Object>) setterFromFactory(pm.propertyMeta(subProp));
+        if (setter == null) {
+            final ClassMeta<P> classMeta = pm.getPropertyMeta().getPropertyClassMeta();
+            if (classMeta instanceof ObjectClassMeta) {
+                ObjectClassMeta<P> ocm = (ObjectClassMeta<P>) classMeta;
+                if (ocm.getNumberOfProperties() == 1) {
+                    PropertyMeta<P, ?> subProp = ocm.getFirstProperty();
 
-                if (subSetter != null) {
-                    setter = new SetterOnGetter<Appendable, Object, P>(subSetter, (Getter<P, Object>) subProp.getGetter());
-                } else {
-                    return new ObjectToStringSetter<P>(subProp.getGetter());
+                    Setter<Appendable, Object> subSetter = (Setter<Appendable, Object>) setterFromFactory(pm.propertyMeta(subProp));
+
+                    if (subSetter != null) {
+                        setter = new SetterOnGetter<Appendable, Object, P>(subSetter, (Getter<P, Object>) subProp.getGetter());
+                    } else {
+                        return new ObjectToStringSetter<P>(subProp.getGetter());
+                    }
+
                 }
-
             }
         }
         return setter;

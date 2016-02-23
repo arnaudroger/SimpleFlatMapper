@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class CsfmGetterNotFoundTest {
+public class FmmbGetterNotFoundTest {
 
 
     /*
@@ -24,18 +24,13 @@ public class CsfmGetterNotFoundTest {
      * we will try to find a getter that matches the constructor arg.
      */
 
-    public static class Foo {
-        private BarOneArgConst bar;
+    public static class FooC {
+        private final BarOneArgConst bar;
 
-        public BarOneArgConst getBar() {
-            return bar;
-        }
-
-        public void setBar(BarOneArgConst bar) {
+        public FooC(BarOneArgConst bar) {
             this.bar = bar;
         }
     }
-
 
     public static class BarOneArgConst {
         private final String val;
@@ -46,39 +41,37 @@ public class CsfmGetterNotFoundTest {
     }
 
     public static class Crux {
-        private  Foo foo;
+        private final FooC foo;
 
-        public Foo getFoo() {
-            return foo;
+        public Crux(FooC foo) {
+            this.foo = foo;
         }
 
-        public void setFoo(Foo foo) {
-            this.foo = foo;
+        public FooC getFoo() {
+            return foo;
         }
     }
 
     @Test
     public void jdbcMapperExtrapolateGetterFromConstructor() {
-        JdbcMapperFactory.newInstance().newBuilder(Foo.class).addMapping("bar").mapper();
+        JdbcMapperFactory.newInstance().newBuilder(FooC.class).addMapping("bar").mapper();
+        JdbcMapperFactory.newInstance().newBuilder(Crux.class).addMapping("foo").mapper();
     }
 
 
     @Test
     public void csvMapperExtrapolateGetterFromConstructor() {
-        CsvMapperFactory.newInstance().newBuilder(Foo.class).addMapping("bar").mapper();
+        CsvMapperFactory.newInstance().newBuilder(FooC.class).addMapping("bar").mapper();
+        CsvMapperFactory.newInstance().newBuilder(Crux.class).addMapping("foo").mapper();
     }
 
     /*
      * But that can't be done when there are no on arg constructor.
      */
     public static class Foo2 {
-        private Bar2 bar;
+        private final Bar2 bar;
 
-        public Bar2 getBar() {
-            return bar;
-        }
-
-        public void setBar(Bar2 bar) {
+        public Foo2(Bar2 bar) {
             this.bar = bar;
         }
     }
@@ -99,7 +92,7 @@ public class CsfmGetterNotFoundTest {
             JdbcMapperFactory.newInstance().newBuilder(Foo2.class).addKey("bar").mapper();
             fail();
         } catch(MapperBuildingException e) {
-            assertTrue(e.getMessage().contains("CSFM_GETTER"));
+            assertTrue(e.getMessage().contains("FMMB_GETTER"));
             // expected
         }
     }
@@ -110,7 +103,6 @@ public class CsfmGetterNotFoundTest {
             CsvMapperFactory.newInstance().newBuilder(Foo2.class).addMapping("bar").mapper();
             fail();
         } catch(MapperBuildingException e) {
-            assertTrue(e.getMessage().contains("CSFM_GETTER"));
             // expected
         }
     }

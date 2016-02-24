@@ -7,47 +7,69 @@ import org.sfm.csv.impl.writer.ObjectAppendableSetter;
 import javax.swing.text.Document;
 import javax.xml.parsers.SAXParser;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.sfm.utils.conv.ConverterFactory.*;
 
 public class ConverterFactoryTest {
 
+    @SuppressWarnings("unchecked")
+    private <I, O> void testConverter(I i, O o) throws Exception {
+        testConverter(i, o, (Class<? super I>)i.getClass(), (Class<? super O>)o.getClass());
+    }
+
+    private <I, O> void testConverter(I i, O o, Class<? super I> classi, Class<? super O> classo) throws Exception {
+        final Converter<? super I, ? super O> converter = getConverter(classi, classo);
+        assertNotNull(converter);
+        assertEquals(o, converter.convert(i));
+        assertNotNull(converter.toString());
+    }
+
     @Test
     public void testToStringConverter() throws Exception {
-        assertEquals("Hoy",
-                getConverter(Object.class, String.class).convert("Hoy"));
+        testConverter("Hoy", "Hoy", Object.class, String.class);
     }
 
     @Test
     public void testNumberToNumberConverter() throws Exception {
-        assertEquals(new Byte((byte) 13),
-                getConverter(Integer.class, Byte.class).convert(13));
-        assertEquals(new Short((short) 13),
-                getConverter(Integer.class, Short.class).convert(13));
-        assertEquals(new Integer(13),
-                getConverter(Integer.class, Integer.class).convert(13));
-        assertEquals(new Long(13),
-                getConverter(Integer.class, Long.class).convert(13));
-        assertEquals(new Float(13),
-                getConverter(Integer.class, Float.class).convert(13));
-        assertEquals(new Double(13),
-                getConverter(Integer.class, Double.class).convert(13));
-        assertEquals(new BigDecimal(13),
-                getConverter(Integer.class, BigDecimal.class).convert(13));
+        testConverter(13, (byte)13);
+        testConverter((byte)13, 13);
+
+        testConverter(13, (short)13);
+        testConverter((short)13, 13);
+
+        testConverter(13, 13);
+        testConverter(13, 13);
+
+        testConverter(13, (long)13);
+        testConverter((long)13, 13);
+
+        testConverter(13, (float)13);
+        testConverter((float)13, 13);
+
+        testConverter(13, (double)13);
+        testConverter((double)13, 13);
+
+
+        testConverter(13, new BigDecimal(13));
+        testConverter(new BigDecimal(13), 13);
+
+        testConverter(13, new BigInteger("13"));
+        testConverter(new BigInteger("13"), 13);
     }
 
     @Test
     public void testIdentity() throws Exception {
         Object o = new Object();
-        assertSame(o, getConverter(Object.class, Object.class).convert(o));
+        testConverter(o, o);
     }
 
     @Test
     public void testURLConverter() throws Exception {
-        assertEquals(new URL("http://url.net"),
-                getConverter(String.class, URL.class).convert("http://url.net"));
+        testConverter("http://url.net", new URL("http://url.net"));
 
         try {
             getConverter(String.class, URL.class).convert("blop");
@@ -59,15 +81,18 @@ public class ConverterFactoryTest {
 
     @Test
     public void testCharSequenceConverter() throws Exception {
-        assertEquals("hello", getConverter(CharSequence.class, String.class).convert(new StringBuilder("hello")));
-        assertEquals(Byte.valueOf((byte)123), getConverter(CharSequence.class, Byte.class).convert("123"));
-        assertEquals(Character.valueOf((char)123), getConverter(CharSequence.class, Character.class).convert("123"));
-        assertEquals(Short.valueOf((short)1234), getConverter(CharSequence.class, Short.class).convert("1234"));
-        assertEquals(Integer.valueOf(1234), getConverter(CharSequence.class, Integer.class).convert("1234"));
-        assertEquals(Long.valueOf(1234), getConverter(CharSequence.class, Long.class).convert("1234"));
-        assertEquals(Float.valueOf(1234.56f), getConverter(CharSequence.class, Float.class).convert("1234.56"), 0.00001);
-        assertEquals(Double.valueOf(1234.56), getConverter(CharSequence.class, Double.class).convert("1234.56"), 0.00001);
-        assertEquals(DbObject.Type.type2, getConverter(CharSequence.class, DbObject.Type.class).convert("type2"));
+        testConverter(new StringBuilder("hello"), "hello");
+        testConverter("123",     Byte.valueOf((byte)123));
+        testConverter("123",     Character.valueOf((char)123));
+        testConverter("1234",    Short.valueOf((short)1234));
+        testConverter("1234",    Integer.valueOf(1234));
+        testConverter("1234",    Long.valueOf(1234));
+        testConverter("1234.56", Float.valueOf(1234.56f));
+        testConverter("1234.56", Double.valueOf(1234.56));
+        testConverter("type2",   DbObject.Type.type2);
+
+        final UUID uuid = UUID.randomUUID();
+        testConverter(uuid.toString(), uuid);
     }
 
     @Test

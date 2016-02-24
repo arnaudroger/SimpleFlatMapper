@@ -83,14 +83,6 @@ public class ConverterFactory {
 
 	private static final Map<Class<?>, Converter<CharSequence, ?>> charSequenceConverters  = new HashMap<Class<?>, Converter<CharSequence, ?>>();
 	static {
-		charSequenceConverters.put(String.class, new Converter<CharSequence, String>() {
-			@Override
-			public String convert(CharSequence in) throws Exception {
-				if (in == null) return null;
-				return in.toString();
-			}
-			public String toString() { return "CharSequenceToString"; }
-		});
 		charSequenceConverters.put(Byte.class, new Converter<CharSequence, Byte>() {
 			@Override
 			public Byte convert(CharSequence in) throws Exception {

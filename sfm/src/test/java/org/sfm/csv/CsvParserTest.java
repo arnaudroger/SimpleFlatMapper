@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+//IFJAVA8_START
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
+//IFJAVA8_END
 import static org.junit.Assert.*;
 
 public class CsvParserTest {

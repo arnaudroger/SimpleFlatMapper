@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
@@ -266,8 +268,45 @@ public class CsvParserTest {
         assertArrayEquals(new Object[] { new Tuple2<String, String>("value1", "value2"), new Tuple2<String, String>("value3", null)}, list.toArray());
     }
 
+	@Test
+	public void testDSLMapToForEachWithLimit() throws IOException {
+		List<Tuple2<String, String>> list = CsvParser.limit(1).mapTo(String.class, String.class)
+				.headers("0", "1").forEach(new StringReader("value1,value2\nvalue3"), new ListCollectorHandler<Tuple2<String, String>>()).getList();
 
-    @Test
+		assertArrayEquals(new Object[] { new Tuple2<String, String>("value1", "value2")}, list.toArray());
+	}
+	@Test
+	public void testDSLMapToForEachFromFile() throws IOException {
+		List<Tuple2<String, String>> list = CsvParser.mapTo(String.class, String.class)
+				.headers("0", "1").forEach(createTempCsv("value1,value2\n" +
+						"value3"), new ListCollectorHandler<Tuple2<String, String>>()).getList();
+
+		assertArrayEquals(new Object[] { new Tuple2<String, String>("value1", "value2"), new Tuple2<String, String>("value3", null)}, list.toArray());
+	}
+
+	//IFJAVA8_START
+
+	@Test
+	public void testDSLMapToStream() throws IOException {
+		List<Tuple2<String, String>> list = CsvParser.mapTo(String.class, String.class)
+				.headers("0", "1").stream(new StringReader("value1,value2\nvalue3")).collect(Collectors.toList());
+
+		assertArrayEquals(new Object[] { new Tuple2<String, String>("value1", "value2"), new Tuple2<String, String>("value3", null)}, list.toArray());
+	}
+
+	@Test
+	public void testDSLMapToStreamFromFile() throws IOException {
+		final Stream<Tuple2<String, String>> stream = CsvParser.mapTo(String.class, String.class)
+				.headers("0", "1").stream(createTempCsv("value1,value2\nvalue3"));
+		List<Tuple2<String, String>> list = stream.collect(Collectors.toList());
+
+		stream.close();
+		assertArrayEquals(new Object[] { new Tuple2<String, String>("value1", "value2"), new Tuple2<String, String>("value3", null)}, list.toArray());
+	}
+	//IFJAVA8_END
+
+
+	@Test
 	public void testDSLMapWithCustomDefinition() throws  Exception {
 		Iterator<Tuple2<String, String>> iterator = CsvParser.mapTo(String.class, String.class).columnDefinition("1", CsvColumnDefinition.customReaderDefinition(new CellValueReader<String>() {
 			@Override
@@ -506,6 +545,15 @@ public class CsvParserTest {
 		assertEquals(2, i);
 	}
 
+	@Test
+	public void testStreamRowsFromFile() throws
+			IOException {
+
+		File f = createTempCsv("row1\nrow2\nrow3");
+		i = 0;
+		CsvParser.stream(f).forEach(strings -> assertArrayEquals(new String[] {"row" + ++i}, strings));
+		assertEquals(3, i);
+	}
 
 
 	//IFJAVA8_END
@@ -588,14 +636,7 @@ public class CsvParserTest {
 
 	@Test
 	public void testIterateStringsFromFile() throws IOException {
-		File file = File.createTempFile("test", ".csv");
-
-		FileWriter writer = new FileWriter(file);
-		try {
-			writer.write("1,2");
-		} finally {
-			writer.close();
-		}
+		File file = createTempCsv("1,2");
 
 		CloseableIterator<String[]> iterator = CsvParser.iterator(file);
 		try {
@@ -608,14 +649,7 @@ public class CsvParserTest {
 
 	@Test
 	public void testIterateObjectFromFile() throws IOException {
-		File file = File.createTempFile("test", ".csv");
-
-		FileWriter writer = new FileWriter(file);
-		try {
-			writer.write("value\n1");
-		} finally {
-			writer.close();
-		}
+		File file = createTempCsv("value\n1");
 
 		CloseableIterator<Long> iterator = CsvParser.mapTo(Long.class).iterator(file);
 		try {
@@ -626,16 +660,21 @@ public class CsvParserTest {
 
 	}
 
-	@Test
-	public void testCsvReaderFromFile() throws IOException {
+	private File createTempCsv(String str) throws IOException {
 		File file = File.createTempFile("test", ".csv");
 
 		FileWriter writer = new FileWriter(file);
 		try {
-			writer.write("value");
+			writer.write(str);
 		} finally {
 			writer.close();
 		}
+		return file;
+	}
+
+	@Test
+	public void testCsvReaderFromFile() throws IOException {
+		File file = createTempCsv("value");
 
 		CloseableCsvReader reader = CsvParser.reader(file);
 		try {
@@ -648,6 +687,15 @@ public class CsvParserTest {
 	}
 
 
+	@Test
+	public void testParseFromFile() throws IOException {
+		File file = createTempCsv("value");
+
+		final String[][] allValues = CsvParser.parse(file, new AccumulateCellConsumer()).allValues();
+
+		assertArrayEquals(new String[][] {{"value"}}, allValues);
+
+	}
 	public static class MyScalaClass {
 		public String myField;
 		public java.util.Date secondField;

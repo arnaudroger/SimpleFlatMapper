@@ -37,6 +37,7 @@ import java.sql.*;
 
 //IFJAVA8_START
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.MonthDay;
 import java.time.ZoneId;
 //IFJAVA8_END
@@ -579,7 +580,7 @@ public class PreparedStatementFieldMapperFactoryTest {
         newFieldMapperAndMapToPS(new ConstantGetter<Object, java.time.Year>(value),  java.time.Year.class, new JavaZoneIdProperty(zoneId));
         newFieldMapperAndMapToPS(NullGetter.<Object, java.time.Year>getter(), java.time.Year.class);
 
-        verify(ps).setDate(1, new java.sql.Date(value.atMonthDay(MonthDay.now()).atStartOfDay(zoneId).toInstant().toEpochMilli()));
+        verify(ps).setDate(1, new java.sql.Date(value.atMonthDay(MonthDay.of(Month.JANUARY, 1)).atStartOfDay(zoneId).toInstant().toEpochMilli()));
         verify(ps).setNull(2, Types.DATE);
     }
     //IFJAVA8_END

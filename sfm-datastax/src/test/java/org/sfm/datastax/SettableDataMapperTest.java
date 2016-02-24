@@ -5,8 +5,10 @@ import com.datastax.driver.core.querybuilder.Batch;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.sfm.datastax.beans.DbObjectsWithTuple;
 import org.sfm.map.Mapper;
 import org.sfm.reflect.TypeReference;
+import org.sfm.tuples.Tuple3;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -23,6 +25,28 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
             "dbobjects(id, name, email, creation_time, type_ordinal, type_name) " +
             "values(?, ?, ?, ?, ?, ?)";
     List<DbObject> dbObjects = Arrays.asList(DbObject.newInstance(), DbObject.newInstance());
+
+
+    @Test
+    public void testUpdateDbObjectWithTuple() throws Exception {
+        testInSession(new Callback() {
+            @Override
+            public void call(Session session) throws Exception {
+                final DatastaxMapper<DbObjectsWithTuple> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObjectsWithTuple.class);
+
+
+                DbObjectsWithTuple value = mapper.iterator(session.execute("select id, t from dbobjects_tuple")).next();
+
+                PreparedStatement preparedStatement =  session.prepare("update dbobjects_tuple SET t  = ? where id = ?");
+
+
+                DatastaxBinder<DbObjectsWithTuple> datastaxBinder = DatastaxMapperFactory.newInstance().mapFrom(DbObjectsWithTuple.class);
+
+                session.execute(datastaxBinder.mapTo(value, preparedStatement));
+
+            }
+        });
+    }
 
     @Test
     public void testInsertDbObjects() throws Exception {

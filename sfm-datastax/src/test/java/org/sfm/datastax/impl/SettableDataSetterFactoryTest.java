@@ -28,6 +28,7 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 
 //IFJAVA8_START
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -38,8 +39,8 @@ import java.time.OffsetTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.ZoneId;
-//IFJAVA8_END
 import java.time.ZonedDateTime;
+//IFJAVA8_END
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -548,10 +549,23 @@ public class SettableDataSetterFactoryTest {
         verify(statement).setDate(0, Date.from(ldt.atMonthDay(MonthDay.of(Month.JANUARY, 1)).atStartOfDay(ZoneId.systemDefault()).toInstant()));
         verify(statement).setToNull(0);
     }
+
+    @Test
+    public void testJava8TimeInstant() throws Exception {
+        Setter<SettableByIndexData, Instant> setter = factory.getSetter(newPM(Instant.class, DataType.timestamp()));
+
+        Instant ldt = Instant.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, Date.from(ldt));
+        verify(statement).setToNull(0);
+    }
     //IFJAVA8_END
 
     @Test
-    public void testJodaTime() throws Exception {
+    public void testJodaLDT() throws Exception {
         Setter<SettableByIndexData, org.joda.time.LocalDateTime> setter = factory.getSetter(newPM(org.joda.time.LocalDateTime.class, DataType.timestamp()));
 
         org.joda.time.LocalDateTime ldt = org.joda.time.LocalDateTime.now();
@@ -560,6 +574,59 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, null);
 
         verify(statement).setDate(0, ldt.toDate(TimeZone.getDefault()));
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testJodaDT() throws Exception {
+        Setter<SettableByIndexData, org.joda.time.DateTime> setter = factory.getSetter(newPM(org.joda.time.DateTime.class, DataType.timestamp()));
+
+        org.joda.time.DateTime ldt = org.joda.time.DateTime.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, ldt.toDate());
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testJodaLD() throws Exception {
+        Setter<SettableByIndexData, org.joda.time.LocalDate> setter = factory.getSetter(newPM(org.joda.time.LocalDate.class, DataType.timestamp()));
+
+        org.joda.time.LocalDate ldt = org.joda.time.LocalDate.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, ldt.toDate());
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testJodaLT() throws Exception {
+        Setter<SettableByIndexData, org.joda.time.LocalTime> setter = factory.getSetter(newPM(org.joda.time.LocalTime.class, DataType.timestamp()));
+
+        org.joda.time.LocalTime ldt = org.joda.time.LocalTime.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, ldt.toDateTimeToday().toDate());
+        verify(statement).setToNull(0);
+    }
+
+
+    @Test
+    public void testJodaInstant() throws Exception {
+        Setter<SettableByIndexData, org.joda.time.Instant> setter = factory.getSetter(newPM(org.joda.time.Instant.class, DataType.timestamp()));
+
+        org.joda.time.Instant ldt = org.joda.time.Instant.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, ldt.toDate());
         verify(statement).setToNull(0);
     }
 

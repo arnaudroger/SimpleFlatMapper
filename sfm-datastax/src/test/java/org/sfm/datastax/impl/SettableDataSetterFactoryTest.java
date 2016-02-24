@@ -28,9 +28,18 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 
 //IFJAVA8_START
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.MonthDay;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.Year;
+import java.time.YearMonth;
 import java.time.ZoneId;
 //IFJAVA8_END
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -437,7 +446,7 @@ public class SettableDataSetterFactoryTest {
     //IFJAVA8_START
 
     @Test
-    public void testJava8Time() throws Exception {
+    public void testJava8TimeLDT() throws Exception {
         Setter<SettableByIndexData, LocalDateTime> setter = factory.getSetter(newPM(LocalDateTime.class, DataType.timestamp()));
 
         LocalDateTime ldt = LocalDateTime.now();
@@ -449,6 +458,96 @@ public class SettableDataSetterFactoryTest {
         verify(statement).setToNull(0);
     }
 
+    @Test
+    public void testJava8TimeLD() throws Exception {
+        Setter<SettableByIndexData, LocalDate> setter = factory.getSetter(newPM(LocalDate.class, DataType.timestamp()));
+
+        LocalDate ldt = LocalDate.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, Date.from(ldt.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testJava8TimeLT() throws Exception {
+        Setter<SettableByIndexData, LocalTime> setter = factory.getSetter(newPM(LocalTime.class, DataType.timestamp()));
+
+        LocalTime ldt = LocalTime.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, Date.from(ldt.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant()));
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testJava8TimeODT() throws Exception {
+        Setter<SettableByIndexData, OffsetDateTime> setter = factory.getSetter(newPM(OffsetDateTime.class, DataType.timestamp()));
+
+        OffsetDateTime ldt = OffsetDateTime.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, Date.from(ldt.toInstant()));
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testJava8TimeOT() throws Exception {
+        Setter<SettableByIndexData, OffsetTime> setter = factory.getSetter(newPM(OffsetTime.class, DataType.timestamp()));
+
+        OffsetTime ldt = OffsetTime.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, Date.from(ldt.atDate(LocalDate.now()).toInstant()));
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testJava8TimeZDT() throws Exception {
+        Setter<SettableByIndexData, ZonedDateTime> setter = factory.getSetter(newPM(ZonedDateTime.class, DataType.timestamp()));
+
+        ZonedDateTime ldt = ZonedDateTime.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, Date.from(ldt.toInstant()));
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testJava8TimeYearMonth() throws Exception {
+        Setter<SettableByIndexData, YearMonth> setter = factory.getSetter(newPM(YearMonth.class, DataType.timestamp()));
+
+        YearMonth ldt = YearMonth.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, Date.from(ldt.atDay(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testJava8TimeYear() throws Exception {
+        Setter<SettableByIndexData, Year> setter = factory.getSetter(newPM(Year.class, DataType.timestamp()));
+
+        Year ldt = Year.now();
+
+        setter.set(statement, ldt);
+        setter.set(statement, null);
+
+        verify(statement).setDate(0, Date.from(ldt.atMonthDay(MonthDay.of(Month.JANUARY, 1)).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        verify(statement).setToNull(0);
+    }
     //IFJAVA8_END
 
     @Test

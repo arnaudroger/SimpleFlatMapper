@@ -33,7 +33,7 @@ public class SizeAdjusterBatchQueryExecutor<T> implements BatchQueryExecutor<T> 
             if (lBatchSize <= 2) {
                 throw e;
             }
-            resize(lBatchSize);
+            resize(lBatchSize / 2);
             insert(connection, values, postExecute);
         }
     }

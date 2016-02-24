@@ -208,7 +208,7 @@ public class MultiRowsBatchInsertCrudTest {
             objectCrud.create(mockConnection, values);
 
             verify(preparedStatementFail, times(2)).executeUpdate();
-            verify(preparedStatementSucceed).executeUpdate();
+            verify(preparedStatementSucceed, times(5)).executeUpdate();
 
         } finally {
             connection.close();

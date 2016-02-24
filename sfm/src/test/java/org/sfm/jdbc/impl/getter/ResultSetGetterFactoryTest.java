@@ -548,6 +548,7 @@ public class ResultSetGetterFactoryTest {
 
 		assertEquals(uuid, getter.get(resultSet));
 		assertEquals(uuid, getter.get(resultSet));
+		assertEquals(uuid, getter.get(resultSet));
 	}
 
 	@Test

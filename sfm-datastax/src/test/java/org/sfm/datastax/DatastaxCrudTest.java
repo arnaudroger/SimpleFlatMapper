@@ -52,16 +52,16 @@ public class DatastaxCrudTest extends AbstractDatastaxTest {
                         DatastaxMapperFactory.newInstance().crud(DbObject.class, Long.class).to(session, "dbobjects");
 
                 DbObject object = DbObject.newInstance();
-                crud.saveWithTtl(object, 1);
-                Thread.sleep(100);
+                crud.saveWithTtl(object, 2);
+                Thread.sleep(500);
 
                 assertEquals(object, crud.read(object.getId()));
-                Thread.sleep(2000);
+                Thread.sleep(3000);
                 assertNull(crud.read(object.getId()));
 
                 DbObject object2 = DbObject.newInstance();
-                crud.save(object2, 1, System.currentTimeMillis());
-                Thread.sleep(100);
+                crud.save(object2, 2, System.currentTimeMillis());
+                Thread.sleep(500);
 
                 assertEquals(object2, crud.read(object2.getId()));
                 Thread.sleep(2000);

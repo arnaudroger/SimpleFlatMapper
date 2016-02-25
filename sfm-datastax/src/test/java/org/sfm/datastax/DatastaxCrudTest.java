@@ -53,6 +53,7 @@ public class DatastaxCrudTest extends AbstractDatastaxTest {
 
                 DbObject object = DbObject.newInstance();
                 crud.saveWithTtl(object, 1);
+                Thread.sleep(100);
 
                 assertEquals(object, crud.read(object.getId()));
                 Thread.sleep(2000);
@@ -60,6 +61,7 @@ public class DatastaxCrudTest extends AbstractDatastaxTest {
 
                 DbObject object2 = DbObject.newInstance();
                 crud.save(object2, 1, System.currentTimeMillis());
+                Thread.sleep(100);
 
                 assertEquals(object2, crud.read(object2.getId()));
                 Thread.sleep(2000);

@@ -107,19 +107,19 @@ public class CrudUpsertTest {
 
     @Test
     public void testUpsertHsqlBatch() throws SQLException {
+        Connection connection = mock(Connection.class);
+        PreparedStatement ps = mock(PreparedStatement.class);
 
+
+        List<DbObject> objects = Arrays.asList(DbObject.newInstance(), DbObject.newInstance());
         try {
-            Connection connection = mock(Connection.class);
-            PreparedStatement ps = mock(PreparedStatement.class);
-
-
-            List<DbObject> objects = Arrays.asList(DbObject.newInstance(), DbObject.newInstance());
+            System.out.println("testUpsertHsqlBatch createOrUpdate");
             hsqlCrud.createOrUpdate(connection, objects);
-
             fail();
         } catch(UnsupportedOperationException e) {
+            System.out.println("testUpsertHsqlBatch createOrUpdate " + e);
+            e.printStackTrace();
             // expected
         }
-
     }
 }

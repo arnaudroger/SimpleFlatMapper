@@ -69,8 +69,20 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
                 new DatastaxMappingContextFactoryBuilder());
     }
 
+    public <T> SettableDataMapperBuilder<T> newBuilderFrom(TypeReference<T> type) {
+        return newBuilderFrom(type.getType());
+    }
+
+    public <T> SettableDataMapperBuilder<T> newBuilderFrom(Class<T> type) {
+        return newBuilderFrom((Type)type);
+    }
+
     public <T> SettableDataMapperBuilder<T> newBuilderFrom(Type type) {
         ClassMeta<T> classMeta = getClassMeta(type);
+        return newBuilderFrom(classMeta);
+    }
+
+    public <T> SettableDataMapperBuilder<T> newBuilderFrom(ClassMeta<T> classMeta) {
         MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config = mapperConfig();
         return new SettableDataMapperBuilder<T>(
                 classMeta,

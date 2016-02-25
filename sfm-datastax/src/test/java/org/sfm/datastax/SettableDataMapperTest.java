@@ -28,22 +28,15 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
 
 
     @Test
-    public void testUpdateDbObjectWithTuple() throws Exception {
+    public void testUpdateDbObjectWithTupleWithDatatype() throws Exception {
         testInSession(new Callback() {
             @Override
             public void call(Session session) throws Exception {
                 final DatastaxMapper<DbObjectsWithTuple> mapper = DatastaxMapperFactory.newInstance().mapTo(DbObjectsWithTuple.class);
-
-
                 DbObjectsWithTuple value = mapper.iterator(session.execute("select id, t from dbobjects_tuple")).next();
-
                 PreparedStatement preparedStatement =  session.prepare("update dbobjects_tuple SET t  = ? where id = ?");
-
-
                 DatastaxBinder<DbObjectsWithTuple> datastaxBinder = DatastaxMapperFactory.newInstance().mapFrom(DbObjectsWithTuple.class);
-
                 session.execute(datastaxBinder.mapTo(value, preparedStatement));
-
             }
         });
     }

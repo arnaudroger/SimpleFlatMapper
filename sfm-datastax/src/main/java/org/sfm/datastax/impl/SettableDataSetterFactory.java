@@ -226,7 +226,8 @@ public class SettableDataSetterFactory
 
         Type propertyType = arg.getPropertyMeta().getPropertyType();
 
-        Type type = arg.getColumnKey().getDataType().asJavaClass();
+        final DataType dataType = arg.getColumnKey().getDataType();
+        Type type = dataType != null ? dataType.asJavaClass() : null;
         if (type == null) {
             type = propertyType;
         }
@@ -246,7 +247,7 @@ public class SettableDataSetterFactory
             setter = setterFactory.getSetter(arg);
 
             if (!TypeHelper.areEquals(TypeHelper.toBoxedClass(type), TypeHelper.toBoxedClass(propertyType))) {
-                Converter<?, ?> converter = getConverter(propertyType, TypeHelper.toClass(type), arg.getColumnKey().getDataType());
+                Converter<?, ?> converter = getConverter(propertyType, TypeHelper.toClass(type), dataType);
                 if (converter != null) {
                     setter = (Setter<SettableByIndexData, P>) new ConvertDelegateSetter<SettableByIndexData, Object, P>(setter, (Converter<Object, P>) converter);
                 } else {
@@ -255,18 +256,16 @@ public class SettableDataSetterFactory
             }
         }
 
-        if (setter == null) {
-            if (Tuples.isTuple(propertyType) && TypeHelper.areEquals(type, TupleValue.class)) {
-                setter = (Setter<SettableByIndexData, P>) TupleSettableDataSetter.newInstance(propertyType, (TupleType)arg.getColumnKey().getDataType(), arg.getColumnKey().getIndex(), mapperConfig, reflectionService);
-            } else if (arg.getColumnKey().getDataType() instanceof UserType) {
+        if (setter == null && dataType != null) {
+            if (dataType instanceof UserType) {
                 if (propertyType.equals(UDTValue.class)) {
                     setter = (Setter<SettableByIndexData, P>) new UDTValueSettableDataSetter(arg.getColumnKey().getIndex());
                 } else {
-                    setter = (Setter<SettableByIndexData, P>) UDTObjectSettableDataSetter.newInstance(propertyType, (UserType)arg.getColumnKey().getDataType(), arg.getColumnKey().getIndex(),  mapperConfig, reflectionService);
+                    setter = (Setter<SettableByIndexData, P>) UDTObjectSettableDataSetter.newInstance(propertyType, (UserType) dataType, arg.getColumnKey().getIndex(),  mapperConfig, reflectionService);
                 }
             } else if (TypeHelper.isAssignable(List.class, type) && TypeHelper.isAssignable(List.class, propertyType)) {
 
-                DataType dataTypeElt = arg.getColumnKey().getDataType().getTypeArguments().get(0);
+                DataType dataTypeElt = dataType.getTypeArguments().get(0);
                 Class<?> dEltType = dataTypeElt.asJavaClass();
                 Type lEltType = TypeHelper.getComponentTypeOfListOrArray(propertyType);
                 if (TypeHelper.areEquals(lEltType, dEltType)) {
@@ -279,7 +278,7 @@ public class SettableDataSetterFactory
                 }
             } else if (TypeHelper.isAssignable(Set.class, type) && TypeHelper.isAssignable(Set.class, propertyType)) {
 
-                DataType dataTypeElt = arg.getColumnKey().getDataType().getTypeArguments().get(0);
+                DataType dataTypeElt = dataType.getTypeArguments().get(0);
                 Class<?> dEltType = dataTypeElt.asJavaClass();
                 Type lEltType = TypeHelper.getComponentTypeOfListOrArray(propertyType);
                 if (TypeHelper.areEquals(lEltType, dEltType)) {
@@ -292,8 +291,8 @@ public class SettableDataSetterFactory
                 }
             } else if (TypeHelper.isAssignable(Map.class, type) && TypeHelper.isAssignable(Map.class, propertyType)) {
 
-                DataType dtKeyType = arg.getColumnKey().getDataType().getTypeArguments().get(0);
-                DataType dtValueType = arg.getColumnKey().getDataType().getTypeArguments().get(1);
+                DataType dtKeyType = dataType.getTypeArguments().get(0);
+                DataType dtValueType = dataType.getTypeArguments().get(1);
 
                 Tuple2<Type, Type> keyValueTypeOfMap = TypeHelper.getKeyValueTypeOfMap(propertyType);
 
@@ -335,7 +334,7 @@ public class SettableDataSetterFactory
                 return new ConverterToUDTValueMapper(mapper, (UserType) dtElt);
             }
             if (TupleValue.class.equals(dataTypeElt)) {
-                Mapper mapper = TupleSettableDataSetter.newTupleMapper(elementType, (TupleType) dtElt, mapperConfig, reflectionService);
+                Mapper mapper = TupleValueSettableDataSetter.newTupleMapper(elementType, (TupleType) dtElt, mapperConfig, reflectionService);
                 return new ConverterToTupleValueMapper(mapper, (TupleType) dtElt);
             }
         }

@@ -9,6 +9,7 @@ import org.sfm.utils.RowHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +23,14 @@ public class JdbcTemplateCrudTest {
 	
 	@Before
 	public void setUp() throws SQLException {
-		template = new JdbcTemplate(new SingleConnectionDataSource(DbHelper.objectDb(), true));
+		Connection dbConnection;
+
+		try {
+			dbConnection = DbHelper.getDbConnection(DbHelper.TargetDB.MYSQL);
+		} catch(Exception e) {
+			dbConnection = DbHelper.getDbConnection(DbHelper.TargetDB.HSQLDB);
+		}
+		template = new JdbcTemplate(new SingleConnectionDataSource(dbConnection, true));
 	}
 
 	@Test
@@ -62,7 +70,12 @@ public class JdbcTemplateCrudTest {
 		objectCrud.delete(key);
 		assertNull(objectCrud.read(key));
 
-		objectCrud.create(DbObject.newInstance());
+		objectCrud.create(object);
+		assertEquals(object, objectCrud.read(key));
+		objectCrud.delete(key);
+
+		objectCrud.createOrUpdate(object);
+		assertEquals(object, objectCrud.read(key));
 	}
 
 
@@ -103,6 +116,14 @@ public class JdbcTemplateCrudTest {
 		// delete
 		objectCrud.delete(keys);
 		assertNull(objectCrud.read(key));
+
+		objectCrud.create(objects);
+		assertEquals(objects, objectCrud.read(keys, new ListCollectorHandler<DbObject>()).getList());
+
+		objectCrud.delete(keys);
+
+		objectCrud.createOrUpdate(objects);
+		assertEquals(objects, objectCrud.read(keys, new ListCollectorHandler<DbObject>()).getList());
 
 	}
 

@@ -356,23 +356,24 @@ public class PreparedStatementSetterFactory
 
         Type type = pm.getPropertyMeta().getPropertyType();
 
-        if (TypeHelper.isPrimitive(type)) {
             Class<?> clazz = TypeHelper.toBoxedClass(type);
-            if (Byte.class.equals(clazz)) {
-                return (Setter<PreparedStatement, P>) new BytePreparedStatementSetter(columnIndex);
-            } else if (Character.class.equals(clazz)) {
-                return (Setter<PreparedStatement, P>) new CharacterPreparedStatementSetter(columnIndex);
-            } else if (Short.class.equals(clazz)) {
-                return (Setter<PreparedStatement, P>) new ShortPreparedStatementSetter(columnIndex);
-            } else if (Integer.class.equals(clazz)) {
-                return (Setter<PreparedStatement, P>) new IntegerPreparedStatementSetter(columnIndex);
-            } else if (Long.class.equals(clazz)) {
-                return (Setter<PreparedStatement, P>) new LongPreparedStatementSetter(columnIndex);
-            } else if (Double.class.equals(clazz)) {
-                return (Setter<PreparedStatement, P>) new DoublePreparedStatementSetter(columnIndex);
-            } else if (Float.class.equals(clazz)) {
-                return (Setter<PreparedStatement, P>) new FloatPreparedStatementSetter(columnIndex);
-            }
+
+        if (Boolean.class.equals(clazz)) {
+            return (Setter<PreparedStatement, P>) new BooleanPreparedStatementSetter(columnIndex);
+        } else if (Byte.class.equals(clazz)) {
+            return (Setter<PreparedStatement, P>) new BytePreparedStatementSetter(columnIndex);
+        } else if (Character.class.equals(clazz)) {
+            return (Setter<PreparedStatement, P>) new CharacterPreparedStatementSetter(columnIndex);
+        } else if (Short.class.equals(clazz)) {
+            return (Setter<PreparedStatement, P>) new ShortPreparedStatementSetter(columnIndex);
+        } else if (Integer.class.equals(clazz)) {
+            return (Setter<PreparedStatement, P>) new IntegerPreparedStatementSetter(columnIndex);
+        } else if (Long.class.equals(clazz)) {
+            return (Setter<PreparedStatement, P>) new LongPreparedStatementSetter(columnIndex);
+        } else if (Double.class.equals(clazz)) {
+            return (Setter<PreparedStatement, P>) new DoublePreparedStatementSetter(columnIndex);
+        } else if (Float.class.equals(clazz)) {
+            return (Setter<PreparedStatement, P>) new FloatPreparedStatementSetter(columnIndex);
         }
 
         IndexedSetter<PreparedStatement, P> setter = getIndexedSetter(pm);

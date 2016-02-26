@@ -1,10 +1,12 @@
 package org.sfm.utils.conv;
 
-import org.sfm.map.column.time.JavaTimeHelper;
 import org.sfm.map.impl.JodaTimeClasses;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.utils.conv.joda.JodaTimeConverterFactory;
+
+//IFJAVA8_START
 import org.sfm.utils.conv.time.JavaTimeConverterFactory;
+//IFJAVA8_END
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;

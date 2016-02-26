@@ -1,4 +1,4 @@
-package org.sfm.utils.conv.time;
+package org.sfm.jdbc.impl.convert.time;
 
 import org.sfm.utils.conv.Converter;
 

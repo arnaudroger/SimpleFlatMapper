@@ -6,13 +6,13 @@ import org.sfm.utils.conv.joda.JodaTimeConverterFactory;
 
 //IFJAVA8_START
 import org.sfm.utils.conv.time.JavaTimeConverterFactory;
+import java.time.temporal.Temporal;
 //IFJAVA8_END
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
-import java.time.temporal.Temporal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

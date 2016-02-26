@@ -1,11 +1,14 @@
 package org.sfm.map.column.time;
 
+import org.joda.time.DateTimeZone;
+import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.TimeZoneProperty;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 public class JavaTimeHelper {
 
@@ -48,6 +51,27 @@ public class JavaTimeHelper {
         }
 
         return null;
+    }
+
+
+    public static ZoneId getDateTimeZoneOrDefault(Object[] params) {
+        if (params != null) {
+            for(Object p : params) {
+                if (p instanceof ColumnDefinition) {
+                    final ZoneId dateTimeZone = _getZoneId((ColumnDefinition<?, ?>) p);
+                    if (dateTimeZone != null) return dateTimeZone;
+                } else if (p instanceof ZoneId) {
+                    return (ZoneId) p;
+                } else if (p instanceof TimeZone) {
+                    return ((TimeZone)p).toZoneId();
+                } else if (p instanceof JavaZoneIdProperty) {
+                    return ((JavaZoneIdProperty)p).getZoneId();
+                } else if (p instanceof TimeZoneProperty) {
+                    return (((TimeZoneProperty)p).getTimeZone()).toZoneId();
+                }
+            }
+        }
+        return ZoneId.systemDefault();
     }
 
 }

@@ -11,7 +11,9 @@ import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.map.MapperConfig;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.column.TimeZoneProperty;
 import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
+import org.sfm.map.column.time.JavaZoneIdProperty;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.ReflectionService;
@@ -42,6 +44,7 @@ import java.time.OffsetTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 //IFJAVA8_END
 import java.util.*;
@@ -461,6 +464,14 @@ public class SettableDataSetterFactoryTest {
 
         verify(statement).setDate(0, Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant()));
         verify(statement).setToNull(0);
+
+
+        final ZoneId zoneId = ZoneId.ofOffset("UTC", ZoneOffset.ofHours(2));
+        Setter<SettableByIndexData, LocalDateTime> setterTz = factory.getSetter(newPM(LocalDateTime.class, DataType.timestamp(), new JavaZoneIdProperty(zoneId)));
+
+        setterTz.set(statement, ldt);
+        verify(statement).setDate(1, Date.from(ldt.atZone(zoneId).toInstant()));
+
     }
 
     @Test
@@ -586,6 +597,13 @@ public class SettableDataSetterFactoryTest {
         Setter<SettableByIndexData, T> setterTZ =
                 factory.getSetter(newPM(joda.getClass(), DataType.timestamp(), new JodaDateTimeZoneProperty(tz2)));
         setterTZ.set(statement, joda);
+        verify(statement).setDate(1, new Date(date.getTime() + TimeUnit.HOURS.toMillis(2)));
+
+        TimeZone jtz = tz2.toTimeZone();
+
+        Setter<SettableByIndexData, T> setterJTZ =
+                factory.getSetter(newPM(joda.getClass(), DataType.timestamp(), new TimeZoneProperty(jtz)));
+        setterJTZ.set(statement, joda);
         verify(statement).setDate(1, new Date(date.getTime() + TimeUnit.HOURS.toMillis(2)));
 
     }

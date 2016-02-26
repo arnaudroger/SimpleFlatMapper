@@ -1,14 +1,16 @@
 package org.sfm.utils.conv;
 
-import org.sfm.map.column.joda.JodaHelper;
+import org.sfm.map.column.time.JavaTimeHelper;
 import org.sfm.map.impl.JodaTimeClasses;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.utils.conv.joda.JodaTimeConverterFactory;
+import org.sfm.utils.conv.time.JavaTimeConverterFactory;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.time.temporal.Temporal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -173,8 +175,13 @@ public class ConverterFactory {
 				return (Converter<F, P>) charSequenceConverters.get(TypeHelper.toClass(outType));
 			}
 		} else if (JodaTimeClasses.isJoda(inType)) {
-			return JodaTimeConverterFactory.getConverter(inType, outType, params);
+			return JodaTimeConverterFactory.getConverterFrom(inType, outType, params);
 		}
+		//IFJAVA8_START
+		else if (TypeHelper.isAssignable(Temporal.class, inType)) {
+			return JavaTimeConverterFactory.getConverterFrom(inType, outType, params);
+		}
+		//IFJAVA8_END
 		return null;
 	}
 

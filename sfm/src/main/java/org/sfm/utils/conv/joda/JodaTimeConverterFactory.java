@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 import java.util.Date;
 
 public class JodaTimeConverterFactory {
-    public static <F, P> Converter<F, P> getConverter(Class<F> inType, Type outType, Object... params) {
+    public static <F, P> Converter<F, P> getConverterFrom(Class<F> inType, Type outType, Object... params) {
         if (TypeHelper.areEquals(Date.class, outType)) {
             if (JodaTimeClasses.isJodaLocalDateTime(inType)) {
                 return (Converter<F, P>) new JodaLocalDateTimeTojuDateConverter(JodaHelper.getDateTimeZoneOrDefault(params));

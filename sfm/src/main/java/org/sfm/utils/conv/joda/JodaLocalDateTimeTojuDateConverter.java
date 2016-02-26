@@ -1,4 +1,4 @@
-package org.sfm.jdbc.impl.convert.joda;
+package org.sfm.utils.conv.joda;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;

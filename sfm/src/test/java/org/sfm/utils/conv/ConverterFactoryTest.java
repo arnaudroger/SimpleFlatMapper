@@ -9,6 +9,8 @@ import javax.xml.parsers.SAXParser;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -102,8 +104,25 @@ public class ConverterFactoryTest {
 
 
     @Test
-    public void testArrayConverter() {
+    public void testJodaTime() throws Exception {
+        long time = System.currentTimeMillis();
+        testConverter(new org.joda.time.LocalDateTime(time), new Date(time));
+        testConverter(new org.joda.time.LocalTime(time), new Date(time));
+        testConverter(new org.joda.time.LocalDate(time), trunc(new Date(time)));
+        testConverter(new org.joda.time.Instant(time), new Date(time));
+        testConverter(new org.joda.time.DateTime(time), new Date(time));
+    }
 
+    private Date trunc(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.HOUR, 0);
+
+        return cal.getTime();
     }
 
 }

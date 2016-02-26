@@ -6,6 +6,9 @@ import org.joda.time.format.DateTimeFormatter;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.TimeZoneProperty;
+import org.sfm.reflect.meta.ObjectClassMeta;
+
+import java.util.TimeZone;
 
 public class JodaHelper {
 
@@ -48,4 +51,23 @@ public class JodaHelper {
         return dateTimeZone == null ? DateTimeZone.getDefault() : dateTimeZone;
     }
 
+    public static DateTimeZone getDateTimeZoneOrDefault(Object[] params) {
+        if (params != null) {
+            for(Object p : params) {
+                if (p instanceof ColumnDefinition) {
+                    final DateTimeZone dateTimeZone = _dateTimeZone((ColumnDefinition<?, ?>) p);
+                    if (dateTimeZone != null) return dateTimeZone;
+                } else if (p instanceof DateTimeZone) {
+                    return (DateTimeZone) p;
+                } else if (p instanceof TimeZone) {
+                    return DateTimeZone.forTimeZone((TimeZone)p);
+                } else if (p instanceof JodaDateTimeZoneProperty) {
+                    return ((JodaDateTimeZoneProperty)p).getZone();
+                } else if (p instanceof TimeZoneProperty) {
+                    return DateTimeZone.forTimeZone(((TimeZoneProperty)p).getTimeZone());
+                }
+            }
+        }
+        return DateTimeZone.getDefault();
+    }
 }

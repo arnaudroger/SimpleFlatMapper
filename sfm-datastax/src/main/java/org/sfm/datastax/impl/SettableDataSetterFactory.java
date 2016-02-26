@@ -5,11 +5,11 @@ import org.joda.time.DateTimeZone;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.datastax.impl.setter.*;
 
-import org.sfm.jdbc.impl.convert.joda.JodaDateTimeTojuDateConverter;
-import org.sfm.jdbc.impl.convert.joda.JodaInstantTojuDateConverter;
-import org.sfm.jdbc.impl.convert.joda.JodaLocalDateTimeTojuDateConverter;
-import org.sfm.jdbc.impl.convert.joda.JodaLocalDateTojuDateConverter;
-import org.sfm.jdbc.impl.convert.joda.JodaLocalTimeTojuDateConverter;
+import org.sfm.utils.conv.joda.JodaDateTimeTojuDateConverter;
+import org.sfm.utils.conv.joda.JodaInstantTojuDateConverter;
+import org.sfm.utils.conv.joda.JodaLocalDateTimeTojuDateConverter;
+import org.sfm.utils.conv.joda.JodaLocalDateTojuDateConverter;
+import org.sfm.utils.conv.joda.JodaLocalTimeTojuDateConverter;
 import org.sfm.map.Mapper;
 import org.sfm.map.MapperConfig;
 import org.sfm.map.column.FieldMapperColumnDefinition;
@@ -23,7 +23,6 @@ import org.sfm.reflect.Setter;
 import org.sfm.reflect.SetterFactory;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.tuples.Tuple2;
-import org.sfm.tuples.Tuples;
 import org.sfm.utils.conv.Converter;
 import org.sfm.utils.conv.ConverterFactory;
 

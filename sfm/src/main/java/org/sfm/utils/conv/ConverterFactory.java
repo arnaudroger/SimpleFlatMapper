@@ -1,6 +1,9 @@
 package org.sfm.utils.conv;
 
+import org.sfm.map.column.joda.JodaHelper;
+import org.sfm.map.impl.JodaTimeClasses;
 import org.sfm.reflect.TypeHelper;
+import org.sfm.utils.conv.joda.JodaTimeConverterFactory;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -150,11 +153,11 @@ public class ConverterFactory {
 		});
 	}
 
-	public static <P, F> Converter<F, P> getConverter(Class<F> inType, Class<P> outType) {
-		return getConverter(inType, (Type)outType);
+	public static <P, F> Converter<F, P> getConverter(Class<F> inType, Class<P> outType, Object... params) {
+		return getConverter(inType, (Type)outType, params);
 	}
 	@SuppressWarnings("unchecked")
-	public static <P, F> Converter<F, P> getConverter(Class<F> inType, Type outType) {
+	public static <P, F> Converter<F, P> getConverter(Class<F> inType, Type outType, Object... params) {
 		if (TypeHelper.areEquals(outType, inType)) {
 			return (Converter<F, P>) new IdentityConverter<F>();
 		} else if (outType.equals(String.class)) {
@@ -169,6 +172,8 @@ public class ConverterFactory {
 			} else {
 				return (Converter<F, P>) charSequenceConverters.get(TypeHelper.toClass(outType));
 			}
+		} else if (JodaTimeClasses.isJoda(inType)) {
+			return JodaTimeConverterFactory.getConverter(inType, outType, params);
 		}
 		return null;
 	}

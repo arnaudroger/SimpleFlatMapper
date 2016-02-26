@@ -13,7 +13,9 @@ import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.column.TimeZoneProperty;
 import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
+//IFJAVA8_START
 import org.sfm.map.column.time.JavaZoneIdProperty;
+//IFJAVA8_END
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.ReflectionService;

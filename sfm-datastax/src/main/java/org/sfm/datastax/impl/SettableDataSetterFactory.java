@@ -144,37 +144,6 @@ public class SettableDataSetterFactory
         });
     }
 
-    private final SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>> jodaTimeFieldMapperToSourceFactory =
-            new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
-                @SuppressWarnings("unchecked")
-                @Override
-                public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> pm) {
-
-
-                    final DateSettableDataSetter setter = new DateSettableDataSetter(pm.getColumnKey().getIndex());
-                    final Type propertyType = pm.getPropertyMeta().getPropertyType();
-                    Converter<P, Date> converter = null;
-                    final DateTimeZone dateTimeZone = JodaHelper.getDateTimeZoneOrDefault(pm.getColumnDefinition());
-                    if (JodaTimeClasses.isJodaLocalDateTime(propertyType)) {
-                        converter = (Converter<P, Date>) new JodaLocalDateTimeTojuDateConverter(dateTimeZone);
-                    } else if (JodaTimeClasses.isJodaLocalDate(propertyType)) {
-                        converter = (Converter<P, Date>) new JodaLocalDateTojuDateConverter();
-                    } else if (JodaTimeClasses.isJodaDateTime(propertyType)) {
-                        converter = (Converter<P, Date>) new JodaDateTimeTojuDateConverter();
-                    } else if (JodaTimeClasses.isJodaInstant(propertyType)) {
-                        converter = (Converter<P, Date>) new JodaInstantTojuDateConverter();
-                    } else if (JodaTimeClasses.isJodaLocalTime(propertyType)) {
-                        converter = (Converter<P, Date>) new JodaLocalTimeTojuDateConverter(dateTimeZone);
-                    }
-                    if (converter != null) {
-                        return new ConvertDelegateSetter<SettableByIndexData, P, Date>(setter, converter);
-                    } else {
-                        return null;
-                    }
-
-                }
-            };
-
     //IFJAVA8_START
     private final SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>> javaTimeFieldMapperToSourceFactory =
             new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
@@ -246,7 +215,7 @@ public class SettableDataSetterFactory
             setter = setterFactory.getSetter(arg);
 
             if (!TypeHelper.areEquals(TypeHelper.toBoxedClass(type), TypeHelper.toBoxedClass(propertyType))) {
-                Converter<?, ?> converter = getConverter(propertyType, TypeHelper.toClass(type), dataType);
+                Converter<?, ?> converter = getConverter(propertyType, TypeHelper.toClass(type), dataType, arg.getColumnDefinition());
                 if (converter != null) {
                     setter = (Setter<SettableByIndexData, P>) new ConvertDelegateSetter<SettableByIndexData, Object, P>(setter, (Converter<Object, P>) converter);
                 } else {
@@ -270,7 +239,7 @@ public class SettableDataSetterFactory
                 if (TypeHelper.areEquals(lEltType, dEltType)) {
                     setter = new ListSettableDataSetter(arg.getColumnKey().getIndex());
                 } else {
-                    Converter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt);
+                    Converter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt, arg.getColumnDefinition());
                     if (converter != null) {
                         setter = new ListWithConverterSettableDataSetter(arg.getColumnKey().getIndex(), converter);
                     }
@@ -283,7 +252,7 @@ public class SettableDataSetterFactory
                 if (TypeHelper.areEquals(lEltType, dEltType)) {
                     setter = new SetSettableDataSetter(arg.getColumnKey().getIndex());
                 } else {
-                    Converter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt);
+                    Converter<?, ?> converter = getConverter(lEltType, dEltType, dataTypeElt, arg.getColumnDefinition());
                     if (converter != null) {
                         setter = new SetWithConverterSettableDataSetter(arg.getColumnKey().getIndex(), converter);
                     }
@@ -299,16 +268,12 @@ public class SettableDataSetterFactory
                     setter = new MapSettableDataSetter(arg.getColumnKey().getIndex());
                 } else {
                     setter = new MapWithConverterSettableDataSetter(arg.getColumnKey().getIndex(),
-                            getConverter(keyValueTypeOfMap.getElement0(), dtKeyType.asJavaClass(), dtKeyType),
-                            getConverter(keyValueTypeOfMap.getElement1(), dtValueType.asJavaClass(), dtValueType)
+                            getConverter(keyValueTypeOfMap.getElement0(), dtKeyType.asJavaClass(), dtKeyType, arg.getColumnDefinition()),
+                            getConverter(keyValueTypeOfMap.getElement1(), dtValueType.asJavaClass(), dtValueType, arg.getColumnDefinition())
                             );
                 }
             }
 
-        }
-
-        if (setter == null) {
-            setter = jodaTimeFieldMapperToSourceFactory.getSetter(arg);
         }
 
         //IFJAVA8_START
@@ -326,7 +291,7 @@ public class SettableDataSetterFactory
     }
 
     @SuppressWarnings("unchecked")
-    private Converter<?, ?> getConverter(Type elementType,  Class<?> dataTypeElt, DataType dtElt) {
+    private Converter<?, ?> getConverter(Type elementType, Class<?> dataTypeElt, DataType dtElt, ColumnDefinition<DatastaxColumnKey, ?> columnDefinition) {
         if (dtElt != null) {
             if (UDTValue.class.equals(dataTypeElt)) {
                 Mapper mapper = UDTObjectSettableDataSetter.newUDTMapper(elementType, (UserType) dtElt, mapperConfig, reflectionService);
@@ -337,6 +302,6 @@ public class SettableDataSetterFactory
                 return new ConverterToTupleValueMapper(mapper, (TupleType) dtElt);
             }
         }
-        return ConverterFactory.getConverter(TypeHelper.toClass(elementType), dataTypeElt);
+        return ConverterFactory.getConverter(TypeHelper.toClass(elementType), dataTypeElt, columnDefinition);
     }
 }

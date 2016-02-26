@@ -1,6 +1,8 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.*;
+import org.joda.time.DateTimeZone;
+import org.joda.time.ReadablePartial;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -9,6 +11,7 @@ import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.map.MapperConfig;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.ReflectionService;
@@ -42,6 +45,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 //IFJAVA8_END
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -566,15 +570,24 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testJodaLDT() throws Exception {
-        Setter<SettableByIndexData, org.joda.time.LocalDateTime> setter = factory.getSetter(newPM(org.joda.time.LocalDateTime.class, DataType.timestamp()));
+        long time = System.currentTimeMillis();
+        testJodaDate(new org.joda.time.LocalDateTime(time), new Date(time));
+    }
 
-        org.joda.time.LocalDateTime ldt = org.joda.time.LocalDateTime.now();
-
-        setter.set(statement, ldt);
+    private <T extends ReadablePartial> void testJodaDate(T joda, Date date) throws Exception {
+        Setter<SettableByIndexData, T> setter = factory.getSetter(newPM(joda.getClass(), DataType.timestamp()));
+        setter.set(statement, joda);
+        verify(statement).setDate(0, date);
         setter.set(statement, null);
-
-        verify(statement).setDate(0, ldt.toDate(TimeZone.getDefault()));
         verify(statement).setToNull(0);
+
+        DateTimeZone tz2 = DateTimeZone.forOffsetHours(DateTimeZone.getDefault().getOffset(date.getTime()) - 2);
+
+        Setter<SettableByIndexData, T> setterTZ =
+                factory.getSetter(newPM(joda.getClass(), DataType.timestamp(), new JodaDateTimeZoneProperty(tz2)));
+        setterTZ.set(statement, joda);
+        verify(statement).setDate(1, new Date(date.getTime() + TimeUnit.HOURS.toMillis(2)));
+
     }
 
     @Test
@@ -612,8 +625,17 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, ldt.toDateTimeToday().toDate());
+        final Date date = ldt.toDateTimeToday().toDate();
+        verify(statement).setDate(0, date);
         verify(statement).setToNull(0);
+
+        DateTimeZone tz2 = DateTimeZone.forOffsetHours(DateTimeZone.getDefault().getOffset(date.getTime()) - 2);
+
+        Setter<SettableByIndexData, org.joda.time.LocalTime> setterTZ =
+                factory.getSetter(newPM(org.joda.time.LocalTime.class, DataType.timestamp(), new JodaDateTimeZoneProperty(tz2)));
+        setterTZ.set(statement, ldt);
+        verify(statement).setDate(1, new Date(date.getTime() + TimeUnit.HOURS.toMillis(2)));
+
     }
 
 
@@ -626,7 +648,8 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, ldt.toDate());
+        final Date date = ldt.toDate();
+        verify(statement).setDate(0, date);
         verify(statement).setToNull(0);
     }
 

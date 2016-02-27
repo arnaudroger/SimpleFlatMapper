@@ -5,6 +5,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 import org.sfm.csv.CsvColumnDefinition;
+import org.sfm.map.column.TimeZoneProperty;
+
 import java.util.TimeZone;
 
 import static org.junit.Assert.*;
@@ -70,6 +72,17 @@ public class JodaHelperTest {
     @Test
     public void testGetDateTimeZoneFromDateTimeZone() {
         assertEquals(CHICAGO_TZ, JodaHelper.getDateTimeZoneOrDefault(CsvColumnDefinition.IDENTITY.add(new JodaDateTimeZoneProperty(CHICAGO_TZ))));
+    }
+
+
+    @Test
+    public void testGetDateTimeZoneFromParams() {
+        assertEquals(CHICAGO_TZ, JodaHelper.getDateTimeZoneOrDefault(new Object[]{CsvColumnDefinition.IDENTITY.addTimeZone(TimeZone.getTimeZone("America/Chicago"))}));
+        assertEquals(CHICAGO_TZ, JodaHelper.getDateTimeZoneOrDefault(new Object[]{CsvColumnDefinition.IDENTITY.add(new JodaDateTimeZoneProperty(CHICAGO_TZ))}));
+        assertEquals(CHICAGO_TZ, JodaHelper.getDateTimeZoneOrDefault(new Object[]{TimeZone.getTimeZone("America/Chicago")}));
+        assertEquals(CHICAGO_TZ, JodaHelper.getDateTimeZoneOrDefault(new Object[]{CHICAGO_TZ}));
+        assertEquals(CHICAGO_TZ, JodaHelper.getDateTimeZoneOrDefault(new Object[]{new TimeZoneProperty(TimeZone.getTimeZone("America/Chicago"))}));
+        assertEquals(CHICAGO_TZ, JodaHelper.getDateTimeZoneOrDefault(new Object[]{new JodaDateTimeZoneProperty(CHICAGO_TZ)}));
     }
 
 }

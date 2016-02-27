@@ -54,7 +54,7 @@ public class JavaTimeHelper {
     }
 
 
-    public static ZoneId getDateTimeZoneOrDefault(Object[] params) {
+    public static ZoneId getZoneIdOrDefault(Object[] params) {
         if (params != null) {
             for(Object p : params) {
                 if (p instanceof ColumnDefinition) {

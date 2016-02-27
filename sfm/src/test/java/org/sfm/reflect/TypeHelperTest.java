@@ -22,6 +22,17 @@ public class TypeHelperTest {
 		assertFalse(TypeHelper.isNumber(char.class));
 		assertFalse(TypeHelper.isNumber(String.class));
 	}
+
+	@Test
+	public void testAreCompatible() {
+		assertTrue(TypeHelper.areCompatible(Integer.class, int.class));
+		assertTrue(TypeHelper.areCompatible(Integer.class, Integer.class));
+		assertTrue(TypeHelper.areCompatible(Number.class, int.class));
+		assertTrue(TypeHelper.areCompatible(Number.class, Integer.class));
+		assertTrue(TypeHelper.areCompatible(Object.class, int.class));
+		assertTrue(TypeHelper.areCompatible(Object.class, Integer.class));
+		assertFalse(TypeHelper.areCompatible(Double.class, Integer.class));
+	}
 	
 	@Test
 	public void testWrap() {

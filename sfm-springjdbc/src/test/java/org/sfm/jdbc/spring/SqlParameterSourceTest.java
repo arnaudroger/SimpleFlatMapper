@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterUtils;
 import org.springframework.jdbc.core.namedparam.ParsedSql;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import java.sql.Types;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
@@ -34,6 +35,12 @@ public class SqlParameterSourceTest {
         assertEquals(12345l, parameterSource.getValue("id"));
         assertEquals("name", parameterSource.getValue("name"));
         assertEquals("email", parameterSource.getValue("email"));
+
+        assertEquals(Types.BIGINT, parameterSource.getSqlType("id"));
+        assertEquals(Types.VARCHAR, parameterSource.getSqlType("name"));
+
+        assertEquals(null, parameterSource.getTypeName("id"));
+        assertEquals(null, parameterSource.getTypeName("name"));
     }
 
     protected DbObject getDbObject() {

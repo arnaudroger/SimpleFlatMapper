@@ -22,6 +22,8 @@ import java.sql.PreparedStatement;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class PsSetterNotFoundTest {
 
@@ -68,8 +70,17 @@ public class PsSetterNotFoundTest {
     }
 
     @Test
-    public void jdbcMapperExtrapolateGetterFromConstructor() {
-        JdbcMapperFactory.newInstance().buildFrom(Foo.class).addColumn("bar").buildIndexFieldMappers();
+    public void jdbcMapperExtrapolateGetterFromConstructor() throws Exception {
+        final MultiIndexFieldMapper<Foo>[] fieldMappers =
+                JdbcMapperFactory.newInstance().buildFrom(Foo.class).addColumn("bar").buildIndexFieldMappers();
+
+
+        assertEquals(1, fieldMappers.length);
+        PreparedStatement ps = mock(PreparedStatement.class);
+        fieldMappers[0].map(ps, new Foo(new BarOneProp("val")), 0);
+        verify(ps).setString(1, "val");
+
+
         JdbcMapperFactory.newInstance().buildFrom(Crux.class).addColumn("foo").buildIndexFieldMappers();
     }
 

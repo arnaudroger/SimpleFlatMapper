@@ -41,8 +41,8 @@ public class JooqFieldKey extends FieldKey<JooqFieldKey> {
 		JooqFieldKey that = (JooqFieldKey) o;
 
 		if (index != that.index) return false;
-		return field.equals(that.field);
-
+		if (!field.equals(that.field)) return false;
+		return name.equals(that.name);
 	}
 
 	@Override

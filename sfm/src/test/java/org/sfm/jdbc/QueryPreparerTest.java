@@ -14,6 +14,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,9 +51,10 @@ public class QueryPreparerTest {
                 ps.close();
             }
 
-            ps = selectQueryPreparer.prepare(connection).bind(dbObject);
+            final QueryBinder<DbObject> queryBinder = selectQueryPreparer.prepare(connection);
+            ps = selectQueryPreparer.prepareStatement(connection);
             try {
-                ps.setLong(1, dbObject.getId());
+                queryBinder.bindTo(dbObject, ps);
 
                 ResultSet resultSet = ps.executeQuery();
 
@@ -107,6 +112,29 @@ public class QueryPreparerTest {
 
     }
 
+    @Test
+    public void testQueryBinderClosePsOnException() throws SQLException {
+        NamedSqlQuery query = NamedSqlQuery.parse("select id, name, email, creation_time, type_ordinal, type_name from TEST_DB_OBJECT where id = ? ");
+
+        QueryPreparer<DbObject> queryPreparer =
+                jdbcMapperFactory
+                        .from(DbObject.class).to(query);
+
+        Connection conn = mock(Connection.class);
+        PreparedStatement ps = mock(PreparedStatement.class);
+        when(conn.prepareStatement(anyString())).thenReturn(ps);
+
+        doThrow(new IllegalStateException()).when(ps).setLong(anyInt(), anyLong());
+
+        try {
+            queryPreparer.prepare(conn).bind(DbObject.newInstance());
+            fail();
+        } catch(IllegalStateException e) {
+            // expected
+        }
+
+        verify(ps).close();
+    }
 
     public static class QueryParamArray {
         public String name;

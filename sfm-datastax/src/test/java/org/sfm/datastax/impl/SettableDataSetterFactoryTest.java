@@ -594,7 +594,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, null);
         verify(statement).setToNull(0);
 
-        DateTimeZone tz2 = DateTimeZone.forOffsetHours(DateTimeZone.getDefault().getOffset(date.getTime()) - 2);
+        DateTimeZone tz2 = getNonDefaultDateTimeZone(date);
 
         Setter<SettableByIndexData, T> setterTZ =
                 factory.getSetter(newPM(joda.getClass(), DataType.timestamp(), new JodaDateTimeZoneProperty(tz2)));
@@ -608,6 +608,10 @@ public class SettableDataSetterFactoryTest {
         setterJTZ.set(statement, joda);
         verify(statement).setDate(1, new Date(date.getTime() + TimeUnit.HOURS.toMillis(2)));
 
+    }
+
+    private DateTimeZone getNonDefaultDateTimeZone(Date date) {
+        return DateTimeZone.forOffsetHours((int) (TimeUnit.MILLISECONDS.toHours(DateTimeZone.getDefault().getOffset(date.getTime())) - 2));
     }
 
     @Test
@@ -649,7 +653,7 @@ public class SettableDataSetterFactoryTest {
         verify(statement).setDate(0, date);
         verify(statement).setToNull(0);
 
-        DateTimeZone tz2 = DateTimeZone.forOffsetHours(DateTimeZone.getDefault().getOffset(date.getTime()) - 2);
+        DateTimeZone tz2 = getNonDefaultDateTimeZone(date);
 
         Setter<SettableByIndexData, org.joda.time.LocalTime> setterTZ =
                 factory.getSetter(newPM(org.joda.time.LocalTime.class, DataType.timestamp(), new JodaDateTimeZoneProperty(tz2)));

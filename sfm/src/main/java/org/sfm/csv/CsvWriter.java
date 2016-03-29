@@ -264,28 +264,28 @@ public class CsvWriter<T>  {
             if (cellWriter instanceof CsvCellWriter) {
                 return newMapDSL(classMeta, columns, mapperConfig, ((CsvCellWriter)cellWriter).separator(separator), skipHeaders);
             }
-            throw new IllegalStateException("Custom cell writer set, cannot use dsl to alter it");
+            throw new IllegalStateException("Custom cell writer set, cannot use schema to alter it");
         }
 
         public CsvWriterDSL<T> quote(char quote) {
             if (cellWriter instanceof CsvCellWriter) {
                 return newMapDSL(classMeta, columns, mapperConfig, ((CsvCellWriter)cellWriter).quote(quote), skipHeaders);
             }
-            throw new IllegalStateException("Custom cell writer set, cannot use dsl to alter it");
+            throw new IllegalStateException("Custom cell writer set, cannot use schema to alter it");
         }
 
         public CsvWriterDSL<T> endOfLine(String endOfLine) {
             if (cellWriter instanceof CsvCellWriter) {
                 return newMapDSL(classMeta, columns, mapperConfig, ((CsvCellWriter)cellWriter).endOfLine(endOfLine), skipHeaders);
             }
-            throw new IllegalStateException("Custom cell writer set, cannot use dsl to alter it");
+            throw new IllegalStateException("Custom cell writer set, cannot use schema to alter it");
         }
 
         public CsvWriterDSL<T> alwaysEscape() {
             if (cellWriter instanceof CsvCellWriter) {
                 return newMapDSL(classMeta, columns, mapperConfig, ((CsvCellWriter)cellWriter).alwaysEscape(), skipHeaders);
             }
-            throw new IllegalStateException("Custom cell writer set, cannot use dsl to alter it");
+            throw new IllegalStateException("Custom cell writer set, cannot use schema to alter it");
         }
 
         /**

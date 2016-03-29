@@ -1,9 +1,8 @@
 package org.sfm.csv.parser;
 
 import java.io.IOException;
-import java.io.Reader;
 
-public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
+public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 	private static final int IN_QUOTE = 4;
 	private static final int IN_CR = 2;
 	private static final int QUOTE = 1;
@@ -20,11 +19,11 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 	}
 
 	@Override
-	public final void parseAll(CellConsumer cellConsumer) {
+	public final void consumeAllBuffer(CellConsumer cellConsumer) {
 		int bufferLength = csvBuffer.getBufferSize();
+		char[] buffer = csvBuffer.getCharBuffer();
 		for(int i = _currentIndex; i  < bufferLength; i++) {
-			char c = csvBuffer.getChar(i);
-			consumeOneChar(c, i, cellConsumer);
+			consumeOneChar(buffer[i], i, cellConsumer);
 		}
 		_currentIndex = bufferLength;
 	}
@@ -112,9 +111,9 @@ public abstract class AbstractCsvCharConsumer implements CsvCharConsumer {
 	}
 
 	@Override
-	public final boolean fillBuffer(Reader reader) throws IOException {
+	public final boolean refillBuffer() throws IOException {
 		shiftCurrentIndex(csvBuffer.shiftBufferToMark());
-		return csvBuffer.fillBuffer(reader);
+		return csvBuffer.fillBuffer();
 	}
 
 	private boolean isAllConsumedFromMark(int bufferIndex) {

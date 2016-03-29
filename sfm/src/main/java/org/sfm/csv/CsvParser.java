@@ -179,7 +179,20 @@ public final class CsvParser {
 		return schema().parse(reader, cellConsumer);
 	}
 
-	public static CloseableCsvReader reader(File file) throws IOException {
+    public static CsvReader reader(CharSequence content) throws IOException {
+        return schema().reader(content);
+    }
+
+    public static Iterator<String[]> iterator(CharSequence content) throws IOException {
+        return schema().iterator(content);
+    }
+
+    public static <CC extends CellConsumer> CC parse(CharSequence content, CC cellConsumer) throws IOException {
+        return schema().parse(content, cellConsumer);
+    }
+
+
+    public static CloseableCsvReader reader(File file) throws IOException {
 		return schema().reader(file);
 	}
 
@@ -200,6 +213,10 @@ public final class CsvParser {
 	public static Stream<String[]> stream(File file) throws IOException {
 		return schema().stream(file);
 	}
+
+    public static Stream<String[]> stream(String content) throws IOException {
+        return schema().stream(content);
+    }
 	//IFJAVA8_END
 
     /**
@@ -297,15 +314,22 @@ public final class CsvParser {
          * @throws java.io.IOException if and error occurs in the reader
          */
         public <CC extends CellConsumer> CC parse(Reader reader, CC cellConsumer) throws IOException {
-            CsvReader csvreader = reader(reader);
+			return parse(charBuffer(reader), cellConsumer);
+        }
 
-            if (limit == -1) {
+        public <CC extends CellConsumer> CC parse(CharSequence content, CC cellConsumer) throws IOException {
+            return parse(charBuffer(content), cellConsumer);
+        }
+		private <CC extends CellConsumer> CC parse(CharBuffer charBuffer, CC cellConsumer) throws IOException {
+			CsvReader csvreader = reader(charBuffer);
+
+			if (limit == -1) {
                 return csvreader.parseAll(cellConsumer);
             } else {
                 return csvreader.parseRows(cellConsumer, limit);
 
             }
-        }
+		}
 
 
 		public <CC extends CellConsumer> CC parse(File file, CC cellConsumer) throws IOException {
@@ -328,10 +352,26 @@ public final class CsvParser {
          * @throws java.io.IOException if an io error occurs
          */
         public CsvReader reader(Reader reader) throws IOException {
-            CsvReader csvReader = new CsvReader(reader, charConsumer());
-            csvReader.skipRows(skip);
-            return csvReader;
+			return reader(charBuffer(reader));
         }
+
+		public CsvReader reader(CharSequence content) throws IOException {
+			return reader(charBuffer(content));
+		}
+
+		private CsvReader reader(CharBuffer charBuffer) throws IOException {
+			CsvReader csvReader = new CsvReader(charConsumer(charBuffer));
+			csvReader.skipRows(skip);
+			return csvReader;
+		}
+
+		private CharBuffer charBuffer(Reader reader) throws IOException {
+			return new ReaderCharBuffer(bufferSize, maxBufferSize, reader);
+		}
+
+		private CharBuffer charBuffer(CharSequence content) throws IOException {
+			return new CharSequenceCharBuffer(content);
+		}
 
 		public CloseableCsvReader reader(File file) throws IOException {
 			return onReader(file, CREATE_CLOSEABLE_CSV_READER);
@@ -340,6 +380,10 @@ public final class CsvParser {
         public Iterator<String[]> iterator(Reader reader) throws IOException {
             return reader(reader).iterator();
         }
+
+		public Iterator<String[]> iterator(CharSequence content) throws IOException {
+			return reader(content).iterator();
+		}
 
 		public CloseableIterator<String[]> iterator(File file) throws IOException {
 			return onReader(file, CREATE_CLOSEABLE_ITERATOR);
@@ -394,6 +438,10 @@ public final class CsvParser {
 			return reader(reader).stream();
 		}
 
+		public Stream<String[]> stream(CharSequence content) throws IOException {
+			return reader(content).stream();
+		}
+
 		public Stream<String[]> stream(File file) throws IOException {
 			return onReader(file, CREATE_CLOSEABLE_STREAM);
 		}
@@ -402,8 +450,7 @@ public final class CsvParser {
 				reader -> stream(reader).onClose(() -> { try { reader.close(); } catch (IOException e) {} });
         //IFJAVA8_END
 
-        private CsvCharConsumer charConsumer() {
-            CharBuffer charBuffer = new CharBuffer(bufferSize, maxBufferSize);
+        private CsvCharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
 
             if (separatorChar == ',' && quoteChar == '"') {
                 return new StandardCsvCharConsumer(charBuffer);
@@ -595,6 +642,10 @@ public final class CsvParser {
 			return mapper.iterator(dsl.reader(reader));
 		}
 
+		public final Iterator<T> iterator(CharSequence content) throws IOException {
+			return mapper.iterator(dsl.reader(content));
+		}
+
 		public final CloseableIterator<T> iterator(File file) throws IOException {
 			return onReader(file, new IOFunction<Reader, CloseableIterator<T>>() {
 				@Override
@@ -614,17 +665,29 @@ public final class CsvParser {
 		}
 
 		public final <H extends RowHandler<T>> H forEach(Reader reader, H rowHandler) throws IOException {
-            if (dsl.limit == -1) {
-                mapper.forEach(dsl.reader(reader), rowHandler);
-            } else {
-                mapper.forEach(dsl.reader(reader), rowHandler, dsl.limit);
-            }
-            return rowHandler;
+			return forEach(rowHandler, dsl.reader(reader));
         }
+
+		public final <H extends RowHandler<T>> H forEach(CharSequence content, H rowHandler) throws IOException {
+			return forEach(rowHandler, dsl.reader(content));
+		}
+
+		private <H extends RowHandler<T>> H forEach(H rowHandler, CsvReader csvReader) throws IOException {
+			if (dsl.limit == -1) {
+                mapper.forEach(csvReader, rowHandler);
+            } else {
+                mapper.forEach(csvReader, rowHandler, dsl.limit);
+            }
+			return rowHandler;
+		}
 
 		//IFJAVA8_START
 		public final Stream<T> stream(Reader reader) throws IOException {
 			return mapper.stream(dsl.reader(reader));
+		}
+
+		public final Stream<T> stream(CharSequence content) throws IOException {
+			return mapper.stream(dsl.reader(content));
 		}
 
 		public final Stream<T> stream(File file) throws IOException {

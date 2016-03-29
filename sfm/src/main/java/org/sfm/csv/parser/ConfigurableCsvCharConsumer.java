@@ -30,7 +30,7 @@ public final class ConfigurableCsvCharConsumer extends AbstractCsvCharConsumer {
 	}
 
 	@Override
-	public boolean nextRow(CellConsumer cellConsumer) {
+	public boolean consumeToNextRow(CellConsumer cellConsumer) {
 
 		int bufferLength = csvBuffer.getBufferSize();
 		for(int index = _currentIndex; index  < bufferLength; index++) {

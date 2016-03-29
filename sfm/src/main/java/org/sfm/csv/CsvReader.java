@@ -8,7 +8,6 @@ import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.util.Iterator;
 //IFJAVA8_START
 import java.util.Spliterator;
@@ -36,11 +35,9 @@ public final class CsvReader implements Iterable<String[]> {
 		}
 	};
 
-	private final Reader reader;
 	private final CsvCharConsumer consumer;
 
-	public CsvReader(Reader reader, CsvCharConsumer charConsumer) {
-		this.reader = reader;
+	public CsvReader(CsvCharConsumer charConsumer) {
 		this.consumer = charConsumer;
 	}
 
@@ -54,8 +51,8 @@ public final class CsvReader implements Iterable<String[]> {
 	public <CC extends CellConsumer> CC parseAll(CC cellConsumer)
 			throws IOException {
 		do {
-			consumer.parseAll(cellConsumer);
-		} while (consumer.fillBuffer(reader));
+			consumer.consumeAllBuffer(cellConsumer);
+		} while (consumer.refillBuffer());
 		consumer.finish(cellConsumer);
 
 		return cellConsumer;
@@ -71,10 +68,10 @@ public final class CsvReader implements Iterable<String[]> {
 			throws IOException {
 
 		do {
-			if (consumer.nextRow(cellConsumer)) {
+			if (consumer.consumeToNextRow(cellConsumer)) {
 				return true;
 			}
-		} while (consumer.fillBuffer(reader));
+		} while (consumer.refillBuffer());
 
 		consumer.finish(cellConsumer);
 		return false;

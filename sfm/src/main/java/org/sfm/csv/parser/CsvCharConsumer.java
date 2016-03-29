@@ -3,14 +3,14 @@ package org.sfm.csv.parser;
 import java.io.IOException;
 import java.io.Reader;
 
-public interface CsvCharConsumer {
-    void parseAll(CellConsumer cellConsumer);
+public abstract class CsvCharConsumer {
+    public abstract void consumeAllBuffer(CellConsumer cellConsumer);
 
-    boolean nextRow(CellConsumer cellConsumer);
+    public abstract boolean consumeToNextRow(CellConsumer cellConsumer);
 
-    void finish(CellConsumer cellConsumer);
+    public abstract void finish(CellConsumer cellConsumer);
 
-    boolean fillBuffer(Reader reader) throws IOException;
+    public abstract boolean refillBuffer() throws IOException;
 
-    char quoteChar();
+    public abstract char quoteChar();
 }

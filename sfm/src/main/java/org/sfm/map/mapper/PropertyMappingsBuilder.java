@@ -1,5 +1,6 @@
 package org.sfm.map.mapper;
 
+import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.FieldKey;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
@@ -169,5 +170,16 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 			}
 		}
 		return i;
+	}
+
+	public boolean hasKey(Predicate<? super K> predicate) {
+		for (PropertyMapping<T, ?, K, D> propMapping : properties) {
+			if (propMapping != null && predicate.test(propMapping.getColumnKey())) {
+				return true;
+			}
+
+		}
+
+		return false;
 	}
 }

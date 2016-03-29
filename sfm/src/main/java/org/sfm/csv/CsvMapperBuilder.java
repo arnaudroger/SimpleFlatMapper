@@ -7,12 +7,17 @@ import org.sfm.csv.mapper.CsvMapperCellHandlerFactory;
 import org.sfm.csv.mapper.DelayedCellSetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
+import org.sfm.map.column.DefaultValueProperty;
 import org.sfm.map.mapper.*;
 import org.sfm.reflect.*;
 import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple3;
+import org.sfm.utils.BiConsumer;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
+import org.sfm.utils.Named;
+import org.sfm.utils.Predicate;
+import org.sfm.utils.RowHandler;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -118,6 +123,24 @@ public class CsvMapperBuilder<T> {
 	}
 
 	public final CsvMapper<T> mapper() {
+
+		mapperConfig
+				.columnDefinitions()
+				.forEach(
+						DefaultValueProperty.class,
+						new BiConsumer<Predicate<? super CsvColumnKey>, DefaultValueProperty>() {
+							@Override
+							public void accept(Predicate<? super CsvColumnKey> predicate, DefaultValueProperty columnProperty) {
+								if (propertyMappingsBuilder.hasKey(predicate)){
+									return;
+								}
+								if (predicate instanceof Named) {
+									String name = ((Named)predicate).getName();
+									addMapping(name, columnProperty);
+								}
+							}
+						});
+
         ParsingContextFactoryBuilder parsingContextFactoryBuilder = new ParsingContextFactoryBuilder(propertyMappingsBuilder.maxIndex() + 1);
 
         Tuple3<Map<Parameter, Getter<? super CsvMapperCellHandler<T>, ?>>, Integer, Boolean> constructorParams = buildConstructorParametersDelayedCellSetter();

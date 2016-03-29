@@ -1,9 +1,12 @@
 package org.sfm.map.mapper;
 
 
+import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.FieldKey;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.tuples.Tuple2;
+import org.sfm.utils.BiConsumer;
+import org.sfm.utils.ConstantUnaryFactory;
 import org.sfm.utils.Predicate;
 import org.sfm.utils.UnaryFactory;
 
@@ -64,5 +67,25 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
 
     public List<Tuple2<Predicate<? super K>, UnaryFactory<? super K, ColumnProperty>>> getProperties() {
         return properties;
+    }
+
+    @Override
+    public <CP extends ColumnProperty, BC extends BiConsumer<Predicate<? super K>, CP>> BC forEach(Class<CP> propertyType, BC consumer) {
+        for(Tuple2<Predicate<? super K>, C> def : definitions) {
+            final CP cp = def.getElement1().lookFor(propertyType);
+            if (cp != null) {
+                consumer.accept(def.getElement0(), cp);
+            }
+        }
+        for (Tuple2<Predicate<? super K>, UnaryFactory<? super K, ColumnProperty>> tuple2 : properties) {
+            final UnaryFactory<? super K, ColumnProperty> unaryFactory = tuple2.getElement1();
+            if (unaryFactory instanceof ConstantUnaryFactory) {
+                final ColumnProperty columnProperty = unaryFactory.newInstance(null);
+                if (propertyType.isInstance(columnProperty)) {
+                    consumer.accept(tuple2.getElement0(), propertyType.cast(columnProperty));
+                }
+            }
+        }
+        return consumer;
     }
 }

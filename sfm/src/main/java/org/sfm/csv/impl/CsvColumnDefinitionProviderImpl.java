@@ -6,6 +6,7 @@ import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.mapper.AbstractColumnDefinitionProvider;
 import org.sfm.tuples.Tuple2;
+import org.sfm.utils.BiConsumer;
 import org.sfm.utils.Predicate;
 import org.sfm.utils.UnaryFactory;
 
@@ -29,7 +30,4 @@ public class CsvColumnDefinitionProviderImpl extends AbstractColumnDefinitionPro
     protected CsvColumnDefinition identity() {
         return CsvColumnDefinition.identity();
     }
-
-
-
 }

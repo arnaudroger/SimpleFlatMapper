@@ -12,6 +12,7 @@ import org.sfm.csv.mapper.CsvMapperCellHandler;
 import org.sfm.csv.mapper.DelayedCellSetterFactory;
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.MapperBuildingException;
+import org.sfm.map.column.DefaultValueProperty;
 import org.sfm.reflect.*;
 import org.sfm.reflect.impl.NullSetter;
 import org.sfm.reflect.meta.ClassMeta;
@@ -268,11 +269,21 @@ public final class CellSetterFactory {
 
 		CellValueReader<? extends P> reader = getReader(prop, index, columnDefinition, parsingContextFactoryBuilder);
 
+		DelayedCellSetterFactory<T, P> factory;
+
 		if (propertyClass.isPrimitive()) {
-			return getPrimitiveDelayedCellSetter(propertyClass, reader, getSetter(prop));
+			factory = getPrimitiveDelayedCellSetter(propertyClass, reader, getSetter(prop));
 		} else {
-			return new DelayedCellSetterFactoryImpl<T, P>(reader, getSetter(prop));
+			factory = new DelayedCellSetterFactoryImpl<T, P>(reader, getSetter(prop));
 		}
+
+		final DefaultValueProperty defaultValueProperty = columnDefinition.lookFor(DefaultValueProperty.class);
+
+		if (defaultValueProperty != null) {
+			factory = new DefaultValueDelayedCallSetterFactory<T, P>(factory, defaultValueProperty);
+		}
+
+		return factory;
 
 
 	}

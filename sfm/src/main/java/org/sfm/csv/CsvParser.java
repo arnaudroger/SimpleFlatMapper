@@ -91,75 +91,75 @@ public final class CsvParser {
 	 * @return the DSL object
 	 */
 	public static DSL separator(char c) {
-		return schema().separator(c);
+		return dsl().separator(c);
 	}
 
 	public static DSL bufferSize(int size) {
-		return schema().bufferSize(size);
+		return dsl().bufferSize(size);
 	}
 
 	public static DSL maxBufferSize(int size) {
-		return schema().maxBufferSize(size);
+		return dsl().maxBufferSize(size);
 	}
 
 	public static DSL quote(char c) {
-		return schema().quote(c);
+		return dsl().quote(c);
 	}
 
 	public static DSL skip(int skip) {
-		return schema().skip(skip);
+		return dsl().skip(skip);
 	}
 
-	private static DSL schema() {
+	public static DSL dsl() {
 		return new DSL();
 	}
 
 	public static DSL limit(int limit) {
-		return schema().limit(limit);
+		return dsl().limit(limit);
 	}
 
 	public static <T> MapToDSL<T> mapTo(Type type) {
-		return schema().mapTo(type);
+		return dsl().mapTo(type);
 	}
 
 	public static <T> MapToDSL<T> mapTo(Class<T> type) {
-		return schema().mapTo(type);
+		return dsl().mapTo(type);
 	}
 
     public static <T> MapToDSL<T> mapTo(TypeReference<T> type) {
-        return schema().mapTo(type);
+        return dsl().mapTo(type);
     }
 
     public static <T1, T2> MapToDSL<Tuple2<T1, T2>> mapTo(Class<T1> class1, Class<T2> class2) {
-		return  schema().mapTo(class1, class2);
+		return  dsl().mapTo(class1, class2);
 	}
 
 	public static <T1, T2, T3> MapToDSL<Tuple3<T1, T2, T3>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3) {
-		return  schema().mapTo(class1, class2, class3);
+		return  dsl().mapTo(class1, class2, class3);
 	}
 
 	public static <T1, T2, T3, T4> MapToDSL<Tuple4<T1, T2, T3, T4>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4) {
-		return  schema().mapTo(class1, class2, class3, class4);
+		return  dsl().mapTo(class1, class2, class3, class4);
 	}
 
 	public static <T1, T2, T3, T4, T5> MapToDSL<Tuple5<T1, T2, T3, T4, T5>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5) {
-		return  schema().mapTo(class1, class2, class3, class4, class5);
+		return  dsl().mapTo(class1, class2, class3, class4, class5);
 	}
 
     public static <T1, T2, T3, T4, T5, T6> MapToDSL<Tuple6<T1, T2, T3, T4, T5, T6>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5, Class<T6> class6) {
-        return  schema().mapTo(class1, class2, class3, class4, class5, class6);
+        return  dsl().mapTo(class1, class2, class3, class4, class5, class6);
     }
 
     public static <T1, T2, T3, T4, T5, T6, T7> MapToDSL<Tuple7<T1, T2, T3, T4, T5, T6, T7>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5, Class<T6> class6, Class<T7> class7) {
-        return  schema().mapTo(class1, class2, class3, class4, class5, class6, class7);
+        return  dsl().mapTo(class1, class2, class3, class4, class5, class6, class7);
     }
 
     public static <T1, T2, T3, T4, T5, T6, T7, T8> MapToDSL<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5, Class<T6> class6, Class<T7> class7, Class<T8> class8) {
-        return  schema().mapTo(class1, class2, class3, class4, class5, class6, class7, class8);
+        return  dsl().mapTo(class1, class2, class3, class4, class5, class6, class7, class8);
     }
 
     public static <T> MapWithDSL<T> mapWith(CsvMapper<T> mapper) {
-		return schema().mapWith(mapper);
+		return dsl().mapWith(mapper);
 	}
 
 	/**
@@ -168,54 +168,54 @@ public final class CsvParser {
      * @throws java.io.IOException if an error occurs reading the data
 	 */
 	public static CsvReader reader(Reader reader) throws IOException {
-		return schema().reader(reader);
+		return dsl().reader(reader);
 	}
 
 	public static Iterator<String[]> iterator(Reader reader) throws IOException {
-		return schema().iterator(reader);
+		return dsl().iterator(reader);
 	}
 
 	public static <CC extends CellConsumer> CC parse(Reader reader, CC cellConsumer) throws IOException {
-		return schema().parse(reader, cellConsumer);
+		return dsl().parse(reader, cellConsumer);
 	}
 
     public static CsvReader reader(CharSequence content) throws IOException {
-        return schema().reader(content);
+        return dsl().reader(content);
     }
 
     public static Iterator<String[]> iterator(CharSequence content) throws IOException {
-        return schema().iterator(content);
+        return dsl().iterator(content);
     }
 
     public static <CC extends CellConsumer> CC parse(CharSequence content, CC cellConsumer) throws IOException {
-        return schema().parse(content, cellConsumer);
+        return dsl().parse(content, cellConsumer);
     }
 
 
     public static CloseableCsvReader reader(File file) throws IOException {
-		return schema().reader(file);
+		return dsl().reader(file);
 	}
 
 	public static CloseableIterator<String[]> iterator(File file) throws IOException {
-		return schema().iterator(file);
+		return dsl().iterator(file);
 	}
 
 
 	public static <CC extends CellConsumer> CC parse(File file, CC cellConsumer) throws IOException {
-		return schema().parse(file, cellConsumer);
+		return dsl().parse(file, cellConsumer);
 	}
 
 	//IFJAVA8_START
 	public static Stream<String[]> stream(Reader r) throws IOException {
-		return schema().stream(r);
+		return dsl().stream(r);
 	}
 
 	public static Stream<String[]> stream(File file) throws IOException {
-		return schema().stream(file);
+		return dsl().stream(file);
 	}
 
     public static Stream<String[]> stream(String content) throws IOException {
-        return schema().stream(content);
+        return dsl().stream(content);
     }
 	//IFJAVA8_END
 

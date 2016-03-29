@@ -1,18 +1,25 @@
 package org.sfm.csv.impl.cellreader;
 
 import org.sfm.csv.ParsingContext;
+import org.sfm.csv.impl.primitive.IntDelayedCellSetter;
 import org.sfm.csv.mapper.DelayedCellSetter;
 import org.sfm.map.column.DefaultValueProperty;
+import org.sfm.reflect.Setter;
 
-public class DefaultValueDelayedCellSetter<T, P> implements DelayedCellSetter<T, P> {
+public class DefaultValueDelayedCellSetter<T, P>
+        implements DelayedCellSetter<T, P> {
     private final DelayedCellSetter<T, P> delegate;
     private final DefaultValueProperty defaultValueProperty;
+    private final Setter<T, ? super P> setter;
 
     private boolean isSet = false;
 
-    public DefaultValueDelayedCellSetter(DelayedCellSetter<T, P> delegate, DefaultValueProperty defaultValueProperty) {
+    public DefaultValueDelayedCellSetter(DelayedCellSetter<T, P> delegate,
+                                         DefaultValueProperty defaultValueProperty,
+                                         Setter<T, ? super P> setter) {
         this.delegate = delegate;
         this.defaultValueProperty = defaultValueProperty;
+        this.setter = setter;
     }
 
     @Override
@@ -45,7 +52,8 @@ public class DefaultValueDelayedCellSetter<T, P> implements DelayedCellSetter<T,
 
     @Override
     public void set(T t) throws Exception {
-        delegate.set(t);
+        P val = consumeValue();
+        setter.set(t, val);
     }
 
     @Override

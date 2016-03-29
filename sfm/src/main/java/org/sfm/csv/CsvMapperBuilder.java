@@ -136,7 +136,9 @@ public class CsvMapperBuilder<T> {
 								}
 								if (predicate instanceof Named) {
 									String name = ((Named)predicate).getName();
-									addMapping(name, columnProperty);
+									final CsvColumnDefinition columnDefinition = CsvColumnDefinition.identity().add(columnProperty);
+									CsvColumnKey key = new CsvColumnKey(name, propertyMappingsBuilder.size());
+									propertyMappingsBuilder.addPropertyIfPresent(key, columnDefinition);
 								}
 							}
 						});
@@ -219,11 +221,10 @@ public class CsvMapperBuilder<T> {
 					propertyMappingsBuilder,
 					params,
 					new GetterFactory<CsvMapperCellHandler<T>, CsvColumnKey>() {
-						final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory, mapperConfig.mapperBuilderErrorHandler());
 
 						@Override
 						public <P> Getter<CsvMapperCellHandler<T>, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
-							return cellSetterFactory.newDelayedGetter(key, target);
+							return newDelayedGetter(key, target, columnDefinition);
 						}
 					});
 		} catch(Exception e) {
@@ -460,7 +461,7 @@ public class CsvMapperBuilder<T> {
             final CsvColumnKey key = propMapping.getColumnKey();
             if (meta.isConstructorProperty()) {
                 delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
-                Getter<CsvMapperCellHandler<T>, ?> delayedGetter = cellSetterFactory.newDelayedGetter(key, meta.getPropertyType());
+                Getter<CsvMapperCellHandler<T>, ?> delayedGetter = newDelayedGetter(key, meta.getPropertyType(), propMapping.getColumnDefinition());
                 constructorInjections.put(((ConstructorPropertyMeta<T, ?>) meta).getParameter(), delayedGetter);
             } else if (meta instanceof DirectClassMeta.DirectPropertyMeta) {
                 delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
@@ -477,9 +478,22 @@ public class CsvMapperBuilder<T> {
 						|| subMeta.getSubProperty() instanceof DirectClassMeta.DirectPropertyMeta) {
                     delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
                 }
-            } else if (propMapping.getColumnDefinition().isKey() && propMapping.getColumnDefinition().keyAppliesTo().test(propMapping.getPropertyMeta())) {
+            } else if ((propMapping.getColumnDefinition().isKey()
+					&& propMapping.getColumnDefinition().keyAppliesTo().test(propMapping.getPropertyMeta()))
+					|| propMapping.getColumnDefinition().has(DefaultValueProperty.class))
+			{
                 delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
             }
         }
     }
+
+	private <P> Getter<CsvMapperCellHandler<T>, P> newDelayedGetter(CsvColumnKey key, Type propertyType, ColumnDefinition<?, ?> columnDefinition) {
+		final CellSetterFactory cellSetterFactory = new CellSetterFactory(cellValueReaderFactory, mapperConfig.mapperBuilderErrorHandler());
+
+		if (columnDefinition.has(DefaultValueProperty.class)) {
+			return (Getter)new DelayedGetter<P>(key.getIndex());
+		} else {
+			return cellSetterFactory.newDelayedGetter(key, target);
+		}
+	}
 }

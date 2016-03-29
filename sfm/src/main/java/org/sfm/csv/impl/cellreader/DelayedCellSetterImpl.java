@@ -31,8 +31,7 @@ public class DelayedCellSetterImpl<T, P> implements DelayedCellSetter<T, P> {
 
     @Override
 	public void set(T t) throws Exception {
-		P val = value;
-		value = null;
+		P val = consumeValue();
 		setter.set(t, val);
 	}
 

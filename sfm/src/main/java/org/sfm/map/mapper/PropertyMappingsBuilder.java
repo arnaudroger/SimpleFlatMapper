@@ -40,7 +40,6 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	}
 
 	
-	@SuppressWarnings("unchecked")
     public <P> PropertyMeta<T, P> addProperty(final K key, final D columnDefinition) {
 		
 		if (!modifiable) throw new IllegalStateException("Builder not modifiable");
@@ -50,16 +49,27 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
             return null;
         }
 
-		@SuppressWarnings("unchecked")
-		final PropertyMeta<T, P> prop = (PropertyMeta<T, P>) propertyFinder.findProperty(propertyNameMatcherFactory.newInstance(key));
+		final PropertyMeta<T, P> prop = addPropertyIfPresent(key, columnDefinition);
 
-		if (prop == null || !isValidMeta.test(prop)) {
+		if (prop == null) {
 			mapperBuilderErrorHandler.propertyNotFound(classMeta.getType(), key.getName());
-			properties.add(null);
             return null;
 		} else {
-			addProperty(key, columnDefinition, prop);
             return prop;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <P> PropertyMeta<T, P> addPropertyIfPresent(final K key, final D columnDefinition) {
+		final PropertyMeta<T, P> prop =
+				(PropertyMeta<T, P>) propertyFinder.findProperty(propertyNameMatcherFactory.newInstance(key));
+
+		if (prop == null || !isValidMeta.test(prop)) {
+			properties.add(null);
+			return null;
+		} else {
+			addProperty(key, columnDefinition, prop);
+			return prop;
 		}
 	}
 
@@ -177,7 +187,6 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 			if (propMapping != null && predicate.test(propMapping.getColumnKey())) {
 				return true;
 			}
-
 		}
 
 		return false;

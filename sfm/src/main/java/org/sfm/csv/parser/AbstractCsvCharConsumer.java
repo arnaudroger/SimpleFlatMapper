@@ -89,8 +89,9 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 		int start = csvBuffer.getMark();
 		int length = currentIndex - start;
 
-		if (charBuffer[start] == quoteChar()) {
-			length = unescape(charBuffer, start, length);
+		final char quoteChar = quoteChar();
+		if (charBuffer[start] == quoteChar) {
+			length = unescape(charBuffer, start, length, quoteChar);
 			start++;
 		}
 
@@ -121,9 +122,7 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 		return (bufferIndex) <  (csvBuffer.getMark() + 1)  ;
 	}
 
-	protected int unescape(final char[] chars, final int offset, final int length) {
-		final char quoteChar = quoteChar();
-
+	protected int unescape(final char[] chars, final int offset, final int length, char quoteChar) {
 		int start = offset + 1;
 		int shiftedIndex = start;
 		boolean notEscaped = true;

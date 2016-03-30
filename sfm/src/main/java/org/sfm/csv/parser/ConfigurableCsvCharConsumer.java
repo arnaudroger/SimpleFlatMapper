@@ -61,7 +61,7 @@ public final class ConfigurableCsvCharConsumer extends AbstractCsvCharConsumer {
 	}
 
 	@Override
-	public char quoteChar() {
+	public final char quoteChar() {
 		return quoteChar;
 	}
 

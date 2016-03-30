@@ -67,7 +67,7 @@ public final class StandardCsvCharConsumer extends AbstractCsvCharConsumer {
 	}
 
 	@Override
-	public char quoteChar() {
+	public final char quoteChar() {
 		return '"';
 	}
 

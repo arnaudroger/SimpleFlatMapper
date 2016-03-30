@@ -82,8 +82,9 @@ public final class ConfigurableTrimCsvCharConsumer extends AbstractCsvCharConsum
 		int start = csvBuffer.getMark();
 		int length = currentIndex - start;
 
-		if (charBuffer[start] == quoteChar()) {
-			length = unescape(charBuffer, start, length);
+		final char quoteChar = quoteChar();
+		if (charBuffer[start] == quoteChar) {
+			length = unescape(charBuffer, start, length, quoteChar);
 			start++;
 		} else {
 			int newStart = firstNonSpaceChar(charBuffer, start, length);
@@ -112,9 +113,7 @@ public final class ConfigurableTrimCsvCharConsumer extends AbstractCsvCharConsum
 		return start + length;
 	}
 
-	protected int unescape(final char[] chars, final int offset, final int length) {
-		final char quoteChar = quoteChar();
-
+	protected int unescape(final char[] chars, final int offset, final int length, char quoteChar) {
 		int start = offset + 1;
 		int shiftedIndex = start;
 		boolean notEscaped = true;
@@ -142,7 +141,7 @@ public final class ConfigurableTrimCsvCharConsumer extends AbstractCsvCharConsum
 	}
 
 	@Override
-	public char quoteChar() {
+	public final char quoteChar() {
 		return quoteChar;
 	}
 

@@ -3,16 +3,17 @@ package org.sfm.csv.parser;
 import java.io.IOException;
 
 public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
-	private static final int IN_QUOTE = 4;
-	private static final int IN_CR = 2;
-	private static final int QUOTE = 1;
-	private static final int NONE = 0;
-	private static final int TURN_OFF_IN_CR_MASK = ~IN_CR;
-	private static final int ALL_QUOTES = QUOTE | IN_QUOTE;
+	protected static final int HAS_CONTENT = 8;
+	protected static final int IN_QUOTE = 4;
+	protected static final int IN_CR = 2;
+	protected static final int QUOTE = 1;
+	protected static final int NONE = 0;
+	protected static final int TURN_OFF_IN_CR_MASK = ~IN_CR;
+	protected static final int ALL_QUOTES = QUOTE | IN_QUOTE;
 	protected final CharBuffer csvBuffer;
 
 	protected int _currentIndex;
-	private int currentState = NONE;
+	protected int currentState = NONE;
 
 	public AbstractCsvCharConsumer(CharBuffer csvBuffer) {
 		this.csvBuffer = csvBuffer;
@@ -75,7 +76,7 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 		cellConsumer.endOfRow();
 	}
 
-	protected final void quote(int currentIndex) {
+	protected void quote(int currentIndex) {
 		if (isAllConsumedFromMark(currentIndex)) {
 			currentState = IN_QUOTE;
 		} else {
@@ -83,7 +84,7 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 		}
 	}
 
-	private void newCell(int currentIndex, CellConsumer cellConsumer) {
+	protected void newCell(int currentIndex, CellConsumer cellConsumer) {
 		char[] charBuffer = csvBuffer.getCharBuffer();
 		int start = csvBuffer.getMark();
 		int length = currentIndex - start;
@@ -116,11 +117,11 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 		return csvBuffer.fillBuffer();
 	}
 
-	private boolean isAllConsumedFromMark(int bufferIndex) {
+	protected final boolean isAllConsumedFromMark(int bufferIndex) {
 		return (bufferIndex) <  (csvBuffer.getMark() + 1)  ;
 	}
 
-	private int unescape(final char[] chars, final int offset, final int length) {
+	protected int unescape(final char[] chars, final int offset, final int length) {
 		final char quoteChar = quoteChar();
 
 		int start = offset + 1;

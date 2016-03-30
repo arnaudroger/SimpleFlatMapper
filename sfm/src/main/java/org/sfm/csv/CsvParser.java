@@ -232,6 +232,7 @@ public final class CsvParser {
         private final int skip;
         private final int limit;
 		private final int maxBufferSize;
+        private final boolean trimSpaces;
 
 		private DSL() {
 			separatorChar = ',';
@@ -240,16 +241,18 @@ public final class CsvParser {
 			skip = 0;
 			limit = -1;
 			maxBufferSize = DEFAULT_MAX_BUFFER_SIZE_8M;
+            trimSpaces = false;
 		}
 
-		public DSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize) {
+		public DSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, boolean trimSpaces) {
 			this.separatorChar = separatorChar;
 			this.quoteChar = quoteChar;
 			this.bufferSize = bufferSize;
 			this.skip = skip;
 			this.limit = limit;
 			this.maxBufferSize = maxBufferSize;
-		}
+            this.trimSpaces = trimSpaces;
+        }
 
 		/**
          * set the separator character. the default value is ','.
@@ -257,7 +260,7 @@ public final class CsvParser {
          * @return this
          */
         public DSL separator(char c) {
-			return new DSL(c, quoteChar, bufferSize, skip, limit, maxBufferSize);
+			return new DSL(c, quoteChar, bufferSize, skip, limit, maxBufferSize, trimSpaces);
         }
 
         /**
@@ -266,7 +269,7 @@ public final class CsvParser {
          * @return this
          */
         public DSL quote(char c) {
-			return new DSL(separatorChar, c, bufferSize, skip, limit, maxBufferSize);
+			return new DSL(separatorChar, c, bufferSize, skip, limit, maxBufferSize, trimSpaces);
         }
 
         /**
@@ -275,7 +278,7 @@ public final class CsvParser {
          * @return this
          */
         public DSL bufferSize(int size) {
-			return new DSL(separatorChar, quoteChar, size, skip, limit, maxBufferSize);
+			return new DSL(separatorChar, quoteChar, size, skip, limit, maxBufferSize, trimSpaces);
         }
 
         /**
@@ -284,7 +287,7 @@ public final class CsvParser {
          * @return this
          */
         public DSL skip(int skip) {
-			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize);
+			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, trimSpaces);
         }
 
         /**
@@ -293,7 +296,7 @@ public final class CsvParser {
          * @return this
          */
         public DSL limit(int limit) {
-			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize);
+			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, trimSpaces);
         }
 
 		/**
@@ -302,8 +305,12 @@ public final class CsvParser {
 		 * @return this
 		 */
 		public DSL maxBufferSize(int maxBufferSize) {
-			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize);
+			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, trimSpaces);
 		}
+
+        public DSL trimSpaces() {
+            return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, true);
+        }
 
         /**
          * Parse the content from the reader as a csv and call back the cellConsumer with the cell values.
@@ -452,10 +459,14 @@ public final class CsvParser {
 
         private CsvCharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
 
-            if (separatorChar == ',' && quoteChar == '"') {
+            if (separatorChar == ',' && quoteChar == '"' && !trimSpaces) {
                 return new StandardCsvCharConsumer(charBuffer);
             } else {
-                return new ConfigurableCsvCharConsumer(charBuffer, separatorChar, quoteChar);
+                if (!trimSpaces) {
+                    return new ConfigurableCsvCharConsumer(charBuffer, separatorChar, quoteChar);
+                } else {
+                    return new ConfigurableTrimCsvCharConsumer(charBuffer, separatorChar, quoteChar);
+                }
             }
 
         }
@@ -483,7 +494,8 @@ public final class CsvParser {
 		public char quote() {
 			return quoteChar;
 		}
-	}
+
+    }
 
     /**
      * DSL for csv mapping to a dynamic jdbcMapper.

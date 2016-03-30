@@ -780,4 +780,22 @@ public class CsvParserTest {
 		strings = it.next();
 		assertArrayEquals(new String[]{"\""}, strings);
 	}
+
+
+	@Test
+	public void testTrimSpaceToQuote() throws IOException {
+		final String[] strings = CsvParser.dsl().trimSpaces().iterator("value, \"val\" ").next();
+		assertArrayEquals(new String[] {"value", "val"}, strings);
+	}
+
+	@Test
+	public void testTrimSpaceToQuoteQuoteProtectedSpaced() throws IOException {
+		final String[] strings = CsvParser.dsl().trimSpaces().iterator("value, \"  \"  ,   ").next();
+		assertArrayEquals(new String[] {"value", "  ", ""}, strings);
+	}
+	@Test
+	public void testTrimSpaceOnNoQuote() throws IOException {
+		final String[] strings = CsvParser.dsl().trimSpaces().iterator("value, val  ").next();
+		assertArrayEquals(new String[] {"value", "val"}, strings);
+	}
 }

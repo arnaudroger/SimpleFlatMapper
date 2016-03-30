@@ -384,6 +384,15 @@ public class CsvParserTest {
 				.separator(separator)
 				.quote(quote);
 
+		CsvParser.DSL dslTrim = dsl.trimSpaces();
+
+		testDsl(expectations, separator, quote, cr, dsl);
+		testDsl(expectations, separator, quote, cr, dslTrim);
+
+
+	}
+
+	private void testDsl(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
 		// reader call
 		testParseAll(expectations, separator, quote, cr, dsl);
 
@@ -405,7 +414,6 @@ public class CsvParserTest {
 		testParse(expectations, separator, quote, cr, dsl);
 
 		testParseWithLimit(expectations, separator, quote, cr, dsl);
-
 	}
 
 	private void testParse(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
@@ -790,12 +798,20 @@ public class CsvParserTest {
 
 	@Test
 	public void testTrimSpaceToQuoteQuoteProtectedSpaced() throws IOException {
-		final String[] strings = CsvParser.dsl().trimSpaces().iterator("value, \"  \"  ,   ").next();
-		assertArrayEquals(new String[] {"value", "  ", ""}, strings);
+		final String[] strings = CsvParser.dsl().trimSpaces().iterator("value, \"  \"  , \"a\"   ,   \"\",\"a\"    ").next();
+		assertArrayEquals(new String[] {"value", "  ", "a", "", "a"}, strings);
 	}
 	@Test
 	public void testTrimSpaceOnNoQuote() throws IOException {
-		final String[] strings = CsvParser.dsl().trimSpaces().iterator("value, val  ").next();
-		assertArrayEquals(new String[] {"value", "val"}, strings);
+		final CsvParser.DSL dsl = CsvParser.dsl().trimSpaces();
+		assertArrayEquals(new String[] {"value", "val", "", ""}, dsl.iterator("value, val  ,, ").next());
+		assertArrayEquals(new String[] {"value", "", "v"}, dsl.iterator("value,   ,v  ").next());
+	}
+
+
+	@Test
+	public void testTrimSpaceOnEscapedComa() throws IOException {
+		final String[] strings = CsvParser.dsl().trimSpaces().iterator("value,\" my val, but oy\"").next();
+		assertArrayEquals(new String[] {"value", " my val, but oy"}, strings);
 	}
 }

@@ -46,12 +46,12 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 	}
 
 	private boolean isInQuote() {
-		return currentState == IN_QUOTE;
+		return (currentState &  IN_QUOTE) != 0;
 	}
 
 	protected final boolean handleEndOfLineLF(int currentIndex, CellConsumer cellConsumer) {
 		if (!isInQuote()) {
-			if (currentState != IN_CR) {
+			if ((currentState & IN_CR) == 0) {
 				endOfRow(currentIndex, cellConsumer);
 				return true;
 			} else {
@@ -65,7 +65,7 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 	protected final boolean handleEndOfLineCR(int currentIndex, CellConsumer cellConsumer) {
 		if (!isInQuote()) {
 			endOfRow(currentIndex, cellConsumer);
-			currentState = IN_CR;
+			currentState |= IN_CR;
 			return true;
 		}
 		return false;
@@ -78,7 +78,7 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 
 	protected void quote(int currentIndex) {
 		if (isAllConsumedFromMark(currentIndex)) {
-			currentState = IN_QUOTE;
+			currentState |= IN_QUOTE;
 		} else {
 			currentState ^= ALL_QUOTES;
 		}

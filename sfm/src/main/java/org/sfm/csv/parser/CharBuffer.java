@@ -28,9 +28,6 @@ public abstract class CharBuffer {
 	public char[] getCharBuffer() {
 		return buffer;
 	}
-	public char getChar(int bufferIndex) {
-		return buffer[bufferIndex];
-	}
 	public int getBufferSize() {
 		return bufferSize;
 	}

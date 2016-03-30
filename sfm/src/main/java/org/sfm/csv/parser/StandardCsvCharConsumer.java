@@ -33,9 +33,10 @@ public final class StandardCsvCharConsumer extends AbstractCsvCharConsumer {
 	public boolean consumeToNextRow(CellConsumer cellConsumer) {
 
 		int bufferLength = csvBuffer.getBufferSize();
+		char[] buffer = csvBuffer.getCharBuffer();
 		for(int index = _currentIndex; index  < bufferLength; index++) {
 
-			char character = csvBuffer.getChar(index);
+			char character = buffer[index];
 			switch(character) {
 				case ',':
 					newCellIfNotInQuote(index, cellConsumer);

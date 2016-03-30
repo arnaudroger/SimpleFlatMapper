@@ -32,12 +32,12 @@
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm</artifactId>
-			<version>5.0.4</version>
+			<version>5.1</version>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.9.1</version>
+			<version>2.9.3</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -181,7 +181,7 @@
 				<dependency>
 					<groupId>org.jooq</groupId>
 					<artifactId>jool</artifactId>
-					<version>0.9.8</version>
+					<version>0.9.10</version>
 					<optional>true</optional>
 				</dependency>
 				<dependency>

@@ -34,9 +34,9 @@ public final class ConfigurableTrimCsvCharConsumer extends AbstractCsvCharConsum
 
 	protected final void quote(int currentIndex) {
 		if (isAllConsumedFromMark(currentIndex)) {
-			currentState = IN_QUOTE;
+			currentState |= IN_QUOTE;
 		} else if ((currentState & (HAS_CONTENT | ALL_QUOTES)) == 0) {
-			currentState = IN_QUOTE;
+			currentState |= IN_QUOTE;
 			csvBuffer.mark(currentIndex);
 		} else {
 			currentState ^= ALL_QUOTES;
@@ -47,9 +47,10 @@ public final class ConfigurableTrimCsvCharConsumer extends AbstractCsvCharConsum
 	public boolean consumeToNextRow(CellConsumer cellConsumer) {
 
 		int bufferLength = csvBuffer.getBufferSize();
+		char[] buffer = csvBuffer.getCharBuffer();
 		for(int index = _currentIndex; index  < bufferLength; index++) {
 
-			char character = csvBuffer.getChar(index);
+			char character = buffer[index];
 
 			if (character == separatorChar) {
 				newCellIfNotInQuote(index, cellConsumer);
@@ -108,7 +109,7 @@ public final class ConfigurableTrimCsvCharConsumer extends AbstractCsvCharConsum
 		for(int i = start; i < start + length; i++) {
 			if (charBuffer[i] != ' ') return i;
 		}
-		return start + length - 1;
+		return start + length;
 	}
 
 	protected int unescape(final char[] chars, final int offset, final int length) {

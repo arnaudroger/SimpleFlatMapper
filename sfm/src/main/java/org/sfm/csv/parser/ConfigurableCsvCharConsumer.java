@@ -33,9 +33,9 @@ public final class ConfigurableCsvCharConsumer extends AbstractCsvCharConsumer {
 	public boolean consumeToNextRow(CellConsumer cellConsumer) {
 
 		int bufferLength = csvBuffer.getBufferSize();
+		char[] buffer = csvBuffer.getCharBuffer();
 		for(int index = _currentIndex; index  < bufferLength; index++) {
-
-			char character = csvBuffer.getChar(index);
+			char character = buffer[index];
 
 			if (character == separatorChar) {
 				newCellIfNotInQuote(index, cellConsumer);

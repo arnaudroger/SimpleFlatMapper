@@ -1,5 +1,6 @@
 package org.sfm.csv;
 
+import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.map.column.DefaultValueProperty;
@@ -24,8 +25,8 @@ public class CsvMapperFactoryDefaultValueTest {
 	public void setUp() {
 		csvMapperFactory = CsvMapperFactory
 				.newInstance()
-				.addColumnProperty("element1", new DefaultValueProperty("defaultValue"))
-				.addColumnProperty("element2", new DefaultValueProperty(123))
+				.addColumnProperty("element1", new DefaultValueProperty<String>("defaultValue"))
+				.addColumnProperty("element2", new DefaultValueProperty<Integer>(123))
 				.failOnAsm(true);
 		csvMapper = csvMapperFactory.newMapper(new TypeReference<Tuple2<String, String>>() { });
 		csvMapperWithGetterSetter = csvMapperFactory.newMapper(MyObject.class);
@@ -113,6 +114,22 @@ public class CsvMapperFactoryDefaultValueTest {
 		assertEquals("v0", value.getElement0());
 		assertEquals(123, value.getElement2());
 	}
+
+	@Test
+	public void testDefaultValueJodaDateTime() throws IOException {
+		LocalDateTime localDateTime = LocalDateTime.now();
+		final Tuple2<String, LocalDateTime> value =
+				CsvMapperFactory
+						.newInstance()
+						.addColumnProperty("element1", new DefaultValueProperty<LocalDateTime>(localDateTime))
+						.newMapper(new TypeReference<Tuple2<String, LocalDateTime>>() {
+						})
+						.iterator(CsvParser.reader("element0\nv0"))
+						.next();
+		assertEquals("v0", value.getElement0());
+		assertEquals(localDateTime, value.getElement1());
+	}
+
 
 	public static class MyObjectPrimitiveGS {
 		private String element0;

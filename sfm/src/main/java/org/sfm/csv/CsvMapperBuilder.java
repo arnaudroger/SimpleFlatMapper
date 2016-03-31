@@ -1,5 +1,6 @@
 package org.sfm.csv;
 
+import org.sfm.csv.column.CustomReaderProperty;
 import org.sfm.csv.impl.*;
 import org.sfm.csv.mapper.CellSetter;
 import org.sfm.csv.mapper.CsvMapperCellHandler;
@@ -27,6 +28,12 @@ import java.util.Map;
 
 public class CsvMapperBuilder<T> {
 
+	public static final CustomReaderProperty NONE_READER_PROPERTY = new CustomReaderProperty(new CellValueReader() {
+		@Override
+		public Object read(char[] chars, int offset, int length, ParsingContext parsingContext) {
+			throw new UnsupportedOperationException("Default value should not try to read");
+		}
+	});
 	private final Type target;
 	private final ReflectionService reflectionService;
 	private final MapperConfig<CsvColumnKey, CsvColumnDefinition> mapperConfig;
@@ -136,7 +143,7 @@ public class CsvMapperBuilder<T> {
 								}
 								if (predicate instanceof Named) {
 									String name = ((Named)predicate).getName();
-									final CsvColumnDefinition columnDefinition = CsvColumnDefinition.identity().add(columnProperty);
+									final CsvColumnDefinition columnDefinition = CsvColumnDefinition.identity().add(columnProperty, NONE_READER_PROPERTY);
 									CsvColumnKey key = new CsvColumnKey(name, propertyMappingsBuilder.size());
 									propertyMappingsBuilder.addPropertyIfPresent(key, columnDefinition);
 								}

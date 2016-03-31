@@ -1,14 +1,21 @@
 package org.sfm.map.column;
 
 
-public class DefaultValueProperty implements ColumnProperty {
-    private final Object value;
+import org.sfm.utils.ConstantSupplier;
+import org.sfm.utils.Supplier;
 
-    public DefaultValueProperty(Object value) {
-        this.value = value;
+public class DefaultValueProperty<T> implements ColumnProperty {
+    private final Supplier<T> value;
+
+    public DefaultValueProperty(T value) {
+        this(new ConstantSupplier<T>(value));
     }
 
-    public Object getValue() {
-        return value;
+    public DefaultValueProperty(Supplier<T> supplier) {
+        this.value = supplier;
+    }
+
+    public T getValue() {
+        return value.get();
     }
 }

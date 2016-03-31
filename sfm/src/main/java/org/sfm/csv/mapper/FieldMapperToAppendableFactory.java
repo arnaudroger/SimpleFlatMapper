@@ -122,12 +122,7 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
 
         if (format != null) {
             final Format f = format;
-            builder.addSupplier(pm.getColumnKey().getIndex(), new Supplier<Format>() {
-                @Override
-                public Format get() {
-                    return (Format) f.clone();
-                }
-            });
+            builder.addSupplier(pm.getColumnKey().getIndex(), new CloneFormatSupplier(f));
             return new FormattingAppender<S>(getter, new MappingContextFormatGetter<S>(pm.getColumnKey().getIndex()), cellWriter);
         }
 
@@ -198,6 +193,19 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
         @Override
         public Format get(MappingContext<? super S> target) throws Exception {
             return target.context(index);
+        }
+    }
+
+    private static class CloneFormatSupplier implements Supplier<Format> {
+        private final Format f;
+
+        public CloneFormatSupplier(Format f) {
+            this.f = f;
+        }
+
+        @Override
+        public Format get() {
+            return (Format) f.clone();
         }
     }
 }

@@ -11,10 +11,10 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.*;
 
 import java.text.SimpleDateFormat;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-//IFJAVA8_END
+IFJAVA8_END*/
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -339,7 +339,7 @@ public class RowGetterFactoryTest {
         assertNull(getter.get(row));
     }
 
-    //IFJAVA8_START
+    /*IFJAVA8_START
     @Test
     public void testJavaLocalDateTimeOnDAteCell() throws Exception {
         final Getter<Row, LocalDateTime> getter = rowGetterFactory.newGetter(LocalDateTime.class, key, CsvColumnDefinition.IDENTITY);
@@ -353,5 +353,5 @@ public class RowGetterFactoryTest {
         final Getter<Row, LocalDateTime> getter = rowGetterFactory.newGetter(LocalDateTime.class, key, CsvColumnDefinition.IDENTITY);
         assertNull(getter.get(row));
     }
-    //IFJAVA8_END
+    IFJAVA8_END*/
 }

@@ -18,9 +18,9 @@ import org.sfm.utils.RowHandler;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.stream.Stream;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 
 public class DynamicSheetMapper<T> implements SheetMapper<T> {
@@ -64,7 +64,7 @@ public class DynamicSheetMapper<T> implements SheetMapper<T> {
         return getPoiMapper(startRow, sheet).forEach(startRow + 1, sheet, rowHandler);
     }
 
-    //IFJAVA8_START
+    /*IFJAVA8_START
     @Override
     public Stream<T> stream(Sheet sheet) {
         return stream(startRow, sheet);
@@ -74,7 +74,7 @@ public class DynamicSheetMapper<T> implements SheetMapper<T> {
     public Stream<T> stream(int startRow, Sheet sheet) {
         return getPoiMapper(startRow, sheet).stream(startRow + 1, sheet);
     }
-    //IFJAVA8_END
+    IFJAVA8_END*/
 
     private SheetMapper<T> getPoiMapper(int startRow, Sheet sheet) {
         Row row = sheet.getRow(startRow);

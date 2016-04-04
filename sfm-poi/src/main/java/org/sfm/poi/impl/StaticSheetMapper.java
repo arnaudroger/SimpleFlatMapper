@@ -10,10 +10,10 @@ import org.sfm.utils.RowHandler;
 
 import java.util.Iterator;
 
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 public class StaticSheetMapper<T> implements RowMapper<T> {
 
@@ -59,7 +59,7 @@ public class StaticSheetMapper<T> implements RowMapper<T> {
         return rowHandler;
     }
 
-    //IFJAVA8_START
+    /*IFJAVA8_START
     @Override
     public Stream<T> stream(Sheet sheet) {
         return stream(startRow, sheet);
@@ -69,7 +69,7 @@ public class StaticSheetMapper<T> implements RowMapper<T> {
     public Stream<T> stream(int startRow, Sheet sheet) {
         return StreamSupport.stream(new SheetSpliterator<T>(this, startRow, sheet, newMappingContext()), false);
     }
-    //IFJAVA8_END
+    IFJAVA8_END*/
 
 
     @Override

@@ -3,9 +3,9 @@ package org.sfm.map;
 import org.sfm.utils.RowHandler;
 
 import java.util.Iterator;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.stream.Stream;
-//IFJAVA8_START
+/*IFJAVA8_START
 
 /**
  *
@@ -51,8 +51,8 @@ public interface EnumarableMapper<S, T, E extends Exception> {
      * @throws E if source error occurs
      * @throws MappingException if an error occurs during the mapping
      */
-    //IFJAVA8_START
+    /*IFJAVA8_START
     Stream<T> stream(S source) throws E, MappingException;
-    //IFJAVA8_END
+    IFJAVA8_END*/
 
 }

@@ -6,9 +6,9 @@ import org.sfm.utils.RowHandler;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.stream.Stream;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 
 /**
@@ -75,9 +75,9 @@ public interface JdbcMapper<T> extends SetRowMapper<ResultSet, ResultSet, T, SQL
 	 * @throws SQLException if sql error occurs
 	 * @throws MappingException if an error occurs during the mapping
 	 */
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	Stream<T> stream(ResultSet rs) throws SQLException, MappingException;
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
 	/**
 	 *

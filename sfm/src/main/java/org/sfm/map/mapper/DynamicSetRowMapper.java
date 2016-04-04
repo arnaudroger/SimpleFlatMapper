@@ -12,9 +12,9 @@ import org.sfm.utils.UnaryFactoryWithException;
 import java.util.Comparator;
 import java.util.Iterator;
 
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.stream.Stream;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 
 public class DynamicSetRowMapper<R, S, T, E extends Exception, K extends FieldKey<K>> implements SetRowMapper<R, S, T, E> {
@@ -69,12 +69,12 @@ public class DynamicSetRowMapper<R, S, T, E extends Exception, K extends FieldKe
 		return getMapperFromSet(rs).iterator(rs);
 	}
 
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	@Override
 	public final Stream<T> stream(S set) throws E, MappingException {
 		return getMapperFromSet(set).stream(set);
 	}
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
 	@Override
 	public final <H extends RowHandler<? super T>> H forEach(S set, H handler) throws E, MappingException {

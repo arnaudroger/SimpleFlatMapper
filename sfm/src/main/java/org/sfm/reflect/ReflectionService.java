@@ -83,10 +83,10 @@ public class ReflectionService {
 			return newArrayListMeta(target);
 		} else if (clazz.isArray()) {
 			return newArrayMeta(clazz);
-			//IFJAVA8_START
+			/*IFJAVA8_START
 		} else if (Optional.class.isAssignableFrom(clazz)) {
 			return new OptionalClassMeta(target, this);
-			//IFJAVA8_END
+			IFJAVA8_END*/
 		} else if (Tuples.isTuple(target)) {
 			return new TupleClassMeta<T>(target, this);
 		} else if (isFastTuple(clazz)) {

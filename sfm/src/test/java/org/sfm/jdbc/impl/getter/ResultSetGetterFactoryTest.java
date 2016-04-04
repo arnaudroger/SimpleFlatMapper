@@ -23,9 +23,9 @@ import java.sql.*;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.time.*;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 import java.util.*;
 
@@ -328,7 +328,7 @@ public class ResultSetGetterFactoryTest {
 		}
 	}
 
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	@Test
 	public void testJavaLocalDate() throws Exception {
 		Getter<ResultSet, java.time.LocalDate> getter = factory.<java.time.LocalDate>newGetter(java.time.LocalDate.class, key(Types.DATE), IDENTITY);
@@ -533,7 +533,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals("JavaYearFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
 
 	@Test

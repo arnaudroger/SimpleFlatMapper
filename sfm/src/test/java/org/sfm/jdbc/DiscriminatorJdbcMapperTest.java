@@ -19,10 +19,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -110,12 +110,12 @@ public class DiscriminatorJdbcMapperTest {
         List<T> persons = mapper.forEach(setUpResultSetMock(), new ListCollectorHandler<T>()).getList();
         validatePersons(persons);
 
-        //IFJAVA8_START
+        /*IFJAVA8_START
         validatePersons(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
 
         final Stream<T> stream = mapper.stream(setUpResultSetMock());
         validatePersons(stream.limit(10).collect(Collectors.toList()));
-        //IFJAVA8_END
+        IFJAVA8_END*/
 
         Iterator<T> iterator = mapper.iterator(setUpResultSetMock());
         persons = new ArrayList<T>();

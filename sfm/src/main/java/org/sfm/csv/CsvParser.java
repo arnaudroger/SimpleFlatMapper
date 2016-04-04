@@ -19,9 +19,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.*;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.stream.Stream;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 /**
  * CsvParser provides an fluent DSL to parse or map csv content.<p>
@@ -205,7 +205,7 @@ public final class CsvParser {
 		return dsl().parse(file, cellConsumer);
 	}
 
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	public static Stream<String[]> stream(Reader r) throws IOException {
 		return dsl().stream(r);
 	}
@@ -217,7 +217,7 @@ public final class CsvParser {
     public static Stream<String[]> stream(String content) throws IOException {
         return dsl().stream(content);
     }
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
     /**
      * DSL for csv parsing.
@@ -440,7 +440,7 @@ public final class CsvParser {
 			return new MapWithDSL<T>(this, mapper);
 		}
 
-        //IFJAVA8_START
+        /*IFJAVA8_START
         public Stream<String[]> stream(Reader reader) throws IOException {
 			return reader(reader).stream();
 		}
@@ -455,7 +455,7 @@ public final class CsvParser {
 
 		private final IOFunction<Reader, Stream<String[]>> CREATE_CLOSEABLE_STREAM =
 				reader -> stream(reader).onClose(() -> { try { reader.close(); } catch (IOException e) {} });
-        //IFJAVA8_END
+        IFJAVA8_END*/
 
         private CsvCharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
 
@@ -693,7 +693,7 @@ public final class CsvParser {
 			return rowHandler;
 		}
 
-		//IFJAVA8_START
+		/*IFJAVA8_START
 		public final Stream<T> stream(Reader reader) throws IOException {
 			return mapper.stream(dsl.reader(reader));
 		}
@@ -716,7 +716,7 @@ public final class CsvParser {
 				}
 			});
 		}
-		//IFJAVA8_END
+		IFJAVA8_END*/
 	}
 
 	private static final IOFunction<Reader, CloseableCsvReader> CREATE_CLOSEABLE_CSV_READER =

@@ -49,7 +49,7 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 	private <R extends Record, E> Mapper<Record, E> buildMapper(RecordType<R> recordType, Class<? extends E> type) {
 		JooqMapperBuilder<E> mapperBuilder =
 				new JooqMapperBuilder<E>(
-						reflectionService.getClassMeta(type),
+						reflectionService.<E>getClassMeta(type),
 						new JooqMappingContextFactoryBuilder<Record>(),
 						mapperConfig);
 

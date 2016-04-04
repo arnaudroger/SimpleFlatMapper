@@ -7,10 +7,10 @@ import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.getter.joda.JodaTimeGetterFactory;
 
-//IFJAVA8_START
+/*IFJAVA8_START
 import org.sfm.map.getter.time.JavaTimeGetterFactory;
 import java.time.*;
-//IFJAVA8_END
+IFJAVA8_END*/
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 
@@ -103,7 +103,7 @@ public class RowGetterFactory implements GetterFactory<Row, CsvColumnKey> {
         getterFactories.put(boolean.class, getterFactories.get(Boolean.class));
 
 
-        //IFJAVA8_START
+        /*IFJAVA8_START
         JavaTimeGetterFactory<Row, CsvColumnKey> javaTimeGetterFactory =
                 new JavaTimeGetterFactory<Row, CsvColumnKey>(getterFactories.get(Date.class));
         getterFactories.put(LocalDate.class, javaTimeGetterFactory);
@@ -115,7 +115,7 @@ public class RowGetterFactory implements GetterFactory<Row, CsvColumnKey> {
         getterFactories.put(Instant.class, javaTimeGetterFactory);
         getterFactories.put(Year.class, javaTimeGetterFactory);
         getterFactories.put(YearMonth.class, javaTimeGetterFactory);
-        //IFJAVA8_END
+        IFJAVA8_END*/
 
         jodaTimeGetterFactory = new JodaTimeGetterFactory<Row, CsvColumnKey>(getterFactories.get(Date.class));
 

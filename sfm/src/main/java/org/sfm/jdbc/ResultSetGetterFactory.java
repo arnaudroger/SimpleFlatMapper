@@ -29,11 +29,11 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.time.*;
 
 import org.sfm.map.getter.time.JavaTimeGetterFactory;
-//IFJAVA8_END
+IFJAVA8_END*/
 public final class ResultSetGetterFactory implements GetterFactory<ResultSet, JdbcColumnKey>{
 
 	public static final GetterFactory<ResultSet, JdbcColumnKey> DATE_GETTER_FACTORY = new GetterFactory<ResultSet, JdbcColumnKey>() {
@@ -348,7 +348,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			}
 		});
 
-		//IFJAVA8_START
+		/*IFJAVA8_START
 		GetterFactory<ResultSet, JdbcColumnKey> objectGetterFactory = new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -367,7 +367,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(Instant.class, javaTimeGetterFactory);
 		factoryPerType.put(Year.class, javaTimeGetterFactory);
 		factoryPerType.put(YearMonth.class, javaTimeGetterFactory);
-		//IFJAVA8_END
+		IFJAVA8_END*/
 
 		jodaTimeGetterFactory = new JodaTimeGetterFactory<ResultSet, JdbcColumnKey>(factoryPerType.get(Date.class));
 	}

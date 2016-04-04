@@ -119,7 +119,7 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 	}
 
 
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	@Test
 	public void testClassWithParamName() throws ClassNotFoundException, IOException {
 		final ClassLoader original = getClass().getClassLoader();
@@ -168,6 +168,6 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		assertNull(instantiatorDefinitions.get(0).getParameters()[0].getName());
 		assertNull(instantiatorDefinitions.get(0).getParameters()[1].getName());
 	}
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
 }

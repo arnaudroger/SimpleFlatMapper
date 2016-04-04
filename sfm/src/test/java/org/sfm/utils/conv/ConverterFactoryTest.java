@@ -14,9 +14,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.time.*;
-//IFJAVA8_END
+IFJAVA8_END*/
 import static org.junit.Assert.*;
 import static org.sfm.utils.conv.ConverterFactory.*;
 
@@ -117,7 +117,7 @@ public class ConverterFactoryTest {
         testConverter(new org.joda.time.DateTime(time), new Date(time));
     }
 
-    //IFJAVA8_START
+    /*IFJAVA8_START
     @Test
     public void testJavaTime() throws Exception {
         long time = System.currentTimeMillis();
@@ -138,7 +138,7 @@ public class ConverterFactoryTest {
 
     }
 
-    //IFJAVA8_END
+    IFJAVA8_END*/
 
     private Date trunc(Date date) {
         Calendar cal = Calendar.getInstance();

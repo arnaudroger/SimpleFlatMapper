@@ -4,11 +4,11 @@ import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.impl.convert.CalendarToTimestampConverter;
 import org.sfm.jdbc.impl.convert.UtilDateToTimestampConverter;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import org.sfm.jdbc.impl.convert.time.*;
 import org.sfm.map.column.time.JavaTimeHelper;
 import java.time.*;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import org.sfm.jdbc.impl.setter.*;
 import org.sfm.map.impl.JodaTimeClasses;
@@ -291,7 +291,7 @@ public class PreparedStatementSetterFactory
     private final Factory jodaTimeFieldMapperToSourceFactory =
             new JodaTimePreparedStatementFactory();
 
-    /*IFJAVA8_START
+    //IFJAVA8_START
     private final Factory javaTimeFieldMapperToSourceFactory =
             new Factory() {
                 @SuppressWarnings("unchecked")
@@ -347,7 +347,7 @@ public class PreparedStatementSetterFactory
                     return null;
                 }
             };
-    IFJAVA8_END*/
+    //IFJAVA8_END
 
     @SuppressWarnings("unchecked")
     @Override
@@ -414,11 +414,11 @@ public class PreparedStatementSetterFactory
             setter = jodaTimeFieldMapperToSourceFactory.getIndexedSetter(arg);
         }
 
-        /*IFJAVA8_START
+        //IFJAVA8_START
         if (setter == null) {
             setter = javaTimeFieldMapperToSourceFactory.getIndexedSetter(arg);
         }
-        IFJAVA8_END*/
+        //IFJAVA8_END
 
         if (setter == null && TypeHelper.isAssignable(SQLData.class, propertyType)) {
             setter = (IndexedSetter<PreparedStatement, T>) new ObjectPreparedStatementIndexSetter();

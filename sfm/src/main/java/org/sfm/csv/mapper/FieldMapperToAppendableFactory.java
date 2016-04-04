@@ -8,11 +8,11 @@ import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.column.SetterFactoryProperty;
 import org.sfm.map.column.SetterProperty;
-/*IFJAVA8_START
+//IFJAVA8_START
 import org.sfm.csv.impl.writer.time.JavaTimeFormattingAppender;
 import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
 import java.time.temporal.TemporalAccessor;
-IFJAVA8_END*/
+//IFJAVA8_END
 import org.sfm.map.column.joda.JodaDateTimeFormatterProperty;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.FieldMapper;
@@ -106,12 +106,12 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
             }
             format = new SimpleDateFormat(df);
         }
-        /*IFJAVA8_START
+        //IFJAVA8_START
         else if (TypeHelper.isAssignable(TemporalAccessor.class, type)
                 && columnDefinition.has(JavaDateTimeFormatterProperty.class)) {
             return new JavaTimeFormattingAppender<S>((Getter<S, ? extends TemporalAccessor>) getter, columnDefinition.lookFor(JavaDateTimeFormatterProperty.class).getFormatter(), cellWriter);
         }
-        IFJAVA8_END*/
+        //IFJAVA8_END
         else if (JodaTimeClasses.isJoda(type)) {
             if (columnDefinition.has(JodaDateTimeFormatterProperty.class)) {
                 return new JodaTimeFormattingAppender<S>(getter, columnDefinition.lookFor(JodaDateTimeFormatterProperty.class).getFormatter(), cellWriter);

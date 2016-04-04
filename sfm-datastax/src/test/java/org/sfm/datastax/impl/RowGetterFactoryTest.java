@@ -15,10 +15,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-IFJAVA8_END*/
+//IFJAVA8_END
 import java.util.Date;
 import java.util.UUID;
 
@@ -201,7 +201,7 @@ public class RowGetterFactoryTest {
         assertEquals(DbObject.Type.type2, new RowGetterFactory(null).newGetter(DbObject.Type.class, columnKey4, null).get(row));
     }
 
-    /*IFJAVA8_START
+    //IFJAVA8_START
 
     @Test
     public void testJava8Time() throws Exception {
@@ -210,7 +210,7 @@ public class RowGetterFactoryTest {
         assertEquals(date, Date.from(gettableDataObjectGetter.get(row).atZone(ZoneId.systemDefault()).toInstant()));
     }
 
-    IFJAVA8_END*/
+    //IFJAVA8_END
 
     @Test
     public void testJodaTime() throws Exception {

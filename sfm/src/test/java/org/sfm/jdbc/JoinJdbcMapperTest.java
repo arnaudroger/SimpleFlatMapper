@@ -15,9 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.stream.Collectors;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyInt;
@@ -155,11 +155,11 @@ public class JoinJdbcMapperTest {
         List<T> professors = mapper.forEach(setUpResultSetMock(), new ListCollectorHandler<T>()).getList();
         JoinTest.validateProfessors(professors);
 
-        /*IFJAVA8_START
+        //IFJAVA8_START
         JoinTest.validateProfessors(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
 
         JoinTest.validateProfessors(mapper.stream(setUpResultSetMock()).limit(3).collect(Collectors.toList()));
-        IFJAVA8_END*/
+        //IFJAVA8_END
 
         Iterator<T> iterator = mapper.iterator(setUpResultSetMock());
         professors = new ArrayList<T>();

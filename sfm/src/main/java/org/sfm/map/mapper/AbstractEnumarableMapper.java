@@ -5,10 +5,10 @@ import org.sfm.utils.*;
 
 import java.util.Iterator;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 
 public abstract class AbstractEnumarableMapper<S, T, E extends Exception> implements EnumarableMapper<S, T, E> {
@@ -43,12 +43,12 @@ public abstract class AbstractEnumarableMapper<S, T, E extends Exception> implem
 		return new EnumarableIterator<T>(newEnumarableOfT(source));
 	}
 
-    /*IFJAVA8_START
+    //IFJAVA8_START
 	@Override
 	public final Stream<T> stream(S source) throws MappingException, E {
 		return StreamSupport.stream(new EnumarableSpliterator<T>(newEnumarableOfT(source)), false);
 	}
-    IFJAVA8_END*/
+    //IFJAVA8_END
 
     protected abstract Enumarable<T> newEnumarableOfT(S source) throws E;
 

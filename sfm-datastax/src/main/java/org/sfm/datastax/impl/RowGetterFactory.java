@@ -25,10 +25,10 @@ import org.sfm.tuples.Tuples;
 import org.sfm.utils.conv.Converter;
 import org.sfm.utils.conv.ConverterFactory;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import org.sfm.map.getter.time.JavaTimeGetterFactory;
 import java.time.*;
-IFJAVA8_END*/
+//IFJAVA8_END
 import java.util.*;
 
 public class RowGetterFactory implements GetterFactory<GettableByIndexData, DatastaxColumnKey> {
@@ -47,7 +47,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                 return (Getter<GettableByIndexData, P>) new DatastaxDateGetter(key.getIndex());
             }
         };
-        /*IFJAVA8_START
+        //IFJAVA8_START
         JavaTimeGetterFactory<GettableByIndexData, DatastaxColumnKey> javaTimeGetterFactory =
                 new JavaTimeGetterFactory<GettableByIndexData, DatastaxColumnKey>(dateGetterFactory);
         getterFactories.put(LocalDate.class, javaTimeGetterFactory);
@@ -59,7 +59,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
         getterFactories.put(Instant.class, javaTimeGetterFactory);
         getterFactories.put(Year.class, javaTimeGetterFactory);
         getterFactories.put(YearMonth.class, javaTimeGetterFactory);
-        IFJAVA8_END*/
+        //IFJAVA8_END
 
         jodaTimeGetterFactory = new JodaTimeGetterFactory<GettableByIndexData, DatastaxColumnKey>(dateGetterFactory);
 

@@ -95,7 +95,7 @@ public class JdbcMapperDbObjectTest {
 		});
 	}
 
-	/*IFJAVA8_START
+	//IFJAVA8_START
 	@Test
 	public void testDbObjectMapperWithStream()
 			throws Exception {
@@ -189,6 +189,6 @@ public class JdbcMapperDbObjectTest {
 			}
 		});
 	}
-	IFJAVA8_END*/
+	//IFJAVA8_END
 
 }

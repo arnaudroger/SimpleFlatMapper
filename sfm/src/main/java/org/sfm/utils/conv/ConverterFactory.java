@@ -4,10 +4,10 @@ import org.sfm.map.impl.JodaTimeClasses;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.utils.conv.joda.JodaTimeConverterFactory;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import org.sfm.utils.conv.time.JavaTimeConverterFactory;
 import java.time.temporal.Temporal;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -179,11 +179,11 @@ public class ConverterFactory {
 		} else if (JodaTimeClasses.isJoda(inType)) {
 			return JodaTimeConverterFactory.getConverterFrom(inType, outType, params);
 		}
-		/*IFJAVA8_START
+		//IFJAVA8_START
 		else if (TypeHelper.isAssignable(Temporal.class, inType)) {
 			return JavaTimeConverterFactory.getConverterFrom(inType, outType, params);
 		}
-		IFJAVA8_END*/
+		//IFJAVA8_END
 		return null;
 	}
 

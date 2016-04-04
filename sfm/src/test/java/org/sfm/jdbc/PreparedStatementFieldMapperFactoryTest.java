@@ -13,9 +13,9 @@ import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.column.SetterFactoryProperty;
 import org.sfm.map.column.SetterProperty;
 import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
-/*IFJAVA8_START
+//IFJAVA8_START
 import org.sfm.map.column.time.JavaZoneIdProperty;
-IFJAVA8_END*/
+//IFJAVA8_END
 import org.sfm.map.error.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.mapper.ConstantTargetFieldMapperFactory;
 import org.sfm.map.mapper.ConstantTargetFieldMapperFactorImpl;
@@ -35,12 +35,12 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.MonthDay;
 import java.time.ZoneId;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import java.util.Calendar;
 import java.util.Date;
@@ -479,7 +479,7 @@ public class PreparedStatementFieldMapperFactoryTest {
         verify(ps).setString(36, "bb");
     }
 
-    /*IFJAVA8_START
+    //IFJAVA8_START
     @Test
     public void testJavaLocalDateTime() throws Exception {
         java.time.LocalDateTime value = java.time.LocalDateTime.now();
@@ -583,7 +583,7 @@ public class PreparedStatementFieldMapperFactoryTest {
         verify(ps).setDate(1, new java.sql.Date(value.atMonthDay(MonthDay.of(Month.JANUARY, 1)).atStartOfDay(zoneId).toInstant().toEpochMilli()));
         verify(ps).setNull(2, Types.DATE);
     }
-    IFJAVA8_END*/
+    //IFJAVA8_END
 
     protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, ColumnProperty... properties) throws Exception {
         newFieldMapperAndMapToPS(getter, clazz, JdbcColumnKey.UNDEFINED_TYPE, properties);

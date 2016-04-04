@@ -313,7 +313,7 @@ public abstract class AbstractMapperFactory<
 	}
 
 
-	private ReflectionService getReflectionService() {
+	protected ReflectionService getReflectionService() {
         if (reflectionService != null) {
             return reflectionService;
         } else {

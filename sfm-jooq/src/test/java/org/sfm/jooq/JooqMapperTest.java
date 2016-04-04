@@ -37,6 +37,25 @@ public class JooqMapperTest {
 	}
 
 	@Test
+	public void testIgnoreFields() throws Exception {
+		Connection conn = DbHelper.objectDb();
+
+		DSLContext dsl = DSL
+				.using(new DefaultConfiguration().set(conn)
+						.set(SQLDialect.HSQLDB)
+						.set(SfmRecordMapperProviderFactory.newInstance().addAlias("id", "noId").ignorePropertyNotFound().newProvider()));
+		
+		List<DbObject> list = dsl.select()
+				.from("TEST_DB_OBJECT").fetchInto(DbObject.class);
+		
+		assertEquals(1, list.size());
+
+		assertEquals(0, list.get(0).getId());
+		list.get(0).setId(1);
+		DbHelper.assertDbObjectMapping(list.get(0));
+	}
+
+	@Test
 	public void testMapperDbObject() throws Exception {
 		Connection conn = DbHelper.objectDb();
 
@@ -44,10 +63,10 @@ public class JooqMapperTest {
 				.using(new DefaultConfiguration().set(conn)
 						.set(SQLDialect.HSQLDB)
 						.set(new SfmRecordMapperProvider()));
-		
+
 		List<DbObject> list = dsl.select()
 				.from("TEST_DB_OBJECT").fetchInto(DbObject.class);
-		
+
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
@@ -59,7 +78,7 @@ public class JooqMapperTest {
 		DSLContext dsl = DSL
 				.using(new DefaultConfiguration().set(conn)
 						.set(SQLDialect.HSQLDB)
-						.set(new SfmRecordMapperProvider()));
+						.set(SfmRecordMapperProviderFactory.newInstance().newProvider()));
 		
 		List<DbExtendedType> list = dsl.select()
 				.from("db_extended_type").fetchInto(DbExtendedType.class);
@@ -71,4 +90,6 @@ public class JooqMapperTest {
 		DbExtendedType.assertDbExtended(o);
 		
 	}
+
+
 }

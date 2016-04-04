@@ -30,16 +30,23 @@ public class JooqMapperBuilder<E> {
 		this(reflectService.<E>getClassMeta(target), new JooqMappingContextFactoryBuilder<Record>());
 	}
 
-	public JooqMapperBuilder(final ClassMeta<E> classMeta, MappingContextFactoryBuilder<Record, JooqFieldKey> mappingContextFactoryBuilder) throws MapperBuildingException {
-		fieldMapperMapperBuilder =
-				new FieldMapperMapperBuilder<Record, E, JooqFieldKey>(
-					FIELD_MAPPER_SOURCE,
-					classMeta,
-					MapperConfig.<JooqFieldKey>fieldMapperConfig(),
-					mappingContextFactoryBuilder);
+	public JooqMapperBuilder(final ClassMeta<E> classMeta,
+							 MappingContextFactoryBuilder<Record, JooqFieldKey> mappingContextFactoryBuilder) throws MapperBuildingException {
+		this(classMeta, mappingContextFactoryBuilder, MapperConfig.<JooqFieldKey>fieldMapperConfig());
 	}
 
-    public JooqMapperBuilder<E> addField(JooqFieldKey key) {
+	public JooqMapperBuilder(final ClassMeta<E> classMeta,
+							 MappingContextFactoryBuilder<Record, JooqFieldKey> mappingContextFactoryBuilder,
+							 MapperConfig<JooqFieldKey, FieldMapperColumnDefinition<JooqFieldKey>> mapperConfig) throws MapperBuildingException {
+		fieldMapperMapperBuilder =
+				new FieldMapperMapperBuilder<Record, E, JooqFieldKey>(
+						FIELD_MAPPER_SOURCE,
+						classMeta,
+						mapperConfig,
+						mappingContextFactoryBuilder);
+	}
+
+		public JooqMapperBuilder<E> addField(JooqFieldKey key) {
 		fieldMapperMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<JooqFieldKey>identity());
 		return this;
 	}

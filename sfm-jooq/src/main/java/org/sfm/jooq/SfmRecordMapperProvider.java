@@ -21,7 +21,7 @@ public class SfmRecordMapperProvider implements RecordMapperProvider {
 	private final ReflectionService reflectionService;
 
 	public SfmRecordMapperProvider() {
-		this(MapperConfig.fieldMapperConfig(), ReflectionService.newInstance());
+		this(MapperConfig.<JooqFieldKey>fieldMapperConfig(), ReflectionService.newInstance());
 	}
 
 	public SfmRecordMapperProvider(

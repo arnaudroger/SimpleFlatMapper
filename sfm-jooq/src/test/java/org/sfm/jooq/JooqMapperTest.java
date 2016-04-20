@@ -48,7 +48,7 @@ public class JooqMapperTest {
 		List<DbObject> list = dsl.select()
 				.from("TEST_DB_OBJECT").fetchInto(DbObject.class);
 		
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
 
 		assertEquals(0, list.get(0).getId());
 		list.get(0).setId(1);
@@ -67,7 +67,7 @@ public class JooqMapperTest {
 		List<DbObject> list = dsl.select()
 				.from("TEST_DB_OBJECT").fetchInto(DbObject.class);
 
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
 	

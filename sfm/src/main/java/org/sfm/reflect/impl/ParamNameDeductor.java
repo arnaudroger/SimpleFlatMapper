@@ -1,7 +1,6 @@
 package org.sfm.reflect.impl;
 
 import org.sfm.reflect.EnumHelper;
-import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.GetterHelper;
 import org.sfm.reflect.Instantiator;
@@ -13,7 +12,6 @@ import org.sfm.reflect.ReflectionInstantiatorDefinitionFactory;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.meta.ClassVisitor;
 import org.sfm.reflect.meta.FieldAndMethodCallBack;
-import org.sfm.tuples.Tuple2;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,7 +24,7 @@ import java.util.Map;
 public class ParamNameDeductor<T> {
     private final Class<T> target;
 
-    private List<Tuple2<Getter<T, ?>, String>> getters;
+    private List<Accessor<T>> accessors;
     private final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
 
     public ParamNameDeductor(Class<T>  target) {
@@ -35,12 +33,9 @@ public class ParamNameDeductor<T> {
 
 
     public String findParamName(InstantiatorDefinition instantiatorDefinition, Parameter param) {
-
-        if (getters == null) {
-            init();
+        if (accessors == null) {
+            accessors = listAccessors();
         }
-
-
         try {
             T value;
 
@@ -48,34 +43,33 @@ public class ParamNameDeductor<T> {
             Instantiator<Object, T> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters, false);
 
             try {
+                // try with null values
                 value = instantiator.newInstance(null);
             } catch(NullPointerException e) {
+                // try with non null explicit values
                 parameters = parametersWithExpectedValue(instantiatorDefinition, param, false);
                 instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters, false);
                 value = instantiator.newInstance(null);
             }
 
             if (value != null) {
-                Object expectedValue = parameters.get(param).get(null);
-                for (Tuple2<Getter<T, ?>, String> gn : getters) {
+                Object expectedPropertyValue = parameters.get(param).get(null);
+                // iterate through all the accessor to find one that returns a matching value
+                for (Accessor<T> accessor : accessors) {
                     try {
-                        if (expectedValue.equals(gn.getElement0().get(value))) {
-                            return gn.getElement1();
+                        final Object propertyValue = accessor.getter.get(value);
+                        if (expectedPropertyValue.equals(propertyValue)) {
+                            return accessor.name;
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
                         // IGNORE
                     }
                 }
             }
 
         } catch(Exception e) {
-            e.printStackTrace();
-
             // IGNORE
         }
-
-
         return null;
     }
 
@@ -164,23 +158,35 @@ public class ParamNameDeductor<T> {
         }
     }
 
-    private void init() {
-        getters = new ArrayList<Tuple2<Getter<T, ?>, String>>();
+    private List<Accessor<T>> listAccessors() {
+        final List<Accessor<T>> list = new ArrayList<Accessor<T>>();
         ClassVisitor.visit(target, new FieldAndMethodCallBack() {
             ObjectGetterFactory objectGetterFactory = new ObjectGetterFactory(null);
             @Override
             public void method(Method method) {
                 if (GetterHelper.isGetter(method)) {
                     Getter<T, Object> methodGetter = objectGetterFactory.getMethodGetter(method);
-                    getters.add(new Tuple2<Getter<T, ?>, String>(methodGetter, GetterHelper.getPropertyNameFromMethodName(method.getName())));
+                    list.add(new Accessor<T>(GetterHelper.getPropertyNameFromMethodName(method.getName()), methodGetter));
                 }
             }
 
             @Override
             public void field(Field field) {
                 Getter<T, Object> fieldGetter = objectGetterFactory.getFieldGetter(field);
-                getters.add(new Tuple2<Getter<T, ?>, String>(fieldGetter, field.getName()));
+                list.add(new Accessor<T>(field.getName(), fieldGetter));
             }
         });
+        return list;
+    }
+
+
+    private static class Accessor<T> {
+        private final Getter<T, ?> getter;
+        private final String name;
+
+        private Accessor(String name, Getter<T, ?> getter) {
+            this.getter = getter;
+            this.name = name;
+        }
     }
 }

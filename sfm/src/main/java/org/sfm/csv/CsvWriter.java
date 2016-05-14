@@ -18,6 +18,7 @@ import org.sfm.utils.ErrorHelper;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.Format;
+import java.util.Arrays;
 
 /**
  * A CsvWriter allows the caller to write object of type T to an appendable in a specified format. See {@link org.sfm.csv.CsvWriter#from(Class)} to create one.
@@ -133,9 +134,14 @@ public class CsvWriter<T>  {
     @SuppressWarnings("unchecked")
     private static <T> Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] toColumnDefinitions(String[] header) {
         Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] columnDefinitions = new Tuple2[header.length];
+        int offset = 0;
+        return toColumnDefinitions(header, columnDefinitions, offset);
+    }
+
+    private static Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] toColumnDefinitions(String[] header, Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] columnDefinitions, int offset) {
         FieldMapperColumnDefinition<CsvColumnKey> identity = FieldMapperColumnDefinition.<CsvColumnKey>identity();
         for(int i = 0; i < header.length; i++) {
-            columnDefinitions[i] = new Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>(header[i], identity);
+            columnDefinitions[i + offset] = new Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>(header[i], identity);
         }
         return columnDefinitions;
     }
@@ -199,10 +205,9 @@ public class CsvWriter<T>  {
          */
         @SuppressWarnings("unchecked")
         public CsvWriterDSL<T> columns(String... columnNames) {
-            Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] newColumns = new Tuple2[columns.length + columnNames.length];
-            System.arraycopy(columns, 0, newColumns, 0, columns.length);
-            System.arraycopy(toColumnDefinitions(columnNames), 0, newColumns, columns.length, columnNames.length);
-
+            Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] newColumns =
+                    Arrays.copyOf(columns, columns.length + columnNames.length);
+            toColumnDefinitions(columnNames, newColumns, columns.length);
             return newColumnMapDSL(classMeta, newColumns, mapperConfig, cellWriter, skipHeaders);
         }
 
@@ -214,8 +219,8 @@ public class CsvWriter<T>  {
          */
         @SuppressWarnings("unchecked")
         public CsvWriterDSL<T> column(String column, ColumnProperty... property) {
-            Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] newColumns = new Tuple2[columns.length + 1];
-            System.arraycopy(columns, 0, newColumns, 0, columns.length);
+            Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] newColumns =
+                    Arrays.copyOf(columns, columns.length + 1);
 
             FieldMapperColumnDefinition<CsvColumnKey> columnDefinition =  FieldMapperColumnDefinition.<CsvColumnKey>identity().add(property);
             newColumns[columns.length] = new Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>(column, columnDefinition);

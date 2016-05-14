@@ -7,12 +7,10 @@ package org.sfm.csv.parser;
 public final class ConfigurableCsvCharConsumer extends AbstractCsvCharConsumer {
 
 	private final char separatorChar;
-	private final char quoteChar;
 
 	public ConfigurableCsvCharConsumer(CharBuffer csvBuffer, char separatorChar, char quoteChar) {
-		super(csvBuffer);
+		super(csvBuffer, quoteChar);
 		this.separatorChar = separatorChar;
-		this.quoteChar = quoteChar;
 	}
 
 	protected void consumeOneChar(char character, int index, CellConsumer cellConsumer) {
@@ -59,11 +57,4 @@ public final class ConfigurableCsvCharConsumer extends AbstractCsvCharConsumer {
 
 		return false;
 	}
-
-	@Override
-	public final char quoteChar() {
-		return quoteChar;
-	}
-
-
 }

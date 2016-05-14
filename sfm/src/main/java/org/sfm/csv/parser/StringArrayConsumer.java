@@ -4,6 +4,8 @@ import org.sfm.csv.impl.cellreader.StringCellValueReader;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.RowHandler;
 
+import java.util.Arrays;
+
 public final class StringArrayConsumer<RH extends RowHandler<String[]>> implements CellConsumer {
 	private final RH handler;
 	private String[] currentRow = new String[10];
@@ -17,22 +19,15 @@ public final class StringArrayConsumer<RH extends RowHandler<String[]>> implemen
 	@Override
 	public void newCell(char[] chars, int offset, int length) {
 		if (currentIndex >= currentRow.length) {
-			doubleSize();
+			currentRow = Arrays.copyOf(currentRow, currentRow.length * 2);;
 		}
 		currentRow[currentIndex++] = StringCellValueReader.readString(chars, offset, length);
-	}
-
-	private void doubleSize() {
-		String[] newArray = new String[currentRow.length * 2];
-		System.arraycopy(currentRow, 0, newArray, 0, currentIndex);
-		currentRow = newArray;
 	}
 
 	@Override
 	public void endOfRow() {
 		try {
-			String[] result = new String[currentIndex];
-			System.arraycopy(currentRow, 0, result, 0, currentIndex);
+			String[] result = Arrays.copyOf(currentRow, currentIndex);
 			handler.handle(result);
 			currentIndex = 0;
 		} catch (Exception e) {

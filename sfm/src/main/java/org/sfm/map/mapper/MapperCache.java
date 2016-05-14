@@ -60,6 +60,13 @@ public final class MapperCache<K extends FieldKey<K>, M> {
 			this.bsearch =  size > SIZE_THRESHOLD;
 		}
 
+		SortedEntries(MapperKey<K>[] keys, Object[] values, MapperKeyComparator<K> comparator) {
+			this.keys = keys;
+			this.values = values;
+			this.comparator = comparator;
+			this.bsearch = keys.length > SIZE_THRESHOLD;
+		}
+
 		Object search(MapperKey<K> key) {
 			final int i = findKey(key);
 			if (i >= 0) {
@@ -95,16 +102,18 @@ public final class MapperCache<K extends FieldKey<K>, M> {
 
 		SortedEntries<K> insertEntry(MapperKey<K> key, Object mapper, int insertionPoint) {
 
-			SortedEntries<K> newEntries = new SortedEntries<K>(keys.length + 1, comparator);
+			SortedEntries<K> newEntries =
+					new SortedEntries<K>(
+						Arrays.copyOf(keys, keys.length + 1),
+						Arrays.copyOf(values, values.length + 1),
+					 	comparator);
 
-			System.arraycopy(keys, 0, newEntries.keys, 0, insertionPoint);
-			System.arraycopy(values, 0, newEntries.values, 0, insertionPoint);
+			System.arraycopy(newEntries.keys, insertionPoint, newEntries.keys, insertionPoint + 1, keys.length - insertionPoint);
+			System.arraycopy(newEntries.values, insertionPoint, newEntries.values, insertionPoint + 1, values.length - insertionPoint);
 
 			newEntries.keys[insertionPoint] = key;
 			newEntries.values[insertionPoint] = mapper;
 
-			System.arraycopy(keys, insertionPoint, newEntries.keys, insertionPoint + 1, keys.length - insertionPoint);
-			System.arraycopy(values, insertionPoint, newEntries.values, insertionPoint + 1, keys.length - insertionPoint);
 			return newEntries;
 
 		}

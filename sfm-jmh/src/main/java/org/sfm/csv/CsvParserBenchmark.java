@@ -12,7 +12,28 @@ import java.util.List;
 @State(Scope.Benchmark)
 public class CsvParserBenchmark {
 
-    public String csv = "val,val2  sdssddsds,lllll llll,sdkokokokokads<>Sddsdsds,adsdsadsad,1,3,4";
+    /**
+     * Benchmark                     Mode  Cnt    Score   Error  Units
+     CsvParserBenchmark.parse      avgt   20  173.738 ± 2.790  ns/op
+     CsvParserBenchmark.parseTrim  avgt   20  241.522 ± 5.823  ns/op
+
+     Benchmark                     Mode  Cnt    Score   Error  Units
+     CsvParserBenchmark.parse      avgt   20  163.853 ± 0.758  ns/op
+     CsvParserBenchmark.parseTrim  avgt   20  239.365 ± 1.015  ns/op
+
+
+     Benchmark                     Mode  Cnt    Score   Error  Units
+     CsvParserBenchmark.parse      avgt   20  290.077 ± 2.920  ns/op
+     CsvParserBenchmark.parseTrim  avgt   20  360.767 ± 1.679  ns/op
+
+
+     Benchmark                     Mode  Cnt    Score   Error  Units
+     CsvParserBenchmark.parse      avgt   20  293.699 ± 1.892  ns/op
+     CsvParserBenchmark.parseTrim  avgt   20  361.417 ± 1.967  ns/op
+
+
+     */
+    public String csv = "val,val2  sdssddsds,lllll llll,sdkokokokokads<>Sddsdsds,adsdsadsad,1,3,4\r\nsddsds,sdds,dsds,sd,ds,dssds";
 
 
     public static final CsvParser.DSL dsl = CsvParser.dsl();

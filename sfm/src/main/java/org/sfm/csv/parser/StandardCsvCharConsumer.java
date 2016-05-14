@@ -7,7 +7,7 @@ package org.sfm.csv.parser;
 public final class StandardCsvCharConsumer extends AbstractCsvCharConsumer {
 
 	public StandardCsvCharConsumer(CharBuffer csvBuffer) {
-		super(csvBuffer);
+		super(csvBuffer, '"');
 	}
 
 	protected void consumeOneChar(char character, int index, CellConsumer cellConsumer) {
@@ -65,11 +65,4 @@ public final class StandardCsvCharConsumer extends AbstractCsvCharConsumer {
 
 		return false;
 	}
-
-	@Override
-	public final char quoteChar() {
-		return '"';
-	}
-
-
 }

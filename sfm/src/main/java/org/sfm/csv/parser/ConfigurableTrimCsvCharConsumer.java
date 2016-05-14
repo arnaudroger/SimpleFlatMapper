@@ -7,12 +7,10 @@ package org.sfm.csv.parser;
 public final class ConfigurableTrimCsvCharConsumer extends AbstractCsvCharConsumer {
 
 	private final char separatorChar;
-	private final char quoteChar;
 
 	public ConfigurableTrimCsvCharConsumer(CharBuffer csvBuffer, char separatorChar, char quoteChar) {
-		super(csvBuffer);
+		super(csvBuffer, quoteChar);
 		this.separatorChar = separatorChar;
-		this.quoteChar = quoteChar;
 	}
 
 	protected void consumeOneChar(char character, int index, CellConsumer cellConsumer) {
@@ -82,7 +80,6 @@ public final class ConfigurableTrimCsvCharConsumer extends AbstractCsvCharConsum
 		int start = csvBuffer.getMark();
 		int length = currentIndex - start;
 
-		final char quoteChar = quoteChar();
 		if (charBuffer[start] == quoteChar) {
 			length = unescape(charBuffer, start, length, quoteChar);
 			start++;
@@ -139,11 +136,4 @@ public final class ConfigurableTrimCsvCharConsumer extends AbstractCsvCharConsum
 
 		return shiftedIndex - start;
 	}
-
-	@Override
-	public final char quoteChar() {
-		return quoteChar;
-	}
-
-
 }

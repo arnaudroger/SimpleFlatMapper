@@ -10,6 +10,7 @@ import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 import static org.sfm.utils.Asserts.requireNonNull;
 
@@ -60,16 +61,14 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
 
     public CD compose(CD columnDefinition) {
         ColumnDefinition cdi = requireNonNull("columnDefinition", columnDefinition);
-        ColumnProperty[] properties = new ColumnProperty[this.properties.length + cdi.properties.length];
-        System.arraycopy(cdi.properties, 0, properties, 0, cdi.properties.length);
+        ColumnProperty[] properties = Arrays.copyOf(cdi.properties, this.properties.length + cdi.properties.length);
         System.arraycopy(this.properties, 0, properties, cdi.properties.length, this.properties.length);
         return newColumnDefinition(properties);
     }
 
     public CD add(ColumnProperty... props) {
         requireNonNull("properties", props);
-        ColumnProperty[] properties = new ColumnProperty[this.properties.length + props.length];
-        System.arraycopy(this.properties, 0, properties, 0, this.properties.length);
+        ColumnProperty[] properties = Arrays.copyOf(this.properties, this.properties.length + props.length);
         System.arraycopy(props, 0, properties, this.properties.length, props.length);
         return newColumnDefinition(properties);
     }

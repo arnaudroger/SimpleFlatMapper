@@ -10,13 +10,15 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 	protected static final int NONE = 0;
 	protected static final int TURN_OFF_IN_CR_MASK = ~IN_CR;
 	protected static final int ALL_QUOTES = QUOTE | IN_QUOTE;
-	protected final CharBuffer csvBuffer;
 
+	protected final CharBuffer csvBuffer;
+	protected final char quoteChar;
 	protected int _currentIndex;
 	protected int currentState = NONE;
 
-	public AbstractCsvCharConsumer(CharBuffer csvBuffer) {
+	public AbstractCsvCharConsumer(CharBuffer csvBuffer, char quoteChar) {
 		this.csvBuffer = csvBuffer;
+		this.quoteChar = quoteChar;
 	}
 
 	@Override
@@ -39,31 +41,26 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 	}
 
 	protected final void newCellIfNotInQuote(int currentIndex, CellConsumer cellConsumer) {
-		if (isInQuote())
-			return;
-
-		newCell(currentIndex, cellConsumer);
-	}
-
-	private boolean isInQuote() {
-		return (currentState &  IN_QUOTE) != 0;
+		if ((currentState &  IN_QUOTE) == 0) {
+			newCell(currentIndex, cellConsumer);
+		}
 	}
 
 	protected final boolean handleEndOfLineLF(int currentIndex, CellConsumer cellConsumer) {
-		if (!isInQuote()) {
-			if ((currentState & IN_CR) == 0) {
-				endOfRow(currentIndex, cellConsumer);
-				return true;
-			} else {
-				// we had a preceding cr so shift the marl
-				csvBuffer.mark(currentIndex + 1);
-			}
+		final int state = this.currentState & (IN_QUOTE | IN_CR);
+
+		if (state == 0) {
+			endOfRow(currentIndex, cellConsumer);
+			return true;
+		} else if (state == IN_CR) {
+			// we had a preceding cr so shift the mark
+			csvBuffer.mark(currentIndex + 1);
 		}
 		return false;
 	}
 
 	protected final boolean handleEndOfLineCR(int currentIndex, CellConsumer cellConsumer) {
-		if (!isInQuote()) {
+		if ((currentState &  IN_QUOTE) == 0) {
 			endOfRow(currentIndex, cellConsumer);
 			currentState |= IN_CR;
 			return true;
@@ -89,9 +86,8 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 		int start = csvBuffer.getMark();
 		int length = currentIndex - start;
 
-		final char quoteChar = quoteChar();
 		if (charBuffer[start] == quoteChar) {
-			length = unescape(charBuffer, start, length, quoteChar);
+			length = unescape(charBuffer, start, length);
 			start++;
 		}
 
@@ -122,24 +118,25 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 		return (bufferIndex) <  (csvBuffer.getMark() + 1)  ;
 	}
 
-	protected int unescape(final char[] chars, final int offset, final int length, char quoteChar) {
+	protected int unescape(final char[] chars, final int offset, final int length) {
 		int start = offset + 1;
 		int shiftedIndex = start;
-		boolean notEscaped = true;
+		boolean escaped = false;
 
 		int lastCharacter = offset + length - 1;
 
+
 		// copy chars apart from escape chars
 		for(int i = start; i < lastCharacter; i++) {
-			notEscaped = chars[i] != quoteChar || !notEscaped;
-			if (notEscaped) {
+			escaped = quoteChar == chars[i] && !escaped;
+			if (!escaped) {
 				chars[shiftedIndex++] = chars[i];
 			}
 		}
 
 		// if last is not quote add to shifted char
-		if (chars[(lastCharacter)] != quoteChar || !notEscaped) {
-			chars[shiftedIndex++] = chars[(lastCharacter)];
+		if (quoteChar != chars[lastCharacter] || escaped) {
+			chars[shiftedIndex++] = chars[lastCharacter];
 		}
 
 		return shiftedIndex - start;

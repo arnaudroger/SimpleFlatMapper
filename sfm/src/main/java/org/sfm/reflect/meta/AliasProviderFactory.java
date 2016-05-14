@@ -1,6 +1,6 @@
 package org.sfm.reflect.meta;
 
-import javax.persistence.Column;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class AliasProviderFactory {
@@ -22,8 +22,7 @@ public class AliasProviderFactory {
 		do {
 			cap = currentAliasProvider.get();
 
-			AliasProvider[] newRegistered = new AliasProvider[registered.length + 1];
-			System.arraycopy(registered, 0, newRegistered, 0, registered.length);
+			AliasProvider[] newRegistered = Arrays.copyOf(registered, registered.length + 1);
 			newRegistered[newRegistered.length - 1]  = aliasProvider;
 
 			AliasProvider aggAliasProvider = aggAliasProvider(newRegistered);

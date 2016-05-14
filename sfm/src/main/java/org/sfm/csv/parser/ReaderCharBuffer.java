@@ -2,6 +2,7 @@ package org.sfm.csv.parser;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 
 public final class ReaderCharBuffer extends CharBuffer {
 
@@ -30,24 +31,27 @@ public final class ReaderCharBuffer extends CharBuffer {
 		int usedLength = Math.max(bufferSize - mark, 0);
 
 		// if buffer tight double the size
-		if (usedLength <= (bufferSize >> 1)) {
-			System.arraycopy(buffer, mark, buffer, 0, usedLength);
-		} else {
-			int newBufferSize = Math.min(maxBufferSize, buffer.length << 1);
-
-			if (newBufferSize == usedLength) {
-				throw new BufferOverflowException("The content in the csv cell exceed the maxSizeBuffer " + maxBufferSize + ", see CsvParser.DSL.maxSizeBuffer(int) to change the default value");
-			}
-			// double buffer size
-			char[] newBuffer = new char[newBufferSize];
-			System.arraycopy(buffer, mark, newBuffer, 0, usedLength);
-			buffer = newBuffer;
+		if (usedLength > (bufferSize >> 2) * 3) {
+			resize(usedLength);
 		}
+
+		System.arraycopy(buffer, mark, buffer, 0, usedLength);
+
 		bufferSize = usedLength;
 
 		int m = mark;
 		mark = 0;
 		return m;
+	}
+
+	private void resize(int requireLength) throws BufferOverflowException {
+		int newBufferSize = Math.min(maxBufferSize, buffer.length << 1);
+
+		if (newBufferSize <= requireLength) {
+            throw new BufferOverflowException("The content in the csv cell exceed the maxSizeBuffer " + maxBufferSize + ", see CsvParser.DSL.maxSizeBuffer(int) to change the default value");
+        }
+		// double buffer size
+		buffer = Arrays.copyOf(buffer, newBufferSize);
 	}
 
 	public char[] getCharBuffer() {

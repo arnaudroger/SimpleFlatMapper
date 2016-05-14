@@ -12,5 +12,4 @@ public abstract class CsvCharConsumer {
 
     public abstract boolean refillBuffer() throws IOException;
 
-    public abstract char quoteChar();
 }

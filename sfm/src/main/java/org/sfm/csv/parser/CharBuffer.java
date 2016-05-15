@@ -18,17 +18,18 @@ public abstract class CharBuffer {
 	public abstract boolean fillBuffer() throws IOException;
 	public abstract int shiftBufferToMark() throws BufferOverflowException;
 
-	public void mark(int index) {
+	public final void mark(int index) {
 		this.mark = index;
 	}
-	public int getMark() {
+	public final int getMark() {
 		return mark;
 	}
 
-	public char[] getCharBuffer() {
+	public final char[] getCharBuffer() {
 		return buffer;
 	}
-	public int getBufferSize() {
+	public final int getBufferSize() {
 		return bufferSize;
 	}
+
 }

@@ -10,19 +10,31 @@ public final class StandardCsvCharConsumer extends AbstractCsvCharConsumer {
 		super(csvBuffer, '"');
 	}
 
-	protected void consumeOneChar(char character, int index, CellConsumer cellConsumer) {
+	@Override
+	public final void consumeAllBuffer(CellConsumer cellConsumer) {
+		int bufferLength = csvBuffer.getBufferSize();
+		char[] chars = csvBuffer.getCharBuffer();
+		int currentIndex = _currentIndex;
+		while(currentIndex  < bufferLength) {
+			consumeOneChar(currentIndex, chars[currentIndex], cellConsumer);
+			currentIndex++;
+		}
+		_currentIndex = currentIndex;
+	}
+
+	private void consumeOneChar(int currentIndex, char character, CellConsumer cellConsumer) {
 		switch(character) {
 			case ',':
-				newCellIfNotInQuote(index, cellConsumer);
+				newCellIfNotInQuote(currentIndex, cellConsumer);
 				break;
 			case '\n':
-				handleEndOfLineLF(index, cellConsumer);
+				handleEndOfLineLF(currentIndex, cellConsumer);
 				break;
 			case '\r':
-				handleEndOfLineCR(index, cellConsumer);
+				handleEndOfLineCR(currentIndex, cellConsumer);
 				return;
 			case '"':
-				quote(index);
+				quote(currentIndex);
 				break;
 			default:
 		}
@@ -34,35 +46,35 @@ public final class StandardCsvCharConsumer extends AbstractCsvCharConsumer {
 
 		int bufferLength = csvBuffer.getBufferSize();
 		char[] buffer = csvBuffer.getCharBuffer();
-		for(int index = _currentIndex; index  < bufferLength; index++) {
-
-			char character = buffer[index];
+		int currentIndex = _currentIndex;
+		while(currentIndex  < bufferLength) {
+			char character = buffer[currentIndex];
 			switch(character) {
 				case ',':
-					newCellIfNotInQuote(index, cellConsumer);
+					newCellIfNotInQuote(currentIndex, cellConsumer);
 					break;
 				case '\n':
-					if (handleEndOfLineLF(index, cellConsumer)) {
-						_currentIndex = index + 1;
+					if (handleEndOfLineLF(currentIndex, cellConsumer)) {
+						_currentIndex = currentIndex + 1;
 						turnOffCrFlag();
 						return true;
 					}
 					break;
 				case '\r':
-					if (handleEndOfLineCR(index, cellConsumer)) {
-						_currentIndex = index + 1;
+					if (handleEndOfLineCR(currentIndex, cellConsumer)) {
+						_currentIndex = currentIndex + 1;
 						return true;
 					}
 					break;
 				case '"':
-					quote(index);
+					quote(currentIndex);
 					break;
 				default:
 			}
 			turnOffCrFlag();
+			currentIndex++;
 		}
-		_currentIndex = bufferLength;
-
+		this._currentIndex = currentIndex;
 		return false;
 	}
 }

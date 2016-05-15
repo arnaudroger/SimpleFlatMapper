@@ -19,7 +19,7 @@ public final class StringArrayConsumer<RH extends RowHandler<String[]>> implemen
 	@Override
 	public void newCell(char[] chars, int offset, int length) {
 		if (currentIndex >= currentRow.length) {
-			currentRow = Arrays.copyOf(currentRow, currentRow.length * 2);;
+			currentRow = Arrays.copyOf(currentRow, currentRow.length * 2);
 		}
 		currentRow[currentIndex++] = StringCellValueReader.readString(chars, offset, length);
 	}

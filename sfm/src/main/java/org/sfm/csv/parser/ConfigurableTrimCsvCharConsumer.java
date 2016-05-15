@@ -13,16 +13,29 @@ public final class ConfigurableTrimCsvCharConsumer extends AbstractCsvCharConsum
 		this.separatorChar = separatorChar;
 	}
 
-	protected void consumeOneChar(char character, int index, CellConsumer cellConsumer) {
+	@Override
+	public final void consumeAllBuffer(CellConsumer cellConsumer) {
+		int bufferLength = csvBuffer.bufferSize;
+		char[] chars = csvBuffer.buffer;
+		int currentIndex = _currentIndex;
+		while(currentIndex  < bufferLength) {
+			consumeOneChar(currentIndex, chars[currentIndex], cellConsumer);
+			currentIndex++;
+		}
+
+		_currentIndex = currentIndex;
+	}
+
+	private void consumeOneChar(int currentIndex, char character, CellConsumer cellConsumer) {
 		if (character == separatorChar) {
-			newCellIfNotInQuote(index, cellConsumer);
+			newCellIfNotInQuote(currentIndex, cellConsumer);
 		} else if (character ==  '\n') {
-				handleEndOfLineLF(index, cellConsumer);
+				handleEndOfLineLF(currentIndex, cellConsumer);
 		} else if (character == '\r') {
-			handleEndOfLineCR(index, cellConsumer);
+			handleEndOfLineCR(currentIndex, cellConsumer);
 			return;
 		} else if (character == quoteChar) {
-			quote(index);
+			quote(currentIndex);
 		} else if (character != ' ') {
 			currentState |= HAS_CONTENT;
 		}
@@ -33,48 +46,55 @@ public final class ConfigurableTrimCsvCharConsumer extends AbstractCsvCharConsum
 	protected final void quote(int currentIndex) {
 		if (isAllConsumedFromMark(currentIndex)) {
 			currentState |= IN_QUOTE;
-		} else if ((currentState & (HAS_CONTENT | ALL_QUOTES)) == 0) {
+		} else if ((currentState & (HAS_CONTENT | ALL_QUOTES)) != 0) {
+			currentState ^= ALL_QUOTES;
+		} else {
 			currentState |= IN_QUOTE;
 			csvBuffer.mark(currentIndex);
-		} else {
-			currentState ^= ALL_QUOTES;
 		}
 	}
+
+	private boolean isAllConsumedFromMark(int bufferIndex) {
+		return (bufferIndex) <  (csvBuffer.getMark() + 1)  ;
+	}
+
 
 	@Override
 	public boolean consumeToNextRow(CellConsumer cellConsumer) {
 
 		int bufferLength = csvBuffer.getBufferSize();
 		char[] buffer = csvBuffer.getCharBuffer();
-		for(int index = _currentIndex; index  < bufferLength; index++) {
+		int currentIndex = _currentIndex;
+		for(; currentIndex  < bufferLength; currentIndex++) {
 
-			char character = buffer[index];
+			char character = buffer[currentIndex];
 
 			if (character == separatorChar) {
-				newCellIfNotInQuote(index, cellConsumer);
+				newCellIfNotInQuote(currentIndex, cellConsumer);
 			} else if (character ==  '\n') {
-				if (handleEndOfLineLF(index, cellConsumer)) {
-					_currentIndex = index + 1;
+				if (handleEndOfLineLF(currentIndex, cellConsumer)) {
+					_currentIndex = currentIndex + 1;
 					turnOffCrFlag();
 					return true;
 				}
 			} else if (character == '\r') {
-				if (handleEndOfLineCR(index, cellConsumer)) {
-					_currentIndex = index + 1;
+				if (handleEndOfLineCR(currentIndex, cellConsumer)) {
+					_currentIndex = currentIndex + 1;
 					return true;
 				}
 			} else if (character == quoteChar) {
-				quote(index);
+				quote(currentIndex);
 			} else if (character != ' ') {
 				currentState |= HAS_CONTENT;
 			}
 			turnOffCrFlag();
 		}
-		_currentIndex = bufferLength;
 
+		_currentIndex = currentIndex;
 		return false;
 	}
 
+	@Override
 	protected void newCell(int currentIndex, CellConsumer cellConsumer) {
 		char[] charBuffer = csvBuffer.getCharBuffer();
 		int start = csvBuffer.getMark();

@@ -21,18 +21,6 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 		this.quoteChar = quoteChar;
 	}
 
-	@Override
-	public final void consumeAllBuffer(CellConsumer cellConsumer) {
-		int bufferLength = csvBuffer.getBufferSize();
-		char[] buffer = csvBuffer.getCharBuffer();
-		for(int i = _currentIndex; i  < bufferLength; i++) {
-			consumeOneChar(buffer[i], i, cellConsumer);
-		}
-		_currentIndex = bufferLength;
-	}
-
-	protected abstract void consumeOneChar(char c, int i, CellConsumer cellConsumer);
-
 	/**
 	 * use bit mask to testing if == IN_CR
 	 */
@@ -41,20 +29,19 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 	}
 
 	protected final void newCellIfNotInQuote(int currentIndex, CellConsumer cellConsumer) {
-		if ((currentState &  IN_QUOTE) == 0) {
-			newCell(currentIndex, cellConsumer);
-		}
+		if ((currentState &  IN_QUOTE) != 0) return;
+		newCell(currentIndex, cellConsumer);
 	}
 
 	protected final boolean handleEndOfLineLF(int currentIndex, CellConsumer cellConsumer) {
-		final int state = this.currentState & (IN_QUOTE | IN_CR);
-
-		if (state == 0) {
-			endOfRow(currentIndex, cellConsumer);
-			return true;
-		} else if (state == IN_CR) {
+		final int inQuoteAndCr = this.currentState & (IN_QUOTE | IN_CR);
+		if (inQuoteAndCr == IN_CR) {
 			// we had a preceding cr so shift the mark
 			csvBuffer.mark(currentIndex + 1);
+			return false;
+		} else if (inQuoteAndCr == 0) {
+			endOfRow(currentIndex, cellConsumer);
+			return true;
 		}
 		return false;
 	}
@@ -74,51 +61,28 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 	}
 
 	protected void quote(int currentIndex) {
-		if (isAllConsumedFromMark(currentIndex)) {
-			currentState |= IN_QUOTE;
-		} else {
+		if (isNotAllConsumedFromMark(currentIndex)) {
 			currentState ^= ALL_QUOTES;
+		} else {
+			currentState |= IN_QUOTE;
 		}
 	}
 
-	protected void newCell(int currentIndex, CellConsumer cellConsumer) {
+	protected void newCell(int end, final CellConsumer cellConsumer) {
 		char[] charBuffer = csvBuffer.getCharBuffer();
 		int start = csvBuffer.getMark();
-		int length = currentIndex - start;
 
-		if (charBuffer[start] == quoteChar) {
-			length = unescape(charBuffer, start, length);
-			start++;
+		if (charBuffer[start] != quoteChar) {
+			cellConsumer.newCell(charBuffer, start, end - start);
+		} else {
+			newEscapedCell(charBuffer, start, end - start, cellConsumer);
 		}
 
-		cellConsumer.newCell(charBuffer, start, length);
-		csvBuffer.mark(currentIndex + 1);
+		csvBuffer.mark(end + 1);
 		currentState = NONE;
 	}
 
-	@Override
-	public final void finish(CellConsumer cellConsumer) {
-		if (!isAllConsumedFromMark(_currentIndex)) {
-			newCell(_currentIndex, cellConsumer);
-		}
-		cellConsumer.end();
-	}
-
-	private void shiftCurrentIndex(int mark) {
-		_currentIndex -= mark;
-	}
-
-	@Override
-	public final boolean refillBuffer() throws IOException {
-		shiftCurrentIndex(csvBuffer.shiftBufferToMark());
-		return csvBuffer.fillBuffer();
-	}
-
-	protected final boolean isAllConsumedFromMark(int bufferIndex) {
-		return (bufferIndex) <  (csvBuffer.getMark() + 1)  ;
-	}
-
-	protected int unescape(final char[] chars, final int offset, final int length) {
+	private void newEscapedCell(final char[] chars, final int offset, final int length, CellConsumer cellConsumer) {
 		int start = offset + 1;
 		int shiftedIndex = start;
 		boolean escaped = false;
@@ -139,6 +103,31 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 			chars[shiftedIndex++] = chars[lastCharacter];
 		}
 
-		return shiftedIndex - start;
+		cellConsumer.newCell(chars, start, shiftedIndex - start);
 	}
+
+	@Override
+	public final void finish(CellConsumer cellConsumer) {
+		int currentIndex = _currentIndex;
+		if (isNotAllConsumedFromMark(currentIndex)) {
+			newCell(currentIndex, cellConsumer);
+		}
+		cellConsumer.end();
+	}
+
+	private void shiftCurrentIndex(int mark) {
+		_currentIndex -= mark;
+	}
+
+	@Override
+	public final boolean refillBuffer() throws IOException {
+		shiftCurrentIndex(csvBuffer.shiftBufferToMark());
+		return csvBuffer.fillBuffer();
+	}
+
+	protected final boolean isNotAllConsumedFromMark(int bufferIndex) {
+		return (bufferIndex) >=  (csvBuffer.getMark() + 1)  ;
+	}
+
+
 }

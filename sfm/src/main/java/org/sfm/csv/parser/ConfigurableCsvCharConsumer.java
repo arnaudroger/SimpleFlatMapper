@@ -13,16 +13,29 @@ public final class ConfigurableCsvCharConsumer extends AbstractCsvCharConsumer {
 		this.separatorChar = separatorChar;
 	}
 
-	protected void consumeOneChar(char character, int index, CellConsumer cellConsumer) {
+
+	@Override
+	public final void consumeAllBuffer(CellConsumer cellConsumer) {
+		int bufferLength = csvBuffer.bufferSize;
+		char[] chars = csvBuffer.buffer;
+		int currentIndex = _currentIndex;
+		while(currentIndex  < bufferLength) {
+			consumeOneChar(currentIndex, chars[currentIndex], cellConsumer);
+			currentIndex++;
+		}
+		_currentIndex = currentIndex;
+	}
+
+	private void consumeOneChar(int currentIndex, char character, CellConsumer cellConsumer) {
 		if (character == separatorChar) {
-			newCellIfNotInQuote(index, cellConsumer);
+			newCellIfNotInQuote(currentIndex, cellConsumer);
 		} else if (character ==  '\n') {
-				handleEndOfLineLF(index, cellConsumer);
+				handleEndOfLineLF(currentIndex, cellConsumer);
 		} else if (character == '\r') {
-			handleEndOfLineCR(index, cellConsumer);
+			handleEndOfLineCR(currentIndex, cellConsumer);
 			return;
 		} else if (character == quoteChar) {
-			quote(index);
+			quote(currentIndex);
 		}
 		turnOffCrFlag();
 	}
@@ -32,29 +45,29 @@ public final class ConfigurableCsvCharConsumer extends AbstractCsvCharConsumer {
 
 		int bufferLength = csvBuffer.getBufferSize();
 		char[] buffer = csvBuffer.getCharBuffer();
-		for(int index = _currentIndex; index  < bufferLength; index++) {
-			char character = buffer[index];
+		int currentIndex = _currentIndex;
+		for(;currentIndex  < bufferLength; currentIndex++) {
+			char character = buffer[currentIndex];
 
 			if (character == separatorChar) {
-				newCellIfNotInQuote(index, cellConsumer);
+				newCellIfNotInQuote(currentIndex, cellConsumer);
 			} else if (character ==  '\n') {
-				if (handleEndOfLineLF(index, cellConsumer)) {
-					_currentIndex = index + 1;
+				if (handleEndOfLineLF(currentIndex, cellConsumer)) {
+					_currentIndex = currentIndex + 1;
 					turnOffCrFlag();
 					return true;
 				}
 			} else if (character == '\r') {
-				if (handleEndOfLineCR(index, cellConsumer)) {
-					_currentIndex = index + 1;
+				if (handleEndOfLineCR(currentIndex, cellConsumer)) {
+					_currentIndex = currentIndex + 1;
 					return true;
 				}
 			} else if (character == quoteChar) {
-				quote(index);
+				quote(currentIndex);
 			}
 			turnOffCrFlag();
 		}
-		_currentIndex = bufferLength;
-
+		_currentIndex = currentIndex;
 		return false;
 	}
 }

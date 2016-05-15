@@ -28,20 +28,20 @@ public final class ReaderCharBuffer extends CharBuffer {
 
 	public int shiftBufferToMark() throws BufferOverflowException {
 		// shift buffer consumer data
-		int usedLength = Math.max(bufferSize - mark, 0);
+		int lMark = this.mark;
+		int usedLength = Math.max(bufferSize - lMark, 0);
 
 		// if buffer tight double the size
 		if (usedLength > (bufferSize >> 2) * 3) {
 			resize(usedLength);
 		}
 
-		System.arraycopy(buffer, mark, buffer, 0, usedLength);
+		System.arraycopy(buffer, lMark, buffer, 0, usedLength);
 
 		bufferSize = usedLength;
 
-		int m = mark;
-		mark = 0;
-		return m;
+		this.mark = 0;
+		return lMark;
 	}
 
 	private void resize(int requireLength) throws BufferOverflowException {
@@ -52,21 +52,5 @@ public final class ReaderCharBuffer extends CharBuffer {
         }
 		// double buffer size
 		buffer = Arrays.copyOf(buffer, newBufferSize);
-	}
-
-	public char[] getCharBuffer() {
-		return buffer;
-	}
-
-	public int getMark() {
-		return mark;
-	}
-
-	public char getChar(int bufferIndex) {
-		return buffer[bufferIndex];
-	}
-
-	public int getBufferSize() {
-		return bufferSize;
 	}
 }

@@ -10,6 +10,14 @@ public final class CharSequenceCharBuffer extends CharBuffer {
 		super(toCharArray(charSequence), charSequence.length());
 	}
 
+	public boolean fillBuffer() throws IOException {
+		return false;
+	}
+
+	public int shiftBufferToMark() throws BufferOverflowException {
+		return 0;
+	}
+
 	private static char[] toCharArray(CharSequence charSequence) {
 		if (charSequence instanceof String) {
 			return ((String)charSequence).toCharArray();
@@ -19,29 +27,5 @@ public final class CharSequenceCharBuffer extends CharBuffer {
 			}
 			return buffer;
 		}
-	}
-
-	public boolean fillBuffer() throws IOException {
-		return false;
-	}
-
-	public int shiftBufferToMark() throws BufferOverflowException {
-		return 0;
-	}
-
-	public char[] getCharBuffer() {
-		return buffer;
-	}
-
-	public int getMark() {
-		return mark;
-	}
-
-	public char getChar(int bufferIndex) {
-		return buffer[bufferIndex];
-	}
-
-	public int getBufferSize() {
-		return bufferSize;
 	}
 }

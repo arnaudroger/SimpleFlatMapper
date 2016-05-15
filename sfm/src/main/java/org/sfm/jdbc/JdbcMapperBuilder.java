@@ -8,6 +8,7 @@ import org.sfm.map.context.MappingContextFactory;
 import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.map.mapper.AbstractMapperBuilder;
 import org.sfm.map.mapper.JoinMapperImpl;
+import org.sfm.map.mapper.KeyFactory;
 import org.sfm.map.mapper.MapperSourceImpl;
 import org.sfm.map.mapper.StaticSetRowMapper;
 import org.sfm.reflect.ReflectionService;
@@ -28,6 +29,12 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
 
     private static final MapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
             new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class, new ResultSetGetterFactory());
+    private static final KeyFactory<JdbcColumnKey> KEY_FACTORY = new KeyFactory<JdbcColumnKey>() {
+        @Override
+        public JdbcColumnKey newKey(String name, int i) {
+            return new JdbcColumnKey(name, i);
+        }
+    };
 
 
     /**
@@ -74,7 +81,8 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
              MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig,
              GetterFactory<ResultSet, JdbcColumnKey> getterFactory,
              MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
-        super(classMeta, parentBuilder, mapperConfig, FIELD_MAPPER_SOURCE.getterFactory(getterFactory), 1);
+        super(classMeta, parentBuilder, mapperConfig, FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
+                KEY_FACTORY, 1);
     }
 
 

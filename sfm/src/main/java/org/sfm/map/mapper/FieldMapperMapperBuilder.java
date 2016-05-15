@@ -2,19 +2,25 @@ package org.sfm.map.mapper;
 
 import org.sfm.jdbc.impl.getter.MapperGetterAdapter;
 import org.sfm.map.*;
+import org.sfm.map.column.DefaultValueProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
+import org.sfm.map.column.GetterProperty;
 import org.sfm.map.context.MappingContextFactoryBuilder;
 import org.sfm.map.impl.FieldErrorHandlerMapper;
 import org.sfm.map.impl.fieldmapper.ConstantSourceFieldMapperFactory;
 import org.sfm.map.impl.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
 import org.sfm.map.impl.fieldmapper.MapperFieldMapper;
 import org.sfm.reflect.*;
+import org.sfm.reflect.impl.ConstantGetter;
 import org.sfm.reflect.impl.NullGetter;
 import org.sfm.reflect.meta.*;
 import org.sfm.tuples.Tuple2;
+import org.sfm.utils.BiConsumer;
 import org.sfm.utils.ErrorDoc;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
+import org.sfm.utils.Named;
+import org.sfm.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -38,17 +44,21 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
     private final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
     protected final MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder;
 
+    private final KeyFactory<K> keyFactory;
+
 
     public FieldMapperMapperBuilder(
             final MapperSource<? super S, K> mapperSource,
             final ClassMeta<T> classMeta,
             final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
-            MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder) throws MapperBuildingException {
+            MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder,
+            KeyFactory<K> keyFactory) throws MapperBuildingException {
         this.mapperSource = requireNonNull("fieldMapperSource", mapperSource);
         this.mapperConfig = requireNonNull("mapperConfig", mapperConfig);
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
 		this.fieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<S, K>(mapperSource.getterFactory());
-		this.propertyMappingsBuilder =
+        this.keyFactory = keyFactory;
+        this.propertyMappingsBuilder =
                 new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K>>(classMeta,
                         mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler(),
                         new PropertyWithSetter());
@@ -75,6 +85,31 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     public Mapper<S, T> mapper() {
+        // look for column with a default value property but no definition.
+        mapperConfig
+                .columnDefinitions()
+                .forEach(
+                        DefaultValueProperty.class,
+                        new BiConsumer<Predicate<? super K>, DefaultValueProperty>() {
+                            @Override
+                            public void accept(Predicate<? super K> predicate, DefaultValueProperty columnProperty) {
+                                if (propertyMappingsBuilder.hasKey(predicate)){
+                                    return;
+                                }
+                                if (predicate instanceof Named) {
+                                    String name = ((Named)predicate).getName();
+                                    GetterProperty getterProperty = new GetterProperty(new ConstantGetter<Object, Object>(columnProperty.getValue()),columnProperty.getValue().getClass()) {
+
+                                    };
+                                    final FieldMapperColumnDefinition<K> columnDefinition =
+                                            FieldMapperColumnDefinition.<K>identity().add(columnProperty,
+                                                    getterProperty);
+                                    propertyMappingsBuilder.addPropertyIfPresent(keyFactory.newKey(name, propertyMappingsBuilder.maxIndex() + 1), columnDefinition);
+                                }
+                            }
+                        });
+
+
         FieldMapper<S, T>[] fields = fields();
         Tuple2<FieldMapper<S, T>[], Instantiator<S, T>> constructorFieldMappersAndInstantiator = getConstructorFieldMappersAndInstantiator();
 
@@ -342,7 +377,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
                 mapperSource,
                 classMeta,
                 mapperConfig,
-                mappingContextFactoryBuilder);
+                mappingContextFactoryBuilder, keyFactory);
     }
 
     private FieldKey<?>[] getKeys() {

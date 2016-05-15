@@ -9,6 +9,12 @@ import org.sfm.map.FieldKey;
 
 public final class TupleElementKey extends FieldKey<TupleElementKey> {
 	private final Expression<?> expression;
+
+	public TupleElementKey(String name, int index) {
+		super(name, index);
+		this.expression = null;
+	}
+
 	public TupleElementKey(Expression<?> expression, int index) {
 		super(getName(expression), index);
 		this.expression = expression;

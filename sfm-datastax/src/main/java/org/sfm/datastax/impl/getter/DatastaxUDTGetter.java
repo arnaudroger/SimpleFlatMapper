@@ -3,6 +3,7 @@ package org.sfm.datastax.impl.getter;
 import com.datastax.driver.core.GettableByIndexData;
 import com.datastax.driver.core.UserType;
 import org.sfm.datastax.DatastaxColumnKey;
+import org.sfm.datastax.DatastaxMapperBuilder;
 import org.sfm.datastax.DatastaxMapperFactory;
 import org.sfm.datastax.impl.DatastaxMappingContextFactoryBuilder;
 import org.sfm.datastax.impl.RowGetterFactory;
@@ -10,6 +11,7 @@ import org.sfm.map.Mapper;
 import org.sfm.map.MapperConfig;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.mapper.FieldMapperMapperBuilder;
+import org.sfm.map.mapper.KeyFactory;
 import org.sfm.map.mapper.MapperSourceImpl;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.meta.ClassMeta;
@@ -18,6 +20,7 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 
 public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
+
     private final Mapper<GettableByIndexData, T> mapper;
     private final int index;
 
@@ -60,7 +63,7 @@ public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
                 mapperSource,
                 classMeta,
                 config,
-                new DatastaxMappingContextFactoryBuilder()
-                );
+                new DatastaxMappingContextFactoryBuilder(),
+                DatastaxMapperBuilder.KEY_FACTORY);
     }
 }

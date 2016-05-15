@@ -23,24 +23,25 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     private int calculatedIndex;
 
     /**
-     * @param mapperSource               the Mapper source.
      * @param classMeta                  the meta for the target class.
      * @param parentBuilder              the parent builder, null if none.
      * @param mapperConfig               the mapperConfig.
+     * @param mapperSource               the Mapper source.
+     * @param keyFactory
      * @param startIndex                 the first column index
      */
     public AbstractMapperBuilder(
             final ClassMeta<T> classMeta,
             MappingContextFactoryBuilder<? super S, K> parentBuilder,
             MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
-            MapperSource<? super S, K> mapperSource, int startIndex) {
+            MapperSource<? super S, K> mapperSource, KeyFactory<K> keyFactory, int startIndex) {
         this.fieldMapperMapperBuilder =
                 new FieldMapperMapperBuilder<S, T, K>(
                         mapperSource,
                         classMeta,
                         mapperConfig,
-                        parentBuilder
-                );
+                        parentBuilder,
+                        keyFactory);
         this.mapperConfig = mapperConfig;
         this.mappingContextFactoryBuilder = parentBuilder;
         this.calculatedIndex = startIndex;

@@ -3,18 +3,59 @@ package org.sfm.jdbc;
 import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
+import org.sfm.map.column.DefaultValueProperty;
 import org.sfm.test.jdbc.DbHelper;
 import org.sfm.test.jdbc.TestRowHandler;
 import org.sfm.utils.ListCollectorHandler;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class JdbcMapperDbObjectTest {
-	
+
+	@Test
+	public void testDefaultValue() throws Exception {
+		final JdbcMapper<DbObject> mapper = JdbcMapperFactory
+				.newInstance()
+				.addColumnProperty("name", new DefaultValueProperty<String>("defaultName")).newMapper(DbObject.class);
+
+		DbHelper.testQuery(new TestRowHandler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement preparedStatement) throws Exception {
+				ResultSet rs = preparedStatement.executeQuery();
+
+				rs.next();
+
+				DbObject object = mapper.map(rs);
+
+				assertEquals(1, object.getId());
+				assertEquals("namers", object.getName());
+
+
+			}
+		}, "SELECT id, 'namers' as name from TEST_DB_OBJECT where id = 1");
+
+		DbHelper.testQuery(new TestRowHandler<PreparedStatement>() {
+			@Override
+			public void handle(PreparedStatement preparedStatement) throws Exception {
+				ResultSet rs = preparedStatement.executeQuery();
+
+				rs.next();
+
+				DbObject object = mapper.map(rs);
+
+				assertEquals(1, object.getId());
+				assertEquals("defaultName", object.getName());
+
+
+			}
+		}, "SELECT id from TEST_DB_OBJECT where id = 1");
+	}
+
 	@Test
 	public void testColumn() throws Exception {
 		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class);

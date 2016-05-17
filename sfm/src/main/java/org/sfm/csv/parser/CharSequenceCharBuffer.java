@@ -5,9 +5,14 @@ import java.io.Reader;
 
 public final class CharSequenceCharBuffer extends CharBuffer {
 
-	public CharSequenceCharBuffer(final CharSequence charSequence)
+	public CharSequenceCharBuffer(final String str)
 			throws IOException {
-		super(toCharArray(charSequence), charSequence.length());
+		super(str.toCharArray(), str.length());
+	}
+
+	public CharSequenceCharBuffer(final CharSequence str)
+			throws IOException {
+		super(toCharArray(str), str.length());
 	}
 
 	public boolean fillBuffer() throws IOException {

@@ -787,8 +787,15 @@ public class CsvParserTest {
 		it = CsvParser.iterator(new StringReader("\"\"\"\""));
 		strings = it.next();
 		assertArrayEquals(new String[]{"\""}, strings);
+
 	}
 
+	@Test
+	public void testQuotedStringShift() throws IOException {
+		Iterator<String[]> it = CsvParser.iterator("\"\"\"a\"\"b\"\"c\"\"d\"");
+		String[] strings = it.next();
+		assertArrayEquals(new String[]{"\"a\"b\"c\"d"}, strings);
+	}
 
 	@Test
 	public void testTrimSpaceToQuote() throws IOException {

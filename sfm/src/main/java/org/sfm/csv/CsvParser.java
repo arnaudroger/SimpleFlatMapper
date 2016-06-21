@@ -183,7 +183,11 @@ public final class CsvParser {
         return dsl().reader(content);
     }
 
-    public static Iterator<String[]> iterator(CharSequence content) throws IOException {
+	public static CsvReader reader(String content) throws IOException {
+		return dsl().reader(content);
+	}
+
+	public static Iterator<String[]> iterator(CharSequence content) throws IOException {
         return dsl().iterator(content);
     }
 
@@ -191,8 +195,11 @@ public final class CsvParser {
         return dsl().parse(content, cellConsumer);
     }
 
+	public static <CC extends CellConsumer> CC parse(String content, CC cellConsumer) throws IOException {
+		return dsl().parse(content, cellConsumer);
+	}
 
-    public static CloseableCsvReader reader(File file) throws IOException {
+	public static CloseableCsvReader reader(File file) throws IOException {
 		return dsl().reader(file);
 	}
 
@@ -324,9 +331,14 @@ public final class CsvParser {
 			return parse(charBuffer(reader), cellConsumer);
         }
 
+		public <CC extends CellConsumer> CC parse(String content, CC cellConsumer) throws IOException {
+			return parse(charBuffer(content), cellConsumer);
+		}
+
         public <CC extends CellConsumer> CC parse(CharSequence content, CC cellConsumer) throws IOException {
             return parse(charBuffer(content), cellConsumer);
         }
+
 		private <CC extends CellConsumer> CC parse(CharBuffer charBuffer, CC cellConsumer) throws IOException {
 			CsvReader csvreader = reader(charBuffer);
 
@@ -366,6 +378,10 @@ public final class CsvParser {
 			return reader(charBuffer(content));
 		}
 
+		public CsvReader reader(String content) throws IOException {
+			return reader(charBuffer(content));
+		}
+
 		private CsvReader reader(CharBuffer charBuffer) throws IOException {
 			CsvReader csvReader = new CsvReader(charConsumer(charBuffer));
 			csvReader.skipRows(skip);
@@ -380,6 +396,10 @@ public final class CsvParser {
 			return new CharSequenceCharBuffer(content);
 		}
 
+		private CharBuffer charBuffer(String content) throws IOException {
+			return new CharSequenceCharBuffer(content);
+		}
+
 		public CloseableCsvReader reader(File file) throws IOException {
 			return onReader(file, CREATE_CLOSEABLE_CSV_READER);
 		}
@@ -389,6 +409,10 @@ public final class CsvParser {
         }
 
 		public Iterator<String[]> iterator(CharSequence content) throws IOException {
+			return reader(content).iterator();
+		}
+
+		public Iterator<String[]> iterator(String content) throws IOException {
 			return reader(content).iterator();
 		}
 
@@ -449,6 +473,10 @@ public final class CsvParser {
 			return reader(content).stream();
 		}
 
+		public Stream<String[]> stream(String content) throws IOException {
+			return reader(content).stream();
+		}
+
 		public Stream<String[]> stream(File file) throws IOException {
 			return onReader(file, CREATE_CLOSEABLE_STREAM);
 		}
@@ -458,18 +486,19 @@ public final class CsvParser {
         //IFJAVA8_END
 
         private CsvCharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
-
-            if (separatorChar == ',' && quoteChar == '"' && !trimSpaces) {
+            if (isStandardConsumer()) {
                 return new StandardCsvCharConsumer(charBuffer);
-            } else {
-                if (!trimSpaces) {
+            } else if (!trimSpaces) {
                     return new ConfigurableCsvCharConsumer(charBuffer, separatorChar, quoteChar);
-                } else {
-                    return new ConfigurableTrimCsvCharConsumer(charBuffer, separatorChar, quoteChar);
-                }
-            }
+			} else {
+				return new ConfigurableTrimCsvCharConsumer(charBuffer, separatorChar, quoteChar);
+			}
 
         }
+
+		private boolean isStandardConsumer() {
+			return separatorChar == ',' && quoteChar == '"' && !trimSpaces;
+		}
 
 		public int maxBufferSize() {
 			return maxBufferSize;
@@ -658,6 +687,10 @@ public final class CsvParser {
 			return mapper.iterator(dsl.reader(content));
 		}
 
+		public final Iterator<T> iterator(String content) throws IOException {
+			return mapper.iterator(dsl.reader(content));
+		}
+
 		public final CloseableIterator<T> iterator(File file) throws IOException {
 			return onReader(file, new IOFunction<Reader, CloseableIterator<T>>() {
 				@Override
@@ -684,6 +717,10 @@ public final class CsvParser {
 			return forEach(rowHandler, dsl.reader(content));
 		}
 
+		public final <H extends RowHandler<T>> H forEach(String content, H rowHandler) throws IOException {
+			return forEach(rowHandler, dsl.reader(content));
+		}
+
 		private <H extends RowHandler<T>> H forEach(H rowHandler, CsvReader csvReader) throws IOException {
 			if (dsl.limit == -1) {
                 mapper.forEach(csvReader, rowHandler);
@@ -699,6 +736,10 @@ public final class CsvParser {
 		}
 
 		public final Stream<T> stream(CharSequence content) throws IOException {
+			return mapper.stream(dsl.reader(content));
+		}
+
+		public final Stream<T> stream(String content) throws IOException {
 			return mapper.stream(dsl.reader(content));
 		}
 

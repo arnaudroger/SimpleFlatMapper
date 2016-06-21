@@ -3,7 +3,6 @@ package org.sfm.csv.parser;
 import java.io.IOException;
 
 public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
-	protected static final int HAS_CONTENT = 8;
 	protected static final int IN_QUOTE = 4;
 	protected static final int IN_CR = 2;
 	protected static final int QUOTE = 1;
@@ -55,12 +54,12 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 		return false;
 	}
 
-	private void endOfRow(int currentIndex, CellConsumer cellConsumer) {
+	private final void endOfRow(int currentIndex, CellConsumer cellConsumer) {
 		newCell(currentIndex, cellConsumer);
 		cellConsumer.endOfRow();
 	}
 
-	protected void quote(int currentIndex) {
+	protected final void quote(int currentIndex) {
 		if (isNotAllConsumedFromMark(currentIndex)) {
 			currentState ^= ALL_QUOTES;
 		} else {
@@ -68,42 +67,36 @@ public abstract class AbstractCsvCharConsumer extends CsvCharConsumer {
 		}
 	}
 
-	protected void newCell(int end, final CellConsumer cellConsumer) {
+	protected final void newCell(int end, final CellConsumer cellConsumer) {
 		char[] charBuffer = csvBuffer.getCharBuffer();
 		int start = csvBuffer.getMark();
 
 		if (charBuffer[start] != quoteChar) {
 			cellConsumer.newCell(charBuffer, start, end - start);
 		} else {
-			newEscapedCell(charBuffer, start, end - start, cellConsumer);
+			newEscapedCell(charBuffer, start, end, cellConsumer);
 		}
 
 		csvBuffer.mark(end + 1);
 		currentState = NONE;
 	}
 
-	private void newEscapedCell(final char[] chars, final int offset, final int length, CellConsumer cellConsumer) {
+	protected final void newEscapedCell(final char[] chars, final int offset, final int end, CellConsumer cellConsumer) {
+
 		int start = offset + 1;
-		int shiftedIndex = start;
-		boolean escaped = false;
 
-		int lastCharacter = offset + length - 1;
-
-
+		boolean notEscaped = true;
 		// copy chars apart from escape chars
-		for(int i = start; i < lastCharacter; i++) {
-			escaped = quoteChar == chars[i] && !escaped;
-			if (!escaped) {
-				chars[shiftedIndex++] = chars[i];
+		int realIndex = start;
+		char lQuoteChar = this.quoteChar;
+		for(int i = start; i < end; i++) {
+			notEscaped = !notEscaped || lQuoteChar != chars[i];
+			chars[realIndex] = chars[i];
+			if (notEscaped) {
+				realIndex++;
 			}
 		}
-
-		// if last is not quote add to shifted char
-		if (quoteChar != chars[lastCharacter] || escaped) {
-			chars[shiftedIndex++] = chars[lastCharacter];
-		}
-
-		cellConsumer.newCell(chars, start, shiftedIndex - start);
+		cellConsumer.newCell(chars, start, realIndex - start);
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 public final class StringArrayConsumer<RH extends RowHandler<String[]>> implements CellConsumer {
 	private final RH handler;
-	private String[] currentRow = new String[10];
+	private String[] currentRow = new String[8];
 	private int currentIndex;
 
 
@@ -28,6 +28,7 @@ public final class StringArrayConsumer<RH extends RowHandler<String[]>> implemen
 	public void endOfRow() {
 		try {
 			String[] result = Arrays.copyOf(currentRow, currentIndex);
+			Arrays.fill(currentRow, null);
 			handler.handle(result);
 			currentIndex = 0;
 		} catch (Exception e) {

@@ -6,8 +6,9 @@ import org.sfm.test.jdbc.DbHelper;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
+//IFJAVA8_START
 import java.time.LocalDateTime;
+//IFJAVA8_END
 
 import static org.junit.Assert.assertEquals;
 

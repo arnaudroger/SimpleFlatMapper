@@ -182,6 +182,8 @@ public class ConverterFactory {
 		//IFJAVA8_START
 		else if (TypeHelper.isAssignable(Temporal.class, inType)) {
 			return JavaTimeConverterFactory.getConverterFrom(inType, outType, params);
+		}else if (TypeHelper.isAssignable(Temporal.class, outType)) {
+			return JavaTimeConverterFactory.getConverterTo(inType, outType, params);
 		}
 		//IFJAVA8_END
 		return null;

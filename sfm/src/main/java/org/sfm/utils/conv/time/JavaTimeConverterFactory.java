@@ -34,4 +34,30 @@ public class JavaTimeConverterFactory {
         }
         return null;
     }
+
+    public static <F, P> Converter<F, P> getConverterTo(Class<F> inType, Type outType, Object[] params) {
+
+        if (TypeHelper.isAssignable(Date.class, inType)) {
+            if (Instant.class.equals(outType)) {
+                return (Converter<F, P>) new DateToJavaInstantConverter();
+            } else if (LocalDateTime.class.equals(outType)) {
+                return (Converter<F, P>) new DateToJavaLocalDateTimeConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            } else if (LocalDate.class.equals(outType)) {
+                return (Converter<F, P>) new DateToJavaLocalDateConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            } else if (LocalTime.class.equals(outType)) {
+                return (Converter<F, P>) new DateToJavaLocalTimeConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            } else if (ZonedDateTime.class.equals(outType)) {
+                return (Converter<F, P>) new DateToJavaZonedDateTimeConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            } else if (OffsetDateTime.class.equals(outType)) {
+                return (Converter<F, P>) new DateToJavaOffsetDateTimeConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            } else if (OffsetTime.class.equals(outType)) {
+                return (Converter<F, P>) new DateToJavaOffsetTimeConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            } else if (YearMonth.class.equals(outType)) {
+                return (Converter<F, P>) new DateToJavaYearMonthConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            } else if (Year.class.equals(outType)) {
+                return (Converter<F, P>) new DateToJavaYearConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            }
+        }
+        return null;
+    }
 }

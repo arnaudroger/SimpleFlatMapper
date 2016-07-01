@@ -119,7 +119,7 @@ public class ConverterFactoryTest {
 
     //IFJAVA8_START
     @Test
-    public void testJavaTime() throws Exception {
+    public void testJavaTimeToDate() throws Exception {
         long time = System.currentTimeMillis();
         final Date date = new Date(time);
         final LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
@@ -135,6 +135,27 @@ public class ConverterFactoryTest {
                 new SimpleDateFormat("yyyyMMdd").parse("20160201"));
         testConverter(Year.of(2016),
                 new SimpleDateFormat("yyyyMMdd").parse("20160101"));
+
+    }
+
+    @Test
+    public void testDateToJavaTime() throws Exception {
+        long time = System.currentTimeMillis();
+        final Date date = new Date(time);
+        final LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+        final ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
+        testConverter(date, localDateTime);
+        testConverter(date, localDateTime.toLocalTime());
+        testConverter(trunc(date), localDateTime.toLocalDate());
+        testConverter(date, date.toInstant());
+        testConverter(date, zonedDateTime);
+        testConverter(date, zonedDateTime.toOffsetDateTime());
+        testConverter(date, zonedDateTime.toOffsetDateTime().toOffsetTime());
+        testConverter(new SimpleDateFormat("yyyyMMdd").parse("20160201"),
+                YearMonth.of(2016, Month.FEBRUARY)
+                );
+        testConverter(new SimpleDateFormat("yyyyMMdd").parse("20160201"),
+                Year.of(2016));
 
     }
 

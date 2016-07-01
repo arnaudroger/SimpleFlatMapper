@@ -9,6 +9,7 @@ import org.sfm.test.DateHelper;
 
 import java.sql.*;
 import java.text.ParseException;
+import java.util.UUID;
 
 
 public class DbHelper {
@@ -62,12 +63,30 @@ public class DbHelper {
 				
 				PreparedStatement ps = c.prepareStatement("insert into db_extended_type values (?, 'https://github.com/arnaudroger/SimpleFlatMapper',"
 						+ "'07:08:09', '2014-11-02', 123.321, 123, ARRAY [ 'HOT', 'COLD' ], ARRAY [ 'COLD', 'FREEZING' ])");
+
+
+
 				try {
 					ps.setBytes(1, new byte[] { 'a', 'b', 'c' });
 					ps.execute();
 				} finally {
 					ps.close();
 				}
+
+				st.execute("create table issue318("
+						+ " id varchar(100),"
+						+ " t  timestamp )");
+
+				ps = c.prepareStatement("insert into issue318 values (?, ?)");
+
+				try {
+					ps.setString(1, UUID.randomUUID().toString());
+					ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+					ps.execute();
+				} finally {
+					ps.close();
+				}
+
 				c.commit();
 			} finally {
 				st.close();

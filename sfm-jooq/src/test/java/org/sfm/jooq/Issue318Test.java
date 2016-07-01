@@ -8,14 +8,15 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;
-import org.sfm.beans.DbObject;
 import org.sfm.test.jdbc.DbHelper;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+//IFJAVA8_START
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+//IFJAVA8_END
 import java.util.List;
 import java.util.UUID;
 

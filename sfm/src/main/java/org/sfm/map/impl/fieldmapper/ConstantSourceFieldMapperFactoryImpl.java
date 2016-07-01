@@ -104,6 +104,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
             getter = getterFactory.newGetter(propertyType, propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition());
         }
 
+        // try to identify constructor that we could build from
 		if (getter == null) {
 			final ClassMeta<P> classMeta = propertyMapping.getPropertyMeta().getPropertyClassMeta();
 
@@ -113,7 +114,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 			if (id != null) {
 				final Type sourceType = id.getParameters()[0].getGenericType();
-				getter = getterFromFactory(propertyMapping, sourceType);
+				getter = getterFactory.newGetter(sourceType, propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition());
 				if (getter != null) {
 					Instantiator instantiator =
 							classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);

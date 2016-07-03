@@ -298,7 +298,7 @@ public abstract class AbstractMapperFactory<
 	}
 
     public final <T> ClassMeta<T> getClassMeta(Type target) {
-        return getReflectionService().getClassMeta(TypeHelper.isPrimitive(target) ? TypeHelper.toBoxedClass(target) : target);
+        return getReflectionService().getClassMeta(target);
     }
 
 	public final <T> ClassMeta<T> getClassMetaWithExtraInstantiator(TypeReference<T> target, Member instantiator) {

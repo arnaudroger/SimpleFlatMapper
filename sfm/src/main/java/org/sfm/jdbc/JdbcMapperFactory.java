@@ -5,6 +5,7 @@ import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.mapper.*;
 import org.sfm.reflect.Getter;
+import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.JpaAliasProvider;
@@ -220,7 +221,7 @@ public final class JdbcMapperFactory
     }
 
 	public <T, K> CrudDSL<T, K> crud(final Type target, final Type keyTarget) {
-		return crud(this.<T>getClassMeta(target), this.<K>getClassMeta(keyTarget));
+		return crud(this.<T>getClassMeta(target), this.<K>getClassMeta(TypeHelper.toBoxedClass(keyTarget)));
 	}
 
 	public <T, K> CrudDSL<T, K> crud(final ClassMeta<T> target, final ClassMeta<K> keyTarget) {

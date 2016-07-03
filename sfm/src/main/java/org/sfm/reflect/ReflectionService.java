@@ -61,6 +61,11 @@ public class ReflectionService {
 		return asmFactory;
 	}
 
+
+	public <T> ClassMeta<T> getClassMeta(Class<T> target) {
+		return getClassMeta((Type)target);
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T> ClassMeta<T> getClassMeta(Type target) {
 		requireNonNull("target", target);

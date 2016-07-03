@@ -5,7 +5,7 @@
 	<artifactId>sfm-test-sandbox</artifactId>
 	<packaging>jar</packaging>
 
-	<version>2.9.8-SNAPSHOT</version>
+	<version>2.9.8</version>
 
 	<licenses>
 		<license>
@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm</artifactId>
-			<version>2.9.8-SNAPSHOT</version>
+			<version>2.9.8</version>
 		</dependency>
 
 

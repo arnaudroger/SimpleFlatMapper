@@ -6,6 +6,7 @@ import org.sfm.map.error.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.error.RethrowRowHandlerErrorHandler;
 import org.sfm.map.impl.*;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.PropertyNameMatcherFactory;
@@ -297,7 +298,7 @@ public abstract class AbstractMapperFactory<
 	}
 
     public final <T> ClassMeta<T> getClassMeta(Type target) {
-        return getReflectionService().getClassMeta(target);
+        return getReflectionService().getClassMeta(TypeHelper.isPrimitive(target) ? TypeHelper.toBoxedClass(target) : target);
     }
 
 	public final <T> ClassMeta<T> getClassMetaWithExtraInstantiator(TypeReference<T> target, Member instantiator) {
@@ -320,4 +321,8 @@ public abstract class AbstractMapperFactory<
             return ReflectionService.newInstance(disableAsm, useAsm);
         }
     }
+
+	public ColumnDefinitionProvider<CD, K> columnDefinitions() {
+		return columnDefinitions;
+	}
 }

@@ -18,14 +18,14 @@ public class CrudFactory {
     public static <T, K> Crud<T, K> newInstance(
             ClassMeta<T> target,
             ClassMeta<K>  keyTarget,
-            CrudMeta<T, K> crudMeta,
+            CrudMeta crudMeta,
             JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance(jdbcMapperFactory);
         return createCrud(target, keyTarget, crudMeta, mapperFactory);
 
     }
 
-    private static <T, K> Crud<T, K> createCrud(ClassMeta<T> target, ClassMeta<K> keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory mapperFactory) throws SQLException {
+    private static <T, K> Crud<T, K> createCrud(ClassMeta<T> target, ClassMeta<K> keyTarget, CrudMeta crudMeta, JdbcMapperFactory mapperFactory) throws SQLException {
         crudMeta.addColumnProperties(mapperFactory);
 
         QueryPreparer<T> insert = buildInsert(target, crudMeta, mapperFactory);
@@ -62,7 +62,7 @@ public class CrudFactory {
         return defaultCrud;
     }
 
-    private static <T, K> QueryPreparer<T> buildUpsert(ClassMeta<T>  target, CrudMeta<T, K> crudMeta, JdbcMapperFactory mapperFactory) {
+    private static <T, K> QueryPreparer<T> buildUpsert(ClassMeta<T>  target, CrudMeta crudMeta, JdbcMapperFactory mapperFactory) {
         if (crudMeta.getDatabaseMeta().isMysql()) {
             return MysqlCrudFactory.buildUpsert(target, crudMeta, mapperFactory);
         } else if (crudMeta.getDatabaseMeta().isPostgresSql() && crudMeta.getDatabaseMeta().isVersionMet(9, 5)) {
@@ -72,7 +72,7 @@ public class CrudFactory {
     }
 
 
-    private static <T, K> KeyTupleQueryPreparer<K> buildKeyTupleQueryPreparer(ClassMeta<K>  keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) {
+    private static <T, K> KeyTupleQueryPreparer<K> buildKeyTupleQueryPreparer(ClassMeta<K>  keyTarget, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) {
         PreparedStatementMapperBuilder<K> builder = jdbcMapperFactory.from(keyTarget);
         List<String> primaryKeys = new ArrayList<String>();
 
@@ -87,7 +87,7 @@ public class CrudFactory {
         return new KeyTupleQueryPreparer<K>(builder.buildIndexFieldMappers(), primaryKeys.toArray(new String[0]));
     }
 
-    private static <T, K>JdbcMapper<K> buildKeyMapper(ClassMeta<K>  keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) {
+    private static <T, K>JdbcMapper<K> buildKeyMapper(ClassMeta<K>  keyTarget, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) {
         JdbcMapperBuilder<K> mapperBuilder = jdbcMapperFactory.newBuilder(keyTarget);
 
         int i = 1;
@@ -97,10 +97,13 @@ public class CrudFactory {
                 i++;
             }
         }
+        if (i == 1) {
+            throw new IllegalArgumentException("No key defined to map to " + keyTarget.getType() + ", specify key using DSL or add a primary key to the table");
+        }
         return mapperBuilder.mapper();
     }
 
-    private static <T, K> JdbcMapper<T> buildSelectMapper(ClassMeta<T>  target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+    private static <T, K> JdbcMapper<T> buildSelectMapper(ClassMeta<T>  target, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         JdbcMapperBuilder<T> mapperBuilder = jdbcMapperFactory.<T>newBuilder(target);
 
         int i = 1;
@@ -111,7 +114,7 @@ public class CrudFactory {
         return mapperBuilder.mapper();
     }
 
-    private static <T, K> QueryPreparer<T> buildInsert(ClassMeta<T> target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+    private static <T, K> QueryPreparer<T> buildInsert(ClassMeta<T> target, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         List<String> generatedKeys = new ArrayList<String>();
 
         StringBuilder sb = new StringBuilder("INSERT INTO ");
@@ -144,7 +147,7 @@ public class CrudFactory {
         return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb), generatedKeys.isEmpty() ? null :  generatedKeys.toArray(new String[0]));
     }
 
-    private static <T, K> QueryPreparer<T> buildUpdate(ClassMeta<T> target, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+    private static <T, K> QueryPreparer<T> buildUpdate(ClassMeta<T> target, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         StringBuilder sb = new StringBuilder("UPDATE ");
         sb.append(crudMeta.getTable());
         sb.append(" SET ");
@@ -164,21 +167,21 @@ public class CrudFactory {
         return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb));
     }
 
-    private static <T, K> QueryPreparer<K> buildSelect(ClassMeta<K> keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+    private static <T, K> QueryPreparer<K> buildSelect(ClassMeta<K> keyTarget, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         StringBuilder sb = new StringBuilder("SELECT * FROM ");
         sb.append(crudMeta.getTable());
         addWhereOnPrimaryKeys(crudMeta, sb);
         return jdbcMapperFactory.<K>from(keyTarget).to(NamedSqlQuery.parse(sb));
     }
 
-    private static <T, K> QueryPreparer<K> buildDelete(ClassMeta<K> keyTarget, CrudMeta<T, K> crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
+    private static <T, K> QueryPreparer<K> buildDelete(ClassMeta<K> keyTarget, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         StringBuilder sb = new StringBuilder("DELETE FROM ");
         sb.append(crudMeta.getTable());
         addWhereOnPrimaryKeys(crudMeta, sb);
         return jdbcMapperFactory.<K>from(keyTarget).to(NamedSqlQuery.parse(sb));
     }
 
-    private static <T, K> void addWhereOnPrimaryKeys(CrudMeta<T, K> crudMeta, StringBuilder sb) {
+    private static <T, K> void addWhereOnPrimaryKeys(CrudMeta crudMeta, StringBuilder sb) {
         sb.append(" WHERE ");
         boolean first = true;
         for(ColumnMeta cm : crudMeta.getColumnMetas()) {

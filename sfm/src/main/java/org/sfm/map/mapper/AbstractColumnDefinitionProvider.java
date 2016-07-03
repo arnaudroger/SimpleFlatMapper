@@ -1,7 +1,6 @@
 package org.sfm.map.mapper;
 
 
-import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.FieldKey;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.tuples.Tuple2;

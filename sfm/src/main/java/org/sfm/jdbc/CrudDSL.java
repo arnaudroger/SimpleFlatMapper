@@ -6,10 +6,8 @@ import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.meta.AliasProviderFactory;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
-import org.sfm.reflect.meta.PropertyNameMatcher;
 import org.sfm.reflect.meta.Table;
 
-import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,13 +24,13 @@ public class CrudDSL<T, K> {
     }
 
     public Crud<T, K> table(Connection connection, String table) throws SQLException {
-        CrudMeta<T, K> crudMeta = CrudMeta.of(connection, table);
+        CrudMeta crudMeta = CrudMeta.of(connection, table, jdbcMapperFactory.columnDefinitions());
         return CrudFactory.newInstance(target, keyTarget, crudMeta, jdbcMapperFactory);
     }
 
 
     public Crud<T, K> to(Connection connection) throws SQLException {
-        CrudMeta<T, K> crudMeta = CrudMeta.of(connection, getTable(connection, target));
+        CrudMeta crudMeta = CrudMeta.of(connection, getTable(connection, target), jdbcMapperFactory.columnDefinitions());
         return CrudFactory.newInstance(target, keyTarget, crudMeta, jdbcMapperFactory);
     }
 
@@ -59,7 +57,7 @@ public class CrudDSL<T, K> {
             } finally {
                 tables.close();
             }
-            throw new IllegalArgumentException("Type " + target + " has no table mapping");
+            throw new IllegalArgumentException("Type " + target.getType() + " has no table mapping");
         }
         sb.append(table.table());
 

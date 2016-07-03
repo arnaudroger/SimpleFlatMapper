@@ -1,8 +1,11 @@
 package org.sfm.jdbc.impl;
 
+import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.jdbc.SqlTypeColumnProperty;
+import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.column.KeyProperty;
+import org.sfm.map.mapper.ColumnDefinitionProvider;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -13,7 +16,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrudMeta<T, K> {
+public class CrudMeta {
 
     private final DatabaseMeta databaseMeta;
     private final String table;
@@ -46,7 +49,9 @@ public class CrudMeta<T, K> {
         return false;
     }
 
-    public static <T, K> CrudMeta<T, K> of(Connection connection, String table) throws SQLException {
+    public static CrudMeta of(Connection connection,
+                              String table,
+                              ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey>, JdbcColumnKey> columnDefinitionProvider) throws SQLException {
         Statement statement = connection.createStatement();
         try {
             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + table + " WHERE 1 = 2");
@@ -58,7 +63,7 @@ public class CrudMeta<T, K> {
                 DatabaseMetaData metaData = connection.getMetaData();
                 DatabaseMeta databaseMeta = new DatabaseMeta(metaData.getDatabaseProductName(), metaData.getDatabaseMajorVersion(), metaData.getDatabaseMinorVersion());
                 ColumnMeta[] columnMetas = new ColumnMeta[resultSetMetaData.getColumnCount()];
-                List<String> primaryKeys = getPrimaryKeys(connection, resultSetMetaData);
+                List<String> primaryKeys = getPrimaryKeys(connection, resultSetMetaData, columnDefinitionProvider);
 
                 for(int i = 0; i < columnMetas.length; i++) {
                     String columnName = resultSetMetaData.getColumnName(i + 1);
@@ -69,7 +74,7 @@ public class CrudMeta<T, K> {
                             resultSetMetaData.isAutoIncrement(i + 1));
                 }
 
-                return new CrudMeta<T, K>(databaseMeta, table, columnMetas);
+                return new CrudMeta(databaseMeta, table, columnMetas);
 
 
             } finally {
@@ -81,8 +86,20 @@ public class CrudMeta<T, K> {
 
     }
 
-    private static List<String> getPrimaryKeys(Connection connection, ResultSetMetaData resultSetMetaData) throws SQLException {
+    private static List<String> getPrimaryKeys(Connection connection, ResultSetMetaData resultSetMetaData, ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey>, JdbcColumnKey> columnDefinitionProvider) throws SQLException {
         List<String> primaryKeys = new ArrayList<String>();
+
+        for(int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
+            JdbcColumnKey key = JdbcColumnKey.of(resultSetMetaData, i);
+            if (columnDefinitionProvider.getColumnDefinition(key).has(KeyProperty.class)) {
+                primaryKeys.add(key.getName());
+            }
+        }
+
+        if (!primaryKeys.isEmpty()) {
+            return primaryKeys;
+        }
+
         ResultSet set = connection.getMetaData().getPrimaryKeys(resultSetMetaData.getCatalogName(1), resultSetMetaData.getSchemaName(1), resultSetMetaData.getTableName(1));
         try {
             while (set.next()) {

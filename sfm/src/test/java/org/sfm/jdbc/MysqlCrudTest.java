@@ -41,7 +41,7 @@ public class MysqlCrudTest {
         when(connection.prepareStatement("INSERT INTO TEST(id) VALUES(?), (?), (?), (?), (?), (?), (?), (?), (?), (?)")).thenReturn(ps);
 
         Crud<DbObject, Long> objectCrud =
-            CrudFactory.newInstance(
+            CrudFactory.<DbObject, Long>newInstance(
                     ReflectionService.newInstance().getClassMeta(DbObject.class),
                     ReflectionService.newInstance().getClassMeta(Long.class),
                     new CrudMeta(new DatabaseMeta("MySQL", 5, 5), "TEST", new ColumnMeta[]{new ColumnMeta("id", Types.INTEGER, true, false)}),
@@ -73,7 +73,7 @@ public class MysqlCrudTest {
 
 
         Crud<DbObject, Long> objectCrud =
-                CrudFactory.newInstance(
+                CrudFactory.<DbObject, Long>newInstance(
                         ReflectionService.newInstance().getClassMeta(DbObject.class),
                         ReflectionService.newInstance().getClassMeta(Long.class),
                         new CrudMeta(new DatabaseMeta("MySQL", 5, 5), "TEST", new ColumnMeta[]{new ColumnMeta("id", Types.INTEGER, true, false)}),

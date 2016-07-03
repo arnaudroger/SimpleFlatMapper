@@ -28,7 +28,7 @@ public class CrudUpsertTest {
     {
         try {
             postGresqlCrud =
-                    CrudFactory.newInstance(
+                    CrudFactory.<DbObject, Long>newInstance(
                     ReflectionService.newInstance().getClassMeta(DbObject.class),
                     ReflectionService.newInstance().getClassMeta(Long.class),
                     new CrudMeta(new DatabaseMeta("PostgreSQL", 5, 5), "TEST",
@@ -47,7 +47,7 @@ public class CrudUpsertTest {
     {
         try {
             hsqlCrud =
-                    CrudFactory.newInstance(
+                    CrudFactory.<DbObject, Long>newInstance(
                             ReflectionService.newInstance().getClassMeta(DbObject.class),
                             ReflectionService.newInstance().getClassMeta(Long.class),
                             new CrudMeta(new DatabaseMeta("HsqlDB", 5, 5), "TEST",

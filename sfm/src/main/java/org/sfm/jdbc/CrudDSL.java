@@ -25,13 +25,13 @@ public class CrudDSL<T, K> {
 
     public Crud<T, K> table(Connection connection, String table) throws SQLException {
         CrudMeta crudMeta = CrudMeta.of(connection, table, jdbcMapperFactory.columnDefinitions());
-        return CrudFactory.newInstance(target, keyTarget, crudMeta, jdbcMapperFactory);
+        return CrudFactory.<T, K>newInstance(target, keyTarget, crudMeta, jdbcMapperFactory);
     }
 
 
     public Crud<T, K> to(Connection connection) throws SQLException {
         CrudMeta crudMeta = CrudMeta.of(connection, getTable(connection, target), jdbcMapperFactory.columnDefinitions());
-        return CrudFactory.newInstance(target, keyTarget, crudMeta, jdbcMapperFactory);
+        return CrudFactory.<T, K>newInstance(target, keyTarget, crudMeta, jdbcMapperFactory);
     }
 
     private String getTable(Connection connection, ClassMeta<T> target) throws SQLException {

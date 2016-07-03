@@ -51,7 +51,7 @@ public class CrudNoPrimaryKeyTest {
         Crud<MyObject, Long> table = JdbcMapperFactory
                 .newInstance()
                 .addKeys("id")
-                .crud(MyObject.class, long.class)
+                .crud(MyObject.class, Long.class)
                 .table(connection, "CRUDNOKEY");
 
         assertEquals(new MyObject(1l, "name"), table.read(connection, 1l));

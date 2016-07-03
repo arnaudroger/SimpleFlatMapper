@@ -37,7 +37,7 @@ public class FastTupleTest {
     @Test
     public void testMetaDataOnFastTuple() throws Exception {
         //creates a new tuple allocated on the JVM heap
-        ClassMeta<FastTuple> cm = ReflectionService.newInstance().getClassMeta(tuple.getClass());
+        ClassMeta<FastTuple> cm = ReflectionService.newInstance().getClassMeta((Class<FastTuple>) tuple.getClass());
 
         final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder();
 
@@ -78,7 +78,7 @@ public class FastTupleTest {
         final FastTuple tuple = tupleSchema.createTuple();
 
         //creates a new tuple allocated on the JVM heap
-        ClassMeta<FastTuple> cm = ReflectionService.newInstance().getClassMeta(tuple.getClass());
+        ClassMeta<FastTuple> cm = ReflectionService.newInstance().getClassMeta((Class<FastTuple>) tuple.getClass());
 
         final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder();
 

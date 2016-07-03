@@ -31,7 +31,7 @@ public class ObjectClassMetaTest {
 
     @Test
     public void testGetterOnly() {
-        ClassMeta<Object> classMeta = ReflectionService.newInstance().getClassMeta(GetterOnly.class);
+        ClassMeta<GetterOnly> classMeta = ReflectionService.newInstance().getClassMeta(GetterOnly.class);
 
         assertNotNull(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("string")));
 
@@ -213,7 +213,7 @@ public class ObjectClassMetaTest {
 
     @Test
     public void testResolveConstructorParamWithDeductor() {
-        ClassMeta<Object> classMeta = ReflectionService.disableAsm().getClassMeta(StringObject.class);
+        ClassMeta<StringObject> classMeta = ReflectionService.disableAsm().getClassMeta(StringObject.class);
 
         assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value")).isConstructorProperty());
 
@@ -221,7 +221,7 @@ public class ObjectClassMetaTest {
 
     @Test
     public void testResolveConstructorParamWithDeductorNoNull() {
-        ClassMeta<Object> classMeta = ReflectionService.disableAsm().getClassMeta(NonNullContainer.class);
+        ClassMeta<NonNullContainer> classMeta = ReflectionService.disableAsm().getClassMeta(NonNullContainer.class);
 
         assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value")).isConstructorProperty());
         assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value2")).isConstructorProperty());
@@ -230,7 +230,7 @@ public class ObjectClassMetaTest {
 
     @Test
     public void testResolveConstructorParamWithDeductorNoNullInParam() {
-        ClassMeta<Object> classMeta = ReflectionService.disableAsm().getClassMeta(TwoStringObjectNonNull.class);
+        ClassMeta<TwoStringObjectNonNull> classMeta = ReflectionService.disableAsm().getClassMeta(TwoStringObjectNonNull.class);
 
         assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value")).isConstructorProperty());
         assertTrue(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value2")).isConstructorProperty());

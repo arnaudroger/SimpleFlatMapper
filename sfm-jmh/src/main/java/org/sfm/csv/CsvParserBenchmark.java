@@ -112,9 +112,7 @@ public class CsvParserBenchmark {
         @Override
         public void newCell(char[] chars, int offset, int length) {
             if (blackhole != null) {
-                blackhole.consume(chars);
-                blackhole.consume(offset);
-                blackhole.consume(length);
+                blackhole.consume(String.valueOf(chars, offset, length));
             }
         }
 

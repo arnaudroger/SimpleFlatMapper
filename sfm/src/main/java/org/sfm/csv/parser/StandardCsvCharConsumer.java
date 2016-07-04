@@ -172,25 +172,20 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 
 	@Override
 	public final void finish(CellConsumer cellConsumer) {
-		int currentIndex = _currentIndex;
-		if (isNotAllConsumedFromMark(currentIndex)) {
-			newCell(currentIndex, cellConsumer);
+		if (isNotAllConsumedFromMark()) {
+			newCell(_currentIndex, cellConsumer);
 		}
 		cellConsumer.end();
 	}
 
-	private void shiftCurrentIndex(int mark) {
-		_currentIndex -= mark;
-	}
-
 	@Override
 	public final boolean refillBuffer() throws IOException {
-		shiftCurrentIndex(csvBuffer.shiftBufferToMark());
+		_currentIndex -= csvBuffer.shiftBufferToMark();
 		return csvBuffer.fillBuffer();
 	}
 
-	private boolean isNotAllConsumedFromMark(int bufferIndex) {
-		return (bufferIndex) >  (csvBuffer.getMark())  ;
+	private boolean isNotAllConsumedFromMark() {
+		return _currentIndex > csvBuffer.getMark();
 	}
 
 

@@ -200,13 +200,9 @@ public final class ConfigurableTrimCsvCharConsumer extends CsvCharConsumer {
 		cellConsumer.end();
 	}
 
-	private void shiftCurrentIndex(int mark) {
-		_currentIndex -= mark;
-	}
-
 	@Override
 	public final boolean refillBuffer() throws IOException {
-		shiftCurrentIndex(csvBuffer.shiftBufferToMark());
+		_currentIndex -= csvBuffer.shiftBufferToMark();
 		return csvBuffer.fillBuffer();
 	}
 

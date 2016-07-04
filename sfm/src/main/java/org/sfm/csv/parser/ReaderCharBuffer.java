@@ -14,7 +14,6 @@ public final class ReaderCharBuffer extends CharBuffer {
 		this.maxBufferSize = maxBufferLength;
 		this.reader = reader;
 	}
-	
 
 	public boolean fillBuffer() throws IOException {
 		int length = reader.read(buffer, bufferSize, buffer.length - bufferSize);

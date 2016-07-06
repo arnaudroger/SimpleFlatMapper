@@ -3,7 +3,7 @@ package org.sfm.utils;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.concurrent.Executor;
-import java.util.concurrent.locks.LockSupport;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ParallelReader extends Reader {
 
@@ -11,18 +11,29 @@ public class ParallelReader extends Reader {
     private final DataProducer dataProducer;
     private final char[] buffer;
     private final int bufferMask;
-    private volatile long tail = 0;
-    private volatile long head = 0;
+    private AtomicLong tail = new AtomicLong();
+    private AtomicLong head = new AtomicLong();
     private final long capacity;
+    private long tailCache;
+    private long headCache;
+    private long padding = 64;
 
+    private long readWait = 0;
+    private long writeWait  =0;
+    private long tailCacheMisses = 0;
+    private long headCacheMisses = 0;
     public ParallelReader(Reader reader, Executor executorService) {
         this(reader, executorService, 1 << 13);
     }
 
     public ParallelReader(Reader reader, Executor executorService, int bufferSize) {
+        int powerOf2 =  1 << 32 - Integer.numberOfLeadingZeros(bufferSize - 1);
+        if (powerOf2 <= 1024) {
+            padding = 0;
+        }
         this.reader = reader;
-        buffer = new char[bufferSize];
-        bufferMask = bufferSize - 1;
+        buffer = new char[powerOf2];
+        bufferMask = buffer.length - 1;
         dataProducer = new DataProducer();
         executorService.execute(dataProducer);
         capacity = buffer.length;
@@ -30,28 +41,36 @@ public class ParallelReader extends Reader {
 
     @Override
     public int read(char[] cbuf, int off, int len) throws IOException {
+        final long currentHead = head.get();
         do {
-            final long currentHead = head;
-            final long currentTail = tail;
-            if (currentHead < currentTail) {
-                int l = read(cbuf, off, len, currentHead, currentTail);
-                head = currentHead + l;
+            if (currentHead < tailCache) {
+                int l = read(cbuf, off, len, currentHead, tailCache);
+
+                head.lazySet(currentHead + l);
                 return l;
             }
 
-            if (!dataProducer.run) {
-                if (tail >= head) {
-                    return -1;
+            tailCache = tail.get();
+            if (currentHead >= tailCache) {
+                if (!dataProducer.run) {
+                    if (dataProducer.exception != null) {
+                        throw dataProducer.exception;
+                    }
+                    tailCache = tail.get();
+                    if (currentHead >= tailCache) {
+                        return -1;
+                    }
                 }
+                readWait ++;
+                waitingStrategy();
+            } else {
+                tailCacheMisses ++;
             }
-
-            waitingStrategy();
-
         } while(true);
     }
 
     private void waitingStrategy() {
-       LockSupport.parkNanos(1000);
+        Thread.yield();
     }
 
     private int read(char[] cbuf, int off, int len, long lhead, long ltail) {
@@ -72,6 +91,11 @@ public class ParallelReader extends Reader {
     public void close() throws IOException {
         dataProducer.stop();
         reader.close();
+        System.out.println("");
+        System.out.println("readWait        = " + readWait);
+        System.out.println("writeWait       = " + writeWait);
+        System.out.println("tailCacheMisses = " + tailCacheMisses);
+        System.out.println("headCacheMisses = " + headCacheMisses);
     }
 
     private class DataProducer implements Runnable {
@@ -80,19 +104,29 @@ public class ParallelReader extends Reader {
 
         @Override
         public void run() {
+            long currentTail = tail.get();
             while(run) {
 
-                final long currentTail = tail;
-                final long currentHead = head;
                 final long wrapPoint = currentTail - buffer.length;
 
-                if (head <= wrapPoint) {
-                    waitingStrategy();
-                    continue;
+                if (headCache - padding <= wrapPoint) {
+                    headCache = head.get();
+                    if (headCache <= wrapPoint) {
+                        writeWait ++;
+                        waitingStrategy();
+                        continue;
+                    }
+                    headCacheMisses ++;
                 }
 
                 try {
-                    fill(currentTail, currentHead);
+                    int r =  read(currentTail, headCache);
+                    if (r == -1) {
+                        run = false;
+                    } else {
+                        currentTail += r;
+                        tail.lazySet(currentTail);
+                    }
                 } catch (IOException e) {
                     exception = e;
                     run = false;
@@ -100,20 +134,14 @@ public class ParallelReader extends Reader {
             }
         }
 
-        private void fill(long ltail, long lhead) throws IOException {
+        private int read(long ltail, long lhead) throws IOException {
             long used = ltail - lhead;
             long available = capacity - used;
             int tailIndex = (int) (ltail & bufferMask);
             int realEnd = (int) Math.min(tailIndex + available,  capacity);
             int realAvailable = realEnd - tailIndex;
 
-            int r = reader.read(buffer, tailIndex, realAvailable);
-
-            if (r == -1) {
-                run = false;
-            } else {
-                tail = ltail + r;
-            }
+            return reader.read(buffer, tailIndex, realAvailable);
         }
 
         public void stop() {

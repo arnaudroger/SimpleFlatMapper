@@ -34,25 +34,27 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 		int currentIndex = _currentIndex;
 		int currentState = _currentState;
 		while(currentIndex  < bufferLength) {
-			currentState = consumeOneChar(cellConsumer, currentIndex, currentState, chars[currentIndex]);
+			char character = chars[currentIndex];
+			switch(character) {
+				case ',':
+					currentState = newCellIfNotInQuote(currentIndex, currentState, cellConsumer);
+					break;
+				case '\n':
+					currentState = handleEndOfLineLF(currentIndex, currentState, cellConsumer);
+					break;
+				case '\r':
+					currentState = handleEndOfLineCR(currentIndex, currentState, cellConsumer);
+					break;
+				case QUOTE_CHAR:
+					currentState = quote(currentState);
+					break;
+				default:
+				currentState &= TURN_OFF_IN_CR_MASK;
+			}
 			currentIndex++;
 		}
 		_currentState = currentState;
 		_currentIndex = currentIndex;
-	}
-
-	private int consumeOneChar(CellConsumer cellConsumer, int currentIndex, int currentState, char character) {
-		switch(character) {
-            case ',':
-				return newCellIfNotInQuote(currentIndex, currentState, cellConsumer);
-            case '\n':
-				return handleEndOfLineLF(currentIndex, currentState, cellConsumer);
-            case '\r':
-                return handleEndOfLineCR(currentIndex, currentState, cellConsumer);
-            case QUOTE_CHAR:
-				return quote(currentState);
-        }
-		return currentState & TURN_OFF_IN_CR_MASK;
 	}
 
 	@Override

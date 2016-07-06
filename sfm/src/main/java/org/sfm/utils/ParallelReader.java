@@ -3,6 +3,7 @@ package org.sfm.utils;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.concurrent.Executor;
+import java.util.concurrent.locks.LockSupport;
 
 public class ParallelReader extends Reader {
 
@@ -29,42 +30,42 @@ public class ParallelReader extends Reader {
 
     @Override
     public int read(char[] cbuf, int off, int len) throws IOException {
-        if (dataProducer.exception != null) {
-            throw dataProducer.exception;
-        }
-
         do {
-            boolean run = dataProducer.run;
-            long lhead = head;
-            long ltail = tail;
-
-            if (lhead != ltail) {
-                return read(cbuf, off, len, lhead, ltail);
-            } else if (run) {
-                waitingStrategy();
-            } else {
-                return -1;
+            final long currentHead = head;
+            final long currentTail = tail;
+            if (currentHead < currentTail) {
+                int l = read(cbuf, off, len, currentHead, currentTail);
+                head = currentHead + l;
+                return l;
             }
+
+            if (!dataProducer.run) {
+                if (tail >= head) {
+                    return -1;
+                }
+            }
+
+            waitingStrategy();
+
         } while(true);
     }
 
     private void waitingStrategy() {
-        //System.out.println("BP Thread.currentThread().getName() = " + Thread.currentThread().getName());
-       // Thread.yield();
+       LockSupport.parkNanos(1000);
     }
 
     private int read(char[] cbuf, int off, int len, long lhead, long ltail) {
-        long availableLength = ltail - lhead;
-        int actualHead = (int) (lhead & bufferMask);
-        long realEnd = Math.min(actualHead + availableLength, capacity);
-        long realLength = realEnd - actualHead;
 
-        int actualLength = (int) Math.min(realLength, len);
+        int currentHead = (int) (lhead & bufferMask);
+        int usedLength = (int) (ltail - lhead);
 
-        System.arraycopy(buffer, actualHead, cbuf, off, actualLength);
+        int block1Length = Math.min(len, Math.min(usedLength, (int) (capacity - currentHead)));
+        int block2Length =  Math.min(len, usedLength) - block1Length;
 
-        head = lhead + actualLength;
-        return actualLength;
+        System.arraycopy(buffer, currentHead, cbuf, off, block1Length);
+        System.arraycopy(buffer, 0, cbuf, off+ block1Length, block2Length);
+
+        return block1Length + block2Length;
     }
 
     @Override
@@ -80,17 +81,21 @@ public class ParallelReader extends Reader {
         @Override
         public void run() {
             while(run) {
-                long ltail = tail;
-                long lhead = head;
-                if (ltail - lhead < capacity) {
-                    try {
-                        fill(ltail, lhead);
-                    } catch (IOException e) {
-                        exception = e;
-                        run = false;
-                    }
-                } else {
+
+                final long currentTail = tail;
+                final long currentHead = head;
+                final long wrapPoint = currentTail - buffer.length;
+
+                if (head <= wrapPoint) {
                     waitingStrategy();
+                    continue;
+                }
+
+                try {
+                    fill(currentTail, currentHead);
+                } catch (IOException e) {
+                    exception = e;
+                    run = false;
                 }
             }
         }

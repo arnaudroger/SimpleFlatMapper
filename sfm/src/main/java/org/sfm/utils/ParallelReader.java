@@ -6,6 +6,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ParallelReader extends Reader {
+    private static final int MAX_READ = 8096;
 
     private final Reader reader;
     private final DataProducer dataProducer;
@@ -141,7 +142,7 @@ public class ParallelReader extends Reader {
             int realEnd = (int) Math.min(tailIndex + available,  capacity);
             int realAvailable = realEnd - tailIndex;
 
-            return reader.read(buffer, tailIndex, realAvailable);
+            return reader.read(buffer, tailIndex, Math.min(realAvailable, MAX_READ));
         }
 
         public void stop() {

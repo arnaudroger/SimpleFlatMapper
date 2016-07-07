@@ -28,7 +28,8 @@ public class ParallelReaderTest {
 
 
         StringBuilder sb = new StringBuilder();
-        try (ParallelReader parallelReader = new ParallelReader(stringReader, executorService, bufferSize)) {
+        ParallelReader parallelReader = new ParallelReader(stringReader, executorService, bufferSize);
+        try {
             int l;
             while((l = parallelReader.read(buffer, 0, buffer.length)) != -1) {
                 sb.append(buffer, 0, l);
@@ -36,6 +37,25 @@ public class ParallelReaderTest {
                     LockSupport.parkNanos(TimeUnit.MICROSECONDS.toNanos(50));
                 }
             }
+        } finally {
+            parallelReader.close();
+        }
+
+        assertEquals(str, sb.toString());
+
+
+        stringReader = new StringReader(str);
+
+
+        sb = new StringBuilder();
+        parallelReader = new ParallelReader(stringReader, executorService, bufferSize);
+        try {
+            int l;
+            while((l = parallelReader.read()) != -1) {
+                sb.append((char)l);
+            }
+        } finally {
+            parallelReader.close();
         }
 
         assertEquals(str, sb.toString());

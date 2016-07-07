@@ -28,12 +28,18 @@ public final class StringArrayConsumer<RH extends RowHandler<String[]>> implemen
 	public void endOfRow() {
 		try {
 			String[] result = Arrays.copyOf(currentRow, currentIndex);
-			Arrays.fill(currentRow, null);
 			handler.handle(result);
+			resetRow(currentRow, currentIndex);
 			currentIndex = 0;
 		} catch (Exception e) {
             ErrorHelper.rethrow(e);
 		}
+	}
+
+	private void resetRow(String[] row, int currentIndex) {
+		for(int i = 0; i < currentIndex; i++) {
+            row[i] = null;
+        }
 	}
 
 	public RH handler() {

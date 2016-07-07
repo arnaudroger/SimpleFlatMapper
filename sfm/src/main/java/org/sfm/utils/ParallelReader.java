@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ParallelReader extends Reader {
     private static final int DEFAULT_MAX_READ = 8192;
+    private static final int DEFAULT_BUFFER_SIZE = 1024 * 32;
 
     private final Reader reader;
     private final DataProducer dataProducer;
@@ -26,7 +27,7 @@ public class ParallelReader extends Reader {
 
 
     public ParallelReader(Reader reader, Executor executorService) {
-        this(reader, executorService, DEFAULT_MAX_READ * 16);
+        this(reader, executorService, DEFAULT_BUFFER_SIZE);
     }
 
     public ParallelReader(Reader reader, Executor executorService, int bufferSize) {

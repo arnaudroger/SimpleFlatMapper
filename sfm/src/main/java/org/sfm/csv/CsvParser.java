@@ -232,6 +232,7 @@ public final class CsvParser {
      */
 	public static final class DSL {
 		public static final int DEFAULT_MAX_BUFFER_SIZE_8M = 1 << 23;
+		public static final int DEFAULT_BUFFER_SIZE_4K = 1024 * 4;
 
 		private final char separatorChar;
         private final char quoteChar;
@@ -244,7 +245,7 @@ public final class CsvParser {
 		private DSL() {
 			separatorChar = ',';
 			quoteChar= '"';
-			bufferSize = 8192;
+			bufferSize = DEFAULT_BUFFER_SIZE_4K;
 			skip = 0;
 			limit = -1;
 			maxBufferSize = DEFAULT_MAX_BUFFER_SIZE_8M;

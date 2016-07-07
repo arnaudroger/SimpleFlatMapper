@@ -113,12 +113,12 @@ public class ParallelReader extends Reader {
         int usedLength = (int) (currentTail - currentHead);
 
         int block1Length = Math.min(len, Math.min(usedLength, (int) (capacity - headIndex)));
-        //int block2Length =  Math.min(len, usedLength) - block1Length;
+        int block2Length =  Math.min(len, usedLength) - block1Length;
 
         System.arraycopy(buffer, headIndex, cbuf, off, block1Length);
-        //System.arraycopy(buffer, 0, cbuf, off+ block1Length, block2Length);
+        System.arraycopy(buffer, 0, cbuf, off+ block1Length, block2Length);
 
-        return block1Length;// + block2Length;
+        return block1Length + block2Length;
     }
 
     @Override

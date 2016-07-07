@@ -26,7 +26,7 @@ public class ParallelReader extends Reader {
 
 
     public ParallelReader(Reader reader, Executor executorService) {
-        this(reader, executorService, 1 << 13);
+        this(reader, executorService, DEFAULT_MAX_READ * 16);
     }
 
     public ParallelReader(Reader reader, Executor executorService, int bufferSize) {
@@ -163,12 +163,16 @@ public class ParallelReader extends Reader {
 
         private int read(long currentTail, long currentHead) throws IOException {
             long used = currentTail - currentHead;
-            long available = capacity - used;
-            int tailIndex = (int) (currentTail & bufferMask);
-            int realEnd = (int) Math.min(tailIndex + available,  capacity);
-            int realAvailable = realEnd - tailIndex;
 
-            return reader.read(buffer, tailIndex, Math.min(realAvailable, maxRead));
+            long length = Math.min(capacity - used, maxRead);
+
+            int tailIndex = (int) (currentTail & bufferMask);
+
+            int endBlock1 = (int) Math.min(tailIndex + length,  capacity);
+
+            int block1Length = endBlock1 - tailIndex;
+
+            return reader.read(buffer, tailIndex, block1Length);
         }
 
         public void stop() {

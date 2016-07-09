@@ -10,12 +10,10 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 
 	private static final int NOTHING = 8;
 	private static final int IN_CR = 4;
-	private static final int QUOTE = 2;
 	private static final int IN_QUOTE = 1;
 	private static final int NONE = 0;
 	private static final int TURN_OFF_NOTHING = ~NOTHING;
 	private static final int TURN_OFF_IN_CR_MASK = ~IN_CR;
-	private static final int ALL_QUOTES = QUOTE | IN_QUOTE;
 
 	private static final char QUOTE_CHAR = '"';
 
@@ -43,17 +41,34 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 	}
 
 	private int consumeOneChar(CellConsumer cellConsumer, int currentIndex, int currentState, char character) {
-		switch(character) {
-            case ',':
-				return newCellIfNotInQuote(currentIndex, currentState, cellConsumer);
-            case '\n':
+
+		if ((currentState &  IN_QUOTE) == 0) {
+			if (character == ',') {
+				return newCell(currentIndex, cellConsumer);
+			} else if (character == '\n') {
 				return handleEndOfLineLF(currentIndex, currentState, cellConsumer);
-            case '\r':
-                return handleEndOfLineCR(currentIndex, currentState, cellConsumer);
-            case QUOTE_CHAR:
-				return quote(currentState);
+			} else if (character == '\r') {
+				return handleEndOfLineCR(currentIndex, cellConsumer);
+			}
+		}
+
+		int newState = currentState;
+
+		if (character == QUOTE_CHAR) {
+			newState = (newState ^ IN_QUOTE);
+		}
+
+		return newState & TURN_OFF_IN_CR_MASK;
+	}
+
+	private int handleEndOfLineLF(int currentIndex, int currentState, CellConsumer cellConsumer) {
+		if ((currentState &  IN_CR) == 0) {
+            endOfRow(currentIndex, cellConsumer);
+            return NONE;
+        } else {
+            csvBuffer.mark(currentIndex + 1);
+            return currentState & TURN_OFF_IN_CR_MASK;
         }
-		return currentState & TURN_OFF_IN_CR_MASK;
 	}
 
 	@Override
@@ -62,37 +77,35 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 		char[] chars = csvBuffer.getCharBuffer();
 		int currentIndex = _currentIndex;
 		int currentState = _currentState;
-		while(currentIndex  < bufferLength) {
+		for(;currentIndex  < bufferLength; currentIndex ++) {
 			char character = chars[currentIndex];
-			switch(character) {
-				case ',':
-					currentState = newCellIfNotInQuote(currentIndex, currentState, cellConsumer);
-					break;
-				case '\n':
-					currentState = handleEndOfLineLF(currentIndex, currentState | NOTHING, cellConsumer);
-					if (currentState == NONE) {
-						_currentState = currentState;
+
+			if ((currentState &  IN_QUOTE) == 0) {
+				if (character == ',') {
+					currentState = newCell(currentIndex, cellConsumer);
+					continue;
+				} else if (character == '\n') {
+					if ((currentState &  IN_CR) == 0) {
+						endOfRow(currentIndex, cellConsumer);
+						_currentState = NONE;
 						_currentIndex = currentIndex + 1;
 						return true;
+					} else {
+						csvBuffer.mark(currentIndex + 1);
 					}
-					currentState &= TURN_OFF_NOTHING;
-					break;
-				case '\r':
-					currentState = handleEndOfLineCR(currentIndex, currentState | NOTHING, cellConsumer);
-					if (currentState == IN_CR) {
-						_currentState = currentState;
-						_currentIndex = currentIndex + 1;
-						return true;
-					}
-					currentState &= TURN_OFF_NOTHING;
-					break;
-				case QUOTE_CHAR:
-					currentState = quote(currentState);
-					break;
-				default:
-					currentState &= TURN_OFF_IN_CR_MASK;
+				} else if (character == '\r') {
+					endOfRow(currentIndex, cellConsumer);
+					_currentState = IN_CR;
+					_currentIndex = currentIndex + 1;
+					return true;
+				}
 			}
-			currentIndex++;
+
+			if (character == QUOTE_CHAR) {
+				currentState = (currentState ^ IN_QUOTE);
+			}
+
+			currentState &= TURN_OFF_IN_CR_MASK;
 		}
 		_currentState = currentState;
 		_currentIndex = currentIndex;
@@ -100,38 +113,14 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 	}
 
 
-	private int newCellIfNotInQuote(int currentIndex, int currentState, CellConsumer cellConsumer) {
-		if ((currentState &  IN_QUOTE) != 0) return currentState & TURN_OFF_IN_CR_MASK;
-		return newCell(currentIndex, cellConsumer);
+	private int handleEndOfLineCR(int currentIndex, CellConsumer cellConsumer) {
+		endOfRow(currentIndex, cellConsumer);
+		return IN_CR;
 	}
 
-	private int handleEndOfLineLF(int currentIndex, int currentState, CellConsumer cellConsumer) {
-		final int inQuoteAndCr = currentState & (IN_QUOTE | IN_CR);
-		if (inQuoteAndCr == IN_CR) {
-			// we had a preceding cr so shift the mark
-			csvBuffer.mark(currentIndex + 1);
-		} else if (inQuoteAndCr == 0) {
-			return endOfRow(currentIndex, cellConsumer);
-		}
-		return currentState & TURN_OFF_IN_CR_MASK;
-	}
-
-	private int handleEndOfLineCR(int currentIndex, int currentState, CellConsumer cellConsumer) {
-		if ((currentState &  IN_QUOTE) == 0) {
-			endOfRow(currentIndex, cellConsumer);
-			return IN_CR;
-		}
-		return currentState;
-	}
-
-	private int endOfRow(int currentIndex, CellConsumer cellConsumer) {
+	private void endOfRow(int currentIndex, CellConsumer cellConsumer) {
 		newCell(currentIndex, cellConsumer);
 		cellConsumer.endOfRow();
-		return NONE;
-	}
-
-	private int quote(int currentState) {
-		return (currentState ^ ((currentState & ALL_QUOTES) == 0 ? IN_QUOTE : ALL_QUOTES)) & TURN_OFF_IN_CR_MASK;
 	}
 
 	private int newCell(int end, final CellConsumer cellConsumer) {
@@ -148,28 +137,36 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 	}
 
 	private int unescape(final char[] chars, final int offset, final int end) {
-		int skipIndex = 0;
 		boolean escaped = false;
-		for (int i = offset; i < end - 1 ; i++) {
-			int correctedIndex = i - skipIndex;
-			escaped = QUOTE_CHAR == chars[correctedIndex] && !escaped;
-			if (escaped) {
-				System.arraycopy(chars, correctedIndex + 1, chars, correctedIndex, end - 1 - i);
-				skipIndex ++;
+		//int skipIndex = 0;
+//		for (int i = offset; i < end - 1 ; i++) {
+//			int correctedIndex = i - skipIndex;
+//			escaped = QUOTE_CHAR == chars[correctedIndex] && !escaped;
+//			if (escaped) {
+//				System.arraycopy(chars, correctedIndex + 1, chars, correctedIndex, end - 1 - i);
+//				skipIndex ++;
+//			}
+//		}
+//
+//		// if last is not quote add to shifted char
+//		if (QUOTE_CHAR == chars[end - skipIndex - 1] && !escaped) {
+//			  skipIndex ++;
+//		}
+		int j = offset;
+		for(int i = offset; i < end; i++) {
+			escaped = QUOTE_CHAR == chars[i] && !escaped;
+			if (!escaped) {
+				chars[j] = chars[i];
+				j++;
 			}
 		}
 
-		// if last is not quote add to shifted char
-		if (QUOTE_CHAR == chars[end - skipIndex - 1] && !escaped) {
-			  skipIndex ++;
-		}
-
-		return skipIndex;
+		return end - j;
 	}
 
 	@Override
 	public final void finish(CellConsumer cellConsumer) {
-		if (isNotAllConsumedFromMark()) {
+		if ( _currentIndex > csvBuffer.getMark()) {
 			newCell(_currentIndex, cellConsumer);
 		}
 		cellConsumer.end();
@@ -180,11 +177,4 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 		_currentIndex -= csvBuffer.shiftBufferToMark();
 		return csvBuffer.fillBuffer();
 	}
-
-	private boolean isNotAllConsumedFromMark() {
-		return _currentIndex > csvBuffer.getMark();
-	}
-
-
-
 }

@@ -42,6 +42,10 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 
 	private int consumeOneChar(CellConsumer cellConsumer, int currentIndex, int currentState, char character) {
 
+		if (character == QUOTE_CHAR) {
+			return (currentState ^ IN_QUOTE) & TURN_OFF_IN_CR_MASK;
+		}
+
 		if ((currentState &  IN_QUOTE) == 0) {
 			if (character == ',') {
 				return newCell(currentIndex, cellConsumer);
@@ -52,22 +56,16 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 			}
 		}
 
-		int newState = currentState;
-
-		if (character == QUOTE_CHAR) {
-			newState = (newState ^ IN_QUOTE);
-		}
-
-		return newState & TURN_OFF_IN_CR_MASK;
+		return currentState & TURN_OFF_IN_CR_MASK;
 	}
 
 	private int handleEndOfLineLF(int currentIndex, int currentState, CellConsumer cellConsumer) {
-		if ((currentState &  IN_CR) == 0) {
-            endOfRow(currentIndex, cellConsumer);
-            return NONE;
+		if ((currentState &  IN_CR) != 0) {
+			csvBuffer.mark(currentIndex + 1);
+			return currentState & TURN_OFF_IN_CR_MASK;
         } else {
-            csvBuffer.mark(currentIndex + 1);
-            return currentState & TURN_OFF_IN_CR_MASK;
+			endOfRow(currentIndex, cellConsumer);
+			return NONE;
         }
 	}
 
@@ -129,7 +127,7 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 		int strEnd = end;
 		if (charBuffer[strStart] == QUOTE_CHAR) {
 			strStart ++;
-			strEnd -= unescape(charBuffer, strStart, end);
+			strEnd = unescape(charBuffer, strStart, end);
 		}
 		cellConsumer.newCell(charBuffer, strStart, strEnd - strStart);
 		csvBuffer.mark(end + 1);
@@ -137,31 +135,29 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 	}
 
 	private int unescape(final char[] chars, final int offset, final int end) {
-		boolean escaped = false;
-		//int skipIndex = 0;
-//		for (int i = offset; i < end - 1 ; i++) {
-//			int correctedIndex = i - skipIndex;
-//			escaped = QUOTE_CHAR == chars[correctedIndex] && !escaped;
-//			if (escaped) {
-//				System.arraycopy(chars, correctedIndex + 1, chars, correctedIndex, end - 1 - i);
-//				skipIndex ++;
-//			}
-//		}
-//
-//		// if last is not quote add to shifted char
-//		if (QUOTE_CHAR == chars[end - skipIndex - 1] && !escaped) {
-//			  skipIndex ++;
-//		}
-		int j = offset;
-		for(int i = offset; i < end; i++) {
-			escaped = QUOTE_CHAR == chars[i] && !escaped;
-			if (!escaped) {
-				chars[j] = chars[i];
-				j++;
+		for(int i = offset; i < end - 1; i ++) {
+			if (chars[i] == QUOTE_CHAR) {
+				return removeEscapeChars(chars, end, i);
 			}
 		}
 
-		return end - j;
+		if (QUOTE_CHAR == chars[end - 1]) {
+			return end - 1;
+		}
+
+		return end;
+	}
+
+	private int removeEscapeChars(final char[] chars, final int end, final int firstEscapeChar) {
+		int j = firstEscapeChar;
+		boolean escaped = true;
+		for(int i = firstEscapeChar + 1;i < end; i++) {
+            escaped = chars[i] == QUOTE_CHAR  && ! escaped;
+            if (!escaped) {
+                chars[j++] = chars[i];
+            }
+        }
+		return j;
 	}
 
 	@Override

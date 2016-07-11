@@ -23,7 +23,7 @@ The [main module](sfm) provides support for
  * [Jdbc Mapper](https://github.com/arnaudroger/SimpleFlatMapper/wiki/JdbcMapper)
  * [Jdbc Crud](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Crud)
 
-The CsvParser included is also one of the [fastest](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Csv-Performance) available in java.
+The CsvParser included is one of the [fastest](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Csv-Performance) available in java.
 
 There are also modules to support integration with external libraries
 

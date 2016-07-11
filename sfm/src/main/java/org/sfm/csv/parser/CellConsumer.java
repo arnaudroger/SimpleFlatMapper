@@ -1,6 +1,8 @@
 package org.sfm.csv.parser;
 
+//IFJAVA8_START
 import java.util.function.Consumer;
+//IFJAVA8_END
 
 //IFJAVA8_START
 @FunctionalInterface

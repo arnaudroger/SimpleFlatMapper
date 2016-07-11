@@ -8,12 +8,13 @@ import java.io.IOException;
  */
 public final class StandardCsvCharConsumer extends CsvCharConsumer {
 
-	private static final int IN_CR = 4;
-	private static final int IN_QUOTE = 1;
+	private static final int IN_CR = 2;
+	private static final int ESCAPED = 1;
 	private static final int NONE = 0;
 	private static final int TURN_OFF_IN_CR_MASK = ~IN_CR;
 
-	private static final char QUOTE_CHAR = '"';
+	private static final char ESCAPE_CHAR = '"';
+	public static final char SEPARATOR_CHAR = ',';
 
 	private final CharBuffer csvBuffer;
 	private int _currentIndex;
@@ -32,23 +33,21 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 		for(;currentIndex  < bufferLength; currentIndex++) {
 			char character = chars[currentIndex];
 
-			if (character == QUOTE_CHAR) {
-				currentState =  (currentState ^ IN_QUOTE) & TURN_OFF_IN_CR_MASK;
-				continue;
-			}
-
-			if ((currentState &  IN_QUOTE) == 0) {
-				if (character == ',') {
-					currentState = newCell(currentIndex, cellConsumer);
+			if (character == ESCAPE_CHAR) {
+				currentState = (currentState ^ ESCAPED);
+			} else if ((currentState & ESCAPED) == 0) {
+				if (character == SEPARATOR_CHAR) {
+					newCell(currentIndex, cellConsumer);
+					currentState = NONE;
 					continue;
 				} else if (character == '\n') {
 					if ((currentState &  IN_CR) == 0) {
 						endOfRow(currentIndex, cellConsumer);
+						currentState = NONE;
+						continue;
 					} else {
 						csvBuffer.mark = currentIndex + 1;
 					}
-					currentState = NONE;
-					continue;
 				} else if (character == '\r') {
 					endOfRow(currentIndex, cellConsumer);
 					currentState = IN_CR;
@@ -71,14 +70,12 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 		for(;currentIndex  < bufferLength; currentIndex ++) {
 			char character = chars[currentIndex];
 
-			if (character == QUOTE_CHAR) {
-				currentState =  (currentState ^ IN_QUOTE) & TURN_OFF_IN_CR_MASK;
-				continue;
-			}
-
-			if ((currentState &  IN_QUOTE) == 0) {
+			if (character == ESCAPE_CHAR) {
+				currentState =  (currentState ^ ESCAPED);
+			} else if ((currentState & ESCAPED) == 0) {
 				if (character == ',') {
-					currentState = newCell(currentIndex, cellConsumer);
+					newCell(currentIndex, cellConsumer);
+					currentState = NONE;
 					continue;
 				} else if (character == '\n') {
 					if ((currentState &  IN_CR) == 0) {
@@ -88,8 +85,6 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 						return true;
 					} else {
 						csvBuffer.mark = currentIndex + 1;
-						currentState = NONE;
-						continue;
 					}
 				} else if (character == '\r') {
 					endOfRow(currentIndex, cellConsumer);
@@ -111,27 +106,26 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 		cellConsumer.endOfRow();
 	}
 
-	private int newCell(int end, final CellConsumer cellConsumer) {
+	private void newCell(int end, final CellConsumer cellConsumer) {
 		char[] charBuffer = csvBuffer.buffer;
 		int strStart = csvBuffer.mark;
 		int strEnd = end;
-		if (charBuffer[strStart] == QUOTE_CHAR) {
+		if (strStart < strEnd && charBuffer[strStart] == ESCAPE_CHAR) {
 			strStart ++;
-			strEnd = unescape(charBuffer, strStart, end);
+			strEnd = unescape(charBuffer, strStart, strEnd);
 		}
 		cellConsumer.newCell(charBuffer, strStart, strEnd - strStart);
 		csvBuffer.mark = (end + 1);
-		return NONE;
 	}
 
 	private int unescape(final char[] chars, final int offset, final int end) {
 		for(int i = offset; i < end - 1; i ++) {
-			if (chars[i] == QUOTE_CHAR) {
+			if (chars[i] == ESCAPE_CHAR) {
 				return removeEscapeChars(chars, end, i);
 			}
 		}
 
-		if (QUOTE_CHAR == chars[end - 1]) {
+		if (offset < end && ESCAPE_CHAR == chars[end - 1]) {
 			return end - 1;
 		}
 
@@ -142,7 +136,7 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 		int j = firstEscapeChar;
 		boolean escaped = true;
 		for(int i = firstEscapeChar + 1;i < end; i++) {
-            escaped = chars[i] == QUOTE_CHAR  && ! escaped;
+            escaped = chars[i] == ESCAPE_CHAR && ! escaped;
             if (!escaped) {
                 chars[j++] = chars[i];
             }
@@ -152,7 +146,7 @@ public final class StandardCsvCharConsumer extends CsvCharConsumer {
 
 	@Override
 	public final void finish(CellConsumer cellConsumer) {
-		if ( _currentIndex > csvBuffer.mark) {
+		if ( _currentIndex > csvBuffer.mark || (_currentIndex > 0 && csvBuffer.buffer[_currentIndex - 1] == ',')) {
 			newCell(_currentIndex, cellConsumer);
 		}
 		cellConsumer.end();

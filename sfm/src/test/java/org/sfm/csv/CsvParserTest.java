@@ -8,6 +8,7 @@ import org.sfm.tuples.*;
 import org.sfm.utils.CloseableIterator;
 import org.sfm.utils.ListCollectorHandler;
 import org.sfm.utils.Predicate;
+import org.sfm.utils.RowHandler;
 
 import java.io.CharArrayReader;
 import java.io.File;
@@ -20,6 +21,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 //IFJAVA8_START
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 //IFJAVA8_END
@@ -33,7 +35,7 @@ public class CsvParserTest {
 					{"cell1", "cell2", ""},
 					{"cell\r\"value\"", "val2"},
 					{"val3"},
-					{"val4"}
+					{"val4", ""}
 			};
 	@Test
 	public void testReadCsvReaderLF() throws IOException {
@@ -820,5 +822,44 @@ public class CsvParserTest {
 	public void testTrimSpaceOnEscapedComa() throws IOException {
 		final String[] strings = CsvParser.dsl().trimSpaces().iterator("value,\" my val, but oy\"").next();
 		assertArrayEquals(new String[] {"value", " my val, but oy"}, strings);
+	}
+
+	@Test
+	public void testEmptyString() throws IOException {
+		assertArrayEquals(new Object[][]{{""}}, toObjects(CsvParser.reader("\n")));
+		assertArrayEquals(new Object[][]{{""}}, toObjects(CsvParser.separator('|').reader("\n")));
+		assertArrayEquals(new Object[][]{{""}}, toObjects(CsvParser.dsl().trimSpaces().reader("\n")));
+	}
+
+	private Object[][] toObjects(CsvReader reader) throws IOException {
+		final List<Object[]> objects = new ArrayList<Object[]>();
+
+		reader.read(new RowHandler<String[]>() {
+			@Override
+			public void handle(String[] strings) {
+				Object[] o = new Object[strings.length];
+				for(int i = 0; i < strings.length; i++) {
+					o[i] = strings[i];
+				}
+				objects.add(o);
+			}
+		});
+
+		return objects.toArray(new Object[0][]);
+
+	}
+
+	@Test
+	public void testOnequote() throws IOException  {
+		assertArrayEquals(new Object[][]{{""}}, toObjects(CsvParser.reader("\"")));
+		assertArrayEquals(new Object[][]{{""}}, toObjects(CsvParser.separator('|').reader("\"")));
+		assertArrayEquals(new Object[][]{{""}}, toObjects(CsvParser.dsl().trimSpaces().reader("\"")));
+	}
+
+	@Test
+	public void testOneSeparator() throws IOException  {
+		assertArrayEquals(new Object[][] {{"", ""}}, toObjects(CsvParser.reader(",")));
+		assertArrayEquals(new Object[][] {{"", ""}}, toObjects(CsvParser.separator('|').reader("|")));
+		assertArrayEquals(new Object[][] {{"", ""}}, toObjects(CsvParser.dsl().trimSpaces().reader(",")));
 	}
 }

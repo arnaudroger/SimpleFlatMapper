@@ -1,5 +1,7 @@
 package org.sfm.csv.parser;
 
+import java.util.function.Consumer;
+
 //IFJAVA8_START
 @FunctionalInterface
 //IFJAVA8_END
@@ -23,4 +25,11 @@ public interface CellConsumer {
 	}
 //IFJAVA8_END
 	;
+
+
+//IFJAVA8_START
+	static CellConsumer of(Consumer<String> c) {
+		return ((chars, offset, length) -> c.accept(new String(chars, offset, length)));
+	}
+//IFJAVA8_END
 }

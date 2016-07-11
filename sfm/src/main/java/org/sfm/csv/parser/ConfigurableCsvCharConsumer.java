@@ -8,10 +8,11 @@ import java.io.IOException;
  */
 public final class ConfigurableCsvCharConsumer extends CsvCharConsumer {
 
-	private static final int IN_CR = 2;
+	private static final int LAST_CHAR_WAS_SEPARATOR = 4;
+	private static final int LAST_CHAR_WAS_CR = 2;
 	private static final int ESCAPED = 1;
 	private static final int NONE = 0;
-	private static final int TURN_OFF_IN_CR_MASK = ~IN_CR;
+	private static final int TURN_OFF_LAST_CHAR_MASK = ~(LAST_CHAR_WAS_CR|LAST_CHAR_WAS_SEPARATOR);
 
 	private final char separatorChar;
 	private final char escapeChar;
@@ -40,10 +41,10 @@ public final class ConfigurableCsvCharConsumer extends CsvCharConsumer {
 			} else if ((currentState & ESCAPED) == 0) {
                 if (character == separatorChar) {
                     newCell(currentIndex, cellConsumer);
-					currentState = NONE;
+					currentState = LAST_CHAR_WAS_SEPARATOR;
                     continue;
                 } else if (character == '\n') {
-                    if ((currentState &  IN_CR) == 0) {
+					if ((currentState & LAST_CHAR_WAS_CR) == 0) {
                         endOfRow(currentIndex, cellConsumer);
 						currentState = NONE;
 						continue;
@@ -52,12 +53,12 @@ public final class ConfigurableCsvCharConsumer extends CsvCharConsumer {
                     }
                 } else if (character == '\r') {
                     endOfRow(currentIndex, cellConsumer);
-                    currentState = IN_CR;
+					currentState = LAST_CHAR_WAS_CR;
                     continue;
                 }
 			}
 
-			currentState &= TURN_OFF_IN_CR_MASK;
+			currentState &= TURN_OFF_LAST_CHAR_MASK;
 		}
 		_currentState = currentState;
 		_currentIndex = currentIndex;
@@ -80,7 +81,7 @@ public final class ConfigurableCsvCharConsumer extends CsvCharConsumer {
 					currentState = NONE;
 					continue;
 				} else if (character == '\n') {
-					if ((currentState &  IN_CR) == 0) {
+					if ((currentState & LAST_CHAR_WAS_CR) == 0) {
 						endOfRow(currentIndex, cellConsumer);
 						_currentState = NONE;
 						_currentIndex = currentIndex + 1;
@@ -90,13 +91,13 @@ public final class ConfigurableCsvCharConsumer extends CsvCharConsumer {
 					}
 				} else if (character == '\r') {
 					endOfRow(currentIndex, cellConsumer);
-					_currentState = IN_CR;
+					_currentState = LAST_CHAR_WAS_CR;
 					_currentIndex = currentIndex + 1;
 					return true;
 				}
 			}
 
-			currentState &= TURN_OFF_IN_CR_MASK;
+			currentState &= TURN_OFF_LAST_CHAR_MASK;
 		}
 		_currentState = currentState;
 		_currentIndex = currentIndex;
@@ -148,7 +149,7 @@ public final class ConfigurableCsvCharConsumer extends CsvCharConsumer {
 
 	@Override
 	public final void finish(CellConsumer cellConsumer) {
-		if ( _currentIndex > csvBuffer.mark || (_currentIndex > 0 && csvBuffer.buffer[_currentIndex - 1] == separatorChar)) {
+		if ( _currentIndex > csvBuffer.mark || (_currentState & LAST_CHAR_WAS_SEPARATOR) != 0) {
 			newCell(_currentIndex, cellConsumer);
 		}
 		cellConsumer.end();

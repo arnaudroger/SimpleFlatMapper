@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-springjdbc.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-springjdbc)
-[![JavaDoc](https://img.shields.io/badge/javadoc-2.9.8-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-springjdbc)
+[![JavaDoc](https://img.shields.io/badge/javadoc-2.10-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-springjdbc)
 
 # Spring JDBC integration
 
@@ -9,7 +9,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-springjdbc</artifactId>
-			<version>2.9.8</version>
+			<version>2.10</version>
 		</dependency>
 ```
 

@@ -79,10 +79,19 @@ public class AbstractDatastaxTest  {
                                         Arrays.asList(new InetSocketAddress("localhost", 9142)))
                                 .build();
 
-                Metadata metadata = cluster.getMetadata();
 
-
-                assertEquals("Test Cluster", metadata.getClusterName());
+                for (int i = 0; i < 10; i++) {
+                    try {
+                        System.out.println("getMetadata : " + i);
+                        Metadata metadata = cluster.getMetadata();
+                        assertEquals("Test Cluster", metadata.getClusterName());
+                        return;
+                    } catch (Exception e) {
+                        System.out.println("failed : " + e.getMessage());
+                        e.printStackTrace();
+                        Thread.sleep(2000);
+                    }
+                }
             }
         } catch (Throwable t) {
             t.printStackTrace();

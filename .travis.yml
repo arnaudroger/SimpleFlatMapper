@@ -22,8 +22,7 @@ jdk:
   - openjdk6
 
 env:
-  - TRAVISBUILD=true
-  - MAVEN_SKIP_RC=true
+  - MAVEN_SKIP_RC=true TRAVISBUILD=true
 
 after_success:
   - mvn -P travis,!dev jacoco:report coveralls:report

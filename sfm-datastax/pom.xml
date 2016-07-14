@@ -144,5 +144,14 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>jdk19</id>
+			<activation>
+				<jdk>9-ea</jdk>
+			</activation>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+		</profile>
 	</profiles>
 </project>

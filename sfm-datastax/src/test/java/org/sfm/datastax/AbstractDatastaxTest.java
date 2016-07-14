@@ -1,14 +1,11 @@
 package org.sfm.datastax;
 
 import com.datastax.driver.core.*;
-import org.apache.cassandra.exceptions.ConfigurationException;
-import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.BeforeClass;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
@@ -69,29 +66,20 @@ public class AbstractDatastaxTest  {
                 System.setProperty("cassandra.config", cassandraConfig);
 
 
-                for (int i = 0; i < 10; i++) {
-                    try {
-                        System.out.println("Starting Cassandra " + cassandraConfig);
-                        EmbeddedCassandraServerHelper.startEmbeddedCassandra(300_000L);
-                        System.out.println("Started Cassandra");
+                System.out.println("Starting Cassandra " + cassandraConfig);
+                EmbeddedCassandraServerHelper.startEmbeddedCassandra(300_000L);
+                System.out.println("Started Cassandra");
 
-                        cluster =
-                                Cluster
-                                        .builder()
-                                        .addContactPointsWithPorts(
-                                                Arrays.asList(new InetSocketAddress("localhost", 9142)))
-                                        .build();
+                cluster =
+                        Cluster
+                                .builder()
+                                .addContactPointsWithPorts(
+                                        Arrays.asList(new InetSocketAddress("localhost", 9142)))
+                                .build();
 
-                        System.out.println("getMetadata : " + i);
-                        Metadata metadata = cluster.getMetadata();
-                        assertEquals("Test Cluster", metadata.getClusterName());
-                        return;
-                    } catch (Exception e) {
-                        System.out.println("failed : " + e.getMessage());
-                        e.printStackTrace();
-                        Thread.sleep(2000);
-                    }
-                }
+                System.out.println("getMetadata " );
+                Metadata metadata = cluster.getMetadata();
+                assertEquals("Test Cluster", metadata.getClusterName());
                 isStarted = true;
 
             }

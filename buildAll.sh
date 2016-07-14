@@ -1,4 +1,7 @@
 #!/bin/bash
+function java9 {
+	sudo update-alternatives --set java /usr/lib/jvm/java-9-oracle/bin/java;export JAVA_HOME=/usr/lib/jvm/java-9-oracle
+}
 function java8 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-8-oracle/jre/bin/java;export JAVA_HOME=/usr/lib/jvm/java-8-oracle
 }
@@ -9,5 +12,10 @@ function java6 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-6-oracle/jre/bin/java;export JAVA_HOME=/usr/lib/jvm/java-6-oracle
 }
 
-git reset --hard && java8 && mvn clean install -Pdev && java7  && mvn clean install  && java6 && mvn clean install  && git reset --hard 
+git reset --hard && \
+java9 && git reset --hard && clean install -Pdev && \
+java8 && git reset --hard && mvn clean install -Pdev && \
+java7 && git reset --hard && mvn clean install && \
+java6 && git reset --hard && mvn clean install \
+&& git reset --hard
 

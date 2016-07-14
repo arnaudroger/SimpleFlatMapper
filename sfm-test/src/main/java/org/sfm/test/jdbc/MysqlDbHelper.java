@@ -65,7 +65,7 @@ public class MysqlDbHelper {
 		String user = "sfm";
 
 		if ("true".equals(System.getenv("TRAVISBUILD"))) {
-			user = "travis";
+			user = "root";
 		}
 
 		return DriverManager.getConnection("jdbc:mysql://localhost:3306/sfm", user, null);

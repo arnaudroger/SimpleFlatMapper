@@ -72,16 +72,16 @@ public class AbstractDatastaxTest  {
                 isStarted = true;
                 System.out.println("Started Cassandra");
 
-                cluster =
-                        Cluster
-                                .builder()
-                                .addContactPointsWithPorts(
-                                        Arrays.asList(new InetSocketAddress("localhost", 9142)))
-                                .build();
-
 
                 for (int i = 0; i < 10; i++) {
                     try {
+                        cluster =
+                                Cluster
+                                        .builder()
+                                        .addContactPointsWithPorts(
+                                                Arrays.asList(new InetSocketAddress("localhost", 9142)))
+                                        .build();
+
                         System.out.println("getMetadata : " + i);
                         Metadata metadata = cluster.getMetadata();
                         assertEquals("Test Cluster", metadata.getClusterName());

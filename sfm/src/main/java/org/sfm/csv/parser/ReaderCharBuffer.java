@@ -8,11 +8,13 @@ public final class ReaderCharBuffer extends CharBuffer {
 
 	private final int maxBufferSize;
 	private final Reader reader;
+	private int resizeThreshold;
 
 	public ReaderCharBuffer(final int bufferSize, int maxBufferLength, Reader reader) {
 		super(new char[bufferSize], 0);
 		this.maxBufferSize = maxBufferLength;
 		this.reader = reader;
+		calculateResizeThreshold();
 	}
 
 	public boolean fillBuffer() throws IOException {
@@ -31,7 +33,7 @@ public final class ReaderCharBuffer extends CharBuffer {
 		int usedLength = Math.max(bufferSize - lMark, 0);
 
 		// if buffer tight double the size
-		if (usedLength > (bufferSize >> 2) * 3) {
+		if (usedLength > resizeThreshold) {
 			resize(usedLength);
 		}
 
@@ -51,5 +53,12 @@ public final class ReaderCharBuffer extends CharBuffer {
         }
 		// double buffer size
 		buffer = Arrays.copyOf(buffer, newBufferSize);
+
+		calculateResizeThreshold();
+	}
+
+	private void calculateResizeThreshold() {
+		// 3/4 of buffer length
+		resizeThreshold = (buffer.length >> 2) * 3;
 	}
 }

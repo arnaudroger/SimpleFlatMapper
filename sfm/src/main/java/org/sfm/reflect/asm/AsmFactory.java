@@ -335,9 +335,8 @@ public class AsmFactory {
     }
 
     private <T> String getPackageName(Type target) {
-
         Package targetPackage = TypeHelper.toClass(target).getPackage();
-        return targetPackage != null ? targetPackage.getName() : ".none";
+        return targetPackage != null ? targetPackage.getName() : "none";
     }
 
 }

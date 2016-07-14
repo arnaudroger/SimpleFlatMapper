@@ -13,7 +13,7 @@ function java6 {
 }
 
 git reset --hard && \
-java9 && git reset --hard && clean install -Pdev && \
+java9 && git reset --hard && mvn clean install -Pdev && \
 java8 && git reset --hard && mvn clean install -Pdev && \
 java7 && git reset --hard && mvn clean install && \
 java6 && git reset --hard && mvn clean install \

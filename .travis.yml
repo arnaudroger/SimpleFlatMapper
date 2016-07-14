@@ -1,12 +1,15 @@
 language: java
 
 sudo: required
+dist: trusty
+group: edge
 
 services:
   - mysql
   - postgresql
 
 jdk:
+  - oraclejdk9
   - oraclejdk8
   - oraclejdk7
   - openjdk7

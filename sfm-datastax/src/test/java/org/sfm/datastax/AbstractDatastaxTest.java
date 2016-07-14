@@ -72,7 +72,6 @@ public class AbstractDatastaxTest  {
                 isStarted = true;
                 System.out.println("Started Cassandra");
 
-                Thread.sleep(5000);
                 cluster =
                         Cluster
                                 .builder()
@@ -87,6 +86,7 @@ public class AbstractDatastaxTest  {
             }
         } catch (Throwable t) {
             t.printStackTrace();
+            throw t;
         }
     }
 

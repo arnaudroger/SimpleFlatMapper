@@ -67,14 +67,14 @@ public class AbstractDatastaxTest  {
 
 
                 System.setProperty("cassandra.config", cassandraConfig);
-                System.out.println("Starting Cassandra " + cassandraConfig);
-                EmbeddedCassandraServerHelper.startEmbeddedCassandra(300_000L);
-                isStarted = true;
-                System.out.println("Started Cassandra");
 
 
                 for (int i = 0; i < 10; i++) {
                     try {
+                        System.out.println("Starting Cassandra " + cassandraConfig);
+                        EmbeddedCassandraServerHelper.startEmbeddedCassandra(300_000L);
+                        System.out.println("Started Cassandra");
+
                         cluster =
                                 Cluster
                                         .builder()
@@ -92,6 +92,8 @@ public class AbstractDatastaxTest  {
                         Thread.sleep(2000);
                     }
                 }
+                isStarted = true;
+
             }
         } catch (Throwable t) {
             t.printStackTrace();

@@ -5,8 +5,14 @@ dist: trusty
 group: edge
 
 services:
-  - mysql
   - postgresql
+
+addons:
+  apt:
+    packages:
+    - mysql-server-5.6
+    - mysql-client-core-5.6
+    - mysql-client-5.6
 
 jdk:
   - oraclejdk9
@@ -17,6 +23,7 @@ jdk:
 
 env:
   - TRAVISBUILD=true
+  - MAVEN_SKIP_RC=true
 
 after_success:
   - mvn -P travis,!dev jacoco:report coveralls:report
@@ -26,5 +33,5 @@ before_install:
   echo "127.0.0.1    $HOSTNAME" | sudo tee -a /etc/hosts
 
 before_script:
-  - mysql -e 'create database sfm;'
+  - mysql -u root -e 'create database sfm;'
   - psql -c 'create database sfm;' -U postgres

@@ -1,6 +1,7 @@
 package org.sfm.datastax.impl.setter;
 
 import com.datastax.driver.core.SettableByIndexData;
+import org.sfm.datastax.DataHelper;
 import org.sfm.reflect.Setter;
 
 import java.util.Date;
@@ -17,7 +18,7 @@ public class DateSettableDataSetter implements Setter<SettableByIndexData, Date>
         if (value == null) {
             target.setToNull(index);
         } else {
-            target.setDate(index, value);
+            DataHelper.setTimestamp(index, value, target);
         }
     }
 }

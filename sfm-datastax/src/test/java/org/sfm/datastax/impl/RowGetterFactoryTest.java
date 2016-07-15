@@ -51,7 +51,7 @@ public class RowGetterFactoryTest {
         when(row.getString(2)).thenReturn("type2");
         when(row.getString(3)).thenReturn(new UUID(23, 24).toString());
         when(row.getBool(1)).thenReturn(Boolean.TRUE);
-        when(row.getDate(1)).thenReturn(date);
+        when(row.getTimestamp(1)).thenReturn(date);
         when(row.getDecimal(1)).thenReturn(new BigDecimal("2.123"));
         when(row.getVarint(1)).thenReturn(new BigInteger("234"));
         when(row.getInet(1)).thenReturn(InetAddress.getByName("192.168.0.1"));

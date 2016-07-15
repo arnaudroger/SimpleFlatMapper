@@ -1,6 +1,7 @@
 package org.sfm.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
+import org.sfm.datastax.DataHelper;
 import org.sfm.reflect.Getter;
 
 import java.util.Date;
@@ -15,6 +16,6 @@ public class DatastaxDateGetter implements Getter<GettableByIndexData, Date> {
 
     @Override
     public Date get(GettableByIndexData target) throws Exception {
-        return target.getDate(index);
+        return DataHelper.getTimestamp(index, target);
     }
 }

@@ -90,7 +90,7 @@ public final class DatastaxColumnKey extends FieldKey<DatastaxColumnKey> impleme
 	@Override
 	public Class<?>[] getAffinities()     {
 		if (dataType != null) {
-			final Class<?> aClass = dataType.asJavaClass();
+			final Class<?> aClass = DataTypeHelper.asJavaClass(dataType);
 			if (Number.class.isAssignableFrom(aClass)) {
 				return new Class<?>[] { aClass, Number.class };
 			}

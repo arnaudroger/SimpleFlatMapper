@@ -102,7 +102,7 @@ public class SettableDataSetterFactoryTest {
         assertEquals(object.getId(), value.getLong(0));
         assertEquals(object.getName(), value.getString(1));
         assertEquals(object.getEmail(), value.getString(2));
-        assertEquals(object.getCreationTime(), value.getDate(3));
+        assertEquals(object.getCreationTime(), value.getTimestamp(3));
         assertEquals(object.getTypeName().name(), value.getString(4));
         assertEquals(object.getTypeOrdinal().ordinal(), value.getInt(5));
     }
@@ -120,9 +120,9 @@ public class SettableDataSetterFactoryTest {
     }
 
     private UserType newUserType(UserType.Field... fields) throws Exception {
-        Constructor<?> constructor = UserType.class.getDeclaredConstructor(String.class, String.class, Collection.class);
+        Constructor<?> constructor = UserType.class.getDeclaredConstructor(String.class, String.class, Collection.class, ProtocolVersion.class, CodecRegistry.class);
         constructor.setAccessible(true);
-        return (UserType) constructor.newInstance("ks", "name", Arrays.asList(fields));
+        return (UserType) constructor.newInstance("ks", "name", Arrays.asList(fields), ProtocolVersion.V3, CodecRegistry.DEFAULT_INSTANCE);
 
     }
     private UserType.Field newField(String name, DataType type) throws Exception {
@@ -157,7 +157,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testSetOfTuple() throws Exception {
-        TupleType ut = TupleType.of(DataType.text(), DataType.cint());
+        TupleType ut = TupleType.of(ProtocolVersion.V3, CodecRegistry.DEFAULT_INSTANCE, DataType.text(), DataType.cint());
 
         Set<Tuple2<String, Integer>> values =
                 new HashSet<Tuple2<String, Integer>>(
@@ -244,7 +244,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testMapWithConverter() throws Exception {
-        TupleType ut = TupleType.of(DataType.text(), DataType.cint());
+        TupleType ut = TupleType.of(ProtocolVersion.V3, CodecRegistry.DEFAULT_INSTANCE, DataType.text(), DataType.cint());
 
         DataType map = DataType.map(DataType.text(), ut);
 
@@ -274,7 +274,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testTuple() throws Exception {
-        TupleType tupleType = TupleType.of(DataType.text(), DataType.cint());
+        TupleType tupleType = TupleType.of(ProtocolVersion.V3, CodecRegistry.DEFAULT_INSTANCE, DataType.text(), DataType.cint());
         TupleValue bd = tupleType.newValue("vvv", 15);
 
         Setter<SettableByIndexData, Tuple2> setter = factory.getSetter(newPM(new TypeReference<Tuple2<String, Integer>>() {}.getType(), tupleType));
@@ -289,7 +289,7 @@ public class SettableDataSetterFactoryTest {
     public void testTupleValue() throws Exception {
         TupleValue bd = mock(TupleValue.class);
 
-        Setter<SettableByIndexData, TupleValue> setter = factory.getSetter(newPM(TupleValue.class, TupleType.of(DataType.text(), DataType.text())));
+        Setter<SettableByIndexData, TupleValue> setter = factory.getSetter(newPM(TupleValue.class, TupleType.of(ProtocolVersion.V3, CodecRegistry.DEFAULT_INSTANCE, DataType.text(), DataType.text())));
         setter.set(statement, bd);
         setter.set(statement, null);
 
@@ -449,7 +449,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, date);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, date);
+        verify(statement).setTimestamp(0, date);
         verify(statement).setToNull(0);
     }
 
@@ -464,7 +464,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant()));
+        verify(statement).setTimestamp(0, Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant()));
         verify(statement).setToNull(0);
 
 
@@ -472,7 +472,7 @@ public class SettableDataSetterFactoryTest {
         Setter<SettableByIndexData, LocalDateTime> setterTz = factory.getSetter(newPM(LocalDateTime.class, DataType.timestamp(), new JavaZoneIdProperty(zoneId)));
 
         setterTz.set(statement, ldt);
-        verify(statement).setDate(1, Date.from(ldt.atZone(zoneId).toInstant()));
+        verify(statement).setTimestamp(1, Date.from(ldt.atZone(zoneId).toInstant()));
 
     }
 
@@ -485,7 +485,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, Date.from(ldt.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        verify(statement).setTimestamp(0, Date.from(ldt.atStartOfDay(ZoneId.systemDefault()).toInstant()));
         verify(statement).setToNull(0);
     }
 
@@ -498,7 +498,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, Date.from(ldt.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant()));
+        verify(statement).setTimestamp(0, Date.from(ldt.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant()));
         verify(statement).setToNull(0);
     }
 
@@ -511,7 +511,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, Date.from(ldt.toInstant()));
+        verify(statement).setTimestamp(0, Date.from(ldt.toInstant()));
         verify(statement).setToNull(0);
     }
 
@@ -524,7 +524,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, Date.from(ldt.atDate(LocalDate.now()).toInstant()));
+        verify(statement).setTimestamp(0, Date.from(ldt.atDate(LocalDate.now()).toInstant()));
         verify(statement).setToNull(0);
     }
 
@@ -537,7 +537,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, Date.from(ldt.toInstant()));
+        verify(statement).setTimestamp(0, Date.from(ldt.toInstant()));
         verify(statement).setToNull(0);
     }
 
@@ -550,7 +550,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, Date.from(ldt.atDay(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        verify(statement).setTimestamp(0, Date.from(ldt.atDay(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         verify(statement).setToNull(0);
     }
 
@@ -563,7 +563,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, Date.from(ldt.atMonthDay(MonthDay.of(Month.JANUARY, 1)).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        verify(statement).setTimestamp(0, Date.from(ldt.atMonthDay(MonthDay.of(Month.JANUARY, 1)).atStartOfDay(ZoneId.systemDefault()).toInstant()));
         verify(statement).setToNull(0);
     }
 
@@ -576,7 +576,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, Date.from(ldt));
+        verify(statement).setTimestamp(0, Date.from(ldt));
         verify(statement).setToNull(0);
     }
     //IFJAVA8_END
@@ -590,7 +590,7 @@ public class SettableDataSetterFactoryTest {
     private <T extends ReadablePartial> void testJodaDate(T joda, Date date) throws Exception {
         Setter<SettableByIndexData, T> setter = factory.getSetter(newPM(joda.getClass(), DataType.timestamp()));
         setter.set(statement, joda);
-        verify(statement).setDate(0, date);
+        verify(statement).setTimestamp(0, date);
         setter.set(statement, null);
         verify(statement).setToNull(0);
 
@@ -599,14 +599,14 @@ public class SettableDataSetterFactoryTest {
         Setter<SettableByIndexData, T> setterTZ =
                 factory.getSetter(newPM(joda.getClass(), DataType.timestamp(), new JodaDateTimeZoneProperty(tz2)));
         setterTZ.set(statement, joda);
-        verify(statement).setDate(1, new Date(date.getTime() + TimeUnit.HOURS.toMillis(2)));
+        verify(statement).setTimestamp(1, new Date(date.getTime() + TimeUnit.HOURS.toMillis(2)));
 
         TimeZone jtz = tz2.toTimeZone();
 
         Setter<SettableByIndexData, T> setterJTZ =
                 factory.getSetter(newPM(joda.getClass(), DataType.timestamp(), new TimeZoneProperty(jtz)));
         setterJTZ.set(statement, joda);
-        verify(statement).setDate(1, new Date(date.getTime() + TimeUnit.HOURS.toMillis(2)));
+        verify(statement).setTimestamp(1, new Date(date.getTime() + TimeUnit.HOURS.toMillis(2)));
 
     }
 
@@ -623,7 +623,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, ldt.toDate());
+        verify(statement).setTimestamp(0, ldt.toDate());
         verify(statement).setToNull(0);
     }
 
@@ -636,7 +636,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        verify(statement).setDate(0, ldt.toDate());
+        verify(statement).setTimestamp(0, ldt.toDate());
         verify(statement).setToNull(0);
     }
 
@@ -650,7 +650,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, null);
 
         final Date date = ldt.toDateTimeToday().toDate();
-        verify(statement).setDate(0, date);
+        verify(statement).setTimestamp(0, date);
         verify(statement).setToNull(0);
 
         DateTimeZone tz2 = getNonDefaultDateTimeZone(date);
@@ -658,7 +658,7 @@ public class SettableDataSetterFactoryTest {
         Setter<SettableByIndexData, org.joda.time.LocalTime> setterTZ =
                 factory.getSetter(newPM(org.joda.time.LocalTime.class, DataType.timestamp(), new JodaDateTimeZoneProperty(tz2)));
         setterTZ.set(statement, ldt);
-        verify(statement).setDate(1, new Date(date.getTime() + TimeUnit.HOURS.toMillis(2)));
+        verify(statement).setTimestamp(1, new Date(date.getTime() + TimeUnit.HOURS.toMillis(2)));
 
     }
 
@@ -673,7 +673,7 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, null);
 
         final Date date = ldt.toDate();
-        verify(statement).setDate(0, date);
+        verify(statement).setTimestamp(0, date);
         verify(statement).setToNull(0);
     }
 

@@ -1,6 +1,7 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.*;
+import org.sfm.datastax.DataTypeHelper;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.datastax.impl.setter.*;
 
@@ -144,7 +145,7 @@ public class SettableDataSetterFactory
         Type propertyType = arg.getPropertyMeta().getPropertyType();
 
         final DataType dataType = arg.getColumnKey().getDataType();
-        Type type = dataType != null ? dataType.asJavaClass() : null;
+        Type type = dataType != null ? DataTypeHelper.asJavaClass(dataType) : null;
         if (type == null) {
             type = propertyType;
         }
@@ -183,7 +184,7 @@ public class SettableDataSetterFactory
             } else if (TypeHelper.isAssignable(List.class, type) && TypeHelper.isAssignable(List.class, propertyType)) {
 
                 DataType dataTypeElt = dataType.getTypeArguments().get(0);
-                Class<?> dEltType = dataTypeElt.asJavaClass();
+                Class<?> dEltType = DataTypeHelper.asJavaClass(dataTypeElt);
                 Type lEltType = TypeHelper.getComponentTypeOfListOrArray(propertyType);
                 if (TypeHelper.areEquals(lEltType, dEltType)) {
                     setter = new ListSettableDataSetter(arg.getColumnKey().getIndex());
@@ -196,7 +197,7 @@ public class SettableDataSetterFactory
             } else if (TypeHelper.isAssignable(Set.class, type) && TypeHelper.isAssignable(Set.class, propertyType)) {
 
                 DataType dataTypeElt = dataType.getTypeArguments().get(0);
-                Class<?> dEltType = dataTypeElt.asJavaClass();
+                Class<?> dEltType = DataTypeHelper.asJavaClass(dataTypeElt);
                 Type lEltType = TypeHelper.getComponentTypeOfListOrArray(propertyType);
                 if (TypeHelper.areEquals(lEltType, dEltType)) {
                     setter = new SetSettableDataSetter(arg.getColumnKey().getIndex());
@@ -217,8 +218,8 @@ public class SettableDataSetterFactory
                     setter = new MapSettableDataSetter(arg.getColumnKey().getIndex());
                 } else {
                     setter = new MapWithConverterSettableDataSetter(arg.getColumnKey().getIndex(),
-                            getConverter(keyValueTypeOfMap.getElement0(), dtKeyType.asJavaClass(), dtKeyType, arg.getColumnDefinition()),
-                            getConverter(keyValueTypeOfMap.getElement1(), dtValueType.asJavaClass(), dtValueType, arg.getColumnDefinition())
+                            getConverter(keyValueTypeOfMap.getElement0(), DataTypeHelper.asJavaClass(dtKeyType), dtKeyType, arg.getColumnDefinition()),
+                            getConverter(keyValueTypeOfMap.getElement1(), DataTypeHelper.asJavaClass(dtValueType), dtValueType, arg.getColumnDefinition())
                             );
                 }
             }
@@ -229,7 +230,7 @@ public class SettableDataSetterFactory
     }
 
     private boolean areSame(DataType dtKeyType, Type element0) {
-        return TypeHelper.areEquals(element0, dtKeyType.asJavaClass());
+        return TypeHelper.areEquals(element0, DataTypeHelper.asJavaClass(dtKeyType));
     }
 
     @SuppressWarnings("unchecked")

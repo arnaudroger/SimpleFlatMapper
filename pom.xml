@@ -419,7 +419,7 @@
                 <module>sfm-test-lombok</module>
                 <module>sfm-test-immutables</module>
                 <module>sfm-jmh</module>
-                <module>sfm-datastax-2_1</module>
+                <module>sfm-datastax-3</module>
             </modules>
         </profile>
     </profiles>

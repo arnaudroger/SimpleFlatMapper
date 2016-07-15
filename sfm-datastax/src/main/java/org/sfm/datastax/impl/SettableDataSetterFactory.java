@@ -38,6 +38,24 @@ public class SettableDataSetterFactory
     private final ReflectionService reflectionService;
 
     {
+        factoryPerClass.put(short.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+                return (Setter<SettableByIndexData, P>) new ShortSettableDataSetter(arg.getColumnKey().getIndex());
+            }
+        });
+        factoryPerClass.put(Short.class, factoryPerClass.get(short.class));
+
+        factoryPerClass.put(byte.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+                return (Setter<SettableByIndexData, P>) new ByteSettableDataSetter(arg.getColumnKey().getIndex());
+            }
+        });
+        factoryPerClass.put(Byte.class, factoryPerClass.get(byte.class));
+
         factoryPerClass.put(int.class, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
             @SuppressWarnings("unchecked")
             @Override
@@ -51,6 +69,9 @@ public class SettableDataSetterFactory
             @SuppressWarnings("unchecked")
             @Override
             public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+                if (DataTypeHelper.isTime(arg.getColumnKey().getDataType().getName())) {
+                    return (Setter<SettableByIndexData, P>)new TimeSettableDataSetter(arg.getColumnKey().getIndex());
+                }
                 return (Setter<SettableByIndexData, P>) new LongSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
@@ -87,7 +108,7 @@ public class SettableDataSetterFactory
             @SuppressWarnings("unchecked")
             @Override
             public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
-                return (Setter<SettableByIndexData, P>) new DateSettableDataSetter(arg.getColumnKey().getIndex());
+                return (Setter<SettableByIndexData, P>) new TimestampSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
 
@@ -130,6 +151,16 @@ public class SettableDataSetterFactory
                 return (Setter<SettableByIndexData, P>) new TupleValueSettableDataSetter(arg.getColumnKey().getIndex());
             }
         });
+
+        if (DataTypeHelper.localDateClass != null) {
+            factoryPerClass.put(DataTypeHelper.localDateClass, new SetterFactory<SettableByIndexData, PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>>>() {
+                @SuppressWarnings("unchecked")
+                @Override
+                public <P> Setter<SettableByIndexData, P> getSetter(PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> arg) {
+                    return (Setter<SettableByIndexData, P>) new DateSettableDataSetter(arg.getColumnKey().getIndex());
+                }
+            });
+        }
     }
 
     public SettableDataSetterFactory(MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig, ReflectionService reflectionService) {

@@ -1,4 +1,4 @@
-package org.sfm.datastax.impl;
+package org.sfm.datastax;
 
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
@@ -6,7 +6,7 @@ import com.datastax.driver.core.GettableData;
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.datastax.DatastaxColumnKey;
+import org.sfm.datastax.impl.RowGetterFactory;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.*;
@@ -15,16 +15,17 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-//IFJAVA8_START
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-//IFJAVA8_END
 import java.util.Date;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+//IFJAVA8_START
+//IFJAVA8_END
 
 
 @SuppressWarnings("unchecked")

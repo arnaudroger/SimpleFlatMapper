@@ -5,14 +5,15 @@ import com.datastax.driver.core.GettableByIndexData;
 import org.sfm.datastax.DataHelper;
 import org.sfm.datastax.DataTypeHelper;
 import org.sfm.reflect.Getter;
-import org.sfm.reflect.primitive.IntGetter;
+import org.sfm.reflect.primitive.ByteGetter;
+import org.sfm.reflect.primitive.ShortGetter;
 
-public class DatastaxGenericIntegerGetter implements IntGetter<GettableByIndexData>, Getter<GettableByIndexData, Integer> {
+public class DatastaxGenericByteGetter implements ByteGetter<GettableByIndexData>, Getter<GettableByIndexData, Byte> {
 
     private final int index;
     private final DataType.Name dataTypeName;
 
-    public DatastaxGenericIntegerGetter(int index, DataType dataType) {
+    public DatastaxGenericByteGetter(int index, DataType dataType) {
         this.index = index;
         this.dataTypeName = validateName(dataType);
     }
@@ -23,37 +24,37 @@ public class DatastaxGenericIntegerGetter implements IntGetter<GettableByIndexDa
         if (DataTypeHelper.isNumber(name)) {
             return name;
         }
-
         throw new IllegalArgumentException("Datatype " + dataType + " not a number");
     }
 
     @Override
-    public Integer get(GettableByIndexData target) throws Exception {
+    public Byte get(GettableByIndexData target) throws Exception {
         if (target.isNull(index)) {
             return null;
         }
-          return getInt(target);
+          return getByte(target);
     }
 
     @Override
-    public int getInt(GettableByIndexData target) throws Exception {
+    public byte getByte(GettableByIndexData target) throws Exception {
         switch (dataTypeName) {
             case BIGINT:
             case COUNTER:
-                return (int)target.getLong(index);
+                return (byte)target.getLong(index);
             case VARINT:
-                return target.getVarint(index).intValue();
+                return target.getVarint(index).byteValue();
             case INT:
-                return target.getInt(index);
+                return (byte)target.getInt(index);
             case DECIMAL:
-                return target.getDecimal(index).intValue();
+                return target.getDecimal(index).byteValue();
             case FLOAT:
-                return (int)target.getFloat(index);
+                return (byte)target.getFloat(index);
             case DOUBLE:
-                return (int)target.getDouble(index);
+                return (byte)target.getDouble(index);
         }
-        if (DataTypeHelper.isSmallInt(dataTypeName)) return (int) DataHelper.getShort(index, target);
-        if (DataTypeHelper.isTinyInt(dataTypeName)) return (int)DataHelper.getByte(index, target);
+
+        if (DataTypeHelper.isSmallInt(dataTypeName)) return (byte)DataHelper.getShort(index, target);
+        if (DataTypeHelper.isTinyInt(dataTypeName)) return DataHelper.getByte(index, target);
 
         return 0;
     }

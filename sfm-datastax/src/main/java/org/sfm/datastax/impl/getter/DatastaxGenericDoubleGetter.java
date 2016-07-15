@@ -2,6 +2,8 @@ package org.sfm.datastax.impl.getter;
 
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
+import org.sfm.datastax.DataHelper;
+import org.sfm.datastax.DataTypeHelper;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.DoubleGetter;
 
@@ -18,16 +20,10 @@ public class DatastaxGenericDoubleGetter implements DoubleGetter<GettableByIndex
     private DataType.Name validateName(DataType dataType) {
 
         final DataType.Name name = dataType.getName();
-        switch (name) {
-            case BIGINT:
-            case VARINT:
-            case INT:
-            case DECIMAL:
-            case FLOAT:
-            case DOUBLE:
-            case COUNTER:
+        if (DataTypeHelper.isNumber(name)) {
             return name;
         }
+
         throw new IllegalArgumentException("Datatype " + dataType + " not a number");
     }
 
@@ -56,6 +52,10 @@ public class DatastaxGenericDoubleGetter implements DoubleGetter<GettableByIndex
             case DOUBLE:
                 return target.getDouble(index);
         }
+
+        if (DataTypeHelper.isSmallInt(dataTypeName)) return (double) DataHelper.getShort(index, target);
+        if (DataTypeHelper.isTinyInt(dataTypeName)) return (double)DataHelper.getByte(index, target);
+
         return 0;
     }
 }

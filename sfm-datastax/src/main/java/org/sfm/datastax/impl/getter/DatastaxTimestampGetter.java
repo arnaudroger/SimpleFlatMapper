@@ -6,16 +6,16 @@ import org.sfm.reflect.Getter;
 
 import java.util.Date;
 
-public class DatastaxDateGetter implements Getter<GettableByIndexData, Object> {
+public class DatastaxTimestampGetter implements Getter<GettableByIndexData, Date> {
 
     private final int index;
 
-    public DatastaxDateGetter(int index) {
+    public DatastaxTimestampGetter(int index) {
         this.index = index;
     }
 
     @Override
-    public Object get(GettableByIndexData target) throws Exception {
-        return DataHelper.getDate(index, target);
+    public Date get(GettableByIndexData target) throws Exception {
+        return DataHelper.getTimestamp(index, target);
     }
 }

@@ -1,7 +1,6 @@
 package org.sfm.datastax;
 
 import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.LocalDate;
 import com.datastax.driver.core.TupleValue;
 import com.datastax.driver.core.UDTValue;
 import com.sun.corba.se.impl.ior.ByteBuffer;
@@ -12,6 +11,32 @@ import java.net.InetAddress;
 import java.util.*;
 
 public class DataTypeHelper {
+
+    public static final Class<?> localDateClass;
+    private static final int DATE_ORDINAL = getOrdinal("DATE");
+
+
+    private static final int TIME_ORDINAL = getOrdinal("TIME");
+    private static final int SMALLINT_ORDINAL = getOrdinal("SMALLINT");
+    private static final int TINYINT_ORDINAL = getOrdinal("TINYINT");
+
+    static {
+        localDateClass = getLocalDateClass();
+    }
+
+    private static int getOrdinal(String type) {
+        try {
+            return DataType.Name.valueOf(type).ordinal();
+        } catch(IllegalArgumentException e) {}
+        return 0;
+    }
+
+    private static Class<?> getLocalDateClass() {
+        try {
+            return DataType.class.getClassLoader().loadClass("com.datastax.driver.core.LocalDate");
+        } catch(Throwable t) {}
+        return null;
+    }
 
     // https://docs.datastax.com/en/latest-java-driver/java-driver/reference/javaClass2Cql3Datatypes.html
     public static Class<?> asJavaClass(DataType dataType) {
@@ -62,13 +87,46 @@ public class DataTypeHelper {
                 return TupleValue.class;
             case CUSTOM:
                 return ByteBuffer.class;
-
-            case DATE: return LocalDate.class;
-            case TIME: return Long.class;
-            case SMALLINT: return Short.class;
-            case TINYINT: return Byte.class;
-
         }
+
+        if (isDate(name)) return localDateClass;
+        if (isTime(name)) return Long.class;
+        if (isSmallInt(name)) return Short.class;
+        if (isTinyInt(name)) return Byte.class;
         return null;
+    }
+
+    public static boolean isTinyInt(DataType.Name name) {
+        return name.ordinal() == TINYINT_ORDINAL;
+    }
+
+    public static boolean isSmallInt(DataType.Name name) {
+        return name.ordinal() == SMALLINT_ORDINAL;
+    }
+
+    public static boolean isTime(DataType.Name name) {
+        return name.ordinal() == TIME_ORDINAL;
+    }
+
+    public static boolean isDate(DataType.Name name) {
+        return name.ordinal() == DATE_ORDINAL;
+    }
+
+    public static boolean isNumber(DataType.Name name) {
+        switch (name) {
+            case BIGINT:
+            case VARINT:
+            case INT:
+            case DECIMAL:
+            case FLOAT:
+            case DOUBLE:
+            case COUNTER:
+                return true;
+        }
+
+        if (DataTypeHelper.isSmallInt(name)) return true;
+        if (DataTypeHelper.isTinyInt(name)) return true;
+
+        return false;
     }
 }

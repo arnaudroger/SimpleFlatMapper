@@ -3,11 +3,11 @@ package org.sfm.datastax;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.TupleValue;
 import com.datastax.driver.core.UDTValue;
-import com.sun.corba.se.impl.ior.ByteBuffer;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 public class DataTypeHelper {

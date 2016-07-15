@@ -85,7 +85,7 @@ public class SettableDataSetterFactoryTest {
         assertEquals(object.getId(), value.getLong(0));
         assertEquals(object.getName(), value.getString(1));
         assertEquals(object.getEmail(), value.getString(2));
-        assertEquals(object.getCreationTime(), value.getDate(3));
+        assertEquals(object.getCreationTime(), value.getTimestamp(3));
         assertEquals(object.getTypeName().name(), value.getString(4));
         assertEquals(object.getTypeOrdinal().ordinal(), value.getInt(5));
     }
@@ -103,9 +103,9 @@ public class SettableDataSetterFactoryTest {
     }
 
     private UserType newUserType(UserType.Field... fields) throws Exception {
-        Constructor<?> constructor = UserType.class.getDeclaredConstructor(String.class, String.class, Collection.class);
+        Constructor<?> constructor = UserType.class.getDeclaredConstructor(String.class, String.class, Collection.class, ProtocolVersion.class, CodecRegistry.class);
         constructor.setAccessible(true);
-        return (UserType) constructor.newInstance("ks", "name", Arrays.asList(fields));
+        return (UserType) constructor.newInstance("ks", "name", Arrays.asList(fields), ProtocolVersion.V3, CodecRegistry.DEFAULT_INSTANCE);
 
     }
     private UserType.Field newField(String name, DataType type) throws Exception {
@@ -257,7 +257,7 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testTuple() throws Exception {
-        TupleType tupleType = TupleType.of(DataType.text(), DataType.cint());
+        TupleType tupleType = TupleType.of(ProtocolVersion.V3, CodecRegistry.DEFAULT_INSTANCE, DataType.text(), DataType.cint());
         TupleValue bd = tupleType.newValue("vvv", 15);
 
         Setter<SettableByIndexData, Tuple2> setter = factory.getSetter(newPM(new TypeReference<Tuple2<String, Integer>>() {}.getType(), tupleType));
@@ -487,9 +487,9 @@ public class SettableDataSetterFactoryTest {
 
     @Test
     public void testJava8TimeODT() throws Exception {
-        Setter<SettableByIndexData, OffsetTimestampTime> setter = factory.getSetter(newPM(OffsetTimestampTime.class, DataType.timestamp()));
+        Setter<SettableByIndexData, OffsetDateTime> setter = factory.getSetter(newPM(OffsetDateTime.class, DataType.timestamp()));
 
-        OffsetTimestampTime ldt = OffsetTimestampTime.now();
+        OffsetDateTime ldt = OffsetDateTime.now();
 
         setter.set(statement, ldt);
         setter.set(statement, null);

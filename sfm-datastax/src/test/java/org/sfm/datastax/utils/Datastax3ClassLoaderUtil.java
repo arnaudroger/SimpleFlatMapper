@@ -9,8 +9,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
-import static org.junit.Assert.assertNotEquals;
-
 public class Datastax3ClassLoaderUtil {
 
     private static final String DATASTAX_JAR = "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar";
@@ -46,13 +44,5 @@ public class Datastax3ClassLoaderUtil {
         } finally {
             inputStream.close();
         }
-    }
-
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-        Class datatypeClass = Datastax3ClassLoaderUtil.getDatastax3ClassLoader().loadClass(DataType.Name.class.getName());
-        assertNotEquals(datatypeClass, DataType.Name.class);
-
-        Enum anEnum = Enum.valueOf(datatypeClass, "TIME");
-        System.out.println("anEnum = " + anEnum);
     }
 }

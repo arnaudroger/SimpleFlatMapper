@@ -41,6 +41,10 @@ public class DataTypeHelper {
     // https://docs.datastax.com/en/latest-java-driver/java-driver/reference/javaClass2Cql3Datatypes.html
     public static Class<?> asJavaClass(DataType dataType) {
         DataType.Name name = dataType.getName();
+        return asJavaClass(name);
+    }
+
+    public static Class<?> asJavaClass(DataType.Name name) {
         if (name == null) return null;
         switch (name) {
             case ASCII:

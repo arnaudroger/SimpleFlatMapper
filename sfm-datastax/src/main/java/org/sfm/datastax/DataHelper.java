@@ -182,4 +182,12 @@ public class DataHelper {
         if (getTinyIntMethod == null) throw new UnsupportedOperationException();
         return (Byte)getTinyIntMethod.invoke(data, index);
     }
+
+    public static boolean hasShortAccessor() {
+        return getSmallIntMethod != null;
+    }
+
+    public static boolean hasByteAccessor() {
+        return getTinyIntMethod != null;
+    }
 }

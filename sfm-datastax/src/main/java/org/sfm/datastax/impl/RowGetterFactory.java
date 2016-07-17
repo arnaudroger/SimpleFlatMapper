@@ -1,6 +1,7 @@
 package org.sfm.datastax.impl;
 
 import com.datastax.driver.core.*;
+import org.sfm.datastax.DataHelper;
 import org.sfm.datastax.DataTypeHelper;
 import org.sfm.datastax.DatastaxColumnKey;
 import org.sfm.datastax.DatastaxMapperFactory;
@@ -72,7 +73,9 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                 final Class<?> javaClass = key.getDataType() != null ? DataTypeHelper.asJavaClass(key.getDataType()) : null;
 
                 if (javaClass == null || javaClass.equals(Byte.class)) {
-                    return (Getter<GettableByIndexData, P>) new DatastaxByteGetter(key.getIndex());
+                    if (DataHelper.hasByteAccessor()) {
+                        return (Getter<GettableByIndexData, P>) new DatastaxByteGetter(key.getIndex());
+                    }
                 } else if (javaClass != null && Number.class.isAssignableFrom(javaClass)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxGenericByteGetter(key.getIndex(), key.getDataType());
                 }
@@ -88,7 +91,9 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                 final Class<?> javaClass = key.getDataType() != null ? DataTypeHelper.asJavaClass(key.getDataType()) : null;
 
                 if (javaClass == null || javaClass.equals(Short.class)) {
-                    return (Getter<GettableByIndexData, P>) new DatastaxShortGetter(key.getIndex());
+                    if (DataHelper.hasShortAccessor()) {
+                        return (Getter<GettableByIndexData, P>) new DatastaxShortGetter(key.getIndex());
+                    }
                 } else if (javaClass != null && Number.class.isAssignableFrom(javaClass)) {
                     return (Getter<GettableByIndexData, P>) new DatastaxGenericShortGetter(key.getIndex(), key.getDataType());
                 }

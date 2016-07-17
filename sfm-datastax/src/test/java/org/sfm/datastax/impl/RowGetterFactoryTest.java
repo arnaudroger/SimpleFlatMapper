@@ -152,6 +152,50 @@ public class RowGetterFactoryTest {
         assertEquals(null, new RowGetterFactory(null).newGetter(Integer.class, columnKey, null).get(row));
     }
 
+    //
+    @Test
+    public void testShortGetterShouldFailOnDatastax2() throws Exception {
+        assertNull(new RowGetterFactory(null).newGetter(Short.class, columnKey, null));
+    }
+
+    @Test
+    public void testShortOnLongDatatype() throws  Exception {
+        assertEquals((short)13, new RowGetterFactory(null).newGetter(Short.class, columnKey.datatype(DataType.bigint()), null).get(row));
+    }
+
+    @Test
+    public void testShortGetterPrimitive() throws Exception {
+        assertEquals((short)13, ((ShortGetter<GettableData>)new RowGetterFactory(null).newGetter(short.class, columnKey.datatype(DataType.bigint()), null)).getShort(row));
+    }
+
+    @Test
+    public void testShortGetterOnNullValue() throws Exception {
+        when(row.isNull(1)).thenReturn(true);
+        assertEquals(null, new RowGetterFactory(null).newGetter(Short.class, columnKey.datatype(DataType.bigint()), null).get(row));
+    }
+
+    @Test
+    public void testByteGetterShouldFailOnDatastax2() throws Exception {
+        assertNull(new RowGetterFactory(null).newGetter(Byte.class, columnKey, null));
+    }
+
+    @Test
+    public void testByteOnLongDatatype() throws  Exception {
+        assertEquals((byte)13, new RowGetterFactory(null).newGetter(Byte.class, columnKey.datatype(DataType.bigint()), null).get(row));
+    }
+
+    @Test
+    public void testByteGetterPrimitive() throws Exception {
+        assertEquals((byte)13, ((ByteGetter<GettableData>)new RowGetterFactory(null).newGetter(byte.class, columnKey.datatype(DataType.bigint()), null)).getByte(row));
+    }
+
+    @Test
+    public void testByteGetterOnNullValue() throws Exception {
+        when(row.isNull(1)).thenReturn(true);
+        assertEquals(null, new RowGetterFactory(null).newGetter(Byte.class, columnKey.datatype(DataType.bigint()), null).get(row));
+    }
+
+
     @Test
     public void testFloatGetterOnNonNullValue() throws Exception {
         assertEquals(14.4f, new RowGetterFactory(null).newGetter(Float.class, columnKey, null).get(row));

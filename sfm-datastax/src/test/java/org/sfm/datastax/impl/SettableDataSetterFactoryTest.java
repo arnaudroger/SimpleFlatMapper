@@ -22,10 +22,12 @@ import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.PropertyMeta;
+import org.sfm.reflect.primitive.ByteSetter;
 import org.sfm.reflect.primitive.DoubleSetter;
 import org.sfm.reflect.primitive.FloatSetter;
 import org.sfm.reflect.primitive.IntSetter;
 import org.sfm.reflect.primitive.LongSetter;
+import org.sfm.reflect.primitive.ShortSetter;
 import org.sfm.tuples.Tuple2;
 
 import java.lang.reflect.Constructor;
@@ -356,6 +358,28 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, null);
 
         verify(statement).setUUID(0, value);
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testByteSetter() throws Exception {
+        Setter<SettableByIndexData, Byte> setter = factory.getSetter(newPM(byte.class, DataType.cint()));
+
+        setter.set(statement, (byte)3);
+        setter.set(statement, null);
+
+        verify(statement).setInt(0, 3);
+        verify(statement).setToNull(0);
+    }
+
+    @Test
+    public void testShortSetter() throws Exception {
+        Setter<SettableByIndexData, Short> setter = factory.getSetter(newPM(short.class, DataType.cint()));
+
+        setter.set(statement, (short)3);
+        setter.set(statement, null);
+
+        verify(statement).setInt(0, 3);
         verify(statement).setToNull(0);
     }
 

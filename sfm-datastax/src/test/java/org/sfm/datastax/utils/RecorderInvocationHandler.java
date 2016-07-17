@@ -8,13 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class RecorderInvocationHandler implements InvocationHandler {
 
-    private List<Invocation> invocations = new ArrayList<>();
+    private List<Invocation> invocations = new ArrayList<Invocation>();
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

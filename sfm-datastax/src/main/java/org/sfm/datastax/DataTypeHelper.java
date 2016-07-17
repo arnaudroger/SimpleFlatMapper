@@ -128,9 +128,8 @@ public class DataTypeHelper {
                 return true;
         }
 
-        if (DataTypeHelper.isSmallInt(name)) return true;
-        if (DataTypeHelper.isTinyInt(name)) return true;
-
-        return false;
+        return DataTypeHelper.isSmallInt(name)
+                || DataTypeHelper.isTinyInt(name)
+                || DataTypeHelper.isTime(name);
     }
 }

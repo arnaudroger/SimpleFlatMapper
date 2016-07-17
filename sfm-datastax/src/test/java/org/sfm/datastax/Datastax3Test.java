@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.sfm.datastax.utils.Datastax3ClassLoaderUtil;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -13,8 +14,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class Datastax3Test {
-
-
 
     @Before
     public void setUp() throws IOException, ClassNotFoundException {
@@ -36,21 +35,43 @@ public class Datastax3Test {
         assertEquals(localDate, localDateClass);
     }
 
-
     @Test
-    public void testDataTypeHelperType() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        testType(Long.class, "TIME");
-        testType(Short.class, "SMALLINT");
-        testType(Byte.class, "TINYINT");
-        testType(localDate, "DATE");
+    public void testDatastax3NewDataTypeAsJavaClass() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        assertDataTypeNameIsMapToExpectedType(Long.class, "TIME");
+        assertDataTypeNameIsMapToExpectedType(Short.class, "SMALLINT");
+        assertDataTypeNameIsMapToExpectedType(Byte.class, "TINYINT");
+        assertDataTypeNameIsMapToExpectedType(localDate, "DATE");
     }
 
-    private void testType(Class<?> expectedType, String name) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Object eName = Enum.valueOf(dataTypeName, name);
-
+    @Test
+    public void testAllDataTypeNameHaveAnAssignedType() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Object values = dataTypeName.getDeclaredMethod("values").invoke(null);
         Method asJavaClass = dataTypeHelper.getDeclaredMethod("asJavaClass", dataTypeName);
 
-        assertEquals(expectedType, asJavaClass.invoke(null, eName));
+        for(int i = 0; i < Array.getLength(values); i++) {
+            Object enumValue = Array.get(values, i);
+            assertNotNull(asJavaClass.invoke(null, enumValue));
+        }
+    }
 
+    @Test
+    public void testDataTypeHelperIsNumberOnDatastax3ExtraType() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        assertDataTypeNameIsNumber(true, "TIME");
+        assertDataTypeNameIsNumber(true, "SMALLINT");
+        assertDataTypeNameIsNumber(true, "TINYINT");
+        assertDataTypeNameIsNumber(false, "DATE");
+
+    }
+
+    private void assertDataTypeNameIsNumber(boolean expected, String name) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Object eName = Enum.valueOf(dataTypeName, name);
+        Method asJavaClass = dataTypeHelper.getDeclaredMethod("isNumber", dataTypeName);
+        assertEquals(expected, asJavaClass.invoke(null, eName));
+    }
+
+    private void assertDataTypeNameIsMapToExpectedType(Class<?> expectedType, String name) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Object eName = Enum.valueOf(dataTypeName, name);
+        Method asJavaClass = dataTypeHelper.getDeclaredMethod("asJavaClass", dataTypeName);
+        assertEquals(expectedType, asJavaClass.invoke(null, eName));
     }
 }

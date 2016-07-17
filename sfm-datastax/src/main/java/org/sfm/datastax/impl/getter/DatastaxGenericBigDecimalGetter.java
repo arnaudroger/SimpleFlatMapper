@@ -2,9 +2,12 @@ package org.sfm.datastax.impl.getter;
 
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
+import org.sfm.datastax.DataHelper;
+import org.sfm.datastax.DataTypeHelper;
 import org.sfm.reflect.Getter;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class DatastaxGenericBigDecimalGetter implements Getter<GettableByIndexData, BigDecimal> {
 
@@ -19,16 +22,11 @@ public class DatastaxGenericBigDecimalGetter implements Getter<GettableByIndexDa
     private DataType.Name validateName(DataType dataType) {
 
         final DataType.Name name = dataType.getName();
-        switch (name) {
-            case BIGINT:
-            case VARINT:
-            case INT:
-            case DECIMAL:
-            case FLOAT:
-            case DOUBLE:
-            case COUNTER:
+
+        if (DataTypeHelper.isNumber(name)) {
             return name;
         }
+
         throw new IllegalArgumentException("Datatype " + dataType + " not a number");
     }
 
@@ -52,6 +50,11 @@ public class DatastaxGenericBigDecimalGetter implements Getter<GettableByIndexDa
             case DOUBLE:
                 return BigDecimal.valueOf(target.getDouble(index));
         }
+
+        if (DataTypeHelper.isSmallInt(dataTypeName)) return BigDecimal.valueOf(DataHelper.getShort(index, target));
+        if (DataTypeHelper.isTinyInt(dataTypeName)) return BigDecimal.valueOf(DataHelper.getByte(index, target));
+        if (DataTypeHelper.isTime(dataTypeName)) return BigDecimal.valueOf(DataHelper.getTime(index, target));
+
         return null;
     }
 }

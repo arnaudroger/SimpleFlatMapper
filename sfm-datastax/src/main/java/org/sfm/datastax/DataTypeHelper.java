@@ -116,6 +116,10 @@ public class DataTypeHelper {
         return name.ordinal() == DATE_ORDINAL;
     }
 
+    public static boolean isNumber(DataType type) {
+        return isNumber(type.getName());
+    }
+
     public static boolean isNumber(DataType.Name name) {
         switch (name) {
             case BIGINT:

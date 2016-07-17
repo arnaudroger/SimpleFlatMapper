@@ -2,6 +2,8 @@ package org.sfm.datastax.impl.getter;
 
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
+import org.sfm.datastax.DataHelper;
+import org.sfm.datastax.DataTypeHelper;
 import org.sfm.reflect.Getter;
 
 import java.math.BigInteger;
@@ -17,19 +19,10 @@ public class DatastaxGenericBigIntegerGetter implements Getter<GettableByIndexDa
     }
 
     private DataType.Name validateName(DataType dataType) {
-
-        final DataType.Name name = dataType.getName();
-        switch (name) {
-            case BIGINT:
-            case VARINT:
-            case INT:
-            case DECIMAL:
-            case FLOAT:
-            case DOUBLE:
-            case COUNTER:
-            return name;
+        if (DataTypeHelper.isNumber(dataType)) {
+            return dataType.getName();
         }
-        throw new IllegalArgumentException("Datatype " + dataType + " not a number");
+        throw new IllegalArgumentException("DataType " + dataType + "is not a number");
     }
 
     @Override
@@ -52,6 +45,11 @@ public class DatastaxGenericBigIntegerGetter implements Getter<GettableByIndexDa
             case DOUBLE:
                 return BigInteger.valueOf((long) target.getDouble(index));
         }
+
+        if (DataTypeHelper.isSmallInt(dataTypeName)) return BigInteger.valueOf((long) DataHelper.getShort(index, target));
+        if (DataTypeHelper.isTinyInt(dataTypeName)) return BigInteger.valueOf((long) DataHelper.getByte(index, target));
+        if (DataTypeHelper.isTime(dataTypeName)) return BigInteger.valueOf(DataHelper.getTime(index, target));
+
         return null;
     }
 }

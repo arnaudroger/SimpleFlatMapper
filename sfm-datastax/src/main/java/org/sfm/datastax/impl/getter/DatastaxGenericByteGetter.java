@@ -55,6 +55,7 @@ public class DatastaxGenericByteGetter implements ByteGetter<GettableByIndexData
 
         if (DataTypeHelper.isSmallInt(dataTypeName)) return (byte)DataHelper.getShort(index, target);
         if (DataTypeHelper.isTinyInt(dataTypeName)) return DataHelper.getByte(index, target);
+        if (DataTypeHelper.isTime(dataTypeName)) return (byte)DataHelper.getTime(index, target);
 
         return 0;
     }

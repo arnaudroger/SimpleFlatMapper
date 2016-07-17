@@ -55,6 +55,7 @@ public class DatastaxGenericLongGetter implements LongGetter<GettableByIndexData
 
         if (DataTypeHelper.isSmallInt(dataTypeName)) return (long)DataHelper.getShort(index, target);
         if (DataTypeHelper.isTinyInt(dataTypeName)) return (long)DataHelper.getByte(index, target);
+        if (DataTypeHelper.isTime(dataTypeName)) return DataHelper.getTime(index, target);
 
         return 0;
     }

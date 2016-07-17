@@ -54,6 +54,7 @@ public class DatastaxGenericFloatGetter implements FloatGetter<GettableByIndexDa
         }
         if (DataTypeHelper.isSmallInt(dataTypeName)) return (float) DataHelper.getShort(index, target);
         if (DataTypeHelper.isTinyInt(dataTypeName)) return (float)DataHelper.getByte(index, target);
+        if (DataTypeHelper.isTime(dataTypeName)) return (float)DataHelper.getTime(index, target);
 
         return 0;
     }

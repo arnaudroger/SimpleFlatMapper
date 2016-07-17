@@ -56,6 +56,7 @@ public class DatastaxGenericShortGetter implements ShortGetter<GettableByIndexDa
 
         if (DataTypeHelper.isSmallInt(dataTypeName)) return DataHelper.getShort(index, target);
         if (DataTypeHelper.isTinyInt(dataTypeName)) return (short)DataHelper.getByte(index, target);
+        if (DataTypeHelper.isTime(dataTypeName)) return (short)DataHelper.getTime(index, target);
 
         return 0;
     }

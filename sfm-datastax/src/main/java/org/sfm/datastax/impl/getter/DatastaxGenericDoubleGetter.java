@@ -55,6 +55,7 @@ public class DatastaxGenericDoubleGetter implements DoubleGetter<GettableByIndex
 
         if (DataTypeHelper.isSmallInt(dataTypeName)) return (double) DataHelper.getShort(index, target);
         if (DataTypeHelper.isTinyInt(dataTypeName)) return (double)DataHelper.getByte(index, target);
+        if (DataTypeHelper.isTime(dataTypeName)) return (double)DataHelper.getTime(index, target);
 
         return 0;
     }

@@ -54,6 +54,7 @@ public class DatastaxGenericIntegerGetter implements IntGetter<GettableByIndexDa
         }
         if (DataTypeHelper.isSmallInt(dataTypeName)) return (int) DataHelper.getShort(index, target);
         if (DataTypeHelper.isTinyInt(dataTypeName)) return (int)DataHelper.getByte(index, target);
+        if (DataTypeHelper.isTime(dataTypeName)) return (int) DataHelper.getTime(index, target);
 
         return 0;
     }

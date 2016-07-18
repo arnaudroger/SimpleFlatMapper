@@ -27,7 +27,9 @@ public class AbstractDatastaxTest  {
 
     @AfterClass
     public static void closeCassandraCluster() throws Exception {
+        System.out.println("close = " + cluster);
         cluster.close();
+        System.out.println("close done");
     }
 
     @SuppressWarnings("WeakerAccess")

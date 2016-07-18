@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNull;
             "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/2.1.8/cassandra-driver-core-2.1.8.jar"
         },
         includes={ReflectionService.class, DatastaxCrud.class, DatastaxCrudTest.class},
+        excludes = { "org.junit", "org.sfm.datastax.DatastaxCrudTest", "io.netty"},
         names={"v303", "v218"}
 )
 public class DatastaxCrudTest extends AbstractDatastaxTest {

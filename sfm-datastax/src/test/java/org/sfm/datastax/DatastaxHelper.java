@@ -14,55 +14,62 @@ public class DatastaxHelper {
     private static final String CASSANDRA_STARTED = "sfm.cassandra.started";
 
     public static void startCassandra() throws Exception {
-        // deal with multiple classloader
-        synchronized (CASSANDRA_STARTED) {
-            if (System.getProperty(CASSANDRA_STARTED)  == null) {
-                fixTypeCodec();
-                // cassandra does some check on the java version
-                // expect a dot not present in java 9 ea 126
-                String vmversion = System.getProperty("java.vm.version");
-                if (vmversion.startsWith("9-ea")) {
-                    System.out.println("override java version prop");
-                    System.setProperty("java.vm.version", "25.51-b03");
-                }
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-                File configFile = new File("target/embeddedCassandra/cu-cassandra.yaml");
-
-                configFile.getParentFile().mkdirs();
-
-                InputStream is = EmbeddedCassandraServerHelper.class.getResourceAsStream("/cu-cassandra.yaml");
-                try {
-                    OutputStream os = new FileOutputStream(configFile);
-
-                    byte[] buffer = new byte[4096];
-                    try {
-                        int l;
-                        while ((l = is.read(buffer)) != -1) {
-                            os.write(buffer, 0, l);
-                        }
-                    } finally {
-                        os.close();
+        try {
+            Thread.currentThread().setContextClassLoader(DatastaxHelper.class.getClassLoader());
+            // deal with multiple classloader
+            synchronized (CASSANDRA_STARTED) {
+                if (System.getProperty(CASSANDRA_STARTED) == null) {
+                    fixTypeCodec();
+                    // cassandra does some check on the java version
+                    // expect a dot not present in java 9 ea 126
+                    String vmversion = System.getProperty("java.vm.version");
+                    if (vmversion.startsWith("9-ea")) {
+                        System.out.println("override java version prop");
+                        System.setProperty("java.vm.version", "25.51-b03");
                     }
 
+                    File configFile = new File("target/embeddedCassandra/cu-cassandra.yaml");
 
-                } finally {
-                    is.close();
+                    configFile.getParentFile().mkdirs();
+
+                    InputStream is = EmbeddedCassandraServerHelper.class.getResourceAsStream("/cu-cassandra.yaml");
+                    try {
+                        OutputStream os = new FileOutputStream(configFile);
+
+                        byte[] buffer = new byte[4096];
+                        try {
+                            int l;
+                            while ((l = is.read(buffer)) != -1) {
+                                os.write(buffer, 0, l);
+                            }
+                        } finally {
+                            os.close();
+                        }
+
+
+                    } finally {
+                        is.close();
+                    }
+
+                    String cassandraConfig = "file:" + configFile.getAbsolutePath();
+
+
+                    System.setProperty("cassandra.config", cassandraConfig);
+
+
+                    System.out.println("Starting Cassandra " + cassandraConfig);
+                    EmbeddedCassandraServerHelper.startEmbeddedCassandra(300_000L);
+                    System.out.println("Started Cassandra");
+
+                    System.setProperty(CASSANDRA_STARTED, "true");
+                } else {
+                    System.out.println("CASSANDRA_STARTED = " + System.getProperty(CASSANDRA_STARTED));
                 }
-
-                String cassandraConfig = "file:" + configFile.getAbsolutePath();
-
-
-                System.setProperty("cassandra.config", cassandraConfig);
-
-
-                System.out.println("Starting Cassandra " + cassandraConfig);
-                EmbeddedCassandraServerHelper.startEmbeddedCassandra(300_000L);
-                System.out.println("Started Cassandra");
-
-                System.setProperty(CASSANDRA_STARTED, "true");
-            } else {
-                System.out.println("CASSANDRA_STARTED = " + System.getProperty(CASSANDRA_STARTED));
             }
+        } finally {
+            Thread.currentThread().setContextClassLoader(classLoader);
         }
     }
 

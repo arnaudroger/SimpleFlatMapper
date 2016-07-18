@@ -3,12 +3,27 @@ package org.sfm.datastax;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.annotations.Table;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.sfm.beans.DbObject;
 import org.sfm.datastax.beans.DbObjectWithAlias;
+import org.sfm.reflect.ReflectionService;
+import org.sfm.utils.LibrarySet;
+import org.sfm.utils.MultiClassLoaderJunitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
+
+@RunWith(MultiClassLoaderJunitRunner.class)
+@LibrarySet(libraryGroups = {
+    //IFJAVA8_START
+    "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar",
+    //IFJAVA8_END
+    "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/2.1.8/cassandra-driver-core-2.1.8.jar"
+},
+includes={ReflectionService.class, DatastaxCrud.class, DatastaxCrudTest.class}
+    )
 
 public class DatastaxCrudTest extends AbstractDatastaxTest {
 

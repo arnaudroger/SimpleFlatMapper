@@ -74,6 +74,9 @@ public class ConverterFactory {
 			@Override
 			public BigDecimal convert(Number in) {
 				if (in == null) return null;
+				if (in instanceof BigInteger) {
+					return new BigDecimal((BigInteger)in);
+				}
 				return new BigDecimal(in.doubleValue());
 			}
 			public String toString() { return "NumberToBigDecimal"; }
@@ -82,7 +85,10 @@ public class ConverterFactory {
 			@Override
 			public BigInteger convert(Number in) {
 				if (in == null) return null;
-				return new BigInteger(String.valueOf(in));
+				if (in instanceof BigDecimal) {
+					return ((BigDecimal) in).toBigInteger();
+				}
+				return BigInteger.valueOf(in.longValue());
 			}
 			public String toString() { return "NumberToBigInteger"; }
 		});

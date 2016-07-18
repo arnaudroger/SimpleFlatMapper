@@ -181,6 +181,11 @@ public class DataTypeTest {
                     Object value = getValue(numberClass);
                     setter.set(settableByDataInstance, value);
                     recorder.invokedOnce(setterMethodFor(dataType), 1, getValue(dataTypeClass));
+
+                    recorder.reset();
+
+                    setter.set(settableByDataInstance, null);
+                    recorder.invokedOnce("setToNull", 1);
                 }
             }
         }

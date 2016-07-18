@@ -45,6 +45,7 @@ import java.math.BigInteger;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -143,6 +144,14 @@ public class DataTypeTest {
                     Object gettableByDataInstance = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { GettableByIndexData.class }, recorder);
                     getter.get(gettableByDataInstance);
                     recorder.invokedOnce(getterMethodFor(dataType), 1);
+
+                    if (!(dataTypeClass.equals(numberClass)
+                            && (BigInteger.class.equals(numberClass)) || BigDecimal.class.equals(numberClass))) {
+                        recorder.when("isNull", 1, true);
+                        assertNull(" fail isNull check " + numberClass + " - " + dataTypeClass, getter.get(gettableByDataInstance));
+                        recorder.reset();
+                    }
+
                 }
             }
         }

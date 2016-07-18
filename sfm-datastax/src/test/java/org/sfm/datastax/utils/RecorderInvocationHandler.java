@@ -14,9 +14,19 @@ public class RecorderInvocationHandler implements InvocationHandler {
 
     private List<Invocation> invocations = new ArrayList<Invocation>();
 
+    private List<Expectation> expectations = new ArrayList<Expectation>();
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        invocations.add(new Invocation(method, args));
+        Invocation e = new Invocation(method, args);
+        invocations.add(e);
+
+        for(Expectation t2 : expectations) {
+            if (t2.matches(e)) {
+                return t2.result();
+            }
+        }
+
         Class<?> returnType = method.getReturnType();
         if (returnType.isPrimitive()) {
             if (short.class.equals(returnType)) {
@@ -63,6 +73,10 @@ public class RecorderInvocationHandler implements InvocationHandler {
         invocations.clear();
     }
 
+    public void when(String name, Object... args) {
+        expectations.add(new Expectation(name, Arrays.copyOf(args, args.length - 1), args[args.length - 1]));
+    }
+
 
     private static class Invocation {
         private final Method method;
@@ -79,6 +93,29 @@ public class RecorderInvocationHandler implements InvocationHandler {
                     "method=" + method +
                     ", args=" + Arrays.toString(args) +
                     '}';
+        }
+    }
+
+    private class Expectation {
+
+        private final String name;
+        private final Object[] args;
+        private final Object result;
+
+        private Expectation(String name, Object[] args, Object result) {
+            this.name = name;
+            this.args = args;
+            this.result = result;
+        }
+
+        public boolean matches(Invocation e) {
+            return
+                    e.method.getName().equals(name)
+                    && Arrays.equals(e.args, args);
+        }
+
+        public Object result() {
+            return result;
         }
     }
 }

@@ -1,6 +1,7 @@
 package org.sfm.datastax;
 
 import com.datastax.driver.core.*;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import java.net.InetSocketAddress;
@@ -22,6 +23,11 @@ public class AbstractDatastaxTest  {
                         .addContactPointsWithPorts(
                                 Arrays.asList(new InetSocketAddress("localhost", 9142)))
                         .build();
+    }
+
+    @AfterClass
+    public static void closeCassandraCluster() throws Exception {
+        cluster.close();
     }
 
     @SuppressWarnings("WeakerAccess")

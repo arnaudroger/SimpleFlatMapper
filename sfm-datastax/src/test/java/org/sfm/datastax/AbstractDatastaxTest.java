@@ -1,105 +1,30 @@
 package org.sfm.datastax;
 
 import com.datastax.driver.core.*;
-import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.BeforeClass;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
-import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
 
-@SuppressWarnings("ALL")
 public class AbstractDatastaxTest  {
 
-    private static final String CASSANDRA_STARTED = "sfm.cassandra.started";
-    static volatile boolean isStarted = false;
 
     static Cluster cluster = null;
 
+
     @BeforeClass
-    public static void startCassandra() throws Exception {
-        try {
-            // deal with multiple classloader
-            synchronized (CASSANDRA_STARTED) {
-                if (System.getProperty(CASSANDRA_STARTED)  == null) {
-
-                    fixTypeCodec();
-
-                    // cassandra does some check on the java version
-                    // expect a dot not present in java 9 ea 126
-                    String vmversion = System.getProperty("java.vm.version");
-                    if (vmversion.startsWith("9-ea")) {
-                        System.out.println("override java version prop");
-                        System.setProperty("java.vm.version", "25.51-b03");
-                    }
-
-                    File configFile = new File("target/embeddedCassandra/cu-cassandra.yaml");
-
-                    configFile.getParentFile().mkdirs();
-
-                    InputStream is = EmbeddedCassandraServerHelper.class.getResourceAsStream("/cu-cassandra.yaml");
-                    try {
-                        OutputStream os = new FileOutputStream(configFile);
-
-                        byte[] buffer = new byte[4096];
-                        try {
-                            int l;
-                            while ((l = is.read(buffer)) != -1) {
-                                os.write(buffer, 0, l);
-                            }
-                        } finally {
-                            os.close();
-                        }
-
-
-                    } finally {
-                        is.close();
-                    }
-
-                    String cassandraConfig = "file:" + configFile.getAbsolutePath();
-
-
-                    System.setProperty("cassandra.config", cassandraConfig);
-
-
-                    System.out.println("Starting Cassandra " + cassandraConfig);
-                    EmbeddedCassandraServerHelper.startEmbeddedCassandra(300_000L);
-                    System.out.println("Started Cassandra");
-
-
-
-                    System.setProperty(CASSANDRA_STARTED, "true");
-
-                } else {
-                    System.out.println("CASSANDRA_STARTED = " + System.getProperty(CASSANDRA_STARTED));
-                }
-            }
-
-
-
-            cluster =
-                    Cluster
-                            .builder()
-                            .addContactPointsWithPorts(
-                                    Arrays.asList(new InetSocketAddress("localhost", 9142)))
-                            .build();
-
-            System.out.println("getMetadata ");
-            Metadata metadata = cluster.getMetadata();
-            assertEquals("Test Cluster", metadata.getClusterName());
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw t;
-        }
+    public static void initCassandraConnection() throws Exception {
+        DatastaxHelper.startCassandra();
+        cluster =
+                Cluster
+                        .builder()
+                        .addContactPointsWithPorts(
+                                Arrays.asList(new InetSocketAddress("localhost", 9142)))
+                        .build();
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected void testInSession(Callback callback) throws Exception {
         Session session =  null;
 
@@ -206,40 +131,8 @@ public class AbstractDatastaxTest  {
 
     }
 
-    @SuppressWarnings("unchecked")
-    private static void fixTypeCodec() {
-        try {
-            System.out.println("PRINT CONNENDRUM");
 
-
-            Field f = Class.forName("com.datastax.driver.core.TypeCodec").getDeclaredField("primitiveCodecs");
-            f.setAccessible(true);
-
-            Map o = (Map) f.get(null);
-            System.out.println("primitiveCodecs = " + o);
-
-            Class<?> longCodec = Class.forName("com.datastax.driver.core.TypeCodec$LongCodec");
-
-            Field instance = longCodec.getDeclaredField("instance");
-            instance.setAccessible(true);
-            Object longCodeInstance = instance.get(null);
-            System.out.println("LongCodec.instance = " + longCodeInstance);
-
-            if (o.get(DataType.Name.BIGINT) == null) {
-                //noinspection unchecked,unchecked,unchecked
-                o.put(DataType.Name.BIGINT, longCodeInstance);
-                o.put(DataType.Name.COUNTER, longCodeInstance);
-
-                o = (Map) f.get(null);
-                System.out.println("primitiveCodecs = " + o);
-            }
-
-
-        } catch(Throwable e ) {
-            // used only for 2.1 drivers
-        }
-    }
-
+    @SuppressWarnings("WeakerAccess")
     protected void tearDown(Session session) {
     }
 

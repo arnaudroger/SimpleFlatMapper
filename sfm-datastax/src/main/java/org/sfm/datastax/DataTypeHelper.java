@@ -28,7 +28,7 @@ public class DataTypeHelper {
         try {
             return DataType.Name.valueOf(type).ordinal();
         } catch(IllegalArgumentException e) {}
-        return 0;
+        return -1;
     }
 
     private static Class<?> getLocalDateClass() {

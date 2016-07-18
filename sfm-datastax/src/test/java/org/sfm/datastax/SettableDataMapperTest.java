@@ -4,11 +4,15 @@ import com.datastax.driver.core.*;
 import com.datastax.driver.core.querybuilder.Batch;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.sfm.beans.DbObject;
 import org.sfm.datastax.beans.DbObjectsWithTuple;
 import org.sfm.map.Mapper;
+import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;
 import org.sfm.tuples.Tuple3;
+import org.sfm.utils.LibrarySet;
+import org.sfm.utils.MultiClassLoaderJunitRunner;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -19,6 +23,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 
+@RunWith(MultiClassLoaderJunitRunner.class)
+@LibrarySet(
+        libraryGroups = {
+                //IFJAVA8_START
+                "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar",
+                //IFJAVA8_END
+                "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/2.1.8/cassandra-driver-core-2.1.8.jar"
+        },
+        includes={ReflectionService.class, DatastaxCrud.class, DatastaxCrudTest.class}
+)
 public class SettableDataMapperTest extends AbstractDatastaxTest {
 
     public static final String QUERY = "insert into " +

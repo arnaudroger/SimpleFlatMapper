@@ -3,8 +3,12 @@ package org.sfm.datastax;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.sfm.datastax.beans.*;
+import org.sfm.reflect.ReflectionService;
 import org.sfm.tuples.Tuple2;
+import org.sfm.utils.LibrarySet;
+import org.sfm.utils.MultiClassLoaderJunitRunner;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -12,7 +16,16 @@ import java.util.Iterator;
 
 import static org.junit.Assert.*;
 
-
+@RunWith(MultiClassLoaderJunitRunner.class)
+@LibrarySet(
+        libraryGroups = {
+                //IFJAVA8_START
+                "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar",
+                //IFJAVA8_END
+                "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/2.1.8/cassandra-driver-core-2.1.8.jar"
+        },
+        includes={ReflectionService.class, DatastaxCrud.class, DatastaxCrudTest.class}
+)
 public class DatastaxMapperCollectionTest extends AbstractDatastaxTest {
 
     @Test

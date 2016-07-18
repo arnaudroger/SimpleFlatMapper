@@ -28,45 +28,58 @@ public class LibrarySetClassLoader extends URLClassLoader {
         }
 
         for(Class<?> includeClass : includes) {
-            URLClassLoader urlClassLoader = getURLClassLoader(includeClass);
-            if (urlClassLoader == null) {
-                throw new IllegalArgumentException("No URL class loader for " + includeClass);
+            URL url = findUrl(includeClass, includeClass.getClassLoader());
+            if (!urls.contains(url)) {
+                urls.add(url);
             }
-
-            for(URL url : urlClassLoader.getURLs()) {
-                if (urlContains(url, includeClass)) {
-                    if (!urls.contains(url)) {
-                        urls.add(url);
-                    }
-                    break;
-                }
-            }
-            throw new IllegalArgumentException("Could not find url for " + includeClass);
         }
 
+        System.out.println("urls = " + urls);
         return urls.toArray(new URL[0]);
+
+
     }
+
+    private static URL findUrl(Class<?> includeClass, ClassLoader classLoader) {
+        if (classLoader instanceof URLClassLoader) {
+            for(URL url : ((URLClassLoader)classLoader).getURLs()) {
+                if (urlContains(url, includeClass)) {
+                    System.out.println(includeClass + " url = " + url);
+                    return url;
+                }
+            }
+        }
+
+        ClassLoader parent = classLoader.getParent();
+        if (parent != null) {
+            return findUrl(includeClass, parent);
+        }
+        throw new IllegalArgumentException("Could not find url for " + includeClass);
+    }
+
 
     private static boolean urlContains(URL url, Class<?> includeClass) {
         URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url});
         return urlClassLoader.findResource(includeClass.getName().replace(".", "/") + ".class") != null;
     }
 
-    private static URLClassLoader getURLClassLoader(Class<?> includeClass) {
-        ClassLoader cl = includeClass.getClassLoader();
-        while(cl != null && !(cl instanceof URLClassLoader)) {
-            cl = cl.getParent();
-        }
-        return (URLClassLoader) cl;
-    }
-
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return super.loadClass(name);
+        if (name.startsWith("org.junit")) {
+            return classLoader.loadClass(name);
+        }
+        try {
+            return super.loadClass(name);
+        } catch (ClassNotFoundException e) {
+            return classLoader.loadClass(name);
+        }
     }
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
+        if (name.startsWith("org.junit")) {
+            return classLoader.loadClass(name);
+        }
         try {
             return super.findClass(name);
         } catch (ClassNotFoundException e) {

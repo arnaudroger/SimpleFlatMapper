@@ -126,6 +126,13 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
 					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<argLine>-XaddExports:java.base/sun.nio.ch=ALL-UNNAMED</argLine>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -143,6 +150,15 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<excludes>
+								<exclude>**/Datastax3Test.java</exclude>
+							</excludes>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>

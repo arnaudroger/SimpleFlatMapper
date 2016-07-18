@@ -2,21 +2,23 @@ package org.sfm.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class LibrarySetClassLoader extends URLClassLoader {
     private final ClassLoader classLoader;
     private final String[] libraries;
+    private final Pattern[] excludes;
 
-    public LibrarySetClassLoader(ClassLoader classLoader, String[] libraries, Class<?>[] includes) throws IOException {
+    public LibrarySetClassLoader(ClassLoader classLoader, String[] libraries, Class<?>[] includes, Pattern[] excludes) throws IOException {
         super(getUrls(libraries, includes), Integer.class.getClassLoader());
         this.classLoader = classLoader;
         this.libraries = libraries;
+        this.excludes = excludes;
     }
 
     private static URL[] getUrls(String[] libraries, Class<?>[] includes) throws IOException {
@@ -65,7 +67,7 @@ public class LibrarySetClassLoader extends URLClassLoader {
 
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        if (name.startsWith("org.junit")) {
+        if (isExcluded(name)) {
             return classLoader.loadClass(name);
         }
         try {
@@ -75,9 +77,18 @@ public class LibrarySetClassLoader extends URLClassLoader {
         }
     }
 
+    private boolean isExcluded(String name) {
+        for(Pattern p : excludes) {
+            if(p.matcher(name).find()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        if (name.startsWith("org.junit")) {
+        if (isExcluded(name)) {
             return classLoader.loadClass(name);
         }
         try {

@@ -2,24 +2,28 @@ package org.sfm.datastax;
 
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sfm.datastax.impl.RowGetterFactory;
 import org.sfm.datastax.utils.RecorderInvocationHandler;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.reflect.ReflectionService;
+import org.sfm.reflect.primitive.ByteGetter;
+import org.sfm.reflect.primitive.DoubleGetter;
+import org.sfm.reflect.primitive.FloatGetter;
+import org.sfm.reflect.primitive.IntGetter;
+import org.sfm.reflect.primitive.LongGetter;
 import org.sfm.reflect.primitive.ShortGetter;
 import org.sfm.utils.LibrarySet;
 import org.sfm.utils.MultiClassLoaderJunitRunner;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
@@ -31,7 +35,8 @@ import static org.junit.Assert.assertNotNull;
                 //IFJAVA8_END
                 "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/2.1.8/cassandra-driver-core-2.1.8.jar"
         },
-        includes={ReflectionService.class, DatastaxCrud.class, DatastaxCrudTest.class}
+        includes={ReflectionService.class, DatastaxCrud.class, DatastaxCrudTest.class},
+        names={"v303", "v218"}
 )
 public class DataTypeTest {
 
@@ -49,9 +54,46 @@ public class DataTypeTest {
     }
 
     @Test
+    public void testLongGetter() throws Exception {
+        testNumberGetter(long.class, LongGetter.class);
+    }
+
+    @Test
+    public void testIntGetter() throws Exception {
+        testNumberGetter(int.class, IntGetter.class);
+    }
+
+    @Test
+    public void testTinyIntGetter() throws Exception {
+        testNumberGetter(byte.class, ByteGetter.class);
+    }
+
+    @Test
     public void testSmallIntGetter() throws Exception {
         testNumberGetter(short.class, ShortGetter.class);
     }
+
+
+    @Test
+    public void testFloatGetter() throws Exception {
+        testNumberGetter(float.class, FloatGetter.class);
+    }
+
+    @Test
+    public void testDoubleGetter() throws Exception {
+        testNumberGetter(double.class, DoubleGetter.class);
+    }
+
+    @Test
+    public void testBigDecimalGetter() throws Exception {
+        testNumberGetter(BigDecimal.class, null);
+    }
+
+    @Test
+    public void testBigIntegerGetter() throws Exception {
+        testNumberGetter(BigInteger.class, null);
+    }
+
 
     private void testNumberGetter(Class<?> numberClass, Class<?> primitiveGetter) throws Exception {
 

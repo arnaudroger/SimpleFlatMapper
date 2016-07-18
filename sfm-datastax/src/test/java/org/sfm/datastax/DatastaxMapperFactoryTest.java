@@ -24,7 +24,8 @@ import static org.junit.Assert.*;
                 //IFJAVA8_END
                 "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/2.1.8/cassandra-driver-core-2.1.8.jar"
         },
-        includes={ReflectionService.class, DatastaxCrud.class, DatastaxCrudTest.class}
+        includes={ReflectionService.class, DatastaxCrud.class, DatastaxCrudTest.class},
+        names={"v303", "v218"}
 )
 public class DatastaxMapperFactoryTest extends AbstractDatastaxTest {
 

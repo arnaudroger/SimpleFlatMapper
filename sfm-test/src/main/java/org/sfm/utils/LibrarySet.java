@@ -11,4 +11,8 @@ import java.lang.annotation.Target;
 public @interface LibrarySet {
     String[] libraryGroups();
     Class<?>[] includes();
+
+    String[] excludes() default {"org.junit"};
+    String[] names() default {};
+
 }

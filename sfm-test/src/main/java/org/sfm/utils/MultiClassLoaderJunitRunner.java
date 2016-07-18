@@ -7,6 +7,7 @@ import org.junit.runners.Suite;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class MultiClassLoaderJunitRunner extends Suite {
 
@@ -21,20 +22,39 @@ public class MultiClassLoaderJunitRunner extends Suite {
 
         List<Runner> runners = new ArrayList<Runner>();
         int i = 0;
+        String[] names = librarySet.names();
+        Pattern[] excludes = toPattern(librarySet.excludes());
         for(final String urlsList : librarySet.libraryGroups()) {
             String[] urls = urlsList.split(",");
-            final int index = i;
-            ClassLoader classLoader = new LibrarySetClassLoader(getClass().getClassLoader(), urls, librarySet.includes());
+            final String suffix = getName(names, i);
+            ClassLoader classLoader = new LibrarySetClassLoader(getClass().getClassLoader(), urls, librarySet.includes(), excludes);
             Class<?> testClass = classLoader.loadClass(klass.getName());
             runners.add(new ClassLoaderChangerRunner(classLoader, new BlockJUnit4ClassRunner(testClass) {
                 @Override
                 protected String getName() {
-                    return super.getName() + "-" + index;
+                    return super.getName() +  suffix;
                 }
             }));
             i++;
         }
         this.runners = runners;
+    }
+
+    private Pattern[] toPattern(String[] excludes) {
+        Pattern[] ps = new Pattern[excludes.length];
+
+        for(int i = 0; i < ps.length; i++) {
+            ps[i] = Pattern.compile(excludes[i]);
+        }
+
+        return ps;
+    }
+
+    private String getName(String[] names, int i) {
+        if (i < names.length) {
+            return names[i];
+        }
+        return "" + i;
     }
 
 

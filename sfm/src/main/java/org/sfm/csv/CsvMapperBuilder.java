@@ -500,7 +500,7 @@ public class CsvMapperBuilder<T> {
 		if (columnDefinition.has(DefaultValueProperty.class)) {
 			return (Getter)new DelayedGetter<P>(key.getIndex());
 		} else {
-			return cellSetterFactory.newDelayedGetter(key, target);
+			return cellSetterFactory.newDelayedGetter(key, propertyType);
 		}
 	}
 }

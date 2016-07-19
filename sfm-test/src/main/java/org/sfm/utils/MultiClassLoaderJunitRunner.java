@@ -17,17 +17,17 @@ public class MultiClassLoaderJunitRunner extends Suite {
     public MultiClassLoaderJunitRunner(Class<?> klass) throws Throwable {
         super(klass, NO_RUNNERS);
 
-        LibrarySet librarySet = klass.getAnnotation(LibrarySet.class);
-        if (librarySet == null) throw new IllegalArgumentException("Class " + klass + " is missing LibrarySet annotation");
+        LibrarySets librarySets = klass.getAnnotation(LibrarySets.class);
+        if (librarySets == null) throw new IllegalArgumentException("Class " + klass + " is missing LibrarySets annotation");
 
         List<Runner> runners = new ArrayList<Runner>();
         int i = 0;
-        String[] names = librarySet.names();
-        Pattern[] excludes = toPattern(librarySet.excludes());
-        for(final String urlsList : librarySet.libraryGroups()) {
+        String[] names = librarySets.names();
+        Pattern[] excludes = toPattern(librarySets.excludes());
+        for(final String urlsList : librarySets.librarySets()) {
             String[] urls = urlsList.split(",");
             final String suffix = getName(names, i);
-            ClassLoader classLoader = new LibrarySetClassLoader(getClass().getClassLoader(), urls, librarySet.includes(), excludes);
+            ClassLoader classLoader = new LibrarySetsClassLoader(getClass().getClassLoader(), urls, librarySets.includes(), excludes);
             Class<?> testClass = classLoader.loadClass(klass.getName());
             runners.add(new ClassLoaderChangerRunner(classLoader, new BlockJUnit4ClassRunner(testClass) {
                 @Override

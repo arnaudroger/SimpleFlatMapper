@@ -6,12 +6,11 @@ import com.datastax.driver.core.SettableByIndexData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sfm.datastax.impl.RowGetterFactory;
 import org.sfm.datastax.utils.RecorderInvocationHandler;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
-import org.sfm.utils.LibrarySet;
+import org.sfm.utils.LibrarySets;
 import org.sfm.utils.MultiClassLoaderJunitRunner;
 
 import java.io.IOException;
@@ -22,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(MultiClassLoaderJunitRunner.class)
-@LibrarySet(libraryGroups = {"http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar"},
+@LibrarySets(librarySets = {"http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar"},
         includes={ReflectionService.class, DatastaxCrud.class, DatastaxCrudTest.class})
 public class Datastax3Test {
 

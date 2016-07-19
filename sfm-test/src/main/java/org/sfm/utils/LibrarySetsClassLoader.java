@@ -1,6 +1,5 @@
 package org.sfm.utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -9,12 +8,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class LibrarySetClassLoader extends URLClassLoader {
+public class LibrarySetsClassLoader extends URLClassLoader {
     private final ClassLoader classLoader;
     private final String[] libraries;
     private final Pattern[] excludes;
 
-    public LibrarySetClassLoader(ClassLoader classLoader, String[] libraries, Class<?>[] includes, Pattern[] excludes) throws IOException {
+    public LibrarySetsClassLoader(ClassLoader classLoader, String[] libraries, Class<?>[] includes, Pattern[] excludes) throws IOException {
         super(getUrls(libraries, includes), Integer.class.getClassLoader());
         this.classLoader = classLoader;
         this.libraries = libraries;
@@ -25,8 +24,7 @@ public class LibrarySetClassLoader extends URLClassLoader {
         List<URL> urls = new ArrayList<URL>();
 
         for(int i = 0; i < libraries.length; i++) {
-            File f = LibraryClassLoaderUtil.downloadIfNotThere(libraries[i]);
-            urls.add(f.toURI().toURL());
+            urls.add(new URL(libraries[i]));
         }
 
         for(Class<?> includeClass : includes) {
@@ -36,7 +34,6 @@ public class LibrarySetClassLoader extends URLClassLoader {
             }
         }
 
-        System.out.println("urls = " + urls);
         return urls.toArray(new URL[0]);
 
 
@@ -46,7 +43,6 @@ public class LibrarySetClassLoader extends URLClassLoader {
         if (classLoader instanceof URLClassLoader) {
             for(URL url : ((URLClassLoader)classLoader).getURLs()) {
                 if (urlContains(url, includeClass)) {
-                    System.out.println(includeClass + " url = " + url);
                     return url;
                 }
             }
@@ -87,20 +83,8 @@ public class LibrarySetClassLoader extends URLClassLoader {
     }
 
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
-        if (isExcluded(name)) {
-            return classLoader.loadClass(name);
-        }
-        try {
-            return super.findClass(name);
-        } catch (ClassNotFoundException e) {
-            return classLoader.loadClass(name);
-        }
-    }
-
-    @Override
     public String toString() {
-        return "LibrarySetClassLoader{" +
+        return "LibrarySetsClassLoader{" +
                 "libraries=" + Arrays.toString(libraries) +
                 '}';
     }

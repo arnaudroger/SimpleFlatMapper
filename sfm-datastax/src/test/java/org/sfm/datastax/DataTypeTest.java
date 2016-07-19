@@ -8,17 +8,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.sfm.datastax.impl.RowGetterFactory;
 import org.sfm.datastax.impl.SettableDataSetterFactory;
-import org.sfm.datastax.impl.SettableDataSetterFactoryTest;
 import org.sfm.datastax.utils.RecorderInvocationHandler;
 import org.sfm.map.MapperConfig;
-import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.Setter;
-import org.sfm.reflect.meta.ObjectClassMeta;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.primitive.ByteGetter;
 import org.sfm.reflect.primitive.ByteSetter;
@@ -32,7 +29,7 @@ import org.sfm.reflect.primitive.LongGetter;
 import org.sfm.reflect.primitive.LongSetter;
 import org.sfm.reflect.primitive.ShortGetter;
 import org.sfm.reflect.primitive.ShortSetter;
-import org.sfm.utils.LibrarySet;
+import org.sfm.utils.LibrarySets;
 import org.sfm.utils.MultiClassLoaderJunitRunner;
 
 import java.lang.reflect.InvocationTargetException;
@@ -50,8 +47,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MultiClassLoaderJunitRunner.class)
-@LibrarySet(
-        libraryGroups = {
+@LibrarySets(
+        librarySets = {
                 //IFJAVA8_START
                 "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar",
                 //IFJAVA8_END

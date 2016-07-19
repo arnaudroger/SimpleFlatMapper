@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sfm.reflect.ReflectionService;
-import org.sfm.utils.LibrarySet;
+import org.sfm.utils.LibrarySets;
 import org.sfm.utils.MultiClassLoaderJunitRunner;
 
 import java.math.BigDecimal;
@@ -14,8 +14,8 @@ import java.math.BigInteger;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MultiClassLoaderJunitRunner.class)
-@LibrarySet(
-        libraryGroups = {
+@LibrarySets(
+        librarySets = {
                 //IFJAVA8_START
                 "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar",
                 //IFJAVA8_END

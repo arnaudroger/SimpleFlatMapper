@@ -8,11 +8,12 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface LibrarySet {
-    String[] libraryGroups();
-    Class<?>[] includes();
+public @interface LibrarySets {
+    String[] librarySets();
 
+    Class<?>[] includes();
     String[] excludes() default {"org.junit"};
+
     String[] names() default {};
 
 }

@@ -191,7 +191,7 @@ public class DataTypeTest {
         }
     }
 
-    private Object getValue(Class<?> numberClass) {
+    public static Object getValue(Class<?> numberClass) {
         if (numberClass.equals(byte.class) || numberClass.equals(Byte.class)) {
             return (byte)1;
         }
@@ -219,7 +219,7 @@ public class DataTypeTest {
         throw new IllegalArgumentException("not number for "+ numberClass);
     }
 
-    private String getterMethodFor(DataType dataType) throws Exception {
+    public static String getterMethodFor(DataType dataType) throws Exception {
         String value = dataType.getName().name();
 
         switch (value) {
@@ -238,11 +238,11 @@ public class DataTypeTest {
         throw new IllegalArgumentException("Not method define for " + value);
     }
 
-    private String setterMethodFor(DataType dataType) throws Exception {
+    public static String setterMethodFor(DataType dataType) throws Exception {
         return getterMethodFor(dataType).replace("get", "set");
     }
 
-    private Getter getGetter(Class<?> target, DataType dataType) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+    public static Getter getGetter(Class<?> target, DataType dataType) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
         RowGetterFactory rowGetterFactory = new RowGetterFactory(null);
 
         DatastaxColumnKey columnKey = new DatastaxColumnKey("col", 1, dataType);
@@ -252,7 +252,7 @@ public class DataTypeTest {
         return rowGetterFactory.newGetter(target, columnKey, columnDefinition);
     }
 
-    private Setter getSetter(Class<?> target, DataType dataType) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+    public static Setter getSetter(Class<?> target, DataType dataType) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
 
         MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig = MapperConfig.<DatastaxColumnKey>fieldMapperConfig();
         ReflectionService reflectionService = ReflectionService.newInstance();
@@ -263,7 +263,7 @@ public class DataTypeTest {
 
         return factory.getSetter(newPM(target, dataType, columnKey));
     }
-    private <T, P> PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> newPM(Type clazz, DataType datatype, DatastaxColumnKey columnKey) {
+    public static <T, P> PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> newPM(Type clazz, DataType datatype, DatastaxColumnKey columnKey) {
         PropertyMeta<T, P> propertyMeta = mock(PropertyMeta.class);
         when(propertyMeta.getPropertyType()).thenReturn(clazz);
         return

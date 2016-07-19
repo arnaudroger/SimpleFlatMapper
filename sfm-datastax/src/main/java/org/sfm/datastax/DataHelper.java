@@ -79,7 +79,7 @@ public class DataHelper {
 
     private static Method getGetDateMethod() {
         try {
-            return GettableByIndexData.class.getMethod("getTime", int.class);
+            return GettableByIndexData.class.getMethod("getDate", int.class);
         } catch (NoSuchMethodException e) {
         }
         return null;

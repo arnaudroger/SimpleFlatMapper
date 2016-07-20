@@ -3,6 +3,8 @@
 
 # Datastax integration
 
+Works with datastax 2.1.x to 3.0.x
+
 ## What about the Datastax Mapper
 * SFM is at about 20% faster
 * More flexible

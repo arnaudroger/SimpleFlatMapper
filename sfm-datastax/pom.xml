@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<artifactId>sfm-parent</artifactId>
-		<version>2.10.2-SNAPSHOT</version>
+		<version>2.12-SNAPSHOT</version>
 	</parent>
 
 	<description>Cassandra Datastax SFM supports.</description>

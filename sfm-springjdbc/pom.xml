@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>sfm-springjdbc</artifactId>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 
 	<description>SpringJdbc supports.</description>
 

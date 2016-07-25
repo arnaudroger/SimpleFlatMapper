@@ -2,8 +2,8 @@ package org.sfm.utils.conv;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
+import org.w3c.dom.Document;
 
-import javax.swing.text.Document;
 import javax.xml.parsers.SAXParser;
 import java.math.BigDecimal;
 import java.math.BigInteger;

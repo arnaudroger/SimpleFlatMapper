@@ -468,8 +468,8 @@
 
     <repositories>
         <repository>
-            <id>simpleflatmapper-maven-repository</id>
-            <url>https://arnaudroger.github.io/SimpleFlatMapper/maven/repository</url>
+            <id>arnaudroger-maven-repository</id>
+            <url>https://arnaudroger.github.io/maven</url>
         </repository>
     </repositories>
     <distributionManagement>

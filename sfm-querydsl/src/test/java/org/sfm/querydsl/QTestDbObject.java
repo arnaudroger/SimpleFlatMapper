@@ -6,15 +6,12 @@ import com.mysema.query.types.path.DateTimePath;
 import com.mysema.query.types.path.NumberPath;
 import com.mysema.query.types.path.StringPath;
 
-import javax.annotation.Generated;
-
 import static com.mysema.query.types.PathMetadataFactory.forVariable;
 
 
 /**
  * QTestDbObject is a Querydsl query type for QTestDbObject
  */
-@Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
 public class QTestDbObject extends com.mysema.query.sql.RelationalPathBase<QTestDbObject> {
 
     private static final long serialVersionUID = 767356144;

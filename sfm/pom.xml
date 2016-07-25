@@ -201,43 +201,6 @@
 			<activation>
 				<jdk>9-ea</jdk>
 			</activation>
-			<build>
-				<plugins>
-
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.6-jigsaw-SNAPSHOT</version>
-						<!--<configuration>-->
-							<!--<compilerArgs>-->
-								<!--<arg>-modulepath /Users/aroger/.m2/repository/org/ow2/asm/asm/5.1/asm-5.1.jar</arg>-->
-							<!--</compilerArgs>-->
-						<!--</configuration>-->
-						<dependencies>
-							<dependency>
-								<groupId>org.codehaus.plexus</groupId>
-								<artifactId>plexus-compiler-javac</artifactId>
-								<version>2.8</version>
-							</dependency>
-							<dependency>
-								<groupId>org.codehaus.plexus</groupId>
-								<artifactId>plexus-compiler-api</artifactId>
-								<version>2.8</version>
-							</dependency>
-							<dependency>
-								<groupId>org.codehaus.plexus</groupId>
-								<artifactId>plexus-compiler-manager</artifactId>
-								<version>2.8</version>
-							</dependency>
-							<dependency>
-								<groupId>org.ow2.asm</groupId>
-								<artifactId>asm</artifactId>
-								<version>6.0_ALPHA</version>
-							</dependency>
-						</dependencies>
-					</plugin>
-				</plugins>
-			</build>
 			<dependencies>
 				<dependency>
 					<groupId>org.jooq</groupId>

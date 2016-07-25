@@ -166,10 +166,6 @@
 						<groupId>com.google.code.maven-replacer-plugin</groupId>
 						<artifactId>replacer</artifactId>
 					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -178,6 +174,7 @@
 			<activation>
 				<jdk>1.8</jdk>
 			</activation>
+
 			<dependencies>
 				<dependency>
 					<groupId>org.jooq</groupId>

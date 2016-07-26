@@ -177,11 +177,11 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<argLine>-XaddExports:java.base/sun.nio.ch=ALL-UNNAMED</argLine>
+							<argLine>-XaddExports:java.base/sun.nio.ch=ALL-UNNAMED -XaddExports:jdk.unsupported/sun.misc=ALL-UNNAMED -XaddExports:java.base/sun.security.util=ALL-UNNAMED -XaddExports:java.base/sun.security.x509=ALL-UNNAMED</argLine>
 						</configuration>
 					</plugin>
 				</plugins>
-
+q
 			</build>
 		</profile>
 	</profiles>

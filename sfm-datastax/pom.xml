@@ -181,7 +181,6 @@
 						</configuration>
 					</plugin>
 				</plugins>
-q
 			</build>
 		</profile>
 	</profiles>

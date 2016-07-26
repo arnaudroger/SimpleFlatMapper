@@ -450,7 +450,7 @@
             </activation>
             <modules>
                 <module>sfm-test-sandbox</module>
-                <!--<module>sfm-test-osgi</module>-->
+                <module>sfm-test-osgi</module>
                 <module>sfm-test-lombok</module>
                 <module>sfm-test-immutables</module>
                 <module>sfm-jmh</module>
@@ -462,6 +462,9 @@
             <activation>
                 <jdk>9-ea</jdk>
             </activation>
+            <modules>
+                <module>sfm-sql2o</module>
+            </modules>
             <build>
                 <plugins>
 
@@ -495,6 +498,17 @@
                                 <version>6.0_ALPHA</version>
                             </dependency>
                         </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>maven-bundle-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <version>3.2.0</version>
+                        <configuration>
+                            <instructions>
+                                <_noee>true</_noee>
+                            </instructions>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

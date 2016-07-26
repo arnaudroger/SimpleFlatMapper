@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>sfm</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
@@ -166,6 +166,10 @@
 						<groupId>com.google.code.maven-replacer-plugin</groupId>
 						<artifactId>replacer</artifactId>
 					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -219,6 +223,22 @@
 					<version>6.0_ALPHA</version>
 				</dependency>
 			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.felix</groupId>
+						<artifactId>maven-bundle-plugin</artifactId>
+						<configuration>
+							<classifier>${jar.classifier}</classifier>
+							<instructions>
+								<Export-Package>!org.sfm.*.impl.*,org.sfm.*</Export-Package>
+								<Import-Package>org.objectweb.asm;version="[4.0,6)";resolution:=optional,org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,*</Import-Package>
+							</instructions>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
+
 	</profiles>
 </project>

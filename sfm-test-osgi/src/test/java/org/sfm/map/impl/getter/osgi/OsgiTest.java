@@ -21,7 +21,7 @@ public class OsgiTest {
         try {
 
 
-            hostApplication.deployBundleWithClass(ClassVisitor.class);
+            loadClassVisitor(hostApplication);
             hostApplication.deployBundleWithClass(CsvParser.class);
 
             InputStream is =
@@ -48,8 +48,8 @@ public class OsgiTest {
         try {
 
 
+            loadClassVisitor(hostApplication);
             hostApplication.deployWrapBundleWithClass(Cell.class);
-            hostApplication.deployBundleWithClass(ClassVisitor.class);
             hostApplication.deployBundleWithClass(CsvParser.class);
             hostApplication.deployBundleWithClass(SheetMapper.class);
 
@@ -66,6 +66,12 @@ public class OsgiTest {
 
         } finally {
             hostApplication.shutdownApplication();
+        }
+    }
+
+    private void loadClassVisitor(HostApplication hostApplication) throws BundleException, IOException {
+        if (!System.getProperty("java.version").contains("9-ea")) {
+            hostApplication.deployBundleWithClass(ClassVisitor.class);
         }
     }
 

@@ -1,6 +1,7 @@
 package org.sfm.utils;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -39,26 +40,31 @@ public class LibrarySetsClassLoader extends URLClassLoader {
 
     }
 
-    private static URL findUrl(Class<?> includeClass, ClassLoader classLoader) {
-        if (classLoader instanceof URLClassLoader) {
-            for(URL url : ((URLClassLoader)classLoader).getURLs()) {
-                if (urlContains(url, includeClass)) {
-                    return url;
+    private static URL findUrl(Class<?> includeClass, ClassLoader classLoader) throws MalformedURLException {
+
+        String classResource = includeClass.getName().replace(".", "/") + ".class";
+        URL urlClass = classLoader.getResource(classResource);
+
+        if (urlClass != null) {
+            String url = urlClass.toString();
+
+            if (url.startsWith("jar:")) {
+                int bang = url.indexOf('!');
+                if (bang != -1) {
+                    String jarUrl = url.substring("jar:".length(), bang);
+                    System.out.println("jarUrl = " + jarUrl);
+                    return new URL(jarUrl);
+                }
+            } else if (url.startsWith("file:")) {
+                if (url.endsWith(classResource)) {
+                    String directoryUrl = url.substring(0, url.length() - classResource.length());
+                    System.out.println("directoryUrl = " + directoryUrl);
+                    return new URL(directoryUrl);
                 }
             }
         }
 
-        ClassLoader parent = classLoader.getParent();
-        if (parent != null) {
-            return findUrl(includeClass, parent);
-        }
-        throw new IllegalArgumentException("Could not find url for " + includeClass);
-    }
-
-
-    private static boolean urlContains(URL url, Class<?> includeClass) {
-        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url});
-        return urlClassLoader.findResource(includeClass.getName().replace(".", "/") + ".class") != null;
+        throw new IllegalArgumentException("Could not find url for " + includeClass + " " + urlClass);
     }
 
     @Override

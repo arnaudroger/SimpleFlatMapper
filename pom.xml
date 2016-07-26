@@ -507,6 +507,7 @@
                         <configuration>
                             <instructions>
                                 <_noee>true</_noee>
+                                <_failok>true</_failok>
                             </instructions>
                         </configuration>
                     </plugin>

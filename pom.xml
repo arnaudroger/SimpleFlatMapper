@@ -499,6 +499,23 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>dev9</id>
+            <activation>
+                <property>
+                    <name>env.TRAVIS</name>
+                    <value>true</value>
+                </property>
+                <jdk>9-ea</jdk>
+            </activation>
+            <modules>
+                <module>sfm-test-sandbox</module>
+                <module>sfm-test-osgi</module>
+                <module>sfm-test-immutables</module>
+                <module>sfm-jmh</module>
+            </modules>
+        </profile>
     </profiles>
 
     <repositories>

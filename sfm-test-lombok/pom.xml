@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.6</version>
+			<version>1.16.11</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -50,4 +50,46 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+
+		<profile>
+			<id>jdk19</id>
+			<activation>
+				<jdk>9-ea</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.6-jigsaw-SNAPSHOT</version>
+						<configuration>
+							<source>9</source>
+							<target>9</target>
+							<fork>true</fork>
+							<compilerArgs>
+								<arg>-J-XaddExports:jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+								<arg>-J-XaddExports:jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+								<arg>-J-XaddExports:jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+								<arg>-J-XaddExports:jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+								<arg>-J-XaddExports:jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+								<arg>-J-XaddExports:jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+								<arg>-J-XaddExports:jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+								<arg>-J-XaddExports:jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+							</compilerArgs>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>org.ow2.asm</groupId>
+								<artifactId>asm</artifactId>
+								<version>6.0_ALPHA</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
 </project>

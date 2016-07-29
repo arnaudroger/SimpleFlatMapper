@@ -45,7 +45,8 @@
     </properties>
 
     <modules>
-        <module>sfm</module>
+        <module>sfm-core</module>
+        <module>sfm-csv</module>
         <module>sfm-datastax</module>
         <module>sfm-jooq</module>
         <module>sfm-poi</module>

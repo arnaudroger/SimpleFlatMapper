@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>sfm-csv</artifactId>
+	<packaging>bundle</packaging>
+
+	<parent>
+		<groupId>org.simpleflatmapper</groupId>
+		<artifactId>sfm-parent</artifactId>
+		<version>2.12-SNAPSHOT</version>
+	</parent>
+
+	<description>Java library to map flat record - ResultSet, csv - to java object with minimum configuration and low footprint.</description>
+
+	<developers>
+		<developer>
+			<id>arnaudroger</id>
+			<name>Arnaud Roger</name>
+			<email>arnaud.roger@gmail.com</email>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>The MIT License (MIT)</name>
+			<url>http://opensource.org/licenses/MIT</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>sfm-core</artifactId>
+			<version>2.12-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<version>2.5.4</version>
+				<configuration>
+					<classifier>${jar.classifier}</classifier>
+					<instructions>
+						<Export-Package>!org.sfm.*.impl.*,org.sfm.*</Export-Package>
+						<Import-Package>org.objectweb.asm;version="[4.0,6)";resolution:=optional,org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,*</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>travis</id>
+			<activation>
+				<property>
+					<name>env.TRAVIS</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

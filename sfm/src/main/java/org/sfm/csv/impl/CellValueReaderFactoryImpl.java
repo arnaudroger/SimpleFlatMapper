@@ -21,8 +21,8 @@ import java.time.*;
 
 import org.sfm.map.column.time.*;
 import org.sfm.csv.impl.cellreader.time.*;
-import org.sfm.utils.UnaryFactory;
 //IFJAVA8_END
+import org.sfm.utils.UnaryFactory;
 
 public final class CellValueReaderFactoryImpl implements CellValueReaderFactory {
 

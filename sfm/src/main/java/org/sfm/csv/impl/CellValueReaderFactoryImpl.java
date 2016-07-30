@@ -67,7 +67,7 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 				parsingContextFactoryBuilder.addParsingContextProvider(index, dateCellValueReader);
 			}
 		} else if (Calendar.class.equals(propertyClass)) {
-			reader = (CellValueReader<P>) new CalendarCellValueReader(getReader(Date.class, index, columnDefinition, parsingContextFactoryBuilder));
+			reader = (CellValueReader<P>) new CalendarCellValueReader(this.<Date>getReader(Date.class, index, columnDefinition, parsingContextFactoryBuilder));
 		//IFJAVA8_START
 		} else if (propertyClass.equals(LocalDate.class)) {
 			reader = (CellValueReader<P>) new JavaLocalDateCellValueReader(JavaTimeHelper.getDateTimeFormatter(columnDefinition));

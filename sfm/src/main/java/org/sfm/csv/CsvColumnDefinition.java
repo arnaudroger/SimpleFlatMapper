@@ -25,12 +25,14 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
         return CsvColumnDefinition.of(properties);
     }
 
-    public String dateFormat() {
-        DateFormatProperty prop = lookFor(DateFormatProperty.class);
-        if (prop != null) {
-            return prop.getPattern();
+    public String[] dateFormats() {
+        DateFormatProperty[] prop = lookForAll(DateFormatProperty.class);
+
+        String[] patterns = new String[prop.length];
+        for(int i = 0; i < prop.length; i++) {
+            patterns[i] = prop[i].getPattern();
         }
-        return null;
+        return patterns;
     }
 
 

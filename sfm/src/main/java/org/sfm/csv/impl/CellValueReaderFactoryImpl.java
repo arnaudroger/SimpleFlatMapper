@@ -56,9 +56,18 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 		CellValueReader<P> reader = null;
 
 		if (propertyClass.equals(Date.class)) {
-			DateCellValueReader dateCellValueReader = new DateCellValueReader(index, columnDefinition.dateFormat(), columnDefinition.getTimeZone());
-			reader = (CellValueReader<P>) dateCellValueReader;
-			parsingContextFactoryBuilder.addParsingContextProvider(index, dateCellValueReader);
+			String[] patterns = columnDefinition.dateFormats();
+			if (patterns.length == 1) {
+				DateCellValueReader dateCellValueReader = new DateCellValueReader(index, patterns[0], columnDefinition.getTimeZone());
+				reader = (CellValueReader<P>) dateCellValueReader;
+				parsingContextFactoryBuilder.addParsingContextProvider(index, dateCellValueReader);
+			} else {
+				DateMultiFormatCellValueReader dateCellValueReader = new DateMultiFormatCellValueReader(index, patterns, columnDefinition.getTimeZone());
+				reader = (CellValueReader<P>) dateCellValueReader;
+				parsingContextFactoryBuilder.addParsingContextProvider(index, dateCellValueReader);
+			}
+		} else if (Calendar.class.equals(propertyClass)) {
+			reader = (CellValueReader<P>) new CalendarCellValueReader(getReader(Date.class, index, columnDefinition, parsingContextFactoryBuilder));
 		//IFJAVA8_START
 		} else if (propertyClass.equals(LocalDate.class)) {
 			reader = (CellValueReader<P>) new JavaLocalDateCellValueReader(JavaTimeHelper.getDateTimeFormatter(columnDefinition));
@@ -79,10 +88,6 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 		} else if (propertyClass.equals(YearMonth.class)) {
 			reader = (CellValueReader<P>) new JavaYearMonthCellValueReader(JavaTimeHelper.getDateTimeFormatter(columnDefinition));
 		//IFJAVA8_END
-		} else if (Calendar.class.equals(propertyClass)) {
-            CalendarCellValueReader calendarCellValueReader = new CalendarCellValueReader(index, columnDefinition.dateFormat(), columnDefinition.getTimeZone());
-            reader = (CellValueReader<P>) calendarCellValueReader;
-            parsingContextFactoryBuilder.addParsingContextProvider(index, calendarCellValueReader);
 		}  else if (Enum.class.isAssignableFrom(propertyClass)) {
 			reader = new EnumCellValueReader(propertyClass);
 		} else if (JodaTimeClasses.isJoda(propertyClass)){

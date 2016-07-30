@@ -6,14 +6,13 @@ import org.sfm.map.ParsingContextProvider;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 public class CalendarCellValueReader implements CellValueReader<Calendar>, ParsingContextProvider {
 
-	private final DateCellValueReader reader;
+	private final CellValueReader<Date> reader;
 
-	public CalendarCellValueReader(int index, String pattern, TimeZone timeZone) {
-		this.reader = new DateCellValueReader(index, pattern, timeZone);
+	public CalendarCellValueReader(CellValueReader<Date> reader) {
+		this.reader = reader;
 	}
 	
 	@Override
@@ -29,7 +28,7 @@ public class CalendarCellValueReader implements CellValueReader<Calendar>, Parsi
 
     @Override
     public Object newContext() {
-        return reader.newContext();
+        return ((ParsingContextProvider)reader).newContext();
     }
 
     @Override

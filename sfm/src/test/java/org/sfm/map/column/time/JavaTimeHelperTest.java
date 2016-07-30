@@ -3,7 +3,6 @@ package org.sfm.map.column.time;
 import org.junit.Test;
 import org.sfm.csv.CsvColumnDefinition;
 import org.sfm.map.column.TimeZoneProperty;
-import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -19,7 +18,7 @@ public class JavaTimeHelperTest {
     @Test
     public void testFormatterFailWhenEmpty() {
         try {
-            JavaTimeHelper.getDateTimeFormatter(CsvColumnDefinition.IDENTITY);
+            JavaTimeHelper.getDateTimeFormatters(CsvColumnDefinition.IDENTITY);
             fail();
         } catch(IllegalArgumentException e) {
 
@@ -28,32 +27,32 @@ public class JavaTimeHelperTest {
 
     @Test
     public void testFormatterFromString() {
-        final DateTimeFormatter yyyyMMdd = JavaTimeHelper.getDateTimeFormatter(CsvColumnDefinition.IDENTITY.addDateFormat("yyyyMMdd"));
-        assertEquals(DateTimeFormatter.ofPattern("yyyyMMdd").toString(), yyyyMMdd.toString());
-        assertEquals(ZoneId.systemDefault(), yyyyMMdd.getZone());
+        final DateTimeFormatter[] yyyyMMdd = JavaTimeHelper.getDateTimeFormatters(CsvColumnDefinition.IDENTITY.addDateFormat("yyyyMMdd"));
+        assertEquals(DateTimeFormatter.ofPattern("yyyyMMdd").toString(), yyyyMMdd[0].toString());
+        assertEquals(ZoneId.systemDefault(), yyyyMMdd[0].getZone());
     }
 
     @Test
     public void testFormatterFromFormatter() {
-        final DateTimeFormatter yyyyMMdd = JavaTimeHelper.getDateTimeFormatter(CsvColumnDefinition.IDENTITY.add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("MMddyyyy"))));
-        assertEquals(DateTimeFormatter.ofPattern("MMddyyyy").toString(), yyyyMMdd.toString());
-        assertEquals(ZoneId.systemDefault(), yyyyMMdd.getZone());
+        final DateTimeFormatter[] yyyyMMdd = JavaTimeHelper.getDateTimeFormatters(CsvColumnDefinition.IDENTITY.add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("MMddyyyy"))));
+        assertEquals(DateTimeFormatter.ofPattern("MMddyyyy").toString(), yyyyMMdd[0].toString());
+        assertEquals(ZoneId.systemDefault(), yyyyMMdd[0].getZone());
 
     }
 
     @Test
     public void testFormatterFromFormatterWithOwnTZ() {
-        final DateTimeFormatter yyyyMMdd = JavaTimeHelper.getDateTimeFormatter(CsvColumnDefinition.IDENTITY.add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("ddMMyyyy").withZone(ZoneId.of("America/Chicago")))));
-        assertEquals(DateTimeFormatter.ofPattern("ddMMyyyy").toString(), yyyyMMdd.toString());
-        assertEquals(ZoneId.of("America/Chicago"), yyyyMMdd.getZone());
+        final DateTimeFormatter[] yyyyMMdd = JavaTimeHelper.getDateTimeFormatters(CsvColumnDefinition.IDENTITY.add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("ddMMyyyy").withZone(ZoneId.of("America/Chicago")))));
+        assertEquals(DateTimeFormatter.ofPattern("ddMMyyyy").toString(), yyyyMMdd[0].toString());
+        assertEquals(ZoneId.of("America/Chicago"), yyyyMMdd[0].getZone());
     }
 
 
     @Test
     public void testFormatterFromFormatterWithSpecifiedTZ() {
-        final DateTimeFormatter yyyyMMdd = JavaTimeHelper.getDateTimeFormatter(CsvColumnDefinition.IDENTITY.add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("ddMMyyyy").withZone(ZoneId.of("America/Chicago")))).addTimeZone(TimeZone.getTimeZone("America/New_York")));
-        assertEquals(DateTimeFormatter.ofPattern("ddMMyyyy").toString(), yyyyMMdd.toString());
-        assertEquals(ZoneId.of("America/New_York"), yyyyMMdd.getZone());
+        final DateTimeFormatter[] yyyyMMdd = JavaTimeHelper.getDateTimeFormatters(CsvColumnDefinition.IDENTITY.add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("ddMMyyyy").withZone(ZoneId.of("America/Chicago")))).addTimeZone(TimeZone.getTimeZone("America/New_York")));
+        assertEquals(DateTimeFormatter.ofPattern("ddMMyyyy").toString(), yyyyMMdd[0].toString());
+        assertEquals(ZoneId.of("America/New_York"), yyyyMMdd[0].getZone());
     }
 
     @Test

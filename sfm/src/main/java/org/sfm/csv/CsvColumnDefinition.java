@@ -32,6 +32,10 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
         for(int i = 0; i < prop.length; i++) {
             patterns[i] = prop[i].getPattern();
         }
+
+        if (patterns.length == 0) {
+            throw new IllegalArgumentException("No date format pattern specified");
+        }
         return patterns;
     }
 

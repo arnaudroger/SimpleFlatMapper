@@ -1,7 +1,6 @@
 package org.sfm.samples;
 
 import org.junit.Test;
-import org.sfm.csv.CsvWriter;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.jdbc.MultiIndexFieldMapper;
@@ -9,15 +8,9 @@ import org.sfm.map.MapperBuildingException;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.column.IndexedSetterFactoryProperty;
 import org.sfm.map.column.IndexedSetterProperty;
-import org.sfm.map.column.SetterFactoryProperty;
-import org.sfm.map.column.SetterProperty;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.IndexedSetter;
 import org.sfm.reflect.IndexedSetterFactory;
-import org.sfm.reflect.Setter;
-import org.sfm.reflect.SetterFactory;
-
-import java.io.IOException;
 import java.sql.PreparedStatement;
 
 import static org.junit.Assert.assertEquals;

@@ -1,12 +1,14 @@
-package org.sfm.reflect.asm.sample;
+package org.simpleflatmapper.csv.impl.asm.samples;
+
 
 import org.sfm.beans.DbFinalObject;
-import org.sfm.csv.impl.CsvMapperCellHandlerImpl;
-import org.sfm.csv.impl.DelayedGetter;
 import org.sfm.reflect.Instantiator;
+import org.simpleflatmapper.csv.impl.CsvMapperCellHandlerImpl;
+import org.simpleflatmapper.csv.impl.DelayedGetter;
 
 @SuppressWarnings("rawtypes")
-public final class CsvDbFinalObjectInstantiator implements Instantiator<CsvMapperCellHandlerImpl<DbFinalObject>, DbFinalObject> {
+public final class
+CsvDbFinalObjectInstantiator implements Instantiator<CsvMapperCellHandlerImpl<DbFinalObject>, DbFinalObject> {
 	
 	DelayedGetter<Long> getter1;
 	

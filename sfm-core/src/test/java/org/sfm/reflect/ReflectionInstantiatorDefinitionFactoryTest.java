@@ -126,8 +126,10 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		ClassLoader cl = new ClassLoader(ClassLoader.getSystemClassLoader().getParent()) {
 			@Override
 			protected Class<?> findClass(String name) throws ClassNotFoundException {
-				InputStream resourceAsStream = original.getResourceAsStream(name.replace(".", "/") + ".class");
+				String resourceName = name.replace(".", "/") + ".class";
+				InputStream resourceAsStream = original.getResourceAsStream(resourceName);
 				if (resourceAsStream == null) {
+					System.out.println("Could not find resource " + resourceName + " in " + original);
 					throw new ClassNotFoundException(name);
 				}
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();

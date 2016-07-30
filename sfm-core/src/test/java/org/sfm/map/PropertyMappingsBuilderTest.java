@@ -2,8 +2,7 @@ package org.sfm.map;
 
 
 import org.junit.Test;
-import org.sfm.csv.CsvColumnDefinition;
-import org.sfm.csv.CsvColumnKey;
+import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.mapper.DefaultPropertyNameMatcherFactory;
 import org.sfm.map.error.RethrowMapperBuilderErrorHandler;
 import org.sfm.map.mapper.PropertyMapping;
@@ -14,6 +13,7 @@ import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.reflect.meta.ListElementPropertyMeta;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.reflect.meta.SubPropertyMeta;
+import org.sfm.samples.SampleFieldKey;
 import org.sfm.utils.ForEachCallBack;
 import org.sfm.utils.Predicate;
 
@@ -35,8 +35,8 @@ public class PropertyMappingsBuilderTest {
     public void testStringInArray() {
 
         final ClassMeta<AnonymousElement> classMeta = ReflectionService.newInstance().getClassMeta(AnonymousElement.class);
-        PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition> builder =
-                new PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition>(
+        PropertyMappingsBuilder<AnonymousElement, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder =
+                new PropertyMappingsBuilder<AnonymousElement, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
                         classMeta,
                         DefaultPropertyNameMatcherFactory.DEFAULT,
                         new RethrowMapperBuilderErrorHandler(),
@@ -47,7 +47,7 @@ public class PropertyMappingsBuilderTest {
                             }
                         });
 
-        builder.addProperty(new CsvColumnKey("phones_value", 0), CsvColumnDefinition.identity());
+        builder.addProperty(new SampleFieldKey("phones_value", 0), FieldMapperColumnDefinition.identity());
 
 
         assertIsPhonesElement(builder);
@@ -59,8 +59,8 @@ public class PropertyMappingsBuilderTest {
     public void testAnonymousInArray() {
 
         final ClassMeta<AnonymousElement> classMeta = ReflectionService.newInstance().getClassMeta(AnonymousElement.class);
-        PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition> builder2 =
-                new PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition>(
+        PropertyMappingsBuilder<AnonymousElement, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder2 =
+                new PropertyMappingsBuilder<AnonymousElement, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
                         classMeta,
                         DefaultPropertyNameMatcherFactory.DEFAULT,
                         new RethrowMapperBuilderErrorHandler(),
@@ -71,18 +71,18 @@ public class PropertyMappingsBuilderTest {
                             }
                         });
 
-        builder2.addProperty(new CsvColumnKey("phones", 0), CsvColumnDefinition.identity());
+        builder2.addProperty(new SampleFieldKey("phones", 0), FieldMapperColumnDefinition.identity());
 
         assertIsPhonesElement(builder2);
 
     }
 
     @SuppressWarnings("unchecked")
-    private void assertIsPhonesElement(PropertyMappingsBuilder<AnonymousElement, CsvColumnKey, CsvColumnDefinition> builder) {
-        final List<PropertyMapping<AnonymousElement, ?, CsvColumnKey, CsvColumnDefinition>> props = new ArrayList<PropertyMapping<AnonymousElement, ?, CsvColumnKey, CsvColumnDefinition>>();
-        builder.forEachProperties(new ForEachCallBack<PropertyMapping<AnonymousElement, ?, CsvColumnKey, CsvColumnDefinition>>() {
+    private void assertIsPhonesElement(PropertyMappingsBuilder<AnonymousElement, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder) {
+        final List<PropertyMapping<AnonymousElement, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>> props = new ArrayList<PropertyMapping<AnonymousElement, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>>();
+        builder.forEachProperties(new ForEachCallBack<PropertyMapping<AnonymousElement, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>>() {
             @Override
-            public void handle(PropertyMapping<AnonymousElement, ?, CsvColumnKey, CsvColumnDefinition> pm) {
+            public void handle(PropertyMapping<AnonymousElement, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm) {
                 props.add(pm);
             }
         });

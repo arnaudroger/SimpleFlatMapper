@@ -10,13 +10,13 @@ import org.sfm.map.impl.JodaTimeClasses;
 import org.sfm.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 //IFJAVA8_START
+import java.time.format.DateTimeFormatter;
 import java.time.*;
 
 import org.sfm.map.column.time.*;

@@ -18,7 +18,7 @@ public class MultiFormaterCellValueReader<T> implements CellValueReader<T> {
         for(CellValueReader<T> reader : readers) {
             try {
                 return reader.read(chars, offset, length, parsingContext);
-            } catch(DateTimeParseException e) {
+            } catch(IllegalArgumentException e) {
             }
         }
         throw new IllegalArgumentException("Unable to parse date " + String.valueOf(chars, offset, length));

@@ -1,7 +1,6 @@
 package org.sfm.map.column.time;
 
-import org.joda.time.DateTimeZone;
-import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
+import org.sfm.map.column.DefaultDateFormatProperty;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.TimeZoneProperty;
@@ -30,7 +29,12 @@ public class JavaTimeHelper {
         }
 
         if (dtf.isEmpty()) {
-            throw new IllegalArgumentException("No date format pattern specified");
+            DefaultDateFormatProperty defaultDateFormatProperty = columnDefinition.lookFor(DefaultDateFormatProperty.class);
+
+            if (defaultDateFormatProperty == null) {
+                throw new IllegalStateException("No date format specified");
+            }
+            dtf.add(withZone(DateTimeFormatter.ofPattern(defaultDateFormatProperty.getPattern()), zoneId));
         }
 
         return dtf.toArray(new DateTimeFormatter[0]);

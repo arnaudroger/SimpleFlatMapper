@@ -20,8 +20,7 @@ public class JavaTimeHelperTest {
         try {
             JavaTimeHelper.getDateTimeFormatters(CsvColumnDefinition.IDENTITY);
             fail();
-        } catch(IllegalArgumentException e) {
-
+        } catch(IllegalStateException e) {
         }
     }
 

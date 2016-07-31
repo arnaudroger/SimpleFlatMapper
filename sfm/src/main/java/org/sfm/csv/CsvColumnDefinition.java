@@ -2,6 +2,7 @@ package org.sfm.csv;
 
 import org.sfm.csv.column.CustomReaderFactoryProperty;
 import org.sfm.csv.column.CustomReaderProperty;
+import org.sfm.map.column.DefaultDateFormatProperty;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.DateFormatProperty;
@@ -34,7 +35,13 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
         }
 
         if (patterns.length == 0) {
-            throw new IllegalArgumentException("No date format pattern specified");
+            DefaultDateFormatProperty defaultDateFormatProperty = lookFor(DefaultDateFormatProperty.class);
+
+            if (defaultDateFormatProperty == null) {
+                throw new IllegalStateException("No date format specified");
+            }
+
+            return new String[] { defaultDateFormatProperty.getPattern() };
         }
         return patterns;
     }

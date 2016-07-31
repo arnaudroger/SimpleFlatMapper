@@ -8,6 +8,8 @@ import org.sfm.csv.mapper.CsvMapperCellHandlerFactory;
 import org.sfm.csv.mapper.DelayedCellSetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
+import org.sfm.map.column.DateFormatProperty;
+import org.sfm.map.column.DefaultDateFormatProperty;
 import org.sfm.map.column.DefaultValueProperty;
 import org.sfm.map.mapper.*;
 import org.sfm.reflect.*;
@@ -121,7 +123,8 @@ public class CsvMapperBuilder<T> {
 	}
 	
 	private CsvColumnDefinition getColumnDefinition(CsvColumnKey key) {
-		return CsvColumnDefinition.compose(CsvColumnDefinition.dateFormatDefinition(defaultDateFormat), mapperConfig.columnDefinitions().getColumnDefinition(key));
+		CsvColumnDefinition columnDefinition = mapperConfig.columnDefinitions().getColumnDefinition(key);
+		return CsvColumnDefinition.compose(CsvColumnDefinition.of(new DefaultDateFormatProperty(defaultDateFormat)), columnDefinition);
 	}
 
 

@@ -3,36 +3,52 @@ package org.sfm.map.column.joda;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.sfm.map.column.DefaultDateFormatProperty;
+import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.TimeZoneProperty;
 import org.sfm.reflect.meta.ObjectClassMeta;
 
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TimeZone;
 
 public class JodaHelper {
 
-    public static DateTimeFormatter getDateTimeFormatter(ColumnDefinition<?, ?> columnDefinition) {
-        DateTimeFormatter dtf;
-
-        if (columnDefinition.has(JodaDateTimeFormatterProperty.class)) {
-            dtf = columnDefinition.lookFor(JodaDateTimeFormatterProperty.class).getFormatter();
-        } else if (columnDefinition.has(DateFormatProperty.class)) {
-            dtf = DateTimeFormat.forPattern(columnDefinition.lookFor(DateFormatProperty.class).getPattern());
-        } else {
-            throw new IllegalArgumentException("No date format pattern specified");
-        }
-
-
+    public static DateTimeFormatter[] getDateTimeFormatters(ColumnDefinition<?, ?> columnDefinition) {
         final DateTimeZone dateTimeZone = _dateTimeZone(columnDefinition);
 
-        if (dateTimeZone != null) {
-            dtf = dtf.withZone(dateTimeZone);
-        } else if (dtf.getZone() == null) {
-            dtf = dtf.withZone(DateTimeZone.getDefault());
+        List<DateTimeFormatter> dtf = new ArrayList<>();
+
+        for(JodaDateTimeFormatterProperty prop : columnDefinition.lookForAll(JodaDateTimeFormatterProperty.class)) {
+            dtf.add(withZone(prop.getFormatter(), dateTimeZone));
         }
 
-        return dtf;
+        for(DateFormatProperty prop : columnDefinition.lookForAll(DateFormatProperty.class)) {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(prop.getPattern());
+            dtf.add(withZone(dateTimeFormatter, dateTimeZone));
+        }
+        if (dtf.isEmpty()) {
+            DefaultDateFormatProperty defaultDateFormatProperty = columnDefinition.lookFor(DefaultDateFormatProperty.class);
+
+            if (defaultDateFormatProperty == null) {
+                throw new IllegalStateException("No date format specified");
+            }
+            dtf.add(withZone(DateTimeFormat.forPattern(defaultDateFormatProperty.getPattern()), dateTimeZone));
+        }
+
+        return dtf.toArray(new DateTimeFormatter[0]);
+    }
+
+    private static DateTimeFormatter withZone(DateTimeFormatter dateTimeFormatter, DateTimeZone zoneId) {
+        if (zoneId != null) {
+            return dateTimeFormatter.withZone(zoneId);
+        } else if (dateTimeFormatter.getZone() == null) {
+            return dateTimeFormatter.withZone(DateTimeZone.getDefault());
+        }
+        return dateTimeFormatter;
     }
 
     private static DateTimeZone _dateTimeZone(ColumnDefinition<?, ?> columnDefinition) {

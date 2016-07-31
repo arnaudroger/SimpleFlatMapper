@@ -20,15 +20,15 @@ public class JodaHelperTest {
     @Test
     public void testFormatterFailWhenEmpty() {
         try {
-            JodaHelper.getDateTimeFormatter(CsvColumnDefinition.IDENTITY);
+            JodaHelper.getDateTimeFormatters(CsvColumnDefinition.IDENTITY);
             fail();
-        } catch(IllegalArgumentException e) {}
+        } catch(IllegalStateException e) {}
     }
 
     @SuppressWarnings("SpellCheckingInspection")
     @Test
     public void testFormatterFromString() {
-        final DateTimeFormatter yyyyMMdd = JodaHelper.getDateTimeFormatter(CsvColumnDefinition.IDENTITY.addDateFormat("yyyyMMdd"));
+        final DateTimeFormatter yyyyMMdd = JodaHelper.getDateTimeFormatters(CsvColumnDefinition.IDENTITY.addDateFormat("yyyyMMdd"))[0];
         final long instant = System.currentTimeMillis();
         assertEquals(DateTimeFormat.forPattern("yyyyMMdd").print(instant), yyyyMMdd.print(instant));
         assertEquals(DateTimeZone.getDefault(), yyyyMMdd.getZone());
@@ -36,7 +36,7 @@ public class JodaHelperTest {
 
     @Test
     public void testFormatterFromFormatter() {
-        final DateTimeFormatter yyyyMMdd = JodaHelper.getDateTimeFormatter(CsvColumnDefinition.IDENTITY.add(new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("MMddyyyy"))));
+        final DateTimeFormatter yyyyMMdd = JodaHelper.getDateTimeFormatters(CsvColumnDefinition.IDENTITY.add(new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("MMddyyyy"))))[0];
         final long instant = System.currentTimeMillis();
         assertEquals(DateTimeFormat.forPattern("MMddyyyy").print(instant), yyyyMMdd.print(instant));
         assertEquals(DateTimeZone.getDefault(), yyyyMMdd.getZone());
@@ -45,7 +45,7 @@ public class JodaHelperTest {
 
     @Test
     public void testFormatterFromFormatterWithOwnTZ() {
-        final DateTimeFormatter yyyyMMdd = JodaHelper.getDateTimeFormatter(CsvColumnDefinition.IDENTITY.add(new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("ddMMyyyy").withZone(CHICAGO_TZ))));
+        final DateTimeFormatter yyyyMMdd = JodaHelper.getDateTimeFormatters(CsvColumnDefinition.IDENTITY.add(new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("ddMMyyyy").withZone(CHICAGO_TZ))))[0];
         final long instant = System.currentTimeMillis();
         assertEquals(DateTimeFormat.forPattern("ddMMyyyy").withZone(CHICAGO_TZ).print(instant), yyyyMMdd.print(instant));
         assertEquals(CHICAGO_TZ, yyyyMMdd.getZone());
@@ -54,7 +54,7 @@ public class JodaHelperTest {
 
     @Test
     public void testFormatterFromFormatterWithSpecifiedTZ() {
-        final DateTimeFormatter yyyyMMdd = JodaHelper.getDateTimeFormatter(CsvColumnDefinition.IDENTITY.add(new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("ddMMyyyy").withZone(CHICAGO_TZ))).addTimeZone(TimeZone.getTimeZone("America/New_York")));
+        final DateTimeFormatter yyyyMMdd = JodaHelper.getDateTimeFormatters(CsvColumnDefinition.IDENTITY.add(new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("ddMMyyyy").withZone(CHICAGO_TZ))).addTimeZone(TimeZone.getTimeZone("America/New_York")))[0];
         final long instant = System.currentTimeMillis();
         assertEquals(DateTimeFormat.forPattern("ddMMyyyy").withZone(NY_TZ).print(instant), yyyyMMdd.print(instant));
         assertEquals(NY_TZ, yyyyMMdd.getZone());

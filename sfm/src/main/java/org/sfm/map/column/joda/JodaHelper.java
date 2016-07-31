@@ -16,7 +16,7 @@ public class JodaHelper {
     public static DateTimeFormatter[] getDateTimeFormatters(ColumnDefinition<?, ?> columnDefinition) {
         final DateTimeZone dateTimeZone = _dateTimeZone(columnDefinition);
 
-        List<DateTimeFormatter> dtf = new ArrayList<>();
+        List<DateTimeFormatter> dtf = new ArrayList<DateTimeFormatter>();
 
         for(JodaDateTimeFormatterProperty prop : columnDefinition.lookForAll(JodaDateTimeFormatterProperty.class)) {
             dtf.add(withZone(prop.getFormatter(), dateTimeZone));

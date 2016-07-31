@@ -4,13 +4,8 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.sfm.map.column.DefaultDateFormatProperty;
-import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.column.DateFormatProperty;
-import org.sfm.map.column.TimeZoneProperty;
-import org.sfm.reflect.meta.ObjectClassMeta;
-
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;

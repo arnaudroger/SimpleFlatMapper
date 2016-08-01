@@ -32,7 +32,10 @@ public class FieldMapperMapperBuilderTest {
         ConstantSourceFieldMapperFactory<Object, SampleFieldKey> factory = new ConstantSourceFieldMapperFactoryImpl<Object, SampleFieldKey>(new GetterFactory<Object, SampleFieldKey>() {
             @Override
             public <P> Getter<Object, P> newGetter(Type target, SampleFieldKey key, ColumnDefinition<?, ?> columnDefinition) {
-                return new ConstantGetter<Object, P>((P) new Date());
+                if (target.equals(Date.class)) {
+                    return new ConstantGetter<Object, P>((P) new Date());
+                }
+                return null;
             }
         });
 
@@ -40,7 +43,7 @@ public class FieldMapperMapperBuilderTest {
         FieldMapperColumnDefinition<SampleFieldKey> identity = FieldMapperColumnDefinition.identity();
         PropertyMapping<MyObjectWithInner, MultiConstructorObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> propertyMapping =
                 new PropertyMapping<MyObjectWithInner, MultiConstructorObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
-                        propertyMeta, new SampleFieldKey("prop", 1), identity);
+                        propertyMeta, new SampleFieldKey("prop", 1, Date.class), identity);
         FieldMapper<Object, MyObjectWithInner> fieldMapper = factory.newFieldMapper(propertyMapping, null, new RethrowMapperBuilderErrorHandler());
 
         MyObjectWithInner o = new MyObjectWithInner();

@@ -3,10 +3,10 @@ package org.sfm.samples;
 import org.junit.Test;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.jdbc.JdbcMapperFactory;
+import org.sfm.jdbc.column.IndexedSetterProperty;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.jdbc.column.IndexedSetterFactoryProperty;
-import org.sfm.map.column.IndexedSetterProperty;
 import org.sfm.map.column.SetterFactoryProperty;
 import org.sfm.map.column.SetterProperty;
 import org.sfm.map.mapper.PropertyMapping;
@@ -17,7 +17,6 @@ import org.sfm.reflect.SetterFactory;
 
 import java.sql.PreparedStatement;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class CtfmSetterNotFoundTest {

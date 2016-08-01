@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(MultiClassLoaderJunitRunner.class)
 @LibrarySets(librarySets = {"http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar"},
         includes={ReflectionService.class, DatastaxCrud.class, DatastaxCrudTest.class})
-public class Datastax3Test {
+public class Datastax3 {
 
     private Class<?> localDateClass;
 

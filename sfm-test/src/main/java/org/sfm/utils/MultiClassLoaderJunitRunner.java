@@ -4,6 +4,7 @@ import org.junit.runner.Runner;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.Suite;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,9 +19,9 @@ public class MultiClassLoaderJunitRunner extends Suite {
         super(klass, NO_RUNNERS);
 
         LibrarySets librarySets = klass.getAnnotation(LibrarySets.class);
+        List<Runner> runners = new ArrayList<Runner>();
         if (librarySets == null) throw new IllegalArgumentException("Class " + klass + " is missing LibrarySets annotation");
 
-        List<Runner> runners = new ArrayList<Runner>();
         int i = 0;
         String[] names = librarySets.names();
         Pattern[] excludes = toPattern(librarySets.excludes());
@@ -28,14 +29,29 @@ public class MultiClassLoaderJunitRunner extends Suite {
             String[] urls = urlsList.split(",");
             final String suffix = getName(names, i);
             ClassLoader classLoader = new LibrarySetsClassLoader(getClass().getClassLoader(), urls, librarySets.includes(), excludes);
-            Class<?> testClass = classLoader.loadClass(klass.getName());
-            runners.add(new ClassLoaderChangerRunner(classLoader, new BlockJUnit4ClassRunner(testClass) {
-                @Override
-                protected String getName() {
-                    return super.getName() +  suffix;
+
+            Suite.SuiteClasses annotation = klass.getAnnotation(Suite.SuiteClasses.class);
+            if (annotation != null) {
+                for(Class cl : annotation.value()) {
+                    Class<?> testClass = classLoader.loadClass(cl.getName());
+                    runners.add(new ClassLoaderChangerRunner(classLoader, new BlockJUnit4ClassRunner(testClass) {
+                        @Override
+                        protected String getName() {
+                            return super.getName() + suffix;
+                        }
+                    }));
+                    i++;
                 }
-            }));
-            i++;
+            } else {
+                Class<?> testClass = classLoader.loadClass(klass.getName());
+                runners.add(new ClassLoaderChangerRunner(classLoader, new BlockJUnit4ClassRunner(testClass) {
+                    @Override
+                    protected String getName() {
+                        return super.getName() + suffix;
+                    }
+                }));
+                i++;
+            }
         }
         this.runners = runners;
     }

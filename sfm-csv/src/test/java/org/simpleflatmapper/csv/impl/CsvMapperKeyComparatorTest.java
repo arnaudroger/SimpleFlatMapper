@@ -7,6 +7,7 @@ import org.sfm.map.mapper.MapperKey;
 import org.sfm.map.mapper.MapperKeyComparator;
 import org.sfm.utils.ListCollectorHandler;
 import org.sfm.utils.RowHandler;
+import org.simpleflatmapper.csv.CsvColumnKey;
 
 import java.lang.reflect.Array;
 import java.util.Random;
@@ -130,15 +131,4 @@ public class CsvMapperKeyComparatorTest {
         }
     }
 
-    private static class JdbcColumnKeyProducer extends AbstractKeyProducer<JdbcColumnKey> {
-
-        private JdbcColumnKeyProducer() {
-            super(JdbcColumnKey.class);
-        }
-
-        @Override
-        protected JdbcColumnKey newKey(String name, int i) {
-            return new JdbcColumnKey(name, i);
-        }
-    }
 }

@@ -2,9 +2,8 @@ package org.sfm.utils.conv;
 
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.w3c.dom.Document;
 
-import javax.xml.parsers.SAXParser;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
@@ -16,6 +15,7 @@ import java.util.UUID;
 
 //IFJAVA8_START
 import java.time.*;
+import java.util.concurrent.locks.Lock;
 //IFJAVA8_END
 import static org.junit.Assert.*;
 import static org.sfm.utils.conv.ConverterFactory.*;
@@ -103,7 +103,7 @@ public class ConverterFactoryTest {
 
     @Test
     public void testNoConverter()  {
-        assertNull(getConverter(Document.class, SAXParser.class));
+        assertNull(getConverter(Reader.class, Lock.class));
     }
 
 

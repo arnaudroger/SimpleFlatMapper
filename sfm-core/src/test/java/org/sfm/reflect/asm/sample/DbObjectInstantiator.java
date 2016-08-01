@@ -3,11 +3,12 @@ package org.sfm.reflect.asm.sample;
 import org.sfm.beans.DbObject;
 import org.sfm.reflect.Instantiator;
 
-import java.sql.ResultSet;
+import java.io.InputStream;
 
-public final class DbObjectInstantiator implements Instantiator<ResultSet, DbObject> {
+
+public final class DbObjectInstantiator implements Instantiator<InputStream, DbObject> {
 	@Override
-	public DbObject newInstance(ResultSet source) throws Exception {
+	public DbObject newInstance(InputStream source) throws Exception {
 		return new DbObject();
 	}
 }

@@ -1,8 +1,10 @@
-package org.sfm.map.mapper;
+package org.sfm.jdbc.impl;
 
 import org.junit.Test;
 import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.FieldKey;
+import org.sfm.map.mapper.MapperKey;
+import org.sfm.map.mapper.MapperKeyComparator;
 import org.sfm.utils.ListCollectorHandler;
 import org.sfm.utils.RowHandler;
 
@@ -11,7 +13,7 @@ import java.util.Random;
 
 import static org.junit.Assert.*;
 
-public class MapperKeyComparatorTest {
+public class JdbcColumnKeyMapperKeyComparatorTest {
 
     private static final String[] COLUMNS = new String[] {
         "id",
@@ -27,7 +29,7 @@ public class MapperKeyComparatorTest {
 
     @Test
     public void testJdbcColumnKey() throws Exception {
-        testComparator(new JdbcColumnKeyProducer(), MapperKeyComparator.jdbcColumnKeyComparator());
+        testComparator(new JdbcColumnKeyProducer(), JdbcColumnKeyMapperKeyComparator.INSTANCE);
     }
 
     public static <K extends FieldKey<K>> MapperKey<K>[] generateKeys(KeyProducer<K> producer) throws Exception {

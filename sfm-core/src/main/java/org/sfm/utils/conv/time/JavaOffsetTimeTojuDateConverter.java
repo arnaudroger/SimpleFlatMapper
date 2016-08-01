@@ -2,7 +2,6 @@ package org.sfm.utils.conv.time;
 
 import org.sfm.utils.conv.Converter;
 
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.OffsetTime;
 import java.util.Date;

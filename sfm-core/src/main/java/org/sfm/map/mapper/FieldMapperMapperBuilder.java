@@ -1,11 +1,11 @@
 package org.sfm.map.mapper;
 
-import org.sfm.jdbc.impl.getter.MapperGetterAdapter;
 import org.sfm.map.*;
 import org.sfm.map.column.DefaultValueProperty;
 import org.sfm.map.column.FieldMapperColumnDefinition;
 import org.sfm.map.column.GetterProperty;
 import org.sfm.map.context.MappingContextFactoryBuilder;
+import org.sfm.map.getter.impl.MapperGetterAdapter;
 import org.sfm.map.impl.FieldErrorHandlerMapper;
 import org.sfm.map.impl.fieldmapper.ConstantSourceFieldMapperFactory;
 import org.sfm.map.impl.fieldmapper.ConstantSourceFieldMapperFactoryImpl;

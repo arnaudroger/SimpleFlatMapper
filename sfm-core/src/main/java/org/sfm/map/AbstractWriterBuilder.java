@@ -22,7 +22,6 @@ import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,7 +95,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
 
         final MappingContextFactoryBuilder mappingContextFactoryBuilder = new MappingContextFactoryBuilder(new KeySourceGetter<K, T>() {
             @Override
-            public Object getValue(K key, T source) throws SQLException {
+            public Object getValue(K key, T source) throws Exception {
                 throw new UnsupportedOperationException();
             }
         });

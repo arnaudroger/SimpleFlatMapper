@@ -4,7 +4,6 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.sfm.utils.conv.Converter;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 public class JodaLocalDateTimeTojuDateConverter implements Converter<LocalDateTime, Date> {

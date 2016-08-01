@@ -1,4 +1,8 @@
-package org.sfm.reflect.meta;
+package org.sfm.jdbc.impl;
+
+import org.sfm.reflect.meta.AliasProvider;
+import org.sfm.reflect.meta.AliasProviderFactory;
+import org.sfm.reflect.meta.Table;
 
 import javax.persistence.Column;
 import java.lang.reflect.Field;

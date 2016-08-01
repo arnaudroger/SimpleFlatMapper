@@ -47,6 +47,7 @@
     <modules>
         <module>sfm-core</module>
         <module>sfm-csv</module>
+        <module>sfm-jdbc</module>
         <module>sfm-datastax</module>
         <module>sfm-jooq</module>
         <module>sfm-poi</module>
@@ -323,12 +324,15 @@
 
         <profile>
             <id>jdk18</id>
+
             <activation>
                 <jdk>1.8</jdk>
             </activation>
+
             <modules>
                 <module>sfm-sql2o</module>
             </modules>
+
             <build>
                 <plugins>
                     <plugin>

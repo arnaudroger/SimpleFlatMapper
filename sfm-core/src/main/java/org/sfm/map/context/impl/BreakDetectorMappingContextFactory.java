@@ -1,6 +1,6 @@
 package org.sfm.map.context.impl;
 
-import org.sfm.jdbc.impl.BreakDetector;
+import org.sfm.map.BreakDetector;
 import org.sfm.map.MappingContext;
 import org.sfm.map.context.KeysDefinition;
 import org.sfm.map.context.MappingContextFactory;

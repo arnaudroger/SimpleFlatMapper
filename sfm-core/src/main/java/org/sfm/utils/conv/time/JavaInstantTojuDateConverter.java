@@ -2,7 +2,6 @@ package org.sfm.utils.conv.time;
 
 import org.sfm.utils.conv.Converter;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Date;
 

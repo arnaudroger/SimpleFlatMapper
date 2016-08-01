@@ -1,7 +1,6 @@
-package org.sfm.jdbc.impl;
+package org.sfm.map;
 
 
-import org.sfm.map.MappingException;
 
 public interface BreakDetector<S> {
     void handle(S source) throws MappingException;

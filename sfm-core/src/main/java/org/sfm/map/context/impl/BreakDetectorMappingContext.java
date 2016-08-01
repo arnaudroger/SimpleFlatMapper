@@ -1,6 +1,6 @@
 package org.sfm.map.context.impl;
 
-import org.sfm.jdbc.impl.BreakDetector;
+import org.sfm.map.BreakDetector;
 import org.sfm.map.MappingContext;
 
 public class BreakDetectorMappingContext<S> extends MappingContext<S> {

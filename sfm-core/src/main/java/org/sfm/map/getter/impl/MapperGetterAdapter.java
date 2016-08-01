@@ -1,4 +1,4 @@
-package org.sfm.jdbc.impl.getter;
+package org.sfm.map.getter.impl;
 
 import org.sfm.map.Mapper;
 import org.sfm.reflect.Getter;

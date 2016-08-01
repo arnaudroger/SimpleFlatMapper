@@ -65,7 +65,7 @@ public class DiscriminatorEnumerable<S, T> implements Enumarable<T> {
         return currentValue;
     }
 
-    private void checkMapper() throws java.sql.SQLException {
+    private void checkMapper() {
         for(Tuple3<Predicate<S>, Mapper<S, T>, MappingContext<? super S>> pmm : discriminatorMappers ) {
             if (pmm.first().test(sourceEnumarable.currentValue())) {
                 if (pmm.second() != currentMapper) {

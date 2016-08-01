@@ -4,10 +4,6 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbObject.Type;
-import org.sfm.jdbc.JdbcColumnKey;
-import org.sfm.jdbc.impl.getter.IntResultSetGetter;
-import org.sfm.jdbc.impl.getter.LongResultSetGetter;
-import org.sfm.jdbc.impl.getter.StringResultSetGetter;
 import org.sfm.map.Mapper;
 import org.sfm.map.MappingContext;
 import org.sfm.map.MappingException;
@@ -18,15 +14,16 @@ import org.sfm.reflect.InstantiatorDefinition;
 import org.sfm.reflect.Parameter;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
+import org.sfm.reflect.impl.ConstantGetter;
+import org.sfm.reflect.impl.ConstantIntGetter;
+import org.sfm.reflect.impl.ConstantLongGetter;
+import org.sfm.samples.SampleFieldKey;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class AsmFactoryTest {
 
@@ -34,28 +31,24 @@ public class AsmFactoryTest {
 	
 	@Test
 	public void testCreateInstantiatorEmptyConstructor() throws Exception {
-		Instantiator<ResultSet, DbObject> instantiator = asmFactory.createEmptyArgsInstantiator(ResultSet.class, DbObject.class);
+		Instantiator<Object, DbObject> instantiator = asmFactory.createEmptyArgsInstantiator(Object.class, DbObject.class);
 		assertNotNull(instantiator.newInstance(null));
-		assertSame(instantiator.getClass(), asmFactory.createEmptyArgsInstantiator(ResultSet.class, DbObject.class).getClass());
+		assertSame(instantiator.getClass(), asmFactory.createEmptyArgsInstantiator(Object.class, DbObject.class).getClass());
 	}
 	@Test
 	public void testCreateInstantiatorFinalDbObjectInjectIdAndName() throws Exception {
 		ExecutableInstantiatorDefinition instantiatorDefinition =
 				(ExecutableInstantiatorDefinition) AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class).get(0);
-		HashMap<Parameter, Getter<? super ResultSet, ?>> injections = new HashMap<Parameter, Getter<? super ResultSet, ?>>();
-		injections.put(new Parameter(0, "id", long.class), new LongResultSetGetter(1));
-		injections.put(new Parameter(1, "name", String.class), new StringResultSetGetter(2));
-		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
+		HashMap<Parameter, Getter<? super Object, ?>> injections = new HashMap<Parameter, Getter<? super Object, ?>>();
+		injections.put(new Parameter(0, "id", long.class), new ConstantLongGetter<Object>(33l));
+		injections.put(new Parameter(1, "name", String.class), new ConstantGetter<Object, String>("fdo"));
+		Instantiator<Object, DbFinalObject> instantiator = asmFactory.createInstantiator(Object.class,
 				instantiatorDefinition,
 				injections
 		);
 		
-		ResultSet rs= mock(ResultSet.class);
-		when(rs.getLong(1)).thenReturn(33l);
-		when(rs.getString(2)).thenReturn("fdo");
-		
-		
-		DbFinalObject fdo = instantiator.newInstance(rs);
+
+		DbFinalObject fdo = instantiator.newInstance(new Object());
 		
 		assertNotNull(fdo);
 		assertNull(fdo.getEmail());
@@ -66,7 +59,7 @@ public class AsmFactoryTest {
 		assertEquals("fdo", fdo.getName());
 
 
-		assertSame(instantiator.getClass(), asmFactory.createInstantiator(ResultSet.class,
+		assertSame(instantiator.getClass(), asmFactory.createInstantiator(Object.class,
 				instantiatorDefinition,
 				injections
 		).getClass());
@@ -74,22 +67,17 @@ public class AsmFactoryTest {
 	
 	@Test
 	public void testCreateInstantiatorFinalDbObjectNameAndType() throws Exception {
-		HashMap<Parameter, Getter<? super ResultSet, ?>> injections = new HashMap<Parameter, Getter<? super ResultSet, ?>>();
-		injections.put(new Parameter(4, "typeOrdinal", Type.class), new OrdinalEnumGetter<ResultSet, Type>(new IntResultSetGetter(1), Type.class));
-		injections.put(new Parameter(1, "name", String.class), new StringResultSetGetter(2));
+		HashMap<Parameter, Getter<? super Object, ?>> injections = new HashMap<Parameter, Getter<? super Object, ?>>();
+		injections.put(new Parameter(4, "typeOrdinal", Type.class), new OrdinalEnumGetter<Object, Type>(new ConstantIntGetter<Object>(1), Type.class));
+		injections.put(new Parameter(1, "name", String.class), new ConstantGetter<Object, String>("fdo"));
 
 		List<InstantiatorDefinition> instantiatorDefinitions = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class);
-		Instantiator<ResultSet, DbFinalObject> instantiator = asmFactory.createInstantiator(ResultSet.class,
+		Instantiator<Object, DbFinalObject> instantiator = asmFactory.createInstantiator(Object.class,
 				(ExecutableInstantiatorDefinition) instantiatorDefinitions.get(0),
 				injections
 		);
 		
-		ResultSet rs= mock(ResultSet.class);
-		when(rs.getInt(1)).thenReturn(1);
-		when(rs.getString(2)).thenReturn("fdo");
-		
-		
-		DbFinalObject fdo = instantiator.newInstance(rs);
+		DbFinalObject fdo = instantiator.newInstance(new Object());
 		
 		assertNotNull(fdo);
 		assertNull(fdo.getEmail());
@@ -104,16 +92,16 @@ public class AsmFactoryTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testAsmJdbcMapperFailedInstantiator() throws Exception {
-		Mapper<ResultSet, DbObject> jdbcMapper =
-				asmFactory.createMapper(new JdbcColumnKey[0],
-				(FieldMapper<ResultSet, DbObject>[]) new FieldMapper[]{},
-				(FieldMapper<ResultSet, DbObject>[]) new FieldMapper[]{},
-				new Instantiator<ResultSet, DbObject>() {
+		Mapper<Object, DbObject> jdbcMapper =
+				asmFactory.createMapper(new SampleFieldKey[0],
+				(FieldMapper<Object, DbObject>[]) new FieldMapper[]{},
+				(FieldMapper<Object, DbObject>[]) new FieldMapper[]{},
+				new Instantiator<Object, DbObject>() {
 					@Override
-					public DbObject newInstance(ResultSet s) throws Exception {
+					public DbObject newInstance(Object s) throws Exception {
 						throw new IOException("Error");
 					}
-				},ResultSet.class,
+				},Object.class,
 				DbObject.class);
 		
 		try {
@@ -127,23 +115,23 @@ public class AsmFactoryTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testAsmJdbcMapperFailedGetter() throws Exception {
-		Mapper<ResultSet, DbObject> jdbcMapper = asmFactory.createMapper(new JdbcColumnKey[0],
-				(FieldMapper<ResultSet, DbObject>[]) new FieldMapper[]{
-						new FieldMapper<ResultSet, DbObject>() {
+		Mapper<Object, DbObject> jdbcMapper = asmFactory.createMapper(new SampleFieldKey[0],
+				(FieldMapper<Object, DbObject>[]) new FieldMapper[]{
+						new FieldMapper<Object, DbObject>() {
 							@Override
-							public void mapTo(ResultSet source, DbObject target, MappingContext<? super ResultSet> mappingContext)
+							public void mapTo(Object source, DbObject target, MappingContext<? super Object> mappingContext)
 									throws MappingException {
 								throw new MappingException("Expected ");
 							}
 						}
 				},
-				(FieldMapper<ResultSet, DbObject>[]) new FieldMapper[]{},
-				new Instantiator<ResultSet, DbObject>() {
+				(FieldMapper<Object, DbObject>[]) new FieldMapper[]{},
+				new Instantiator<Object, DbObject>() {
 					@Override
-					public DbObject newInstance(ResultSet s) throws Exception {
+					public DbObject newInstance(Object s) throws Exception {
 						return new DbObject();
 					}
-				}, ResultSet.class,
+				}, Object.class,
 				DbObject.class);
 		
 		try {

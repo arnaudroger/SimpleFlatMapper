@@ -1,7 +1,8 @@
-package org.sfm.map.column;
+package org.sfm.jdbc.column;
 
 
 import org.sfm.jdbc.impl.setter.PreparedStatementSetterImpl;
+import org.sfm.map.column.SetterFactoryProperty;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.IndexedSetter;
 import org.sfm.reflect.IndexedSetterFactory;

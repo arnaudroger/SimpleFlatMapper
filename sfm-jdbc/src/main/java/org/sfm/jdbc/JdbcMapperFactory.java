@@ -8,7 +8,7 @@ import org.sfm.reflect.Getter;
 import org.sfm.reflect.TypeHelper;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.JpaAliasProvider;
+import org.sfm.jdbc.impl.JpaAliasProvider;
 import org.sfm.utils.UnaryFactory;
 import org.sfm.utils.UnaryFactoryWithException;
 

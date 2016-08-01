@@ -6,7 +6,7 @@ import org.sfm.jdbc.JdbcMapperFactory;
 import org.sfm.jdbc.MultiIndexFieldMapper;
 import org.sfm.map.MapperBuildingException;
 import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.column.IndexedSetterFactoryProperty;
+import org.sfm.jdbc.column.IndexedSetterFactoryProperty;
 import org.sfm.map.column.IndexedSetterProperty;
 import org.sfm.map.mapper.PropertyMapping;
 import org.sfm.reflect.IndexedSetter;

@@ -8,8 +8,8 @@ import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.samples.SampleFieldKey;
 import org.sfm.utils.Predicate;
 
+import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.sql.ResultSet;
 
 import static org.junit.Assert.*;
 
@@ -18,9 +18,9 @@ public class FieldMapperColumnDefinitionTest {
 
     @Test
     public void testCompose() throws Exception {
-        GetterFactory<ResultSet, SampleFieldKey> getterFactory = new GetterFactory<ResultSet, SampleFieldKey>() {
+        GetterFactory<InputStream, SampleFieldKey> getterFactory = new GetterFactory<InputStream, SampleFieldKey>() {
             @Override
-            public <P> Getter<ResultSet, P> newGetter(Type target, SampleFieldKey key, ColumnDefinition<?, ?> columnDefinition) {
+            public <P> Getter<InputStream, P> newGetter(Type target, SampleFieldKey key, ColumnDefinition<?, ?> columnDefinition) {
                 return null;
             }
 
@@ -30,9 +30,9 @@ public class FieldMapperColumnDefinitionTest {
             }
 
         };
-        Getter<ResultSet, Integer> getter = new Getter<ResultSet, Integer>() {
+        Getter<InputStream, Integer> getter = new Getter<InputStream, Integer>() {
             @Override
-            public Integer get(ResultSet target) throws Exception {
+            public Integer get(InputStream target) throws Exception {
                 return 3;
             }
             @Override
@@ -40,9 +40,9 @@ public class FieldMapperColumnDefinitionTest {
                 return "Getter";
             }
         };
-        FieldMapper<ResultSet, Object> fieldMapper = new FieldMapper<ResultSet, Object>() {
+        FieldMapper<InputStream, Object> fieldMapper = new FieldMapper<InputStream, Object>() {
             @Override
-            public void mapTo(ResultSet source, Object target, MappingContext<? super ResultSet> mappingContext) throws Exception {
+            public void mapTo(InputStream source, Object target, MappingContext<? super InputStream> mappingContext) throws Exception {
             }
 
             @Override

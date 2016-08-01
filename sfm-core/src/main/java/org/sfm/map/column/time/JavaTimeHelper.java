@@ -1,37 +1,52 @@
 package org.sfm.map.column.time;
 
-import org.joda.time.DateTimeZone;
-import org.sfm.map.column.joda.JodaDateTimeZoneProperty;
+import org.sfm.map.column.DefaultDateFormatProperty;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.TimeZoneProperty;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TimeZone;
 
 public class JavaTimeHelper {
 
-    public static DateTimeFormatter getDateTimeFormatter(ColumnDefinition<?, ?> columnDefinition) {
-        DateTimeFormatter dtf;
+    public static DateTimeFormatter[] getDateTimeFormatters(ColumnDefinition<?, ?> columnDefinition) {
+        List<DateTimeFormatter> dtf = new ArrayList<DateTimeFormatter>();
 
-        if (columnDefinition.has(JavaDateTimeFormatterProperty.class)) {
-            dtf = columnDefinition.lookFor(JavaDateTimeFormatterProperty.class).getFormatter();
-        } else if (columnDefinition.has(DateFormatProperty.class)) {
-            dtf = DateTimeFormatter.ofPattern(columnDefinition.lookFor(DateFormatProperty.class).getPattern());
-        } else {
-            throw new IllegalArgumentException("No date format pattern specified");
+
+        ZoneId zoneId = _getZoneId(columnDefinition);
+
+        for(JavaDateTimeFormatterProperty prop : columnDefinition.lookForAll(JavaDateTimeFormatterProperty.class)) {
+            dtf.add(withZone(prop.getFormatter(), zoneId));
         }
 
-        final ZoneId zoneId = _getZoneId(columnDefinition);
+        for(DateFormatProperty prop : columnDefinition.lookForAll(DateFormatProperty.class)) {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(prop.getPattern());
+            dtf.add(withZone(dateTimeFormatter, zoneId));
+        }
 
+        if (dtf.isEmpty()) {
+            DefaultDateFormatProperty defaultDateFormatProperty = columnDefinition.lookFor(DefaultDateFormatProperty.class);
+
+            if (defaultDateFormatProperty == null) {
+                throw new IllegalStateException("No date format specified");
+            }
+            dtf.add(withZone(DateTimeFormatter.ofPattern(defaultDateFormatProperty.getPattern()), zoneId));
+        }
+
+        return dtf.toArray(new DateTimeFormatter[0]);
+    }
+
+    private static DateTimeFormatter withZone(DateTimeFormatter dateTimeFormatter, ZoneId zoneId) {
         if (zoneId != null) {
-            dtf = dtf.withZone(zoneId);
-        } else if (dtf.getZone() == null) {
-            dtf = dtf.withZone(ZoneId.systemDefault());
+            return dateTimeFormatter.withZone(zoneId);
+        } else if (dateTimeFormatter.getZone() == null) {
+            return dateTimeFormatter.withZone(ZoneId.systemDefault());
         }
-
-        return dtf;
+        return dateTimeFormatter;
     }
 
     public static ZoneId getZoneIdOrDefault(ColumnDefinition<?, ?> columnDefinition) {

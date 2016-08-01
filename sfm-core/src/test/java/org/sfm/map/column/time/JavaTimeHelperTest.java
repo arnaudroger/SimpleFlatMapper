@@ -19,41 +19,40 @@ public class JavaTimeHelperTest {
     @Test
     public void testFormatterFailWhenEmpty() {
         try {
-            JavaTimeHelper.getDateTimeFormatter(FieldMapperColumnDefinition.identity());
+            JavaTimeHelper.getDateTimeFormatters(FieldMapperColumnDefinition.identity());
             fail();
-        } catch(IllegalArgumentException e) {
-
+        } catch(IllegalStateException e) {
         }
     }
 
     @Test
     public void testFormatterFromString() {
-        final DateTimeFormatter yyyyMMdd = JavaTimeHelper.getDateTimeFormatter(FieldMapperColumnDefinition.identity().add(new DateFormatProperty("yyyyMMdd")));
-        assertEquals(DateTimeFormatter.ofPattern("yyyyMMdd").toString(), yyyyMMdd.toString());
-        assertEquals(ZoneId.systemDefault(), yyyyMMdd.getZone());
+        final DateTimeFormatter[] yyyyMMdd = JavaTimeHelper.getDateTimeFormatters(FieldMapperColumnDefinition.identity().add(new DateFormatProperty("yyyyMMdd")));
+        assertEquals(DateTimeFormatter.ofPattern("yyyyMMdd").toString(), yyyyMMdd[0].toString());
+        assertEquals(ZoneId.systemDefault(), yyyyMMdd[0].getZone());
     }
 
     @Test
     public void testFormatterFromFormatter() {
-        final DateTimeFormatter yyyyMMdd = JavaTimeHelper.getDateTimeFormatter(FieldMapperColumnDefinition.identity().add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("MMddyyyy"))));
-        assertEquals(DateTimeFormatter.ofPattern("MMddyyyy").toString(), yyyyMMdd.toString());
-        assertEquals(ZoneId.systemDefault(), yyyyMMdd.getZone());
+        final DateTimeFormatter[] yyyyMMdd = JavaTimeHelper.getDateTimeFormatters(FieldMapperColumnDefinition.identity().add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("MMddyyyy"))));
+        assertEquals(DateTimeFormatter.ofPattern("MMddyyyy").toString(), yyyyMMdd[0].toString());
+        assertEquals(ZoneId.systemDefault(), yyyyMMdd[0].getZone());
 
     }
 
     @Test
     public void testFormatterFromFormatterWithOwnTZ() {
-        final DateTimeFormatter yyyyMMdd = JavaTimeHelper.getDateTimeFormatter(FieldMapperColumnDefinition.identity().add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("ddMMyyyy").withZone(ZoneId.of("America/Chicago")))));
-        assertEquals(DateTimeFormatter.ofPattern("ddMMyyyy").toString(), yyyyMMdd.toString());
-        assertEquals(ZoneId.of("America/Chicago"), yyyyMMdd.getZone());
+        final DateTimeFormatter[] yyyyMMdd = JavaTimeHelper.getDateTimeFormatters(FieldMapperColumnDefinition.identity().add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("ddMMyyyy").withZone(ZoneId.of("America/Chicago")))));
+        assertEquals(DateTimeFormatter.ofPattern("ddMMyyyy").toString(), yyyyMMdd[0].toString());
+        assertEquals(ZoneId.of("America/Chicago"), yyyyMMdd[0].getZone());
     }
 
 
     @Test
     public void testFormatterFromFormatterWithSpecifiedTZ() {
-        final DateTimeFormatter yyyyMMdd = JavaTimeHelper.getDateTimeFormatter(FieldMapperColumnDefinition.identity().add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("ddMMyyyy").withZone(ZoneId.of("America/Chicago")))).add(new TimeZoneProperty(TimeZone.getTimeZone("America/New_York"))));
-        assertEquals(DateTimeFormatter.ofPattern("ddMMyyyy").toString(), yyyyMMdd.toString());
-        assertEquals(ZoneId.of("America/New_York"), yyyyMMdd.getZone());
+        final DateTimeFormatter[] yyyyMMdd = JavaTimeHelper.getDateTimeFormatters(FieldMapperColumnDefinition.identity().add(new JavaDateTimeFormatterProperty(DateTimeFormatter.ofPattern("ddMMyyyy").withZone(ZoneId.of("America/Chicago")))).add(new TimeZoneProperty(TimeZone.getTimeZone("America/New_York"))));
+        assertEquals(DateTimeFormatter.ofPattern("ddMMyyyy").toString(), yyyyMMdd[0].toString());
+        assertEquals(ZoneId.of("America/New_York"), yyyyMMdd[0].getZone());
     }
 
     @Test

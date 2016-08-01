@@ -9,8 +9,11 @@ import org.sfm.map.column.RenameProperty;
 import org.sfm.reflect.meta.PropertyMeta;
 import org.sfm.utils.Predicate;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.sfm.utils.Asserts.requireNonNull;
 
@@ -81,6 +84,17 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
             }
         }
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T[] lookForAll(Class<T> propClass) {
+        List<T> list = new ArrayList<T>();
+        for(ColumnProperty cp : properties) {
+            if (cp != null && propClass.isInstance(cp)) {
+                list.add((T) cp);
+            }
+        }
+        return list.toArray((T[]) Array.newInstance(propClass, 0));
     }
 
     protected abstract CD newColumnDefinition(ColumnProperty[] properties);

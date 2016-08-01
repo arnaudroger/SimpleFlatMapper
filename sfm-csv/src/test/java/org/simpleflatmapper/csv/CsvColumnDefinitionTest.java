@@ -47,7 +47,7 @@ public class CsvColumnDefinitionTest {
                 }).addCustomCellValueReaderFactory(cellValueReaderFactory).addTimeZone(tz).addKey(appliesTo);
 
         assertEquals("blop", compose.rename(new CsvColumnKey("bar", -1)).getName());
-        assertEquals("yyyyMM", compose.dateFormat());
+        assertArrayEquals(new String[] {"yyyyMM"}, compose.dateFormats());
         assertEquals(new Integer(3), compose.getCustomReader().read(null, 0, 0, null));
         assertEquals(cellValueReaderFactory, compose.getCustomCellValueReaderFactory());
         assertEquals(tz, compose.getTimeZone());

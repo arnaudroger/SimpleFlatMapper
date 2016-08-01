@@ -3,7 +3,9 @@ package org.simpleflatmapper.csv;
 import org.junit.Test;
 import org.sfm.map.FieldMapperErrorHandler;
 import org.sfm.map.MappingException;
+import org.sfm.map.column.DateFormatProperty;
 import org.sfm.utils.ListCollectorHandler;
+import org.sfm.utils.Predicate;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -14,9 +16,17 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 public class CsvMapperDateFormatTest {
+
+	public static final Predicate<CsvColumnKey> TRUE = new Predicate<CsvColumnKey>() {
+        @Override
+        public boolean test(CsvColumnKey csvColumnKey) {
+            return true;
+        }
+    };
 
 	public static class ObjectWithDate {
 		private final Date date1;
@@ -104,5 +114,61 @@ public class CsvMapperDateFormatTest {
 		verify(fieldMapperErrorHandler).errorMappingField(eq(new CsvColumnKey("date2", 2)), any(),same(list.get(0)), any(Exception.class));
 	}
 
+
+	@Test
+	public void testReadMultipleFormat() throws  Exception {
+		String format1 = "dd/MM/yyyy";
+		String format2 = "MM-dd-yyyy";
+		String format3 = "yyyyMMdd";
+
+		CsvMapper<ObjectWithDate> mapper =
+				CsvMapperFactory
+						.newInstance()
+						.addColumnProperty(TRUE, new DateFormatProperty(format1))
+						.addColumnProperty(TRUE, new DateFormatProperty(format2))
+						.addColumnProperty(TRUE, new DateFormatProperty(format3))
+						.newMapper(ObjectWithDate.class);
+
+		String data = "date1\n18/06/2016\n06-19-2016\n20160620";
+
+
+
+		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollectorHandler<ObjectWithDate>()).getList();
+		assertEquals(3, list.size());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		assertEquals(sdf.parse("20160618"), list.get(0).date1);
+		assertEquals(sdf.parse("20160619"), list.get(1).date1);
+		assertEquals(sdf.parse("20160620"), list.get(2).date1);
+	}
+
+	@Test
+	public void testReadMultipleFormatOverrideDefault() throws  Exception {
+		String format1 = "dd/MM/yyyy";
+		String format2 = "MM-dd-yyyy";
+
+		CsvMapper<ObjectWithDate> mapper =
+				CsvMapperFactory
+						.newInstance()
+						.defaultDateFormat(format1)
+						.addColumnProperty(TRUE, new DateFormatProperty(format2))
+						.newMapper(ObjectWithDate.class);
+
+		String data1 = "date1\n18/06/2016";
+		String data2 = "date1\n06-19-2016";
+
+
+		try {
+			mapper.forEach(new StringReader(data1), new ListCollectorHandler<ObjectWithDate>()).getList();
+			fail();
+		} catch (Exception e) {
+			//
+		}
+
+		List<ObjectWithDate> list = mapper.forEach(new StringReader(data2), new ListCollectorHandler<ObjectWithDate>()).getList();
+
+		assertEquals(1, list.size());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		assertEquals(sdf.parse("20160619"), list.get(0).date1);
+	}
 
 }

@@ -2,6 +2,7 @@ package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.column.CustomReaderFactoryProperty;
 import org.simpleflatmapper.csv.column.CustomReaderProperty;
+import org.sfm.map.column.DefaultDateFormatProperty;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.column.ColumnProperty;
 import org.sfm.map.column.DateFormatProperty;
@@ -25,12 +26,24 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
         return CsvColumnDefinition.of(properties);
     }
 
-    public String dateFormat() {
-        DateFormatProperty prop = lookFor(DateFormatProperty.class);
-        if (prop != null) {
-            return prop.getPattern();
+    public String[] dateFormats() {
+        DateFormatProperty[] prop = lookForAll(DateFormatProperty.class);
+
+        String[] patterns = new String[prop.length];
+        for(int i = 0; i < prop.length; i++) {
+            patterns[i] = prop[i].getPattern();
         }
-        return null;
+
+        if (patterns.length == 0) {
+            DefaultDateFormatProperty defaultDateFormatProperty = lookFor(DefaultDateFormatProperty.class);
+
+            if (defaultDateFormatProperty == null) {
+                throw new IllegalStateException("No date format specified");
+            }
+
+            return new String[] { defaultDateFormatProperty.getPattern() };
+        }
+        return patterns;
     }
 
 

@@ -1,5 +1,7 @@
 package org.simpleflatmapper.csv.impl.cellreader.joda;
 
+import org.joda.time.format.DateTimeFormatter;
+import org.sfm.utils.UnaryFactory;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.sfm.map.column.joda.JodaHelper;
@@ -16,18 +18,56 @@ public class JodaTimeCellValueReaderHelper {
 
 
         if (JodaTimeClasses.isJodaDateTime(clazz)) {
-            return new JodaDateTimeCellValueReader(JodaHelper.getDateTimeFormatter(columnDefinition));
+            return newJodaTime(columnDefinition,
+                            new UnaryFactory<DateTimeFormatter, CellValueReader<?>>() {
+                                @Override
+                                public CellValueReader<?> newInstance(DateTimeFormatter dateTimeFormatter) {
+                                    return new JodaDateTimeCellValueReader(dateTimeFormatter);
+                                }
+                            });
         }
         if (JodaTimeClasses.isJodaLocalDate(clazz)) {
-            return new JodaLocalDateCellValueReader(JodaHelper.getDateTimeFormatter(columnDefinition));
+            return newJodaTime(columnDefinition,
+                    new UnaryFactory<DateTimeFormatter, CellValueReader<?>>() {
+                        @Override
+                        public CellValueReader<?> newInstance(DateTimeFormatter dateTimeFormatter) {
+                            return new JodaLocalDateCellValueReader(dateTimeFormatter);
+                        }
+                    });
         }
         if (JodaTimeClasses.isJodaLocalDateTime(clazz)) {
-            return new JodaLocalDateTimeCellValueReader(JodaHelper.getDateTimeFormatter(columnDefinition));
+            return newJodaTime(columnDefinition,
+                    new UnaryFactory<DateTimeFormatter, CellValueReader<?>>() {
+                        @Override
+                        public CellValueReader<?> newInstance(DateTimeFormatter dateTimeFormatter) {
+                            return new JodaLocalDateTimeCellValueReader(dateTimeFormatter);
+                        }
+                    });
         }
         if (JodaTimeClasses.isJodaLocalTime(clazz)) {
-            return new JodaLocalTimeCellValueReader(JodaHelper.getDateTimeFormatter(columnDefinition));
+            return newJodaTime(columnDefinition,
+                    new UnaryFactory<DateTimeFormatter, CellValueReader<?>>() {
+                        @Override
+                        public CellValueReader<?> newInstance(DateTimeFormatter dateTimeFormatter) {
+                            return new JodaLocalTimeCellValueReader(dateTimeFormatter);
+                        }
+                    });
         }
 
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static CellValueReader<?> newJodaTime(CsvColumnDefinition csvColumnDefinition, UnaryFactory<DateTimeFormatter, CellValueReader<?>> unaryFactory) {
+        DateTimeFormatter[] dateTimeFormatters = JodaHelper.getDateTimeFormatters(csvColumnDefinition);
+        if (dateTimeFormatters.length == 1) {
+            return unaryFactory.newInstance(dateTimeFormatters[0]);
+        } else {
+            CellValueReader<?>[] readers = new CellValueReader[dateTimeFormatters.length];
+            for(int i = 0; i < readers.length; i++) {
+                readers[i] = unaryFactory.newInstance(dateTimeFormatters[i]);
+            }
+            return new MultiFormaterCellValueReader(readers);
+        }
     }
 }

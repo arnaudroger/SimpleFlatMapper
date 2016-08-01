@@ -1,7 +1,9 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-datastax.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-datastax)
-[![JavaDoc](https://img.shields.io/badge/javadoc-2.11-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-datastax)
+[![JavaDoc](https://img.shields.io/badge/javadoc-2.12-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-datastax)
 
 # Datastax integration
+
+Works with datastax 2.1.x to 3.0.x
 
 ## What about the Datastax Mapper
 * SFM is at about 20% faster
@@ -14,7 +16,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-datastax</artifactId>
-			<version>2.11</version>
+			<version>2.12</version>
 		</dependency>
 ```
 

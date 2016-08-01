@@ -1,13 +1,14 @@
 package org.simpleflatmapper.csv.impl.asm;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.csv.CellValueReader;
-import org.sfm.csv.ParsingContext;
-import org.sfm.csv.impl.*;
-import org.sfm.csv.impl.cellreader.DelayedCellSetterImpl;
-import org.sfm.csv.mapper.CellSetter;
-import org.sfm.csv.mapper.DelayedCellSetter;
+import org.simpleflatmapper.csv.CellValueReader;
+import org.simpleflatmapper.csv.ParsingContext;
+import org.simpleflatmapper.csv.impl.*;
+import org.simpleflatmapper.csv.impl.cellreader.DelayedCellSetterImpl;
+import org.simpleflatmapper.csv.mapper.CellSetter;
+import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
 import org.sfm.reflect.ExecutableInstantiatorDefinition;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.Instantiator;
@@ -17,7 +18,6 @@ import org.sfm.reflect.asm.AsmFactory;
 import java.sql.ResultSet;
 import java.util.HashMap;
 
-import static org.junit.Assert.assertNotNull;
 
 public class CsvMapperCellHandlerImpAsmInstantiatorTest {
 

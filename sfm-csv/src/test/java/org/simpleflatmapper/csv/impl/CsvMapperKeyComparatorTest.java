@@ -1,7 +1,6 @@
 package org.simpleflatmapper.csv.impl;
 
 import org.junit.Test;
-import org.sfm.jdbc.JdbcColumnKey;
 import org.sfm.map.FieldKey;
 import org.sfm.map.mapper.MapperKey;
 import org.sfm.map.mapper.MapperKeyComparator;

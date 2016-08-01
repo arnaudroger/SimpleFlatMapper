@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.sfm.beans.DbFinalObject;
 import org.sfm.beans.DbObject;
 import org.sfm.beans.DbPrimitiveObject;
-import org.sfm.csv.impl.cellreader.*;
+import org.simpleflatmapper.csv.impl.cellreader.*;
 import org.sfm.tuples.Tuple2;
 import org.sfm.tuples.Tuples;
 import org.sfm.utils.ListCollectorHandler;

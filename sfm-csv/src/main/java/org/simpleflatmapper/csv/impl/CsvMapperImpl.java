@@ -4,7 +4,7 @@ import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.csv.CsvReader;
-import org.sfm.csv.mapper.*;
+import org.simpleflatmapper.csv.mapper.*;
 import org.simpleflatmapper.csv.parser.CellConsumer;
 import org.sfm.map.MappingException;
 import org.sfm.map.RowHandlerErrorHandler;

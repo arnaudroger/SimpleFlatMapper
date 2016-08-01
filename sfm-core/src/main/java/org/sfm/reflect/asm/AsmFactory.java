@@ -2,6 +2,7 @@ package org.sfm.reflect.asm;
 
 import org.sfm.map.*;
 import org.sfm.reflect.*;
+import org.sfm.utils.UnaryFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -20,6 +21,7 @@ public class AsmFactory {
     private final ConcurrentMap<Object, Getter<?, ?>> getterCache = new ConcurrentHashMap<Object, Getter<?, ?>>();
 	private final ConcurrentMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>> instantiatorCache = new ConcurrentHashMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>>();
     private final ConcurrentMap<MapperKey, Class<? extends Mapper<?, ?>>> fieldMapperCache = new ConcurrentHashMap<MapperKey, Class<? extends Mapper<?, ?>>>();
+    private final ConcurrentMap<Class<?>, Object> subFactories = new ConcurrentHashMap<Class<?>, Object>();
 
 
 	public AsmFactory(ClassLoader cl) {
@@ -53,7 +55,7 @@ public class AsmFactory {
     }
 
 
-    private Class<?> createClass(String className, byte[] bytes, ClassLoader declaringClassLoader) {
+    public Class<?> createClass(String className, byte[] bytes, ClassLoader declaringClassLoader) {
         return factoryClassLoader.registerClass(className, bytes, declaringClassLoader);
     }
 
@@ -277,9 +279,30 @@ public class AsmFactory {
         return sb.toString();
     }
 
-    private <T> String getPackageName(Type target) {
+    public String getPackageName(Type target) {
         Package targetPackage = TypeHelper.toClass(target).getPackage();
         return targetPackage != null ? targetPackage.getName() : "none";
     }
 
+    public long getNextClassNumber() {
+        return classNumber.getAndIncrement();
+    }
+
+    public <T> T registerOrCreate(Class<T> clazz, UnaryFactory<AsmFactory, T> factory) {
+        T t = clazz.cast(subFactories.get(clazz));
+
+        if (t == null) {
+            t = factory.newInstance(this);
+
+            T tPresent = clazz.cast(subFactories.putIfAbsent(clazz, t));
+
+            if (tPresent != null) {
+                return tPresent;
+            }
+
+        }
+
+
+        return t;
+    }
 }

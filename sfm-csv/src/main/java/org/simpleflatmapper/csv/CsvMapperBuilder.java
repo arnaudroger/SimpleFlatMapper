@@ -1,14 +1,16 @@
 package org.simpleflatmapper.csv;
 
+import org.sfm.reflect.asm.AsmFactory;
+import org.sfm.utils.UnaryFactory;
 import org.simpleflatmapper.csv.column.CustomReaderProperty;
-import org.sfm.csv.impl.*;
+import org.simpleflatmapper.csv.impl.*;
+import org.simpleflatmapper.csv.impl.asm.CsvAsmFactory;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandlerFactory;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetterFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.ColumnProperty;
-import org.sfm.map.column.DateFormatProperty;
 import org.sfm.map.column.DefaultDateFormatProperty;
 import org.sfm.map.column.DefaultValueProperty;
 import org.sfm.map.mapper.*;
@@ -20,7 +22,6 @@ import org.sfm.utils.ErrorHelper;
 import org.sfm.utils.ForEachCallBack;
 import org.sfm.utils.Named;
 import org.sfm.utils.Predicate;
-import org.sfm.utils.RowHandler;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -182,7 +183,12 @@ public class CsvMapperBuilder<T> {
         if (isEligibleForAsmHandler()) {
             try {
                 return reflectionService.getAsmFactory()
-						.<T>createCsvMapperCellHandler(target, delayedCellSetterFactories, setters,
+						.registerOrCreate(CsvAsmFactory.class, new UnaryFactory<AsmFactory, CsvAsmFactory>() {
+					@Override
+					public CsvAsmFactory newInstance(AsmFactory asmFactory) {
+						return new CsvAsmFactory(asmFactory);
+					}
+			}).<T>createCsvMapperCellHandler(target, delayedCellSetterFactories, setters,
                         instantiator, keys, parsingContextFactory, mapperConfig.fieldMapperErrorHandler(),
 								 mapperConfig.maxMethodSize());
             } catch (Exception e) {

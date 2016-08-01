@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv.mapper;
 
 import org.simpleflatmapper.csv.CellWriter;
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.sfm.csv.impl.writer.*;
+import org.simpleflatmapper.csv.impl.writer.*;
 
 import org.sfm.map.MapperBuilderErrorHandler;
 import org.sfm.map.column.FieldMapperColumnDefinition;

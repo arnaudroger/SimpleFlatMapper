@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
-import org.sfm.csv.parser.*;
+import org.simpleflatmapper.csv.parser.*;
 import org.sfm.map.impl.CaseInsensitiveFieldKeyNamePredicate;
 import org.sfm.reflect.ReflectionService;
 import org.sfm.reflect.TypeReference;

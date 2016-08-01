@@ -3,8 +3,7 @@ package org.simpleflatmapper.csv.impl;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CellValueReaderFactory;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
-import org.sfm.csv.impl.cellreader.*;
-import org.simpleflatmapper.csv.impl.cellreader.joda.JodaTimeCellValueReaderHelper;
+import org.simpleflatmapper.csv.impl.cellreader.*;
 import org.simpleflatmapper.csv.ParsingContextFactoryBuilder;
 import org.sfm.map.impl.JodaTimeClasses;
 import org.sfm.reflect.TypeHelper;
@@ -20,7 +19,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.*;
 
 import org.sfm.map.column.time.*;
-import org.sfm.csv.impl.cellreader.time.*;
+import org.simpleflatmapper.csv.impl.cellreader.joda.JodaTimeCellValueReaderHelper;
+import org.simpleflatmapper.csv.impl.cellreader.time.*;
 //IFJAVA8_END
 import org.sfm.utils.UnaryFactory;
 

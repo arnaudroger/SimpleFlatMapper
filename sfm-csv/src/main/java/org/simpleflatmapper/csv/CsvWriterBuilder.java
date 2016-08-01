@@ -1,7 +1,9 @@
 package org.simpleflatmapper.csv;
 
 
-import org.sfm.csv.impl.writer.*;
+import org.simpleflatmapper.csv.impl.writer.CellSeparatorAppender;
+import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
+import org.simpleflatmapper.csv.impl.writer.EndOfRowAppender;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
 import org.sfm.map.*;
 import org.sfm.map.column.FieldMapperColumnDefinition;

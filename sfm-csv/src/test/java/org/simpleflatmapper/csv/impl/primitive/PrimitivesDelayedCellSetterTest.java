@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv.impl.primitive;
 
 import org.junit.Test;
 import org.sfm.beans.DbPrimitiveObjectWithSetter;
-import org.sfm.csv.impl.cellreader.*;
+import org.simpleflatmapper.csv.impl.cellreader.*;
 import org.sfm.reflect.Setter;
 import org.sfm.reflect.ObjectSetterFactory;
 

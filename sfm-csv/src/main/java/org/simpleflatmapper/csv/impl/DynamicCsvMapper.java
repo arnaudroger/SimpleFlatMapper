@@ -1,6 +1,6 @@
 package org.simpleflatmapper.csv.impl;
 
-import org.sfm.csv.*;
+import org.simpleflatmapper.csv.*;
 import org.simpleflatmapper.csv.parser.CellConsumer;
 import org.sfm.map.*;
 import org.sfm.map.mapper.ColumnDefinitionProvider;
@@ -9,7 +9,6 @@ import org.sfm.map.mapper.MapperKey;
 import org.sfm.map.mapper.MapperKeyComparator;
 import org.sfm.reflect.meta.ClassMeta;
 import org.sfm.utils.RowHandler;
-import org.simpleflatmapper.csv.*;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -36,7 +35,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	private final MapperConfig<CsvColumnKey, CsvColumnDefinition> mapperConfig;
 
 	private final MapperCache<CsvColumnKey, CsvMapperImpl<T>> mapperCache =
-			new MapperCache<CsvColumnKey, CsvMapperImpl<T>>(MapperKeyComparator.csvColumnKeyComparator());
+			new MapperCache<CsvColumnKey, CsvMapperImpl<T>>(CsvColumnKeyMapperKeyComparator.INSTANCE);
 
 	public DynamicCsvMapper(final Type target,
 							final ClassMeta<T> classMeta,

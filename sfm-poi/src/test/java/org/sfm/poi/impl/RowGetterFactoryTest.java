@@ -5,8 +5,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.csv.CsvColumnDefinition;
-import org.sfm.csv.CsvColumnKey;
+import org.simpleflatmapper.csv.CsvColumnDefinition;
+import org.simpleflatmapper.csv.CsvColumnKey;
 import org.sfm.reflect.Getter;
 import org.sfm.reflect.primitive.*;
 

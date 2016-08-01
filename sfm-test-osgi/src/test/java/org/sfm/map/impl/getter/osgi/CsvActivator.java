@@ -2,7 +2,7 @@ package org.sfm.map.impl.getter.osgi;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.sfm.csv.CsvParser;
+import org.simpleflatmapper.csv.CsvParser;
 
 import java.io.StringReader;
 

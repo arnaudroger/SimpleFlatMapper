@@ -2,7 +2,7 @@ package org.sfm.poi.impl;
 
 
 import org.apache.poi.ss.usermodel.Row;
-import org.sfm.csv.CsvColumnKey;
+import org.simpleflatmapper.csv.CsvColumnKey;
 import org.sfm.map.mapper.ColumnDefinition;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.getter.joda.JodaTimeGetterFactory;

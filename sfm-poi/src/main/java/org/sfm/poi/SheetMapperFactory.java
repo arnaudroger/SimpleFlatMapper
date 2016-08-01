@@ -1,7 +1,6 @@
 package org.sfm.poi;
 
 import org.apache.poi.ss.usermodel.Row;
-import org.sfm.csv.CsvColumnKey;
 import org.sfm.map.mapper.AbstractMapperFactory;
 import org.sfm.map.GetterFactory;
 import org.sfm.map.column.FieldMapperColumnDefinition;
@@ -11,6 +10,7 @@ import org.sfm.poi.impl.DynamicSheetMapper;
 import org.sfm.poi.impl.RowGetterFactory;
 import org.sfm.reflect.TypeReference;
 import org.sfm.reflect.meta.ClassMeta;
+import org.simpleflatmapper.csv.CsvColumnKey;
 
 import java.lang.reflect.Type;
 

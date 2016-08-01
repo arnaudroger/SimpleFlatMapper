@@ -7,7 +7,7 @@ import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
-import org.sfm.csv.CsvParser;
+import org.simpleflatmapper.csv.CsvParser;
 import org.sfm.poi.SheetMapper;
 
 import java.io.*;

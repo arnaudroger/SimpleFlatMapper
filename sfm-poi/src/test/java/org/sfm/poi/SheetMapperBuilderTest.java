@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Before;
 import org.junit.Test;
 import org.sfm.beans.DbObject;
-import org.sfm.csv.CsvColumnKey;
+import org.simpleflatmapper.csv.CsvColumnKey;
 import org.sfm.poi.impl.CsvColumnKeyRowKeySourceGetter;
 import java.sql.SQLException;
 import java.util.Date;

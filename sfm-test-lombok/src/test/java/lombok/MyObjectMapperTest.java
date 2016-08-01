@@ -1,7 +1,7 @@
 package lombok;
 
 import org.junit.Test;
-import org.sfm.csv.CsvParser;
+import org.simpleflatmapper.csv.CsvParser;
 
 import java.io.IOException;
 import java.io.StringReader;

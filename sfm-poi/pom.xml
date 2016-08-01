@@ -53,7 +53,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm</artifactId>
+			<artifactId>sfm-core</artifactId>
 			<version>2.13-SNAPSHOT</version>
 		</dependency>
 

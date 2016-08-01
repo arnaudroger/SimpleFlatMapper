@@ -17,19 +17,6 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-
-@RunWith(MultiClassLoaderJunitRunner.class)
-@LibrarySets(
-        librarySets = {
-                //IFJAVA8_START
-                "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar",
-                //IFJAVA8_END
-                "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/2.1.8/cassandra-driver-core-2.1.8.jar"
-        },
-        includes={ReflectionService.class, DatastaxCrud.class, DatastaxCrudTest.class},
-        excludes = { "org.junit", "org.sfm.datastax.DatastaxCrudTest", "io.netty"},
-        names={"v303", "v218"}
-)
 public class SettableDataMapperTest extends AbstractDatastaxTest {
 
     public static final String QUERY = "insert into " +

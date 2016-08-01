@@ -11,25 +11,23 @@ import java.util.Arrays;
 public class AbstractDatastaxTest  {
 
 
-    static Cluster cluster = null;
+    static volatile Cluster cluster = null;
 
 
     @BeforeClass
     public static void initCassandraConnection() throws Exception {
         DatastaxHelper.startCassandra();
-        cluster =
-                Cluster
-                        .builder()
-                        .addContactPointsWithPorts(
-                                Arrays.asList(new InetSocketAddress("localhost", 9142)))
-                        .build();
-    }
-
-    @AfterClass
-    public static void closeCassandraCluster() throws Exception {
-        System.out.println("close = " + cluster);
-        cluster.close();
-        System.out.println("close done");
+        if (cluster == null) {
+            System.out.println("Open cassandra connection");
+            cluster =
+                    Cluster
+                            .builder()
+                            .addContactPointsWithPorts(
+                                    Arrays.asList(new InetSocketAddress("localhost", 9142)))
+                            .withProtocolVersion(ProtocolVersion.V3)
+                            .build();
+            System.out.println("opened " + cluster.getMetadata());
+        }
     }
 
     @SuppressWarnings("WeakerAccess")

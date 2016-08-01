@@ -46,17 +46,6 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MultiClassLoaderJunitRunner.class)
-@LibrarySets(
-        librarySets = {
-                //IFJAVA8_START
-                "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar",
-                //IFJAVA8_END
-                "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/2.1.8/cassandra-driver-core-2.1.8.jar"
-        },
-        includes={ReflectionService.class, DatastaxCrud.class, DatastaxCrudTest.class, Mock.class},
-        names={"v303", "v218"}
-)
 public class DataTypeTest {
 
 

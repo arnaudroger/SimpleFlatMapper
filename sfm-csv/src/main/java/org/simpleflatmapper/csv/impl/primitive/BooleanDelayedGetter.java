@@ -1,8 +1,8 @@
 package org.simpleflatmapper.csv.impl.primitive;
 
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.primitive.BooleanGetter;
+import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.core.reflect.primitive.BooleanGetter;
 
 public class BooleanDelayedGetter<T> implements BooleanGetter<CsvMapperCellHandler<T>>, Getter<CsvMapperCellHandler<T>, Boolean> {
 	private final int index;

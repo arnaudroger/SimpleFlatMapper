@@ -5,12 +5,12 @@ import org.simpleflatmapper.csv.impl.writer.CellSeparatorAppender;
 import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
 import org.simpleflatmapper.csv.impl.writer.EndOfRowAppender;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
-import org.sfm.map.*;
-import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.mapper.ConstantTargetFieldMapperFactory;
-import org.sfm.map.mapper.PropertyMapping;
-import org.sfm.reflect.*;
-import org.sfm.reflect.meta.ClassMeta;
+import org.simpleflatmapper.core.map.*;
+import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.core.map.mapper.ConstantTargetFieldMapperFactory;
+import org.simpleflatmapper.core.map.mapper.PropertyMapping;
+import org.simpleflatmapper.core.reflect.*;
+import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 
 import java.util.List;
 

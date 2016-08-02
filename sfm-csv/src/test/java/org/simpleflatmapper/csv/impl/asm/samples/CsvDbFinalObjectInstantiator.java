@@ -1,8 +1,8 @@
 package org.simpleflatmapper.csv.impl.asm.samples;
 
 
-import org.sfm.beans.DbFinalObject;
-import org.sfm.reflect.Instantiator;
+import org.simpleflatmapper.test.beans.DbFinalObject;
+import org.simpleflatmapper.core.reflect.Instantiator;
 import org.simpleflatmapper.csv.impl.CsvMapperCellHandlerImpl;
 import org.simpleflatmapper.csv.impl.DelayedGetter;
 

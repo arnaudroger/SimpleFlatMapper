@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv.impl.primitive;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.impl.cellreader.BooleanCellValueReader;
-import org.sfm.reflect.primitive.BooleanSetter;
+import org.simpleflatmapper.core.reflect.primitive.BooleanSetter;
 
 public class BooleanCellSetter<T> implements CellSetter<T> {
 

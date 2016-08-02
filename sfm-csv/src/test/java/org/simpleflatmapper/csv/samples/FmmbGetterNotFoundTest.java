@@ -6,7 +6,7 @@ import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.column.CustomReaderProperty;
 import org.simpleflatmapper.csv.impl.cellreader.StringCellValueReader;
-import org.sfm.map.MapperBuildingException;
+import org.simpleflatmapper.core.map.MapperBuildingException;
 import static org.junit.Assert.fail;
 
 public class FmmbGetterNotFoundTest {

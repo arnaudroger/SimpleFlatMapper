@@ -1,11 +1,11 @@
 package org.simpleflatmapper.csv;
 
 import org.junit.Test;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.MappingException;
-import org.sfm.map.column.DateFormatProperty;
-import org.sfm.utils.ListCollectorHandler;
-import org.sfm.utils.Predicate;
+import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.core.map.MappingException;
+import org.simpleflatmapper.core.map.column.DateFormatProperty;
+import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.core.utils.Predicate;
 
 import java.io.IOException;
 import java.io.StringReader;

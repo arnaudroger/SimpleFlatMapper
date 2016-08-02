@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv;
 
 
-import org.sfm.map.ParsingContextProvider;
+import org.simpleflatmapper.core.map.ParsingContextProvider;
 
 public class ParsingContextFactory {
 

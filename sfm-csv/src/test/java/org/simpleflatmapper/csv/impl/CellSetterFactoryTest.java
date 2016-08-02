@@ -1,9 +1,9 @@
 package org.simpleflatmapper.csv.impl;
 
 import org.junit.Test;
-import org.sfm.reflect.ExecutableInstantiatorDefinition;
-import org.sfm.reflect.InstantiatorDefinition;
-import org.sfm.reflect.Parameter;
+import org.simpleflatmapper.core.reflect.ExecutableInstantiatorDefinition;
+import org.simpleflatmapper.core.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.core.reflect.Parameter;
 
 import java.util.Date;
 

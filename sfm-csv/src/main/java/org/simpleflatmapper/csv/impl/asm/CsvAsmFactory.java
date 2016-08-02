@@ -1,10 +1,10 @@
 package org.simpleflatmapper.csv.impl.asm;
 
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.map.error.RethrowFieldMapperErrorHandler;
-import org.sfm.reflect.Instantiator;
-import org.sfm.reflect.TypeHelper;
-import org.sfm.reflect.asm.AsmFactory;
+import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.core.map.error.RethrowFieldMapperErrorHandler;
+import org.simpleflatmapper.core.reflect.Instantiator;
+import org.simpleflatmapper.core.reflect.TypeHelper;
+import org.simpleflatmapper.core.reflect.asm.AsmFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.ParsingContextFactory;
 import org.simpleflatmapper.csv.mapper.CellSetter;

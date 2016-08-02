@@ -1,5 +1,6 @@
-module org.sfm.csv {
-    requires org.sfm.core;
+module org.simpleflatmapper.csv {
+    requires org.simpleflatmapper.core;
     requires org.objectweb.asm;
-    exports org.sfm.csv;
+    requires joda.time;
+    exports org.simpleflatmapper.csv;
 }

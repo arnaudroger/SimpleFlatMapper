@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.impl.writer;
 
 import org.simpleflatmapper.csv.CellWriter;
-import org.sfm.reflect.Setter;
+import org.simpleflatmapper.core.reflect.Setter;
 
 public class CellWriterSetterWrapper<P> implements Setter<Appendable, P> {
     private final Setter<Appendable, P> setter;

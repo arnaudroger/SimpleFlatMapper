@@ -170,10 +170,10 @@
                         </executions>
                         <configuration>
                             <includes>
-                                <include>src/main/java/org/sfm/**/*</include>
-                                <include>src/test/java/org/sfm/**/*</include>
-                                <include>*/src/main/java/org/sfm/**/*</include>
-                                <include>*/src/test/java/org/sfm/**/*</include>
+                                <include>src/main/java/org/simpleflatmapper/**/*</include>
+                                <include>src/test/java/org/simpleflatmapper/**/*</include>
+                                <include>*/src/main/java/org/simpleflatmapper/**/*</include>
+                                <include>*/src/test/java/org/simpleflatmapper/**/*</include>
                             </includes>
                             <excludes>
                                 <exclude>target/**</exclude>
@@ -200,9 +200,9 @@
                             <target>1.6</target>
                             <excludes>
                                 <exclude>**/module-info.java</exclude>
-                                <exclude>**/org/sfm/**/*Spliterator*</exclude>
-                                <exclude>**/org/sfm/**/*Optional*</exclude>
-                                <exclude>**/org/sfm/**/time/*</exclude>
+                                <exclude>**/org/simpleflatmapper/**/*Spliterator*</exclude>
+                                <exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
+                                <exclude>**/org/simpleflatmapper/**/time/*</exclude>
                             </excludes>
                         </configuration>
 
@@ -213,11 +213,13 @@
                                 <configuration>
                                     <testExcludes>
                                         <exclude>**/module-info.java</exclude>
-                                        <exclude>**/org/sfm/tuples/fasttuple/**/*</exclude>
-                                        <exclude>**/org/sfm/tuples/jool/**/*</exclude>
-                                        <exclude>**/org/sfm/**/*Optional*</exclude>
-                                        <exclude>**/org/sfm/**/time/*</exclude>
-                                        <exclude>**/org/sfm/datastax/*</exclude>
+                                        <exclude>**/org/simpleflatmapper/core/tuples/fasttuple/**/*</exclude>
+                                        <exclude>**/org/simpleflatmapper/core/tuples/jool/**/*</exclude>
+                                        <exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
+                                        <exclude>**/org/simpleflatmapper/**/time/*</exclude>
+                                        <exclude>**/org/simpleflatmapper/datastax/*</exclude>
+                                        <exclude>**/org/simpleflatmapper/csv/samples/JoolTupleTest.java</exclude>
+                                        <exclude>**/org/simpleflatmapper/csv/samples/FastTupleTest.java</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>
@@ -261,10 +263,10 @@
                         </executions>
                         <configuration>
                             <includes>
-                                <include>src/main/java/org/sfm/**/*</include>
-                                <include>src/test/java/org/sfm/**/*</include>
-                                <include>*/src/main/java/org/sfm/**/*</include>
-                                <include>*/src/test/java/org/sfm/**/*</include>
+                                <include>src/main/java/org/simpleflatmapper/**/*</include>
+                                <include>src/test/java/org/simpleflatmapper/**/*</include>
+                                <include>*/src/main/java/org/simpleflatmapper/**/*</include>
+                                <include>*/src/test/java/org/simpleflatmapper/**/*</include>
                             </includes>
                             <excludes>
                                 <exclude>target/**</exclude>
@@ -292,9 +294,9 @@
 
                             <excludes>
                                 <exclude>**/module-info.java</exclude>
-                                <exclude>**/org/sfm/**/*Spliterator*</exclude>
-                                <exclude>**/org/sfm/**/*Optional*</exclude>
-                                <exclude>**/org/sfm/**/time/*</exclude>
+                                <exclude>**/org/simpleflatmapper/**/*Spliterator*</exclude>
+                                <exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
+                                <exclude>**/org/simpleflatmapper/**/time/*</exclude>
                             </excludes>
 
                         </configuration>
@@ -306,9 +308,10 @@
                                 <configuration>
                                     <testExcludes>
                                         <exclude>**/module-info.java</exclude>
-                                        <exclude>**/org/sfm/tuples/jool/**/*</exclude>
-                                        <exclude>**/org/sfm/**/*Optional*</exclude>
-                                        <exclude>**/org/sfm/**/time/*</exclude>
+                                        <exclude>**/org/simpleflatmapper/core/tuples/jool/**/*</exclude>
+                                        <exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
+                                        <exclude>**/org/simpleflatmapper/**/time/*</exclude>
+                                        <exclude>**/org/simpleflatmapper/csv/samples/JoolTupleTest.java</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>

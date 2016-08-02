@@ -1,12 +1,12 @@
 package org.simpleflatmapper.csv;
 
 import org.junit.Test;
-import org.sfm.beans.Db1DeepObject;
-import org.sfm.beans.Db1DeepPartialObject;
-import org.sfm.beans.DbFinal1DeepObject;
-import org.sfm.test.jdbc.DbHelper;
-import org.sfm.reflect.ReflectionService;
-import org.sfm.utils.ListCollectorHandler;
+import org.simpleflatmapper.test.beans.Db1DeepObject;
+import org.simpleflatmapper.test.beans.Db1DeepPartialObject;
+import org.simpleflatmapper.test.beans.DbFinal1DeepObject;
+import org.simpleflatmapper.test.jdbc.DbHelper;
+import org.simpleflatmapper.core.reflect.ReflectionService;
+import org.simpleflatmapper.core.utils.ListCollectorHandler;
 
 import java.io.Reader;
 import java.io.StringReader;

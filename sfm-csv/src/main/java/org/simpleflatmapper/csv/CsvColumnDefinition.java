@@ -2,13 +2,13 @@ package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.column.CustomReaderFactoryProperty;
 import org.simpleflatmapper.csv.column.CustomReaderProperty;
-import org.sfm.map.column.DefaultDateFormatProperty;
-import org.sfm.map.mapper.ColumnDefinition;
-import org.sfm.map.column.ColumnProperty;
-import org.sfm.map.column.DateFormatProperty;
-import org.sfm.map.column.TimeZoneProperty;
-import org.sfm.reflect.meta.PropertyMeta;
-import org.sfm.utils.Predicate;
+import org.simpleflatmapper.core.map.column.DefaultDateFormatProperty;
+import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
+import org.simpleflatmapper.core.map.column.ColumnProperty;
+import org.simpleflatmapper.core.map.column.DateFormatProperty;
+import org.simpleflatmapper.core.map.column.TimeZoneProperty;
+import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.core.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.TimeZone;

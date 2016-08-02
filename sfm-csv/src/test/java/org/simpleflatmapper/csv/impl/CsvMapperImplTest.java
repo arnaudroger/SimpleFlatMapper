@@ -1,12 +1,12 @@
 package org.simpleflatmapper.csv.impl;
 
 import org.junit.Test;
-import org.sfm.beans.DbObject;
+import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.ParsingContext;
-import org.sfm.utils.RowHandler;
+import org.simpleflatmapper.core.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.StringReader;

@@ -1,10 +1,10 @@
 package org.simpleflatmapper.csv.impl.primitive;
 
 import org.junit.Test;
-import org.sfm.beans.DbPrimitiveObjectWithSetter;
+import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 import org.simpleflatmapper.csv.impl.cellreader.*;
-import org.sfm.reflect.Setter;
-import org.sfm.reflect.ObjectSetterFactory;
+import org.simpleflatmapper.core.reflect.Setter;
+import org.simpleflatmapper.core.reflect.ObjectSetterFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

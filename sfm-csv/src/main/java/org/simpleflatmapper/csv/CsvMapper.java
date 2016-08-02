@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv;
 
-import org.sfm.map.MappingException;
-import org.sfm.utils.RowHandler;
+import org.simpleflatmapper.core.map.MappingException;
+import org.simpleflatmapper.core.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;

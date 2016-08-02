@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.impl.asm.samples;
 
-import org.sfm.beans.DbObject;
-import org.sfm.reflect.Instantiator;
+import org.simpleflatmapper.test.beans.DbObject;
+import org.simpleflatmapper.core.reflect.Instantiator;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
 
 @SuppressWarnings("rawtypes")

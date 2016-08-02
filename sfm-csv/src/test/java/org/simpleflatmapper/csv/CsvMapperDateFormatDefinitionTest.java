@@ -1,8 +1,8 @@
 package org.simpleflatmapper.csv;
 
 import org.junit.Test;
-import org.sfm.tuples.Tuple2;
-import org.sfm.tuples.Tuples;
+import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.core.tuples.Tuples;
 
 import java.io.IOException;
 import java.io.StringReader;

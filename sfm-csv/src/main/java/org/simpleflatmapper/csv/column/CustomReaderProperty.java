@@ -2,12 +2,12 @@ package org.simpleflatmapper.csv.column;
 
 
 import org.simpleflatmapper.csv.CellValueReader;
-import org.sfm.map.column.ColumnProperty;
-import org.sfm.reflect.TypeHelper;
+import org.simpleflatmapper.core.map.column.ColumnProperty;
+import org.simpleflatmapper.core.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
 
-import static org.sfm.utils.Asserts.requireNonNull;
+import static org.simpleflatmapper.core.utils.Asserts.requireNonNull;
 
 public class CustomReaderProperty implements ColumnProperty {
     private final CellValueReader<?> reader;

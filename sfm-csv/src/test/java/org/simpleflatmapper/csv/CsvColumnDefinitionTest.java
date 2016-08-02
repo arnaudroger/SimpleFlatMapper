@@ -2,8 +2,8 @@ package org.simpleflatmapper.csv;
 
 
 import org.junit.Test;
-import org.sfm.reflect.meta.PropertyMeta;
-import org.sfm.utils.Predicate;
+import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.core.utils.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.TimeZone;

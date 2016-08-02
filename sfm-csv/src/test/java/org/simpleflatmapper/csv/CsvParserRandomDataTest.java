@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv;
 
 import org.junit.Test;
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.sfm.utils.ListCollectorHandler;
+import org.simpleflatmapper.core.utils.ListCollectorHandler;
 
 import java.io.CharArrayReader;
 import java.io.IOException;

@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.samples;
 
 import org.junit.Test;
-import org.sfm.map.MapperBuildingException;
+import org.simpleflatmapper.core.map.MapperBuildingException;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.ParsingContext;

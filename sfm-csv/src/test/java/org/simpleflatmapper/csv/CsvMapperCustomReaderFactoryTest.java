@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv;
 
 
 import org.junit.Test;
-import org.sfm.beans.DbObject;
+import org.simpleflatmapper.test.beans.DbObject;
 
 import java.io.IOException;
 import java.io.StringReader;

@@ -1,12 +1,12 @@
 package org.simpleflatmapper.csv.impl.cellreader.joda;
 
 import org.joda.time.format.DateTimeFormatter;
-import org.sfm.utils.UnaryFactory;
+import org.simpleflatmapper.core.utils.UnaryFactory;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
-import org.sfm.map.column.joda.JodaHelper;
-import org.sfm.map.impl.JodaTimeClasses;
-import org.sfm.reflect.TypeHelper;
+import org.simpleflatmapper.core.map.column.joda.JodaHelper;
+import org.simpleflatmapper.core.map.column.JodaTimeClasses;
+import org.simpleflatmapper.core.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
 

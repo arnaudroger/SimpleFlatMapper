@@ -1,13 +1,13 @@
 package org.simpleflatmapper.csv.impl.asm;
 
 import org.objectweb.asm.*;
-import org.sfm.reflect.asm.AsmUtils;
-import org.sfm.reflect.asm.ShardingHelper;
+import org.simpleflatmapper.core.reflect.asm.AsmUtils;
+import org.simpleflatmapper.core.reflect.asm.ShardingHelper;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.ParsingContextFactory;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.reflect.Instantiator;
+import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.core.reflect.Instantiator;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandlerFactory;
@@ -149,14 +149,6 @@ public class CsvMapperCellHandlerBuilder {
                 return delayedCellSetters.length;
             }
 
-            @Override
-            protected void appendDebugInfo(MethodVisitor mv, Label startLabel, Label endLabel) {
-                mv.visitLocalVariable("this", "Lorg/sfm/reflect/asm/sample/AsmCsvMapperCellHandler;", null, startLabel, endLabel, 0);
-                mv.visitLocalVariable("chars", "[C", null, startLabel, endLabel, 1);
-                mv.visitLocalVariable("offset", "I", null, startLabel, endLabel, 2);
-                mv.visitLocalVariable("length", "I", null, startLabel, endLabel, 3);
-                mv.visitLocalVariable("cellIndex", "I", null, startLabel, endLabel, 4);
-            }
         });
 
     }

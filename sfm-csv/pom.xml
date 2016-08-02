@@ -71,8 +71,8 @@
 				<configuration>
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
-						<Export-Package>!org.sfm.*.impl.*,org.sfm.*</Export-Package>
-						<Import-Package>org.objectweb.asm;version="[4.0,6)";resolution:=optional,org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,*</Import-Package>
+						<Export-Package>org.simpleflatmapper.csv</Export-Package>
+						<Import-Package>org.objectweb.asm;version="[4.0,6)";resolution:=optional,org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,org.simpleflatmapper.core.*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -199,21 +199,7 @@
 					<version>6.0_ALPHA</version>
 				</dependency>
 			</dependencies>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.felix</groupId>
-						<artifactId>maven-bundle-plugin</artifactId>
-						<configuration>
-							<classifier>${jar.classifier}</classifier>
-							<instructions>
-								<Export-Package>!org.sfm.*.impl.*,org.sfm.*</Export-Package>
-								<Import-Package>org.objectweb.asm;version="[4.0,6)";resolution:=optional,org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,*</Import-Package>
-							</instructions>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
+
 		</profile>
 
 	</profiles>

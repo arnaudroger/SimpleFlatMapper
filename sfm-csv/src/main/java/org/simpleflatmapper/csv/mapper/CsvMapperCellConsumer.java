@@ -1,8 +1,8 @@
 package org.simpleflatmapper.csv.mapper;
 
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.utils.RowHandler;
+import org.simpleflatmapper.core.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.core.utils.RowHandler;
 
 import java.util.Collection;
 

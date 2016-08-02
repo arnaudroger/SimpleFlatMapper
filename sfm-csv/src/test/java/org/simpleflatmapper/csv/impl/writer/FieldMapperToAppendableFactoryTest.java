@@ -7,25 +7,24 @@ import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
-import org.sfm.beans.DbObject;
-import org.sfm.beans.DbPrimitiveObjectWithSetter;
+import org.simpleflatmapper.test.beans.DbObject;
+import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
-import org.sfm.map.FieldMapper;
-import org.sfm.map.context.MappingContextFactory;
-import org.sfm.map.column.DateFormatProperty;
-import org.sfm.map.column.FormatProperty;
-import org.sfm.map.column.joda.JodaDateTimeFormatterProperty;
-import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.mapper.PropertyMapping;
-import org.sfm.map.context.KeySourceGetter;
-import org.sfm.map.context.MappingContextFactoryBuilder;
-import org.sfm.reflect.ReflectionService;
-import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.reflect.meta.DefaultPropertyNameMatcher;
-import org.sfm.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.core.map.FieldMapper;
+import org.simpleflatmapper.core.map.context.MappingContextFactory;
+import org.simpleflatmapper.core.map.column.DateFormatProperty;
+import org.simpleflatmapper.core.map.column.FormatProperty;
+import org.simpleflatmapper.core.map.column.joda.JodaDateTimeFormatterProperty;
+import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.core.map.mapper.PropertyMapping;
+import org.simpleflatmapper.core.map.context.KeySourceGetter;
+import org.simpleflatmapper.core.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.core.reflect.ReflectionService;
+import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.core.reflect.meta.DefaultPropertyNameMatcher;
+import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
 
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.UUID;
 
@@ -185,7 +184,7 @@ public class FieldMapperToAppendableFactoryTest {
     public <T> MappingContextFactoryBuilder<T, CsvColumnKey> getMappingContextBuilder() {
         return new MappingContextFactoryBuilder<T, CsvColumnKey>(new KeySourceGetter<CsvColumnKey, T>() {
             @Override
-            public Object getValue(CsvColumnKey key, T source) throws SQLException {
+            public Object getValue(CsvColumnKey key, T source) throws Exception {
                 return null;
             }
         });

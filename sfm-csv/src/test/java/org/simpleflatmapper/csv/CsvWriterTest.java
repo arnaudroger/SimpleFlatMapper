@@ -1,14 +1,14 @@
 package org.simpleflatmapper.csv;
 
 import org.junit.Test;
-import org.sfm.beans.DbObject;
+import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
-import org.sfm.map.*;
-import org.sfm.map.column.DateFormatProperty;
-import org.sfm.map.column.EnumOrdinalFormatProperty;
-import org.sfm.reflect.TypeReference;
-import org.sfm.tuples.Tuple2;
-import org.sfm.tuples.Tuples;
+import org.simpleflatmapper.core.map.*;
+import org.simpleflatmapper.core.map.column.DateFormatProperty;
+import org.simpleflatmapper.core.map.column.EnumOrdinalFormatProperty;
+import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.core.tuples.Tuples;
 
 import java.io.IOException;
 import java.io.StringWriter;

@@ -5,8 +5,9 @@ import org.simpleflatmapper.csv.CellValueReaderFactory;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.impl.cellreader.*;
 import org.simpleflatmapper.csv.ParsingContextFactoryBuilder;
-import org.sfm.map.impl.JodaTimeClasses;
-import org.sfm.reflect.TypeHelper;
+import org.simpleflatmapper.core.map.column.JodaTimeClasses;
+import org.simpleflatmapper.csv.impl.cellreader.joda.JodaTimeCellValueReaderHelper;
+import org.simpleflatmapper.core.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.Calendar;
@@ -18,11 +19,10 @@ import java.util.UUID;
 import java.time.format.DateTimeFormatter;
 import java.time.*;
 
-import org.sfm.map.column.time.*;
-import org.simpleflatmapper.csv.impl.cellreader.joda.JodaTimeCellValueReaderHelper;
+import org.simpleflatmapper.core.map.column.time.*;
 import org.simpleflatmapper.csv.impl.cellreader.time.*;
 //IFJAVA8_END
-import org.sfm.utils.UnaryFactory;
+import org.simpleflatmapper.core.utils.UnaryFactory;
 
 public final class CellValueReaderFactoryImpl implements CellValueReaderFactory {
 

@@ -3,8 +3,8 @@ package org.simpleflatmapper.csv.mapper;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.ParsingContextFactory;
 import org.simpleflatmapper.csv.impl.CsvMapperCellHandlerImpl;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.reflect.Instantiator;
+import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.core.reflect.Instantiator;
 
 public class CsvMapperCellHandlerFactory<T> {
 

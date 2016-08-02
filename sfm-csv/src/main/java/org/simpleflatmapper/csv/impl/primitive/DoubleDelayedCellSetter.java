@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv.impl.primitive;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.impl.cellreader.DoubleCellValueReader;
-import org.sfm.reflect.primitive.DoubleSetter;
+import org.simpleflatmapper.core.reflect.primitive.DoubleSetter;
 
 public class DoubleDelayedCellSetter<T> implements DelayedCellSetter<T, Double> {
 

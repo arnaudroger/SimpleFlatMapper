@@ -6,8 +6,8 @@ import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.reflect.Instantiator;
+import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.core.reflect.Instantiator;
 
 public final class CsvMapperCellHandlerImpl<T> extends CsvMapperCellHandler<T> {
 

@@ -1,8 +1,8 @@
 package org.simpleflatmapper.csv.impl.primitive;
 
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.primitive.ByteGetter;
+import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.core.reflect.primitive.ByteGetter;
 
 public class ByteDelayedGetter<T> implements ByteGetter<CsvMapperCellHandler<T>>, Getter<CsvMapperCellHandler<T>, Byte> {
 	private final int index;

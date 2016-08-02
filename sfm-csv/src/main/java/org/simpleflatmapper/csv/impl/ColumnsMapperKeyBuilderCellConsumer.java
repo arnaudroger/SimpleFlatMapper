@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv.impl;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.impl.cellreader.StringCellValueReader;
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.sfm.map.mapper.MapperKey;
+import org.simpleflatmapper.core.map.mapper.MapperKey;
 
 import java.util.ArrayList;
 import java.util.List;

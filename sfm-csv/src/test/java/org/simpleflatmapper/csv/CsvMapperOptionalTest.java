@@ -2,12 +2,12 @@ package org.simpleflatmapper.csv;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sfm.beans.DbFinalObject;
-import org.sfm.test.jdbc.DbHelper;
-import org.sfm.map.MapperBuildingException;
-import org.sfm.reflect.TypeReference;
-import org.sfm.tuples.Tuple2;
-import org.sfm.utils.ListCollectorHandler;
+import org.simpleflatmapper.test.beans.DbFinalObject;
+import org.simpleflatmapper.test.jdbc.DbHelper;
+import org.simpleflatmapper.core.map.MapperBuildingException;
+import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.core.utils.ListCollectorHandler;
 
 import java.io.IOException;
 import java.io.StringReader;

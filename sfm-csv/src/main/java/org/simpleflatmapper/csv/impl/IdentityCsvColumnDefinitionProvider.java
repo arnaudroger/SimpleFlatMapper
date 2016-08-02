@@ -2,10 +2,10 @@ package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.sfm.map.column.ColumnProperty;
-import org.sfm.map.mapper.ColumnDefinitionProvider;
-import org.sfm.utils.BiConsumer;
-import org.sfm.utils.Predicate;
+import org.simpleflatmapper.core.map.column.ColumnProperty;
+import org.simpleflatmapper.core.map.mapper.ColumnDefinitionProvider;
+import org.simpleflatmapper.core.utils.BiConsumer;
+import org.simpleflatmapper.core.utils.Predicate;
 
 public class IdentityCsvColumnDefinitionProvider implements ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> {
     @Override

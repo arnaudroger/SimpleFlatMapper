@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv.samples;
 import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Test;
 import org.simpleflatmapper.csv.CsvParser;
-import org.sfm.reflect.TypeReference;
+import org.simpleflatmapper.core.reflect.TypeReference;
 
 import java.io.IOException;
 import java.io.StringReader;

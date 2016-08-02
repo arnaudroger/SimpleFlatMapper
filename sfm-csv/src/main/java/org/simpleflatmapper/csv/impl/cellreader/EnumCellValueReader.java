@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv.impl.cellreader;
 
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.ParsingContext;
-import org.sfm.reflect.EnumHelper;
+import org.simpleflatmapper.core.reflect.EnumHelper;
 
 public class EnumCellValueReader<E extends Enum<E>> implements CellValueReader<E> {
 

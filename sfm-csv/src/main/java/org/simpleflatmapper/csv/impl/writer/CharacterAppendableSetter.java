@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.impl.writer;
 
 import org.simpleflatmapper.csv.CellWriter;
-import org.sfm.reflect.primitive.CharacterSetter;
+import org.simpleflatmapper.core.reflect.primitive.CharacterSetter;
 
 public class CharacterAppendableSetter implements CharacterSetter<Appendable> {
 

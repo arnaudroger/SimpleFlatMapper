@@ -6,10 +6,10 @@ import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.csv.CsvReader;
 import org.simpleflatmapper.csv.mapper.*;
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.sfm.map.MappingException;
-import org.sfm.map.RowHandlerErrorHandler;
-import org.sfm.utils.ErrorHelper;
-import org.sfm.utils.RowHandler;
+import org.simpleflatmapper.core.map.MappingException;
+import org.simpleflatmapper.core.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.core.utils.ErrorHelper;
+import org.simpleflatmapper.core.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;

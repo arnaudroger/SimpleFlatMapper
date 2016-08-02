@@ -1,8 +1,8 @@
 package org.simpleflatmapper.csv;
 
 import org.junit.Test;
-import org.sfm.test.jdbc.JoinTest;
-import org.sfm.utils.ListCollectorHandler;
+import org.simpleflatmapper.test.jdbc.JoinTest;
+import org.simpleflatmapper.core.utils.ListCollectorHandler;
 
 import java.io.IOException;
 import java.io.StringReader;

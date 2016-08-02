@@ -3,12 +3,12 @@ package org.simpleflatmapper.csv;
 import org.junit.Test;
 import org.simpleflatmapper.csv.parser.BufferOverflowException;
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.sfm.reflect.TypeReference;
-import org.sfm.tuples.*;
-import org.sfm.utils.CloseableIterator;
-import org.sfm.utils.ListCollectorHandler;
-import org.sfm.utils.Predicate;
-import org.sfm.utils.RowHandler;
+import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.core.tuples.*;
+import org.simpleflatmapper.core.utils.CloseableIterator;
+import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.core.utils.Predicate;
+import org.simpleflatmapper.core.utils.RowHandler;
 
 import java.io.CharArrayReader;
 import java.io.File;

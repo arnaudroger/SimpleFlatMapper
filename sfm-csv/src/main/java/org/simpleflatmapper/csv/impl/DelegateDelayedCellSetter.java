@@ -4,7 +4,7 @@ import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.mapper.BreakDetector;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellConsumer;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
-import org.sfm.reflect.Setter;
+import org.simpleflatmapper.core.reflect.Setter;
 
 public class DelegateDelayedCellSetter<T, P> implements DelayedCellSetter<T, P> {
 

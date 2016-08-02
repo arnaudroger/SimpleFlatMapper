@@ -2,13 +2,12 @@ package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.*;
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.sfm.map.*;
-import org.sfm.map.mapper.ColumnDefinitionProvider;
-import org.sfm.map.mapper.MapperCache;
-import org.sfm.map.mapper.MapperKey;
-import org.sfm.map.mapper.MapperKeyComparator;
-import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.utils.RowHandler;
+import org.simpleflatmapper.core.map.*;
+import org.simpleflatmapper.core.map.mapper.ColumnDefinitionProvider;
+import org.simpleflatmapper.core.map.mapper.MapperCache;
+import org.simpleflatmapper.core.map.mapper.MapperKey;
+import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.core.utils.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -20,7 +19,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END
 
-import static org.sfm.utils.Asserts.requireNonNull;
+import static org.simpleflatmapper.core.utils.Asserts.requireNonNull;
 
 public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	

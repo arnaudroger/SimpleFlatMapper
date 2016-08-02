@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv.impl.cellreader;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.impl.ParsingException;
-import org.sfm.map.ParsingContextProvider;
+import org.simpleflatmapper.core.map.ParsingContextProvider;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static org.sfm.utils.Asserts.requireNonNull;
+import static org.simpleflatmapper.core.utils.Asserts.requireNonNull;
 
 public class DateCellValueReader implements CellValueReader<Date>, ParsingContextProvider {
 	

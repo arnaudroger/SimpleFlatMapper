@@ -2,9 +2,9 @@ package org.simpleflatmapper.csv.column;
 
 
 import org.simpleflatmapper.csv.CellValueReaderFactory;
-import org.sfm.map.column.ColumnProperty;
+import org.simpleflatmapper.core.map.column.ColumnProperty;
 
-import static org.sfm.utils.Asserts.requireNonNull;
+import static org.simpleflatmapper.core.utils.Asserts.requireNonNull;
 
 public class CustomReaderFactoryProperty implements ColumnProperty {
     private final CellValueReaderFactory readerFactory;

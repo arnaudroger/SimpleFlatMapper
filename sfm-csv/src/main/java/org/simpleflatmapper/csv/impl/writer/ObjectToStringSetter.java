@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.impl.writer;
 
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.Setter;
+import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.core.reflect.Setter;
 
 public class ObjectToStringSetter<P> implements Setter<Appendable, P> {
     private final Getter<P, ?> getter;

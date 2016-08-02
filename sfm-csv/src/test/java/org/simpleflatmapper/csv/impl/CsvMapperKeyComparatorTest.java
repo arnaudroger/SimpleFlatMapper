@@ -1,10 +1,9 @@
 package org.simpleflatmapper.csv.impl;
 
 import org.junit.Test;
-import org.sfm.map.mapper.MapperKeyComparatorTest;
+import org.simpleflatmapper.csv.CsvColumnKeyMapperKeyComparator;
+import org.simpleflatmapper.test.core.mapper.MapperKeyComparatorTest;
 import org.simpleflatmapper.csv.CsvColumnKey;
-
-
 
 public class CsvMapperKeyComparatorTest {
 

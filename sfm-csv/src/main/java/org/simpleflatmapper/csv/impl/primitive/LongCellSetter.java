@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv.impl.primitive;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.impl.cellreader.LongCellValueReader;
-import org.sfm.reflect.primitive.LongSetter;
+import org.simpleflatmapper.core.reflect.primitive.LongSetter;
 
 public class LongCellSetter<T> implements CellSetter<T> {
 

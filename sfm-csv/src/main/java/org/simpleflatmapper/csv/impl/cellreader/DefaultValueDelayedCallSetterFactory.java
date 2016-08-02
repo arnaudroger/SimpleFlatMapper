@@ -4,8 +4,8 @@ import org.simpleflatmapper.csv.mapper.BreakDetector;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellConsumer;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetterFactory;
-import org.sfm.map.column.DefaultValueProperty;
-import org.sfm.reflect.Setter;
+import org.simpleflatmapper.core.map.column.DefaultValueProperty;
+import org.simpleflatmapper.core.reflect.Setter;
 
 public class DefaultValueDelayedCallSetterFactory<T, P>
         implements DelayedCellSetterFactory<T, P> {

@@ -2,13 +2,13 @@ package org.simpleflatmapper.csv.impl.writer;
 
 
 import org.simpleflatmapper.csv.CellWriter;
-import org.sfm.map.FieldMapper;
-import org.sfm.map.MappingContext;
-import org.sfm.reflect.Getter;
+import org.simpleflatmapper.core.map.FieldMapper;
+import org.simpleflatmapper.core.map.MappingContext;
+import org.simpleflatmapper.core.reflect.Getter;
 
 import java.text.Format;
 
-import static org.sfm.utils.Asserts.requireNonNull;
+import static org.simpleflatmapper.core.utils.Asserts.requireNonNull;
 
 public class FormattingAppender<S> implements FieldMapper<S, Appendable> {
 

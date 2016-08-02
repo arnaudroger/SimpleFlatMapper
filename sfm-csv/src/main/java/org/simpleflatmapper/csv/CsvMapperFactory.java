@@ -3,10 +3,10 @@ package org.simpleflatmapper.csv;
 import org.simpleflatmapper.csv.impl.CellValueReaderFactoryImpl;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
-import org.sfm.map.*;
-import org.sfm.map.mapper.AbstractMapperFactory;
-import org.sfm.reflect.TypeReference;
-import org.sfm.reflect.meta.ClassMeta;
+import org.simpleflatmapper.core.map.*;
+import org.simpleflatmapper.core.map.mapper.AbstractMapperFactory;
+import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 
 import java.lang.reflect.Type;
 

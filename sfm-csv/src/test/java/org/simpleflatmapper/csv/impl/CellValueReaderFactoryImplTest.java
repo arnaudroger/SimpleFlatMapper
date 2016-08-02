@@ -20,9 +20,9 @@ import java.util.UUID;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import org.sfm.map.column.time.JavaDateTimeFormatterProperty;
+import org.simpleflatmapper.core.map.column.time.JavaDateTimeFormatterProperty;
 //IFJAVA8_END
-import org.sfm.map.column.joda.JodaDateTimeFormatterProperty;
+import org.simpleflatmapper.core.map.column.joda.JodaDateTimeFormatterProperty;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -33,8 +33,8 @@ public class CellValueReaderFactoryImplTest {
     private final CellValueReaderFactoryImpl cellValueReaderFactory = new CellValueReaderFactoryImpl();
 
     @Test
-    public void testDoesNotReaderAReaderForJavaSqlDate() {
-        assertNull(cellValueReaderFactory.getReader(java.sql.Date.class, 1, null, null));
+    public void testDoesNotReaderAReaderForJavaSqlDate() throws ClassNotFoundException {
+        assertNull(cellValueReaderFactory.getReader(Class.forName("java.sql.Date"), 1, null, null));
     }
 
     @Test

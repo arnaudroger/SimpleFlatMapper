@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.parser;
 
 import org.junit.Test;
-import org.sfm.utils.RowHandler;
+import org.simpleflatmapper.core.utils.RowHandler;
 
 import static org.junit.Assert.assertEquals;
 

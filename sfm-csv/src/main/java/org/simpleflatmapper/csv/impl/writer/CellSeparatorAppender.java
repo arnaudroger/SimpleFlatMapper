@@ -1,8 +1,8 @@
 package org.simpleflatmapper.csv.impl.writer;
 
 import org.simpleflatmapper.csv.CellWriter;
-import org.sfm.map.FieldMapper;
-import org.sfm.map.MappingContext;
+import org.simpleflatmapper.core.map.FieldMapper;
+import org.simpleflatmapper.core.map.MappingContext;
 
 public class CellSeparatorAppender<T>
         implements FieldMapper<T, Appendable> {

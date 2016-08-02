@@ -4,8 +4,8 @@ import org.simpleflatmapper.csv.parser.CellConsumer;
 import org.simpleflatmapper.csv.parser.CsvCharConsumer;
 import org.simpleflatmapper.csv.parser.CsvStringArrayIterator;
 import org.simpleflatmapper.csv.parser.StringArrayConsumer;
-import org.sfm.utils.ErrorHelper;
-import org.sfm.utils.RowHandler;
+import org.simpleflatmapper.core.utils.ErrorHelper;
+import org.simpleflatmapper.core.utils.RowHandler;
 
 import java.io.IOException;
 import java.util.Iterator;

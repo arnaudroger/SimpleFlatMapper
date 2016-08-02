@@ -1,12 +1,12 @@
 package org.simpleflatmapper.csv;
 
 import org.junit.Test;
-import org.sfm.beans.DbObject;
-import org.sfm.map.Mapper;
-import org.sfm.map.column.DateFormatProperty;
-import org.sfm.map.column.EnumOrdinalFormatProperty;
-import org.sfm.map.column.FieldMapperColumnDefinition;
-import org.sfm.map.MapperConfig;
+import org.simpleflatmapper.test.beans.DbObject;
+import org.simpleflatmapper.core.map.Mapper;
+import org.simpleflatmapper.core.map.column.DateFormatProperty;
+import org.simpleflatmapper.core.map.column.EnumOrdinalFormatProperty;
+import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.core.map.MapperConfig;
 
 import static org.junit.Assert.*;
 

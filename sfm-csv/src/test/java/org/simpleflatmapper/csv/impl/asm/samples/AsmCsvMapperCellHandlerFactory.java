@@ -1,14 +1,14 @@
 package org.simpleflatmapper.csv.impl.asm.samples;
 
-import org.sfm.beans.DbObject;
+import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.ParsingContextFactory;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandlerFactory;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.reflect.Instantiator;
+import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.core.reflect.Instantiator;
 
 public class AsmCsvMapperCellHandlerFactory extends CsvMapperCellHandlerFactory<DbObject> {
     public AsmCsvMapperCellHandlerFactory(Instantiator<CsvMapperCellHandler<DbObject>, DbObject> instantiator, CsvColumnKey[] keys, ParsingContextFactory parsingContextFactory, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler) {

@@ -2,20 +2,20 @@ package org.simpleflatmapper.csv.impl.asm;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.sfm.beans.DbObject;
+import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.impl.*;
 import org.simpleflatmapper.csv.impl.cellreader.DelayedCellSetterImpl;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
-import org.sfm.reflect.ExecutableInstantiatorDefinition;
-import org.sfm.reflect.Getter;
-import org.sfm.reflect.Instantiator;
-import org.sfm.reflect.Parameter;
-import org.sfm.reflect.asm.AsmFactory;
+import org.simpleflatmapper.core.reflect.ExecutableInstantiatorDefinition;
+import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.core.reflect.Instantiator;
+import org.simpleflatmapper.core.reflect.Parameter;
+import org.simpleflatmapper.core.reflect.asm.AsmFactory;
 
-import java.sql.ResultSet;
+import java.io.InputStream;
 import java.util.HashMap;
 
 
@@ -26,7 +26,7 @@ public class CsvMapperCellHandlerImpAsmInstantiatorTest {
 	@Test
 	public void testInstantiate() throws Exception {
 		
-		Instantiator<ResultSet, DbObject> instantiator = factory.createEmptyArgsInstantiator(ResultSet.class, DbObject.class);
+		Instantiator<InputStream, DbObject> instantiator = factory.createEmptyArgsInstantiator(InputStream.class, DbObject.class);
 		
 		Assert.assertNotNull(instantiator.newInstance(null));
 	}

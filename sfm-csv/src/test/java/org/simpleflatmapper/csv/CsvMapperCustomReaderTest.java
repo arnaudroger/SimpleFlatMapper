@@ -2,14 +2,14 @@ package org.simpleflatmapper.csv;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sfm.beans.DbFinalObject;
-import org.sfm.beans.DbObject;
-import org.sfm.beans.DbPrimitiveObject;
+import org.simpleflatmapper.test.beans.DbFinalObject;
+import org.simpleflatmapper.test.beans.DbObject;
+import org.simpleflatmapper.test.beans.DbPrimitiveObject;
 import org.simpleflatmapper.csv.impl.cellreader.*;
-import org.sfm.tuples.Tuple2;
-import org.sfm.tuples.Tuples;
-import org.sfm.utils.ListCollectorHandler;
-import org.sfm.utils.Predicate;
+import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.core.tuples.Tuples;
+import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.core.utils.Predicate;
 
 import java.io.IOException;
 import java.io.StringReader;

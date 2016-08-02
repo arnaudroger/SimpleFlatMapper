@@ -2,15 +2,15 @@ package org.simpleflatmapper.csv;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sfm.beans.DbFinalObject;
-import org.sfm.beans.DbObject;
-import org.sfm.beans.DbPartialFinalObject;
-import org.sfm.reflect.meta.ClassMeta;
-import org.sfm.test.jdbc.DbHelper;
-import org.sfm.map.MapperBuilderErrorHandler;
-import org.sfm.reflect.TypeReference;
-import org.sfm.tuples.Tuple2;
-import org.sfm.utils.ListCollectorHandler;
+import org.simpleflatmapper.test.beans.DbFinalObject;
+import org.simpleflatmapper.test.beans.DbObject;
+import org.simpleflatmapper.test.beans.DbPartialFinalObject;
+import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.test.jdbc.DbHelper;
+import org.simpleflatmapper.core.map.MapperBuilderErrorHandler;
+import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.core.utils.ListCollectorHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -44,11 +44,11 @@ public class CsvMapperBuilderTest {
 
 		assertTrue(builder.mapper().toString().startsWith(
 			   "CsvMapperImpl{" +
-					   "targetSettersFactory=TargetSettersFactory{instantiator=EmptyConstructorInstantiator{constructor=public org.sfm.beans.DbObject()}}, " +
+					   "targetSettersFactory=TargetSettersFactory{instantiator=EmptyConstructorInstantiator{constructor=public org.simpleflatmapper.test.beans.DbObject()}}, " +
 					   "delayedCellSetters=[], " +
-					   "setters=[LongCellSetter{setter=LongMethodSetter{method=public void org.sfm.beans.DbObject.setId(long)}, reader=LongCellValueReaderImpl{}}, " +
-					   "CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setName(java.lang.String)}}, " +
-					   "CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.sfm.beans.DbObject.setEmail(java.lang.String)}}, " +
+					   "setters=[LongCellSetter{setter=LongMethodSetter{method=public void org.simpleflatmapper.test.beans.DbObject.setId(long)}, reader=LongCellValueReaderImpl{}}, " +
+					   "CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.simpleflatmapper.test.beans.DbObject.setName(java.lang.String)}}, " +
+					   "CellSetterImpl{reader=StringCellValueReader{}, setter=MethodSetter{method=public void org.simpleflatmapper.test.beans.DbObject.setEmail(java.lang.String)}}, " +
 					   "CellSetterImpl{reader=DateCellValueReader{index=3,"));
     }
 
@@ -59,14 +59,14 @@ public class CsvMapperBuilderTest {
         assertTrue(builder.mapper().toString().startsWith(
                 "CsvMapperImpl{" +
                         "targetSettersFactory=TargetSettersFactory{instantiator=InjectConstructorInstantiator{" +
-                            "instantiatorDefinition=InstantiatorDefinition{executable=public org.sfm.beans.DbFinalObject(long,java.lang.String,java.lang.String,java.util.Date,org.sfm.beans.DbObject$Type,org.sfm.beans.DbObject$Type), " +
+                            "instantiatorDefinition=InstantiatorDefinition{executable=public org.simpleflatmapper.test.beans.DbFinalObject(long,java.lang.String,java.lang.String,java.util.Date,org.simpleflatmapper.test.beans.DbObject$Type,org.simpleflatmapper.test.beans.DbObject$Type), " +
                             "parameters=[" +
                                 "Parameter{name='id', type=long, resolvedType=long}, " +
                                 "Parameter{name='name', type=class java.lang.String, resolvedType=class java.lang.String}, " +
                                 "Parameter{name='email', type=class java.lang.String, resolvedType=class java.lang.String}, " +
                                 "Parameter{name='creationTime', type=class java.util.Date, resolvedType=class java.util.Date}, " +
-                                "Parameter{name='typeOrdinal', type=class org.sfm.beans.DbObject$Type, resolvedType=class org.sfm.beans.DbObject$Type}, " +
-                                "Parameter{name='typeName', type=class org.sfm.beans.DbObject$Type, resolvedType=class org.sfm.beans.DbObject$Type}]}}}, " +
+                                "Parameter{name='typeOrdinal', type=class org.simpleflatmapper.test.beans.DbObject$Type, resolvedType=class org.simpleflatmapper.test.beans.DbObject$Type}, " +
+                                "Parameter{name='typeName', type=class org.simpleflatmapper.test.beans.DbObject$Type, resolvedType=class org.simpleflatmapper.test.beans.DbObject$Type}]}}}, " +
                         "delayedCellSetters=[" +
                         "LongDelayedCellSetterFactory{setter=null, reader=LongCellValueReaderImpl{}}, " +
                         "DelayedCellSetterFactoryImpl{reader=StringCellValueReader{}, setter=null}, " +

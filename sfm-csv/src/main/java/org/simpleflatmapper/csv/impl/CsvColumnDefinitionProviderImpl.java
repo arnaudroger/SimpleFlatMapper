@@ -3,12 +3,11 @@ package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.sfm.map.column.ColumnProperty;
-import org.sfm.map.mapper.AbstractColumnDefinitionProvider;
-import org.sfm.tuples.Tuple2;
-import org.sfm.utils.BiConsumer;
-import org.sfm.utils.Predicate;
-import org.sfm.utils.UnaryFactory;
+import org.simpleflatmapper.core.map.column.ColumnProperty;
+import org.simpleflatmapper.core.map.mapper.AbstractColumnDefinitionProvider;
+import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.core.utils.Predicate;
+import org.simpleflatmapper.core.utils.UnaryFactory;
 
 import java.util.List;
 

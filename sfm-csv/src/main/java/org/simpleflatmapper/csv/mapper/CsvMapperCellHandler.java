@@ -2,9 +2,9 @@ package org.simpleflatmapper.csv.mapper;
 
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.ParsingContext;
-import org.sfm.map.FieldMapperErrorHandler;
-import org.sfm.reflect.Instantiator;
-import org.sfm.utils.ErrorHelper;
+import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.core.reflect.Instantiator;
+import org.simpleflatmapper.core.utils.ErrorHelper;
 
 public abstract class CsvMapperCellHandler<T> {
     protected final Instantiator<CsvMapperCellHandler<T>, T> instantiator;

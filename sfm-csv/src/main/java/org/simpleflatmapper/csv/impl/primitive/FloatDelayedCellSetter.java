@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv.impl.primitive;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.impl.cellreader.FloatCellValueReader;
-import org.sfm.reflect.primitive.FloatSetter;
+import org.simpleflatmapper.core.reflect.primitive.FloatSetter;
 
 public class FloatDelayedCellSetter<T> implements DelayedCellSetter<T, Float> {
 

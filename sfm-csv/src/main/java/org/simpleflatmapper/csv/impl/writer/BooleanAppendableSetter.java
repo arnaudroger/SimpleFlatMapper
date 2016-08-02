@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.impl.writer;
 
 import org.simpleflatmapper.csv.CellWriter;
-import org.sfm.reflect.primitive.BooleanSetter;
+import org.simpleflatmapper.core.reflect.primitive.BooleanSetter;
 
 public class BooleanAppendableSetter implements BooleanSetter<Appendable> {
 

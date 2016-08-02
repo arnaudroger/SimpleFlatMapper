@@ -1,6 +1,9 @@
-module org.sfm.csv {
-    requires org.sfm.core;
+module org.simpleflatmapper.jdbc {
+    requires org.simpleflatmapper.core;
     requires org.objectweb.asm;
+    requires joda.time;
     requires java.sql;
-    exports org.sfm.jdbc;
+    requires javax.persistence;
+    requires mysql.connector.java;
+    exports org.simpleflatmapper.jdbc;
 }

@@ -213,6 +213,7 @@
                                 <configuration>
                                     <testExcludes>
                                         <exclude>**/module-info.java</exclude>
+                                        <exclude>**/org/simpleflatmapper/**/*Spliterator*</exclude>
                                         <exclude>**/org/simpleflatmapper/core/tuples/fasttuple/**/*</exclude>
                                         <exclude>**/org/simpleflatmapper/core/tuples/jool/**/*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
@@ -308,6 +309,7 @@
                                 <configuration>
                                     <testExcludes>
                                         <exclude>**/module-info.java</exclude>
+                                        <exclude>**/org/simpleflatmapper/**/*Spliterator*</exclude>
                                         <exclude>**/org/simpleflatmapper/core/tuples/jool/**/*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/time/*</exclude>

@@ -50,4 +50,9 @@ public class OptionalPropertyFinder<T> implements PropertyFinder<Optional<T>> {
     public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
         return Arrays.asList(tupleClassMeta.getInstantiatorDefinition());
     }
+
+    @Override
+    public PropertyFinder<?> getSubPropertyFinder(String name) {
+        return null;
+    }
 }

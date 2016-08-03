@@ -1,4 +1,4 @@
-package org.simpleflatmapper.core.reflect.getter.impl.time;
+package org.simpleflatmapper.core.reflect.getter.time;
 
 import org.simpleflatmapper.core.reflect.Getter;
 

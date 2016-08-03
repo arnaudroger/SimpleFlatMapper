@@ -1,4 +1,4 @@
-package org.simpleflatmapper.core.reflect.getter.impl.joda;
+package org.simpleflatmapper.core.reflect.getter.joda;
 
 import org.joda.time.LocalDateTime;
 import org.simpleflatmapper.core.reflect.Getter;
@@ -15,7 +15,10 @@ public class JodaLocalDateTimeFromDateGetter<S> implements Getter<S, LocalDateTi
 
     @Override
     public LocalDateTime get(S target) throws Exception {
-        return new LocalDateTime(getter.get(target));
+        Date date = getter.get(target);
+        if (date == null) return null;
+
+        return LocalDateTime.fromDateFields(date);
     }
 
     @Override

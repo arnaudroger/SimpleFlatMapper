@@ -144,5 +144,10 @@ final class ObjectPropertyFinder<T> implements PropertyFinder<T> {
 		return eligibleInstantiatorDefinitions;
 	}
 
+	@Override
+	public PropertyFinder<?> getSubPropertyFinder(String name) {
+		return subPropertyFinders.get(name);
+	}
+
 
 }

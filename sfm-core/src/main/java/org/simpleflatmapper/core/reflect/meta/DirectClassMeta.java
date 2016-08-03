@@ -62,6 +62,11 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
         public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
             return null;
         }
+
+        @Override
+        public PropertyFinder<?> getSubPropertyFinder(String name) {
+            return null;
+        }
     }
 
     public class DirectPropertyMeta<E> extends PropertyMeta<T, E> {

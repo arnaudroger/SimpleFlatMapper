@@ -1,8 +1,10 @@
-package org.simpleflatmapper.core.reflect.getter.impl.time;
+package org.simpleflatmapper.core.reflect.getter.time;
 
 import org.simpleflatmapper.core.reflect.Getter;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
@@ -10,9 +12,11 @@ import java.util.Date;
 public class JavaInstantFromObjectGetter<S> implements Getter<S, Instant> {
 
     private final Getter<S, ?> getter;
+    private final ZoneId zoneId;
 
-    public JavaInstantFromObjectGetter(Getter<S, ?> getter) {
+    public JavaInstantFromObjectGetter(Getter<S, ?> getter, ZoneId zoneId) {
         this.getter = getter;
+        this.zoneId = zoneId;
     }
 
     @Override
@@ -25,6 +29,10 @@ public class JavaInstantFromObjectGetter<S> implements Getter<S, Instant> {
 
         if (o instanceof Date) {
             return Instant.ofEpochMilli(((Date) o).getTime());
+        }
+
+        if (o instanceof LocalDateTime) {
+            return ((LocalDateTime)o).atZone(zoneId).toInstant();
         }
 
         if (o instanceof TemporalAccessor) {

@@ -1,4 +1,4 @@
-package org.simpleflatmapper.core.reflect.getter.impl.time;
+package org.simpleflatmapper.core.reflect.getter.time;
 
 import org.simpleflatmapper.core.reflect.Getter;
 
@@ -28,6 +28,10 @@ public class JavaZonedDateTimeFromObjectGetter<S> implements Getter<S, ZonedDate
             return Instant.ofEpochMilli(((Date) o).getTime()).atZone(zone);
         }
 
+        if (o instanceof Instant) {
+            return((Instant)o).atZone(zone);
+        }
+
         if (o instanceof ZonedDateTime) {
             return (ZonedDateTime) o;
         }
@@ -37,7 +41,7 @@ public class JavaZonedDateTimeFromObjectGetter<S> implements Getter<S, ZonedDate
         }
 
         if (o instanceof TemporalAccessor) {
-            return ZonedDateTime.from((TemporalAccessor) o);
+            return ZonedDateTime.from((TemporalAccessor) o).withZoneSameLocal(zone);
         }
 
         throw new IllegalArgumentException("Cannot convert " + o + " to ZonedDateTime");

@@ -74,4 +74,9 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> implements PropertyFin
     public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
         return mapMeta.getInstantiatorDefinitions();
     }
+
+    @Override
+    public PropertyFinder<?> getSubPropertyFinder(String name) {
+        return null;
+    }
 }

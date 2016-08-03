@@ -1,6 +1,5 @@
 package org.simpleflatmapper.core.reflect.getter.time;
 
-import org.simpleflatmapper.core.reflect.getter.impl.time.*;
 import  org.simpleflatmapper.core.map.mapper.ColumnDefinition;
 import  org.simpleflatmapper.core.map.FieldKey;
 import  org.simpleflatmapper.core.map.GetterFactory;
@@ -31,7 +30,7 @@ public class JavaTimeGetterFactory<T, K extends FieldKey<K>> implements GetterFa
                 getterFactory.newGetter(Object.class, key, columnDefinition);
 
         if (Instant.class.equals(clazz)) {
-            return (Getter<T, P>) new JavaInstantFromObjectGetter<T>(getter);
+            return (Getter<T, P>) new JavaInstantFromObjectGetter<T>(getter, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
         } else if (LocalDate.class.equals(clazz)) {
             return (Getter<T, P>) new JavaLocalDateFromObjectGetter<T>(getter, JavaTimeHelper.getZoneIdOrDefault(columnDefinition));
         } else if (LocalDateTime.class.equals(clazz)) {

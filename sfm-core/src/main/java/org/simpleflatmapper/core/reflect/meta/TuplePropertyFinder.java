@@ -63,4 +63,9 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
         }
         return null;
     }
+
+    @Override
+    public PropertyFinder<?> getSubPropertyFinder(String name) {
+        return null;
+    }
 }

@@ -1,4 +1,4 @@
-package org.simpleflatmapper.core.reflect.getter.impl.time;
+package org.simpleflatmapper.core.reflect.getter.time;
 
 import org.simpleflatmapper.core.reflect.Getter;
 
@@ -25,6 +25,11 @@ public class JavaOffsetDateTimeFromObjectGetter<S> implements Getter<S, OffsetDa
 
         if (o instanceof Date) {
             final Instant instant = Instant.ofEpochMilli(((Date) o).getTime());
+            return instant.atOffset(zone.getRules().getOffset(instant));
+        }
+
+        if (o instanceof Instant) {
+            final Instant instant = (Instant) o;
             return instant.atOffset(zone.getRules().getOffset(instant));
         }
 

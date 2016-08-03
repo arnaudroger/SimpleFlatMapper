@@ -5,7 +5,7 @@ import org.simpleflatmapper.core.map.column.DefaultValueProperty;
 import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
 import org.simpleflatmapper.core.map.column.GetterProperty;
 import org.simpleflatmapper.core.map.context.MappingContextFactoryBuilder;
-import org.simpleflatmapper.core.reflect.getter.impl.MapperGetterAdapter;
+import org.simpleflatmapper.core.reflect.getter.MapperGetterAdapter;
 import org.simpleflatmapper.core.map.impl.FieldErrorHandlerMapper;
 import org.simpleflatmapper.core.map.fieldmapper.ConstantSourceFieldMapperFactory;
 import org.simpleflatmapper.core.map.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
@@ -17,6 +17,7 @@ import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 import org.simpleflatmapper.core.reflect.meta.ConstructorPropertyMeta;
 import org.simpleflatmapper.core.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.core.reflect.meta.DirectClassMeta;
+import org.simpleflatmapper.core.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.core.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.core.tuples.Tuple2;
@@ -58,6 +59,15 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
             final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
             MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder,
             KeyFactory<K> keyFactory) throws MapperBuildingException {
+                this(mapperSource, classMeta, mapperConfig, mappingContextFactoryBuilder, keyFactory, null);
+    }
+
+    public FieldMapperMapperBuilder(
+            final MapperSource<? super S, K> mapperSource,
+            final ClassMeta<T> classMeta,
+            final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
+            MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder,
+            KeyFactory<K> keyFactory, PropertyFinder<T> propertyFinder) throws MapperBuildingException {
         this.mapperSource = requireNonNull("fieldMapperSource", mapperSource);
         this.mapperConfig = requireNonNull("mapperConfig", mapperConfig);
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
@@ -66,7 +76,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         this.propertyMappingsBuilder =
                 new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K>>(classMeta,
                         mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler(),
-                        new PropertyWithSetter());
+                        new PropertyWithSetter(), propertyFinder);
 		this.target = requireNonNull("classMeta", classMeta).getType();
 		this.reflectionService = requireNonNull("classMeta", classMeta).getReflectionService();
 	}
@@ -307,7 +317,11 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     @SuppressWarnings("unchecked")
     private <P> Mapper<S, P> subPropertyMapper(PropertyMeta<T, P> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
-        final FieldMapperMapperBuilder<S, P, K> builder = newSubBuilder(owner.getPropertyClassMeta(), mappingContextFactoryBuilder);
+        final FieldMapperMapperBuilder<S, P, K> builder =
+                newSubBuilder(owner.getPropertyClassMeta(),
+                        mappingContextFactoryBuilder,
+                        (PropertyFinder<P>) propertyMappingsBuilder.getPropertyFinder().getSubPropertyFinder(owner.getName()));
+
 
         for(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm : properties) {
             final SubPropertyMeta<T, P,  ?> propertyMeta = (SubPropertyMeta<T, P,  ?>) pm.getPropertyMeta();
@@ -377,12 +391,17 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 		additionalMappers.add(mapper);
 	}
 
-    private <ST> FieldMapperMapperBuilder<S, ST, K> newSubBuilder(ClassMeta<ST> classMeta, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
+    private <ST> FieldMapperMapperBuilder<S, ST, K> newSubBuilder(
+            ClassMeta<ST> classMeta,
+            MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder,
+            PropertyFinder<ST> propertyFinder) {
         return new FieldMapperMapperBuilder<S, ST, K>(
                 mapperSource,
                 classMeta,
                 mapperConfig,
-                mappingContextFactoryBuilder, keyFactory);
+                mappingContextFactoryBuilder,
+                keyFactory,
+                propertyFinder);
     }
 
     private FieldKey<?>[] getKeys() {

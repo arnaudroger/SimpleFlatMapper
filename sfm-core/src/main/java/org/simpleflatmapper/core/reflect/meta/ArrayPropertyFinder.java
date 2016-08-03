@@ -65,4 +65,9 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
     protected boolean isValidIndex(IndexedColumn indexedColumn) {
         return indexedColumn.getIndexValue() >= 0;
     }
+
+    @Override
+    public PropertyFinder<?> getSubPropertyFinder(String name) {
+        return null;
+    }
 }

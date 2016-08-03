@@ -1,4 +1,4 @@
-package org.simpleflatmapper.core.reflect.getter.impl.time;
+package org.simpleflatmapper.core.reflect.getter.time;
 
 import org.simpleflatmapper.core.reflect.Getter;
 
@@ -28,6 +28,11 @@ public class JavaLocalDateTimeFromObjectGetter<S> implements Getter<S, LocalDate
 
         if (o instanceof Date) {
             return Instant.ofEpochMilli(((Date) o).getTime()).atZone(zone).toLocalDateTime();
+        }
+
+        if (o instanceof Instant) {
+            final Instant instant = (Instant) o;
+            return instant.atZone(zone).toLocalDateTime();
         }
 
         if (o instanceof LocalDateTime) {

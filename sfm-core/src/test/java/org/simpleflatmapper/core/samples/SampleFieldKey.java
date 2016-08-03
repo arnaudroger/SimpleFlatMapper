@@ -1,10 +1,17 @@
 package org.simpleflatmapper.core.samples;
 
 import  org.simpleflatmapper.core.map.FieldKey;
+import org.simpleflatmapper.core.map.mapper.KeyFactory;
 import  org.simpleflatmapper.core.map.mapper.TypeAffinity;
 
 public class SampleFieldKey extends FieldKey<SampleFieldKey> implements TypeAffinity {
 
+    public static final KeyFactory<SampleFieldKey> KEY_FACTORY = new KeyFactory<SampleFieldKey>() {
+        @Override
+        public SampleFieldKey newKey(String name, int i) {
+            return new SampleFieldKey(name, i);
+        }
+    } ;
     private final Class<?>[] affinities;
 
     public SampleFieldKey(String name, int index) {

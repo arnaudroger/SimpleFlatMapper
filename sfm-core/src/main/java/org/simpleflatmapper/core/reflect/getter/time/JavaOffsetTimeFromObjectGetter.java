@@ -1,4 +1,4 @@
-package org.simpleflatmapper.core.reflect.getter.impl.time;
+package org.simpleflatmapper.core.reflect.getter.time;
 
 import org.simpleflatmapper.core.reflect.Getter;
 
@@ -29,6 +29,11 @@ public class JavaOffsetTimeFromObjectGetter<S> implements Getter<S, OffsetTime> 
             return instant.atOffset(zone.getRules().getOffset(instant)).toOffsetTime();
         }
 
+        if (o instanceof Instant) {
+            final Instant instant = (Instant) o;
+            return instant.atOffset(zone.getRules().getOffset(instant)).toOffsetTime();
+        }
+
         if (o instanceof OffsetTime) {
             return (OffsetTime) o;
         }
@@ -38,7 +43,7 @@ public class JavaOffsetTimeFromObjectGetter<S> implements Getter<S, OffsetTime> 
         }
 
         if (o instanceof LocalTime) {
-            return ((LocalTime)o).atOffset(zone.getRules().getStandardOffset(Instant.now()));
+            return ((LocalTime)o).atOffset(zone.getRules().getOffset(Instant.now()));
         }
 
         if (o instanceof TemporalAccessor) {

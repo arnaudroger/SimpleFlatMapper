@@ -455,7 +455,7 @@ public class ResultSetGetterFactoryTest {
 
 		assertEquals(offsetTime, getter.get(resultSet));
 		assertEquals(offsetTime, getter.get(resultSet));
-		assertEquals(offsetTime.toLocalTime().atOffset(ZoneId.systemDefault().getRules().getStandardOffset(Instant.now())), getter.get(resultSet));
+		assertEquals(offsetTime.toLocalTime().atOffset(ZoneId.systemDefault().getRules().getOffset(Instant.now())), getter.get(resultSet));
 		assertEquals(offsetTime, getter.get(resultSet));
 		assertEquals(offsetTime, getter.get(resultSet));
 		assertEquals(offsetTime, getter.get(resultSet));
@@ -482,7 +482,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(zonedDateTime, getter.get(resultSet));
 		assertEquals(zonedDateTime, getter.get(resultSet));
 		assertEquals(zonedDateTime, getter.get(resultSet));
-		assertEquals(zonedDateTime.toOffsetDateTime().toZonedDateTime(), getter.get(resultSet));
+		assertEquals(zonedDateTime, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
 
 

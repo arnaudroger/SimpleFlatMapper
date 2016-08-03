@@ -1,9 +1,6 @@
 package org.simpleflatmapper.core.reflect.getter.joda;
 
-import org.simpleflatmapper.core.reflect.getter.impl.joda.JodaDateTimeFromDateGetter;
-import org.simpleflatmapper.core.reflect.getter.impl.joda.JodaLocalDateFromDateGetter;
-import org.simpleflatmapper.core.reflect.getter.impl.joda.JodaLocalDateTimeFromDateGetter;
-import org.simpleflatmapper.core.reflect.getter.impl.joda.JodaLocalTimeFromObjectGetter;
+import org.simpleflatmapper.core.map.column.joda.JodaHelper;
 import  org.simpleflatmapper.core.map.mapper.ColumnDefinition;
 import  org.simpleflatmapper.core.map.FieldKey;
 import  org.simpleflatmapper.core.map.GetterFactory;
@@ -35,7 +32,7 @@ public class JodaTimeGetterFactory<T, K extends FieldKey<K>> implements GetterFa
                 dateGetterFactory.newGetter(java.util.Date.class, key, columnDefinition);
 
         if (JodaTimeClasses.isJodaDateTime(clazz)) {
-            return (Getter<T, P>) new JodaDateTimeFromDateGetter<T>(getter);
+            return (Getter<T, P>) new JodaDateTimeFromDateGetter<T>(getter, JodaHelper.getDateTimeZoneOrDefault(columnDefinition));
         }
         if (JodaTimeClasses.isJodaLocalDate(clazz)) {
             return (Getter<T, P>)  new JodaLocalDateFromDateGetter<T>(getter);

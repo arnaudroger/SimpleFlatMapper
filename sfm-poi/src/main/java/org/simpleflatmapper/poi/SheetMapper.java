@@ -1,7 +1,7 @@
 package org.simpleflatmapper.poi;
 
 import org.apache.poi.ss.usermodel.Sheet;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.util.Iterator;
 //IFJAVA8_START

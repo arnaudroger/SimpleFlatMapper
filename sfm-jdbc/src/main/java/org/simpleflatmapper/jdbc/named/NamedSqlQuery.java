@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.named;
 
 import org.simpleflatmapper.jdbc.SizeSupplier;
-import org.simpleflatmapper.core.utils.Asserts;
+import org.simpleflatmapper.util.Asserts;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static org.simpleflatmapper.core.utils.Asserts.requireNonNull;
+import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public class DateCellValueReader implements CellValueReader<Date>, ParsingContextProvider {
 	

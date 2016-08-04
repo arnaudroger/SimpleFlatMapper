@@ -8,8 +8,8 @@ import org.simpleflatmapper.csv.mapper.*;
 import org.simpleflatmapper.csv.parser.CellConsumer;
 import org.simpleflatmapper.core.map.MappingException;
 import org.simpleflatmapper.core.map.RowHandlerErrorHandler;
-import org.simpleflatmapper.core.utils.ErrorHelper;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;

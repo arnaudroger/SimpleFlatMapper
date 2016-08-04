@@ -5,7 +5,7 @@ import org.simpleflatmapper.test.beans.DbFinalListObject;
 import org.simpleflatmapper.test.beans.DbListObject;
 import org.simpleflatmapper.test.beans.DbListOfString;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
 

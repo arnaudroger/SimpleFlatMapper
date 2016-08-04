@@ -23,18 +23,18 @@ import org.simpleflatmapper.core.map.column.FormatProperty;
 import org.simpleflatmapper.core.map.mapper.ConstantTargetFieldMapperFactory;
 import org.simpleflatmapper.core.map.mapper.PropertyMapping;
 import org.simpleflatmapper.core.map.context.MappingContextFactoryBuilder;
-import org.simpleflatmapper.core.map.column.JodaTimeClasses;
 import org.simpleflatmapper.core.map.fieldmapper.*;
 import org.simpleflatmapper.core.reflect.Getter;
 import org.simpleflatmapper.core.reflect.Setter;
 import org.simpleflatmapper.core.reflect.SetterFactory;
 import org.simpleflatmapper.core.reflect.SetterOnGetter;
-import org.simpleflatmapper.core.reflect.TypeHelper;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 import org.simpleflatmapper.core.reflect.meta.ObjectClassMeta;
 import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.core.reflect.primitive.*;
-import org.simpleflatmapper.core.utils.Supplier;
+import org.simpleflatmapper.util.Supplier;
+import org.simpleflatmapper.util.TypeHelper;
+import org.simpleflatmapper.util.date.joda.JodaTimeHelper;
 
 import java.lang.reflect.Type;
 import java.text.Format;
@@ -102,21 +102,21 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
 
             DateFormatProperty dfp = columnDefinition.lookFor(DateFormatProperty.class);
             if (dfp != null) {
-                df = dfp.getPattern();
+                df = dfp.get();
             }
             format = new SimpleDateFormat(df);
         }
         //IFJAVA8_START
         else if (TypeHelper.isAssignable(TemporalAccessor.class, type)
                 && columnDefinition.has(JavaDateTimeFormatterProperty.class)) {
-            return new JavaTimeFormattingAppender<S>((Getter<S, ? extends TemporalAccessor>) getter, columnDefinition.lookFor(JavaDateTimeFormatterProperty.class).getFormatter(), cellWriter);
+            return new JavaTimeFormattingAppender<S>((Getter<S, ? extends TemporalAccessor>) getter, columnDefinition.lookFor(JavaDateTimeFormatterProperty.class).get(), cellWriter);
         }
         //IFJAVA8_END
-        else if (JodaTimeClasses.isJoda(type)) {
+        else if (JodaTimeHelper.isJoda(type)) {
             if (columnDefinition.has(JodaDateTimeFormatterProperty.class)) {
-                return new JodaTimeFormattingAppender<S>(getter, columnDefinition.lookFor(JodaDateTimeFormatterProperty.class).getFormatter(), cellWriter);
+                return new JodaTimeFormattingAppender<S>(getter, columnDefinition.lookFor(JodaDateTimeFormatterProperty.class).get(), cellWriter);
             } else if (columnDefinition.has(DateFormatProperty.class)) {
-                return new JodaTimeFormattingAppender<S>(getter, columnDefinition.lookFor(DateFormatProperty.class).getPattern(), cellWriter);
+                return new JodaTimeFormattingAppender<S>(getter, columnDefinition.lookFor(DateFormatProperty.class).get(), cellWriter);
             }
         }
 

@@ -8,7 +8,7 @@ import org.simpleflatmapper.core.map.column.ColumnProperty;
 import org.simpleflatmapper.core.map.column.DateFormatProperty;
 import org.simpleflatmapper.core.map.column.TimeZoneProperty;
 import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.core.utils.Predicate;
+import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.TimeZone;
@@ -31,7 +31,7 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
 
         String[] patterns = new String[prop.length];
         for(int i = 0; i < prop.length; i++) {
-            patterns[i] = prop[i].getPattern();
+            patterns[i] = prop[i].get();
         }
 
         if (patterns.length == 0) {
@@ -41,7 +41,7 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
                 throw new IllegalStateException("No date format specified");
             }
 
-            return new String[] { defaultDateFormatProperty.getPattern() };
+            return new String[] { defaultDateFormatProperty.get() };
         }
         return patterns;
     }
@@ -74,7 +74,7 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
     public TimeZone getTimeZone(){
         TimeZoneProperty prop = lookFor(TimeZoneProperty.class);
         if (prop != null) {
-            return prop.getTimeZone();
+            return prop.get();
         }
         return TimeZone.getDefault();
     }

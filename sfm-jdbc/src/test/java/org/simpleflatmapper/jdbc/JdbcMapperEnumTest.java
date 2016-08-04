@@ -3,7 +3,7 @@ package org.simpleflatmapper.jdbc;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbEnumObject;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.core.tuples.Tuple2;
 
 import java.sql.ResultSet;

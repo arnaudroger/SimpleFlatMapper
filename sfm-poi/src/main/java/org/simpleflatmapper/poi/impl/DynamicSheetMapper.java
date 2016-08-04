@@ -12,7 +12,7 @@ import org.simpleflatmapper.core.map.mapper.MapperCache;
 import org.simpleflatmapper.poi.SheetMapper;
 import org.simpleflatmapper.poi.SheetMapperBuilder;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 import org.simpleflatmapper.csv.CsvColumnKeyMapperKeyComparator;
 
 import java.util.ArrayList;

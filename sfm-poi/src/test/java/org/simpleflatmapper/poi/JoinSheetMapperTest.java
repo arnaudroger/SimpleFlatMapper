@@ -8,7 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.test.jdbc.JoinTest;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -3,11 +3,11 @@ package org.simpleflatmapper.csv.column;
 
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.core.map.column.ColumnProperty;
-import org.simpleflatmapper.core.reflect.TypeHelper;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 
-import static org.simpleflatmapper.core.utils.Asserts.requireNonNull;
+import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public class CustomReaderProperty implements ColumnProperty {
     private final CellValueReader<?> reader;

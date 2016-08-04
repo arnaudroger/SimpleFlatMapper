@@ -1,12 +1,11 @@
 package org.simpleflatmapper.csv.impl.cellreader.joda;
 
 import org.joda.time.format.DateTimeFormatter;
-import org.simpleflatmapper.core.utils.UnaryFactory;
+import org.simpleflatmapper.util.TypeHelper;
+import org.simpleflatmapper.util.UnaryFactory;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
-import org.simpleflatmapper.core.map.column.joda.JodaHelper;
-import org.simpleflatmapper.core.map.column.JodaTimeClasses;
-import org.simpleflatmapper.core.reflect.TypeHelper;
+import org.simpleflatmapper.util.date.joda.JodaTimeHelper;
 
 import java.lang.reflect.Type;
 
@@ -17,7 +16,7 @@ public class JodaTimeCellValueReaderHelper {
         Class<?> clazz = TypeHelper.toClass(type);
 
 
-        if (JodaTimeClasses.isJodaDateTime(clazz)) {
+        if (JodaTimeHelper.isJodaDateTime(clazz)) {
             return newJodaTime(columnDefinition,
                             new UnaryFactory<DateTimeFormatter, CellValueReader<?>>() {
                                 @Override
@@ -26,7 +25,7 @@ public class JodaTimeCellValueReaderHelper {
                                 }
                             });
         }
-        if (JodaTimeClasses.isJodaLocalDate(clazz)) {
+        if (JodaTimeHelper.isJodaLocalDate(clazz)) {
             return newJodaTime(columnDefinition,
                     new UnaryFactory<DateTimeFormatter, CellValueReader<?>>() {
                         @Override
@@ -35,7 +34,7 @@ public class JodaTimeCellValueReaderHelper {
                         }
                     });
         }
-        if (JodaTimeClasses.isJodaLocalDateTime(clazz)) {
+        if (JodaTimeHelper.isJodaLocalDateTime(clazz)) {
             return newJodaTime(columnDefinition,
                     new UnaryFactory<DateTimeFormatter, CellValueReader<?>>() {
                         @Override
@@ -44,7 +43,7 @@ public class JodaTimeCellValueReaderHelper {
                         }
                     });
         }
-        if (JodaTimeClasses.isJodaLocalTime(clazz)) {
+        if (JodaTimeHelper.isJodaLocalTime(clazz)) {
             return newJodaTime(columnDefinition,
                     new UnaryFactory<DateTimeFormatter, CellValueReader<?>>() {
                         @Override
@@ -59,7 +58,7 @@ public class JodaTimeCellValueReaderHelper {
 
     @SuppressWarnings("unchecked")
     private static CellValueReader<?> newJodaTime(CsvColumnDefinition csvColumnDefinition, UnaryFactory<DateTimeFormatter, CellValueReader<?>> unaryFactory) {
-        DateTimeFormatter[] dateTimeFormatters = JodaHelper.getDateTimeFormatters(csvColumnDefinition);
+        DateTimeFormatter[] dateTimeFormatters = JodaTimeHelper.getDateTimeFormatters(csvColumnDefinition.properties());
         if (dateTimeFormatters.length == 1) {
             return unaryFactory.newInstance(dateTimeFormatters[0]);
         } else {

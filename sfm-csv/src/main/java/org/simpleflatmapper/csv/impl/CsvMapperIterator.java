@@ -2,8 +2,8 @@ package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.CsvReader;
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.simpleflatmapper.core.utils.ErrorHelper;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.io.IOException;
 import java.util.Iterator;

@@ -5,7 +5,7 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.impl.CsvMapperImpl;
 import org.simpleflatmapper.csv.impl.ParsingException;
 import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;

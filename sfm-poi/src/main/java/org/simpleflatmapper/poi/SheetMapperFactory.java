@@ -8,7 +8,7 @@ import org.simpleflatmapper.core.map.mapper.FieldMapperColumnDefinitionProviderI
 import org.simpleflatmapper.core.map.MapperConfig;
 import org.simpleflatmapper.poi.impl.DynamicSheetMapper;
 import org.simpleflatmapper.poi.impl.RowGetterFactory;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 import org.simpleflatmapper.csv.CsvColumnKey;
 

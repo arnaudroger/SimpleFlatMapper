@@ -5,7 +5,7 @@ import org.simpleflatmapper.jdbc.impl.convert.CalendarToTimestampConverter;
 import org.simpleflatmapper.jdbc.impl.convert.UtilDateToTimestampConverter;
 
 //IFJAVA8_START
-import org.simpleflatmapper.core.map.column.time.JavaTimeHelper;
+import org.simpleflatmapper.util.date.time.JavaTimeHelper;
 import java.time.*;
 import org.simpleflatmapper.jdbc.impl.convert.time.JavaInstantToTimestampConverter;
 import org.simpleflatmapper.jdbc.impl.convert.time.JavaLocalDateTimeToTimestampConverter;
@@ -19,14 +19,14 @@ import org.simpleflatmapper.jdbc.impl.convert.time.JavaZonedDateTimeToTimestampC
 
 //IFJAVA8_END
 
-import org.simpleflatmapper.core.map.column.JodaTimeClasses;
+import org.simpleflatmapper.util.date.joda.JodaTimeHelper;
 import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.core.map.mapper.PropertyMapping;
 import org.simpleflatmapper.core.reflect.IndexedSetter;
 import org.simpleflatmapper.core.reflect.IndexedSetterFactory;
 import org.simpleflatmapper.core.reflect.Setter;
 import org.simpleflatmapper.core.reflect.SetterFactory;
-import org.simpleflatmapper.core.reflect.TypeHelper;
+import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.jdbc.impl.setter.ArrayPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BigDecimalPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BlobPreparedStatementIndexSetter;
@@ -459,7 +459,7 @@ public class PreparedStatementSetterFactory
             }
         }
 
-        if (setter == null && JodaTimeClasses.isJoda(propertyType)) {
+        if (setter == null && JodaTimeHelper.isJoda(propertyType)) {
             setter = jodaTimeFieldMapperToSourceFactory.getIndexedSetter(arg);
         }
 

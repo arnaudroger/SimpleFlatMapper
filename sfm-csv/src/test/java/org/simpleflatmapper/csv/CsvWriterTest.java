@@ -6,7 +6,7 @@ import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
 import org.simpleflatmapper.core.map.*;
 import org.simpleflatmapper.core.map.column.DateFormatProperty;
 import org.simpleflatmapper.core.map.column.EnumOrdinalFormatProperty;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.core.tuples.Tuple2;
 import org.simpleflatmapper.core.tuples.Tuples;
 

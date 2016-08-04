@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;

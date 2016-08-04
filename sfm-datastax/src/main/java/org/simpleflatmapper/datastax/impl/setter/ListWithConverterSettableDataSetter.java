@@ -2,7 +2,7 @@ package org.simpleflatmapper.datastax.impl.setter;
 
 import com.datastax.driver.core.SettableByIndexData;
 import org.simpleflatmapper.core.reflect.Setter;
-import org.simpleflatmapper.core.conv.Converter;
+import org.simpleflatmapper.converter.Converter;
 
 import java.util.ArrayList;
 import java.util.List;

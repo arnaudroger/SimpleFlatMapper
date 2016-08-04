@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc.impl.convert.time;
 
-import org.simpleflatmapper.core.conv.Converter;
+import org.simpleflatmapper.converter.Converter;
 
 import java.sql.Date;
 import java.time.YearMonth;

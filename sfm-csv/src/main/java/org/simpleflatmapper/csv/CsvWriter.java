@@ -10,10 +10,9 @@ import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
 import org.simpleflatmapper.core.map.MapperConfig;
 import org.simpleflatmapper.core.map.mapper.ContextualMapper;
 import org.simpleflatmapper.core.reflect.ReflectionService;
-import org.simpleflatmapper.core.reflect.TypeReference;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
-import org.simpleflatmapper.core.tuples.Tuple2;
-import org.simpleflatmapper.core.utils.ErrorHelper;
+import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.TypeReference;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -132,16 +131,16 @@ public class CsvWriter<T>  {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] toColumnDefinitions(String[] header) {
-        Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] columnDefinitions = new Tuple2[header.length];
+    private static <T> Column[] toColumnDefinitions(String[] header) {
+        Column[] columnDefinitions = new Column[header.length];
         int offset = 0;
         return toColumnDefinitions(header, columnDefinitions, offset);
     }
 
-    private static Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] toColumnDefinitions(String[] header, Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] columnDefinitions, int offset) {
+    private static Column[] toColumnDefinitions(String[] header, Column[] columnDefinitions, int offset) {
         FieldMapperColumnDefinition<CsvColumnKey> identity = FieldMapperColumnDefinition.<CsvColumnKey>identity();
         for(int i = 0; i < header.length; i++) {
-            columnDefinitions[i + offset] = new Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>(header[i], identity);
+            columnDefinitions[i + offset] = new Column(header[i], identity);
         }
         return columnDefinitions;
     }
@@ -152,7 +151,7 @@ public class CsvWriter<T>  {
      */
     public static class CsvWriterDSL<T> {
 
-        protected final Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] columns;
+        protected final Column[] columns;
         protected final ContextualMapper<T, Appendable> mapper;
         protected final CellWriter cellWriter;
         protected final ClassMeta<T> classMeta;
@@ -160,7 +159,7 @@ public class CsvWriter<T>  {
         protected final boolean skipHeaders;
 
         private CsvWriterDSL(
-                Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] columns,
+                Column[] columns,
                 CellWriter cellWriter,
                 ContextualMapper<T, Appendable> mapper,
                 ClassMeta<T> classMeta,
@@ -192,7 +191,7 @@ public class CsvWriter<T>  {
                 if (i != 0) {
                     cellWriter.nextCell(appendable);
                 }
-                cellWriter.writeValue(columns[i].first(), appendable);
+                cellWriter.writeValue(columns[i].name(), appendable);
 
             }
             cellWriter.endOfRow(appendable);
@@ -205,7 +204,7 @@ public class CsvWriter<T>  {
          */
         @SuppressWarnings("unchecked")
         public CsvWriterDSL<T> columns(String... columnNames) {
-            Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] newColumns =
+            Column[] newColumns =
                     Arrays.copyOf(columns, columns.length + columnNames.length);
             toColumnDefinitions(columnNames, newColumns, columns.length);
             return newColumnMapDSL(classMeta, newColumns, mapperConfig, cellWriter, skipHeaders);
@@ -219,11 +218,11 @@ public class CsvWriter<T>  {
          */
         @SuppressWarnings("unchecked")
         public CsvWriterDSL<T> column(String column, ColumnProperty... property) {
-            Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] newColumns =
+            Column[] newColumns =
                     Arrays.copyOf(columns, columns.length + 1);
 
             FieldMapperColumnDefinition<CsvColumnKey> columnDefinition =  FieldMapperColumnDefinition.<CsvColumnKey>identity().add(property);
-            newColumns[columns.length] = new Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>(column, columnDefinition);
+            newColumns[columns.length] = new Column(column, columnDefinition);
 
             return newColumnMapDSL(classMeta, newColumns, mapperConfig, cellWriter, skipHeaders);
         }
@@ -308,15 +307,15 @@ public class CsvWriter<T>  {
 
         protected CsvWriterDSL<T> newColumnMapDSL(
                 ClassMeta<T> classMeta,
-                Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] columns,
+                Column[] columns,
                 MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
                 CellWriter cellWriter,
                 boolean skipHeaders) {
 
             CsvWriterBuilder<T> builder = new CsvWriterBuilder<T>(classMeta, mapperConfig, new FieldMapperToAppendableFactory(cellWriter), cellWriter);
 
-            for( Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>> col : columns) {
-                builder.addColumn(col.first(), col.second());
+            for( Column col : columns) {
+                builder.addColumn(col.name(), col.definition());
             }
 
             ContextualMapper<T, Appendable> mapper = (ContextualMapper<T, Appendable>) builder.mapper();
@@ -326,15 +325,15 @@ public class CsvWriter<T>  {
 
         protected CsvWriterDSL<T> newMapDSL(
                 ClassMeta<T> classMeta,
-                Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] columns,
+                Column[] columns,
                 MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
                 CellWriter cellWriter,
                 boolean skipHeaders) {
 
             CsvWriterBuilder<T> builder = new CsvWriterBuilder<T>(classMeta, mapperConfig, new FieldMapperToAppendableFactory(cellWriter), cellWriter);
 
-            for( Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>> col : columns) {
-                builder.addColumn(col.first(), col.second());
+            for( Column col : columns) {
+                builder.addColumn(col.name(), col.definition());
             }
 
             ContextualMapper<T, Appendable> mapper = (ContextualMapper<T, Appendable>) builder.mapper();
@@ -342,7 +341,7 @@ public class CsvWriter<T>  {
             return newCsvWriterDSL(columns, cellWriter, mapper, classMeta, mapperConfig, skipHeaders);
         }
 
-        protected CsvWriterDSL<T> newCsvWriterDSL(Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] columns,
+        protected CsvWriterDSL<T> newCsvWriterDSL(Column[] columns,
                                                 CellWriter cellWriter,
                                                 ContextualMapper<T, Appendable> mapper, ClassMeta<T> classMeta,
                                                 MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
@@ -357,14 +356,14 @@ public class CsvWriter<T>  {
                 CellWriter cellWriter,
                 ClassMeta<T> classMeta,
                 MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig, boolean skipHeaders) {
-            super(new Tuple2[0], cellWriter, null, classMeta, mapperConfig, skipHeaders);
+            super(new Column[0], cellWriter, null, classMeta, mapperConfig, skipHeaders);
         }
 
         @Override
         public CsvWriter<T> to(Appendable appendable) throws IOException {
             throw new IllegalStateException("No columned defined");
         }
-        protected NoColumnCsvWriterDSL<T> newCsvWriterDSL(Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] columns,
+        protected NoColumnCsvWriterDSL<T> newCsvWriterDSL(Column[] columns,
                                                   CellWriter cellWriter,
                                                   ContextualMapper<T, Appendable> mapper, ClassMeta<T> classMeta,
                                                   MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
@@ -376,7 +375,7 @@ public class CsvWriter<T>  {
     public static class DefaultCsvWriterDSL<T> extends CsvWriterDSL<T> {
 
         private DefaultCsvWriterDSL(
-                Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] columns,
+                Column[] columns,
                 CellWriter cellWriter,
                 ContextualMapper<T, Appendable> mapper,
                 ClassMeta<T> classMeta,
@@ -403,19 +402,38 @@ public class CsvWriter<T>  {
          */
         @SuppressWarnings("unchecked")
         public CsvWriterDSL<T> column(String column, ColumnProperty... property) {
-            Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] newColumns = new Tuple2[1];
+            Column[] newColumns = new Column[1];
 
             FieldMapperColumnDefinition<CsvColumnKey> columnDefinition =  FieldMapperColumnDefinition.<CsvColumnKey>identity().add(property);
-            newColumns[0] = new Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>(column, columnDefinition);
+            newColumns[0] = new Column(column, columnDefinition);
 
             return newColumnMapDSL(classMeta, newColumns, mapperConfig, cellWriter, skipHeaders);
         }
-        protected CsvWriterDSL<T> newCsvWriterDSL(Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>[] columns,
+        protected CsvWriterDSL<T> newCsvWriterDSL(Column[] columns,
                                                   CellWriter cellWriter,
                                                   ContextualMapper<T, Appendable> mapper, ClassMeta<T> classMeta,
                                                   MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig,
                                                   boolean skipHeaders) {
             return new DefaultCsvWriterDSL<T>(columns, cellWriter, mapper, classMeta, mapperConfig, skipHeaders);
+        }
+    }
+
+    // Tuple2<String, FieldMapperColumnDefinition<CsvColumnKey>>
+    public static class Column {
+        private final String name;
+        private final FieldMapperColumnDefinition<CsvColumnKey> definition;
+
+        public Column(String name, FieldMapperColumnDefinition<CsvColumnKey> definition) {
+            this.name = name;
+            this.definition = definition;
+        }
+
+        public String name() {
+            return name;
+        }
+
+        public FieldMapperColumnDefinition<CsvColumnKey> definition() {
+            return definition;
         }
     }
 

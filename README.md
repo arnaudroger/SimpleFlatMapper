@@ -98,14 +98,14 @@ There is a build for
 
 ```java
 public class MyDao {
-	JdbcMapper<MyObject> mapper =
+	JdbcMapper<MyObject> parameterGetterMap =
 		JdbcMapperFactory.newInstance().newMapper(MyObject.class);
 
 	public List<MyObject> findAll() throws SQLException {
 		try (Connection conn = getConnection();
 		     PreparedStatement ps = conn.prepareStatement("select * from my_table");
 		     ResultSet rs = ps.executeQuery();) {
-			return mapper.stream(rs).collect(Collectors.toList());
+			return parameterGetterMap.stream(rs).collect(Collectors.toList());
 		}
 	}
 

@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbExtendedType;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.sql.PreparedStatement;
 import java.util.List;

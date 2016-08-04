@@ -1,17 +1,18 @@
 package org.simpleflatmapper.csv;
 
+import org.simpleflatmapper.core.map.mapper.AbstractColumnDefinitionProvider;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
 import org.simpleflatmapper.csv.parser.*;
 import org.simpleflatmapper.core.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.core.reflect.ReflectionService;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 import org.simpleflatmapper.core.tuples.*;
-import org.simpleflatmapper.core.utils.CloseableIterator;
-import org.simpleflatmapper.core.utils.IOFunction;
-import org.simpleflatmapper.core.utils.Predicate;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.CloseableIterator;
+import org.simpleflatmapper.util.IOFunction;
+import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.io.File;
 import java.io.FileReader;
@@ -577,10 +578,10 @@ public final class CsvParser {
 		}
 
         public MapWithDSL<T> addKeys(String... keys) {
-            List<Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>> definitions = columnDefinitionProvider.getDefinitions();
+            List<AbstractColumnDefinitionProvider.PredicatedColunnDefinition<CsvColumnDefinition, CsvColumnKey>> definitions = columnDefinitionProvider.getDefinitions();
 
             for(String key : keys) {
-                definitions.add(new Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>(new CaseInsensitiveFieldKeyNamePredicate(key),
+                definitions.add(new AbstractColumnDefinitionProvider.PredicatedColunnDefinition<CsvColumnDefinition, CsvColumnKey>(new CaseInsensitiveFieldKeyNamePredicate(key),
                         CsvColumnDefinition.key()));
             }
 
@@ -588,8 +589,8 @@ public final class CsvParser {
         }
 
         private CsvColumnDefinitionProviderImpl newColumnDefinitionProvider(Predicate<? super CsvColumnKey> predicate, CsvColumnDefinition columnDefinition) {
-			List<Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>> definitions = columnDefinitionProvider.getDefinitions();
-			definitions.add(new Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>(predicate, columnDefinition));
+			List<AbstractColumnDefinitionProvider.PredicatedColunnDefinition<CsvColumnDefinition, CsvColumnKey>> definitions = columnDefinitionProvider.getDefinitions();
+			definitions.add(new AbstractColumnDefinitionProvider.PredicatedColunnDefinition<CsvColumnDefinition, CsvColumnKey>(predicate, columnDefinition));
 			return new CsvColumnDefinitionProviderImpl(definitions, columnDefinitionProvider.getProperties());
 		}
 

@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.impl;
 
 import com.mysql.jdbc.PacketTooBigException;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

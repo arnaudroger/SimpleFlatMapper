@@ -4,7 +4,7 @@ import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.core.reflect.Instantiator;
-import org.simpleflatmapper.core.utils.ErrorHelper;
+import org.simpleflatmapper.util.ErrorHelper;
 
 public abstract class CsvMapperCellHandler<T> {
     protected final Instantiator<CsvMapperCellHandler<T>, T> instantiator;

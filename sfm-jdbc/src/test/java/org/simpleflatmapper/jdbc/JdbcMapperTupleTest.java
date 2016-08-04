@@ -1,10 +1,14 @@
 package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
+import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.core.tuples.Tuple3;
+import org.simpleflatmapper.core.tuples.Tuple4;
+import org.simpleflatmapper.core.tuples.Tuple5;
+import org.simpleflatmapper.core.tuples.Tuples;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
-import org.simpleflatmapper.core.tuples.*;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -11,7 +11,7 @@ import org.simpleflatmapper.core.map.mapper.MapperImpl;
 import org.simpleflatmapper.core.reflect.Getter;
 import org.simpleflatmapper.core.reflect.getter.FieldGetter;
 import org.simpleflatmapper.core.reflect.primitive.LongGetter;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;

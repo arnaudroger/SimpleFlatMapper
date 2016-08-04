@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.util.Date;
 import java.util.Iterator;

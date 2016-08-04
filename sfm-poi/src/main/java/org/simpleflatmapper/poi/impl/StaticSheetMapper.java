@@ -6,7 +6,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.simpleflatmapper.core.map.*;
 import org.simpleflatmapper.core.map.context.MappingContextFactory;
 import org.simpleflatmapper.poi.RowMapper;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.util.Iterator;
 

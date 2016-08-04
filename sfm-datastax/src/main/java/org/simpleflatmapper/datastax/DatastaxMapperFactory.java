@@ -16,10 +16,10 @@ import org.simpleflatmapper.core.map.mapper.ConstantTargetFieldMapperFactorImpl;
 import org.simpleflatmapper.core.map.mapper.DynamicSetRowMapper;
 import org.simpleflatmapper.core.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 import org.simpleflatmapper.core.map.mapper.MapperKey;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
-import org.simpleflatmapper.core.utils.UnaryFactory;
-import org.simpleflatmapper.core.utils.UnaryFactoryWithException;
+import org.simpleflatmapper.util.UnaryFactory;
+import org.simpleflatmapper.util.UnaryFactoryWithException;
 
 import java.lang.reflect.Type;
 

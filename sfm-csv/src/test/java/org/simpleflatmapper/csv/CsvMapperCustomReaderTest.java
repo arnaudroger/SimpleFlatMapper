@@ -8,8 +8,8 @@ import org.simpleflatmapper.test.beans.DbPrimitiveObject;
 import org.simpleflatmapper.csv.impl.cellreader.*;
 import org.simpleflatmapper.core.tuples.Tuple2;
 import org.simpleflatmapper.core.tuples.Tuples;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
-import org.simpleflatmapper.core.utils.Predicate;
+import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.Predicate;
 
 import java.io.IOException;
 import java.io.StringReader;

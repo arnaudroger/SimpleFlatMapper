@@ -6,7 +6,7 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.datastax.beans.DbObjectsWithTuple;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 
 import java.util.*;
 

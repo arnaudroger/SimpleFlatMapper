@@ -5,7 +5,7 @@ import org.simpleflatmapper.jdbc.ResultSetGetterFactory;
 import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
 import org.simpleflatmapper.core.reflect.Getter;
 import org.simpleflatmapper.core.reflect.TypeHelper;
-import org.simpleflatmapper.core.conv.Converter;
+import org.simpleflatmapper.converter.Converter;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;

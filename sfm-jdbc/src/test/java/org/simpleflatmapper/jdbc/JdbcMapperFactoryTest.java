@@ -1,19 +1,20 @@
 package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
+import org.simpleflatmapper.core.reflect.getter.GetterFactory;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbObjectWithAlias;
 import org.simpleflatmapper.core.map.*;
 import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
 import org.simpleflatmapper.core.tuples.Tuple2;
 import org.simpleflatmapper.core.tuples.Tuples;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.lang.reflect.Type;
 import java.sql.*;
@@ -231,7 +232,7 @@ public class JdbcMapperFactoryTest {
 		JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.asm().getterFactory(new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, Object... properties) {
 				return new Getter() {
 					@Override
 					public Object get(Object target) throws Exception {

@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.impl;
 
-import org.simpleflatmapper.core.utils.Enumarable;
-import org.simpleflatmapper.core.utils.ErrorHelper;
+import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.ErrorHelper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

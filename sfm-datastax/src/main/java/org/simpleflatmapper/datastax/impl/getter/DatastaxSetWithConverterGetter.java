@@ -2,7 +2,7 @@ package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
 import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.conv.Converter;
+import org.simpleflatmapper.converter.Converter;
 
 import java.util.HashSet;
 import java.util.Set;

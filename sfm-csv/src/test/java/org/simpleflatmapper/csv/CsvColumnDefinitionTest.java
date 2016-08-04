@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv;
 
 import org.junit.Test;
 import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.core.utils.Predicate;
+import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.TimeZone;

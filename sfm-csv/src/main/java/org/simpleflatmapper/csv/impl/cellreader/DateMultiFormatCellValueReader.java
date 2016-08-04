@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static org.simpleflatmapper.core.utils.Asserts.requireNonNull;
+import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public class DateMultiFormatCellValueReader implements CellValueReader<Date>, ParsingContextProvider {
 

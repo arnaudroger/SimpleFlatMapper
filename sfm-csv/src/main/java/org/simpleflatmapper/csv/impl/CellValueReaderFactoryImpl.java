@@ -5,9 +5,7 @@ import org.simpleflatmapper.csv.CellValueReaderFactory;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.impl.cellreader.*;
 import org.simpleflatmapper.csv.ParsingContextFactoryBuilder;
-import org.simpleflatmapper.core.map.column.JodaTimeClasses;
 import org.simpleflatmapper.csv.impl.cellreader.joda.JodaTimeCellValueReaderHelper;
-import org.simpleflatmapper.core.reflect.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.Calendar;
@@ -18,11 +16,12 @@ import java.util.UUID;
 //IFJAVA8_START
 import java.time.format.DateTimeFormatter;
 import java.time.*;
-
-import org.simpleflatmapper.core.map.column.time.*;
 import org.simpleflatmapper.csv.impl.cellreader.time.*;
 //IFJAVA8_END
-import org.simpleflatmapper.core.utils.UnaryFactory;
+import org.simpleflatmapper.util.TypeHelper;
+import org.simpleflatmapper.util.UnaryFactory;
+import org.simpleflatmapper.util.date.joda.JodaTimeHelper;
+import org.simpleflatmapper.util.date.time.JavaTimeHelper;
 
 public final class CellValueReaderFactoryImpl implements CellValueReaderFactory {
 
@@ -155,7 +154,7 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 		//IFJAVA8_END
 		}  else if (Enum.class.isAssignableFrom(propertyClass)) {
 			reader = new EnumCellValueReader(propertyClass);
-		} else if (JodaTimeClasses.isJoda(propertyClass)){
+		} else if (JodaTimeHelper.isJoda(propertyClass)){
 			reader = (CellValueReader<P>) JodaTimeCellValueReaderHelper.getReader(propertyClass, columnDefinition);
 		} else if (UUID.class.equals(propertyClass)) {
 			reader = (CellValueReader<P>) new UUIDCellValueReader();
@@ -170,7 +169,7 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 
 	//IFJAVA8_START
 	private <T>  CellValueReader<T> newJavaTime(CsvColumnDefinition csvColumnDefinition, UnaryFactory<DateTimeFormatter, CellValueReader<T>> unaryFactory) {
-		DateTimeFormatter[] dateTimeFormatters = JavaTimeHelper.getDateTimeFormatters(csvColumnDefinition);
+		DateTimeFormatter[] dateTimeFormatters = JavaTimeHelper.getDateTimeFormatters(csvColumnDefinition.properties());
 		if (dateTimeFormatters.length == 1) {
 			return unaryFactory.newInstance(dateTimeFormatters[0]);
 		} else {

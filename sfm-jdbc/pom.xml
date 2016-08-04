@@ -60,15 +60,21 @@
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-core</artifactId>
+			<artifactId>sfm-map</artifactId>
 			<version>2.13-SNAPSHOT</version>
 			<scope>test</scope>
 			<type>test-jar</type>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-core</artifactId>
+			<artifactId>sfm-map</artifactId>
 			<version>2.13-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>sfm-tuples</artifactId>
+			<version>2.13-SNAPSHOT</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

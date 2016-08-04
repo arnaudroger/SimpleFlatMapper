@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jooq.conv;
 
 import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.conv.Converter;
+import org.simpleflatmapper.converter.Converter;
 
 import java.sql.Array;
 import java.sql.ResultSet;

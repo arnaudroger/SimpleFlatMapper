@@ -3,9 +3,9 @@ package org.simpleflatmapper.jdbc;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.core.tuples.Tuple2;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

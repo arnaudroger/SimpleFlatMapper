@@ -7,14 +7,14 @@ import org.simpleflatmapper.core.map.*;
 import org.simpleflatmapper.core.map.context.MappingContextFactory;
 import org.simpleflatmapper.core.map.mapper.JoinMapperEnumarable;
 import org.simpleflatmapper.poi.RowMapper;
-import org.simpleflatmapper.core.utils.Enumarable;
-import org.simpleflatmapper.core.utils.EnumarableIterator;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.EnumarableIterator;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.util.Iterator;
 
 //IFJAVA8_START
-import org.simpleflatmapper.core.utils.EnumarableSpliterator;
+import org.simpleflatmapper.util.EnumarableSpliterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END

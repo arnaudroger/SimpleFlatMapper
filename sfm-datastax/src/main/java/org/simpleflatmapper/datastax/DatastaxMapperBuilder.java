@@ -14,8 +14,8 @@ import org.simpleflatmapper.core.map.mapper.KeyFactory;
 import org.simpleflatmapper.core.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.core.map.mapper.StaticSetRowMapper;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
-import org.simpleflatmapper.core.utils.Enumarable;
-import org.simpleflatmapper.core.utils.UnaryFactory;
+import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.UnaryFactory;
 
 /**
  * @see DatastaxMapperFactory

@@ -4,8 +4,8 @@ import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.core.map.column.ColumnProperty;
 import org.simpleflatmapper.core.map.mapper.ColumnDefinitionProvider;
-import org.simpleflatmapper.core.utils.BiConsumer;
-import org.simpleflatmapper.core.utils.Predicate;
+import org.simpleflatmapper.util.BiConsumer;
+import org.simpleflatmapper.util.Predicate;
 
 public class IdentityCsvColumnDefinitionProvider implements ColumnDefinitionProvider<CsvColumnDefinition, CsvColumnKey> {
     @Override

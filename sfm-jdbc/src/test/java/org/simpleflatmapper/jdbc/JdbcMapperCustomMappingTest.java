@@ -1,9 +1,9 @@
 package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
+import org.simpleflatmapper.core.reflect.getter.GetterFactory;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.core.map.GetterFactory;
 import org.simpleflatmapper.core.map.MappingContext;
 import org.simpleflatmapper.core.map.MappingException;
 import org.simpleflatmapper.core.map.FieldMapper;
@@ -175,7 +175,7 @@ public class JdbcMapperCustomMappingTest {
                                 FieldMapperColumnDefinition.customGetterFactory(new GetterFactory<ResultSet, JdbcColumnKey>() {
                                     @SuppressWarnings("unchecked")
                                     @Override
-                                    public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+                                    public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, Object... properties) {
                                         return (Getter<ResultSet, P>) new Getter<ResultSet, Long>() {
                                             @Override
                                             public Long get(ResultSet target) throws Exception {

@@ -3,9 +3,8 @@ package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.jdbc.impl.DiscriminatorJdbcMapper;
 import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.reflect.TypeReference;
-import org.simpleflatmapper.core.tuples.Tuple2;
-import org.simpleflatmapper.core.utils.Predicate;
+import org.simpleflatmapper.util.TypeReference;
+import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -76,8 +75,8 @@ public class DiscriminatorJdbcBuilder<T> {
      */
     public JdbcMapper<T> mapper() {
 
-        List<Tuple2<Predicate<String>, JdbcMapper<T>>> mappers =
-                new ArrayList<Tuple2<Predicate<String>, JdbcMapper<T>>>();
+        List<PredicatedJdbcMapper<T>> mappers =
+                new ArrayList<PredicatedJdbcMapper<T>>();
 
         for(DiscriminatorJdbcSubBuilder subBuilder : builders) {
             JdbcMapper<T> mapper;
@@ -88,7 +87,7 @@ public class DiscriminatorJdbcBuilder<T> {
                 mapper = jdbcMapperFactory.newMapper(subBuilder.type);
             }
 
-            mappers.add(new Tuple2<Predicate<String>, JdbcMapper<T>>(subBuilder.predicate, mapper));
+            mappers.add(new PredicatedJdbcMapper<T>(subBuilder.predicate, mapper));
         }
 
 
@@ -216,4 +215,22 @@ public class DiscriminatorJdbcBuilder<T> {
         }
     }
 
-}
+    //Tuple2<Predicate<String>, JdbcMapper<T>>
+    public static class PredicatedJdbcMapper<T> {
+        private final Predicate<String> predicate;
+        private final JdbcMapper<T> jdbcMapper;
+
+        private PredicatedJdbcMapper(Predicate<String> predicate, JdbcMapper<T> jdbcMapper) {
+            this.predicate = predicate;
+            this.jdbcMapper = jdbcMapper;
+        }
+
+        public Predicate<String> getPredicate() {
+            return predicate;
+        }
+
+        public JdbcMapper<T> getJdbcMapper() {
+            return jdbcMapper;
+        }
+    }
+ }

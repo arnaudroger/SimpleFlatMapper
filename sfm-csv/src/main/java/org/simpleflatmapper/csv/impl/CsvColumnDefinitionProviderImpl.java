@@ -3,11 +3,7 @@ package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.simpleflatmapper.core.map.column.ColumnProperty;
 import org.simpleflatmapper.core.map.mapper.AbstractColumnDefinitionProvider;
-import org.simpleflatmapper.core.tuples.Tuple2;
-import org.simpleflatmapper.core.utils.Predicate;
-import org.simpleflatmapper.core.utils.UnaryFactory;
 
 import java.util.List;
 
@@ -15,8 +11,8 @@ public class CsvColumnDefinitionProviderImpl extends AbstractColumnDefinitionPro
     public CsvColumnDefinitionProviderImpl(){
     }
 
-    public CsvColumnDefinitionProviderImpl(List<Tuple2<Predicate<? super CsvColumnKey>, CsvColumnDefinition>> definitions,
-                                           List<Tuple2<Predicate<? super CsvColumnKey>, UnaryFactory<? super CsvColumnKey, ColumnProperty>>> properties) {
+    public CsvColumnDefinitionProviderImpl(List<PredicatedColunnDefinition<CsvColumnDefinition, CsvColumnKey>> definitions,
+                                           List<PredicatedColunnPropertyFactory<CsvColumnDefinition, CsvColumnKey>> properties) {
         super(definitions, properties);
     }
 

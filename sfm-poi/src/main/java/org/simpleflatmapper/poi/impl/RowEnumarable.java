@@ -2,7 +2,7 @@ package org.simpleflatmapper.poi.impl;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.simpleflatmapper.core.utils.Enumarable;
+import org.simpleflatmapper.util.Enumarable;
 
 public class RowEnumarable implements Enumarable<Row> {
 

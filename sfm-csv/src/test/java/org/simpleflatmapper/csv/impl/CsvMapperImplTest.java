@@ -6,7 +6,7 @@ import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.ParsingContext;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.io.IOException;
 import java.io.StringReader;

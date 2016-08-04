@@ -2,7 +2,7 @@ package org.simpleflatmapper.jdbc.impl.setter;
 
 import org.simpleflatmapper.core.reflect.IndexedSetter;
 import org.simpleflatmapper.core.reflect.Setter;
-import org.simpleflatmapper.core.utils.Asserts;
+import org.simpleflatmapper.util.Asserts;
 
 import java.sql.PreparedStatement;
 

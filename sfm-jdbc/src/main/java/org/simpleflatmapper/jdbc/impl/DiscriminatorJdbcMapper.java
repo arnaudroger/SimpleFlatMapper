@@ -1,14 +1,13 @@
 package org.simpleflatmapper.jdbc.impl;
 
+import org.simpleflatmapper.jdbc.DiscriminatorJdbcBuilder;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.core.map.*;
 import org.simpleflatmapper.core.map.mapper.AbstractEnumarableDelegateMapper;
 import org.simpleflatmapper.core.map.DiscriminatorEnumerable;
-import org.simpleflatmapper.core.utils.ErrorHelper;
-import org.simpleflatmapper.core.utils.Predicate;
-import org.simpleflatmapper.core.tuples.Tuple2;
-import org.simpleflatmapper.core.tuples.Tuple3;
-import org.simpleflatmapper.core.conv.Converter;
+import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.converter.Converter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,9 +19,9 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableDelegate
 
 
     private final String discriminatorColumn;
-    private final List<Tuple2<Predicate<String>, JdbcMapper<T>>> mappers;
+    private final List<DiscriminatorJdbcBuilder.PredicatedJdbcMapper<T>> mappers;
 
-    public DiscriminatorJdbcMapper(String discriminatorColumn, List<Tuple2<Predicate<String>, JdbcMapper<T>>> mappers, RowHandlerErrorHandler rowHandlerErrorHandler) {
+    public DiscriminatorJdbcMapper(String discriminatorColumn, List<DiscriminatorJdbcBuilder.PredicatedJdbcMapper<T>> mappers, RowHandlerErrorHandler rowHandlerErrorHandler) {
         super(rowHandlerErrorHandler);
         this.discriminatorColumn = discriminatorColumn;
         this.mappers = mappers;
@@ -32,9 +31,9 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableDelegate
     protected JdbcMapper<T> getMapper(final ResultSet rs) throws MappingException {
         String value = getDiscriminatorValue(rs);
 
-        for (Tuple2<Predicate<String>, JdbcMapper<T>> tm : mappers) {
-            if (tm.first().test(value)) {
-                return tm.second();
+        for (DiscriminatorJdbcBuilder.PredicatedJdbcMapper<T> tm : mappers) {
+            if (tm.getPredicate().test(value)) {
+                return tm.getJdbcMapper();
             }
         }
         throw new MappingException("No jdbcMapper found for " + discriminatorColumn + " = " + value);
@@ -48,21 +47,22 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableDelegate
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected DiscriminatorEnumerable<ResultSet, T> newEnumarableOfT(ResultSet rs) throws SQLException {
-        @SuppressWarnings("unchecked") Tuple3<Predicate<ResultSet>, Mapper<ResultSet, T>, MappingContext<? super ResultSet>>[] mapperDiscriminators =
-                new Tuple3[this.mappers.size()];
+        DiscriminatorEnumerable.PredicatedMapper<ResultSet, T>[] mapperDiscriminators =
+                new DiscriminatorEnumerable.PredicatedMapper[this.mappers.size()];
 
         for(int i = 0; i < mapperDiscriminators.length; i++) {
 
-            Tuple2<Predicate<String>, JdbcMapper<T>> mapper = mappers.get(i);
+            DiscriminatorJdbcBuilder.PredicatedJdbcMapper<T> mapper = mappers.get(i);
 
-            Predicate<ResultSet> discriminatorPredicate = new DiscriminatorPredicate(discriminatorColumn, mapper.first());
+            Predicate<ResultSet> discriminatorPredicate = new DiscriminatorPredicate(discriminatorColumn, mapper.getPredicate());
 
             mapperDiscriminators[i] =
-                    new Tuple3<Predicate<ResultSet>, Mapper<ResultSet, T>, MappingContext<? super ResultSet>>(
+                    new DiscriminatorEnumerable.PredicatedMapper<ResultSet, T>(
                             discriminatorPredicate,
-                            mapper.second(),
-                            mapper.second().newMappingContext(rs));
+                            mapper.getJdbcMapper(),
+                            mapper.getJdbcMapper().newMappingContext(rs));
         }
 
         return new DiscriminatorEnumerable<ResultSet, T>(

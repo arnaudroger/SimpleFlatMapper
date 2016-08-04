@@ -8,7 +8,7 @@ import org.simpleflatmapper.core.reflect.Getter;
 
 import java.text.Format;
 
-import static org.simpleflatmapper.core.utils.Asserts.requireNonNull;
+import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public class FormattingAppender<S> implements FieldMapper<S, Appendable> {
 

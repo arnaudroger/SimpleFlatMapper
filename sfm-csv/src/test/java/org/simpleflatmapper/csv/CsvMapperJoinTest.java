@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv;
 
 import org.junit.Test;
 import org.simpleflatmapper.test.jdbc.JoinTest;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.io.IOException;
 import java.io.StringReader;

@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.test.beans.Bar;
 import org.simpleflatmapper.test.beans.Foo;
 import org.simpleflatmapper.test.beans.Pair;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
 

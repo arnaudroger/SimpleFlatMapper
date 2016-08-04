@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc.impl.convert;
 
-import org.simpleflatmapper.core.conv.Converter;
+import org.simpleflatmapper.converter.Converter;
 
 import java.sql.Timestamp;
 import java.util.Date;

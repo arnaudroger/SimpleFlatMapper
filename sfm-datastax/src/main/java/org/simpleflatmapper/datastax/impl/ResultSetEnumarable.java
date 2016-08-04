@@ -2,7 +2,7 @@ package org.simpleflatmapper.datastax.impl;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
-import org.simpleflatmapper.core.utils.Enumarable;
+import org.simpleflatmapper.util.Enumarable;
 
 
 public class ResultSetEnumarable implements Enumarable<Row> {

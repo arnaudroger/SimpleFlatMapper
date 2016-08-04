@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbFinalPrimitiveObject;
 import org.simpleflatmapper.test.beans.DbPrimitiveObject;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.io.Reader;
 import java.io.StringReader;

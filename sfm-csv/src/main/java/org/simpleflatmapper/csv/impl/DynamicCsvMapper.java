@@ -7,7 +7,7 @@ import org.simpleflatmapper.core.map.mapper.ColumnDefinitionProvider;
 import org.simpleflatmapper.core.map.mapper.MapperCache;
 import org.simpleflatmapper.core.map.mapper.MapperKey;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 //IFJAVA8_END
 
-import static org.simpleflatmapper.core.utils.Asserts.requireNonNull;
+import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	

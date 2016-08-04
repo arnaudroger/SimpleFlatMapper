@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.core.map.*;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

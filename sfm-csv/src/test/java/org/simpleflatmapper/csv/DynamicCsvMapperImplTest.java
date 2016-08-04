@@ -7,8 +7,8 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbObject.Type;
 import org.simpleflatmapper.test.beans.DbPartialFinalObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.io.Reader;
 import java.io.StringReader;

@@ -6,7 +6,7 @@ import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellConsumer;
 import org.simpleflatmapper.core.reflect.Setter;
 
-import static org.simpleflatmapper.core.utils.Asserts.requireNonNull;
+import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public class DelegateCellSetter<T, P> implements CellSetter<T> {
 

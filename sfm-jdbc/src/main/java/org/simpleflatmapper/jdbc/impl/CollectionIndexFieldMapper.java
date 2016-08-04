@@ -5,7 +5,7 @@ import org.simpleflatmapper.core.reflect.Getter;
 import org.simpleflatmapper.core.reflect.IndexedGetter;
 import org.simpleflatmapper.core.reflect.IndexedSetter;
 import org.simpleflatmapper.core.reflect.primitive.IntGetter;
-import org.simpleflatmapper.core.utils.ErrorHelper;
+import org.simpleflatmapper.util.ErrorHelper;
 
 import java.sql.PreparedStatement;
 

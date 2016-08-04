@@ -4,7 +4,7 @@ import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.core.map.column.DefaultValueProperty;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.core.tuples.Tuple2;
 
 import java.io.IOException;

@@ -20,7 +20,7 @@ import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.core.map.mapper.PropertyMapping;
 import org.simpleflatmapper.core.reflect.ReflectionService;
 import org.simpleflatmapper.core.reflect.Setter;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.core.reflect.primitive.DoubleSetter;
 import org.simpleflatmapper.core.reflect.primitive.FloatSetter;

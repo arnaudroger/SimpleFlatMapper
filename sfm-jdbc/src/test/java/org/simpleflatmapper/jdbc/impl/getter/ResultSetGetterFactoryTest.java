@@ -13,7 +13,7 @@ import org.simpleflatmapper.jdbc.ResultSetGetterFactory;
 import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
 import org.simpleflatmapper.core.reflect.Getter;
 import org.simpleflatmapper.core.reflect.primitive.IntGetter;
-import org.simpleflatmapper.core.utils.UUIDHelper;
+import org.simpleflatmapper.util.UUIDHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

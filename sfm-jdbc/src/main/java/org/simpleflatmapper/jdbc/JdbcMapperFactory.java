@@ -1,17 +1,18 @@
 package org.simpleflatmapper.jdbc;
 
+import org.simpleflatmapper.core.reflect.getter.GetterFactory;
 import org.simpleflatmapper.jdbc.impl.JdbcColumnKeyMapperKeyComparator;
 import org.simpleflatmapper.jdbc.impl.PreparedStatementSetterFactory;
 import org.simpleflatmapper.core.map.*;
 import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
 import org.simpleflatmapper.core.map.mapper.*;
 import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.TypeHelper;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeHelper;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 import org.simpleflatmapper.jdbc.impl.JpaAliasProvider;
-import org.simpleflatmapper.core.utils.UnaryFactory;
-import org.simpleflatmapper.core.utils.UnaryFactoryWithException;
+import org.simpleflatmapper.util.UnaryFactory;
+import org.simpleflatmapper.util.UnaryFactoryWithException;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;

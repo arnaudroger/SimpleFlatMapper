@@ -2,11 +2,11 @@ package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.jdbc.impl.CrudFactory;
 import org.simpleflatmapper.jdbc.impl.CrudMeta;
-import org.simpleflatmapper.core.reflect.TypeHelper;
 import org.simpleflatmapper.core.reflect.meta.AliasProviderFactory;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 import org.simpleflatmapper.core.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.core.reflect.meta.Table;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

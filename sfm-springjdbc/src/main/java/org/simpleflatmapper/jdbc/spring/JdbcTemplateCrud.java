@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.jdbc.Crud;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;

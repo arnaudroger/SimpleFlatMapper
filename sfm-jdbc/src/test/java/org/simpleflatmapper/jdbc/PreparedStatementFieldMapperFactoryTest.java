@@ -33,7 +33,7 @@ import org.simpleflatmapper.core.reflect.getter.ConstantIntGetter;
 import org.simpleflatmapper.core.reflect.getter.ConstantLongGetter;
 import org.simpleflatmapper.core.reflect.getter.ConstantShortGetter;
 import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.core.utils.UUIDHelper;
+import org.simpleflatmapper.util.UUIDHelper;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

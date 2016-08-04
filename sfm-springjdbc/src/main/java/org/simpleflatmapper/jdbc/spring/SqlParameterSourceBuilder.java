@@ -14,8 +14,8 @@ import org.simpleflatmapper.core.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 import org.simpleflatmapper.core.reflect.meta.ObjectPropertyMeta;
 import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.core.utils.ErrorHelper;
-import org.simpleflatmapper.core.utils.ForEachCallBack;
+import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.ForEachCallBack;
 import org.springframework.jdbc.core.StatementCreatorUtils;
 import org.springframework.jdbc.core.namedparam.ParsedSql;
 

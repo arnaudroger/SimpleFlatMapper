@@ -5,7 +5,7 @@ import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
 import org.simpleflatmapper.core.map.*;
 import org.simpleflatmapper.core.map.mapper.AbstractMapperFactory;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 
 import java.lang.reflect.Type;
@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
  * CsvMapperFactory is not Thread-Safe but the mappers are.
  * It is strongly advised to instantiate one jdbcMapper per class for the life of your application.
  * <p>
- * You can instantiate dynamic jdbcMapper which will use the first line of the csv file
+ * You can instantiate dynamic jdbcMapper which will use the name line of the csv file
  * to figure out the list of the columns or a static one using a builder.
  * <p>
  * <code>

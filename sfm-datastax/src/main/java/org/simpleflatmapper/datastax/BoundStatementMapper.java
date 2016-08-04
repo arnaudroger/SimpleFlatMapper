@@ -3,7 +3,7 @@ package org.simpleflatmapper.datastax;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.SettableByIndexData;
 import org.simpleflatmapper.core.map.Mapper;
-import org.simpleflatmapper.core.utils.ErrorHelper;
+import org.simpleflatmapper.util.ErrorHelper;
 
 
 public class BoundStatementMapper<T> {

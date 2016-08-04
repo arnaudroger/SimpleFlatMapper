@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.sql.Connection;
 import java.sql.SQLException;

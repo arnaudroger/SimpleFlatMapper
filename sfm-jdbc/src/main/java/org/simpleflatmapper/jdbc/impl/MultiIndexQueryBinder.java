@@ -4,8 +4,8 @@ import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 import org.simpleflatmapper.jdbc.QueryBinder;
 import org.simpleflatmapper.jdbc.SizeSupplier;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
-import org.simpleflatmapper.core.utils.Asserts;
-import org.simpleflatmapper.core.utils.ErrorHelper;
+import org.simpleflatmapper.util.Asserts;
+import org.simpleflatmapper.util.ErrorHelper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

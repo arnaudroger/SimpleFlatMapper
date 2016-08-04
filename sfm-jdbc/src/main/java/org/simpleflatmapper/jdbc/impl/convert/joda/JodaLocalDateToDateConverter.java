@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.impl.convert.joda;
 
 import org.joda.time.LocalDate;
-import org.simpleflatmapper.core.conv.Converter;
+import org.simpleflatmapper.converter.Converter;
 
 import java.sql.Date;
 

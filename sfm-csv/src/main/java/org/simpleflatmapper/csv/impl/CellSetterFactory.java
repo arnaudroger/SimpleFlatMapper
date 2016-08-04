@@ -17,7 +17,8 @@ import org.simpleflatmapper.core.reflect.NullSetter;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 import org.simpleflatmapper.core.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.core.utils.ErrorDoc;
+import org.simpleflatmapper.util.ErrorDoc;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.Date;

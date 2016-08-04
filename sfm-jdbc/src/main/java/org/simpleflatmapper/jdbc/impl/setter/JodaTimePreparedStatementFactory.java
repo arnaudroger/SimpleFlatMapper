@@ -12,10 +12,9 @@ import org.simpleflatmapper.jdbc.impl.convert.joda.JodaInstantToTimestampConvert
 import org.simpleflatmapper.jdbc.impl.convert.joda.JodaLocalDateTimeToTimestampConverter;
 import org.simpleflatmapper.jdbc.impl.convert.joda.JodaLocalDateToDateConverter;
 import org.simpleflatmapper.jdbc.impl.convert.joda.JodaLocalTimeToTimeConverter;
-import org.simpleflatmapper.core.map.column.joda.JodaHelper;
-import org.simpleflatmapper.core.map.column.JodaTimeClasses;
 import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.core.map.mapper.PropertyMapping;
+import org.simpleflatmapper.util.date.joda.JodaTimeHelper;
 
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -24,27 +23,27 @@ public class JodaTimePreparedStatementFactory implements PreparedStatementSetter
     @SuppressWarnings("unchecked")
     @Override
     public <P> PreparedStatementIndexSetter<P> getIndexedSetter(PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-        if (JodaTimeClasses.isJodaDateTime(pm.getPropertyMeta().getPropertyType())) {
+        if (JodaTimeHelper.isJodaDateTime(pm.getPropertyMeta().getPropertyType())) {
             return (PreparedStatementIndexSetter<P>)
                     new ConvertDelegateIndexSetter<DateTime, Timestamp>(
                             new TimestampPreparedStatementIndexSetter(),
                             new JodaDateTimeToTimestampConverter());
-        } else if (JodaTimeClasses.isJodaLocalDateTime(pm.getPropertyMeta().getPropertyType())) {
+        } else if (JodaTimeHelper.isJodaLocalDateTime(pm.getPropertyMeta().getPropertyType())) {
             return (PreparedStatementIndexSetter<P>)
                     new ConvertDelegateIndexSetter<LocalDateTime, Timestamp>(
                             new TimestampPreparedStatementIndexSetter(),
-                            new JodaLocalDateTimeToTimestampConverter(JodaHelper.getDateTimeZoneOrDefault(pm.getColumnDefinition())));
-        } else if (JodaTimeClasses.isJodaLocalDate(pm.getPropertyMeta().getPropertyType())) {
+                            new JodaLocalDateTimeToTimestampConverter(JodaTimeHelper.getDateTimeZoneOrDefault(pm.getColumnDefinition())));
+        } else if (JodaTimeHelper.isJodaLocalDate(pm.getPropertyMeta().getPropertyType())) {
             return (PreparedStatementIndexSetter<P>)
                     new ConvertDelegateIndexSetter<LocalDate, java.sql.Date>(
                             new DatePreparedStatementIndexSetter(),
                             new JodaLocalDateToDateConverter());
-        } else if (JodaTimeClasses.isJodaLocalTime(pm.getPropertyMeta().getPropertyType())) {
+        } else if (JodaTimeHelper.isJodaLocalTime(pm.getPropertyMeta().getPropertyType())) {
             return (PreparedStatementIndexSetter<P>)
                     new ConvertDelegateIndexSetter<LocalTime, Time>(
                             new TimePreparedStatementIndexSetter(),
-                            new JodaLocalTimeToTimeConverter(JodaHelper.getDateTimeZoneOrDefault(pm.getColumnDefinition())));
-        } else if (JodaTimeClasses.isJodaInstant(pm.getPropertyMeta().getPropertyType())) {
+                            new JodaLocalTimeToTimeConverter(JodaTimeHelper.getDateTimeZoneOrDefault(pm.getColumnDefinition())));
+        } else if (JodaTimeHelper.isJodaInstant(pm.getPropertyMeta().getPropertyType())) {
             return (PreparedStatementIndexSetter<P>)
                     new ConvertDelegateIndexSetter<Instant, Timestamp>(
                             new TimestampPreparedStatementIndexSetter(),

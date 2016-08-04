@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
+import org.simpleflatmapper.core.map.asm.MapperAsmFactory;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.core.map.*;
 import org.simpleflatmapper.core.reflect.*;
@@ -42,20 +43,20 @@ public class JdbcMapperBuilderImplTest {
 		assertTrue(mapper instanceof JdbcMapperBuilder.StaticJdbcSetRowMapper);
 	}
 
-	public AsmFactory newAsmFactoryFailsOnmapper() {
-		return new AsmFactory(Thread.currentThread().getContextClassLoader()) {
+	public MapperAsmFactory newAsmFactoryFailsOnmapper() {
+		return new MapperAsmFactory(new AsmFactory(Thread.currentThread().getContextClassLoader())) {
 			@Override
 			public <S, T> Mapper<S, T> createMapper(final FieldKey<?>[] keys,
-                                                                                final FieldMapper<S, T>[] mappers,
-                                                                                final FieldMapper<S, T>[] constructorMappers,
-                                                                                final Instantiator<? super S, T> instantiator,
-                                                                                final Class<? super S> source,
-                                                                                final Class<T> target) throws Exception {
-                    throw new UnsupportedOperationException();
-                }
+													final FieldMapper<S, T>[] mappers,
+													final FieldMapper<S, T>[] constructorMappers,
+													final Instantiator<? super S, T> instantiator,
+													final Class<? super S> source,
+													final Class<T> target) throws Exception {
+				throw new UnsupportedOperationException();
+			}
 
 
-                };
+		};
 	}
 
 	@Test

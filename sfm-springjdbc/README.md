@@ -13,23 +13,23 @@
 		</dependency>
 ```
 
-## Create mapper
+## Create parameterGetterMap
 
 See [JdbcTemplateMapperFactoryTest](/sfm-springjdbc/src/test/java/org/simpleflatmapper/jdbc/spring/JdbcTemplateMapperFactoryTest.java) for more examples.
 
 ```java
 class MyDao {
-	private final RowMapper<DbObject> mapper =
+	private final RowMapper<DbObject> parameterGetterMap =
 		JdbcTemplateMapperFactory.newInstance().newRowMapper(DbObject.class);
 
 	public void doSomething() {
-		List<DbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);
+		List<DbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, parameterGetterMap);
 	}
 
 	public void doSomethingElse() {
 		 template
 		 	.query(TEST_DB_OBJECT_QUERY,
-		 		mapper.newResultSetExtractor((o) -> System.out.println(o.toString())));
+		 		parameterGetterMap.newResultSetExtractor((o) -> System.out.println(o.toString())));
 	}
 }
 ```

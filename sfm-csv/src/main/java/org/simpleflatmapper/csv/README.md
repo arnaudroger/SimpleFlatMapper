@@ -4,10 +4,10 @@ Uses header to match to the property.
 
 ```java
 public class MyParser {
-    private final CsvMapper<MyObject> mapper = 
+    private final CsvMapper<MyObject> parameterGetterMap =
     	CsvMapperFactory.newInstance().newMapper(MyObject.class);
     public void printAll(Writer writer, Reader reader) throws IOException {
-        mapper.forEach(reader, (o) -> writer.append(o.toString()).append("\n"));
+        parameterGetterMap.forEach(reader, (o) -> writer.append(o.toString()).append("\n"));
     }
 }
 ```
@@ -15,7 +15,7 @@ public class MyParser {
 Supported type
 ------
 
-Csv mapper can map to :
+Csv parameterGetterMap can map to :
 
 boolean, byte, char, date, double, enum, float, integer, long short, string
 

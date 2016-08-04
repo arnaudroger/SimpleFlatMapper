@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc.impl.setter;
 
-import org.simpleflatmapper.core.utils.UUIDHelper;
+import org.simpleflatmapper.util.UUIDHelper;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.jdbc.QueryBinder;
-import org.simpleflatmapper.core.utils.ErrorHelper;
+import org.simpleflatmapper.util.ErrorHelper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv.mapper;
 
 import org.simpleflatmapper.csv.parser.CellConsumer;
 import org.simpleflatmapper.core.map.RowHandlerErrorHandler;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.util.Collection;
 

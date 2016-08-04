@@ -6,8 +6,8 @@ import org.junit.runners.Parameterized;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.MysqlDbHelper;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import javax.persistence.Table;
 import java.sql.Connection;

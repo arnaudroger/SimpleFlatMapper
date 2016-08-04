@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.impl.setter;
 
-import org.simpleflatmapper.core.utils.ErrorHelper;
-import org.simpleflatmapper.core.conv.Converter;
+import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.converter.Converter;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

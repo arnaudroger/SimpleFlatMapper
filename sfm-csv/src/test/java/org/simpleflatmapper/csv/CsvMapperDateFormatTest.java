@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.core.map.MappingException;
 import org.simpleflatmapper.core.map.column.DateFormatProperty;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
-import org.simpleflatmapper.core.utils.Predicate;
+import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.Predicate;
 
 import java.io.IOException;
 import java.io.StringReader;

@@ -10,8 +10,8 @@ import org.simpleflatmapper.core.map.GetterFactory;
 import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.core.reflect.Getter;
 import org.simpleflatmapper.core.reflect.TypeHelper;
-import org.simpleflatmapper.core.conv.Converter;
-import org.simpleflatmapper.core.conv.ConverterFactory;
+import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ConverterFactory;
 
 import java.lang.reflect.Type;
 

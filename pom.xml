@@ -45,7 +45,11 @@
     </properties>
 
     <modules>
-        <module>sfm-core</module>
+        <module>sfm-util</module>
+        <module>sfm-reflect</module>
+        <module>sfm-map</module>
+        <module>sfm-tuples</module>
+        <module>sfm-converter</module>
         <module>sfm-csv</module>
         <module>sfm-jdbc</module>
         <module>sfm-datastax</module>

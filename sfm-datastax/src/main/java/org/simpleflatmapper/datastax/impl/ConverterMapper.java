@@ -1,7 +1,7 @@
 package org.simpleflatmapper.datastax.impl;
 
 import org.simpleflatmapper.core.map.Mapper;
-import org.simpleflatmapper.core.conv.Converter;
+import org.simpleflatmapper.converter.Converter;
 
 public class ConverterMapper<I, O> implements Converter<I, O> {
 

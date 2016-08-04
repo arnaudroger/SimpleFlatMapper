@@ -23,8 +23,8 @@ import java.net.InetAddress;
 import org.simpleflatmapper.core.tuples.Tuple2;
 import org.simpleflatmapper.core.tuples.Tuples;
 
-import org.simpleflatmapper.core.conv.Converter;
-import org.simpleflatmapper.core.conv.ConverterFactory;
+import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ConverterFactory;
 
 //IFJAVA8_START
 import org.simpleflatmapper.core.reflect.getter.time.JavaTimeGetterFactory;

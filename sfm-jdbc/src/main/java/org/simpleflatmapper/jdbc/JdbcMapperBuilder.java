@@ -11,10 +11,11 @@ import org.simpleflatmapper.core.map.mapper.KeyFactory;
 import org.simpleflatmapper.core.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.core.map.mapper.StaticSetRowMapper;
 import org.simpleflatmapper.core.reflect.ReflectionService;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.core.reflect.getter.GetterFactory;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
-import org.simpleflatmapper.core.utils.Enumarable;
-import org.simpleflatmapper.core.utils.UnaryFactory;
+import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.UnaryFactory;
 import org.simpleflatmapper.jdbc.impl.ResultSetEnumarable;
 
 import java.lang.reflect.Type;

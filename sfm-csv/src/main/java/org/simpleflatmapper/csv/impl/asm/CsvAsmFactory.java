@@ -3,7 +3,6 @@ package org.simpleflatmapper.csv.impl.asm;
 import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.core.map.error.RethrowFieldMapperErrorHandler;
 import org.simpleflatmapper.core.reflect.Instantiator;
-import org.simpleflatmapper.core.reflect.TypeHelper;
 import org.simpleflatmapper.core.reflect.asm.AsmFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.ParsingContextFactory;
@@ -11,6 +10,7 @@ import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandlerFactory;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetterFactory;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,7 +64,7 @@ public class CsvAsmFactory {
 
         sb.append( "org.simpleflatmapper.csv.generated.")
                 .append(asmFactory.getPackageName(target))
-                .append(".AsmCsvMapperCellHandlerTo").append(TypeHelper.toClass(target).getSimpleName());
+                .append(".AsmCsvMapperCellHandlerTo").append(asmFactory.replaceArray(TypeHelper.toClass(target).getSimpleName()));
         if (delayedCellSetterFactories.length > 0) {
             sb.append("DS").append(Integer.toString(delayedCellSetterFactories.length));
         }

@@ -15,7 +15,7 @@
 ## Quick start
 
 ```java
-    final SheetMapper<DbObject> mapper =
+    final SheetMapper<DbObject> parameterGetterMap =
             SheetMapperFactory
                     .newInstance()
                     .newMapper(DbObject.class);
@@ -24,6 +24,6 @@
 
         try (InputStream is = new FileInputStream("file.xls");
                 Workbook workbook = new HSSFWorkbook(is)){
-            mapper.stream(workbook.getSheetAt(0)).forEach(System.out::println);
+            parameterGetterMap.stream(workbook.getSheetAt(0)).forEach(System.out::println);
         }
 ```

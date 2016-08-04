@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.io.Closeable;
 import java.io.IOException;

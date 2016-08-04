@@ -1,8 +1,8 @@
 package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.jdbc.JdbcMapper;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.RowHandler;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;

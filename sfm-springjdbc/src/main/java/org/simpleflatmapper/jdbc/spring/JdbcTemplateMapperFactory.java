@@ -7,7 +7,7 @@ import org.simpleflatmapper.core.map.MapperBuildingException;
 import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
 import org.simpleflatmapper.core.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.core.map.mapper.FieldMapperColumnDefinitionProviderImpl;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;

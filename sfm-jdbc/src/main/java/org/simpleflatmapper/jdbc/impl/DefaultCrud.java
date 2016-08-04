@@ -4,8 +4,8 @@ import org.simpleflatmapper.jdbc.Crud;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.QueryPreparer;
 import org.simpleflatmapper.core.map.Mapper;
-import org.simpleflatmapper.core.utils.ErrorHelper;
-import org.simpleflatmapper.core.utils.RowHandler;
+import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.RowHandler;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

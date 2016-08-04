@@ -6,7 +6,7 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.core.map.column.DefaultValueProperty;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -24,7 +24,7 @@ Works with datastax 2.1.x to 3.0.x
 
 ```java
 
-    final DatastaxMapper<DbObject> mapper =
+    final DatastaxMapper<DbObject> parameterGetterMap =
         DatastaxMapperFactory.newInstance().mapTo(DbObject.class);
 
     ...
@@ -33,7 +33,7 @@ Works with datastax 2.1.x to 3.0.x
             session.execute(
                 "select id, name, email, creation_time, type_ordinal, type_name"
                 + " from dbobjects");
-        final Iterator<DbObject> iterator = mapper.iterator(rs);
+        final Iterator<DbObject> iterator = parameterGetterMap.iterator(rs);
 
 
     final DatastaxBinder<DbObject> datastaxBinder =

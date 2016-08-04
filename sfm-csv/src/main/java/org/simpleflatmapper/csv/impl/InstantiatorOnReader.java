@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv.impl;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.core.reflect.Instantiator;
-import org.simpleflatmapper.core.utils.ErrorHelper;
+import org.simpleflatmapper.util.ErrorHelper;
 
 public class InstantiatorOnReader<S, T> implements CellValueReader<T> {
 	private final Instantiator<S, T> instantiator;

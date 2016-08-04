@@ -8,9 +8,9 @@ import org.simpleflatmapper.test.beans.DbPartialFinalObject;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.core.map.MapperBuilderErrorHandler;
-import org.simpleflatmapper.core.reflect.TypeReference;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.core.tuples.Tuple2;
-import org.simpleflatmapper.core.utils.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.io.IOException;
 import java.io.StringReader;

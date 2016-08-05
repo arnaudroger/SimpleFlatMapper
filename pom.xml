@@ -223,8 +223,8 @@
                                         <exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/time/*</exclude>
                                         <exclude>**/org/simpleflatmapper/datastax/*</exclude>
-                                        <exclude>**/org/simpleflatmapper/csv/samples/JoolTupleTest.java</exclude>
-                                        <exclude>**/org/simpleflatmapper/csv/samples/FastTupleTest.java</exclude>
+                                        <exclude>**/org/simpleflatmapper/**/JoolTupleTest.java</exclude>
+                                        <exclude>**/org/simpleflatmapper/**/FastTupleTest.java</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>
@@ -317,7 +317,7 @@
                                         <exclude>**/org/simpleflatmapper/core/tuples/jool/**/*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/time/*</exclude>
-                                        <exclude>**/org/simpleflatmapper/csv/samples/JoolTupleTest.java</exclude>
+                                        <exclude>**/org/simpleflatmapper/**/JoolTupleTest.java</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>

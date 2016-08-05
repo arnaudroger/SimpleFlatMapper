@@ -53,6 +53,7 @@
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
 						<Export-Package>org.simpleflatmapper.util</Export-Package>
+						<Import-Package>org.joda.time.*;resolution:=optional</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

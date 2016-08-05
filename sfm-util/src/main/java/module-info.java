@@ -1,3 +1,3 @@
-module org.simpleflatmapper.core {
+module org.simpleflatmapper.util {
         exports org.simpleflatmapper.util;
 }

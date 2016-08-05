@@ -350,17 +350,17 @@ public class PreparedStatementSetterFactory
                         return (PreparedStatementIndexSetter<P>)
                                 new ConvertDelegateIndexSetter<java.time.LocalDateTime, Timestamp>(
                                         new TimestampPreparedStatementIndexSetter(),
-                                        new JavaLocalDateTimeToTimestampConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
+                                        new JavaLocalDateTimeToTimestampConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition().properties())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.LocalDate.class)) {
                         return (PreparedStatementIndexSetter<P>)
                                 new ConvertDelegateIndexSetter<java.time.LocalDate, java.sql.Date>(
                                         new DatePreparedStatementIndexSetter(),
-                                        new JavaLocalDateToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
+                                        new JavaLocalDateToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition().properties())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.LocalTime.class)) {
                         return (PreparedStatementIndexSetter<P>)
                                 new ConvertDelegateIndexSetter<java.time.LocalTime, Time>(
                                         new TimePreparedStatementIndexSetter(),
-                                        new JavaLocalTimeToTimeConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
+                                        new JavaLocalTimeToTimeConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition().properties())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.Instant.class)) {
                         return (PreparedStatementIndexSetter<P>)
                                 new ConvertDelegateIndexSetter<java.time.Instant, Timestamp>(
@@ -385,12 +385,12 @@ public class PreparedStatementSetterFactory
                         return (PreparedStatementIndexSetter<P>)
                                 new ConvertDelegateIndexSetter<java.time.YearMonth, java.sql.Date>(
                                         new DatePreparedStatementIndexSetter(),
-                                        new JavaYearMonthToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
+                                        new JavaYearMonthToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition().properties())));
                     } else if (TypeHelper.isClass(pm.getPropertyMeta().getPropertyType(), java.time.Year.class)) {
                         return (PreparedStatementIndexSetter<P>)
                                 new ConvertDelegateIndexSetter<Year, java.sql.Date>(
                                         new DatePreparedStatementIndexSetter(),
-                                        new JavaYearToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition())));
+                                        new JavaYearToDateConverter(JavaTimeHelper.getZoneIdOrDefault(pm.getColumnDefinition().properties())));
                     }
 
                     return null;

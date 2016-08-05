@@ -4,6 +4,7 @@ package org.simpleflatmapper.poi.impl;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.simpleflatmapper.core.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.core.map.*;
 import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;

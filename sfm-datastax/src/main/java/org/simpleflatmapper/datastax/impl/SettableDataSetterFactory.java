@@ -301,6 +301,6 @@ public class SettableDataSetterFactory
                 return new ConverterToTupleValueMapper(mapper, (TupleType) dtElt);
             }
         }
-        return ConverterFactory.getConverter(TypeHelper.toClass(elementType), dataTypeElt, columnDefinition);
+        return ConverterFactory.getConverter(TypeHelper.toClass(elementType), dataTypeElt, columnDefinition.properties());
     }
 }

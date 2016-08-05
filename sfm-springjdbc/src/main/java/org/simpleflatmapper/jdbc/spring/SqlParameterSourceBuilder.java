@@ -9,13 +9,13 @@ import org.simpleflatmapper.core.map.mapper.PropertyMapping;
 import org.simpleflatmapper.core.map.mapper.PropertyMappingsBuilder;
 import org.simpleflatmapper.core.reflect.ReflectionService;
 import org.simpleflatmapper.core.reflect.ScoredGetter;
-import org.simpleflatmapper.core.reflect.TypeHelper;
 import org.simpleflatmapper.core.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.core.reflect.meta.ClassMeta;
 import org.simpleflatmapper.core.reflect.meta.ObjectPropertyMeta;
 import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ForEachCallBack;
+import org.simpleflatmapper.util.TypeHelper;
 import org.springframework.jdbc.core.StatementCreatorUtils;
 import org.springframework.jdbc.core.namedparam.ParsedSql;
 

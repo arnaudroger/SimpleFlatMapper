@@ -1,21 +1,21 @@
 package org.simpleflatmapper.querydsl;
 
 import com.mysema.query.Tuple;
-import org.simpleflatmapper.core.map.GetterFactory;
 import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
+import org.simpleflatmapper.core.reflect.getter.GetterFactory;
 import org.simpleflatmapper.querydsl.getter.EnumTupleNamedIndexedGetter;
 import org.simpleflatmapper.querydsl.getter.EnumTupleOrdinalIndexedGetter;
 import org.simpleflatmapper.querydsl.getter.TupleIndexedGetter;
 import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.TypeHelper;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 
-public final class TupleGetterFactory implements GetterFactory<Tuple, TupleElementKey>{
+public final class TupleGetterFactory implements GetterFactory<Tuple, TupleElementKey> {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public <P> Getter<Tuple, P> newGetter(Type genericType, TupleElementKey key, ColumnDefinition<?, ?> columnDefinition) {
+	public <P> Getter<Tuple, P> newGetter(Type genericType, TupleElementKey key, Object... properties) {
 		
 		Class<Object> propertyClass = TypeHelper.toClass(genericType);
 		if (Enum.class.isAssignableFrom(propertyClass)) {

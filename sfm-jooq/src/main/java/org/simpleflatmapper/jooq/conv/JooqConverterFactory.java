@@ -4,8 +4,8 @@ import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.ResultSetGetterFactory;
 import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
 import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.TypeHelper;
 import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;

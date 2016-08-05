@@ -1,17 +1,17 @@
 package org.simpleflatmapper.jooq;
 
 import org.jooq.Record;
+import org.simpleflatmapper.core.reflect.getter.GetterFactory;
 import org.simpleflatmapper.jooq.conv.JooqConverterFactory;
 import org.simpleflatmapper.jooq.getter.EnumRecordNamedGetter;
 import org.simpleflatmapper.jooq.getter.EnumRecordOrdinalGetter;
 import org.simpleflatmapper.jooq.getter.RecordGetter;
 import org.simpleflatmapper.jooq.getter.RecordGetterWithConverter;
-import org.simpleflatmapper.core.map.GetterFactory;
 import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.TypeHelper;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 
@@ -20,7 +20,7 @@ public class RecordGetterFactory<R extends Record> implements
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public <P> Getter<R, P> newGetter(Type genericType, JooqFieldKey key, ColumnDefinition<?, ?> columnDefinition) {
+	public <P> Getter<R, P> newGetter(Type genericType, JooqFieldKey key, Object... properties) {
 		Class<P> propertyClass = TypeHelper.toClass(genericType);
 		if (Enum.class.isAssignableFrom(propertyClass)) {
 			Class<?> columnType = key.getField().getType();

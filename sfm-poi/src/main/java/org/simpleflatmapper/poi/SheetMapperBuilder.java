@@ -2,9 +2,9 @@ package org.simpleflatmapper.poi;
 
 
 import org.apache.poi.ss.usermodel.Row;
+import org.simpleflatmapper.core.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.core.map.mapper.AbstractMapperBuilder;
-import org.simpleflatmapper.core.map.GetterFactory;
 import org.simpleflatmapper.core.map.Mapper;
 import org.simpleflatmapper.core.map.MapperConfig;
 import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;

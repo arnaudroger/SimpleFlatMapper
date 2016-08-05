@@ -1,5 +1,5 @@
 module org.simpleflatmapper.datastax {
-        requires org.simpleflatmapper.core;
+        requires org.simpleflatmapper.map;
         requires cassandra.driver.core;
         requires cassandra.driver.mapping;
         requires guava;

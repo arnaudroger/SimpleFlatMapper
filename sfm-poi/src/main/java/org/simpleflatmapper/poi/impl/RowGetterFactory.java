@@ -2,9 +2,9 @@ package org.simpleflatmapper.poi.impl;
 
 
 import org.apache.poi.ss.usermodel.Row;
+import org.simpleflatmapper.core.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
-import org.simpleflatmapper.core.map.GetterFactory;
 import org.simpleflatmapper.core.reflect.getter.joda.JodaTimeGetterFactory;
 
 //IFJAVA8_START
@@ -12,7 +12,7 @@ import org.simpleflatmapper.core.reflect.getter.time.JavaTimeGetterFactory;
 import java.time.*;
 //IFJAVA8_END
 import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.TypeHelper;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -29,66 +29,66 @@ public class RowGetterFactory implements GetterFactory<Row, CsvColumnKey> {
     static {
         getterFactories.put(String.class, new GetterFactory<Row, CsvColumnKey>() {
             @Override
-            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
                 return (Getter<Row, P>) new PoiStringGetter(key.getIndex());
             }
         });
         getterFactories.put(Date.class, new GetterFactory<Row, CsvColumnKey>() {
             @Override
-            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
                 return (Getter<Row, P>) new PoiDateGetter(key.getIndex());
             }
         });
 
         getterFactories.put(Byte.class, new GetterFactory<Row, CsvColumnKey>() {
             @Override
-            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
                 return (Getter<Row, P>) new PoiByteGetter(key.getIndex());
             }
         });
 
         getterFactories.put(Character.class, new GetterFactory<Row, CsvColumnKey>() {
             @Override
-            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
                 return (Getter<Row, P>) new PoiCharacterGetter(key.getIndex());
             }
         });
         getterFactories.put(Short.class, new GetterFactory<Row, CsvColumnKey>() {
             @Override
-            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
                 return (Getter<Row, P>) new PoiShortGetter(key.getIndex());
             }
         });
         getterFactories.put(Integer.class, new GetterFactory<Row, CsvColumnKey>() {
             @Override
-            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
                 return (Getter<Row, P>) new PoiIntegerGetter(key.getIndex());
             }
         });
         getterFactories.put(Long.class, new GetterFactory<Row, CsvColumnKey>() {
             @Override
-            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
                 return (Getter<Row, P>) new PoiLongGetter(key.getIndex());
             }
         });
 
         getterFactories.put(Float.class, new GetterFactory<Row, CsvColumnKey>() {
             @Override
-            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
                 return (Getter<Row, P>) new PoiFloatGetter(key.getIndex());
             }
         });
 
         getterFactories.put(Double.class, new GetterFactory<Row, CsvColumnKey>() {
             @Override
-            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
                 return (Getter<Row, P>) new PoiDoubleGetter(key.getIndex());
             }
         });
 
         getterFactories.put(Boolean.class, new GetterFactory<Row, CsvColumnKey>() {
             @Override
-            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+            public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
                 return (Getter<Row, P>) new PoiBooleanGetter(key.getIndex());
             }
         });
@@ -123,18 +123,18 @@ public class RowGetterFactory implements GetterFactory<Row, CsvColumnKey> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, ColumnDefinition<?, ?> columnDefinition) {
+    public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
 
         Class<?> targetClass = TypeHelper.toClass(target);
 
         final GetterFactory<Row, CsvColumnKey> rowGetterFactory = getterFactories.get(targetClass);
 
         if (rowGetterFactory != null) {
-            return rowGetterFactory.newGetter(target, key, columnDefinition);
+            return rowGetterFactory.newGetter(target, key, properties);
         } else if (TypeHelper.isEnum(target)) {
             return new PoiEnumGetter(key.getIndex(), TypeHelper.toClass(target));
         } else {
-            Getter<Row, P> getter = jodaTimeGetterFactory.newGetter(target, key, columnDefinition);
+            Getter<Row, P> getter = jodaTimeGetterFactory.newGetter(target, key, properties);
             if (getter != null) return getter;
         }
 

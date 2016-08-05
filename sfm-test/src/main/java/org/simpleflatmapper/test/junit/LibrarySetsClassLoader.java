@@ -52,13 +52,13 @@ public class LibrarySetsClassLoader extends URLClassLoader {
                 int bang = url.indexOf('!');
                 if (bang != -1) {
                     String jarUrl = url.substring("jar:".length(), bang);
-                    System.out.println("jarUrl = " + jarUrl);
+                    System.out.println(includeClass + " => "  + urlClass  + " => jarUrl = " + jarUrl);
                     return new URL(jarUrl);
                 }
             } else if (url.startsWith("file:")) {
                 if (url.endsWith(classResource)) {
                     String directoryUrl = url.substring(0, url.length() - classResource.length());
-                    System.out.println("directoryUrl = " + directoryUrl);
+                    System.out.println(includeClass + " => directoryUrl = " + directoryUrl);
                     return new URL(directoryUrl);
                 }
             }

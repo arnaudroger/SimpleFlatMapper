@@ -1,6 +1,7 @@
-package org.simpleflatmapper.core.map.impl;
+package org.simpleflatmapper.core.map.mapper;
 
 import org.simpleflatmapper.core.map.FieldKey;
+import org.simpleflatmapper.core.map.impl.CalculateMaxIndex;
 import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.core.map.mapper.PropertyMapping;
 import org.simpleflatmapper.core.map.mapper.PropertyMappingsBuilder;

@@ -1,7 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
-import org.simpleflatmapper.core.map.asm.MapperAsmFactory;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.core.map.*;
 import org.simpleflatmapper.core.reflect.*;

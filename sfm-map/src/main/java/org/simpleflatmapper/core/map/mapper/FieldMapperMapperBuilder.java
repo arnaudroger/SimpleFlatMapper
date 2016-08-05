@@ -10,7 +10,6 @@ import org.simpleflatmapper.core.map.impl.FieldErrorHandlerMapper;
 import org.simpleflatmapper.core.map.fieldmapper.ConstantSourceFieldMapperFactory;
 import org.simpleflatmapper.core.map.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
 import org.simpleflatmapper.core.map.fieldmapper.MapperFieldMapper;
-import org.simpleflatmapper.core.map.impl.MapperInstantiatorFactory;
 import org.simpleflatmapper.core.reflect.*;
 import org.simpleflatmapper.core.reflect.asm.AsmFactory;
 import org.simpleflatmapper.core.reflect.getter.ConstantGetter;

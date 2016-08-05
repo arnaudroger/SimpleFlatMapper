@@ -1,6 +1,6 @@
 package org.simpleflatmapper.csv;
 
-import org.simpleflatmapper.core.map.impl.MapperInstantiatorFactory;
+import org.simpleflatmapper.core.map.mapper.MapperInstantiatorFactory;
 import org.simpleflatmapper.core.reflect.asm.AsmFactory;
 import org.simpleflatmapper.core.reflect.getter.GetterFactory;
 import org.simpleflatmapper.util.TypeReference;

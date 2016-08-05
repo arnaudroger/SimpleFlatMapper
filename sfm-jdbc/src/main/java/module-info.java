@@ -1,7 +1,5 @@
 module org.simpleflatmapper.jdbc {
-    requires org.simpleflatmapper.core;
-    requires org.objectweb.asm;
-    requires joda.time;
+    requires org.simpleflatmapper.map;
     requires java.sql;
     requires javax.persistence;
     requires mysql.connector.java;

@@ -17,11 +17,11 @@ import java.util.UUID;
 import java.time.format.DateTimeFormatter;
 import java.time.*;
 import org.simpleflatmapper.csv.impl.cellreader.time.*;
+import org.simpleflatmapper.util.date.time.JavaTimeHelper;
 //IFJAVA8_END
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.UnaryFactory;
 import org.simpleflatmapper.util.date.joda.JodaTimeHelper;
-import org.simpleflatmapper.util.date.time.JavaTimeHelper;
 
 public final class CellValueReaderFactoryImpl implements CellValueReaderFactory {
 

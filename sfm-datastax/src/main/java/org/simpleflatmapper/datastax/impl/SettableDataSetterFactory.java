@@ -13,8 +13,6 @@ import org.simpleflatmapper.core.reflect.setter.ConvertDelegateSetter;
 import org.simpleflatmapper.core.reflect.ReflectionService;
 import org.simpleflatmapper.core.reflect.Setter;
 import org.simpleflatmapper.core.reflect.SetterFactory;
-import org.simpleflatmapper.core.reflect.TypeHelper;
-import org.simpleflatmapper.core.tuples.Tuple2;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
 import org.simpleflatmapper.datastax.impl.setter.BigDecimalSettableDataSetter;
@@ -44,6 +42,7 @@ import org.simpleflatmapper.datastax.impl.setter.TupleValueSettableDataSetter;
 import org.simpleflatmapper.datastax.impl.setter.UDTObjectSettableDataSetter;
 import org.simpleflatmapper.datastax.impl.setter.UDTValueSettableDataSetter;
 import org.simpleflatmapper.datastax.impl.setter.UUIDSettableDataSetter;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -269,14 +268,14 @@ public class SettableDataSetterFactory
                 DataType dtKeyType = dataType.getTypeArguments().get(0);
                 DataType dtValueType = dataType.getTypeArguments().get(1);
 
-                Tuple2<Type, Type> keyValueTypeOfMap = TypeHelper.getKeyValueTypeOfMap(propertyType);
+                TypeHelper.MapEntryTypes keyValueTypeOfMap = TypeHelper.getKeyValueTypeOfMap(propertyType);
 
-                if (areSame(dtKeyType, keyValueTypeOfMap.getElement0()) && areSame(dtValueType, keyValueTypeOfMap.getElement1())) {
+                if (areSame(dtKeyType, keyValueTypeOfMap.getKeyType()) && areSame(dtValueType, keyValueTypeOfMap.getValueType())) {
                     setter = new MapSettableDataSetter(arg.getColumnKey().getIndex());
                 } else {
                     setter = new MapWithConverterSettableDataSetter(arg.getColumnKey().getIndex(),
-                            getConverter(keyValueTypeOfMap.getElement0(), DataTypeHelper.asJavaClass(dtKeyType), dtKeyType, arg.getColumnDefinition()),
-                            getConverter(keyValueTypeOfMap.getElement1(), DataTypeHelper.asJavaClass(dtValueType), dtValueType, arg.getColumnDefinition())
+                            getConverter(keyValueTypeOfMap.getKeyType(), DataTypeHelper.asJavaClass(dtKeyType), dtKeyType, arg.getColumnDefinition()),
+                            getConverter(keyValueTypeOfMap.getValueType(), DataTypeHelper.asJavaClass(dtValueType), dtValueType, arg.getColumnDefinition())
                             );
                 }
             }

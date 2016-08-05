@@ -2,6 +2,7 @@ package org.simpleflatmapper.datastax;
 
 import com.datastax.driver.core.*;
 import com.datastax.driver.core.exceptions.DriverException;
+import org.simpleflatmapper.core.reflect.getter.GetterFactory;
 import org.simpleflatmapper.datastax.impl.ResultSetEnumarable;
 import org.simpleflatmapper.core.map.*;
 import org.simpleflatmapper.core.map.column.ColumnProperty;

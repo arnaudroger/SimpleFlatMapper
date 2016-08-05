@@ -5,8 +5,8 @@ import com.datastax.driver.core.TableMetadata;
 import org.simpleflatmapper.datastax.impl.DatastaxCrudFactory;
 import org.simpleflatmapper.core.reflect.meta.AliasProviderFactory;
 import org.simpleflatmapper.core.reflect.meta.Table;
-import org.simpleflatmapper.core.reflect.TypeHelper;
 import org.simpleflatmapper.core.reflect.meta.DefaultPropertyNameMatcher;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 

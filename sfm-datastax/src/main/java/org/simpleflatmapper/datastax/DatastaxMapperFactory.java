@@ -4,6 +4,7 @@ import com.datastax.driver.core.GettableByIndexData;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.exceptions.DriverException;
+import org.simpleflatmapper.core.reflect.getter.GetterFactory;
 import org.simpleflatmapper.datastax.impl.DatastaxMapperKeyComparator;
 import org.simpleflatmapper.datastax.impl.DatastaxMappingContextFactoryBuilder;
 import org.simpleflatmapper.datastax.impl.RowGetterFactory;

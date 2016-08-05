@@ -5,7 +5,7 @@ import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.DataType;
 import org.simpleflatmapper.core.map.FieldKey;
 import org.simpleflatmapper.core.map.mapper.MapperKey;
-import org.simpleflatmapper.core.map.mapper.TypeAffinity;
+import org.simpleflatmapper.core.reflect.TypeAffinity;
 
 public final class DatastaxColumnKey extends FieldKey<DatastaxColumnKey> implements TypeAffinity {
 

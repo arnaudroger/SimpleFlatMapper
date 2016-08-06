@@ -1,9 +1,9 @@
 package org.simpleflatmapper.csv.impl.writer.time;
 
 import org.simpleflatmapper.csv.CellWriter;
-import org.simpleflatmapper.core.map.FieldMapper;
-import org.simpleflatmapper.core.map.MappingContext;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.reflect.Getter;
 
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;

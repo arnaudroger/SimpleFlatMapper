@@ -1,8 +1,8 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.core.map.FieldKey;
-import org.simpleflatmapper.core.map.mapper.MapperKey;
-import org.simpleflatmapper.core.reflect.TypeAffinity;
+import org.simpleflatmapper.map.FieldKey;
+import org.simpleflatmapper.map.mapper.MapperKey;
+import org.simpleflatmapper.reflect.TypeAffinity;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

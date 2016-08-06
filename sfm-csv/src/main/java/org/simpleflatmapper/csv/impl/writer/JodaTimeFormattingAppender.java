@@ -4,9 +4,9 @@ import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.simpleflatmapper.csv.CellWriter;
-import org.simpleflatmapper.core.map.FieldMapper;
-import org.simpleflatmapper.core.map.MappingContext;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.reflect.Getter;
 
 
 public class JodaTimeFormattingAppender<T> implements FieldMapper<T, Appendable> {

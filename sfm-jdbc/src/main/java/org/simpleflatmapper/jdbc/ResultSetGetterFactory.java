@@ -1,15 +1,15 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.core.reflect.getter.BytesUUIDGetter;
-import org.simpleflatmapper.core.reflect.getter.EnumUnspecifiedTypeGetter;
-import org.simpleflatmapper.core.reflect.getter.GetterFactory;
-import org.simpleflatmapper.core.reflect.getter.OrdinalEnumGetter;
-import org.simpleflatmapper.core.reflect.getter.StringEnumGetter;
-import org.simpleflatmapper.core.reflect.getter.StringUUIDGetter;
-import org.simpleflatmapper.core.reflect.getter.UUIDUnspecifiedTypeGetter;
-import org.simpleflatmapper.core.reflect.getter.joda.JodaTimeGetterFactory;
-import org.simpleflatmapper.core.map.MapperBuildingException;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.getter.BytesUUIDGetter;
+import org.simpleflatmapper.reflect.getter.EnumUnspecifiedTypeGetter;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
+import org.simpleflatmapper.reflect.getter.OrdinalEnumGetter;
+import org.simpleflatmapper.reflect.getter.StringEnumGetter;
+import org.simpleflatmapper.reflect.getter.StringUUIDGetter;
+import org.simpleflatmapper.reflect.getter.UUIDUnspecifiedTypeGetter;
+import org.simpleflatmapper.reflect.getter.joda.JodaTimeGetterFactory;
+import org.simpleflatmapper.map.MapperBuildingException;
+import org.simpleflatmapper.reflect.Getter;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -28,7 +28,7 @@ import java.util.UUID;
 
 //IFJAVA8_START
 import java.time.*;
-import org.simpleflatmapper.core.reflect.getter.time.JavaTimeGetterFactory;
+import org.simpleflatmapper.reflect.getter.time.JavaTimeGetterFactory;
 //IFJAVA8_END
 
 import org.simpleflatmapper.jdbc.impl.getter.ArrayResultSetGetter;

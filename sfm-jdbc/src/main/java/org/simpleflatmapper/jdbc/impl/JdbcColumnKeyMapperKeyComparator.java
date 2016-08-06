@@ -1,8 +1,8 @@
 package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
-import org.simpleflatmapper.core.map.mapper.MapperKey;
-import org.simpleflatmapper.core.map.mapper.MapperKeyComparator;
+import org.simpleflatmapper.map.mapper.MapperKey;
+import org.simpleflatmapper.map.mapper.MapperKeyComparator;
 
 public final class JdbcColumnKeyMapperKeyComparator extends MapperKeyComparator<JdbcColumnKey> {
 

@@ -3,8 +3,8 @@ package org.simpleflatmapper.csv.impl.primitive;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 import org.simpleflatmapper.csv.impl.cellreader.*;
-import org.simpleflatmapper.core.reflect.Setter;
-import org.simpleflatmapper.core.reflect.ObjectSetterFactory;
+import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.reflect.ObjectSetterFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

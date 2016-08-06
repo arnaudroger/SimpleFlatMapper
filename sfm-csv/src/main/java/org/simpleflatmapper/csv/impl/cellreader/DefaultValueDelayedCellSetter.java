@@ -2,8 +2,8 @@ package org.simpleflatmapper.csv.impl.cellreader;
 
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
-import org.simpleflatmapper.core.map.column.DefaultValueProperty;
-import org.simpleflatmapper.core.reflect.Setter;
+import org.simpleflatmapper.map.column.DefaultValueProperty;
+import org.simpleflatmapper.reflect.Setter;
 
 public class DefaultValueDelayedCellSetter<T, P>
         implements DelayedCellSetter<T, P> {

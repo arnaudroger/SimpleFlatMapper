@@ -9,11 +9,11 @@ import org.simpleflatmapper.csv.impl.*;
 import org.simpleflatmapper.csv.impl.cellreader.DelayedCellSetterImpl;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
-import org.simpleflatmapper.core.reflect.ExecutableInstantiatorDefinition;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.Instantiator;
-import org.simpleflatmapper.core.reflect.Parameter;
-import org.simpleflatmapper.core.reflect.asm.AsmFactory;
+import org.simpleflatmapper.reflect.ExecutableInstantiatorDefinition;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.Instantiator;
+import org.simpleflatmapper.reflect.Parameter;
+import org.simpleflatmapper.reflect.asm.AsmFactory;
 
 import java.io.InputStream;
 import java.util.HashMap;

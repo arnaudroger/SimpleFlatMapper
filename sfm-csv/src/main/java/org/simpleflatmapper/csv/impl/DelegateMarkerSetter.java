@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.mapper.CellSetter;
-import org.simpleflatmapper.core.reflect.Setter;
+import org.simpleflatmapper.reflect.Setter;
 
 public class DelegateMarkerSetter<T, P> implements CellSetter<T> {
 

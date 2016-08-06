@@ -1,8 +1,8 @@
 package org.simpleflatmapper.csv.impl.writer;
 
 import org.simpleflatmapper.csv.CellWriter;
-import org.simpleflatmapper.core.map.FieldMapper;
-import org.simpleflatmapper.core.map.MappingContext;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.MappingContext;
 
 public class EndOfRowAppender<S>
         implements FieldMapper<S, Appendable> {

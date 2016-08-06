@@ -20,12 +20,12 @@ import org.simpleflatmapper.jdbc.impl.convert.time.JavaZonedDateTimeToTimestampC
 //IFJAVA8_END
 
 import org.simpleflatmapper.util.date.joda.JodaTimeHelper;
-import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
-import org.simpleflatmapper.core.map.mapper.PropertyMapping;
-import org.simpleflatmapper.core.reflect.IndexedSetter;
-import org.simpleflatmapper.core.reflect.IndexedSetterFactory;
-import org.simpleflatmapper.core.reflect.Setter;
-import org.simpleflatmapper.core.reflect.SetterFactory;
+import org.simpleflatmapper.map.mapper.ColumnDefinition;
+import org.simpleflatmapper.map.mapper.PropertyMapping;
+import org.simpleflatmapper.reflect.IndexedSetter;
+import org.simpleflatmapper.reflect.IndexedSetterFactory;
+import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.reflect.SetterFactory;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.jdbc.impl.setter.ArrayPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BigDecimalPreparedStatementIndexSetter;

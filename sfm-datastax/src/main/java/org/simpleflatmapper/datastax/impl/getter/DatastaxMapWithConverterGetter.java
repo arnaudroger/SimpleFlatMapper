@@ -1,7 +1,7 @@
 package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.converter.Converter;
 
 import java.util.HashMap;

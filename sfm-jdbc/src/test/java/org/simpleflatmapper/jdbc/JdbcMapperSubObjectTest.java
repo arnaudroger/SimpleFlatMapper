@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.simpleflatmapper.test.beans.Db1DeepObject;
 import org.simpleflatmapper.test.beans.Db2DeepObject;
 import org.simpleflatmapper.test.beans.DbFinal1DeepObject;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
 

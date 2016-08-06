@@ -2,7 +2,7 @@ package org.simpleflatmapper.jdbc.spring;
 
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.core.map.column.ConstantValueProperty;
+import org.simpleflatmapper.map.column.ConstantValueProperty;
 import org.springframework.jdbc.core.namedparam.NamedParameterUtils;
 import org.springframework.jdbc.core.namedparam.ParsedSql;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;

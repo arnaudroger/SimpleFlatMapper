@@ -2,7 +2,7 @@ package org.simpleflatmapper.querydsl.getter;
 
 import com.mysema.query.Tuple;
 import org.simpleflatmapper.querydsl.TupleElementKey;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.Getter;
 
 public class TupleIndexedGetter<P> implements Getter<Tuple, P> {
 

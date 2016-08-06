@@ -2,7 +2,7 @@ package org.simpleflatmapper.datastax.impl.setter;
 
 import com.datastax.driver.core.SettableByIndexData;
 import com.datastax.driver.core.UDTValue;
-import org.simpleflatmapper.core.reflect.Setter;
+import org.simpleflatmapper.reflect.Setter;
 
 public class UDTValueSettableDataSetter implements Setter<SettableByIndexData, UDTValue> {
     private final int index;

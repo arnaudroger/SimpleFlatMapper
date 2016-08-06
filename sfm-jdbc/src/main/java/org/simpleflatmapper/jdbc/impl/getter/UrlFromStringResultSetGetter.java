@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc.impl.getter;
 
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.Getter;
 
 import java.net.MalformedURLException;
 import java.net.URL;

@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jooq;
 
 import org.jooq.Field;
-import org.simpleflatmapper.core.map.FieldKey;
+import org.simpleflatmapper.map.FieldKey;
 
 public class JooqFieldKey extends FieldKey<JooqFieldKey> {
 	private final Field<?> field;

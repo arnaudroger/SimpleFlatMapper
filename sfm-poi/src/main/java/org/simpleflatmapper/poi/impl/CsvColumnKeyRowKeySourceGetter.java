@@ -3,13 +3,11 @@ package org.simpleflatmapper.poi.impl;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.simpleflatmapper.core.map.context.KeySourceGetter;
-
-import java.sql.SQLException;
+import org.simpleflatmapper.map.context.KeySourceGetter;
 
 public class CsvColumnKeyRowKeySourceGetter implements KeySourceGetter<CsvColumnKey, Row> {
     @Override
-    public Object getValue(CsvColumnKey key, Row source) throws SQLException {
+    public Object getValue(CsvColumnKey key, Row source) {
         final Cell cell = source.getCell(key.getIndex());
         if (cell != null) {
             switch (cell.getCellType()) {

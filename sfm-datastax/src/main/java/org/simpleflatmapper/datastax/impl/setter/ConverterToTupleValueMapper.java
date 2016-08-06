@@ -2,7 +2,7 @@ package org.simpleflatmapper.datastax.impl.setter;
 
 import com.datastax.driver.core.TupleType;
 import com.datastax.driver.core.TupleValue;
-import org.simpleflatmapper.core.map.Mapper;
+import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.converter.Converter;
 
 public class ConverterToTupleValueMapper<I> implements Converter<I, TupleValue> {

@@ -3,11 +3,12 @@ package org.simpleflatmapper.datastax;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.SettableByIndexData;
-import org.simpleflatmapper.core.map.*;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.map.mapper.ConstantTargetFieldMapperFactory;
-import org.simpleflatmapper.core.reflect.Instantiator;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.map.AbstractWriterBuilder;
+import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
+import org.simpleflatmapper.reflect.Instantiator;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 public class SettableDataMapperBuilder<T> extends AbstractWriterBuilder<SettableByIndexData, T, DatastaxColumnKey, SettableDataMapperBuilder<T>> {
 

@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv.column;
 
 
 import org.simpleflatmapper.csv.CellValueReader;
-import org.simpleflatmapper.core.map.column.ColumnProperty;
+import org.simpleflatmapper.map.column.ColumnProperty;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;

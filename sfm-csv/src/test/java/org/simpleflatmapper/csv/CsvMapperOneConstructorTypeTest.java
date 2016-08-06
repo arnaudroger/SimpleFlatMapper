@@ -1,8 +1,8 @@
 package org.simpleflatmapper.csv;
 
 import org.junit.Test;
-import org.simpleflatmapper.core.map.MappingException;
-import org.simpleflatmapper.core.reflect.ReflectionService;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.io.IOException;

@@ -3,9 +3,9 @@ package org.simpleflatmapper.csv;
 import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.simpleflatmapper.core.map.column.DefaultValueProperty;
+import org.simpleflatmapper.map.column.DefaultValueProperty;
 import org.simpleflatmapper.util.TypeReference;
-import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.tuple.Tuple2;
 
 import java.io.IOException;
 import java.util.Iterator;

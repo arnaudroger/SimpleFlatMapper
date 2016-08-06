@@ -6,8 +6,8 @@ import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.csv.CsvReader;
 import org.simpleflatmapper.csv.mapper.*;
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.simpleflatmapper.core.map.MappingException;
-import org.simpleflatmapper.core.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.RowHandlerErrorHandler;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.RowHandler;
 

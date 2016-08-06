@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.impl.writer;
 
 import org.simpleflatmapper.csv.CellWriter;
-import org.simpleflatmapper.core.reflect.primitive.IntSetter;
+import org.simpleflatmapper.reflect.primitive.IntSetter;
 
 public class IntegerAppendableSetter implements IntSetter<Appendable> {
 

@@ -3,8 +3,8 @@ package org.simpleflatmapper.poi.impl;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.primitive.CharacterGetter;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.primitive.CharacterGetter;
 
 public class PoiCharacterGetter implements Getter<Row, Character>, CharacterGetter<Row> {
 

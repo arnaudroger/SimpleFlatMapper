@@ -70,27 +70,8 @@
 				<configuration>
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
-						<Export-Package>
-							org.simpleflatmapper.core.map,
-							org.simpleflatmapper.core.map.context,
-							org.simpleflatmapper.core.map.parameterGetterMap,
-							org.simpleflatmapper.core.map.fieldmapper,
-							org.simpleflatmapper.core.map.column,
-							org.simpleflatmapper.core.map.error,
-							org.simpleflatmapper.core.map.column.joda,
-							org.simpleflatmapper.core.map.column.time,
-							org.simpleflatmapper.core.reflect,
-							org.simpleflatmapper.core.reflect.meta,
-							org.simpleflatmapper.core.reflect.asm,
-							org.simpleflatmapper.core.reflect.getter,
-							org.simpleflatmapper.core.reflect.getter.joda,
-							org.simpleflatmapper.core.reflect.getter.time,
-							org.simpleflatmapper.core.reflect.setter,
-							org.simpleflatmapper.core.reflect.primitive,
-							org.simpleflatmapper.core.tuples,
-							org.simpleflatmapper.core.utils,
-							org.simpleflatmapper.core.conv</Export-Package>
-						<Import-Package>org.objectweb.asm;version="[4.0,6)";resolution:=optional,org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional</Import-Package>
+						<Export-Package>org.simpleflatmapper.tuple</Export-Package>
+						<Import-Package></Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

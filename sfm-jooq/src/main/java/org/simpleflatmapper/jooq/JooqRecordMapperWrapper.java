@@ -2,7 +2,7 @@ package org.simpleflatmapper.jooq;
 
 import org.jooq.Record;
 import org.jooq.RecordMapper;
-import org.simpleflatmapper.core.map.Mapper;
+import org.simpleflatmapper.map.Mapper;
 
 public class JooqRecordMapperWrapper<R extends Record, E> implements RecordMapper<R, E> {
 

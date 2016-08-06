@@ -12,8 +12,8 @@ import org.simpleflatmapper.jdbc.impl.convert.joda.JodaInstantToTimestampConvert
 import org.simpleflatmapper.jdbc.impl.convert.joda.JodaLocalDateTimeToTimestampConverter;
 import org.simpleflatmapper.jdbc.impl.convert.joda.JodaLocalDateToDateConverter;
 import org.simpleflatmapper.jdbc.impl.convert.joda.JodaLocalTimeToTimeConverter;
-import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
-import org.simpleflatmapper.core.map.mapper.PropertyMapping;
+import org.simpleflatmapper.map.mapper.ColumnDefinition;
+import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.util.date.joda.JodaTimeHelper;
 
 import java.sql.Time;

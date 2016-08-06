@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc.spring;
 
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.ErrorHelper;
 
 public final class PlaceHolderValueGetter<T> {

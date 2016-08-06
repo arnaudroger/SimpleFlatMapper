@@ -4,8 +4,8 @@ import com.mysema.query.types.Expression;
 import com.mysema.query.types.Path;
 import com.mysema.query.types.PathMetadata;
 import com.mysema.query.types.PathType;
-import org.simpleflatmapper.core.map.MappingException;
-import org.simpleflatmapper.core.map.FieldKey;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.FieldKey;
 
 public final class TupleElementKey extends FieldKey<TupleElementKey> {
 	private final Expression<?> expression;

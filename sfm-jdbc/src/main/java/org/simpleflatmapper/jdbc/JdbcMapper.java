@@ -1,6 +1,8 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.core.map.*;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.util.RowHandler;
 
 import java.sql.ResultSet;

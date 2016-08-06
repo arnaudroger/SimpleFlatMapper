@@ -7,8 +7,8 @@ import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
-import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.core.reflect.Instantiator;
+import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.reflect.Instantiator;
 
 public class AsmCsvMapperCellHandler extends CsvMapperCellHandler<DbObject> {
 

@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv.column;
 
 
 import org.simpleflatmapper.csv.CellValueReaderFactory;
-import org.simpleflatmapper.core.map.column.ColumnProperty;
+import org.simpleflatmapper.map.column.ColumnProperty;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 

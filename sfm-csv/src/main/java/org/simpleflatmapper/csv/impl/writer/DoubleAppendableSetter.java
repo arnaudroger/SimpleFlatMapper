@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.impl.writer;
 
 import org.simpleflatmapper.csv.CellWriter;
-import org.simpleflatmapper.core.reflect.primitive.DoubleSetter;
+import org.simpleflatmapper.reflect.primitive.DoubleSetter;
 
 public class DoubleAppendableSetter implements DoubleSetter<Appendable> {
 

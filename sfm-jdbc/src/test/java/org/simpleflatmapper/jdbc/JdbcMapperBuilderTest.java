@@ -2,15 +2,15 @@ package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.core.map.Mapper;
-import org.simpleflatmapper.core.map.MapperBuilderErrorHandler;
-import org.simpleflatmapper.core.map.MappingException;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.map.error.LogFieldMapperErrorHandler;
-import org.simpleflatmapper.core.map.mapper.MapperImpl;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.getter.FieldGetter;
-import org.simpleflatmapper.core.reflect.primitive.LongGetter;
+import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.MapperBuilderErrorHandler;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.error.LogFieldMapperErrorHandler;
+import org.simpleflatmapper.map.mapper.MapperImpl;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.getter.FieldGetter;
+import org.simpleflatmapper.reflect.primitive.LongGetter;
 import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.lang.reflect.Field;

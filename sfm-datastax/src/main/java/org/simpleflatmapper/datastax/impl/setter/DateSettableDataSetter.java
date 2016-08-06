@@ -2,7 +2,7 @@ package org.simpleflatmapper.datastax.impl.setter;
 
 import com.datastax.driver.core.SettableByIndexData;
 import org.simpleflatmapper.datastax.DataHelper;
-import org.simpleflatmapper.core.reflect.Setter;
+import org.simpleflatmapper.reflect.Setter;
 
 public class DateSettableDataSetter implements Setter<SettableByIndexData, Object>{
     private final int index;

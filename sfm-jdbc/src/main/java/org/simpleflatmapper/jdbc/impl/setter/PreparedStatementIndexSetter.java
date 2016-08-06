@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc.impl.setter;
 
-import org.simpleflatmapper.core.reflect.IndexedSetter;
+import org.simpleflatmapper.reflect.IndexedSetter;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

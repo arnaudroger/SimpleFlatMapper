@@ -91,11 +91,12 @@ public class HostApplication
             throw new RuntimeException("Could not find resource for " + aClass);
         }
 
+        System.out.println("resource = " + resource);
         Bundle b;
         if ("jar".equals(resource.getProtocol())) {
             String file = resource.getFile();
             file = file.substring(0, file.indexOf('!'));
-
+            System.out.println("jar = " + file);
             b = install(file);
 
         } else {
@@ -103,11 +104,7 @@ public class HostApplication
             if (indexOfTarget >= 0) {
                 File root = new File(resource.getFile().substring(0, indexOfTarget + "target/classes".length()));
 
-                System.out.println("root = " + root);
-
-
-
-
+                System.out.println("dir = " + root);
 
                 File tmp = File.createTempFile("tmp", "jar");
 

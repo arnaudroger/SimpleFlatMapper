@@ -1,9 +1,9 @@
 package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
-import org.simpleflatmapper.core.map.MapperConfig;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 import java.util.concurrent.atomic.AtomicReference;
 

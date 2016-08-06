@@ -5,7 +5,7 @@ import org.simpleflatmapper.test.beans.DbBoxedPrimitiveObject;
 import org.simpleflatmapper.test.beans.DbFinalPrimitiveObject;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 import org.simpleflatmapper.test.beans.PrimitiveObject;
-import org.simpleflatmapper.core.map.Mapper;
+import org.simpleflatmapper.map.Mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

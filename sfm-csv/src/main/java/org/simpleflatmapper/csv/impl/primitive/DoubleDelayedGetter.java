@@ -1,8 +1,8 @@
 package org.simpleflatmapper.csv.impl.primitive;
 
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.primitive.DoubleGetter;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.primitive.DoubleGetter;
 
 public class DoubleDelayedGetter<T> implements DoubleGetter<CsvMapperCellHandler<T>>, Getter<CsvMapperCellHandler<T>, Double> {
 	private final int index;

@@ -2,8 +2,8 @@ package org.simpleflatmapper.querydsl.getter;
 
 import com.mysema.query.Tuple;
 import org.simpleflatmapper.querydsl.TupleElementKey;
-import org.simpleflatmapper.core.reflect.EnumHelper;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.EnumHelper;
+import org.simpleflatmapper.reflect.Getter;
 
 public final class EnumTupleOrdinalIndexedGetter<E extends Enum<E>> implements  Getter<Tuple, E> {
 

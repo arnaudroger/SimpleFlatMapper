@@ -6,8 +6,8 @@ import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbPrimitiveObject;
 import org.simpleflatmapper.csv.impl.cellreader.*;
-import org.simpleflatmapper.core.tuples.Tuple2;
-import org.simpleflatmapper.core.tuples.Tuples;
+import org.simpleflatmapper.tuple.Tuple2;
+import org.simpleflatmapper.tuple.Tuples;
 import org.simpleflatmapper.util.ListCollectorHandler;
 import org.simpleflatmapper.util.Predicate;
 

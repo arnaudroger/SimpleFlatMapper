@@ -1,17 +1,17 @@
 package org.simpleflatmapper.jooq;
 
 import org.jooq.*;
-import org.simpleflatmapper.core.map.Mapper;
-import org.simpleflatmapper.core.map.MapperConfig;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.reflect.ReflectionService;
+import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.reflect.ReflectionService;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
  * Integration point with jooq.<p>
- * Provide a JooqRecordMapper backed by an Sfm {@link org.jooq.Record} {@link org.simpleflatmapper.core.map.Mapper}
+ * Provide a JooqRecordMapper backed by an Sfm {@link org.jooq.Record} {@link Mapper}
  */
 public class SfmRecordMapperProvider implements RecordMapperProvider {
 

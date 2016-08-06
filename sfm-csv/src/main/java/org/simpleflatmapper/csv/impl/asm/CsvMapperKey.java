@@ -4,8 +4,8 @@ import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetterFactory;
-import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.core.reflect.Instantiator;
+import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.reflect.Instantiator;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;

@@ -3,7 +3,7 @@ package org.simpleflatmapper.jdbc.impl;
 import org.simpleflatmapper.jdbc.QueryBinder;
 import org.simpleflatmapper.jdbc.QueryPreparer;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
-import org.simpleflatmapper.core.map.Mapper;
+import org.simpleflatmapper.map.Mapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

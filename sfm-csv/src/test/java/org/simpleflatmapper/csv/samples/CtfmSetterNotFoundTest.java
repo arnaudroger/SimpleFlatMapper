@@ -1,8 +1,8 @@
 package org.simpleflatmapper.csv.samples;
 
 import org.junit.Test;
-import org.simpleflatmapper.core.map.column.SetterProperty;
-import org.simpleflatmapper.core.reflect.Setter;
+import org.simpleflatmapper.map.column.SetterProperty;
+import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.csv.CsvWriter;
 
 import java.io.IOException;

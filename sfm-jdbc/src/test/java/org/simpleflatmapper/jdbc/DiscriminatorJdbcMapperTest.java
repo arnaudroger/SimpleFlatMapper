@@ -3,7 +3,7 @@ package org.simpleflatmapper.jdbc;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.simpleflatmapper.core.map.MappingContext;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.test.jdbc.JoinTest;
 import org.simpleflatmapper.util.ListCollectorHandler;
 

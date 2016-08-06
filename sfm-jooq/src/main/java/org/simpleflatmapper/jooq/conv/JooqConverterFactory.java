@@ -2,8 +2,8 @@ package org.simpleflatmapper.jooq.conv;
 
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.ResultSetGetterFactory;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.util.TypeHelper;
 

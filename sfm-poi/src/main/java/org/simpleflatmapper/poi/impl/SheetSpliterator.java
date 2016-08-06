@@ -3,7 +3,7 @@ package org.simpleflatmapper.poi.impl;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.simpleflatmapper.core.map.MappingContext;
+import org.simpleflatmapper.map.MappingContext;
 
 import java.util.Spliterator;
 import java.util.function.Consumer;

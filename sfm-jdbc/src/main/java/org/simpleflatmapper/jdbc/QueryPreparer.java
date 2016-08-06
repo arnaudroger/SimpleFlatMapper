@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.core.map.Mapper;
+import org.simpleflatmapper.map.Mapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

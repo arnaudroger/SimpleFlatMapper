@@ -1,14 +1,21 @@
 package org.simpleflatmapper.csv;
 
-import org.simpleflatmapper.core.map.mapper.AbstractColumnDefinitionProvider;
+import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
 import org.simpleflatmapper.csv.parser.*;
-import org.simpleflatmapper.core.map.CaseInsensitiveFieldKeyNamePredicate;
-import org.simpleflatmapper.core.reflect.ReflectionService;
+import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
+import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.tuple.Tuple2;
+import org.simpleflatmapper.tuple.Tuple3;
+import org.simpleflatmapper.tuple.Tuple4;
+import org.simpleflatmapper.tuple.Tuple5;
+import org.simpleflatmapper.tuple.Tuple6;
+import org.simpleflatmapper.tuple.Tuple7;
+import org.simpleflatmapper.tuple.Tuple8;
+import org.simpleflatmapper.tuple.Tuples;
 import org.simpleflatmapper.util.TypeReference;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
-import org.simpleflatmapper.core.tuples.*;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.CloseableIterator;
 import org.simpleflatmapper.util.IOFunction;
 import org.simpleflatmapper.util.Predicate;

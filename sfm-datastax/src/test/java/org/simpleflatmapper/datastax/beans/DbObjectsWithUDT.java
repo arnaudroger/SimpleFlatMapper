@@ -1,7 +1,5 @@
 package org.simpleflatmapper.datastax.beans;
 
-import org.simpleflatmapper.core.tuples.Tuple3;
-
 public class DbObjectsWithUDT {
     private long id;
     private MyType t;

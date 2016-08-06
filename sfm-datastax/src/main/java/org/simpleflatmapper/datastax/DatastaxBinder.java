@@ -6,12 +6,12 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Statement;
 import org.simpleflatmapper.datastax.impl.DatastaxMapperKeyComparator;
 import org.simpleflatmapper.datastax.impl.SettableDataSetterFactory;
-import org.simpleflatmapper.core.map.MapperConfig;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.map.mapper.ConstantTargetFieldMapperFactorImpl;
-import org.simpleflatmapper.core.map.mapper.MapperCache;
-import org.simpleflatmapper.core.map.mapper.MapperKey;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactorImpl;
+import org.simpleflatmapper.map.mapper.MapperCache;
+import org.simpleflatmapper.map.mapper.MapperKey;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 public class DatastaxBinder<T> {
     private final MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config;

@@ -4,9 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.core.map.MapperBuildingException;
+import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.util.TypeReference;
-import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.io.IOException;

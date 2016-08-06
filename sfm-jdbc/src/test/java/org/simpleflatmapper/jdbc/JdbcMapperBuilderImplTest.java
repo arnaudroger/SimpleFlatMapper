@@ -1,11 +1,17 @@
 package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.Instantiator;
+import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.reflect.Parameter;
+import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.core.map.*;
-import org.simpleflatmapper.core.reflect.*;
-import org.simpleflatmapper.core.reflect.asm.AsmFactory;
-import org.simpleflatmapper.core.reflect.InstantiatorFactory;
+import org.simpleflatmapper.reflect.asm.AsmFactory;
+import org.simpleflatmapper.reflect.InstantiatorFactory;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -72,9 +78,9 @@ public class JdbcMapperBuilderImplTest {
 				return new InstantiatorFactory(null) {
 					@Override
 					public <S, T> Instantiator<S, T> getInstantiator(Type target,
-							Class<?> source,
-							List<InstantiatorDefinition> constructors,
-							Map<Parameter, Getter<? super S, ?>> injections, boolean useAsm)
+																	 Class<?> source,
+																	 List<InstantiatorDefinition> constructors,
+																	 Map<Parameter, Getter<? super S, ?>> injections, boolean useAsm)
 							throws SecurityException {
 						throw new UnsupportedOperationException();
 					}

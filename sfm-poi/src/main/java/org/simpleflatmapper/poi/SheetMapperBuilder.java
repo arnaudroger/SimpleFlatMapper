@@ -2,20 +2,20 @@ package org.simpleflatmapper.poi;
 
 
 import org.apache.poi.ss.usermodel.Row;
-import org.simpleflatmapper.core.reflect.getter.GetterFactory;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.simpleflatmapper.core.map.mapper.AbstractMapperBuilder;
-import org.simpleflatmapper.core.map.Mapper;
-import org.simpleflatmapper.core.map.MapperConfig;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.map.context.MappingContextFactoryBuilder;
-import org.simpleflatmapper.core.map.mapper.KeyFactory;
-import org.simpleflatmapper.core.map.mapper.MapperSourceImpl;
+import org.simpleflatmapper.map.mapper.AbstractMapperBuilder;
+import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.mapper.KeyFactory;
+import org.simpleflatmapper.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.poi.impl.JoinSheetMapper;
 import org.simpleflatmapper.poi.impl.CsvColumnKeyRowKeySourceGetter;
 import org.simpleflatmapper.poi.impl.RowGetterFactory;
 import org.simpleflatmapper.poi.impl.StaticSheetMapper;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 public class SheetMapperBuilder<T> extends AbstractMapperBuilder<Row, T, CsvColumnKey, RowMapper<T>,  SheetMapperBuilder<T>> {
 

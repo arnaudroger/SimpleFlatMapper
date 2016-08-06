@@ -5,7 +5,7 @@ import org.simpleflatmapper.csv.mapper.CsvMapperCellConsumer;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetterFactory;
 import org.simpleflatmapper.csv.impl.cellreader.IntegerCellValueReader;
-import org.simpleflatmapper.core.reflect.primitive.IntSetter;
+import org.simpleflatmapper.reflect.primitive.IntSetter;
 
 public class IntDelayedCellSetterFactory<T> implements DelayedCellSetterFactory<T, Integer> {
 

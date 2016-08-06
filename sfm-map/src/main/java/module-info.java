@@ -7,12 +7,12 @@ module org.simpleflatmapper.map {
         requires public org.simpleflatmapper.reflect;
         requires public org.simpleflatmapper.converter;
 
-        exports org.simpleflatmapper.core.map;
-        exports org.simpleflatmapper.core.map.context;
-        exports org.simpleflatmapper.core.map.mapper;
-        exports org.simpleflatmapper.core.map.fieldmapper;
-        exports org.simpleflatmapper.core.map.column;
-        exports org.simpleflatmapper.core.map.error;
-        exports org.simpleflatmapper.core.map.column.joda;
-        exports org.simpleflatmapper.core.map.column.time;
+        exports org.simpleflatmapper.map;
+        exports org.simpleflatmapper.map.context;
+        exports org.simpleflatmapper.map.mapper;
+        exports org.simpleflatmapper.map.fieldmapper;
+        exports org.simpleflatmapper.map.column;
+        exports org.simpleflatmapper.map.error;
+        exports org.simpleflatmapper.map.column.joda;
+        exports org.simpleflatmapper.map.column.time;
 }

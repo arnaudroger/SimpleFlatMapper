@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.impl.getter;
 
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.primitive.FloatGetter;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.primitive.FloatGetter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

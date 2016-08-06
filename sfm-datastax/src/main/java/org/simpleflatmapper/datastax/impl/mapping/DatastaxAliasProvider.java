@@ -2,9 +2,9 @@ package org.simpleflatmapper.datastax.impl.mapping;
 
 
 import com.datastax.driver.mapping.annotations.Column;
-import org.simpleflatmapper.core.reflect.meta.AliasProvider;
-import org.simpleflatmapper.core.reflect.meta.AliasProviderFactory;
-import org.simpleflatmapper.core.reflect.meta.Table;
+import org.simpleflatmapper.reflect.meta.AliasProvider;
+import org.simpleflatmapper.reflect.meta.AliasProviderFactory;
+import org.simpleflatmapper.reflect.meta.Table;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

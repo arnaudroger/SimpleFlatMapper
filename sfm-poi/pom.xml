@@ -34,9 +34,12 @@
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
 						<Export-Package>org.simpleflatmapper.poi</Export-Package>
-						<Import-Package>org.objectweb.asm;version="[4.0,6)";resolution:=optional,org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,
-							org.simpleflatmapper.core.*,,org.simpleflatmapper.csv.*,
-							org.apache.poi.*</Import-Package>
+						<Import-Package>
+							org.objectweb.asm;version="[4.0,6)";resolution:=optional,
+							org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,
+							org.simpleflatmapper.*,
+							org.apache.poi.*
+						</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

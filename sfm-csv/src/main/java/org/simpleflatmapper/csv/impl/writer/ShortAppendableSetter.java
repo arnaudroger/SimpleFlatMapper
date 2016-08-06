@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.impl.writer;
 
 import org.simpleflatmapper.csv.CellWriter;
-import org.simpleflatmapper.core.reflect.primitive.ShortSetter;
+import org.simpleflatmapper.reflect.primitive.ShortSetter;
 
 public class ShortAppendableSetter implements ShortSetter<Appendable> {
 

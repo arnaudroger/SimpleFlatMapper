@@ -1,15 +1,15 @@
 package org.simpleflatmapper.poi;
 
 import org.apache.poi.ss.usermodel.Row;
-import org.simpleflatmapper.core.map.mapper.AbstractMapperFactory;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.map.mapper.FieldMapperColumnDefinitionProviderImpl;
-import org.simpleflatmapper.core.map.MapperConfig;
-import org.simpleflatmapper.core.reflect.getter.GetterFactory;
+import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
+import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.poi.impl.DynamicSheetMapper;
 import org.simpleflatmapper.poi.impl.RowGetterFactory;
 import org.simpleflatmapper.util.TypeReference;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.csv.CsvColumnKey;
 
 import java.lang.reflect.Type;

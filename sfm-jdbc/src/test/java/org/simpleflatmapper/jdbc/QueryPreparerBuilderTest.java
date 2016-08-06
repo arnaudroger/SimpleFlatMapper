@@ -2,10 +2,10 @@ package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.core.map.Mapper;
-import org.simpleflatmapper.core.map.column.GetterProperty;
-import org.simpleflatmapper.core.map.column.ConstantValueProperty;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.column.GetterProperty;
+import org.simpleflatmapper.map.column.ConstantValueProperty;
+import org.simpleflatmapper.reflect.Getter;
 
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;

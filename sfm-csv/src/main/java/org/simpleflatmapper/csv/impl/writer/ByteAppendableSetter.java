@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.impl.writer;
 
 import org.simpleflatmapper.csv.CellWriter;
-import org.simpleflatmapper.core.reflect.primitive.ByteSetter;
+import org.simpleflatmapper.reflect.primitive.ByteSetter;
 
 public class ByteAppendableSetter implements ByteSetter<Appendable> {
 

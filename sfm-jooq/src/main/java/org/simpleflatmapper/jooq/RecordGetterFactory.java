@@ -1,14 +1,13 @@
 package org.simpleflatmapper.jooq;
 
 import org.jooq.Record;
-import org.simpleflatmapper.core.reflect.getter.GetterFactory;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.jooq.conv.JooqConverterFactory;
 import org.simpleflatmapper.jooq.getter.EnumRecordNamedGetter;
 import org.simpleflatmapper.jooq.getter.EnumRecordOrdinalGetter;
 import org.simpleflatmapper.jooq.getter.RecordGetter;
 import org.simpleflatmapper.jooq.getter.RecordGetterWithConverter;
-import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
 import org.simpleflatmapper.util.TypeHelper;

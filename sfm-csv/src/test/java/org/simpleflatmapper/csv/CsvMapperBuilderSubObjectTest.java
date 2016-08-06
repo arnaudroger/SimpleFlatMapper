@@ -5,7 +5,7 @@ import org.simpleflatmapper.test.beans.Db1DeepObject;
 import org.simpleflatmapper.test.beans.Db1DeepPartialObject;
 import org.simpleflatmapper.test.beans.DbFinal1DeepObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.core.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.io.Reader;

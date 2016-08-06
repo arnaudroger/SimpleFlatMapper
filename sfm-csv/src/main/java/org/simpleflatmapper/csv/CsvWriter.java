@@ -2,15 +2,15 @@ package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
-import org.simpleflatmapper.core.map.Mapper;
-import org.simpleflatmapper.core.map.MappingContext;
-import org.simpleflatmapper.core.map.column.ColumnProperty;
-import org.simpleflatmapper.core.map.column.FormatProperty;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.map.MapperConfig;
-import org.simpleflatmapper.core.map.mapper.ContextualMapper;
-import org.simpleflatmapper.core.reflect.ReflectionService;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.column.ColumnProperty;
+import org.simpleflatmapper.map.column.FormatProperty;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.mapper.ContextualMapper;
+import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.TypeReference;
 

@@ -1,17 +1,16 @@
 package org.simpleflatmapper.datastax.impl;
 
 import com.datastax.driver.core.*;
-import org.simpleflatmapper.core.reflect.getter.GetterFactory;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.datastax.DataTypeHelper;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 import org.simpleflatmapper.datastax.DatastaxMapperFactory;
-import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
-import org.simpleflatmapper.core.reflect.getter.EnumUnspecifiedTypeGetter;
-import org.simpleflatmapper.core.reflect.getter.OrdinalEnumGetter;
-import org.simpleflatmapper.core.reflect.getter.StringEnumGetter;
-import org.simpleflatmapper.core.reflect.getter.joda.JodaTimeGetterFactory;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.getter.EnumUnspecifiedTypeGetter;
+import org.simpleflatmapper.reflect.getter.OrdinalEnumGetter;
+import org.simpleflatmapper.reflect.getter.StringEnumGetter;
+import org.simpleflatmapper.reflect.getter.joda.JodaTimeGetterFactory;
+import org.simpleflatmapper.reflect.Getter;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -24,7 +23,7 @@ import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
 
 //IFJAVA8_START
-import org.simpleflatmapper.core.reflect.getter.time.JavaTimeGetterFactory;
+import org.simpleflatmapper.reflect.getter.time.JavaTimeGetterFactory;
 import java.time.*;
 import java.time.LocalDate;
 //IFJAVA8_END

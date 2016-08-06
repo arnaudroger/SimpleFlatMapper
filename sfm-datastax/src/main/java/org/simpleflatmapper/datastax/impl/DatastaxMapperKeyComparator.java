@@ -2,8 +2,8 @@ package org.simpleflatmapper.datastax.impl;
 
 import com.datastax.driver.core.DataType;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
-import org.simpleflatmapper.core.map.mapper.MapperKey;
-import org.simpleflatmapper.core.map.mapper.MapperKeyComparator;
+import org.simpleflatmapper.map.mapper.MapperKey;
+import org.simpleflatmapper.map.mapper.MapperKeyComparator;
 
 
 public class DatastaxMapperKeyComparator extends MapperKeyComparator<DatastaxColumnKey> {

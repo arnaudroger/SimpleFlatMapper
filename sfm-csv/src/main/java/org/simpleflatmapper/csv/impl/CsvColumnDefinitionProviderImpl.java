@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.simpleflatmapper.core.map.mapper.AbstractColumnDefinitionProvider;
+import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
 
 import java.util.List;
 

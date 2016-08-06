@@ -10,7 +10,6 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.poi.impl.CsvColumnKeyRowKeySourceGetter;
 
-import java.sql.SQLException;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -52,30 +51,30 @@ public class SheetMapperBuilderTest {
     }
 
     @Test
-    public void testKeyGetterOnNull() throws SQLException {
+    public void testKeyGetterOnNull() {
        assertNull(keySourceGetter.getValue(new CsvColumnKey("", 5), sheet.getRow(1)));
     }
     @Test
-    public void testKeyGetterOnBlank() throws SQLException {
+    public void testKeyGetterOnBlank() {
         assertNull(keySourceGetter.getValue(new CsvColumnKey("", 5), sheet.getRow(1)));
     }
 
     @Test
-    public void testKeyGetterOnString() throws SQLException {
+    public void testKeyGetterOnString() {
         assertEquals("val", keySourceGetter.getValue(new CsvColumnKey("", 0), sheet.getRow(1)));
     }
     @Test
-    public void testKeyGetterOnDate() throws SQLException {
+    public void testKeyGetterOnDate() {
         assertEquals(25569, (Double)keySourceGetter.getValue(new CsvColumnKey("", 1), sheet.getRow(1)), 1);
     }
 
     @Test
-    public void testKeyGetterOnDouble() throws SQLException {
+    public void testKeyGetterOnDouble() {
         assertEquals(1.234, (Double)keySourceGetter.getValue(new CsvColumnKey("", 2), sheet.getRow(1)), 0.0001);
     }
 
     @Test
-    public void testKeyGetterOnBoolean() throws SQLException {
+    public void testKeyGetterOnBoolean() {
         assertEquals(Boolean.TRUE, keySourceGetter.getValue(new CsvColumnKey("", 3), sheet.getRow(1)));
     }
 

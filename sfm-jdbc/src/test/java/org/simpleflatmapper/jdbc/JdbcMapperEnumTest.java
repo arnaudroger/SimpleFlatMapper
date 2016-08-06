@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbEnumObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.TypeReference;
-import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.tuple.Tuple2;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -3,7 +3,7 @@ package org.simpleflatmapper.jdbc.impl;
 import org.simpleflatmapper.jdbc.Crud;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.QueryPreparer;
-import org.simpleflatmapper.core.map.Mapper;
+import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.RowHandler;
 

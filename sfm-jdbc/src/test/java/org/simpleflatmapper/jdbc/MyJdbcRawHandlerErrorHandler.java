@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.core.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.RowHandlerErrorHandler;
 
 public class MyJdbcRawHandlerErrorHandler implements RowHandlerErrorHandler {
 

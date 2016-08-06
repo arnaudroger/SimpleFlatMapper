@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.simpleflatmapper.util.TypeReference;
-import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.sql.ResultSet;

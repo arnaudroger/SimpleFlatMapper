@@ -1,9 +1,9 @@
 package org.simpleflatmapper.jooq;
 
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.map.mapper.AbstractColumnDefinitionProvider;
-import org.simpleflatmapper.core.map.mapper.AbstractMapperFactory;
-import org.simpleflatmapper.core.map.mapper.FieldMapperColumnDefinitionProviderImpl;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
+import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
+import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 
 public class SfmRecordMapperProviderFactory
         extends AbstractMapperFactory<JooqFieldKey, FieldMapperColumnDefinition<JooqFieldKey>, SfmRecordMapperProviderFactory> {

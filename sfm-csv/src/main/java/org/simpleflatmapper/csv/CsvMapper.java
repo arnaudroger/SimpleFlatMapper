@@ -1,6 +1,6 @@
 package org.simpleflatmapper.csv;
 
-import org.simpleflatmapper.core.map.MappingException;
+import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.util.RowHandler;
 
 import java.io.IOException;

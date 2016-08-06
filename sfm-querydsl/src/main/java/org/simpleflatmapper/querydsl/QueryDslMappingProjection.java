@@ -3,7 +3,7 @@ package org.simpleflatmapper.querydsl;
 import com.mysema.query.Tuple;
 import com.mysema.query.types.Expression;
 import com.mysema.query.types.MappingProjection;
-import org.simpleflatmapper.core.map.Mapper;
+import org.simpleflatmapper.map.Mapper;
 
 public class QueryDslMappingProjection<T> extends MappingProjection<T> {
 	/**

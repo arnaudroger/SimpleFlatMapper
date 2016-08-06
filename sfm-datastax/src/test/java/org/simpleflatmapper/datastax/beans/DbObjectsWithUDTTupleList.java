@@ -1,6 +1,6 @@
 package org.simpleflatmapper.datastax.beans;
 
-import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.tuple.Tuple2;
 
 import java.util.List;
 

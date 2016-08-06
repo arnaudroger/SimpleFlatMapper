@@ -5,11 +5,11 @@ import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbPartialFinalObject;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.core.map.MapperBuilderErrorHandler;
+import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.util.TypeReference;
-import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.io.IOException;

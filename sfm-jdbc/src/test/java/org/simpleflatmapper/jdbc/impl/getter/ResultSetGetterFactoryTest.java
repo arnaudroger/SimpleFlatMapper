@@ -10,9 +10,9 @@ import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.ResultSetGetterFactory;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.primitive.IntGetter;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.primitive.IntGetter;
 import org.simpleflatmapper.util.UUIDHelper;
 
 import java.io.ByteArrayInputStream;

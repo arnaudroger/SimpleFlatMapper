@@ -3,8 +3,8 @@ package org.simpleflatmapper.poi.impl;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.primitive.ByteGetter;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.primitive.ByteGetter;
 
 public class PoiByteGetter implements Getter<Row, Byte>, ByteGetter<Row> {
 

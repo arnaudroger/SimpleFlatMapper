@@ -2,9 +2,11 @@ package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.jdbc.DiscriminatorJdbcBuilder;
 import org.simpleflatmapper.jdbc.JdbcMapper;
-import org.simpleflatmapper.core.map.*;
-import org.simpleflatmapper.core.map.mapper.AbstractEnumarableDelegateMapper;
-import org.simpleflatmapper.core.map.DiscriminatorEnumerable;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.mapper.AbstractEnumarableDelegateMapper;
+import org.simpleflatmapper.map.DiscriminatorEnumerable;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.converter.Converter;

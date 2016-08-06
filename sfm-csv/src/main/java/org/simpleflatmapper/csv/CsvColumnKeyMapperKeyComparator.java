@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv;
 
-import org.simpleflatmapper.core.map.mapper.MapperKey;
-import org.simpleflatmapper.core.map.mapper.MapperKeyComparator;
+import org.simpleflatmapper.map.mapper.MapperKey;
+import org.simpleflatmapper.map.mapper.MapperKeyComparator;
 
 public final class CsvColumnKeyMapperKeyComparator extends MapperKeyComparator<CsvColumnKey> {
 

@@ -1,9 +1,9 @@
 package org.simpleflatmapper.csv.impl.asm;
 
-import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.core.map.error.RethrowFieldMapperErrorHandler;
-import org.simpleflatmapper.core.reflect.Instantiator;
-import org.simpleflatmapper.core.reflect.asm.AsmFactory;
+import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.map.error.RethrowFieldMapperErrorHandler;
+import org.simpleflatmapper.reflect.Instantiator;
+import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.ParsingContextFactory;
 import org.simpleflatmapper.csv.mapper.CellSetter;

@@ -1,8 +1,8 @@
 package org.simpleflatmapper.datastax.impl.setter;
 
 import com.datastax.driver.core.SettableByIndexData;
-import org.simpleflatmapper.core.reflect.Setter;
-import org.simpleflatmapper.core.reflect.primitive.FloatSetter;
+import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.reflect.primitive.FloatSetter;
 
 public class FloatSettableDataSetter implements Setter<SettableByIndexData, Float>, FloatSetter<SettableByIndexData> {
     private final int index;

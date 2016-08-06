@@ -1,8 +1,8 @@
 package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.ListCollectorHandler;
 import org.simpleflatmapper.util.Predicate;
 

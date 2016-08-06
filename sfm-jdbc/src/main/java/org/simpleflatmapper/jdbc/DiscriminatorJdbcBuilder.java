@@ -2,7 +2,7 @@ package org.simpleflatmapper.jdbc;
 
 
 import org.simpleflatmapper.jdbc.impl.DiscriminatorJdbcMapper;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.Predicate;
 

@@ -5,11 +5,11 @@ import com.datastax.driver.core.GettableByIndexData;
 import com.datastax.driver.core.TupleType;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 import org.simpleflatmapper.datastax.DatastaxMapperFactory;
-import org.simpleflatmapper.core.map.Mapper;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.map.mapper.FieldMapperMapperBuilder;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.tuples.Tuple2;
+import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.mapper.FieldMapperMapperBuilder;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.tuple.Tuple2;
 
 import java.lang.reflect.Type;
 import java.util.List;

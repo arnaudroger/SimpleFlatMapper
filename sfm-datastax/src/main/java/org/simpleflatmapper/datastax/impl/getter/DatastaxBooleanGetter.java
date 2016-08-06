@@ -1,8 +1,8 @@
 package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.primitive.BooleanGetter;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.primitive.BooleanGetter;
 
 public class DatastaxBooleanGetter implements BooleanGetter<GettableByIndexData>, Getter<GettableByIndexData, Boolean> {
 

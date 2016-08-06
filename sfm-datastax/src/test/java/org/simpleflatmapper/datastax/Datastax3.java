@@ -7,9 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.simpleflatmapper.datastax.utils.RecorderInvocationHandler;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.ReflectionService;
-import org.simpleflatmapper.core.reflect.Setter;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.test.junit.LibrarySets;
 import org.simpleflatmapper.test.junit.MultiClassLoaderJunitRunner;
 

@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.core.map.context.MappingContextFactoryBuilder;
-import org.simpleflatmapper.core.map.context.KeySourceGetter;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.context.KeySourceGetter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -3,7 +3,7 @@ package org.simpleflatmapper.datastax;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.exceptions.DriverException;
-import org.simpleflatmapper.core.map.SetRowMapper;
+import org.simpleflatmapper.map.SetRowMapper;
 
 
 /**

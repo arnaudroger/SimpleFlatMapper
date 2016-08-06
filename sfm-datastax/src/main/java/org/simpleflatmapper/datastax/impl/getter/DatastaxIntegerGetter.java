@@ -1,8 +1,8 @@
 package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.primitive.IntGetter;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.primitive.IntGetter;
 
 public class DatastaxIntegerGetter implements IntGetter<GettableByIndexData>, Getter<GettableByIndexData, Integer> {
 

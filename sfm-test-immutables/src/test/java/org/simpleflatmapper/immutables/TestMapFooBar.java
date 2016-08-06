@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.PreparedStatementMapperBuilder;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 import static org.junit.Assert.assertNotNull;
 

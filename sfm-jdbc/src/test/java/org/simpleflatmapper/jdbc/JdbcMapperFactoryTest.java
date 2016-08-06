@@ -1,18 +1,20 @@
 package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
-import org.simpleflatmapper.core.reflect.getter.GetterFactory;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.RowHandlerErrorHandler;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbObjectWithAlias;
-import org.simpleflatmapper.core.map.*;
-import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
-import org.simpleflatmapper.core.tuples.Tuple2;
-import org.simpleflatmapper.core.tuples.Tuples;
+import org.simpleflatmapper.tuple.Tuple2;
+import org.simpleflatmapper.tuple.Tuples;
 import org.simpleflatmapper.util.ListCollectorHandler;
 import org.simpleflatmapper.util.RowHandler;
 
@@ -167,7 +169,7 @@ public class JdbcMapperFactoryTest {
 	public void testFieldErrorHandling()
 			throws SQLException, Exception, ParseException {
 		@SuppressWarnings("unchecked")
-		FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler  = mock(FieldMapperErrorHandler.class);
+        FieldMapperErrorHandler<JdbcColumnKey> fieldMapperErrorHandler  = mock(FieldMapperErrorHandler.class);
 		final Exception exception = new Exception("Error!");
 		JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.asm()
 			.fieldMapperErrorHandler(fieldMapperErrorHandler)

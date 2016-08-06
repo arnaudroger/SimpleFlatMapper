@@ -2,8 +2,8 @@ package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.simpleflatmapper.core.map.column.ColumnProperty;
-import org.simpleflatmapper.core.map.mapper.ColumnDefinitionProvider;
+import org.simpleflatmapper.map.column.ColumnProperty;
+import org.simpleflatmapper.map.mapper.ColumnDefinitionProvider;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.Predicate;
 

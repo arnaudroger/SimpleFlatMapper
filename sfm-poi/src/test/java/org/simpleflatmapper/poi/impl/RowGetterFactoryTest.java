@@ -4,11 +4,18 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.simpleflatmapper.reflect.primitive.BooleanGetter;
+import org.simpleflatmapper.reflect.primitive.ByteGetter;
+import org.simpleflatmapper.reflect.primitive.CharacterGetter;
+import org.simpleflatmapper.reflect.primitive.DoubleGetter;
+import org.simpleflatmapper.reflect.primitive.FloatGetter;
+import org.simpleflatmapper.reflect.primitive.IntGetter;
+import org.simpleflatmapper.reflect.primitive.LongGetter;
+import org.simpleflatmapper.reflect.primitive.ShortGetter;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.primitive.*;
+import org.simpleflatmapper.reflect.Getter;
 
 import java.text.SimpleDateFormat;
 //IFJAVA8_START

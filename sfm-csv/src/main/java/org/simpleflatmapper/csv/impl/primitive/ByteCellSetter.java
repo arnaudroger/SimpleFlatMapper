@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv.impl.primitive;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.impl.cellreader.ByteCellValueReader;
-import org.simpleflatmapper.core.reflect.primitive.ByteSetter;
+import org.simpleflatmapper.reflect.primitive.ByteSetter;
 
 public class ByteCellSetter<T> implements CellSetter<T> {
 

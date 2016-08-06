@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.jdbc.QueryBinder;
-import org.simpleflatmapper.core.map.Mapper;
+import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.jdbc.QueryPreparer;
 
 import java.sql.Connection;

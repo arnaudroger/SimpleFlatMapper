@@ -2,17 +2,17 @@ package org.simpleflatmapper.querydsl;
 
 import com.mysema.query.Tuple;
 import com.mysema.query.types.Expression;
-import org.simpleflatmapper.core.map.Mapper;
-import org.simpleflatmapper.core.map.MapperBuildingException;
-import org.simpleflatmapper.core.map.MapperConfig;
-import org.simpleflatmapper.core.map.mapper.FieldMapperMapperBuilder;
-import org.simpleflatmapper.core.map.mapper.KeyFactory;
-import org.simpleflatmapper.core.map.mapper.MapperSource;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.map.context.MappingContextFactoryBuilder;
-import org.simpleflatmapper.core.map.mapper.MapperSourceImpl;
-import org.simpleflatmapper.core.reflect.ReflectionService;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.MapperBuildingException;
+import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.mapper.FieldMapperMapperBuilder;
+import org.simpleflatmapper.map.mapper.KeyFactory;
+import org.simpleflatmapper.map.mapper.MapperSource;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.mapper.MapperSourceImpl;
+import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 import java.lang.reflect.Type;
 

@@ -1,13 +1,13 @@
 package org.simpleflatmapper.csv.impl.asm;
 
 import org.objectweb.asm.*;
-import org.simpleflatmapper.core.reflect.asm.AsmUtils;
-import org.simpleflatmapper.core.reflect.asm.ShardingHelper;
+import org.simpleflatmapper.reflect.asm.AsmUtils;
+import org.simpleflatmapper.reflect.asm.ShardingHelper;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.ParsingContextFactory;
-import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.core.reflect.Instantiator;
+import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandlerFactory;
@@ -15,8 +15,6 @@ import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetterFactory;
 
 import java.lang.reflect.Type;
-
-import static org.objectweb.asm.Opcodes.*;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class CsvMapperCellHandlerBuilder {

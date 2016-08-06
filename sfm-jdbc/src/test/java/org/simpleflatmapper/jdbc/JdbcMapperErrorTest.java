@@ -3,12 +3,12 @@ package org.simpleflatmapper.jdbc;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.Foo;
-import org.simpleflatmapper.core.map.MapperBuilderErrorHandler;
-import org.simpleflatmapper.core.map.MappingException;
-import org.simpleflatmapper.core.map.FieldMapper;
-import org.simpleflatmapper.core.map.error.LogFieldMapperErrorHandler;
-import org.simpleflatmapper.core.map.mapper.MapperImpl;
-import org.simpleflatmapper.core.reflect.Instantiator;
+import org.simpleflatmapper.map.MapperBuilderErrorHandler;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.error.LogFieldMapperErrorHandler;
+import org.simpleflatmapper.map.mapper.MapperImpl;
+import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.util.RowHandler;
 
 import java.io.IOException;

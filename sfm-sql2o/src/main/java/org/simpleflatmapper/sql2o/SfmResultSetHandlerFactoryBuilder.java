@@ -2,7 +2,7 @@ package org.simpleflatmapper.sql2o;
 
 import org.simpleflatmapper.jdbc.DynamicJdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
-import org.simpleflatmapper.core.map.mapper.DefaultPropertyNameMatcherFactory;
+import org.simpleflatmapper.map.mapper.DefaultPropertyNameMatcherFactory;
 import org.sql2o.DefaultResultSetHandlerFactoryBuilder;
 import org.sql2o.ResultSetHandlerFactory;
 

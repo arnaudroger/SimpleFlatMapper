@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv.impl.cellreader;
 
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.ParsingContext;
-import org.simpleflatmapper.core.map.ParsingContextProvider;
+import org.simpleflatmapper.map.ParsingContextProvider;
 
 import java.util.Calendar;
 import java.util.Date;

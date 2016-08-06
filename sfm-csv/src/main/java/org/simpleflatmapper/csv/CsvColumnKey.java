@@ -1,6 +1,6 @@
 package org.simpleflatmapper.csv;
 
-import org.simpleflatmapper.core.map.FieldKey;
+import org.simpleflatmapper.map.FieldKey;
 
 public final class CsvColumnKey extends FieldKey<CsvColumnKey> {
 

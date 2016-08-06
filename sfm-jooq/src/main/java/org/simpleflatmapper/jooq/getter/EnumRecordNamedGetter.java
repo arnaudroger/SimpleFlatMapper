@@ -2,7 +2,7 @@ package org.simpleflatmapper.jooq.getter;
 
 import org.jooq.Record;
 import org.simpleflatmapper.jooq.JooqFieldKey;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.Getter;
 
 public final class EnumRecordNamedGetter<R extends Record, E extends Enum<E>> implements Getter<R, E> {
 

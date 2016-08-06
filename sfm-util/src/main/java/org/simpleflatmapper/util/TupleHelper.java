@@ -10,7 +10,7 @@ public class TupleHelper {
 
     public static boolean isSfmTuple(Type type) {
         String className = TypeHelper.toClass(type).getName();
-        return className.startsWith("org.simpleflatmapper.core.tuples.Tuple")
+        return className.startsWith("org.simpleflatmapper.tuple.Tuple")
                 && !className.endsWith("Tuples");
     }
 

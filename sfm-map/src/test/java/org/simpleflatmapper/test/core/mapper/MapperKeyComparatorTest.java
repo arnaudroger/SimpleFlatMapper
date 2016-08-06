@@ -1,9 +1,9 @@
 package org.simpleflatmapper.test.core.mapper;
 
 import org.junit.Assert;
-import  org.simpleflatmapper.core.map.FieldKey;
-import  org.simpleflatmapper.core.map.mapper.MapperKey;
-import  org.simpleflatmapper.core.map.mapper.MapperKeyComparator;
+import org.simpleflatmapper.map.FieldKey;
+import org.simpleflatmapper.map.mapper.MapperKey;
+import org.simpleflatmapper.map.mapper.MapperKeyComparator;
 import org.simpleflatmapper.util.ListCollectorHandler;
 import org.simpleflatmapper.util.RowHandler;
 

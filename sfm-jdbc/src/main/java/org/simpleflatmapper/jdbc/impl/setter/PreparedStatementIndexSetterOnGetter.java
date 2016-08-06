@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc.impl.setter;
 
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.ErrorHelper;
 
 import java.sql.PreparedStatement;

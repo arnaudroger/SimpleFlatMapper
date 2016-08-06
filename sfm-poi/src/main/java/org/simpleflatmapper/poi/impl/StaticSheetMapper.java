@@ -3,8 +3,11 @@ package org.simpleflatmapper.poi.impl;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.simpleflatmapper.core.map.*;
-import org.simpleflatmapper.core.map.context.MappingContextFactory;
+import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.poi.RowMapper;
 import org.simpleflatmapper.util.RowHandler;
 

@@ -1,8 +1,8 @@
 package org.simpleflatmapper.jooq;
 
 import org.jooq.Record;
-import org.simpleflatmapper.core.map.context.MappingContextFactoryBuilder;
-import org.simpleflatmapper.core.map.context.KeySourceGetter;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.context.KeySourceGetter;
 
 import java.sql.SQLException;
 

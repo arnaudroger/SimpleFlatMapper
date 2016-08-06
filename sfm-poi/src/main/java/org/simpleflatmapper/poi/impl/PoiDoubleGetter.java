@@ -3,8 +3,8 @@ package org.simpleflatmapper.poi.impl;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.primitive.DoubleGetter;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.primitive.DoubleGetter;
 
 public class PoiDoubleGetter implements Getter<Row, Double>, DoubleGetter<Row> {
 

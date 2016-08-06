@@ -2,11 +2,12 @@ package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.*;
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.simpleflatmapper.core.map.*;
-import org.simpleflatmapper.core.map.mapper.ColumnDefinitionProvider;
-import org.simpleflatmapper.core.map.mapper.MapperCache;
-import org.simpleflatmapper.core.map.mapper.MapperKey;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.mapper.ColumnDefinitionProvider;
+import org.simpleflatmapper.map.mapper.MapperCache;
+import org.simpleflatmapper.map.mapper.MapperKey;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.RowHandler;
 
 import java.io.IOException;

@@ -3,7 +3,7 @@ package org.simpleflatmapper.datastax;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import org.junit.Test;
-import org.simpleflatmapper.core.tuples.Tuple3;
+import org.simpleflatmapper.tuple.Tuple3;
 import org.simpleflatmapper.datastax.beans.DbObjectsWithTuple;
 import org.simpleflatmapper.datastax.beans.DbObjectsWithTupleValue;
 

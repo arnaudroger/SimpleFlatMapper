@@ -2,7 +2,7 @@ package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
 import org.simpleflatmapper.datastax.DataHelper;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.Getter;
 
 import java.util.Date;
 

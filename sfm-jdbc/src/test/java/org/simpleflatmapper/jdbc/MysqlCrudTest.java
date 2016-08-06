@@ -8,7 +8,7 @@ import org.simpleflatmapper.jdbc.impl.ColumnMeta;
 import org.simpleflatmapper.jdbc.impl.CrudFactory;
 import org.simpleflatmapper.jdbc.impl.CrudMeta;
 import org.simpleflatmapper.jdbc.impl.DatabaseMeta;
-import org.simpleflatmapper.core.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.ReflectionService;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

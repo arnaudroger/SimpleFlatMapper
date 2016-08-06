@@ -1,6 +1,6 @@
 package org.simpleflatmapper.datastax.beans;
 
-import org.simpleflatmapper.core.tuples.Tuple3;
+import org.simpleflatmapper.tuple.Tuple3;
 
 public class DbObjectsWithTuple {
     private long id;

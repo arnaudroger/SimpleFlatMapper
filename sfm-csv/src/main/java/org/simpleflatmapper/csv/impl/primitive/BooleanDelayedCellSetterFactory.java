@@ -5,7 +5,7 @@ import org.simpleflatmapper.csv.mapper.CsvMapperCellConsumer;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetterFactory;
 import org.simpleflatmapper.csv.impl.cellreader.BooleanCellValueReader;
-import org.simpleflatmapper.core.reflect.primitive.BooleanSetter;
+import org.simpleflatmapper.reflect.primitive.BooleanSetter;
 
 public class BooleanDelayedCellSetterFactory<T> implements DelayedCellSetterFactory<T, Boolean> {
 

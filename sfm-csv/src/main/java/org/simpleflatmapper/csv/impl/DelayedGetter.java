@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.Getter;
 
 public class DelayedGetter<T> implements Getter<CsvMapperCellHandler<?>, T> {
 	private final int index;

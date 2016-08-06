@@ -1,9 +1,9 @@
 package org.simpleflatmapper.csv;
 
 import org.junit.Test;
-import org.simpleflatmapper.core.map.FieldMapperErrorHandler;
-import org.simpleflatmapper.core.map.MappingException;
-import org.simpleflatmapper.core.map.column.DateFormatProperty;
+import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.column.DateFormatProperty;
 import org.simpleflatmapper.util.ListCollectorHandler;
 import org.simpleflatmapper.util.Predicate;
 

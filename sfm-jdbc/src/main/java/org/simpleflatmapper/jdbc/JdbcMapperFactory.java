@@ -1,15 +1,20 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.core.reflect.getter.GetterFactory;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.jdbc.impl.JdbcColumnKeyMapperKeyComparator;
 import org.simpleflatmapper.jdbc.impl.PreparedStatementSetterFactory;
-import org.simpleflatmapper.core.map.*;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.map.mapper.*;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
+import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactorImpl;
+import org.simpleflatmapper.map.mapper.DynamicSetRowMapper;
+import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
+import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.TypeReference;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.jdbc.impl.JpaAliasProvider;
 import org.simpleflatmapper.util.UnaryFactory;
 import org.simpleflatmapper.util.UnaryFactoryWithException;
@@ -48,8 +53,8 @@ import java.sql.SQLException;
  */
 public final class JdbcMapperFactory
 		extends AbstractMapperFactory<JdbcColumnKey,
-                FieldMapperColumnDefinition<JdbcColumnKey>,
-                JdbcMapperFactory> {
+                        FieldMapperColumnDefinition<JdbcColumnKey>,
+                        JdbcMapperFactory> {
 
 	static {
 		JpaAliasProvider.registers();

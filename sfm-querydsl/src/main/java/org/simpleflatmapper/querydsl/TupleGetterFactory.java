@@ -1,12 +1,11 @@
 package org.simpleflatmapper.querydsl;
 
 import com.mysema.query.Tuple;
-import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
-import org.simpleflatmapper.core.reflect.getter.GetterFactory;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.querydsl.getter.EnumTupleNamedIndexedGetter;
 import org.simpleflatmapper.querydsl.getter.EnumTupleOrdinalIndexedGetter;
 import org.simpleflatmapper.querydsl.getter.TupleIndexedGetter;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;

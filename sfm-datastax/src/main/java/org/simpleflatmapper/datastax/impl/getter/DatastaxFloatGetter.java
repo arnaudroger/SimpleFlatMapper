@@ -1,8 +1,8 @@
 package org.simpleflatmapper.datastax.impl.getter;
 
 import com.datastax.driver.core.GettableByIndexData;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.primitive.FloatGetter;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.primitive.FloatGetter;
 
 public class DatastaxFloatGetter implements FloatGetter<GettableByIndexData>, Getter<GettableByIndexData, Float> {
 

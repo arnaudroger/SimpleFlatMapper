@@ -5,7 +5,7 @@ import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.PreparedStatementMapperBuilder;
 import org.simpleflatmapper.jdbc.QueryPreparer;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

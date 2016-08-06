@@ -1,10 +1,10 @@
 package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.IndexedGetter;
-import org.simpleflatmapper.core.reflect.IndexedSetter;
-import org.simpleflatmapper.core.reflect.primitive.IntGetter;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.IndexedGetter;
+import org.simpleflatmapper.reflect.IndexedSetter;
+import org.simpleflatmapper.reflect.primitive.IntGetter;
 import org.simpleflatmapper.util.ErrorHelper;
 
 import java.sql.PreparedStatement;

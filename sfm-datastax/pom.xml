@@ -30,19 +30,11 @@
 				<configuration>
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
-						<Export-Package>org.sfm.datastax</Export-Package>
+						<Export-Package>org.simpleflatmapper.datastax</Export-Package>
 						<Import-Package>org.simpleflatmapper.*,cassandra.driver.*,com.google.*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
-				<!--<plugin>-->
-					<!--<groupId>org.apache.maven.plugins</groupId>-->
-					<!--<artifactId>maven-surefire-plugin</artifactId>-->
-					<!--<configuration>-->
-						<!--<argLine>-verbose:class</argLine>-->
-					<!--</configuration>-->
-				<!--</plugin>-->
-
 		</plugins>
 	</build>
 	<dependencies>

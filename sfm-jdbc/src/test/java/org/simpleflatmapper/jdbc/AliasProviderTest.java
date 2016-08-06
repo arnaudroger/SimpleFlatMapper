@@ -2,8 +2,8 @@ package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.impl.JpaAliasProvider;
-import org.simpleflatmapper.core.reflect.meta.AliasProviderFactory;
-import org.simpleflatmapper.core.reflect.meta.DefaultAliasProvider;
+import org.simpleflatmapper.reflect.meta.AliasProviderFactory;
+import org.simpleflatmapper.reflect.meta.DefaultAliasProvider;
 
 import javax.persistence.Column;
 

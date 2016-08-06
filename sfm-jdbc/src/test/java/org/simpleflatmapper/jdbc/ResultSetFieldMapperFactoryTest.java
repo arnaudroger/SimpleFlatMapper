@@ -2,17 +2,17 @@ package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.core.map.FieldMapper;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.map.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
-import org.simpleflatmapper.core.map.mapper.PropertyMapping;
-import org.simpleflatmapper.core.map.error.RethrowMapperBuilderErrorHandler;
-import org.simpleflatmapper.core.map.fieldmapper.ConstantSourceFieldMapperFactory;
-import org.simpleflatmapper.core.map.fieldmapper.LongFieldMapper;
-import org.simpleflatmapper.core.reflect.ReflectionService;
-import org.simpleflatmapper.core.reflect.meta.ClassMeta;
-import org.simpleflatmapper.core.reflect.meta.DefaultPropertyNameMatcher;
-import org.simpleflatmapper.core.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
+import org.simpleflatmapper.map.mapper.PropertyMapping;
+import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
+import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactory;
+import org.simpleflatmapper.map.fieldmapper.LongFieldMapper;
+import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
+import org.simpleflatmapper.reflect.meta.PropertyMeta;
 
 import java.sql.ResultSet;
 

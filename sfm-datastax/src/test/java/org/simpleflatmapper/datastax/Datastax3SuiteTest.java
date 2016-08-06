@@ -3,8 +3,8 @@ package org.simpleflatmapper.datastax;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.simpleflatmapper.core.map.Mapper;
-import org.simpleflatmapper.core.reflect.ReflectionService;
+import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.test.junit.LibrarySets;
 import org.simpleflatmapper.test.junit.MultiClassLoaderJunitRunner;
 

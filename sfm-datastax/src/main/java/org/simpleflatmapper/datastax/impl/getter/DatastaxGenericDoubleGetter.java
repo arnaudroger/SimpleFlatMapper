@@ -4,8 +4,8 @@ import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.GettableByIndexData;
 import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.datastax.DataTypeHelper;
-import org.simpleflatmapper.core.reflect.Getter;
-import org.simpleflatmapper.core.reflect.primitive.DoubleGetter;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.primitive.DoubleGetter;
 
 public class DatastaxGenericDoubleGetter implements DoubleGetter<GettableByIndexData>, Getter<GettableByIndexData, Double> {
 

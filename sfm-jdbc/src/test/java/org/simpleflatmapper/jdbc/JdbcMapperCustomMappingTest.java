@@ -1,16 +1,15 @@
 package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
-import org.simpleflatmapper.core.reflect.getter.GetterFactory;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.core.map.MappingContext;
-import org.simpleflatmapper.core.map.MappingException;
-import org.simpleflatmapper.core.map.FieldMapper;
-import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
-import org.simpleflatmapper.core.map.column.GetterProperty;
-import org.simpleflatmapper.core.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.column.GetterProperty;
+import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
 

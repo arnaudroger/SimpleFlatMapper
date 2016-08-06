@@ -2,8 +2,8 @@ package org.simpleflatmapper.datastax.impl;
 
 import com.datastax.driver.core.GettableByIndexData;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
-import org.simpleflatmapper.core.map.context.KeySourceGetter;
-import org.simpleflatmapper.core.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.context.KeySourceGetter;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 
 public class DatastaxMappingContextFactoryBuilder extends MappingContextFactoryBuilder<GettableByIndexData, DatastaxColumnKey> {
     public DatastaxMappingContextFactoryBuilder() {

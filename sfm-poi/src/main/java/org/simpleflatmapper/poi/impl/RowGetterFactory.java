@@ -2,16 +2,15 @@ package org.simpleflatmapper.poi.impl;
 
 
 import org.apache.poi.ss.usermodel.Row;
-import org.simpleflatmapper.core.reflect.getter.GetterFactory;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
-import org.simpleflatmapper.core.map.mapper.ColumnDefinition;
-import org.simpleflatmapper.core.reflect.getter.joda.JodaTimeGetterFactory;
+import org.simpleflatmapper.reflect.getter.joda.JodaTimeGetterFactory;
 
 //IFJAVA8_START
-import org.simpleflatmapper.core.reflect.getter.time.JavaTimeGetterFactory;
+import org.simpleflatmapper.reflect.getter.time.JavaTimeGetterFactory;
 import java.time.*;
 //IFJAVA8_END
-import org.simpleflatmapper.core.reflect.Getter;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;

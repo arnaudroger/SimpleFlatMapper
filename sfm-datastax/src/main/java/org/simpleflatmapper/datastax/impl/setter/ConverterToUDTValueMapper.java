@@ -2,7 +2,7 @@ package org.simpleflatmapper.datastax.impl.setter;
 
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
-import org.simpleflatmapper.core.map.Mapper;
+import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.converter.Converter;
 
 public class ConverterToUDTValueMapper<I> implements Converter<I, UDTValue> {

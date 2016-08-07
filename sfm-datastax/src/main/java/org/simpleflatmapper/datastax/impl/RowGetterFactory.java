@@ -1,6 +1,7 @@
 package org.simpleflatmapper.datastax.impl;
 
 import com.datastax.driver.core.*;
+import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.datastax.DataTypeHelper;
@@ -9,7 +10,6 @@ import org.simpleflatmapper.datastax.DatastaxMapperFactory;
 import org.simpleflatmapper.reflect.getter.EnumUnspecifiedTypeGetter;
 import org.simpleflatmapper.reflect.getter.OrdinalEnumGetter;
 import org.simpleflatmapper.reflect.getter.StringEnumGetter;
-import org.simpleflatmapper.reflect.getter.joda.JodaTimeGetterFactory;
 import org.simpleflatmapper.reflect.Getter;
 
 import java.lang.reflect.Type;
@@ -20,13 +20,6 @@ import java.net.InetAddress;
 
 
 import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.impl.JavaBaseConverterFactoryProducer;
-
-//IFJAVA8_START
-import org.simpleflatmapper.reflect.getter.time.JavaTimeGetterFactory;
-import java.time.*;
-import java.time.LocalDate;
-//IFJAVA8_END
 
 import org.simpleflatmapper.datastax.impl.getter.DatastaxBigDecimalGetter;
 import org.simpleflatmapper.datastax.impl.getter.DatastaxBigIntegerGetter;
@@ -73,8 +66,6 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
     private final HashMap<Class<?>, GetterFactory<GettableByIndexData, DatastaxColumnKey>> getterFactories = new HashMap<Class<?>, GetterFactory<GettableByIndexData, DatastaxColumnKey>>();
     private final DatastaxMapperFactory datastaxMapperFactory;
 
-    private JodaTimeGetterFactory<GettableByIndexData, DatastaxColumnKey> jodaTimeGetterFactory;
-
     public RowGetterFactory(DatastaxMapperFactory datastaxMapperFactory) {
         this.datastaxMapperFactory = datastaxMapperFactory;
         GetterFactory<GettableByIndexData, DatastaxColumnKey> dateGetterFactory = new GetterFactory<GettableByIndexData, DatastaxColumnKey>() {
@@ -84,22 +75,6 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                 return (Getter<GettableByIndexData, P>) new DatastaxTimestampGetter(key.getIndex());
             }
         };
-        //IFJAVA8_START
-        JavaTimeGetterFactory<GettableByIndexData, DatastaxColumnKey> javaTimeGetterFactory =
-                new JavaTimeGetterFactory<GettableByIndexData, DatastaxColumnKey>(dateGetterFactory);
-        getterFactories.put(LocalDate.class, javaTimeGetterFactory);
-        getterFactories.put(LocalDateTime.class, javaTimeGetterFactory);
-        getterFactories.put(LocalTime.class, javaTimeGetterFactory);
-        getterFactories.put(OffsetDateTime.class, javaTimeGetterFactory);
-        getterFactories.put(OffsetTime.class, javaTimeGetterFactory);
-        getterFactories.put(ZonedDateTime.class, javaTimeGetterFactory);
-        getterFactories.put(Instant.class, javaTimeGetterFactory);
-        getterFactories.put(Year.class, javaTimeGetterFactory);
-        getterFactories.put(YearMonth.class, javaTimeGetterFactory);
-        //IFJAVA8_END
-
-        jodaTimeGetterFactory = new JodaTimeGetterFactory<GettableByIndexData, DatastaxColumnKey>(dateGetterFactory);
-
         getterFactories.put(Byte.class, new GetterFactory<GettableByIndexData, DatastaxColumnKey>() {
             @SuppressWarnings("unchecked")
             @Override
@@ -396,12 +371,6 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
             return rowGetterFactory.newGetter(target, key, properties);
         }
 
-        final Getter<GettableByIndexData, P> getter = jodaTimeGetterFactory.newGetter(target, key, properties);
-
-        if (getter != null) {
-            return getter;
-        }
-
         if (key.getDataType() != null && key.getDataType() instanceof UserType) {
             UserType ut = (UserType) key.getDataType();
             return (Getter<GettableByIndexData, P>) DatastaxUDTGetter.newInstance(datastaxMapperFactory, target, ut, key.getIndex());
@@ -420,7 +389,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                 return new ConverterMapper(DatastaxTupleGetter.newTupleMapper(elementType, (TupleType) dtElt, datastaxMapperFactory));
             }
         }
-        return JavaBaseConverterFactoryProducer.getConverter(dataTypeElt, elementType);
+        return ConverterService.getInstance().findConverter(dataTypeElt, elementType);
     }
 
     @SuppressWarnings("unchecked")

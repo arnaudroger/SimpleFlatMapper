@@ -5,7 +5,6 @@ import org.simpleflatmapper.csv.CellValueReaderFactory;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.impl.cellreader.*;
 import org.simpleflatmapper.csv.ParsingContextFactoryBuilder;
-import org.simpleflatmapper.csv.impl.cellreader.joda.JodaTimeCellValueReaderHelper;
 
 import java.lang.reflect.Type;
 import java.util.Calendar;
@@ -13,15 +12,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-//IFJAVA8_START
-import java.time.format.DateTimeFormatter;
-import java.time.*;
-import org.simpleflatmapper.csv.impl.cellreader.time.*;
-import org.simpleflatmapper.util.date.time.JavaTimeHelper;
-//IFJAVA8_END
+
 import org.simpleflatmapper.util.TypeHelper;
-import org.simpleflatmapper.util.UnaryFactory;
-import org.simpleflatmapper.util.date.joda.JodaTimeHelper;
 
 public final class CellValueReaderFactoryImpl implements CellValueReaderFactory {
 
@@ -69,93 +61,8 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 			}
 		} else if (Calendar.class.equals(propertyClass)) {
 			reader = (CellValueReader<P>) new CalendarCellValueReader(this.<Date>getReader(Date.class, index, columnDefinition, parsingContextFactoryBuilder));
-		//IFJAVA8_START
-		} else if (propertyClass.equals(LocalDate.class)) {
-			reader = (CellValueReader<P>)
-					newJavaTime(columnDefinition,
-							new UnaryFactory<DateTimeFormatter, CellValueReader<LocalDate>>() {
-								@Override
-								public CellValueReader<LocalDate> newInstance(DateTimeFormatter dateTimeFormatter) {
-									return new JavaLocalDateCellValueReader(dateTimeFormatter);
-								}
-							});
-		} else if (propertyClass.equals(LocalDateTime.class)) {
-			reader = (CellValueReader<P>)
-					newJavaTime(columnDefinition,
-							new UnaryFactory<DateTimeFormatter, CellValueReader<LocalDateTime>>() {
-								@Override
-								public CellValueReader<LocalDateTime> newInstance(DateTimeFormatter dateTimeFormatter) {
-									return new JavaLocalDateTimeCellValueReader(dateTimeFormatter);
-								}
-							});
-		} else if (propertyClass.equals(LocalTime.class)) {
-			reader = (CellValueReader<P>)
-					newJavaTime(columnDefinition,
-							new UnaryFactory<DateTimeFormatter, CellValueReader<LocalTime>>() {
-								@Override
-								public CellValueReader<LocalTime> newInstance(DateTimeFormatter dateTimeFormatter) {
-									return new JavaLocalTimeCellValueReader(dateTimeFormatter);
-								}
-							});
-		} else if (propertyClass.equals(ZonedDateTime.class)) {
-			reader = (CellValueReader<P>)
-					newJavaTime(columnDefinition,
-							new UnaryFactory<DateTimeFormatter, CellValueReader<ZonedDateTime>>() {
-								@Override
-								public CellValueReader<ZonedDateTime> newInstance(DateTimeFormatter dateTimeFormatter) {
-									return new JavaZonedDateTimeCellValueReader(dateTimeFormatter);
-								}
-							});
-		} else if (propertyClass.equals(OffsetTime.class)) {
-			reader = (CellValueReader<P>)
-					newJavaTime(columnDefinition,
-							new UnaryFactory<DateTimeFormatter, CellValueReader<OffsetTime>>() {
-								@Override
-								public CellValueReader<OffsetTime> newInstance(DateTimeFormatter dateTimeFormatter) {
-									return new JavaOffsetTimeCellValueReader(dateTimeFormatter);
-								}
-							});
-		} else if (propertyClass.equals(OffsetDateTime.class)) {
-			reader = (CellValueReader<P>)
-					newJavaTime(columnDefinition,
-							new UnaryFactory<DateTimeFormatter, CellValueReader<OffsetDateTime>>() {
-								@Override
-								public CellValueReader<OffsetDateTime> newInstance(DateTimeFormatter dateTimeFormatter) {
-									return new JavaOffsetDateTimeCellValueReader(dateTimeFormatter);
-								}
-							});
-		} else if (propertyClass.equals(Instant.class)) {
-			reader = (CellValueReader<P>)
-					newJavaTime(columnDefinition,
-							new UnaryFactory<DateTimeFormatter, CellValueReader<Instant>>() {
-								@Override
-								public CellValueReader<Instant> newInstance(DateTimeFormatter dateTimeFormatter) {
-									return new JavaInstantCellValueReader(dateTimeFormatter);
-								}
-							});
-		} else if (propertyClass.equals(Year.class)) {
-			reader = (CellValueReader<P>)
-					newJavaTime(columnDefinition,
-							new UnaryFactory<DateTimeFormatter, CellValueReader<Year>>() {
-								@Override
-								public CellValueReader<Year> newInstance(DateTimeFormatter dateTimeFormatter) {
-									return new JavaYearCellValueReader(dateTimeFormatter);
-								}
-							});
-		} else if (propertyClass.equals(YearMonth.class)) {
-			reader = (CellValueReader<P>)
-					newJavaTime(columnDefinition,
-							new UnaryFactory<DateTimeFormatter, CellValueReader<YearMonth>>() {
-								@Override
-								public CellValueReader<YearMonth> newInstance(DateTimeFormatter dateTimeFormatter) {
-									return new JavaYearMonthCellValueReader(dateTimeFormatter);
-								}
-							});
-		//IFJAVA8_END
 		}  else if (Enum.class.isAssignableFrom(propertyClass)) {
 			reader = new EnumCellValueReader(propertyClass);
-		} else if (JodaTimeHelper.isJoda(propertyClass)){
-			reader = (CellValueReader<P>) JodaTimeCellValueReaderHelper.getReader(propertyClass, columnDefinition);
 		} else if (UUID.class.equals(propertyClass)) {
 			reader = (CellValueReader<P>) new UUIDCellValueReader();
 		}
@@ -166,21 +73,6 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 
 		return reader;
 	}
-
-	//IFJAVA8_START
-	private <T>  CellValueReader<T> newJavaTime(CsvColumnDefinition csvColumnDefinition, UnaryFactory<DateTimeFormatter, CellValueReader<T>> unaryFactory) {
-		DateTimeFormatter[] dateTimeFormatters = JavaTimeHelper.getDateTimeFormatters(csvColumnDefinition.properties());
-		if (dateTimeFormatters.length == 1) {
-			return unaryFactory.newInstance(dateTimeFormatters[0]);
-		} else {
-			CellValueReader<T>[] readers = new CellValueReader[dateTimeFormatters.length];
-			for(int i = 0; i < readers.length; i++) {
-				readers[i] = unaryFactory.newInstance(dateTimeFormatters[i]);
-			}
-			return new MultiFormaterCellValueReader<T>(readers);
-		}
-	}
-	//IFJAVA8_END
 
 	@SuppressWarnings("unchecked")
 	private <P> CellValueReader<P> getCellValueTransformer(Class<? extends P> propertyType) {

@@ -8,11 +8,6 @@ import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.column.SetterFactoryProperty;
 import org.simpleflatmapper.map.column.SetterProperty;
-//IFJAVA8_START
-import org.simpleflatmapper.csv.impl.writer.time.JavaTimeFormattingAppender;
-import org.simpleflatmapper.map.column.time.JavaDateTimeFormatterProperty;
-import java.time.temporal.TemporalAccessor;
-//IFJAVA8_END
 import org.simpleflatmapper.map.column.joda.JodaDateTimeFormatterProperty;
 import org.simpleflatmapper.map.fieldmapper.BooleanFieldMapper;
 import org.simpleflatmapper.map.fieldmapper.ByteFieldMapper;
@@ -49,7 +44,6 @@ import org.simpleflatmapper.reflect.primitive.LongGetter;
 import org.simpleflatmapper.reflect.primitive.ShortGetter;
 import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TypeHelper;
-import org.simpleflatmapper.util.date.joda.JodaTimeHelper;
 
 import java.lang.reflect.Type;
 import java.text.Format;
@@ -120,19 +114,6 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
                 df = dfp.get();
             }
             format = new SimpleDateFormat(df);
-        }
-        //IFJAVA8_START
-        else if (TypeHelper.isAssignable(TemporalAccessor.class, type)
-                && columnDefinition.has(JavaDateTimeFormatterProperty.class)) {
-            return new JavaTimeFormattingAppender<S>((Getter<S, ? extends TemporalAccessor>) getter, columnDefinition.lookFor(JavaDateTimeFormatterProperty.class).get(), cellWriter);
-        }
-        //IFJAVA8_END
-        else if (JodaTimeHelper.isJoda(type)) {
-            if (columnDefinition.has(JodaDateTimeFormatterProperty.class)) {
-                return new JodaTimeFormattingAppender<S>(getter, columnDefinition.lookFor(JodaDateTimeFormatterProperty.class).get(), cellWriter);
-            } else if (columnDefinition.has(DateFormatProperty.class)) {
-                return new JodaTimeFormattingAppender<S>(getter, columnDefinition.lookFor(DateFormatProperty.class).get(), cellWriter);
-            }
         }
 
         if (format != null) {

@@ -7,7 +7,6 @@ import org.simpleflatmapper.reflect.getter.OrdinalEnumGetter;
 import org.simpleflatmapper.reflect.getter.StringEnumGetter;
 import org.simpleflatmapper.reflect.getter.StringUUIDGetter;
 import org.simpleflatmapper.reflect.getter.UUIDUnspecifiedTypeGetter;
-import org.simpleflatmapper.reflect.getter.joda.JodaTimeGetterFactory;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.reflect.Getter;
 
@@ -24,12 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-
-
-//IFJAVA8_START
-import java.time.*;
-import org.simpleflatmapper.reflect.getter.time.JavaTimeGetterFactory;
-//IFJAVA8_END
 
 import org.simpleflatmapper.jdbc.impl.getter.ArrayResultSetGetter;
 import org.simpleflatmapper.jdbc.impl.getter.ArrayToListResultSetGetter;
@@ -143,7 +136,6 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 
 	private static final Map<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>> factoryPerType =
 		new HashMap<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>>();
-	private static final JodaTimeGetterFactory<ResultSet, JdbcColumnKey> jodaTimeGetterFactory;
 
 	static {
 		factoryPerType.put(String.class, new StringResultSetGetterFactory());
@@ -388,20 +380,6 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
 			}
 		};
-		JavaTimeGetterFactory<ResultSet, JdbcColumnKey> javaTimeGetterFactory =
-				new JavaTimeGetterFactory<ResultSet, JdbcColumnKey>(objectGetterFactory);
-		factoryPerType.put(LocalDate.class, javaTimeGetterFactory);
-		factoryPerType.put(LocalDateTime.class, javaTimeGetterFactory);
-		factoryPerType.put(LocalTime.class, javaTimeGetterFactory);
-		factoryPerType.put(OffsetDateTime.class, javaTimeGetterFactory);
-		factoryPerType.put(OffsetTime.class, javaTimeGetterFactory);
-		factoryPerType.put(ZonedDateTime.class, javaTimeGetterFactory);
-		factoryPerType.put(Instant.class, javaTimeGetterFactory);
-		factoryPerType.put(Year.class, javaTimeGetterFactory);
-		factoryPerType.put(YearMonth.class, javaTimeGetterFactory);
-		//IFJAVA8_END
-
-		jodaTimeGetterFactory = new JodaTimeGetterFactory<ResultSet, JdbcColumnKey>(factoryPerType.get(Date.class));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -443,11 +421,9 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			}
 		}
 		
-		Getter<ResultSet, P> getter;
+		Getter<ResultSet, P> getter = null;
 		if (getterFactory != null) {
 			getter = (Getter<ResultSet, P>) getterFactory.newGetter(genericType, key, properties);
-		} else {
-			getter = (Getter<ResultSet, P>) jodaTimeGetterFactory.newGetter(genericType, key, properties);
 		}
 
 		if (getter == null) {

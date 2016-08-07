@@ -4,12 +4,8 @@ import org.simpleflatmapper.converter.AbstractConverterFactory;
 import org.simpleflatmapper.converter.AbstractConverterFactoryProducer;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
-import org.simpleflatmapper.converter.ConverterFactoryProducer;
 import org.simpleflatmapper.converter.ConvertingTypes;
-import org.simpleflatmapper.util.TypeHelper;
-import org.simpleflatmapper.util.date.time.JavaTimeHelper;
 
-import java.lang.reflect.Type;
 import java.time.*;
 import java.util.Date;
 import java.util.function.Consumer;
@@ -101,6 +97,61 @@ public class JavaTimeConverterFactoryProducer extends AbstractConverterFactoryPr
             @Override
             public Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params) {
                 return new DateToJavaYearConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            }
+        });
+
+        factoryConverter(consumer, new AbstractConverterFactory(Object.class, Instant.class) {
+            @Override
+            public Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params) {
+                return new ObjectToJavaInstantConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            }
+        });
+        factoryConverter(consumer, new AbstractConverterFactory(Object.class, LocalDateTime.class) {
+            @Override
+            public Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params) {
+                return new ObjectToJavaLocalDateTimeConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            }
+        });
+        factoryConverter(consumer, new AbstractConverterFactory(Object.class, LocalDate.class) {
+            @Override
+            public Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params) {
+                return new ObjectToJavaLocalDateConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            }
+        });
+        factoryConverter(consumer, new AbstractConverterFactory(Object.class, LocalTime.class) {
+            @Override
+            public Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params) {
+                return new ObjectToJavaLocalTimeConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            }
+        });
+        factoryConverter(consumer, new AbstractConverterFactory(Object.class, ZonedDateTime.class) {
+            @Override
+            public Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params) {
+                return new ObjectToJavaZonedDateTimeConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            }
+        });
+        factoryConverter(consumer, new AbstractConverterFactory(Object.class, OffsetDateTime.class) {
+            @Override
+            public Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params) {
+                return new ObjectToJavaOffsetDateTimeConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            }
+        });
+        factoryConverter(consumer, new AbstractConverterFactory(Object.class, OffsetTime.class) {
+            @Override
+            public Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params) {
+                return new ObjectToJavaOffsetTimeConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            }
+        });
+        factoryConverter(consumer, new AbstractConverterFactory(Object.class, YearMonth.class) {
+            @Override
+            public Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params) {
+                return new ObjectToJavaYearMonthConverter(JavaTimeHelper.getZoneIdOrDefault(params));
+            }
+        });
+        factoryConverter(consumer, new AbstractConverterFactory(Object.class, Year.class) {
+            @Override
+            public Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params) {
+                return new ObjectToJavaYearConverter(JavaTimeHelper.getZoneIdOrDefault(params));
             }
         });
     }

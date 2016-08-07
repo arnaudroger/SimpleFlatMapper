@@ -3,7 +3,7 @@ package org.simpleflatmapper.map.column.time;
 import org.junit.Test;
 import org.simpleflatmapper.map.column.DateFormatProperty;
 import org.simpleflatmapper.map.column.TimeZoneProperty;
-import org.simpleflatmapper.util.date.time.JavaTimeHelper;
+import org.simpleflatmapper.converter.impl.time.JavaTimeHelper;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;

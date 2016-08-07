@@ -357,7 +357,7 @@ public class ResultSetGetterFactoryTest {
 
 		assertNull(getter.get(resultSet));
 
-		assertEquals("JavaLocalDateFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
+		assertEquals("ObjectToJavaLocalDateConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -381,7 +381,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(localDateTime, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
 
-		assertEquals("JavaLocalDateTimeFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
+		assertEquals("ObjectToJavaLocalDateTimeConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -409,7 +409,7 @@ public class ResultSetGetterFactoryTest {
 		assertNull(getter.get(resultSet));
 
 
-		assertEquals("JavaLocalTimeFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
+		assertEquals("ObjectToJavaLocalTimeConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -432,7 +432,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(offsetDateTime, getter.get(resultSet));
 		assertEquals(offsetDateTime, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
-		assertEquals("JavaOffsetDateTimeFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
+		assertEquals("ObjectToJavaOffsetDateTimeConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -462,7 +462,7 @@ public class ResultSetGetterFactoryTest {
 		assertNull(getter.get(resultSet));
 
 
-		assertEquals("JavaOffsetTimeFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
+		assertEquals("ObjectToJavaOffsetTimeConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -486,7 +486,7 @@ public class ResultSetGetterFactoryTest {
 		assertNull(getter.get(resultSet));
 
 
-		assertEquals("JavaZonedDateTimeFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
+		assertEquals("ObjectToJavaZonedDateTimeConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -501,7 +501,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(instant, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
 
-		assertEquals("JavaInstantFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
+		assertEquals("ObjectToJavaInstantConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -516,7 +516,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(YearMonth.from(dateTime), getter.get(resultSet));
 		assertNull(getter.get(resultSet));
 
-		assertEquals("JavaYearMonthFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
+		assertEquals("ObjectToJavaYearMonthConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -530,7 +530,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(Year.of(2029), getter.get(resultSet));
 		assertNull(getter.get(resultSet));
 
-		assertEquals("JavaYearFromObjectGetter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
+		assertEquals("ObjectToJavaYearConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	//IFJAVA8_END

@@ -1,5 +1,6 @@
 package org.simpleflatmapper.reflect.meta;
 
+import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.reflect.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
 public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	private final ReflectionService reflectionService;
-	private final Converter<CharSequence, K> keyConverter;
+	private final Converter<? super CharSequence, ? extends K> keyConverter;
 	private final ClassMeta<V> valueClassMeta;
 	private final Type type;
 
@@ -25,7 +26,7 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	public MapClassMeta(Type type, Type keyType, Type valueType, ReflectionService reflectionService) {
 		this.type = type;
-		this.keyConverter = JavaBaseConverterFactoryProducer.getConverter(CharSequence.class, keyType);
+		this.keyConverter = ConverterService.getInstance().findConverter(CharSequence.class, keyType);
 		if (keyConverter == null) {
 			throw new IllegalArgumentException("Unsupported key type " + keyType);
 		}

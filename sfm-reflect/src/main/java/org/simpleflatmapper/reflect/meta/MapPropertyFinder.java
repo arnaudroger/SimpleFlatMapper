@@ -11,10 +11,10 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> implements PropertyFin
 
     private final ClassMeta<V> valueMetaData;
     private final ClassMeta<T> mapMeta;
-    private final Converter<CharSequence, K> keyConverter;
+    private final Converter<? super CharSequence, ? extends K> keyConverter;
     private final Map<PropertyNameMatcher, PropertyFinder<V>> finders = new HashMap<PropertyNameMatcher, PropertyFinder<V>>();
 
-    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<CharSequence, K> keyConverter) {
+    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter) {
         this.mapMeta = mapMeta;
         this.valueMetaData = valueMetaData;
         this.keyConverter = keyConverter;

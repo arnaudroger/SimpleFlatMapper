@@ -1,7 +1,7 @@
 package org.simpleflatmapper.map.column.time;
 
+import org.simpleflatmapper.converter.impl.time.DateTimeFormatterSupplier;
 import org.simpleflatmapper.map.column.ColumnProperty;
-import org.simpleflatmapper.util.date.time.DateTimeFormatterSupplier;
 
 import java.time.format.DateTimeFormatter;
 
@@ -12,6 +12,7 @@ public class JavaDateTimeFormatterProperty implements ColumnProperty, DateTimeFo
         this.formatter = formatter;
     }
 
+    @Override
     public DateTimeFormatter get() {
         return formatter;
     }

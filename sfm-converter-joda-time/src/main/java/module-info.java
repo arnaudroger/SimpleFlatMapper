@@ -1,5 +1,5 @@
 module org.simpleflatmapper.converter.joda {
-        requires joda.time;
         requires org.simpleflatmapper.converter;
+        requires joda.time;
         exports org.simpleflatmapper.converter.joda;
 }

@@ -14,7 +14,7 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
 import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.ConverterFactory;
+import org.simpleflatmapper.converter.impl.JavaBaseConverterFactoryProducer;
 import org.simpleflatmapper.datastax.impl.setter.BigDecimalSettableDataSetter;
 import org.simpleflatmapper.datastax.impl.setter.BigIntegerSettableDataSetter;
 import org.simpleflatmapper.datastax.impl.setter.ByteSettableDataSetter;
@@ -301,6 +301,6 @@ public class SettableDataSetterFactory
                 return new ConverterToTupleValueMapper(mapper, (TupleType) dtElt);
             }
         }
-        return ConverterFactory.getConverter(TypeHelper.toClass(elementType), dataTypeElt, columnDefinition.properties());
+        return JavaBaseConverterFactoryProducer.getConverter(TypeHelper.toClass(elementType), dataTypeElt, columnDefinition.properties());
     }
 }

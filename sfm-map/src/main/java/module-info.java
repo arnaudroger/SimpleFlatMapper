@@ -1,7 +1,6 @@
 module org.simpleflatmapper.map {
         requires org.objectweb.asm;
         requires java.logging;
-        requires joda.time;
 
         requires public org.simpleflatmapper.util;
         requires public org.simpleflatmapper.reflect;

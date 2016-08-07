@@ -5,7 +5,7 @@ import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.ConverterFactory;
+import org.simpleflatmapper.converter.impl.JavaBaseConverterFactoryProducer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -25,7 +25,7 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 
 	public MapClassMeta(Type type, Type keyType, Type valueType, ReflectionService reflectionService) {
 		this.type = type;
-		this.keyConverter = ConverterFactory.getConverter(CharSequence.class, keyType);
+		this.keyConverter = JavaBaseConverterFactoryProducer.getConverter(CharSequence.class, keyType);
 		if (keyConverter == null) {
 			throw new IllegalArgumentException("Unsupported key type " + keyType);
 		}

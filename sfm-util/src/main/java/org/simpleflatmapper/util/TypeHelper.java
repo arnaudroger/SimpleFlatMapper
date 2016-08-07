@@ -228,7 +228,11 @@ public class TypeHelper {
 		for(int i = 0; i < typeParameters.length; i++) {
 			TypeVariable<Class<Object>> typeVariable = typeParameters[i];
 			if (typeVariable.getName().equals(t.getName())) {
-				return ((ParameterizedType)type).getActualTypeArguments()[i];
+				if (type instanceof ParameterizedType) {
+					return ((ParameterizedType) type).getActualTypeArguments()[i];
+				} else {
+					return null;
+				}
 			}
 		}
 		return type;

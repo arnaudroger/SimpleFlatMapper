@@ -9,7 +9,7 @@ import org.simpleflatmapper.jooq.getter.RecordGetter;
 import org.simpleflatmapper.jooq.getter.RecordGetterWithConverter;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.ConverterFactory;
+import org.simpleflatmapper.converter.impl.JavaBaseConverterFactoryProducer;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
@@ -41,7 +41,7 @@ public class RecordGetterFactory<R extends Record> implements
 	}
 	
 	private <P, F> Getter<R, P> newRecordGetterWithConverter(Class<F> inType, Type outType, int index) {
-		Converter<F, P> converter = ConverterFactory.getConverter(inType, outType);
+		Converter<F, P> converter = JavaBaseConverterFactoryProducer.getConverter(inType, outType);
 		if (converter == null) {
 			converter = JooqConverterFactory.getConverter(inType, outType);
 		}

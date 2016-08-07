@@ -1,6 +1,5 @@
 module org.simpleflatmapper.reflect {
         requires org.objectweb.asm;
-        requires joda.time;
         requires org.simpleflatmapper.util;
         requires org.simpleflatmapper.converter;
 

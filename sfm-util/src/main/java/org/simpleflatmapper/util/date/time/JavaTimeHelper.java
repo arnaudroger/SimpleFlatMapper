@@ -1,8 +1,9 @@
 package org.simpleflatmapper.util.date.time;
 
+import org.simpleflatmapper.util.Supplier;
+import org.simpleflatmapper.util.SupplierHelper;
 import org.simpleflatmapper.util.date.DateFormatSupplier;
 import org.simpleflatmapper.util.date.DefaultDateFormatSupplier;
-import org.simpleflatmapper.util.date.TimeZoneSupplier;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -19,8 +20,8 @@ public class JavaTimeHelper {
 
         DefaultDateFormatSupplier defaultDateFormatSupplier = null;
         for(Object prop : properties) {
-            if (prop instanceof DateTimeFormatterSupplier) {
-                dtf.add(withZone(((DateTimeFormatterSupplier) prop).get(), zoneId));
+            if (SupplierHelper.isSupplierOf(prop, DateTimeFormatter.class)) {
+                dtf.add(withZone(((Supplier<DateTimeFormatter>) prop).get(), zoneId));
             } else if (prop instanceof DateFormatSupplier) {
                 dtf.add(withZone(((DateFormatSupplier) prop).get(), zoneId));
             } else if (prop instanceof DefaultDateFormatSupplier) {
@@ -64,10 +65,10 @@ public class JavaTimeHelper {
                     return (ZoneId) p;
                 } else if (p instanceof TimeZone) {
                     return ((TimeZone)p).toZoneId();
-                } else if (p instanceof ZoneIdSupplier) {
-                    return ((ZoneIdSupplier)p).get();
-                } else if (p instanceof TimeZoneSupplier) {
-                    return (((TimeZoneSupplier)p).get()).toZoneId();
+                } else if (SupplierHelper.isSupplierOf(p, ZoneId.class)) {
+                    return ((Supplier<ZoneId>)p).get();
+                } else if (SupplierHelper.isSupplierOf(p, TimeZone.class)) {
+                    return (((Supplier<TimeZone>)p).get()).toZoneId();
                 }
             }
         }

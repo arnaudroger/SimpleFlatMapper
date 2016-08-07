@@ -257,7 +257,7 @@ public class ResultSetGetterFactoryTest {
         Getter<ResultSet, LocalDate> getter = factory.<LocalDate>newGetter(LocalDate.class, key(Types.DATE), IDENTITY);
         LocalDate dt = getter.get(resultSet);
 		assertTrue(new LocalDate(cal).isEqual(dt));
-        assertEquals("JodaLocalDateFromDateGetter{getter=DateResultSetGetter{column=1}}", getter.toString());
+        assertEquals("DateToJodaLocalDateConverter{getter=DateResultSetGetter{column=1}}", getter.toString());
 	}
 	@Test
 	public void testJodaLocalDateTime() throws Exception {
@@ -267,7 +267,7 @@ public class ResultSetGetterFactoryTest {
         Getter<ResultSet, LocalDateTime> getter = factory.<LocalDateTime>newGetter(LocalDateTime.class, key(Types.TIMESTAMP), IDENTITY);
         LocalDateTime dt = getter.get(resultSet);
 		assertTrue(new LocalDateTime(cal).isEqual(dt));
-        assertEquals("JodaLocalDateTimeFromDateGetter{getter=TimestampResultSetGetter{column=1}}", getter.toString());
+        assertEquals("DateToJodaLocalDateTimeConverter{getter=TimestampResultSetGetter{column=1}}", getter.toString());
 	}
 	@Test
 	public void testJodaLocalTime() throws Exception {

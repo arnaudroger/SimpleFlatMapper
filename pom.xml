@@ -50,6 +50,7 @@
         <module>sfm-map</module>
         <module>sfm-tuples</module>
         <module>sfm-converter</module>
+        <module>sfm-converter-joda-time</module>
         <module>sfm-csv</module>
         <module>sfm-jdbc</module>
         <module>sfm-datastax</module>

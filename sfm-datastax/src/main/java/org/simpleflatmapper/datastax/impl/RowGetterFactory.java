@@ -20,7 +20,7 @@ import java.net.InetAddress;
 
 
 import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.ConverterFactory;
+import org.simpleflatmapper.converter.impl.JavaBaseConverterFactoryProducer;
 
 //IFJAVA8_START
 import org.simpleflatmapper.reflect.getter.time.JavaTimeGetterFactory;
@@ -420,7 +420,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
                 return new ConverterMapper(DatastaxTupleGetter.newTupleMapper(elementType, (TupleType) dtElt, datastaxMapperFactory));
             }
         }
-        return ConverterFactory.getConverter(dataTypeElt, elementType);
+        return JavaBaseConverterFactoryProducer.getConverter(dataTypeElt, elementType);
     }
 
     @SuppressWarnings("unchecked")

@@ -32,7 +32,7 @@ public final class DoubleResultSetGetter implements DoubleGetter<ResultSet>, Get
     @Override
     public String toString() {
         return "DoubleResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

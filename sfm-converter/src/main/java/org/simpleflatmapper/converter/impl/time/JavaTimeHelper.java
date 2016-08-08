@@ -13,6 +13,30 @@ import java.util.TimeZone;
 
 public class JavaTimeHelper {
 
+    public static DateTimeFormatter getDateTimeFormatter(Object... properties) {
+
+        ZoneId zoneId = getZoneId(properties);
+
+        DefaultDateFormatSupplier defaultDateFormatSupplier = null;
+        for(Object prop : properties) {
+            if (SupplierHelper.isSupplierOf(prop, DateTimeFormatter.class)) {
+                return (withZone(((Supplier<DateTimeFormatter>) prop).get(), zoneId));
+            } else if (prop instanceof DateFormatSupplier) {
+                return (withZone(((DateFormatSupplier) prop).get(), zoneId));
+            } else if (prop instanceof DefaultDateFormatSupplier) {
+                defaultDateFormatSupplier = (DefaultDateFormatSupplier) prop;
+            } else if (prop instanceof DateTimeFormatter) {
+                return ((DateTimeFormatter) prop);
+            }
+        }
+
+        if (defaultDateFormatSupplier != null) {
+            return withZone(defaultDateFormatSupplier.get(), zoneId);
+        }
+
+        return null;
+    }
+
     public static DateTimeFormatter[] getDateTimeFormatters(Object... properties) {
         List<DateTimeFormatter> dtf = new ArrayList<DateTimeFormatter>();
 
@@ -26,6 +50,8 @@ public class JavaTimeHelper {
                 dtf.add(withZone(((DateFormatSupplier) prop).get(), zoneId));
             } else if (prop instanceof DefaultDateFormatSupplier) {
                 defaultDateFormatSupplier = (DefaultDateFormatSupplier) prop;
+            } else if (prop instanceof DateTimeFormatter) {
+                dtf.add((DateTimeFormatter) prop);
             }
         }
 

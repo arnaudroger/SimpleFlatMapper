@@ -6,7 +6,6 @@ import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.impl.JavaBaseConverterFactoryProducer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;

@@ -4,9 +4,8 @@ import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.column.ColumnProperty;
-import org.simpleflatmapper.map.column.FormatProperty;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FormatProperty;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.mapper.ContextualMapper;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -36,13 +35,13 @@ import java.util.Arrays;
  *     CsvWriter csvWriter = CsvWriter.from(MyObject.class).skipHeaders().to(myWriter);<br>
  * </code>
  * <br>
- * You can also specified the column names.
+ * You can also specified the property names.
  * <br>
  * <code>
  *     CsvWriter csvWriter = CsvWriter.from(MyObject.class).columns("id", "name").to(myWriter);<br>
  * </code>
  * <br>
- * Or add a column with a specified format
+ * Or add a property with a specified format
  * <br>
  * <code>
  *     CsvWriter csvWriter = CsvWriter.from(MyObject.class).columns("date", new SimpleDateFormat("yyyyMMdd")).to(myWriter);<br>
@@ -199,7 +198,7 @@ public class CsvWriter<T>  {
 
         /**
          * Create a new DSL object identical to the current one but and append the specified columns
-         * @param columnNames the list of column names
+         * @param columnNames the list of property names
          * @return the new DSL
          */
         @SuppressWarnings("unchecked")
@@ -211,13 +210,13 @@ public class CsvWriter<T>  {
         }
 
         /**
-         * Create a new DSL object identical to the current one but with the specified column added.
-         * @param column the column name
-         * @param property the column properties
+         * Create a new DSL object identical to the current one but with the specified property added.
+         * @param column the property name
+         * @param property the property properties
          * @return the new DSL
          */
         @SuppressWarnings("unchecked")
-        public CsvWriterDSL<T> column(String column, ColumnProperty... property) {
+        public CsvWriterDSL<T> column(String column, Object... property) {
             Column[] newColumns =
                     Arrays.copyOf(columns, columns.length + 1);
 
@@ -228,9 +227,9 @@ public class CsvWriter<T>  {
         }
 
         /**
-         * Create a new DSL object identical to the current one but with the specified column added.
-         * @param column the column name
-         * @param format the column formatter
+         * Create a new DSL object identical to the current one but with the specified property added.
+         * @param column the property name
+         * @param format the property formatter
          * @return the new DSL
          */
         public CsvWriterDSL<T> column(String column, Format format) {
@@ -386,7 +385,7 @@ public class CsvWriter<T>  {
 
         /**
          * Create a new DSL object identical to the current one but with the specified columns instead of the default ones.
-         * @param columnNames the list of column names
+         * @param columnNames the list of property names
          * @return the new DSL
          */
         public CsvWriterDSL<T> columns(String... columnNames) {
@@ -395,13 +394,13 @@ public class CsvWriter<T>  {
 
 
         /**
-         * Create a new DSL object identical to the current one but with the specified column instead of the default ones.
-         * @param column the column name
-         * @param property the column properties
+         * Create a new DSL object identical to the current one but with the specified property instead of the default ones.
+         * @param column the property name
+         * @param property the property properties
          * @return the new DSL
          */
         @SuppressWarnings("unchecked")
-        public CsvWriterDSL<T> column(String column, ColumnProperty... property) {
+        public CsvWriterDSL<T> column(String column, Object... property) {
             Column[] newColumns = new Column[1];
 
             FieldMapperColumnDefinition<CsvColumnKey> columnDefinition =  FieldMapperColumnDefinition.<CsvColumnKey>identity().add(property);

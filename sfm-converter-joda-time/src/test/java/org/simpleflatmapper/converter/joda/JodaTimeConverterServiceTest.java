@@ -5,8 +5,7 @@ import org.junit.Test;
 
 import java.util.Date;
 
-import static org.simpleflatmapper.converter.ConverterServiceTest.testConverter;
-
+import static org.simpleflatmapper.converter.test.ConverterServiceTestHelper.testConverter;
 
 public class JodaTimeConverterServiceTest {
 

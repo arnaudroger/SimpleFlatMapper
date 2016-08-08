@@ -1,8 +1,7 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.map.column.ColumnProperty;
 
-public class SqlTypeColumnProperty implements ColumnProperty {
+public class SqlTypeColumnProperty {
 
     private final int sqlType;
 

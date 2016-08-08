@@ -3,9 +3,9 @@ package org.simpleflatmapper.map.mapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
-import org.simpleflatmapper.map.column.DefaultValueProperty;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.column.GetterProperty;
+import org.simpleflatmapper.map.property.DefaultValueProperty;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.impl.FieldErrorHandlerMapper;
 import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactory;
@@ -114,7 +114,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
     }
 
     public Mapper<S, T> mapper() {
-        // look for column with a default value property but no definition.
+        // look for property with a default value property but no definition.
         mapperConfig
                 .columnDefinitions()
                 .forEach(

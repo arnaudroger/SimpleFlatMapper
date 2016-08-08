@@ -32,7 +32,7 @@ public final class FloatResultSetGetter implements FloatGetter<ResultSet>, Gette
     @Override
     public String toString() {
         return "FloatResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

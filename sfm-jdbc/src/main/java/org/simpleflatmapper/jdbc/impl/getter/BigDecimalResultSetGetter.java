@@ -21,7 +21,7 @@ public final class BigDecimalResultSetGetter implements Getter<ResultSet, BigDec
     @Override
     public String toString() {
         return "BigDecimalResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

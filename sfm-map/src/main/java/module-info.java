@@ -10,8 +10,7 @@ module org.simpleflatmapper.map {
         exports org.simpleflatmapper.map.context;
         exports org.simpleflatmapper.map.mapper;
         exports org.simpleflatmapper.map.fieldmapper;
-        exports org.simpleflatmapper.map.column;
         exports org.simpleflatmapper.map.error;
-        exports org.simpleflatmapper.map.column.joda;
-        exports org.simpleflatmapper.map.column.time;
+        exports org.simpleflatmapper.map.property;
+        exports org.simpleflatmapper.map.property.time;
 }

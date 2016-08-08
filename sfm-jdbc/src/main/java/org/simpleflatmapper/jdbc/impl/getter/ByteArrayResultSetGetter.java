@@ -20,7 +20,7 @@ public final class ByteArrayResultSetGetter implements Getter<ResultSet, byte[]>
     @Override
     public String toString() {
         return "ByteArrayResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

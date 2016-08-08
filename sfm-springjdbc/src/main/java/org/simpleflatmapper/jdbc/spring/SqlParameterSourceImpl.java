@@ -22,7 +22,7 @@ public final class SqlParameterSourceImpl<T> implements SqlParameterSource {
         if (parameter != null) {
             return parameter.getValue(instance);
         } else {
-            throw new IllegalArgumentException("No value for column " + column);
+            throw new IllegalArgumentException("No value for property " + column);
         }
     }
 

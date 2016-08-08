@@ -3,7 +3,7 @@ package org.simpleflatmapper.jooq;
 import org.jooq.*;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 
 import java.util.concurrent.ConcurrentHashMap;

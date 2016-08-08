@@ -14,7 +14,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	private final boolean caseSensitive;
 
 	public DefaultPropertyNameMatcher(String column, int from, boolean exactMatch, boolean caseSensitive) {
-		this.column = requireNonNull("column", column);
+		this.column = requireNonNull("property", column);
 		this.from = from;
 		this.exactMatch = exactMatch;
 		this.caseSensitive = caseSensitive;

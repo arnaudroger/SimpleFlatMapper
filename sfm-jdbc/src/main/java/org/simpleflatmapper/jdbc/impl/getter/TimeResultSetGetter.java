@@ -20,7 +20,7 @@ public final class TimeResultSetGetter implements Getter<ResultSet, Time> {
     @Override
     public String toString() {
         return "TimeResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

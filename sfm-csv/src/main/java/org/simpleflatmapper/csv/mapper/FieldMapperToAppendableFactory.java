@@ -1,14 +1,15 @@
 package org.simpleflatmapper.csv.mapper;
 
+import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.csv.CellWriter;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.impl.writer.*;
 
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.column.SetterFactoryProperty;
-import org.simpleflatmapper.map.column.SetterProperty;
-import org.simpleflatmapper.map.column.joda.JodaDateTimeFormatterProperty;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.SetterFactoryProperty;
+import org.simpleflatmapper.map.property.SetterProperty;
 import org.simpleflatmapper.map.fieldmapper.BooleanFieldMapper;
 import org.simpleflatmapper.map.fieldmapper.ByteFieldMapper;
 import org.simpleflatmapper.map.fieldmapper.CharacterFieldMapper;
@@ -21,9 +22,9 @@ import org.simpleflatmapper.map.fieldmapper.ShortFieldMapper;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.column.DateFormatProperty;
-import org.simpleflatmapper.map.column.EnumOrdinalFormatProperty;
-import org.simpleflatmapper.map.column.FormatProperty;
+import org.simpleflatmapper.map.property.DateFormatProperty;
+import org.simpleflatmapper.map.property.EnumOrdinalFormatProperty;
+import org.simpleflatmapper.map.property.FormatProperty;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
@@ -55,6 +56,7 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
     private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     private final CellWriter cellWriter;
+    private final ConverterService converterService = ConverterService.getInstance();
 
     public FieldMapperToAppendableFactory(CellWriter cellWriter) {
         this.cellWriter = cellWriter;
@@ -96,6 +98,7 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
                 return new DoubleFieldMapper<S, Appendable>((DoubleGetter) getter, new DoubleAppendableSetter(cellWriter));
             }
         }
+
         Setter<Appendable, ? super P> setter = null;
 
         if (TypeHelper.isEnum(type) && columnDefinition.has(EnumOrdinalFormatProperty.class)) {
@@ -119,11 +122,24 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
         if (format != null) {
             final Format f = format;
             builder.addSupplier(pm.getColumnKey().getIndex(), new CloneFormatSupplier(f));
-            return new FormattingAppender<S>(getter, new MappingContextFormatGetter<S>(pm.getColumnKey().getIndex()), cellWriter);
+            return new FormatingAppender<S>(getter, new MappingContextFormatGetter<S>(pm.getColumnKey().getIndex()), cellWriter);
         }
+
 
         if (setter == null) {
             setter = getSetter(pm, cellWriter);
+        }
+
+        if (setter == null) {
+            Converter<? super P, ? extends CharSequence> converter =
+                    converterService.findConverter(
+                            pm.getPropertyMeta().getPropertyType(),
+                            CharSequence.class,
+                            columnDefinition != null ? columnDefinition.properties() : new Object[0]);
+
+            if (converter != null) {
+                return new ConvertingAppender<S, P>(getter, converter, cellWriter);
+            }
         }
 
         return new FieldMapperImpl<S, Appendable, P>(getter, setter);
@@ -141,9 +157,9 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
 
         if (setter != null) {
             return new CellWriterSetterWrapper(cellWriter, setter);
-        } else {
-            return new ObjectAppendableSetter(cellWriter);
         }
+
+        return null;
     }
 
     private <S, P> Setter<Appendable, ?> setterFromFactory(PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm) {

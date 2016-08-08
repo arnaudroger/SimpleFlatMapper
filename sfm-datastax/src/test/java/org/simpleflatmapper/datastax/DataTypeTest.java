@@ -8,7 +8,7 @@ import org.simpleflatmapper.datastax.impl.RowGetterFactory;
 import org.simpleflatmapper.datastax.impl.SettableDataSetterFactory;
 import org.simpleflatmapper.datastax.utils.RecorderInvocationHandler;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.Getter;

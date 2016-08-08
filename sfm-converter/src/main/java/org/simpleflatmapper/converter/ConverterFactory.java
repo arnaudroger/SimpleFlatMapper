@@ -1,8 +1,9 @@
 package org.simpleflatmapper.converter;
 
-public interface ConverterFactory {
+public interface ConverterFactory<I, O> {
 
-    Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params);
+    Converter<? super I, ? extends O> newConverter(ConvertingTypes targetedTypes, Object... params);
 
     int score(ConvertingTypes targetedTypes);
+
 }

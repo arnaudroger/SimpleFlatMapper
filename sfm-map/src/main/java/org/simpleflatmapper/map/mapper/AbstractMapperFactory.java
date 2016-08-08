@@ -5,7 +5,6 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.RowHandlerErrorHandler;
-import org.simpleflatmapper.map.column.ColumnProperty;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.error.RethrowRowHandlerErrorHandler;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -151,8 +150,8 @@ public abstract class AbstractMapperFactory<
 	}
 
 	/**
-	 * Associate an alias on the column key to rename to value.
-	 * @param key the column to rename
+	 * Associate an alias on the property key to rename to value.
+	 * @param key the property to rename
 	 * @param value then name to rename to
 	 * @return the current factory
 	 */
@@ -161,8 +160,8 @@ public abstract class AbstractMapperFactory<
 	}
 
     /**
-     * Associate the specified columnDefinition to the specified column.
-     * @param key the column
+     * Associate the specified columnDefinition to the specified property.
+     * @param key the property
      * @param columnDefinition the columnDefinition
      * @return the current factory
      */
@@ -171,8 +170,8 @@ public abstract class AbstractMapperFactory<
 	}
 
     /**
-     * Associate the specified columnDefinition to the column matching the predicate.
-     * @param predicate the column predicate
+     * Associate the specified columnDefinition to the property matching the predicate.
+     * @param predicate the property predicate
      * @param columnDefinition the columnDefinition
      * @return the current factory
      */
@@ -182,38 +181,38 @@ public abstract class AbstractMapperFactory<
 	}
 
 	/**
-	 * Associate the specified columnProperties to the column matching the predicate.
-	 * @param name the column predicate
+	 * Associate the specified columnProperties to the property matching the predicate.
+	 * @param name the property predicate
 	 * @param properties the properties
 	 * @return the current factory
 	 */
-	public final MF addColumnProperty(String name, ColumnProperty... properties) {
-		for(ColumnProperty property : properties) {
-			columnDefinitions.addColumnProperty(new CaseInsensitiveFieldKeyNamePredicate(name), new ConstantUnaryFactory<K, ColumnProperty>(property));
+	public final MF addColumnProperty(String name, Object... properties) {
+		for(Object property : properties) {
+			columnDefinitions.addColumnProperty(new CaseInsensitiveFieldKeyNamePredicate(name), new ConstantUnaryFactory<K, Object>(property));
 		}
 		return (MF) this;
 	}
 
 	/**
-	 * Associate the specified columnProperties to the column matching the predicate.
-	 * @param predicate the column predicate
+	 * Associate the specified columnProperties to the property matching the predicate.
+	 * @param predicate the property predicate
 	 * @param properties the properties
 	 * @return the current factory
 	 */
-	public final MF addColumnProperty(Predicate<? super K> predicate, ColumnProperty... properties) {
-		for(ColumnProperty property : properties) {
-			columnDefinitions.addColumnProperty(predicate, new ConstantUnaryFactory<K, ColumnProperty>(property));
+	public final MF addColumnProperty(Predicate<? super K> predicate, Object... properties) {
+		for(Object property : properties) {
+			columnDefinitions.addColumnProperty(predicate, new ConstantUnaryFactory<K, Object>(property));
 		}
 		return (MF) this;
 	}
 
 	/**
-	 * Associate the specified columnProperties to the column matching the predicate.
-	 * @param predicate the column predicate
+	 * Associate the specified columnProperties to the property matching the predicate.
+	 * @param predicate the property predicate
 	 * @param propertyFactory the properties
 	 * @return the current factory
 	 */
-	public final MF addColumnProperty(Predicate<? super K> predicate, UnaryFactory<K, ColumnProperty> propertyFactory) {
+	public final MF addColumnProperty(Predicate<? super K> predicate, UnaryFactory<K, Object> propertyFactory) {
 		columnDefinitions.addColumnProperty(predicate, propertyFactory);
 		return (MF) this;
 	}
@@ -229,7 +228,7 @@ public abstract class AbstractMapperFactory<
 	}
 
     /**
-     * Associate the aliases value to the column key.
+     * Associate the aliases value to the property key.
      * @param aliases the key value pair
      * @return the current factory
      */

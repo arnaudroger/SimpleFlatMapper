@@ -26,7 +26,7 @@ public class UrlFromStringResultSetGetter implements
     @Override
     public String toString() {
         return "UrlFromStringResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

@@ -21,7 +21,7 @@ public class DateResultSetGetter implements
     @Override
     public String toString() {
         return "DateResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

@@ -32,7 +32,7 @@ public final class ByteResultSetGetter implements ByteGetter<ResultSet>, Getter<
     @Override
     public String toString() {
         return "ByteResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

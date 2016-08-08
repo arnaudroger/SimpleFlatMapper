@@ -20,7 +20,7 @@ public final class TimestampResultSetGetter implements Getter<ResultSet, Timesta
     @Override
     public String toString() {
         return "TimestampResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

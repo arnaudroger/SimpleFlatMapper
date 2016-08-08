@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv.samples;
 
 import org.junit.Test;
-import org.simpleflatmapper.map.column.SetterProperty;
+import org.simpleflatmapper.map.property.SetterProperty;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.csv.CsvWriter;
 

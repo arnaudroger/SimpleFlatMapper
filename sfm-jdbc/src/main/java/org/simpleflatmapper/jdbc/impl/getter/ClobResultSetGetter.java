@@ -20,7 +20,7 @@ public final class ClobResultSetGetter implements Getter<ResultSet, Clob> {
     @Override
     public String toString() {
         return "ClobResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

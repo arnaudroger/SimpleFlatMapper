@@ -15,6 +15,27 @@ import java.util.List;
 import java.util.TimeZone;
 
 public class JodaTimeHelper {
+    public static DateTimeFormatter getDateTimeFormatter(Object... properties) {
+
+        final DateTimeZone dateTimeZone = getDateTimeZone(properties);
+
+        DefaultDateFormatSupplier defaultDateFormatSupplier = null;
+        for(Object prop : properties) {
+            if (SupplierHelper.isSupplierOf(prop, DateTimeFormatter.class)) {
+                return (withZone(((Supplier<DateTimeFormatter>) prop).get(), dateTimeZone));
+            } else if (prop instanceof DateFormatSupplier) {
+                return (withZone(((DateFormatSupplier)prop).get(), dateTimeZone));
+            } else if (prop instanceof DefaultDateFormatSupplier) {
+                defaultDateFormatSupplier = (DefaultDateFormatSupplier) prop;
+            }
+        }
+
+        if (defaultDateFormatSupplier != null) {
+            return withZone(defaultDateFormatSupplier.get(), dateTimeZone);
+        }
+
+        return null;
+    }
 
     public static DateTimeFormatter[] getDateTimeFormatters(Object... properties) {
         List<DateTimeFormatter> dtf = new ArrayList<DateTimeFormatter>();

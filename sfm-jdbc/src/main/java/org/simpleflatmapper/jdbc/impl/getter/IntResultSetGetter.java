@@ -32,7 +32,7 @@ public final class IntResultSetGetter implements IntGetter<ResultSet>, Getter<Re
     @Override
     public String toString() {
         return "IntResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

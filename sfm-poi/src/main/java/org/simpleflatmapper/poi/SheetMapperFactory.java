@@ -2,7 +2,7 @@ package org.simpleflatmapper.poi;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.reflect.getter.GetterFactory;

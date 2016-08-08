@@ -7,8 +7,7 @@ import org.simpleflatmapper.datastax.impl.ResultSetEnumarable;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.RowHandlerErrorHandler;
-import org.simpleflatmapper.map.column.ColumnProperty;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.AbstractMapperBuilder;
@@ -49,27 +48,27 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
 
 
     /**
-     * add a new mapping to the specified column with the specified index,  the specified type.
+     * add a new mapping to the specified property with the specified index,  the specified type.
      *
-     * @param column           the column name
-     * @param index            the column index
-     * @param dataType          the column type, @see java.sql.Types
-     * @param properties the column properties
+     * @param column           the property name
+     * @param index            the property index
+     * @param dataType          the property type, @see java.sql.Types
+     * @param properties the property properties
      * @return the current builder
      */
-    public DatastaxMapperBuilder<T> addMapping(final String column, final int index, final DataType dataType, ColumnProperty... properties) {
+    public DatastaxMapperBuilder<T> addMapping(final String column, final int index, final DataType dataType, Object... properties) {
         return addMapping(new DatastaxColumnKey(column, index, dataType), properties);
     }
 
     /**
-     * add the all the column present in the metaData
+     * add the all the property present in the metaData
      *
      * @param metaData the metaDAta
      * @return the current builder
      */
     public DatastaxMapperBuilder<T> addMapping(final ColumnDefinitions metaData) {
         for (int i = 1; i <= metaData.size(); i++) {
-            addMapping(metaData.getName(i), i, metaData.getType(i));
+            addMapping(metaData.getName(i), i, metaData.getType(i), new Object[0]);
         }
 
         return this;

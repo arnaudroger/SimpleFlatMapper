@@ -2,11 +2,10 @@ package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.column.CustomReaderFactoryProperty;
 import org.simpleflatmapper.csv.column.CustomReaderProperty;
-import org.simpleflatmapper.map.column.DefaultDateFormatProperty;
+import org.simpleflatmapper.map.property.DefaultDateFormatProperty;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
-import org.simpleflatmapper.map.column.ColumnProperty;
-import org.simpleflatmapper.map.column.DateFormatProperty;
-import org.simpleflatmapper.map.column.TimeZoneProperty;
+import org.simpleflatmapper.map.property.DateFormatProperty;
+import org.simpleflatmapper.map.property.TimeZoneProperty;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.Predicate;
 
@@ -15,14 +14,14 @@ import java.util.TimeZone;
 
 public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColumnDefinition> {
 
-    public static final CsvColumnDefinition IDENTITY = new CsvColumnDefinition(new ColumnProperty[0]);
+    public static final CsvColumnDefinition IDENTITY = new CsvColumnDefinition(new Object[0]);
 
-    protected CsvColumnDefinition(ColumnProperty[] properties) {
+    protected CsvColumnDefinition(Object[] properties) {
         super(properties);
     }
 
     @Override
-    protected CsvColumnDefinition newColumnDefinition(ColumnProperty[] properties) {
+    protected CsvColumnDefinition newColumnDefinition(Object[] properties) {
         return CsvColumnDefinition.of(properties);
     }
 
@@ -139,7 +138,7 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
         return def1.compose(def2);
     }
 
-    public static CsvColumnDefinition of(ColumnProperty... properties) {
+    public static CsvColumnDefinition of(Object... properties) {
         return new CsvColumnDefinition(properties);
     }
 }

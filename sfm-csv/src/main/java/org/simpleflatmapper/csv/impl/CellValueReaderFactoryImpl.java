@@ -1,8 +1,11 @@
 package org.simpleflatmapper.csv.impl;
 
+import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CellValueReaderFactory;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
+import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.impl.cellreader.*;
 import org.simpleflatmapper.csv.ParsingContextFactoryBuilder;
 
@@ -41,6 +44,8 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 		READERS.put(Object.class,    new StringCellValueReader());
 	}
 
+	private ConverterService converterService = ConverterService.getInstance();
+
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <P> CellValueReader<P> getReader(Type propertyType, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
@@ -69,6 +74,14 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 
 		if (reader == null) {
 			reader = getCellValueTransformer(propertyClass);
+		}
+
+
+		if (reader == null) {
+			Converter<? super Object, ? extends P> converter = converterService.findConverter(CharSequence.class, propertyType, columnDefinition != null ? columnDefinition.properties() : new Object[0]);
+			if (converter != null) {
+				return new CharSequenceConverterCellValueReader<P>(converter);
+			}
 		}
 
 		return reader;

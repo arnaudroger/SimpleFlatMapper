@@ -5,7 +5,7 @@ import org.simpleflatmapper.jdbc.impl.JdbcColumnKeyMapperKeyComparator;
 import org.simpleflatmapper.jdbc.impl.PreparedStatementSetterFactory;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.SetRowMapper;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactorImpl;
@@ -95,8 +95,8 @@ public final class JdbcMapperFactory
 
 
 	/**
-	 * Associate the specified FieldMapper for the specified column.
-	 * @param key the column
+	 * Associate the specified FieldMapper for the specified property.
+	 * @param key the property
 	 * @param fieldMapper the fieldMapper
 	 * @return the current factory
 	 */
@@ -105,8 +105,8 @@ public final class JdbcMapperFactory
 	}
 
 	/**
-	 * Associate the specified Getter for the specified column.
-	 * @param key the column
+	 * Associate the specified Getter for the specified property.
+	 * @param key the property
 	 * @param getter the getter
 	 * @return the current factory
 	 */
@@ -274,8 +274,8 @@ public final class JdbcMapperFactory
 	}
 
 	/**
-     * Create a discriminator builder based on the specified column
-     * @param column the discriminator column
+     * Create a discriminator builder based on the specified property
+     * @param column the discriminator property
      * @param <T> the root type of the jdbcMapper
      * @return a builder to specify the type mapping
      */

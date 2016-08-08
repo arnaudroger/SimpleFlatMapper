@@ -2,6 +2,9 @@ package org.simpleflatmapper.poi.impl;
 
 
 import org.apache.poi.ss.usermodel.Row;
+import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.reflect.GetterWithConverter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 
@@ -94,20 +97,40 @@ public class RowGetterFactory implements GetterFactory<Row, CsvColumnKey> {
         getterFactories.put(float.class, getterFactories.get(Float.class));
         getterFactories.put(double.class, getterFactories.get(Double.class));
         getterFactories.put(boolean.class, getterFactories.get(Boolean.class));
+
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
 
-        Class<?> targetClass = TypeHelper.toClass(target);
+        Class<P> targetClass = TypeHelper.toClass(target);
+
+        if (TypeHelper.isEnum(target)) {
+            return new PoiEnumGetter(key.getIndex(), TypeHelper.toClass(target));
+        }
 
         final GetterFactory<Row, CsvColumnKey> rowGetterFactory = getterFactories.get(targetClass);
 
+        Getter<Row, P> getter = null;
         if (rowGetterFactory != null) {
-            return rowGetterFactory.newGetter(target, key, properties);
-        } else if (TypeHelper.isEnum(target)) {
-            return new PoiEnumGetter(key.getIndex(), TypeHelper.toClass(target));
+            getter = rowGetterFactory.newGetter(target, key, properties);
+        }
+
+        if (getter != null) {
+            return getter;
+        }
+
+        if (targetClass.getName().startsWith("java.time") || targetClass.getName().startsWith("org.joda")) {
+            Converter<? super Date, ? extends P> converter = ConverterService.getInstance().findConverter(Date.class, targetClass, properties);
+            if (converter != null) {
+                return new GetterWithConverter<Row, Date, P>(converter, new PoiDateGetter(key.getIndex()));
+            }
+        }
+
+        Converter<? super String, ? extends P> converter = ConverterService.getInstance().findConverter(String.class, targetClass, properties);
+        if (converter != null) {
+            return new GetterWithConverter<Row, String, P>(converter, new PoiStringGetter(key.getIndex()));
         }
 
         return null;

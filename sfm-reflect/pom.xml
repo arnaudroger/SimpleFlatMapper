@@ -79,11 +79,9 @@
 							org.simpleflatmapper.reflect.meta,
 							org.simpleflatmapper.reflect.asm,
 							org.simpleflatmapper.reflect.getter,
-							org.simpleflatmapper.reflect.getter.joda,
-							org.simpleflatmapper.reflect.getter.time,
 							org.simpleflatmapper.reflect.setter,
 							org.simpleflatmapper.reflect.primitive</Export-Package>
-						<Import-Package>org.objectweb.asm;version="[4.0,6)";resolution:=optional,org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional;org.joda.time.*:=optional,org.simpleflatmapper.*</Import-Package>
+						<Import-Package>org.objectweb.asm;version="[4.0,6)";resolution:=optional,org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional;</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

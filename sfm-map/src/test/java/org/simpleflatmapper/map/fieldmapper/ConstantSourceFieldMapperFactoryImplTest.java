@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.SampleFieldKey;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;

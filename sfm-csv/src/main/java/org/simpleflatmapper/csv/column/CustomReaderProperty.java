@@ -2,14 +2,13 @@ package org.simpleflatmapper.csv.column;
 
 
 import org.simpleflatmapper.csv.CellValueReader;
-import org.simpleflatmapper.map.column.ColumnProperty;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
-public class CustomReaderProperty implements ColumnProperty {
+public class CustomReaderProperty {
     private final CellValueReader<?> reader;
 
     public CustomReaderProperty(CellValueReader<?> reader) {

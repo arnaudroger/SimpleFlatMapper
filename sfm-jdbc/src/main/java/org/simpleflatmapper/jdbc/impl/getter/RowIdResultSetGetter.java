@@ -20,7 +20,7 @@ public final class RowIdResultSetGetter implements Getter<ResultSet, RowId> {
     @Override
     public String toString() {
         return "RowIdResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

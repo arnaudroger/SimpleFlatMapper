@@ -2,7 +2,6 @@ package org.simpleflatmapper.map.mapper;
 
 
 import org.simpleflatmapper.map.FieldKey;
-import org.simpleflatmapper.map.column.ColumnProperty;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.ConstantUnaryFactory;
 import org.simpleflatmapper.util.Predicate;
@@ -31,7 +30,7 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
         definitions.add(new PredicatedColunnDefinition<C,K>(predicate, definition));
     }
 
-    public void addColumnProperty(Predicate<? super K> predicate, UnaryFactory<? super K, ColumnProperty> propertyFactory) {
+    public void addColumnProperty(Predicate<? super K> predicate, UnaryFactory<? super K, Object> propertyFactory) {
         properties.add(new PredicatedColunnPropertyFactory<C, K>(predicate, propertyFactory));
     }
 
@@ -47,7 +46,7 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
 
         for (PredicatedColunnPropertyFactory<C, K> tuple2 : properties) {
             if (tuple2.predicate.test(key)) {
-                ColumnProperty columnProperty = tuple2.columnPropertyFactory.newInstance(key);
+                Object columnProperty = tuple2.columnPropertyFactory.newInstance(key);
                 if (columnProperty != null) {
                     definition = definition.add(columnProperty);
                 }
@@ -69,7 +68,7 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
     }
 
     @Override
-    public <CP extends ColumnProperty, BC extends BiConsumer<Predicate<? super K>, CP>> BC forEach(Class<CP> propertyType, BC consumer) {
+    public <CP, BC extends BiConsumer<Predicate<? super K>, CP>> BC forEach(Class<CP> propertyType, BC consumer) {
         for(PredicatedColunnDefinition<C,K> def : definitions) {
             final CP cp = def.columnDefinition.lookFor(propertyType);
             if (cp != null) {
@@ -77,9 +76,9 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
             }
         }
         for (PredicatedColunnPropertyFactory tuple2 : properties) {
-            final UnaryFactory<? super K, ColumnProperty> unaryFactory = tuple2.columnPropertyFactory;
+            final UnaryFactory<? super K, Object> unaryFactory = tuple2.columnPropertyFactory;
             if (unaryFactory instanceof ConstantUnaryFactory) {
-                final ColumnProperty columnProperty = unaryFactory.newInstance(null);
+                final Object columnProperty = unaryFactory.newInstance(null);
                 if (propertyType.isInstance(columnProperty)) {
                     consumer.accept(tuple2.predicate, propertyType.cast(columnProperty));
                 }
@@ -101,9 +100,9 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
     //Tuple2<Predicate<? super K>, UnaryFactory<? super K, ColumnProperty>>
     public static class PredicatedColunnPropertyFactory<C extends ColumnDefinition<K, C>, K extends FieldKey<K>> {
         private final Predicate<? super K> predicate;
-        private final UnaryFactory<? super K, ColumnProperty> columnPropertyFactory;
+        private final UnaryFactory<? super K, Object> columnPropertyFactory;
 
-        public PredicatedColunnPropertyFactory(Predicate<? super K> predicate, UnaryFactory<? super K, ColumnProperty> columnPropertyFactory) {
+        public PredicatedColunnPropertyFactory(Predicate<? super K> predicate, UnaryFactory<? super K, Object> columnPropertyFactory) {
             this.predicate = predicate;
             this.columnPropertyFactory = columnPropertyFactory;
         }

@@ -2,7 +2,7 @@ package org.simpleflatmapper.jdbc.column;
 
 
 import org.simpleflatmapper.jdbc.impl.setter.PreparedStatementSetterImpl;
-import org.simpleflatmapper.map.column.SetterFactoryProperty;
+import org.simpleflatmapper.map.property.SetterFactoryProperty;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.IndexedSetter;
 import org.simpleflatmapper.reflect.IndexedSetterFactory;

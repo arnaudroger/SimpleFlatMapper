@@ -4,10 +4,10 @@ import org.simpleflatmapper.converter.Converter;
 
 public class GetterWithConverter<T, I, P> implements Getter<T, P> {
 
-    private final Converter<? super I, P> converter;
+    private final Converter<? super I, ? extends P> converter;
     private final Getter<? super T, ? extends I> getter;
 
-    public GetterWithConverter(Converter<? super I, P> converter, Getter<? super T, ? extends I> getter) {
+    public GetterWithConverter(Converter<? super I, ? extends P > converter, Getter<? super T, ? extends I> getter) {
         this.converter = converter;
         this.getter = getter;
     }

@@ -7,13 +7,12 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.jdbc.impl.PreparedStatementSetterFactory;
 import org.simpleflatmapper.jdbc.impl.getter.ResultSetGetterFactoryTest;
 import org.simpleflatmapper.map.FieldMapper;
-import org.simpleflatmapper.map.column.ColumnProperty;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.column.SetterFactoryProperty;
-import org.simpleflatmapper.map.column.SetterProperty;
-import org.simpleflatmapper.map.column.joda.JodaDateTimeZoneProperty;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.SetterFactoryProperty;
+import org.simpleflatmapper.map.property.SetterProperty;
+import org.simpleflatmapper.converter.joda.JodaDateTimeZoneProperty;
 //IFJAVA8_START
-import org.simpleflatmapper.map.column.time.JavaZoneIdProperty;
+import org.simpleflatmapper.map.property.time.JavaZoneIdProperty;
 //IFJAVA8_END
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
@@ -74,8 +73,8 @@ public class PreparedStatementFieldMapperFactoryTest {
     @Test
     public void testEnumOrdinal() throws Exception {
         final DbObject.Type type = DbObject.Type.type3;
-        newFieldMapperAndMapToPS(new ConstantGetter<Object, DbObject.Type>(type), DbObject.Type.class, Types.NUMERIC);
-        newFieldMapperAndMapToPS(NullGetter.<Object, DbObject.Type>getter(), DbObject.Type.class, Types.NUMERIC);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, DbObject.Type>(type), DbObject.Type.class, Types.NUMERIC, new Object[0]);
+        newFieldMapperAndMapToPS(NullGetter.<Object, DbObject.Type>getter(), DbObject.Type.class, Types.NUMERIC, new Object[0]);
 
         verify(ps).setInt(1, type.ordinal());
         verify(ps).setNull(2, Types.INTEGER);
@@ -447,8 +446,8 @@ public class PreparedStatementFieldMapperFactoryTest {
     @Test
     public void testUUIDBinary() throws Exception {
         UUID uuid = UUID.randomUUID();
-        newFieldMapperAndMapToPS(new ConstantGetter<Object, UUID>(uuid), UUID.class, Types.BINARY);
-        newFieldMapperAndMapToPS(NullGetter.<Object, UUID>getter(), UUID.class, Types.BINARY);
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, UUID>(uuid), UUID.class, Types.BINARY, new Object[0]);
+        newFieldMapperAndMapToPS(NullGetter.<Object, UUID>getter(), UUID.class, Types.BINARY, new Object[0]);
 
         verify(ps).setBytes(1, UUIDHelper.toBytes(uuid));
         verify(ps).setNull(2, Types.BINARY);
@@ -592,16 +591,16 @@ public class PreparedStatementFieldMapperFactoryTest {
     }
     //IFJAVA8_END
 
-    protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, ColumnProperty... properties) throws Exception {
+    protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, Object... properties) throws Exception {
         newFieldMapperAndMapToPS(getter, clazz, JdbcColumnKey.UNDEFINED_TYPE, properties);
     }
-    protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, int sqlType, ColumnProperty... properties) throws Exception {
+    protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, int sqlType, Object... properties) throws Exception {
         FieldMapper<T, PreparedStatement> fieldMapper = factory.newFieldMapper(newPropertyMapping(getter, clazz, sqlType, properties), null, new RethrowMapperBuilderErrorHandler());
         fieldMapper.mapTo(null, ps, null);
     }
 
     @SuppressWarnings("unchecked")
-    private <T, P> PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> newPropertyMapping(Getter<T, P> getter, Class<P> clazz, int sqltype, ColumnProperty... properties) {
+    private <T, P> PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> newPropertyMapping(Getter<T, P> getter, Class<P> clazz, int sqltype, Object... properties) {
         PropertyMeta<T, P> propertyMeta = mock(PropertyMeta.class);
         when(propertyMeta.getGetter()).thenReturn(getter);
         when(propertyMeta.getPropertyType()).thenReturn(clazz);

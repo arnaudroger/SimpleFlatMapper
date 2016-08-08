@@ -1,9 +1,10 @@
 package org.simpleflatmapper.converter;
 
-public abstract class AbstractConverterFactory implements ConverterFactory{
+
+public abstract class AbstractConverterFactory<I, O> implements ConverterFactory<I, O> {
     protected final ConvertingTypes convertingTypes;
 
-    protected AbstractConverterFactory(Class<?> from, Class<?> to) {
+    protected AbstractConverterFactory(Class<I> from, Class<O> to) {
         this(new ConvertingTypes(from, to));
     }
 

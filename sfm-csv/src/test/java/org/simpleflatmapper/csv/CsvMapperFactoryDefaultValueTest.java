@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv;
 import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.simpleflatmapper.map.column.DefaultValueProperty;
+import org.simpleflatmapper.map.property.DefaultValueProperty;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.tuple.Tuple2;
 

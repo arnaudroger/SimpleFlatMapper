@@ -4,9 +4,9 @@ package org.simpleflatmapper.map.mapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.column.SetterFactoryProperty;
-import org.simpleflatmapper.map.column.SetterProperty;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.SetterFactoryProperty;
+import org.simpleflatmapper.map.property.SetterProperty;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Setter;
@@ -78,6 +78,18 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
             setter = setterFromFactory(pm);
         }
 
+
+        if (getter == null) {
+            mappingErrorHandler.accessorNotFound("Could not find getter for "
+                    + pm + " See " + ErrorDoc.toUrl("CTFM_GETTER_NOT_FOUND"));
+            return null;
+        }
+        if (setter == null) {
+            mappingErrorHandler.accessorNotFound("Could not find setter for " + pm
+                    + " See " + ErrorDoc.toUrl("CTFM_SETTER_NOT_FOUND"));
+            return null;
+        }
+
         if (TypeHelper.isPrimitive(pm.getPropertyMeta().getPropertyType())) {
             if (getter instanceof BooleanGetter && setter instanceof BooleanSetter) {
                 return new BooleanFieldMapper<S, T>((BooleanGetter<S>)getter, (BooleanSetter<T>) setter);
@@ -98,16 +110,6 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
             }
         }
 
-        if (getter == null) {
-            mappingErrorHandler.accessorNotFound("Could not find getter for "
-                    + pm + " See " + ErrorDoc.toUrl("CTFM_GETTER_NOT_FOUND"));
-            return null;
-        }
-        if (setter == null) {
-            mappingErrorHandler.accessorNotFound("Could not find setter for " + pm
-                    + " See " + ErrorDoc.toUrl("CTFM_SETTER_NOT_FOUND"));
-            return null;
-        }
         return new FieldMapperImpl<S, T, P>(getter, setter);
     }
 

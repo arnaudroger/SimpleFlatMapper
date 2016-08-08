@@ -20,7 +20,7 @@ public final class ReaderResultSetGetter implements Getter<ResultSet, Reader> {
     @Override
     public String toString() {
         return "ReaderResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

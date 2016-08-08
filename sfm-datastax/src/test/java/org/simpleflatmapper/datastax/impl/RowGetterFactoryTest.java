@@ -14,7 +14,7 @@ import org.simpleflatmapper.reflect.primitive.LongGetter;
 import org.simpleflatmapper.reflect.primitive.ShortGetter;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.Getter;
 
 import java.math.BigDecimal;

@@ -53,11 +53,18 @@
             <scope>test</scope>
         </dependency>
 		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>sfm-converter-joda-time</artifactId>
+			<version>2.13-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.9.3</version>
-			<optional>true</optional>
+			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -76,7 +83,7 @@
 				<configuration>
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
-						<Export-Package>org.simpleflatmapper.csv</Export-Package>
+						<Export-Package>org.simpleflatmapper.csv,org.simpleflatmapper.csv.column,org.simpleflatmapper.csv.parser</Export-Package>
 						<Import-Package>
 							org.objectweb.asm;version="[4.0,6)";resolution:=optional,
 							org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,

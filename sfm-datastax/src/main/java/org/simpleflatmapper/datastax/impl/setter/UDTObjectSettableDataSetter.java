@@ -6,7 +6,7 @@ import org.simpleflatmapper.datastax.SettableDataMapperBuilder;
 import org.simpleflatmapper.datastax.impl.SettableDataSetterFactory;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactorImpl;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;

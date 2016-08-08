@@ -9,12 +9,11 @@ import org.mockito.ArgumentCaptor;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.column.ColumnProperty;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.column.TimeZoneProperty;
-import org.simpleflatmapper.map.column.joda.JodaDateTimeZoneProperty;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.TimeZoneProperty;
+import org.simpleflatmapper.converter.joda.JodaDateTimeZoneProperty;
 //IFJAVA8_START
-import org.simpleflatmapper.map.column.time.JavaZoneIdProperty;
+import org.simpleflatmapper.map.property.time.JavaZoneIdProperty;
 //IFJAVA8_END
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
@@ -700,7 +699,7 @@ public class SettableDataSetterFactoryTest {
     }
 
     @SuppressWarnings("unchecked")
-    private <T, P> PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> newPM(Type clazz, DataType datatype, ColumnProperty... properties) {
+    private <T, P> PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> newPM(Type clazz, DataType datatype, Object... properties) {
         PropertyMeta<T, P> propertyMeta = mock(PropertyMeta.class);
         when(propertyMeta.getPropertyType()).thenReturn(clazz);
         return

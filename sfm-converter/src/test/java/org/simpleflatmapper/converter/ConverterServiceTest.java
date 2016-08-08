@@ -16,22 +16,12 @@ import java.util.UUID;
 import java.time.*;
 //IFJAVA8_END
 import static org.junit.Assert.*;
+import static org.simpleflatmapper.converter.test.ConverterServiceTestHelper.testConverter;
 
 public class ConverterServiceTest {
 
     public enum ENUM {
         type1, type2
-    }
-    @SuppressWarnings("unchecked")
-    public static <I, O> void testConverter(I i, O o) throws Exception {
-        testConverter(i, o, (Class<? super I>)i.getClass(), (Class<? super O>)o.getClass());
-    }
-
-    public static <I, O> void testConverter(I i, O o, Class<I> classi, Class<O> classo) throws Exception {
-        final Converter<? super I, ? extends O> converter = ConverterService.getInstance().findConverter(classi, classo);
-        assertNotNull("Converter not null", converter);
-        assertEquals(o, converter.convert(i));
-        assertNotNull(converter.toString());
     }
 
     @Test
@@ -105,18 +95,4 @@ public class ConverterServiceTest {
     public void testNoConverter()  {
         assertNull(ConverterService.getInstance().findConverter(Reader.class, System.class));
     }
-
-
-    private Date trunc(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-
-        cal.set(Calendar.MILLISECOND, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-
-        return cal.getTime();
-    }
-
 }

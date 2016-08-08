@@ -20,7 +20,7 @@ public final class BlobResultSetGetter implements Getter<ResultSet, Blob> {
     @Override
     public String toString() {
         return "BlobResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

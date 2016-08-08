@@ -3,8 +3,8 @@ package org.simpleflatmapper.jdbc.impl;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.SqlTypeColumnProperty;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.column.KeyProperty;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.map.mapper.ColumnDefinitionProvider;
 
 import java.sql.Connection;

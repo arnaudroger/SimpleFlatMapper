@@ -21,7 +21,7 @@ public final class BigIntegerResultSetGetter implements Getter<ResultSet, BigInt
     @Override
     public String toString() {
         return "BigIntegerResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

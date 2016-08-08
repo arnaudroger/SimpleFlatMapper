@@ -39,7 +39,7 @@ public final class ArrayResultSetGetter<E> implements Getter<ResultSet, E[]> {
     @Override
     public String toString() {
         return "ArrayResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 ", elementGetter=" + elementGetter +
                 '}';
     }

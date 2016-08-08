@@ -20,7 +20,7 @@ public final class InputStreamResultSetGetter implements Getter<ResultSet, Input
     @Override
     public String toString() {
         return "InputStreamResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

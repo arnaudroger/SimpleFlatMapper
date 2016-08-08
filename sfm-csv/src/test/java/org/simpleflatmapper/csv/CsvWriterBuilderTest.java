@@ -3,9 +3,9 @@ package org.simpleflatmapper.csv;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.map.Mapper;
-import org.simpleflatmapper.map.column.DateFormatProperty;
-import org.simpleflatmapper.map.column.EnumOrdinalFormatProperty;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.DateFormatProperty;
+import org.simpleflatmapper.map.property.EnumOrdinalFormatProperty;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.MapperConfig;
 
 import static org.junit.Assert.*;

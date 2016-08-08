@@ -3,7 +3,7 @@ package org.simpleflatmapper.jdbc.samples;
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.map.MapperBuildingException;
-import org.simpleflatmapper.map.column.GetterProperty;
+import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.reflect.Getter;
 
 import java.sql.ResultSet;

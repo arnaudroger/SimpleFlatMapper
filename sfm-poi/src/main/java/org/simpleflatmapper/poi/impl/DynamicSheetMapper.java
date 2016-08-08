@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.map.mapper.MapperCache;
 import org.simpleflatmapper.poi.SheetMapper;

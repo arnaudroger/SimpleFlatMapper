@@ -7,6 +7,7 @@ import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
 import org.simpleflatmapper.converter.ConvertingTypes;
 
+import org.simpleflatmapper.converter.ToStringConverter;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.math.BigDecimal;
@@ -36,9 +37,9 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		constantConverter(consumer, CharSequence.class, Float.class,     new CharSequenceFloatConverter());
 		constantConverter(consumer, CharSequence.class, Double.class,    new CharSequenceDoubleConverter());
 		constantConverter(consumer, CharSequence.class, UUID.class,      new CharSequenceUUIDConverter());
-		factoryConverter (consumer, new AbstractConverterFactory(CharSequence.class, Enum.class) {
+		factoryConverter (consumer, new AbstractConverterFactory<CharSequence, Enum>(CharSequence.class, Enum.class) {
 			@SuppressWarnings("unchecked")
-			public Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params) {
+			public Converter<? super CharSequence, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
 				return new CharSequenceToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
 			}
 
@@ -51,7 +52,7 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 			}
 		});
 
-		constantConverter(consumer, Object.class, String.class, new ToStringConverter<Object>());
-		constantConverter(consumer, Object.class, URL.class, new ToStringToURLConverter<Object>());
+		constantConverter(consumer, Object.class, String.class, ToStringConverter.INSTANCE);
+		constantConverter(consumer, Object.class, URL.class, new ToStringToURLConverter());
 	}
 }

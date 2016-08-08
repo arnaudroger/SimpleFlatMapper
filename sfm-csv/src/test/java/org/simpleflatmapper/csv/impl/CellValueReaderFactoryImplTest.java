@@ -20,9 +20,9 @@ import java.util.UUID;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import org.simpleflatmapper.map.column.time.JavaDateTimeFormatterProperty;
+import org.simpleflatmapper.map.property.time.JavaDateTimeFormatterProperty;
 //IFJAVA8_END
-import org.simpleflatmapper.map.column.joda.JodaDateTimeFormatterProperty;
+import org.simpleflatmapper.converter.joda.JodaDateTimeFormatterProperty;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

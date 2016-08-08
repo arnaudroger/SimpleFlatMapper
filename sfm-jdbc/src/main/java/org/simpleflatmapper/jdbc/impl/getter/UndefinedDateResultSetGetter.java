@@ -32,7 +32,7 @@ public class UndefinedDateResultSetGetter implements
     @Override
     public String toString() {
         return "UndefinedDateResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

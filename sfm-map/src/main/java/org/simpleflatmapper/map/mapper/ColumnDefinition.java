@@ -2,10 +2,9 @@ package org.simpleflatmapper.map.mapper;
 
 
 import org.simpleflatmapper.map.FieldKey;
-import org.simpleflatmapper.map.column.ColumnProperty;
-import org.simpleflatmapper.map.column.IgnoreProperty;
-import org.simpleflatmapper.map.column.KeyProperty;
-import org.simpleflatmapper.map.column.RenameProperty;
+import org.simpleflatmapper.map.property.IgnoreProperty;
+import org.simpleflatmapper.map.property.KeyProperty;
+import org.simpleflatmapper.map.property.RenameProperty;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.Predicate;
 
@@ -26,9 +25,9 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
             return false;
         }
     };
-    private final ColumnProperty[] properties;
+    private final Object[] properties;
 
-    protected ColumnDefinition(ColumnProperty[] properties) {
+    protected ColumnDefinition(Object[] properties) {
         this.properties = requireNonNull("properties", properties);
     }
 
@@ -45,7 +44,7 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
         return has(IgnoreProperty.class);
     }
 
-    public boolean has(Class<? extends ColumnProperty> clazz) {
+    public boolean has(Class<?> clazz) {
         return lookFor(clazz) != null;
     }
 
@@ -65,21 +64,21 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
 
     public CD compose(CD columnDefinition) {
         ColumnDefinition cdi = requireNonNull("columnDefinition", columnDefinition);
-        ColumnProperty[] properties = Arrays.copyOf(cdi.properties, this.properties.length + cdi.properties.length);
+        Object[] properties = Arrays.copyOf(cdi.properties, this.properties.length + cdi.properties.length);
         System.arraycopy(this.properties, 0, properties, cdi.properties.length, this.properties.length);
         return newColumnDefinition(properties);
     }
 
-    public CD add(ColumnProperty... props) {
+    public CD add(Object... props) {
         requireNonNull("properties", props);
-        ColumnProperty[] properties = Arrays.copyOf(this.properties, this.properties.length + props.length);
+        Object[] properties = Arrays.copyOf(this.properties, this.properties.length + props.length);
         System.arraycopy(props, 0, properties, this.properties.length, props.length);
         return newColumnDefinition(properties);
     }
 
     @SuppressWarnings("unchecked")
     public <T> T lookFor(Class<T> propClass) {
-        for(ColumnProperty cp : properties) {
+        for(Object cp : properties) {
             if (cp != null && propClass.isInstance(cp)) {
                 return (T) cp;
             }
@@ -90,7 +89,7 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
     @SuppressWarnings("unchecked")
     public <T> T[] lookForAll(Class<T> propClass) {
         List<T> list = new ArrayList<T>();
-        for(ColumnProperty cp : properties) {
+        for(Object cp : properties) {
             if (cp != null && propClass.isInstance(cp)) {
                 list.add((T) cp);
             }
@@ -98,7 +97,7 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
         return list.toArray((T[]) Array.newInstance(propClass, 0));
     }
 
-    protected abstract CD newColumnDefinition(ColumnProperty[] properties);
+    protected abstract CD newColumnDefinition(Object[] properties);
 
     public CD addRename(String name) {
         return add(new RenameProperty(name));

@@ -1,16 +1,18 @@
 package org.simpleflatmapper.jdbc.impl.setter;
 
+import org.simpleflatmapper.reflect.IndexedSetter;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.converter.Converter;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class ConvertDelegateIndexSetter<I, O> implements PreparedStatementIndexSetter<I> {
-    private final PreparedStatementIndexSetter<O> setter;
-    private final Converter<I, O> converter;
 
-    public ConvertDelegateIndexSetter(PreparedStatementIndexSetter<O> setter, Converter<I, O> converter) {
+public class ConvertDelegateIndexSetter<I, O> implements PreparedStatementIndexSetter<I> {
+    private final IndexedSetter<PreparedStatement, O>  setter;
+    private final Converter<? super I, ? extends O> converter;
+
+    public ConvertDelegateIndexSetter(IndexedSetter<PreparedStatement, O> setter, Converter<? super I, ? extends O> converter) {
         this.setter = setter;
         this.converter = converter;
     }

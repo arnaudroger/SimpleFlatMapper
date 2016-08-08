@@ -82,15 +82,15 @@
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
 						<Export-Package>
-							org.simpleflatmapper.map,
-							org.simpleflatmapper.map.column,
-							org.simpleflatmapper.map.column.joda,
-							org.simpleflatmapper.map.column.time,
-							org.simpleflatmapper.map.context,
-							org.simpleflatmapper.map.error,
-							org.simpleflatmapper.map.fieldmapper,
-							org.simpleflatmapper.map.mapper
-						</Export-Package>
+                            org.simpleflatmapper.map,
+                            org.simpleflatmapper.map.property,
+                            org.simpleflatmapper.map.property.joda,
+                            org.simpleflatmapper.map.property.time,
+                            org.simpleflatmapper.map.context,
+                            org.simpleflatmapper.map.error,
+                            org.simpleflatmapper.map.fieldmapper,
+                            org.simpleflatmapper.map.mapper
+                        </Export-Package>
 						<Import-Package>
 							org.objectweb.asm;version="[4.0,6)";resolution:=optional,
 							org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,

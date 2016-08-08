@@ -20,7 +20,7 @@ public final class SQLXMLResultSetGetter implements Getter<ResultSet, SQLXML> {
     @Override
     public String toString() {
         return "SQLXMLResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

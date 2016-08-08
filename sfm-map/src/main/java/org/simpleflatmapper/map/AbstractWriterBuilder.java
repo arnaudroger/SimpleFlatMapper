@@ -2,9 +2,8 @@ package org.simpleflatmapper.map;
 
 
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
-import org.simpleflatmapper.map.column.ColumnProperty;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.column.ConstantValueProperty;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.ConstantValueProperty;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
@@ -62,12 +61,12 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
 
     }
 
-    public B addColumn(String column, ColumnProperty... properties) {
+    public B addColumn(String column, Object... properties) {
         FieldMapperColumnDefinition<K> columnDefinition = FieldMapperColumnDefinition.of(properties);
         return addColumn(newKey(column, currentIndex++, columnDefinition), columnDefinition);
     }
 
-    public B addColumn(K key, ColumnProperty... properties) {
+    public B addColumn(K key, Object... properties) {
         return addColumn(key, FieldMapperColumnDefinition.<K>identity().add(properties));
     }
 

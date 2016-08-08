@@ -1,12 +1,13 @@
 package org.simpleflatmapper.datastax.impl;
 
 import com.datastax.driver.core.*;
+import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.datastax.DataTypeHelper;
 import org.simpleflatmapper.datastax.DatastaxColumnKey;
 
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.setter.ConvertDelegateSetter;
@@ -14,7 +15,6 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
 import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.impl.JavaBaseConverterFactoryProducer;
 import org.simpleflatmapper.datastax.impl.setter.BigDecimalSettableDataSetter;
 import org.simpleflatmapper.datastax.impl.setter.BigIntegerSettableDataSetter;
 import org.simpleflatmapper.datastax.impl.setter.ByteSettableDataSetter;
@@ -301,6 +301,6 @@ public class SettableDataSetterFactory
                 return new ConverterToTupleValueMapper(mapper, (TupleType) dtElt);
             }
         }
-        return JavaBaseConverterFactoryProducer.getConverter(TypeHelper.toClass(elementType), dataTypeElt, columnDefinition.properties());
+        return ConverterService.getInstance().findConverter(TypeHelper.toClass(elementType), dataTypeElt, columnDefinition.properties());
     }
 }

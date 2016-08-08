@@ -9,7 +9,7 @@ import org.simpleflatmapper.datastax.impl.DatastaxMappingContextFactoryBuilder;
 import org.simpleflatmapper.datastax.impl.RowGetterFactory;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.FieldMapperMapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.reflect.Getter;

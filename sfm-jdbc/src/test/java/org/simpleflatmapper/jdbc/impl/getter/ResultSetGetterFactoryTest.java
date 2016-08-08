@@ -7,10 +7,11 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.simpleflatmapper.jdbc.column.ZoneOffsetProperty;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.ResultSetGetterFactory;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.primitive.IntGetter;
 import org.simpleflatmapper.util.UUIDHelper;
@@ -84,7 +85,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getBlob(1)).thenReturn(blob);
         Getter<ResultSet, Object> getter = factory.newGetter(Blob.class, key(Types.BLOB), IDENTITY);
         assertEquals(blob, getter.get(resultSet));
-        assertEquals("BlobResultSetGetter{column=1}", getter.toString());
+        assertEquals("BlobResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -93,7 +94,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getClob(1)).thenReturn(blob);
         Getter<ResultSet, Object> getter = factory.newGetter(Clob.class, key(Types.CLOB), IDENTITY);
         assertEquals(blob, getter.get(resultSet));
-        assertEquals("ClobResultSetGetter{column=1}", getter.toString());
+        assertEquals("ClobResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -102,7 +103,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getCharacterStream(1)).thenReturn(blob);
         Getter<ResultSet, Object> getter = factory.newGetter(Reader.class, key(Types.CLOB), IDENTITY);
         assertEquals(blob, getter.get(resultSet));
-        assertEquals("ReaderResultSetGetter{column=1}", getter.toString());
+        assertEquals("ReaderResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -111,7 +112,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getNClob(1)).thenReturn(blob);
         Getter<ResultSet, Object> getter = factory.newGetter(NClob.class, key(Types.NCLOB), IDENTITY);
         assertEquals(blob, getter.get(resultSet));
-        assertEquals("NClobResultSetGetter{column=1}", getter.toString());
+        assertEquals("NClobResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -120,7 +121,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getNCharacterStream(1)).thenReturn(blob);
         Getter<ResultSet, Object> getter = factory.newGetter(Reader.class, key(Types.NCLOB), IDENTITY);
         assertEquals(blob, getter.get(resultSet));
-        assertEquals("NReaderResultSetGetter{column=1}", getter.toString());
+        assertEquals("NReaderResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -129,7 +130,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getBinaryStream(1)).thenReturn(inputStream);
         Getter<ResultSet, Object> getter = factory.newGetter(InputStream.class, key(Types.BLOB), IDENTITY);
         assertEquals(inputStream, getter.get(resultSet));
-        assertEquals("InputStreamResultSetGetter{column=1}", getter.toString());
+        assertEquals("InputStreamResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -138,7 +139,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getRef(1)).thenReturn(ref);
         Getter<ResultSet, Object> getter = factory.newGetter(Ref.class, key(Types.REF), IDENTITY);
         assertEquals(ref, getter.get(resultSet));
-        assertEquals("RefResultSetGetter{column=1}", getter.toString());
+        assertEquals("RefResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -147,7 +148,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getRowId(1)).thenReturn(rowId);
         Getter<ResultSet, Object> getter = factory.newGetter(RowId.class, key(Types.ROWID), IDENTITY);
         assertEquals(rowId, getter.get(resultSet));
-        assertEquals("RowIdResultSetGetter{column=1}", getter.toString());
+        assertEquals("RowIdResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -156,7 +157,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getArray(1)).thenReturn(array);
         Getter<ResultSet, Object> getter = factory.newGetter(Array.class, key(Types.ARRAY), IDENTITY);
         assertEquals(array, getter.get(resultSet));
-        assertEquals("SqlArrayResultSetGetter{column=1}", getter.toString());
+        assertEquals("SqlArrayResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -165,7 +166,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getSQLXML(1)).thenReturn(sqlxml);
         Getter<ResultSet, Object> getter = factory.newGetter(SQLXML.class, key(Types.SQLXML), IDENTITY);
         assertEquals(sqlxml, getter.get(resultSet));
-        assertEquals("SQLXMLResultSetGetter{column=1}", getter.toString());
+        assertEquals("SQLXMLResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -174,7 +175,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getURL(1)).thenReturn(url);
         Getter<ResultSet, Object> getter = factory.newGetter(URL.class, key(Types.DATALINK), IDENTITY);
         assertEquals(url, getter.get(resultSet));
-        assertEquals("UrlResultSetGetter{column=1}", getter.toString());
+        assertEquals("UrlResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -183,7 +184,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getString(1)).thenReturn("http://url.net");
         Getter<ResultSet, Object> getter = factory.newGetter(URL.class, key(Types.VARCHAR), IDENTITY);
         assertEquals(url, getter.get(resultSet));
-        assertEquals("UrlFromStringResultSetGetter{column=1}", getter.toString());
+        assertEquals("UrlFromStringResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -194,7 +195,7 @@ public class ResultSetGetterFactoryTest {
         assertEquals(date, getter.get(resultSet));
 		when(resultSet.getObject(1)).thenReturn(131l);
 		assertEquals(new java.util.Date(131l), getter.get(resultSet));
-        assertEquals("UndefinedDateResultSetGetter{column=1}", getter.toString());
+        assertEquals("UndefinedDateResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -204,7 +205,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(time, factory.newGetter(Time.class, key(JdbcColumnKey.UNDEFINED_TYPE), IDENTITY).get(resultSet));
         Getter<ResultSet, Object> getter = factory.newGetter(java.util.Date.class, key(Types.TIME), IDENTITY);
         assertEquals(time, getter.get(resultSet));
-        assertEquals("TimeResultSetGetter{column=1}", getter.toString());
+        assertEquals("TimeResultSetGetter{property=1}", getter.toString());
 	}
 
 	@Test
@@ -214,7 +215,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(time, factory.newGetter(Timestamp.class, key(JdbcColumnKey.UNDEFINED_TYPE), IDENTITY).get(resultSet));
         Getter<ResultSet, Object> getter = factory.newGetter(java.util.Date.class, key(Types.TIMESTAMP), IDENTITY);
         assertEquals(time, getter.get(resultSet));
-        assertEquals("TimestampResultSetGetter{column=1}", getter.toString());
+        assertEquals("TimestampResultSetGetter{property=1}", getter.toString());
 	}
 	@Test
 	public void testSqlDate() throws Exception {
@@ -223,7 +224,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals(time, factory.newGetter(Date.class, key(JdbcColumnKey.UNDEFINED_TYPE), IDENTITY).get(resultSet));
         Getter<ResultSet, Object> getter = factory.newGetter(java.util.Date.class, key(Types.DATE), IDENTITY);
         assertEquals(time, getter.get(resultSet));
-        assertEquals("DateResultSetGetter{column=1}", getter.toString());
+        assertEquals("DateResultSetGetter{property=1}", getter.toString());
 	}
 	@Test
 	public void testObject() throws Exception {
@@ -231,7 +232,7 @@ public class ResultSetGetterFactoryTest {
 		when(resultSet.getObject(1)).thenReturn(object);
         Getter<ResultSet, Object> getter = factory.newGetter(Object.class, key(JdbcColumnKey.UNDEFINED_TYPE), IDENTITY);
         assertEquals(object, getter.get(resultSet));
-        assertEquals("ObjectResultSetGetter{column=1}", getter.toString());
+        assertEquals("ObjectResultSetGetter{property=1}", getter.toString());
 	}
 
 	private JdbcColumnKey key(int type) {
@@ -247,7 +248,6 @@ public class ResultSetGetterFactoryTest {
         Getter<ResultSet, DateTime> getter = factory.<DateTime>newGetter(DateTime.class, key(Types.TIMESTAMP), IDENTITY);
         DateTime dt = getter.get(resultSet);
 		assertTrue(new DateTime(cal).isEqual(dt));
-        assertEquals("JodaDateTimeFromDateGetter{getter=TimestampResultSetGetter{column=1}}", getter.toString());
 	}
 	@Test
 	public void testJodaLocalDate() throws Exception {
@@ -257,7 +257,6 @@ public class ResultSetGetterFactoryTest {
         Getter<ResultSet, LocalDate> getter = factory.<LocalDate>newGetter(LocalDate.class, key(Types.DATE), IDENTITY);
         LocalDate dt = getter.get(resultSet);
 		assertTrue(new LocalDate(cal).isEqual(dt));
-        assertEquals("DateToJodaLocalDateConverter{getter=DateResultSetGetter{column=1}}", getter.toString());
 	}
 	@Test
 	public void testJodaLocalDateTime() throws Exception {
@@ -267,7 +266,6 @@ public class ResultSetGetterFactoryTest {
         Getter<ResultSet, LocalDateTime> getter = factory.<LocalDateTime>newGetter(LocalDateTime.class, key(Types.TIMESTAMP), IDENTITY);
         LocalDateTime dt = getter.get(resultSet);
 		assertTrue(new LocalDateTime(cal).isEqual(dt));
-        assertEquals("DateToJodaLocalDateTimeConverter{getter=TimestampResultSetGetter{column=1}}", getter.toString());
 	}
 	@Test
 	public void testJodaLocalTime() throws Exception {
@@ -277,7 +275,6 @@ public class ResultSetGetterFactoryTest {
         Getter<ResultSet, LocalTime> getter = factory.<LocalTime>newGetter(LocalTime.class, key(Types.TIME), IDENTITY);
         LocalTime dt = getter.get(resultSet);
 		assertTrue(new LocalTime(cal).isEqual(dt));
-        assertEquals("JodaLocalTimeResultSetGetter{getter=TimeResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -291,7 +288,7 @@ public class ResultSetGetterFactoryTest {
 
         Getter<ResultSet, Calendar> getter = factory.<Calendar>newGetter(Calendar.class, key(Types.TIMESTAMP), IDENTITY);
         assertEquals(cal, getter.get(resultSet));
-        assertEquals("CalendarResultSetGetter{dateGetter=TimestampResultSetGetter{column=1}}", getter.toString());
+        assertEquals("CalendarResultSetGetter{dateGetter=TimestampResultSetGetter{property=1}}", getter.toString());
 	}
 
 	@Test
@@ -338,26 +335,15 @@ public class ResultSetGetterFactoryTest {
 		final ZonedDateTime zonedDateTime = Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault());
 		final java.time.LocalDate expected = zonedDateTime.toLocalDate();
 
-		when(resultSet.getObject(1))
-				.thenReturn(ts, // sql
-						zonedDateTime.toLocalDateTime(), // local datetime
-						zonedDateTime.toLocalDateTime().toLocalDate(), // local date
-						zonedDateTime, // zoned date time
-						zonedDateTime.toOffsetDateTime() // offset time
-						, null
+		when(resultSet.getDate(1))
+				.thenReturn(ts,
+						 null
 				);
 
-		assertEquals(expected, getter.get(resultSet));
-		assertEquals(expected, getter.get(resultSet));
-
-		assertEquals(expected, getter.get(resultSet));
-		assertEquals(expected, getter.get(resultSet));
 
 		assertEquals(expected, getter.get(resultSet));
 
 		assertNull(getter.get(resultSet));
-
-		assertEquals("ObjectToJavaLocalDateConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -366,103 +352,59 @@ public class ResultSetGetterFactoryTest {
 		final ZonedDateTime zonedDateTime = Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault());
 		final java.time.LocalDateTime localDateTime = zonedDateTime.toLocalDateTime();
 
-		when(resultSet.getObject(1)).thenReturn(ts,
-				zonedDateTime.toLocalDateTime(), // local datetime
-				zonedDateTime, // zoned date time
-				zonedDateTime.toOffsetDateTime() // offset time
-				, null
+		when(resultSet.getTimestamp(1)).thenReturn(ts,
+				 null
 		);
 
 		Getter<ResultSet, java.time.LocalDateTime> getter = factory.<java.time.LocalDateTime>newGetter(java.time.LocalDateTime.class, key(Types.TIMESTAMP), IDENTITY);
 
 		assertEquals(localDateTime, getter.get(resultSet));
-		assertEquals(localDateTime, getter.get(resultSet));
-		assertEquals(localDateTime, getter.get(resultSet));
-		assertEquals(localDateTime, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
 
-		assertEquals("ObjectToJavaLocalDateTimeConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
 	public void testJavaLocalTime() throws Exception {
 		Time ts = new Time(System.currentTimeMillis());
-		final ZonedDateTime zonedDateTime = Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault());
-		final java.time.LocalTime localTime = zonedDateTime.toLocalTime();
+		final java.time.LocalTime localTime = ts.toLocalTime();
 
-		when(resultSet.getObject(1)).thenReturn(ts,
-				zonedDateTime.toLocalDateTime(), // local datetime
-				zonedDateTime.toLocalTime(),
-				zonedDateTime, // zoned date time
-				zonedDateTime.toOffsetDateTime(), // offset time
-				zonedDateTime.toOffsetDateTime().toOffsetTime(), null
-		);
+		when(resultSet.getTime(1)).thenReturn(ts, null);
 
 		Getter<ResultSet, java.time.LocalTime> getter = factory.<java.time.LocalTime>newGetter(java.time.LocalTime.class, key(Types.TIME), IDENTITY);
 
 		assertEquals(localTime, getter.get(resultSet));
-		assertEquals(localTime, getter.get(resultSet));
-		assertEquals(localTime, getter.get(resultSet));
-		assertEquals(localTime, getter.get(resultSet));
-		assertEquals(localTime, getter.get(resultSet));
-		assertEquals(localTime, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
-
-
-		assertEquals("ObjectToJavaLocalTimeConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
-	public void testJavaOffsetDateTime() throws Exception {
+	public void testJavaOffsetDateTimeFromT() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		Timestamp ts = new Timestamp(cal.getTimeInMillis());
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
 		final OffsetDateTime offsetDateTime = instant.atOffset(ZoneId.systemDefault().getRules().getOffset(instant));
 
-		when(resultSet.getObject(1)).thenReturn(ts,
-				offsetDateTime.toLocalDateTime(),
-				offsetDateTime.toLocalDate(),
-				offsetDateTime.toZonedDateTime(),
-				offsetDateTime, null);
+		when(resultSet.getTimestamp(1)).thenReturn(ts, null);
 
 		Getter<ResultSet, java.time.OffsetDateTime> getter = factory.<java.time.OffsetDateTime>newGetter(java.time.OffsetDateTime.class, key(Types.TIMESTAMP), IDENTITY);
 		assertEquals(offsetDateTime, getter.get(resultSet));
-		assertEquals(offsetDateTime, getter.get(resultSet));
-		assertEquals(offsetDateTime.withHour(0).withMinute(0).withSecond(0).withNano(0), getter.get(resultSet));
-		assertEquals(offsetDateTime, getter.get(resultSet));
-		assertEquals(offsetDateTime, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
-		assertEquals("ObjectToJavaOffsetDateTimeConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
-	public void testJavaOffsetTime() throws Exception {
+	public void testJavaOffsetTimeFromT() throws Exception {
 		Calendar cal = Calendar.getInstance();
-		Timestamp ts = new Timestamp(cal.getTimeInMillis());
+		Time ts = new Time(cal.getTimeInMillis());
 
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
-		final OffsetDateTime offsetDateTime = instant.atOffset(ZoneId.systemDefault().getRules().getOffset(instant));
-		final OffsetTime offsetTime = offsetDateTime.toOffsetTime();
+		ZoneOffset offset = ZoneId.systemDefault().getRules().getOffset(instant);
+		final OffsetTime offsetTime = ts.toLocalTime().atOffset(offset);
 
-		when(resultSet.getObject(1)).thenReturn(ts,
-				offsetDateTime.toLocalDateTime(),
-				offsetDateTime.toLocalTime(),
-				offsetDateTime.toZonedDateTime(),
-				offsetDateTime,
-				offsetDateTime.toOffsetTime(), null);
+		when(resultSet.getTime(1)).thenReturn(ts, null);
 
-		Getter<ResultSet, java.time.OffsetTime> getter = factory.<java.time.OffsetTime>newGetter(java.time.OffsetTime.class, key(Types.TIME), IDENTITY);
+		Getter<ResultSet, java.time.OffsetTime> getter = factory.<java.time.OffsetTime>newGetter(java.time.OffsetTime.class, key(Types.TIME), new ZoneOffsetProperty(offset));
 
-		assertEquals(offsetTime, getter.get(resultSet));
-		assertEquals(offsetTime, getter.get(resultSet));
-		assertEquals(offsetTime.toLocalTime().atOffset(ZoneId.systemDefault().getRules().getOffset(Instant.now())), getter.get(resultSet));
-		assertEquals(offsetTime, getter.get(resultSet));
-		assertEquals(offsetTime, getter.get(resultSet));
 		assertEquals(offsetTime, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
-
-
-		assertEquals("ObjectToJavaOffsetTimeConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
@@ -472,65 +414,46 @@ public class ResultSetGetterFactoryTest {
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
 		final ZonedDateTime zonedDateTime = instant.atZone(ZoneId.systemDefault());
 
-		when(resultSet.getObject(1)).thenReturn(ts,
-				zonedDateTime.toLocalDateTime(),
-				zonedDateTime,
-				zonedDateTime.toOffsetDateTime(), null);
+		when(resultSet.getTimestamp(1)).thenReturn(ts, null);
 
-		Getter<ResultSet, java.time.ZonedDateTime> getter = factory.<java.time.ZonedDateTime>newGetter(java.time.ZonedDateTime.class, key(Types.TIMESTAMP), IDENTITY);
+		Getter<ResultSet, java.time.ZonedDateTime> getter = factory.<java.time.ZonedDateTime>newGetter(java.time.ZonedDateTime.class, key(Types.TIMESTAMP));
 
-		assertEquals(zonedDateTime, getter.get(resultSet));
-		assertEquals(zonedDateTime, getter.get(resultSet));
-		assertEquals(zonedDateTime, getter.get(resultSet));
 		assertEquals(zonedDateTime, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
-
-
-		assertEquals("ObjectToJavaZonedDateTimeConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
 	public void testJavaInstant() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		Timestamp ts = new Timestamp(cal.getTimeInMillis());
-		when(resultSet.getObject(1)).thenReturn(ts, cal.getTimeInMillis(), Instant.ofEpochMilli(cal.getTimeInMillis()).atZone(ZoneId.systemDefault()), null);
+		when(resultSet.getTimestamp(1)).thenReturn(ts, null);
 		Getter<ResultSet, java.time.Instant> getter = factory.<java.time.Instant>newGetter(java.time.Instant.class, key(Types.TIMESTAMP), IDENTITY);
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
 		assertEquals(instant, getter.get(resultSet));
-		assertEquals(instant, getter.get(resultSet));
-		assertEquals(instant, getter.get(resultSet));
 		assertNull(getter.get(resultSet));
-
-		assertEquals("ObjectToJavaInstantConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
 	public void testJavaYearMonth() throws Exception {
 		Calendar cal = Calendar.getInstance();
-		Date ts = new Date(cal.getTimeInMillis());
-		when(resultSet.getObject(1)).thenReturn(ts, Instant.ofEpochMilli(cal.getTimeInMillis()).atZone(ZoneId.systemDefault()), ts.toLocalDate().getYear()  * 100  + ts.toLocalDate().getMonthValue(), null);		Getter<ResultSet, java.time.YearMonth> getter = factory.<java.time.YearMonth>newGetter(java.time.YearMonth.class, key(Types.TIMESTAMP), IDENTITY);
+		Timestamp ts = new Timestamp(cal.getTimeInMillis());
+		when(resultSet.getTimestamp(1)).thenReturn(ts, null);
+
+		Getter<ResultSet, java.time.YearMonth> getter = factory.<java.time.YearMonth>newGetter(java.time.YearMonth.class, key(Types.TIMESTAMP), IDENTITY);
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
 		final ZonedDateTime dateTime = instant.atZone(ZoneId.systemDefault());
 		assertEquals(YearMonth.from(dateTime), getter.get(resultSet));
-		assertEquals(YearMonth.from(dateTime), getter.get(resultSet));
-		assertEquals(YearMonth.from(dateTime), getter.get(resultSet));
 		assertNull(getter.get(resultSet));
-
-		assertEquals("ObjectToJavaYearMonthConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	@Test
 	public void testJavaYear() throws Exception {
-		java.time.LocalDateTime ldt = java.time.LocalDateTime.of(2029, 1, 2, 1, 1, 1);
+		when(resultSet.getInt(1)).thenReturn(2029, 0);
+		when(resultSet.wasNull()).thenReturn(true);
 
-		when(resultSet.getObject(1)).thenReturn(2029, ldt, new Date(ldt.toInstant(ZoneOffset.ofHours(0)).toEpochMilli()), null);
 		Getter<ResultSet, java.time.Year> getter = factory.<java.time.Year>newGetter(java.time.Year.class, key(Types.INTEGER), IDENTITY);
 		assertEquals(Year.of(2029), getter.get(resultSet));
-		assertEquals(Year.of(2029), getter.get(resultSet));
-		assertEquals(Year.of(2029), getter.get(resultSet));
 		assertNull(getter.get(resultSet));
-
-		assertEquals("ObjectToJavaYearConverter{getter=ObjectResultSetGetter{column=1}}", getter.toString());
 	}
 
 	//IFJAVA8_END

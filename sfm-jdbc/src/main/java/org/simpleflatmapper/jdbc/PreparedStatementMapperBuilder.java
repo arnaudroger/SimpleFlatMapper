@@ -11,7 +11,7 @@ import org.simpleflatmapper.jdbc.impl.setter.PreparedStatementIndexSetterOnGette
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
 import org.simpleflatmapper.map.AbstractWriterBuilder;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.jdbc.column.IndexedSetterFactoryProperty;
 import org.simpleflatmapper.jdbc.column.IndexedSetterProperty;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;

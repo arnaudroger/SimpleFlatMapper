@@ -8,7 +8,7 @@ import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
 import org.simpleflatmapper.map.AbstractWriterBuilder;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.Instantiator;

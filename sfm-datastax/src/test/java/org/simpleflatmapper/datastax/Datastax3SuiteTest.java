@@ -3,6 +3,7 @@ package org.simpleflatmapper.datastax;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.test.junit.LibrarySets;
@@ -14,9 +15,9 @@ import org.simpleflatmapper.test.junit.MultiClassLoaderJunitRunner;
         librarySets = {
                 "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar"
         },
-        includes={ReflectionService.class, Mapper.class, DatastaxCrud.class, DatastaxCrudTest.class},
-        excludes = { "org.junit", "DatastaxCrudTest", "io.netty"},
-        names={"v303", "v218"}
+        includes={Converter.class, ReflectionService.class, Mapper.class, DatastaxCrud.class, DatastaxCrudTest.class},
+        excludes = { "org.junit", "io.netty"},
+        names={"v303"}
 )
 @Suite.SuiteClasses({
     Datastax3.class,

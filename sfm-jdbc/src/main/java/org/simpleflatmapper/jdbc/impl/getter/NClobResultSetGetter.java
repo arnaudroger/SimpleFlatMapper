@@ -20,7 +20,7 @@ public final class NClobResultSetGetter implements Getter<ResultSet, NClob> {
     @Override
     public String toString() {
         return "NClobResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

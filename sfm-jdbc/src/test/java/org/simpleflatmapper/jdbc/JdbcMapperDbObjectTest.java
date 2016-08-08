@@ -3,7 +3,7 @@ package org.simpleflatmapper.jdbc;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.map.column.DefaultValueProperty;
+import org.simpleflatmapper.map.property.DefaultValueProperty;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
 import org.simpleflatmapper.util.ListCollectorHandler;

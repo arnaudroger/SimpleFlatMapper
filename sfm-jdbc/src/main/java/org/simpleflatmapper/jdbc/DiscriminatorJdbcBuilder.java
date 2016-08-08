@@ -2,7 +2,7 @@ package org.simpleflatmapper.jdbc;
 
 
 import org.simpleflatmapper.jdbc.impl.DiscriminatorJdbcMapper;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.Predicate;
 
@@ -126,9 +126,9 @@ public class DiscriminatorJdbcBuilder<T> {
         }
 
         /**
-         * Static column definition.
+         * Static property definition.
          * @see JdbcMapperBuilder
-         * @param column the column
+         * @param column the property
          * @return the current builder
          */
         public DiscriminatorJdbcSubBuilder addMapping(String column) {
@@ -136,10 +136,10 @@ public class DiscriminatorJdbcBuilder<T> {
         }
 
         /**
-         * Static column definition.
+         * Static property definition.
          * @see JdbcMapperBuilder
-         * @param column the column
-         * @param columnDefinition the column definition
+         * @param column the property
+         * @param columnDefinition the property definition
          * @return the current builder
          */
         public DiscriminatorJdbcSubBuilder addMapping(String column, FieldMapperColumnDefinition<JdbcColumnKey> columnDefinition) {
@@ -151,11 +151,11 @@ public class DiscriminatorJdbcBuilder<T> {
         }
 
         /**
-         * Static column definition.
+         * Static property definition.
          * @see JdbcMapperBuilder
-         * @param column the column
-         * @param index the column index
-         * @param columnDefinition the column definition
+         * @param column the property
+         * @param index the property index
+         * @param columnDefinition the property definition
          * @return the current builder
          */
         public DiscriminatorJdbcSubBuilder addMapping(String column, int index, FieldMapperColumnDefinition<JdbcColumnKey> columnDefinition) {

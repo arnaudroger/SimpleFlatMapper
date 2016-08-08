@@ -1,6 +1,6 @@
 package org.simpleflatmapper.map;
 
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.error.RethrowFieldMapperErrorHandler;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.error.RethrowRowHandlerErrorHandler;

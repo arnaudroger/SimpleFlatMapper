@@ -47,7 +47,7 @@
 				<configuration>
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
-						<Export-Package>org.simpleflatmapper.util.*</Export-Package>
+						<Export-Package>org.simpleflatmapper.util</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

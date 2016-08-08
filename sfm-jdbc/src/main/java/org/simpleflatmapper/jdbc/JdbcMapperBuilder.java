@@ -4,8 +4,7 @@ import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.RowHandlerErrorHandler;
-import org.simpleflatmapper.map.column.ColumnProperty;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.AbstractMapperBuilder;
@@ -91,11 +90,11 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
 
 
     /**
-     * add a new mapping to the specified column with the specified index and the specified type.
+     * add a new mapping to the specified property with the specified index and the specified type.
      *
-     * @param column  the column name
-     * @param index   the column index
-     * @param sqlType the column type, @see java.sql.Types
+     * @param column  the property name
+     * @param index   the property index
+     * @param sqlType the property type, @see java.sql.Types
      * @return the current builder
      */
     public JdbcMapperBuilder<T> addMapping(final String column, final int index, final int sqlType) {
@@ -104,12 +103,12 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
     }
 
     /**
-     * add a new mapping to the specified column with the specified index,  the specified type.
+     * add a new mapping to the specified property with the specified index,  the specified type.
      *
-     * @param column           the column name
-     * @param index            the column index
-     * @param sqlType          the column type, @see java.sql.Types
-     * @param columnDefinition the column definition
+     * @param column           the property name
+     * @param index            the property index
+     * @param sqlType          the property type, @see java.sql.Types
+     * @param columnDefinition the property definition
      * @return the current builder
      */
     public JdbcMapperBuilder<T> addMapping(final String column, final int index, final int sqlType, FieldMapperColumnDefinition<JdbcColumnKey> columnDefinition) {
@@ -117,20 +116,20 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
     }
 
     /**
-     * add a new mapping to the specified column with the specified index,  the specified type.
+     * add a new mapping to the specified property with the specified index,  the specified type.
      *
-     * @param column           the column name
-     * @param index            the column index
-     * @param sqlType          the column type, @see java.sql.Types
-     * @param properties the column properties
+     * @param column           the property name
+     * @param index            the property index
+     * @param sqlType          the property type, @see java.sql.Types
+     * @param properties the property properties
      * @return the current builder
      */
-    public JdbcMapperBuilder<T> addMapping(final String column, final int index, final int sqlType, ColumnProperty... properties) {
+    public JdbcMapperBuilder<T> addMapping(final String column, final int index, final int sqlType, Object... properties) {
         return addMapping(new JdbcColumnKey(column, index, sqlType), properties);
     }
 
     /**
-     * add the all the column present in the metaData
+     * add the all the property present in the metaData
      *
      * @param metaData the metaDAta
      * @return the current builder

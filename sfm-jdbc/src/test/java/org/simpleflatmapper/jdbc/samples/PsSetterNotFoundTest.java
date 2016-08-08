@@ -6,7 +6,7 @@ import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 import org.simpleflatmapper.jdbc.column.IndexedSetterProperty;
 import org.simpleflatmapper.map.MapperBuildingException;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.jdbc.column.IndexedSetterFactoryProperty;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.IndexedSetter;

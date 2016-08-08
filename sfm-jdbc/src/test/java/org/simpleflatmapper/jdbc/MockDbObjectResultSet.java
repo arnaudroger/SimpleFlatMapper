@@ -44,7 +44,7 @@ public class MockDbObjectResultSet implements ResultSet {
 		switch(columnIndex) {
 		case 4: return new Timestamp(i * 1000);
 		}
-		throw new SQLException("invalid column index " + columnIndex);
+		throw new SQLException("invalid property index " + columnIndex);
 	}
 	
 	@Override
@@ -54,7 +54,7 @@ public class MockDbObjectResultSet implements ResultSet {
 		case 3: return "email" + i;
 		case 6: return "type" + ((i%4) + 1);
 		}
-		throw new SQLException("invalid column index " + columnIndex);
+		throw new SQLException("invalid property index " + columnIndex);
 	}
 	
 	
@@ -66,7 +66,7 @@ public class MockDbObjectResultSet implements ResultSet {
 		} else if (columnLabel.startsWith("email")) {
 			return "email";
 		}
-		throw new SQLException("invalid column name " + columnLabel);
+		throw new SQLException("invalid property name " + columnLabel);
 	}
 	
 	@Override
@@ -74,7 +74,7 @@ public class MockDbObjectResultSet implements ResultSet {
 		if (columnLabel.startsWith("year_sta")) {
 			return 2000 + i;
 		}  else {
-			throw new SQLException("invalid column name " + columnLabel);
+			throw new SQLException("invalid property name " + columnLabel);
 		}
 	}
 
@@ -83,7 +83,7 @@ public class MockDbObjectResultSet implements ResultSet {
 		if (columnLabel.startsWith("id")) {
 			return i;
 		}  else {
-			throw new SQLException("invalid column name " + columnLabel);
+			throw new SQLException("invalid property name " + columnLabel);
 		}
 	}
 
@@ -93,7 +93,7 @@ public class MockDbObjectResultSet implements ResultSet {
 			return i % 4;
 		} 
 
-		throw new SQLException("invalid column name " + columnIndex);
+		throw new SQLException("invalid property name " + columnIndex);
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class MockDbObjectResultSet implements ResultSet {
 		if (columnIndex == 1) {
 			return i;
 		} 
-		throw new SQLException("invalid column name " + columnIndex);
+		throw new SQLException("invalid property name " + columnIndex);
 	}
 
 	@Override

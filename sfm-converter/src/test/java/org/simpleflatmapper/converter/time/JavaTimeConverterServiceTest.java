@@ -1,6 +1,9 @@
 package org.simpleflatmapper.converter.time;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.AppenderConverter;
+import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ConverterService;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -15,11 +18,17 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.Calendar;
 import java.util.Date;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.simpleflatmapper.converter.ConverterServiceTest.testConverter;
+import static org.simpleflatmapper.converter.test.ConverterServiceTestHelper.testConverter;
 
 
 public class JavaTimeConverterServiceTest {
@@ -78,8 +87,8 @@ public class JavaTimeConverterServiceTest {
         testObjectToInstant(instant.atZone(zoneId).toInstant(), instant);
         testObjectToInstant(instant.atZone(zoneId).toLocalDateTime(), instant);
         testObjectToInstant(instant.atZone(zoneId).toOffsetDateTime(), instant);
-        testObjectToInstant(Date.from(instant), instant);
-        testObjectToInstant(instant.toEpochMilli(), instant);
+        testObjectToInstant(Date.from(instant), instant.truncatedTo(ChronoUnit.MILLIS));
+        testObjectToInstant(instant.toEpochMilli(), instant.truncatedTo(ChronoUnit.MILLIS));
 
         try {
             testObjectToInstant("a string", instant);
@@ -129,7 +138,7 @@ public class JavaTimeConverterServiceTest {
         testObjectToLocalDateTime(localDateTime.atZone(zoneId), localDateTime);
         testObjectToLocalDateTime(localDateTime.atZone(zoneId).toInstant(), localDateTime);
         testObjectToLocalDateTime(localDateTime.atZone(zoneId).toOffsetDateTime(), localDateTime);
-        testObjectToLocalDateTime(Date.from(localDateTime.atZone(zoneId).toInstant()), localDateTime);
+        testObjectToLocalDateTime(Date.from(localDateTime.atZone(zoneId).toInstant()), localDateTime.truncatedTo(ChronoUnit.MILLIS));
 
         try {
             testObjectToLocalDateTime("a string", localDateTime);
@@ -157,7 +166,7 @@ public class JavaTimeConverterServiceTest {
         testObjectToLocalTime(localTime.atDate(LocalDate.now()).atOffset(offset), localTime);
         testObjectToLocalTime(localTime.atDate(LocalDate.now()).toLocalTime(), localTime);
         testObjectToLocalTime(localTime.atDate(LocalDate.now()).toInstant(offset), localTime);
-        testObjectToLocalTime(Date.from(localTime.atDate(LocalDate.now()).toInstant(offset)), localTime);
+        testObjectToLocalTime(Date.from(localTime.atDate(LocalDate.now()).toInstant(offset)), localTime.truncatedTo(ChronoUnit.MILLIS));
 
         try {
             testObjectToLocalTime("a string", localTime);
@@ -182,7 +191,7 @@ public class JavaTimeConverterServiceTest {
         testObjectToOffsetDateTime(offsetDateTime.toLocalDateTime(), offsetDateTime);
         testObjectToOffsetDateTime(offsetDateTime.toInstant(), offsetDateTime);
         testObjectToOffsetDateTime(offsetDateTime.atZoneSameInstant(zoneId), offsetDateTime);
-        testObjectToOffsetDateTime(Date.from(offsetDateTime.toInstant()), offsetDateTime);
+        testObjectToOffsetDateTime(Date.from(offsetDateTime.toInstant()), offsetDateTime.truncatedTo(ChronoUnit.MILLIS));
 
         try {
             testObjectToOffsetDateTime("a string", offsetDateTime);
@@ -209,7 +218,7 @@ public class JavaTimeConverterServiceTest {
         testObjectToOffsetTime(offsetTime.atDate(LocalDate.now()).toLocalDateTime(), offsetTime);
         testObjectToOffsetTime(offsetTime.atDate(LocalDate.now()).toLocalTime(), offsetTime);
         testObjectToOffsetTime(offsetTime.atDate(LocalDate.now()).toInstant(), offsetTime);
-        testObjectToOffsetTime(Date.from(offsetTime.atDate(LocalDate.now()).toInstant()), offsetTime);
+        testObjectToOffsetTime(Date.from(offsetTime.atDate(LocalDate.now()).toInstant()), offsetTime.truncatedTo(ChronoUnit.MILLIS));
 
         try {
             testObjectToOffsetTime("a string", offsetTime);
@@ -283,7 +292,7 @@ public class JavaTimeConverterServiceTest {
         testObjectToZonedDateTime(zonedDateTime.toInstant(), zonedDateTime);
         testObjectToZonedDateTime(zonedDateTime.toLocalDateTime(), zonedDateTime);
         testObjectToZonedDateTime(zonedDateTime.toOffsetDateTime(), zonedDateTime);
-        testObjectToZonedDateTime(Date.from(zonedDateTime.toInstant()), zonedDateTime);
+        testObjectToZonedDateTime(Date.from(zonedDateTime.toInstant()), zonedDateTime.truncatedTo(ChronoUnit.MILLIS));
 
         try {
             testObjectToZonedDateTime("a string", zonedDateTime);
@@ -295,6 +304,53 @@ public class JavaTimeConverterServiceTest {
 
     private void testObjectToZonedDateTime(Object in, ZonedDateTime out) throws Exception {
         testConverter(in, out, Object.class, ZonedDateTime.class);
+    }
+
+
+    @Test
+    public void testCharacterToTime() throws Exception {
+        testConvertFromCharSequence(Instant.now(), DateTimeFormatter.ISO_INSTANT);
+        testConvertFromCharSequence(LocalDate.now(), DateTimeFormatter.ISO_LOCAL_DATE);
+        testConvertFromCharSequence(LocalDateTime.now(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        testConvertFromCharSequence(LocalTime.now(), DateTimeFormatter.ISO_LOCAL_TIME);
+        testConvertFromCharSequence(OffsetDateTime.now(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        testConvertFromCharSequence(OffsetTime.now(), DateTimeFormatter.ISO_OFFSET_TIME);
+        testConvertFromCharSequence(Year.now(), DateTimeFormatter.ofPattern("yyyy"));
+        testConvertFromCharSequence(YearMonth.now(), DateTimeFormatter.ofPattern("yyyy-MM"));
+        testConvertFromCharSequence(ZonedDateTime.now(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
+    }
+
+    public void testConvertFromCharSequence(Temporal temploral, DateTimeFormatter dateTimeFormatter) throws Exception {
+        Converter<? super CharSequence, ? extends Temporal> converter =
+                ConverterService.getInstance().findConverter(CharSequence.class, temploral.getClass(), dateTimeFormatter);
+        assertEquals(temploral, converter.convert(dateTimeFormatter.format(temploral)));
+
+        assertNull(converter.convert(""));
+        assertNull(converter.convert(null));
+
+        DateTimeFormatter failing = DateTimeFormatter.ofPattern("yyyy////dd");
+        Converter<? super CharSequence, ? extends Temporal> multiConverter =
+                ConverterService.getInstance().findConverter(CharSequence.class, temploral.getClass(), failing, dateTimeFormatter);
+        assertEquals(temploral, multiConverter.convert(dateTimeFormatter.format(temploral)));
+    }
+
+
+    @Test
+    public void testTemporalToString() throws Exception {
+
+        Converter<? super ZonedDateTime, ? extends CharSequence> converter = ConverterService.getInstance().findConverter(ZonedDateTime.class, CharSequence.class, DateTimeFormatter.ISO_ZONED_DATE_TIME);
+
+        assertTrue(AppenderConverter.class.isInstance(converter));
+
+        AppenderConverter<? super ZonedDateTime, ? extends CharSequence> appenderConverter = (AppenderConverter<? super ZonedDateTime, ? extends CharSequence>) converter;
+
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+
+        assertEquals(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(zonedDateTime), converter.convert(zonedDateTime));
+        StringBuilder sb = new StringBuilder();
+        appenderConverter.appendTo(zonedDateTime, sb);
+        assertEquals(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(zonedDateTime), sb.toString());
+
     }
 
     private Date trunc(Date date) {

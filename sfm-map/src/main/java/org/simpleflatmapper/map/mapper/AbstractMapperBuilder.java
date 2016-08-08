@@ -4,8 +4,7 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.column.ColumnProperty;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 
@@ -28,7 +27,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
      * @param mapperConfig               the mapperConfig.
      * @param mapperSource               the Mapper source.
      * @param keyFactory
-     * @param startIndex                 the first column index
+     * @param startIndex                 the first property index
      */
     public AbstractMapperBuilder(
             final ClassMeta<T> classMeta,
@@ -61,10 +60,10 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     }
 
     /**
-     * add a new mapping to the specified column with a key column definition and an undefined type.
-     * The index is incremented for each non indexed column mapping.
+     * add a new mapping to the specified property with a key property definition and an undefined type.
+     * The index is incremented for each non indexed property mapping.
      *
-     * @param column the column name
+     * @param column the property name
      * @return the current builder
      */
     public final B addKey(String column) {
@@ -72,9 +71,9 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     }
 
     /**
-     * add a new mapping to the specified column with an undefined type. The index is incremented for each non indexed column mapping.
+     * add a new mapping to the specified property with an undefined type. The index is incremented for each non indexed property mapping.
      *
-     * @param column the column name
+     * @param column the property name
      * @return the current builder
      */
     public final B addMapping(String column) {
@@ -82,9 +81,9 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     }
 
     /**
-     * add a new mapping to the specified column with the specified columnDefinition and an undefined type. The index is incremented for each non indexed column mapping.
+     * add a new mapping to the specified property with the specified columnDefinition and an undefined type. The index is incremented for each non indexed property mapping.
      *
-     * @param column           the column name
+     * @param column           the property name
      * @param columnDefinition the definition
      * @return the current builder
      */
@@ -93,21 +92,21 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     }
 
     /**
-     * add a new mapping to the specified column with the specified columnDefinition and an undefined type. The index is incremented for each non indexed column mapping.
+     * add a new mapping to the specified property with the specified columnDefinition and an undefined type. The index is incremented for each non indexed property mapping.
      *
-     * @param column           the column name
+     * @param column           the property name
      * @param properties the definition
      * @return the current builder
      */
-    public final B addMapping(final String column, final ColumnProperty... properties) {
+    public final B addMapping(final String column, final Object... properties) {
         return addMapping(column, calculatedIndex++, properties);
     }
 
     /**
-     * add a new mapping to the specified column with the specified index and an undefined type.
+     * add a new mapping to the specified property with the specified index and an undefined type.
      *
-     * @param column the column name
-     * @param index  the column index
+     * @param column the property name
+     * @param index  the property index
      * @return the current builder
      */
     public final B addMapping(String column, int index) {
@@ -115,11 +114,11 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     }
 
     /**
-     * add a new mapping to the specified column with the specified index, specified column definition and an undefined type.
+     * add a new mapping to the specified property with the specified index, specified property definition and an undefined type.
      *
-     * @param column           the column name
-     * @param index            the column index
-     * @param columnDefinition the column definition
+     * @param column           the property name
+     * @param index            the property index
+     * @param columnDefinition the property definition
      * @return the current builder
      */
     public final B addMapping(String column, int index, final FieldMapperColumnDefinition<K> columnDefinition) {
@@ -127,14 +126,14 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     }
 
     /**
-     * add a new mapping to the specified column with the specified index, specified column definition and an undefined type.
+     * add a new mapping to the specified property with the specified index, specified property definition and an undefined type.
      *
-     * @param column           the column name
-     * @param index            the column index
-     * @param properties the column properties
+     * @param column           the property name
+     * @param index            the property index
+     * @param properties the property properties
      * @return the current builder
      */
-    public final B addMapping(String column, int index, final ColumnProperty... properties) {
+    public final B addMapping(String column, int index, final Object... properties) {
         return addMapping(key(column, index), properties);
     }
 
@@ -158,7 +157,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     }
 
     @SuppressWarnings("unchecked")
-    public final B addMapping(K key, ColumnProperty... properties) {
+    public final B addMapping(K key, Object... properties) {
         fieldMapperMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<K>of(properties));
         return (B) this;
     }

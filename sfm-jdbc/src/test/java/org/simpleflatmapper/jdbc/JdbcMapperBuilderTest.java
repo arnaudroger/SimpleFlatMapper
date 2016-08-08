@@ -5,7 +5,7 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.error.LogFieldMapperErrorHandler;
 import org.simpleflatmapper.map.mapper.MapperImpl;
 import org.simpleflatmapper.reflect.Getter;

@@ -59,7 +59,6 @@ public class ConverterService {
 
     @SuppressWarnings("unchecked")
     public <P, F> Converter<? super F, ? extends P> findConverter(Type inType, Type outType, Object... params) {
-
         List<ScoredConverterFactory> potentials = new ArrayList<ScoredConverterFactory>();
 
         if (TypeHelper.areEquals(inType, outType)) {

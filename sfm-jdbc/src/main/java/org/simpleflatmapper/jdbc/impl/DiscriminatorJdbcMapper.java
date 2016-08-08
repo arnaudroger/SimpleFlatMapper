@@ -115,7 +115,7 @@ public final class DiscriminatorJdbcMapper<T> extends AbstractEnumarableDelegate
 
         @Override
         public String convert(ResultSet in) throws Exception {
-            return " column " + discriminatorColumn + " = " + in.getObject(discriminatorColumn);
+            return " property " + discriminatorColumn + " = " + in.getObject(discriminatorColumn);
         }
     }
 

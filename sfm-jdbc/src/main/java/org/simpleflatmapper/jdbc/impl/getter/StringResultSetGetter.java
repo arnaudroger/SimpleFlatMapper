@@ -19,7 +19,7 @@ public final class StringResultSetGetter implements Getter<ResultSet, String> {
     @Override
     public String toString() {
         return "StringResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

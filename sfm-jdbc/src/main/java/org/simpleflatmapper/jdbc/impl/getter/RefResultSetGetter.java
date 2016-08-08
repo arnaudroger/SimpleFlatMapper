@@ -20,7 +20,7 @@ public final class RefResultSetGetter implements Getter<ResultSet, Ref> {
     @Override
     public String toString() {
         return "RefResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

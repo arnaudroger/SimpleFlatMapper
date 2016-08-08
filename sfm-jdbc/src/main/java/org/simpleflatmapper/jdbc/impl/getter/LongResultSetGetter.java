@@ -33,7 +33,7 @@ public final class LongResultSetGetter implements LongGetter<ResultSet>,
     @Override
     public String toString() {
         return "LongResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

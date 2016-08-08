@@ -1,5 +1,9 @@
 package org.simpleflatmapper.jdbc;
 
+import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.jdbc.impl.JDBCTypeHelper;
+import org.simpleflatmapper.reflect.GetterWithConverter;
 import org.simpleflatmapper.reflect.getter.BytesUUIDGetter;
 import org.simpleflatmapper.reflect.getter.EnumUnspecifiedTypeGetter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
@@ -79,6 +83,8 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			}
 		}
 	};
+	private final ConverterService converterService = ConverterService.getInstance();
+
 	public static final class StringResultSetGetterFactory implements
 			GetterFactory<ResultSet, JdbcColumnKey> {
 		@SuppressWarnings("unchecked")
@@ -386,7 +392,20 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 	@Override
 	public <P> Getter<ResultSet, P> newGetter(Type genericType,
 											  JdbcColumnKey key, Object... properties) {
-		
+
+		Getter<ResultSet, P> getter = _newGetter(genericType, key, properties);
+
+		if (getter != null) return getter;
+		;
+
+		// convertion fall back
+		Class<?> sqlDataType = JDBCTypeHelper.toJavaType(key.getSqlType(), genericType);
+		getter = lookForGetterWithConvertion(sqlDataType, (Class<P>) TypeHelper.toClass(genericType), key, properties);
+
+		return getter;
+	}
+
+	private <P> Getter<ResultSet, P> _newGetter(Type genericType, JdbcColumnKey key, Object[] properties) {
 		Class<?> clazz = TypeHelper.wrap(TypeHelper.toClass(genericType));
 
 		if (Object.class.equals(clazz)) {
@@ -402,7 +421,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				return (Getter<ResultSet, P>) newArrayListGetter(elementType, key, properties);
 			}
 		}
-		
+
 		GetterFactory<ResultSet, JdbcColumnKey> getterFactory;
 
 		if (clazz.isEnum()) {
@@ -420,7 +439,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				}
 			}
 		}
-		
+
 		Getter<ResultSet, P> getter = null;
 		if (getterFactory != null) {
 			getter = (Getter<ResultSet, P>) getterFactory.newGetter(genericType, key, properties);
@@ -433,6 +452,17 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		}
 
 		return getter;
+	}
+
+	private <P, J> Getter<ResultSet, P> lookForGetterWithConvertion(Class<J> sqlDataType, Class<P> propertyType, JdbcColumnKey key, Object[] properties) {
+		Converter<? super J, ? extends P> converter = converterService.findConverter(sqlDataType, propertyType, properties);
+
+		if (converter != null) {
+			Getter<ResultSet, J> getter = _newGetter(sqlDataType, key, properties);
+
+			return new GetterWithConverter<ResultSet, J, P>(converter, getter);
+		}
+		return null;
 	}
 
 	private <E> Getter<ResultSet, E[]> newArrayGetter(Class<E> elementType, JdbcColumnKey key, Object... properties) {

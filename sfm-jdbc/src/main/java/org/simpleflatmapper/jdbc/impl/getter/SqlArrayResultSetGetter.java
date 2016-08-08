@@ -20,7 +20,7 @@ public final class SqlArrayResultSetGetter implements Getter<ResultSet, Array> {
     @Override
     public String toString() {
         return "SqlArrayResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

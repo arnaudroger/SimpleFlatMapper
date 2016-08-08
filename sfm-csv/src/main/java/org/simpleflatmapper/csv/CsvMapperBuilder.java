@@ -29,9 +29,8 @@ import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandlerFactory;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetterFactory;
-import org.simpleflatmapper.map.column.ColumnProperty;
-import org.simpleflatmapper.map.column.DefaultDateFormatProperty;
-import org.simpleflatmapper.map.column.DefaultValueProperty;
+import org.simpleflatmapper.map.property.DefaultDateFormatProperty;
+import org.simpleflatmapper.map.property.DefaultValueProperty;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ForEachCallBack;
@@ -122,15 +121,15 @@ public class CsvMapperBuilder<T> {
 		return this;
 	}
 
-	public final CsvMapperBuilder<T> addMapping(final String columnKey, final ColumnProperty... properties) {
+	public final CsvMapperBuilder<T> addMapping(final String columnKey, final Object... properties) {
 		return addMapping(columnKey, propertyMappingsBuilder.size(), properties);
 	}
 
-	public final CsvMapperBuilder<T> addMapping(final String columnKey, int columnIndex, final ColumnProperty... properties) {
+	public final CsvMapperBuilder<T> addMapping(final String columnKey, int columnIndex, final Object... properties) {
 		return addMapping(new CsvColumnKey(columnKey, columnIndex), properties);
 	}
 
-	public final CsvMapperBuilder<T> addMapping(final CsvColumnKey key, final ColumnProperty... properties) {
+	public final CsvMapperBuilder<T> addMapping(final CsvColumnKey key, final Object... properties) {
 		return addMapping(key, CsvColumnDefinition.of(properties));
 	}
 
@@ -172,7 +171,8 @@ public class CsvMapperBuilder<T> {
         ParsingContextFactoryBuilder parsingContextFactoryBuilder = new ParsingContextFactoryBuilder(propertyMappingsBuilder.maxIndex() + 1);
 
 		ConstructorParametersDelayedCellSetter constructorParams = buildConstructorParametersDelayedCellSetter();
-        final Instantiator<CsvMapperCellHandler<T>, T> instantiator = getInstantiator(constructorParams.parameterGetterMap);
+        @SuppressWarnings("unchecked")
+		final Instantiator<CsvMapperCellHandler<T>, T> instantiator = getInstantiator(constructorParams.parameterGetterMap);
         final CsvColumnKey[] keys = getKeys();
 
         // will build the context factory builder

@@ -19,7 +19,7 @@ public final class NStringResultSetGetter implements Getter<ResultSet, String> {
     @Override
     public String toString() {
         return "NStringResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

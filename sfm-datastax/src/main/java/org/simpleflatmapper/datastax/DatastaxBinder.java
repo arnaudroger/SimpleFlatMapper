@@ -7,7 +7,7 @@ import com.datastax.driver.core.Statement;
 import org.simpleflatmapper.datastax.impl.DatastaxMapperKeyComparator;
 import org.simpleflatmapper.datastax.impl.SettableDataSetterFactory;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.column.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactorImpl;
 import org.simpleflatmapper.map.mapper.MapperCache;
 import org.simpleflatmapper.map.mapper.MapperKey;

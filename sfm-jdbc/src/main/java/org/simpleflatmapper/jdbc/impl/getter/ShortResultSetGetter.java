@@ -32,7 +32,7 @@ public final class ShortResultSetGetter implements ShortGetter<ResultSet>, Gette
     @Override
     public String toString() {
         return "ShortResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

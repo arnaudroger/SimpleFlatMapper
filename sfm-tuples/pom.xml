@@ -35,24 +35,6 @@
 			<version>5.1</version>
 		</dependency>
 		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.9.3</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>javax.persistence</artifactId>
-			<version>2.1.1</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.38</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-test</artifactId>
 			<version>2.13-SNAPSHOT</version>
@@ -73,32 +55,6 @@
 						<Export-Package>org.simpleflatmapper.tuple</Export-Package>
 						<Import-Package></Import-Package>
 					</instructions>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.pitest</groupId>
-				<artifactId>pitest-maven</artifactId>
-				<version>1.1.9</version>
-				<configuration>
-					<targetClasses>
-						<param>org.simpleflatmapper.*</param>
-					</targetClasses>
-					<targetTests>
-						<param>org.simpleflatmapper.*</param>
-					</targetTests>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -122,24 +78,6 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jdk16</id>
-			<activation>
-				<jdk>1.6</jdk>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
 			<id>jdk17</id>
 			<activation>
 				<jdk>1.7</jdk>
@@ -153,18 +91,6 @@
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 		<profile>
 			<id>jdk18</id>
@@ -209,11 +135,6 @@
 					<version>0.1</version>
 					<optional>true</optional>
 					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.ow2.asm</groupId>
-					<artifactId>asm</artifactId>
-					<version>6.0_ALPHA</version>
 				</dependency>
 			</dependencies>
 		</profile>

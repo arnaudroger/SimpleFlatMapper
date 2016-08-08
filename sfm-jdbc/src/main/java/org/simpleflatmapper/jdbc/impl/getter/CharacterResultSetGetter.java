@@ -32,7 +32,7 @@ public final class CharacterResultSetGetter implements CharacterGetter<ResultSet
     @Override
     public String toString() {
         return "CharacterResultSetGetter{" +
-                "column=" + column +
+                "property=" + column +
                 '}';
     }
 }

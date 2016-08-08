@@ -3,12 +3,15 @@ package org.simpleflatmapper.datastax;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.TupleValue;
 import com.datastax.driver.core.UDTValue;
+import org.simpleflatmapper.util.TypeHelper;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.Date;
 
 public class DataTypeHelper {
 
@@ -135,5 +138,34 @@ public class DataTypeHelper {
         return DataTypeHelper.isSmallInt(name)
                 || DataTypeHelper.isTinyInt(name)
                 || DataTypeHelper.isTime(name);
+    }
+
+    private final static Map<String, Class<?>> defaultTypes = new HashMap<String, Class<?>>();
+    static {
+        defaultTypes.put("java.util.Date", Date.class);
+        defaultTypes.put("java.util.Calendar", Date.class);
+        defaultTypes.put("java.time.Instant", Date.class);
+        defaultTypes.put("org.joda.time.Instant", Date.class);
+        defaultTypes.put("java.time.LocalDateTime", Date.class);
+        defaultTypes.put("java.time.ZonedDateTime", Date.class);
+        defaultTypes.put("java.time.OffsetDateTime", Date.class);
+        defaultTypes.put("org.joda.time.DateTime", Date.class);
+        defaultTypes.put("org.joda.time.LocalDateTime", Date.class);
+        defaultTypes.put("java.time.LocalTime", Date.class);
+        defaultTypes.put("java.time.OffsetTime", Date.class);
+        defaultTypes.put("org.joda.time.LocalTime", Date.class);
+        defaultTypes.put("java.time.LocalDate", Date.class);
+        defaultTypes.put("java.time.YearMonth", Date.class);
+        defaultTypes.put("java.time.Year", Date.class);
+        defaultTypes.put("org.joda.time.LocalDate", Date.class);
+    }
+    public static Class<?> asJavaClass(DataType dataType, Type target) {
+        if (dataType != null) {
+            Class<?> dataTypeClass = asJavaClass(dataType);
+            if (dataTypeClass != null) {
+                return  dataTypeClass;
+            }
+        }
+        return defaultTypes.get(TypeHelper.toClass(target).getName());
     }
 }

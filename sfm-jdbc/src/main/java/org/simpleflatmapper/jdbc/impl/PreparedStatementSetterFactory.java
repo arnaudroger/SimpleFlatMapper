@@ -356,19 +356,19 @@ public class PreparedStatementSetterFactory
             if (iclass.equals(Timestamp.class)) {
                 Converter<? super P, ? extends java.util.Date> dateConverter = ConverterService.getInstance().findConverter(pclazz, java.util.Date.class, pm.getColumnDefinition().properties());
                 if (dateConverter != null) {
-                    converter = new ComposedConverter<P, java.util.Date,  I>(dateConverter, (Converter<? super java.util.Date, ? extends I>) new UtilDateToTimestampConverter());
+                    converter = new ComposedConverter(dateConverter, new UtilDateToTimestampConverter());
                 }
             }
             if (iclass.equals(Time.class)) {
                 Converter<? super P, ? extends java.util.Date> dateConverter = ConverterService.getInstance().findConverter(pclazz, java.util.Date.class, pm.getColumnDefinition().properties());
                 if (dateConverter != null) {
-                    converter = new ComposedConverter<P, java.util.Date,  I>(dateConverter, (Converter<? super java.util.Date, ? extends I>) new UtilDateToTimeConverter());
+                    converter = new ComposedConverter(dateConverter, new UtilDateToTimeConverter());
                 }
             }
             if (iclass.equals(Date.class)) {
                 Converter<? super P, ? extends java.util.Date> dateConverter = ConverterService.getInstance().findConverter(pclazz, java.util.Date.class, pm.getColumnDefinition().properties());
                 if (dateConverter != null) {
-                    converter = new ComposedConverter<P, java.util.Date,  I>(dateConverter, (Converter<? super java.util.Date, ? extends I>) new UtilDateToDateConverter());
+                    converter = new ComposedConverter(dateConverter, new UtilDateToDateConverter());
                 }
             }
 

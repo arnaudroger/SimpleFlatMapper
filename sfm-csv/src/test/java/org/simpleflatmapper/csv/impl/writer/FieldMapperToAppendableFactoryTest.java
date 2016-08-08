@@ -15,7 +15,6 @@ import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.property.DateFormatProperty;
 import org.simpleflatmapper.map.property.FormatProperty;
-import org.simpleflatmapper.converter.joda.JodaDateTimeFormatterProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.context.KeySourceGetter;
@@ -93,7 +92,7 @@ public class FieldMapperToAppendableFactoryTest {
     @Test
     public void testJodaDateTimeWithFormater() throws  Exception {
         MappingContextFactoryBuilder<JodaObject, CsvColumnKey> builder = getMappingContextBuilder();
-        FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("yyyyMMdd")));
+        FieldMapperColumnDefinition<CsvColumnKey> format = FieldMapperColumnDefinition.<CsvColumnKey>identity().add(DateTimeFormat.forPattern("yyyyMMdd"));
         FieldMapper<JodaObject, Appendable> fieldMapper =
                 defaultFieldAppenderFactory.newFieldMapper(newPropertyMapping("dateTime", jodaObjectClassMeta, format),
                         builder, null);

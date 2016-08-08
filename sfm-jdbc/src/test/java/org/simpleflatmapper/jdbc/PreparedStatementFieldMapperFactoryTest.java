@@ -10,7 +10,6 @@ import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.SetterFactoryProperty;
 import org.simpleflatmapper.map.property.SetterProperty;
-import org.simpleflatmapper.converter.joda.JodaDateTimeZoneProperty;
 //IFJAVA8_START
 import org.simpleflatmapper.map.property.time.JavaZoneIdProperty;
 //IFJAVA8_END
@@ -390,7 +389,7 @@ public class PreparedStatementFieldMapperFactoryTest {
         org.joda.time.LocalDateTime value = new org.joda.time.LocalDateTime();
         DateTimeZone dateTimeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
 
-        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.LocalDateTime>(value), org.joda.time.LocalDateTime.class, new JodaDateTimeZoneProperty(dateTimeZone));
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.LocalDateTime>(value), org.joda.time.LocalDateTime.class, dateTimeZone);
         newFieldMapperAndMapToPS(NullGetter.<Object, org.joda.time.LocalDateTime>getter(), org.joda.time.LocalDateTime.class);
 
         verify(ps).setTimestamp(1, new Timestamp(value.toDateTime(dateTimeZone).getMillis()));
@@ -402,7 +401,7 @@ public class PreparedStatementFieldMapperFactoryTest {
         org.joda.time.LocalTime value = new org.joda.time.LocalTime();
         DateTimeZone dateTimeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
 
-        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.LocalTime>(value), org.joda.time.LocalTime.class, new JodaDateTimeZoneProperty(dateTimeZone));
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.LocalTime>(value), org.joda.time.LocalTime.class, dateTimeZone);
         newFieldMapperAndMapToPS(NullGetter.<Object, org.joda.time.LocalTime>getter(), org.joda.time.LocalTime.class);
 
         verify(ps).setTime(1, new Time(value.toDateTimeToday(dateTimeZone).getMillis()));
@@ -414,7 +413,7 @@ public class PreparedStatementFieldMapperFactoryTest {
         org.joda.time.LocalDate value = new org.joda.time.LocalDate();
         DateTimeZone dateTimeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
 
-        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.LocalDate>(value), org.joda.time.LocalDate.class, new JodaDateTimeZoneProperty(dateTimeZone));
+        newFieldMapperAndMapToPS(new ConstantGetter<Object, org.joda.time.LocalDate>(value), org.joda.time.LocalDate.class, dateTimeZone);
         newFieldMapperAndMapToPS(NullGetter.<Object, org.joda.time.LocalDate>getter(), org.joda.time.LocalDate.class);
 
         verify(ps).setDate(1, new java.sql.Date(value.toDate().getTime()));

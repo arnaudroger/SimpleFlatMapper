@@ -157,6 +157,7 @@ public class HostApplication
         debugBundle(b);
     }
 
+
     public void deployWrapBundleWithClass(Class<?> aClass) throws BundleException, IOException {
         URL resource = Thread.currentThread().getContextClassLoader().getResource(aClass.getName().replace('.', '/') + ".class");
 
@@ -251,6 +252,17 @@ public class HostApplication
     }
 
 
+    public Bundle install(URL url) throws IOException, BundleException {
+        System.out.println("install = " + url);
+        InputStream is = url.openStream();
+        try {
+            Bundle b = install(url.toString(), is);
+            b.start();
+            return b;
+        } finally {
+            is.close();
+        }
+    }
     public Bundle install(String location, InputStream is) throws BundleException {
         return m_activator.getContext().installBundle(location, is);
     }

@@ -1,5 +1,6 @@
 package org.simpleflatmapper.osgi;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.junit.Test;
 import org.objectweb.asm.ClassVisitor;
@@ -16,17 +17,38 @@ import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.ErrorHelper;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 
 public class OsgiTest {
 
+
+    private static final URL FELIX   = url("http://repo1.maven.org/maven2/org/apache/felix/org.apache.felix.log/1.0.1/org.apache.felix.log-1.0.1.jar");
+    private static final URL ASM     = url("http://repo1.maven.org/maven2/org/ow2/asm/asm-all/5.0.4/asm-all-5.0.4.jar");
+    private static final URL ASM6    = url("http://repo1.maven.org/maven2/org/ow2/asm/asm-all/6.0_ALPHA/asm-all-6.0_ALPHA.jar");
+    private static final URL ARIES   = url("http://repo1.maven.org/maven2/org/apache/aries/org.apache.aries.util/1.1.1/org.apache.aries.util-1.1.1.jar");
+    private static final URL SPLIFLY = url("http://repo1.maven.org/maven2/org/apache/aries/spifly/org.apache.aries.spifly.dynamic.bundle/1.0.8/org.apache.aries.spifly.dynamic.bundle-1.0.8.jar");
+
+
+    private static URL url(String s) {
+        try {
+            return new URL(s);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     public void testCsvParser() throws BundleException, InterruptedException, IOException {
         HostApplication hostApplication = new HostApplication();
         try {
 
-
-            loadClassVisitor(hostApplication);
+            installFelix(hostApplication);
             installSfmMap(hostApplication);
             hostApplication.deployBundleWithClass(CsvParser.class);
 
@@ -53,8 +75,8 @@ public class OsgiTest {
         HostApplication hostApplication = new HostApplication();
         try {
 
+            installFelix(hostApplication);
 
-            loadClassVisitor(hostApplication);
             hostApplication.deployWrapBundleWithClass(Cell.class);
             installSfmMap(hostApplication);
             hostApplication.deployBundleWithClass(CsvParser.class);
@@ -84,10 +106,51 @@ public class OsgiTest {
         hostApplication.deployBundleWithClass(Mapper.class);
     }
 
-    private void loadClassVisitor(HostApplication hostApplication) throws BundleException, IOException {
-        if (!System.getProperty("java.version").contains("9-ea")) {
-            hostApplication.deployBundleWithClass(ClassVisitor.class);
+    private void installFelix(HostApplication hostApplication) throws IOException, BundleException {
+        hostApplication.install(FELIX);
+
+        String javaVersion = System.getProperty("java.version");
+        System.out.println("javaVersion = " + javaVersion);
+        if (!javaVersion.contains("9-ea")) {
+            hostApplication.install(ASM);
+            hostApplication.install(ARIES);
+            hostApplication.install(SPLIFLY);
+        } else {
+            hostApplication.install(repackage(ASM));
+            hostApplication.install(repackage(ARIES));
+            hostApplication.install(repackage(SPLIFLY));
+
         }
     }
+
+    private URL repackage(URL asm6) throws IOException {
+        File tmpFile = File.createTempFile("bundle", "jar");
+        try (InputStream fis = asm6.openStream();
+             JarInputStream jis = new JarInputStream(fis);
+        ) {
+            Manifest man = jis.getManifest();
+
+            Attributes mainAttributes = man.getMainAttributes();
+
+            System.out.println("mainAttributes = " + mainAttributes.keySet());
+
+            mainAttributes.remove(new Attributes.Name("Bundle-RequiredExecutionEnvironment"));
+            mainAttributes.remove(new Attributes.Name("Require-Capability"));
+
+
+            try (FileOutputStream fos = new FileOutputStream(tmpFile);
+                 JarOutputStream jos = new JarOutputStream(fos, man)
+            ) {
+                JarEntry zentry;
+                while ((zentry = jis.getNextJarEntry()) != null) {
+                    jos.putNextEntry(zentry);
+                    IOUtils.copy(jis, jos);
+                }
+            }
+        }
+
+        return tmpFile.toURL();
+    }
+
 
 }

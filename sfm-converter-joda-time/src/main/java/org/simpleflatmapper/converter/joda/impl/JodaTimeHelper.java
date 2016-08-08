@@ -27,6 +27,8 @@ public class JodaTimeHelper {
                 return (withZone(((DateFormatSupplier)prop).get(), dateTimeZone));
             } else if (prop instanceof DefaultDateFormatSupplier) {
                 defaultDateFormatSupplier = (DefaultDateFormatSupplier) prop;
+            } else if (prop instanceof DateTimeFormatter) {
+                return (DateTimeFormatter) prop;
             }
         }
 
@@ -50,6 +52,8 @@ public class JodaTimeHelper {
                 dtf.add(withZone(((DateFormatSupplier)prop).get(), dateTimeZone));
             } else if (prop instanceof DefaultDateFormatSupplier) {
                 defaultDateFormatSupplier = (DefaultDateFormatSupplier) prop;
+            } else if (prop instanceof DateTimeFormatter) {
+                dtf.add((DateTimeFormatter) prop);
             }
         }
 

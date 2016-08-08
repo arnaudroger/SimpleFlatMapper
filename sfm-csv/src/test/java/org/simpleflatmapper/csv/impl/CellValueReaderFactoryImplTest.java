@@ -22,7 +22,6 @@ import java.time.format.DateTimeFormatter;
 
 import org.simpleflatmapper.map.property.time.JavaDateTimeFormatterProperty;
 //IFJAVA8_END
-import org.simpleflatmapper.converter.joda.JodaDateTimeFormatterProperty;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -92,7 +91,7 @@ public class CellValueReaderFactoryImplTest {
         String date = "20150128";
         final org.joda.time.format.DateTimeFormatter yyyyMMdd = DateTimeFormat.forPattern("yyyyMMdd");
         LocalDateTime localDateTime = yyyyMMdd.parseLocalDateTime(date);
-        CellValueReader<?> reader = cellValueReaderFactory.getReader(LocalDateTime.class, 0, CsvColumnDefinition.IDENTITY.add(new JodaDateTimeFormatterProperty(yyyyMMdd)), null);
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(LocalDateTime.class, 0, CsvColumnDefinition.IDENTITY.add(yyyyMMdd), null);
         assertEquals(localDateTime, reader.read(date.toCharArray(), 0, date.length(), null));
     }
 

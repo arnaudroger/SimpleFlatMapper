@@ -10,7 +10,9 @@ import org.simpleflatmapper.util.TypeHelper;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
 
@@ -37,8 +39,14 @@ public class ConverterService {
 
         ServiceLoader<ConverterFactoryProducer> serviceLoader = ServiceLoader.load(ConverterFactoryProducer.class);
 
-        for(ConverterFactoryProducer converterFactoryProducer : serviceLoader) {
-            converterFactoryProducer.produce(factoryConsumer);
+        Iterator<ConverterFactoryProducer> iterator = serviceLoader.iterator();
+
+        while(iterator.hasNext()) {
+            try {
+                iterator.next().produce(factoryConsumer);
+            } catch (ServiceConfigurationError e) {
+                System.err.println("Unexpected error on listing ConverterFactoryProducer " + e);
+            }
         }
 
         return converterFactories;

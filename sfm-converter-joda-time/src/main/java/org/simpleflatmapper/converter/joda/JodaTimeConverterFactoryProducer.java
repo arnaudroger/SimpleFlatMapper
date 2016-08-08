@@ -33,8 +33,9 @@ import org.simpleflatmapper.converter.joda.impl.JodaLocalTimeTojuDateConverter;
 import org.simpleflatmapper.converter.joda.impl.JodaReadableInstantToStringConverter;
 import org.simpleflatmapper.converter.joda.impl.JodaReadablePartialToStringConverter;
 import org.simpleflatmapper.converter.joda.impl.JodaTimeHelper;
+import org.simpleflatmapper.util.Consumer;
+
 import java.util.Date;
-import java.util.function.Consumer;
 
 public class JodaTimeConverterFactoryProducer extends AbstractConverterFactoryProducer {
 

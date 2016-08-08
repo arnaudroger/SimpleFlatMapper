@@ -8,22 +8,23 @@ import org.simpleflatmapper.converter.ConverterFactory;
 import java.sql.Date;
 import java.sql.Time;
 import org.simpleflatmapper.converter.ConvertingTypes;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.SupplierHelper;
+
+import java.sql.Timestamp;
 
 //IFJAVA8_START
 import org.simpleflatmapper.jdbc.converter.time.DateToLocalDateConverter;
 import org.simpleflatmapper.jdbc.converter.time.TimeToLocalTimeConverter;
 import org.simpleflatmapper.jdbc.converter.time.TimeToOffsetTimeConverter;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
 //IFJAVA8_END
 import java.util.Calendar;
-import java.util.function.Consumer;
 
 public class JdbcConverterFactoryProducer extends AbstractConverterFactoryProducer {
     @Override

@@ -1,11 +1,12 @@
 package org.simpleflatmapper.converter;
 
-//IFJAVA8_START
-import org.simpleflatmapper.converter.impl.IdentityConverter;
 import org.simpleflatmapper.converter.impl.JavaBaseConverterFactoryProducer;
+import org.simpleflatmapper.converter.impl.IdentityConverter;
+//IFJAVA8_START
 import org.simpleflatmapper.converter.impl.time.JavaTimeConverterFactoryProducer;
-import org.simpleflatmapper.util.TypeHelper;
 //IFJAVA8_END
+import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
-import java.util.function.Consumer;
 
 public class ConverterService {
 

@@ -8,13 +8,13 @@ import org.simpleflatmapper.converter.ConverterFactory;
 import org.simpleflatmapper.converter.ConvertingTypes;
 
 import org.simpleflatmapper.converter.ToStringConverter;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryProducer {
 	@Override

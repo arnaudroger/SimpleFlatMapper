@@ -6,12 +6,12 @@ import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
 import org.simpleflatmapper.converter.ConvertingTypes;
 import org.simpleflatmapper.converter.ToStringConverter;
+import org.simpleflatmapper.util.Consumer;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.Date;
-import java.util.function.Consumer;
 
 public class JavaTimeConverterFactoryProducer extends AbstractConverterFactoryProducer {
 

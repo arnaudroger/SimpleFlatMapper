@@ -1,6 +1,7 @@
 package org.simpleflatmapper.converter;
 
-import java.util.function.Consumer;
+
+import org.simpleflatmapper.util.Consumer;
 
 public abstract class AbstractConverterFactoryProducer implements ConverterFactoryProducer {
 

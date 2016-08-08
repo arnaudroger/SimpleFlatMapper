@@ -17,9 +17,10 @@ import java.sql.Types;
 //IFJAVA8_START
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+//IFJAVA8_END
+
 import java.util.HashMap;
 import java.util.Map;
-//IFJAVA8_END
 
 public class JDBCTypeHelper {
 

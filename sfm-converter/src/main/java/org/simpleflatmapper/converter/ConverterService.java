@@ -22,7 +22,7 @@ public class ConverterService {
     private static final ConverterService INSTANCE = new ConverterService(getConverterFactories());
 
     private static List<ConverterFactory> getConverterFactories() {
-        List<ConverterFactory> converterFactories = new ArrayList<>();
+        final List<ConverterFactory> converterFactories = new ArrayList<>();
 
         Consumer<ConverterFactory> factoryConsumer = new Consumer<ConverterFactory>() {
             @Override

@@ -2,8 +2,6 @@ package org.simpleflatmapper.converter.joda.impl;
 
 import org.simpleflatmapper.converter.Converter;
 
-import java.time.format.DateTimeParseException;
-
 public class MultiDateTimeFormatterConverter<I, O> implements Converter<I, O> {
     private final Converter<I, O>[] converters;
 

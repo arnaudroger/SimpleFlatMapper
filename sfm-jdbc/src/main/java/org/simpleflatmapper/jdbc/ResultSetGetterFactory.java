@@ -378,7 +378,6 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			}
 		});
 
-		//IFJAVA8_START
 		GetterFactory<ResultSet, JdbcColumnKey> objectGetterFactory = new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override

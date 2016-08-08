@@ -7,7 +7,6 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.simpleflatmapper.jdbc.column.ZoneOffsetProperty;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.ResultSetGetterFactory;
@@ -26,6 +25,7 @@ import java.text.SimpleDateFormat;
 
 //IFJAVA8_START
 import java.time.*;
+import org.simpleflatmapper.jdbc.property.time.ZoneOffsetProperty;
 //IFJAVA8_END
 
 import java.util.*;

@@ -1,4 +1,4 @@
-package org.simpleflatmapper.jdbc.column;
+package org.simpleflatmapper.jdbc.property.time;
 
 import org.simpleflatmapper.util.Supplier;
 

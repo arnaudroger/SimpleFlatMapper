@@ -2,7 +2,8 @@ package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.impl.JpaAliasProvider;
-import org.simpleflatmapper.reflect.meta.AliasProviderFactory;
+import org.simpleflatmapper.jdbc.impl.JpaAliasProviderFactory;
+import org.simpleflatmapper.reflect.meta.AliasProviderService;
 import org.simpleflatmapper.reflect.meta.DefaultAliasProvider;
 
 import javax.persistence.Column;
@@ -36,11 +37,10 @@ public class AliasProviderTest {
 
     @Test
     public void testFactoryJPAPresent() {
-        JpaAliasProvider.registers();
-        assertEquals(JpaAliasProvider.class, AliasProviderFactory.getAliasProvider().getClass());
+        assertEquals(JpaAliasProvider.class, AliasProviderService.getAliasProvider().getClass());
     }
     @Test
-    public void testFactoryJPANotPresent() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testFactoryJPANotPresent() throws Exception {
         final ClassLoader original = Thread.currentThread().getContextClassLoader();
         ClassLoader cl = new ClassLoader(ClassLoader.getSystemClassLoader().getParent()) {
             @Override
@@ -74,14 +74,9 @@ public class AliasProviderTest {
         };
         Thread.currentThread().setContextClassLoader(cl);
         try {
-            Class<?> jpa = cl.loadClass(JpaAliasProvider.class.getName());
-            jpa.getDeclaredMethod("registers").invoke(null);
+            Class<?> jpa = cl.loadClass(JpaAliasProviderFactory.class.getName());
+            assertEquals(false, jpa.getDeclaredMethod("isActive").invoke(jpa.getConstructor().newInstance()));
 
-            Class<?> factory = cl.loadClass(AliasProviderFactory.class.getName());
-
-            Object provider = factory.getDeclaredMethod("getAliasProvider").invoke(factory);
-
-            assertEquals(DefaultAliasProvider.class.getName(), provider.getClass().getName());
         } finally {
             Thread.currentThread().setContextClassLoader(original);
         }

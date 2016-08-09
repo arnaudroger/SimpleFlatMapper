@@ -3,7 +3,7 @@ package org.simpleflatmapper.datastax;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.TableMetadata;
 import org.simpleflatmapper.datastax.impl.DatastaxCrudFactory;
-import org.simpleflatmapper.reflect.meta.AliasProviderFactory;
+import org.simpleflatmapper.reflect.meta.AliasProviderService;
 import org.simpleflatmapper.reflect.meta.Table;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.util.TypeHelper;
@@ -24,7 +24,7 @@ public class DatastaxCrudDSL<T, K> {
 
     public DatastaxCrud<T, K> to(Session session) {
         Table table =
-                AliasProviderFactory
+                AliasProviderService
                         .getAliasProvider()
                         .getTable(TypeHelper.toClass(targetType));
         return to(session, keyspace(session, table), table(session, table, targetType));
@@ -57,7 +57,7 @@ public class DatastaxCrudDSL<T, K> {
 
     public DatastaxCrud<T, K> to(Session session, String table) {
         Table keyspaceTable =
-                AliasProviderFactory
+                AliasProviderService
                         .getAliasProvider()
                         .getTable(TypeHelper.toClass(targetType));
 

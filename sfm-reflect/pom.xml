@@ -34,12 +34,7 @@
 			<artifactId>asm</artifactId>
 			<version>5.1</version>
 		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.9.3</version>
-			<optional>true</optional>
-		</dependency>
+
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-util</artifactId>
@@ -49,6 +44,12 @@
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter</artifactId>
 			<version>2.13-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.9.3</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
@@ -84,6 +85,10 @@
 						<Import-Package>org.objectweb.asm;version="[4.0,6)";resolution:=optional,
 							org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,
 						org.simpleflatmapper.util</Import-Package>
+
+						<Require-Capability>osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
+						<Provide-Capability>osgi.serviceloader;osgi.serviceloader=org.simpleflatmapper.reflect.meta.AliasProviderFactory</Provide-Capability>
+
 					</instructions>
 				</configuration>
 			</plugin>

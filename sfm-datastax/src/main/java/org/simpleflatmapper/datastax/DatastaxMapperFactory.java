@@ -9,7 +9,6 @@ import org.simpleflatmapper.datastax.impl.DatastaxMapperKeyComparator;
 import org.simpleflatmapper.datastax.impl.DatastaxMappingContextFactoryBuilder;
 import org.simpleflatmapper.datastax.impl.RowGetterFactory;
 import org.simpleflatmapper.datastax.impl.SettableDataSetterFactory;
-import org.simpleflatmapper.datastax.impl.mapping.DatastaxAliasProvider;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -26,10 +25,6 @@ import org.simpleflatmapper.util.UnaryFactoryWithException;
 import java.lang.reflect.Type;
 
 public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>, DatastaxMapperFactory> {
-
-    static {
-        DatastaxAliasProvider.registers();
-    }
 
     private GetterFactory<GettableByIndexData, DatastaxColumnKey> getterFactory = new RowGetterFactory(this);
 

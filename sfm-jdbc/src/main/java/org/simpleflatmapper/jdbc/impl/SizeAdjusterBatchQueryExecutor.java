@@ -1,6 +1,5 @@
 package org.simpleflatmapper.jdbc.impl;
 
-import com.mysql.jdbc.PacketTooBigException;
 import org.simpleflatmapper.util.RowHandler;
 
 import java.sql.Connection;
@@ -29,12 +28,16 @@ public class SizeAdjusterBatchQueryExecutor<T> implements BatchQueryExecutor<T> 
             } else {
                 splitBatches(connection, values, lBatchSize, postExecute);
             }
-        } catch (PacketTooBigException e) {
-            if (lBatchSize <= 2) {
+        } catch (SQLException e) {
+            if (e.getClass().getName().equals("com.mysql.jdbc.PacketTooBigException")) {
+                if (lBatchSize <= 2) {
+                    throw e;
+                }
+                resize(lBatchSize / 2);
+                insert(connection, values, postExecute);
+            } else {
                 throw e;
             }
-            resize(lBatchSize / 2);
-            insert(connection, values, postExecute);
         }
     }
 

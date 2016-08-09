@@ -84,9 +84,6 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		}
 	};
 
-	// OFFSET TIMES
-	// JAVAX PERSISTENCE
-
 	private final ConverterService converterService = ConverterService.getInstance();
 
 	public static final class StringResultSetGetterFactory implements

@@ -2,7 +2,7 @@ package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.jdbc.impl.CrudFactory;
 import org.simpleflatmapper.jdbc.impl.CrudMeta;
-import org.simpleflatmapper.reflect.meta.AliasProviderFactory;
+import org.simpleflatmapper.reflect.meta.AliasProviderService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.Table;
@@ -36,7 +36,7 @@ public class CrudDSL<T, K> {
 
     private String getTable(Connection connection, ClassMeta<T> target) throws SQLException {
         final Class<Object> targetClass = TypeHelper.toClass(target.getType());
-        Table table = AliasProviderFactory.getAliasProvider().getTable(targetClass);
+        Table table = AliasProviderService.getAliasProvider().getTable(targetClass);
 
         StringBuilder sb = new StringBuilder();
         if (table.schema() != null && table.schema().length() > 0) {

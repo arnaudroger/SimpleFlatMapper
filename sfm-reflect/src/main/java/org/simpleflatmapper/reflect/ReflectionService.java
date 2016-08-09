@@ -6,7 +6,7 @@ import org.simpleflatmapper.reflect.asm.AsmHelper;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.meta.AliasProvider;
-import org.simpleflatmapper.reflect.meta.AliasProviderFactory;
+import org.simpleflatmapper.reflect.meta.AliasProviderService;
 import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DirectClassMeta;
@@ -53,7 +53,7 @@ public class ReflectionService {
 		this.objectSetterFactory = new ObjectSetterFactory(asmFactory);
         this.objectGetterFactory = new ObjectGetterFactory(asmFactory);
 		this.instantiatorFactory = new InstantiatorFactory(asmFactory);
-		this.aliasProvider = AliasProviderFactory.getAliasProvider();
+		this.aliasProvider = AliasProviderService.getAliasProvider();
 	}
 
 	public ObjectSetterFactory getObjectSetterFactory() {

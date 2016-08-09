@@ -15,7 +15,6 @@ import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.jdbc.impl.JpaAliasProvider;
 import org.simpleflatmapper.util.UnaryFactory;
 import org.simpleflatmapper.util.UnaryFactoryWithException;
 
@@ -55,10 +54,6 @@ public final class JdbcMapperFactory
 		extends AbstractMapperFactory<JdbcColumnKey,
                         FieldMapperColumnDefinition<JdbcColumnKey>,
                         JdbcMapperFactory> {
-
-	static {
-		JpaAliasProvider.registers();
-	}
 
     /**
 	 * instantiate a new JdbcMapperFactory

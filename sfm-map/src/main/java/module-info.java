@@ -1,10 +1,7 @@
 module org.simpleflatmapper.map {
-        requires org.objectweb.asm;
         requires java.logging;
 
-        requires public org.simpleflatmapper.util;
         requires public org.simpleflatmapper.reflect;
-        requires public org.simpleflatmapper.converter;
 
         exports org.simpleflatmapper.map;
         exports org.simpleflatmapper.map.context;

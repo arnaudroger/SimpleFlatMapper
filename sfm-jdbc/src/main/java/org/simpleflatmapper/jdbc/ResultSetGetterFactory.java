@@ -147,7 +147,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(Date.class, DATE_GETTER_FACTORY);
 
 		// see http://www.oracle.com/technetwork/articles/java/jf14-date-time-2125367.html
-		//JAVA8_START
+		//IFJAVA8_START
 		factoryPerType.put(java.time.OffsetTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -170,7 +170,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 				return null;
 			}
 		});
-		//JAVA8_END
+		//IFJAVA8_END
 
 		factoryPerType.put(java.util.Calendar.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")

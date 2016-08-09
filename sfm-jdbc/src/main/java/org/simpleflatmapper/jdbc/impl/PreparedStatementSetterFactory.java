@@ -303,7 +303,7 @@ public class PreparedStatementSetterFactory
                 });
 
         // see http://www.oracle.com/technetwork/articles/java/jf14-date-time-2125367.html
-        //JAVA8_START
+        //IFJAVA8_START
         factoryPerClass.put(java.time.OffsetTime.class, new Factory() {
             @SuppressWarnings("unchecked")
             @Override
@@ -324,7 +324,7 @@ public class PreparedStatementSetterFactory
                 return null;
             }
         });
-        //JAVA8_END
+        //IFJAVA8_END
     }
 
     @SuppressWarnings("unchecked")

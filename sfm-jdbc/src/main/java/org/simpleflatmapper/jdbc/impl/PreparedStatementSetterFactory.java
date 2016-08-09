@@ -8,12 +8,15 @@ import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.converter.UtilDateToDateConverter;
 import org.simpleflatmapper.jdbc.converter.UtilDateToTimeConverter;
 import org.simpleflatmapper.jdbc.converter.UtilDateToTimestampConverter;
+import org.simpleflatmapper.jdbc.impl.getter.ObjectResultSetGetter;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.IndexedSetter;
 import org.simpleflatmapper.reflect.IndexedSetterFactory;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.jdbc.impl.setter.ArrayPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BigDecimalPreparedStatementIndexSetter;
@@ -298,6 +301,30 @@ public class PreparedStatementSetterFactory
                         return (PreparedStatementIndexSetter<P>) new UUIDStringPreparedStatementIndexSetter();
                     }
                 });
+
+        // see http://www.oracle.com/technetwork/articles/java/jf14-date-time-2125367.html
+        //JAVA8_START
+        factoryPerClass.put(java.time.OffsetTime.class, new Factory() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> PreparedStatementIndexSetter<P> getIndexedSetter(JdbcColumnKey key) {
+                if (key.getSqlType() == Types.TIME_WITH_TIMEZONE) {
+                    return (PreparedStatementIndexSetter<P>) new ObjectPreparedStatementIndexSetter();
+                }
+                return null;
+            }
+        });
+        factoryPerClass.put(java.time.OffsetDateTime.class, new Factory() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <P> PreparedStatementIndexSetter<P> getIndexedSetter(JdbcColumnKey key) {
+                if (key.getSqlType() == Types.TIMESTAMP_WITH_TIMEZONE) {
+                    return (PreparedStatementIndexSetter<P>) new ObjectPreparedStatementIndexSetter();
+                }
+                return null;
+            }
+        });
+        //JAVA8_END
     }
 
     @SuppressWarnings("unchecked")

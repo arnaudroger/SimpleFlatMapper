@@ -139,8 +139,6 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		}
 	};
 
-	public static final int UNDEFINED = -99999;
-
 	private static final Map<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>> factoryPerType =
 		new HashMap<Class<?>, GetterFactory<ResultSet, JdbcColumnKey>>();
 
@@ -148,6 +146,31 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		factoryPerType.put(String.class, new StringResultSetGetterFactory());
 		factoryPerType.put(Date.class, DATE_GETTER_FACTORY);
 
+		// see http://www.oracle.com/technetwork/articles/java/jf14-date-time-2125367.html
+		//JAVA8_START
+		factoryPerType.put(java.time.OffsetTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, Object... properties) {
+				if (key.getSqlType() == Types.TIME_WITH_TIMEZONE) {
+					return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
+
+				}
+				return null;
+			}
+		});
+		factoryPerType.put(java.time.OffsetDateTime.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, Object... properties) {
+				if (key.getSqlType() == Types.TIMESTAMP_WITH_TIMEZONE) {
+					return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
+
+				}
+				return null;
+			}
+		});
+		//JAVA8_END
 
 		factoryPerType.put(java.util.Calendar.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")

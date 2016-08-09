@@ -27,14 +27,9 @@ public class IntegerCellValueReaderTest {
 		try {
 			reader.read(chars, 0, chars.length, null);
 			fail("Expect exception");
-		} catch(ParsingException e){
+		} catch(NumberFormatException e){
 			// expected
 		}
-	}
-
-	@Test
-	public void testReadIntWithSpace() {
-		assertEquals(12345, readInt(" 1 2 345"));
 	}
 
 	@Test

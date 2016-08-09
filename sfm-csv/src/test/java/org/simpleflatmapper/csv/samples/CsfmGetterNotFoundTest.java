@@ -5,7 +5,7 @@ import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.ParsingContext;
-import org.simpleflatmapper.csv.column.CustomReaderProperty;
+import org.simpleflatmapper.csv.property.CustomReaderProperty;
 import org.simpleflatmapper.csv.impl.cellreader.StringCellValueReader;
 
 import static org.junit.Assert.assertTrue;

@@ -12,6 +12,7 @@ public final class ShortCellValueReaderImpl implements ShortCellValueReader {
 
 	@Override
 	public short readShort(char[] chars, int offset, int length, ParsingContext parsingContext) {
+		if (length == 0) return 0;
 		return Short.parseShort(String.valueOf(chars, offset, length));
 	}
 

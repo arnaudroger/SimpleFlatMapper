@@ -22,17 +22,12 @@ public class LongCellValueReaderTest {
 	}
 
 	@Test
-	public void testReadLongWithSpace() {
-		assertEquals(12345l, readLong(" 1 2 345"));
-	}
-
-	@Test
 	public void testInvalidLong() throws UnsupportedEncodingException {
 		final char[] chars = "Nan".toCharArray();
 		try {
 			reader.read(chars, 0, chars.length, null);
 			fail("Expect exception");
-		} catch(ParsingException e){
+		} catch(NumberFormatException e){
 			// expected
 		}
 	}

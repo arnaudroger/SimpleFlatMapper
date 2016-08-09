@@ -26,7 +26,7 @@ public class ByteCellValueReaderTest {
 		try {
 			reader.read(chars, 0, chars.length, null);
 			fail("Expect exception");
-		} catch(ParsingException e){
+		} catch(NumberFormatException e){
 			// expected
 		}
 	

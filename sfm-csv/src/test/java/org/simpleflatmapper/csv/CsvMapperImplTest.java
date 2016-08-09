@@ -49,7 +49,7 @@ public class CsvMapperImplTest {
 
         try {
             iterator.next();
-        } catch(ParsingException e) {
+        } catch(NumberFormatException e) {
             System.out.println(e.toString());
         }
 

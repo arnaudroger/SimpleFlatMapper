@@ -22,7 +22,7 @@ import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
-import org.simpleflatmapper.csv.column.CustomReaderProperty;
+import org.simpleflatmapper.csv.property.CustomReaderProperty;
 import org.simpleflatmapper.csv.impl.*;
 import org.simpleflatmapper.csv.impl.asm.CsvAsmFactory;
 import org.simpleflatmapper.csv.mapper.CellSetter;

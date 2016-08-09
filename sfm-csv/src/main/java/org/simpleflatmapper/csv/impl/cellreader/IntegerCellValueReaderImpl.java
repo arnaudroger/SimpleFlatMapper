@@ -1,14 +1,8 @@
 package org.simpleflatmapper.csv.impl.cellreader;
 
 import org.simpleflatmapper.csv.ParsingContext;
-import org.simpleflatmapper.csv.impl.ParsingException;
-
 
 public final class IntegerCellValueReaderImpl implements IntegerCellValueReader {
-
-	private final static char C_ZERO = '0';
-	private final static char C_NINE = '9';
-	private final static char C_NEG_SIGN = '-';
 
 	@Override
 	public Integer read(char[] chars, int offset, int length, ParsingContext parsingContext) {
@@ -22,6 +16,7 @@ public final class IntegerCellValueReaderImpl implements IntegerCellValueReader 
 	}
 
 	public static int parseInt(char[] chars, int offset, int length) {
+		if (length == 0) return 0;
 		return Integer.parseInt(String.valueOf(chars, offset, length));
 	}
 

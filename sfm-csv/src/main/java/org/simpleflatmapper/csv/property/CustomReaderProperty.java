@@ -1,4 +1,4 @@
-package org.simpleflatmapper.csv.column;
+package org.simpleflatmapper.csv.property;
 
 
 import org.simpleflatmapper.csv.CellValueReader;

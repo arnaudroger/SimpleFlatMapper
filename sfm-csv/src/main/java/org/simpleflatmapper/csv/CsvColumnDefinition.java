@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv;
 
-import org.simpleflatmapper.csv.column.CustomReaderFactoryProperty;
-import org.simpleflatmapper.csv.column.CustomReaderProperty;
+import org.simpleflatmapper.csv.property.CustomReaderFactoryProperty;
+import org.simpleflatmapper.csv.property.CustomReaderProperty;
 import org.simpleflatmapper.map.property.DefaultDateFormatProperty;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.property.DateFormatProperty;

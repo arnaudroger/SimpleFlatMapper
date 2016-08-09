@@ -1,7 +1,7 @@
 package org.simpleflatmapper.reflect.impl;
 
 import org.junit.Test;
-import org.simpleflatmapper.reflect.NullGetter;
+import org.simpleflatmapper.reflect.getter.NullGetter;
 
 import static org.junit.Assert.*;
 

@@ -1,6 +1,6 @@
 package org.simpleflatmapper.reflect.getter;
 
-import org.simpleflatmapper.reflect.EnumHelper;
+import org.simpleflatmapper.util.EnumHelper;
 import org.simpleflatmapper.reflect.Getter;
 
 public final class EnumUnspecifiedTypeGetter<R, E extends Enum<E>> implements Getter<R, E> {

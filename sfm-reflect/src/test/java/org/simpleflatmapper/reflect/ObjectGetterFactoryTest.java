@@ -435,7 +435,10 @@ public class ObjectGetterFactoryTest {
     public void testExtension() throws Exception {
         Foo foo = new Foo();
         new ObjectSetterFactory(null).getSetter(Foo.class, "bar").set(foo, "bar");
+        new ObjectSetterFactory(null).getFieldSetter(Foo.class, "bar").set(foo, "bar");
+
         assertEquals("bar", noAsm.getGetter(Foo.class, "bar").get(foo));
+        assertEquals("bar", noAsm.getFieldGetter(Foo.class, "bar").get(foo));
     }
 
 

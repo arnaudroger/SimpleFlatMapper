@@ -2,7 +2,7 @@ package org.simpleflatmapper.datastax.impl;
 
 import com.datastax.driver.core.*;
 import org.simpleflatmapper.converter.ConverterService;
-import org.simpleflatmapper.reflect.GetterWithConverter;
+import org.simpleflatmapper.reflect.getter.GetterWithConverter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.datastax.DataHelper;
 import org.simpleflatmapper.datastax.DataTypeHelper;

@@ -1,6 +1,8 @@
 package org.simpleflatmapper.reflect;
 
 
+import org.simpleflatmapper.reflect.getter.NullSetter;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -12,10 +14,6 @@ public class ScoredSetter<T, P>  {
     public ScoredSetter(int score, Setter<T, P> setter) {
         this.score = score;
         this.setter = setter;
-    }
-
-    public int getScore() {
-        return score;
     }
 
     public Setter<T, P> getSetter() {
@@ -50,11 +48,9 @@ public class ScoredSetter<T, P>  {
         return of(methodSetter, score);
     }
 
-
     public static <T, P> ScoredSetter<T, P> ofField(Field field, Setter<T, P> fieldSetter) {
         return of(fieldSetter, 1);
     }
-
 
     public static <T, P> ScoredSetter<T, P> of(Setter<T, P> methodSetter, int score) {
         return new ScoredSetter<T, P>(score, methodSetter);

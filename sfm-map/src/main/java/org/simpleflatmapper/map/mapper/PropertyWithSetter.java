@@ -1,6 +1,6 @@
 package org.simpleflatmapper.map.mapper;
 
-import org.simpleflatmapper.reflect.NullSetter;
+import org.simpleflatmapper.reflect.getter.NullSetter;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.Predicate;
 

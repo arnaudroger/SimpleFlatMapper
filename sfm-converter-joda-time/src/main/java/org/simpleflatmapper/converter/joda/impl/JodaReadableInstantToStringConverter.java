@@ -2,12 +2,10 @@ package org.simpleflatmapper.converter.joda.impl;
 
 import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormatter;
-import org.simpleflatmapper.converter.AppenderConverter;
-
-import java.io.IOException;
+import org.simpleflatmapper.converter.Converter;
 
 
-public class JodaReadableInstantToStringConverter implements AppenderConverter<ReadableInstant, String> {
+public class JodaReadableInstantToStringConverter implements Converter<ReadableInstant, String> {
 
     private final DateTimeFormatter dateTimeFormatter;
 
@@ -18,10 +16,5 @@ public class JodaReadableInstantToStringConverter implements AppenderConverter<R
     @Override
     public String convert(ReadableInstant in) throws Exception {
         return dateTimeFormatter.print(in);
-    }
-
-    @Override
-    public void appendTo(ReadableInstant in, Appendable appendable) throws IOException {
-        dateTimeFormatter.printTo(appendable, in);
     }
 }

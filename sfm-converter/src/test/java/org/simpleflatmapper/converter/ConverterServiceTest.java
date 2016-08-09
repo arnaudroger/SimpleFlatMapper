@@ -52,8 +52,10 @@ public class ConverterServiceTest {
 
         testConverter(13, new BigDecimal(13));
         testConverter(new BigDecimal(13), 13);
+        testConverter(new BigInteger("13"), new BigDecimal("13"));
 
         testConverter(13, new BigInteger("13"));
+        testConverter(new BigDecimal("13"), new BigInteger("13"));
         testConverter(new BigInteger("13"), 13);
     }
 

@@ -3,7 +3,7 @@ package org.simpleflatmapper.jdbc;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.jdbc.impl.JDBCTypeHelper;
-import org.simpleflatmapper.reflect.GetterWithConverter;
+import org.simpleflatmapper.reflect.getter.GetterWithConverter;
 import org.simpleflatmapper.reflect.getter.BytesUUIDGetter;
 import org.simpleflatmapper.reflect.getter.EnumUnspecifiedTypeGetter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
@@ -83,6 +83,10 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			}
 		}
 	};
+
+	// OFFSET TIMES
+	// JAVAX PERSISTENCE
+
 	private final ConverterService converterService = ConverterService.getInstance();
 
 	public static final class StringResultSetGetterFactory implements

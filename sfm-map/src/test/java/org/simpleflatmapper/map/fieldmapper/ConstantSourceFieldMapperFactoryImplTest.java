@@ -134,8 +134,6 @@ public class ConstantSourceFieldMapperFactoryImplTest {
         PropertyMapping<T, P, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm = createPropertyMapping(target, property);
         when(getterFactory.<P>newGetter(pm.getPropertyMeta().getPropertyType(), pm.getColumnKey(), pm.getColumnDefinition().properties())).thenReturn(getter);
         return constantSourceFieldMapperFactory.newFieldMapper(pm, mappingContextFactoryBuilder, MAPPING_ERROR_HANDLER);
-
-
     }
     private <T, P> PropertyMapping<T, P, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> createPropertyMapping(
             Class<T> target, String property) {

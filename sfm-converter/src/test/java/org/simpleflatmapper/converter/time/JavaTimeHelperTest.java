@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.converter.impl.time.JavaTimeHelper;
 import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.date.DateFormatSupplier;
+import org.simpleflatmapper.util.date.DefaultDateFormatSupplier;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -46,7 +47,7 @@ public class JavaTimeHelperTest {
     };
 
     @Test
-    public void testFormatterFailWhenEmpty() {
+    public void testGetFormattersFailWhenEmpty() {
         try {
             JavaTimeHelper.getDateTimeFormatters();
             fail();
@@ -55,7 +56,46 @@ public class JavaTimeHelperTest {
     }
 
     @Test
-    public void testFormatterFromString() {
+    public void testGetFormatterReturnNullWhenEmpty() {
+        assertNull(JavaTimeHelper.getDateTimeFormatter());
+    }
+
+    @Test
+    public void testGetFormatterAndDefaultFormat() {
+        assertEquals("Value(YearOfEra,4,19,EXCEEDS_PAD)",JavaTimeHelper.getDateTimeFormatter(new DefaultDateFormatSupplier() {
+            @Override
+            public String get() {
+                return "yyyy";
+            }
+        }).toString());
+
+        assertEquals(DateTimeFormatter.ISO_DATE,JavaTimeHelper.getDateTimeFormatter(new DefaultDateFormatSupplier() {
+            @Override
+            public String get() {
+                return "yyyy";
+            }
+        }, DateTimeFormatter.ISO_DATE));
+    }
+
+    @Test
+    public void testGetFormattersAndDefaultFormat() {
+        assertEquals("Value(YearOfEra,4,19,EXCEEDS_PAD)",JavaTimeHelper.getDateTimeFormatters(new DefaultDateFormatSupplier() {
+            @Override
+            public String get() {
+                return "yyyy";
+            }
+        })[0].toString());
+
+        assertArrayEquals(new DateTimeFormatter[] {DateTimeFormatter.ISO_DATE},JavaTimeHelper.getDateTimeFormatters(new DefaultDateFormatSupplier() {
+            @Override
+            public String get() {
+                return "yyyy";
+            }
+        }, DateTimeFormatter.ISO_DATE));
+    }
+
+    @Test
+    public void testFormattersFromString() {
         final DateTimeFormatter[] yyyyMMdd = JavaTimeHelper.getDateTimeFormatters(new DateFormatSupplier() {
             @Override
             public String get() {
@@ -67,7 +107,7 @@ public class JavaTimeHelperTest {
     }
 
     @Test
-    public void testFormatterFromFormatter() {
+    public void testFormattersFromFormatter() {
         final DateTimeFormatter[] yyyyMMdd = JavaTimeHelper.getDateTimeFormatters(DATE_TIME_FORMATTER_SUPPLIER);
         assertEquals(DateTimeFormatter.ofPattern("MMddyyyy").toString(), yyyyMMdd[0].toString());
         assertEquals(ZoneId.systemDefault(), yyyyMMdd[0].getZone());
@@ -75,7 +115,7 @@ public class JavaTimeHelperTest {
     }
 
     @Test
-    public void testFormatterFromFormatterWithOwnTZ() {
+    public void testFormattersFromFormatterWithOwnTZ() {
         final DateTimeFormatter[] yyyyMMdd = JavaTimeHelper.getDateTimeFormatters(DATE_TIME_FORMATTER_WITH_TZ_SUPPLIER);
         assertEquals(DateTimeFormatter.ofPattern("ddMMyyyy").toString(), yyyyMMdd[0].toString());
         assertEquals(ZoneId.of("America/Chicago"), yyyyMMdd[0].getZone());
@@ -83,7 +123,7 @@ public class JavaTimeHelperTest {
 
 
     @Test
-    public void testFormatterFromFormatterWithSpecifiedTZ() {
+    public void testFormattersFromFormatterWithSpecifiedTZ() {
         final DateTimeFormatter[] yyyyMMdd = JavaTimeHelper.getDateTimeFormatters(DATE_TIME_FORMATTER_WITH_TZ_SUPPLIER, TIME_ZONE_SUPPLIER);
         assertEquals(DateTimeFormatter.ofPattern("ddMMyyyy").toString(), yyyyMMdd[0].toString());
         assertEquals(ZoneId.of("America/New_York"), yyyyMMdd[0].getZone());

@@ -88,12 +88,4 @@ public class ConvertingTypes {
     public Type getTo() {
         return to;
     }
-
-    @Override
-    public String toString() {
-        return "ConvertingTypes{" +
-                "from=" + from +
-                ", to=" + to +
-                '}';
-    }
 }

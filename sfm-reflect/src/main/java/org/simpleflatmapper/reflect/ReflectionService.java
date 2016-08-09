@@ -3,11 +3,14 @@ package org.simpleflatmapper.reflect;
 import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.asm.AsmHelper;
+import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinition;
+import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.meta.AliasProvider;
 import org.simpleflatmapper.reflect.meta.AliasProviderFactory;
 import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DirectClassMeta;
+import org.simpleflatmapper.reflect.meta.FastTupleClassMeta;
 import org.simpleflatmapper.reflect.meta.MapClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 //IFJAVA8_START

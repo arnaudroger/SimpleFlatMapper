@@ -3,6 +3,8 @@ package org.simpleflatmapper.reflect;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.getter.FieldSetter;
 import org.simpleflatmapper.reflect.getter.MethodSetter;
+import org.simpleflatmapper.reflect.getter.NullSetter;
+import org.simpleflatmapper.reflect.impl.SetterHelper;
 import org.simpleflatmapper.reflect.primitive.BooleanFieldSetter;
 import org.simpleflatmapper.reflect.primitive.BooleanMethodSetter;
 import org.simpleflatmapper.reflect.primitive.BooleanSetter;

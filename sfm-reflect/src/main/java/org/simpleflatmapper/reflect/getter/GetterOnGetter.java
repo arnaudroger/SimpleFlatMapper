@@ -1,5 +1,7 @@
-package org.simpleflatmapper.reflect;
+package org.simpleflatmapper.reflect.getter;
 
+
+import org.simpleflatmapper.reflect.Getter;
 
 public class GetterOnGetter<O, I, P> implements Getter<O, P> {
     private final Getter<I, P> g2;

@@ -1,5 +1,7 @@
-package org.simpleflatmapper.reflect;
+package org.simpleflatmapper.reflect.impl;
 
+import org.simpleflatmapper.reflect.ExecutableInstantiatorDefinition;
+import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.*;

@@ -6,6 +6,8 @@ import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 
 import java.util.HashMap;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -134,6 +136,33 @@ public class InstantiatorFactoryTest {
 
 		final MyClassWithFactoryMethodAndConstructor object = instantiator.newInstance(null);
 		assertNotNull(object);
+	}
+
+	@Test
+	public void testOneArgInstantiator() throws  Exception {
+		InstantiatorDefinition def = new ExecutableInstantiatorDefinition(String.class.getDeclaredMethod("valueOf", Object.class),
+				new Parameter[] {new Parameter(0, "value", Object.class)});
+
+		assertNotNull(def.toString());
+
+		Instantiator<Object, String> instantiator = DISABLE_ASM.getInstantiatorFactory().getOneArgIdentityInstantiator(def);
+
+		assertEquals("12345", instantiator.newInstance(12345));
+
+		Instantiator<Object, String> instantiatorAsm = ASM.getInstantiatorFactory().getOneArgIdentityInstantiator(def);
+
+		assertEquals("12345", instantiatorAsm.newInstance(12345));
+
+
+
+	}
+
+	@Test
+	public void testArrayInstantiator() throws  Exception {
+		assertArrayEquals(new int[3], DISABLE_ASM.getInstantiatorFactory().<Object, int[]>getArrayInstantiator(int.class, 3).newInstance(null));
+		assertArrayEquals(new int[3], ASM.getInstantiatorFactory().<Object, int[]>getArrayInstantiator(int.class, 3).newInstance(null));
+		assertArrayEquals(new String[3], DISABLE_ASM.getInstantiatorFactory().<Object, String[]>getArrayInstantiator(String.class, 3).newInstance(null));
+		assertArrayEquals(new String[3], ASM.getInstantiatorFactory().<Object, String[]>getArrayInstantiator(String.class, 3).newInstance(null));
 	}
 	
 }

@@ -15,11 +15,11 @@ import org.simpleflatmapper.converter.ConverterFactory;
 import org.simpleflatmapper.converter.ConvertingTypes;
 import org.simpleflatmapper.converter.ToStringConverter;
 import org.simpleflatmapper.converter.joda.impl.AbstractMultiFormatConverterFactory;
-import org.simpleflatmapper.converter.joda.impl.CharacterSequenceToJodaDateTimeConverter;
-import org.simpleflatmapper.converter.joda.impl.CharacterSequenceToJodaInstantConverter;
-import org.simpleflatmapper.converter.joda.impl.CharacterSequenceToJodaLocalDateConverter;
-import org.simpleflatmapper.converter.joda.impl.CharacterSequenceToJodaLocalDateTimeConverter;
-import org.simpleflatmapper.converter.joda.impl.CharacterSequenceToJodaLocalTimeConverter;
+import org.simpleflatmapper.converter.joda.impl.CharSequenceToJodaDateTimeConverter;
+import org.simpleflatmapper.converter.joda.impl.CharSequenceToJodaInstantConverter;
+import org.simpleflatmapper.converter.joda.impl.CharSequenceToJodaLocalDateConverter;
+import org.simpleflatmapper.converter.joda.impl.CharSequenceToJodaLocalDateTimeConverter;
+import org.simpleflatmapper.converter.joda.impl.CharSequenceToJodaLocalTimeConverter;
 import org.simpleflatmapper.converter.joda.impl.DateToJodaDateTimeConverter;
 import org.simpleflatmapper.converter.joda.impl.DateToJodaInstantConverter;
 import org.simpleflatmapper.converter.joda.impl.DateToJodaLocalDateConverter;
@@ -74,31 +74,31 @@ public class JodaTimeConverterFactoryProducer extends AbstractConverterFactoryPr
         factoryConverter(consumer, new AbstractMultiFormatConverterFactory<CharSequence, DateTime>(CharSequence.class, DateTime.class) {
             @Override
             protected Converter<CharSequence, DateTime> newConverter(DateTimeFormatter formatter) {
-                return new CharacterSequenceToJodaDateTimeConverter(formatter);
+                return new CharSequenceToJodaDateTimeConverter(formatter);
             }
         });
         factoryConverter(consumer, new AbstractMultiFormatConverterFactory<CharSequence, Instant>(CharSequence.class, Instant.class) {
             @Override
             protected Converter<CharSequence, Instant> newConverter(DateTimeFormatter formatter) {
-                return new CharacterSequenceToJodaInstantConverter(formatter);
+                return new CharSequenceToJodaInstantConverter(formatter);
             }
         });
         factoryConverter(consumer, new AbstractMultiFormatConverterFactory<CharSequence, LocalDate>(CharSequence.class, LocalDate.class) {
             @Override
             protected Converter<CharSequence, LocalDate> newConverter(DateTimeFormatter formatter) {
-                return new CharacterSequenceToJodaLocalDateConverter(formatter);
+                return new CharSequenceToJodaLocalDateConverter(formatter);
             }
         });
         factoryConverter(consumer, new AbstractMultiFormatConverterFactory<CharSequence, LocalDateTime>(CharSequence.class, LocalDateTime.class) {
             @Override
             protected Converter<CharSequence, LocalDateTime> newConverter(DateTimeFormatter formatter) {
-                return new CharacterSequenceToJodaLocalDateTimeConverter(formatter);
+                return new CharSequenceToJodaLocalDateTimeConverter(formatter);
             }
         });
         factoryConverter(consumer, new AbstractMultiFormatConverterFactory<CharSequence, LocalTime>(CharSequence.class, LocalTime.class) {
             @Override
             protected Converter<CharSequence, LocalTime> newConverter(DateTimeFormatter formatter) {
-                return new CharacterSequenceToJodaLocalTimeConverter(formatter);
+                return new CharSequenceToJodaLocalTimeConverter(formatter);
             }
         });
 

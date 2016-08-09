@@ -11,22 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
-public class JavaTimeHelper {
-
+public final class JavaTimeHelper {
+    private JavaTimeHelper (){
+    }
     public static DateTimeFormatter getDateTimeFormatter(Object... properties) {
 
         ZoneId zoneId = getZoneId(properties);
 
         DefaultDateFormatSupplier defaultDateFormatSupplier = null;
         for(Object prop : properties) {
-            if (SupplierHelper.isSupplierOf(prop, DateTimeFormatter.class)) {
-                return (withZone(((Supplier<DateTimeFormatter>) prop).get(), zoneId));
-            } else if (prop instanceof DateFormatSupplier) {
-                return (withZone(((DateFormatSupplier) prop).get(), zoneId));
+            DateTimeFormatter dateTimeFormatter = toDateTimeFormatter(prop, zoneId);
+            if (dateTimeFormatter != null) {
+                return dateTimeFormatter;
             } else if (prop instanceof DefaultDateFormatSupplier) {
                 defaultDateFormatSupplier = (DefaultDateFormatSupplier) prop;
-            } else if (prop instanceof DateTimeFormatter) {
-                return ((DateTimeFormatter) prop);
             }
         }
 
@@ -44,14 +42,11 @@ public class JavaTimeHelper {
 
         DefaultDateFormatSupplier defaultDateFormatSupplier = null;
         for(Object prop : properties) {
-            if (SupplierHelper.isSupplierOf(prop, DateTimeFormatter.class)) {
-                dtf.add(withZone(((Supplier<DateTimeFormatter>) prop).get(), zoneId));
-            } else if (prop instanceof DateFormatSupplier) {
-                dtf.add(withZone(((DateFormatSupplier) prop).get(), zoneId));
-            } else if (prop instanceof DefaultDateFormatSupplier) {
+            DateTimeFormatter dateTimeFormatter = toDateTimeFormatter(prop, zoneId);
+            if (dateTimeFormatter != null) {
+                dtf.add(dateTimeFormatter);
+            }else if (prop instanceof DefaultDateFormatSupplier) {
                 defaultDateFormatSupplier = (DefaultDateFormatSupplier) prop;
-            } else if (prop instanceof DateTimeFormatter) {
-                dtf.add((DateTimeFormatter) prop);
             }
         }
 
@@ -63,6 +58,17 @@ public class JavaTimeHelper {
         }
 
         return dtf.toArray(new DateTimeFormatter[0]);
+    }
+
+    private static DateTimeFormatter toDateTimeFormatter(Object prop, ZoneId zoneId) {
+        if (SupplierHelper.isSupplierOf(prop, DateTimeFormatter.class)) {
+            return withZone(((Supplier<DateTimeFormatter>) prop).get(), zoneId);
+        } else if (prop instanceof DateFormatSupplier) {
+            return  withZone(((DateFormatSupplier) prop).get(), zoneId);
+        } else if (prop instanceof DateTimeFormatter) {
+            return (DateTimeFormatter) prop;
+        }
+        return null;
     }
 
     private static DateTimeFormatter withZone(String format, ZoneId zoneId) {

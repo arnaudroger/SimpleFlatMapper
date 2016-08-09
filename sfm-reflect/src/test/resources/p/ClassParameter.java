@@ -9,4 +9,8 @@ public class ClassParameter {
 		this.name = name;
 		this.value = value;
 	}
+
+	public static ClassParameter of(String name) {
+		return new ClassParameter(name, 0);
+	}
 }

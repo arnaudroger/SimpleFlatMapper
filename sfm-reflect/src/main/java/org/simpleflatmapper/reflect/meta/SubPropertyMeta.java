@@ -1,7 +1,7 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.GetterOnGetter;
+import org.simpleflatmapper.reflect.getter.GetterOnGetter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
 

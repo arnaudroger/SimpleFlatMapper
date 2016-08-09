@@ -16,7 +16,7 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinitions;
-import org.simpleflatmapper.reflect.NullSetter;
+import org.simpleflatmapper.reflect.getter.NullSetter;
 import org.simpleflatmapper.reflect.ObjectSetterFactory;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.Setter;

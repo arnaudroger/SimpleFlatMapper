@@ -6,10 +6,10 @@ import org.joda.time.format.DateTimeFormatter;
 import org.simpleflatmapper.converter.Converter;
 
 
-public class CharacterSequenceToJodaLocalTimeConverter implements Converter<CharSequence, LocalTime> {
+public class CharSequenceToJodaLocalTimeConverter implements Converter<CharSequence, LocalTime> {
     private final DateTimeFormatter dateTimeFormatter;
 
-    public CharacterSequenceToJodaLocalTimeConverter(DateTimeFormatter dateTimeFormatter) {
+    public CharSequenceToJodaLocalTimeConverter(DateTimeFormatter dateTimeFormatter) {
         this.dateTimeFormatter = dateTimeFormatter;
     }
 

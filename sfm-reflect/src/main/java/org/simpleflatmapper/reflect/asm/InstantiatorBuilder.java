@@ -3,7 +3,7 @@ package org.simpleflatmapper.reflect.asm;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
+import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;

@@ -5,6 +5,8 @@ import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiator;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.reflect.getter.ConstantIntGetter;
+import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinition;
+import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinitionFactory;
 
 import java.util.Arrays;
 import java.util.Comparator;

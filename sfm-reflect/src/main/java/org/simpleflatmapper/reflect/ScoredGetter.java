@@ -1,6 +1,8 @@
 package org.simpleflatmapper.reflect;
 
 
+import org.simpleflatmapper.reflect.getter.NullGetter;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -14,10 +16,6 @@ public class ScoredGetter<T, P>  {
     public ScoredGetter(int score, Getter<T, P> getter) {
         this.score = score;
         this.getter = getter;
-    }
-
-    public int getScore() {
-        return score;
     }
 
     public Getter<T, P> getGetter() {

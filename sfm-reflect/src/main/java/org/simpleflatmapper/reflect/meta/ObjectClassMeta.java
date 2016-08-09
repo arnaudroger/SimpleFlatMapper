@@ -1,7 +1,9 @@
 package org.simpleflatmapper.reflect.meta;
 
+import org.simpleflatmapper.reflect.impl.GetterHelper;
 import org.simpleflatmapper.reflect.impl.ParamNameDeductor;
 import org.simpleflatmapper.reflect.*;
+import org.simpleflatmapper.reflect.impl.SetterHelper;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.TypeHelper;
 

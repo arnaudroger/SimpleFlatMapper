@@ -3,7 +3,7 @@ package org.simpleflatmapper.map.mapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.impl.CalculateMaxIndex;
 import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.GetterInstantiator;
+import org.simpleflatmapper.reflect.getter.GetterInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
 import org.simpleflatmapper.reflect.Parameter;

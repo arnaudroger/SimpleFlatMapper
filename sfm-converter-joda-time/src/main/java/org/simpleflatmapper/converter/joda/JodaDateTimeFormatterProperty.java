@@ -15,10 +15,4 @@ public class JodaDateTimeFormatterProperty implements Supplier<DateTimeFormatter
         return formatter;
     }
 
-    @Override
-    public String toString() {
-        return "JodaDateTimeFormatterProperty{" +
-                formatter +
-                '}';
-    }
 }

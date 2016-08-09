@@ -2,7 +2,7 @@ package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.reflect.NullSetter;
+import org.simpleflatmapper.reflect.getter.NullSetter;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;

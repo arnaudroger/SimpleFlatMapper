@@ -1,6 +1,6 @@
 package org.simpleflatmapper.reflect.asm;
 
-import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
+import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;

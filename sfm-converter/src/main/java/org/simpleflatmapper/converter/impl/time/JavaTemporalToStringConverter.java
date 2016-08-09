@@ -1,11 +1,12 @@
 package org.simpleflatmapper.converter.impl.time;
 
-import org.simpleflatmapper.converter.AppenderConverter;
+
+import org.simpleflatmapper.converter.Converter;
 
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 
-public class JavaTemporalToStringConverter implements AppenderConverter<Temporal, String> {
+public class JavaTemporalToStringConverter implements Converter<Temporal, String> {
 
     private final DateTimeFormatter dateTimeFormatter;
 
@@ -16,10 +17,5 @@ public class JavaTemporalToStringConverter implements AppenderConverter<Temporal
     @Override
     public String convert(Temporal in) throws Exception {
         return dateTimeFormatter.format(in);
-    }
-
-    @Override
-    public void appendTo(Temporal in, Appendable appendable) {
-        dateTimeFormatter.formatTo(in, appendable);
     }
 }

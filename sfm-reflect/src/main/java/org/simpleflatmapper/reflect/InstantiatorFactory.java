@@ -1,7 +1,9 @@
 package org.simpleflatmapper.reflect;
 
 import org.simpleflatmapper.reflect.asm.AsmFactory;
+import org.simpleflatmapper.reflect.getter.IdentityGetter;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiator;
+import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.impl.EmptyConstructorInstantiator;
 import org.simpleflatmapper.reflect.impl.EmptyStaticMethodInstantiator;
 import org.simpleflatmapper.reflect.impl.InjectConstructorInstantiator;
@@ -10,6 +12,7 @@ import org.simpleflatmapper.util.ErrorHelper;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,6 +152,9 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> getOneArgIdentityInstantiator(InstantiatorDefinition id) {
+		if (id.getParameters().length != 1) {
+			throw new IllegalArgumentException("Definition does not have one param " + Arrays.asList(id.getParameters()));
+		}
 		Map<Parameter, Getter<? super S, ?>> injections = new HashMap<Parameter, Getter<? super S, ?>>();
 		injections.put(id.getParameters()[0], new IdentityGetter());
 		return getInstantiator(id, id.getParameters()[0].getType(), injections, true);

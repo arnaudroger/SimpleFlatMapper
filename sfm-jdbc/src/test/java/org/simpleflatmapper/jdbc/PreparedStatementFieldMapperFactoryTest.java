@@ -18,7 +18,7 @@ import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactorImpl;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.NullGetter;
+import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
 import org.simpleflatmapper.reflect.getter.ConstantBooleanGetter;

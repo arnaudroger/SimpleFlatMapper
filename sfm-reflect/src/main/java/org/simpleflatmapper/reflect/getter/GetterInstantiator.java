@@ -1,5 +1,8 @@
-package org.simpleflatmapper.reflect;
+package org.simpleflatmapper.reflect.getter;
 
+
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.Instantiator;
 
 public class GetterInstantiator<S, T> implements Instantiator<S, T> {
     private final Getter<S, T> getter;

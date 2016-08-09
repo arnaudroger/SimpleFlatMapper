@@ -4,7 +4,7 @@ package org.simpleflatmapper.poi.impl;
 import org.apache.poi.ss.usermodel.Row;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
-import org.simpleflatmapper.reflect.GetterWithConverter;
+import org.simpleflatmapper.reflect.getter.GetterWithConverter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 

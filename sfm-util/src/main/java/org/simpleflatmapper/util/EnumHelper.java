@@ -1,4 +1,4 @@
-package org.simpleflatmapper.reflect;
+package org.simpleflatmapper.util;
 
 public class EnumHelper {
 

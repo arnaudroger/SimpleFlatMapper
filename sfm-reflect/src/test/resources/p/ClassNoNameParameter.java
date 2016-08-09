@@ -9,4 +9,8 @@ public class ClassNoNameParameter {
 		this.name = name;
 		this.value = value;
 	}
+
+	public static ClassNoNameParameter of(String name) {
+		return new ClassNoNameParameter(name, 0);
+	}
 }

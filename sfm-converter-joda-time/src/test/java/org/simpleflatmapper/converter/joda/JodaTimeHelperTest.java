@@ -1,12 +1,14 @@
 package org.simpleflatmapper.converter.joda;
 
 import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 import org.simpleflatmapper.converter.joda.impl.JodaTimeHelper;
 import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.date.DateFormatSupplier;
+import org.simpleflatmapper.util.date.DefaultDateFormatSupplier;
 
 import java.util.TimeZone;
 
@@ -15,12 +17,7 @@ import static org.junit.Assert.*;
 public class JodaTimeHelperTest {
 
     private static final DateTimeZone CHICAGO_TZ = DateTimeZone.forID("America/Chicago");
-    public static final Supplier<DateTimeZone> DATE_TIME_ZONE_SUPPLIER = new Supplier<DateTimeZone>() {
-        @Override
-        public DateTimeZone get() {
-            return CHICAGO_TZ;
-        }
-    };
+    public static final Supplier<DateTimeZone> DATE_TIME_ZONE_SUPPLIER = new JodaDateTimeZoneProperty(CHICAGO_TZ);
     public static final Supplier<DateTimeFormatter> DATE_TIME_FORMATTER_SUPPLIER_TZ = new Supplier<DateTimeFormatter>() {
         @Override
         public DateTimeFormatter get() {
@@ -34,12 +31,7 @@ public class JodaTimeHelperTest {
             return "yyyyMMdd";
         }
     };
-    public static final Supplier<DateTimeFormatter> DATE_TIME_FORMATTER_SUPPLIER = new Supplier<DateTimeFormatter>() {
-        @Override
-        public DateTimeFormatter get() {
-            return DateTimeFormat.forPattern("MMddyyyy");
-        }
-    };
+    public static final Supplier<DateTimeFormatter> DATE_TIME_FORMATTER_SUPPLIER = new JodaDateTimeFormatterProperty(DateTimeFormat.forPattern("MMddyyyy"));
     public static final Supplier<TimeZone> TIME_ZONE_SUPPLIER = new Supplier<TimeZone>() {
         @Override
         public TimeZone get() {
@@ -49,16 +41,60 @@ public class JodaTimeHelperTest {
 
     @SuppressWarnings("EmptyCatchBlock")
     @Test
-    public void testFormatterFailWhenEmpty() {
+    public void testFormattersFailWhenEmpty() {
         try {
             JodaTimeHelper.getDateTimeFormatters();
             fail();
         } catch(IllegalStateException e) {}
     }
 
+    @Test
+    public void testGetFormatterReturnNullWhenEmpty() {
+        assertNull(JodaTimeHelper.getDateTimeFormatter());
+    }
+
+    @Test
+    public void testGetFormatterAndDefaultFormat() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        assertEquals(DateTimeFormat.forPattern("yyyy").print(localDateTime),JodaTimeHelper.getDateTimeFormatter(new DefaultDateFormatSupplier() {
+            @Override
+            public String get() {
+                return "yyyy";
+            }
+        }).print(localDateTime));
+
+        assertEquals(DateTimeFormat.fullDate().print(localDateTime) ,JodaTimeHelper.getDateTimeFormatter(new DefaultDateFormatSupplier() {
+            @Override
+            public String get() {
+                return "yyyy";
+            }
+        }, DateTimeFormat.fullDate()).print(localDateTime));
+    }
+
+    @Test
+    public void testGetFormattersAndDefaultFormat() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        assertEquals(DateTimeFormat.forPattern("yyyy").print(localDateTime),JodaTimeHelper.getDateTimeFormatters(new DefaultDateFormatSupplier() {
+            @Override
+            public String get() {
+                return "yyyy";
+            }
+        })[0].print(localDateTime));
+
+        DateTimeFormatter[] dateTimeFormatters = JodaTimeHelper.getDateTimeFormatters(new DefaultDateFormatSupplier() {
+            @Override
+            public String get() {
+                return "yyyy";
+            }
+        }, DateTimeFormat.fullDate());
+        assertEquals(1, dateTimeFormatters.length);
+        assertEquals(DateTimeFormat.fullDate().print(localDateTime), dateTimeFormatters[0].print(localDateTime));
+    }
+
     @SuppressWarnings("SpellCheckingInspection")
     @Test
-    public void testFormatterFromString() {
+    public void testFormattersFromString() {
         final DateTimeFormatter yyyyMMdd = JodaTimeHelper.getDateTimeFormatters(DATE_FORMAT_SUPPLIER)[0];
         final long instant = System.currentTimeMillis();
         assertEquals(DateTimeFormat.forPattern("yyyyMMdd").print(instant), yyyyMMdd.print(instant));
@@ -66,7 +102,7 @@ public class JodaTimeHelperTest {
     }
 
     @Test
-    public void testFormatterFromFormatter() {
+    public void testFormattersFromFormatter() {
         final DateTimeFormatter yyyyMMdd = JodaTimeHelper.getDateTimeFormatters(DATE_TIME_FORMATTER_SUPPLIER)[0];
         final long instant = System.currentTimeMillis();
         assertEquals(DateTimeFormat.forPattern("MMddyyyy").print(instant), yyyyMMdd.print(instant));
@@ -75,7 +111,7 @@ public class JodaTimeHelperTest {
     }
 
     @Test
-    public void testFormatterFromFormatterWithOwnTZ() {
+    public void testFormattersFromFormatterWithOwnTZ() {
         final DateTimeFormatter yyyyMMdd = JodaTimeHelper.getDateTimeFormatters(DATE_TIME_FORMATTER_SUPPLIER_TZ)[0];
         final long instant = System.currentTimeMillis();
         assertEquals(DateTimeFormat.forPattern("ddMMyyyy").withZone(CHICAGO_TZ).print(instant), yyyyMMdd.print(instant));
@@ -84,7 +120,7 @@ public class JodaTimeHelperTest {
 
 
     @Test
-    public void testFormatterFromFormatterWithSpecifiedTZ() {
+    public void testFormattersFromFormatterWithSpecifiedTZ() {
         final DateTimeFormatter yyyyMMdd = JodaTimeHelper.getDateTimeFormatters(DATE_TIME_FORMATTER_SUPPLIER_TZ, TIME_ZONE_SUPPLIER)[0];
         final long instant = System.currentTimeMillis();
         assertEquals(DateTimeFormat.forPattern("ddMMyyyy").withZone(NY_TZ).print(instant), yyyyMMdd.print(instant));

@@ -1,7 +1,6 @@
 package org.simpleflatmapper.converter.time;
 
 import org.junit.Test;
-import org.simpleflatmapper.converter.AppenderConverter;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
 
@@ -19,6 +18,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.Calendar;
@@ -191,6 +191,9 @@ public class JavaTimeConverterServiceTest {
         testObjectToOffsetDateTime(offsetDateTime.toLocalDateTime(), offsetDateTime);
         testObjectToOffsetDateTime(offsetDateTime.toInstant(), offsetDateTime);
         testObjectToOffsetDateTime(offsetDateTime.atZoneSameInstant(zoneId), offsetDateTime);
+        testObjectToOffsetDateTime(offsetDateTime.atZoneSameInstant(zoneId), offsetDateTime);
+        testObjectToOffsetDateTime(offsetDateTime.toLocalDate(), offsetDateTime.truncatedTo(ChronoUnit.DAYS));
+
         testObjectToOffsetDateTime(Date.from(offsetDateTime.toInstant()), offsetDateTime.truncatedTo(ChronoUnit.MILLIS));
 
         try {
@@ -332,25 +335,29 @@ public class JavaTimeConverterServiceTest {
         Converter<? super CharSequence, ? extends Temporal> multiConverter =
                 ConverterService.getInstance().findConverter(CharSequence.class, temploral.getClass(), failing, dateTimeFormatter);
         assertEquals(temploral, multiConverter.convert(dateTimeFormatter.format(temploral)));
+
+        try {
+            multiConverter.convert("a");
+            fail();
+        } catch (DateTimeParseException e) {
+
+        }
     }
 
 
     @Test
     public void testTemporalToString() throws Exception {
-
         Converter<? super ZonedDateTime, ? extends CharSequence> converter = ConverterService.getInstance().findConverter(ZonedDateTime.class, CharSequence.class, DateTimeFormatter.ISO_ZONED_DATE_TIME);
-
-        assertTrue(AppenderConverter.class.isInstance(converter));
-
-        AppenderConverter<? super ZonedDateTime, ? extends CharSequence> appenderConverter = (AppenderConverter<? super ZonedDateTime, ? extends CharSequence>) converter;
-
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
-
         assertEquals(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(zonedDateTime), converter.convert(zonedDateTime));
-        StringBuilder sb = new StringBuilder();
-        appenderConverter.appendTo(zonedDateTime, sb);
-        assertEquals(DateTimeFormatter.ISO_ZONED_DATE_TIME.format(zonedDateTime), sb.toString());
+    }
 
+
+    @Test
+    public void testTemporalToStringNoFormat() throws Exception {
+        Converter<? super ZonedDateTime, ? extends CharSequence> converter = ConverterService.getInstance().findConverter(ZonedDateTime.class, CharSequence.class);
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+        assertEquals(zonedDateTime.toString(), converter.convert(zonedDateTime));
     }
 
     private Date trunc(Date date) {

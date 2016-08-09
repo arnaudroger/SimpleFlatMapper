@@ -1,5 +1,7 @@
-package org.simpleflatmapper.reflect;
+package org.simpleflatmapper.reflect.getter;
 
+
+import org.simpleflatmapper.reflect.Setter;
 
 public class NullSetter<T, P> implements Setter<T, P> {
 

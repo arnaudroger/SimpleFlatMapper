@@ -1,9 +1,9 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.junit.Test;
-import org.simpleflatmapper.reflect.IdentityGetter;
+import org.simpleflatmapper.reflect.getter.IdentityGetter;
 import org.simpleflatmapper.reflect.ReflectionService;
-import org.simpleflatmapper.reflect.NullSetter;
+import org.simpleflatmapper.reflect.getter.NullSetter;
 
 import static org.junit.Assert.*;
 

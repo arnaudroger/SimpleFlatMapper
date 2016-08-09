@@ -1,6 +1,7 @@
-package org.simpleflatmapper.reflect;
+package org.simpleflatmapper.reflect.getter;
 
 import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.reflect.Getter;
 
 public class GetterWithConverter<T, I, P> implements Getter<T, P> {
 

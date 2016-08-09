@@ -3,7 +3,7 @@ package org.simpleflatmapper.poi.impl;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.simpleflatmapper.reflect.EnumHelper;
+import org.simpleflatmapper.util.EnumHelper;
 import org.simpleflatmapper.reflect.Getter;
 
 public class PoiEnumGetter<E extends Enum<E>> implements Getter<Row, E> {

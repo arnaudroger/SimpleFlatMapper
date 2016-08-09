@@ -3,10 +3,15 @@ package org.simpleflatmapper.reflect;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -102,6 +107,27 @@ public class InstantiatorDefinitionTest {
                     }
                 });
         assertNull(sid);
+    }
+
+    @Test
+    public void testDefaultCompatibilityScorers() {
+        InstantiatorDefinitions.CompatibilityScorer compatibilityScorer = InstantiatorDefinitions.getCompatibilityScorer(new Object());
+        assertEquals(0, compatibilityScorer.score(new ExecutableInstantiatorDefinition(null, new Parameter(0, "", InputStream.class))));
+        assertEquals(1, compatibilityScorer.score(new ExecutableInstantiatorDefinition(null, new Parameter(0, "", Number.class))));
+    }
+
+    @Test
+    public void testTypeAffinityCompatibilityScorers() {
+        InstantiatorDefinitions.CompatibilityScorer compatibilityScorer = InstantiatorDefinitions.getCompatibilityScorer(new TypeAffinity() {
+            @Override
+            public Class<?>[] getAffinities() {
+                return new Class<?>[] {Date.class, URL.class};
+            }
+        });
+        assertEquals(0, compatibilityScorer.score(new ExecutableInstantiatorDefinition(null, new Parameter(0, "", InputStream.class))));
+        assertEquals(12, compatibilityScorer.score(new ExecutableInstantiatorDefinition(null, new Parameter(0, "", Date.class))));
+        assertEquals(11, compatibilityScorer.score(new ExecutableInstantiatorDefinition(null, new Parameter(0, "", URL.class))));
+        assertEquals(1, compatibilityScorer.score(new ExecutableInstantiatorDefinition(null, new Parameter(0, "", Number.class))));
     }
 
 }

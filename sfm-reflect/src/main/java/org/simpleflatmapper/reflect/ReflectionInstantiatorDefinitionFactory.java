@@ -41,7 +41,7 @@ public class ReflectionInstantiatorDefinitionFactory {
 
 
     @SuppressWarnings("unchecked")
-    public static List<InstantiatorDefinition> extractDefinitionsWithoutParamNames(Type target) {
+    private static List<InstantiatorDefinition> extractDefinitionsWithoutParamNames(Type target) {
         return extractDefinitions(target, new ParameterBuilder() {
 
             @Override
@@ -56,7 +56,7 @@ public class ReflectionInstantiatorDefinitionFactory {
         });
     }
     @SuppressWarnings("unchecked")
-    public static List<InstantiatorDefinition> extractDefinitionsWithParamNames(Type target) {
+    private static List<InstantiatorDefinition> extractDefinitionsWithParamNames(Type target) {
         return extractDefinitions(target, new ParameterBuilder() {
             @Override
             public Parameter[] getParameters(Method m, Type target) {
@@ -81,7 +81,7 @@ public class ReflectionInstantiatorDefinitionFactory {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<InstantiatorDefinition> extractDefinitions(Type target, ParameterBuilder parameterBuilder) {
+    private static List<InstantiatorDefinition> extractDefinitions(Type target, ParameterBuilder parameterBuilder) {
         Class<?> clazz = TypeHelper.toClass(target);
         List<InstantiatorDefinition> instantiatorDefinitions = new ArrayList<InstantiatorDefinition>();
 

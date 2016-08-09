@@ -157,19 +157,72 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 
 		List<InstantiatorDefinition> instantiatorDefinitions = ReflectionService.newInstance().extractInstantiator(classWithParameter);
 
-		assertEquals(1, instantiatorDefinitions.size());
+		assertEquals(2, instantiatorDefinitions.size());
 		assertEquals(2, instantiatorDefinitions.get(0).getParameters().length);
 		assertEquals("name", instantiatorDefinitions.get(0).getParameters()[0].getName());
 		assertEquals("value", instantiatorDefinitions.get(0).getParameters()[1].getName());
 
+		assertEquals(1, instantiatorDefinitions.get(1).getParameters().length);
+		assertEquals("name", instantiatorDefinitions.get(1).getParameters()[0].getName());
+
 
 		instantiatorDefinitions = ReflectionService.newInstance().extractInstantiator(classWithoutParameter);
 
-		assertEquals(1, instantiatorDefinitions.size());
+		assertEquals(2, instantiatorDefinitions.size());
 		assertEquals(2, instantiatorDefinitions.get(0).getParameters().length);
 		assertNull(instantiatorDefinitions.get(0).getParameters()[0].getName());
 		assertNull(instantiatorDefinitions.get(0).getParameters()[1].getName());
+
+		assertEquals(1, instantiatorDefinitions.get(1).getParameters().length);
+		assertNull(instantiatorDefinitions.get(1).getParameters()[0].getName());
+
 	}
 	//IFJAVA8_END
+
+
+	@Test
+	public void testInstantiatorWithExtraInstatiator() throws Exception {
+		List<InstantiatorDefinition> instantiatorDefinitionsFactory =
+				ReflectionService.newInstance().extractInstantiator(F.class, FF.class.getMethod("newInstance"));
+
+		assertEquals(2, instantiatorDefinitionsFactory.size());
+
+		assertEquals(InstantiatorDefinition.Type.CONSTRUCTOR, instantiatorDefinitionsFactory.get(0).getType());
+		assertEquals(InstantiatorDefinition.Type.METHOD, instantiatorDefinitionsFactory.get(1).getType());
+
+		List<InstantiatorDefinition> instantiatorDefinitionsBuilder =
+				ReflectionService.newInstance().extractInstantiator(F.class, FB.class.getConstructor());
+
+		assertEquals(2, instantiatorDefinitionsBuilder.size());
+		assertEquals(InstantiatorDefinition.Type.CONSTRUCTOR, instantiatorDefinitionsBuilder.get(0).getType());
+		assertEquals(InstantiatorDefinition.Type.BUILDER, instantiatorDefinitionsBuilder.get(1).getType());
+	}
+
+
+	public static class F {
+
+	}
+
+	public static class FF {
+		public static F newInstance() {
+			return new F();
+		}
+	}
+
+	public static class FB {
+
+		public FB withA(String a) {
+			return this;
+		}
+
+		public F build() {
+			return new F();
+		}
+	}
+
+
+
+
+
 
 }

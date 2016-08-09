@@ -17,10 +17,4 @@ public abstract class AbstractConverterFactory<I, O> implements ConverterFactory
         return this.convertingTypes.score(targetedTypes);
     }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "{" +
-                "convertingTypes=" + convertingTypes +
-                '}';
-    }
 }

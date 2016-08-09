@@ -168,22 +168,6 @@ public class JavaTimeConverterFactoryProducer extends AbstractConverterFactoryPr
             }
         });
 
-        factoryConverter(consumer, new AbstractMultiFormatConverterFactory<CharSequence, Instant>(CharSequence.class, Instant.class) {
-            @SuppressWarnings("unchecked")
-            @Override
-            protected Converter<CharSequence, Instant> newConverter(DateTimeFormatter formatter) {
-                return new CharSequenceToInstantConverter(formatter);
-            }
-        });
-
-
-        factoryConverter(consumer, new AbstractMultiFormatConverterFactory<CharSequence, Instant>(CharSequence.class, Instant.class) {
-            @SuppressWarnings("unchecked")
-            @Override
-            protected Converter<CharSequence, Instant> newConverter(DateTimeFormatter formatter) {
-                return new CharSequenceToInstantConverter(formatter);
-            }
-        });
         factoryConverter(consumer, new AbstractMultiFormatConverterFactory<CharSequence, LocalDate>(CharSequence.class, LocalDate.class) {
             @SuppressWarnings("unchecked")
             @Override

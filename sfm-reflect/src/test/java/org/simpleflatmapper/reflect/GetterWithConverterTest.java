@@ -3,6 +3,7 @@ package org.simpleflatmapper.reflect;
 import org.junit.Test;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.reflect.getter.GetterWithConverter;
 
 import static org.junit.Assert.assertEquals;
 

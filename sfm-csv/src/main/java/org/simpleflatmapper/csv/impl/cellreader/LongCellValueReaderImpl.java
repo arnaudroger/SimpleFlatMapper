@@ -22,24 +22,7 @@ public final class LongCellValueReaderImpl implements LongCellValueReader {
 	}
 
 	public static long parseLong(char[] chars, int offset, int length) {
-		long n = 0;
-		boolean negative = false;
-		for(int i = offset; i < offset + length; i++) {
-			char b = chars[i];
-			if (b >= C_ZERO && b <= C_NINE) {
-				n  = n * 10 +  chars[i] - C_ZERO;
-			} else {
-				if (b == C_NEG_SIGN && i == offset) {
-					negative = true;
-				} else if (b != ' ') {
-					throw new ParsingException("Cannot parse " + new String(chars, offset, length) + " as a long");
-				}
-			}
-		}
-		if (negative) {
-			n = 0 - n;
-		}
-		return n;
+		return Long.parseLong(String.valueOf(chars, offset, length));
 	}
 
     @Override

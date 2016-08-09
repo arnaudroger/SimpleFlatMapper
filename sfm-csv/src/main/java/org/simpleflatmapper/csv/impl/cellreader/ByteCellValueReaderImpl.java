@@ -12,7 +12,7 @@ public class ByteCellValueReaderImpl implements ByteCellValueReader {
 
 	@Override
 	public byte readByte(char[] chars, int offset, int length, ParsingContext parsingContext) {
-		return (byte) IntegerCellValueReaderImpl.parseInt(chars, offset, length);
+		return Byte.parseByte(String.valueOf(chars, offset, length));
 	}
 
     @Override

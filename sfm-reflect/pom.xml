@@ -30,8 +30,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.ow2.asm</groupId>
-			<artifactId>asm</artifactId>
+			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>ow2asm</artifactId>
 			<version>5.1</version>
 		</dependency>
 
@@ -82,10 +82,11 @@
 							org.simpleflatmapper.reflect.instantiator,
 							org.simpleflatmapper.reflect.getter,
 							org.simpleflatmapper.reflect.setter,
-							org.simpleflatmapper.reflect.primitive</Export-Package>
-						<Import-Package>org.objectweb.asm;version="[4.0,6)";resolution:=optional,
-							org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,
-						org.simpleflatmapper.util</Import-Package>
+							org.simpleflatmapper.reflect.primitive,
+							org.simpleflatmapper.ow2asm,
+							org.simpleflatmapper.ow2asm.signature
+						</Export-Package>
+						<Import-Package>org.simpleflatmapper.util</Import-Package>
 
 						<Require-Capability>osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
 						<Provide-Capability>osgi.serviceloader;osgi.serviceloader=org.simpleflatmapper.reflect.meta.AliasProviderFactory</Provide-Capability>
@@ -229,11 +230,37 @@
 					<scope>test</scope>
 				</dependency>
 				<dependency>
-					<groupId>org.ow2.asm</groupId>
-					<artifactId>asm</artifactId>
+					<groupId>org.simpleflatmapper</groupId>
+					<artifactId>ow2asm</artifactId>
 					<version>6.0_ALPHA</version>
 				</dependency>
 			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-asm</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>org.simpleflatmapper</groupId>
+											<artifactId>ow2asm</artifactId>
+											<version>6.0_ALPHA</version>
+										</artifactItem>
+									</artifactItems>
+									<outputDirectory>target/classes</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 	</profiles>

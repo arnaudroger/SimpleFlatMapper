@@ -85,9 +85,6 @@
 					<instructions>
 						<Export-Package>org.simpleflatmapper.csv,org.simpleflatmapper.csv.property,org.simpleflatmapper.csv.parser</Export-Package>
 						<Import-Package>
-							org.objectweb.asm;version="[4.0,6)";resolution:=optional,
-							org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,
-							org.joda.time.*;resolution:=optional,
 							org.simpleflatmapper.*
 						</Import-Package>
 					</instructions>
@@ -209,11 +206,6 @@
 					<version>0.1</version>
 					<optional>true</optional>
 					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.ow2.asm</groupId>
-					<artifactId>asm</artifactId>
-					<version>6.0_ALPHA</version>
 				</dependency>
 			</dependencies>
 

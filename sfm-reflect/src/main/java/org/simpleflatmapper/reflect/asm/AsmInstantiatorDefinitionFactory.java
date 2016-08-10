@@ -1,10 +1,10 @@
 package org.simpleflatmapper.reflect.asm;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.simpleflatmapper.ow2asm.ClassReader;
+import org.simpleflatmapper.ow2asm.ClassVisitor;
+import org.simpleflatmapper.ow2asm.Label;
+import org.simpleflatmapper.ow2asm.MethodVisitor;
+import org.simpleflatmapper.ow2asm.Opcodes;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;

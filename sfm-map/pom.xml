@@ -30,11 +30,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.ow2.asm</groupId>
-			<artifactId>asm</artifactId>
-			<version>5.1</version>
-		</dependency>
-		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-reflect</artifactId>
 			<version>2.13-SNAPSHOT</version>
@@ -68,9 +63,7 @@
                             org.simpleflatmapper.map.mapper
                         </Export-Package>
 						<Import-Package>
-							org.objectweb.asm;version="[4.0,6)";resolution:=optional,
-							org.objectweb.asm.signature;version="[4.0,6)";resolution:=optional,
-							org.joda.time.*;resolution:=optional,
+							org.simpleflatmapper.ow2asm.*,
 							org.simpleflatmapper.reflect.*,
 							org.simpleflatmapper.tuple;resolution:=optional,
 							org.simpleflatmapper.util.*,
@@ -213,11 +206,6 @@
 					<version>0.1</version>
 					<optional>true</optional>
 					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.ow2.asm</groupId>
-					<artifactId>asm</artifactId>
-					<version>6.0_ALPHA</version>
 				</dependency>
 			</dependencies>
 		</profile>

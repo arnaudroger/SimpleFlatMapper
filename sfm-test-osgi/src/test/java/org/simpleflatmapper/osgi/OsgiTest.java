@@ -3,7 +3,6 @@ package org.simpleflatmapper.osgi;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.junit.Test;
-import org.objectweb.asm.ClassVisitor;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;

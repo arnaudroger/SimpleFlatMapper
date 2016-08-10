@@ -1,8 +1,8 @@
 package org.simpleflatmapper.reflect.asm;
 
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.simpleflatmapper.ow2asm.ClassWriter;
+import org.simpleflatmapper.ow2asm.MethodVisitor;
+import org.simpleflatmapper.ow2asm.Opcodes;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.primitive.IntSetter;
 

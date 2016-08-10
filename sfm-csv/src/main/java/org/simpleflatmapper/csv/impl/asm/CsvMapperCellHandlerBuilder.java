@@ -1,6 +1,10 @@
 package org.simpleflatmapper.csv.impl.asm;
 
-import org.objectweb.asm.*;
+import org.simpleflatmapper.ow2asm.ClassWriter;
+import org.simpleflatmapper.ow2asm.FieldVisitor;
+import org.simpleflatmapper.ow2asm.Label;
+import org.simpleflatmapper.ow2asm.MethodVisitor;
+import org.simpleflatmapper.ow2asm.Opcodes;
 import org.simpleflatmapper.reflect.asm.AsmUtils;
 import org.simpleflatmapper.reflect.asm.ShardingHelper;
 import org.simpleflatmapper.csv.CsvColumnKey;

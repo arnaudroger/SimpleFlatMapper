@@ -1,23 +1,23 @@
 package org.simpleflatmapper.reflect.asm;
 
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
+import org.simpleflatmapper.ow2asm.ClassWriter;
+import org.simpleflatmapper.ow2asm.MethodVisitor;
 import org.simpleflatmapper.reflect.Instantiator;
 
-import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
-import static org.objectweb.asm.Opcodes.ACC_FINAL;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_SUPER;
-import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.CHECKCAST;
-import static org.objectweb.asm.Opcodes.DUP;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
-import static org.objectweb.asm.Opcodes.NEW;
-import static org.objectweb.asm.Opcodes.RETURN;
-import static org.objectweb.asm.Opcodes.V1_6;
+import static org.simpleflatmapper.ow2asm.Opcodes.ACC_BRIDGE;
+import static org.simpleflatmapper.ow2asm.Opcodes.ACC_FINAL;
+import static org.simpleflatmapper.ow2asm.Opcodes.ACC_PUBLIC;
+import static org.simpleflatmapper.ow2asm.Opcodes.ACC_SUPER;
+import static org.simpleflatmapper.ow2asm.Opcodes.ACC_SYNTHETIC;
+import static org.simpleflatmapper.ow2asm.Opcodes.ALOAD;
+import static org.simpleflatmapper.ow2asm.Opcodes.ARETURN;
+import static org.simpleflatmapper.ow2asm.Opcodes.CHECKCAST;
+import static org.simpleflatmapper.ow2asm.Opcodes.DUP;
+import static org.simpleflatmapper.ow2asm.Opcodes.INVOKESPECIAL;
+import static org.simpleflatmapper.ow2asm.Opcodes.INVOKEVIRTUAL;
+import static org.simpleflatmapper.ow2asm.Opcodes.NEW;
+import static org.simpleflatmapper.ow2asm.Opcodes.RETURN;
+import static org.simpleflatmapper.ow2asm.Opcodes.V1_6;
 
 public class ConstructorBuilder {
 	public static byte[] createEmptyConstructor(final String className, final Class<?> sourceClass,

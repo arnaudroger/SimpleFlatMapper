@@ -1,9 +1,9 @@
 package org.simpleflatmapper.reflect.asm;
 
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.signature.SignatureReader;
-import org.objectweb.asm.signature.SignatureVisitor;
+import org.simpleflatmapper.ow2asm.MethodVisitor;
+import org.simpleflatmapper.ow2asm.Opcodes;
+import org.simpleflatmapper.ow2asm.signature.SignatureReader;
+import org.simpleflatmapper.ow2asm.signature.SignatureVisitor;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.io.File;
@@ -22,25 +22,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.objectweb.asm.Opcodes.BIPUSH;
-import static org.objectweb.asm.Opcodes.DCONST_0;
-import static org.objectweb.asm.Opcodes.DLOAD;
-import static org.objectweb.asm.Opcodes.DRETURN;
-import static org.objectweb.asm.Opcodes.FCONST_0;
-import static org.objectweb.asm.Opcodes.FLOAD;
-import static org.objectweb.asm.Opcodes.FRETURN;
-import static org.objectweb.asm.Opcodes.ICONST_0;
-import static org.objectweb.asm.Opcodes.ICONST_1;
-import static org.objectweb.asm.Opcodes.ICONST_2;
-import static org.objectweb.asm.Opcodes.ICONST_3;
-import static org.objectweb.asm.Opcodes.ICONST_4;
-import static org.objectweb.asm.Opcodes.ICONST_5;
-import static org.objectweb.asm.Opcodes.ILOAD;
-import static org.objectweb.asm.Opcodes.IRETURN;
-import static org.objectweb.asm.Opcodes.LCONST_0;
-import static org.objectweb.asm.Opcodes.LLOAD;
-import static org.objectweb.asm.Opcodes.LRETURN;
-import static org.objectweb.asm.Opcodes.SIPUSH;
+import static org.simpleflatmapper.ow2asm.Opcodes.BIPUSH;
+import static org.simpleflatmapper.ow2asm.Opcodes.DCONST_0;
+import static org.simpleflatmapper.ow2asm.Opcodes.DLOAD;
+import static org.simpleflatmapper.ow2asm.Opcodes.DRETURN;
+import static org.simpleflatmapper.ow2asm.Opcodes.FCONST_0;
+import static org.simpleflatmapper.ow2asm.Opcodes.FLOAD;
+import static org.simpleflatmapper.ow2asm.Opcodes.FRETURN;
+import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_0;
+import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_1;
+import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_2;
+import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_3;
+import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_4;
+import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_5;
+import static org.simpleflatmapper.ow2asm.Opcodes.ILOAD;
+import static org.simpleflatmapper.ow2asm.Opcodes.IRETURN;
+import static org.simpleflatmapper.ow2asm.Opcodes.LCONST_0;
+import static org.simpleflatmapper.ow2asm.Opcodes.LLOAD;
+import static org.simpleflatmapper.ow2asm.Opcodes.LRETURN;
+import static org.simpleflatmapper.ow2asm.Opcodes.SIPUSH;
 
 public class AsmUtils {
 

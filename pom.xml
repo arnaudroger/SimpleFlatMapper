@@ -59,6 +59,7 @@
         <module>sfm-querydsl</module>
         <module>sfm-springjdbc</module>
         <module>sfm-test</module>
+        <module>ow2.asm/ASM_5_1</module>
   </modules>
 
     <build>
@@ -490,6 +491,7 @@
             </activation>
             <modules>
                 <module>sfm-sql2o</module>
+                <module>ow2.asm/ASM_6_0_ALPHA</module>
             </modules>
             <build>
                 <plugins>

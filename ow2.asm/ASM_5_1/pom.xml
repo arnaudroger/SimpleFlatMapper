@@ -1,0 +1,29 @@
+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <groupId>org.simpleflatmapper</groupId>
+  <artifactId>ow2asm</artifactId>
+  <name>ASM Core</name>
+  <version>5.1</version>
+  <packaging>jar</packaging>
+
+
+  <properties>
+    <jacoco.skip>true</jacoco.skip>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.3</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -158,7 +158,7 @@ public final class ObjectGetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> DoubleGetter<T> toDoubleGetter(Getter<? super T, ? extends Double> getter) {
+	public static <T> DoubleGetter<T> toDoubleGetter(Getter<T, ? extends Double> getter) {
 		if (getter instanceof DoubleGetter) {
 			return (DoubleGetter<T>) getter;
 		} else {

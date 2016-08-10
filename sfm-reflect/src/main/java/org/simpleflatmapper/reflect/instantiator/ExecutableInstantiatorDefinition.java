@@ -1,4 +1,7 @@
-package org.simpleflatmapper.reflect;
+package org.simpleflatmapper.reflect.instantiator;
+
+import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.reflect.Parameter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;

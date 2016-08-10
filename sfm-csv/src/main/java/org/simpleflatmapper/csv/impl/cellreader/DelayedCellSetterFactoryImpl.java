@@ -10,9 +10,9 @@ import org.simpleflatmapper.reflect.Setter;
 public class DelayedCellSetterFactoryImpl<T, P> implements DelayedCellSetterFactory<T, P> {
 
 	private final CellValueReader<? extends P> reader;
-	private final Setter<T, ? super P> setter;
+	private final Setter<? super T, ? super P> setter;
 	
-	public DelayedCellSetterFactoryImpl(CellValueReader<? extends P> reader, Setter<T, ? super P> setter) {
+	public DelayedCellSetterFactoryImpl(CellValueReader<? extends P> reader, Setter<? super T, ? super P> setter) {
 		this.reader = reader;
 		this.setter = setter;
 	}

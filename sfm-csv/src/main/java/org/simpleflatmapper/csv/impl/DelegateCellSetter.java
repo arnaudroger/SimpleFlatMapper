@@ -12,7 +12,7 @@ public class DelegateCellSetter<T, P> implements CellSetter<T> {
 
 	private final DelegateMarkerSetter<T, P> marker;
 	private final CsvMapperCellConsumer<P> handler;
-    private final Setter<T, P> setter;
+    private final Setter<? super T, ? super P> setter;
 	private final int cellIndex;
 
 	@SuppressWarnings("unchecked")

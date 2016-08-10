@@ -3,7 +3,7 @@ package org.simpleflatmapper.reflect.meta;
 
 import org.junit.Test;
 import org.simpleflatmapper.reflect.ReflectionService;
-import org.simpleflatmapper.reflect.getter.NullSetter;
+import org.simpleflatmapper.reflect.setter.NullSetter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -1,7 +1,7 @@
 package org.simpleflatmapper.reflect.asm;
 
 import org.junit.Test;
-import org.simpleflatmapper.reflect.ExecutableInstantiatorDefinition;
+import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.tuple.Tuples;

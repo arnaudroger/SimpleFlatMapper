@@ -3,11 +3,11 @@ package org.simpleflatmapper.reflect.getter;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 
-public class InstantiatorOnGetter<S, T, P> implements Getter<T, P> {
-	private final Instantiator<S, P> instantiator;
-	private final Getter<T, S> getter;
+public class InstantiatorGetter<S, T, P> implements Getter<T, P> {
+	private final Instantiator<? super S, ? extends P> instantiator;
+	private final Getter<? super T, ? extends S> getter;
 	
-	public InstantiatorOnGetter(Instantiator<S, P> instantiator, Getter<T, S> getter) {
+	public InstantiatorGetter(Instantiator<? super S, ? extends P> instantiator, Getter<? super T, ? extends S> getter) {
 		super();
 		this.instantiator = instantiator;
 		this.getter = getter;

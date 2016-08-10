@@ -9,13 +9,13 @@ public class DefaultValueDelayedCellSetter<T, P>
         implements DelayedCellSetter<T, P> {
     private final DelayedCellSetter<T, P> delegate;
     private final DefaultValueProperty defaultValueProperty;
-    private final Setter<T, ? super P> setter;
+    private final Setter<? super T, ? super P> setter;
 
     private boolean isSet = false;
 
     public DefaultValueDelayedCellSetter(DelayedCellSetter<T, P> delegate,
                                          DefaultValueProperty defaultValueProperty,
-                                         Setter<T, ? super P> setter) {
+                                         Setter<? super T, ? super P> setter) {
         this.delegate = delegate;
         this.defaultValueProperty = defaultValueProperty;
         this.setter = setter;

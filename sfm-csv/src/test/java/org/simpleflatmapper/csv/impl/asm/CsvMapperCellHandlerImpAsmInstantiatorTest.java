@@ -9,7 +9,7 @@ import org.simpleflatmapper.csv.impl.*;
 import org.simpleflatmapper.csv.impl.cellreader.DelayedCellSetterImpl;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
-import org.simpleflatmapper.reflect.ExecutableInstantiatorDefinition;
+import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.Parameter;

@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ListSizeGetter implements IntGetter<List<?>> {
     @Override
-    public int getInt(List<?> target) throws Exception {
+    public int getInt(List<?> target) {
         return target.size();
     }
 }

@@ -11,12 +11,12 @@ public class ConstantByteGetter<T> implements ByteGetter, Getter<T, Byte> {
     }
 
     @Override
-    public byte getByte(Object target) throws Exception {
+    public byte getByte(Object target) {
         return value;
     }
 
     @Override
-    public Byte get(T target) throws Exception {
+    public Byte get(T target) {
         return value;
     }
 }

@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.meta;
 
 
 import org.junit.Test;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.test.beans.Db1DeepObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -32,8 +33,15 @@ public class SubPropertyMetaTest {
 
         Db1DeepObject object = new Db1DeepObject();
         object.setDbObject(new DbObject());
+
         subPropertyMeta.getSetter().set(object, "n1");
-        assertEquals("n1", subPropertyMeta.getGetter().get(object));
+        Getter<Db1DeepObject, String> getter = subPropertyMeta.getGetter();
+        assertEquals("n1", getter.get(object));
+
+        Db1DeepObject objectNull = new Db1DeepObject();
+        assertEquals(null, getter.get(objectNull));
+
+        assertTrue(getter.toString().startsWith("GetterOnGetter{g1="));
 
         ClassMeta<?> meta = subPropertyMeta.newPropertyClassMeta();
         assertEquals(String.class, meta.getType());

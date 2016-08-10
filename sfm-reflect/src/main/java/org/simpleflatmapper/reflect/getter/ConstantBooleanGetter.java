@@ -11,12 +11,12 @@ public class ConstantBooleanGetter<T> implements BooleanGetter, Getter<T, Boolea
     }
 
     @Override
-    public boolean getBoolean(Object target) throws Exception {
+    public boolean getBoolean(Object target) {
         return value;
     }
 
     @Override
-    public Boolean get(T target) throws Exception {
+    public Boolean get(T target) {
         return value;
     }
 }

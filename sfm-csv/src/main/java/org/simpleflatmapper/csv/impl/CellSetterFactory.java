@@ -15,8 +15,8 @@ import org.simpleflatmapper.map.property.DefaultValueProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.reflect.InstantiatorDefinitions;
-import org.simpleflatmapper.reflect.getter.NullSetter;
+import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
+import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.reflect.ObjectSetterFactory;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.Setter;
@@ -58,7 +58,7 @@ public final class CellSetterFactory {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 	}
 	
-	public <T,P> CellSetter<T> getPrimitiveCellSetter(Class<?> clazz, CellValueReader<? extends P> reader, Setter<T, ? super P> setter) {
+	public <T,P> CellSetter<T> getPrimitiveCellSetter(Class<?> clazz, CellValueReader<? extends P> reader, Setter<? super T, ? super P> setter) {
 		if (boolean.class.equals(clazz)) {
 			return new BooleanCellSetter<T>(ObjectSetterFactory.toBooleanSetter(setter), booleanReader(reader));
 		} else if (byte.class.equals(clazz)) {
@@ -152,7 +152,7 @@ public final class CellSetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T,P> DelayedCellSetterFactory<T, P> getPrimitiveDelayedCellSetter(Class<?> clazz, CellValueReader<? extends P> reader, Setter<T, ? super P> setter) {
+	private <T,P> DelayedCellSetterFactory<T, P> getPrimitiveDelayedCellSetter(Class<?> clazz, CellValueReader<? extends P> reader, Setter<? super T, ? super P> setter) {
 		if (boolean.class.equals(clazz)) {
 			return (DelayedCellSetterFactory<T, P>) new BooleanDelayedCellSetterFactory<T>(ObjectSetterFactory.toBooleanSetter(setter), booleanReader(reader));
 		} else if (byte.class.equals(clazz)) {
@@ -277,7 +277,7 @@ public final class CellSetterFactory {
 
 		DelayedCellSetterFactory<T, P> factory;
 
-		final Setter<T, P> setter = getSetter(prop);
+		final Setter<? super T, ? super P> setter = getSetter(prop);
 
 		if (propertyClass.isPrimitive()) {
 			factory = getPrimitiveDelayedCellSetter(propertyClass, reader, setter);
@@ -296,8 +296,8 @@ public final class CellSetterFactory {
 
 	}
 
-	private <T, P> Setter<T, P> getSetter(PropertyMeta<T, P> prop) {
-		Setter<T, P> setter = prop.getSetter();
+	private <T, P> Setter<? super T, ? super P> getSetter(PropertyMeta<T, P> prop) {
+		Setter<? super T, ? super P> setter = prop.getSetter();
 
 		if (NullSetter.isNull(setter)) {
 			return null;

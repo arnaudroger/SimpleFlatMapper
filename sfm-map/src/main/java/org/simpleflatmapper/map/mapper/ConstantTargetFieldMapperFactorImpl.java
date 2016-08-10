@@ -58,7 +58,7 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
             MappingContextFactoryBuilder contextFactoryBuilder,
             MapperBuilderErrorHandler mappingErrorHandler) {
 
-        Getter<S, P> getter;
+        Getter<? super S, ? extends P> getter;
 
         Getter<?, ?> customGetter = pm.getColumnDefinition().getCustomGetter();
         if (customGetter != null) {
@@ -67,11 +67,11 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
             getter = pm.getPropertyMeta().getGetter();
         }
 
-        Setter<T, P> setter = null;
+        Setter<? super T, ? super P> setter = null;
 
         final SetterProperty setterProperty = pm.getColumnDefinition().lookFor(SetterProperty.class);
         if (setterProperty != null) {
-            setter = (Setter<T, P>) setterProperty.getSetter();
+            setter = (Setter<? super T, ? super P> ) setterProperty.getSetter();
         }
 
         if (setter == null) {

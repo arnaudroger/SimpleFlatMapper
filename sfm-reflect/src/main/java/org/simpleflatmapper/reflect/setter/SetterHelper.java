@@ -1,5 +1,6 @@
-package org.simpleflatmapper.reflect.impl;
+package org.simpleflatmapper.reflect.setter;
 
+import org.simpleflatmapper.reflect.getter.GetterHelper;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Method;

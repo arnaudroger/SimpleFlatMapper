@@ -1,7 +1,7 @@
 package org.simpleflatmapper.reflect;
 
 import org.junit.Test;
-import org.simpleflatmapper.reflect.impl.SetterHelper;
+import org.simpleflatmapper.reflect.setter.SetterHelper;
 import org.simpleflatmapper.test.beans.Bar;
 import org.simpleflatmapper.test.beans.BarField;
 import org.simpleflatmapper.test.beans.Foo;

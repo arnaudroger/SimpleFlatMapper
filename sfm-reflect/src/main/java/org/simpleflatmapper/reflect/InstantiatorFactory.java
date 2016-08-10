@@ -3,11 +3,12 @@ package org.simpleflatmapper.reflect;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.getter.IdentityGetter;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiator;
-import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.impl.EmptyConstructorInstantiator;
 import org.simpleflatmapper.reflect.impl.EmptyStaticMethodInstantiator;
 import org.simpleflatmapper.reflect.impl.InjectConstructorInstantiator;
 import org.simpleflatmapper.reflect.impl.InjectStaticMethodInstantiator;
+import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
+import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
 import org.simpleflatmapper.util.ErrorHelper;
 
 import java.lang.reflect.*;
@@ -32,7 +33,7 @@ public class InstantiatorFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<InstantiatorDefinition> constructors, Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
+	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<InstantiatorDefinition> constructors, Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
 		final InstantiatorDefinition instantiatorDefinition = getSmallerConstructor(constructors);
 
 		if (instantiatorDefinition == null) {
@@ -44,7 +45,7 @@ public class InstantiatorFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> getInstantiator(InstantiatorDefinition instantiatorDefinition, Class<?> source, Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
+	public <S, T> Instantiator<S, T> getInstantiator(InstantiatorDefinition instantiatorDefinition, Class<?> source, Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
 		if (asmFactory != null  && useAsmIfEnabled) {
 			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
 				ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
@@ -81,16 +82,16 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
 	private <S, T> Instantiator<S, T> builderInstantiator(BuilderInstantiatorDefinition instantiatorDefinition,
-														  Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
+														  Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
 
 		final Instantiator<Void, ?> buildInstantiator =
 				getInstantiator(instantiatorDefinition.getBuilderInstantiator(), Void.class,
-				 new HashMap<Parameter, Getter<? super Void, ?>>(), useAsmIfEnabled);
+				 new HashMap<org.simpleflatmapper.reflect.Parameter, Getter<? super Void, ?>>(), useAsmIfEnabled);
 		List<MethodGetterPair<S>> chainedArguments = new ArrayList<MethodGetterPair<S>>();
 		List<MethodGetterPair<S>> unchainedArguments = new ArrayList<MethodGetterPair<S>>();
 
 		int i = 0;
-		for(Map.Entry<Parameter, Getter<? super S, ?>> e : injections.entrySet()) {
+		for(Map.Entry<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> e : injections.entrySet()) {
 			final MethodGetterPair<S> arguments =
 				new MethodGetterPair<S>(instantiatorDefinition.getSetters().get(e.getKey()), e.getValue());
 			if (Void.TYPE.equals(arguments.getMethod().getReturnType())) {
@@ -108,7 +109,7 @@ public class InstantiatorFactory {
 
 	private <S, T> Instantiator<S, T> methodInstantiator(
 			ExecutableInstantiatorDefinition instantiatorDefinition,
-			Map<Parameter, Getter<? super S, ?>> injections) {
+			Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections) {
 		Method m = (Method) instantiatorDefinition.getExecutable();
 		if (m.getParameterTypes().length == 0) {
 			return new EmptyStaticMethodInstantiator<S, T>(m);
@@ -121,7 +122,7 @@ public class InstantiatorFactory {
 	@SuppressWarnings("unchecked")
 	private <S, T> Instantiator<S, T> constructorInstantiator(
 			ExecutableInstantiatorDefinition instantiatorDefinition,
-			Map<Parameter, Getter<? super S, ?>> injections) {
+			Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections) {
 		Constructor<? extends T> c = (Constructor<? extends T>) instantiatorDefinition.getExecutable();
 		if (c.getParameterTypes().length == 0) {
 			return new EmptyConstructorInstantiator<S, T>(c);
@@ -155,7 +156,7 @@ public class InstantiatorFactory {
 		if (id.getParameters().length != 1) {
 			throw new IllegalArgumentException("Definition does not have one param " + Arrays.asList(id.getParameters()));
 		}
-		Map<Parameter, Getter<? super S, ?>> injections = new HashMap<Parameter, Getter<? super S, ?>>();
+		Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections = new HashMap<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>>();
 		injections.put(id.getParameters()[0], new IdentityGetter());
 		return getInstantiator(id, id.getParameters()[0].getType(), injections, true);
 	}

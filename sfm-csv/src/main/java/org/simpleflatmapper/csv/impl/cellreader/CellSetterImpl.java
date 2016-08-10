@@ -8,10 +8,10 @@ import org.simpleflatmapper.reflect.Setter;
 public final class CellSetterImpl<T, P> implements CellSetter<T> {
 
 	private final CellValueReader<? extends P> reader;
-	private final Setter<T, ? super P> setter;
+	private final Setter<? super T, ? super P> setter;
 
 	public CellSetterImpl(CellValueReader<? extends P> reader,
-			Setter<T, ? super P> setter) {
+			Setter<? super T, ? super P> setter) {
 		this.reader = reader;
 		this.setter = setter;
 	}

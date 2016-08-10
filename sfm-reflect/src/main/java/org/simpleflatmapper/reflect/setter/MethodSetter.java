@@ -1,4 +1,4 @@
-package org.simpleflatmapper.reflect.getter;
+package org.simpleflatmapper.reflect.setter;
 
 import org.simpleflatmapper.reflect.Setter;
 

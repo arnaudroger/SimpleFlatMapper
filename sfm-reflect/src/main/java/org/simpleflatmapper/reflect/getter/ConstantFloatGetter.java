@@ -11,12 +11,12 @@ public class ConstantFloatGetter<T> implements FloatGetter, Getter<T, Float> {
     }
 
     @Override
-    public float getFloat(Object target) throws Exception {
+    public float getFloat(Object target) {
         return value;
     }
 
     @Override
-    public Float get(T target) throws Exception {
+    public Float get(T target) {
         return value;
     }
 }

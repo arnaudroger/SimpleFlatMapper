@@ -1,6 +1,8 @@
-package org.simpleflatmapper.reflect;
+package org.simpleflatmapper.reflect.instantiator;
 
 
+import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.util.Collection;

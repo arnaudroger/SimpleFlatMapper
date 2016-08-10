@@ -6,8 +6,8 @@ import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.reflect.InstantiatorDefinitions;
-import org.simpleflatmapper.reflect.getter.InstantiatorOnGetter;
+import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
+import org.simpleflatmapper.reflect.getter.InstantiatorGetter;
 import org.simpleflatmapper.reflect.ObjectGetterFactory;
 import org.simpleflatmapper.reflect.ObjectSetterFactory;
 import org.simpleflatmapper.reflect.Setter;
@@ -31,7 +31,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 	}
 
 
-	private <T, P> FieldMapper<S, T> primitiveIndexedFieldMapper(final Class<P> type, final Setter<T, ? super P> setter, final Getter<? super S, ? extends P> getter) {
+	private <T, P> FieldMapper<S, T> primitiveIndexedFieldMapper(final Class<P> type, final Setter<? super T, ? super P> setter, final Getter<? super S, ? extends P> getter) {
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<S, T>(
 					ObjectGetterFactory.<S, P>toBooleanGetter(getter),
@@ -79,7 +79,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 		final PropertyMeta<T, P> propertyMeta = propertyMapping.getPropertyMeta();
 		final Type propertyType = propertyMeta.getPropertyType();
-		final Setter<T, ? super P> setter = propertyMeta.getSetter();
+		final Setter<? super T, ? super P> setter = propertyMeta.getSetter();
 		final K key = propertyMapping.getColumnKey();
 		final Class<P> type = TypeHelper.toClass(propertyType);
 
@@ -128,7 +128,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 				if (getter != null) {
 					Instantiator instantiator =
 							classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
-					getter = new InstantiatorOnGetter(instantiator, getter);
+					getter = new InstantiatorGetter(instantiator, getter);
 				}
 			}
 		}

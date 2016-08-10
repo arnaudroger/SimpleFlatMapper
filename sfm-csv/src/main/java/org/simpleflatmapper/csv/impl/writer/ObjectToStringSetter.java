@@ -4,9 +4,9 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Setter;
 
 public class ObjectToStringSetter<P> implements Setter<Appendable, P> {
-    private final Getter<P, ?> getter;
+    private final Getter<? super P, ?> getter;
 
-    public ObjectToStringSetter(Getter<P, ?> getter) {
+    public ObjectToStringSetter(Getter<? super P, ?> getter) {
         this.getter = getter;
     }
 

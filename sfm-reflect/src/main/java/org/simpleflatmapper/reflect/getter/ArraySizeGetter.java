@@ -6,7 +6,7 @@ import java.lang.reflect.Array;
 
 public class ArraySizeGetter implements IntGetter<Object> {
     @Override
-    public int getInt(Object target) throws Exception {
+    public int getInt(Object target) throws IllegalArgumentException {
         return Array.getLength(target);
     }
 }

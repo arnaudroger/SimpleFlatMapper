@@ -1,6 +1,7 @@
 package org.simpleflatmapper.reflect;
 
 import org.junit.Test;
+import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.test.beans.DbFinalPrimitiveObject;
 import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 

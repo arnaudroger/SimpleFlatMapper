@@ -2,7 +2,7 @@ package org.simpleflatmapper.reflect;
 
 
 import org.simpleflatmapper.reflect.getter.FieldSetter;
-import org.simpleflatmapper.reflect.getter.MethodSetter;
+import org.simpleflatmapper.reflect.setter.MethodSetter;
 
 /**
  * Represent a setter of a property of type P on a object of type T.

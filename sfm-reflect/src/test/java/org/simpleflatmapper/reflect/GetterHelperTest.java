@@ -1,7 +1,7 @@
 package org.simpleflatmapper.reflect;
 
 import org.junit.Test;
-import org.simpleflatmapper.reflect.impl.GetterHelper;
+import org.simpleflatmapper.reflect.getter.GetterHelper;
 
 import java.lang.reflect.Modifier;
 

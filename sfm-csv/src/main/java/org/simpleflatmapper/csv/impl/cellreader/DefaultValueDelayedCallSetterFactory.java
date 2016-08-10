@@ -11,9 +11,9 @@ public class DefaultValueDelayedCallSetterFactory<T, P>
         implements DelayedCellSetterFactory<T, P> {
     private final DelayedCellSetterFactory<T, P> factory;
     private final DefaultValueProperty defaultValueProperty;
-    private final Setter<T, ? super P> setter;
+    private final Setter<? super T, ? super P> setter;
 
-    public DefaultValueDelayedCallSetterFactory(DelayedCellSetterFactory<T, P> factory, DefaultValueProperty defaultValueProperty, Setter<T, ? super P> setter) {
+    public DefaultValueDelayedCallSetterFactory(DelayedCellSetterFactory<T, P> factory, DefaultValueProperty defaultValueProperty, Setter<? super T, ? super P> setter) {
         this.factory = factory;
         this.defaultValueProperty = defaultValueProperty;
         this.setter = setter;

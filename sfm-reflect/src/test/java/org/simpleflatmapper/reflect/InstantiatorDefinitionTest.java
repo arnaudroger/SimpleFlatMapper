@@ -2,6 +2,8 @@ package org.simpleflatmapper.reflect;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
+import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;

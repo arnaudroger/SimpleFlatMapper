@@ -5,6 +5,7 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.UUIDHelper;
 
 import java.io.ByteArrayInputStream;
+import java.util.Date;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -24,11 +25,20 @@ public class UUIDUnspecifiedTypeGetterTest {
         Getter subGetter = mock(Getter.class);
         UUIDUnspecifiedTypeGetter<Object> getter = new UUIDUnspecifiedTypeGetter<Object>(subGetter);
 
-        when(subGetter.get(any())).thenReturn(uuid.toString(), UUIDHelper.toBytes(uuid), new ByteArrayInputStream(UUIDHelper.toBytes(uuid)));
+        when(subGetter.get(any())).thenReturn(uuid.toString(),
+                UUIDHelper.toBytes(uuid),
+                new ByteArrayInputStream(UUIDHelper.toBytes(uuid)), new Date());
 
         assertEquals(uuid, getter.get(null));
         assertEquals(uuid, getter.get(null));
         assertEquals(uuid, getter.get(null));
+
+        try {
+            getter.get(null);
+            fail();
+        } catch (IllegalArgumentException e) {
+
+        }
 
         getter.toString();
 

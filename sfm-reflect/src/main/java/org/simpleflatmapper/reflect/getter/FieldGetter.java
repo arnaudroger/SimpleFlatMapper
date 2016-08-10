@@ -19,7 +19,7 @@ public final class FieldGetter<T, P> implements Getter<T, P> {
 
     @Override
     public String toString() {
-        return "FieldSetter{" +
+        return "FieldGetter{" +
                 "field=" + field +
                 '}';
     }

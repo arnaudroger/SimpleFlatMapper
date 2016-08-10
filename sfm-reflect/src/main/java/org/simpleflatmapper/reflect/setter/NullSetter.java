@@ -1,9 +1,9 @@
-package org.simpleflatmapper.reflect.getter;
+package org.simpleflatmapper.reflect.setter;
 
 
 import org.simpleflatmapper.reflect.Setter;
 
-public class NullSetter<T, P> implements Setter<T, P> {
+public class NullSetter implements Setter<Object, Object> {
 
     public static final NullSetter NULL_SETTER = new NullSetter();
 
@@ -11,7 +11,7 @@ public class NullSetter<T, P> implements Setter<T, P> {
     }
 
     @Override
-    public void set(T target, P value) throws Exception {
+    public void set(Object target, Object value) {
     }
     @Override
     public String toString() {
@@ -19,9 +19,6 @@ public class NullSetter<T, P> implements Setter<T, P> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T, E> Setter<T, E> setter() {
-        return NULL_SETTER;
-    }
 
     public static boolean isNull(Setter<?,?> setter) {
         return setter == null || setter == NULL_SETTER;

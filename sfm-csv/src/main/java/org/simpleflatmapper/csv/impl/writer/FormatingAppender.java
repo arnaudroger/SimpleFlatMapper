@@ -12,11 +12,11 @@ import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public class FormatingAppender<S> implements FieldMapper<S, Appendable> {
 
-    private final Getter<S, ?> getter;
+    private final Getter<? super S, ?> getter;
     private final Getter<MappingContext<? super S>, Format> formatAccessor;
     private final CellWriter cellWriter;
 
-    public FormatingAppender(Getter<S, ?> getter, Getter<MappingContext<? super S>, Format> formatAccessor, CellWriter cellWriter) {
+    public FormatingAppender(Getter<? super S, ?> getter, Getter<MappingContext<? super S>, Format> formatAccessor, CellWriter cellWriter) {
         this.getter = getter;
         this.formatAccessor = formatAccessor;
         this.cellWriter = cellWriter;

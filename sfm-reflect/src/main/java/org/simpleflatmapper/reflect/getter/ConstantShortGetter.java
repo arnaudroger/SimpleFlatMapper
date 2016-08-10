@@ -11,12 +11,12 @@ public class ConstantShortGetter<T> implements ShortGetter, Getter<T, Short> {
     }
 
     @Override
-    public short getShort(Object target) throws Exception {
+    public short getShort(Object target) {
         return value;
     }
 
     @Override
-    public Short get(T target) throws Exception {
+    public Short get(T target) {
         return value;
     }
 }

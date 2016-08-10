@@ -11,12 +11,12 @@ public class ConstantDoubleGetter<T> implements DoubleGetter, Getter<T, Double> 
     }
 
     @Override
-    public double getDouble(Object target) throws Exception {
+    public double getDouble(Object target) {
         return value;
     }
 
     @Override
-    public Double get(T target) throws Exception {
+    public Double get(T target) {
         return value;
     }
 }

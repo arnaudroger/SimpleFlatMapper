@@ -27,12 +27,12 @@ public class ObjectPropertyMeta<T, P> extends PropertyMeta<T, P> {
     }
 
 	@Override
-	public Setter<T, P> getSetter() {
+	public Setter<? super T, ? super P> getSetter() {
 		return setter.getSetter();
 	}
 
     @Override
-    public Getter<T, P> getGetter() {
+    public Getter<? super T, ? extends P> getGetter() {
         return getter.getGetter();
     }
 

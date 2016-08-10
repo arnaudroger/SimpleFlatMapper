@@ -3,7 +3,7 @@ package org.simpleflatmapper.reflect;
 import org.junit.Test;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.getter.FieldSetter;
-import org.simpleflatmapper.reflect.getter.MethodSetter;
+import org.simpleflatmapper.reflect.setter.MethodSetter;
 import org.simpleflatmapper.reflect.primitive.BooleanFieldSetter;
 import org.simpleflatmapper.reflect.primitive.BooleanMethodSetter;
 import org.simpleflatmapper.reflect.primitive.ByteFieldSetter;

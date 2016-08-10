@@ -10,7 +10,7 @@ public class ConstantGetter<T, P> implements Getter<T, P> {
     }
 
     @Override
-    public P get(T target) throws Exception {
+    public P get(T target) {
         return value;
     }
 }

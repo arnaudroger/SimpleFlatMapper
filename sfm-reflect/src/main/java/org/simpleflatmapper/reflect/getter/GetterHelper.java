@@ -1,4 +1,4 @@
-package org.simpleflatmapper.reflect.impl;
+package org.simpleflatmapper.reflect.getter;
 
 import org.simpleflatmapper.util.TypeHelper;
 

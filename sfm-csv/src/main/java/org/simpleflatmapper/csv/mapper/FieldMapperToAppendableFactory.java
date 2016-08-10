@@ -67,7 +67,7 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
     public <S, P> FieldMapper<S, Appendable> newFieldMapper(PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm, MappingContextFactoryBuilder builder, MapperBuilderErrorHandler mappingErrorHandler) {
         if (pm == null) throw new NullPointerException("pm is null");
 
-        Getter<S, ? extends P> getter;
+        Getter<? super S, ? extends P> getter;
 
         Getter<?, ?> customGetter = pm.getColumnDefinition().getCustomGetter();
         if (customGetter != null) {

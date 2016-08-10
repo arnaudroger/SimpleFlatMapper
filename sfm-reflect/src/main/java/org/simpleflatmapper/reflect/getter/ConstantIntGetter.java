@@ -11,12 +11,12 @@ public class ConstantIntGetter<T> implements IntGetter, Getter<T, Integer> {
     }
 
     @Override
-    public int getInt(Object target) throws Exception {
+    public int getInt(Object target) {
         return value;
     }
 
     @Override
-    public Integer get(T target) throws Exception {
+    public Integer get(T target) {
         return value;
     }
 }

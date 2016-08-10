@@ -1,5 +1,6 @@
 package org.simpleflatmapper.reflect.impl;
 
+import org.simpleflatmapper.reflect.getter.GetterHelper;
 import org.simpleflatmapper.util.EnumHelper;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;

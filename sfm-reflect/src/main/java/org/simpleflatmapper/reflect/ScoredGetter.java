@@ -9,16 +9,17 @@ import java.lang.reflect.Method;
 public class ScoredGetter<T, P>  {
 
     @SuppressWarnings("unchecked")
-    public static final ScoredGetter NULL = new ScoredGetter(Integer.MIN_VALUE, NullGetter.NULL_GETTER);
-    private final int score;
-    private final Getter<T, P> getter;
+    public static final ScoredGetter NULL = new ScoredGetter(Integer.MIN_VALUE, NullGetter.getter());
 
-    public ScoredGetter(int score, Getter<T, P> getter) {
+    private final int score;
+    private final Getter<? super T, ? extends P> getter;
+
+    public ScoredGetter(int score, Getter<? super T, ? extends P> getter) {
         this.score = score;
         this.getter = getter;
     }
 
-    public Getter<T, P> getGetter() {
+    public Getter<? super T, ? extends P> getGetter() {
         return getter;
     }
 

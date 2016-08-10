@@ -1,7 +1,7 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.reflect.getter.NullSetter;
+import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.getter.IdentityGetter;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -82,8 +82,8 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
 
 
         @Override
-        public Setter<T, E> getSetter() {
-            return NullSetter.setter();
+        public Setter<? super T, ? super E> getSetter() {
+            return NullSetter.NULL_SETTER;
         }
 
         @SuppressWarnings("unchecked")

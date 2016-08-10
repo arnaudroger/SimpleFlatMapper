@@ -79,6 +79,7 @@
 							org.simpleflatmapper.reflect,
 							org.simpleflatmapper.reflect.meta,
 							org.simpleflatmapper.reflect.asm,
+							org.simpleflatmapper.reflect.instantiator,
 							org.simpleflatmapper.reflect.getter,
 							org.simpleflatmapper.reflect.setter,
 							org.simpleflatmapper.reflect.primitive</Export-Package>

@@ -11,7 +11,7 @@ public class DelegateDelayedCellSetter<T, P> implements DelayedCellSetter<T, P> 
 	private final CsvMapperCellConsumer<P> cellConsumer;
 	private final int cellIndex;
     private final BreakDetector breakDetector;
-    private final Setter<T, P> setter;
+    private final Setter<? super T, ? super P> setter;
 
 
 	public DelegateDelayedCellSetter(DelegateMarkerDelayedCellSetterFactory<T, P> marker, int cellIndex, BreakDetector breakDetector) {

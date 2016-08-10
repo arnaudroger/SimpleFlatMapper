@@ -1,7 +1,7 @@
 package org.simpleflatmapper.reflect;
 
 import org.junit.Test;
-import org.simpleflatmapper.reflect.getter.MethodSetter;
+import org.simpleflatmapper.reflect.setter.MethodSetter;
 import org.simpleflatmapper.reflect.primitive.BooleanMethodSetter;
 import org.simpleflatmapper.reflect.primitive.BooleanSetter;
 import org.simpleflatmapper.reflect.primitive.ByteMethodSetter;

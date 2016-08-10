@@ -1,13 +1,13 @@
 package org.simpleflatmapper.reflect.meta;
 
-import org.simpleflatmapper.reflect.ExecutableInstantiatorDefinition;
+import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;
 import org.simpleflatmapper.reflect.ScoredSetter;
 import org.simpleflatmapper.reflect.Setter;
-import org.simpleflatmapper.reflect.impl.GetterHelper;
+import org.simpleflatmapper.reflect.getter.GetterHelper;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.TypeHelper;
 

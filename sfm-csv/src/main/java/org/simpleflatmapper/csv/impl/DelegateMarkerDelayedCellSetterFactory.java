@@ -10,11 +10,11 @@ import org.simpleflatmapper.reflect.Setter;
 public class DelegateMarkerDelayedCellSetterFactory<T, P> implements DelayedCellSetterFactory<T, P> {
 
 	private final CsvMapper<P> mapper;
-	private final Setter<T, P> setter;
+	private final Setter<? super T, ? super P> setter;
     private final int index;
 	private final int parent;
 
-	public DelegateMarkerDelayedCellSetterFactory(CsvMapper<P> mapper, Setter<T, P> setter, int index, int parent) {
+	public DelegateMarkerDelayedCellSetterFactory(CsvMapper<P> mapper, Setter<? super T, ? super P> setter, int index, int parent) {
 		this.mapper = mapper;
 		this.setter = setter;
         this.index = index;
@@ -25,7 +25,7 @@ public class DelegateMarkerDelayedCellSetterFactory<T, P> implements DelayedCell
 		return mapper;
 	}
 
-	public Setter<T, P> getSetter() {
+	public Setter<? super T, ? super P> getSetter() {
 		return setter;
 	}
 

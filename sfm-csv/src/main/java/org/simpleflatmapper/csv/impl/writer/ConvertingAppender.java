@@ -9,11 +9,11 @@ import org.simpleflatmapper.reflect.Getter;
 
 public class ConvertingAppender<S, P> implements FieldMapper<S, Appendable> {
 
-    private final Getter<S, ? extends P> getter;
+    private final Getter<? super S, ? extends P> getter;
     private final Converter<? super P, ? extends  CharSequence> converter;
     private final CellWriter cellWriter;
 
-    public ConvertingAppender(Getter<S, ? extends P> getter, Converter<? super P, ? extends  CharSequence> converter, CellWriter cellWriter) {
+    public ConvertingAppender(Getter<? super S, ? extends P> getter, Converter<? super P, ? extends  CharSequence> converter, CellWriter cellWriter) {
         this.getter = getter;
         this.converter = converter;
         this.cellWriter = cellWriter;

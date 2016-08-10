@@ -1,7 +1,7 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.ConstructorNotFoundException;
-import org.simpleflatmapper.reflect.ExecutableInstantiatorDefinition;
+import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;

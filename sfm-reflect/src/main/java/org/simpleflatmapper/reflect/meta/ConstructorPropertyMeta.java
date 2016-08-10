@@ -2,7 +2,7 @@ package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.reflect.getter.NullSetter;
+import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;
@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
     private final Class<T> owner;
-    private final Setter<T, P> setter = NullSetter.setter();
+    private final Setter<? super T, ? super P> setter = NullSetter.NULL_SETTER;
     private final ScoredGetter<T, P> scoredGetter;
     private final Parameter parameter;
     private final InstantiatorDefinition instantiatorDefinition;
@@ -42,12 +42,12 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
     }
 
 	@Override
-	public Setter<T, P> getSetter() {
+	public Setter<? super T, ? super P> getSetter() {
         return setter;
 	}
 
     @Override
-    public Getter<T, P> getGetter() {
+    public Getter<? super T, ? extends P> getGetter() {
         return scoredGetter.getGetter();
     }
 

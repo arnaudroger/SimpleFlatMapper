@@ -11,12 +11,12 @@ public class ConstantCharacterGetter<T> implements CharacterGetter, Getter<T, Ch
     }
 
     @Override
-    public char getCharacter(Object target) throws Exception {
+    public char getCharacter(Object target) {
         return value;
     }
 
     @Override
-    public Character get(T target) throws Exception {
+    public Character get(T target) {
         return value;
     }
 }

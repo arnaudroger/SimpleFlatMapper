@@ -11,12 +11,12 @@ public class ConstantLongGetter<T> implements LongGetter, Getter<T, Long> {
     }
 
     @Override
-    public long getLong(Object target) throws Exception {
+    public long getLong(Object target) {
         return value;
     }
 
     @Override
-    public Long get(T target) throws Exception {
+    public Long get(T target) {
         return value;
     }
 }

@@ -23,9 +23,9 @@ public abstract class PropertyMeta<O, P> {
 		this.reflectService = reflectService;
 	}
 
-	public abstract Setter<O, P> getSetter();
+	public abstract Setter<? super O, ? super P> getSetter();
 
-    public abstract Getter<O, P> getGetter();
+    public abstract Getter<? super O, ? extends P> getGetter();
 
 	public final String getName() {
 		return name;

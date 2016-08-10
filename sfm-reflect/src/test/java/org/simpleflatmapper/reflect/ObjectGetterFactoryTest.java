@@ -45,6 +45,10 @@ public class ObjectGetterFactoryTest {
         assertEquals(dbo.getName(), noAsm.getGetter(DbObject.class, "name").get(dbo));
         assertEquals(dbfo.getName(), noAsm.getGetter(DbFinalObject.class, "name").get(dbfo));
         assertEquals(dbpo.name, noAsm.getGetter(DbPublicObject.class, "name").get(dbpo));
+
+        assertEquals("MethodGetter{method=public java.lang.String org.simpleflatmapper.test.beans.DbObject.getName()}", noAsm.getGetter(DbObject.class, "name").toString());
+        assertEquals("MethodGetter{method=public java.lang.String org.simpleflatmapper.test.beans.DbFinalObject.getName()}", noAsm.getGetter(DbFinalObject.class, "name").toString());
+        assertEquals("FieldGetter{field=public java.lang.String org.simpleflatmapper.test.beans.DbPublicObject.name}", noAsm.getGetter(DbPublicObject.class, "name").toString());
     }
     @Test
     public void testObjectGetterAsm() throws Exception {
@@ -421,14 +425,18 @@ public class ObjectGetterFactoryTest {
     }
 
     @Test
-    public void testObjectFieldGetterAsm() throws Exception {
+    public void testObjectFieldGetter() throws Exception {
+
+        FooField ff = new FooField();
+        ff.foo = "foo1";
 
         Getter<FooField, Object> getter = asm.getGetter(FooField.class, "foo");
         assertFalse(getter instanceof FieldGetter);
-        FooField ff = new FooField();
-        ff.foo = "foo1";
         assertEquals("foo1", getter.get(ff));
 
+        getter = noAsm.getGetter(FooField.class, "foo");
+        assertEquals("foo1", getter.get(ff));
+        assertEquals("FieldGetter{field=public java.lang.String org.simpleflatmapper.test.beans.FooField.foo}", getter.toString());
     }
 
     @Test

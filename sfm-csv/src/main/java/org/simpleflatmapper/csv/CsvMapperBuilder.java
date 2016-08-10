@@ -360,7 +360,7 @@ public class CsvMapperBuilder<T> {
                 }
 
                 int indexOfMapper = propertyToMapperIndex.get(propName);
-                Setter<T, I> setter = null;
+                Setter<? super T, ? super I> setter = null;
 
                 if (!subProp.isConstructorProperty()) {
                     setter =  subProp.getSetter();

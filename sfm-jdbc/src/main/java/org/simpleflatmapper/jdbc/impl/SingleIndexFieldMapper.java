@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.IndexedSetter;
 import java.sql.PreparedStatement;
 
 public class SingleIndexFieldMapper<T, P> implements MultiIndexFieldMapper<T> {
-    private final IndexedSetter<PreparedStatement, P> setter;
-    private final Getter<T, P> getter;
+    private final IndexedSetter<? super PreparedStatement, ? super P> setter;
+    private final Getter<? super T, ? extends P> getter;
 
-    public SingleIndexFieldMapper(IndexedSetter<PreparedStatement, P> setter, Getter<T, P> getter) {
+    public SingleIndexFieldMapper(IndexedSetter<? super PreparedStatement, ? super P> setter, Getter<? super T, ? extends P> getter) {
         this.setter = setter;
         this.getter = getter;
     }

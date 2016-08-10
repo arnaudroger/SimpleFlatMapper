@@ -14,9 +14,9 @@ import org.simpleflatmapper.map.fieldmapper.MapperFieldMapper;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.reflect.InstantiatorDefinitions;
+import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
-import org.simpleflatmapper.reflect.getter.InstantiatorOnGetter;
+import org.simpleflatmapper.reflect.getter.InstantiatorGetter;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
@@ -393,7 +393,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
                 if (getter != null) {
                     Instantiator instantiator =
                             classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
-                    getter = new InstantiatorOnGetter(instantiator, getter);
+                    getter = new InstantiatorGetter(instantiator, getter);
                 }
             }
 

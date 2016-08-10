@@ -3,7 +3,7 @@ package org.simpleflatmapper.reflect;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.getter.FieldGetter;
 import org.simpleflatmapper.reflect.getter.MethodGetter;
-import org.simpleflatmapper.reflect.impl.GetterHelper;
+import org.simpleflatmapper.reflect.getter.GetterHelper;
 import org.simpleflatmapper.reflect.primitive.BooleanGetter;
 import org.simpleflatmapper.reflect.primitive.BoxedBooleanGetter;
 import org.simpleflatmapper.reflect.primitive.BoxedByteGetter;

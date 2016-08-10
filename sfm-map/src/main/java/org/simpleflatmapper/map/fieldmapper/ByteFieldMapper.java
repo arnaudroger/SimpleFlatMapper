@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.ByteSetter;
 
 public final class ByteFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final ByteGetter<S> getter;
-	private final ByteSetter<T> setter;
+	private final ByteGetter<? super S> getter;
+	private final ByteSetter<? super T> setter;
 	
- 	public ByteFieldMapper(final ByteGetter<S> getter, final ByteSetter<T> setter) {
+ 	public ByteFieldMapper(final ByteGetter<? super S> getter, final ByteSetter<? super T> setter) {
 		this.getter = getter;
 		this.setter = setter;
 	}

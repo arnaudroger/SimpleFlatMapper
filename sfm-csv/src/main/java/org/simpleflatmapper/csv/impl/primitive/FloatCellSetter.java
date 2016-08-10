@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.FloatSetter;
 
 public class FloatCellSetter<T> implements CellSetter<T> {
 
-	private final FloatSetter<T> setter;
+	private final FloatSetter<? super T> setter;
 	private final FloatCellValueReader reader;
 
-	public FloatCellSetter(FloatSetter<T> setter, FloatCellValueReader reader) {
+	public FloatCellSetter(FloatSetter<? super T> setter, FloatCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

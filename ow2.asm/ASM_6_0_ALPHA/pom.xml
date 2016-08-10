@@ -33,4 +33,11 @@
       </plugin>
     </plugins>
   </build>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>arnaudroger-maven-plugin-repository</id>
+      <url>https://arnaudroger.github.io/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
 </project>

@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.BooleanSetter;
 
 public class BooleanCellSetter<T> implements CellSetter<T> {
 
-	private final BooleanSetter<T> setter;
+	private final BooleanSetter<? super T> setter;
 	private final BooleanCellValueReader reader;
 	
-	public BooleanCellSetter(BooleanSetter<T> setter, BooleanCellValueReader reader) {
+	public BooleanCellSetter(BooleanSetter<? super T> setter, BooleanCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

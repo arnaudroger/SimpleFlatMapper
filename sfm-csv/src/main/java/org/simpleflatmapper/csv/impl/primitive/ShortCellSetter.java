@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.ShortSetter;
 
 public class ShortCellSetter<T> implements CellSetter<T> {
 
-	private final ShortSetter<T> setter;
+	private final ShortSetter<? super T> setter;
 	private final ShortCellValueReader reader;
 
-	public ShortCellSetter(ShortSetter<T> setter, ShortCellValueReader reader) {
+	public ShortCellSetter(ShortSetter<? super T> setter, ShortCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

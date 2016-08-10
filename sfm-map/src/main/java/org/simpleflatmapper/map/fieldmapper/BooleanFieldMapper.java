@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.BooleanSetter;
 
 public final class BooleanFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final BooleanGetter<S> getter;
-	private final BooleanSetter<T> setter;
+	private final BooleanGetter<? super S> getter;
+	private final BooleanSetter<? super T> setter;
 	
- 	public BooleanFieldMapper(final BooleanGetter<S> getter, final BooleanSetter<T> setter) {
+ 	public BooleanFieldMapper(final BooleanGetter<? super S> getter, final BooleanSetter<? super T> setter) {
 		this.getter = getter;
 		this.setter = setter;
 	}

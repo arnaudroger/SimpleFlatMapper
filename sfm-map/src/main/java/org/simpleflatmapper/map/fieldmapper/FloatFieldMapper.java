@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.FloatSetter;
 
 public final class FloatFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final FloatGetter<S> getter;
-	private final FloatSetter<T> setter;
+	private final FloatGetter<? super S> getter;
+	private final FloatSetter<? super T> setter;
 	
- 	public FloatFieldMapper(final FloatGetter<S> getter, final FloatSetter<T> setter) {
+ 	public FloatFieldMapper(final FloatGetter<? super S> getter, final FloatSetter<? super T> setter) {
 		this.getter = getter;
 		this.setter = setter;
 	}

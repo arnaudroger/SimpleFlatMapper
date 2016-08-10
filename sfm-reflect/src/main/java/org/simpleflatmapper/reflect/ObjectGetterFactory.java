@@ -122,74 +122,74 @@ public final class ObjectGetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> BooleanGetter<T> toBooleanGetter(final Getter<? super T, ? extends P> getter) {
+	public static <T> BooleanGetter<T> toBooleanGetter(final Getter<T, ? extends Boolean> getter) {
 		if (getter instanceof BooleanGetter) {
 			return (BooleanGetter<T>) getter;
 		} else {
-			return new BoxedBooleanGetter<T>((Getter<? super T, Boolean>) getter);
+			return new BoxedBooleanGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> IntGetter<T> toIntGetter(Getter<? super T, ? extends P> getter) {
+	public static <T> IntGetter<T> toIntGetter(Getter<T, ? extends Integer> getter) {
 		if (getter instanceof IntGetter) {
 			return (IntGetter<T>) getter;
 		} else {
-			return new BoxedIntGetter<T>((Getter<? super T, Integer>) getter);
+			return new BoxedIntGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> LongGetter<T> toLongGetter(Getter<? super T, ? extends P> getter) {
+	public static <T> LongGetter<T> toLongGetter(Getter<T, ? extends Long> getter) {
 		if (getter instanceof LongGetter) {
 			return (LongGetter<T>) getter;
 		} else {
-			return new BoxedLongGetter<T>((Getter<? super T, Long>) getter);
+			return new BoxedLongGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> FloatGetter<T> toFloatGetter(Getter<? super T, ? extends P> getter) {
+	public static <T> FloatGetter<T> toFloatGetter(Getter<T, ? extends Float> getter) {
 		if (getter instanceof FloatGetter) {
 			return (FloatGetter<T>) getter;
 		} else {
-			return new BoxedFloatGetter<T>((Getter<? super T, Float>) getter);
+			return new BoxedFloatGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> DoubleGetter<T> toDoubleGetter(Getter<? super T, ? extends P> getter) {
+	public static <T> DoubleGetter<T> toDoubleGetter(Getter<? super T, ? extends Double> getter) {
 		if (getter instanceof DoubleGetter) {
 			return (DoubleGetter<T>) getter;
 		} else {
-			return new BoxedDoubleGetter<T>((Getter<? super T, Double>) getter);
+			return new BoxedDoubleGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> ByteGetter<T> toByteGetter(Getter<? super T, ? extends P> getter) {
+	public static <T> ByteGetter<T> toByteGetter(Getter<T, ? extends Byte> getter) {
 		if (getter instanceof ByteGetter) {
 			return (ByteGetter<T>) getter;
 		} else {
-			return new BoxedByteGetter<T>((Getter<? super T, Byte>) getter);
+			return new BoxedByteGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> ShortGetter<T> toShortGetter(Getter<? super T, ? extends P> getter) {
+	public static <T> ShortGetter<T> toShortGetter(Getter<T, ? extends Short> getter) {
 		if (getter instanceof ShortGetter) {
 			return (ShortGetter<T>) getter;
 		} else {
-			return new BoxedShortGetter<T>((Getter<? super T, Short>) getter);
+			return new BoxedShortGetter<T>(getter);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, P> CharacterGetter<T> toCharGetter(Getter<? super T, ? extends P> getter) {
+	public static <T> CharacterGetter<T> toCharGetter(Getter<T, ? extends Character> getter) {
 		if (getter instanceof CharacterGetter) {
 			return (CharacterGetter<T>) getter;
 		} else {
-			return new BoxedCharacterGetter<T>((Getter<? super T, Character>) getter);
+			return new BoxedCharacterGetter<T>(getter);
 		}
 	}
 

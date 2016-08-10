@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.DoubleSetter;
 
 public class DoubleCellSetter<T> implements CellSetter<T> {
 
-	private final DoubleSetter<T> setter;
+	private final DoubleSetter<? super T> setter;
 	private final DoubleCellValueReader reader;
 
-	public DoubleCellSetter(DoubleSetter<T> setter, DoubleCellValueReader reader) {
+	public DoubleCellSetter(DoubleSetter<? super T> setter, DoubleCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

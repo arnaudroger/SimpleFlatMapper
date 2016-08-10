@@ -5,9 +5,9 @@ import org.simpleflatmapper.reflect.Getter;
 public class BoxedFloatGetter<T> implements FloatGetter<T>, Getter<T, Float> {
 
 
-    private final Getter<? super T, Float> delegate;
+    private final Getter<? super T, ? extends Float> delegate;
 
-    public BoxedFloatGetter(Getter<? super T, Float> delegate) {
+    public BoxedFloatGetter(Getter<? super T, ? extends Float> delegate) {
         this.delegate = delegate;
     }
 

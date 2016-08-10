@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.CharacterSetter;
 
 public class CharCellSetter<T> implements CellSetter<T> {
 
-	private final CharacterSetter<T> setter;
+	private final CharacterSetter<? super T> setter;
 	private final CharCellValueReader reader;
 
-	public CharCellSetter(CharacterSetter<T> setter, CharCellValueReader reader) {
+	public CharCellSetter(CharacterSetter<? super T> setter, CharCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

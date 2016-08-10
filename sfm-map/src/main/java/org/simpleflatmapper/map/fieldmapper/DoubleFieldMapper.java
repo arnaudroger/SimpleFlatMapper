@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.DoubleSetter;
 
 public final class DoubleFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final DoubleGetter<S> getter;
-	private final DoubleSetter<T> setter;
+	private final DoubleGetter<? super S> getter;
+	private final DoubleSetter<? super T> setter;
 	
- 	public DoubleFieldMapper(final DoubleGetter<S> getter, final DoubleSetter<T> setter) {
+ 	public DoubleFieldMapper(final DoubleGetter<? super S> getter, final DoubleSetter<? super T> setter) {
 		this.getter = getter;
 		this.setter = setter;
 	}

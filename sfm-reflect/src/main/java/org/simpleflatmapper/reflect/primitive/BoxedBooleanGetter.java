@@ -5,9 +5,9 @@ import org.simpleflatmapper.reflect.Getter;
 public class BoxedBooleanGetter<T> implements BooleanGetter<T>, Getter<T, Boolean> {
 
 
-    private final Getter<? super T, Boolean> delegate;
+    private final Getter<? super T, ? extends Boolean> delegate;
 
-    public BoxedBooleanGetter(Getter<? super T, Boolean> delegate) {
+    public BoxedBooleanGetter(Getter<? super T, ? extends Boolean> delegate) {
         this.delegate = delegate;
     }
 

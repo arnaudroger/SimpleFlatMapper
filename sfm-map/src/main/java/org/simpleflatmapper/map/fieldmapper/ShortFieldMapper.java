@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.ShortSetter;
 
 public final class ShortFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final ShortGetter<S> getter;
-	private final ShortSetter<T> setter;
+	private final ShortGetter<? super S> getter;
+	private final ShortSetter<? super T> setter;
 	
- 	public ShortFieldMapper(final ShortGetter<S> getter, final ShortSetter<T> setter) {
+ 	public ShortFieldMapper(final ShortGetter<? super S> getter, final ShortSetter<? super T> setter) {
 		this.getter = getter;
 		this.setter = setter;
 	}

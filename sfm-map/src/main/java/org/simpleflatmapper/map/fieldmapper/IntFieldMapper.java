@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.IntSetter;
 
 public final class IntFieldMapper<S, T> implements FieldMapper<S, T> {
 
-	private final IntGetter<S> getter;
-	private final IntSetter<T> setter;
+	private final IntGetter<? super S> getter;
+	private final IntSetter<? super T> setter;
 	
- 	public IntFieldMapper(final IntGetter<S> getter, final IntSetter<T> setter) {
+ 	public IntFieldMapper(final IntGetter<? super S> getter, final IntSetter<? super T> setter) {
 		this.getter = getter;
 		this.setter = setter;
 	}

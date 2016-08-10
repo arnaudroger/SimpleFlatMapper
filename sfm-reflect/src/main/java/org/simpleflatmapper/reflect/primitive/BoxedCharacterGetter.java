@@ -5,9 +5,9 @@ import org.simpleflatmapper.reflect.Getter;
 public class BoxedCharacterGetter<T> implements CharacterGetter<T>, Getter<T, Character> {
 
 
-    private final Getter<? super T, Character> delegate;
+    private final Getter<? super T, ? extends Character> delegate;
 
-    public BoxedCharacterGetter(Getter<? super T, Character> delegate) {
+    public BoxedCharacterGetter(Getter<? super T, ? extends Character> delegate) {
         this.delegate = delegate;
     }
 

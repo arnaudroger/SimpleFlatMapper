@@ -31,39 +31,40 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 	}
 
 
+	@SuppressWarnings("unchecked")
 	private <T, P> FieldMapper<S, T> primitiveIndexedFieldMapper(final Class<P> type, final Setter<? super T, ? super P> setter, final Getter<? super S, ? extends P> getter) {
 		if (type.equals(Boolean.TYPE)) {
 			return new BooleanFieldMapper<S, T>(
-					ObjectGetterFactory.<S, P>toBooleanGetter(getter),
-					ObjectSetterFactory.<T, P>toBooleanSetter(setter));
+					ObjectGetterFactory.<S>toBooleanGetter((Getter<S, ? extends Boolean>) getter),
+					ObjectSetterFactory.<T>toBooleanSetter((Setter<T, ? super Boolean>) setter));
 		} else if (type.equals(Integer.TYPE)) {
 			return new IntFieldMapper<S, T>(
-					ObjectGetterFactory.<S, P>toIntGetter(getter),
-					ObjectSetterFactory.<T, P>toIntSetter(setter));
+					ObjectGetterFactory.<S>toIntGetter((Getter<S, ? extends Integer>) getter),
+					ObjectSetterFactory.<T>toIntSetter((Setter<T, ? super Integer>) setter));
 		} else if (type.equals(Long.TYPE)) {
 			return new LongFieldMapper<S, T>(
-					ObjectGetterFactory.<S, P>toLongGetter(getter),
-					ObjectSetterFactory.<T, P>toLongSetter(setter));
+					ObjectGetterFactory.<S>toLongGetter((Getter<S, ? extends Long>) getter),
+					ObjectSetterFactory.<T>toLongSetter((Setter<T, ? super Long>) setter));
 		} else if (type.equals(Float.TYPE)) {
 			return new FloatFieldMapper<S, T>(
-					ObjectGetterFactory.<S, P>toFloatGetter(getter),
-					ObjectSetterFactory.<T, P>toFloatSetter(setter));
+					ObjectGetterFactory.<S>toFloatGetter((Getter<S, ? extends Float>) getter),
+					ObjectSetterFactory.<T>toFloatSetter((Setter<T, ? super Float>) setter));
 		} else if (type.equals(Double.TYPE)) {
 			return new DoubleFieldMapper<S, T>(
-					ObjectGetterFactory.<S, P>toDoubleGetter(getter),
-					ObjectSetterFactory.<T, P>toDoubleSetter(setter));
+					ObjectGetterFactory.<S>toDoubleGetter((Getter<? super S, ? extends Double>) getter),
+					ObjectSetterFactory.<T>toDoubleSetter((Setter<T, ? super Double>) setter));
 		} else if (type.equals(Byte.TYPE)) {
 			return new ByteFieldMapper<S, T>(
-					ObjectGetterFactory.<S, P>toByteGetter(getter),
-					ObjectSetterFactory.<T, P>toByteSetter(setter));
+					ObjectGetterFactory.<S>toByteGetter((Getter<S, ? extends Byte>) getter),
+					ObjectSetterFactory.<T>toByteSetter((Setter<T, ? super Byte>) setter));
 		} else if (type.equals(Character.TYPE)) {
 			return new CharacterFieldMapper<S, T>(
-					ObjectGetterFactory.<S, P>toCharGetter(getter),
-					ObjectSetterFactory.<T, P>toCharacterSetter(setter));
+					ObjectGetterFactory.<S>toCharGetter((Getter<S, ? extends Character>) getter),
+					ObjectSetterFactory.<T>toCharacterSetter((Setter<T, ? super Character>) setter));
 		} else if (type.equals(Short.TYPE)) {
 			return new ShortFieldMapper<S, T>(
-					ObjectGetterFactory.<S, P>toShortGetter(getter),
-					ObjectSetterFactory.<T, P>toShortSetter(setter));
+					ObjectGetterFactory.<S>toShortGetter((Getter<S, ? extends Short>) getter),
+					ObjectSetterFactory.<T>toShortSetter((Setter<T, ? super Short>) setter));
 		} else {
 			throw new UnsupportedOperationException("Type " + type
 					+ " is not primitive");

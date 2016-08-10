@@ -7,10 +7,10 @@ import org.simpleflatmapper.reflect.primitive.LongSetter;
 
 public class LongCellSetter<T> implements CellSetter<T> {
 
-	private final LongSetter<T> setter;
+	private final LongSetter<? super T> setter;
 	private final LongCellValueReader reader;
 
-	public LongCellSetter(LongSetter<T> setter, LongCellValueReader reader) {
+	public LongCellSetter(LongSetter<? super T> setter, LongCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

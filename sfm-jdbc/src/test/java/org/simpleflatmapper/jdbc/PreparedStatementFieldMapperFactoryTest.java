@@ -594,7 +594,8 @@ public class PreparedStatementFieldMapperFactoryTest {
         newFieldMapperAndMapToPS(getter, clazz, JdbcColumnKey.UNDEFINED_TYPE, properties);
     }
     protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, int sqlType, Object... properties) throws Exception {
-        FieldMapper<T, PreparedStatement> fieldMapper = factory.newFieldMapper(newPropertyMapping(getter, clazz, sqlType, properties), null, new RethrowMapperBuilderErrorHandler());
+        PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> propertyMapping = newPropertyMapping(getter, clazz, sqlType, properties);
+        FieldMapper<T, PreparedStatement> fieldMapper = factory.<T, P>newFieldMapper(propertyMapping, null, new RethrowMapperBuilderErrorHandler());
         fieldMapper.mapTo(null, ps, null);
     }
 

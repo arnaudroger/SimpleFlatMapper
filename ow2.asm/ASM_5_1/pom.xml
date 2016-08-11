@@ -8,11 +8,6 @@
   <name>ASM Core</name>
   <version>5.1</version>
   <packaging>jar</packaging>
-
-
-  <properties>
-    <jacoco.skip>true</jacoco.skip>
-  </properties>
   <build>
     <plugins>
       <plugin>
@@ -22,6 +17,14 @@
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.7.5.201505241946</version>
+        <configuration>
+          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>

@@ -51,7 +51,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 					ObjectSetterFactory.<T>toFloatSetter((Setter<T, ? super Float>) setter));
 		} else if (type.equals(Double.TYPE)) {
 			return new DoubleFieldMapper<S, T>(
-					ObjectGetterFactory.<S>toDoubleGetter((Getter<? super S, ? extends Double>) getter),
+					ObjectGetterFactory.<S>toDoubleGetter((Getter<S, ? extends Double>) getter),
 					ObjectSetterFactory.<T>toDoubleSetter((Setter<T, ? super Double>) setter));
 		} else if (type.equals(Byte.TYPE)) {
 			return new ByteFieldMapper<S, T>(

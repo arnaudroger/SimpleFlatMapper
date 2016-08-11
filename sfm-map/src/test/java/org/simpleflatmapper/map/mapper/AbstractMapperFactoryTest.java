@@ -30,7 +30,7 @@ public class AbstractMapperFactoryTest {
 
         MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig = mapperFactory.mapperConfig();
 
-        ArrayList<Object> properties = new ArrayList<Object>();
+        final ArrayList<Object> properties = new ArrayList<Object>();
         mapperConfig.columnDefinitions().forEach(Object.class, new BiConsumer<Predicate<? super SampleFieldKey>, Object>() {
             @Override
             public void accept(Predicate<? super SampleFieldKey> predicate, Object o) {

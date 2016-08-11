@@ -75,7 +75,7 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
                 consumer.accept(def.predicate, cp);
             }
         }
-        for (PredicatedColunnPropertyFactory tuple2 : properties) {
+        for (PredicatedColunnPropertyFactory<C, K> tuple2 : properties) {
             final UnaryFactory<? super K, Object> unaryFactory = tuple2.columnPropertyFactory;
             if (unaryFactory instanceof ConstantUnaryFactory) {
                 final Object columnProperty = unaryFactory.newInstance(null);

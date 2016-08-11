@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv.impl;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellHandler;
 import org.simpleflatmapper.reflect.Getter;
 
-public class DelayedGetter<T> implements Getter<CsvMapperCellHandler<?>, T> {
+public class DelayedGetter<T, P> implements Getter<CsvMapperCellHandler<T>, P> {
 	private final int index;
 	
 	public DelayedGetter(int index) {
@@ -12,8 +12,8 @@ public class DelayedGetter<T> implements Getter<CsvMapperCellHandler<?>, T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T get(CsvMapperCellHandler<?> target) throws Exception {
-		return (T) target.getDelayedCellSetter(index).consumeValue();
+	public P get(CsvMapperCellHandler<T> target) throws Exception {
+		return (P) target.getDelayedCellSetter(index).consumeValue();
 	}
 
     @Override

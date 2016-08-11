@@ -29,6 +29,7 @@ public class FieldMapperMapperBuilderTest {
 
 
     GetterFactory<Object, SampleFieldKey> getterFactory = new GetterFactory<Object, SampleFieldKey>() {
+        @SuppressWarnings("unchecked")
         @Override
         public <P> Getter<Object, P> newGetter(Type target, SampleFieldKey key, Object... properties) {
 

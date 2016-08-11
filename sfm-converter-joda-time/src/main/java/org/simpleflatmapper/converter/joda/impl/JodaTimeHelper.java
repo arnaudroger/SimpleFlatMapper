@@ -35,6 +35,7 @@ public final class JodaTimeHelper {
 
         return null;
     }
+    @SuppressWarnings("unchecked")
     private static DateTimeFormatter toDateTimeFormater(Object prop, DateTimeZone dateTimeZone) {
         if (SupplierHelper.isSupplierOf(prop, DateTimeFormatter.class)) {
             return (withZone(((Supplier<DateTimeFormatter>) prop).get(), dateTimeZone));
@@ -89,6 +90,7 @@ public final class JodaTimeHelper {
         return DateTimeZone.getDefault();
     }
 
+    @SuppressWarnings("unchecked")
     private static DateTimeZone getDateTimeZone(Object[] params) {
         if (params != null) {
             for(Object p : params) {

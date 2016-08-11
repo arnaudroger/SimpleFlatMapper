@@ -7,12 +7,12 @@ import org.simpleflatmapper.reflect.primitive.ByteSetter;
 
 public class ByteDelayedCellSetter<T> implements DelayedCellSetter<T, Byte> {
 
-	private final ByteSetter<T> setter;
+	private final ByteSetter<? super T> setter;
 	private final ByteCellValueReader reader;
     private byte value;
     private boolean isNull;
 
-	public ByteDelayedCellSetter(ByteSetter<T> setter, ByteCellValueReader reader) {
+	public ByteDelayedCellSetter(ByteSetter<? super T> setter, ByteCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

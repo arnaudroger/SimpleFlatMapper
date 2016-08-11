@@ -3,7 +3,7 @@ package org.simpleflatmapper.reflect.getter;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.primitive.LongGetter;
 
-public class ConstantLongGetter<T> implements LongGetter, Getter<T, Long> {
+public class ConstantLongGetter<T> implements LongGetter<T>, Getter<T, Long> {
     private final long value;
 
     public ConstantLongGetter(long value) {
@@ -11,7 +11,7 @@ public class ConstantLongGetter<T> implements LongGetter, Getter<T, Long> {
     }
 
     @Override
-    public long getLong(Object target) {
+    public long getLong(T target) {
         return value;
     }
 

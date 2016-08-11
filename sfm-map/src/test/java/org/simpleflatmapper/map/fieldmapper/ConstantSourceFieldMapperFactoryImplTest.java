@@ -43,6 +43,7 @@ public class ConstantSourceFieldMapperFactoryImplTest {
     GetterFactory<Object, SampleFieldKey> getterFactory;
     KeySourceGetter<SampleFieldKey, Object> keySourceGetter;
 
+    @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
         getterFactory = mock(GetterFactory.class);

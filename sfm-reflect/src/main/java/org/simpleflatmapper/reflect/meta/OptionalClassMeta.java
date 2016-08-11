@@ -46,9 +46,6 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
         return id;
     }
 
-    public InstantiatorDefinition getInstantiatorDefinition() {
-        return instantiatorDefinition;
-    }
 
     @Override
 	public ReflectionService getReflectionService() {

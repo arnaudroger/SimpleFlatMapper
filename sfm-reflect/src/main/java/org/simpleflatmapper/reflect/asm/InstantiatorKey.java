@@ -11,21 +11,21 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
-public class InstantiatorKey {
+public class InstantiatorKey<S> {
 	private final Object constructor;
 	private final InjectedParam[] injectedParams;
 	private final Class<?> source;
 	
-	public InstantiatorKey(Object constructor, InjectedParam[] injectedParams,  Class<?> source) {
+	public InstantiatorKey(Object constructor, InjectedParam[] injectedParams,  Class<S> source) {
 		super();
 		this.constructor = constructor;
 		this.injectedParams = injectedParams;
 		this.source = source;
 	}
-	public InstantiatorKey(Class<?> target, Class<?> source) throws NoSuchMethodException, SecurityException {
+	public InstantiatorKey(Class<?> target, Class<S> source) throws NoSuchMethodException, SecurityException {
 		this(target.getConstructor(), null, source);
 	}
-	public InstantiatorKey(InstantiatorDefinition instantiatorDefinition, Map injections, Class<?> source) {
+	public InstantiatorKey(InstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections, Class<S> source) {
 		this(getConstructor(instantiatorDefinition), paramAndGetterClass(injections), source);
 	}
 
@@ -36,10 +36,10 @@ public class InstantiatorKey {
 			return ((BuilderInstantiatorDefinition)def).getBuildMethod();
 		}
 	}
-	private static InjectedParam[] paramAndGetterClass(Map<Parameter, Getter<?, ?>> injections) {
+	private static <S> InjectedParam[] paramAndGetterClass(Map<Parameter, Getter<? super S, ?>> injections) {
 		InjectedParam[] names = new InjectedParam[injections.size()];
 		int i = 0;
-		for(Map.Entry<Parameter, Getter<?, ?>> e : injections.entrySet()) {
+		for(Map.Entry<Parameter, Getter<? super S, ?>> e : injections.entrySet()) {
 			names[i++] = new InjectedParam(e.getKey().getName(), e.getValue().getClass());
 		}
 		Arrays.sort(names, new Comparator<InjectedParam>() {

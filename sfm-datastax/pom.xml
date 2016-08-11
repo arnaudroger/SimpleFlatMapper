@@ -31,7 +31,7 @@
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
 						<Export-Package>org.simpleflatmapper.datastax</Export-Package>
-						<Import-Package>org.simpleflatmapper.*,cassandra.driver.*,com.google.*</Import-Package>
+						<Import-Package>org.simpleflatmapper.*,com.datastax.driver.*,com.google.*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

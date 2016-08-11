@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 
 public class ListHandlerTest {
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testList() {
         ListHandler<String> handler = new ListHandler<String>();

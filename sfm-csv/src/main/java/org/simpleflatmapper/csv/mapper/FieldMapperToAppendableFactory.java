@@ -145,31 +145,33 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
         return new FieldMapperImpl<S, Appendable, P>(getter, setter);
     }
 
+    @SuppressWarnings("unchecked")
     private <S, P> Setter<Appendable, ? super P> getSetter(PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm, CellWriter cellWriter) {
 
         final SetterProperty setterProperty = pm.getColumnDefinition().lookFor(SetterProperty.class);
 
         if (setterProperty != null) {
-            return new CellWriterSetterWrapper(cellWriter, setterProperty.getSetter());
+            return new CellWriterSetterWrapper<P>(cellWriter, (Setter<Appendable, P>) setterProperty.getSetter());
         }
 
-        Setter<Appendable, ?> setter = setterFromFactory(pm);
+        Setter<Appendable, ? super P> setter = setterFromFactory(pm);
 
         if (setter != null) {
-            return new CellWriterSetterWrapper(cellWriter, setter);
+            return new CellWriterSetterWrapper<P>(cellWriter, setter);
         }
 
         return null;
     }
 
-    private <S, P> Setter<Appendable, ?> setterFromFactory(PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm) {
-        Setter<Appendable, ?> setter = null;
+    @SuppressWarnings("unchecked")
+    private <S, P> Setter<Appendable, ? super P> setterFromFactory(PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> pm) {
+        Setter<Appendable, ? super P> setter = null;
 
         final SetterFactoryProperty setterFactoryProperty = pm.getColumnDefinition().lookFor(SetterFactoryProperty.class);
         if (setterFactoryProperty != null) {
             final SetterFactory<Appendable, PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>> setterFactory =
                     (SetterFactory<Appendable, PropertyMapping<S, P, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>>) setterFactoryProperty.getSetterFactory();
-            setter = (Setter<Appendable, ?>) setterFactory.getSetter(pm);
+            setter = setterFactory.getSetter(pm);
         }
 
 

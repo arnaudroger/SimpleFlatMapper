@@ -45,7 +45,7 @@ public class MapperInstantiatorFactory {
         if (TypeHelper.isArray(target)) {
             return instantiatorFactory.getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentTypeOfListOrArray(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, K, D>()).maxIndex + 1);
         } else {
-            return instantiatorFactory.getInstantiator(target, TypeHelper.toClass(source), propertyMappingsBuilder.getPropertyFinder().getEligibleInstantiatorDefinitions(), constructorParameterGetterMap,useAsmIfEnabled);
+            return instantiatorFactory.getInstantiator(target, TypeHelper.<S>toClass(source), propertyMappingsBuilder.getPropertyFinder().getEligibleInstantiatorDefinitions(), constructorParameterGetterMap,useAsmIfEnabled);
         }
     }
 }

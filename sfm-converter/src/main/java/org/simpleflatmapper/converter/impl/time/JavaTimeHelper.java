@@ -60,6 +60,7 @@ public final class JavaTimeHelper {
         return dtf.toArray(new DateTimeFormatter[0]);
     }
 
+    @SuppressWarnings("unchecked")
     private static DateTimeFormatter toDateTimeFormatter(Object prop, ZoneId zoneId) {
         if (SupplierHelper.isSupplierOf(prop, DateTimeFormatter.class)) {
             return withZone(((Supplier<DateTimeFormatter>) prop).get(), zoneId);
@@ -90,6 +91,7 @@ public final class JavaTimeHelper {
         return ZoneId.systemDefault();
     }
 
+    @SuppressWarnings("unchecked")
     public static ZoneId getZoneId(Object[] params) {
         if (params != null) {
             for(Object p : params) {

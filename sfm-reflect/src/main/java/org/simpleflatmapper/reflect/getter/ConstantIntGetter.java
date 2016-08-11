@@ -3,7 +3,7 @@ package org.simpleflatmapper.reflect.getter;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.primitive.IntGetter;
 
-public class ConstantIntGetter<T> implements IntGetter, Getter<T, Integer> {
+public class ConstantIntGetter<T> implements IntGetter<T>, Getter<T, Integer> {
     private final int value;
 
     public ConstantIntGetter(int value) {
@@ -11,7 +11,7 @@ public class ConstantIntGetter<T> implements IntGetter, Getter<T, Integer> {
     }
 
     @Override
-    public int getInt(Object target) {
+    public int getInt(T target) {
         return value;
     }
 

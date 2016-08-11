@@ -9,10 +9,10 @@ import org.simpleflatmapper.reflect.primitive.BooleanSetter;
 
 public class BooleanDelayedCellSetterFactory<T> implements DelayedCellSetterFactory<T, Boolean> {
 
-	private final BooleanSetter<T> setter;
+	private final BooleanSetter<? super T> setter;
 	private final BooleanCellValueReader reader;
 
-	public BooleanDelayedCellSetterFactory(BooleanSetter<T> setter, BooleanCellValueReader reader) {
+	public BooleanDelayedCellSetterFactory(BooleanSetter<? super T> setter, BooleanCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

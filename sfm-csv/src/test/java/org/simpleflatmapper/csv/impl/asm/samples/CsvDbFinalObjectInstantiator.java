@@ -7,10 +7,9 @@ import org.simpleflatmapper.csv.impl.CsvMapperCellHandlerImpl;
 import org.simpleflatmapper.csv.impl.DelayedGetter;
 
 @SuppressWarnings("rawtypes")
-public final class
-CsvDbFinalObjectInstantiator implements Instantiator<CsvMapperCellHandlerImpl<DbFinalObject>, DbFinalObject> {
+public final class CsvDbFinalObjectInstantiator implements Instantiator<CsvMapperCellHandlerImpl<DbFinalObject>, DbFinalObject> {
 	
-	DelayedGetter<Long> getter1;
+	DelayedGetter<DbFinalObject, Long> getter1;
 	
 	@SuppressWarnings("unchecked")
 	@Override

@@ -9,14 +9,14 @@ import java.util.Optional;
 public class OptionalPropertyFinder<T> implements PropertyFinder<Optional<T>> {
 
 
-    private final OptionalClassMeta<T> tupleClassMeta;
+    private final OptionalClassMeta<T> optionalClassMeta;
     private final PropertyFinder<T> propertyFinder;
     private int nbProp = 0;
     private final ClassMeta<T> innerMeta;
 
-    public OptionalPropertyFinder(OptionalClassMeta<T> tupleClassMeta) {
-        this.tupleClassMeta = tupleClassMeta;
-        innerMeta = tupleClassMeta.getInnerMeta();
+    public OptionalPropertyFinder(OptionalClassMeta<T> optionalClassMeta) {
+        this.optionalClassMeta = optionalClassMeta;
+        innerMeta = optionalClassMeta.getInnerMeta();
         this.propertyFinder = innerMeta != null ? innerMeta.newPropertyFinder() : null;
 	}
 
@@ -32,7 +32,7 @@ public class OptionalPropertyFinder<T> implements PropertyFinder<Optional<T>> {
             }
         } else if (nbProp == 0){
             nbProp++;
-            return (PropertyMeta<Optional<T>, E>) tupleClassMeta.getProperty();
+            return (PropertyMeta<Optional<T>, E>) optionalClassMeta.getProperty();
         }
 
         return null;
@@ -41,14 +41,14 @@ public class OptionalPropertyFinder<T> implements PropertyFinder<Optional<T>> {
     @SuppressWarnings("unchecked")
     private <I, E> PropertyMeta<Optional<T>, E> getSubPropertyMeta(PropertyMeta<I, ?> property) {
         return new SubPropertyMeta<Optional<T>, I, E>(
-                tupleClassMeta.getReflectionService(),
-                (PropertyMeta<Optional<T>, I>)tupleClassMeta.getProperty(),
+                optionalClassMeta.getReflectionService(),
+                (PropertyMeta<Optional<T>, I>) optionalClassMeta.getProperty(),
                 (PropertyMeta<I, E>)property);
     }
 
     @Override
     public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
-        return Arrays.asList(tupleClassMeta.getInstantiatorDefinition());
+        return optionalClassMeta.getInstantiatorDefinitions();
     }
 
     @Override

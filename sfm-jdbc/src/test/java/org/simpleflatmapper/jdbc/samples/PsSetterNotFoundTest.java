@@ -158,6 +158,7 @@ public class PsSetterNotFoundTest {
                 .addColumnProperty("bar",
                         new IndexedSetterFactoryProperty(
                             new IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>>() {
+                                @SuppressWarnings("unchecked")
                                 @Override
                                 public <P> IndexedSetter<PreparedStatement, P> getIndexedSetter(final PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> arg) {
                                     return (IndexedSetter<PreparedStatement, P>) new IndexedSetter<PreparedStatement, Bar2Prop>() {

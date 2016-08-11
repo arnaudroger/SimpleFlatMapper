@@ -525,7 +525,7 @@ public class CsvMapperBuilder<T> {
 
 		for(Object prop :properties) {
 			if (prop instanceof DefaultValueProperty) {
-				return (Getter)new DelayedGetter<P>(key.getIndex());
+				return new DelayedGetter<T, P>(key.getIndex());
 			}
 		}
 		return cellSetterFactory.newDelayedGetter(key, propertyType);

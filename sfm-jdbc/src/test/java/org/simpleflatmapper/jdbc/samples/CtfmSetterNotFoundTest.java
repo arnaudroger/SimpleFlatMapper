@@ -148,6 +148,7 @@ public class CtfmSetterNotFoundTest {
                 .addColumnProperty("bar",
                         new SetterFactoryProperty(
                             new SetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>>() {
+                                @SuppressWarnings("unchecked")
                                 @Override
                                 public <P> Setter<PreparedStatement, P> getSetter(final PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> arg) {
                                     return (Setter<PreparedStatement, P>) new Setter<PreparedStatement, Bar2Prop>() {
@@ -188,6 +189,7 @@ public class CtfmSetterNotFoundTest {
                 .addColumnProperty("bar",
                         new IndexedSetterFactoryProperty(
                                 new IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>>() {
+                                    @SuppressWarnings("unchecked")
                                     @Override
                                     public <P> IndexedSetter<PreparedStatement, P> getIndexedSetter(final PropertyMapping<?, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> arg) {
                                         return (IndexedSetter<PreparedStatement, P>) new IndexedSetter<PreparedStatement, Bar2Prop>() {

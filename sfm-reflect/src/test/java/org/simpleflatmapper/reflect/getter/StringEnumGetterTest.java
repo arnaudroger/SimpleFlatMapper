@@ -15,7 +15,7 @@ public class StringEnumGetterTest {
 
     @Test
     public void test() throws Exception {
-        Getter<Object, String> stringGetter = mock(Getter.class);
+        @SuppressWarnings("unchecked") Getter<Object, String> stringGetter = mock(Getter.class);
         StringEnumGetter<Object, ENUM> getter = new StringEnumGetter<Object, ENUM>(stringGetter, ENUM.class);
 
         when(stringGetter.get(any())).thenReturn("ZERO", "ONE", "TWO", "THREE");

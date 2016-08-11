@@ -56,6 +56,7 @@ public final class TS2ArraysMapperCache<K extends FieldKey<K>, M> implements IMa
 		private final boolean bsearch;
 		private final MapperKeyComparator<K> comparator;
 
+		@SuppressWarnings("unchecked")
 		SortedEntries(int size, MapperKeyComparator<K> comparator) {
 			this.comparator = comparator;
 			this.keys = new MapperKey[size];

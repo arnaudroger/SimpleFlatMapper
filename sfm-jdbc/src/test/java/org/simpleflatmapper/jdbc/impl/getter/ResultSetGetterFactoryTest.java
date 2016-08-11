@@ -336,9 +336,7 @@ public class ResultSetGetterFactoryTest {
 		final java.time.LocalDate expected = zonedDateTime.toLocalDate();
 
 		when(resultSet.getDate(1))
-				.thenReturn(ts,
-						 null
-				);
+				.thenReturn(ts, (Date) null);
 
 
 		assertEquals(expected, getter.get(resultSet));
@@ -352,9 +350,7 @@ public class ResultSetGetterFactoryTest {
 		final ZonedDateTime zonedDateTime = Instant.ofEpochMilli(ts.getTime()).atZone(ZoneId.systemDefault());
 		final java.time.LocalDateTime localDateTime = zonedDateTime.toLocalDateTime();
 
-		when(resultSet.getTimestamp(1)).thenReturn(ts,
-				 null
-		);
+		when(resultSet.getTimestamp(1)).thenReturn(ts, (Timestamp) null);
 
 		Getter<ResultSet, java.time.LocalDateTime> getter = factory.<java.time.LocalDateTime>newGetter(java.time.LocalDateTime.class, key(Types.TIMESTAMP), IDENTITY);
 
@@ -368,7 +364,7 @@ public class ResultSetGetterFactoryTest {
 		Time ts = new Time(System.currentTimeMillis());
 		final java.time.LocalTime localTime = ts.toLocalTime();
 
-		when(resultSet.getTime(1)).thenReturn(ts, null);
+		when(resultSet.getTime(1)).thenReturn(ts, (Time)null);
 
 		Getter<ResultSet, java.time.LocalTime> getter = factory.<java.time.LocalTime>newGetter(java.time.LocalTime.class, key(Types.TIME), IDENTITY);
 
@@ -383,7 +379,7 @@ public class ResultSetGetterFactoryTest {
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
 		final OffsetDateTime offsetDateTime = instant.atOffset(ZoneId.systemDefault().getRules().getOffset(instant));
 
-		when(resultSet.getTimestamp(1)).thenReturn(ts, null);
+		when(resultSet.getTimestamp(1)).thenReturn(ts, (Timestamp) null);
 
 		Getter<ResultSet, java.time.OffsetDateTime> getter = factory.<java.time.OffsetDateTime>newGetter(java.time.OffsetDateTime.class, key(Types.TIMESTAMP), IDENTITY);
 		assertEquals(offsetDateTime, getter.get(resultSet));
@@ -399,7 +395,7 @@ public class ResultSetGetterFactoryTest {
 		ZoneOffset offset = ZoneId.systemDefault().getRules().getOffset(instant);
 		final OffsetTime offsetTime = ts.toLocalTime().atOffset(offset);
 
-		when(resultSet.getTime(1)).thenReturn(ts, null);
+		when(resultSet.getTime(1)).thenReturn(ts, (Time) null);
 
 		Getter<ResultSet, java.time.OffsetTime> getter = factory.<java.time.OffsetTime>newGetter(java.time.OffsetTime.class, key(Types.TIME), new ZoneOffsetProperty(offset));
 
@@ -414,7 +410,7 @@ public class ResultSetGetterFactoryTest {
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
 		final ZonedDateTime zonedDateTime = instant.atZone(ZoneId.systemDefault());
 
-		when(resultSet.getTimestamp(1)).thenReturn(ts, null);
+		when(resultSet.getTimestamp(1)).thenReturn(ts, (Timestamp) null);
 
 		Getter<ResultSet, java.time.ZonedDateTime> getter = factory.<java.time.ZonedDateTime>newGetter(java.time.ZonedDateTime.class, key(Types.TIMESTAMP));
 
@@ -426,7 +422,7 @@ public class ResultSetGetterFactoryTest {
 	public void testJavaInstant() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		Timestamp ts = new Timestamp(cal.getTimeInMillis());
-		when(resultSet.getTimestamp(1)).thenReturn(ts, null);
+		when(resultSet.getTimestamp(1)).thenReturn(ts, (Timestamp) null);
 		Getter<ResultSet, java.time.Instant> getter = factory.<java.time.Instant>newGetter(java.time.Instant.class, key(Types.TIMESTAMP), IDENTITY);
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());
 		assertEquals(instant, getter.get(resultSet));
@@ -437,7 +433,7 @@ public class ResultSetGetterFactoryTest {
 	public void testJavaYearMonth() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		Timestamp ts = new Timestamp(cal.getTimeInMillis());
-		when(resultSet.getTimestamp(1)).thenReturn(ts, null);
+		when(resultSet.getTimestamp(1)).thenReturn(ts, (Timestamp) null);
 
 		Getter<ResultSet, java.time.YearMonth> getter = factory.<java.time.YearMonth>newGetter(java.time.YearMonth.class, key(Types.TIMESTAMP), IDENTITY);
 		final Instant instant = Instant.ofEpochMilli(ts.getTime());

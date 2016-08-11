@@ -66,22 +66,23 @@ public class Datastax3 {
 
     @Test
     public void testLocalDateGetter() throws Exception {
-        Getter getter = DataTypeTest.getGetter(localDateClass, (DataType) DataType.class.getMethod("date").invoke(null));
+        Getter<GettableByIndexData, ?> getter = DataTypeTest.getGetter(localDateClass, (DataType) DataType.class.getMethod("date").invoke(null));
 
         RecorderInvocationHandler recorder = new RecorderInvocationHandler();
-        Object gettableByDataInstance = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { GettableByIndexData.class }, recorder);
+        GettableByIndexData gettableByDataInstance = (GettableByIndexData) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { GettableByIndexData.class }, recorder);
 
         getter.get(gettableByDataInstance);
 
         recorder.invokedOnce("getDate", 1);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testLocalDateSetter() throws Exception {
-        Setter setter = DataTypeTest.getSetter(localDateClass, (DataType) DataType.class.getMethod("date").invoke(null));
+        Setter<SettableByIndexData, Object> setter = DataTypeTest.getSetter((Class<Object>)localDateClass, (DataType) DataType.class.getMethod("date").invoke(null));
 
         RecorderInvocationHandler recorder = new RecorderInvocationHandler();
-        Object settableByDataInstance = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { SettableByIndexData.class }, recorder);
+        SettableByIndexData settableByDataInstance = (SettableByIndexData) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { SettableByIndexData.class }, recorder);
 
         Object localDateInstance = localDateClass.getDeclaredMethod("fromMillisSinceEpoch", long.class).invoke(null, System.currentTimeMillis());
         setter.set(settableByDataInstance, localDateInstance);

@@ -55,6 +55,7 @@ public final class S2ArraysMapperCache<K extends FieldKey<K>, M> implements IMap
 		private final Object[] values;
 		private final Comparator<MapperKey<K>> comparator;
 
+		@SuppressWarnings("unchecked")
 		SortedEntries(int size, Comparator<MapperKey<K>> comparator) {
 			this.comparator = comparator;
 			this.keys = new MapperKey[size];

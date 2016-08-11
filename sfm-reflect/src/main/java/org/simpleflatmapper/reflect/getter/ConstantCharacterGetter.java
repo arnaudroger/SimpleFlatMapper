@@ -3,7 +3,7 @@ package org.simpleflatmapper.reflect.getter;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.primitive.CharacterGetter;
 
-public class ConstantCharacterGetter<T> implements CharacterGetter, Getter<T, Character> {
+public class ConstantCharacterGetter<T> implements CharacterGetter<T>, Getter<T, Character> {
     private final char value;
 
     public ConstantCharacterGetter(char value) {
@@ -11,7 +11,7 @@ public class ConstantCharacterGetter<T> implements CharacterGetter, Getter<T, Ch
     }
 
     @Override
-    public char getCharacter(Object target) {
+    public char getCharacter(T target) {
         return value;
     }
 

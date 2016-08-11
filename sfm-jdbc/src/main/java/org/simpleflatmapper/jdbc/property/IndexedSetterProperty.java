@@ -8,15 +8,18 @@ import org.simpleflatmapper.reflect.IndexedSetter;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
 
+import java.sql.PreparedStatement;
+
 public class IndexedSetterProperty extends SetterFactoryProperty {
 
     private final IndexedSetter<?, ?> setter;
 
-    public IndexedSetterProperty(final IndexedSetter<?, ?> setter) {
-        super(new SetterFactory<Object, Object>() {
+    public <P> IndexedSetterProperty(final IndexedSetter<PreparedStatement, P> setter) {
+        super(new SetterFactory<PreparedStatement, Object>() {
+            @SuppressWarnings("unchecked")
             @Override
-            public <P> Setter<Object, P> getSetter(Object arg) {
-                return new PreparedStatementSetterImpl(((PropertyMapping)arg).getColumnKey().getIndex(), setter);
+            public <PP> Setter<PreparedStatement, PP> getSetter(Object arg) {
+                return new PreparedStatementSetterImpl<PP>(((PropertyMapping)arg).getColumnKey().getIndex(), (IndexedSetter<PreparedStatement, PP>) setter);
             }
         });
         this.setter = setter;

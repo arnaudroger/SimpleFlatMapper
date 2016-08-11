@@ -78,7 +78,7 @@ public class JdbcMapperBuilderImplTest {
 				return new InstantiatorFactory(null) {
 					@Override
 					public <S, T> Instantiator<S, T> getInstantiator(Type target,
-																	 Class<?> source,
+																	 Class<S> source,
 																	 List<InstantiatorDefinition> constructors,
 																	 Map<Parameter, Getter<? super S, ?>> injections, boolean useAsm)
 							throws SecurityException {

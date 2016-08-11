@@ -52,6 +52,7 @@ public final class T2ArraysMapperCache<K extends FieldKey<K>, M> implements IMap
 		private final MapperKey<K>[] keys;
 		private final Object[] values;
 
+		@SuppressWarnings("unchecked")
 		Entries(int size) {
 			this.keys = new MapperKey[size];
 			this.values = new Object[size];

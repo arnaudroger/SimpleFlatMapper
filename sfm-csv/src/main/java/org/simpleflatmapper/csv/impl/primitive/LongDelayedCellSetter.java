@@ -7,12 +7,12 @@ import org.simpleflatmapper.reflect.primitive.LongSetter;
 
 public class LongDelayedCellSetter<T> implements DelayedCellSetter<T, Long> {
 
-	private final LongSetter<T> setter;
+	private final LongSetter<? super T> setter;
 	private final LongCellValueReader reader;
 	private long value;
     private boolean isNull;
 
-	public LongDelayedCellSetter(LongSetter<T> setter, LongCellValueReader reader) {
+	public LongDelayedCellSetter(LongSetter<? super T> setter, LongCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

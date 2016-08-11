@@ -7,14 +7,14 @@ import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConvertingTypes;
 
 
-public abstract class AbstractMultiFormatConverterFactory<I, O> extends AbstractConverterFactory {
+public abstract class AbstractMultiFormatConverterFactory<I, O> extends AbstractConverterFactory<I, O> {
     public AbstractMultiFormatConverterFactory(Class<I> from, Class<O> to) {
         super(from, to);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Converter<?, ?> newConverter(ConvertingTypes targetedTypes, Object... params) {
+    public Converter<? super I, ? extends O> newConverter(ConvertingTypes targetedTypes, Object... params) {
 
         DateTimeFormatter[] dateTimeFormatters = JodaTimeHelper.getDateTimeFormatters(params);
 

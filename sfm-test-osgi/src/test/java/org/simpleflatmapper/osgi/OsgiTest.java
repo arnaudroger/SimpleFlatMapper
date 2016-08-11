@@ -148,7 +148,7 @@ public class OsgiTest {
             }
         }
 
-        return tmpFile.toURL();
+        return tmpFile.toURI().toURL();
     }
 
 

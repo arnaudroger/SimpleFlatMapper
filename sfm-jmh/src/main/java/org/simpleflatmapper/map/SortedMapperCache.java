@@ -62,6 +62,7 @@ public final class SortedMapperCache<K extends FieldKey<K>, M> implements IMappe
 
     }
 
+    @SuppressWarnings("unchecked")
     private CacheEntry<K, M>[] insertEntry(CacheEntry<K, M> entry, CacheEntry<K, M>[] entries, int insertionPoint) {
         CacheEntry<K, M>[] newEntries = new CacheEntry[entries.length + 1];
         System.arraycopy(entries, 0, newEntries, 0, insertionPoint);

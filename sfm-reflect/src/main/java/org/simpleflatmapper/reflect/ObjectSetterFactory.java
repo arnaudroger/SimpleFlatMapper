@@ -134,11 +134,11 @@ public final class ObjectSetterFactory {
 	
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> BooleanSetter<T> toBooleanSetter(final Setter<T, ? super Boolean> setter) {
+	public static <T> BooleanSetter<? super T> toBooleanSetter(final Setter<? super T, ? super Boolean> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof BooleanSetter) {
-			return (BooleanSetter<T>) setter;
+			return (BooleanSetter<? super T>) setter;
 		} else if (setter instanceof MethodSetter) {
 			return new BooleanMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
@@ -153,11 +153,11 @@ public final class ObjectSetterFactory {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> ByteSetter<T> toByteSetter(final Setter<T, ? super Byte> setter) {
+	public static <T> ByteSetter<? super T> toByteSetter(final Setter<? super T, ? super Byte> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof ByteSetter) {
-			return (ByteSetter<T>) setter;
+			return (ByteSetter<? super T>) setter;
 		} else if (setter instanceof MethodSetter) {
 			return new ByteMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
@@ -167,11 +167,11 @@ public final class ObjectSetterFactory {
 		}
 	}
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> CharacterSetter<T> toCharacterSetter(final Setter<T, ? super Character> setter) {
+	public static <T> CharacterSetter<? super T> toCharacterSetter(final Setter<? super T, ? super Character> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof CharacterSetter) {
-			return (CharacterSetter<T>) setter;
+			return (CharacterSetter<? super T>) setter;
 		} else if (setter instanceof MethodSetter) {
 			return new CharacterMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
@@ -182,11 +182,11 @@ public final class ObjectSetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> ShortSetter<T> toShortSetter(final Setter<T, ? super Short> setter) {
+	public static <T> ShortSetter<? super T> toShortSetter(final Setter<? super T, ? super Short> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof ShortSetter) {
-			return (ShortSetter<T>) setter;
+			return (ShortSetter<? super T>) setter;
 		} else if (setter instanceof MethodSetter) {
 			return new ShortMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
@@ -197,11 +197,11 @@ public final class ObjectSetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> IntSetter<T> toIntSetter(final Setter<T, ? super Integer> setter) {
+	public static <T> IntSetter<? super T> toIntSetter(final Setter<? super T, ? super Integer> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof IntSetter) {
-			return (IntSetter<T>) setter;
+			return (IntSetter<? super T>) setter;
 		} else if (setter instanceof MethodSetter) {
 			return new IntMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
@@ -212,11 +212,11 @@ public final class ObjectSetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> LongSetter<T> toLongSetter(final Setter<T, ? super Long> setter) {
+	public static <T> LongSetter<? super T> toLongSetter(final Setter<? super T, ? super Long> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof LongSetter) {
-			return (LongSetter<T>) setter;
+			return (LongSetter<? super T>) setter;
 		} else if (setter instanceof MethodSetter) {
 			return new LongMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
@@ -227,11 +227,11 @@ public final class ObjectSetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> FloatSetter<T> toFloatSetter(final Setter<T, ? super Float> setter) {
+	public static <T> FloatSetter<? super T> toFloatSetter(final Setter<? super T, ? super Float> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof FloatSetter) {
-			return (FloatSetter<T>) setter;
+			return (FloatSetter<? super T>) setter;
 		} else if (setter instanceof MethodSetter) {
 			return new FloatMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {
@@ -242,11 +242,11 @@ public final class ObjectSetterFactory {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> DoubleSetter<T> toDoubleSetter(final Setter<T, ? super Double> setter) {
+	public static <T> DoubleSetter<? super T> toDoubleSetter(final Setter<? super T, ? super Double> setter) {
 		if (isNullSetter(setter)) {
 			return null;
 		} else if (setter instanceof DoubleSetter) {
-			return (DoubleSetter<T>) setter;
+			return (DoubleSetter<? super T>) setter;
 		} else if (setter instanceof MethodSetter) {
 			return new DoubleMethodSetter<T>(((MethodSetter) setter).getMethod());
 		} else if (setter instanceof FieldSetter) {

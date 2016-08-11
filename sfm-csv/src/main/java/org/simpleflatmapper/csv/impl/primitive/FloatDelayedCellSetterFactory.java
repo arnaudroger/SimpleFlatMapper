@@ -9,10 +9,10 @@ import org.simpleflatmapper.reflect.primitive.FloatSetter;
 
 public class FloatDelayedCellSetterFactory<T> implements DelayedCellSetterFactory<T, Float> {
 
-	private final FloatSetter<T> setter;
+	private final FloatSetter<? super T> setter;
 	private final FloatCellValueReader reader;
 
-	public FloatDelayedCellSetterFactory(FloatSetter<T> setter, FloatCellValueReader reader) {
+	public FloatDelayedCellSetterFactory(FloatSetter<? super T> setter, FloatCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

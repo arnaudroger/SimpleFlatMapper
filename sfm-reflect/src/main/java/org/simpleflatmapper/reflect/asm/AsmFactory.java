@@ -139,8 +139,8 @@ public class AsmFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> createInstantiator(final Class<?> source, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, Getter<? super S, ?>> injections) throws Exception {
-		InstantiatorKey instantiatorKey = new InstantiatorKey(instantiatorDefinition, injections, source);
+	public <S, T> Instantiator<S, T> createInstantiator(final Class<S> source, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, Getter<? super S, ?>> injections) throws Exception {
+		InstantiatorKey<S> instantiatorKey = new InstantiatorKey<S>(instantiatorDefinition, injections, source);
 		Class<? extends Instantiator<?, ?>> instantiator = instantiatorCache.get(instantiatorKey);
         Instantiator<Void, ?> builderInstantiator = null;
 		if (instantiator == null) {

@@ -256,6 +256,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private <P> Getter<GettableByIndexData, P> _newGetter(Type target, DatastaxColumnKey key, Object... properties) {
         Class<?> targetClass = TypeHelper.toClass(target);
         if (Date.class.equals(targetClass)) {
@@ -390,6 +391,7 @@ public class RowGetterFactory implements GetterFactory<GettableByIndexData, Data
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private <P, D> Getter<GettableByIndexData, P> withConversion(Type target, DatastaxColumnKey key, Object[] properties) {
 
         Class<D> dataTypeClass = (Class<D>) DataTypeHelper.asJavaClass(key.getDataType(), target);

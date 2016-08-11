@@ -376,6 +376,7 @@ public class PreparedStatementSetterFactory
     }
 
 
+    @SuppressWarnings("unchecked")
     private <P, I> IndexedSetter<PreparedStatement, P> getSetterWithConvertion(Class<P> pclazz, Class<I> iclass, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
         Converter<? super P, ? extends I> converter = ConverterService.getInstance().findConverter(pclazz, iclass);
 
@@ -383,23 +384,23 @@ public class PreparedStatementSetterFactory
             if (iclass.equals(Timestamp.class)) {
                 Converter<? super P, ? extends java.util.Date> dateConverter = ConverterService.getInstance().findConverter(pclazz, java.util.Date.class, pm.getColumnDefinition().properties());
                 if (dateConverter != null) {
-                    converter = new ComposedConverter(dateConverter, new UtilDateToTimestampConverter());
+                    converter = (Converter<? super P, ? extends I>) new ComposedConverter<P, java.util.Date, Timestamp>(dateConverter, new UtilDateToTimestampConverter());
                 }
             }
             if (iclass.equals(Time.class)) {
                 Converter<? super P, ? extends java.util.Date> dateConverter = ConverterService.getInstance().findConverter(pclazz, java.util.Date.class, pm.getColumnDefinition().properties());
                 if (dateConverter != null) {
-                    converter = new ComposedConverter(dateConverter, new UtilDateToTimeConverter());
+                    converter = (Converter<? super P, ? extends I>) new ComposedConverter<P, java.util.Date, Time>(dateConverter, new UtilDateToTimeConverter());
                 }
             }
             if (iclass.equals(Date.class)) {
                 Converter<? super P, ? extends java.util.Date> dateConverter = ConverterService.getInstance().findConverter(pclazz, java.util.Date.class, pm.getColumnDefinition().properties());
                 if (dateConverter != null) {
-                    converter = new ComposedConverter(dateConverter, new UtilDateToDateConverter());
+                    converter = (Converter<? super P, ? extends I>) new ComposedConverter<P, java.util.Date, Date>(dateConverter, new UtilDateToDateConverter());
                 }
             }
-
         }
+
         if (converter != null) {
             IndexedSetter<PreparedStatement, I> indexedSetter = getIndexedSetter(iclass, pm);
             if (indexedSetter != null) {
@@ -411,6 +412,7 @@ public class PreparedStatementSetterFactory
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     protected  <T> IndexedSetter<PreparedStatement, T> getIndexedSetter(Type propertyType, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> arg) {
         IndexedSetter<PreparedStatement, T> setter = null;
 

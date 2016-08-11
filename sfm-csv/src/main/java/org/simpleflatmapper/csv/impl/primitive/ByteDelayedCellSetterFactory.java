@@ -9,10 +9,10 @@ import org.simpleflatmapper.reflect.primitive.ByteSetter;
 
 public class ByteDelayedCellSetterFactory<T> implements DelayedCellSetterFactory<T, Byte> {
 
-	private final ByteSetter<T> setter;
+	private final ByteSetter<? super T> setter;
 	private final ByteCellValueReader reader;
 
-	public ByteDelayedCellSetterFactory(ByteSetter<T> setter, ByteCellValueReader reader) {
+	public ByteDelayedCellSetterFactory(ByteSetter<? super T> setter, ByteCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

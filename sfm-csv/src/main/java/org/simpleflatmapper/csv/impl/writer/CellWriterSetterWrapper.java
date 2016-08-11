@@ -4,10 +4,10 @@ import org.simpleflatmapper.csv.CellWriter;
 import org.simpleflatmapper.reflect.Setter;
 
 public class CellWriterSetterWrapper<P> implements Setter<Appendable, P> {
-    private final Setter<Appendable, P> setter;
+    private final Setter<Appendable, ? super P> setter;
     private final CellWriter cellWriter;
 
-    public CellWriterSetterWrapper(CellWriter cellWriter, Setter<Appendable, P> setter) {
+    public CellWriterSetterWrapper(CellWriter cellWriter, Setter<Appendable, ? super P> setter) {
         this.cellWriter = cellWriter;
         this.setter = setter;
     }

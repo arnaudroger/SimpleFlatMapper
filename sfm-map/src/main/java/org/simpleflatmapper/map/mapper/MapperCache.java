@@ -52,6 +52,7 @@ public final class MapperCache<K extends FieldKey<K>, M> {
 		private final boolean bsearch;
 		private final MapperKeyComparator<K> comparator;
 
+		@SuppressWarnings("unchecked")
 		SortedEntries(int size, MapperKeyComparator<K> comparator) {
 			this.comparator = comparator;
 			this.keys = new MapperKey[size];

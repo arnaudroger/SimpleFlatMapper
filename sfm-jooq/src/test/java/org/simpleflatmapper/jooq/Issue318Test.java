@@ -1,10 +1,6 @@
 package org.simpleflatmapper.jooq;
 
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.RecordMapper;
-import org.jooq.RecordType;
-import org.jooq.SQLDialect;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Test;
@@ -29,12 +25,13 @@ import static org.mockito.Mockito.when;
 public class Issue318Test {
 
     //IFJAVA8_START
+    @SuppressWarnings("unchecked")
     @Test
     public void testLocalDateTimeFromTimestamp() throws SQLException {
 
         SfmRecordMapperProvider recordMapperProvider = new SfmRecordMapperProvider();
 
-        RecordType rt = mock(RecordType.class);
+        RecordType<Record> rt = mock(RecordType.class);
 
 
         Field[] fields = new Field[] {
@@ -45,7 +42,7 @@ public class Issue318Test {
         when(rt.size()).thenReturn(fields.length);
         when(rt.fields()).thenReturn(fields);
 
-        RecordMapper mapper = recordMapperProvider.provide(rt, Issue318.class);
+        RecordMapper<Record, Issue318> mapper = recordMapperProvider.provide(rt, Issue318.class);
 
         assertNotNull(mapper);
     }

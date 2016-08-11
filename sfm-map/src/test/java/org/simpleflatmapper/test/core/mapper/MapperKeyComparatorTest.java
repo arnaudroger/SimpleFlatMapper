@@ -25,6 +25,7 @@ public class MapperKeyComparatorTest {
     private static final Random random = new Random();
 
 
+    @SuppressWarnings("unchecked")
     public static <K extends FieldKey<K>> MapperKey<K>[] generateKeys(KeyProducer<K> producer) throws Exception {
         ListCollectorHandler<MapperKey<K>> collector = new ListCollectorHandler<MapperKey<K>>();
 
@@ -87,6 +88,7 @@ public class MapperKeyComparatorTest {
             this.keyClass = keyClass;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public void produces(RowHandler<MapperKey<K>> consumer, String[] names) throws Exception {
             K[] columns1 = (K[]) Array.newInstance(keyClass, names.length);

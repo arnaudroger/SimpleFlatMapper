@@ -22,7 +22,7 @@ public class UUIDUnspecifiedTypeGetterTest {
 
         UUID uuid = UUID.randomUUID();
 
-        Getter subGetter = mock(Getter.class);
+        @SuppressWarnings("unchecked") Getter<Object, Object> subGetter = mock(Getter.class);
         UUIDUnspecifiedTypeGetter<Object> getter = new UUIDUnspecifiedTypeGetter<Object>(subGetter);
 
         when(subGetter.get(any())).thenReturn(uuid.toString(),

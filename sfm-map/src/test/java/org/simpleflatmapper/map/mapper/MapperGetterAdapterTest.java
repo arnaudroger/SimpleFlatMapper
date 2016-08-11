@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 public class MapperGetterAdapterTest {
 
 
+    @SuppressWarnings("unchecked")
     @Test
     public void test() throws Exception {
         Predicate<Object> nullChecker = mock(Predicate.class);

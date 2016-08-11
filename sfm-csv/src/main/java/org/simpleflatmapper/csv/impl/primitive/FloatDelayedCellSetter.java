@@ -7,12 +7,12 @@ import org.simpleflatmapper.reflect.primitive.FloatSetter;
 
 public class FloatDelayedCellSetter<T> implements DelayedCellSetter<T, Float> {
 
-	private final FloatSetter<T> setter;
+	private final FloatSetter<? super T> setter;
 	private final FloatCellValueReader reader;
 	private float value;
     private boolean isNull;
 
-	public FloatDelayedCellSetter(FloatSetter<T> setter, FloatCellValueReader reader) {
+	public FloatDelayedCellSetter(FloatSetter<? super T> setter, FloatCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

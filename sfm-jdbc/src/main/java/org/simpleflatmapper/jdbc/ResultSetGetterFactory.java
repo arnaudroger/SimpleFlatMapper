@@ -428,6 +428,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		return getter;
 	}
 
+	@SuppressWarnings("unchecked")
 	private <P> Getter<ResultSet, P> _newGetter(Type genericType, JdbcColumnKey key, Object[] properties) {
 		Class<?> clazz = TypeHelper.wrap(TypeHelper.toClass(genericType));
 

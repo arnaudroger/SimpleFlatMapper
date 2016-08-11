@@ -113,6 +113,7 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
         return new FieldMapperImpl<S, T, P>(getter, setter);
     }
 
+    @SuppressWarnings("unchecked")
     private <S, P> Setter<T, P> setterFromFactory(PropertyMapping<S, ?, K, FieldMapperColumnDefinition<K>> pm) {
         Setter<T, P> setter = null;
         final SetterFactoryProperty setterFactoryProperty = pm.getColumnDefinition().lookFor(SetterFactoryProperty.class);

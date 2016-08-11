@@ -39,6 +39,7 @@ public class JdbcConverterFactoryProducer extends AbstractConverterFactoryProduc
                 return new TimeToOffsetTimeConverter(zoneOffset);
             }
 
+            @SuppressWarnings("unchecked")
             private ZoneOffset getZoneOffset(Object[] params) {
                 for(Object prop : params) {
                     if (prop instanceof ZoneOffset) {

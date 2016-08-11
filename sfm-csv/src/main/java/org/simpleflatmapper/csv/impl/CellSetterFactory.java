@@ -58,23 +58,24 @@ public final class CellSetterFactory {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <T,P> CellSetter<T> getPrimitiveCellSetter(Class<?> clazz, CellValueReader<? extends P> reader, Setter<? super T, ? super P> setter) {
 		if (boolean.class.equals(clazz)) {
-			return new BooleanCellSetter<T>(ObjectSetterFactory.toBooleanSetter((Setter<T, ? super Boolean>) setter), booleanReader(reader));
+			return new BooleanCellSetter<T>(ObjectSetterFactory.toBooleanSetter((Setter<? super T, ? super Boolean>) setter), booleanReader(reader));
 		} else if (byte.class.equals(clazz)) {
-			return new ByteCellSetter<T>(ObjectSetterFactory.toByteSetter((Setter<T, ? super Byte>) setter), byteReader(reader));
+			return new ByteCellSetter<T>(ObjectSetterFactory.toByteSetter((Setter<? super T, ? super Byte>) setter), byteReader(reader));
 		} else if (char.class.equals(clazz)) {
-			return new CharCellSetter<T>(ObjectSetterFactory.toCharacterSetter((Setter<T, ? super Character>) setter), charReader(reader));
+			return new CharCellSetter<T>(ObjectSetterFactory.toCharacterSetter((Setter<? super T, ? super Character>) setter), charReader(reader));
 		} else if (short.class.equals(clazz)) {
-			return new ShortCellSetter<T>(ObjectSetterFactory.toShortSetter((Setter<T, ? super Short>) setter), shortReader(reader));
+			return new ShortCellSetter<T>(ObjectSetterFactory.toShortSetter((Setter<? super T, ? super Short>) setter), shortReader(reader));
 		} else if (int.class.equals(clazz)) {
-			return new IntCellSetter<T>(ObjectSetterFactory.toIntSetter((Setter<T, ? super Integer>) setter), intReader(reader));
+			return new IntCellSetter<T>(ObjectSetterFactory.toIntSetter((Setter<? super T, ? super Integer>) setter), intReader(reader));
 		} else if (long.class.equals(clazz)) {
-			return new LongCellSetter<T>(ObjectSetterFactory.toLongSetter((Setter<T, ? super Long>) setter), longReader(reader));
+			return new LongCellSetter<T>(ObjectSetterFactory.toLongSetter((Setter<? super T, ? super Long>) setter), longReader(reader));
 		} else if (float.class.equals(clazz)) {
-			return new FloatCellSetter<T>(ObjectSetterFactory.toFloatSetter((Setter<T, ? super Float>) setter), floatReader(reader));
+			return new FloatCellSetter<T>(ObjectSetterFactory.toFloatSetter((Setter<? super T, ? super Float>) setter), floatReader(reader));
 		} else if (double.class.equals(clazz)) {
-			return new DoubleCellSetter<T>(ObjectSetterFactory.toDoubleSetter((Setter<T, ? super Double>) setter), doubleReader(reader));
+			return new DoubleCellSetter<T>(ObjectSetterFactory.toDoubleSetter((Setter<? super T, ? super Double>) setter), doubleReader(reader));
 		} 
 		throw new IllegalArgumentException("Invalid primitive type " + clazz);
 	}
@@ -152,23 +153,23 @@ public final class CellSetterFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T,P> DelayedCellSetterFactory<T, P> getPrimitiveDelayedCellSetter(Class<?> clazz, CellValueReader<? extends P> reader, Setter<T, ? super P> setter) {
+	private <T,P> DelayedCellSetterFactory<T, P> getPrimitiveDelayedCellSetter(Class<?> clazz, CellValueReader<? extends P> reader, Setter<? super T, ? super P> setter) {
 		if (boolean.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new BooleanDelayedCellSetterFactory<T>(ObjectSetterFactory.toBooleanSetter((Setter<T, ? super Boolean>) setter), booleanReader(reader));
+			return (DelayedCellSetterFactory<T, P>) new BooleanDelayedCellSetterFactory<T>(ObjectSetterFactory.toBooleanSetter((Setter<? super T, ? super Boolean>) setter), booleanReader(reader));
 		} else if (byte.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new ByteDelayedCellSetterFactory<T>(ObjectSetterFactory.toByteSetter((Setter<T, ? super Byte>) setter), byteReader(reader));
+			return (DelayedCellSetterFactory<T, P>) new ByteDelayedCellSetterFactory<T>(ObjectSetterFactory.toByteSetter((Setter<? super T, ? super Byte>) setter), byteReader(reader));
 		} else if (char.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new CharDelayedCellSetterFactory<T>(ObjectSetterFactory.toCharacterSetter((Setter<T, ? super Character>) setter), charReader(reader));
+			return (DelayedCellSetterFactory<T, P>) new CharDelayedCellSetterFactory<T>(ObjectSetterFactory.toCharacterSetter((Setter<? super T, ? super Character>) setter), charReader(reader));
 		} else if (short.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new ShortDelayedCellSetterFactory<T>(ObjectSetterFactory.toShortSetter((Setter<T, ? super Short>) setter), shortReader(reader));
+			return (DelayedCellSetterFactory<T, P>) new ShortDelayedCellSetterFactory<T>(ObjectSetterFactory.toShortSetter((Setter<? super T, ? super Short>) setter), shortReader(reader));
 		} else if (int.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new IntDelayedCellSetterFactory<T>(ObjectSetterFactory.toIntSetter((Setter<T, ? super Integer>) setter), intReader(reader));
+			return (DelayedCellSetterFactory<T, P>) new IntDelayedCellSetterFactory<T>(ObjectSetterFactory.toIntSetter((Setter<? super T, ? super Integer>) setter), intReader(reader));
 		} else if (long.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new LongDelayedCellSetterFactory<T>(ObjectSetterFactory.toLongSetter((Setter<T, ? super Long>) setter), longReader(reader));
+			return (DelayedCellSetterFactory<T, P>) new LongDelayedCellSetterFactory<T>(ObjectSetterFactory.toLongSetter((Setter<? super T, ? super Long>) setter), longReader(reader));
 		} else if (float.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new FloatDelayedCellSetterFactory<T>(ObjectSetterFactory.toFloatSetter((Setter<T, ? super Float>) setter), floatReader(reader));
+			return (DelayedCellSetterFactory<T, P>) new FloatDelayedCellSetterFactory<T>(ObjectSetterFactory.toFloatSetter((Setter<? super T, ? super Float>) setter), floatReader(reader));
 		} else if (double.class.equals(clazz)) {
-			return (DelayedCellSetterFactory<T, P>) new DoubleDelayedCellSetterFactory<T>(ObjectSetterFactory.toDoubleSetter((Setter<T, ? super Double>) setter), doubleReader(reader));
+			return (DelayedCellSetterFactory<T, P>) new DoubleDelayedCellSetterFactory<T>(ObjectSetterFactory.toDoubleSetter((Setter<? super T, ? super Double>) setter), doubleReader(reader));
 		} 
 		throw new IllegalArgumentException("Invalid primitive type " + clazz);
 	}
@@ -199,7 +200,7 @@ public final class CellSetterFactory {
 				throw new IllegalArgumentException("Unexpected primitive " + clazz);
 			}
 		} else {
-			getter = new DelayedGetter<T>(columnIndex);
+			getter = new DelayedGetter<T, P>(columnIndex);
 		}
 		return getter;
 	}
@@ -247,10 +248,10 @@ public final class CellSetterFactory {
 				final PropertyMeta<?, Object> property = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.exact(parameter.getName()));
 				reader = cellValueReaderFromFactory(property, index, columnDefinition, parsingContextFactoryBuilder);
 				if (reader != null) {
-					Instantiator instantiator =
+					Instantiator<P, P> instantiator =
 							classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
 					return
-							new InstantiatorOnReader(instantiator, reader);
+							new InstantiatorOnReader<P, P>(instantiator, reader);
 				}
 			}
 		}
@@ -280,7 +281,7 @@ public final class CellSetterFactory {
 		final Setter<? super T, ? super P> setter = getSetter(prop);
 
 		if (propertyClass.isPrimitive()) {
-			factory = getPrimitiveDelayedCellSetter(propertyClass, reader, (Setter<T, ? super P>) setter);
+			factory = getPrimitiveDelayedCellSetter(propertyClass, reader, setter);
 		} else {
 			factory = new DelayedCellSetterFactoryImpl<T, P>(reader, setter);
 		}

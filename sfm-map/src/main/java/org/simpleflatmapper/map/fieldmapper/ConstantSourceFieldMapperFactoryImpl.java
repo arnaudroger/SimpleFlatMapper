@@ -104,6 +104,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T, P> Getter<? super S, ? extends P> getterFromFactory(PropertyMapping<T, P, K, FieldMapperColumnDefinition<K>> propertyMapping, Type propertyType) {
 		Getter<? super S, ? extends P> getter = null;
 		if (propertyMapping.getColumnDefinition().hasCustomFactory()) {

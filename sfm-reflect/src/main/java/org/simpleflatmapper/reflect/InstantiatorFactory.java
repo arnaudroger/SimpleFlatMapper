@@ -33,7 +33,7 @@ public class InstantiatorFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<?> source, List<InstantiatorDefinition> constructors, Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
+	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<S> source, List<InstantiatorDefinition> constructors, Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
 		final InstantiatorDefinition instantiatorDefinition = getSmallerConstructor(constructors);
 
 		if (instantiatorDefinition == null) {
@@ -45,7 +45,7 @@ public class InstantiatorFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> getInstantiator(InstantiatorDefinition instantiatorDefinition, Class<?> source, Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
+	public <S, T> Instantiator<S, T> getInstantiator(InstantiatorDefinition instantiatorDefinition, Class<S> source, Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
 		if (asmFactory != null  && useAsmIfEnabled) {
 			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
 				ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
@@ -157,8 +157,8 @@ public class InstantiatorFactory {
 			throw new IllegalArgumentException("Definition does not have one param " + Arrays.asList(id.getParameters()));
 		}
 		Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections = new HashMap<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>>();
-		injections.put(id.getParameters()[0], new IdentityGetter());
-		return getInstantiator(id, id.getParameters()[0].getType(), injections, true);
+		injections.put(id.getParameters()[0], new IdentityGetter<S>());
+		return getInstantiator(id, (Class<S>) id.getParameters()[0].getType(), injections, true);
 	}
 
 

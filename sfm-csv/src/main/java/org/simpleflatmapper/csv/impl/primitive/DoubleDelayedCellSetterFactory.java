@@ -9,10 +9,10 @@ import org.simpleflatmapper.reflect.primitive.DoubleSetter;
 
 public class DoubleDelayedCellSetterFactory<T> implements DelayedCellSetterFactory<T, Double> {
 
-	private final DoubleSetter<T> setter;
+	private final DoubleSetter<? super T> setter;
 	private final DoubleCellValueReader reader;
 
-	public DoubleDelayedCellSetterFactory(DoubleSetter<T> setter, DoubleCellValueReader reader) {
+	public DoubleDelayedCellSetterFactory(DoubleSetter<? super T> setter, DoubleCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

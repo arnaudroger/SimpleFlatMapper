@@ -98,12 +98,12 @@ public class DataTypeTest {
         testNumber(BigInteger.class, null, null);
     }
 
-    private void testNumber(Class<?> numberClass, Class<?> primitiveGetter, Class<?> primitiveSetter) throws Exception {
+    private <N> void testNumber(Class<N> numberClass, Class<?> primitiveGetter, Class<?> primitiveSetter) throws Exception {
         testNumberGetter(numberClass, primitiveGetter);
         testNumberSetter(numberClass, primitiveSetter);
     }
 
-    private void testNumberGetter(Class<?> numberClass, Class<?> primitiveGetter) throws Exception {
+    private <N> void testNumberGetter(Class<N> numberClass, Class<?> primitiveGetter) throws Exception {
         Method[] methods = DataType.class.getMethods();
         for(int i = 0; i < methods.length; i++) {
             Method method = methods[i];
@@ -114,7 +114,7 @@ public class DataTypeTest {
                 if (DataTypeHelper.isNumber(dataType)) {
                     Class dataTypeClass = DataTypeHelper.asJavaClass(dataType);
 
-                    Getter getter = getGetter(numberClass, dataType);
+                    Getter<? super GettableByIndexData, N> getter = getGetter(numberClass, dataType);
 
                     assertNotNull("No getter for " + numberClass + ", " + dataType, getter);
 
@@ -123,7 +123,7 @@ public class DataTypeTest {
                     }
 
                     RecorderInvocationHandler recorder = new RecorderInvocationHandler();
-                    Object gettableByDataInstance = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { GettableByIndexData.class }, recorder);
+                    GettableByIndexData gettableByDataInstance = (GettableByIndexData) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { GettableByIndexData.class }, recorder);
                     getter.get(gettableByDataInstance);
                     recorder.invokedOnce(getterMethodFor(dataType), 1);
 
@@ -139,7 +139,7 @@ public class DataTypeTest {
         }
     }
 
-    private void testNumberSetter(Class<?> numberClass, Class<?> primitiveSetter) throws Exception {
+    private <N> void testNumberSetter(Class<N> numberClass, Class<?> primitiveSetter) throws Exception {
         Method[] methods = DataType.class.getMethods();
         for(int i = 0; i < methods.length; i++) {
             Method method = methods[i];
@@ -148,9 +148,9 @@ public class DataTypeTest {
                     && method.getParameterTypes().length == 0) {
                 DataType dataType = (DataType) method.invoke(null);
                 if (DataTypeHelper.isNumber(dataType)) {
-                    Class dataTypeClass = DataTypeHelper.asJavaClass(dataType);
+                    Class<?> dataTypeClass = DataTypeHelper.asJavaClass(dataType);
 
-                    Setter setter = getSetter(numberClass, dataType);
+                    Setter<? super SettableByIndexData, N> setter = getSetter(numberClass, dataType);
 
                     assertNotNull("No setter for " + numberClass + ", " + dataType, setter);
 
@@ -159,8 +159,8 @@ public class DataTypeTest {
                     }
 
                     RecorderInvocationHandler recorder = new RecorderInvocationHandler();
-                    Object settableByDataInstance = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { SettableByIndexData.class }, recorder);
-                    Object value = getValue(numberClass);
+                    SettableByIndexData settableByDataInstance = (SettableByIndexData) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { SettableByIndexData.class }, recorder);
+                    N value = getValue(numberClass);
                     setter.set(settableByDataInstance, value);
                     recorder.invokedOnce(setterMethodFor(dataType), 1, getValue(dataTypeClass));
 
@@ -173,30 +173,31 @@ public class DataTypeTest {
         }
     }
 
-    public static Object getValue(Class<?> numberClass) {
+    @SuppressWarnings("unchecked")
+    public static <N> N getValue(Class<N> numberClass) {
         if (numberClass.equals(byte.class) || numberClass.equals(Byte.class)) {
-            return (byte)1;
+            return (N)Byte.valueOf((byte)1);
         }
         if (numberClass.equals(short.class) || numberClass.equals(Short.class)) {
-            return (short)1;
+            return (N)Short.valueOf((short)1);
         }
         if (numberClass.equals(int.class) || numberClass.equals(Integer.class)) {
-            return (int)1;
+            return (N)Integer.valueOf(1);
         }
         if (numberClass.equals(long.class) || numberClass.equals(Long.class)) {
-            return (long)1;
+            return (N)Long.valueOf(1);
         }
         if (numberClass.equals(float.class) || numberClass.equals(Float.class)) {
-            return (float)1;
+            return (N)Float.valueOf(1);
         }
         if (numberClass.equals(double.class) || numberClass.equals(Double.class)) {
-            return (double)1;
+            return (N)Double.valueOf(1);
         }
         if (numberClass.equals(BigInteger.class)) {
-            return BigInteger.ONE;
+            return (N)BigInteger.ONE;
         }
         if (numberClass.equals(BigDecimal.class)) {
-            return BigDecimal.ONE;
+            return (N)BigDecimal.ONE;
         }
         throw new IllegalArgumentException("not number for "+ numberClass);
     }
@@ -224,7 +225,7 @@ public class DataTypeTest {
         return getterMethodFor(dataType).replace("get", "set");
     }
 
-    public static Getter getGetter(Class<?> target, DataType dataType) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+    public static <N> Getter<GettableByIndexData, N> getGetter(Class<N> target, DataType dataType) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
         RowGetterFactory rowGetterFactory = new RowGetterFactory(null);
 
         DatastaxColumnKey columnKey = new DatastaxColumnKey("col", 1, dataType);
@@ -234,7 +235,7 @@ public class DataTypeTest {
         return rowGetterFactory.newGetter(target, columnKey, columnDefinition);
     }
 
-    public static Setter getSetter(Class<?> target, DataType dataType) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+    public static <N> Setter<SettableByIndexData, N> getSetter(Class<N> target, DataType dataType) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
 
         MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> mapperConfig = MapperConfig.<DatastaxColumnKey>fieldMapperConfig();
         ReflectionService reflectionService = ReflectionService.newInstance();
@@ -245,6 +246,7 @@ public class DataTypeTest {
 
         return factory.getSetter(newPM(target, dataType, columnKey));
     }
+    @SuppressWarnings("unchecked")
     public static <T, P> PropertyMapping<?, ?, DatastaxColumnKey, ? extends ColumnDefinition<DatastaxColumnKey, ?>> newPM(Type clazz, DataType datatype, DatastaxColumnKey columnKey) {
         PropertyMeta<T, P> propertyMeta = mock(PropertyMeta.class);
         when(propertyMeta.getPropertyType()).thenReturn(clazz);

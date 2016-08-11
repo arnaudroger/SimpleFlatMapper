@@ -65,7 +65,8 @@ public class AsmFactoryTest {
 	@Test
 	public void testCreateInstantiatorFinalDbObjectNameAndType() throws Exception {
 		HashMap<Parameter, Getter<? super Object, ?>> injections = new HashMap<Parameter, Getter<? super Object, ?>>();
-		injections.put(new Parameter(4, "typeOrdinal", Type.class), new OrdinalEnumGetter<Object, Type>(new ConstantIntGetter<Object>(1), Type.class));
+		ConstantIntGetter<Object> getter = new ConstantIntGetter<Object>(1);
+		injections.put(new Parameter(4, "typeOrdinal", Type.class), new OrdinalEnumGetter<Object, Type>(getter, Type.class));
 		injections.put(new Parameter(1, "name", String.class), new ConstantGetter<Object, String>("fdo"));
 
 		List<InstantiatorDefinition> instantiatorDefinitions = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class);

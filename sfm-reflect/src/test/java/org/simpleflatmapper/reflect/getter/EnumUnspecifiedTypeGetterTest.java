@@ -14,7 +14,7 @@ public class EnumUnspecifiedTypeGetterTest {
 
     @Test
     public void testName() throws Exception {
-        Getter getter = mock(Getter.class);
+        @SuppressWarnings("unchecked") Getter<Object, Object> getter = mock(Getter.class);
         EnumUnspecifiedTypeGetter<Object, ENUM> eGetter =
                 new EnumUnspecifiedTypeGetter<Object, ENUM>(getter, ENUM.class);
 
@@ -33,7 +33,7 @@ public class EnumUnspecifiedTypeGetterTest {
     @Test
     public void testOrdinal() throws Exception {
 
-        Getter getter = mock(Getter.class);
+        @SuppressWarnings("unchecked") Getter<Object, Object> getter = mock(Getter.class);
         EnumUnspecifiedTypeGetter<Object, ENUM> eGetter =
                 new EnumUnspecifiedTypeGetter<Object, ENUM>(getter, ENUM.class);
 

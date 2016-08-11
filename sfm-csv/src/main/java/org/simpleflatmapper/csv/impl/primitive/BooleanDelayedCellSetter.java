@@ -7,12 +7,12 @@ import org.simpleflatmapper.reflect.primitive.BooleanSetter;
 
 public class BooleanDelayedCellSetter<T> implements DelayedCellSetter<T, Boolean> {
 
-	private final BooleanSetter<T> setter;
+	private final BooleanSetter<? super T> setter;
 	private final BooleanCellValueReader reader;
 	private boolean value;
     private boolean isNull;
 
-	public BooleanDelayedCellSetter(BooleanSetter<T> setter, BooleanCellValueReader reader) {
+	public BooleanDelayedCellSetter(BooleanSetter<? super T> setter, BooleanCellValueReader reader) {
 		this.setter = setter;
 		this.reader = reader;
 	}

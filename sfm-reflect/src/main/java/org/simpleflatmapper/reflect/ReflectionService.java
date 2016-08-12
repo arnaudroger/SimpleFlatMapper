@@ -2,7 +2,6 @@ package org.simpleflatmapper.reflect;
 
 import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
-import org.simpleflatmapper.reflect.asm.AsmHelper;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
 import org.simpleflatmapper.reflect.meta.AliasProvider;
@@ -37,19 +36,11 @@ public class ReflectionService {
 	private final AsmFactory asmFactory;
 	private final AliasProvider aliasProvider;
 
-	private final boolean asmPresent;
-	private final boolean asmActivated;
 
 	private final ConcurrentMap<Type, ClassMeta<?>> metaCache = new ConcurrentHashMap<Type, ClassMeta<?>>();
 
-	public ReflectionService(final boolean asmPresent, final boolean asmActivated, final AsmFactory asmFactory) {
-		this.asmPresent = asmPresent;
-		this.asmActivated = asmActivated && asmPresent;
-		if (asmActivated) {
-			this.asmFactory = asmFactory;
-		} else {
-			this.asmFactory = null;
-		}
+	public ReflectionService(final AsmFactory asmFactory) {
+		this.asmFactory = asmFactory;
 		this.objectSetterFactory = new ObjectSetterFactory(asmFactory);
         this.objectGetterFactory = new ObjectGetterFactory(asmFactory);
 		this.instantiatorFactory = new InstantiatorFactory(asmFactory);
@@ -64,12 +55,9 @@ public class ReflectionService {
 		return instantiatorFactory;
 	}
 
-	public boolean isAsmPresent() {
-		return asmPresent;
-	}
 
 	public boolean isAsmActivated() {
-		return asmActivated;
+		return asmFactory != null;
 	}
 	public AsmFactory getAsmFactory() {
 		return asmFactory;
@@ -156,8 +144,7 @@ public class ReflectionService {
 	public List<InstantiatorDefinition> extractInstantiator(Type target, Member extraInstantiator) throws IOException {
 		List<InstantiatorDefinition> list;
 
-        if (isAsmPresent()
-				&& !ReflectionInstantiatorDefinitionFactory.areParameterNamePresent(target)) {
+        if (!ReflectionInstantiatorDefinitionFactory.areParameterNamePresent(target)) {
             try {
                 list = AsmInstantiatorDefinitionFactory.extractDefinitions(target);
             } catch(IOException e) {
@@ -190,34 +177,26 @@ public class ReflectionService {
 	}
 
 	public static ReflectionService newInstance() {
-		return newInstance(false, true);
+		return newInstance(true);
 	}
 
 	private static final AsmFactory _asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader());
 
-	public static ReflectionService newInstance(boolean disableAsm, boolean useAsmGeneration) {
-		boolean asmPresent = AsmHelper.isAsmPresent() && !disableAsm;
-		boolean hasClassLoaderIncapacity = cannotSeeSetterFromContextClassLoader();
-
-		if (hasClassLoaderIncapacity) {
-			useAsmGeneration = false;
-		}
-
-		return new ReflectionService(asmPresent, useAsmGeneration, asmPresent && useAsmGeneration ? _asmFactory  : null);
+	public static ReflectionService newInstance(boolean useAsmGeneration) {
+		return new ReflectionService(useAsmGeneration && canSeeSetterFromContextClassLoader() ? _asmFactory  : null);
 	}
 
 	public static ReflectionService disableAsm() {
-		return newInstance(true, false);
+		return newInstance(false);
 	}
 
-	private static boolean cannotSeeSetterFromContextClassLoader() {
+	private static boolean canSeeSetterFromContextClassLoader() {
 		try {
 			Class.forName(Setter.class.getName(), false, Thread.currentThread().getContextClassLoader());
-		} catch(Exception e) {
 			return true;
+		} catch(Exception e) {
+			return false;
 		}
-
-		return false;
 	}
 
     public ObjectGetterFactory getObjectGetterFactory() {

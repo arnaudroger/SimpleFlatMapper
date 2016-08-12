@@ -11,10 +11,12 @@ import org.simpleflatmapper.map.SampleFieldKey;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.error.RethrowRowHandlerErrorHandler;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.Predicate;
 
+import java.lang.annotation.Retention;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -54,7 +56,6 @@ public class AbstractMapperFactoryTest {
 
         assertTrue(mapperConfig.propertyNameMatcherFactory() instanceof  DefaultPropertyNameMatcherFactory);
 
-        assertTrue(mapperFactory.getReflectionService().isAsmPresent());
         assertTrue(mapperFactory.getReflectionService().isAsmActivated());
 
     }
@@ -98,6 +99,13 @@ public class AbstractMapperFactoryTest {
         assertEquals(fieldMapperErrorHandler, mapperConfig.fieldMapperErrorHandler());
         assertEquals(mapperBuilderErrorHandler, mapperConfig.mapperBuilderErrorHandler());
         assertEquals(rowHandlerErrorHandler, mapperConfig.rowHandlerErrorHandler());
+    }
+
+    @Test
+    public void testAsmSettings() {
+        ReflectionService reflectionService = new MapperFactory().useAsm(false).getReflectionService();
+
+        assertFalse(reflectionService.isAsmActivated());
     }
 
 

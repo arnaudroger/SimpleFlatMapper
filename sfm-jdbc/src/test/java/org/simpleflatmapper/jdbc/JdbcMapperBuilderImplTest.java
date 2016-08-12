@@ -42,7 +42,7 @@ public class JdbcMapperBuilderImplTest {
 	@Test
 	public void testAsmFailureOnmapper() {
 
-		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(true, true, newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
 
 		final JdbcMapper<DbObject> mapper = builder.mapper();
 		assertTrue(mapper instanceof JdbcMapperBuilder.StaticJdbcSetRowMapper);
@@ -59,7 +59,7 @@ public class JdbcMapperBuilderImplTest {
 
 	@Test
     public void testAsmFailureOnJdbcMapperFailOnAsm() {
-		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().reflectionService(new ReflectionService(true, true, newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().reflectionService(new ReflectionService(newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
 
         try {
             builder.mapper();
@@ -69,10 +69,9 @@ public class JdbcMapperBuilderImplTest {
         }
     }
 	
-	public boolean asmPresent = true;
 	@Test
 	public void testAsmFailureOnInstantiator() {
-		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(true, true, null) {
+		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(null) {
 			@Override
 			public InstantiatorFactory getInstantiatorFactory() {
 				return new InstantiatorFactory(null) {
@@ -88,9 +87,6 @@ public class JdbcMapperBuilderImplTest {
 				};
 			}
 			
-			public boolean isAsmPresent() {
-				return asmPresent;
-			}
 		}).newBuilder(DbObject.class);
 		
 		try {
@@ -98,14 +94,7 @@ public class JdbcMapperBuilderImplTest {
 			fail("Expected exception");
 		} catch(UnsupportedOperationException e) {
 		}
-
-		asmPresent = false;
-		try {
-			builder.mapper();
-			fail("Expected exception");
-		} catch(UnsupportedOperationException e) {
-		}
-}
+	}
 
 
 }

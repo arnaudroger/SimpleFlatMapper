@@ -41,7 +41,7 @@ public class CsvMapperOneConstructorTypeTest {
 	
 	@Test
 	public void testCanCreateTypeFromUnambiguousConstructor() throws Exception {
-		CsvMapperBuilder<MyObject> builder = new CsvMapperBuilder<MyObject>(MyObject.class, ReflectionService.newInstance(false, false));
+		CsvMapperBuilder<MyObject> builder = new CsvMapperBuilder<MyObject>(MyObject.class, ReflectionService.newInstance(false));
 		testMatchConstructor(builder);
 	}
 	

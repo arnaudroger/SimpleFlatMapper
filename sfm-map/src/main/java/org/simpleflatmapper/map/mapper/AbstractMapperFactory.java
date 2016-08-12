@@ -320,7 +320,7 @@ public abstract class AbstractMapperFactory<
         if (reflectionService != null) {
             return reflectionService;
         } else {
-            return ReflectionService.newInstance(disableAsm, useAsm);
+            return ReflectionService.newInstance(useAsm);
         }
     }
 

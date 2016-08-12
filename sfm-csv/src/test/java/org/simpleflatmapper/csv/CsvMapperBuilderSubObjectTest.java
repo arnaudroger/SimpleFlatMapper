@@ -19,7 +19,7 @@ public class CsvMapperBuilderSubObjectTest {
 
     @Test
     public void testMapDbObjectWithCustomReader() throws Exception {
-        CsvMapperBuilder<Db1DeepObject> builder = new CsvMapperBuilder<Db1DeepObject>(Db1DeepObject.class,  ReflectionService.newInstance(true, false));
+        CsvMapperBuilder<Db1DeepObject> builder = new CsvMapperBuilder<Db1DeepObject>(Db1DeepObject.class,  ReflectionService.newInstance(false));
         CsvColumnDefinition columnDefinition = CsvColumnDefinition.customReaderDefinition(new CellValueReader<String>() {
             @Override
             public String read(char[] chars, int offset, int length, ParsingContext parsingContext) {
@@ -38,7 +38,7 @@ public class CsvMapperBuilderSubObjectTest {
 	@Test
 	public void testMapDbObject() throws Exception {
 		
-		CsvMapperBuilder<Db1DeepObject> builder = new CsvMapperBuilder<Db1DeepObject>(Db1DeepObject.class,  ReflectionService.newInstance(true, false));
+		CsvMapperBuilder<Db1DeepObject> builder = new CsvMapperBuilder<Db1DeepObject>(Db1DeepObject.class,  ReflectionService.newInstance(false));
 		addDbObjectFields(builder);
 		CsvMapper<Db1DeepObject> mapper = builder.mapper();
 		

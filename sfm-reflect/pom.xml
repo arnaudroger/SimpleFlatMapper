@@ -120,6 +120,27 @@
 					</targetTests>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-asm</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.simpleflatmapper</groupId>
+									<artifactId>ow2asm</artifactId>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>target/classes</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
@@ -235,32 +256,7 @@
 					<version>6.0_ALPHA</version>
 				</dependency>
 			</dependencies>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>copy-asm</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>org.simpleflatmapper</groupId>
-											<artifactId>ow2asm</artifactId>
-											<version>6.0_ALPHA</version>
-										</artifactItem>
-									</artifactItems>
-									<outputDirectory>target/classes</outputDirectory>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
+
 		</profile>
 
 	</profiles>

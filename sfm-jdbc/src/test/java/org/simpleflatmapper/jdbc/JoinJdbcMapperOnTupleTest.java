@@ -22,7 +22,6 @@ public class JoinJdbcMapperOnTupleTest {
 
     private JdbcMapperFactory asmJdbcMapperFactory = JdbcMapperFactoryHelper.asm().addKeys("0_id", "1_id");
     private JdbcMapperFactory noAsmJdbcMapperFactory = JdbcMapperFactoryHelper.noAsm().addKeys("0_id", "1_id");
-    private JdbcMapperFactory disabledAsmJdbcMapperFactory = JdbcMapperFactoryHelper.disableAsm().addKeys("0_id", "1_id");
 
     @Test
     public void testTupleJoin() throws Exception {
@@ -36,11 +35,6 @@ public class JoinJdbcMapperOnTupleTest {
         }));
     }
 
-    @Test
-    public void testTupleJoinDisabledAsm() throws Exception {
-        validateBuilder(disabledAsmJdbcMapperFactory.newBuilder(new TypeReference<Tuple2<Person, List<Person>>>() {
-        }));
-    }
 
     @Test
     public void testTupleJoinInverted() throws Exception {

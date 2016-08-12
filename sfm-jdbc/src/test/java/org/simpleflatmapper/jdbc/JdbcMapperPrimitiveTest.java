@@ -33,7 +33,7 @@ public class JdbcMapperPrimitiveTest {
 	
 	@Test
 	public void testIndexedPrimitivesWithSetterAccessNoAsm() throws Exception {
-		JdbcMapperBuilder<DbPrimitiveObjectWithSetter> builder = JdbcMapperFactoryHelper.disableAsm().newBuilder(DbPrimitiveObjectWithSetter.class);
+		JdbcMapperBuilder<DbPrimitiveObjectWithSetter> builder = JdbcMapperFactoryHelper.noAsm().newBuilder(DbPrimitiveObjectWithSetter.class);
 		testIndexedPrimitives(builder);
 	}
 	

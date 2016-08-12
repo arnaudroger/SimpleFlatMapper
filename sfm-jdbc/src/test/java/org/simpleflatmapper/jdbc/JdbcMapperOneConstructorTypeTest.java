@@ -40,7 +40,7 @@ public class JdbcMapperOneConstructorTypeTest {
 	
 	@Test
 	public void testCanCreateTypeFromUnambiguousConstructorNoAsm() throws Exception {
-		JdbcMapperBuilder<MyObject> builder = JdbcMapperFactoryHelper.disableAsm().newBuilder(MyObject.class);
+		JdbcMapperBuilder<MyObject> builder = JdbcMapperFactoryHelper.noAsm().newBuilder(MyObject.class);
 		testMatchConstructor(builder);
 	}
 

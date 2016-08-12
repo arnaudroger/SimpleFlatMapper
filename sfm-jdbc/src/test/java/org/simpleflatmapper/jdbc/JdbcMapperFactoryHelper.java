@@ -10,10 +10,6 @@ public class JdbcMapperFactoryHelper {
         return asm().useAsm(false);
     }
 
-    public static JdbcMapperFactory disableAsm() {
-        return asm().disableAsm(true);
-    }
-
     public static JdbcMapperFactory noFailOnAsm() {
         return JdbcMapperFactory.newInstance();
     }

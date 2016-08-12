@@ -77,7 +77,7 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
 
                 PreparedStatement preparedStatement = session.prepare(bs);
 
-                DatastaxBinder<List<DbObject>> datastaxBinder = DatastaxMapperFactory.newInstance().disableAsm(true).mapFrom(new TypeReference<List<DbObject>>() {
+                DatastaxBinder<List<DbObject>> datastaxBinder = DatastaxMapperFactory.newInstance().useAsm(false).mapFrom(new TypeReference<List<DbObject>>() {
                 });
 
                 Statement statement = datastaxBinder.mapTo(dbObjects, preparedStatement);

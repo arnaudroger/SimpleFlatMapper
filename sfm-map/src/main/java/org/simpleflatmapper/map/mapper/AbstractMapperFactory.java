@@ -39,7 +39,6 @@ public abstract class AbstractMapperFactory<
 	private final CD identity;
 
 	private boolean useAsm = true;
-    private boolean disableAsm = false;
     private boolean failOnAsm = false;
     private int asmMapperNbFieldsLimit = MapperConfig.NO_ASM_MAPPER_THRESHOLD;
 
@@ -115,16 +114,6 @@ public abstract class AbstractMapperFactory<
 		this.useAsm = useAsm;
 		return (MF) this;
 	}
-
-	/**
-	 * @param disableAsm true if you want to disable asm for generation and to resolve constructor parameter names.
-     * @return the current factory
-	 */
-	public final MF disableAsm(final boolean disableAsm) {
-		this.disableAsm = disableAsm;
-		return (MF) this;
-	}
-
 
     /**
      * Override the default implementation of the ReflectionService.

@@ -106,6 +106,18 @@ public class AbstractMapperFactoryTest {
         ReflectionService reflectionService = new MapperFactory().useAsm(false).getReflectionService();
 
         assertFalse(reflectionService.isAsmActivated());
+
+
+        MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig = new MapperFactory()
+                .asmMapperNbFieldsLimit(33)
+                .failOnAsm(true)
+                .maxMethodSize(13)
+                .mapperConfig();
+
+        assertEquals(33, mapperConfig.asmMapperNbFieldsLimit());
+        assertEquals(13, mapperConfig.maxMethodSize());
+        assertEquals(true, mapperConfig.failOnAsm());
+
     }
 
 

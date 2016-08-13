@@ -11,14 +11,8 @@ public class CsvColumnDefinitionProviderImpl extends AbstractColumnDefinitionPro
     public CsvColumnDefinitionProviderImpl(){
     }
 
-    public CsvColumnDefinitionProviderImpl(List<PredicatedColunnDefinition<CsvColumnDefinition, CsvColumnKey>> definitions,
-                                           List<PredicatedColunnPropertyFactory<CsvColumnDefinition, CsvColumnKey>> properties) {
-        super(definitions, properties);
-    }
-
-    @Override
-    protected CsvColumnDefinition compose(CsvColumnDefinition definition, CsvColumnDefinition second) {
-        return CsvColumnDefinition.compose(definition, second);
+    public CsvColumnDefinitionProviderImpl(List<PredicatedColunnPropertyFactory<CsvColumnDefinition, CsvColumnKey>> properties) {
+        super(properties);
     }
 
     @Override

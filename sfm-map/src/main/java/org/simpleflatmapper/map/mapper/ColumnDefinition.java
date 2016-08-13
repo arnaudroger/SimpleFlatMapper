@@ -108,7 +108,7 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
     }
 
     public CD addKey() {
-        return add(new KeyProperty());
+        return add(KeyProperty.DEFAULT);
     }
 
     public CD addKey(Predicate<PropertyMeta<?, ?>> appliesTo) {

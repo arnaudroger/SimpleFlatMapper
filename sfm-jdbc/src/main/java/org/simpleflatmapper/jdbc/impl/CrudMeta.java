@@ -115,7 +115,7 @@ public class CrudMeta {
         for(ColumnMeta columnMeta : columnMetas) {
             mapperFactory.addColumnProperty(columnMeta.getColumn(), SqlTypeColumnProperty.of(columnMeta.getSqlType()));
             if (columnMeta.isGenerated()) {
-                mapperFactory.addColumnProperty(columnMeta.getColumn(), new KeyProperty());
+                mapperFactory.addColumnProperty(columnMeta.getColumn(), KeyProperty.DEFAULT);
             }
         }
     }

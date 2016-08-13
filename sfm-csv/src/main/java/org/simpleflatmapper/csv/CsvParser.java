@@ -5,6 +5,7 @@ import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
 import org.simpleflatmapper.csv.parser.*;
 import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
+import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.tuple.Tuple3;
@@ -14,6 +15,7 @@ import org.simpleflatmapper.tuple.Tuple6;
 import org.simpleflatmapper.tuple.Tuple7;
 import org.simpleflatmapper.tuple.Tuple8;
 import org.simpleflatmapper.tuple.Tuples;
+import org.simpleflatmapper.util.ConstantUnaryFactory;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.CloseableIterator;
@@ -585,20 +587,23 @@ public final class CsvParser {
 		}
 
         public MapWithDSL<T> addKeys(String... keys) {
-            List<AbstractColumnDefinitionProvider.PredicatedColunnDefinition<CsvColumnDefinition, CsvColumnKey>> definitions = columnDefinitionProvider.getDefinitions();
+			List<AbstractColumnDefinitionProvider.PredicatedColunnPropertyFactory<CsvColumnDefinition, CsvColumnKey>> properties = columnDefinitionProvider.getProperties();
 
-            for(String key : keys) {
-                definitions.add(new AbstractColumnDefinitionProvider.PredicatedColunnDefinition<CsvColumnDefinition, CsvColumnKey>(new CaseInsensitiveFieldKeyNamePredicate(key),
-                        CsvColumnDefinition.key()));
+			for(String key : keys) {
+                properties.add(new AbstractColumnDefinitionProvider.PredicatedColunnPropertyFactory<CsvColumnDefinition, CsvColumnKey>(
+                		new CaseInsensitiveFieldKeyNamePredicate(key),
+                        new ConstantUnaryFactory<CsvColumnKey, Object>(KeyProperty.DEFAULT)));
             }
 
-            return new MapToDSL<T>(getDsl(), classMeta, mapToClass, new CsvColumnDefinitionProviderImpl(definitions, columnDefinitionProvider.getProperties()));
+            return new MapToDSL<T>(getDsl(), classMeta, mapToClass, new CsvColumnDefinitionProviderImpl(properties));
         }
 
         private CsvColumnDefinitionProviderImpl newColumnDefinitionProvider(Predicate<? super CsvColumnKey> predicate, CsvColumnDefinition columnDefinition) {
-			List<AbstractColumnDefinitionProvider.PredicatedColunnDefinition<CsvColumnDefinition, CsvColumnKey>> definitions = columnDefinitionProvider.getDefinitions();
-			definitions.add(new AbstractColumnDefinitionProvider.PredicatedColunnDefinition<CsvColumnDefinition, CsvColumnKey>(predicate, columnDefinition));
-			return new CsvColumnDefinitionProviderImpl(definitions, columnDefinitionProvider.getProperties());
+			List<AbstractColumnDefinitionProvider.PredicatedColunnPropertyFactory<CsvColumnDefinition, CsvColumnKey>> properties = columnDefinitionProvider.getProperties();
+			for(Object property : columnDefinition.properties()) {
+				properties.add(new AbstractColumnDefinitionProvider.PredicatedColunnPropertyFactory<CsvColumnDefinition, CsvColumnKey>(predicate, new ConstantUnaryFactory<CsvColumnKey, Object>(property)));
+			}
+			return new CsvColumnDefinitionProviderImpl(properties);
 		}
 
 		public StaticMapToDSL<T> overrideWithDefaultHeaders() {

@@ -176,7 +176,7 @@ public class AbstractMapperFactoryTest {
 
         Object prop1 = new Object();
         Object prop2 = new Object();
-        Object prop3 = new Object();
+        final Object prop3 = new Object();
 
         mapperFactory.addColumnProperty("mykey", prop1);
 

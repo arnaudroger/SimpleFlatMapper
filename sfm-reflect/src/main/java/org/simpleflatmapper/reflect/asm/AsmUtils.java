@@ -9,6 +9,7 @@ import org.simpleflatmapper.util.TypeHelper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -227,8 +228,15 @@ public class AsmUtils {
 			case 'S': return short.class;
 			}
 		}
-		
-		if (sig.startsWith("L")) {
+
+		if (sig.startsWith("+")) {
+			sig = sig.substring(1);
+		}
+		if (sig.startsWith("[")) {
+			Type componentType = toGenericType(sig.substring(1), genericTypeNames, target);
+			Class<?> componentClass = TypeHelper.toClass(componentType);
+			return Array.newInstance(componentClass, 0).getClass();
+		} else if (sig.startsWith("L")) {
 			sig = sig.substring(1);
 			if (sig.endsWith(";")) {
 				sig = sig.substring(0, sig.length() - 1);

@@ -119,6 +119,22 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DirectClassMeta<?> that = (DirectClassMeta<?>) o;
+
+        return target.equals(that.target);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return target.hashCode();
+    }
+
+    @Override
     public String toString() {
         return "DirectClassMeta{" +
                 "target=" + target +

@@ -16,10 +16,12 @@ import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.map.property.RenameProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyNameMatcher;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.annotation.Retention;
@@ -234,13 +236,44 @@ public class AbstractMapperFactoryTest {
     }
 
     @Test
+    public void testCopyConstructor() {
+        MapperFactory mapperFactory = new MapperFactory();
+        MapperFactory mapperFactory2 = new MapperFactory(mapperFactory);
+
+        assertEquals(mapperFactory.columnDefinitions(), mapperFactory2.columnDefinitions());
+        assertEquals(mapperFactory.getReflectionService().isAsmActivated(), mapperFactory2.getReflectionService().isAsmActivated());
+        assertEquals(mapperFactory.mapperConfig().failOnAsm(), mapperFactory2.mapperConfig().failOnAsm());
+        assertEquals(mapperFactory.mapperConfig().asmMapperNbFieldsLimit(), mapperFactory2.mapperConfig().asmMapperNbFieldsLimit());
+        assertEquals(mapperFactory.mapperConfig().propertyNameMatcherFactory(), mapperFactory2.mapperConfig().propertyNameMatcherFactory());
+        assertEquals(mapperFactory.mapperConfig().maxMethodSize(), mapperFactory2.mapperConfig().maxMethodSize());
+
+
+    }
+    @Test
     public void testMeta() {
+        MapperFactory mapperFactory = new MapperFactory();
+
+        ClassMeta<String> stringClassMeta = mapperFactory.getClassMeta(String.class);
+
+        assertEquals(stringClassMeta, mapperFactory.getClassMeta((Type)String.class));
+        assertEquals(stringClassMeta, mapperFactory.getClassMeta(new TypeReference<String>() {
+        }));
+
+
+        assertNotNull(mapperFactory.getClassMetaWithExtraInstantiator(String.class, null));
+        assertNotNull(mapperFactory.getClassMetaWithExtraInstantiator((Type)String.class, null));
+        assertNotNull( mapperFactory.getClassMetaWithExtraInstantiator(new TypeReference<String>() {
+        }, null));
 
     }
 
     static class MapperFactory extends AbstractMapperFactory<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>, MapperFactory> {
         public MapperFactory() {
             super(new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>(), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+        }
+
+        public MapperFactory(AbstractMapperFactory<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>, ?> config) {
+            super(config);
         }
     }
 }

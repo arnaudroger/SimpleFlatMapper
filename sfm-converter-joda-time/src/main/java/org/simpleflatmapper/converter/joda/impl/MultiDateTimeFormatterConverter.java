@@ -11,7 +11,8 @@ public class MultiDateTimeFormatterConverter<I, O> implements Converter<I, O> {
 
     @Override
     public O convert(I in) throws Exception {
-        for(Converter<I, O> converter : converters) {
+        for(int i = converters.length - 1; i >= 0; i--) {
+            Converter<I, O> converter = converters[i];
             try {
                 return converter.convert(in);
             } catch (IllegalArgumentException e) {

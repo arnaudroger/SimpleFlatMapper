@@ -33,7 +33,7 @@ public class DateMultiFormatCellValueReader implements CellValueReader<Date>, Pa
 
 		String str = StringCellValueReader.readString(chars, offset, length);
 		DateFormat[] dfs = (DateFormat[]) parsingContext.getContext(index);
-		for(int i = 0; i < dfs.length; i++) {
+		for(int i = dfs.length - 1; i >= 0; i--) {
 			try {
 				return dfs[i].parse(str);
 			} catch (ParseException e) {

@@ -79,7 +79,7 @@ public class AbstractMapperBuilderTest {
                 new SampleMapperBuilder<DbObject>(classMeta)
                         .addKey("id")
                         .addMapping("email",
-                                FieldMapperColumnDefinition.identity().add(
+                                (Object)FieldMapperColumnDefinition.<SampleFieldKey>identity().add(
                                 new GetterProperty(new Getter<Object, String>() {
                             @Override
                             public String get(Object target) throws Exception {

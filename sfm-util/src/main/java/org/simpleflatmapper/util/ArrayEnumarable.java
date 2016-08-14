@@ -1,7 +1,5 @@
 package org.simpleflatmapper.util;
 
-import org.simpleflatmapper.util.Enumarable;
-
 public class ArrayEnumarable<T> implements Enumarable<T> {
 
     private final T[] objects;
@@ -13,8 +11,8 @@ public class ArrayEnumarable<T> implements Enumarable<T> {
 
     @Override
     public boolean next() {
+        currentIndex ++;
         if (currentIndex < objects.length) {
-            currentIndex ++;
             return true;
         }
         return false;

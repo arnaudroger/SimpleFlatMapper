@@ -162,6 +162,12 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
 
     @SuppressWarnings("unchecked")
     public final B addMapping(K key, Object... properties) {
+        if (properties.length == 1) { // catch Object... on column definition
+            if (properties[0] instanceof ColumnDefinition) {
+                fieldMapperMapperBuilder.addMapping(key, (FieldMapperColumnDefinition<K>) properties[0]);
+                return (B) this;
+            }
+        }
         fieldMapperMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<K>of(properties));
         return (B) this;
     }

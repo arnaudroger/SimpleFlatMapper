@@ -1,11 +1,15 @@
 package org.simpleflatmapper.map.mapper;
 
 import org.junit.Test;
+import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.SampleFieldKey;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
@@ -44,12 +48,68 @@ public class AbstractMapperBuilderTest {
         });
     }
 
+
+    @Test
+    public void testCustomization() throws Exception {
+        ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+
+        Mapper<Object[], DbObject> mapper =
+                new SampleMapperBuilder<DbObject>(classMeta)
+                    .addKey("id")
+                    .addMapper(new FieldMapper<Object[], DbObject>() {
+                        @Override
+                        public void mapTo(Object[] source, DbObject target, MappingContext<? super Object[]> context) throws Exception {
+                            target.setName("fieldMapper");
+                        }
+                    })
+                    .addMapping("email", new GetterProperty(new Getter<Object, String>() {
+                        @Override
+                        public String get(Object target) throws Exception {
+                            return "getterEmail";
+                        }
+                    })).mapper();
+
+        DbObject dbObject = mapper.map(new Object[] { 1l });
+        assertEquals(1, dbObject.getId());
+        assertEquals("fieldMapper", dbObject.getName());
+        assertEquals("getterEmail", dbObject.getEmail());
+
+
+        mapper =
+                new SampleMapperBuilder<DbObject>(classMeta)
+                        .addKey("id")
+                        .addMapping("email",
+                                FieldMapperColumnDefinition.identity().add(
+                                new GetterProperty(new Getter<Object, String>() {
+                            @Override
+                            public String get(Object target) throws Exception {
+                                return "getterEmail";
+                            }
+                        })))
+                         .addMapping("name",
+                            FieldMapperColumnDefinition.<SampleFieldKey>identity().add(
+                                    new GetterProperty(new Getter<Object, String>() {
+                                        @Override
+                                        public String get(Object target) throws Exception {
+                                            return "getterName";
+                                        }
+                        }))).mapper();
+        dbObject = mapper.map(new Object[] { 1l});
+        assertEquals(1, dbObject.getId());
+        assertEquals("getterEmail", dbObject.getEmail());
+        assertEquals("getterName", dbObject.getName());
+
+
+
+    }
+
     private <T> void testMapper(Supplier<T> supplier) throws Exception {
         T instance1 = supplier.get();
         T instance2 = supplier.get();
         ClassMeta<T> classMeta = ReflectionService.newInstance().<T>getClassMeta(instance1.getClass());
 
         SampleMapperBuilder<T> builder = new SampleMapperBuilder<T>(classMeta);
+        SampleMapperBuilder<T> builderIndexed = new SampleMapperBuilder<T>(classMeta);
 
         String[] headers = classMeta.generateHeaders();
 
@@ -58,12 +118,14 @@ public class AbstractMapperBuilderTest {
         for(int i = 0; i < headers.length; i++) {
             String str = headers[i];
             builder.addMapping(str);
+            builderIndexed.addMapping(str, i);
             row[i] = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(str)).getGetter().get(instance1);
 
         }
         Mapper<Object[], T> mapper = builder.mapper();
 
         assertEquals(instance1, mapper.map(row));
+        assertEquals(instance1, builderIndexed.mapper().map(row));
 
         assertNotEquals(instance1, instance2);
         mapper.mapTo(row, instance2, null);

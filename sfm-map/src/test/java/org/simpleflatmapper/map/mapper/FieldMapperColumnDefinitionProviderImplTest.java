@@ -32,14 +32,14 @@ public class FieldMapperColumnDefinitionProviderImplTest {
                 new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>();
 
 
-        Predicate<SampleFieldKey> prop1Predicate = new Predicate<SampleFieldKey>() {
+        final Predicate<SampleFieldKey> prop1Predicate = new Predicate<SampleFieldKey>() {
             @Override
             public boolean test(SampleFieldKey sampleFieldKey) {
                 return sampleFieldKey.getIndex() == 0;
             }
         };
 
-        Predicate<SampleFieldKey> prop2Predicate = new Predicate<SampleFieldKey>() {
+        final Predicate<SampleFieldKey> prop2Predicate = new Predicate<SampleFieldKey>() {
             @Override
             public boolean test(SampleFieldKey sampleFieldKey) {
                 return sampleFieldKey.getIndex() == 1;
@@ -78,6 +78,8 @@ public class FieldMapperColumnDefinitionProviderImplTest {
         });
 
         assertArrayEquals(new String[] {"prop1", "prop2"}, props.toArray(new String[0]));
+
+        assertArrayEquals(new String[] {"prop1"}, provider.getColumnDefinition(new SampleFieldKey("", 0)).lookForAll(String.class));
     }
 
 }

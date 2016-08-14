@@ -44,7 +44,6 @@ public class MappingContextFactoryBuilder<S, K> {
     }
 
 
-
     public void addKey(K key) {
         if (!keys.contains(key)) {
             keys.add(key);

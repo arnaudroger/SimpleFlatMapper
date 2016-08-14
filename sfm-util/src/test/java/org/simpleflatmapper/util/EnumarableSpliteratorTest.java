@@ -13,7 +13,7 @@ public class EnumarableSpliteratorTest {
 
 
     public static final String[] STRINGS = {"str1", "str2", "str3"};
-    Enumarable<String> enumarable = new StringArrayEnumarable(STRINGS);
+    Enumarable<String> enumarable = new ArrayEnumarable<String>(STRINGS);
 
     @Test
     public void testStreamCollect() {

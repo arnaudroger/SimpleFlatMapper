@@ -84,7 +84,10 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
              MapperConfig<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> mapperConfig,
              GetterFactory<ResultSet, JdbcColumnKey> getterFactory,
              MappingContextFactoryBuilder<ResultSet, JdbcColumnKey> parentBuilder) {
-        super(classMeta, parentBuilder, mapperConfig, FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
+        super(classMeta,
+                parentBuilder,
+                mapperConfig,
+                FIELD_MAPPER_SOURCE.getterFactory(getterFactory),
                 KEY_FACTORY, 1);
     }
 
@@ -141,11 +144,6 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
         }
 
         return this;
-    }
-
-    @Override
-    protected JdbcColumnKey key(String column, int index) {
-        return new JdbcColumnKey(column, index);
     }
 
     @Override

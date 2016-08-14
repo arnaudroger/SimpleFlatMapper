@@ -18,6 +18,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
 
     protected final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
     protected final MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder;
+    private final KeyFactory<K> keyFactory;
 
     private int calculatedIndex;
 
@@ -33,7 +34,9 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
             final ClassMeta<T> classMeta,
             MappingContextFactoryBuilder<? super S, K> parentBuilder,
             MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
-            MapperSource<? super S, K> mapperSource, KeyFactory<K> keyFactory, int startIndex) {
+            MapperSource<? super S, K> mapperSource,
+            KeyFactory<K> keyFactory,
+            int startIndex) {
         this.fieldMapperMapperBuilder =
                 new FieldMapperMapperBuilder<S, T, K>(
                         mapperSource,
@@ -41,6 +44,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
                         mapperConfig,
                         parentBuilder,
                         keyFactory);
+        this.keyFactory = keyFactory;
         this.mapperConfig = mapperConfig;
         this.mappingContextFactoryBuilder = parentBuilder;
         this.calculatedIndex = startIndex;
@@ -162,7 +166,9 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
         return (B) this;
     }
 
-    protected abstract K key(String column, int index);
+    private final K key(String column, int index) {
+        return keyFactory.newKey(column, index);
+    }
 
     protected abstract M newJoinJdbcMapper(Mapper<S, T> mapper);
 

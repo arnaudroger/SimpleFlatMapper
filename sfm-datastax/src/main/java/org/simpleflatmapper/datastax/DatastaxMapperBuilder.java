@@ -75,11 +75,6 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
     }
 
     @Override
-    protected DatastaxColumnKey key(String column, int index) {
-        return new DatastaxColumnKey(column, index);
-    }
-
-    @Override
     protected DatastaxMapper<T> newJoinJdbcMapper(Mapper<Row, T> mapper) {
         return new JoinDatastaxMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }

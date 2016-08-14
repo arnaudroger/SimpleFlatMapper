@@ -38,11 +38,6 @@ public class SheetMapperBuilder<T> extends AbstractMapperBuilder<Row, T, CsvColu
     }
 
     @Override
-    protected CsvColumnKey key(String column, int index) {
-        return new CsvColumnKey(column, index);
-    }
-
-    @Override
     protected RowMapper<T> newJoinJdbcMapper(Mapper<Row, T> mapper) {
         return new JoinSheetMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }

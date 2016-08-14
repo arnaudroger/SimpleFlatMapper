@@ -7,13 +7,13 @@ import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.util.Enumarable;
 import org.simpleflatmapper.util.UnaryFactory;
 
-public class JoinMapperImpl<R, S, T, E extends Exception> extends AbstractEnumarableDelegateMapper<R, S, T, E> {
+public class JoinMapperImpl<ROW, ROWS, T, EX extends Exception> extends AbstractEnumarableDelegateMapper<ROW, ROWS, T, EX> {
 
-    private final Mapper<R, T> mapper;
-    private final MappingContextFactory<? super R> mappingContextFactory;
-    private final UnaryFactory<S, Enumarable<R>> factory;
+    private final Mapper<ROW, T> mapper;
+    private final MappingContextFactory<? super ROW> mappingContextFactory;
+    private final UnaryFactory<ROWS, Enumarable<ROW>> factory;
 
-    public JoinMapperImpl(Mapper<R, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super R> mappingContextFactory, UnaryFactory<S, Enumarable<R>> factory) {
+    public JoinMapperImpl(Mapper<ROW, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<ROWS, Enumarable<ROW>> factory) {
         super(errorHandler);
         this.mapper = mapper;
         this.mappingContextFactory = mappingContextFactory;
@@ -22,25 +22,25 @@ public class JoinMapperImpl<R, S, T, E extends Exception> extends AbstractEnumar
 
 
     @Override
-    protected final Mapper<R, T> getMapper(R source) {
+    protected final Mapper<ROW, T> getMapper(ROW source) {
         return mapper;
     }
 
     @Override
-    protected final Enumarable<T> newEnumarableOfT(S source) throws E {
-        return new JoinMapperEnumarable<R, T>(mapper,  mappingContextFactory.newContext(), newSourceEnumarable(source));
+    protected final Enumarable<T> newEnumarableOfT(ROWS source) throws EX {
+        return new JoinMapperEnumarable<ROW, T>(mapper,  mappingContextFactory.newContext(), newSourceEnumarable(source));
     }
 
-    private Enumarable<R> newSourceEnumarable(S source) {
+    private Enumarable<ROW> newSourceEnumarable(ROWS source) {
         return factory.newInstance(source);
     }
 
-    public MappingContext<? super R> newMappingContext() {
+    public MappingContext<? super ROW> newMappingContext() {
         return mappingContextFactory.newContext();
     }
 
 
-    public MappingContext<? super R> newMappingContext(R row) {
+    public MappingContext<? super ROW> newMappingContext(ROW row) {
         return newMappingContext();
     }
 

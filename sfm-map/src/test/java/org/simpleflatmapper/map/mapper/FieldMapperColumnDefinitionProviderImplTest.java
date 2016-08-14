@@ -25,8 +25,8 @@ public class FieldMapperColumnDefinitionProviderImplTest {
 
         final Object prop1 = "prop1";
         final Object prop2 = "prop2";
-        final ConstantUnaryFactory<SampleFieldKey, Object> prop1Fact = new ConstantUnaryFactory<>(prop1);
-        final ConstantUnaryFactory<SampleFieldKey, Object> prop2Fact = new ConstantUnaryFactory<>(prop2);
+        final ConstantUnaryFactory<SampleFieldKey, Object> prop1Fact = new ConstantUnaryFactory<SampleFieldKey, Object>(prop1);
+        final ConstantUnaryFactory<SampleFieldKey, Object> prop2Fact = new ConstantUnaryFactory<SampleFieldKey, Object>(prop2);
 
         FieldMapperColumnDefinitionProviderImpl<SampleFieldKey> provider =
                 new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>();

@@ -98,7 +98,7 @@ public class AbstractMapperBuilderTest {
                         public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
                             return source[key.getIndex()];
                         }
-                    }), MapperConfig.fieldMapperConfig(), new MapperSourceImpl<Object[], SampleFieldKey>(Object[].class, GETTER_FACTORY),
+                    }), MapperConfig.<SampleFieldKey>fieldMapperConfig(), new MapperSourceImpl<Object[], SampleFieldKey>(Object[].class, GETTER_FACTORY),
                     KEY_FACTORY, 0);
         }
 

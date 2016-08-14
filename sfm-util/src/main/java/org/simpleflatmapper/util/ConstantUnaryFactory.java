@@ -1,6 +1,6 @@
 package org.simpleflatmapper.util;
 
-public class ConstantUnaryFactory<T, P> implements UnaryFactory<T, P>{
+public class ConstantUnaryFactory<T, P> implements UnaryFactory<T, P> {
     private final P value;
 
     public ConstantUnaryFactory(P value) {
@@ -11,4 +11,5 @@ public class ConstantUnaryFactory<T, P> implements UnaryFactory<T, P>{
     public P newInstance(T t) {
         return value;
     }
+
 }

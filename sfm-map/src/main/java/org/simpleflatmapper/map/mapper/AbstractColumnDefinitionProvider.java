@@ -16,7 +16,7 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
     protected final List<PredicatedColunnPropertyFactory<C, K>> properties;
 
     public AbstractColumnDefinitionProvider() {
-        properties = new ArrayList<PredicatedColunnPropertyFactory<C, K>>();
+        this(new ArrayList<PredicatedColunnPropertyFactory<C, K>>());
     }
     public AbstractColumnDefinitionProvider(List<PredicatedColunnPropertyFactory<C, K>> properties) {
         this.properties = properties;
@@ -76,6 +76,14 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
         public PredicatedColunnPropertyFactory(Predicate<? super K> predicate, UnaryFactory<? super K, Object> columnPropertyFactory) {
             this.predicate = predicate;
             this.columnPropertyFactory = columnPropertyFactory;
+        }
+
+        public Predicate<? super K> getPredicate() {
+            return predicate;
+        }
+
+        public UnaryFactory<? super K, Object> getColumnPropertyFactory() {
+            return columnPropertyFactory;
         }
     }
 

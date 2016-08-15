@@ -135,9 +135,12 @@ public class ReflectionServiceTest {
         assertTrue(name instanceof ConstructorPropertyMeta);
         assertEquals(0, ((ConstructorPropertyMeta)name).getParameter().getIndex());
         assertEquals(String.class, ((ConstructorPropertyMeta)name).getParameter().getType());
+        assertNull(((ConstructorPropertyMeta)name).getParameter().getName());
+
         assertTrue(value instanceof ConstructorPropertyMeta);
         assertEquals(1, ((ConstructorPropertyMeta)value).getParameter().getIndex());
         assertEquals(int.class, ((ConstructorPropertyMeta)value).getParameter().getType());
+        assertNull(((ConstructorPropertyMeta)value).getParameter().getName());
     }
 
 }

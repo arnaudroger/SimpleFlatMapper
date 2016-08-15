@@ -36,7 +36,7 @@ public abstract class AbstractEnumarableMapper<S, T, E extends Exception> implem
         return handler;
 	}
 
-    public <H extends RowHandler<? super T>> void handleT(H handler, T t) {
+    private <H extends RowHandler<? super T>> void handleT(H handler, T t) {
         try {
             handler.handle(t);
         } catch(Throwable e) {

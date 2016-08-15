@@ -10,16 +10,16 @@ import org.simpleflatmapper.map.impl.StaticMapperEnumarable;
 import org.simpleflatmapper.util.Enumarable;
 import org.simpleflatmapper.util.UnaryFactory;
 
-public class StaticSetRowMapper<R, S, T, E extends Exception> extends AbstractEnumarableMapper<S, T, E> implements SetRowMapper<R, S, T, E> {
+public class StaticSetRowMapper<ROW, SET, T, E extends Exception> extends AbstractEnumarableMapper<SET, T, E> implements SetRowMapper<ROW, SET, T, E> {
 
-	private final Mapper<R, T> mapper;
-	private final MappingContextFactory<? super  R> mappingContextFactory;
-	private final UnaryFactory<S, Enumarable<R>> enumarableFactory;
+	private final Mapper<ROW, T> mapper;
+	private final MappingContextFactory<? super ROW> mappingContextFactory;
+	private final UnaryFactory<SET, Enumarable<ROW>> enumarableFactory;
 
-	public StaticSetRowMapper(final Mapper<R, T> mapper,
+	public StaticSetRowMapper(final Mapper<ROW, T> mapper,
 							  final RowHandlerErrorHandler errorHandler,
-							  final MappingContextFactory<? super R> mappingContextFactory,
-							  UnaryFactory<S, Enumarable<R>> enumarableFactory) {
+							  final MappingContextFactory<? super ROW> mappingContextFactory,
+							  UnaryFactory<SET, Enumarable<ROW>> enumarableFactory) {
 		super(errorHandler);
 		this.mapper = mapper;
 		this.mappingContextFactory = mappingContextFactory;
@@ -27,22 +27,22 @@ public class StaticSetRowMapper<R, S, T, E extends Exception> extends AbstractEn
 	}
 
 	@Override
-	public final T map(R rs) throws MappingException {
+	public final T map(ROW rs) throws MappingException {
 		return mapper.map(rs);
 	}
 
 	@Override
-	public final T map(R rs, MappingContext<? super R> context) throws MappingException {
+	public final T map(ROW rs, MappingContext<? super ROW> context) throws MappingException {
 		return mapper.map(rs, context);
 	}
 
 	@Override
-	public final void mapTo(R rs, T target, MappingContext<? super R> context) throws Exception {
+	public final void mapTo(ROW rs, T target, MappingContext<? super ROW> context) throws Exception {
 		mapper.mapTo(rs, target, context);
 	}
 
 	@Override
-	public final MappingContext<? super R> newMappingContext(R set) throws E {
+	public final MappingContext<? super ROW> newMappingContext(ROW set) throws E {
 		return mappingContextFactory.newContext();
 	}
 
@@ -52,7 +52,7 @@ public class StaticSetRowMapper<R, S, T, E extends Exception> extends AbstractEn
 	}
 
 	@Override
-	protected final Enumarable<T> newEnumarableOfT(S source) throws E {
-		return new StaticMapperEnumarable<R, T>(mapper, mappingContextFactory.newContext(), enumarableFactory.newInstance(source));
+	protected final Enumarable<T> newEnumarableOfT(SET source) throws E {
+		return new StaticMapperEnumarable<ROW, T>(mapper, mappingContextFactory.newContext(), enumarableFactory.newInstance(source));
 	}
 }

@@ -1,4 +1,4 @@
-package org.simpleflatmapper.reflect.tuples;
+package org.simpleflatmapper.util;
 
 import org.junit.Test;
 import org.simpleflatmapper.tuple.Tuple2;

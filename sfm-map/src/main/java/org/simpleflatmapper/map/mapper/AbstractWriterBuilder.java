@@ -1,16 +1,16 @@
-package org.simpleflatmapper.map;
+package org.simpleflatmapper.map.mapper;
 
 
+import org.simpleflatmapper.map.FieldKey;
+import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.PropertyWithGetter;
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
-import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
-import org.simpleflatmapper.map.mapper.ContextualMapper;
-import org.simpleflatmapper.map.mapper.MapperImpl;
-import org.simpleflatmapper.map.mapper.PropertyMapping;
-import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;

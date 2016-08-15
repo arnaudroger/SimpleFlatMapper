@@ -16,30 +16,30 @@ import java.util.stream.Stream;
 //IFJAVA8_END
 
 
-public class DynamicSetRowMapper<R, S, T, E extends Exception, K extends FieldKey<K>> implements SetRowMapper<R, S, T, E> {
+public class DynamicSetRowMapper<ROW, SET, T, E extends Exception, K extends FieldKey<K>> implements SetRowMapper<ROW, SET, T, E> {
 
 
-    private final MapperCache<K, SetRowMapper<R, S, T, E>> mapperCache;
+    private final MapperCache<K, SetRowMapper<ROW, SET, T, E>> mapperCache;
 
-	private final UnaryFactory<MapperKey<K>, SetRowMapper<R, S, T, E>> mapperFactory;
+	private final UnaryFactory<MapperKey<K>, SetRowMapper<ROW, SET, T, E>> mapperFactory;
 
-	private final UnaryFactoryWithException<R, MapperKey<K>, E> mapperKeyFromRow;
+	private final UnaryFactoryWithException<ROW, MapperKey<K>, E> mapperKeyFromRow;
 
-	private final UnaryFactoryWithException<S, MapperKey<K>, E> mapperKeyFromSet;
+	private final UnaryFactoryWithException<SET, MapperKey<K>, E> mapperKeyFromSet;
 
 	public DynamicSetRowMapper(
-			UnaryFactory<MapperKey<K>, SetRowMapper<R, S, T, E>> mapperFactory,
-			UnaryFactoryWithException<R, MapperKey<K>, E> mapperKeyFromRow,
-			UnaryFactoryWithException<S, MapperKey<K>, E> mapperKeyFromSet,
+			UnaryFactory<MapperKey<K>, SetRowMapper<ROW, SET, T, E>> mapperFactory,
+			UnaryFactoryWithException<ROW, MapperKey<K>, E> mapperKeyFromRow,
+			UnaryFactoryWithException<SET, MapperKey<K>, E> mapperKeyFromSet,
 			MapperKeyComparator<K> keyComparator) {
 		this.mapperFactory = mapperFactory;
 		this.mapperKeyFromRow = mapperKeyFromRow;
 		this.mapperKeyFromSet = mapperKeyFromSet;
-		this.mapperCache = new MapperCache<K, SetRowMapper<R, S, T, E>>(keyComparator);
+		this.mapperCache = new MapperCache<K, SetRowMapper<ROW, SET, T, E>>(keyComparator);
 	}
 
 	@Override
-	public final T map(R row) throws MappingException {
+	public final T map(ROW row) throws MappingException {
 		try {
 			return getMapperFromRow(row).map(row);
 		} catch(Exception e) {
@@ -49,7 +49,7 @@ public class DynamicSetRowMapper<R, S, T, E extends Exception, K extends FieldKe
 	}
 
 	@Override
-	public final T map(R row, MappingContext<? super R> context) throws MappingException {
+	public final T map(ROW row, MappingContext<? super ROW> context) throws MappingException {
 		try {
 			return getMapperFromRow(row).map(row, context);
 		} catch(Exception e) {
@@ -59,29 +59,29 @@ public class DynamicSetRowMapper<R, S, T, E extends Exception, K extends FieldKe
 	}
 
 	@Override
-	public final void mapTo(R row, T target, MappingContext<? super R> context) throws Exception {
+	public final void mapTo(ROW row, T target, MappingContext<? super ROW> context) throws Exception {
 		getMapperFromRow(row).mapTo(row, target, context);
 	}
 
 	@Override
-	public final Iterator<T> iterator(S rs) throws E, MappingException {
+	public final Iterator<T> iterator(SET rs) throws E, MappingException {
 		return getMapperFromSet(rs).iterator(rs);
 	}
 
 	//IFJAVA8_START
 	@Override
-	public final Stream<T> stream(S set) throws E, MappingException {
+	public final Stream<T> stream(SET set) throws E, MappingException {
 		return getMapperFromSet(set).stream(set);
 	}
 	//IFJAVA8_END
 
 	@Override
-	public final <H extends RowHandler<? super T>> H forEach(S set, H handler) throws E, MappingException {
+	public final <H extends RowHandler<? super T>> H forEach(SET set, H handler) throws E, MappingException {
 		return getMapperFromSet(set).forEach(set, handler);
 	}
 
 	@Override
-	public final MappingContext<? super R> newMappingContext(R set) throws E {
+	public final MappingContext<? super ROW> newMappingContext(ROW set) throws E {
 		return getMapperFromRow(set).newMappingContext(set);
 	}
 
@@ -92,16 +92,16 @@ public class DynamicSetRowMapper<R, S, T, E extends Exception, K extends FieldKe
 				'}';
 	}
 
-	private SetRowMapper<R, S, T, E> getMapperFromSet(S set) throws E {
+	private SetRowMapper<ROW, SET, T, E> getMapperFromSet(SET set) throws E {
 		return getMapper(mapperKeyFromSet.newInstance(set));
 	}
 
-	private SetRowMapper<R, S, T, E> getMapperFromRow(R row) throws E {
+	private SetRowMapper<ROW, SET, T, E> getMapperFromRow(ROW row) throws E {
 		return getMapper(mapperKeyFromRow.newInstance(row));
 	}
 
-	public SetRowMapper<R, S, T, E> getMapper(MapperKey<K> key) throws E {
-		SetRowMapper<R, S, T, E> mapper = mapperCache.get(key);
+	public SetRowMapper<ROW, SET, T, E> getMapper(MapperKey<K> key) throws E {
+		SetRowMapper<ROW, SET, T, E> mapper = mapperCache.get(key);
 		if (mapper == null) {
 			mapper = mapperFactory.newInstance(key);
 			mapperCache.add(key, mapper);

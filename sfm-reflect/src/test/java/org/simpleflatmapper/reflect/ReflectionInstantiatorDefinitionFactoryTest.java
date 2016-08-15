@@ -119,42 +119,42 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 
 	}
 
+	public static final ClassLoader CLASS_LOADER = new ClassLoader(ClassLoader.getSystemClassLoader().getParent()) {
+		ClassLoader original = ReflectionInstantiatorDefinitionFactoryTest.class.getClassLoader();
+		@Override
+		protected Class<?> findClass(String name) throws ClassNotFoundException {
+			String resourceName = name.replace(".", "/") + ".class";
+			InputStream resourceAsStream = original.getResourceAsStream(resourceName);
+			if (resourceAsStream == null) {
+				System.out.println("Could not find resource " + resourceName + " in " + original);
+				throw new ClassNotFoundException(name);
+			}
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			try {
+				int i;
+				while((i = resourceAsStream.read()) != -1) {
+					bos.write(i);
+				}
+				byte[] bytes = bos.toByteArray();
+				return defineClass(name, bytes, 0, bytes.length);
+			} catch (IOException e) {
+				throw new ClassNotFoundException(e.getMessage(), e);
+			} finally {
+				try {
+					resourceAsStream.close();
+				} catch (IOException e) {
+				}
+			}
+
+		}
+	};
 
 	//IFJAVA8_START
 	@Test
 	public void testClassWithParamName() throws ClassNotFoundException, IOException {
-		final ClassLoader original = getClass().getClassLoader();
-		ClassLoader cl = new ClassLoader(ClassLoader.getSystemClassLoader().getParent()) {
-			@Override
-			protected Class<?> findClass(String name) throws ClassNotFoundException {
-				String resourceName = name.replace(".", "/") + ".class";
-				InputStream resourceAsStream = original.getResourceAsStream(resourceName);
-				if (resourceAsStream == null) {
-					System.out.println("Could not find resource " + resourceName + " in " + original);
-					throw new ClassNotFoundException(name);
-				}
-				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				try {
-					int i;
-					while((i = resourceAsStream.read()) != -1) {
-						bos.write(i);
-					}
-					byte[] bytes = bos.toByteArray();
-					return defineClass(name, bytes, 0, bytes.length);
-				} catch (IOException e) {
-					throw new ClassNotFoundException(e.getMessage(), e);
-				} finally {
-					try {
-						resourceAsStream.close();
-					} catch (IOException e) {
-					}
-				}
-
-			}
-		};
-
-		final Class<?> classWithParameter = cl.loadClass("p.ClassParameter");
-		final Class<?> classWithoutParameter = cl.loadClass("p.ClassNoNameParameter");
+		final Class<?> classWithParameter = CLASS_LOADER.loadClass("p.ClassParameter");
+		final Class<?> classWithoutParameter = CLASS_LOADER.loadClass("p.ClassNoNameParameter");
+		final Class<?> classWithoutDebug = CLASS_LOADER.loadClass("p.ClassNoDebug");
 
 		List<InstantiatorDefinition> instantiatorDefinitions = ReflectionService.newInstance().extractInstantiator(classWithParameter);
 
@@ -176,9 +176,9 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 
 		assertEquals(1, instantiatorDefinitions.get(1).getParameters().length);
 		assertNull(instantiatorDefinitions.get(1).getParameters()[0].getName());
-
 	}
 	//IFJAVA8_END
+
 
 
 	@Test

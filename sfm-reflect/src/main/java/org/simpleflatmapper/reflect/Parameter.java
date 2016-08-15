@@ -32,6 +32,10 @@ public final class Parameter {
 		return genericType;
 	}
 
+	public int getIndex() {
+		return index;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

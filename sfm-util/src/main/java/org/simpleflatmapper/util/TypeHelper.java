@@ -163,7 +163,7 @@ public class TypeHelper {
 
 	public static boolean isJavaLang(Type target) {
         Class<?> clazz = TypeHelper.toClass(target);
-        return clazz.isPrimitive() || clazz.getPackage().getName().equals("java.lang");
+        return clazz.isPrimitive() || (clazz.getPackage() != null && clazz.getPackage().getName().equals("java.lang"));
 	}
 
     public static boolean isEnum(Type target) {

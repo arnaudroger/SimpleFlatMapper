@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect;
 
 import org.junit.Test;
 import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
+import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
@@ -9,9 +10,11 @@ import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.TypeReference;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
+import static org.simpleflatmapper.reflect.ReflectionInstantiatorDefinitionFactoryTest.CLASS_LOADER;
 
 public class ReflectionServiceTest {
 
@@ -112,6 +115,29 @@ public class ReflectionServiceTest {
         public void setName(String name) {
             this.name = name;
         }
+    }
+
+
+    @Test
+    public void testClassWithNoDebug() throws ClassNotFoundException, IOException {
+        final Class<?> classWithoutDebug = CLASS_LOADER.loadClass("p.ClassNoDebug");
+
+        ClassMeta<?> classMeta = ReflectionService.newInstance().getClassMeta(classWithoutDebug);
+
+        PropertyMeta<?, ?> name = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("name"));
+        PropertyMeta<?, ?> value = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"));
+        PropertyMeta<?, ?> arg0 = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("arg0"));
+        PropertyMeta<?, ?> arg1 = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("arg1"));
+
+        assertNull(arg0);
+        assertNull(arg1);
+
+        assertTrue(name instanceof ConstructorPropertyMeta);
+        assertEquals(0, ((ConstructorPropertyMeta)name).getParameter().getIndex());
+        assertEquals(String.class, ((ConstructorPropertyMeta)name).getParameter().getType());
+        assertTrue(value instanceof ConstructorPropertyMeta);
+        assertEquals(1, ((ConstructorPropertyMeta)value).getParameter().getIndex());
+        assertEquals(int.class, ((ConstructorPropertyMeta)value).getParameter().getType());
     }
 
 }

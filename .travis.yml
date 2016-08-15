@@ -1,18 +1,10 @@
 language: java
 
 sudo: required
-dist: trusty
-group: edge
 
 services:
+  - mysql
   - postgresql
-
-addons:
-  apt:
-    packages:
-    - mysql-server-5.6
-    - mysql-client-core-5.6
-    - mysql-client-5.6
 
 jdk:
   - oraclejdk9
@@ -25,19 +17,15 @@ env:
   - MAVEN_SKIP_RC=true TRAVISBUILD=true
 
 after_success:
-  - mvn -P travis,!dev -DserviceName=travis-ci jacoco:report coveralls:report
+  - mvn -P travis,!dev jacoco:report coveralls:report
 
 
 before_install:
   - echo "127.0.0.1    $HOSTNAME" | sudo tee -a /etc/hosts
-  - wget https://archive.apache.org/dist/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.zip
-  - unzip -qq apache-maven-3.2.5-bin.zip
-  - export M2_HOME=$PWD/apache-maven-3.2.5
-  - export PATH=$M2_HOME/bin:$PATH
   - sudo add-apt-repository -y ppa:webupd8team/java
   - sudo apt-get -y update
   - sudo apt-get -y install oracle-java9-installer
 
 before_script:
-  - mysql -u root -e 'create database sfm;'
+  - mysql -e 'create database sfm;'
   - psql -c 'create database sfm;' -U postgres

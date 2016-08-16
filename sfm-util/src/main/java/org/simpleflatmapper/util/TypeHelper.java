@@ -1,6 +1,8 @@
 package org.simpleflatmapper.util;
 
 
+import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -19,8 +21,10 @@ public class TypeHelper {
 			return toClass(((TypeVariable) target).getBounds()[0]);
 		} else if (target instanceof WildcardType) {
 			return toClass(((WildcardType)target).getUpperBounds()[0]);
-		}
-		throw new UnsupportedOperationException("Cannot extract class from type " + target);
+		} else if (target instanceof GenericArrayType) {
+		    return (Class<T>) Array.newInstance(toClass(((GenericArrayType) target).getGenericComponentType()), 0).getClass();
+        }
+		throw new UnsupportedOperationException("Cannot extract class from type " + target + " " + target.getClass());
 	}
 
 	public static <T> Map<TypeVariable<?>, Type> getTypesMap(Type targetType) {

@@ -454,13 +454,11 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         private final FieldMapper<S, T>[] fieldMappers;
         private final Instantiator<S, T> instantiator;
 
-    private InstantiatorAndFieldMappers(FieldMapper<S, T>[] fieldMappers, Instantiator<S, T> instantiator) {
-        this.fieldMappers = fieldMappers;
-        this.instantiator = instantiator;
+        private InstantiatorAndFieldMappers(FieldMapper<S, T>[] fieldMappers, Instantiator<S, T> instantiator) {
+            this.fieldMappers = fieldMappers;
+            this.instantiator = instantiator;
+        }
     }
-}
-//Tuple2, >
-
     private class ConstructorInjections {
         private final Map<Parameter, Getter<? super S, ?>> parameterGetterMap;
         private final FieldMapper<S, T>[] fieldMappers;
@@ -471,7 +469,6 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         }
     }
 
-    //Tuple2<PropertyMeta<T, ?>, List<>
     private class PropertyPerOwner {
         private final PropertyMeta<T, ?> owner;
         private final List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> propertyMappings;

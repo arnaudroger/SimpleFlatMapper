@@ -56,10 +56,10 @@ public class AbstractWriterBuilderTest {
     }
     private static final SetterFactory<List<Object>, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>> SETTER_FACTORY = new SetterFactory<List<Object>, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>>() {
         @Override
-        public <P> Setter<List<Object>, P> getSetter(PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>> arg) {
+        public <P> Setter<List<Object>, P> getSetter(final PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>> arg) {
             return new Setter<List<Object>, P>() {
                 @Override
-                public void set(List<Object> target, P v) throws Exception {
+                public void set(final List<Object> target, final P v) throws Exception {
                     int i = arg.getColumnKey().getIndex();
                     while (i >= target.size()) {
                         target.add(null);

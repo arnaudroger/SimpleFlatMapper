@@ -170,7 +170,7 @@ public class HostApplication
 
             File tmpFile = File.createTempFile("wrap", ".jar");
 
-            Set<String> packages = new HashSet<>();
+            Set<String> packages = new HashSet<String>();
             try (FileInputStream fis = new FileInputStream(file);
                  JarInputStream jis = new JarInputStream(fis);
             ) {

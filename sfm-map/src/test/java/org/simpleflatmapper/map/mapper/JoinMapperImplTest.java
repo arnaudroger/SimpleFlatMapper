@@ -82,7 +82,7 @@ public class JoinMapperImplTest {
                 {2, 3l, "name3"}
         };
 
-        checkList(joinMapper.forEach(data, new ListCollectorHandler<>()).getList());
+        checkList(joinMapper.forEach(data, new ListCollectorHandler<DbListObject>()).getList());
 
         //IFJAVA8_START
         checkList(joinMapper.stream(data).collect(Collectors.toList()));

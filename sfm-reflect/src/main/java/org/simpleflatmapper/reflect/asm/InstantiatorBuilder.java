@@ -266,7 +266,7 @@ public class InstantiatorBuilder {
         }
     }
 
-    private static Method getGetterMethod(Class<? extends Getter> aClass) {
+    private static Method getGetterMethod(Class<?> aClass) {
         Method m = null;
         for(Method p : aClass.getDeclaredMethods()) {
             if (!Modifier.isStatic(p.getModifiers())

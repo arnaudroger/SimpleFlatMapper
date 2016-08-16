@@ -240,7 +240,7 @@ public class MapperAsmBuilder {
         AsmUtils.invoke(mv, mapperClass, m);
     }
 
-    private static Method getMapToMethod(Class<? extends FieldMapper> aClass) {
+    private static Method getMapToMethod(Class<?> aClass) {
         Method m = null;
         for(Method p : aClass.getDeclaredMethods()) {
             if (!Modifier.isStatic(p.getModifiers())

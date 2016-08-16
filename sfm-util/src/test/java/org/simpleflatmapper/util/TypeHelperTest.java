@@ -30,7 +30,6 @@ public class TypeHelperTest {
 
 		try {
 			TypeHelper.toClass(new Type() {
-				@Override
 				public String getTypeName() {
 					return null;
 				}

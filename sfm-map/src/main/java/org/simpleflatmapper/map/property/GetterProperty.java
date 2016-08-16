@@ -33,7 +33,7 @@ public class GetterProperty {
     }
 
     public static Type getReturnType(Getter<?, ?> getter) {
-        Type[] paramTypesForInterface = TypeHelper.getParamTypesForInterface(getter.getClass(), Getter.class);
+        Type[] paramTypesForInterface = TypeHelper.getGenericParameterForClass(getter.getClass(), Getter.class);
         return paramTypesForInterface != null ? paramTypesForInterface[1] : null;
     }
 

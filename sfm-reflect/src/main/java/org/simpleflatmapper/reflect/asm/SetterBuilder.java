@@ -11,8 +11,8 @@ import java.lang.reflect.Method;
 
 public class SetterBuilder implements Opcodes {
 
-	private static final String SETTER_TYPE = AsmUtils.toType(Setter.class);
-	private static final String ORG_SFM_REFLECT_PRIMITIVE = AsmUtils.toType(IntSetter.class.getPackage().getName());
+	private static final String SETTER_TYPE = AsmUtils.toAsmType(Setter.class);
+	private static final String ORG_SFM_REFLECT_PRIMITIVE = AsmUtils.toAsmType(IntSetter.class.getPackage().getName());
 
     public static byte[] createObjectSetter(final String className, final Field field) throws Exception {
 
@@ -30,7 +30,7 @@ public class SetterBuilder implements Opcodes {
                 V1_6,
                 ACC_PUBLIC + ACC_FINAL + ACC_SUPER,
                 classType,
-                "Ljava/lang/Object;L" + SETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;",
+                "Ljava/lang/Object;L" + SETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTargetTypeDeclaration(propertyType) + ">;",
                 "java/lang/Object", new String[] {SETTER_TYPE});
 
         {
@@ -68,7 +68,7 @@ public class SetterBuilder implements Opcodes {
 				V1_6,
 				ACC_PUBLIC + ACC_FINAL + ACC_SUPER,
 				classType,
-				"Ljava/lang/Object;L" + SETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;",
+				"Ljava/lang/Object;L" + SETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTargetTypeDeclaration(propertyType) + ">;",
 				"java/lang/Object", new String[] {SETTER_TYPE});
 
 		{
@@ -94,13 +94,13 @@ public class SetterBuilder implements Opcodes {
         MethodVisitor mv;
         {
             mv = cw.visitMethod(ACC_PUBLIC, "set",
-                    "(L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ")V", null,
+                    "(" + AsmUtils.toTargetTypeDeclaration(targetType) + AsmUtils.toTargetTypeDeclaration(propertyType) + ")V", null,
                     new String[] { "java/lang/Exception" });
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(ALOAD, 2);
 
-            mv.visitFieldInsn(PUTFIELD, targetType, field.getName(), AsmUtils.toTypeParam(propertyType));
+            mv.visitFieldInsn(PUTFIELD, targetType, field.getName(), AsmUtils.toTargetTypeDeclaration(propertyType));
 
             mv.visitInsn(RETURN);
             mv.visitMaxs(2, 3);
@@ -114,13 +114,13 @@ public class SetterBuilder implements Opcodes {
         MethodVisitor mv;
         {
             mv = cw.visitMethod(ACC_PUBLIC, "set",
-                    "(L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ")V", null,
+                    "(" + AsmUtils.toTargetTypeDeclaration(targetType) + AsmUtils.toTargetTypeDeclaration(propertyType) + ")V", null,
                     new String[] { "java/lang/Exception" });
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(ALOAD, 2);
 
-            AsmUtils.invoke(mv, target, method.getName(),  "(" + AsmUtils.toTypeParam(propertyType) + ")V");
+            AsmUtils.invoke(mv, target, method.getName(),  "(" + AsmUtils.toTargetTypeDeclaration(propertyType) + ")V");
 
             mv.visitInsn(RETURN);
             mv.visitMaxs(2, 3);
@@ -138,7 +138,7 @@ public class SetterBuilder implements Opcodes {
         mv.visitTypeInsn(CHECKCAST, targetType);
         mv.visitVarInsn(ALOAD, 2);
         mv.visitTypeInsn(CHECKCAST,  propertyType );
-        mv.visitMethodInsn(INVOKEVIRTUAL, classType , "set", "(L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ")V", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, classType , "set", "(" + AsmUtils.toTargetTypeDeclaration(targetType) + AsmUtils.toTargetTypeDeclaration(propertyType) + ")V", false);
         mv.visitInsn(RETURN);
         mv.visitMaxs(3, 3);
         mv.visitEnd();
@@ -201,7 +201,7 @@ public class SetterBuilder implements Opcodes {
 		
 		cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL  + ACC_SUPER,  classType, 
 				"Ljava/lang/Object;"
-				+ "L"  + SETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;"
+				+ "L"  + SETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTargetTypeDeclaration(propertyType) + ">;"
 				+ "L" + ORG_SFM_REFLECT_PRIMITIVE + methodSuffix + "Setter<L" + targetType + ";>;",
 				"java/lang/Object", 
 				new String[] { SETTER_TYPE,
@@ -218,7 +218,7 @@ public class SetterBuilder implements Opcodes {
 		mv.visitEnd();
 		}
 		{
-		mv = cw.visitMethod(ACC_PUBLIC, setMethod, "(L" + targetType + ";" + primitiveType + ")V", null, new String[] { "java/lang/Exception" });
+		mv = cw.visitMethod(ACC_PUBLIC, setMethod, "(" + AsmUtils.toTargetTypeDeclaration(targetType) + primitiveType + ")V", null, new String[] { "java/lang/Exception" });
 		mv.visitCode();
 		mv.visitVarInsn(ALOAD, 1);
 		mv.visitVarInsn(primitiveLoadOp, 2);
@@ -230,7 +230,7 @@ public class SetterBuilder implements Opcodes {
 		mv.visitEnd();
 		}
 		{
-		mv = cw.visitMethod(ACC_PUBLIC, "set", "(L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ")V", null, new String[] { "java/lang/Exception" });
+		mv = cw.visitMethod(ACC_PUBLIC, "set", "(" + AsmUtils.toTargetTypeDeclaration(targetType) + AsmUtils.toTargetTypeDeclaration(propertyType) + ")V", null, new String[] { "java/lang/Exception" });
 		mv.visitCode();
 		mv.visitVarInsn(ALOAD, 1);
 		mv.visitVarInsn(ALOAD, 2);
@@ -283,7 +283,7 @@ public class SetterBuilder implements Opcodes {
 
         cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL  + ACC_SUPER,  classType,
                 "Ljava/lang/Object;"
-                        + "L"  + SETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;"
+                        + "L"  + SETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTargetTypeDeclaration(propertyType) + ">;"
                         + "L" + ORG_SFM_REFLECT_PRIMITIVE + methodSuffix + "Setter<L" + targetType + ";>;",
                 "java/lang/Object",
                 new String[] { SETTER_TYPE,
@@ -300,7 +300,7 @@ public class SetterBuilder implements Opcodes {
             mv.visitEnd();
         }
         {
-            mv = cw.visitMethod(ACC_PUBLIC, setMethod, "(L" + targetType + ";" + primitiveType + ")V", null, new String[] { "java/lang/Exception" });
+            mv = cw.visitMethod(ACC_PUBLIC, setMethod, "(" + AsmUtils.toTargetTypeDeclaration(targetType) + primitiveType + ")V", null, new String[] { "java/lang/Exception" });
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(primitiveLoadOp, 2);
@@ -312,7 +312,7 @@ public class SetterBuilder implements Opcodes {
             mv.visitEnd();
         }
         {
-            mv = cw.visitMethod(ACC_PUBLIC, "set", "(L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ")V", null, new String[] { "java/lang/Exception" });
+            mv = cw.visitMethod(ACC_PUBLIC, "set", "(" + AsmUtils.toTargetTypeDeclaration(targetType) + AsmUtils.toTargetTypeDeclaration(propertyType) + ")V", null, new String[] { "java/lang/Exception" });
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(ALOAD, 2);
@@ -343,7 +343,7 @@ public class SetterBuilder implements Opcodes {
         mv.visitVarInsn(ALOAD, 1);
         mv.visitTypeInsn(CHECKCAST,  targetType );
         mv.visitVarInsn(primitiveLoadOp, 2);
-        mv.visitMethodInsn(INVOKEVIRTUAL,  classType , setMethod, "(L" + targetType + ";" + primitiveType + ")V", false);
+        mv. visitMethodInsn(INVOKEVIRTUAL,  classType , setMethod, "(" + AsmUtils.toTargetTypeDeclaration(targetType) + primitiveType + ")V", false);
         mv.visitInsn(RETURN);
         mv.visitMaxs(3, 3);
         mv.visitEnd();
@@ -356,7 +356,7 @@ public class SetterBuilder implements Opcodes {
         mv.visitTypeInsn(CHECKCAST,  targetType );
         mv.visitVarInsn(ALOAD, 2);
         mv.visitTypeInsn(CHECKCAST,  propertyType );
-        mv.visitMethodInsn(INVOKEVIRTUAL,  classType , "set", "(L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ")V", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL,  classType , "set", "(" + AsmUtils.toTargetTypeDeclaration(targetType) + AsmUtils.toTargetTypeDeclaration(propertyType) + ")V", false);
         mv.visitInsn(RETURN);
         mv.visitMaxs(3, 3);
         mv.visitEnd();

@@ -2,15 +2,20 @@ package org.simpleflatmapper.reflect.asm;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class AsmUtilsTest {
@@ -30,6 +35,21 @@ public class AsmUtilsTest {
 		assertEquals(List.class, pt.getRawType());
 		assertEquals(List.class, pt2.getRawType());
 		assertEquals(String.class, pt2.getActualTypeArguments()[0]);
+	}
+
+	@Test
+	public void testToAsmType() {
+		assertEquals("java/lang/String", AsmUtils.toAsmType(String.class));
+		assertEquals("java/lang/String", AsmUtils.toGenericAsmType(String.class));
+		assertEquals("java/util/HashMap", AsmUtils.toAsmType(new HashMap<String, Long>() {}.getClass().getGenericSuperclass()));
+		assertEquals("java/util/HashMap<Ljava/lang/String;Ljava/lang/Long;>", AsmUtils.toGenericAsmType(new HashMap<String, Long>() {}.getClass().getGenericSuperclass()));
+	}
+
+
+	@Test
+	public void testGetClosestPublicImpl() {
+		assertEquals(HashMap.class, TypeHelper.toClass(AsmUtils.findClosestPublicTypeExposing(new HashMap<Object, Object>() {}.getClass(), Map.class)));
+		assertNull(AsmUtils.findClosestPublicTypeExposing(new HashMap<Object, Object>() {}.getClass(), Getter.class));
 	}
 
     @Test

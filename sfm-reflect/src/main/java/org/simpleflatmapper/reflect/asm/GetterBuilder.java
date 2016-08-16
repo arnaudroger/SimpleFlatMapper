@@ -11,8 +11,8 @@ import java.lang.reflect.Method;
 
 public class GetterBuilder implements Opcodes {
 
-	private static final String GETTER_TYPE = AsmUtils.toType(Getter.class);
-	private static final String ORG_SFM_REFLECT_PRIMITIVE = AsmUtils.toType(IntGetter.class.getPackage().getName());
+	private static final String GETTER_TYPE = AsmUtils.toAsmType(Getter.class);
+	private static final String ORG_SFM_REFLECT_PRIMITIVE = AsmUtils.toAsmType(IntGetter.class.getPackage().getName());
 
 
     public static byte[] createObjectGetter(final String className, final Field field) throws Exception {
@@ -31,7 +31,7 @@ public class GetterBuilder implements Opcodes {
                 V1_6,
                 ACC_PUBLIC + ACC_FINAL + ACC_SUPER,
                 classType,
-                "Ljava/lang/Object;L" + GETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;",
+                "Ljava/lang/Object;L" + GETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTargetTypeDeclaration(propertyType) + ">;",
                 "java/lang/Object", new String[] {GETTER_TYPE});
 
         {
@@ -45,12 +45,12 @@ public class GetterBuilder implements Opcodes {
         }
         {
             mv = cw.visitMethod(ACC_PUBLIC, "get",
-                    "(L" + targetType + ";)" + AsmUtils.toTypeParam(propertyType), null,
+                    "(" + AsmUtils.toTargetTypeDeclaration(targetType) + ")" + AsmUtils.toTargetTypeDeclaration(propertyType), null,
                     new String[] { "java/lang/Exception" });
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 1);
 
-            mv.visitFieldInsn(GETFIELD, targetType, field.getName(), AsmUtils.toTypeParam(propertyType));
+            mv.visitFieldInsn(GETFIELD, targetType, field.getName(), AsmUtils.toTargetTypeDeclaration(propertyType));
 
             mv.visitInsn(ARETURN);
             mv.visitMaxs(1, 2);
@@ -83,7 +83,7 @@ public class GetterBuilder implements Opcodes {
 				V1_6,
 				ACC_PUBLIC + ACC_FINAL + ACC_SUPER,
 				classType,
-				"Ljava/lang/Object;L" + GETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;",
+				"Ljava/lang/Object;L" + GETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTargetTypeDeclaration(propertyType) + ">;",
 				"java/lang/Object", new String[] {GETTER_TYPE});
 
 		{
@@ -97,12 +97,12 @@ public class GetterBuilder implements Opcodes {
 		}
 		{
 			mv = cw.visitMethod(ACC_PUBLIC, "get",
-					"(L" + targetType + ";)" + AsmUtils.toTypeParam(propertyType), null,
+					"(" + AsmUtils.toTargetTypeDeclaration(targetType) + ")" + AsmUtils.toTargetTypeDeclaration(propertyType), null,
 					new String[] { "java/lang/Exception" });
 			mv.visitCode();
 			mv.visitVarInsn(ALOAD, 1);
 
-			AsmUtils.invoke(mv, target, method.getName(), "()" + AsmUtils.toTypeParam(propertyType));
+			AsmUtils.invoke(mv, target, method.getName(), "()" + AsmUtils.toTargetTypeDeclaration(propertyType));
 
 			mv.visitInsn(ARETURN);
 			mv.visitMaxs(1, 2);
@@ -126,7 +126,7 @@ public class GetterBuilder implements Opcodes {
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 1);
         mv.visitTypeInsn(CHECKCAST, targetType);
-        mv.visitMethodInsn(INVOKEVIRTUAL, classType, "get", "(L" + targetType + ";)" + AsmUtils.toTypeParam(propertyType), false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, classType, "get", "(" + AsmUtils.toTargetTypeDeclaration(targetType) + ")" + AsmUtils.toTargetTypeDeclaration(propertyType), false);
         mv.visitInsn(ARETURN);
         mv.visitMaxs(2, 2);
         mv.visitEnd();
@@ -155,7 +155,7 @@ public class GetterBuilder implements Opcodes {
 
         cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL  + ACC_SUPER,  classType,
                 "Ljava/lang/Object;"
-                        + "L"  + GETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;"
+                        + "L"  + GETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTargetTypeDeclaration(propertyType) + ">;"
                         + "L" + ORG_SFM_REFLECT_PRIMITIVE + methodSuffix + "Getter<L" + targetType + ";>;",
                 "java/lang/Object",
                 new String[] {GETTER_TYPE,
@@ -172,7 +172,7 @@ public class GetterBuilder implements Opcodes {
             mv.visitEnd();
         }
         {
-            mv = cw.visitMethod(ACC_PUBLIC, getMethod, "(L" + targetType + ";)" + primitiveType , null, new String[] { "java/lang/Exception" });
+            mv = cw.visitMethod(ACC_PUBLIC, getMethod, "(" + AsmUtils.toTargetTypeDeclaration(targetType) + ")" + primitiveType , null, new String[] { "java/lang/Exception" });
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 1);
 
@@ -183,7 +183,7 @@ public class GetterBuilder implements Opcodes {
             mv.visitEnd();
         }
         {
-            mv = cw.visitMethod(ACC_PUBLIC, "get", "(L" + targetType + ";)" + AsmUtils.toTypeParam(propertyType), null, new String[] { "java/lang/Exception" });
+            mv = cw.visitMethod(ACC_PUBLIC, "get", "(" + AsmUtils.toTargetTypeDeclaration(targetType) + ")" + AsmUtils.toTargetTypeDeclaration(propertyType), null, new String[] { "java/lang/Exception" });
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 1);
             mv.visitFieldInsn(GETFIELD, targetType, field.getName(), primitiveType);
@@ -224,7 +224,7 @@ public class GetterBuilder implements Opcodes {
 
 		cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL  + ACC_SUPER,  classType, 
 				"Ljava/lang/Object;"
-				+ "L"  + GETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTypeParam(propertyType) + ">;"
+				+ "L"  + GETTER_TYPE + "<L" + targetType + ";" + AsmUtils.toTargetTypeDeclaration(propertyType) + ">;"
 				+ "L" + ORG_SFM_REFLECT_PRIMITIVE + methodSuffix + "Getter<L" + targetType + ";>;",
 				"java/lang/Object", 
 				new String[] {GETTER_TYPE,
@@ -241,7 +241,7 @@ public class GetterBuilder implements Opcodes {
 		mv.visitEnd();
 		}
 		{
-		mv = cw.visitMethod(ACC_PUBLIC, getMethod, "(L" + targetType + ";)" + primitiveType , null, new String[] { "java/lang/Exception" });
+		mv = cw.visitMethod(ACC_PUBLIC, getMethod, "(" + AsmUtils.toTargetTypeDeclaration(targetType) + ")" + primitiveType , null, new String[] { "java/lang/Exception" });
 		mv.visitCode();
 		mv.visitVarInsn(ALOAD, 1);
 
@@ -252,7 +252,7 @@ public class GetterBuilder implements Opcodes {
 		mv.visitEnd();
 		}
 		{
-		mv = cw.visitMethod(ACC_PUBLIC, "get", "(L" + targetType + ";)" + AsmUtils.toTypeParam(propertyType), null, new String[] { "java/lang/Exception" });
+		mv = cw.visitMethod(ACC_PUBLIC, "get", "(" + AsmUtils.toTargetTypeDeclaration(targetType) + ")" + AsmUtils.toTargetTypeDeclaration(propertyType), null, new String[] { "java/lang/Exception" });
 		mv.visitCode();
 		mv.visitVarInsn(ALOAD, 1);
 		AsmUtils.invoke(mv, target, method.getName(), "()" + primitiveType);
@@ -278,7 +278,7 @@ public class GetterBuilder implements Opcodes {
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 1);
         mv.visitTypeInsn(CHECKCAST, targetType);
-        mv.visitMethodInsn(INVOKEVIRTUAL,  classType , getMethod, "(L" + targetType + ";)" + primitiveType, false);
+        mv.visitMethodInsn(INVOKEVIRTUAL,  classType , getMethod, "(" + AsmUtils.toTargetTypeDeclaration(targetType) + ")" + primitiveType, false);
         mv.visitInsn(AsmUtils.returnOps.get(primitive));
         mv.visitMaxs(2, 2);
         mv.visitEnd();
@@ -289,7 +289,7 @@ public class GetterBuilder implements Opcodes {
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 1);
         mv.visitTypeInsn(CHECKCAST,  targetType );
-        mv.visitMethodInsn(INVOKEVIRTUAL,  classType , "get", "(L" + targetType + ";)" + AsmUtils.toTypeParam(propertyType), false);
+        mv.visitMethodInsn(INVOKEVIRTUAL,  classType , "get", "(" + AsmUtils.toTargetTypeDeclaration(targetType) + ")" + AsmUtils.toTargetTypeDeclaration(propertyType), false);
         mv.visitInsn(ARETURN);
         mv.visitMaxs(2, 2);
         mv.visitEnd();

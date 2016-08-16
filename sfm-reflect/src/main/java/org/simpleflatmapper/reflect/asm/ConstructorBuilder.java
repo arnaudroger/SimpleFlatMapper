@@ -25,10 +25,10 @@ public class ConstructorBuilder {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		MethodVisitor mv;
 
-		String targetType = AsmUtils.toType(targetClass);
-		String sourceType = AsmUtils.toType(sourceClass);
-		String classType = AsmUtils.toType(className);
-		String instantiatorType = AsmUtils.toType(Instantiator.class);
+		String targetType = AsmUtils.toAsmType(targetClass);
+		String sourceType = AsmUtils.toAsmType(sourceClass);
+		String classType = AsmUtils.toAsmType(className);
+		String instantiatorType = AsmUtils.toAsmType(Instantiator.class);
 
 		cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType,
 				"Ljava/lang/Object;L" + instantiatorType + "<L"

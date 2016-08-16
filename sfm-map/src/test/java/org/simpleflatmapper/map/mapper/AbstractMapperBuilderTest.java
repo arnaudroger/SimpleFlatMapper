@@ -15,6 +15,7 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
+import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.ArrayEnumarable;
 import org.simpleflatmapper.util.Enumarable;
@@ -35,17 +36,17 @@ public class AbstractMapperBuilderTest {
             public DbObject get() {
                 return DbObject.newInstance();
             }
-        });
+        }, true);
     }
 
     @Test
     public void testDbFinalObject() throws Exception {
-        testMapper(new Supplier<DbObject>() {
+        testMapper(new Supplier<DbFinalObject>() {
             @Override
-            public DbObject get() {
-                return DbObject.newInstance();
+            public DbFinalObject get() {
+                return DbFinalObject.newInstance();
             }
-        });
+        }, false);
     }
 
 
@@ -103,7 +104,7 @@ public class AbstractMapperBuilderTest {
 
     }
 
-    private <T> void testMapper(Supplier<T> supplier) throws Exception {
+    private <T> void testMapper(Supplier<T> supplier, boolean mapTo) throws Exception {
         T instance1 = supplier.get();
         T instance2 = supplier.get();
         ClassMeta<T> classMeta = ReflectionService.newInstance().<T>getClassMeta(instance1.getClass());
@@ -128,8 +129,11 @@ public class AbstractMapperBuilderTest {
         assertEquals(instance1, builderIndexed.mapper().map(row));
 
         assertNotEquals(instance1, instance2);
-        mapper.mapTo(row, instance2, null);
-        assertEquals(instance1, instance2);
+
+        if (mapTo) {
+            mapper.mapTo(row, instance2, null);
+            assertEquals(instance1, instance2);
+        }
     }
 
 
@@ -160,7 +164,7 @@ public class AbstractMapperBuilderTest {
                         public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
                             return source[key.getIndex()];
                         }
-                    }), MapperConfig.<SampleFieldKey>fieldMapperConfig(), new MapperSourceImpl<Object[], SampleFieldKey>(Object[].class, GETTER_FACTORY),
+                    }), MapperConfig.<SampleFieldKey>fieldMapperConfig().failOnAsm(true), new MapperSourceImpl<Object[], SampleFieldKey>(Object[].class, GETTER_FACTORY),
                     KEY_FACTORY, 0);
         }
 

@@ -4,6 +4,7 @@ package org.simpleflatmapper.util;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.*;
 
 public class TypeHelper {
@@ -15,13 +16,15 @@ public class TypeHelper {
 		} else if (target instanceof ParameterizedType) {
 			return (Class<T>) ((ParameterizedType) target).getRawType();
 		} else if (target instanceof TypeVariable) {
-			Type[] bounds = ((TypeVariable) target).getBounds();
-			return (Class<T>) bounds[0];
+			return toClass(((TypeVariable) target).getBounds()[0]);
+		} else if (target instanceof WildcardType) {
+			return toClass(((WildcardType)target).getUpperBounds()[0]);
 		}
 		throw new UnsupportedOperationException("Cannot extract class from type " + target);
 	}
 
-	public static <T> Map<TypeVariable<?>, Type> getTypesMap(Type targetType, Class<T> targetClass) {
+	public static <T> Map<TypeVariable<?>, Type> getTypesMap(Type targetType) {
+		Class<T> targetClass = TypeHelper.toClass(targetType);
 		Map<TypeVariable<?>, Type> genericTypes = Collections.emptyMap();
 		if (targetType instanceof ParameterizedType) {
 			TypeVariable<Class<T>>[] typeParameters = targetClass.getTypeParameters();
@@ -48,10 +51,6 @@ public class TypeHelper {
 		} else {
 			return target;
 		}
-	}
-	
-	public static Class<?> wrap(Type type) {
-		return wrap(TypeHelper.toClass(type));
 	}
 	
 	public static  boolean areCompatible(Class<?> target, Class<?> source) {
@@ -106,52 +105,23 @@ public class TypeHelper {
 		if (TypeHelper.areEquals(t, i)) {
 			return t;
 		}
-		if (t instanceof Class) {
-			for(Type it : ((Class) t).getGenericInterfaces()) {
-				if (isAssignable(i, it)) {
+		for(Type it : TypeHelper.toClass(t).getGenericInterfaces()) {
+			if (isAssignable(i, it)) {
+				if (areEquals(it, i)) {
 					return it;
+				} else {
+					return getGenericInterface(it, i);
 				}
 			}
-		} else if (t instanceof ParameterizedType) {
-			return getGenericInterface(((ParameterizedType) t).getRawType(), i);
 		}
 		return null;
 	}
 
 	private static Type getGenericSuperType(Type t) {
-		if (t instanceof Class) {
-			return ((Class) t).getGenericSuperclass();
-		} else if (t instanceof ParameterizedType) {
-			return getGenericSuperType(((ParameterizedType) t).getRawType());
-		}
-		return null;
+		return TypeHelper.toClass(t).getGenericSuperclass();
 	}
 
 
-	public static Type[] getParamTypesForInterface(Class<?> target, Class<?> inter) {
-		if (target == null) {
-			return null;
-		}
-		Type[] genericInterfaces = target.getGenericInterfaces();
-		for(Type t : genericInterfaces) {
-			if (t instanceof ParameterizedType) {
-				ParameterizedType pt = (ParameterizedType) t;
-				if (pt.getRawType().equals(inter)) {
-					return pt.getActualTypeArguments();
-				}
-			} else if (t instanceof Class) {
-				Type[] readerClass = getParamTypesForInterface((Class) t, inter);
-				if (readerClass != null) {
-					return readerClass;
-				}
-			}
-		}
-		return getParamTypesForInterface(target.getSuperclass(), inter);
-	}
-
-	public static boolean isClass(Type outType, Class<?> class1) {
-		return toClass(outType).equals(class1);
-	}
 
 	public static boolean isAssignable(Type type, Type from) {
 		return isAssignable(TypeHelper.toBoxedClass(type), from);
@@ -183,9 +153,6 @@ public class TypeHelper {
 		}
 	}
 
-    public static boolean areEquals(Type target, Class<?> clazz) {
-        return clazz.equals(TypeHelper.toClass(target));
-    }
 	public static boolean areEquals(Type target, Type clazz) {
 		return TypeHelper.toClass(clazz).equals(TypeHelper.toClass(target));
 	}
@@ -201,7 +168,7 @@ public class TypeHelper {
 				if (genericInterface instanceof ParameterizedType) {
 					types = ((ParameterizedType) genericInterface).getActualTypeArguments();
 				} else {
-					throw new IllegalStateException("type " + type + " is not a ParameterizedType");
+					return null;
 				}
 			} else {
 				types = getGenericParameterForClass(TypeHelper.getGenericSuperType(type), interfaceClass);
@@ -213,7 +180,8 @@ public class TypeHelper {
 		}
 	}
 
-	private static void resolveTypeVariables(Type source, Type[] types) {
+
+	public static void resolveTypeVariables(Type source, Type[] types) {
 		for(int i = 0; i < types.length; i++) {
             Type t = types[i];
             if (t instanceof TypeVariable) {

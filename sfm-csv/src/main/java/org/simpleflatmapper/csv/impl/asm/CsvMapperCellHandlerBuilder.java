@@ -23,10 +23,10 @@ import java.lang.reflect.Type;
 @SuppressWarnings("SpellCheckingInspection")
 public class CsvMapperCellHandlerBuilder {
 
-    public static final String DELAYED_CELL_SETTER_TYPE = AsmUtils.toType(DelayedCellSetter.class);
-    public static final String CELL_SETTER_TYPE = AsmUtils.toType(CellSetter.class);
-    public static final String CSV_CELL_MAPPER_TYPE = AsmUtils.toType(CsvMapperCellHandler.class);
-    public static final String CELL_HANDLER_FACTORY_TYPE = AsmUtils.toType(CsvMapperCellHandlerFactory.class);
+    public static final String DELAYED_CELL_SETTER_TYPE = AsmUtils.toAsmType(DelayedCellSetter.class);
+    public static final String CELL_SETTER_TYPE = AsmUtils.toAsmType(CellSetter.class);
+    public static final String CSV_CELL_MAPPER_TYPE = AsmUtils.toAsmType(CsvMapperCellHandler.class);
+    public static final String CELL_HANDLER_FACTORY_TYPE = AsmUtils.toAsmType(CsvMapperCellHandlerFactory.class);
 
     public static <T> byte[] createTargetSetterClass(String className,
                                                  DelayedCellSetterFactory<T, ?>[] delayedCellSetters,
@@ -37,8 +37,8 @@ public class CsvMapperCellHandlerBuilder {
         FieldVisitor fv;
         MethodVisitor mv;
 
-        final String targetType = AsmUtils.toType(type);
-        final String classType = AsmUtils.toType(className);
+        final String targetType = AsmUtils.toAsmType(type);
+        final String classType = AsmUtils.toAsmType(className);
 
         cw.visit(Opcodes.V1_6, Opcodes.ACC_FINAL + Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, classType,
                 "L" + CSV_CELL_MAPPER_TYPE + "<L" + targetType + ";>;", CSV_CELL_MAPPER_TYPE, null);
@@ -48,7 +48,7 @@ public class CsvMapperCellHandlerBuilder {
         for(int i = 0; i < delayedCellSetters.length; i++) {
             if (delayedCellSetters[i] != null) {
                 fv = cw.visitField(Opcodes.ACC_PROTECTED + Opcodes.ACC_FINAL, "delayedCellSetter" + i,
-                        AsmUtils.toDeclaredLType(DELAYED_CELL_SETTER_TYPE),
+                        AsmUtils.toTargetTypeDeclaration(DELAYED_CELL_SETTER_TYPE),
                         "L" + DELAYED_CELL_SETTER_TYPE + "<L" + targetType + ";*>;", null);
                 fv.visitEnd();
             }
@@ -57,7 +57,7 @@ public class CsvMapperCellHandlerBuilder {
         for(int i = 0; i < setters.length; i++) {
             if (setters[i] != null) {
                 fv = cw.visitField(Opcodes.ACC_PROTECTED + Opcodes.ACC_FINAL, "setter" + i,
-                        AsmUtils.toDeclaredLType(CELL_SETTER_TYPE),
+                        AsmUtils.toTargetTypeDeclaration(CELL_SETTER_TYPE),
                         "L" + CELL_SETTER_TYPE + "<L" + targetType + ";>;", null);
                 fv.visitEnd();
             }
@@ -106,8 +106,8 @@ public class CsvMapperCellHandlerBuilder {
                         mv.visitVarInsn(Opcodes.ILOAD, 2);
                         mv.visitVarInsn(Opcodes.ILOAD, 3);
                         mv.visitVarInsn(Opcodes.ALOAD, 0);
-                        mv.visitFieldInsn(Opcodes.GETFIELD, classType, "parsingContext", AsmUtils.toDeclaredLType(ParsingContext.class));
-                        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, CELL_SETTER_TYPE, "set", "(Ljava/lang/Object;[CIIL" + AsmUtils.toType(ParsingContext.class) + ";)V", true);
+                        mv.visitFieldInsn(Opcodes.GETFIELD, classType, "parsingContext", AsmUtils.toTargetTypeDeclaration(ParsingContext.class));
+                        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, CELL_SETTER_TYPE, "set", "(Ljava/lang/Object;[CIIL" + AsmUtils.toAsmType(ParsingContext.class) + ";)V", true);
                     }
                     if (i < (end - 1)) {
                         mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
@@ -209,11 +209,11 @@ public class CsvMapperCellHandlerBuilder {
         });
 
         MethodVisitor mv;
-        mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "peekDelayedCellSetterValue" , "(L" + AsmUtils.toType(CsvColumnKey.class) + ";)Ljava/lang/Object;", null, null);
+        mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "peekDelayedCellSetterValue" , "(L" + AsmUtils.toAsmType(CsvColumnKey.class) + ";)Ljava/lang/Object;", null, null);
         mv.visitCode();
 
         mv.visitVarInsn(Opcodes.ALOAD, 1);
-        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, AsmUtils.toType(CsvColumnKey.class), "getIndex", "()I", false);
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, AsmUtils.toAsmType(CsvColumnKey.class), "getIndex", "()I", false);
         mv.visitVarInsn(Opcodes.ISTORE, 2);
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         mv.visitVarInsn(Opcodes.ILOAD, 2);
@@ -245,8 +245,8 @@ public class CsvMapperCellHandlerBuilder {
                         mv.visitVarInsn(Opcodes.ILOAD, 2);
                         mv.visitVarInsn(Opcodes.ILOAD, 3);
                         mv.visitVarInsn(Opcodes.ALOAD, 0);
-                        mv.visitFieldInsn(Opcodes.GETFIELD, classType, "parsingContext", AsmUtils.toDeclaredLType(ParsingContext.class));
-                        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, DELAYED_CELL_SETTER_TYPE, "set", "([CIIL" + AsmUtils.toType(ParsingContext.class) + ";)V", true);
+                        mv.visitFieldInsn(Opcodes.GETFIELD, classType, "parsingContext", AsmUtils.toTargetTypeDeclaration(ParsingContext.class));
+                        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, DELAYED_CELL_SETTER_TYPE, "set", "([CIIL" + AsmUtils.toAsmType(ParsingContext.class) + ";)V", true);
                     }
                     if (i < (end - 1)) {
                         mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
@@ -472,20 +472,20 @@ public class CsvMapperCellHandlerBuilder {
         MethodVisitor mv;// constructor
         {
             mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "(" +
-                    AsmUtils.toDeclaredLType(Instantiator.class) +
-                    AsmUtils.toDeclaredLType(DelayedCellSetter[].class) +
-                    AsmUtils.toDeclaredLType(CellSetter[].class) +
-                    AsmUtils.toDeclaredLType(CsvColumnKey[].class) +
-                    AsmUtils.toDeclaredLType(ParsingContext.class) +
-                    AsmUtils.toDeclaredLType(FieldMapperErrorHandler.class) +
+                    AsmUtils.toTargetTypeDeclaration(Instantiator.class) +
+                    AsmUtils.toTargetTypeDeclaration(DelayedCellSetter[].class) +
+                    AsmUtils.toTargetTypeDeclaration(CellSetter[].class) +
+                    AsmUtils.toTargetTypeDeclaration(CsvColumnKey[].class) +
+                    AsmUtils.toTargetTypeDeclaration(ParsingContext.class) +
+                    AsmUtils.toTargetTypeDeclaration(FieldMapperErrorHandler.class) +
                     ")V",
                     "(" +
-                    "L" + AsmUtils.toType(Instantiator.class) +"<L" + AsmUtils.toType(CsvMapperCellHandler.class)+ "<L" + targetType + ";>;L"+ targetType + ";>;" +
+                    "L" + AsmUtils.toAsmType(Instantiator.class) +"<L" + AsmUtils.toAsmType(CsvMapperCellHandler.class)+ "<L" + targetType + ";>;L"+ targetType + ";>;" +
                     "[L" + DELAYED_CELL_SETTER_TYPE +  "<L" + targetType + ";*>;" +
                     "[L" + CELL_SETTER_TYPE + "<L" + targetType + ";>;" +
-                    AsmUtils.toDeclaredLType(CsvColumnKey[].class) +
-                    AsmUtils.toDeclaredLType(ParsingContext.class) +
-                    "L" + AsmUtils.toType(FieldMapperErrorHandler.class) + "<L" + AsmUtils.toType(CsvColumnKey.class) + ";>;" +
+                    AsmUtils.toTargetTypeDeclaration(CsvColumnKey[].class) +
+                    AsmUtils.toTargetTypeDeclaration(ParsingContext.class) +
+                    "L" + AsmUtils.toAsmType(FieldMapperErrorHandler.class) + "<L" + AsmUtils.toAsmType(CsvColumnKey.class) + ";>;" +
                     ")V", null);
             mv.visitCode();
             mv.visitVarInsn(Opcodes.ALOAD, 0);
@@ -499,12 +499,12 @@ public class CsvMapperCellHandlerBuilder {
             mv.visitVarInsn(Opcodes.ALOAD, 6);
             mv.visitMethodInsn(Opcodes.INVOKESPECIAL, CSV_CELL_MAPPER_TYPE, "<init>",
                     "(" +
-                            AsmUtils.toDeclaredLType(Instantiator.class) +
-                            AsmUtils.toDeclaredLType(CsvColumnKey[].class) +
+                            AsmUtils.toTargetTypeDeclaration(Instantiator.class) +
+                            AsmUtils.toTargetTypeDeclaration(CsvColumnKey[].class) +
                             "I" +
                             "I" +
-                            AsmUtils.toDeclaredLType(ParsingContext.class) +
-                            AsmUtils.toDeclaredLType(FieldMapperErrorHandler.class) +
+                            AsmUtils.toTargetTypeDeclaration(ParsingContext.class) +
+                            AsmUtils.toTargetTypeDeclaration(FieldMapperErrorHandler.class) +
                             ")V", false);
 
 
@@ -528,7 +528,7 @@ public class CsvMapperCellHandlerBuilder {
                     mv.visitFieldInsn(Opcodes.PUTFIELD,
                             classType,
                             "delayedCellSetter" + i,
-                            AsmUtils.toDeclaredLType(DELAYED_CELL_SETTER_TYPE));
+                            AsmUtils.toTargetTypeDeclaration(DELAYED_CELL_SETTER_TYPE));
                 }
             }
 
@@ -541,7 +541,7 @@ public class CsvMapperCellHandlerBuilder {
                     mv.visitFieldInsn(Opcodes.PUTFIELD,
                             classType,
                             "setter" + i ,
-                            AsmUtils.toDeclaredLType(CELL_SETTER_TYPE));
+                            AsmUtils.toTargetTypeDeclaration(CELL_SETTER_TYPE));
                 }
             }
 
@@ -623,9 +623,9 @@ public class CsvMapperCellHandlerBuilder {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         MethodVisitor mv;
 
-        String factoryType = AsmUtils.toType(factoryName);
-        String classType = AsmUtils.toType(className);
-        String targetType = AsmUtils.toType(target);
+        String factoryType = AsmUtils.toAsmType(factoryName);
+        String classType = AsmUtils.toAsmType(className);
+        String targetType = AsmUtils.toAsmType(target);
 
 
         cw.visit(Opcodes.V1_6, Opcodes.ACC_FINAL + Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER,
@@ -635,17 +635,17 @@ public class CsvMapperCellHandlerBuilder {
 
         {
             mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "(" +
-                    AsmUtils.toDeclaredLType(Instantiator.class) +
-                    AsmUtils.toDeclaredLType(CsvColumnKey[].class) +
-                    AsmUtils.toDeclaredLType(ParsingContextFactory.class) +
-                    AsmUtils.toDeclaredLType(FieldMapperErrorHandler.class) +
+                    AsmUtils.toTargetTypeDeclaration(Instantiator.class) +
+                    AsmUtils.toTargetTypeDeclaration(CsvColumnKey[].class) +
+                    AsmUtils.toTargetTypeDeclaration(ParsingContextFactory.class) +
+                    AsmUtils.toTargetTypeDeclaration(FieldMapperErrorHandler.class) +
                     ")V",
                     "(" +
-                    "L"+ AsmUtils.toType(Instantiator.class) +
-                            "<L" + AsmUtils.toType(CsvMapperCellHandler.class) + "<L"+ targetType + ";>;L" + targetType + ";>;" +
-                    AsmUtils.toDeclaredLType(CsvColumnKey[].class) +
-                    AsmUtils.toDeclaredLType(ParsingContextFactory.class) +
-                    "L" + AsmUtils.toType(FieldMapperErrorHandler.class) + "<L" + AsmUtils.toType(CsvColumnKey.class) + ";>;" +
+                    "L"+ AsmUtils.toAsmType(Instantiator.class) +
+                            "<L" + AsmUtils.toAsmType(CsvMapperCellHandler.class) + "<L"+ targetType + ";>;L" + targetType + ";>;" +
+                    AsmUtils.toTargetTypeDeclaration(CsvColumnKey[].class) +
+                    AsmUtils.toTargetTypeDeclaration(ParsingContextFactory.class) +
+                    "L" + AsmUtils.toAsmType(FieldMapperErrorHandler.class) + "<L" + AsmUtils.toAsmType(CsvColumnKey.class) + ";>;" +
                     ")V", null);
 
             mv.visitCode();
@@ -656,10 +656,10 @@ public class CsvMapperCellHandlerBuilder {
             mv.visitVarInsn(Opcodes.ALOAD, 4);
             mv.visitMethodInsn(Opcodes.INVOKESPECIAL, CELL_HANDLER_FACTORY_TYPE, "<init>",
                     "(" +
-                            AsmUtils.toDeclaredLType(Instantiator.class) +
-                            AsmUtils.toDeclaredLType(CsvColumnKey[].class) +
-                            AsmUtils.toDeclaredLType(ParsingContextFactory.class) +
-                            AsmUtils.toDeclaredLType(FieldMapperErrorHandler.class) +
+                            AsmUtils.toTargetTypeDeclaration(Instantiator.class) +
+                            AsmUtils.toTargetTypeDeclaration(CsvColumnKey[].class) +
+                            AsmUtils.toTargetTypeDeclaration(ParsingContextFactory.class) +
+                            AsmUtils.toTargetTypeDeclaration(FieldMapperErrorHandler.class) +
                     ")V", false);
             mv.visitInsn(Opcodes.RETURN);
             mv.visitMaxs(5, 5);
@@ -667,36 +667,36 @@ public class CsvMapperCellHandlerBuilder {
         }
         {
             mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "newInstance", "(" +
-                    AsmUtils.toDeclaredLType(DelayedCellSetter[].class) +
-                    AsmUtils.toDeclaredLType(CellSetter[].class) +
-                    ")" + AsmUtils.toDeclaredLType(CsvMapperCellHandler.class),
+                    AsmUtils.toTargetTypeDeclaration(DelayedCellSetter[].class) +
+                    AsmUtils.toTargetTypeDeclaration(CellSetter[].class) +
+                    ")" + AsmUtils.toTargetTypeDeclaration(CsvMapperCellHandler.class),
                     "(" +
                     "[L" + DELAYED_CELL_SETTER_TYPE + "<L" +  targetType + ";*>;" +
                     "[L" + CELL_SETTER_TYPE + "<L" +  targetType + ";>;" +
                     ")" +
-                    "L" + AsmUtils.toType(CsvMapperCellHandler.class) + "<L" + targetType + ";>;", null);
+                    "L" + AsmUtils.toAsmType(CsvMapperCellHandler.class) + "<L" + targetType + ";>;", null);
             mv.visitCode();
             mv.visitTypeInsn(Opcodes.NEW, classType);
             mv.visitInsn(Opcodes.DUP);
             mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitFieldInsn(Opcodes.GETFIELD, factoryType, "instantiator", AsmUtils.toDeclaredLType(Instantiator.class));
+            mv.visitFieldInsn(Opcodes.GETFIELD, factoryType, "instantiator", AsmUtils.toTargetTypeDeclaration(Instantiator.class));
             mv.visitVarInsn(Opcodes.ALOAD, 1);
             mv.visitVarInsn(Opcodes.ALOAD, 2);
             mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitFieldInsn(Opcodes.GETFIELD, factoryType, "keys", AsmUtils.toDeclaredLType(CsvColumnKey[].class));
+            mv.visitFieldInsn(Opcodes.GETFIELD, factoryType, "keys", AsmUtils.toTargetTypeDeclaration(CsvColumnKey[].class));
             mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitFieldInsn(Opcodes.GETFIELD, factoryType, "parsingContextFactory", AsmUtils.toDeclaredLType(ParsingContextFactory.class));
-            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, AsmUtils.toType(ParsingContextFactory.class), "newContext", "()" + AsmUtils.toDeclaredLType(ParsingContext.class), false);
+            mv.visitFieldInsn(Opcodes.GETFIELD, factoryType, "parsingContextFactory", AsmUtils.toTargetTypeDeclaration(ParsingContextFactory.class));
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, AsmUtils.toAsmType(ParsingContextFactory.class), "newContext", "()" + AsmUtils.toTargetTypeDeclaration(ParsingContext.class), false);
             mv.visitVarInsn(Opcodes.ALOAD, 0);
-            mv.visitFieldInsn(Opcodes.GETFIELD, factoryType, "fieldErrorHandler", AsmUtils.toDeclaredLType(FieldMapperErrorHandler.class));
+            mv.visitFieldInsn(Opcodes.GETFIELD, factoryType, "fieldErrorHandler", AsmUtils.toTargetTypeDeclaration(FieldMapperErrorHandler.class));
             mv.visitMethodInsn(Opcodes.INVOKESPECIAL, classType, "<init>",
                     "(" +
-                            AsmUtils.toDeclaredLType(Instantiator.class) +
-                            AsmUtils.toDeclaredLType(DelayedCellSetter[].class) +
-                            AsmUtils.toDeclaredLType(CellSetter[].class) +
-                            AsmUtils.toDeclaredLType(CsvColumnKey[].class) +
-                            AsmUtils.toDeclaredLType(ParsingContext.class) +
-                            AsmUtils.toDeclaredLType(FieldMapperErrorHandler.class) +
+                            AsmUtils.toTargetTypeDeclaration(Instantiator.class) +
+                            AsmUtils.toTargetTypeDeclaration(DelayedCellSetter[].class) +
+                            AsmUtils.toTargetTypeDeclaration(CellSetter[].class) +
+                            AsmUtils.toTargetTypeDeclaration(CsvColumnKey[].class) +
+                            AsmUtils.toTargetTypeDeclaration(ParsingContext.class) +
+                            AsmUtils.toTargetTypeDeclaration(FieldMapperErrorHandler.class) +
                     ")V", false);
             mv.visitInsn(Opcodes.ARETURN);
             mv.visitMaxs(8, 3);

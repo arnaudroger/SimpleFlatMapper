@@ -4,6 +4,7 @@ import org.simpleflatmapper.ow2asm.MethodVisitor;
 import org.simpleflatmapper.ow2asm.Opcodes;
 import org.simpleflatmapper.ow2asm.signature.SignatureReader;
 import org.simpleflatmapper.ow2asm.signature.SignatureVisitor;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.io.File;
@@ -48,20 +49,8 @@ public class AsmUtils {
 	public static final String ASM_DUMP_TARGET_DIR = "asm.dump.target.dir";
 
 	public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
-	public static String toType(final Type target) {
-		return toType(TypeHelper.toClass(target));
-	}
 
-	public static String toType(final Class<?> target) {
-		if (target.isPrimitive()) {
-			return primitivesType.get(target);
-		}
-		return toType(getPublicOrInterfaceClass(target).getName());
-	}
 
-	public static String toType(final String name) {
-		return name.replace('.', '/');
-	}
 	static final Map<Class<?>, Class<?>> wrappers = new HashMap<Class<?>, Class<?>>();
 
 	static {
@@ -152,13 +141,60 @@ public class AsmUtils {
 			targetDir.mkdirs();
 		} 
 	}
-	
-	public static boolean isStillGeneric(Class<? > clazz) {
-		clazz = getPublicOrInterfaceClass(clazz);
-		final TypeVariable<?>[] typeParameters = clazz.getTypeParameters();
-		return typeParameters != null && typeParameters.length > 0;
+
+
+	public static String toAsmType(final String name) {
+		return name.replace('.', '/');
 	}
-	
+
+	public static String toAsmType(final Type type) {
+		if (TypeHelper.isPrimitive(type)) {
+			return primitivesType.get(TypeHelper.toClass(type));
+		}
+		return toAsmType(TypeHelper.toClass(type).getName());
+	}
+
+	public static String toTargetTypeDeclaration(Type targetType) {
+		if (TypeHelper.isPrimitive(targetType)) {
+			return primitivesType.get(TypeHelper.toClass(targetType));
+		}
+		return toTargetTypeDeclaration(AsmUtils.toAsmType(targetType));
+
+	}
+	public static String toTargetTypeDeclaration(String targetType) {
+		if (targetType.startsWith("[")) {
+			return targetType;
+		} else {
+			return "L" + targetType+ ";";
+		}
+	}
+
+
+	public static String toGenericAsmType(final Type type) {
+		StringBuilder sb = new StringBuilder();
+
+
+		sb.append(toAsmType(type));
+
+		Type[] typeParameters = null;
+
+		if (type instanceof ParameterizedType) {
+			typeParameters = ((ParameterizedType) type).getActualTypeArguments();
+		}
+
+		if (typeParameters != null && typeParameters.length > 0) {
+			sb.append("<");
+
+			for(Type t : typeParameters) {
+				sb.append(toTargetTypeDeclaration(toGenericAsmType(t)));
+			}
+
+			sb.append(">");
+		}
+
+		return sb.toString();
+	}
+
 	public static byte[] writeClassToFile (final String className, final byte[] bytes) throws IOException {
 		return writeClassToFileInDir(className, bytes,  AsmUtils.targetDir);
 	}
@@ -185,36 +221,6 @@ public class AsmUtils {
         }
 	}
 
-	public static String toTypeWithParam(Class<?> class1) {
-		StringBuilder sb = new StringBuilder();
-		
-		class1 = getPublicOrInterfaceClass(class1);
-		
-		sb.append(toType(class1));
-		
-		TypeVariable<?>[] typeParameters = class1.getTypeParameters();
-		
-		if (typeParameters != null && typeParameters.length > 0) {
-			sb.append("<");
-			
-			for(TypeVariable<?> t : typeParameters) {
-				String typeName = t.getName();
-				sb.append(toTypeParam(typeName));
-			}
-			
-			sb.append(">");
-		}
-		
-		return sb.toString();
-	}
-
-	public static String toTypeParam(String typeName) {
-		if (typeName.startsWith("[")) {
-			return typeName;
-		} else {
-			return "L" + toType(typeName) + ";";
-		}
-	}
 	public static Type toGenericType(String sig, List<String> genericTypeNames, Type target) throws ClassNotFoundException {
 		if (sig.length() == 1) {
 			switch (sig.charAt(0)) {
@@ -264,32 +270,43 @@ public class AsmUtils {
 		}
 	}
 
+	public static Type findClosestPublicTypeExposing(Type type, Class<?> expose) {
+		return findTypeInHierarchy(type, new TypeIsPublicAndImplement(expose));
+	}
 
-	public static Class<?> getPublicOrInterfaceClass(Class<?> clazz) {
-		if (! Modifier.isPublic(clazz.getModifiers()) && ! Modifier.isStatic(clazz.getModifiers())) {
-			Class<?>[] interfaces = clazz.getInterfaces();
-			if (interfaces != null && interfaces.length > 0) {
-				return interfaces[0];
-			} else {
-				return getPublicOrInterfaceClass(clazz.getSuperclass());
+	public static Type findTypeInHierarchy(Type type, Predicate<Type> predicate) {
+
+		if (predicate.test(type)) {
+			return type;
+		}
+
+		// check interfaces
+		Class<Object> targetClass = TypeHelper.toClass(type);
+
+		for(Type i : targetClass.getGenericInterfaces()) {
+			if (predicate.test(i)) {
+				return i;
 			}
 		}
-		
-		return clazz;
+
+		Type st = targetClass.getGenericSuperclass();
+		if (st != null) {
+			return findTypeInHierarchy(st, predicate);
+		}
+
+		return null;
 	}
 
-	public static void invoke(MethodVisitor mv, Class<?> target,
+	public static void invoke(MethodVisitor mv, Type target, Method method) {
+		invoke(mv, target, method.getName(), toSignature(method));
+	}
+    public static void invoke(MethodVisitor mv, Type target,
 			String method, String sig) {
-		Class<?> publicClass = getPublicOrInterfaceClass(target);
-		boolean isInterface = publicClass.isInterface();
-		mv.visitMethodInsn(isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, toType(publicClass), method, sig, isInterface);
+		Type publicClass = findTypeInHierarchy(target, new TypeIsPublicAndHasMethodMethod(method));
+		boolean isInterface = TypeHelper.toClass(publicClass).isInterface();
+		mv.visitMethodInsn(isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, toAsmType(publicClass), method, sig, isInterface);
 	}
-	public static String toDeclaredLType(String sourceType) {
-		if (sourceType.startsWith("[L") || sourceType.startsWith("L")) {
-			return sourceType;
-		}
-		return "L" + sourceType + ";";
-	}
+
 	public static Class<?> toWrapperClass(Type type) {
 		final Class<?> clazz = TypeHelper.toClass(type);
 		if (clazz.isPrimitive()) {
@@ -297,7 +314,7 @@ public class AsmUtils {
 		} else return clazz;
 	}
 	public static String toWrapperType(Type type) {
-		return toType(toWrapperClass(type));
+		return toAsmType(toWrapperClass(type));
 	}
 
 	public static List<String> extractGenericTypeNames(String sig) {
@@ -475,23 +492,17 @@ public class AsmUtils {
 		return types;
 	}
 
-    public static String toDeclaredLType(Class<?> clazz) {
-		if (clazz.isPrimitive()) {
-			return primitivesType.get(clazz);
-		}
-        return toDeclaredLType(toType(clazz));
-    }
 
 	public static String toSignature(Method exec) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("(");
 		for(Class<?> clazz : exec.getParameterTypes()) {
-			sb.append(AsmUtils.toDeclaredLType(clazz));
+			sb.append(AsmUtils.toTargetTypeDeclaration(clazz));
 		}
 		sb.append(")");
 
-		sb.append(AsmUtils.toDeclaredLType(exec.getReturnType()));
+		sb.append(AsmUtils.toTargetTypeDeclaration(exec.getReturnType()));
 
 		return sb.toString();
 	}
@@ -581,4 +592,40 @@ public class AsmUtils {
                 }
         }
     }
+
+	private static class TypeIsPublicAndHasMethodMethod implements Predicate<Type> {
+		private final String method;
+
+		public TypeIsPublicAndHasMethodMethod(String method) {
+			this.method = method;
+		}
+
+		@Override
+		public boolean test(Type type) {
+			Class<?> clazz = TypeHelper.toClass(type);
+			if (!Modifier.isPublic(clazz.getModifiers())) {
+				return false;
+			}
+			for(Method m : clazz.getMethods()) {
+				if (m.getName().equals(method)) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	private static class TypeIsPublicAndImplement implements Predicate<Type> {
+		private final Class<?> expose;
+
+		public TypeIsPublicAndImplement(Class<?> expose) {
+			this.expose = expose;
+		}
+
+		@Override
+		public boolean test(Type type) {
+			Class<Object> targetClass = TypeHelper.toClass(type);
+			return Modifier.isPublic(targetClass.getModifiers()) && expose.isAssignableFrom(targetClass);
+		}
+	}
 }

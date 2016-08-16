@@ -9,12 +9,22 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
+import org.simpleflatmapper.reflect.primitive.BooleanGetter;
+import org.simpleflatmapper.reflect.primitive.ByteGetter;
+import org.simpleflatmapper.reflect.primitive.CharacterGetter;
+import org.simpleflatmapper.reflect.primitive.DoubleGetter;
+import org.simpleflatmapper.reflect.primitive.FloatGetter;
+import org.simpleflatmapper.reflect.primitive.IntGetter;
+import org.simpleflatmapper.reflect.primitive.LongGetter;
+import org.simpleflatmapper.reflect.primitive.ShortGetter;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -48,10 +58,10 @@ public class InstantiatorBuilder {
 
 		Class<?> targetClass= TypeHelper.toClass(getTargetType(instantiatorDefinition));
 		
-		String targetType = AsmUtils.toType(targetClass);
+		String targetType = AsmUtils.toAsmType(targetClass);
 		String sourceType = AsmUtils.toWrapperType(sourceClass);
-        String classType = AsmUtils.toType(className);
-        String instantiatorType = AsmUtils.toType(Instantiator.class);
+        String classType = AsmUtils.toAsmType(className);
+        String instantiatorType = AsmUtils.toAsmType(Instantiator.class);
 
         cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType, "Ljava/lang/Object;L" + instantiatorType + "<L"	+ targetType + ";>;", "java/lang/Object",
 				new String[] { instantiatorType });
@@ -76,10 +86,10 @@ public class InstantiatorBuilder {
 
         Class<?> targetClass= TypeHelper.toClass(getTargetType(instantiatorDefinition));
 
-        String targetType = AsmUtils.toType(targetClass);
+        String targetType = AsmUtils.toAsmType(targetClass);
         String sourceType = AsmUtils.toWrapperType(sourceClass);
-        String classType = AsmUtils.toType(className);
-        String instantiatorType = AsmUtils.toType(Instantiator.class);
+        String classType = AsmUtils.toAsmType(className);
+        String instantiatorType = AsmUtils.toAsmType(Instantiator.class);
 
         cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType, "Ljava/lang/Object;L" + instantiatorType + "<L"	+ targetType + ";>;", "java/lang/Object",
                 new String[] { instantiatorType });
@@ -91,9 +101,9 @@ public class InstantiatorBuilder {
                     cw.visitField(
                             ACC_FINAL,
                             "builderInstantiator",
-                            "L" + AsmUtils.toType(Instantiator.class) + ";",
-                            "L" + AsmUtils.toType(Instantiator.class) + "<Ljava/lang/Void;L"
-                                    + AsmUtils.toType(getTargetType(instantiatorDefinition.getBuilderInstantiator())) +  ";>;", null);
+                            "L" + AsmUtils.toAsmType(Instantiator.class) + ";",
+                            "L" + AsmUtils.toAsmType(Instantiator.class) + "<Ljava/lang/Void;L"
+                                    + AsmUtils.toAsmType(getTargetType(instantiatorDefinition.getBuilderInstantiator())) +  ";>;", null);
             fv.visitEnd();
         }
 
@@ -110,7 +120,9 @@ public class InstantiatorBuilder {
     private static <S> void appendGetters(Map<Parameter, Getter<? super S, ?>> injections, ClassWriter cw) {
         FieldVisitor fv;
         for(Entry<Parameter, Getter<? super S, ?>> entry : injections.entrySet()) {
-            fv = cw.visitField(ACC_FINAL, "getter_" + entry.getKey().getName(), "L" + AsmUtils.toType(entry.getValue().getClass()) +";", null, null);
+            GetterCall getterCall = getGetterCall(entry.getKey().getType(), entry.getValue().getClass());
+
+            fv = cw.visitField(ACC_FINAL, "getter_" + entry.getKey().getName(), AsmUtils.toTargetTypeDeclaration(getterCall.getterType), null, null);
             fv.visitEnd();
         }
     }
@@ -118,9 +130,9 @@ public class InstantiatorBuilder {
     private static <S> void appendInitBuilder(Map<Parameter, Getter<? super S, ?>> injections, ClassWriter cw, String sourceType, String classType, BuilderInstantiatorDefinition instantiatorDefinition) {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "<init>",
-                "(Ljava/util/Map;L" + AsmUtils.toType(Instantiator.class) + ";)V",
-                "(Ljava/util/Map<Ljava.lang.String;L" + AsmUtils.toType(Getter.class)  +"<" + AsmUtils.toDeclaredLType(sourceType) + "*>;>;" +
-                        "L" + AsmUtils.toType(Instantiator.class) + "<Ljava/lang/Void;L" + AsmUtils.toType(getTargetType(instantiatorDefinition.getBuilderInstantiator())) +";>;)V", null);
+                "(Ljava/util/Map;L" + AsmUtils.toAsmType(Instantiator.class) + ";)V",
+                "(Ljava/util/Map<Ljava.lang.String;L" + AsmUtils.toAsmType(Getter.class)  +"<" + AsmUtils.toTargetTypeDeclaration(sourceType) + "*>;>;" +
+                        "L" + AsmUtils.toAsmType(Instantiator.class) + "<Ljava/lang/Void;L" + AsmUtils.toAsmType(getTargetType(instantiatorDefinition.getBuilderInstantiator())) +";>;)V", null);
 
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
@@ -128,18 +140,18 @@ public class InstantiatorBuilder {
 
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 2);
-        mv.visitFieldInsn(PUTFIELD, classType, "builderInstantiator", "L" + AsmUtils.toType(Instantiator.class) + ";");
+        mv.visitFieldInsn(PUTFIELD, classType, "builderInstantiator", "L" + AsmUtils.toAsmType(Instantiator.class) + ";");
 
         for(Entry<Parameter, Getter<? super S, ?>> entry : injections.entrySet()) {
             String name = entry.getKey().getName();
-            String getterType = AsmUtils.toType(entry.getValue().getClass());
+            GetterCall getterCall = getGetterCall(entry.getKey().getType(), entry.getValue().getClass());
 
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitLdcInsn(name);
             mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
-            mv.visitTypeInsn(CHECKCAST, getterType);
-            mv.visitFieldInsn(PUTFIELD, classType, "getter_" + name, "L" + getterType +";");
+            mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(getterCall.getterType));
+            mv.visitFieldInsn(PUTFIELD, classType, "getter_" + name, AsmUtils.toTargetTypeDeclaration(getterCall.getterType));
         }
 
         mv.visitInsn(RETURN);
@@ -152,7 +164,7 @@ public class InstantiatorBuilder {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "<init>",
                 "(Ljava/util/Map;)V",
-                "(Ljava/util/Map<Ljava.lang.String;L" + AsmUtils.toType(Getter.class)  +"<" + AsmUtils.toDeclaredLType(sourceType) + "*>;>;)V", null);
+                "(Ljava/util/Map<Ljava.lang.String;L" + AsmUtils.toAsmType(Getter.class)  +"<" + AsmUtils.toTargetTypeDeclaration(sourceType) + "*>;>;)V", null);
 
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
@@ -161,14 +173,16 @@ public class InstantiatorBuilder {
 
         for(Entry<Parameter, Getter<? super S, ?>> entry : injections.entrySet()) {
             String name = entry.getKey().getName();
-            String getterType = AsmUtils.toType(entry.getValue().getClass());
+
+            GetterCall getterCall = getGetterCall(entry.getKey().getType(), entry.getValue().getClass());
+
 
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitLdcInsn(name);
             mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
-            mv.visitTypeInsn(CHECKCAST, getterType);
-            mv.visitFieldInsn(PUTFIELD, classType, "getter_" + name, "L" + getterType +";");
+            mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(getterCall.getterType));
+            mv.visitFieldInsn(PUTFIELD, classType, "getter_" + name, AsmUtils.toTargetTypeDeclaration(getterCall.getterType));
 
         }
 
@@ -180,7 +194,7 @@ public class InstantiatorBuilder {
 
     private static <S> void appendNewInstance(Class<?> sourceClass, ExecutableInstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections, ClassWriter cw, String targetType, String sourceType, String classType, Parameter[] parameters) throws NoSuchMethodException {
         MethodVisitor mv;
-        mv = cw.visitMethod(ACC_PUBLIC, "newInstance", "(" + AsmUtils.toDeclaredLType(sourceType) + ")L" + targetType + ";", null, new String[] { "java/lang/Exception" });
+        mv = cw.visitMethod(ACC_PUBLIC, "newInstance", "(" + AsmUtils.toTargetTypeDeclaration(sourceType) + ")" + AsmUtils.toTargetTypeDeclaration(targetType), null, new String[] { "java/lang/Exception" });
         mv.visitCode();
         mv.visitTypeInsn(NEW, targetType);
         mv.visitInsn(DUP);
@@ -191,16 +205,7 @@ public class InstantiatorBuilder {
         for (Parameter p : parameters) {
             Getter<? super S, ?> getter = injections.get(p);
 
-
-            String propertyType = AsmUtils.toType(p.getType());
-
-            if (TypeHelper.isPrimitive(p.getType())) {
-                sb.append(propertyType);
-            } else if (TypeHelper.isArray(p.getType())) {
-                sb.append(propertyType);
-            } else {
-                sb.append("L").append(propertyType).append(";");
-            }
+            sb.append(AsmUtils.toTargetTypeDeclaration(p.getType()));
 
             if (getter == null) {
                 if (TypeHelper.isPrimitive(p.getType())) {
@@ -209,50 +214,7 @@ public class InstantiatorBuilder {
                     mv.visitInsn(ACONST_NULL);
                 }
             } else {
-
-                Class<?> getterPublicType = AsmUtils.getPublicOrInterfaceClass(getter.getClass());
-                String getterType = AsmUtils.toType(getterPublicType);
-
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, classType, "getter_" + p.getName(), "L" + getterType + ";");
-                mv.visitVarInsn(ALOAD, 1);
-
-                if (TypeHelper.isPrimitive(p.getType())) {
-                    String methodSuffix = AsmUtils.wrappers.get(p.getType()).getSimpleName();
-                    if ("Integer".equals(methodSuffix)) {
-                        methodSuffix = "Int";
-                    }
-                    String methodName = "get" + methodSuffix;
-                    try {
-                        getterPublicType.getMethod(methodName);
-                        AsmUtils.invoke(mv, getterPublicType, "get" + methodSuffix, "(" + AsmUtils.toDeclaredLType(sourceType) + ")" + propertyType);
-                    } catch (NoSuchMethodException e) {
-                        if (AsmUtils.isStillGeneric(getter.getClass())) {
-                            AsmUtils.invoke(mv, getterPublicType, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
-                            mv.visitTypeInsn(CHECKCAST, AsmUtils.toWrapperType(p.getType()));
-                        } else {
-                            AsmUtils.invoke(mv, getterPublicType, "get", "(" + AsmUtils.toDeclaredLType(sourceType) + ")L" + AsmUtils.toType(getter.getClass().getMethod("get", sourceClass).getReturnType()) + ";");
-                        }
-                        //mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Long", "longValue", "()J", false);
-
-                        String valueMethodPrefix = methodSuffix.toLowerCase();
-                        if ("character".equals(valueMethodPrefix)) {
-                            valueMethodPrefix = "char";
-                        }
-                        String valueMethod = valueMethodPrefix + "Value";
-                        //mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Long", "longValue", "()J", false);
-                        AsmUtils.invoke(mv, AsmUtils.toWrapperClass(p.getType()), valueMethod, "()" + AsmUtils.toType(p.getType()));
-
-                    }
-                } else {
-                    if (AsmUtils.isStillGeneric(getter.getClass())) {
-                        AsmUtils.invoke(mv, getterPublicType, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
-                        mv.visitTypeInsn(CHECKCAST, propertyType);
-                    } else {
-                        AsmUtils.invoke(mv, getterPublicType, "get", "(" + AsmUtils.toDeclaredLType(sourceType) + ")L" + AsmUtils.toType(getter.getClass().getMethod("get", sourceClass).getReturnType()) + ";");
-                    }
-                }
-
+                invovkeGetter(p, getter, classType, sourceClass, mv);
             }
         }
 
@@ -260,7 +222,7 @@ public class InstantiatorBuilder {
         if (exec instanceof Constructor) {
             mv.visitMethodInsn(INVOKESPECIAL, targetType, "<init>", "(" + sb.toString() + ")V", false);
         } else {
-            mv.visitMethodInsn(INVOKESTATIC, AsmUtils.toType(((Method)exec).getDeclaringClass()), exec.getName(),
+            mv.visitMethodInsn(INVOKESTATIC, AsmUtils.toAsmType(((Method)exec).getDeclaringClass()), exec.getName(),
                     AsmUtils.toSignature((Method)exec)
                     , false);
 
@@ -271,18 +233,78 @@ public class InstantiatorBuilder {
         mv.visitEnd();
     }
 
+    private static <S> void invovkeGetter(Parameter p, Getter<? super S, ?> getter, String classType, Class<?> sourceClass, MethodVisitor mv) throws NoSuchMethodException {
+        GetterCall getterCall = getGetterCall(p.getType(), getter.getClass());
+
+        String getterType = AsmUtils.toAsmType(getterCall.getterType);
+        String sourceType = AsmUtils.toAsmType(sourceClass.equals(Void.class) || sourceClass.equals(void.class) ? Object.class : sourceClass);
+
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitFieldInsn(GETFIELD, classType, "getter_" + p.getName(), AsmUtils.toTargetTypeDeclaration(getterType));
+        mv.visitVarInsn(ALOAD, 1);
+
+        if (getterCall.isPrimitive) {
+            AsmUtils.invoke(mv, getterCall.getterType, getterCall.methodName, "(" + AsmUtils.toTargetTypeDeclaration(sourceType) + ")" + AsmUtils.toAsmType(p.getType()));
+        } else {
+            Class<?> wrapperClass = AsmUtils.toWrapperClass(p.getType());
+            Method getterMethod = getGetterMethod(TypeHelper.toClass(getterCall.getterType));
+
+            AsmUtils.invoke(mv, getterCall.getterType, getterMethod);
+            if (!wrapperClass.isAssignableFrom(getterMethod.getReturnType())) {
+                mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(wrapperClass));
+            }
+
+            if (TypeHelper.isPrimitive(p.getType())) {
+                String methodSuffix = getPrimitiveMethodSuffix(p);
+                String valueMethodPrefix = methodSuffix.toLowerCase();
+                if ("character".equals(valueMethodPrefix)) {
+                    valueMethodPrefix = "char";
+                }
+                String valueMethod = valueMethodPrefix + "Value";
+                AsmUtils.invoke(mv, wrapperClass, valueMethod, "()" + AsmUtils.toAsmType(p.getType()));
+            }
+        }
+    }
+
+    private static Method getGetterMethod(Class<? extends Getter> aClass) {
+        Method m = null;
+        for(Method p : aClass.getDeclaredMethods()) {
+            if (!Modifier.isStatic(p.getModifiers())
+                    && p.getName().equals("get")
+                    && (p.getParameterTypes() != null && p.getParameterTypes().length == 1)) {
+                // crude way of selecting non bridge method
+                if (m == null || p.getModifiers() < m.getModifiers()) {
+                    m = p;
+                }
+            }
+        }
+        return m;
+    }
+
+    private static String getPrimitiveMethodSuffix(Parameter p) {
+        return getPrimitiveMethodSuffix(p.getType());
+    }
+
+    private static String getPrimitiveMethodSuffix(Class<?> type) {
+        String methodSuffix = AsmUtils.wrappers.get(type).getSimpleName();
+        if ("Integer".equals(methodSuffix)) {
+            methodSuffix = "Int";
+        }
+        return methodSuffix;
+    }
+
     private static <S> void appendNewInstance(Class<?> sourceClass, BuilderInstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections, ClassWriter cw, String targetType, String sourceType, String classType, Map<Parameter, Method> setters) throws NoSuchMethodException {
         MethodVisitor mv;
-        mv = cw.visitMethod(ACC_PUBLIC, "newInstance", "(" + AsmUtils.toDeclaredLType(sourceType) + ")L" + targetType + ";", null, new String[] { "java/lang/Exception" });
+        mv = cw.visitMethod(ACC_PUBLIC, "newInstance", "(" + AsmUtils.toTargetTypeDeclaration(sourceType) + ")" + AsmUtils.toTargetTypeDeclaration(targetType), null, new String[] { "java/lang/Exception" });
         mv.visitCode();
 
 
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD,classType, "builderInstantiator", "L" + AsmUtils.toType(Instantiator.class) + ";");
+        mv.visitFieldInsn(GETFIELD,classType, "builderInstantiator", AsmUtils.toTargetTypeDeclaration(Instantiator.class));
         mv.visitInsn(ACONST_NULL);
-        mv.visitMethodInsn(INVOKEINTERFACE, AsmUtils.toType(Instantiator.class), "newInstance", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
+        mv.visitMethodInsn(INVOKEINTERFACE, AsmUtils.toAsmType(Instantiator.class), "newInstance", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
         final Type builderClass = getTargetType(instantiatorDefinition.getBuilderInstantiator());
-        final String builderType = AsmUtils.toType(builderClass);
+        final String builderType = AsmUtils.toAsmType(builderClass);
         mv.visitTypeInsn(CHECKCAST, builderType);
 
         mv.visitVarInsn(ASTORE, 2);
@@ -292,7 +314,6 @@ public class InstantiatorBuilder {
             Parameter p = e.getKey();
             Getter<? super S, ?> getter = injections.get(p);
 
-            String propertyType = AsmUtils.toType(p.getType());
 
             if (getter == null) {
                 if (TypeHelper.isPrimitive(p.getType())) {
@@ -302,48 +323,7 @@ public class InstantiatorBuilder {
                 }
             } else {
 
-                Class<?> getterPublicType = AsmUtils.getPublicOrInterfaceClass(getter.getClass());
-                String getterType = AsmUtils.toType(getterPublicType);
-
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, classType, "getter_" + p.getName(), "L" + getterType + ";");
-                mv.visitVarInsn(ALOAD, 1);
-
-                if (TypeHelper.isPrimitive(p.getType())) {
-                    String methodSuffix = AsmUtils.wrappers.get(p.getType()).getSimpleName();
-                    if ("Integer".equals(methodSuffix)) {
-                        methodSuffix = "Int";
-                    }
-                    String methodName = "get" + methodSuffix;
-                    try {
-                        getterPublicType.getMethod(methodName);
-                        AsmUtils.invoke(mv, getterPublicType, "get" + methodSuffix, "(" + AsmUtils.toDeclaredLType(sourceType) + ")" + propertyType);
-                    } catch (NoSuchMethodException ex) {
-                        if (AsmUtils.isStillGeneric(getter.getClass())) {
-                            AsmUtils.invoke(mv, getterPublicType, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
-                            mv.visitTypeInsn(CHECKCAST, AsmUtils.toWrapperType(p.getType()));
-                        } else {
-                            AsmUtils.invoke(mv, getterPublicType, "get", "(" + AsmUtils.toDeclaredLType(sourceType) + ")L" + AsmUtils.toType(getter.getClass().getMethod("get", sourceClass).getReturnType()) + ";");
-                        }
-                        //mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Long", "longValue", "()J", false);
-
-                        String valueMethodPrefix = methodSuffix.toLowerCase();
-                        if ("character".equals(valueMethodPrefix)) {
-                            valueMethodPrefix = "char";
-                        }
-                        String valueMethod = valueMethodPrefix + "Value";
-                        //mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Long", "longValue", "()J", false);
-                        AsmUtils.invoke(mv, AsmUtils.toWrapperClass(p.getType()), valueMethod, "()" + AsmUtils.toType(p.getType()));
-
-                    }
-                } else {
-                    if (AsmUtils.isStillGeneric(getter.getClass())) {
-                        AsmUtils.invoke(mv, getterPublicType, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
-                        mv.visitTypeInsn(CHECKCAST, propertyType);
-                    } else {
-                        AsmUtils.invoke(mv, getterPublicType, "get", "(" + AsmUtils.toDeclaredLType(sourceType) + ")L" + AsmUtils.toType(getter.getClass().getMethod("get", sourceClass).getReturnType()) + ";");
-                    }
-                }
+                invovkeGetter(p, getter, classType, sourceClass, mv);
 
                 AsmUtils.invoke(mv, TypeHelper.toClass(builderClass), e.getValue().getName(),
                         AsmUtils.toSignature(e.getValue()));
@@ -363,6 +343,37 @@ public class InstantiatorBuilder {
         mv.visitEnd();
     }
 
+    private static GetterCall getGetterCall(Class<?> propertyType, Class<? extends Getter> getterClass) {
+        if (TypeHelper.isPrimitive(propertyType)) {
+            Class<?> primitiveGetter = getPrimitiveGetter(propertyType);
+            if (primitiveGetter == null) {
+                throw new IllegalStateException("No primitive getter for primitive " + propertyType);
+            }
+            Type publicGetterClass = AsmUtils.findClosestPublicTypeExposing(getterClass, primitiveGetter);
+            if (publicGetterClass != null) {
+                return new GetterCall("get" + getPrimitiveMethodSuffix(propertyType), publicGetterClass, true);
+            }
+        }
+
+        Type publicGetterClass = AsmUtils.findClosestPublicTypeExposing(getterClass, Getter.class);
+        return new GetterCall("get", publicGetterClass, false);
+    }
+
+    static final Map<Class<?>, Class<?>> primitivesGetter = new HashMap<Class<?>, Class<?>>();
+    static {
+        primitivesGetter.put(boolean.class, BooleanGetter.class);
+        primitivesGetter.put(byte.class,    ByteGetter.class);
+        primitivesGetter.put(char.class,    CharacterGetter.class);
+        primitivesGetter.put(short.class,   ShortGetter.class);
+        primitivesGetter.put(int.class,     IntGetter.class);
+        primitivesGetter.put(long.class,    LongGetter.class);
+        primitivesGetter.put(float.class,   FloatGetter.class);
+        primitivesGetter.put(double.class,  DoubleGetter.class);
+    }
+    private static Class<?> getPrimitiveGetter(Class<?> propertyType) {
+        return primitivesGetter.get(propertyType);
+    }
+
     private static void appendBridgeMethod(ClassWriter cw, String targetType, String sourceType, String classType) {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC,
@@ -373,8 +384,8 @@ public class InstantiatorBuilder {
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 1);
         mv.visitTypeInsn(CHECKCAST, sourceType);
-        mv.visitMethodInsn(INVOKEVIRTUAL, classType, "newInstance", "(" + AsmUtils.toDeclaredLType(sourceType) + ")L"
-                + targetType + ";", false);
+        mv.visitMethodInsn(INVOKEVIRTUAL, classType, "newInstance", "(" + AsmUtils.toTargetTypeDeclaration(sourceType) + ")"
+                + AsmUtils.toTargetTypeDeclaration(targetType), false);
         mv.visitInsn(ARETURN);
         mv.visitMaxs(2, 2);
         mv.visitEnd();
@@ -440,6 +451,18 @@ public class InstantiatorBuilder {
                 return ((BuilderInstantiatorDefinition)instantiatorDefinition).getBuildMethod().getGenericReturnType();
             default:
                 throw new IllegalArgumentException("Unsupported type " + instantiatorDefinition.getType());
+        }
+    }
+
+    static class GetterCall {
+        final String methodName;
+        final Type getterType;
+        final boolean isPrimitive;
+
+        GetterCall(String methodName, Type getterType, boolean isPrimitive) {
+            this.methodName = methodName;
+            this.getterType = getterType;
+            this.isPrimitive = isPrimitive;
         }
     }
 }

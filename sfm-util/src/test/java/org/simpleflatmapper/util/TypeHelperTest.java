@@ -3,7 +3,9 @@ package org.simpleflatmapper.util;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -12,6 +14,73 @@ import java.util.concurrent.ConcurrentMap;
 import static org.junit.Assert.*;
 
 public class TypeHelperTest {
+
+
+	@Test
+	public void testToClass() {
+		assertEquals(Map.class, TypeHelper.toClass(new TypeReference<Map<String, String>>() {}.getType()));
+
+		ParameterizedType type = (ParameterizedType) new TypeReference<Map<? extends Number, String>>() {
+		}.getType();
+		assertEquals(Number.class, TypeHelper.toClass(type.getActualTypeArguments()[0]));
+
+		assertEquals(Date.class, TypeHelper.toClass(MyComparable.class.getTypeParameters()[0]));
+
+		assertEquals(Date.class, TypeHelper.toClass(Date.class));
+
+		try {
+			TypeHelper.toClass(new Type() {
+				@Override
+				public String getTypeName() {
+					return null;
+				}
+			});
+			fail();
+		} catch (UnsupportedOperationException  e) {
+
+		}
+
+	}
+
+	@Test
+	public void testIs() {
+		assertTrue(TypeHelper.isJavaLang(Long.class));
+		assertFalse(TypeHelper.isJavaLang(Date.class));
+		assertTrue(TypeHelper.isPrimitive(long.class));
+		assertFalse(TypeHelper.isPrimitive(Long.class));
+
+		assertTrue(TypeHelper.isArray(new Object[0].getClass()));
+		assertFalse(TypeHelper.isArray(new Object().getClass()));
+
+
+		assertTrue(TypeHelper.isNumber(Long.class));
+		assertTrue(TypeHelper.isNumber(BigDecimal.class));
+		assertFalse(TypeHelper.isNumber(Date.class));
+
+		assertTrue(TypeHelper.isEnum(E.class));
+		assertFalse(TypeHelper.isEnum(BigDecimal.class));
+	}
+
+	@Test
+	public void testGetTypeMaps() {
+		Type type = new TypeReference<Map<String, Number>>() {
+		}.getType();
+		Map<TypeVariable<?>, Type> typesMap = TypeHelper.getTypesMap(type);
+
+		assertEquals(2, typesMap.size());
+		assertEquals(String.class, typesMap.get(Map.class.getTypeParameters()[0]));
+		assertEquals(Number.class,  typesMap.get(Map.class.getTypeParameters()[1]));
+	}
+
+	enum E {A, B}
+
+	static class MyComparable<T extends Date> implements Comparable<T> {
+
+		@Override
+		public int compareTo(T o) {
+			return 0;
+		}
+	}
 
 	@Test
 	public void testIsNumber() {
@@ -71,6 +140,16 @@ public class TypeHelperTest {
 				TypeHelper.getKeyValueTypeOfMap(new TypeReference<ConcurrentMap<String, Integer>>(){}.getType()));
 	}
 
+	@Test
+	public void testMapperEntryTypes() {
+		assertEquals(new TypeHelper.MapEntryTypes(String.class, Integer.class), new TypeHelper.MapEntryTypes(String.class, Integer.class));
+		assertNotEquals(new TypeHelper.MapEntryTypes(Number.class, Integer.class), new TypeHelper.MapEntryTypes(String.class, Integer.class));
+
+		assertEquals(new TypeHelper.MapEntryTypes(String.class, Integer.class).hashCode(), new TypeHelper.MapEntryTypes(String.class, Integer.class).hashCode());
+		assertNotEquals(new TypeHelper.MapEntryTypes(Number.class, Integer.class).hashCode(), new TypeHelper.MapEntryTypes(String.class, Integer.class).hashCode());
+
+		new TypeHelper.MapEntryTypes(String.class, Integer.class).toString();
+	}
 
 	@Test
 	public void testGetGenericParametersForInterface() {

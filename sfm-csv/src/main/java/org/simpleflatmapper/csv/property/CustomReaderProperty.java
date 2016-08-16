@@ -20,7 +20,7 @@ public class CustomReaderProperty {
     }
 
     public Type getReturnType() {
-        final Type[] paramTypesForInterface = TypeHelper.getParamTypesForInterface(reader.getClass(), CellValueReader.class);
+        final Type[] paramTypesForInterface = TypeHelper.getGenericParameterForClass(reader.getClass(), CellValueReader.class);
         return paramTypesForInterface != null ? paramTypesForInterface[0] : null;
     }
 

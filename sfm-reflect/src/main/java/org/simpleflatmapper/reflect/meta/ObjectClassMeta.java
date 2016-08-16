@@ -116,7 +116,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
     private List<PropertyMeta<T, ?>> listProperties(final ReflectionService reflectService, Type targetType) {
 		final Class<T> target = TypeHelper.<T>toClass(targetType);
 		final List<PropertyMeta<T, ?>> properties = new ArrayList<PropertyMeta<T, ?>>();
-		final Map<TypeVariable<?>, Type> typeVariableTypeMap = TypeHelper.getTypesMap(targetType, target);
+		final Map<TypeVariable<?>, Type> typeVariableTypeMap = TypeHelper.getTypesMap(targetType);
 
 		ClassVisitor.visit(target, new FieldAndMethodCallBack() {
 			@Override

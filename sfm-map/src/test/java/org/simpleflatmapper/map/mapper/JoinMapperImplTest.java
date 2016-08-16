@@ -24,6 +24,7 @@ import static org.junit.Assert.*;
 
 public class JoinMapperImplTest {
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testJoin() {
         Mapper<Object[], DbListObject> mapper = new Mapper<Object[], DbListObject>() {

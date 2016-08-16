@@ -21,7 +21,8 @@ public class DbObject {
 		return object;
 	}
 
-	public enum Type {
+	public enum
+	Type {
 		type1, type2, type3, type4
 	}
 	private long id;

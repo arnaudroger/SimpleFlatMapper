@@ -30,7 +30,7 @@ public class AsmInstantiatorDefinitionFactoryTest {
 	public void testExtractConstructorsFinalDbObject() throws IOException, NoSuchMethodException, SecurityException {
 
 		List<InstantiatorDefinition> finalDbObjectConstructors = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class);
-		assertEquals(1, finalDbObjectConstructors.size());
+		assertEquals(2, finalDbObjectConstructors.size());
 		assertEquals(6, finalDbObjectConstructors.get(0).getParameters().length);
 		
 		assertEquals(long.class, finalDbObjectConstructors.get(0).getParameters()[0].getType());

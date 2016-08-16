@@ -73,7 +73,7 @@ public class AbstractWriterBuilderTest {
     public class Writerbuilder<T> extends AbstractWriterBuilder<List<Object>, T, SampleFieldKey, Writerbuilder<T>> {
 
         public Writerbuilder(ClassMeta<T> classMeta) {
-            super(classMeta, TypeHelper.<List<Object>>toClass(new TypeReference<List<Object>>(){}.getType()), MapperConfig.<SampleFieldKey>fieldMapperConfig(),
+            super(classMeta, TypeHelper.<List<Object>>toClass(new TypeReference<List<Object>>(){}.getType()), MapperConfig.<SampleFieldKey>fieldMapperConfig().failOnAsm(true),
                     new ConstantTargetFieldMapperFactorImpl<List<Object>, SampleFieldKey>(SETTER_FACTORY));
         }
 

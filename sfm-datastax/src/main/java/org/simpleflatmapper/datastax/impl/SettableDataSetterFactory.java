@@ -207,7 +207,7 @@ public class SettableDataSetterFactory
         }
 
         if (TypeHelper.isEnum(propertyType)) {
-            if (TypeHelper.isClass(type, String.class)) {
+            if (TypeHelper.areEquals(type, String.class)) {
                 return (Setter<SettableByIndexData, P>) new StringEnumSettableDataSetter(arg.getColumnKey().getIndex());
             } else {
                 return (Setter<SettableByIndexData, P>) new OrdinalEnumSettableDataSetter(arg.getColumnKey().getIndex());

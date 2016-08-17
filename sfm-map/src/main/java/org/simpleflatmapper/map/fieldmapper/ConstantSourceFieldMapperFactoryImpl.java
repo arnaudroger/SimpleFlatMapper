@@ -157,7 +157,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 				return null;
 			}
 			types.add(sourceType);
-			subGetter = lookForInstantiatorGetter(classMeta.getReflectionService().getClassMeta(sourceType), key, columnDefinition, types);
+			subGetter = lookForInstantiatorGetter(classMeta.getReflectionService().<T>getClassMeta(sourceType), key, columnDefinition, types);
 		}
 
 		if (subGetter != null) {

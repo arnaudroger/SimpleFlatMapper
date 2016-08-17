@@ -66,7 +66,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> implements PropertyFin
         PropertyMeta<T, E> propertyMeta = (PropertyMeta<T, E>) keys.get(keyStringValue);
 
         if (propertyMeta == null) {
-            MapElementPropertyMeta<T, K, V> mapElementPropertyMeta = new MapElementPropertyMeta<>(
+            MapElementPropertyMeta<T, K, V> mapElementPropertyMeta = new MapElementPropertyMeta<T, K, V>(
                     propertyNameMatcher,
                     valueMetaData.getReflectionService(),
                     valueMetaData,

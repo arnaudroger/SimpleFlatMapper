@@ -60,4 +60,6 @@ public abstract class PropertyMeta<O, P> {
 	public boolean isDirect() {
 		return false;
 	}
+
+
 }

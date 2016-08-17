@@ -7,7 +7,7 @@ import org.jooq.impl.DefaultDataType;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.mapper.FieldMapperMapperBuilder;
+import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSource;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -29,7 +29,7 @@ public class JooqMapperBuilder<E> {
 		}
 	};
 
-	private final FieldMapperMapperBuilder<Record, E, JooqFieldKey> fieldMapperMapperBuilder;
+	private final ConstantSourceMapperBuilder<Record, E, JooqFieldKey> constantSourceMapperBuilder;
 
 	public JooqMapperBuilder(final Type target) throws MapperBuildingException {
 		this(target, ReflectionService.newInstance());
@@ -48,8 +48,8 @@ public class JooqMapperBuilder<E> {
 	public JooqMapperBuilder(final ClassMeta<E> classMeta,
 							 MappingContextFactoryBuilder<Record, JooqFieldKey> mappingContextFactoryBuilder,
 							 MapperConfig<JooqFieldKey, FieldMapperColumnDefinition<JooqFieldKey>> mapperConfig) throws MapperBuildingException {
-		fieldMapperMapperBuilder =
-				new FieldMapperMapperBuilder<Record, E, JooqFieldKey>(
+		constantSourceMapperBuilder =
+				new ConstantSourceMapperBuilder<Record, E, JooqFieldKey>(
 						FIELD_MAPPER_SOURCE,
 						classMeta,
 						mapperConfig,
@@ -58,12 +58,12 @@ public class JooqMapperBuilder<E> {
 	}
 
 		public JooqMapperBuilder<E> addField(JooqFieldKey key) {
-		fieldMapperMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<JooqFieldKey>identity());
+		constantSourceMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<JooqFieldKey>identity());
 		return this;
 	}
 
 	public Mapper<Record, E> mapper() {
-		return fieldMapperMapperBuilder.mapper();
+		return constantSourceMapperBuilder.mapper();
 	}
 
 	private static class FakeField extends CustomField<Object> {

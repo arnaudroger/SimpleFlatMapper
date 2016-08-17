@@ -157,7 +157,12 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 				if (indexOfProperty != -1) {
 					ConstructorPropertyMeta<T, P> constructorPropertyMeta = (ConstructorPropertyMeta<T, P>) constructorProperties.get(indexOfProperty);
 					if (getter != null && GetterHelper.isCompatible(constructorPropertyMeta.getPropertyType(), type)) {
-						constructorProperties.set(indexOfProperty, constructorPropertyMeta.getter(getter));
+						constructorPropertyMeta = constructorPropertyMeta.getter(getter);
+						constructorProperties.set(indexOfProperty, constructorPropertyMeta);
+					}
+					if (setter != null && SetterHelper.isCompatible(constructorPropertyMeta.getPropertyType(), type)) {
+						constructorPropertyMeta = constructorPropertyMeta.setter(setter);
+						constructorProperties.set(indexOfProperty, constructorPropertyMeta);
 					}
 				} else {
 					indexOfProperty = findProperty(properties, propertyName);

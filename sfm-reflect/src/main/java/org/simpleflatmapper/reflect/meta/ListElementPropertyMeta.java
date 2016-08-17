@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ListElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
-	private final int index;
+    private final int index;
 	private final ArrayClassMeta<T, E> arrayMetaData;
     private final BooleanSupplier isVerticalList;
 

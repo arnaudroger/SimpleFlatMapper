@@ -5,7 +5,7 @@ import com.mysema.query.types.Expression;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.mapper.FieldMapperMapperBuilder;
+import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSource;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -26,7 +26,7 @@ public final class QueryDslMapperBuilder<T> {
 		}
 	} ;
 
-	private final FieldMapperMapperBuilder<Tuple, T, TupleElementKey> fieldMapperMapperBuilder;
+	private final ConstantSourceMapperBuilder<Tuple, T, TupleElementKey> constantSourceMapperBuilder;
 
 	public QueryDslMapperBuilder(final Type target) throws MapperBuildingException {
 		this(target, ReflectionService.newInstance());
@@ -38,8 +38,8 @@ public final class QueryDslMapperBuilder<T> {
 	}
 	
 	public QueryDslMapperBuilder(final ClassMeta<T> classMeta, MappingContextFactoryBuilder<Tuple, TupleElementKey> parentBuilder) throws MapperBuildingException {
-		fieldMapperMapperBuilder =
-				new FieldMapperMapperBuilder<Tuple, T, TupleElementKey>(
+		constantSourceMapperBuilder =
+				new ConstantSourceMapperBuilder<Tuple, T, TupleElementKey>(
 						FIELD_MAPPER_SOURCE,
 						classMeta,
 						MapperConfig.<TupleElementKey>fieldMapperConfig(),
@@ -47,11 +47,11 @@ public final class QueryDslMapperBuilder<T> {
 	}
 
     public <E> QueryDslMapperBuilder<T> addMapping(Expression<?> expression, int i) {
-		fieldMapperMapperBuilder.addMapping(new TupleElementKey(expression, i), FieldMapperColumnDefinition.<TupleElementKey>identity());
+		constantSourceMapperBuilder.addMapping(new TupleElementKey(expression, i), FieldMapperColumnDefinition.<TupleElementKey>identity());
 		return this;
 	}
 
 	public Mapper<Tuple, T> mapper() {
-		return fieldMapperMapperBuilder.mapper();
+		return constantSourceMapperBuilder.mapper();
 	}
 }

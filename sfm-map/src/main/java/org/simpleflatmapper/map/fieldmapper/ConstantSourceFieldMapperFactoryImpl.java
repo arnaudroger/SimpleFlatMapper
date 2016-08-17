@@ -21,12 +21,14 @@ import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.HashSet;
 
 public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>> implements ConstantSourceFieldMapperFactory<S,K> {
 
-	private final GetterFactory<? super S, K> getterFactory;
+	private final GetterFactory<? super S, ? super K> getterFactory;
 
-	public ConstantSourceFieldMapperFactoryImpl(GetterFactory<? super S, K> getterFactory) {
+	public ConstantSourceFieldMapperFactoryImpl(GetterFactory<? super S, ? super K> getterFactory) {
 		this.getterFactory = getterFactory;
 	}
 
@@ -84,12 +86,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		final K key = propertyMapping.getColumnKey();
 		final Class<P> type = TypeHelper.toClass(propertyType);
 
-        @SuppressWarnings("unchecked")
-		Getter<? super S, ? extends P> getter = (Getter<? super S, ? extends P>) propertyMapping.getColumnDefinition().getCustomGetter();
-
-		if (getter == null) {
-			getter = getterFromFactory(propertyMapping, propertyType);
-		}
+		Getter<? super S, ? extends P> getter = getGetterFor(propertyMapping);
 
 		if (getter == null) {
 			mappingErrorHandler.accessorNotFound("Could not find getter for " + key + " type " + propertyType
@@ -105,9 +102,14 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T, P> Getter<? super S, ? extends P> getterFromFactory(PropertyMapping<T, P, K, FieldMapperColumnDefinition<K>> propertyMapping, Type propertyType) {
-		Getter<? super S, ? extends P> getter = null;
-		if (propertyMapping.getColumnDefinition().hasCustomFactory()) {
+	@Override
+	public <T, P> Getter<? super S, ? extends P> getGetterFor(PropertyMapping<T, P, K, FieldMapperColumnDefinition<K>> propertyMapping) {
+		Type propertyType = propertyMapping.getPropertyMeta().getPropertyType();
+
+		@SuppressWarnings("unchecked")
+		Getter<? super S, ? extends P> getter = (Getter<? super S, ? extends P>) propertyMapping.getColumnDefinition().getCustomGetter();
+
+		if (getter == null && propertyMapping.getColumnDefinition().hasCustomFactory()) {
             GetterFactory<? super S, K> cGetterFactory = (GetterFactory<? super S, K>) propertyMapping.getColumnDefinition().getCustomGetterFactory();
             getter = cGetterFactory.newGetter(propertyType, propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition().properties());
         }
@@ -118,24 +120,49 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
         // try to identify constructor that we could build from
 		if (getter == null) {
-			final ClassMeta<P> classMeta = propertyMapping.getPropertyMeta().getPropertyClassMeta();
-
-			InstantiatorDefinitions.CompatibilityScorer scorer = InstantiatorDefinitions.getCompatibilityScorer(propertyMapping.getColumnKey());
-			InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(),
-					scorer);
-
-			if (id != null) {
-				final Type sourceType = id.getParameters()[0].getGenericType();
-				getter = getterFactory.newGetter(sourceType, propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition().properties());
-				if (getter != null) {
-					Instantiator instantiator =
-							classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
-					getter = new InstantiatorGetter(instantiator, getter);
-				}
-			}
+			getter = lookForInstantiatorGetter(propertyMapping.getPropertyMeta().getPropertyClassMeta(), propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition(), new HashSet<Type>());
 		}
 
 		return getter;
+	}
+
+	public <P> Getter<? super S, ? extends P> lookForInstantiatorGetter(ClassMeta<P> classMeta, K key, FieldMapperColumnDefinition<K> columnDefinition, Collection<Type> types) {
+
+
+		InstantiatorDefinitions.CompatibilityScorer scorer = InstantiatorDefinitions.getCompatibilityScorer(key);
+		InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(),
+                scorer);
+
+		if (id != null) {
+            return getGettetInstantiator(classMeta, id, key, columnDefinition, types);
+        }
+		return null;
+	}
+
+	private <T, P> Getter<? super S, ? extends P> getGettetInstantiator(
+			ClassMeta<P> classMeta,
+			InstantiatorDefinition id, K key, FieldMapperColumnDefinition<K> columnDefinition,
+			Collection<Type> types) {
+
+		Instantiator<? super T, ? extends P> instantiator =
+				classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
+
+		final Type sourceType = id.getParameters()[0].getGenericType();
+
+		Getter<? super S, ? extends T> subGetter = getterFactory.newGetter(sourceType, key, columnDefinition);
+
+		if (subGetter == null) {
+			if (types.contains(sourceType)) {
+				// loop circuit cutter
+				return null;
+			}
+			types.add(sourceType);
+			subGetter = lookForInstantiatorGetter(classMeta.getReflectionService().getClassMeta(sourceType), key, columnDefinition, types);
+		}
+
+		if (subGetter != null) {
+			return new InstantiatorGetter<T, S, P>(instantiator, subGetter);
+		} else return null;
 	}
 
 

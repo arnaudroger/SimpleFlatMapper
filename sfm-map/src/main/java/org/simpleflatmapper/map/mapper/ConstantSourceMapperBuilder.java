@@ -33,6 +33,7 @@ import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.ErrorHelper;
@@ -47,7 +48,7 @@ import java.util.*;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
-public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
+public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     private static final FieldKey[] FIELD_KEYS = new FieldKey[0];
 
@@ -67,7 +68,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
     private final KeyFactory<K> keyFactory;
 
 
-    public FieldMapperMapperBuilder(
+    public ConstantSourceMapperBuilder(
             final MapperSource<? super S, K> mapperSource,
             final ClassMeta<T> classMeta,
             final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
@@ -76,7 +77,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
                 this(mapperSource, classMeta, mapperConfig, mappingContextFactoryBuilder, keyFactory, null);
     }
 
-    public FieldMapperMapperBuilder(
+    public ConstantSourceMapperBuilder(
             final MapperSource<? super S, K> mapperSource,
             final ClassMeta<T> classMeta,
             final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
@@ -96,7 +97,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 	}
 
     @SuppressWarnings("unchecked")
-    public final FieldMapperMapperBuilder<S, T, K> addMapping(K key, final FieldMapperColumnDefinition<K> columnDefinition) {
+    public final ConstantSourceMapperBuilder<S, T, K> addMapping(K key, final FieldMapperColumnDefinition<K> columnDefinition) {
         final FieldMapperColumnDefinition<K> composedDefinition = columnDefinition.compose(mapperConfig.columnDefinitions().getColumnDefinition(key));
         final K mappedColumnKey = composedDefinition.rename(key);
 
@@ -205,11 +206,21 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 		propertyMappingsBuilder.forEachConstructorProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K>>>() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> t) {
-				PropertyMeta<T, ?> pm  = t.getPropertyMeta();
+			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping) {
+				PropertyMeta<T, ?> pm  = propertyMapping.getPropertyMeta();
                 ConstructorPropertyMeta<T, ?> cProp = (ConstructorPropertyMeta<T, ?>) pm;
                 Parameter parameter = cProp.getParameter();
-                injections.put(parameter, getterFor(t));
+                Getter<? super S, ?> getter = fieldMapperFactory.getGetterFor(propertyMapping);
+                if (NullGetter.isNull(getter)) {
+                    mapperConfig.mapperBuilderErrorHandler()
+                            .accessorNotFound("Could not find getter for " + propertyMapping.getColumnKey() + " type "
+                                    + propertyMapping.getPropertyMeta().getPropertyType() + " See " + ErrorDoc.toUrl("FMMB_GETTER_NOT_FOUND"));
+                } else {
+                    injections.put(parameter, getter);
+                }
+                if (!NullSetter.isNull(cProp.getSetter())) {
+                    fieldMappers.add(fieldMapperFactory.newFieldMapper(propertyMapping, mappingContextFactoryBuilder, mapperConfig.mapperBuilderErrorHandler()));
+                }
 			}
 		});
 
@@ -338,7 +349,7 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
 
     @SuppressWarnings("unchecked")
     private <P> Mapper<S, P> subPropertyMapper(PropertyMeta<T, P> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
-        final FieldMapperMapperBuilder<S, P, K> builder =
+        final ConstantSourceMapperBuilder<S, P, K> builder =
                 newSubBuilder(owner.getPropertyClassMeta(),
                         mappingContextFactoryBuilder,
                         (PropertyFinder<P>) propertyMappingsBuilder.getPropertyFinder().getSubPropertyFinder(owner.getName()));
@@ -370,53 +381,15 @@ public final class FieldMapperMapperBuilder<S, T, K extends FieldKey<K>>  {
         return fieldMapper;
     }
 
-    @SuppressWarnings("unchecked")
-    private Getter<? super S, ?> getterFor(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> t) {
-		Getter<? super S, ?> getter = (Getter<? super S, ?>) t.getColumnDefinition().getCustomGetter();
-
-		if (getter == null) {
-			getter = mapperSource.getterFactory().newGetter(t.getPropertyMeta().getPropertyType(), t.getColumnKey(), t.getColumnDefinition().properties());
-		}
-
-        if (getter == null) {
-            final ClassMeta<Object> classMeta = (ClassMeta<Object>) t.getPropertyMeta().getPropertyClassMeta();
-
-            InstantiatorDefinitions.CompatibilityScorer scorer = InstantiatorDefinitions.getCompatibilityScorer(t.getColumnKey());
-            InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(),
-                    scorer);
-
-            if (id != null) {
-                final Parameter parameter = id.getParameters()[0];
-                final PropertyMeta<Object, Object> pm =  classMeta.newPropertyFinder().<Object>findProperty(DefaultPropertyNameMatcher.exact(parameter.getName()));
-                final PropertyMapping<Object, Object, K, FieldMapperColumnDefinition<K>> propertyMapping = t.propertyMeta(pm);
-                getter = getterFor((PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>) propertyMapping);
-                if (getter != null) {
-                    Instantiator instantiator =
-                            classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
-                    getter = new InstantiatorGetter(instantiator, getter);
-                }
-            }
-
-        }
-
-		if (getter == null) {
-            mapperConfig.mapperBuilderErrorHandler()
-                    .accessorNotFound("Could not find getter for " + t.getColumnKey() + " type "
-                            + t.getPropertyMeta().getPropertyType() + " See " + ErrorDoc.toUrl("FMMB_GETTER_NOT_FOUND"));
-		}
-		return getter;
-	}
-
-
     public void addMapper(FieldMapper<S, T> mapper) {
 		additionalMappers.add(mapper);
 	}
 
-    private <ST> FieldMapperMapperBuilder<S, ST, K> newSubBuilder(
+    private <ST> ConstantSourceMapperBuilder<S, ST, K> newSubBuilder(
             ClassMeta<ST> classMeta,
             MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder,
             PropertyFinder<ST> propertyFinder) {
-        return new FieldMapperMapperBuilder<S, ST, K>(
+        return new ConstantSourceMapperBuilder<S, ST, K>(
                 mapperSource,
                 classMeta,
                 mapperConfig,

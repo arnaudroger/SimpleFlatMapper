@@ -4,6 +4,7 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ScoredGetter;
+import org.simpleflatmapper.reflect.ScoredSetter;
 import org.simpleflatmapper.util.TypeHelper;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -34,7 +35,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
         Getter<T, E> getter = tupleClassMeta.getReflectionService().getObjectGetterFactory().getGetter(tClass, parameter.getName());
         return new ConstructorPropertyMeta<T, E>(parameter.getName(), tupleClassMeta.getReflectionService(),
                 parameter, tClass,
-                ScoredGetter.<T, E>of(getter, Integer.MAX_VALUE), instantiatorDefinition);
+                ScoredGetter.<T, E>of(getter, Integer.MAX_VALUE), ScoredSetter.<T, E>nullSetter(), instantiatorDefinition);
     }
 
     @Override

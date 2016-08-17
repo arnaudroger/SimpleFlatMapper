@@ -14,7 +14,7 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B extends AbstractMapperBuilder<S, T, K, M, B>> {
 
 
-    private final FieldMapperMapperBuilder<S, T, K> fieldMapperMapperBuilder;
+    private final ConstantSourceMapperBuilder<S, T, K> constantSourceMapperBuilder;
 
     protected final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
     protected final MappingContextFactoryBuilder<? super S, K> mappingContextFactoryBuilder;
@@ -37,8 +37,8 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
             MapperSource<? super S, K> mapperSource,
             KeyFactory<K> keyFactory,
             int startIndex) {
-        this.fieldMapperMapperBuilder =
-                new FieldMapperMapperBuilder<S, T, K>(
+        this.constantSourceMapperBuilder =
+                new ConstantSourceMapperBuilder<S, T, K>(
                         mapperSource,
                         classMeta,
                         mapperConfig,
@@ -54,9 +54,9 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
      * @return a new instance of the jdbcMapper based on the current state of the builder.
      */
     public final M mapper() {
-        Mapper<S, T> mapper = fieldMapperMapperBuilder.mapper();
+        Mapper<S, T> mapper = constantSourceMapperBuilder.mapper();
 
-        if (fieldMapperMapperBuilder.hasJoin()) {
+        if (constantSourceMapperBuilder.hasJoin()) {
             return newJoinJdbcMapper(mapper);
         } else {
             return newStaticJdbcMapper(mapper);
@@ -149,14 +149,14 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
      */
     @SuppressWarnings("unchecked")
     public final B addMapper(FieldMapper<S, T> mapper) {
-        fieldMapperMapperBuilder.addMapper(mapper);
+        constantSourceMapperBuilder.addMapper(mapper);
         return (B) this;
     }
 
 
     @SuppressWarnings("unchecked")
     public final B addMapping(K key, FieldMapperColumnDefinition<K> columnDefinition) {
-        fieldMapperMapperBuilder.addMapping(key, columnDefinition);
+        constantSourceMapperBuilder.addMapping(key, columnDefinition);
         return (B) this;
     }
 
@@ -164,11 +164,11 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     public final B addMapping(K key, Object... properties) {
         if (properties.length == 1) { // catch Object... on column definition
             if (properties[0] instanceof ColumnDefinition) {
-                fieldMapperMapperBuilder.addMapping(key, (FieldMapperColumnDefinition<K>) properties[0]);
+                constantSourceMapperBuilder.addMapping(key, (FieldMapperColumnDefinition<K>) properties[0]);
                 return (B) this;
             }
         }
-        fieldMapperMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<K>of(properties));
+        constantSourceMapperBuilder.addMapping(key, FieldMapperColumnDefinition.<K>of(properties));
         return (B) this;
     }
 

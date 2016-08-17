@@ -1,11 +1,13 @@
 package org.simpleflatmapper.reflect.meta;
 
+import org.simpleflatmapper.reflect.ScoredSetter;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;
+import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -31,7 +33,10 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 			this.propertyMeta = new ConstructorPropertyMeta<Optional<T>, Object>("value",
 					reflectionService,
 					instantiatorDefinition.getParameters()[0],
-					TypeHelper.toClass(type), new ScoredGetter<Optional<T>, Object>(Integer.MAX_VALUE, new OptionalGetter<T>()), instantiatorDefinition);
+					TypeHelper.toClass(type),
+					new ScoredGetter<Optional<T>, Object>(Integer.MAX_VALUE, new OptionalGetter<T>()),
+					ScoredSetter.<Optional<T>, Object>nullSetter(),
+					instantiatorDefinition);
 			this.innerMeta = reflectionService.getClassMeta(instantiatorDefinition.getParameters()[0].getGenericType());
 		} catch(Exception e) {
             ErrorHelper.rethrow(e);

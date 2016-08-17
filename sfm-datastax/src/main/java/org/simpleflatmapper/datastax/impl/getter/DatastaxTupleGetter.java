@@ -7,7 +7,7 @@ import org.simpleflatmapper.datastax.DatastaxColumnKey;
 import org.simpleflatmapper.datastax.DatastaxMapperFactory;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.mapper.FieldMapperMapperBuilder;
+import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.tuple.Tuple2;
 
@@ -35,7 +35,7 @@ public class DatastaxTupleGetter<T extends Tuple2<?, ?>> implements Getter<Getta
     }
 
     public static <P extends Tuple2<?, ?>> Mapper<GettableByIndexData, P> newTupleMapper(Type target, TupleType tt, DatastaxMapperFactory factory) {
-        FieldMapperMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> builder =
+        ConstantSourceMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> builder =
                 DatastaxUDTGetter.newFieldMapperBuilder(factory, target);
 
         List<DataType> componentTypes = tt.getComponentTypes();

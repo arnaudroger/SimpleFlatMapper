@@ -4,36 +4,25 @@ import org.simpleflatmapper.test.beans.DbObject.Type;
 
 import java.util.Date;
 
-public class DbPartialFinalObject {
+public class DbObjectConstructorAndSetter {
 	private long id;
 	private String name;
-	private final String email;
+	private String email;
 	private Date creationTime;
-	
-	private final Type typeOrdinal;
+
+	private Type typeOrdinal;
 	private Type typeName;
-	
-	public DbPartialFinalObject(String email,  Type typeOrdinal) {
-		this.email = email;
-		this.typeOrdinal = typeOrdinal;
-	}
-	
-	public void setName(String name) {
+
+
+	public DbObjectConstructorAndSetter(long id, String name, String email, Date creationTime, Type typeOrdinal, Type typeName) {
+		this.id = id;
 		this.name = name;
-	}
-
-	public void setCreationTime(Date creationTime) {
+		this.email = email;
 		this.creationTime = creationTime;
-	}
-
-	public void setTypeName(Type typeName) {
+		this.typeOrdinal = typeOrdinal;
 		this.typeName = typeName;
 	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
+	
 	public long getId() {
 		return id;
 	}
@@ -53,12 +42,36 @@ public class DbPartialFinalObject {
 		return typeName;
 	}
 
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setCreationTime(Date creationTime) {
+		this.creationTime = creationTime;
+	}
+
+	public void setTypeOrdinal(Type typeOrdinal) {
+		this.typeOrdinal = typeOrdinal;
+	}
+
+	public void setTypeName(Type typeName) {
+		this.typeName = typeName;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		DbPartialFinalObject that = (DbPartialFinalObject) o;
+		DbObjectConstructorAndSetter that = (DbObjectConstructorAndSetter) o;
 
 		if (id != that.id) return false;
 		if (name != null ? !name.equals(that.name) : that.name != null) return false;
@@ -80,15 +93,8 @@ public class DbPartialFinalObject {
 		return result;
 	}
 
-	public static DbPartialFinalObject newInstance() {
+	public static DbObjectConstructorAndSetter newInstance() {
 		DbObject dbObject = DbObject.newInstance();
-		DbPartialFinalObject partialFinalObject = new DbPartialFinalObject(dbObject.getEmail(), dbObject.getTypeOrdinal());
-
-		partialFinalObject.setId(dbObject.getId());
-		partialFinalObject.setName(dbObject.getName());
-		partialFinalObject.setCreationTime(dbObject.getCreationTime());
-		partialFinalObject.setTypeName(dbObject.getTypeName());
-
-		return partialFinalObject;
+		return new DbObjectConstructorAndSetter(dbObject.getId(), dbObject.getName(), dbObject.getEmail(), dbObject.getCreationTime(), dbObject.getTypeOrdinal(), dbObject.getTypeName());
 	}
 }

@@ -10,7 +10,7 @@ import org.simpleflatmapper.datastax.impl.RowGetterFactory;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.mapper.FieldMapperMapperBuilder;
+import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
@@ -40,7 +40,7 @@ public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
     }
 
     public static <P> Mapper<GettableByIndexData, P> newUDTMapper(Type target, UserType tt, DatastaxMapperFactory factory) {
-        FieldMapperMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> builder = newFieldMapperBuilder(factory, target);
+        ConstantSourceMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> builder = newFieldMapperBuilder(factory, target);
 
         Iterator<UserType.Field> iterator = tt.iterator();
         int i = 0;
@@ -54,11 +54,11 @@ public class DatastaxUDTGetter<T> implements Getter<GettableByIndexData, T> {
         return builder.mapper();
     }
 
-    public static <P> FieldMapperMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> newFieldMapperBuilder(DatastaxMapperFactory factory, Type target) {
+    public static <P> ConstantSourceMapperBuilder<GettableByIndexData, P, DatastaxColumnKey> newFieldMapperBuilder(DatastaxMapperFactory factory, Type target) {
         MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config = factory.mapperConfig();
         MapperSourceImpl<GettableByIndexData, DatastaxColumnKey> mapperSource = new MapperSourceImpl<GettableByIndexData, DatastaxColumnKey>(GettableByIndexData.class, new RowGetterFactory(factory));
         ClassMeta<P> classMeta = factory.getClassMeta(target);
-        return new FieldMapperMapperBuilder<GettableByIndexData, P, DatastaxColumnKey>(
+        return new ConstantSourceMapperBuilder<GettableByIndexData, P, DatastaxColumnKey>(
                 mapperSource,
                 classMeta,
                 config,

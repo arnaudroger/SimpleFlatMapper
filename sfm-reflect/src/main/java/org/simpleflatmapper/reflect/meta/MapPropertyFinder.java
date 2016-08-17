@@ -13,6 +13,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> implements PropertyFin
     private final ClassMeta<T> mapMeta;
     private final Converter<? super CharSequence, ? extends K> keyConverter;
     private final Map<PropertyNameMatcher, PropertyFinder<V>> finders = new HashMap<PropertyNameMatcher, PropertyFinder<V>>();
+    private final Map<String, MapElementPropertyMeta<?, K, V>> keys = new HashMap<String, MapElementPropertyMeta<?, K, V>>();
 
     public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter) {
         this.mapMeta = mapMeta;
@@ -38,7 +39,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> implements PropertyFin
                 if (propertyMeta != null) {
                     finders.put(keyMatcher, propertyFinder);
                     if (propertyMeta instanceof DirectClassMeta.DirectPropertyMeta) {
-                        return newKeyProperty(keyMatcher);
+                        return keyProperty(keyMatcher);
                     } else {
                         return newSubPropertyMeta(keyMatcher, propertyMeta);
                     }
@@ -51,7 +52,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> implements PropertyFin
     }
 
     private <E> PropertyMeta<T, E> newSubPropertyMeta(PropertyNameMatcher keyMatcher, PropertyMeta<V, ?> propertyMeta) throws Exception {
-        final PropertyMeta<T, V> keyProperty = newKeyProperty(keyMatcher);
+        final PropertyMeta<T, V> keyProperty = keyProperty(keyMatcher);
         final SubPropertyMeta<T, V, E> subPropertyMeta =
                 new SubPropertyMeta<T, V, E>(
                         valueMetaData.getReflectionService(),
@@ -60,13 +61,23 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> implements PropertyFin
         return subPropertyMeta;
     }
 
-    private <E> PropertyMeta<T, E> newKeyProperty(PropertyNameMatcher propertyNameMatcher) throws Exception {
-        return (PropertyMeta<T, E>)
-                new MapElementPropertyMeta<T, K, V>(
-                        propertyNameMatcher,
-                        valueMetaData.getReflectionService(),
-                        valueMetaData,
-                        keyConverter.convert(propertyNameMatcher.toString()));
+    private <E> PropertyMeta<T, E> keyProperty(PropertyNameMatcher propertyNameMatcher) throws Exception {
+        String keyStringValue = propertyNameMatcher.toString();
+        PropertyMeta<T, E> propertyMeta = (PropertyMeta<T, E>) keys.get(keyStringValue);
+
+        if (propertyMeta == null) {
+            MapElementPropertyMeta<T, K, V> mapElementPropertyMeta = new MapElementPropertyMeta<>(
+                    propertyNameMatcher,
+                    valueMetaData.getReflectionService(),
+                    valueMetaData,
+                    keyConverter.convert(keyStringValue));
+            keys.put(keyStringValue, mapElementPropertyMeta);
+            propertyMeta =
+                    (PropertyMeta<T, E>)
+                            mapElementPropertyMeta;
+
+        }
+        return propertyMeta;
     }
 
     @Override

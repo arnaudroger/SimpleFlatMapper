@@ -6,7 +6,7 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SampleFieldKey;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.mapper.FieldMapperMapperBuilder;
+import org.simpleflatmapper.map.mapper.ConstantSourceMapperBuilder;
 import org.simpleflatmapper.map.mapper.MapperSource;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -20,7 +20,7 @@ import java.util.Date;
 import static org.junit.Assert.*;
 
 
-public class FieldMapperMapperBuilderTest {
+public class ConstantSourceMapperBuilderTest {
 
     public static final Date DATE = new Date();
     public static final String STRING = "hello!";
@@ -56,8 +56,8 @@ public class FieldMapperMapperBuilderTest {
     @Test
     public void testAnonymousParameterWithDifferentType() throws Exception {
 
-        FieldMapperMapperBuilder<Object, MyObjectWithInner, SampleFieldKey> fieldMapperMapperBuilder =
-                new FieldMapperMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
+        ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey> constantSourceMapperBuilder =
+                new ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
                         mapperSource,
                         classMeta,
                         MapperConfig.config(new IdentityFieldMapperColumnDefinitionProvider<SampleFieldKey>()),
@@ -67,9 +67,9 @@ public class FieldMapperMapperBuilderTest {
 
 
 
-        fieldMapperMapperBuilder.addMapping(new SampleFieldKey("prop", 0, Date.class), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+        constantSourceMapperBuilder.addMapping(new SampleFieldKey("prop", 0, Date.class), FieldMapperColumnDefinition.<SampleFieldKey>identity());
 
-        Mapper<Object, MyObjectWithInner> mapper = fieldMapperMapperBuilder.mapper();
+        Mapper<Object, MyObjectWithInner> mapper = constantSourceMapperBuilder.mapper();
 
         MyObjectWithInner o = mapper.map(null);
 
@@ -82,8 +82,8 @@ public class FieldMapperMapperBuilderTest {
     public void testMapInnerObjectWithMapper() throws Exception {
 
 
-        FieldMapperMapperBuilder<Object, MyObjectWithInner, SampleFieldKey> fieldMapperMapperBuilder =
-                new FieldMapperMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
+        ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey> constantSourceMapperBuilder =
+                new ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
                         mapperSource,
                         classMeta,
                         MapperConfig.config(new IdentityFieldMapperColumnDefinitionProvider<SampleFieldKey>()),
@@ -91,10 +91,10 @@ public class FieldMapperMapperBuilderTest {
                                 SampleFieldKey.KEY_FACTORY
                                 );
 
-        fieldMapperMapperBuilder.addMapping(new SampleFieldKey("prop_date", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+        constantSourceMapperBuilder.addMapping(new SampleFieldKey("prop_date", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
 
 
-        Mapper<Object, MyObjectWithInner> mapper = fieldMapperMapperBuilder.mapper();
+        Mapper<Object, MyObjectWithInner> mapper = constantSourceMapperBuilder.mapper();
 
         MyObjectWithInner o = mapper.map(null);
 

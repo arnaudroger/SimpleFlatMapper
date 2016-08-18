@@ -2,8 +2,6 @@ package org.simpleflatmapper.jooq;
 
 import org.jooq.Record;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
-import org.simpleflatmapper.jooq.getter.EnumRecordNamedGetter;
-import org.simpleflatmapper.jooq.getter.EnumRecordOrdinalGetter;
 import org.simpleflatmapper.jooq.getter.RecordGetter;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.TypeHelper;

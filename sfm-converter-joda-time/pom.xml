@@ -39,6 +39,11 @@
 			<artifactId>sfm-converter</artifactId>
 			<version>2.13-SNAPSHOT</version>
 		</dependency>
+        <dependency>
+            <groupId>org.simpleflatmapper</groupId>
+            <artifactId>sfm-util</artifactId>
+            <version>2.13-SNAPSHOT</version>
+        </dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter</artifactId>

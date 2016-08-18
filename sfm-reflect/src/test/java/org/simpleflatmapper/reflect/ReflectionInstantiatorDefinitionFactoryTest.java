@@ -14,12 +14,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class ReflectionInstantiatorDefinitionFactoryTest {
-
 
 	public static class ObjectWithFactoryMethod {
 		public static ObjectWithFactoryMethod valueOf(String value) {

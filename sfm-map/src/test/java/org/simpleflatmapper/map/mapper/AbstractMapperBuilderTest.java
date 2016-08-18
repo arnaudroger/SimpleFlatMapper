@@ -40,7 +40,6 @@ import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Type;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

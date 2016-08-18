@@ -9,7 +9,7 @@ import org.simpleflatmapper.jdbc.impl.PreparedStatementSetterFactory;
 import org.simpleflatmapper.jdbc.impl.setter.PreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.PreparedStatementIndexSetterOnGetter;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
-import org.simpleflatmapper.map.mapper.AbstractWriterBuilder;
+import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.jdbc.property.IndexedSetterFactoryProperty;
@@ -38,7 +38,7 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PreparedStatementMapperBuilder<T> extends AbstractWriterBuilder<PreparedStatement, T, JdbcColumnKey, PreparedStatementMapperBuilder<T>> {
+public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMapperBuilder<PreparedStatement, T, JdbcColumnKey, PreparedStatementMapperBuilder<T>> {
 
     public PreparedStatementMapperBuilder(
             ClassMeta<T> classMeta,

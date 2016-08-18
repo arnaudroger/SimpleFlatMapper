@@ -5,9 +5,17 @@ import org.simpleflatmapper.converter.AbstractConverterFactoryProducer;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
 
+import java.lang.reflect.Type;
+import java.sql.Array;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.Time;
+
+import org.simpleflatmapper.converter.ConvertingScore;
 import org.simpleflatmapper.converter.ConvertingTypes;
+import org.simpleflatmapper.jdbc.JdbcColumnKey;
+import org.simpleflatmapper.jdbc.ResultSetGetterFactory;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.SupplierHelper;
@@ -18,6 +26,7 @@ import java.sql.Timestamp;
 import org.simpleflatmapper.jdbc.converter.time.DateToLocalDateConverter;
 import org.simpleflatmapper.jdbc.converter.time.TimeToLocalTimeConverter;
 import org.simpleflatmapper.jdbc.converter.time.TimeToOffsetTimeConverter;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -25,6 +34,7 @@ import java.time.OffsetTime;
 import java.time.ZoneOffset;
 //IFJAVA8_END
 import java.util.Calendar;
+import java.util.List;
 
 public class JdbcConverterFactoryProducer extends AbstractConverterFactoryProducer {
     @Override
@@ -53,6 +63,28 @@ public class JdbcConverterFactoryProducer extends AbstractConverterFactoryProduc
             }
         });
         //IFJAVA8_END
+
+        factoryConverter(consumer, new AbstractConverterFactory<Array, Object>(Array.class, java.lang.reflect.Array.class) {
+            @Override
+            public Converter<? super Array, ? extends Object> newConverter(ConvertingTypes targetedTypes, Object... params) {
+                Type elementType = TypeHelper.getComponentTypeOfListOrArray(targetedTypes.getTo());
+                Getter<? super ResultSet, ?> getter = ResultSetGetterFactory.INSTANCE.newGetter(elementType, new JdbcColumnKey("elt", 2), params);
+                return new SqlArrayToJavaArrayConverter<Object>(TypeHelper.<Object>toClass(elementType), getter);
+            }
+
+            @Override
+            public ConvertingScore score(ConvertingTypes targetedTypes) {
+                return new ConvertingScore(super.score(targetedTypes).getFromScore(), TypeHelper.isArray(targetedTypes.getTo()) ? 1 : -1 );
+            }
+        });
+        factoryConverter(consumer, new AbstractConverterFactory<Array, List>(Array.class, List.class) {
+            @Override
+            public Converter<? super Array, ? extends List> newConverter(ConvertingTypes targetedTypes, Object... params) {
+                Type elementType = TypeHelper.getComponentTypeOfListOrArray(targetedTypes.getTo());
+                Getter<? super ResultSet, ?> getter = ResultSetGetterFactory.INSTANCE.newGetter(elementType, new JdbcColumnKey("elt", 2), params);
+                return new SqlArrayToListConverter<Object>( getter);
+            }
+        });
 
         constantConverter(consumer, Calendar.class, Timestamp.class, new CalendarToTimestampConverter());
         constantConverter(consumer, java.util.Date.class, Timestamp.class, new UtilDateToTimestampConverter());

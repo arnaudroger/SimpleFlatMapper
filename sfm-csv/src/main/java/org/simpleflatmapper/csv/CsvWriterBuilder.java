@@ -5,7 +5,7 @@ import org.simpleflatmapper.csv.impl.writer.CellSeparatorAppender;
 import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
 import org.simpleflatmapper.csv.impl.writer.EndOfRowAppender;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
-import org.simpleflatmapper.map.mapper.AbstractWriterBuilder;
+import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -17,7 +17,7 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 import java.util.List;
 
-public class CsvWriterBuilder<T> extends AbstractWriterBuilder<Appendable, T, CsvColumnKey, CsvWriterBuilder<T>> {
+public class CsvWriterBuilder<T> extends AbstractConstantTargetMapperBuilder<Appendable, T, CsvColumnKey, CsvWriterBuilder<T>> {
 
     private final CellWriter cellWriter;
     private final CellSeparatorAppender<T> cellSeparatorAppender;

@@ -7,12 +7,19 @@ import com.mysema.query.types.PathType;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.FieldKey;
 
+import java.lang.reflect.Type;
+
 public final class TupleElementKey extends FieldKey<TupleElementKey> {
 	private final Expression<?> expression;
 
 	public TupleElementKey(String name, int index) {
 		super(name, index);
 		this.expression = null;
+	}
+
+	@Override
+	public Type getType(Type targetType) {
+		return expression.getType();
 	}
 
 	public TupleElementKey(Expression<?> expression, int index) {

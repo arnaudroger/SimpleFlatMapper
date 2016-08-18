@@ -69,23 +69,43 @@ public class ConverterService {
     public <F, P> Converter<? super F, ? extends P> findConverter(Type inType, Type outType, Object... params) {
         List<ScoredConverterFactory> potentials = new ArrayList<ScoredConverterFactory>();
 
+        List<ScoredConverterFactory> tails = new ArrayList<ScoredConverterFactory>();
+
         if (TypeHelper.areEquals(inType, outType)) {
             return new IdentityConverter();
         }
         ConvertingTypes targetedTypes = new ConvertingTypes(inType, outType);
 
         for(ConverterFactory converterFactory : converters) {
-            int score = converterFactory.score(targetedTypes);
-            if (score >= 0) {
-                potentials.add(new ScoredConverterFactory(score, converterFactory));
+            ConvertingScore score = converterFactory.score(targetedTypes);
+            int globalScore = score.getScore();
+            if (globalScore >= 0) {
+                potentials.add(new ScoredConverterFactory(globalScore, converterFactory));
+            } else {
+                int tailScore = score.getToScore();
+                if (tailScore >= 0) {
+                    tails.add(new ScoredConverterFactory(tailScore, converterFactory));
+                }
             }
         }
 
-        Collections.sort(potentials);
 
         if (potentials.size() > 0) {
+            Collections.sort(potentials);
             return (Converter<F, P>) potentials.get(0).converterFactory.newConverter(targetedTypes, params);
         } else {
+            if (tails.size() > 0) {
+                Collections.sort(tails);
+
+                for(ScoredConverterFactory sfactory : tails) {
+                    Type tailFactoryInType = sfactory.converterFactory.getFromType();
+                    Converter converter = (Converter<? super F, ? extends P>) findConverter(inType, tailFactoryInType, params);
+
+                    if (converter != null) {
+                        return new ComposedConverter(converter, sfactory.converterFactory.newConverter(new ConvertingTypes(tailFactoryInType, targetedTypes.getTo()), params));
+                    }
+                }
+            }
             return null;
         }
     }

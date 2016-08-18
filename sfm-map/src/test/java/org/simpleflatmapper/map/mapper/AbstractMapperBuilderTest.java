@@ -1,6 +1,10 @@
 package org.simpleflatmapper.map.mapper;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
+import org.simpleflatmapper.converter.joda.JodaDateTimeFormatterProperty;
 import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.Mapper;
@@ -36,6 +40,8 @@ import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +53,37 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 
 public class AbstractMapperBuilderTest {
+
+    @Test
+    public void testConversionDateToJodaTime() {
+        ClassMeta<List<DateTime>> classMeta =
+                ReflectionService.disableAsm().<List<DateTime>>getClassMeta(new TypeReference<List<DateTime>>() {}.getType());
+
+        Mapper<Object[] , List<DateTime>> mapper =
+                new SampleMapperBuilder<List<DateTime>>(classMeta)
+                    .addMapping(new SampleFieldKey("0", 0, new Class[0], Date.class)).mapper();
+
+        Object[] objects = new Object[] { new Date() };
+        List<DateTime> map = mapper.map(objects);
+        assertEquals(objects[0], map.get(0).toDate());
+    }
+
+    @Test
+    public void testConversionCharacterToJodaTime() {
+        ClassMeta<List<DateTime>> classMeta =
+                ReflectionService.disableAsm().<List<DateTime>>getClassMeta(new TypeReference<List<DateTime>>() {}.getType());
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyyMMdd HH:mm:ss.SSSS Z");
+
+        Mapper<Object[] , List<DateTime>> mapper =
+                new SampleMapperBuilder<List<DateTime>>(classMeta)
+                        .addMapping(new SampleFieldKey("0", 0, new Class[0], String.class), dateTimeFormatter).mapper();
+
+        DateTime now = DateTime.now();
+        Object[] objects = new Object[] { dateTimeFormatter.print(now) };
+        List<DateTime> map = mapper.map(objects);
+        assertEquals(now, map.get(0));
+    }
 
     //IFJAVA8_START
     @Test

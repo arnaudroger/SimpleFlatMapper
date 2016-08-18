@@ -7,6 +7,8 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.reflect.TypeAffinity;
 
+import java.lang.reflect.Type;
+
 public final class DatastaxColumnKey extends FieldKey<DatastaxColumnKey> implements TypeAffinity {
 
 	private final DataType dataType;
@@ -55,6 +57,11 @@ public final class DatastaxColumnKey extends FieldKey<DatastaxColumnKey> impleme
 
 		return dataType != null ? dataType.equals(that.dataType) : that.dataType == null;
 
+	}
+
+	@Override
+	public Type getType(Type targetType) {
+		return DataTypeHelper.asJavaClass(dataType, targetType);
 	}
 
 	@Override

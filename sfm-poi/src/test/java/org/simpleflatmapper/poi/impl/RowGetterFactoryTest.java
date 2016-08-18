@@ -332,33 +332,5 @@ public class RowGetterFactoryTest {
         assertNull(getter.get(row));
     }
 
-    @Test
-    public void testJodaDateTimeOnDateCell() throws Exception {
-        final Getter<Row, DateTime> getter = rowGetterFactory.newGetter(DateTime.class, key, CsvColumnDefinition.IDENTITY);
-        Date now = new Date();
-        cell.setCellValue(now);
-        assertEquals(now, getter.get(row).toDate());
-    }
 
-    @Test
-    public void testJodaDateTimeOnBlankCell() throws Exception {
-        final Getter<Row, Date> getter = rowGetterFactory.newGetter(Date.class, key, CsvColumnDefinition.IDENTITY);
-        assertNull(getter.get(row));
-    }
-
-    //IFJAVA8_START
-    @Test
-    public void testJavaLocalDateTimeOnDAteCell() throws Exception {
-        final Getter<Row, LocalDateTime> getter = rowGetterFactory.newGetter(LocalDateTime.class, key, CsvColumnDefinition.IDENTITY);
-        Date now = new Date();
-        cell.setCellValue(now);
-        assertEquals(LocalDateTime.ofInstant(now.toInstant(), ZoneId.systemDefault()), getter.get(row));
-    }
-
-    @Test
-    public void testJavaLocalDateTimeOnBlankCell() throws Exception {
-        final Getter<Row, LocalDateTime> getter = rowGetterFactory.newGetter(LocalDateTime.class, key, CsvColumnDefinition.IDENTITY);
-        assertNull(getter.get(row));
-    }
-    //IFJAVA8_END
 }

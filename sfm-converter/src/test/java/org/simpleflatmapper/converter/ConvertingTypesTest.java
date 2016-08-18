@@ -13,10 +13,10 @@ public class ConvertingTypesTest {
         ConvertingTypes stringToDate = new ConvertingTypes(String.class, Date.class);
         ConvertingTypes dateToString  = new ConvertingTypes(Date.class, String.class);
 
-        assertEquals(256 * 256 + 256, stringToDate.score(stringToDate));
-        assertEquals(256 * 256 + 256, dateToString.score(dateToString));
-        assertEquals(-1, stringToDate.score(dateToString));
-        assertEquals(-1, dateToString.score(stringToDate));
+        assertEquals(256 * 256 + 256, stringToDate.score(stringToDate).getScore());
+        assertEquals(256 * 256 + 256, dateToString.score(dateToString).getScore());
+        assertEquals(-1, stringToDate.score(dateToString).getScore());
+        assertEquals(-1, dateToString.score(stringToDate).getScore());
     }
 
 
@@ -26,11 +26,11 @@ public class ConvertingTypesTest {
         ConvertingTypes numberToByte = new ConvertingTypes(Number.class, Byte.class);
         ConvertingTypes longToByte = new ConvertingTypes(Long.class, Byte.class);
 
-        assertTrue(objectToByte.score(longToByte) > 0);
-        assertTrue(numberToByte.score(longToByte) > 0);
+        assertTrue(objectToByte.score(longToByte).getScore() > 0);
+        assertTrue(numberToByte.score(longToByte).getScore() > 0);
 
-        assertTrue(numberToByte.score(longToByte) < longToByte.score(longToByte));
-        assertTrue(objectToByte.score(longToByte) < numberToByte.score(longToByte));
+        assertTrue(numberToByte.score(longToByte).getScore() < longToByte.score(longToByte).getScore());
+        assertTrue(objectToByte.score(longToByte).getScore() < numberToByte.score(longToByte).getScore());
     }
 
     @Test
@@ -40,11 +40,11 @@ public class ConvertingTypesTest {
 
         ConvertingTypes objectToObject = new ConvertingTypes(Object.class, Object.class);
 
-        assertTrue(objectToObject.score(objectToNumber) < 0);
-        assertTrue(objectToNumber.score(objectToNumber) > 0);
-        assertTrue(objectToLong.score(objectToNumber) > 0);
+        assertTrue(objectToObject.score(objectToNumber).getScore() < 0);
+        assertTrue(objectToNumber.score(objectToNumber).getScore() > 0);
+        assertTrue(objectToLong.score(objectToNumber).getScore() > 0);
 
-        assertTrue(objectToNumber.score(objectToNumber) > objectToNumber.score(objectToLong));
+        assertTrue(objectToNumber.score(objectToNumber).getScore() > objectToNumber.score(objectToLong).getScore());
     }
 
     @Test

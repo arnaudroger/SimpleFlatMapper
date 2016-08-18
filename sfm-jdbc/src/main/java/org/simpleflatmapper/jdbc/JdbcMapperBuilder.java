@@ -31,7 +31,7 @@ import java.sql.SQLException;
 public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet, T, JdbcColumnKey, JdbcMapper<T>, JdbcMapperBuilder<T>> {
 
     private static final MapperSourceImpl<ResultSet, JdbcColumnKey> FIELD_MAPPER_SOURCE =
-            new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class, new ResultSetGetterFactory());
+            new MapperSourceImpl<ResultSet, JdbcColumnKey>(ResultSet.class,  ResultSetGetterFactory.INSTANCE);
     private static final KeyFactory<JdbcColumnKey> KEY_FACTORY = new KeyFactory<JdbcColumnKey>() {
         @Override
         public JdbcColumnKey newKey(String name, int i) {
@@ -69,7 +69,7 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
     public JdbcMapperBuilder(final Type target, ReflectionService reflectService) {
         this(reflectService.<T>getClassMeta(target),
                 MapperConfig.<JdbcColumnKey>fieldMapperConfig(),
-                new ResultSetGetterFactory(),
+                ResultSetGetterFactory.INSTANCE,
                 new JdbcMappingContextFactoryBuilder());
     }
 

@@ -1,10 +1,12 @@
 package org.simpleflatmapper.converter;
 
 
+import java.lang.reflect.Type;
+
 public abstract class AbstractConverterFactory<I, O> implements ConverterFactory<I, O> {
     protected final ConvertingTypes convertingTypes;
 
-    protected AbstractConverterFactory(Class<I> from, Class<O> to) {
+    protected AbstractConverterFactory(Class<? super I> from, Class<? extends O> to) {
         this(new ConvertingTypes(from, to));
     }
 
@@ -13,8 +15,12 @@ public abstract class AbstractConverterFactory<I, O> implements ConverterFactory
     }
 
     @Override
-    public int score(ConvertingTypes targetedTypes) {
+    public ConvertingScore score(ConvertingTypes targetedTypes) {
         return this.convertingTypes.score(targetedTypes);
     }
 
+    @Override
+    public Type getFromType() {
+        return this.convertingTypes.getFrom();
+    }
 }

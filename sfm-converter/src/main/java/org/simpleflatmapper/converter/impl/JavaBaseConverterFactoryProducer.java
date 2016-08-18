@@ -5,6 +5,7 @@ import org.simpleflatmapper.converter.AbstractConverterFactory;
 import org.simpleflatmapper.converter.AbstractConverterFactoryProducer;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterFactory;
+import org.simpleflatmapper.converter.ConvertingScore;
 import org.simpleflatmapper.converter.ConvertingTypes;
 
 import org.simpleflatmapper.converter.ToStringConverter;
@@ -37,6 +38,7 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		constantConverter(consumer, CharSequence.class, Float.class,     new CharSequenceFloatConverter());
 		constantConverter(consumer, CharSequence.class, Double.class,    new CharSequenceDoubleConverter());
 		constantConverter(consumer, CharSequence.class, UUID.class,      new CharSequenceUUIDConverter());
+
 		factoryConverter (consumer, new AbstractConverterFactory<CharSequence, Enum>(CharSequence.class, Enum.class) {
 			@SuppressWarnings("unchecked")
 			public Converter<? super CharSequence, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
@@ -44,11 +46,41 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 			}
 
 			@Override
-			public int score(ConvertingTypes targetedTypes) {
+			public ConvertingScore score(ConvertingTypes targetedTypes) {
 				if (TypeHelper.isAssignable(Enum.class, targetedTypes.getTo())) {
-					return ConvertingTypes.getSourceScore(convertingTypes.getFrom(), targetedTypes.getFrom());
+					return new ConvertingScore(ConvertingTypes.getSourceScore(convertingTypes.getFrom(), targetedTypes.getFrom()), ConvertingScore.MAX_SCORE);
 				}
-				return -1;
+				return ConvertingScore.NO_MATCH;
+			}
+		});
+
+		factoryConverter (consumer, new AbstractConverterFactory<Number, Enum>(Number.class, Enum.class) {
+			@SuppressWarnings("unchecked")
+			public Converter<? super Number, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
+				return new NumberToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
+			}
+
+			@Override
+			public ConvertingScore score(ConvertingTypes targetedTypes) {
+				if (TypeHelper.isAssignable(Enum.class, targetedTypes.getTo())) {
+					return new ConvertingScore(ConvertingTypes.getSourceScore(convertingTypes.getFrom(), targetedTypes.getFrom()), ConvertingScore.MAX_SCORE);
+				}
+				return ConvertingScore.NO_MATCH;
+			}
+		});
+
+		factoryConverter (consumer, new AbstractConverterFactory<Object, Enum>(Object.class, Enum.class) {
+			@SuppressWarnings("unchecked")
+			public Converter<? super Object, ? extends Enum> newConverter(ConvertingTypes targetedTypes, Object... params) {
+				return new ObjectToEnumConverter(TypeHelper.toClass(targetedTypes.getTo()));
+			}
+
+			@Override
+			public ConvertingScore score(ConvertingTypes targetedTypes) {
+				if (TypeHelper.isAssignable(Enum.class, targetedTypes.getTo())) {
+					return new ConvertingScore(ConvertingTypes.getSourceScore(convertingTypes.getFrom(), targetedTypes.getFrom()), ConvertingScore.MAX_SCORE);
+				}
+				return ConvertingScore.NO_MATCH;
 			}
 		});
 

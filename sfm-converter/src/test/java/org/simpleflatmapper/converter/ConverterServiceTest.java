@@ -60,6 +60,11 @@ public class ConverterServiceTest {
     }
 
     @Test
+    public void testChain2Converters() throws Exception {
+        testConverter("1", BigDecimal.ONE);
+    }
+
+    @Test
     public void testIdentity() throws Exception {
         Object o = new Object();
         testConverter(o, o);

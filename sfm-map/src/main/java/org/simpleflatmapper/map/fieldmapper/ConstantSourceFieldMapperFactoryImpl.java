@@ -1,11 +1,14 @@
 package org.simpleflatmapper.map.fieldmapper;
 
+import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.reflect.getter.GetterWithConverter;
 import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
 import org.simpleflatmapper.reflect.getter.InstantiatorGetter;
 import org.simpleflatmapper.reflect.ObjectGetterFactory;
@@ -27,9 +30,12 @@ import java.util.HashSet;
 public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>> implements ConstantSourceFieldMapperFactory<S,K> {
 
 	private final GetterFactory<? super S, ? super K> getterFactory;
+	private final ConverterService converterService;
 
-	public ConstantSourceFieldMapperFactoryImpl(GetterFactory<? super S, ? super K> getterFactory) {
+
+	public ConstantSourceFieldMapperFactoryImpl(GetterFactory<? super S, ? super K> getterFactory, ConverterService converterService) {
 		this.getterFactory = getterFactory;
+		this.converterService = converterService;
 	}
 
 
@@ -86,7 +92,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		final K key = propertyMapping.getColumnKey();
 		final Class<P> type = TypeHelper.toClass(propertyType);
 
-		Getter<? super S, ? extends P> getter = getGetterFor(propertyMapping);
+		Getter<? super S, ? extends P> getter = getGetterFromSource(key, propertyMapping.getColumnDefinition(), propertyMeta.getPropertyClassMeta());
 
 		if (getter == null) {
 			mappingErrorHandler.accessorNotFound("Could not find getter for " + key + " type " + propertyType
@@ -101,29 +107,45 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+
+
 	@Override
-	public <T, P> Getter<? super S, ? extends P> getGetterFor(PropertyMapping<T, P, K, FieldMapperColumnDefinition<K>> propertyMapping) {
-		Type propertyType = propertyMapping.getPropertyMeta().getPropertyType();
-
+	public <P> Getter<? super S, ? extends P> getGetterFromSource(K columnKey, FieldMapperColumnDefinition<K> columnDefinition, ClassMeta<P> propertyClassMeta) {
+		Type propertyType = propertyClassMeta.getType();
 		@SuppressWarnings("unchecked")
-		Getter<? super S, ? extends P> getter = (Getter<? super S, ? extends P>) propertyMapping.getColumnDefinition().getCustomGetter();
+		Getter<? super S, ? extends P> getter = (Getter<? super S, ? extends P>) columnDefinition.getCustomGetter();
 
-		if (getter == null && propertyMapping.getColumnDefinition().hasCustomFactory()) {
-            GetterFactory<? super S, K> cGetterFactory = (GetterFactory<? super S, K>) propertyMapping.getColumnDefinition().getCustomGetterFactory();
-            getter = cGetterFactory.newGetter(propertyType, propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition().properties());
+		if (getter == null && columnDefinition.hasCustomFactory()) {
+            GetterFactory<? super S, K> cGetterFactory = (GetterFactory<? super S, K>) columnDefinition.getCustomGetterFactory();
+            getter = cGetterFactory.newGetter(propertyType, columnKey, columnDefinition.properties());
         }
 
 		if (getter == null) {
-            getter = getterFactory.newGetter(propertyType, propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition().properties());
+            getter = getterFactory.newGetter(propertyType, columnKey, columnDefinition.properties());
         }
 
-        // try to identify constructor that we could build from
+		// try to identify constructor that we could build from
 		if (getter == null) {
-			getter = lookForInstantiatorGetter(propertyMapping.getPropertyMeta().getPropertyClassMeta(), propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition(), new HashSet<Type>());
+			getter = lookForAlternativeGetter(propertyClassMeta, columnKey, columnDefinition, new HashSet<Type>());
 		}
 
 		return getter;
+	}
+
+	private <P, J> Getter<? super S, ? extends P> lookForAlternativeGetter(ClassMeta<P> classMeta, K key, FieldMapperColumnDefinition<K> columnDefinition, Collection<Type> types) {
+		// look for converter
+		Type propertyType = classMeta.getType();
+		Type sourceType = key.getType(propertyType);
+		Object[] properties = columnDefinition.properties();
+		Converter<? super J, ? extends P> converter = converterService.findConverter(sourceType, propertyType, properties);
+
+		if (converter != null) {
+			Getter<? super S, ? extends J> getter = getterFactory.newGetter(sourceType, key, properties);
+
+			return new GetterWithConverter<S, J, P>(converter, getter);
+		}
+
+		return lookForInstantiatorGetter(classMeta, key, columnDefinition, types);
 	}
 
 	public <P> Getter<? super S, ? extends P> lookForInstantiatorGetter(ClassMeta<P> classMeta, K key, FieldMapperColumnDefinition<K> columnDefinition, Collection<Type> types) {

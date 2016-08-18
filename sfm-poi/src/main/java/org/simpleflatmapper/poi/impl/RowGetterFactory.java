@@ -2,13 +2,11 @@ package org.simpleflatmapper.poi.impl;
 
 
 import org.apache.poi.ss.usermodel.Row;
-import org.simpleflatmapper.converter.Converter;
-import org.simpleflatmapper.converter.ConverterService;
-import org.simpleflatmapper.reflect.getter.GetterWithConverter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.csv.CsvColumnKey;
 
 import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.getter.GetterFactoryRegistry;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
@@ -20,7 +18,8 @@ import java.util.Map;
 public class RowGetterFactory implements GetterFactory<Row, CsvColumnKey> {
 
 
-    private static final Map<Class<?>, GetterFactory<Row, CsvColumnKey>> getterFactories = new HashMap<Class<?>, GetterFactory<Row, CsvColumnKey>>();
+    private static final GetterFactoryRegistry<Row, CsvColumnKey> getterFactories =
+            new GetterFactoryRegistry<Row, CsvColumnKey>();
 
     static {
         getterFactories.put(String.class, new GetterFactory<Row, CsvColumnKey>() {
@@ -89,28 +88,27 @@ public class RowGetterFactory implements GetterFactory<Row, CsvColumnKey> {
             }
         });
 
-        getterFactories.put(byte.class, getterFactories.get(Byte.class));
-        getterFactories.put(char.class, getterFactories.get(Character.class));
-        getterFactories.put(short.class, getterFactories.get(Short.class));
-        getterFactories.put(int.class, getterFactories.get(Integer.class));
-        getterFactories.put(long.class, getterFactories.get(Long.class));
-        getterFactories.put(float.class, getterFactories.get(Float.class));
-        getterFactories.put(double.class, getterFactories.get(Double.class));
-        getterFactories.put(boolean.class, getterFactories.get(Boolean.class));
+        getterFactories.mapFromTo(byte.class, Byte.class);
+        getterFactories.mapFromTo(char.class, Character.class);
+        getterFactories.mapFromTo(short.class, Short.class);
+        getterFactories.mapFromTo(int.class, Integer.class);
+        getterFactories.mapFromTo(long.class, Long.class);
+        getterFactories.mapFromTo(float.class, Float.class);
+        getterFactories.mapFromTo(double.class, Double.class);
+        getterFactories.mapFromTo(boolean.class, Boolean.class);
 
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <P> Getter<Row, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
-
         Class<P> targetClass = TypeHelper.toClass(target);
 
         if (TypeHelper.isEnum(target)) {
             return new PoiEnumGetter(key.getIndex(), TypeHelper.toClass(target));
         }
 
-        final GetterFactory<Row, CsvColumnKey> rowGetterFactory = getterFactories.get(targetClass);
+        final GetterFactory<Row, CsvColumnKey> rowGetterFactory = getterFactories.findFactoryFor(targetClass);
 
         Getter<Row, P> getter = null;
         if (rowGetterFactory != null) {
@@ -119,18 +117,6 @@ public class RowGetterFactory implements GetterFactory<Row, CsvColumnKey> {
 
         if (getter != null) {
             return getter;
-        }
-
-        if (targetClass.getName().startsWith("java.time") || targetClass.getName().startsWith("org.joda")) {
-            Converter<? super Date, ? extends P> converter = ConverterService.getInstance().findConverter(Date.class, targetClass, properties);
-            if (converter != null) {
-                return new GetterWithConverter<Row, Date, P>(converter, new PoiDateGetter(key.getIndex()));
-            }
-        }
-
-        Converter<? super String, ? extends P> converter = ConverterService.getInstance().findConverter(String.class, targetClass, properties);
-        if (converter != null) {
-            return new GetterWithConverter<Row, String, P>(converter, new PoiStringGetter(key.getIndex()));
         }
 
         return null;

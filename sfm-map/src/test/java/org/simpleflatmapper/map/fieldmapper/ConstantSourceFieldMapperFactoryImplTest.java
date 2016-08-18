@@ -3,6 +3,7 @@ package org.simpleflatmapper.map.fieldmapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.SampleFieldKey;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -47,7 +48,7 @@ public class ConstantSourceFieldMapperFactoryImplTest {
     @Before
     public void setUp() {
         getterFactory = mock(GetterFactory.class);
-        constantSourceFieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<Object, SampleFieldKey>(getterFactory);
+        constantSourceFieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<Object, SampleFieldKey>(getterFactory, ConverterService.getInstance());
         keySourceGetter = mock(KeySourceGetter.class);
         mappingContextFactoryBuilder = null;
     }

@@ -27,7 +27,7 @@ import org.simpleflatmapper.util.UnaryFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B extends AbstractWriterBuilder<S, T, K , B>> {
+public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends FieldKey<K>, B extends AbstractConstantTargetMapperBuilder<S, T, K , B>> {
 
     private final ReflectionService reflectionService;
     protected final MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig;
@@ -40,7 +40,7 @@ public abstract class AbstractWriterBuilder<S, T, K  extends FieldKey<K>, B exte
 
     private int currentIndex = getStartingIndex();
 
-    public AbstractWriterBuilder(
+    public AbstractConstantTargetMapperBuilder(
             ClassMeta<T> classMeta,
             Class<S> sourceClass, MapperConfig<K, FieldMapperColumnDefinition<K>> mapperConfig,
             ConstantTargetFieldMapperFactory<S, K> fieldAppenderFactory) {

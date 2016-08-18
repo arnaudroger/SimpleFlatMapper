@@ -1,22 +1,15 @@
 package org.simpleflatmapper.jdbc.impl;
 
-import org.simpleflatmapper.converter.ComposedConverter;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 
-import org.simpleflatmapper.jdbc.converter.UtilDateToDateConverter;
-import org.simpleflatmapper.jdbc.converter.UtilDateToTimeConverter;
-import org.simpleflatmapper.jdbc.converter.UtilDateToTimestampConverter;
-import org.simpleflatmapper.jdbc.impl.getter.ObjectResultSetGetter;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
-import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.IndexedSetter;
 import org.simpleflatmapper.reflect.IndexedSetterFactory;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
-import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.jdbc.impl.setter.ArrayPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BigDecimalPreparedStatementIndexSetter;
@@ -378,28 +371,7 @@ public class PreparedStatementSetterFactory
 
     @SuppressWarnings("unchecked")
     private <P, I> IndexedSetter<PreparedStatement, P> getSetterWithConvertion(Class<P> pclazz, Class<I> iclass, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>> pm) {
-        Converter<? super P, ? extends I> converter = ConverterService.getInstance().findConverter(pclazz, iclass);
-
-        if (converter == null) {
-            if (iclass.equals(Timestamp.class)) {
-                Converter<? super P, ? extends java.util.Date> dateConverter = ConverterService.getInstance().findConverter(pclazz, java.util.Date.class, pm.getColumnDefinition().properties());
-                if (dateConverter != null) {
-                    converter = (Converter<? super P, ? extends I>) new ComposedConverter<P, java.util.Date, Timestamp>(dateConverter, new UtilDateToTimestampConverter());
-                }
-            }
-            if (iclass.equals(Time.class)) {
-                Converter<? super P, ? extends java.util.Date> dateConverter = ConverterService.getInstance().findConverter(pclazz, java.util.Date.class, pm.getColumnDefinition().properties());
-                if (dateConverter != null) {
-                    converter = (Converter<? super P, ? extends I>) new ComposedConverter<P, java.util.Date, Time>(dateConverter, new UtilDateToTimeConverter());
-                }
-            }
-            if (iclass.equals(Date.class)) {
-                Converter<? super P, ? extends java.util.Date> dateConverter = ConverterService.getInstance().findConverter(pclazz, java.util.Date.class, pm.getColumnDefinition().properties());
-                if (dateConverter != null) {
-                    converter = (Converter<? super P, ? extends I>) new ComposedConverter<P, java.util.Date, Date>(dateConverter, new UtilDateToDateConverter());
-                }
-            }
-        }
+        Converter<? super P, ? extends I> converter = ConverterService.getInstance().findConverter(pclazz, iclass, pm.getColumnDefinition().properties());
 
         if (converter != null) {
             IndexedSetter<PreparedStatement, I> indexedSetter = getIndexedSetter(iclass, pm);

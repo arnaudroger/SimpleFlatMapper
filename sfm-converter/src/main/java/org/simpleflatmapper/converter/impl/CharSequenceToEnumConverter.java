@@ -11,6 +11,7 @@ public class CharSequenceToEnumConverter<E extends Enum<E>> implements Converter
 
     @Override
     public E convert(CharSequence in) throws Exception {
+        if (in == null) return null;
         return Enum.valueOf(enumClass, in.toString());
     }
 }

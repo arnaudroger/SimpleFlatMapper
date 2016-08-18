@@ -3,6 +3,8 @@ package org.simpleflatmapper.map;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.reflect.TypeAffinity;
 
+import java.lang.reflect.Type;
+
 public class SampleFieldKey extends FieldKey<SampleFieldKey> implements TypeAffinity {
 
     public static final KeyFactory<SampleFieldKey> KEY_FACTORY = new KeyFactory<SampleFieldKey>() {
@@ -12,20 +14,34 @@ public class SampleFieldKey extends FieldKey<SampleFieldKey> implements TypeAffi
         }
     } ;
     private final Class<?>[] affinities;
+    private final Type type;
 
     public SampleFieldKey(String name, int index) {
-        super(name, index);
-        this.affinities = new Class[0];
+        this(name, index, new Class[0]);
     }
 
     public SampleFieldKey(String name, int index, Class<?>... affinities) {
-        super(name, index);
+        this(name, index, affinities, Object.class, null);
+    }
+
+    public SampleFieldKey(String name, int index, Class<?>[] affinities, Type type) {
+        this(name, index, affinities, type, null);
+    }
+
+    public SampleFieldKey(String name, int index, Class<?>[] affinities, Type type, SampleFieldKey parent) {
+        super(name, index, parent);
         this.affinities = affinities;
+        this.type = type;
+
     }
 
     public SampleFieldKey(String name, int index, SampleFieldKey parent) {
-        super(name, index, parent);
-        this.affinities = new Class[0];
+        this(name, index, new Class[0], Object.class, parent);
+    }
+
+    @Override
+    public Type getType(Type targetType) {
+        return type;
     }
 
     @Override

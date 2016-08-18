@@ -21,7 +21,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class AbstractWriterBuilderTest {
+public class AbstractConstantTargetMapperBuilderTest {
 
     @Test
     public void testDbObject() throws Exception {
@@ -70,7 +70,7 @@ public class AbstractWriterBuilderTest {
         }
     };
 
-    public class Writerbuilder<T> extends AbstractWriterBuilder<List<Object>, T, SampleFieldKey, Writerbuilder<T>> {
+    public class Writerbuilder<T> extends AbstractConstantTargetMapperBuilder<List<Object>, T, SampleFieldKey, Writerbuilder<T>> {
 
         public Writerbuilder(ClassMeta<T> classMeta) {
             super(classMeta, TypeHelper.<List<Object>>toClass(new TypeReference<List<Object>>(){}.getType()), MapperConfig.<SampleFieldKey>fieldMapperConfig().failOnAsm(true),

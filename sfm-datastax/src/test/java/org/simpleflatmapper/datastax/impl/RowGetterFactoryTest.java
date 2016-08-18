@@ -251,23 +251,6 @@ public class RowGetterFactoryTest {
         assertEquals(DbObject.Type.type2, new RowGetterFactory(null).newGetter(DbObject.Type.class, columnKey4).get(row));
     }
 
-    //IFJAVA8_START
-
-    @Test
-    public void testJava8Time() throws Exception {
-        final FieldMapperColumnDefinition<DatastaxColumnKey> identity = FieldMapperColumnDefinition.<DatastaxColumnKey>identity();
-        final Getter<GettableByIndexData, LocalDateTime> gettableDataObjectGetter = new RowGetterFactory(null).newGetter(LocalDateTime.class, columnKey, identity);
-        assertEquals(date, Date.from(gettableDataObjectGetter.get(row).atZone(ZoneId.systemDefault()).toInstant()));
-    }
-
-    //IFJAVA8_END
-
-    @Test
-    public void testJodaTime() throws Exception {
-        final FieldMapperColumnDefinition<DatastaxColumnKey> identity = FieldMapperColumnDefinition.<DatastaxColumnKey>identity();
-        final Getter<GettableByIndexData, org.joda.time.LocalDateTime> gettableDataObjectGetter = new RowGetterFactory(null).newGetter(org.joda.time.LocalDateTime.class, columnKey, identity);
-        assertEquals(date, gettableDataObjectGetter.get(row).toDate());
-    }
 
     private DatastaxColumnKey columnKey(DataType type) {
         return new DatastaxColumnKey(columnKey.getName(), columnKey.getIndex(), type);

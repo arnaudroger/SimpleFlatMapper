@@ -2,6 +2,8 @@ package org.simpleflatmapper.map;
 
 import org.simpleflatmapper.util.Asserts;
 
+import java.lang.reflect.Type;
+
 public abstract class FieldKey<K extends FieldKey<K>> {
 
 	protected final String name;
@@ -47,6 +49,12 @@ public abstract class FieldKey<K extends FieldKey<K>> {
 		return name.equals(fieldKey.name);
 
 	}
+
+	/**
+	 * @param targetType the type we are expecting to map from/to
+	 * @return the type we expect to find in the source/target.
+	 */
+	public abstract Type getType(Type targetType);
 
 	@Override
 	public int hashCode() {

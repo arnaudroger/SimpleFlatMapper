@@ -1,6 +1,7 @@
 package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -20,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ResultSetFieldMapperFactoryTest {
 	
-	ConstantSourceFieldMapperFactory<ResultSet, JdbcColumnKey> factory = new ConstantSourceFieldMapperFactoryImpl<ResultSet, JdbcColumnKey>(new ResultSetGetterFactory());
+	ConstantSourceFieldMapperFactory<ResultSet, JdbcColumnKey> factory = new ConstantSourceFieldMapperFactoryImpl<ResultSet, JdbcColumnKey>(ResultSetGetterFactory.INSTANCE, ConverterService.getInstance());
 
 	@Test
 	public void testPrimitiveField() {

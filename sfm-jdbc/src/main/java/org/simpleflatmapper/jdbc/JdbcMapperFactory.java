@@ -68,7 +68,7 @@ public final class JdbcMapperFactory
 		return new JdbcMapperFactory(config);
 	}
 
-	private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = new ResultSetGetterFactory();
+	private GetterFactory<ResultSet, JdbcColumnKey> getterFactory = ResultSetGetterFactory.INSTANCE;
 
 	private JdbcMapperFactory(AbstractMapperFactory<JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>, ?> config) {
 		super(config);

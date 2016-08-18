@@ -15,16 +15,14 @@ public class ConvertingTypes {
         this.to = to;
     }
 
-    public int score(ConvertingTypes targetedTypes) {
+    public ConvertingScore score(ConvertingTypes targetedTypes) {
         // score on target
         int targetScore = getTargetScore(to, targetedTypes.getTo());
-        if (targetScore == -1) return -1;
 
         // score on source
         int sourceScore = getSourceScore(from, targetedTypes.getFrom());
-        if (sourceScore == -1) return -1;
 
-        return targetScore * MAX_SCORE  + sourceScore;
+        return  new ConvertingScore(sourceScore, targetScore);
     }
 
     public static int getSourceScore(Type from, Type target) {
@@ -88,4 +86,5 @@ public class ConvertingTypes {
     public Type getTo() {
         return to;
     }
+
 }

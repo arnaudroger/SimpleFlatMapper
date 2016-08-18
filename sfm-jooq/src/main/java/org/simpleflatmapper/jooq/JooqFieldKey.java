@@ -2,6 +2,10 @@ package org.simpleflatmapper.jooq;
 
 import org.jooq.Field;
 import org.simpleflatmapper.map.FieldKey;
+import org.simpleflatmapper.util.TypeHelper;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 public class JooqFieldKey extends FieldKey<JooqFieldKey> {
 	private final Field<?> field;
@@ -43,6 +47,21 @@ public class JooqFieldKey extends FieldKey<JooqFieldKey> {
 		if (index != that.index) return false;
 		if (!field.equals(that.field)) return false;
 		return name.equals(that.name);
+	}
+
+	@Override
+	public Type getType(Type targetType) {
+		Class<?> type = field.getType();
+		if (Object.class.equals(type)) {
+			if (TypeHelper.isArray(targetType)) {
+				return java.sql.Array.class;
+			} else if (TypeHelper.isAssignable(List.class, targetType)) {
+				return java.sql.Array.class;
+			}else if (TypeHelper.isAssignable(java.sql.Array.class, targetType)) {
+				return java.sql.Array.class;
+			}
+		}
+		return type;
 	}
 
 	@Override

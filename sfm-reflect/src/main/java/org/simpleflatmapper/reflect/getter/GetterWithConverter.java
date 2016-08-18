@@ -3,7 +3,6 @@ package org.simpleflatmapper.reflect.getter;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.reflect.Getter;
 
-import static java.util.Objects.requireNonNull;
 
 public class GetterWithConverter<T, I, P> implements Getter<T, P> {
 
@@ -11,8 +10,10 @@ public class GetterWithConverter<T, I, P> implements Getter<T, P> {
     private final Getter<? super T, ? extends I> getter;
 
     public GetterWithConverter(Converter<? super I, ? extends P > converter, Getter<? super T, ? extends I> getter) {
-        this.converter = requireNonNull(converter, "converter");
-        this.getter = requireNonNull(getter, "getter");
+        if (converter == null) throw new NullPointerException("converter");
+        if (getter == null) throw new NullPointerException("getter");
+        this.converter = converter;
+        this.getter = getter;
     }
 
     @Override

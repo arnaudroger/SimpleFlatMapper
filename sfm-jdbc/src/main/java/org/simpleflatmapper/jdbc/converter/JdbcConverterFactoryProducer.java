@@ -21,13 +21,12 @@ import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.SupplierHelper;
 
 import java.sql.Timestamp;
+import org.simpleflatmapper.util.TypeHelper;
 
 //IFJAVA8_START
 import org.simpleflatmapper.jdbc.converter.time.DateToLocalDateConverter;
 import org.simpleflatmapper.jdbc.converter.time.TimeToLocalTimeConverter;
 import org.simpleflatmapper.jdbc.converter.time.TimeToOffsetTimeConverter;
-import org.simpleflatmapper.util.TypeHelper;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetTime;

@@ -21,6 +21,7 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.util.ErrorDoc;
+import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
@@ -92,7 +93,9 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		final K key = propertyMapping.getColumnKey();
 		final Class<P> type = TypeHelper.toClass(propertyType);
 
-		Getter<? super S, ? extends P> getter = getGetterFromSource(key, propertyMapping.getColumnDefinition(), propertyMeta.getPropertyClassMeta());
+		Getter<? super S, ? extends P> getter = getGetterFromSource(key,
+				propertyMapping.getPropertyMeta().getPropertyType(),
+				propertyMapping.getColumnDefinition(), propertyMeta.getPropertyClassMetaSupplier());
 
 		if (getter == null) {
 			mappingErrorHandler.accessorNotFound("Could not find getter for " + key + " type " + propertyType
@@ -110,8 +113,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 
 	@Override
-	public <P> Getter<? super S, ? extends P> getGetterFromSource(K columnKey, FieldMapperColumnDefinition<K> columnDefinition, ClassMeta<P> propertyClassMeta) {
-		Type propertyType = propertyClassMeta.getType();
+	public <P> Getter<? super S, ? extends P> getGetterFromSource(K columnKey, Type propertyType, FieldMapperColumnDefinition<K> columnDefinition, Supplier<ClassMeta<P>> propertyClassMetaSupplier) {
 		@SuppressWarnings("unchecked")
 		Getter<? super S, ? extends P> getter = (Getter<? super S, ? extends P>) columnDefinition.getCustomGetter();
 
@@ -126,7 +128,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 		// try to identify constructor that we could build from
 		if (getter == null) {
-			getter = lookForAlternativeGetter(propertyClassMeta, columnKey, columnDefinition, new HashSet<Type>());
+			getter = lookForAlternativeGetter(propertyClassMetaSupplier.get(), columnKey, columnDefinition, new HashSet<Type>());
 		}
 
 		return getter;

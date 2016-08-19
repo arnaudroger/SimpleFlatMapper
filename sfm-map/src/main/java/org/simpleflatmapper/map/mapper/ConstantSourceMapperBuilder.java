@@ -38,6 +38,7 @@ import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.Named;
 import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.UnaryFactory;
 
@@ -198,13 +199,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 	}
 
     private GetterFactory<? super S, K> fieldMapperAsGetterFactory() {
-        return new GetterFactory<S, K>() {
-            @Override
-            public <P> Getter<S, P> newGetter(Type target, K key, Object... properties) {
-                FieldMapperColumnDefinition<K> columnDefinition = FieldMapperColumnDefinition.<K>identity().add(properties);
-                return (Getter<S, P>) fieldMapperFactory.getGetterFromSource(key, columnDefinition, reflectionService.<P>getClassMeta(target));
-            }
-        };
+        return new FieldMapperFactoryGetterFactoryAdapter();
     }
 
     @SuppressWarnings("unchecked")
@@ -212,13 +207,15 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 		final Map<Parameter, Getter<? super S, ?>> injections = new HashMap<Parameter, Getter<? super S, ?>>();
 		final List<FieldMapper<S, T>> fieldMappers = new ArrayList<FieldMapper<S, T>>();
 		propertyMappingsBuilder.forEachConstructorProperties(new ForEachCallBack<PropertyMapping<T,?,K, FieldMapperColumnDefinition<K>>>() {
-			@SuppressWarnings("unchecked")
+
+            @SuppressWarnings("unchecked")
 			@Override
 			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping) {
 				PropertyMeta<T, ?> pm  = propertyMapping.getPropertyMeta();
                 ConstructorPropertyMeta<T, ?> cProp = (ConstructorPropertyMeta<T, ?>) pm;
                 Parameter parameter = cProp.getParameter();
-                Getter<? super S, ?> getter = fieldMapperFactory.getGetterFromSource(propertyMapping.getColumnKey(), propertyMapping.getColumnDefinition(), pm.getPropertyClassMeta());
+                Getter<? super S, ?> getter =
+                        fieldMapperFactory.getGetterFromSource(propertyMapping.getColumnKey(), pm.getPropertyType(), propertyMapping.getColumnDefinition(), pm.getPropertyClassMetaSupplier());
                 if (NullGetter.isNull(getter)) {
                     mapperConfig.mapperBuilderErrorHandler()
                             .accessorNotFound("Could not find getter for " + propertyMapping.getColumnKey() + " type "
@@ -459,4 +456,26 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             this.propertyMappings = propertyMappings;
         }
     }
+
+    private class FieldMapperFactoryGetterFactoryAdapter implements GetterFactory<S, K> {
+        @SuppressWarnings("unchecked")
+        @Override
+        public <P> Getter<S, P> newGetter(Type target, K key, Object... properties) {
+            FieldMapperColumnDefinition<K> columnDefinition = FieldMapperColumnDefinition.<K>identity().add(properties);
+            return (Getter<S, P>) fieldMapperFactory.getGetterFromSource(key, target , columnDefinition, new ClassMetaSupplier<P>(target));
+        }
+    }
+    private class ClassMetaSupplier<P> implements Supplier<ClassMeta<P>> {
+        private final Type target;
+
+        public ClassMetaSupplier(Type target) {
+            this.target = target;
+        }
+
+        @Override
+        public ClassMeta<P> get() {
+            return reflectionService.<P>getClassMeta(target);
+        }
+    }
+
 }

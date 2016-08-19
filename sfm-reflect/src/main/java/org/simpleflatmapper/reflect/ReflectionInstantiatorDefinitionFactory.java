@@ -130,10 +130,6 @@ public class ReflectionInstantiatorDefinitionFactory {
     }
 
     private static Parameter[] buildParameters(Type target, Class<?>[] parameterTypes, Type[] parameterGenericTypes, TypeVariable<Class<Object>>[] targetClassTypeParameters) {
-        System.out.println("target = " + target);
-        System.out.println("parameterTypes = " + Arrays.asList(parameterTypes));
-        System.out.println("parameterGenericTypes = " + Arrays.asList(parameterGenericTypes));
-        System.out.println("targetClassTypeParameters = " + Arrays.asList(targetClassTypeParameters));
         Parameter[] parameters = new Parameter[parameterTypes.length];
         for(int i = 0; i < parameters.length; i++) {
             Type paramType = parameterGenericTypes[i];
@@ -146,10 +142,6 @@ public class ReflectionInstantiatorDefinitionFactory {
                     int j = 0;
                     for (TypeVariable<Class<Object>> typeParameter : targetClassTypeParameters) {
                         if (typeParameter.getName().equals(tv.getName())) {
-                            System.out.println("typeParameter = " + typeParameter);
-                            System.out.println("tv = " + tv);
-                            System.out.println("pt = " + Arrays.asList(pt.getActualTypeArguments()));
-                            System.out.println("j = " + j);
                             Type[] actualTypeArguments = pt.getActualTypeArguments();
                             resolvedParamType = actualTypeArguments[j];
                             break;

@@ -3,6 +3,7 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.util.Supplier;
 
 import java.lang.reflect.Type;
 
@@ -62,4 +63,12 @@ public abstract class PropertyMeta<O, P> {
 	}
 
 
+	public Supplier<ClassMeta<P>> getPropertyClassMetaSupplier() {
+		return new Supplier<ClassMeta<P>>() {
+			@Override
+			public ClassMeta<P> get() {
+				return getPropertyClassMeta();
+			}
+		};
+	}
 }

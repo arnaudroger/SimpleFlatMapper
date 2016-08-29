@@ -1,15 +1,18 @@
-package org.simpleflatmapper.map;
+package org.simpleflatmapper.map.mapper;
 
-import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.UncheckedConverter;
+import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.util.Enumarable;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.Predicate;
 
 public class DiscriminatorEnumerable<S, T> implements Enumarable<T> {
 
-    private final PredicatedMapper<S, T>[] discriminatorMappers;
+    private final PredicatedMapperWithContext<S, T>[] discriminatorMappers;
     private final Enumarable<S> sourceEnumarable;
-    private final Converter<S, String> errorMessageGenerator;
+    private final UncheckedConverter<? super S, ? extends CharSequence> errorMessageGenerator;
 
     private T currentValue;
     private T nextValue;
@@ -18,9 +21,9 @@ public class DiscriminatorEnumerable<S, T> implements Enumarable<T> {
 
 
     public DiscriminatorEnumerable(
-            PredicatedMapper<S, T>[] discriminatorMappers,
+            PredicatedMapperWithContext<S, T>[] discriminatorMappers,
             Enumarable<S> sourceEnumarable,
-            Converter<S, String> errorMessageGenerator) {
+            UncheckedConverter<? super S, ? extends CharSequence> errorMessageGenerator) {
         this.discriminatorMappers = discriminatorMappers;
         this.sourceEnumarable = sourceEnumarable;
         this.errorMessageGenerator = errorMessageGenerator;
@@ -62,7 +65,7 @@ public class DiscriminatorEnumerable<S, T> implements Enumarable<T> {
     }
 
     private void checkMapper() {
-        for(PredicatedMapper<S, T> pmm : discriminatorMappers ) {
+        for(PredicatedMapperWithContext<S, T> pmm : discriminatorMappers ) {
             if (pmm.predicate.test(sourceEnumarable.currentValue())) {
                 if (pmm.mapper != currentMapper) {
                     markAsBroken();
@@ -76,28 +79,22 @@ public class DiscriminatorEnumerable<S, T> implements Enumarable<T> {
     }
 
     private void mapperNotFound() {
-        String errorMessage;
-        try {
-            errorMessage = errorMessageGenerator.convert(sourceEnumarable.currentValue());
-        } catch (Exception e) {
-            errorMessage = "NA";
-        }
+        CharSequence errorMessage = errorMessageGenerator.convert(sourceEnumarable.currentValue());
         throw new MappingException("No mapper found for " + errorMessage);
     }
 
     private void markAsBroken() {
-        for(PredicatedMapper<S, T> pmm : discriminatorMappers ) {
+        for(PredicatedMapperWithContext<S, T> pmm : discriminatorMappers ) {
            pmm.mappingContext.markAsBroken();
         }
     }
 
-    //Tuple3<Predicate<S>, Mapper<S, T>, MappingContext<? super S>>
-    public static class PredicatedMapper<S, T> {
-        private final Predicate<S> predicate;
-        private final Mapper<S, T> mapper;
-        private final MappingContext<? super S> mappingContext;
+    public static class PredicatedMapperWithContext<ROW, T> {
+        private final Predicate<ROW> predicate;
+        private final Mapper<ROW, T> mapper;
+        private final MappingContext<? super ROW> mappingContext;
 
-        public PredicatedMapper(Predicate<S> predicate, Mapper<S, T> mapper, MappingContext<? super S> mappingContext) {
+        public PredicatedMapperWithContext(Predicate<ROW> predicate, Mapper<ROW, T> mapper, MappingContext<? super ROW> mappingContext) {
             this.predicate = predicate;
             this.mapper = mapper;
             this.mappingContext = mappingContext;

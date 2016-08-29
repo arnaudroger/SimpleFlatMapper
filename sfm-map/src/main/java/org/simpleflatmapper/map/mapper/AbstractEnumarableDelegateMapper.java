@@ -6,25 +6,25 @@ import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.RowHandlerErrorHandler;
 
-public abstract class AbstractEnumarableDelegateMapper<R, S, T, E extends Exception> extends AbstractEnumarableMapper<S, T, E> implements Mapper<R, T> {
+public abstract class AbstractEnumarableDelegateMapper<ROW, ROWS, T, E extends Exception> extends AbstractEnumarableMapper<ROWS, T, E> implements Mapper<ROW, T> {
     public AbstractEnumarableDelegateMapper(RowHandlerErrorHandler errorHandler) {
         super(errorHandler);
     }
 
     @Override
-    public final T map(R source) throws MappingException {
+    public final T map(ROW source) throws MappingException {
         return getMapper(source).map(source);
     }
 
     @Override
-    public final T map(R source, MappingContext<? super R> context) throws MappingException {
+    public final T map(ROW source, MappingContext<? super ROW> context) throws MappingException {
         return getMapper(source).map(source, context);
     }
 
     @Override
-    public final void mapTo(R source, T target, MappingContext<? super R> context) throws Exception {
+    public final void mapTo(ROW source, T target, MappingContext<? super ROW> context) throws Exception {
         getMapper(source).mapTo(source, target, context);
     }
 
-    protected abstract Mapper<R, T> getMapper(R source);
+    protected abstract Mapper<ROW, T> getMapper(ROW source);
 }

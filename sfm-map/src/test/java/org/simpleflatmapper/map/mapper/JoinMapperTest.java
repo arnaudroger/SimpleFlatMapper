@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-public class JoinMapperImplTest {
+public class JoinMapperTest {
 
     @SuppressWarnings("unchecked")
     @Test
@@ -68,8 +68,8 @@ public class JoinMapperImplTest {
                 return source[key.getIndex()];
             }
         }, -1);
-        JoinMapperImpl<Object[], Object[][], DbListObject, RuntimeException> joinMapper =
-                new JoinMapperImpl<Object[], Object[][], DbListObject, RuntimeException>(
+        JoinMapper<Object[], Object[][], DbListObject, RuntimeException> joinMapper =
+                new JoinMapper<Object[], Object[][], DbListObject, RuntimeException>(
                         mapper, new RethrowRowHandlerErrorHandler(),
                         new BreakDetectorMappingContextFactory<Object[], Object>(new KeysDefinition[] {keysDefinition}, 0),
                         SetRowMapperTest.ENUMARABLE_UNARY_FACTORY

@@ -32,7 +32,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DiscriminatorJdbcMapperTest {
+public class DiscriminatorMapperTest {
 
 
     @Test
@@ -68,8 +68,6 @@ public class DiscriminatorJdbcMapperTest {
 
 
         validateMapper(mapper);
-
-        assertTrue(mapper.toString().startsWith("DiscriminatorJdbcMapper{discriminatorColumn='person_type', mappers=["));
 
     }
 

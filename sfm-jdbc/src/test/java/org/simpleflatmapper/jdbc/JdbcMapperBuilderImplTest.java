@@ -45,7 +45,7 @@ public class JdbcMapperBuilderImplTest {
 		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.noFailOnAsm().reflectionService(new ReflectionService(newAsmFactoryFailsOnmapper())).newBuilder(DbObject.class);
 
 		final JdbcMapper<DbObject> mapper = builder.mapper();
-		assertTrue(mapper instanceof JdbcMapperBuilder.StaticJdbcSetRowMapper);
+		assertTrue(mapper.getClass().getSimpleName().equals("StaticJdbcSetRowMapper"));
 	}
 
 	public AsmFactory newAsmFactoryFailsOnmapper() {

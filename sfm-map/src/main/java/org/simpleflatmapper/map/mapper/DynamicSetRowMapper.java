@@ -81,11 +81,6 @@ public class DynamicSetRowMapper<ROW, SET, T, E extends Exception, K extends Fie
 	}
 
 	@Override
-	public final MappingContext<? super ROW> newMappingContext(ROW set) throws E {
-		return getMapperFromRow(set).newMappingContext(set);
-	}
-
-	@Override
 	public String toString() {
 		return "DynamicMapper{mapperFactory=" + mapperFactory
 				+  ", " + mapperCache +

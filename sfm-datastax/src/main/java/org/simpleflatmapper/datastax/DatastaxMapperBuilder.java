@@ -11,7 +11,7 @@ import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.AbstractMapperBuilder;
-import org.simpleflatmapper.map.mapper.JoinMapperImpl;
+import org.simpleflatmapper.map.mapper.JoinMapper;
 import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.map.mapper.MapperSourceImpl;
 import org.simpleflatmapper.map.mapper.StaticSetRowMapper;
@@ -79,7 +79,7 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
         return new JoinDatastaxMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 
-    private static class JoinDatastaxMapper<T> extends JoinMapperImpl<Row, ResultSet, T, DriverException> implements DatastaxMapper<T> {
+    private static class JoinDatastaxMapper<T> extends JoinMapper<Row, ResultSet, T, DriverException> implements DatastaxMapper<T> {
         public JoinDatastaxMapper(Mapper<Row, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
             super(mapper, errorHandler, mappingContextFactory, new ResultSetEnumarableFactory());
         }

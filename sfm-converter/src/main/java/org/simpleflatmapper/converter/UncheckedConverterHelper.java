@@ -1,0 +1,27 @@
+package org.simpleflatmapper.converter;
+
+import org.simpleflatmapper.util.ErrorHelper;
+
+public class UncheckedConverterHelper {
+
+    public static <I, O> UncheckedConverter<I, O> toUnchecked(final Converter<I, O> converter) {
+        return new UncheckedConverterImpl<I, O>(converter);
+    }
+
+    private static class UncheckedConverterImpl<I, O> implements UncheckedConverter<I, O> {
+        private final Converter<I, O> converter;
+
+        public UncheckedConverterImpl(Converter<I, O> converter) {
+            this.converter = converter;
+        }
+
+        @Override
+        public O convert(I in) {
+            try {
+                return converter.convert(in);
+            } catch (Exception e) {
+                return ErrorHelper.rethrow(e);
+            }
+        }
+    }
+}

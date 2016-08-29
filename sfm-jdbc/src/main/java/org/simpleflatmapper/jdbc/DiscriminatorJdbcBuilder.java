@@ -1,17 +1,28 @@
 package org.simpleflatmapper.jdbc;
 
 
-import org.simpleflatmapper.jdbc.impl.DiscriminatorJdbcMapper;
+import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.UncheckedConverter;
+import org.simpleflatmapper.converter.UncheckedConverterHelper;
+import org.simpleflatmapper.jdbc.impl.ResultSetEnumarable;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.mapper.DiscriminatorMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.util.Enumarable;
+import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Type;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The builder is used to build a DiscriminatorJdbcMapper that will instantiate
+ * The builder is used to build a DiscriminatorMapper that will instantiate
  * different types depending on the value of a specified field.
  * @param <T> the root type of the jdbcMapper
  */
@@ -75,23 +86,50 @@ public class DiscriminatorJdbcBuilder<T> {
      */
     public JdbcMapper<T> mapper() {
 
-        List<PredicatedJdbcMapper<T>> mappers =
-                new ArrayList<PredicatedJdbcMapper<T>>();
+        List<DiscriminatorMapper.PredicatedMapper<ResultSet, ResultSet, T, SQLException>> mappers =
+                new ArrayList<DiscriminatorMapper.PredicatedMapper<ResultSet, ResultSet, T, SQLException>>();
 
         for(DiscriminatorJdbcSubBuilder subBuilder : builders) {
-            JdbcMapper<T> mapper;
+            JdbcMapper<T> mapper = subBuilder.createMapper();
 
-            if (subBuilder.builder != null) {
-                mapper = subBuilder.builder.mapper();
-            } else {
-                mapper = jdbcMapperFactory.newMapper(subBuilder.type);
-            }
-
-            mappers.add(new PredicatedJdbcMapper<T>(subBuilder.predicate, mapper));
+            Predicate<ResultSet> predicate = new ResultSetDiscriminatorPredicate(column, subBuilder.predicate);
+            mappers.add(new DiscriminatorMapper.PredicatedMapper<ResultSet, ResultSet, T, SQLException>(predicate, mapper, mapper));
         }
 
 
-        return new DiscriminatorJdbcMapper<T>(column, mappers, jdbcMapperFactory.rowHandlerErrorHandler());
+        DiscriminatorJdbcMapper<T> discriminatorMapper = new DiscriminatorJdbcMapper<T>(
+                mappers,
+                new UnaryFactory<ResultSet, Enumarable<ResultSet>>() {
+                    @Override
+                    public Enumarable<ResultSet> newInstance(ResultSet resultSet) {
+                        return new ResultSetEnumarable(resultSet);
+                    }
+                },
+                UncheckedConverterHelper.<ResultSet, String>toUnchecked(
+                        new Converter<ResultSet, String>() {
+                            @Override
+                            public String convert(ResultSet in) throws SQLException {
+                                return column + ":" + in.getObject(column);
+                            }
+                        }),
+                jdbcMapperFactory.rowHandlerErrorHandler());
+        return discriminatorMapper;
+    }
+
+    private static class DiscriminatorJdbcMapper<T> extends DiscriminatorMapper<ResultSet, ResultSet, T, SQLException>
+            implements JdbcMapper<T> {
+
+        public DiscriminatorJdbcMapper(List<PredicatedMapper<ResultSet, ResultSet, T, SQLException>> predicatedMappers,
+                                       UnaryFactory<ResultSet, Enumarable<ResultSet>> rowEnumarableFactory,
+                                       UncheckedConverter<ResultSet, String> errorConverter,
+                                       RowHandlerErrorHandler rowHandlerErrorHandler) {
+            super(predicatedMappers, rowEnumarableFactory, errorConverter, rowHandlerErrorHandler);
+        }
+
+        @Override
+        public MappingContext<? super ResultSet> newMappingContext(ResultSet resultSet) throws SQLException {
+            return ((JdbcMapper<T>)getMapper(resultSet)).newMappingContext(resultSet);
+        }
     }
 
     private static class DiscriminatorPredicate implements Predicate<String> {
@@ -111,6 +149,26 @@ public class DiscriminatorJdbcBuilder<T> {
             return "DiscriminatorPredicate{" +
                     "value='" + value + '\'' +
                     '}';
+        }
+    }
+
+    private static class ResultSetDiscriminatorPredicate implements Predicate<ResultSet> {
+        private final String discriminatorColumn;
+        private final Predicate<String> predicate;
+
+        public ResultSetDiscriminatorPredicate(String discriminatorColumn, Predicate<String> predicate) {
+            this.discriminatorColumn = discriminatorColumn;
+            this.predicate = predicate;
+        }
+
+        @Override
+        public boolean test(ResultSet resultSet) {
+            try {
+                return predicate.test(resultSet.getString(discriminatorColumn));
+            } catch (SQLException e) {
+                ErrorHelper.rethrow(e);
+                return false;
+            }
         }
     }
 
@@ -168,7 +226,7 @@ public class DiscriminatorJdbcBuilder<T> {
 
         /**
          * @see DiscriminatorJdbcBuilder
-         * @return return a DiscriminatorJdbcMapper based on the current state of the builder
+         * @return return a DiscriminatorMapper based on the current state of the builder
          */
         public JdbcMapper<T> mapper() {
             return DiscriminatorJdbcBuilder.this.mapper();
@@ -213,24 +271,13 @@ public class DiscriminatorJdbcBuilder<T> {
         public DiscriminatorJdbcSubBuilder when(Predicate<String> predicate, Type type) {
             return DiscriminatorJdbcBuilder.this.when(predicate, type);
         }
-    }
 
-    //Tuple2<Predicate<String>, JdbcMapper<T>>
-    public static class PredicatedJdbcMapper<T> {
-        private final Predicate<String> predicate;
-        private final JdbcMapper<T> jdbcMapper;
-
-        private PredicatedJdbcMapper(Predicate<String> predicate, JdbcMapper<T> jdbcMapper) {
-            this.predicate = predicate;
-            this.jdbcMapper = jdbcMapper;
-        }
-
-        public Predicate<String> getPredicate() {
-            return predicate;
-        }
-
-        public JdbcMapper<T> getJdbcMapper() {
-            return jdbcMapper;
+        private JdbcMapper<T> createMapper() {
+            if (builder != null) {
+                return builder.mapper();
+            } else {
+                return jdbcMapperFactory.newMapper(type);
+            }
         }
     }
  }

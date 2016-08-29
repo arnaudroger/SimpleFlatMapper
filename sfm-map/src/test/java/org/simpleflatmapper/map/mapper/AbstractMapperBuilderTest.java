@@ -4,7 +4,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
-import org.simpleflatmapper.converter.joda.JodaDateTimeFormatterProperty;
 import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.Mapper;
@@ -437,7 +436,7 @@ public class AbstractMapperBuilderTest {
 
         @Override
         protected Mapper<Object[], T> newJoinJdbcMapper(Mapper<Object[], T> mapper) {
-            return new JoinMapperImpl<Object[], Object[][], T, RuntimeException>(mapper,
+            return new JoinMapper<Object[], Object[][], T, RuntimeException>(mapper,
                     mapperConfig.rowHandlerErrorHandler(),
                     mappingContextFactoryBuilder.newFactory(),
                     new UnaryFactory<Object[][], Enumarable<Object[]>>() {

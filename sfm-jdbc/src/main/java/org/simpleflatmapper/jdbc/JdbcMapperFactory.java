@@ -1,5 +1,7 @@
 package org.simpleflatmapper.jdbc;
 
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.jdbc.impl.JdbcColumnKeyMapperKeyComparator;
 import org.simpleflatmapper.jdbc.impl.PreparedStatementSetterFactory;
@@ -265,6 +267,11 @@ public final class JdbcMapperFactory
 		@Override
 		public String toString() {
 			return "DynamicJdbcSetRowMapper{}";
+		}
+
+		@Override
+		public MappingContext<? super ResultSet> newMappingContext(ResultSet resultSet) throws SQLException {
+			return getMapper(resultSet.getMetaData()).newMappingContext(resultSet);
 		}
 	}
 

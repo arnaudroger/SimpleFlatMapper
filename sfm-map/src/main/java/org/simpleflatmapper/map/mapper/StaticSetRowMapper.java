@@ -42,11 +42,6 @@ public class StaticSetRowMapper<ROW, SET, T, E extends Exception> extends Abstra
 	}
 
 	@Override
-	public final MappingContext<? super ROW> newMappingContext(ROW set) throws E {
-		return mappingContextFactory.newContext();
-	}
-
-	@Override
 	public String toString() {
 		return "StaticSetRowMapper{" + mapper + '}';
 	}
@@ -54,5 +49,9 @@ public class StaticSetRowMapper<ROW, SET, T, E extends Exception> extends Abstra
 	@Override
 	protected final Enumarable<T> newEnumarableOfT(SET source) throws E {
 		return new StaticMapperEnumarable<ROW, T>(mapper, mappingContextFactory.newContext(), enumarableFactory.newInstance(source));
+	}
+
+	protected MappingContextFactory<? super ROW> getMappingContextFactory() {
+		return mappingContextFactory;
 	}
 }

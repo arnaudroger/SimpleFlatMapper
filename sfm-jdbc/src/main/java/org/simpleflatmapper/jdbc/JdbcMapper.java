@@ -3,6 +3,7 @@ package org.simpleflatmapper.jdbc;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
+import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
 import org.simpleflatmapper.util.RowHandler;
 
 import java.sql.ResultSet;
@@ -31,7 +32,7 @@ import java.util.stream.Stream;
  * @param <T> the type that the jdbcMapper is mapping to
  * @see JdbcMapperFactory
  */
-public interface JdbcMapper<T> extends SetRowMapper<ResultSet, ResultSet, T, SQLException> {
+public interface JdbcMapper<T> extends SetRowMapper<ResultSet, ResultSet, T, SQLException>, MappingContextFactoryFromRows<ResultSet, ResultSet, SQLException> {
 
 	/**
 	 * map source object to a new instance of T
@@ -80,11 +81,4 @@ public interface JdbcMapper<T> extends SetRowMapper<ResultSet, ResultSet, T, SQL
 	//IFJAVA8_START
 	Stream<T> stream(ResultSet rs) throws SQLException, MappingException;
 	//IFJAVA8_END
-
-	/**
-	 *
-	 * @param rs the result set
-	 * @return a new mapping context valid for that resultSet
-	 */
-	MappingContext<? super ResultSet> newMappingContext(ResultSet rs) throws SQLException;
 }

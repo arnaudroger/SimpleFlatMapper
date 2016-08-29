@@ -7,13 +7,13 @@ import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.util.Enumarable;
 import org.simpleflatmapper.util.UnaryFactory;
 
-public class JoinMapperImpl<ROW, ROWS, T, EX extends Exception> extends AbstractEnumarableDelegateMapper<ROW, ROWS, T, EX> {
+public class JoinMapper<ROW, ROWS, T, EX extends Exception> extends AbstractEnumarableDelegateMapper<ROW, ROWS, T, EX> {
 
     private final Mapper<ROW, T> mapper;
     private final MappingContextFactory<? super ROW> mappingContextFactory;
     private final UnaryFactory<ROWS, Enumarable<ROW>> factory;
 
-    public JoinMapperImpl(Mapper<ROW, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<ROWS, Enumarable<ROW>> factory) {
+    public JoinMapper(Mapper<ROW, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<ROWS, Enumarable<ROW>> factory) {
         super(errorHandler);
         this.mapper = mapper;
         this.mappingContextFactory = mappingContextFactory;
@@ -35,13 +35,7 @@ public class JoinMapperImpl<ROW, ROWS, T, EX extends Exception> extends Abstract
         return factory.newInstance(source);
     }
 
-    public MappingContext<? super ROW> newMappingContext() {
-        return mappingContextFactory.newContext();
+    protected MappingContextFactory<? super ROW> getMappingContextFactory() {
+        return mappingContextFactory;
     }
-
-
-    public MappingContext<? super ROW> newMappingContext(ROW row) {
-        return newMappingContext();
-    }
-
 }

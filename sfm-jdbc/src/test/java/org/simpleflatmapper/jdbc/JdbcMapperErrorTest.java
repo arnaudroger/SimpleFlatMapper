@@ -81,45 +81,4 @@ public class JdbcMapperErrorTest {
             assertTrue(e instanceof IOException);
         }
 	}
-	
-	
-	@SuppressWarnings("unchecked")
-    @Test
-	public void testHandlerError() throws MappingException, SQLException {
-		
-		MyJdbcRawHandlerErrorHandler handler = new MyJdbcRawHandlerErrorHandler();
-		@SuppressWarnings("unchecked")
-		FieldMapper<ResultSet, DbObject>[] fields = new FieldMapper[] {};
-		JdbcMapperBuilder.StaticJdbcSetRowMapper<DbObject> mapper =
-			new JdbcMapperBuilder.StaticJdbcSetRowMapper<DbObject>(
-				new MapperImpl<ResultSet, DbObject>(
-					fields,
-					new FieldMapper[] {},
-                	new Instantiator<ResultSet, DbObject>() {
-						@Override
-						public DbObject newInstance(ResultSet s) throws Exception {
-							return new DbObject();
-						}
-					}),
-					handler, new JdbcMappingContextFactoryBuilder().newFactory());
-		final Error error = new Error();
-		
-		ResultSet rs = mock(ResultSet.class);
-		when(rs.next()).thenReturn(true, false);
-		
-		mapper.forEach(rs, new RowHandler<DbObject>() {
-
-			@Override
-			public void handle(DbObject t) throws Exception {
-				throw error;
-			}
-		});
-		
-		assertSame(error, handler.error);
-		
-		
-	}
-
-
-
 }

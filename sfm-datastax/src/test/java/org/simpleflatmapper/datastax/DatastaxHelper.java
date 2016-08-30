@@ -60,7 +60,7 @@ public class DatastaxHelper {
                     System.setProperty("cassandra.native.epoll.enabled", "false");
 
                     System.out.println("Starting Cassandra " + cassandraConfig);
-                    EmbeddedCassandraServerHelper.startEmbeddedCassandra(300_000L);
+                    EmbeddedCassandraServerHelper.startEmbeddedCassandra(300000L);
                     System.out.println("Started Cassandra");
 
                     System.setProperty(CASSANDRA_STARTED, "true");

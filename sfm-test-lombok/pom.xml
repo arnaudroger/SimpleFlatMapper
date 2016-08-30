@@ -15,6 +15,10 @@
 		</license>
 	</licenses>
 
+	<properties>
+		<jar.classifier />
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -35,6 +39,7 @@
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-csv</artifactId>
 			<version>2.13-SNAPSHOT</version>
+			<classifier>${jar.classifier}</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -52,12 +57,33 @@
 	</dependencies>
 
 	<profiles>
+		<profile>
+			<id>jdk16</id>
+			<activation>
+				<jdk>1.6</jdk>
+			</activation>
+			<properties>
+				<jar.classifier>jdk16</jar.classifier>
+			</properties>
+		</profile>
+		<profile>
+			<id>jdk17</id>
+			<activation>
+				<jdk>1.7</jdk>
+			</activation>
+			<properties>
+				<jar.classifier>jdk16</jar.classifier>
+			</properties>
+		</profile>
 
 		<profile>
 			<id>jdk19</id>
 			<activation>
 				<jdk>9-ea</jdk>
 			</activation>
+			<properties>
+				<jar.classifier>jdk9</jar.classifier>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>

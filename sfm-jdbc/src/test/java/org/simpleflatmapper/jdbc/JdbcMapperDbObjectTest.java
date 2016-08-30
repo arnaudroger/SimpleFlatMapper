@@ -12,7 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Iterator;
 import java.util.List;
-
+//IFJAVA8_START
+import java.util.function.Consumer;
+//IFJAVA8_END
 import static org.junit.Assert.*;
 
 public class JdbcMapperDbObjectTest {
@@ -150,11 +152,14 @@ public class JdbcMapperDbObjectTest {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				mapper.stream(ps.executeQuery()).forEach(
-						(o) -> {
-							try {
-								DbHelper.assertDbObjectMapping(o);
-							} catch (Exception e) {
-								throw new RuntimeException(e);
+						new Consumer<DbObject>() {
+							@Override
+							public void accept(DbObject o) {
+								try {
+									DbHelper.assertDbObjectMapping(o);
+								} catch (Exception e) {
+									throw new RuntimeException(e);
+								}
 							}
 						}
 				);
@@ -173,11 +178,14 @@ public class JdbcMapperDbObjectTest {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				mapper.stream(ps.executeQuery()).forEach(
-						(o) -> {
-							try {
-								DbHelper.assertDbObjectMapping(o);
-							} catch (Exception e) {
-								throw new RuntimeException(e);
+						new Consumer<DbObject>() {
+							@Override
+							public void accept(DbObject o) {
+								try {
+									DbHelper.assertDbObjectMapping(o);
+								} catch (Exception e) {
+									throw new RuntimeException(e);
+								}
 							}
 						}
 				);
@@ -196,11 +204,14 @@ public class JdbcMapperDbObjectTest {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				mapper.stream(ps.executeQuery()).limit(1).forEach(
-						(o) -> {
-							try {
-								DbHelper.assertDbObjectMapping(o);
-							} catch (Exception e) {
-								throw new RuntimeException(e);
+						new Consumer<DbObject>() {
+							@Override
+							public void accept(DbObject o) {
+								try {
+									DbHelper.assertDbObjectMapping(o);
+								} catch (Exception e) {
+									throw new RuntimeException(e);
+								}
 							}
 						}
 				);
@@ -219,11 +230,14 @@ public class JdbcMapperDbObjectTest {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
 				mapper.stream(ps.executeQuery()).limit(1).forEach(
-						(o) -> {
-							try {
-								DbHelper.assertDbObjectMapping(o);
-							} catch (Exception e) {
-								throw new RuntimeException(e);
+						new Consumer<DbObject>() {
+							@Override
+							public void accept(DbObject o) {
+								try {
+									DbHelper.assertDbObjectMapping(o);
+								} catch (Exception e) {
+									throw new RuntimeException(e);
+								}
 							}
 						}
 				);

@@ -36,6 +36,7 @@ questions.
         <maven>3.0</maven>
     </prerequisites>
 
+
     <dependencies>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
@@ -52,11 +53,13 @@ questions.
             <groupId>org.simpleflatmapper</groupId>
             <artifactId>sfm-jdbc</artifactId>
             <version>2.13-SNAPSHOT</version>
+            <classifier>${jar.classifier}</classifier>
         </dependency>
         <dependency>
             <groupId>org.simpleflatmapper</groupId>
             <artifactId>sfm-csv</artifactId>
             <version>2.13-SNAPSHOT</version>
+            <classifier>${jar.classifier}</classifier>
         </dependency>
     </dependencies>
 
@@ -65,6 +68,8 @@ questions.
         <jmh.version>1.12</jmh.version>
         <javac.target>1.8</javac.target>
         <uberjar.name>benchmarks</uberjar.name>
+        <jar.classifier />
+
     </properties>
 
     <build>
@@ -156,5 +161,17 @@ questions.
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>jdk19</id>
+            <activation>
+                <jdk>9-ea</jdk>
+            </activation>
+            <properties>
+                <jar.classifier>jdk9</jar.classifier>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

@@ -256,9 +256,9 @@
                 <jdk>1.7</jdk>
             </activation>
             <properties>
-                <source.classifier>jdk17-sources</source.classifier>
+                <source.classifier>jdk16-sources</source.classifier>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
-                <jar.classifier>jdk17</jar.classifier>
+                <jar.classifier>jdk16</jar.classifier>
             </properties>
 
             <modules>
@@ -307,8 +307,8 @@
                         <artifactId>maven-compiler-plugin</artifactId>
                         <version>3.3</version>
                         <configuration>
-                            <source>1.7</source>
-                            <target>1.7</target>
+                            <source>1.6</source>
+                            <target>1.6</target>
 
                             <excludes>
                                 <exclude>**/module-info.java</exclude>
@@ -383,6 +383,57 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+        <profile>
+            <id>jdk19</id>
+            <activation>
+                <jdk>9-ea</jdk>
+            </activation>
+            <properties>
+                <source.classifier>jdk9-sources</source.classifier>
+                <jar.classifier>jdk9</jar.classifier>
+            </properties>
+
+            <modules>
+                <module>sfm-sql2o</module>
+                <module>ow2.asm/ASM_6_0_ALPHA</module>
+            </modules>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.6-jigsaw-SNAPSHOT</version>
+                        <configuration>
+                            <source>9</source>
+                            <target>9</target>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.ow2.asm</groupId>
+                                <artifactId>asm</artifactId>
+                                <version>6.0_ALPHA</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>maven-bundle-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <version>3.2.0</version>
+                        <configuration>
+                            <instructions>
+                                <_noee>true</_noee>
+                                <_failok>true</_failok>
+                                <_nouses>true</_nouses>
+                            </instructions>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -484,50 +535,6 @@
             </modules>
         </profile>
 
-        <profile>
-            <id>jdk19</id>
-            <activation>
-                <jdk>9-ea</jdk>
-            </activation>
-            <modules>
-                <module>sfm-sql2o</module>
-                <module>ow2.asm/ASM_6_0_ALPHA</module>
-            </modules>
-            <build>
-                <plugins>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.6-jigsaw-SNAPSHOT</version>
-                        <configuration>
-                            <source>9</source>
-                            <target>9</target>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.ow2.asm</groupId>
-                                <artifactId>asm</artifactId>
-                                <version>6.0_ALPHA</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.felix</groupId>
-                        <artifactId>maven-bundle-plugin</artifactId>
-                        <extensions>true</extensions>
-                        <version>3.2.0</version>
-                        <configuration>
-                            <instructions>
-                                <_noee>true</_noee>
-                                <_failok>true</_failok>
-                                <_nouses>true</_nouses>
-                            </instructions>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
 
         <profile>
             <id>dev9</id>

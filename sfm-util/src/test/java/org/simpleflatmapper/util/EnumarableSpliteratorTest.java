@@ -19,7 +19,7 @@ public class EnumarableSpliteratorTest {
     public void testStreamCollect() {
         List<String> list = StreamSupport
                 .stream(new EnumarableSpliterator<String>(enumarable), false)
-                .collect(Collectors.toList());
+                .collect(Collectors.<String>toList());
         assertEquals(Arrays.asList(STRINGS), list);
     }
 
@@ -28,7 +28,7 @@ public class EnumarableSpliteratorTest {
         List<String> list = StreamSupport
                 .stream(new EnumarableSpliterator<String>(enumarable), false)
                 .limit(1)
-                .collect(Collectors.toList());
+                .collect(Collectors.<String>toList());
         assertEquals(Arrays.asList(STRINGS).subList(0, 1), list);
     }
 

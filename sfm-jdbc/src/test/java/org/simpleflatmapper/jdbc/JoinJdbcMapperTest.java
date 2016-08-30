@@ -156,9 +156,9 @@ public class JoinJdbcMapperTest {
         JoinTest.validateProfessors(professors);
 
         //IFJAVA8_START
-        JoinTest.validateProfessors(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
+        JoinTest.validateProfessors(mapper.stream(setUpResultSetMock()).collect(Collectors.<T>toList()));
 
-        JoinTest.validateProfessors(mapper.stream(setUpResultSetMock()).limit(3).collect(Collectors.toList()));
+        JoinTest.validateProfessors(mapper.stream(setUpResultSetMock()).limit(3).collect(Collectors.<T>toList()));
         //IFJAVA8_END
 
         Iterator<T> iterator = mapper.iterator(setUpResultSetMock());

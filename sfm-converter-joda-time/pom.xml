@@ -38,12 +38,14 @@
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter</artifactId>
 			<version>2.13-SNAPSHOT</version>
+			<classifier>${jar.classifier}</classifier>
 		</dependency>
         <dependency>
             <groupId>org.simpleflatmapper</groupId>
             <artifactId>sfm-util</artifactId>
-            <version>2.13-SNAPSHOT</version>
-        </dependency>
+			<version>2.13-SNAPSHOT</version>
+			<classifier>${jar.classifier}</classifier>
+		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter</artifactId>

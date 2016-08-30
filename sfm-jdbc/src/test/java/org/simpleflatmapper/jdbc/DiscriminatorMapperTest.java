@@ -109,10 +109,10 @@ public class DiscriminatorMapperTest {
         validatePersons(persons);
 
         //IFJAVA8_START
-        validatePersons(mapper.stream(setUpResultSetMock()).collect(Collectors.toList()));
+        validatePersons(mapper.stream(setUpResultSetMock()).collect(Collectors.<T>toList()));
 
         final Stream<T> stream = mapper.stream(setUpResultSetMock());
-        validatePersons(stream.limit(10).collect(Collectors.toList()));
+        validatePersons(stream.limit(10).collect(Collectors.<T>toList()));
         //IFJAVA8_END
 
         Iterator<T> iterator = mapper.iterator(setUpResultSetMock());

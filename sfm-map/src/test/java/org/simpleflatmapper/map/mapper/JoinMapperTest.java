@@ -85,7 +85,7 @@ public class JoinMapperTest {
         checkList(joinMapper.forEach(data, new ListCollectorHandler<DbListObject>()).getList());
 
         //IFJAVA8_START
-        checkList(joinMapper.stream(data).collect(Collectors.toList()));
+        checkList(joinMapper.stream(data).collect(Collectors.<DbListObject>toList()));
         //IFJAVA8_END
 
         List<DbListObject> list = new ArrayList<DbListObject>();

@@ -35,6 +35,8 @@ import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -202,22 +204,27 @@ public class DataTypeTest {
         throw new IllegalArgumentException("not number for "+ numberClass);
     }
 
+
+    private static Map<String, String> getterMethods = new HashMap<String, String>();
+    static {
+        getterMethods.put("BIGINT" , "getLong");
+        getterMethods.put("COUNTER", "getLong");
+        getterMethods.put("INT"    , "getInt");
+        getterMethods.put("TINYINT"    , "getByte");
+        getterMethods.put("TIME"    , "getTime");
+        getterMethods.put("DECIMAL"    , "getDecimal");
+        getterMethods.put("DOUBLE"  , "getDouble");
+        getterMethods.put("FLOAT"  , "getFloat");
+        getterMethods.put("VARINT"  , "getVarint");
+        getterMethods.put("SMALLINT"  , "getShort");
+    }
     public static String getterMethodFor(DataType dataType) throws Exception {
         String value = dataType.getName().name();
 
-        switch (value) {
-            case "BIGINT"  : return "getLong";
-            case "COUNTER" : return "getLong";
-            case "INT"     : return "getInt";
-            case "TINYINT"     : return "getByte";
-            case "TIME"     : return "getTime";
-            case "DECIMAL"     : return "getDecimal";
-            case "DOUBLE"   : return "getDouble";
-            case "FLOAT"   : return "getFloat";
-            case "VARINT"   : return "getVarint";
-            case "SMALLINT"   : return "getShort";
+        String method = getterMethods.get(value);
+        if (method != null) {
+            return method;
         }
-
         throw new IllegalArgumentException("Not method define for " + value);
     }
 

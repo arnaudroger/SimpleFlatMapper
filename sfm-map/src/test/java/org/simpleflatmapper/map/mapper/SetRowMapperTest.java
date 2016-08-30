@@ -103,7 +103,7 @@ public class SetRowMapperTest {
         checkIdNameResult(staticSetRowMapper.forEach(ID_NAME_DATA, new ListCollectorHandler<DbObject>()).getList());
         checkIdNameResult(staticSetRowMapper.iterator(ID_NAME_DATA));
         //IFJAVA8_START
-        checkIdNameResult(staticSetRowMapper.stream(ID_NAME_DATA).collect(Collectors.toList()));
+        checkIdNameResult(staticSetRowMapper.stream(ID_NAME_DATA).collect(Collectors.<DbObject>toList()));
         //IFJAVA8_END
         checkIdNameRow(1l, staticSetRowMapper.map(ID_NAME_DATA[0]));
         checkIdNameRow(1l, staticSetRowMapper.map(ID_NAME_DATA[0], null));
@@ -140,7 +140,7 @@ public class SetRowMapperTest {
         checkIdNameEmailResult(staticSetRowMapper.forEach(ID_NAME_EMAIL_DATA, new ListCollectorHandler<DbObject>()).getList());
         checkIdNameEmailResult(staticSetRowMapper.iterator(ID_NAME_EMAIL_DATA));
         //IFJAVA8_START
-        checkIdNameEmailResult(staticSetRowMapper.stream(ID_NAME_EMAIL_DATA).collect(Collectors.toList()));
+        checkIdNameEmailResult(staticSetRowMapper.stream(ID_NAME_EMAIL_DATA).collect(Collectors.<DbObject>toList()));
         //IFJAVA8_END
         checkIdNameEmailRow(1l, staticSetRowMapper.map(ID_NAME_EMAIL_DATA[0]));
         checkIdNameEmailRow(1l, staticSetRowMapper.map(ID_NAME_EMAIL_DATA[0], null));

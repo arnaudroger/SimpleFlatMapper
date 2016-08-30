@@ -51,10 +51,10 @@ public abstract class FieldKey<K extends FieldKey<K>> {
 	}
 
 	/**
-	 * @param targetType the type we are expecting to map from/to
+	 * @param javaType the type we are expecting to map from/to
 	 * @return the type we expect to find in the source/target.
 	 */
-	public abstract Type getType(Type targetType);
+	public abstract Type getType(Type javaType);
 
 	@Override
 	public int hashCode() {

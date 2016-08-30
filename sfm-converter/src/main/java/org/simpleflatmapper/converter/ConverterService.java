@@ -44,8 +44,9 @@ public class ConverterService {
         while(iterator.hasNext()) {
             try {
                 iterator.next().produce(factoryConsumer);
-            } catch (ServiceConfigurationError e) {
-                System.err.println("Unexpected error on listing ConverterFactoryProducer, prop classloader visibility " + e);
+            } catch (Throwable e) {
+                System.err.println("Unexpected error on listing ConverterFactoryProducer " + e);
+                e.printStackTrace();
             }
         }
 

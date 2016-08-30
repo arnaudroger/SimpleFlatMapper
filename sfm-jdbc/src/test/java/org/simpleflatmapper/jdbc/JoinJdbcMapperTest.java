@@ -4,7 +4,11 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.test.beans.Professor;
 import org.simpleflatmapper.test.jdbc.JoinTest;
+import org.simpleflatmapper.test.beans.ProfessorC;
+import org.simpleflatmapper.test.beans.ProfessorField;
+import org.simpleflatmapper.test.beans.ProfessorGS;
 import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.sql.ResultSet;
@@ -32,35 +36,35 @@ public class JoinJdbcMapperTest {
 
     @Test
     public void testJoinTableFields() throws Exception {
-        validateMapper(asmJdbcMapperFactory.newMapper(JoinTest.ProfessorField.class));
+        validateMapper(asmJdbcMapperFactory.newMapper(ProfessorField.class));
     }
 
     @Test
     public void testJoinTableGSNoAsm() throws Exception {
-        validateMapper(noAsmJdbcMapperFactory.newMapper(JoinTest.ProfessorGS.class));
+        validateMapper(noAsmJdbcMapperFactory.newMapper(ProfessorGS.class));
     }
 
 
     @Test
     public void testJoinTableGS() throws Exception {
-        validateMapper(asmJdbcMapperFactory.newMapper(JoinTest.ProfessorGS.class));
+        validateMapper(asmJdbcMapperFactory.newMapper(ProfessorGS.class));
     }
 
 
     @Test
     public void testJoinTableGS2Joins() throws Exception {
-        validateMapper(asmJdbcMapperFactory.newMapper(JoinTest.ProfessorGS.class));
+        validateMapper(asmJdbcMapperFactory.newMapper(ProfessorGS.class));
     }
 
     @Test
     public void testJoinTableC() throws Exception {
-        validateMapper(asmJdbcMapperFactory.newMapper(JoinTest.ProfessorC.class));
+        validateMapper(asmJdbcMapperFactory.newMapper(ProfessorC.class));
     }
 
 
     @Test
     public void testJoinTableCNoAsm() throws Exception {
-        final JdbcMapper<JoinTest.ProfessorC> mapper = noAsmJdbcMapperFactory.newMapper(JoinTest.ProfessorC.class);
+        final JdbcMapper<ProfessorC> mapper = noAsmJdbcMapperFactory.newMapper(ProfessorC.class);
         validateMapper(mapper);
 
         assertNotNull(mapper.toString());
@@ -70,7 +74,7 @@ public class JoinJdbcMapperTest {
     public void testJoinTableCNoAsmMultiThread() throws Exception {
         ExecutorService executor = Executors.newFixedThreadPool(4);
         try {
-            final JdbcMapper<JoinTest.ProfessorC> mapper = noAsmJdbcMapperFactory.newMapper(JoinTest.ProfessorC.class);
+            final JdbcMapper<ProfessorC> mapper = noAsmJdbcMapperFactory.newMapper(ProfessorC.class);
 
             List<Future<Object>> futures  = new ArrayList<Future<Object>>(100);
             for (int i = 0; i <300; i++) {
@@ -93,8 +97,8 @@ public class JoinJdbcMapperTest {
 
         @Test
     public void testJoinTableGSManualMapping() throws Exception {
-        JdbcMapper<JoinTest.ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
-                .newBuilder(JoinTest.ProfessorGS.class)
+        JdbcMapper<ProfessorGS> mapper = JdbcMapperFactoryHelper.asm()
+                .newBuilder(ProfessorGS.class)
                 .addKey("id")
                 .addMapping("name")
                 .addKey("students_id")
@@ -151,7 +155,7 @@ public class JoinJdbcMapperTest {
     }
 
 
-    private <T extends JoinTest.Professor<?>> void validateMapper(JdbcMapper<T> mapper) throws Exception {
+    private <T extends Professor<?>> void validateMapper(JdbcMapper<T> mapper) throws Exception {
         List<T> professors = mapper.forEach(setUpResultSetMock(), new ListCollectorHandler<T>()).getList();
         JoinTest.validateProfessors(professors);
 

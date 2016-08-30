@@ -24,26 +24,29 @@ import java.util.Map;
 
 public class JDBCTypeHelper {
 
-    private static final Map<String, Class<?>> propertyTypeDefaultSqlType = new HashMap<String, Class<?>>();
+    private static final Map<String, Class<?>> javaTypeToSqlType = new HashMap<String, Class<?>>();
 
     static {
-        propertyTypeDefaultSqlType.put("java.util.Date", Timestamp.class);
-        propertyTypeDefaultSqlType.put("java.util.Calendar", Timestamp.class);
-        propertyTypeDefaultSqlType.put("java.time.Instant", Timestamp.class);
-        propertyTypeDefaultSqlType.put("org.joda.time.Instant", Timestamp.class);
-        propertyTypeDefaultSqlType.put("java.time.LocalDateTime", Timestamp.class);
-        propertyTypeDefaultSqlType.put("java.time.ZonedDateTime", Timestamp.class);
-        propertyTypeDefaultSqlType.put("java.time.OffsetDateTime", Timestamp.class);
-        propertyTypeDefaultSqlType.put("org.joda.time.DateTime", Timestamp.class);
-        propertyTypeDefaultSqlType.put("org.joda.time.LocalDateTime", Timestamp.class);
-        propertyTypeDefaultSqlType.put("java.time.LocalTime", Time.class);
-        propertyTypeDefaultSqlType.put("java.time.OffsetTime", Time.class);
-        propertyTypeDefaultSqlType.put("org.joda.time.LocalTime", Time.class);
-        propertyTypeDefaultSqlType.put("java.time.LocalDate", Date.class);
-        propertyTypeDefaultSqlType.put("java.time.YearMonth", Date.class);
-        propertyTypeDefaultSqlType.put("java.time.Year", Date.class);
-        propertyTypeDefaultSqlType.put("org.joda.time.LocalDate", Date.class);
+        javaTypeToSqlType.put("java.util.Date", Timestamp.class);
+        javaTypeToSqlType.put("java.util.Calendar", Timestamp.class);
+
+        javaTypeToSqlType.put("java.time.Instant", Timestamp.class);
+        javaTypeToSqlType.put("java.time.LocalDateTime", Timestamp.class);
+        javaTypeToSqlType.put("java.time.ZonedDateTime", Timestamp.class);
+        javaTypeToSqlType.put("java.time.OffsetDateTime", Timestamp.class);
+        javaTypeToSqlType.put("java.time.LocalTime", Time.class);
+        javaTypeToSqlType.put("java.time.OffsetTime", Time.class);
+        javaTypeToSqlType.put("java.time.LocalDate", Date.class);
+        javaTypeToSqlType.put("java.time.YearMonth", Date.class);
+        javaTypeToSqlType.put("java.time.Year", Date.class);
+
+        javaTypeToSqlType.put("org.joda.time.Instant", Timestamp.class);
+        javaTypeToSqlType.put("org.joda.time.LocalDateTime", Timestamp.class);
+        javaTypeToSqlType.put("org.joda.time.DateTime", Timestamp.class);
+        javaTypeToSqlType.put("org.joda.time.LocalTime", Time.class);
+        javaTypeToSqlType.put("org.joda.time.LocalDate", Date.class);
     }
+    
     public static Class<?> toJavaType(int sqlType, Type propertyType) {
         switch (sqlType) {
             case Types.ARRAY: return Array.class;
@@ -97,7 +100,7 @@ public class JDBCTypeHelper {
 
         }
 
-        Class<?> defaultSqlType = propertyTypeDefaultSqlType.get(TypeHelper.toClass(propertyType).getName());
+        Class<?> defaultSqlType = javaTypeToSqlType.get(TypeHelper.toClass(propertyType).getName());
         if (defaultSqlType != null) {
             return defaultSqlType;
         }

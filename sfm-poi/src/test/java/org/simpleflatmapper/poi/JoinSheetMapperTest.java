@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.test.jdbc.JoinTest;
+import org.simpleflatmapper.test.beans.ProfessorGS;
 import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class JoinSheetMapperTest {
 
     Sheet joinSheet;
 
-    SheetMapper<JoinTest.ProfessorGS> joinSheetMapper;
+    SheetMapper<ProfessorGS> joinSheetMapper;
 
     @Before
     public void setUp(){
@@ -48,7 +49,7 @@ public class JoinSheetMapperTest {
         joinSheetMapper =
             SheetMapperFactory
                 .newInstance()
-                .newBuilder(JoinTest.ProfessorGS.class)
+                .newBuilder(ProfessorGS.class)
                 .addKey("id")
                 .addMapping("name")
                 .addKey("students_id")
@@ -60,9 +61,9 @@ public class JoinSheetMapperTest {
 
     @Test
     public void iteratorOnSheetFrom0WithStaticMapper() {
-        Iterator<JoinTest.ProfessorGS> iterator = joinSheetMapper.iterator(joinSheet);
+        Iterator<ProfessorGS> iterator = joinSheetMapper.iterator(joinSheet);
 
-        List<JoinTest.ProfessorGS> list = new ArrayList<JoinTest.ProfessorGS>();
+        List<ProfessorGS> list = new ArrayList<ProfessorGS>();
 
         while(iterator.hasNext()) {
             list.add(iterator.next());
@@ -77,7 +78,7 @@ public class JoinSheetMapperTest {
                 joinSheetMapper
                         .forEach(
                                 joinSheet,
-                                new ListCollectorHandler<JoinTest.ProfessorGS>()
+                                new ListCollectorHandler<ProfessorGS>()
                         ).getList()
         );
 
@@ -88,7 +89,7 @@ public class JoinSheetMapperTest {
     @Test
     public void streamOnSheetFrom0WithStreamWithStaticMapper() {
 
-        List<JoinTest.ProfessorGS> list = joinSheetMapper.stream(joinSheet).collect(Collectors.toList());
+        List<ProfessorGS> list = joinSheetMapper.stream(joinSheet).collect(Collectors.toList());
         JoinTest.validateProfessors(list);
 
     }

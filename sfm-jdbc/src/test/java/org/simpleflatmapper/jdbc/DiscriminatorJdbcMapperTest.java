@@ -4,7 +4,11 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.test.jdbc.JoinTest;
+import org.simpleflatmapper.test.beans.Person;
+import org.simpleflatmapper.test.beans.Professor;
+import org.simpleflatmapper.test.beans.Student;
+import org.simpleflatmapper.test.beans.StudentGS;
+import org.simpleflatmapper.test.beans.ProfessorGS;
 import org.simpleflatmapper.util.ListCollectorHandler;
 
 import java.sql.ResultSet;
@@ -32,20 +36,20 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DiscriminatorMapperTest {
+public class DiscriminatorJdbcMapperTest {
 
 
     @Test
     public void testDiscriminator() throws Exception {
-        JdbcMapper<JoinTest.Person> mapper =
+        JdbcMapper<Person> mapper =
                 JdbcMapperFactoryHelper.asm()
                 .addKeys("id", "students_id")
-                .<JoinTest.Person>newDiscriminator("person_type")
-                .when("student", JoinTest.StudentGS.class)
+                .<Person>newDiscriminator("person_type")
+                .when("student", StudentGS.class)
                         .addMapping("person_type")
                         .addMapping("id")
                         .addMapping("name")
-                .when("professor", JoinTest.ProfessorGS.class)
+                .when("professor", ProfessorGS.class)
                 .mapper();
 
 
@@ -57,12 +61,12 @@ public class DiscriminatorMapperTest {
 
     @Test
     public void testDiscriminatorNoAsm() throws Exception {
-        JdbcMapper<JoinTest.Person> mapper =
+        JdbcMapper<Person> mapper =
                 JdbcMapperFactoryHelper.noAsm()
                         .addKeys("id", "students_id")
-                        .<JoinTest.Person>newDiscriminator("person_type")
-                        .when("student", JoinTest.StudentGS.class)
-                        .when("professor", JoinTest.ProfessorGS.class)
+                        .<Person>newDiscriminator("person_type")
+                        .when("student", StudentGS.class)
+                        .when("professor", ProfessorGS.class)
                         .mapper();
 
 
@@ -77,12 +81,12 @@ public class DiscriminatorMapperTest {
 
 
         try {
-            final JdbcMapper<JoinTest.Person> mapper =
+            final JdbcMapper<Person> mapper =
                     JdbcMapperFactoryHelper.noAsm()
                             .addKeys("id", "students_id")
-                            .<JoinTest.Person>newDiscriminator("person_type")
-                            .when("student", JoinTest.StudentGS.class)
-                            .when("professor", JoinTest.ProfessorGS.class)
+                            .<Person>newDiscriminator("person_type")
+                            .when("student", StudentGS.class)
+                            .when("professor", ProfessorGS.class)
                             .mapper();
 
             List<Future<Object>> futures  = new ArrayList<Future<Object>>(100);
@@ -104,7 +108,7 @@ public class DiscriminatorMapperTest {
         }
     }
 
-    private <T extends JoinTest.Person> void validateMapper(JdbcMapper<T> mapper) throws Exception {
+    private <T extends Person> void validateMapper(JdbcMapper<T> mapper) throws Exception {
         List<T> persons = mapper.forEach(setUpResultSetMock(), new ListCollectorHandler<T>()).getList();
         validatePersons(persons);
 
@@ -128,20 +132,20 @@ public class DiscriminatorMapperTest {
         MappingContext<? super ResultSet> mappingContext = mapper.newMappingContext(rs);
         mappingContext.handle(rs);
         final T professor = mapper.map(rs, mappingContext);
-        validateProfessorMap((JoinTest.Professor)professor);
+        validateProfessorMap((Professor)professor);
         rs.next();
         mappingContext.handle(rs);
         rs.next();
         mappingContext.handle(rs);
         mapper.mapTo(rs, professor, mappingContext);
 
-        validateProfessorMapTo((JoinTest.Professor)professor);
+        validateProfessorMapTo((Professor)professor);
     }
 
 
-    private void validatePersons(List<? extends JoinTest.Person> persons) {
+    private void validatePersons(List<? extends Person> persons) {
         assertEquals("we get 4 persons from the resultset", 4, persons.size());
-        final JoinTest.Professor<?> professor0 = (JoinTest.Professor<?>)persons.get(0);
+        final Professor<?> professor0 = (Professor<?>)persons.get(0);
 
         assertPersonEquals(1, "professor1", professor0);
         assertEquals("has 2 students", 2, professor0.getStudents().size());
@@ -151,13 +155,13 @@ public class DiscriminatorMapperTest {
         assertArrayEquals(new Object[]{"phone41"}, professor0.getStudents().get(1).getPhones().toArray());
 
 
-        final JoinTest.Student student2 = (JoinTest.Student) persons.get(1);
+        final Student student2 = (Student) persons.get(1);
         assertPersonEquals(2, "student2", student2);
 
-        final JoinTest.Student student3 = (JoinTest.Student) persons.get(2);
+        final Student student3 = (Student) persons.get(2);
         assertPersonEquals(3, "student3", student3);
 
-        final JoinTest.Professor<?> professor4 = (JoinTest.Professor<?>)persons.get(3);
+        final Professor<?> professor4 = (Professor<?>)persons.get(3);
 
         assertPersonEquals(4, "professor4", professor4);
 
@@ -165,13 +169,13 @@ public class DiscriminatorMapperTest {
     }
 
 
-    private <T extends JoinTest.Professor<?>> void validateProfessorMap(T professor0) {
+    private <T extends Professor<?>> void validateProfessorMap(T professor0) {
         assertPersonEquals(1, "professor1", professor0);
         assertEquals("has 2 students", 1, professor0.getStudents().size());
         assertPersonEquals(3, "student3", professor0.getStudents().get(0));
         assertArrayEquals(new Object[]{"phone31"}, professor0.getStudents().get(0).getPhones().toArray());
     }
-    private <T extends JoinTest.Professor<?>> void validateProfessorMapTo(T professor0) {
+    private <T extends Professor<?>> void validateProfessorMapTo(T professor0) {
         assertPersonEquals(1, "professor1", professor0);
         assertEquals("has 2 students", 2, professor0.getStudents().size());
         assertPersonEquals(3, "student3", professor0.getStudents().get(0));
@@ -182,7 +186,7 @@ public class DiscriminatorMapperTest {
     }
 
 
-    private void assertPersonEquals(int id, String name, JoinTest.Person person) {
+    private void assertPersonEquals(int id, String name, Person person) {
         assertEquals(id, person.getId());
         assertEquals(name, person.getName());
     }

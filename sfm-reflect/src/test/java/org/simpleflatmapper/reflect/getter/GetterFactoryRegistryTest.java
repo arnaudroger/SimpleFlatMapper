@@ -5,8 +5,6 @@ import org.junit.Test;
 import org.simpleflatmapper.reflect.Getter;
 
 import java.lang.reflect.Type;
-import java.sql.Timestamp;
-import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -25,22 +23,22 @@ public class GetterFactoryRegistryTest {
             }
         };
 
-        getterFactoryRegistry.put(Timestamp.class, gf1);
+        getterFactoryRegistry.put(Long.class, gf1);
     }
 
     @Test
     public void testIndirectLookup() {
-        assertSame(gf1, getterFactoryRegistry.findFactoryFor(Date.class));
+        assertSame(gf1, getterFactoryRegistry.findFactoryFor(Number.class));
     }
 
     @Test
     public void testDirectLookup() {
-        assertSame(gf1, getterFactoryRegistry.findFactoryFor(Timestamp.class));
+        assertSame(gf1, getterFactoryRegistry.findFactoryFor(Long.class));
     }
 
     @Test
     public void testNoMatch() {
-        assertNull(getterFactoryRegistry.findFactoryFor(java.sql.Date.class));
+        assertNull(getterFactoryRegistry.findFactoryFor(String.class));
     }
 
 }

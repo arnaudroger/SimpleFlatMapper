@@ -10,6 +10,7 @@ import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class AsmUtilsTest {
 		assertEquals(String.class, pt2.getActualTypeArguments()[0]);
 
 		assertEquals(pt, pt);
+		assertEquals(pt.hashCode(), pt.hashCode());
 		assertNotEquals(pt, pt2);
 		assertEquals("ParameterizedTypeImpl{rawType=interface java.util.List, types=[ParameterizedTypeImpl{rawType=interface java.util.List, types=[class java.lang.String]}]}", pt.toString());
 	}
@@ -54,9 +56,25 @@ public class AsmUtilsTest {
 
 
 	@Test
+	public void testToTargetTypeDeclaration() {
+		assertEquals("I", AsmUtils.toTargetTypeDeclaration(int.class));
+		assertEquals("Ljava/lang/String;", AsmUtils.toTargetTypeDeclaration(String.class));
+		assertEquals("[Ljava/lang/String;", AsmUtils.toTargetTypeDeclaration(String[].class));
+
+
+		assertEquals("Ljava/lang/String;", AsmUtils.toTargetTypeDeclaration("java/lang/String"));
+		assertEquals("[Ljava/lang/String;", AsmUtils.toTargetTypeDeclaration("[Ljava/lang/String;"));
+	}
+
+	@Test
 	public void testGetClosestPublicImpl() {
 		assertEquals(HashMap.class, TypeHelper.toClass(AsmUtils.findClosestPublicTypeExposing(new HashMap<Object, Object>() {}.getClass(), Map.class)));
 		assertNull(AsmUtils.findClosestPublicTypeExposing(new HashMap<Object, Object>() {}.getClass(), Getter.class));
+	}
+
+	@Test
+	public void testToGenericTypeArray() throws ClassNotFoundException {
+		assertEquals(String[].class, AsmUtils.toGenericType("[Ljava/lang/String;", Collections.emptyList(), Object.class));
 	}
 
     @Test

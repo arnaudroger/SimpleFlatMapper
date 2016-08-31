@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SampleFieldKey;
+import org.simpleflatmapper.map.property.ConstantValueProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -31,6 +32,23 @@ public class AbstractConstantTargetMapperBuilderTest {
                 return DbObject.newInstance();
             }
         });
+    }
+
+
+    @Test
+    public void testConstantValue() throws Exception {
+        ClassMeta<DbObject> classMeta = ReflectionService.newInstance().<DbObject>getClassMeta(DbObject.class);
+
+        Writerbuilder<DbObject> builder = new Writerbuilder<DbObject>(classMeta);
+        builder.addColumn("id");
+        builder.addColumn("blop", new ConstantValueProperty<String>("blop", String.class));
+
+        DbObject dbObject = DbObject.newInstance();
+        List<Object> list = builder.mapper().map(dbObject);
+
+        assertEquals(list.get(0), dbObject.getId());
+        assertEquals("blop", list.get(1));
+
     }
 
     private <T> void testWriter(Supplier<T> supplier) throws Exception {

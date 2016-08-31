@@ -74,7 +74,7 @@ public class AsmUtilsTest {
 
 	@Test
 	public void testToGenericTypeArray() throws ClassNotFoundException {
-		assertEquals(String[].class, AsmUtils.toGenericType("[Ljava/lang/String;", Collections.emptyList(), Object.class));
+		assertEquals(String[].class, AsmUtils.toGenericType("[Ljava/lang/String;", Collections.<String>emptyList(), Object.class));
 	}
 
     @Test

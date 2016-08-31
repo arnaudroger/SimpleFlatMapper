@@ -20,7 +20,7 @@ public class MappingSqlQuery<T> extends SqlQuery<T> {
 
     public MappingSqlQuery(DataSource ds, String sql, JdbcMapper<T> mapper) {
         super(ds, sql);
-        statementCallback = new PreparedStatementCallbackImpl<>(mapper);
+        statementCallback = new PreparedStatementCallbackImpl<T>(mapper);
     }
 
     public List<T> execute(Object[] params, Map<?, ?> context) throws DataAccessException {

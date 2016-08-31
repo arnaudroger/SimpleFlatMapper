@@ -30,7 +30,7 @@ public class ConstantTargetFieldMapperFactoryImplTest {
                 @Override
                 public <P> Setter<Appendable, P> getSetter(PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>> arg) {
                     if (TypeHelper.isJavaLang(arg.getPropertyMeta().getPropertyType())) {
-                        return new AppendableSetter<>();
+                        return new AppendableSetter<P>();
                     }
                     return null;
                 }

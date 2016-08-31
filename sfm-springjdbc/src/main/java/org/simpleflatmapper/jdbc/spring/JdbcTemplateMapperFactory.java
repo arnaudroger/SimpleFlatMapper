@@ -42,7 +42,7 @@ public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcC
 
 	public <T> RowMapperImpl<T> newRowMapper(Type target)
 			throws MapperBuildingException {
-		return new RowMapperImpl<T>(newJdbcMapper(target));
+		return new RowMapperImpl<T>(this.<T>newJdbcMapper(target));
 	}
 
 	public <T> JdbcMapper<T> newJdbcMapper(Type target) {
@@ -56,7 +56,7 @@ public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcC
 
 	public <T> PreparedStatementCallbackImpl<T> newPreparedStatementCallback(Type target)
 			throws MapperBuildingException {
-		return new PreparedStatementCallbackImpl<T>(newJdbcMapper(target));
+		return new PreparedStatementCallbackImpl<T>(this.<T>newJdbcMapper(target));
 	}
 
 	public <T> PreparedStatementCallbackImpl<T> newPreparedStatementCallback(TypeReference<T> target)
@@ -71,7 +71,7 @@ public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcC
 
 	public <T> ResultSetExtractorImpl<T> newResultSetExtractor(Type target)
 			throws MapperBuildingException {
-		return new ResultSetExtractorImpl<T>(newJdbcMapper(target));
+		return new ResultSetExtractorImpl<T>(this.<T>newJdbcMapper(target));
 	}
 
 	public <T> ResultSetExtractorImpl<T> newResultSetExtractor(TypeReference<T> target)
@@ -109,6 +109,6 @@ public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcC
 	}
 
 	public <T> MappingSqlQuery<T> mappingSqlQuery(Type target, DataSource ds, String sql) {
-		return new MappingSqlQuery<T>(ds, sql, newJdbcMapper(target));
+		return new MappingSqlQuery<T>(ds, sql, this.<T>newJdbcMapper(target));
 	}
 }

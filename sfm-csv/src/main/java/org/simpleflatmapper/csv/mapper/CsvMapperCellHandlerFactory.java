@@ -11,9 +11,9 @@ public class CsvMapperCellHandlerFactory<T> {
     protected final Instantiator<CsvMapperCellHandler<T>, T> instantiator;
     protected final CsvColumnKey[] keys;
     protected final ParsingContextFactory parsingContextFactory;
-    protected final FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler;
+    protected final FieldMapperErrorHandler<? super CsvColumnKey> fieldErrorHandler;
 
-    public CsvMapperCellHandlerFactory(Instantiator<CsvMapperCellHandler<T>, T> instantiator, CsvColumnKey[] keys, ParsingContextFactory parsingContextFactory, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler) {
+    public CsvMapperCellHandlerFactory(Instantiator<CsvMapperCellHandler<T>, T> instantiator, CsvColumnKey[] keys, ParsingContextFactory parsingContextFactory, FieldMapperErrorHandler<? super CsvColumnKey> fieldErrorHandler) {
         this.instantiator = instantiator;
         this.keys = keys;
         this.parsingContextFactory = parsingContextFactory;

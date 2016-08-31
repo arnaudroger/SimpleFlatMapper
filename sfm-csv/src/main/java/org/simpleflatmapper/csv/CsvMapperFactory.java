@@ -96,7 +96,7 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 	}
 
 	/**
-	 * Will create a instance of ResultSetMapperBuilder 
+	 * Will create a newInstance of ResultSetMapperBuilder
 	 * @param target the target class of the jdbcMapper
      * @param <T> the targeted type
 	 * @return a builder ready to instantiate a jdbcMapper or to be customized

@@ -38,7 +38,7 @@ public class PropertyMappingsBuilderTest {
                 new PropertyMappingsBuilder<AnonymousElement, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
                         classMeta,
                         DefaultPropertyNameMatcherFactory.DEFAULT,
-                        new RethrowMapperBuilderErrorHandler(),
+                        RethrowMapperBuilderErrorHandler.INSTANCE,
                         new Predicate<PropertyMeta<?, ?>>() {
                             @Override
                             public boolean test(PropertyMeta<?, ?> propertyMeta) {
@@ -62,7 +62,7 @@ public class PropertyMappingsBuilderTest {
                 new PropertyMappingsBuilder<AnonymousElement, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
                         classMeta,
                         DefaultPropertyNameMatcherFactory.DEFAULT,
-                        new RethrowMapperBuilderErrorHandler(),
+                        RethrowMapperBuilderErrorHandler.INSTANCE,
                         new Predicate<PropertyMeta<?, ?>>() {
                             @Override
                             public boolean test(PropertyMeta<?, ?> propertyMeta) {

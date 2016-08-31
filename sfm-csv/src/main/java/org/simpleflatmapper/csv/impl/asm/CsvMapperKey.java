@@ -22,7 +22,7 @@ public class CsvMapperKey {
 
 
 
-    public <T> CsvMapperKey(CsvColumnKey[] keys, CellSetter<T>[] setters, DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories, Instantiator<CsvMapperCellHandler<T>, T> instantiator, Type target, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler, int maxMethodSize) {
+    public <T> CsvMapperKey(CsvColumnKey[] keys, CellSetter<T>[] setters, DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories, Instantiator<CsvMapperCellHandler<T>, T> instantiator, Type target, FieldMapperErrorHandler<? super CsvColumnKey> fieldErrorHandler, int maxMethodSize) {
         this.keys = keys;
         this.setters = getClassArray(setters);
         this.delayedSetters = getClassArray(delayedCellSetterFactories);

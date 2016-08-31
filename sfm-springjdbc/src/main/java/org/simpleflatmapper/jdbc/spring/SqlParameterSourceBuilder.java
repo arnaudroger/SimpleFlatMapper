@@ -1,6 +1,8 @@
 package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
+import org.simpleflatmapper.jdbc.named.NamedParameter;
+import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.PropertyWithGetter;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
@@ -30,17 +32,6 @@ public final class SqlParameterSourceBuilder<T> {
     private final ReflectionService reflectionService;
     private int index = 1;
 
-    private static final Field paramNamesField;
-    static {
-        Field f = null;
-        try {
-            f = ParsedSql.class.getDeclaredField("parameterNames");
-            f.setAccessible(true);
-        } catch (Exception e) {
-            // ignore
-        }
-        paramNamesField = f;
-    }
 
     public SqlParameterSourceBuilder(
             ClassMeta<T> classMeta,
@@ -78,19 +69,11 @@ public final class SqlParameterSourceBuilder<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public SqlParameterSourceFactory<T> buildFactory(ParsedSql parsedSql) {
-        if (paramNamesField == null) {
-            throw new IllegalArgumentException("Unable to gain access to paramNames field in parsedSql");
-        }
-
-        try {
-            List<String> names = (List<String>) paramNamesField.get(parsedSql);
-
-            for(String name : names) {
-                add(name);
-            }
-        } catch (IllegalAccessException e) {
-            ErrorHelper.rethrow(e);
+    public SqlParameterSourceFactory<T> buildFactory(String sql) {
+        NamedSqlQuery namedSqlQuery = NamedSqlQuery.parse(sql);
+        for(int i = 0; i < namedSqlQuery.getParametersSize(); i++) {
+            NamedParameter parameter = namedSqlQuery.getParameter(i);
+            add(parameter.getName());
         }
         return buildFactory();
     }

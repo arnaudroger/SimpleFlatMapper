@@ -32,12 +32,12 @@ public class ResultSetFieldMapperFactoryTest {
 		FieldMapperColumnDefinition<JdbcColumnKey> identity = FieldMapperColumnDefinition.identity();
 		PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> propertyMapping = new PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(id, new JdbcColumnKey("id", 1), identity);
 		FieldMapper<ResultSet, DbObject> fieldMapper = factory.newFieldMapper(
-				propertyMapping, null, new RethrowMapperBuilderErrorHandler());
+				propertyMapping, null, RethrowMapperBuilderErrorHandler.INSTANCE);
 		
 		assertTrue(fieldMapper instanceof LongFieldMapper);
 
 		PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> propertyMapping1 = new PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(id, new JdbcColumnKey("id", 0), identity);
-		fieldMapper = factory.newFieldMapper(propertyMapping1, null, new RethrowMapperBuilderErrorHandler());
+		fieldMapper = factory.newFieldMapper(propertyMapping1, null, RethrowMapperBuilderErrorHandler.INSTANCE);
 		assertTrue(fieldMapper instanceof LongFieldMapper);
 
 	}

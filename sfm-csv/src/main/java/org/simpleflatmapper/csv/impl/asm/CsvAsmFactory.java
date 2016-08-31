@@ -32,7 +32,7 @@ public class CsvAsmFactory {
                                                                          Instantiator<CsvMapperCellHandler<T>, T> instantiator,
                                                                          CsvColumnKey[] keys,
                                                                          ParsingContextFactory parsingContextFactory,
-                                                                         FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler,
+                                                                         FieldMapperErrorHandler<? super CsvColumnKey> fieldErrorHandler,
                                                                          int maxMethodSize
                                                                          ) throws Exception {
 

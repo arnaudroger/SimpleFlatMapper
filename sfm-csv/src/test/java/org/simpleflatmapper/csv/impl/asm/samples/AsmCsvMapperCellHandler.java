@@ -23,7 +23,7 @@ public class AsmCsvMapperCellHandler extends CsvMapperCellHandler<DbObject> {
     protected final CellSetter<DbObject> setter5;
 
 
-    public AsmCsvMapperCellHandler(Instantiator<CsvMapperCellHandler<DbObject>, DbObject> instantiator, DelayedCellSetter<DbObject, ?>[] delayedCellSetters, CellSetter<DbObject>[] setters, CsvColumnKey[] columns, ParsingContext parsingContext, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler) {
+    public AsmCsvMapperCellHandler(Instantiator<CsvMapperCellHandler<DbObject>, DbObject> instantiator, DelayedCellSetter<DbObject, ?>[] delayedCellSetters, CellSetter<DbObject>[] setters, CsvColumnKey[] columns, ParsingContext parsingContext, FieldMapperErrorHandler<? super CsvColumnKey> fieldErrorHandler) {
         super(instantiator, columns, delayedCellSetters.length, setters.length, parsingContext, fieldErrorHandler);
         delayedCellSetter0 = delayedCellSetters[0];
         delayedCellSetter1 = delayedCellSetters[1];

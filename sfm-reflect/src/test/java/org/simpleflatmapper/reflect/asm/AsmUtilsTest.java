@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.asm;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.simpleflatmapper.ow2asm.MethodVisitor;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -14,9 +15,11 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
+import static org.simpleflatmapper.ow2asm.Opcodes.*;
 
 public class AsmUtilsTest {
 
@@ -35,6 +38,10 @@ public class AsmUtilsTest {
 		assertEquals(List.class, pt.getRawType());
 		assertEquals(List.class, pt2.getRawType());
 		assertEquals(String.class, pt2.getActualTypeArguments()[0]);
+
+		assertEquals(pt, pt);
+		assertNotEquals(pt, pt2);
+		assertEquals("ParameterizedTypeImpl{rawType=interface java.util.List, types=[ParameterizedTypeImpl{rawType=interface java.util.List, types=[class java.lang.String]}]}", pt.toString());
 	}
 
 	@Test
@@ -125,6 +132,40 @@ public class AsmUtilsTest {
 
 		assertTrue(f.exists());
 		assertTrue(f.length() == 4);
+	}
+
+	@Test
+	public void testAddIndex() {
+		MethodVisitor mv = mock(MethodVisitor.class);
+
+		AsmUtils.addIndex(mv, 0);
+		verify(mv).visitInsn(ICONST_0);
+
+		AsmUtils.addIndex(mv, 1);
+		verify(mv).visitInsn(ICONST_1);
+
+		AsmUtils.addIndex(mv, 2);
+		verify(mv).visitInsn(ICONST_2);
+
+		AsmUtils.addIndex(mv, 3);
+		verify(mv).visitInsn(ICONST_3);
+
+		AsmUtils.addIndex(mv, 4);
+		verify(mv).visitInsn(ICONST_4);
+
+		AsmUtils.addIndex(mv, 5);
+		verify(mv).visitInsn(ICONST_5);
+
+
+		AsmUtils.addIndex(mv, 123);
+		verify(mv).visitIntInsn(BIPUSH, 123);
+
+		AsmUtils.addIndex(mv, 512);
+		verify(mv).visitIntInsn(SIPUSH, 512);
+
+		AsmUtils.addIndex(mv, Short.MAX_VALUE + 1);
+		verify(mv).visitLdcInsn(Short.MAX_VALUE + 1);
+
 	}
 
 }

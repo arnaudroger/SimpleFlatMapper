@@ -20,7 +20,7 @@ public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, Fiel
 
     /**
      *
-     * @return new instance of factory
+     * @return new newInstance of factory
      */
     public static SheetMapperFactory newInstance() {
         return new SheetMapperFactory();
@@ -33,7 +33,7 @@ public class SheetMapperFactory extends AbstractMapperFactory<CsvColumnKey, Fiel
     /**
      * set a new getterFactory.
      * @param getterFactory the getterFactory
-     * @return the instance
+     * @return the newInstance
      */
     public SheetMapperFactory getterFactory(GetterFactory<Row, CsvColumnKey> getterFactory) {
         this.getterFactory = getterFactory;

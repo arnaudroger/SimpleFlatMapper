@@ -20,7 +20,7 @@ public final class CsvMapperCellHandlerImpl<T> extends CsvMapperCellHandler<T> {
 
     public CsvMapperCellHandlerImpl(Instantiator<CsvMapperCellHandler<T>, T> instantiator, DelayedCellSetter<T, ?>[] delayedCellSetters,
                                     CellSetter<T>[] setters, CsvColumnKey[] columns,
-                                    ParsingContext parsingContext, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler) {
+                                    ParsingContext parsingContext, FieldMapperErrorHandler<? super CsvColumnKey> fieldErrorHandler) {
         super(instantiator, columns, delayedCellSetters.length, setters.length, parsingContext, fieldErrorHandler);
         this.delayedCellSetters = delayedCellSetters;
         this.setters = setters;

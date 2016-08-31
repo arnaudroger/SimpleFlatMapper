@@ -10,6 +10,11 @@ import java.lang.reflect.Type;
 public final class RethrowMapperBuilderErrorHandler implements
 		MapperBuilderErrorHandler {
 
+	public static RethrowMapperBuilderErrorHandler INSTANCE = new RethrowMapperBuilderErrorHandler();
+
+	private RethrowMapperBuilderErrorHandler(){
+	}
+
 	@Override
 	public void accessorNotFound(final String msg) {
 		throw new MapperBuildingException(msg);

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 
 public class ConstantSourceFieldMapperFactoryImplTest {
 
-    public static final RethrowMapperBuilderErrorHandler MAPPING_ERROR_HANDLER = new RethrowMapperBuilderErrorHandler();
+    public static final RethrowMapperBuilderErrorHandler MAPPING_ERROR_HANDLER = RethrowMapperBuilderErrorHandler.INSTANCE;
     public static final ReflectionService REFLECTION_SERVICE = ReflectionService.newInstance();
     public static final ReflectionService REFLECTION_SERVICE_NO_ASM = ReflectionService.disableAsm();
 
@@ -123,7 +123,7 @@ public class ConstantSourceFieldMapperFactoryImplTest {
     }
 
     private <T> void assertPrimitiveSetter(FieldMapper<Object, T> fieldMapper, T object, String getter, Class<?> primitiveInterface, Object... expected) throws Exception {
-        assertTrue("Expect " + fieldMapper + " to be an instance of " + primitiveInterface, primitiveInterface.isInstance(fieldMapper));
+        assertTrue("Expect " + fieldMapper + " to be an newInstance of " + primitiveInterface, primitiveInterface.isInstance(fieldMapper));
         Method getterMethod = object.getClass().getMethod(getter);
         assertEquals(expected[0], getterMethod.invoke(object));
         fieldMapper.mapTo(null, object, null);
@@ -137,7 +137,7 @@ public class ConstantSourceFieldMapperFactoryImplTest {
         when(getterFactory.<P>newGetter(pm.getPropertyMeta().getPropertyType(), pm.getColumnKey(), pm.getColumnDefinition().properties())).thenReturn(getter);
         return constantSourceFieldMapperFactory.newFieldMapper(pm, mappingContextFactoryBuilder, MAPPING_ERROR_HANDLER);
     }
-    private <T, P> PropertyMapping<T, P, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> createPropertyMapping(
+    public static <T, P> PropertyMapping<T, P, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> createPropertyMapping(
             Class<T> target, String property) {
         ClassMeta<T> classMeta = REFLECTION_SERVICE.getClassMeta(target);
 

@@ -13,7 +13,7 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
-import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactorImpl;
+import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactoryImpl;
 import org.simpleflatmapper.map.mapper.DynamicSetRowMapper;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 import org.simpleflatmapper.map.mapper.MapperKey;
@@ -84,8 +84,8 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
         return new SettableDataMapperBuilder<T>(
                 classMeta,
                 config,
-                ConstantTargetFieldMapperFactorImpl
-                        .instance(new SettableDataSetterFactory(config, classMeta.getReflectionService())));
+                ConstantTargetFieldMapperFactoryImpl
+                        .newInstance(new SettableDataSetterFactory(config, classMeta.getReflectionService())));
     }
 
     public <T> DatastaxBinder<T> mapFrom(Class<T> type) {

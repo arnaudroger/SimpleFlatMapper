@@ -70,7 +70,7 @@ public class JoinMapperTest {
         }, -1);
         JoinMapper<Object[], Object[][], DbListObject, RuntimeException> joinMapper =
                 new JoinMapper<Object[], Object[][], DbListObject, RuntimeException>(
-                        mapper, new RethrowRowHandlerErrorHandler(),
+                        mapper, RethrowRowHandlerErrorHandler.INSTANCE,
                         new BreakDetectorMappingContextFactory<Object[], Object>(new KeysDefinition[] {keysDefinition}, 0),
                         SetRowMapperTest.ENUMARABLE_UNARY_FACTORY
                         );

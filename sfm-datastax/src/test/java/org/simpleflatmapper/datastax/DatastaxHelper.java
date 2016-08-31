@@ -87,10 +87,10 @@ public class DatastaxHelper {
 
             Class<?> longCodec = Class.forName("com.datastax.driver.core.TypeCodec$LongCodec");
 
-            Field instance = longCodec.getDeclaredField("instance");
+            Field instance = longCodec.getDeclaredField("newInstance");
             instance.setAccessible(true);
             Object longCodeInstance = instance.get(null);
-            System.out.println("LongCodec.instance = " + longCodeInstance);
+            System.out.println("LongCodec.newInstance = " + longCodeInstance);
 
             if (o.get(DataType.Name.BIGINT) == null) {
                 //noinspection unchecked,unchecked,unchecked

@@ -18,10 +18,8 @@ public class SqlParameterSourceTest {
     public void testParseSql() {
         String sql = "INSERT INTO table VALUES(:id, :name, :email)";
 
-        ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(sql);
-
         SqlParameterSourceFactory<DbObject> sqlParameters =
-                JdbcTemplateMapperFactory.newInstance().newSqlParameterSourceFactory(DbObject.class, parsedSql);
+                JdbcTemplateMapperFactory.newInstance().newSqlParameterSourceFactory(DbObject.class, sql);
 
         testMapping(sqlParameters);
     }

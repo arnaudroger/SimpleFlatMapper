@@ -20,22 +20,22 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
         return new MapperConfig<K, FieldMapperColumnDefinition<K>>(
                 new IdentityFieldMapperColumnDefinitionProvider<K>(),
                 DefaultPropertyNameMatcherFactory.DEFAULT,
-                new RethrowMapperBuilderErrorHandler(),
+                RethrowMapperBuilderErrorHandler.INSTANCE,
                 false,
                 NO_ASM_MAPPER_THRESHOLD,
-                new RethrowFieldMapperErrorHandler<K>(),
-                new RethrowRowHandlerErrorHandler(), MAX_METHOD_SIZE);
+                RethrowFieldMapperErrorHandler.INSTANCE,
+                RethrowRowHandlerErrorHandler.INSTANCE, MAX_METHOD_SIZE);
     }
 
     public static <K extends FieldKey<K>, CD extends ColumnDefinition<K, CD>> MapperConfig<K, CD> config(ColumnDefinitionProvider<CD, K> columnDefinitionProvider) {
         return new MapperConfig<K, CD>(
                 columnDefinitionProvider,
                 DefaultPropertyNameMatcherFactory.DEFAULT,
-                new RethrowMapperBuilderErrorHandler(),
+                RethrowMapperBuilderErrorHandler.INSTANCE,
                 false,
                 NO_ASM_MAPPER_THRESHOLD,
-                new RethrowFieldMapperErrorHandler<K>(),
-                new RethrowRowHandlerErrorHandler(), MAX_METHOD_SIZE);
+                RethrowFieldMapperErrorHandler.INSTANCE,
+                RethrowRowHandlerErrorHandler.INSTANCE, MAX_METHOD_SIZE);
     }
 
     private final ColumnDefinitionProvider<CD, K> columnDefinitions;
@@ -43,7 +43,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
     private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
     private final boolean failOnAsm;
     private final int asmMapperNbFieldsLimit;
-    private final FieldMapperErrorHandler<K> fieldMapperErrorHandler;
+    private final FieldMapperErrorHandler<? super K> fieldMapperErrorHandler;
     private final RowHandlerErrorHandler rowHandlerErrorHandler;
     private final int maxMethodSize;
 
@@ -54,7 +54,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
             MapperBuilderErrorHandler mapperBuilderErrorHandler,
             boolean failOnAsm,
             int asmMapperNbFieldsLimit,
-            FieldMapperErrorHandler<K> fieldMapperErrorHandler,
+            FieldMapperErrorHandler<? super K> fieldMapperErrorHandler,
             RowHandlerErrorHandler rowHandlerErrorHandler, int maxMethodSize) {
         this.columnDefinitions = columnDefinitions;
         this.propertyNameMatcherFactory = propertyNameMatcherFactory;
@@ -175,7 +175,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 && !(fieldMapperErrorHandler instanceof RethrowFieldMapperErrorHandler);
     }
 
-    public FieldMapperErrorHandler<K> fieldMapperErrorHandler() {
+    public FieldMapperErrorHandler<? super K> fieldMapperErrorHandler() {
         return fieldMapperErrorHandler;
     }
 

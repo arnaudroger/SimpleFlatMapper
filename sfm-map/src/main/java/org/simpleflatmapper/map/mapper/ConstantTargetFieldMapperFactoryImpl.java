@@ -43,11 +43,11 @@ import org.simpleflatmapper.map.fieldmapper.ShortFieldMapper;
 import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.TypeHelper;
 
-public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> implements ConstantTargetFieldMapperFactory<T, K> {
+public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> implements ConstantTargetFieldMapperFactory<T, K> {
 
     private final SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory;
 
-    public ConstantTargetFieldMapperFactorImpl(SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory) {
+    private ConstantTargetFieldMapperFactoryImpl(SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory) {
         this.setterFactory = setterFactory;
     }
 
@@ -147,9 +147,9 @@ public class ConstantTargetFieldMapperFactorImpl<T, K extends FieldKey<K>> imple
         return setter;
     }
 
-    public static <T, K extends FieldKey<K>> ConstantTargetFieldMapperFactory<T, K> instance(
+    public static <T, K extends FieldKey<K>> ConstantTargetFieldMapperFactory<T, K> newInstance(
             SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory) {
-        return new ConstantTargetFieldMapperFactorImpl<T, K>(setterFactory);
+        return new ConstantTargetFieldMapperFactoryImpl<T, K>(setterFactory);
     }
 
 

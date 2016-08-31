@@ -9,7 +9,7 @@ public class RethrowMapperBuilderErrorHandlerTest {
 
 	@Test
 	public void testGetterNotFound() {
-		RethrowMapperBuilderErrorHandler handler = new RethrowMapperBuilderErrorHandler();
+		RethrowMapperBuilderErrorHandler handler = RethrowMapperBuilderErrorHandler.INSTANCE;
 		try {
 			handler.accessorNotFound("prop");
 			fail("Expected exception");
@@ -19,7 +19,7 @@ public class RethrowMapperBuilderErrorHandlerTest {
 
 	@Test
 	public void testSetterNotFound() {
-		RethrowMapperBuilderErrorHandler handler = new RethrowMapperBuilderErrorHandler();
+		RethrowMapperBuilderErrorHandler handler = RethrowMapperBuilderErrorHandler.INSTANCE;
 		try {
 			handler.propertyNotFound(this.getClass(), "prop");
 			fail("Expected exception");

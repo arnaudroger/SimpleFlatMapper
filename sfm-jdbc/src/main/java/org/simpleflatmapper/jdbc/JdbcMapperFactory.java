@@ -1,7 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.jdbc.impl.JdbcColumnKeyMapperKeyComparator;
 import org.simpleflatmapper.jdbc.impl.PreparedStatementSetterFactory;
@@ -10,7 +9,7 @@ import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.map.mapper.AbstractMapperFactory;
-import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactorImpl;
+import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactoryImpl;
 import org.simpleflatmapper.map.mapper.DynamicSetRowMapper;
 import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 import org.simpleflatmapper.map.mapper.MapperKey;
@@ -26,7 +25,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
- * JdbcMapperFactory allows you to customise the mappers and create an instance of it using a fluent syntax.
+ * JdbcMapperFactory allows you to customise the mappers and create an newInstance of it using a fluent syntax.
  * <p>
  * JdbcMapperFactory is not Thread-Safe but the mappers are.
  * It is strongly advised to instantiate one jdbcMapper per class for the life of your application.
@@ -59,7 +58,7 @@ public final class JdbcMapperFactory
 
     /**
 	 * instantiate a new JdbcMapperFactory
-	 * @return a new instance JdbcMapperFactory
+	 * @return a new newInstance JdbcMapperFactory
 	 */
 	public static JdbcMapperFactory newInstance() {
 		return new JdbcMapperFactory();
@@ -112,11 +111,11 @@ public final class JdbcMapperFactory
 	}
 
 	/**
-	 * Will create a instance of JdbcMapper based on the specified metadata and the target class.
+	 * Will create a newInstance of JdbcMapper based on the specified metadata and the target class.
 	 * @param target the target class of the jdbcMapper
 	 * @param metaData the metadata to create the jdbcMapper from
      * @param <T> the jdbcMapper target type
-	 * @return a jdbcMapper that will map the data represented by the metadata to an instance of target
+	 * @return a jdbcMapper that will map the data represented by the metadata to an newInstance of target
      * @throws java.sql.SQLException if an error occurs getting the metaData
 	 */
 	public <T> JdbcMapper<T> newMapper(final Class<T> target, final ResultSetMetaData metaData) throws SQLException {
@@ -126,7 +125,7 @@ public final class JdbcMapperFactory
 	}
 	
 	/**
-	 * Will create a instance of JdbcMapperBuilder on the specified target class.
+	 * Will create a newInstance of JdbcMapperBuilder on the specified target class.
 	 * @param target the target class
      * @param <T> the jdbcMapper target type
 	 * @return the builder
@@ -136,7 +135,7 @@ public final class JdbcMapperFactory
 	}
 
     /**
-     * Will create a instance of JdbcMapperBuilder on the type T specified by the typeReference.
+     * Will create a newInstance of JdbcMapperBuilder on the type T specified by the typeReference.
      * @param target the typeReference
      * @param <T> the jdbcMapper target type
      * @return the builder
@@ -146,7 +145,7 @@ public final class JdbcMapperFactory
     }
 
     /**
-     * Will create a instance of JdbcMapperBuilder on the specified type.
+     * Will create a newInstance of JdbcMapperBuilder on the specified type.
      * @param target the type
      * @param <T> the jdbcMapper target type
      * @return the builder
@@ -184,7 +183,7 @@ public final class JdbcMapperFactory
 	}
 
 	public <T> PreparedStatementMapperBuilder<T> buildFrom(final ClassMeta<T> classMeta) {
-		return new PreparedStatementMapperBuilder<T>(classMeta, mapperConfig(), ConstantTargetFieldMapperFactorImpl.instance(new PreparedStatementSetterFactory()));
+		return new PreparedStatementMapperBuilder<T>(classMeta, mapperConfig(), ConstantTargetFieldMapperFactoryImpl.newInstance(new PreparedStatementSetterFactory()));
 	}
 
 	public <T> PreparedStatementMapperBuilder<T> from(final Class<T> target) {

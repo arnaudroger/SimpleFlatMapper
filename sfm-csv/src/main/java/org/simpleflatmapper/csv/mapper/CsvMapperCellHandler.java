@@ -13,14 +13,14 @@ public abstract class CsvMapperCellHandler<T> {
     protected final int delayedCellSettersLength;
     protected final ParsingContext parsingContext;
 
-    protected final FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler;
+    protected final FieldMapperErrorHandler<? super CsvColumnKey> fieldErrorHandler;
 
 
     protected T currentInstance;
 
     public CsvMapperCellHandler(Instantiator<CsvMapperCellHandler<T>, T> instantiator,
                                 CsvColumnKey[] columns, int delayedCellSettersLength, int cellSettersLength,
-                                ParsingContext parsingContext, FieldMapperErrorHandler<CsvColumnKey> fieldErrorHandler) {
+                                ParsingContext parsingContext, FieldMapperErrorHandler<? super CsvColumnKey> fieldErrorHandler) {
         this.instantiator = instantiator;
         this.columns = columns;
         this.parsingContext = parsingContext;

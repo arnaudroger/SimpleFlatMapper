@@ -15,7 +15,7 @@ import org.simpleflatmapper.map.property.time.JavaZoneIdProperty;
 //IFJAVA8_END
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
-import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactorImpl;
+import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactoryImpl;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.getter.NullGetter;
@@ -64,7 +64,7 @@ public class PreparedStatementFieldMapperFactoryTest {
     private int index;
     @Before
     public void setUp() {
-        factory = ConstantTargetFieldMapperFactorImpl.instance(new PreparedStatementSetterFactory());
+        factory = ConstantTargetFieldMapperFactoryImpl.newInstance(new PreparedStatementSetterFactory());
         ps = mock(PreparedStatement.class);
         index = 1;
     }
@@ -595,7 +595,7 @@ public class PreparedStatementFieldMapperFactoryTest {
     }
     protected <T, P> void newFieldMapperAndMapToPS(Getter<T, P> getter, Class<P> clazz, int sqlType, Object... properties) throws Exception {
         PropertyMapping<T, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> propertyMapping = newPropertyMapping(getter, clazz, sqlType, properties);
-        FieldMapper<T, PreparedStatement> fieldMapper = factory.<T, P>newFieldMapper(propertyMapping, null, new RethrowMapperBuilderErrorHandler());
+        FieldMapper<T, PreparedStatement> fieldMapper = factory.<T, P>newFieldMapper(propertyMapping, null, RethrowMapperBuilderErrorHandler.INSTANCE);
         fieldMapper.mapTo(null, ps, null);
     }
 

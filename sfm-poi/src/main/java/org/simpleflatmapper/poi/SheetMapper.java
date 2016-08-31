@@ -13,7 +13,7 @@ public interface SheetMapper<T> {
     /**
      *
      * @param sheet the sheet to map from
-     * @return an iterator of mapped instance of T
+     * @return an iterator of mapped newInstance of T
      */
     Iterator<T> iterator(Sheet sheet);
 
@@ -21,7 +21,7 @@ public interface SheetMapper<T> {
      *
      * @param startRow row index to start at
      * @param sheet the sheet to map from
-     * @return an iterator of mapped instance of T
+     * @return an iterator of mapped newInstance of T
      */
     Iterator<T> iterator(int startRow, Sheet sheet);
 
@@ -48,7 +48,7 @@ public interface SheetMapper<T> {
     /**
      *
      * @param sheet the sheet to map from
-     * @return a stream on mapped instance of T
+     * @return a stream on mapped newInstance of T
      */
     //IFJAVA8_START
     Stream<T> stream(Sheet sheet);
@@ -58,7 +58,7 @@ public interface SheetMapper<T> {
      *
      * @param startRow row index to start at
      * @param sheet the sheet to map from
-     * @return a stream on mapped instance of T
+     * @return a stream on mapped newInstance of T
      */
     //IFJAVA8_START
     Stream<T> stream(int startRow, Sheet sheet);

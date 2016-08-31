@@ -92,7 +92,7 @@ public class SetRowMapperTest {
 
         StaticSetRowMapper<Object[], Object[][], DbObject, RuntimeException> staticSetRowMapper =
                 new StaticSetRowMapper<Object[], Object[][], DbObject, RuntimeException>(ID_NAME_MAPPER,
-                        new RethrowRowHandlerErrorHandler(), MappingContext.EMPTY_FACTORY, ENUMARABLE_UNARY_FACTORY);
+                        RethrowRowHandlerErrorHandler.INSTANCE, MappingContext.EMPTY_FACTORY, ENUMARABLE_UNARY_FACTORY);
 
 
         checkSetRowMapperIdName(staticSetRowMapper);
@@ -180,7 +180,7 @@ public class SetRowMapperTest {
                     public SetRowMapper<Object[], Object[][], DbObject, RuntimeException> newInstance(MapperKey<SampleFieldKey> sampleFieldKeyMapperKey) {
                         Mapper<Object[], DbObject> mapper = sampleFieldKeyMapperKey.getColumns().length == 2 ? ID_NAME_MAPPER : ID_NAME_EMIL_MAPPER;
                         return new StaticSetRowMapper<Object[], Object[][], DbObject, RuntimeException>(mapper,
-                                new RethrowRowHandlerErrorHandler(), MappingContext.EMPTY_FACTORY, ENUMARABLE_UNARY_FACTORY);
+                                RethrowRowHandlerErrorHandler.INSTANCE, MappingContext.EMPTY_FACTORY, ENUMARABLE_UNARY_FACTORY);
                     }
                 };
         UnaryFactoryWithException<Object[], MapperKey<SampleFieldKey>, RuntimeException> mapperKeyFromRow = new UnaryFactoryWithException<Object[], MapperKey<SampleFieldKey>, RuntimeException>() {

@@ -8,7 +8,7 @@ import org.simpleflatmapper.datastax.impl.DatastaxMapperKeyComparator;
 import org.simpleflatmapper.datastax.impl.SettableDataSetterFactory;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactorImpl;
+import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactoryImpl;
 import org.simpleflatmapper.map.mapper.MapperCache;
 import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
@@ -42,7 +42,7 @@ public class DatastaxBinder<T> {
     protected BoundStatementMapper<T> createMapper(MapperKey<DatastaxColumnKey> mapperKey) {
         BoundStatementMapper<T> mapper;
         SettableDataMapperBuilder<T> settableDataMapperBuilder = new SettableDataMapperBuilder<T>(classMeta, config,
-                ConstantTargetFieldMapperFactorImpl.instance(new SettableDataSetterFactory(config, classMeta.getReflectionService())));
+                ConstantTargetFieldMapperFactoryImpl.newInstance(new SettableDataSetterFactory(config, classMeta.getReflectionService())));
         for(DatastaxColumnKey columnKey : mapperKey.getColumns()) {
             settableDataMapperBuilder.addColumn(columnKey);
         }

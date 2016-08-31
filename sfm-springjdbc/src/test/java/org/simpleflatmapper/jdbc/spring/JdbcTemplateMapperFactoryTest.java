@@ -47,7 +47,7 @@ public class JdbcTemplateMapperFactoryTest {
 
 	@Test
 	public void testPreparedStatementCallbackWithHandler() throws SQLException, ParseException  {
-		JdbcTemplateMapper<DbObject> mapper = JdbcTemplateMapperFactory.newInstance().newMapper(DbObject.class);
+		PreparedStatementCallbackImpl<DbObject> mapper = JdbcTemplateMapperFactory.newInstance().newPreparedStatementCallback(DbObject.class);
 		List<DbObject> results = 
 			template
 				.execute(DbHelper.TEST_DB_OBJECT_QUERY, 
@@ -56,7 +56,7 @@ public class JdbcTemplateMapperFactoryTest {
 	}
 	@Test
 	public void testResultSetExtractorWithHandler() throws SQLException, ParseException  {
-		JdbcTemplateMapper<DbObject> mapper = JdbcTemplateMapperFactory.newInstance().newMapper(DbObject.class);
+		ResultSetExtractorImpl<DbObject> mapper = JdbcTemplateMapperFactory.newInstance().newResultSetExtractor(DbObject.class);
 		List<DbObject> results = 
 			template
 				.query(DbHelper.TEST_DB_OBJECT_QUERY, 

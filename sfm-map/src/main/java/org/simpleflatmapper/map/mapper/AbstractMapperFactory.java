@@ -32,8 +32,8 @@ public abstract class AbstractMapperFactory<
 
 
 	private FieldMapperErrorHandler<K> fieldMapperErrorHandler = null;
-    private MapperBuilderErrorHandler mapperBuilderErrorHandler = new RethrowMapperBuilderErrorHandler();
-    private RowHandlerErrorHandler rowHandlerErrorHandler = new RethrowRowHandlerErrorHandler();
+    private MapperBuilderErrorHandler mapperBuilderErrorHandler = RethrowMapperBuilderErrorHandler.INSTANCE;
+    private RowHandlerErrorHandler rowHandlerErrorHandler = RethrowRowHandlerErrorHandler.INSTANCE;
 
     private final AbstractColumnDefinitionProvider<CD, K> columnDefinitions;
 	private final CD identity;
@@ -117,7 +117,7 @@ public abstract class AbstractMapperFactory<
 
     /**
      * Override the default implementation of the ReflectionService.
-     * @param reflectionService the overriding instance
+     * @param reflectionService the overriding newInstance
      * @return the current factory
      */
     public final MF reflectionService(final ReflectionService reflectionService) {

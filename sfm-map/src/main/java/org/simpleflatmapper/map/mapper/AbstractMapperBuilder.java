@@ -51,7 +51,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
     }
 
     /**
-     * @return a new instance of the jdbcMapper based on the current state of the builder.
+     * @return a new newInstance of the jdbcMapper based on the current state of the builder.
      */
     public final M mapper() {
         Mapper<S, T> mapper = constantSourceMapperBuilder.mapper();

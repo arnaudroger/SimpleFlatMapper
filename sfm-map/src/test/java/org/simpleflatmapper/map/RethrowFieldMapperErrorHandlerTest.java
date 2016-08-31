@@ -11,7 +11,7 @@ public class RethrowFieldMapperErrorHandlerTest {
 
 	@Test
 	public void test() {
-		RethrowFieldMapperErrorHandler<String> handler = new RethrowFieldMapperErrorHandler<String>();
+		RethrowFieldMapperErrorHandler handler = RethrowFieldMapperErrorHandler.INSTANCE;
 		Exception error = new Exception();
 		try {
 			handler.errorMappingField("prop", this, this, error);

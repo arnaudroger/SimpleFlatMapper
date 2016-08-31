@@ -9,7 +9,7 @@ public class RethrowRowHandlerErrorHandlerTest {
 
 	@Test
 	public void testHandlerError() {
-		RethrowRowHandlerErrorHandler handler = new RethrowRowHandlerErrorHandler();
+		RethrowRowHandlerErrorHandler handler = RethrowRowHandlerErrorHandler.INSTANCE;
 		
 		Exception error = new Exception();
 		try {

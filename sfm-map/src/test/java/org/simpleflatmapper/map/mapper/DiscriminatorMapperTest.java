@@ -129,7 +129,7 @@ public class DiscriminatorMapperTest {
                     public String convert(Object[] in) {
                         return Arrays.toString(in);
                     }
-                }, new RethrowRowHandlerErrorHandler());
+                }, RethrowRowHandlerErrorHandler.INSTANCE);
 
     }
     @Test

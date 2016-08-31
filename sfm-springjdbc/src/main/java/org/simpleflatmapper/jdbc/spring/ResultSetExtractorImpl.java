@@ -1,9 +1,9 @@
 package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.jdbc.JdbcMapper;
+import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.util.ListCollectorHandler;
 import org.simpleflatmapper.util.RowHandler;
-import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Provide integration point with Spring JdbcTemplate.
  * <p>
- * It implements {@link org.springframework.jdbc.core.RowMapper}, {@link org.springframework.jdbc.core.PreparedStatementCallback} and {@link org.springframework.jdbc.core.ResultSetExtractor}.
+ * It implements {@link RowMapper}, {@link PreparedStatementCallback} and {@link ResultSetExtractor}.
  * Because some JdbcTemplate template signature match against a few of those type you might need to downcast, declare the variable with a specific type or use the type specific method in {@link JdbcTemplateMapperFactory}.
  *
  * <p>
@@ -48,27 +48,11 @@ import java.util.List;
  * @see JdbcTemplateMapperFactory#newRowMapper(Class)
  *
  */
-public final class JdbcTemplateMapper<T> implements RowMapper<T>, PreparedStatementCallback<List<T>>, ResultSetExtractor<List<T>> {
+public final class ResultSetExtractorImpl<T> implements ResultSetExtractor<List<T>> {
 	private final JdbcMapper<T> mapper;
-	
-	public JdbcTemplateMapper(JdbcMapper<T> mapper) {
+
+	public ResultSetExtractorImpl(JdbcMapper<T> mapper) {
 		this.mapper = mapper;
-	}
-
-	@Override
-	public T mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return mapper.map(rs);
-	}
-
-	@Override
-	public List<T> doInPreparedStatement(PreparedStatement ps) throws SQLException,
-			DataAccessException {
-		ResultSet rs = ps.executeQuery();
-		try {
-			return extractData(rs);
-		} finally {
-			rs.close();
-		}
 	}
 
     @Override
@@ -76,23 +60,6 @@ public final class JdbcTemplateMapper<T> implements RowMapper<T>, PreparedStatem
             DataAccessException {
         return mapper.forEach(rs, new ListCollectorHandler<T>()).getList();
     }
-	
-	public <H extends RowHandler<T>> PreparedStatementCallback<H> newPreparedStatementCallback(final H handler) {
-		return new PreparedStatementCallback<H>() {
-			@Override
-			public H doInPreparedStatement(
-					PreparedStatement ps)
-					throws SQLException, DataAccessException {
-				ResultSet rs = ps.executeQuery();
-				ResultSetExtractor<H> resultSetExtractor = newResultSetExtractor(handler);
-				try {
-					return resultSetExtractor.extractData(rs);
-				} finally {
-					rs.close();
-				}
-			}
-		};
-	}
 
 	public <H extends RowHandler<T>>  ResultSetExtractor<H> newResultSetExtractor(final H handler) {
 		return new ResultSetExtractor<H>() {

@@ -60,9 +60,9 @@ public interface CsvMapper<T> {
      * <br>
 	 * 
 	 * @param reader the reader
-	 * @param handle the callback instance
+	 * @param handle the callback newInstance
      * @param <H> the row handler type
-	 * @return the callback instance
+	 * @return the callback newInstance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
@@ -74,9 +74,9 @@ public interface CsvMapper<T> {
 	 *
 	 *
 	 * @param reader the reader
-	 * @param handle the callback instance
+	 * @param handle the callback newInstance
      * @param <H> the row handler type
-	 * @return the callback instance
+	 * @return the callback newInstance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
@@ -88,10 +88,10 @@ public interface CsvMapper<T> {
 	 * 
 	 * 
 	 * @param reader the reader
-	 * @param handle the callback instance
+	 * @param handle the callback newInstance
 	 * @param skip the number of row to skip
      * @param <H> the row handler type
-	 * @return the callback instance
+	 * @return the callback newInstance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
@@ -103,11 +103,11 @@ public interface CsvMapper<T> {
 	 * 
 	 * 
 	 * @param reader the reader
-	 * @param handle the callback instance
+	 * @param handle the callback newInstance
 	 * @param skip the number of row to skip
 	 * @param limit the number of row to process
      * @param <H> the row handler type
-	 * @return the callback instance
+	 * @return the callback newInstance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
@@ -118,10 +118,10 @@ public interface CsvMapper<T> {
 	 *
 	 *
 	 * @param reader the reader
-	 * @param handle the callback instance
+	 * @param handle the callback newInstance
 	 * @param limit the number of row to process
      * @param <H> the row handler type
-	 * @return the callback instance
+	 * @return the callback newInstance
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */

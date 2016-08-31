@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 public interface EnumarableMapper<S, T, E extends Exception> {
 
     /**
-     * Loop over the resultSet, map each row to a new instance of T and call back the handler
+     * Loop over the resultSet, map each row to a new newInstance of T and call back the handler
      *<p>
      * The method will return the handler passed as an argument so you can easily chain the calls like <br>
      * <code>

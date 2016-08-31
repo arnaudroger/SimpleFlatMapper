@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.test.beans.DbPartialFinalObject;
 import org.simpleflatmapper.util.Asserts;
 
 import java.util.ArrayList;
@@ -16,6 +17,32 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class ObjectClassMetaTest {
+
+
+    @Test
+    public void testNumberOfProperties() {
+        ObjectClassMeta<?> classMeta = (ObjectClassMeta<?>) ReflectionService.newInstance().getClassMeta(DbObject.class);
+        assertEquals(7, classMeta.getNumberOfProperties());
+
+        classMeta = (ObjectClassMeta<?>) ReflectionService.newInstance().getClassMeta(DbFinalObject.class);
+        assertEquals(6, classMeta.getNumberOfProperties());
+
+        classMeta = (ObjectClassMeta<?>) ReflectionService.newInstance().getClassMeta(DbPartialFinalObject.class);
+        assertEquals(6, classMeta.getNumberOfProperties());
+    }
+
+    @Test
+    public void testGetFirstProperty() {
+        ObjectClassMeta<?> classMeta = (ObjectClassMeta<?>) ReflectionService.newInstance().getClassMeta(DbObject.class);
+        assertEquals("object", classMeta.getFirstProperty().getPath());
+
+        classMeta = (ObjectClassMeta<?>) ReflectionService.newInstance().getClassMeta(DbFinalObject.class);
+        assertEquals("id", classMeta.getFirstProperty().getPath());
+
+        classMeta = (ObjectClassMeta<?>) ReflectionService.newInstance().getClassMeta(DbPartialFinalObject.class);
+        assertEquals("email", classMeta.getFirstProperty().getPath());
+    }
+
 
 
     @Test

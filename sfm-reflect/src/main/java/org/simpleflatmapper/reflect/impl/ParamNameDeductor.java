@@ -122,15 +122,7 @@ public class ParamNameDeductor<T> {
             Enum[] values = EnumHelper.getValues(TypeHelper.<Enum>toClass(type));
             return (V) (values.length > 1 ? values[1] : values[0]);
         } else {
-            InstantiatorDefinition instantiatorDefinition = InstantiatorFactory.getSmallerConstructor(ReflectionInstantiatorDefinitionFactory.extractDefinitions(type));
-
-            Instantiator<Object, V> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, true), false);
-            try {
-                return instantiator.newInstance(null);
-            } catch (NullPointerException e) {
-                instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, false), false);
-                return instantiator.newInstance(null);
-            }
+            return createValueFromInstantiator(type);
         }
     }
 
@@ -147,15 +139,19 @@ public class ParamNameDeductor<T> {
             Enum[] values = EnumHelper.getValues(TypeHelper.<Enum>toClass(type));
             return (V) values[0];
         } else {
-            InstantiatorDefinition instantiatorDefinition = InstantiatorFactory.getSmallerConstructor(ReflectionInstantiatorDefinitionFactory.extractDefinitions(type));
+            return createValueFromInstantiator(type);
+        }
+    }
 
-            Instantiator<Object, V> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, true), false);
-            try {
-                return instantiator.newInstance(null);
-            } catch (NullPointerException e) {
-                instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, false), false);
-                return instantiator.newInstance(null);
-            }
+    private <V> V createValueFromInstantiator(Type type) throws Exception {
+        InstantiatorDefinition instantiatorDefinition = InstantiatorFactory.getSmallerConstructor(ReflectionInstantiatorDefinitionFactory.extractDefinitions(type));
+
+        Instantiator<Object, V> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, true), false);
+        try {
+            return instantiator.newInstance(null);
+        } catch (NullPointerException e) {
+            instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, false), false);
+            return instantiator.newInstance(null);
         }
     }
 

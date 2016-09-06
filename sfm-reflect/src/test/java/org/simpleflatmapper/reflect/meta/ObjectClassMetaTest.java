@@ -6,18 +6,68 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.test.beans.DbPartialFinalObject;
 import org.simpleflatmapper.util.Asserts;
+import org.simpleflatmapper.util.TypeReference;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class ObjectClassMetaTest {
 
+
+    @Test
+    public void testAliasProvider() {
+        ReflectionService reflectionService = ReflectionService.newInstance().withAliasProvider(new AliasProvider() {
+            @Override
+            public String getAliasForMethod(Method method) {
+                if ("getName".equals(method.getName())) {
+                    return "myname";
+                }
+                return null;
+            }
+
+            @Override
+            public String getAliasForField(Field field) {
+                if ("id".equals(field.getName())) {
+                    return "myid";
+                }
+                return null;
+            }
+
+            @Override
+            public Table getTable(Class<?> target) {
+                return null;
+            }
+        });
+
+        ClassMeta<DbObject> classMeta = reflectionService.getClassMeta(DbObject.class);
+        assertNotNull(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("myid")));
+        assertNotNull(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("myname")));
+
+        classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+        assertNull(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("myid")));
+        assertNull(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("myname")));
+
+    }
+
+    @Test
+    public void testTypeVariable() {
+        ClassMeta<TVObject<Date>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<TVObject<Date>>() {} .getType());
+        assertEquals(Date.class, classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("t")).getPropertyType());
+    }
+
+    public static class TVObject<T> {
+        public T t;
+    }
 
     @Test
     public void testNumberOfProperties() {

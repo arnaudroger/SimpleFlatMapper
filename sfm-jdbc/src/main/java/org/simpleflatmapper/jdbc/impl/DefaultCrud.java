@@ -76,13 +76,15 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
                 return selectQueryMapper.map(resultSet);
             }
         } finally {
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                // IGNORE
-            }
+            safeClose(preparedStatement);
         }
         return null;
+    }
+
+    private void safeClose(PreparedStatement preparedStatement) {
+        try {
+            preparedStatement.close();
+        } catch (SQLException e) {}
     }
 
     @Override
@@ -98,11 +100,7 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
         } catch(Exception e) {
             return ErrorHelper.rethrow(e);
         } finally {
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                // IGNORE
-            }
+            safeClose(preparedStatement);
         }
     }
 
@@ -131,11 +129,7 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
         } catch (Exception e) {
             ErrorHelper.rethrow(e);
         } finally {
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                // IGNORE
-            }
+            safeClose(preparedStatement);
         }
     }
 
@@ -178,11 +172,7 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
         } catch(Exception e) {
             ErrorHelper.rethrow(e);
         } finally {
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                // IGNORE
-            }
+            safeClose(preparedStatement);
         }
         return keyConsumer;
     }
@@ -196,13 +186,10 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
             }
             return keyConsumer;
         } finally {
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                // IGNORE
-            }
+            safeClose(preparedStatement);
         }
     }
+
     protected void handleGeneratedKeys(RowHandler<? super K> keyConsumer, PreparedStatement preparedStatement) throws SQLException {
         ResultSet keys = preparedStatement.getGeneratedKeys();
         try {

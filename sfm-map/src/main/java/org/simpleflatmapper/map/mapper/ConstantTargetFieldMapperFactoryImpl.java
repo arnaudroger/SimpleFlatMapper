@@ -43,6 +43,8 @@ import org.simpleflatmapper.map.fieldmapper.ShortFieldMapper;
 import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.TypeHelper;
 
+import java.lang.reflect.Type;
+
 public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> implements ConstantTargetFieldMapperFactory<T, K> {
 
     private final SetterFactory<T, PropertyMapping<?, ?, K, ? extends ColumnDefinition<K, ?>>> setterFactory;
@@ -67,6 +69,12 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
             getter = pm.getPropertyMeta().getGetter();
         }
 
+        if (getter == null) {
+            mappingErrorHandler.accessorNotFound("Could not find getter for "
+                    + pm + " See " + ErrorDoc.toUrl("CTFM_GETTER_NOT_FOUND"));
+            return null;
+        }
+
         Setter<? super T, ? super P> setter = null;
 
         final SetterProperty setterProperty = pm.getColumnDefinition().lookFor(SetterProperty.class);
@@ -75,22 +83,24 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
         }
 
         if (setter == null) {
-            setter = setterFromFactory(pm);
+            setter = getSetterForTarget(pm);
         }
 
 
-        if (getter == null) {
-            mappingErrorHandler.accessorNotFound("Could not find getter for "
-                    + pm + " See " + ErrorDoc.toUrl("CTFM_GETTER_NOT_FOUND"));
-            return null;
-        }
+
         if (setter == null) {
             mappingErrorHandler.accessorNotFound("Could not find setter for " + pm
                     + " See " + ErrorDoc.toUrl("CTFM_SETTER_NOT_FOUND"));
             return null;
         }
 
-        if (TypeHelper.isPrimitive(pm.getPropertyMeta().getPropertyType())) {
+        Type propertyType = pm.getPropertyMeta().getPropertyType();
+
+        return buildFieldMapper(getter, setter, propertyType);
+    }
+
+    private <S, P> FieldMapper<S, T> buildFieldMapper(Getter<? super S, ? extends P> getter, Setter<? super T, ? super P> setter, Type propertyType) {
+        if (TypeHelper.isPrimitive(propertyType)) {
             if (getter instanceof BooleanGetter && setter instanceof BooleanSetter) {
                 return new BooleanFieldMapper<S, T>((BooleanGetter<S>)getter, (BooleanSetter<T>) setter);
             } else if (getter instanceof ByteGetter && setter instanceof ByteSetter) {
@@ -114,7 +124,7 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
     }
 
     @SuppressWarnings("unchecked")
-    private <S, P> Setter<T, P> setterFromFactory(PropertyMapping<S, ?, K, FieldMapperColumnDefinition<K>> pm) {
+    private <S, P> Setter<T, P> getSetterForTarget(PropertyMapping<S, ?, K, FieldMapperColumnDefinition<K>> pm) {
         Setter<T, P> setter = null;
         final SetterFactoryProperty setterFactoryProperty = pm.getColumnDefinition().lookFor(SetterFactoryProperty.class);
         if (setterFactoryProperty != null) {
@@ -136,7 +146,7 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
                 if (ocm.getNumberOfProperties() == 1) {
                     PropertyMeta<P, ?> subProp = ocm.getFirstProperty();
 
-                    Setter<T, Object> subSetter = setterFromFactory(pm.propertyMeta(subProp));
+                    Setter<T, Object> subSetter = getSetterForTarget(pm.propertyMeta(subProp));
 
                     if (subSetter != null) {
                         return new SetterOnGetter<T, Object, P>(subSetter, (Getter<P, Object>) subProp.getGetter());

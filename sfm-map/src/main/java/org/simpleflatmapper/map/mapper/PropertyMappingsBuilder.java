@@ -178,11 +178,6 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	}
 
 
-	public PropertyMapping<T, ?, K, D> get(int i) {
-		modifiable = false;
-		return properties.get(i);
-	}
-
     public boolean isDirectProperty() {
         return  (properties.size() == 1 && properties.get(0) != null && properties.get(0).getPropertyMeta() instanceof DirectClassMeta.DirectPropertyMeta);
     }

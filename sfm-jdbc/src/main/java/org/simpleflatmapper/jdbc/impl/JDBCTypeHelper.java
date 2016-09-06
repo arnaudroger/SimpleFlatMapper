@@ -29,6 +29,7 @@ public class JDBCTypeHelper {
     static {
         javaTypeToSqlType.put("java.util.Date", Timestamp.class);
         javaTypeToSqlType.put("java.util.Calendar", Timestamp.class);
+        javaTypeToSqlType.put("java.sql.Timestamp", Timestamp.class);
 
         javaTypeToSqlType.put("java.time.Instant", Timestamp.class);
         javaTypeToSqlType.put("java.time.LocalDateTime", Timestamp.class);
@@ -36,9 +37,11 @@ public class JDBCTypeHelper {
         javaTypeToSqlType.put("java.time.OffsetDateTime", Timestamp.class);
         javaTypeToSqlType.put("java.time.LocalTime", Time.class);
         javaTypeToSqlType.put("java.time.OffsetTime", Time.class);
+        javaTypeToSqlType.put("java.sql.Time", Time.class);
         javaTypeToSqlType.put("java.time.LocalDate", Date.class);
         javaTypeToSqlType.put("java.time.YearMonth", Date.class);
         javaTypeToSqlType.put("java.time.Year", Date.class);
+        javaTypeToSqlType.put("java.sql.Date", Date.class);
 
         javaTypeToSqlType.put("org.joda.time.Instant", Timestamp.class);
         javaTypeToSqlType.put("org.joda.time.LocalDateTime", Timestamp.class);
@@ -75,7 +78,7 @@ public class JDBCTypeHelper {
             case Types.BINARY:
             case Types.VARBINARY:
             case Types.LONGVARBINARY:
-                return byte.class;
+                return byte[].class;
             case Types.DATE:
                 return Date.class;
             case Types.TIME:

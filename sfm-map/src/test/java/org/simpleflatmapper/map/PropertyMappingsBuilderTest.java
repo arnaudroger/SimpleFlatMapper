@@ -7,11 +7,13 @@ import org.simpleflatmapper.map.mapper.DefaultPropertyNameMatcherFactory;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ListElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
+import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
@@ -22,6 +24,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class PropertyMappingsBuilderTest {
 
@@ -96,5 +99,35 @@ public class PropertyMappingsBuilderTest {
 
         assertTrue(TypeHelper.isAssignable(List.class, subPropertyMeta.getOwnerProperty().getPropertyType()));
         assertTrue(subPropertyMeta.getSubProperty() instanceof ListElementPropertyMeta);
+    }
+
+
+    @Test
+    public void testCustomSourceIncompatibility() {
+
+        final ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+        PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder2 =
+                new PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
+                        classMeta,
+                        DefaultPropertyNameMatcherFactory.DEFAULT,
+                        RethrowMapperBuilderErrorHandler.INSTANCE,
+                        new Predicate<PropertyMeta<?, ?>>() {
+                            @Override
+                            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                                return true;
+                            }
+                        });
+
+        try {
+            builder2.addProperty(new SampleFieldKey("id", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity().addGetter(new Getter<Object, String>() {
+                @Override
+                public String get(Object target) throws Exception {
+                    return null;
+                }
+            }));
+            fail();
+        } catch(MapperBuildingException e) {
+        }
+
     }
 }

@@ -40,11 +40,25 @@ public class ReflectionService {
 	private final ConcurrentMap<Type, ClassMeta<?>> metaCache = new ConcurrentHashMap<Type, ClassMeta<?>>();
 
 	public ReflectionService(final AsmFactory asmFactory) {
+		this(
+				new ObjectSetterFactory(asmFactory),
+				new ObjectGetterFactory(asmFactory),
+				new InstantiatorFactory(asmFactory),
+				asmFactory,
+				AliasProviderService.getAliasProvider()
+			);
+	}
+
+	private ReflectionService(ObjectSetterFactory objectSetterFactory,
+							  ObjectGetterFactory objectGetterFactory,
+							  InstantiatorFactory instantiatorFactory,
+							  AsmFactory asmFactory,
+							  AliasProvider aliasProvider) {
+		this.objectSetterFactory = objectSetterFactory;
+		this.objectGetterFactory = objectGetterFactory;
+		this.instantiatorFactory = instantiatorFactory;
 		this.asmFactory = asmFactory;
-		this.objectSetterFactory = new ObjectSetterFactory(asmFactory);
-        this.objectGetterFactory = new ObjectGetterFactory(asmFactory);
-		this.instantiatorFactory = new InstantiatorFactory(asmFactory);
-		this.aliasProvider = AliasProviderService.getAliasProvider();
+		this.aliasProvider = aliasProvider;
 	}
 
 	public ObjectSetterFactory getObjectSetterFactory() {
@@ -205,6 +219,16 @@ public class ReflectionService {
 
 	public boolean hasAsmFactory() {
 		return asmFactory != null;
+	}
+
+
+	public ReflectionService withAliasProvider(AliasProvider aliasProvider) {
+		return new ReflectionService(
+				objectSetterFactory,
+				objectGetterFactory,
+				instantiatorFactory,
+				asmFactory,
+				aliasProvider);
 	}
 
 

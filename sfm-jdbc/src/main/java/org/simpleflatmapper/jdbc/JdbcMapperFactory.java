@@ -1,5 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
+import org.simpleflatmapper.jdbc.impl.PreparedStatementIndexedSetterFactory;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.jdbc.impl.JdbcColumnKeyMapperKeyComparator;
@@ -183,7 +184,7 @@ public final class JdbcMapperFactory
 	}
 
 	public <T> PreparedStatementMapperBuilder<T> buildFrom(final ClassMeta<T> classMeta) {
-		return new PreparedStatementMapperBuilder<T>(classMeta, mapperConfig(), ConstantTargetFieldMapperFactoryImpl.newInstance(new PreparedStatementSetterFactory()));
+		return new PreparedStatementMapperBuilder<T>(classMeta, mapperConfig(), ConstantTargetFieldMapperFactoryImpl.newInstance(PreparedStatementSetterFactory.INSTANCE));
 	}
 
 	public <T> PreparedStatementMapperBuilder<T> from(final Class<T> target) {

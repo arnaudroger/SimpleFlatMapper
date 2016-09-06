@@ -3,14 +3,15 @@ package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.jdbc.impl.CollectionIndexFieldMapper;
 import org.simpleflatmapper.jdbc.impl.MultiIndexQueryPreparer;
+import org.simpleflatmapper.jdbc.impl.PreparedStatementIndexedSetterFactory;
 import org.simpleflatmapper.jdbc.impl.SingleIndexFieldMapper;
 import org.simpleflatmapper.jdbc.impl.MapperQueryPreparer;
-import org.simpleflatmapper.jdbc.impl.PreparedStatementSetterFactory;
 import org.simpleflatmapper.jdbc.impl.setter.PreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.PreparedStatementIndexSetterOnGetter;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
 import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.jdbc.property.IndexedSetterFactoryProperty;
 import org.simpleflatmapper.jdbc.property.IndexedSetterProperty;
@@ -39,6 +40,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMapperBuilder<PreparedStatement, T, JdbcColumnKey, PreparedStatementMapperBuilder<T>> {
+
+    private IndexedSetterFactory<PreparedStatement, PropertyMapping<?, ?, JdbcColumnKey, ? extends ColumnDefinition<JdbcColumnKey, ?>>> indexedSetterFactory = PreparedStatementIndexedSetterFactory.INSTANCE;
 
     public PreparedStatementMapperBuilder(
             ClassMeta<T> classMeta,
@@ -135,7 +138,6 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
         final List<MultiIndexFieldMapper<T>> fields = new ArrayList<MultiIndexFieldMapper<T>>();
 
         propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>>() {
-            final PreparedStatementSetterFactory setterFactory = new PreparedStatementSetterFactory();
             @Override
             public void handle(PropertyMapping<T, ?, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pm) {
 
@@ -207,7 +209,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
                 }
 
                 if (setter == null) {
-                    setter = setterFactory.getIndexedSetter(pm);
+                    setter = indexedSetterFactory.getIndexedSetter(pm);
                 }
                 if (setter == null) {
                     final ClassMeta<P> classMeta = pm.getPropertyMeta().getPropertyClassMeta();

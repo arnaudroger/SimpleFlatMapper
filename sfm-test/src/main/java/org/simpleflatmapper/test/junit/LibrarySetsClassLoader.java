@@ -40,7 +40,7 @@ public class LibrarySetsClassLoader extends URLClassLoader {
 
     }
 
-    private static URL findUrl(Class<?> includeClass, ClassLoader classLoader) throws MalformedURLException {
+    public static URL findUrl(Class<?> includeClass, ClassLoader classLoader) throws MalformedURLException {
 
         String classResource = includeClass.getName().replace(".", "/") + ".class";
         URL urlClass = classLoader.getResource(classResource);

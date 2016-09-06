@@ -29,7 +29,7 @@ public class TupleClassMetaTest {
 
         Class<?> tuple2Class = cl.loadClass(Tuple2.class.getName());
 
-        TupleClassMeta<?> classMeta = new TupleClassMeta<>(tuple2Class, reflectionService);
+        TupleClassMeta classMeta = new TupleClassMeta(tuple2Class, reflectionService);
 
         List<InstantiatorDefinition> instantiatorDefinitions = classMeta.getInstantiatorDefinitions();
 

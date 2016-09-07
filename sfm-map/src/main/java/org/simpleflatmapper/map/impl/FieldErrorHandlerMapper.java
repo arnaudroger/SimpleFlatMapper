@@ -30,8 +30,6 @@ public final class FieldErrorHandlerMapper<S, T, K> implements FieldMapper<S, T>
 
     @Override
     public String toString() {
-        return "FieldErrorHandlerMapper{" +
-                "delegate=" + delegate +
-                '}';
-    }
+        return "FieldErrorHandlerMapper{delegate=" + delegate + '}';
+	}
 }

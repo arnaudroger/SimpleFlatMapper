@@ -1,8 +1,11 @@
 package org.simpleflatmapper.map.impl;
 
 import org.junit.Test;
+import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SampleFieldKey;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -33,6 +36,14 @@ public class ConstantSourceMapperBuilderTest {
         @Override
         public <P> Getter<Object, P> newGetter(Type target, SampleFieldKey key, Object... properties) {
 
+            if (key.getIndex() == 16) {
+                return new Getter<Object, P>() {
+                    @Override
+                    public P get(Object target) throws Exception {
+                        throw new RuntimeException("Error !");
+                    }
+                };
+            }
             if (target.equals(Date.class)) {
                 return (Getter<Object, P>) new ConstantGetter<Object, Date>(DATE);
             } else if (target.equals(String.class)) {
@@ -100,6 +111,33 @@ public class ConstantSourceMapperBuilderTest {
 
         assertEquals(DATE, o.prop.date);
         assertNull(o.prop.str);
+    }
+
+    @Test
+    public void testFieldMapperErrorHandler() throws  Exception{
+        ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey> constantSourceMapperBuilder =
+                new ConstantSourceMapperBuilder<Object, MyObjectWithInner, SampleFieldKey>(
+                        mapperSource,
+                        classMeta,
+                        MapperConfig.config(new IdentityFieldMapperColumnDefinitionProvider<SampleFieldKey>()).fieldMapperErrorHandler(new FieldMapperErrorHandler<SampleFieldKey>() {
+                            @Override
+                            public void errorMappingField(SampleFieldKey key, Object source, Object target, Exception error) throws MappingException {
+                            }
+                        }),
+                        new MappingContextFactoryBuilder<Object, SampleFieldKey>(null),
+                        SampleFieldKey.KEY_FACTORY
+                );
+
+        constantSourceMapperBuilder.addMapping(new SampleFieldKey("prop_date", 16), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+
+        Mapper<Object, MyObjectWithInner> mapper = constantSourceMapperBuilder.mapper();
+
+        MyObjectWithInner o = mapper.map(null);
+
+        System.out.println("mapper = " + mapper);
+        assertNull(o.prop.date);
+        assertNull(o.prop.str);
+
     }
 
 

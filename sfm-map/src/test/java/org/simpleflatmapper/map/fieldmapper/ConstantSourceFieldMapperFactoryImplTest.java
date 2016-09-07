@@ -37,7 +37,6 @@ public class ConstantSourceFieldMapperFactoryImplTest {
 
     public static final RethrowMapperBuilderErrorHandler MAPPING_ERROR_HANDLER = RethrowMapperBuilderErrorHandler.INSTANCE;
     public static final ReflectionService REFLECTION_SERVICE = ReflectionService.newInstance();
-    public static final ReflectionService REFLECTION_SERVICE_NO_ASM = ReflectionService.disableAsm();
 
     ConstantSourceFieldMapperFactoryImpl<Object, SampleFieldKey> constantSourceFieldMapperFactory;
     MappingContextFactoryBuilder<Object, SampleFieldKey> mappingContextFactoryBuilder;

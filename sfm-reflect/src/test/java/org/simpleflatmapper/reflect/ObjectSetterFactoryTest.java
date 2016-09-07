@@ -20,6 +20,7 @@ import org.simpleflatmapper.reflect.primitive.LongFieldSetter;
 import org.simpleflatmapper.reflect.primitive.LongMethodSetter;
 import org.simpleflatmapper.reflect.primitive.ShortFieldSetter;
 import org.simpleflatmapper.reflect.primitive.ShortMethodSetter;
+import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.test.beans.Bar;
 import org.simpleflatmapper.test.beans.DbPrimitiveObject;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
@@ -101,6 +102,7 @@ public class ObjectSetterFactoryTest {
 		assertTrue(ObjectSetterFactory.toBooleanSetter(nonAsmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pBoolean")) instanceof BooleanMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pBoolean");
 		assertSame(setter, ObjectSetterFactory.toBooleanSetter(setter));
+		assertNull(ObjectSetterFactory.toBooleanSetter(null));
 		
 		try {
 			ObjectSetterFactory.toBooleanSetter(new Setter<DbPrimitiveObject, Boolean>() {
@@ -119,7 +121,8 @@ public class ObjectSetterFactoryTest {
 		assertTrue(ObjectSetterFactory.toByteSetter(nonAsmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pByte")) instanceof ByteMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pByte");
 		assertSame(setter, ObjectSetterFactory.toByteSetter(setter));
-		
+		assertNull(ObjectSetterFactory.toByteSetter(null));
+
 		try {
 			ObjectSetterFactory.toByteSetter(new Setter<DbPrimitiveObject, Byte>() {
                 @Override
@@ -137,7 +140,8 @@ public class ObjectSetterFactoryTest {
 		assertTrue(ObjectSetterFactory.toCharacterSetter(nonAsmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pCharacter")) instanceof CharacterMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pCharacter");
 		assertSame(setter, ObjectSetterFactory.toCharacterSetter(setter));
-		
+		assertNull(ObjectSetterFactory.toCharacterSetter(null));
+
 		try {
 			ObjectSetterFactory.toCharacterSetter(new Setter<DbPrimitiveObject, Character>() {
                 @Override
@@ -155,7 +159,8 @@ public class ObjectSetterFactoryTest {
 		assertTrue(ObjectSetterFactory.toShortSetter(nonAsmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pShort")) instanceof ShortMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pShort");
 		assertSame(setter, ObjectSetterFactory.toShortSetter(setter));
-		
+		assertNull(ObjectSetterFactory.toShortSetter(null));
+
 		try {
 			ObjectSetterFactory.toShortSetter(new Setter<DbPrimitiveObject, Short>() {
                 @Override
@@ -173,7 +178,8 @@ public class ObjectSetterFactoryTest {
 		assertTrue(ObjectSetterFactory.toIntSetter(nonAsmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pInt")) instanceof IntMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pInt");
 		assertSame(setter, ObjectSetterFactory.toIntSetter(setter));
-		
+		assertNull(ObjectSetterFactory.toIntSetter(null));
+
 		try {
 			ObjectSetterFactory.toIntSetter(new Setter<DbPrimitiveObject, Integer>() {
                 @Override
@@ -191,7 +197,8 @@ public class ObjectSetterFactoryTest {
 		assertTrue(ObjectSetterFactory.toLongSetter(nonAsmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pLong")) instanceof LongMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pLong");
 		assertSame(setter, ObjectSetterFactory.toLongSetter(setter));
-		
+		assertNull(ObjectSetterFactory.toLongSetter(null));
+
 		try {
 			ObjectSetterFactory.toLongSetter(new Setter<DbPrimitiveObject, Long>() {
                 @Override
@@ -209,7 +216,8 @@ public class ObjectSetterFactoryTest {
 		assertTrue(ObjectSetterFactory.toFloatSetter(nonAsmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pFloat")) instanceof FloatMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pFloat");
 		assertSame(setter, ObjectSetterFactory.toFloatSetter(setter));
-		
+		assertNull(ObjectSetterFactory.toFloatSetter(null));
+
 		try {
 			ObjectSetterFactory.toFloatSetter(new Setter<DbPrimitiveObject, Float>() {
                 @Override
@@ -227,7 +235,8 @@ public class ObjectSetterFactoryTest {
 		assertTrue(ObjectSetterFactory.toDoubleSetter(nonAsmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pDouble")) instanceof DoubleMethodSetter);
 		Setter<DbPrimitiveObjectWithSetter, Object> setter =  asmFactory.getSetter(DbPrimitiveObjectWithSetter.class, "pDouble");
 		assertSame(setter, ObjectSetterFactory.toDoubleSetter(setter));
-		
+		assertNull(ObjectSetterFactory.toDoubleSetter(null));
+
 		try {
 			ObjectSetterFactory.toDoubleSetter(new Setter<DbPrimitiveObject, Double>() {
                 @Override

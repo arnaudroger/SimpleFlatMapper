@@ -3,12 +3,14 @@ package org.simpleflatmapper.map.mapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.SampleFieldKey;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactoryImplTest;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
+import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.primitive.BooleanSetter;
 import org.simpleflatmapper.reflect.primitive.ByteSetter;
 import org.simpleflatmapper.reflect.primitive.CharacterSetter;
@@ -17,10 +19,14 @@ import org.simpleflatmapper.reflect.primitive.FloatSetter;
 import org.simpleflatmapper.reflect.primitive.IntSetter;
 import org.simpleflatmapper.reflect.primitive.LongSetter;
 import org.simpleflatmapper.reflect.primitive.ShortSetter;
+import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 import org.simpleflatmapper.util.TypeHelper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 public class ConstantTargetFieldMapperFactoryImplTest {
 
@@ -74,6 +80,46 @@ public class ConstantTargetFieldMapperFactoryImplTest {
         fieldMapper.mapTo(object, sb, null);
 
         assertEquals(expectedValue, sb.toString());
+
+    }
+
+    @Test
+    public void testGetterNotFound() {
+        ConstantTargetFieldMapperFactory<Appendable, SampleFieldKey> factory = ConstantTargetFieldMapperFactoryImpl.<Appendable, SampleFieldKey>newInstance(setterFactory);
+
+        try {
+            PropertyMeta<Object, Object> pm = mock(PropertyMeta.class);
+            PropertyMapping<Object, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> propertyMapping =
+                    new PropertyMapping<>(pm, new SampleFieldKey("hh", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+            factory.newFieldMapper(propertyMapping, null, RethrowMapperBuilderErrorHandler.INSTANCE);
+            fail();
+        } catch (MapperBuildingException e) {
+        }
+    }
+
+    @Test
+    public void testSetterNotFound() {
+        SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>> setterFactory =
+                new SetterFactory<Appendable, PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>>>() {
+                    @Override
+                    public <P> Setter<Appendable, P> getSetter(PropertyMapping<?, ?, SampleFieldKey, ? extends ColumnDefinition<SampleFieldKey, ?>> arg) {
+                        return null;
+                    }
+                };
+
+        ConstantTargetFieldMapperFactory<Appendable, SampleFieldKey> factory = ConstantTargetFieldMapperFactoryImpl.<Appendable, SampleFieldKey>newInstance(setterFactory);
+        try {
+            PropertyMapping<DbObject, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> propertyMapping =
+                    ConstantSourceFieldMapperFactoryImplTest.createPropertyMapping(DbObject.class, "id");
+            assertNotNull(propertyMapping.getPropertyMeta().getGetter());
+            factory.newFieldMapper(propertyMapping, null, RethrowMapperBuilderErrorHandler.INSTANCE);
+            fail();
+        } catch (MapperBuildingException e) {
+        }
+    }
+
+    @Test
+    public void testSetterFactoryProperty() {
 
     }
 

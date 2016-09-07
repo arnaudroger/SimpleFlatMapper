@@ -7,9 +7,11 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
 
     private final BreakDetector<S>[] breakDetectors;
     private final BreakDetector<S> rootDetector;
+    private final MappingContext<S> delegateContext;
 
-    public BreakDetectorMappingContext(BreakDetector<S>[] breakDetectors, int rootDetector) {
+    public BreakDetectorMappingContext(BreakDetector<S>[] breakDetectors, int rootDetector, MappingContext<S> delegateContext) {
         this.breakDetectors = breakDetectors;
+        this.delegateContext = delegateContext;
         this.rootDetector = rootDetector == -1 ? null : breakDetectors[rootDetector];
     }
 
@@ -46,6 +48,6 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
 
     @Override
     public <T> T context(int i) {
-        return null;
+        return delegateContext.context(i);
     }
 }

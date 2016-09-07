@@ -10,7 +10,7 @@ import org.simpleflatmapper.map.context.impl.BreakDetectorMappingContextFactory;
 import org.simpleflatmapper.map.context.impl.BreakGetter;
 import org.simpleflatmapper.map.context.impl.NullChecker;
 import org.simpleflatmapper.map.context.impl.RootBreakGetterProvider;
-import org.simpleflatmapper.map.context.impl.ValuedMapperContextFactory;
+import org.simpleflatmapper.map.context.impl.ValuedMappingContextFactory;
 import org.simpleflatmapper.util.BooleanProvider;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.Supplier;
@@ -87,10 +87,14 @@ public class MappingContextFactoryBuilder<S, K> {
 
         List<MappingContextFactoryBuilder<S, K>> builders = getAllBuilders();
 
-        if (builders.isEmpty() && suppliers.isEmpty()) {
-            return MappingContext.EMPTY_FACTORY;
-        }
 
+        MappingContextFactory<S> context;
+
+        if (suppliers.isEmpty()) {
+            context = MappingContext.EMPTY_FACTORY;
+        } else {
+            context = new ValuedMappingContextFactory<S>(suppliers);
+        }
         if (!builders.isEmpty()) {
             KeysDefinition<S, K>[] keyDefinions = new KeysDefinition[builders.get(builders.size() - 1).currentIndex + 1];
 
@@ -105,14 +109,11 @@ public class MappingContextFactoryBuilder<S, K> {
                 }
             }
 
-            return new BreakDetectorMappingContextFactory<S, K>(keyDefinions, rootDetector);
+            context = new BreakDetectorMappingContextFactory<S, K>(keyDefinions, rootDetector, context);
         }
 
-        if (!suppliers.isEmpty()) {
-            return new ValuedMapperContextFactory<S>(suppliers);
-        }
+        return context;
 
-        throw new IllegalStateException();
     }
 
     private boolean isEligibleAsRootKey() {

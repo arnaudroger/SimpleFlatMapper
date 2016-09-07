@@ -4,19 +4,26 @@ import org.simpleflatmapper.map.BreakDetector;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.context.KeysDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactory;
+import org.simpleflatmapper.util.Supplier;
+
+import java.util.List;
 
 public class BreakDetectorMappingContextFactory<S, K> implements MappingContextFactory<S> {
     private final KeysDefinition<S, K>[] keyDefinitions;
     private final int rootDetector;
+    private final MappingContextFactory<S> delegateFactory;
 
-    public BreakDetectorMappingContextFactory(KeysDefinition<S, K>[] keyDefinitions, int rootDetector) {
+    public BreakDetectorMappingContextFactory(KeysDefinition<S, K>[] keyDefinitions,
+                                              int rootDetector,
+                                              MappingContextFactory<S> delegateFactory) {
         this.keyDefinitions = keyDefinitions;
         this.rootDetector = rootDetector;
+        this.delegateFactory = delegateFactory;
     }
 
     @Override
     public MappingContext<S> newContext() {
-        return new BreakDetectorMappingContext<S>(newBreakDetectors(keyDefinitions), rootDetector);
+        return new BreakDetectorMappingContext<S>(newBreakDetectors(keyDefinitions), rootDetector, delegateFactory.newContext());
     }
 
     @SuppressWarnings("unchecked")

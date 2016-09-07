@@ -6,16 +6,20 @@ import org.simpleflatmapper.util.Supplier;
 
 import java.util.List;
 
-public class ValuedMapperContextFactory<S> implements MappingContextFactory<S> {
+public class ValuedMappingContextFactory<S> implements MappingContextFactory<S> {
     private final Supplier<?>[] suppliers;
 
-    public ValuedMapperContextFactory(List<Supplier<?>> suppliers) {
+    public ValuedMappingContextFactory(List<Supplier<?>> suppliers) {
         this.suppliers = suppliers.toArray(new Supplier[0]);
 
     }
 
     @Override
     public MappingContext<S> newContext() {
+        return new ValuedMappingContext<S>(getObjects());
+    }
+
+    protected Object[] getObjects() {
         Object[] values = new Object[suppliers.length];
 
         for(int i = 0; i < suppliers.length; i ++) {
@@ -24,7 +28,6 @@ public class ValuedMapperContextFactory<S> implements MappingContextFactory<S> {
                 values[i] = s.get();
             }
         }
-
-        return new ValuedMappingContext<S>(values);
+        return values;
     }
 }

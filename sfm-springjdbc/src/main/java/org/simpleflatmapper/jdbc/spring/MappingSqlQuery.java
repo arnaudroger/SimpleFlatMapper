@@ -1,7 +1,6 @@
 package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.jdbc.JdbcMapper;
-import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jdbc.named.NamedParameter;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
 import org.springframework.dao.DataAccessException;
@@ -14,7 +13,6 @@ import org.springframework.jdbc.core.namedparam.ParsedSql;
 import org.springframework.jdbc.object.SqlQuery;
 
 import javax.sql.DataSource;
-import java.sql.SQLType;
 import java.util.List;
 import java.util.Map;
 

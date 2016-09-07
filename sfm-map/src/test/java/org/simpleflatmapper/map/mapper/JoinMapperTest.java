@@ -7,6 +7,7 @@ import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SampleFieldKey;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.KeysDefinition;
+import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.impl.BreakDetectorMappingContextFactory;
 import org.simpleflatmapper.map.error.RethrowRowHandlerErrorHandler;
 import org.simpleflatmapper.test.beans.DbListObject;
@@ -71,7 +72,7 @@ public class JoinMapperTest {
         JoinMapper<Object[], Object[][], DbListObject, RuntimeException> joinMapper =
                 new JoinMapper<Object[], Object[][], DbListObject, RuntimeException>(
                         mapper, RethrowRowHandlerErrorHandler.INSTANCE,
-                        new BreakDetectorMappingContextFactory<Object[], Object>(new KeysDefinition[] {keysDefinition}, 0),
+                        new BreakDetectorMappingContextFactory<Object[], Object>(new KeysDefinition[] {keysDefinition}, 0, MappingContext.EMPTY_FACTORY),
                         SetRowMapperTest.ENUMARABLE_UNARY_FACTORY
                         );
 

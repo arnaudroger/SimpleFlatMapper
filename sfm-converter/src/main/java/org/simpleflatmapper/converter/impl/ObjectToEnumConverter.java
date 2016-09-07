@@ -5,22 +5,19 @@ import org.simpleflatmapper.util.EnumHelper;
 
 public class ObjectToEnumConverter<E extends Enum<E>> implements Converter<Object, E> {
     private final Class<E> enumClass;
-    private final E[] values;
+
+    private final NumberToEnumConverter<E> numberToEnumConverter;
 
     public ObjectToEnumConverter(Class<E> enumClass) {
         this.enumClass = enumClass;
-        this.values = EnumHelper.getValues(enumClass);
+        this.numberToEnumConverter = new NumberToEnumConverter<E>(enumClass);
     }
 
     @Override
     public E convert(Object in) throws Exception {
         if (in == null) return null;
         if (in instanceof Number) {
-            int i = ((Number)in).intValue();
-            if (i < 0 || i >= values.length) {
-                throw new IllegalArgumentException("Invalid ordinal value " + in + " for " + enumClass);
-            }
-            return values[i];
+            return numberToEnumConverter.convert((Number) in);
         } else {
             return Enum.valueOf(enumClass, String.valueOf(in));
         }

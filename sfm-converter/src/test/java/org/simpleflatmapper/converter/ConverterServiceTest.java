@@ -65,6 +65,27 @@ public class ConverterServiceTest {
     }
 
     @Test
+    public void testObjectToEnumConverter() throws Exception {
+        testConverter(0, ENUM.type1, Object.class, ENUM.class);
+        testConverter("type2", ENUM.type2, Object.class, ENUM.class);
+        testConverter(null, null, Object.class, ENUM.class);
+    }
+
+    @Test
+    public void testNumberToEnumConverter() throws Exception {
+        testConverter(0, ENUM.type1);
+        testConverter(1, ENUM.type2);
+        testConverter(null, null, Number.class, ENUM.class);
+
+        try {
+            testConverter(2, ENUM.type2);
+            fail();
+        } catch(IllegalArgumentException e) {
+
+        }
+    }
+
+    @Test
     public void testIdentity() throws Exception {
         Object o = new Object();
         testConverter(o, o);

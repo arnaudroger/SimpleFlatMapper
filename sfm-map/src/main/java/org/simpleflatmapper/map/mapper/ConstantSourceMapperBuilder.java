@@ -256,7 +256,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
     private <P> FieldMapper<S, T> newMapperFieldMapper(List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties, PropertyMeta<T, ?> meta, Mapper<S, ?> mapper, MappingContextFactoryBuilder<S, K> mappingContextFactoryBuilder) {
 
         final Getter<T, P> getter = (Getter<T, P>) meta.getGetter();
-        if (mappingContextFactoryBuilder.isEmpty() && getter instanceof NullGetter) {
+        if (mappingContextFactoryBuilder.hasNoKeys() && getter instanceof NullGetter) {
             throw new MapperBuildingException("Cannot get a getter on " + meta + " needed to work with join " + mappingContextFactoryBuilder);
         }
         final MapperFieldMapper<S, T, P> fieldMapper =

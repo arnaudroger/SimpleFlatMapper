@@ -19,16 +19,19 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
         return breakDetectors != null ? breakDetectors[i] : null;
     }
 
-    @Override public boolean broke(int i) {
+    @Override
+    public boolean broke(int i) {
         BreakDetector<S> breakDetector = getBreakDetector(i);
         return breakDetector == null || breakDetector.isBroken();
     }
 
-    @Override public boolean rootBroke() {
+    @Override
+    public boolean rootBroke() {
         return rootDetector == null || rootDetector.isBroken();
     }
 
-    @Override public void handle(S source) {
+    @Override
+    public void handle(S source) {
         if (breakDetectors == null) return;
         for(BreakDetector<S> bs : breakDetectors) {
             if (bs != null) {
@@ -37,7 +40,8 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
         }
     }
 
-    @Override public void markAsBroken() {
+    @Override
+    public void markAsBroken() {
         if (breakDetectors == null) return;
         for(BreakDetector<S> bs : breakDetectors) {
             if (bs != null) {

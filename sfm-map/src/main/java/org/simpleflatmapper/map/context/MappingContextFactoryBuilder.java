@@ -62,7 +62,7 @@ public class MappingContextFactoryBuilder<S, K> {
     }
 
     public Getter<MappingContext<? super S>, BooleanProvider> breakDetectorGetter() {
-        if (isEmpty()) {
+        if (hasNoKeys()) {
             if (parent != null) {
                 return parent.breakDetectorGetter();
             } else {
@@ -126,7 +126,7 @@ public class MappingContextFactoryBuilder<S, K> {
         if (parent == null) {
             return -1;
         } else {
-            if (parent.isEmpty()) {
+            if (parent.hasNoKeys()) {
                 return parent.getParentNonEmptyIndex();
             } else {
                 return parent.currentIndex;
@@ -142,7 +142,7 @@ public class MappingContextFactoryBuilder<S, K> {
     private List<MappingContextFactoryBuilder<S, K>> getAllBuilders() {
         List<MappingContextFactoryBuilder<S, K>> list = new ArrayList<MappingContextFactoryBuilder<S, K>>();
 
-        if (!isEmpty()) {
+        if (!hasNoKeys()) {
             list.add(this);
         }
 
@@ -153,12 +153,12 @@ public class MappingContextFactoryBuilder<S, K> {
         return list;
     }
 
-    public boolean isEmpty() {
+    public boolean hasNoKeys() {
         return keys.isEmpty();
     }
 
     public boolean hasNoDependentKeys() {
-        if (!isEmpty()) {
+        if (!hasNoKeys()) {
             return false;
         }
 

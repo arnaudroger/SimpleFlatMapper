@@ -81,7 +81,7 @@ public abstract class AbstractMapperFactory<
      * @return the current factory
      */
     public final MF ignorePropertyNotFound() {
-        return mapperBuilderErrorHandler(new IgnoreMapperBuilderErrorHandler());
+        return mapperBuilderErrorHandler(IgnoreMapperBuilderErrorHandler.INSTANCE);
     }
 
     /**

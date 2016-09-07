@@ -76,6 +76,8 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 	@SuppressWarnings("unchecked")
 	public <P> PropertyMeta<T, P> addPropertyIfPresent(final K key, final D columnDefinition) {
+		if (!modifiable) throw new IllegalStateException("Builder not modifiable");
+
 		final PropertyMeta<T, P> prop =
 				(PropertyMeta<T, P>) propertyFinder.findProperty(propertyNameMatcherFactory.newInstance(key));
 
@@ -144,6 +146,10 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
                 }
             }
         }
+	}
+
+	public List<PropertyMapping<T, ?, K, D>> currentProperties() {
+		return new ArrayList<PropertyMapping<T, ?, K, D>>(properties);
 	}
 	
 	public <H extends ForEachCallBack<PropertyMapping<T, ?, K, D>>> H forEachProperties(H handler)  {

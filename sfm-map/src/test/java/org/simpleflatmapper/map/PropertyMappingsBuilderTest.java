@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -128,6 +130,115 @@ public class PropertyMappingsBuilderTest {
             fail();
         } catch(MapperBuildingException e) {
         }
+    }
+
+    @Test
+    public void testCustomSourceIncompatibilityIgnoreError() {
+
+        final ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+        PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder2 =
+                new PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
+                        classMeta,
+                        DefaultPropertyNameMatcherFactory.DEFAULT,
+                        IgnoreMapperBuilderErrorHandler.INSTANCE,
+                        new Predicate<PropertyMeta<?, ?>>() {
+                            @Override
+                            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                                return true;
+                            }
+                        });
+
+        builder2.addProperty(new SampleFieldKey("id", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity().addGetter(new Getter<Object, String>() {
+            @Override
+            public String get(Object target) throws Exception {
+                return null;
+            }
+        }));
+        builder2.addProperty(new SampleFieldKey("name", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+
+        final List<PropertyMapping<DbObject, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>> props = getAllProperties(builder2);
+
+        assertEquals(2, props.size());
+        assertNull(props.get(0));
+    }
+
+    private List<PropertyMapping<DbObject, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>> getAllProperties(PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder2) {
+        return builder2.currentProperties();
+    }
+
+
+    @Test
+    public void testAddPropertyIfPresent() {
+        final ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+        PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder2 =
+                new PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
+                        classMeta,
+                        DefaultPropertyNameMatcherFactory.DEFAULT,
+                        RethrowMapperBuilderErrorHandler.INSTANCE,
+                        new Predicate<PropertyMeta<?, ?>>() {
+                            @Override
+                            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                                return true;
+                            }
+                        });
+
+        builder2.addPropertyIfPresent(new SampleFieldKey("not_id", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+        List<PropertyMapping<DbObject, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>> props = getAllProperties(builder2);
+
+        assertEquals(1, props.size());
+        assertNull(props.get(0));
+
+        builder2.addPropertyIfPresent(new SampleFieldKey("id", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+        props = getAllProperties(builder2);
+
+        assertEquals(2, props.size());
+        assertNull(props.get(0));
 
     }
+
+    @Test
+    public void testAddFailedPropertyIgnoreError() {
+        final ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+        PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder2 =
+                new PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
+                        classMeta,
+                        DefaultPropertyNameMatcherFactory.DEFAULT,
+                        IgnoreMapperBuilderErrorHandler.INSTANCE,
+                        new Predicate<PropertyMeta<?, ?>>() {
+                            @Override
+                            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                                return true;
+                            }
+                        });
+
+        builder2.addProperty(new SampleFieldKey("not_id", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+        List<PropertyMapping<DbObject, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>> props = getAllProperties(builder2);
+
+        assertEquals(1, props.size());
+        assertNull(props.get(0));
+    }
+
+    @Test
+    public void testAddPropertyIgnore() {
+        final ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+        PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder2 =
+                new PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
+                        classMeta,
+                        DefaultPropertyNameMatcherFactory.DEFAULT,
+                        IgnoreMapperBuilderErrorHandler.INSTANCE,
+                        new Predicate<PropertyMeta<?, ?>>() {
+                            @Override
+                            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                                return true;
+                            }
+                        });
+
+        builder2.addProperty(new SampleFieldKey("not_id", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity().addIgnore());
+        List<PropertyMapping<DbObject, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>> props = getAllProperties(builder2);
+
+        assertEquals(1, props.size());
+        assertNull(props.get(0));
+    }
+
+
 }

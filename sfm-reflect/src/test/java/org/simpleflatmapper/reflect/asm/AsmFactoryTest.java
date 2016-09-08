@@ -92,7 +92,7 @@ public class AsmFactoryTest {
 	public void testRegisterOrCreate() {
 		AsmFactory asmFactory = new AsmFactory(getClass().getClassLoader());
 
-		MyService[] services = new MyService[] {new MyService(), new MyService() };
+		final MyService[] services = new MyService[] {new MyService(), new MyService() };
 		UnaryFactory<AsmFactory, MyService> factory = new UnaryFactory<AsmFactory, MyService>() {
 			int i = 0;
 

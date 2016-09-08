@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.meta;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class ArrayAliasProvider implements AliasProvider {
     private final AliasProvider[] providers;
@@ -35,5 +36,9 @@ public class ArrayAliasProvider implements AliasProvider {
             if (! Table.isNull(table)) return table;
         }
         return null;
+    }
+
+    public AliasProvider[] providers() {
+        return Arrays.copyOf(providers, providers.length);
     }
 }

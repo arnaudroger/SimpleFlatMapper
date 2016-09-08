@@ -12,8 +12,9 @@ import java.util.List;
 import java.util.TimeZone;
 
 public final class JavaTimeHelper {
-    private JavaTimeHelper (){
-    }
+
+    private JavaTimeHelper () {}
+
     public static DateTimeFormatter getDateTimeFormatter(Object... properties) {
 
         ZoneId zoneId = getZoneId(properties);

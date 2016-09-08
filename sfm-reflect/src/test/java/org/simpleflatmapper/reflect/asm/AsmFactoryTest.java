@@ -13,6 +13,7 @@ import org.simpleflatmapper.reflect.getter.OrdinalEnumGetter;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbObject.Type;
+import org.simpleflatmapper.util.UnaryFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -87,4 +88,24 @@ public class AsmFactoryTest {
 	}
 	
 
+	@Test
+	public void testRegisterOrCreate() {
+		AsmFactory asmFactory = new AsmFactory(getClass().getClassLoader());
+
+		MyService[] services = new MyService[] {new MyService(), new MyService() };
+		UnaryFactory<AsmFactory, MyService> factory = new UnaryFactory<AsmFactory, MyService>() {
+			int i = 0;
+
+			@Override
+			public MyService newInstance(AsmFactory asmFactory) {
+				return services[i++];
+			}
+		};
+		assertSame(services[0], asmFactory.registerOrCreate(MyService.class, factory));
+		assertSame(services[0], asmFactory.registerOrCreate(MyService.class, factory));
+	}
+
+	public static class MyService {
+
+	}
 }

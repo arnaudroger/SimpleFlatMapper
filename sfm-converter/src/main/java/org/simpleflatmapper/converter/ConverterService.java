@@ -21,6 +21,10 @@ public class ConverterService {
     private static final ConverterService INSTANCE = new ConverterService(getConverterFactories());
 
     private static List<ConverterFactory> getConverterFactories() {
+        return getConverterFactories(ServiceLoader.load(ConverterFactoryProducer.class));
+    }
+
+    private static List<ConverterFactory> getConverterFactories(ServiceLoader<ConverterFactoryProducer> serviceLoader) {
         final List<ConverterFactory> converterFactories = new ArrayList<ConverterFactory>();
 
         Consumer<ConverterFactory> factoryConsumer = new Consumer<ConverterFactory>() {
@@ -35,8 +39,6 @@ public class ConverterService {
         //IFJAVA8_START
         new JavaTimeConverterFactoryProducer().produce(factoryConsumer);
         //IFJAVA8_END
-
-        ServiceLoader<ConverterFactoryProducer> serviceLoader = ServiceLoader.load(ConverterFactoryProducer.class);
 
         Iterator<ConverterFactoryProducer> iterator = serviceLoader.iterator();
 

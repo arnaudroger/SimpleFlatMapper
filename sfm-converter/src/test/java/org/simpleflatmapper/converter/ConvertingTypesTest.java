@@ -13,6 +13,8 @@ public class ConvertingTypesTest {
         ConvertingTypes stringToDate = new ConvertingTypes(String.class, Date.class);
         ConvertingTypes dateToString  = new ConvertingTypes(Date.class, String.class);
 
+        assertEquals(256, stringToDate.score(stringToDate).getFromScore());
+        assertEquals(256, stringToDate.score(stringToDate).getToScore());
         assertEquals(256 * 256 + 256, stringToDate.score(stringToDate).getScore());
         assertEquals(256 * 256 + 256, dateToString.score(dateToString).getScore());
         assertEquals(-1, stringToDate.score(dateToString).getScore());

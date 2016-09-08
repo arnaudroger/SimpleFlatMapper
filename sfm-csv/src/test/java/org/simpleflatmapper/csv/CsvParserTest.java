@@ -206,7 +206,7 @@ public class CsvParserTest {
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
 		assertEquals("value3", tuple2.third());
-		assertEquals("value4", tuple2.forth());
+		assertEquals("value4", tuple2.fourth());
 		assertFalse(iterator.hasNext());
 	}
 
@@ -220,7 +220,7 @@ public class CsvParserTest {
 		assertEquals("value1", tuple2.first());
 		assertEquals("value2", tuple2.second());
 		assertEquals("value3", tuple2.third());
-		assertEquals("value4", tuple2.forth());
+		assertEquals("value4", tuple2.fourth());
 		assertEquals("value5", tuple2.fifth());
 		assertFalse(iterator.hasNext());
 	}
@@ -233,7 +233,7 @@ public class CsvParserTest {
         assertEquals("value1", tuple6.first());
         assertEquals("value2", tuple6.second());
         assertEquals("value3", tuple6.third());
-        assertEquals("value4", tuple6.forth());
+        assertEquals("value4", tuple6.fourth());
         assertEquals("value5", tuple6.fifth());
         assertEquals("value6", tuple6.sixth());
     }
@@ -247,7 +247,7 @@ public class CsvParserTest {
         assertEquals("value1", tuple.first());
         assertEquals("value2", tuple.second());
         assertEquals("value3", tuple.third());
-        assertEquals("value4", tuple.forth());
+        assertEquals("value4", tuple.fourth());
         assertEquals("value5", tuple.fifth());
         assertEquals("value6", tuple.sixth());
         assertEquals("value7", tuple.seventh());
@@ -262,7 +262,7 @@ public class CsvParserTest {
         assertEquals("value1", tuple.first());
         assertEquals("value2", tuple.second());
         assertEquals("value3", tuple.third());
-        assertEquals("value4", tuple.forth());
+        assertEquals("value4", tuple.fourth());
         assertEquals("value5", tuple.fifth());
         assertEquals("value6", tuple.sixth());
         assertEquals("value7", tuple.seventh());

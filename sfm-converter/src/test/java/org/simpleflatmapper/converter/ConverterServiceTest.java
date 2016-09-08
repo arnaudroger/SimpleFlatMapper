@@ -3,25 +3,57 @@ package org.simpleflatmapper.converter;
 import org.junit.Test;
 
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.URL;
 
+import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.ServiceLoader;
 import java.util.UUID;
 
 //IFJAVA8_START
 import java.time.*;
 //IFJAVA8_END
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 import static org.simpleflatmapper.converter.test.ConverterServiceTestHelper.testConverter;
 
 public class ConverterServiceTest {
 
     public enum ENUM {
         type1, type2
+    }
+
+
+    @Test
+    public void testServiceLoader() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, MalformedURLException {
+        Method getConverterFactories = ConverterService.class.getDeclaredMethod("getConverterFactories", ServiceLoader.class);
+        getConverterFactories.setAccessible(true);
+
+        ServiceLoader<ConverterFactoryProducer> serviceLoader = ServiceLoader.load(ConverterFactoryProducer.class, new URLClassLoader(new URL[0], getClass().getClassLoader()));
+
+        List<ConverterFactory> defaultList = (List<ConverterFactory>) getConverterFactories.invoke(null, serviceLoader);
+
+        assertFalse(defaultList.isEmpty());
+
+        System.out.println("defaultList = " + defaultList.size());
+
+        URLClassLoader loader = new URLClassLoader(new URL[]{new URL("file:src/test/resources/sl1/")}, getClass().getClassLoader());
+        ServiceLoader<ConverterFactoryProducer> serviceLoader2 = ServiceLoader.load(ConverterFactoryProducer.class, loader);
+
+        List<ConverterFactory> slList = (List<ConverterFactory>) getConverterFactories.invoke(null, serviceLoader2);
+
+        assertFalse(defaultList.isEmpty());
+        assertEquals(defaultList.size() + 1, slList.size());
+
+
     }
 
     @Test

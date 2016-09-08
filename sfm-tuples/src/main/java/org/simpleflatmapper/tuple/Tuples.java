@@ -4,7 +4,10 @@ package org.simpleflatmapper.tuple;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-public class Tuples {
+public final class Tuples {
+
+    private Tuples() {
+    }
 
     public static ParameterizedType typeDef(final Type... types) {
         return tupleImplementationTypeDef(getTupleClass(types.length), types);

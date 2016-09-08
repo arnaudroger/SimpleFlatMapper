@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 
 import static org.junit.Assert.*;
 
@@ -18,6 +19,17 @@ public class TuplesTest {
         } catch(Exception e) {
             // expected
         }
+    }
+
+    @Test
+    public void typeDef() {
+        ParameterizedType parameterizedType = Tuples.typeDef(String.class, Integer.class);
+
+        assertEquals(Tuple2.class, parameterizedType.getRawType());
+        assertNull(parameterizedType.getOwnerType());
+        assertEquals(2, parameterizedType.getActualTypeArguments().length);
+        assertEquals(String.class, parameterizedType.getActualTypeArguments()[0]);
+        assertEquals(Integer.class, parameterizedType.getActualTypeArguments()[1]);
     }
 
     Tuple2<String, String> tuple2 = new Tuple2<String, String>("aa", "bb");
@@ -75,6 +87,14 @@ public class TuplesTest {
             Tuple2<?, ?> sameTuple = (Tuple2<?, ?>) m.invoke(currentTuple, "v" + i);
             Tuple2<?, ?> diffTuple = (Tuple2<?, ?>) m.invoke(currentTuple, "d" + i);
 
+            for(int j = 0; j < Math.min(i, 10); j++) {
+                String m1 =  "getElement" + (j);
+                String m2 = getNumberMethod(j + 1);
+
+                assertEquals(nextTuple.getClass().getMethod(m1).invoke(nextTuple), nextTuple.getClass().getMethod(m2).invoke(nextTuple));
+
+            }
+
 
             assertEquals(nextTuple, sameTuple);
             assertEquals(nextTuple.hashCode(), sameTuple.hashCode());
@@ -86,5 +106,21 @@ public class TuplesTest {
 
             currentTuple = nextTuple;
         }
+    }
+
+    private String getNumberMethod(int i) {
+        switch (i) {
+            case 1: return "first";
+            case 2: return "second";
+            case 3: return "third";
+            case 4: return "fourth";
+            case 5: return "fifth";
+            case 6: return "sixth";
+            case 7: return "seventh";
+            case 8: return "eighth";
+            case 9: return "ninth";
+            case 10: return "tenth";
+        }
+        throw new IllegalArgumentException("  " + i);
     }
 }

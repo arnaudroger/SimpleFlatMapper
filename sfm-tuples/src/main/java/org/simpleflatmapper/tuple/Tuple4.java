@@ -13,7 +13,7 @@ public class Tuple4<T1, T2, T3, T4> extends Tuple3<T1, T2, T3> {
         return element3;
     }
 
-    public final T4 forth() {
+    public final T4 fourth() {
         return getElement3();
     }
 

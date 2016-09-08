@@ -149,7 +149,7 @@ public class JdbcMapperTupleTest {
 							assertEquals("1", tuple.first());
 							assertEquals("2", tuple.second());
 							assertEquals(3l, tuple.third().longValue());
-							assertEquals(4, tuple.forth().intValue());
+							assertEquals(4, tuple.fourth().intValue());
 							assertEquals(3.3, tuple.fifth().floatValue(), 0.0001);
 						} finally {
 							try { rs.close(); } catch (Exception e) {}

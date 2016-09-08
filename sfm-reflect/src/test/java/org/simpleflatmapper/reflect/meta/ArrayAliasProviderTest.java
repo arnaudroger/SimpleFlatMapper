@@ -32,6 +32,13 @@ public class ArrayAliasProviderTest {
         assertEquals("getAliasForField", p.getAliasForField(null));
         assertEquals("getAliasForMethod", p.getAliasForMethod(null));
         assertSame(table, p.getTable(null));
+
+
+        ArrayAliasProvider p2 = new ArrayAliasProvider(new DefaultAliasProvider());
+
+        assertNull(p2.getAliasForField(null));
+        assertNull(p2.getAliasForMethod(null));
+        assertNull(p2.getTable(null));
     }
 
 }

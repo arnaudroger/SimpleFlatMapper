@@ -2,7 +2,9 @@ package org.simpleflatmapper.converter;
 
 import org.simpleflatmapper.util.ErrorHelper;
 
-public class UncheckedConverterHelper {
+public final class UncheckedConverterHelper {
+
+    private UncheckedConverterHelper() {}
 
     public static <I, O> UncheckedConverter<I, O> toUnchecked(final Converter<I, O> converter) {
         return new UncheckedConverterImpl<I, O>(converter);

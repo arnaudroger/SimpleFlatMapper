@@ -13,8 +13,9 @@ import java.util.List;
 import java.util.TimeZone;
 
 public final class JodaTimeHelper {
-    private JodaTimeHelper() {
-    }
+
+    private JodaTimeHelper() {}
+
     public static DateTimeFormatter getDateTimeFormatter(Object... properties) {
 
         final DateTimeZone dateTimeZone = getDateTimeZone(properties);

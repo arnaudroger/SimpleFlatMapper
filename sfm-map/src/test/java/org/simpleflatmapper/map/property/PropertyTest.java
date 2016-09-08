@@ -3,8 +3,6 @@ package org.simpleflatmapper.map.property;
 import org.junit.Test;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.property.time.JavaDateTimeFormatterProperty;
-import org.simpleflatmapper.map.property.time.JavaZoneIdProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
@@ -18,6 +16,8 @@ import java.text.SimpleDateFormat;
 //IFJAVA8_START
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import org.simpleflatmapper.map.property.time.JavaDateTimeFormatterProperty;
+import org.simpleflatmapper.map.property.time.JavaZoneIdProperty;
 //IFJAVA8_END
 
 import java.util.TimeZone;

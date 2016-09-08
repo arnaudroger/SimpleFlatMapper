@@ -29,7 +29,7 @@ public class GetterProperty {
     }
 
     public String toString() {
-        return "Getter{Getter}";
+        return "Getter{" + getter + "}";
     }
 
     public static Type getReturnType(Getter<?, ?> getter) {

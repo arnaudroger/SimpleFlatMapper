@@ -29,7 +29,7 @@ public class KeyProperty {
 
     @Override
     public String toString() {
-        return "Key{}";
+        return "Key{" + appliesTo + "}";
     }
 
     @Override

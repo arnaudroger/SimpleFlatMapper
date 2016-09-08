@@ -15,4 +15,9 @@ public class JavaDateTimeFormatterProperty implements Supplier<DateTimeFormatter
     public DateTimeFormatter get() {
         return formatter;
     }
+
+    @Override
+    public String toString() {
+        return "DateTimeFormatter{" + formatter + '}';
+    }
 }

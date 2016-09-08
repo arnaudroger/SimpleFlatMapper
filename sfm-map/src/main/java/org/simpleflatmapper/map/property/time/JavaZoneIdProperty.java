@@ -16,4 +16,9 @@ public class JavaZoneIdProperty implements Supplier<ZoneId> {
     public ZoneId get() {
         return zoneId;
     }
+
+    @Override
+    public String toString() {
+        return "ZoneId{" + zoneId.getId() + '}';
+    }
 }

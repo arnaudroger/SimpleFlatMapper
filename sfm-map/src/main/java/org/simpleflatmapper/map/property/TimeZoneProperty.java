@@ -21,7 +21,6 @@ public class TimeZoneProperty implements Supplier<TimeZone> {
 
     @Override
     public String toString() {
-        return "TimeZone{"+ timeZone.getDisplayName() +
-                '}';
+        return "TimeZone{"+ timeZone.getID() + '}';
     }
 }

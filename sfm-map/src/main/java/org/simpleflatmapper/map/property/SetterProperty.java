@@ -17,6 +17,6 @@ public class SetterProperty {
 
     @Override
     public String toString() {
-        return "Setter{Setter}";
+        return "Setter{" + setter + "}";
     }
 }

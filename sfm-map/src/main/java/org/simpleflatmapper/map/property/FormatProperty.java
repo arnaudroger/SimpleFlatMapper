@@ -14,4 +14,9 @@ public class FormatProperty {
     public Format format() {
         return format;
     }
+
+    @Override
+    public String toString() {
+        return "Format{" + format + '}';
+    }
 }

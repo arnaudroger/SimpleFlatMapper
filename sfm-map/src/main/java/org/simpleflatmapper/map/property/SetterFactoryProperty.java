@@ -15,6 +15,6 @@ public class SetterFactoryProperty {
 
     @Override
     public String toString() {
-        return "SetterFactory{SetterFactory}";
+        return "SetterFactory{" + setterFactory + "}";
     }
 }

@@ -18,6 +18,6 @@ public class DefaultDateFormatProperty implements DefaultDateFormatSupplier {
 
     @Override
     public String toString() {
-        return "DefaultDateFormatProperty{'" + pattern + "'}";
+        return "DefaultDateFormat{'" + pattern + "'}";
     }
 }

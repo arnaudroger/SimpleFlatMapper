@@ -17,6 +17,6 @@ public class FieldMapperProperty {
 
     @Override
     public String toString() {
-        return "FieldMapper{FieldMapper}";
+        return "FieldMapper{" + fieldMapper + "}";
     }
 }

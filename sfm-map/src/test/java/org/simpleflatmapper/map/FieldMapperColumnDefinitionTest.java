@@ -54,6 +54,11 @@ public class FieldMapperColumnDefinitionTest {
             public boolean test(PropertyMeta<?, ?> propertyMeta) {
                 return false;
             }
+
+            @Override
+            public String toString() {
+                return "K";
+            }
         };
         FieldMapperColumnDefinition<SampleFieldKey> compose =
                 FieldMapperColumnDefinition.<SampleFieldKey>identity().addRename("blop").addGetter(getter).addFieldMapper(fieldMapper).addGetterFactory(getterFactory).addKey(appliesTo);
@@ -70,7 +75,7 @@ public class FieldMapperColumnDefinitionTest {
 
         assertTrue(FieldMapperColumnDefinition.<SampleFieldKey>identity().addIgnore().ignore());
 
-        assertEquals("ColumnDefinition{Rename{'blop'}, Getter{Getter}, FieldMapper{FieldMapper}, GetterFactory{GetterFactory}, Key{}, Ignore{}}", compose.addIgnore().toString());
+        assertEquals("ColumnDefinition{Rename{'blop'}, Getter{Getter}, FieldMapper{FieldMapper}, GetterFactory{GetterFactory}, Key{K}, Ignore{}}", compose.addIgnore().toString());
 
         assertTrue(compose.isKey());
         assertFalse(FieldMapperColumnDefinition.<SampleFieldKey>identity().isKey());

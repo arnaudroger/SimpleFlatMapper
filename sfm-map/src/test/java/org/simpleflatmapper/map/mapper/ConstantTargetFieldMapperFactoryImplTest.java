@@ -90,7 +90,7 @@ public class ConstantTargetFieldMapperFactoryImplTest {
         try {
             PropertyMeta<Object, Object> pm = mock(PropertyMeta.class);
             PropertyMapping<Object, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> propertyMapping =
-                    new PropertyMapping<>(pm, new SampleFieldKey("hh", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+                    new PropertyMapping<Object, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(pm, new SampleFieldKey("hh", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
             factory.newFieldMapper(propertyMapping, null, RethrowMapperBuilderErrorHandler.INSTANCE);
             fail();
         } catch (MapperBuildingException e) {

@@ -7,6 +7,7 @@ import org.simpleflatmapper.util.TupleHelper;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TupleHelperTest {
@@ -22,6 +23,19 @@ public class TupleHelperTest {
 
             currentTuple = nextTuple;
         }
+
+        assertFalse(TupleHelper.isTuple(String.class));
     }
+
+
+    //IFJAVA8_START
+    @Test
+    public void testIsJoolTuple() {
+        TupleHelper.isTuple(org.jooq.lambda.tuple.Tuple2.class);
+        TupleHelper.isTuple(new org.jooq.lambda.tuple.Tuple0() {
+        }.getClass());
+    }
+    //IFJAVA8_END
+
 
 }

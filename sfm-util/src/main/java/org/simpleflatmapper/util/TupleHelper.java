@@ -4,6 +4,8 @@ import java.lang.reflect.Type;
 
 public class TupleHelper {
 
+    private TupleHelper() {}
+
     public static boolean isTuple(Type type) {
         return isSfmTuple(type) || isJoolTuple(type);
     }

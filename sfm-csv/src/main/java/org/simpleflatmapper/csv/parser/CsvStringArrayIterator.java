@@ -18,7 +18,7 @@ public class CsvStringArrayIterator implements Iterator<String[]> {
 
     @SuppressWarnings("unchecked")
     public CsvStringArrayIterator(CsvReader csvReader) {
-        cellConsumer = new StringArrayConsumer(new RowHandler<String[]>() {
+        cellConsumer = StringArrayConsumer.newInstance(new RowHandler<String[]>() {
             @Override
             public void handle(String[] strings) throws Exception {
                 value = strings;

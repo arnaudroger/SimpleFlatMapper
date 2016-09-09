@@ -90,12 +90,12 @@ public final class CsvReader implements Iterable<String[]> {
 	}
 
 	public <RH extends RowHandler<String[]>> RH read(RH handler) throws IOException {
-		parseAll(new StringArrayConsumer<RH>(handler));
+		parseAll(StringArrayConsumer.newInstance(handler));
 		return handler;
 	}
 
 	public <RH extends RowHandler<String[]>> RH read(RH handler, int limit) throws IOException {
-		parseRows(new StringArrayConsumer<RH>(handler), limit);
+		parseRows(StringArrayConsumer.newInstance(handler), limit);
 		return handler;
 	}
 
@@ -119,7 +119,7 @@ public final class CsvReader implements Iterable<String[]> {
 		@Override
 		public boolean tryAdvance(Consumer<? super String[]> action) {
 			try {
-				return reader.parseRow(new StringArrayConsumer<RowHandler<String[]>>((strings) -> action.accept(strings)));
+				return reader.parseRow(StringArrayConsumer.newInstance((strings) -> action.accept(strings)));
 			} catch (IOException e) {
                return ErrorHelper.rethrow(e);
 			}
@@ -128,7 +128,7 @@ public final class CsvReader implements Iterable<String[]> {
 		@Override
 		public void forEachRemaining(Consumer<? super String[]> action) {
 			try {
-				reader.parseAll(new StringArrayConsumer<RowHandler<String[]>>((strings) -> action.accept(strings)));
+				reader.parseAll(StringArrayConsumer.newInstance((strings) -> action.accept(strings)));
 			} catch (IOException e) {
                 ErrorHelper.rethrow(e);
 			}

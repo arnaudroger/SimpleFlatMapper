@@ -4,42 +4,55 @@ import org.simpleflatmapper.csv.impl.cellreader.StringCellValueReader;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.RowHandler;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public final class StringArrayConsumer<RH extends RowHandler<String[]>> implements CellConsumer {
+
+	public static final int DEFAULT_MAX_NUMBER_OF_CELL_PER_ROW = 64 * 1024 * 1024;
 	private final RH handler;
-	private String[] currentRow = new String[8];
+	private final int maxNumberOfCellPerRow;
 	private int currentIndex;
+	private int currentLength = 8;
+	private String[] currentRow = new String[currentLength];
 
 
 	public StringArrayConsumer(RH handler) {
+		this(handler, DEFAULT_MAX_NUMBER_OF_CELL_PER_ROW);
+	}
+	public StringArrayConsumer(RH handler, int maxNumberOfCellPerRow) {
 		this.handler = handler;
+		this.maxNumberOfCellPerRow = maxNumberOfCellPerRow;
 	}
 
 	@Override
 	public void newCell(char[] chars, int offset, int length) {
-		if (currentIndex >= currentRow.length) {
-			currentRow = Arrays.copyOf(currentRow, currentRow.length * 2);
+		ensureCapacity();
+		currentRow[currentIndex] = StringCellValueReader.readString(chars, offset, length);
+		currentIndex ++;
+	}
+
+	private void ensureCapacity() {
+		if (currentIndex >= currentLength) {
+			if (currentLength >= maxNumberOfCellPerRow) {
+				throw new ArrayIndexOutOfBoundsException("Reach maximum number of cell per row " + currentIndex);
+			}
+			currentLength *= 2;
+			currentRow = Arrays.copyOf(currentRow, currentLength);
 		}
-		currentRow[currentIndex++] = StringCellValueReader.readString(chars, offset, length);
 	}
 
 	@Override
 	public void endOfRow() {
 		try {
-			String[] result = Arrays.copyOf(currentRow, currentIndex);
-			handler.handle(result);
-			resetRow(currentRow, currentIndex);
-			currentIndex = 0;
-		} catch (Exception e) {
-            ErrorHelper.rethrow(e);
-		}
+			_endOfRow();
+		} catch (Exception e) { ErrorHelper.rethrow(e); }
 	}
 
-	private void resetRow(String[] row, int currentIndex) {
-		for(int i = 0; i < currentIndex; i++) {
-            row[i] = null;
-        }
+	private void _endOfRow() throws Exception {
+		handler.handle(Arrays.copyOf(currentRow, currentIndex));
+		Arrays.fill(currentRow, 0, currentIndex, null);
+		currentIndex = 0;
 	}
 
 	public RH handler() {
@@ -48,13 +61,9 @@ public final class StringArrayConsumer<RH extends RowHandler<String[]>> implemen
 
 	@Override
 	public void end() {
-		if (!isEmpty()) {
+		if (currentIndex > 0) {
 			endOfRow();
 		}
-	}
-
-	private boolean isEmpty() {
-		return currentIndex == 0;
 	}
 
 	public static <RH extends RowHandler<String[]>> StringArrayConsumer<RH> newInstance(RH handler) {

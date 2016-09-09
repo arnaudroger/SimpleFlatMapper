@@ -47,10 +47,12 @@ public class CsvColumnDefinitionTest {
                 }).addCustomCellValueReaderFactory(cellValueReaderFactory).addTimeZone(tz).addKey(appliesTo);
 
         assertEquals("blop", compose.rename(new CsvColumnKey("bar", -1)).getName());
+        assertEquals("blop", CsvColumnDefinition.renameDefinition("blop").rename(new CsvColumnKey("bar", -1)).getName());
         assertArrayEquals(new String[] {"yyyyMM"}, compose.dateFormats());
         assertEquals(new Integer(3), compose.getCustomReader().read(null, 0, 0, null));
         assertEquals(cellValueReaderFactory, compose.getCustomCellValueReaderFactory());
         assertEquals(tz, compose.getTimeZone());
+        assertEquals(tz, CsvColumnDefinition.timeZoneDefinition(tz).getTimeZone());
 
         assertTrue(compose.hasCustomSource());
         assertFalse(compose.ignore());
@@ -59,10 +61,27 @@ public class CsvColumnDefinitionTest {
         assertTrue(CsvColumnDefinition.identity().addIgnore().ignore());
 
         assertTrue(compose.isKey());
+
+        assertTrue(CsvColumnDefinition.key(appliesTo).isKey());
         assertSame(appliesTo, compose.keyAppliesTo());
 
         final String toString = compose.addIgnore().toString();
         System.out.println("toString = " + toString);
 
     }
+
+
+    @Test
+    public void testIdentity() {
+        CsvColumnDefinition identity = CsvColumnDefinition.identity();
+        try {
+            identity.dateFormats();
+            fail();
+        } catch (IllegalStateException e) {
+        }
+
+        assertNull(identity.getCustomCellValueReaderFactory());
+        assertNull(identity.getCustomReader());
+    }
+
 }

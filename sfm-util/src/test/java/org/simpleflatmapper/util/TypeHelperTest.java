@@ -3,6 +3,7 @@ package org.simpleflatmapper.util;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
 
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -39,6 +40,13 @@ public class TypeHelperTest {
 
 		}
 
+		assertEquals(String[].class, TypeHelper.toClass(new GenericArrayType() {
+			@Override
+			public Type getGenericComponentType() {
+				return String.class;
+			}
+		}));
+
 	}
 
 	@Test
@@ -58,6 +66,14 @@ public class TypeHelperTest {
 
 		assertTrue(TypeHelper.isEnum(E.class));
 		assertFalse(TypeHelper.isEnum(BigDecimal.class));
+	}
+
+
+	@Test
+	public void testIsAssignable() {
+		assertTrue(TypeHelper.isAssignable((Type)int.class, (Type)Integer.class));
+		assertTrue(TypeHelper.isAssignable((Type)Number.class, (Type)Integer.class));
+		assertFalse(TypeHelper.isAssignable((Type)Integer.class, (Type)Number.class));
 	}
 
 	@Test
@@ -114,6 +130,7 @@ public class TypeHelperTest {
 	@Test
 	public void testGetComponentTypeOfList() {
 		assertEquals(String.class, TypeHelper.getComponentTypeOfListOrArray(new TypeReference<List<String>>(){}.getType()));
+		assertEquals(Object.class, TypeHelper.getComponentTypeOfListOrArray(List.class));
 	}
 
 	@Test
@@ -123,9 +140,15 @@ public class TypeHelperTest {
 
 	@Test
 	public void testGetKeyValueTypeOfMapOnGenericInterface() {
+		TypeHelper.MapEntryTypes typeOfMap = TypeHelper.getKeyValueTypeOfMap(new TypeReference<Map<String, Integer>>() {
+		}.getType());
 		assertEquals(new TypeHelper.MapEntryTypes(String.class, Integer.class),
-				TypeHelper.getKeyValueTypeOfMap(new TypeReference<Map<String, Integer>>() {
-				}.getType()));
+				typeOfMap);
+		assertEquals(String.class, typeOfMap.getKeyType());
+		assertEquals(Integer.class, typeOfMap.getValueType());
+
+		assertEquals(new TypeHelper.MapEntryTypes(Object.class, Object.class),
+				TypeHelper.getKeyValueTypeOfMap(Map.class));
 	}
 	@Test
 	public void testGetKeyValueTypeOfMapOnSpecifiedClass() {

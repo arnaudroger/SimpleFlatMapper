@@ -2,12 +2,11 @@ package org.simpleflatmapper.util;
 
 
 
-public class SupplierHelper {
-    public static boolean isSupplierOf(Object potentialSupplier, Class<?> supplyClass) {
-        if (potentialSupplier.getClass() == null || supplyClass == null) {
-            return false;
-        }
+public final class SupplierHelper {
 
+    private SupplierHelper() {}
+
+    public static boolean isSupplierOf(Object potentialSupplier, Class<?> supplyClass) {
         if (!Supplier.class.isInstance(potentialSupplier)) {
             return false;
         }

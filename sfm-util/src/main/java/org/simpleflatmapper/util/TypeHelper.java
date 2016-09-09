@@ -9,7 +9,9 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.*;
 
-public class TypeHelper {
+public final class TypeHelper {
+
+	private TypeHelper() {}
 
 	@SuppressWarnings("unchecked")
 	public static <T> Class<T> toClass(Type target) {
@@ -90,10 +92,13 @@ public class TypeHelper {
 		} else  {
 			Type[] parameterTypes = getGenericParameterForClass(outType, Collection.class);
 			if (parameterTypes != null) {
-				return parameterTypes[0];
+				Type parameterType = parameterTypes[0];
+				if (parameterType != null) {
+					return parameterType;
+				}
 			}
 		}
-		return null;
+		return Object.class;
 	}
 
 	public static MapEntryTypes getKeyValueTypeOfMap(Type outType) {
@@ -101,7 +106,7 @@ public class TypeHelper {
 		if (parameterTypes != null) {
 			return new MapEntryTypes(parameterTypes[0], parameterTypes[1]);
 		}
-		return null;
+		return MapEntryTypes.OBJECT_OBJECT;
 	}
 
 
@@ -211,6 +216,7 @@ public class TypeHelper {
 	}
 
 	public static class MapEntryTypes {
+		public static final MapEntryTypes OBJECT_OBJECT = new MapEntryTypes(Object.class, Object.class);
 		private final Type keyType;
 		private final Type valueType;
 		public MapEntryTypes(Type keyType, Type valueType) {

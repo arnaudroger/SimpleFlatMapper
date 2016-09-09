@@ -34,6 +34,10 @@ public class CsvColumnKeyTest {
     }
 
     @Test
+    public void testGetType() {
+        assertEquals(CharSequence.class, new CsvColumnKey("col", 2).getType(null));
+    }
+    @Test
     public void testToString() throws Exception {
         assertEquals("CsvColumnKey{name='col2', index=2}", new CsvColumnKey("col2", 2).toString());
     }

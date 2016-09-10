@@ -15,7 +15,7 @@ public abstract class CharBuffer {
 	}
 	
 
-	public abstract boolean fillBuffer() throws IOException;
+	public abstract int fillBuffer() throws IOException;
 	public abstract int shiftBufferToMark() throws BufferOverflowException;
 
 	public final void mark(int index) {

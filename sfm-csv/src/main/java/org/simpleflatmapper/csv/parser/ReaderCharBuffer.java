@@ -17,14 +17,10 @@ public final class ReaderCharBuffer extends CharBuffer {
 		calculateResizeThreshold();
 	}
 
-	public boolean fillBuffer() throws IOException {
+	public int fillBuffer() throws IOException {
 		int length = reader.read(buffer, bufferSize, buffer.length - bufferSize);
-		if (length != -1) {
-			bufferSize += length;
-			return true;
-		} else {
-			return false;
-		}
+		bufferSize += Math.max(0, length);
+		return length;
 	}
 
 	public int shiftBufferToMark() throws BufferOverflowException {

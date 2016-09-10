@@ -3,6 +3,7 @@ package org.simpleflatmapper.csv;
 import org.simpleflatmapper.csv.parser.CellConsumer;
 import org.simpleflatmapper.csv.parser.CsvCharConsumer;
 import org.simpleflatmapper.csv.parser.CsvStringArrayIterator;
+import org.simpleflatmapper.csv.parser.NullConsumer;
 import org.simpleflatmapper.csv.parser.StringArrayConsumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.RowHandler;
@@ -19,21 +20,6 @@ import java.util.stream.StreamSupport;
 
 
 public final class CsvReader implements Iterable<String[]> {
-
-	private final static CellConsumer DUMMY_CONSUMER = new CellConsumer() {
-
-		@Override
-		public void newCell(char[] chars, int offset, int length) {
-		}
-
-		@Override
-		public void endOfRow() {
-		}
-
-		@Override
-		public void end() {
-		}
-	};
 
 	private final CsvCharConsumer consumer;
 
@@ -52,7 +38,7 @@ public final class CsvReader implements Iterable<String[]> {
 			throws IOException {
 		do {
 			consumer.consumeAllBuffer(cellConsumer);
-		} while (consumer.refillBuffer());
+		} while (consumer.refillBuffer() >= 0);
 		consumer.finish(cellConsumer);
 
 		return cellConsumer;
@@ -71,7 +57,7 @@ public final class CsvReader implements Iterable<String[]> {
 			if (consumer.consumeToNextRow(cellConsumer)) {
 				return true;
 			}
-		} while (consumer.refillBuffer());
+		} while (consumer.refillBuffer() >= 0);
 
 		consumer.finish(cellConsumer);
 		return false;
@@ -79,7 +65,7 @@ public final class CsvReader implements Iterable<String[]> {
 
 
 	public void skipRows(int n) throws IOException {
-		parseRows(DUMMY_CONSUMER, n);
+		parseRows(NullConsumer.INSTANCE, n);
 	}
 
 	public <CC extends CellConsumer> CC  parseRows(CC cellConsumer, int limit) throws IOException {

@@ -497,19 +497,12 @@ public final class CsvParser {
         //IFJAVA8_END
 
         private CsvCharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
-            if (isStandardConsumer()) {
-                return new StandardCsvCharConsumer(charBuffer);
-            } else if (!trimSpaces) {
-                    return new ConfigurableCsvCharConsumer(charBuffer, separatorChar, quoteChar);
+			if (!trimSpaces) {
+				return new CsvCharConsumer(charBuffer, separatorChar, quoteChar);
 			} else {
-				return new ConfigurableTrimCsvCharConsumer(charBuffer, separatorChar, quoteChar);
+				return new TrimCsvCharConsumer(charBuffer, separatorChar, quoteChar);
 			}
-
         }
-
-		private boolean isStandardConsumer() {
-			return separatorChar == ',' && quoteChar == '"' && !trimSpaces;
-		}
 
 		public int maxBufferSize() {
 			return maxBufferSize;

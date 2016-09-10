@@ -15,8 +15,8 @@ public final class CharSequenceCharBuffer extends CharBuffer {
 		super(toCharArray(str), str.length());
 	}
 
-	public boolean fillBuffer() throws IOException {
-		return false;
+	public int fillBuffer() throws IOException {
+		return -1;
 	}
 
 	public int shiftBufferToMark() throws BufferOverflowException {

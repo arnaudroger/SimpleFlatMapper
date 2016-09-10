@@ -496,13 +496,21 @@ public final class CsvParser {
 				reader -> stream(reader).onClose(() -> { try { reader.close(); } catch (IOException e) {} });
         //IFJAVA8_END
 
-        private CsvCharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
-			if (!trimSpaces) {
-				return new CsvCharConsumer(charBuffer, separatorChar, quoteChar);
+        private CharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
+			if (isCsv()) {
+				return new CsvCharConsumer(charBuffer);
 			} else {
-				return new TrimCsvCharConsumer(charBuffer, separatorChar, quoteChar);
+				if (trimSpaces) {
+					return new TrimConfigurableCharConsumer(charBuffer, separatorChar, quoteChar);
+				} else {
+					return new ConfigurableCharConsumer(charBuffer, separatorChar, quoteChar);
+				}
 			}
         }
+
+		private boolean isCsv() {
+			return !trimSpaces && separatorChar == ',' && quoteChar == '"';
+		}
 
 		public int maxBufferSize() {
 			return maxBufferSize;

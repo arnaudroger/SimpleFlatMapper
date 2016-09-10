@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.simpleflatmapper.csv.parser.CsvCharConsumer;
+import org.simpleflatmapper.csv.parser.CharConsumer;
 import org.simpleflatmapper.csv.parser.CsvStringArrayIterator;
 import org.simpleflatmapper.csv.parser.NullConsumer;
 import org.simpleflatmapper.csv.parser.StringArrayConsumer;
@@ -21,9 +21,9 @@ import java.util.stream.StreamSupport;
 
 public final class CsvReader implements Iterable<String[]> {
 
-	private final CsvCharConsumer consumer;
+	private final CharConsumer consumer;
 
-	public CsvReader(CsvCharConsumer charConsumer) {
+	public CsvReader(CharConsumer charConsumer) {
 		this.consumer = charConsumer;
 	}
 

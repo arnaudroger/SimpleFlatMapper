@@ -5,13 +5,16 @@ package org.simpleflatmapper.csv.parser;
 /**
  * Consume the charBuffer.
  */
-public class CsvCharConsumer extends CharConsumer {
+public class ConfigurableCharConsumer extends CharConsumer {
 
-	private static final char separatorChar = ',';
-	private static final char escapeChar  = '"';
 
-	public CsvCharConsumer(CharBuffer csvBuffer) {
+	protected final char separatorChar;
+	protected final char escapeChar;
+
+	public ConfigurableCharConsumer(CharBuffer csvBuffer, char separatorChar, char escapeChar) {
 		super(csvBuffer);
+		this.separatorChar = separatorChar;
+		this.escapeChar = escapeChar;
 	}
 
 	public final void consumeAllBuffer(CellConsumer cellConsumer) {

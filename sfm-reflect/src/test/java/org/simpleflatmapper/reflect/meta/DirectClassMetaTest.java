@@ -5,6 +5,8 @@ import org.simpleflatmapper.reflect.getter.IdentityGetter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
 public class DirectClassMetaTest {
@@ -30,6 +32,15 @@ public class DirectClassMetaTest {
         assertArrayEquals(new String[] {""},  direct.generateHeaders());
 
         assertEquals(".", property.getPath());
+
+        assertEquals(Arrays.asList(), direct.getInstantiatorDefinitions());
+        assertEquals(String.class, direct.getType());
+
+        assertEquals(direct, direct);
+        assertNotEquals(direct, ReflectionService.newInstance().getClassMeta(Integer.class));
+        assertEquals(direct.hashCode(), direct.hashCode());
+        assertNotEquals(direct.hashCode(), ReflectionService.newInstance().getClassMeta(Integer.class).hashCode());
+
 
     }
 }

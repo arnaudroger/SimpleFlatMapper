@@ -164,7 +164,7 @@ public class DiscriminatorJdbcBuilder<T> {
             try {
                 return predicate.test(resultSet.getString(discriminatorColumn));
             } catch (SQLException e) {
-                return ErrorHelper.rethrow(e);
+                return ErrorHelper.<Boolean>rethrow(e);
             }
         }
     }

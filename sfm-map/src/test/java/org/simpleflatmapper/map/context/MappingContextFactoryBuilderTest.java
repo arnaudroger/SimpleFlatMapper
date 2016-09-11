@@ -42,15 +42,22 @@ public class MappingContextFactoryBuilderTest {
     }
 
     @Test
-    public void testKeys() {
+    public void testKeys() throws Exception {
         builder.addKey(new SampleFieldKey("k1", 0));
 
         assertFalse(builder.hasNoKeys());
         MappingContextFactory<Object[]> mappingContextFactory = builder.newFactory();
+
+
         assertTrue(mappingContextFactory instanceof BreakDetectorMappingContextFactory);
 
         assertNull(mappingContextFactory.newContext().context(0));
 
+
+        assertTrue(builder.nullChecker().test(new Object[] { null}));
+        assertFalse(builder.nullChecker().test(new Object[] { 123 }));
+
+        assertTrue(builder.breakDetectorGetter().get(mappingContextFactory.newContext()).getBoolean());
 
     }
 

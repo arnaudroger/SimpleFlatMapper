@@ -146,9 +146,7 @@ public class DiscriminatorJdbcBuilder<T> {
 
         @Override
         public String toString() {
-            return "DiscriminatorPredicate{" +
-                    "value='" + value + '\'' +
-                    '}';
+            return "DiscriminatorPredicate{value='" + value + '\'' + '}';
         }
     }
 
@@ -166,8 +164,7 @@ public class DiscriminatorJdbcBuilder<T> {
             try {
                 return predicate.test(resultSet.getString(discriminatorColumn));
             } catch (SQLException e) {
-                ErrorHelper.rethrow(e);
-                return false;
+                return ErrorHelper.rethrow(e);
             }
         }
     }
@@ -201,11 +198,15 @@ public class DiscriminatorJdbcBuilder<T> {
          * @return the current builder
          */
         public DiscriminatorJdbcSubBuilder addMapping(String column, FieldMapperColumnDefinition<JdbcColumnKey> columnDefinition) {
+            initBuilder();
+            builder.addMapping(column, columnDefinition);
+            return this;
+        }
+
+        private void initBuilder() {
             if (builder == null) {
                 builder = jdbcMapperFactory.newBuilder(type);
             }
-            builder.addMapping(column, columnDefinition);
-            return this;
         }
 
         /**
@@ -217,9 +218,7 @@ public class DiscriminatorJdbcBuilder<T> {
          * @return the current builder
          */
         public DiscriminatorJdbcSubBuilder addMapping(String column, int index, FieldMapperColumnDefinition<JdbcColumnKey> columnDefinition) {
-            if (builder == null) {
-                builder = jdbcMapperFactory.newBuilder(type);
-            }
+            initBuilder();
             builder.addMapping(column, index, columnDefinition);
             return this;
         }
@@ -249,7 +248,7 @@ public class DiscriminatorJdbcBuilder<T> {
          * @return the current builder
          */
         public DiscriminatorJdbcSubBuilder when(String value, Class<? extends T> type) {
-            return DiscriminatorJdbcBuilder.this.when(value, type);
+            return when(value, (Type)type);
         }
 
         /**
@@ -259,7 +258,7 @@ public class DiscriminatorJdbcBuilder<T> {
          * @return the current builder
          */
         public DiscriminatorJdbcSubBuilder when(String value, TypeReference<? extends T> type) {
-            return DiscriminatorJdbcBuilder.this.when(value, type);
+            return when(value, type.getType());
         }
 
         /**

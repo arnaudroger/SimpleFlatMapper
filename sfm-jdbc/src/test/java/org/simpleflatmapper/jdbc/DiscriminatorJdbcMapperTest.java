@@ -4,12 +4,14 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.test.beans.Person;
 import org.simpleflatmapper.test.beans.Professor;
 import org.simpleflatmapper.test.beans.Student;
 import org.simpleflatmapper.test.beans.StudentGS;
 import org.simpleflatmapper.test.beans.ProfessorGS;
 import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.Predicate;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -48,15 +50,15 @@ public class DiscriminatorJdbcMapperTest {
                 .when("student", StudentGS.class)
                         .addMapping("person_type")
                         .addMapping("id")
-                        .addMapping("name")
-                .when("professor", ProfessorGS.class)
+                        .addMapping("name", 3, FieldMapperColumnDefinition.<JdbcColumnKey>identity())
+                .when(new Predicate<String>() {
+                    @Override
+                    public boolean test(String s) {
+                        return "professor".equals(s);
+                    }
+                }, ProfessorGS.class)
                 .mapper();
-
-
-
         validateMapper(mapper);
-
-
     }
 
     @Test

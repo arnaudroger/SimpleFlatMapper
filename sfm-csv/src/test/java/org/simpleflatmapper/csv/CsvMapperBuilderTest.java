@@ -151,10 +151,10 @@ public class CsvMapperBuilderTest {
 		});
 		final CsvMapper<Map<String, DbObject>> mapper =
 				builder
-						.addMapping("key1_id")
+						.addMapping("key1_id", new Object[0])
 						.addMapping("key1_name")
 						.addMapping("key2_2_id")
-						.addMapping("key2_2_name")
+						.addMapping("key2_2_name", 3, new Object[0])
 						.mapper();
 
 		final Iterator<Map<String, DbObject>> iterator = mapper.iterator(new StringReader("1,name1,2,name2"));

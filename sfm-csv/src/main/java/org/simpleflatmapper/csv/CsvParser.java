@@ -181,13 +181,6 @@ public final class CsvParser {
 		return dsl().reader(reader);
 	}
 
-	public static Iterator<String[]> iterator(Reader reader) throws IOException {
-		return dsl().iterator(reader);
-	}
-
-	public static <CC extends CellConsumer> CC parse(Reader reader, CC cellConsumer) throws IOException {
-		return dsl().parse(reader, cellConsumer);
-	}
 
     public static CsvReader reader(CharSequence content) throws IOException {
         return dsl().reader(content);
@@ -197,26 +190,45 @@ public final class CsvParser {
 		return dsl().reader(content);
 	}
 
+	public static CloseableCsvReader reader(File file) throws IOException {
+		return dsl().reader(file);
+	}
+
+	public static Iterator<String[]> iterator(Reader reader) throws IOException {
+		return dsl().iterator(reader);
+	}
+
 	public static Iterator<String[]> iterator(CharSequence content) throws IOException {
         return dsl().iterator(content);
     }
 
-    public static <CC extends CellConsumer> CC parse(CharSequence content, CC cellConsumer) throws IOException {
+	public static CloseableIterator<String[]> iterator(File file) throws IOException {
+		return dsl().iterator(file);
+	}
+
+	public static <H extends RowHandler<String[]>> H forEach(Reader reader, H rowHandler) throws IOException {
+		return dsl().forEach(reader, rowHandler);
+	}
+
+	public static <H extends RowHandler<String[]>> H forEach(CharSequence content, H rowHandler) throws IOException {
+		return dsl().forEach(content, rowHandler);
+	}
+
+	public static <H extends RowHandler<String[]>> H forEach(File file, H rowHandler) throws IOException {
+		return dsl().forEach(file, rowHandler);
+	}
+
+	public static <CC extends CellConsumer> CC parse(Reader reader, CC cellConsumer) throws IOException {
+		return dsl().parse(reader, cellConsumer);
+	}
+
+	public static <CC extends CellConsumer> CC parse(CharSequence content, CC cellConsumer) throws IOException {
         return dsl().parse(content, cellConsumer);
     }
 
 	public static <CC extends CellConsumer> CC parse(String content, CC cellConsumer) throws IOException {
 		return dsl().parse(content, cellConsumer);
 	}
-
-	public static CloseableCsvReader reader(File file) throws IOException {
-		return dsl().reader(file);
-	}
-
-	public static CloseableIterator<String[]> iterator(File file) throws IOException {
-		return dsl().iterator(file);
-	}
-
 
 	public static <CC extends CellConsumer> CC parse(File file, CC cellConsumer) throws IOException {
 		return dsl().parse(file, cellConsumer);
@@ -430,6 +442,29 @@ public final class CsvParser {
 		public CloseableIterator<String[]> iterator(File file) throws IOException {
 			return onReader(file, CREATE_CLOSEABLE_ITERATOR);
 		}
+
+		public <H extends RowHandler<String[]>> H forEach(Reader reader, H rowHandler) throws IOException {
+			return reader(reader).read(rowHandler);
+		}
+
+		public <H extends RowHandler<String[]>> H forEach(CharSequence content, H rowHandler) throws IOException {
+			return reader(content).read(rowHandler);
+		}
+
+		public <H extends RowHandler<String[]>> H forEach(String content, H rowHandler) throws IOException {
+			return reader(content).read(rowHandler);
+		}
+
+		public <H extends RowHandler<String[]>> H forEach(File file, H rowHandler) throws IOException {
+			CloseableCsvReader csvReader = CsvParser.reader(file);
+			try {
+				csvReader.read(rowHandler);
+			} finally {
+				csvReader.close();
+			}
+			return rowHandler;
+		}
+
 
 		public <T> MapToDSL<T> mapTo(Type target) {
 			return new MapToDSL<T>(this, target);

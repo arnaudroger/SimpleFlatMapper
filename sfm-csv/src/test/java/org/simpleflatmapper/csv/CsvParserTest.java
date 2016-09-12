@@ -758,6 +758,19 @@ public class CsvParserTest {
 	}
 
 	@Test
+	public void testForEach() throws Exception {
+		testForEachList(CsvParser.forEach("a,b\nc,d", new ListCollectorHandler<String[]>()).getList());
+		testForEachList(CsvParser.forEach(createTempCsv("a,b\nc,d"), new ListCollectorHandler<String[]>()).getList());
+		testForEachList(CsvParser.forEach(new StringReader("a,b\nc,d"), new ListCollectorHandler<String[]>()).getList());
+	}
+
+	private void testForEachList(List<String[]> list) {
+		assertArrayEquals(new String[] { "a", "b" }, list.get(0));
+		assertArrayEquals(new String[] { "c", "d" }, list.get(1));
+		assertEquals(2, list.size());
+	}
+
+	@Test
 	public void testParsingFromString() throws IOException {
 		final String[][] allValues = CsvParser.parse("value", new AccumulateCellConsumer()).allValues();
 		assertArrayEquals(new String[][] {{"value"}}, allValues);

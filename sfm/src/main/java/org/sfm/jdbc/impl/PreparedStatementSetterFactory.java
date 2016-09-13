@@ -282,7 +282,11 @@ public class PreparedStatementSetterFactory
                             case Types.VARBINARY:
                             case Types.LONGVARBINARY:
                                 return (PreparedStatementIndexSetter<P>) new UUIDBinaryPreparedStatementIndexSetter();
+                            case Types.OTHER:
+                                // asssume it's a postgres uuid
+                                return (PreparedStatementIndexSetter<P>) new ObjectPreparedStatementIndexSetter();
                         }
+                        // default to string
                         return (PreparedStatementIndexSetter<P>) new UUIDStringPreparedStatementIndexSetter();
                     }
                 });

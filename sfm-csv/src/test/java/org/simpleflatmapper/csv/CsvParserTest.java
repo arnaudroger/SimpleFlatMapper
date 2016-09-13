@@ -886,26 +886,4 @@ public class CsvParserTest {
 		assertArrayEquals(new Object[][] {{"", ""}}, toObjects(CsvParser.dsl().trimSpaces().reader(",")));
 	}
 
-	static CsvWriter.CsvWriterDSL<DbObject> writerDsl =
-			CsvWriter.from(DbObject.class).columns("id" ,"name", "email");
-
-	public static void writeCsv(Collection<DbObject> objects) throws IOException {
-		try (StringWriter fileWriter = new StringWriter()) {
-			CsvWriter<DbObject> writer=
-					writerDsl.to(fileWriter);
-			objects.forEach(CheckedConsumerHelper.toConsumer(new CheckedConsumer<DbObject>() {
-				@Override
-				public void accept(DbObject dbObject) throws Exception {
-					writer.append(dbObject);
-				}
-			}));
-
-			System.out.println("fileWriter = " + fileWriter);
-		}
-	}
-
-	public static void main(String[] args) throws IOException {
-		writeCsv(Arrays.asList(DbObject.newInstance()));
-	}
-
 }

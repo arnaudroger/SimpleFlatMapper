@@ -13,6 +13,7 @@ import org.simpleflatmapper.tuple.Tuple6;
 import org.simpleflatmapper.tuple.Tuple7;
 import org.simpleflatmapper.tuple.Tuple8;
 import org.simpleflatmapper.tuple.Tuples;
+import org.simpleflatmapper.util.CheckedConsumerHelper;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.CloseableIterator;
 import org.simpleflatmapper.util.ListCollector;
@@ -892,7 +893,12 @@ public class CsvParserTest {
 		try (StringWriter fileWriter = new StringWriter()) {
 			CsvWriter<DbObject> writer=
 					writerDsl.to(fileWriter);
-			objects.forEach(CheckedConsumer.toConsumer(writer::append));
+			objects.forEach(CheckedConsumerHelper.toConsumer(new CheckedConsumer<DbObject>() {
+				@Override
+				public void accept(DbObject dbObject) throws Exception {
+					writer.append(dbObject);
+				}
+			}));
 
 			System.out.println("fileWriter = " + fileWriter);
 		}

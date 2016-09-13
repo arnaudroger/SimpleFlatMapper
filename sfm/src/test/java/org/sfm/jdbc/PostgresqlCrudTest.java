@@ -77,7 +77,7 @@ public class PostgresqlCrudTest {
     @Test
     public void testUUID() throws SQLException {
         Connection connection = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
-        if (connection == null) { System.err.println("Db MySQL not available"); return; }
+        if (connection == null) { System.err.println("Db POSTGRESQL not available"); return; }
 
         try {
             Crud<MyEntity, Integer> objectCrud =
@@ -88,13 +88,13 @@ public class PostgresqlCrudTest {
             object.setUid(UUID.randomUUID());
             object.setName("n1");
 
-            objectCrud.createOrUpdate(connection, object);
+            objectCrud.create(connection, object);
 
             assertEquals(object, objectCrud.read(connection, object.getId()));
 
             object.setName("Updated Email");
 
-            objectCrud.createOrUpdate(connection, object);
+            objectCrud.update(connection, object);
 
             assertEquals(object, objectCrud.read(connection, object.getId()));
 

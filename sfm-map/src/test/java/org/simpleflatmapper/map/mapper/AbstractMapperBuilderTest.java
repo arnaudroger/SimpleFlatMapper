@@ -437,7 +437,7 @@ public class AbstractMapperBuilderTest {
         @Override
         protected Mapper<Object[], T> newJoinJdbcMapper(Mapper<Object[], T> mapper) {
             return new JoinMapper<Object[], Object[][], T, RuntimeException>(mapper,
-                    mapperConfig.rowHandlerErrorHandler(),
+                    mapperConfig.consumerErrorHandler(),
                     mappingContextFactoryBuilder.newFactory(),
                     new UnaryFactory<Object[][], Enumarable<Object[]>>() {
                 @Override

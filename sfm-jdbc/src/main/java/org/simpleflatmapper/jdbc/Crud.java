@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -42,7 +42,7 @@ public interface Crud<T, K> {
      * @return the keyConsumer
      * @throws SQLException
      */
-    <RH extends RowHandler<? super K>> RH create(Connection connection, T value, RH keyConsumer) throws SQLException;
+    <RH extends CheckedConsumer<? super K>> RH create(Connection connection, T value, RH keyConsumer) throws SQLException;
 
     /**
      * insert values into the db through the specified connection.
@@ -55,7 +55,7 @@ public interface Crud<T, K> {
      * @return the keyConsumer
      * @throws SQLException
      */
-    <RH extends RowHandler<? super K>> RH create(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException;
+    <RH extends CheckedConsumer<? super K>> RH create(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException;
 
     /**
      * retrieve the object with the specified key.
@@ -68,14 +68,14 @@ public interface Crud<T, K> {
     T read(Connection connection, K key) throws SQLException;
 
     /**
-     * retrieve the objects with the specified keys and pass them to the rowHandler.
+     * retrieve the objects with the specified keys and pass them to the consumer.
      *
      * @param connection the connection
      * @param keys       the keys
-     * @param rowHandler the handler that is callback for each row
+     * @param consumer the handler that is callback for each row
      * @throws SQLException if an error occurs
      */
-    <RH extends RowHandler<? super T>> RH read(Connection connection, Collection<K> keys, RH rowHandler) throws SQLException;
+    <RH extends CheckedConsumer<? super T>> RH read(Connection connection, Collection<K> keys, RH consumer) throws SQLException;
 
     /**
      * update the object.
@@ -141,7 +141,7 @@ public interface Crud<T, K> {
      * @return the keyConsumer
      * @throws SQLException
      */
-    <RH extends RowHandler<? super K>> RH createOrUpdate(Connection connection, T value, RH keyConsumer) throws SQLException;
+    <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Connection connection, T value, RH keyConsumer) throws SQLException;
 
 
     /**
@@ -154,5 +154,5 @@ public interface Crud<T, K> {
      * @return the keyConsumer
      * @throws SQLException
      */
-    <RH extends RowHandler<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException;
+    <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException;
 }

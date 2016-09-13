@@ -5,7 +5,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.tuple.Tuple2;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -159,7 +159,7 @@ public class JoinJdbcMapperOnTupleTest {
         }
 
         final JdbcMapper<Tuple2<Person, List<Person>>> mapper = builder.mapper();
-        List<Tuple2<Person, List<Person>>> professors = mapper.forEach(setUpResultSetMock(columns, rows), new ListCollectorHandler<Tuple2<Person, List<Person>>>()).getList();
+        List<Tuple2<Person, List<Person>>> professors = mapper.forEach(setUpResultSetMock(columns, rows), new ListCollector<Tuple2<Person, List<Person>>>()).getList();
         validateProfessors(professors);
     }
 
@@ -175,7 +175,7 @@ public class JoinJdbcMapperOnTupleTest {
         }
 
         final JdbcMapper<Tuple2<List<Person>, Person>> mapper = builder.mapper();
-        List<Tuple2<List<Person>, Person>> professors = mapper.forEach(setUpResultSetMock(columns, rowsInverted), new ListCollectorHandler<Tuple2<List<Person>, Person>>()).getList();
+        List<Tuple2<List<Person>, Person>> professors = mapper.forEach(setUpResultSetMock(columns, rowsInverted), new ListCollector<Tuple2<List<Person>, Person>>()).getList();
         validateProfessorsInverted(professors);
     }
 

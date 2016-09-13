@@ -12,11 +12,11 @@ public class SetCollectorHandlerTest {
 
     @Test
     public void testCreateSet() {
-        SetCollectorHandler<String> collectorHandler = new SetCollectorHandler<String>();
+        SetCollector<String> collectorHandler = new SetCollector<String>();
 
-        collectorHandler.handle("1");
-        collectorHandler.handle("2");
-        collectorHandler.handle("3");
+        collectorHandler.accept("1");
+        collectorHandler.accept("2");
+        collectorHandler.accept("3");
 
         assertEquals(new HashSet<String>(Arrays.asList("1", "2", "3")), collectorHandler.getSet());
     }

@@ -1,9 +1,9 @@
 package org.simpleflatmapper.map;
 
+import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.error.RethrowFieldMapperErrorHandler;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
-import org.simpleflatmapper.map.error.RethrowRowHandlerErrorHandler;
 import org.simpleflatmapper.map.impl.IdentityFieldMapperColumnDefinitionProvider;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.ColumnDefinitionProvider;
@@ -24,7 +24,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 false,
                 NO_ASM_MAPPER_THRESHOLD,
                 RethrowFieldMapperErrorHandler.INSTANCE,
-                RethrowRowHandlerErrorHandler.INSTANCE, MAX_METHOD_SIZE);
+                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE);
     }
 
     public static <K extends FieldKey<K>, CD extends ColumnDefinition<K, CD>> MapperConfig<K, CD> config(ColumnDefinitionProvider<CD, K> columnDefinitionProvider) {
@@ -35,7 +35,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 false,
                 NO_ASM_MAPPER_THRESHOLD,
                 RethrowFieldMapperErrorHandler.INSTANCE,
-                RethrowRowHandlerErrorHandler.INSTANCE, MAX_METHOD_SIZE);
+                RethrowConsumerErrorHandler.INSTANCE, MAX_METHOD_SIZE);
     }
 
     private final ColumnDefinitionProvider<CD, K> columnDefinitions;
@@ -44,7 +44,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
     private final boolean failOnAsm;
     private final int asmMapperNbFieldsLimit;
     private final FieldMapperErrorHandler<? super K> fieldMapperErrorHandler;
-    private final RowHandlerErrorHandler rowHandlerErrorHandler;
+    private final ConsumerErrorHandler consumerErrorHandler;
     private final int maxMethodSize;
 
 
@@ -55,14 +55,14 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
             boolean failOnAsm,
             int asmMapperNbFieldsLimit,
             FieldMapperErrorHandler<? super K> fieldMapperErrorHandler,
-            RowHandlerErrorHandler rowHandlerErrorHandler, int maxMethodSize) {
+            ConsumerErrorHandler consumerErrorHandler, int maxMethodSize) {
         this.columnDefinitions = columnDefinitions;
         this.propertyNameMatcherFactory = propertyNameMatcherFactory;
         this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
         this.failOnAsm = failOnAsm;
         this.asmMapperNbFieldsLimit = asmMapperNbFieldsLimit;
         this.fieldMapperErrorHandler = fieldMapperErrorHandler;
-        this.rowHandlerErrorHandler = rowHandlerErrorHandler;
+        this.consumerErrorHandler = consumerErrorHandler;
         this.maxMethodSize = maxMethodSize;
     }
 
@@ -96,7 +96,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                rowHandlerErrorHandler, maxMethodSize);
+                    consumerErrorHandler, maxMethodSize);
     }
 
     public MapperConfig<K, CD> propertyNameMatcherFactory(PropertyNameMatcherFactory propertyNameMatcherFactory) {
@@ -107,7 +107,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                rowHandlerErrorHandler, maxMethodSize);
+                consumerErrorHandler, maxMethodSize);
     }
 
     public MapperConfig<K, CD> mapperBuilderErrorHandler(MapperBuilderErrorHandler mapperBuilderErrorHandler) {
@@ -118,7 +118,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                rowHandlerErrorHandler, maxMethodSize);
+                consumerErrorHandler, maxMethodSize);
     }
 
     public MapperConfig<K, CD> failOnAsm(boolean failOnAsm) {
@@ -129,7 +129,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                rowHandlerErrorHandler, maxMethodSize);
+                consumerErrorHandler, maxMethodSize);
     }
 
     public MapperConfig<K, CD> asmMapperNbFieldsLimit(int asmMapperNbFieldsLimit) {
@@ -140,7 +140,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                rowHandlerErrorHandler, maxMethodSize);
+                consumerErrorHandler, maxMethodSize);
     }
 
     public MapperConfig<K, CD> fieldMapperErrorHandler(FieldMapperErrorHandler<K> fieldMapperErrorHandler) {
@@ -151,10 +151,10 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                rowHandlerErrorHandler, maxMethodSize);
+                consumerErrorHandler, maxMethodSize);
     }
 
-    public MapperConfig<K,CD> rowHandlerErrorHandler(RowHandlerErrorHandler rowHandlerErrorHandler) {
+    public MapperConfig<K,CD> consumerErrorHandler(ConsumerErrorHandler consumerErrorHandler) {
         return new MapperConfig<K, CD>(
                 columnDefinitions,
                 propertyNameMatcherFactory,
@@ -162,12 +162,21 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                rowHandlerErrorHandler,
+                consumerErrorHandler,
                 maxMethodSize);
     }
 
-    public RowHandlerErrorHandler rowHandlerErrorHandler() {
-        return rowHandlerErrorHandler;
+    public ConsumerErrorHandler consumerErrorHandler() {
+        return consumerErrorHandler;
+    }
+
+    @Deprecated
+    public MapperConfig<K,CD> rowHandlerErrorHandler(ConsumerErrorHandler rowHandlerErrorHandler) {
+        return consumerErrorHandler(rowHandlerErrorHandler);
+    }
+
+    public ConsumerErrorHandler rowHandlerErrorHandler() {
+        return consumerErrorHandler();
     }
 
     public boolean hasFieldMapperErrorHandler() {
@@ -191,7 +200,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 failOnAsm,
                 asmMapperNbFieldsLimit,
                 fieldMapperErrorHandler,
-                rowHandlerErrorHandler,
+                consumerErrorHandler,
                 maxMethodSize);
     }
 

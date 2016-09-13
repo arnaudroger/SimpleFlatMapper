@@ -4,10 +4,10 @@ package org.simpleflatmapper.map.mapper;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 
 public abstract class AbstractEnumarableDelegateMapper<ROW, ROWS, T, E extends Exception> extends AbstractEnumarableMapper<ROWS, T, E> implements Mapper<ROW, T> {
-    public AbstractEnumarableDelegateMapper(RowHandlerErrorHandler errorHandler) {
+    public AbstractEnumarableDelegateMapper(ConsumerErrorHandler errorHandler) {
         super(errorHandler);
     }
 

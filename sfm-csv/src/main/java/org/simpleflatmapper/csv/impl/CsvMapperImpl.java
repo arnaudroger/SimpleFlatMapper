@@ -6,10 +6,10 @@ import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.csv.CsvReader;
 import org.simpleflatmapper.csv.mapper.*;
 import org.simpleflatmapper.csv.parser.CellConsumer;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
 import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -30,7 +30,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
 
     private final CsvColumnKey[] joinKeys;
-	private final RowHandlerErrorHandler rowHandlerErrorHandlers;
+	private final ConsumerErrorHandler consumerErrorHandlers;
     protected final CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory;
 
     private final boolean hasSetterSubProperties;
@@ -40,13 +40,13 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
                          DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories,
                          CellSetter<T>[] setters,
                          CsvColumnKey[] joinKeys,
-                         RowHandlerErrorHandler rowHandlerErrorHandlers) {
+                         ConsumerErrorHandler consumerErrorHandlers) {
 		super();
 		this.csvMapperCellHandlerFactory = csvMapperCellHandlerFactory;
 		this.delayedCellSetterFactories = delayedCellSetterFactories;
 		this.setters = setters;
         this.joinKeys = joinKeys;
-		this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
+		this.consumerErrorHandlers = consumerErrorHandlers;
         this.hasSetterSubProperties = hasSetterSubProperties(setters);
         this.hasSubProperties = hasSetterSubProperties || hasDelayedMarker(delayedCellSetterFactories);
 	}
@@ -70,28 +70,28 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
     }
 
     @Override
-	public final <H extends RowHandler<? super T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
+	public final <H extends CheckedConsumer<? super T>> H forEach(final Reader reader, final H handler) throws IOException, MappingException {
 		return forEach(CsvParser.reader(reader), handler);
 	}
 
 	@Override
-	public <H extends RowHandler<? super T>> H forEach(CsvReader reader, H handle) throws IOException, MappingException {
+	public <H extends CheckedConsumer<? super T>> H forEach(CsvReader reader, H handle) throws IOException, MappingException {
 		reader.parseAll(newCellConsumer(handle));
 		return handle;
 	}
 
 	@Override
-	public final <H extends RowHandler<? super T>> H forEach(final Reader reader, final H handler, final int skip) throws IOException, MappingException {
+	public final <H extends CheckedConsumer<? super T>> H forEach(final Reader reader, final H handler, final int skip) throws IOException, MappingException {
 		return forEach(CsvParser.skip(skip).reader(reader), handler);
 	}
 
 	@Override
-	public final <H extends RowHandler<? super T>> H forEach(final Reader reader, final H handler, final int skip, final int limit) throws IOException, MappingException {
+	public final <H extends CheckedConsumer<? super T>> H forEach(final Reader reader, final H handler, final int skip, final int limit) throws IOException, MappingException {
 		return forEach(CsvParser.skip(skip).reader(reader), handler, limit);
 	}
 
 	@Override
-	public final <H extends RowHandler<? super T>> H forEach(CsvReader reader, H handle, int limit) throws IOException, MappingException {
+	public final <H extends CheckedConsumer<? super T>> H forEach(CsvReader reader, H handle, int limit) throws IOException, MappingException {
 		reader.parseRows(newCellConsumer(handle), limit);
 		return handle;
 	}
@@ -134,9 +134,9 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
 		public CsvSpliterator(CsvReader csvReader) {
 			this.csvReader = csvReader;
-			this.cellConsumer = newCellConsumer(new RowHandler<T>() {
+			this.cellConsumer = newCellConsumer(new CheckedConsumer<T>() {
 				@Override
-				public void handle(T t) throws Exception {
+				public void accept(T t) throws Exception {
 					current = t;
 				}
 			});
@@ -161,9 +161,9 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		@Override
 		public void forEachRemaining(Consumer<? super T> action) {
 			try {
-				csvReader.parseAll(newCellConsumer(new RowHandler<T>() {
+				csvReader.parseAll(newCellConsumer(new CheckedConsumer<T>() {
                     @Override
-                    public void handle(T t) throws Exception {
+                    public void accept(T t) throws Exception {
 						action.accept(t);
                     }
                 }));
@@ -190,11 +190,11 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
 	//IFJAVA8_END
 
-    protected CsvMapperCellConsumer newCellConsumer(final RowHandler<? super T> handler) {
+    protected CsvMapperCellConsumer newCellConsumer(final CheckedConsumer<? super T> handler) {
         return newCellConsumer(handler, null);
     }
 
-	protected CsvMapperCellConsumer<T> newCellConsumer(final RowHandler<? super T> handler, BreakDetector parentBreakDetector) {
+	protected CsvMapperCellConsumer<T> newCellConsumer(final CheckedConsumer<? super T> handler, BreakDetector parentBreakDetector) {
         CsvMapperCellConsumer<?>[] cellHandlers = null;
 
         if (hasSubProperties) {
@@ -208,7 +208,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
         CsvMapperCellHandler<T> mapperSetters = csvMapperCellHandlerFactory.newInstance(outDelayedCellSetters, outSetters);
 
         return new CsvMapperCellConsumer<T>(mapperSetters,
-                rowHandlerErrorHandlers,
+                consumerErrorHandlers,
                 handler,
                 breakDetector, toList(cellHandlers));
 	}

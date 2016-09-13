@@ -8,23 +8,21 @@ import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.SampleFieldKey;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
-import org.simpleflatmapper.map.error.RethrowRowHandlerErrorHandler;
+import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.map.property.RenameProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyNameMatcher;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
 
-import java.lang.annotation.Retention;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,7 +57,7 @@ public class AbstractMapperFactoryTest {
 
         assertTrue(mapperConfig.mapperBuilderErrorHandler() instanceof RethrowMapperBuilderErrorHandler);
 
-        assertTrue(mapperConfig.rowHandlerErrorHandler() instanceof RethrowRowHandlerErrorHandler);
+        assertTrue(mapperConfig.consumerErrorHandler() instanceof RethrowConsumerErrorHandler);
 
         assertEquals(MapperConfig.MAX_METHOD_SIZE, mapperConfig.maxMethodSize());
 
@@ -92,7 +90,7 @@ public class AbstractMapperFactoryTest {
             public void customFieldError(FieldKey<?> key, String message) {
             }
         };
-        RowHandlerErrorHandler rowHandlerErrorHandler = new RowHandlerErrorHandler() {
+        ConsumerErrorHandler consumerErrorHandler = new ConsumerErrorHandler() {
             @Override
             public void handlerError(Throwable error, Object target) {
             }
@@ -100,15 +98,15 @@ public class AbstractMapperFactoryTest {
 
         mapperFactory.fieldMapperErrorHandler(fieldMapperErrorHandler);
         mapperFactory.mapperBuilderErrorHandler(mapperBuilderErrorHandler);
-        mapperFactory.rowHandlerErrorHandler(rowHandlerErrorHandler);
+        mapperFactory.consumerErrorHandler(consumerErrorHandler);
 
 
         MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig = mapperFactory.mapperConfig();
 
         assertEquals(fieldMapperErrorHandler, mapperConfig.fieldMapperErrorHandler());
         assertEquals(mapperBuilderErrorHandler, mapperConfig.mapperBuilderErrorHandler());
-        assertEquals(rowHandlerErrorHandler, mapperConfig.rowHandlerErrorHandler());
-        assertEquals(rowHandlerErrorHandler, mapperFactory.rowHandlerErrorHandler());
+        assertEquals(consumerErrorHandler, mapperConfig.consumerErrorHandler());
+        assertEquals(consumerErrorHandler, mapperFactory.consumerErrorHandler());
 
         mapperFactory = new MapperFactory();
 

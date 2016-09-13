@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -36,11 +36,11 @@ public class CloseableCsvReader implements Closeable, Iterable<String[]> {
         return delegate.parseRows(cellConsumer, limit);
     }
 
-    public <RH extends RowHandler<String[]>> RH read(RH handler) throws IOException {
+    public <RH extends CheckedConsumer<String[]>> RH read(RH handler) throws IOException {
         return delegate.read(handler);
     }
 
-    public <RH extends RowHandler<String[]>> RH read(RH handler, int limit) throws IOException {
+    public <RH extends CheckedConsumer<String[]>> RH read(RH handler, int limit) throws IOException {
         return delegate.read(handler, limit);
     }
 

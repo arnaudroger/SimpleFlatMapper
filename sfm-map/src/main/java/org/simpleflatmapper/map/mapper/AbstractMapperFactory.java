@@ -4,9 +4,9 @@ import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
-import org.simpleflatmapper.map.error.RethrowRowHandlerErrorHandler;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
@@ -33,7 +33,7 @@ public abstract class AbstractMapperFactory<
 
 	private FieldMapperErrorHandler<K> fieldMapperErrorHandler = null;
     private MapperBuilderErrorHandler mapperBuilderErrorHandler = RethrowMapperBuilderErrorHandler.INSTANCE;
-    private RowHandlerErrorHandler rowHandlerErrorHandler = RethrowRowHandlerErrorHandler.INSTANCE;
+    private ConsumerErrorHandler consumerErrorHandler = RethrowConsumerErrorHandler.INSTANCE;
 
     private final AbstractColumnDefinitionProvider<CD, K> columnDefinitions;
 	private final CD identity;
@@ -96,13 +96,18 @@ public abstract class AbstractMapperFactory<
 
 
     /**
-     * the RowHandlerErrorHandler is called when an exception is thrown by the RowHandler in the forEach call.
-     * @param rowHandlerErrorHandler the new RowHandlerErrorHandler
+     * the ConsumerErrorHandler is called when an exception is thrown by the CheckedConsumer in the forEach call.
+     * @param consumerErrorHandler the new ConsumerErrorHandler
      * @return the current factory
      */
-	public final MF rowHandlerErrorHandler(final RowHandlerErrorHandler rowHandlerErrorHandler) {
-		this.rowHandlerErrorHandler = rowHandlerErrorHandler;
+	public final MF consumerErrorHandler(final ConsumerErrorHandler consumerErrorHandler) {
+		this.consumerErrorHandler = consumerErrorHandler;
 		return (MF) this;
+	}
+
+	@Deprecated
+	public final MF rowHandlerErrorHandler(final ConsumerErrorHandler rowHandlerErrorHandler) {
+		return consumerErrorHandler(rowHandlerErrorHandler);
 	}
 
 	/**
@@ -133,7 +138,7 @@ public abstract class AbstractMapperFactory<
 				.failOnAsm(failOnAsm)
 				.asmMapperNbFieldsLimit(asmMapperNbFieldsLimit)
 				.fieldMapperErrorHandler(fieldMapperErrorHandler)
-				.rowHandlerErrorHandler(rowHandlerErrorHandler)
+				.consumerErrorHandler(consumerErrorHandler)
 				.maxMethodSize(maxMethodSize);
 	}
 
@@ -273,10 +278,10 @@ public abstract class AbstractMapperFactory<
 
 
     /**
-     * @return the current RowHandlerErrorHandler
+     * @return the current ConsumerErrorHandler
      */
-    public final RowHandlerErrorHandler rowHandlerErrorHandler() {
-        return rowHandlerErrorHandler;
+    public final ConsumerErrorHandler consumerErrorHandler() {
+        return consumerErrorHandler;
     }
 
 

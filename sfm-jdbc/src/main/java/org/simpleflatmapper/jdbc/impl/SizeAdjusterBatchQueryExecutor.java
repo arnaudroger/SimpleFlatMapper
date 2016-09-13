@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc.impl;
 
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,7 +20,7 @@ public class SizeAdjusterBatchQueryExecutor<T> implements BatchQueryExecutor<T> 
     }
 
     @Override
-    public void insert(Connection connection, Collection<T> values, RowHandler<PreparedStatement> postExecute) throws SQLException {
+    public void insert(Connection connection, Collection<T> values, CheckedConsumer<PreparedStatement> postExecute) throws SQLException {
         int lBatchSize = Math.min(batchSize.get(), values.size());
         try {
             if (values.size() <= lBatchSize) {
@@ -51,7 +51,7 @@ public class SizeAdjusterBatchQueryExecutor<T> implements BatchQueryExecutor<T> 
         } while(batchSize.compareAndSet(currentSize, lBatchSize));
     }
 
-    private void splitBatches(Connection connection, Collection<T> values, int lBatchSize, RowHandler<PreparedStatement> postExecute) throws SQLException {
+    private void splitBatches(Connection connection, Collection<T> values, int lBatchSize, CheckedConsumer<PreparedStatement> postExecute) throws SQLException {
         int batchNumber = 0;
         Iterator<T> it = values.iterator();
         List<T> list = new ArrayList<T>(lBatchSize);

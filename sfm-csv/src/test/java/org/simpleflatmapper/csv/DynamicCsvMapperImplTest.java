@@ -7,8 +7,8 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbObject.Type;
 import org.simpleflatmapper.test.beans.DbPartialFinalObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.util.ListCollectorHandler;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.ListCollector;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -57,7 +57,7 @@ public class DynamicCsvMapperImplTest {
 	public void testDbObject() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 
-		List<DbObject> list = mapper.forEach(dbObjectCsvReader3Lines(), new ListCollectorHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(dbObjectCsvReader3Lines(), new ListCollector<DbObject>()).getList();
 		assertEquals(2, list.size());
 		DbHelper.assertDbObjectMapping(1, list.get(0));
 		DbHelper.assertDbObjectMapping(2, list.get(1));
@@ -67,7 +67,7 @@ public class DynamicCsvMapperImplTest {
 	public void testDbObjectWithSkip() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 
-		List<DbObject> list = mapper.forEach(dbObjectCsvReader3LinesWithLineToSkip(), new ListCollectorHandler<DbObject>(),1).getList();
+		List<DbObject> list = mapper.forEach(dbObjectCsvReader3LinesWithLineToSkip(), new ListCollector<DbObject>(),1).getList();
 		assertEquals(2, list.size());
 		DbHelper.assertDbObjectMapping(1, list.get(0));
 		DbHelper.assertDbObjectMapping(2, list.get(1));
@@ -78,7 +78,7 @@ public class DynamicCsvMapperImplTest {
 	public void testDbObjectWithSkipAndLimit() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
 		
-		List<DbObject> list = mapper.forEach(dbObjectCsvReader3LinesWithLineToSkip(), new ListCollectorHandler<DbObject>(),1,1).getList();
+		List<DbObject> list = mapper.forEach(dbObjectCsvReader3LinesWithLineToSkip(), new ListCollector<DbObject>(),1,1).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
@@ -87,7 +87,7 @@ public class DynamicCsvMapperImplTest {
 	public void testFinalDbObject() throws Exception {
 		CsvMapper<DbFinalObject> mapper = CsvMapperFactory.newInstance().newMapper(DbFinalObject.class);
 
-		List<DbFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListCollectorHandler<DbFinalObject>()).getList();
+		List<DbFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListCollector<DbFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 		
@@ -97,7 +97,7 @@ public class DynamicCsvMapperImplTest {
 	public void testPartialFinalDbObject() throws Exception {
 		CsvMapper<DbPartialFinalObject> mapper = CsvMapperFactory.newInstance().newMapper(DbPartialFinalObject.class);
 		
-		List<DbPartialFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListCollectorHandler<DbPartialFinalObject>()).getList();
+		List<DbPartialFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListCollector<DbPartialFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 		
@@ -210,7 +210,7 @@ public class DynamicCsvMapperImplTest {
 		CsvMapper<DbListObject> mapper = CsvMapperFactory.newInstance().newMapper(DbListObject.class);
 		
 		
-		List<DbListObject> list = mapper.forEach(new StringReader(CSV_LIST), new ListCollectorHandler<DbListObject>()).getList();
+		List<DbListObject> list = mapper.forEach(new StringReader(CSV_LIST), new ListCollector<DbListObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0).getObjects().get(0));
 
@@ -229,9 +229,9 @@ public class DynamicCsvMapperImplTest {
 		final AtomicLong sumOfAllIds = new AtomicLong();
 		final AtomicLong nbRow = new AtomicLong();
 		
-		final RowHandler<DbObject> handler = new RowHandler<DbObject>() {
+		final CheckedConsumer<DbObject> handler = new CheckedConsumer<DbObject>() {
 			@Override
-			public void handle(DbObject t) throws Exception {
+			public void accept(DbObject t) throws Exception {
 				long id = t.getId();
 				
 				assertEquals("name" + Long.toHexString(id), t.getName());

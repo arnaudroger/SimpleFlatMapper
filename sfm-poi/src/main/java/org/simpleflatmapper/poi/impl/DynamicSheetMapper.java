@@ -13,7 +13,7 @@ import org.simpleflatmapper.map.mapper.MapperCache;
 import org.simpleflatmapper.poi.SheetMapper;
 import org.simpleflatmapper.poi.SheetMapperBuilder;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.csv.CsvColumnKeyMapperKeyComparator;
 
 import java.util.ArrayList;
@@ -56,13 +56,13 @@ public class DynamicSheetMapper<T> implements SheetMapper<T> {
     }
 
     @Override
-    public <RH extends RowHandler<T>> RH forEach(Sheet sheet, RH rowHandler) {
-        return forEach(startRow, sheet, rowHandler);
+    public <RH extends CheckedConsumer<T>> RH forEach(Sheet sheet, RH consumer) {
+        return forEach(startRow, sheet, consumer);
     }
 
     @Override
-    public <RH extends RowHandler<T>> RH forEach(int startRow, Sheet sheet, RH rowHandler) {
-        return getPoiMapper(startRow, sheet).forEach(startRow + 1, sheet, rowHandler);
+    public <RH extends CheckedConsumer<T>> RH forEach(int startRow, Sheet sheet, RH consumer) {
+        return getPoiMapper(startRow, sheet).forEach(startRow + 1, sheet, consumer);
     }
 
     //IFJAVA8_START

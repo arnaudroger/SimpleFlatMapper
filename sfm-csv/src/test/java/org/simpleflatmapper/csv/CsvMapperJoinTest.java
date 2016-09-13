@@ -6,7 +6,7 @@ import org.simpleflatmapper.test.jdbc.JoinTest;
 import org.simpleflatmapper.test.beans.ProfessorC;
 import org.simpleflatmapper.test.beans.ProfessorField;
 import org.simpleflatmapper.test.beans.ProfessorGS;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,7 +30,7 @@ public class CsvMapperJoinTest {
                 geStaticCsvMapper(getCsvMapperFactory(), ProfessorGS.class);
 
         final List<ProfessorGS> professors =
-                mapper.forEach(new StringReader(DATA), new ListCollectorHandler<ProfessorGS>()).getList();
+                mapper.forEach(new StringReader(DATA), new ListCollector<ProfessorGS>()).getList();
 
         JoinTest.validateProfessors(professors);
     }
@@ -41,7 +41,7 @@ public class CsvMapperJoinTest {
                 geStaticCsvMapper(getCsvShardingMapperFactory(), ProfessorGS.class);
 
         final List<ProfessorGS> professors =
-                mapper.forEach(new StringReader(DATA), new ListCollectorHandler<ProfessorGS>()).getList();
+                mapper.forEach(new StringReader(DATA), new ListCollector<ProfessorGS>()).getList();
 
         JoinTest.validateProfessors(professors);
     }
@@ -56,7 +56,7 @@ public class CsvMapperJoinTest {
         List<ProfessorGS> professors =
                 professorGSStaticMapToDSL
                         .addMapping("students_phones_value")
-                        .forEach(new StringReader(HEADER_DATA), new ListCollectorHandler<ProfessorGS>())
+                        .forEach(new StringReader(HEADER_DATA), new ListCollector<ProfessorGS>())
                         .getList();
         JoinTest.validateProfessors(professors);
     }
@@ -66,7 +66,7 @@ public class CsvMapperJoinTest {
         final CsvMapperFactory mapperFactory = getCsvMapperFactory();
 
         final List<ProfessorGS> professors =
-                mapperFactory.newMapper(ProfessorGS.class).forEach(new StringReader(HEADER_DATA), new ListCollectorHandler<ProfessorGS>()).getList();
+                mapperFactory.newMapper(ProfessorGS.class).forEach(new StringReader(HEADER_DATA), new ListCollector<ProfessorGS>()).getList();
 
         JoinTest.validateProfessors(professors);
     }
@@ -76,7 +76,7 @@ public class CsvMapperJoinTest {
         final CsvMapperFactory mapperFactory = getCsvShardingMapperFactory();
 
         final List<ProfessorGS> professors =
-                mapperFactory.newMapper(ProfessorGS.class).forEach(new StringReader(HEADER_DATA), new ListCollectorHandler<ProfessorGS>()).getList();
+                mapperFactory.newMapper(ProfessorGS.class).forEach(new StringReader(HEADER_DATA), new ListCollector<ProfessorGS>()).getList();
 
         JoinTest.validateProfessors(professors);
     }
@@ -86,7 +86,7 @@ public class CsvMapperJoinTest {
         List<ProfessorGS> professors =
                 CsvParser.mapTo(ProfessorGS.class)
                         .addKeys("id", "students_id")
-                        .forEach(new StringReader(HEADER_DATA), new ListCollectorHandler<ProfessorGS>())
+                        .forEach(new StringReader(HEADER_DATA), new ListCollector<ProfessorGS>())
                         .getList();
         JoinTest.validateProfessors(professors);
     }
@@ -98,7 +98,7 @@ public class CsvMapperJoinTest {
                 geStaticCsvMapper(getCsvMapperFactory(), ProfessorC.class);
 
         final List<ProfessorC> professors =
-                mapper.forEach(new StringReader(DATA), new ListCollectorHandler<ProfessorC>()).getList();
+                mapper.forEach(new StringReader(DATA), new ListCollector<ProfessorC>()).getList();
 
         JoinTest.validateProfessors(professors);
     }
@@ -109,7 +109,7 @@ public class CsvMapperJoinTest {
                 geStaticCsvMapper(getCsvShardingMapperFactory(), ProfessorC.class);
 
         final List<ProfessorC> professors =
-                mapper.forEach(new StringReader(DATA), new ListCollectorHandler<ProfessorC>()).getList();
+                mapper.forEach(new StringReader(DATA), new ListCollector<ProfessorC>()).getList();
 
         JoinTest.validateProfessors(professors);
     }
@@ -119,7 +119,7 @@ public class CsvMapperJoinTest {
         final CsvMapperFactory mapperFactory = getCsvMapperFactory();
 
         final List<ProfessorC> professors =
-                mapperFactory.newMapper(ProfessorC.class).forEach(new StringReader(HEADER_DATA), new ListCollectorHandler<ProfessorC>()).getList();
+                mapperFactory.newMapper(ProfessorC.class).forEach(new StringReader(HEADER_DATA), new ListCollector<ProfessorC>()).getList();
 
         JoinTest.validateProfessors(professors);
     }
@@ -129,7 +129,7 @@ public class CsvMapperJoinTest {
         final CsvMapperFactory mapperFactory = getCsvShardingMapperFactory();
 
         final List<ProfessorC> professors =
-                mapperFactory.newMapper(ProfessorC.class).forEach(new StringReader(HEADER_DATA), new ListCollectorHandler<ProfessorC>()).getList();
+                mapperFactory.newMapper(ProfessorC.class).forEach(new StringReader(HEADER_DATA), new ListCollector<ProfessorC>()).getList();
 
         JoinTest.validateProfessors(professors);
     }
@@ -139,7 +139,7 @@ public class CsvMapperJoinTest {
         final CsvMapperFactory mapperFactory = getCsvMapperFactory();
 
         final List<ProfessorField> professors =
-                mapperFactory.newMapper(ProfessorField.class).forEach(new StringReader(HEADER_DATA), new ListCollectorHandler<ProfessorField>()).getList();
+                mapperFactory.newMapper(ProfessorField.class).forEach(new StringReader(HEADER_DATA), new ListCollector<ProfessorField>()).getList();
 
         JoinTest.validateProfessors(professors);
     }

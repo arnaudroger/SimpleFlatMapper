@@ -6,8 +6,8 @@ import org.junit.runners.Parameterized;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.MysqlDbHelper;
-import org.simpleflatmapper.util.ListCollectorHandler;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.ListCollector;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import javax.persistence.Table;
 import java.sql.Connection;
@@ -49,10 +49,10 @@ public class CrudTest {
 
             // create
             Long key =
-                    objectCrud.create(connection, object, new RowHandler<Long>() {
+                    objectCrud.create(connection, object, new CheckedConsumer<Long>() {
                 Long key;
                 @Override
-                public void handle(Long aLong) throws Exception {
+                public void accept(Long aLong) throws Exception {
                     key = aLong;
                 }
             }).key;
@@ -80,15 +80,15 @@ public class CrudTest {
 
             final List<Long> keys  = new ArrayList<Long>();
             final List<DbObject> values = Arrays.asList(DbObject.newInstance(), DbObject.newInstance());
-            objectCrud.create(connection, values, new RowHandler<Long>() {
+            objectCrud.create(connection, values, new CheckedConsumer<Long>() {
                 @Override
-                public void handle(Long aLong) throws Exception {
+                public void accept(Long aLong) throws Exception {
                     values.get(keys.size()).setId(aLong);
                     keys.add(aLong);
                 }
             });
 
-            assertCollectionEquals(values, objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(values, objectCrud.read(connection, keys, new ListCollector<DbObject>()).getList());
 
 
             int i = 333;
@@ -99,12 +99,12 @@ public class CrudTest {
 
             objectCrud.update(connection, values);
 
-            assertCollectionEquals(values, objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(values, objectCrud.read(connection, keys, new ListCollector<DbObject>()).getList());
 
 
             objectCrud.delete(connection, keys);
 
-            assertCollectionEquals(Collections.<DbObject>emptyList(), objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(Collections.<DbObject>emptyList(), objectCrud.read(connection, keys, new ListCollector<DbObject>()).getList());
 
         } finally {
             connection.close();
@@ -167,10 +167,10 @@ public class CrudTest {
 
         // create
         Long key =
-                objectCrud.create(connection, object, new RowHandler<Long>() {
+                objectCrud.create(connection, object, new CheckedConsumer<Long>() {
                     Long key;
                     @Override
-                    public void handle(Long aLong) throws Exception {
+                    public void accept(Long aLong) throws Exception {
                         key = aLong;
                     }
                 }).key;
@@ -220,10 +220,10 @@ public class CrudTest {
 
             // create
             CKEY key =
-                    objectCrud.create(connection, object, new RowHandler<CKEY>() {
+                    objectCrud.create(connection, object, new CheckedConsumer<CKEY>() {
                         CKEY key;
                         @Override
-                        public void handle(CKEY aLong) throws Exception {
+                        public void accept(CKEY aLong) throws Exception {
                             key = aLong;
                         }
                     }).key;
@@ -257,7 +257,7 @@ public class CrudTest {
 
             objectCrud.create(connection, values);
 
-            assertCollectionEquals(values, objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(values, objectCrud.read(connection, keys, new ListCollector<DbObject>()).getList());
 
 
             int i = 333;
@@ -268,12 +268,12 @@ public class CrudTest {
 
             objectCrud.update(connection, values);
 
-            assertCollectionEquals(values, objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(values, objectCrud.read(connection, keys, new ListCollector<DbObject>()).getList());
 
 
             objectCrud.delete(connection, keys);
 
-            assertCollectionEquals(Collections.<DbObject>emptyList(), objectCrud.read(connection, keys, new ListCollectorHandler<DbObject>()).getList());
+            assertCollectionEquals(Collections.<DbObject>emptyList(), objectCrud.read(connection, keys, new ListCollector<DbObject>()).getList());
         } finally {
             connection.close();
         }

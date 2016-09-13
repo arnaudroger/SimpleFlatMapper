@@ -1,12 +1,12 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
-public class KeyCapture<T> implements RowHandler<T> {
+public class KeyCapture<T> implements CheckedConsumer<T> {
 
     private T key;
     @Override
-    public void handle(T t) throws Exception {
+    public void accept(T t) throws Exception {
         key = t;
     }
 

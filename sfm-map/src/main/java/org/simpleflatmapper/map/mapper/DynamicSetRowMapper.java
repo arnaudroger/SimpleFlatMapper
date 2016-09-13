@@ -6,7 +6,7 @@ import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.UnaryFactory;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.UnaryFactoryWithException;
 
 import java.util.Iterator;
@@ -76,7 +76,7 @@ public class DynamicSetRowMapper<ROW, SET, T, E extends Exception, K extends Fie
 	//IFJAVA8_END
 
 	@Override
-	public final <H extends RowHandler<? super T>> H forEach(SET set, H handler) throws E, MappingException {
+	public final <H extends CheckedConsumer<? super T>> H forEach(SET set, H handler) throws E, MappingException {
 		return getMapperFromSet(set).forEach(set, handler);
 	}
 

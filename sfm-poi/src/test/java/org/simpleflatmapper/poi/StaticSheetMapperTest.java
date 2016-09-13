@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -63,11 +63,11 @@ public class StaticSheetMapperTest {
 
     @Test
     public void forEachOnSheetFrom0WithStaticMapper() {
-        int row = staticSheetMapper.forEach(staticSheet, new RowHandler<DbObject>() {
+        int row = staticSheetMapper.forEach(staticSheet, new CheckedConsumer<DbObject>() {
             int row = 0;
 
             @Override
-            public void handle(DbObject dbObject) throws Exception {
+            public void accept(DbObject dbObject) throws Exception {
                 assertDbObject(row, dbObject);
                 row++;
             }

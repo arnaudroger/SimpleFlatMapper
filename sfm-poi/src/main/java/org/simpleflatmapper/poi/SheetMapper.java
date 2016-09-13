@@ -1,7 +1,7 @@
 package org.simpleflatmapper.poi;
 
 import org.apache.poi.ss.usermodel.Sheet;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.util.Iterator;
 //IFJAVA8_START
@@ -28,21 +28,21 @@ public interface SheetMapper<T> {
     /**
      *
      * @param sheet the sheet to map from
-     * @param rowHandler the handler to call back
+     * @param consumer the handler to call back
      * @param <RH> the type of the handler
      * @return the handler
      */
-    <RH extends RowHandler<T>> RH forEach(Sheet sheet, RH rowHandler);
+    <RH extends CheckedConsumer<T>> RH forEach(Sheet sheet, RH consumer);
 
     /**
      *
      * @param startRow row index to start at
      * @param sheet the sheet to map from
-     * @param rowHandler the handler to call back
+     * @param consumer the handler to call back
      * @param <RH> the type of the handler
      * @return the handler
      */
-    <RH extends RowHandler<T>> RH forEach(int startRow, Sheet sheet, RH rowHandler);
+    <RH extends CheckedConsumer<T>> RH forEach(int startRow, Sheet sheet, RH consumer);
 
 
     /**

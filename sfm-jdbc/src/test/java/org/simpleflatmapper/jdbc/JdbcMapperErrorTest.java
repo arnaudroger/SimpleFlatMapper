@@ -9,7 +9,7 @@ import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.error.LogFieldMapperErrorHandler;
 import org.simpleflatmapper.map.mapper.MapperImpl;
 import org.simpleflatmapper.reflect.Instantiator;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.IOException;
 import java.sql.ResultSet;

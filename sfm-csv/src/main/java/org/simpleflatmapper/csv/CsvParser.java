@@ -21,7 +21,7 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.CloseableIterator;
 import org.simpleflatmapper.util.IOFunction;
 import org.simpleflatmapper.util.Predicate;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.File;
 import java.io.FileReader;
@@ -206,16 +206,16 @@ public final class CsvParser {
 		return dsl().iterator(file);
 	}
 
-	public static <H extends RowHandler<String[]>> H forEach(Reader reader, H rowHandler) throws IOException {
-		return dsl().forEach(reader, rowHandler);
+	public static <H extends CheckedConsumer<String[]>> H forEach(Reader reader, H consumer) throws IOException {
+		return dsl().forEach(reader, consumer);
 	}
 
-	public static <H extends RowHandler<String[]>> H forEach(CharSequence content, H rowHandler) throws IOException {
-		return dsl().forEach(content, rowHandler);
+	public static <H extends CheckedConsumer<String[]>> H forEach(CharSequence content, H consumer) throws IOException {
+		return dsl().forEach(content, consumer);
 	}
 
-	public static <H extends RowHandler<String[]>> H forEach(File file, H rowHandler) throws IOException {
-		return dsl().forEach(file, rowHandler);
+	public static <H extends CheckedConsumer<String[]>> H forEach(File file, H consumer) throws IOException {
+		return dsl().forEach(file, consumer);
 	}
 
 	public static <CC extends CellConsumer> CC parse(Reader reader, CC cellConsumer) throws IOException {
@@ -443,26 +443,26 @@ public final class CsvParser {
 			return onReader(file, CREATE_CLOSEABLE_ITERATOR);
 		}
 
-		public <H extends RowHandler<String[]>> H forEach(Reader reader, H rowHandler) throws IOException {
-			return reader(reader).read(rowHandler);
+		public <H extends CheckedConsumer<String[]>> H forEach(Reader reader, H consumer) throws IOException {
+			return reader(reader).read(consumer);
 		}
 
-		public <H extends RowHandler<String[]>> H forEach(CharSequence content, H rowHandler) throws IOException {
-			return reader(content).read(rowHandler);
+		public <H extends CheckedConsumer<String[]>> H forEach(CharSequence content, H consumer) throws IOException {
+			return reader(content).read(consumer);
 		}
 
-		public <H extends RowHandler<String[]>> H forEach(String content, H rowHandler) throws IOException {
-			return reader(content).read(rowHandler);
+		public <H extends CheckedConsumer<String[]>> H forEach(String content, H consumer) throws IOException {
+			return reader(content).read(consumer);
 		}
 
-		public <H extends RowHandler<String[]>> H forEach(File file, H rowHandler) throws IOException {
+		public <H extends CheckedConsumer<String[]>> H forEach(File file, H consumer) throws IOException {
 			CloseableCsvReader csvReader = CsvParser.reader(file);
 			try {
-				csvReader.read(rowHandler);
+				csvReader.read(consumer);
 			} finally {
 				csvReader.close();
 			}
-			return rowHandler;
+			return consumer;
 		}
 
 
@@ -750,34 +750,34 @@ public final class CsvParser {
 			});
 		}
 
-		public final <H extends RowHandler<T>> H forEach(File file, H rowHandler) throws IOException {
+		public final <H extends CheckedConsumer<T>> H forEach(File file, H consumer) throws IOException {
 			Reader reader = new FileReader(file);
 			try {
-				return forEach(reader, rowHandler);
+				return forEach(reader, consumer);
 			} finally {
 				try { reader.close(); } catch (IOException e) { }
 			}
 		}
 
-		public final <H extends RowHandler<T>> H forEach(Reader reader, H rowHandler) throws IOException {
-			return forEach(rowHandler, dsl.reader(reader));
+		public final <H extends CheckedConsumer<T>> H forEach(Reader reader, H consumer) throws IOException {
+			return forEach(consumer, dsl.reader(reader));
         }
 
-		public final <H extends RowHandler<T>> H forEach(CharSequence content, H rowHandler) throws IOException {
-			return forEach(rowHandler, dsl.reader(content));
+		public final <H extends CheckedConsumer<T>> H forEach(CharSequence content, H consumer) throws IOException {
+			return forEach(consumer, dsl.reader(content));
 		}
 
-		public final <H extends RowHandler<T>> H forEach(String content, H rowHandler) throws IOException {
-			return forEach(rowHandler, dsl.reader(content));
+		public final <H extends CheckedConsumer<T>> H forEach(String content, H consumer) throws IOException {
+			return forEach(consumer, dsl.reader(content));
 		}
 
-		private <H extends RowHandler<T>> H forEach(H rowHandler, CsvReader csvReader) throws IOException {
+		private <H extends CheckedConsumer<T>> H forEach(H consumer, CsvReader csvReader) throws IOException {
 			if (dsl.limit == -1) {
-                mapper.forEach(csvReader, rowHandler);
+                mapper.forEach(csvReader, consumer);
             } else {
-                mapper.forEach(csvReader, rowHandler, dsl.limit);
+                mapper.forEach(csvReader, consumer, dsl.limit);
             }
-			return rowHandler;
+			return consumer;
 		}
 
 		//IFJAVA8_START

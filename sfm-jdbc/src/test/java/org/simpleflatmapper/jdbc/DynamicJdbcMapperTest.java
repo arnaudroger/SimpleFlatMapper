@@ -1,12 +1,16 @@
 package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
+import org.simpleflatmapper.jdbc.property.IndexedSetterProperty;
+import org.simpleflatmapper.map.property.GetterProperty;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.IndexedSetter;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbObject.Type;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
-import org.simpleflatmapper.util.ListCollectorHandler;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.ListCollector;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 //IFJAVA8_START
@@ -41,7 +46,7 @@ public class DynamicJdbcMapperTest {
 		DbHelper.testDbObjectFromDb(new TestRowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				List<DbObject> objects = mapper.forEach(ps.executeQuery(), new ListCollectorHandler<DbObject>()).getList();
+				List<DbObject> objects = mapper.forEach(ps.executeQuery(), new ListCollector<DbObject>()).getList();
 				assertEquals(1, objects.size());
 				DbHelper.assertDbObjectMapping(objects.get(0));
 			}
@@ -123,9 +128,9 @@ public class DynamicJdbcMapperTest {
 		final AtomicLong sumOfAllIds = new AtomicLong();
 		final AtomicLong nbRow = new AtomicLong();
 		
-		final RowHandler<DbObject> handler = new RowHandler<DbObject>() {
+		final CheckedConsumer<DbObject> handler = new CheckedConsumer<DbObject>() {
 			@Override
-			public void handle(DbObject t) throws Exception {
+			public void accept(DbObject t) throws Exception {
 				long id = t.getId();
 				
 				assertEquals("name" + Long.toHexString(id), t.getName());
@@ -171,4 +176,5 @@ public class DynamicJdbcMapperTest {
 		
 		assertEquals(NBFUTURE * sum, sumOfAllIds.get());
 	}
+
 }

@@ -184,7 +184,7 @@ public class CsvMapperBuilder<T> {
 
         return new CsvMapperImpl<T>(csvMapperCellHandlerFactory,
                 delayedCellSetterFactories,
-                setters, getJoinKeys(), mapperConfig.rowHandlerErrorHandler());
+                setters, getJoinKeys(), mapperConfig.consumerErrorHandler());
 	}
 
     private CsvMapperCellHandlerFactory<T> newCsvMapperCellHandlerFactory(ParsingContextFactoryBuilder parsingContextFactoryBuilder,

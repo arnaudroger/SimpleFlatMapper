@@ -10,7 +10,7 @@ import org.simpleflatmapper.test.beans.Professor;
 import org.simpleflatmapper.test.beans.Student;
 import org.simpleflatmapper.test.beans.StudentGS;
 import org.simpleflatmapper.test.beans.ProfessorGS;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
 
 import java.sql.ResultSet;
@@ -111,7 +111,7 @@ public class DiscriminatorJdbcMapperTest {
     }
 
     private <T extends Person> void validateMapper(JdbcMapper<T> mapper) throws Exception {
-        List<T> persons = mapper.forEach(setUpResultSetMock(), new ListCollectorHandler<T>()).getList();
+        List<T> persons = mapper.forEach(setUpResultSetMock(), new ListCollector<T>()).getList();
         validatePersons(persons);
 
         //IFJAVA8_START

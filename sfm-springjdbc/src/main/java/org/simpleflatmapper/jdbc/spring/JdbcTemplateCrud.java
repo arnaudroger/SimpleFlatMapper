@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.jdbc.Crud;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -63,7 +63,7 @@ public class JdbcTemplateCrud<T, K> {
      * @return the keyConsumer
      * @throws SQLException
      */
-    public <RH extends RowHandler<? super K>> RH create(final T value, final RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH create(final T value, final RH keyConsumer) throws SQLException {
         return
             jdbcTemplate.execute(new ConnectionCallback<RH>() {
                 @Override
@@ -83,7 +83,7 @@ public class JdbcTemplateCrud<T, K> {
      * @return the keyConsumer
      * @throws SQLException
      */
-    public <RH extends RowHandler<? super K>> RH create(final Collection<T> values, final RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH create(final Collection<T> values, final RH keyConsumer) throws SQLException {
         return
             jdbcTemplate.execute(new ConnectionCallback<RH>() {
                 @Override
@@ -111,18 +111,18 @@ public class JdbcTemplateCrud<T, K> {
     }
 
     /**
-     * retrieve the objects with the specified keys and pass them to the rowHandler.
+     * retrieve the objects with the specified keys and pass them to the consumer.
      *
      * @param keys       the keys
-     * @param rowHandler the handler that is callback for each row
+     * @param consumer the handler that is callback for each row
      * @throws SQLException if an error occurs
      */
-    public <RH extends RowHandler<? super T>> RH read(final Collection<K> keys, final RH rowHandler) throws SQLException {
+    public <RH extends CheckedConsumer<? super T>> RH read(final Collection<K> keys, final RH consumer) throws SQLException {
         return
             jdbcTemplate.execute(new ConnectionCallback<RH>() {
                 @Override
                 public RH doInConnection(Connection connection) throws SQLException, DataAccessException {
-                    return crud.read(connection, keys, rowHandler);
+                    return crud.read(connection, keys, consumer);
                 }
             });
     }
@@ -232,7 +232,7 @@ public class JdbcTemplateCrud<T, K> {
      * @return the keyConsumer
      * @throws SQLException
      */
-    public <RH extends RowHandler<? super K>> RH createOrUpdate(final T value, final RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(final T value, final RH keyConsumer) throws SQLException {
         return jdbcTemplate.execute(new ConnectionCallback<RH>() {
             @Override
             public RH doInConnection(Connection connection) throws SQLException, DataAccessException {
@@ -251,7 +251,7 @@ public class JdbcTemplateCrud<T, K> {
      * @return the keyConsumer
      * @throws SQLException
      */
-    public <RH extends RowHandler<? super K>> RH createOrUpdate(final Collection<T> values, final RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(final Collection<T> values, final RH keyConsumer) throws SQLException {
         return jdbcTemplate.execute(new ConnectionCallback<RH>() {
             @Override
             public RH doInConnection(Connection connection) throws SQLException, DataAccessException {

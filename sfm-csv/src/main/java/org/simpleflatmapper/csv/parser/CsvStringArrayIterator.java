@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv.parser;
 
 import org.simpleflatmapper.csv.CsvReader;
 import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -18,9 +18,9 @@ public class CsvStringArrayIterator implements Iterator<String[]> {
 
     @SuppressWarnings("unchecked")
     public CsvStringArrayIterator(CsvReader csvReader) {
-        cellConsumer = StringArrayConsumer.newInstance(new RowHandler<String[]>() {
+        cellConsumer = StringArrayConsumer.newInstance(new CheckedConsumer<String[]>() {
             @Override
-            public void handle(String[] strings) throws Exception {
+            public void accept(String[] strings) throws Exception {
                 value = strings;
             }
         });

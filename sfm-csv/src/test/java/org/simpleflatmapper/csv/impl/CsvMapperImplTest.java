@@ -6,7 +6,7 @@ import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.ParsingContext;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -27,9 +27,9 @@ public class CsvMapperImplTest {
         })).addMapping("name").addMapping("email").mapper();
         final CsvMapperImpl<DbObject> mapper3 = (CsvMapperImpl<DbObject>) CsvMapperFactory.newInstance().newBuilder(DbObject.class).addMapping("id").addMapping("name").addMapping("creationTime").mapper();
 
-        final RowHandler<DbObject> handler = new RowHandler<DbObject>() {
+        final CheckedConsumer<DbObject> handler = new CheckedConsumer<DbObject>() {
             @Override
-            public void handle(DbObject dbObject) throws Exception {
+            public void accept(DbObject dbObject) throws Exception {
 
             }
         };

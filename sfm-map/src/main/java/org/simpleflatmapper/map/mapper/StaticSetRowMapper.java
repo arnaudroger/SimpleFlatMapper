@@ -3,7 +3,7 @@ package org.simpleflatmapper.map.mapper;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.impl.StaticMapperEnumarable;
@@ -17,7 +17,7 @@ public class StaticSetRowMapper<ROW, SET, T, E extends Exception> extends Abstra
 	private final UnaryFactory<SET, Enumarable<ROW>> enumarableFactory;
 
 	public StaticSetRowMapper(final Mapper<ROW, T> mapper,
-							  final RowHandlerErrorHandler errorHandler,
+							  final ConsumerErrorHandler errorHandler,
 							  final MappingContextFactory<? super ROW> mappingContextFactory,
 							  UnaryFactory<SET, Enumarable<ROW>> enumarableFactory) {
 		super(errorHandler);

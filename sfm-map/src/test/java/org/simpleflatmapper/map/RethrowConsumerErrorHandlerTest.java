@@ -1,15 +1,15 @@
 package org.simpleflatmapper.map;
 
 import org.junit.Test;
-import org.simpleflatmapper.map.error.RethrowRowHandlerErrorHandler;
+import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 
 import static org.junit.Assert.assertSame;
 
-public class RethrowRowHandlerErrorHandlerTest {
+public class RethrowConsumerErrorHandlerTest {
 
 	@Test
 	public void testHandlerError() {
-		RethrowRowHandlerErrorHandler handler = RethrowRowHandlerErrorHandler.INSTANCE;
+		RethrowConsumerErrorHandler handler = RethrowConsumerErrorHandler.INSTANCE;
 		
 		Exception error = new Exception();
 		try {

@@ -7,14 +7,14 @@ import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
-import org.simpleflatmapper.map.error.RethrowRowHandlerErrorHandler;
+import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.test.beans.Person;
 import org.simpleflatmapper.test.beans.ProfessorGS;
 import org.simpleflatmapper.test.beans.StudentGS;
 import org.simpleflatmapper.util.ArrayEnumarable;
 import org.simpleflatmapper.util.Enumarable;
 import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.UnaryFactory;
 
@@ -129,7 +129,7 @@ public class DiscriminatorMapperTest {
                     public String convert(Object[] in) {
                         return Arrays.toString(in);
                     }
-                }, RethrowRowHandlerErrorHandler.INSTANCE);
+                }, RethrowConsumerErrorHandler.INSTANCE);
 
     }
     @Test
@@ -141,7 +141,7 @@ public class DiscriminatorMapperTest {
                         {"student", "sname", 1},
                         {"professor", "pname", 2}
                 },
-                new ListCollectorHandler<Person>()).getList();
+                new ListCollector<Person>()).getList();
 
         assertEquals(2, list.size());
 
@@ -164,7 +164,7 @@ public class DiscriminatorMapperTest {
                             {"cat", "sname", 1},
                             {"professor", "pname", 2}
                     },
-                    new ListCollectorHandler<Person>()).getList();
+                    new ListCollector<Person>()).getList();
             fail();
         } catch (MappingException e) {
             //expected

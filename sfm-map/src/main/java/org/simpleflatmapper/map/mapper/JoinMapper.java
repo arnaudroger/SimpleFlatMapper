@@ -1,8 +1,7 @@
 package org.simpleflatmapper.map.mapper;
 
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.Mapper;
-import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.util.Enumarable;
 import org.simpleflatmapper.util.UnaryFactory;
@@ -13,7 +12,7 @@ public class JoinMapper<ROW, ROWS, T, EX extends Exception> extends AbstractEnum
     private final MappingContextFactory<? super ROW> mappingContextFactory;
     private final UnaryFactory<ROWS, Enumarable<ROW>> factory;
 
-    public JoinMapper(Mapper<ROW, T> mapper, RowHandlerErrorHandler errorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<ROWS, Enumarable<ROW>> factory) {
+    public JoinMapper(Mapper<ROW, T> mapper, ConsumerErrorHandler errorHandler, MappingContextFactory<? super ROW> mappingContextFactory, UnaryFactory<ROWS, Enumarable<ROW>> factory) {
         super(errorHandler);
         this.mapper = mapper;
         this.mappingContextFactory = mappingContextFactory;

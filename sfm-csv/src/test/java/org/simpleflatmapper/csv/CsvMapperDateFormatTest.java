@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.property.DateFormatProperty;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
 
 import java.io.IOException;
@@ -67,7 +67,7 @@ public class CsvMapperDateFormatTest {
 		String data = "date1,date2\n" + strDate + "," + strDate;
 		
 		
-		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollectorHandler<ObjectWithDate>()).getList();
+		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollector<ObjectWithDate>()).getList();
 		assertEquals(1, list.size());
 		
 		assertEquals(date, list.get(0).date1);
@@ -82,7 +82,7 @@ public class CsvMapperDateFormatTest {
 		CsvMapper<ObjectWithDate> mapper = CsvMapperFactory.newInstance().fieldMapperErrorHandler(fieldMapperErrorHandler).newMapper(ObjectWithDate.class);
 		
 		String data = "date3,date1,date2\nwrong date,wrong date,wrong date";
-		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollectorHandler<ObjectWithDate>()).getList();
+		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollector<ObjectWithDate>()).getList();
 		assertEquals(1, list.size());
 		
 		assertNull(list.get(0).date1);
@@ -102,7 +102,7 @@ public class CsvMapperDateFormatTest {
 		CsvMapper<ObjectWithDate> mapper = CsvMapperFactory.newInstance().useAsm(false).fieldMapperErrorHandler(fieldMapperErrorHandler).newMapper(ObjectWithDate.class);
 
 		String data = "date3,date1,date2\nwrong date,wrong date,wrong date";
-		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollectorHandler<ObjectWithDate>()).getList();
+		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollector<ObjectWithDate>()).getList();
 		assertEquals(1, list.size());
 
 		assertNull(list.get(0).date1);
@@ -133,7 +133,7 @@ public class CsvMapperDateFormatTest {
 
 
 
-		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollectorHandler<ObjectWithDate>()).getList();
+		List<ObjectWithDate> list = mapper.forEach(new StringReader(data), new ListCollector<ObjectWithDate>()).getList();
 		assertEquals(3, list.size());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		assertEquals(sdf.parse("20160618"), list.get(0).date1);
@@ -158,13 +158,13 @@ public class CsvMapperDateFormatTest {
 
 
 		try {
-			mapper.forEach(new StringReader(data1), new ListCollectorHandler<ObjectWithDate>()).getList();
+			mapper.forEach(new StringReader(data1), new ListCollector<ObjectWithDate>()).getList();
 			fail();
 		} catch (Exception e) {
 			//
 		}
 
-		List<ObjectWithDate> list = mapper.forEach(new StringReader(data2), new ListCollectorHandler<ObjectWithDate>()).getList();
+		List<ObjectWithDate> list = mapper.forEach(new StringReader(data2), new ListCollector<ObjectWithDate>()).getList();
 
 		assertEquals(1, list.size());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");

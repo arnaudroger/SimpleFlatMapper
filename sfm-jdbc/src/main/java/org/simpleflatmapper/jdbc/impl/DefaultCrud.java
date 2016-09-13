@@ -5,7 +5,7 @@ import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.QueryPreparer;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -58,12 +58,12 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
     }
 
     @Override
-    public <RH extends RowHandler<? super K>> RH create(Connection connection, T value, RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH create(Connection connection, T value, RH keyConsumer) throws SQLException {
         return executeQueryPreparer(connection, value, keyConsumer, insertQueryPreparer);
     }
 
     @Override
-    public <RH extends RowHandler<? super K>> RH create(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH create(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
         return executeQueryPreparerInBatchMode(connection, values, keyConsumer, insertQueryPreparer);
     }
 
@@ -88,15 +88,15 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
     }
 
     @Override
-    public <RH extends RowHandler<? super T>> RH read(Connection connection, Collection<K> keys, RH rowHandler) throws SQLException {
+    public <RH extends CheckedConsumer<? super T>> RH read(Connection connection, Collection<K> keys, RH consumer) throws SQLException {
         PreparedStatement preparedStatement = keyTupleQueryPreparer.prepareStatement("SELECT * FROM " + table + " WHERE ", connection, keys.size());
         try {
             keyTupleQueryPreparer.bindTo(keys, preparedStatement, 0);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                rowHandler.handle(selectQueryMapper.map(resultSet));
+                consumer.accept(selectQueryMapper.map(resultSet));
             }
-            return rowHandler;
+            return consumer;
         } catch(Exception e) {
             return ErrorHelper.rethrow(e);
         } finally {
@@ -145,16 +145,16 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
     }
 
     @Override
-    public <RH extends RowHandler<? super K>> RH createOrUpdate(Connection connection, T value, RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Connection connection, T value, RH keyConsumer) throws SQLException {
         return executeQueryPreparer(connection, value, keyConsumer, upsertQueryPreparer);
     }
 
     @Override
-    public <RH extends RowHandler<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
         return executeQueryPreparerInBatchMode(connection, values, keyConsumer, upsertQueryPreparer);
     }
 
-    protected <RH extends RowHandler<? super K>> RH executeQueryPreparerInBatchMode(Connection connection, Collection<T> values, RH keyConsumer, QueryPreparer<T> queryPreparer) throws SQLException {
+    protected <RH extends CheckedConsumer<? super K>> RH executeQueryPreparerInBatchMode(Connection connection, Collection<T> values, RH keyConsumer, QueryPreparer<T> queryPreparer) throws SQLException {
         PreparedStatement preparedStatement = queryPreparer.prepareStatement(connection);
         try {
             Mapper<T, PreparedStatement> mapper = queryPreparer.mapper();
@@ -177,7 +177,7 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
         return keyConsumer;
     }
 
-    protected <RH extends RowHandler<? super K>, QPT> RH executeQueryPreparer(Connection connection, QPT value, RH keyConsumer, QueryPreparer<QPT> queryPreparer) throws SQLException {
+    protected <RH extends CheckedConsumer<? super K>, QPT> RH executeQueryPreparer(Connection connection, QPT value, RH keyConsumer, QueryPreparer<QPT> queryPreparer) throws SQLException {
         PreparedStatement preparedStatement = queryPreparer.prepare(connection).bind(value);
         try {
             preparedStatement.executeUpdate();
@@ -190,12 +190,12 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
         }
     }
 
-    protected void handleGeneratedKeys(RowHandler<? super K> keyConsumer, PreparedStatement preparedStatement) throws SQLException {
+    protected void handleGeneratedKeys(CheckedConsumer<? super K> keyConsumer, PreparedStatement preparedStatement) throws SQLException {
         ResultSet keys = preparedStatement.getGeneratedKeys();
         try {
             while (keys.next()) {
                 try {
-                    keyConsumer.handle(keyMapper.map(keys));
+                    keyConsumer.accept(keyMapper.map(keys));
                 } catch (Exception e) {
                     ErrorHelper.rethrow(e);
                 }

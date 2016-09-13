@@ -7,12 +7,12 @@ import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SampleFieldKey;
 import org.simpleflatmapper.map.SampleFieldKeyMapperKeyComparator;
 import org.simpleflatmapper.map.SetRowMapper;
-import org.simpleflatmapper.map.error.RethrowRowHandlerErrorHandler;
+import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.ArrayEnumarable;
 import org.simpleflatmapper.util.Enumarable;
 import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.UnaryFactory;
 import org.simpleflatmapper.util.UnaryFactoryWithException;
 
@@ -92,7 +92,7 @@ public class SetRowMapperTest {
 
         StaticSetRowMapper<Object[], Object[][], DbObject, RuntimeException> staticSetRowMapper =
                 new StaticSetRowMapper<Object[], Object[][], DbObject, RuntimeException>(ID_NAME_MAPPER,
-                        RethrowRowHandlerErrorHandler.INSTANCE, MappingContext.EMPTY_FACTORY, ENUMARABLE_UNARY_FACTORY);
+                        RethrowConsumerErrorHandler.INSTANCE, MappingContext.EMPTY_FACTORY, ENUMARABLE_UNARY_FACTORY);
 
 
         checkSetRowMapperIdName(staticSetRowMapper);
@@ -100,7 +100,7 @@ public class SetRowMapperTest {
     }
 
     private void checkSetRowMapperIdName(SetRowMapper<Object[], Object[][], DbObject, RuntimeException> staticSetRowMapper) throws Exception {
-        checkIdNameResult(staticSetRowMapper.forEach(ID_NAME_DATA, new ListCollectorHandler<DbObject>()).getList());
+        checkIdNameResult(staticSetRowMapper.forEach(ID_NAME_DATA, new ListCollector<DbObject>()).getList());
         checkIdNameResult(staticSetRowMapper.iterator(ID_NAME_DATA));
         //IFJAVA8_START
         checkIdNameResult(staticSetRowMapper.stream(ID_NAME_DATA).collect(Collectors.<DbObject>toList()));
@@ -137,7 +137,7 @@ public class SetRowMapperTest {
 
 
     private void checkSetRowMapperIdNameEmail(SetRowMapper<Object[], Object[][], DbObject, RuntimeException> staticSetRowMapper) throws Exception {
-        checkIdNameEmailResult(staticSetRowMapper.forEach(ID_NAME_EMAIL_DATA, new ListCollectorHandler<DbObject>()).getList());
+        checkIdNameEmailResult(staticSetRowMapper.forEach(ID_NAME_EMAIL_DATA, new ListCollector<DbObject>()).getList());
         checkIdNameEmailResult(staticSetRowMapper.iterator(ID_NAME_EMAIL_DATA));
         //IFJAVA8_START
         checkIdNameEmailResult(staticSetRowMapper.stream(ID_NAME_EMAIL_DATA).collect(Collectors.<DbObject>toList()));
@@ -180,7 +180,7 @@ public class SetRowMapperTest {
                     public SetRowMapper<Object[], Object[][], DbObject, RuntimeException> newInstance(MapperKey<SampleFieldKey> sampleFieldKeyMapperKey) {
                         Mapper<Object[], DbObject> mapper = sampleFieldKeyMapperKey.getColumns().length == 2 ? ID_NAME_MAPPER : ID_NAME_EMIL_MAPPER;
                         return new StaticSetRowMapper<Object[], Object[][], DbObject, RuntimeException>(mapper,
-                                RethrowRowHandlerErrorHandler.INSTANCE, MappingContext.EMPTY_FACTORY, ENUMARABLE_UNARY_FACTORY);
+                                RethrowConsumerErrorHandler.INSTANCE, MappingContext.EMPTY_FACTORY, ENUMARABLE_UNARY_FACTORY);
                     }
                 };
         UnaryFactoryWithException<Object[], MapperKey<SampleFieldKey>, RuntimeException> mapperKeyFromRow = new UnaryFactoryWithException<Object[], MapperKey<SampleFieldKey>, RuntimeException>() {

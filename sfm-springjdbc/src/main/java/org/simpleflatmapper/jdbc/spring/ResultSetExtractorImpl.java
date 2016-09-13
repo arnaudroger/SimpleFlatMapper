@@ -2,14 +2,13 @@ package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
-import org.simpleflatmapper.util.ListCollectorHandler;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.ListCollector;
+import org.simpleflatmapper.util.CheckedConsumer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -58,10 +57,10 @@ public final class ResultSetExtractorImpl<T> implements ResultSetExtractor<List<
     @Override
     public List<T> extractData(ResultSet rs) throws SQLException,
             DataAccessException {
-        return mapper.forEach(rs, new ListCollectorHandler<T>()).getList();
+        return mapper.forEach(rs, new ListCollector<T>()).getList();
     }
 
-	public <H extends RowHandler<T>>  ResultSetExtractor<H> newResultSetExtractor(final H handler) {
+	public <H extends CheckedConsumer<T>>  ResultSetExtractor<H> newResultSetExtractor(final H handler) {
 		return new ResultSetExtractor<H>() {
 			@Override
 			public H extractData(ResultSet rs) throws SQLException,

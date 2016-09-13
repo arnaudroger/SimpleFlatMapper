@@ -39,11 +39,11 @@ public class SheetMapperBuilder<T> extends AbstractMapperBuilder<Row, T, CsvColu
 
     @Override
     protected RowMapper<T> newJoinJdbcMapper(Mapper<Row, T> mapper) {
-        return new JoinSheetMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
+        return new JoinSheetMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 
     @Override
     protected RowMapper<T> newStaticJdbcMapper(Mapper<Row, T> mapper) {
-        return  new StaticSheetMapper<T>(mapper, mapperConfig.rowHandlerErrorHandler(), mappingContextFactoryBuilder.newFactory());
+        return  new StaticSheetMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 }

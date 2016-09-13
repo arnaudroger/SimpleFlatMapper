@@ -18,7 +18,7 @@ public class MyDao {
         try (PreparedStatement ps = 
         		conn.prepareStatement("select id, email, my_property from MyTable")) {
 	        try (ResultSet rs = ps.executeQuery()){
-	            parameterGetterMap.forEach(rs, new RowHandler<MyObject>{
+	            parameterGetterMap.forEach(rs, new CheckedConsumer<MyObject>{
 	            	public void handle(MyObject o) throws IOException { 
 	            		writer.append(o.toString()).append("\n")); 
 	            	}  

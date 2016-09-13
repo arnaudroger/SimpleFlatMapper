@@ -1,8 +1,8 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 
-public class MyJdbcRawHandlerErrorHandler implements RowHandlerErrorHandler {
+public class MyJdbcRawHandlerErrorHandler implements ConsumerErrorHandler {
 
 	public Throwable error;
 

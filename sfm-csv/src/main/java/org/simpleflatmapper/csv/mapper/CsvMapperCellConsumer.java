@@ -1,8 +1,8 @@
 package org.simpleflatmapper.csv.mapper;
 
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.util.Collection;
 
@@ -13,11 +13,11 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
 
 
-    protected final RowHandlerErrorHandler rowHandlerErrorHandlers;
+    protected final ConsumerErrorHandler consumerErrorHandlers;
 
     protected final BreakDetector breakDetector;
 
-    protected final RowHandler<? super T> handler;
+    protected final CheckedConsumer<? super T> handler;
 
     protected final CsvMapperCellConsumer[] children;
 
@@ -26,12 +26,12 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
     @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
     public CsvMapperCellConsumer(
             CsvMapperCellHandler<T> csvMapperCellHandler,
-            RowHandlerErrorHandler rowHandlerErrorHandlers,
-            RowHandler<? super T> handler,
+            ConsumerErrorHandler consumerErrorHandlers,
+            CheckedConsumer<? super T> handler,
             BreakDetector breakDetector, Collection<CsvMapperCellConsumer<?>> children) {
         super();
         this.mapperSetters = csvMapperCellHandler;
-        this.rowHandlerErrorHandlers = rowHandlerErrorHandlers;
+        this.consumerErrorHandlers = consumerErrorHandlers;
         this.handler = handler;
         this.breakDetector = breakDetector;
         this.children = children.toArray(new CsvMapperCellConsumer[0]);
@@ -56,9 +56,9 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
     protected final void callHandler() {
         if (handler == null) return;
         try {
-            handler.handle(getCurrentInstance());
+            handler.accept(getCurrentInstance());
         } catch (Exception e) {
-            rowHandlerErrorHandlers.handlerError(e, getCurrentInstance());
+            consumerErrorHandlers.handlerError(e, getCurrentInstance());
         }
     }
 

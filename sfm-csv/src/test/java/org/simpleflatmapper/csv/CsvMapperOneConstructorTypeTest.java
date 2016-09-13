@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv;
 import org.junit.Test;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.reflect.ReflectionService;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -50,6 +50,6 @@ public class CsvMapperOneConstructorTypeTest {
 		builder.addMapping("prop");
 		CsvMapper<MyObject> mapper = builder.mapper();
 		
-		assertEquals("value", mapper.forEach(new StringReader("value"), new ListCollectorHandler<MyObject>()).getList().get(0).prop.value);
+		assertEquals("value", mapper.forEach(new StringReader("value"), new ListCollector<MyObject>()).getList().get(0).prop.value);
 	}
 }

@@ -1,6 +1,8 @@
 package org.simpleflatmapper.csv;
 
 import org.junit.Test;
+import org.simpleflatmapper.test.beans.DbObject;
+import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.csv.parser.BufferOverflowException;
 import org.simpleflatmapper.csv.parser.CellConsumer;
 import org.simpleflatmapper.tuple.Tuple2;
@@ -13,9 +15,8 @@ import org.simpleflatmapper.tuple.Tuple8;
 import org.simpleflatmapper.tuple.Tuples;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.CloseableIterator;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
-import org.simpleflatmapper.util.RowHandler;
 
 import java.io.CharArrayReader;
 import java.io.File;
@@ -23,8 +24,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 //IFJAVA8_START
@@ -272,7 +275,7 @@ public class CsvParserTest {
     @Test
     public void testDSLMapToForEach() throws IOException {
         List<Tuple2<String, String>> list = CsvParser.mapTo(String.class, String.class)
-                .headers("0", "1").forEach(new StringReader("value1,value2\nvalue3"), new ListCollectorHandler<Tuple2<String, String>>()).getList();
+                .headers("0", "1").forEach(new StringReader("value1,value2\nvalue3"), new ListCollector<Tuple2<String, String>>()).getList();
 
         assertArrayEquals(new Object[] { new Tuple2<String, String>("value1", "value2"), new Tuple2<String, String>("value3", null)}, list.toArray());
     }
@@ -280,7 +283,7 @@ public class CsvParserTest {
 	@Test
 	public void testDSLMapToForEachWithLimit() throws IOException {
 		List<Tuple2<String, String>> list = CsvParser.limit(1).mapTo(String.class, String.class)
-				.headers("0", "1").forEach(new StringReader("value1,value2\nvalue3"), new ListCollectorHandler<Tuple2<String, String>>()).getList();
+				.headers("0", "1").forEach(new StringReader("value1,value2\nvalue3"), new ListCollector<Tuple2<String, String>>()).getList();
 
 		assertArrayEquals(new Object[] { new Tuple2<String, String>("value1", "value2")}, list.toArray());
 	}
@@ -288,7 +291,7 @@ public class CsvParserTest {
 	public void testDSLMapToForEachFromFile() throws IOException {
 		List<Tuple2<String, String>> list = CsvParser.mapTo(String.class, String.class)
 				.headers("0", "1").forEach(createTempCsv("value1,value2\n" +
-						"value3"), new ListCollectorHandler<Tuple2<String, String>>()).getList();
+						"value3"), new ListCollector<Tuple2<String, String>>()).getList();
 
 		assertArrayEquals(new Object[] { new Tuple2<String, String>("value1", "value2"), new Tuple2<String, String>("value3", null)}, list.toArray());
 	}
@@ -296,7 +299,7 @@ public class CsvParserTest {
 	public void testDSLMapToForEachFromString() throws IOException {
 		List<Tuple2<String, String>> list = CsvParser.mapTo(String.class, String.class)
 				.headers("0", "1").forEach("value1,value2\n" +
-						"value3", new ListCollectorHandler<Tuple2<String, String>>()).getList();
+						"value3", new ListCollector<Tuple2<String, String>>()).getList();
 
 		assertArrayEquals(new Object[] { new Tuple2<String, String>("value1", "value2"), new Tuple2<String, String>("value3", null)}, list.toArray());
 	}
@@ -444,7 +447,7 @@ public class CsvParserTest {
 
 	private void testReadRows(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
 		List<String[]> rows =
-				dsl.reader(createReader(expectations, separator, quote, cr)).read(new ListCollectorHandler<String[]>()).getList();
+				dsl.reader(createReader(expectations, separator, quote, cr)).read(new ListCollector<String[]>()).getList();
 
 		assertArrayEquals(expectations, rows.toArray(new String[0][]));
 	}
@@ -453,7 +456,7 @@ public class CsvParserTest {
 
 	private void testReadRowsWithLimit(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
 		List<String[]> rows =
-				dsl.reader(createReader(expectations, separator, quote, cr)).read(new ListCollectorHandler<String[]>(), 1).getList();
+				dsl.reader(createReader(expectations, separator, quote, cr)).read(new ListCollector<String[]>(), 1).getList();
 
 		assertArrayEquals(toSubArray(expectations, 0, 1), rows.toArray(new String[0][]));
 	}
@@ -759,9 +762,9 @@ public class CsvParserTest {
 
 	@Test
 	public void testForEach() throws Exception {
-		testForEachList(CsvParser.forEach("a,b\nc,d", new ListCollectorHandler<String[]>()).getList());
-		testForEachList(CsvParser.forEach(createTempCsv("a,b\nc,d"), new ListCollectorHandler<String[]>()).getList());
-		testForEachList(CsvParser.forEach(new StringReader("a,b\nc,d"), new ListCollectorHandler<String[]>()).getList());
+		testForEachList(CsvParser.forEach("a,b\nc,d", new ListCollector<String[]>()).getList());
+		testForEachList(CsvParser.forEach(createTempCsv("a,b\nc,d"), new ListCollector<String[]>()).getList());
+		testForEachList(CsvParser.forEach(new StringReader("a,b\nc,d"), new ListCollector<String[]>()).getList());
 	}
 
 	private void testForEachList(List<String[]> list) {
@@ -853,9 +856,9 @@ public class CsvParserTest {
 	private Object[][] toObjects(CsvReader reader) throws IOException {
 		final List<Object[]> objects = new ArrayList<Object[]>();
 
-		reader.read(new RowHandler<String[]>() {
+		reader.read(new CheckedConsumer<String[]>() {
 			@Override
-			public void handle(String[] strings) {
+			public void accept(String[] strings) {
 				Object[] o = new Object[strings.length];
 				for(int i = 0; i < strings.length; i++) {
 					o[i] = strings[i];
@@ -881,4 +884,22 @@ public class CsvParserTest {
 		assertArrayEquals(new Object[][] {{"", ""}}, toObjects(CsvParser.separator('|').reader("|")));
 		assertArrayEquals(new Object[][] {{"", ""}}, toObjects(CsvParser.dsl().trimSpaces().reader(",")));
 	}
+
+	static CsvWriter.CsvWriterDSL<DbObject> writerDsl =
+			CsvWriter.from(DbObject.class).columns("id" ,"name", "email");
+
+	public static void writeCsv(Collection<DbObject> objects) throws IOException {
+		try (StringWriter fileWriter = new StringWriter()) {
+			CsvWriter<DbObject> writer=
+					writerDsl.to(fileWriter);
+			objects.forEach(CheckedConsumer.toConsumer(writer::append));
+
+			System.out.println("fileWriter = " + fileWriter);
+		}
+	}
+
+	public static void main(String[] args) throws IOException {
+		writeCsv(Arrays.asList(DbObject.newInstance()));
+	}
+
 }

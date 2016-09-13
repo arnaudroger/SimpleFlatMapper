@@ -7,13 +7,12 @@ import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SampleFieldKey;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.KeysDefinition;
-import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.context.impl.BreakDetectorMappingContextFactory;
-import org.simpleflatmapper.map.error.RethrowRowHandlerErrorHandler;
+import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.test.beans.DbListObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,7 +70,7 @@ public class JoinMapperTest {
         }, -1);
         JoinMapper<Object[], Object[][], DbListObject, RuntimeException> joinMapper =
                 new JoinMapper<Object[], Object[][], DbListObject, RuntimeException>(
-                        mapper, RethrowRowHandlerErrorHandler.INSTANCE,
+                        mapper, RethrowConsumerErrorHandler.INSTANCE,
                         new BreakDetectorMappingContextFactory<Object[], Object>(new KeysDefinition[] {keysDefinition}, 0, MappingContext.EMPTY_FACTORY),
                         SetRowMapperTest.ENUMARABLE_UNARY_FACTORY
                         );
@@ -83,7 +82,7 @@ public class JoinMapperTest {
                 {2, 3l, "name3"}
         };
 
-        checkList(joinMapper.forEach(data, new ListCollectorHandler<DbListObject>()).getList());
+        checkList(joinMapper.forEach(data, new ListCollector<DbListObject>()).getList());
 
         //IFJAVA8_START
         checkList(joinMapper.stream(data).collect(Collectors.<DbListObject>toList()));

@@ -4,8 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.util.ListCollectorHandler;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.ListCollector;
+import org.simpleflatmapper.util.CheckedConsumer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
@@ -47,10 +47,10 @@ public class JdbcTemplateCrudTest {
 
 		// create
 		Long key =
-				objectCrud.create(object, new RowHandler<Long>() {
+				objectCrud.create(object, new CheckedConsumer<Long>() {
 					Long key;
 					@Override
-					public void handle(Long aLong) throws Exception {
+					public void accept(Long aLong) throws Exception {
 						key = aLong;
 					}
 				}).key;
@@ -97,10 +97,10 @@ public class JdbcTemplateCrudTest {
 		// create
 		final List<DbObject> objects = Arrays.asList(object);
 		Long key =
-				objectCrud.create(objects, new RowHandler<Long>() {
+				objectCrud.create(objects, new CheckedConsumer<Long>() {
 					Long key;
 					@Override
-					public void handle(Long aLong) throws Exception {
+					public void accept(Long aLong) throws Exception {
 						key = aLong;
 					}
 				}).key;
@@ -110,7 +110,7 @@ public class JdbcTemplateCrudTest {
 
 		List<Long> keys = Arrays.asList(object.getId());
 		// read
-		assertEquals(objects, objectCrud.read(keys, new ListCollectorHandler<DbObject>()).getList());
+		assertEquals(objects, objectCrud.read(keys, new ListCollector<DbObject>()).getList());
 
 		object.setName("Udpdated");
 
@@ -123,13 +123,13 @@ public class JdbcTemplateCrudTest {
 		assertNull(objectCrud.read(key));
 
 		objectCrud.create(objects);
-		assertEquals(objects, objectCrud.read(keys, new ListCollectorHandler<DbObject>()).getList());
+		assertEquals(objects, objectCrud.read(keys, new ListCollector<DbObject>()).getList());
 
 		objectCrud.delete(keys);
 
 		try {
 			objectCrud.createOrUpdate(objects);
-			assertEquals(objects, objectCrud.read(keys, new ListCollectorHandler<DbObject>()).getList());
+			assertEquals(objects, objectCrud.read(keys, new ListCollector<DbObject>()).getList());
 		} catch (UnsupportedOperationException e) {}
 
 	}

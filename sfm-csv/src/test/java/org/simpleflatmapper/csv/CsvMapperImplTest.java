@@ -5,7 +5,7 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.impl.CsvMapperImpl;
 import org.simpleflatmapper.csv.impl.ParsingException;
 import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -62,10 +62,10 @@ public class CsvMapperImplTest {
 		CsvMapperBuilderTest.addDbObjectFields(builder);
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
 
-		int i = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader3Lines(), new RowHandler<DbObject>() {
+		int i = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader3Lines(), new CheckedConsumer<DbObject>() {
 			int i = 0;
 			@Override
-			public void handle(DbObject dbObject) throws Exception {
+			public void accept(DbObject dbObject) throws Exception {
 				DbHelper.assertDbObjectMapping(i++, dbObject);
 			}
 		}).i;
@@ -81,10 +81,10 @@ public class CsvMapperImplTest {
 		CsvMapperBuilderTest.addDbObjectFields(builder);
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
 
-		int i = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader3Lines(), new RowHandler<DbObject>() {
+		int i = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader3Lines(), new CheckedConsumer<DbObject>() {
 			int i = 1;
 			@Override
-			public void handle(DbObject dbObject) throws Exception {
+			public void accept(DbObject dbObject) throws Exception {
 				DbHelper.assertDbObjectMapping(i++, dbObject);
 			}
 		}, 1).i;
@@ -98,10 +98,10 @@ public class CsvMapperImplTest {
 		CsvMapperBuilderTest.addDbObjectFields(builder);
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
 
-		int i = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader3Lines(), new RowHandler<DbObject>() {
+		int i = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader3Lines(), new CheckedConsumer<DbObject>() {
 			int i = 1;
 			@Override
-			public void handle(DbObject dbObject) throws Exception {
+			public void accept(DbObject dbObject) throws Exception {
 				DbHelper.assertDbObjectMapping(i++, dbObject);
 			}
 		}, 1, 1).i;

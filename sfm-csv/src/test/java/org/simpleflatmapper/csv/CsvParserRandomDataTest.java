@@ -2,7 +2,7 @@ package org.simpleflatmapper.csv;
 
 import org.junit.Test;
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 
 import java.io.CharArrayReader;
 import java.io.IOException;
@@ -139,7 +139,7 @@ public class CsvParserRandomDataTest {
 
 	private void testReadRows(TestData testData, CsvParser.DSL dsl, char[] chars) throws IOException {
 		List<String[]> rows =
-				dsl.reader(createReader(chars)).read(new ListCollectorHandler<String[]>()).getList();
+				dsl.reader(createReader(chars)).read(new ListCollector<String[]>()).getList();
 
 		assertArrayEquals(testData.expectations, rows.toArray(new String[0][]));
 	}
@@ -148,7 +148,7 @@ public class CsvParserRandomDataTest {
 
 	private void testReadRowsWithLimit(TestData testData, CsvParser.DSL dsl, char[] chars) throws IOException {
 		List<String[]> rows =
-				dsl.reader(createReader(chars)).read(new ListCollectorHandler<String[]>(), 1).getList();
+				dsl.reader(createReader(chars)).read(new ListCollector<String[]>(), 1).getList();
 
 		assertArrayEquals(toSubArray(testData.expectations, 0, 1), rows.toArray(new String[0][]));
 	}

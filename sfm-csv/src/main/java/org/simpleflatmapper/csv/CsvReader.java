@@ -5,8 +5,9 @@ import org.simpleflatmapper.csv.parser.CharConsumer;
 import org.simpleflatmapper.csv.parser.CsvStringArrayIterator;
 import org.simpleflatmapper.csv.parser.NullConsumer;
 import org.simpleflatmapper.csv.parser.StringArrayConsumer;
+import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -75,12 +76,12 @@ public final class CsvReader implements Iterable<String[]> {
 		return cellConsumer;
 	}
 
-	public <RH extends RowHandler<String[]>> RH read(RH handler) throws IOException {
+	public <RH extends CheckedConsumer<String[]>> RH read(RH handler) throws IOException {
 		parseAll(StringArrayConsumer.newInstance(handler));
 		return handler;
 	}
 
-	public <RH extends RowHandler<String[]>> RH read(RH handler, int limit) throws IOException {
+	public <RH extends CheckedConsumer<String[]>> RH read(RH handler, int limit) throws IOException {
 		parseRows(StringArrayConsumer.newInstance(handler), limit);
 		return handler;
 	}

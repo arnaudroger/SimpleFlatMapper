@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.test.jdbc.JoinTest;
 import org.simpleflatmapper.test.beans.ProfessorGS;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -78,7 +78,7 @@ public class JoinSheetMapperTest {
                 joinSheetMapper
                         .forEach(
                                 joinSheet,
-                                new ListCollectorHandler<ProfessorGS>()
+                                new ListCollector<ProfessorGS>()
                         ).getList()
         );
 

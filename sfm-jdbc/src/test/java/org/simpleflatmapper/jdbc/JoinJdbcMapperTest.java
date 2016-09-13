@@ -9,7 +9,7 @@ import org.simpleflatmapper.test.jdbc.JoinTest;
 import org.simpleflatmapper.test.beans.ProfessorC;
 import org.simpleflatmapper.test.beans.ProfessorField;
 import org.simpleflatmapper.test.beans.ProfessorGS;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -156,7 +156,7 @@ public class JoinJdbcMapperTest {
 
 
     private <T extends Professor<?>> void validateMapper(JdbcMapper<T> mapper) throws Exception {
-        List<T> professors = mapper.forEach(setUpResultSetMock(), new ListCollectorHandler<T>()).getList();
+        List<T> professors = mapper.forEach(setUpResultSetMock(), new ListCollector<T>()).getList();
         JoinTest.validateProfessors(professors);
 
         //IFJAVA8_START

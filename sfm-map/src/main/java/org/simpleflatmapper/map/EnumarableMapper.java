@@ -1,6 +1,6 @@
 package org.simpleflatmapper.map;
 
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.util.Iterator;
 //IFJAVA8_START
@@ -32,7 +32,7 @@ public interface EnumarableMapper<S, T, E extends Exception> {
      * @throws MappingException if an error occurs during the mapping
      *
      */
-    <H extends RowHandler<? super T>> H forEach(final S source, final H handler)
+    <H extends CheckedConsumer<? super T>> H forEach(final S source, final H handler)
             throws E, MappingException;
 
     /**

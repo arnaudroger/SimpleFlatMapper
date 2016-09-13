@@ -3,7 +3,7 @@ package org.simpleflatmapper.map.mapper;
 import org.simpleflatmapper.converter.UncheckedConverter;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
 import org.simpleflatmapper.util.Enumarable;
 import org.simpleflatmapper.util.Predicate;
@@ -20,8 +20,8 @@ public class DiscriminatorMapper<ROW, ROWS, T, EX extends Exception> extends Abs
     public DiscriminatorMapper(List<PredicatedMapper<ROW, ROWS, T, EX>> mappers,
                                UnaryFactory<ROWS, Enumarable<ROW>> rowEnumarableFactory,
                                UncheckedConverter<ROW, String> errorConverter,
-                               RowHandlerErrorHandler rowHandlerErrorHandler) {
-        super(rowHandlerErrorHandler);
+                               ConsumerErrorHandler consumerErrorHandler) {
+        super(consumerErrorHandler);
         this.mappers = mappers;
         this.errorConverter = errorConverter;
         this.rowEnumarableFactory = rowEnumarableFactory;

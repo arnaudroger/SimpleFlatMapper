@@ -1,11 +1,14 @@
 package org.simpleflatmapper.util;
 
 /**
- * Functional interface use to provide call back when the jdbcMapper is getting new value.<p>
- * It is equivalent to a {@link java.util.function.Consumer} apart that it allows for checked Exception.
- *
- * @param <T> the type of the call back argument
+ * use {@link CheckedConsumer} instead.
  */
-public interface RowHandler<T> {
-	void handle(T t) throws Exception;
+@Deprecated
+public interface RowHandler<T> extends CheckedConsumer<T> {
+	//IFJAVA8_START
+	// bridge method only available for java8
+	default void handle(T t) throws Exception {
+		accept(t);
+	}
+	//IFJAVA8_END
 }

@@ -2,10 +2,10 @@ package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.EnumarableMapper;
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.util.Enumarable;
 import org.simpleflatmapper.util.EnumarableIterator;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.util.Iterator;
 
@@ -19,14 +19,14 @@ import org.simpleflatmapper.util.EnumarableSpliterator;
 
 public abstract class AbstractEnumarableMapper<S, T, E extends Exception> implements EnumarableMapper<S, T, E> {
 
-    protected final RowHandlerErrorHandler errorHandler;
+    protected final ConsumerErrorHandler errorHandler;
 
-    public AbstractEnumarableMapper(RowHandlerErrorHandler errorHandler) {
+    public AbstractEnumarableMapper(ConsumerErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
     }
 
     @Override
-	public final <H extends RowHandler<? super T>> H forEach(final S source, final H handler)
+	public final <H extends CheckedConsumer<? super T>> H forEach(final S source, final H handler)
 			throws E, MappingException {
         final Enumarable<T> enumarable = newEnumarableOfT(source);
         while(enumarable.next()) {
@@ -36,9 +36,9 @@ public abstract class AbstractEnumarableMapper<S, T, E extends Exception> implem
         return handler;
 	}
 
-    private <H extends RowHandler<? super T>> void handleT(H handler, T t) {
+    private <H extends CheckedConsumer<? super T>> void handleT(H handler, T t) {
         try {
-            handler.handle(t);
+            handler.accept(t);
         } catch(Throwable e) {
             errorHandler.handlerError(e, t);
         }

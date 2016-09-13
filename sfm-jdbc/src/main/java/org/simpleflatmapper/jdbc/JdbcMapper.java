@@ -4,7 +4,7 @@ import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.SetRowMapper;
 import org.simpleflatmapper.map.context.MappingContextFactoryFromRows;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -59,7 +59,7 @@ public interface JdbcMapper<T> extends SetRowMapper<ResultSet, ResultSet, T, SQL
 	 * @throws MappingException if an error occurs during the mapping
 	 *
 	 */
-	<H extends RowHandler<? super T>> H forEach(final ResultSet rs, final H handler)
+	<H extends CheckedConsumer<? super T>> H forEach(final ResultSet rs, final H handler)
 			throws SQLException, MappingException;
 
 	/**

@@ -2,7 +2,7 @@ package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,12 +25,12 @@ public abstract class AbstractBatchInsertQueryExecutor<T> implements BatchQueryE
     }
 
     @Override
-    public void insert(Connection connection, Collection<T> values, RowHandler<PreparedStatement> postExecute) throws SQLException {
+    public void insert(Connection connection, Collection<T> values, CheckedConsumer<PreparedStatement> postExecute) throws SQLException {
         PreparedStatement preparedStatement = prepareStatement(connection, values.size());
         try {
             bindTo(preparedStatement, values);
             preparedStatement.executeUpdate();
-            postExecute.handle(preparedStatement);
+            postExecute.accept(preparedStatement);
         } catch (Exception e) {
             ErrorHelper.rethrow(e);
         } finally {

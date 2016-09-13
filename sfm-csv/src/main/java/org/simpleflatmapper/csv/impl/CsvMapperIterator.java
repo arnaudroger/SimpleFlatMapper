@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv.impl;
 import org.simpleflatmapper.csv.CsvReader;
 import org.simpleflatmapper.csv.parser.CellConsumer;
 import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -18,9 +18,9 @@ public class CsvMapperIterator<T> implements Iterator<T> {
 	private final CellConsumer cellConsumer;
 	
 	public CsvMapperIterator(CsvReader reader, CsvMapperImpl<T> csvMapperImpl) {
-		cellConsumer = csvMapperImpl.newCellConsumer(new RowHandler<T>() {
+		cellConsumer = csvMapperImpl.newCellConsumer(new CheckedConsumer<T>() {
 			@Override
-			public void handle(T t) throws Exception {
+			public void accept(T t) throws Exception {
 				currentValue = t;
 			}
 		});

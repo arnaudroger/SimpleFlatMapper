@@ -8,7 +8,7 @@ import org.simpleflatmapper.test.beans.DbPrimitiveObject;
 import org.simpleflatmapper.csv.impl.cellreader.*;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.tuple.Tuples;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
 
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class CsvMapperCustomReaderTest {
         CsvMapperBuilderTest.addDbObjectFields(builder);
 
         CsvMapper<DbObject> mapper = builder.mapper();
-        List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollectorHandler<DbObject>()).getList();
+        List<DbObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollector<DbObject>()).getList();
         assertEquals(1, list.size());
         assertEquals(0x5677al, list.get(0).getId());
         assertEquals("name 1", list.get(0).getName());
@@ -94,7 +94,7 @@ public class CsvMapperCustomReaderTest {
         CsvMapperBuilderTest.addDbObjectFields(builder);
 
         CsvMapper<DbFinalObject> mapper = builder.mapper();
-        List<DbFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollectorHandler<DbFinalObject>()).getList();
+        List<DbFinalObject> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollector<DbFinalObject>()).getList();
         assertEquals(1, list.size());
         assertEquals(0x5677al, list.get(0).getId());
         assertEquals("name 1", list.get(0).getName());

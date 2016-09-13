@@ -3,7 +3,7 @@ package org.simpleflatmapper.jdbc;
 import org.junit.Test;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
 
 import java.sql.ResultSet;
@@ -59,7 +59,7 @@ public class JoinJdbcMapperCustomKeyTest {
                                 {"t1", 2, "t12", "p121"}
                         });
 
-        final List<Person> list = mapper.forEach(rs, new ListCollectorHandler<Person>()).getList();
+        final List<Person> list = mapper.forEach(rs, new ListCollector<Person>()).getList();
 
         assertEquals(2, list.size());
         assertEquals("t1", list.get(0).key.tag);

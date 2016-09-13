@@ -7,7 +7,7 @@ import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.tuple.Tuple2;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -96,7 +96,7 @@ public class CsvMapperOptionalTest {
 		addDbObjectFields(builder);
 		CsvMapper<Optional<DbFinalObject>> mapper = builder.mapper();
 
-		List<Optional<DbFinalObject>> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollectorHandler<Optional<DbFinalObject>>()).getList();
+		List<Optional<DbFinalObject>> list = mapper.forEach(CsvMapperImplTest.dbObjectCsvReader(), new ListCollector<Optional<DbFinalObject>>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0).get());
     }

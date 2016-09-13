@@ -6,14 +6,14 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public class ListCollectorHandlerTest {
+public class ListCollectorTest {
 
     @Test
     public void test() {
-        ListCollectorHandler<String> handler = new ListCollectorHandler<String>();
+        ListCollector<String> handler = new ListCollector<String>();
 
-        handler.handle("str1");
-        handler.handle("str2");
+        handler.accept("str1");
+        handler.accept("str2");
 
         assertEquals(Arrays.asList("str1", "str2"), handler.getList());
     }

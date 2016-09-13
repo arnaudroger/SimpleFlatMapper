@@ -1,7 +1,7 @@
 package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.jdbc.Crud;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,15 +34,15 @@ public final class MultiRowsBatchInsertCrud<T, K> implements Crud<T, K> {
     }
 
     @Override
-    public <RH extends RowHandler<? super K>> RH create(Connection connection, T value, RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH create(Connection connection, T value, RH keyConsumer) throws SQLException {
         return delegate.create(connection, value, keyConsumer);
     }
 
     @Override
-    public <RH extends RowHandler<? super K>> RH create(Connection connection, Collection<T> values, final RH keyConsumer) throws SQLException {
-        batchInsertQueryExecutor.insert(connection, values, new RowHandler<PreparedStatement>() {
+    public <RH extends CheckedConsumer<? super K>> RH create(Connection connection, Collection<T> values, final RH keyConsumer) throws SQLException {
+        batchInsertQueryExecutor.insert(connection, values, new CheckedConsumer<PreparedStatement>() {
             @Override
-            public void handle(PreparedStatement preparedStatement) throws Exception {
+            public void accept(PreparedStatement preparedStatement) throws Exception {
                 if (delegate.hasGeneratedKeys && keyConsumer != null) {
                     delegate.handleGeneratedKeys(keyConsumer, preparedStatement);
                 }
@@ -57,8 +57,8 @@ public final class MultiRowsBatchInsertCrud<T, K> implements Crud<T, K> {
     }
 
     @Override
-    public <RH extends RowHandler<? super T>> RH read(Connection connection, Collection<K> keys, RH rowHandler) throws SQLException {
-        return delegate.read(connection, keys, rowHandler);
+    public <RH extends CheckedConsumer<? super T>> RH read(Connection connection, Collection<K> keys, RH consumer) throws SQLException {
+        return delegate.read(connection, keys, consumer);
     }
 
     @Override
@@ -92,15 +92,15 @@ public final class MultiRowsBatchInsertCrud<T, K> implements Crud<T, K> {
     }
 
     @Override
-    public <RH extends RowHandler<? super K>> RH  createOrUpdate(Connection connection, T value, RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH  createOrUpdate(Connection connection, T value, RH keyConsumer) throws SQLException {
         return delegate.createOrUpdate(connection, value, keyConsumer);
     }
 
     @Override
-    public <RH extends RowHandler<? super K>> RH  createOrUpdate(Connection connection, Collection<T> values, final RH keyConsumer) throws SQLException {
-        batchUpsertQueryExecutor.insert(connection, values, new RowHandler<PreparedStatement>() {
+    public <RH extends CheckedConsumer<? super K>> RH  createOrUpdate(Connection connection, Collection<T> values, final RH keyConsumer) throws SQLException {
+        batchUpsertQueryExecutor.insert(connection, values, new CheckedConsumer<PreparedStatement>() {
             @Override
-            public void handle(PreparedStatement preparedStatement) throws Exception {
+            public void accept(PreparedStatement preparedStatement) throws Exception {
                 if (delegate.hasGeneratedKeys && keyConsumer != null) {
                     delegate.handleGeneratedKeys(keyConsumer, preparedStatement);
                 }

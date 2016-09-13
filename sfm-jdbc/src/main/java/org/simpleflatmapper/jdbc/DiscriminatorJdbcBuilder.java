@@ -5,8 +5,8 @@ import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.UncheckedConverter;
 import org.simpleflatmapper.converter.UncheckedConverterHelper;
 import org.simpleflatmapper.jdbc.impl.ResultSetEnumarable;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
 import org.simpleflatmapper.map.mapper.DiscriminatorMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.util.Enumarable;
@@ -112,7 +112,7 @@ public class DiscriminatorJdbcBuilder<T> {
                                 return column + ":" + in.getObject(column);
                             }
                         }),
-                jdbcMapperFactory.rowHandlerErrorHandler());
+                jdbcMapperFactory.consumerErrorHandler());
         return discriminatorMapper;
     }
 
@@ -122,8 +122,8 @@ public class DiscriminatorJdbcBuilder<T> {
         public DiscriminatorJdbcMapper(List<PredicatedMapper<ResultSet, ResultSet, T, SQLException>> predicatedMappers,
                                        UnaryFactory<ResultSet, Enumarable<ResultSet>> rowEnumarableFactory,
                                        UncheckedConverter<ResultSet, String> errorConverter,
-                                       RowHandlerErrorHandler rowHandlerErrorHandler) {
-            super(predicatedMappers, rowEnumarableFactory, errorConverter, rowHandlerErrorHandler);
+                                       ConsumerErrorHandler consumerErrorHandler) {
+            super(predicatedMappers, rowEnumarableFactory, errorConverter, consumerErrorHandler);
         }
 
         @Override

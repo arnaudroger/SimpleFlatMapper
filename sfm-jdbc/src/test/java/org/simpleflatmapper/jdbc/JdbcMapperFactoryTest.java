@@ -5,7 +5,7 @@ import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.FieldMapperErrorHandler;
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbObjectWithAlias;
@@ -15,8 +15,8 @@ import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.tuple.Tuples;
-import org.simpleflatmapper.util.ListCollectorHandler;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.ListCollector;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.lang.reflect.Type;
 import java.sql.*;
@@ -180,7 +180,7 @@ public class JdbcMapperFactoryTest {
 				}
 			}).newBuilder(DbObject.class).addMapping("id").mapper();
 		
-		List<DbObject> list = mapper.forEach(new MockDbObjectResultSet(1), new ListCollectorHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(new MockDbObjectResultSet(1), new ListCollector<DbObject>()).getList();
 		assertNotNull(list.get(0));
 		verify(fieldMapperErrorHandler).errorMappingField(eq(new JdbcColumnKey("id", 1)), any(), same(list.get(0)), same(exception));
 	}
@@ -201,27 +201,27 @@ public class JdbcMapperFactoryTest {
 		when(rs.next()).thenReturn(true, false);
 		when(rs.getLong(1)).thenThrow(exception);
 		
-		List<DbObject> list = mapper.forEach(rs, new ListCollectorHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(rs, new ListCollector<DbObject>()).getList();
 		assertNotNull(list.get(0));
 		verify(fieldMapperErrorHandler).errorMappingField(eq(new JdbcColumnKey("id", 1)), any(), same(list.get(0)), same(exception));
 
 	}
 
 	@Test
-	public void testSetRowHandlerError() throws SQLException {
-		RowHandlerErrorHandler errorHandler = mock(RowHandlerErrorHandler.class);
+	public void testSetCheckedConsumerError() throws SQLException {
+		ConsumerErrorHandler errorHandler = mock(ConsumerErrorHandler.class);
 		ResultSet rs = mock(ResultSet.class);
 		when(rs.next()).thenReturn(true, true, false);
 		when(rs.getLong(1)).thenReturn(1l);
 
 		final Exception exception = new SQLException("Error!");
 		JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.asm()
-				.rowHandlerErrorHandler(errorHandler)
+				.consumerErrorHandler(errorHandler)
 				.newBuilder(DbObject.class).addMapping("id").mapper();
 
-		mapper.forEach(rs, new RowHandler<DbObject>() {
+		mapper.forEach(rs, new CheckedConsumer<DbObject>() {
 			@Override
-			public void handle(DbObject dbObject) throws Exception {
+			public void accept(DbObject dbObject) throws Exception {
 				throw exception;
 			}
 		});
@@ -257,7 +257,7 @@ public class JdbcMapperFactoryTest {
 	private void assertMapPsDbObject(ResultSet rs,
 			JdbcMapper<DbObject> mapper) throws Exception,
 			ParseException {
-		List<DbObject> list = mapper.forEach(rs, new ListCollectorHandler<DbObject>()).getList();
+		List<DbObject> list = mapper.forEach(rs, new ListCollector<DbObject>()).getList();
 		assertEquals(1,  list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}
@@ -265,7 +265,7 @@ public class JdbcMapperFactoryTest {
 	private void assertMapPsDbObjectWithAlias(ResultSet rs,
 			JdbcMapper<DbObjectWithAlias> mapper) throws Exception,
 			ParseException {
-		List<DbObjectWithAlias> list = mapper.forEach(rs, new ListCollectorHandler<DbObjectWithAlias>()).getList();
+		List<DbObjectWithAlias> list = mapper.forEach(rs, new ListCollector<DbObjectWithAlias>()).getList();
 		assertEquals(1,  list.size());
 		DbHelper.assertDbObjectWithAliasMapping(list.get(0));
 	}
@@ -273,7 +273,7 @@ public class JdbcMapperFactoryTest {
 	private void assertMapPsFinalDbObject(ResultSet rs,
 			JdbcMapper<DbFinalObject> mapper) throws Exception,
 			ParseException {
-		List<DbFinalObject> list = mapper.forEach(rs, new ListCollectorHandler<DbFinalObject>()).getList();
+		List<DbFinalObject> list = mapper.forEach(rs, new ListCollector<DbFinalObject>()).getList();
 		assertEquals(1,  list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
 	}

@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.map.mapper.MapperKeyComparator;
-import org.simpleflatmapper.util.ListCollectorHandler;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.ListCollector;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.lang.reflect.Array;
 import java.util.Random;
@@ -27,7 +27,7 @@ public class MapperKeyComparatorTest {
 
     @SuppressWarnings("unchecked")
     public static <K extends FieldKey<K>> MapperKey<K>[] generateKeys(KeyProducer<K> producer) throws Exception {
-        ListCollectorHandler<MapperKey<K>> collector = new ListCollectorHandler<MapperKey<K>>();
+        ListCollector<MapperKey<K>> collector = new ListCollector<MapperKey<K>>();
 
         for(int i = 0; i < 1000; i++) {
             producer.produces(collector, names(random));
@@ -78,7 +78,7 @@ public class MapperKeyComparatorTest {
     }
 
     public interface KeyProducer<K extends FieldKey<K>> {
-        void produces(RowHandler<MapperKey<K>> consumer, String[] names) throws Exception;
+        void produces(CheckedConsumer<MapperKey<K>> consumer, String[] names) throws Exception;
     }
 
     public static abstract class AbstractKeyProducer<K extends FieldKey<K>> implements KeyProducer<K> {
@@ -90,7 +90,7 @@ public class MapperKeyComparatorTest {
 
         @SuppressWarnings("unchecked")
         @Override
-        public void produces(RowHandler<MapperKey<K>> consumer, String[] names) throws Exception {
+        public void produces(CheckedConsumer<MapperKey<K>> consumer, String[] names) throws Exception {
             K[] columns1 = (K[]) Array.newInstance(keyClass, names.length);
             K[] columns2 = (K[]) Array.newInstance(keyClass, names.length);
 
@@ -98,8 +98,8 @@ public class MapperKeyComparatorTest {
                 columns1[i] = newKey(names[i], i);
                 columns2[i] = newKey(names[i], i+1);
             }
-            consumer.handle(new MapperKey<K>(columns1));
-            consumer.handle(new MapperKey<K>(columns2));
+            consumer.accept(new MapperKey<K>(columns1));
+            consumer.accept(new MapperKey<K>(columns2));
         }
 
         protected abstract K newKey(String name, int i);

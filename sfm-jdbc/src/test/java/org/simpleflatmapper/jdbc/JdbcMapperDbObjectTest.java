@@ -6,7 +6,7 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.map.property.DefaultValueProperty;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
-import org.simpleflatmapper.util.ListCollectorHandler;
+import org.simpleflatmapper.util.ListCollector;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -90,7 +90,7 @@ public class JdbcMapperDbObjectTest {
 		DbHelper.testDbObjectFromDb(new TestRowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				List<DbFinalObject> objects = mapper.forEach(ps.executeQuery(), new ListCollectorHandler<DbFinalObject>()).getList();
+				List<DbFinalObject> objects = mapper.forEach(ps.executeQuery(), new ListCollector<DbFinalObject>()).getList();
 				assertEquals(1, objects.size());
 				DbHelper.assertDbObjectMapping(objects.get(0));
 			}
@@ -101,7 +101,7 @@ public class JdbcMapperDbObjectTest {
 		DbHelper.testDbObjectFromDb(new TestRowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
-				List<DbObject> objects = mapper.forEach(ps.executeQuery(), new ListCollectorHandler<DbObject>()).getList();
+				List<DbObject> objects = mapper.forEach(ps.executeQuery(), new ListCollector<DbObject>()).getList();
 				assertEquals(1, objects.size());
 				DbHelper.assertDbObjectMapping(objects.get(0));
 			}

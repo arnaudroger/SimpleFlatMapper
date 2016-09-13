@@ -1,13 +1,11 @@
 package org.simpleflatmapper.csv.parser;
 
 import org.simpleflatmapper.csv.impl.cellreader.StringCellValueReader;
+import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.RowHandler;
-
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
-public final class StringArrayConsumer<RH extends RowHandler<String[]>> implements CellConsumer {
+public final class StringArrayConsumer<RH extends CheckedConsumer<String[]>> implements CellConsumer {
 
 	public static final int DEFAULT_MAX_NUMBER_OF_CELL_PER_ROW = 64 * 1024 * 1024;
 	private final RH handler;
@@ -50,7 +48,7 @@ public final class StringArrayConsumer<RH extends RowHandler<String[]>> implemen
 	}
 
 	private void _endOfRow() throws Exception {
-		handler.handle(Arrays.copyOf(currentRow, currentIndex));
+		handler.accept(Arrays.copyOf(currentRow, currentIndex));
 		Arrays.fill(currentRow, 0, currentIndex, null);
 		currentIndex = 0;
 	}
@@ -66,7 +64,7 @@ public final class StringArrayConsumer<RH extends RowHandler<String[]>> implemen
 		}
 	}
 
-	public static <RH extends RowHandler<String[]>> StringArrayConsumer<RH> newInstance(RH handler) {
+	public static <RH extends CheckedConsumer<String[]>> StringArrayConsumer<RH> newInstance(RH handler) {
 		return new StringArrayConsumer<RH>(handler);
 	}
 }

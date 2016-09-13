@@ -3,16 +3,16 @@ package org.simpleflatmapper.poi.impl;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.map.RowHandlerErrorHandler;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 import org.simpleflatmapper.map.mapper.JoinMapperEnumarable;
 import org.simpleflatmapper.poi.RowMapper;
 import org.simpleflatmapper.util.Enumarable;
 import org.simpleflatmapper.util.EnumarableIterator;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.util.Iterator;
 
@@ -27,12 +27,12 @@ public class JoinSheetMapper<T> implements RowMapper<T> {
     private final Mapper<Row, T> mapper;
     private final int startRow = 0;
 
-    private final RowHandlerErrorHandler rowHandlerErrorHandler;
+    private final ConsumerErrorHandler consumerErrorHandler;
     private final MappingContextFactory<? super Row> mappingContextFactory;
 
-    public JoinSheetMapper(Mapper<Row, T> mapper, RowHandlerErrorHandler rowHandlerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
+    public JoinSheetMapper(Mapper<Row, T> mapper, ConsumerErrorHandler consumerErrorHandler, MappingContextFactory<? super Row> mappingContextFactory) {
         this.mapper = mapper;
-        this.rowHandlerErrorHandler = rowHandlerErrorHandler;
+        this.consumerErrorHandler = consumerErrorHandler;
         this.mappingContextFactory = mappingContextFactory;
     }
 
@@ -51,25 +51,25 @@ public class JoinSheetMapper<T> implements RowMapper<T> {
     }
 
     @Override
-    public <RH extends RowHandler<T>> RH forEach(Sheet sheet, RH rowHandler) {
-        return forEach(startRow, sheet, rowHandler);
+    public <RH extends CheckedConsumer<T>> RH forEach(Sheet sheet, RH consumer) {
+        return forEach(startRow, sheet, consumer);
     }
 
     @Override
-    public <RH extends RowHandler<T>> RH forEach(int startRow, Sheet sheet, RH rowHandler) {
+    public <RH extends CheckedConsumer<T>> RH forEach(int startRow, Sheet sheet, RH consumer) {
         MappingContext<? super Row> mappingContext = newMappingContext();
 
         Enumarable<T> enumarable = enumerable(startRow, sheet, mappingContext);
 
         while(enumarable.next()) {
             try {
-                rowHandler.handle(enumarable.currentValue());
+                consumer.accept(enumarable.currentValue());
             } catch(Exception e) {
-                rowHandlerErrorHandler.handlerError(e, enumarable.currentValue());
+                consumerErrorHandler.handlerError(e, enumarable.currentValue());
             }
         }
 
-        return rowHandler;
+        return consumer;
     }
 
     //IFJAVA8_START

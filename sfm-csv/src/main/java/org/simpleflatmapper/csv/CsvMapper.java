@@ -1,7 +1,7 @@
 package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.map.MappingException;
-import org.simpleflatmapper.util.RowHandler;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -51,7 +51,7 @@ import java.util.stream.Stream;
 public interface CsvMapper<T> {
 	
 	/**
-	 * Will map each row of the content of reader to an object of type T and will pass that object to the handle via the {@link RowHandler}.handler(T t) call back.
+	 * Will map each row of the content of reader to an object of type T and will pass that object to the handle via the {@link CheckedConsumer}.handler(T t) call back.
 	 * <p>
      * The method will return the handler passed as an argument so you can easily chain the calls like <br>
      * <code>
@@ -66,11 +66,11 @@ public interface CsvMapper<T> {
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
-	<H extends RowHandler<? super T>> H forEach(Reader reader, H handle) throws IOException, MappingException;
+	<H extends CheckedConsumer<? super T>> H forEach(Reader reader, H handle) throws IOException, MappingException;
 
 
 	/**
-	 * Will map each row of the content of reader to an object of type T and will pass that object to the handle via the {@link RowHandler}.handler(T t) call back.
+	 * Will map each row of the content of reader to an object of type T and will pass that object to the handle via the {@link CheckedConsumer}.handler(T t) call back.
 	 *
 	 *
 	 * @param reader the reader
@@ -80,11 +80,11 @@ public interface CsvMapper<T> {
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
-	<H extends RowHandler<? super T>> H forEach(CsvReader reader, H handle) throws IOException, MappingException;
+	<H extends CheckedConsumer<? super T>> H forEach(CsvReader reader, H handle) throws IOException, MappingException;
 
 
 	/**
-	 * Will map each row of the content of reader, starting at rowStart, to an object of type T and will pass that object to the handle via the {@link RowHandler}.handler(T t) call back.
+	 * Will map each row of the content of reader, starting at rowStart, to an object of type T and will pass that object to the handle via the {@link CheckedConsumer}.handler(T t) call back.
 	 * 
 	 * 
 	 * @param reader the reader
@@ -95,11 +95,11 @@ public interface CsvMapper<T> {
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
-	<H extends RowHandler<? super T>> H forEach(Reader reader, H handle, int skip) throws IOException, MappingException;
+	<H extends CheckedConsumer<? super T>> H forEach(Reader reader, H handle, int skip) throws IOException, MappingException;
 
 
 	/**
-	 * Will map each row of the content of reader, starting at rowStart and ending before rowEnd, to an object of type T and will pass that object to the handle via the {@link RowHandler}.handler(T t) call back.
+	 * Will map each row of the content of reader, starting at rowStart and ending before rowEnd, to an object of type T and will pass that object to the handle via the {@link CheckedConsumer}.handler(T t) call back.
 	 * 
 	 * 
 	 * @param reader the reader
@@ -111,10 +111,10 @@ public interface CsvMapper<T> {
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
-	<H extends RowHandler<? super T>> H forEach(Reader reader, H handle, int skip, int limit) throws IOException, MappingException;
+	<H extends CheckedConsumer<? super T>> H forEach(Reader reader, H handle, int skip, int limit) throws IOException, MappingException;
 
 	/**
-	 * Will map each row of the content of reader, starting at rowStart and ending before rowEnd, to an object of type T and will pass that object to the handle via the {@link RowHandler}.handler(T t) call back.
+	 * Will map each row of the content of reader, starting at rowStart and ending before rowEnd, to an object of type T and will pass that object to the handle via the {@link CheckedConsumer}.handler(T t) call back.
 	 *
 	 *
 	 * @param reader the reader
@@ -125,7 +125,7 @@ public interface CsvMapper<T> {
 	 * @throws IOException if an io error occurs
 	 * @throws MappingException if an mapping error occurs
 	 */
-	<H extends RowHandler<? super T>> H forEach(CsvReader reader, H handle, int limit) throws IOException, MappingException;
+	<H extends CheckedConsumer<? super T>> H forEach(CsvReader reader, H handle, int limit) throws IOException, MappingException;
 
 	/**
 	 * Will return an iterator on the reader that will return a mapped object for each row.

@@ -350,8 +350,11 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 					case Types.LONGVARBINARY:
 					case Types.VARBINARY:
 						return (Getter<ResultSet, P>) new BytesUUIDGetter<ResultSet>(new ByteArrayResultSetGetter(key.getIndex()));
+					case Types.OTHER:
+						// assume it's a UUID postgres
+						return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
 					default:
-						throw new MapperBuildingException("Incompatible type " + key.getSqlType() + " with enum");
+						throw new MapperBuildingException("Incompatible type " + key.getSqlType() + " with UUID");
 				}
 			}
 		});

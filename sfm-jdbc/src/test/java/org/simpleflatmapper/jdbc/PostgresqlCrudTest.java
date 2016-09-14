@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -70,6 +71,72 @@ public class PostgresqlCrudTest {
 
         } finally {
             connection.close();
+        }
+    }
+
+    @Test
+    public void testUUID() throws SQLException {
+        Connection connection = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
+        if (connection == null) { System.err.println("Db POSTGRESQL not available"); return; }
+
+        try {
+            Crud<MyEntity, Integer> objectCrud =
+                    JdbcMapperFactory.newInstance().<MyEntity, Integer>crud(MyEntity.class, Integer.class).table(connection, "TEST_UUID");
+
+            final MyEntity object = new MyEntity();
+            object.setId(1);
+            object.setUid(UUID.randomUUID());
+            object.setName("n1");
+
+            objectCrud.create(connection, object);
+
+            assertEquals(object, objectCrud.read(connection, object.getId()));
+
+            object.setName("Updated Email");
+
+            objectCrud.update(connection, object);
+
+            assertEquals(object, objectCrud.read(connection, object.getId()));
+
+        } finally {
+            connection.close();
+        }
+
+    }
+
+    public static class MyEntity {
+
+        private int _id;
+        public int getId() { return _id; }
+        public void setId( int value ) { _id = value; }
+
+        private UUID _uid;
+        public UUID getUid() { return _uid; }
+        public void setUid( UUID value ) { _uid = value; }
+
+        private String _name;
+        public String getName() { return _name; }
+        public void setName( String value ) { _name = value; }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            MyEntity myEntity = (MyEntity) o;
+
+            if (_id != myEntity._id) return false;
+            if (_uid != null ? !_uid.equals(myEntity._uid) : myEntity._uid != null) return false;
+            return _name != null ? _name.equals(myEntity._name) : myEntity._name == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = _id;
+            result = 31 * result + (_uid != null ? _uid.hashCode() : 0);
+            result = 31 * result + (_name != null ? _name.hashCode() : 0);
+            return result;
         }
     }
 }

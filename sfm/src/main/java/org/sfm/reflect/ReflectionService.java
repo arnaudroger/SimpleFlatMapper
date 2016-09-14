@@ -125,7 +125,11 @@ public class ReflectionService {
     }
 
     private boolean isDirectType(Type target) {
-        return TypeHelper.isJavaLang(target)|| TypeHelper.isEnum(target) || TypeHelper.areEquals(target, Date.class);
+        return TypeHelper.isJavaLang(target)
+				|| TypeHelper.isEnum(target)
+				|| TypeHelper.areEquals(target, Date.class)
+				|| TypeHelper.areEquals(target, UUID.class)
+				;
     }
 
 	public String getColumnName(Method method) {

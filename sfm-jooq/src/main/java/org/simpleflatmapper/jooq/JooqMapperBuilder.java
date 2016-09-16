@@ -1,5 +1,6 @@
 package org.simpleflatmapper.jooq;
 
+import org.jooq.Context;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.CustomField;
@@ -71,5 +72,9 @@ public class JooqMapperBuilder<E> {
         protected FakeField(String name) {
             super(name, new DefaultDataType<Object>(SQLDialect.DEFAULT, Object.class, "varchar"));
         }
-    }
+
+		public void accept(Context<?> context) {
+			throw new UnsupportedOperationException("Fake field not supposed to be used in query generation");
+		}
+	}
 }

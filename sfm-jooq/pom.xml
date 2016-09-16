@@ -97,6 +97,13 @@
 					</plugin>
 				</plugins>
 			</build>
+			<dependencies>
+				<dependency>
+					<groupId>org.jooq</groupId>
+					<artifactId>jooq</artifactId>
+					<version>3.6.4</version>
+				</dependency>
+			</dependencies>
 		</profile>
 		<profile>
 			<id>jdk17</id>
@@ -115,6 +122,13 @@
 					</plugin>
 				</plugins>
 			</build>
+			<dependencies>
+				<dependency>
+					<groupId>org.jooq</groupId>
+					<artifactId>jooq</artifactId>
+					<version>3.6.4</version>
+				</dependency>
+			</dependencies>
 		</profile>
 
 	</profiles>

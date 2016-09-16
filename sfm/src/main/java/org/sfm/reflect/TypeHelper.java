@@ -2,6 +2,8 @@ package org.sfm.reflect;
 
 import org.sfm.tuples.Tuple2;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -18,6 +20,8 @@ public class TypeHelper {
 		} else if (target instanceof TypeVariable) {
 			Type[] bounds = ((TypeVariable) target).getBounds();
 			return (Class<T>) bounds[0];
+		} else if (target instanceof GenericArrayType) {
+			return (Class<T>) Array.newInstance(toClass(((GenericArrayType) target).getGenericComponentType()), 0).getClass();
 		}
 		throw new UnsupportedOperationException("Cannot extract class from type " + target);
 	}

@@ -5,6 +5,7 @@ import org.jooq.Binding;
 import org.jooq.Comparator;
 import org.jooq.Condition;
 import org.jooq.Configuration;
+import org.jooq.Context;
 import org.jooq.Converter;
 import org.jooq.DataType;
 import org.jooq.DatePart;
@@ -91,5 +92,9 @@ public class JooqMapperBuilder<E> {
         protected FakeField(String name) {
             super(name, new DefaultDataType<Object>(SQLDialect.DEFAULT, Object.class, "varchar"));
         }
-    }
+
+		public void accept(Context<?> context) {
+			throw new UnsupportedOperationException("Fake field not supposed to be used in query generation");
+		}
+	}
 }

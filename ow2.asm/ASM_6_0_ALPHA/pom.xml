@@ -8,6 +8,9 @@
   <version>6.0_ALPHA</version>
   <artifactId>ow2asm</artifactId>
   <packaging>jar</packaging>
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
 
   <build>
     <plugins>

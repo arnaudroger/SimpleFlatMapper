@@ -17,8 +17,5 @@ mvn release:perform
 cp tmp/release.properties .
 java7
 mvn release:perform
-cp tmp/release.properties .
-java6
-mvn release:perform
 git reset --hard && git pull --rebase
 

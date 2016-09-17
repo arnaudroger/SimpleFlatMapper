@@ -915,8 +915,9 @@ public class CsvParserTest {
 		}
 		checkYamlCommentParserRows(rows);
 
-
+		//IFJAVA8_START
 		checkYamlCommentParserRows(dsl.stream(data).collect(Collectors.toList()));
+		//IFJAVA8_END
 		checkYamlCommentParserRows(dsl.forEach(data, new ListCollector<String[]>()).getList());
 
 		File csv = createTempCsv(data);
@@ -930,7 +931,9 @@ public class CsvParserTest {
 		checkYamlCommentParserRows(rows);
 
 
+		//IFJAVA8_START
 		checkYamlCommentParserRows(dsl.stream(csv).collect(Collectors.toList()));
+		//IFJAVA8_END
 		checkYamlCommentParserRows(dsl.forEach(csv, new ListCollector<String[]>()).getList());
 
 
@@ -942,8 +945,9 @@ public class CsvParserTest {
 		}
 		checkYamlCommentParserRows(rows);
 
-
+		//IFJAVA8_START
 		checkYamlCommentParserRows(dsl.stream(new StringReader(data)).collect(Collectors.toList()));
+		//IFJAVA8_END
 		checkYamlCommentParserRows(dsl.forEach(new StringReader(data), new ListCollector<String[]>()).getList());
 
 	}

@@ -934,6 +934,18 @@ public class CsvParserTest {
 		checkYamlCommentParserRows(dsl.forEach(csv, new ListCollector<String[]>()).getList());
 
 
+		rows = new ArrayList<>();
+
+		iterator = dsl.iterator(new StringReader(data));
+		while(iterator.hasNext()) {
+			rows.add(iterator.next());
+		}
+		checkYamlCommentParserRows(rows);
+
+
+		checkYamlCommentParserRows(dsl.stream(new StringReader(data)).collect(Collectors.toList()));
+		checkYamlCommentParserRows(dsl.forEach(new StringReader(data), new ListCollector<String[]>()).getList());
+
 	}
 
 	@Test
@@ -959,6 +971,14 @@ public class CsvParserTest {
 
 
 		dsl.forEach(createTempCsv(data), rowCollector, commentCollector);
+		checkYamlCommentParserRows(rowCollector.getList());
+		checkYamlComments(commentCollector.getList());
+
+		rowCollector = new ListCollector<String[]>();
+		commentCollector = new ListCollector<String>();
+
+
+		dsl.forEach(new StringReader(data), rowCollector, commentCollector);
 		checkYamlCommentParserRows(rowCollector.getList());
 		checkYamlComments(commentCollector.getList());
 
@@ -1003,6 +1023,37 @@ public class CsvParserTest {
 		//IFJAVA8_START
 		checkYamlCommentMapperResult(dbObjectMapToDSL.stream(data).collect(Collectors.toList()));
 		//IFJAVA8_END
+
+		File csv = createTempCsv(data);
+
+		checkYamlCommentMapperResult(dbObjectMapToDSL.forEach(csv, new ListCollector<DbObject>()).getList());
+
+		dbObjects = new ArrayList<DbObject>();
+		CloseableIterator<DbObject> citerator = dbObjectMapToDSL.iterator(csv);
+		while(citerator.hasNext()) {
+			dbObjects.add(citerator.next());
+		}
+		checkYamlCommentMapperResult(dbObjects);
+
+		//IFJAVA8_START
+		checkYamlCommentMapperResult(dbObjectMapToDSL.stream(csv).collect(Collectors.toList()));
+		//IFJAVA8_END
+
+
+		checkYamlCommentMapperResult(dbObjectMapToDSL.forEach(new StringReader(data), new ListCollector<DbObject>()).getList());
+
+		dbObjects = new ArrayList<DbObject>();
+		iterator = dbObjectMapToDSL.iterator(new StringReader(data));
+		while(iterator.hasNext()) {
+			dbObjects.add(iterator.next());
+		}
+		checkYamlCommentMapperResult(dbObjects);
+
+		//IFJAVA8_START
+		checkYamlCommentMapperResult(dbObjectMapToDSL.stream(new StringReader(data)).collect(Collectors.toList()));
+		//IFJAVA8_END
+
+
 	}
 
 	private void checkYamlCommentMapperResult(List<DbObject> dbObjects) {

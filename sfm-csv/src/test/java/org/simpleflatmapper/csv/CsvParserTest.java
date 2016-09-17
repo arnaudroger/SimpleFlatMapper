@@ -906,29 +906,68 @@ public class CsvParserTest {
 		CsvParser.DSLYamlComment dsl = CsvParser
 				.dsl()
 				.withYamlComments();
-		List<String[]> rows =
-				dsl
-				.forEach(data,new ListCollector<String[]>()).getList();;
 
+		List<String[]> rows = new ArrayList<>();
+
+		Iterator<String[]> iterator = dsl.iterator(data);
+		while(iterator.hasNext()) {
+			rows.add(iterator.next());
+		}
 		checkYamlCommentParserRows(rows);
+
+
+		checkYamlCommentParserRows(dsl.stream(data).collect(Collectors.toList()));
+		checkYamlCommentParserRows(dsl.forEach(data, new ListCollector<String[]>()).getList());
+
+		File csv = createTempCsv(data);
+
+		rows = new ArrayList<>();
+
+		CloseableIterator<String[]> citerator = dsl.iterator(csv);
+		while(citerator.hasNext()) {
+			rows.add(citerator.next());
+		}
+		checkYamlCommentParserRows(rows);
+
+
+		checkYamlCommentParserRows(dsl.stream(csv).collect(Collectors.toList()));
+		checkYamlCommentParserRows(dsl.forEach(csv, new ListCollector<String[]>()).getList());
+
+
+	}
+
+	@Test
+	public void testYamlCommentParserForEachRowComment() throws IOException  {
+		String data = "test,\" \"\"hello\"\" \"\n# this a comment, not data\none more";
+
+
+		CsvParser.DSLYamlComment dsl = CsvParser
+				.dsl()
+				.withYamlComments();
 
 		ListCollector<String[]> rowCollector = new ListCollector<String[]>();
 		ListCollector<String> commentCollector = new ListCollector<String>();
 
 
 		dsl.forEach(data, rowCollector, commentCollector);
-		rows = rowCollector.getList();
-		checkYamlCommentParserRows(rows);
+		checkYamlCommentParserRows(rowCollector.getList());
+		checkYamlComments(commentCollector.getList());
 
-		rows = new ArrayList<>();
-		for(String[] row : dsl.reader(data)) {
-			rows.add(row);
-		}
-		checkYamlCommentParserRows(rows);
 
-		assertEquals(1, commentCollector.getList().size());
-		assertEquals("# this a comment, not data", commentCollector.getList().get(0));
+		rowCollector = new ListCollector<String[]>();
+		commentCollector = new ListCollector<String>();
 
+
+		dsl.forEach(createTempCsv(data), rowCollector, commentCollector);
+		checkYamlCommentParserRows(rowCollector.getList());
+		checkYamlComments(commentCollector.getList());
+
+
+	}
+
+	private void checkYamlComments(List<String> comments) {
+		assertEquals(1, comments.size());
+		assertEquals("# this a comment, not data", comments.get(0));
 	}
 
 	private void checkYamlCommentParserRows(List<String[]> rows) {
@@ -946,16 +985,30 @@ public class CsvParserTest {
 				"# if you need that many comment ....";
 
 
-		List<DbObject> dbObjects = CsvParser
+		CsvParser.MapToDSL<DbObject> dbObjectMapToDSL = CsvParser
 				.dsl()
 				.withYamlComments()
-				.mapTo(DbObject.class)
-				.forEach(data, new ListCollector<DbObject>()).getList();
+				.mapTo(DbObject.class);
 
+
+		checkYamlCommentMapperResult(dbObjectMapToDSL.forEach(data, new ListCollector<DbObject>()).getList());
+
+		List<DbObject> dbObjects = new ArrayList<DbObject>();
+		Iterator<DbObject> iterator = dbObjectMapToDSL.iterator(data);
+		while(iterator.hasNext()) {
+			dbObjects.add(iterator.next());
+		}
+		checkYamlCommentMapperResult(dbObjects);
+
+		//IFJAVA8_START
+		checkYamlCommentMapperResult(dbObjectMapToDSL.stream(data).collect(Collectors.toList()));
+		//IFJAVA8_END
+	}
+
+	private void checkYamlCommentMapperResult(List<DbObject> dbObjects) {
 		assertEquals(1, dbObjects.size());
 		assertEquals(1, dbObjects.get(0).getId());
 		assertEquals("n", dbObjects.get(0).getName());
-
 	}
 
 }

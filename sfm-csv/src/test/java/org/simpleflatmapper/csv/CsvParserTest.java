@@ -907,7 +907,7 @@ public class CsvParserTest {
 				.dsl()
 				.withYamlComments();
 
-		List<String[]> rows = new ArrayList<>();
+		List<String[]> rows = new ArrayList<String[]>();
 
 		Iterator<String[]> iterator = dsl.iterator(data);
 		while(iterator.hasNext()) {
@@ -921,7 +921,7 @@ public class CsvParserTest {
 
 		File csv = createTempCsv(data);
 
-		rows = new ArrayList<>();
+		rows = new ArrayList<String[]>();
 
 		CloseableIterator<String[]> citerator = dsl.iterator(csv);
 		while(citerator.hasNext()) {
@@ -934,7 +934,7 @@ public class CsvParserTest {
 		checkYamlCommentParserRows(dsl.forEach(csv, new ListCollector<String[]>()).getList());
 
 
-		rows = new ArrayList<>();
+		rows = new ArrayList<String[]>();
 
 		iterator = dsl.iterator(new StringReader(data));
 		while(iterator.hasNext()) {

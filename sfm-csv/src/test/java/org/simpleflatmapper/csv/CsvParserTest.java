@@ -950,6 +950,20 @@ public class CsvParserTest {
 		//IFJAVA8_END
 		checkYamlCommentParserRows(dsl.forEach(new StringReader(data), new ListCollector<String[]>()).getList());
 
+
+		rows = new ArrayList<String[]>();
+
+		iterator = dsl.iterator(new StringBuilder(data));
+		while(iterator.hasNext()) {
+			rows.add(iterator.next());
+		}
+		checkYamlCommentParserRows(rows);
+
+		//IFJAVA8_START
+		checkYamlCommentParserRows(dsl.stream(new StringBuilder(data)).collect(Collectors.toList()));
+		//IFJAVA8_END
+		checkYamlCommentParserRows(dsl.forEach(new StringBuilder(data), new ListCollector<String[]>()).getList());
+
 	}
 
 	@Test
@@ -986,6 +1000,12 @@ public class CsvParserTest {
 		checkYamlCommentParserRows(rowCollector.getList());
 		checkYamlComments(commentCollector.getList());
 
+		rowCollector = new ListCollector<String[]>();
+		commentCollector = new ListCollector<String>();
+
+		dsl.forEach(new StringBuilder(data), rowCollector, commentCollector);
+		checkYamlCommentParserRows(rowCollector.getList());
+		checkYamlComments(commentCollector.getList());
 
 	}
 
@@ -1057,6 +1077,19 @@ public class CsvParserTest {
 		checkYamlCommentMapperResult(dbObjectMapToDSL.stream(new StringReader(data)).collect(Collectors.toList()));
 		//IFJAVA8_END
 
+
+		checkYamlCommentMapperResult(dbObjectMapToDSL.forEach(new StringBuilder(data), new ListCollector<DbObject>()).getList());
+
+		dbObjects = new ArrayList<DbObject>();
+		iterator = dbObjectMapToDSL.iterator(new StringBuilder(data));
+		while(iterator.hasNext()) {
+			dbObjects.add(iterator.next());
+		}
+		checkYamlCommentMapperResult(dbObjects);
+
+		//IFJAVA8_START
+		checkYamlCommentMapperResult(dbObjectMapToDSL.stream(new StringBuilder(data)).collect(Collectors.toList()));
+		//IFJAVA8_END
 
 	}
 

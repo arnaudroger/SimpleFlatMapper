@@ -15,17 +15,13 @@ import org.simpleflatmapper.tuple.Tuple6;
 import org.simpleflatmapper.tuple.Tuple7;
 import org.simpleflatmapper.tuple.Tuple8;
 import org.simpleflatmapper.tuple.Tuples;
-import org.simpleflatmapper.util.BiFactory;
 import org.simpleflatmapper.util.ConstantUnaryFactory;
 import org.simpleflatmapper.util.Function;
-import org.simpleflatmapper.util.NullConsumer;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.CloseableIterator;
-import org.simpleflatmapper.util.IOFunction;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.CheckedConsumer;
-import org.simpleflatmapper.util.UnaryFactory;
 
 import java.io.File;
 import java.io.FileReader;
@@ -187,7 +183,6 @@ public final class CsvParser {
 		return dsl().reader(reader);
 	}
 
-
     public static CsvReader reader(CharSequence content) throws IOException {
         return dsl().reader(content);
     }
@@ -315,7 +310,6 @@ public final class CsvParser {
 				return csvreader.parseAll(cellConsumer);
 			} else {
 				return csvreader.parseRows(cellConsumer, limit);
-
 			}
 		}
 
@@ -324,11 +318,7 @@ public final class CsvParser {
 			try {
 				return parse(reader, cellConsumer);
 			} finally {
-				try {
-					reader.close();
-				} catch(IOException e) {
-					// ignore
-				}
+				try { reader.close(); } catch(IOException e) { /* ignore*/ }
 			}
 		}
 
@@ -827,10 +817,6 @@ public final class CsvParser {
             return dsl;
         }
 
-        protected final CsvMapper<T> getMapper() {
-            return mapper;
-        }
-
 		public final Iterator<T> iterator(Reader reader) throws IOException {
 			return mapper.iterator(dsl.reader(reader));
 		}
@@ -941,11 +927,7 @@ public final class CsvParser {
 		try {
 			return factory.apply(reader, dsl);
 		} catch(IOException ioe) {
-			try {
-				reader.close();
-			} catch(IOException ioe2) {
-				// ignore
-			}
+			try { reader.close(); } catch(IOException ioe2) { /* ignore*/ }
 			throw ioe;
 		}
 	}

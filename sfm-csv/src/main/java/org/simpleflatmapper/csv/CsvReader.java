@@ -10,8 +10,8 @@ import org.simpleflatmapper.util.Function;
 
 import java.io.IOException;
 import java.util.Iterator;
-//IFJAVA8_START
 import java.util.NoSuchElementException;
+//IFJAVA8_START
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;

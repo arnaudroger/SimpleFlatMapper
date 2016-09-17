@@ -94,6 +94,9 @@
                         <header>
                             <![CDATA[<a href="http://www.simpleflatmapper.org">SimpleFlatMapper</a> hosted on <a href="https://github.com/arnaudroger/SimpleFlatMapper">GitHub</a>]]>
                         </header>
+                        <sourceFileExcludes>
+                            <exclude>**/module-info.java</exclude>
+                        </sourceFileExcludes>
                     </configuration>
                 </plugin>
             </plugins>

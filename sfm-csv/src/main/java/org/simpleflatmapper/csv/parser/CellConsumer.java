@@ -12,9 +12,14 @@ public interface CellConsumer {
 //IFJAVA8_START
 	default
 //IFJAVA8_END
-	void endOfRow()
+
+	/**
+	 * @return false if the row was skipped
+	 */
+	boolean endOfRow()
 //IFJAVA8_START
 	{
+		return true;
 	}
 //IFJAVA8_END
 	;

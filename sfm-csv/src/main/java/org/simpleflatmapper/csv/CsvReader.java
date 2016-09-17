@@ -2,16 +2,16 @@ package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.parser.CellConsumer;
 import org.simpleflatmapper.csv.parser.CharConsumer;
-import org.simpleflatmapper.csv.parser.CsvStringArrayIterator;
-import org.simpleflatmapper.csv.parser.NullConsumer;
+import org.simpleflatmapper.csv.parser.NullCellConsumer;
 import org.simpleflatmapper.csv.parser.StringArrayConsumer;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.ErrorHelper;
-import org.simpleflatmapper.util.CheckedConsumer;
+import org.simpleflatmapper.util.Function;
 
 import java.io.IOException;
 import java.util.Iterator;
 //IFJAVA8_START
+import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -22,10 +22,19 @@ import java.util.stream.StreamSupport;
 
 public final class CsvReader implements Iterable<String[]> {
 
+
+
 	private final CharConsumer consumer;
 
+	private final Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper;
+
 	public CsvReader(CharConsumer charConsumer) {
+		this(charConsumer, null);
+	}
+
+	public CsvReader(CharConsumer charConsumer,  Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
 		this.consumer = charConsumer;
+		this.cellConsumerWrapper = cellConsumerWrapper;
 	}
 
 	/**
@@ -37,12 +46,17 @@ public final class CsvReader implements Iterable<String[]> {
 	 */
 	public <CC extends CellConsumer> CC parseAll(CC cellConsumer)
 			throws IOException {
+		_parseAll(wrapConsumer(cellConsumer));
+
+		return cellConsumer;
+	}
+
+
+	private <CC extends CellConsumer> void _parseAll(CC cellConsumer) throws IOException {
 		do {
 			consumer.consumeAllBuffer(cellConsumer);
 		} while (consumer.refillBuffer() >= 0);
 		consumer.finish(cellConsumer);
-
-		return cellConsumer;
 	}
 
 	/**
@@ -54,6 +68,10 @@ public final class CsvReader implements Iterable<String[]> {
 	public boolean parseRow(CellConsumer cellConsumer)
 			throws IOException {
 
+		return _parseRow(wrapConsumer(cellConsumer));
+	}
+
+	private boolean _parseRow(CellConsumer cellConsumer) throws IOException {
 		do {
 			if (consumer.consumeToNextRow(cellConsumer)) {
 				return true;
@@ -66,25 +84,39 @@ public final class CsvReader implements Iterable<String[]> {
 
 
 	public void skipRows(int n) throws IOException {
-		parseRows(NullConsumer.INSTANCE, n);
+		_parseRows(NullCellConsumer.INSTANCE, n);
 	}
 
 	public <CC extends CellConsumer> CC  parseRows(CC cellConsumer, int limit) throws IOException {
-		for(int i = 0; i < limit; i++) {
-			parseRow(cellConsumer);
-		}
+		_parseRows(wrapConsumer(cellConsumer), limit);
 		return cellConsumer;
 	}
 
-	public <RH extends CheckedConsumer<String[]>> RH read(RH handler) throws IOException {
-		parseAll(StringArrayConsumer.newInstance(handler));
-		return handler;
+	private <CC extends CellConsumer> void _parseRows(CC cellConsumer, int limit) throws IOException {
+		for(int i = 0; i < limit; i++) {
+			_parseRow(cellConsumer);
+		}
 	}
 
-	public <RH extends CheckedConsumer<String[]>> RH read(RH handler, int limit) throws IOException {
-		parseRows(StringArrayConsumer.newInstance(handler), limit);
-		return handler;
+	public <RH extends CheckedConsumer<String[]>> RH read(RH consumer) throws IOException {
+		parseAll(toCellConsumer(consumer));
+		return consumer;
 	}
+
+	public <RH extends CheckedConsumer<String[]>> RH read(RH consumer, int limit) throws IOException {
+		parseRows(toCellConsumer(consumer), limit);
+		return consumer;
+	}
+
+	private CellConsumer toCellConsumer(CheckedConsumer<String[]> consumer) {
+		return StringArrayConsumer.newInstance(consumer);
+	}
+
+	private CellConsumer wrapConsumer(CellConsumer cellConsumer) {
+		if (cellConsumerWrapper == null) return cellConsumer;
+		return cellConsumerWrapper.apply(cellConsumer);
+	}
+
 
 	@Override
 	public Iterator<String[]> iterator() {
@@ -106,7 +138,7 @@ public final class CsvReader implements Iterable<String[]> {
 		@Override
 		public boolean tryAdvance(Consumer<? super String[]> action) {
 			try {
-				return reader.parseRow(StringArrayConsumer.newInstance((strings) -> action.accept(strings)));
+				return reader.parseRow(reader.toCellConsumer(action::accept));
 			} catch (IOException e) {
                return ErrorHelper.rethrow(e);
 			}
@@ -115,7 +147,7 @@ public final class CsvReader implements Iterable<String[]> {
 		@Override
 		public void forEachRemaining(Consumer<? super String[]> action) {
 			try {
-				reader.parseAll(StringArrayConsumer.newInstance((strings) -> action.accept(strings)));
+				reader.parseAll(reader.toCellConsumer(action::accept));
 			} catch (IOException e) {
                 ErrorHelper.rethrow(e);
 			}
@@ -137,6 +169,57 @@ public final class CsvReader implements Iterable<String[]> {
 		}
 	}
 
+
 	//IFJAVA8_END
 
+    private static class CsvStringArrayIterator implements Iterator<String[]> {
+
+        private final CsvReader reader;
+        private final CellConsumer cellConsumer;
+
+        private boolean isFetched;
+        private String[] value;
+
+        @SuppressWarnings("unchecked")
+        public CsvStringArrayIterator(CsvReader csvReader) {
+            cellConsumer = csvReader.toCellConsumer(new CheckedConsumer<String[]>() {
+                @Override
+                public void accept(String[] strings)  {
+                    value = strings;
+                }
+            });
+            reader = csvReader;
+        }
+
+        @Override
+        public boolean hasNext() {
+            fetch();
+            return value != null;
+        }
+
+        private void fetch() {
+            if (!isFetched) {
+                try {
+                    value = null;
+                    reader.parseRow(cellConsumer);
+                } catch (IOException e) {
+                    ErrorHelper.rethrow(e);
+                }
+                isFetched = true;
+            }
+        }
+
+        @Override
+        public String[] next() {
+            fetch();
+            if (value == null) throw new NoSuchElementException();
+            isFetched = false;
+            return value;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
 }

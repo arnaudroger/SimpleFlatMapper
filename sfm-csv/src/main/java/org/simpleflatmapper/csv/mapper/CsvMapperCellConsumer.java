@@ -8,10 +8,7 @@ import java.util.Collection;
 
 public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
-
     private final CsvMapperCellHandler<T> mapperSetters;
-
-
 
     protected final ConsumerErrorHandler consumerErrorHandlers;
 
@@ -38,9 +35,10 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
     }
 
     @Override
-    public final void endOfRow() {
+    public final boolean endOfRow() {
         composeInstance();
         resetConsumer();
+        return true;
     }
 
     public final T getCurrentInstance() {

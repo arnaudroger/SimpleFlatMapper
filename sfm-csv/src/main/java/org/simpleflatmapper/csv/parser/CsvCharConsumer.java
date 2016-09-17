@@ -66,12 +66,24 @@ public class CsvCharConsumer extends CharConsumer {
 						continue;
 					} else if (character == '\n') {
 						if ((currentState & LAST_CHAR_WAS_CR) == 0) {
-							return endOfRow(currentIndex, cellConsumer, NONE);
+							if(endOfRow(currentIndex, cellConsumer)) {
+								_currentIndex = currentIndex + 1;
+								_currentState = NONE;
+								return true;
+							}
+							currentState = NONE;
+							continue;
 						} else {
 							csvBuffer.mark(currentIndex + 1);
 						}
 					} else if (character == '\r') {
-						return endOfRow(currentIndex, cellConsumer, LAST_CHAR_WAS_CR);
+						if(endOfRow(currentIndex, cellConsumer)) {
+							_currentIndex = currentIndex + 1;
+							_currentState = LAST_CHAR_WAS_CR;
+							return true;
+						}
+						currentState = LAST_CHAR_WAS_CR;
+						continue;
 					}
 				}
 				currentState &= TURN_OFF_LAST_CHAR_MASK;

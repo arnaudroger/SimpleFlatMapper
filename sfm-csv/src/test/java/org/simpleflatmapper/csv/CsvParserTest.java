@@ -13,7 +13,6 @@ import org.simpleflatmapper.tuple.Tuple6;
 import org.simpleflatmapper.tuple.Tuple7;
 import org.simpleflatmapper.tuple.Tuple8;
 import org.simpleflatmapper.tuple.Tuples;
-import org.simpleflatmapper.util.CheckedConsumerHelper;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.CloseableIterator;
 import org.simpleflatmapper.util.ListCollector;
@@ -25,10 +24,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 //IFJAVA8_START
@@ -614,9 +611,10 @@ public class CsvParserTest {
 		}
 
 		@Override
-		public void endOfRow() {
+		public boolean endOfRow() {
 			rows.add(currentRow.toArray(new String[0]));
 			currentRow.clear();
+			return true;
 		}
 
 		@Override
@@ -884,6 +882,80 @@ public class CsvParserTest {
 		assertArrayEquals(new Object[][] {{"", ""}}, toObjects(CsvParser.reader(",")));
 		assertArrayEquals(new Object[][] {{"", ""}}, toObjects(CsvParser.separator('|').reader("|")));
 		assertArrayEquals(new Object[][] {{"", ""}}, toObjects(CsvParser.dsl().trimSpaces().reader(",")));
+	}
+
+	@Test
+	public void testNoUnescaping() throws IOException {
+		StringReader stringReader = new StringReader("test,\" \"\"hello\"\" \"\n# this a comment, not data" );
+
+		List<String[]> data = CsvParser
+				.dsl()
+				.disableUnescaping()
+				.forEach(stringReader, new ListCollector<String[]>()).getList();
+
+		assertEquals(2, data.size());
+		assertArrayEquals(new String[] {"test", "\" \"\"hello\"\" \""}, data.get(0));
+		assertArrayEquals(new String[] {"# this a comment", " not data"}, data.get(1));
+
+	}
+	@Test
+	public void testYamlCommentParser() throws IOException  {
+		String data = "test,\" \"\"hello\"\" \"\n# this a comment, not data\none more";
+
+
+		CsvParser.DSLYamlComment dsl = CsvParser
+				.dsl()
+				.withYamlComments();
+		List<String[]> rows =
+				dsl
+				.forEach(data,new ListCollector<String[]>()).getList();;
+
+		checkYamlCommentParserRows(rows);
+
+		ListCollector<String[]> rowCollector = new ListCollector<String[]>();
+		ListCollector<String> commentCollector = new ListCollector<String>();
+
+
+		dsl.forEach(data, rowCollector, commentCollector);
+		rows = rowCollector.getList();
+		checkYamlCommentParserRows(rows);
+
+		rows = new ArrayList<>();
+		for(String[] row : dsl.reader(data)) {
+			rows.add(row);
+		}
+		checkYamlCommentParserRows(rows);
+
+		assertEquals(1, commentCollector.getList().size());
+		assertEquals("# this a comment, not data", commentCollector.getList().get(0));
+
+	}
+
+	private void checkYamlCommentParserRows(List<String[]> rows) {
+		assertEquals(2, rows.size());
+		assertArrayEquals(new String[] {"test", " \"hello\" "}, rows.get(0));
+		assertArrayEquals(new String[] {"one more"}, rows.get(1));
+	}
+
+	@Test
+	public void testYamlCommentMapper() throws IOException  {
+		String data = "# comment who cares\n" +
+				"id,name\n" +
+				"# what's up wih all the comments\n" +
+				"1,\"n\"\n" +
+				"# if you need that many comment ....";
+
+
+		List<DbObject> dbObjects = CsvParser
+				.dsl()
+				.withYamlComments()
+				.mapTo(DbObject.class)
+				.forEach(data, new ListCollector<DbObject>()).getList();
+
+		assertEquals(1, dbObjects.size());
+		assertEquals(1, dbObjects.get(0).getId());
+		assertEquals("n", dbObjects.get(0).getName());
+
 	}
 
 }

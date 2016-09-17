@@ -28,16 +28,9 @@ public abstract class CharConsumer {
 
 	protected abstract void newCell(int end, final CellConsumer cellConsumer);
 
-	protected final boolean endOfRow(int currentIndex, CellConsumer cellConsumer, int state) {
-		endOfRow(currentIndex, cellConsumer);
-		_currentState = state;
-		_currentIndex = currentIndex + 1;
-		return true;
-	}
-
-	protected final void endOfRow(int currentIndex, CellConsumer cellConsumer) {
+	protected final boolean endOfRow(int currentIndex, CellConsumer cellConsumer) {
 		newCell(currentIndex, cellConsumer);
-		cellConsumer.endOfRow();
+		return cellConsumer.endOfRow();
 	}
 
 	public final void finish(CellConsumer cellConsumer) {

@@ -273,9 +273,10 @@ public class CsvParserRandomDataTest {
 		}
 
 		@Override
-		public void endOfRow() {
+		public boolean endOfRow() {
 			rows.add(currentRow.toArray(new String[0]));
 			currentRow.clear();
+			return true;
 		}
 
 		@Override

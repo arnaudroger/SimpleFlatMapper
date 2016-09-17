@@ -116,8 +116,8 @@ public class CsvParserBenchmark {
         }
 
         @Override
-        public void endOfRow() {
-
+        public boolean endOfRow() {
+            return true;
         }
 
         @Override

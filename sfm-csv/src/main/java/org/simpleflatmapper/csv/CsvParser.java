@@ -15,13 +15,17 @@ import org.simpleflatmapper.tuple.Tuple6;
 import org.simpleflatmapper.tuple.Tuple7;
 import org.simpleflatmapper.tuple.Tuple8;
 import org.simpleflatmapper.tuple.Tuples;
+import org.simpleflatmapper.util.BiFactory;
 import org.simpleflatmapper.util.ConstantUnaryFactory;
+import org.simpleflatmapper.util.Function;
+import org.simpleflatmapper.util.NullConsumer;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.CloseableIterator;
 import org.simpleflatmapper.util.IOFunction;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.CheckedConsumer;
+import org.simpleflatmapper.util.UnaryFactory;
 
 import java.io.File;
 import java.io.FileReader;
@@ -94,6 +98,8 @@ import java.util.stream.Stream;
  *
  */
 public final class CsvParser {
+	public static final int DEFAULT_MAX_BUFFER_SIZE_8M = 1 << 23;
+	public static final int DEFAULT_BUFFER_SIZE_4K = 1024 * 4;
 
 	/**
 	 *
@@ -248,133 +254,72 @@ public final class CsvParser {
     }
 	//IFJAVA8_END
 
-    /**
-     * DSL for csv parsing.
-     * @see CsvParser
-     */
-	public static final class DSL {
-		public static final int DEFAULT_MAX_BUFFER_SIZE_8M = 1 << 23;
-		public static final int DEFAULT_BUFFER_SIZE_4K = 1024 * 4;
+	protected static abstract class AbstractDSL<D extends AbstractDSL<D>> {
+		protected final char separatorChar;
+		protected final char quoteChar;
+		protected final int bufferSize;
+		protected final int skip;
+		protected final int limit;
+		protected final int maxBufferSize;
+		protected final StringPostProcessing stringPostProcessing;
+		protected final Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper;
 
-		private final char separatorChar;
-        private final char quoteChar;
-        private final int bufferSize;
-        private final int skip;
-        private final int limit;
-		private final int maxBufferSize;
-        private final boolean trimSpaces;
+		protected enum StringPostProcessing { NONE, UNESCAPE, TRIM }
 
-		private DSL() {
+		protected AbstractDSL() {
 			separatorChar = ',';
 			quoteChar= '"';
 			bufferSize = DEFAULT_BUFFER_SIZE_4K;
 			skip = 0;
 			limit = -1;
 			maxBufferSize = DEFAULT_MAX_BUFFER_SIZE_8M;
-            trimSpaces = false;
+			stringPostProcessing = StringPostProcessing.UNESCAPE;
+			cellConsumerWrapper = null;
 		}
 
-		public DSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, boolean trimSpaces) {
+		protected AbstractDSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
 			this.separatorChar = separatorChar;
 			this.quoteChar = quoteChar;
 			this.bufferSize = bufferSize;
 			this.skip = skip;
 			this.limit = limit;
 			this.maxBufferSize = maxBufferSize;
-            this.trimSpaces = trimSpaces;
-        }
-
-		/**
-         * set the separator character. the default value is ','.
-         * @param c the new separator character
-         * @return this
-         */
-        public DSL separator(char c) {
-			return new DSL(c, quoteChar, bufferSize, skip, limit, maxBufferSize, trimSpaces);
-        }
-
-        /**
-         * set the quote character. the default value is '"'.
-         * @param c the quote character
-         * @return this
-         */
-        public DSL quote(char c) {
-			return new DSL(separatorChar, c, bufferSize, skip, limit, maxBufferSize, trimSpaces);
-        }
-
-        /**
-         * set the size of the char buffer to read from.
-         * @param size the size in bytes
-         * @return this
-         */
-        public DSL bufferSize(int size) {
-			return new DSL(separatorChar, quoteChar, size, skip, limit, maxBufferSize, trimSpaces);
-        }
-
-        /**
-         * set the number of line to skip.
-         * @param skip number of line to skip.
-         * @return this
-         */
-        public DSL skip(int skip) {
-			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, trimSpaces);
-        }
-
-        /**
-         * set the number of row to process. limit does not affect stream or iterator.
-         * @param limit number of row to process
-         * @return this
-         */
-        public DSL limit(int limit) {
-			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, trimSpaces);
-        }
-
-		/**
-		 * set the maximum size of the content the parser will handle before failing to avoid OOM.
-		 * @param maxBufferSize the maximum size the buffer will grow, default 8M
-		 * @return this
-		 */
-		public DSL maxBufferSize(int maxBufferSize) {
-			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, trimSpaces);
+			this.stringPostProcessing = stringPostProcessing;
+			this.cellConsumerWrapper = cellConsumerWrapper;
 		}
 
-        public DSL trimSpaces() {
-            return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, true);
-        }
-
-        /**
-         * Parse the content from the reader as a csv and call back the cellConsumer with the cell values.
-         * @param reader the reader
-         * @param cellConsumer the callback object for each cell value
-         * @param <CC> the type of the cell consumer
-         * @return cellConsumer
-         * @throws java.io.IOException if and error occurs in the reader
-         */
-        public <CC extends CellConsumer> CC parse(Reader reader, CC cellConsumer) throws IOException {
+		/**
+		 * Parse the content from the reader as a csv and call back the cellConsumer with the cell values.
+		 * @param reader the reader
+		 * @param cellConsumer the callback object for each cell value
+		 * @param <CC> the type of the cell consumer
+		 * @return cellConsumer
+		 * @throws IOException if and error occurs in the reader
+		 */
+		public final <CC extends CellConsumer> CC parse(Reader reader, CC cellConsumer) throws IOException {
 			return parse(charBuffer(reader), cellConsumer);
-        }
+		}
 
-		public <CC extends CellConsumer> CC parse(String content, CC cellConsumer) throws IOException {
+		public final <CC extends CellConsumer> CC parse(String content, CC cellConsumer) throws IOException {
 			return parse(charBuffer(content), cellConsumer);
 		}
 
-        public <CC extends CellConsumer> CC parse(CharSequence content, CC cellConsumer) throws IOException {
-            return parse(charBuffer(content), cellConsumer);
-        }
+		public final <CC extends CellConsumer> CC parse(CharSequence content, CC cellConsumer) throws IOException {
+			return parse(charBuffer(content), cellConsumer);
+		}
 
 		private <CC extends CellConsumer> CC parse(CharBuffer charBuffer, CC cellConsumer) throws IOException {
 			CsvReader csvreader = reader(charBuffer);
 
 			if (limit == -1) {
-                return csvreader.parseAll(cellConsumer);
-            } else {
-                return csvreader.parseRows(cellConsumer, limit);
+				return csvreader.parseAll(cellConsumer);
+			} else {
+				return csvreader.parseRows(cellConsumer, limit);
 
-            }
+			}
 		}
 
-
-		public <CC extends CellConsumer> CC parse(File file, CC cellConsumer) throws IOException {
+		public final <CC extends CellConsumer> CC parse(File file, CC cellConsumer) throws IOException {
 			Reader reader = new FileReader(file);
 			try {
 				return parse(reader, cellConsumer);
@@ -387,76 +332,76 @@ public final class CsvParser {
 			}
 		}
 
-        /**
-         * Create a CsvReader and the specified reader. Will skip the number of specified rows.
-         * @param reader the content
-         * @return a CsvReader on the reader.
-         * @throws java.io.IOException if an io error occurs
-         */
-        public CsvReader reader(Reader reader) throws IOException {
+		/**
+		 * Create a CsvReader and the specified reader. Will skip the number of specified rows.
+		 * @param reader the content
+		 * @return a CsvReader on the reader.
+		 * @throws IOException if an io error occurs
+		 */
+		public final CsvReader reader(Reader reader) throws IOException {
 			return reader(charBuffer(reader));
-        }
+		}
 
-		public CsvReader reader(CharSequence content) throws IOException {
+		public final CsvReader reader(CharSequence content) throws IOException {
 			return reader(charBuffer(content));
 		}
 
-		public CsvReader reader(String content) throws IOException {
+		public final CsvReader reader(String content) throws IOException {
 			return reader(charBuffer(content));
 		}
 
 		private CsvReader reader(CharBuffer charBuffer) throws IOException {
-			CsvReader csvReader = new CsvReader(charConsumer(charBuffer));
+			CsvReader csvReader = new CsvReader(charConsumer(charBuffer), cellConsumerWrapper);
 			csvReader.skipRows(skip);
 			return csvReader;
 		}
 
-		private CharBuffer charBuffer(Reader reader) throws IOException {
+		protected CharBuffer charBuffer(Reader reader) throws IOException {
 			return new ReaderCharBuffer(bufferSize, maxBufferSize, reader);
 		}
 
-		private CharBuffer charBuffer(CharSequence content) throws IOException {
+		protected CharBuffer charBuffer(CharSequence content) throws IOException {
 			return new CharSequenceCharBuffer(content);
 		}
 
-		private CharBuffer charBuffer(String content) throws IOException {
+		protected CharBuffer charBuffer(String content) throws IOException {
 			return new CharSequenceCharBuffer(content);
 		}
 
-		public CloseableCsvReader reader(File file) throws IOException {
-			return onReader(file, CREATE_CLOSEABLE_CSV_READER);
+		public final CloseableCsvReader reader(File file) throws IOException {
+			return onReader(file, this, CREATE_CLOSEABLE_CSV_READER);
 		}
 
-        public Iterator<String[]> iterator(Reader reader) throws IOException {
-            return reader(reader).iterator();
-        }
+		public final Iterator<String[]> iterator(Reader reader) throws IOException {
+			return reader(reader).iterator();
+		}
 
-		public Iterator<String[]> iterator(CharSequence content) throws IOException {
+		public final Iterator<String[]> iterator(CharSequence content) throws IOException {
 			return reader(content).iterator();
 		}
 
-		public Iterator<String[]> iterator(String content) throws IOException {
+		public final Iterator<String[]> iterator(String content) throws IOException {
 			return reader(content).iterator();
 		}
 
-		public CloseableIterator<String[]> iterator(File file) throws IOException {
-			return onReader(file, CREATE_CLOSEABLE_ITERATOR);
+		public final CloseableIterator<String[]> iterator(File file) throws IOException {
+			return onReader(file, this, CREATE_CLOSEABLE_ITERATOR);
 		}
 
-		public <H extends CheckedConsumer<String[]>> H forEach(Reader reader, H consumer) throws IOException {
+		public final <H extends CheckedConsumer<String[]>> H forEach(Reader reader, H consumer) throws IOException {
 			return reader(reader).read(consumer);
 		}
 
-		public <H extends CheckedConsumer<String[]>> H forEach(CharSequence content, H consumer) throws IOException {
+		public final <H extends CheckedConsumer<String[]>> H forEach(CharSequence content, H consumer) throws IOException {
 			return reader(content).read(consumer);
 		}
 
-		public <H extends CheckedConsumer<String[]>> H forEach(String content, H consumer) throws IOException {
+		public final <H extends CheckedConsumer<String[]>> H forEach(String content, H consumer) throws IOException {
 			return reader(content).read(consumer);
 		}
 
-		public <H extends CheckedConsumer<String[]>> H forEach(File file, H consumer) throws IOException {
-			CloseableCsvReader csvReader = CsvParser.reader(file);
+		public final <H extends CheckedConsumer<String[]>> H forEach(File file, H consumer) throws IOException {
+			CloseableCsvReader csvReader = reader(file);
 			try {
 				csvReader.read(consumer);
 			} finally {
@@ -465,114 +410,271 @@ public final class CsvParser {
 			return consumer;
 		}
 
-
-		public <T> MapToDSL<T> mapTo(Type target) {
+		public final <T> MapToDSL<T> mapTo(Type target) {
 			return new MapToDSL<T>(this, target);
 		}
 
-		public <T> MapToDSL<T> mapTo(Class<T> target) {
+		public final <T> MapToDSL<T> mapTo(Class<T> target) {
 			return mapTo((Type)target);
 		}
 
-        public <T> MapToDSL<T> mapTo(TypeReference<T> target) {
-            return mapTo(target.getType());
-        }
+		public final <T> MapToDSL<T> mapTo(TypeReference<T> target) {
+			return mapTo(target.getType());
+		}
 
-		public <T1, T2> MapToDSL<Tuple2<T1, T2>> mapTo(Class<T1> class1, Class<T2> class2) {
+		public final <T1, T2> MapToDSL<Tuple2<T1, T2>> mapTo(Class<T1> class1, Class<T2> class2) {
 			return new MapToDSL<Tuple2<T1, T2>>(this, Tuples.typeDef(class1, class2));
 		}
 
-		public <T1, T2, T3> MapToDSL<Tuple3<T1, T2, T3>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3) {
+		public final <T1, T2, T3> MapToDSL<Tuple3<T1, T2, T3>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3) {
 			return new MapToDSL<Tuple3<T1, T2, T3>>(this, Tuples.typeDef(class1, class2, class3));
 		}
 
-		public <T1, T2, T3, T4> MapToDSL<Tuple4<T1, T2, T3, T4>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4) {
+		public final <T1, T2, T3, T4> MapToDSL<Tuple4<T1, T2, T3, T4>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4) {
 			return new MapToDSL<Tuple4<T1, T2, T3, T4>>(this, Tuples.typeDef(class1, class2, class3, class4));
 		}
 
-		public <T1, T2, T3, T4, T5> MapToDSL<Tuple5<T1, T2, T3, T4, T5>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5) {
+		public final <T1, T2, T3, T4, T5> MapToDSL<Tuple5<T1, T2, T3, T4, T5>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5) {
 			return new MapToDSL<Tuple5<T1, T2, T3, T4, T5>>(this, Tuples.typeDef(class1, class2, class3, class4, class5));
 		}
 
-        public <T1, T2, T3, T4, T5, T6> MapToDSL<Tuple6<T1, T2, T3, T4, T5, T6>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5, Class<T6> class6) {
-            return new MapToDSL<Tuple6<T1, T2, T3, T4, T5, T6>>(this, Tuples.typeDef(class1, class2, class3, class4, class5, class6));
-        }
+		public final <T1, T2, T3, T4, T5, T6> MapToDSL<Tuple6<T1, T2, T3, T4, T5, T6>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5, Class<T6> class6) {
+			return new MapToDSL<Tuple6<T1, T2, T3, T4, T5, T6>>(this, Tuples.typeDef(class1, class2, class3, class4, class5, class6));
+		}
 
-        public <T1, T2, T3, T4, T5, T6, T7> MapToDSL<Tuple7<T1, T2, T3, T4, T5, T6, T7>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5, Class<T6> class6, Class<T7> class7) {
-            return new MapToDSL<Tuple7<T1, T2, T3, T4, T5, T6, T7>>(this, Tuples.typeDef(class1, class2, class3, class4, class5, class6, class7));
-        }
+		public final <T1, T2, T3, T4, T5, T6, T7> MapToDSL<Tuple7<T1, T2, T3, T4, T5, T6, T7>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5, Class<T6> class6, Class<T7> class7) {
+			return new MapToDSL<Tuple7<T1, T2, T3, T4, T5, T6, T7>>(this, Tuples.typeDef(class1, class2, class3, class4, class5, class6, class7));
+		}
 
-        public <T1, T2, T3, T4, T5, T6, T7, T8> MapToDSL<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5, Class<T6> class6, Class<T7> class7, Class<T8> class8) {
-            return new MapToDSL<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>>(this, Tuples.typeDef(class1, class2, class3, class4, class5, class6, class7, class8));
-        }
+		public final <T1, T2, T3, T4, T5, T6, T7, T8> MapToDSL<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> mapTo(Class<T1> class1, Class<T2> class2, Class<T3> class3, Class<T4> class4, Class<T5> class5, Class<T6> class6, Class<T7> class7, Class<T8> class8) {
+			return new MapToDSL<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>>(this, Tuples.typeDef(class1, class2, class3, class4, class5, class6, class7, class8));
+		}
 
-        public <T> MapWithDSL<T> mapWith(CsvMapper<T> mapper) {
+		public final <T> MapWithDSL<T> mapWith(CsvMapper<T> mapper) {
 			return new MapWithDSL<T>(this, mapper);
 		}
 
-        //IFJAVA8_START
-        public Stream<String[]> stream(Reader reader) throws IOException {
+		//IFJAVA8_START
+		public final Stream<String[]> stream(Reader reader) throws IOException {
 			return reader(reader).stream();
 		}
 
-		public Stream<String[]> stream(CharSequence content) throws IOException {
+		public final Stream<String[]> stream(CharSequence content) throws IOException {
 			return reader(content).stream();
 		}
 
-		public Stream<String[]> stream(String content) throws IOException {
+		public final Stream<String[]> stream(String content) throws IOException {
 			return reader(content).stream();
 		}
 
-		public Stream<String[]> stream(File file) throws IOException {
-			return onReader(file, CREATE_CLOSEABLE_STREAM);
+		public final Stream<String[]> stream(File file) throws IOException {
+			return onReader(file, this, (reader, dsl) -> dsl.stream(reader).onClose(() -> { try { reader.close(); } catch (IOException e) {} }));
 		}
+		//IFJAVA8_END
 
-		private final IOFunction<Reader, Stream<String[]>> CREATE_CLOSEABLE_STREAM =
-				reader -> stream(reader).onClose(() -> { try { reader.close(); } catch (IOException e) {} });
-        //IFJAVA8_END
-
-        private CharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
+		protected final CharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
 			if (isCsv()) {
 				return new CsvCharConsumer(charBuffer);
 			} else {
-				if (trimSpaces) {
-					return new TrimConfigurableCharConsumer(charBuffer, separatorChar, quoteChar);
-				} else {
-					return new ConfigurableCharConsumer(charBuffer, separatorChar, quoteChar);
+				switch (stringPostProcessing) {
+					case TRIM:
+						return new TrimAndUnescapeCharConsumer(charBuffer, separatorChar, quoteChar);
+					case UNESCAPE:
+						return new UnescapeCharConsumer(charBuffer, separatorChar, quoteChar);
+					case NONE:
+						return new NoStringPostProcessingCharConsumer(charBuffer, separatorChar, quoteChar);
 				}
 			}
-        }
-
-		private boolean isCsv() {
-			return !trimSpaces && separatorChar == ',' && quoteChar == '"';
+			throw new IllegalStateException("Could not instantiate char consumer " + stringPostProcessing);
 		}
 
-		public int maxBufferSize() {
+		protected final boolean isCsv() {
+			return stringPostProcessing == StringPostProcessing.UNESCAPE && separatorChar == ',' && quoteChar == '"';
+		}
+
+		public final int maxBufferSize() {
 			return maxBufferSize;
 		}
 
-		public int bufferSize() {
+		public final int bufferSize() {
 			return bufferSize;
 		}
 
-		public int limit() {
+		public final int limit() {
 			return limit;
 		}
 
-		public int skip() {
+		public final int skip() {
 			return skip;
 		}
 
-		public char separator() {
+		public final char separator() {
 			return separatorChar;
 		}
 
-		public char quote() {
+		public final char quote() {
 			return quoteChar;
 		}
 
-    }
 
+		/**
+		 * set the separator character. the default value is ','.
+		 * @param c the new separator character
+		 * @return this
+		 */
+		public D separator(char c) {
+			return newDSL(c, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
+		}
+
+		/**
+		 * set the quote character. the default value is '"'.
+		 * @param c the quote character
+		 * @return this
+		 */
+		public D quote(char c) {
+			return newDSL(separatorChar, c, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
+		}
+
+		/**
+		 * set the size of the char buffer to read from.
+		 * @param size the size in bytes
+		 * @return this
+		 */
+		public D bufferSize(int size) {
+			return newDSL(separatorChar, quoteChar, size, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
+		}
+
+		/**
+		 * set the number of line to skip.
+		 * @param skip number of line to skip.
+		 * @return this
+		 */
+		public D skip(int skip) {
+			return newDSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
+		}
+
+		/**
+		 * set the number of row to process. limit does not affect stream or iterator.
+		 * @param limit number of row to process
+		 * @return this
+		 */
+		public D limit(int limit) {
+			return newDSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
+		}
+
+		/**
+		 * set the maximum size of the content the parser will handle before failing to avoid OOM.
+		 * @param maxBufferSize the maximum size the buffer will grow, default 8M
+		 * @return this
+		 */
+		public D maxBufferSize(int maxBufferSize) {
+			return newDSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
+		}
+
+
+		protected abstract D newDSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper);
+
+
+	}
+    /**
+     * DSL for csv parsing.
+     * @see CsvParser
+     */
+	public static final class DSL extends AbstractDSL<DSL> {
+
+		protected DSL() {
+		}
+
+		protected DSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
+			super(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
+		}
+
+
+
+		public DSL trimSpaces() {
+            return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.TRIM, cellConsumerWrapper);
+        }
+
+		public DSLYamlComment withYamlComments() {
+			return new DSLYamlComment(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.NONE,
+					new Function<CellConsumer, CellConsumer>() {
+						@Override
+						public CellConsumer apply(CellConsumer cellConsumer) {
+							return new IgnoreYamlCommentUnescapeContentCellConsumer(quoteChar, cellConsumer);
+						}
+					}
+			);
+
+		}
+
+		public DSL disableUnescaping() {
+			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.NONE, cellConsumerWrapper);
+		}
+
+		@Override
+		protected DSL newDSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
+			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
+		}
+
+	}
+
+
+    public static final class DSLYamlComment extends AbstractDSL<DSLYamlComment> {
+		protected DSLYamlComment(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
+			super(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
+		}
+
+		private CsvReader rawReader(CharBuffer charBuffer) throws IOException {
+			CsvReader csvReader = new CsvReader(charConsumer(charBuffer), null);
+			csvReader.skipRows(skip);
+			return csvReader;
+		}
+
+		public void forEach(Reader reader, CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) throws IOException {
+			_forEach(rawReader(charBuffer(reader)), rowConsumer, commentConsumer);
+		}
+
+		public void forEach(CharSequence content, CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) throws IOException {
+			_forEach(rawReader(charBuffer(content)), rowConsumer, commentConsumer);
+		}
+
+		public void forEach(String content, CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) throws IOException {
+			_forEach(rawReader(charBuffer(content)), rowConsumer, commentConsumer);
+		}
+
+		private void _forEach(CsvReader reader, CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) throws IOException {
+			reader.parseAll(YamlCommentStringArrayConsumer.newInstance(rowConsumer, commentConsumer, separatorChar, quoteChar));
+		}
+
+		public void forEach(File file, CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) throws IOException {
+			CloseableCsvReader csvReader = rawReader(file);
+			try {
+				csvReader.parseAll(YamlCommentStringArrayConsumer.newInstance(rowConsumer, commentConsumer, separatorChar, quoteChar));
+			} finally {
+				csvReader.close();
+			}
+		}
+
+		private final CloseableCsvReader rawReader(File file) throws IOException {
+			return onReader(file, this, CREATE_CLOSEABLE_CSV_RAW_READER);
+		}
+
+		private static final OnReaderFactory<CloseableCsvReader, DSLYamlComment> CREATE_CLOSEABLE_CSV_RAW_READER =
+				new OnReaderFactory<CloseableCsvReader, DSLYamlComment>() {
+					@Override
+					public CloseableCsvReader apply(Reader reader, DSLYamlComment dsl) throws IOException {
+						return new CloseableCsvReader(dsl.rawReader(dsl.charBuffer(reader)), reader);
+					}
+				};
+
+
+
+		@Override
+		protected DSLYamlComment newDSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
+			return new DSLYamlComment(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
+		}
+
+	}
     /**
      * DSL for csv mapping to a dynamic jdbcMapper.
      * @see CsvParser
@@ -583,10 +685,10 @@ public final class CsvParser {
 		private final Type mapToClass;
 		private final CsvColumnDefinitionProviderImpl columnDefinitionProvider;
 
-		public MapToDSL(DSL dsl, Type mapToClass) {
+		public MapToDSL(AbstractDSL dsl, Type mapToClass) {
 			this(dsl, ReflectionService.newInstance().<T>getClassMeta(mapToClass), mapToClass, new CsvColumnDefinitionProviderImpl());
 		}
-		private MapToDSL(DSL dsl, ClassMeta<T> classMeta, Type mapToClass, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
+		private MapToDSL(AbstractDSL dsl, ClassMeta<T> classMeta, Type mapToClass, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 			super(dsl, new DynamicCsvMapper<T>(mapToClass, classMeta, columnDefinitionProvider));
 			this.mapToClass = mapToClass;
 			this.classMeta = classMeta;
@@ -676,7 +778,7 @@ public final class CsvParser {
 		private final List<Tuple2<String, CsvColumnDefinition>> columns;
 
 
-		private StaticMapToDSL(DSL dsl, ClassMeta<T> classMeta, Type mapToClass, List<Tuple2<String, CsvColumnDefinition>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
+		private StaticMapToDSL(AbstractDSL dsl, ClassMeta<T> classMeta, Type mapToClass, List<Tuple2<String, CsvColumnDefinition>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 			super(dsl, newStaticMapper(mapToClass, classMeta, columns, columnDefinitionProvider));
 			this.classMeta = classMeta;
 			this.mapToClass = mapToClass;
@@ -713,15 +815,15 @@ public final class CsvParser {
      * @see CsvMapper
      */
     public static class MapWithDSL<T> {
-		private final DSL dsl;
+		private final AbstractDSL<?> dsl;
 		private final CsvMapper<T> mapper;
 
-		public MapWithDSL(DSL dsl, CsvMapper<T> mapper) {
+		public MapWithDSL(AbstractDSL dsl, CsvMapper<T> mapper) {
 			this.dsl = dsl;
 			this.mapper = mapper;
 		}
 
-        protected final DSL getDsl() {
+        protected final AbstractDSL getDsl() {
             return dsl;
         }
 
@@ -742,12 +844,14 @@ public final class CsvParser {
 		}
 
 		public final CloseableIterator<T> iterator(File file) throws IOException {
-			return onReader(file, new IOFunction<Reader, CloseableIterator<T>>() {
-				@Override
-				public CloseableIterator<T> apply(Reader reader) throws IOException {
-					return new CloseableIterator<T>(iterator(reader), reader);
-				}
-			});
+			OnReaderFactory<CloseableIterator<T>, AbstractDSL<?>> factory =
+					new OnReaderFactory<CloseableIterator<T>, AbstractDSL<?>>() {
+						@Override
+						public CloseableIterator<T> apply(Reader reader, AbstractDSL<?> dsl) throws IOException {
+							return new CloseableIterator<T>(iterator(reader), reader);
+						}
+					};
+			return onReader(file, dsl, factory);
 		}
 
 		public final <H extends CheckedConsumer<T>> H forEach(File file, H consumer) throws IOException {
@@ -794,42 +898,48 @@ public final class CsvParser {
 		}
 
 		public final Stream<T> stream(File file) throws IOException {
-			return onReader(file, new IOFunction<Reader, Stream<T>>() {
-				@Override
-				public Stream<T> apply(Reader reader) throws IOException {
-					return stream(reader).onClose(() -> {
-						try {
-							reader.close();
-						} catch (IOException e) {
-							// ignore
+			OnReaderFactory<Stream<T>, AbstractDSL<?>> factory =
+					new OnReaderFactory<Stream<T>, AbstractDSL<?>>() {
+						@Override
+						public Stream<T> apply(Reader reader, AbstractDSL<?> dsl) throws IOException {
+							return stream(reader).onClose(() -> {
+								try {
+									reader.close();
+								} catch (IOException e) {
+									// ignore
+								}
+							});
 						}
-					});
-				}
-			});
+					};
+			return onReader(file, dsl, factory);
 		}
 		//IFJAVA8_END
 	}
 
-	private static final IOFunction<Reader, CloseableCsvReader> CREATE_CLOSEABLE_CSV_READER =
-			new IOFunction<Reader, CloseableCsvReader>() {
+
+	private static final OnReaderFactory<CloseableCsvReader, AbstractDSL<?>> CREATE_CLOSEABLE_CSV_READER =
+			new OnReaderFactory<CloseableCsvReader, AbstractDSL<?>>() {
 				@Override
-				public CloseableCsvReader apply(Reader reader) throws IOException {
-					return new CloseableCsvReader(reader(reader), reader);
+				public CloseableCsvReader apply(Reader reader, AbstractDSL<?> dsl) throws IOException {
+					return new CloseableCsvReader(dsl.reader(reader), reader);
 				}
 			};
-	private static final IOFunction<Reader, CloseableIterator<String[]>> CREATE_CLOSEABLE_ITERATOR =
-			new IOFunction<Reader, CloseableIterator<String[]>>() {
+	private static final OnReaderFactory<CloseableIterator<String[]>, AbstractDSL<?>> CREATE_CLOSEABLE_ITERATOR =
+			new OnReaderFactory<CloseableIterator<String[]>, AbstractDSL<?>>() {
 				@Override
-				public CloseableIterator<String[]> apply(Reader reader) throws IOException {
-					return new CloseableIterator<String[]>(iterator(reader), reader);
+				public CloseableIterator<String[]> apply(Reader reader, AbstractDSL<?> dsl) throws IOException {
+					return new CloseableIterator<String[]>(dsl.iterator(reader), reader);
 				}
 			};
 
+	interface OnReaderFactory<T, D extends AbstractDSL<?>> {
+		T apply(Reader reader, D dsl) throws IOException;
+	}
 
-	private static <R> R onReader(File file, IOFunction<Reader, R> IOFunction) throws IOException {
+	protected static <R, D extends AbstractDSL<?>> R onReader(File file, D dsl, OnReaderFactory<R, ? super D> factory) throws IOException {
 		Reader reader = new FileReader(file);
 		try {
-			return IOFunction.apply(reader);
+			return factory.apply(reader, dsl);
 		} catch(IOException ioe) {
 			try {
 				reader.close();
@@ -839,4 +949,7 @@ public final class CsvParser {
 			throw ioe;
 		}
 	}
+
+
+
 }

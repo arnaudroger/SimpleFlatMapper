@@ -5,9 +5,9 @@ package org.simpleflatmapper.csv.parser;
 /**
  * Consume the charBuffer.
  */
-public class TrimConfigurableCharConsumer extends ConfigurableCharConsumer {
+public class TrimAndUnescapeCharConsumer extends UnescapeCharConsumer {
 
-	public TrimConfigurableCharConsumer(CharBuffer csvBuffer, char separatorChar, char escapeChar) {
+	public TrimAndUnescapeCharConsumer(CharBuffer csvBuffer, char separatorChar, char escapeChar) {
 		super(csvBuffer, separatorChar, escapeChar);
 	}
 

@@ -5,7 +5,7 @@ import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import java.util.Arrays;
 
-public final class StringArrayConsumer<RH extends CheckedConsumer<? super String[]>> implements CellConsumer {
+public final class StringArrayCellConsumer<RH extends CheckedConsumer<? super String[]>> implements CellConsumer {
 
 	public static final int DEFAULT_MAX_NUMBER_OF_CELL_PER_ROW = 64 * 1024 * 1024;
 	private final RH handler;
@@ -14,7 +14,7 @@ public final class StringArrayConsumer<RH extends CheckedConsumer<? super String
 	private int currentLength = 8;
 	private String[] currentRow = new String[currentLength];
 
-	private StringArrayConsumer(RH handler, int maxNumberOfCellPerRow) {
+	private StringArrayCellConsumer(RH handler, int maxNumberOfCellPerRow) {
 		this.handler = handler;
 		this.maxNumberOfCellPerRow = maxNumberOfCellPerRow;
 	}
@@ -60,11 +60,11 @@ public final class StringArrayConsumer<RH extends CheckedConsumer<? super String
 			endOfRow();
 		}
 	}
-	public static <RH extends CheckedConsumer<? super String[]>> StringArrayConsumer<RH> newInstance(RH handler, int maxNumberOfCellPerRow) {
-		return new StringArrayConsumer<RH>(handler, maxNumberOfCellPerRow);
+	public static <RH extends CheckedConsumer<? super String[]>> StringArrayCellConsumer<RH> newInstance(RH handler, int maxNumberOfCellPerRow) {
+		return new StringArrayCellConsumer<RH>(handler, maxNumberOfCellPerRow);
 	}
 
-	public static <RH extends CheckedConsumer<? super String[]>> StringArrayConsumer<RH> newInstance(RH handler) {
+	public static <RH extends CheckedConsumer<? super String[]>> StringArrayCellConsumer<RH> newInstance(RH handler) {
 		return newInstance(handler, DEFAULT_MAX_NUMBER_OF_CELL_PER_ROW);
 	}
 }

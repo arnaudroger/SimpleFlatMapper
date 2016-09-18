@@ -3,7 +3,7 @@ package org.simpleflatmapper.csv;
 import org.simpleflatmapper.csv.parser.CellConsumer;
 import org.simpleflatmapper.csv.parser.CharConsumer;
 import org.simpleflatmapper.csv.parser.NullCellConsumer;
-import org.simpleflatmapper.csv.parser.StringArrayConsumer;
+import org.simpleflatmapper.csv.parser.StringArrayCellConsumer;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.Function;
@@ -109,7 +109,7 @@ public final class CsvReader implements Iterable<String[]> {
 	}
 
 	private CellConsumer toCellConsumer(CheckedConsumer<String[]> consumer) {
-		return StringArrayConsumer.newInstance(consumer);
+		return StringArrayCellConsumer.newInstance(consumer);
 	}
 
 	private CellConsumer wrapConsumer(CellConsumer cellConsumer) {

@@ -5,7 +5,7 @@ import org.simpleflatmapper.util.CheckedConsumer;
 
 import static org.junit.Assert.assertEquals;
 
-public class StringArrayConsumerTest {
+public class StringArrayCellConsumerTest {
 
     static class MyCheckedConsumer implements CheckedConsumer<String[]> {
 
@@ -18,7 +18,7 @@ public class StringArrayConsumerTest {
     }
     @Test
     public void testNewCell() throws Exception {
-        StringArrayConsumer<MyCheckedConsumer> consumer = StringArrayConsumer.<MyCheckedConsumer>newInstance(new MyCheckedConsumer());
+        StringArrayCellConsumer<MyCheckedConsumer> consumer = StringArrayCellConsumer.<MyCheckedConsumer>newInstance(new MyCheckedConsumer());
         for(int i = 0; i < 20; i ++) {
             char[] chars = Integer.toString(i).toCharArray();
             consumer.newCell(chars, 0 , chars.length);

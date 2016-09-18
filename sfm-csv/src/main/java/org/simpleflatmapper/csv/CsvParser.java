@@ -590,7 +590,7 @@ public final class CsvParser {
 					new Function<CellConsumer, CellConsumer>() {
 						@Override
 						public CellConsumer apply(CellConsumer cellConsumer) {
-							return new IgnoreYamlCommentUnescapeContentCellConsumer(quoteChar, cellConsumer);
+							return new YamlCommentUnescapeContentCellConsumer(quoteChar, cellConsumer, IgnoreCellConsumer.INSTANCE);
 						}
 					}
 			);
@@ -633,13 +633,17 @@ public final class CsvParser {
 		}
 
 		private void _forEach(CsvReader reader, CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) throws IOException {
-			reader.parseAll(YamlCommentStringArrayConsumer.newInstance(rowConsumer, commentConsumer, separatorChar, quoteChar));
+			reader.parseAll(newYamlCellConsumer(rowConsumer, commentConsumer));
+		}
+
+		private YamlCommentUnescapeContentCellConsumer newYamlCellConsumer(CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) {
+			return new YamlCommentUnescapeContentCellConsumer(quoteChar, StringArrayCellConsumer.newInstance(rowConsumer), StringConcatCellConsumer.newInstance(commentConsumer, separatorChar));
 		}
 
 		public void forEach(File file, CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) throws IOException {
 			CloseableCsvReader csvReader = rawReader(file);
 			try {
-				csvReader.parseAll(YamlCommentStringArrayConsumer.newInstance(rowConsumer, commentConsumer, separatorChar, quoteChar));
+				csvReader.parseAll(newYamlCellConsumer(rowConsumer, commentConsumer));
 			} finally {
 				csvReader.close();
 			}

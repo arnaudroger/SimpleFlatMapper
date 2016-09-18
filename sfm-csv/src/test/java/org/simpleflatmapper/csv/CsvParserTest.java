@@ -695,6 +695,8 @@ public class CsvParserTest {
 	public void testIterateStringsFromString() throws IOException {
 		Iterator<String[]> iterator = CsvParser.iterator("1,2");
 		assertArrayEquals(new String[]{"1", "2"}, iterator.next());
+		iterator = CsvParser.iterator(new StringBuilder("1,2"));
+		assertArrayEquals(new String[]{"1", "2"}, iterator.next());
 	}
 
 	@Test
@@ -712,6 +714,8 @@ public class CsvParserTest {
 	@Test
 	public void testIterateObjectFromString() throws IOException {
 		Iterator<Long> iterator = CsvParser.mapTo(Long.class).iterator("value\n1");
+		assertEquals(1l, iterator.next().longValue());
+		iterator = CsvParser.mapTo(Long.class).iterator(new StringBuilder("value\n1"));
 		assertEquals(1l, iterator.next().longValue());
 	}
 
@@ -746,6 +750,10 @@ public class CsvParserTest {
 		CsvReader reader = CsvParser.reader("value");
 		Iterator<String[]> iterator = reader.iterator();
 		assertArrayEquals(new String[] {"value"}, iterator.next());
+
+		reader = CsvParser.reader(new StringBuilder("value"));
+		iterator = reader.iterator();
+		assertArrayEquals(new String[] {"value"}, iterator.next());
 	}
 
 
@@ -774,7 +782,9 @@ public class CsvParserTest {
 
 	@Test
 	public void testParsingFromString() throws IOException {
-		final String[][] allValues = CsvParser.parse("value", new AccumulateCellConsumer()).allValues();
+		String[][] allValues = CsvParser.parse("value", new AccumulateCellConsumer()).allValues();
+		assertArrayEquals(new String[][] {{"value"}}, allValues);
+		allValues = CsvParser.parse(new StringBuilder("value"), new AccumulateCellConsumer()).allValues();
 		assertArrayEquals(new String[][] {{"value"}}, allValues);
 	}
 

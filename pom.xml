@@ -242,6 +242,7 @@
                                         <exclude>**/org/simpleflatmapper/datastax/*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/JoolTupleTest.java</exclude>
                                         <exclude>**/org/simpleflatmapper/**/FastTupleTest.java</exclude>
+                                        <exclude>**/org/simpleflatmapper/jooq/Issue337Test*</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>
@@ -336,6 +337,7 @@
                                         <exclude>**/org/simpleflatmapper/**/time/*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/JoolTupleTest.java</exclude>
                                         <exclude>**/org/simpleflatmapper/**/samples/GettingStarted*</exclude>
+                                        <exclude>**/org/simpleflatmapper/jooq/Issue337Test*</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>

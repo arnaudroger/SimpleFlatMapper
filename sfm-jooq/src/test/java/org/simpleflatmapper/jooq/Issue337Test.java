@@ -1,4 +1,4 @@
-package org.sfm.jooq;
+package org.simpleflatmapper.jooq;
 
 import org.jooq.Context;
 import org.jooq.Field;

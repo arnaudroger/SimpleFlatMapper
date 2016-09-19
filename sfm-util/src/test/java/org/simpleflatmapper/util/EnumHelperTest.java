@@ -16,4 +16,13 @@ public class EnumHelperTest {
         A, B, C
     }
 
+    @Test
+    public void testGextValuesOnNonEnum() {
+        try {
+            EnumHelper.getValues((Class)Object.class);
+            fail();
+        } catch (Error e) {
+            // expected
+        }
+    }
 }

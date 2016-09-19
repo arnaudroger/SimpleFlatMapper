@@ -1,19 +1,17 @@
 package org.sfm.jooq;
 
 import org.jooq.Context;
-import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Row2;
 import org.jooq.SQLDialect;
-import org.jooq.Table;
 import org.jooq.impl.CustomField;
 import org.jooq.impl.CustomTable;
 import org.jooq.impl.DefaultDataType;
 import org.jooq.impl.UpdatableRecordImpl;
 import org.junit.Test;
-import org.sfm.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.ReflectionService;
 
 public class Issue337Test {
 

@@ -57,6 +57,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	}
 
 	private int _partialMatch(final CharSequence property) {
+		if (property == null) return -1;
 		int indexColumn = from;
 		int indexProperty = 0;
 		boolean nextToUpperCase = false;

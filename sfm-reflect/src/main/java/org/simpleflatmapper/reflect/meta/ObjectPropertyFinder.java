@@ -25,7 +25,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 
 	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, PropertyFinder.MatchingProperties matchingProperties, PropertyMatchingScore score) {
 		if (classMeta.getConstructorProperties() != null) {
-			for (ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
+			for (final ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
 				String columnName = getColumnName(prop);
 				if (propertyNameMatcher.matches(columnName)
 						&& hasConstructorMatching(prop.getParameter())) {

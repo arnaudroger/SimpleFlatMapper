@@ -33,6 +33,7 @@
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>ow2asm</artifactId>
 			<version>3.0.b2-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -263,6 +264,7 @@
 					<groupId>org.simpleflatmapper</groupId>
 					<artifactId>ow2asm</artifactId>
 					<version>6.0_ALPHA</version>
+					<scope>provided</scope>
 				</dependency>
 			</dependencies>
 

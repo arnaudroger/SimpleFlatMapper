@@ -1,13 +1,14 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.util.Consumer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractIndexPropertyFinder<T> implements PropertyFinder<T> {
+public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     protected final ClassMeta<T> classMeta;
     protected final List<IndexedElement<T, ?>> elements;
     private final Map<String, Integer> speculativeIndexes = new HashMap<String, Integer>();
@@ -17,10 +18,13 @@ public abstract class AbstractIndexPropertyFinder<T> implements PropertyFinder<T
         this.classMeta = classMeta;
     }
 
-    @SuppressWarnings("unchecked")
-    public <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
+    @Override
+    protected void lookForProperties(
+            PropertyNameMatcher propertyNameMatcher,
+            MatchingProperties matchingProperties,
+            PropertyMatchingScore score) {
 
-        IndexedColumn indexedColumn = propertyNameMatcher.matchesIndex();
+        IndexedColumn indexedColumn = propertyNameMatcher.matchIndex();
 
         if (indexedColumn == null) {
             indexedColumn = extrapolateIndex(propertyNameMatcher);
@@ -31,30 +35,40 @@ public abstract class AbstractIndexPropertyFinder<T> implements PropertyFinder<T
         }
 
         if (indexedColumn == null || !isValidIndex(indexedColumn)) {
-            return null;
+            // no index found
+            return;
         }
 
-        IndexedElement<T, E> indexedElement = (IndexedElement<T, E>) getIndexedElement(indexedColumn);
+        IndexedElement<T, ?> indexedElement = getIndexedElement(indexedColumn);
 
         if (indexedElement.getElementClassMeta().isLeaf() || indexedColumn.getSubPropertyNameMatcher() == null) {
-            indexedElement.addProperty(".");
-            return indexedElement.getPropertyMeta();
+            matchingProperties.found(indexedElement.getPropertyMeta(), new Consumer() {
+                @Override
+                public void accept(Object o) {
+                    indexedElement.addProperty(".");
+                }
+            }, score);
+            return ;
         }
 
-        PropertyFinder<?> propertyFinder = indexedElement.getPropertyFinder();
+        final PropertyFinder<?> eltPropertyFinder = indexedElement.getPropertyFinder();
 
-        if (propertyFinder == null) {
-            return null;
+        if (eltPropertyFinder == null) {
+            return;
         }
 
-        PropertyMeta<?, ?> subProp = propertyFinder.findProperty(indexedColumn.getSubPropertyNameMatcher());
-        if (subProp == null) {
-            return null;
+        final PropertyMeta<?, ?> eltProp = eltPropertyFinder.findProperty(indexedColumn.getSubPropertyNameMatcher());
+        if (eltProp == null) {
+            return;
         }
 
-        indexedElement.addProperty(subProp);
-
-        return new SubPropertyMeta(classMeta.getReflectionService(), indexedElement.getPropertyMeta(), subProp);
+        SubPropertyMeta propertyMeta = new SubPropertyMeta(classMeta.getReflectionService(), indexedElement.getPropertyMeta(), eltProp);
+        matchingProperties.found(propertyMeta, new Consumer() {
+            @Override
+            public void accept(Object o) {
+                indexedElement.addProperty(eltProp);
+            }
+        }, score);
     }
 
     protected abstract boolean isValidIndex(IndexedColumn indexedColumn);

@@ -80,8 +80,12 @@ public class PostgresqlCrudTest {
         if (connection == null) { System.err.println("Db POSTGRESQL not available"); return; }
 
         try {
-            Crud<MyEntity, Integer> objectCrud =
-                    JdbcMapperFactory.newInstance().<MyEntity, Integer>crud(MyEntity.class, Integer.class).table(connection, "TEST_UUID");
+            Crud<MyEntity, UUID> objectCrud =
+                    JdbcMapperFactory
+                            .newInstance()
+                            .addKeys("uid")
+                            .<MyEntity, UUID>crud(MyEntity.class, UUID.class)
+                            .table(connection, "TEST_UUID");
 
             final MyEntity object = new MyEntity();
             object.setId(1);
@@ -90,13 +94,13 @@ public class PostgresqlCrudTest {
 
             objectCrud.create(connection, object);
 
-            assertEquals(object, objectCrud.read(connection, object.getId()));
+            assertEquals(object, objectCrud.read(connection, object.getUid()));
 
             object.setName("Updated Email");
 
             objectCrud.update(connection, object);
 
-            assertEquals(object, objectCrud.read(connection, object.getId()));
+            assertEquals(object, objectCrud.read(connection, object.getUid()));
 
         } finally {
             connection.close();

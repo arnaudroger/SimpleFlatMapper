@@ -1,12 +1,13 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.util.Consumer;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class OptionalPropertyFinder<T> implements PropertyFinder<Optional<T>> {
+public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
 
 
     private final OptionalClassMeta<T> optionalClassMeta;
@@ -23,19 +24,25 @@ public class OptionalPropertyFinder<T> implements PropertyFinder<Optional<T>> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E> PropertyMeta<Optional<T>, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
+    protected  void lookForProperties(
+            PropertyNameMatcher propertyNameMatcher,
+            MatchingProperties matchingProperties,
+            PropertyMatchingScore score){
         if (!innerMeta.isLeaf()) {
             final PropertyMeta<T, ?> property = propertyFinder.findProperty(propertyNameMatcher);
 
             if (property != null) {
-                return getSubPropertyMeta(property);
+                matchingProperties.found(getSubPropertyMeta(property), null, score);
             }
         } else if (nbProp == 0){
             nbProp++;
-            return (PropertyMeta<Optional<T>, E>) optionalClassMeta.getProperty();
+            matchingProperties.found(optionalClassMeta.getProperty(), new Consumer() {
+                @Override
+                public void accept(Object o) {
+                    nbProp++;
+                }
+            }, score);
         }
-
-        return null;
     }
 
     @SuppressWarnings("unchecked")

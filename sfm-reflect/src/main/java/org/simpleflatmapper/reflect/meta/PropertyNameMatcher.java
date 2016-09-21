@@ -12,7 +12,7 @@ public interface PropertyNameMatcher {
 
     boolean matches(CharSequence property);
 
-    IndexedColumn matchesIndex();
+    IndexedColumn matchIndex();
 
     PropertyNameMatcher partialMatch(CharSequence property);
 

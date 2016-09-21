@@ -26,7 +26,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	}
 
 	@Override
-	public IndexedColumn matchesIndex() {
+	public IndexedColumn matchIndex() {
 		int index = -1;
 
 		int listIndexStart = from;

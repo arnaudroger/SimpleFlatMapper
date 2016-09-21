@@ -112,7 +112,7 @@ public class ReflectionService {
 		} else if (isFastTuple(clazz)) {
             return new FastTupleClassMeta<T>(target, this);
         }
-		if (isDirectType(target)) {
+		if (false || isDirectType(target)) {
 			return new DirectClassMeta<T>(target, this);
 		} else {
 			return new ObjectClassMeta<T>(target, this);
@@ -141,7 +141,11 @@ public class ReflectionService {
     }
 
     private boolean isDirectType(Type target) {
-        return TypeHelper.isJavaLang(target)|| TypeHelper.isEnum(target) || TypeHelper.areEquals(target, Date.class);
+        return TypeHelper.isJavaLang(target)
+				|| TypeHelper.isEnum(target)
+				|| TypeHelper.areEquals(target, Date.class)
+				|| TypeHelper.areEquals(target, UUID.class)
+				;
     }
 
 	public String getColumnName(Method method) {

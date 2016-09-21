@@ -55,10 +55,15 @@ public final class DirectClassMeta<T> implements ClassMeta<T> {
         return Collections.emptyList();
     }
 
-    public class DirectPropertyFinder implements PropertyFinder<T> {
+    public class DirectPropertyFinder extends PropertyFinder<T> {
+
+
         @Override
-        public <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
-            return new DirectPropertyMeta<E>("direct", reflectService, target);
+        protected void lookForProperties(
+                PropertyNameMatcher propertyNameMatcher,
+                MatchingProperties matchingProperties,
+                PropertyMatchingScore score) {
+            matchingProperties.found(new DirectPropertyMeta<Object>("direct", reflectService, target), null, score);
         }
 
         @Override

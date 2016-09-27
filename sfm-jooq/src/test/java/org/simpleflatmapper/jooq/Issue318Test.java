@@ -9,10 +9,10 @@ import org.simpleflatmapper.test.jdbc.DbHelper;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-//IFJAVA8_END
+IFJAVA8_END*/
 import java.util.List;
 import java.util.UUID;
 
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 public class Issue318Test {
 
-    //IFJAVA8_START
+    /*IFJAVA8_START
     @SuppressWarnings("unchecked")
     @Test
     public void testLocalDateTimeFromTimestamp() throws SQLException {
@@ -96,5 +96,5 @@ public class Issue318Test {
             this.id = id;
         }
     }
-    //IFJAVA8_END
+    IFJAVA8_END*/
 }

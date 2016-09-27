@@ -23,7 +23,7 @@ import org.simpleflatmapper.util.SupplierHelper;
 import java.sql.Timestamp;
 import org.simpleflatmapper.util.TypeHelper;
 
-//IFJAVA8_START
+/*IFJAVA8_START
 import org.simpleflatmapper.jdbc.converter.time.DateToLocalDateConverter;
 import org.simpleflatmapper.jdbc.converter.time.TimeToLocalTimeConverter;
 import org.simpleflatmapper.jdbc.converter.time.TimeToOffsetTimeConverter;
@@ -31,14 +31,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
-//IFJAVA8_END
+IFJAVA8_END*/
 import java.util.Calendar;
 import java.util.List;
 
 public class JdbcConverterFactoryProducer extends AbstractConverterFactoryProducer {
     @Override
     public void produce(Consumer<ConverterFactory> consumer) {
-        //IFJAVA8_START
+        /*IFJAVA8_START
         constantConverter(consumer, Time.class, LocalTime.class, new TimeToLocalTimeConverter());
         constantConverter(consumer, Date.class, LocalDate.class, new DateToLocalDateConverter());
         factoryConverter(consumer, new AbstractConverterFactory<Time, OffsetTime>(Time.class, OffsetTime.class) {
@@ -61,7 +61,7 @@ public class JdbcConverterFactoryProducer extends AbstractConverterFactoryProduc
                 return ZoneOffset.UTC;
             }
         });
-        //IFJAVA8_END
+        IFJAVA8_END*/
 
         factoryConverter(consumer, new AbstractConverterFactory<Array, Object>(Array.class, java.lang.reflect.Array.class) {
             @Override

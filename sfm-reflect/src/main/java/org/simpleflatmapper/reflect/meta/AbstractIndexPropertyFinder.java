@@ -1,12 +1,9 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.util.Consumer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     protected final ClassMeta<T> classMeta;
@@ -22,7 +19,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     protected void lookForProperties(
             PropertyNameMatcher propertyNameMatcher,
             FoundProperty<T> matchingProperties,
-            PropertyMatchingScore score) {
+            PropertyMatchingScore score, boolean allowSelfReference) {
 
 
         IndexedColumn indexedColumn = propertyNameMatcher.matchIndex();
@@ -83,7 +80,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                             }
                         }, score);
                     }
-                }, score);
+                }, score, true);
     }
 
 

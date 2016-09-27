@@ -16,12 +16,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import org.simpleflatmapper.map.property.time.JavaDateTimeFormatterProperty;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -104,7 +104,7 @@ public class CellValueReaderFactoryImplTest {
     }
 
 
-    //IFJAVA8_START
+    /*IFJAVA8_START
     @Test
     public void testJavaLocalDate() throws Exception {
         String date = "20150128";
@@ -198,6 +198,6 @@ public class CellValueReaderFactoryImplTest {
         CellValueReader<?> reader = cellValueReaderFactory.getReader(java.time.YearMonth.class, 0, CsvColumnDefinition.dateFormatDefinition("yyyyMMdd"), null);
         assertEquals(localTime, reader.read(date.toCharArray(), 0, date.length(), null));
     }
-    //IFJAVA8_END
+    IFJAVA8_END*/
 
 }

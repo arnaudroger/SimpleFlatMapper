@@ -28,10 +28,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.*;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.function.Function;
 import java.util.stream.Stream;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 /**
  * CsvParser provides an fluent DSL to parse or map csv content.<p>
@@ -235,7 +235,7 @@ public final class CsvParser {
 		return dsl().parse(file, cellConsumer);
 	}
 
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	public static Stream<String[]> stream(Reader r) throws IOException {
 		return dsl().stream(r);
 	}
@@ -252,7 +252,7 @@ public final class CsvParser {
 	public static Stream<String[]> stream(String content) throws IOException {
         return dsl().stream(content);
     }
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
 	protected static abstract class AbstractDSL<D extends AbstractDSL<D>> {
 		protected final char separatorChar;
@@ -449,7 +449,7 @@ public final class CsvParser {
 			return new MapWithDSL<T>(this, mapper);
 		}
 
-		//IFJAVA8_START
+		/*IFJAVA8_START
 		public final Stream<String[]> stream(Reader reader) throws IOException {
 			return reader(reader).stream();
 		}
@@ -461,13 +461,13 @@ public final class CsvParser {
 		public final Stream<String[]> stream(String content) throws IOException {
 			return reader(content).stream();
 		}
-		//IFJAVA8_END
+		IFJAVA8_END*/
 		/**
 		 * Use <R> R stream(File file, Function<Stream<String[]>, R> function) instead.
  		 * @param file the file
 		 * @return a stream of String[]
 		 */
-		//IFJAVA8_START
+		/*IFJAVA8_START
 		@Deprecated
 		public final Stream<String[]> stream(File file) throws IOException {
 			return onReader(file, this, (reader, dsl) -> dsl.stream(reader).onClose(() -> { try { reader.close(); } catch (IOException e) {} }));
@@ -482,7 +482,7 @@ public final class CsvParser {
 				throw ioe;
 			}
 		}
-		//IFJAVA8_END
+		IFJAVA8_END*/
 
 		protected final CharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
 			if (isCsv()) {
@@ -910,7 +910,7 @@ public final class CsvParser {
 			return consumer;
 		}
 
-		//IFJAVA8_START
+		/*IFJAVA8_START
 		public final Stream<T> stream(Reader reader) throws IOException {
 			return mapper.stream(dsl.reader(reader));
 		}
@@ -922,13 +922,13 @@ public final class CsvParser {
 		public final Stream<T> stream(String content) throws IOException {
 			return mapper.stream(dsl.reader(content));
 		}
-		//IFJAVA8_END
+		IFJAVA8_END*/
 		/**
 		 * use stream(File file, Function<Stream<T>, R> function)
 		 * @param file the file
 		 * @return a stream of T
 		 */
-		//IFJAVA8_START
+		/*IFJAVA8_START
 		@Deprecated
 		public final Stream<T> stream(File file) throws IOException {
 			OnReaderFactory<Stream<T>, AbstractDSL<?>> factory =
@@ -956,7 +956,7 @@ public final class CsvParser {
 				throw ioe;
 			}
 		}
-		//IFJAVA8_END
+		IFJAVA8_END*/
 	}
 
 

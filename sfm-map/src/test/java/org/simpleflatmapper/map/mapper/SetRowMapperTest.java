@@ -19,9 +19,9 @@ import org.simpleflatmapper.util.UnaryFactoryWithException;
 import java.util.Iterator;
 import java.util.List;
 
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.stream.Collectors;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 import static org.junit.Assert.*;
 
@@ -102,9 +102,9 @@ public class SetRowMapperTest {
     private void checkSetRowMapperIdName(SetRowMapper<Object[], Object[][], DbObject, RuntimeException> staticSetRowMapper) throws Exception {
         checkIdNameResult(staticSetRowMapper.forEach(ID_NAME_DATA, new ListCollector<DbObject>()).getList());
         checkIdNameResult(staticSetRowMapper.iterator(ID_NAME_DATA));
-        //IFJAVA8_START
+        /*IFJAVA8_START
         checkIdNameResult(staticSetRowMapper.stream(ID_NAME_DATA).collect(Collectors.<DbObject>toList()));
-        //IFJAVA8_END
+        IFJAVA8_END*/
         checkIdNameRow(1l, staticSetRowMapper.map(ID_NAME_DATA[0]));
         checkIdNameRow(1l, staticSetRowMapper.map(ID_NAME_DATA[0], null));
         DbObject d = new DbObject();
@@ -139,9 +139,9 @@ public class SetRowMapperTest {
     private void checkSetRowMapperIdNameEmail(SetRowMapper<Object[], Object[][], DbObject, RuntimeException> staticSetRowMapper) throws Exception {
         checkIdNameEmailResult(staticSetRowMapper.forEach(ID_NAME_EMAIL_DATA, new ListCollector<DbObject>()).getList());
         checkIdNameEmailResult(staticSetRowMapper.iterator(ID_NAME_EMAIL_DATA));
-        //IFJAVA8_START
+        /*IFJAVA8_START
         checkIdNameEmailResult(staticSetRowMapper.stream(ID_NAME_EMAIL_DATA).collect(Collectors.<DbObject>toList()));
-        //IFJAVA8_END
+        IFJAVA8_END*/
         checkIdNameEmailRow(1l, staticSetRowMapper.map(ID_NAME_EMAIL_DATA[0]));
         checkIdNameEmailRow(1l, staticSetRowMapper.map(ID_NAME_EMAIL_DATA[0], null));
         DbObject d = new DbObject();

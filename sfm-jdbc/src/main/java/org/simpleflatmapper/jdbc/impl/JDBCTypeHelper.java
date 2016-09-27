@@ -14,10 +14,10 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 import java.util.HashMap;
 import java.util.Map;
@@ -94,12 +94,12 @@ public class JDBCTypeHelper {
             case Types.REF:
                 return Ref.class;
 
-            //IFJAVA8_START
+            /*IFJAVA8_START
             case Types.TIME_WITH_TIMEZONE:
                 return OffsetTime.class;
             case Types.TIMESTAMP_WITH_TIMEZONE:
                 return OffsetDateTime.class;
-            //IFJAVA8_END
+            IFJAVA8_END*/
 
         }
 

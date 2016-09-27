@@ -1,7 +1,6 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.util.Consumer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,14 +10,14 @@ public abstract class PropertyFinder<T> {
 	@SuppressWarnings("unchecked")
 	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
 		MatchingProperties matchingProperties = new MatchingProperties();
-		lookForProperties(propertyNameMatcher, matchingProperties, PropertyMatchingScore.INITIAL);
+		lookForProperties(propertyNameMatcher, matchingProperties, PropertyMatchingScore.INITIAL, true);
 		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
 	}
 
 	protected abstract void lookForProperties(
 			PropertyNameMatcher propertyNameMatcher,
 			FoundProperty<T> matchingProperties,
-			PropertyMatchingScore score);
+			PropertyMatchingScore score, boolean allowSelfReference);
 
 
 	public abstract List<InstantiatorDefinition> getEligibleInstantiatorDefinitions();

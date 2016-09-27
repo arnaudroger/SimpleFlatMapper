@@ -1,7 +1,6 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.converter.Converter;
 
 import java.util.*;
@@ -25,7 +24,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     protected void lookForProperties(
             final PropertyNameMatcher propertyNameMatcher,
             final FoundProperty matchingProperties,
-            final PropertyMatchingScore score) {
+            final PropertyMatchingScore score, boolean allowSelfReference) {
         for(final PropertyNameMatcherKeyValuePair keyValue : propertyNameMatcher.keyValuePairs()) {
             final PropertyNameMatcher keyMatcher = keyValue.getKey();
             final PropertyNameMatcher valueMatcher = keyValue.getValue();
@@ -55,8 +54,8 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                             }
                         }
                     },
-                    score
-            );
+                    score,
+                    true);
         }
 
     }

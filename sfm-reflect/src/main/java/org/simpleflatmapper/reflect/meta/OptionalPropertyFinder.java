@@ -1,7 +1,6 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.util.Consumer;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +25,7 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
     protected  void lookForProperties(
             PropertyNameMatcher propertyNameMatcher,
             FoundProperty matchingProperties,
-            PropertyMatchingScore score){
+            PropertyMatchingScore score, boolean allowSelfReference){
         propertyFinder.lookForProperties(propertyNameMatcher, new FoundProperty<T>() {
             @Override
             public <P extends PropertyMeta<T, ?>> void found(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score) {
@@ -45,7 +44,7 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
                 }
                 matchingProperties.found(getSubPropertyMeta(propertyMeta), callback, score);
             }
-        }, score);
+        }, score, allowSelfReference);
     }
 
     @SuppressWarnings("unchecked")

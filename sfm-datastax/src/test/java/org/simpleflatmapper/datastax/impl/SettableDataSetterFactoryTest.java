@@ -12,9 +12,9 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.TimeZoneProperty;
 import org.simpleflatmapper.converter.joda.JodaDateTimeZoneProperty;
-//IFJAVA8_START
+/*IFJAVA8_START
 import org.simpleflatmapper.map.property.time.JavaZoneIdProperty;
-//IFJAVA8_END
+IFJAVA8_END*/
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -33,7 +33,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,7 +47,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-//IFJAVA8_END
+IFJAVA8_END*/
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -474,7 +474,7 @@ public class SettableDataSetterFactoryTest {
         verify(statement).setToNull(0);
     }
 
-    //IFJAVA8_START
+    /*IFJAVA8_START
 
     @Test
     public void testJava8TimeLDT() throws Exception {
@@ -600,7 +600,7 @@ public class SettableDataSetterFactoryTest {
         verify(statement).setDate(0, Date.from(ldt));
         verify(statement).setToNull(0);
     }
-    //IFJAVA8_END
+    IFJAVA8_END*/
 
     @Test
     public void testJodaLDT() throws Exception {

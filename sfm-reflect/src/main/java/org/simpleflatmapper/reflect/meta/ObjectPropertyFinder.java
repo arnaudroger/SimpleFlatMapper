@@ -26,7 +26,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	}
 
 	@Override
-	protected void lookForProperties(final PropertyNameMatcher propertyNameMatcher, FoundProperty<T> matchingProperties, PropertyMatchingScore score) {
+	protected void lookForProperties(final PropertyNameMatcher propertyNameMatcher, FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference) {
 		lookForConstructor(propertyNameMatcher, matchingProperties, score);
 		lookForProperty(propertyNameMatcher, matchingProperties, score);
 		if (state != State.PROPERTIES) {
@@ -126,7 +126,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			subPropertyFinders.put(prop.getName(), subPropertyFinder);
 		}
 
-		subPropertyFinder.lookForProperties(propertyNameMatcher, foundProperty, score);
+		subPropertyFinder.lookForProperties(propertyNameMatcher, foundProperty, score, false);
 	}
 
     private String getColumnName(PropertyMeta<T, ?> prop) {

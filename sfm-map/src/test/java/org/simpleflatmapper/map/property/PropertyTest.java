@@ -185,7 +185,6 @@ public class PropertyTest {
 
         assertEquals(p1, p1);
         assertEquals(p1.hashCode(), p1.hashCode());
-        assertEquals("name1", p1.getName());
         assertNotEquals(p1, p2);
         assertNotEquals(p1.hashCode(), p2.hashCode());
         assertEquals("Rename{'name1'}", p1.toString());

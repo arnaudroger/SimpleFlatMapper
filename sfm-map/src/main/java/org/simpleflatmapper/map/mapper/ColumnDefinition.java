@@ -35,7 +35,7 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
     public K rename(K key) {
         RenameProperty rp = lookFor(RenameProperty.class);
         if (rp != null) {
-            return key.alias(rp.getName());
+            return rp.apply(key);
         }
         return key;
     }

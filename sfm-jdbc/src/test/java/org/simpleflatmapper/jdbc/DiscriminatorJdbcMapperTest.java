@@ -198,7 +198,7 @@ public class DiscriminatorJdbcMapperTest {
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
 
 
-        final String[] columns = new String[] { "person_type", "id", "name", "students_id", "students_name", "students_phones_value"};
+        final String[] columns = new String[] { "person_type", "id", "name", "students_id", "students_name", "students_phone_val"};
 
         when(metaData.getColumnCount()).thenReturn(columns.length);
         when(metaData.getColumnLabel(anyInt())).then(new Answer<String>() {

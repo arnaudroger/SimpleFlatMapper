@@ -48,7 +48,7 @@ public class JoinJdbcMapperCustomKeyTest {
                 .addMapping("key_tag")
                 .addMapping("key_n")
                 .addMapping("name")
-                .addMapping("phones_value")
+                .addMapping("phone_val")
                 .mapper();
 
         ResultSet rs =

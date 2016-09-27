@@ -29,7 +29,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	protected void lookForProperties(final PropertyNameMatcher propertyNameMatcher, FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference) {
 		lookForConstructor(propertyNameMatcher, matchingProperties, score);
 		lookForProperty(propertyNameMatcher, matchingProperties, score);
-		if (state != State.PROPERTIES) {
+		if (state != State.PROPERTIES && allowSelfReference) {
 			matchingProperties.found(new SelfPropertyMeta(classMeta.getReflectionService(), classMeta.getType(), new BooleanProvider() {
 						@Override
 						public boolean getBoolean() {

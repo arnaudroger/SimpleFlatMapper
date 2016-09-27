@@ -19,7 +19,7 @@ public class DirectClassMetaTest {
         PropertyMeta<String, Object> property = direct.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("bbb", 0, true, true));
 
 
-        assertTrue(property instanceof SelfPropertyMeta);
+        assertTrue("Expect SelfPropertyMeta " + property, property instanceof SelfPropertyMeta);
         assertEquals("SelfPropertyMeta{type=class java.lang.String,name=self}", property.toString());
 
         assertTrue(property.getGetter() instanceof IdentityGetter);

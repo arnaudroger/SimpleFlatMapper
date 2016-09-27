@@ -62,7 +62,7 @@ public class ArrayMetaDataTest {
         PropertyFinder<String[]> propertyFinder = classMeta.newPropertyFinder();
         PropertyMeta<String[], String> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false));
 
-        assertTrue(bb instanceof ArrayElementPropertyMeta);
+        assertTrue("expect ArrayElementPropertyMeta " + bb, bb instanceof ArrayElementPropertyMeta);
         ArrayElementPropertyMeta<String[], String> meta = (ArrayElementPropertyMeta<String[], String>) bb;
 
         String[] list = new String[2];

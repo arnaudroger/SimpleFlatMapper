@@ -15,7 +15,9 @@ public class DirectClassMetaTest {
     public void testDirect() {
         ClassMeta<String> direct = ReflectionService.newInstance().getClassMeta(String.class);
 
-        PropertyMeta<String, Object> property = direct.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("xyz", 0, true, true));
+
+        PropertyMeta<String, Object> property = direct.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("bbb", 0, true, true));
+
 
         assertTrue("Expect SelfPropertyMeta " + property, property instanceof SelfPropertyMeta);
         assertEquals("SelfPropertyMeta{type=class java.lang.String,name=self}", property.toString());

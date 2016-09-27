@@ -52,6 +52,7 @@ public class MapClassMetaTest {
 
         final PropertyMeta<?, ?> k_kv_k_id = mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_id"));
         assertNotNull(k_kv_k_id);
+        assertTrue("Expect MapElementPropertyMeta " + k_kv_k_id, k_kv_k_id instanceof  MapElementPropertyMeta);
         MapElementPropertyMeta<?, ?, ?> idMeta = (MapElementPropertyMeta<?, ?, ?>) k_kv_k_id;
         assertEquals("k_kv_k_id", idMeta.getKey());
 

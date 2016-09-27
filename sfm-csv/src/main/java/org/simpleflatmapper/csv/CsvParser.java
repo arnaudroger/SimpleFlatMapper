@@ -16,7 +16,6 @@ import org.simpleflatmapper.tuple.Tuple7;
 import org.simpleflatmapper.tuple.Tuple8;
 import org.simpleflatmapper.tuple.Tuples;
 import org.simpleflatmapper.util.ConstantUnaryFactory;
-import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.CloseableIterator;
@@ -30,6 +29,7 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.*;
 //IFJAVA8_START
+import java.util.function.Function;
 import java.util.stream.Stream;
 //IFJAVA8_END
 
@@ -240,11 +240,16 @@ public final class CsvParser {
 		return dsl().stream(r);
 	}
 
+	@Deprecated
 	public static Stream<String[]> stream(File file) throws IOException {
 		return dsl().stream(file);
 	}
 
-    public static Stream<String[]> stream(String content) throws IOException {
+	public static <R> R stream(File file, Function<Stream<String[]>, R> function) throws IOException {
+		return dsl().stream(file, function);
+	}
+
+	public static Stream<String[]> stream(String content) throws IOException {
         return dsl().stream(content);
     }
 	//IFJAVA8_END
@@ -257,7 +262,7 @@ public final class CsvParser {
 		protected final int limit;
 		protected final int maxBufferSize;
 		protected final StringPostProcessing stringPostProcessing;
-		protected final Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper;
+		protected final org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper;
 
 		protected enum StringPostProcessing { NONE, UNESCAPE, TRIM }
 
@@ -272,7 +277,7 @@ public final class CsvParser {
 			cellConsumerWrapper = null;
 		}
 
-		protected AbstractDSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
+		protected AbstractDSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
 			this.separatorChar = separatorChar;
 			this.quoteChar = quoteChar;
 			this.bufferSize = bufferSize;
@@ -456,9 +461,26 @@ public final class CsvParser {
 		public final Stream<String[]> stream(String content) throws IOException {
 			return reader(content).stream();
 		}
-
+		//IFJAVA8_END
+		/**
+		 * Use <R> R stream(File file, Function<Stream<String[]>, R> function) instead.
+ 		 * @param file the file
+		 * @return a stream of String[]
+		 */
+		//IFJAVA8_START
+		@Deprecated
 		public final Stream<String[]> stream(File file) throws IOException {
 			return onReader(file, this, (reader, dsl) -> dsl.stream(reader).onClose(() -> { try { reader.close(); } catch (IOException e) {} }));
+		}
+
+		public final <R> R stream(File file, Function<Stream<String[]>, R> function) throws IOException {
+			Reader reader = new FileReader(file);
+			try {
+				return function.apply(stream(reader));
+			} catch(IOException ioe) {
+				try { reader.close(); } catch(IOException ioe2) { }
+				throw ioe;
+			}
 		}
 		//IFJAVA8_END
 
@@ -562,7 +584,7 @@ public final class CsvParser {
 		}
 
 
-		protected abstract D newDSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper);
+		protected abstract D newDSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper);
 
 
 	}
@@ -575,7 +597,7 @@ public final class CsvParser {
 		protected DSL() {
 		}
 
-		protected DSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
+		protected DSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
 			super(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
 		}
 
@@ -587,7 +609,7 @@ public final class CsvParser {
 
 		public DSLYamlComment withYamlComments() {
 			return new DSLYamlComment(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.NONE,
-					new Function<CellConsumer, CellConsumer>() {
+					new org.simpleflatmapper.util.Function<CellConsumer, CellConsumer>() {
 						@Override
 						public CellConsumer apply(CellConsumer cellConsumer) {
 							return new YamlCommentUnescapeContentCellConsumer(quoteChar, cellConsumer, IgnoreCellConsumer.INSTANCE);
@@ -602,7 +624,7 @@ public final class CsvParser {
 		}
 
 		@Override
-		protected DSL newDSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
+		protected DSL newDSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
 			return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
 		}
 
@@ -610,7 +632,7 @@ public final class CsvParser {
 
 
     public static final class DSLYamlComment extends AbstractDSL<DSLYamlComment> {
-		protected DSLYamlComment(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
+		protected DSLYamlComment(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
 			super(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
 		}
 
@@ -664,7 +686,7 @@ public final class CsvParser {
 
 
 		@Override
-		protected DSLYamlComment newDSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
+		protected DSLYamlComment newDSL(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
 			return new DSLYamlComment(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
 		}
 
@@ -900,7 +922,14 @@ public final class CsvParser {
 		public final Stream<T> stream(String content) throws IOException {
 			return mapper.stream(dsl.reader(content));
 		}
-
+		//IFJAVA8_END
+		/**
+		 * use stream(File file, Function<Stream<T>, R> function)
+		 * @param file the file
+		 * @return a stream of T
+		 */
+		//IFJAVA8_START
+		@Deprecated
 		public final Stream<T> stream(File file) throws IOException {
 			OnReaderFactory<Stream<T>, AbstractDSL<?>> factory =
 					new OnReaderFactory<Stream<T>, AbstractDSL<?>>() {
@@ -916,6 +945,16 @@ public final class CsvParser {
 						}
 					};
 			return onReader(file, dsl, factory);
+		}
+
+		public final <R> R stream(File file, Function<Stream<T>, R> function) throws IOException {
+			Reader reader = new FileReader(file);
+			try {
+				return function.apply(stream(reader));
+			} catch(IOException ioe) {
+				try { reader.close(); } catch(IOException ioe2) {  }
+				throw ioe;
+			}
 		}
 		//IFJAVA8_END
 	}

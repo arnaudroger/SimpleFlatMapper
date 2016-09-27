@@ -322,6 +322,15 @@ public class CsvParserTest {
 	}
 
 	@Test
+	public void testDSLMapToStreamFromFileFunction() throws IOException {
+		List<Tuple2<String, String>> list = CsvParser.mapTo(String.class, String.class)
+				.headers("0", "1").stream(createTempCsv("value1,value2\nvalue3"), (s) -> s.collect(Collectors.toList()) );
+
+		assertArrayEquals(new Object[] { new Tuple2<String, String>("value1", "value2"), new Tuple2<String, String>("value3", null)}, list.toArray());
+	}
+
+
+	@Test
 	public void testDSLMapToStreamFromString() throws IOException {
 		final Stream<Tuple2<String, String>> stream = CsvParser.mapTo(String.class, String.class)
 				.headers("0", "1").stream("value1,value2\nvalue3");
@@ -587,6 +596,19 @@ public class CsvParserTest {
 		File f = createTempCsv("row1\nrow2\nrow3");
 		i = 0;
 		CsvParser.stream(f).forEach(strings -> assertArrayEquals(new String[] {"row" + ++i}, strings));
+		assertEquals(3, i);
+	}
+
+	@Test
+	public void testStreamRowsFromFileNewCall() throws
+			IOException {
+
+		File f = createTempCsv("row1\nrow2\nrow3");
+		i = 0;
+		assertTrue(CsvParser.stream(f, stream -> {
+            stream.forEach(strings -> assertArrayEquals(new String[] {"row" + ++i}, strings));
+            return Boolean.TRUE;
+        }));
 		assertEquals(3, i);
 	}
 	@Test

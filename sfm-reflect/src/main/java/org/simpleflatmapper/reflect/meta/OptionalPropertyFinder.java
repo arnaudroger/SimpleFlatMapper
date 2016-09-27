@@ -30,7 +30,7 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
             @Override
             public <P extends PropertyMeta<T, ?>> void found(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score) {
                 Runnable callback;
-                if (!propertyMeta.isSubProperty()) {
+                if (propertyMeta.isSelf()) {
                     if (nbProp > 0) return;
                     callback = new Runnable() {
                         @Override

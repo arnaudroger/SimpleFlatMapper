@@ -139,17 +139,19 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
         }
 
         if (setter == null) {
-            final ClassMeta<?> propertyClassMeta = pm.getPropertyMeta().getPropertyClassMeta();
-            if (propertyClassMeta instanceof ObjectClassMeta) {
-                ObjectClassMeta<P> ocm = (ObjectClassMeta<P>) propertyClassMeta;
+            if (!pm.getPropertyMeta().isSelf()) {
+                final ClassMeta<?> propertyClassMeta = pm.getPropertyMeta().getPropertyClassMeta();
+                if (propertyClassMeta instanceof ObjectClassMeta) {
+                    ObjectClassMeta<P> ocm = (ObjectClassMeta<P>) propertyClassMeta;
 
-                if (ocm.getNumberOfProperties() == 1) {
-                    PropertyMeta<P, ?> subProp = ocm.getFirstProperty();
+                    if (ocm.getNumberOfProperties() == 1) {
+                        PropertyMeta<P, ?> subProp = ocm.getFirstProperty();
 
-                    Setter<T, Object> subSetter = getSetterForTarget(pm.propertyMeta(subProp));
+                        Setter<T, Object> subSetter = getSetterForTarget(pm.propertyMeta(subProp));
 
-                    if (subSetter != null) {
-                        return new SetterOnGetter<T, Object, P>(subSetter, (Getter<P, Object>) subProp.getGetter());
+                        if (subSetter != null) {
+                            return new SetterOnGetter<T, Object, P>(subSetter, (Getter<P, Object>) subProp.getGetter());
+                        }
                     }
                 }
             }

@@ -62,7 +62,7 @@ public class QueryPreparerBuilderTest {
     @Test
     public void testDirectMeta() throws Exception {
         PreparedStatementMapperBuilder<DMClass> mapperBuilder = JdbcMapperFactory.newInstance().buildFrom(DMClass.class);
-        mapperBuilder.addColumn("time_bucket");
+        mapperBuilder.addColumn("time");
 
         Mapper<DMClass, PreparedStatement> mapper = mapperBuilder.mapper();
 

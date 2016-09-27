@@ -55,7 +55,7 @@ public class CsvMapperJoinTest {
                 .addMapping("students_name");
         List<ProfessorGS> professors =
                 professorGSStaticMapToDSL
-                        .addMapping("students_phones_value")
+                        .addMapping("students_phones_val")
                         .forEach(new StringReader(HEADER_DATA), new ListCollector<ProfessorGS>())
                         .getList();
         JoinTest.validateProfessors(professors);
@@ -153,7 +153,7 @@ public class CsvMapperJoinTest {
                 .addMapping("name")
                 .addMapping("students_id")
                 .addMapping("students_name")
-                .addMapping("students_phones_value")
+                .addMapping("students_phones_val")
                 .mapper();
     }
 

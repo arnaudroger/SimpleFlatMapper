@@ -2,7 +2,6 @@ package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.util.Consumer;
-import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.converter.Converter;
 
 import java.util.*;
@@ -24,35 +23,40 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
 
     @Override
     protected void lookForProperties(
-            PropertyNameMatcher propertyNameMatcher,
-            MatchingProperties matchingProperties,
-            PropertyMatchingScore score) {
-        for(PropertyNameMatcherKeyValuePair keyValue : propertyNameMatcher.keyValuePairs()) {
+            final PropertyNameMatcher propertyNameMatcher,
+            final FoundProperty matchingProperties,
+            final PropertyMatchingScore score) {
+        for(final PropertyNameMatcherKeyValuePair keyValue : propertyNameMatcher.keyValuePairs()) {
             final PropertyNameMatcher keyMatcher = keyValue.getKey();
             final PropertyNameMatcher valueMatcher = keyValue.getValue();
 
             final PropertyFinder<V> propertyFinder = getPropertyFinder(keyMatcher);
 
-            final PropertyMeta<V, ?> propertyMeta = propertyFinder.findProperty(valueMatcher);
+            propertyFinder.lookForProperties(valueMatcher,
+                    new FoundProperty<V>() {
+                        @Override
+                        public <P extends PropertyMeta<V, ?>> void found(final P propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
+                            Runnable sCallback = new Runnable() {
+                                @Override
+                                public void run() {
+                                    finders.put(keyMatcher, propertyFinder);
+                                    selectionCallback.run();
+                                }
+                            };
 
-            if (propertyMeta != null) {
-                Consumer<Object> selectionCallback = new Consumer<Object>() {
-                    @Override
-                    public void accept(Object o) {
-                        finders.put(keyMatcher, propertyFinder);
-                    }
-                };
+                            PropertyMeta<T, ?> keyProperty = keyProperty(keyMatcher);
 
-                PropertyMeta<T, ?> keyProperty = keyProperty(keyMatcher);
-
-                if (keyProperty != null) {
-                    if (propertyMeta instanceof DirectClassMeta.DirectPropertyMeta) {
-                        matchingProperties.found(keyProperty, selectionCallback, score);
-                    } else {
-                        matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), selectionCallback, score);
-                    }
-                }
-            }
+                            if (keyProperty != null) {
+                                if (propertyMeta instanceof SelfPropertyMeta) {
+                                    matchingProperties.found(keyProperty, selectionCallback, score);
+                                } else {
+                                    matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), selectionCallback, score);
+                                }
+                            }
+                        }
+                    },
+                    score
+            );
         }
 
     }

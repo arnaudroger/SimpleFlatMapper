@@ -107,7 +107,7 @@ public class CsvWriterTest {
     @Test
     public void testWriterFailOnInvalidColumn() throws  Exception {
         try {
-            CsvWriter.from(DbObject.class).columns("nonexistent");
+            CsvWriter.from(DbObject.class).columns("id", "nonexistent");
             fail();
         } catch(MapperBuildingException e) {
             // expected

@@ -176,20 +176,22 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
 
 
         if (setter == null) {
-            final ClassMeta<P> classMeta = pm.getPropertyMeta().getPropertyClassMeta();
-            if (classMeta instanceof ObjectClassMeta) {
-                ObjectClassMeta<P> ocm = (ObjectClassMeta<P>) classMeta;
-                if (ocm.getNumberOfProperties() == 1) {
-                    PropertyMeta<P, ?> subProp = ocm.getFirstProperty();
+            if (!pm.getPropertyMeta().isSelf()) {
+                final ClassMeta<P> classMeta = pm.getPropertyMeta().getPropertyClassMeta();
+                if (classMeta instanceof ObjectClassMeta) {
+                    ObjectClassMeta<P> ocm = (ObjectClassMeta<P>) classMeta;
+                    if (ocm.getNumberOfProperties() == 1) {
+                        PropertyMeta<P, ?> subProp = ocm.getFirstProperty();
 
-                    Setter<Appendable, Object> subSetter = (Setter<Appendable, Object>) setterFromFactory(pm.propertyMeta(subProp));
+                        Setter<Appendable, Object> subSetter = (Setter<Appendable, Object>) setterFromFactory(pm.propertyMeta(subProp));
 
-                    if (subSetter != null) {
-                        setter = new SetterOnGetter<Appendable, Object, P>(subSetter, (Getter<P, Object>) subProp.getGetter());
-                    } else {
-                        return new ObjectToStringSetter<P>(subProp.getGetter());
+                        if (subSetter != null) {
+                            setter = new SetterOnGetter<Appendable, Object, P>(subSetter, (Getter<P, Object>) subProp.getGetter());
+                        } else {
+                            return new ObjectToStringSetter<P>(subProp.getGetter());
+                        }
+
                     }
-
                 }
             }
         }

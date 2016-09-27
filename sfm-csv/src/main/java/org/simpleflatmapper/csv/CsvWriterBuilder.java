@@ -5,6 +5,10 @@ import org.simpleflatmapper.csv.impl.writer.CellSeparatorAppender;
 import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
 import org.simpleflatmapper.csv.impl.writer.EndOfRowAppender;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
+import org.simpleflatmapper.map.MapperBuilderErrorHandler;
+import org.simpleflatmapper.map.PropertyWithGetter;
+import org.simpleflatmapper.map.context.KeySourceGetter;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MapperConfig;
@@ -14,7 +18,10 @@ import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.Consumer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CsvWriterBuilder<T> extends AbstractConstantTargetMapperBuilder<Appendable, T, CsvColumnKey, CsvWriterBuilder<T>> {
@@ -30,13 +37,6 @@ public class CsvWriterBuilder<T> extends AbstractConstantTargetMapperBuilder<App
         super(classMeta, Appendable.class, mapperConfig, fieldAppenderFactory);
         this.cellWriter = cellWriter;
         this.cellSeparatorAppender = new CellSeparatorAppender<T>(cellWriter);
-    }
-
-    public CsvWriterBuilder<T> defaultHeaders() {
-        for (String column : classMeta.generateHeaders()) {
-            addColumn(column);
-        }
-        return this;
     }
 
     public static <T> CsvWriterBuilder<T> newBuilder(Class<T> clazz) {

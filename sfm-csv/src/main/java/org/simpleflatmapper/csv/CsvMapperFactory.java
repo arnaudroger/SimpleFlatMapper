@@ -121,4 +121,5 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 		builder.setDefaultDateFormat(defaultDateFormat);
 		return builder;
 	}
+
 }

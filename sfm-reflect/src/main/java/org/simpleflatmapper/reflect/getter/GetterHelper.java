@@ -47,9 +47,14 @@ public class GetterHelper {
 				&& (method.getParameterTypes() == null ||  method.getParameterTypes().length == 0)
 				&& !method.getReturnType().equals(void.class)
 				&& !isToString(method)
-				&& !isHashcode(method);
+				&& !isHashcode(method)
+				&& !isClone(method);
 	}
-
+	private static boolean isClone(Method method) {
+		return method.getName() == "clone"
+				&& (method.getReturnType().equals(Object.class) || method.getDeclaringClass().equals(method.getReturnType()))
+				&& (method.getParameterTypes() == null ||  method.getParameterTypes().length == 0);
+	}
 	private static boolean isToString(Method method) {
 		return method.getName() == "toString" && method.getReturnType().equals(String.class)
 				&& (method.getParameterTypes() == null ||  method.getParameterTypes().length == 0);

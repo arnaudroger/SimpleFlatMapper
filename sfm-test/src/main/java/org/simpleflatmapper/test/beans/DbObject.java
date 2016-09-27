@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class DbObject {
 
+	public static String[] HEADERS = new String[] { "id", "name", "email", "creationTime", "typeOrdinal", "typeName"};
 	private static AtomicLong random = new AtomicLong(10000);
 	public static DbObject newInstance() {
 		DbObject object = new DbObject();

@@ -361,18 +361,16 @@ public class AbstractMapperBuilderTest {
 
     }
     private <T> void testDbObjectxxxMapper(Supplier<T> supplier, boolean mapTo) throws Exception {
-        testDbObjectxxxMapper(supplier, mapTo, false);
-        testDbObjectxxxMapper(supplier, mapTo, true);
+        testDbObjectxxxMapper(supplier, mapTo, false, DbObject.HEADERS);
+        testDbObjectxxxMapper(supplier, mapTo, true, DbObject.HEADERS);
     }
-    private <T> void testDbObjectxxxMapper(Supplier<T> supplier, boolean mapTo, boolean useAsm) throws Exception {
+    private <T> void testDbObjectxxxMapper(Supplier<T> supplier, boolean mapTo, boolean useAsm, String[] headers) throws Exception {
         T instance1 = supplier.get();
         T instance2 = supplier.get();
         ClassMeta<T> classMeta = ReflectionService.newInstance(useAsm).<T>getClassMeta(instance1.getClass());
 
         SampleMapperBuilder<T> builder = new SampleMapperBuilder<T>(classMeta);
         SampleMapperBuilder<T> builderIndexed = new SampleMapperBuilder<T>(classMeta);
-
-        String[] headers = classMeta.generateHeaders();
 
         Object[] row = new Object[headers.length];
 

@@ -79,6 +79,10 @@ public class PropertyFinderTest {
         propEltId = propertyFinder.findProperty(matcher("2_notid"));
         assertNull(propEltId);
 
+
+        propEltId = propertyFinder.findProperty(matcher("elt0"));
+        assertNotNull(propEltId);
+
         propEltId = propertyFinder.findProperty(matcher("notid"));
         assertNull(propEltId);
 

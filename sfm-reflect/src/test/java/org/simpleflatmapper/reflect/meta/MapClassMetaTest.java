@@ -27,10 +27,13 @@ public class MapClassMetaTest {
                 ReflectionService.newInstance().getClassMeta(new TypeReference<Map<String, DbObject>>() {}.getType());
         final PropertyFinder<Map<String, DbObject>> mapPropertyFinder = classMeta.newPropertyFinder();
 
-        assertNull(mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_noprop")));
         final SubPropertyMeta<?, ?, ?> k_kv_k_id =
                 (SubPropertyMeta<?, ?, ?>) mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_id"));
         assertNotNull(k_kv_k_id);
+
+        PropertyMeta<Map<String, DbObject>, Object> k_kv_k_noprop = mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_noprop"));
+        assertTrue(k_kv_k_noprop instanceof MapElementPropertyMeta); // self ref
+
         MapElementPropertyMeta<?, ?, ?> idMeta = (MapElementPropertyMeta<?, ?, ?>) k_kv_k_id.getOwnerProperty();
         assertEquals("k_kv_k", idMeta.getKey());
 
@@ -118,13 +121,6 @@ public class MapClassMetaTest {
                 ReflectionService.newInstance().getClassMeta(typeReference.getType());
 
         assertEquals(typeReference.getType(), classMeta.getType());
-        assertFalse(classMeta.isLeaf());
-
-        try {
-            classMeta.generateHeaders();
-            fail();
-        }  catch (UnsupportedOperationException e) {
-        }
 
         hasOneInstantiatorDefinitionWithEmptyConstructorOnImpl(classMeta, impl);
     }

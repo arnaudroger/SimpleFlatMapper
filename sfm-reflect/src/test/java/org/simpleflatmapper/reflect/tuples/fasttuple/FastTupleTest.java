@@ -61,8 +61,6 @@ public class FastTupleTest {
         fieldC.getSetter().set(tuple, (short)3);
         assertEquals(3, fieldC.getGetter().get(tuple).shortValue());
 
-        System.out.println(Arrays.toString(cm.generateHeaders()));
-        assertArrayEquals(new String[]{"fieldA", "fieldB", "fieldC"}, cm.generateHeaders());
     }
 
     @Test
@@ -102,9 +100,5 @@ public class FastTupleTest {
         fieldC.getSetter().set(tuple, (short)3);
         assertEquals(3, fieldC.getGetter().get(tuple).shortValue());
 
-        try {
-            cm.generateHeaders();
-            fail();
-        } catch(Exception e) {}
     }
 }

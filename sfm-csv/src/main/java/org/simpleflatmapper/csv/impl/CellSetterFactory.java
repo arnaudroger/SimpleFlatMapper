@@ -240,18 +240,20 @@ public final class CellSetterFactory {
         }
 
 		if (reader == null) {
-			final ClassMeta<?> classMeta = pm.getPropertyClassMeta();
-			InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(), COMPATIBILITY_SCORER);
+			if (!pm.isSelf()) {
+				final ClassMeta<?> classMeta = pm.getPropertyClassMeta();
+				InstantiatorDefinition id = InstantiatorDefinitions.lookForCompatibleOneArgument(classMeta.getInstantiatorDefinitions(), COMPATIBILITY_SCORER);
 
-			if (id != null) {
-				final Parameter parameter = id.getParameters()[0];
-				final PropertyMeta<?, Object> property = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.exact(parameter.getName()));
-				reader = cellValueReaderFromFactory(property, index, columnDefinition, parsingContextFactoryBuilder);
-				if (reader != null) {
-					Instantiator<P, P> instantiator =
-							classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
-					return
-							new InstantiatorOnReader<P, P>(instantiator, reader);
+				if (id != null) {
+					final Parameter parameter = id.getParameters()[0];
+					final PropertyMeta<?, Object> property = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.exact(parameter.getName()));
+					reader = cellValueReaderFromFactory(property, index, columnDefinition, parsingContextFactoryBuilder);
+					if (reader != null) {
+						Instantiator<P, P> instantiator =
+								classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
+						return
+								new InstantiatorOnReader<P, P>(instantiator, reader);
+					}
 				}
 			}
 		}

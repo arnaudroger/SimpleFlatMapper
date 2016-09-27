@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 public class JdbcMapperOneConstructorTypeTest {
 
 	public static class MyObject {
-		SubObject prop;
+		public SubObject prop;
 	}
 	public static class SubObject {
 		private final String value;
@@ -24,7 +24,7 @@ public class JdbcMapperOneConstructorTypeTest {
 	}
 	
 	public static class MyObjectAmbiguity {
-		SubObjectAmbiguity prop;
+		public SubObjectAmbiguity prop;
 	}
 	public static class SubObjectAmbiguity {
 		private final String value;

@@ -4,6 +4,8 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.getter.GetterOnGetter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.reflect.getter.NullGetter;
+import org.simpleflatmapper.reflect.setter.NullSetter;
 
 import java.lang.reflect.Type;
 
@@ -26,7 +28,7 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 	}
 	@Override
 	public Setter<O, P> getSetter() {
-		if (subProperty.getSetter() != null && ownerProperty.getGetter() != null) {
+		if (!NullSetter.isNull(subProperty.getSetter()) && !NullGetter.isNull(ownerProperty.getGetter())) {
 			return new Setter<O, P>() {
 				@Override
 				public void set(O target, P value) throws Exception {
@@ -34,7 +36,7 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 				}
 			};
 		} else {
-			return null;
+			return (Setter<O, P>) NullSetter.NULL_SETTER;
 		}
 	}
 
@@ -63,6 +65,12 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 	public boolean isSubProperty() {
 		return true;
 	}
+
+	@Override
+	public boolean isValid() {
+		return subProperty.isValid();
+	}
+
 	@Override
 	public String getPath() {
 		return getOwnerProperty().getPath() + "." + subProperty.getPath();

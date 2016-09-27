@@ -4,17 +4,21 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.reflect.meta.DirectClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
+import org.simpleflatmapper.reflect.meta.SelfPropertyMeta;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ForEachCallBack;
+import org.simpleflatmapper.util.NullConsumer;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> {
 
@@ -30,6 +34,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	protected boolean modifiable = true;
 
 	private final Predicate<PropertyMeta<?, ?>> isValidMeta;
+	private Consumer<K> propertyNotFoundConsumer;
 
 	public PropertyMappingsBuilder(final ClassMeta<T> classMeta,
 								   final PropertyNameMatcherFactory propertyNameMatcherFactory,
@@ -40,6 +45,12 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		this.propertyFinder = classMeta.newPropertyFinder();
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.classMeta = classMeta;
+		this.propertyNotFoundConsumer = new Consumer<K>() {
+			@Override
+			public void accept(K k) {
+				mapperBuilderErrorHandler.propertyNotFound(classMeta.getType(), k.getName());
+			}
+		};
 	}
 
 	public PropertyMappingsBuilder(final ClassMeta<T> classMeta,
@@ -52,42 +63,64 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		this.propertyFinder = propertyFinder != null ? propertyFinder : classMeta.newPropertyFinder();
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.classMeta = classMeta;
+		this.propertyNotFoundConsumer = new Consumer<K>() {
+			@Override
+			public void accept(K k) {
+				mapperBuilderErrorHandler.propertyNotFound(classMeta.getType(), k.getName());
+			}
+		};
 	}
 
 	
     public <P> PropertyMeta<T, P> addProperty(final K key, final D columnDefinition) {
-		
-		if (!modifiable) throw new IllegalStateException("Builder not modifiable");
+		return
+				_addProperty(key, columnDefinition, propertyNotFoundConsumer);
+	}
 
-        if (columnDefinition.ignore()) {
-            properties.add(null);
-            return null;
-        }
-
-		final PropertyMeta<T, P> prop = addPropertyIfPresent(key, columnDefinition);
-
-		if (prop == null) {
-			mapperBuilderErrorHandler.propertyNotFound(classMeta.getType(), key.getName());
-            return null;
-		} else {
-            return prop;
-		}
+	public <P> PropertyMeta<T, P> addPropertyIfPresent(final K key, final D columnDefinition) {
+		return _addProperty(key, columnDefinition, NullConsumer.INSTANCE);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <P> PropertyMeta<T, P> addPropertyIfPresent(final K key, final D columnDefinition) {
+	private <P> PropertyMeta<T, P> _addProperty(final K key, final D columnDefinition, Consumer<? super K> propertyNotFound) {
 		if (!modifiable) throw new IllegalStateException("Builder not modifiable");
+
+		if (columnDefinition.ignore()) {
+			properties.add(null);
+			return null;
+		}
 
 		final PropertyMeta<T, P> prop =
 				(PropertyMeta<T, P>) propertyFinder.findProperty(propertyNameMatcherFactory.newInstance(key));
 
+
 		if (prop == null || !isValidMeta.test(prop)) {
+			propertyNotFound.accept(key);
 			properties.add(null);
 			return null;
 		} else {
 			addProperty(key, columnDefinition, prop);
+
+			handleSelfPropertyMetaInvalidation(propertyNotFound);
+
 			return prop;
 		}
+	}
+
+	private void handleSelfPropertyMetaInvalidation(Consumer<? super K> propertyNotFound) {
+		List<K> invalidateKeys = new ArrayList<K>();
+
+		for(ListIterator<PropertyMapping<T, ?, K, D>> iterator = properties.listIterator(); iterator.hasNext();) {
+            PropertyMapping<T, ?, K, D> propertyMapping = iterator.next();
+            if (propertyMapping != null && !propertyMapping.getPropertyMeta().isValid()) {
+                iterator.set(null);
+                invalidateKeys.add(propertyMapping.getColumnKey());
+            }
+        }
+
+		for(K k : invalidateKeys) {
+            propertyNotFound.accept(k);
+        }
 	}
 
 	public <P> void addProperty(final K key, final D columnDefinition, final PropertyMeta<T, P> prop) {
@@ -141,7 +174,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
         for (PropertyMapping<T, ?, K, D> property : properties) {
             if (property != null) {
                 PropertyMeta<T, ?> propertyMeta = property.getPropertyMeta();
-                if (propertyMeta != null && propertyMeta.isConstructorProperty()) {
+                if (propertyMeta != null && propertyMeta.isConstructorProperty() && ! propertyMeta.isSubProperty()) {
                     handler.handle(property);
                 }
             }
@@ -185,7 +218,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 
     public boolean isDirectProperty() {
-        return  (properties.size() == 1 && properties.get(0) != null && properties.get(0).getPropertyMeta() instanceof DirectClassMeta.DirectPropertyMeta);
+        return  (properties.size() == 1 && properties.get(0) != null && properties.get(0).getPropertyMeta() instanceof SelfPropertyMeta);
     }
 
 	public int maxIndex() {
@@ -206,5 +239,9 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		}
 
 		return false;
+	}
+
+	public ClassMeta<T> getClassMeta() {
+		return classMeta;
 	}
 }

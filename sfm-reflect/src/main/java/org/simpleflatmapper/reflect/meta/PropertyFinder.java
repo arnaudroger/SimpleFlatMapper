@@ -17,7 +17,7 @@ public abstract class PropertyFinder<T> {
 
 	protected abstract void lookForProperties(
 			PropertyNameMatcher propertyNameMatcher,
-			MatchingProperties matchingProperties,
+			FoundProperty<T> matchingProperties,
 			PropertyMatchingScore score);
 
 
@@ -26,11 +26,12 @@ public abstract class PropertyFinder<T> {
 
 
 
-	protected static class MatchingProperties<T> {
+	protected static class MatchingProperties<T> implements FoundProperty<T> {
 		private final List<MatchedProperty<T, ?>> matchedProperties = new ArrayList<MatchedProperty<T, ?>>();
-		<P extends  PropertyMeta<T, ?>> void found(P propertyMeta,
-				   Consumer<? super P> selectionCallback,
-				   PropertyMatchingScore score) {
+		@Override
+		public <P extends  PropertyMeta<T, ?>> void found(P propertyMeta,
+														  Runnable selectionCallback,
+														  PropertyMatchingScore score) {
 			matchedProperties.add(new MatchedProperty<T, P>(propertyMeta, selectionCallback, score));
 		}
 
@@ -45,10 +46,10 @@ public abstract class PropertyFinder<T> {
 
 	private static class MatchedProperty<T, P extends PropertyMeta<T, ?>> implements Comparable<MatchedProperty<T, ?>>{
 		private final P propertyMeta;
-		private final Consumer<? super P> selectionCallback;
+		private final Runnable selectionCallback;
 		private final PropertyMatchingScore score;
 
-		private MatchedProperty(P propertyMeta, Consumer<? super P> selectionCallback, PropertyMatchingScore score) {
+		private MatchedProperty(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score) {
 			this.propertyMeta = propertyMeta;
 			this.selectionCallback = selectionCallback;
 			this.score = score;
@@ -61,8 +62,13 @@ public abstract class PropertyFinder<T> {
 		}
 
 		public void select() {
-			if (selectionCallback != null) selectionCallback.accept(propertyMeta);
+			if (selectionCallback != null) selectionCallback.run();
 		}
 	}
 
+    public interface FoundProperty<T> {
+        <P extends  PropertyMeta<T, ?>> void found(P propertyMeta,
+                                                   Runnable selectionCallback,
+                                                   PropertyMatchingScore score);
+    }
 }

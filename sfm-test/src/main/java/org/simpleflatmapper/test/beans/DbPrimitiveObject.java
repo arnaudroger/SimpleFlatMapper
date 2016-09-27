@@ -10,7 +10,21 @@ public class DbPrimitiveObject implements PrimitiveObject {
 	protected long pLong;
 	protected float pFloat;
 	protected double pDouble;
-	
+
+	public DbPrimitiveObject(boolean pBoolean, byte pByte, char pCharacter, short pShort, int pInt, long pLong, float pFloat, double pDouble) {
+		this.pBoolean = pBoolean;
+		this.pByte = pByte;
+		this.pCharacter = pCharacter;
+		this.pShort = pShort;
+		this.pInt = pInt;
+		this.pLong = pLong;
+		this.pFloat = pFloat;
+		this.pDouble = pDouble;
+	}
+
+	public DbPrimitiveObject() {
+	}
+
 	@Override
 	public boolean ispBoolean() {
 		return pBoolean;

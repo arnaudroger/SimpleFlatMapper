@@ -3,7 +3,6 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.util.Consumer;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,23 +25,27 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
     @Override
     protected  void lookForProperties(
             PropertyNameMatcher propertyNameMatcher,
-            MatchingProperties matchingProperties,
+            FoundProperty matchingProperties,
             PropertyMatchingScore score){
-        if (!innerMeta.isLeaf()) {
-            final PropertyMeta<T, ?> property = propertyFinder.findProperty(propertyNameMatcher);
-
-            if (property != null) {
-                matchingProperties.found(getSubPropertyMeta(property), null, score);
-            }
-        } else if (nbProp == 0){
-            nbProp++;
-            matchingProperties.found(optionalClassMeta.getProperty(), new Consumer() {
-                @Override
-                public void accept(Object o) {
-                    nbProp++;
+        propertyFinder.lookForProperties(propertyNameMatcher, new FoundProperty<T>() {
+            @Override
+            public <P extends PropertyMeta<T, ?>> void found(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score) {
+                Runnable callback;
+                if (!propertyMeta.isSubProperty()) {
+                    if (nbProp > 0) return;
+                    callback = new Runnable() {
+                        @Override
+                        public void run() {
+                            selectionCallback.run();
+                            nbProp ++;
+                        }
+                    };
+                } else {
+                    callback = selectionCallback;
                 }
-            }, score);
-        }
+                matchingProperties.found(getSubPropertyMeta(propertyMeta), callback, score);
+            }
+        }, score);
     }
 
     @SuppressWarnings("unchecked")

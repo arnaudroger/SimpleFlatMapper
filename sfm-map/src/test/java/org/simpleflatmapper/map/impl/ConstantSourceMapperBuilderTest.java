@@ -135,8 +135,7 @@ public class ConstantSourceMapperBuilderTest {
         MyObjectWithInner o = mapper.map(null);
 
         System.out.println("mapper = " + mapper);
-        assertNull(o.prop.date);
-        assertNull(o.prop.str);
+        assertNull(o.prop);
 
     }
 
@@ -148,14 +147,21 @@ public class ConstantSourceMapperBuilderTest {
         private String str;
         private Date date;
 
-        public MultiConstructorObject(String bob) {
-            this.str = bob;
+        public MultiConstructorObject(String str) {
+            this.str = str;
         }
-        public MultiConstructorObject(Date bap) {
-            this.date = bap;
+        public MultiConstructorObject(Date date) {
+            this.date = date;
         }
 
 
+        public String getStr() {
+            return str;
+        }
+
+        public Date getDate() {
+            return date;
+        }
     }
 
 }

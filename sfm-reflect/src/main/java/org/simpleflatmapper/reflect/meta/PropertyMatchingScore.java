@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.meta;
 
 public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> {
     public final static PropertyMatchingScore INITIAL = new PropertyMatchingScore();
+    public final static PropertyMatchingScore MINIMUM = new PropertyMatchingScore(Long.MIN_VALUE);
 
     private final long score;
 
@@ -23,9 +24,8 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
 
     @Override
     public int compareTo(PropertyMatchingScore o) {
-        long l = o.score - score;
-        if (l > 0) return 1;
-        if (l < 0) return -1;
+        if (o.score > score) return 1;
+        if (o.score < score) return -1;
         return 0;
     }
 }

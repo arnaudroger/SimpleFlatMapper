@@ -15,32 +15,20 @@ public class DirectClassMetaTest {
     public void testDirect() {
         ClassMeta<String> direct = ReflectionService.newInstance().getClassMeta(String.class);
 
-        assertTrue(direct instanceof DirectClassMeta);
-        assertEquals("DirectClassMeta{target=class java.lang.String}", direct.toString());
 
         PropertyMeta<String, Object> property = direct.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("bbb", 0, true, true));
 
-        assertNull(direct.newPropertyFinder().getEligibleInstantiatorDefinitions());
 
-        assertTrue(property instanceof DirectClassMeta.DirectPropertyMeta);
-        assertEquals("DirectPropertyMeta{type=class java.lang.String,name=direct}", property.toString());
+        assertTrue(property instanceof SelfPropertyMeta);
+        assertEquals("SelfPropertyMeta{type=class java.lang.String,name=self}", property.toString());
 
         assertTrue(property.getGetter() instanceof IdentityGetter);
 
         assertTrue(NullSetter.isNull(property.getSetter()));
 
-        assertArrayEquals(new String[] {""},  direct.generateHeaders());
+        assertEquals("{this}", property.getPath());
 
-        assertEquals(".", property.getPath());
-
-        assertEquals(Arrays.asList(), direct.getInstantiatorDefinitions());
         assertEquals(String.class, direct.getType());
-
-        assertEquals(direct, direct);
-        assertNotEquals(direct, ReflectionService.newInstance().getClassMeta(Integer.class));
-        assertEquals(direct.hashCode(), direct.hashCode());
-        assertNotEquals(direct.hashCode(), ReflectionService.newInstance().getClassMeta(Integer.class).hashCode());
-
 
     }
 }

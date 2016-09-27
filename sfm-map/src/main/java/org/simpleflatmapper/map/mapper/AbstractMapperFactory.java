@@ -116,6 +116,7 @@ public abstract class AbstractMapperFactory<
 	 * @return the current factory
 	 */
 	public final MF useAsm(final boolean useAsm) {
+		if (reflectionService != null)  throw new IllegalStateException("Reflection service is set cannot change useAsm");
 		this.useAsm = useAsm;
 		return (MF) this;
 	}
@@ -311,12 +312,11 @@ public abstract class AbstractMapperFactory<
 
 
 	protected ReflectionService getReflectionService() {
-        if (reflectionService != null) {
-            return reflectionService;
-        } else {
-            return ReflectionService.newInstance(useAsm);
-        }
-    }
+        if (reflectionService == null) {
+			reflectionService =  ReflectionService.newInstance(useAsm);
+		}
+		return reflectionService;
+	}
 
 	public ColumnDefinitionProvider<CD, K> columnDefinitions() {
 		return columnDefinitions;

@@ -17,10 +17,6 @@ import static org.junit.Assert.*;
 
 public class TuplesClassMetaTest {
 
-    @Test
-    public void isNotLeaf() {
-        assertFalse(classMeta.isLeaf());
-    }
 
     @Test
     public void failOnNoConstructorMatchingType() {
@@ -37,15 +33,6 @@ public class TuplesClassMetaTest {
     @SuppressWarnings("unused")
     static class MyTuple<T1, T2> {
     }
-    @Test
-    public void testGenerateHeadersOnDbObjectString() {
-        String[] names = {"element0_id", "element0_name", "element0_email", "element0_creation_time", "element0_type_ordinal", "element0_type_name", "element1"};
-        Assert.assertArrayEquals(
-                names,
-                ReflectionService.newInstance().getClassMeta(Tuples.typeDef(DbObject.class, String.class)).generateHeaders());
-    }
-
-
 
     @Test
     public void testFindPropertyNoAsm() {

@@ -72,11 +72,22 @@ public class ObjectSetterFactoryTest {
 	
 	@Test
 	public void testFallBackToField() throws Exception {
-		Setter<Bar, String> setter = nonAsmFactory.getSetter(Bar.class, "bar");
+		Setter<FallBackBar, String> setter = nonAsmFactory.getSetter(FallBackBar.class, "bar");
 		assertTrue(setter instanceof FieldSetter);
-		SetterHelperTest.validateBarSetter(setter);
+		FallBackBar b = new FallBackBar();
+		assertNull(b.getBar());
+		setter.set(b, "bar");
+		assertEquals("bar", b.getBar());
 	}
-	
+
+	public class FallBackBar {
+		private String bar;
+		public String getBar() {
+			return bar;
+		}
+	}
+
+
 	@Test
 	public void testReturnNullIfNotFound() throws Exception {
 		Setter<Foo, String> setter = nonAsmFactory.getSetter(Foo.class, "xxbar");

@@ -8,6 +8,7 @@ import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;
 import org.simpleflatmapper.reflect.setter.NullSetter;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -66,11 +67,6 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 		return type;
 	}
 
-	@Override
-	public String[] generateHeaders() {
-		return innerMeta.generateHeaders();
-	}
-
 	public ClassMeta<T> getInnerMeta() {
 		return innerMeta;
 	}
@@ -80,13 +76,13 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
     }
 
 	@Override
-	public boolean isLeaf() {
-		return false;
+	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
+		return Arrays.asList(instantiatorDefinition);
 	}
 
 	@Override
-	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
-		return Arrays.asList(instantiatorDefinition);
+	public void forEachProperties(Consumer<? super PropertyMeta<Optional<T>, ?>> consumer) {
+		consumer.accept(propertyMeta);
 	}
 
 

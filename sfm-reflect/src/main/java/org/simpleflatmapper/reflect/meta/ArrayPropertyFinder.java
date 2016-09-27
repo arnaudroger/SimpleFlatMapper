@@ -42,23 +42,23 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
     }
 
     @Override
-    protected IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
+    protected void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, FoundProperty foundProperty, PropertyMatchingScore score) {
         final ClassMeta<E> elementClassMeta = ((ArrayClassMeta)classMeta).getElementClassMeta();
 
-        PropertyMeta<E, Object> property;
-
-        property = elementClassMeta.newPropertyFinder().findProperty(propertyNameMatcher);
+        // all element has same type so check if can find property
+        PropertyMeta<E, ?> property =
+                elementClassMeta.newPropertyFinder().findProperty(propertyNameMatcher);
         if (property != null) {
             for (int i = 0; i < elements.size(); i++) {
                 IndexedElement element = elements.get(i);
                 if (!element.hasProperty(property)) {
-                    return new IndexedColumn(i, propertyNameMatcher);
+                    lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), foundProperty, score);
+                    return;
                 }
             }
 
-            return new IndexedColumn(elements.size(), propertyNameMatcher);
+            lookForAgainstColumn(new IndexedColumn(elements.size(), propertyNameMatcher), foundProperty, score);
         }
-		return null;
 	}
 
     @Override

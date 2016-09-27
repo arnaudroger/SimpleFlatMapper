@@ -8,7 +8,6 @@ import org.simpleflatmapper.reflect.meta.AliasProvider;
 import org.simpleflatmapper.reflect.meta.AliasProviderService;
 import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.reflect.meta.DirectClassMeta;
 import org.simpleflatmapper.reflect.meta.FastTupleClassMeta;
 import org.simpleflatmapper.reflect.meta.MapClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
@@ -112,11 +111,7 @@ public class ReflectionService {
 		} else if (isFastTuple(clazz)) {
             return new FastTupleClassMeta<T>(target, this);
         }
-		if (false || isDirectType(target)) {
-			return new DirectClassMeta<T>(target, this);
-		} else {
-			return new ObjectClassMeta<T>(target, this);
-		}
+		return new ObjectClassMeta<T>(target, this);
 	}
 
 	public <T> ClassMeta<T> getClassMetaExtraInstantiator(Type target, Member builderInstantiator) {
@@ -138,14 +133,6 @@ public class ReflectionService {
 	private <T> boolean isFastTuple(Class<T> clazz) {
         Class<?> superClass = clazz.getSuperclass();
         return superClass != null && "com.boundary.tuple.FastTuple".equals(superClass.getName());
-    }
-
-    private boolean isDirectType(Type target) {
-        return TypeHelper.isJavaLang(target)
-				|| TypeHelper.isEnum(target)
-				|| TypeHelper.areEquals(target, Date.class)
-				|| TypeHelper.areEquals(target, UUID.class)
-				;
     }
 
 	public String getColumnName(Method method) {

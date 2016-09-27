@@ -277,6 +277,7 @@ public class CsvMapperBuilderTest {
 	public void testMapDbObjectWrongName() throws Exception {
 		MapperBuilderErrorHandler mapperBuilderErrorHandler = mock(MapperBuilderErrorHandler.class);
 		CsvMapperBuilder<DbFinalObject> builder = csvMapperFactory.mapperBuilderErrorHandler(mapperBuilderErrorHandler ).newBuilder(DbFinalObject.class);
+		builder.addMapping("id");
 		builder.addMapping("No_prop");
 		verify(mapperBuilderErrorHandler).propertyNotFound(DbFinalObject.class, "No_prop");
 	}

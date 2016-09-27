@@ -50,12 +50,16 @@ public class ObjectClassMetaTest {
         });
 
         ClassMeta<DbObject> classMeta = reflectionService.getClassMeta(DbObject.class);
-        assertNotNull(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("myid")));
-        assertNotNull(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("myname")));
+        PropertyFinder<DbObject> propertyFinder1 = classMeta.newPropertyFinder();
+        propertyFinder1.findProperty(DefaultPropertyNameMatcher.of("email")); // force non direct mode
+        assertNotNull(propertyFinder1.findProperty(DefaultPropertyNameMatcher.of("myid")));
+        assertNotNull(propertyFinder1.findProperty(DefaultPropertyNameMatcher.of("myname")));
 
         classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
-        assertNull(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("myid")));
-        assertNull(classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("myname")));
+        PropertyFinder<DbObject> propertyFinder2 = classMeta.newPropertyFinder();
+        propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("email")); // force non direct mode
+        assertNull(propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("myid")));
+        assertNull(propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("myname")));
 
     }
 
@@ -91,19 +95,6 @@ public class ObjectClassMetaTest {
 
         classMeta = (ObjectClassMeta<?>) ReflectionService.newInstance().getClassMeta(DbPartialFinalObject.class);
         assertEquals("email", classMeta.getFirstProperty().getPath());
-    }
-
-
-
-    @Test
-    public void testGenerateHeaders() {
-        String[] names = {"id", "name", "email", "creation_time", "type_ordinal", "type_name"};
-        assertArrayEquals(
-                names,
-                ReflectionService.newInstance().getClassMeta(DbFinalObject.class).generateHeaders());
-        assertArrayEquals(
-                names,
-                ReflectionService.newInstance().getClassMeta(DbObject.class).generateHeaders());
     }
 
     @Test
@@ -200,7 +191,7 @@ public class ObjectClassMetaTest {
     }
 
     public static class IncompatibleGetter {
-        private String value;
+        public String value;
 
         public int getValue() {
             return 1;
@@ -267,14 +258,6 @@ public class ObjectClassMetaTest {
         }
 
     }
-    @Test
-    public void testGenerateHeadersWithConstructorAndSetterProperty() {
-        String[] names = {"id", "o_id", "o_name", "o_email", "o_creation_time", "o_type_ordinal", "o_type_name"};
-        assertArrayEquals(
-                names,
-                ReflectionService.newInstance().getClassMeta(MyClass.class).generateHeaders());
-    }
-
 
     private class UnprefixedBean {
         private String alt;

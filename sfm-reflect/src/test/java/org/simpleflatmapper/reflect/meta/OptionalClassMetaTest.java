@@ -23,13 +23,6 @@ public class OptionalClassMetaTest {
 
     ClassMeta<Optional<String>> stringClassMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Optional<String>>() {
     }.getType());
-    @Test
-    public void testGenerateHeaders() {
-        String[] names = {"id", "name", "email", "creation_time", "type_ordinal", "type_name"};
-        assertArrayEquals(
-                names,
-                objectClassMeta.generateHeaders());
-    }
 
     @Test
     public void testFindProperty() throws Exception {

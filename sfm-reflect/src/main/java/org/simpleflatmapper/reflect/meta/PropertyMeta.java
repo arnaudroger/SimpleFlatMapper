@@ -58,8 +58,12 @@ public abstract class PropertyMeta<O, P> {
 	}
 
 
-	public boolean isDirect() {
+	public boolean isSelf() {
 		return false;
+	}
+
+	public boolean isValid() {
+		return true;
 	}
 
 

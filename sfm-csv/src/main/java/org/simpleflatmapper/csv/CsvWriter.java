@@ -1,22 +1,37 @@
 package org.simpleflatmapper.csv;
 
+import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.converter.ToStringConverter;
 import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
+import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.PropertyWithGetter;
+import org.simpleflatmapper.map.context.KeySourceGetter;
+import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.property.FormatProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.mapper.ContextualMapper;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.Format;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A CsvWriter allows the caller to write object of type T to an appendable in a specified format. See {@link CsvWriter#from(Class)} to create one.
@@ -113,10 +128,14 @@ public class CsvWriter<T>  {
 
         MapperConfig<CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> mapperConfig = MapperConfig.<CsvColumnKey>fieldMapperConfig();
         try {
-            builder.defaultHeaders();
+            String[] headers = defaultHeaders(classMeta);
+            for(String header : headers) {
+                builder.addColumn(header);
+            }
             ContextualMapper<T, Appendable> mapper = (ContextualMapper<T, Appendable>) builder.mapper();
+
             return new DefaultCsvWriterDSL<T>(
-                    CsvWriter.<T>toColumnDefinitions(classMeta.generateHeaders()),
+                    CsvWriter.<T>toColumnDefinitions(headers),
                     cellWriter,
                     mapper,
                     classMeta,
@@ -127,6 +146,71 @@ public class CsvWriter<T>  {
                     classMeta,
                     mapperConfig, false);
         }
+    }
+
+    private static <T> String[] defaultHeaders(ClassMeta<T> classMeta) {
+        List<String> columns = new ArrayList<String>();
+        addDefaultHeaders(classMeta, "", columns);
+        return  columns.toArray(new String[0]);
+    }
+
+
+    private static <P> void addDefaultHeaders(final ClassMeta<P> classMeta, final String prefix, final List<String> columns) {
+        classMeta.forEachProperties(new Consumer<PropertyMeta<P,?>>() {
+            PropertyWithGetter propertyWithGetter = new PropertyWithGetter();
+            @Override
+            public void accept(PropertyMeta<P, ?> propertyMeta) {
+                if (! propertyWithGetter.test(propertyMeta)) return;
+                String currentName = prefix +  propertyMeta.getPath();
+                if (!canWrite(propertyMeta.getPropertyType())) {
+                    addDefaultHeaders(propertyMeta.getPropertyClassMeta(), currentName + "_", columns);
+                } else {
+                    columns.add(toDelimiterSeparated(currentName));
+                }
+
+            }
+        });
+    }
+
+    private static String toDelimiterSeparated(String str) {
+        StringBuilder sb = new StringBuilder(str.length());
+        boolean lastWasUpperCase = false;
+        for(int i = 0; i < str.length(); i ++) {
+            char c = str.charAt(i);
+            if (Character.isUpperCase(c)) {
+                if (lastWasUpperCase) {
+                    sb.append(c);
+                } else {
+                    if (i > 0) {
+                        sb.append('_');
+                    }
+                    sb.append(Character.toLowerCase(c));
+                }
+                lastWasUpperCase = true;
+            } else {
+                lastWasUpperCase = false;
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static <P, E> boolean canWrite(Type type) {
+        Converter<? super Object, ?> converter = ConverterService.getInstance().findConverter(type, CharSequence.class);
+        return (converter != null && (! (converter instanceof ToStringConverter) || allowToStringConverter(type) ) );
+    }
+
+    private static boolean allowToStringConverter(Type type) {
+        return TypeHelper.isPrimitive(type)
+                || TypeHelper.isEnum(type)
+                || TypeHelper.isInPackage(type, new Predicate<String>() {
+            @Override
+            public boolean test(String s) {
+                return s.startsWith("java.");
+            }
+        })
+                ;
+
     }
 
     @SuppressWarnings("unchecked")
@@ -360,7 +444,7 @@ public class CsvWriter<T>  {
 
         @Override
         public CsvWriter<T> to(Appendable appendable) throws IOException {
-            throw new IllegalStateException("No columned defined");
+            throw new IllegalStateException("No column defined");
         }
         protected NoColumnCsvWriterDSL<T> newCsvWriterDSL(Column[] columns,
                                                   CellWriter cellWriter,

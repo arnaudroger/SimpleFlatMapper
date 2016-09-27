@@ -24,9 +24,9 @@ import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
-import org.simpleflatmapper.reflect.meta.DirectClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.reflect.meta.SelfPropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.Mapper;
@@ -90,7 +90,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         this.propertyMappingsBuilder =
                 new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K>>(classMeta,
                         mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler(),
-                        new PropertyWithSetter(), propertyFinder);
+                        new PropertyWithSetterOrConstructor(), propertyFinder);
 		this.target = requireNonNull("classMeta", classMeta).getType();
 		this.reflectionService = requireNonNull("classMeta", classMeta).getReflectionService();
 	}
@@ -289,7 +289,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 			public void handle(PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> t) {
 				if (t == null) return;
 				PropertyMeta<T, ?> meta = t.getPropertyMeta();
-				if (meta == null || (meta instanceof DirectClassMeta.DirectPropertyMeta)) return;
+				if (meta == null || (meta instanceof SelfPropertyMeta)) return;
                  if (!meta.isConstructorProperty() && !meta.isSubProperty()) {
 					fields.add(newFieldMapper(t));
 				}

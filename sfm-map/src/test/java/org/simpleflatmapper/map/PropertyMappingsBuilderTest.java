@@ -182,17 +182,23 @@ public class PropertyMappingsBuilderTest {
                             }
                         });
 
-        builder2.addPropertyIfPresent(new SampleFieldKey("not_id", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
-        List<PropertyMapping<DbObject, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>> props = getAllProperties(builder2);
 
-        assertEquals(1, props.size());
-        assertNull(props.get(0));
+        List<PropertyMapping<DbObject, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>> props;
 
         builder2.addPropertyIfPresent(new SampleFieldKey("id", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
         props = getAllProperties(builder2);
 
+        assertEquals(1, props.size());
+        assertNotNull(props.get(0));
+
+        builder2.addPropertyIfPresent(new SampleFieldKey("not_id", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+        props = getAllProperties(builder2);
+
         assertEquals(2, props.size());
-        assertNull(props.get(0));
+        assertNotNull(props.get(0));
+        assertNull(props.get(1));
+
+
 
     }
 
@@ -210,12 +216,12 @@ public class PropertyMappingsBuilderTest {
                                 return true;
                             }
                         });
-
+        builder2.addProperty(new SampleFieldKey("id", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
         builder2.addProperty(new SampleFieldKey("not_id", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
         List<PropertyMapping<DbObject, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>> props = getAllProperties(builder2);
 
-        assertEquals(1, props.size());
-        assertNull(props.get(0));
+        assertEquals(2, props.size());
+        assertNull(props.get(1));
     }
 
     @Test

@@ -145,6 +145,15 @@ public final class TypeHelper {
         return clazz.isPrimitive() || (clazz.getPackage() != null && clazz.getPackage().getName().equals("java.lang"));
 	}
 
+	public static boolean isInPackage(Type target, Predicate<String> packagePredicate) {
+		Class<?> clazz = TypeHelper.toClass(target);
+		Package clazzPackage = clazz.getPackage();
+		if (clazzPackage != null) {
+			return packagePredicate.test(clazzPackage.getName());
+		}
+		return false;
+	}
+
     public static boolean isEnum(Type target) {
         Class<?> clazz = TypeHelper.toClass(target);
         return clazz.isEnum();
@@ -214,6 +223,8 @@ public final class TypeHelper {
 		}
 		return type;
 	}
+
+
 
 	public static class MapEntryTypes {
 		public static final MapEntryTypes OBJECT_OBJECT = new MapEntryTypes(Object.class, Object.class);

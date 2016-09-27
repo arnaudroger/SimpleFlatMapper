@@ -26,6 +26,7 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.test.beans.DbPrimitiveObject;
+import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 
 import java.lang.reflect.Method;
 
@@ -61,60 +62,60 @@ public class ConstantSourceFieldMapperFactoryImplTest {
     @Test
     public void testFieldMapperPrimitives() throws Exception {
 
-        DbPrimitiveObject object = new DbPrimitiveObject();
+        DbPrimitiveObjectWithSetter object = new DbPrimitiveObjectWithSetter();
 
         {
-            FieldMapper<Object, DbPrimitiveObject> fieldMapper =
-                    createFieldMapper(DbPrimitiveObject.class, "pBoolean", new ConstantBooleanGetter<Object>(true));
+            FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
+                    createFieldMapper(DbPrimitiveObjectWithSetter.class, "pBoolean", new ConstantBooleanGetter<Object>(true));
 
             assertPrimitiveSetter(fieldMapper, object, "ispBoolean", BooleanFieldMapper.class, false, true);
         }
 
         {
-            FieldMapper<Object, DbPrimitiveObject> fieldMapper =
-                    createFieldMapper(DbPrimitiveObject.class, "pByte", new ConstantByteGetter<Object>((byte) 16));
+            FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
+                    createFieldMapper(DbPrimitiveObjectWithSetter.class, "pByte", new ConstantByteGetter<Object>((byte) 16));
 
             assertPrimitiveSetter(fieldMapper, object, "getpByte", ByteFieldMapper.class, (byte) 0, (byte) 16);
         }
 
         {
-            FieldMapper<Object, DbPrimitiveObject> fieldMapper =
-                    createFieldMapper(DbPrimitiveObject.class, "pCharacter", new ConstantCharacterGetter<Object>((char) 16));
+            FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
+                    createFieldMapper(DbPrimitiveObjectWithSetter.class, "pCharacter", new ConstantCharacterGetter<Object>((char) 16));
 
             assertPrimitiveSetter(fieldMapper, object, "getpCharacter", CharacterFieldMapper.class, (char) 0, (char) 16);
         }
 
         {
-            FieldMapper<Object, DbPrimitiveObject> fieldMapper =
-                    createFieldMapper(DbPrimitiveObject.class, "pShort", new ConstantShortGetter<Object>((short) 16));
+            FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
+                    createFieldMapper(DbPrimitiveObjectWithSetter.class, "pShort", new ConstantShortGetter<Object>((short) 16));
 
             assertPrimitiveSetter(fieldMapper, object, "getpShort", ShortFieldMapper.class, (short) 0, (short) 16);
         }
 
         {
-            FieldMapper<Object, DbPrimitiveObject> fieldMapper =
-                    createFieldMapper(DbPrimitiveObject.class, "pInt", new ConstantIntGetter<Object>(16));
+            FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
+                    createFieldMapper(DbPrimitiveObjectWithSetter.class, "pInt", new ConstantIntGetter<Object>(16));
 
             assertPrimitiveSetter(fieldMapper, object, "getpInt", IntFieldMapper.class, 0, 16);
         }
 
         {
-            FieldMapper<Object, DbPrimitiveObject> fieldMapper =
-                    createFieldMapper(DbPrimitiveObject.class, "pLong", new ConstantLongGetter<Object>(16l));
+            FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
+                    createFieldMapper(DbPrimitiveObjectWithSetter.class, "pLong", new ConstantLongGetter<Object>(16l));
 
             assertPrimitiveSetter(fieldMapper, object, "getpLong", LongFieldMapper.class, 0l, 16l);
         }
 
         {
-            FieldMapper<Object, DbPrimitiveObject> fieldMapper =
-                    createFieldMapper(DbPrimitiveObject.class, "pFloat", new ConstantFloatGetter<Object>(16f));
+            FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
+                    createFieldMapper(DbPrimitiveObjectWithSetter.class, "pFloat", new ConstantFloatGetter<Object>(16f));
 
             assertPrimitiveSetter(fieldMapper, object, "getpFloat", FloatFieldMapper.class, 0f, 16f);
         }
 
         {
-            FieldMapper<Object, DbPrimitiveObject> fieldMapper =
-                    createFieldMapper(DbPrimitiveObject.class, "pDouble", new ConstantDoubleGetter<Object>(16.0));
+            FieldMapper<Object, DbPrimitiveObjectWithSetter> fieldMapper =
+                    createFieldMapper(DbPrimitiveObjectWithSetter.class, "pDouble", new ConstantDoubleGetter<Object>(16.0));
 
             assertPrimitiveSetter(fieldMapper, object, "getpDouble", DoubleFieldMapper.class, 0.0, 16.0);
         }

@@ -31,7 +31,7 @@ public class AbstractConstantTargetMapperBuilderTest {
             public DbObject get() {
                 return DbObject.newInstance();
             }
-        });
+        }, DbObject.HEADERS);
     }
 
 
@@ -51,13 +51,11 @@ public class AbstractConstantTargetMapperBuilderTest {
 
     }
 
-    private <T> void testWriter(Supplier<T> supplier) throws Exception {
+    private <T> void testWriter(Supplier<T> supplier, String[] headers) throws Exception {
         T instance1 = supplier.get();
         ClassMeta<T> classMeta = ReflectionService.newInstance().<T>getClassMeta(instance1.getClass());
 
         Writerbuilder<T> builder = new Writerbuilder<T>(classMeta);
-
-        String[] headers = classMeta.generateHeaders();
 
         Object[] row = new Object[headers.length];
 

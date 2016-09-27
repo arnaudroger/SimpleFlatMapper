@@ -1,42 +1,27 @@
 package org.simpleflatmapper.reflect.meta;
 
-import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.reflect.Parameter;
-import org.simpleflatmapper.reflect.ScoredGetter;
-import org.simpleflatmapper.reflect.ScoredSetter;
-import org.simpleflatmapper.util.TypeHelper;
+
+import org.simpleflatmapper.util.Consumer;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
 
 
-    public TuplePropertyFinder(TupleClassMeta<T> tupleClassMeta) {
+    public TuplePropertyFinder(final TupleClassMeta<T> tupleClassMeta) {
         super(tupleClassMeta);
 
-        for(int i = 0; i < tupleClassMeta.getTupleSize(); i++) {
-			elements.add(newIndexedElement(tupleClassMeta, i));
-		}
+        tupleClassMeta.forEachProperties(new Consumer<PropertyMeta<T, ?>>() {
+            @Override
+            public void accept(PropertyMeta<T, ?> propertyMeta) {
+                elements.add(newIndexedElement(tupleClassMeta, propertyMeta));
+            }
+        });
 	}
 
-	private <E> IndexedElement<T, E> newIndexedElement(TupleClassMeta<T> tupleClassMeta, int i) {
-		ConstructorPropertyMeta<T, E> prop =
-                newConstructorPropertyMeta(tupleClassMeta, i);
+	private <E> IndexedElement<T, E> newIndexedElement(TupleClassMeta<T> tupleClassMeta,  PropertyMeta<T, E> prop) {
 		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(prop.getPropertyType());
 		return new IndexedElement<T, E>(prop, classMeta);
 	}
-
-    private <E> ConstructorPropertyMeta<T, E> newConstructorPropertyMeta(TupleClassMeta<T> tupleClassMeta, int i) {
-        Class<T> tClass = TypeHelper.toClass(tupleClassMeta.getType());
-
-        InstantiatorDefinition instantiatorDefinition = getEligibleInstantiatorDefinitions().get(0);
-        final Parameter parameter = instantiatorDefinition.getParameters()[i];
-
-        Getter<T, E> getter = tupleClassMeta.getReflectionService().getObjectGetterFactory().getGetter(tClass, parameter.getName());
-        return new ConstructorPropertyMeta<T, E>(parameter.getName(), tupleClassMeta.getReflectionService(),
-                parameter, tClass,
-                ScoredGetter.<T, E>of(getter, Integer.MAX_VALUE), ScoredSetter.<T, E>nullSetter(), instantiatorDefinition);
-    }
 
     @Override
     protected boolean isValidIndex(IndexedColumn indexedColumn) {
@@ -47,22 +32,37 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
         return elements.get(indexedColumn.getIndexValue());
     }
 
-    protected IndexedColumn extrapolateIndex(PropertyNameMatcher propertyNameMatcher) {
+    protected void extrapolateIndex(final PropertyNameMatcher propertyNameMatcher, final FoundProperty foundProperty, PropertyMatchingScore score) {
         for(int i = 0; i < elements.size(); i++) {
-            IndexedElement element = elements.get(i);
+            final IndexedElement element = elements.get(i);
 
             if (element.getElementClassMeta() != null) {
-                PropertyFinder<?> pf = element.getPropertyFinder();
-                PropertyMeta<?, Object> property = pf.findProperty(propertyNameMatcher);
-                if (property != null) {
-                    if (!element.hasProperty(property)) {
-                        return new IndexedColumn(i , propertyNameMatcher);
+                element.getPropertyFinder().lookForProperties(propertyNameMatcher, new FoundProperty() {
+                    @Override
+                    public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
+
+                        if (!element.hasProperty(propertyMeta)) {
+                            PropertyMeta subProperty;
+                            if (propertyMeta.isSelf()) {
+                                subProperty = element.getPropertyMeta();
+                            } else {
+                                subProperty = new SubPropertyMeta(classMeta.getReflectionService(), element.getPropertyMeta(), propertyMeta);
+                            }
+
+                            foundProperty.found(subProperty, new Runnable() {
+                                @Override
+                                public void run() {
+                                    element.addProperty(propertyMeta);
+                                    selectionCallback.run();
+                                }
+                            }, score);
+                        }
                     }
-                }
+                }, score);
 
             }
+            score = score.decrease(1);
         }
-        return null;
     }
 
     @Override

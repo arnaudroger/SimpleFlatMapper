@@ -8,6 +8,7 @@ import org.simpleflatmapper.reflect.ScoredGetter;
 import org.simpleflatmapper.reflect.ScoredSetter;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.getter.GetterHelper;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -113,22 +114,13 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
     }
 
     @Override
-    public String[] generateHeaders() {
-        if (headers == null) {
-            throw new UnsupportedOperationException("Cannot generate headers on directMemory tuple");
-        }  else {
-            return headers;
-        }
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return false;
-    }
-
-    @Override
     public List<InstantiatorDefinition> getInstantiatorDefinitions() {
         return instantiatorDefinitions;
+    }
+
+    @Override
+    public void forEachProperties(Consumer<? super PropertyMeta<T, ?>> consumer) {
+        delegate.forEachProperties(consumer);
     }
 
 }

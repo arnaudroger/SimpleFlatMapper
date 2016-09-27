@@ -3,6 +3,7 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Modifier;
@@ -75,19 +76,9 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 		return type;
 	}
 
-	@Override
-	public String[] generateHeaders() {
-		throw new UnsupportedOperationException("Cannot generate headers for a list/array");
-	}
-
     public boolean isArray() {
         return TypeHelper.isArray(type);
     }
-
-	@Override
-	public boolean isLeaf() {
-		return false;
-	}
 
 	@Override
 	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
@@ -96,5 +87,10 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 		} else {
 			return Collections.emptyList();
 		}
+	}
+
+	@Override
+	public void forEachProperties(Consumer<? super PropertyMeta<T, ?>> consumer) {
+		throw new UnsupportedOperationException("Cannot forEach property on array as variable");
 	}
 }

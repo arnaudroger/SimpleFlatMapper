@@ -1,10 +1,14 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.ConstructorNotFoundException;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.ScoredGetter;
+import org.simpleflatmapper.reflect.ScoredSetter;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TupleHelper;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.ErrorHelper;
@@ -19,10 +23,10 @@ import java.util.ListIterator;
 
 public class TupleClassMeta<T> implements ClassMeta<T> {
 
-	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private final ReflectionService reflectionService;
 	private final Type type;
 	private final InstantiatorDefinition instantiatorDefinition;
+    private final List<ConstructorPropertyMeta<T, ?>> propertyMetas;
 
 	public TupleClassMeta(Type type, ReflectionService reflectionService) {
 		this.type = type;
@@ -30,11 +34,33 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 
 		try {
             this.instantiatorDefinition = getInstantiatorDefinition(type, reflectionService);
+            this.propertyMetas = getPropertyMetas(instantiatorDefinition, reflectionService, type);
 		} catch(Exception e) {
             ErrorHelper.rethrow(e);
             throw new IllegalStateException();
 		}
 	}
+
+    private static <T> List<ConstructorPropertyMeta<T, ?>> getPropertyMetas(InstantiatorDefinition instantiatorDefinition, ReflectionService reflectionService, Type type) {
+        int size = instantiatorDefinition.getParameters().length;
+        List<ConstructorPropertyMeta<T, ?>> propertyMetas = new ArrayList<ConstructorPropertyMeta<T, ?>>();
+
+        for(int i = 0; i < size; i++) {
+            propertyMetas.add(TupleClassMeta.<T, Object>newConstructorPropertyMeta(instantiatorDefinition, i, reflectionService, type));
+        }
+        return propertyMetas;
+    }
+
+    private static <T, E> ConstructorPropertyMeta<T, E> newConstructorPropertyMeta(InstantiatorDefinition instantiatorDefinition, int i, ReflectionService reflectionService, Type type) {
+        Class<T> tClass = TypeHelper.toClass(type);
+
+        final Parameter parameter = instantiatorDefinition.getParameters()[i];
+
+        Getter<T, E> getter = reflectionService.getObjectGetterFactory().getGetter(tClass, parameter.getName());
+        return new ConstructorPropertyMeta<T, E>("element" + i, reflectionService,
+                parameter, tClass,
+                ScoredGetter.<T, E>of(getter, Integer.MAX_VALUE), ScoredSetter.<T, E>nullSetter(), instantiatorDefinition);
+    }
 
     private InstantiatorDefinition getInstantiatorDefinition(Type type, ReflectionService reflectionService) throws java.io.IOException {
         final List<InstantiatorDefinition> definitions = reflectionService.extractInstantiator(type);
@@ -89,28 +115,6 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 		return type;
 	}
 
-	@Override
-	public String[] generateHeaders() {
-		List<String> strings = new ArrayList<String>();
-
-        ElementNameGenerator nameGenerator = new SFMTupleNameGenerator();
-
-		int i = 0;
-		for(Parameter cp : instantiatorDefinition.getParameters()) {
-            String prefix = nameGenerator.name(i);
-			ClassMeta<?> classMeta = reflectionService.getClassMeta(cp.getGenericType());
-
-            for(String prop : classMeta.generateHeaders()) {
-                String name = prop.length() == 0 ? prefix : prefix + "_" + prop;
-                strings.add(name);
-            }
-
-			i++;
-		}
-
-		return strings.toArray(EMPTY_STRING_ARRAY);
-	}
-
     private static ElementNameGenerator elementNameGenerator(Type type) {
         Class<?> clazz = TypeHelper.toClass(type);
 
@@ -126,7 +130,14 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 		return Arrays.asList(instantiatorDefinition);
 	}
 
-	public int getTupleSize() {
+    @Override
+    public void forEachProperties(Consumer<? super PropertyMeta<T, ?>> consumer) {
+        for(PropertyMeta<T, ?> prop : propertyMetas) {
+            consumer.accept(prop);
+        }
+    }
+
+    public int getTupleSize() {
 		return instantiatorDefinition.getParameters().length;
 	}
 
@@ -146,8 +157,4 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
         }
     }
 
-    @Override
-    public boolean isLeaf() {
-        return false;
-    }
 }

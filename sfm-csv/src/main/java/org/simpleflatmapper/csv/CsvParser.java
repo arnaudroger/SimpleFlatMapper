@@ -690,17 +690,35 @@ public final class CsvParser {
 		}
 
 		public StaticMapToDSL<T> headers(String... headers) {
-			return new StaticMapToDSL<T>(getDsl(), classMeta, mapToClass, getColumnDefinitions(headers), columnDefinitionProvider);
+			return headers(headers, getDsl());
+
+		}
+		public StaticMapToDSL<T> overrideHeaders(String... headers) {
+			return headers(headers, getDsl().skip(1));
+		}
+
+		private StaticMapToDSL<T> headers(String[] headers, AbstractDSL csvDsl) {
+			return new StaticMapToDSL<T>(csvDsl, classMeta, mapToClass, getColumnDefinitions(headers), columnDefinitionProvider);
 		}
 
 		public StaticMapToDSL<T> defaultHeaders() {
-			return headers(classMeta.generateHeaders());
+			return defaultHeaders(getDsl());
 		}
 
-		public StaticMapToDSL<T> overrideHeaders(String... headers) {
-			List<Tuple2<String, CsvColumnDefinition>> columns = getColumnDefinitions(headers);
-			return new StaticMapToDSL<T>(getDsl().skip(1), classMeta, mapToClass, columns, columnDefinitionProvider);
+		public StaticMapToDSL<T> overrideWithDefaultHeaders() {
+			return defaultHeaders(getDsl().skip(1));
 		}
+
+		private StaticMapToDSL<T> defaultHeaders(AbstractDSL csvDsl) {
+			return new StaticMapToDSL<T>(
+					csvDsl,
+					classMeta,
+					mapToClass,
+					newDefaultStaticMapper(mapToClass, classMeta, columnDefinitionProvider),
+					columnDefinitionProvider);
+		}
+
+
 
 		private List<Tuple2<String, CsvColumnDefinition>> getColumnDefinitions(String[] headers) {
 			List<Tuple2<String,CsvColumnDefinition>> columns = new ArrayList<Tuple2<String, CsvColumnDefinition>>();
@@ -738,10 +756,6 @@ public final class CsvParser {
 			return new CsvColumnDefinitionProviderImpl(properties);
 		}
 
-		public StaticMapToDSL<T> overrideWithDefaultHeaders() {
-			return overrideHeaders(classMeta.generateHeaders());
-		}
-
 		public StaticMapToDSL<T> addMapping(String column) {
 			return staticMapper().addMapping(column);
 		}
@@ -754,7 +768,7 @@ public final class CsvParser {
 		}
 
 		private StaticMapToDSL<T> staticMapper() {
-			return new StaticMapToDSL<T>(getDsl().skip(1), classMeta, mapToClass, Collections.<Tuple2<String,CsvColumnDefinition>>emptyList(), columnDefinitionProvider);
+			return headers(new String[0], getDsl().skip(1));
 		}
 
 
@@ -772,20 +786,20 @@ public final class CsvParser {
 		private final List<Tuple2<String, CsvColumnDefinition>> columns;
 
 
+		private StaticMapToDSL(AbstractDSL dsl, ClassMeta<T> classMeta, Type mapToClass,  CsvMapper<T> mapper, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
+			super(dsl, mapper);
+			this.classMeta = classMeta;
+			this.mapToClass = mapToClass;
+			this.columns = new ArrayList<Tuple2<String, CsvColumnDefinition>>();
+			this.columnDefinitionProvider = columnDefinitionProvider;
+		}
+
 		private StaticMapToDSL(AbstractDSL dsl, ClassMeta<T> classMeta, Type mapToClass, List<Tuple2<String, CsvColumnDefinition>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
 			super(dsl, newStaticMapper(mapToClass, classMeta, columns, columnDefinitionProvider));
 			this.classMeta = classMeta;
 			this.mapToClass = mapToClass;
 			this.columns = columns;
 			this.columnDefinitionProvider = columnDefinitionProvider;
-		}
-
-		private static <T> CsvMapper<T> newStaticMapper(Type mapToClass, ClassMeta<T> classMeta, List<Tuple2<String, CsvColumnDefinition>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
-			CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(mapToClass, classMeta, columnDefinitionProvider);
-			for(Tuple2<String, CsvColumnDefinition> col: columns) {
-				builder.addMapping(col.first(), col.second());
-			}
-			return builder.mapper();
 		}
 
 		public StaticMapToDSL<T> addMapping(String column) {
@@ -936,6 +950,18 @@ public final class CsvParser {
 		}
 	}
 
+	private static <T> CsvMapper<T> newDefaultStaticMapper(Type mapToClass, ClassMeta<T> classMeta, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(mapToClass, classMeta, columnDefinitionProvider);
+		builder.addDefaultHeaders();
+		return builder.mapper();
+	}
+	private static <T> CsvMapper<T> newStaticMapper(Type mapToClass, ClassMeta<T> classMeta, List<Tuple2<String, CsvColumnDefinition>> columns, CsvColumnDefinitionProviderImpl columnDefinitionProvider) {
+		CsvMapperBuilder<T> builder = new CsvMapperBuilder<T>(mapToClass, classMeta, columnDefinitionProvider);
+		for(Tuple2<String, CsvColumnDefinition> col: columns) {
+			builder.addMapping(col.first(), col.second());
+		}
+		return builder.mapper();
+	}
 
 
 }

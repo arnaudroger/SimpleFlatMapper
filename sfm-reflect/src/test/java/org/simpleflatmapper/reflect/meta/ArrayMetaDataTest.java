@@ -51,10 +51,6 @@ public class ArrayMetaDataTest {
         assertEquals(ArrayList.class.getConstructor(),
                 ((ExecutableInstantiatorDefinition)propertyFinder.getEligibleInstantiatorDefinitions().get(0)).getExecutable());
 
-        try {
-            classMeta.generateHeaders();
-            fail();
-        } catch(Exception e) {}
     }
 
     @Test

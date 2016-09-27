@@ -14,12 +14,14 @@ import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
-import org.simpleflatmapper.map.mapper.PropertyWithSetter;
+import org.simpleflatmapper.map.mapper.PropertyWithSetterOrConstructor;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
-import org.simpleflatmapper.reflect.meta.DirectClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.reflect.meta.SelfPropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
+import org.simpleflatmapper.util.CheckedConsumer;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;
 import org.simpleflatmapper.csv.property.CustomReaderProperty;
@@ -91,7 +93,7 @@ public class CsvMapperBuilder<T> {
         this.reflectionService = classMeta.getReflectionService();
 		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition>(classMeta,
 				mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler(),
-				new PropertyWithSetter());
+				new PropertyWithSetterOrConstructor());
 		this.cellValueReaderFactory = cellValueReaderFactory;
 		this.mapperConfig = mapperConfig;
 	}
@@ -436,7 +438,7 @@ public class CsvMapperBuilder<T> {
 				
 				PropertyMeta<T, ?> prop = propMapping.getPropertyMeta();
 
-				if (prop == null || prop instanceof  DirectClassMeta.DirectPropertyMeta) {
+				if (prop == null || prop instanceof SelfPropertyMeta) {
 					return;
 				}
 
@@ -469,6 +471,28 @@ public class CsvMapperBuilder<T> {
 		return setters;
 	}
 
+	public void addDefaultHeaders() {
+		addDefaultHeaders(propertyMappingsBuilder.getClassMeta(), "");
+	}
+
+	private <P> void addDefaultHeaders(final ClassMeta<P> classMeta, final String prefix) {
+		classMeta.forEachProperties(new Consumer<PropertyMeta<P,?>>() {
+
+			@Override
+			public void accept(PropertyMeta<P, ?> propertyMeta) {
+
+				String currentName = prefix +  propertyMeta.getPath();
+
+				if (cellValueReaderFactory.getReader(propertyMeta.getPropertyType(), 0, CsvColumnDefinition.identity(), new ParsingContextFactoryBuilder(1)) == null) {
+					addDefaultHeaders(propertyMeta.getPropertyClassMeta(), currentName + "_");
+				} else {
+					addMapping(currentName);
+				}
+
+			}
+		});
+	}
+
 	private class BuildConstructorInjections implements ForEachCallBack<PropertyMapping<T,?,CsvColumnKey, CsvColumnDefinition>> {
         final CellSetterFactory cellSetterFactory;
         private final Map<Parameter, Getter<? super CsvMapperCellHandler<T>, ?>> constructorInjections;
@@ -496,7 +520,7 @@ public class CsvMapperBuilder<T> {
                 delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
                 Getter<CsvMapperCellHandler<T>, ?> delayedGetter = newDelayedGetter(meta.getPropertyType(), key, propMapping.getColumnDefinition().properties());
                 constructorInjections.put(((ConstructorPropertyMeta<T, ?>) meta).getParameter(), delayedGetter);
-            } else if (meta instanceof DirectClassMeta.DirectPropertyMeta) {
+            } else if (meta instanceof SelfPropertyMeta) {
                 delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
             } else if (meta.isSubProperty()) {
                 SubPropertyMeta<T, ?, ?> subMeta = (SubPropertyMeta<T, ?, ?>) meta;
@@ -508,7 +532,7 @@ public class CsvMapperBuilder<T> {
                 } else if (
 						(propMapping.getColumnDefinition().isKey()
 						&& propMapping.getColumnDefinition().keyAppliesTo().test(propMapping.getPropertyMeta()))
-						|| subMeta.getSubProperty() instanceof DirectClassMeta.DirectPropertyMeta) {
+						|| subMeta.getSubProperty() instanceof SelfPropertyMeta) {
                     delayedSetterEnd = Math.max(delayedSetterEnd, key.getIndex() + 1);
                 }
             } else if ((propMapping.getColumnDefinition().isKey()

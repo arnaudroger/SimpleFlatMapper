@@ -4,6 +4,7 @@ import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.converter.Converter;
 
@@ -76,17 +77,12 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 	}
 
 	@Override
-	public String[] generateHeaders() {
-		throw new UnsupportedOperationException("Cannot generate headers for map");
-	}
-
-	@Override
-	public boolean isLeaf() {
-		return false;
-	}
-
-	@Override
 	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
 		return Arrays.<InstantiatorDefinition>asList(new ExecutableInstantiatorDefinition(constructor));
+	}
+
+	@Override
+	public void forEachProperties(Consumer<? super PropertyMeta<M, ?>> consumer) {
+		throw new UnsupportedOperationException("Cannot list properties as non static");
 	}
 }

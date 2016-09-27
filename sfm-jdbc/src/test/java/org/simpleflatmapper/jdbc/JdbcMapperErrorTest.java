@@ -27,7 +27,8 @@ public class JdbcMapperErrorTest {
 		MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
 		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().mapperBuilderErrorHandler(errorHandler).newBuilder(DbObject.class);
 
-		builder.addMapping("notthere1", 1);
+		builder.addMapping("id", 1);
+		builder.addMapping("notthere1", 2);
 		
 		verify(errorHandler).propertyNotFound(DbObject.class, "notthere1");
 		

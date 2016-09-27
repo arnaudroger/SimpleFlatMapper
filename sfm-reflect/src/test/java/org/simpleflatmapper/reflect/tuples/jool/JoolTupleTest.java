@@ -64,15 +64,6 @@ public class JoolTupleTest {
     }
 
     @Test
-    public void testGenerateHeadersJoolTuple() {
-        String[] names = {"element0", "element1"};
-        ClassMeta<Object> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<org.jooq.lambda.tuple.Tuple2<String, String>>() {
-        }.getType());
-        assertArrayEquals(
-                names,
-                classMeta.generateHeaders());
-    }
-    @Test
     public void testFindPropertyNoAsmJool() {
         Type type = new TypeReference<org.jooq.lambda.tuple.Tuple2<String, String>>() {}.getType();
 

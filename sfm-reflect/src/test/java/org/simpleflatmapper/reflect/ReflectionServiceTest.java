@@ -3,6 +3,7 @@ package org.simpleflatmapper.reflect;
 import org.junit.Test;
 import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
 import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
+import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
@@ -124,10 +125,11 @@ public class ReflectionServiceTest {
 
         ClassMeta<?> classMeta = ReflectionService.newInstance().getClassMeta(classWithoutDebug);
 
-        PropertyMeta<?, ?> name = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("name"));
-        PropertyMeta<?, ?> value = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"));
-        PropertyMeta<?, ?> arg0 = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("arg0"));
-        PropertyMeta<?, ?> arg1 = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("arg1"));
+        PropertyFinder<?> propertyFinder = classMeta.newPropertyFinder();
+        PropertyMeta<?, ?> name = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("name"));
+        PropertyMeta<?, ?> value = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("value"));
+        PropertyMeta<?, ?> arg0 = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("arg0"));
+        PropertyMeta<?, ?> arg1 = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("arg1"));
 
         assertNull(arg0);
         assertNull(arg1);

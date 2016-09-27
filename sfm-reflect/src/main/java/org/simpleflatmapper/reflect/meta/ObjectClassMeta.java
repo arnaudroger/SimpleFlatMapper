@@ -1,10 +1,13 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.getter.GetterHelper;
+import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.impl.ParamNameDeductor;
 import org.simpleflatmapper.reflect.*;
+import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.reflect.setter.SetterHelper;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -13,7 +16,6 @@ import java.util.*;
 
 public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
-	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private final List<PropertyMeta<T, ?>> properties;
 	private final List<ConstructorPropertyMeta<T, ?>> constructorProperties;
 	private final List<InstantiatorDefinition> instantiatorDefinitions;
@@ -135,7 +137,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
 					Getter<T, Object> methodGetter = reflectService.getObjectGetterFactory().getMethodGetter(method);
 					register(propertyName,
-							method.getReturnType(),
+							method.getGenericReturnType(),
 							ScoredGetter.ofMethod(method, methodGetter),
 							ScoredSetter.<T, Object>nullSetter());
 				}
@@ -183,20 +185,25 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			public void field(Field field) {
 				final String name = field.getName();
 				if (!Modifier.isStatic(field.getModifiers())) {
-					ScoredGetter<T, Object> getter = ScoredGetter.<T, Object>ofField(field, reflectService.getObjectGetterFactory().<T, Object>getFieldGetter(field));
-					ScoredSetter<T, Object> setter;
 
-					if (!Modifier.isFinal(field.getModifiers())) {
-						setter = ScoredSetter.<T, Object>ofField(field, reflectService.getObjectSetterFactory().<T, Object>getFieldSetter(field));
+					if (Modifier.isPublic(field.getModifiers())) {
+						ScoredGetter<T, Object> getter = ScoredGetter.<T, Object>ofField(field, reflectService.getObjectGetterFactory().<T, Object>getFieldGetter(field));
+						ScoredSetter<T, Object> setter;
+
+						if (!Modifier.isFinal(field.getModifiers())) {
+							setter = ScoredSetter.<T, Object>ofField(field, reflectService.getObjectSetterFactory().<T, Object>getFieldSetter(field));
+						} else {
+							setter = ScoredSetter.<T, Object>nullSetter();
+						}
+
+
+						register(name,
+								field.getGenericType(),
+								getter,
+								setter);
 					} else {
-						setter = ScoredSetter.<T, Object>nullSetter();
+						register(name, field.getGenericType(), ScoredGetter.<T, Object>nullGetter(), ScoredSetter.<T, Object>nullSetter());
 					}
-
-
-					register(name,
-							field.getGenericType(),
-							getter,
-							setter);
 				}
 			}
 
@@ -211,7 +218,13 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
                 return -1;
             }
         });
-		
+		// filter out private field only;
+		for(Iterator<PropertyMeta<T, ?>> it = properties.iterator(); it.hasNext();) {
+			PropertyMeta<T, ?> propertyMeta = it.next();
+			if (NullSetter.isNull(propertyMeta.getSetter()) && NullGetter.isNull(propertyMeta.getGetter())) {
+				it.remove();
+			}
+		}
 		return properties;
 	}
 
@@ -227,6 +240,17 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	@Override
 	public List<InstantiatorDefinition> getInstantiatorDefinitions() {
 		return instantiatorDefinitions;
+	}
+
+	@Override
+	public void forEachProperties(Consumer<? super PropertyMeta<T, ?>> consumer) {
+		for(ConstructorPropertyMeta<T, ?> prop : constructorProperties) {
+			consumer.accept(prop);
+		}
+
+		for(PropertyMeta<T, ?> prop : properties) {
+			consumer.accept(prop);
+		}
 	}
 
 	List<PropertyMeta<T, ?>> getProperties() {
@@ -250,67 +274,6 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	@Override
 	public Type getType() {
 		return target;
-	}
-
-	@Override
-	public String[] generateHeaders() {
-		List<String> strings = new ArrayList<String>();
-
-		for(PropertyMeta<T, ?> cpm : constructorProperties) {
-			// ignore constructor properties of same type with 1 arg, copy constructor
-			if (((ConstructorPropertyMeta)cpm ).getConstructorParameterSize() > 1
-					|| cpm.getPropertyClassMeta() != this) {
-				extractProperties(strings, cpm);
-			}
-		}
-
-        for(PropertyMeta<T, ?> cpm : properties) {
-            extractProperties(strings, cpm);
-        }
-
-        return strings.toArray(EMPTY_STRING_ARRAY);
-	}
-
-    private void extractProperties(List<String> properties, PropertyMeta<T, ?> cpm) {
-        String prefix = cpm.getName();
-        ClassMeta<?> classMeta = cpm.getPropertyClassMeta();
-
-        if (classMeta != null) {
-            for(String prop : classMeta.generateHeaders()) {
-                String name = prop.length() == 0 ? prefix : prefix + "_" + prop;
-                if (!properties.contains(name)) {
-                    properties.add(formatName(name));
-                }
-            }
-        } else {
-            if (!properties.contains(prefix)) {
-                properties.add(formatName(prefix));
-            }
-        }
-    }
-
-	private String formatName(String name) {
-		StringBuilder sb = new StringBuilder(name.length());
-		boolean lastWasUpperCase = false;
-		for(int i = 0; i < name.length(); i++) {
-			char c = name.charAt(i);
-
-			if (Character.isUpperCase(c)) {
-				if (!lastWasUpperCase) {
-					sb.append('_');
-				}
-				sb.append(Character.toLowerCase(c));
-			} else {
-				lastWasUpperCase = false;
-				sb.append(c);
-			}
-		}
-		return sb.toString();
-	}
-
-	@Override
-	public boolean isLeaf() {
-		return false;
 	}
 
 	public int getNumberOfProperties() {

@@ -2,15 +2,23 @@ package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
-import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.BooleanProvider;
 
 import java.util.*;
 
 final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
-	
+
+
+	enum State {
+		NONE, SELF, PROPERTIES
+	}
 	private final List<InstantiatorDefinition> eligibleInstantiatorDefinitions;
 	private final ObjectClassMeta<T> classMeta;
 	private final Map<String, PropertyFinder<?>> subPropertyFinders = new HashMap<String, PropertyFinder<?>>();
+	private State state = State.NONE;
+	private String selfName;
+
+
 
     ObjectPropertyFinder(ObjectClassMeta<T> classMeta) {
 		this.classMeta = classMeta;
@@ -18,70 +26,107 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	}
 
 	@Override
-	protected void lookForProperties(PropertyNameMatcher propertyNameMatcher, PropertyFinder.MatchingProperties matchingProperties, PropertyMatchingScore score) {
+	protected void lookForProperties(final PropertyNameMatcher propertyNameMatcher, FoundProperty<T> matchingProperties, PropertyMatchingScore score) {
 		lookForConstructor(propertyNameMatcher, matchingProperties, score);
 		lookForProperty(propertyNameMatcher, matchingProperties, score);
+		if (state != State.PROPERTIES) {
+			matchingProperties.found(new SelfPropertyMeta(classMeta.getReflectionService(), classMeta.getType(), new BooleanProvider() {
+						@Override
+						public boolean getBoolean() {
+							return state != State.PROPERTIES;
+						}
+					}),
+					new Runnable() {
+						@Override
+						public void run() {
+							state = State.SELF;
+							selfName = propertyNameMatcher.toString();
+						}
+					}, PropertyMatchingScore.MINIMUM);
+		}
 	}
 
-	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, PropertyFinder.MatchingProperties matchingProperties, PropertyMatchingScore score) {
+	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (final ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
-				String columnName = getColumnName(prop);
+				final String columnName = getColumnName(prop);
 				if (propertyNameMatcher.matches(columnName)
 						&& hasConstructorMatching(prop.getParameter())) {
-					matchingProperties.found(prop, new Consumer<ConstructorPropertyMeta<T, ?>>() {
+					matchingProperties.found(prop, new Runnable() {
 						@Override
-						public void accept(ConstructorPropertyMeta<T, ?> o) {
-							removeNonMatching(o.getParameter());
+						public void run() {
+							removeNonMatching(prop.getParameter());
+							state = State.PROPERTIES;
 						}
 					}, score);
 				}
 
 				PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(columnName);
 				if (subPropMatcher != null && hasConstructorMatching(prop.getParameter())) {
-					PropertyMeta<?, ?> subProp = lookForSubProperty(subPropMatcher, prop);
-					if (subProp != null) {
-						matchingProperties.found(
-								new SubPropertyMeta(classMeta.getReflectionService(), prop, subProp),
-								new Consumer<Object>() {
-									@Override
-									public void accept(Object o) {
-										removeNonMatching(prop.getParameter());
-									}
-								}, score.shift());
-					}
+					lookForSubProperty(subPropMatcher, prop, new FoundProperty() {
+						@Override
+						public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
+							matchingProperties.found(
+									new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
+									new Runnable() {
+										@Override
+										public void run() {
+											selectionCallback.run();
+											removeNonMatching(prop.getParameter());
+											state = State.PROPERTIES;
+										}
+									}, score.shift());
+						}
+					}, score.shift());
 				}
 			}
 		}
 	}
 
 
-	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, PropertyFinder.MatchingProperties matchingProperties, PropertyMatchingScore score) {
-		for (PropertyMeta<T, ?> prop : classMeta.getProperties()) {
-			String columnName = getColumnName(prop);
+	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score) {
+		for (final PropertyMeta<T, ?> prop : classMeta.getProperties()) {
+			final String columnName = getColumnName(prop);
 			if (propertyNameMatcher.matches(columnName)) {
-				matchingProperties.found(prop, null, score.decrease(1));
+				matchingProperties.found(prop, new Runnable() {
+					@Override
+					public void run() {
+						state = State.PROPERTIES;
+					}
+				}, score.decrease(1));
 			}
-			PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(columnName);
+			final PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(columnName);
 			if (subPropMatcher != null) {
-				PropertyMeta<?, ?> subProp =  lookForSubProperty(subPropMatcher, prop);
-				if (subProp != null) {
-					matchingProperties.found(new SubPropertyMeta(classMeta.getReflectionService(), prop, subProp), null, score.shift().decrease(-1));
-				}
+				lookForSubProperty(subPropMatcher, prop, new FoundProperty() {
+					@Override
+					public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
+						matchingProperties.found(new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
+								new Runnable() {
+									@Override
+									public void run() {
+										selectionCallback.run();
+										state = State.PROPERTIES;
+
+									}
+								}, score);
+					}
+				}, score.shift().decrease( -1));
 			}
 		}
 	}
 
-	private PropertyMeta<?, ?> lookForSubProperty(
+	private void lookForSubProperty(
 			final PropertyNameMatcher propertyNameMatcher,
-			final PropertyMeta<T, ?> prop) {
+			final PropertyMeta<T, ?> prop,
+			final FoundProperty foundProperty,
+			final PropertyMatchingScore score) {
 		PropertyFinder<?> subPropertyFinder = subPropertyFinders.get(getColumnName(prop));
 		if (subPropertyFinder == null) {
 			subPropertyFinder = prop.getPropertyClassMeta().newPropertyFinder();
 			subPropertyFinders.put(prop.getName(), subPropertyFinder);
 		}
 
-		return subPropertyFinder.findProperty(propertyNameMatcher);
+		subPropertyFinder.lookForProperties(propertyNameMatcher, foundProperty, score);
 	}
 
     private String getColumnName(PropertyMeta<T, ?> prop) {

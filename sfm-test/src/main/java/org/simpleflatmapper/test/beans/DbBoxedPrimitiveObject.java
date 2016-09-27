@@ -10,7 +10,18 @@ public class DbBoxedPrimitiveObject implements PrimitiveObject {
 	protected Long pLong;
 	protected Float pFloat;
 	protected Double pDouble;
-	
+
+	public DbBoxedPrimitiveObject(Boolean pBoolean, Byte pByte, Character pCharacter, Short pShort, Integer pInt, Long pLong, Float pFloat, Double pDouble) {
+		this.pBoolean = pBoolean;
+		this.pByte = pByte;
+		this.pCharacter = pCharacter;
+		this.pShort = pShort;
+		this.pInt = pInt;
+		this.pLong = pLong;
+		this.pFloat = pFloat;
+		this.pDouble = pDouble;
+	}
+
 	public Boolean getoBoolean() {
 		return pBoolean;
 	}

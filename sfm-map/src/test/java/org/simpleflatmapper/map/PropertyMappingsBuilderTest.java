@@ -51,7 +51,7 @@ public class PropertyMappingsBuilderTest {
                             }
                         });
 
-        builder.addProperty(new SampleFieldKey("phones_value", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+        builder.addProperty(new SampleFieldKey("phones_str", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
 
 
         assertIsPhonesElement(builder);

@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.stream.Collectors;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 public class JoinSheetMapperTest {
 
@@ -85,7 +85,7 @@ public class JoinSheetMapperTest {
     }
 
 
-    /*IFJAVA8_START
+    //IFJAVA8_START
     @Test
     public void streamOnSheetFrom0WithStreamWithStaticMapper() {
 
@@ -93,6 +93,6 @@ public class JoinSheetMapperTest {
         JoinTest.validateProfessors(list);
 
     }
-    IFJAVA8_END*/
+    //IFJAVA8_END
 
 }

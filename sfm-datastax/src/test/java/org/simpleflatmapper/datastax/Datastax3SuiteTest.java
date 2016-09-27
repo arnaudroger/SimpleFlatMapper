@@ -9,7 +9,7 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.test.junit.LibrarySets;
 import org.simpleflatmapper.test.junit.MultiClassLoaderJunitRunner;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 @RunWith(MultiClassLoaderJunitRunner.class)
 @LibrarySets(
         librarySets = {
@@ -30,6 +30,6 @@ import org.simpleflatmapper.test.junit.MultiClassLoaderJunitRunner;
     DataTypeTest.class,
     SettableDataMapperTest.class
 })
-IFJAVA8_END*/
+//IFJAVA8_END
 public class Datastax3SuiteTest {
 }

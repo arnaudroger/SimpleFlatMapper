@@ -16,10 +16,10 @@ import java.sql.Timestamp;
 import java.sql.Types;
 
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import static org.junit.Assert.assertEquals;
 
@@ -46,20 +46,20 @@ public class JDBCTypeHelperTest {
         testSqlTypes(Struct.class, Types.STRUCT);
         testSqlTypes(Ref.class, Types.REF);
 
-        /*IFJAVA8_START
+        //IFJAVA8_START
         testSqlTypes(OffsetTime.class, Types.TIME_WITH_TIMEZONE);
         testSqlTypes(OffsetDateTime.class, Types.TIMESTAMP_WITH_TIMEZONE);
-        IFJAVA8_END*/
+        //IFJAVA8_END
     }
 
     @Test
     public void testSqlTypeMappingDefault() {
         testSqlTypes(Timestamp.class, java.util.Date.class, Timestamp.class);
 
-        /*IFJAVA8_START
+        //IFJAVA8_START
         testSqlTypes(Time.class, OffsetTime.class);
         testSqlTypes(Timestamp.class, OffsetDateTime.class);
-        IFJAVA8_END*/
+        //IFJAVA8_END
     }
 
     private void testSqlTypes(Class<?> expected, int... sqlTypes) {

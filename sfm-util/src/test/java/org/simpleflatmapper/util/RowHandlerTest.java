@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public class RowHandlerTest {
 
-    /*IFJAVA8_START
+    //IFJAVA8_START
     @Test
     public void testDefaultBridge() throws Exception {
         List<String> values = new ArrayList<String>();
@@ -24,6 +24,6 @@ public class RowHandlerTest {
 
         assertArrayEquals(new String[] {"test"}, values.toArray(new String[0]));
     }
-    IFJAVA8_END*/
+    //IFJAVA8_END
 
 }

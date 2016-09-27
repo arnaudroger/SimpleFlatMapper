@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.UUID;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.time.*;
-IFJAVA8_END*/
+//IFJAVA8_END
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.simpleflatmapper.converter.test.ConverterServiceTestHelper.testConverter;

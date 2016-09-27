@@ -13,10 +13,10 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Iterator;
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -140,7 +140,7 @@ public class CsvMapperImplTest {
 	}
 
 
-	/*IFJAVA8_START
+	//IFJAVA8_START
 	@Test
 	public void testCsvStream()
 			throws IOException, ParseException {
@@ -211,7 +211,7 @@ public class CsvMapperImplTest {
 		});
 		assertEquals(1, i);
 	}
-	IFJAVA8_END*/
+	//IFJAVA8_END
 
 
     public enum TypeRoot {

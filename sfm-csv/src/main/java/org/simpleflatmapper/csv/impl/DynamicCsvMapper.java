@@ -15,10 +15,10 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
@@ -108,7 +108,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 	}
 
 
-	/*IFJAVA8_START
+	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(Reader reader) throws IOException {
 		CsvReader csvReader = CsvParser.reader(reader);
@@ -126,7 +126,7 @@ public final class DynamicCsvMapper<T> implements CsvMapper<T> {
 		return stream(CsvParser.skip(skip).reader(reader));
 	}
 
-	IFJAVA8_END*/
+	//IFJAVA8_END
 
 	protected CsvMapperImpl<T> getCsvMapper(MapperKey<CsvColumnKey> key) {
 		CsvMapperImpl<T> csvMapperImpl = mapperCache.get(key);

@@ -16,7 +16,6 @@ import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -140,7 +139,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 			// cannot determine type
 			return true;
 		} else if(!areCompatible(propertyMetaType, customSourceReturnType)) {
-			mapperBuilderErrorHandler.customFieldError(key, "Incompatible customReader type " + customSourceReturnType +  " expected " + propertyMetaType);
+			mapperBuilderErrorHandler.customFieldError(key, "Incompatible customReader on '" + key.getName()+ "' type " + customSourceReturnType +  " expected " + propertyMetaType );
 			return false;
 		}
 		return true;

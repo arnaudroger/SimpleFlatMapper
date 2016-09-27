@@ -22,7 +22,7 @@ public final class RethrowMapperBuilderErrorHandler implements
 
 	@Override
 	public void propertyNotFound(final Type target, final String property) {
-		throw new MapperBuildingException("Could not find eligible property for " + property + " on  " + target + " not found "
+		throw new MapperBuildingException("Could not find eligible property for '" + property + "' on  " + target + " not found "
 				+ " See " + ErrorDoc.toUrl("PROPERTY_NOT_FOUND"));
 	}
 

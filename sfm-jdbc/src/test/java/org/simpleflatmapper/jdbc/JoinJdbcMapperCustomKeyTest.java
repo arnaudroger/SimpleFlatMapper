@@ -48,11 +48,11 @@ public class JoinJdbcMapperCustomKeyTest {
                 .addMapping("key_tag")
                 .addMapping("key_n")
                 .addMapping("name")
-                .addMapping("phone_val")
+                .addMapping("phones_val")
                 .mapper();
 
         ResultSet rs =
-                JoinJdbcMapperOnTupleTest.setUpResultSetMock(new String[]{"key_tag", "key_n", "name", "phone_value"},
+                JoinJdbcMapperOnTupleTest.setUpResultSetMock(new String[]{"key_tag", "key_n", "name", "phones_value"},
                         new Object[][]{
                                 {"t1", 1, "t11", "p111"},
                                 {"t1", 1, "t11", "p112"},

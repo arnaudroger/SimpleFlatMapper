@@ -21,7 +21,7 @@ public class CsvMapperJoinTest {
             + "2,professor2,4,student4,phone51\n"
             + "2,professor2,4,student4,phone52\n"
             + "3,professor3,,,,";
-    private static final String HEADER_DATA = "id,name,students_id,students_name,students_phones_value\n"
+    private static final String HEADER_DATA = "id,name,students_id,students_name,students_phones_str\n"
             + DATA;
 
     @Test

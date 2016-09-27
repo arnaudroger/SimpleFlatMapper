@@ -129,7 +129,7 @@ public class CsvParserTest {
 
 	@Test
 	public void testDSLMapToString() throws IOException {
-		Iterator<String> iterator = CsvParser.mapTo(String.class).headers("value").iterator(new StringReader("value1,value2"));
+		Iterator<String> iterator = CsvParser.mapTo(String.class).headers("val").iterator(new StringReader("value1,value2"));
 		assertTrue(iterator.hasNext());
 		String tuple2 = iterator.next();
 		assertEquals("value1", tuple2);
@@ -138,7 +138,7 @@ public class CsvParserTest {
 
 	@Test
 	public void testDSLMapToLong() throws IOException {
-		Iterator<Long> iterator = CsvParser.mapTo(Long.class).headers("value").iterator(new StringReader("123,value2"));
+		Iterator<Long> iterator = CsvParser.mapTo(Long.class).headers("val").iterator(new StringReader("123,value2"));
 		assertTrue(iterator.hasNext());
 		Long tuple2 = iterator.next();
 		assertEquals(123l, tuple2.longValue());

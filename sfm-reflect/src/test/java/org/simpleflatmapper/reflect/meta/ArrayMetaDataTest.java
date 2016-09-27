@@ -30,11 +30,11 @@ public class ArrayMetaDataTest {
         List<String> list = new ArrayList<String>();
 
         assertNull(meta0.getGetter().get(list));
-        meta0.getSetter().set(list, "aa");
-        assertEquals("aa", meta0.getGetter().get(list));
+        meta0.getSetter().set(list, "zyx");
+        assertEquals("zyx", meta0.getGetter().get(list));
 
         // index discovery
-        PropertyMeta<Object, Object> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false));
+        PropertyMeta<Object, Object> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("xyz", 0, false, false));
 
         assertTrue(bb instanceof ListElementPropertyMeta);
         ListElementPropertyMeta<Object, Object> meta = (ListElementPropertyMeta<Object, Object>) bb;
@@ -43,8 +43,8 @@ public class ArrayMetaDataTest {
 
 
         assertNull(meta.getGetter().get(list));
-        meta.getSetter().set(list, "aa");
-        assertEquals("aa", meta.getGetter().get(list));
+        meta.getSetter().set(list, "zyx");
+        assertEquals("zyx", meta.getGetter().get(list));
 
         assertEquals("ListElementPropertyMeta{index=1}", bb.toString());
 
@@ -60,15 +60,15 @@ public class ArrayMetaDataTest {
         assertTrue(classMeta instanceof ArrayClassMeta);
 
         PropertyFinder<String[]> propertyFinder = classMeta.newPropertyFinder();
-        PropertyMeta<String[], String> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false));
+        PropertyMeta<String[], String> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("xyz", 0, false, false));
 
         assertTrue("expect ArrayElementPropertyMeta " + bb, bb instanceof ArrayElementPropertyMeta);
         ArrayElementPropertyMeta<String[], String> meta = (ArrayElementPropertyMeta<String[], String>) bb;
 
         String[] list = new String[2];
         assertNull(meta.getGetter().get(list));
-        meta.getSetter().set(list, "aa");
-        assertEquals("aa", meta.getGetter().get(list));
+        meta.getSetter().set(list, "zyx");
+        assertEquals("zyx", meta.getGetter().get(list));
 
         assertEquals("ArrayElementPropertyMeta{index=0}", bb.toString());
         assertTrue(propertyFinder.getEligibleInstantiatorDefinitions().isEmpty());

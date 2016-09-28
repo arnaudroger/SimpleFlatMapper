@@ -27,6 +27,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class PropertyMappingsBuilderTest {
 
@@ -247,4 +251,32 @@ public class PropertyMappingsBuilderTest {
     }
 
 
+    @Test
+    public void testSelfPropertyInvalidation() {
+        final ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+
+        MapperBuilderErrorHandler errorHandler = mock(MapperBuilderErrorHandler.class);
+
+        PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder =
+                new PropertyMappingsBuilder<DbObject, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(
+                        classMeta,
+                        DefaultPropertyNameMatcherFactory.DEFAULT,
+                        errorHandler,
+                        new Predicate<PropertyMeta<?, ?>>() {
+                            @Override
+                            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                                return true;
+                            }
+                        });
+
+        builder.addProperty(new SampleFieldKey("self", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+
+        verify(errorHandler, never()).customFieldError(any(), any());
+        verify(errorHandler, never()).accessorNotFound(any());
+        verify(errorHandler, never()).propertyNotFound(any(), any());
+
+        builder.addProperty(new SampleFieldKey("id", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+
+        verify(errorHandler).propertyNotFound(DbObject.class, "self");
+    }
 }

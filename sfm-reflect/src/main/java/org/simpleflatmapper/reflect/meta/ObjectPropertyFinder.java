@@ -29,7 +29,9 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	protected void lookForProperties(final PropertyNameMatcher propertyNameMatcher, FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference) {
 		lookForConstructor(propertyNameMatcher, matchingProperties, score);
 		lookForProperty(propertyNameMatcher, matchingProperties, score);
-		if (state != State.PROPERTIES && allowSelfReference) {
+
+		final String propName = propertyNameMatcher.toString();
+		if (allowSelfReference && (state == State.NONE || (state == State.SELF && propName.equals(selfName)))) {
 			matchingProperties.found(new SelfPropertyMeta(classMeta.getReflectionService(), classMeta.getType(), new BooleanProvider() {
 						@Override
 						public boolean getBoolean() {
@@ -40,7 +42,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 						@Override
 						public void run() {
 							state = State.SELF;
-							selfName = propertyNameMatcher.toString();
+							selfName = propName;
 						}
 					}, PropertyMatchingScore.MINIMUM);
 		}

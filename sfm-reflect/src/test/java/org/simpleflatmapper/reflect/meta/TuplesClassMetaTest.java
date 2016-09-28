@@ -54,19 +54,19 @@ public class TuplesClassMetaTest {
     public void testIndexStartingAtZero() {
         final PropertyFinder<Tuple2<Foo, Foo>> propertyFinder = classMeta.newPropertyFinder();
 
-        final PropertyMeta<Tuple2<Foo, Foo>, String> t0_foo = propertyFinder.findProperty(newMatcher("t0_foo"));
-        final PropertyMeta<Tuple2<Foo, Foo>, String> t0_bar = propertyFinder.findProperty(newMatcher("t0_bar"));
-        final PropertyMeta<Tuple2<Foo, Foo>, String> t1_foo = propertyFinder.findProperty(newMatcher("t1_foo"));
-        final PropertyMeta<Tuple2<Foo, Foo>, String> t1_bar = propertyFinder.findProperty(newMatcher("t1_bar"));
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t0_foo = propertyFinder.findProperty(newMatcher("t0_foo"));
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t0_bar = propertyFinder.findProperty(newMatcher("t0_bar"));
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t1_foo = propertyFinder.findProperty(newMatcher("t1_foo"));
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t1_bar = propertyFinder.findProperty(newMatcher("t1_bar"));
 
         validate(t0_foo, t0_bar, t1_foo, t1_bar);
 
     }
 
-    private void validate(PropertyMeta<Tuple2<Foo, Foo>, String> t0_foo,
-                          PropertyMeta<Tuple2<Foo, Foo>, String> t0_bar,
-                          PropertyMeta<Tuple2<Foo, Foo>, String> t1_foo,
-                          PropertyMeta<Tuple2<Foo, Foo>, String> t1_bar) {
+    private void validate(PropertyMeta<Tuple2<Foo, Foo>, ?> t0_foo,
+                          PropertyMeta<Tuple2<Foo, Foo>, ?> t0_bar,
+                          PropertyMeta<Tuple2<Foo, Foo>, ?> t1_foo,
+                          PropertyMeta<Tuple2<Foo, Foo>, ?> t1_bar) {
 
         assertNotNull(t0_foo);
         assertIs("element0", "foo", t0_foo);
@@ -81,7 +81,7 @@ public class TuplesClassMetaTest {
     }
 
     @SuppressWarnings("unchecked")
-    private void assertIs(String elementName, String prop, PropertyMeta<Tuple2<Foo, Foo>, String> propertyMeta) {
+    private void assertIs(String elementName, String prop, PropertyMeta<Tuple2<Foo, Foo>, ?> propertyMeta) {
         assertTrue(propertyMeta.isSubProperty());
         SubPropertyMeta<Tuple2<Foo, Foo>, Foo, String> subPropertyMeta = (SubPropertyMeta<Tuple2<Foo, Foo>, Foo, String>) propertyMeta;
 
@@ -97,10 +97,10 @@ public class TuplesClassMetaTest {
     public void testIndexStartingFlexiblePrefix() {
         final PropertyFinder<Tuple2<Foo, Foo>> propertyFinder = classMeta.newPropertyFinder();
 
-        final PropertyMeta<Tuple2<Foo, Foo>, String> t0_foo = propertyFinder.findProperty(newMatcher("ta_foo"));
-        final PropertyMeta<Tuple2<Foo, Foo>, String> t0_bar = propertyFinder.findProperty(newMatcher("ta_bar"));
-        final PropertyMeta<Tuple2<Foo, Foo>, String> t1_foo = propertyFinder.findProperty(newMatcher("tb_foo"));
-        final PropertyMeta<Tuple2<Foo, Foo>, String> t1_bar = propertyFinder.findProperty(newMatcher("tb_bar"));
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t0_foo = propertyFinder.findProperty(newMatcher("ta_foo"));
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t0_bar = propertyFinder.findProperty(newMatcher("ta_bar"));
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t1_foo = propertyFinder.findProperty(newMatcher("tb_foo"));
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t1_bar = propertyFinder.findProperty(newMatcher("tb_bar"));
         validate(t0_foo, t0_bar, t1_foo, t1_bar);
 
     }

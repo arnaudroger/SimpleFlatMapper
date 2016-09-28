@@ -10,7 +10,6 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
 
     private final OptionalClassMeta<T> optionalClassMeta;
     private final PropertyFinder<T> propertyFinder;
-    private int nbProp = 0;
     private final ClassMeta<T> innerMeta;
 
     public OptionalPropertyFinder(OptionalClassMeta<T> optionalClassMeta) {
@@ -29,20 +28,7 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
         propertyFinder.lookForProperties(propertyNameMatcher, new FoundProperty<T>() {
             @Override
             public <P extends PropertyMeta<T, ?>> void found(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score) {
-                Runnable callback;
-                if (propertyMeta.isSelf()) {
-                    if (nbProp > 0) return;
-                    callback = new Runnable() {
-                        @Override
-                        public void run() {
-                            selectionCallback.run();
-                            nbProp ++;
-                        }
-                    };
-                } else {
-                    callback = selectionCallback;
-                }
-                matchingProperties.found(getSubPropertyMeta(propertyMeta), callback, score);
+                matchingProperties.found(getSubPropertyMeta(propertyMeta), selectionCallback, score);
             }
         }, score, allowSelfReference);
     }

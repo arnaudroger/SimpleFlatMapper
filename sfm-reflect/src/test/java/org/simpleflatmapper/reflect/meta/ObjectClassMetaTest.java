@@ -14,10 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -180,6 +183,49 @@ public class ObjectClassMetaTest {
         assertEquals(3, target.value2);
 
     }
+
+    @Test
+    public void testSelfRefInvalidation() {
+        ClassMeta<DbObject> classMeta = ReflectionService.newInstance().getClassMeta(DbObject.class);
+        PropertyFinder<DbObject> propertyFinder = classMeta.newPropertyFinder();
+        PropertyMeta<DbObject, ?> property = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("dddd"));
+        assertNotNull(property);
+        assertTrue(property.isSelf());
+        assertTrue(property.isValid());
+
+        assertNull(propertyFinder.findProperty(DefaultPropertyNameMatcher.of("cccc")));
+        assertNotNull(propertyFinder.findProperty(DefaultPropertyNameMatcher.of("dddd")));
+
+        PropertyMeta<DbObject, ?> idProperty = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("id"));
+        assertNotNull(idProperty);
+        assertFalse(idProperty.isSelf());
+        assertTrue(idProperty.isValid());
+
+
+        assertFalse(property.isValid());
+    }
+
+    //IFJAVA8_START
+    @Test
+    public void testSelfRefInvalidationOnOptional() {
+        ClassMeta<Optional<DbObject>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Optional<DbObject>>() {
+        }.getType());
+        PropertyFinder<Optional<DbObject>> propertyFinder = classMeta.newPropertyFinder();
+        PropertyMeta<Optional<DbObject>, ?> property = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("dddd"));
+        assertNotNull(property);
+        assertTrue(property.isValid());
+
+        assertNull(propertyFinder.findProperty(DefaultPropertyNameMatcher.of("cccc")));
+        assertNotNull(propertyFinder.findProperty(DefaultPropertyNameMatcher.of("dddd")));
+
+        PropertyMeta<Optional<DbObject>, ?> idProperty = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("id"));
+        assertNotNull(idProperty);
+        assertTrue(idProperty.isValid());
+
+
+        assertFalse(property.isValid());
+    }
+    //IFJAVA8_END
 
     public static class GetterBetterThanName {
         public String getValue() {

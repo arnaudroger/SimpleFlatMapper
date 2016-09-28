@@ -114,7 +114,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
         return new ConstructorPropertyMeta<T, P>(paramName, target, reflectService, param,  instantiatorDefinition);
     }
 
-    private List<PropertyMeta<T, ?>> listProperties(final ReflectionService reflectService, Type targetType) {
+    private List<PropertyMeta<T, ?>> listProperties(final ReflectionService reflectService, final Type targetType) {
 		final Class<T> target = TypeHelper.<T>toClass(targetType);
 		final List<PropertyMeta<T, ?>> properties = new ArrayList<PropertyMeta<T, ?>>();
 		final Map<TypeVariable<?>, Type> typeVariableTypeMap = TypeHelper.getTypesMap(targetType);

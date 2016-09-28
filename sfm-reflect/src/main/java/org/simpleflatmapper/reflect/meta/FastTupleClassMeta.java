@@ -1,5 +1,6 @@
 package org.simpleflatmapper.reflect.meta;
 
+import com.sun.source.tree.ModifiersTree;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
@@ -14,6 +15,7 @@ import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +51,20 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
     private static <T> ArrayList<PropertyMeta<T, ?>> getPropertyMetas(Type ownerType, ReflectionService reflectionService) throws NoSuchMethodException {
         final ArrayList<PropertyMeta<T, ?>> propertyMetas = new ArrayList<PropertyMeta<T, ?>>();
         Class<?> clazz = TypeHelper.toClass(ownerType);
-        for(Field f : clazz.getDeclaredFields()) {
+
+        if (isDirect(clazz)) {
+            for(Method m : clazz.getDeclaredMethods()) {
+                if (m.getParameterTypes().length == 0 && GetterHelper.isPublicMember(m.getModifiers())) {
+                    String field = m.getName();
+
+                    Method setter = clazz.getDeclaredMethod(field, m.getReturnType());
+
+                    ObjectPropertyMeta<T, ?> propertyMeta = newPropertyMethod(field, m, setter, reflectionService, ownerType);
+                    propertyMetas.add(propertyMeta);
+                }
+            }
+        } else {
+            for (Field f : clazz.getDeclaredFields()) {
                 String field = f.getName();
 
                 Method getter = clazz.getDeclaredMethod(field);
@@ -57,10 +72,21 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
 
                 ObjectPropertyMeta<T, ?> propertyMeta = newPropertyMethod(field, getter, setter, reflectionService, ownerType);
                 propertyMetas.add(propertyMeta);
+            }
         }
 
 
         return propertyMetas;
+    }
+
+    private static boolean isDirect(Class<?> clazz) {
+        try {
+            Field unsafe = clazz.getDeclaredField("unsafe");
+            int m = unsafe.getModifiers();
+            return Modifier.isStatic(m);
+        } catch (NoSuchFieldException e) {
+            return false;
+        }
     }
 
     private static <T, P> ObjectPropertyMeta<T, P> newPropertyMethod(String field, Method getter, Method setter, ReflectionService reflectionService, Type ownerType) {

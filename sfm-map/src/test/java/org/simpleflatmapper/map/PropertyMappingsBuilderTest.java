@@ -19,6 +19,7 @@ import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -271,9 +272,9 @@ public class PropertyMappingsBuilderTest {
 
         builder.addProperty(new SampleFieldKey("self", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
 
-        verify(errorHandler, never()).customFieldError(any(), any());
-        verify(errorHandler, never()).accessorNotFound(any());
-        verify(errorHandler, never()).propertyNotFound(any(), any());
+        verify(errorHandler, never()).customFieldError(any(FieldKey.class), any(String.class));
+        verify(errorHandler, never()).accessorNotFound(any(String.class));
+        verify(errorHandler, never()).propertyNotFound(any(Type.class), any(String.class));
 
         builder.addProperty(new SampleFieldKey("id", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
 

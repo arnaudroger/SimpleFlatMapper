@@ -85,7 +85,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         this.mapperSource = requireNonNull("fieldMapperSource", mapperSource);
         this.mapperConfig = requireNonNull("mapperConfig", mapperConfig);
         this.mappingContextFactoryBuilder = mappingContextFactoryBuilder;
-		this.fieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<S, K>(mapperSource.getterFactory(), ConverterService.getInstance());
+		this.fieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<S, K>(mapperSource.getterFactory(), ConverterService.getInstance(), mapperSource.source());
         this.keyFactory = keyFactory;
         this.propertyMappingsBuilder =
                 new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K>>(classMeta,
@@ -127,9 +127,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                                 }
                                 if (predicate instanceof Named) {
                                     String name = ((Named)predicate).getName();
-                                    GetterProperty getterProperty = new GetterProperty(new ConstantGetter<Object, Object>(columnProperty.getValue()),columnProperty.getValue().getClass()) {
+                                    GetterProperty getterProperty =
+                                            new GetterProperty(new ConstantGetter<S, Object>(columnProperty.getValue()), mapperSource.source(), columnProperty.getValue().getClass());
 
-                                    };
                                     final FieldMapperColumnDefinition<K> columnDefinition =
                                             FieldMapperColumnDefinition.<K>identity().add(columnProperty,
                                                     getterProperty);

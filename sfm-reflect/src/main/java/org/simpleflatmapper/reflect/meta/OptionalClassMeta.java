@@ -7,7 +7,6 @@ import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;
-import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.TypeHelper;
@@ -32,9 +31,8 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 		try {
             this.instantiatorDefinition = getInstantiatorDefinition(type);
 			this.propertyMeta = new ConstructorPropertyMeta<Optional<T>, Object>("value",
-					reflectionService,
+                    type, reflectionService,
 					instantiatorDefinition.getParameters()[0],
-					TypeHelper.<Optional<T>>toClass(type),
 					new ScoredGetter<Optional<T>, Object>(Integer.MAX_VALUE, new OptionalGetter<T>()),
 					ScoredSetter.<Optional<T>, Object>nullSetter(),
 					instantiatorDefinition);

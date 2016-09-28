@@ -14,12 +14,10 @@ public class SelfPropertyMeta<T, E> extends PropertyMeta<T, E> {
     private static final Getter IDENTITY_GETTER = new IdentityGetter();
     public static final String PROPERTY_PATH = "{this}";
 
-    private final Type type;
     private final BooleanProvider isValid;
 
     public SelfPropertyMeta(ReflectionService reflectService, Type type, BooleanProvider isValid) {
-        super("self", reflectService);
-        this.type = type;
+        super("self", type, reflectService);
         this.isValid = isValid;
     }
 
@@ -47,7 +45,7 @@ public class SelfPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
     @Override
     public Type getPropertyType() {
-        return type;
+        return getOwnerType();
     }
 
     @Override
@@ -58,7 +56,7 @@ public class SelfPropertyMeta<T, E> extends PropertyMeta<T, E> {
     @Override
     public String toString() {
         return "SelfPropertyMeta{" +
-                "type=" + type +
+                "type=" + getOwnerType() +
                 ",name=" + getName() +
                 '}';
     }

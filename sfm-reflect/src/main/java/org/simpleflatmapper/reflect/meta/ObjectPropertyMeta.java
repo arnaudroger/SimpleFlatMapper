@@ -14,16 +14,16 @@ public class ObjectPropertyMeta<T, P> extends PropertyMeta<T, P> {
     private final ScoredGetter<T, P> getter;
 	private final Type type;
 
-	public ObjectPropertyMeta(String name, ReflectionService reflectService, Type type, ScoredGetter<T, P> getter, ScoredSetter<T, P> setter) {
-		super(name, reflectService);
-		this.type = type;
+	public ObjectPropertyMeta(String name, Type ownerType, ReflectionService reflectService, Type propertyType, ScoredGetter<T, P> getter, ScoredSetter<T, P> setter) {
+		super(name, ownerType, reflectService);
+		this.type = propertyType;
         this.getter = getter;
         this.setter = setter;
 	}
 
 
     public PropertyMeta<T, P> getterSetter(ScoredGetter<T, P> getter, ScoredSetter<T, P> setter) {
-        return new ObjectPropertyMeta<T, P>(getName(), reflectService, type, this.getter.best(getter), this.setter.best(setter));
+        return new ObjectPropertyMeta<T, P>(getName(), getOwnerType(), reflectService, type, this.getter.best(getter), this.setter.best(setter));
     }
 
 	@Override

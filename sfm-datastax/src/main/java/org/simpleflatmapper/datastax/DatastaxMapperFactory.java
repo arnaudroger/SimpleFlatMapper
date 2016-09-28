@@ -3,6 +3,7 @@ package org.simpleflatmapper.datastax;
 import com.datastax.driver.core.GettableByIndexData;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
+import com.datastax.driver.core.SettableByIndexData;
 import com.datastax.driver.core.exceptions.DriverException;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.datastax.impl.DatastaxMapperKeyComparator;
@@ -85,7 +86,7 @@ public class DatastaxMapperFactory extends AbstractMapperFactory<DatastaxColumnK
                 classMeta,
                 config,
                 ConstantTargetFieldMapperFactoryImpl
-                        .newInstance(new SettableDataSetterFactory(config, classMeta.getReflectionService())));
+                        .newInstance(new SettableDataSetterFactory(config, classMeta.getReflectionService()), SettableByIndexData.class));
     }
 
     public <T> DatastaxBinder<T> mapFrom(Class<T> type) {

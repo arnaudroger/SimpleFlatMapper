@@ -93,7 +93,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
 
             MapElementPropertyMeta<T, K, V> mapElementPropertyMeta = new MapElementPropertyMeta<T, K, V>(
                     propertyNameMatcher,
-                    valueMetaData.getReflectionService(),
+                    mapMeta.getType(), valueMetaData.getReflectionService(),
                     valueMetaData,
                     key);
             keys.put(keyStringValue, mapElementPropertyMeta);

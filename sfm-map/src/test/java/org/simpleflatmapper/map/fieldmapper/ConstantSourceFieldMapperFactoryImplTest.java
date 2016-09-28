@@ -25,7 +25,6 @@ import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.test.beans.DbPrimitiveObject;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 
 import java.lang.reflect.Method;
@@ -48,7 +47,7 @@ public class ConstantSourceFieldMapperFactoryImplTest {
     @Before
     public void setUp() {
         getterFactory = mock(GetterFactory.class);
-        constantSourceFieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<Object, SampleFieldKey>(getterFactory, ConverterService.getInstance());
+        constantSourceFieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<Object, SampleFieldKey>(getterFactory, ConverterService.getInstance(), Object.class);
         keySourceGetter = mock(KeySourceGetter.class);
         mappingContextFactoryBuilder = null;
     }

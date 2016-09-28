@@ -21,6 +21,7 @@ import org.simpleflatmapper.util.UnaryFactory;
 import org.simpleflatmapper.util.UnaryFactoryWithException;
 
 import java.lang.reflect.Type;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -184,7 +185,7 @@ public final class JdbcMapperFactory
 	}
 
 	public <T> PreparedStatementMapperBuilder<T> buildFrom(final ClassMeta<T> classMeta) {
-		return new PreparedStatementMapperBuilder<T>(classMeta, mapperConfig(), ConstantTargetFieldMapperFactoryImpl.newInstance(PreparedStatementSetterFactory.INSTANCE));
+		return new PreparedStatementMapperBuilder<T>(classMeta, mapperConfig(), ConstantTargetFieldMapperFactoryImpl.newInstance(PreparedStatementSetterFactory.INSTANCE, PreparedStatement.class));
 	}
 
 	public <T> PreparedStatementMapperBuilder<T> from(final Class<T> target) {

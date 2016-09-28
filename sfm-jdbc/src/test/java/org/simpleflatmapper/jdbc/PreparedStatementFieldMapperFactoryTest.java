@@ -64,7 +64,7 @@ public class PreparedStatementFieldMapperFactoryTest {
     private int index;
     @Before
     public void setUp() {
-        factory = ConstantTargetFieldMapperFactoryImpl.newInstance(PreparedStatementSetterFactory.INSTANCE);
+        factory = ConstantTargetFieldMapperFactoryImpl.newInstance(PreparedStatementSetterFactory.INSTANCE, PreparedStatement.class);
         ps = mock(PreparedStatement.class);
         index = 1;
     }

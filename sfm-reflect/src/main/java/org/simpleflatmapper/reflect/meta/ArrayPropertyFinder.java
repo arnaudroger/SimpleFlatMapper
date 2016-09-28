@@ -28,10 +28,10 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
         ArrayClassMeta<T, E> arrayClassMeta = (ArrayClassMeta<T, E>) classMeta;
         if (arrayClassMeta.isArray()) {
             return new ArrayElementPropertyMeta<T, E>(name,
-                    arrayClassMeta.getReflectionService(), index, arrayClassMeta);
+                    classMeta.getType(), arrayClassMeta.getReflectionService(), index, arrayClassMeta);
         } else {
             return new ListElementPropertyMeta<T, E>(name,
-                    arrayClassMeta.getReflectionService(), index, arrayClassMeta, new BooleanSupplier() {
+                    classMeta.getType(), arrayClassMeta.getReflectionService(), index, arrayClassMeta, new BooleanSupplier() {
 
                 @Override
                 public boolean getAsBoolean() {

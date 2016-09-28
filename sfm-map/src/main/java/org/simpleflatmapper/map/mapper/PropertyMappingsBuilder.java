@@ -3,6 +3,7 @@ package org.simpleflatmapper.map.mapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
+import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
@@ -123,10 +124,10 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	}
 
 	public <P> void addProperty(final K key, final D columnDefinition, final PropertyMeta<T, P> prop) {
-		if (columnDefinition.hasCustomSource()) {
+		if (columnDefinition.hasCustomSourceFrom(prop.getOwnerType())) {
             Type type = prop.getPropertyType();
 
-            if (!checkTypeCompatibility(key, columnDefinition.getCustomSourceReturnType(), type)) {
+            if (!checkTypeCompatibility(key, columnDefinition.getCustomSourceReturnTypeFrom(prop.getOwnerType()), type)) {
 				properties.add(null);
 				return;
 			}

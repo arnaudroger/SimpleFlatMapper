@@ -69,7 +69,7 @@ public class FieldMapperToAppendableFactory implements ConstantTargetFieldMapper
 
         Getter<? super S, ? extends P> getter;
 
-        Getter<?, ?> customGetter = pm.getColumnDefinition().getCustomGetter();
+        Getter<?, ?> customGetter = pm.getColumnDefinition().getCustomGetterFrom(pm.getPropertyMeta().getOwnerType());
         if (customGetter != null) {
             getter = (Getter<S, P>) customGetter;
         } else {

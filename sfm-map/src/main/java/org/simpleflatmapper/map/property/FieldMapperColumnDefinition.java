@@ -26,38 +26,6 @@ public class FieldMapperColumnDefinition<K extends FieldKey<K>> extends ColumnDe
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public Getter<?, ?> getCustomGetter() {
-        final GetterProperty property = lookFor(GetterProperty.class);
-        if (property != null) {
-            return (Getter<?, ?>) property.getGetter();
-        }
-        return null;
-    }
-
-    @Override
-    public boolean hasCustomSource() {
-        return has(GetterProperty.class);
-    }
-
-    @Override
-    public Type getCustomSourceReturnType() {
-        return lookFor(GetterProperty.class).getReturnType();
-    }
-
-    @SuppressWarnings("unchecked")
-    public GetterFactory<?, K> getCustomGetterFactory(){
-        final GetterFactoryProperty property = lookFor(GetterFactoryProperty.class);
-        if (property != null) {
-            return (GetterFactory<?, K>) property.getGetterFactory();
-        }
-        return null;
-    }
-
-    public boolean hasCustomFactory() {
-        return has(GetterFactoryProperty.class);
-    }
-
     public FieldMapperColumnDefinition<K> addGetter(Getter<?, ?> getter) {
         return add(new GetterProperty(getter));
     }

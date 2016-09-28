@@ -111,8 +111,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	}
 
     private <P> ConstructorPropertyMeta<T, P> constructorMeta(org.simpleflatmapper.reflect.Parameter param, String paramName, InstantiatorDefinition instantiatorDefinition) {
-        Class<T> tClass = TypeHelper.toClass(this.target);
-        return new ConstructorPropertyMeta<T, P>(paramName, reflectService, param, tClass, instantiatorDefinition);
+        return new ConstructorPropertyMeta<T, P>(paramName, target, reflectService, param,  instantiatorDefinition);
     }
 
     private List<PropertyMeta<T, ?>> listProperties(final ReflectionService reflectService, Type targetType) {
@@ -169,7 +168,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 				} else {
 					indexOfProperty = findProperty(properties, propertyName);
 					if (indexOfProperty == -1) {
-						properties.add(new ObjectPropertyMeta<T, P>(propertyName, reflectService, type, getter, setter));
+						properties.add(new ObjectPropertyMeta<T, P>(propertyName, targetType, reflectService, type, getter, setter));
 					} else {
 						ObjectPropertyMeta<T, P> meta = (ObjectPropertyMeta<T, P>) properties.get(indexOfProperty);
 

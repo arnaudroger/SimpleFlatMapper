@@ -2,11 +2,20 @@ package org.simpleflatmapper.map.mapper;
 
 
 import org.simpleflatmapper.map.FieldKey;
+import org.simpleflatmapper.map.property.GetterFactoryProperty;
+import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.map.property.IgnoreProperty;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.map.property.RenameProperty;
+import org.simpleflatmapper.map.property.SetterFactoryProperty;
+import org.simpleflatmapper.map.property.SetterProperty;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.reflect.SetterFactory;
+import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
@@ -97,6 +106,57 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
         return list.toArray((T[]) Array.newInstance(propClass, 0));
     }
 
+    public Getter<?, ?> getCustomGetterFrom(Type fromType) {
+        GetterProperty getterPropertyFrom = getCustomGetterPropertyFrom(fromType);
+        return getterPropertyFrom != null ? getterPropertyFrom.getGetter() : null;
+    }
+
+    public GetterProperty getCustomGetterPropertyFrom(Type fromType) {
+        for(GetterProperty getterProperty : lookForAll(GetterProperty.class)) {
+            if (getterProperty.getSourceType() == null || TypeHelper.isAssignable(getterProperty.getSourceType(), fromType)) {
+                return getterProperty;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasCustomSourceFrom(Type ownerType) {
+        return getCustomGetterPropertyFrom(ownerType) != null;
+    }
+
+    public Type getCustomSourceReturnTypeFrom(Type ownerType) {
+        GetterProperty getterProperty = getCustomGetterPropertyFrom(ownerType);
+        return getterProperty != null ? getterProperty.getReturnType() : null;
+
+    }
+
+    public GetterFactory<?, K> getCustomGetterFactoryFrom(Type sourceType) {
+        for(GetterFactoryProperty getterFactoryProperty : lookForAll(GetterFactoryProperty.class)) {
+            if (getterFactoryProperty.getSourceType() == null || TypeHelper.isAssignable(getterFactoryProperty.getSourceType(), sourceType)) {
+                return (GetterFactory<?, K>) getterFactoryProperty.getGetterFactory();
+            }
+        }
+        return null;
+    }
+
+    public Setter<?, ?> getCustomSetterTo(Type targetType) {
+        for(SetterProperty setterProperty : lookForAll(SetterProperty.class)) {
+            if (setterProperty.getTargetType() == null || TypeHelper.isAssignable(setterProperty.getTargetType(), targetType)) {
+                return setterProperty.getSetter();
+            }
+        }
+        return null;
+    }
+
+    public SetterFactory<?, ?> getCustomSetterFactoryTo(Type targetType) {
+        for(SetterFactoryProperty getterFactoryProperty : lookForAll(SetterFactoryProperty.class)) {
+            if (getterFactoryProperty.getTargetType() == null || TypeHelper.isAssignable(getterFactoryProperty.getTargetType(), targetType)) {
+                return getterFactoryProperty.getSetterFactory();
+            }
+        }
+        return null;
+    }
+
     protected abstract CD newColumnDefinition(Object[] properties);
 
     public CD addRename(String name) {
@@ -134,10 +194,8 @@ public abstract class ColumnDefinition<K extends FieldKey<K>, CD extends ColumnD
         return sb.toString();
     }
 
-    public abstract boolean hasCustomSource();
-    public abstract Type getCustomSourceReturnType();
-
     public Object[] properties() {
         return properties;
     }
+
 }

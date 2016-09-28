@@ -14,8 +14,8 @@ public class MapElementPropertyMeta<T extends Map<K, V>, K, V> extends PropertyM
 	private final MapSetter<T, K, V> setter;
 	private final MapGetter<T, K, V> getter;
 
-	public MapElementPropertyMeta(PropertyNameMatcher propertyNameMatcher, ReflectionService reflectService, ClassMeta<V> valueMetaData, K key) {
-		super(propertyNameMatcher.toString(), reflectService);
+	public MapElementPropertyMeta(PropertyNameMatcher propertyNameMatcher, Type ownerType, ReflectionService reflectService, ClassMeta<V> valueMetaData, K key) {
+		super(propertyNameMatcher.toString(), ownerType, reflectService);
 		this.valueMetaData = valueMetaData;
 		this.key = key;
 		setter = new MapSetter<T, K, V>(key);

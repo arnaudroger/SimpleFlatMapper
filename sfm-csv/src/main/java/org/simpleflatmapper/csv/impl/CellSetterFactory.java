@@ -209,7 +209,7 @@ public final class CellSetterFactory {
 	private <P> CellValueReader<P> getReader(PropertyMeta<?, P> pm, int index, CsvColumnDefinition columnDefinition, ParsingContextFactoryBuilder parsingContextFactoryBuilder) {
 		CellValueReader<P> reader = null;
 
-		if (columnDefinition.hasCustomSource()) {
+		if (columnDefinition.hasCustomSourceFrom(pm.getOwnerType())) {
 			reader = (CellValueReader<P>) columnDefinition.getCustomReader();
 		}
 

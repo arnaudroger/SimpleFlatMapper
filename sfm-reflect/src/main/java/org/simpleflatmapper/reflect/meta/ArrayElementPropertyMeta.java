@@ -14,8 +14,8 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 	private final Getter<T, E> getter;
 
 	@SuppressWarnings("unchecked")
-	public ArrayElementPropertyMeta(String name,  ReflectionService reflectService, int index, ArrayClassMeta<T, E> arrayMetaData) {
-		super(name, reflectService);
+	public ArrayElementPropertyMeta(String name, Type ownerType, ReflectionService reflectService, int index, ArrayClassMeta<T, E> arrayMetaData) {
+		super(name, ownerType, reflectService);
         if (index < 0) throw new IllegalArgumentException("Invalid array index " + index);
 		this.index = index;
 		this.arrayMetaData = arrayMetaData;

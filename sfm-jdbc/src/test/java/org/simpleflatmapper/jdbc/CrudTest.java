@@ -3,6 +3,12 @@ package org.simpleflatmapper.jdbc;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.simpleflatmapper.jdbc.property.IndexedSetterProperty;
+import org.simpleflatmapper.map.property.GetterProperty;
+import org.simpleflatmapper.map.property.SetterProperty;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.IndexedSetter;
+import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.MysqlDbHelper;
@@ -11,6 +17,8 @@ import org.simpleflatmapper.util.CheckedConsumer;
 
 import javax.persistence.Table;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -149,6 +157,69 @@ public class CrudTest {
                     JdbcMapperFactory.newInstance().<TestDbObject, Long>crud(TestDbObject.class, Long.class).to(connection);
 
             checkCrudDbObject(connection, objectCrud, DbObject.newInstance(new TestDbObject()));
+
+        } finally {
+            connection.close();
+        }
+    }
+
+    @Test
+    public void testDbObjectCrudWithCustomGetter() throws Exception {
+
+        JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance().addColumnProperty("name", new GetterProperty(new Getter<ResultSet, String>() {
+            @Override
+            public String get(ResultSet target) throws Exception {
+                return "customname";
+            }
+        }));
+
+        Connection connection = DbHelper.getDbConnection(targetDB);
+        if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
+        try {
+            Crud<TestDbObject, Long> objectCrud =
+                    mapperFactory.<TestDbObject, Long>crud(TestDbObject.class, Long.class).to(connection);
+
+            TestDbObject testDbObject = DbObject.newInstance(new TestDbObject());
+
+            objectCrud.create(connection, testDbObject);
+
+            TestDbObject read = objectCrud.read(connection, testDbObject.getId());
+
+            assertEquals("customname", read.getName());
+            assertEquals(testDbObject.getEmail(), read.getEmail());
+
+
+        } finally {
+            connection.close();
+        }
+    }
+
+    @Test
+    public void testDbObjectCrudWithCustomSetter() throws Exception {
+
+        JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance().addColumnProperty("name", new IndexedSetterProperty(new IndexedSetter<PreparedStatement, Object>() {
+            @Override
+            public void set(PreparedStatement target, Object value, int index) throws Exception {
+                target.setString(index, "customname");
+            }
+        }));
+
+        Connection connection = DbHelper.getDbConnection(targetDB);
+        if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
+        try {
+            Crud<TestDbObject, Long> objectCrud =
+                    mapperFactory.<TestDbObject, Long>crud(TestDbObject.class, Long.class).to(connection);
+
+            TestDbObject testDbObject = DbObject.newInstance(new TestDbObject());
+            assertNotEquals("customname", testDbObject);
+
+            objectCrud.create(connection, testDbObject);
+
+            TestDbObject read = objectCrud.read(connection, testDbObject.getId());
+
+            assertEquals("customname", read.getName());
+            assertEquals(testDbObject.getEmail(), read.getEmail());
+
 
         } finally {
             connection.close();

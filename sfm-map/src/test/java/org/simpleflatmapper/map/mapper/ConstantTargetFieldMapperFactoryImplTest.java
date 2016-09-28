@@ -45,7 +45,7 @@ public class ConstantTargetFieldMapperFactoryImplTest {
 
     @Before
     public void setUp() {
-        factory = ConstantTargetFieldMapperFactoryImpl.<Appendable, SampleFieldKey>newInstance(setterFactory);
+        factory = ConstantTargetFieldMapperFactoryImpl.<Appendable, SampleFieldKey>newInstance(setterFactory, Appendable.class);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class ConstantTargetFieldMapperFactoryImplTest {
 
     @Test
     public void testGetterNotFound() {
-        ConstantTargetFieldMapperFactory<Appendable, SampleFieldKey> factory = ConstantTargetFieldMapperFactoryImpl.<Appendable, SampleFieldKey>newInstance(setterFactory);
+        ConstantTargetFieldMapperFactory<Appendable, SampleFieldKey> factory = ConstantTargetFieldMapperFactoryImpl.<Appendable, SampleFieldKey>newInstance(setterFactory, Appendable.class);
 
         try {
             PropertyMeta<Object, Object> pm = mock(PropertyMeta.class);
@@ -107,7 +107,7 @@ public class ConstantTargetFieldMapperFactoryImplTest {
                     }
                 };
 
-        ConstantTargetFieldMapperFactory<Appendable, SampleFieldKey> factory = ConstantTargetFieldMapperFactoryImpl.<Appendable, SampleFieldKey>newInstance(setterFactory);
+        ConstantTargetFieldMapperFactory<Appendable, SampleFieldKey> factory = ConstantTargetFieldMapperFactoryImpl.<Appendable, SampleFieldKey>newInstance(setterFactory, Appendable.class);
         try {
             PropertyMapping<DbObject, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> propertyMapping =
                     ConstantSourceFieldMapperFactoryImplTest.createPropertyMapping(DbObject.class, "id");

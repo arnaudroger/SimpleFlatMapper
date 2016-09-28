@@ -32,11 +32,13 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 
 	private final GetterFactory<? super S, ? super K> getterFactory;
 	private final ConverterService converterService;
+	private final Type sourceType;
 
 
-	public ConstantSourceFieldMapperFactoryImpl(GetterFactory<? super S, ? super K> getterFactory, ConverterService converterService) {
+	public ConstantSourceFieldMapperFactoryImpl(GetterFactory<? super S, ? super K> getterFactory, ConverterService converterService, Type sourceType) {
 		this.getterFactory = getterFactory;
 		this.converterService = converterService;
+		this.sourceType = sourceType;
 	}
 
 
@@ -115,11 +117,13 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 	@Override
 	public <P> Getter<? super S, ? extends P> getGetterFromSource(K columnKey, Type propertyType, FieldMapperColumnDefinition<K> columnDefinition, Supplier<ClassMeta<P>> propertyClassMetaSupplier) {
 		@SuppressWarnings("unchecked")
-		Getter<? super S, ? extends P> getter = (Getter<? super S, ? extends P>) columnDefinition.getCustomGetter();
+		Getter<? super S, ? extends P> getter = (Getter<? super S, ? extends P>) columnDefinition.getCustomGetterFrom(sourceType);
 
-		if (getter == null && columnDefinition.hasCustomFactory()) {
-            GetterFactory<? super S, K> cGetterFactory = (GetterFactory<? super S, K>) columnDefinition.getCustomGetterFactory();
-            getter = cGetterFactory.newGetter(propertyType, columnKey, columnDefinition.properties());
+		if (getter == null) {
+            GetterFactory<? super S, K> customGetterFactory = (GetterFactory<? super S, K>) columnDefinition.getCustomGetterFactoryFrom(sourceType);
+			if (customGetterFactory != null) {
+				getter = customGetterFactory.newGetter(propertyType, columnKey, columnDefinition.properties());
+			}
         }
 
 		if (getter == null) {

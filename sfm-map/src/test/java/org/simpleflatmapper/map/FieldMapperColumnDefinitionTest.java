@@ -9,6 +9,7 @@ import org.simpleflatmapper.util.Predicate;
 
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -65,13 +66,12 @@ public class FieldMapperColumnDefinitionTest {
 
         assertEquals("blop", compose.rename(new SampleFieldKey("bar", -1)).getName());
         assertEquals(fieldMapper, compose.getCustomFieldMapper());
-        assertEquals(getterFactory, compose.getCustomGetterFactory());
-        assertEquals(new Integer(3), compose.getCustomGetter().get(null));
+        assertEquals(getterFactory, compose.getCustomGetterFactoryFrom(InputStream.class));
+        assertNull(compose.getCustomGetterFactoryFrom(Date.class));
+        assertEquals(new Integer(3), compose.getCustomGetterFrom(InputStream.class).get(null));
+        assertNull(compose.getCustomGetterFrom(Date.class));
 
-        assertTrue(compose.hasCustomSource());
-        assertTrue(compose.hasCustomFactory());
         assertFalse(compose.ignore());
-        assertEquals(Integer.class, compose.getCustomSourceReturnType());
 
         assertTrue(FieldMapperColumnDefinition.<SampleFieldKey>identity().addIgnore().ignore());
 

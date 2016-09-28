@@ -60,6 +60,6 @@ public class UDTObjectSettableDataSetter<T> implements Setter<SettableByIndexDat
     public static <T> SettableDataMapperBuilder<T> newFieldMapperBuilder(MapperConfig<DatastaxColumnKey, FieldMapperColumnDefinition<DatastaxColumnKey>> config,
                                                                          ReflectionService reflectionService,  Type target) {
         ClassMeta<T> classMeta = reflectionService.getClassMeta(target);
-        return new SettableDataMapperBuilder<T>(classMeta, config, ConstantTargetFieldMapperFactoryImpl.newInstance(new SettableDataSetterFactory(config, reflectionService)));
+        return new SettableDataMapperBuilder<T>(classMeta, config, ConstantTargetFieldMapperFactoryImpl.newInstance(new SettableDataSetterFactory(config, reflectionService), SettableByIndexData.class));
     }
 }

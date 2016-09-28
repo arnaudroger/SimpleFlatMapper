@@ -8,6 +8,7 @@ import org.simpleflatmapper.reflect.IndexedSetter;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.SetterFactory;
 
+import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 
 public class IndexedSetterProperty extends SetterFactoryProperty {
@@ -21,7 +22,7 @@ public class IndexedSetterProperty extends SetterFactoryProperty {
             public <PP> Setter<PreparedStatement, PP> getSetter(Object arg) {
                 return new PreparedStatementSetterImpl<PP>(((PropertyMapping)arg).getColumnKey().getIndex(), (IndexedSetter<PreparedStatement, PP>) setter);
             }
-        });
+        }, PreparedStatement.class);
         this.setter = setter;
     }
 

@@ -168,7 +168,12 @@ public class AsmInstantiatorDefinitionFactory {
 
             }, 0);
         } finally {
-            try { is.close(); } catch(Exception e) {}
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception e) {
+                }
+            }
         }
 
         return constructors;

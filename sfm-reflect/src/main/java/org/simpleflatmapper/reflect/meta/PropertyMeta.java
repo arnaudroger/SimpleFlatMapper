@@ -14,13 +14,15 @@ import java.lang.reflect.Type;
  */
 public abstract class PropertyMeta<O, P> {
 	private final String name;
+	private final Type ownerType;
 
 	protected final ReflectionService reflectService;
 	
 	private volatile ClassMeta<P> classMeta;
 
-	public PropertyMeta(String name, ReflectionService reflectService) {
+	public PropertyMeta(String name, Type ownerType, ReflectionService reflectService) {
 		this.name = name;
+		this.ownerType = ownerType;
 		this.reflectService = reflectService;
 	}
 
@@ -33,6 +35,10 @@ public abstract class PropertyMeta<O, P> {
 	}
 
 	public abstract Type getPropertyType();
+
+	public Type getOwnerType() {
+		return ownerType;
+	}
 
 	public final ClassMeta<P> getPropertyClassMeta() {
 		ClassMeta<P> meta = classMeta;

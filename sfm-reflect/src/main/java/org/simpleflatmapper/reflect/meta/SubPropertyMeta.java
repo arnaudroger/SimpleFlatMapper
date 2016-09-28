@@ -20,11 +20,11 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 	private final PropertyMeta<I, P> subProperty;
 	private final GetterOnGetter<O, I, P> getter;
 
-	public SubPropertyMeta(ReflectionService reflectService, PropertyMeta<O, I> property, PropertyMeta<I, P> subProperty) {
-		super(property.getName(), reflectService);
-		this.ownerProperty = property;
+	public SubPropertyMeta(ReflectionService reflectService, PropertyMeta<O, I> ownerProperty, PropertyMeta<I, P> subProperty) {
+		super(ownerProperty.getName(), ownerProperty.getOwnerType(), reflectService);
+		this.ownerProperty = ownerProperty;
 		this.subProperty = subProperty;
-		this.getter = new GetterOnGetter<O, I, P>(ownerProperty.getGetter(), subProperty.getGetter());
+		this.getter = new GetterOnGetter<O, I, P>(this.ownerProperty.getGetter(), subProperty.getGetter());
 	}
 	@Override
 	public Setter<O, P> getSetter() {

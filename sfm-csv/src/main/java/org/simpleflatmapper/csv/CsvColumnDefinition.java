@@ -5,6 +5,7 @@ import org.simpleflatmapper.csv.property.CustomReaderProperty;
 import org.simpleflatmapper.map.property.DefaultDateFormatProperty;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.property.DateFormatProperty;
+import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.map.property.TimeZoneProperty;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.Predicate;
@@ -45,13 +46,15 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
         return patterns;
     }
 
-
-    public boolean hasCustomSource() {
-        return has(CustomReaderProperty.class) ;
+    @Override
+    public boolean hasCustomSourceFrom(Type ownerType) {
+        return has(CustomReaderProperty.class);
     }
 
-    public Type getCustomSourceReturnType() {
-        return lookFor(CustomReaderProperty.class).getReturnType();
+    @Override
+    public Type getCustomSourceReturnTypeFrom(Type ownerType) {
+        CustomReaderProperty customReaderProperty = lookFor(CustomReaderProperty.class);
+        return customReaderProperty != null ? customReaderProperty.getReturnType() : null;
     }
 
     public CellValueReader<?> getCustomReader() {

@@ -15,14 +15,9 @@ import org.simpleflatmapper.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.TypeHelper;
 import org.springframework.jdbc.core.StatementCreatorUtils;
-import org.springframework.jdbc.core.namedparam.ParsedSql;
-
-import java.lang.reflect.Field;
-import java.util.List;
 
 public final class SqlParameterSourceBuilder<T> {
 
@@ -59,7 +54,7 @@ public final class SqlParameterSourceBuilder<T> {
 
         if (composedDefinition.has(ConstantValueProperty.class)) {
             ConstantValueProperty staticValueProperty = composedDefinition.lookFor(ConstantValueProperty.class);
-            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<T, Object>(key.getName(), reflectionService, staticValueProperty.getType(), ScoredGetter.of(new ConstantGetter<T, Object>(staticValueProperty.getValue()), 1), null);
+            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<T, Object>(key.getName(), builder.getClassMeta().getType(), reflectionService, staticValueProperty.getType(), ScoredGetter.of(new ConstantGetter<T, Object>(staticValueProperty.getValue()), 1), null);
             builder.addProperty(key, columnDefinition, meta);
         } else {
             builder.addProperty(mappedColumnKey, composedDefinition);

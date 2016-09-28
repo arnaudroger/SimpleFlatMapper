@@ -91,7 +91,7 @@ public class AbstractConstantTargetMapperBuilderTest {
 
         public Writerbuilder(ClassMeta<T> classMeta) {
             super(classMeta, TypeHelper.<List<Object>>toClass(new TypeReference<List<Object>>(){}.getType()), MapperConfig.<SampleFieldKey>fieldMapperConfig().failOnAsm(true),
-                    ConstantTargetFieldMapperFactoryImpl.<List<Object>, SampleFieldKey>newInstance(SETTER_FACTORY));
+                    ConstantTargetFieldMapperFactoryImpl.<List<Object>, SampleFieldKey>newInstance(SETTER_FACTORY, List.class));
         }
 
         @Override

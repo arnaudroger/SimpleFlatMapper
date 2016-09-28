@@ -3,7 +3,6 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ScoredSetter;
-import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;
@@ -13,36 +12,31 @@ import java.lang.reflect.Type;
 
 public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
-    private final Class<T> owner;
     private final ScoredSetter<T, P> scoredSetter;
     private final ScoredGetter<T, P> scoredGetter;
     private final Parameter parameter;
     private final InstantiatorDefinition instantiatorDefinition;
 
     public ConstructorPropertyMeta(String name,
+                                   Type ownerType,
                                    ReflectionService reflectService,
                                    Parameter parameter,
-                                   Class<T> owner, InstantiatorDefinition instantiatorDefinition) {
-        this(name, reflectService, parameter, owner, ScoredGetter.<T, P>nullGetter(), ScoredSetter.<T, P>nullSetter(), instantiatorDefinition);
+                                   InstantiatorDefinition instantiatorDefinition) {
+        this(name, ownerType, reflectService, parameter, ScoredGetter.<T, P>nullGetter(), ScoredSetter.<T, P>nullSetter(), instantiatorDefinition);
     }
 
     public ConstructorPropertyMeta(String name,
+                                   Type ownerType,
                                    ReflectionService reflectService,
                                    Parameter parameter,
-                                   Class<T> owner,
-                                    ScoredGetter<T, P> scoredGetter,
-                                    ScoredSetter<T, P> scoredSetter,
+                                   ScoredGetter<T, P> scoredGetter,
+                                   ScoredSetter<T, P> scoredSetter,
                                    InstantiatorDefinition instantiatorDefinition) {
-		super(name, reflectService);
+		super(name, ownerType, reflectService);
 		this.parameter = parameter;
-        this.owner = owner;
         this.scoredGetter = scoredGetter;
         this.scoredSetter = scoredSetter;
         this.instantiatorDefinition = instantiatorDefinition;
-    }
-
-    public int getConstructorParameterSize() {
-        return instantiatorDefinition.getParameters().length;
     }
 
 	@Override
@@ -57,7 +51,7 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
     public ConstructorPropertyMeta<T, P> getter(ScoredGetter<T, P> getter) {
         if (getter.isBetterThan(this.scoredGetter)) {
-            return new ConstructorPropertyMeta<T, P>(getName(), reflectService, parameter, owner, getter, scoredSetter, instantiatorDefinition);
+            return new ConstructorPropertyMeta<T, P>(getName(), getOwnerType(), reflectService, parameter, getter, scoredSetter, instantiatorDefinition);
         } else {
             return this;
         }
@@ -65,7 +59,7 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
 
     public ConstructorPropertyMeta<T, P> setter(ScoredSetter<T, P> setter) {
         if (setter.isBetterThan(this.scoredSetter)) {
-            return new ConstructorPropertyMeta<T, P>(getName(), reflectService, parameter, owner, scoredGetter, setter, instantiatorDefinition);
+            return new ConstructorPropertyMeta<T, P>(getName(), getOwnerType(), reflectService, parameter, scoredGetter, setter, instantiatorDefinition);
         } else {
             return this;
         }
@@ -92,7 +86,7 @@ public class ConstructorPropertyMeta<T, P> extends PropertyMeta<T, P> {
     @Override
     public String toString() {
         return "ConstructorPropertyMeta{" +
-                "owner=" + owner +
+                "owner=" + getOwnerType() +
                 ", constructorParameter=" + parameter +
                 '}';
     }

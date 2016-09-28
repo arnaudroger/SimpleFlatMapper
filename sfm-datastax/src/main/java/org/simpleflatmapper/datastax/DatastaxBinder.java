@@ -3,6 +3,7 @@ package org.simpleflatmapper.datastax;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.SettableByIndexData;
 import com.datastax.driver.core.Statement;
 import org.simpleflatmapper.datastax.impl.DatastaxMapperKeyComparator;
 import org.simpleflatmapper.datastax.impl.SettableDataSetterFactory;
@@ -42,7 +43,7 @@ public class DatastaxBinder<T> {
     protected BoundStatementMapper<T> createMapper(MapperKey<DatastaxColumnKey> mapperKey) {
         BoundStatementMapper<T> mapper;
         SettableDataMapperBuilder<T> settableDataMapperBuilder = new SettableDataMapperBuilder<T>(classMeta, config,
-                ConstantTargetFieldMapperFactoryImpl.newInstance(new SettableDataSetterFactory(config, classMeta.getReflectionService())));
+                ConstantTargetFieldMapperFactoryImpl.newInstance(new SettableDataSetterFactory(config, classMeta.getReflectionService()), SettableByIndexData.class));
         for(DatastaxColumnKey columnKey : mapperKey.getColumns()) {
             settableDataMapperBuilder.addColumn(columnKey);
         }

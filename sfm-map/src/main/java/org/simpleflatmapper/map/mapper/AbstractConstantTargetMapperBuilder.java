@@ -81,7 +81,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
 
         if (composedDefinition.has(ConstantValueProperty.class)) {
             ConstantValueProperty staticValueProperty = composedDefinition.lookFor(ConstantValueProperty.class);
-            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<T, Object>(key.getName(), reflectionService, staticValueProperty.getType(), ScoredGetter.of(new ConstantGetter<T, Object>(staticValueProperty.getValue()), 1), null);
+            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<T, Object>(key.getName(), classMeta.getType(), reflectionService, staticValueProperty.getType(), ScoredGetter.of(new ConstantGetter<T, Object>(staticValueProperty.getValue()), 1), null);
             propertyMappingsBuilder.addProperty(key, columnDefinition, meta);
         } else {
             propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);

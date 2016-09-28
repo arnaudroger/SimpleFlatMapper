@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ResultSetFieldMapperFactoryTest {
 	
-	ConstantSourceFieldMapperFactory<ResultSet, JdbcColumnKey> factory = new ConstantSourceFieldMapperFactoryImpl<ResultSet, JdbcColumnKey>(ResultSetGetterFactory.INSTANCE, ConverterService.getInstance());
+	ConstantSourceFieldMapperFactory<ResultSet, JdbcColumnKey> factory = new ConstantSourceFieldMapperFactoryImpl<ResultSet, JdbcColumnKey>(ResultSetGetterFactory.INSTANCE, ConverterService.getInstance(), ResultSet.class);
 
 	@Test
 	public void testPrimitiveField() {

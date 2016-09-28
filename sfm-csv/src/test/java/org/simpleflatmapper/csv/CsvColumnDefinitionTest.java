@@ -54,9 +54,9 @@ public class CsvColumnDefinitionTest {
         assertEquals(tz, compose.getTimeZone());
         assertEquals(tz, CsvColumnDefinition.timeZoneDefinition(tz).getTimeZone());
 
-        assertTrue(compose.hasCustomSource());
+        assertTrue(compose.hasCustomSourceFrom(Object.class));
         assertFalse(compose.ignore());
-        assertEquals(Integer.class, compose.getCustomSourceReturnType());
+        assertEquals(Integer.class, compose.getCustomSourceReturnTypeFrom(Object.class));
 
         assertTrue(CsvColumnDefinition.identity().addIgnore().ignore());
 

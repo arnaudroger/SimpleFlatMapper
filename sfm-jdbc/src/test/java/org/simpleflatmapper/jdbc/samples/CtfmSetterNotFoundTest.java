@@ -160,7 +160,7 @@ public class CtfmSetterNotFoundTest {
                                     };
                                 }
                             }
-                ))
+                                ))
                 .buildFrom(Foo2.class)
                 .addColumn("bar")
                 .mapper();

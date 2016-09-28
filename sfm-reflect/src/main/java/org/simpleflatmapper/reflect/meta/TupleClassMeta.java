@@ -57,8 +57,8 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
         final Parameter parameter = instantiatorDefinition.getParameters()[i];
 
         Getter<T, E> getter = reflectionService.getObjectGetterFactory().getGetter(tClass, parameter.getName());
-        return new ConstructorPropertyMeta<T, E>("element" + i, reflectionService,
-                parameter, tClass,
+        return new ConstructorPropertyMeta<T, E>("element" + i, type, reflectionService,
+                parameter,
                 ScoredGetter.<T, E>of(getter, Integer.MAX_VALUE), ScoredSetter.<T, E>nullSetter(), instantiatorDefinition);
     }
 

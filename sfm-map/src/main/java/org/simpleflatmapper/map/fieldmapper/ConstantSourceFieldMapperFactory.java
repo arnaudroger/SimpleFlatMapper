@@ -18,5 +18,9 @@ public interface ConstantSourceFieldMapperFactory<S, K extends FieldKey<K>> {
 			MappingContextFactoryBuilder contextFactoryBuilder,
 			MapperBuilderErrorHandler mappingErrorHandler);
 
-    <P> Getter<? super S, ? extends P> getGetterFromSource(K columnKey, Type propertyType, FieldMapperColumnDefinition<K> columnDefinition, Supplier<ClassMeta<P>> propertyClassMetaSupplier);
+    <P> Getter<? super S, ? extends P> getGetterFromSource(
+    		K columnKey,
+			Type propertyType,
+			FieldMapperColumnDefinition<K> columnDefinition,
+			Supplier<ClassMeta<P>> propertyClassMetaSupplier);
 }

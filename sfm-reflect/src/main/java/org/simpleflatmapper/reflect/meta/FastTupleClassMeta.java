@@ -1,6 +1,5 @@
 package org.simpleflatmapper.reflect.meta;
 
-import com.sun.source.tree.ModifiersTree;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;

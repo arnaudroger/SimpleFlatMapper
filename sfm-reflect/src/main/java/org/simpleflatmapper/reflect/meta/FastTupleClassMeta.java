@@ -49,15 +49,14 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
     private static <T> ArrayList<PropertyMeta<T, ?>> getPropertyMetas(Type ownerType, ReflectionService reflectionService) throws NoSuchMethodException {
         final ArrayList<PropertyMeta<T, ?>> propertyMetas = new ArrayList<PropertyMeta<T, ?>>();
         Class<?> clazz = TypeHelper.toClass(ownerType);
-        for(Method m : clazz.getDeclaredMethods()) {
-            if (m.getParameterTypes().length == 0 && GetterHelper.isPublicMember(m.getModifiers())) {
-                String field = m.getName();
+        for(Field f : clazz.getDeclaredFields()) {
+                String field = f.getName();
 
-                Method setter = clazz.getDeclaredMethod(field, m.getReturnType());
+                Method getter = clazz.getDeclaredMethod(field);
+                Method setter = clazz.getDeclaredMethod(field, f.getType());
 
-                ObjectPropertyMeta<T, ?> propertyMeta = newPropertyMethod(field, m, setter, reflectionService, ownerType);
+                ObjectPropertyMeta<T, ?> propertyMeta = newPropertyMethod(field, getter, setter, reflectionService, ownerType);
                 propertyMetas.add(propertyMeta);
-            }
         }
 
 

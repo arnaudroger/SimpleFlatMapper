@@ -38,8 +38,6 @@ public class FastTupleTest {
         final FastTuple tuple1 = iterator.next();
         final FastTuple tuple2 = iterator.next();
 
-        System.out.println("tuple1 = " + tuple1);
-        System.out.println("tuple2 = " + tuple2);
 
         assertEquals(6l, tuple1.getLong(1));
         assertEquals(7, tuple1.getInt(2));

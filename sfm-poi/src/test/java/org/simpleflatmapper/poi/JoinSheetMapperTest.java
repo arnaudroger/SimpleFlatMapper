@@ -54,7 +54,7 @@ public class JoinSheetMapperTest {
                 .addMapping("name")
                 .addKey("students_id")
                 .addMapping("students_name")
-                .addMapping("students_phones_val")
+                .addMapping("students_phones_value")
                 .mapper();
 
     }

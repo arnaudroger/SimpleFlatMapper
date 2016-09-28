@@ -103,7 +103,7 @@ public class JoinJdbcMapperTest {
                 .addMapping("name")
                 .addKey("students_id")
                 .addMapping("students_name")
-                .addMapping("students_phones_val")
+                .addMapping("students_phones_value")
                 .mapper();
 
         validateMapper(mapper);
@@ -116,7 +116,7 @@ public class JoinJdbcMapperTest {
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
 
 
-        final String[] columns = new String[] { "id", "name", "students_id", "students_name", "students_phones_val"};
+        final String[] columns = new String[] { "id", "name", "students_id", "students_name", "students_phones_value"};
 
         when(metaData.getColumnCount()).thenReturn(columns.length);
         when(metaData.getColumnLabel(anyInt())).then(new Answer<String>() {

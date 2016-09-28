@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -31,8 +32,14 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
             instantiatorDefinitions = new ArrayList<InstantiatorDefinition>();
             instantiatorDefinitions.add(new ExecutableInstantiatorDefinition(clazz.getConstructor()));
             final List<PropertyMeta<T, ?>> properties = getPropertyMetas(target, reflectionService);
-            this.delegate = new ObjectClassMeta<T>(target,
-                    instantiatorDefinitions, new ArrayList<ConstructorPropertyMeta<T, ?>>(), properties, reflectionService);
+            this.delegate =
+                    new ObjectClassMeta<T>(
+                        target,
+                        instantiatorDefinitions,
+                        Collections.<ConstructorPropertyMeta<T, ?>>emptyList(),
+                        Collections.<String, String>emptyMap(),
+                        properties,
+                        reflectionService);
         } catch (NoSuchMethodException e) {
             ErrorHelper.rethrow(e);
             throw new IllegalStateException();

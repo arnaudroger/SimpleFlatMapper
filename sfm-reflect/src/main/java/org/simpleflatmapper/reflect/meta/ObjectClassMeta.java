@@ -30,31 +30,32 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	}
 
 	public ObjectClassMeta(Type target, Member builderInstantiator, ReflectionService reflectService) {
-		this.target = target;
-		this.reflectService = reflectService;
 		try {
+			this.target = target;
+			this.reflectService = reflectService;
 			this.instantiatorDefinitions = reflectService.extractInstantiator(target, builderInstantiator);
 			this.constructorProperties = listConstructorProperties(instantiatorDefinitions);
+			this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.<T>toClass(target)));
+			this.properties = Collections.unmodifiableList(listProperties(reflectService, target));
 		} catch(Exception e) {
 			ErrorHelper.rethrow(e);
 			throw new IllegalStateException();
 		}
-		this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.<T>toClass(target)));
-		this.properties = Collections.unmodifiableList(listProperties(reflectService, target));
 	}
 
     public ObjectClassMeta(Type target,
                            List<InstantiatorDefinition> instantiatorDefinitions,
                            List<ConstructorPropertyMeta<T, ?>> constructorProperties,
+						   Map<String, String> fieldAliases,
                            List<PropertyMeta<T, ?>> properties,
                            ReflectionService reflectService) {
         this.target = target;
-        this.properties = properties;
-        this.constructorProperties = constructorProperties;
-        this.instantiatorDefinitions = instantiatorDefinitions;
-        this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.<T>toClass(target)));
-        this.reflectService = reflectService;
-    }
+		this.reflectService = reflectService;
+		this.instantiatorDefinitions = instantiatorDefinitions;
+		this.constructorProperties = constructorProperties;
+		this.fieldAliases = fieldAliases;
+		this.properties = properties;
+	}
 
     private Map<String, String> aliases(final ReflectionService reflectService, Class<T> target) {
 		final Map<String, String> map = new HashMap<String, String>();

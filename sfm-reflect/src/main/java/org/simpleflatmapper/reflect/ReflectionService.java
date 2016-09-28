@@ -8,12 +8,14 @@ import org.simpleflatmapper.reflect.meta.AliasProvider;
 import org.simpleflatmapper.reflect.meta.AliasProviderService;
 import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
 import org.simpleflatmapper.reflect.meta.FastTupleClassMeta;
 import org.simpleflatmapper.reflect.meta.MapClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 //IFJAVA8_START
 import org.simpleflatmapper.reflect.meta.OptionalClassMeta;
 //IFJAVA8_END
+import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.TupleClassMeta;
 import org.simpleflatmapper.util.TupleHelper;
 import org.simpleflatmapper.util.TypeHelper;
@@ -58,6 +60,33 @@ public class ReflectionService {
 		this.instantiatorFactory = instantiatorFactory;
 		this.asmFactory = asmFactory;
 		this.aliasProvider = aliasProvider;
+		initPredefined();
+	}
+
+	private void initPredefined() {
+		predefined(String.class);
+		predefined(Boolean.class);
+		predefined(Byte.class);
+		predefined(Character.class);
+		predefined(Short.class);
+		predefined(Integer.class);
+		predefined(Long.class);
+		predefined(Float.class);
+		predefined(Double.class);
+	}
+
+	private <T> void predefined(Class<T> target) {
+		metaCache.put(target, predefNoPropsMeta(target));
+	}
+
+	private <T> ClassMeta<T> predefNoPropsMeta(Class<T> target) {
+		return new ObjectClassMeta<T>(
+				target,
+				Collections.<InstantiatorDefinition>emptyList(),
+				Collections.<ConstructorPropertyMeta<T, ?>>emptyList(),
+				Collections.<String, String>emptyMap(),
+				Collections.<PropertyMeta<T, ?>>emptyList(),
+				this);
 	}
 
 	public ObjectSetterFactory getObjectSetterFactory() {
@@ -221,7 +250,5 @@ public class ReflectionService {
 				asmFactory,
 				aliasProvider);
 	}
-
-
 }
  

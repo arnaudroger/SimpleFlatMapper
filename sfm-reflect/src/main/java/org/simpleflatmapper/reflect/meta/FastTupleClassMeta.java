@@ -66,11 +66,15 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
             for (Field f : clazz.getDeclaredFields()) {
                 String field = f.getName();
 
-                Method getter = clazz.getDeclaredMethod(field);
-                Method setter = clazz.getDeclaredMethod(field, f.getType());
+                try {
+                    Method getter = clazz.getDeclaredMethod(field);
+                    Method setter = clazz.getDeclaredMethod(field, f.getType());
 
-                ObjectPropertyMeta<T, ?> propertyMeta = newPropertyMethod(field, getter, setter, reflectionService, ownerType);
-                propertyMetas.add(propertyMeta);
+                    ObjectPropertyMeta<T, ?> propertyMeta = newPropertyMethod(field, getter, setter, reflectionService, ownerType);
+                    propertyMetas.add(propertyMeta);
+                } catch (NoSuchMethodException e) {
+                    // field has no getter/setter ignore.
+                }
             }
         }
 

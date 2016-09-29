@@ -20,6 +20,7 @@ public class DatastaxCrudTest extends AbstractDatastaxTest {
             public void call(Session session) throws Exception {
                 DatastaxCrud<DbObject, Long> crud =
                         DatastaxMapperFactory.newInstance().crud(DbObject.class, Long.class).to(session, "dbobjects");
+                System.out.println("testCrud = " + crud);
                 testCrudDbObject(crud, DbObject.newInstance());
             }
         });
@@ -52,6 +53,7 @@ public class DatastaxCrudTest extends AbstractDatastaxTest {
                 DatastaxCrud<DbObject, Long> crud =
                         DatastaxMapperFactory.newInstance().crud(DbObject.class, Long.class).to(session, "dbobjects");
 
+                System.out.println("testCreateTTL = " + crud);
                 DbObject object = DbObject.newInstance();
                 crud.saveWithTtl(object, 2);
                 Thread.sleep(500);
@@ -84,7 +86,7 @@ public class DatastaxCrudTest extends AbstractDatastaxTest {
 
                 DatastaxCrud<DbObject, Long> crud =
                         DatastaxMapperFactory.newInstance().crud(DbObject.class, Long.class).to(session, "dbobjects");
-
+                System.out.println("testCreateDeleteTS = " + crud);
                 DbObject object = DbObject.newInstance();
                 crud.saveWithTimestamp(object, ts - 2000);
 
@@ -117,6 +119,7 @@ public class DatastaxCrudTest extends AbstractDatastaxTest {
             public void call(Session session) throws Exception {
                 DatastaxCrud<DbObjectTable, Long> crud =
                         DatastaxMapperFactory.newInstance().crud(DbObjectTable.class, Long.class).to(session);
+
                 testCrudDbObject(crud, DbObject.newInstance(new DbObjectTable()));
             }
         });

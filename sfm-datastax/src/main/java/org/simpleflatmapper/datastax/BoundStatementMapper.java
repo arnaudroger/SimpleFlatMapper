@@ -21,4 +21,11 @@ public class BoundStatementMapper<T> {
         }
         return boundStatement;
     }
+
+    @Override
+    public String toString() {
+        return "BoundStatementMapper{" +
+                "mapper=" + mapper +
+                '}';
+    }
 }

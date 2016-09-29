@@ -33,4 +33,12 @@ public class ContextualMapper<S, T> implements Mapper<S, T> {
     public void mapTo(S source, T target, MappingContext<? super S> context) throws Exception {
         delegate.mapTo(source, target, context);
     }
+
+    @Override
+    public String toString() {
+        return "ContextualMapper{" +
+                "mappingContextFactory=" + mappingContextFactory +
+                ", delegate=" + delegate +
+                '}';
+    }
 }

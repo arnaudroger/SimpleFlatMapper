@@ -271,4 +271,23 @@ public class DatastaxCrud<T, K> {
             resultSetFuture.addListener(listener, executor);
         }
     }
+
+    @Override
+    public String toString() {
+        return "DatastaxCrud{\n" +
+                "\n\treadQuery=" + readQuery +
+                ",\n\tdeleteQuery=" + deleteQuery +
+                ",\n\tdeleteQueryWithTimestamp=" + deleteQueryWithTimestamp +
+                ",\n\tinsertQuery=" + insertQuery +
+                ",\n\tinsertQueryWithTtlAndTimestamp=" + insertQueryWithTtlAndTimestamp +
+                ",\n\tinsertQueryWithTtl=" + insertQueryWithTtl +
+                ",\n\tinsertQueryWithTimestamp=" + insertQueryWithTimestamp +
+                ",\n\tkeySetter=" + keySetter +
+                ",\n\tkeySetterWith1Option=" + keySetterWith1Option +
+                ",\n\tinsertSetter=" + insertSetter +
+                ",\n\tselectMapper=" + selectMapper +
+                ",\n\tnumberOfColumns=" + numberOfColumns +
+                ",\n\tsession=" + session +
+                '}';
+    }
 }

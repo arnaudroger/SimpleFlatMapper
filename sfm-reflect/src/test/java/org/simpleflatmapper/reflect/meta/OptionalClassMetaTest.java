@@ -6,9 +6,12 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,5 +66,21 @@ public class OptionalClassMetaTest {
         assertEquals(1, id.getParameters().length);
         assertEquals("value", id.getParameters()[0].getName());
     }
+
+    @Test
+    public void testForEach() {
+        List<String> names = new ArrayList<String>();
+        ClassMeta<Object> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Optional<DbObject>>() {
+        }.getType());
+        classMeta.forEachProperties(new Consumer<PropertyMeta<?, ?>>() {
+            @Override
+            public void accept(PropertyMeta<?, ?> dbObjectPropertyMeta) {
+                names.add(dbObjectPropertyMeta.getName());
+            }
+        });
+
+        assertEquals(Arrays.asList("value"), names);
+    }
+
 
 }

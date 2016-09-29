@@ -8,11 +8,11 @@ import java.util.HashSet;
 import static org.junit.Assert.*;
 
 
-public class ImmutableSetCollectorHandlerTest {
+public class ImmutableSetCollectorTest {
 
     @Test
     public void testCreateSet() {
-        ImmutableSetCollectorHandler<String> collectorHandler = new ImmutableSetCollectorHandler<String>();
+        ImmutableSetCollector<String> collectorHandler = new ImmutableSetCollector<String>();
 
         collectorHandler.accept("1");
         collectorHandler.accept("2");

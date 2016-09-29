@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementation of {@link CheckedConsumer} that collect all the value into a list.<p>
+ * Implementation of {@link Consumer} that collect all the value into a list.<p>
  * Equivalent to a {@link java.util.stream.Collectors#toList()}.
  * @param <T> the type of the callback argument
  */
-public final class ListCollector<T> implements CheckedConsumer<T> {
+public final class ListCollector<T> implements Consumer<T> {
 
 	private final List<T> list = new ArrayList<T>();
 	

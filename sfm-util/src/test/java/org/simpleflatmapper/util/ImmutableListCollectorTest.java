@@ -11,7 +11,7 @@ public class ImmutableListCollectorTest {
 
     @Test
     public void testList() {
-        ImmutableListCollectorHandler<String> handler = new ImmutableListCollectorHandler<String>();
+        ImmutableListCollector<String> handler = new ImmutableListCollector<String>();
         handler.accept("1");
         assertEquals(Arrays.asList("1"), handler.getList());
 

@@ -6,6 +6,8 @@ import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.test.beans.DbPartialFinalObject;
 import org.simpleflatmapper.util.Asserts;
+import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.lang.reflect.Field;
@@ -314,6 +316,19 @@ public class ObjectClassMetaTest {
         public String value() {
             return alt;
         }
+    }
+
+    @Test
+    public void testForEach() {
+        List<String> names = new ArrayList<String>();
+        ReflectionService.newInstance().getClassMeta(DbObject.class).forEachProperties(new Consumer<PropertyMeta<DbObject, ?>>() {
+            @Override
+            public void accept(PropertyMeta<DbObject, ?> dbObjectPropertyMeta) {
+                names.add(dbObjectPropertyMeta.getName());
+            }
+        });
+
+        assertEquals(Arrays.asList("object", "id", "name", "email", "creationTime", "typeOrdinal", "typeName"), names);
     }
 
 

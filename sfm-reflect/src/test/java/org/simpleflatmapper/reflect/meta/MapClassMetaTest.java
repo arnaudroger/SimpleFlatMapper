@@ -6,6 +6,7 @@ import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinitio
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.util.AbstractMap;
@@ -19,7 +20,20 @@ import static org.junit.Assert.*;
 
 public class MapClassMetaTest {
 
+    @Test
+    public void testForEach() {
+        try {
+            ReflectionService.newInstance().getClassMeta(new TypeReference<Map<String, String>>() {}.getType()).forEachProperties(new Consumer<PropertyMeta<?, ?>>() {
+                @Override
+                public void accept(PropertyMeta<?, ?> dbObjectPropertyMeta) {
+                }
+            });
+            fail();
+        } catch (UnsupportedOperationException e) {
+            // expected
+        }
 
+    }
     @Test
     @SuppressWarnings("unchecked")
     public void testFindPropertyStringDbObject() {

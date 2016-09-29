@@ -11,7 +11,6 @@ import org.simpleflatmapper.test.junit.LibrarySetsClassLoader;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.tuple.Tuple2;
-import org.simpleflatmapper.tuple.Tuples;
 
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -21,7 +20,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -117,7 +115,7 @@ public class TupleClassMetaTest {
 
     @Test
     public void testForEach() {
-        List<String> names = new ArrayList<String>();
+        final List<String> names = new ArrayList<String>();
         ClassMeta<Object> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple2<Foo, Foo>>() {
         }.getType());
         classMeta.forEachProperties(new Consumer<PropertyMeta<?, ?>>() {

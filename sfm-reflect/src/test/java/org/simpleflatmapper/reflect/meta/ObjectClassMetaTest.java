@@ -320,7 +320,7 @@ public class ObjectClassMetaTest {
 
     @Test
     public void testForEach() {
-        List<String> names = new ArrayList<String>();
+        final List<String> names = new ArrayList<String>();
         ReflectionService.newInstance().getClassMeta(DbObject.class).forEachProperties(new Consumer<PropertyMeta<DbObject, ?>>() {
             @Override
             public void accept(PropertyMeta<DbObject, ?> dbObjectPropertyMeta) {

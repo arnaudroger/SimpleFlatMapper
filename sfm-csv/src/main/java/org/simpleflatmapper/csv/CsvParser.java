@@ -463,7 +463,7 @@ public final class CsvParser {
 		}
 		//IFJAVA8_END
 		/**
-		 * Use <R> R stream(File file, Function<Stream<String[]>, R> function) instead.
+		 * Use R stream(File file, Function<Stream<String[]>, R> function) instead.
  		 * @param file the file
 		 * @return a stream of String[]
 		 */

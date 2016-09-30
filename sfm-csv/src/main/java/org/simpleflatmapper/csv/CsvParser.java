@@ -463,7 +463,7 @@ public final class CsvParser {
 		}
 		//IFJAVA8_END
 		/**
-		 * Use R stream(File file, Function<Stream<String[]>, R> function) instead.
+		 * Use @see AbstractDSL#stream(File, Function).
  		 * @param file the file
 		 * @return a stream of String[]
 		 */
@@ -924,7 +924,7 @@ public final class CsvParser {
 		}
 		//IFJAVA8_END
 		/**
-		 * use stream(File file, Function<Stream<T>, R> function)
+		 * use @see MapWithDSL#stream(File, Function)
 		 * @param file the file
 		 * @return a stream of T
 		 */

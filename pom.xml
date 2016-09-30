@@ -4,7 +4,7 @@
 
     <groupId>org.simpleflatmapper</groupId>
     <artifactId>sfm-parent</artifactId>
-    <version>3.0</version>
+    <version>3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>sfm-parent</name>
@@ -79,7 +79,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.3</version>
+                    <version>3.5.1</version>
                     <configuration>
                         <source>1.8</source>
                         <target>1.8</target>
@@ -136,7 +136,7 @@
                         <plugin>
                             <groupId>org.jacoco</groupId>
                             <artifactId>jacoco-maven-plugin</artifactId>
-                            <version>0.7.5.201505241946</version>
+                            <version>0.7.7.201606060606</version>
                             <executions>
                                 <execution>
                                     <id>prepare-agent</id>
@@ -152,7 +152,7 @@
                     <plugin>
                         <groupId>org.eluder.coveralls</groupId>
                         <artifactId>coveralls-maven-plugin</artifactId>
-                        <version>4.2.0</version>
+                        <version>4.3.0</version>
                         <configuration>
                             <jacocoReports>
                                 <param>${project.reporting.outputDirectory}/${project.version}/jacoco</param>
@@ -214,7 +214,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.3</version>
                         <configuration>
                             <source>1.6</source>
                             <target>1.6</target>
@@ -310,7 +309,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.3</version>
                         <configuration>
                             <source>1.6</source>
                             <target>1.6</target>
@@ -367,7 +365,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.3</version>
                         <configuration>
                             <source>1.8</source>
                             <target>1.8</target>
@@ -402,8 +399,8 @@
                 <jdk>9-ea</jdk>
             </activation>
             <properties>
-                <source.classifier>jdk9-sources</source.classifier>
-                <jar.classifier>jdk9</jar.classifier>
+                <source.classifier>jdk9ea-sources</source.classifier>
+                <jar.classifier>jdk9ea</jar.classifier>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
             </properties>
 
@@ -476,7 +473,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>2.4</version>
+                        <version>3.0.1</version>
                         <configuration>
                             <classifier>${source.classifier}</classifier>
                         </configuration>
@@ -492,7 +489,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.3</version>
+                        <version>2.10.4</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>

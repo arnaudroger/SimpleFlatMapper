@@ -9,6 +9,7 @@ import org.simpleflatmapper.reflect.meta.Table;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -44,7 +45,8 @@ public class CrudDSL<T, K> {
         }
 
         if (table.table() == null) {
-            final ResultSet tables = connection.getMetaData().getTables(connection.getCatalog(), null, null, null);
+            DatabaseMetaData metaData = connection.getMetaData();
+            final ResultSet tables = getTables(connection, metaData);
             final String className = TypeHelper.toClass(targetClass).getSimpleName();
             try {
                 while(tables.next()) {
@@ -62,5 +64,16 @@ public class CrudDSL<T, K> {
         sb.append(table.table());
 
         return sb.toString();
+    }
+
+    private ResultSet getTables(Connection connection, DatabaseMetaData metaData) throws SQLException {
+        try {
+            return metaData.getTables(connection.getCatalog(), null, null, null);
+        } catch (SQLException e) {
+            if ("S1009".equals(e.getSQLState())) { // see https://bugs.mysql.com/bug.php?id=81105
+                return metaData.getTables(connection.getCatalog(), null, "", null);
+            }
+            throw e;
+        }
     }
 }

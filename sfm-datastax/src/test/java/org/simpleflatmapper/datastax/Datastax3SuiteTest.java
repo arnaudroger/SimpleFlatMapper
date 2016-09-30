@@ -13,7 +13,7 @@ import org.simpleflatmapper.test.junit.MultiClassLoaderJunitRunner;
 @RunWith(MultiClassLoaderJunitRunner.class)
 @LibrarySets(
         librarySets = {
-                "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.0.3/cassandra-driver-core-3.0.3.jar"
+                "http://repo1.maven.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.1.0/cassandra-driver-core-3.1.0.jar",
         },
         includes={Converter.class, ReflectionService.class, Mapper.class, DatastaxCrud.class, DatastaxCrudTest.class},
         excludes = { "org.junit", "io.netty"},

@@ -77,7 +77,7 @@ public class RowGetterFactoryTest {
     public void testGetStringOnBooleanCell() throws Exception {
         final Getter<Row, String> getter = rowGetterFactory.newGetter(String.class, key, CsvColumnDefinition.IDENTITY);
         cell.setCellValue(true);
-        assertEquals("true", getter.get(row));
+        assertEquals("TRUE", getter.get(row));
     }
 
     @Test

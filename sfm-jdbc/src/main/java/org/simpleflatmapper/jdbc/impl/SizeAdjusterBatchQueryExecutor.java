@@ -29,7 +29,10 @@ public class SizeAdjusterBatchQueryExecutor<T> implements BatchQueryExecutor<T> 
                 splitBatches(connection, values, lBatchSize, postExecute);
             }
         } catch (SQLException e) {
-            if (e.getClass().getName().equals("com.mysql.jdbc.PacketTooBigException")) {
+            String name = e.getClass().getName();
+            if (name.equals("com.mysql.jdbc.PacketTooBigException") // 5.x name
+                || name.equals("com.mysql.cj.jdbc.exceptions.PacketTooBigException") // 6.x
+                    ) {
                 if (lBatchSize <= 2) {
                     throw e;
                 }

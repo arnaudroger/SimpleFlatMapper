@@ -1,6 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
-import com.mysql.jdbc.PacketTooBigException;
+
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.simpleflatmapper.test.beans.DbObject;
@@ -10,6 +10,7 @@ import org.simpleflatmapper.jdbc.impl.CrudMeta;
 import org.simpleflatmapper.jdbc.impl.DatabaseMeta;
 import org.simpleflatmapper.reflect.ReflectionService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -64,7 +64,7 @@ public class MysqlCrudTest {
         PreparedStatement ps2 = mock(PreparedStatement.class);
         when(connection.prepareStatement("INSERT INTO TEST(id) VALUES(?), (?), (?), (?), (?), (?), (?), (?), (?), (?)")).thenReturn(ps);
         when(connection.prepareStatement("INSERT INTO TEST(id) VALUES(?), (?), (?), (?), (?)")).thenReturn(ps2);
-        when(ps.executeUpdate()).thenThrow(new PacketTooBigException(60, 60));
+        when(ps.executeUpdate()).thenThrow(getPacketTooBigException());
 
 
         Crud<DbObject, Long> objectCrud =
@@ -99,6 +99,18 @@ public class MysqlCrudTest {
         verify(ps).executeUpdate();
 
 
+    }
+
+    public static SQLException getPacketTooBigException() {
+        try {
+            return (SQLException) Class.forName("com.mysql.cj.jdbc.exceptions.PacketTooBigException").getConstructor(long.class, long.class).newInstance(60l, 60l);
+        } catch (Exception e) {
+            try {
+                return (SQLException) Class.forName("com.mysql.jdbc.PacketTooBigException").getConstructor(long.class, long.class).newInstance(60l, 60l);
+            } catch (Exception e1) {
+                throw new Error(e1);
+            }
+        }
     }
 
 }

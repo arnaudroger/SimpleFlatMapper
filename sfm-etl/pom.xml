@@ -1,19 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>sfm-poi</artifactId>
-	<packaging>bundle</packaging>
+	<artifactId>sfm-etl</artifactId>
+	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<artifactId>sfm-parent</artifactId>
-		<version>3.0-SNAPSHOT</version>
+		<version>2.7.5-SNAPSHOT</version>
 	</parent>
 
-	<name>sfm-poi</name>
-	<url>http://github.com/arnaudroger/SimpleFlatMapper</url>
-
-	<description>Excel POI supports.</description>
+	<description>SFM ETL</description>
 
 
 	<licenses>
@@ -33,11 +30,7 @@
 				<configuration>
 					<classifier>${jar.classifier}</classifier>
 					<instructions>
-						<Export-Package>org.simpleflatmapper.poi</Export-Package>
-						<Import-Package>
-							org.simpleflatmapper.*,
-							org.apache.poi.*
-						</Import-Package>
+						<Export-Package>org.sfm.etl</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -45,36 +38,22 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>3.15</version>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.9.4</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-csv</artifactId>
-			<version>3.0-SNAPSHOT</version>
+			<artifactId>sfm-jdbc</artifactId>
+			<version>2.15-SNAPSHOT</version>
 			<classifier>${jar.classifier}</classifier>
 		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-converter-joda-time</artifactId>
-			<version>3.0-SNAPSHOT</version>
-			<classifier>${jar.classifier}</classifier>
-			<scope>test</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-test</artifactId>
-			<version>3.0-SNAPSHOT</version>
-			<classifier>${jar.classifier}</classifier>
+			<version>2.15-SNAPSHOT</version>
 			<scope>test</scope>
+			<classifier>${jar.classifier}</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.jctools</groupId>
+			<artifactId>jctools-core</artifactId>
+			<version>1.1</version>
 		</dependency>
 	</dependencies>
 	<profiles>

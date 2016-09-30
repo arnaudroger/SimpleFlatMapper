@@ -1,6 +1,5 @@
 package org.simpleflatmapper.jdbc;
 
-import com.mysql.jdbc.PacketTooBigException;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.simpleflatmapper.test.beans.DbObject;
@@ -201,7 +200,7 @@ public class MysqlMultiRowsBatchInsertCrudTest {
             when(mockConnection.prepareStatement(anyString()))
                     .thenReturn(preparedStatementFail, preparedStatementFail, preparedStatementSucceed);
 
-            when(preparedStatementFail.executeUpdate()).thenThrow(new PacketTooBigException(3, 3));
+            when(preparedStatementFail.executeUpdate()).thenThrow(MysqlCrudTest.getPacketTooBigException());
 
             objectCrud.create(mockConnection, values);
 

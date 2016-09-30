@@ -82,7 +82,7 @@
 				<jdk>9-ea</jdk>
 			</activation>
 			<properties>
-				<jar.classifier>jdk9</jar.classifier>
+				<jar.classifier>jdk9ea</jar.classifier>
 			</properties>
 			<build>
 				<plugins>

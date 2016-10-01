@@ -3,6 +3,7 @@ package org.simpleflatmapper.reflect;
 import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinitionFactory;
+import org.simpleflatmapper.reflect.impl.JavaLangClassMetaFactoryProducer;
 import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
 import org.simpleflatmapper.reflect.meta.AliasProvider;
 import org.simpleflatmapper.reflect.meta.AliasProviderService;
@@ -17,8 +18,11 @@ import org.simpleflatmapper.reflect.meta.OptionalClassMeta;
 //IFJAVA8_END
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.TupleClassMeta;
+import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.ProducerServiceLoader;
 import org.simpleflatmapper.util.TupleHelper;
 import org.simpleflatmapper.util.TypeHelper;
+import org.simpleflatmapper.util.UnaryFactory;
 
 import java.io.IOException;
 import java.lang.reflect.*;
@@ -31,8 +35,30 @@ import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public class ReflectionService {
 
+	private static final UnaryFactory<ReflectionService, ClassMeta<?>>[] predefined =
+			getPredifinedClassMetaFactory();
+
+	private static UnaryFactory<ReflectionService, ClassMeta<?>>[] getPredifinedClassMetaFactory() {
+		List<UnaryFactory<ReflectionService, ClassMeta<?>>> list = new ArrayList<UnaryFactory<ReflectionService, ClassMeta<?>>>();
+		Consumer<UnaryFactory<ReflectionService, ClassMeta<?>>> consumer = new Consumer<UnaryFactory<ReflectionService, ClassMeta<?>>>() {
+			@Override
+			public void accept(UnaryFactory<ReflectionService, ClassMeta<?>> reflectionServiceClassMetaUnaryFactory) {
+				list.add(reflectionServiceClassMetaUnaryFactory);
+			}
+		};
+
+		new JavaLangClassMetaFactoryProducer().produce(consumer);
+
+		ProducerServiceLoader.produceFromServiceLoader(
+				ClassMetaFactoryProducer.class,
+				consumer
+		);
+
+		return list.toArray(new UnaryFactory[0]);
+	}
+
 	private final ObjectSetterFactory objectSetterFactory;
-    private final ObjectGetterFactory objectGetterFactory;
+	private final ObjectGetterFactory objectGetterFactory;
 	private final InstantiatorFactory instantiatorFactory;
 	private final AsmFactory asmFactory;
 	private final AliasProvider aliasProvider;
@@ -64,29 +90,10 @@ public class ReflectionService {
 	}
 
 	private void initPredefined() {
-		predefined(String.class);
-		predefined(Boolean.class);
-		predefined(Byte.class);
-		predefined(Character.class);
-		predefined(Short.class);
-		predefined(Integer.class);
-		predefined(Long.class);
-		predefined(Float.class);
-		predefined(Double.class);
-	}
-
-	private <T> void predefined(Class<T> target) {
-		metaCache.put(target, predefNoPropsMeta(target));
-	}
-
-	private <T> ClassMeta<T> predefNoPropsMeta(Class<T> target) {
-		return new ObjectClassMeta<T>(
-				target,
-				Collections.<InstantiatorDefinition>emptyList(),
-				Collections.<ConstructorPropertyMeta<T, ?>>emptyList(),
-				Collections.<String, String>emptyMap(),
-				Collections.<PropertyMeta<T, ?>>emptyList(),
-				this);
+		for (UnaryFactory<ReflectionService, ClassMeta<?>> factory : predefined) {
+			ClassMeta<?> classMeta = factory.newInstance(this);
+			metaCache.put(classMeta.getType(), classMeta);
+		}
 	}
 
 	public ObjectSetterFactory getObjectSetterFactory() {
@@ -249,6 +256,9 @@ public class ReflectionService {
 				instantiatorFactory,
 				asmFactory,
 				aliasProvider);
+	}
+
+	public interface ClassMetaFactoryProducer extends ProducerServiceLoader.Producer<UnaryFactory<ReflectionService, ClassMeta<?>>> {
 	}
 }
  

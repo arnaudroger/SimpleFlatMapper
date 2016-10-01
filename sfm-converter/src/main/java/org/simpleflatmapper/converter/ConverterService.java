@@ -6,14 +6,13 @@ import org.simpleflatmapper.converter.impl.IdentityConverter;
 import org.simpleflatmapper.converter.impl.time.JavaTimeConverterFactoryProducer;
 //IFJAVA8_END
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.ProducerServiceLoader;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ServiceLoader;
 
 public class ConverterService {
 
@@ -21,15 +20,11 @@ public class ConverterService {
     private static final ConverterService INSTANCE = new ConverterService(getConverterFactories());
 
     private static List<ConverterFactory> getConverterFactories() {
-        return getConverterFactories(ServiceLoader.load(ConverterFactoryProducer.class));
-    }
-
-    private static List<ConverterFactory> getConverterFactories(ServiceLoader<ConverterFactoryProducer> serviceLoader) {
         final List<ConverterFactory> converterFactories = new ArrayList<ConverterFactory>();
 
-        Consumer<ConverterFactory> factoryConsumer = new Consumer<ConverterFactory>() {
+        Consumer<ConverterFactory<?, ?>> factoryConsumer = new Consumer<ConverterFactory<?, ?>>() {
             @Override
-            public void accept(ConverterFactory converterFactory) {
+            public void accept(ConverterFactory<?, ?> converterFactory) {
                 converterFactories.add(converterFactory);
             }
         };
@@ -40,16 +35,7 @@ public class ConverterService {
         new JavaTimeConverterFactoryProducer().produce(factoryConsumer);
         //IFJAVA8_END
 
-        Iterator<ConverterFactoryProducer> iterator = serviceLoader.iterator();
-
-        while(iterator.hasNext()) {
-            try {
-                iterator.next().produce(factoryConsumer);
-            } catch (Throwable e) {
-                System.err.println("Unexpected error on listing ConverterFactoryProducer " + e);
-                e.printStackTrace();
-            }
-        }
+        ProducerServiceLoader.produceFromServiceLoader(ConverterFactoryProducer.class, factoryConsumer);
 
         return converterFactories;
     }

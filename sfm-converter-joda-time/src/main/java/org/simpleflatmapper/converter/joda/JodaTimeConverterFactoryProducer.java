@@ -40,7 +40,7 @@ import java.util.Date;
 public class JodaTimeConverterFactoryProducer extends AbstractConverterFactoryProducer {
 
     @Override
-    public void produce(Consumer<ConverterFactory> consumer) {
+    public void produce(Consumer<? super ConverterFactory<?, ?>> consumer) {
         // Date to joda time
         factoryConverter(consumer, new AbstractConverterFactory<Date, DateTime>(Date.class, DateTime.class) {
             @Override

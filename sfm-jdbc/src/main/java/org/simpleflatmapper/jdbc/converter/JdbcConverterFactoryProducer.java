@@ -37,7 +37,7 @@ import java.util.List;
 
 public class JdbcConverterFactoryProducer extends AbstractConverterFactoryProducer {
     @Override
-    public void produce(Consumer<ConverterFactory> consumer) {
+    public void produce(Consumer<? super ConverterFactory<?, ?>> consumer) {
         //IFJAVA8_START
         constantConverter(consumer, Time.class, LocalTime.class, new TimeToLocalTimeConverter());
         constantConverter(consumer, Date.class, LocalDate.class, new DateToLocalDateConverter());

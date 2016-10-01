@@ -1,8 +1,8 @@
 package org.simpleflatmapper.converter;
 
 
-import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.ProducerServiceLoader;
 
-public interface ConverterFactoryProducer {
-    void produce(Consumer<ConverterFactory> consumer);
+public interface ConverterFactoryProducer
+        extends ProducerServiceLoader.Producer<ConverterFactory<?, ?>> {
 }

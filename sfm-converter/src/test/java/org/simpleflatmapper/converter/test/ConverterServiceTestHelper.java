@@ -1,22 +1,11 @@
 package org.simpleflatmapper.converter.test;
 
-import org.junit.Test;
-import org.simpleflatmapper.converter.ConversionException;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
 
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URL;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 
 public class ConverterServiceTestHelper {

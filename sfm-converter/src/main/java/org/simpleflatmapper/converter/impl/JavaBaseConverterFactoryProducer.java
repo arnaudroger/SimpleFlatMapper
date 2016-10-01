@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryProducer {
 	@Override
-	public void produce(Consumer<ConverterFactory> consumer) {
+	public void produce(Consumer<? super ConverterFactory<?, ?>> consumer) {
 		constantConverter(consumer, Number.class, Byte.class      , new NumberByteConverter());
 		constantConverter(consumer, Number.class, Short.class     , new NumberShortConverter());
 		constantConverter(consumer, Number.class, Integer.class   , new NumberIntegerConverter());

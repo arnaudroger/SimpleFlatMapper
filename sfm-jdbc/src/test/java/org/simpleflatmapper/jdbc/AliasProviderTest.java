@@ -3,8 +3,11 @@ package org.simpleflatmapper.jdbc;
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.impl.JpaAliasProvider;
 import org.simpleflatmapper.jdbc.impl.JpaAliasProviderFactory;
+import org.simpleflatmapper.reflect.getter.ConstantBooleanGetter;
 import org.simpleflatmapper.reflect.meta.AliasProviderService;
 import org.simpleflatmapper.reflect.meta.DefaultAliasProvider;
+import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.ListCollector;
 
 import javax.persistence.Column;
 
@@ -12,8 +15,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class AliasProviderTest {
 
@@ -75,7 +84,13 @@ public class AliasProviderTest {
         Thread.currentThread().setContextClassLoader(cl);
         try {
             Class<?> jpa = cl.loadClass(JpaAliasProviderFactory.class.getName());
-            assertEquals(false, jpa.getDeclaredMethod("isActive").invoke(jpa.getConstructor().newInstance()));
+            Class<?> consumerClass = cl.loadClass(Consumer.class.getName());
+
+            Object consumer = cl.loadClass(ListCollector.class.getName()).newInstance();
+            jpa.getMethod("produce", consumerClass).invoke(jpa.getConstructor().newInstance(), consumer);
+
+            List<String> list = (List<String>) consumer.getClass().getMethod("getList").invoke(consumer);
+            assertTrue(list.isEmpty());
 
         } finally {
             Thread.currentThread().setContextClassLoader(original);

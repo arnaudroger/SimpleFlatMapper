@@ -1,13 +1,10 @@
 package org.simpleflatmapper.reflect.meta;
 
-public class AliasProviderFactoryDisabled implements AliasProviderFactory {
-    @Override
-    public AliasProvider newProvider() {
-        return null;
-    }
+import org.simpleflatmapper.util.Consumer;
 
+public class AliasProviderFactoryDisabled implements AliasProviderProducer {
     @Override
-    public boolean isActive() {
-        return false;
+    public void produce(Consumer<? super AliasProvider> consumer) {
+
     }
 }

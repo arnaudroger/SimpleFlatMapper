@@ -1,9 +1,10 @@
 package org.simpleflatmapper.reflect.meta;
 
 
+import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.ProducerServiceLoader;
+
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.ServiceLoader;
 
 public final class AliasProviderService {
 
@@ -11,26 +12,16 @@ public final class AliasProviderService {
 
 	private static final AliasProvider aliasProvider = findAliasProviders();
 
-	private static AliasProvider findAliasProviders() {
-		return findAliasProviders(ServiceLoader.load(AliasProviderFactory.class));
-	}
 
-	private static AliasProvider findAliasProviders(ServiceLoader<AliasProviderFactory> serviceLoader) {
+	private static AliasProvider findAliasProviders() {
 		ArrayList<AliasProvider> providers = new ArrayList<AliasProvider>();
 
-		Iterator<AliasProviderFactory> iterator = serviceLoader.iterator();
-
-		while(iterator.hasNext()) {
-			try {
-				AliasProviderFactory factory = iterator.next();
-				if (factory.isActive()) {
-					providers.add(factory.newProvider());
-				}
-			} catch (Throwable e) {
-				System.err.println("Unexpected error on listing ConverterFactoryProducer, prop classloader visibility " + e);
+		ProducerServiceLoader.produceFromServiceLoader(AliasProviderProducer.class, new Consumer<AliasProvider>() {
+			@Override
+			public void accept(AliasProvider t) {
+				providers.add(t);
 			}
-		}
-
+		});
 		return aggregateAliasProvider(providers.toArray(new AliasProvider[0]));
 	}
 

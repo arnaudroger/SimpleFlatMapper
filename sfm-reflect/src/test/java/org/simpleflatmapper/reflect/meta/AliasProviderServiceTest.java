@@ -15,32 +15,43 @@ public class AliasProviderServiceTest {
 
     @Test
     public void testServiceLoader() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, MalformedURLException {
-        Method findAliasProviders = AliasProviderService.class.getDeclaredMethod("findAliasProviders", ServiceLoader.class);
-        findAliasProviders.setAccessible(true);
 
-        ServiceLoader<AliasProviderFactory> serviceLoader = ServiceLoader.load(AliasProviderFactory.class, new URLClassLoader(new URL[0], getClass().getClassLoader()));
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
 
-        AliasProvider defaultAliasProvider = (AliasProvider) findAliasProviders.invoke(null, serviceLoader);
-        assertTrue(defaultAliasProvider instanceof DefaultAliasProvider);
+            Method findAliasProviders = AliasProviderService.class.getDeclaredMethod("findAliasProviders");
+            findAliasProviders.setAccessible(true);
+
+            Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[0], getClass().getClassLoader()));
+            AliasProvider defaultAliasProvider = (AliasProvider) findAliasProviders.invoke(null);
+            assertTrue(defaultAliasProvider instanceof DefaultAliasProvider);
 
 
-        URLClassLoader loader = new URLClassLoader(new URL[]{new URL("file:src/test/resources/sl1/")}, getClass().getClassLoader());
-        AliasProvider oneALiasProvider = (AliasProvider) findAliasProviders.invoke(null, ServiceLoader.load(AliasProviderFactory.class, loader));
+            URLClassLoader loader = new URLClassLoader(new URL[]{new URL("file:src/test/resources/sl1/")}, getClass().getClassLoader());
 
-        assertTrue(oneALiasProvider instanceof  AliasProviderFactory1.AliasProvider1);
+            Thread.currentThread().setContextClassLoader(loader);
 
-        loader = new URLClassLoader(new URL[]{new URL("file:src/test/resources/sl2/")}, getClass().getClassLoader());
-        AliasProvider multipleAliasProvider = (AliasProvider) findAliasProviders.invoke(null, ServiceLoader.load(AliasProviderFactory.class, loader));
+            AliasProvider oneALiasProvider = (AliasProvider) findAliasProviders.invoke(null);
 
-        assertTrue(multipleAliasProvider instanceof ArrayAliasProvider);
+            assertTrue(oneALiasProvider instanceof AliasProviderFactory1.AliasProvider1);
 
-        ArrayAliasProvider arrayAliasProvider = (ArrayAliasProvider) multipleAliasProvider;
+            loader = new URLClassLoader(new URL[]{new URL("file:src/test/resources/sl2/")}, getClass().getClassLoader());
 
-        AliasProvider[] providers = arrayAliasProvider.providers();
+            Thread.currentThread().setContextClassLoader(loader);
+            AliasProvider multipleAliasProvider = (AliasProvider) findAliasProviders.invoke(null);
 
-        assertEquals(2, providers.length);
+            assertTrue(multipleAliasProvider instanceof ArrayAliasProvider);
 
-        assertTrue(providers[0] instanceof AliasProviderFactory1.AliasProvider1);
-        assertTrue(providers[1] instanceof AliasProviderFactory2.AliasProvider2);
+            ArrayAliasProvider arrayAliasProvider = (ArrayAliasProvider) multipleAliasProvider;
+
+            AliasProvider[] providers = arrayAliasProvider.providers();
+
+            assertEquals(2, providers.length);
+
+            assertTrue(providers[0] instanceof AliasProviderFactory1.AliasProvider1);
+            assertTrue(providers[1] instanceof AliasProviderFactory2.AliasProvider2);
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
     }
 }

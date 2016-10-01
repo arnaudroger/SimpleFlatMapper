@@ -17,7 +17,7 @@ public class JavaTimeConverterFactoryProducer extends AbstractConverterFactoryPr
 
 
     @Override
-    public void produce(Consumer<ConverterFactory> consumer) {
+    public void produce(Consumer<? super ConverterFactory<?, ?>> consumer) {
         constantConverter(consumer, Instant.class, Date.class, new JavaInstantTojuDateConverter());
         factoryConverter(consumer, new AbstractConverterFactory<LocalDateTime, Date>(LocalDateTime.class, Date.class) {
             @Override

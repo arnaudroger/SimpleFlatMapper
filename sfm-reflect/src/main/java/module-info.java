@@ -12,5 +12,6 @@ module org.simpleflatmapper.reflect {
         exports org.simpleflatmapper.ow2asm;
         exports org.simpleflatmapper.ow2asm.signature;
 
-        uses org.simpleflatmapper.reflect.meta.AliasProviderFactory;
+        uses org.simpleflatmapper.reflect.meta.AliasProviderProducer;
+        uses org.simpleflatmapper.reflect.ReflectionService.ClassMetaFactoryProducer;
 }

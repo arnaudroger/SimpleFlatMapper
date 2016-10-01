@@ -5,6 +5,6 @@ module org.simpleflatmapper.datastax {
         requires guava;
         exports org.simpleflatmapper.datastax;
 
-        provides org.simpleflatmapper.reflect.meta.AliasProviderFactory
+        provides org.simpleflatmapper.reflect.meta.AliasProviderProducer
         with org.simpleflatmapper.datastax.impl.mapping.DatastaxAliasProviderFactory;
 }

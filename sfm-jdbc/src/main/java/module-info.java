@@ -8,6 +8,6 @@ module org.simpleflatmapper.jdbc {
 
     provides org.simpleflatmapper.converter.ConverterFactoryProducer
         with org.simpleflatmapper.jdbc.converter.JdbcConverterFactoryProducer;
-    provides org.simpleflatmapper.reflect.meta.AliasProviderFactory
+    provides org.simpleflatmapper.reflect.meta.AliasProviderProducer
         with org.simpleflatmapper.jdbc.impl.JpaAliasProviderFactory;
 }

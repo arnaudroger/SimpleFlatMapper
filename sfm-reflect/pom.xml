@@ -94,7 +94,7 @@
 						<Import-Package>org.simpleflatmapper.util</Import-Package>
 
 						<Require-Capability>osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
-						<Provide-Capability>osgi.serviceloader;osgi.serviceloader=org.simpleflatmapper.reflect.meta.AliasProviderProducer</Provide-Capability>
+						<Provide-Capability>osgi.serviceloader;osgi.serviceloader=org.simpleflatmapper.reflect.meta.AliasProviderProducer,org.simpleflatmapper.reflect.ReflectionService.ClassMetaFactoryProducer</Provide-Capability>
 
 					</instructions>
 				</configuration>

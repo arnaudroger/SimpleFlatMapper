@@ -39,7 +39,7 @@ public class ReflectionService {
 			getPredifinedClassMetaFactory();
 
 	private static UnaryFactory<ReflectionService, ClassMeta<?>>[] getPredifinedClassMetaFactory() {
-		List<UnaryFactory<ReflectionService, ClassMeta<?>>> list = new ArrayList<UnaryFactory<ReflectionService, ClassMeta<?>>>();
+		final List<UnaryFactory<ReflectionService, ClassMeta<?>>> list = new ArrayList<UnaryFactory<ReflectionService, ClassMeta<?>>>();
 		Consumer<UnaryFactory<ReflectionService, ClassMeta<?>>> consumer = new Consumer<UnaryFactory<ReflectionService, ClassMeta<?>>>() {
 			@Override
 			public void accept(UnaryFactory<ReflectionService, ClassMeta<?>> reflectionServiceClassMetaUnaryFactory) {

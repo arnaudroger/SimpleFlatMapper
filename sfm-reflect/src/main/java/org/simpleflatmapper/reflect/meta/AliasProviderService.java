@@ -14,7 +14,7 @@ public final class AliasProviderService {
 
 
 	private static AliasProvider findAliasProviders() {
-		ArrayList<AliasProvider> providers = new ArrayList<AliasProvider>();
+		final ArrayList<AliasProvider> providers = new ArrayList<AliasProvider>();
 
 		ProducerServiceLoader.produceFromServiceLoader(AliasProviderProducer.class, new Consumer<AliasProvider>() {
 			@Override

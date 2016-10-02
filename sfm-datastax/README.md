@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-datastax.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-datastax)
-[![JavaDoc](https://img.shields.io/badge/javadoc-2.14.1-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-datastax)
+[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-datastax)
 
 # Datastax integration
 
@@ -16,7 +16,7 @@ Works with datastax 2.1.x to 3.0.x
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-datastax</artifactId>
-			<version>2.14.1</version>
+			<version>3.0</version>
 		</dependency>
 ```
 

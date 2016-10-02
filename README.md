@@ -11,7 +11,7 @@
 ## [Getting Started](http://simpleflatmapper.org/01-getting-started.html) 
 
 ## Modules
-| |
+| |||
 |------|-----|-----|
 |[Csv](sfm-csv)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-csv.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-csv)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-csv)
 |[Jdbc](sfm-jdbc)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-jdbc.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-jdbc)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jdbc)

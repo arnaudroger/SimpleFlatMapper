@@ -4,9 +4,14 @@
 
 [![Java 6](https://img.shields.io/badge/java-6-orange.svg)](#java-6)[![Java 7](https://img.shields.io/badge/java-7-green.svg)](#java-7)[![Java 8](https://img.shields.io/badge/java-8-brightgreen.svg)](#java-8)[![Java 9-ea](https://img.shields.io/badge/java-9-brightgreen.svg)](#java-8)
 
-# [Simple Flat Mapper](http://simpleflatmapper.org/) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-ReleaseNotes)
+# [Simple Flat Mapper](http://simpleflatmapper.org/) 
 
-|Modules|||
+## [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-ReleaseNotes)
+
+## [Getting Started](http://simpleflatmapper.org/01-getting-started.html) 
+
+## Modules
+||||
 |------|-----|-----|
 |[Csv](sfm-csv)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-csv.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-csv)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-csv)
 |[Jdbc](sfm-jdbc)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-jdbc.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-jdbc)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jdbc)
@@ -18,6 +23,7 @@
 |[SQL2o](sfm-sql2o), no java6 |[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-sql2o.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-sql2o)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
 
 
+## blurb
 
 SimpleFlatMapper is a library that provide
 * [performant](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-Local-Mysql)
@@ -54,11 +60,7 @@ See [Property Mapping Wiki](https://github.com/arnaudroger/SimpleFlatMapper/wiki
 
 If you encounter any problem with the mapping don't hesitate to [create an issue](https://github.com/arnaudroger/SimpleFlatMapper/issues/new).
 
-
-## [Getting Started](http://simpleflatmapper.org/01-getting-started.html) 
-
-
-### Building it
+## Building it
 
 The build is using [Maven](http://maven.apache.org/).
 

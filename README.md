@@ -1,16 +1,23 @@
-[![Maven csv](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-csv.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-csv)
-[![Maven jdbc](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-jdbc.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-jdbc)
-[![JavaDoc csv](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jdbc)
-[![JavaDoc jdbc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-csv)
 [![License](https://img.shields.io/github/license/arnaudroger/simpleFlatMapper.svg)](https://raw.githubusercontent.com/arnaudroger/SimpleFlatMapper/master/LICENSE)
-
-[![Java 6](https://img.shields.io/badge/java-6-orange.svg)](#java-6)[![Java 7](https://img.shields.io/badge/java-7-green.svg)](#java-7)[![Java 8](https://img.shields.io/badge/java-8-brightgreen.svg)](#java-8)[![Java 9-ea](https://img.shields.io/badge/java-9-brightgreen.svg)](#java-8)
-
 [![Build Status](https://img.shields.io/travis/arnaudroger/SimpleFlatMapper.svg)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
+[![Java 6](https://img.shields.io/badge/java-6-orange.svg)](#java-6)[![Java 7](https://img.shields.io/badge/java-7-green.svg)](#java-7)[![Java 8](https://img.shields.io/badge/java-8-brightgreen.svg)](#java-8)[![Java 9-ea](https://img.shields.io/badge/java-9-brightgreen.svg)](#java-8)
 
-# Simple Flat Mapper (SFM) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-ReleaseNotes)
+# [Simple Flat Mapper](http://simpleflatmapper.org/) [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-ReleaseNotes)
+
+|Modules|||
+|------|-----|-----|
+|[Csv](sfm-csv)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-csv.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-csv)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-csv)
+|[Jdbc](sfm-jdbc)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-jdbc.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-jdbc)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jdbc)
+|[Cassandra Datastax driver](sfm-datastax)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-datastax.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-datastax)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-datastax)
+|[jOOQ](sfm-jooq)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-jooq.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-jooq)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jooq)
+|[Poi Excel Spreadsheet](sfm-poi)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-poi.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-poi)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-poi)
+|[Query DSL](sfm-querydsl)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-querydsl.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-querydsl)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-querydsl)
+|[Spring JDBC](sfm-springjdbc)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-springjdbc.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-springjdbc)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-springjdbc)
+|[SQL2o](sfm-sql2o), no java6 |[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-sql2o.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-sql2o)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
+
+
 
 SimpleFlatMapper is a library that provide
 * [performant](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-Local-Mysql)
@@ -47,86 +54,9 @@ See [Property Mapping Wiki](https://github.com/arnaudroger/SimpleFlatMapper/wiki
 
 If you encounter any problem with the mapping don't hesitate to [create an issue](https://github.com/arnaudroger/SimpleFlatMapper/issues/new).
 
-|Module|||
-|------|-----|-----|
-|[Csv](sfm-csv)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-csv.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-csv)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-csv)
-|[Jdbc](sfm-jdbc)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-jdbc.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-jdbc)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jdbc)
-|[Cassandra Datastax driver](sfm-datastax)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-datastax.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-datastax)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-datastax)
-|[jOOQ](sfm-jooq)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-jooq.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-jooq)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-jooq)
-|[Poi Excel Spreadsheet](sfm-poi)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-poi.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-poi)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-poi)
-|[Query DSL](sfm-querydsl)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-querydsl.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-querydsl)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-querydsl)
-|[Spring JDBC](sfm-springjdbc)|[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-springjdbc.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-springjdbc)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-springjdbc)
-|[SQL2o](sfm-sql2o), no java6 |[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-sql2o.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-sql2o)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
 
+## [Getting Started](http://simpleflatmapper.org/01-getting-started.html) 
 
-## Getting Started 
-
-### Binaries
-
-The binaries are available in maven central. 
-[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/)
-There is a build for
-
-
-#### Java 8
-
-```xml
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-csv</artifactId>
-			<version>3.0</version>
-		</dependency>
-```
-#### Java 9
-
-```xml
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-csv</artifactId>
-			<version>3.0</version>
-            <classifier>jdk9ea</classifier>
-		</dependency>
-```
-
-#### Java 6/7
-
-```xml
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-csvs</artifactId>
-			<version>3.0</version>
-			<classifier>jdk16</classifier>
-		</dependency>
-```
-
-
-### Jdbc
-
-```java
-public class MyDao {
-	JdbcMapper<MyObject> parameterGetterMap =
-		JdbcMapperFactory.newInstance().newMapper(MyObject.class);
-
-	public List<MyObject> findAll() throws SQLException {
-		try (Connection conn = getConnection();
-		     PreparedStatement ps = conn.prepareStatement("select * from my_table");
-		     ResultSet rs = ps.executeQuery();) {
-			return parameterGetterMap.stream(rs).collect(Collectors.toList());
-		}
-	}
-
-}
-```
-
-### Csv
-
-```java
-CsvParser
-        .separator('\t')
-        .mapTo(MyObject.class)
-        .stream(reader)
-        .forEach(System.out::println);
-```
 
 ### Building it
 

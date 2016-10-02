@@ -6,7 +6,7 @@
 
 # [Simple Flat Mapper](http://simpleflatmapper.org/) 
 
-## [Release Notes](https://github.com/arnaudroger/SimpleFlatMapper/wiki/SimpleFlatMapper-ReleaseNotes)
+## [Release Notes](http://simpleflatmapper.org/10-news.html)
 
 ## [Getting Started](http://simpleflatmapper.org/01-getting-started.html) 
 
@@ -23,7 +23,7 @@
 |[SQL2o](sfm-sql2o), no java6 |[![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-sql2o.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-sql2o)|[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
 
 
-## blurb
+## blurb that need to be transfer
 
 SimpleFlatMapper is a library that provide
 * [performant](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-Local-Mysql)

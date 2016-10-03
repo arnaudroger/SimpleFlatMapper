@@ -39,8 +39,8 @@ before_install:
   - export PATH=$M2_HOME/bin:$PATH
   - sudo add-apt-repository -y ppa:webupd8team/java
   - sudo apt-get -y update
-  - sudo apt-get -y install openjdk-6-jdk-headless
-  - sudo apt-get -y install openjdk-7-jdk-headless
+  - sudo apt-get -y install openjdk-6-jdk
+  - sudo apt-get -y install openjdk-7-jdk
   - sudo apt-get -y install oracle-java7-installer
   - sudo apt-get -y install oracle-java9-installer
 

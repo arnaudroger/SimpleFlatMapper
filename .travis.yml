@@ -40,8 +40,6 @@ before_install:
   - sudo add-apt-repository -y ppa:openjdk-r/ppa
   - sudo add-apt-repository -y ppa:webupd8team/java
   - sudo apt-get -y update
-  - echo install jdk9
-  - sudo apt-get -y --force-yes install oracle-java9-installer oracle-java9-set-default
   - echo install jdk6 jdk7
   - sudo apt-get -y install openjdk-6-jdk openjdk-7-jdk oracle-java7-installer
   - sudo ln -s /usr/lib/jvm/java-6-openjdk-amd64 /usr/lib/jvm/java-6-openjdk

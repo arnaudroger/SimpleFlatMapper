@@ -32,15 +32,15 @@ public final class CharConsumer {
 		final TextFormat textFormat = _textFormat;
 
 		final char[] chars = _csvBuffer.getCharBuffer();
-		final int bufferSize = Math.min(_csvBuffer.getBufferSize(), chars.length); // hint
+		final int bufferSize = _csvBuffer.getBufferSize();
 
-		int currentIndex = _currentIndex;
 		int currentState = _currentState;
 
-		for(;currentIndex  < bufferSize; currentIndex++) {
+		int currentIndex;
+		for(currentIndex = _currentIndex; currentIndex  < bufferSize; currentIndex++) {
 			char character = chars[currentIndex];
 			if (textFormat.isNotEscapeCharacter(character)) {
-				if (isEscaped(currentState)) {
+				if (isNotEscaped(currentState)) {
 					if (textFormat.isSeparator(character)) {
 						newCell(chars, currentIndex, cellConsumer);
 						currentState = LAST_CHAR_WAS_SEPARATOR;
@@ -80,16 +80,16 @@ public final class CharConsumer {
 	public final boolean consumeToNextRow(CellConsumer cellConsumer) {
 		final TextFormat textFormat = _textFormat;
 
-		final int bufferSize = _csvBuffer.getBufferSize();
 		final char[] chars = _csvBuffer.getCharBuffer();
+		final int bufferSize = _csvBuffer.getBufferSize();
 
-		int currentIndex = _currentIndex;
 		int currentState = _currentState;
 
-		for(;currentIndex  < bufferSize; currentIndex++) {
+		int currentIndex;
+		for(currentIndex = _currentIndex; currentIndex  < bufferSize; currentIndex++) {
 			char character = chars[currentIndex];
 			if (textFormat.isNotEscapeCharacter(character)) {
-				if (isEscaped(currentState)) {
+				if (isNotEscaped(currentState)) {
 					if (textFormat.isSeparator(character)) {
 						newCell(chars, currentIndex, cellConsumer);
 						currentState = LAST_CHAR_WAS_SEPARATOR;
@@ -97,8 +97,7 @@ public final class CharConsumer {
 					} else if (character == '\n') {
 						if (lastCharWasNotCr(currentState)) {
 							if (endOfRowReturnValue(chars, currentIndex, cellConsumer)) {
-								_currentState = NONE;
-								_currentIndex = currentIndex + 1;
+								exitOnState(currentIndex, NONE);
 								return true;
 							}
 							currentState = NONE;
@@ -107,8 +106,7 @@ public final class CharConsumer {
 						cellStart = currentIndex + 1;
 					} else if (character == '\r') {
 						if (endOfRowReturnValue(chars, currentIndex, cellConsumer)) {
-							_currentState = LAST_CHAR_WAS_CR;
-							_currentIndex = currentIndex + 1;
+							exitOnState(currentIndex, LAST_CHAR_WAS_CR);
 							return true;
 						}
 						currentState = LAST_CHAR_WAS_CR;
@@ -127,6 +125,11 @@ public final class CharConsumer {
 		return false;
 	}
 
+	private void exitOnState(int currentIndex, int none) {
+		_currentState = none;
+		_currentIndex = currentIndex + 1;
+	}
+
 	public boolean endOfRowReturnValue(char[] chars, int currentIndex, CellConsumer cellConsumer) {
 		newCell(chars, currentIndex, cellConsumer);
 		return cellConsumer.endOfRow();
@@ -134,34 +137,33 @@ public final class CharConsumer {
 
 	public final void finish(CellConsumer cellConsumer) {
 		if ( _currentIndex > cellStart
-				|| lastCharWasSeparator()) {
+				|| lastCharWasSeparator(_currentState)) {
 			newCell(_csvBuffer.getCharBuffer(), _currentIndex, cellConsumer);
 			_currentState = NONE;
 		}
 		cellConsumer.end();
 	}
 
-	public final boolean refillBuffer() throws IOException {
-		if (_csvBuffer.shiftBufferToMark(cellStart)) {
-			_currentIndex -= cellStart;
-			cellStart = 0;
-			return _csvBuffer.fillBuffer();
-		} else {
-			return false;
-		}
+	public final int refillBuffer() throws IOException {
+		shiftBufferToMark();
+		return _csvBuffer.fillBuffer();
 	}
 
-	private boolean isEscaped(int currentState) {
+	public void shiftBufferToMark() throws BufferOverflowException {
+		int m = Math.max(0, _csvBuffer.shiftBufferToMark(cellStart));
+		_currentIndex -= m;
+		cellStart -= m;
+	}
+
+	private static boolean isNotEscaped(int currentState) {
 		return (currentState & ESCAPED) == 0;
 	}
 
-
-
-	private boolean lastCharWasNotCr(int currentState) {
+	private static boolean lastCharWasNotCr(int currentState) {
 		return (currentState & LAST_CHAR_WAS_CR) == 0;
 	}
 
-	private boolean lastCharWasSeparator() {
-		return (_currentState & LAST_CHAR_WAS_SEPARATOR) != 0;
+	private static boolean lastCharWasSeparator(int currentState) {
+		return (currentState & LAST_CHAR_WAS_SEPARATOR) != 0;
 	}
 }

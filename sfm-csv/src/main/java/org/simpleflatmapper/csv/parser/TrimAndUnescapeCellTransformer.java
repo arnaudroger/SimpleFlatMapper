@@ -1,12 +1,11 @@
 package org.simpleflatmapper.csv.parser;
 
-import javax.xml.soap.Text;
 
-public final class TrimCellTransformer extends CellTransformer {
+public final class TrimAndUnescapeCellTransformer extends CellTransformer {
 
     private final UnescapeCellTransformer delegate;
 
-    public TrimCellTransformer(TextFormat textFormat) {
+    public TrimAndUnescapeCellTransformer(TextFormat textFormat) {
         this.delegate = new UnescapeCellTransformer(textFormat);
     }
 

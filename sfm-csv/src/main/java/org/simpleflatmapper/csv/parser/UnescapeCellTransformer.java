@@ -3,11 +3,9 @@ package org.simpleflatmapper.csv.parser;
 public final class UnescapeCellTransformer extends CellTransformer {
 
     private final TextFormat textFormat;
-    private final NoopCellTransformer delegate;
 
     public UnescapeCellTransformer(TextFormat textFormat) {
         this.textFormat = textFormat;
-        this.delegate = new NoopCellTransformer();
     }
 
     public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer) {
@@ -19,7 +17,7 @@ public final class UnescapeCellTransformer extends CellTransformer {
             strEnd = unescape(chars, strStart, strEnd);
         }
 
-        delegate.newCell(chars, strStart, strEnd, cellConsumer);
+        cellConsumer.newCell(chars, strStart, strEnd - strStart);
     }
 
     private int unescape(final char[] chars, final int start, final int end) {

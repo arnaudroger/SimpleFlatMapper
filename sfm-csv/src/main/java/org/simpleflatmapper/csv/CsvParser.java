@@ -498,7 +498,7 @@ public final class CsvParser {
 			CellTransformer cellTransformer;
 			switch (stringPostProcessing) {
 				case TRIM:
-					cellTransformer = new TrimCellTransformer(textFormat);
+					cellTransformer = new TrimAndUnescapeCellTransformer(textFormat);
 					break;
 				case UNESCAPE:
 					cellTransformer = new UnescapeCellTransformer(textFormat);

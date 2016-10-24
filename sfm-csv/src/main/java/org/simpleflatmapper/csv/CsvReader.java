@@ -22,7 +22,7 @@ import java.util.stream.StreamSupport;
 
 public final class CsvReader implements Iterable<String[]> {
 
-	private final CharConsumer _consumer;
+	private final CharConsumer consumer;
 
 	private final Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper;
 
@@ -31,7 +31,7 @@ public final class CsvReader implements Iterable<String[]> {
 	}
 
 	public CsvReader(CharConsumer charConsumer,  Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
-		this._consumer = charConsumer;
+		this.consumer = charConsumer;
 		this.cellConsumerWrapper = cellConsumerWrapper;
 	}
 
@@ -51,10 +51,10 @@ public final class CsvReader implements Iterable<String[]> {
 
 
 	private <CC extends CellConsumer> void _parseAll(CC cellConsumer) throws IOException {
-		CharConsumer consumer = _consumer;
 		do {
 			consumer.consumeAllBuffer(cellConsumer);
-		} while (consumer.refillBuffer() >= 0);
+			consumer.shiftBufferToMark();
+		} while (consumer.refillBuffer());
 		consumer.finish(cellConsumer);
 	}
 
@@ -70,13 +70,12 @@ public final class CsvReader implements Iterable<String[]> {
 	}
 
 	private boolean _parseRow(CellConsumer cellConsumer) throws IOException {
-		CharConsumer consumer = _consumer;
-
 		do {
 			if (consumer.consumeToNextRow(cellConsumer)) {
 				return true;
 			}
-		} while (consumer.refillBuffer() >= 0);
+			consumer.shiftBufferToMark();
+		} while (consumer.refillBuffer());
 
 		consumer.finish(cellConsumer);
 		return false;

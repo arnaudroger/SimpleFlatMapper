@@ -67,16 +67,6 @@ public final class CharConsumer {
 		_currentIndex = currentIndex;
 	}
 
-	public void endOfRow(char[] chars, int currentIndex, CellConsumer cellConsumer) {
-		newCell(chars, currentIndex, cellConsumer);
-		cellConsumer.endOfRow();
-	}
-
-	public void newCell(char[] chars, int currentIndex, CellConsumer cellConsumer) {
-		cellTransformer.newCell(chars, cellStart, currentIndex, cellConsumer);
-		cellStart = currentIndex + 1;
-	}
-
 	public final boolean consumeToNextRow(CellConsumer cellConsumer) {
 		final TextFormat textFormat = _textFormat;
 
@@ -125,16 +115,6 @@ public final class CharConsumer {
 		return false;
 	}
 
-	private void exitOnState(int currentIndex, int none) {
-		_currentState = none;
-		_currentIndex = currentIndex + 1;
-	}
-
-	public boolean endOfRowReturnValue(char[] chars, int currentIndex, CellConsumer cellConsumer) {
-		newCell(chars, currentIndex, cellConsumer);
-		return cellConsumer.endOfRow();
-	}
-
 	public final void finish(CellConsumer cellConsumer) {
 		if ( _currentIndex > cellStart
 				|| lastCharWasSeparator(_currentState)) {
@@ -144,15 +124,34 @@ public final class CharConsumer {
 		cellConsumer.end();
 	}
 
-	public final int refillBuffer() throws IOException {
-		shiftBufferToMark();
-		return _csvBuffer.fillBuffer();
+	public final boolean refillBuffer() throws IOException {
+		return _csvBuffer.fillBuffer() >= 0;
 	}
 
-	public void shiftBufferToMark() throws BufferOverflowException {
+	public final void shiftBufferToMark() throws BufferOverflowException {
 		int m = Math.max(0, _csvBuffer.shiftBufferToMark(cellStart));
 		_currentIndex -= m;
 		cellStart -= m;
+	}
+
+	private void endOfRow(char[] chars, int currentIndex, CellConsumer cellConsumer) {
+		newCell(chars, currentIndex, cellConsumer);
+		cellConsumer.endOfRow();
+	}
+
+	private boolean endOfRowReturnValue(char[] chars, int currentIndex, CellConsumer cellConsumer) {
+		newCell(chars, currentIndex, cellConsumer);
+		return cellConsumer.endOfRow();
+	}
+
+	private void newCell(char[] chars, int currentIndex, CellConsumer cellConsumer) {
+		cellTransformer.newCell(chars, cellStart, currentIndex, cellConsumer);
+		cellStart = currentIndex + 1;
+	}
+
+	private void exitOnState(int currentIndex, int none) {
+		_currentState = none;
+		_currentIndex = currentIndex + 1;
 	}
 
 	private static boolean isNotEscaped(int currentState) {

@@ -1165,7 +1165,7 @@ public class CsvParserTest {
 		assertEquals("n", dbObjects.get(0).getName());
 	}
 
-
+	//IFJAVA8_START
 	public void testWeirdQuote() throws IOException {
 		String csv = "ddddd\",ddd";
 
@@ -1173,6 +1173,8 @@ public class CsvParserTest {
 
 		assertArrayEquals(new String[] { "ddddd", "ddd"}, strings.get(0));
 	}
+	//IFJAVA8_END
+
 
 	@Test
 	public void testReadMultipleFormatOverrideDefault() throws  Exception {
@@ -1180,7 +1182,7 @@ public class CsvParserTest {
 		String data2 = "date1\n06-19-2016";
 
 
-		List<String> strings = new ArrayList<String>();
+		final List<String> strings = new ArrayList<String>();
 		CsvParser.forEach(new StringReader(data2), new CheckedConsumer<String[]>() {
 			@Override
 			public void accept(String[] s) throws Exception {
@@ -1197,7 +1199,7 @@ public class CsvParserTest {
 		String data2 = "date1\n06-19-2016";
 
 
-		List<String> strings = new ArrayList<String>();
+		final List<String> strings = new ArrayList<String>();
 		CsvParser.bufferSize(8).forEach(new StringReader(data2), new CheckedConsumer<String[]>() {
 			@Override
 			public void accept(String[] s) throws Exception {

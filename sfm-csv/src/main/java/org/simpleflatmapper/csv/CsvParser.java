@@ -512,10 +512,6 @@ public final class CsvParser {
 			return cellTransformer;
 		}
 
-		protected final boolean isCsv() {
-			return stringPostProcessing == StringPostProcessing.UNESCAPE && separatorChar == ',' && quoteChar == '"';
-		}
-
 		public final int maxBufferSize() {
 			return maxBufferSize;
 		}

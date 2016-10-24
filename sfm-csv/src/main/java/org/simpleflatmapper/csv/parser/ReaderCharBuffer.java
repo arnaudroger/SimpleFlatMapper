@@ -17,28 +17,34 @@ public final class ReaderCharBuffer extends CharBuffer {
 		calculateResizeThreshold();
 	}
 
-	public int fillBuffer() throws IOException {
+	@Override
+	public final boolean fillBuffer() throws IOException {
 		int length = reader.read(buffer, bufferSize, buffer.length - bufferSize);
-		bufferSize += Math.max(0, length);
-		return length;
+		if (length > 0) {
+			bufferSize += length;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	public int shiftBufferToMark() throws BufferOverflowException {
+	@Override
+	public final void shiftBufferToMark(int mark) throws BufferOverflowException {
 		// shift buffer consumer data
-		int lMark = this.mark;
-		int usedLength = Math.max(bufferSize - lMark, 0);
+		int usedLength = Math.max(bufferSize - mark, 0);
 
 		// if buffer tight double the size
 		if (usedLength > resizeThreshold) {
 			resize(usedLength);
 		}
 
-		System.arraycopy(buffer, lMark, buffer, 0, usedLength);
-
+		System.arraycopy(buffer, mark, buffer, 0, usedLength);
 		bufferSize = usedLength;
+	}
 
-		this.mark = 0;
-		return lMark;
+	@Override
+	public final boolean supportsShift() {
+		return true;
 	}
 
 	private void resize(int requireLength) throws BufferOverflowException {

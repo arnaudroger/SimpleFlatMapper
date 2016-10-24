@@ -15,12 +15,19 @@ public final class CharSequenceCharBuffer extends CharBuffer {
 		super(toCharArray(str), str.length());
 	}
 
-	public int fillBuffer() throws IOException {
-		return -1;
+	@Override
+	public boolean fillBuffer() throws IOException {
+		throw new UnsupportedOperationException();
 	}
 
-	public int shiftBufferToMark() throws BufferOverflowException {
-		return 0;
+	@Override
+	public boolean supportsShift() {
+		return false;
+	}
+
+	@Override
+	public void shiftBufferToMark(int mark) throws BufferOverflowException {
+		throw new UnsupportedOperationException();
 	}
 
 	private static char[] toCharArray(CharSequence charSequence) {

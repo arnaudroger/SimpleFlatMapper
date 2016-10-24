@@ -170,5 +170,4 @@ public class CsvMapperDateFormatTest {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		assertEquals(sdf.parse("20160619"), list.get(0).date1);
 	}
-
 }

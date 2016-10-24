@@ -23,8 +23,15 @@ public class QueryDSLTest {
 		
 		SQLQuery sqlquery = new SQLQuery(conn, new HSQLDBTemplates());
 		try {
-			 List<DbObject> list = sqlquery.from(qTestDbObject).where(qTestDbObject.id.eq(1l)).list(new QueryDslMappingProjection<DbObject>(DbObject.class, qTestDbObject.id,
-					qTestDbObject.name, qTestDbObject.email, qTestDbObject.creationTime, qTestDbObject.typeName, qTestDbObject.typeOrdinal ));
+			 List<DbObject> list =
+					 sqlquery
+							 .from(qTestDbObject)
+							 .where(qTestDbObject.id.eq(1l))
+							 .list(
+							 		new QueryDslMappingProjection<DbObject>(
+							 				DbObject.class,
+											qTestDbObject.id, qTestDbObject.name, qTestDbObject.email,
+											qTestDbObject.creationTime, qTestDbObject.typeName, qTestDbObject.typeOrdinal ));
 			 
 			 assertEquals(1, list.size());
 			 DbHelper.assertDbObjectMapping(list.get(0));

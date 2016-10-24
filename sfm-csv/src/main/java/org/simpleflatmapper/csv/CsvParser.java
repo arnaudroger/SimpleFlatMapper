@@ -485,19 +485,31 @@ public final class CsvParser {
 		//IFJAVA8_END
 
 		protected final CharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
-			if (isCsv()) {
-				return new CsvCharConsumer(charBuffer);
-			} else {
-				switch (stringPostProcessing) {
-					case TRIM:
-						return new TrimAndUnescapeCharConsumer(charBuffer, separatorChar, quoteChar);
-					case UNESCAPE:
-						return new UnescapeCharConsumer(charBuffer, separatorChar, quoteChar);
-					case NONE:
-						return new NoStringPostProcessingCharConsumer(charBuffer, separatorChar, quoteChar);
-				}
+			final TextFormat textFormat = getTextFormat();
+			return new CharConsumer(charBuffer, textFormat, getCellTransformer(textFormat));
+
+		}
+
+		private TextFormat getTextFormat() {
+			return new TextFormat(separatorChar, quoteChar);
+		}
+
+		private CellTransformer getCellTransformer(TextFormat textFormat) {
+			CellTransformer cellTransformer;
+			switch (stringPostProcessing) {
+				case TRIM:
+					cellTransformer = new TrimCellTransformer(textFormat);
+					break;
+				case UNESCAPE:
+					cellTransformer = new UnescapeCellTransformer(textFormat);
+					break;
+				case NONE:
+					cellTransformer = new NoopCellTransformer();
+					break;
+				default:
+					throw new IllegalStateException("Could not instantiate char consumer " + stringPostProcessing);
 			}
-			throw new IllegalStateException("Could not instantiate char consumer " + stringPostProcessing);
+			return cellTransformer;
 		}
 
 		protected final boolean isCsv() {

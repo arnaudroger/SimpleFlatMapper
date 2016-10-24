@@ -20,16 +20,12 @@ public final class ReaderCharBuffer extends CharBuffer {
 	@Override
 	public final boolean fillBuffer() throws IOException {
 		int length = reader.read(buffer, bufferSize, buffer.length - bufferSize);
-		if (length > 0) {
-			bufferSize += length;
-			return true;
-		} else {
-			return false;
-		}
+		bufferSize += Math.max(0, length);
+		return length > 0;
 	}
 
 	@Override
-	public final void shiftBufferToMark(int mark) throws BufferOverflowException {
+	public final boolean shiftBufferToMark(int mark) throws BufferOverflowException {
 		// shift buffer consumer data
 		int usedLength = Math.max(bufferSize - mark, 0);
 
@@ -40,10 +36,7 @@ public final class ReaderCharBuffer extends CharBuffer {
 
 		System.arraycopy(buffer, mark, buffer, 0, usedLength);
 		bufferSize = usedLength;
-	}
 
-	@Override
-	public final boolean supportsShift() {
 		return true;
 	}
 

@@ -16,18 +16,13 @@ public final class CharSequenceCharBuffer extends CharBuffer {
 	}
 
 	@Override
-	public boolean fillBuffer() throws IOException {
+	public final boolean fillBuffer() throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean supportsShift() {
+	public final boolean shiftBufferToMark(int mark) {
 		return false;
-	}
-
-	@Override
-	public void shiftBufferToMark(int mark) throws BufferOverflowException {
-		throw new UnsupportedOperationException();
 	}
 
 	private static char[] toCharArray(CharSequence charSequence) {

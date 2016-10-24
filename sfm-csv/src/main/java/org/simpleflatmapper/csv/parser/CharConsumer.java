@@ -17,51 +17,44 @@ public final class CharConsumer {
 	private final CharBuffer _csvBuffer;
 	private int _currentIndex = 0;
 	private int _currentState = NONE;
-	private int _cellStart = 0;
+	private int cellStart = 0;
 
+	private final CellTransformer cellTransformer;
 	private final TextFormat _textFormat;
-	private final CellTransformer _cellTransformer;
 
 	public CharConsumer(CharBuffer csvBuffer, TextFormat textFormat, CellTransformer cellTransformer) {
 		this._csvBuffer = csvBuffer;
 		this._textFormat = textFormat;
-		this._cellTransformer = cellTransformer;
+		this.cellTransformer = cellTransformer;
 	}
 
 	public final void consumeAllBuffer(CellConsumer cellConsumer) {
 		final TextFormat textFormat = _textFormat;
-		final CellTransformer cellTransformer = _cellTransformer;
 
-		final int bufferSize = _csvBuffer.getBufferSize();
 		final char[] chars = _csvBuffer.getCharBuffer();
+		final int bufferSize = Math.min(_csvBuffer.getBufferSize(), chars.length); // hint
 
 		int currentIndex = _currentIndex;
 		int currentState = _currentState;
-		int cellStart = _cellStart;
 
 		for(;currentIndex  < bufferSize; currentIndex++) {
 			char character = chars[currentIndex];
 			if (textFormat.isNotEscapeCharacter(character)) {
 				if (isEscaped(currentState)) {
 					if (textFormat.isSeparator(character)) {
-						cellTransformer.newCell(chars, cellStart, currentIndex, cellConsumer);
-						cellStart = currentIndex + 1;
+						newCell(chars, currentIndex, cellConsumer);
 						currentState = LAST_CHAR_WAS_SEPARATOR;
 						continue;
 					} else if (character == '\n') {
 						if (lastCharWasNotCr(currentState)) {
-							cellTransformer.newCell(chars, cellStart, currentIndex, cellConsumer);
-							cellConsumer.endOfRow();
+							endOfRow(chars, currentIndex, cellConsumer);
 							currentState = NONE;
-							cellStart = currentIndex + 1;
 							continue;
 						}
 						cellStart = currentIndex + 1;
 					} else if (character == '\r') {
-						cellTransformer.newCell(chars, cellStart, currentIndex, cellConsumer);
-						cellConsumer.endOfRow();
+						endOfRow(chars, currentIndex, cellConsumer);
 						currentState = LAST_CHAR_WAS_CR;
-						cellStart = currentIndex + 1;
 						continue;
 					}
 				}
@@ -72,60 +65,53 @@ public final class CharConsumer {
 		}
 		_currentState = currentState;
 		_currentIndex = currentIndex;
-		_cellStart = cellStart;
+	}
+
+	public void endOfRow(char[] chars, int currentIndex, CellConsumer cellConsumer) {
+		newCell(chars, currentIndex, cellConsumer);
+		cellConsumer.endOfRow();
+	}
+
+	public void newCell(char[] chars, int currentIndex, CellConsumer cellConsumer) {
+		cellTransformer.newCell(chars, cellStart, currentIndex, cellConsumer);
+		cellStart = currentIndex + 1;
 	}
 
 	public final boolean consumeToNextRow(CellConsumer cellConsumer) {
 		final TextFormat textFormat = _textFormat;
-		final CellTransformer cellTransformer = _cellTransformer;
 
 		final int bufferSize = _csvBuffer.getBufferSize();
 		final char[] chars = _csvBuffer.getCharBuffer();
 
 		int currentIndex = _currentIndex;
 		int currentState = _currentState;
-		int cellStart = _cellStart;
 
 		for(;currentIndex  < bufferSize; currentIndex++) {
 			char character = chars[currentIndex];
 			if (textFormat.isNotEscapeCharacter(character)) {
 				if (isEscaped(currentState)) {
 					if (textFormat.isSeparator(character)) {
-						cellTransformer.newCell(chars, cellStart, currentIndex, cellConsumer);
-						cellStart = currentIndex + 1;
+						newCell(chars, currentIndex, cellConsumer);
 						currentState = LAST_CHAR_WAS_SEPARATOR;
 						continue;
 					} else if (character == '\n') {
 						if (lastCharWasNotCr(currentState)) {
-							cellTransformer.newCell(chars, cellStart, currentIndex, cellConsumer);
-							boolean b = cellConsumer.endOfRow();
-							currentState = NONE;
-							cellStart = currentIndex + 1;
-
-							if (b) {
-								_currentState = currentState;
+							if (endOfRowReturnValue(chars, currentIndex, cellConsumer)) {
+								_currentState = NONE;
 								_currentIndex = currentIndex + 1;
-								_cellStart = cellStart;
 								return true;
 							}
-
+							currentState = NONE;
 							continue;
 						}
 						cellStart = currentIndex + 1;
 					} else if (character == '\r') {
-
-						cellTransformer.newCell(chars, cellStart, currentIndex, cellConsumer);
-						boolean b = cellConsumer.endOfRow();
-
-						currentState = LAST_CHAR_WAS_CR;
-						cellStart = currentIndex + 1;
-
-						if (b) {
-							_currentState = currentState;
+						if (endOfRowReturnValue(chars, currentIndex, cellConsumer)) {
+							_currentState = LAST_CHAR_WAS_CR;
 							_currentIndex = currentIndex + 1;
-							_cellStart = cellStart;
 							return true;
 						}
+						currentState = LAST_CHAR_WAS_CR;
 						continue;
 					}
 				}
@@ -137,26 +123,28 @@ public final class CharConsumer {
 
 		_currentState = currentState;
 		_currentIndex = currentIndex;
-		_cellStart = cellStart;
 
 		return false;
 	}
 
+	public boolean endOfRowReturnValue(char[] chars, int currentIndex, CellConsumer cellConsumer) {
+		newCell(chars, currentIndex, cellConsumer);
+		return cellConsumer.endOfRow();
+	}
+
 	public final void finish(CellConsumer cellConsumer) {
-		if ( _currentIndex > _cellStart
+		if ( _currentIndex > cellStart
 				|| lastCharWasSeparator()) {
-			_cellTransformer.newCell(_csvBuffer.getCharBuffer(), _cellStart, _currentIndex, cellConsumer);
-			_cellStart = _currentIndex + 1;
+			newCell(_csvBuffer.getCharBuffer(), _currentIndex, cellConsumer);
 			_currentState = NONE;
 		}
 		cellConsumer.end();
 	}
 
 	public final boolean refillBuffer() throws IOException {
-		if (_csvBuffer.supportsShift()) {
-			_csvBuffer.shiftBufferToMark(_cellStart);
-			_currentIndex -= _cellStart;
-			_cellStart = 0;
+		if (_csvBuffer.shiftBufferToMark(cellStart)) {
+			_currentIndex -= cellStart;
+			cellStart = 0;
 			return _csvBuffer.fillBuffer();
 		} else {
 			return false;

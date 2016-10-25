@@ -22,8 +22,7 @@ public final class StringArrayCellConsumer<RH extends CheckedConsumer<? super St
 	@Override
 	public void newCell(char[] chars, int offset, int length) {
 		ensureCapacity();
-		String cellValue = StringCellValueReader.readString(chars, offset, length);
-		currentRow[currentIndex] = cellValue;
+		currentRow[currentIndex] = new String(chars, offset, length);
 		currentIndex ++;
 	}
 

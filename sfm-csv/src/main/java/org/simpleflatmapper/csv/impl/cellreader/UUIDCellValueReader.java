@@ -13,7 +13,7 @@ public class UUIDCellValueReader implements CellValueReader<UUID> {
 	@Override
 	public UUID read(char[] chars, int offset, int length, ParsingContext parsingContext) {
 		if (length > 0) {
-			return UUID.fromString(StringCellValueReader.readString(chars, offset, length));
+			return UUID.fromString(new String(chars, offset, length));
 		}
 		return null;
 	}

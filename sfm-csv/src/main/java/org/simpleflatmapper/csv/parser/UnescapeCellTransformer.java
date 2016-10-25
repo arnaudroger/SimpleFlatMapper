@@ -2,17 +2,17 @@ package org.simpleflatmapper.csv.parser;
 
 public final class UnescapeCellTransformer extends CellTransformer {
 
-    private final TextFormat textFormat;
+    private final char escapeChar;
 
-    public UnescapeCellTransformer(TextFormat textFormat) {
-        this.textFormat = textFormat;
+    public UnescapeCellTransformer(char escapeChar) {
+        this.escapeChar = escapeChar;
     }
 
     public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer) {
         int strStart = start;
         int strEnd = end;
 
-        if (strStart < strEnd && textFormat.isEscapeCharacter(chars[strStart])) {
+        if (strStart < strEnd && chars[strStart] == escapeChar) {
             strStart ++;
             strEnd = unescape(chars, strStart, strEnd);
         }
@@ -22,12 +22,12 @@ public final class UnescapeCellTransformer extends CellTransformer {
 
     private int unescape(final char[] chars, final int start, final int end) {
         for(int i = start; i < end - 1; i ++) {
-            if (textFormat.isEscapeCharacter(chars[i])) {
+            if (chars[i] == escapeChar) {
                 return removeEscapeChars(chars, end, i);
             }
         }
 
-        if (start < end && textFormat.isEscapeCharacter(chars[end - 1])) {
+        if (start < end && chars[end - 1]  == escapeChar) {
             return end - 1;
         }
 
@@ -38,7 +38,7 @@ public final class UnescapeCellTransformer extends CellTransformer {
         int j = firstEscapeChar;
         boolean escaped = true;
         for(int i = firstEscapeChar + 1;i < end; i++) {
-            escaped = textFormat.isEscapeCharacter(chars[i]) && ! escaped;
+            escaped = chars[i]  == escapeChar && ! escaped;
             if (!escaped) {
                 chars[j++] = chars[i];
             }

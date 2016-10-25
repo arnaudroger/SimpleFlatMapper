@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * Consume the charBuffer.
  */
-public final class CharConsumer {
+public abstract class CharConsumer {
 
 	private static final int LAST_CHAR_WAS_SEPARATOR = 4;
 	private static final int LAST_CHAR_WAS_CR = 2;
@@ -20,17 +20,13 @@ public final class CharConsumer {
 	private int cellStart = 0;
 
 	private final CellTransformer cellTransformer;
-	private final TextFormat _textFormat;
 
 	public CharConsumer(CharBuffer csvBuffer, TextFormat textFormat, CellTransformer cellTransformer) {
 		this._csvBuffer = csvBuffer;
-		this._textFormat = textFormat;
 		this.cellTransformer = cellTransformer;
 	}
 
 	public final void consumeAllBuffer(CellConsumer cellConsumer) {
-		final TextFormat textFormat = _textFormat;
-
 		final char[] chars = _csvBuffer.getCharBuffer();
 		final int bufferSize = _csvBuffer.getBufferSize();
 
@@ -39,9 +35,9 @@ public final class CharConsumer {
 		int currentIndex;
 		for(currentIndex = _currentIndex; currentIndex  < bufferSize; currentIndex++) {
 			char character = chars[currentIndex];
-			if (textFormat.isNotEscapeCharacter(character)) {
+			if (isNotEscapeCharacter(character)) {
 				if (isNotEscaped(currentState)) {
-					if (textFormat.isSeparator(character)) {
+					if (isSeparator(character)) {
 						newCell(chars, currentIndex, cellConsumer);
 						currentState = LAST_CHAR_WAS_SEPARATOR;
 						continue;
@@ -68,8 +64,6 @@ public final class CharConsumer {
 	}
 
 	public final boolean consumeToNextRow(CellConsumer cellConsumer) {
-		final TextFormat textFormat = _textFormat;
-
 		final char[] chars = _csvBuffer.getCharBuffer();
 		final int bufferSize = _csvBuffer.getBufferSize();
 
@@ -78,9 +72,9 @@ public final class CharConsumer {
 		int currentIndex;
 		for(currentIndex = _currentIndex; currentIndex  < bufferSize; currentIndex++) {
 			char character = chars[currentIndex];
-			if (textFormat.isNotEscapeCharacter(character)) {
+			if (isNotEscapeCharacter(character)) {
 				if (isNotEscaped(currentState)) {
-					if (textFormat.isSeparator(character)) {
+					if (isSeparator(character)) {
 						newCell(chars, currentIndex, cellConsumer);
 						currentState = LAST_CHAR_WAS_SEPARATOR;
 						continue;
@@ -114,6 +108,10 @@ public final class CharConsumer {
 
 		return false;
 	}
+
+	protected abstract boolean isSeparator(char character);
+
+	protected abstract boolean isNotEscapeCharacter(char character);
 
 	public final void finish(CellConsumer cellConsumer) {
 		if ( _currentIndex > cellStart

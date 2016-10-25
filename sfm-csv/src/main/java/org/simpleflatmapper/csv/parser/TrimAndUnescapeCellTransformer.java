@@ -5,8 +5,8 @@ public final class TrimAndUnescapeCellTransformer extends CellTransformer {
 
     private final UnescapeCellTransformer delegate;
 
-    public TrimAndUnescapeCellTransformer(TextFormat textFormat) {
-        this.delegate = new UnescapeCellTransformer(textFormat);
+    public TrimAndUnescapeCellTransformer(char escapeChar) {
+        this.delegate = new UnescapeCellTransformer(escapeChar);
     }
 
     public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer) {

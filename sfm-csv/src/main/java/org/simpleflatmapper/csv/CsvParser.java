@@ -486,8 +486,12 @@ public final class CsvParser {
 
 		protected final CharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
 			final TextFormat textFormat = getTextFormat();
-			return new CharConsumer(charBuffer, textFormat, getCellTransformer(textFormat));
 
+			if (quoteChar == '"' && separatorChar == ',') {
+				return new CsvCharConsumer(charBuffer, textFormat, getCellTransformer(textFormat));
+			} else {
+				return new ConfigurableCharConsumer(charBuffer, textFormat, getCellTransformer(textFormat));
+			}
 		}
 
 		private TextFormat getTextFormat() {
@@ -498,10 +502,10 @@ public final class CsvParser {
 			CellTransformer cellTransformer;
 			switch (stringPostProcessing) {
 				case TRIM:
-					cellTransformer = new TrimAndUnescapeCellTransformer(textFormat);
+					cellTransformer = new TrimAndUnescapeCellTransformer(textFormat.getEscapeChar());
 					break;
 				case UNESCAPE:
-					cellTransformer = new UnescapeCellTransformer(textFormat);
+					cellTransformer = new UnescapeCellTransformer(textFormat.getEscapeChar());
 					break;
 				case NONE:
 					cellTransformer = new NoopCellTransformer();

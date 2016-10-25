@@ -10,16 +10,11 @@ public final class TextFormat {
         this.escapeChar = escapeChar;
     }
 
-    public final boolean isNotEscapeCharacter(char character) {
-        return character != escapeChar;
+    public char getSeparatorChar() {
+        return separatorChar;
     }
 
-    public final boolean isEscapeCharacter(char character) {
-        return character == escapeChar;
+    public char getEscapeChar() {
+        return escapeChar;
     }
-
-    public final boolean isSeparator(char character) {
-        return character == separatorChar;
-    }
-
 }

@@ -15,11 +15,13 @@ public final class CharSequenceCharBuffer extends CharBuffer {
 		super(toCharArray(str), str.length());
 	}
 
-	public int fillBuffer() throws IOException {
+	@Override
+	public final int fillBuffer() throws IOException {
 		return -1;
 	}
 
-	public int shiftBufferToMark() throws BufferOverflowException {
+	@Override
+	public final int shiftBufferToMark() {
 		return 0;
 	}
 

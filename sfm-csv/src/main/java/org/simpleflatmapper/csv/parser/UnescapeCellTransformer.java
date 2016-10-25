@@ -1,27 +1,14 @@
 package org.simpleflatmapper.csv.parser;
 
-public final class CsvCharConsumer extends CharConsumer {
+public final class UnescapeCellTransformer extends CellTransformer {
 
-    public static final char escapeChar = '"';
-    public static final char separatorChar = ',';
+    private final char escapeChar;
 
-    public CsvCharConsumer(CharBuffer csvBuffer) {
-        super(csvBuffer, false);
+    public UnescapeCellTransformer(char escapeChar) {
+        this.escapeChar = escapeChar;
     }
 
-    @Override
-    protected final boolean isSeparator(char character) {
-        return character == separatorChar;
-    }
-
-    @Override
-    protected final boolean isNotEscapeCharacter(char character) {
-        return character != escapeChar;
-    }
-
-
-    @Override
-    protected final void pushCell(char[] chars, int start, int end, CellConsumer cellConsumer) {
+    public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer) {
         int strStart = start;
         int strEnd = end;
 

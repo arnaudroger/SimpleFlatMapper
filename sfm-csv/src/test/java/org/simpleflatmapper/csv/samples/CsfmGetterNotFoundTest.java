@@ -105,7 +105,7 @@ public class CsfmGetterNotFoundTest {
                 .addColumnProperty("bar", new CustomReaderProperty(new CellValueReader<Bar2>() {
                     @Override
                     public Bar2 read(char[] chars, int offset, int length, ParsingContext parsingContext) {
-                        return new Bar2(StringCellValueReader.readString(chars, offset, length), 2);
+                        return new Bar2(new String(chars, offset, length), 2);
                     }
                 }))
                 .newBuilder(Foo2.class)

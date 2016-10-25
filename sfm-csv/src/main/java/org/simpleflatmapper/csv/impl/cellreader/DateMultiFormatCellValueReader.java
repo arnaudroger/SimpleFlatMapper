@@ -31,7 +31,7 @@ public class DateMultiFormatCellValueReader implements CellValueReader<Date>, Pa
 	public Date read(char[] chars, int offset, int length, ParsingContext parsingContext) {
 		if (length == 0) return null;
 
-		String str = StringCellValueReader.readString(chars, offset, length);
+		String str = new String(chars, offset, length);
 		DateFormat[] dfs = (DateFormat[]) parsingContext.getContext(index);
 		for(int i = dfs.length - 1; i >= 0; i--) {
 			try {

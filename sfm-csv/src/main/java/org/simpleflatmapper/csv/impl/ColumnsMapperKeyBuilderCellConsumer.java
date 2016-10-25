@@ -29,7 +29,7 @@ public final class ColumnsMapperKeyBuilderCellConsumer implements CellConsumer {
 	@Override
 	public void newCell(char[] chars, int offset, int length) {
 		if (!hasNoData) throw new IllegalArgumentException("Already consume the headers");
-		columns.add(new CsvColumnKey(StringCellValueReader.readString(chars, offset, length), index));
+		columns.add(new CsvColumnKey(new String(chars, offset, length), index));
 		index++;
 	}
 

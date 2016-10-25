@@ -16,7 +16,7 @@ public final class DoubleCellValueReaderImpl implements DoubleCellValueReader {
 	}
 	public static double parseDouble(char[] chars, int offset, int length) {
         if (length == 0) return Double.NaN;
-        return Double.parseDouble(StringCellValueReader.readString(chars, offset, length));
+        return Double.parseDouble(new String(chars, offset, length));
 	}
 
     @Override

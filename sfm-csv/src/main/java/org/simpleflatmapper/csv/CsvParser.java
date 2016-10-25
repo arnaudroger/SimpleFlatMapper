@@ -264,7 +264,7 @@ public final class CsvParser {
 		protected final StringPostProcessing stringPostProcessing;
 		protected final org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper;
 
-		protected enum StringPostProcessing { NONE, UNESCAPE, TRIM }
+		protected enum StringPostProcessing { NONE, UNESCAPE, TRIM_AND_UNESCAPE}
 
 		protected AbstractDSL() {
 			separatorChar = ',';
@@ -485,23 +485,39 @@ public final class CsvParser {
 		//IFJAVA8_END
 
 		protected final CharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
+			final TextFormat textFormat = getTextFormat();
+
 			if (isCsv()) {
 				return new CsvCharConsumer(charBuffer);
 			} else {
-				switch (stringPostProcessing) {
-					case TRIM:
-						return new TrimAndUnescapeCharConsumer(charBuffer, separatorChar, quoteChar);
-					case UNESCAPE:
-						return new UnescapeCharConsumer(charBuffer, separatorChar, quoteChar);
-					case NONE:
-						return new NoStringPostProcessingCharConsumer(charBuffer, separatorChar, quoteChar);
-				}
+				return new ConfigurableCharConsumer(charBuffer, textFormat, getCellTransformer(textFormat));
 			}
-			throw new IllegalStateException("Could not instantiate char consumer " + stringPostProcessing);
 		}
 
-		protected final boolean isCsv() {
-			return stringPostProcessing == StringPostProcessing.UNESCAPE && separatorChar == ',' && quoteChar == '"';
+		private boolean isCsv() {
+			return quoteChar == '"' && separatorChar == ',' && stringPostProcessing == StringPostProcessing.UNESCAPE;
+		}
+
+		private TextFormat getTextFormat() {
+			return new TextFormat(separatorChar, quoteChar);
+		}
+
+		private CellTransformer getCellTransformer(TextFormat textFormat) {
+			CellTransformer cellTransformer;
+			switch (stringPostProcessing) {
+				case TRIM_AND_UNESCAPE:
+					cellTransformer = new TrimAndUnescapeCellTransformer(textFormat.getEscapeChar());
+					break;
+				case UNESCAPE:
+					cellTransformer = new UnescapeCellTransformer(textFormat.getEscapeChar());
+					break;
+				case NONE:
+					cellTransformer = new NoopCellTransformer();
+					break;
+				default:
+					throw new IllegalStateException("Could not instantiate char consumer " + stringPostProcessing);
+			}
+			return cellTransformer;
 		}
 
 		public final int maxBufferSize() {
@@ -604,7 +620,7 @@ public final class CsvParser {
 
 
 		public DSL trimSpaces() {
-            return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.TRIM, cellConsumerWrapper);
+            return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.TRIM_AND_UNESCAPE, cellConsumerWrapper);
         }
 
 		public DSLYamlComment withYamlComments() {

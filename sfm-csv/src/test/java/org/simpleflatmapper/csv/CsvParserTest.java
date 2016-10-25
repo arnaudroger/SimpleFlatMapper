@@ -101,7 +101,7 @@ public class CsvParserTest {
 		assertEquals("value2", tuple2.second());
 		assertFalse(iterator.hasNext());
 
-		//assertEquals("value", CsvParser.mapTo(String.class).iterator(new StringReader("val\nvalue")).next());
+		//assertEquals("value", CsvParser.mapTo(String.class).iterator(new StringReader("val\nvalue")).current());
 	}
 
 	@Test
@@ -665,6 +665,19 @@ public class CsvParserTest {
 		}
 
 	}
+	@Test
+	public void testIssue84CsvParser() throws IOException {
+		String str = "my_field,second_field\n" +
+				",,";
+
+		Iterator<String[]> iterator = CsvParser.iterator(new StringReader(str));
+
+		while(iterator.hasNext()) {
+			System.out.println(iterator.next());
+		}
+
+	}
+
 
 	@Test
 	public void testMaxBufferSize() throws IOException {
@@ -882,6 +895,9 @@ public class CsvParserTest {
 		assertArrayEquals(new Object[][]{{""}}, toObjects(CsvParser.reader("\n")));
 		assertArrayEquals(new Object[][]{{""}}, toObjects(CsvParser.separator('|').reader("\n")));
 		assertArrayEquals(new Object[][]{{""}}, toObjects(CsvParser.dsl().trimSpaces().reader("\n")));
+		assertArrayEquals(new Object[][]{{""}}, toObjectsIt(CsvParser.reader("\n")));
+		assertArrayEquals(new Object[][]{{""}}, toObjectsIt(CsvParser.separator('|').reader("\n")));
+		assertArrayEquals(new Object[][]{{""}}, toObjectsIt(CsvParser.dsl().trimSpaces().reader("\n")));
 	}
 
 	private Object[][] toObjects(CsvReader reader) throws IOException {
@@ -890,11 +906,7 @@ public class CsvParserTest {
 		reader.read(new CheckedConsumer<String[]>() {
 			@Override
 			public void accept(String[] strings) {
-				Object[] o = new Object[strings.length];
-				for(int i = 0; i < strings.length; i++) {
-					o[i] = strings[i];
-				}
-				objects.add(o);
+				objects.add(Arrays.copyOf(strings, strings.length, Object[].class));
 			}
 		});
 
@@ -902,18 +914,40 @@ public class CsvParserTest {
 
 	}
 
+	private Object[][] toObjectsIt(CsvReader reader) throws IOException {
+		final List<Object[]> objects = new ArrayList<Object[]>();
+
+		Iterator<String[]> it = reader.iterator();
+
+		while(it.hasNext()) {
+			String[] strings = it.next();
+			objects.add(Arrays.copyOf(strings, strings.length, Object[].class));
+		}
+		return objects.toArray(new Object[0][]);
+	}
+
 	@Test
 	public void testOnequote() throws IOException  {
 		assertArrayEquals(new Object[][]{{""}}, toObjects(CsvParser.reader("\"")));
 		assertArrayEquals(new Object[][]{{""}}, toObjects(CsvParser.separator('|').reader("\"")));
 		assertArrayEquals(new Object[][]{{""}}, toObjects(CsvParser.dsl().trimSpaces().reader("\"")));
+
+		assertArrayEquals(new Object[][]{{""}}, toObjectsIt(CsvParser.reader("\"")));
+		assertArrayEquals(new Object[][]{{""}}, toObjectsIt(CsvParser.separator('|').reader("\"")));
+		assertArrayEquals(new Object[][]{{""}}, toObjectsIt(CsvParser.dsl().trimSpaces().reader("\"")));
 	}
 
 	@Test
 	public void testOneSeparator() throws IOException  {
 		assertArrayEquals(new Object[][] {{"", ""}}, toObjects(CsvParser.reader(",")));
+		assertArrayEquals(new Object[][] {{"", ""}}, toObjectsIt(CsvParser.reader(",")));
+
 		assertArrayEquals(new Object[][] {{"", ""}}, toObjects(CsvParser.separator('|').reader("|")));
 		assertArrayEquals(new Object[][] {{"", ""}}, toObjects(CsvParser.dsl().trimSpaces().reader(",")));
+
+		assertArrayEquals(new Object[][] {{"", ""}}, toObjectsIt(CsvParser.separator('|').reader("|")));
+		assertArrayEquals(new Object[][] {{"", ""}}, toObjectsIt(CsvParser.dsl().trimSpaces().reader(",")));
+
 	}
 
 	@Test
@@ -1131,4 +1165,78 @@ public class CsvParserTest {
 		assertEquals("n", dbObjects.get(0).getName());
 	}
 
+	@Test
+	public void testWeirdQuote() throws IOException {
+		String csv = "ddddd\",ddd,\"dd\", \"dd,dd\"";
+
+		List<String[]> strings = CsvParser.forEach(csv, new ListCollector<String[]>()).getList();
+
+		assertArrayEquals(new String[] { "ddddd\"", "ddd", "dd", " \"dd", "dd\""}, strings.get(0));
+
+
+		strings = new ArrayList<String[]>();
+
+		for(String[] row : CsvParser.reader(csv)) {
+			strings.add(row);
+		}
+
+		assertArrayEquals(new String[] { "ddddd\"", "ddd", "dd", " \"dd", "dd\""}, strings.get(0));
+
+	}
+
+
+	@Test
+	public void testWeirdQuoteWithTrim() throws IOException {
+		String csv = "  ddddd\",ddd, \"dd,dd\"";
+
+		List<String[]> strings = CsvParser.dsl().trimSpaces().forEach(csv, new ListCollector<String[]>()).getList();
+
+		assertArrayEquals(new String[] { "ddddd\"", "ddd", "dd,dd"}, strings.get(0));
+
+
+		strings = new ArrayList<String[]>();
+
+		for(String[] row : CsvParser.dsl().trimSpaces().reader(csv)) {
+			strings.add(row);
+		}
+
+		assertArrayEquals(new String[] { "ddddd\"", "ddd", "dd,dd"}, strings.get(0));
+
+	}
+
+
+	@Test
+	public void testReadMultipleFormatOverrideDefault() throws  Exception {
+
+		String data2 = "date1\n06-19-2016";
+
+
+		final List<String> strings = new ArrayList<String>();
+		CsvParser.forEach(new StringReader(data2), new CheckedConsumer<String[]>() {
+			@Override
+			public void accept(String[] s) throws Exception {
+				strings.add(s[0]);
+			}
+		});
+
+		assertArrayEquals(new String[] { "date1",  "06-19-2016" }, strings.toArray(new String[0]));
+
+	}
+	@Test
+	public void testReadMultipleFormatOverrideDefault2() throws  Exception {
+
+		String data2 = "date1\n06-19-2016";
+
+
+		final List<String> strings = new ArrayList<String>();
+		CsvParser.bufferSize(8).forEach(new StringReader(data2), new CheckedConsumer<String[]>() {
+			@Override
+			public void accept(String[] s) throws Exception {
+				strings.add(s[0]);
+			}
+		});
+
+		assertArrayEquals(new String[] { "date1",  "06-19-2016" }, strings.toArray(new String[0]));
+
+	}
 }

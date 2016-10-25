@@ -8,7 +8,7 @@ public final class ConfigurableCharConsumer extends CharConsumer {
     private CellTransformer cellTransformer;
 
     public ConfigurableCharConsumer(CharBuffer csvBuffer, TextFormat textFormat, CellTransformer cellTransformer) {
-        super(csvBuffer);
+        super(csvBuffer, cellTransformer instanceof TrimAndUnescapeCellTransformer);
         this.cellTransformer = cellTransformer;
         this.escapeChar = textFormat.getEscapeChar();
         this.separatorChar = textFormat.getSeparatorChar();

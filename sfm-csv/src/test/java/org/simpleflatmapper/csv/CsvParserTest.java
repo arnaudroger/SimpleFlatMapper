@@ -1165,15 +1165,44 @@ public class CsvParserTest {
 		assertEquals("n", dbObjects.get(0).getName());
 	}
 
-	//IFJAVA8_START
+	@Test
 	public void testWeirdQuote() throws IOException {
-		String csv = "ddddd\",ddd";
+		String csv = "ddddd\",ddd,\"dd\", \"dd,dd\"";
 
-		List<String[]> strings = CsvParser.stream(csv).collect(Collectors.toList());
+		List<String[]> strings = CsvParser.forEach(csv, new ListCollector<>()).getList();
 
-		assertArrayEquals(new String[] { "ddddd", "ddd"}, strings.get(0));
+		assertArrayEquals(new String[] { "ddddd\"", "ddd", "dd", " \"dd", "dd\""}, strings.get(0));
+
+
+		strings = new ArrayList<String[]>();
+
+		for(String[] row : CsvParser.reader(csv)) {
+			strings.add(row);
+		}
+
+		assertArrayEquals(new String[] { "ddddd\"", "ddd", "dd", " \"dd", "dd\""}, strings.get(0));
+
 	}
-	//IFJAVA8_END
+
+
+	@Test
+	public void testWeirdQuoteWithTrim() throws IOException {
+		String csv = "  ddddd\",ddd, \"dd,dd\"";
+
+		List<String[]> strings = CsvParser.dsl().trimSpaces().forEach(csv, new ListCollector<>()).getList();
+
+		assertArrayEquals(new String[] { "ddddd\"", "ddd", "dd,dd"}, strings.get(0));
+
+
+		strings = new ArrayList<String[]>();
+
+		for(String[] row : CsvParser.dsl().trimSpaces().reader(csv)) {
+			strings.add(row);
+		}
+
+		assertArrayEquals(new String[] { "ddddd\"", "ddd", "dd,dd"}, strings.get(0));
+
+	}
 
 
 	@Test

@@ -6,7 +6,7 @@ public final class CsvCharConsumer extends CharConsumer {
     public static final char separatorChar = ',';
 
     public CsvCharConsumer(CharBuffer csvBuffer) {
-        super(csvBuffer);
+        super(csvBuffer, false);
     }
 
     @Override
@@ -20,6 +20,7 @@ public final class CsvCharConsumer extends CharConsumer {
     }
 
 
+    @Override
     protected final void pushCell(char[] chars, int start, int end, CellConsumer cellConsumer) {
         int strStart = start;
         int strEnd = end;

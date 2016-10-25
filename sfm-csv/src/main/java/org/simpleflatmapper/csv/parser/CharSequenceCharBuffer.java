@@ -21,8 +21,8 @@ public final class CharSequenceCharBuffer extends CharBuffer {
 	}
 
 	@Override
-	public final int shiftBufferToMark(int mark) {
-		return -1;
+	public final int shiftBufferToMark() {
+		return 0;
 	}
 
 	private static char[] toCharArray(CharSequence charSequence) {

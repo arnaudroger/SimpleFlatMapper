@@ -25,18 +25,21 @@ public final class ReaderCharBuffer extends CharBuffer {
 	}
 
 	@Override
-	public final int shiftBufferToMark(int mark) throws BufferOverflowException {
+	public final int shiftBufferToMark() throws BufferOverflowException {
 		// shift buffer consumer data
-		int usedLength = Math.max(bufferSize - mark, 0);
+		int lMark = this.mark;
+		int usedLength = Math.max(bufferSize - lMark, 0);
 
 		// if buffer tight double the size
 		resizeIfNeeded(usedLength);
 
-		System.arraycopy(buffer, mark, buffer, 0, usedLength);
+		System.arraycopy(buffer, lMark, buffer, 0, usedLength);
 
 		bufferSize = usedLength;
 
-		return mark;
+		mark = 0;
+
+		return lMark;
 	}
 
 	private void resizeIfNeeded(int requireLength) throws BufferOverflowException {

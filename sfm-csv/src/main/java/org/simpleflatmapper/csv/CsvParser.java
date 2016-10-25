@@ -264,7 +264,7 @@ public final class CsvParser {
 		protected final StringPostProcessing stringPostProcessing;
 		protected final org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper;
 
-		protected enum StringPostProcessing { NONE, UNESCAPE, TRIM }
+		protected enum StringPostProcessing { NONE, UNESCAPE, TRIM_AND_UNESCAPE}
 
 		protected AbstractDSL() {
 			separatorChar = ',';
@@ -487,11 +487,15 @@ public final class CsvParser {
 		protected final CharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
 			final TextFormat textFormat = getTextFormat();
 
-			if (quoteChar == '"' && separatorChar == ',') {
-				return new CsvCharConsumer(charBuffer, textFormat, getCellTransformer(textFormat));
+			if (isCsv()) {
+				return new CsvCharConsumer(charBuffer);
 			} else {
 				return new ConfigurableCharConsumer(charBuffer, textFormat, getCellTransformer(textFormat));
 			}
+		}
+
+		private boolean isCsv() {
+			return quoteChar == '"' && separatorChar == ',' && stringPostProcessing == StringPostProcessing.UNESCAPE;
 		}
 
 		private TextFormat getTextFormat() {
@@ -501,7 +505,7 @@ public final class CsvParser {
 		private CellTransformer getCellTransformer(TextFormat textFormat) {
 			CellTransformer cellTransformer;
 			switch (stringPostProcessing) {
-				case TRIM:
+				case TRIM_AND_UNESCAPE:
 					cellTransformer = new TrimAndUnescapeCellTransformer(textFormat.getEscapeChar());
 					break;
 				case UNESCAPE:
@@ -616,7 +620,7 @@ public final class CsvParser {
 
 
 		public DSL trimSpaces() {
-            return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.TRIM, cellConsumerWrapper);
+            return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.TRIM_AND_UNESCAPE, cellConsumerWrapper);
         }
 
 		public DSLYamlComment withYamlComments() {

@@ -17,13 +17,9 @@ public abstract class CharConsumer {
 	private final CharBuffer _csvBuffer;
 	private int _currentIndex = 0;
 	private int _currentState = NONE;
-	private int cellStart = 0;
 
-	private final CellTransformer cellTransformer;
-
-	public CharConsumer(CharBuffer csvBuffer, TextFormat textFormat, CellTransformer cellTransformer) {
+	public CharConsumer(CharBuffer csvBuffer) {
 		this._csvBuffer = csvBuffer;
-		this.cellTransformer = cellTransformer;
 	}
 
 	public final void consumeAllBuffer(CellConsumer cellConsumer) {
@@ -47,7 +43,7 @@ public abstract class CharConsumer {
 							currentState = NONE;
 							continue;
 						}
-						cellStart = currentIndex + 1;
+						startNextCell(currentIndex);
 					} else if (character == '\r') {
 						endOfRow(chars, currentIndex, cellConsumer);
 						currentState = LAST_CHAR_WAS_CR;
@@ -87,7 +83,7 @@ public abstract class CharConsumer {
 							currentState = NONE;
 							continue;
 						}
-						cellStart = currentIndex + 1;
+						startNextCell(currentIndex);
 					} else if (character == '\r') {
 						if (endOfRowReturnValue(chars, currentIndex, cellConsumer)) {
 							exitOnState(currentIndex, LAST_CHAR_WAS_CR);
@@ -109,12 +105,8 @@ public abstract class CharConsumer {
 		return false;
 	}
 
-	protected abstract boolean isSeparator(char character);
-
-	protected abstract boolean isNotEscapeCharacter(char character);
-
 	public final void finish(CellConsumer cellConsumer) {
-		if ( _currentIndex > cellStart
+		if ( hasUnconsumedData()
 				|| lastCharWasSeparator(_currentState)) {
 			newCell(_csvBuffer.getCharBuffer(), _currentIndex, cellConsumer);
 			_currentState = NONE;
@@ -122,14 +114,18 @@ public abstract class CharConsumer {
 		cellConsumer.end();
 	}
 
+	protected abstract boolean isSeparator(char character);
+
+	protected abstract boolean isNotEscapeCharacter(char character);
+
+	protected abstract void pushCell(char[] chars, int start, int end, CellConsumer cellConsumer);
+
 	public final boolean refillBuffer() throws IOException {
 		return _csvBuffer.fillBuffer() >= 0;
 	}
 
 	public final void shiftBufferToMark() throws BufferOverflowException {
-		int m = Math.max(0, _csvBuffer.shiftBufferToMark(cellStart));
-		_currentIndex -= m;
-		cellStart -= m;
+		_currentIndex -= _csvBuffer.shiftBufferToMark();
 	}
 
 	private void endOfRow(char[] chars, int currentIndex, CellConsumer cellConsumer) {
@@ -143,8 +139,16 @@ public abstract class CharConsumer {
 	}
 
 	private void newCell(char[] chars, int currentIndex, CellConsumer cellConsumer) {
-		cellTransformer.newCell(chars, cellStart, currentIndex, cellConsumer);
-		cellStart = currentIndex + 1;
+		pushCell(chars, _csvBuffer.mark, currentIndex, cellConsumer);
+		startNextCell(currentIndex);
+	}
+
+	private void startNextCell(int currentIndex) {
+		_csvBuffer.mark = currentIndex + 1;
+	}
+
+	private boolean hasUnconsumedData() {
+		return _currentIndex > _csvBuffer.mark;
 	}
 
 	private void exitOnState(int currentIndex, int none) {

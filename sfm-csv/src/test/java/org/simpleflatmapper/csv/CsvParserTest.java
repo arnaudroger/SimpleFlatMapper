@@ -1169,7 +1169,7 @@ public class CsvParserTest {
 	public void testWeirdQuote() throws IOException {
 		String csv = "ddddd\",ddd,\"dd\", \"dd,dd\"";
 
-		List<String[]> strings = CsvParser.forEach(csv, new ListCollector<>()).getList();
+		List<String[]> strings = CsvParser.forEach(csv, new ListCollector<String[]>()).getList();
 
 		assertArrayEquals(new String[] { "ddddd\"", "ddd", "dd", " \"dd", "dd\""}, strings.get(0));
 
@@ -1189,7 +1189,7 @@ public class CsvParserTest {
 	public void testWeirdQuoteWithTrim() throws IOException {
 		String csv = "  ddddd\",ddd, \"dd,dd\"";
 
-		List<String[]> strings = CsvParser.dsl().trimSpaces().forEach(csv, new ListCollector<>()).getList();
+		List<String[]> strings = CsvParser.dsl().trimSpaces().forEach(csv, new ListCollector<String[]>()).getList();
 
 		assertArrayEquals(new String[] { "ddddd\"", "ddd", "dd,dd"}, strings.get(0));
 

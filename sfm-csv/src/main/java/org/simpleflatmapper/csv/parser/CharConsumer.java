@@ -18,14 +18,12 @@ public abstract class CharConsumer {
 	private static final int TURN_OFF_LAST_CHAR_MASK = ~(LAST_CHAR_WAS_CR|LAST_CHAR_WAS_SEPARATOR);
 
 	private final CharBuffer _csvBuffer;
-	private final boolean notIgnoreLeadingSpace;
 
 	private int _currentIndex = 0;
 	private int _currentState = NONE;
 
-	public CharConsumer(CharBuffer csvBuffer, boolean ignoreLeadingSpace) {
+	public CharConsumer(CharBuffer csvBuffer) {
 		this._csvBuffer = csvBuffer;
-		this.notIgnoreLeadingSpace = !ignoreLeadingSpace;
 	}
 
 	public final void consumeAllBuffer(CellConsumer cellConsumer) {
@@ -59,7 +57,7 @@ public abstract class CharConsumer {
 					}
 				}
 				currentState &= TURN_OFF_LAST_CHAR_MASK;
-				currentState |= (notIgnoreLeadingSpace || character != ' ') ? DATA : 0;
+				currentState |= (isNotIgnoringLeadingSpace() || character != ' ') ? DATA : 0;
 			} else if (canEscaped(currentState)) {
 				currentState = (currentState ^ LAST_CHAR_WAS_ESCAPE) | ESCAPED;
 			}
@@ -105,7 +103,7 @@ public abstract class CharConsumer {
 					}
 				}
 				currentState &= TURN_OFF_LAST_CHAR_MASK;
-				currentState |= (notIgnoreLeadingSpace || character != ' ') ? DATA : 0;
+				currentState |= (isNotIgnoringLeadingSpace() || character != ' ') ? DATA : 0;
 			} else if (canEscaped(currentState)) {
 				currentState = (currentState ^ LAST_CHAR_WAS_ESCAPE) | ESCAPED;
 			}
@@ -131,6 +129,8 @@ public abstract class CharConsumer {
 	protected abstract boolean isNotEscapeCharacter(char character);
 
 	protected abstract void pushCell(char[] chars, int start, int end, CellConsumer cellConsumer);
+
+	protected abstract boolean isNotIgnoringLeadingSpace();
 
 	public final boolean refillBuffer() throws IOException {
 		return _csvBuffer.fillBuffer() >= 0;

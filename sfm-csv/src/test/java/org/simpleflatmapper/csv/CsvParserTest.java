@@ -1075,6 +1075,26 @@ public class CsvParserTest {
 
 	}
 
+	@Test
+	public void testYamlCommentParserTrim() throws IOException {
+		String data = "  test , \" hello\"\n# this a comment, not data\none more";
+
+		CsvParser.DSLYamlComment dsl = CsvParser
+				.dsl()
+				.trimSpaces()
+				.withYamlComments();
+
+		ListCollector<String[]> rowCollector = new ListCollector<String[]>();
+		ListCollector<String> commentCollector = new ListCollector<String>();
+
+
+		dsl.forEach(data, rowCollector, commentCollector);
+
+		assertArrayEquals(new String[] {"test", " hello"}, rowCollector.getList().get(0));
+		assertArrayEquals(new String[] {"one more"}, rowCollector.getList().get(1));
+		assertEquals(Arrays.asList("# this a comment, not data"), commentCollector.getList());
+	}
+
 	private void checkYamlComments(List<String> comments) {
 		assertEquals(1, comments.size());
 		assertEquals("# this a comment, not data", comments.get(0));

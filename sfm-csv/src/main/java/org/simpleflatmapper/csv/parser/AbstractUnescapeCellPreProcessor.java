@@ -1,18 +1,12 @@
 package org.simpleflatmapper.csv.parser;
 
-public final class UnescapeCellTransformer extends CellTransformer {
-
-    private final char escapeChar;
-
-    public UnescapeCellTransformer(char escapeChar) {
-        this.escapeChar = escapeChar;
-    }
+public abstract class AbstractUnescapeCellPreProcessor extends CellPreProcessor {
 
     public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer) {
         int strStart = start;
         int strEnd = end;
 
-        if (strStart < strEnd && chars[strStart] == escapeChar) {
+        if (strStart < strEnd && isEscapeChar(chars[strStart])) {
             strStart ++;
             strEnd = unescape(chars, strStart, strEnd);
         }
@@ -22,12 +16,12 @@ public final class UnescapeCellTransformer extends CellTransformer {
 
     private int unescape(final char[] chars, final int start, final int end) {
         for(int i = start; i < end - 1; i ++) {
-            if (chars[i] == escapeChar) {
+            if (isEscapeChar(chars[i])) {
                 return removeEscapeChars(chars, end, i);
             }
         }
 
-        if (start < end && chars[end - 1]  == escapeChar) {
+        if (start < end && isEscapeChar(chars[end - 1])) {
             return end - 1;
         }
 
@@ -38,11 +32,19 @@ public final class UnescapeCellTransformer extends CellTransformer {
         int j = firstEscapeChar;
         boolean escaped = true;
         for(int i = firstEscapeChar + 1;i < end; i++) {
-            escaped = chars[i]  == escapeChar && ! escaped;
+            escaped = isEscapeChar(chars[i]) && ! escaped;
             if (!escaped) {
                 chars[j++] = chars[i];
             }
         }
         return j;
     }
+
+    protected abstract boolean isEscapeChar(char c);
+
+    @Override
+    public final boolean ignoreLeadingSpace() {
+        return false;
+    }
+
 }

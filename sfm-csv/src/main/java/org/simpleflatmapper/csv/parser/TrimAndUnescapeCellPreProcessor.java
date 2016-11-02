@@ -1,12 +1,12 @@
 package org.simpleflatmapper.csv.parser;
 
 
-public final class TrimAndUnescapeCellTransformer extends CellTransformer {
+public final class TrimAndUnescapeCellPreProcessor extends CellPreProcessor {
 
-    private final UnescapeCellTransformer delegate;
+    private final CellPreProcessor delegate;
 
-    public TrimAndUnescapeCellTransformer(char escapeChar) {
-        this.delegate = new UnescapeCellTransformer(escapeChar);
+    public TrimAndUnescapeCellPreProcessor(CellPreProcessor cellPreProcessor) {
+        this.delegate = cellPreProcessor;
     }
 
     public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer) {
@@ -29,5 +29,10 @@ public final class TrimAndUnescapeCellTransformer extends CellTransformer {
         for(;start < end && chars[start] == ' '; start++)
             ;
         return start;
+    }
+
+    @Override
+    public boolean ignoreLeadingSpace() {
+        return true;
     }
 }

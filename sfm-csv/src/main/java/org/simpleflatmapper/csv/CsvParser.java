@@ -490,7 +490,7 @@ public final class CsvParser {
 			if (isCsv()) {
 				return new CsvCharConsumer(charBuffer);
 			} else {
-				return new ConfigurableCharConsumer(charBuffer, textFormat, getCellTransformer(textFormat));
+				return new ConfigurableCharConsumer(charBuffer, textFormat, getCellTransformer(textFormat, stringPostProcessing));
 			}
 		}
 
@@ -498,26 +498,29 @@ public final class CsvParser {
 			return quoteChar == '"' && separatorChar == ',' && stringPostProcessing == StringPostProcessing.UNESCAPE;
 		}
 
-		private TextFormat getTextFormat() {
+		protected TextFormat getTextFormat() {
 			return new TextFormat(separatorChar, quoteChar);
 		}
 
-		private CellTransformer getCellTransformer(TextFormat textFormat) {
-			CellTransformer cellTransformer;
+		protected CellPreProcessor getCellTransformer(TextFormat textFormat, StringPostProcessing stringPostProcessing) {
 			switch (stringPostProcessing) {
 				case TRIM_AND_UNESCAPE:
-					cellTransformer = new TrimAndUnescapeCellTransformer(textFormat.getEscapeChar());
-					break;
+					return new TrimAndUnescapeCellPreProcessor(getUnescapeCellTransformer(textFormat));
 				case UNESCAPE:
-					cellTransformer = new UnescapeCellTransformer(textFormat.getEscapeChar());
-					break;
+					return getUnescapeCellTransformer(textFormat);
 				case NONE:
-					cellTransformer = new NoopCellTransformer();
-					break;
+					return NoopCellPreProcessor.INSTANCE;
 				default:
 					throw new IllegalStateException("Could not instantiate char consumer " + stringPostProcessing);
 			}
-			return cellTransformer;
+		}
+
+		protected CellPreProcessor getUnescapeCellTransformer(TextFormat textFormat) {
+			if (textFormat.getEscapeChar() == '"') {
+				return CsvUnescapeCellPreProcessor.INSTANCE;
+			} else {
+				return new UnescapeCellPreProcessor(textFormat.getEscapeChar());
+			}
 		}
 
 		public final int maxBufferSize() {
@@ -624,15 +627,14 @@ public final class CsvParser {
         }
 
 		public DSLYamlComment withYamlComments() {
-			return new DSLYamlComment(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.NONE,
+			return new DSLYamlComment(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing,
 					new org.simpleflatmapper.util.Function<CellConsumer, CellConsumer>() {
 						@Override
 						public CellConsumer apply(CellConsumer cellConsumer) {
-							return new YamlCommentUnescapeContentCellConsumer(quoteChar, cellConsumer, IgnoreCellConsumer.INSTANCE);
+							return new YamlCommentUnescapeContentCellConsumer(getCellTransformer(getTextFormat(), stringPostProcessing), cellConsumer, IgnoreCellConsumer.INSTANCE);
 						}
 					}
 			);
-
 		}
 
 		public DSL disableUnescaping() {
@@ -648,6 +650,7 @@ public final class CsvParser {
 
 
     public static final class DSLYamlComment extends AbstractDSL<DSLYamlComment> {
+
 		protected DSLYamlComment(char separatorChar, char quoteChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
 			super(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper);
 		}
@@ -675,7 +678,20 @@ public final class CsvParser {
 		}
 
 		private YamlCommentUnescapeContentCellConsumer newYamlCellConsumer(CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) {
-			return new YamlCommentUnescapeContentCellConsumer(quoteChar, StringArrayCellConsumer.newInstance(rowConsumer), StringConcatCellConsumer.newInstance(commentConsumer, separatorChar));
+			return new YamlCommentUnescapeContentCellConsumer(superGetCellTransformer(getTextFormat(), stringPostProcessing), StringArrayCellConsumer.newInstance(rowConsumer), StringConcatCellConsumer.newInstance(commentConsumer, separatorChar));
+		}
+
+		private CellPreProcessor superGetCellTransformer(TextFormat textFormat, StringPostProcessing stringPostProcessing) {
+			return super.getCellTransformer(textFormat, stringPostProcessing);
+		}
+
+		@Override
+		protected CellPreProcessor getCellTransformer(TextFormat textFormat, StringPostProcessing stringPostProcessing) {
+			if (stringPostProcessing == StringPostProcessing.TRIM_AND_UNESCAPE) {
+				return NoopYamlTrimeCellPreProcessor.INSTANCE;
+			} else {
+				return NoopCellPreProcessor.INSTANCE;
+			}
 		}
 
 		public void forEach(File file, CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) throws IOException {

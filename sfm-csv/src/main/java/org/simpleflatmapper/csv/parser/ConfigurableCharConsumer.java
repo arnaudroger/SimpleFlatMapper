@@ -5,13 +5,15 @@ public final class ConfigurableCharConsumer extends CharConsumer {
 
     private final char escapeChar;
     private final char separatorChar;
-    private CellTransformer cellTransformer;
+    private final CellPreProcessor cellPreProcessor;
+    private final boolean notIgnoringLeadingSpace;
 
-    public ConfigurableCharConsumer(CharBuffer csvBuffer, TextFormat textFormat, CellTransformer cellTransformer) {
-        super(csvBuffer, cellTransformer instanceof TrimAndUnescapeCellTransformer);
-        this.cellTransformer = cellTransformer;
+    public ConfigurableCharConsumer(CharBuffer csvBuffer, TextFormat textFormat, CellPreProcessor cellPreProcessor) {
+        super(csvBuffer);
+        this.cellPreProcessor = cellPreProcessor;
         this.escapeChar = textFormat.getEscapeChar();
         this.separatorChar = textFormat.getSeparatorChar();
+        this.notIgnoringLeadingSpace = !cellPreProcessor.ignoreLeadingSpace();
     }
 
     @Override
@@ -26,6 +28,11 @@ public final class ConfigurableCharConsumer extends CharConsumer {
 
     @Override
     protected void pushCell(char[] chars, int start, int end, CellConsumer cellConsumer) {
-        cellTransformer.newCell(chars, start, end, cellConsumer);
+        cellPreProcessor.newCell(chars, start, end, cellConsumer);
+    }
+
+    @Override
+    protected boolean isNotIgnoringLeadingSpace() {
+        return notIgnoringLeadingSpace;
     }
 }

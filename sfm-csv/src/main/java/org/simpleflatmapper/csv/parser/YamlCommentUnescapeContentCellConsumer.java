@@ -9,17 +9,16 @@ public final class YamlCommentUnescapeContentCellConsumer implements CellConsume
 	private static final int REGULAR_ROW = 1;
 	private static final int NONE = 0;
 
-	private final char escapeChar;
 	private final CellConsumer rowDelegate;
 	private final CellConsumer commentDelegate;
+	private final CellPreProcessor rowCellPreProcessor;
 
 	private int state;
 
-
-	public YamlCommentUnescapeContentCellConsumer(char escapeChar,
+	public YamlCommentUnescapeContentCellConsumer(CellPreProcessor rowCellPreProcessor,
                                                   CellConsumer rowDelegate,
 												  CellConsumer commentDelegate) {
-		this.escapeChar = escapeChar;
+		this.rowCellPreProcessor = rowCellPreProcessor;
 		this.rowDelegate = requireNonNull( "rowDelegate", rowDelegate);
 		this.commentDelegate = requireNonNull( "commentDelegate", commentDelegate);
 	}
@@ -30,13 +29,7 @@ public final class YamlCommentUnescapeContentCellConsumer implements CellConsume
 			state = (length > 0 && chars[offset] == '#') ? COMMENT : REGULAR_ROW;
 		}
 		if (state != COMMENT) {
-			// unescape
-			if (length > 0  && chars[offset] == escapeChar) {
-				int end = offset + length;
-				offset ++;
-				length = CellUtil.unescapeInPlace(chars, offset, end, escapeChar) - offset;
-			}
-			rowDelegate.newCell(chars, offset, length);
+			rowCellPreProcessor.newCell(chars, offset, offset + length, rowDelegate);
 		} else {
 			commentDelegate.newCell(chars, offset, length);
 		}

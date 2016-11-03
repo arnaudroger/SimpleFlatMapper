@@ -9,14 +9,12 @@ import org.simpleflatmapper.reflect.meta.AliasProvider;
 import org.simpleflatmapper.reflect.meta.AliasProviderService;
 import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
 import org.simpleflatmapper.reflect.meta.FastTupleClassMeta;
 import org.simpleflatmapper.reflect.meta.MapClassMeta;
 import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 //IFJAVA8_START
 import org.simpleflatmapper.reflect.meta.OptionalClassMeta;
 //IFJAVA8_END
-import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.TupleClassMeta;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ProducerServiceLoader;

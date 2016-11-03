@@ -1,11 +1,11 @@
 module org.simpleflatmapper.jdbc.spring {
-        requires org.simpleflatmapper.map;
+        requires public org.simpleflatmapper.map;
         requires org.simpleflatmapper.jdbc;
-        requires spring.jdbc;
-        requires spring.tx;
-        requires spring.beans;
-        requires spring.core;
-        requires java.sql;
+        requires public spring.jdbc;
+        requires public spring.tx;
+        requires public spring.beans;
+        requires public spring.core;
+        requires public java.sql;
 
         exports org.simpleflatmapper.jdbc.spring;
 }

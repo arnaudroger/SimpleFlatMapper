@@ -1,5 +1,5 @@
-org.simpleflatmapper.reflect.meta.AliasProviderFactory1
-org.simpleflatmapper.reflect.meta.AliasProviderFactory2
-org.simpleflatmapper.reflect.meta.AliasProviderFactoryFake
-org.simpleflatmapper.reflect.meta.AliasProviderFactoryDisabled
+org.simpleflatmapper.reflect.test.meta.AliasProviderFactory1
+org.simpleflatmapper.reflect.test.meta.AliasProviderFactory2
+org.simpleflatmapper.reflect.test.meta.AliasProviderFactoryFake
+org.simpleflatmapper.reflect.test.meta.AliasProviderFactoryDisabled
 org.simpleflatmapper.reflect.meta.AliasProviderFactoryNotThere

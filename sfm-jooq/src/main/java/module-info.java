@@ -1,7 +1,7 @@
 module org.simpleflatmapper.jooq {
-        requires org.simpleflatmapper.map;
+        requires public org.simpleflatmapper.map;
         requires org.simpleflatmapper.jdbc;
-        requires jooq;
+        requires public jooq;
         requires java.sql;
         exports org.simpleflatmapper.jooq;
 }

@@ -49,6 +49,12 @@ public class CsvParserTest {
 		testCsvReader(SAMPLE_CSV_MIX_EXPECTATION, ',', '"', "\n");
 	}
 
+
+	@Test
+	public void testReadCsvReaderLFSINGLEQUOTE() throws IOException {
+		testCsvReader(SAMPLE_CSV_MIX_EXPECTATION, ',', '\'', "\n");
+	}
+
 	@Test
 	public void testReadCsvReaderCR() throws IOException {
 		testCsvReader(SAMPLE_CSV_MIX_EXPECTATION, ',', '"', "\r");
@@ -538,7 +544,7 @@ public class CsvParserTest {
 				if (colIndex > 0) {
 					sb.append(separator);
 				}
-				if (cell.indexOf(quoteChar) != -1) {
+				if (needEscape(cell, quoteChar, separator)) {
 					sb.append(quoteChar);
 					for (int j = 0; j < cell.length(); j++) {
 						char c = cell.charAt(j);
@@ -557,6 +563,13 @@ public class CsvParserTest {
 		}
 
 		return sb;
+	}
+
+	private boolean needEscape(String cell, char quote, char separator) {
+		return cell.indexOf(quote) != 1
+				||cell.indexOf(separator) != 1
+				|| cell.indexOf('\n') != -1
+				|| cell.indexOf('\r') != -1;
 	}
 
 	int i = 0;

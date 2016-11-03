@@ -238,7 +238,7 @@
                                         <exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/samples/GettingStarted*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/time/*</exclude>
-                                        <exclude>**/org/simpleflatmapper/datastax/*</exclude>
+                                        <exclude>**/org/simpleflatmapper/datastax/test/*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/JoolTupleTest.java</exclude>
                                         <exclude>**/org/simpleflatmapper/**/FastTupleTest.java</exclude>
                                         <exclude>**/org/simpleflatmapper/jooq/test/Issue337Test*</exclude>

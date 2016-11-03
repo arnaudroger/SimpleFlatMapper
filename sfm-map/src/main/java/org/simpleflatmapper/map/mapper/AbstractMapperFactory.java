@@ -311,7 +311,7 @@ public abstract class AbstractMapperFactory<
 	}
 
 
-	protected ReflectionService getReflectionService() {
+	public ReflectionService getReflectionService() {
         if (reflectionService == null) {
 			reflectionService =  ReflectionService.newInstance(useAsm);
 		}

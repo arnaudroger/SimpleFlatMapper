@@ -229,6 +229,37 @@
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+
+						<executions>
+							<execution>
+								<id>default-testCompile</id>
+								<phase>test-compile</phase>
+								<configuration>
+									<fork>true</fork>
+									<compilerArgs>
+										<arg>--add-exports</arg>
+										<arg>org.simpleflatmapper.map/org.simpleflatmapper.map.context.impl=org.simpleflatmapper.map.test</arg>
+										<arg>--add-exports</arg>
+										<arg>org.simpleflatmapper.map/org.simpleflatmapper.map.impl=org.simpleflatmapper.map.test</arg>
+										<arg>--add-exports</arg>
+										<arg>org.simpleflatmapper.map/org.simpleflatmapper.map.asm=org.simpleflatmapper.map.test</arg>
+									</compilerArgs>
+								</configuration>
+								<goals>
+									<goal>testCompile</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+
+			</build>
 		</profile>
 
 	</profiles>

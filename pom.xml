@@ -112,8 +112,8 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>2.0.2-beta</version>
+            <artifactId>mockito-core</artifactId>
+            <version>2.2.9</version>
             <scope>test</scope>
         </dependency>
 
@@ -238,10 +238,10 @@
                                         <exclude>**/org/simpleflatmapper/**/*Optional*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/samples/GettingStarted*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/time/*</exclude>
-                                        <exclude>**/org/simpleflatmapper/datastax/*</exclude>
+                                        <exclude>**/org/simpleflatmapper/datastax/test/*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/JoolTupleTest.java</exclude>
                                         <exclude>**/org/simpleflatmapper/**/FastTupleTest.java</exclude>
-                                        <exclude>**/org/simpleflatmapper/jooq/Issue337Test*</exclude>
+                                        <exclude>**/org/simpleflatmapper/jooq/test/Issue337Test*</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>
@@ -335,7 +335,7 @@
                                         <exclude>**/org/simpleflatmapper/**/time/*</exclude>
                                         <exclude>**/org/simpleflatmapper/**/JoolTupleTest.java</exclude>
                                         <exclude>**/org/simpleflatmapper/**/samples/GettingStarted*</exclude>
-                                        <exclude>**/org/simpleflatmapper/jooq/Issue337Test*</exclude>
+                                        <exclude>**/org/simpleflatmapper/jooq/test/Issue337Test*</exclude>
                                     </testExcludes>
                                 </configuration>
                                 <goals>
@@ -414,7 +414,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.6-jigsaw-SNAPSHOT</version>
+                        <version>3.6.0</version>
                         <configuration>
                             <source>9</source>
                             <target>9</target>

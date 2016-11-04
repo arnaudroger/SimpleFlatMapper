@@ -16,6 +16,4 @@ module org.simpleflatmapper.datastax.test {
         requires joda.time;
 
         requires org.simpleflatmapper.map.test;
-
-        exports org.simpleflatmapper.datastax.test.config;
  }

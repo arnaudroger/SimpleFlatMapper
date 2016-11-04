@@ -2,6 +2,7 @@ package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.jdbc.impl.CrudFactory;
 import org.simpleflatmapper.jdbc.impl.CrudMeta;
+import org.simpleflatmapper.jdbc.impl.LazyCrud;
 import org.simpleflatmapper.reflect.meta.AliasProviderService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
@@ -24,15 +25,21 @@ public class CrudDSL<T, K> {
         this.jdbcMapperFactory = jdbcMapperFactory;
     }
 
+    public Crud<T, K> lazy() throws SQLException {
+        return new LazyCrud<T, K>(this, null);
+    }
+
+    public Crud<T, K> table(String table) throws SQLException {
+        return new LazyCrud<T, K>(this, table);
+    }
+
     public Crud<T, K> table(Connection connection, String table) throws SQLException {
         CrudMeta crudMeta = CrudMeta.of(connection, table, jdbcMapperFactory.columnDefinitions());
         return CrudFactory.<T, K>newInstance(target, keyTarget, crudMeta, jdbcMapperFactory);
     }
 
-
     public Crud<T, K> to(Connection connection) throws SQLException {
-        CrudMeta crudMeta = CrudMeta.of(connection, getTable(connection, target), jdbcMapperFactory.columnDefinitions());
-        return CrudFactory.<T, K>newInstance(target, keyTarget, crudMeta, jdbcMapperFactory);
+        return table(connection, getTable(connection, target));
     }
 
     private String getTable(Connection connection, ClassMeta<T> target) throws SQLException {

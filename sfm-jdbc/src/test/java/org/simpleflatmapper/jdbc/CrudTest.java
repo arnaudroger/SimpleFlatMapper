@@ -148,6 +148,37 @@ public class CrudTest {
             connection.close();
         }
     }
+
+    @Test
+    public void testDbObjectLazyCrud() throws SQLException {
+        Connection connection = DbHelper.getDbConnection(targetDB);
+        if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
+        try {
+            Crud<DbObject, Long> objectCrud =
+                    JdbcMapperFactory.newInstance().<DbObject, Long>crud(DbObject.class, Long.class).table("TEST_DB_OBJECT");
+
+            checkCrudDbObject(connection, objectCrud, DbObject.newInstance());
+
+        } finally {
+            connection.close();
+        }
+    }
+
+    @Test
+    public void testDbObjectLazyCrudTable() throws SQLException {
+        Connection connection = DbHelper.getDbConnection(targetDB);
+        if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
+        try {
+            Crud<DbObjectTable, Long> objectCrud =
+                    JdbcMapperFactory.newInstance().<DbObjectTable, Long>crud(DbObjectTable.class, Long.class).lazy();
+
+            checkCrudDbObject(connection, objectCrud, DbObject.newInstance(new DbObjectTable()));
+
+        } finally {
+            connection.close();
+        }
+    }
+
     @Test
     public void testDbObjectCrudTestDbObject() throws SQLException {
         Connection connection = DbHelper.getDbConnection(targetDB);

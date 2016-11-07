@@ -14,7 +14,7 @@ import java.util.List;
  * @param <T> the target type
  * @param <K> the key type
  */
-public class ConnectedCrud<T, K> implements Crud<T, K> {
+public class ConnectedCrud<T, K> {
 
 
     private final DataSource dataSource;
@@ -34,7 +34,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     public void create(T value) throws SQLException {
         TX tx = openConnection();
         try {
-            create(tx.connection(), value);
+            delegate.create(tx.connection(), value);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -52,7 +52,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     public void create(Collection<T> values) throws SQLException {
         TX tx = openConnection();
         try {
-            create(tx.connection(), values);
+            delegate.create(tx.connection(), values);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -74,7 +74,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     public <RH extends CheckedConsumer<? super K>> RH create(T value, RH keyConsumer) throws SQLException {
         TX tx = openConnection();
         try {
-            create(tx.connection(), value, keyConsumer);
+            delegate.create(tx.connection(), value, keyConsumer);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -97,7 +97,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     public <RH extends CheckedConsumer<? super K>> RH create(Collection<T> values, RH keyConsumer) throws SQLException {
         TX tx = openConnection();
         try {
-            create(tx.connection(), values, keyConsumer);
+            delegate.create(tx.connection(), values, keyConsumer);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -118,7 +118,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
         TX tx = openConnection();
         T value = null;
         try {
-            value = read(tx.connection(), key);
+            value = delegate.read(tx.connection(), key);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -138,7 +138,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     public <RH extends CheckedConsumer<? super T>> RH read(Collection<K> keys, RH consumer) throws SQLException {
         TX tx = openConnection();
         try {
-            read(tx.connection(), keys, consumer);
+            delegate.read(tx.connection(), keys, consumer);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -157,7 +157,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     public void update(T value) throws SQLException {
         TX tx = openConnection();
         try {
-            update(tx.connection(), value);
+            delegate.update(tx.connection(), value);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -175,7 +175,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     public void update(Collection<T> values) throws SQLException {
         TX tx = openConnection();
         try {
-            update(tx.connection(), values);
+            delegate.update(tx.connection(), values);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -193,7 +193,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     public void delete(K key) throws SQLException {
         TX tx = openConnection();
         try {
-            delete(tx.connection(), key);
+            delegate.delete(tx.connection(), key);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -208,10 +208,10 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
      * @param keys       the keys
      * @throws SQLException if an error occurs
      */
-    public void delete(List<K> keys) throws SQLException {
+    public void delete(Collection<K> keys) throws SQLException {
         TX tx = openConnection();
         try {
-            delete(tx.connection(), keys);
+            delegate.delete(tx.connection(), keys);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -229,7 +229,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     public void createOrUpdate(T value) throws SQLException {
         TX tx = openConnection();
         try {
-            createOrUpdate(tx.connection(), value);
+            delegate.createOrUpdate(tx.connection(), value);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -247,7 +247,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     public void createOrUpdate(Collection<T> values) throws SQLException {
         TX tx = openConnection();
         try {
-            createOrUpdate(tx.connection(), values);
+            delegate.createOrUpdate(tx.connection(), values);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -268,7 +268,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(T value, RH keyConsumer) throws SQLException {
         TX tx = openConnection();
         try {
-            createOrUpdate(tx.connection(), value, keyConsumer);
+            delegate.createOrUpdate(tx.connection(), value, keyConsumer);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -291,7 +291,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Collection<T> values, RH keyConsumer) throws SQLException {
         TX tx = openConnection();
         try {
-            createOrUpdate(tx.connection(), values, keyConsumer);
+            delegate.createOrUpdate(tx.connection(), values, keyConsumer);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -301,74 +301,9 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
         return keyConsumer;
     }
 
-    @Override
-    public void create(Connection connection, T value) throws SQLException {
-        delegate.create(connection, value);
-    }
 
-    @Override
-    public void create(Connection connection, Collection<T> values) throws SQLException {
-        delegate.create(connection, values);
-    }
-
-    @Override
-    public <RH extends CheckedConsumer<? super K>> RH create(Connection connection, T value, RH keyConsumer) throws SQLException {
-        return delegate.create(connection, value, keyConsumer);
-    }
-
-    @Override
-    public <RH extends CheckedConsumer<? super K>> RH create(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
-        return delegate.create(connection, values, keyConsumer);
-    }
-
-    @Override
-    public T read(Connection connection, K key) throws SQLException {
-        return delegate.read(connection, key);
-    }
-
-    @Override
-    public <RH extends CheckedConsumer<? super T>> RH read(Connection connection, Collection<K> keys, RH consumer) throws SQLException {
-        return delegate.read(connection, keys, consumer);
-    }
-
-    @Override
-    public void update(Connection connection, T value) throws SQLException {
-        delegate.update(connection, value);
-    }
-
-    @Override
-    public void update(Connection connection, Collection<T> values) throws SQLException {
-        delegate.update(connection, values);
-    }
-
-    @Override
-    public void delete(Connection connection, K key) throws SQLException {
-        delegate.delete(connection, key);
-    }
-
-    @Override
-    public void delete(Connection connection, List<K> keys) throws SQLException {
-        delegate.delete(connection, keys);
-    }
-
-    @Override
-    public void createOrUpdate(Connection connection, T value) throws SQLException {
-        delegate.createOrUpdate(connection, value);
-    }
-
-    @Override
-    public void createOrUpdate(Connection connection, Collection<T> values) throws SQLException {
-        delegate.createOrUpdate(connection, values);
-    }
-
-    @Override
-    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Connection connection, T value, RH keyConsumer) throws SQLException {
-        return delegate.createOrUpdate(connection, value, keyConsumer);
-    }
-
-    @Override
-    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
-        return delegate.createOrUpdate(connection, values, keyConsumer);
+    public Crud<T, K> crud() {
+        return delegate;
     }
 
 

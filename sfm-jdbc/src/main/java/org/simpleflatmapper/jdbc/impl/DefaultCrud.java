@@ -121,7 +121,7 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
     }
 
     @Override
-    public void delete(Connection connection, List<K> keys) throws SQLException {
+    public void delete(Connection connection, Collection<K> keys) throws SQLException {
         PreparedStatement preparedStatement = keyTupleQueryPreparer.prepareStatement("DELETE FROM " + table + " WHERE ", connection, keys.size());
         try {
             keyTupleQueryPreparer.bindTo(keys, preparedStatement, 0);

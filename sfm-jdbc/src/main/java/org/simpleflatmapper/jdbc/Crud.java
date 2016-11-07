@@ -111,7 +111,7 @@ public interface Crud<T, K> {
      * @param keys       the keys
      * @throws SQLException if an error occurs
      */
-    void delete(Connection connection, List<K> keys) throws SQLException;
+    void delete(Connection connection, Collection<K> keys) throws SQLException;
 
     /**
      * UPSERT only supported on Mysql

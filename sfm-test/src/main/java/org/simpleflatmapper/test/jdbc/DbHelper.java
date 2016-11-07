@@ -1,5 +1,6 @@
 package org.simpleflatmapper.test.jdbc;
 
+import org.hsqldb.jdbc.JDBCDataSourceFactory;
 import org.junit.Assert;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
@@ -7,12 +8,29 @@ import org.simpleflatmapper.test.beans.DbObjectWithAlias;
 import org.simpleflatmapper.test.beans.DbPartialFinalObject;
 import org.simpleflatmapper.test.DateHelper;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.text.ParseException;
+import java.util.Properties;
 import java.util.UUID;
 
 
 public class DbHelper {
+
+	public static final String HSQLDB_URL = "jdbc:hsqldb:mem:mymemdb";
+	private static final String HSQLDB_USER = "SA";
+	private static final String HSQLDB_PASSWORD = "";
+
+	public static DataSource getHsqlDataSource() throws Exception {
+		objectDb();
+
+		Properties props = new Properties();
+		props.setProperty("url", HSQLDB_URL);
+		props.setProperty("user", HSQLDB_USER);
+		props.setProperty("password", HSQLDB_PASSWORD);
+		return JDBCDataSourceFactory.createDataSource(props);
+
+	}
 
 	public enum TargetDB {
 		HSQLDB, MYSQL, POSTGRESQL
@@ -164,7 +182,7 @@ public class DbHelper {
 
 
 	private static Connection newHsqlDbConnection() throws SQLException {
-		return DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", "");
+		return DriverManager.getConnection(HSQLDB_URL, HSQLDB_USER, HSQLDB_PASSWORD);
 	}
 	
 	

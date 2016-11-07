@@ -16,6 +16,7 @@ import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.CheckedConsumer;
 
 import javax.persistence.Table;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -264,7 +265,7 @@ public class CrudTest {
     public static class TestDbObject extends DbObject {
     }
 
-    private <T extends DbObject> void checkCrudDbObject(Connection connection, Crud<T, Long> objectCrud, T object) throws SQLException {
+    public static <T extends DbObject> void checkCrudDbObject(Connection connection, Crud<T, Long> objectCrud, T object) throws SQLException {
         assertNull(objectCrud.read(connection, object.getId()));
 
         // create

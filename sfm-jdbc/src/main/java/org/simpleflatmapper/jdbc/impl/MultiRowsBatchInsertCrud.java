@@ -77,7 +77,7 @@ public final class MultiRowsBatchInsertCrud<T, K> implements Crud<T, K> {
     }
 
     @Override
-    public void delete(Connection connection, List<K> keys) throws SQLException {
+    public void delete(Connection connection, Collection<K> keys) throws SQLException {
         delegate.delete(connection, keys);
     }
 

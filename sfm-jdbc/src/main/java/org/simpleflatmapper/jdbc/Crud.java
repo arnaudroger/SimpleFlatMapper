@@ -111,7 +111,7 @@ public interface Crud<T, K> {
      * @param keys       the keys
      * @throws SQLException if an error occurs
      */
-    void delete(Connection connection, List<K> keys) throws SQLException;
+    void delete(Connection connection, Collection<K> keys) throws SQLException;
 
     /**
      * UPSERT only supported on Mysql
@@ -132,7 +132,7 @@ public interface Crud<T, K> {
     void createOrUpdate(Connection connection, Collection<T> values) throws SQLException;
 
     /**
-     * UPSERT only supported on Mysql.
+     * UPSERT only supported on Mysql and Postgres 9.5.
      * Used the callback with caution has Mysql will return an incremented id event for when no insert actually occurred.
      * @param connection the connection
      * @param value the value to upsert
@@ -145,7 +145,7 @@ public interface Crud<T, K> {
 
 
     /**
-     * UPSERT only supported on Mysql.
+     * UPSERT only supported on Mysql and Postgres 9.5.
      * Used the callback with caution has Mysql will return an incremented id event for when no insert actually occurred.
      * @param connection the connection
      * @param values the values to insert

@@ -56,7 +56,7 @@ public class ConnectedCrudTest {
         Connection connection = mock(Connection.class);
         when(dataSource.getConnection()).thenReturn(connection);
 
-        ConnectedCrud<Object, Object> connectedCrud = new ConnectedCrud<>(dataSource, crud);
+        ConnectedCrud<Object, Object> connectedCrud = new ConnectedCrud<Object, Object>(dataSource, crud);
 
         Collection<Object> values = new ArrayList<Object>();
         Object value = new Object();
@@ -141,7 +141,7 @@ public class ConnectedCrudTest {
         Connection connection = mock(Connection.class);
         when(dataSource.getConnection()).thenReturn(connection);
 
-        ConnectedCrud<Object, Object> connectedCrud = new ConnectedCrud<>(dataSource, crud);
+        ConnectedCrud<Object, Object> connectedCrud = new ConnectedCrud<Object, Object>(dataSource, crud);
 
         Collection<Object> values = new ArrayList<Object>();
         Object value = new Object();

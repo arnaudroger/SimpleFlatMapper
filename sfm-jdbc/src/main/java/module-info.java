@@ -2,7 +2,6 @@ module org.simpleflatmapper.jdbc {
     requires public org.simpleflatmapper.map;
 
     requires public java.sql;
-    requires public javax.sql;
 
     exports org.simpleflatmapper.jdbc;
     exports org.simpleflatmapper.jdbc.named;

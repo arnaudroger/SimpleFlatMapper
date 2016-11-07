@@ -155,4 +155,7 @@ public interface Crud<T, K> {
      * @throws SQLException
      */
     <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException;
+
+
+    <P> SelectQuery<T, P> readWhere(String whereClause, Class<P> paramClass);
 }

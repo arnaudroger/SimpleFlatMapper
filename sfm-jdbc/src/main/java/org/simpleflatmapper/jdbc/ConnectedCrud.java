@@ -1,9 +1,6 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.util.CheckedBiConsumer;
-import org.simpleflatmapper.util.CheckedBiFunction;
 import org.simpleflatmapper.util.CheckedConsumer;
-import org.simpleflatmapper.util.CheckedTriConsumer;
 import org.simpleflatmapper.util.ErrorHelper;
 
 import javax.sql.DataSource;
@@ -11,7 +8,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.BiFunction;
 
 /**
  *
@@ -122,7 +118,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
         TX tx = openConnection();
         T value = null;
         try {
-            read(tx.connection(), key);
+            value = read(tx.connection(), key);
             tx.commit();
         } catch (Throwable e) {
             tx.handleError(e);
@@ -140,8 +136,16 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
      * @throws SQLException if an error occurs
      */
     public <RH extends CheckedConsumer<? super T>> RH read(Collection<K> keys, RH consumer) throws SQLException {
-        return doInConnection(READ_KEYS, keys, consumer);
-
+        TX tx = openConnection();
+        try {
+            read(tx.connection(), keys, consumer);
+            tx.commit();
+        } catch (Throwable e) {
+            tx.handleError(e);
+        } finally {
+            tx.close();
+        }
+        return consumer;
     }
 
     /**
@@ -151,7 +155,15 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void update(T value) throws SQLException {
-
+        TX tx = openConnection();
+        try {
+            update(tx.connection(), value);
+            tx.commit();
+        } catch (Throwable e) {
+            tx.handleError(e);
+        } finally {
+            tx.close();
+        }
     }
 
     /**
@@ -161,7 +173,15 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void update(Collection<T> values) throws SQLException {
-
+        TX tx = openConnection();
+        try {
+            update(tx.connection(), values);
+            tx.commit();
+        } catch (Throwable e) {
+            tx.handleError(e);
+        } finally {
+            tx.close();
+        }
     }
 
     /**
@@ -171,7 +191,15 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void delete(K key) throws SQLException {
-
+        TX tx = openConnection();
+        try {
+            delete(tx.connection(), key);
+            tx.commit();
+        } catch (Throwable e) {
+            tx.handleError(e);
+        } finally {
+            tx.close();
+        }
     }
 
     /**
@@ -181,7 +209,15 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void delete(List<K> keys) throws SQLException {
-
+        TX tx = openConnection();
+        try {
+            delete(tx.connection(), keys);
+            tx.commit();
+        } catch (Throwable e) {
+            tx.handleError(e);
+        } finally {
+            tx.close();
+        }
     }
 
     /**
@@ -191,7 +227,15 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
      * @throws UnsupportedOperationException
      */
     public void createOrUpdate(T value) throws SQLException {
-
+        TX tx = openConnection();
+        try {
+            createOrUpdate(tx.connection(), value);
+            tx.commit();
+        } catch (Throwable e) {
+            tx.handleError(e);
+        } finally {
+            tx.close();
+        }
     }
 
     /**
@@ -201,7 +245,15 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
      * @throws UnsupportedOperationException
      */
     public void createOrUpdate(Collection<T> values) throws SQLException {
-
+        TX tx = openConnection();
+        try {
+            createOrUpdate(tx.connection(), values);
+            tx.commit();
+        } catch (Throwable e) {
+            tx.handleError(e);
+        } finally {
+            tx.close();
+        }
     }
 
     /**
@@ -214,7 +266,16 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
      * @throws SQLException
      */
     public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(T value, RH keyConsumer) throws SQLException {
-
+        TX tx = openConnection();
+        try {
+            createOrUpdate(tx.connection(), value, keyConsumer);
+            tx.commit();
+        } catch (Throwable e) {
+            tx.handleError(e);
+        } finally {
+            tx.close();
+        }
+        return keyConsumer;
     }
 
 
@@ -228,57 +289,16 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
      * @throws SQLException
      */
     public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Collection<T> values, RH keyConsumer) throws SQLException {
-
-    }
-
-    private <T> void doInConnection(CheckedBiConsumer<Connection, T> consumer, T t) throws SQLException {
-        Connection connection = dataSource.getConnection();
-
+        TX tx = openConnection();
         try {
-
-            consumer.accept(connection, t);
-        } catch (Throwable error) {
-
+            createOrUpdate(tx.connection(), values, keyConsumer);
+            tx.commit();
+        } catch (Throwable e) {
+            tx.handleError(e);
         } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                //
-            }
+            tx.close();
         }
-    }
-
-    private <T, U> void doInConnection(CheckedTriConsumer<Connection, T, U> consumer, T t, U u) throws SQLException {
-        Connection connection = dataSource.getConnection();
-
-        try {
-
-            consumer.accept(connection, t, u);
-        } catch (Throwable error) {
-
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                //
-            }
-        }
-    }
-
-    private <P, R> R doInConnection(CheckedBiFunction<Connection, P, R> function, P p) throws SQLException {
-        Connection connection = dataSource.getConnection();
-
-        try {
-            return function.apply(connection, p);
-        } catch (Throwable error) {
-
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                //
-            }
-        }
+        return keyConsumer;
     }
 
     @Override
@@ -352,7 +372,7 @@ public class ConnectedCrud<T, K> implements Crud<T, K> {
     }
 
 
-    private TX openConnection() throws SQLException {
+    private TX  openConnection() throws SQLException {
         return TX.from(dataSource);
     }
     private static class TX {

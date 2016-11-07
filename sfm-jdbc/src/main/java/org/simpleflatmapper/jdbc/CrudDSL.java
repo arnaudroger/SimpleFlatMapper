@@ -9,6 +9,7 @@ import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.Table;
 import org.simpleflatmapper.util.TypeHelper;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -37,6 +38,25 @@ public class CrudDSL<T, K> {
         CrudMeta crudMeta = CrudMeta.of(connection, table, jdbcMapperFactory.columnDefinitions());
         return CrudFactory.<T, K>newInstance(target, keyTarget, crudMeta, jdbcMapperFactory);
     }
+
+    public ConnectedCrud<T, K> table(DataSource dataSource, String table) throws SQLException {
+        Connection connection = dataSource.getConnection();
+        try {
+            return new ConnectedCrud<T, K>(dataSource, table(connection, table));
+        } finally {
+            connection.close();
+        }
+    }
+
+    public ConnectedCrud<T, K> to(DataSource dataSource) throws SQLException {
+        Connection connection = dataSource.getConnection();
+        try {
+            return new ConnectedCrud<T, K>(dataSource, to(connection));
+        } finally {
+            connection.close();
+        }
+    }
+
 
     public Crud<T, K> to(Connection connection) throws SQLException {
         return table(connection, getTable(connection, target));

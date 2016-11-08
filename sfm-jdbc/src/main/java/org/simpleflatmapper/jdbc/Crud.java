@@ -2,10 +2,10 @@ package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.util.CheckedConsumer;
 
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
 
 /**
  *
@@ -157,5 +157,5 @@ public interface Crud<T, K> {
     <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException;
 
 
-    <P> SelectQuery<T, P> readWhere(String whereClause, Class<P> paramClass);
+    <P> SelectQuery<T, P> where(String whereClause, Type paramClass);
 }

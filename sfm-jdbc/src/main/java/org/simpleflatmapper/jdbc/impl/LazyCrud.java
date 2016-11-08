@@ -2,12 +2,13 @@ package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.jdbc.Crud;
 import org.simpleflatmapper.jdbc.CrudDSL;
+import org.simpleflatmapper.jdbc.SelectQuery;
 import org.simpleflatmapper.util.CheckedConsumer;
 
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LazyCrud<T, K> implements Crud<T, K> {
@@ -114,5 +115,59 @@ public class LazyCrud<T, K> implements Crud<T, K> {
     @Override
     public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
         return getDelegate(connection).createOrUpdate(connection, values, keyConsumer);
+    }
+
+    @Override
+    public <P> SelectQuery<T, P> where(String whereClause, Type paramClass) {
+        Crud<T, K> crud = delegate.get();
+
+        if (crud != null) {
+            return crud.where(whereClause, paramClass);
+        } else {
+            return new LazySelectQuery<P>(whereClause, paramClass);
+        }
+
+    }
+
+    private class LazySelectQuery<P> implements SelectQuery<T, P> {
+        private final String whereClause;
+        private final Type paramClass;
+
+        private final AtomicReference<SelectQuery<T, P>> delegate = new AtomicReference<SelectQuery<T, P>>();
+
+        public LazySelectQuery(String whereClause, Type paramClass) {
+            this.whereClause = whereClause;
+            this.paramClass = paramClass;
+        }
+
+        @Override
+        public T readFirst(Connection connection, P p) throws SQLException {
+            return getDelegateQuery(connection).readFirst(connection, p);
+        }
+
+        @Override
+        public <C extends CheckedConsumer<? super T>> C read(Connection connection, P p, C consumer) throws SQLException {
+            return getDelegateQuery(connection).read(connection, p, consumer);
+        }
+
+        private SelectQuery<T, P> getDelegateQuery(Connection connection) throws SQLException {
+            SelectQuery<T, P> query;
+
+            do {
+                query = delegate.get();
+
+                if (query != null)
+                    break;
+
+                SelectQuery<T, P> newQuery = getDelegate(connection).where(whereClause, paramClass);
+                if (this.delegate.compareAndSet(null, newQuery)) {
+                    query = newQuery;
+                    break;
+                }
+
+            } while (true);
+
+            return  query;
+        }
     }
 }

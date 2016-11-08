@@ -3,16 +3,17 @@ package org.simpleflatmapper.jdbc.impl;
 import org.simpleflatmapper.jdbc.Crud;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.QueryPreparer;
+import org.simpleflatmapper.jdbc.SelectQuery;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.CheckedConsumer;
 
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
 
 public final class DefaultCrud<T, K> implements Crud<T,K> {
 
@@ -26,6 +27,7 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
     protected final JdbcMapper<K> keyMapper;
     protected final String table;
     protected final boolean hasGeneratedKeys;
+    protected final SelectQueryWhereFactory<T> selectQueryWhereFactory;
 
     public DefaultCrud(QueryPreparer<T> insertQueryPreparer,
                        QueryPreparer<T> updateQueryPreparer,
@@ -34,7 +36,9 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
                        KeyTupleQueryPreparer<K> keyTupleQueryPreparer,
                        JdbcMapper<T> selectQueryMapper,
                        QueryPreparer<K> deleteQueryPreparer,
-                       JdbcMapper<K> keyMapper, String table, boolean hasGeneratedKeys) {
+                       JdbcMapper<K> keyMapper, String table,
+                       boolean hasGeneratedKeys,
+                       SelectQueryWhereFactory<T> selectQueryWhereFactory) {
         this.insertQueryPreparer = insertQueryPreparer;
         this.updateQueryPreparer = updateQueryPreparer;
         this.selectQueryPreparer = selectQueryPreparer;
@@ -45,6 +49,7 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
         this.keyMapper = keyMapper;
         this.table = table;
         this.hasGeneratedKeys = hasGeneratedKeys;
+        this.selectQueryWhereFactory = selectQueryWhereFactory;
     }
 
     @Override
@@ -152,6 +157,11 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
     @Override
     public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Connection connection, Collection<T> values, RH keyConsumer) throws SQLException {
         return executeQueryPreparerInBatchMode(connection, values, keyConsumer, upsertQueryPreparer);
+    }
+
+    @Override
+    public <P> SelectQuery<T, P> where(String whereClause, Type paramClass) {
+        return selectQueryWhereFactory.where(whereClause, paramClass);
     }
 
     protected <RH extends CheckedConsumer<? super K>> RH executeQueryPreparerInBatchMode(Connection connection, Collection<T> values, RH keyConsumer, QueryPreparer<T> queryPreparer) throws SQLException {

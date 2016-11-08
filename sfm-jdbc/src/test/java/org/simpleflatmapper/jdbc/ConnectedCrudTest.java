@@ -3,6 +3,7 @@ package org.simpleflatmapper.jdbc;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.simpleflatmapper.jdbc.impl.TransactionFactory;
 import org.simpleflatmapper.jdbc.property.IndexedSetterProperty;
 import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.reflect.Getter;
@@ -56,7 +57,7 @@ public class ConnectedCrudTest {
         Connection connection = mock(Connection.class);
         when(dataSource.getConnection()).thenReturn(connection);
 
-        ConnectedCrud<Object, Object> connectedCrud = new ConnectedCrud<Object, Object>(dataSource, crud);
+        ConnectedCrud<Object, Object> connectedCrud = new ConnectedCrud<Object, Object>(new TransactionFactory(dataSource), crud);
 
         Collection<Object> values = new ArrayList<Object>();
         Object value = new Object();
@@ -141,7 +142,7 @@ public class ConnectedCrudTest {
         Connection connection = mock(Connection.class);
         when(dataSource.getConnection()).thenReturn(connection);
 
-        ConnectedCrud<Object, Object> connectedCrud = new ConnectedCrud<Object, Object>(dataSource, crud);
+        ConnectedCrud<Object, Object> connectedCrud = new ConnectedCrud<Object, Object>(new TransactionFactory(dataSource), crud);
 
         Collection<Object> values = new ArrayList<Object>();
         Object value = new Object();
@@ -360,6 +361,8 @@ public class ConnectedCrudTest {
         assertNull(objectCrud.read(key));
 
         objectCrud.create(object);
+
+        assertEquals(object, objectCrud.where("id = :id", Long.class).readFirst(object.getId()));
     }
 
 

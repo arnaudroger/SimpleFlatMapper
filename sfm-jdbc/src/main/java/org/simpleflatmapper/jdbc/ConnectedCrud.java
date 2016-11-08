@@ -1,13 +1,12 @@
 package org.simpleflatmapper.jdbc;
 
+import org.simpleflatmapper.jdbc.impl.Transaction;
+import org.simpleflatmapper.jdbc.impl.TransactionFactory;
 import org.simpleflatmapper.util.CheckedConsumer;
-import org.simpleflatmapper.util.ErrorHelper;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
+import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
 
 /**
  *
@@ -17,11 +16,11 @@ import java.util.List;
 public class ConnectedCrud<T, K> {
 
 
-    private final DataSource dataSource;
+    private final TransactionFactory transactionFactory;
     private final Crud<T, K> delegate;
 
-    public ConnectedCrud(DataSource dataSource, Crud<T, K> delegate) {
-        this.dataSource = dataSource;
+    public ConnectedCrud(TransactionFactory transactionFactory, Crud<T, K> delegate) {
+        this.transactionFactory = transactionFactory;
         this.delegate = delegate;
     }
 
@@ -32,7 +31,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void create(T value) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.create(tx.connection(), value);
             tx.commit();
@@ -50,7 +49,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void create(Collection<T> values) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.create(tx.connection(), values);
             tx.commit();
@@ -72,7 +71,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException
      */
     public <RH extends CheckedConsumer<? super K>> RH create(T value, RH keyConsumer) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.create(tx.connection(), value, keyConsumer);
             tx.commit();
@@ -95,7 +94,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException
      */
     public <RH extends CheckedConsumer<? super K>> RH create(Collection<T> values, RH keyConsumer) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.create(tx.connection(), values, keyConsumer);
             tx.commit();
@@ -115,7 +114,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException if an error occurs
      */
     public T read(K key) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         T value = null;
         try {
             value = delegate.read(tx.connection(), key);
@@ -136,7 +135,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException if an error occurs
      */
     public <RH extends CheckedConsumer<? super T>> RH read(Collection<K> keys, RH consumer) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.read(tx.connection(), keys, consumer);
             tx.commit();
@@ -155,7 +154,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void update(T value) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.update(tx.connection(), value);
             tx.commit();
@@ -173,7 +172,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void update(Collection<T> values) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.update(tx.connection(), values);
             tx.commit();
@@ -191,7 +190,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void delete(K key) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.delete(tx.connection(), key);
             tx.commit();
@@ -209,7 +208,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void delete(Collection<K> keys) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.delete(tx.connection(), keys);
             tx.commit();
@@ -227,7 +226,7 @@ public class ConnectedCrud<T, K> {
      * @throws UnsupportedOperationException
      */
     public void createOrUpdate(T value) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.createOrUpdate(tx.connection(), value);
             tx.commit();
@@ -245,7 +244,7 @@ public class ConnectedCrud<T, K> {
      * @throws UnsupportedOperationException
      */
     public void createOrUpdate(Collection<T> values) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.createOrUpdate(tx.connection(), values);
             tx.commit();
@@ -266,7 +265,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException
      */
     public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(T value, RH keyConsumer) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.createOrUpdate(tx.connection(), value, keyConsumer);
             tx.commit();
@@ -289,7 +288,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException
      */
     public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Collection<T> values, RH keyConsumer) throws SQLException {
-        TX tx = openConnection();
+        Transaction tx = newTransaction();
         try {
             delegate.createOrUpdate(tx.connection(), values, keyConsumer);
             tx.commit();
@@ -306,40 +305,13 @@ public class ConnectedCrud<T, K> {
         return delegate;
     }
 
-
-    private TX  openConnection() throws SQLException {
-        return TX.from(dataSource);
+    public <P> ConnectedSelectQuery<T, P> where(String whereClause, Type paramClass) {
+        SelectQuery<T, P> selectQuery = delegate.where(whereClause, paramClass);
+        return new ConnectedSelectQuery<T, P>(selectQuery, transactionFactory);
     }
-    private static class TX {
-        private final Connection connection;
 
-        private TX(Connection connection) {
-            this.connection = connection;
-        }
-
-        public static TX from(DataSource dataSource) throws SQLException {
-            return new TX(dataSource.getConnection());
-        }
-
-        public Connection connection() {
-            return connection;
-        }
-
-        public void commit() throws SQLException {
-            connection.commit();
-        }
-
-        public void handleError(Throwable e) throws SQLException {
-            connection.rollback();
-            ErrorHelper.rethrow(e);
-        }
-
-        public void close() {
-            try {
-                connection.close();
-            } catch (Throwable t) {
-                // swallow
-            }
-        }
+    private Transaction newTransaction() throws SQLException {
+        return transactionFactory.newTransaction();
     }
+
 }

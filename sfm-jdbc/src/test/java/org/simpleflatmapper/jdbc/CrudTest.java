@@ -266,6 +266,9 @@ public class CrudTest {
     }
 
     public static <T extends DbObject> void checkCrudDbObject(Connection connection, Crud<T, Long> objectCrud, T object) throws SQLException {
+
+        assertNull(objectCrud.where(" 1 = 2 ", Void.class).readFirst(connection, null));
+
         assertNull(objectCrud.read(connection, object.getId()));
 
         // create

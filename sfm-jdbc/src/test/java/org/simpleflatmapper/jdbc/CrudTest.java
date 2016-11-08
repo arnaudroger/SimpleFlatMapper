@@ -298,7 +298,11 @@ public class CrudTest {
         objectCrud.create(connection, object);
 
 
-        assertEquals(object, objectCrud.where(" id = :id ", Long.class).readFirst(connection, object.getId()));
+        SelectQuery<T, Object> selectQuery = objectCrud.where(" id = :id ", Long.class);
+        assertSame(selectQuery, objectCrud.where(" id = :id ", Long.class));
+        assertEquals(object, selectQuery.readFirst(connection, object.getId()));
+        assertEquals(Arrays.asList(object), objectCrud.where(" email =:email and name = :name", object.getClass()).read(connection, object, new ListCollector<T>()).getList());
+        assertEquals(Arrays.asList(object), objectCrud.where(" email =:email and name = :name",Object[].class).read(connection, new Object[] {object.getEmail(), object.getName()}, new ListCollector<T>()).getList());
     }
 
 

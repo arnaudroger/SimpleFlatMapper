@@ -363,6 +363,7 @@ public class ConnectedCrudTest {
         objectCrud.create(object);
 
         assertEquals(object, objectCrud.where("id = :id", Long.class).readFirst(object.getId()));
+        assertEquals(Arrays.asList(object), objectCrud.where("name = :name", DbObject.class).read(object, new ListCollector<T>()).getList());
     }
 
 

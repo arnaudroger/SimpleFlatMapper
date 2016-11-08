@@ -5,10 +5,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.simpleflatmapper.jdbc.property.IndexedSetterProperty;
 import org.simpleflatmapper.map.property.GetterProperty;
-import org.simpleflatmapper.map.property.SetterProperty;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.IndexedSetter;
-import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.MysqlDbHelper;
@@ -16,7 +14,6 @@ import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.CheckedConsumer;
 
 import javax.persistence.Table;
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -171,7 +168,7 @@ public class CrudTest {
         if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
         try {
             Crud<DbObjectTable, Long> objectCrud =
-                    JdbcMapperFactory.newInstance().<DbObjectTable, Long>crud(DbObjectTable.class, Long.class).lazy();
+                    JdbcMapperFactory.newInstance().<DbObjectTable, Long>crud(DbObjectTable.class, Long.class).crud();
 
             checkCrudDbObject(connection, objectCrud, DbObject.newInstance(new DbObjectTable()));
 

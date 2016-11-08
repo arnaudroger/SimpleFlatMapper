@@ -27,19 +27,43 @@ public class CrudDSL<T, K> {
         this.jdbcMapperFactory = jdbcMapperFactory;
     }
 
-    public Crud<T, K> lazy() throws SQLException {
+    /**
+     * Create a crud that will validate on the first interaction with a connection.
+     * The table name is derived from the jpa annotation or from the class name.
+     * @return a new crud instance
+     */
+    public Crud<T, K> crud() {
         return new LazyCrud<T, K>(this, null);
     }
 
-    public Crud<T, K> table(String table) throws SQLException {
+    /**
+     * Create a crud against the specified table that will validate on the first interaction with a connection.
+     * @param table the table name
+     * @return a new crud instance
+     */
+    public Crud<T, K> table(String table) {
         return new LazyCrud<T, K>(this, table);
     }
 
+    /**
+     * Create a crud against the specified table validating it against the specified connection.
+     * @param connection the connection
+     * @param table the table
+     * @return a new crud instance
+     * @throws SQLException if an error occurred
+     */
     public Crud<T, K> table(Connection connection, String table) throws SQLException {
         CrudMeta crudMeta = CrudMeta.of(connection, table, jdbcMapperFactory.columnDefinitions());
         return CrudFactory.<T, K>newInstance(target, keyTarget, crudMeta, jdbcMapperFactory);
     }
 
+    /**
+     * Create a connected crud against the specified table validating it against the specified datasource.
+     * @param dataSource the datasource
+     * @param table the table
+     * @return a new crud instance
+     * @throws SQLException if an error occurred
+     */
     public ConnectedCrud<T, K> table(DataSource dataSource, String table) throws SQLException {
         Connection connection = dataSource.getConnection();
         try {
@@ -49,6 +73,13 @@ public class CrudDSL<T, K> {
         }
     }
 
+    /**
+     * Create a connected crud validating it against the specified datasource.
+     * The table name is derived from the jpa annotation or from the class name.
+     * @param dataSource the datasource
+     * @return a new crud instance
+     * @throws SQLException if an error occurred
+     */
     public ConnectedCrud<T, K> to(DataSource dataSource) throws SQLException {
         Connection connection = dataSource.getConnection();
         try {
@@ -58,7 +89,13 @@ public class CrudDSL<T, K> {
         }
     }
 
-
+    /**
+     * Create a connected crud validating it against the specified connection.
+     * The table name is derived from the jpa annotation or from the class name.
+     * @param connection the connection
+     * @return a new crud instance
+     * @throws SQLException if an error occurred
+     */
     public Crud<T, K> to(Connection connection) throws SQLException {
         return table(connection, getTable(connection, target));
     }

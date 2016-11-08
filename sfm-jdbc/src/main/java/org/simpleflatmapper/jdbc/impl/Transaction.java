@@ -22,8 +22,12 @@ public class Transaction {
     }
 
     public void handleError(Throwable e) throws SQLException {
-        if (!connection.getAutoCommit()) {
-            connection.rollback();
+        try {
+            if (!connection.getAutoCommit()) {
+                connection.rollback();
+            }
+        } catch(Throwable t) {
+            // swallow not to mask original error
         }
         ErrorHelper.rethrow(e);
     }

@@ -284,6 +284,7 @@ public class CrudTest {
         key = object.getId();
         // read
         assertEquals(object, objectCrud.read(connection, key));
+        assertEquals(Arrays.asList(object), objectCrud.read(connection, Arrays.asList(key), new ListCollector<T>()).getList());
 
         object.setName("Udpdated");
 
@@ -323,6 +324,15 @@ public class CrudTest {
         objectCrud.update(connection, Arrays.asList(object));
 
         assertEquals(object, selectQuery.readFirst(connection, object.getId()));
+
+        objectCrud.delete(connection, object.getId());
+        assertNull(selectQuery.readFirst(connection, object.getId()));
+
+        objectCrud.create(connection, object);
+
+        assertEquals(object, selectQuery.readFirst(connection, object.getId()));
+
+
 
     }
 

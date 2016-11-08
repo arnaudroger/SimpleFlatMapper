@@ -18,7 +18,9 @@ public class Transaction {
     }
 
     public void commit() throws SQLException {
-        connection.commit();
+        if (!connection.getAutoCommit()) {
+            connection.commit();
+        }
     }
 
     public void handleError(Throwable e) throws SQLException {

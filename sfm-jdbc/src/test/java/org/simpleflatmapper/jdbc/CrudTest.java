@@ -298,7 +298,7 @@ public class CrudTest {
         objectCrud.delete(connection, key);
         assertNull(objectCrud.read(connection, key));
 
-        objectCrud.create(connection, object);
+        objectCrud.create(connection, Arrays.asList(object));
 
 
         SelectQuery<T, Object> selectQuery = objectCrud.where(" id = :id ", Long.class);
@@ -306,6 +306,27 @@ public class CrudTest {
         assertEquals(object, selectQuery.readFirst(connection, object.getId()));
         assertEquals(Arrays.asList(object), objectCrud.where(" email =:email and name = :name", object.getClass()).read(connection, object, new ListCollector<T>()).getList());
         assertEquals(Arrays.asList(object), objectCrud.where(" email =:email and name = :name",Object[].class).read(connection, new Object[] {object.getEmail(), object.getName()}, new ListCollector<T>()).getList());
+
+        objectCrud.delete(connection, Arrays.asList(object.getId()));
+
+        assertNull(selectQuery.readFirst(connection, object.getId()));
+
+        assertNull(objectCrud.create(connection, Arrays.asList(object), new CheckedConsumer<Long>() {
+            Long key;
+            @Override
+            public void accept(Long aLong) throws Exception {
+                this.key = aLong;
+            }
+        }).key);
+
+
+        assertEquals(object, selectQuery.readFirst(connection, object.getId()));
+
+        object.setName("Udpdated 2");
+        objectCrud.update(connection, Arrays.asList(object));
+
+        assertEquals(object, selectQuery.readFirst(connection, object.getId()));
+
     }
 
 

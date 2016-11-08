@@ -22,7 +22,9 @@ public class Transaction {
     }
 
     public void handleError(Throwable e) throws SQLException {
-        connection.rollback();
+        if (!connection.getAutoCommit()) {
+            connection.rollback();
+        }
         ErrorHelper.rethrow(e);
     }
 

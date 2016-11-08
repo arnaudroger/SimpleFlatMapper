@@ -50,7 +50,8 @@ public class CrudFactory {
                 delete,
                 keyMapper,
                 crudMeta.getTable(),
-                hasGeneratedKeys);
+                hasGeneratedKeys,
+                new SelectQueryWhereFactory<T>(crudMeta.getTable(), selectMapper, mapperFactory));
 
         if (crudMeta.getDatabaseMeta().isMysql()) {
             return MysqlCrudFactory.newInstance(target, keyTarget, crudMeta, mapperFactory, defaultCrud);
@@ -117,7 +118,7 @@ public class CrudFactory {
         List<String> generatedKeys = new ArrayList<String>();
 
         StringBuilder sb = new StringBuilder("INSERT INTO ");
-        sb.append(crudMeta.getTable());
+        appendTableName(sb, crudMeta);
         sb.append("(");
         boolean first = true;
         for(ColumnMeta cm : crudMeta.getColumnMetas()) {
@@ -148,7 +149,7 @@ public class CrudFactory {
 
     private static <T, K> QueryPreparer<T> buildUpdate(ClassMeta<T> target, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         StringBuilder sb = new StringBuilder("UPDATE ");
-        sb.append(crudMeta.getTable());
+        appendTableName(sb, crudMeta);
         sb.append(" SET ");
         boolean first = true;
         for(ColumnMeta cm : crudMeta.getColumnMetas()) {
@@ -168,14 +169,18 @@ public class CrudFactory {
 
     private static <T, K> QueryPreparer<K> buildSelect(ClassMeta<K> keyTarget, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         StringBuilder sb = new StringBuilder("SELECT * FROM ");
-        sb.append(crudMeta.getTable());
+        appendTableName(sb, crudMeta);
         addWhereOnPrimaryKeys(crudMeta, sb);
         return jdbcMapperFactory.<K>from(keyTarget).to(NamedSqlQuery.parse(sb));
     }
 
+    private static void appendTableName(StringBuilder sb, CrudMeta crudMeta) {
+        sb.append(crudMeta.getTable());
+    }
+
     private static <T, K> QueryPreparer<K> buildDelete(ClassMeta<K> keyTarget, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
         StringBuilder sb = new StringBuilder("DELETE FROM ");
-        sb.append(crudMeta.getTable());
+        appendTableName(sb, crudMeta);
         addWhereOnPrimaryKeys(crudMeta, sb);
         return jdbcMapperFactory.<K>from(keyTarget).to(NamedSqlQuery.parse(sb));
     }

@@ -1,13 +1,14 @@
 package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.jdbc.Crud;
+import org.simpleflatmapper.jdbc.SelectQuery;
 import org.simpleflatmapper.util.CheckedConsumer;
 
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
 
 public final class MultiRowsBatchInsertCrud<T, K> implements Crud<T, K> {
     private final BatchQueryExecutor<T> batchInsertQueryExecutor;
@@ -107,5 +108,10 @@ public final class MultiRowsBatchInsertCrud<T, K> implements Crud<T, K> {
             }
         });
         return keyConsumer;
+    }
+
+    @Override
+    public <P> SelectQuery<T, P> where(String whereClause, Type paramClass) {
+        return delegate.where(whereClause, paramClass);
     }
 }

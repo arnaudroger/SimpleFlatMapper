@@ -296,6 +296,9 @@ public class CrudTest {
         assertNull(objectCrud.read(connection, key));
 
         objectCrud.create(connection, object);
+
+
+        assertEquals(object, objectCrud.where(" id = :id ", Long.class).readFirst(connection, object.getId()));
     }
 
 

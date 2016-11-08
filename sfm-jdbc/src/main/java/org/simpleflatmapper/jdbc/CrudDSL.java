@@ -3,6 +3,7 @@ package org.simpleflatmapper.jdbc;
 import org.simpleflatmapper.jdbc.impl.CrudFactory;
 import org.simpleflatmapper.jdbc.impl.CrudMeta;
 import org.simpleflatmapper.jdbc.impl.LazyCrud;
+import org.simpleflatmapper.jdbc.impl.TransactionFactory;
 import org.simpleflatmapper.reflect.meta.AliasProviderService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
@@ -42,7 +43,7 @@ public class CrudDSL<T, K> {
     public ConnectedCrud<T, K> table(DataSource dataSource, String table) throws SQLException {
         Connection connection = dataSource.getConnection();
         try {
-            return new ConnectedCrud<T, K>(dataSource, table(connection, table));
+            return new ConnectedCrud<T, K>(new TransactionFactory(dataSource), table(connection, table));
         } finally {
             connection.close();
         }
@@ -51,7 +52,7 @@ public class CrudDSL<T, K> {
     public ConnectedCrud<T, K> to(DataSource dataSource) throws SQLException {
         Connection connection = dataSource.getConnection();
         try {
-            return new ConnectedCrud<T, K>(dataSource, to(connection));
+            return new ConnectedCrud<T, K>(new TransactionFactory(dataSource), to(connection));
         } finally {
             connection.close();
         }

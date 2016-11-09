@@ -1,17 +1,8 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.simpleflatmapper/sfm-sql2o.svg)](https://maven-badges.herokuapp.com/maven-central/org.simpleflatmapper/sfm-sql2o)
-[![JavaDoc](https://img.shields.io/badge/javadoc-3.0-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
+[![JavaDoc](https://img.shields.io/badge/javadoc-blue.svg)](http://www.javadoc.io/doc/org.simpleflatmapper/sfm-sql2o)
 
-# sql2o integration
+[Getting Started](http://simpleflatmapper.org/0108-getting-started-sql2o.html)
 
-## Add dependency
-
-```xml
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>sfm-sql2o</artifactId>
-			<version>3.0</version>
-		</dependency>
-```
 
 ## SQL2o integration
 

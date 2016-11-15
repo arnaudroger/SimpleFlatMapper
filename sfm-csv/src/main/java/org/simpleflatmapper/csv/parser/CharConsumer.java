@@ -12,7 +12,7 @@ public class CharConsumer {
 	private static final int ESCAPED                     = 8;
 	private static final int LAST_CHAR_WAS_SEPARATOR     = 4;
 	private static final int LAST_CHAR_WAS_CR            = 2;
-	private static final int UNESCAPED_AREA = 1;
+	private static final int ESCAPED_AREA = 1;
 	private static final int NONE                        = 0;
 
 	private static final int TURN_OFF_LAST_CHAR_MASK = ~(LAST_CHAR_WAS_CR|LAST_CHAR_WAS_SEPARATOR);
@@ -21,10 +21,8 @@ public class CharConsumer {
 	public static final char SPACE = ' ';
 
 	private final CharBuffer csvBuffer;
-	private final char escapeChar;
-	private final char separatorChar;
+	private final TextFormat textFormat;
 	private final CellPreProcessor cellPreProcessor;
-	private final boolean notIgnoringLeadingSpace;
 
 	private int _currentIndex = 0;
 	private int _currentState = NONE;
@@ -32,62 +30,52 @@ public class CharConsumer {
 	public CharConsumer(CharBuffer csvBuffer, TextFormat textFormat, CellPreProcessor cellPreProcessor) {
 		this.csvBuffer = csvBuffer;
 		this.cellPreProcessor = cellPreProcessor;
-		this.escapeChar = textFormat.escapeChar;
-		this.separatorChar = textFormat.separatorChar;
-		this.notIgnoringLeadingSpace = !cellPreProcessor.ignoreLeadingSpace();
+		this.textFormat = textFormat;
 	}
 
 	public final void consumeAllBuffer(final CellConsumer cellConsumer) {
 
-		final boolean notIgnoringLeadingSpace = this.notIgnoringLeadingSpace;
-		final int escapeChar = this.escapeChar;
-		final int separatorChar = this.separatorChar;
+		final boolean ignoreLeadingSpace = cellPreProcessor.ignoreLeadingSpace();
+		final int escapeChar = textFormat.escapeChar;
+		final int separatorChar = textFormat.separatorChar;
 
 		int currentState = _currentState;
 		int currentIndex = _currentIndex;
 
 		final char[] chars = csvBuffer.buffer;
-		final int bufferSize =  Math.min(csvBuffer.bufferSize, chars.length);
+		final int bufferSize =  csvBuffer.bufferSize;
 
 		for(; currentIndex  < bufferSize; currentIndex++) {
 			final char character = chars[currentIndex];
 
-			final boolean unescapedArea = (currentState & UNESCAPED_AREA) == 0;
-
-			if (character == separatorChar) { // separator
-				if (unescapedArea) {
-					cellPreProcessor.newCell(chars, csvBuffer.mark, currentIndex, cellConsumer);
-					csvBuffer.mark = currentIndex + 1;
-					currentState = LAST_CHAR_WAS_SEPARATOR;
-					continue;
-				}
-			} else if (character == LF) { // \n
-				if (unescapedArea) {
-					if ((currentState & LAST_CHAR_WAS_CR) == 0) {
-						cellPreProcessor.newCell(chars, csvBuffer.mark, currentIndex, cellConsumer);
-						cellConsumer.endOfRow();
+			if (character != escapeChar) {
+				if ((currentState & ESCAPED_AREA) == 0) {
+					if (character == separatorChar) { // separator
+						newCell(cellConsumer, currentIndex, chars);
+						currentState = LAST_CHAR_WAS_SEPARATOR;
+						continue;
+					} else if (character == LF) { // \n
+						if ((currentState & LAST_CHAR_WAS_CR) == 0) {
+							endOfRow(cellConsumer, currentIndex, chars);
+						}
+						csvBuffer.mark = currentIndex + 1;
+						currentState = NONE;
+						continue;
+					} else if (character == CR) { // \r
+						endOfRow(cellConsumer, currentIndex, chars);
+						csvBuffer.mark = currentIndex + 1;
+						currentState = LAST_CHAR_WAS_CR;
+						continue;
 					}
-					csvBuffer.mark = currentIndex + 1;
-					currentState = NONE;
-					continue;
 				}
-			} else if (character == CR) { // \r
-				if (unescapedArea) {
-					cellPreProcessor.newCell(chars, csvBuffer.mark, currentIndex, cellConsumer);
-					cellConsumer.endOfRow();
-					csvBuffer.mark = currentIndex + 1;
-					currentState = LAST_CHAR_WAS_CR;
-					continue;
-				}
-			} else if (character == escapeChar) { // escape
+				currentState = (currentState & TURN_OFF_LAST_CHAR_MASK)
+						| ((ignoreLeadingSpace && character == SPACE) ? 0 : DATA);
+			} else { // escape
 				currentState =
 						(((currentState ^ DATA) & (ESCAPED | DATA)) != 0) ?
-						(currentState ^ UNESCAPED_AREA) | ESCAPED : currentState;
-				continue;
+							(currentState ^ ESCAPED_AREA) | ESCAPED :
+							currentState;
 			}
-
-			currentState = (currentState & TURN_OFF_LAST_CHAR_MASK)
-					| ((notIgnoringLeadingSpace || character != SPACE) ? DATA : 0);
 		}
 
 		_currentState = currentState;
@@ -95,66 +83,57 @@ public class CharConsumer {
 	}
 
 	public final boolean consumeToNextRow(CellConsumer cellConsumer) {
-		final boolean notIgnoringLeadingSpace = this.notIgnoringLeadingSpace;
-		final int escapeChar = this.escapeChar;
-		final int separatorChar = this.separatorChar;
+		final boolean ignoreLeadingSpace = cellPreProcessor.ignoreLeadingSpace();
+		final int escapeChar = textFormat.escapeChar;
+		final int separatorChar = textFormat.separatorChar;
 
 		int currentState = _currentState;
 		int currentIndex = _currentIndex;
 
 		final char[] chars = csvBuffer.buffer;
-		final int bufferSize =  Math.min(csvBuffer.bufferSize, chars.length);
+		final int bufferSize = csvBuffer.bufferSize;
 
 		for(; currentIndex  < bufferSize; currentIndex++) {
 			final char character = chars[currentIndex];
 
-			final boolean unescapedArea = (currentState & UNESCAPED_AREA) == 0;
-
-			if (character == separatorChar) { // separator
-				if (unescapedArea) {
-					cellPreProcessor.newCell(chars, csvBuffer.mark, currentIndex, cellConsumer);
-					csvBuffer.mark = currentIndex + 1;
-					currentState = LAST_CHAR_WAS_SEPARATOR;
-					continue;
-				}
-			} else if (character == LF) { // \n
-				if (unescapedArea) {
-					if ((currentState & LAST_CHAR_WAS_CR) == 0) {
-						cellPreProcessor.newCell(chars, csvBuffer.mark, currentIndex, cellConsumer);
+			if (character != escapeChar) {
+				if ((currentState & ESCAPED_AREA) == 0) {
+					if (character == separatorChar) { // separator
+						newCell(cellConsumer, currentIndex, chars);
+						currentState = LAST_CHAR_WAS_SEPARATOR;
+						continue;
+					} else if (character == LF) { // \n
+						if ((currentState & LAST_CHAR_WAS_CR) == 0) {
+							if (bEndOfRow(cellConsumer, currentIndex, chars)) {
+								csvBuffer.mark = currentIndex + 1;
+								_currentIndex = currentIndex + 1;
+								_currentState = NONE;
+								return true;
+							}
+						}
 						csvBuffer.mark = currentIndex + 1;
 						currentState = NONE;
-						if (cellConsumer.endOfRow()) {
+						continue;
+					} else if (character == CR) { // \r
+						if (bEndOfRow(cellConsumer, currentIndex, chars)) {
+							csvBuffer.mark = currentIndex + 1;
 							_currentIndex = currentIndex + 1;
-							_currentState = currentState;
+							_currentState = LAST_CHAR_WAS_CR;
 							return true;
 						}
+						csvBuffer.mark = currentIndex + 1;
+						currentState = LAST_CHAR_WAS_CR;
 						continue;
 					}
-					csvBuffer.mark = currentIndex + 1;
-					currentState = NONE;
-					continue;
 				}
-			} else if (character == CR) { // \r
-				if (unescapedArea) {
-					cellPreProcessor.newCell(chars, csvBuffer.mark, currentIndex, cellConsumer);
-					csvBuffer.mark = currentIndex + 1;
-					currentState = LAST_CHAR_WAS_CR;
-					if (cellConsumer.endOfRow()) {
-						_currentIndex = currentIndex + 1;
-						_currentState = currentState;
-						return true;
-					}
-					continue;
-				}
-			} else if (character == escapeChar) { // escape
+				currentState = (currentState & TURN_OFF_LAST_CHAR_MASK)
+						| ((ignoreLeadingSpace && character == SPACE) ? 0 : DATA);
+			} else {
 				currentState =
 						(((currentState ^ DATA) & (ESCAPED | DATA)) != 0) ?
-								(currentState ^ UNESCAPED_AREA) | ESCAPED : currentState;
-				continue;
+								(currentState ^ ESCAPED_AREA) | ESCAPED :
+								currentState;
 			}
-
-			currentState = (currentState & TURN_OFF_LAST_CHAR_MASK)
-					| ((notIgnoringLeadingSpace || character != SPACE) ? DATA : 0);
 		}
 
 		_currentState = currentState;
@@ -167,8 +146,7 @@ public class CharConsumer {
 	public final void finish(CellConsumer cellConsumer) {
 		if ( hasUnconsumedData()
 				|| (_currentState & LAST_CHAR_WAS_SEPARATOR) != 0) {
-			cellPreProcessor.newCell(csvBuffer.buffer, csvBuffer.mark, _currentIndex, cellConsumer);
-			csvBuffer.mark = _currentIndex + 1;
+			newCell(cellConsumer, _currentIndex, csvBuffer.buffer);
 			_currentState = NONE;
 		}
 		cellConsumer.end();
@@ -181,6 +159,21 @@ public class CharConsumer {
 	public final void shiftBufferToMark() throws BufferOverflowException {
 		_currentIndex -= csvBuffer.shiftBufferToMark();
 	}
+
+	private void endOfRow(CellConsumer cellConsumer, int currentIndex, char[] chars) {
+		cellPreProcessor.newCell(chars, csvBuffer.mark, currentIndex, cellConsumer);
+		cellConsumer.endOfRow();
+	}
+	private boolean bEndOfRow(CellConsumer cellConsumer, int currentIndex, char[] chars) {
+		cellPreProcessor.newCell(chars, csvBuffer.mark, currentIndex, cellConsumer);
+		return cellConsumer.endOfRow();
+	}
+
+	private void newCell(CellConsumer cellConsumer, int currentIndex, char[] chars) {
+		cellPreProcessor.newCell(chars, csvBuffer.mark, currentIndex, cellConsumer);
+		csvBuffer.mark = currentIndex + 1;
+	}
+
 
 	private boolean hasUnconsumedData() {
 		return _currentIndex > csvBuffer.mark;

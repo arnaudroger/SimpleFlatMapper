@@ -2,10 +2,10 @@ package org.simpleflatmapper.csv.parser;
 
 public class UnescapeCellPreProcessor extends CellPreProcessor {
 
-    private final char escapeChar;
+    private final TextFormat textFormat;
 
-    public UnescapeCellPreProcessor(char escapeChar) {
-        this.escapeChar = escapeChar;
+    public UnescapeCellPreProcessor(TextFormat textFormat) {
+        this.textFormat = textFormat;
     }
 
 
@@ -13,7 +13,7 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
         int strStart = start;
         int strEnd = end;
 
-        if (strStart < strEnd && chars[strStart] == escapeChar) {
+        if (strStart < strEnd && chars[strStart] == textFormat.escapeChar) {
             strStart ++;
             strEnd = unescape(chars, strStart, strEnd);
         }
@@ -23,12 +23,12 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
 
     private int unescape(final char[] chars, final int start, final int end) {
         for(int i = start; i < end - 1; i ++) {
-            if (chars[i] == escapeChar) {
+            if (chars[i] == textFormat.escapeChar) {
                 return removeEscapeChars(chars, end, i);
             }
         }
 
-        if (start < end && chars[end - 1] == escapeChar) {
+        if (start < end && chars[end - 1] == textFormat.escapeChar) {
             return end - 1;
         }
 
@@ -39,7 +39,7 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
         int j = firstEscapeChar;
         boolean escaped = true;
         for(int i = firstEscapeChar + 1;i < end; i++) {
-            escaped = chars[i] == escapeChar && ! escaped;
+            escaped = chars[i] == textFormat.escapeChar && ! escaped;
             if (!escaped) {
                 chars[j++] = chars[i];
             }

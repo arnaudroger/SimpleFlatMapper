@@ -30,7 +30,7 @@ public class BreakDetectorImpl<S, K> implements BreakDetector<S> {
 
         isBroken = (parent != null && parent.isBroken())
                 || lastValues == null
-                || !Arrays.equals(lastValues, newValues);
+                || !Arrays.deepEquals(lastValues, newValues);
 
         lastValues = newValues;
     }

@@ -487,16 +487,9 @@ public final class CsvParser {
 		protected final CharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
 			final TextFormat textFormat = getTextFormat();
 
-			if (isCsv()) {
-				return new CsvCharConsumer(charBuffer);
-			} else {
-				return new ConfigurableCharConsumer(charBuffer, textFormat, getCellTransformer(textFormat, stringPostProcessing));
-			}
+			return new CharConsumer(charBuffer, textFormat, getCellTransformer(textFormat, stringPostProcessing));
 		}
 
-		private boolean isCsv() {
-			return quoteChar == '"' && separatorChar == ',' && stringPostProcessing == StringPostProcessing.UNESCAPE;
-		}
 
 		protected TextFormat getTextFormat() {
 			return new TextFormat(separatorChar, quoteChar);
@@ -516,11 +509,7 @@ public final class CsvParser {
 		}
 
 		protected CellPreProcessor getUnescapeCellTransformer(TextFormat textFormat) {
-			if (textFormat.getEscapeChar() == '"') {
-				return CsvUnescapeCellPreProcessor.INSTANCE;
-			} else {
-				return new UnescapeCellPreProcessor(textFormat.getEscapeChar());
-			}
+			return new UnescapeCellPreProcessor(textFormat);
 		}
 
 		public final int maxBufferSize() {

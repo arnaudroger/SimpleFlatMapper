@@ -16,11 +16,5 @@ public abstract class CharBuffer {
 	public abstract int fillBuffer() throws IOException;
 	public abstract int shiftBufferToMark() throws BufferOverflowException;
 
-	public final char[] getCharBuffer() {
-		return buffer;
-	}
-	public final int getBufferSize() {
-		return bufferSize;
-	}
 
 }

@@ -503,14 +503,22 @@ public class CsvParserTest {
 
 	private void testSkipThenParseRows(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
 		String[][] cells;
-		cells = dsl.skip(1).reader(createReader(expectations, separator, quote, cr)).parseRows(new AccumulateCellConsumer(), 2).allValues();
+		cells = dsl
+				.skip(1)
+				.reader(createReader(expectations, separator, quote, cr))
+				.parseRows(new AccumulateCellConsumer(), 2)
+				.allValues();
 
 		assertArrayEquals(toSubArray(expectations, 1, 2), cells);
 	}
 
 	private void testSkipThenParseAll(String[][] expectations, char separator, char quote, String cr, CsvParser.DSL dsl) throws IOException {
 		String[][] cells;
-		cells = dsl.skip(1).reader(createReader(expectations, separator, quote, cr)).parseAll(new AccumulateCellConsumer()).allValues();
+		cells =
+				dsl
+				.skip(1)
+				.reader(createReader(expectations, separator, quote, cr))
+				.parseAll(new AccumulateCellConsumer()).allValues();
 
 		assertArrayEquals(toSubArray(expectations, 1, expectations.length - 1), cells);
 	}

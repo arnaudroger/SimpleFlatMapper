@@ -4,9 +4,8 @@ import org.junit.Test;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
-import org.simpleflatmapper.map.property.RenameProperty;
-import org.simpleflatmapper.map.property.SetterProperty;
 import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.io.IOException;
 
@@ -67,6 +66,11 @@ public class Issue364 {
                 .newInstance()
 //                .addColumnProperty("Benchmark", new SetterProperty(setter))
                 .newMapper(Data.class);
-        CsvParser.mapWith(mapper).stream(DATA).forEach(System.out::println);
+        CsvParser.mapWith(mapper).forEach(DATA, new CheckedConsumer<Data>() {
+            @Override
+            public void accept(Data data) throws Exception {
+                System.out.println("data = " + data);
+            }
+        });
     }
 }

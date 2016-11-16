@@ -35,7 +35,7 @@ public class CharConsumer {
 
 	public final void consumeAllBuffer(final CellConsumer cellConsumer) {
 
-		final boolean ignoreLeadingSpace = cellPreProcessor.ignoreLeadingSpace();
+		final boolean notIgnoreLeadingSpace = !cellPreProcessor.ignoreLeadingSpace();
 		final int escapeChar = textFormat.escapeChar;
 		final int separatorChar = textFormat.separatorChar;
 
@@ -68,13 +68,12 @@ public class CharConsumer {
 						continue;
 					}
 				}
-				currentState = (currentState & TURN_OFF_LAST_CHAR_MASK)
-						| ((ignoreLeadingSpace && character == SPACE) ? 0 : DATA);
-			} else { // escape
-				currentState =
-						(((currentState ^ DATA) & (ESCAPED | DATA)) != 0) ?
-							(currentState ^ ESCAPED_AREA) | ESCAPED :
-							currentState;
+				currentState &= TURN_OFF_LAST_CHAR_MASK;
+				if (notIgnoreLeadingSpace || character != SPACE) {
+					currentState  |= DATA;
+				}
+			} else if(((currentState ^ DATA) & (ESCAPED | DATA)) != 0){ // escape
+				currentState = (currentState ^ ESCAPED_AREA) | ESCAPED;
 			}
 		}
 
@@ -83,7 +82,7 @@ public class CharConsumer {
 	}
 
 	public final boolean consumeToNextRow(CellConsumer cellConsumer) {
-		final boolean ignoreLeadingSpace = cellPreProcessor.ignoreLeadingSpace();
+		final boolean notIgnoreLeadingSpace = !cellPreProcessor.ignoreLeadingSpace();
 		final int escapeChar = textFormat.escapeChar;
 		final int separatorChar = textFormat.separatorChar;
 
@@ -126,13 +125,12 @@ public class CharConsumer {
 						continue;
 					}
 				}
-				currentState = (currentState & TURN_OFF_LAST_CHAR_MASK)
-						| ((ignoreLeadingSpace && character == SPACE) ? 0 : DATA);
-			} else {
-				currentState =
-						(((currentState ^ DATA) & (ESCAPED | DATA)) != 0) ?
-								(currentState ^ ESCAPED_AREA) | ESCAPED :
-								currentState;
+				currentState &= TURN_OFF_LAST_CHAR_MASK;
+				if (notIgnoreLeadingSpace || character != SPACE) {
+					currentState  |= DATA;
+				}
+			} else if(((currentState ^ DATA) & (ESCAPED | DATA)) != 0){ // escape
+				currentState = (currentState ^ ESCAPED_AREA) | ESCAPED;
 			}
 		}
 

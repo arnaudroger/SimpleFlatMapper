@@ -56,11 +56,11 @@ public class Issue364 {
 //                .newMapper(Data.class);
 
 
-        Setter<Data, String> setter = (target, value)  -> {
-                int indexOfDot = value.indexOf('.');
-                target.algorithm = value.substring(0, indexOfDot);
-                target.type = value.substring(indexOfDot + 1, value.length());
-            };
+//        Setter<Data, String> setter = (target, value)  -> {
+//                int indexOfDot = value.indexOf('.');
+//                target.algorithm = value.substring(0, indexOfDot);
+//                target.type = value.substring(indexOfDot + 1, value.length());
+//            };
 
         CsvMapper<Data> mapper = CsvMapperFactory
                 .newInstance()

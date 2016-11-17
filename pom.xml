@@ -120,6 +120,7 @@
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
             <version>2.5s</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

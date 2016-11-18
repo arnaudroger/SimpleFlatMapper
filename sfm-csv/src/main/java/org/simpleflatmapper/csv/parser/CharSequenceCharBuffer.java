@@ -20,11 +20,6 @@ public final class CharSequenceCharBuffer extends CharBuffer {
 		return -1;
 	}
 
-	@Override
-	public final int shiftBufferToMark() {
-		return 0;
-	}
-
 	private static char[] toCharArray(CharSequence charSequence) {
 		if (charSequence instanceof String) {
 			return ((String)charSequence).toCharArray();

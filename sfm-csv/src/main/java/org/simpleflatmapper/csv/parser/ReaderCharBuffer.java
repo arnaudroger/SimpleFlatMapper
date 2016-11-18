@@ -14,50 +14,36 @@ public final class ReaderCharBuffer extends CharBuffer {
 		super(new char[bufferSize], 0);
 		this.maxBufferSize = maxBufferLength;
 		this.reader = reader;
-		this.resizeThreshold = calculateResizeThreshold();
+		this.resizeThreshold = (buffer.length >> 2) * 3;
 	}
 
 	@Override
 	public final int fillBuffer() throws IOException {
-		int length = reader.read(buffer, bufferSize, buffer.length - bufferSize);
-		bufferSize += Math.max(0, length);
-		return length;
+		resizeIfNeeded();
+		return readToBuffer();
 	}
 
-	@Override
-	public final int shiftBufferToMark() throws BufferOverflowException {
-		// shift buffer consumer data
-		int lMark = this.mark;
-		int usedLength = Math.max(bufferSize - lMark, 0);
-
-		// if buffer tight double the size
-		resizeIfNeeded(usedLength);
-
-		System.arraycopy(buffer, lMark, buffer, 0, usedLength);
-
-		bufferSize = usedLength;
-
-		mark = 0;
-
-		return lMark;
-	}
-
-	private void resizeIfNeeded(int requireLength) throws BufferOverflowException {
-		if (requireLength > resizeThreshold) {
+	private void resizeIfNeeded() throws BufferOverflowException {
+		int usedLength = usedLength();
+		if (usedLength > resizeThreshold) {
 			int newBufferSize = Math.min(maxBufferSize, buffer.length << 1);
 
-			if (newBufferSize <= requireLength) {
+			if (newBufferSize <= usedLength) {
 				throw new BufferOverflowException("The content in the csv cell exceed the maxSizeBuffer " + maxBufferSize + ", see CsvParser.DSL.maxSizeBuffer(int) to change the default value");
 			}
 			// double buffer size
 			buffer = Arrays.copyOf(buffer, newBufferSize);
 
-			resizeThreshold = calculateResizeThreshold();
+			// 3/4
+			resizeThreshold = (buffer.length >> 2) * 3;
 		}
 	}
 
-	private int calculateResizeThreshold() {
-		// 3/4 of buffer length
-		return (buffer.length >> 2) * 3;
+	private int readToBuffer() throws IOException {
+		int l = reader.read(buffer, bufferSize, buffer.length - bufferSize);
+		if (l > 0) {
+			bufferSize += l;
+		}
+		return l;
 	}
 }

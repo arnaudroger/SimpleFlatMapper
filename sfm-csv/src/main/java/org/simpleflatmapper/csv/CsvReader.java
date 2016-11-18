@@ -53,10 +53,11 @@ public final class CsvReader implements Iterable<String[]> {
 	private <CC extends CellConsumer> void _parseAll(CC cellConsumer) throws IOException {
 		do {
 			consumer.consumeAllBuffer(cellConsumer);
-			consumer.shiftBufferToMark();
-		} while (consumer.refillBuffer());
+		} while(consumer.next());
+
 		consumer.finish(cellConsumer);
 	}
+
 
 	/**
 	 * parse cvs
@@ -74,8 +75,7 @@ public final class CsvReader implements Iterable<String[]> {
 			if (consumer.consumeToNextRow(cellConsumer)) {
 				return true;
 			}
-			consumer.shiftBufferToMark();
-		} while (consumer.refillBuffer());
+		} while(consumer.next());
 
 		consumer.finish(cellConsumer);
 		return false;

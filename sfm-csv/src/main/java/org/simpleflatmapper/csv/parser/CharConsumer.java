@@ -194,43 +194,19 @@ public final class CharConsumer {
 		cellConsumer.end();
 	}
 
-	public final boolean refillBuffer() throws IOException {
-		return csvBuffer.fillBuffer() >= 0;
-	}
-
-	public final void shiftBufferToMark() throws BufferOverflowException {
-		_currentIndex -= csvBuffer.shiftBufferToMark();
-	}
-
-	private static boolean _hasNoDataOrIsEscaped(int currentState) {
-		return ((currentState ^ DATA) & (ESCAPED | DATA)) != 0;
-	}
-
-	private boolean bEndOfRow(CellConsumer cellConsumer, char[] chars, int cellEnd) {
-		cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer);
-		return cellConsumer.endOfRow();
-	}
-
 	private void endOfCell(CellConsumer cellConsumer, char[] chars, int cellEnd) {
 		cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer);
 		csvBuffer.mark = cellEnd + 1;
 	}
 
-	private void endOfRowLF(CellConsumer cellConsumer, int currentState, char[] chars, int cellEnd) {
-		if ((currentState & LAST_CHAR_WAS_CR) == 0) {
-			cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer);
-			cellConsumer.endOfRow();
-		}
-	}
-
-	private void endOfRowCR(CellConsumer cellConsumer, char[] chars, int cellEnd) {
-		cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer);
-		cellConsumer.endOfRow();
-	}
-
-
 	private boolean hasUnconsumedData() {
 		return _currentIndex > csvBuffer.mark;
 	}
 
+	public boolean next() throws IOException {
+		int mark = csvBuffer.mark;
+		csvBuffer.shiftBufferToMark();
+		_currentIndex -= mark;
+		return csvBuffer.fillBuffer() >= 0;
+	}
 }

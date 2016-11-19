@@ -18,32 +18,27 @@ public final class ReaderCharBuffer extends CharBuffer {
 	}
 
 	@Override
-	public final int fillBuffer() throws IOException {
-		resizeIfNeeded();
-		return readToBuffer();
-	}
+	public final boolean next() throws IOException {
+		// shift buffer consumer data
+		int effectiveMark = Math.min(bufferSize, mark);
+		int newSize = bufferSize - effectiveMark;
+		System.arraycopy(buffer, effectiveMark, buffer, 0, newSize);
+		bufferSize = newSize;
+		mark = 0;
 
-	private void resizeIfNeeded() throws BufferOverflowException {
-		int usedLength = usedLength();
-		if (usedLength > resizeThreshold) {
+		if (bufferSize > resizeThreshold) {
 			int newBufferSize = Math.min(maxBufferSize, buffer.length << 1);
-
-			if (newBufferSize <= usedLength) {
+			if (newBufferSize <= bufferSize) {
 				throw new BufferOverflowException("The content in the csv cell exceed the maxSizeBuffer " + maxBufferSize + ", see CsvParser.DSL.maxSizeBuffer(int) to change the default value");
-			}
-			// double buffer size
+			}			// double buffer size
 			buffer = Arrays.copyOf(buffer, newBufferSize);
-
 			// 3/4
-			resizeThreshold = (buffer.length >> 2) * 3;
+			resizeThreshold = (newBufferSize >> 2) * 3;
 		}
+
+		int l = reader.read(buffer, bufferSize, buffer.length - bufferSize);
+		bufferSize += Math.max(0, l);
+		return l > 0;
 	}
 
-	private int readToBuffer() throws IOException {
-		int l = reader.read(buffer, bufferSize, buffer.length - bufferSize);
-		if (l > 0) {
-			bufferSize += l;
-		}
-		return l;
-	}
 }

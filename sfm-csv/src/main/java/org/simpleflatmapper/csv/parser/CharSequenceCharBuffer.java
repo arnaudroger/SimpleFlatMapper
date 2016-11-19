@@ -16,8 +16,8 @@ public final class CharSequenceCharBuffer extends CharBuffer {
 	}
 
 	@Override
-	public final int fillBuffer() throws IOException {
-		return -1;
+	public final boolean next() throws IOException {
+		return false;
 	}
 
 	private static char[] toCharArray(CharSequence charSequence) {

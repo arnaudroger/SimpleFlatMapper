@@ -188,15 +188,11 @@ public final class CharConsumer {
 	public final void finish(CellConsumer cellConsumer) {
 		if ( hasUnconsumedData()
 				|| (_currentState & LAST_CHAR_WAS_SEPARATOR) != 0) {
-			endOfCell(cellConsumer, csvBuffer.buffer, _currentIndex);
+			cellPreProcessor.newCell(csvBuffer.buffer, csvBuffer.mark, _currentIndex, cellConsumer);
+			csvBuffer.mark = _currentIndex + 1;
 			_currentState = NONE;
 		}
 		cellConsumer.end();
-	}
-
-	private void endOfCell(CellConsumer cellConsumer, char[] chars, int cellEnd) {
-		cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer);
-		csvBuffer.mark = cellEnd + 1;
 	}
 
 	private boolean hasUnconsumedData() {
@@ -205,8 +201,8 @@ public final class CharConsumer {
 
 	public boolean next() throws IOException {
 		int mark = csvBuffer.mark;
-		csvBuffer.shiftBufferToMark();
-		_currentIndex -= mark;
-		return csvBuffer.fillBuffer() >= 0;
+		boolean b = csvBuffer.next();
+		_currentIndex -= mark - csvBuffer.mark;
+		return b;
 	}
 }

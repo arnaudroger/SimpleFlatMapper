@@ -176,22 +176,22 @@ public final class CharConsumer {
 				}
 			} else {
 				// look for next escapeChar
-//				int nextEscapeChar = findNextEscapeChar(chars, currentIndex, bufferSize, escapeChar);
-//
-//				if (nextEscapeChar >= 0) {
-//					currentIndex = nextEscapeChar + 1;
-//					currentState &= TURN_OFF_ESCAPED_AREA;
-//				} else {
-//					currentIndex = bufferSize;
-//				}
-				while (currentIndex < bufferSize) {
-					char character = chars[currentIndex];
-					currentIndex++;
-					if (character == escapeChar) {
-						currentState &= TURN_OFF_ESCAPED_AREA;
-						break;
-					}
+				int nextEscapeChar = findNextEscapeChar(chars, currentIndex, bufferSize, escapeChar);
+
+				if (nextEscapeChar >= 0) {
+					currentIndex = nextEscapeChar + 1;
+					currentState &= TURN_OFF_ESCAPED_AREA;
+				} else {
+					currentIndex = bufferSize;
 				}
+//				while (currentIndex < bufferSize) {
+//					char character = chars[currentIndex];
+//					currentIndex++;
+//					if (character == escapeChar) {
+//						currentState &= TURN_OFF_ESCAPED_AREA;
+//						break;
+//					}
+//				}
 			}
 		}
 

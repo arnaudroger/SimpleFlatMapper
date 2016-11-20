@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-map</artifactId>
-			<version>3.5-SNAPSHOT</version>
+			<version>3.4-SNAPSHOT</version>
 			<classifier>${jar.classifier}</classifier>
 		</dependency>
 
@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-map</artifactId>
-			<version>3.5-SNAPSHOT</version>
+			<version>3.4-SNAPSHOT</version>
 			<scope>test</scope>
 			<type>test-jar</type>
 		</dependency>

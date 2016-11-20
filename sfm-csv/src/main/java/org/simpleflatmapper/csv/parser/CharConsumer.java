@@ -38,8 +38,8 @@ public final class CharConsumer {
 	public final void consumeAllBuffer(final CellConsumer cellConsumer) {
 
 		final boolean notIgnoreLeadingSpace = !cellPreProcessor.ignoreLeadingSpace();
-		final int escapeChar = textFormat.escapeChar;
-		final int separatorChar = textFormat.separatorChar;
+		final char escapeChar = textFormat.escapeChar;
+		final char separatorChar = textFormat.separatorChar;
 
 		int currentState = _currentState;
 		int currentIndex = _currentIndex;
@@ -88,6 +88,15 @@ public final class CharConsumer {
 					}
 				}
 			} else {
+//				int nextEscapeChar = findNextEscapeChar(chars, currentIndex, bufferSize, escapeChar);
+//
+//				if (nextEscapeChar >= 0) {
+//					currentIndex = nextEscapeChar + 1;
+//					currentState &= TURN_OFF_ESCAPED_AREA;
+//				} else {
+//					currentIndex = bufferSize;
+//				}
+
 				// look for next escapeChar
 				while (currentIndex < bufferSize) {
 					char character = chars[currentIndex];
@@ -107,8 +116,8 @@ public final class CharConsumer {
 
 	public final boolean consumeToNextRow(CellConsumer cellConsumer) {
 		final boolean notIgnoreLeadingSpace = !cellPreProcessor.ignoreLeadingSpace();
-		final int escapeChar = textFormat.escapeChar;
-		final int separatorChar = textFormat.separatorChar;
+		final char escapeChar = textFormat.escapeChar;
+		final char separatorChar = textFormat.separatorChar;
 
 		int currentState = _currentState;
 		int currentIndex = _currentIndex;
@@ -167,6 +176,14 @@ public final class CharConsumer {
 				}
 			} else {
 				// look for next escapeChar
+//				int nextEscapeChar = findNextEscapeChar(chars, currentIndex, bufferSize, escapeChar);
+//
+//				if (nextEscapeChar >= 0) {
+//					currentIndex = nextEscapeChar + 1;
+//					currentState &= TURN_OFF_ESCAPED_AREA;
+//				} else {
+//					currentIndex = bufferSize;
+//				}
 				while (currentIndex < bufferSize) {
 					char character = chars[currentIndex];
 					currentIndex++;
@@ -183,6 +200,13 @@ public final class CharConsumer {
 
 		return false;
 
+	}
+
+	private int findNextEscapeChar(char[] chars, int currentIndex, int bufferSize, char escapeChar) {
+		for(int i = currentIndex; i < bufferSize; i++) {
+			if (chars[i] == escapeChar) return i;
+		}
+		return -1;
 	}
 
 	public final void finish(CellConsumer cellConsumer) {

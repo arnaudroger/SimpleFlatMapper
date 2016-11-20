@@ -41,13 +41,11 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
         boolean escaped = true;
         for(int sourceIndex = firstEscapeChar + 1;sourceIndex < end; sourceIndex++) {
             char c = chars[sourceIndex];
-            if (escaped) {
+            if (c != escapeChar || escaped) {
                 chars[destIndex++] = c;
                 escaped = false;
-            } else if (c == escapeChar) {
-                escaped = true;
             } else {
-                chars[destIndex++] = c;
+                escaped = true;
             }
         }
         return destIndex;

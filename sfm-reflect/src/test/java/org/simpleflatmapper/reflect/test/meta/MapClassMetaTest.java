@@ -7,7 +7,9 @@ import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.util.AbstractMap;
@@ -20,6 +22,7 @@ import java.util.concurrent.ConcurrentMap;
 import static org.junit.Assert.*;
 
 public class MapClassMetaTest {
+    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
 
     @Test
     public void testForEach() {
@@ -40,7 +43,7 @@ public class MapClassMetaTest {
     public void testFindPropertyStringDbObject() {
         final ClassMeta<Map<String, DbObject>> classMeta =
                 ReflectionService.newInstance().getClassMeta(new TypeReference<Map<String, DbObject>>() {}.getType());
-        final PropertyFinder<Map<String, DbObject>> mapPropertyFinder = classMeta.newPropertyFinder();
+        final PropertyFinder<Map<String, DbObject>> mapPropertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
         final SubPropertyMeta<?, ?, ?> k_kv_k_id =
                 (SubPropertyMeta<?, ?, ?>) mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_id"));
@@ -63,7 +66,7 @@ public class MapClassMetaTest {
     public void testFindPropertyStringString() {
         final ClassMeta<Map<String, String>> classMeta =
                 ReflectionService.newInstance().getClassMeta(new TypeReference<Map<String, String>>() {}.getType());
-        final PropertyFinder<Map<String, String>> mapPropertyFinder = classMeta.newPropertyFinder();
+        final PropertyFinder<Map<String, String>> mapPropertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
         final PropertyMeta<?, ?> k_kv_k_id = mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_id"));
         assertNotNull(k_kv_k_id);

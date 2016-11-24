@@ -31,8 +31,10 @@ import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.primitive.IntGetter;
+import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.ForEachCallBack;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.sql.PreparedStatement;
@@ -167,7 +169,9 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
                     throw new IllegalArgumentException("Unexpected elementMeta" + propertyMeta);
                 }
 
-                PropertyMeta<C, P> childProperty = (PropertyMeta<C, P>) pm.getPropertyMeta().getPropertyClassMeta().newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("0"));
+                PropertyMeta<C, P> childProperty =
+                        (PropertyMeta<C, P>)
+                                pm.getPropertyMeta().getPropertyClassMeta().newPropertyFinder(ConstantPredicate.truePredicate()).findProperty(DefaultPropertyNameMatcher.of("0"));
 
                 final PropertyMapping<C, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pmchildProperttMeta = pm.propertyMeta(childProperty);
 

@@ -16,6 +16,7 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
+import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.reflect.ObjectSetterFactory;
 import org.simpleflatmapper.reflect.Parameter;
@@ -23,7 +24,9 @@ import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.ErrorDoc;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
@@ -246,7 +249,14 @@ public final class CellSetterFactory {
 
 				if (id != null) {
 					final Parameter parameter = id.getParameters()[0];
-					final PropertyMeta<?, Object> property = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.exact(parameter.getName()));
+					// look for constructor property matching name
+					final PropertyMeta<?, Object> property = classMeta.newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+						@Override
+						public boolean test(PropertyMeta<?, ?> propertyMeta) {
+							return propertyMeta.isConstructorProperty()
+									|| propertyMeta.isSubProperty() && ((SubPropertyMeta)propertyMeta).getOwnerProperty().isConstructorProperty();
+						}
+					}).findProperty(DefaultPropertyNameMatcher.exact(parameter.getName()));
 					reader = cellValueReaderFromFactory(property, index, columnDefinition, parsingContextFactoryBuilder);
 					if (reader != null) {
 						Instantiator<P, P> instantiator =

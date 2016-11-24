@@ -10,6 +10,8 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.tuple.Tuple2;
+import org.simpleflatmapper.util.ConstantPredicate;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.io.IOException;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class ReflectionServiceTest {
-
+    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
 
     @Test
     public void testClassMetaCache() {
@@ -43,7 +45,7 @@ public class ReflectionServiceTest {
 
         ClassMeta<Node> cm = reflectionService.getClassMeta(Node.class);
 
-        final PropertyMeta<Node, Object> propertyMeta = cm.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("parent_parent_parent"));
+        final PropertyMeta<Node, Object> propertyMeta = cm.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("parent_parent_parent"));
         assertNotNull(propertyMeta);
         assertNotNull(cm);
     }
@@ -76,7 +78,7 @@ public class ReflectionServiceTest {
         ClassMeta<IGetters> meta = ReflectionService.newInstance().getClassMeta(IGetters.class);
 
 
-        assertEquals("Rudolph", meta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("name")).getGetter().get(value));
+        assertEquals("Rudolph", meta.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("name")).getGetter().get(value));
 
 
 
@@ -86,7 +88,7 @@ public class ReflectionServiceTest {
     public void testDisableAsmResolvedConstructorParamName() {
         ClassMeta<DbFinalObject> classMeta = ReflectionService.disableAsm().getClassMeta(DbFinalObject.class);
 
-        PropertyMeta<DbFinalObject, ?> property = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("id"));
+        PropertyMeta<DbFinalObject, ?> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("id"));
         assertTrue(property.isConstructorProperty());
     }
 
@@ -125,7 +127,7 @@ public class ReflectionServiceTest {
 
         ClassMeta<?> classMeta = ReflectionService.newInstance().getClassMeta(classWithoutDebug);
 
-        PropertyFinder<?> propertyFinder = classMeta.newPropertyFinder();
+        PropertyFinder<?> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
         PropertyMeta<?, ?> name = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("name"));
         PropertyMeta<?, ?> value = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("value"));
         PropertyMeta<?, ?> arg0 = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("arg0"));

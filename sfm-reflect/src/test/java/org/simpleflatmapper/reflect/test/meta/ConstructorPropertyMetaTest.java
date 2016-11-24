@@ -7,30 +7,34 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.setter.NullSetter;
+import org.simpleflatmapper.util.ConstantPredicate;
+import org.simpleflatmapper.util.Predicate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ConstructorPropertyMetaTest {
 
+    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
+
     ClassMeta<CObject> classMeta = ReflectionService.newInstance().getClassMeta(CObject.class);
     CObject cObject = new CObject("v1", "v2");
 
     @Test
     public void testSetterIsNullSetter() throws Exception {
-        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false));
+        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false));
         assertTrue(property.getSetter() instanceof NullSetter);
     }
 
     @Test
     public void testGetValueIfGetterAvailable() throws Exception {
-        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false));
+        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false));
         assertEquals("v1", property.getGetter().get(cObject));
     }
 
     @Test
     public void testToString() {
-        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false));
+        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false));
 
         assertTrue(property.toString().startsWith("ConstructorPropertyMeta"));
     }

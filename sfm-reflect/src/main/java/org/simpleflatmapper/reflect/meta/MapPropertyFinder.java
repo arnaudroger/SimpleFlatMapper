@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.util.Predicate;
 
 import java.util.*;
 
@@ -14,7 +15,8 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     private final Map<PropertyNameMatcher, PropertyFinder<V>> finders = new HashMap<PropertyNameMatcher, PropertyFinder<V>>();
     private final Map<String, MapElementPropertyMeta<?, K, V>> keys = new HashMap<String, MapElementPropertyMeta<?, K, V>>();
 
-    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter) {
+    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+        super(propertyFilter);
         this.mapMeta = mapMeta;
         this.valueMetaData = valueMetaData;
         this.keyConverter = keyConverter;
@@ -63,7 +65,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     private PropertyFinder<V> getPropertyFinder(PropertyNameMatcher keyMatcher) {
         PropertyFinder<V> propertyFinder = finders.get(keyMatcher);
         if (propertyFinder == null) {
-            propertyFinder = valueMetaData.newPropertyFinder();
+            propertyFinder = valueMetaData.newPropertyFinder(propertyFilter);
         }
         return propertyFinder;
     }

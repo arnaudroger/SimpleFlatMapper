@@ -15,6 +15,8 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.ConstantPredicate;
+import org.simpleflatmapper.util.Predicate;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -137,7 +139,7 @@ public class FieldMapperToAppendableFactoryJavaTimeTest {
     }
 
     private <T> PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>> newPropertyMapping(String col, ClassMeta<T> classMeta, FieldMapperColumnDefinition<CsvColumnKey> columnDefinition) {
-        PropertyMeta<T, String> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(col));
+        PropertyMeta<T, String> propertyMeta = classMeta.newPropertyFinder(ConstantPredicate.truePredicate()).findProperty(DefaultPropertyNameMatcher.of(col));
         if (propertyMeta == null) throw new IllegalArgumentException("cannot find prop " + col);
         return new PropertyMapping<T, String, CsvColumnKey, FieldMapperColumnDefinition<CsvColumnKey>>(
                 propertyMeta,

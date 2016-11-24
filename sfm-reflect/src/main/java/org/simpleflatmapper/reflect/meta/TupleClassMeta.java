@@ -9,6 +9,7 @@ import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TupleHelper;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.ErrorHelper;
@@ -107,8 +108,8 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 	}
 
 	@Override
-	public PropertyFinder<T> newPropertyFinder() {
-		return new TuplePropertyFinder<T>(this);
+	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
+		return new TuplePropertyFinder<T>(this, propertyFilter);
 	}
 
 	public Type getType() {

@@ -1,6 +1,7 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.util.Predicate;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,10 +13,11 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
     private final PropertyFinder<T> propertyFinder;
     private final ClassMeta<T> innerMeta;
 
-    public OptionalPropertyFinder(OptionalClassMeta<T> optionalClassMeta) {
+    public OptionalPropertyFinder(OptionalClassMeta<T> optionalClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+        super(propertyFilter);
         this.optionalClassMeta = optionalClassMeta;
         innerMeta = optionalClassMeta.getInnerMeta();
-        this.propertyFinder = innerMeta != null ? innerMeta.newPropertyFinder() : null;
+        this.propertyFinder = innerMeta != null ? innerMeta.newPropertyFinder(propertyFilter) : null;
 	}
 
 

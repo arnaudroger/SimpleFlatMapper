@@ -1,6 +1,7 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.util.Predicate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,8 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     protected final ClassMeta<T> classMeta;
     protected final List<IndexedElement<T, ?>> elements;
 
-    public AbstractIndexPropertyFinder(ClassMeta<T> classMeta) {
+    public AbstractIndexPropertyFinder(ClassMeta<T> classMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+        super(propertyFilter);
         this.elements = new ArrayList<IndexedElement<T, ?>>();
         this.classMeta = classMeta;
     }

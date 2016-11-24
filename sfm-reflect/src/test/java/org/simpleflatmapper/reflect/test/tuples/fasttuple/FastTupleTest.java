@@ -9,6 +9,8 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.ConstantPredicate;
+import org.simpleflatmapper.util.Predicate;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -37,7 +39,7 @@ public class FastTupleTest {
         //creates a new tuple allocated on the JVM heap
         @SuppressWarnings("unchecked") ClassMeta<FastTuple> cm = ReflectionService.newInstance().getClassMeta((Class<FastTuple>) tuple.getClass());
 
-        final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder();
+        final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder(ConstantPredicate.truePredicate());
 
         final PropertyMeta<FastTuple, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldA", 0, true, true));
         final PropertyMeta<FastTuple, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldB", 0, true, true));
@@ -76,7 +78,7 @@ public class FastTupleTest {
         //creates a new tuple allocated on the JVM heap
         @SuppressWarnings("unchecked") ClassMeta<FastTuple> cm = ReflectionService.newInstance().getClassMeta((Class<FastTuple>) tuple.getClass());
 
-        final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder();
+        final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder(ConstantPredicate.truePredicate());
 
         final PropertyMeta<FastTuple, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldA", 0, true, true));
         final PropertyMeta<FastTuple, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldB", 0, true, true));

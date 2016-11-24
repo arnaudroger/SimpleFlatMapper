@@ -2,13 +2,14 @@ package org.simpleflatmapper.reflect.meta;
 
 
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.Predicate;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
 
 
-    public TuplePropertyFinder(final TupleClassMeta<T> tupleClassMeta) {
-        super(tupleClassMeta);
+    public TuplePropertyFinder(final TupleClassMeta<T> tupleClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+        super(tupleClassMeta, propertyFilter);
 
         tupleClassMeta.forEachProperties(new Consumer<PropertyMeta<T, ?>>() {
             @Override
@@ -20,7 +21,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
 
 	private <E> IndexedElement<T, E> newIndexedElement(TupleClassMeta<T> tupleClassMeta,  PropertyMeta<T, E> prop) {
 		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(prop.getPropertyType());
-		return new IndexedElement<T, E>(prop, classMeta);
+		return new IndexedElement<T, E>(prop, classMeta, propertyFilter);
 	}
 
     @Override

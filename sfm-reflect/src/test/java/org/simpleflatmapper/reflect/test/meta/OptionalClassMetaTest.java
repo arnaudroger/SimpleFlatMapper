@@ -7,9 +7,10 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.setter.NullSetter;
-import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
+import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.lang.reflect.Type;
@@ -30,9 +31,10 @@ public class OptionalClassMetaTest {
     ClassMeta<Optional<String>> stringClassMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Optional<String>>() {
     }.getType());
 
+    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
     @Test
     public void testFindProperty() throws Exception {
-        PropertyMeta<Optional<DbObject>, String> email = objectClassMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("email"));
+        PropertyMeta<Optional<DbObject>, String> email = objectClassMeta.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("email"));
 
         DbObject dbObject = new DbObject();
         dbObject.setEmail("houlala 2 la mission!");
@@ -49,7 +51,7 @@ public class OptionalClassMetaTest {
 
 
 
-        PropertyMeta<Optional<String>, String> strValue = stringClassMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of("value"));
+        PropertyMeta<Optional<String>, String> strValue = stringClassMeta.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("value"));
 
         assertEquals("str", strValue.getGetter().get(Optional.of("str")));
         assertTrue(NullSetter.isNull(strValue.getSetter()));

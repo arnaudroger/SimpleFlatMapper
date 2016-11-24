@@ -1,15 +1,22 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.util.Predicate;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class PropertyFinder<T> {
+	protected final Predicate<PropertyMeta<?, ?>> propertyFilter;
+
+	protected PropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
+		this.propertyFilter = propertyFilter;
+	}
+
 	@SuppressWarnings("unchecked")
 	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
-		MatchingProperties matchingProperties = new MatchingProperties();
+		MatchingProperties matchingProperties = new MatchingProperties(propertyFilter);
 		lookForProperties(propertyNameMatcher, matchingProperties, PropertyMatchingScore.INITIAL, true);
 		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
 	}
@@ -27,11 +34,19 @@ public abstract class PropertyFinder<T> {
 
 	protected static class MatchingProperties<T> implements FoundProperty<T> {
 		private final List<MatchedProperty<T, ?>> matchedProperties = new ArrayList<MatchedProperty<T, ?>>();
+		private final Predicate<PropertyMeta<?, ?>> propertyFilter;
+
+		public MatchingProperties(Predicate<PropertyMeta<?, ?>> propertyFilter) {
+			this.propertyFilter = propertyFilter;
+		}
+
 		@Override
 		public <P extends  PropertyMeta<T, ?>> void found(P propertyMeta,
 														  Runnable selectionCallback,
 														  PropertyMatchingScore score) {
-			matchedProperties.add(new MatchedProperty<T, P>(propertyMeta, selectionCallback, score));
+			if (propertyFilter.test(propertyMeta)) {
+				matchedProperties.add(new MatchedProperty<T, P>(propertyMeta, selectionCallback, score));
+			}
 		}
 
 		public PropertyMeta<T, ?> selectBestMatch() {

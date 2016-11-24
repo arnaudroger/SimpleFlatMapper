@@ -3,7 +3,6 @@ package org.simpleflatmapper.map.mapper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
-import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
@@ -33,16 +32,16 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 	protected boolean modifiable = true;
 
-	private final Predicate<PropertyMeta<?, ?>> isValidMeta;
+	private final Predicate<PropertyMeta<?, ?>> isValidPropertyMeta;
 	private Consumer<K> propertyNotFoundConsumer;
 
 	public PropertyMappingsBuilder(final ClassMeta<T> classMeta,
 								   final PropertyNameMatcherFactory propertyNameMatcherFactory,
 								   final MapperBuilderErrorHandler mapperBuilderErrorHandler,
-								   final Predicate<PropertyMeta<?, ?>> isValidMeta)  throws MapperBuildingException {
+								   final Predicate<PropertyMeta<?, ?>> isValidPropertyMeta)  throws MapperBuildingException {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-		this.isValidMeta = isValidMeta;
-		this.propertyFinder = classMeta.newPropertyFinder();
+		this.isValidPropertyMeta = isValidPropertyMeta;
+		this.propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.classMeta = classMeta;
 		this.propertyNotFoundConsumer = new Consumer<K>() {
@@ -56,11 +55,11 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	public PropertyMappingsBuilder(final ClassMeta<T> classMeta,
 								   final PropertyNameMatcherFactory propertyNameMatcherFactory,
 								   final MapperBuilderErrorHandler mapperBuilderErrorHandler,
-								   final Predicate<PropertyMeta<?, ?>> isValidMeta,
+								   final Predicate<PropertyMeta<?, ?>> isValidPropertyMeta,
 								   final PropertyFinder<T> propertyFinder)  throws MapperBuildingException {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-		this.isValidMeta = isValidMeta;
-		this.propertyFinder = propertyFinder != null ? propertyFinder : classMeta.newPropertyFinder();
+		this.isValidPropertyMeta = isValidPropertyMeta;
+		this.propertyFinder = propertyFinder != null ? propertyFinder : classMeta.newPropertyFinder(isValidPropertyMeta);
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.classMeta = classMeta;
 		this.propertyNotFoundConsumer = new Consumer<K>() {
@@ -91,10 +90,11 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		}
 
 		final PropertyMeta<T, P> prop =
-				(PropertyMeta<T, P>) propertyFinder.findProperty(propertyNameMatcherFactory.newInstance(key));
+				(PropertyMeta<T, P>) propertyFinder
+						.findProperty(propertyNameMatcherFactory.newInstance(key));
 
 
-		if (prop == null || !isValidMeta.test(prop)) {
+		if (prop == null || !isValidPropertyMeta.test(prop)) {
 			propertyNotFound.accept(key);
 			properties.add(null);
 			return null;

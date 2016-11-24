@@ -5,6 +5,7 @@ import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinitio
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.converter.Converter;
 
@@ -67,8 +68,8 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 	}
 
 	@Override
-	public PropertyFinder<M> newPropertyFinder() {
-		return new MapPropertyFinder<M, K, V>(this, valueClassMeta, keyConverter);
+	public PropertyFinder<M> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
+		return new MapPropertyFinder<M, K, V>(this, valueClassMeta, keyConverter, propertyFilter);
 	}
 
 	@Override

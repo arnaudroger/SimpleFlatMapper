@@ -13,8 +13,5 @@ public abstract class CharBuffer {
 		this.bufferSize = bufferSize;
 	}
 
-	public abstract int fillBuffer() throws IOException;
-	public abstract int shiftBufferToMark() throws BufferOverflowException;
-
-
+	public abstract boolean next() throws IOException;
 }

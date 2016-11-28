@@ -78,6 +78,24 @@ public class CsvParserTest {
     }
 
     @Test
+    public void testSimpleCsv() throws  IOException {
+		List<String[]> list = CsvParser.forEach("a,b\n" +
+				"c", new ListCollector<String[]>()).getList();
+
+		assertArrayEquals(new String[] {"a", "b"}, list.get(0));
+		assertArrayEquals(new String[] {"c"}, list.get(1));
+	}
+
+	@Test
+	public void testSimpleCsQuotes() throws  IOException {
+		List<String[]> list = CsvParser.forEach("\"a\",\"b\"\n" +
+				"\"c\"", new ListCollector<String[]>()).getList();
+
+		assertArrayEquals(new String[] {"a", "b"}, list.get(0));
+		assertArrayEquals(new String[] {"c"}, list.get(1));
+	}
+
+	@Test
 	public void testDSLRootConfig() {
 		assertEquals(9, CsvParser.bufferSize(9).bufferSize());
 		assertEquals(3, CsvParser.limit(3).limit());

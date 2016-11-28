@@ -14,50 +14,31 @@ public final class ReaderCharBuffer extends CharBuffer {
 		super(new char[bufferSize], 0);
 		this.maxBufferSize = maxBufferLength;
 		this.reader = reader;
-		this.resizeThreshold = calculateResizeThreshold();
+		this.resizeThreshold = (buffer.length >> 2) * 3;
 	}
 
 	@Override
-	public final int fillBuffer() throws IOException {
-		int length = reader.read(buffer, bufferSize, buffer.length - bufferSize);
-		bufferSize += Math.max(0, length);
-		return length;
-	}
-
-	@Override
-	public final int shiftBufferToMark() throws BufferOverflowException {
+	public final boolean next() throws IOException {
 		// shift buffer consumer data
-		int lMark = this.mark;
-		int usedLength = Math.max(bufferSize - lMark, 0);
-
-		// if buffer tight double the size
-		resizeIfNeeded(usedLength);
-
-		System.arraycopy(buffer, lMark, buffer, 0, usedLength);
-
-		bufferSize = usedLength;
-
+		int effectiveMark = Math.min(bufferSize, mark);
+		int newSize = bufferSize - effectiveMark;
+		System.arraycopy(buffer, effectiveMark, buffer, 0, newSize);
+		bufferSize = newSize;
 		mark = 0;
 
-		return lMark;
-	}
-
-	private void resizeIfNeeded(int requireLength) throws BufferOverflowException {
-		if (requireLength > resizeThreshold) {
+		if (bufferSize > resizeThreshold) {
 			int newBufferSize = Math.min(maxBufferSize, buffer.length << 1);
-
-			if (newBufferSize <= requireLength) {
+			if (newBufferSize <= bufferSize) {
 				throw new BufferOverflowException("The content in the csv cell exceed the maxSizeBuffer " + maxBufferSize + ", see CsvParser.DSL.maxSizeBuffer(int) to change the default value");
-			}
-			// double buffer size
+			}			// double buffer size
 			buffer = Arrays.copyOf(buffer, newBufferSize);
-
-			resizeThreshold = calculateResizeThreshold();
+			// 3/4
+			resizeThreshold = (newBufferSize >> 2) * 3;
 		}
+
+		int l = reader.read(buffer, bufferSize, buffer.length - bufferSize);
+		bufferSize += Math.max(0, l);
+		return l > 0;
 	}
 
-	private int calculateResizeThreshold() {
-		// 3/4 of buffer length
-		return (buffer.length >> 2) * 3;
-	}
 }

@@ -44,7 +44,7 @@ before_install:
   - sudo apt-get -y install openjdk-6-jdk openjdk-7-jdk oracle-java7-installer
   - sudo ln -s /usr/lib/jvm/java-6-openjdk-amd64 /usr/lib/jvm/java-6-openjdk
   - sudo ln -s /usr/lib/jvm/java-7-openjdk-amd64 /usr/lib/jvm/java-7-openjdk
-  - sudo ln -s /usr/lib/jvm/java-8-oracle-amd64 /usr/lib/jvm/java-8-oracle
+  - sudo ln -s /usr/lib/jvm/java-8-oracle /usr/lib/jvm/java-8-oracle-amd64
 before_script:
   - mysql -u root -e 'create database sfm;'
   - psql -c 'create database sfm;' -U postgres

@@ -144,7 +144,7 @@ public class ConnectedCrud<T, K> {
      * @param value      the object
      * @throws SQLException if an error occurs
      */
-    public void update(T value) throws SQLException {
+    public void update(final T value) throws SQLException {
         transactionTemplate
             .doInTransaction(new SQLFunction<Connection, Object>() {
                 @Override
@@ -161,7 +161,7 @@ public class ConnectedCrud<T, K> {
      * @param values      the objects
      * @throws SQLException if an error occurs
      */
-    public void update(Collection<T> values) throws SQLException {
+    public void update(final Collection<T> values) throws SQLException {
         transactionTemplate
             .doInTransaction(new SQLFunction<Connection, Object>() {
                 @Override
@@ -178,7 +178,7 @@ public class ConnectedCrud<T, K> {
      * @param key        the key
      * @throws SQLException if an error occurs
      */
-    public void delete(K key) throws SQLException {
+    public void delete(final K key) throws SQLException {
         transactionTemplate
             .doInTransaction(new SQLFunction<Connection, Object>() {
                 @Override
@@ -195,7 +195,7 @@ public class ConnectedCrud<T, K> {
      * @param keys       the keys
      * @throws SQLException if an error occurs
      */
-    public void delete(Collection<K> keys) throws SQLException {
+    public void delete(final Collection<K> keys) throws SQLException {
         transactionTemplate
             .doInTransaction(new SQLFunction<Connection, Object>() {
                 @Override
@@ -212,7 +212,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException
      * @throws UnsupportedOperationException
      */
-    public void createOrUpdate(T value) throws SQLException {
+    public void createOrUpdate(final T value) throws SQLException {
         transactionTemplate
             .doInTransaction(new SQLFunction<Connection, Object>() {
                 @Override
@@ -229,7 +229,7 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException
      * @throws UnsupportedOperationException
      */
-    public void createOrUpdate(Collection<T> values) throws SQLException {
+    public void createOrUpdate(final Collection<T> values) throws SQLException {
         transactionTemplate
             .doInTransaction(new SQLFunction<Connection, Object>() {
                 @Override
@@ -249,7 +249,7 @@ public class ConnectedCrud<T, K> {
      * @return the keyConsumer
      * @throws SQLException
      */
-    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(T value, RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(final T value, final RH keyConsumer) throws SQLException {
         transactionTemplate
                 .doInTransaction(new SQLFunction<Connection, Object>() {
                     @Override
@@ -271,7 +271,7 @@ public class ConnectedCrud<T, K> {
      * @return the keyConsumer
      * @throws SQLException
      */
-    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Collection<T> values, RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(final Collection<T> values, final RH keyConsumer) throws SQLException {
         transactionTemplate
                 .doInTransaction(new SQLFunction<Connection, Object>() {
                     @Override
@@ -288,7 +288,7 @@ public class ConnectedCrud<T, K> {
         return delegate;
     }
 
-    public <P> ConnectedSelectQuery<T, P> where(String whereClause, Type paramClass) {
+    public <P> ConnectedSelectQuery<T, P> where(final String whereClause, final Type paramClass) {
         SelectQuery<T, P> selectQuery = delegate.where(whereClause, paramClass);
         return new ConnectedSelectQuery<T, P>(selectQuery, transactionTemplate);
     }

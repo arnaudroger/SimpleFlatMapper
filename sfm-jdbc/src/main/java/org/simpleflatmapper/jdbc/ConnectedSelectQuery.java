@@ -15,7 +15,7 @@ public class ConnectedSelectQuery<T, P> {
         this.txFactory = txFactory;
     }
 
-    public T readFirst(P p) throws SQLException {
+    public T readFirst(final P p) throws SQLException {
         return txFactory.doInTransaction(
                 new SQLFunction<Connection, T>() {
                     @Override
@@ -26,7 +26,7 @@ public class ConnectedSelectQuery<T, P> {
         );
     }
 
-    public <C extends CheckedConsumer<? super T>> C read(P p, C consumer) throws SQLException {
+    public <C extends CheckedConsumer<? super T>> C read(final P p, final C consumer) throws SQLException {
         txFactory.doInTransaction(new SQLFunction<Connection, Object>() {
             @Override
             public Object apply(Connection connection) throws SQLException {

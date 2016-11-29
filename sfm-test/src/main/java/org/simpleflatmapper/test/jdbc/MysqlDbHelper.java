@@ -62,13 +62,7 @@ public class MysqlDbHelper {
 
 
 	private static Connection newMysqlDbConnection() throws SQLException {
-		String user = "sfm";
-
-		if ("true".equals(System.getenv("TRAVISBUILD"))) {
-			user = "root";
-		}
-
-		return DriverManager.getConnection("jdbc:mysql://localhost:3306/sfm", user, null);
+		return DriverManager.getConnection("jdbc:mysql://localhost:3306/sfm", "sfm", null);
 	}
 
 	public static void main(String[] args) throws SQLException {

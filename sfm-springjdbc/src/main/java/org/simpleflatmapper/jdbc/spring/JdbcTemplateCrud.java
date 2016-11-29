@@ -1,10 +1,7 @@
 package org.simpleflatmapper.jdbc.spring;
 
-import org.simpleflatmapper.jdbc.ConnectedSelectQuery;
-import org.simpleflatmapper.jdbc.Crud;
-import org.simpleflatmapper.jdbc.SQLFunction;
+import org.simpleflatmapper.jdbc.*;
 import org.simpleflatmapper.jdbc.impl.DataSourceTransactionTemplate;
-import org.simpleflatmapper.jdbc.TransactionTemplate;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -266,7 +263,8 @@ public class JdbcTemplateCrud<T, K> {
     }
 
     public <P> ConnectedSelectQuery<T, P> where(String whereClause, Type paramClass) {
-        return new ConnectedSelectQuery<T, P>(crud.where(whereClause, paramClass),
+        SelectQuery<T, P> selectQuery = crud.where(whereClause, paramClass);
+        return new ConnectedSelectQuery<T, P>(selectQuery,
                 new JdbcTemplateTransactionTemplate(jdbcTemplate));
     }
 
@@ -279,7 +277,7 @@ public class JdbcTemplateCrud<T, K> {
         }
 
         @Override
-        public <R> R doInTransaction(SQLFunction<? super Connection, ? extends R> sqlFunction) throws SQLException {
+        public <R> R doInTransaction(final SQLFunction<? super Connection, ? extends R> sqlFunction) throws SQLException {
             return jdbcTemplate.execute(new ConnectionCallback<R>() {
                 @Override
                 public R doInConnection(Connection con) throws SQLException, DataAccessException {

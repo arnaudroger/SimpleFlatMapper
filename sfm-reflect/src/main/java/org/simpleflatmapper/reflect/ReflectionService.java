@@ -36,6 +36,7 @@ public class ReflectionService {
 	private static final UnaryFactory<ReflectionService, ClassMeta<?>>[] predefined =
 			getPredifinedClassMetaFactory();
 
+	@SuppressWarnings("unchecked")
 	private static UnaryFactory<ReflectionService, ClassMeta<?>>[] getPredifinedClassMetaFactory() {
 		final List<UnaryFactory<ReflectionService, ClassMeta<?>>> list = new ArrayList<UnaryFactory<ReflectionService, ClassMeta<?>>>();
 		Consumer<UnaryFactory<ReflectionService, ClassMeta<?>>> consumer = new Consumer<UnaryFactory<ReflectionService, ClassMeta<?>>>() {

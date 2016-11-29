@@ -1,10 +1,9 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.jdbc.impl.Transaction;
-import org.simpleflatmapper.jdbc.impl.TransactionFactory;
 import org.simpleflatmapper.util.CheckedConsumer;
 
 import java.lang.reflect.Type;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -16,11 +15,11 @@ import java.util.Collection;
 public class ConnectedCrud<T, K> {
 
 
-    private final TransactionFactory transactionFactory;
+    private final TransactionTemplate transactionTemplate;
     private final Crud<T, K> delegate;
 
-    public ConnectedCrud(TransactionFactory transactionFactory, Crud<T, K> delegate) {
-        this.transactionFactory = transactionFactory;
+    public ConnectedCrud(TransactionTemplate transactionTemplate, Crud<T, K> delegate) {
+        this.transactionTemplate = transactionTemplate;
         this.delegate = delegate;
     }
 
@@ -30,16 +29,15 @@ public class ConnectedCrud<T, K> {
      * @param value      the value
      * @throws SQLException if an error occurs
      */
-    public void create(T value) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.create(tx.connection(), value);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+    public void create(final T value) throws SQLException {
+        transactionTemplate
+            .doInTransaction(new SQLFunction<Connection, Object>() {
+                @Override
+                public Object apply(Connection connection) throws SQLException {
+                    delegate.create(connection, value);
+                    return null;
+                }
+            });
     }
 
     /**
@@ -48,16 +46,15 @@ public class ConnectedCrud<T, K> {
      * @param values      the values
      * @throws SQLException if an error occurs
      */
-    public void create(Collection<T> values) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.create(tx.connection(), values);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+    public void create(final Collection<T> values) throws SQLException {
+        transactionTemplate
+            .doInTransaction(new SQLFunction<Connection, Object>() {
+                @Override
+                public Object apply(Connection connection) throws SQLException {
+                    delegate.create(connection, values);
+                    return null;
+                }
+            });
     }
 
     /**
@@ -70,16 +67,15 @@ public class ConnectedCrud<T, K> {
      * @return the keyConsumer
      * @throws SQLException
      */
-    public <RH extends CheckedConsumer<? super K>> RH create(T value, RH keyConsumer) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.create(tx.connection(), value, keyConsumer);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+    public <RH extends CheckedConsumer<? super K>> RH create(final T value, final RH keyConsumer) throws SQLException {
+        transactionTemplate
+            .doInTransaction(new SQLFunction<Connection, Object>() {
+                @Override
+                public Object apply(Connection connection) throws SQLException {
+                    delegate.create(connection, value, keyConsumer);
+                    return null;
+                }
+            });
         return keyConsumer;
     }
 
@@ -93,16 +89,15 @@ public class ConnectedCrud<T, K> {
      * @return the keyConsumer
      * @throws SQLException
      */
-    public <RH extends CheckedConsumer<? super K>> RH create(Collection<T> values, RH keyConsumer) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.create(tx.connection(), values, keyConsumer);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+    public <RH extends CheckedConsumer<? super K>> RH create(final Collection<T> values, final RH keyConsumer) throws SQLException {
+        transactionTemplate
+            .doInTransaction(new SQLFunction<Connection, Object>() {
+                @Override
+                public Object apply(Connection connection) throws SQLException {
+                    delegate.create(connection, values, keyConsumer);
+                    return null;
+                }
+            });
         return keyConsumer;
     }
 
@@ -113,18 +108,15 @@ public class ConnectedCrud<T, K> {
      * @return the object or null if not found
      * @throws SQLException if an error occurs
      */
-    public T read(K key) throws SQLException {
-        Transaction tx = newTransaction();
-        T value = null;
-        try {
-            value = delegate.read(tx.connection(), key);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
-        return value;
+    public T read(final K key) throws SQLException {
+        return
+            transactionTemplate
+                .doInTransaction(new SQLFunction<Connection, T>() {
+                    @Override
+                    public T apply(Connection connection) throws SQLException {
+                        return delegate.read(connection, key);
+                    }
+                });
     }
 
     /**
@@ -134,16 +126,15 @@ public class ConnectedCrud<T, K> {
      * @param consumer the handler that is callback for each row
      * @throws SQLException if an error occurs
      */
-    public <RH extends CheckedConsumer<? super T>> RH read(Collection<K> keys, RH consumer) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.read(tx.connection(), keys, consumer);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+    public <RH extends CheckedConsumer<? super T>> RH read(final Collection<K> keys, final RH consumer) throws SQLException {
+        transactionTemplate
+            .doInTransaction(new SQLFunction<Connection, Object>() {
+                @Override
+                public Object apply(Connection connection) throws SQLException {
+                    delegate.read(connection, keys, consumer);
+                    return null;
+                }
+            });
         return consumer;
     }
 
@@ -154,15 +145,14 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void update(T value) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.update(tx.connection(), value);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+        transactionTemplate
+            .doInTransaction(new SQLFunction<Connection, Object>() {
+                @Override
+                public Object apply(Connection connection) throws SQLException {
+                    delegate.update(connection, value);
+                    return null;
+                }
+            });
     }
 
     /**
@@ -172,15 +162,14 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void update(Collection<T> values) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.update(tx.connection(), values);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+        transactionTemplate
+            .doInTransaction(new SQLFunction<Connection, Object>() {
+                @Override
+                public Object apply(Connection connection) throws SQLException {
+                    delegate.update(connection, values);
+                    return null;
+                }
+            });
     }
 
     /**
@@ -190,15 +179,14 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void delete(K key) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.delete(tx.connection(), key);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+        transactionTemplate
+            .doInTransaction(new SQLFunction<Connection, Object>() {
+                @Override
+                public Object apply(Connection connection) throws SQLException {
+                    delegate.delete(connection, key);
+                    return null;
+                }
+            });
     }
 
     /**
@@ -208,15 +196,14 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException if an error occurs
      */
     public void delete(Collection<K> keys) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.delete(tx.connection(), keys);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+        transactionTemplate
+            .doInTransaction(new SQLFunction<Connection, Object>() {
+                @Override
+                public Object apply(Connection connection) throws SQLException {
+                    delegate.delete(connection, keys);
+                    return null;
+                }
+            });
     }
 
     /**
@@ -226,15 +213,14 @@ public class ConnectedCrud<T, K> {
      * @throws UnsupportedOperationException
      */
     public void createOrUpdate(T value) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.createOrUpdate(tx.connection(), value);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+        transactionTemplate
+            .doInTransaction(new SQLFunction<Connection, Object>() {
+                @Override
+                public Object apply(Connection connection) throws SQLException {
+                    delegate.createOrUpdate(connection, value);
+                    return null;
+                }
+            });
     }
 
     /**
@@ -244,15 +230,14 @@ public class ConnectedCrud<T, K> {
      * @throws UnsupportedOperationException
      */
     public void createOrUpdate(Collection<T> values) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.createOrUpdate(tx.connection(), values);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+        transactionTemplate
+            .doInTransaction(new SQLFunction<Connection, Object>() {
+                @Override
+                public Object apply(Connection connection) throws SQLException {
+                    delegate.createOrUpdate(connection, values);
+                    return null;
+                }
+            });
     }
 
     /**
@@ -265,15 +250,14 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException
      */
     public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(T value, RH keyConsumer) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.createOrUpdate(tx.connection(), value, keyConsumer);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+        transactionTemplate
+                .doInTransaction(new SQLFunction<Connection, Object>() {
+                    @Override
+                    public Object apply(Connection connection) throws SQLException {
+                        delegate.createOrUpdate(connection, value, keyConsumer);
+                        return null;
+                    }
+                });
         return keyConsumer;
     }
 
@@ -288,15 +272,14 @@ public class ConnectedCrud<T, K> {
      * @throws SQLException
      */
     public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(Collection<T> values, RH keyConsumer) throws SQLException {
-        Transaction tx = newTransaction();
-        try {
-            delegate.createOrUpdate(tx.connection(), values, keyConsumer);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+        transactionTemplate
+                .doInTransaction(new SQLFunction<Connection, Object>() {
+                    @Override
+                    public Object apply(Connection connection) throws SQLException {
+                        delegate.createOrUpdate(connection, values, keyConsumer);
+                        return null;
+                    }
+                });
         return keyConsumer;
     }
 
@@ -307,11 +290,7 @@ public class ConnectedCrud<T, K> {
 
     public <P> ConnectedSelectQuery<T, P> where(String whereClause, Type paramClass) {
         SelectQuery<T, P> selectQuery = delegate.where(whereClause, paramClass);
-        return new ConnectedSelectQuery<T, P>(selectQuery, transactionFactory);
-    }
-
-    private Transaction newTransaction() throws SQLException {
-        return transactionFactory.newTransaction();
+        return new ConnectedSelectQuery<T, P>(selectQuery, transactionTemplate);
     }
 
 }

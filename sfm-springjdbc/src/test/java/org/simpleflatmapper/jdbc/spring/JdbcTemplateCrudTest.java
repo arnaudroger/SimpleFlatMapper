@@ -2,6 +2,7 @@ package org.simpleflatmapper.jdbc.spring;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.simpleflatmapper.jdbc.ConnectedSelectQuery;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.util.ListCollector;
@@ -131,6 +132,27 @@ public class JdbcTemplateCrudTest {
 			objectCrud.createOrUpdate(objects);
 			assertEquals(objects, objectCrud.read(keys, new ListCollector<DbObject>()).getList());
 		} catch (UnsupportedOperationException e) {}
+
+	}
+
+	@Test
+	public void testWhere() throws SQLException {
+		JdbcTemplateCrud<DbObject, Long> objectCrud =
+				JdbcTemplateMapperFactory.newInstance()
+						.<DbObject, Long>crud(DbObject.class, Long.class).to(template, "TEST_DB_OBJECT");
+		DbObject object = DbObject.newInstance();
+
+
+		ConnectedSelectQuery<DbObject, String> objectByName = objectCrud.where(" name = :name", String.class);
+
+		assertNull(objectByName.readFirst(object.getName()));
+
+		objectCrud.create(object);
+
+		assertEquals(object, objectByName.readFirst(object.getName()));
+
+		assertEquals(Arrays.asList(object), objectByName.read(object.getName(), new ListCollector<DbObject>()).getList());
+
 
 	}
 

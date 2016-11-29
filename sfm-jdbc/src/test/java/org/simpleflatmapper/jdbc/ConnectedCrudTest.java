@@ -1,24 +1,14 @@
 package org.simpleflatmapper.jdbc;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.simpleflatmapper.jdbc.impl.TransactionFactory;
-import org.simpleflatmapper.jdbc.property.IndexedSetterProperty;
-import org.simpleflatmapper.map.property.GetterProperty;
-import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.IndexedSetter;
+import org.simpleflatmapper.jdbc.impl.DataSourceTransactionTemplate;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.test.jdbc.MysqlDbHelper;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.ListCollector;
 
-import javax.persistence.Table;
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -57,7 +47,7 @@ public class ConnectedCrudTest {
         Connection connection = mock(Connection.class);
         when(dataSource.getConnection()).thenReturn(connection);
 
-        ConnectedCrud<Object, Object> connectedCrud = new ConnectedCrud<Object, Object>(new TransactionFactory(dataSource), crud);
+        ConnectedCrud<Object, Object> connectedCrud = new ConnectedCrud<Object, Object>(new DataSourceTransactionTemplate(dataSource), crud);
 
         Collection<Object> values = new ArrayList<Object>();
         Object value = new Object();
@@ -142,7 +132,7 @@ public class ConnectedCrudTest {
         Connection connection = mock(Connection.class);
         when(dataSource.getConnection()).thenReturn(connection);
 
-        ConnectedCrud<Object, Object> connectedCrud = new ConnectedCrud<Object, Object>(new TransactionFactory(dataSource), crud);
+        ConnectedCrud<Object, Object> connectedCrud = new ConnectedCrud<Object, Object>(new DataSourceTransactionTemplate(dataSource), crud);
 
         Collection<Object> values = new ArrayList<Object>();
         Object value = new Object();

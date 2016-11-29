@@ -87,6 +87,7 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
         return buildFieldMapper(getter, setter, propertyType);
     }
 
+    @SuppressWarnings("unchecked")
     private <S, P> FieldMapper<S, T> buildFieldMapper(Getter<? super S, ? extends P> getter, Setter<? super T, ? super P> setter, Type propertyType) {
         if (TypeHelper.isPrimitive(propertyType)) {
             if (getter instanceof BooleanGetter && setter instanceof BooleanSetter) {

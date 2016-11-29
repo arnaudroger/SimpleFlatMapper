@@ -1,11 +1,16 @@
 package org.simpleflatmapper.jdbc.spring;
 
+import org.simpleflatmapper.jdbc.ConnectedSelectQuery;
 import org.simpleflatmapper.jdbc.Crud;
+import org.simpleflatmapper.jdbc.SQLFunction;
+import org.simpleflatmapper.jdbc.impl.DataSourceTransactionTemplate;
+import org.simpleflatmapper.jdbc.TransactionTemplate;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -258,5 +263,29 @@ public class JdbcTemplateCrud<T, K> {
                 return crud.createOrUpdate(connection, values, keyConsumer);
             }
         });
+    }
+
+    public <P> ConnectedSelectQuery<T, P> where(String whereClause, Type paramClass) {
+        return new ConnectedSelectQuery<T, P>(crud.where(whereClause, paramClass),
+                new JdbcTemplateTransactionTemplate(jdbcTemplate));
+    }
+
+    private static class JdbcTemplateTransactionTemplate implements TransactionTemplate {
+
+        private final JdbcTemplate jdbcTemplate;
+
+        private JdbcTemplateTransactionTemplate(JdbcTemplate jdbcTemplate) {
+            this.jdbcTemplate = jdbcTemplate;
+        }
+
+        @Override
+        public <R> R doInTransaction(SQLFunction<? super Connection, ? extends R> sqlFunction) throws SQLException {
+            return jdbcTemplate.execute(new ConnectionCallback<R>() {
+                @Override
+                public R doInConnection(Connection con) throws SQLException, DataAccessException {
+                    return sqlFunction.apply(con);
+                }
+            });
+        }
     }
 }

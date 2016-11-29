@@ -25,6 +25,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		this.eligibleInstantiatorDefinitions = classMeta.getInstantiatorDefinitions() != null ? new ArrayList<InstantiatorDefinition>(classMeta.getInstantiatorDefinitions()) : null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void lookForProperties(final PropertyNameMatcher propertyNameMatcher, FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference) {
 		lookForConstructor(propertyNameMatcher, matchingProperties, score);

@@ -26,6 +26,8 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 		this.subProperty = subProperty;
 		this.getter = new GetterOnGetter<O, I, P>(this.ownerProperty.getGetter(), subProperty.getGetter());
 	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public Setter<O, P> getSetter() {
 		if (!NullSetter.isNull(subProperty.getSetter()) && !NullGetter.isNull(ownerProperty.getGetter())) {

@@ -1,45 +1,39 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.jdbc.impl.Transaction;
-import org.simpleflatmapper.jdbc.impl.TransactionFactory;
 import org.simpleflatmapper.util.CheckedConsumer;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ConnectedSelectQuery<T, P> {
 
     private final SelectQuery<T, P> delegate;
-    private final TransactionFactory txFactory;
+    private final TransactionTemplate txFactory;
 
-    public ConnectedSelectQuery(SelectQuery<T, P> delegate, TransactionFactory txFactory) {
+    public ConnectedSelectQuery(SelectQuery<T, P> delegate, TransactionTemplate txFactory) {
         this.delegate = delegate;
         this.txFactory = txFactory;
     }
 
-    public T readFirst(P p) throws SQLException {
-        T t = null;
-        Transaction tx = txFactory.newTransaction();
-        try {
-            t = delegate.readFirst(tx.connection(), p);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
-        return t;
+    public T readFirst(final P p) throws SQLException {
+        return txFactory.doInTransaction(
+                new SQLFunction<Connection, T>() {
+                    @Override
+                    public T apply(Connection connection) throws SQLException {
+                        return delegate.readFirst(connection, p);
+                    }
+                }
+        );
     }
 
-    public <C extends CheckedConsumer<? super T>> C read(P p, C consumer) throws SQLException {
-        Transaction tx = txFactory.newTransaction();
-        try {
-            delegate.read(tx.connection(), p, consumer);
-            tx.commit();
-        } catch (Throwable e) {
-            tx.handleError(e);
-        } finally {
-            tx.close();
-        }
+    public <C extends CheckedConsumer<? super T>> C read(final P p, final C consumer) throws SQLException {
+        txFactory.doInTransaction(new SQLFunction<Connection, Object>() {
+            @Override
+            public Object apply(Connection connection) throws SQLException {
+                delegate.read(connection, p, consumer);
+                return null;
+            }
+        });
         return consumer;
     }
 

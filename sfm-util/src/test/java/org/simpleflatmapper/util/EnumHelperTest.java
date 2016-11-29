@@ -19,7 +19,7 @@ public class EnumHelperTest {
     @Test
     public void testGextValuesOnNonEnum() {
         try {
-            EnumHelper.getValues((Class)Object.class);
+            Enum[] values = EnumHelper.getValues((Class) Object.class);
             fail();
         } catch (Error e) {
             // expected

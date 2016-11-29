@@ -41,7 +41,7 @@
 		<dependency>
 			<groupId>org.sql2o</groupId>
 			<artifactId>sql2o</artifactId>
-			<version>1.6.0-RC2</version>
+			<version>1.6.0-RC3</version>
         </dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>4.3.3.RELEASE</version>
+			<version>4.3.4.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

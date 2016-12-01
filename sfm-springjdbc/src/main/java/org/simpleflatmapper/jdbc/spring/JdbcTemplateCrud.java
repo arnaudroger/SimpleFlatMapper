@@ -1,7 +1,6 @@
 package org.simpleflatmapper.jdbc.spring;
 
 import org.simpleflatmapper.jdbc.*;
-import org.simpleflatmapper.jdbc.impl.DataSourceTransactionTemplate;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;

@@ -28,7 +28,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	}
 
 	@Override
-	protected void lookForProperties(final PropertyNameMatcher propertyNameMatcher, FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference) {
+	public void lookForProperties(final PropertyNameMatcher propertyNameMatcher, FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference) {
 		lookForConstructor(propertyNameMatcher, matchingProperties, score);
 		lookForProperty(propertyNameMatcher, matchingProperties, score);
 

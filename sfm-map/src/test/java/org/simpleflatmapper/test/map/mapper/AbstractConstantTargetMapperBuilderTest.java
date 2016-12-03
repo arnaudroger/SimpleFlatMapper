@@ -69,7 +69,7 @@ public class AbstractConstantTargetMapperBuilderTest {
         for(int i = 0; i < headers.length; i++) {
             String str = headers[i];
             builder.addColumn(str);
-            row[i] = classMeta.newPropertyFinder(ConstantPredicate.truePredicate()).findProperty(DefaultPropertyNameMatcher.of(str)).getGetter().get(instance1);
+            row[i] = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(str)).getGetter().get(instance1);
 
         }
 

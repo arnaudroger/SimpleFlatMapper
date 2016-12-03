@@ -91,9 +91,8 @@ public class CsvMapperBuilder<T> {
 		this.target = target;
         this.minDelayedSetter = minDelayedSetter;
         this.reflectionService = classMeta.getReflectionService();
-		this.propertyMappingsBuilder = new PropertyMappingsBuilder<T, CsvColumnKey, CsvColumnDefinition>(classMeta,
-				mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler(),
-				new PropertyWithSetterOrConstructor());
+		this.propertyMappingsBuilder =
+				PropertyMappingsBuilder.<T, CsvColumnKey, CsvColumnDefinition>of(classMeta, mapperConfig, PropertyWithSetterOrConstructor.INSTANCE);
 		this.cellValueReaderFactory = cellValueReaderFactory;
 		this.mapperConfig = mapperConfig;
 	}

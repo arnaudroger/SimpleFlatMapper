@@ -23,13 +23,6 @@ public class Issue365Test {
         public String type;
         public double score;
 
-//
-//        public void setBenchmark(String value) {
-//                int indexOfDot = value.indexOf('.');
-//                algorithm = value.substring(0, indexOfDot);
-//                type = value.substring(indexOfDot + 1, value.length());
-//
-//        }
         @Override
         public String toString() {
             return "Data{" +

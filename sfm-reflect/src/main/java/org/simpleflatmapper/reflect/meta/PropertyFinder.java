@@ -21,7 +21,7 @@ public abstract class PropertyFinder<T> {
 		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
 	}
 
-	protected abstract void lookForProperties(
+	public abstract void lookForProperties(
 			PropertyNameMatcher propertyNameMatcher,
 			FoundProperty<T> matchingProperties,
 			PropertyMatchingScore score, boolean allowSelfReference);
@@ -30,7 +30,9 @@ public abstract class PropertyFinder<T> {
 	public abstract List<InstantiatorDefinition> getEligibleInstantiatorDefinitions();
     public abstract PropertyFinder<?> getSubPropertyFinder(String name);
 
-
+	public Predicate<PropertyMeta<?, ?>> getPropertyFilter() {
+		return propertyFilter;
+	}
 
 	protected static class MatchingProperties<T> implements FoundProperty<T> {
 		private final List<MatchedProperty<T, ?>> matchedProperties = new ArrayList<MatchedProperty<T, ?>>();

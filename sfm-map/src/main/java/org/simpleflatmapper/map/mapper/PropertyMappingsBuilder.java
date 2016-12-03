@@ -1,13 +1,21 @@
 package org.simpleflatmapper.map.mapper;
 
+import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
+import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.impl.ExtendClassMeta;
+import org.simpleflatmapper.map.property.GetterProperty;
+import org.simpleflatmapper.map.property.SetterProperty;
+import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.reflect.meta.SelfPropertyMeta;
+import org.simpleflatmapper.reflect.setter.NullSetter;
+import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.NullConsumer;
@@ -32,33 +40,17 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 	protected boolean modifiable = true;
 
-	private final Predicate<PropertyMeta<?, ?>> isValidPropertyMeta;
 	private Consumer<K> propertyNotFoundConsumer;
+	private List<ExtendClassMeta.CustomProperty<?, ?>> customProperties;
 
-	public PropertyMappingsBuilder(final ClassMeta<T> classMeta,
-								   final PropertyNameMatcherFactory propertyNameMatcherFactory,
-								   final MapperBuilderErrorHandler mapperBuilderErrorHandler,
-								   final Predicate<PropertyMeta<?, ?>> isValidPropertyMeta)  throws MapperBuildingException {
+	private PropertyMappingsBuilder(final ClassMeta<T> classMeta,
+									final PropertyNameMatcherFactory propertyNameMatcherFactory,
+									final MapperBuilderErrorHandler mapperBuilderErrorHandler,
+									final Predicate<PropertyMeta<?, ?>> isValidPropertyMeta,
+									final PropertyFinder<T> propertyFinder,
+									List<ExtendClassMeta.CustomProperty<?, ?>> customProperties)  throws MapperBuildingException {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-		this.isValidPropertyMeta = isValidPropertyMeta;
-		this.propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
-		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
-		this.classMeta = classMeta;
-		this.propertyNotFoundConsumer = new Consumer<K>() {
-			@Override
-			public void accept(K k) {
-				mapperBuilderErrorHandler.propertyNotFound(classMeta.getType(), k.getName());
-			}
-		};
-	}
-
-	public PropertyMappingsBuilder(final ClassMeta<T> classMeta,
-								   final PropertyNameMatcherFactory propertyNameMatcherFactory,
-								   final MapperBuilderErrorHandler mapperBuilderErrorHandler,
-								   final Predicate<PropertyMeta<?, ?>> isValidPropertyMeta,
-								   final PropertyFinder<T> propertyFinder)  throws MapperBuildingException {
-		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
-		this.isValidPropertyMeta = isValidPropertyMeta;
+		this.customProperties = customProperties;
 		this.propertyFinder = propertyFinder != null ? propertyFinder : classMeta.newPropertyFinder(isValidPropertyMeta);
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.classMeta = classMeta;
@@ -89,12 +81,14 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 			return null;
 		}
 
+		PropertyFinder<T> effectivePropertyFinder = wrapPropertyFinder(this.propertyFinder);
+
 		final PropertyMeta<T, P> prop =
-				(PropertyMeta<T, P>) propertyFinder
+				(PropertyMeta<T, P>) effectivePropertyFinder
 						.findProperty(propertyNameMatcherFactory.newInstance(key));
 
 
-		if (prop == null || !isValidPropertyMeta.test(prop)) {
+		if (prop == null) {
 			propertyNotFound.accept(key);
 			properties.add(null);
 			return null;
@@ -105,6 +99,15 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 			return prop;
 		}
+	}
+
+	private PropertyFinder<T> wrapPropertyFinder(PropertyFinder<T> propertyFinder) {
+
+		if (!customProperties.isEmpty()) {
+			return new ExtendClassMeta.ExtendPropertyFinder<T>(propertyFinder, classMeta.getType(), customProperties);
+		}
+
+		return propertyFinder;
 	}
 
 	private void handleSelfPropertyMetaInvalidation(Consumer<? super K> propertyNotFound) {
@@ -243,5 +246,57 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 	public ClassMeta<T> getClassMeta() {
 		return classMeta;
+	}
+
+	public static <T, K extends FieldKey<K>, D  extends ColumnDefinition<K, D>> PropertyMappingsBuilder<T, K, D> of(
+			ClassMeta<T> classMeta,
+			MapperConfig<K, D> mapperConfig,
+			Predicate<PropertyMeta<?, ?>> propertyPredicate) {
+		return of(classMeta, mapperConfig, propertyPredicate, null);
+	}
+
+		public static <T, K extends FieldKey<K>, D  extends ColumnDefinition<K, D>> PropertyMappingsBuilder<T, K, D> of(
+			final ClassMeta<T> classMeta,
+			final MapperConfig<K, D> mapperConfig,
+			final Predicate<PropertyMeta<?, ?>> propertyPredicate,
+			final PropertyFinder<T> propertyFinder) {
+			final List<ExtendClassMeta.CustomProperty<?, ?>> customProperties = new ArrayList<ExtendClassMeta.CustomProperty<?, ?>>();
+
+			// setter
+			mapperConfig.columnDefinitions().forEach(SetterProperty.class, new BiConsumer<Predicate<? super K>, SetterProperty>() {
+				@Override
+				public void accept(Predicate<? super K> predicate, SetterProperty setterProperty) {
+					if (predicate instanceof CaseInsensitiveFieldKeyNamePredicate) {
+						CaseInsensitiveFieldKeyNamePredicate p = (CaseInsensitiveFieldKeyNamePredicate) predicate;
+						ExtendClassMeta.CustomProperty cp = new ExtendClassMeta.CustomProperty(setterProperty.getTargetType(), classMeta.getReflectionService(), p.getName(), setterProperty.getPropertyType(), setterProperty.getSetter(), NullGetter.getter());
+						if (propertyPredicate.test(cp)) {
+							customProperties.add(cp);
+						}
+					}
+				}
+			});
+
+			// getter
+			mapperConfig.columnDefinitions().forEach(GetterProperty.class, new BiConsumer<Predicate<? super K>, GetterProperty>() {
+				@Override
+				public void accept(Predicate<? super K> predicate, GetterProperty getterProperty) {
+					if (predicate instanceof CaseInsensitiveFieldKeyNamePredicate) {
+						CaseInsensitiveFieldKeyNamePredicate p = (CaseInsensitiveFieldKeyNamePredicate) predicate;
+						ExtendClassMeta.CustomProperty cp = new ExtendClassMeta.CustomProperty(getterProperty.getSourceType(), classMeta.getReflectionService(), p.getName(), getterProperty.getReturnType(), NullSetter.NULL_SETTER, getterProperty.getGetter());
+						if (propertyPredicate.test(cp)) {
+							customProperties.add(cp);
+						}
+					}
+				}
+			});
+
+			return
+					new PropertyMappingsBuilder<T, K, D>(
+							classMeta,
+							mapperConfig.propertyNameMatcherFactory(),
+							mapperConfig.mapperBuilderErrorHandler(),
+							propertyPredicate,
+							propertyFinder,
+							customProperties);
 	}
 }

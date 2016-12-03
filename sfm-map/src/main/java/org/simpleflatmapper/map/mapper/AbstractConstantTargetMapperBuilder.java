@@ -49,10 +49,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
         this.reflectionService = classMeta.getReflectionService();
         this.mapperConfig = mapperConfig;
         this.propertyMappingsBuilder =
-                new PropertyMappingsBuilder<T, K,  FieldMapperColumnDefinition<K>>(
-                        classMeta,
-                        mapperConfig.propertyNameMatcherFactory(),
-                        mapperConfig.mapperBuilderErrorHandler(), new PropertyWithGetter());
+                PropertyMappingsBuilder.of(classMeta, mapperConfig, PropertyWithGetter.INSTANCE);
         this.classMeta = classMeta;
     }
 

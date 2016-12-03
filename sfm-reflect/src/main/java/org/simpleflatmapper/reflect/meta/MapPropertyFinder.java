@@ -23,7 +23,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     }
 
     @Override
-    protected void lookForProperties(
+    public void lookForProperties(
             final PropertyNameMatcher propertyNameMatcher,
             final FoundProperty matchingProperties,
             final PropertyMatchingScore score, boolean allowSelfReference) {

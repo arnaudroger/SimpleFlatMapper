@@ -34,12 +34,7 @@ public final class SqlParameterSourceBuilder<T> {
         this.mapperConfig = mapperConfig;
         this.reflectionService = classMeta.getReflectionService();
         this.builder =
-                new PropertyMappingsBuilder<T, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(
-                        classMeta,
-                        mapperConfig.propertyNameMatcherFactory(),
-                        mapperConfig.mapperBuilderErrorHandler(),
-                        new PropertyWithGetter()
-                );
+                PropertyMappingsBuilder.of(classMeta, mapperConfig, PropertyWithGetter.INSTANCE);
     }
 
     public SqlParameterSourceBuilder<T> add(String column) {

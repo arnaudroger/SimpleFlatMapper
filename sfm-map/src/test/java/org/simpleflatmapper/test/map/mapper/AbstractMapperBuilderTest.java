@@ -383,7 +383,7 @@ public class AbstractMapperBuilderTest {
             String str = headers[i];
             builder.addMapping(str);
             builderIndexed.addMapping(str, i);
-            row[i] = classMeta.newPropertyFinder(ConstantPredicate.truePredicate()).findProperty(DefaultPropertyNameMatcher.of(str)).getGetter().get(instance1);
+            row[i] = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(str)).getGetter().get(instance1);
 
         }
         Mapper<Object[], T> mapper = builder.mapper();
@@ -438,7 +438,7 @@ public class AbstractMapperBuilderTest {
         }
 
         @Override
-        protected Mapper<Object[], T> newJoinJdbcMapper(Mapper<Object[], T> mapper) {
+        protected Mapper<Object[], T> newJoinMapper(Mapper<Object[], T> mapper) {
             return new JoinMapper<Object[], Object[][], T, RuntimeException>(mapper,
                     mapperConfig.consumerErrorHandler(),
                     mappingContextFactoryBuilder.newFactory(),
@@ -451,7 +451,7 @@ public class AbstractMapperBuilderTest {
         }
 
         @Override
-        protected Mapper<Object[], T> newStaticJdbcMapper(Mapper<Object[], T> mapper) {
+        protected Mapper<Object[], T> newStaticMapper(Mapper<Object[], T> mapper) {
             return mapper;
         }
     }

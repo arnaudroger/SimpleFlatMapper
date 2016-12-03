@@ -23,7 +23,7 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected  void lookForProperties(
+    public void lookForProperties(
             PropertyNameMatcher propertyNameMatcher,
             FoundProperty matchingProperties,
             PropertyMatchingScore score, boolean allowSelfReference){

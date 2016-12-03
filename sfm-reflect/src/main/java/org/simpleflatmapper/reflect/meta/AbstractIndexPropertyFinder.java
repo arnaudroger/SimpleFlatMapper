@@ -18,7 +18,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void lookForProperties(
+    public void lookForProperties(
             PropertyNameMatcher propertyNameMatcher,
             FoundProperty<T> matchingProperties,
             PropertyMatchingScore score, boolean allowSelfReference) {

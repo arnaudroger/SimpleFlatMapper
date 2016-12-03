@@ -147,7 +147,7 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
     }
 
     @Override
-    protected JdbcMapper<T> newJoinJdbcMapper(Mapper<ResultSet, T> mapper) {
+    protected JdbcMapper<T> newJoinMapper(Mapper<ResultSet, T> mapper) {
         return new JoinJdbcMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 
@@ -170,7 +170,7 @@ public final class JdbcMapperBuilder<T> extends AbstractMapperBuilder<ResultSet,
         }
     }
     @Override
-    protected JdbcMapper<T> newStaticJdbcMapper(Mapper<ResultSet, T> mapper) {
+    protected JdbcMapper<T> newStaticMapper(Mapper<ResultSet, T> mapper) {
         return new StaticJdbcSetRowMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 

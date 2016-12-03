@@ -195,7 +195,11 @@ public class CrudTest {
     @Test
     public void testDbObjectCrudWithCustomGetter() throws Exception {
 
-        JdbcMapperFactory mapperFactory = JdbcMapperFactory.newInstance().addColumnProperty("name", new GetterProperty(new Getter<ResultSet, String>() {
+        JdbcMapperFactory mapperFactory =
+                JdbcMapperFactory
+                        .newInstance()
+                        .addColumnProperty("name",
+                                new GetterProperty(new Getter<ResultSet, String>() {
             @Override
             public String get(ResultSet target) throws Exception {
                 return "customname";

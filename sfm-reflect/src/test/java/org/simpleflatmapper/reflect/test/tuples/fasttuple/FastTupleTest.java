@@ -39,7 +39,7 @@ public class FastTupleTest {
         //creates a new tuple allocated on the JVM heap
         @SuppressWarnings("unchecked") ClassMeta<FastTuple> cm = ReflectionService.newInstance().getClassMeta((Class<FastTuple>) tuple.getClass());
 
-        final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder(ConstantPredicate.truePredicate());
+        final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
 
         final PropertyMeta<FastTuple, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldA", 0, true, true));
         final PropertyMeta<FastTuple, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldB", 0, true, true));
@@ -78,7 +78,7 @@ public class FastTupleTest {
         //creates a new tuple allocated on the JVM heap
         @SuppressWarnings("unchecked") ClassMeta<FastTuple> cm = ReflectionService.newInstance().getClassMeta((Class<FastTuple>) tuple.getClass());
 
-        final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder(ConstantPredicate.truePredicate());
+        final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
 
         final PropertyMeta<FastTuple, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldA", 0, true, true));
         final PropertyMeta<FastTuple, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldB", 0, true, true));

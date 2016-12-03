@@ -157,10 +157,9 @@ public class CsvWriter<T>  {
 
     private static <P> void addDefaultHeaders(final ClassMeta<P> classMeta, final String prefix, final List<String> columns) {
         classMeta.forEachProperties(new Consumer<PropertyMeta<P,?>>() {
-            PropertyWithGetter propertyWithGetter = new PropertyWithGetter();
             @Override
             public void accept(PropertyMeta<P, ?> propertyMeta) {
-                if (! propertyWithGetter.test(propertyMeta)) return;
+                if (! PropertyWithGetter.INSTANCE.test(propertyMeta)) return;
                 String currentName = prefix +  propertyMeta.getPath();
                 if (!canWrite(propertyMeta.getPropertyType())) {
                     addDefaultHeaders(propertyMeta.getPropertyClassMeta(), currentName + "_", columns);

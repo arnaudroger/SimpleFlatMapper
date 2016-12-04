@@ -18,6 +18,7 @@ import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ForEachCallBack;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.NullConsumer;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
@@ -104,7 +105,12 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	private <T> PropertyFinder<T> wrapPropertyFinder(PropertyFinder<T> propertyFinder) {
 
 		if (!customProperties.isEmpty()) {
-			return new ExtendPropertyFinder<T>(propertyFinder, customProperties);
+			return new ExtendPropertyFinder<T>(propertyFinder, customProperties, new Function<PropertyFinder.PropertyFinderTransformer, PropertyFinder.PropertyFinderTransformer>() {
+				@Override
+				public PropertyFinder.PropertyFinderTransformer apply(PropertyFinder.PropertyFinderTransformer propertyFinderTransformer) {
+					return new ExtendPropertyFinder.ExtendPropertyFinderTransformer(propertyFinderTransformer, customProperties);
+				}
+			});
 		}
 
 		return propertyFinder;

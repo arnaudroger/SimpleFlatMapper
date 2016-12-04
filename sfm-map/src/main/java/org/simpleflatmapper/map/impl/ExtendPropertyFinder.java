@@ -8,51 +8,54 @@ import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMatchingScore;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyNameMatcher;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
 public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
+    private static final Runnable EMPTY_CALLBACK = new Runnable() { @Override public void run() { } };
+    private static final Function<PropertyFinderTransformer, PropertyFinderTransformer> IDENTITY =
+            new Function<PropertyFinderTransformer, PropertyFinderTransformer>() {
+                @Override
+                public PropertyFinderTransformer apply(PropertyFinderTransformer propertyFinderTransformer) {
+                    return propertyFinderTransformer;
+                }
+            };
     private final PropertyFinder<T> delegate;
     private final List<CustomProperty<?, ?>> customProperties;
+    private final Function<PropertyFinderTransformer, PropertyFinderTransformer> transformerFunction;
 
     public ExtendPropertyFinder(PropertyFinder<T> delegate,
                                 List<CustomProperty<?, ?>> customProperties) {
+        this(delegate, customProperties, IDENTITY);
+    }
+
+    public ExtendPropertyFinder(PropertyFinder<T> delegate,
+                                List<CustomProperty<?, ?>> customProperties,
+                                Function<PropertyFinderTransformer, PropertyFinderTransformer> transformerFunction) {
         super(delegate.getPropertyFilter());
         this.delegate = delegate;
         this.customProperties = customProperties;
+        this.transformerFunction = transformerFunction;
     }
 
     @Override
     public void lookForProperties(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final boolean allowSelfReference, final PropertyFinderTransformer propertyFinderTransformer) {
         for (CustomProperty<?, ?> property : customProperties) {
             if (property.isApplicable(delegate.getOwnerType()) && propertyNameMatcher.matches(property.getName())) {
-                matchingProperties.found((CustomProperty<T, ?>) property, new Runnable() {
-                    @Override
-                    public void run() {
-                    }
-                }, score);
+                matchingProperties.found((CustomProperty<T, ?>) property, EMPTY_CALLBACK, score);
             }
         }
 
+        PropertyFinderTransformer newTransformer = transformerFunction.apply(propertyFinderTransformer);
 
-        PropertyFinderTransformer newTransformer;
-
-        if (propertyFinderTransformer == IDENTITY_TRANSFORMER) {
-            newTransformer = new ExtendPropertyFinderTransformer(propertyFinderTransformer, customProperties);
-        } else {
-            newTransformer = propertyFinderTransformer;
-        }
-
-        PropertyFinder<T> effectivePropertyFinder = delegate;
-        //propertyFinderTransformer.apply(delegate);
-
-        effectivePropertyFinder
+        delegate
                 .lookForProperties(
                         propertyNameMatcher,
                         matchingProperties,
-                        score,
+                        score.decrease(1),
                         allowSelfReference,
                         newTransformer);
     }

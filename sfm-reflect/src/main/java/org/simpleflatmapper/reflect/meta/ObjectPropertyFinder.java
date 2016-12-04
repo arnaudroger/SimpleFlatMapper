@@ -46,13 +46,8 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 							return state != State.PROPERTIES;
 						}
 					}),
-					new Runnable() {
-						@Override
-						public void run() {
-							state = State.SELF;
-							selfName = propName;
-						}
-					}, PropertyMatchingScore.MINIMUM);
+					selfPropertySelectionCallback(propName),
+					PropertyMatchingScore.MINIMUM);
 		}
 	}
 
@@ -62,13 +57,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 				final String columnName = getColumnName(prop);
 				if (propertyNameMatcher.matches(columnName)
 						&& hasConstructorMatching(prop.getParameter())) {
-					matchingProperties.found(prop, new Runnable() {
-						@Override
-						public void run() {
-							removeNonMatching(prop.getParameter());
-							state = State.PROPERTIES;
-						}
-					}, score);
+					matchingProperties.found(prop, propertiesRemoveNonMatchingCallBack(prop), score);
 				}
 
 				PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(columnName);
@@ -78,14 +67,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 						public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
 							matchingProperties.found(
 									new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
-									new Runnable() {
-										@Override
-										public void run() {
-											selectionCallback.run();
-											removeNonMatching(prop.getParameter());
-											state = State.PROPERTIES;
-										}
-									}, score.shift());
+									propertiesDelegateAndRemoveNonMatchingCallBack(selectionCallback, prop), score.shift());
 						}
 					}, score.shift(), propertyFinderTransformer);
 				}
@@ -98,12 +80,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		for (final PropertyMeta<T, ?> prop : classMeta.getProperties()) {
 			final String columnName = getColumnName(prop);
 			if (propertyNameMatcher.matches(columnName)) {
-				matchingProperties.found(prop, new Runnable() {
-					@Override
-					public void run() {
-						state = State.PROPERTIES;
-					}
-				}, score.decrease(1));
+				matchingProperties.found(prop, propertiesCallBack(), score.decrease(1));
 			}
 			final PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(columnName);
 			if (subPropMatcher != null) {
@@ -111,14 +88,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 					@Override
 					public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
 						matchingProperties.found(new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
-								new Runnable() {
-									@Override
-									public void run() {
-										selectionCallback.run();
-										state = State.PROPERTIES;
-
-									}
-								}, score);
+								propertiesDelegateCallBack(selectionCallback), score);
 					}
 				}, score.shift().decrease( -1),
 				propertyFinderTransformer);
@@ -165,6 +135,57 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			}
 		}
 		return false;
+	}
+
+	private Runnable compose(final Runnable r1, final Runnable r2) {
+		return new Runnable() {
+			@Override
+			public void run() {
+				r1.run();
+				r2.run();
+			}
+		};
+	}
+
+	private Runnable propertiesDelegateAndRemoveNonMatchingCallBack(final Runnable selectionCallback, final ConstructorPropertyMeta<T, ?> prop) {
+		return compose(selectionCallback, propertiesRemoveNonMatchingCallBack(prop));
+	}
+
+	private Runnable propertiesRemoveNonMatchingCallBack(final ConstructorPropertyMeta<T, ?> prop) {
+		return compose(removeNonMatchingCallBack(prop), propertiesCallBack());
+	}
+
+	private Runnable removeNonMatchingCallBack(final ConstructorPropertyMeta<T, ?> prop) {
+		return new Runnable() {
+			@Override
+			public void run() {
+				removeNonMatching(prop.getParameter());
+			}
+		};
+	}
+
+	private Runnable propertiesDelegateCallBack(final Runnable selectionCallback) {
+		return compose(selectionCallback, propertiesCallBack());
+	}
+
+
+	private Runnable propertiesCallBack() {
+		return new Runnable() {
+			@Override
+			public void run() {
+				state = State.PROPERTIES;
+			}
+		};
+	}
+
+	private Runnable selfPropertySelectionCallback(final String propName) {
+		return new Runnable() {
+			@Override
+			public void run() {
+				state = State.SELF;
+				selfName = propName;
+			}
+		};
 	}
 
 	@Override

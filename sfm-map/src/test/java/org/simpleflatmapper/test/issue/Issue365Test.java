@@ -6,14 +6,19 @@ import org.simpleflatmapper.map.mapper.FieldMapperColumnDefinitionProviderImpl;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.map.property.SetterProperty;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.test.map.SampleFieldKey;
+import org.simpleflatmapper.test.map.mapper.AbstractConstantTargetMapperBuilderTest;
 import org.simpleflatmapper.test.map.mapper.AbstractMapperBuilderTest;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -26,6 +31,14 @@ public class Issue365Test {
             int indexOfDot = value.indexOf('.');
             target.algorithm = value.substring(0, indexOfDot);
             target.type = value.substring(indexOfDot + 1, value.length());
+        }
+    };
+
+    public static final Getter<Data, String> GETTER = new Getter<Data, String>() {
+
+        @Override
+        public String get(Data target) throws Exception {
+            return target.algorithm + "." + target.type;
         }
     };
 
@@ -69,6 +82,32 @@ public class Issue365Test {
         assertEquals("type", data.type);
     }
 
+
+    @Test
+    public void testMapOnCustomGetter() throws IOException {
+
+        ClassMeta<Data> classMeta = ReflectionService.newInstance().getClassMeta(Data.class);
+
+        AbstractConstantTargetMapperBuilderTest.Writerbuilder<Data> builder =
+                new AbstractConstantTargetMapperBuilderTest.Writerbuilder<Data>(classMeta, mapperConfig());
+
+        Mapper<Data, List<Object>> mapper =
+                builder
+                    .addColumn("score")
+                    .addColumn("benchmark")
+                    .mapper();
+
+        Data data = new Data();
+        data.score = 3.455;
+        data.algorithm = "algo";
+        data.type = "type";
+
+        List<Object> list = mapper.map(data);
+
+        assertEquals(Arrays.asList(new Object[] {3.455, "algo.type"}), list);
+    }
+
+
     @Test
     public void testMapOnCustomSetterSubProperty() throws IOException {
 
@@ -95,7 +134,7 @@ public class Issue365Test {
                 new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>();
 
         provider.addColumnDefinition(new CaseInsensitiveFieldKeyNamePredicate("benchmark"),
-                FieldMapperColumnDefinition.<SampleFieldKey>identity().add(new SetterProperty(SETTER)));
+                FieldMapperColumnDefinition.<SampleFieldKey>identity().add(new SetterProperty(SETTER)).add(new GetterProperty(GETTER)));
         return MapperConfig.<SampleFieldKey>fieldMapperConfig().columnDefinitions(provider);
     }
 }

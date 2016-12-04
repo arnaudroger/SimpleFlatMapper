@@ -94,10 +94,13 @@ public class AbstractConstantTargetMapperBuilderTest {
         }
     };
 
-    public class Writerbuilder<T> extends AbstractConstantTargetMapperBuilder<List<Object>, T, SampleFieldKey, Writerbuilder<T>> {
+    public static class Writerbuilder<T> extends AbstractConstantTargetMapperBuilder<List<Object>, T, SampleFieldKey, Writerbuilder<T>> {
 
         public Writerbuilder(ClassMeta<T> classMeta) {
-            super(classMeta, TypeHelper.<List<Object>>toClass(new TypeReference<List<Object>>(){}.getType()), MapperConfig.<SampleFieldKey>fieldMapperConfig().failOnAsm(true),
+            this(classMeta, MapperConfig.<SampleFieldKey>fieldMapperConfig().failOnAsm(true));
+        }
+        public Writerbuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig) {
+            super(classMeta, TypeHelper.<List<Object>>toClass(new TypeReference<List<Object>>(){}.getType()), mapperConfig,
                     ConstantTargetFieldMapperFactoryImpl.<List<Object>, SampleFieldKey>newInstance(SETTER_FACTORY, List.class));
         }
 

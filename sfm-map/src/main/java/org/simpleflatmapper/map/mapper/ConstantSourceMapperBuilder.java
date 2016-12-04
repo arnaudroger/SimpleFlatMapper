@@ -57,7 +57,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
 	protected final PropertyMappingsBuilder<T, K,FieldMapperColumnDefinition<K>> propertyMappingsBuilder;
 	protected final ReflectionService reflectionService;
-	
+
 	private final List<FieldMapper<S, T>> additionalMappers = new ArrayList<FieldMapper<S, T>>();
 
     private final MapperSource<? super S, K> mapperSource;
@@ -306,7 +306,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 		for(FieldMapper<S, T> mapper : additionalMappers) {
 			fields.add(mapper);
 		}
-		
+
 		return fields.toArray(new FieldMapper[0]);
 	}
 

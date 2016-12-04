@@ -3,8 +3,10 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.util.BooleanProvider;
+import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.Predicate;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
@@ -28,9 +30,13 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	}
 
 	@Override
-	public void lookForProperties(final PropertyNameMatcher propertyNameMatcher, FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference) {
-		lookForConstructor(propertyNameMatcher, matchingProperties, score);
-		lookForProperty(propertyNameMatcher, matchingProperties, score);
+	public void lookForProperties(final PropertyNameMatcher propertyNameMatcher,
+								  FoundProperty<T> matchingProperties,
+								  PropertyMatchingScore score,
+								  boolean allowSelfReference,
+								  PropertyFinderTransformer propertyFinderTransform) {
+		lookForConstructor(propertyNameMatcher, matchingProperties, score, propertyFinderTransform);
+		lookForProperty(propertyNameMatcher, matchingProperties, score, propertyFinderTransform);
 
 		final String propName = propertyNameMatcher.toString();
 		if (allowSelfReference && (state == State.NONE || (state == State.SELF && propName.equals(selfName)))) {
@@ -50,7 +56,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		}
 	}
 
-	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score) {
+	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (final ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
 				final String columnName = getColumnName(prop);
@@ -81,14 +87,14 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 										}
 									}, score.shift());
 						}
-					}, score.shift());
+					}, score.shift(), propertyFinderTransformer);
 				}
 			}
 		}
 	}
 
 
-	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score) {
+	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer) {
 		for (final PropertyMeta<T, ?> prop : classMeta.getProperties()) {
 			final String columnName = getColumnName(prop);
 			if (propertyNameMatcher.matches(columnName)) {
@@ -114,7 +120,8 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 									}
 								}, score);
 					}
-				}, score.shift().decrease( -1));
+				}, score.shift().decrease( -1),
+				propertyFinderTransformer);
 			}
 		}
 	}
@@ -123,14 +130,17 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			final PropertyNameMatcher propertyNameMatcher,
 			final PropertyMeta<T, ?> prop,
 			final FoundProperty foundProperty,
-			final PropertyMatchingScore score) {
+			final PropertyMatchingScore score,
+			final PropertyFinderTransformer propertyFinderTransformer) {
 		PropertyFinder<?> subPropertyFinder = subPropertyFinders.get(getColumnName(prop));
 		if (subPropertyFinder == null) {
 			subPropertyFinder = prop.getPropertyClassMeta().newPropertyFinder(propertyFilter);
 			subPropertyFinders.put(prop.getName(), subPropertyFinder);
 		}
 
-		subPropertyFinder.lookForProperties(propertyNameMatcher, foundProperty, score, false);
+		propertyFinderTransformer
+				.apply(subPropertyFinder)
+				.lookForProperties(propertyNameMatcher, foundProperty, score, false, propertyFinderTransformer);
 	}
 
     private String getColumnName(PropertyMeta<T, ?> prop) {
@@ -165,6 +175,11 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	@Override
 	public PropertyFinder<?> getSubPropertyFinder(String name) {
 		return subPropertyFinders.get(name);
+	}
+
+	@Override
+	public Type getOwnerType() {
+		return classMeta.getType();
 	}
 
 

@@ -45,7 +45,7 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
     }
 
     @Override
-    protected void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, FoundProperty foundProperty, PropertyMatchingScore score) {
+    protected void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer) {
         final ClassMeta<E> elementClassMeta = ((ArrayClassMeta)classMeta).getElementClassMeta();
 
         // all element has same type so check if can find property
@@ -55,12 +55,12 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
             for (int i = 0; i < elements.size(); i++) {
                 IndexedElement element = elements.get(i);
                 if (!element.hasProperty(property)) {
-                    lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), foundProperty, score);
+                    lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), foundProperty, score, propertyFinderTransformer);
                     return;
                 }
             }
 
-            lookForAgainstColumn(new IndexedColumn(elements.size(), propertyNameMatcher), foundProperty, score);
+            lookForAgainstColumn(new IndexedColumn(elements.size(), propertyNameMatcher), foundProperty, score, propertyFinderTransformer);
         }
 	}
 

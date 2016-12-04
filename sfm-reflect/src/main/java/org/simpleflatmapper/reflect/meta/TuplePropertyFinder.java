@@ -33,12 +33,12 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
         return elements.get(indexedColumn.getIndexValue());
     }
 
-    protected void extrapolateIndex(final PropertyNameMatcher propertyNameMatcher, final FoundProperty foundProperty, PropertyMatchingScore score) {
+    protected void extrapolateIndex(final PropertyNameMatcher propertyNameMatcher, final FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer) {
         for(int i = 0; i < elements.size(); i++) {
             final IndexedElement element = elements.get(i);
 
             if (element.getElementClassMeta() != null) {
-                element.getPropertyFinder().lookForProperties(propertyNameMatcher, new FoundProperty() {
+                propertyFinderTransformer.apply(element.getPropertyFinder()).lookForProperties(propertyNameMatcher, new FoundProperty() {
                     @Override
                     public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
 
@@ -59,7 +59,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
                             }, score);
                         }
                     }
-                }, score, true);
+                }, score, true, propertyFinderTransformer);
 
             }
             score = score.decrease(1);

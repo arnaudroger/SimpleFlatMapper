@@ -4,6 +4,7 @@ import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.util.Predicate;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -26,14 +27,14 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     public void lookForProperties(
             final PropertyNameMatcher propertyNameMatcher,
             final FoundProperty matchingProperties,
-            final PropertyMatchingScore score, boolean allowSelfReference) {
+            final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer) {
         for(final PropertyNameMatcherKeyValuePair keyValue : propertyNameMatcher.keyValuePairs()) {
             final PropertyNameMatcher keyMatcher = keyValue.getKey();
             final PropertyNameMatcher valueMatcher = keyValue.getValue();
 
             final PropertyFinder<V> propertyFinder = getPropertyFinder(keyMatcher);
 
-            propertyFinder.lookForProperties(valueMatcher,
+            propertyFinderTransformer.apply(propertyFinder).lookForProperties(valueMatcher,
                     new FoundProperty<V>() {
                         @Override
                         public <P extends PropertyMeta<V, ?>> void found(final P propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
@@ -57,7 +58,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                         }
                     },
                     score,
-                    true);
+                    true, propertyFinderTransformer);
         }
 
     }
@@ -115,5 +116,10 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     @Override
     public PropertyFinder<?> getSubPropertyFinder(String name) {
         return null;
+    }
+
+    @Override
+    public Type getOwnerType() {
+        return mapMeta.getType();
     }
 }

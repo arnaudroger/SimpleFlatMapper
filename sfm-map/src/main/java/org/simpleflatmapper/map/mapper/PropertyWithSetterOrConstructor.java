@@ -6,6 +6,12 @@ import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.util.Predicate;
 
 public class PropertyWithSetterOrConstructor implements Predicate<PropertyMeta<?, ?>> {
+
+	public static final PropertyWithSetterOrConstructor INSTANCE = new PropertyWithSetterOrConstructor();
+
+	private PropertyWithSetterOrConstructor() {
+	}
+
     @Override
 	public boolean test(PropertyMeta<?, ?> propertyMeta) {
 		if (propertyMeta.isSelf()) {

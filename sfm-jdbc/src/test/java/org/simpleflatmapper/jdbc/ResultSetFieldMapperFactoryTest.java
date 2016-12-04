@@ -14,6 +14,8 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.ConstantPredicate;
+import org.simpleflatmapper.util.Predicate;
 
 import java.sql.ResultSet;
 
@@ -27,7 +29,7 @@ public class ResultSetFieldMapperFactoryTest {
 	public void testPrimitiveField() {
 
 		ClassMeta<DbObject> classMeta = ReflectionService.newInstance(false).getClassMeta(DbObject.class);
-		PropertyMeta<DbObject, Long> id = classMeta.newPropertyFinder().<Long>findProperty(new DefaultPropertyNameMatcher("id", 0, false, false));
+		PropertyMeta<DbObject, Long> id = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).<Long>findProperty(new DefaultPropertyNameMatcher("id", 0, false, false));
 
 		FieldMapperColumnDefinition<JdbcColumnKey> identity = FieldMapperColumnDefinition.identity();
 		PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> propertyMapping = new PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(id, new JdbcColumnKey("id", 1), identity);

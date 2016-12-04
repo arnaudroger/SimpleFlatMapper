@@ -9,6 +9,7 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.ParameterizedType;
@@ -57,8 +58,8 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 	}
 
 	@Override
-	public PropertyFinder<Optional<T>> newPropertyFinder() {
-		return new OptionalPropertyFinder<T>(this);
+	public PropertyFinder<Optional<T>> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
+		return new OptionalPropertyFinder<T>(this, propertyFilter);
 	}
 
 	public Type getType() {

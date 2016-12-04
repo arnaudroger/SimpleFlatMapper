@@ -57,9 +57,9 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
         Mapper<S, T> mapper = constantSourceMapperBuilder.mapper();
 
         if (constantSourceMapperBuilder.hasJoin()) {
-            return newJoinJdbcMapper(mapper);
+            return newJoinMapper(mapper);
         } else {
-            return newStaticJdbcMapper(mapper);
+            return newStaticMapper(mapper);
         }
     }
 
@@ -176,7 +176,7 @@ public abstract class AbstractMapperBuilder<S, T, K extends FieldKey<K>, M, B ex
         return keyFactory.newKey(column, index);
     }
 
-    protected abstract M newJoinJdbcMapper(Mapper<S, T> mapper);
+    protected abstract M newJoinMapper(Mapper<S, T> mapper);
 
-    protected abstract M newStaticJdbcMapper(Mapper<S, T> mapper);
+    protected abstract M newStaticMapper(Mapper<S, T> mapper);
 }

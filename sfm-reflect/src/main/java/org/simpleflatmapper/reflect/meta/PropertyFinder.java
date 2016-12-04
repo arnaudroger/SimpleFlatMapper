@@ -1,37 +1,59 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.util.Predicate;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class PropertyFinder<T> {
+	protected final Predicate<PropertyMeta<?, ?>> propertyFilter;
+
+	protected PropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
+		this.propertyFilter = propertyFilter;
+	}
+
 	@SuppressWarnings("unchecked")
 	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
-		MatchingProperties matchingProperties = new MatchingProperties();
-		lookForProperties(propertyNameMatcher, matchingProperties, PropertyMatchingScore.INITIAL, true);
+		MatchingProperties matchingProperties = new MatchingProperties(propertyFilter);
+		lookForProperties(propertyNameMatcher, matchingProperties, PropertyMatchingScore.INITIAL, true, IDENTITY_TRANSFORMER);
 		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
 	}
 
-	protected abstract void lookForProperties(
+	public abstract void lookForProperties(
 			PropertyNameMatcher propertyNameMatcher,
 			FoundProperty<T> matchingProperties,
-			PropertyMatchingScore score, boolean allowSelfReference);
+			PropertyMatchingScore score,
+			boolean allowSelfReference,
+			PropertyFinderTransformer propertyFinderTransformer);
 
 
 	public abstract List<InstantiatorDefinition> getEligibleInstantiatorDefinitions();
     public abstract PropertyFinder<?> getSubPropertyFinder(String name);
 
+	public Predicate<PropertyMeta<?, ?>> getPropertyFilter() {
+		return propertyFilter;
+	}
 
+	public abstract Type getOwnerType();
 
 	protected static class MatchingProperties<T> implements FoundProperty<T> {
 		private final List<MatchedProperty<T, ?>> matchedProperties = new ArrayList<MatchedProperty<T, ?>>();
+		private final Predicate<PropertyMeta<?, ?>> propertyFilter;
+
+		public MatchingProperties(Predicate<PropertyMeta<?, ?>> propertyFilter) {
+			this.propertyFilter = propertyFilter;
+		}
+
 		@Override
 		public <P extends  PropertyMeta<T, ?>> void found(P propertyMeta,
 														  Runnable selectionCallback,
 														  PropertyMatchingScore score) {
-			matchedProperties.add(new MatchedProperty<T, P>(propertyMeta, selectionCallback, score));
+			if (propertyFilter.test(propertyMeta)) {
+				matchedProperties.add(new MatchedProperty<T, P>(propertyMeta, selectionCallback, score));
+			}
 		}
 
 		public PropertyMeta<T, ?> selectBestMatch() {
@@ -70,4 +92,20 @@ public abstract class PropertyFinder<T> {
                                                    Runnable selectionCallback,
                                                    PropertyMatchingScore score);
     }
+
+    public interface PropertyFinderTransformer {
+		<T> PropertyFinder<T> apply(PropertyFinder<T> propertyFinder);
+	}
+
+	public static PropertyFinderTransformer IDENTITY_TRANSFORMER = new PropertyFinderTransformer() {
+		@Override
+		public <T> PropertyFinder<T> apply(PropertyFinder<T> propertyFinder) {
+			return propertyFinder;
+		}
+
+		@Override
+		public String toString() {
+			return "IDENTITY_TRANSFORMER";
+		}
+	};
 }

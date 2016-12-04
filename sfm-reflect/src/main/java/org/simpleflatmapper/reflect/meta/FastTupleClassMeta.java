@@ -10,6 +10,7 @@ import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.getter.GetterHelper;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Field;
@@ -107,8 +108,8 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
     }
 
     @Override
-    public PropertyFinder<T> newPropertyFinder() {
-        return delegate.newPropertyFinder();
+    public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
+        return delegate.newPropertyFinder(propertyFilter);
     }
 
     @Override

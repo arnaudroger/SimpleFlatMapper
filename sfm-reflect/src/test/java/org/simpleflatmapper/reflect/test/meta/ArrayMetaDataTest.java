@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.*;
+import org.simpleflatmapper.util.ConstantPredicate;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.util.ArrayList;
@@ -13,6 +15,8 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class ArrayMetaDataTest {
+
+    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
 
     @Test
     public void testListOfString() throws Exception {
@@ -23,7 +27,7 @@ public class ArrayMetaDataTest {
         assertTrue(classMeta instanceof ArrayClassMeta);
 
         // indexed
-        PropertyFinder<Object> propertyFinder = classMeta.newPropertyFinder();
+        PropertyFinder<Object> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
         PropertyMeta<Object, Object> _0 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("0", 0, false, false));
         ListElementPropertyMeta<Object, Object> meta0 = (ListElementPropertyMeta<Object, Object>) _0;
         assertEquals(0, meta0.getIndex());
@@ -60,7 +64,7 @@ public class ArrayMetaDataTest {
 
         assertTrue(classMeta instanceof ArrayClassMeta);
 
-        PropertyFinder<String[]> propertyFinder = classMeta.newPropertyFinder();
+        PropertyFinder<String[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
         PropertyMeta<String[], String> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false));
 
         assertTrue("expect ArrayElementPropertyMeta " + bb, bb instanceof ArrayElementPropertyMeta);

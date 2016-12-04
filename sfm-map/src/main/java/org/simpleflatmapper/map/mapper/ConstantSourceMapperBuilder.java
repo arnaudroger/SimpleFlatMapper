@@ -57,7 +57,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 
 	protected final PropertyMappingsBuilder<T, K,FieldMapperColumnDefinition<K>> propertyMappingsBuilder;
 	protected final ReflectionService reflectionService;
-	
+
 	private final List<FieldMapper<S, T>> additionalMappers = new ArrayList<FieldMapper<S, T>>();
 
     private final MapperSource<? super S, K> mapperSource;
@@ -88,9 +88,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 		this.fieldMapperFactory = new ConstantSourceFieldMapperFactoryImpl<S, K>(mapperSource.getterFactory(), ConverterService.getInstance(), mapperSource.source());
         this.keyFactory = keyFactory;
         this.propertyMappingsBuilder =
-                new PropertyMappingsBuilder<T, K, FieldMapperColumnDefinition<K>>(classMeta,
-                        mapperConfig.propertyNameMatcherFactory(), mapperConfig.mapperBuilderErrorHandler(),
-                        new PropertyWithSetterOrConstructor(), propertyFinder);
+                PropertyMappingsBuilder.of(classMeta, mapperConfig, PropertyWithSetterOrConstructor.INSTANCE, propertyFinder);
 		this.target = requireNonNull("classMeta", classMeta).getType();
 		this.reflectionService = requireNonNull("classMeta", classMeta).getReflectionService();
 	}
@@ -308,7 +306,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 		for(FieldMapper<S, T> mapper : additionalMappers) {
 			fields.add(mapper);
 		}
-		
+
 		return fields.toArray(new FieldMapper[0]);
 	}
 

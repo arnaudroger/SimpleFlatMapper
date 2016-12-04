@@ -75,7 +75,7 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
     }
 
     @Override
-    protected DatastaxMapper<T> newJoinJdbcMapper(Mapper<Row, T> mapper) {
+    protected DatastaxMapper<T> newJoinMapper(Mapper<Row, T> mapper) {
         return new JoinDatastaxMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 
@@ -93,7 +93,7 @@ public final class DatastaxMapperBuilder<T> extends AbstractMapperBuilder<Row, T
     }
 
     @Override
-    protected DatastaxMapper<T> newStaticJdbcMapper(Mapper<Row, T> mapper) {
+    protected DatastaxMapper<T> newStaticMapper(Mapper<Row, T> mapper) {
         return new StaticDatastaxMapper<T>(mapper, mapperConfig.consumerErrorHandler(), mappingContextFactoryBuilder.newFactory());
     }
 

@@ -27,6 +27,8 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
+import org.simpleflatmapper.util.ConstantPredicate;
+import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Method;
 
@@ -141,7 +143,7 @@ public class ConstantSourceFieldMapperFactoryImplTest {
             Class<T> target, String property) {
         ClassMeta<T> classMeta = REFLECTION_SERVICE.getClassMeta(target);
 
-        PropertyMeta<T, P> propertyMeta = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(property));
+        PropertyMeta<T, P> propertyMeta = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(property));
 
         PropertyMapping<T, P , SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm =
                 new PropertyMapping<T, P, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(

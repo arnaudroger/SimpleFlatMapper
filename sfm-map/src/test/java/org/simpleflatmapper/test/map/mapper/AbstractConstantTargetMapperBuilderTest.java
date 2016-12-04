@@ -3,6 +3,7 @@ package org.simpleflatmapper.test.map.mapper;
 import org.junit.Test;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
@@ -17,6 +18,8 @@ import org.simpleflatmapper.reflect.SetterFactory;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.test.beans.DbObject;
+import org.simpleflatmapper.util.ConstantPredicate;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.Supplier;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.TypeReference;
@@ -66,7 +69,7 @@ public class AbstractConstantTargetMapperBuilderTest {
         for(int i = 0; i < headers.length; i++) {
             String str = headers[i];
             builder.addColumn(str);
-            row[i] = classMeta.newPropertyFinder().findProperty(DefaultPropertyNameMatcher.of(str)).getGetter().get(instance1);
+            row[i] = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(str)).getGetter().get(instance1);
 
         }
 
@@ -91,10 +94,13 @@ public class AbstractConstantTargetMapperBuilderTest {
         }
     };
 
-    public class Writerbuilder<T> extends AbstractConstantTargetMapperBuilder<List<Object>, T, SampleFieldKey, Writerbuilder<T>> {
+    public static class Writerbuilder<T> extends AbstractConstantTargetMapperBuilder<List<Object>, T, SampleFieldKey, Writerbuilder<T>> {
 
         public Writerbuilder(ClassMeta<T> classMeta) {
-            super(classMeta, TypeHelper.<List<Object>>toClass(new TypeReference<List<Object>>(){}.getType()), MapperConfig.<SampleFieldKey>fieldMapperConfig().failOnAsm(true),
+            this(classMeta, MapperConfig.<SampleFieldKey>fieldMapperConfig().failOnAsm(true));
+        }
+        public Writerbuilder(ClassMeta<T> classMeta, MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig) {
+            super(classMeta, TypeHelper.<List<Object>>toClass(new TypeReference<List<Object>>(){}.getType()), mapperConfig,
                     ConstantTargetFieldMapperFactoryImpl.<List<Object>, SampleFieldKey>newInstance(SETTER_FACTORY, List.class));
         }
 

@@ -1,5 +1,7 @@
 package org.simpleflatmapper.reflect.meta;
 
+import org.simpleflatmapper.util.Predicate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,11 +12,11 @@ public class IndexedElement<T, E> {
     private final PropertyFinder<E> propertyFinder;
     private final List<String> assignedPath = new ArrayList<String>();
 
-    public IndexedElement(PropertyMeta<T, E> propertyMeta, ClassMeta<E> elementClassMeta) {
+    public IndexedElement(PropertyMeta<T, E> propertyMeta, ClassMeta<E> elementClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
         this.propertyMeta = propertyMeta;
         this.elementClassMeta = elementClassMeta;
         if (elementClassMeta != null) {
-            propertyFinder = elementClassMeta.newPropertyFinder();
+            propertyFinder = elementClassMeta.newPropertyFinder(propertyFilter);
         } else {
             propertyFinder = null;
         }

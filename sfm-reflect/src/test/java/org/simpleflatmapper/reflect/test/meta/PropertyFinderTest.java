@@ -6,18 +6,22 @@ import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.tuple.Tuples;
+import org.simpleflatmapper.util.ConstantPredicate;
+import org.simpleflatmapper.util.Predicate;
 
 import static org.junit.Assert.*;
 
 public class PropertyFinderTest {
 
 
+    private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
+
     @Test
     public void testFindElementOnArray() {
 
         ClassMeta<DbObject[]> classMeta = ReflectionService.newInstance().getClassMeta(DbObject[].class);
 
-        PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder();
+        PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
         PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("elt0_id"));
         assertNotNull(propEltId);
@@ -57,7 +61,7 @@ public class PropertyFinderTest {
     public void testFindElementOnTuple() {
         ClassMeta<DbObject[]> classMeta = ReflectionService.newInstance().getClassMeta(Tuples.typeDef(String.class, DbObject.class, DbObject.class));
 
-        PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder();
+        PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
         PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("element2_id"));
         assertNotNull(propEltId);
@@ -96,7 +100,7 @@ public class PropertyFinderTest {
     public void testArrayElementConstructorInjectionWithIncompatibleConstructorUseCompatibleOutlay() {
         ClassMeta<ObjectWithIncompatibleConstructor[]> classMeta = ReflectionService.newInstance().getClassMeta(ObjectWithIncompatibleConstructor[].class);
 
-        PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder();
+        PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
         assertNotNull(propertyFinder.findProperty(matcher("1_arg1")));
         assertNotNull(propertyFinder.findProperty(matcher("1_arg3")));
@@ -108,7 +112,7 @@ public class PropertyFinderTest {
     public void testArrayElementConstructorInjectionWithIncompatibleConstructorUseIncompatibleOutlay() {
         ClassMeta<ObjectWithIncompatibleConstructor[]> classMeta = ReflectionService.newInstance().getClassMeta(ObjectWithIncompatibleConstructor[].class);
 
-        PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder();
+        PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
         assertNotNull(propertyFinder.findProperty(matcher("1_arg1")));
         assertNotNull(propertyFinder.findProperty(matcher("1_arg3")));

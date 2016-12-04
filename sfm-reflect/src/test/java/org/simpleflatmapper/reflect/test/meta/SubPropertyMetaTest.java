@@ -10,6 +10,7 @@ import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.test.beans.Db1DeepObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.util.Predicate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -22,7 +23,14 @@ public class SubPropertyMetaTest {
     public void testSubProperty() throws Exception {
         ClassMeta<Db1DeepObject> classMeta = ReflectionService.newInstance().getClassMeta(Db1DeepObject.class);
 
-        PropertyMeta<Db1DeepObject, String> property = classMeta.newPropertyFinder().findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false));
+        PropertyMeta<Db1DeepObject, String> property = classMeta
+                .newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+                    @Override
+                    public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                        return true;
+                    }
+                })
+                .findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false));
 
         assertTrue(property instanceof SubPropertyMeta);
         assertTrue(property.isSubProperty());

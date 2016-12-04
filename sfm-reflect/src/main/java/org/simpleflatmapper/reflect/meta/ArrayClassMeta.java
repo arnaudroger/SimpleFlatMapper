@@ -4,6 +4,7 @@ import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinitio
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.util.Consumer;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Modifier;
@@ -68,8 +69,8 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	}
 
 	@Override
-	public PropertyFinder<T> newPropertyFinder() {
-		return new ArrayPropertyFinder<T, E>(this);
+	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
+		return new ArrayPropertyFinder<T, E>(this, propertyFilter);
 	}
 
 	public Type getType() {

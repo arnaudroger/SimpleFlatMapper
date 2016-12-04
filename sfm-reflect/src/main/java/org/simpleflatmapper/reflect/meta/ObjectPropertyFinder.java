@@ -3,7 +3,10 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.util.BooleanProvider;
+import org.simpleflatmapper.util.Function;
+import org.simpleflatmapper.util.Predicate;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
@@ -20,16 +23,21 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 
 
 
-    ObjectPropertyFinder(ObjectClassMeta<T> classMeta) {
-		this.classMeta = classMeta;
+    ObjectPropertyFinder(ObjectClassMeta<T> classMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+        super(propertyFilter);
+        this.classMeta = classMeta;
 		this.eligibleInstantiatorDefinitions = classMeta.getInstantiatorDefinitions() != null ? new ArrayList<InstantiatorDefinition>(classMeta.getInstantiatorDefinitions()) : null;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void lookForProperties(final PropertyNameMatcher propertyNameMatcher, FoundProperty<T> matchingProperties, PropertyMatchingScore score, boolean allowSelfReference) {
-		lookForConstructor(propertyNameMatcher, matchingProperties, score);
-		lookForProperty(propertyNameMatcher, matchingProperties, score);
+	public void lookForProperties(final PropertyNameMatcher propertyNameMatcher,
+								  FoundProperty<T> matchingProperties,
+								  PropertyMatchingScore score,
+								  boolean allowSelfReference,
+								  PropertyFinderTransformer propertyFinderTransform) {
+		lookForConstructor(propertyNameMatcher, matchingProperties, score, propertyFinderTransform);
+		lookForProperty(propertyNameMatcher, matchingProperties, score, propertyFinderTransform);
 
 		final String propName = propertyNameMatcher.toString();
 		if (allowSelfReference && (state == State.NONE || (state == State.SELF && propName.equals(selfName)))) {
@@ -39,29 +47,18 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 							return state != State.PROPERTIES;
 						}
 					}),
-					new Runnable() {
-						@Override
-						public void run() {
-							state = State.SELF;
-							selfName = propName;
-						}
-					}, PropertyMatchingScore.MINIMUM);
+					selfPropertySelectionCallback(propName),
+					PropertyMatchingScore.MINIMUM);
 		}
 	}
 
-	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score) {
+	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (final ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
 				final String columnName = getColumnName(prop);
 				if (propertyNameMatcher.matches(columnName)
 						&& hasConstructorMatching(prop.getParameter())) {
-					matchingProperties.found(prop, new Runnable() {
-						@Override
-						public void run() {
-							removeNonMatching(prop.getParameter());
-							state = State.PROPERTIES;
-						}
-					}, score);
+					matchingProperties.found(prop, propertiesRemoveNonMatchingCallBack(prop), score);
 				}
 
 				PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(columnName);
@@ -71,32 +68,20 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 						public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
 							matchingProperties.found(
 									new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
-									new Runnable() {
-										@Override
-										public void run() {
-											selectionCallback.run();
-											removeNonMatching(prop.getParameter());
-											state = State.PROPERTIES;
-										}
-									}, score.shift());
+									propertiesDelegateAndRemoveNonMatchingCallBack(selectionCallback, prop), score.shift());
 						}
-					}, score.shift());
+					}, score.shift(), propertyFinderTransformer);
 				}
 			}
 		}
 	}
 
 
-	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score) {
+	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer) {
 		for (final PropertyMeta<T, ?> prop : classMeta.getProperties()) {
 			final String columnName = getColumnName(prop);
 			if (propertyNameMatcher.matches(columnName)) {
-				matchingProperties.found(prop, new Runnable() {
-					@Override
-					public void run() {
-						state = State.PROPERTIES;
-					}
-				}, score.decrease(1));
+				matchingProperties.found(prop, propertiesCallBack(), score.decrease(1));
 			}
 			final PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(columnName);
 			if (subPropMatcher != null) {
@@ -104,16 +89,10 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 					@Override
 					public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
 						matchingProperties.found(new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
-								new Runnable() {
-									@Override
-									public void run() {
-										selectionCallback.run();
-										state = State.PROPERTIES;
-
-									}
-								}, score);
+								propertiesDelegateCallBack(selectionCallback), score);
 					}
-				}, score.shift().decrease( -1));
+				}, score.shift().decrease( -1),
+				propertyFinderTransformer);
 			}
 		}
 	}
@@ -122,14 +101,17 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			final PropertyNameMatcher propertyNameMatcher,
 			final PropertyMeta<T, ?> prop,
 			final FoundProperty foundProperty,
-			final PropertyMatchingScore score) {
+			final PropertyMatchingScore score,
+			final PropertyFinderTransformer propertyFinderTransformer) {
 		PropertyFinder<?> subPropertyFinder = subPropertyFinders.get(getColumnName(prop));
 		if (subPropertyFinder == null) {
-			subPropertyFinder = prop.getPropertyClassMeta().newPropertyFinder();
+			subPropertyFinder = prop.getPropertyClassMeta().newPropertyFinder(propertyFilter);
 			subPropertyFinders.put(prop.getName(), subPropertyFinder);
 		}
 
-		subPropertyFinder.lookForProperties(propertyNameMatcher, foundProperty, score, false);
+		propertyFinderTransformer
+				.apply(subPropertyFinder)
+				.lookForProperties(propertyNameMatcher, foundProperty, score, false, propertyFinderTransformer);
 	}
 
     private String getColumnName(PropertyMeta<T, ?> prop) {
@@ -156,6 +138,57 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		return false;
 	}
 
+	private Runnable compose(final Runnable r1, final Runnable r2) {
+		return new Runnable() {
+			@Override
+			public void run() {
+				r1.run();
+				r2.run();
+			}
+		};
+	}
+
+	private Runnable propertiesDelegateAndRemoveNonMatchingCallBack(final Runnable selectionCallback, final ConstructorPropertyMeta<T, ?> prop) {
+		return compose(selectionCallback, propertiesRemoveNonMatchingCallBack(prop));
+	}
+
+	private Runnable propertiesRemoveNonMatchingCallBack(final ConstructorPropertyMeta<T, ?> prop) {
+		return compose(removeNonMatchingCallBack(prop), propertiesCallBack());
+	}
+
+	private Runnable removeNonMatchingCallBack(final ConstructorPropertyMeta<T, ?> prop) {
+		return new Runnable() {
+			@Override
+			public void run() {
+				removeNonMatching(prop.getParameter());
+			}
+		};
+	}
+
+	private Runnable propertiesDelegateCallBack(final Runnable selectionCallback) {
+		return compose(selectionCallback, propertiesCallBack());
+	}
+
+
+	private Runnable propertiesCallBack() {
+		return new Runnable() {
+			@Override
+			public void run() {
+				state = State.PROPERTIES;
+			}
+		};
+	}
+
+	private Runnable selfPropertySelectionCallback(final String propName) {
+		return new Runnable() {
+			@Override
+			public void run() {
+				state = State.SELF;
+				selfName = propName;
+			}
+		};
+	}
+
 	@Override
 	public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
 		return eligibleInstantiatorDefinitions;
@@ -164,6 +197,11 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	@Override
 	public PropertyFinder<?> getSubPropertyFinder(String name) {
 		return subPropertyFinders.get(name);
+	}
+
+	@Override
+	public Type getOwnerType() {
+		return classMeta.getType();
 	}
 
 

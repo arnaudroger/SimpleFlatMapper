@@ -72,6 +72,9 @@ public abstract class PropertyMeta<O, P> {
 		return true;
 	}
 
+	public final ReflectionService getReflectService () {
+		return reflectService;
+	}
 
 	public Supplier<ClassMeta<P>> getPropertyClassMetaSupplier() {
 		return new Supplier<ClassMeta<P>>() {

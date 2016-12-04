@@ -7,7 +7,11 @@ import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.ConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
+import org.simpleflatmapper.map.property.GetterProperty;
+import org.simpleflatmapper.map.property.SetterProperty;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
@@ -182,9 +186,22 @@ public abstract class AbstractMapperFactory<
 	 */
 	public final MF addColumnProperty(String name, Object... properties) {
 		for(Object property : properties) {
-			columnDefinitions.addColumnProperty(new CaseInsensitiveFieldKeyNamePredicate(name), new ConstantUnaryFactory<K, Object>(property));
+			columnDefinitions.addColumnProperty(
+					new CaseInsensitiveFieldKeyNamePredicate(name),
+					new ConstantUnaryFactory<K, Object>(upgrade(property)));
 		}
 		return (MF) this;
+	}
+
+	private Object upgrade(Object property) {
+		if (property instanceof Setter) {
+			return new SetterProperty((Setter<?, ?>) property);
+		}
+		if (property instanceof Getter) {
+			return new GetterProperty((Getter<?, ?>) property);
+		}
+
+		return property;
 	}
 
 	/**

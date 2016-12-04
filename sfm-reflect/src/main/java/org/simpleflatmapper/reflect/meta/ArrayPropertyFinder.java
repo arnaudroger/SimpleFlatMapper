@@ -1,6 +1,7 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.util.BooleanSupplier;
+import org.simpleflatmapper.util.Predicate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +12,16 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 	private final List<IndexedElement<T, E>> elements = new ArrayList<IndexedElement<T, E>>();
 
 
-    public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta) {
-        super(arrayClassMeta);
+    public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+        super(arrayClassMeta, propertyFilter);
     }
 
     @Override
     protected IndexedElement<T, E> getIndexedElement(IndexedColumn indexedColumn) {
         while (elements.size() <= indexedColumn.getIndexValue()) {
-            elements.add(new IndexedElement<T, E>(newElementPropertyMeta(elements.size(), "element" + elements.size()), ((ArrayClassMeta<T, E>)classMeta).getElementClassMeta()));
+            elements.add(new IndexedElement<T, E>(
+                    newElementPropertyMeta(elements.size(), "element" + elements.size()), ((ArrayClassMeta<T, E>)classMeta).getElementClassMeta(),
+                    propertyFilter));
         }
 
         return elements.get(indexedColumn.getIndexValue());
@@ -42,22 +45,22 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
     }
 
     @Override
-    protected void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, FoundProperty foundProperty, PropertyMatchingScore score) {
+    protected void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer) {
         final ClassMeta<E> elementClassMeta = ((ArrayClassMeta)classMeta).getElementClassMeta();
 
         // all element has same type so check if can find property
         PropertyMeta<E, ?> property =
-                elementClassMeta.newPropertyFinder().findProperty(propertyNameMatcher);
+                elementClassMeta.newPropertyFinder(propertyFilter).findProperty(propertyNameMatcher);
         if (property != null) {
             for (int i = 0; i < elements.size(); i++) {
                 IndexedElement element = elements.get(i);
                 if (!element.hasProperty(property)) {
-                    lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), foundProperty, score);
+                    lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), foundProperty, score, propertyFinderTransformer);
                     return;
                 }
             }
 
-            lookForAgainstColumn(new IndexedColumn(elements.size(), propertyNameMatcher), foundProperty, score);
+            lookForAgainstColumn(new IndexedColumn(elements.size(), propertyNameMatcher), foundProperty, score, propertyFinderTransformer);
         }
 	}
 

@@ -2,7 +2,9 @@ package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.util.Predicate;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -14,24 +16,25 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     private final Map<PropertyNameMatcher, PropertyFinder<V>> finders = new HashMap<PropertyNameMatcher, PropertyFinder<V>>();
     private final Map<String, MapElementPropertyMeta<?, K, V>> keys = new HashMap<String, MapElementPropertyMeta<?, K, V>>();
 
-    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter) {
+    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+        super(propertyFilter);
         this.mapMeta = mapMeta;
         this.valueMetaData = valueMetaData;
         this.keyConverter = keyConverter;
     }
 
     @Override
-    protected void lookForProperties(
+    public void lookForProperties(
             final PropertyNameMatcher propertyNameMatcher,
             final FoundProperty matchingProperties,
-            final PropertyMatchingScore score, boolean allowSelfReference) {
+            final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer) {
         for(final PropertyNameMatcherKeyValuePair keyValue : propertyNameMatcher.keyValuePairs()) {
             final PropertyNameMatcher keyMatcher = keyValue.getKey();
             final PropertyNameMatcher valueMatcher = keyValue.getValue();
 
             final PropertyFinder<V> propertyFinder = getPropertyFinder(keyMatcher);
 
-            propertyFinder.lookForProperties(valueMatcher,
+            propertyFinderTransformer.apply(propertyFinder).lookForProperties(valueMatcher,
                     new FoundProperty<V>() {
                         @Override
                         public <P extends PropertyMeta<V, ?>> void found(final P propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
@@ -55,7 +58,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                         }
                     },
                     score,
-                    true);
+                    true, propertyFinderTransformer);
         }
 
     }
@@ -63,7 +66,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     private PropertyFinder<V> getPropertyFinder(PropertyNameMatcher keyMatcher) {
         PropertyFinder<V> propertyFinder = finders.get(keyMatcher);
         if (propertyFinder == null) {
-            propertyFinder = valueMetaData.newPropertyFinder();
+            propertyFinder = valueMetaData.newPropertyFinder(propertyFilter);
         }
         return propertyFinder;
     }
@@ -113,5 +116,10 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     @Override
     public PropertyFinder<?> getSubPropertyFinder(String name) {
         return null;
+    }
+
+    @Override
+    public Type getOwnerType() {
+        return mapMeta.getType();
     }
 }

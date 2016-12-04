@@ -1,7 +1,9 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.util.Predicate;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,31 +11,35 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     protected final ClassMeta<T> classMeta;
     protected final List<IndexedElement<T, ?>> elements;
 
-    public AbstractIndexPropertyFinder(ClassMeta<T> classMeta) {
+    public AbstractIndexPropertyFinder(ClassMeta<T> classMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
+        super(propertyFilter);
         this.elements = new ArrayList<IndexedElement<T, ?>>();
         this.classMeta = classMeta;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void lookForProperties(
+    public void lookForProperties(
             PropertyNameMatcher propertyNameMatcher,
             FoundProperty<T> matchingProperties,
-            PropertyMatchingScore score, boolean allowSelfReference) {
+            PropertyMatchingScore score,
+            boolean allowSelfReference,
+            PropertyFinderTransformer propertyFinderTransformer) {
 
 
         IndexedColumn indexedColumn = propertyNameMatcher.matchIndex();
         if (indexedColumn != null) {
-            lookForAgainstColumn(indexedColumn, matchingProperties, score);
+            lookForAgainstColumn(indexedColumn, matchingProperties, score, propertyFinderTransformer);
         } else {
-            extrapolateIndex(propertyNameMatcher, matchingProperties, score.decrease(1));
-            speculativeMatching(propertyNameMatcher, matchingProperties, score.shift());
+            extrapolateIndex(propertyNameMatcher, matchingProperties, score.decrease(1), propertyFinderTransformer);
+            speculativeMatching(propertyNameMatcher, matchingProperties, score.shift(), propertyFinderTransformer);
         }
 
     }
 
     @SuppressWarnings("unchecked")
-    protected void lookForAgainstColumn(IndexedColumn indexedColumn, final FoundProperty<T> matchingProperties, PropertyMatchingScore score) {
+    protected void lookForAgainstColumn(IndexedColumn indexedColumn, final FoundProperty<T> matchingProperties, PropertyMatchingScore score,
+                                        PropertyFinderTransformer propertyFinderTransformer) {
 
         if (indexedColumn == null || !isValidIndex(indexedColumn)) {
             // no index found
@@ -60,7 +66,8 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
             return;
         }
 
-        eltPropertyFinder.lookForProperties(indexedColumn.getSubPropertyNameMatcher(),
+        propertyFinderTransformer.apply(eltPropertyFinder)
+                .lookForProperties(indexedColumn.getSubPropertyNameMatcher(),
                 new FoundProperty() {
                     @Override
                     public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
@@ -80,16 +87,16 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                             }
                         }, score);
                     }
-                }, score, true);
+                }, score, true, propertyFinderTransformer);
     }
 
 
-    private void speculativeMatching(PropertyNameMatcher propertyNameMatcher, FoundProperty foundProperty, PropertyMatchingScore score) {
+    private void speculativeMatching(PropertyNameMatcher propertyNameMatcher, FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer) {
         // try to match against prefix
         PropertyNameMatch speculativeMatch = propertyNameMatcher.speculativeMatch();
 
         if (speculativeMatch != null) {
-                extrapolateIndex(speculativeMatch.getLeftOverMatcher(), foundProperty, score);
+                extrapolateIndex(speculativeMatch.getLeftOverMatcher(), foundProperty, score, propertyFinderTransformer);
         }
     }
 
@@ -97,10 +104,15 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
     protected abstract <E> IndexedElement<T,?> getIndexedElement(IndexedColumn indexedColumn);
 
-    protected abstract void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, FoundProperty foundProperty, PropertyMatchingScore score);
+    protected abstract void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer);
 
     @Override
     public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
         return classMeta.getInstantiatorDefinitions();
+    }
+
+    @Override
+    public Type getOwnerType() {
+        return classMeta.getType();
     }
 }

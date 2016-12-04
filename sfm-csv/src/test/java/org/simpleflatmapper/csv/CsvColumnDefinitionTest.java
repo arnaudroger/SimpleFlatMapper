@@ -3,6 +3,7 @@ package org.simpleflatmapper.csv;
 
 import org.junit.Test;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
@@ -27,12 +28,7 @@ public class CsvColumnDefinitionTest {
                 return "CellValueReaderFactory";
             }
         };
-        final Predicate<PropertyMeta<?, ?>> appliesTo = new Predicate<PropertyMeta<?, ?>>() {
-            @Override
-            public boolean test(PropertyMeta<?, ?> propertyMeta) {
-                return false;
-            }
-        };
+        final Predicate<PropertyMeta<?, ?>> appliesTo = ConstantPredicate.falsePredicate();
         CsvColumnDefinition compose = CsvColumnDefinition.identity().addDateFormat("yyyyMM").addRename("blop").addCustomReader(
                 new CellValueReader<Integer>() {
                     @Override

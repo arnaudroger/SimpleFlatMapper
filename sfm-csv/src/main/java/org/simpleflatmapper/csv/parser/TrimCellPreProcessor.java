@@ -1,22 +1,22 @@
 package org.simpleflatmapper.csv.parser;
 
 
-public final class TrimAndUnescapeCellPreProcessor extends CellPreProcessor {
+public final class TrimCellPreProcessor extends CellPreProcessor {
 
     private final CellPreProcessor delegate;
 
-    public TrimAndUnescapeCellPreProcessor(CellPreProcessor cellPreProcessor) {
+    public TrimCellPreProcessor(CellPreProcessor cellPreProcessor) {
         this.delegate = cellPreProcessor;
     }
 
-    public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer) {
+    public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer, int state) {
         int strStart = start;
         int strEnd = end;
 
         strEnd = strEnd(strStart, strEnd, chars);
         strStart = strStart(strStart, strEnd, chars);
 
-        delegate.newCell(chars, strStart, strEnd, cellConsumer);
+        delegate.newCell(chars, strStart, strEnd, cellConsumer, state);
     }
 
     private int strEnd(int start, int end, char[] chars) {

@@ -6,7 +6,7 @@ public final class NoopCellPreProcessor extends CellPreProcessor {
     private NoopCellPreProcessor() {
     }
 
-    public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer) {
+    public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer, int state) {
         cellConsumer.newCell(chars, start, end - start);
     }
 

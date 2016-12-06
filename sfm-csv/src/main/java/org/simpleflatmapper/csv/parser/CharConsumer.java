@@ -81,12 +81,10 @@ public final class CharConsumer {
 							currentState = LAST_CHAR_WAS_CR;
 							cellConsumer.endOfRow();
 							continue;
-						} else if (character == escapeChar) { // has no data or is already escaped
-							if (((currentState ^ CELL_DATA) & (ESCAPED | CELL_DATA)) != 0) {
-								currentState = ESCAPED_AREA | ESCAPED;
-								break;
-							}
-						} else if (yamlComment && character == COMMENT && (currentState & (CELL_DATA | ROW_DATA)) == 0) {
+						} else if (((currentState ^ CELL_DATA) & (ESCAPED | CELL_DATA)) != 0 && character == escapeChar) {
+							currentState = ESCAPED_AREA | ESCAPED;
+							break;
+						} else if (yamlComment && (currentState & (CELL_DATA | ROW_DATA)) == 0 && character == COMMENT) {
 							currentState |= COMMENTED;
 							break;
 						}
@@ -185,12 +183,10 @@ public final class CharConsumer {
 								return true;
 							}
 							continue;
-						} else if (character == escapeChar) { // has no data or is already escaped
-							if (((currentState ^ CELL_DATA) & (ESCAPED | CELL_DATA)) != 0) {
-								currentState = ESCAPED_AREA | ESCAPED;
-								break;
-							}
-						} else if (yamlComment && character == COMMENT && (currentState & (CELL_DATA | ROW_DATA)) == 0) {
+						} else if (((currentState ^ CELL_DATA) & (ESCAPED | CELL_DATA)) != 0 && character == escapeChar) {
+							currentState = ESCAPED_AREA | ESCAPED;
+							break;
+						} else if (yamlComment && (currentState & (CELL_DATA | ROW_DATA)) == 0 && character == COMMENT) {
 							currentState |= COMMENTED;
 							break;
 						}

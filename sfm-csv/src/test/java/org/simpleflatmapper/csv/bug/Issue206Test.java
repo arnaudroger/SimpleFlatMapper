@@ -14,7 +14,7 @@ import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 
-public class Bug206 {
+public class Issue206Test {
 
     final CsvParser.MapWithDSL<MyClass> dsl = CsvParser.mapWith(CsvMapperFactory.newInstance().useAsm(false).newMapper(MyClass.class));
 

@@ -8,7 +8,6 @@ public final class StringConcatCellConsumer<RH extends CheckedConsumer<? super S
 	private final RH handler;
 	private final char separatorChar;
 	private final StringBuilder stringBuilder = new StringBuilder();
-	private boolean hasData = false;
 
 	private StringConcatCellConsumer(RH handler, char separatorChar) {
 		this.handler = handler;
@@ -17,11 +16,10 @@ public final class StringConcatCellConsumer<RH extends CheckedConsumer<? super S
 
 	@Override
 	public void newCell(char[] chars, int offset, int length) {
-		if (hasData) {
+		if (stringBuilder.length() > 0) {
 			stringBuilder.append(separatorChar);
 		}
 		stringBuilder.append(chars, offset, length);
-		hasData = true;
 	}
 
 
@@ -33,7 +31,7 @@ public final class StringConcatCellConsumer<RH extends CheckedConsumer<? super S
 	}
 
 	private boolean _endOfRow() throws Exception {
-		if (hasData) {
+		if (stringBuilder.length() > 0) {
 			handler.accept(stringBuilder.toString());
 			stringBuilder.setLength(0);
 		}

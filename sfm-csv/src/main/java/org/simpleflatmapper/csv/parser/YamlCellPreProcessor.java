@@ -80,7 +80,7 @@ public final class YamlCellPreProcessor extends CellPreProcessor {
 		@Override
 		public void end() {
 			if (rowState == REGULAR_ROW) {
-				endOfRow();
+				rowDelegate.endOfRow();
 			}
 			rowDelegate.end();
 		}

@@ -9,34 +9,41 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
     }
 
 
-    public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer) {
-        int strStart = start;
-        int strEnd = end;
-
-        int escapeChar = textFormat.escapeChar;
-        if (strStart < strEnd && chars[strStart] == escapeChar) {
-            strStart ++;
-            strEnd = unescape(chars, strStart, strEnd, escapeChar);
+    public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer, int state) {
+        if ((state & CharConsumer.ESCAPED) == 0) {
+            cellConsumer.newCell(chars, start, end - start);
+        } else {
+            unescape(chars, start, end, cellConsumer);
         }
-
-        cellConsumer.newCell(chars, strStart, strEnd - strStart);
     }
 
-    private int unescape(final char[] chars, final int start, final int end, final int escapeChar) {
-        for(int i = start; i < end - 1; i ++) {
-            if (chars[i] == escapeChar) {
-                return removeEscapeChars(chars, end, i, escapeChar);
+    private void unescape(final char[] chars, int start, int end, CellConsumer cellConsumer) {
+        if (start < end) {
+            int i = start + 1;
+
+            char escapeChar = textFormat.escapeChar;
+            if (chars[start] == escapeChar) {
+                start++;
+            }
+
+            while (i < end - 1) {
+                if (chars[i] == escapeChar) {
+                    removeEscapeChars(chars, start, i, end, cellConsumer);
+                    return;
+                }
+                i++;
+            }
+
+            if (i < end && chars[i] == escapeChar) {
+                end--;
             }
         }
 
-        if (start < end && chars[end - 1] == escapeChar) {
-            return end - 1;
-        }
-
-        return end;
+        cellConsumer.newCell(chars, start, end - start);
     }
 
-    private int removeEscapeChars(final char[] chars, final int end, final int firstEscapeChar, final int escapeChar) {
+    private void removeEscapeChars(final char[] chars, final int start, final int firstEscapeChar, int end, CellConsumer cellConsumer) {
+        char escapeChar = textFormat.escapeChar;
         int destIndex = firstEscapeChar;
         boolean escaped = true;
         for(int sourceIndex = firstEscapeChar + 1;sourceIndex < end; sourceIndex++) {
@@ -48,7 +55,7 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
                 escaped = true;
             }
         }
-        return destIndex;
+        cellConsumer.newCell(chars, start, destIndex - start);
     }
 
     @Override

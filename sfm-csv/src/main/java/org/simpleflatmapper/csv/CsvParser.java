@@ -498,7 +498,7 @@ public final class CsvParser {
 		protected CellPreProcessor getCellTransformer(TextFormat textFormat, StringPostProcessing stringPostProcessing) {
 			switch (stringPostProcessing) {
 				case TRIM_AND_UNESCAPE:
-					return new TrimAndUnescapeCellPreProcessor(getUnescapeCellTransformer(textFormat));
+					return new TrimCellPreProcessor(getUnescapeCellTransformer(textFormat));
 				case UNESCAPE:
 					return getUnescapeCellTransformer(textFormat);
 				case NONE:
@@ -620,7 +620,8 @@ public final class CsvParser {
 					new org.simpleflatmapper.util.Function<CellConsumer, CellConsumer>() {
 						@Override
 						public CellConsumer apply(CellConsumer cellConsumer) {
-							return new YamlCommentUnescapeContentCellConsumer(getCellTransformer(getTextFormat(), stringPostProcessing), cellConsumer, IgnoreCellConsumer.INSTANCE);
+							TextFormat textFormat = getTextFormat();
+							return new YamlCellPreProcessor.YamlCellConsumer(cellConsumer, IgnoreCellConsumer.INSTANCE, getCellTransformer(textFormat, stringPostProcessing));
 						}
 					}
 			);
@@ -666,8 +667,12 @@ public final class CsvParser {
 			reader.parseAll(newYamlCellConsumer(rowConsumer, commentConsumer));
 		}
 
-		private YamlCommentUnescapeContentCellConsumer newYamlCellConsumer(CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) {
-			return new YamlCommentUnescapeContentCellConsumer(superGetCellTransformer(getTextFormat(), stringPostProcessing), StringArrayCellConsumer.newInstance(rowConsumer), StringConcatCellConsumer.newInstance(commentConsumer, separatorChar));
+		private YamlCellPreProcessor.YamlCellConsumer newYamlCellConsumer(CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) {
+			TextFormat textFormat = getTextFormat();
+			return new YamlCellPreProcessor.YamlCellConsumer(
+					StringArrayCellConsumer.newInstance(rowConsumer),
+					StringConcatCellConsumer.newInstance(commentConsumer, separatorChar),
+					superGetCellTransformer(textFormat, stringPostProcessing));
 		}
 
 		private CellPreProcessor superGetCellTransformer(TextFormat textFormat, StringPostProcessing stringPostProcessing) {
@@ -676,11 +681,7 @@ public final class CsvParser {
 
 		@Override
 		protected CellPreProcessor getCellTransformer(TextFormat textFormat, StringPostProcessing stringPostProcessing) {
-			if (stringPostProcessing == StringPostProcessing.TRIM_AND_UNESCAPE) {
-				return NoopYamlTrimeCellPreProcessor.INSTANCE;
-			} else {
-				return NoopCellPreProcessor.INSTANCE;
-			}
+			return new YamlCellPreProcessor(stringPostProcessing == StringPostProcessing.TRIM_AND_UNESCAPE);
 		}
 
 		public void forEach(File file, CheckedConsumer<String[]> rowConsumer, CheckedConsumer<String> commentConsumer) throws IOException {

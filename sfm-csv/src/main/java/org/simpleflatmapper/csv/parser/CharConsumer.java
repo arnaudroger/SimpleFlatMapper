@@ -8,12 +8,12 @@ import java.io.IOException;
  */
 public final class CharConsumer {
 
-	private static final int DATA                        = 16;
-	private static final int ESCAPED                     = 8;
-	private static final int LAST_CHAR_WAS_SEPARATOR     = 4;
-	private static final int LAST_CHAR_WAS_CR            = 2;
-	private static final int ESCAPED_AREA = 1;
-	private static final int NONE                        = 0;
+	public static final int DATA                        = 16;
+	public static final int ESCAPED                     = 8;
+	public static final int LAST_CHAR_WAS_SEPARATOR     = 4;
+	public static final int LAST_CHAR_WAS_CR            = 2;
+	public static final int ESCAPED_AREA                = 1;
+	public static final int NONE                        = 0;
 
 	private static final int TURN_OFF_LAST_CHAR_MASK = ~(LAST_CHAR_WAS_CR|LAST_CHAR_WAS_SEPARATOR);
 	private static final int TURN_OFF_ESCAPED_AREA = ~(ESCAPED_AREA);
@@ -57,20 +57,20 @@ public final class CharConsumer {
 					currentIndex ++;
 
 					if (character == separatorChar) { // separator
-						cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer);
+						cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer, currentState);
 						csvBuffer.mark = currentIndex;
 						currentState = LAST_CHAR_WAS_SEPARATOR;
 						continue;
 					} else if (character == LF) { // \n
 						if ((currentState & LAST_CHAR_WAS_CR) == 0) {
-							cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer);
+							cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer, currentState);
 							cellConsumer.endOfRow();
 						}
 						csvBuffer.mark = currentIndex;
 						currentState = NONE;
 						continue;
 					} else if (character == CR) { // \r
-						cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer);
+						cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer, currentState);
 						csvBuffer.mark = currentIndex;
 						currentState = LAST_CHAR_WAS_CR;
 						cellConsumer.endOfRow();
@@ -124,13 +124,13 @@ public final class CharConsumer {
 					currentIndex ++;
 
 					if (character == separatorChar) { // separator
-						cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer);
+						cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer, currentState);
 						csvBuffer.mark = currentIndex;
 						currentState = LAST_CHAR_WAS_SEPARATOR;
 						continue;
 					} else if (character == LF) { // \n
 						if ((currentState & LAST_CHAR_WAS_CR) == 0) {
-							cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer);
+							cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer, currentState);
 							if (cellConsumer.endOfRow()) {
 								csvBuffer.mark = currentIndex;
 								_currentState = NONE;
@@ -142,7 +142,7 @@ public final class CharConsumer {
 						currentState = NONE;
 						continue;
 					} else if (character == CR) { // \r
-						cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer);
+						cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer, currentState);
 						csvBuffer.mark = currentIndex;
 						currentState = LAST_CHAR_WAS_CR;
 						if (cellConsumer.endOfRow()) {
@@ -191,7 +191,7 @@ public final class CharConsumer {
 	public final void finish(CellConsumer cellConsumer) {
 		if ( hasUnconsumedData()
 				|| (_currentState & LAST_CHAR_WAS_SEPARATOR) != 0) {
-			cellPreProcessor.newCell(csvBuffer.buffer, csvBuffer.mark, _currentIndex, cellConsumer);
+			cellPreProcessor.newCell(csvBuffer.buffer, csvBuffer.mark, _currentIndex, cellConsumer, _currentState);
 			csvBuffer.mark = _currentIndex + 1;
 			_currentState = NONE;
 		}

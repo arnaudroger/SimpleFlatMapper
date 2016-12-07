@@ -7,7 +7,7 @@ public class ConstantUnaryFactoryTest {
 
     @Test
     public void test() {
-        Assert.assertEquals("hello", new ConstantUnaryFactory<String, String>("hello").newInstance("bye"));
+        Assert.assertEquals("hello", ConstantUnaryFactory.<String, String>of("hello").newInstance("bye"));
     }
 
 }

@@ -133,7 +133,7 @@ public class Issue365Test {
         FieldMapperColumnDefinitionProviderImpl<SampleFieldKey> provider =
                 new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>();
 
-        provider.addColumnDefinition(new CaseInsensitiveFieldKeyNamePredicate("benchmark"),
+        provider.addColumnDefinition("benchmark",
                 FieldMapperColumnDefinition.<SampleFieldKey>identity().add(new SetterProperty(SETTER)).add(new GetterProperty(GETTER)));
         return MapperConfig.<SampleFieldKey>fieldMapperConfig().columnDefinitions(provider);
     }

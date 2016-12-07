@@ -164,7 +164,8 @@ public abstract class AbstractMapperFactory<
      * @return the current factory
      */
 	public final MF addColumnDefinition(String key, CD columnDefinition) {
-		return addColumnDefinition(new CaseInsensitiveFieldKeyNamePredicate(key), columnDefinition);
+		columnDefinitions.addColumnDefinition(key, columnDefinition);
+		return (MF) this;
 	}
 
     /**
@@ -186,22 +187,9 @@ public abstract class AbstractMapperFactory<
 	 */
 	public final MF addColumnProperty(String name, Object... properties) {
 		for(Object property : properties) {
-			columnDefinitions.addColumnProperty(
-					new CaseInsensitiveFieldKeyNamePredicate(name),
-					new ConstantUnaryFactory<K, Object>(upgrade(property)));
+			columnDefinitions.addColumnProperty(name, property);
 		}
 		return (MF) this;
-	}
-
-	private Object upgrade(Object property) {
-		if (property instanceof Setter) {
-			return new SetterProperty((Setter<?, ?>) property);
-		}
-		if (property instanceof Getter) {
-			return new GetterProperty((Getter<?, ?>) property);
-		}
-
-		return property;
 	}
 
 	/**
@@ -212,7 +200,7 @@ public abstract class AbstractMapperFactory<
 	 */
 	public final MF addColumnProperty(Predicate<? super K> predicate, Object... properties) {
 		for(Object property : properties) {
-			columnDefinitions.addColumnProperty(predicate, new ConstantUnaryFactory<K, Object>(property));
+			columnDefinitions.addColumnProperty(predicate, property);
 		}
 		return (MF) this;
 	}

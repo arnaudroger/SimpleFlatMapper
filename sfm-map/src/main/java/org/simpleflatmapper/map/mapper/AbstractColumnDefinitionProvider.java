@@ -1,7 +1,12 @@
 package org.simpleflatmapper.map.mapper;
 
 
+import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.map.FieldKey;
+import org.simpleflatmapper.map.property.GetterProperty;
+import org.simpleflatmapper.map.property.SetterProperty;
+import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.util.BiConsumer;
 import org.simpleflatmapper.util.ConstantUnaryFactory;
 import org.simpleflatmapper.util.Predicate;
@@ -24,13 +29,49 @@ public abstract class AbstractColumnDefinitionProvider<C extends ColumnDefinitio
 
     public void addColumnDefinition(Predicate<? super K> predicate, C definition) {
         for(Object prop : definition.properties()) {
-            addColumnProperty(predicate, new ConstantUnaryFactory<Object, Object>(prop));
+            addColumnProperty(predicate, newFactory(prop));
         }
+    }
+    public void addColumnDefinition(String name, C definition) {
+        Predicate<? super K> predicate = newPredicate(name);
+        for(Object prop : definition.properties()) {
+            addColumnProperty(predicate, newFactory(prop));
+        }
+    }
+
+    public void addColumnProperty(String name, Object property) {
+        addColumnProperty(newPredicate(name), newFactory(property));
+    }
+
+    public void addColumnProperty(Predicate<? super K> predicate, Object property) {
+        addColumnProperty(predicate, newFactory(property));
     }
 
     public void addColumnProperty(Predicate<? super K> predicate, UnaryFactory<? super K, Object> propertyFactory) {
         properties.add(new PredicatedColunnPropertyFactory<C, K>(predicate, propertyFactory));
     }
+
+
+    private CaseInsensitiveFieldKeyNamePredicate newPredicate(String name) {
+        return CaseInsensitiveFieldKeyNamePredicate.of(name);
+    }
+
+    private UnaryFactory<? super K, Object> newFactory(Object prop) {
+        return ConstantUnaryFactory.of(upgrade(prop));
+    }
+
+    private Object upgrade(Object property) {
+        if (property instanceof Setter) {
+            return new SetterProperty((Setter<?, ?>) property);
+        }
+        if (property instanceof Getter) {
+            return new GetterProperty((Getter<?, ?>) property);
+        }
+        return property;
+    }
+
+
+
 
     @Override
     public C getColumnDefinition(K key) {

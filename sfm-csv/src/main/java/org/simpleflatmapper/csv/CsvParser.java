@@ -776,7 +776,7 @@ public final class CsvParser {
 		}
 
 		public MapToDSL<T> columnDefinition(String column, CsvColumnDefinition columnDefinition) {
-			return columnDefinition(new CaseInsensitiveFieldKeyNamePredicate(column), columnDefinition);
+			return new MapToDSL<T>(getDsl(), classMeta, mapToClass, newColumnDefinitionProvider(column, columnDefinition));
 		}
 
 		public MapToDSL<T> columnDefinition(Predicate<? super CsvColumnKey> predicate, CsvColumnDefinition columnDefinition) {
@@ -784,23 +784,25 @@ public final class CsvParser {
 		}
 
         public MapWithDSL<T> addKeys(String... keys) {
-			List<AbstractColumnDefinitionProvider.PredicatedColunnPropertyFactory<CsvColumnDefinition, CsvColumnKey>> properties = columnDefinitionProvider.getProperties();
+			CsvColumnDefinitionProviderImpl newProvider = columnDefinitionProvider.copy();
 
 			for(String key : keys) {
-                properties.add(new AbstractColumnDefinitionProvider.PredicatedColunnPropertyFactory<CsvColumnDefinition, CsvColumnKey>(
-                		new CaseInsensitiveFieldKeyNamePredicate(key),
-                        new ConstantUnaryFactory<CsvColumnKey, Object>(KeyProperty.DEFAULT)));
+				newProvider.addColumnProperty(key, KeyProperty.DEFAULT);
             }
 
-            return new MapToDSL<T>(getDsl(), classMeta, mapToClass, new CsvColumnDefinitionProviderImpl(properties));
+            return new MapToDSL<T>(getDsl(), classMeta, mapToClass, newProvider);
         }
 
+		private CsvColumnDefinitionProviderImpl newColumnDefinitionProvider(String name, CsvColumnDefinition columnDefinition) {
+			CsvColumnDefinitionProviderImpl newProvider = columnDefinitionProvider.copy();
+			newProvider.addColumnDefinition(name, columnDefinition);
+			return newProvider;
+		}
+
         private CsvColumnDefinitionProviderImpl newColumnDefinitionProvider(Predicate<? super CsvColumnKey> predicate, CsvColumnDefinition columnDefinition) {
-			List<AbstractColumnDefinitionProvider.PredicatedColunnPropertyFactory<CsvColumnDefinition, CsvColumnKey>> properties = columnDefinitionProvider.getProperties();
-			for(Object property : columnDefinition.properties()) {
-				properties.add(new AbstractColumnDefinitionProvider.PredicatedColunnPropertyFactory<CsvColumnDefinition, CsvColumnKey>(predicate, new ConstantUnaryFactory<CsvColumnKey, Object>(property)));
-			}
-			return new CsvColumnDefinitionProviderImpl(properties);
+			CsvColumnDefinitionProviderImpl newProvider = columnDefinitionProvider.copy();
+			newProvider.addColumnDefinition(predicate, columnDefinition);
+			return newProvider;
 		}
 
 		public StaticMapToDSL<T> addMapping(String column) {

@@ -3,10 +3,10 @@ package org.simpleflatmapper.map;
 import org.simpleflatmapper.util.Named;
 import org.simpleflatmapper.util.Predicate;
 
-public class CaseInsensitiveFieldKeyNamePredicate implements Predicate<FieldKey<?>>, Named {
+public final class CaseInsensitiveFieldKeyNamePredicate implements Predicate<FieldKey<?>>, Named {
     private final String name;
 
-    public CaseInsensitiveFieldKeyNamePredicate(String name) {
+    private CaseInsensitiveFieldKeyNamePredicate(String name) {
         this.name = name;
     }
 
@@ -18,5 +18,9 @@ public class CaseInsensitiveFieldKeyNamePredicate implements Predicate<FieldKey<
     @Override
     public String getName() {
         return name;
+    }
+
+    public static CaseInsensitiveFieldKeyNamePredicate of(String name) {
+        return new CaseInsensitiveFieldKeyNamePredicate(name);
     }
 }

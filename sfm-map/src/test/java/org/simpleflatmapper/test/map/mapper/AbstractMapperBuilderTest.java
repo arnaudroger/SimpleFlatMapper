@@ -256,7 +256,7 @@ public class AbstractMapperBuilderTest {
 
 
         FieldMapperColumnDefinitionProviderImpl<SampleFieldKey> definitionProvider = new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>();
-        definitionProvider.addColumnProperty(new CaseInsensitiveFieldKeyNamePredicate("type_name"), new ConstantUnaryFactory<SampleFieldKey, Object>(new DefaultValueProperty<DbObject.Type>(DbObject.Type.type4)));
+        definitionProvider.addColumnProperty("type_name", new DefaultValueProperty<DbObject.Type>(DbObject.Type.type4));
 
         MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig =
                 MapperConfig.<SampleFieldKey>fieldMapperConfig().columnDefinitions(definitionProvider);

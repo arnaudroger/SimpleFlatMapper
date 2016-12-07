@@ -28,8 +28,8 @@ public class FieldMapperColumnDefinitionProviderImplTest {
 
         final Object prop1 = "prop1";
         final Object prop2 = "prop2";
-        final ConstantUnaryFactory<SampleFieldKey, Object> prop1Fact = new ConstantUnaryFactory<SampleFieldKey, Object>(prop1);
-        final ConstantUnaryFactory<SampleFieldKey, Object> prop2Fact = new ConstantUnaryFactory<SampleFieldKey, Object>(prop2);
+        final ConstantUnaryFactory<SampleFieldKey, Object> prop1Fact = ConstantUnaryFactory.<SampleFieldKey, Object>of(prop1);
+        final ConstantUnaryFactory<SampleFieldKey, Object> prop2Fact = ConstantUnaryFactory.<SampleFieldKey, Object>of(prop2);
 
         FieldMapperColumnDefinitionProviderImpl<SampleFieldKey> provider =
                 new FieldMapperColumnDefinitionProviderImpl<SampleFieldKey>();
@@ -65,7 +65,7 @@ public class FieldMapperColumnDefinitionProviderImplTest {
 
         final ArrayList<String> props = new ArrayList<String>();
 
-        provider.addColumnProperty(prop1Predicate, new ConstantUnaryFactory<SampleFieldKey, Object>(new Object()));
+        provider.addColumnProperty(prop1Predicate, new Object());
 
         provider.forEach(String.class, new BiConsumer<Predicate<? super SampleFieldKey>, String>() {
             @Override

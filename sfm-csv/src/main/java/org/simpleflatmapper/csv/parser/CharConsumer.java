@@ -189,9 +189,9 @@ public final class CharConsumer {
 				} else {
 					int nextEndOfLineChar = findNexEndOfLineChar(chars, currentIndex, bufferSize);
 					if (nextEndOfLineChar != -1) {
+						currentIndex = nextEndOfLineChar + 1;
 						cellPreProcessor.newCell(chars, csvBuffer.mark, nextEndOfLineChar, cellConsumer, currentState);
 						cellConsumer.endOfRow();
-						currentIndex = nextEndOfLineChar + 1;
 						csvBuffer.mark = currentIndex;
 						currentState = chars[nextEndOfLineChar] == CR ? LAST_CHAR_WAS_CR : NONE;
 					} else {

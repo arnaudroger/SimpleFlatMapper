@@ -94,7 +94,7 @@ public final class CharConsumer {
 							currentState |= CELL_DATA;
 						}
 					}
-				} else {
+				} else { // comment
 					while (currentIndex < bufferSize) {
 						final char character = chars[currentIndex];
 						final int cellEnd = currentIndex;
@@ -117,13 +117,13 @@ public final class CharConsumer {
 					}
 				}
 			} else {
-				while (currentIndex < bufferSize) {
-					final char character = chars[currentIndex];
-					currentIndex++;
-					if (character == escapeChar) {
-						currentState &= TURN_OFF_ESCAPED_AREA;
-						break;
-					}
+				// escaped area
+				int nextEscapeChar = findNextEscapeChar(chars, currentIndex, bufferSize, escapeChar);
+				if (nextEscapeChar != -1) {
+					currentIndex = nextEscapeChar + 1;
+					currentState &= TURN_OFF_ESCAPED_AREA;
+				} else {
+					currentIndex = bufferSize;
 				}
 			}
 		}
@@ -219,13 +219,12 @@ public final class CharConsumer {
 					}
 				}
 			} else {
-				while (currentIndex < bufferSize) {
-					final char character = chars[currentIndex];
-					currentIndex++;
-					if (character == escapeChar) {
-						currentState &= TURN_OFF_ESCAPED_AREA;
-						break;
-					}
+				int nextEscapeChar = findNextEscapeChar(chars, currentIndex, bufferSize, escapeChar);
+				if (nextEscapeChar != -1) {
+					currentIndex = nextEscapeChar + 1;
+					currentState &= TURN_OFF_ESCAPED_AREA;
+				} else {
+					currentIndex = bufferSize;
 				}
 			}
 		}
@@ -234,7 +233,13 @@ public final class CharConsumer {
 		_currentIndex = currentIndex;
 
 		return false;
+	}
 
+	private int findNextEscapeChar(char[] chars, int start, int end, char escapeChar) {
+		for(int i = start; i < end; i++) {
+			if (chars[i] == escapeChar) return i;
+		}
+		return -1;
 	}
 
 	public final void finish(CellConsumer cellConsumer) {

@@ -118,7 +118,7 @@ public final class CharConsumer {
 				}
 			} else {
 				// escaped area
-				int nextEscapeChar = findNextEscapeChar(chars, currentIndex, bufferSize, escapeChar);
+				int nextEscapeChar = findNexChar(chars, currentIndex, bufferSize, escapeChar);
 				if (nextEscapeChar != -1) {
 					currentIndex = nextEscapeChar + 1;
 					currentState &= TURN_OFF_ESCAPED_AREA;
@@ -219,7 +219,7 @@ public final class CharConsumer {
 					}
 				}
 			} else {
-				int nextEscapeChar = findNextEscapeChar(chars, currentIndex, bufferSize, escapeChar);
+				int nextEscapeChar = findNexChar(chars, currentIndex, bufferSize, escapeChar);
 				if (nextEscapeChar != -1) {
 					currentIndex = nextEscapeChar + 1;
 					currentState &= TURN_OFF_ESCAPED_AREA;
@@ -235,9 +235,9 @@ public final class CharConsumer {
 		return false;
 	}
 
-	private int findNextEscapeChar(char[] chars, int start, int end, char escapeChar) {
+	private int findNexChar(char[] chars, int start, int end, char c) {
 		for(int i = start; i < end; i++) {
-			if (chars[i] == escapeChar) return i;
+			if (chars[i] == c) return i;
 		}
 		return -1;
 	}

@@ -95,25 +95,15 @@ public final class CharConsumer {
 						}
 					}
 				} else { // comment
-					while (currentIndex < bufferSize) {
-						final char character = chars[currentIndex];
-						final int cellEnd = currentIndex;
-
-						currentIndex++;
-
-						if (character == LF) { // \n
-							cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer, currentState);
-							cellConsumer.endOfRow();
-							csvBuffer.mark = currentIndex;
-							currentState = NONE;
-							break;
-						} else if (character == CR) { // \r
-							cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer, currentState);
-							cellConsumer.endOfRow();
-							csvBuffer.mark = currentIndex;
-							currentState = LAST_CHAR_WAS_CR;
-							break;
-						}
+					int nextEndOfLineChar = findNexEndOfLineChar(chars, currentIndex, bufferSize);
+					if (nextEndOfLineChar != -1) {
+						cellPreProcessor.newCell(chars, csvBuffer.mark, nextEndOfLineChar, cellConsumer, currentState);
+						cellConsumer.endOfRow();
+						currentIndex = nextEndOfLineChar + 1;
+						csvBuffer.mark = currentIndex;
+						currentState = chars[nextEndOfLineChar] == CR ? LAST_CHAR_WAS_CR : NONE;
+					} else {
+						currentIndex = bufferSize;
 					}
 				}
 			} else {
@@ -197,25 +187,15 @@ public final class CharConsumer {
 						}
 					}
 				} else {
-					while (currentIndex < bufferSize) {
-						final char character = chars[currentIndex];
-						final int cellEnd = currentIndex;
-
-						currentIndex++;
-
-						if (character == LF) { // \n
-							cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer, currentState);
-							cellConsumer.endOfRow();
-							csvBuffer.mark = currentIndex;
-							currentState = NONE;
-							break;
-						} else if (character == CR) { // \r
-							cellPreProcessor.newCell(chars, csvBuffer.mark, cellEnd, cellConsumer, currentState);
-							cellConsumer.endOfRow();
-							csvBuffer.mark = currentIndex;
-							currentState = LAST_CHAR_WAS_CR;
-							break;
-						}
+					int nextEndOfLineChar = findNexEndOfLineChar(chars, currentIndex, bufferSize);
+					if (nextEndOfLineChar != -1) {
+						cellPreProcessor.newCell(chars, csvBuffer.mark, nextEndOfLineChar, cellConsumer, currentState);
+						cellConsumer.endOfRow();
+						currentIndex = nextEndOfLineChar + 1;
+						csvBuffer.mark = currentIndex;
+						currentState = chars[nextEndOfLineChar] == CR ? LAST_CHAR_WAS_CR : NONE;
+					} else {
+						currentIndex = bufferSize;
 					}
 				}
 			} else {
@@ -238,6 +218,14 @@ public final class CharConsumer {
 	private int findNexChar(char[] chars, int start, int end, char c) {
 		for(int i = start; i < end; i++) {
 			if (chars[i] == c) return i;
+		}
+		return -1;
+	}
+
+	private int findNexEndOfLineChar(char[] chars, int start, int end) {
+		for(int i = start; i < end; i++) {
+			char c = chars[i];
+			if (c == CR || c == LF) return i;
 		}
 		return -1;
 	}

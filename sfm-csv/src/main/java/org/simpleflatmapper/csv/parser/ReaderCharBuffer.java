@@ -22,21 +22,23 @@ public final class ReaderCharBuffer extends CharBuffer {
 		// shift buffer consumer data
 		int effectiveMark = Math.min(bufferSize, mark);
 		int newSize = bufferSize - effectiveMark;
-		System.arraycopy(buffer, effectiveMark, buffer, 0, newSize);
+		char[] lbuffer = this.buffer;
+		System.arraycopy(lbuffer, effectiveMark, lbuffer, 0, newSize);
 		bufferSize = newSize;
 		mark = 0;
 
-		if (bufferSize > resizeThreshold) {
-			int newBufferSize = Math.min(maxBufferSize, buffer.length << 1);
-			if (newBufferSize <= bufferSize) {
+		if (newSize > resizeThreshold) {
+			int newBufferSize = Math.min(maxBufferSize, lbuffer.length << 1);
+			if (newBufferSize <= newSize) {
 				throw new BufferOverflowException("The content in the csv cell exceed the maxSizeBuffer " + maxBufferSize + ", see CsvParser.DSL.maxSizeBuffer(int) to change the default value");
 			}			// double buffer size
-			buffer = Arrays.copyOf(buffer, newBufferSize);
+			lbuffer = Arrays.copyOf(lbuffer, newBufferSize);
+			this.buffer = lbuffer;
 			// 3/4
 			resizeThreshold = (newBufferSize >> 2) * 3;
 		}
 
-		int l = reader.read(buffer, bufferSize, buffer.length - bufferSize);
+		int l = reader.read(lbuffer, newSize, lbuffer.length - newSize);
 		bufferSize += Math.max(0, l);
 		return l > 0;
 	}

@@ -13,49 +13,35 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
         if ((state & CharConsumer.ESCAPED) == 0) {
             cellConsumer.newCell(chars, start, end - start);
         } else {
-            unescape(chars, start, end, cellConsumer);
+            unescape(chars, start + 1, end, cellConsumer);
         }
     }
 
     private void unescape(final char[] chars, int start, int end, CellConsumer cellConsumer) {
-        if (start < end) {
-            int i = start + 1;
-
-            char escapeChar = textFormat.escapeChar;
-            if (chars[start] == escapeChar) {
-                start++;
-            }
-
-            while (i < end - 1) {
-                if (chars[i] == escapeChar) {
-                    removeEscapeChars(chars, start, i, end, cellConsumer);
-                    return;
-                }
-                i++;
-            }
-
-            if (i < end && chars[i] == escapeChar) {
-                end--;
-            }
-        }
-
-        cellConsumer.newCell(chars, start, end - start);
-    }
-
-    private void removeEscapeChars(final char[] chars, final int start, final int firstEscapeChar, int end, CellConsumer cellConsumer) {
         char escapeChar = textFormat.escapeChar;
-        int destIndex = firstEscapeChar;
-        boolean escaped = true;
-        for(int sourceIndex = firstEscapeChar + 1;sourceIndex < end; sourceIndex++) {
-            char c = chars[sourceIndex];
-            if (c != escapeChar || escaped) {
-                chars[destIndex++] = c;
-                escaped = false;
-            } else {
-                escaped = true;
+        for(int i = start; i < end - 1; i++) {
+            if (chars[i] == escapeChar) {
+                int destIndex = i;
+                boolean escaped = true;
+                for(i = i +1 ;i < end; i++) {
+                    char c = chars[i];
+                    if (c != escapeChar || escaped) {
+                        chars[destIndex++] = c;
+                        escaped = false;
+                    } else {
+                        escaped = true;
+                    }
+                }
+                cellConsumer.newCell(chars, start, destIndex - start);
+                return;
             }
         }
-        cellConsumer.newCell(chars, start, destIndex - start);
+
+        int l = end - start;
+        if (l >0 && chars[end -1] == escapeChar) {
+            l --;
+        }
+        cellConsumer.newCell(chars, start, l);
     }
 
     @Override

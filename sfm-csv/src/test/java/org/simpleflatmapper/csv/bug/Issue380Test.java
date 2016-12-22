@@ -12,8 +12,23 @@ import static org.junit.Assert.assertEquals;
 
 public class Issue380Test {
 
+
     @Test
     public void testYamlWithQuoteProtectedCR() throws IOException {
+        ListCollector<String[]> rowConsumer = new ListCollector<String[]>();
+        ListCollector<String> commentConsumer = new ListCollector<String>();
+        CsvParser.dsl()
+                .withYamlComments()
+                .forEach("# yaml comment with ,\"\rdata,#not a comment,v\r#c2", rowConsumer, commentConsumer);
+
+        assertEquals(Arrays.asList("# yaml comment with ,\"", "#c2"), commentConsumer.getList());
+        assertEquals(1, rowConsumer.getList().size());
+        assertArrayEquals(new String[] {"data", "#not a comment", "v"}, rowConsumer.getList().get(0));
+    }
+
+
+    @Test
+    public void testYamlWithQuoteProtectedLF() throws IOException {
         ListCollector<String[]> rowConsumer = new ListCollector<String[]>();
         ListCollector<String> commentConsumer = new ListCollector<String>();
         CsvParser.dsl()

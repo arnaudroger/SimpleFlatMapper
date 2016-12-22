@@ -1071,6 +1071,76 @@ public class CsvParserTest {
 
 	}
 
+
+	@Test
+	public void testYamlCommentInlineParser() throws IOException  {
+		String data = "test,\" \"\"hello\"\" \"\n# this a comment, not data\none more";
+
+
+		CsvParser.DSLYamlComment dsl = CsvParser
+				.dsl()
+				.withYamlCommentsInline();
+
+		List<String[]> rows = new ArrayList<String[]>();
+
+		Iterator<String[]> iterator = dsl.iterator(data);
+		while(iterator.hasNext()) {
+			rows.add(iterator.next());
+		}
+		checkYamlCommentParserInlineRows(rows);
+
+		//IFJAVA8_START
+		checkYamlCommentParserInlineRows(dsl.stream(data).collect(Collectors.toList()));
+		//IFJAVA8_END
+		checkYamlCommentParserInlineRows(dsl.forEach(data, new ListCollector<String[]>()).getList());
+
+		File csv = createTempCsv(data);
+
+		rows = new ArrayList<String[]>();
+
+		CloseableIterator<String[]> citerator = dsl.iterator(csv);
+		while(citerator.hasNext()) {
+			rows.add(citerator.next());
+		}
+		checkYamlCommentParserInlineRows(rows);
+
+
+		//IFJAVA8_START
+		checkYamlCommentParserInlineRows(dsl.stream(csv).collect(Collectors.toList()));
+		//IFJAVA8_END
+		checkYamlCommentParserInlineRows(dsl.forEach(csv, new ListCollector<String[]>()).getList());
+
+
+		rows = new ArrayList<String[]>();
+
+		iterator = dsl.iterator(new StringReader(data));
+		while(iterator.hasNext()) {
+			rows.add(iterator.next());
+		}
+		checkYamlCommentParserInlineRows(rows);
+
+		//IFJAVA8_START
+		checkYamlCommentParserInlineRows(dsl.stream(new StringReader(data)).collect(Collectors.toList()));
+		//IFJAVA8_END
+		checkYamlCommentParserInlineRows(dsl.forEach(new StringReader(data), new ListCollector<String[]>()).getList());
+
+
+		rows = new ArrayList<String[]>();
+
+		iterator = dsl.iterator(new StringBuilder(data));
+		while(iterator.hasNext()) {
+			rows.add(iterator.next());
+		}
+		checkYamlCommentParserInlineRows(rows);
+
+		//IFJAVA8_START
+		checkYamlCommentParserInlineRows(dsl.stream(new StringBuilder(data)).collect(Collectors.toList()));
+		//IFJAVA8_END
+		checkYamlCommentParserInlineRows(dsl.forEach(new StringBuilder(data), new ListCollector<String[]>()).getList());
+
+	}
+
+
 	@Test
 	public void testYamlCommentParserForEachRowComment() throws IOException  {
 		String data = "test,\" \"\"hello\"\" \"\n# this a comment, not data\none more";
@@ -1143,6 +1213,13 @@ public class CsvParserTest {
 		assertEquals(2, rows.size());
 		assertArrayEquals(new String[] {"test", " \"hello\" "}, rows.get(0));
 		assertArrayEquals(new String[] {"one more"}, rows.get(1));
+	}
+
+	private void checkYamlCommentParserInlineRows(List<String[]> rows) {
+		assertEquals(3, rows.size());
+		assertArrayEquals(new String[] {"test", " \"hello\" "}, rows.get(0));
+		assertArrayEquals(new String[] {"# this a comment, not data"}, rows.get(1));
+		assertArrayEquals(new String[] {"one more"}, rows.get(2));
 	}
 
 	@Test

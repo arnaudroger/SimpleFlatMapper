@@ -27,21 +27,51 @@ public final class YamlCellPreProcessor extends CellPreProcessor {
 		return ignoreLeadingSpace;
 	}
 
+	public static CellConsumer commentConsumerToCellConsumer(CheckedConsumer<String> commentConsumer) {
+		return commentConsumer != null ? new CommentConsumer(commentConsumer) : null;
+	}
+
+	public static final class CommentConsumer implements CellConsumer {
+
+		private final CheckedConsumer<String> delegate;
+
+		public CommentConsumer(CheckedConsumer<String> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public void newCell(char[] chars, int offset, int length) {
+			try {
+				delegate.accept(new String(chars, offset, length));
+			} catch (Exception e) {
+				ErrorHelper.rethrow(e);
+			}
+		}
+
+		@Override
+		public boolean endOfRow() {
+			return true;
+		}
+
+		@Override
+		public void end() {
+		}
+	}
 
 	public static final class YamlCellConsumer implements CellConsumer {
 
-		public final CellConsumer rowDelegate;
-		public final CheckedConsumer<String> commentConsumer;
-		public final CellPreProcessor rowCellPreProcessor;
+		private final CellConsumer rowDelegate;
+		private final CellConsumer commentDelegate;
+		private final CellPreProcessor rowCellPreProcessor;
 
 
 		private int rowState;
 
 		public YamlCellConsumer(CellConsumer rowDelegate,
-								CheckedConsumer<String> commentConsumer,
+								CellConsumer commentDelegate,
 								CellPreProcessor rowCellPreProcessor) {
 			this.rowDelegate = requireNonNull( "rowDelegate", rowDelegate);
-			this.commentConsumer =  commentConsumer;
+			this.commentDelegate = commentDelegate;
 			this.rowCellPreProcessor = rowCellPreProcessor;
 		}
 
@@ -54,12 +84,8 @@ public final class YamlCellPreProcessor extends CellPreProcessor {
 				rowCellPreProcessor.newCell(chars, start, end, rowDelegate, state);
 				rowState = REGULAR_ROW;
 			} else {
-				if (commentConsumer != null) {
-					try {
-						commentConsumer.accept(new String(chars, start, end - start));
-					} catch (Exception e) {
-						ErrorHelper.rethrow(e);
-					}
+				if (commentDelegate != null) {
+					commentDelegate.newCell(chars, start, end - start);
 				}
 				rowState = COMMENT;
 			}
@@ -69,9 +95,9 @@ public final class YamlCellPreProcessor extends CellPreProcessor {
 		public boolean endOfRow() {
 			boolean b;
 			if (rowState != COMMENT) {
-				b =  rowDelegate.endOfRow();
+				b = rowDelegate.endOfRow();
 			} else {
-				b = commentConsumer != null;
+				b = commentDelegate != null && commentDelegate.endOfRow();
 			}
 			rowState = NONE;
 			return b;
@@ -79,10 +105,8 @@ public final class YamlCellPreProcessor extends CellPreProcessor {
 
 		@Override
 		public void end() {
-			if (rowState == REGULAR_ROW) {
-				rowDelegate.endOfRow();
-			}
 			rowDelegate.end();
+			if (commentDelegate != null) commentDelegate.end();
 		}
 	}
 

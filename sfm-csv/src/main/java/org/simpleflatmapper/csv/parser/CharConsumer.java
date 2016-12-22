@@ -191,9 +191,13 @@ public final class CharConsumer {
 					if (nextEndOfLineChar != -1) {
 						currentIndex = nextEndOfLineChar + 1;
 						cellPreProcessor.newCell(chars, csvBuffer.mark, nextEndOfLineChar, cellConsumer, currentState);
-						cellConsumer.endOfRow();
 						csvBuffer.mark = currentIndex;
 						currentState = chars[nextEndOfLineChar] == CR ? LAST_CHAR_WAS_CR : NONE;
+						if (cellConsumer.endOfRow()) {
+							_currentState = currentState;
+							_currentIndex = currentIndex;
+							return true;
+						}
 					} else {
 						currentIndex = bufferSize;
 					}

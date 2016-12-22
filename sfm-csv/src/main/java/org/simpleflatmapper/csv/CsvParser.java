@@ -618,6 +618,11 @@ public final class CsvParser {
             return new DSL(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.TRIM_AND_UNESCAPE, cellConsumerWrapper, yamlComment);
         }
 
+		/**
+		 * will parse line starting with # as yaml comment.
+		 * comments line will be ignored unless using the special foreach call.
+		 * @return
+		 */
 		public DSLYamlComment withYamlComments() {
 			return new DSLYamlComment(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing,
 					new org.simpleflatmapper.util.Function<CellConsumer, CellConsumer>() {
@@ -625,6 +630,23 @@ public final class CsvParser {
 						public CellConsumer apply(CellConsumer cellConsumer) {
 							TextFormat textFormat = getTextFormat();
 							return new YamlCellPreProcessor.YamlCellConsumer(cellConsumer, null, getCellTransformer(textFormat, stringPostProcessing));
+						}
+					},
+					true);
+		}
+
+		/**
+		 * will parse line starting with # as yaml comment.
+		 * comments line will be come as a row of 1 cell.
+		 * @return
+		 */
+		public DSLYamlComment withYamlCommentsAsCell() {
+			return new DSLYamlComment(separatorChar, quoteChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing,
+					new org.simpleflatmapper.util.Function<CellConsumer, CellConsumer>() {
+						@Override
+						public CellConsumer apply(CellConsumer cellConsumer) {
+							TextFormat textFormat = getTextFormat();
+							return new YamlCellPreProcessor.YamlCellConsumer(cellConsumer, cellConsumer, getCellTransformer(textFormat, stringPostProcessing));
 						}
 					},
 					true);
@@ -674,7 +696,7 @@ public final class CsvParser {
 			TextFormat textFormat = getTextFormat();
 			return new YamlCellPreProcessor.YamlCellConsumer(
 					StringArrayCellConsumer.newInstance(rowConsumer),
-					commentConsumer,
+					YamlCellPreProcessor.commentConsumerToCellConsumer(commentConsumer),
 					superGetCellTransformer(textFormat, stringPostProcessing));
 		}
 

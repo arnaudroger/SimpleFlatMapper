@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.simpleflatmapper</groupId>
 		<artifactId>sfm-parent</artifactId>
-		<version>3.6</version>
+		<version>3.7-SNAPSHOT</version>
 	</parent>
 
 	<description>Java library to map flat record - ResultSet, csv - to java object with minimum configuration and low footprint.</description>
@@ -32,14 +32,14 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-test</artifactId>
-			<version>3.6</version>
+			<version>3.7-SNAPSHOT</version>
 			<classifier>${jar.classifier}</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-tuples</artifactId>
-			<version>3.6</version>
+			<version>3.7-SNAPSHOT</version>
 			<classifier>${jar.classifier}</classifier>
 			<scope>test</scope>
 		</dependency>

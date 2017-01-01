@@ -4,7 +4,7 @@ import org.simpleflatmapper.jdbc.Crud;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.JdbcOperations;
 
 import java.lang.reflect.Type;
 import java.sql.Connection;
@@ -21,31 +21,31 @@ public class JdbcTemplateCrudDSL<T, K> {
         this.keyTarget = keyTarget;
     }
 
-    public JdbcTemplateCrud<T, K> to(JdbcTemplate jdbcTemplate, final String table) {
+    public JdbcTemplateCrud<T, K> to(JdbcOperations jdbcOperations, final String table) {
         final JdbcMapperFactory factory = JdbcMapperFactory.newInstance(jdbcTemplateMapperFactory);
 
         Crud<T, K> crud =
-            jdbcTemplate.execute(new ConnectionCallback<Crud<T, K>>() {
+            jdbcOperations.execute(new ConnectionCallback<Crud<T, K>>() {
                 @Override
                 public Crud<T, K> doInConnection(Connection connection) throws SQLException, DataAccessException {
                     return factory.<T, K>crud(target, keyTarget).table(connection, table);
                 }
             });
 
-        return new JdbcTemplateCrud<T, K>(jdbcTemplate, crud);
+        return new JdbcTemplateCrud<T, K>(jdbcOperations, crud);
     }
 
-    public JdbcTemplateCrud<T, K> to(JdbcTemplate jdbcTemplate) {
+    public JdbcTemplateCrud<T, K> to(JdbcOperations jdbcOperations) {
         final JdbcMapperFactory factory = JdbcMapperFactory.newInstance(jdbcTemplateMapperFactory);
 
         Crud<T, K> crud =
-                jdbcTemplate.execute(new ConnectionCallback<Crud<T, K>>() {
+                jdbcOperations.execute(new ConnectionCallback<Crud<T, K>>() {
                     @Override
                     public Crud<T, K> doInConnection(Connection connection) throws SQLException, DataAccessException {
                         return factory.<T, K>crud(target, keyTarget).to(connection);
                     }
                 });
 
-        return new JdbcTemplateCrud<T, K>(jdbcTemplate, crud);
+        return new JdbcTemplateCrud<T, K>(jdbcOperations, crud);
     }
 }

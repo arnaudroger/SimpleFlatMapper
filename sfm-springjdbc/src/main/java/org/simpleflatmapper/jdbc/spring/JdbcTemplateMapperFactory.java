@@ -108,6 +108,10 @@ public final class JdbcTemplateMapperFactory extends AbstractMapperFactory<JdbcC
 		return new JdbcTemplateCrudDSL<T, K>(this, target, keyTarget);
 	}
 
+	public <T, K> JdbcTemplateCrudDSL<T, K> crud(Class<T> target, Class<K> keyTarget) {
+		return crud((Type)target, (Type)keyTarget);
+	}
+
 	public <T> MappingSqlQuery<T> mappingSqlQuery(Type target, DataSource ds, String sql) {
 		return new MappingSqlQuery<T>(ds, sql, this.<T>newJdbcMapper(target));
 	}

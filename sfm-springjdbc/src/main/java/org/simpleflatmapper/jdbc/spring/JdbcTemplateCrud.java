@@ -4,7 +4,7 @@ import org.simpleflatmapper.jdbc.*;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.JdbcOperations;
 
 import java.lang.reflect.Type;
 import java.sql.Connection;
@@ -14,11 +14,11 @@ import java.util.List;
 
 public class JdbcTemplateCrud<T, K> {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final JdbcOperations jdbcTemplate;
     private final Crud<T, K> crud;
 
-    public JdbcTemplateCrud(JdbcTemplate jdbcTemplate, Crud<T, K> crud) {
-        this.jdbcTemplate = jdbcTemplate;
+    public JdbcTemplateCrud(JdbcOperations jdbcOperations, Crud<T, K> crud) {
+        this.jdbcTemplate = jdbcOperations;
         this.crud = crud;
     }
 
@@ -26,9 +26,9 @@ public class JdbcTemplateCrud<T, K> {
      * insert value into the db through the specified connection.
      *
      * @param value      the value
-     * @throws SQLException if an error occurs
+     * @throws DataAccessException if an error occurs
      */
-    public void create(final T value) throws SQLException {
+    public void create(final T value) throws DataAccessException {
         jdbcTemplate.execute(new ConnectionCallback<Object>() {
             @Override
             public Object doInConnection(Connection connection) throws SQLException, DataAccessException {
@@ -42,9 +42,9 @@ public class JdbcTemplateCrud<T, K> {
      * insert values into the db through the specified connection.
      *
      * @param values      the values
-     * @throws SQLException if an error occurs
+     * @throws DataAccessException if an error occurs
      */
-    public void create(final Collection<T> values) throws SQLException {
+    public void create(final Collection<T> values) throws DataAccessException {
         jdbcTemplate.execute(new ConnectionCallback<Object>() {
             @Override
             public Object doInConnection(Connection connection) throws SQLException, DataAccessException {
@@ -62,9 +62,9 @@ public class JdbcTemplateCrud<T, K> {
      * @param keyConsumer the key consumer
      * @param <RH>        the type of keyConsumer
      * @return the keyConsumer
-     * @throws SQLException
+     * @throws DataAccessException
      */
-    public <RH extends CheckedConsumer<? super K>> RH create(final T value, final RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH create(final T value, final RH keyConsumer) throws DataAccessException {
         return
             jdbcTemplate.execute(new ConnectionCallback<RH>() {
                 @Override
@@ -82,9 +82,9 @@ public class JdbcTemplateCrud<T, K> {
      * @param keyConsumer the key consumer
      * @param <RH>        the type of keyConsumer
      * @return the keyConsumer
-     * @throws SQLException
+     * @throws DataAccessException
      */
-    public <RH extends CheckedConsumer<? super K>> RH create(final Collection<T> values, final RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH create(final Collection<T> values, final RH keyConsumer) throws DataAccessException {
         return
             jdbcTemplate.execute(new ConnectionCallback<RH>() {
                 @Override
@@ -99,9 +99,9 @@ public class JdbcTemplateCrud<T, K> {
      *
      * @param key        the key
      * @return the object or null if not found
-     * @throws SQLException if an error occurs
+     * @throws DataAccessException if an error occurs
      */
-    public T read(final K key) throws SQLException {
+    public T read(final K key) throws DataAccessException {
         return
             jdbcTemplate.execute(new ConnectionCallback<T>() {
                 @Override
@@ -116,9 +116,9 @@ public class JdbcTemplateCrud<T, K> {
      *
      * @param keys       the keys
      * @param consumer the handler that is callback for each row
-     * @throws SQLException if an error occurs
+     * @throws DataAccessException if an error occurs
      */
-    public <RH extends CheckedConsumer<? super T>> RH read(final Collection<K> keys, final RH consumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super T>> RH read(final Collection<K> keys, final RH consumer) throws DataAccessException {
         return
             jdbcTemplate.execute(new ConnectionCallback<RH>() {
                 @Override
@@ -132,9 +132,9 @@ public class JdbcTemplateCrud<T, K> {
      * update the object.
      *
      * @param value      the object
-     * @throws SQLException if an error occurs
+     * @throws DataAccessException if an error occurs
      */
-    public void update(final T value) throws SQLException {
+    public void update(final T value) throws DataAccessException {
         jdbcTemplate.execute(new ConnectionCallback<Object>() {
             @Override
             public Object doInConnection(Connection connection) throws SQLException, DataAccessException {
@@ -148,9 +148,9 @@ public class JdbcTemplateCrud<T, K> {
      * update the objects.
      *
      * @param values      the objects
-     * @throws SQLException if an error occurs
+     * @throws DataAccessException if an error occurs
      */
-    public void update(final Collection<T> values) throws SQLException {
+    public void update(final Collection<T> values) throws DataAccessException {
         jdbcTemplate.execute(new ConnectionCallback<Object>() {
             @Override
             public Object doInConnection(Connection connection) throws SQLException, DataAccessException {
@@ -164,9 +164,9 @@ public class JdbcTemplateCrud<T, K> {
      * delete the object with the specified key.
      *
      * @param key        the key
-     * @throws SQLException if an error occurs
+     * @throws DataAccessException if an error occurs
      */
-    public void delete(final K key) throws SQLException {
+    public void delete(final K key) throws DataAccessException {
         jdbcTemplate.execute(new ConnectionCallback<Object>() {
             @Override
             public Object doInConnection(Connection connection) throws SQLException, DataAccessException {
@@ -180,9 +180,9 @@ public class JdbcTemplateCrud<T, K> {
      * delete the objects with the specified keys.
      *
      * @param keys       the keys
-     * @throws SQLException if an error occurs
+     * @throws DataAccessException if an error occurs
      */
-    public void delete(final List<K> keys) throws SQLException {
+    public void delete(final List<K> keys) throws DataAccessException {
         jdbcTemplate.execute(new ConnectionCallback<Object>() {
             @Override
             public Object doInConnection(Connection connection) throws SQLException, DataAccessException {
@@ -195,10 +195,10 @@ public class JdbcTemplateCrud<T, K> {
     /**
      * UPSERT only supported on Mysql
      * @param value the value
-     * @throws SQLException
+     * @throws DataAccessException
      * @throws UnsupportedOperationException
      */
-    public void createOrUpdate(final T value) throws SQLException {
+    public void createOrUpdate(final T value) throws DataAccessException {
         jdbcTemplate.execute(new ConnectionCallback<Object>() {
             @Override
             public Object doInConnection(Connection connection) throws SQLException, DataAccessException {
@@ -211,10 +211,10 @@ public class JdbcTemplateCrud<T, K> {
     /**
      * UPSERT only supported on Mysql
      * @param values the values to upsert
-     * @throws SQLException
+     * @throws DataAccessException
      * @throws UnsupportedOperationException
      */
-    public void createOrUpdate(final Collection<T> values) throws SQLException {
+    public void createOrUpdate(final Collection<T> values) throws DataAccessException {
         jdbcTemplate.execute(new ConnectionCallback<Object>() {
             @Override
             public Object doInConnection(Connection connection) throws SQLException, DataAccessException {
@@ -231,9 +231,9 @@ public class JdbcTemplateCrud<T, K> {
      * @param keyConsumer generated key consumer
      * @param <RH> the keyConsumer type
      * @return the keyConsumer
-     * @throws SQLException
+     * @throws DataAccessException
      */
-    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(final T value, final RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(final T value, final RH keyConsumer) throws DataAccessException {
         return jdbcTemplate.execute(new ConnectionCallback<RH>() {
             @Override
             public RH doInConnection(Connection connection) throws SQLException, DataAccessException {
@@ -250,9 +250,9 @@ public class JdbcTemplateCrud<T, K> {
      * @param keyConsumer generated key consumer
      * @param <RH> the keyConsumer type
      * @return the keyConsumer
-     * @throws SQLException
+     * @throws DataAccessException
      */
-    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(final Collection<T> values, final RH keyConsumer) throws SQLException {
+    public <RH extends CheckedConsumer<? super K>> RH createOrUpdate(final Collection<T> values, final RH keyConsumer) throws DataAccessException {
         return jdbcTemplate.execute(new ConnectionCallback<RH>() {
             @Override
             public RH doInConnection(Connection connection) throws SQLException, DataAccessException {
@@ -269,15 +269,15 @@ public class JdbcTemplateCrud<T, K> {
 
     private static class JdbcTemplateTransactionTemplate implements TransactionTemplate {
 
-        private final JdbcTemplate jdbcTemplate;
+        private final JdbcOperations jdbcOperations;
 
-        private JdbcTemplateTransactionTemplate(JdbcTemplate jdbcTemplate) {
-            this.jdbcTemplate = jdbcTemplate;
+        private JdbcTemplateTransactionTemplate(JdbcOperations jdbcOperations) {
+            this.jdbcOperations = jdbcOperations;
         }
 
         @Override
-        public <R> R doInTransaction(final SQLFunction<? super Connection, ? extends R> sqlFunction) throws SQLException {
-            return jdbcTemplate.execute(new ConnectionCallback<R>() {
+        public <R> R doInTransaction(final SQLFunction<? super Connection, ? extends R> sqlFunction) throws DataAccessException {
+            return jdbcOperations.execute(new ConnectionCallback<R>() {
                 @Override
                 public R doInConnection(Connection con) throws SQLException, DataAccessException {
                     return sqlFunction.apply(con);

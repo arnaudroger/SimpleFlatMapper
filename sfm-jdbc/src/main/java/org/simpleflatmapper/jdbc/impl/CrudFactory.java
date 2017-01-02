@@ -168,7 +168,18 @@ public class CrudFactory {
     }
 
     private static <T, K> QueryPreparer<K> buildSelect(ClassMeta<K> keyTarget, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
-        StringBuilder sb = new StringBuilder("SELECT * FROM ");
+        StringBuilder sb = new StringBuilder("SELECT ");
+
+        boolean first = true;
+        for(ColumnMeta cm : crudMeta.getColumnMetas()) {
+            if (!first) {
+                sb.append(", ");
+            }
+            sb.append(cm.getColumn());
+            first = false;
+        }
+
+        sb.append(" FROM ");
         appendTableName(sb, crudMeta);
         addWhereOnPrimaryKeys(crudMeta, sb);
         return jdbcMapperFactory.<K>from(keyTarget).to(NamedSqlQuery.parse(sb));

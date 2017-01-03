@@ -1,11 +1,12 @@
 package org.simpleflatmapper.jdbi;
 
 import org.junit.Test;
-import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
+import org.skife.jdbi.v2.sqlobject.Bind;
+import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapperFactory;
 
@@ -20,7 +21,7 @@ public class SfmBindTest {
     @Test
     public void testBindDbObject() throws Exception {
         DBI dbi = new DBI(DbHelper.getHsqlDataSource());
-        dbi.registerMapper(new SfmResultSetMapperFactory());
+        //dbi.registerMapper(new SfmResultSetMapperFactory());
 
         Handle handle = dbi.open();
 
@@ -34,11 +35,11 @@ public class SfmBindTest {
 
             attach.insert(dbObject1);
 
-            checkObjectInserted(handle, dbObject1);
+            checkObjectInserted(attach, handle, dbObject1);
 
             attach.insert(dbObject2);
 
-            checkObjectInserted(handle, dbObject2);
+            checkObjectInserted(attach, handle, dbObject2);
 
 
         } finally {
@@ -54,11 +55,8 @@ public class SfmBindTest {
                 .list().size() == 1);
     }
 
-    public void checkObjectInserted(Handle handle, DbObject dbObject) {
-        DbObject o = handle.createQuery("SELECT * from TEST_DB_OBJECT WHERE id = :id")
-                .bind("id", dbObject.getId())
-                .mapTo(DbObject.class)
-                .first();
+    public void checkObjectInserted(SfmBindExample attach, Handle handle, DbObject dbObject) {
+        DbObject o = attach.selectOne(dbObject.getId());
 
         assertEquals(dbObject, o);
     }
@@ -68,6 +66,9 @@ public class SfmBindTest {
     {
         @SqlUpdate("insert into TEST_DB_OBJECT (id, name, email, creation_time, type_ordinal, type_name) values (:id, :name, :email, :creation_time, :type_ordinal, :type_name)")
         void insert(@SfmBind(sqlTypes = {@SqlType(name ="type_ordinal", type=Types.NUMERIC)}) DbObject s);
+
+        @SqlQuery("SELECT * FROM TEST_DB_OBJECT where id = :id")
+        DbObject selectOne(@Bind("id") long id);
 
     }
 

@@ -211,7 +211,7 @@ public final class JdbcMapperFactory
 	 * @param <T> the jdbcMapper target type
 	 * @return the DynamicMapper
 	 */
-	public <T> JdbcMapper<T> newMapper(final Class<T> target) {
+	public <T> DynamicJdbcMapper<T> newMapper(final Class<T> target) {
 		return newMapper((Type) target);
 	}
 
@@ -221,7 +221,7 @@ public final class JdbcMapperFactory
      * @param <T> the jdbcMapper target type
      * @return the DynamicMapper
      */
-    public <T> JdbcMapper<T> newMapper(final TypeReference<T> target) {
+    public <T> DynamicJdbcMapper<T> newMapper(final TypeReference<T> target) {
         return newMapper(target.getType());
     }
 
@@ -243,7 +243,7 @@ public final class JdbcMapperFactory
      * @param <T> the jdbcMapper target type
      * @return the DynamicMapper
      */
-	public <T> JdbcMapper<T> newMapper(final Type target) {
+	public <T> DynamicJdbcMapper<T> newMapper(final Type target) {
 		final ClassMeta<T> classMeta = getClassMeta(target);
 		return new DynamicJdbcSetRowMapper<T>(new SetRowMapperFactory<T>(classMeta),  new MapperKeyFactory(),  new MapperKeyFactory());
 	}

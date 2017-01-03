@@ -1,5 +1,6 @@
 package org.simpleflatmapper.jdbi;
 
+import org.simpleflatmapper.jdbc.DynamicJdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.util.BiPredicate;
@@ -46,7 +47,7 @@ public class SfmResultSetMapperFactory implements ResultSetMapperFactory {
 
     @Override
     public boolean accepts(Class aClass, StatementContext statementContext) {
-        return true;
+        return acceptsPredicate.test(aClass, statementContext);
     }
 
     @SuppressWarnings("unchecked")
@@ -55,13 +56,24 @@ public class SfmResultSetMapperFactory implements ResultSetMapperFactory {
         ResultSetMapper mapper = cache.get(aClass);
 
         if (mapper == null) {
-            mapper = new SfmResultSetMapper(mapperFactory.newInstance(aClass));
+            Mapper<ResultSet, ?> resultSetMapper = mapperFactory.newInstance(aClass);
+            mapper = toResultSetMapper(resultSetMapper);
             ResultSetMapper<?> cachedMapper = cache.putIfAbsent(aClass, mapper);
             if (cachedMapper != null) {
                 mapper = cachedMapper;
             }
         }
 
+        return mapper;
+    }
+
+    private <T> ResultSetMapper<T> toResultSetMapper(Mapper<ResultSet, T> resultSetMapper) {
+        ResultSetMapper mapper;
+        if (resultSetMapper instanceof DynamicJdbcMapper) {
+            mapper = new DynamicSfmResultSetMapper<T>((DynamicJdbcMapper<T>) resultSetMapper);
+        } else {
+            mapper = new DefaultSfmResultSetMapper<T>(resultSetMapper);
+        }
         return mapper;
     }
 }

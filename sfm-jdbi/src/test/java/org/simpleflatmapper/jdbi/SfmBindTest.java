@@ -7,10 +7,12 @@ import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapperFactory;
 
 import java.sql.Types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class SfmBindTest {
 
@@ -25,27 +27,43 @@ public class SfmBindTest {
         try {
             SfmBindExample attach = handle.attach(SfmBindExample.class);
 
-            DbObject dbObject = DbObject.newInstance();
+            DbObject dbObject1 = DbObject.newInstance();
+            DbObject dbObject2 = DbObject.newInstance();
+            checkObjectNotThere(handle, dbObject1);
+            checkObjectNotThere(handle, dbObject2);
 
-            attach.insert(dbObject);
+            attach.insert(dbObject1);
 
-            checkObjectInserted(handle, dbObject);
+            checkObjectInserted(handle, dbObject1);
+
+            attach.insert(dbObject2);
+
+            checkObjectInserted(handle, dbObject2);
+
 
         } finally {
             handle.close();
         }
     }
 
+    public void checkObjectNotThere(Handle handle, DbObject dbObject) {
+        assertFalse(
+                handle.createQuery("SELECT 1 from TEST_DB_OBJECT WHERE id = :id")
+                .bind("id", dbObject.getId())
+                .map(Integer.class)
+                .list().size() == 1);
+    }
+
     public void checkObjectInserted(Handle handle, DbObject dbObject) {
-        SfmResultSetMapper<DbObject> resultSetMapper = new SfmResultSetMapper<DbObject>(JdbcMapperFactory.newInstance().newMapper(DbObject.class));
         DbObject o = handle.createQuery("SELECT * from TEST_DB_OBJECT WHERE id = :id")
                 .bind("id", dbObject.getId())
-                .map(resultSetMapper)
+                .mapTo(DbObject.class)
                 .first();
 
         assertEquals(dbObject, o);
     }
 
+    @RegisterMapperFactory(value = {SfmResultSetMapperFactory.class})
     public interface SfmBindExample
     {
         @SqlUpdate("insert into TEST_DB_OBJECT (id, name, email, creation_time, type_ordinal, type_name) values (:id, :name, :email, :creation_time, :type_ordinal, :type_name)")

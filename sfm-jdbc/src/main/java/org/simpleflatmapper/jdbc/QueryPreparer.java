@@ -35,4 +35,5 @@ public interface QueryPreparer<T> {
      */
     Mapper<T, PreparedStatement> mapper();
 
+    String toRewrittenSqlQuery(T value);
 }

@@ -58,6 +58,7 @@
         <module>sfm-poi</module>
         <module>sfm-querydsl</module>
         <module>sfm-springjdbc</module>
+        <module>sfm-jdbi</module>
         <module>sfm-test</module>
         <module>ow2.asm/ASM_5_1</module>
   </modules>

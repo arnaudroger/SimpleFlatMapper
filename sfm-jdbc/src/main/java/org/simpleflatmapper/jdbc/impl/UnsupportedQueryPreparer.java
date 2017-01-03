@@ -30,4 +30,9 @@ public class UnsupportedQueryPreparer<T> implements QueryPreparer<T> {
     public Mapper<T, PreparedStatement> mapper() {
         throw new UnsupportedOperationException(message);
     }
+
+    @Override
+    public String toRewrittenSqlQuery(T value) {
+        throw new UnsupportedOperationException(message);
+    }
 }

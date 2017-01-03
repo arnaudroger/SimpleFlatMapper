@@ -2,6 +2,7 @@ package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.jdbc.QueryBinder;
 import org.simpleflatmapper.jdbc.QueryPreparer;
+import org.simpleflatmapper.jdbc.SizeSupplier;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
 import org.simpleflatmapper.map.Mapper;
 
@@ -34,6 +35,11 @@ public class MapperQueryPreparer<T> implements QueryPreparer<T> {
     @Override
     public Mapper<T, PreparedStatement> mapper() {
         return mapper;
+    }
+
+    @Override
+    public String toRewrittenSqlQuery(final T value) {
+        return query.toSqlQuery();
     }
 
 

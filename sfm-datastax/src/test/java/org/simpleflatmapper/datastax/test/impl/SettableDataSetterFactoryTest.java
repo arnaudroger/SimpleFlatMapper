@@ -1,10 +1,8 @@
 package org.simpleflatmapper.datastax.test.impl;
 
 import com.datastax.driver.core.*;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.ReadablePartial;
-import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -51,7 +49,6 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 //IFJAVA8_END
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -674,12 +671,11 @@ public class SettableDataSetterFactoryTest {
         setter.set(statement, ldt);
         setter.set(statement, null);
 
-        DateTimeZone tz2 = getNonDefaultDateTimeZone(new Date());
-        final Date date = ldt.toDateTimeToday(tz2).toDate();
-
+        final Date date = ldt.toDateTimeToday().toDate();
         verify(statement).setDate(0, date);
         verify(statement).setToNull(0);
 
+        DateTimeZone tz2 = getNonDefaultDateTimeZone(date);
 
         Setter<SettableByIndexData, org.joda.time.LocalTime> setterTZ =
                 factory.getSetter(newPM(org.joda.time.LocalTime.class, DataType.timestamp(), new JodaDateTimeZoneProperty(tz2)));
@@ -687,6 +683,7 @@ public class SettableDataSetterFactoryTest {
         verify(statement).setDate(1, new Date(date.getTime() + TimeUnit.HOURS.toMillis(2)));
 
     }
+
 
     @Test
     public void testJodaInstant() throws Exception {

@@ -127,10 +127,6 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		return stream(CsvParser.skip(skip).reader(reader));
 	}
 
-    public CsvMapperCellHandlerFactory<T>  csvMapperCellHandlerFactory() {
-        return csvMapperCellHandlerFactory;
-    }
-
     public class CsvSpliterator implements Spliterator<T> {
 		private final CsvReader csvReader;
 		private final CellConsumer cellConsumer;
@@ -297,6 +293,11 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
             return null;
         }
     }
+
+    public CsvMapperCellHandlerFactory<T>  csvMapperCellHandlerFactory() {
+        return csvMapperCellHandlerFactory;
+    }
+
 
     @Override
     public String toString() {

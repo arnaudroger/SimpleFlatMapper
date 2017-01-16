@@ -131,5 +131,63 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>jdk19</id>
+			<activation>
+				<jdk>9-ea</jdk>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.jooq</groupId>
+					<artifactId>jool</artifactId>
+					<version>0.9.12</version>
+					<optional>true</optional>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>com.boundary</groupId>
+					<artifactId>fasttuple-core</artifactId>
+					<version>0.1</version>
+					<optional>true</optional>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+
+						<executions>
+							<execution>
+								<id>default-testCompile</id>
+								<phase>test-compile</phase>
+								<configuration>
+									<fork>true</fork>
+									<compilerArgs>
+										<arg>--add-exports</arg>
+										<arg>org.simpleflatmapper.poi/org.simpleflatmapper.poi.impl=org.simpleflatmapper.poi.test</arg>
+									</compilerArgs>
+								</configuration>
+								<goals>
+									<goal>testCompile</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+
+						<configuration>
+							<argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+						</configuration>
+					</plugin>
+				</plugins>
+
+			</build>
+		</profile>
 	</profiles>
 </project>

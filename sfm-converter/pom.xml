@@ -118,5 +118,41 @@
 			</build>
 		</profile>
 
+		<profile>
+			<id>jdk19</id>
+			<activation>
+				<jdk>9-ea</jdk>
+			</activation>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+
+						<executions>
+							<execution>
+								<id>default-testCompile</id>
+								<phase>test-compile</phase>
+								<configuration>
+									<fork>true</fork>
+									<compilerArgs>
+										<arg>--add-exports</arg>
+										<arg>org.simpleflatmapper.converter/org.simpleflatmapper.converter.impl.time=org.simpleflatmapper.converter.test</arg>
+										<arg>--add-exports</arg>
+										<arg>org.simpleflatmapper.converter/org.simpleflatmapper.converter.impl=org.simpleflatmapper.converter.test</arg>
+									</compilerArgs>
+								</configuration>
+								<goals>
+									<goal>testCompile</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+
+			</build>
+		</profile>
+
 	</profiles>
 </project>

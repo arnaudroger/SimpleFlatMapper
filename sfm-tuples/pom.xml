@@ -133,7 +133,33 @@
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
-		</profile>
 
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+
+						<executions>
+							<execution>
+								<id>default-testCompile</id>
+								<phase>test-compile</phase>
+								<configuration>
+									<fork>true</fork>
+									<compilerArgs>
+										<arg>--add-exports</arg>
+										<arg>org.simpleflatmapper.tuple/org.simpleflatmapper.tuple.gen=org.simpleflatmapper.tuple.test</arg>
+									</compilerArgs>
+								</configuration>
+								<goals>
+									<goal>testCompile</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+
+			</build>
+		</profile>
 	</profiles>
 </project>

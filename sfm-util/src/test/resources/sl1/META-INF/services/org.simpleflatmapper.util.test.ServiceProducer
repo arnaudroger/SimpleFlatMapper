@@ -1,0 +1,3 @@
+org.simpleflatmapper.util.NotThereServiceProducer
+org.simpleflatmapper.util.test.ValidServiceProducer
+org.simpleflatmapper.util.test.WrongTypeServiceProducer

@@ -1,6 +1,6 @@
 module org.simpleflatmapper.datastax {
-        requires public org.simpleflatmapper.map;
-        requires public org.simpleflatmapper.tuple;
+        requires transitive org.simpleflatmapper.map;
+        requires transitive org.simpleflatmapper.tuple;
         requires cassandra.driver.core;
         requires guava;
         exports org.simpleflatmapper.datastax;

@@ -1,10 +1,12 @@
 module org.simpleflatmapper.jdbc {
-    requires public org.simpleflatmapper.map;
+    requires transitive org.simpleflatmapper.map;
 
-    requires public java.sql;
+    requires transitive java.sql;
 
     exports org.simpleflatmapper.jdbc;
     exports org.simpleflatmapper.jdbc.named;
+    exports org.simpleflatmapper.jdbc.property;
+    exports org.simpleflatmapper.jdbc.property.time;
 
     provides org.simpleflatmapper.converter.ConverterFactoryProducer
         with org.simpleflatmapper.jdbc.converter.JdbcConverterFactoryProducer;

@@ -31,7 +31,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
     private final CsvColumnKey[] joinKeys;
 	private final ConsumerErrorHandler consumerErrorHandlers;
-    protected final CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory;
+    private final CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory;
 
     private final boolean hasSetterSubProperties;
     private final boolean hasSubProperties;
@@ -127,7 +127,11 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		return stream(CsvParser.skip(skip).reader(reader));
 	}
 
-	public class CsvSpliterator implements Spliterator<T> {
+    public CsvMapperCellHandlerFactory<T>  csvMapperCellHandlerFactory() {
+        return csvMapperCellHandlerFactory;
+    }
+
+    public class CsvSpliterator implements Spliterator<T> {
 		private final CsvReader csvReader;
 		private final CellConsumer cellConsumer;
 		private T current;

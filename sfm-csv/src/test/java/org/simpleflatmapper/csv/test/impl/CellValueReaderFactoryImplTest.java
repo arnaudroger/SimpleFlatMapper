@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.ParsingContextFactoryBuilder;
+import org.simpleflatmapper.csv.impl.CellValueReaderFactoryImpl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,7 +21,6 @@ import java.util.UUID;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import org.simpleflatmapper.csv.impl.CellValueReaderFactoryImpl;
 import org.simpleflatmapper.map.property.time.JavaDateTimeFormatterProperty;
 //IFJAVA8_END
 

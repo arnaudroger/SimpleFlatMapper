@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>org.jdbi</groupId>
 			<artifactId>jdbi3</artifactId>
-			<version>3.0.0-alpha10</version>
+			<version>3.0.0-beta0</version>
 		</dependency>
 
 

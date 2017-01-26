@@ -365,6 +365,7 @@
 
             <modules>
                 <module>sfm-sql2o</module>
+                <module>sfm-jdbi3</module>
             </modules>
 
             <build>
@@ -413,6 +414,7 @@
 
             <modules>
                 <module>sfm-sql2o</module>
+                <module>sfm-jdbi3</module>
                 <module>ow2.asm/ASM_6_0_ALPHA</module>
             </modules>
             <build>

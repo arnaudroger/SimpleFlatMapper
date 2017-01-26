@@ -21,7 +21,6 @@ public class ResultSetMapperFactoryTest {
             DbObject dbObject = handle.createQuery(DbHelper.TEST_DB_OBJECT_QUERY).mapTo(DbObject.class).first();
             DbHelper.assertDbObjectMapping(dbObject);
 
-
             SfmBindTest.SfmBindExample attach = handle.attach(SfmBindTest.SfmBindExample.class);
             attach.insert(DbObject.newInstance());
             assertTrue(handle.createQuery("select * from TEST_DB_OBJECT").mapTo(DbObject.class).list().size() > 1);

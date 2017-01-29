@@ -17,8 +17,8 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Iterator;
-//IFJAVA8_START
 import java.util.Map;
+//IFJAVA8_START
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 //IFJAVA8_END

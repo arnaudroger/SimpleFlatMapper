@@ -59,7 +59,7 @@ public class ConverterService {
 
         List<ScoredConverterFactory> tails = new ArrayList<ScoredConverterFactory>();
 
-        if (TypeHelper.areEquals(inType, outType)) {
+        if (TypeHelper.isAssignable(outType, inType)) {
             return new IdentityConverter();
         }
         ConvertingTypes targetedTypes = new ConvertingTypes(inType, outType);

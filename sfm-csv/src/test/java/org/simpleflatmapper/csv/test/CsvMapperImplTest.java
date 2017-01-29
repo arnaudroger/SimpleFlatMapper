@@ -4,10 +4,12 @@ import org.junit.Test;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperBuilder;
 import org.simpleflatmapper.csv.CsvMapperFactory;
+import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.impl.CsvMapperImpl;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.util.CheckedConsumer;
+import org.simpleflatmapper.util.TypeReference;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -16,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Iterator;
 //IFJAVA8_START
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 //IFJAVA8_END
@@ -239,5 +242,20 @@ public class CsvMapperImplTest {
 		builder.addMapping("c1");
 		CsvMapper<String> mapper = builder.mapper();
 		assertEquals("0", mapper.iterator(new StringReader("0")).next());
+	}
+
+	@Test
+	public void testMapStringString() throws IOException  {
+		Map next = CsvParser.mapTo(new TypeReference<Map<String, String>>() {
+		}).iterator("key1,k_2\nv1,v2").next();
+		assertEquals("v1", next.get("key1"));
+		assertEquals("v2", next.get("k_2"));
+	}
+
+	@Test
+	public void testMap() throws IOException  {
+		Map next = CsvParser.mapTo(Map.class).iterator("key1,k_2\nv1,v2").next();
+		assertEquals("v1", next.get("key1"));
+		assertEquals("v2", next.get("k_2"));
 	}
 }

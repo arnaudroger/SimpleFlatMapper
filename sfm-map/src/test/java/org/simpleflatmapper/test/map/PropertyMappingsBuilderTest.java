@@ -8,20 +8,17 @@ import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
-import org.simpleflatmapper.map.mapper.DefaultPropertyNameMatcherFactory;
-import org.simpleflatmapper.map.error.RethrowMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
-import org.simpleflatmapper.reflect.meta.ListElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.ForEachCallBack;
-import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 
@@ -97,7 +94,7 @@ public class PropertyMappingsBuilderTest {
         SubPropertyMeta<AnonymousElement, ?, ?> subPropertyMeta = (SubPropertyMeta<AnonymousElement, ?, ?>) propertyMeta;
 
         assertTrue(TypeHelper.isAssignable(List.class, subPropertyMeta.getOwnerProperty().getPropertyType()));
-        assertTrue("expect ListElementPropertyMeta " + subPropertyMeta.getSubProperty(), subPropertyMeta.getSubProperty() instanceof ListElementPropertyMeta);
+        assertTrue("expect ListElementPropertyMeta " + subPropertyMeta.getSubProperty(), subPropertyMeta.getSubProperty() instanceof ArrayElementPropertyMeta);
     }
 
 

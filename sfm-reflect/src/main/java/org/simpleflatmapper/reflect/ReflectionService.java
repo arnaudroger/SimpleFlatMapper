@@ -133,7 +133,7 @@ public class ReflectionService {
 
 		if (Map.class.isAssignableFrom(clazz)) {
 			return (ClassMeta<T>) newMapMeta(target);
-		} else if (List.class.isAssignableFrom(clazz)) {
+		} else if (List.class.isAssignableFrom(clazz) || Set.class.isAssignableFrom(clazz)) {
 			return newArrayListMeta(target);
 		} else if (clazz.isArray()) {
 			return newArrayMeta(clazz);

@@ -10,7 +10,9 @@ import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -22,14 +24,14 @@ public class ArrayMetaDataTest {
     public void testListOfString() throws Exception {
         ClassMeta<Object> classMeta = ReflectionService.newInstance()
                 .getClassMeta(new TypeReference<List<String>>() {
-        }.getType());
+                }.getType());
 
         assertTrue(classMeta instanceof ArrayClassMeta);
 
         // indexed
         PropertyFinder<Object> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
         PropertyMeta<Object, Object> _0 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("0", 0, false, false));
-        ListElementPropertyMeta<Object, Object> meta0 = (ListElementPropertyMeta<Object, Object>) _0;
+        ArrayElementPropertyMeta<Object, Object> meta0 = (ArrayElementPropertyMeta<Object, Object>) _0;
         assertEquals(0, meta0.getIndex());
 
         List<String> list = new ArrayList<String>();
@@ -41,8 +43,8 @@ public class ArrayMetaDataTest {
         // index discovery
         PropertyMeta<Object, Object> bb = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bb", 0, false, false));
 
-        assertTrue(bb instanceof ListElementPropertyMeta);
-        ListElementPropertyMeta<Object, Object> meta = (ListElementPropertyMeta<Object, Object>) bb;
+        assertTrue(bb instanceof ArrayElementPropertyMeta);
+        ArrayElementPropertyMeta<Object, Object> meta = (ArrayElementPropertyMeta<Object, Object>) bb;
         assertEquals(1, meta.getIndex());
 
 
@@ -51,9 +53,37 @@ public class ArrayMetaDataTest {
         meta.getSetter().set(list, "aa");
         assertEquals("aa", meta.getGetter().get(list));
 
-        assertEquals("ListElementPropertyMeta{index=1}", bb.toString());
+        assertEquals("ArrayElementPropertyMeta{index=1}", bb.toString());
 
         assertEquals(ArrayList.class.getConstructor(),
+                ((ExecutableInstantiatorDefinition)propertyFinder.getEligibleInstantiatorDefinitions().get(0)).getExecutable());
+
+    }
+
+
+    @Test
+    public void testSetOfString() throws Exception {
+        ClassMeta<Object> classMeta = ReflectionService.newInstance()
+                .getClassMeta(new TypeReference<Set<String>>() {
+                }.getType());
+
+        assertTrue(classMeta instanceof ArrayClassMeta);
+
+        // indexed
+        PropertyFinder<Object> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
+        PropertyMeta<Object, Object> _0 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("0", 0, false, false));
+        ArrayElementPropertyMeta<Object, Object> meta0 = (ArrayElementPropertyMeta<Object, Object>) _0;
+        assertEquals(0, meta0.getIndex());
+
+        Set<String> list = new HashSet<>();
+
+        assertNull(meta0.getGetter().get(list));
+        meta0.getSetter().set(list, "aa");
+        assertEquals("aa", list.iterator().next());
+        assertNull(meta0.getGetter().get(list));
+
+
+        assertEquals(HashSet.class.getConstructor(),
                 ((ExecutableInstantiatorDefinition)propertyFinder.getEligibleInstantiatorDefinitions().get(0)).getExecutable());
 
     }

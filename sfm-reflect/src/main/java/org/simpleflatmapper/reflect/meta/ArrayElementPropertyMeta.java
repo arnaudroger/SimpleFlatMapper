@@ -3,6 +3,9 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.util.IntFactory;
+import org.simpleflatmapper.util.Supplier;
+import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Type;
 
@@ -10,27 +13,31 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
 	private final int index;
 	private final ArrayClassMeta<T, E> arrayMetaData;
-	private final Setter<T, E> setter;
-	private final Getter<T, E> getter;
+	private final IntFactory<Setter<T, E>> setterFactory;
+	private final IntFactory<Getter<T, E>> getterFactory;
 
 	@SuppressWarnings("unchecked")
-	public ArrayElementPropertyMeta(String name, Type ownerType, ReflectionService reflectService, int index, ArrayClassMeta<T, E> arrayMetaData) {
+	public ArrayElementPropertyMeta(String name, Type ownerType, ReflectionService reflectService,
+									int index,
+									ArrayClassMeta<T, E> arrayMetaData,
+									IntFactory<Setter<T, E>> setterFactory,
+									IntFactory<Getter<T, E>> getterFactory) {
 		super(name, ownerType, reflectService);
-        if (index < 0) throw new IllegalArgumentException("Invalid array index " + index);
+		if (index < 0) throw new IllegalArgumentException("Invalid array index " + index);
 		this.index = index;
 		this.arrayMetaData = arrayMetaData;
-		setter = (Setter<T, E>) new IndexArraySetter<E>(index);
-		getter = (Getter<T, E>) new IndexArrayGetter<E>(index);
+		this.setterFactory = setterFactory;
+		this.getterFactory = getterFactory;
 	}
 
 	@Override
 	public Setter<T, E> getSetter() {
-        return setter;
+        return setterFactory.newInstance(index);
 	}
 
     @Override
     public Getter<T, E> getGetter() {
-        return getter;
+        return getterFactory.newInstance(index);
     }
 
     @Override
@@ -46,33 +53,6 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 	public String getPath() {
 		return index + "." + getName();
 	}
-
-
-	private static class IndexArraySetter<E> implements Setter<E[], E> {
-		private final int index;
-
-		private IndexArraySetter(int index) {
-			this.index = index;
-		}
-
-		@Override
-        public void set(E[] target, E value) throws Exception {
-			target[index] = value;
-        }
-	}
-
-    private static class IndexArrayGetter<E> implements Getter<E[], E> {
-        private final int index;
-
-        private IndexArrayGetter(int index) {
-            this.index = index;
-        }
-
-        @Override
-        public E get(E[] target) throws Exception {
-            return target[index];
-        }
-    }
 
     @Override
     public String toString() {

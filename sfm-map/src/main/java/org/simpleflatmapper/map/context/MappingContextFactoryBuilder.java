@@ -3,7 +3,7 @@ package org.simpleflatmapper.map.context;
 
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.meta.ListElementPropertyMeta;
+import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.MapElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.map.context.impl.BreakDetectorMappingContextFactory;
@@ -117,7 +117,7 @@ public class MappingContextFactoryBuilder<S, K> {
     }
 
     private boolean isEligibleAsRootKey() {
-        return !(owner instanceof ListElementPropertyMeta)
+        return !(owner instanceof ArrayElementPropertyMeta)
                 && !(owner instanceof MapElementPropertyMeta)
                 && (parent == null || parent.isEligibleAsRootKey());
     }

@@ -9,6 +9,7 @@ import org.simpleflatmapper.jdbc.impl.MapperQueryPreparer;
 import org.simpleflatmapper.jdbc.impl.setter.PreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.PreparedStatementIndexSetterOnGetter;
 import org.simpleflatmapper.jdbc.named.NamedSqlQuery;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
@@ -17,6 +18,7 @@ import org.simpleflatmapper.jdbc.property.IndexedSetterFactoryProperty;
 import org.simpleflatmapper.jdbc.property.IndexedSetterProperty;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.IndexedGetter;
 import org.simpleflatmapper.reflect.IndexedSetter;
@@ -58,7 +60,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
     }
 
     @Override
-    protected Instantiator<T, PreparedStatement> getInstantiator() {
+    protected BiInstantiator<T, MappingContext<? super T>, PreparedStatement> getInstantiator() {
         return new NullInstantiator<T>();
     }
 
@@ -80,9 +82,9 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
         return key;
     }
 
-    private static class NullInstantiator<T> implements Instantiator<T, PreparedStatement> {
+    private static class NullInstantiator<T> implements BiInstantiator<T, MappingContext<? super T>,  PreparedStatement> {
         @Override
-        public PreparedStatement newInstance(T o) throws Exception {
+        public PreparedStatement newInstance(T o, MappingContext<? super T> context) throws Exception {
             throw new UnsupportedOperationException();
         }
     }

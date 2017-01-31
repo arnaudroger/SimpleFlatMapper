@@ -1,5 +1,6 @@
 package org.simpleflatmapper.reflect.asm;
 
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.Getter;
@@ -7,6 +8,7 @@ import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.util.BiFactory;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.UnaryFactory;
 
@@ -25,6 +27,7 @@ public class AsmFactory {
 	private final ConcurrentMap<Object, Setter<?, ?>> setterCache = new ConcurrentHashMap<Object, Setter<?, ?>>();
     private final ConcurrentMap<Object, Getter<?, ?>> getterCache = new ConcurrentHashMap<Object, Getter<?, ?>>();
 	private final ConcurrentMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>> instantiatorCache = new ConcurrentHashMap<InstantiatorKey, Class<? extends Instantiator<?, ?>>>();
+    private final ConcurrentMap<BiInstantiatorKey, Class<? extends BiInstantiator<?, ?, ?>>> biInstantiatorCache = new ConcurrentHashMap<BiInstantiatorKey, Class<? extends BiInstantiator<?, ?, ?>>>();
     private final ConcurrentMap<Class<?>, Object> subFactories = new ConcurrentHashMap<Class<?>, Object>();
 
 
@@ -171,6 +174,41 @@ public class AsmFactory {
             return (Instantiator<S, T>) instantiator.getConstructor(Map.class, Instantiator.class).newInstance(getterPerName, builderInstantiator);
         }
 	}
+
+
+    @SuppressWarnings("unchecked")
+    public <S1, S2, T> BiInstantiator<S1, S2, T> createBiInstantiator(final Class<?> s1, final Class<?> s2, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections) throws Exception {
+        BiInstantiatorKey instantiatorKey = new BiInstantiatorKey(instantiatorDefinition, injections, s1, s2);
+        Class<? extends BiInstantiator<?, ?, ?>> instantiator = biInstantiatorCache.get(instantiatorKey);
+        Instantiator builderInstantiator = null;
+        if (instantiator == null) {
+            final String className = generateClassNameForBiInstantiator(instantiatorKey);
+            final byte[] bytes;
+            if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
+                bytes = BiInstantiatorBuilder.createInstantiator(className, s1, s2, (ExecutableInstantiatorDefinition)instantiatorDefinition, injections);
+            }  else {
+                builderInstantiator = createInstantiator(Void.class, ((BuilderInstantiatorDefinition)instantiatorDefinition).getBuilderInstantiator(), new HashMap<Parameter, Getter<? super Void, ?>>());
+                bytes = BiInstantiatorBuilder.createInstantiator(
+                        className,
+                        s1, s2,
+                        builderInstantiator,
+                        (BuilderInstantiatorDefinition)instantiatorDefinition, injections);
+            }
+            instantiator = (Class<? extends BiInstantiator<?, ?, ?>>) createClass(className, bytes, instantiatorKey.getDeclaringClass().getClassLoader());
+            biInstantiatorCache.put(instantiatorKey, instantiator);
+        }
+
+        Map<String, BiFactory<? super S1, ? super S2, ?>> factoryPerName = new HashMap<String, BiFactory<? super S1, ? super S2, ?>>();
+        for(Entry<Parameter, BiFactory<? super S1, ? super S2, ?>> e : injections.entrySet()) {
+            factoryPerName.put(e.getKey().getName(), e.getValue());
+        }
+
+        if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
+            return (BiInstantiator<S1, S2, T>) instantiator.getConstructor(Map.class).newInstance(factoryPerName);
+        } else {
+            return (BiInstantiator<S1, S2, T>) instantiator.getConstructor(Map.class, Instantiator.class).newInstance(factoryPerName, builderInstantiator);
+        }
+    }
 	
 
     private final AtomicLong classNumber = new AtomicLong();
@@ -203,6 +241,37 @@ public class AsmFactory {
 		sb.append("_I").append(Long.toHexString(classNumber.getAndIncrement()));
 		return sb.toString();
 	}
+
+    private String generateClassNameForBiInstantiator(final BiInstantiatorKey key) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append( "org.simpleflatmapper.reflect.generated.")
+                .append(getPackageName(key.getDeclaringClass()))
+                .append(".AsmBiInstantiator").append(key.getDeclaringClass().getSimpleName());
+        sb.append("From");
+        sb.append(replaceArray(key.getS1().getSimpleName()));
+        sb.append("And");
+        sb.append(replaceArray(key.getS2().getSimpleName()));
+
+        String[] injectedParams = key.getInjectedParams();
+        if (injectedParams != null && injectedParams.length > 0) {
+            sb.append("Into");
+            int e = Math.min(16, injectedParams.length);
+            for(int i = 0; i < e; i++) {
+                if (i!=0) {
+                    sb.append("And");
+                }
+                sb.append(injectedParams[i]);
+            }
+
+            int l = injectedParams.length - e;
+            if (l >0) {
+                sb.append("And").append(Integer.toString(l)).append("More");
+            }
+        }
+        sb.append("_I").append(Long.toHexString(classNumber.getAndIncrement()));
+        return sb.toString();
+    }
 
 	public String replaceArray(String simpleName) {
 		return simpleName.replace('[', 's').replace(']', '_');

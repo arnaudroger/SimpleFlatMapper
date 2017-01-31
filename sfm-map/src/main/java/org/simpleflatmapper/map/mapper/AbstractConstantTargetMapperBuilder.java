@@ -5,12 +5,14 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.PropertyWithGetter;
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.ScoredGetter;
@@ -119,7 +121,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
 
         Mapper<T, S> mapper;
         FieldMapper[] fields = mappers.toArray(new FieldMapper[0]);
-        Instantiator<T, S> instantiator = getInstantiator();
+        BiInstantiator<T, MappingContext<? super T>, S> instantiator = getInstantiator();
         if (mappers.size() < 256) {
             try {
                 mapper =
@@ -171,7 +173,7 @@ public abstract class AbstractConstantTargetMapperBuilder<S, T, K  extends Field
         return 0;
     }
 
-    protected abstract Instantiator<T, S> getInstantiator();
+    protected abstract BiInstantiator<T, MappingContext<? super T>, S> getInstantiator();
 
     protected abstract K newKey(String column, int i, FieldMapperColumnDefinition<K> columnDefinition);
 

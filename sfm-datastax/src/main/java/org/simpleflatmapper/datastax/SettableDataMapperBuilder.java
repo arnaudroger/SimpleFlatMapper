@@ -3,10 +3,12 @@ package org.simpleflatmapper.datastax;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.SettableByIndexData;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 
@@ -20,7 +22,7 @@ public class SettableDataMapperBuilder<T> extends AbstractConstantTargetMapperBu
     }
 
     @Override
-    protected Instantiator<T, SettableByIndexData> getInstantiator() {
+    protected BiInstantiator<T, MappingContext<? super T>, SettableByIndexData> getInstantiator() {
         return new NullInstantiator<T>();
     }
 
@@ -29,9 +31,9 @@ public class SettableDataMapperBuilder<T> extends AbstractConstantTargetMapperBu
         return new DatastaxColumnKey(column, i);
     }
 
-    private static class NullInstantiator<T> implements Instantiator<T, SettableByIndexData> {
+    private static class NullInstantiator<T> implements BiInstantiator<T, MappingContext<? super T>, SettableByIndexData> {
         @Override
-        public BoundStatement newInstance(T o) throws Exception {
+        public BoundStatement newInstance(T o, MappingContext< ? super T> context) throws Exception {
             throw new UnsupportedOperationException();
         }
     }

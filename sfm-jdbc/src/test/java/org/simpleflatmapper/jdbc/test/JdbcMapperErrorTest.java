@@ -3,6 +3,8 @@ package org.simpleflatmapper.jdbc.test;
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.Foo;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
@@ -66,9 +68,9 @@ public class JdbcMapperErrorTest {
 	@Test
 	public void testInstantiatorError() {
 		MapperImpl<ResultSet, DbObject> mapper = new MapperImpl<ResultSet, DbObject>(null, null,
-				new Instantiator<ResultSet, DbObject>() {
+				new BiInstantiator<ResultSet, MappingContext<? super ResultSet>, DbObject>() {
 					@Override
-					public DbObject newInstance(ResultSet s) throws Exception {
+					public DbObject newInstance(ResultSet s, MappingContext<? super ResultSet> context) throws Exception {
 						throw new IOException();
 					}
 				});

@@ -3,6 +3,8 @@ package org.simpleflatmapper.test.map.mapper;
 import org.junit.Test;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.mapper.AbstractConstantTargetMapperBuilder;
@@ -105,10 +107,10 @@ public class AbstractConstantTargetMapperBuilderTest {
         }
 
         @Override
-        protected Instantiator<T, List<Object>> getInstantiator() {
-            return new Instantiator<T, List<Object>>() {
+        protected BiInstantiator<T, MappingContext<? super T>, List<Object>> getInstantiator() {
+            return new BiInstantiator<T, MappingContext<? super T>, List<Object>>() {
                 @Override
-                public List<Object> newInstance(T t) throws Exception {
+                public List<Object> newInstance(T t, MappingContext<? super T> context) throws Exception {
                     return new ArrayList<Object>();
                 }
             };

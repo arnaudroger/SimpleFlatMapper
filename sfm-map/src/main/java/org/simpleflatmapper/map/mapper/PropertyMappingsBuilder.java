@@ -226,7 +226,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	}
 
 
-	public boolean isDirectProperty() {
+	public boolean isSelfProperty() {
 		return  (properties.size() == 1 && properties.get(0) != null && properties.get(0).getPropertyMeta() instanceof SelfPropertyMeta);
 	}
 

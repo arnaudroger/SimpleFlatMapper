@@ -6,6 +6,7 @@ import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
 import org.simpleflatmapper.csv.impl.writer.EndOfRowAppender;
 import org.simpleflatmapper.csv.mapper.FieldMapperToAppendableFactory;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.PropertyWithGetter;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
@@ -15,6 +16,7 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.ConstantTargetFieldMapperFactory;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
@@ -62,7 +64,7 @@ public class CsvWriterBuilder<T> extends AbstractConstantTargetMapperBuilder<App
     }
 
     @Override
-    protected Instantiator<T, Appendable> getInstantiator() {
+    protected BiInstantiator<T, MappingContext<? super T>, Appendable> getInstantiator() {
         return new AppendableInstantiator<T>();
     }
 
@@ -83,9 +85,9 @@ public class CsvWriterBuilder<T> extends AbstractConstantTargetMapperBuilder<App
         fieldMappers.add(new EndOfRowAppender<T>(cellWriter));
     }
 
-    private static class AppendableInstantiator<T> implements Instantiator<T, Appendable> {
+    private static class AppendableInstantiator<T> implements BiInstantiator<T, MappingContext<? super T>, Appendable> {
         @Override
-        public Appendable newInstance(T o) throws Exception {
+        public Appendable newInstance(T o, MappingContext<? super T> context) throws Exception {
             return new StringBuilder();
         }
     }

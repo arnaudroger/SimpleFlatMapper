@@ -68,11 +68,11 @@ public class JoinMapperTest {
             public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
                 return source[key.getIndex()];
             }
-        }, -1);
+        }, 0, -1);
         JoinMapper<Object[], Object[][], DbListObject, RuntimeException> joinMapper =
                 new JoinMapper<Object[], Object[][], DbListObject, RuntimeException>(
                         mapper, RethrowConsumerErrorHandler.INSTANCE,
-                        new BreakDetectorMappingContextFactory<Object[], Object>(new KeysDefinition[] {keysDefinition}, 0, MappingContext.EMPTY_FACTORY),
+                        new BreakDetectorMappingContextFactory<Object[], Object>(new KeysDefinition[] {keysDefinition}, 0, MappingContext.EMPTY_FACTORY, 3),
                         SetRowMapperTest.ENUMARABLE_UNARY_FACTORY
                         );
 

@@ -9,15 +9,15 @@ import java.util.Arrays;
 public class BreakDetectorImpl<S, K> implements BreakDetector<S> {
 
     private final KeysDefinition<S, K> definition;
-    private final BreakDetector<S> parent;
+    private final BreakDetector<S>[] family;
     private Object[] lastValues;
 
     private boolean isBroken = true;
 
 
-    public BreakDetectorImpl(KeysDefinition<S, K> definition, BreakDetector<S> parent) {
+    public BreakDetectorImpl(KeysDefinition<S, K> definition, BreakDetector<S>[] family) {
         this.definition = definition;
-        this.parent = parent;
+        this.family = family;
     }
 
     @Override
@@ -28,7 +28,8 @@ public class BreakDetectorImpl<S, K> implements BreakDetector<S> {
 
         Object[] newValues = definition.getValues(source);
 
-        isBroken = (parent != null && parent.isBroken())
+        int i = definition.getParentIndex();
+        isBroken = (i >= 0 && family[i].isBroken())
                 || lastValues == null
                 || !Arrays.deepEquals(lastValues, newValues);
 

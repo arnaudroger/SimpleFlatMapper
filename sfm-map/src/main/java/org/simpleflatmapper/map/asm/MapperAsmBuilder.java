@@ -6,6 +6,7 @@ import org.simpleflatmapper.ow2asm.MethodVisitor;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.AbstractMapper;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.asm.AsmUtils;
 import org.simpleflatmapper.util.TypeHelper;
@@ -41,7 +42,7 @@ public class MapperAsmBuilder {
 
 	private static final String ABSTRACT_MAPPER_TYPE = AsmUtils.toAsmType(AbstractMapper.class);
 	private static final String FIELD_MAPPER_TYPE = AsmUtils.toAsmType(FieldMapper.class);
-	private static final String INSTANTIATOR_TYPE = AsmUtils.toAsmType(Instantiator.class);
+	private static final String INSTANTIATOR_TYPE = AsmUtils.toAsmType(BiInstantiator.class);
 
     private static final String mappingContextType = AsmUtils.toAsmType(MappingContext.class);
 

@@ -30,4 +30,12 @@ public class MappingContext<S> {
 
     public void handle(S source) {
     }
+
+    public void setCurrentValue(int i, Object value) {
+
+    }
+
+    public Object getCurrentValue(int i) {
+        throw new IllegalStateException();
+    }
 }

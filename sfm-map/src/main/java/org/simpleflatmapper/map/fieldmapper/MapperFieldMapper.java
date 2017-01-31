@@ -14,16 +14,17 @@ public final class MapperFieldMapper<S, T, P> implements FieldMapper<S, T> {
 
 	private final Mapper<S, P> mapper;
 	private final Setter<? super T, ? super P> propertySetter;
-    private final Getter<? super T, ? extends P> propertyGetter;
     private final Predicate<? super S> nullChecker;
-    private final Getter<MappingContext<? super S>, BooleanProvider> breakDetectorProvider;
 
-    public MapperFieldMapper(Mapper<S, P> mapper, Setter<? super T, ? super P> propertySetter, Getter<? super T, ? extends P> propertyGetter, Predicate<? super S> nullChecker, Getter<MappingContext<? super S>, BooleanProvider> breakDetectorProvider) {
+    private final Getter<MappingContext<? super S>, BooleanProvider> breakDetectorProvider;
+    private final int currentValueIndex;
+
+    public MapperFieldMapper(Mapper<S, P> mapper, Setter<? super T, ? super P> propertySetter, Predicate<? super S> nullChecker, Getter<MappingContext<? super S>, BooleanProvider> breakDetectorProvider, int currentValueIndex) {
         this.mapper = requireNonNull("jdbcMapper", mapper);
         this.propertySetter = requireNonNull("propertySetter", propertySetter);
-        this.propertyGetter = requireNonNull("propertyGetter", propertyGetter);
         this.nullChecker = requireNonNull("nullChecker", nullChecker);
         this.breakDetectorProvider = requireNonNull("breakDetectorProvider", breakDetectorProvider);
+        this.currentValueIndex = currentValueIndex;
     }
 
     @Override
@@ -35,12 +36,17 @@ public final class MapperFieldMapper<S, T, P> implements FieldMapper<S, T> {
         boolean isBroken = breakDetectorProvider.get(context).getBoolean();
 
         if (isBroken) {
-            propertySetter.set(target, mapper.map(source, context));
-        } else {
-            P value = propertyGetter.get(target);
-            if (value != null) {
-                mapper.mapTo(source, value, context);
+            P value = mapper.map(source, context);
+            propertySetter.set(target, value);
+            if (context != null) {
+                context.setCurrentValue(currentValueIndex, value);
             }
+        } else {
+            P value = (P) context.getCurrentValue(currentValueIndex);
+            if (value == null) {
+                throw new NullPointerException();
+            }
+            mapper.mapTo(source, value, context);
         }
 	}
 
@@ -49,7 +55,6 @@ public final class MapperFieldMapper<S, T, P> implements FieldMapper<S, T> {
         return "MapperFieldMapper{" +
                 "jdbcMapper=" + mapper +
                 ", propertySetter=" + propertySetter +
-                ", propertyGetter=" + propertyGetter +
                 '}';
     }
 }

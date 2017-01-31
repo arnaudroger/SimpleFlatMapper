@@ -5,18 +5,22 @@ import org.simpleflatmapper.map.MappingContext;
 
 public class BreakDetectorMappingContext<S> extends MappingContext<S> {
 
-    private final BreakDetector<S>[] breakDetectors;
+    private final BreakDetector<S>[] originalOrderBreakDetectors;
+    private final BreakDetector<S>[] processingDectectors;
     private final BreakDetector<S> rootDetector;
     private final MappingContext<S> delegateContext;
+    private final Object[] currentValues;
 
-    public BreakDetectorMappingContext(BreakDetector<S>[] breakDetectors, int rootDetector, MappingContext<S> delegateContext) {
-        this.breakDetectors = breakDetectors;
+    public BreakDetectorMappingContext(BreakDetector<S>[] originalOrderBreakDetectors, BreakDetector<S>[] processingDectectors, int rootDetector, MappingContext<S> delegateContext, Object[] currentValues) {
+        this.originalOrderBreakDetectors = originalOrderBreakDetectors;
+        this.processingDectectors = processingDectectors;
         this.delegateContext = delegateContext;
-        this.rootDetector = rootDetector == -1 ? null : breakDetectors[rootDetector];
+        this.currentValues = currentValues;
+        this.rootDetector = rootDetector == -1 ? null : originalOrderBreakDetectors[rootDetector];
     }
 
     private BreakDetector<S> getBreakDetector(int i) {
-        return breakDetectors != null ? breakDetectors[i] : null;
+        return originalOrderBreakDetectors != null ? originalOrderBreakDetectors[i] : null;
     }
 
     @Override
@@ -32,8 +36,8 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
 
     @Override
     public void handle(S source) {
-        if (breakDetectors == null) return;
-        for(BreakDetector<S> bs : breakDetectors) {
+        if (processingDectectors == null) return;
+        for(BreakDetector<S> bs : processingDectectors) {
             if (bs != null) {
                 bs.handle(source);
             }
@@ -42,8 +46,8 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
 
     @Override
     public void markAsBroken() {
-        if (breakDetectors == null) return;
-        for(BreakDetector<S> bs : breakDetectors) {
+        if (processingDectectors == null) return;
+        for(BreakDetector<S> bs : processingDectectors) {
             if (bs != null) {
                 bs.markAsBroken();
             }
@@ -53,5 +57,15 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
     @Override
     public <T> T context(int i) {
         return delegateContext.context(i);
+    }
+
+    @Override
+    public void setCurrentValue(int i, Object value) {
+        this.currentValues[i] = value;
+    }
+
+    @Override
+    public Object getCurrentValue(int i) {
+        return currentValues[i];
     }
 }

@@ -3,6 +3,8 @@ package org.simpleflatmapper.map.asm;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 
@@ -46,7 +48,7 @@ public class MapperAsmFactory {
     public <S, T> Mapper<S, T> createMapper(final FieldKey<?>[] keys,
                                             final FieldMapper<S, T>[] mappers,
                                             final FieldMapper<S, T>[] constructorMappers,
-                                            final Instantiator<? super S, T> instantiator,
+                                            final BiInstantiator<S, MappingContext<? super S>, T> instantiator,
                                             final Class<? super S> source,
                                             final Class<T> target) throws Exception {
 

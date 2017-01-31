@@ -1,5 +1,6 @@
 package org.simpleflatmapper.map.mapper;
 
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MappingContext;
@@ -8,9 +9,9 @@ import org.simpleflatmapper.util.ErrorHelper;
 
 public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
 	
-	private final Instantiator<? super S, T> instantiator;
+	private final BiInstantiator<? super S, MappingContext<? super S>, T> instantiator;
 
-	public AbstractMapper(final Instantiator<? super S, T> instantiator) {
+	public AbstractMapper(final BiInstantiator<? super S, MappingContext<? super S>, T> instantiator) {
 		this.instantiator = instantiator;
     }
 
@@ -22,7 +23,7 @@ public abstract class AbstractMapper<S, T> implements Mapper<S, T> {
     @Override
 	public final T map(final S source, final MappingContext<? super S> mappingContext) throws MappingException {
 		try {
-			final T target = instantiator.newInstance(source);
+			final T target = instantiator.newInstance(source, mappingContext);
 			mapFields(source, target, mappingContext);
 			return target;
 		} catch(Exception e) {

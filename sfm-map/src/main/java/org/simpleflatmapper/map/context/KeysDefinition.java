@@ -8,10 +8,12 @@ public class KeysDefinition<S, K> {
     private final KeySourceGetter<K, S> keySourceGetter;
     private final List<K> keys;
     private final int parentIndex;
+    private final int currentIndex;
 
-    public KeysDefinition(List<K> keys, KeySourceGetter<K, S> keySourceGetter, int parentIndex) {
+    public KeysDefinition(List<K> keys, KeySourceGetter<K, S> keySourceGetter, int currentIndex, int parentIndex) {
         this.keys = keys;
         this.keySourceGetter = keySourceGetter;
+        this.currentIndex = currentIndex;
         this.parentIndex = parentIndex;
     }
 
@@ -33,5 +35,9 @@ public class KeysDefinition<S, K> {
 
     public int getParentIndex() {
         return parentIndex;
+    }
+
+    public int getIndex() {
+        return currentIndex;
     }
 }

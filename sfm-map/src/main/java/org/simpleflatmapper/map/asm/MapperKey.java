@@ -2,6 +2,8 @@ package org.simpleflatmapper.map.asm;
 
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;
 
 import java.util.Arrays;
@@ -19,7 +21,7 @@ public class MapperKey<K extends  FieldKey<K>> {
     public MapperKey(K[] keys,
                      FieldMapper<?, ?>[] fieldMappers,
                      FieldMapper<?, ?>[] constructorFieldMappers,
-                     Instantiator<?, ?> instantiator,
+                     BiInstantiator<?, ?, ?> instantiator,
                      Class<?> target, Class<?> source) {
         this.keys = keys;
         this.source = source;

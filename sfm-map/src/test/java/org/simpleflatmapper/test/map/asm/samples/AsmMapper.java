@@ -7,6 +7,7 @@ import org.simpleflatmapper.map.fieldmapper.FieldMapperImpl;
 import org.simpleflatmapper.map.fieldmapper.IntFieldMapper;
 import org.simpleflatmapper.map.fieldmapper.LongFieldMapper;
 import org.simpleflatmapper.map.mapper.AbstractMapper;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.test.beans.DbObject;
 
@@ -20,7 +21,7 @@ public final class AsmMapper extends AbstractMapper<InputStream, DbObject> {
 	private final FieldMapperImpl<InputStream, DbObject, ?> mapper4;
 	
 	@SuppressWarnings("unchecked")
-	public AsmMapper(FieldMapper<InputStream, DbObject>[] mappers, FieldMapper<InputStream, DbObject>[] mappers2, Instantiator<InputStream, DbObject> instantiator, MappingContextFactory<InputStream> mappingContextFactory) {
+	public AsmMapper(FieldMapper<InputStream, DbObject>[] mappers, FieldMapper<InputStream, DbObject>[] mappers2, BiInstantiator<InputStream, MappingContext<? super InputStream>, DbObject> instantiator, MappingContextFactory<InputStream> mappingContextFactory) {
 		super(instantiator);
 		mapper1 = (LongFieldMapper<InputStream, DbObject>) mappers[0];
 		mapper2 = (IntFieldMapper<InputStream, DbObject>) mappers[2];

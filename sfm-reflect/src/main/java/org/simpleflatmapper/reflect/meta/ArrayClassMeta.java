@@ -128,11 +128,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 			return new IntFactory<Setter<T, E>>() {
 				@Override
 				public Setter<T, E> newInstance(int i) {
-					if (isVertical.getAsBoolean() && i == 0) {
-						return new AppendSetSetter();
-					} else {
-						return (Setter<T, E>) NullSetter.NULL_SETTER;
-					}
+					return new AppendSetSetter();
 				}
 			};
 		}

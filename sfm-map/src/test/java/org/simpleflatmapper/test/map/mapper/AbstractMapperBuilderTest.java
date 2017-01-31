@@ -45,11 +45,13 @@ import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 //IFJAVA8_START
 import java.util.Optional;
+import java.util.Set;
 //IFJAVA8_END
 
 
@@ -146,6 +148,41 @@ public class AbstractMapperBuilderTest {
         assertEquals(2l, map.get(2).getId());
         assertEquals("name2", map.get(2).getName());
     }
+
+    @Test
+    public void testSetDbObject() {
+        ClassMeta<Set<DbObject>> classMeta =
+                ReflectionService.disableAsm().<Set<DbObject>>getClassMeta(new TypeReference<Set<DbObject>>() {}.getType());
+        Mapper<Object[], Set<DbObject>> mapper =
+                new SampleMapperBuilder<Set<DbObject>>(classMeta)
+                        .addMapping("1_id")
+                        .addMapping("1_name")
+                        .addMapping("2_id")
+                        .addMapping("2_name")
+                        .mapper();
+
+        Set<DbObject> map = mapper.map(new Object[]{1l, "name1", 2l, "name2"});
+
+        assertEquals(2, map.size());
+
+        Iterator<DbObject> it = map.iterator();
+        DbObject o = it.next();
+        if (o.getId() == 1l) {
+            assertEquals("name1", o.getName());
+
+            o = it.next();
+            assertEquals(2l, o.getId());
+            assertEquals("name2", o.getName());
+        } else {
+            assertEquals("name2", o.getName());
+
+            o = it.next();
+            assertEquals(1l, o.getId());
+            assertEquals("name1", o.getName());
+
+        }
+    }
+
     @Test
     public void testMapDbObject() {
         ClassMeta<Map<Long, DbObject>> classMeta =

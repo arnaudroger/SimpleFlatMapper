@@ -5,6 +5,7 @@ import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
 import org.simpleflatmapper.reflect.Instantiator;
@@ -26,9 +27,9 @@ public class MapperAsmFactoryTest {
 				asmFactory.createMapper(new SampleFieldKey[0],
 				(FieldMapper<Object, DbObject>[]) new FieldMapper[]{},
 				(FieldMapper<Object, DbObject>[]) new FieldMapper[]{},
-				new Instantiator<Object, DbObject>() {
+				new BiInstantiator<Object, MappingContext<? super Object>, DbObject>() {
 					@Override
-					public DbObject newInstance(Object s) throws Exception {
+					public DbObject newInstance(Object s, MappingContext<? super Object> mappingContext) throws Exception {
 						throw new IOException("Error");
 					}
 				},Object.class,
@@ -56,9 +57,9 @@ public class MapperAsmFactoryTest {
 						}
 				},
 				(FieldMapper<Object, DbObject>[]) new FieldMapper[]{},
-				new Instantiator<Object, DbObject>() {
+				new BiInstantiator<Object, MappingContext<? super Object>, DbObject>() {
 					@Override
-					public DbObject newInstance(Object s) throws Exception {
+					public DbObject newInstance(Object s, MappingContext<? super Object> context) throws Exception {
 						return new DbObject();
 					}
 				}, Object.class,

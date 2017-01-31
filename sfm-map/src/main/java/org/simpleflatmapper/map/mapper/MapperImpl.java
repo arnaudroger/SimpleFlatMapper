@@ -2,6 +2,7 @@ package org.simpleflatmapper.map.mapper;
 
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Instantiator;
 
 import java.util.Arrays;
@@ -14,7 +15,7 @@ public class MapperImpl<S, T> extends AbstractMapper<S, T> {
 
     public MapperImpl(final FieldMapper<S, T>[] fieldMappers,
                       final FieldMapper<S, T>[] constructorMappers,
-                      final Instantiator<? super S, T> instantiator) {
+                      final BiInstantiator<? super S,MappingContext<? super S>, T> instantiator) {
 		super(instantiator);
 		this.fieldMappers = fieldMappers;
         this.constructorMappers = constructorMappers;

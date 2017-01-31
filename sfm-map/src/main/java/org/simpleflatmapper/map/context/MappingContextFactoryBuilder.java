@@ -98,22 +98,36 @@ public class MappingContextFactoryBuilder<S, K> {
         if (!builders.isEmpty()) {
             KeysDefinition<S, K>[] keyDefinions = new KeysDefinition[builders.get(builders.size() - 1).currentIndex + 1];
 
-            int rootDetector = -1;
+            int rootDetector = getRootDetector(builders);
+
+
             for (int i = 0; i < builders.size(); i++) {
                 final MappingContextFactoryBuilder<S, K> builder = builders.get(i);
-
-                final KeysDefinition<S, K> keyDefinition = builder.newKeysDefinition(builder.getParentNonEmptyIndex());
-                keyDefinions[builder.currentIndex] = keyDefinition;
-                if (builder.currentIndex == 0 || (rootDetector == -1 && builder.isEligibleAsRootKey())) {
-                    rootDetector = builder.currentIndex;
+                int parentIndex = builder.getParentNonEmptyIndex();
+                if (parentIndex == -1 && rootDetector != builder.currentIndex()) {
+                    parentIndex = rootDetector;
                 }
+                final KeysDefinition<S, K> keyDefinition = builder.newKeysDefinition(builder.currentIndex, parentIndex);
+                keyDefinions[builder.currentIndex] = keyDefinition;
             }
 
-            context = new BreakDetectorMappingContextFactory<S, K>(keyDefinions, rootDetector, context);
+            context = new BreakDetectorMappingContextFactory<S, K>(keyDefinions, rootDetector, context, counter.value);
         }
 
         return context;
 
+    }
+
+    private int getRootDetector(List<MappingContextFactoryBuilder<S, K>> builders) {
+        int rootDetector = -1;
+        // calculate rootDetector
+        for (int i = 0; i < builders.size(); i++) {
+            final MappingContextFactoryBuilder<S, K> builder = builders.get(i);
+            if (builder.currentIndex == 0 || (rootDetector == -1 && builder.isEligibleAsRootKey())) {
+                rootDetector = builder.currentIndex;
+            }
+        }
+        return rootDetector;
     }
 
     private boolean isEligibleAsRootKey() {
@@ -134,8 +148,8 @@ public class MappingContextFactoryBuilder<S, K> {
         }
     }
 
-    private KeysDefinition<S, K> newKeysDefinition(int parent) {
-        return new KeysDefinition<S, K>(keys, keySourceGetter, parent);
+    private KeysDefinition<S, K> newKeysDefinition(int currentIndex, int parent) {
+        return new KeysDefinition<S, K>(keys, keySourceGetter, currentIndex, parent);
     }
 
 
@@ -172,6 +186,10 @@ public class MappingContextFactoryBuilder<S, K> {
 
     public boolean isRoot() {
         return parent == null;
+    }
+
+    public int currentIndex() {
+        return currentIndex;
     }
 
     private static class Counter {

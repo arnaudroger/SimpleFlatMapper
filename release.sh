@@ -29,7 +29,9 @@ mvn release:perform
 java9
 git reset --hard
 cp tmp/release.properties .
+export MAVEN_OPTS="--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED "
 mvn release:perform
+unset MAVEN_OPTS
 
 
 git reset --hard && git pull --rebase

@@ -74,7 +74,7 @@ public class MapperInstantiatorFactory {
         }
 
         if (TypeHelper.isArray(target)) {
-            return new BiToUnaryInstantiator<S, MappingContext<? super S>, T>(instantiatorFactory.getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentTypeOfListOrArray(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, K, D>()).maxIndex + 1));
+            return new BiToUnaryInstantiator<S, MappingContext<? super S>, T>(instantiatorFactory.<S, T>getArrayInstantiator(TypeHelper.toClass(TypeHelper.getComponentTypeOfListOrArray(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, K, D>()).maxIndex + 1));
         } else {
             return instantiatorFactory.<S, MappingContext<? super S>, T>getBiInstantiator(target, TypeHelper.<S>toClass(source), MappingContext.class, propertyMappingsBuilder.getPropertyFinder().getEligibleInstantiatorDefinitions(), constructorParameterGetterMap,useAsmIfEnabled);
         }

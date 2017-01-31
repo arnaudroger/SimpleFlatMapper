@@ -2,6 +2,7 @@ package org.simpleflatmapper.test.map.mapper;
 
 import org.junit.Test;
 import org.simpleflatmapper.map.Mapper;
+import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.MapperBiFactoryAdapter;
 import org.simpleflatmapper.util.Predicate;
 
@@ -19,15 +20,18 @@ public class MapperBiFactoryAdapterTest {
         Predicate<Object> nullChecker = mock(Predicate.class);
         Mapper<Object, String> mapper = mock(Mapper.class);
 
+        MappingContext mappingContext = mock(MappingContext.class);
+
         MapperBiFactoryAdapter<Object, String> getter =
                 new MapperBiFactoryAdapter<Object, String>(mapper, nullChecker, 0);
 
-        when(mapper.map(any(), any())).thenReturn("HEllo", "Bye");
+        Object o = new Object();
+
+        when(mapper.map(o, mappingContext)).thenReturn("HEllo", "Bye");
         when(nullChecker.test(any())).thenReturn(false, true);
 
-        assertEquals("HEllo", getter.newInstance(null, null));
+        assertEquals("HEllo", getter.newInstance(o, mappingContext));
         assertNull(getter.newInstance(null, null));
         getter.toString();
     }
-
 }

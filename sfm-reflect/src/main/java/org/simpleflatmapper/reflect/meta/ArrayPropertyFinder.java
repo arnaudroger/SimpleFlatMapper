@@ -31,12 +31,12 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
         ArrayClassMeta<T, E> arrayClassMeta = (ArrayClassMeta<T, E>) classMeta;
         return new ArrayElementPropertyMeta<T, E>(name,
                 classMeta.getType(), arrayClassMeta.getReflectionService(), index, arrayClassMeta,
-                arrayClassMeta.newSetterFactory(new BooleanSupplier() {
+                arrayClassMeta.<T, E>newSetterFactory(new BooleanSupplier() {
                     @Override
                     public boolean getAsBoolean() {
                         return elements.size() == 1;
                     }
-                }), arrayClassMeta.newGetterFactory());
+                }), arrayClassMeta.<T, E>newGetterFactory());
     }
 
     @Override

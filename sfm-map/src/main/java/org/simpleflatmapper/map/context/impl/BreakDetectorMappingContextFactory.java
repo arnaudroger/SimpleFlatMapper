@@ -77,7 +77,7 @@ public class BreakDetectorMappingContextFactory<S, K> implements MappingContextF
         for (int i = 0; i < definitions.length; i++) {
             KeysDefinition<S, K> definition = definitions[i];
 
-            BreakDetectorImpl<S, K> breakDetector = new BreakDetectorImpl<>(definition, originalOrderedBreakDetectors);
+            BreakDetectorImpl<S, K> breakDetector = new BreakDetectorImpl<S, K>(definition, originalOrderedBreakDetectors);
 
             processingOrderBreakDetectors[i] = breakDetector;
             originalOrderedBreakDetectors[definition.getIndex()] = breakDetector;

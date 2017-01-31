@@ -75,7 +75,7 @@ public class ArrayMetaDataTest {
         ArrayElementPropertyMeta<Object, Object> meta0 = (ArrayElementPropertyMeta<Object, Object>) _0;
         assertEquals(0, meta0.getIndex());
 
-        Set<String> list = new HashSet<>();
+        Set<String> list = new HashSet<String>();
 
         assertNull(meta0.getGetter().get(list));
         meta0.getSetter().set(list, "aa");

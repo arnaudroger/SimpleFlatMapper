@@ -45,6 +45,7 @@ import static org.simpleflatmapper.ow2asm.Opcodes.V1_6;
 public class BiInstantiatorBuilder {
 
     public static final Class<BiInstantiator> BI_INSTANTIATOR_CLASS = BiInstantiator.class;
+    public static final Class<Instantiator> INSTANTIATOR_CLASS = Instantiator.class;
 
     public static <S1, S2>  byte[] createInstantiator(final String className, final Class<?> s1, final Class<?> s2,
                                                       final ExecutableInstantiatorDefinition instantiatorDefinition, final Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections) throws Exception {
@@ -97,8 +98,8 @@ public class BiInstantiatorBuilder {
                     cw.visitField(
                             ACC_FINAL,
                             "builderInstantiator",
-                            "L" + AsmUtils.toAsmType(BI_INSTANTIATOR_CLASS) + ";",
-                            "L" + AsmUtils.toAsmType(BI_INSTANTIATOR_CLASS) + "<Ljava/lang/Void;L"
+                            "L" + AsmUtils.toAsmType(INSTANTIATOR_CLASS) + ";",
+                            "L" + AsmUtils.toAsmType(INSTANTIATOR_CLASS) + "<Ljava/lang/Void;L"
                                     + AsmUtils.toAsmType(getTargetType(instantiatorDefinition.getBuilderInstantiator())) +  ";>;", null);
             fv.visitEnd();
         }
@@ -124,9 +125,9 @@ public class BiInstantiatorBuilder {
     private static <S1, S2> void appendInitBuilder(Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections, ClassWriter cw, String s1, String s2, String classType, BuilderInstantiatorDefinition instantiatorDefinition) {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "<init>",
-                "(Ljava/util/Map;L" + AsmUtils.toAsmType(BI_INSTANTIATOR_CLASS) + ";)V",
+                "(Ljava/util/Map;L" + AsmUtils.toAsmType(INSTANTIATOR_CLASS) + ";)V",
                 "(Ljava/util/Map<Ljava.lang.String;L" + AsmUtils.toAsmType(BiFactory.class)  +"<" + AsmUtils.toTargetTypeDeclaration(s1) + "*" + AsmUtils.toTargetTypeDeclaration(s2) + "*>;>;" +
-                        "L" + AsmUtils.toAsmType(BI_INSTANTIATOR_CLASS) + "<Ljava/lang/Void;L" + AsmUtils.toAsmType(getTargetType(instantiatorDefinition.getBuilderInstantiator())) +";>;)V", null);
+                        "L" + AsmUtils.toAsmType(INSTANTIATOR_CLASS) + "<Ljava/lang/Void;L" + AsmUtils.toAsmType(getTargetType(instantiatorDefinition.getBuilderInstantiator())) +";>;)V", null);
 
         mv.visitCode();
         mv.visitVarInsn(ALOAD, 0);
@@ -134,7 +135,7 @@ public class BiInstantiatorBuilder {
 
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(ALOAD, 2);
-        mv.visitFieldInsn(PUTFIELD, classType, "builderInstantiator", "L" + AsmUtils.toAsmType(BI_INSTANTIATOR_CLASS) + ";");
+        mv.visitFieldInsn(PUTFIELD, classType, "builderInstantiator", "L" + AsmUtils.toAsmType(INSTANTIATOR_CLASS) + ";");
 
         for(Entry<Parameter, BiFactory<? super S1, ? super S2, ?>> entry : injections.entrySet()) {
             String name = entry.getKey().getName();
@@ -289,9 +290,9 @@ public class BiInstantiatorBuilder {
 
 
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD,classType, "builderInstantiator", AsmUtils.toTargetTypeDeclaration(BI_INSTANTIATOR_CLASS));
+        mv.visitFieldInsn(GETFIELD,classType, "builderInstantiator", AsmUtils.toTargetTypeDeclaration(INSTANTIATOR_CLASS));
         mv.visitInsn(ACONST_NULL);
-        mv.visitMethodInsn(INVOKEINTERFACE, AsmUtils.toAsmType(BI_INSTANTIATOR_CLASS), "newInstance", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
+        mv.visitMethodInsn(INVOKEINTERFACE, AsmUtils.toAsmType(INSTANTIATOR_CLASS), "newInstance", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
         final Type builderClass = getTargetType(instantiatorDefinition.getBuilderInstantiator());
         final String builderType = AsmUtils.toAsmType(builderClass);
         mv.visitTypeInsn(CHECKCAST, builderType);

@@ -3,6 +3,7 @@ package org.simpleflatmapper.reflect.asm;
 import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
+import org.simpleflatmapper.reflect.getter.BiFunctionGetter;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.util.BiFunction;
 
@@ -42,7 +43,15 @@ public class BiInstantiatorKey {
 		InjectedParam[] names = new InjectedParam[injections.size()];
 		int i = 0;
 		for(Map.Entry<Parameter, BiFunction<? super S1, ? super S2, ?>> e : injections.entrySet()) {
-			names[i++] = new InjectedParam(e.getKey().getName(), e.getValue().getClass());
+			BiFunction<? super S1, ? super S2, ?> function = e.getValue();
+
+			Class<?> functionClass = function.getClass();
+
+			if (function instanceof BiFunctionGetter) {
+				functionClass = ((BiFunctionGetter)function).getGetter().getClass();
+			}
+
+			names[i++] = new InjectedParam(e.getKey().getName(), functionClass);
 		}
 		Arrays.sort(names, new Comparator<InjectedParam>() {
 			@Override

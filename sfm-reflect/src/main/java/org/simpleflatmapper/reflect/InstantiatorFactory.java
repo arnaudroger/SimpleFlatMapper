@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class InstantiatorFactory {
 	private final AsmFactory asmFactory;
@@ -53,6 +54,7 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings("unchecked")
 	public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(InstantiatorDefinition instantiatorDefinition, Class<?> s1, Class<?> s2, Map<org.simpleflatmapper.reflect.Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) {
+		checkParameters(instantiatorDefinition, injections.keySet());
 		if (asmFactory != null  && useAsmIfEnabled) {
 			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
 				ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
@@ -102,6 +104,7 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings("unchecked")
 	public <S, T> Instantiator<S, T> getInstantiator(InstantiatorDefinition instantiatorDefinition, Class<S> source, Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
+		checkParameters(instantiatorDefinition, injections.keySet());
 		if (asmFactory != null  && useAsmIfEnabled) {
 			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
 				ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
@@ -133,6 +136,14 @@ public class InstantiatorFactory {
 				return builderInstantiator((BuilderInstantiatorDefinition)instantiatorDefinition, injections, useAsmIfEnabled);
 			default:
 				throw new IllegalArgumentException("Unsupported executable type " + instantiatorDefinition);
+		}
+	}
+
+	private void checkParameters(InstantiatorDefinition instantiatorDefinition, Set<Parameter> parameters) {
+		for(Parameter p : parameters) {
+			if (!instantiatorDefinition.hasParam(p)) {
+				throw new IllegalArgumentException("Could not find " + p + " in " + instantiatorDefinition + " raise issue");
+			}
 		}
 	}
 

@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class BiInstantiatorFactoryTest {
 
@@ -211,6 +212,32 @@ public class BiInstantiatorFactoryTest {
 		ClassExample c2  = instantiator2.newInstance(null, null);
 		assertEquals("str2", c2.getStr());
 		assertEquals(13, c2.getVal1());
+	}
+
+
+	@Test
+	public void testBiInstantiatorFailOnParameterMissMatch() throws Exception {
+		Map<Parameter, BiFunction<? super Object, ? super Object, ?>> injections1 = new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>();
+
+
+		injections1.put(new Parameter(0, "str", String.class), new BiFunctionGetter<Object, Object, String>(new ConstantGetter<Object, String>("str1")));
+		injections1.put(new Parameter(1, "val2", int.class), new BiFunctionGetter<Object, Object, Integer>(new ConstantGetter<Object, Integer>(12)));
+
+
+		List<InstantiatorDefinition> constructors = ReflectionService.newInstance().extractInstantiator(ClassExample.class);
+
+		try {
+
+			final BiInstantiator<Object, Object, ClassExample> instantiator1 =
+					ASM.getBiInstantiator(ClassExample.class, Object.class, Object.class,
+							constructors,
+							injections1,
+							true);
+			fail();
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+
 	}
 
 	public static class ClassExample {

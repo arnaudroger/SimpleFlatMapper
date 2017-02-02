@@ -1,12 +1,10 @@
 package org.simpleflatmapper.reflect.impl;
 
 import org.simpleflatmapper.reflect.BiInstantiator;
-import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
-import org.simpleflatmapper.util.BiFactory;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ErrorHelper;
 
 import java.lang.reflect.Constructor;
@@ -20,7 +18,7 @@ public final class InjectConstructorBiInstantiator<S1, S2, T> implements BiInsta
 	private final InstantiatorDefinition instantiatorDefinition;
 
 	@SuppressWarnings("unchecked")
-	public InjectConstructorBiInstantiator(ExecutableInstantiatorDefinition instantiatorDefinition, Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections) {
+	public InjectConstructorBiInstantiator(ExecutableInstantiatorDefinition instantiatorDefinition, Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections) {
 		this.argBuilder = new BiArgumentBuilder<S1, S2>(instantiatorDefinition, injections);
 		this.constructor = (Constructor<? extends T>) instantiatorDefinition.getExecutable();
 		this.instantiatorDefinition = instantiatorDefinition;

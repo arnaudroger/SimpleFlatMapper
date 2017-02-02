@@ -7,15 +7,13 @@ import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.reflect.BiInstantiator;
-import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
-import org.simpleflatmapper.util.BiFactory;
+import org.simpleflatmapper.util.BiFunction;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -81,7 +79,7 @@ public class JdbcMapperBuilderImplTest {
 				return new InstantiatorFactory(null) {
 
 					@Override
-					public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(Type target, Class<?> s1, Class<?> s2, List<InstantiatorDefinition> constructors, Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
+					public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(Type target, Class<?> s1, Class<?> s2, List<InstantiatorDefinition> constructors, Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
 						throw new UnsupportedOperationException();
 					}
 				};

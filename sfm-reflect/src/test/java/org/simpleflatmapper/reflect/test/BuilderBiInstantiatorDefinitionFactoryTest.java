@@ -3,20 +3,15 @@ package org.simpleflatmapper.reflect.test;
 import org.junit.Test;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
-import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
-import org.simpleflatmapper.reflect.getter.ConstantGetter;
-import org.simpleflatmapper.reflect.getter.ConstantIntGetter;
 import org.simpleflatmapper.reflect.impl.BuilderBiInstantiator;
-import org.simpleflatmapper.reflect.impl.BuilderInstantiator;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
-import org.simpleflatmapper.util.BiFactory;
-import org.simpleflatmapper.util.ConstantBiFactory;
+import org.simpleflatmapper.util.BiFunction;
+import org.simpleflatmapper.util.ConstantBiFunction;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -59,10 +54,10 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
         assertEquals("name", parameters[1].getName());
         assertEquals("id", parameters[0].getName());
 
-        Map<Parameter, BiFactory<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFactory<? super Void, ? super Object, ?>>();
+        Map<Parameter, BiFunction<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFunction<? super Void, ? super Object, ?>>();
 
-        params.put(parameters[1], new ConstantBiFactory<Void, Object, String>("myname"));
-        params.put(parameters[0], new ConstantBiFactory<Void, Object, Integer>(3));
+        params.put(parameters[1], new ConstantBiFunction<Void, Object, String>("myname"));
+        params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(3));
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
@@ -92,9 +87,9 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
             }
         });
 
-        Map<Parameter, BiFactory<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFactory<? super Void, ? super Object, ?>>();
-        params.put(parameters[1], new ConstantBiFactory<Void, Object, String>("myname"));
-        params.put(parameters[0], new ConstantBiFactory<Void, Object, Integer>(3));
+        Map<Parameter, BiFunction<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFunction<? super Void, ? super Object, ?>>();
+        params.put(parameters[1], new ConstantBiFunction<Void, Object, String>("myname"));
+        params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(3));
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
@@ -124,9 +119,9 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
             }
         });
 
-        Map<Parameter, BiFactory<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFactory<? super Void, ? super Object, ?>>();
-        params.put(parameters[1], new ConstantBiFactory<Void, Object, String>("myname"));
-        params.put(parameters[0], new ConstantBiFactory<Void, Object, Integer>(3));
+        Map<Parameter, BiFunction<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFunction<? super Void, ? super Object, ?>>();
+        params.put(parameters[1], new ConstantBiFunction<Void, Object, String>("myname"));
+        params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(3));
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
@@ -156,9 +151,9 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
                 return o1.getName().compareTo(o2.getName());
             }
         });
-        Map<Parameter, BiFactory<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFactory<? super Void, ? super Object, ?>>();
-        params.put(parameters[2], new ConstantBiFactory<Void, Object, String>("zrux"));
-        params.put(parameters[0], new ConstantBiFactory<Void, Object, Integer>(3));
+        Map<Parameter, BiFunction<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFunction<? super Void, ? super Object, ?>>();
+        params.put(parameters[2], new ConstantBiFunction<Void, Object, String>("zrux"));
+        params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(3));
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
@@ -187,9 +182,9 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
                 return o1.getName().compareTo(o2.getName());
             }
         });
-        Map<Parameter, BiFactory<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFactory<? super Void, ? super Object, ?>>();
-        params.put(parameters[2], new ConstantBiFactory<Void, Object, String>("zrux"));
-        params.put(parameters[0], new ConstantBiFactory<Void, Object, Integer>(3));
+        Map<Parameter, BiFunction<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFunction<? super Void, ? super Object, ?>>();
+        params.put(parameters[2], new ConstantBiFunction<Void, Object, String>("zrux"));
+        params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(3));
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null, true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory

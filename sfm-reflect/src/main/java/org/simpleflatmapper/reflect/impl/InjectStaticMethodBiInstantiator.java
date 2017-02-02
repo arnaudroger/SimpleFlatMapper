@@ -1,12 +1,10 @@
 package org.simpleflatmapper.reflect.impl;
 
 import org.simpleflatmapper.reflect.BiInstantiator;
-import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
-import org.simpleflatmapper.util.BiFactory;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ErrorHelper;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +18,7 @@ public final class InjectStaticMethodBiInstantiator<S1, S2, T> implements BiInst
 	private final BiArgumentBuilder<S1, S2> argBuilder;
 	private final InstantiatorDefinition instantiatorDefinition;
 
-	public InjectStaticMethodBiInstantiator(ExecutableInstantiatorDefinition instantiatorDefinition, Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections) {
+	public InjectStaticMethodBiInstantiator(ExecutableInstantiatorDefinition instantiatorDefinition, Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections) {
 		this.argBuilder = new BiArgumentBuilder<S1, S2>(instantiatorDefinition, injections);
 		this.method = (Method) instantiatorDefinition.getExecutable();
 		this.declaringClass = method.getDeclaringClass();

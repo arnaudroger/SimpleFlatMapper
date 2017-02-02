@@ -4,7 +4,7 @@ import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
-import org.simpleflatmapper.util.BiFactory;
+import org.simpleflatmapper.util.BiFunction;
 
 import java.lang.reflect.Member;
 import java.util.Arrays;
@@ -27,7 +27,7 @@ public class BiInstantiatorKey {
 	public BiInstantiatorKey(Class<?> target, Class<?> s1, Class<?> s2) throws NoSuchMethodException, SecurityException {
 		this(target.getConstructor(), null, s1, s2);
 	}
-	public <S1, S2> BiInstantiatorKey(InstantiatorDefinition instantiatorDefinition, Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections, Class<?> s1, Class<?> s2) {
+	public <S1, S2> BiInstantiatorKey(InstantiatorDefinition instantiatorDefinition, Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, Class<?> s1, Class<?> s2) {
 		this(getConstructor(instantiatorDefinition), paramAndBuilderFactoryClass(injections), s1, s2);
 	}
 
@@ -38,10 +38,10 @@ public class BiInstantiatorKey {
 			return ((BuilderInstantiatorDefinition)def).getBuildMethod();
 		}
 	}
-	private static <S1, S2> InjectedParam[] paramAndBuilderFactoryClass(Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections) {
+	private static <S1, S2> InjectedParam[] paramAndBuilderFactoryClass(Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections) {
 		InjectedParam[] names = new InjectedParam[injections.size()];
 		int i = 0;
-		for(Map.Entry<Parameter, BiFactory<? super S1, ? super S2, ?>> e : injections.entrySet()) {
+		for(Map.Entry<Parameter, BiFunction<? super S1, ? super S2, ?>> e : injections.entrySet()) {
 			names[i++] = new InjectedParam(e.getKey().getName(), e.getValue().getClass());
 		}
 		Arrays.sort(names, new Comparator<InjectedParam>() {

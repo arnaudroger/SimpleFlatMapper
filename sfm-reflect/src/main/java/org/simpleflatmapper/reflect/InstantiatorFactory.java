@@ -4,7 +4,9 @@ import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.getter.IdentityGetter;
 import org.simpleflatmapper.reflect.impl.BuilderBiInstantiator;
 import org.simpleflatmapper.reflect.impl.BuilderInstantiator;
+import org.simpleflatmapper.reflect.impl.EmptyConstructorBiInstantiator;
 import org.simpleflatmapper.reflect.impl.EmptyConstructorInstantiator;
+import org.simpleflatmapper.reflect.impl.EmptyStaticMethodBiInstantiator;
 import org.simpleflatmapper.reflect.impl.EmptyStaticMethodInstantiator;
 import org.simpleflatmapper.reflect.impl.InjectConstructorBiInstantiator;
 import org.simpleflatmapper.reflect.impl.InjectConstructorInstantiator;
@@ -12,7 +14,7 @@ import org.simpleflatmapper.reflect.impl.InjectStaticMethodBiInstantiator;
 import org.simpleflatmapper.reflect.impl.InjectStaticMethodInstantiator;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
-import org.simpleflatmapper.util.BiFactory;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ErrorHelper;
 
 import java.lang.reflect.*;
@@ -38,7 +40,7 @@ public class InstantiatorFactory {
 
 
 	@SuppressWarnings("unchecked")
-	public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(Type target, final Class<?> s1, final Class<?> s2, List<InstantiatorDefinition> constructors, Map<org.simpleflatmapper.reflect.Parameter, BiFactory<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
+	public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(Type target, final Class<?> s1, final Class<?> s2, List<InstantiatorDefinition> constructors, Map<org.simpleflatmapper.reflect.Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
 		final InstantiatorDefinition instantiatorDefinition = getSmallerConstructor(constructors);
 
 		if (instantiatorDefinition == null) {
@@ -50,7 +52,7 @@ public class InstantiatorFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(InstantiatorDefinition instantiatorDefinition, Class<?> s1, Class<?> s2, Map<org.simpleflatmapper.reflect.Parameter, BiFactory<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) {
+	public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(InstantiatorDefinition instantiatorDefinition, Class<?> s1, Class<?> s2, Map<org.simpleflatmapper.reflect.Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) {
 		if (asmFactory != null  && useAsmIfEnabled) {
 			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
 				ExecutableInstantiatorDefinition executableInstantiatorDefinition = (ExecutableInstantiatorDefinition) instantiatorDefinition;
@@ -188,18 +190,18 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
 	private <S1, S2, T> BiInstantiator<S1, S2, T>  builderBiInstantiator(BuilderInstantiatorDefinition instantiatorDefinition,
-														  Map<org.simpleflatmapper.reflect.Parameter, BiFactory<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) {
+																		 Map<org.simpleflatmapper.reflect.Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) {
 
 		final Instantiator<Void, ?> buildInstantiator =
 				getInstantiator(instantiatorDefinition.getBuilderInstantiator(), Void.class,
 						new HashMap<org.simpleflatmapper.reflect.Parameter, Getter<? super Void, ?>>(), useAsmIfEnabled);
-		List<MethodFactoryPair<S1, S2>> chainedArguments = new ArrayList<MethodFactoryPair<S1, S2>>();
-		List<MethodFactoryPair<S1, S2>> unchainedArguments = new ArrayList<MethodFactoryPair<S1, S2>>();
+		List<MethodBiFunctionPair<S1, S2>> chainedArguments = new ArrayList<MethodBiFunctionPair<S1, S2>>();
+		List<MethodBiFunctionPair<S1, S2>> unchainedArguments = new ArrayList<MethodBiFunctionPair<S1, S2>>();
 
 		int i = 0;
-		for(Map.Entry<org.simpleflatmapper.reflect.Parameter, BiFactory<? super S1, ? super S2, ?>> e : injections.entrySet()) {
-			final MethodFactoryPair<S1, S2> arguments =
-					new MethodFactoryPair<S1, S2>(instantiatorDefinition.getSetters().get(e.getKey()), e.getValue());
+		for(Map.Entry<org.simpleflatmapper.reflect.Parameter, BiFunction<? super S1, ? super S2, ?>> e : injections.entrySet()) {
+			final MethodBiFunctionPair<S1, S2> arguments =
+					new MethodBiFunctionPair<S1, S2>(instantiatorDefinition.getSetters().get(e.getKey()), e.getValue());
 			if (Void.TYPE.equals(arguments.getMethod().getReturnType())) {
 				unchainedArguments.add(arguments);
 			} else {
@@ -208,17 +210,17 @@ public class InstantiatorFactory {
 		}
 
 		return new BuilderBiInstantiator<S1, S2, T>(buildInstantiator,
-				chainedArguments.toArray(new MethodFactoryPair[0]),
-				unchainedArguments.toArray(new MethodFactoryPair[0]),
+				chainedArguments.toArray(new MethodBiFunctionPair[0]),
+				unchainedArguments.toArray(new MethodBiFunctionPair[0]),
 				instantiatorDefinition.getBuildMethod());
 	}
 
 	private <S1, S2, T> BiInstantiator<S1, S2, T>  methodBiInstantiator(
 			ExecutableInstantiatorDefinition instantiatorDefinition,
-			Map<org.simpleflatmapper.reflect.Parameter, BiFactory<? super S1, ? super S2, ?>> injections) {
+			Map<org.simpleflatmapper.reflect.Parameter, BiFunction<? super S1, ? super S2, ?>> injections) {
 		Method m = (Method) instantiatorDefinition.getExecutable();
 		if (m.getParameterTypes().length == 0) {
-			return new BiToUnaryInstantiator<S1, S2, T>(new EmptyStaticMethodInstantiator<S1, T>(m));
+			return new EmptyStaticMethodBiInstantiator<S1, S2, T>(m);
 		} else {
 			return new InjectStaticMethodBiInstantiator<S1, S2, T>(instantiatorDefinition, injections);
 		}
@@ -228,10 +230,10 @@ public class InstantiatorFactory {
 	@SuppressWarnings("unchecked")
 	private <S1, S2, T> BiInstantiator<S1, S2, T>  constructorBiInstantiator(
 			ExecutableInstantiatorDefinition instantiatorDefinition,
-			Map<org.simpleflatmapper.reflect.Parameter, BiFactory<? super S1, ? super S2, ?>> injections) {
+			Map<org.simpleflatmapper.reflect.Parameter, BiFunction<? super S1, ? super S2, ?>> injections) {
 		Constructor<? extends T> c = (Constructor<? extends T>) instantiatorDefinition.getExecutable();
 		if (c.getParameterTypes().length == 0) {
-			return new BiToUnaryInstantiator<S1, S2, T>(new EmptyConstructorInstantiator<S1, T>(c));
+			return new EmptyConstructorBiInstantiator<S1, S2, T>(c);
 		} else {
 			return new InjectConstructorBiInstantiator<S1, S2, T>(instantiatorDefinition, injections);
 		}
@@ -255,6 +257,10 @@ public class InstantiatorFactory {
 
 	public <S, T> Instantiator<S, T> getArrayInstantiator(final Class<?> elementType, final int length) {
 		return new ArrayInstantiator<S, T>(elementType, length);
+	}
+
+	public <S1, S2, T> BiInstantiator<S1, S2, T> getArrayBiInstantiator(final Class<?> elementType, final int length) {
+		return new ArrayBiInstantiator<S1, S2, T>(elementType, length);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -282,5 +288,21 @@ public class InstantiatorFactory {
         public T newInstance(S s) throws Exception {
             return (T) Array.newInstance(elementType, length);
         }
+	}
+
+	private static final class ArrayBiInstantiator<S1, S2, T> implements BiInstantiator<S1, S2, T> {
+		private final Class<?> elementType;
+		private final int length;
+
+		public ArrayBiInstantiator(Class<?> elementType, int length) {
+			this.elementType = elementType;
+			this.length = length;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public T newInstance(S1 s1, S2 s2) throws Exception {
+			return (T) Array.newInstance(elementType, length);
+		}
 	}
 }

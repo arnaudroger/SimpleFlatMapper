@@ -8,7 +8,7 @@ import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.simpleflatmapper.test.beans.DbFinalPrimitiveObject;
-import org.simpleflatmapper.util.BiFactory;
+import org.simpleflatmapper.util.BiFunction;
 
 import java.util.HashMap;
 
@@ -79,7 +79,7 @@ public class BiInstantiatorFactoryTest {
 						Object.class,
 						Object.class,
 						AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalPrimitiveObject.class),
-						new HashMap<Parameter, BiFactory<? super Object, ? super Object, ?>>(), true);
+						new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null, null);
 		assertNotNull(object);
 	}
@@ -91,7 +91,7 @@ public class BiInstantiatorFactoryTest {
 						Object.class,
 						Object.class,
 						AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalPrimitiveObject.class),
-						new HashMap<Parameter, BiFactory<? super Object, ? super Object, ?>>(), true);
+						new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null, null);
 		assertNotNull(object);
 	}
@@ -104,7 +104,7 @@ public class BiInstantiatorFactoryTest {
 						long.class,
 						long.class,
 						AsmInstantiatorDefinitionFactory.extractDefinitions(MyClassWithFactoryMethodPrimitiveType.class),
-						new HashMap<Parameter, BiFactory<? super Long, ? super Long, ?>>(), true);
+						new HashMap<Parameter, BiFunction<? super Long, ? super Long, ?>>(), true);
 		MyClassWithFactoryMethodPrimitiveType object = instantiator.newInstance(1l, 2l);
 		assertNotNull(object);
 	}
@@ -116,7 +116,7 @@ public class BiInstantiatorFactoryTest {
 								Object.class,
 								Object.class,
 								ReflectionService.newInstance().extractInstantiator(MyClassWithFactoryMethod.class),
-								new HashMap<Parameter, BiFactory<? super Object, ? super Object, ?>>(), true);
+								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
 
 		assertTrue(instantiator.getClass().getSimpleName().startsWith("Asm"));
 		final MyClassWithFactoryMethod object = instantiator.newInstance(null, null);
@@ -132,7 +132,7 @@ public class BiInstantiatorFactoryTest {
 								Object.class,
 								Object.class,
 								ReflectionService.disableAsm().extractInstantiator(MyClassWithFactoryMethod.class),
-								new HashMap<Parameter, BiFactory<? super Object, ? super Object, ?>>(), true);
+								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
 
 		assertFalse(instantiator.getClass().getSimpleName().startsWith("Asm"));
 		final MyClassWithFactoryMethod object = instantiator.newInstance(null, null);
@@ -148,7 +148,7 @@ public class BiInstantiatorFactoryTest {
 								Object.class,
 								Object.class,
 								ReflectionService.disableAsm().extractInstantiator(MyClassWithEmptyFactoryMethod.class),
-								new HashMap<Parameter, BiFactory<? super Object, ? super Object, ?>>(), true);
+								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
 
 		assertFalse(instantiator.getClass().getSimpleName().startsWith("Asm"));
 		final MyClassWithEmptyFactoryMethod object = instantiator.newInstance(null, null);
@@ -164,7 +164,7 @@ public class BiInstantiatorFactoryTest {
 								Object.class,
 								Object.class,
 								ReflectionService.newInstance().extractInstantiator(MyClassWithFactoryMethodAndConstructor.class),
-								new HashMap<Parameter, BiFactory<? super Object, ? super Object, ?>>(), true);
+								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
 
 		final MyClassWithFactoryMethodAndConstructor object = instantiator.newInstance(null, null);
 		assertNotNull(object);

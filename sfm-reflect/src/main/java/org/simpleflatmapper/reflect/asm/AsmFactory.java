@@ -8,7 +8,7 @@ import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.Setter;
-import org.simpleflatmapper.util.BiFactory;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.UnaryFactory;
 
@@ -177,7 +177,7 @@ public class AsmFactory {
 
 
     @SuppressWarnings("unchecked")
-    public <S1, S2, T> BiInstantiator<S1, S2, T> createBiInstantiator(final Class<?> s1, final Class<?> s2, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections) throws Exception {
+    public <S1, S2, T> BiInstantiator<S1, S2, T> createBiInstantiator(final Class<?> s1, final Class<?> s2, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections) throws Exception {
         BiInstantiatorKey instantiatorKey = new BiInstantiatorKey(instantiatorDefinition, injections, s1, s2);
         Class<? extends BiInstantiator<?, ?, ?>> instantiator = biInstantiatorCache.get(instantiatorKey);
         Instantiator builderInstantiator = null;
@@ -198,8 +198,8 @@ public class AsmFactory {
             biInstantiatorCache.put(instantiatorKey, instantiator);
         }
 
-        Map<String, BiFactory<? super S1, ? super S2, ?>> factoryPerName = new HashMap<String, BiFactory<? super S1, ? super S2, ?>>();
-        for(Entry<Parameter, BiFactory<? super S1, ? super S2, ?>> e : injections.entrySet()) {
+        Map<String, BiFunction<? super S1, ? super S2, ?>> factoryPerName = new HashMap<String, BiFunction<? super S1, ? super S2, ?>>();
+        for(Entry<Parameter, BiFunction<? super S1, ? super S2, ?>> e : injections.entrySet()) {
             factoryPerName.put(e.getKey().getName(), e.getValue());
         }
 

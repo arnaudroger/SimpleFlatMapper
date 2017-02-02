@@ -5,11 +5,21 @@ import org.simpleflatmapper.ow2asm.FieldVisitor;
 import org.simpleflatmapper.ow2asm.MethodVisitor;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
+import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
+import org.simpleflatmapper.reflect.getter.BiFunctionGetter;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
-import org.simpleflatmapper.util.BiFactory;
+import org.simpleflatmapper.reflect.primitive.BooleanGetter;
+import org.simpleflatmapper.reflect.primitive.ByteGetter;
+import org.simpleflatmapper.reflect.primitive.CharacterGetter;
+import org.simpleflatmapper.reflect.primitive.DoubleGetter;
+import org.simpleflatmapper.reflect.primitive.FloatGetter;
+import org.simpleflatmapper.reflect.primitive.IntGetter;
+import org.simpleflatmapper.reflect.primitive.LongGetter;
+import org.simpleflatmapper.reflect.primitive.ShortGetter;
+import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Constructor;
@@ -17,6 +27,9 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -47,8 +60,10 @@ public class BiInstantiatorBuilder {
     public static final Class<BiInstantiator> BI_INSTANTIATOR_CLASS = BiInstantiator.class;
     public static final Class<Instantiator> INSTANTIATOR_CLASS = Instantiator.class;
 
+    public static final String BI_FUNCTION_PREFIX = "factory_";
+
     public static <S1, S2>  byte[] createInstantiator(final String className, final Class<?> s1, final Class<?> s2,
-                                                      final ExecutableInstantiatorDefinition instantiatorDefinition, final Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections) throws Exception {
+                                                      final ExecutableInstantiatorDefinition instantiatorDefinition, final Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injectionsMap) throws Exception {
 		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
 		Class<?> targetClass= TypeHelper.toClass(getTargetType(instantiatorDefinition));
@@ -58,13 +73,14 @@ public class BiInstantiatorBuilder {
         String s2Type = AsmUtils.toWrapperType(s2);
         String classType = AsmUtils.toAsmType(className);
         String instantiatorType = AsmUtils.toAsmType(BI_INSTANTIATOR_CLASS);
+        List<InjectionPoint> injections = toInjections(injectionsMap);
 
         cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType, "Ljava/lang/Object;L" + instantiatorType + "<L"	+ targetType + ";>;", "java/lang/Object",
 				new String[] { instantiatorType });
 
         Parameter[] parameters = instantiatorDefinition.getParameters();
 
-        appendFactory(injections, cw);
+        appendFunctionsField(injections, cw);
         appendInit(injections, cw, s1Type, s2Type, classType);
         appendNewInstance(s1, s2, instantiatorDefinition, injections, cw, targetType, s1Type, s2Type, classType, parameters);
         appendBridgeMethod(cw, targetType, s1Type, s2Type, classType);
@@ -74,10 +90,18 @@ public class BiInstantiatorBuilder {
 		return AsmUtils.writeClassToFile(className, cw.toByteArray());
 	}
 
+    private static <S1, S2>  List<InjectionPoint> toInjections(Map<Parameter, BiFunction<? super S1, ? super S2 , ?>> injectionsMap) {
+        List<InjectionPoint> injections = new ArrayList<InjectionPoint>(injectionsMap.size());
+        for(Entry<Parameter, BiFunction<? super S1, ? super S2 , ?>> e : injectionsMap.entrySet()) {
+            injections.add(getFunctionCall(e.getKey(), e.getValue()));
+        }
+        return injections;
+    }
+
     public static <S1, S2>  byte[] createInstantiator(final String className, final Class<?> s1, final Class<?> s2,
                                                  final Instantiator<Void, ?> builderInstantiator,
                                                  final BuilderInstantiatorDefinition instantiatorDefinition,
-                                                 final Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections) throws Exception {
+                                                 final Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injectionsMap) throws Exception {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
         Class<?> targetClass= TypeHelper.toClass(getTargetType(instantiatorDefinition));
@@ -88,6 +112,7 @@ public class BiInstantiatorBuilder {
         String classType = AsmUtils.toAsmType(className);
         String instantiatorType = AsmUtils.toAsmType(BI_INSTANTIATOR_CLASS);
 
+        List<InjectionPoint> injections = toInjections(injectionsMap);
         cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, classType, "Ljava/lang/Object;L" + instantiatorType + "<L"	+ targetType + ";>;", "java/lang/Object",
                 new String[] { instantiatorType });
 
@@ -104,9 +129,9 @@ public class BiInstantiatorBuilder {
             fv.visitEnd();
         }
 
-        appendFactory(injections, cw);
+        appendFunctionsField(injections, cw);
         appendInitBuilder(injections, cw, s1Type, s2Type, classType, instantiatorDefinition);
-        appendNewInstance2(s1, s2, instantiatorDefinition, injections, cw, targetType, s1Type, s2Type, classType, instantiatorDefinition.getSetters());
+        appendNewInstanceBuilder(s1, s2, instantiatorDefinition, injections, cw, targetType, s1Type, s2Type, classType, instantiatorDefinition.getSetters());
         appendBridgeMethod(cw, targetType, s1Type, s2Type, classType);
         appendToString(injections, cw, instantiatorDefinition.getParameters());
         cw.visitEnd();
@@ -114,19 +139,37 @@ public class BiInstantiatorBuilder {
         return AsmUtils.writeClassToFile(className, cw.toByteArray());
     }
 
-    private static <S1, S2> void appendFactory(Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections, ClassWriter cw) {
-        FieldVisitor fv;
-        for(Entry<Parameter, BiFactory<? super S1, ? super S2, ?>> entry : injections.entrySet()) {
-            fv = cw.visitField(ACC_FINAL, "factory_" + entry.getKey().getName(), AsmUtils.toTargetTypeDeclaration(entry.getValue().getClass()), null, null);
+    private static <S1, S2> void appendFunctionsField(List<InjectionPoint> injections, ClassWriter cw) {
+        for(InjectionPoint injectionPoint : injections) {
+            FieldVisitor fv = cw.visitField(ACC_FINAL, getBiFunctionFieldName(injectionPoint.parameter), AsmUtils.toTargetTypeDeclaration(injectionPoint.functionType), null, null);
             fv.visitEnd();
         }
     }
 
-    private static <S1, S2> void appendInitBuilder(Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections, ClassWriter cw, String s1, String s2, String classType, BuilderInstantiatorDefinition instantiatorDefinition) {
+    private static <S1, S2> void appendInit(List<InjectionPoint> injections, ClassWriter cw, String s1, String s2, String classType) {
+        MethodVisitor mv;
+        mv = cw.visitMethod(ACC_PUBLIC, "<init>",
+                "(Ljava/util/Map;)V",
+                "(Ljava/util/Map<Ljava.lang.String;L" + AsmUtils.toAsmType(BiFunction.class)  +"<" + AsmUtils.toTargetTypeDeclaration(s1) + "*" + AsmUtils.toTargetTypeDeclaration(s2) + "*>;>;)V", null);
+
+        mv.visitCode();
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+
+        appendInitField(injections, classType, mv);
+
+        mv.visitInsn(RETURN);
+
+        mv.visitMaxs(3, 2);
+        mv.visitEnd();
+    }
+
+
+    private static <S1, S2> void appendInitBuilder(List<InjectionPoint> injections, ClassWriter cw, String s1, String s2, String classType, BuilderInstantiatorDefinition instantiatorDefinition) {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "<init>",
                 "(Ljava/util/Map;L" + AsmUtils.toAsmType(INSTANTIATOR_CLASS) + ";)V",
-                "(Ljava/util/Map<Ljava.lang.String;L" + AsmUtils.toAsmType(BiFactory.class)  +"<" + AsmUtils.toTargetTypeDeclaration(s1) + "*" + AsmUtils.toTargetTypeDeclaration(s2) + "*>;>;" +
+                "(Ljava/util/Map<Ljava.lang.String;L" + AsmUtils.toAsmType(BiFunction.class)  +"<" + AsmUtils.toTargetTypeDeclaration(s1) + "*" + AsmUtils.toTargetTypeDeclaration(s2) + "*>;>;" +
                         "L" + AsmUtils.toAsmType(INSTANTIATOR_CLASS) + "<Ljava/lang/Void;L" + AsmUtils.toAsmType(getTargetType(instantiatorDefinition.getBuilderInstantiator())) +";>;)V", null);
 
         mv.visitCode();
@@ -137,16 +180,7 @@ public class BiInstantiatorBuilder {
         mv.visitVarInsn(ALOAD, 2);
         mv.visitFieldInsn(PUTFIELD, classType, "builderInstantiator", "L" + AsmUtils.toAsmType(INSTANTIATOR_CLASS) + ";");
 
-        for(Entry<Parameter, BiFactory<? super S1, ? super S2, ?>> entry : injections.entrySet()) {
-            String name = entry.getKey().getName();
-
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitVarInsn(ALOAD, 1);
-            mv.visitLdcInsn(name);
-            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
-            mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(entry.getValue().getClass()));
-            mv.visitFieldInsn(PUTFIELD, classType, "factory_" + name, AsmUtils.toTargetTypeDeclaration(entry.getValue().getClass()));
-        }
+        appendInitField(injections, classType, mv);
 
         mv.visitInsn(RETURN);
 
@@ -154,37 +188,24 @@ public class BiInstantiatorBuilder {
         mv.visitEnd();
     }
 
-    private static <S1, S2> void appendInit(Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections, ClassWriter cw, String s1, String s2, String classType) {
-        MethodVisitor mv;
-        mv = cw.visitMethod(ACC_PUBLIC, "<init>",
-                "(Ljava/util/Map;)V",
-                "(Ljava/util/Map<Ljava.lang.String;L" + AsmUtils.toAsmType(BiFactory.class)  +"<" + AsmUtils.toTargetTypeDeclaration(s1) + "*" + AsmUtils.toTargetTypeDeclaration(s2) + "*>;>;)V", null);
-
-        mv.visitCode();
-        mv.visitVarInsn(ALOAD, 0);
-        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
-
-
-        for(Entry<Parameter, BiFactory<? super S1, ? super S2, ?>> entry : injections.entrySet()) {
-            String name = entry.getKey().getName();
-
+    private static <S1, S2> void appendInitField(List<InjectionPoint> injections, String classType, MethodVisitor mv) {
+        for(InjectionPoint injectionPoint : injections) {
 
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
-            mv.visitLdcInsn(name);
+            mv.visitLdcInsn(injectionPoint.parameter.getName());
             mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
-            mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(entry.getValue().getClass()));
-            mv.visitFieldInsn(PUTFIELD, classType, "factory_" + name, AsmUtils.toTargetTypeDeclaration(entry.getValue().getClass()));
-
+            if (injectionPoint.isGetter) {
+                mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(BiFunctionGetter.class));
+                mv.visitMethodInsn(INVOKEVIRTUAL, AsmUtils.toAsmType(BiFunctionGetter.class), "getGetter", "()" + AsmUtils.toTargetTypeDeclaration(Getter.class), false);
+            }
+            mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(injectionPoint.functionType));
+            mv.visitFieldInsn(PUTFIELD, classType, getBiFunctionFieldName(injectionPoint.parameter), AsmUtils.toTargetTypeDeclaration(injectionPoint.functionType));
         }
-
-        mv.visitInsn(RETURN);
-
-        mv.visitMaxs(3, 2);
-        mv.visitEnd();
     }
 
-    private static <S1, S2> void appendNewInstance(Class<?> s1, Class<?> s2, ExecutableInstantiatorDefinition instantiatorDefinition, Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections, ClassWriter cw, String targetType, String s1Type, String s2Type, String classType, Parameter[] parameters) throws NoSuchMethodException {
+
+    private static <S1, S2> void appendNewInstance(Class<?> s1, Class<?> s2, ExecutableInstantiatorDefinition instantiatorDefinition, List<InjectionPoint> injectionPoints, ClassWriter cw, String targetType, String s1Type, String s2Type, String classType, Parameter[] parameters) throws NoSuchMethodException {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "newInstance", "(" + AsmUtils.toTargetTypeDeclaration(s1Type) + AsmUtils.toTargetTypeDeclaration(s2Type) +")" + AsmUtils.toTargetTypeDeclaration(targetType), null, new String[] { "java/lang/Exception" });
         mv.visitCode();
@@ -195,18 +216,14 @@ public class BiInstantiatorBuilder {
         StringBuilder sb = new StringBuilder();
 
         for (Parameter p : parameters) {
-            BiFactory<? super S1, ? super S2, ?> factory = injections.get(p);
+            InjectionPoint function = findFunctionCalls(p, injectionPoints);
 
             sb.append(AsmUtils.toTargetTypeDeclaration(p.getType()));
 
-            if (factory == null) {
-                if (TypeHelper.isPrimitive(p.getType())) {
-                    mv.visitInsn(AsmUtils.defaultValue.get(p.getType()));
-                } else {
-                    mv.visitInsn(ACONST_NULL);
-                }
+            if (function == null) {
+                newInstanceNullFunction(mv, p);
             } else {
-                invovkeFactory(p, factory, classType, s1, s2, mv);
+                invokeBiFunction(function, classType, s1, s2, mv);
             }
         }
 
@@ -225,65 +242,7 @@ public class BiInstantiatorBuilder {
         mv.visitEnd();
     }
 
-    private static <S1, S2> void invovkeFactory(Parameter p, BiFactory<S1, S2, ?> factory, String classType, Class<?> s1, Class<?> s2, MethodVisitor mv) throws NoSuchMethodException {
-
-        String getterType = AsmUtils.toAsmType(factory.getClass());
-        String s1Type = AsmUtils.toAsmType(s1.equals(Void.class) || s1.equals(void.class) ? Object.class : s1);
-        String s2Type = AsmUtils.toAsmType(s2.equals(Void.class) || s2.equals(void.class) ? Object.class : s2);
-
-        mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD, classType, "factory_" + p.getName(), AsmUtils.toTargetTypeDeclaration(getterType));
-        mv.visitVarInsn(ALOAD, 1);
-        mv.visitVarInsn(ALOAD, 2);
-
-        Class<?> wrapperClass = AsmUtils.toWrapperClass(p.getType());
-        Method getterMethod = getNewInstanceMethod(factory.getClass());
-
-        AsmUtils.invoke(mv, factory.getClass(), getterMethod);
-        if (!wrapperClass.isAssignableFrom(getterMethod.getReturnType())) {
-            mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(wrapperClass));
-        }
-
-        if (TypeHelper.isPrimitive(p.getType())) {
-            String methodSuffix = getPrimitiveMethodSuffix(p);
-            String valueMethodPrefix = methodSuffix.toLowerCase();
-            if ("character".equals(valueMethodPrefix)) {
-                valueMethodPrefix = "char";
-            }
-            String valueMethod = valueMethodPrefix + "Value";
-            AsmUtils.invoke(mv, wrapperClass, valueMethod, "()" + AsmUtils.toAsmType(p.getType()));
-        }
-    }
-
-    private static Method getNewInstanceMethod(Class<? extends BiFactory> aClass) {
-        Method m = null;
-        for(Method p : aClass.getDeclaredMethods()) {
-            if (!Modifier.isStatic(p.getModifiers())
-                    && p.getName().equals("newInstance")
-                    && (p.getParameterTypes() != null && p.getParameterTypes().length == 2)) {
-                // crude way of selecting non bridge method
-                if (m == null || p.getModifiers() < m.getModifiers()) {
-                    m = p;
-                }
-            }
-        }
-        return m;
-    }
-
-
-    private static String getPrimitiveMethodSuffix(Parameter p) {
-        return getPrimitiveMethodSuffix(p.getType());
-    }
-
-    private static String getPrimitiveMethodSuffix(Class<?> type) {
-        String methodSuffix = AsmUtils.wrappers.get(type).getSimpleName();
-        if ("Integer".equals(methodSuffix)) {
-            methodSuffix = "Int";
-        }
-        return methodSuffix;
-    }
-
-    private static <S1, S2> void appendNewInstance2(Class<?> s1, Class<?> s2, BuilderInstantiatorDefinition instantiatorDefinition, Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections, ClassWriter cw, String targetType, String s1Type, String s2Type, String classType, Map<Parameter, Method> setters) throws NoSuchMethodException {
+    private static <S1, S2> void appendNewInstanceBuilder(Class<?> s1, Class<?> s2, BuilderInstantiatorDefinition instantiatorDefinition, List<InjectionPoint> injectionPoints, ClassWriter cw, String targetType, String s1Type, String s2Type, String classType, Map<Parameter, Method> setters) throws NoSuchMethodException {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "newInstance", "(" + AsmUtils.toTargetTypeDeclaration(s1Type) + AsmUtils.toTargetTypeDeclaration(s2Type)+ ")" + AsmUtils.toTargetTypeDeclaration(targetType), null, new String[] { "java/lang/Exception" });
         mv.visitCode();
@@ -302,18 +261,14 @@ public class BiInstantiatorBuilder {
         for (Entry<Parameter, Method> e : setters.entrySet()) {
             mv.visitVarInsn(ALOAD, 2);
             Parameter p = e.getKey();
-            BiFactory<? super S1, ? super S2, ?> factory = injections.get(p);
 
+            InjectionPoint injectionPoint = findFunctionCalls(p, injectionPoints);
 
-            if (factory == null) {
-                if (TypeHelper.isPrimitive(p.getType())) {
-                    mv.visitInsn(AsmUtils.defaultValue.get(p.getType()));
-                } else {
-                    mv.visitInsn(ACONST_NULL);
-                }
+            if (injectionPoint == null) {
+                newInstanceNullFunction(mv, p);
             } else {
 
-                invovkeFactory(p, factory, classType, s1, s2, mv);
+                invokeBiFunction(injectionPoint, classType, s1, s2, mv);
 
                 AsmUtils.invoke(mv, TypeHelper.toClass(builderClass), e.getValue().getName(),
                         AsmUtils.toSignature(e.getValue()));
@@ -331,6 +286,74 @@ public class BiInstantiatorBuilder {
         mv.visitInsn(ARETURN);
         mv.visitMaxs(3 , 2);
         mv.visitEnd();
+    }
+
+    private static InjectionPoint findFunctionCalls(Parameter p, List<InjectionPoint> injectionPoints) {
+        for(InjectionPoint fc : injectionPoints) {
+            if (fc.parameter.equals(p)) {
+                return fc;
+            }
+        }
+        return null;
+    }
+
+    private static void newInstanceNullFunction(MethodVisitor mv, Parameter p) {
+        if (TypeHelper.isPrimitive(p.getType())) {
+            mv.visitInsn(AsmUtils.defaultValue.get(p.getType()));
+        } else {
+            mv.visitInsn(ACONST_NULL);
+        }
+    }
+
+
+    private static <S1, S2> void invokeBiFunction(InjectionPoint injectionPoint, String classType, Class<?> s1, Class<?> s2, MethodVisitor mv) throws NoSuchMethodException {
+
+        String s1Type = AsmUtils.toAsmType(s1.equals(Void.class) || s1.equals(void.class) ? Object.class : s1);
+        String s2Type = AsmUtils.toAsmType(s2.equals(Void.class) || s2.equals(void.class) ? Object.class : s2);
+
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitFieldInsn(GETFIELD, classType, getBiFunctionFieldName(injectionPoint.parameter), AsmUtils.toTargetTypeDeclaration(injectionPoint.functionType));
+        mv.visitVarInsn(ALOAD, 1);
+        if (!injectionPoint.isGetter){
+            mv.visitVarInsn(ALOAD, 2);
+        }
+
+        Method getterMethod = injectionPoint.getMethod();
+
+        AsmUtils.invoke(mv, injectionPoint.functionType, getterMethod);
+
+        if (!injectionPoint.isPrimitive) {
+            Class<?> wrapperClass = AsmUtils.toWrapperClass(injectionPoint.parameter.getType());
+            if (!wrapperClass.isAssignableFrom(getterMethod.getReturnType())) {
+                mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(wrapperClass));
+            }
+
+            if (TypeHelper.isPrimitive(injectionPoint.parameter.getType())) {
+                String methodSuffix = getPrimitiveMethodSuffix(injectionPoint.parameter);
+                String valueMethodPrefix = methodSuffix.toLowerCase();
+                if ("character".equals(valueMethodPrefix)) {
+                    valueMethodPrefix = "char";
+                }
+                String valueMethod = valueMethodPrefix + "Value";
+                AsmUtils.invoke(mv, wrapperClass, valueMethod, "()" + AsmUtils.toAsmType(injectionPoint.parameter.getType()));
+            }
+        }
+    }
+
+    private static String getBiFunctionFieldName(Parameter p) {
+        return BI_FUNCTION_PREFIX + p.getName();
+    }
+
+    private static String getPrimitiveMethodSuffix(Parameter p) {
+        return getPrimitiveMethodSuffix(p.getType());
+    }
+
+    private static String getPrimitiveMethodSuffix(Class<?> type) {
+        String methodSuffix = AsmUtils.wrappers.get(type).getSimpleName();
+        if ("Integer".equals(methodSuffix)) {
+            methodSuffix = "Int";
+        }
+        return methodSuffix;
     }
 
 
@@ -353,7 +376,7 @@ public class BiInstantiatorBuilder {
         mv.visitEnd();
     }
 
-    private static <S1, S2> void appendToString(Map<Parameter, BiFactory<? super S1, ? super S2, ?>> injections, ClassWriter cw, Parameter[] parameters) {
+    private static <S1, S2> void appendToString(List<InjectionPoint> injections, ClassWriter cw, Parameter[] parameters) {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
         mv.visitCode();
@@ -380,10 +403,10 @@ public class BiInstantiatorBuilder {
             mv.visitLdcInsn(parameter);
             mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
 
-            BiFactory<? super S1, ? super S2, ?> biFactory = injections.get(parameters[i]);
+            InjectionPoint injectionPoint = findFunctionCalls(parameters[i], injections);
 
             String getterName =  ", parameter" + i + "=";
-            String getterString = String.valueOf(biFactory);
+            String getterString = injectionPoint != null ? injectionPoint.functionType.toString() : "<null>";
 
             mv.visitLdcInsn(getterName);
             mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
@@ -402,7 +425,29 @@ public class BiInstantiatorBuilder {
         mv.visitEnd();
     }
 
-    private static Type getTargetType(InstantiatorDefinition instantiatorDefinition) {
+    private static InjectionPoint getFunctionCall(Parameter parameter, BiFunction biFunction) {
+        if (biFunction.getClass().equals(BiFunctionGetter.class)) {
+            Getter getter = ((BiFunctionGetter)biFunction).getGetter();
+            Class<?> getterClass = getter.getClass();
+            if (TypeHelper.isPrimitive(parameter.getType())) {
+                Class<?> primitiveGetter = getPrimitiveGetter(parameter.getType());
+                if (primitiveGetter == null) {
+                    throw new IllegalStateException("No primitive getter for primitive " + parameter.getType());
+                }
+                Type publicGetterClass = AsmUtils.findClosestPublicTypeExposing(getterClass, primitiveGetter);
+                if (publicGetterClass != null) {
+                    return new InjectionPoint(parameter, biFunction, true, "get" + getPrimitiveMethodSuffix(parameter.getType()), publicGetterClass, true);
+                }
+            }
+
+            Type publicGetterClass = AsmUtils.findClosestPublicTypeExposing(getterClass, Getter.class);
+            return new InjectionPoint(parameter, biFunction, true, "get", publicGetterClass, false);
+        } else {
+            return new InjectionPoint(parameter, biFunction, false, "apply", biFunction.getClass(), false);
+        }
+    }
+
+    public static Type getTargetType(InstantiatorDefinition instantiatorDefinition) {
 
         switch (instantiatorDefinition.getType()) {
             case METHOD:
@@ -414,6 +459,60 @@ public class BiInstantiatorBuilder {
             default:
                 throw new IllegalArgumentException("Unsupported type " + instantiatorDefinition.getType());
         }
+    }
+
+
+    static final Map<Class<?>, Class<?>> primitivesGetter = new HashMap<Class<?>, Class<?>>();
+    static {
+        primitivesGetter.put(boolean.class, BooleanGetter.class);
+        primitivesGetter.put(byte.class,    ByteGetter.class);
+        primitivesGetter.put(char.class,    CharacterGetter.class);
+        primitivesGetter.put(short.class,   ShortGetter.class);
+        primitivesGetter.put(int.class,     IntGetter.class);
+        primitivesGetter.put(long.class,    LongGetter.class);
+        primitivesGetter.put(float.class,   FloatGetter.class);
+        primitivesGetter.put(double.class,  DoubleGetter.class);
+    }
+    public static Class<?> getPrimitiveGetter(Class<?> propertyType) {
+        return primitivesGetter.get(propertyType);
+    }
+
+    static class InjectionPoint {
+        final Parameter parameter;
+        final BiFunction<?, ?, ?> function;
+        final boolean isGetter;
+        final String methodName;
+        final Type functionType;
+        final boolean isPrimitive;
+
+        InjectionPoint(Parameter parameter, BiFunction<?, ?, ?> function, boolean isGetter, String methodName, Type functionType, boolean isPrimitive) {
+            this.parameter = parameter;
+            this.function = function;
+            this.isGetter = isGetter;
+            this.methodName = methodName;
+            this.functionType = functionType;
+            this.isPrimitive = isPrimitive;
+        }
+
+        public Method getMethod() {
+            return BiInstantiatorBuilder.getMethod(TypeHelper.toClass(functionType), methodName, isGetter ? 1 : 2);
+        }
+    }
+
+
+    public static Method getMethod(Class<?> aClass, String name, int nbParam) {
+        Method m = null;
+        for(Method p : aClass.getDeclaredMethods()) {
+            if (!Modifier.isStatic(p.getModifiers())
+                    && p.getName().equals(name)
+                    && (p.getParameterTypes() != null && p.getParameterTypes().length == nbParam)) {
+                // crude way of selecting non bridge method
+                if (m == null || p.getModifiers() < m.getModifiers()) {
+                    m = p;
+                }
+            }
+        }
+        return m;
     }
 
 }

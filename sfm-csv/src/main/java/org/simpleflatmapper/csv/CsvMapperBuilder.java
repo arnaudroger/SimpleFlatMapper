@@ -2,10 +2,7 @@ package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
-import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.mapper.ColumnDefinitionProvider;
-import org.simpleflatmapper.map.mapper.MapperInstantiatorFactory;
-import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
@@ -22,7 +19,6 @@ import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SelfPropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
-import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.util.UnaryFactory;

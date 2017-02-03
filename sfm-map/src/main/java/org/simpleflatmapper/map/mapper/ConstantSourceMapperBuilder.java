@@ -192,7 +192,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 		try {
             ConstructorInjections constructorInjections = constructorInjections();
             Map<Parameter, BiFunction<? super S , ? super MappingContext<? super S>, ?>> injections = constructorInjections.parameterGetterMap;
-            BiInstantiator<S, MappingContext<? super S>, T> instantiator = new MapperInstantiatorFactory(instantiatorFactory).<S, T, K, FieldMapperColumnDefinition<K>>getBiInstantiator(mapperSource.source(), target, propertyMappingsBuilder, injections, fieldMapperAsGetterFactory());
+            BiInstantiator<S, MappingContext<? super S>, T> instantiator = new MapperBiInstantiatorFactory(instantiatorFactory).<S, T, K, FieldMapperColumnDefinition<K>>getBiInstantiator(mapperSource.source(), target, propertyMappingsBuilder, injections, fieldMapperAsGetterFactory());
             return new InstantiatorAndFieldMappers(constructorInjections.fieldMappers, instantiator);
 		} catch(Exception e) {
             return ErrorHelper.rethrow(e);

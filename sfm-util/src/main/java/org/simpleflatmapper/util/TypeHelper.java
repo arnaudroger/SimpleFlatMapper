@@ -90,7 +90,7 @@ public final class TypeHelper {
 		if (target.isArray()) {
 			return toClass(outType).getComponentType();
 		} else  {
-			Type[] parameterTypes = getGenericParameterForClass(outType, Collection.class);
+			Type[] parameterTypes = getGenericParameterForClass(outType, Iterable.class);
 			if (parameterTypes != null) {
 				Type parameterType = parameterTypes[0];
 				if (parameterType != null) {

@@ -131,11 +131,7 @@ public class ReflectionService {
 	private <T> ClassMeta<T> newClassMeta(Type target) {
 		Class<T> clazz = TypeHelper.toClass(target);
 
-		if (Map.class.isAssignableFrom(clazz)) {
-			return (ClassMeta<T>) newMapMeta(target);
-		} else if (List.class.isAssignableFrom(clazz) || Set.class.isAssignableFrom(clazz)) {
-			return newArrayListMeta(target);
-		} else if (clazz.isArray()) {
+		if (clazz.isArray()) {
 			return newArrayMeta(clazz);
 			//IFJAVA8_START
 		} else if (Optional.class.isAssignableFrom(clazz)) {
@@ -145,7 +141,11 @@ public class ReflectionService {
 			return new TupleClassMeta<T>(target, this);
 		} else if (isFastTuple(clazz)) {
             return new FastTupleClassMeta<T>(target, this);
-        }
+        } else if (Map.class.isAssignableFrom(clazz)) {
+			return (ClassMeta<T>) newMapMeta(target);
+		} else if (Collection.class.isAssignableFrom(clazz) || Iterable.class.equals(clazz)) {
+			return newCollectionMeta(target);
+		}
 		return new ObjectClassMeta<T>(target, this);
 	}
 
@@ -161,7 +161,7 @@ public class ReflectionService {
 		return new ArrayClassMeta<T, E>(clazz, clazz.getComponentType(), this);
 	}
 
-	private <T, E> ClassMeta<T> newArrayListMeta(Type type) {
+	private <T, E> ClassMeta<T> newCollectionMeta(Type type) {
 		return new ArrayClassMeta<T, E>(type, TypeHelper.getComponentTypeOfListOrArray(type), this);
 	}
 

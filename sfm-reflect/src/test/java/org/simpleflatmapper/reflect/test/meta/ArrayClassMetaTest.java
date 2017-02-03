@@ -1,17 +1,14 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.junit.Test;
-import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
-import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;

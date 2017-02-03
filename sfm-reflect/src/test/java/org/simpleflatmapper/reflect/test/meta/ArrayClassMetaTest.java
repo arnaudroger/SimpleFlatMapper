@@ -31,9 +31,9 @@ public class ArrayClassMetaTest {
 
         assertTrue(classMeta instanceof ArrayClassMeta);
 
-        PropertyMeta p = classMeta.<Object, String>newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+        PropertyMeta p = classMeta.newPropertyFinder(new Predicate() {
             @Override
-            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+            public boolean test(Object propertyMeta) {
                 return true;
             }
         }).findProperty(DefaultPropertyNameMatcher.of("3"));
@@ -65,9 +65,9 @@ public class ArrayClassMetaTest {
 
         assertTrue(classMeta instanceof ArrayClassMeta);
 
-        PropertyMeta p = classMeta.<Object, String>newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+        PropertyMeta p = classMeta.newPropertyFinder(new Predicate() {
             @Override
-            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+            public boolean test(Object propertyMeta) {
                 return true;
             }
         }).findProperty(DefaultPropertyNameMatcher.of("3"));
@@ -151,9 +151,9 @@ public class ArrayClassMetaTest {
     }
 
     private PropertyMeta findProperty(ClassMeta<?> classMeta) {
-        return classMeta.<Object, String>newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+        return classMeta.newPropertyFinder(new Predicate() {
                 @Override
-                public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                public boolean test(Object propertyMeta) {
                     return true;
                 }
             }).findProperty(DefaultPropertyNameMatcher.of("v"));

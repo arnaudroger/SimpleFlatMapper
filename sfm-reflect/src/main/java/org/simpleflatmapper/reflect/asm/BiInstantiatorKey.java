@@ -25,9 +25,6 @@ public class BiInstantiatorKey {
 		this.s1 = s1;
 		this.s2 = s2;
 	}
-	public BiInstantiatorKey(Class<?> target, Class<?> s1, Class<?> s2) throws NoSuchMethodException, SecurityException {
-		this(target.getConstructor(), null, s1, s2);
-	}
 	public <S1, S2> BiInstantiatorKey(InstantiatorDefinition instantiatorDefinition, Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, Class<?> s1, Class<?> s2) {
 		this(getConstructor(instantiatorDefinition), paramAndBuilderFactoryClass(injections), s1, s2);
 	}

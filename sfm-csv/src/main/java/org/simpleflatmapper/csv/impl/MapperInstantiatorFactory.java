@@ -1,20 +1,16 @@
 package org.simpleflatmapper.csv.impl;
 
 import org.simpleflatmapper.map.FieldKey;
-import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.map.impl.CalculateMaxIndex;
+import org.simpleflatmapper.map.mapper.CalculateMaxIndex;
 import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
-import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
-import org.simpleflatmapper.reflect.instantiator.GetterBiInstantiator;
 import org.simpleflatmapper.reflect.instantiator.GetterInstantiator;
-import org.simpleflatmapper.util.BiFunction;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.TypeHelper;
 

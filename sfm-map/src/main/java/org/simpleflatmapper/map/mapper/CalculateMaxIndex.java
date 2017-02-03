@@ -1,8 +1,6 @@
-package org.simpleflatmapper.map.impl;
+package org.simpleflatmapper.map.mapper;
 
-import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.FieldKey;
-import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;

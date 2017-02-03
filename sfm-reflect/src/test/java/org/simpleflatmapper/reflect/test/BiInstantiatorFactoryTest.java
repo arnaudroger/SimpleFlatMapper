@@ -30,6 +30,15 @@ public class BiInstantiatorFactoryTest {
 	public static final InstantiatorFactory ASM = new InstantiatorFactory(new AsmFactory(BiInstantiatorFactoryTest.class.getClassLoader()), true);
 
 
+
+	public static class MyClassWithEmptyConstructor {
+
+		public MyClassWithEmptyConstructor(){
+		}
+
+
+	}
+
 	public static class MyClassWithFactoryMethod {
 
 		private MyClassWithFactoryMethod(){
@@ -175,6 +184,39 @@ public class BiInstantiatorFactoryTest {
 								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
 
 		final MyClassWithFactoryMethodAndConstructor object = instantiator.newInstance(null, null);
+		assertNotNull(object);
+	}
+
+
+	@Test
+	public void testInstantiateEmptyConstructorNoAsm() throws Exception {
+
+		final BiInstantiator<Object, Object, MyClassWithEmptyConstructor> instantiator =
+				DISABLE_ASM
+						.getBiInstantiator(
+								MyClassWithEmptyConstructor.class,
+								Object.class,
+								Object.class,
+								ReflectionService.newInstance().extractInstantiator(MyClassWithEmptyConstructor.class),
+								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
+
+		final MyClassWithEmptyConstructor object = instantiator.newInstance(null, null);
+		assertNotNull(object);
+	}
+
+	@Test
+	public void testInstantiateEmptyConstructorAsm() throws Exception {
+
+		final BiInstantiator<Object, Object, MyClassWithEmptyConstructor> instantiator =
+				ASM
+						.getBiInstantiator(
+								MyClassWithEmptyConstructor.class,
+								Object.class,
+								Object.class,
+								ReflectionService.newInstance().extractInstantiator(MyClassWithEmptyConstructor.class),
+								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
+
+		final MyClassWithEmptyConstructor object = instantiator.newInstance(null, null);
 		assertNotNull(object);
 	}
 

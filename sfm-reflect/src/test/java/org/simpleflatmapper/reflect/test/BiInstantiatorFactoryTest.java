@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.reflect.BiInstantiator;
+import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
 import org.simpleflatmapper.reflect.Parameter;
@@ -10,6 +11,7 @@ import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.getter.BiFunctionGetter;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
+import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.test.beans.DbFinalPrimitiveObject;
 import org.simpleflatmapper.util.BiFunction;
 
@@ -18,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -280,6 +283,14 @@ public class BiInstantiatorFactoryTest {
 			// expected
 		}
 
+	}
+
+	@Test
+	public void testArrayBiInstantiator() throws  Exception {
+		assertArrayEquals(new int[3], DISABLE_ASM.<Object, Object, int[]>getArrayBiInstantiator(int.class, 3).newInstance(null, null));
+		assertArrayEquals(new int[3], ASM.<Object, Object, int[]>getArrayBiInstantiator(int.class, 3).newInstance(null, null));
+		assertArrayEquals(new String[3], DISABLE_ASM.<Object, Object, String[]>getArrayBiInstantiator(String.class, 3).newInstance(null, null));
+		assertArrayEquals(new String[3], ASM.<Object, Object,String[]>getArrayBiInstantiator(String.class, 3).newInstance(null, null));
 	}
 
 	public static class ClassExample {

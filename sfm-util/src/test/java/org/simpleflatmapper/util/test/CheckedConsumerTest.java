@@ -18,7 +18,11 @@ public class CheckedConsumerTest {
         } catch (Exception e) {
             assertTrue(e instanceof IOException);
         }
+
+        CheckedConsumer.toConsumer((t) -> {
+        }).accept(null);
     }
+
 
     private void checkedConsumer() {
         CheckedConsumer.toConsumer((t) -> {

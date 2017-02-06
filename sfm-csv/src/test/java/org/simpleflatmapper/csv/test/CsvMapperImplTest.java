@@ -19,12 +19,15 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Map;
 //IFJAVA8_START
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 //IFJAVA8_END
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class CsvMapperImplTest {
@@ -257,5 +260,20 @@ public class CsvMapperImplTest {
 		Map next = CsvParser.mapTo(Map.class).iterator("key1,k_2\nv1,v2").next();
 		assertEquals("v1", next.get("key1"));
 		assertEquals("v2", next.get("k_2"));
+	}
+
+	@Test
+	public void testSetString() throws IOException {
+		Set<String> set = CsvParser.mapTo(new TypeReference<Set<String>>() {
+		}) .iterator("v1,v2\ns1,s2").next();
+		assertEquals(2, set.size());
+		assertTrue(set.contains("s1"));
+		assertTrue(set.contains("s2"));
+	}
+
+	@Test
+	public void testArrayInt() throws IOException {
+		int[] ints = CsvParser.mapTo(int[].class).iterator("0,2\n1,3").next();
+		assertArrayEquals(new int[] {1,0,3}, ints);
 	}
 }

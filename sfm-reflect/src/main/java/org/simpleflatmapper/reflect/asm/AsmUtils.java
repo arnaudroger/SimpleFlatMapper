@@ -139,7 +139,7 @@ public class AsmUtils {
 		if (targetDirStr != null) {
 			targetDir = new File(targetDirStr);
 			targetDir.mkdirs();
-		} 
+		}
 	}
 
 
@@ -257,15 +257,15 @@ public class AsmUtils {
 				return null;
 			}
 		}
-		
+
 		int indexOf = sig.indexOf('<');
 		if (indexOf == -1) {
-			return Class.forName(sig.replace('/','.'));
+			return Class.forName(sig.replace('/','.'), true, TypeHelper.toClass(target).getClassLoader());
 		} else {
-			final Class<?> rawType = Class.forName(sig.substring(0, indexOf).replace('/','.'));
+			final Class<?> rawType = Class.forName(sig.substring(0, indexOf).replace('/','.'), true, TypeHelper.toClass(target).getClassLoader());
 
 			final Type[] types = parseTypes(sig.substring(indexOf+ 1, sig.length() - 1), genericTypeNames, target);
-			
+
 			return new ParameterizedTypeImpl(rawType, types);
 		}
 	}

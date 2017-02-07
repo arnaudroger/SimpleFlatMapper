@@ -260,14 +260,23 @@ public class AsmUtils {
 
 		int indexOf = sig.indexOf('<');
 		if (indexOf == -1) {
-			return Class.forName(sig.replace('/','.'), true, TypeHelper.toClass(target).getClassLoader());
+			return Class.forName(sig.replace('/','.'), true, getClassLoader(target));
 		} else {
-			final Class<?> rawType = Class.forName(sig.substring(0, indexOf).replace('/','.'), true, TypeHelper.toClass(target).getClassLoader());
+			final Class<?> rawType = Class.forName(sig.substring(0, indexOf).replace('/','.'), true, getClassLoader(target));
 
 			final Type[] types = parseTypes(sig.substring(indexOf+ 1, sig.length() - 1), genericTypeNames, target);
 
 			return new ParameterizedTypeImpl(rawType, types);
 		}
+	}
+
+	private static ClassLoader getClassLoader(Type target) {
+		if (target == null)
+			return Thread.currentThread().getContextClassLoader();
+		Class<Object> aClass = TypeHelper.toClass(target);
+		if (aClass == null)
+			return Thread.currentThread().getContextClassLoader();
+		return aClass.getClassLoader();
 	}
 
 	public static Type findClosestPublicTypeExposing(Type type, Class<?> expose) {

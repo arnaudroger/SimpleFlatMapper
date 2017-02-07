@@ -18,8 +18,8 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Map;
-//IFJAVA8_START
 import java.util.Set;
+//IFJAVA8_START
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 //IFJAVA8_END
@@ -35,12 +35,12 @@ public class CsvMapperImplTest {
 	public static Reader dbObjectCsvReader() throws UnsupportedEncodingException {
 		return new StringReader("1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4");
 	}
-	
+
 	public static Reader dbObjectCsvReader3Lines() throws UnsupportedEncodingException {
 		return new StringReader("0,name 0,name0@mail.com,2014-03-04 11:10:03,2,type4\n"
 				+ "1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4\n"
 				+ "2,name 2,name2@mail.com,2014-03-04 11:10:03,2,type4"
-				
+
 				);
 	}
 
@@ -123,8 +123,8 @@ public class CsvMapperImplTest {
 		CsvMapperBuilder<DbObject> builder = CsvMapperFactory.newInstance().newBuilder(DbObject.class);
 		CsvMapperBuilderTest.addDbObjectFields(builder);
 		CsvMapperImpl<DbObject> mapper = (CsvMapperImpl<DbObject>) builder.mapper();
-		
-		
+
+
 		Iterator<DbObject> it = mapper.iterator(CsvMapperImplTest.dbObjectCsvReader3Lines());
 		DbHelper.assertDbObjectMapping(0, it.next());
 		DbHelper.assertDbObjectMapping(1, it.next());

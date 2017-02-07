@@ -14,7 +14,10 @@ function java6 {
 }
 
 java8
-mvn release:prepare -Pdev
+mvn --batch-mode -Dtag=sfm-parent-3.9.1 -Pdev release:prepare \
+                 -DreleaseVersion=3.9.1 \
+                 -DdevelopmentVersion=3.10-SNAPSHOT
+#mvn release:prepare -Pdev
 cp release.properties tmp/release.properties
 
 

@@ -259,10 +259,13 @@ public class AsmUtils {
 		}
 
 		int indexOf = sig.indexOf('<');
+
+		ClassLoader classLoader = TypeHelper.getClassLoader(target, Thread.currentThread().getContextClassLoader());
+
 		if (indexOf == -1) {
-			return Class.forName(sig.replace('/','.'), true, getClassLoader(target));
+			return Class.forName(sig.replace('/','.'), true, classLoader);
 		} else {
-			final Class<?> rawType = Class.forName(sig.substring(0, indexOf).replace('/','.'), true, getClassLoader(target));
+			final Class<?> rawType = Class.forName(sig.substring(0, indexOf).replace('/','.'), true, classLoader);
 
 			final Type[] types = parseTypes(sig.substring(indexOf+ 1, sig.length() - 1), genericTypeNames, target);
 

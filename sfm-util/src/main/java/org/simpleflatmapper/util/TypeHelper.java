@@ -18,7 +18,7 @@ public final class TypeHelper {
 		if (target instanceof Class) {
 			return (Class<T>) target;
 		} else if (target instanceof ParameterizedType) {
-			return (Class<T>) ((ParameterizedType) target).getRawType();
+			return toClass(((ParameterizedType) target).getRawType());
 		} else if (target instanceof TypeVariable) {
 			return toClass(((TypeVariable) target).getBounds()[0]);
 		} else if (target instanceof WildcardType) {
@@ -28,6 +28,14 @@ public final class TypeHelper {
         }
 		throw new UnsupportedOperationException("Cannot extract class from type " + target + " " + target.getClass());
 	}
+
+	public static ClassLoader getClassLoader(Type target, ClassLoader defaultClassLoader) {
+		if (target == null) return defaultClassLoader;
+		Class<?> clazz = toClass(target);
+		if (clazz == null) return defaultClassLoader;
+		return clazz.getClassLoader();
+	}
+
 
 	public static <T> Map<TypeVariable<?>, Type> getTypesMap(Type targetType) {
 		Class<T> targetClass = TypeHelper.toClass(targetType);
@@ -50,7 +58,7 @@ public final class TypeHelper {
 	public static boolean isPrimitive(Type type) {
 		return toClass(type).isPrimitive();
 	}
-	
+
 	public static Class<?> wrap(Class<?> target) {
 		if (target.isPrimitive()) {
 			return wrappers.get(target);
@@ -58,13 +66,13 @@ public final class TypeHelper {
 			return target;
 		}
 	}
-	
+
 	public static  boolean areCompatible(Class<?> target, Class<?> source) {
 		Class<?> wrapTarget = wrap(target);
 		Class<?> wrapSource = wrap(source);
 		return wrapTarget.isAssignableFrom(wrapSource);
 	}
-	
+
 	public static boolean isNumber(Type target) {
 		return Number.class.isAssignableFrom(wrap(TypeHelper.toClass(target)));
 	}

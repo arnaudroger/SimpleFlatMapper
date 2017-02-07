@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.simpleflatmapper.ow2asm.MethodVisitor;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.asm.AsmUtils;
+import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.io.File;
@@ -89,7 +90,7 @@ public class AsmUtilsTest {
 
             @Override
             public Type getRawType() {
-                return null;
+                return Tuple2.class;
             }
 
             @Override

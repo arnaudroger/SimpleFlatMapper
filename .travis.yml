@@ -37,8 +37,8 @@ before_install:
   - unzip -qq apache-maven-3.2.5-bin.zip
   - export M2_HOME=$PWD/apache-maven-3.2.5
   - export PATH=$M2_HOME/bin:$PATH
-  - sudo add-apt-repository -y ppa:openjdk-r/ppa
-  - sudo add-apt-repository -y ppa:webupd8team/java
+  - sudo -E add-apt-repository -y ppa:openjdk-r/ppa
+  - sudo -E add-apt-repository -y ppa:webupd8team/java
   - sudo apt-get -y update
   - echo install jdk6 jdk7
   - sudo apt-get -y install openjdk-6-jdk openjdk-7-jdk oracle-java7-installer

@@ -9,16 +9,18 @@ function java8 {
 function java7 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-7-oracle/jre/bin/java;export JAVA_HOME=/usr/lib/jvm/java-7-oracle
 }
-function java6 { 
+function java6 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-6-oracle/jre/bin/java;export JAVA_HOME=/usr/lib/jvm/java-6-oracle
 }
 
-echo "change versions"
-exit
+#echo "change versions"
+#exit
 java8
-mvn --batch-mode -Dtag=sfm-parent-3.9.1 -Pdev release:prepare \
-                 -DreleaseVersion=3.9.1 \
-                 -DdevelopmentVersion=3.10-SNAPSHOT
+REL=3.10
+DEV=3.11-SNAPSHOT
+mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
+                 -DreleaseVersion=$REL \
+                 -DdevelopmentVersion=$DEV
 #mvn release:prepare -Pdev
 cp release.properties tmp/release.properties
 

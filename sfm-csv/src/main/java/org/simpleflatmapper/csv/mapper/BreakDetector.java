@@ -81,9 +81,4 @@ public class BreakDetector  {
         brokenCheck = false;
         broken = false;
     }
-
-
-    public boolean isEmpty() {
-        return keys.length == 0;
-    }
 }

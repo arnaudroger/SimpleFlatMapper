@@ -5,6 +5,7 @@ import org.simpleflatmapper.csv.mapper.BreakDetector;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellConsumer;
 import org.simpleflatmapper.csv.mapper.DelayedCellSetter;
 import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.reflect.setter.AppendCollectionSetter;
 
 public class DelegateDelayedCellSetter<T, P> implements DelayedCellSetter<T, P> {
 
@@ -15,7 +16,7 @@ public class DelegateDelayedCellSetter<T, P> implements DelayedCellSetter<T, P> 
 
 
 	public DelegateDelayedCellSetter(DelegateMarkerDelayedCellSetterFactory<T, P> marker, int cellIndex, BreakDetector breakDetector) {
-		this.cellConsumer = ((CsvMapperImpl<P>)marker.getMapper()).newCellConsumer(null, breakDetector);
+		this.cellConsumer = ((CsvMapperImpl<P>)marker.getMapper()).newCellConsumer(null, breakDetector, marker.getSetter() instanceof AppendCollectionSetter);
 		this.cellIndex = cellIndex;
         this.setter = marker.getSetter();
         this.breakDetector = cellConsumer.getBreakDetector();

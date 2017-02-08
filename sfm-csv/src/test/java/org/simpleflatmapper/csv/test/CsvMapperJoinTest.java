@@ -5,6 +5,7 @@ import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperBuilder;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
+import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.test.beans.Person;
 import org.simpleflatmapper.test.jdbc.JoinTest;
 import org.simpleflatmapper.test.beans.ProfessorC;
@@ -14,7 +15,13 @@ import org.simpleflatmapper.util.ListCollector;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.sql.ResultSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class CsvMapperJoinTest {
 
@@ -170,4 +177,37 @@ public class CsvMapperJoinTest {
     private CsvMapperFactory getCsvShardingMapperFactory() {
         return getCsvMapperFactory().maxMethodSize(2);
     }
+
+
+    @Test
+    public void testUser() throws IOException {
+        CsvMapper<User> mapper = CsvMapperFactory
+                .newInstance()
+                .useAsm(false)
+                .newBuilder(User.class).addMapping("id", KeyProperty.DEFAULT).addMapping("name").addMapping("roles_name").mapper();
+
+
+        Iterator<User> iterator = mapper.iterator(new StringReader("1,n1,r1\n1,n1,r2"));
+
+        User u = iterator.next();
+
+        u = iterator.next();
+
+        assertEquals(1, u.id);
+        assertEquals("n1", u.name);
+        assertEquals(2, u.roles.size());
+
+    }
+
+
+    public static class User {
+        public int id;
+        public String name;
+        public Set<Role> roles;
+    }
+
+    public static class Role {
+        public String name;
+    }
+
 }

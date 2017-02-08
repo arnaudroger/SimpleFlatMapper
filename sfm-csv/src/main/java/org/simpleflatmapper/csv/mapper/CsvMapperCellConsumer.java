@@ -142,9 +142,8 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
 
     private void updateBreakStatus(int cellIndex) {
-
-        if (breakDetector.updateStatus(mapperSetters, cellIndex)) {
-            if (breakDetector.broken()) {
+        if (breakDetector == null || breakDetector.updateStatus(mapperSetters, cellIndex)) {
+            if (breakDetector == null || breakDetector.broken()) {
                 if (mapperSetters.hasInstance()) {
                     callHandler();
                     mapperSetters.resetCurrentInstance();
@@ -152,7 +151,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
                 updateChildrenStatus(cellIndex);
 
-                if (breakDetector.isNotNull()) {
+                if (breakDetector == null || breakDetector.isNotNull()) {
                     mapperSetters.createInstance();
                 }
                 return;

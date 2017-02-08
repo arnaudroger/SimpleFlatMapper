@@ -5,6 +5,7 @@ import org.simpleflatmapper.csv.mapper.BreakDetector;
 import org.simpleflatmapper.csv.mapper.CellSetter;
 import org.simpleflatmapper.csv.mapper.CsvMapperCellConsumer;
 import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.reflect.setter.AppendCollectionSetter;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
@@ -18,7 +19,7 @@ public class DelegateCellSetter<T, P> implements CellSetter<T> {
 	@SuppressWarnings("unchecked")
     public DelegateCellSetter(DelegateMarkerSetter<T, P> marker, int cellIndex, BreakDetector parentBreakDetector) {
 		this.marker = requireNonNull("marker",  marker);
-		this.handler = marker.getMapper().newCellConsumer(null, parentBreakDetector);
+		this.handler = marker.getMapper().newCellConsumer(null, parentBreakDetector, marker.getSetter() instanceof AppendCollectionSetter);
         this.setter = marker.getSetter();
 		this.cellIndex = cellIndex;
 	}
@@ -40,7 +41,7 @@ public class DelegateCellSetter<T, P> implements CellSetter<T> {
             setter.set(target, this.handler.getCurrentInstance());
         }
 	}
-	
+
 	public CsvMapperCellConsumer getCellConsumer() {
 		return handler;
 	}

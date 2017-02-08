@@ -191,16 +191,22 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 	//IFJAVA8_END
 
     protected CsvMapperCellConsumer newCellConsumer(final CheckedConsumer<? super T> handler) {
-        return newCellConsumer(handler, null);
+        return newCellConsumer(handler, null, false);
     }
 
-	protected CsvMapperCellConsumer<T> newCellConsumer(final CheckedConsumer<? super T> handler, BreakDetector parentBreakDetector) {
+	protected CsvMapperCellConsumer<T> newCellConsumer(final CheckedConsumer<? super T> handler, BreakDetector parentBreakDetector, boolean appendCollection) {
         CsvMapperCellConsumer<?>[] cellHandlers = null;
 
         if (hasSubProperties) {
             cellHandlers = new CsvMapperCellConsumer<?>[delayedCellSetterFactories.length + setters.length];
         }
-        final BreakDetector breakDetector = newBreakDetector(parentBreakDetector, delayedCellSetterFactories.length - 1);
+
+        BreakDetector breakDetector = null;
+
+        // check is need to skip breakdetector if no key and append to collection
+        if ((joinKeys != null && joinKeys.length > 0) || !appendCollection) {
+            breakDetector = newBreakDetector(parentBreakDetector, delayedCellSetterFactories.length - 1);
+        }
 
         DelayedCellSetter<T, ?>[] outDelayedCellSetters = getDelayedCellSetters(cellHandlers, breakDetector);
         CellSetter<T>[] outSetters = getCellSetters(cellHandlers, breakDetector);

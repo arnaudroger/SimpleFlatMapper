@@ -15,7 +15,6 @@ import org.simpleflatmapper.util.ListCollector;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.sql.ResultSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;

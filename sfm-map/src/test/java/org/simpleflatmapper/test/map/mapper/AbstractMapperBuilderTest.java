@@ -12,6 +12,7 @@ import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.test.beans.DbListObject;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.context.KeySourceGetter;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
@@ -288,6 +289,62 @@ public class AbstractMapperBuilderTest {
     }
 
     @Test
+    public void testJoinDbListObject() throws Exception {
+        ClassMeta<DbListObject> classMeta = ReflectionService.newInstance().<DbListObject>getClassMeta(DbListObject.class);
+
+        JoinMapper<Object[], Object[][], DbListObject, RuntimeException> mapper =
+                (JoinMapper<Object[], Object[][], DbListObject, RuntimeException>) new SampleMapperBuilder<DbListObject>(classMeta)
+                        .addKey("id")
+                        .addKey("objects_id")
+                        .addMapping("objects_name")
+                        .mapper();
+
+
+        checkDbListJoinMapper(mapper);
+
+    }
+
+    @Test
+    public void testJoinDbListObjectMissingKey() throws Exception {
+        ClassMeta<DbListObject> classMeta = ReflectionService.newInstance().<DbListObject>getClassMeta(DbListObject.class);
+
+        JoinMapper<Object[], Object[][], DbListObject, RuntimeException> mapper =
+                (JoinMapper<Object[], Object[][], DbListObject, RuntimeException>) new SampleMapperBuilder<DbListObject>(classMeta)
+                        .addKey("id")
+                        .addMapping("objects_id")
+                        .addMapping("objects_name")
+                        .mapper();
+
+
+        checkDbListJoinMapper(mapper);
+
+    }
+
+    private void checkDbListJoinMapper(JoinMapper<Object[], Object[][], DbListObject, RuntimeException> mapper) {
+        Iterator<DbListObject> iterator = mapper.iterator(new Object[][]{
+                {1, 1l, "n1"},
+                {1, 2l, "n2"},
+                {2, 1l, "n1"}
+        });
+
+        DbListObject dbListObject = iterator.next();
+
+        assertEquals(1, dbListObject.getId());
+        assertEquals(2, dbListObject.getObjects().size());
+        assertEquals(1l, dbListObject.getObjects().get(0).getId());
+        assertEquals("n1", dbListObject.getObjects().get(0).getName());
+        assertEquals(2l, dbListObject.getObjects().get(1).getId());
+        assertEquals("n2", dbListObject.getObjects().get(1).getName());
+
+        dbListObject = iterator.next();
+        assertEquals(2, dbListObject.getId());
+        assertEquals(1, dbListObject.getObjects().size());
+        assertEquals(1l, dbListObject.getObjects().get(0).getId());
+        assertEquals("n1", dbListObject.getObjects().get(0).getName());
+    }
+
+
+    @Test
     public void testDefaultValue() throws Exception {
         ClassMeta<DbObject> classMeta = ReflectionService.newInstance().<DbObject>getClassMeta(DbObject.class);
 
@@ -308,6 +365,8 @@ public class AbstractMapperBuilderTest {
         assertEquals(3l, dbObject.getId());
         assertEquals(DbObject.Type.type4, dbObject.getTypeName());
     }
+
+
 
     @Test
     public void testDbObject() throws Exception {

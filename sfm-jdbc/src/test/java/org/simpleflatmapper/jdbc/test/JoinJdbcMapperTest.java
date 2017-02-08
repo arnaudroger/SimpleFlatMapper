@@ -19,6 +19,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 //IFJAVA8_START
@@ -34,7 +36,7 @@ public class JoinJdbcMapperTest {
 
     private JdbcMapperFactory asmJdbcMapperFactory = JdbcMapperFactoryHelper.asm().addKeys("id", "students_id");
     private JdbcMapperFactory noAsmJdbcMapperFactory = JdbcMapperFactoryHelper.noAsm().addKeys("id", "students_id");
-
+    private JdbcMapperFactory userJdbcMapperFactory = JdbcMapperFactoryHelper.noAsm().addKeys("uuid");
 
     @Test
     public void testJoinTableFields() throws Exception {
@@ -194,5 +196,37 @@ public class JoinJdbcMapperTest {
 
     }
 
+    @Test
+    public void testUser() throws SQLException {
+        JdbcMapper<User> mapper = userJdbcMapperFactory.newBuilder(User.class).addKey("id").addMapping("name").addMapping("roles_name").mapper();
+
+        ResultSet rs = mock(ResultSet.class);
+
+        when(rs.next()).thenReturn(true, true, false);
+
+        when(rs.getInt(1)).thenReturn(1, 1);
+        when(rs.getString(2)).thenReturn("n1", "n1");
+        when(rs.getString(3)).thenReturn("r1", "r2");
+
+        Iterator<User> iterator = mapper.iterator(rs);
+
+        User u = iterator.next();
+
+        assertEquals(1, u.id);
+        assertEquals("n1", u.name);
+        assertEquals(2, u.roles.size());
+
+    }
+
+
+    public static class User {
+        public int id;
+        public String name;
+        public Set<Role> roles;
+    }
+
+    public static class Role {
+        public String name;
+    }
 
 }

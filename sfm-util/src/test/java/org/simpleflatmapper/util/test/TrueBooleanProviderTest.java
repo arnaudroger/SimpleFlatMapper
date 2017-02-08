@@ -9,6 +9,6 @@ public class TrueBooleanProviderTest {
 
     @Test
     public void testGetBoolean() throws Exception {
-        assertTrue(new TrueBooleanProvider().getBoolean());
+        assertTrue(TrueBooleanProvider.INSTANCE.getBoolean());
     }
 }

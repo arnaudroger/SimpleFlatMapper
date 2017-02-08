@@ -3,6 +3,7 @@ package org.simpleflatmapper.map.context;
 
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.MapElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
@@ -11,9 +12,11 @@ import org.simpleflatmapper.map.context.impl.BreakGetter;
 import org.simpleflatmapper.map.context.impl.NullChecker;
 import org.simpleflatmapper.map.context.impl.RootBreakGetterProvider;
 import org.simpleflatmapper.map.context.impl.ValuedMappingContextFactory;
+import org.simpleflatmapper.reflect.setter.AppendCollectionSetter;
 import org.simpleflatmapper.util.BooleanProvider;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.Supplier;
+import org.simpleflatmapper.util.TrueBooleanProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +66,15 @@ public class MappingContextFactoryBuilder<S, K> {
 
     public Getter<MappingContext<? super S>, BooleanProvider> breakDetectorGetter() {
         if (hasNoKeys()) {
+            if (owner instanceof ArrayElementPropertyMeta) {
+                ArrayElementPropertyMeta elementPropertyMeta = (ArrayElementPropertyMeta) owner;
+                if (elementPropertyMeta.getSetter() instanceof AppendCollectionSetter) {
+                    return new ConstantGetter<MappingContext<? super S>, BooleanProvider>(TrueBooleanProvider.INSTANCE);
+                }
+            }
+
             if (parent != null) {
+                // Object in collection with no key and append setter break all the time
                 return parent.breakDetectorGetter();
             } else {
                 return new RootBreakGetterProvider<S>();

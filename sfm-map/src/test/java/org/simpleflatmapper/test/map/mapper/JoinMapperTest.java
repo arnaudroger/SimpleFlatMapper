@@ -27,56 +27,61 @@ import static org.junit.Assert.*;
 
 public class JoinMapperTest {
 
+    private final Mapper<Object[], DbListObject> dbListObjectMapper = new Mapper<Object[], DbListObject>() {
+        @Override
+        public DbListObject map(Object[] source) throws MappingException {
+            return map(source, null);
+        }
+
+        @Override
+        public DbListObject map(Object[] source, MappingContext<? super Object[]> context) throws MappingException {
+            DbListObject dbListObject = new DbListObject();
+            try {
+                mapTo(source, dbListObject, context);
+            } catch (Exception e) {
+                ErrorHelper.rethrow(e);
+            }
+            return dbListObject;
+        }
+
+        @Override
+        public void mapTo(Object[] source, DbListObject target, MappingContext<? super Object[]> context) throws Exception {
+            target.setId((Integer) source[0]);
+            List<DbObject> objects = target.getObjects();
+            if (objects == null) {
+                objects = new ArrayList<DbObject>();
+                target.setObjects(objects);
+            }
+            DbObject o = new DbObject();
+            o.setId((Long) source[1]);
+            o.setName((String) source[2]);
+            objects.add(o);
+
+        }
+    };
+    private final KeysDefinition<Object[], SampleFieldKey> keysDefinition = new KeysDefinition<Object[], SampleFieldKey>(Arrays.asList(new SampleFieldKey("id", 0)),
+            new KeySourceGetter<SampleFieldKey, Object[]>() {
+        @Override
+        public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
+            return source[key.getIndex()];
+        }
+    }, 0, -1);
+
     @SuppressWarnings("unchecked")
     @Test
-    public void testJoin() {
-        Mapper<Object[], DbListObject> mapper = new Mapper<Object[], DbListObject>() {
-            @Override
-            public DbListObject map(Object[] source) throws MappingException {
-                return map(source, null);
-            }
-
-            @Override
-            public DbListObject map(Object[] source, MappingContext<? super Object[]> context) throws MappingException {
-                DbListObject dbListObject = new DbListObject();
-                try {
-                    mapTo(source, dbListObject, context);
-                } catch (Exception e) {
-                    ErrorHelper.rethrow(e);
-                }
-                return dbListObject;
-            }
-
-            @Override
-            public void mapTo(Object[] source, DbListObject target, MappingContext<? super Object[]> context) throws Exception {
-                target.setId((Integer) source[0]);
-                List<DbObject> objects = target.getObjects();
-                if (objects == null) {
-                    objects = new ArrayList<DbObject>();
-                    target.setObjects(objects);
-                }
-                DbObject o = new DbObject();
-                o.setId((Long) source[1]);
-                o.setName((String) source[2]);
-                objects.add(o);
-
-            }
-        };
-        KeysDefinition<Object[], SampleFieldKey> keysDefinition = new KeysDefinition<Object[], SampleFieldKey>(Arrays.asList(new SampleFieldKey("id", 0)),
-                new KeySourceGetter<SampleFieldKey, Object[]>() {
-            @Override
-            public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
-                return source[key.getIndex()];
-            }
-        }, 0, -1);
+    public void testJoinWithKey() {
         JoinMapper<Object[], Object[][], DbListObject, RuntimeException> joinMapper =
                 new JoinMapper<Object[], Object[][], DbListObject, RuntimeException>(
-                        mapper, RethrowConsumerErrorHandler.INSTANCE,
+                        dbListObjectMapper, RethrowConsumerErrorHandler.INSTANCE,
                         new BreakDetectorMappingContextFactory<Object[], Object>(new KeysDefinition[] {keysDefinition}, 0, MappingContext.EMPTY_FACTORY, 3),
                         SetRowMapperTest.ENUMARABLE_UNARY_FACTORY
                         );
 
 
+        checkJoins(joinMapper);
+    }
+
+    private void checkJoins(JoinMapper<Object[], Object[][], DbListObject, RuntimeException> joinMapper) {
         Object[][] data = new Object[][] {
                 {1, 1l, "name1"},
                 {1, 2l, "name2"},

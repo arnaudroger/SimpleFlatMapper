@@ -3,9 +3,8 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.util.BooleanProvider;
 import org.simpleflatmapper.util.IntFactory;
-import org.simpleflatmapper.util.Supplier;
-import org.simpleflatmapper.util.UnaryFactory;
 
 import java.lang.reflect.Type;
 

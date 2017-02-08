@@ -92,7 +92,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	public ClassMeta<E> getElementClassMeta() {
 		return elementClassMeta;
 	}
-	
+
 	public Type getElementTarget() {
 		return elementTarget;
 	}
@@ -130,7 +130,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T, E> IntFactory<Setter<T, E>> newSetterFactory(final BooleanSupplier isVertical) {
+	public <T, E> IntFactory<Setter<T, E>> newSetterFactory(final BooleanSupplier appendSetter) {
 		if (TypeHelper.isArray(type)) {
 			Type elementType = TypeHelper.getComponentTypeOfListOrArray(type);
 
@@ -204,8 +204,8 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 			return new IntFactory<Setter<T, E>>() {
 				@Override
 				public Setter<T, E> newInstance(int i) {
-					if (isVertical.getAsBoolean() && i == 0) {
-						return new AppendCollectionSetter();
+					if (appendSetter.getAsBoolean() && i == 0) {
+						return AppendCollectionSetter.INSTANCE;
 					} else {
 						return new IndexedListSetter(i);
 					}
@@ -215,7 +215,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 			return new IntFactory<Setter<T, E>>() {
 				@Override
 				public Setter<T, E> newInstance(int i) {
-					return new AppendCollectionSetter();
+					return AppendCollectionSetter.INSTANCE;
 				}
 			};
 		}

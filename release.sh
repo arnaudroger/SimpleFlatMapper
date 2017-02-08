@@ -13,6 +13,8 @@ function java6 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-6-oracle/jre/bin/java;export JAVA_HOME=/usr/lib/jvm/java-6-oracle
 }
 
+echo "change versions"
+exit
 java8
 mvn --batch-mode -Dtag=sfm-parent-3.9.1 -Pdev release:prepare \
                  -DreleaseVersion=3.9.1 \

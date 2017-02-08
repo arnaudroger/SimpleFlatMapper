@@ -191,8 +191,6 @@ public class CsvMapperJoinTest {
 
         User u = iterator.next();
 
-        u = iterator.next();
-
         assertEquals(1, u.id);
         assertEquals("n1", u.name);
         assertEquals(2, u.roles.size());

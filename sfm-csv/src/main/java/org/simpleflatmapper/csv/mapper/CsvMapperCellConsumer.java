@@ -20,6 +20,8 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
     protected int cellIndex = 0;
 
+    private boolean calledHandler = false;
+
     @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
     public CsvMapperCellConsumer(
             CsvMapperCellHandler<T> csvMapperCellHandler,
@@ -38,7 +40,9 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
     public final boolean endOfRow() {
         composeInstance();
         resetConsumer();
-        return true;
+        boolean calledHandler = this.calledHandler;
+        this.calledHandler = false;
+        return calledHandler;
     }
 
     public final T getCurrentInstance() {
@@ -52,6 +56,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
 
     protected final void callHandler() {
+        calledHandler = true;
         if (handler == null) return;
         try {
             handler.accept(getCurrentInstance());

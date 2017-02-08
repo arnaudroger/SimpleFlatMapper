@@ -6,7 +6,7 @@
   <groupId>org.simpleflatmapper</groupId>
   <artifactId>ow2asm</artifactId>
   <name>ASM Core</name>
-  <version>3.10</version>
+  <version>3.11-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <properties>

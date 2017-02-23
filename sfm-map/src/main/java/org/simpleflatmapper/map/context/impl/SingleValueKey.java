@@ -3,7 +3,9 @@ package org.simpleflatmapper.map.context.impl;
 import org.simpleflatmapper.map.context.Key;
 
 import java.util.Arrays;
+//IFJAVA8_START
 import java.util.Objects;
+//IFJAVA8_END
 
 public class SingleValueKey extends Key {
 

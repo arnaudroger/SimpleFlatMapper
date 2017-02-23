@@ -23,7 +23,7 @@ import java.util.stream.StreamSupport;
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public final class DynamicCsvMapper<T> implements CsvMapper<T> {
-	
+
 	private final ClassMeta<T> classMeta;
 
 	private final Type target;

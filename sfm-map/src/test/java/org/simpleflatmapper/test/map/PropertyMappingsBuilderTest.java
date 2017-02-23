@@ -7,6 +7,7 @@ import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.annotation.Key;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.map.mapper.PropertyMappingsBuilder;
@@ -218,5 +219,24 @@ public class PropertyMappingsBuilderTest {
         builder.addProperty(new SampleFieldKey("id", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
 
         verify(errorHandler).propertyNotFound(DbObject.class, "self");
+    }
+
+    @Test
+    public void testAnnotations() {
+
+        final ClassMeta<ObjectWithAnnotation> classMeta = ReflectionService.newInstance().getClassMeta(ObjectWithAnnotation.class);
+        PropertyMappingsBuilder<ObjectWithAnnotation, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder2 =
+                defaultPropertyMappingBuilder(classMeta);
+
+        builder2.addProperty(new SampleFieldKey("id", 0), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+
+        List<PropertyMapping<ObjectWithAnnotation, ?, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>> propertyMappings = builder2.currentProperties();
+
+        assertTrue(propertyMappings.get(0).getColumnDefinition().isKey());
+    }
+
+    public static class ObjectWithAnnotation {
+        @Key
+        public int id;
     }
 }

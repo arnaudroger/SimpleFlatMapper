@@ -19,6 +19,10 @@ public class KeyProperty {
 
     private final Predicate<PropertyMeta<?, ?>> appliesTo;
 
+    public KeyProperty() {
+        this(DEFAULT_PREDICATE);
+    }
+
     public KeyProperty(Predicate<PropertyMeta<?, ?>> appliesTo) {
         this.appliesTo = requireNonNull("appliesTo", appliesTo);
     }

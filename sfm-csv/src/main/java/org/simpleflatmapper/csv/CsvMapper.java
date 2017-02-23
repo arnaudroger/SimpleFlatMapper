@@ -49,7 +49,7 @@ import java.util.stream.Stream;
  * @see CsvMapperFactory
  */
 public interface CsvMapper<T> {
-	
+
 	/**
 	 * Will map each row of the content of reader to an object of type T and will pass that object to the handle via the {@link CheckedConsumer}.handler(T t) call back.
 	 * <p>
@@ -58,7 +58,7 @@ public interface CsvMapper<T> {
      *     List&lt;T&gt; list = jdbcMapper.forEach(reader, new ListHandler&lt;T&gt;()).getList();
      * </code>
      * <br>
-	 * 
+	 *
 	 * @param reader the reader
 	 * @param handle the callback newInstance
      * @param <H> the row handler type
@@ -85,8 +85,8 @@ public interface CsvMapper<T> {
 
 	/**
 	 * Will map each row of the content of reader, starting at rowStart, to an object of type T and will pass that object to the handle via the {@link CheckedConsumer}.handler(T t) call back.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param reader the reader
 	 * @param handle the callback newInstance
 	 * @param skip the number of row to skip
@@ -100,8 +100,8 @@ public interface CsvMapper<T> {
 
 	/**
 	 * Will map each row of the content of reader, starting at rowStart and ending before rowEnd, to an object of type T and will pass that object to the handle via the {@link CheckedConsumer}.handler(T t) call back.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param reader the reader
 	 * @param handle the callback newInstance
 	 * @param skip the number of row to skip
@@ -129,7 +129,7 @@ public interface CsvMapper<T> {
 
 	/**
 	 * Will return an iterator on the reader that will return a mapped object for each row.
-	 * 
+	 *
 	 * @param reader the reader
 	 * @return an iterator on the file
      * @throws IOException if an io error occurs
@@ -147,7 +147,7 @@ public interface CsvMapper<T> {
 
 	/**
 	 * Will return an iterator on the reader that will return a mapped object for each row.
-	 * 
+	 *
 	 * @param reader the reader
 	 * @param skip the number of row to skip
 	 * @return an iterator on the file
@@ -157,7 +157,7 @@ public interface CsvMapper<T> {
 
 	/**
 	 * Will return a Stream of T
-	 * 
+	 *
 	 * @param reader the reader
 	 * @return stream of T
      * @throws IOException if an io error occurs
@@ -175,10 +175,10 @@ public interface CsvMapper<T> {
 	//IFJAVA8_START
 	Stream<T> stream(CsvReader reader) throws IOException;
 	//IFJAVA8_END
-	
+
 	/**
 	 * Will return a Stream of T.
-	 * 
+	 *
 	 * @param reader the reader
 	 * @param skip the number of row to skip
 	 * @return stream of T

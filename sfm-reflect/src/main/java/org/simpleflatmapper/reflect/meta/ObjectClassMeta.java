@@ -9,9 +9,11 @@ import org.simpleflatmapper.reflect.setter.SetterHelper;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ErrorHelper;
+import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -21,7 +23,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	private final List<ConstructorPropertyMeta<T, ?>> constructorProperties;
 	private final List<InstantiatorDefinition> instantiatorDefinitions;
 
-	
+
 	private final ReflectionService reflectService;
 	private final Type target;
 
@@ -60,7 +62,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
     private Map<String, String> aliases(final ReflectionService reflectService, Class<T> target) {
 		final Map<String, String> map = new HashMap<String, String>();
-		
+
 		ClassVisitor.visit(target, new FieldAndMethodCallBack() {
 			@Override
 			public void method(Method method) {
@@ -77,7 +79,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 					map.put(name, alias);
 				}
 			}
-			
+
 			@Override
 			public void field(Field field) {
 				String alias = reflectService.getColumnName(field);
@@ -86,13 +88,13 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 				}
 			}
 		});
-		
+
 		return map;
 	}
 
 	private List<ConstructorPropertyMeta<T, ?>> listConstructorProperties(List<InstantiatorDefinition> instantiatorDefinitions) {
 		if (instantiatorDefinitions == null) return null;
-		
+
 		List<ConstructorPropertyMeta<T, ?>> constructorProperties = new ArrayList<ConstructorPropertyMeta<T, ?>>();
 
 		ParamNameDeductor<T> paramNameDeductor = null;
@@ -113,7 +115,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 	}
 
     private <P> ConstructorPropertyMeta<T, P> constructorMeta(org.simpleflatmapper.reflect.Parameter param, String paramName, InstantiatorDefinition instantiatorDefinition) {
-        return new ConstructorPropertyMeta<T, P>(paramName, target, reflectService, param,  instantiatorDefinition);
+        return new ConstructorPropertyMeta<T, P>(paramName, target, reflectService, param,  instantiatorDefinition, null);
     }
 
     private List<PropertyMeta<T, ?>> listProperties(final ReflectionService reflectService, final Type targetType) {
@@ -132,7 +134,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 					register(propertyName,
 							method.getGenericParameterTypes()[0],
 							ScoredGetter.<T, Object>nullGetter(),
-							ScoredSetter.ofMethod(method, methodSetter));
+							ScoredSetter.ofMethod(method, methodSetter), getDefineProperties(method));
 				} else if (GetterHelper.isGetter(method)) {
 					final String propertyName = GetterHelper.getPropertyNameFromMethodName(name);
 
@@ -140,12 +142,12 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 					register(propertyName,
 							method.getGenericReturnType(),
 							ScoredGetter.ofMethod(method, methodGetter),
-							ScoredSetter.<T, Object>nullSetter());
+							ScoredSetter.<T, Object>nullSetter(), getDefineProperties(method));
 				}
 			}
 
 			@SuppressWarnings("unchecked")
-			private <P> void register(String propertyName, Type type, ScoredGetter<T, P> getter, ScoredSetter<T, P> setter) {
+			private <P> void register(String propertyName, Type type, ScoredGetter<T, P> getter, ScoredSetter<T, P> setter, Object[] defineProperties) {
 
 				if (type instanceof TypeVariable) {
 					Type mappedType = typeVariableTypeMap.get(type);
@@ -159,6 +161,10 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
 				if (indexOfProperty != -1) {
 					ConstructorPropertyMeta<T, P> constructorPropertyMeta = (ConstructorPropertyMeta<T, P>) constructorProperties.get(indexOfProperty);
+					if (defineProperties != null && defineProperties.length > 0) {
+						constructorPropertyMeta = constructorPropertyMeta.defineProperties(defineProperties);
+						constructorProperties.set(indexOfProperty, constructorPropertyMeta);
+					}
 					if (getter != null && GetterHelper.isCompatible(constructorPropertyMeta.getPropertyType(), type)) {
 						constructorPropertyMeta = constructorPropertyMeta.getter(getter);
 						constructorProperties.set(indexOfProperty, constructorPropertyMeta);
@@ -170,14 +176,14 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 				} else {
 					indexOfProperty = findProperty(properties, propertyName);
 					if (indexOfProperty == -1) {
-						properties.add(new ObjectPropertyMeta<T, P>(propertyName, targetType, reflectService, type, getter, setter));
+						properties.add(new ObjectPropertyMeta<T, P>(propertyName, targetType, reflectService, type, getter, setter, defineProperties));
 					} else {
 						ObjectPropertyMeta<T, P> meta = (ObjectPropertyMeta<T, P>) properties.get(indexOfProperty);
 
 						ScoredGetter<T, P> compatibleGetter = GetterHelper.isCompatible(meta.getPropertyType(), type) ? getter : ScoredGetter.<T, P>nullGetter();
 						ScoredSetter<T, P> compatibleSetter = SetterHelper.isCompatible(meta.getPropertyType(), type) ? setter : ScoredSetter.<T, P>nullSetter();
 						properties.set(indexOfProperty,
-								meta.getterSetter(compatibleGetter, compatibleSetter));
+								meta.getterSetter(compatibleGetter, compatibleSetter, defineProperties));
 					}
 				}
 			}
@@ -201,9 +207,9 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 						register(name,
 								field.getGenericType(),
 								getter,
-								setter);
+								setter, getDefineProperties(field));
 					} else {
-						register(name, field.getGenericType(), ScoredGetter.<T, Object>nullGetter(), ScoredSetter.<T, Object>nullSetter());
+						register(name, field.getGenericType(), ScoredGetter.<T, Object>nullGetter(), ScoredSetter.<T, Object>nullSetter(), getDefineProperties(field));
 					}
 				}
 			}
@@ -227,6 +233,15 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			}
 		}
 		return properties;
+	}
+
+	private Object[] getDefineProperties(AnnotatedElement annotatedElement) {
+		ListCollector<Object> properties = new ListCollector<Object>();
+		AnnotationToPropertyService annotationToPropertyService = AnnotationToPropertyUtil.getAnnotationToPropertyService();
+		for(Annotation annotation : annotatedElement.getAnnotations()) {
+			annotationToPropertyService.generateProperty(annotation, properties);
+		}
+		return properties.getList().toArray();
 	}
 
 

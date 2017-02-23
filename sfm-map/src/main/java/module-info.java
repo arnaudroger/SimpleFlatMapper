@@ -10,4 +10,8 @@ module simpleflatmapper.map {
         exports org.simpleflatmapper.map.error;
         exports org.simpleflatmapper.map.property;
         exports org.simpleflatmapper.map.property.time;
+        exports org.simpleflatmapper.map.annotation;
+
+        provides org.simpleflatmapper.reflect.meta.AnnotationToPropertyServiceProducer
+                with org.simpleflatmapper.map.annotation.impl.MappingAnnotationToPropertyServiceProducer;
 }

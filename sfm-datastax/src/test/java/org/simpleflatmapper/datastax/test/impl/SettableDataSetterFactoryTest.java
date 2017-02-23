@@ -297,7 +297,7 @@ public class SettableDataSetterFactoryTest {
         verify(statement).setTupleValue(0, bd);
         verify(statement).setToNull(0);
     }
-    
+
     @Test
     public void testBigDecimal() throws Exception {
         BigDecimal bd = new BigDecimal("3.33");

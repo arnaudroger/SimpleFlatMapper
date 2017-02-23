@@ -29,13 +29,13 @@ import static org.junit.Assert.*;
 
 
 public class DynamicJdbcMapperTest {
-	
+
 	final JdbcMapper<DbObject> mapper;
-	
+
 	public DynamicJdbcMapperTest() throws NoSuchMethodException, SecurityException, SQLException {
 		mapper = JdbcMapperFactoryHelper.noAsm().newMapper(DbObject.class);
 	}
-	
+
 	@Test
 	public void testResultSetMapperForEachRS()
 			throws Exception {
@@ -112,36 +112,36 @@ public class DynamicJdbcMapperTest {
 			}
 		});
 	}
-	
-	
+
+
 	private static final int NBROW = 2;
 	private static final int NBFUTURE = 10000;
 	@Test
 	public void testMultipleThread() throws InterruptedException, ExecutionException {
 		final JdbcMapper<DbObject> mapper = JdbcMapperFactoryHelper.asm().newMapper(DbObject.class);
-		
+
 		ExecutorService service = Executors.newFixedThreadPool(4);
 		final AtomicLong sumOfAllIds = new AtomicLong();
 		final AtomicLong nbRow = new AtomicLong();
-		
+
 		final CheckedConsumer<DbObject> handler = new CheckedConsumer<DbObject>() {
 			@Override
 			public void accept(DbObject t) throws Exception {
 				long id = t.getId();
-				
+
 				assertEquals("name" + Long.toHexString(id), t.getName());
 				assertEquals("email" + Long.toHexString(id), t.getEmail());
 				assertEquals(Type.values()[(int)(id) % 4], t.getTypeName());
 				assertEquals(Type.values()[(int)(id) % 4], t.getTypeOrdinal());
 				assertEquals(id, t.getCreationTime().getTime() / 1000);
-				
+
 				sumOfAllIds.addAndGet(id);
 				nbRow.incrementAndGet();
 			}
 		};
-		
-		
-		List<Future<Object>> futures = new ArrayList<Future<Object>>(); 
+
+
+		List<Future<Object>> futures = new ArrayList<Future<Object>>();
 		for(int i = 0; i < NBFUTURE; i++) {
 			futures.add(service.submit(new Callable<Object>() {
 				@Override
@@ -151,8 +151,8 @@ public class DynamicJdbcMapperTest {
 				}
 			}));
 		}
-		
-		
+
+
 		int i = 0;
 		for(Future<Object> future : futures) {
 			try {
@@ -164,12 +164,12 @@ public class DynamicJdbcMapperTest {
 		}
 		assertEquals(NBFUTURE, i);
 		assertEquals(NBFUTURE * NBROW, nbRow.get());
-		
+
 		int sum = 0;
 		for(i = 1 ; i <= NBROW ; i++) {
 			sum += i;
 		}
-		
+
 		assertEquals(NBFUTURE * sum, sumOfAllIds.get());
 	}
 

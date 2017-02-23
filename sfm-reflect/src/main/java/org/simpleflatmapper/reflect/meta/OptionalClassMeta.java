@@ -10,7 +10,6 @@ import org.simpleflatmapper.reflect.ScoredGetter;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.Predicate;
-import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -36,7 +35,7 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 					instantiatorDefinition.getParameters()[0],
 					new ScoredGetter<Optional<T>, Object>(Integer.MAX_VALUE, new OptionalGetter<T>()),
 					ScoredSetter.<Optional<T>, Object>nullSetter(),
-					instantiatorDefinition);
+					instantiatorDefinition, null);
 			this.innerMeta = reflectionService.getClassMeta(instantiatorDefinition.getParameters()[0].getGenericType());
 		} catch(Exception e) {
             ErrorHelper.rethrow(e);

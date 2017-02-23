@@ -71,16 +71,16 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		assertEquals(3, dbObjectConstructors.size());
 		assertEquals(0, dbObjectConstructors.get(0).getParameters().length);
 		assertEquals(DbObject.class.getConstructor(), ((ExecutableInstantiatorDefinition)dbObjectConstructors.get(0)).getExecutable());
-		
+
 	}
-	
+
 	@Test
 	public void testExtractConstructorsFinalDbObject() throws IOException, NoSuchMethodException, SecurityException {
 
 		List<InstantiatorDefinition> finalDbObjectConstructors = ReflectionInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class);
 		assertEquals(2, finalDbObjectConstructors.size());
 		assertEquals(6, finalDbObjectConstructors.get(0).getParameters().length);
-		
+
 		assertEquals(long.class, finalDbObjectConstructors.get(0).getParameters()[0].getType());
 		assertEquals(String.class, finalDbObjectConstructors.get(0).getParameters()[1].getType());
 		assertEquals(String.class, finalDbObjectConstructors.get(0).getParameters()[2].getType());
@@ -95,7 +95,7 @@ public class ReflectionInstantiatorDefinitionFactoryTest {
 		assertNull(finalDbObjectConstructors.get(0).getParameters()[4].getName());
 		assertNull(finalDbObjectConstructors.get(0).getParameters()[5].getName());
 
-		
+
 		assertEquals(DbFinalObject.class.getConstructor(long.class, String.class, String.class, Date.class, Type.class, Type.class),
 				((ExecutableInstantiatorDefinition)finalDbObjectConstructors.get(0)).getExecutable());
 

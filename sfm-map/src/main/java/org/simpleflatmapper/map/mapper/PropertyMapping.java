@@ -16,7 +16,9 @@ public class PropertyMapping<T, P, K extends FieldKey<K>, D extends ColumnDefini
 	}
 
 	public <TT, PP> PropertyMapping<TT, PP, K, D> propertyMeta(PropertyMeta<TT, PP> propertyMeta) {
-		return new PropertyMapping<TT, PP, K, D>(propertyMeta, columnKey, columnDefinition);
+		Object[] definedProperties = propertyMeta.getDefinedProperties();
+		D mergeColumnDefintion = definedProperties != null ?  this.columnDefinition.newColumnDefinition(definedProperties) : this.columnDefinition;
+		return new PropertyMapping<TT, PP, K, D>(propertyMeta, columnKey, mergeColumnDefintion);
 	}
 
 	public PropertyMeta<T, P> getPropertyMeta() {

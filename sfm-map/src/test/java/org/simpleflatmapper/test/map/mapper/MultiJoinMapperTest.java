@@ -3,6 +3,7 @@ package org.simpleflatmapper.test.map.mapper;
 import org.junit.Test;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
+import org.simpleflatmapper.map.annotation.Key;
 import org.simpleflatmapper.map.mapper.JoinMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -29,6 +30,7 @@ public class MultiJoinMapperTest {
     };
 
     public static class Root {
+        @Key
         public int id;
         public List<Element> ll;
         public List<Element> ls;
@@ -48,7 +50,12 @@ public class MultiJoinMapperTest {
         AbstractMapperBuilderTest.SampleMapperBuilder<Root> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<Root>(classMeta, mapperConfig());
 
-        Mapper<Object[], Root> rowMapper = builder.addKey("id").addKey("ll_id").addKey("ls_id").mapper();
+        Mapper<Object[], Root> rowMapper =
+                builder
+                        .addMapping("id")
+                        .addKey("ll_id")
+                        .addKey("ls_id")
+                        .mapper();
         JoinMapper<Object[], Object[][], Root, RuntimeException> mapper =
                 (JoinMapper<Object[], Object[][], Root, RuntimeException>) rowMapper;
 
@@ -76,7 +83,7 @@ public class MultiJoinMapperTest {
         AbstractMapperBuilderTest.SampleMapperBuilder<Root> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<Root>(classMeta, mapperConfig());
 
-        Mapper<Object[], Root> rowMapper = builder.addKey("id").addKey("ll_id").addKey("ll_elements_id").addMapping("ll_elements_value").mapper();
+        Mapper<Object[], Root> rowMapper = builder.addMapping("id").addKey("ll_id").addKey("ll_elements_id").addMapping("ll_elements_value").mapper();
         JoinMapper<Object[], Object[][], Root, RuntimeException> mapper =
                 (JoinMapper<Object[], Object[][], Root, RuntimeException>) rowMapper;
 
@@ -118,11 +125,13 @@ public class MultiJoinMapperTest {
 
 
     public static class RootC {
-        private final int id;
-        private final  List<Element> ll;
-        private final  List<Element> ls;
 
-        public RootC(int id, List<Element> ll, List<Element> ls) {
+        @Key
+        private final int id;
+        private final  List<ElementC> ll;
+        private final  List<ElementC> ls;
+
+        public RootC(int id, List<ElementC> ll, List<ElementC> ls) {
             this.id = id;
             this.ll = ll;
             this.ls = ls;
@@ -132,11 +141,11 @@ public class MultiJoinMapperTest {
             return id;
         }
 
-        public List<Element> getLl() {
+        public List<ElementC> getLl() {
             return ll;
         }
 
-        public List<Element> getLs() {
+        public List<ElementC> getLs() {
             return ls;
         }
     }
@@ -147,7 +156,7 @@ public class MultiJoinMapperTest {
         public ElementC(int id) {
             this.id = id;
         }
-
+        @Key
         public int getId() {
             return id;
         }
@@ -160,7 +169,11 @@ public class MultiJoinMapperTest {
         AbstractMapperBuilderTest.SampleMapperBuilder<RootC> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<RootC>(classMeta, mapperConfig());
 
-        Mapper<Object[], RootC> rowMapper = builder.addKey("id").addKey("ll_id").addKey("ls_id").mapper();
+        Mapper<Object[], RootC> rowMapper = builder
+                .addMapping("id")
+                .addMapping("ll_id")
+                .addMapping("ls_id")
+                .mapper();
         JoinMapper<Object[], Object[][], RootC, RuntimeException> mapper =
                 (JoinMapper<Object[], Object[][], RootC, RuntimeException>) rowMapper;
 

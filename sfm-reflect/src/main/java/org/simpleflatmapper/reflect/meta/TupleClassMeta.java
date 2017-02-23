@@ -60,7 +60,7 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
         Getter<T, E> getter = reflectionService.getObjectGetterFactory().getGetter(tClass, parameter.getName());
         return new ConstructorPropertyMeta<T, E>("element" + i, type, reflectionService,
                 parameter,
-                ScoredGetter.<T, E>of(getter, Integer.MAX_VALUE), ScoredSetter.<T, E>nullSetter(), instantiatorDefinition);
+                ScoredGetter.<T, E>of(getter, Integer.MAX_VALUE), ScoredSetter.<T, E>nullSetter(), instantiatorDefinition, null);
     }
 
     private InstantiatorDefinition getInstantiatorDefinition(Type type, ReflectionService reflectionService) throws java.io.IOException {

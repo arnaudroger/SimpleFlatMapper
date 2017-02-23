@@ -49,7 +49,7 @@ public final class SqlParameterSourceBuilder<T> {
 
         if (composedDefinition.has(ConstantValueProperty.class)) {
             ConstantValueProperty staticValueProperty = composedDefinition.lookFor(ConstantValueProperty.class);
-            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<T, Object>(key.getName(), builder.getClassMeta().getType(), reflectionService, staticValueProperty.getType(), ScoredGetter.of(new ConstantGetter<T, Object>(staticValueProperty.getValue()), 1), null);
+            PropertyMeta<T, Object> meta = new ObjectPropertyMeta<T, Object>(key.getName(), builder.getClassMeta().getType(), reflectionService, staticValueProperty.getType(), ScoredGetter.of(new ConstantGetter<T, Object>(staticValueProperty.getValue()), 1), null, null);
             builder.addProperty(key, columnDefinition, meta);
         } else {
             builder.addProperty(mappedColumnKey, composedDefinition);

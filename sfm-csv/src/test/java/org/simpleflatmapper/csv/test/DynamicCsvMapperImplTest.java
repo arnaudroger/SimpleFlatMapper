@@ -38,12 +38,12 @@ public class DynamicCsvMapperImplTest {
 		return new StringReader("id,name,email,creationTime,typeOrdinal,typeName\n"
 				+ "1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4");
 	}
-	
+
 	public static Reader dbObjectCsvReader3LinesWithLineToSkip() throws UnsupportedEncodingException {
 		return new StringReader("\nid,name,email,creationTime,typeOrdinal,typeName\n"
 				+ "1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4\n"
 				+ "2,name 2,name2@mail.com,2014-03-04 11:10:03,2,type4"
-				
+
 				);
 	}
 	public static Reader dbObjectCsvReader3Lines() throws UnsupportedEncodingException {
@@ -79,7 +79,7 @@ public class DynamicCsvMapperImplTest {
 	@Test
 	public void testDbObjectWithSkipAndLimit() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
-		
+
 		List<DbObject> list = mapper.forEach(dbObjectCsvReader3LinesWithLineToSkip(), new ListCollector<DbObject>(),1,1).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
@@ -92,20 +92,20 @@ public class DynamicCsvMapperImplTest {
 		List<DbFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListCollector<DbFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
-		
+
 	}
-	
+
 	@Test
 	public void testPartialFinalDbObject() throws Exception {
 		CsvMapper<DbPartialFinalObject> mapper = CsvMapperFactory.newInstance().newMapper(DbPartialFinalObject.class);
-		
+
 		List<DbPartialFinalObject> list = mapper.forEach(dbObjectCsvReader(), new ListCollector<DbPartialFinalObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0));
-		
+
 	}
-	
-	
+
+
 	@Test
 	public void testDbObjectIterator() throws Exception {
 		CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
@@ -208,21 +208,21 @@ public class DynamicCsvMapperImplTest {
 			+ "1,1,name 1,name1@mail.com,2014-03-04 11:10:03,2,type4";
 	@Test
 	public void testDbListObject() throws Exception {
-		
+
 		CsvMapper<DbListObject> mapper = CsvMapperFactory.newInstance().newMapper(DbListObject.class);
-		
-		
+
+
 		List<DbListObject> list = mapper.forEach(new StringReader(CSV_LIST), new ListCollector<DbListObject>()).getList();
 		assertEquals(1, list.size());
 		DbHelper.assertDbObjectMapping(list.get(0).getObjects().get(0));
 
 	}
-	
-	
+
+
 
 	private static final int NBROW = 2;
 	private static final int NBFUTURE = 10000;
-	
+
 	@Test
 	public void testMultipleThread() throws InterruptedException, ExecutionException {
 		final CsvMapper<DbObject> mapper = CsvMapperFactory.newInstance().newMapper(DbObject.class);
@@ -230,26 +230,26 @@ public class DynamicCsvMapperImplTest {
 		ExecutorService service = Executors.newFixedThreadPool(4);
 		final AtomicLong sumOfAllIds = new AtomicLong();
 		final AtomicLong nbRow = new AtomicLong();
-		
+
 		final CheckedConsumer<DbObject> handler = new CheckedConsumer<DbObject>() {
 			@Override
 			public void accept(DbObject t) throws Exception {
 				long id = t.getId();
-				
+
 				assertEquals("name" + Long.toHexString(id), t.getName());
 				assertEquals("email" + Long.toHexString(id), t.getEmail());
 				assertEquals(Type.values()[(int)(id) % 4], t.getTypeName());
 				assertEquals(Type.values()[(int)(id) % 4], t.getTypeOrdinal());
 				assertEquals(id, t.getCreationTime().getTime() / 1000);
-				
+
 				sumOfAllIds.addAndGet(id);
 				nbRow.incrementAndGet();
 			}
 		};
-		
+
 		final String str = buildCsvContent();
-		
-		List<Future<Object>> futures = new ArrayList<Future<Object>>(); 
+
+		List<Future<Object>> futures = new ArrayList<Future<Object>>();
 		for(int i = 0; i < NBFUTURE; i++) {
 			futures.add(service.submit(new Callable<Object>() {
 				@Override
@@ -259,8 +259,8 @@ public class DynamicCsvMapperImplTest {
 				}
 			}));
 		}
-		
-		
+
+
 		int i = 0;
 		for(Future<Object> future : futures) {
 			try {
@@ -272,20 +272,20 @@ public class DynamicCsvMapperImplTest {
 		}
 		assertEquals(NBFUTURE, i);
 		assertEquals(nbRow.get(), NBFUTURE * NBROW);
-		
+
 		int sum = 0;
 		for(i = 0 ; i < NBROW ; i++) {
 			sum += i;
 		}
-		
+
 		assertEquals(sumOfAllIds.get(), NBFUTURE * sum);
 	}
 
 	private String buildCsvContent() {
 		StringBuilder sb = new StringBuilder();
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		
+
 		sb.append("id,name,email,type_name,type_ordinal,creation_time\n");
 		for(int i = 0; i < NBROW; i++) {
 			sb.append(Long.toString(i)).append(",");
@@ -295,7 +295,7 @@ public class DynamicCsvMapperImplTest {
 			sb.append(Long.toString(i % 4)).append(",");
 			sb.append(sdf.format(new Date(i * 1000))).append("\n");
 		}
-		
+
 		return sb.toString();
 	}
 }

@@ -14,4 +14,5 @@ module simpleflatmapper.reflect {
 
         uses org.simpleflatmapper.reflect.meta.AliasProviderProducer;
         uses org.simpleflatmapper.reflect.ReflectionService.ClassMetaFactoryProducer;
+        uses org.simpleflatmapper.reflect.meta.AnnotationToPropertyServiceProducer;
 }

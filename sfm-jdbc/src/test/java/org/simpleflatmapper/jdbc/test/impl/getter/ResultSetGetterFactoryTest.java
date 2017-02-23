@@ -36,7 +36,7 @@ public class ResultSetGetterFactoryTest {
 	public static final FieldMapperColumnDefinition<JdbcColumnKey> IDENTITY = FieldMapperColumnDefinition.identity();
 	ResultSetGetterFactory factory;
 	ResultSet resultSet;
-	
+
 	@Before
 	public void setUp() {
 		factory =  ResultSetGetterFactory.INSTANCE;
@@ -60,7 +60,7 @@ public class ResultSetGetterFactoryTest {
 		assertEquals("value", factory.newGetter(String.class, key(Types.NCLOB), IDENTITY).get(resultSet));
 		assertEquals("value", factory.newGetter(String.class, key(Types.NVARCHAR), IDENTITY).get(resultSet));
 	}
-	
+
 	@Test
 	public void testBlob() throws Exception {
 		Blob blob = mock(Blob.class);

@@ -17,7 +17,7 @@ public abstract class PropertyMeta<O, P> {
 	private final Type ownerType;
 
 	protected final ReflectionService reflectService;
-	
+
 	private volatile ClassMeta<P> classMeta;
 
 	public PropertyMeta(String name, Type ownerType, ReflectionService reflectService) {
@@ -83,5 +83,9 @@ public abstract class PropertyMeta<O, P> {
 				return getPropertyClassMeta();
 			}
 		};
+	}
+
+	public Object[] getDefinedProperties() {
+		return new Object[0];
 	}
 }

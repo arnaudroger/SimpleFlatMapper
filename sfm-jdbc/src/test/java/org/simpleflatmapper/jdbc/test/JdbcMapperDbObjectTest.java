@@ -64,11 +64,11 @@ public class JdbcMapperDbObjectTest {
 	@Test
 	public void testColumn() throws Exception {
 		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class);
-		
+
 		addColumn(builder);
-		
+
 		final JdbcMapper<DbObject> mapper = builder.mapper();
-		
+
 		testDbObjectMapper(mapper);
 	}
 
@@ -81,15 +81,15 @@ public class JdbcMapperDbObjectTest {
 		builder.addMapping("type_name");
 		return builder;
 	}
-	
+
 	@Test
 	public void testColumnFinalProperty() throws Exception {
 		JdbcMapperBuilder<DbFinalObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbFinalObject.class);
-		
+
 		addColumn(builder);
-		
+
 		final JdbcMapper<DbFinalObject> mapper = builder.mapper();
-		
+
 		DbHelper.testDbObjectFromDb(new TestRowHandler<PreparedStatement>() {
 			@Override
 			public void handle(PreparedStatement ps) throws Exception {
@@ -110,7 +110,7 @@ public class JdbcMapperDbObjectTest {
 			}
 		});
 	}
-	
+
 	@Test
 	public void testDbObjectMapperWithIterator()
 			throws Exception {
@@ -145,7 +145,7 @@ public class JdbcMapperDbObjectTest {
 	@Test
 	public void testDbObjectMapperWithStream()
 			throws Exception {
-		
+
 		JdbcMapperBuilder<DbObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbObject.class);
 		addColumn(builder);
 

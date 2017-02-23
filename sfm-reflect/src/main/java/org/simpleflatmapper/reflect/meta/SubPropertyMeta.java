@@ -78,7 +78,13 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 		return getOwnerProperty().getPath() + "." + subProperty.getPath();
 	}
 
-    @Override
+
+	@Override
+	public Object[] getDefinedProperties() {
+		return subProperty.getDefinedProperties();
+	}
+
+	@Override
     public String toString() {
         return "SubPropertyMeta{" +
                 "ownerProperty=" + ownerProperty +

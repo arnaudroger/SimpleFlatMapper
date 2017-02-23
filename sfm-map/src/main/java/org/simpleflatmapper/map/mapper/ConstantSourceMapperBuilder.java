@@ -104,9 +104,10 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         if (columnDefinition.getCustomFieldMapper() != null) {
             addMapper((FieldMapper<S, T>) columnDefinition.getCustomFieldMapper());
         } else {
-            final PropertyMeta<T, ?> property = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
-            if (property != null && composedDefinition.isKey()) {
-                if (composedDefinition.keyAppliesTo().test(property)) {
+            PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> propertyMapping = propertyMappingsBuilder.addProperty(mappedColumnKey, composedDefinition);
+            if (propertyMapping != null) {
+                FieldMapperColumnDefinition<K> effectiveColumnDefinition = propertyMapping.getColumnDefinition();
+                if (effectiveColumnDefinition.isKey() && effectiveColumnDefinition.keyAppliesTo().test(propertyMapping.getPropertyMeta())) {
                     mappingContextFactoryBuilder.addKey(key);
                 }
             }

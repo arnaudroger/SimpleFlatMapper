@@ -1,7 +1,10 @@
 package org.simpleflatmapper.reflect.test.meta;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.simpleflatmapper.reflect.meta.*;
+import org.simpleflatmapper.reflect.test.KeyTest;
+import org.simpleflatmapper.reflect.test.KeyTestProperty;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -361,6 +364,26 @@ public class ObjectClassMetaTest {
         assertTrue(classMeta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value")).isConstructorProperty());
         assertTrue(classMeta.newPropertyFinder(propertyFilter).findProperty(DefaultPropertyNameMatcher.of("value2")).isConstructorProperty());
 
+    }
+
+    @Test
+    public void testAnnotationsToProperty() {
+        final ClassMeta<ObjectWithAnnotation> classMeta = ReflectionService.newInstance().getClassMeta(ObjectWithAnnotation.class);
+
+        Object[] definedProperties = classMeta.newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+            @Override
+            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                return true;
+            }
+        }).findProperty(DefaultPropertyNameMatcher.of("id")).getDefinedProperties();
+
+        assertEquals(1, definedProperties.length);
+        assertTrue(definedProperties[0] instanceof KeyTestProperty);
+    }
+
+    public static class ObjectWithAnnotation {
+        @KeyTest
+        public int id;
     }
 
     public static class StringObject {

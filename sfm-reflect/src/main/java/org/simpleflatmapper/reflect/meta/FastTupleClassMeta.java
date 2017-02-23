@@ -99,7 +99,7 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
         return new ObjectPropertyMeta<T, P>(field, ownerType, reflectionService,
                 getter.getGenericReturnType(),
                 ScoredGetter.of(methodGetter, 1),
-                ScoredSetter.of(methodSetter, 1));
+                ScoredSetter.of(methodSetter, 1), null);
     }
 
     @Override

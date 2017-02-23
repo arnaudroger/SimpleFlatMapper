@@ -13,19 +13,54 @@ public class ObjectPropertyMeta<T, P> extends PropertyMeta<T, P> {
 	private final ScoredSetter<T, P> setter;
     private final ScoredGetter<T, P> getter;
 	private final Type type;
+	private final Object[] defineProperties;
 
-	public ObjectPropertyMeta(String name, Type ownerType, ReflectionService reflectService, Type propertyType, ScoredGetter<T, P> getter, ScoredSetter<T, P> setter) {
+	public ObjectPropertyMeta(
+			String name,
+			Type ownerType,
+			ReflectionService reflectService,
+			Type propertyType,
+			ScoredGetter<T, P> getter,
+			ScoredSetter<T, P> setter, Object[] defineProperties) {
+
 		super(name, ownerType, reflectService);
 		this.type = propertyType;
         this.getter = getter;
         this.setter = setter;
+		this.defineProperties = defineProperties;
 	}
 
 
-    public PropertyMeta<T, P> getterSetter(ScoredGetter<T, P> getter, ScoredSetter<T, P> setter) {
-        return new ObjectPropertyMeta<T, P>(getName(), getOwnerType(), reflectService, type, this.getter.best(getter), this.setter.best(setter));
+    public PropertyMeta<T, P> getterSetter(ScoredGetter<T, P> getter, ScoredSetter<T, P> setter, Object[] defineProperties) {
+        return new ObjectPropertyMeta<T, P>(getName(), getOwnerType(), reflectService, type, this.getter.best(getter), this.setter.best(setter), concatenate(this.defineProperties, defineProperties));
     }
 
+
+	public static Object[] concatenate(Object[] p1, Object[] p2) {
+		int l = 0;
+		if (p1 != null) {
+			l += p1.length;
+		}
+		if (p2 != null) {
+			l += p2.length;
+		}
+
+		Object[] merged = new Object[l];
+
+
+		int start = 0;
+
+		if (p1 != null) {
+			System.arraycopy(p1, 0, merged, 0, p1.length);
+			start += p1.length;
+		}
+
+		if (p2 != null) {
+			System.arraycopy(p2, 0, merged, start, p2.length);
+		}
+
+		return merged;
+	}
 	@Override
 	public Setter<? super T, ? super P> getSetter() {
 		return setter.getSetter();
@@ -46,7 +81,12 @@ public class ObjectPropertyMeta<T, P> extends PropertyMeta<T, P> {
 		return getName();
 	}
 
-    @Override
+	@Override
+	public Object[] getDefinedProperties() {
+		return defineProperties;
+	}
+
+	@Override
     public String toString() {
         return "ObjectPropertyMeta{" +
                 "name="+ getName() +

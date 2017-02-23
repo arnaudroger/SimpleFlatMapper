@@ -64,17 +64,17 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 	}
 
 
-	public <P> PropertyMeta<T, P> addProperty(final K key, final D columnDefinition) {
+	public <P> PropertyMapping<T, P, K, D> addProperty(final K key, final D columnDefinition) {
 		return
 				_addProperty(key, columnDefinition, propertyNotFoundConsumer);
 	}
 
-	public <P> PropertyMeta<T, P> addPropertyIfPresent(final K key, final D columnDefinition) {
+	public <P> PropertyMapping<T, P, K, D> addPropertyIfPresent(final K key, final D columnDefinition) {
 		return _addProperty(key, columnDefinition, NullConsumer.INSTANCE);
 	}
 
 	@SuppressWarnings("unchecked")
-	private <P> PropertyMeta<T, P> _addProperty(final K key, final D columnDefinition, Consumer<? super K> propertyNotFound) {
+	private <P> PropertyMapping<T, P, K, D> _addProperty(final K key, final D columnDefinition, Consumer<? super K> propertyNotFound) {
 		if (!modifiable) throw new IllegalStateException("Builder not modifiable");
 
 		if (columnDefinition.ignore()) {
@@ -94,11 +94,11 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 			properties.add(null);
 			return null;
 		} else {
-			addProperty(key, columnDefinition, prop);
+			PropertyMapping<T, P, K, D> propertyMapping = addProperty(key, columnDefinition, prop);
 
 			handleSelfPropertyMetaInvalidation(propertyNotFound);
 
-			return prop;
+			return propertyMapping;
 		}
 	}
 
@@ -132,16 +132,24 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		}
 	}
 
-	public <P> void addProperty(final K key, final D columnDefinition, final PropertyMeta<T, P> prop) {
+	public <P> PropertyMapping<T, P, K, D> addProperty(final K key, final D columnDefinition, final PropertyMeta<T, P> prop) {
 		if (columnDefinition.hasCustomSourceFrom(prop.getOwnerType())) {
 			Type type = prop.getPropertyType();
 
 			if (!checkTypeCompatibility(key, columnDefinition.getCustomSourceReturnTypeFrom(prop.getOwnerType()), type)) {
 				properties.add(null);
-				return;
+				return null;
 			}
 		}
-		properties.add(new PropertyMapping<T, P, K, D>(prop, key, columnDefinition));
+
+		Object[] definedProperties = prop.getDefinedProperties();
+		D mergeColumnDefinition = definedProperties != null ? columnDefinition.add(definedProperties) : columnDefinition;
+
+		PropertyMapping<T, P, K, D> propertyMapping = new PropertyMapping<>(prop, key, mergeColumnDefinition);
+
+		properties.add(propertyMapping);
+
+		return propertyMapping;
 	}
 
 	private boolean checkTypeCompatibility(K key, Type customSourceReturnType, Type propertyMetaType) {

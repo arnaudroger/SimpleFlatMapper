@@ -49,7 +49,7 @@ public class JDBCTypeHelper {
         javaTypeToSqlType.put("org.joda.time.LocalTime", Time.class);
         javaTypeToSqlType.put("org.joda.time.LocalDate", Date.class);
     }
-    
+
     public static Class<?> toJavaType(int sqlType, Type propertyType) {
         switch (sqlType) {
             case Types.ARRAY: return Array.class;

@@ -145,7 +145,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		Object[] definedProperties = prop.getDefinedProperties();
 		D mergeColumnDefinition = definedProperties != null ? columnDefinition.add(definedProperties) : columnDefinition;
 
-		PropertyMapping<T, P, K, D> propertyMapping = new PropertyMapping<>(prop, key, mergeColumnDefinition);
+		PropertyMapping<T, P, K, D> propertyMapping = new PropertyMapping<T, P, K, D>(prop, key, mergeColumnDefinition);
 
 		properties.add(propertyMapping);
 

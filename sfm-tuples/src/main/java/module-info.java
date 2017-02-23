@@ -1,3 +1,3 @@
-module org.simpleflatmapper.tuple {
+module simpleflatmapper.tuple {
         exports org.simpleflatmapper.tuple;
 }

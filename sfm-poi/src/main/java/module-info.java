@@ -1,8 +1,8 @@
-module org.simpleflatmapper.poi {
+module simpleflatmapper.poi {
         requires transitive poi;
 
-        requires transitive org.simpleflatmapper.map;
-        requires org.simpleflatmapper.csv;
+        requires transitive simpleflatmapper.map;
+        requires simpleflatmapper.csv;
 
         exports org.simpleflatmapper.poi;
 

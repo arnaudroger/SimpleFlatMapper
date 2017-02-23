@@ -1,5 +1,5 @@
-module org.simpleflatmapper.map.test {
-        requires org.simpleflatmapper.map;
+module simpleflatmapper.map.test {
+        requires simpleflatmapper.map;
         requires junit;
         requires sfm.test;
         requires mockito.core;

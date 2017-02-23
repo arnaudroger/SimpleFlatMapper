@@ -1,7 +1,7 @@
-module org.simpleflatmapper.csv.test {
-        requires org.simpleflatmapper.tuple;
-        requires org.simpleflatmapper.csv;
-        requires org.simpleflatmapper.map.test;
+module simpleflatmapper.csv.test {
+        requires simpleflatmapper.tuple;
+        requires simpleflatmapper.csv;
+        requires simpleflatmapper.map.test;
         requires junit;
         requires sfm.test;
         requires mockito.core;

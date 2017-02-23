@@ -1,4 +1,4 @@
-module org.simpleflatmapper.util {
+module simpleflatmapper.util {
         exports org.simpleflatmapper.util;
         exports org.simpleflatmapper.util.date;
 }

@@ -1,9 +1,9 @@
-module org.simpleflatmapper.datastax.test {
-        requires org.simpleflatmapper.datastax;
-        requires org.simpleflatmapper.tuple;
-        requires org.simpleflatmapper.reflect;
-        requires org.simpleflatmapper.converter;
-        requires org.simpleflatmapper.converter.joda;
+module simpleflatmapper.datastax.test {
+        requires simpleflatmapper.datastax;
+        requires simpleflatmapper.tuple;
+        requires simpleflatmapper.reflect;
+        requires simpleflatmapper.converter;
+        requires simpleflatmapper.converter.joda;
 
         requires cassandra.driver.mapping;
         requires libthrift;
@@ -15,5 +15,5 @@ module org.simpleflatmapper.datastax.test {
         requires cassandra.all;
         requires joda.time;
 
-        requires org.simpleflatmapper.map.test;
+        requires simpleflatmapper.map.test;
  }

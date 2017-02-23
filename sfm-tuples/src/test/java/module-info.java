@@ -1,5 +1,5 @@
-module org.simpleflatmapper.tuple.test {
-        requires org.simpleflatmapper.tuple;
+module simpleflatmapper.tuple.test {
+        requires simpleflatmapper.tuple;
         requires junit;
 
 }

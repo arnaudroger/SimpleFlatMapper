@@ -1,6 +1,6 @@
-module org.simpleflatmapper.sql2o.test {
-        requires org.simpleflatmapper.sql2o;
-        requires org.simpleflatmapper.jdbc;
+module simpleflatmapper.sql2o.test {
+        requires simpleflatmapper.sql2o;
+        requires simpleflatmapper.jdbc;
         requires junit;
         requires java.sql;
         requires sfm.test;

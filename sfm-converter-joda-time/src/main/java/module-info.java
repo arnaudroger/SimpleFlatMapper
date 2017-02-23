@@ -1,6 +1,6 @@
-module org.simpleflatmapper.converter.joda {
-        requires org.simpleflatmapper.util;
-        requires org.simpleflatmapper.converter;
+module simpleflatmapper.converter.joda {
+        requires simpleflatmapper.util;
+        requires simpleflatmapper.converter;
         requires joda.time;
         exports org.simpleflatmapper.converter.joda;
 

@@ -210,7 +210,7 @@
 									<fork>true</fork>
 									<compilerArgs>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.datastax/org.simpleflatmapper.datastax.impl=org.simpleflatmapper.datastax.test</arg>
+										<arg>simpleflatmapper.datastax/org.simpleflatmapper.datastax.impl=simpleflatmapper.datastax.test</arg>
 									</compilerArgs>
 								</configuration>
 								<goals>

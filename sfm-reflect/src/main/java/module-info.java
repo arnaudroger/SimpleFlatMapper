@@ -1,6 +1,6 @@
-module org.simpleflatmapper.reflect {
-        requires transitive org.simpleflatmapper.util;
-        requires transitive org.simpleflatmapper.converter;
+module simpleflatmapper.reflect {
+        requires transitive simpleflatmapper.util;
+        requires transitive simpleflatmapper.converter;
 
         exports org.simpleflatmapper.reflect;
         exports org.simpleflatmapper.reflect.meta;

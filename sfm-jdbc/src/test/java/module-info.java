@@ -1,7 +1,7 @@
-module org.simpleflatmapper.jdbc.test {
-    requires org.simpleflatmapper.jdbc;
-    requires org.simpleflatmapper.tuple;
-    requires org.simpleflatmapper.map.test;
+module simpleflatmapper.jdbc.test {
+    requires simpleflatmapper.jdbc;
+    requires simpleflatmapper.tuple;
+    requires simpleflatmapper.map.test;
     requires junit;
     requires sfm.test;
     requires mockito.core;

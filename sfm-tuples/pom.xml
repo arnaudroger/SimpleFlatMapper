@@ -148,7 +148,7 @@
 									<fork>true</fork>
 									<compilerArgs>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.tuple/org.simpleflatmapper.tuple.gen=org.simpleflatmapper.tuple.test</arg>
+										<arg>simpleflatmapper.tuple/org.simpleflatmapper.tuple.gen=simpleflatmapper.tuple.test</arg>
 									</compilerArgs>
 								</configuration>
 								<goals>

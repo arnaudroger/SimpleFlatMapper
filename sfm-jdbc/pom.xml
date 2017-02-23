@@ -206,13 +206,13 @@
 									<fork>true</fork>
 									<compilerArgs>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.jdbc/org.simpleflatmapper.jdbc.impl=org.simpleflatmapper.jdbc.test</arg>
+										<arg>simpleflatmapper.jdbc/org.simpleflatmapper.jdbc.impl=simpleflatmapper.jdbc.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.jdbc/org.simpleflatmapper.jdbc.impl.getter=org.simpleflatmapper.jdbc.test</arg>
+										<arg>simpleflatmapper.jdbc/org.simpleflatmapper.jdbc.impl.getter=simpleflatmapper.jdbc.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.jdbc/org.simpleflatmapper.jdbc.converter=org.simpleflatmapper.jdbc.test</arg>
+										<arg>simpleflatmapper.jdbc/org.simpleflatmapper.jdbc.converter=simpleflatmapper.jdbc.test</arg>
 										<arg>--add-exports</arg>
-										<arg>org.simpleflatmapper.jdbc/org.simpleflatmapper.jdbc.converter.time=org.simpleflatmapper.jdbc.test</arg>
+										<arg>simpleflatmapper.jdbc/org.simpleflatmapper.jdbc.converter.time=simpleflatmapper.jdbc.test</arg>
 									</compilerArgs>
 								</configuration>
 								<goals>

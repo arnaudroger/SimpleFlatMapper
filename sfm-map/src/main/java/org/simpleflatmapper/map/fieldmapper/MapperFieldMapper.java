@@ -23,6 +23,7 @@ public final class MapperFieldMapper<S, T, P> implements FieldMapper<S, T> {
         this.currentValueIndex = currentValueIndex;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
 	public void mapTo(final S source, final T target, final MappingContext<? super S> context) throws Exception {
         if (nullChecker.test(source)){

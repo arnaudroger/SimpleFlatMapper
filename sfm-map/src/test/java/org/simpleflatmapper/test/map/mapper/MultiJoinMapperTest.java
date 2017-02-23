@@ -4,8 +4,10 @@ import org.junit.Test;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.mapper.JoinMapper;
+import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.util.ListCollector;
 
 import java.util.List;
@@ -44,7 +46,7 @@ public class MultiJoinMapperTest {
         ClassMeta<Root> classMeta = ReflectionService.newInstance().getClassMeta(Root.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<Root> builder =
-                new AbstractMapperBuilderTest.SampleMapperBuilder<Root>(classMeta, MapperConfig.fieldMapperConfig());
+                new AbstractMapperBuilderTest.SampleMapperBuilder<Root>(classMeta, mapperConfig());
 
         Mapper<Object[], Root> rowMapper = builder.addKey("id").addKey("ll_id").addKey("ls_id").mapper();
         JoinMapper<Object[], Object[][], Root, RuntimeException> mapper =
@@ -57,6 +59,10 @@ public class MultiJoinMapperTest {
         validateRoot(list.get(1));
     }
 
+    private MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig() {
+        return MapperConfig.fieldMapperConfig();
+    }
+
 
     public static Object[][] data_diffvalue = new Object[][] {
             {1, 1, 1, "a"},
@@ -67,7 +73,7 @@ public class MultiJoinMapperTest {
         ClassMeta<Root> classMeta = ReflectionService.newInstance().getClassMeta(Root.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<Root> builder =
-                new AbstractMapperBuilderTest.SampleMapperBuilder<Root>(classMeta, MapperConfig.fieldMapperConfig());
+                new AbstractMapperBuilderTest.SampleMapperBuilder<Root>(classMeta, mapperConfig());
 
         Mapper<Object[], Root> rowMapper = builder.addKey("id").addKey("ll_id").addKey("ll_elements_id").addMapping("ll_elements_value").mapper();
         JoinMapper<Object[], Object[][], Root, RuntimeException> mapper =
@@ -149,7 +155,7 @@ public class MultiJoinMapperTest {
         ClassMeta<RootC> classMeta = ReflectionService.newInstance().getClassMeta(RootC.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<RootC> builder =
-                new AbstractMapperBuilderTest.SampleMapperBuilder<RootC>(classMeta, MapperConfig.fieldMapperConfig());
+                new AbstractMapperBuilderTest.SampleMapperBuilder<RootC>(classMeta, mapperConfig());
 
         Mapper<Object[], RootC> rowMapper = builder.addKey("id").addKey("ll_id").addKey("ls_id").mapper();
         JoinMapper<Object[], Object[][], RootC, RuntimeException> mapper =

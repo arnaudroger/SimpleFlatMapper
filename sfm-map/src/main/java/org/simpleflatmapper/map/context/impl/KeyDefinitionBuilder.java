@@ -12,7 +12,7 @@ public class KeyDefinitionBuilder<S, K> {
     private final List<K> keys;
     private final int index;
 
-    private final ArrayList<KeyDefinitionBuilder<S, K>> children = new ArrayList<>();
+    private final ArrayList<KeyDefinitionBuilder<S, K>> children = new ArrayList<KeyDefinitionBuilder<S, K>>();
 
     public KeyDefinitionBuilder(List<K> keys, KeySourceGetter<K, S> keySourceGetter, KeyDefinitionBuilder<S, K> parent, int index) {
         this.keys = keys;

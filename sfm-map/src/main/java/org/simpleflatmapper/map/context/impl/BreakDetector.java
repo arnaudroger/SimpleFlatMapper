@@ -11,12 +11,15 @@ public class BreakDetector<S>  {
     private final KeyDefinition<S, ?> definition;
     private final HashMap<Key, Object> cache;
     private final BreakDetector<S>[] siblings;
+    private final boolean root;
 
     private Key currentKey;
+
 
     public BreakDetector(KeyDefinition<S, ?> definition, BreakDetector<S>[] siblings) {
         this.definition = emptyToNull(definition);
         this.siblings = siblings;
+        this.root = definition.isRoot();
         if (this.definition == null) {
             cache = null;
         } else {
@@ -48,7 +51,7 @@ public class BreakDetector<S>  {
             b = true;
         } else if (!oldKey.equals(currentKey)) {
             b = true;
-            markChildrenHasBroken();
+            markChildrenHasBroken(root);
         }
 
         callBrokeOnChildren(source);
@@ -64,11 +67,11 @@ public class BreakDetector<S>  {
         }
     }
 
-    private void markChildrenHasBroken() {
+    private void markChildrenHasBroken(boolean root) {
         KeyDefinition<S, ?>[] children = definition.getChildren();
         if (children == null) return;
         for(KeyDefinition<S, ?> keyDefinition : children) {
-            siblings[keyDefinition.getIndex()].markAsBroken();
+            siblings[keyDefinition.getIndex()].markAsBroken(root);
         }
     }
 
@@ -89,11 +92,13 @@ public class BreakDetector<S>  {
         return null;
     }
 
-    public void markAsBroken() {
+    public void markAsBroken(boolean root) {
         if (definition != null) {
             currentKey = null;
-            cache.clear();
-            markChildrenHasBroken();
+            if (root) {
+                cache.clear();
+            }
+            markChildrenHasBroken(root);
         }
     }
 }

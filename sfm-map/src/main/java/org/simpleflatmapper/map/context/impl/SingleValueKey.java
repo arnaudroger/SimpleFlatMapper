@@ -7,10 +7,12 @@ import java.util.Objects;
 
 public class SingleValueKey extends Key {
 
-    private final Object values;
+    private final Object value;
+    private final int _hashCode;
 
-    public SingleValueKey(Object values) {
-        this.values = values;
+    public SingleValueKey(Object value) {
+        this.value = value;
+        this._hashCode = _hashCode(value);
         //IFJAVA8_START
         if (true)
             return;
@@ -26,17 +28,21 @@ public class SingleValueKey extends Key {
 
         if (true) {
             //IFJAVA8_START
-            return Objects.deepEquals(values, keys.values);
+            return Objects.deepEquals(value, keys.value);
             //IFJAVA8_END
         }
         throw new IllegalArgumentException("Supported only in java8");
     }
 
     @Override
+    public int hashCode() {
+        return _hashCode;
+    }
+
     /**
      * copy from Array.deepHashCode0
      */
-    public int hashCode() {
+    private int _hashCode(Object values) {
         int valueHash = 0;
         if (values instanceof Object[])
             valueHash = Arrays.deepHashCode((Object[]) values);

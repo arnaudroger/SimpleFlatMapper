@@ -16,8 +16,11 @@ public class KeyDefinition<S, K> {
 
     private final KeyDefinition<S, K>[] children;
 
-    public KeyDefinition(K[] keys, KeySourceGetter<K, S> keySourceGetter, KeyDefinition<S, K>[] children, int index) {
+    private final boolean root;
+
+    public KeyDefinition(K[] keys, KeySourceGetter<K, S> keySourceGetter, KeyDefinition<S, K>[] children, int index, boolean root) {
         this.singleKey = getSingleKey(keys);
+        this.root = root;
         if (singleKey == null) {
             this.keys = keys;
         } else {
@@ -74,4 +77,7 @@ public class KeyDefinition<S, K> {
         return index;
     }
 
+    public boolean isRoot() {
+        return root;
+    }
 }

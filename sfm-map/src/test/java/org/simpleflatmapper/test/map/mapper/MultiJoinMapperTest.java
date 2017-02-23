@@ -66,7 +66,8 @@ public class MultiJoinMapperTest {
 
     public static Object[][] data_diffvalue = new Object[][] {
             {1, 1, 1, "a"},
-            {1, 2, 1, "b"}
+            {1, 2, 1, "b"},
+            {1, 1, 2, "b"}
     };
     @Test
     public void testMultiJoinSameIdDiffContent() {
@@ -91,9 +92,11 @@ public class MultiJoinMapperTest {
         assertEquals(2, root.ll.get(1).id);
 
 
-        assertEquals(1, root.ll.get(0).elements.size());
+        assertEquals(2, root.ll.get(0).elements.size());
         assertEquals(1, root.ll.get(0).elements.get(0).id);
         assertEquals("a", root.ll.get(0).elements.get(0).value);
+        assertEquals(2, root.ll.get(0).elements.get(1).id);
+        assertEquals("b", root.ll.get(0).elements.get(1).value);
 
         assertEquals(1, root.ll.get(1).elements.size());
         assertEquals(1, root.ll.get(1).elements.get(0).id);

@@ -35,7 +35,7 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
 
     @Override
     public void markAsBroken() {
-        rootDetector.markAsBroken();
+        rootDetector.markAsBroken(true);
     }
 
     @Override

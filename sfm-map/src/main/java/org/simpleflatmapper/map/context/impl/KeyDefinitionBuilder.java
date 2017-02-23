@@ -5,6 +5,7 @@ import org.simpleflatmapper.map.context.KeySourceGetter;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class KeyDefinitionBuilder<S, K> {
@@ -13,10 +14,12 @@ public class KeyDefinitionBuilder<S, K> {
     private final int index;
 
     private final ArrayList<KeyDefinitionBuilder<S, K>> children = new ArrayList<KeyDefinitionBuilder<S, K>>();
+    private final boolean root;
 
-    public KeyDefinitionBuilder(List<K> keys, KeySourceGetter<K, S> keySourceGetter, KeyDefinitionBuilder<S, K> parent, int index) {
+    public KeyDefinitionBuilder(List<K> keys, KeySourceGetter<K, S> keySourceGetter, KeyDefinitionBuilder<S, K> parent, int index, boolean root) {
         this.keys = keys;
         this.keySourceGetter = keySourceGetter;
+        this.root = root;
         if (parent != null)
             parent.addChild(this);
         this.index = index;
@@ -24,7 +27,7 @@ public class KeyDefinitionBuilder<S, K> {
 
 
     public KeyDefinitionBuilder<S, K> asChild(int currentIndex) {
-        return new KeyDefinitionBuilder<S, K>(keys, keySourceGetter, this, currentIndex);
+        return new KeyDefinitionBuilder<S, K>(keys, keySourceGetter, this, currentIndex, false);
     }
 
     private void addChild(KeyDefinitionBuilder<S, K> keyDefinition) {
@@ -55,7 +58,7 @@ public class KeyDefinitionBuilder<S, K> {
         if (!children.isEmpty())
             keyChildren = children.toArray(new KeyDefinition[0]);
 
-        KeyDefinition<S, K> keyDefinition = new KeyDefinition<S, K>(toK(builder.keys), builder.keySourceGetter, keyChildren, builder.index);
+        KeyDefinition<S, K> keyDefinition = new KeyDefinition<S, K>(toK(builder.keys), builder.keySourceGetter, keyChildren, builder.index, builder.root);
 
         keyDefinitions[builder.index]= keyDefinition;
 
@@ -65,5 +68,13 @@ public class KeyDefinitionBuilder<S, K> {
     private static <K> K[] toK(List<K> keys) {
         if (keys.size() == 0) return null;
         else return keys.toArray((K[]) Array.newInstance(keys.get(0).getClass(), 0));
+    }
+
+    public List<K> getKeys() {
+        return keys;
+    }
+
+    public boolean isRoot() {
+        return root;
     }
 }

@@ -7,9 +7,11 @@ import java.util.Arrays;
 public class MultiValueKey extends Key {
 
     private final Object[] values;
+    private final int _hashCode;
 
     public MultiValueKey(Object[] values) {
         this.values = values;
+        this._hashCode = Arrays.deepHashCode(values);
     }
 
     @Override
@@ -22,6 +24,6 @@ public class MultiValueKey extends Key {
 
     @Override
     public int hashCode() {
-        return Arrays.deepHashCode(values);
+        return _hashCode;
     }
 }

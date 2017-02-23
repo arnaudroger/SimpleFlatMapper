@@ -138,7 +138,15 @@ public class MappingContextFactoryBuilder<S, K> {
         if (builder.keys.isEmpty() && parent != null && ! builder.newObjectOnEachRow()) {
              keyDefinition = parent.asChild(builder.currentIndex);
         } else {
-             keyDefinition = new KeyDefinitionBuilder<S, K>(builder.keys, builder.keySourceGetter, parent, builder.currentIndex);
+            List<K> keys = new ArrayList<K>(builder.keys);
+
+            // append parent keys except for root, as the root will clear all the cache
+            // also if keys is empty we generate a new row every time so leave empty
+            if (parent != null && !builder.keys.isEmpty() && ! parent.isRoot()) {
+                keys.addAll(parent.getKeys());
+            }
+
+            keyDefinition = new KeyDefinitionBuilder<S, K>(keys, builder.keySourceGetter, parent, builder.currentIndex, builder.currentIndex == rootDetector);
         }
 
         keyDefinitions[builder.currentIndex] = keyDefinition;

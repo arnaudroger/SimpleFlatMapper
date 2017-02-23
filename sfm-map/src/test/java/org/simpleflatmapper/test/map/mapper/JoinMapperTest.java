@@ -16,7 +16,6 @@ import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.ListCollector;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 //IFJAVA8_START
@@ -65,7 +64,7 @@ public class JoinMapperTest {
         public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
             return source[key.getIndex()];
         }
-    }, null, 0);
+    }, null, 0, true);
 
     @SuppressWarnings("unchecked")
     @Test

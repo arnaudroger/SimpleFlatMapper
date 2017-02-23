@@ -5,6 +5,7 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
+import org.simpleflatmapper.map.fieldmapper.MapperFieldMapper;
 import org.simpleflatmapper.map.property.DefaultValueProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.GetterProperty;
@@ -12,7 +13,6 @@ import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.impl.FieldErrorHandlerMapper;
 import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactory;
 import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
-import org.simpleflatmapper.map.fieldmapper.MapperFieldMapper;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
@@ -259,7 +259,6 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 new MapperFieldMapper<S, T, P>((Mapper<S, P>) mapper,
                         (Setter<T, P>) meta.getSetter(),
                         mappingContextFactoryBuilder.nullChecker(),
-                        mappingContextFactoryBuilder.breakDetectorGetter(),
                         mappingContextFactoryBuilder.currentIndex());
 
         return wrapFieldMapperWithErrorHandler(properties.get(0), fieldMapper);

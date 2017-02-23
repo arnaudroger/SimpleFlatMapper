@@ -2,21 +2,16 @@ package org.simpleflatmapper.map.context;
 
 
 import org.simpleflatmapper.map.MappingContext;
-import org.simpleflatmapper.reflect.Getter;
-import org.simpleflatmapper.reflect.getter.ConstantGetter;
+import org.simpleflatmapper.map.context.impl.KeyDefinitionBuilder;
 import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.MapElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.map.context.impl.BreakDetectorMappingContextFactory;
-import org.simpleflatmapper.map.context.impl.BreakGetter;
 import org.simpleflatmapper.map.context.impl.NullChecker;
-import org.simpleflatmapper.map.context.impl.RootBreakGetterProvider;
 import org.simpleflatmapper.map.context.impl.ValuedMappingContextFactory;
 import org.simpleflatmapper.reflect.setter.AppendCollectionSetter;
-import org.simpleflatmapper.util.BooleanProvider;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.Supplier;
-import org.simpleflatmapper.util.TrueBooleanProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,26 +59,6 @@ public class MappingContextFactoryBuilder<S, K> {
         return new NullChecker<S, K>(keys, keySourceGetter);
     }
 
-    public Getter<MappingContext<? super S>, BooleanProvider> breakDetectorGetter() {
-        if (hasNoKeys()) {
-            if (owner instanceof ArrayElementPropertyMeta) {
-                ArrayElementPropertyMeta elementPropertyMeta = (ArrayElementPropertyMeta) owner;
-                if (elementPropertyMeta.getSetter() instanceof AppendCollectionSetter) {
-                    return new ConstantGetter<MappingContext<? super S>, BooleanProvider>(TrueBooleanProvider.INSTANCE);
-                }
-            }
-
-            if (parent != null) {
-                // Object in collection with no key and append setter break all the time
-                return parent.breakDetectorGetter();
-            } else {
-                return new RootBreakGetterProvider<S>();
-            }
-        } else {
-            return new BreakGetter<S>(currentIndex);
-        }
-    }
-
     public MappingContextFactoryBuilder<S, K> newBuilder(List<K> subKeys, PropertyMeta<?, ?> owner) {
         MappingContextFactoryBuilder<S, K> subBuilder = new MappingContextFactoryBuilder<S, K>(counter, subKeys, keySourceGetter, this, owner);
         children.add(subBuilder);
@@ -96,8 +71,6 @@ public class MappingContextFactoryBuilder<S, K> {
             throw new IllegalStateException();
         }
 
-        List<MappingContextFactoryBuilder<S, K>> builders = getAllBuilders();
-
 
         MappingContextFactory<S> context;
 
@@ -106,27 +79,87 @@ public class MappingContextFactoryBuilder<S, K> {
         } else {
             context = new ValuedMappingContextFactory<S>(suppliers);
         }
-        if (!builders.isEmpty()) {
-            KeysDefinition<S, K>[] keyDefinions = new KeysDefinition[builders.get(builders.size() - 1).currentIndex + 1];
+
+        ArrayList<MappingContextFactoryBuilder<S, K>> builders = new ArrayList<MappingContextFactoryBuilder<S, K>>();
+        addAllBuilders(builders);
+
+        if (hasKeys(builders)) {
+            KeyDefinitionBuilder<S, K>[] keyDefinitionsBuilder = new KeyDefinitionBuilder[builders.get(builders.size() - 1).currentIndex + 1];
 
             int rootDetector = getRootDetector(builders);
 
-
             for (int i = 0; i < builders.size(); i++) {
-                final MappingContextFactoryBuilder<S, K> builder = builders.get(i);
-                int parentIndex = builder.getParentNonEmptyIndex();
-                if (parentIndex == -1 && rootDetector != builder.currentIndex()) {
-                    parentIndex = rootDetector;
-                }
-                final KeysDefinition<S, K> keyDefinition = builder.newKeysDefinition(builder.currentIndex, parentIndex);
-                keyDefinions[builder.currentIndex] = keyDefinition;
+                MappingContextFactoryBuilder<S, K> builder = builders.get(i);
+
+                populateKey(keyDefinitionsBuilder, builders, builder, rootDetector);
             }
 
-            context = new BreakDetectorMappingContextFactory<S, K>(keyDefinions, rootDetector, context, counter.value);
+            KeyDefinition<S, K>[] keyDefinitions = KeyDefinitionBuilder.<S, K>toKeyDefinitions(keyDefinitionsBuilder);
+
+            context = new BreakDetectorMappingContextFactory<S>(keyDefinitions[rootDetector], keyDefinitions, context);
         }
 
         return context;
+    }
 
+    private KeyDefinitionBuilder<S, K> populateKey(KeyDefinitionBuilder<S, K>[] keyDefinitions, ArrayList<MappingContextFactoryBuilder<S, K>> builders, MappingContextFactoryBuilder<S, K> builder, int rootDetector) {
+
+        if (keyDefinitions[builder.currentIndex] != null) {
+            return keyDefinitions[builder.currentIndex];
+        }
+
+        int parentIndex = builder.getParentNonEmptyIndex();
+        if (parentIndex == -1 && rootDetector != builder.currentIndex()) {
+            parentIndex = rootDetector;
+        }
+        KeyDefinitionBuilder<S, K> parent = null;
+        if (parentIndex != -1) {
+            parent = keyDefinitions[parentIndex];
+            if (parent == null) {
+                // not yet define look for parent and create key
+                for(int i = 0; i < builders.size(); i++) {
+                    MappingContextFactoryBuilder<S, K> potentialParent = builders.get(i);
+                    if (potentialParent.currentIndex == parentIndex) {
+                        parent = populateKey(keyDefinitions, builders, potentialParent, rootDetector);
+                        break;
+                    }
+                }
+                if (parent == null) {
+                    throw new IllegalArgumentException("Could not find parent for builder " + builder);
+                }
+            }
+        }
+
+
+
+        KeyDefinitionBuilder<S, K> keyDefinition;
+
+        // empty key use parent key except for child of appendsetter
+        if (builder.keys.isEmpty() && parent != null && ! builder.newObjectOnEachRow()) {
+             keyDefinition = parent.asChild(builder.currentIndex);
+        } else {
+             keyDefinition = new KeyDefinitionBuilder<S, K>(builder.keys, builder.keySourceGetter, parent, builder.currentIndex);
+        }
+
+        keyDefinitions[builder.currentIndex] = keyDefinition;
+        return keyDefinition;
+    }
+
+    private boolean newObjectOnEachRow() {
+        if (owner instanceof ArrayElementPropertyMeta) {
+            ArrayElementPropertyMeta elementPropertyMeta = (ArrayElementPropertyMeta) owner;
+            if (elementPropertyMeta.getSetter() instanceof AppendCollectionSetter) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasKeys(ArrayList<MappingContextFactoryBuilder<S, K>> builders) {
+        for(int i = 0; i < builders.size(); i++) {
+            if (!builders.get(i).hasNoKeys()) return true;
+        }
+        return false;
     }
 
     private int getRootDetector(List<MappingContextFactoryBuilder<S, K>> builders) {
@@ -134,8 +167,10 @@ public class MappingContextFactoryBuilder<S, K> {
         // calculate rootDetector
         for (int i = 0; i < builders.size(); i++) {
             final MappingContextFactoryBuilder<S, K> builder = builders.get(i);
-            if (builder.currentIndex == 0 || (rootDetector == -1 && builder.isEligibleAsRootKey())) {
-                rootDetector = builder.currentIndex;
+            if (!builder.keys.isEmpty()) {
+                if (builder.currentIndex == 0 || (rootDetector == -1 && builder.isEligibleAsRootKey())) {
+                    rootDetector = builder.currentIndex;
+                }
             }
         }
         return rootDetector;
@@ -159,23 +194,12 @@ public class MappingContextFactoryBuilder<S, K> {
         }
     }
 
-    private KeysDefinition<S, K> newKeysDefinition(int currentIndex, int parent) {
-        return new KeysDefinition<S, K>(keys, keySourceGetter, currentIndex, parent);
-    }
 
-
-    private List<MappingContextFactoryBuilder<S, K>> getAllBuilders() {
-        List<MappingContextFactoryBuilder<S, K>> list = new ArrayList<MappingContextFactoryBuilder<S, K>>();
-
-        if (!hasNoKeys()) {
-            list.add(this);
-        }
-
+    private void addAllBuilders(ArrayList<MappingContextFactoryBuilder<S, K>> builders) {
+        builders.add(this);
         for(MappingContextFactoryBuilder<S, K> child : children) {
-            list.addAll(child.getAllBuilders());
+            child.addAllBuilders(builders);
         }
-
-        return list;
     }
 
     public boolean hasNoKeys() {

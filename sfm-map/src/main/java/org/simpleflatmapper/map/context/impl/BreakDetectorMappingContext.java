@@ -1,57 +1,41 @@
 package org.simpleflatmapper.map.context.impl;
 
-import org.simpleflatmapper.map.BreakDetector;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.map.context.KeyDefinition;
 
 public class BreakDetectorMappingContext<S> extends MappingContext<S> {
 
-    private final BreakDetector<S>[] originalOrderBreakDetectors;
-    private final BreakDetector<S>[] processingDectectors;
     private final BreakDetector<S> rootDetector;
     private final MappingContext<S> delegateContext;
-    private final Object[] currentValues;
+    private final BreakDetector<S>[] breakDetectors;
 
-    public BreakDetectorMappingContext(BreakDetector<S>[] originalOrderBreakDetectors, BreakDetector<S>[] processingDectectors, int rootDetector, MappingContext<S> delegateContext, Object[] currentValues) {
-        this.originalOrderBreakDetectors = originalOrderBreakDetectors;
-        this.processingDectectors = processingDectectors;
+    public BreakDetectorMappingContext(KeyDefinition<S, ?> rootKeyDefinition,
+                                       MappingContext<S> delegateContext,
+                                       KeyDefinition<S, ?>[] keyDefinitions) {
         this.delegateContext = delegateContext;
-        this.currentValues = currentValues;
-        this.rootDetector = rootDetector == -1 ? null : originalOrderBreakDetectors[rootDetector];
+        this.breakDetectors = toKeyContext(keyDefinitions);
+        this.rootDetector = breakDetectors[rootKeyDefinition.getIndex()];
     }
 
-    private BreakDetector<S> getBreakDetector(int i) {
-        return originalOrderBreakDetectors != null ? originalOrderBreakDetectors[i] : null;
-    }
 
-    @Override
-    public boolean broke(int i) {
-        BreakDetector<S> breakDetector = getBreakDetector(i);
-        return breakDetector == null || breakDetector.isBroken();
-    }
-
-    @Override
-    public boolean rootBroke() {
-        return rootDetector == null || rootDetector.isBroken();
-    }
-
-    @Override
-    public void handle(S source) {
-        if (processingDectectors == null) return;
-        for(BreakDetector<S> bs : processingDectectors) {
-            if (bs != null) {
-                bs.handle(source);
-            }
+    @SuppressWarnings("unchecked")
+    private static <S> BreakDetector<S>[] toKeyContext(KeyDefinition<S, ?>[] definitions) {
+        BreakDetector<S>[] breakDetectors = new BreakDetector[definitions.length];
+        for (int i = 0; i < definitions.length; i++) {
+            KeyDefinition<S, ?> definition = definitions[i];
+            breakDetectors[i] = new BreakDetector<S>(definition, breakDetectors);
         }
+        return breakDetectors;
+    }
+
+    @Override
+    public boolean broke(S source) {
+        return rootDetector.broke(source);
     }
 
     @Override
     public void markAsBroken() {
-        if (processingDectectors == null) return;
-        for(BreakDetector<S> bs : processingDectectors) {
-            if (bs != null) {
-                bs.markAsBroken();
-            }
-        }
+        rootDetector.markAsBroken();
     }
 
     @Override
@@ -60,12 +44,12 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
     }
 
     @Override
-    public void setCurrentValue(int i, Object value) {
-        this.currentValues[i] = value;
+    public void setCurrentValue(int i,  Object value) {
+        this.breakDetectors[i].setValue(value);
     }
 
     @Override
     public Object getCurrentValue(int i) {
-        return currentValues[i];
+        return breakDetectors[i].getValue();
     }
 }

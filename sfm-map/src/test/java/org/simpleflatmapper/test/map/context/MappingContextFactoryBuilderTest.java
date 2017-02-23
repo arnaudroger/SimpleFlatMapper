@@ -60,8 +60,6 @@ public class MappingContextFactoryBuilderTest {
         assertTrue(builder.nullChecker().test(new Object[] { null}));
         assertFalse(builder.nullChecker().test(new Object[] { 123 }));
 
-        assertTrue(builder.breakDetectorGetter().get(mappingContextFactory.newContext()).getBoolean());
-
     }
 
     @Test

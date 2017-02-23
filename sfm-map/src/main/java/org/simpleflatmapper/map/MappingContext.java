@@ -13,11 +13,7 @@ public class MappingContext<S> {
         }
     };
 
-    public boolean broke(int i) {
-        return true;
-    }
-
-    public boolean rootBroke() {
+    public boolean broke(S source) {
         return true;
     }
 
@@ -28,14 +24,11 @@ public class MappingContext<S> {
         return null;
     }
 
-    public void handle(S source) {
-    }
-
     public void setCurrentValue(int i, Object value) {
 
     }
 
     public Object getCurrentValue(int i) {
-        throw new IllegalStateException();
+        return null;
     }
 }

@@ -1,13 +1,10 @@
 package org.simpleflatmapper.test.map.issue;
 
 import org.junit.Test;
-import org.simpleflatmapper.map.BreakDetector;
 import org.simpleflatmapper.map.context.KeySourceGetter;
-import org.simpleflatmapper.map.context.KeysDefinition;
-import org.simpleflatmapper.map.context.impl.BreakDetectorImpl;
+import org.simpleflatmapper.map.context.KeyDefinition;
+import org.simpleflatmapper.map.context.impl.BreakDetector;
 import org.simpleflatmapper.test.map.SampleFieldKey;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -26,17 +23,13 @@ public class Issue366 {
 
         when(keySourceGetter.getValue(key, object)).thenReturn(new byte[] {1, 2}, new byte[] {1, 2}, new byte[] {1, 3});
 
-        KeysDefinition<Object, SampleFieldKey> keyDefinition =
-                new KeysDefinition<Object, SampleFieldKey>(Arrays.asList(key), keySourceGetter, 0, -1);
-        BreakDetector<Object> breakDetector = new BreakDetectorImpl<Object, SampleFieldKey>(keyDefinition, null);
+        KeyDefinition<Object, SampleFieldKey> keyDefinition =
+                new KeyDefinition<Object, SampleFieldKey>(new SampleFieldKey[] {key}, keySourceGetter, null, 0);
+        BreakDetector<Object> breakDetector = new BreakDetector<Object>(keyDefinition, new BreakDetector[0]);
 
-        breakDetector.handle(object);
-
-        assertTrue(breakDetector.isBroken());
-        breakDetector.handle(object);
-        assertFalse(breakDetector.isBroken());
-        breakDetector.handle(object);
-        assertTrue(breakDetector.isBroken());
+        assertTrue(breakDetector.broke(object));
+        assertFalse(breakDetector.broke(object));
+        assertTrue(breakDetector.broke(object));
 
     }
 }

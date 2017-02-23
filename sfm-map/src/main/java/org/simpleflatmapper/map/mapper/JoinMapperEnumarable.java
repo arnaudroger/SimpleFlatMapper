@@ -31,9 +31,8 @@ public class JoinMapperEnumarable<S, T> implements Enumarable<T> {
             while (sourceEnumarable.next()) {
 
                 S source = sourceEnumarable.currentValue();
-                mappingContext.handle(source);
 
-                if (mappingContext.rootBroke()) {
+                if (mappingContext.broke(source)) {
                     if (currentValue == null) {
                         currentValue = mapper.map(source, mappingContext);
                     } else {

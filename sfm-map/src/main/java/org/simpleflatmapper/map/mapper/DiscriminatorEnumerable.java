@@ -39,9 +39,8 @@ public class DiscriminatorEnumerable<S, T> implements Enumarable<T> {
                 checkMapper();
 
                 S source = sourceEnumarable.currentValue();
-                currentMappingContext.handle(source);
 
-                if (currentMappingContext.rootBroke()) {
+                if (currentMappingContext.broke(source)) {
                     if (currentValue == null) {
                         currentValue = currentMapper.map(source, currentMappingContext);
                     } else {

@@ -6,7 +6,7 @@ import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.context.KeySourceGetter;
-import org.simpleflatmapper.map.context.KeysDefinition;
+import org.simpleflatmapper.map.context.KeyDefinition;
 import org.simpleflatmapper.map.context.impl.BreakDetectorMappingContextFactory;
 import org.simpleflatmapper.map.error.RethrowConsumerErrorHandler;
 import org.simpleflatmapper.map.mapper.JoinMapper;
@@ -59,13 +59,13 @@ public class JoinMapperTest {
 
         }
     };
-    private final KeysDefinition<Object[], SampleFieldKey> keysDefinition = new KeysDefinition<Object[], SampleFieldKey>(Arrays.asList(new SampleFieldKey("id", 0)),
+    private final KeyDefinition<Object[], SampleFieldKey> keyDefinition = new KeyDefinition<Object[], SampleFieldKey>(new SampleFieldKey[] {new SampleFieldKey("id", 0) },
             new KeySourceGetter<SampleFieldKey, Object[]>() {
         @Override
         public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
             return source[key.getIndex()];
         }
-    }, 0, -1);
+    }, null, 0);
 
     @SuppressWarnings("unchecked")
     @Test
@@ -73,7 +73,7 @@ public class JoinMapperTest {
         JoinMapper<Object[], Object[][], DbListObject, RuntimeException> joinMapper =
                 new JoinMapper<Object[], Object[][], DbListObject, RuntimeException>(
                         dbListObjectMapper, RethrowConsumerErrorHandler.INSTANCE,
-                        new BreakDetectorMappingContextFactory<Object[], Object>(new KeysDefinition[] {keysDefinition}, 0, MappingContext.EMPTY_FACTORY, 3),
+                        new BreakDetectorMappingContextFactory<Object[]>(keyDefinition, new KeyDefinition[] {keyDefinition}, MappingContext.EMPTY_FACTORY),
                         SetRowMapperTest.ENUMARABLE_UNARY_FACTORY
                         );
 

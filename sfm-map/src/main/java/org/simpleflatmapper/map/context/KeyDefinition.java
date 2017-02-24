@@ -14,11 +14,10 @@ public class KeyDefinition<S, K> {
 
     private final int index;
 
-    private final KeyDefinition<S, K>[] children;
 
     private final boolean root;
 
-    public KeyDefinition(K[] keys, KeySourceGetter<K, S> keySourceGetter, KeyDefinition<S, K>[] children, int index, boolean root) {
+    public KeyDefinition(K[] keys, KeySourceGetter<K, S> keySourceGetter, int index, boolean root) {
         this.singleKey = getSingleKey(keys);
         this.root = root;
         if (singleKey == null) {
@@ -30,7 +29,6 @@ public class KeyDefinition<S, K> {
         this.keySourceGetter = keySourceGetter;
         this.empty = keys == null || keys.length == 0;
         this.index = index;
-        this.children = children;
     }
 
     private static <K> K getSingleKey(K[] keys) {
@@ -67,10 +65,6 @@ public class KeyDefinition<S, K> {
             values[i] = keySourceGetter.getValue(keys[i], source);
         }
         return new MultiValueKey(values);
-    }
-
-    public KeyDefinition<S, K>[] getChildren() {
-        return children;
     }
 
     public int getIndex() {

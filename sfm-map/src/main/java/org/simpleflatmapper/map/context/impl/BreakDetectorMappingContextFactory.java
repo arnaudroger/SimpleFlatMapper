@@ -5,8 +5,8 @@ import org.simpleflatmapper.map.context.KeyDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactory;
 
 public class BreakDetectorMappingContextFactory<S> implements MappingContextFactory<S> {
-    private final KeyDefinition<S, ?>[] keyDefinitions;
     private final KeyDefinition<S, ?> rootKeyDefinition;
+    private final KeyDefinition<S, ?>[] keyDefinitions;
     private final MappingContextFactory<S> delegateFactory;
 
     public BreakDetectorMappingContextFactory(

@@ -94,9 +94,14 @@ public class MappingContextFactoryBuilder<S, K> {
                 populateKey(keyDefinitionsBuilder, builders, builder, rootDetector);
             }
 
+
+
             KeyDefinition<S, K>[] keyDefinitions = KeyDefinitionBuilder.<S, K>toKeyDefinitions(keyDefinitionsBuilder);
 
-            context = new BreakDetectorMappingContextFactory<S>(keyDefinitions[rootDetector], keyDefinitions, context);
+            KeyDefinition<S, K> rootKeyDefinition = keyDefinitions[rootDetector];
+
+
+            context = new BreakDetectorMappingContextFactory<S>(rootKeyDefinition, keyDefinitions, context);
         }
 
         return context;
@@ -146,7 +151,7 @@ public class MappingContextFactoryBuilder<S, K> {
                 keys.addAll(parent.getKeys());
             }
 
-            keyDefinition = new KeyDefinitionBuilder<S, K>(keys, builder.keySourceGetter, parent, builder.currentIndex, builder.currentIndex == rootDetector);
+            keyDefinition = new KeyDefinitionBuilder<S, K>(keys, builder.keySourceGetter, builder.currentIndex, builder.currentIndex == rootDetector);
         }
 
         keyDefinitions[builder.currentIndex] = keyDefinition;

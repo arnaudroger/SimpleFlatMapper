@@ -64,7 +64,7 @@ public class JoinMapperTest {
         public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
             return source[key.getIndex()];
         }
-    }, null, 0, true);
+    }, 0, true);
 
     @SuppressWarnings("unchecked")
     @Test
@@ -72,7 +72,7 @@ public class JoinMapperTest {
         JoinMapper<Object[], Object[][], DbListObject, RuntimeException> joinMapper =
                 new JoinMapper<Object[], Object[][], DbListObject, RuntimeException>(
                         dbListObjectMapper, RethrowConsumerErrorHandler.INSTANCE,
-                        new BreakDetectorMappingContextFactory<Object[]>(keyDefinition, new KeyDefinition[] {keyDefinition}, MappingContext.EMPTY_FACTORY),
+                        new BreakDetectorMappingContextFactory<Object[]>(keyDefinition, new KeyDefinition[0], MappingContext.EMPTY_FACTORY),
                         SetRowMapperTest.ENUMARABLE_UNARY_FACTORY
                         );
 

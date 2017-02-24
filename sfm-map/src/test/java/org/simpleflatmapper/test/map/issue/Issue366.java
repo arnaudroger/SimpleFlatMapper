@@ -24,8 +24,8 @@ public class Issue366 {
         when(keySourceGetter.getValue(key, object)).thenReturn(new byte[] {1, 2}, new byte[] {1, 2}, new byte[] {1, 3});
 
         KeyDefinition<Object, SampleFieldKey> keyDefinition =
-                new KeyDefinition<Object, SampleFieldKey>(new SampleFieldKey[] {key}, keySourceGetter, null, 0, true);
-        BreakDetector<Object> breakDetector = new BreakDetector<Object>(keyDefinition, new BreakDetector[0]);
+                new KeyDefinition<Object, SampleFieldKey>(new SampleFieldKey[] {key}, keySourceGetter, 0, true);
+        BreakDetector<Object> breakDetector = new BreakDetector<Object>(keyDefinition);
 
         assertTrue(breakDetector.broke(object));
         assertFalse(breakDetector.broke(object));

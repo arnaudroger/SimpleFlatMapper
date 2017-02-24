@@ -8,34 +8,54 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
     private final BreakDetector<S> rootDetector;
     private final MappingContext<S> delegateContext;
     private final BreakDetector<S>[] breakDetectors;
+    private final int rootDetectorIndex;
 
     public BreakDetectorMappingContext(KeyDefinition<S, ?> rootKeyDefinition,
                                        MappingContext<S> delegateContext,
                                        KeyDefinition<S, ?>[] keyDefinitions) {
+        this.rootDetector = new BreakDetector<S>(rootKeyDefinition);
         this.delegateContext = delegateContext;
-        this.breakDetectors = toKeyContext(keyDefinitions);
-        this.rootDetector = breakDetectors[rootKeyDefinition.getIndex()];
+        this.breakDetectors = toBreakDetectors(keyDefinitions);
+        this.rootDetectorIndex = rootKeyDefinition.getIndex();
     }
 
 
     @SuppressWarnings("unchecked")
-    private static <S> BreakDetector<S>[] toKeyContext(KeyDefinition<S, ?>[] definitions) {
+    private static <S> BreakDetector<S>[] toBreakDetectors(KeyDefinition<S, ?>[] definitions) {
         BreakDetector<S>[] breakDetectors = new BreakDetector[definitions.length];
         for (int i = 0; i < definitions.length; i++) {
             KeyDefinition<S, ?> definition = definitions[i];
-            breakDetectors[i] = new BreakDetector<S>(definition, breakDetectors);
+            breakDetectors[i] = new BreakDetector<S>(definition);
         }
         return breakDetectors;
     }
 
     @Override
     public boolean broke(S source) {
-        return rootDetector.broke(source);
+        boolean b = rootDetector.broke(source);
+
+        if (b) {
+            for(BreakDetector breakDetector : breakDetectors) {
+                if (breakDetector != rootDetector) {
+                    breakDetector.markRootAsBroken();
+                }
+            }
+        }
+
+        for(BreakDetector breakDetector : breakDetectors) {
+            if (breakDetector != rootDetector) {
+                breakDetector.handleSource(source);
+            }
+        }
+
+        return b;
     }
 
     @Override
     public void markAsBroken() {
-        rootDetector.markAsBroken(true);
+        for(BreakDetector breakDetector : breakDetectors) {
+            breakDetector.markRootAsBroken();
+        }
     }
 
     @Override
@@ -45,7 +65,11 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
 
     @Override
     public void setCurrentValue(int i,  Object value) {
-        this.breakDetectors[i].setValue(value);
+        if (i == rootDetectorIndex) {
+            rootDetector.setValue(value);
+        } else {
+            this.breakDetectors[i].setValue(value);
+        }
     }
 
     @Override

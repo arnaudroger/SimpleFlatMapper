@@ -4,12 +4,11 @@ import org.simpleflatmapper.map.MappingException;
 import org.simpleflatmapper.map.context.Key;
 import org.simpleflatmapper.map.context.KeyDefinition;
 
-import java.util.HashMap;
 
 public class BreakDetector<S>  {
 
     private final KeyDefinition<S, ?> definition;
-    private final HashMap<Key, Object> cache;
+    private final KeyObjectStore cache;
 
     private Key currentKey;
 
@@ -19,7 +18,7 @@ public class BreakDetector<S>  {
         if (this.definition == null) {
             cache = null;
         } else {
-            cache = new HashMap<Key, Object>();
+            cache = new KeyObjectStore();
         }
     }
 
@@ -37,9 +36,7 @@ public class BreakDetector<S>  {
             return true;
         }
 
-
         Key oldKey = currentKey;
-
         currentKey = definition.getValues(source);
 
         return oldKey == null || !oldKey.equals(currentKey);

@@ -4,7 +4,7 @@ import org.simpleflatmapper.map.context.Key;
 
 import java.util.Arrays;
 
-public class MultiValueKey extends Key {
+public final class MultiValueKey extends Key {
 
     private final Object[] values;
     private final int _hashCode;

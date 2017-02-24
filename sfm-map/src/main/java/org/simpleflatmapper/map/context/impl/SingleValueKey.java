@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Objects;
 //IFJAVA8_END
 
-public class SingleValueKey extends Key {
+public final class SingleValueKey extends Key {
 
     private final Object value;
     private final int _hashCode;

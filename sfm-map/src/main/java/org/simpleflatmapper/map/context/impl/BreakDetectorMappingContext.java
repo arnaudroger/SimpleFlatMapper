@@ -8,15 +8,13 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
     private final BreakDetector<S> rootDetector;
     private final MappingContext<S> delegateContext;
     private final BreakDetector<S>[] breakDetectors;
-    private final int rootDetectorIndex;
 
     public BreakDetectorMappingContext(KeyDefinition<S, ?> rootKeyDefinition,
                                        MappingContext<S> delegateContext,
                                        KeyDefinition<S, ?>[] keyDefinitions) {
-        this.rootDetector = new BreakDetector<S>(rootKeyDefinition);
         this.delegateContext = delegateContext;
         this.breakDetectors = toBreakDetectors(keyDefinitions);
-        this.rootDetectorIndex = rootKeyDefinition.getIndex();
+        this.rootDetector = breakDetectors[rootKeyDefinition.getIndex()];
     }
 
 
@@ -65,11 +63,7 @@ public class BreakDetectorMappingContext<S> extends MappingContext<S> {
 
     @Override
     public void setCurrentValue(int i,  Object value) {
-        if (i == rootDetectorIndex) {
-            rootDetector.setValue(value);
-        } else {
-            this.breakDetectors[i].setValue(value);
-        }
+        this.breakDetectors[i].setValue(value);
     }
 
     @Override

@@ -30,6 +30,16 @@ public class JoinSample {
     }
 
 
+    /**
+     * Test for https://arnaudroger.github.io/blog/2017/02/24/jooq-one-to-many.html
+     *
+     * To avoid having to mock the result set metadata I used a static mapper here. In production code
+     * you can just call
+     *  newMapper(Location.class)
+     * instead of newBuilder()...mapper()
+     *
+     * @throws SQLException
+     */
     @Test
     public void stackOverFlowJoin() throws SQLException {
         JdbcMapper<Location> mapper = JdbcMapperFactory

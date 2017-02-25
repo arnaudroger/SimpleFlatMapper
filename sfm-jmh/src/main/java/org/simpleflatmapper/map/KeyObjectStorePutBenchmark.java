@@ -15,7 +15,7 @@ import java.util.HashMap;
 @State(Scope.Benchmark)
 public class KeyObjectStorePutBenchmark {
 
-    @Param(value = { "1", "10", "100", "1000"})
+    @Param(value = { "1", "10", "100", "1000", "10000"})
     public int nb;
     Object[][] data;
     @Setup

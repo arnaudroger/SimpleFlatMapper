@@ -38,7 +38,7 @@ public class JoinSample {
                 .newBuilder(Location.class)
                 .addMapping(new JdbcColumnKey("name", 1, Types.VARCHAR))
                 .addMapping(new JdbcColumnKey("player", 2, Types.VARCHAR))
-                .addMapping(new JdbcColumnKey("invitedPlayers_id", 3, Types.VARCHAR))
+                .addMapping(new JdbcColumnKey("invited_players_player", 3, Types.VARCHAR))
                 .mapper();
 
         UUID[] players = new UUID[] { UUID.randomUUID(), UUID.randomUUID()};

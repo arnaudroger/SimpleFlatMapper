@@ -64,7 +64,7 @@ public class JoinMapperTest {
         public Object getValue(SampleFieldKey key, Object[] source) throws Exception {
             return source[key.getIndex()];
         }
-    }, 0, true);
+    }, 0);
 
     @SuppressWarnings("unchecked")
     @Test

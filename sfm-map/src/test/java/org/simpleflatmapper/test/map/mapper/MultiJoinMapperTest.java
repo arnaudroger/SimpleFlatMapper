@@ -1,15 +1,18 @@
 package org.simpleflatmapper.test.map.mapper;
 
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.annotation.Key;
 import org.simpleflatmapper.map.mapper.JoinMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
+import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.util.ListCollector;
+import org.simpleflatmapper.util.TypeReference;
 
 import java.util.List;
 
@@ -196,9 +199,67 @@ public class MultiJoinMapperTest {
     }
 
 
-    @Test
-    public void testTupleRoot() {
+    public static Object[][] tdata = new Object[][] {
+            {1, 1, 1},
+            {1, 1, 2},
+            {1, 2, 1},
+            {2, 3, 1}
+    };
 
+    @Test
+    public void testMultiJoinTuples() {
+        ClassMeta<Tuple2<A, List<Tuple2<B, List<C>>>>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple2<A, List<Tuple2<B, List<C>>>>>() {}.getType());
+
+        AbstractMapperBuilderTest.SampleMapperBuilder<Tuple2<A, List<Tuple2<B, List<C>>>>> builder =
+                new AbstractMapperBuilderTest.SampleMapperBuilder<Tuple2<A, List<Tuple2<B, List<C>>>>>(classMeta, mapperConfig());
+
+        JoinMapper<Object[], Object[][], Tuple2<A, List<Tuple2<B, List<C>>>>, RuntimeException> mapper =
+                (JoinMapper<Object[], Object[][], Tuple2<A, List<Tuple2<B, List<C>>>>, RuntimeException>)
+                        builder
+                                .addMapping("id", KeyProperty.DEFAULT)
+                                .addMapping("elt1_elt0_elt0_id", KeyProperty.DEFAULT)
+                                .addMapping("elt1_elt0_elt1_elt0_id", KeyProperty.DEFAULT)
+                                .mapper();
+
+
+        List<Tuple2<A, List<Tuple2<B, List<C>>>>> list = mapper.forEach(tdata, new ListCollector<Tuple2<A, List<Tuple2<B, List<C>>>>>()).getList();
+
+        assertEquals(2, list.size());
+
+        assertEquals(1, list.get(0).v1.id);
+
+        assertEquals(2, list.get(0).v2.size());
+
+        assertEquals(1, list.get(0).v2.get(0).v1.id);
+        assertEquals(2, list.get(0).v2.get(0).v2.size());
+        assertEquals(1, list.get(0).v2.get(0).v2.get(0).id);
+        assertEquals(2, list.get(0).v2.get(0).v2.get(1).id);
+
+        assertEquals(2, list.get(0).v2.get(1).v1.id);
+        assertEquals(1, list.get(0).v2.get(1).v2.size());
+        assertEquals(1, list.get(0).v2.get(1).v2.get(0).id);
+
+
+        assertEquals(2, list.get(1).v1.id);
+
+        assertEquals(1, list.get(1).v2.size());
+
+        assertEquals(3, list.get(1).v2.get(0).v1.id);
+        assertEquals(1, list.get(1).v2.get(0).v2.size());
+        assertEquals(1, list.get(1).v2.get(0).v2.get(0).id);
+
+
+
+    }
+
+    public static class A {
+        public int id;
+    }
+    public static class B {
+        public int id;
+    }
+    public static class C {
+        public int id;
     }
 
 

@@ -45,16 +45,27 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
         // all element has same type so check if can find property
         PropertyMeta<E, ?> property =
                 elementClassMeta.newPropertyFinder(propertyFilter).findProperty(propertyNameMatcher);
+
+        // need to use callback
+//        elementClassMeta.newPropertyFinder(propertyFilter)
+//                .lookForProperties(propertyNameMatcher,
+//                        new FoundProperty() {
+//                        }, score, true,
+//                        propertyFinderTransformer
+//
+//                );
+
         if (property != null) {
             for (int i = 0; i < elements.size(); i++) {
                 IndexedElement element = elements.get(i);
                 if (!element.hasProperty(property)) {
-                    lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), foundProperty, score, propertyFinderTransformer);
+                    lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), foundProperty, score.decrease(i), propertyFinderTransformer);
                     return;
                 }
             }
 
-            lookForAgainstColumn(new IndexedColumn(elements.size(), propertyNameMatcher), foundProperty, score, propertyFinderTransformer);
+            int index = elements.size();
+            lookForAgainstColumn(new IndexedColumn(index, propertyNameMatcher), foundProperty, score.decrease(index * 256), propertyFinderTransformer);
         }
 	}
 

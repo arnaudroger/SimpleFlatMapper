@@ -14,8 +14,6 @@ import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.Supplier;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class MappingContextFactoryBuilder<S, K> {
@@ -88,20 +86,14 @@ public class MappingContextFactoryBuilder<S, K> {
         if (hasKeys(builders)) {
             KeyDefinitionBuilder<S, K>[] keyDefinitionsBuilder = new KeyDefinitionBuilder[builders.get(builders.size() - 1).currentIndex + 1];
 
-            int rootDetector = getRootDetector(builders);
-
             for (int i = 0; i < builders.size(); i++) {
                 MappingContextFactoryBuilder<S, K> builder = builders.get(i);
 
-                populateKey(keyDefinitionsBuilder, builders, builder, rootDetector);
+                populateKey(keyDefinitionsBuilder, builders, builder);
             }
 
-
-
             KeyDefinition<S, K>[] keyDefinitions = KeyDefinitionBuilder.<S, K>toKeyDefinitions(keyDefinitionsBuilder);
-
-            KeyDefinition<S, K> rootKeyDefinition = keyDefinitions[rootDetector];
-
+            KeyDefinition<S, K> rootKeyDefinition = keyDefinitions[0];
 
             context = new BreakDetectorMappingContextFactory<S>(rootKeyDefinition, keyDefinitions, context);
         }
@@ -109,17 +101,13 @@ public class MappingContextFactoryBuilder<S, K> {
         return context;
     }
 
-    private KeyDefinitionBuilder<S, K> populateKey(KeyDefinitionBuilder<S, K>[] keyDefinitions, ArrayList<MappingContextFactoryBuilder<S, K>> builders, MappingContextFactoryBuilder<S, K> builder, int rootDetector) {
+    private KeyDefinitionBuilder<S, K> populateKey(KeyDefinitionBuilder<S, K>[] keyDefinitions, ArrayList<MappingContextFactoryBuilder<S, K>> builders, MappingContextFactoryBuilder<S, K> builder) {
 
         if (keyDefinitions[builder.currentIndex] != null) {
             return keyDefinitions[builder.currentIndex];
         }
 
-        // if no parent fallback on root detector
-        int parentIndex = builder.getParentNonEmptyIndex();
-        if (parentIndex == -1 && rootDetector != builder.currentIndex()) {
-            parentIndex = rootDetector;
-        }
+        int parentIndex = builder.getNonEmptyParentIndex();
 
         KeyDefinitionBuilder<S, K> parent = null;
         if (parentIndex != -1) {
@@ -129,7 +117,7 @@ public class MappingContextFactoryBuilder<S, K> {
                 for(int i = 0; i < builders.size(); i++) {
                     MappingContextFactoryBuilder<S, K> potentialParent = builders.get(i);
                     if (potentialParent.currentIndex == parentIndex) {
-                        parent = populateKey(keyDefinitions, builders, potentialParent, rootDetector);
+                        parent = populateKey(keyDefinitions, builders, potentialParent);
                         break;
                     }
                 }
@@ -147,9 +135,12 @@ public class MappingContextFactoryBuilder<S, K> {
         } else {
             List<K> keys = new ArrayList<K>(builder.effectiveKeys());
 
-            appendParentKeys(parent, keys);
+            // ignore root parent
+            if (parentIndex >0 && parent != null) {
+                appendParentKeys(parent, keys);
+            }
 
-            keyDefinition = new KeyDefinitionBuilder<S, K>(keys, builder.keySourceGetter, builder.currentIndex, builder.currentIndex == rootDetector);
+            keyDefinition = new KeyDefinitionBuilder<S, K>(keys, builder.keySourceGetter, builder.currentIndex);
         }
 
         keyDefinitions[builder.currentIndex] = keyDefinition;
@@ -157,9 +148,8 @@ public class MappingContextFactoryBuilder<S, K> {
     }
 
     private void appendParentKeys(KeyDefinitionBuilder<S, K> parent, List<K> keys) {
-        // append parent keys except for root, as the root will clear all the cache
-        // also if keys is empty we generate a new row every time so leave empty
-        if (parent != null && !keys.isEmpty() && !parent.isRoot()) {
+        // if keys is empty we generate a new row every time so leave empty
+        if (!keys.isEmpty()) {
             for(K k : parent.getKeys()) {
                 if (!keys.contains(k)) {
                     keys.add(k);
@@ -174,15 +164,14 @@ public class MappingContextFactoryBuilder<S, K> {
             return keys;
         }
 
+        List<K> keys = new ArrayList<K>();
         for(MappingContextFactoryBuilder<S, K> child : children) {
             if (child.isEligibleAsSubstituteKey()) {
-                List<K> ks = child.effectiveKeys();
-                if (!ks.isEmpty())
-                    return ks;
+                keys.addAll(child.effectiveKeys());
             }
 
         }
-        return Collections.emptyList();
+        return keys;
     }
 
 
@@ -227,16 +216,11 @@ public class MappingContextFactoryBuilder<S, K> {
                 && !(owner instanceof MapElementPropertyMeta);
     }
 
-    private int getParentNonEmptyIndex() {
-        if (parent == null) {
-            return -1;
-        } else {
-            if (parent.hasNoKeys()) {
-                return parent.getParentNonEmptyIndex();
-            } else {
-                return parent.currentIndex;
-            }
-        }
+    // ignore empty parent useful to skip root keys
+    private int getNonEmptyParentIndex() {
+        return parent == null
+                ? -1
+                : parent.effectiveKeys().isEmpty() ? parent.getNonEmptyParentIndex() : parent.currentIndex;
     }
 
 

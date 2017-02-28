@@ -11,24 +11,21 @@ public class KeyDefinitionBuilder<S, K> {
     private final List<K> keys;
     private final int index;
 
-    private final boolean root;
-
-    public KeyDefinitionBuilder(List<K> keys, KeySourceGetter<K, S> keySourceGetter, int index, boolean root) {
+    public KeyDefinitionBuilder(List<K> keys, KeySourceGetter<K, S> keySourceGetter, int index) {
         this.keys = keys;
         this.keySourceGetter = keySourceGetter;
-        this.root = root;
         this.index = index;
     }
 
 
     public KeyDefinitionBuilder<S, K> asChild(int currentIndex) {
-        return new KeyDefinitionBuilder<S, K>(keys, keySourceGetter, currentIndex, false);
+        return new KeyDefinitionBuilder<S, K>(keys, keySourceGetter, currentIndex);
     }
 
     public static <S, K> KeyDefinition<S, K>[] toKeyDefinitions(KeyDefinitionBuilder<S, K>[] siblings) {
         KeyDefinition<S, K>[] keyDefinitions = new KeyDefinition[siblings.length];
         for(KeyDefinitionBuilder<S, K> builder : siblings) {
-            KeyDefinition<S, K> keyDefinition = new KeyDefinition<S, K>(toK(builder.keys), builder.keySourceGetter, builder.index, builder.root);
+            KeyDefinition<S, K> keyDefinition = new KeyDefinition<S, K>(toK(builder.keys), builder.keySourceGetter, builder.index);
             keyDefinitions[builder.index]= keyDefinition;
         }
         return keyDefinitions;
@@ -41,9 +38,5 @@ public class KeyDefinitionBuilder<S, K> {
 
     public List<K> getKeys() {
         return keys;
-    }
-
-    public boolean isRoot() {
-        return root;
     }
 }

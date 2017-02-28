@@ -72,8 +72,4 @@ public class BreakDetector<S>  {
             cache.clear();
         }
     }
-
-    public boolean isRoot() {
-        return definition != null && definition.isRoot();
-    }
 }

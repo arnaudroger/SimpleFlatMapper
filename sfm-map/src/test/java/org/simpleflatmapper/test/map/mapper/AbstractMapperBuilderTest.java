@@ -3,6 +3,7 @@ package org.simpleflatmapper.test.map.mapper;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Assert;
 import org.junit.Test;
 import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
@@ -492,6 +493,60 @@ public class AbstractMapperBuilderTest {
         if (mapTo) {
             mapper.mapTo(row, instance2, null);
             assertEquals(instance1, instance2);
+        }
+    }
+
+    @Test
+    // https://github.com/arnaudroger/SimpleFlatMapper/issues/416
+    public void testEmptyAndFullConstructor() {
+        AbstractMapperFactoryTest.MapperFactory mapperFactory = new AbstractMapperFactoryTest.MapperFactory();
+
+
+        testCanBuildMapper(mapperFactory.getClassMeta(new TypeReference<Tuple2<AA, String>>() { }));
+        testCanBuildMapper(mapperFactory.getClassMeta(new TypeReference<List<AA>>() { }));
+        testCanBuildMapper(mapperFactory.getClassMeta(new TypeReference<Optional<AA>>() { }));
+
+        testCanBuildMapper(mapperFactory.getClassMeta(new TypeReference<Map<String, AA>>() { }), "aa_");
+
+    }
+    private <T> void testCanBuildMapper(ClassMeta<T> classMeta) {
+        testCanBuildMapper(classMeta, "");
+    }
+    private <T> void testCanBuildMapper(ClassMeta<T> classMeta, String prefix) {
+        SampleMapperBuilder<T> builderTuple = new SampleMapperBuilder<T>(classMeta);
+
+        assertNotNull(
+                builderTuple
+                        .addMapping(prefix + "id")
+                        .addMapping(prefix + "value")
+                        .mapper()); // fails
+    }
+
+    public static class AA {
+        private String value;
+        private int id;
+
+        public AA() {
+        }
+        public AA(int id, String value) {
+            this.id = id;
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
         }
     }
 

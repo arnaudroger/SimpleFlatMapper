@@ -14,6 +14,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     private final ClassMeta<T> mapMeta;
     private final Converter<? super CharSequence, ? extends K> keyConverter;
     private final Map<PropertyNameMatcher, PropertyFinder<V>> finders = new HashMap<PropertyNameMatcher, PropertyFinder<V>>();
+    private final Map<PropertyMeta<?, ?>, PropertyFinder<V>> findersByKey = new HashMap<PropertyMeta<?, ?>, PropertyFinder<V>>();
     private final Map<String, MapElementPropertyMeta<?, K, V>> keys = new HashMap<String, MapElementPropertyMeta<?, K, V>>();
 
     public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter, Predicate<PropertyMeta<?, ?>> propertyFilter) {
@@ -38,21 +39,23 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                     new FoundProperty<V>() {
                         @Override
                         public <P extends PropertyMeta<V, ?>> void found(final P propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
+                            PropertyMeta<T, ?> keyProperty = keyProperty(keyMatcher);
                             Runnable sCallback = new Runnable() {
                                 @Override
                                 public void run() {
                                     finders.put(keyMatcher, propertyFinder);
+                                    findersByKey.put(keyProperty, propertyFinder);
                                     selectionCallback.run();
                                 }
                             };
 
-                            PropertyMeta<T, ?> keyProperty = keyProperty(keyMatcher);
+
 
                             if (keyProperty != null) {
                                 if (propertyMeta instanceof SelfPropertyMeta) {
-                                    matchingProperties.found(keyProperty, selectionCallback, score);
+                                    matchingProperties.found(keyProperty, sCallback, score);
                                 } else {
-                                    matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), selectionCallback, score);
+                                    matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), sCallback, score);
                                 }
                             }
                         }
@@ -114,9 +117,10 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     }
 
     @Override
-    public PropertyFinder<?> getSubPropertyFinder(String name) {
-        return null;
+    public PropertyFinder<?> getSubPropertyFinder(PropertyMeta<?, ?> owner) {
+        return findersByKey.get(owner);
     }
+
 
     @Override
     public Type getOwnerType() {

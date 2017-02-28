@@ -17,28 +17,30 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
                 elements.add(newIndexedElement(tupleClassMeta, propertyMeta));
             }
         });
-	}
+    }
 
-	private <E> IndexedElement<T, E> newIndexedElement(TupleClassMeta<T> tupleClassMeta,  PropertyMeta<T, E> prop) {
-		ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(prop.getPropertyType());
-		return new IndexedElement<T, E>(prop, classMeta, propertyFilter);
-	}
+    private <E> IndexedElement<T, E> newIndexedElement(TupleClassMeta<T> tupleClassMeta, PropertyMeta<T, E> prop) {
+        ClassMeta<E> classMeta = tupleClassMeta.getReflectionService().getClassMeta(prop.getPropertyType());
+        return new IndexedElement<T, E>(prop, classMeta, propertyFilter);
+    }
 
     @Override
     protected boolean isValidIndex(IndexedColumn indexedColumn) {
         return indexedColumn.getIndexValue() < elements.size();
     }
+
     @Override
     protected IndexedElement<T, ?> getIndexedElement(IndexedColumn indexedColumn) {
         return elements.get(indexedColumn.getIndexValue());
     }
 
     protected void extrapolateIndex(final PropertyNameMatcher propertyNameMatcher, final FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer) {
-        for(int i = 0; i < elements.size(); i++) {
+        for (int i = 0; i < elements.size(); i++) {
             final IndexedElement element = elements.get(i);
 
             if (element.getElementClassMeta() != null) {
-                propertyFinderTransformer.apply(element.getPropertyFinder()).lookForProperties(propertyNameMatcher, new FoundProperty() {
+                PropertyFinder propertyFinder = element.getPropertyFinder();
+                propertyFinderTransformer.apply(propertyFinder).lookForProperties(propertyNameMatcher, new FoundProperty() {
                     @Override
                     public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
 
@@ -64,10 +66,5 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
             }
             score = score.decrease(1);
         }
-    }
-
-    @Override
-    public PropertyFinder<?> getSubPropertyFinder(String name) {
-        return null;
     }
 }

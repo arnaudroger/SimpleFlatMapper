@@ -50,9 +50,13 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
     }
 
     @Override
-    public PropertyFinder<?> getSubPropertyFinder(String name) {
-        return null;
+    public PropertyFinder<?> getSubPropertyFinder(PropertyMeta<?, ?> owner) {
+        if (owner.equals(optionalClassMeta.getProperty())) {
+            return propertyFinder;
+        }
+        throw new IllegalArgumentException("Unexpected owner " + owner);
     }
+
 
     @Override
     public Type getOwnerType() {

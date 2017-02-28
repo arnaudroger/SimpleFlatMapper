@@ -67,8 +67,8 @@ public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public PropertyFinder<?> getSubPropertyFinder(String name) {
-        return delegate.getSubPropertyFinder(name);
+    public PropertyFinder<?> getSubPropertyFinder(PropertyMeta<?, ?> owner) {
+        return delegate.getSubPropertyFinder(owner);
     }
 
     @Override

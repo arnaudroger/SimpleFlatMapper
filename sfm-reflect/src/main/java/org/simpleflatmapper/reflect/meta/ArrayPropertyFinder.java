@@ -9,8 +9,6 @@ import java.util.List;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 
-	private final List<IndexedElement<T, E>> elements = new ArrayList<IndexedElement<T, E>>();
-
 
     public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
         super(arrayClassMeta, propertyFilter);
@@ -24,7 +22,7 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
                     propertyFilter));
         }
 
-        return elements.get(indexedColumn.getIndexValue());
+        return (IndexedElement<T, E>) elements.get(indexedColumn.getIndexValue());
 	}
 
     private PropertyMeta<T, E> newElementPropertyMeta(int index, String name) {
@@ -65,8 +63,4 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
         return indexedColumn.getIndexValue() >= 0;
     }
 
-    @Override
-    public PropertyFinder<?> getSubPropertyFinder(String name) {
-        return null;
-    }
 }

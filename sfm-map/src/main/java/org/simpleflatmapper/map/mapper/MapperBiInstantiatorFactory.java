@@ -4,6 +4,7 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
@@ -13,6 +14,7 @@ import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 
 public class MapperBiInstantiatorFactory {
@@ -46,7 +48,17 @@ public class MapperBiInstantiatorFactory {
         if (TypeHelper.isArray(target)) {
             return instantiatorFactory.<S, MappingContext<? super S>, T>getArrayBiInstantiator(TypeHelper.toClass(TypeHelper.getComponentTypeOfListOrArray(target)), propertyMappingsBuilder.forEachProperties(new CalculateMaxIndex<T, K, D>()).maxIndex + 1);
         } else {
-            return instantiatorFactory.<S, MappingContext<? super S>, T>getBiInstantiator(target, TypeHelper.<S>toClass(source), MappingContext.class, propertyMappingsBuilder.getPropertyFinder().getEligibleInstantiatorDefinitions(), constructorParameterGetterMap,useAsmIfEnabled);
+            List<InstantiatorDefinition> instantiatorDefinitions = propertyMappingsBuilder.getPropertyFinder().getEligibleInstantiatorDefinitions();
+            return
+                    instantiatorFactory.
+                            <S, MappingContext<? super S>, T>
+                                    getBiInstantiator(
+                                            target,
+                                            TypeHelper.<S>toClass(source),
+                                            MappingContext.class,
+                                            instantiatorDefinitions,
+                                            constructorParameterGetterMap,
+                                            useAsmIfEnabled);
         }
     }
 

@@ -314,7 +314,4 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 						customProperties);
 	}
 
-	public PropertyFinder<?> getSubPropertyFinder(String name) {
-		return wrapPropertyFinder(propertyFinder.getSubPropertyFinder(name));
-	}
 }

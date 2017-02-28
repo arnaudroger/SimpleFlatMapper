@@ -31,7 +31,8 @@ public abstract class PropertyFinder<T> {
 
 
 	public abstract List<InstantiatorDefinition> getEligibleInstantiatorDefinitions();
-    public abstract PropertyFinder<?> getSubPropertyFinder(String name);
+
+    public abstract PropertyFinder<?> getSubPropertyFinder(PropertyMeta<?, ?> owner);
 
 	public Predicate<PropertyMeta<?, ?>> getPropertyFilter() {
 		return propertyFilter;

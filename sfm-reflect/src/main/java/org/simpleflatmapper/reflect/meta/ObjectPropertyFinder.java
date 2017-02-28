@@ -17,7 +17,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	}
 	private final List<InstantiatorDefinition> eligibleInstantiatorDefinitions;
 	private final ObjectClassMeta<T> classMeta;
-	private final Map<String, PropertyFinder<?>> subPropertyFinders = new HashMap<String, PropertyFinder<?>>();
+	private final Map<PropertyMeta<?, ?>, PropertyFinder<?>> subPropertyFinders = new HashMap<PropertyMeta<?, ?>, PropertyFinder<?>>();
 	private State state = State.NONE;
 	private String selfName;
 
@@ -103,15 +103,29 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			final FoundProperty foundProperty,
 			final PropertyMatchingScore score,
 			final PropertyFinderTransformer propertyFinderTransformer) {
-		PropertyFinder<?> subPropertyFinder = subPropertyFinders.get(getColumnName(prop));
+
+    	PropertyFinder<?> subPropertyFinder = subPropertyFinders.get(prop);
+
+    	final PropertyFinder<?> newPropertyFinder;
+
 		if (subPropertyFinder == null) {
 			subPropertyFinder = prop.getPropertyClassMeta().newPropertyFinder(propertyFilter);
-			subPropertyFinders.put(prop.getName(), subPropertyFinder);
+			newPropertyFinder = subPropertyFinder;
+		} else {
+			newPropertyFinder = null;
 		}
 
 		propertyFinderTransformer
 				.apply(subPropertyFinder)
-				.lookForProperties(propertyNameMatcher, foundProperty, score, false, propertyFinderTransformer);
+				.lookForProperties(propertyNameMatcher,  new FoundProperty() {
+					@Override
+					public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
+						if (newPropertyFinder != null) {
+							subPropertyFinders.put(prop, newPropertyFinder);
+						}
+						foundProperty.found(propertyMeta, selectionCallback, score);
+					}
+				}, score, false, propertyFinderTransformer);
 	}
 
     private String getColumnName(PropertyMeta<T, ?> prop) {
@@ -128,7 +142,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			}
 		}
 	}
-	
+
 	private boolean hasConstructorMatching(Parameter param) {
 		for(InstantiatorDefinition cd : eligibleInstantiatorDefinitions) {
 			if (cd.hasParam(param)) {
@@ -195,8 +209,8 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	}
 
 	@Override
-	public PropertyFinder<?> getSubPropertyFinder(String name) {
-		return subPropertyFinders.get(name);
+	public PropertyFinder<?> getSubPropertyFinder(PropertyMeta<?, ?> owner) {
+		return subPropertyFinders.get(owner);
 	}
 
 	@Override

@@ -5,7 +5,9 @@ import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     protected final ClassMeta<T> classMeta;
@@ -115,4 +117,15 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     public Type getOwnerType() {
         return classMeta.getType();
     }
+
+    @Override
+    public PropertyFinder<?> getSubPropertyFinder(PropertyMeta<?, ?> owner) {
+        for(IndexedElement<T, ?> ie : elements) {
+            if (ie.getPropertyMeta().equals(owner)) {
+                return ie.getPropertyFinder();
+            }
+        }
+        throw new IllegalArgumentException("Unexpected owner " + owner);
+    }
+
 }

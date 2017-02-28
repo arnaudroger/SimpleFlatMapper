@@ -496,6 +496,7 @@ public class AbstractMapperBuilderTest {
         }
     }
 
+
     @Test
     // https://github.com/arnaudroger/SimpleFlatMapper/issues/416
     public void testEmptyAndFullConstructor() {

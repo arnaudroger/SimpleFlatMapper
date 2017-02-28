@@ -196,5 +196,11 @@ public class MultiJoinMapperTest {
     }
 
 
+    @Test
+    public void testTupleRoot() {
+
+    }
+
+
 
 }

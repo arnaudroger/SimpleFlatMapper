@@ -1,6 +1,6 @@
 module simpleflatmapper.map.test {
         requires simpleflatmapper.map;
-        requires simpleflatmapper.tuples;
+        requires simpleflatmapper.tuple;
         requires junit;
         requires sfm.test;
         requires mockito.core;

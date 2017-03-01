@@ -1,7 +1,6 @@
 package org.simpleflatmapper.test.map;
 
 
-import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
@@ -20,6 +19,7 @@ import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.map.mapper.MultiJoinMapperTest;
+import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.TypeHelper;

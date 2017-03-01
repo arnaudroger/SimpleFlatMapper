@@ -226,27 +226,27 @@ public class MultiJoinMapperTest {
 
         assertEquals(2, list.size());
 
-        assertEquals(1, list.get(0).v1.id);
+        assertEquals(1, list.get(0).first().id);
 
-        assertEquals(2, list.get(0).v2.size());
+        assertEquals(2, list.get(0).second().size());
 
-        assertEquals(1, list.get(0).v2.get(0).v1.id);
-        assertEquals(2, list.get(0).v2.get(0).v2.size());
-        assertEquals(1, list.get(0).v2.get(0).v2.get(0).id);
-        assertEquals(2, list.get(0).v2.get(0).v2.get(1).id);
+        assertEquals(1, list.get(0).second().get(0).first().id);
+        assertEquals(2, list.get(0).second().get(0).second().size());
+        assertEquals(1, list.get(0).second().get(0).second().get(0).id);
+        assertEquals(2, list.get(0).second().get(0).second().get(1).id);
 
-        assertEquals(2, list.get(0).v2.get(1).v1.id);
-        assertEquals(1, list.get(0).v2.get(1).v2.size());
-        assertEquals(1, list.get(0).v2.get(1).v2.get(0).id);
+        assertEquals(2, list.get(0).second().get(1).first().id);
+        assertEquals(1, list.get(0).second().get(1).second().size());
+        assertEquals(1, list.get(0).second().get(1).second().get(0).id);
 
 
-        assertEquals(2, list.get(1).v1.id);
+        assertEquals(2, list.get(1).first().id);
 
-        assertEquals(1, list.get(1).v2.size());
+        assertEquals(1, list.get(1).second().size());
 
-        assertEquals(3, list.get(1).v2.get(0).v1.id);
-        assertEquals(1, list.get(1).v2.get(0).v2.size());
-        assertEquals(1, list.get(1).v2.get(0).v2.get(0).id);
+        assertEquals(3, list.get(1).second().get(0).first().id);
+        assertEquals(1, list.get(1).second().get(0).second().size());
+        assertEquals(1, list.get(1).second().get(0).second().get(0).id);
 
 
 

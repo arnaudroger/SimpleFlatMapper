@@ -8,7 +8,6 @@ import org.simpleflatmapper.util.ListCollector;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;

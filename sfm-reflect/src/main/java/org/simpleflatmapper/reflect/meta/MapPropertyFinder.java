@@ -39,7 +39,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                     new FoundProperty<V>() {
                         @Override
                         public <P extends PropertyMeta<V, ?>> void found(final P propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
-                            PropertyMeta<T, ?> keyProperty = keyProperty(keyMatcher);
+                            final PropertyMeta<T, ?> keyProperty = keyProperty(keyMatcher);
                             Runnable sCallback = new Runnable() {
                                 @Override
                                 public void run() {

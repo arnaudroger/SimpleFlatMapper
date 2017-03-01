@@ -292,7 +292,7 @@ public class AbstractMapperBuilderTest {
     public void testJoinDbListObject() throws Exception {
         ClassMeta<DbListObject> classMeta = ReflectionService.newInstance(false).<DbListObject>getClassMeta(DbListObject.class);
 
-        SampleMapperBuilder<DbListObject> builder = new SampleMapperBuilder<>(classMeta);
+        SampleMapperBuilder<DbListObject> builder = new SampleMapperBuilder<DbListObject>(classMeta);
         JoinMapper<Object[], Object[][], DbListObject, RuntimeException> mapper =
                 (JoinMapper<Object[], Object[][], DbListObject, RuntimeException>) builder
                         .addKey("id")
@@ -505,7 +505,9 @@ public class AbstractMapperBuilderTest {
 
         testCanBuildMapper(mapperFactory.getClassMeta(new TypeReference<Tuple2<AA, String>>() { }));
         testCanBuildMapper(mapperFactory.getClassMeta(new TypeReference<List<AA>>() { }));
+        //IFJAVA8_START
         testCanBuildMapper(mapperFactory.getClassMeta(new TypeReference<Optional<AA>>() { }));
+        //IFJAVA8_END
 
         testCanBuildMapper(mapperFactory.getClassMeta(new TypeReference<Map<String, AA>>() { }), "aa_");
 

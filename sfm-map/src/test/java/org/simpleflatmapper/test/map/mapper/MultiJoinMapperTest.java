@@ -1,6 +1,5 @@
 package org.simpleflatmapper.test.map.mapper;
 
-import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperConfig;
@@ -11,6 +10,7 @@ import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.test.map.SampleFieldKey;
+import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.ListCollector;
 import org.simpleflatmapper.util.TypeReference;
 

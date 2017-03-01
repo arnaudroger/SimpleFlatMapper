@@ -47,8 +47,9 @@ public class PropertyFinderTest {
         assertNull(propEltId);
 
 
-        propEltId = propertyFinder.findProperty(matcher("notid"));
-        assertNull(propEltId);
+        propEltId = propertyFinder.findProperty(matcher("notid")); // will safe match
+        assertTrue(propEltId instanceof  ArrayElementPropertyMeta);
+        assertEquals(4, ((ArrayElementPropertyMeta)propEltId).getIndex());
 
 
     }

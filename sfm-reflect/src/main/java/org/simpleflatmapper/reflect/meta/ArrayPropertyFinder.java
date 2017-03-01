@@ -42,30 +42,22 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
     protected void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer) {
         final ClassMeta<E> elementClassMeta = ((ArrayClassMeta)classMeta).getElementClassMeta();
 
-        // all element has same type so check if can find property
+        // all element has same type so check if can find any property matching
         PropertyMeta<E, ?> property =
                 elementClassMeta.newPropertyFinder(propertyFilter).findProperty(propertyNameMatcher);
-
-        // need to use callback
-//        elementClassMeta.newPropertyFinder(propertyFilter)
-//                .lookForProperties(propertyNameMatcher,
-//                        new FoundProperty() {
-//                        }, score, true,
-//                        propertyFinderTransformer
-//
-//                );
 
         if (property != null) {
             for (int i = 0; i < elements.size(); i++) {
                 IndexedElement element = elements.get(i);
-                if (!element.hasProperty(property)) {
-                    lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), foundProperty, score.decrease(i), propertyFinderTransformer);
+                ExtrapolateFoundProperty<T> matchingProperties = new ExtrapolateFoundProperty<T>(element, foundProperty);
+                lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), matchingProperties, score.decrease(i), propertyFinderTransformer);
+                if (matchingProperties.hasFound()) {
                     return;
                 }
             }
 
             int index = elements.size();
-            lookForAgainstColumn(new IndexedColumn(index, propertyNameMatcher), foundProperty, score.decrease(index * 256), propertyFinderTransformer);
+            lookForAgainstColumn(new IndexedColumn(index, propertyNameMatcher), foundProperty, score.decrease(index == 0 ? 0 : (16 + index) ), propertyFinderTransformer);
         }
 	}
 
@@ -74,4 +66,36 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
         return indexedColumn.getIndexValue() >= 0;
     }
 
+    private static class ExtrapolateFoundProperty<T> implements FoundProperty<T> {
+        private final IndexedElement element;
+        private final FoundProperty foundProperty;
+        private boolean found;
+
+        public ExtrapolateFoundProperty(IndexedElement element, FoundProperty foundProperty) {
+            this.element = element;
+            this.foundProperty = foundProperty;
+        }
+
+        @Override
+        public <P extends PropertyMeta<T, ?>> void found(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score) {
+            String pathCheck;
+
+            if (propertyMeta instanceof ArrayElementPropertyMeta) {
+                pathCheck = SelfPropertyMeta.PROPERTY_PATH;
+            } else if (propertyMeta.isSubProperty()) {
+                pathCheck = ((SubPropertyMeta)propertyMeta).getSubProperty().getPath();
+            } else {
+                throw new IllegalArgumentException("Excepted match " + propertyMeta);
+            }
+
+            if (!element.hasProperty(pathCheck)) {
+                foundProperty.found(propertyMeta, selectionCallback, score);
+                this.found = true;
+            }
+        }
+
+        public boolean hasFound() {
+            return found;
+        }
+    }
 }

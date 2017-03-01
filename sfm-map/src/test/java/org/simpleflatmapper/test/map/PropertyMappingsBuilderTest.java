@@ -1,6 +1,7 @@
 package org.simpleflatmapper.test.map;
 
 
+import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Test;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.IgnoreMapperBuilderErrorHandler;
@@ -18,9 +19,11 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.test.beans.DbObject;
+import org.simpleflatmapper.test.map.mapper.MultiJoinMapperTest;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.ForEachCallBack;
 import org.simpleflatmapper.util.TypeHelper;
+import org.simpleflatmapper.util.TypeReference;
 
 
 import java.lang.reflect.Type;
@@ -239,4 +242,29 @@ public class PropertyMappingsBuilderTest {
         @Key
         public int id;
     }
+
+
+    @Test
+    public void test418() {
+        ClassMeta<List<Tuple2<B, List<C>>>> classMeta2 = ReflectionService.newInstance().getClassMeta(new TypeReference<List<Tuple2<B, List<C>>>>() {}.getType());
+
+        PropertyMappingsBuilder<List<Tuple2<B, List<C>>>, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder2 =
+                defaultPropertyMappingBuilder(classMeta2);
+
+        PropertyMapping<List<Tuple2<B, List<C>>>, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm1 = builder2.addProperty(new SampleFieldKey("id", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+        PropertyMapping<List<Tuple2<B, List<C>>>, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm2 = builder2.addProperty(new SampleFieldKey("id", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
+
+        assertEquals("0.element0.element1.0.element0.id", pm2.getPropertyMeta().getPath());
+    }
+
+    public static class A {
+        public int id;
+    }
+    public static class B {
+        public int id;
+    }
+    public static class C {
+        public int id;
+    }
+
 }

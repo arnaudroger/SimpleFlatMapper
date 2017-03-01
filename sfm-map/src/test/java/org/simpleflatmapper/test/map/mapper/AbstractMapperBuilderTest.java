@@ -291,10 +291,11 @@ public class AbstractMapperBuilderTest {
 
     @Test
     public void testJoinDbListObject() throws Exception {
-        ClassMeta<DbListObject> classMeta = ReflectionService.newInstance().<DbListObject>getClassMeta(DbListObject.class);
+        ClassMeta<DbListObject> classMeta = ReflectionService.newInstance(false).<DbListObject>getClassMeta(DbListObject.class);
 
+        SampleMapperBuilder<DbListObject> builder = new SampleMapperBuilder<>(classMeta);
         JoinMapper<Object[], Object[][], DbListObject, RuntimeException> mapper =
-                (JoinMapper<Object[], Object[][], DbListObject, RuntimeException>) new SampleMapperBuilder<DbListObject>(classMeta)
+                (JoinMapper<Object[], Object[][], DbListObject, RuntimeException>) builder
                         .addKey("id")
                         .addKey("objects_id")
                         .addMapping("objects_name")

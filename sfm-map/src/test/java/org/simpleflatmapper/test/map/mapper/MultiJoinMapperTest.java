@@ -167,7 +167,7 @@ public class MultiJoinMapperTest {
 
     @Test
     public void testMultiJoinC() {
-        ClassMeta<RootC> classMeta = ReflectionService.newInstance().getClassMeta(RootC.class);
+        ClassMeta<RootC> classMeta = ReflectionService.newInstance(false).getClassMeta(RootC.class);
 
         AbstractMapperBuilderTest.SampleMapperBuilder<RootC> builder =
                 new AbstractMapperBuilderTest.SampleMapperBuilder<RootC>(classMeta, mapperConfig());

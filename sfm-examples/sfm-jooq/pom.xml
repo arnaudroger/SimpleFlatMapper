@@ -5,7 +5,7 @@
 	<artifactId>sfm-examples-jooq</artifactId>
 	<packaging>jar</packaging>
 
-	<version>3.11.2</version>
+	<version>3.12-SNAPSHOT</version>
 
 	<licenses>
 		<license>
@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-jooq</artifactId>
-			<version>3.11.2</version>
+			<version>3.12-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

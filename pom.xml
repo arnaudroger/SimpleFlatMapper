@@ -566,7 +566,7 @@
                 <module>sfm-test-osgi</module>
                 <!--<module>sfm-test-immutables</module>-->
                 <module>sfm-jmh</module>
-                <module>sfm-examples/sfm-jooq</module>
+                <!--<module>sfm-examples/sfm-jooq</module>-->
             </modules>
         </profile>
     </profiles>

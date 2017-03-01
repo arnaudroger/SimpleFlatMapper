@@ -5,7 +5,7 @@
 	<artifactId>sfm-examples-jooq</artifactId>
 	<packaging>jar</packaging>
 
-	<version>3.12-SNAPSHOT</version>
+	<version>3.11.2</version>
 
 	<licenses>
 		<license>
@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-jooq</artifactId>
-			<version>3.12-SNAPSHOT</version>
+			<version>3.11.2</version>
 		</dependency>
 
 		<dependency>
@@ -189,7 +189,7 @@
 								<database>
 									<name>org.jooq.util.h2.H2Database</name>
 									<includes>.*</includes>
-									<excludes></excludes>
+									<excludes />
 									<inputSchema>PUBLIC</inputSchema>
 									<recordTimestampFields>REC_TIMESTAMP</recordTimestampFields>
 								</database>

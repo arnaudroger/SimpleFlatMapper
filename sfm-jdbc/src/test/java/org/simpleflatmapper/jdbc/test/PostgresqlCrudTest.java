@@ -121,12 +121,14 @@ public class PostgresqlCrudTest {
         if (connection == null) { System.err.println("Db POSTGRESQL not available"); return; }
 
         try {
-            
-            try (Statement st = connection.createStatement()) {
+            Statement st = connection.createStatement();
+            try  {
                 st.execute("CREATE TABLE IF NOT EXISTS test_db_object_serial(  id bigserial primary key,"
                         + " name varchar(100), "
                         + " email varchar(100),"
                         + " creation_Time timestamp, type_ordinal int, type_name varchar(10)  )");
+            } finally {
+                st.close();
             }
             
             Crud<DbObject, Long> objectCrud =
@@ -170,8 +172,8 @@ public class PostgresqlCrudTest {
         if (connection == null) { System.err.println("Db POSTGRESQL not available"); return; }
 
         try {
-
-            try (Statement st = connection.createStatement()) {
+            Statement st = connection.createStatement()
+            try {
                 st.execute("DROP TABLE IF EXISTS test_db_object_seq");
                 st.execute("DROP SEQUENCE IF EXISTS test_seq_seq");
                 st.execute("CREATE SEQUENCE test_seq_seq");
@@ -180,6 +182,8 @@ public class PostgresqlCrudTest {
                         + " name varchar(100), "
                         + " email varchar(100),"
                         + " creation_Time timestamp, type_ordinal int, type_name varchar(10)  )");
+            } finally {
+                st.close();
             }
 
             Crud<DbObject, Long> objectCrud =

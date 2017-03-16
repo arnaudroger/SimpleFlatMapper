@@ -172,7 +172,7 @@ public class PostgresqlCrudTest {
         if (connection == null) { System.err.println("Db POSTGRESQL not available"); return; }
 
         try {
-            Statement st = connection.createStatement()
+            Statement st = connection.createStatement();
             try {
                 st.execute("DROP TABLE IF EXISTS test_db_object_seq");
                 st.execute("DROP SEQUENCE IF EXISTS test_seq_seq");

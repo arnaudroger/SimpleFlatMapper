@@ -174,9 +174,9 @@ public class PostgresqlCrudTest {
             try (Statement st = connection.createStatement()) {
                 st.execute("DROP TABLE IF EXISTS test_db_object_seq");
                 st.execute("DROP SEQUENCE IF EXISTS test_seq_seq");
-                st.execute("CREATE SEQUENCE If NOT EXISTS test_seq_seq");
+                st.execute("CREATE SEQUENCE test_seq_seq");
                 
-                st.execute("CREATE TABLE IF NOT EXISTS test_db_object_seq(  id bigint DEFAULT 3,"
+                st.execute("CREATE TABLE test_db_object_seq(  id bigint DEFAULT 3,"
                         + " name varchar(100), "
                         + " email varchar(100),"
                         + " creation_Time timestamp, type_ordinal int, type_name varchar(10)  )");

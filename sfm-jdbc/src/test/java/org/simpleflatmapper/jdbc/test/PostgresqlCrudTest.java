@@ -293,40 +293,46 @@ public class PostgresqlCrudTest {
             object = DbObject.newInstance();
             object.setId(-22225);
 
-            // createOrUpdate
-            key =
-                    objectCrud.createOrUpdate(connection, object, new CheckedConsumer<Long>() {
-                        Long key;
-                        @Override
-                        public void accept(Long aLong) throws Exception {
-                            key = aLong;
-                        }
-                    }).key;
+            try {
+                // createOrUpdate
+                key =
+                        objectCrud.createOrUpdate(connection, object, new CheckedConsumer<Long>() {
+                            Long key;
 
-            assertFalse(key.equals(object.getId()));
+                            @Override
+                            public void accept(Long aLong) throws Exception {
+                                key = aLong;
+                            }
+                        }).key;
 
-            object.setId(key);
+                assertFalse(key.equals(object.getId()));
 
-            // read
-            assertEquals(object, objectCrud.read(connection, key));
+                object.setId(key);
 
-            // createOrUpdate batch
-            key =
-                    objectCrud.createOrUpdate(connection, Arrays.asList(object), new CheckedConsumer<Long>() {
-                        Long key;
-                        @Override
-                        public void accept(Long aLong) throws Exception {
-                            if (key != null) throw new IllegalArgumentException();
-                            key = aLong;
-                        }
-                    }).key;
+                // read
+                assertEquals(object, objectCrud.read(connection, key));
 
-            assertFalse(key.equals(object.getId()));
+                // createOrUpdate batch
+                key =
+                        objectCrud.createOrUpdate(connection, Arrays.asList(object), new CheckedConsumer<Long>() {
+                            Long key;
 
-            object.setId(key);
+                            @Override
+                            public void accept(Long aLong) throws Exception {
+                                if (key != null) throw new IllegalArgumentException();
+                                key = aLong;
+                            }
+                        }).key;
 
-            // read
-            assertEquals(object, objectCrud.read(connection, key));
+                assertFalse(key.equals(object.getId()));
+
+                object.setId(key);
+
+                // read
+                assertEquals(object, objectCrud.read(connection, key));
+            } catch(UnsupportedOperationException e) {
+                // wrong postgres version
+            }
 
         } finally {
             connection.close();

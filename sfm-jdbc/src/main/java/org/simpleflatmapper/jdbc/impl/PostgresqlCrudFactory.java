@@ -29,6 +29,7 @@ public class PostgresqlCrudFactory {
 
         List<String> generatedKeys = new ArrayList<String>();
         List<String> insertColumns = new ArrayList<String>();
+        List<String> insertColumnExpressions = new ArrayList<String>();
         List<String> updateColumns = new ArrayList<String>();
         List<String> keys = new ArrayList<String>();
 
@@ -37,9 +38,14 @@ public class PostgresqlCrudFactory {
             String columnName = cm.getColumn();
             if (cm.isGenerated()) {
                 generatedKeys.add(columnName);
-            } else {
+            } 
+            
+            if (cm.isInsertable()) {
                 insertColumns.add(columnName);
-                statementMapperBuilder.addColumn(columnName);
+                insertColumnExpressions.add(cm.getInsertExpression());
+                if (!cm.isGenerated()) {
+                    statementMapperBuilder.addColumn(columnName);
+                }
             }
             if (!cm.isKey()) {
                 updateColumns.add(columnName);
@@ -51,6 +57,7 @@ public class PostgresqlCrudFactory {
         PostgresqlBatchInsertQueryExecutor<T> queryExecutor = new PostgresqlBatchInsertQueryExecutor<T>(
                 crudMeta.getTable(),
                 insertColumns.toArray(new String[0]),
+                insertColumnExpressions.toArray(new String[0]),
                 onDuplicateKeyUpdate ? updateColumns.toArray(new String[0]) : null,
                 generatedKeys.toArray(new String[0]),
                 keys.toArray(new String[0]),
@@ -67,14 +74,16 @@ public class PostgresqlCrudFactory {
 
         boolean first = true;
         for(ColumnMeta cm : crudMeta.getColumnMetas()) {
-            if (!cm.isGenerated()) {
+            if (cm.isGenerated()) {
+                generatedKeys.add(cm.getColumn());
+            }
+            
+            if (cm.isInsertable()) {
                 if (!first) {
                     sb.append(", ");
                 }
                 sb.append(cm.getColumn());
                 first = false;
-            } else {
-                generatedKeys.add(cm.getColumn());
             }
         }
 
@@ -82,11 +91,11 @@ public class PostgresqlCrudFactory {
 
         first = true;
         for(ColumnMeta cm : crudMeta.getColumnMetas()) {
-            if (!cm.isGenerated()) {
+            if (cm.isInsertable()) {
                 if (!first) {
                     sb.append(", ");
                 }
-                sb.append("?");
+                sb.append(cm.getInsertExpression());
                 first = false;
             }
         }

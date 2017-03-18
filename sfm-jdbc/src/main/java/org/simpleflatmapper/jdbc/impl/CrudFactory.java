@@ -122,24 +122,26 @@ public class CrudFactory {
         sb.append("(");
         boolean first = true;
         for(ColumnMeta cm : crudMeta.getColumnMetas()) {
-            if (!cm.isGenerated()) {
+            if (cm.isInsertable()) {
                 if (!first) {
                     sb.append(", ");
                 }
                 sb.append(cm.getColumn());
                 first = false;
-            } else {
+            } 
+            
+            if (cm.isGenerated()) {
                 generatedKeys.add(cm.getColumn());
             }
         }
         sb.append(") VALUES(");
         first = true;
         for(ColumnMeta cm : crudMeta.getColumnMetas()) {
-            if (!cm.isGenerated()) {
+            if (cm.isInsertable()) {
                 if (!first) {
                     sb.append(", ");
                 }
-                sb.append("?");
+                sb.append(cm.getInsertExpression());
                 first = false;
             }
         }

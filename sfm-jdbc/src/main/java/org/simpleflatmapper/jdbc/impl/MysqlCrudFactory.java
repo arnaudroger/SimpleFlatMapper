@@ -29,6 +29,7 @@ public class MysqlCrudFactory {
 
         List<String> generatedKeys = new ArrayList<String>();
         List<String> insertColumns = new ArrayList<String>();
+        List<String> insertColumnExpressions = new ArrayList<String>();
         List<String> updateColumns = new ArrayList<String>();
 
         PreparedStatementMapperBuilder<T> statementMapperBuilder = jdbcMapperFactory.<T>from(target);
@@ -36,9 +37,13 @@ public class MysqlCrudFactory {
             String columnName = cm.getColumn();
             if (cm.isGenerated()) {
                 generatedKeys.add(columnName);
-            } else {
+            } 
+            if (cm.isInsertable()){
                 insertColumns.add(columnName);
-                statementMapperBuilder.addColumn(columnName);
+                if (!cm.isGenerated()) {
+                    statementMapperBuilder.addColumn(columnName);
+                } 
+                insertColumnExpressions.add(cm.getInsertExpression());
             }
             if (!cm.isKey()) {
                 updateColumns.add(columnName);
@@ -48,6 +53,7 @@ public class MysqlCrudFactory {
         MysqlBatchInsertQueryExecutor<T> queryExecutor = new MysqlBatchInsertQueryExecutor<T>(
                 crudMeta.getTable(),
                 insertColumns.toArray(new String[0]),
+                insertColumnExpressions.toArray(new String[0]),
                 onDuplicateKeyUpdate ? updateColumns.toArray(new String[0]) : null,
                 generatedKeys.toArray(new String[0]),
                 statementMapperBuilder.buildIndexFieldMappers());
@@ -64,14 +70,15 @@ public class MysqlCrudFactory {
 
         boolean first = true;
         for(ColumnMeta cm : crudMeta.getColumnMetas()) {
-            if (!cm.isGenerated()) {
+            if (cm.isGenerated()) {
+                generatedKeys.add(cm.getColumn());
+            }
+            if (cm.isInsertable()) {
                 if (!first) {
                     sb.append(", ");
                 }
                 sb.append(cm.getColumn());
                 first = false;
-            } else {
-                generatedKeys.add(cm.getColumn());
             }
         }
 
@@ -79,11 +86,11 @@ public class MysqlCrudFactory {
 
         first = true;
         for(ColumnMeta cm : crudMeta.getColumnMetas()) {
-            if (!cm.isGenerated()) {
+            if (cm.isInsertable()) {
                 if (!first) {
                     sb.append(", ");
                 }
-                sb.append("?");
+                sb.append(cm.getInsertExpression());
                 first = false;
             }
         }

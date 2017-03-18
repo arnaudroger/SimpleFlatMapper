@@ -12,13 +12,16 @@ import java.util.Collection;
 public abstract class AbstractBatchInsertQueryExecutor<T> implements BatchQueryExecutor<T> {
     protected final String table;
     protected final String[] insertColumns;
+    protected final String[] insertColumnExpressions;
     protected final String[] updateColumns;
     protected final String[] generatedKeys;
+    
     protected final MultiIndexFieldMapper<T>[] multiIndexFieldMappers;
 
-    public AbstractBatchInsertQueryExecutor(String table, String[] insertColumns, String[] updateColumns, String[] generatedKeys, MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
+    public AbstractBatchInsertQueryExecutor(String table, String[] insertColumns, String[] insertColumnExpressions, String[] updateColumns, String[] generatedKeys, MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
         this.table = table;
         this.insertColumns = insertColumns;
+        this.insertColumnExpressions = insertColumnExpressions;
         this.updateColumns = updateColumns;
         this.generatedKeys = generatedKeys;
         this.multiIndexFieldMappers = multiIndexFieldMappers;
@@ -73,15 +76,23 @@ public abstract class AbstractBatchInsertQueryExecutor<T> implements BatchQueryE
             }
             sb.append("(");
 
-            for(int j = 0; j < insertColumns.length; j++) {
-                if (j > 0) {
-                    sb.append(", ");
-                }
-                sb.append("?");
-            }
+            appendValueExpressions(sb);
 
             sb.append(")");
 
+        }
+    }
+
+    private void appendValueExpressions(StringBuilder sb) {
+        for(int j = 0; j < insertColumns.length; j++) {
+            if (j > 0) {
+                sb.append(", ");
+            }
+            if (insertColumnExpressions == null || insertColumnExpressions[j] == null) {
+                sb.append("?");
+            } else {
+                sb.append(insertColumnExpressions[j]);
+            }
         }
     }
 

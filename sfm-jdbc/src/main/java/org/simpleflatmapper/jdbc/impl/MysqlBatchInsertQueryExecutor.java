@@ -7,10 +7,11 @@ public final class MysqlBatchInsertQueryExecutor<T> extends AbstractBatchInsertQ
     public MysqlBatchInsertQueryExecutor(
             String table,
             String[] insertColumns,
+            String[] insertColumnExpressions,
             String[] updateColumns,
             String[] generatedKeys,
             MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
-        super(table, insertColumns, updateColumns, generatedKeys, multiIndexFieldMappers);
+        super(table, insertColumns, insertColumnExpressions, updateColumns, generatedKeys, multiIndexFieldMappers);
     }
 
     protected void onDuplicateKeys(StringBuilder sb) {

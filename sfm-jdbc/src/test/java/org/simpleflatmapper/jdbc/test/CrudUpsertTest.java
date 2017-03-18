@@ -38,8 +38,8 @@ public class CrudUpsertTest {
                     ReflectionService.newInstance().getClassMeta(Long.class),
                     new CrudMeta(new DatabaseMeta("PostgreSQL", 9, 5), "TEST",
                             new ColumnMeta[]{
-                                    new ColumnMeta("id", Types.INTEGER, true, false),
-                                    new ColumnMeta("name", Types.VARCHAR, false, false)
+                                    new ColumnMeta("id", Types.INTEGER, true, null),
+                                    new ColumnMeta("name", Types.VARCHAR, false, null)
                             }),
                     JdbcMapperFactory.newInstance());
         } catch (SQLException e) {

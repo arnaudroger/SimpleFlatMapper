@@ -41,7 +41,7 @@ public class MysqlCrudTest {
             CrudFactory.<DbObject, Long>newInstance(
                     ReflectionService.newInstance().getClassMeta(DbObject.class),
                     ReflectionService.newInstance().getClassMeta(Long.class),
-                    new CrudMeta(new DatabaseMeta("MySQL", 5, 5), "TEST", new ColumnMeta[]{new ColumnMeta("id", Types.INTEGER, true, false)}),
+                    new CrudMeta(new DatabaseMeta("MySQL", 5, 5), "TEST", new ColumnMeta[]{new ColumnMeta("id", Types.INTEGER, true, null)}),
                     JdbcMapperFactory.newInstance());
 
 
@@ -73,7 +73,7 @@ public class MysqlCrudTest {
                 CrudFactory.<DbObject, Long>newInstance(
                         ReflectionService.newInstance().getClassMeta(DbObject.class),
                         ReflectionService.newInstance().getClassMeta(Long.class),
-                        new CrudMeta(new DatabaseMeta("MySQL", 5, 5), "TEST", new ColumnMeta[]{new ColumnMeta("id", Types.INTEGER, true, false)}),
+                        new CrudMeta(new DatabaseMeta("MySQL", 5, 5), "TEST", new ColumnMeta[]{new ColumnMeta("id", Types.INTEGER, true, null)}),
                         JdbcMapperFactory.newInstance());
         final int batchsize = 10;
 

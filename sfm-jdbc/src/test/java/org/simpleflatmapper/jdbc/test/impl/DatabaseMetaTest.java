@@ -1,6 +1,7 @@
-package org.simpleflatmapper.jdbc.impl;
+package org.simpleflatmapper.jdbc.test.impl;
 
 import org.junit.Test;
+import org.simpleflatmapper.jdbc.impl.DatabaseMeta;
 
 import static org.junit.Assert.*;
 

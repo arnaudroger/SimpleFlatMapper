@@ -30,10 +30,10 @@ public class DatabaseMeta {
     }
 
     public boolean isVersionMet(int major, int minor) {
-        if (major > majorVersion) {
+        if (major < majorVersion) {
             return true;
         } else if (major == majorVersion) {
-            return minor >= minorVersion;
+            return minor <= minorVersion;
         }
         return false;
     }

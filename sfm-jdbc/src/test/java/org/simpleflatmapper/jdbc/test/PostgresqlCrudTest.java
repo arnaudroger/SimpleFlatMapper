@@ -229,7 +229,7 @@ public class PostgresqlCrudTest {
                 st.execute("DROP SEQUENCE IF EXISTS test_seq_seq");
                 st.execute("CREATE SEQUENCE test_seq_seq");
 
-                st.execute("CREATE TABLE test_db_object_seq(  id bigint,"
+                st.execute("CREATE TABLE test_db_object_seq(  id bigint primary key,"
                         + " name varchar(100), "
                         + " email varchar(100),"
                         + " creation_Time timestamp, type_ordinal int, type_name varchar(10)  )");
@@ -265,6 +265,68 @@ public class PostgresqlCrudTest {
             // read
             assertEquals(object, objectCrud.read(connection, key));
 
+
+            object = DbObject.newInstance();
+            object.setId(-22225);
+
+
+            // create batch
+            key =
+                    objectCrud.create(connection, Arrays.asList(object), new CheckedConsumer<Long>() {
+                        Long key;
+                        @Override
+                        public void accept(Long aLong) throws Exception {
+                            if (key != null) throw new IllegalArgumentException();
+                            key = aLong;
+                            
+                        }
+                    }).key;
+
+            assertFalse(key.equals(object.getId()));
+
+            object.setId(key);
+
+            // read
+            assertEquals(object, objectCrud.read(connection, key));
+
+
+            object = DbObject.newInstance();
+            object.setId(-22225);
+
+            // createOrUpdate
+            key =
+                    objectCrud.createOrUpdate(connection, object, new CheckedConsumer<Long>() {
+                        Long key;
+                        @Override
+                        public void accept(Long aLong) throws Exception {
+                            key = aLong;
+                        }
+                    }).key;
+
+            assertFalse(key.equals(object.getId()));
+
+            object.setId(key);
+
+            // read
+            assertEquals(object, objectCrud.read(connection, key));
+
+            // createOrUpdate batch
+            key =
+                    objectCrud.createOrUpdate(connection, Arrays.asList(object), new CheckedConsumer<Long>() {
+                        Long key;
+                        @Override
+                        public void accept(Long aLong) throws Exception {
+                            if (key != null) throw new IllegalArgumentException();
+                            key = aLong;
+                        }
+                    }).key;
+
+            assertFalse(key.equals(object.getId()));
+
+            object.setId(key);
+
+            // read
+            assertEquals(object, objectCrud.read(connection, key));
 
         } finally {
             connection.close();

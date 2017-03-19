@@ -1,10 +1,8 @@
 package org.simpleflatmapper.csv;
 
-import org.simpleflatmapper.map.mapper.AbstractColumnDefinitionProvider;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
 import org.simpleflatmapper.csv.parser.*;
-import org.simpleflatmapper.map.CaseInsensitiveFieldKeyNamePredicate;
 import org.simpleflatmapper.map.property.KeyProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.tuple.Tuple2;
@@ -15,18 +13,21 @@ import org.simpleflatmapper.tuple.Tuple6;
 import org.simpleflatmapper.tuple.Tuple7;
 import org.simpleflatmapper.tuple.Tuple8;
 import org.simpleflatmapper.tuple.Tuples;
-import org.simpleflatmapper.util.ConstantUnaryFactory;
 import org.simpleflatmapper.util.TypeReference;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.util.CloseableIterator;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.CheckedConsumer;
 
+import java.io.Closeable;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.*;
 //IFJAVA8_START
 import java.util.function.Function;
@@ -96,6 +97,7 @@ import java.util.stream.Stream;
 public final class CsvParser {
 	public static final int DEFAULT_MAX_BUFFER_SIZE_8M = 1 << 23;
 	public static final int DEFAULT_BUFFER_SIZE_4K = 1024 * 4;
+	public static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
 
 	/**
 	 *
@@ -235,6 +237,49 @@ public final class CsvParser {
 		return dsl().parse(file, cellConsumer);
 	}
 
+	private static Reader newReader(File file) throws IOException {
+		return newReader(file, DEFAULT_CHARSET);
+	}
+	private static Reader newReader(File file, Charset charset) throws IOException {
+		//IFJAVA8_START
+		if (true) {
+			FileChannel fileChannel = FileChannel.open(file.toPath());
+			try {
+				return Channels.newReader(fileChannel, charset.newDecoder(), -1);
+			} catch(Throwable e) {
+				safeClose(fileChannel);
+				throw e;
+			}
+		}
+		//IFJAVA8_END
+		
+		return newReaderJava6(file, charset);
+	}
+
+	private static void safeClose(Closeable closeable) {
+		if (closeable == null) return;
+		try {
+			closeable.close();
+		} catch (IOException e) {
+			// ignore
+		}
+	}
+
+	private static Reader newReaderJava6(File file, Charset charset) throws IOException {
+		RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+		FileChannel fileChannel = null;
+		
+		try {
+			fileChannel = randomAccessFile.getChannel();
+			return Channels.newReader(fileChannel, charset.newDecoder(), -1);
+		} catch(Throwable t) {
+			safeClose(fileChannel);
+			safeClose(randomAccessFile);
+			throw t;
+		}
+	}
+
+
 	//IFJAVA8_START
 	public static Stream<String[]> stream(Reader r) throws IOException {
 		return dsl().stream(r);
@@ -322,7 +367,7 @@ public final class CsvParser {
 		}
 
 		public final <CC extends CellConsumer> CC parse(File file, CC cellConsumer) throws IOException {
-			Reader reader = new FileReader(file);
+			Reader reader = newReader(file);
 			try {
 				return parse(reader, cellConsumer);
 			} finally {
@@ -477,7 +522,7 @@ public final class CsvParser {
 		}
 
 		public final <R> R stream(File file, Function<Stream<String[]>, R> function) throws IOException {
-			Reader reader = new FileReader(file);
+			Reader reader = newReader(file);
 			try {
 				return function.apply(stream(reader));
 			} catch(IOException ioe) {
@@ -930,7 +975,7 @@ public final class CsvParser {
 		}
 
 		public final <H extends CheckedConsumer<T>> H forEach(File file, H consumer) throws IOException {
-			Reader reader = new FileReader(file);
+			Reader reader = newReader(file);
 			try {
 				return forEach(reader, consumer);
 			} finally {
@@ -997,7 +1042,7 @@ public final class CsvParser {
 		}
 
 		public final <R> R stream(File file, Function<Stream<T>, R> function) throws IOException {
-			Reader reader = new FileReader(file);
+			Reader reader = newReader(file);
 			try {
 				return function.apply(stream(reader));
 			} catch(IOException ioe) {
@@ -1029,7 +1074,7 @@ public final class CsvParser {
 	}
 
 	protected static <R, D extends AbstractDSL<?>> R onReader(File file, D dsl, OnReaderFactory<R, ? super D> factory) throws IOException {
-		Reader reader = new FileReader(file);
+		Reader reader = newReader(file);
 		try {
 			return factory.apply(reader, dsl);
 		} catch(IOException ioe) {

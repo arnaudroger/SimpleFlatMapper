@@ -25,9 +25,9 @@ import java.nio.file.Files;
 
 
 /*
-java -jar target/benchmarks.jar ReaderBench -f 5 -i 10 -wi 10 -bm avgt -tu ns
+java -jar target/benchmarks.jar ReaderBench -f 5 -i 10 -wi 10 -bm avgt -tu ns -rf csv
  
-Benchmark                                     (latin1)  (nbChars)   Mode  Cnt      Score      Error  Units
+Benchmark                                     (latin1)  (nbBytes)   Mode  Cnt      Score      Error  Units
 ReaderBenchmark.testFileChannel                   true        256  thrpt   10  91774.427 ± 3066.295  ops/s
 ReaderBenchmark.testFileChannel                   true       4096  thrpt   10  77065.533 ± 3729.302  ops/s
 ReaderBenchmark.testFileChannel                   true      32178  thrpt   10  29670.632 ± 1779.399  ops/s
@@ -114,7 +114,7 @@ public class ReaderBenchmark {
     }
 
     private void consume(Reader reader, Blackhole blackhole) throws IOException {
-        char[] buffer = new char[4096];
+        char[] buffer = new char[Math.min(4096, nbChars)];
         
         while(reader.read(buffer) != -1) {
             blackhole.consume(buffer);

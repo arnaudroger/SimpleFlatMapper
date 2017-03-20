@@ -20,34 +20,8 @@ import java.nio.file.Files;
 import java.util.Random;
 
 
-/*
-java -jar target/benchmarks.jar InputStreamBench -f 5 -i 10 -wi 10 -bm avgt -tu ns -rf csv
- 
- 
-Benchmark                                                    (latin1)  (nbBytes)  (nbChars)  Mode  Cnt        Score        Error  Units
-InputStreamBenchmark.testFileChannel                              N/A         16        N/A  avgt   10     8977.331 ±    435.043  ns/op
-InputStreamBenchmark.testFileChannel                              N/A       4096        N/A  avgt   10     9317.365 ±    353.604  ns/op
-InputStreamBenchmark.testFileChannel                              N/A      32178        N/A  avgt   10    16918.700 ±    444.074  ns/op
-
-InputStreamBenchmark.testFileChannelViaRandomFile                 N/A         16        N/A  avgt   10    11152.358 ±    386.047  ns/op
-InputStreamBenchmark.testFileChannelViaRandomFile                 N/A       4096        N/A  avgt   10    11337.523 ±    428.330  ns/op
-InputStreamBenchmark.testFileChannelViaRandomFile                 N/A      32178        N/A  avgt   10    19453.311 ±   1347.894  ns/op
-
-InputStreamBenchmark.testFileInputStream                          N/A         16        N/A  avgt   10    12064.893 ±   2195.136  ns/op
-InputStreamBenchmark.testFileInputStream                          N/A       4096        N/A  avgt   10    12355.153 ±   2752.407  ns/op
-InputStreamBenchmark.testFileInputStream                          N/A      32178        N/A  avgt   10    20682.621 ±   3246.232  ns/op
-
-InputStreamBenchmark.testFiles                                    N/A         16        N/A  avgt   10     9020.596 ±    450.964  ns/op
-InputStreamBenchmark.testFiles                                    N/A       4096        N/A  avgt   10     9304.132 ±    553.883  ns/op
-InputStreamBenchmark.testFiles                                    N/A      32178        N/A  avgt   10    17405.981 ±    679.683  ns/op
- 
-
- */
 @State(Scope.Benchmark)
 public class InputStreamBenchmark {
-    
-
- 
     
     @Param({"16", "4096", "32178", "500000", "5000000"})
     public int nbBytes; 

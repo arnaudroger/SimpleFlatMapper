@@ -49,7 +49,7 @@ public class InputStreamBenchmark {
 
  
     
-    @Param({"16", "4096", "32178"})
+    @Param({"16", "4096", "32178", "500000", "5000000"})
     public int nbBytes; 
     
     public File file;

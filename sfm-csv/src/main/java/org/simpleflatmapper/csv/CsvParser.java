@@ -272,7 +272,11 @@ public final class CsvParser {
 		try {
 			fileChannel = randomAccessFile.getChannel();
 			return Channels.newReader(fileChannel, charset.newDecoder(), -1);
-		} catch(Throwable t) {
+		} catch(RuntimeException t) {
+			safeClose(fileChannel);
+			safeClose(randomAccessFile);
+			throw t;
+		} catch(Error t) {
 			safeClose(fileChannel);
 			safeClose(randomAccessFile);
 			throw t;

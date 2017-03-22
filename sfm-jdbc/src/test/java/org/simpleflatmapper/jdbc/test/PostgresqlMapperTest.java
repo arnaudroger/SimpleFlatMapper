@@ -32,24 +32,33 @@ public class PostgresqlMapperTest {
         try {
             DynamicJdbcMapper<InetAndCidr> mapper = JdbcMapperFactory.newInstance().newMapper(InetAndCidr.class);
             DynamicJdbcMapper<InetAndCidrAsString> mapperStr = JdbcMapperFactory.newInstance().newMapper(InetAndCidrAsString.class);
-            
-            try (Statement statement = connection.createStatement()) {
+
+            Statement statement = connection.createStatement();
+            try  {
                 statement.execute("DROP TABLE IF EXISTS  iac ");
                 statement.execute("create TABLE iac (  field1 inet, field2 cidr)");
                 statement.execute("INSERT INTO iac(field1, field2) VALUES('10.1.0.1', '10.1.0.0/22')");
-                
-                
-                try (ResultSet rs = statement.executeQuery("SELECT field1, field2 from iac")) {
+
+
+                ResultSet rs = statement.executeQuery("SELECT field1, field2 from iac");
+                try  {
                     Iterator<InetAndCidr> iterator = mapper.iterator(rs);
                     InetAndCidr next = iterator.next();
                     System.out.println("next = " + next);
 
+                } finally {
+                    rs.close();
                 }
-                try (ResultSet rs = statement.executeQuery("SELECT field1, field2 from iac")) {
+                rs = statement.executeQuery("SELECT field1, field2 from iac")
+                try {
                     Iterator<InetAndCidrAsString> iteratorStr = mapperStr.iterator(rs);
                     InetAndCidrAsString inetAndCidrAsString = iteratorStr.next();
                     System.out.println("inetAndCidrAsString = " + inetAndCidrAsString);
+                } finally {
+                    rs.close();
                 }
+            } finally {
+                statement.close();
             }
 
 

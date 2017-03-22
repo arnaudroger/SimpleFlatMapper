@@ -11,9 +11,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.Channels;
@@ -33,7 +35,7 @@ public class CharReadingBenchmark {
     public int fileSize = 50_000_000;
     
     public Charset charset;
-    
+
     @Param({"8192", "32768", "131072"})
     private int bufferSize;
 
@@ -92,6 +94,35 @@ public class CharReadingBenchmark {
             while(byteBuffer.hasRemaining()) {
                 byteBuffer.get(buffer, 0, Math.min(buffer.length, byteBuffer.remaining()));
                 blackhole.consume(buffer);
+            }
+            
+        }
+    }
+
+    @Benchmark
+    public void fileChannelBytes(Blackhole blackhole) throws IOException {
+        byte[] buffer = new byte[bufferSize];
+
+        ByteBuffer wrap = ByteBuffer.wrap(buffer);
+        try (FileChannel channel = FileChannel.open(file.toPath())) {
+            int l;
+            while((l = channel.read(wrap)) != -1) {
+                blackhole.consume(buffer);
+                wrap.clear();
+            }
+        }
+    }
+
+    @Benchmark
+    public void intputStreamBytes(Blackhole blackhole) throws IOException {
+        byte[] buffer = new byte[bufferSize];
+
+        try (FileChannel channel = FileChannel.open(file.toPath())) {
+            try (InputStream is = Channels.newInputStream(channel)) {
+                int l;
+                while ((l = is.read(buffer)) != -1) {
+                    blackhole.consume(buffer);
+                }
             }
         }
     }

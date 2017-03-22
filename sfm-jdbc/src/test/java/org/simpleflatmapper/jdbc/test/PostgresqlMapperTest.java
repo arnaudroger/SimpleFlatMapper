@@ -49,7 +49,7 @@ public class PostgresqlMapperTest {
                 } finally {
                     rs.close();
                 }
-                rs = statement.executeQuery("SELECT field1, field2 from iac")
+                rs = statement.executeQuery("SELECT field1, field2 from iac");
                 try {
                     Iterator<InetAndCidrAsString> iteratorStr = mapperStr.iterator(rs);
                     InetAndCidrAsString inetAndCidrAsString = iteratorStr.next();

@@ -18,6 +18,7 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.test.beans.DbObject;
+import org.simpleflatmapper.test.beans.Foo;
 import org.simpleflatmapper.test.map.mapper.MultiJoinMapperTest;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.ConstantPredicate;
@@ -27,6 +28,7 @@ import org.simpleflatmapper.util.TypeReference;
 
 
 import java.lang.reflect.Type;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -256,6 +258,7 @@ public class PropertyMappingsBuilderTest {
 
         assertEquals("0.element0.element1.0.element0.id", pm2.getPropertyMeta().getPath());
     }
+    
 
     public static class A {
         public int id;
@@ -265,6 +268,34 @@ public class PropertyMappingsBuilderTest {
     }
     public static class C {
         public int id;
+    }
+
+    // networks_network_ipv4 is map to networks[4] instead of networks[].network.ipv4
+    @Test
+    public void test431() {
+        ClassMeta<FooN> classMeta =  ReflectionService.newInstance().getClassMeta(FooN.class);
+        PropertyMappingsBuilder<FooN, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> builder 
+                = defaultPropertyMappingBuilder(classMeta);
+
+        SampleFieldKey networks_network_ipv4 = new SampleFieldKey("networks_network_ipv4", 1);
+        FieldMapperColumnDefinition<SampleFieldKey> identity = FieldMapperColumnDefinition.<SampleFieldKey>identity();
+        PropertyMapping<FooN, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> propertyMapping = 
+                builder.addProperty(networks_network_ipv4, identity);
+
+        assertEquals("networks.0.element0.network.ipv4", propertyMapping.getPropertyMeta().getPath());
+
+    }
+    
+    public static class FooN {
+        public List<BarN> networks;
+    }
+    
+    public static class BarN {
+        public ZooN network;
+    }
+    
+    public static class ZooN {
+        public InetAddress ipv4;
     }
 
 }

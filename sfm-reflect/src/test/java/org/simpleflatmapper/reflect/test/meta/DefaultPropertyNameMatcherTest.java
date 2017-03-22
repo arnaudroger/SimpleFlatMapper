@@ -44,5 +44,13 @@ public class DefaultPropertyNameMatcherTest {
 		assertNull(matcher.partialMatch("myCol2"));
 	}
 	
+	@Test
+	public void testMatchIndex() {
+		assertEquals(2, new DefaultPropertyNameMatcher("elt2", 0, false, false).matchIndex().getIndexValue());
+		assertEquals(2, new DefaultPropertyNameMatcher("elt_2", 0, false, false).matchIndex().getIndexValue());
+		assertNull(new DefaultPropertyNameMatcher("elt_ipv2", 0, false, false).matchIndex());
+		
+	}
+	
 
 }

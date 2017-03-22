@@ -36,7 +36,6 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
             extrapolateIndex(propertyNameMatcher, matchingProperties, score.decrease(1), propertyFinderTransformer);
             speculativeMatching(propertyNameMatcher, matchingProperties, score.shift(), propertyFinderTransformer);
         }
-
     }
 
     @SuppressWarnings("unchecked")

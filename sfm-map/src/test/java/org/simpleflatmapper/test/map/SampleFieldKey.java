@@ -5,6 +5,7 @@ import org.simpleflatmapper.map.mapper.KeyFactory;
 import org.simpleflatmapper.reflect.TypeAffinity;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 public class SampleFieldKey extends FieldKey<SampleFieldKey> implements TypeAffinity {
 
@@ -54,5 +55,14 @@ public class SampleFieldKey extends FieldKey<SampleFieldKey> implements TypeAffi
     @Override
     public Class<?>[] getAffinities() {
         return affinities;
+    }
+
+    @Override
+    public String toString() {
+        return "SampleFieldKey{" +
+                "name=" + getName() +
+                "affinities=" + Arrays.toString(affinities) +
+                ", type=" + type +
+                '}';
     }
 }

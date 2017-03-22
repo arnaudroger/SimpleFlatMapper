@@ -30,7 +30,23 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 		int index = -1;
 
 		int listIndexStart = from;
-		while(listIndexStart < column.length() &&  !Character.isDigit(column.charAt(listIndexStart))) {
+		
+		// skip separtor char
+		while(listIndexStart < column.length() && isSeparatorChar(column.charAt(listIndexStart))) {
+			listIndexStart++;
+		}
+		
+		
+		boolean encounterSeparator = false;
+		while(listIndexStart < column.length()) {
+			char ch = column.charAt(listIndexStart);
+			if (Character.isDigit(ch)) {
+				break;
+			} else if (isSeparatorChar(ch)) {
+				encounterSeparator = true;
+			} else if (encounterSeparator) {
+				return null;
+			}
 			listIndexStart++;
 		}
 

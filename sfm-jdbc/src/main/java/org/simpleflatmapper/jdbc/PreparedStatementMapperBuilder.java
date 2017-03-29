@@ -198,7 +198,11 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
                 }
 
                 if (setter == null) {
-                    mapperConfig.mapperBuilderErrorHandler().accessorNotFound("Could not find setter for " + pm + " See " + ErrorDoc.toUrl("PS_SETTER_NOT_FOUND"));
+                    mapperConfig.mapperBuilderErrorHandler().accessorNotFound(
+                            "Could not find setter for " + pm.getColumnKey() 
+                                    + " type " + pm.getPropertyMeta().getPropertyType() 
+                                    + " path " + pm.getPropertyMeta().getPath() 
+                                    + " See " + ErrorDoc.toUrl("PS_SETTER_NOT_FOUND"));
                 }
 
                 return setter;

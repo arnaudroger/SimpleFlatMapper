@@ -222,7 +222,8 @@ public final class CellSetterFactory {
 
 		if (reader == null) {
 			mapperBuilderErrorHandler.accessorNotFound("Could not find reader for "
-					+ pm + " See " + ErrorDoc.toUrl("CSFM_GETTER_NOT_FOUND"));
+					+ pm.getPath() + " type " + pm.getPropertyType() 
+					+ " See " + ErrorDoc.toUrl("CSFM_GETTER_NOT_FOUND"));
 		}
 
 		return reader;

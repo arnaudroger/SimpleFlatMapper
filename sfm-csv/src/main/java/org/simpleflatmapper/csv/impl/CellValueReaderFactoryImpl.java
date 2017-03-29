@@ -5,7 +5,6 @@ import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CellValueReaderFactory;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
-import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.csv.impl.cellreader.*;
 import org.simpleflatmapper.csv.ParsingContextFactoryBuilder;
 

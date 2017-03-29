@@ -226,7 +226,9 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 if (NullGetter.isNull(getter)) {
                     mapperConfig.mapperBuilderErrorHandler()
                             .accessorNotFound("Could not find getter for " + propertyMapping.getColumnKey() + " type "
-                                    + propertyMapping.getPropertyMeta().getPropertyType() + " See " + ErrorDoc.toUrl("FMMB_GETTER_NOT_FOUND"));
+                                    + propertyMapping.getPropertyMeta().getPropertyType()
+                                    + " path " + propertyMapping.getPropertyMeta().getPath()
+                                    + " See " + ErrorDoc.toUrl("FMMB_GETTER_NOT_FOUND"));
                 } else {
                     injections.put(parameter, new BiFunctionGetter<S, MappingContext<? super S>, Object>(getter));
                 }

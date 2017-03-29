@@ -68,8 +68,9 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
         }
 
         if (getter == null) {
-            mappingErrorHandler.accessorNotFound("Could not find getter for "
-                    + pm + " See " + ErrorDoc.toUrl("CTFM_GETTER_NOT_FOUND"));
+            mappingErrorHandler.accessorNotFound("Could not find getter for " + pm.getColumnKey() + " type "
+                    + pm.getPropertyMeta().getPropertyType()
+                    + " path " + pm.getPropertyMeta().getPath() + ", See " + ErrorDoc.toUrl("CTFM_GETTER_NOT_FOUND"));
             return null;
         }
 
@@ -77,7 +78,9 @@ public class ConstantTargetFieldMapperFactoryImpl<T, K extends FieldKey<K>> impl
 
 
         if (setter == null) {
-            mappingErrorHandler.accessorNotFound("Could not find setter for " + pm
+            mappingErrorHandler.accessorNotFound("Could not find setter for " + pm.getColumnKey() + " type "
+                    + pm.getPropertyMeta().getPropertyType()
+                    + " path " + pm.getPropertyMeta().getPath() 
                     + " See " + ErrorDoc.toUrl("CTFM_SETTER_NOT_FOUND"));
             return null;
         }

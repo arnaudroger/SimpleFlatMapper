@@ -100,7 +100,9 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 				propertyMapping.getColumnDefinition(), propertyMeta.getPropertyClassMetaSupplier());
 
 		if (getter == null) {
-			mappingErrorHandler.accessorNotFound("Could not find getter for " + key + " type " + propertyType
+			mappingErrorHandler.accessorNotFound("Could not find getter for " + key 
+					+ " type " + propertyType 
+					+ " path " + propertyMapping.getPropertyMeta().getPath()
 					+ " See " + ErrorDoc.toUrl("CSFM_GETTER_NOT_FOUND"));
 			return null;
 		} else {

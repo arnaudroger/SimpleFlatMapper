@@ -10,6 +10,8 @@ import org.simpleflatmapper.csv.impl.cellreader.*;
 import org.simpleflatmapper.csv.ParsingContextFactoryBuilder;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +43,8 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 		READERS.put(Double.class, new DoubleCellValueReaderImpl());
 		READERS.put(String.class,    new StringCellValueReader());
 		READERS.put(CharSequence.class,    new StringCellValueReader());
+		READERS.put(BigInteger.class,    new BigIntegerCellValueReader());
+		READERS.put(BigDecimal.class,    new BigDecimalCellValueReader());
 		READERS.put(Object.class,    new StringCellValueReader());
 	}
 

@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Map;
@@ -275,5 +277,20 @@ public class CsvMapperImplTest {
 	public void testArrayInt() throws IOException {
 		int[] ints = CsvParser.mapTo(int[].class).iterator("0,2\n1,3").next();
 		assertArrayEquals(new int[] {1,0,3}, ints);
+	}
+	
+	
+	@Test
+	public void testBigXXX() throws IOException {
+		Biggy biggy = CsvParser.mapTo(Biggy.class).iterator("bi,bd\n1234567891011121314,123456789.1234556789").next();
+		
+		assertEquals(new BigInteger("1234567891011121314"), biggy.bi);
+		assertEquals(new BigDecimal("123456789.1234556789"), biggy.bd);
+
+	}
+	
+	public static class Biggy {
+		public BigInteger bi;
+		public BigDecimal bd;
 	}
 }

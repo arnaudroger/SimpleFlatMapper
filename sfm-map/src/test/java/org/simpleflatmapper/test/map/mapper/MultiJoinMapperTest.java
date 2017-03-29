@@ -69,6 +69,42 @@ public class MultiJoinMapperTest {
         validateRoot(list.get(1));
     }
 
+    public static class Root2 {
+        @Key
+        public int id;
+        public List<Element2> ll;
+        public List<Element2> ls;
+    }
+
+    public static class Element2 {
+        public String id;
+        public String value;
+        public Element2 element;
+    }
+    @Test
+    public void testMultiJoinOnNullNoKey() {
+        ClassMeta<Root2> classMeta = ReflectionService.newInstance().getClassMeta(Root2.class);
+
+        AbstractMapperBuilderTest.SampleMapperBuilder<Root2> builder =
+                new AbstractMapperBuilderTest.SampleMapperBuilder<Root2>(classMeta, mapperConfig());
+
+        Mapper<Object[], Root2> rowMapper =
+                builder
+                        .addKey("id")
+                        .addKey("ll_id")
+                        .addKey("ls_element_id")
+                        .mapper();
+        JoinMapper<Object[], Object[][], Root2, RuntimeException> mapper =
+                (JoinMapper<Object[], Object[][], Root2, RuntimeException>) rowMapper;
+       Object[][] data = new Object[][] {
+                {1, "1", null, null},
+                {1, "2", null, null}
+        };
+        List<Root2> list = mapper.forEach(data, new ListCollector<Root2>()).getList();
+
+        assertEquals(1, list.size());
+    }
+
     private MapperConfig<SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> mapperConfig() {
         return MapperConfig.fieldMapperConfig();
     }

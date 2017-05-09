@@ -291,7 +291,7 @@ public final class CellSetterFactory {
 
 		DelayedCellSetterFactory<T, P> factory;
 
-		final Setter<? super T, ? super P> setter = getSetter(prop);
+		final Setter<? super T, ? super P> setter = prop.isConstructorProperty() ? null  : getSetter(prop);
 
 		if (propertyClass.isPrimitive()) {
 			factory = getPrimitiveDelayedCellSetter(propertyClass, reader, setter);

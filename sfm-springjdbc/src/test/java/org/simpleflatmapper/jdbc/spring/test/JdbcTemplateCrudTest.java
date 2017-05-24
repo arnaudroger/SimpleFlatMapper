@@ -52,7 +52,7 @@ public class JdbcTemplateCrudTest {
 						.<DbObject, Long>crud(DbObject.class, Long.class)
 						.lazilyTo(template, "TEST_DB_OBJECT_LAZY");
 		
-		template.execute("create table test_db_object_lazy("
+		template.execute("create table TEST_DB_OBJECT_LAZY("
 				+ " id bigint primary key,"
 				+ " name varchar(100), "
 				+ " email varchar(100),"

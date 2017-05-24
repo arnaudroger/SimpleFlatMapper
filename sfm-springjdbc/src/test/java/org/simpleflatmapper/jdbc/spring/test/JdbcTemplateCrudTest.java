@@ -37,6 +37,52 @@ public class JdbcTemplateCrudTest {
 
 		template = new JdbcTemplate(new SingleConnectionDataSource(dbConnection, true));
 	}
+	
+	@Test
+	public void testLazyCrud() throws SQLException {
+		
+		// drop table if exist
+		try {
+			template.execute("DROP TABLE TEST_DB_OBJECT_LAZY");
+		} catch(Exception e) {
+		}
+		
+		JdbcTemplateCrud<DbObject, Long> objectCrud =
+				JdbcTemplateMapperFactory.newInstance()
+						.<DbObject, Long>crud(DbObject.class, Long.class)
+						.lazilyTo(template, "TEST_DB_OBJECT_LAZY");
+		
+		template.execute("create table test_db_object_lazy("
+				+ " id bigint primary key,"
+				+ " name varchar(100), "
+				+ " email varchar(100),"
+				+ " creation_Time timestamp, type_ordinal int, type_name varchar(10)  )");
+
+		DbObject object = DbObject.newInstance();
+
+
+		assertNull(objectCrud.read(object.getId()));
+
+		// create
+		Long key =
+				objectCrud.create(object, new CheckedConsumer<Long>() {
+					Long key;
+					@Override
+					public void accept(Long aLong) throws Exception {
+						key = aLong;
+					}
+				}).key;
+
+		assertNull(key);
+
+
+		key = object.getId();
+		// read
+		assertEquals(object, objectCrud.read(key));
+
+
+
+	}
 
 	@Test
 	public void testCrud() throws SQLException {

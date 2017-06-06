@@ -72,8 +72,8 @@ message AddressBook {
                         .addMapping("name")
                         .addMapping("id")
                         .addMapping("email")
-                        .addMapping("addAllPhones_0_number")
-                        .addMapping("addAllPhones_0_type")
+                        .addMapping("phones_number")
+                        .addMapping("phones_type")
                         .mapper();
 
         AddressBookProtos.Person person = csvMapper.iterator(new StringReader("arnaud,1,arnaud.roger@gmail.com,+4411223333,MOBILE")).next();

@@ -29,6 +29,15 @@ public class SetterHelper {
 			return name;
 		}
 	}
+	public static String getPropertyNameFromBuilderMethodName(final String name) {
+		if (name.startsWith("set") && name.length() > 3)  {
+			return name.substring(3, 4).toLowerCase() + name.substring(4);
+		} else if (name.startsWith("addAll") && name.length() > "addAll".length()){
+			return name.substring(6, 7).toLowerCase() + name.substring(7);
+		} else {
+			return name;
+		}
+	}
 
 
 	public static boolean isSetter(Method method) {

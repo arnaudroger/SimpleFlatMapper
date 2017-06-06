@@ -77,7 +77,7 @@ public class BuilderInstantiatorDefinitionFactory {
                     // setter
                     org.simpleflatmapper.reflect.Parameter p = new org.simpleflatmapper.reflect.Parameter(i++, SetterHelper.getPropertyNameFromBuilderMethodName(m.getName()), m.getParameterTypes()[0], m.getGenericParameterTypes()[0]);
                     setters.put(p, m);
-                } else if (TypeHelper.areEquals(returnType, target) && m.getParameterTypes().length == 0) {
+                } else if (TypeHelper.isAssignable(target, returnType) && m.getParameterTypes().length == 0) {
                     // build function
                     buildMethods.add(m);
                 }

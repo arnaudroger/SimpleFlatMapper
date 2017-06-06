@@ -67,4 +67,18 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
             score = score.decrease(1);
         }
     }
+
+    @Override
+    protected boolean indexMatches(PropertyMeta<T, ?> propertyMeta, PropertyMeta<?, ?> owner) {
+        if (owner == propertyMeta) return true;
+        if (propertyMeta instanceof  ConstructorPropertyMeta && owner instanceof ConstructorPropertyMeta) {
+            return ((ConstructorPropertyMeta) propertyMeta).getParameter().equals(((ConstructorPropertyMeta) owner).getParameter());
+        }
+        return false;
+    }
+
+    @Override
+    protected PropertyFinder<?> registerProperty(SubPropertyMeta<?, ?, ?> subPropertyMeta) {
+        throw new IllegalArgumentException("Cannot add element to tuples " + subPropertyMeta);
+    }
 }

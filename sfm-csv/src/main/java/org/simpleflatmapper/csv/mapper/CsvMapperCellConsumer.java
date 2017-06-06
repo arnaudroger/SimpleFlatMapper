@@ -21,13 +21,15 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
     protected int cellIndex = 0;
 
     private boolean calledHandler = false;
+    private boolean producedObject = false;
 
     @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
     public CsvMapperCellConsumer(
             CsvMapperCellHandler<T> csvMapperCellHandler,
             ConsumerErrorHandler consumerErrorHandlers,
             CheckedConsumer<? super T> handler,
-            BreakDetector breakDetector, Collection<CsvMapperCellConsumer<?>> children) {
+            BreakDetector breakDetector, 
+            Collection<CsvMapperCellConsumer<?>> children) {
         super();
         this.mapperSetters = csvMapperCellHandler;
         this.consumerErrorHandlers = consumerErrorHandlers;
@@ -43,6 +45,15 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
         boolean calledHandler = this.calledHandler;
         this.calledHandler = false;
         return calledHandler;
+    }
+
+    public T getOrCreateCurrentInstance() {
+        T t = getCurrentInstance();
+        if (t == null) {
+            composeInstance();
+        }
+        t = getCurrentInstance();
+        return t;
     }
 
     public final T getCurrentInstance() {
@@ -131,6 +142,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
                 }
             }
         }
+        
     }
 
 
@@ -171,4 +183,5 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
             consumer.updateBreakStatus(cellIndex);
         }
     }
+
 }

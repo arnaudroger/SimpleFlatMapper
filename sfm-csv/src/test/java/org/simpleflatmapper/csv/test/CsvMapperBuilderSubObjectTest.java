@@ -72,10 +72,26 @@ public class CsvMapperBuilderSubObjectTest {
 		DbHelper.assertDbObjectMapping(o.getDbObject());
 	}
 
-    @Test
-    public void testMapDbPartialObject() throws UnsupportedEncodingException, Exception {
+	@Test
+	public void testMapDbPartialObject() throws UnsupportedEncodingException, Exception {
 
-        CsvMapperBuilder<Db1DeepPartialObject> builder = new CsvMapperBuilder<Db1DeepPartialObject>(Db1DeepPartialObject.class);
+		CsvMapperBuilder<Db1DeepPartialObject> builder = new CsvMapperBuilder<Db1DeepPartialObject>(Db1DeepPartialObject.class);
+		addDbObjectFields(builder);
+		CsvMapper<Db1DeepPartialObject> mapper = builder.mapper();
+
+		List<Db1DeepPartialObject> list = mapper.forEach(db1deepObjectCsvReader(), new ListCollector<Db1DeepPartialObject>()).getList();
+		assertEquals(1, list.size());
+
+		Db1DeepPartialObject o = list.get(0);
+		assertEquals(1234, o.getId());
+		assertEquals("val!", o.getValue());
+		DbHelper.assertDbObjectMapping(o.getDbObject());
+	}
+	
+    @Test
+    public void testMapDbPartialObjectNoAsm() throws UnsupportedEncodingException, Exception {
+
+        CsvMapperBuilder<Db1DeepPartialObject> builder = new CsvMapperBuilder<Db1DeepPartialObject>(Db1DeepPartialObject.class, ReflectionService.disableAsm());
         addDbObjectFields(builder);
         CsvMapper<Db1DeepPartialObject> mapper = builder.mapper();
 

@@ -38,7 +38,7 @@ public class DelegateCellSetter<T, P> implements CellSetter<T> {
 		this.handler.newCell(chars, offset, length, cellIndex);
         final BreakDetector breakDetector = handler.getBreakDetector();
         if (setter != null && (breakDetector == null || (breakDetector.broken()&& breakDetector.isNotNull()))) {
-            setter.set(target, this.handler.getCurrentInstance());
+            setter.set(target, this.handler.getOrCreateCurrentInstance());
         }
 	}
 

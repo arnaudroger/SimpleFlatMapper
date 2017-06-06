@@ -148,6 +148,8 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		PropertyMapping<T, P, K, D> propertyMapping = new PropertyMapping<T, P, K, D>(prop, key, mergeColumnDefinition);
 
 		properties.add(propertyMapping);
+		
+		propertyFinder.manualMatch(prop);
 
 		return propertyMapping;
 	}

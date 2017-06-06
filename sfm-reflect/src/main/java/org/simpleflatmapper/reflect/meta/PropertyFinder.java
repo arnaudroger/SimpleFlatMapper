@@ -1,6 +1,7 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
@@ -33,6 +34,7 @@ public abstract class PropertyFinder<T> {
 	public abstract List<InstantiatorDefinition> getEligibleInstantiatorDefinitions();
 
     public abstract PropertyFinder<?> getSubPropertyFinder(PropertyMeta<?, ?> owner);
+	public abstract PropertyFinder<?> getOrCreateSubPropertyFinder(SubPropertyMeta<?, ?, ?> subPropertyMeta);
 
 	public Predicate<PropertyMeta<?, ?>> getPropertyFilter() {
 		return propertyFilter;
@@ -93,6 +95,19 @@ public abstract class PropertyFinder<T> {
                                                    Runnable selectionCallback,
                                                    PropertyMatchingScore score);
     }
+
+
+	public void manualMatch(PropertyMeta<?, ?> prop) {
+		if (prop.isSubProperty()) {
+			SubPropertyMeta subPropertyMeta = (SubPropertyMeta) prop;
+			PropertyMeta ownerProperty = subPropertyMeta.getOwnerProperty();
+			
+			manualMatch(ownerProperty);
+			
+			PropertyFinder<?> subPropertyFinder = getOrCreateSubPropertyFinder(subPropertyMeta);
+			subPropertyFinder.manualMatch(subPropertyMeta.getSubProperty());
+		}
+	}
 
     public interface PropertyFinderTransformer {
 		<T> PropertyFinder<T> apply(PropertyFinder<T> propertyFinder);

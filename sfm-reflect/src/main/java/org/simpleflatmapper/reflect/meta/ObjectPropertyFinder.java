@@ -214,8 +214,28 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	}
 
 	@Override
+	public PropertyFinder<?> getOrCreateSubPropertyFinder(SubPropertyMeta<?, ?, ?> subPropertyMeta) {
+		PropertyFinder<?> propertyFinder = subPropertyFinders.get(subPropertyMeta.getOwnerProperty());
+		
+		if (propertyFinder == null) {
+			propertyFinder = subPropertyMeta.getSubProperty().getPropertyClassMeta().newPropertyFinder(propertyFilter);
+			subPropertyFinders.put(subPropertyMeta.getOwnerProperty(), propertyFinder);
+		}
+		
+		return propertyFinder;
+	}
+
+	@Override
 	public Type getOwnerType() {
 		return classMeta.getType();
+	}
+
+	@Override
+	public void manualMatch(PropertyMeta<?, ?> prop) {
+    	if (prop.isConstructorProperty()) {
+			removeNonMatching(((ConstructorPropertyMeta) prop).getParameter());
+		}
+		super.manualMatch(prop);
 	}
 
 

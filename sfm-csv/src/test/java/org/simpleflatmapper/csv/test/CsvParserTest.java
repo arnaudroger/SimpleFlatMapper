@@ -6,6 +6,7 @@ import org.simpleflatmapper.csv.CloseableCsvReader;
 import org.simpleflatmapper.csv.CsvColumnDefinition;
 import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.CsvMapper;
+import org.simpleflatmapper.csv.CsvMapperBuilder;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.csv.CsvReader;
@@ -1384,4 +1385,64 @@ public class CsvParserTest {
 		assertArrayEquals(new String[] { "date1",  "06-19-2016" }, strings.toArray(new String[0]));
 
 	}
+	
+	@Test
+	public void testIssue442() throws Exception {
+		B1 next4 = CsvParser.mapTo(B1.class).iterator("d2\nv").next();
+		assertEquals("v", next4.d2);
+
+
+		List<B1> next3 = CsvParser.mapTo(new TypeReference<List<B1>>() {
+		}).iterator("0_d2\nv").next();
+		assertEquals("v", next3.get(0).d2);
+		
+		A2 next2 = CsvParser.mapTo(A2.class).iterator("b1s_0_d2\nv").next();
+		assertEquals("v", next2.b1s.get(0).d2);
+
+		A1 next = CsvParser.mapTo(A1.class).iterator("b1s_0_d2\nv").next();
+		assertEquals("v", next.b1s.get(0).d2);
+	}
+	
+	@Test
+	public void testIssue442_minimum_A3() throws Exception {
+		CsvMapperBuilder<A3> csvMapperBuilder = CsvMapperFactory.newInstance().useAsm(false).newBuilder(A3.class).addMapping("b1s_d2");
+		CsvMapper<A3> mapper = csvMapperBuilder.mapper();
+		Iterator<A3> iterator = mapper.iterator(new StringReader("v"));
+		A3 next3 = iterator.next();
+		assertEquals("v", next3.b1s.d2);
+	}
+	
+	public static class A1 {
+		private final List<B1> b1s;
+
+		public A1(List<B1> b1s) {
+			this.b1s = b1s;
+		}
+	}
+	
+	public static class B1 {
+		private final String d2;
+
+		public B1(String d2) {
+			this.d2 = d2;
+		}
+	}
+
+
+	public static class A2 {
+		public List<B1> b1s;
+	}
+	public static class A3 {
+		private B1 b1s;
+
+		public B1 getB1s() {
+			return b1s;
+		}
+
+		public void setB1s(B1 b1s) {
+			this.b1s = b1s;
+		}
+	}
+
+
 }

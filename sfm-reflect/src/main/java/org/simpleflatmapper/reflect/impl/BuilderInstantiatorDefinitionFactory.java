@@ -64,11 +64,12 @@ public class BuilderInstantiatorDefinitionFactory {
     private static BuilderInstantiatorDefinition getDefinitionForBuilder(ExecutableInstantiatorDefinition def,
                                                                          Type builderType, Type target) {
         Map<org.simpleflatmapper.reflect.Parameter, Method> setters = new HashMap<org.simpleflatmapper.reflect.Parameter, Method>();
-        Method buildMethod = null;
+        List<Method> buildMethods = new ArrayList<Method>();
 
         int i = 0;
 
-        for(Method m : TypeHelper.toClass(builderType).getMethods()) {
+        Class<?> builderClass = TypeHelper.toClass(builderType);
+        for(Method m : builderClass.getMethods()) {
             if (!Modifier.isStatic(m.getModifiers()) && Object.class != m.getDeclaringClass()) {
                 Type returnType = m.getGenericReturnType();
                 if ((TypeHelper.areEquals(returnType, void.class)
@@ -78,18 +79,32 @@ public class BuilderInstantiatorDefinitionFactory {
                     setters.put(p, m);
                 } else if (TypeHelper.areEquals(returnType, target) && m.getParameterTypes().length == 0) {
                     // build function
-                    if (buildMethod != null) {
-                        throw new IllegalStateException("Duplicate potential build method " + buildMethod + " and " + m);
-                    }
-                    buildMethod = m;
+                    buildMethods.add(m);
                 }
             }
         }
+        
+        Method buildMethod = selectBuildMethod(buildMethods);
 
-
-        if (!setters.isEmpty() || buildMethod != null) {
+        if (!setters.isEmpty() && buildMethod != null) {
             return new BuilderInstantiatorDefinition(def, setters, buildMethod);
         }
         return null;
+    }
+
+    private static Method selectBuildMethod(List<Method> buildMethods) {
+        if (buildMethods.isEmpty()) 
+            return null;
+        
+        if (buildMethods.size() == 1)
+            return buildMethods.get(0);
+
+        for(Method m : buildMethods) {
+            if (m.getName().equals("build")) {
+                return m;
+            }
+        }
+
+        throw new IllegalStateException("Multiple potential build methods candidate " + buildMethods + ", cannot use the builder on that object");
     }
 }

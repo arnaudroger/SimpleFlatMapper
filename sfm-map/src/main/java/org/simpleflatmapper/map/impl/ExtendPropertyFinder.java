@@ -8,6 +8,7 @@ import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMatchingScore;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyNameMatcher;
+import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -69,6 +70,11 @@ public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
     @Override
     public PropertyFinder<?> getSubPropertyFinder(PropertyMeta<?, ?> owner) {
         return delegate.getSubPropertyFinder(owner);
+    }
+
+    @Override
+    public PropertyFinder<?> getOrCreateSubPropertyFinder(SubPropertyMeta<?, ?, ?> subPropertyMeta) {
+        return delegate.getOrCreateSubPropertyFinder(subPropertyMeta);
     }
 
     @Override

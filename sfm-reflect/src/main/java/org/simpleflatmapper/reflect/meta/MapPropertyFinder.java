@@ -121,6 +121,11 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
         return findersByKey.get(owner);
     }
 
+    @Override
+    public PropertyFinder<?> getOrCreateSubPropertyFinder(SubPropertyMeta<?, ?, ?> subPropertyMeta) {
+        return getSubPropertyFinder(subPropertyMeta.getOwnerProperty());
+    }
+
 
     @Override
     public Type getOwnerType() {

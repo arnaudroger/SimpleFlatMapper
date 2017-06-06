@@ -111,6 +111,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {
         return classMeta.getInstantiatorDefinitions();
     }
+    
 
     @Override
     public Type getOwnerType() {
@@ -119,12 +120,36 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
     @Override
     public PropertyFinder<?> getSubPropertyFinder(PropertyMeta<?, ?> owner) {
+        PropertyFinder<?> ie = lookForPropertyFinder(owner);
+        if (ie != null) return ie;
+
+        throw new IllegalArgumentException("Unexpected owner " + owner);
+    }
+
+    private PropertyFinder<?> lookForPropertyFinder(PropertyMeta<?, ?> owner) {
         for(IndexedElement<T, ?> ie : elements) {
-            if (ie.getPropertyMeta().equals(owner)) {
+            if (indexMatches(ie.getPropertyMeta(), owner)) {
                 return ie.getPropertyFinder();
             }
         }
-        throw new IllegalArgumentException("Unexpected owner " + owner);
+        return null;
     }
+
+    protected abstract boolean indexMatches(PropertyMeta<T, ?> propertyMeta, PropertyMeta<?, ?> owner);
+
+    @Override
+    public PropertyFinder<?> getOrCreateSubPropertyFinder(SubPropertyMeta<?, ?, ?> subPropertyMeta) {
+        PropertyMeta<?, ?> ownerProperty = subPropertyMeta.getOwnerProperty();
+
+        PropertyFinder<?> ie = lookForPropertyFinder(ownerProperty);
+        
+        if (ie != null) return ie;
+        
+        
+        return registerProperty(subPropertyMeta);
+        
+    }
+
+    protected abstract PropertyFinder<?> registerProperty(SubPropertyMeta<?, ?, ?> subPropertyMeta);
 
 }

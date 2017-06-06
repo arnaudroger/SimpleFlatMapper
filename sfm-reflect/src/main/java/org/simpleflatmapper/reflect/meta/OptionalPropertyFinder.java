@@ -57,6 +57,11 @@ public class OptionalPropertyFinder<T> extends PropertyFinder<Optional<T>> {
         throw new IllegalArgumentException("Unexpected owner " + owner);
     }
 
+    @Override
+    public PropertyFinder<?> getOrCreateSubPropertyFinder(SubPropertyMeta<?, ?, ?> subPropertyMeta) {
+        return getSubPropertyFinder(subPropertyMeta.getOwnerProperty());
+    }
+
 
     @Override
     public Type getOwnerType() {

@@ -62,6 +62,28 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 	}
 
     @Override
+    protected boolean indexMatches(PropertyMeta<T, ?> propertyMeta, PropertyMeta<?, ?> owner) {
+        if (owner == propertyMeta) return true;
+        if (propertyMeta instanceof  ArrayElementPropertyMeta && owner instanceof ArrayElementPropertyMeta) {
+            return ((ArrayElementPropertyMeta) propertyMeta).getIndex() == ((ArrayElementPropertyMeta) owner).getIndex();
+        }
+        return false;
+    }
+
+    @Override
+    protected PropertyFinder<?> registerProperty(SubPropertyMeta<?, ?, ?> subPropertyMeta) {
+        PropertyMeta<?, ?> ownerProperty = subPropertyMeta.getOwnerProperty();
+        
+        if (ownerProperty instanceof  ArrayElementPropertyMeta) {
+            ArrayElementPropertyMeta arrayElementPropertyMeta = (ArrayElementPropertyMeta) ownerProperty;
+            IndexedElement<T, E> indexedElement = getIndexedElement(new IndexedColumn(arrayElementPropertyMeta.getIndex(), null));
+            return indexedElement.getPropertyFinder();
+        }
+        
+        throw new IllegalArgumentException("Illegal owner expected ArrayElementPropertyMeta got " + subPropertyMeta);
+    }
+
+    @Override
     protected boolean isValidIndex(IndexedColumn indexedColumn) {
         return indexedColumn.getIndexValue() >= 0;
     }

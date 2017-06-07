@@ -3,18 +3,17 @@ package org.simpleflatmapper.proto;
 import org.junit.Test;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperFactory;
-import org.simpleflatmapper.csv.CsvParser;
+import org.simpleflatmapper.map.property.DateFormatProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by aroger on 06/06/2017.
- */
 public class ProtoClassTest {
     /*
     message Person {
@@ -87,5 +86,27 @@ message AddressBook {
 
         assertEquals("+4411223333", phones.getNumber());
         assertEquals(AddressBookProtos.Person.PhoneType.MOBILE, phones.getType());
+    }
+
+    @Test
+    public void testMapPersonTs() throws IOException, ParseException {
+
+        ClassMeta<AddressBookProtos.Person> classMeta = ReflectionService.newInstance().getClassMeta(AddressBookProtos.Person.class);
+        
+        
+        CsvMapper<AddressBookProtos.Person> csvMapper =
+                CsvMapperFactory
+                        .newInstance()
+                        .useAsm(false)
+                        .newBuilder(AddressBookProtos.Person.class)
+                        .addMapping("name")
+                        .addMapping("ts", new DateFormatProperty("yyyyMMdd"))
+                        .mapper();
+
+        AddressBookProtos.Person person = csvMapper.iterator(new StringReader("arnaud,20170607")).next();
+
+        assertEquals("arnaud", person.getName());
+        assertEquals(new SimpleDateFormat("yyyyMMdd").parse("20170607").getTime(), person.getTs().getSeconds() * 1000);
+
     }
 }

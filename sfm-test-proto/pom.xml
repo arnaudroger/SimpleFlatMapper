@@ -38,6 +38,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>sfm-converter-protobuf</artifactId>
+			<version>3.12-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>

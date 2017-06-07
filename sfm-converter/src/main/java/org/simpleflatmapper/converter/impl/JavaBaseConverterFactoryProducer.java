@@ -11,10 +11,13 @@ import org.simpleflatmapper.converter.ConvertingTypes;
 import org.simpleflatmapper.converter.ToStringConverter;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeHelper;
+import org.simpleflatmapper.util.date.DateFormatSupplier;
+import org.simpleflatmapper.util.date.DefaultDateFormatSupplier;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.util.Date;
 import java.util.UUID;
 
 public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryProducer {
@@ -38,6 +41,27 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		constantConverter(consumer, CharSequence.class, Float.class,     new CharSequenceFloatConverter());
 		constantConverter(consumer, CharSequence.class, Double.class,    new CharSequenceDoubleConverter());
 		constantConverter(consumer, CharSequence.class, UUID.class,      new CharSequenceUUIDConverter());
+		factoryConverter(consumer, new AbstractConverterFactory<CharSequence, Date>(CharSequence.class, Date.class) {
+			@Override
+			public Converter<? super CharSequence, ? extends Date> newConverter(ConvertingTypes targetedTypes, Object... params) {
+				return new CharSequenceToDateConverter(getFormat(params));
+			}
+
+			private String getFormat(Object[] params) {
+				String defaultValue = null;
+				if (params != null) {
+					for(Object o : params) {
+						if (o instanceof DefaultDateFormatSupplier) {
+							defaultValue = ((DefaultDateFormatSupplier) o).get();
+						} else if (o instanceof DateFormatSupplier) {
+							return ((DateFormatSupplier) o).get();
+						}
+					}
+					
+				}
+				return defaultValue;
+			}
+		});
 
 		factoryConverter (consumer, new AbstractConverterFactory<CharSequence, Enum>(CharSequence.class, Enum.class) {
 			@SuppressWarnings("unchecked")

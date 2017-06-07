@@ -3,6 +3,7 @@ package org.simpleflatmapper.converter.test;
 import org.junit.Test;
 import org.simpleflatmapper.converter.ConversionException;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.util.date.DateFormatSupplier;
 
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
@@ -13,6 +14,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.net.URLClassLoader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.UUID;
@@ -118,6 +121,14 @@ public class ConverterServiceTest {
         testConverter("1234.56", Float.valueOf(1234.56f));
         testConverter("1234.56", Double.valueOf(1234.56));
         testConverter("type2",   ENUM.type2);
+        testConverter("20170607", new SimpleDateFormat("yyyyMMdd").parse("20170607"),
+                CharSequence.class, Date.class, new DateFormatSupplier() {
+
+            @Override
+            public String get() {
+                return "yyyyMMdd";
+            }
+        });
 
         final UUID uuid = UUID.randomUUID();
         testConverter(uuid.toString(), uuid);

@@ -70,6 +70,19 @@ public final class AddressBookProtos {
      */
     org.simpleflatmapper.proto.AddressBookProtos.Person.PhoneNumberOrBuilder getPhonesOrBuilder(
         int index);
+
+    /**
+     * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+     */
+    boolean hasTs();
+    /**
+     * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+     */
+    com.google.protobuf.Timestamp getTs();
+    /**
+     * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+     */
+    com.google.protobuf.TimestampOrBuilder getTsOrBuilder();
   }
   /**
    * <pre>
@@ -142,6 +155,19 @@ public final class AddressBookProtos {
               }
               phones_.add(
                   input.readMessage(org.simpleflatmapper.proto.AddressBookProtos.Person.PhoneNumber.parser(), extensionRegistry));
+              break;
+            }
+            case 42: {
+              com.google.protobuf.Timestamp.Builder subBuilder = null;
+              if (ts_ != null) {
+                subBuilder = ts_.toBuilder();
+              }
+              ts_ = input.readMessage(com.google.protobuf.Timestamp.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(ts_);
+                ts_ = subBuilder.buildPartial();
+              }
+
               break;
             }
           }
@@ -989,6 +1015,27 @@ public final class AddressBookProtos {
       return phones_.get(index);
     }
 
+    public static final int TS_FIELD_NUMBER = 5;
+    private com.google.protobuf.Timestamp ts_;
+    /**
+     * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+     */
+    public boolean hasTs() {
+      return ts_ != null;
+    }
+    /**
+     * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+     */
+    public com.google.protobuf.Timestamp getTs() {
+      return ts_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : ts_;
+    }
+    /**
+     * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+     */
+    public com.google.protobuf.TimestampOrBuilder getTsOrBuilder() {
+      return getTs();
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -1013,6 +1060,9 @@ public final class AddressBookProtos {
       for (int i = 0; i < phones_.size(); i++) {
         output.writeMessage(4, phones_.get(i));
       }
+      if (ts_ != null) {
+        output.writeMessage(5, getTs());
+      }
     }
 
     public int getSerializedSize() {
@@ -1033,6 +1083,10 @@ public final class AddressBookProtos {
       for (int i = 0; i < phones_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, phones_.get(i));
+      }
+      if (ts_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, getTs());
       }
       memoizedSize = size;
       return size;
@@ -1058,6 +1112,11 @@ public final class AddressBookProtos {
           .equals(other.getEmail());
       result = result && getPhonesList()
           .equals(other.getPhonesList());
+      result = result && (hasTs() == other.hasTs());
+      if (hasTs()) {
+        result = result && getTs()
+            .equals(other.getTs());
+      }
       return result;
     }
 
@@ -1077,6 +1136,10 @@ public final class AddressBookProtos {
       if (getPhonesCount() > 0) {
         hash = (37 * hash) + PHONES_FIELD_NUMBER;
         hash = (53 * hash) + getPhonesList().hashCode();
+      }
+      if (hasTs()) {
+        hash = (37 * hash) + TS_FIELD_NUMBER;
+        hash = (53 * hash) + getTs().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -1213,6 +1276,12 @@ public final class AddressBookProtos {
         } else {
           phonesBuilder_.clear();
         }
+        if (tsBuilder_ == null) {
+          ts_ = null;
+        } else {
+          ts_ = null;
+          tsBuilder_ = null;
+        }
         return this;
       }
 
@@ -1248,6 +1317,11 @@ public final class AddressBookProtos {
           result.phones_ = phones_;
         } else {
           result.phones_ = phonesBuilder_.build();
+        }
+        if (tsBuilder_ == null) {
+          result.ts_ = ts_;
+        } else {
+          result.ts_ = tsBuilder_.build();
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -1327,6 +1401,9 @@ public final class AddressBookProtos {
               phonesBuilder_.addAllMessages(other.phones_);
             }
           }
+        }
+        if (other.hasTs()) {
+          mergeTs(other.getTs());
         }
         onChanged();
         return this;
@@ -1769,6 +1846,123 @@ public final class AddressBookProtos {
           phones_ = null;
         }
         return phonesBuilder_;
+      }
+
+      private com.google.protobuf.Timestamp ts_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> tsBuilder_;
+      /**
+       * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+       */
+      public boolean hasTs() {
+        return tsBuilder_ != null || ts_ != null;
+      }
+      /**
+       * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+       */
+      public com.google.protobuf.Timestamp getTs() {
+        if (tsBuilder_ == null) {
+          return ts_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : ts_;
+        } else {
+          return tsBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+       */
+      public Builder setTs(com.google.protobuf.Timestamp value) {
+        if (tsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ts_ = value;
+          onChanged();
+        } else {
+          tsBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+       */
+      public Builder setTs(
+          com.google.protobuf.Timestamp.Builder builderForValue) {
+        if (tsBuilder_ == null) {
+          ts_ = builderForValue.build();
+          onChanged();
+        } else {
+          tsBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+       */
+      public Builder mergeTs(com.google.protobuf.Timestamp value) {
+        if (tsBuilder_ == null) {
+          if (ts_ != null) {
+            ts_ =
+              com.google.protobuf.Timestamp.newBuilder(ts_).mergeFrom(value).buildPartial();
+          } else {
+            ts_ = value;
+          }
+          onChanged();
+        } else {
+          tsBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+       */
+      public Builder clearTs() {
+        if (tsBuilder_ == null) {
+          ts_ = null;
+          onChanged();
+        } else {
+          ts_ = null;
+          tsBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+       */
+      public com.google.protobuf.Timestamp.Builder getTsBuilder() {
+        
+        onChanged();
+        return getTsFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+       */
+      public com.google.protobuf.TimestampOrBuilder getTsOrBuilder() {
+        if (tsBuilder_ != null) {
+          return tsBuilder_.getMessageOrBuilder();
+        } else {
+          return ts_ == null ?
+              com.google.protobuf.Timestamp.getDefaultInstance() : ts_;
+        }
+      }
+      /**
+       * <code>optional .google.protobuf.Timestamp ts = 5;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder> 
+          getTsFieldBuilder() {
+        if (tsBuilder_ == null) {
+          tsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Timestamp, com.google.protobuf.Timestamp.Builder, com.google.protobuf.TimestampOrBuilder>(
+                  getTs(),
+                  getParentForChildren(),
+                  isClean());
+          ts_ = null;
+        }
+        return tsBuilder_;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -2586,16 +2780,18 @@ public final class AddressBookProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\021addressbook.proto\022\010tutorial\"\325\001\n\006Person" +
-      "\022\014\n\004name\030\001 \001(\t\022\n\n\002id\030\002 \001(\005\022\r\n\005email\030\003 \001(" +
-      "\t\022,\n\006phones\030\004 \003(\0132\034.tutorial.Person.Phon" +
-      "eNumber\032G\n\013PhoneNumber\022\016\n\006number\030\001 \001(\t\022(" +
-      "\n\004type\030\002 \001(\0162\032.tutorial.Person.PhoneType" +
-      "\"+\n\tPhoneType\022\n\n\006MOBILE\020\000\022\010\n\004HOME\020\001\022\010\n\004W" +
-      "ORK\020\002\"/\n\013AddressBook\022 \n\006people\030\001 \003(\0132\020.t" +
-      "utorial.PersonBP\n\024org.simpleflatmapper.protoB\021" +
-      "AddressBookProtos\252\002$Google.Protobuf.Exam" +
-      "ples.AddressBookb\006proto3"
+      "\n\021addressbook.proto\022\010tutorial\032\037google/pr" +
+      "otobuf/timestamp.proto\"\375\001\n\006Person\022\014\n\004nam" +
+      "e\030\001 \001(\t\022\n\n\002id\030\002 \001(\005\022\r\n\005email\030\003 \001(\t\022,\n\006ph" +
+      "ones\030\004 \003(\0132\034.tutorial.Person.PhoneNumber" +
+      "\022&\n\002ts\030\005 \001(\0132\032.google.protobuf.Timestamp" +
+      "\032G\n\013PhoneNumber\022\016\n\006number\030\001 \001(\t\022(\n\004type\030" +
+      "\002 \001(\0162\032.tutorial.Person.PhoneType\"+\n\tPho" +
+      "neType\022\n\n\006MOBILE\020\000\022\010\n\004HOME\020\001\022\010\n\004WORK\020\002\"/" +
+      "\n\013AddressBook\022 \n\006people\030\001 \003(\0132\020.tutorial" +
+      ".PersonBP\n\024org.simpleflatmapper.protoB\021Address",
+      "BookProtos\252\002$Google.Protobuf.Examples.Ad" +
+      "dressBookb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2608,13 +2804,14 @@ public final class AddressBookProtos {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          com.google.protobuf.TimestampProto.getDescriptor(),
         }, assigner);
     internal_static_tutorial_Person_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_tutorial_Person_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tutorial_Person_descriptor,
-        new java.lang.String[] { "Name", "Id", "Email", "Phones", });
+        new java.lang.String[] { "Name", "Id", "Email", "Phones", "Ts", });
     internal_static_tutorial_Person_PhoneNumber_descriptor =
       internal_static_tutorial_Person_descriptor.getNestedTypes().get(0);
     internal_static_tutorial_Person_PhoneNumber_fieldAccessorTable = new
@@ -2627,6 +2824,7 @@ public final class AddressBookProtos {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tutorial_AddressBook_descriptor,
         new java.lang.String[] { "People", });
+    com.google.protobuf.TimestampProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

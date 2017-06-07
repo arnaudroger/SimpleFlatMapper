@@ -2,6 +2,8 @@ package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
+import org.simpleflatmapper.reflect.getter.NullGetter;
+import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
@@ -82,7 +84,51 @@ public abstract class PropertyFinder<T> {
 
 		@Override
 		public int compareTo(MatchedProperty<T, ?> o) {
-			return this.score.compareTo(o.score);
+			int i =  this.score.compareTo(o.score);
+			
+			if (i == 0) {
+				return compare(this.propertyMeta, o.propertyMeta);
+			} else {
+				return i;
+			}
+		}
+
+		private int compare(PropertyMeta<?, ?> p1, PropertyMeta<?, ?> p2) {
+			if (p1.isConstructorProperty()) {
+				if (!p2.isConstructorProperty()) {
+					return -1;
+				}
+			} else if (p2.isConstructorProperty()) {
+				return 1;
+			} else if (!p1.isSelf()) {
+				if (p2.isSelf()) {
+					return -1;
+				}
+			} else if (!p2.isSelf()) {
+				return 1;
+			} else if (!p1.isSubProperty()) {
+				if (p2.isSubProperty()) {
+					return -1;
+				}
+			} else if (!p2.isSubProperty()) {
+				return 1;
+			}
+			return getterSetterCompare(p1, p2);
+		}
+
+		private int getterSetterCompare(PropertyMeta<?, ?> p1, PropertyMeta<?, ?> p2) {
+			return nbGetterSetter(p1) - nbGetterSetter(p2);
+		}
+
+		private int nbGetterSetter(PropertyMeta<?, ?> p) {
+			int c = 0;
+			if (NullGetter.isNull(p.getGetter())) {
+				c++;
+			}
+			if (NullSetter.isNull(p.getSetter())) {
+				c++;
+			}
+			return c;
 		}
 
 		public void select() {

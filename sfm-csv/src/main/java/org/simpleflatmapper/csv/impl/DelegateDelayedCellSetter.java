@@ -26,7 +26,7 @@ public class DelegateDelayedCellSetter<T, P> implements DelayedCellSetter<T, P> 
 	public DelegateDelayedCellSetter(CsvMapperCellConsumer<P> handler, int cellIndex) {
 		this.cellConsumer = handler;
 		this.cellIndex = cellIndex;
-        this.setter = NullSetter.NULL_SETTER;
+        this.setter = null;
         this.breakDetector = null;
 	}
 

@@ -79,7 +79,7 @@ public class JdbcMapperBuilderImplTest {
 				return new InstantiatorFactory(null) {
 
 					@Override
-					public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(Type target, Class<?> s1, Class<?> s2, List<InstantiatorDefinition> constructors, Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
+					public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(Type target, Class<?> s1, Class<?> s2, List<InstantiatorDefinition> constructors, Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) throws SecurityException {
 						throw new UnsupportedOperationException();
 					}
 				};

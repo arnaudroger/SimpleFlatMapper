@@ -102,9 +102,9 @@ public class BiInstantiatorBuilder {
     }
 
     public static <S1, S2>  byte[] createInstantiator(final String className, final Class<?> s1, final Class<?> s2,
-                                                 final Instantiator<Void, ?> builderInstantiator,
-                                                 final BuilderInstantiatorDefinition instantiatorDefinition,
-                                                 final Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injectionsMap) throws Exception {
+                                                      final Instantiator<Void, ?> builderInstantiator,
+                                                      final BuilderInstantiatorDefinition instantiatorDefinition,
+                                                      final Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injectionsMap, boolean ignoreNullValues) throws Exception {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
         Class<?> targetClass= TypeHelper.toClass(getTargetType(instantiatorDefinition));
@@ -134,7 +134,7 @@ public class BiInstantiatorBuilder {
 
         appendFunctionsField(injections, cw);
         appendInitBuilder(injections, cw, s1Type, s2Type, classType, instantiatorDefinition);
-        appendNewInstanceBuilder(s1, s2, instantiatorDefinition, injections, cw, targetType, s1Type, s2Type, classType, instantiatorDefinition.getSetters());
+        appendNewInstanceBuilder(s1, s2, instantiatorDefinition, injections, cw, targetType, s1Type, s2Type, classType, instantiatorDefinition.getSetters(), ignoreNullValues);
         appendBridgeMethod(cw, targetType, s1Type, s2Type, classType);
         appendToString(injections, cw, instantiatorDefinition.getParameters());
         cw.visitEnd();
@@ -245,7 +245,7 @@ public class BiInstantiatorBuilder {
         mv.visitEnd();
     }
 
-    private static <S1, S2> void appendNewInstanceBuilder(Class<?> s1, Class<?> s2, BuilderInstantiatorDefinition instantiatorDefinition, List<InjectionPoint> injectionPoints, ClassWriter cw, String targetType, String s1Type, String s2Type, String classType, Map<Parameter, Method> setters) throws NoSuchMethodException {
+    private static <S1, S2> void appendNewInstanceBuilder(Class<?> s1, Class<?> s2, BuilderInstantiatorDefinition instantiatorDefinition, List<InjectionPoint> injectionPoints, ClassWriter cw, String targetType, String s1Type, String s2Type, String classType, Map<Parameter, Method> setters, boolean ignoreNullValues) throws NoSuchMethodException {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "newInstance", "(" + AsmUtils.toTargetTypeDeclaration(s1Type) + AsmUtils.toTargetTypeDeclaration(s2Type)+ ")" + AsmUtils.toTargetTypeDeclaration(targetType), null, new String[] { "java/lang/Exception" });
         mv.visitCode();
@@ -269,7 +269,7 @@ public class BiInstantiatorBuilder {
 
             if (injectionPoint != null) {
 
-                final boolean checkIfNull = !injectionPoint.isPrimitive;
+                final boolean checkIfNull = ignoreNullValues && !injectionPoint.isPrimitive;
                 
                 mv.visitVarInsn(ALOAD, 2);
                 
@@ -288,7 +288,7 @@ public class BiInstantiatorBuilder {
                                     mv.visitVarInsn(ASTORE, 2);
                                 }
                             }
-                        }, true);
+                        }, ignoreNullValues);
             }
         }
         mv.visitVarInsn(ALOAD, 2);

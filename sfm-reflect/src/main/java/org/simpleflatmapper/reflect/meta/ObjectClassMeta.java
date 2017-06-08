@@ -37,7 +37,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 			this.target = target;
 			this.reflectService = reflectService;
 			this.instantiatorDefinitions = reflectService.extractInstantiator(target, builderInstantiator);
-			this.constructorProperties = listConstructorProperties(instantiatorDefinitions);
+			this.constructorProperties = listConstructorProperties(instantiatorDefinitions, reflectService.builderIgnoresNullValues());
 			this.fieldAliases = Collections.unmodifiableMap(aliases(reflectService, TypeHelper.<T>toClass(target)));
 			this.properties = Collections.unmodifiableList(listProperties(reflectService, target));
 		} catch(Exception e) {
@@ -92,7 +92,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 		return map;
 	}
 
-	private List<ConstructorPropertyMeta<T, ?>> listConstructorProperties(List<InstantiatorDefinition> instantiatorDefinitions) {
+	private List<ConstructorPropertyMeta<T, ?>> listConstructorProperties(List<InstantiatorDefinition> instantiatorDefinitions, boolean builderIgnoresNullValues) {
 		if (instantiatorDefinitions == null) return null;
 
 		List<ConstructorPropertyMeta<T, ?>> constructorProperties = new ArrayList<ConstructorPropertyMeta<T, ?>>();
@@ -106,7 +106,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 					if (paramNameDeductor == null) {
 						paramNameDeductor = new ParamNameDeductor<T>(TypeHelper.<T>toClass(target));
 					}
-					paramName = paramNameDeductor.findParamName(cd, param);
+					paramName = paramNameDeductor.findParamName(cd, param, builderIgnoresNullValues);
 				}
 				constructorProperties.add(constructorMeta(param, paramName, cd));
 			}

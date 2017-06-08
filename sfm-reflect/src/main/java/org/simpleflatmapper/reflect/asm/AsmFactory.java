@@ -142,7 +142,7 @@ public class AsmFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> createInstantiator(final Class<S> source, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, Getter<? super S, ?>> injections) throws Exception {
+	public <S, T> Instantiator<S, T> createInstantiator(final Class<S> source, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, Getter<? super S, ?>> injections, boolean builderIgnoresNullValues) throws Exception {
 		InstantiatorKey<S> instantiatorKey = new InstantiatorKey<S>(instantiatorDefinition, injections, source);
 		Class<? extends Instantiator<?, ?>> instantiator = instantiatorCache.get(instantiatorKey);
         Instantiator<Void, ?> builderInstantiator = null;
@@ -152,11 +152,11 @@ public class AsmFactory {
             if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
                 bytes = InstantiatorBuilder.createInstantiator(className, source, (ExecutableInstantiatorDefinition)instantiatorDefinition, injections);
             }  else {
-                builderInstantiator = createInstantiator(Void.class, ((BuilderInstantiatorDefinition)instantiatorDefinition).getBuilderInstantiator(), new HashMap<Parameter, Getter<? super Void, ?>>());
+                builderInstantiator = createInstantiator(Void.class, ((BuilderInstantiatorDefinition)instantiatorDefinition).getBuilderInstantiator(), new HashMap<Parameter, Getter<? super Void, ?>>(), builderIgnoresNullValues);
                 bytes = InstantiatorBuilder.createInstantiator(
                         className,
                         source,
-                        (BuilderInstantiatorDefinition)instantiatorDefinition, injections);
+                        (BuilderInstantiatorDefinition)instantiatorDefinition, injections, builderIgnoresNullValues);
             }
 			instantiator = (Class<? extends Instantiator<?, ?>>) createClass(className, bytes, instantiatorKey.getDeclaringClass().getClassLoader());
 			instantiatorCache.put(instantiatorKey, instantiator);
@@ -176,7 +176,7 @@ public class AsmFactory {
 
 
     @SuppressWarnings("unchecked")
-    public <S1, S2, T> BiInstantiator<S1, S2, T> createBiInstantiator(final Class<?> s1, final Class<?> s2, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections) throws Exception {
+    public <S1, S2, T> BiInstantiator<S1, S2, T> createBiInstantiator(final Class<?> s1, final Class<?> s2, final InstantiatorDefinition instantiatorDefinition, final Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean builderIgnoresNullValues) throws Exception {
         BiInstantiatorKey instantiatorKey = new BiInstantiatorKey(instantiatorDefinition, injections, s1, s2);
         Class<? extends BiInstantiator<?, ?, ?>> instantiator = biInstantiatorCache.get(instantiatorKey);
         Instantiator builderInstantiator = null;
@@ -186,12 +186,12 @@ public class AsmFactory {
             if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
                 bytes = BiInstantiatorBuilder.createInstantiator(className, s1, s2, (ExecutableInstantiatorDefinition)instantiatorDefinition, injections);
             }  else {
-                builderInstantiator = createInstantiator(Void.class, ((BuilderInstantiatorDefinition)instantiatorDefinition).getBuilderInstantiator(), new HashMap<Parameter, Getter<? super Void, ?>>());
+                builderInstantiator = createInstantiator(Void.class, ((BuilderInstantiatorDefinition)instantiatorDefinition).getBuilderInstantiator(), new HashMap<Parameter, Getter<? super Void, ?>>(), builderIgnoresNullValues);
                 bytes = BiInstantiatorBuilder.createInstantiator(
                         className,
                         s1, s2,
                         builderInstantiator,
-                        (BuilderInstantiatorDefinition)instantiatorDefinition, injections);
+                        (BuilderInstantiatorDefinition)instantiatorDefinition, injections, builderIgnoresNullValues);
             }
             instantiator = (Class<? extends BiInstantiator<?, ?, ?>>) createClass(className, bytes, instantiatorKey.getDeclaringClass().getClassLoader());
             biInstantiatorCache.put(instantiatorKey, instantiator);

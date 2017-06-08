@@ -73,7 +73,7 @@ public class InstantiatorBuilder {
 
     public static <S>  byte[] createInstantiator(final String className, final Class<?> sourceClass,
                                                  final BuilderInstantiatorDefinition instantiatorDefinition,
-                                                 final Map<Parameter, Getter<? super S, ?>> injections) throws Exception {
+                                                 final Map<Parameter, Getter<? super S, ?>> injections, boolean ignoreNullValues) throws Exception {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
         Class<?> targetClass= TypeHelper.toClass(BiInstantiatorBuilder.getTargetType(instantiatorDefinition));
@@ -99,7 +99,7 @@ public class InstantiatorBuilder {
 
         appendGetters(injections, cw);
         appendInitBuilder(injections, cw, sourceType, classType, instantiatorDefinition);
-        appendNewInstanceBuilderOnBuilder(sourceClass, instantiatorDefinition, injections, cw, targetType, sourceType, classType, instantiatorDefinition.getSetters());
+        appendNewInstanceBuilderOnBuilder(sourceClass, instantiatorDefinition, injections, cw, targetType, sourceType, classType, instantiatorDefinition.getSetters(), ignoreNullValues);
         appendBridgeMethod(cw, targetType, sourceType, classType);
         appendToString(injections, cw, instantiatorDefinition.getParameters());
         cw.visitEnd();
@@ -289,7 +289,7 @@ public class InstantiatorBuilder {
         return methodSuffix;
     }
 
-    private static <S> void appendNewInstanceBuilderOnBuilder(Class<?> sourceClass, BuilderInstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections, ClassWriter cw, String targetType, String sourceType, String classType, Map<Parameter, Method> setters) throws NoSuchMethodException {
+    private static <S> void appendNewInstanceBuilderOnBuilder(Class<?> sourceClass, BuilderInstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections, ClassWriter cw, String targetType, String sourceType, String classType, Map<Parameter, Method> setters, boolean ignoreNullValues) throws NoSuchMethodException {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "newInstance", "(" + AsmUtils.toTargetTypeDeclaration(sourceType) + ")" + AsmUtils.toTargetTypeDeclaration(targetType), null, new String[] { "java/lang/Exception" });
         mv.visitCode();
@@ -313,7 +313,7 @@ public class InstantiatorBuilder {
             if (getter != null) {
 
                 final Class<?> parameterType = p.getType();
-                final boolean checkIfNull = !getGetterCall(parameterType, getter.getClass()).isPrimitive;
+                final boolean checkIfNull = ignoreNullValues && !getGetterCall(parameterType, getter.getClass()).isPrimitive;
                 
                 mv.visitVarInsn(ALOAD, 2);
                 
@@ -330,7 +330,7 @@ public class InstantiatorBuilder {
                             mv.visitVarInsn(ASTORE, 2);
                         }
                     }
-                }, true);
+                }, ignoreNullValues);
 
 
                     

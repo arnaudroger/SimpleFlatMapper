@@ -44,7 +44,7 @@ public class CsvMapperCellHandlerImpAsmInstantiatorTest {
 		Instantiator<CsvMapperCellHandlerImpl<String>, String> instantiator =
 				factory.createInstantiator(source,
 						new ExecutableInstantiatorDefinition(String.class.getConstructor(char[].class), parameter),
-						injections);
+						injections, true);
 		DelayedCellSetterImpl delayedCellSetter = new DelayedCellSetterImpl(null, new CellValueReader() {
 			@Override
 			public char[] read(char[] chars, int offset, int length, ParsingContext parsingContext) {

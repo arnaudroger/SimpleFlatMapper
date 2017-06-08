@@ -24,7 +24,6 @@ import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
-import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
@@ -261,7 +260,7 @@ public final class CellSetterFactory {
 					reader = cellValueReaderFromFactory(property, index, columnDefinition, parsingContextFactoryBuilder);
 					if (reader != null) {
 						Instantiator<P, P> instantiator =
-								classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
+								classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id, classMeta.getReflectionService().builderIgnoresNullValues());
 						return
 								new InstantiatorOnReader<P, P>(instantiator, reader);
 					}

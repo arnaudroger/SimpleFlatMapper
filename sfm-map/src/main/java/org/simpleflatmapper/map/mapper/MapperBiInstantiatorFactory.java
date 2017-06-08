@@ -26,12 +26,12 @@ public class MapperBiInstantiatorFactory {
     }
 
 
-    public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> BiInstantiator<S, MappingContext<? super S>,T> getBiInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<Parameter, BiFunction<? super S, ? super MappingContext<? super S>, ?>> constructorParameterGetterMap, GetterFactory<? super S, K> getterFactory) throws NoSuchMethodException {
-        return  getBiInstantiator(source, target, propertyMappingsBuilder, constructorParameterGetterMap, getterFactory, true);
+    public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> BiInstantiator<S, MappingContext<? super S>,T> getBiInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<Parameter, BiFunction<? super S, ? super MappingContext<? super S>, ?>> constructorParameterGetterMap, GetterFactory<? super S, K> getterFactory, boolean builderIgnoresNullValues) throws NoSuchMethodException {
+        return  getBiInstantiator(source, target, propertyMappingsBuilder, constructorParameterGetterMap, getterFactory, true, builderIgnoresNullValues);
     }
 
     @SuppressWarnings("unchecked")
-    public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> BiInstantiator<S, MappingContext<? super S>, T> getBiInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<Parameter, BiFunction<? super S, ? super MappingContext<? super S>, ?>> constructorParameterGetterMap, final  GetterFactory<? super S, K> getterFactory, boolean useAsmIfEnabled) throws NoSuchMethodException {
+    public <S, T, K extends FieldKey<K>, D extends ColumnDefinition<K, D>> BiInstantiator<S, MappingContext<? super S>, T> getBiInstantiator(Type source, Type target, PropertyMappingsBuilder<T, K, D> propertyMappingsBuilder, Map<Parameter, BiFunction<? super S, ? super MappingContext<? super S>, ?>> constructorParameterGetterMap, final GetterFactory<? super S, K> getterFactory, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) throws NoSuchMethodException {
 
         if (propertyMappingsBuilder.isSelfProperty()) {
             Getter getter = propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, K, D>>() {
@@ -58,7 +58,7 @@ public class MapperBiInstantiatorFactory {
                                             MappingContext.class,
                                             instantiatorDefinitions,
                                             constructorParameterGetterMap,
-                                            useAsmIfEnabled);
+                                            useAsmIfEnabled, builderIgnoresNullValues);
         }
     }
 

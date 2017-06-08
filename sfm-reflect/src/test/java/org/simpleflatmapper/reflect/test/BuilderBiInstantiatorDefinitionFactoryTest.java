@@ -61,7 +61,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true);
+                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null, null);
         assertFalse((instantiator instanceof BuilderBiInstantiator));
@@ -94,7 +94,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true);
+                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null, null);
 
@@ -126,7 +126,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, false);
+                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, false, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null, null);
 
@@ -157,7 +157,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, false);
+                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, false, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null, null);
 
@@ -189,7 +189,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true);
+                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null, null);
 
@@ -221,7 +221,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, Object,ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true);
+                .<Void, Object,ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null, null);
 
@@ -253,7 +253,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, Object,ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true);
+                .<Void, Object,ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null, null);
 
@@ -284,7 +284,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null, true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true);
+                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null, null);
 
@@ -316,7 +316,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null, true);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true);
+                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null, null);
 

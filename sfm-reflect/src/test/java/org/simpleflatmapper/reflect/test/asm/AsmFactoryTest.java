@@ -44,8 +44,8 @@ public class AsmFactoryTest {
 		injections.put(new Parameter(1, "name", String.class), new ConstantGetter<Object, String>("fdo"));
 		Instantiator<Object, DbFinalObject> instantiator = asmFactory.createInstantiator(Object.class,
 				instantiatorDefinition,
-				injections
-		);
+				injections,
+                true);
 		
 
 		DbFinalObject fdo = instantiator.newInstance(new Object());
@@ -61,8 +61,8 @@ public class AsmFactoryTest {
 
 		assertSame(instantiator.getClass(), asmFactory.createInstantiator(Object.class,
 				instantiatorDefinition,
-				injections
-		).getClass());
+				injections,
+                true).getClass());
 	}
 	
 	@Test
@@ -75,8 +75,8 @@ public class AsmFactoryTest {
 		List<InstantiatorDefinition> instantiatorDefinitions = AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalObject.class);
 		Instantiator<Object, DbFinalObject> instantiator = asmFactory.createInstantiator(Object.class,
 				(ExecutableInstantiatorDefinition) instantiatorDefinitions.get(0),
-				injections
-		);
+				injections,
+                true);
 		
 		DbFinalObject fdo = instantiator.newInstance(new Object());
 		

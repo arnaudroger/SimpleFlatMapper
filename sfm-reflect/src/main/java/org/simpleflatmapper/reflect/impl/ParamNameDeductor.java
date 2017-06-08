@@ -33,23 +33,23 @@ public class ParamNameDeductor<T> {
     }
 
 
-    public String findParamName(InstantiatorDefinition instantiatorDefinition, Parameter param) {
+    public String findParamName(InstantiatorDefinition instantiatorDefinition, Parameter param, boolean builderIgnoresNullValues) {
         if (accessors == null) {
             accessors = listAccessors();
         }
         try {
             T value;
 
-            Map<Parameter, Getter<? super Object, ?>> parameters = parametersWithExpectedValue(instantiatorDefinition, param, true);
-            Instantiator<Object, T> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters, false);
+            Map<Parameter, Getter<? super Object, ?>> parameters = parametersWithExpectedValue(instantiatorDefinition, param, true, builderIgnoresNullValues);
+            Instantiator<Object, T> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters, false, builderIgnoresNullValues);
 
             try {
                 // try with null values
                 value = instantiator.newInstance(null);
             } catch(NullPointerException e) {
                 // try with non null explicit values
-                parameters = parametersWithExpectedValue(instantiatorDefinition, param, false);
-                instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters, false);
+                parameters = parametersWithExpectedValue(instantiatorDefinition, param, false, builderIgnoresNullValues);
+                instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters, false, builderIgnoresNullValues);
                 value = instantiator.newInstance(null);
             }
 
@@ -74,16 +74,16 @@ public class ParamNameDeductor<T> {
         return null;
     }
 
-    private Map<Parameter, Getter<? super Object, ?>> parametersWithExpectedValue(InstantiatorDefinition instantiatorDefinition, Parameter param, boolean allowNull) throws Exception {
-        Map<Parameter, Getter<? super Object, ?>> parameterGetterMap = parameters(instantiatorDefinition, allowNull);
-        parameterGetterMap.put(param, new ConstantGetter<Object, Object>(markValue(param.getGenericType())));
+    private Map<Parameter, Getter<? super Object, ?>> parametersWithExpectedValue(InstantiatorDefinition instantiatorDefinition, Parameter param, boolean allowNull, boolean builderIgnoresNullValues) throws Exception {
+        Map<Parameter, Getter<? super Object, ?>> parameterGetterMap = parameters(instantiatorDefinition, allowNull, builderIgnoresNullValues);
+        parameterGetterMap.put(param, new ConstantGetter<Object, Object>(markValue(param.getGenericType(), builderIgnoresNullValues)));
         return parameterGetterMap;
     }
 
-    private Map<Parameter, Getter<? super Object, ?>> parameters(InstantiatorDefinition instantiatorDefinition, boolean allowNull) throws Exception {
+    private Map<Parameter, Getter<? super Object, ?>> parameters(InstantiatorDefinition instantiatorDefinition, boolean allowNull, boolean builderIgnoresNullValues) throws Exception {
         Map<Parameter, Getter<? super Object, ?>> parameterGetterMap = new HashMap<Parameter, Getter<? super Object, ?>>();
         for(Parameter parameter : instantiatorDefinition.getParameters()) {
-            Object value = neutralValue(parameter.getGenericType(), allowNull);
+            Object value = neutralValue(parameter.getGenericType(), allowNull, builderIgnoresNullValues);
             parameterGetterMap.put(parameter, new ConstantGetter<Object, Object>(value));
         }
         return parameterGetterMap;
@@ -112,7 +112,7 @@ public class ParamNameDeductor<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private <V> V markValue(Type type) throws Exception {
+    private <V> V markValue(Type type, boolean builderIgnoresNullValues) throws Exception {
         if (TypeHelper.isPrimitive(type)) {
             return (V) primitivesMarkValue.get(type);
         }
@@ -122,12 +122,12 @@ public class ParamNameDeductor<T> {
             Enum[] values = EnumHelper.getValues(TypeHelper.<Enum>toClass(type));
             return (V) (values.length > 1 ? values[1] : values[0]);
         } else {
-            return createValueFromInstantiator(type);
+            return createValueFromInstantiator(type, builderIgnoresNullValues);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private <V> V neutralValue(Type type, boolean allowNull) throws Exception {
+    private <V> V neutralValue(Type type, boolean allowNull, boolean builderIgnoresNullValues) throws Exception {
         if (TypeHelper.isPrimitive(type)) {
             return (V) primitivesNeutralValue.get(type);
         }
@@ -139,18 +139,18 @@ public class ParamNameDeductor<T> {
             Enum[] values = EnumHelper.getValues(TypeHelper.<Enum>toClass(type));
             return (V) values[0];
         } else {
-            return createValueFromInstantiator(type);
+            return createValueFromInstantiator(type, builderIgnoresNullValues);
         }
     }
 
-    private <V> V createValueFromInstantiator(Type type) throws Exception {
+    private <V> V createValueFromInstantiator(Type type, boolean builderIgnoresNullValues) throws Exception {
         InstantiatorDefinition instantiatorDefinition = InstantiatorFactory.getSmallerConstructor(ReflectionInstantiatorDefinitionFactory.extractDefinitions(type));
 
-        Instantiator<Object, V> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, true), false);
+        Instantiator<Object, V> instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, true, builderIgnoresNullValues), false, builderIgnoresNullValues);
         try {
             return instantiator.newInstance(null);
         } catch (NullPointerException e) {
-            instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, false), false);
+            instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, Object.class, parameters(instantiatorDefinition, false, builderIgnoresNullValues), false, builderIgnoresNullValues);
             return instantiator.newInstance(null);
         }
     }

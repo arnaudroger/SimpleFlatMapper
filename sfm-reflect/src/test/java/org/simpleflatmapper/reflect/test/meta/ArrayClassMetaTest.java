@@ -162,7 +162,7 @@ public class ArrayClassMetaTest {
     private Object instantiate(ClassMeta<?> classMeta) throws Exception {
         InstantiatorDefinition instantiatorDefinition = classMeta.getInstantiatorDefinitions().get(0);
         InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
-        Instantiator instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, (Class)Object.class, new HashMap(), false);
+        Instantiator instantiator = instantiatorFactory.getInstantiator(instantiatorDefinition, (Class)Object.class, new HashMap(), false, true);
         return instantiator.newInstance(null);
     }
 

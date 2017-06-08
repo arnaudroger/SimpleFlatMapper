@@ -41,19 +41,19 @@ public class InstantiatorFactory {
 
 
 	@SuppressWarnings("unchecked")
-	public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(Type target, final Class<?> s1, final Class<?> s2, List<InstantiatorDefinition> constructors, Map<org.simpleflatmapper.reflect.Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
+	public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(Type target, final Class<?> s1, final Class<?> s2, List<InstantiatorDefinition> constructors, Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) throws SecurityException {
 		final InstantiatorDefinition instantiatorDefinition = getSmallerConstructor(constructors);
 
 		if (instantiatorDefinition == null) {
 			throw new IllegalArgumentException("No constructor available for " + target);
 		}
-		return this.getBiInstantiator(instantiatorDefinition, s1, s2, injections, useAsmIfEnabled);
+		return this.getBiInstantiator(instantiatorDefinition, s1, s2, injections, useAsmIfEnabled, builderIgnoresNullValues);
 
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(InstantiatorDefinition instantiatorDefinition, Class<?> s1, Class<?> s2, Map<org.simpleflatmapper.reflect.Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) {
+	public <S1, S2, T> BiInstantiator<S1, S2, T> getBiInstantiator(InstantiatorDefinition instantiatorDefinition, Class<?> s1, Class<?> s2, Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) {
 		checkParameters(instantiatorDefinition, injections.keySet());
 		if (asmFactory != null  && useAsmIfEnabled) {
 			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
@@ -61,7 +61,7 @@ public class InstantiatorFactory {
 				Member executable = executableInstantiatorDefinition.getExecutable();
 				if (Modifier.isPublic(executable.getModifiers())) {
 					try {
-						return asmFactory.createBiInstantiator(s1, s2, executableInstantiatorDefinition, injections);
+						return asmFactory.createBiInstantiator(s1, s2, executableInstantiatorDefinition, injections, builderIgnoresNullValues);
 					} catch (Exception e) {
 						// fall back on reflection
 						if (failOnAsmError) ErrorHelper.rethrow(e);
@@ -69,7 +69,7 @@ public class InstantiatorFactory {
 				}
 			} else {
 				try {
-					return asmFactory.createBiInstantiator(s1, s2, (BuilderInstantiatorDefinition)instantiatorDefinition, injections);
+					return asmFactory.createBiInstantiator(s1, s2, (BuilderInstantiatorDefinition)instantiatorDefinition, injections, builderIgnoresNullValues);
 				} catch (Exception e) {
 					// fall back on reflection
 					if (failOnAsmError) ErrorHelper.rethrow(e);
@@ -83,7 +83,7 @@ public class InstantiatorFactory {
 			case METHOD:
 				return methodBiInstantiator((ExecutableInstantiatorDefinition)instantiatorDefinition, injections);
 			case BUILDER:
-				return builderBiInstantiator((BuilderInstantiatorDefinition)instantiatorDefinition, injections, useAsmIfEnabled);
+				return builderBiInstantiator((BuilderInstantiatorDefinition)instantiatorDefinition, injections, useAsmIfEnabled, builderIgnoresNullValues);
 			default:
 				throw new IllegalArgumentException("Unsupported executable type " + instantiatorDefinition);
 		}
@@ -91,19 +91,19 @@ public class InstantiatorFactory {
 
 
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<S> source, List<InstantiatorDefinition> constructors, Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) throws SecurityException {
+	public <S, T> Instantiator<S, T> getInstantiator(Type target, final Class<S> source, List<InstantiatorDefinition> constructors, Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) throws SecurityException {
 		final InstantiatorDefinition instantiatorDefinition = getSmallerConstructor(constructors);
 
 		if (instantiatorDefinition == null) {
 			throw new IllegalArgumentException("No constructor available for " + target);
 		}
-		return getInstantiator(instantiatorDefinition, source, injections, useAsmIfEnabled);
+		return getInstantiator(instantiatorDefinition, source, injections, useAsmIfEnabled, builderIgnoresNullValues);
 
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> getInstantiator(InstantiatorDefinition instantiatorDefinition, Class<S> source, Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
+	public <S, T> Instantiator<S, T> getInstantiator(InstantiatorDefinition instantiatorDefinition, Class<S> source, Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) {
 		checkParameters(instantiatorDefinition, injections.keySet());
 		if (asmFactory != null  && useAsmIfEnabled) {
 			if (instantiatorDefinition instanceof ExecutableInstantiatorDefinition) {
@@ -111,7 +111,7 @@ public class InstantiatorFactory {
 				Member executable = executableInstantiatorDefinition.getExecutable();
 				if (Modifier.isPublic(executable.getModifiers())) {
 					try {
-						return asmFactory.createInstantiator(source, executableInstantiatorDefinition, injections);
+						return asmFactory.createInstantiator(source, executableInstantiatorDefinition, injections, builderIgnoresNullValues);
 					} catch (Exception e) {
 						// fall back on reflection
 						if (failOnAsmError) ErrorHelper.rethrow(e);
@@ -119,7 +119,7 @@ public class InstantiatorFactory {
 				}
 			} else {
 				try {
-					return asmFactory.createInstantiator(source, (BuilderInstantiatorDefinition)instantiatorDefinition, injections);
+					return asmFactory.createInstantiator(source, (BuilderInstantiatorDefinition)instantiatorDefinition, injections, builderIgnoresNullValues);
 				} catch (Exception e) {
 					// fall back on reflection
 					if (failOnAsmError) ErrorHelper.rethrow(e);
@@ -133,7 +133,7 @@ public class InstantiatorFactory {
 			case METHOD:
 				return methodInstantiator((ExecutableInstantiatorDefinition)instantiatorDefinition, injections);
 			case BUILDER:
-				return builderInstantiator((BuilderInstantiatorDefinition)instantiatorDefinition, injections, useAsmIfEnabled);
+				return builderInstantiator((BuilderInstantiatorDefinition)instantiatorDefinition, injections, useAsmIfEnabled, builderIgnoresNullValues);
 			default:
 				throw new IllegalArgumentException("Unsupported executable type " + instantiatorDefinition);
 		}
@@ -149,11 +149,11 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
 	private <S, T> Instantiator<S, T> builderInstantiator(BuilderInstantiatorDefinition instantiatorDefinition,
-														  Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled) {
+														  Map<Parameter, Getter<? super S, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) {
 
 		final Instantiator<Void, ?> buildInstantiator =
 				getInstantiator(instantiatorDefinition.getBuilderInstantiator(), Void.class,
-				 new HashMap<org.simpleflatmapper.reflect.Parameter, Getter<? super Void, ?>>(), useAsmIfEnabled);
+				 new HashMap<org.simpleflatmapper.reflect.Parameter, Getter<? super Void, ?>>(), useAsmIfEnabled, builderIgnoresNullValues);
 		List<MethodGetterPair<S>> chainedArguments = new ArrayList<MethodGetterPair<S>>();
 		List<MethodGetterPair<S>> unchainedArguments = new ArrayList<MethodGetterPair<S>>();
 
@@ -171,7 +171,7 @@ public class InstantiatorFactory {
 		return new BuilderInstantiator<S, T>(buildInstantiator,
 				chainedArguments.toArray(new MethodGetterPair[0]),
 				unchainedArguments.toArray(new MethodGetterPair[0]),
-				instantiatorDefinition.getBuildMethod(), true);
+				instantiatorDefinition.getBuildMethod(), builderIgnoresNullValues);
 	}
 
 	private <S, T> Instantiator<S, T> methodInstantiator(
@@ -201,11 +201,11 @@ public class InstantiatorFactory {
 
 	@SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
 	private <S1, S2, T> BiInstantiator<S1, S2, T>  builderBiInstantiator(BuilderInstantiatorDefinition instantiatorDefinition,
-																		 Map<org.simpleflatmapper.reflect.Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled) {
+																		 Map<Parameter, BiFunction<? super S1, ? super S2, ?>> injections, boolean useAsmIfEnabled, boolean builderIgnoresNullValues) {
 
 		final Instantiator<Void, ?> buildInstantiator =
 				getInstantiator(instantiatorDefinition.getBuilderInstantiator(), Void.class,
-						new HashMap<org.simpleflatmapper.reflect.Parameter, Getter<? super Void, ?>>(), useAsmIfEnabled);
+						new HashMap<org.simpleflatmapper.reflect.Parameter, Getter<? super Void, ?>>(), useAsmIfEnabled, builderIgnoresNullValues);
 		List<MethodBiFunctionPair<S1, S2>> chainedArguments = new ArrayList<MethodBiFunctionPair<S1, S2>>();
 		List<MethodBiFunctionPair<S1, S2>> unchainedArguments = new ArrayList<MethodBiFunctionPair<S1, S2>>();
 
@@ -223,7 +223,7 @@ public class InstantiatorFactory {
 		return new BuilderBiInstantiator<S1, S2, T>(buildInstantiator,
 				chainedArguments.toArray(new MethodBiFunctionPair[0]),
 				unchainedArguments.toArray(new MethodBiFunctionPair[0]),
-				instantiatorDefinition.getBuildMethod(), true);
+				instantiatorDefinition.getBuildMethod(), builderIgnoresNullValues);
 	}
 
 	private <S1, S2, T> BiInstantiator<S1, S2, T>  methodBiInstantiator(
@@ -275,13 +275,13 @@ public class InstantiatorFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <S, T> Instantiator<S, T> getOneArgIdentityInstantiator(InstantiatorDefinition id) {
+	public <S, T> Instantiator<S, T> getOneArgIdentityInstantiator(InstantiatorDefinition id, boolean builderIgnoresNullValues) {
 		if (id.getParameters().length != 1) {
 			throw new IllegalArgumentException("Definition does not have one param " + Arrays.asList(id.getParameters()));
 		}
 		Map<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>> injections = new HashMap<org.simpleflatmapper.reflect.Parameter, Getter<? super S, ?>>();
 		injections.put(id.getParameters()[0], new IdentityGetter<S>());
-		return getInstantiator(id, (Class<S>) id.getParameters()[0].getType(), injections, true);
+		return getInstantiator(id, (Class<S>) id.getParameters()[0].getType(), injections, true, builderIgnoresNullValues);
 	}
 
 

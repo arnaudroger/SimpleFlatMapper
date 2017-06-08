@@ -175,7 +175,7 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 			Collection<Type> types) {
 
 		Instantiator<? super T, ? extends P> instantiator =
-				classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id);
+				classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id, classMeta.getReflectionService().builderIgnoresNullValues());
 
 		final Type sourceType = id.getParameters()[0].getGenericType();
 

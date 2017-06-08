@@ -2,7 +2,6 @@ package org.simpleflatmapper.reflect.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.reflect.BiInstantiator;
-import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
 import org.simpleflatmapper.reflect.Parameter;
@@ -11,11 +10,9 @@ import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.getter.BiFunctionGetter;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
-import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.test.beans.DbFinalPrimitiveObject;
 import org.simpleflatmapper.util.BiFunction;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +96,7 @@ public class BiInstantiatorFactoryTest {
 						Object.class,
 						Object.class,
 						AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalPrimitiveObject.class),
-						new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
+						new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true, true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null, null);
 		assertNotNull(object);
 	}
@@ -111,7 +108,7 @@ public class BiInstantiatorFactoryTest {
 						Object.class,
 						Object.class,
 						AsmInstantiatorDefinitionFactory.extractDefinitions(DbFinalPrimitiveObject.class),
-						new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
+						new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true, true);
 		DbFinalPrimitiveObject object = instantiator.newInstance(null, null);
 		assertNotNull(object);
 	}
@@ -124,7 +121,7 @@ public class BiInstantiatorFactoryTest {
 						long.class,
 						long.class,
 						AsmInstantiatorDefinitionFactory.extractDefinitions(MyClassWithFactoryMethodPrimitiveType.class),
-						new HashMap<Parameter, BiFunction<? super Long, ? super Long, ?>>(), true);
+						new HashMap<Parameter, BiFunction<? super Long, ? super Long, ?>>(), true, true);
 		MyClassWithFactoryMethodPrimitiveType object = instantiator.newInstance(1l, 2l);
 		assertNotNull(object);
 	}
@@ -136,7 +133,7 @@ public class BiInstantiatorFactoryTest {
 								Object.class,
 								Object.class,
 								ReflectionService.newInstance().extractInstantiator(MyClassWithFactoryMethod.class),
-								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
+								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true, true);
 
 		assertTrue(instantiator.getClass().getSimpleName().startsWith("Asm"));
 		final MyClassWithFactoryMethod object = instantiator.newInstance(null, null);
@@ -152,7 +149,7 @@ public class BiInstantiatorFactoryTest {
 								Object.class,
 								Object.class,
 								ReflectionService.disableAsm().extractInstantiator(MyClassWithFactoryMethod.class),
-								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
+								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true, true);
 
 		assertFalse(instantiator.getClass().getSimpleName().startsWith("Asm"));
 		final MyClassWithFactoryMethod object = instantiator.newInstance(null, null);
@@ -168,7 +165,7 @@ public class BiInstantiatorFactoryTest {
 								Object.class,
 								Object.class,
 								ReflectionService.disableAsm().extractInstantiator(MyClassWithEmptyFactoryMethod.class),
-								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
+								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true, true);
 
 		assertFalse(instantiator.getClass().getSimpleName().startsWith("Asm"));
 		final MyClassWithEmptyFactoryMethod object = instantiator.newInstance(null, null);
@@ -184,7 +181,7 @@ public class BiInstantiatorFactoryTest {
 								Object.class,
 								Object.class,
 								ReflectionService.newInstance().extractInstantiator(MyClassWithFactoryMethodAndConstructor.class),
-								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
+								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true, true);
 
 		final MyClassWithFactoryMethodAndConstructor object = instantiator.newInstance(null, null);
 		assertNotNull(object);
@@ -201,7 +198,7 @@ public class BiInstantiatorFactoryTest {
 								Object.class,
 								Object.class,
 								ReflectionService.newInstance().extractInstantiator(MyClassWithEmptyConstructor.class),
-								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
+								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true, true);
 
 		final MyClassWithEmptyConstructor object = instantiator.newInstance(null, null);
 		assertNotNull(object);
@@ -217,7 +214,7 @@ public class BiInstantiatorFactoryTest {
 								Object.class,
 								Object.class,
 								ReflectionService.newInstance().extractInstantiator(MyClassWithEmptyConstructor.class),
-								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true);
+								new HashMap<Parameter, BiFunction<? super Object, ? super Object, ?>>(), true, true);
 
 		final MyClassWithEmptyConstructor object = instantiator.newInstance(null, null);
 		assertNotNull(object);
@@ -242,13 +239,13 @@ public class BiInstantiatorFactoryTest {
 				ASM.getBiInstantiator(ClassExample.class, Object.class, Object.class,
 						constructors,
 						injections1,
-						true);
+						true, true);
 
 		final BiInstantiator<Object, Object, ClassExample> instantiator2 =
 				ASM.getBiInstantiator(ClassExample.class, Object.class, Object.class,
 						constructors,
 						injections2,
-						true);
+						true, true);
 
 
 		ClassExample c1  = instantiator1.newInstance(null, null);
@@ -277,7 +274,7 @@ public class BiInstantiatorFactoryTest {
 					ASM.getBiInstantiator(ClassExample.class, Object.class, Object.class,
 							constructors,
 							injections1,
-							true);
+							true, true);
 			fail();
 		} catch (IllegalArgumentException e) {
 			// expected

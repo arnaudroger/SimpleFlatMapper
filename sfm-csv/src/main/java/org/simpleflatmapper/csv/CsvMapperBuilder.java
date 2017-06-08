@@ -256,7 +256,7 @@ public class CsvMapperBuilder<T> {
 							public <P> Getter<CsvMapperCellHandler<T>, P> newGetter(Type target, CsvColumnKey key, Object... properties) {
 								return newDelayedGetter(target, key, properties);
 							}
-						});
+						}, reflectionService.builderIgnoresNullValues());
 		} catch(Exception e) {
             return ErrorHelper.rethrow(e);
 		}

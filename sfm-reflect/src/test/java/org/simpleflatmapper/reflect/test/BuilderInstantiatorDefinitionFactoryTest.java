@@ -57,7 +57,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null);
         assertFalse((instantiator instanceof BuilderInstantiator));
@@ -89,7 +89,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null);
 
@@ -122,7 +122,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null);
 
@@ -152,7 +152,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, false);
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, false, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null);
 
@@ -184,7 +184,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null);
 
@@ -217,7 +217,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null);
 
@@ -249,7 +249,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null, true);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, false);
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, false, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null);
 
@@ -281,7 +281,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null);
 
@@ -313,7 +313,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null, true);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, false);
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, false, true);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null);
 

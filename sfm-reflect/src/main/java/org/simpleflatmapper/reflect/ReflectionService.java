@@ -61,6 +61,7 @@ public class ReflectionService {
 	private final InstantiatorFactory instantiatorFactory;
 	private final AsmFactory asmFactory;
 	private final AliasProvider aliasProvider;
+	private final boolean builderIgnoresNullValues;
 
 
 	private final ConcurrentMap<Type, ClassMeta<?>> metaCache = new ConcurrentHashMap<Type, ClassMeta<?>>();
@@ -71,20 +72,21 @@ public class ReflectionService {
 				new ObjectGetterFactory(asmFactory),
 				new InstantiatorFactory(asmFactory),
 				asmFactory,
-				AliasProviderService.getAliasProvider()
-			);
+				AliasProviderService.getAliasProvider(),
+				true);
 	}
 
 	private ReflectionService(ObjectSetterFactory objectSetterFactory,
 							  ObjectGetterFactory objectGetterFactory,
 							  InstantiatorFactory instantiatorFactory,
 							  AsmFactory asmFactory,
-							  AliasProvider aliasProvider) {
+							  AliasProvider aliasProvider, boolean builderIgnoresNullValues) {
 		this.objectSetterFactory = objectSetterFactory;
 		this.objectGetterFactory = objectGetterFactory;
 		this.instantiatorFactory = instantiatorFactory;
 		this.asmFactory = asmFactory;
 		this.aliasProvider = aliasProvider;
+		this.builderIgnoresNullValues = builderIgnoresNullValues;
 		initPredefined();
 	}
 
@@ -254,9 +256,22 @@ public class ReflectionService {
 				objectGetterFactory,
 				instantiatorFactory,
 				asmFactory,
-				aliasProvider);
+				aliasProvider, builderIgnoresNullValues);
 	}
 
-	public interface ClassMetaFactoryProducer extends ProducerServiceLoader.Producer<UnaryFactory<ReflectionService, ClassMeta<?>>> {
+	public ReflectionService withBuilderIgnoresNullValues(boolean builderIgnoresNullValues) {
+		return new ReflectionService(
+				objectSetterFactory,
+				objectGetterFactory,
+				instantiatorFactory,
+				asmFactory,
+				aliasProvider, builderIgnoresNullValues);
+	}
+
+	public boolean builderIgnoresNullValues() {
+		return builderIgnoresNullValues;
+	}
+
+    public interface ClassMetaFactoryProducer extends ProducerServiceLoader.Producer<UnaryFactory<ReflectionService, ClassMeta<?>>> {
 	}
 }

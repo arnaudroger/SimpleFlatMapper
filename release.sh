@@ -16,8 +16,8 @@ function java6 {
 #echo "change versions"
 #exit
 java8
-REL=3.11.8
-DEV=3.12-SNAPSHOT
+REL=3.12-rc0
+DEV=3.13-SNAPSHOT
 mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL \
                  -DdevelopmentVersion=$DEV

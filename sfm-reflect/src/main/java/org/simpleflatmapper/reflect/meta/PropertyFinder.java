@@ -117,15 +117,15 @@ public abstract class PropertyFinder<T> {
 		}
 
 		private int getterSetterCompare(PropertyMeta<?, ?> p1, PropertyMeta<?, ?> p2) {
-			return nbGetterSetter(p1) - nbGetterSetter(p2);
+			return nbGetterSetter(p2) - nbGetterSetter(p1);
 		}
 
 		private int nbGetterSetter(PropertyMeta<?, ?> p) {
 			int c = 0;
-			if (NullGetter.isNull(p.getGetter())) {
+			if (!NullGetter.isNull(p.getGetter())) {
 				c++;
 			}
-			if (NullSetter.isNull(p.getSetter())) {
+			if (!NullSetter.isNull(p.getSetter())) {
 				c++;
 			}
 			return c;
@@ -133,6 +133,16 @@ public abstract class PropertyFinder<T> {
 
 		public void select() {
 			if (selectionCallback != null) selectionCallback.run();
+		}
+
+		@Override
+		public String toString() {
+			return "MatchedProperty{" +
+					"propertyMeta=" + propertyMeta +
+					", score=" + score + ":" + nbGetterSetter(propertyMeta) +
+					", getter=" + propertyMeta.getGetter() +
+					", setter=" + propertyMeta.getSetter() +
+					'}';
 		}
 	}
 

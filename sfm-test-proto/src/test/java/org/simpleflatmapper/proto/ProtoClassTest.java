@@ -1,11 +1,15 @@
 package org.simpleflatmapper.proto;
 
+import com.google.protobuf.Timestamp;
 import org.junit.Test;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.map.property.DateFormatProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
+import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.util.Predicate;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -107,6 +111,25 @@ message AddressBook {
 
         assertEquals("arnaud", person.getName());
         assertEquals(new SimpleDateFormat("yyyyMMdd").parse("20170607").getTime(), person.getTs().getSeconds() * 1000);
+
+    }
+    
+    
+    @Test
+    public void testClassMeta() throws Exception {
+
+        ClassMeta<AddressBookProtos.Person> classMeta = ReflectionService
+                .newInstance()
+                .getClassMeta(AddressBookProtos.Person.class);
+
+        PropertyMeta<AddressBookProtos.Person, Object> ts = classMeta.newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+            @Override
+            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                return true;
+            }
+        }).findProperty(DefaultPropertyNameMatcher.of("ts"));
+        
+        assertEquals(Timestamp.class, ts.getPropertyType());
 
     }
 }

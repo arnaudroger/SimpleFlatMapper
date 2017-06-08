@@ -129,7 +129,6 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 				final String name = method.getName();
 				if (SetterHelper.isSetter(method)) {
 					final String propertyName = SetterHelper.getPropertyNameFromMethodName(name);
-
 					Setter<T, Object> methodSetter = reflectService.getObjectSetterFactory().getMethodSetter(method);
 					register(propertyName,
 							method.getGenericParameterTypes()[0],
@@ -137,7 +136,6 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 							ScoredSetter.ofMethod(method, methodSetter), getDefineProperties(method));
 				} else if (GetterHelper.isGetter(method)) {
 					final String propertyName = GetterHelper.getPropertyNameFromMethodName(name);
-
 					Getter<T, Object> methodGetter = reflectService.getObjectGetterFactory().getMethodGetter(method);
 					register(propertyName,
 							method.getGenericReturnType(),
@@ -157,8 +155,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 				}
 
 
-				int indexOfProperty = findProperty(constructorProperties, propertyName);
-
+				int indexOfProperty = findProperty(constructorProperties, propertyName, type);
 				if (indexOfProperty != -1) {
 					ConstructorPropertyMeta<T, P> constructorPropertyMeta = (ConstructorPropertyMeta<T, P>) constructorProperties.get(indexOfProperty);
 					if (defineProperties != null && defineProperties.length > 0) {
@@ -174,7 +171,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 						constructorProperties.set(indexOfProperty, constructorPropertyMeta);
 					}
 				} else {
-					indexOfProperty = findProperty(properties, propertyName);
+					indexOfProperty = findProperty(properties, propertyName, type);
 					if (indexOfProperty == -1) {
 						properties.add(new ObjectPropertyMeta<T, P>(propertyName, targetType, reflectService, type, getter, setter, defineProperties));
 					} else {
@@ -182,6 +179,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
 						ScoredGetter<T, P> compatibleGetter = GetterHelper.isCompatible(meta.getPropertyType(), type) ? getter : ScoredGetter.<T, P>nullGetter();
 						ScoredSetter<T, P> compatibleSetter = SetterHelper.isCompatible(meta.getPropertyType(), type) ? setter : ScoredSetter.<T, P>nullSetter();
+
 						properties.set(indexOfProperty,
 								meta.getterSetter(compatibleGetter, compatibleSetter, defineProperties));
 					}
@@ -214,11 +212,12 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 				}
 			}
 
-            private int findProperty(List<? extends PropertyMeta<T, ?>> properties, String name) {
+            private int findProperty(List<? extends PropertyMeta<T, ?>> properties, String name, Type type) {
                 for(int i = 0; i < properties.size(); i++) {
 					PropertyMeta<T, ?> propertyMeta = properties.get(i);
 					String propertyMetaName = propertyMeta.getName();
-					if (propertyMetaName != null && propertyMetaName.equals(name)) {
+					if (propertyMetaName != null && propertyMetaName.equals(name) && 
+							TypeHelper.isAssignable(propertyMeta.getPropertyType(), type)) {
                         return i;
                     }
                 }

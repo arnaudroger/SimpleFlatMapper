@@ -110,9 +110,9 @@
 									<fork>true</fork>
 									<compilerArgs>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.converter.joda/org.simpleflatmapper.converter.joda.impl=simpleflatmapper.converter.joda.test</arg>
+										<arg>org.simpleflatmapper.converter.joda/org.simpleflatmapper.converter.joda.impl=org.simpleflatmapper.converter.joda.test</arg>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.converter.joda/org.simpleflatmapper.converter.joda=simpleflatmapper.converter.joda.test</arg>
+										<arg>org.simpleflatmapper.converter.joda/org.simpleflatmapper.converter.joda=org.simpleflatmapper.converter.joda.test</arg>
 									</compilerArgs>
 								</configuration>
 								<goals>

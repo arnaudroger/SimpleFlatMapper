@@ -1,7 +1,7 @@
-module simpleflatmapper.map {
+module org.simpleflatmapper.map {
         requires java.logging;
 
-        requires transitive simpleflatmapper.reflect;
+        requires transitive org.simpleflatmapper.reflect;
 
         exports org.simpleflatmapper.map;
         exports org.simpleflatmapper.map.context;

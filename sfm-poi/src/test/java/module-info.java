@@ -1,7 +1,7 @@
-module simpleflatmapper.poi.test {
+module org.simpleflatmapper.poi.test {
 
-        requires simpleflatmapper.poi;
-        requires simpleflatmapper.csv;
+        requires org.simpleflatmapper.poi;
+        requires org.simpleflatmapper.csv;
         requires junit;
         requires sfm.test;
         requires joda.time;

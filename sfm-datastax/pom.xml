@@ -225,7 +225,7 @@
 
 									<compilerArgs>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.datastax/org.simpleflatmapper.datastax.impl=simpleflatmapper.datastax.test</arg>
+										<arg>org.simpleflatmapper.datastax/org.simpleflatmapper.datastax.impl=org.simpleflatmapper.datastax.test</arg>
 									</compilerArgs>
 									<testExcludes>
 										<exclude>**/src/test/java/org/simpleflatmapper/datastax/test/DatastaxHelper.java</exclude>

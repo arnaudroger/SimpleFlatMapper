@@ -167,7 +167,7 @@
 									<fork>true</fork>
 									<compilerArgs>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.poi/org.simpleflatmapper.poi.impl=simpleflatmapper.poi.test</arg>
+										<arg>org.simpleflatmapper.poi/org.simpleflatmapper.poi.impl=org.simpleflatmapper.poi.test</arg>
 									</compilerArgs>
 								</configuration>
 								<goals>

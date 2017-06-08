@@ -1,5 +1,5 @@
-module simpleflatmapper.jdbc {
-    requires transitive simpleflatmapper.map;
+module org.simpleflatmapper.jdbc {
+    requires transitive org.simpleflatmapper.map;
 
     requires transitive java.sql;
 

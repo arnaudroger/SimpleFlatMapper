@@ -227,17 +227,17 @@
 									<fork>true</fork>
 									<compilerArgs>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.csv/org.simpleflatmapper.csv.mapper=simpleflatmapper.csv.test</arg>
+										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.csv.mapper=org.simpleflatmapper.csv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.csv/org.simpleflatmapper.csv.impl=simpleflatmapper.csv.test</arg>
+										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.csv.impl=org.simpleflatmapper.csv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.csv/org.simpleflatmapper.csv.impl.cellreader=simpleflatmapper.csv.test</arg>
+										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.csv.impl.cellreader=org.simpleflatmapper.csv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.csv/org.simpleflatmapper.csv.impl.primitive=simpleflatmapper.csv.test</arg>
+										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.csv.impl.primitive=org.simpleflatmapper.csv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.csv/org.simpleflatmapper.csv.impl.writer=simpleflatmapper.csv.test</arg>
+										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.csv.impl.writer=org.simpleflatmapper.csv.test</arg>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.csv/org.simpleflatmapper.csv.parser=simpleflatmapper.csv.test</arg>
+										<arg>org.simpleflatmapper.csv/org.simpleflatmapper.csv.parser=org.simpleflatmapper.csv.test</arg>
 									</compilerArgs>
 								</configuration>
 								<goals>

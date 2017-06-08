@@ -104,9 +104,9 @@
 									<fork>true</fork>
 									<compilerArgs>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.converter.protobuf/org.simpleflatmapper.converter.protobuf.impl=simpleflatmapper.converter.protobuf.test</arg>
+										<arg>org.simpleflatmapper.converter.protobuf/org.simpleflatmapper.converter.protobuf.impl=org.simpleflatmapper.converter.protobuf.test</arg>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.converter.protobuf/org.simpleflatmapper.converter.protobuf=simpleflatmapper.converter.protobuf.test</arg>
+										<arg>org.simpleflatmapper.converter.protobuf/org.simpleflatmapper.converter.protobuf=org.simpleflatmapper.converter.protobuf.test</arg>
 									</compilerArgs>
 								</configuration>
 								<goals>

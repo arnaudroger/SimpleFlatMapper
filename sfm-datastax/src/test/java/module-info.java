@@ -1,9 +1,9 @@
-module simpleflatmapper.datastax.test {
-        requires simpleflatmapper.datastax;
-        requires simpleflatmapper.tuple;
-        requires simpleflatmapper.reflect;
-        requires simpleflatmapper.converter;
-        requires simpleflatmapper.converter.joda;
+module org.simpleflatmapper.datastax.test {
+        requires org.simpleflatmapper.datastax;
+        requires org.simpleflatmapper.tuple;
+        requires org.simpleflatmapper.reflect;
+        requires org.simpleflatmapper.converter;
+        requires org.simpleflatmapper.converter.joda;
 
         requires cassandra.driver.mapping;
 
@@ -12,5 +12,5 @@ module simpleflatmapper.datastax.test {
         requires mockito.core;
         requires joda.time;
 
-        requires simpleflatmapper.map.test;
+        requires org.simpleflatmapper.map.test;
  }

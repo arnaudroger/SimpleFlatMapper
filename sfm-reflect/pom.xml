@@ -270,7 +270,7 @@
 									<fork>true</fork>
 									<compilerArgs>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.reflect/org.simpleflatmapper.reflect.impl=simpleflatmapper.reflect.test</arg>
+										<arg>org.simpleflatmapper.reflect/org.simpleflatmapper.reflect.impl=org.simpleflatmapper.reflect.test</arg>
 									</compilerArgs>
                                 </configuration>
                                 <goals>

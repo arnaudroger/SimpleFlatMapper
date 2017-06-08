@@ -1,6 +1,6 @@
-module simpleflatmapper.jdbc.spring {
-        requires transitive simpleflatmapper.map;
-        requires simpleflatmapper.jdbc;
+module org.simpleflatmapper.jdbc.spring {
+        requires transitive org.simpleflatmapper.map;
+        requires org.simpleflatmapper.jdbc;
         requires transitive spring.jdbc;
         requires transitive spring.tx;
         requires transitive spring.beans;

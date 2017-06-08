@@ -1,5 +1,5 @@
-module simpleflatmapper.jooq.test {
-        requires simpleflatmapper.jooq;
+module org.simpleflatmapper.jooq.test {
+        requires org.simpleflatmapper.jooq;
 
         requires java.sql;
         requires junit;

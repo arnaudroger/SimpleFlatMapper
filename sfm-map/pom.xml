@@ -246,11 +246,11 @@
 									<fork>true</fork>
 									<compilerArgs>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.map/org.simpleflatmapper.map.context.impl=simpleflatmapper.map.test</arg>
+										<arg>org.simpleflatmapper.map/org.simpleflatmapper.map.context.impl=org.simpleflatmapper.map.test</arg>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.map/org.simpleflatmapper.map.impl=simpleflatmapper.map.test</arg>
+										<arg>org.simpleflatmapper.map/org.simpleflatmapper.map.impl=org.simpleflatmapper.map.test</arg>
 										<arg>--add-exports</arg>
-										<arg>simpleflatmapper.map/org.simpleflatmapper.map.asm=simpleflatmapper.map.test</arg>
+										<arg>org.simpleflatmapper.map/org.simpleflatmapper.map.asm=org.simpleflatmapper.map.test</arg>
 									</compilerArgs>
 								</configuration>
 								<goals>

@@ -1,6 +1,6 @@
-module simpleflatmapper.jdbi3 {
-        requires transitive simpleflatmapper.map;
-        requires simpleflatmapper.jdbc;
+module org.simpleflatmapper.jdbi3 {
+        requires transitive org.simpleflatmapper.map;
+        requires org.simpleflatmapper.jdbc;
         requires transitive jdbi3;
         requires transitive java.sql;
 

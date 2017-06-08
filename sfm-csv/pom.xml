@@ -37,12 +37,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
-			<artifactId>ow2asm</artifactId>
-			<version>3.12-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-tuples</artifactId>
 			<version>3.12-SNAPSHOT</version>
 			<classifier>${jar.classifier}</classifier>

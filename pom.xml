@@ -44,25 +44,6 @@
         <jar.classifier />
     </properties>
 
-    <modules>
-        <module>sfm-util</module>
-        <module>sfm-reflect</module>
-        <module>sfm-map</module>
-        <module>sfm-tuples</module>
-        <module>sfm-converter</module>
-        <module>sfm-converter-joda-time</module>
-        <module>sfm-converter-protobuf</module>
-        <module>sfm-csv</module>
-        <module>sfm-jdbc</module>
-        <module>sfm-datastax</module>
-        <module>sfm-jooq</module>
-        <module>sfm-poi</module>
-        <module>sfm-querydsl</module>
-        <module>sfm-springjdbc</module>
-        <module>sfm-jdbi</module>
-        <module>sfm-test</module>
-        <module>ow2.asm/ASM_5_1</module>
-  </modules>
 
     <build>
         <pluginManagement>
@@ -129,6 +110,34 @@
     </dependencies>
 
     <profiles>
+        
+        <profile>
+            <id>non-java9</id>
+            <activation>
+                <jdk>[1.6,1.9)</jdk>
+            </activation>
+
+            <modules>
+                <module>ow2.asm/ASM_5_1</module>
+                <module>sfm-util</module>
+                <module>sfm-reflect</module>
+                <module>sfm-map</module>
+                <module>sfm-tuples</module>
+                <module>sfm-converter</module>
+                <module>sfm-converter-joda-time</module>
+                <module>sfm-converter-protobuf</module>
+                <module>sfm-csv</module>
+                <module>sfm-jdbc</module>
+                <module>sfm-datastax</module>
+                <module>sfm-jooq</module>
+                <module>sfm-poi</module>
+                <module>sfm-querydsl</module>
+                <module>sfm-springjdbc</module>
+                <module>sfm-jdbi</module>
+                <module>sfm-test</module>
+            </modules>
+        </profile>
+            
         <profile>
             <id>travis</id>
             <activation>
@@ -415,9 +424,25 @@
             </properties>
 
             <modules>
+                <module>ow2.asm/ASM_6_0_ALPHA</module>
+                <module>sfm-util</module>
+                <module>sfm-reflect</module>
+                <module>sfm-map</module>
+                <module>sfm-tuples</module>
+                <module>sfm-converter</module>
+                <module>sfm-converter-joda-time</module>
+                <module>sfm-converter-protobuf</module>
+                <module>sfm-csv</module>
+                <module>sfm-jdbc</module>
+                <module>sfm-datastax</module>
+                <module>sfm-jooq</module>
+                <module>sfm-poi</module>
+                <module>sfm-querydsl</module>
+                <module>sfm-springjdbc</module>
+                <module>sfm-jdbi</module>
+                <module>sfm-test</module>
                 <module>sfm-sql2o</module>
                 <module>sfm-jdbi3</module>
-                <module>ow2.asm/ASM_6_0_ALPHA</module>
             </modules>
             <build>
                 <plugins>
@@ -425,7 +450,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.6.0</version>
+                        <version>3.6.1</version>
                         <configuration>
                             <source>9</source>
                             <target>9</target>

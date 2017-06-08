@@ -1,7 +1,7 @@
 module simpleflatmapper.jdbi3 {
         requires transitive simpleflatmapper.map;
         requires simpleflatmapper.jdbc;
-        requires transitive jdbi;
+        requires transitive jdbi3;
         requires transitive java.sql;
 
         exports org.simpleflatmapper.jdbi3;

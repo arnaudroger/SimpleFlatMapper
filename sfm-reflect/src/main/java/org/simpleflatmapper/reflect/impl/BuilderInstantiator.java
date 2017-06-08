@@ -13,16 +13,18 @@ public final class BuilderInstantiator<S, T> implements Instantiator<S, T> {
 	private final MethodGetterPair<S>[] chainedArguments;
 	private final MethodGetterPair<S>[] unchainedArguments;
 	private final Method buildMethod;
+	private final boolean ignoreNullValues;
 
 	public BuilderInstantiator(
 			Instantiator<Void, ?> builderInstantiator,
 			MethodGetterPair<S>[] chainedArguments,
 			MethodGetterPair<S>[] unchainedArguments,
-			Method buildMethod) {
+			Method buildMethod, boolean ignoreNullValues) {
 		this.builderInstantiator = builderInstantiator;
 		this.chainedArguments = chainedArguments;
 		this.unchainedArguments = unchainedArguments;
 		this.buildMethod = buildMethod;
+		this.ignoreNullValues = ignoreNullValues;
 	}
 
 
@@ -32,10 +34,16 @@ public final class BuilderInstantiator<S, T> implements Instantiator<S, T> {
 		try {
 			Object builder = builderInstantiator.newInstance(null);
 			for (MethodGetterPair<S> argument : chainedArguments) {
-				builder = argument.getMethod().invoke(builder, argument.getGetter().get(s));
+				Object v = argument.getGetter().get(s);
+				if (!ignoreNullValues || v != null) {
+					builder = argument.getMethod().invoke(builder, v);
+				}
 			}
 			for (MethodGetterPair<S> argument : unchainedArguments) {
-				argument.getMethod().invoke(builder, argument.getGetter().get(s));
+				Object v = argument.getGetter().get(s);
+				if (!ignoreNullValues || v != null) {
+					argument.getMethod().invoke(builder, v);
+				}
 			}
 			return (T) buildMethod.invoke(builder);
 		} catch (InvocationTargetException e) {

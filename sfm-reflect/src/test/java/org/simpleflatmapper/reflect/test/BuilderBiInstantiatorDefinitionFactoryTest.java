@@ -70,6 +70,70 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
         assertEquals(3, o.getId());
     }
 
+
+    @Test
+    public void testBuilderFromMethodNullHandling() throws Exception {
+        final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
+
+        assertEquals(1, instantiatorDefinitions.size());
+
+        BuilderInstantiatorDefinition b = (BuilderInstantiatorDefinition) instantiatorDefinitions.get(0);
+
+        final Parameter[] parameters = b.getParameters();
+
+        Arrays.sort(parameters, new Comparator<Parameter>() {
+            @Override
+            public int compare(Parameter o1, Parameter o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+
+        Map<Parameter, BiFunction<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFunction<? super Void, ? super Object, ?>>();
+        params.put(parameters[1], new ConstantBiFunction<Void, Object, String>(null));
+        params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(null));
+
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
+        final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true);
+        final ClassBuilderWithMethod o = instantiator
+                .newInstance(null, null);
+
+        assertEquals(null, o.getName());
+        assertEquals(0, o.getId());
+    }
+
+
+    @Test
+    public void testBuilderFromMethodNoAsmNullHandling() throws Exception {
+        final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
+
+        assertEquals(1, instantiatorDefinitions.size());
+
+        BuilderInstantiatorDefinition b = (BuilderInstantiatorDefinition) instantiatorDefinitions.get(0);
+
+        final Parameter[] parameters = b.getParameters();
+
+        Arrays.sort(parameters, new Comparator<Parameter>() {
+            @Override
+            public int compare(Parameter o1, Parameter o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+
+        Map<Parameter, BiFunction<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFunction<? super Void, ? super Object, ?>>();
+        params.put(parameters[1], new ConstantBiFunction<Void, Object, String>(null));
+        params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(null));
+
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
+        final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, false);
+        final ClassBuilderWithMethod o = instantiator
+                .newInstance(null, null);
+
+        assertEquals(null, o.getName());
+        assertEquals(0, o.getId());
+    }
+    
     @Test
     public void testBuilderFromMethodNoAsm() throws Exception {
         final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
@@ -93,7 +157,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
         final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true);
+                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, false);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null, null);
 
@@ -166,6 +230,38 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
         assertEquals("zrux", o.getZrux());
     }
 
+
+    @Test
+    public void testBuilderFromMethodVoidNullHandling() throws Exception {
+        final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
+
+        assertEquals(1, instantiatorDefinitions.size());
+
+        BuilderInstantiatorDefinition b = (BuilderInstantiatorDefinition) instantiatorDefinitions.get(0);
+
+        final Parameter[] parameters = b.getParameters();
+
+        Arrays.sort(parameters, new Comparator<Parameter>() {
+            @Override
+            public int compare(Parameter o1, Parameter o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        Map<Parameter, BiFunction<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFunction<? super Void, ? super Object, ?>>();
+        params.put(parameters[2], new ConstantBiFunction<Void, Object, String>(null));
+        params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(null));
+
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, Object,ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true);
+        final ClassBuilderWithMethod o = instantiator
+                .newInstance(null, null);
+
+        assertFalse((instantiator instanceof BuilderBiInstantiator));
+        assertEquals(0, o.getId());
+        assertEquals(null, o.getZrux());
+    }
+
     @Test
     public void testBuilderFromMethodVoidNoAsm() throws Exception {
         final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
@@ -196,6 +292,39 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
         assertEquals(3, o.getId());
         assertEquals("zrux", o.getZrux());
     }
+
+
+    @Test
+    public void testBuilderFromMethodVoidNoAsmNullHandling() throws Exception {
+        final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
+
+        assertEquals(1, instantiatorDefinitions.size());
+
+        BuilderInstantiatorDefinition b = (BuilderInstantiatorDefinition) instantiatorDefinitions.get(0);
+
+        final Parameter[] parameters = b.getParameters();
+
+        Arrays.sort(parameters, new Comparator<Parameter>() {
+            @Override
+            public int compare(Parameter o1, Parameter o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        Map<Parameter, BiFunction<? super Void, ? super Object, ?>> params = new HashMap<Parameter, BiFunction<? super Void, ? super Object, ?>>();
+        params.put(parameters[2], new ConstantBiFunction<Void, Object, String>(null));
+        params.put(parameters[0], new ConstantBiFunction<Void, Object, Integer>(null));
+
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null, true);
+        final BiInstantiator<Void, Object, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, Object, ClassBuilderWithMethod>getBiInstantiator(b, Void.class, Object.class, params, true);
+        final ClassBuilderWithMethod o = instantiator
+                .newInstance(null, null);
+
+        assertTrue((instantiator instanceof BuilderBiInstantiator));
+        assertEquals(0, o.getId());
+        assertEquals(null, o.getZrux());
+    }
+    
     public static abstract class ClassBuilderWithMethod {
 
         public abstract String getName();
@@ -229,6 +358,7 @@ public class BuilderBiInstantiatorDefinitionFactoryTest {
             }
 
             public Builder name(String name) {
+                if (name == null) throw new NullPointerException();
                 return new Builder(name, id, zrux);
             }
 

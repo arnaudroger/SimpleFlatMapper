@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.asm;
 
 import org.simpleflatmapper.ow2asm.ClassWriter;
 import org.simpleflatmapper.ow2asm.FieldVisitor;
+import org.simpleflatmapper.ow2asm.Label;
 import org.simpleflatmapper.ow2asm.MethodVisitor;
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
@@ -20,6 +21,7 @@ import org.simpleflatmapper.reflect.primitive.IntGetter;
 import org.simpleflatmapper.reflect.primitive.LongGetter;
 import org.simpleflatmapper.reflect.primitive.ShortGetter;
 import org.simpleflatmapper.util.BiFunction;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Constructor;
@@ -45,6 +47,7 @@ import static org.simpleflatmapper.ow2asm.Opcodes.ASTORE;
 import static org.simpleflatmapper.ow2asm.Opcodes.CHECKCAST;
 import static org.simpleflatmapper.ow2asm.Opcodes.DUP;
 import static org.simpleflatmapper.ow2asm.Opcodes.GETFIELD;
+import static org.simpleflatmapper.ow2asm.Opcodes.IFNULL;
 import static org.simpleflatmapper.ow2asm.Opcodes.INVOKEINTERFACE;
 import static org.simpleflatmapper.ow2asm.Opcodes.INVOKESPECIAL;
 import static org.simpleflatmapper.ow2asm.Opcodes.INVOKESTATIC;
@@ -223,7 +226,7 @@ public class BiInstantiatorBuilder {
             if (function == null) {
                 newInstanceNullFunction(mv, p);
             } else {
-                invokeBiFunction(function, classType, s1, s2, mv);
+                invokeBiFunction(function, classType, s1, s2, mv, null, false);
             }
         }
 
@@ -258,24 +261,34 @@ public class BiInstantiatorBuilder {
 
         mv.visitVarInsn(ASTORE, 2);
 
-        for (Entry<Parameter, Method> e : setters.entrySet()) {
-            mv.visitVarInsn(ALOAD, 2);
+        for (final Entry<Parameter, Method> e : setters.entrySet()) {
+
             Parameter p = e.getKey();
 
-            InjectionPoint injectionPoint = findFunctionCalls(p, injectionPoints);
+            final InjectionPoint injectionPoint = findFunctionCalls(p, injectionPoints);
 
-            if (injectionPoint == null) {
-                newInstanceNullFunction(mv, p);
-            } else {
+            if (injectionPoint != null) {
 
-                invokeBiFunction(injectionPoint, classType, s1, s2, mv);
+                final boolean checkIfNull = !injectionPoint.isPrimitive;
+                
+                mv.visitVarInsn(ALOAD, 2);
+                
+                invokeBiFunction(injectionPoint, classType, s1, s2, mv,
 
-                AsmUtils.invoke(mv, TypeHelper.toClass(builderClass), e.getValue().getName(),
-                        AsmUtils.toSignature(e.getValue()));
-
-                if (!Void.TYPE.equals(e.getValue().getReturnType())) {
-                    mv.visitVarInsn(ASTORE, 2);
-                }
+                        new Consumer<MethodVisitor>() {
+                            @Override
+                            public void accept(MethodVisitor mv) {
+                                if (checkIfNull) {
+                                    mv.visitVarInsn(ALOAD, 2);
+                                    mv.visitVarInsn(AsmUtils.getLoadOps(injectionPoint.parameter.getType()), 3);
+                                }
+                                AsmUtils.invoke(mv, TypeHelper.toClass(builderClass), e.getValue().getName(),
+                                        AsmUtils.toSignature(e.getValue()));
+                                if (!Void.TYPE.equals(e.getValue().getReturnType())) {
+                                    mv.visitVarInsn(ASTORE, 2);
+                                }
+                            }
+                        }, true);
             }
         }
         mv.visitVarInsn(ALOAD, 2);
@@ -306,7 +319,7 @@ public class BiInstantiatorBuilder {
     }
 
 
-    private static <S1, S2> void invokeBiFunction(InjectionPoint injectionPoint, String classType, Class<?> s1, Class<?> s2, MethodVisitor mv) throws NoSuchMethodException {
+    private static <S1, S2> void invokeBiFunction(InjectionPoint injectionPoint, String classType, Class<?> s1, Class<?> s2, MethodVisitor mv, Consumer<MethodVisitor> consumer, boolean ignoreNullValues) throws NoSuchMethodException {
 
         String s1Type = AsmUtils.toAsmType(s1.equals(Void.class) || s1.equals(void.class) ? Object.class : s1);
         String s2Type = AsmUtils.toAsmType(s2.equals(Void.class) || s2.equals(void.class) ? Object.class : s2);
@@ -323,19 +336,52 @@ public class BiInstantiatorBuilder {
         AsmUtils.invoke(mv, injectionPoint.functionType, getterMethod);
 
         if (!injectionPoint.isPrimitive) {
+            
+            // IF NULL
             Class<?> wrapperClass = AsmUtils.toWrapperClass(injectionPoint.parameter.getType());
             if (!wrapperClass.isAssignableFrom(getterMethod.getReturnType())) {
                 mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(wrapperClass));
             }
 
-            if (TypeHelper.isPrimitive(injectionPoint.parameter.getType())) {
-                String methodSuffix = getPrimitiveMethodSuffix(injectionPoint.parameter);
-                String valueMethodPrefix = methodSuffix.toLowerCase();
-                if ("character".equals(valueMethodPrefix)) {
-                    valueMethodPrefix = "char";
-                }
-                String valueMethod = valueMethodPrefix + "Value";
-                AsmUtils.invoke(mv, wrapperClass, valueMethod, "()" + AsmUtils.toAsmType(injectionPoint.parameter.getType()));
+            Label label = new Label();
+            if (ignoreNullValues) {
+                mv.visitVarInsn(ASTORE, 3);
+
+                mv.visitVarInsn(ALOAD, 3);
+                mv.visitJumpInsn(IFNULL, label);
+            }
+
+            changeToPrimitiveIfNeeded(injectionPoint, mv, wrapperClass, ignoreNullValues);
+
+            if (consumer != null) {
+                consumer.accept(mv);
+            }
+
+            if (ignoreNullValues) {
+                mv.visitLabel(label);
+            }
+            // iframe?
+        } else {
+            if (consumer != null) {
+                consumer.accept(mv);
+            }
+        }
+    }
+
+    private static void changeToPrimitiveIfNeeded(InjectionPoint injectionPoint, MethodVisitor mv, Class<?> wrapperClass, boolean ignoreNullValues) {
+        if (TypeHelper.isPrimitive(injectionPoint.parameter.getType())) {
+            if (ignoreNullValues) {
+                mv.visitVarInsn(ALOAD, 3);
+            }
+            String methodSuffix = getPrimitiveMethodSuffix(injectionPoint.parameter);
+            String valueMethodPrefix = methodSuffix.toLowerCase();
+            if ("character".equals(valueMethodPrefix)) {
+                valueMethodPrefix = "char";
+            }
+            String valueMethod = valueMethodPrefix + "Value";
+            AsmUtils.invoke(mv, wrapperClass, valueMethod, "()" + AsmUtils.toAsmType(injectionPoint.parameter.getType()));
+            if (ignoreNullValues) {
+                mv.visitVarInsn(AsmUtils.getStoreOps(injectionPoint.parameter.getType()), 3);
             }
         }
     }

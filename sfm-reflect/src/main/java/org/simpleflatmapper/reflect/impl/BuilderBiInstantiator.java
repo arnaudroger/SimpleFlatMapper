@@ -14,16 +14,19 @@ public final class BuilderBiInstantiator<S1, S2, T> implements BiInstantiator<S1
 	private final MethodBiFunctionPair<S1, S2>[] chainedArguments;
 	private final MethodBiFunctionPair<S1, S2>[] unchainedArguments;
 	private final Method buildMethod;
+	private final boolean ignoreNullValues;
 
 	public BuilderBiInstantiator(
 			Instantiator<Void, ?> builderInstantiator,
 			MethodBiFunctionPair<S1, S2>[] chainedArguments,
 			MethodBiFunctionPair<S1, S2>[] unchainedArguments,
-			Method buildMethod) {
+			Method buildMethod, 
+			boolean ignoreNullValues) {
 		this.builderInstantiator = builderInstantiator;
 		this.chainedArguments = chainedArguments;
 		this.unchainedArguments = unchainedArguments;
 		this.buildMethod = buildMethod;
+		this.ignoreNullValues = ignoreNullValues;
 	}
 
 
@@ -33,10 +36,16 @@ public final class BuilderBiInstantiator<S1, S2, T> implements BiInstantiator<S1
 		try {
 			Object builder = builderInstantiator.newInstance(null);
 			for (MethodBiFunctionPair<S1, S2> argument : chainedArguments) {
-				builder = argument.getMethod().invoke(builder, argument.getFunction().apply(s1, s2));
+				Object v = argument.getFunction().apply(s1, s2);
+				if (!ignoreNullValues || v != null) {
+					builder = argument.getMethod().invoke(builder, v);
+				}
 			}
 			for (MethodBiFunctionPair<S1, S2> argument : unchainedArguments) {
-				argument.getMethod().invoke(builder, argument.getFunction().apply(s1, s2));
+				Object v = argument.getFunction().apply(s1, s2);
+				if (!ignoreNullValues || v != null) {
+					argument.getMethod().invoke(builder, v);
+				}
 			}
 			return (T) buildMethod.invoke(builder);
 		} catch (InvocationTargetException e) {

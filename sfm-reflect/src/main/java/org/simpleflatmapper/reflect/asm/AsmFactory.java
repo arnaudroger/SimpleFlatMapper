@@ -156,7 +156,6 @@ public class AsmFactory {
                 bytes = InstantiatorBuilder.createInstantiator(
                         className,
                         source,
-                        builderInstantiator,
                         (BuilderInstantiatorDefinition)instantiatorDefinition, injections);
             }
 			instantiator = (Class<? extends Instantiator<?, ?>>) createClass(className, bytes, instantiatorKey.getDeclaringClass().getClassLoader());

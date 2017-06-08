@@ -171,7 +171,7 @@ public class InstantiatorFactory {
 		return new BuilderInstantiator<S, T>(buildInstantiator,
 				chainedArguments.toArray(new MethodGetterPair[0]),
 				unchainedArguments.toArray(new MethodGetterPair[0]),
-				instantiatorDefinition.getBuildMethod());
+				instantiatorDefinition.getBuildMethod(), true);
 	}
 
 	private <S, T> Instantiator<S, T> methodInstantiator(
@@ -223,7 +223,7 @@ public class InstantiatorFactory {
 		return new BuilderBiInstantiator<S1, S2, T>(buildInstantiator,
 				chainedArguments.toArray(new MethodBiFunctionPair[0]),
 				unchainedArguments.toArray(new MethodBiFunctionPair[0]),
-				instantiatorDefinition.getBuildMethod());
+				instantiatorDefinition.getBuildMethod(), true);
 	}
 
 	private <S1, S2, T> BiInstantiator<S1, S2, T>  methodBiInstantiator(

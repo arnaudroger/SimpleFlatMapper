@@ -25,7 +25,25 @@ public final class BuilderInstantiator implements Instantiator<InputStream, Buil
 	public BuilderInstantiatorDefinitionFactoryTest.ClassBuilderWithMethod newInstance(InputStream source) throws Exception {
 		BuilderInstantiatorDefinitionFactoryTest.ClassBuilderWithMethod.Builder builder = builderInstantiator.newInstance(null);
 		builder = builder.id(getter_id.getInt(source));
-		builder.name(getter_name.get(source));
+		
+		{
+			String name = getter_name.get(source);
+			if (name != null) {
+				builder = builder.name(name);
+			}
+		}
+		{
+			String name2 = getter_name.get(source);
+			if (name2 != null) {
+				builder = builder.name(name2);
+			}
+		}
+		{
+			String name3 = getter_name.get(source);
+			if (name3 != null) {
+				builder = builder.name(name3);
+			}
+		}
 		return builder.build();
 	}
 }

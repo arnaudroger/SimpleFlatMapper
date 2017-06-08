@@ -2,12 +2,15 @@ package org.simpleflatmapper.reflect.asm;
 
 import org.simpleflatmapper.ow2asm.ClassWriter;
 import org.simpleflatmapper.ow2asm.FieldVisitor;
+import org.simpleflatmapper.ow2asm.Label;
 import org.simpleflatmapper.ow2asm.MethodVisitor;
+import org.simpleflatmapper.ow2asm.Opcodes;
 import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.Parameter;
+import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Constructor;
@@ -29,6 +32,7 @@ import static org.simpleflatmapper.ow2asm.Opcodes.ASTORE;
 import static org.simpleflatmapper.ow2asm.Opcodes.CHECKCAST;
 import static org.simpleflatmapper.ow2asm.Opcodes.DUP;
 import static org.simpleflatmapper.ow2asm.Opcodes.GETFIELD;
+import static org.simpleflatmapper.ow2asm.Opcodes.IFNULL;
 import static org.simpleflatmapper.ow2asm.Opcodes.INVOKEINTERFACE;
 import static org.simpleflatmapper.ow2asm.Opcodes.INVOKESPECIAL;
 import static org.simpleflatmapper.ow2asm.Opcodes.INVOKESTATIC;
@@ -59,7 +63,7 @@ public class InstantiatorBuilder {
 
         appendGetters(injections, cw);
         appendInit(injections, cw, sourceType, classType);
-        appendNewInstanceBuilder(sourceClass, instantiatorDefinition, injections, cw, targetType, sourceType, classType, parameters);
+        appendNewInstanceBuilderOnMethod(sourceClass, instantiatorDefinition, injections, cw, targetType, sourceType, classType, parameters);
         appendBridgeMethod(cw, targetType, sourceType, classType);
         appendToString(injections, cw, parameters);
 		cw.visitEnd();
@@ -68,7 +72,6 @@ public class InstantiatorBuilder {
 	}
 
     public static <S>  byte[] createInstantiator(final String className, final Class<?> sourceClass,
-                                                 final Instantiator<Void, ?> builderInstantiator,
                                                  final BuilderInstantiatorDefinition instantiatorDefinition,
                                                  final Map<Parameter, Getter<? super S, ?>> injections) throws Exception {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -96,7 +99,7 @@ public class InstantiatorBuilder {
 
         appendGetters(injections, cw);
         appendInitBuilder(injections, cw, sourceType, classType, instantiatorDefinition);
-        appendNewInstanceBuilder(sourceClass, instantiatorDefinition, injections, cw, targetType, sourceType, classType, instantiatorDefinition.getSetters());
+        appendNewInstanceBuilderOnBuilder(sourceClass, instantiatorDefinition, injections, cw, targetType, sourceType, classType, instantiatorDefinition.getSetters());
         appendBridgeMethod(cw, targetType, sourceType, classType);
         appendToString(injections, cw, instantiatorDefinition.getParameters());
         cw.visitEnd();
@@ -169,7 +172,7 @@ public class InstantiatorBuilder {
         mv.visitEnd();
     }
 
-    private static <S> void appendNewInstanceBuilder(Class<?> sourceClass, ExecutableInstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections, ClassWriter cw, String targetType, String sourceType, String classType, Parameter[] parameters) throws NoSuchMethodException {
+    private static <S> void appendNewInstanceBuilderOnMethod(Class<?> sourceClass, ExecutableInstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections, ClassWriter cw, String targetType, String sourceType, String classType, Parameter[] parameters) throws NoSuchMethodException {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "newInstance", "(" + AsmUtils.toTargetTypeDeclaration(sourceType) + ")" + AsmUtils.toTargetTypeDeclaration(targetType), null, new String[] { "java/lang/Exception" });
         mv.visitCode();
@@ -191,7 +194,7 @@ public class InstantiatorBuilder {
                     mv.visitInsn(ACONST_NULL);
                 }
             } else {
-                invokeGetter(p, getter, classType, sourceClass, mv);
+                invokeGetter(p, getter, classType, sourceClass, mv, null, false);
             }
         }
 
@@ -210,7 +213,7 @@ public class InstantiatorBuilder {
         mv.visitEnd();
     }
 
-    private static <S> void invokeGetter(Parameter p, Getter<? super S, ?> getter, String classType, Class<?> sourceClass, MethodVisitor mv) throws NoSuchMethodException {
+    private static <S> void invokeGetter(Parameter p, Getter<? super S, ?> getter, String classType, Class<?> sourceClass, MethodVisitor mv, Consumer<MethodVisitor> consumer, boolean ignoreNullValues) throws NoSuchMethodException {
         GetterCall getterCall = getGetterCall(p.getType(), getter.getClass());
 
         String getterType = AsmUtils.toAsmType(getterCall.getterType);
@@ -222,23 +225,54 @@ public class InstantiatorBuilder {
 
         if (getterCall.isPrimitive) {
             AsmUtils.invoke(mv, getterCall.getterType, getterCall.methodName, "(" + AsmUtils.toTargetTypeDeclaration(sourceType) + ")" + AsmUtils.toAsmType(p.getType()));
+            if (consumer != null) {
+                consumer.accept(mv);
+            }
         } else {
             Class<?> wrapperClass = AsmUtils.toWrapperClass(p.getType());
             Method getterMethod = BiInstantiatorBuilder.getMethod(TypeHelper.toClass(getterCall.getterType), "get", 1);
 
+            
             AsmUtils.invoke(mv, getterCall.getterType, getterMethod);
             if (!wrapperClass.isAssignableFrom(getterMethod.getReturnType())) {
                 mv.visitTypeInsn(CHECKCAST, AsmUtils.toAsmType(wrapperClass));
             }
 
-            if (TypeHelper.isPrimitive(p.getType())) {
-                String methodSuffix = getPrimitiveMethodSuffix(p);
-                String valueMethodPrefix = methodSuffix.toLowerCase();
-                if ("character".equals(valueMethodPrefix)) {
-                    valueMethodPrefix = "char";
-                }
-                String valueMethod = valueMethodPrefix + "Value";
-                AsmUtils.invoke(mv, wrapperClass, valueMethod, "()" + AsmUtils.toAsmType(p.getType()));
+
+            Label label = new Label();
+            if (ignoreNullValues) {
+                mv.visitVarInsn(ASTORE, 3);
+
+                mv.visitVarInsn(ALOAD, 3);
+                mv.visitJumpInsn(IFNULL, label);
+            }
+            
+            changeToPrimitiveIfNeeded(p, mv, wrapperClass, ignoreNullValues);
+            if (consumer != null) {
+                consumer.accept(mv);
+            }
+
+            if (ignoreNullValues) {
+                mv.visitLabel(label);
+            }
+        }
+    }
+
+    private static void changeToPrimitiveIfNeeded(Parameter p, MethodVisitor mv, Class<?> wrapperClass, boolean ignoreNullValues) {
+
+        if (TypeHelper.isPrimitive(p.getType())) {
+            if (ignoreNullValues) {
+                mv.visitVarInsn(ALOAD, 3);
+            }
+            String methodSuffix = getPrimitiveMethodSuffix(p);
+            String valueMethodPrefix = methodSuffix.toLowerCase();
+            if ("character".equals(valueMethodPrefix)) {
+                valueMethodPrefix = "char";
+            }
+            String valueMethod = valueMethodPrefix + "Value";
+            AsmUtils.invoke(mv, wrapperClass, valueMethod, "()" + AsmUtils.toAsmType(p.getType()));
+            if (ignoreNullValues) {
+                mv.visitVarInsn(AsmUtils.getStoreOps(p.getType()), 3);
             }
         }
     }
@@ -255,7 +289,7 @@ public class InstantiatorBuilder {
         return methodSuffix;
     }
 
-    private static <S> void appendNewInstanceBuilder(Class<?> sourceClass, BuilderInstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections, ClassWriter cw, String targetType, String sourceType, String classType, Map<Parameter, Method> setters) throws NoSuchMethodException {
+    private static <S> void appendNewInstanceBuilderOnBuilder(Class<?> sourceClass, BuilderInstantiatorDefinition instantiatorDefinition, Map<Parameter, Getter<? super S, ?>> injections, ClassWriter cw, String targetType, String sourceType, String classType, Map<Parameter, Method> setters) throws NoSuchMethodException {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "newInstance", "(" + AsmUtils.toTargetTypeDeclaration(sourceType) + ")" + AsmUtils.toTargetTypeDeclaration(targetType), null, new String[] { "java/lang/Exception" });
         mv.visitCode();
@@ -271,27 +305,42 @@ public class InstantiatorBuilder {
 
         mv.visitVarInsn(ASTORE, 2);
 
-        for (Entry<Parameter, Method> e : setters.entrySet()) {
-            mv.visitVarInsn(ALOAD, 2);
+        boolean first = true;
+        for (final Entry<Parameter, Method> e : setters.entrySet()) {
             Parameter p = e.getKey();
             Getter<? super S, ?> getter = injections.get(p);
 
+            if (getter != null) {
 
-            if (getter == null) {
-                if (TypeHelper.isPrimitive(p.getType())) {
-                    mv.visitInsn(AsmUtils.defaultValue.get(p.getType()));
-                } else {
-                    mv.visitInsn(ACONST_NULL);
-                }
-            } else {
+                final Class<?> parameterType = p.getType();
+                final boolean checkIfNull = !getGetterCall(parameterType, getter.getClass()).isPrimitive;
+                
+                mv.visitVarInsn(ALOAD, 2);
+                
+                invokeGetter(p, getter, classType, sourceClass, mv, new Consumer<MethodVisitor>() {
+                    @Override
+                    public void accept(MethodVisitor mv) {
+                        if (checkIfNull) {
+                            mv.visitVarInsn(ALOAD, 2);
+                            mv.visitVarInsn(AsmUtils.getLoadOps(parameterType), 3);
+                        }
+                        AsmUtils.invoke(mv, TypeHelper.toClass(builderClass), e.getValue().getName(),
+                                AsmUtils.toSignature(e.getValue()));
+                        if (!Void.TYPE.equals(e.getValue().getReturnType())) {
+                            mv.visitVarInsn(ASTORE, 2);
+                        }
+                    }
+                }, true);
 
-                invokeGetter(p, getter, classType, sourceClass, mv);
 
-                AsmUtils.invoke(mv, TypeHelper.toClass(builderClass), e.getValue().getName(),
-                        AsmUtils.toSignature(e.getValue()));
-
-                if (!Void.TYPE.equals(e.getValue().getReturnType())) {
-                    mv.visitVarInsn(ASTORE, 2);
+                    
+                if (checkIfNull) {
+                    if (first && !Void.TYPE.equals(e.getValue().getReturnType())) {
+                        mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{builderType}, 0, null);
+                    } else {
+                        mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                    }
+                    first = false;
                 }
             }
         }

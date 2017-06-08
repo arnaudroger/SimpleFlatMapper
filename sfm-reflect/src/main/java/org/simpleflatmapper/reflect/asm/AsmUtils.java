@@ -24,13 +24,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.simpleflatmapper.ow2asm.Opcodes.ALOAD;
+import static org.simpleflatmapper.ow2asm.Opcodes.ASTORE;
 import static org.simpleflatmapper.ow2asm.Opcodes.BIPUSH;
 import static org.simpleflatmapper.ow2asm.Opcodes.DCONST_0;
 import static org.simpleflatmapper.ow2asm.Opcodes.DLOAD;
 import static org.simpleflatmapper.ow2asm.Opcodes.DRETURN;
+import static org.simpleflatmapper.ow2asm.Opcodes.DSTORE;
 import static org.simpleflatmapper.ow2asm.Opcodes.FCONST_0;
 import static org.simpleflatmapper.ow2asm.Opcodes.FLOAD;
 import static org.simpleflatmapper.ow2asm.Opcodes.FRETURN;
+import static org.simpleflatmapper.ow2asm.Opcodes.FSTORE;
 import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_0;
 import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_1;
 import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_2;
@@ -39,9 +43,11 @@ import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_4;
 import static org.simpleflatmapper.ow2asm.Opcodes.ICONST_5;
 import static org.simpleflatmapper.ow2asm.Opcodes.ILOAD;
 import static org.simpleflatmapper.ow2asm.Opcodes.IRETURN;
+import static org.simpleflatmapper.ow2asm.Opcodes.ISTORE;
 import static org.simpleflatmapper.ow2asm.Opcodes.LCONST_0;
 import static org.simpleflatmapper.ow2asm.Opcodes.LLOAD;
 import static org.simpleflatmapper.ow2asm.Opcodes.LRETURN;
+import static org.simpleflatmapper.ow2asm.Opcodes.LSTORE;
 import static org.simpleflatmapper.ow2asm.Opcodes.SIPUSH;
 
 public class AsmUtils {
@@ -101,6 +107,20 @@ public class AsmUtils {
 		loadOps.put(long.class, LLOAD);
 		loadOps.put(short.class, ILOAD);
 	}
+
+	static final Map<Class<?>, Integer> storeOps = new HashMap<Class<?>, Integer>();
+
+	static {
+		storeOps.put(boolean.class, ISTORE);
+		storeOps.put(byte.class, ISTORE);
+		storeOps.put(char.class, ISTORE);
+		storeOps.put(double.class, DSTORE);
+		storeOps.put(float.class, FSTORE);
+		storeOps.put(int.class, ISTORE);
+		storeOps.put(long.class, LSTORE);
+		storeOps.put(short.class, ISTORE);
+	}
+	
 	static final Map<Class<?>, Integer> returnOps = new HashMap<Class<?>, Integer>();
 
     static {
@@ -517,6 +537,20 @@ public class AsmUtils {
 		sb.append(AsmUtils.toTargetTypeDeclaration(exec.getReturnType()));
 
 		return sb.toString();
+	}
+
+	public static int getLoadOps(Class<?> parameterType) {
+		if (TypeHelper.isPrimitive(parameterType)) {
+			return loadOps.get(parameterType);
+		}
+		return ALOAD;
+	}
+
+	public static int getStoreOps(Class<?> type) {
+		if (TypeHelper.isPrimitive(type)) {
+			return storeOps.get(type);
+		}
+		return ASTORE;
 	}
 
 

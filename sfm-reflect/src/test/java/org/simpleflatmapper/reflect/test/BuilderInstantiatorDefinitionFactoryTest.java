@@ -99,6 +99,69 @@ public class BuilderInstantiatorDefinitionFactoryTest {
 
 
     @Test
+    public void testBuilderFromMethodNullHandling() throws Exception {
+        final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
+
+        assertEquals(1, instantiatorDefinitions.size());
+
+        BuilderInstantiatorDefinition b = (BuilderInstantiatorDefinition) instantiatorDefinitions.get(0);
+
+        final Parameter[] parameters = b.getParameters();
+
+        Arrays.sort(parameters, new Comparator<Parameter>() {
+            @Override
+            public int compare(Parameter o1, Parameter o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        Map<Parameter, Getter<? super Void, ?>> params = new HashMap<Parameter, Getter<? super Void, ?>>();
+
+        params.put(parameters[1], new ConstantGetter<Void, Object>(null));
+        params.put(parameters[0], new ConstantGetter<Void, Integer>(null));
+
+
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
+        final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+        final ClassBuilderWithMethod o = instantiator
+                .newInstance(null);
+
+        assertEquals(null, o.getName());
+        assertEquals(0, o.getId());
+    }
+    @Test
+    public void testBuilderFromMethodNullHandlingNoAsm() throws Exception {
+        final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
+
+        assertEquals(1, instantiatorDefinitions.size());
+
+        BuilderInstantiatorDefinition b = (BuilderInstantiatorDefinition) instantiatorDefinitions.get(0);
+
+        final Parameter[] parameters = b.getParameters();
+
+        Arrays.sort(parameters, new Comparator<Parameter>() {
+            @Override
+            public int compare(Parameter o1, Parameter o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        Map<Parameter, Getter<? super Void, ?>> params = new HashMap<Parameter, Getter<? super Void, ?>>();
+
+        params.put(parameters[1], new ConstantGetter<Void, Object>(null));
+        params.put(parameters[0], new ConstantGetter<Void, Integer>(null));
+
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null);
+        final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, false);
+        final ClassBuilderWithMethod o = instantiator
+                .newInstance(null);
+
+        assertEquals(null, o.getName());
+        assertEquals(0, o.getId());
+    }
+
+
+    @Test
     public void testBuilderFromMethodAsmBoxing() throws Exception {
         final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
 
@@ -186,7 +249,7 @@ public class BuilderInstantiatorDefinitionFactoryTest {
 
         final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null, true);
         final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
-                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, false);
         final ClassBuilderWithMethod o = instantiator
                 .newInstance(null);
 
@@ -194,6 +257,72 @@ public class BuilderInstantiatorDefinitionFactoryTest {
         assertEquals(3, o.getId());
         assertEquals("zrux", o.getZrux());
     }
+
+    @Test
+    public void testBuilderFromMethodVoidNullHandling() throws Exception {
+        final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
+
+        assertEquals(1, instantiatorDefinitions.size());
+
+        BuilderInstantiatorDefinition b = (BuilderInstantiatorDefinition) instantiatorDefinitions.get(0);
+
+        final Parameter[] parameters = b.getParameters();
+
+        Arrays.sort(parameters, new Comparator<Parameter>() {
+            @Override
+            public int compare(Parameter o1, Parameter o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        Map<Parameter, Getter<? super Void, ?>> params = new HashMap<Parameter, Getter<? super Void, ?>>();
+
+        params.put(parameters[2], new ConstantGetter<Void, Object>(null));
+        params.put(parameters[0], new ConstantGetter<Void, Integer>(null));
+
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(new AsmFactory(getClass().getClassLoader()), true);
+        final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, true);
+        final ClassBuilderWithMethod o = instantiator
+                .newInstance(null);
+
+        assertFalse((instantiator instanceof BuilderInstantiator));
+        assertEquals(0, o.getId());
+        assertEquals(null, o.getZrux());
+    }
+
+    @Test
+    public void testBuilderFromMethodVoidNoAsmNullHandling() throws Exception {
+        final List<InstantiatorDefinition> instantiatorDefinitions = BuilderInstantiatorDefinitionFactory.extractDefinitions(ClassBuilderWithMethod.class);
+
+        assertEquals(1, instantiatorDefinitions.size());
+
+        BuilderInstantiatorDefinition b = (BuilderInstantiatorDefinition) instantiatorDefinitions.get(0);
+
+        final Parameter[] parameters = b.getParameters();
+
+        Arrays.sort(parameters, new Comparator<Parameter>() {
+            @Override
+            public int compare(Parameter o1, Parameter o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        Map<Parameter, Getter<? super Void, ?>> params = new HashMap<Parameter, Getter<? super Void, ?>>();
+
+        params.put(parameters[2], new ConstantGetter<Void, Object>(null));
+        params.put(parameters[0], new ConstantGetter<Void, Integer>(null));
+
+        final InstantiatorFactory instantiatorFactory = new InstantiatorFactory(null, true);
+        final Instantiator<Void, ClassBuilderWithMethod> instantiator = instantiatorFactory
+                .<Void, ClassBuilderWithMethod>getInstantiator(b, Void.class, params, false);
+        final ClassBuilderWithMethod o = instantiator
+                .newInstance(null);
+
+        assertTrue((instantiator instanceof BuilderInstantiator));
+        assertEquals(0, o.getId());
+        assertEquals(null, o.getZrux());
+    }
+    
+    
     public static abstract class ClassBuilderWithMethod {
 
         public abstract String getName();

@@ -4,15 +4,33 @@ import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.setter.SetterHelper;
+import org.simpleflatmapper.util.ConstantPredicate;
+import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class BuilderInstantiatorDefinitionFactory {
+
+    public static final Predicate<Method> GOOGLE_PROTO_EXCLUDE = new Predicate<Method>() {
+        Set<String> excludeMethod = new HashSet<>(Arrays.asList(
+                "setUnknownFields", 
+                "clearField", "mergeUnknownFields", "mergeFrom", "clearOneof", "mergeFrom"
+        ));
+        @Override
+        public boolean test(Method method) {
+            String name = method.getName();
+            return excludeMethod.contains(name);
+        }
+    };
+
     public static List<InstantiatorDefinition> extractDefinitions(Type target) {
 
         List<InstantiatorDefinition> instantiatorDefinitions = new ArrayList<InstantiatorDefinition>();
@@ -69,7 +87,10 @@ public class BuilderInstantiatorDefinitionFactory {
         int i = 0;
 
         Class<?> builderClass = TypeHelper.toClass(builderType);
+        
+        Predicate<Method> excludeMethod = getExcludeMethodPredicateFor(builderClass);
         for(Method m : builderClass.getMethods()) {
+            if (excludeMethod.test(m)) continue;
             if (!Modifier.isStatic(m.getModifiers()) && Object.class != m.getDeclaringClass()) {
                 Type returnType = m.getGenericReturnType();
                 if ((TypeHelper.areEquals(returnType, void.class)
@@ -90,6 +111,13 @@ public class BuilderInstantiatorDefinitionFactory {
             return new BuilderInstantiatorDefinition(def, setters, buildMethod);
         }
         return null;
+    }
+
+    private static Predicate<Method> getExcludeMethodPredicateFor(Class<?> builderClass) {
+        if (builderClass.getSuperclass() != null && builderClass.getSuperclass().getName().equals("com.google.protobuf.GeneratedMessageV3$Builder")) {
+            return GOOGLE_PROTO_EXCLUDE;
+        }
+        return ConstantPredicate.falsePredicate();
     }
 
     private static Method selectBuildMethod(List<Method> buildMethods) {

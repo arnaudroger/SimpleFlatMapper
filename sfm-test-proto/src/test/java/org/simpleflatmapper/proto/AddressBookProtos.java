@@ -83,6 +83,28 @@ public final class AddressBookProtos {
      * <code>optional .google.protobuf.Timestamp ts = 5;</code>
      */
     com.google.protobuf.TimestampOrBuilder getTsOrBuilder();
+
+    /**
+     * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+     */
+    boolean hasOint();
+    /**
+     * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+     */
+    com.google.protobuf.Int32Value getOint();
+    /**
+     * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+     */
+    com.google.protobuf.Int32ValueOrBuilder getOintOrBuilder();
+
+    /**
+     * <code>optional .tutorial.Person.Corpus corpus = 7;</code>
+     */
+    int getCorpusValue();
+    /**
+     * <code>optional .tutorial.Person.Corpus corpus = 7;</code>
+     */
+    org.simpleflatmapper.proto.AddressBookProtos.Person.Corpus getCorpus();
   }
   /**
    * <pre>
@@ -104,6 +126,7 @@ public final class AddressBookProtos {
       id_ = 0;
       email_ = "";
       phones_ = java.util.Collections.emptyList();
+      corpus_ = 0;
     }
 
     @java.lang.Override
@@ -168,6 +191,25 @@ public final class AddressBookProtos {
                 ts_ = subBuilder.buildPartial();
               }
 
+              break;
+            }
+            case 50: {
+              com.google.protobuf.Int32Value.Builder subBuilder = null;
+              if (oint_ != null) {
+                subBuilder = oint_.toBuilder();
+              }
+              oint_ = input.readMessage(com.google.protobuf.Int32Value.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(oint_);
+                oint_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 56: {
+              int rawValue = input.readEnum();
+
+              corpus_ = rawValue;
               break;
             }
           }
@@ -301,6 +343,149 @@ public final class AddressBookProtos {
       }
 
       // @@protoc_insertion_point(enum_scope:tutorial.Person.PhoneType)
+    }
+
+    /**
+     * Protobuf enum {@code tutorial.Person.Corpus}
+     */
+    public enum Corpus
+        implements com.google.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>UNIVERSAL = 0;</code>
+       */
+      UNIVERSAL(0),
+      /**
+       * <code>WEB = 1;</code>
+       */
+      WEB(1),
+      /**
+       * <code>IMAGES = 2;</code>
+       */
+      IMAGES(2),
+      /**
+       * <code>LOCAL = 3;</code>
+       */
+      LOCAL(3),
+      /**
+       * <code>NEWS = 4;</code>
+       */
+      NEWS(4),
+      /**
+       * <code>PRODUCTS = 5;</code>
+       */
+      PRODUCTS(5),
+      /**
+       * <code>VIDEO = 6;</code>
+       */
+      VIDEO(6),
+      UNRECOGNIZED(-1),
+      ;
+
+      /**
+       * <code>UNIVERSAL = 0;</code>
+       */
+      public static final int UNIVERSAL_VALUE = 0;
+      /**
+       * <code>WEB = 1;</code>
+       */
+      public static final int WEB_VALUE = 1;
+      /**
+       * <code>IMAGES = 2;</code>
+       */
+      public static final int IMAGES_VALUE = 2;
+      /**
+       * <code>LOCAL = 3;</code>
+       */
+      public static final int LOCAL_VALUE = 3;
+      /**
+       * <code>NEWS = 4;</code>
+       */
+      public static final int NEWS_VALUE = 4;
+      /**
+       * <code>PRODUCTS = 5;</code>
+       */
+      public static final int PRODUCTS_VALUE = 5;
+      /**
+       * <code>VIDEO = 6;</code>
+       */
+      public static final int VIDEO_VALUE = 6;
+
+
+      public final int getNumber() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalArgumentException(
+              "Can't get the number of an unknown enum value.");
+        }
+        return value;
+      }
+
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static Corpus valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static Corpus forNumber(int value) {
+        switch (value) {
+          case 0: return UNIVERSAL;
+          case 1: return WEB;
+          case 2: return IMAGES;
+          case 3: return LOCAL;
+          case 4: return NEWS;
+          case 5: return PRODUCTS;
+          case 6: return VIDEO;
+          default: return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<Corpus>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          Corpus> internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<Corpus>() {
+              public Corpus findValueByNumber(int number) {
+                return Corpus.forNumber(number);
+              }
+            };
+
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(ordinal());
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return org.simpleflatmapper.proto.AddressBookProtos.Person.getDescriptor().getEnumTypes().get(1);
+      }
+
+      private static final Corpus[] VALUES = values();
+
+      public static Corpus valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        if (desc.getIndex() == -1) {
+          return UNRECOGNIZED;
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int value;
+
+      private Corpus(int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:tutorial.Person.Corpus)
     }
 
     public interface PhoneNumberOrBuilder extends
@@ -1036,6 +1221,43 @@ public final class AddressBookProtos {
       return getTs();
     }
 
+    public static final int OINT_FIELD_NUMBER = 6;
+    private com.google.protobuf.Int32Value oint_;
+    /**
+     * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+     */
+    public boolean hasOint() {
+      return oint_ != null;
+    }
+    /**
+     * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+     */
+    public com.google.protobuf.Int32Value getOint() {
+      return oint_ == null ? com.google.protobuf.Int32Value.getDefaultInstance() : oint_;
+    }
+    /**
+     * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+     */
+    public com.google.protobuf.Int32ValueOrBuilder getOintOrBuilder() {
+      return getOint();
+    }
+
+    public static final int CORPUS_FIELD_NUMBER = 7;
+    private int corpus_;
+    /**
+     * <code>optional .tutorial.Person.Corpus corpus = 7;</code>
+     */
+    public int getCorpusValue() {
+      return corpus_;
+    }
+    /**
+     * <code>optional .tutorial.Person.Corpus corpus = 7;</code>
+     */
+    public org.simpleflatmapper.proto.AddressBookProtos.Person.Corpus getCorpus() {
+      org.simpleflatmapper.proto.AddressBookProtos.Person.Corpus result = org.simpleflatmapper.proto.AddressBookProtos.Person.Corpus.valueOf(corpus_);
+      return result == null ? org.simpleflatmapper.proto.AddressBookProtos.Person.Corpus.UNRECOGNIZED : result;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -1063,6 +1285,12 @@ public final class AddressBookProtos {
       if (ts_ != null) {
         output.writeMessage(5, getTs());
       }
+      if (oint_ != null) {
+        output.writeMessage(6, getOint());
+      }
+      if (corpus_ != org.simpleflatmapper.proto.AddressBookProtos.Person.Corpus.UNIVERSAL.getNumber()) {
+        output.writeEnum(7, corpus_);
+      }
     }
 
     public int getSerializedSize() {
@@ -1087,6 +1315,14 @@ public final class AddressBookProtos {
       if (ts_ != null) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, getTs());
+      }
+      if (oint_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(6, getOint());
+      }
+      if (corpus_ != org.simpleflatmapper.proto.AddressBookProtos.Person.Corpus.UNIVERSAL.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(7, corpus_);
       }
       memoizedSize = size;
       return size;
@@ -1117,6 +1353,12 @@ public final class AddressBookProtos {
         result = result && getTs()
             .equals(other.getTs());
       }
+      result = result && (hasOint() == other.hasOint());
+      if (hasOint()) {
+        result = result && getOint()
+            .equals(other.getOint());
+      }
+      result = result && corpus_ == other.corpus_;
       return result;
     }
 
@@ -1141,6 +1383,12 @@ public final class AddressBookProtos {
         hash = (37 * hash) + TS_FIELD_NUMBER;
         hash = (53 * hash) + getTs().hashCode();
       }
+      if (hasOint()) {
+        hash = (37 * hash) + OINT_FIELD_NUMBER;
+        hash = (53 * hash) + getOint().hashCode();
+      }
+      hash = (37 * hash) + CORPUS_FIELD_NUMBER;
+      hash = (53 * hash) + corpus_;
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1282,6 +1530,14 @@ public final class AddressBookProtos {
           ts_ = null;
           tsBuilder_ = null;
         }
+        if (ointBuilder_ == null) {
+          oint_ = null;
+        } else {
+          oint_ = null;
+          ointBuilder_ = null;
+        }
+        corpus_ = 0;
+
         return this;
       }
 
@@ -1323,6 +1579,12 @@ public final class AddressBookProtos {
         } else {
           result.ts_ = tsBuilder_.build();
         }
+        if (ointBuilder_ == null) {
+          result.oint_ = oint_;
+        } else {
+          result.oint_ = ointBuilder_.build();
+        }
+        result.corpus_ = corpus_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1404,6 +1666,12 @@ public final class AddressBookProtos {
         }
         if (other.hasTs()) {
           mergeTs(other.getTs());
+        }
+        if (other.hasOint()) {
+          mergeOint(other.getOint());
+        }
+        if (other.corpus_ != 0) {
+          setCorpusValue(other.getCorpusValue());
         }
         onChanged();
         return this;
@@ -1963,6 +2231,167 @@ public final class AddressBookProtos {
           ts_ = null;
         }
         return tsBuilder_;
+      }
+
+      private com.google.protobuf.Int32Value oint_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.google.protobuf.Int32Value, com.google.protobuf.Int32Value.Builder, com.google.protobuf.Int32ValueOrBuilder> ointBuilder_;
+      /**
+       * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+       */
+      public boolean hasOint() {
+        return ointBuilder_ != null || oint_ != null;
+      }
+      /**
+       * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+       */
+      public com.google.protobuf.Int32Value getOint() {
+        if (ointBuilder_ == null) {
+          return oint_ == null ? com.google.protobuf.Int32Value.getDefaultInstance() : oint_;
+        } else {
+          return ointBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+       */
+      public Builder setOint(com.google.protobuf.Int32Value value) {
+        if (ointBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          oint_ = value;
+          onChanged();
+        } else {
+          ointBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+       */
+      public Builder setOint(
+          com.google.protobuf.Int32Value.Builder builderForValue) {
+        if (ointBuilder_ == null) {
+          oint_ = builderForValue.build();
+          onChanged();
+        } else {
+          ointBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+       */
+      public Builder mergeOint(com.google.protobuf.Int32Value value) {
+        if (ointBuilder_ == null) {
+          if (oint_ != null) {
+            oint_ =
+              com.google.protobuf.Int32Value.newBuilder(oint_).mergeFrom(value).buildPartial();
+          } else {
+            oint_ = value;
+          }
+          onChanged();
+        } else {
+          ointBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+       */
+      public Builder clearOint() {
+        if (ointBuilder_ == null) {
+          oint_ = null;
+          onChanged();
+        } else {
+          oint_ = null;
+          ointBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+       */
+      public com.google.protobuf.Int32Value.Builder getOintBuilder() {
+        
+        onChanged();
+        return getOintFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+       */
+      public com.google.protobuf.Int32ValueOrBuilder getOintOrBuilder() {
+        if (ointBuilder_ != null) {
+          return ointBuilder_.getMessageOrBuilder();
+        } else {
+          return oint_ == null ?
+              com.google.protobuf.Int32Value.getDefaultInstance() : oint_;
+        }
+      }
+      /**
+       * <code>optional .google.protobuf.Int32Value oint = 6;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.google.protobuf.Int32Value, com.google.protobuf.Int32Value.Builder, com.google.protobuf.Int32ValueOrBuilder> 
+          getOintFieldBuilder() {
+        if (ointBuilder_ == null) {
+          ointBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Int32Value, com.google.protobuf.Int32Value.Builder, com.google.protobuf.Int32ValueOrBuilder>(
+                  getOint(),
+                  getParentForChildren(),
+                  isClean());
+          oint_ = null;
+        }
+        return ointBuilder_;
+      }
+
+      private int corpus_ = 0;
+      /**
+       * <code>optional .tutorial.Person.Corpus corpus = 7;</code>
+       */
+      public int getCorpusValue() {
+        return corpus_;
+      }
+      /**
+       * <code>optional .tutorial.Person.Corpus corpus = 7;</code>
+       */
+      public Builder setCorpusValue(int value) {
+        corpus_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .tutorial.Person.Corpus corpus = 7;</code>
+       */
+      public org.simpleflatmapper.proto.AddressBookProtos.Person.Corpus getCorpus() {
+        org.simpleflatmapper.proto.AddressBookProtos.Person.Corpus result = org.simpleflatmapper.proto.AddressBookProtos.Person.Corpus.valueOf(corpus_);
+        return result == null ? org.simpleflatmapper.proto.AddressBookProtos.Person.Corpus.UNRECOGNIZED : result;
+      }
+      /**
+       * <code>optional .tutorial.Person.Corpus corpus = 7;</code>
+       */
+      public Builder setCorpus(org.simpleflatmapper.proto.AddressBookProtos.Person.Corpus value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        
+        corpus_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .tutorial.Person.Corpus corpus = 7;</code>
+       */
+      public Builder clearCorpus() {
+        
+        corpus_ = 0;
+        onChanged();
+        return this;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -2781,17 +3210,22 @@ public final class AddressBookProtos {
   static {
     java.lang.String[] descriptorData = {
       "\n\021addressbook.proto\022\010tutorial\032\037google/pr" +
-      "otobuf/timestamp.proto\"\375\001\n\006Person\022\014\n\004nam" +
-      "e\030\001 \001(\t\022\n\n\002id\030\002 \001(\005\022\r\n\005email\030\003 \001(\t\022,\n\006ph" +
-      "ones\030\004 \003(\0132\034.tutorial.Person.PhoneNumber" +
-      "\022&\n\002ts\030\005 \001(\0132\032.google.protobuf.Timestamp" +
-      "\032G\n\013PhoneNumber\022\016\n\006number\030\001 \001(\t\022(\n\004type\030" +
-      "\002 \001(\0162\032.tutorial.Person.PhoneType\"+\n\tPho" +
-      "neType\022\n\n\006MOBILE\020\000\022\010\n\004HOME\020\001\022\010\n\004WORK\020\002\"/" +
-      "\n\013AddressBook\022 \n\006people\030\001 \003(\0132\020.tutorial" +
-      ".PersonBP\n\024org.simpleflatmapper.protoB\021Address",
-      "BookProtos\252\002$Google.Protobuf.Examples.Ad" +
-      "dressBookb\006proto3"
+      "otobuf/timestamp.proto\032\036google/protobuf/" +
+      "wrappers.proto\"\255\003\n\006Person\022\014\n\004name\030\001 \001(\t\022" +
+      "\n\n\002id\030\002 \001(\005\022\r\n\005email\030\003 \001(\t\022,\n\006phones\030\004 \003" +
+      "(\0132\034.tutorial.Person.PhoneNumber\022&\n\002ts\030\005" +
+      " \001(\0132\032.google.protobuf.Timestamp\022)\n\004oint" +
+      "\030\006 \001(\0132\033.google.protobuf.Int32Value\022\'\n\006c" +
+      "orpus\030\007 \001(\0162\027.tutorial.Person.Corpus\032G\n\013" +
+      "PhoneNumber\022\016\n\006number\030\001 \001(\t\022(\n\004type\030\002 \001(" +
+      "\0162\032.tutorial.Person.PhoneType\"+\n\tPhoneTy",
+      "pe\022\n\n\006MOBILE\020\000\022\010\n\004HOME\020\001\022\010\n\004WORK\020\002\"Z\n\006Co" +
+      "rpus\022\r\n\tUNIVERSAL\020\000\022\007\n\003WEB\020\001\022\n\n\006IMAGES\020\002" +
+      "\022\t\n\005LOCAL\020\003\022\010\n\004NEWS\020\004\022\014\n\010PRODUCTS\020\005\022\t\n\005V" +
+      "IDEO\020\006\"/\n\013AddressBook\022 \n\006people\030\001 \003(\0132\020." +
+      "tutorial.PersonBP\n\024org.simpleflatmapper.protoB" +
+      "\021AddressBookProtos\252\002$Google.Protobuf.Exa" +
+      "mples.AddressBookb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2805,13 +3239,14 @@ public final class AddressBookProtos {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           com.google.protobuf.TimestampProto.getDescriptor(),
+          com.google.protobuf.WrappersProto.getDescriptor(),
         }, assigner);
     internal_static_tutorial_Person_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_tutorial_Person_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tutorial_Person_descriptor,
-        new java.lang.String[] { "Name", "Id", "Email", "Phones", "Ts", });
+        new java.lang.String[] { "Name", "Id", "Email", "Phones", "Ts", "Oint", "Corpus", });
     internal_static_tutorial_Person_PhoneNumber_descriptor =
       internal_static_tutorial_Person_descriptor.getNestedTypes().get(0);
     internal_static_tutorial_Person_PhoneNumber_fieldAccessorTable = new
@@ -2825,6 +3260,7 @@ public final class AddressBookProtos {
         internal_static_tutorial_AddressBook_descriptor,
         new java.lang.String[] { "People", });
     com.google.protobuf.TimestampProto.getDescriptor();
+    com.google.protobuf.WrappersProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

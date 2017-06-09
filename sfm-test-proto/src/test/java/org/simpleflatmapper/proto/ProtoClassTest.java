@@ -94,10 +94,6 @@ message AddressBook {
 
     @Test
     public void testMapPersonTs() throws IOException, ParseException {
-
-        ClassMeta<AddressBookProtos.Person> classMeta = ReflectionService.newInstance().getClassMeta(AddressBookProtos.Person.class);
-        
-        
         CsvMapper<AddressBookProtos.Person> csvMapper =
                 CsvMapperFactory
                         .newInstance()
@@ -111,6 +107,24 @@ message AddressBook {
 
         assertEquals("arnaud", person.getName());
         assertEquals(new SimpleDateFormat("yyyyMMdd").parse("20170607").getTime(), person.getTs().getSeconds() * 1000);
+
+    }
+
+    @Test
+    public void testMapPersonIntValue() throws IOException, ParseException {
+        CsvMapper<AddressBookProtos.Person> csvMapper =
+                CsvMapperFactory
+                        .newInstance()
+                        .useAsm(false)
+                        .newBuilder(AddressBookProtos.Person.class)
+                        .addMapping("name")
+                        .addMapping("oint")
+                        .mapper();
+
+        AddressBookProtos.Person person = csvMapper.iterator(new StringReader("arnaud,36")).next();
+
+        assertEquals("arnaud", person.getName());
+        assertEquals(36, person.getOint().getValue());
 
     }
     

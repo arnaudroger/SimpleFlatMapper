@@ -14,6 +14,9 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	<properties>
+		<jar.classifier/>
+	</properties>
 
 	<build>
 		<plugins>
@@ -34,17 +37,20 @@
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-csv</artifactId>
 			<version>3.13-SNAPSHOT</version>
+			<classifier>${jar.classifier}</classifier>
 		</dependency>
 
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-jdbc</artifactId>
 			<version>3.13-SNAPSHOT</version>
+			<classifier>${jar.classifier}</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-poi</artifactId>
 			<version>3.13-SNAPSHOT</version>
+			<classifier>${jar.classifier}</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>
@@ -84,7 +90,9 @@
 			<activation>
 				<jdk>9-ea</jdk>
 			</activation>
-
+			<properties>
+				<jar.classifier>jdk9ea</jar.classifier>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>

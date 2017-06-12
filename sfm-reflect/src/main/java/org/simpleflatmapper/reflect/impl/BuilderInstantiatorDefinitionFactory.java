@@ -20,7 +20,7 @@ import java.util.Set;
 public class BuilderInstantiatorDefinitionFactory {
 
     public static final Predicate<Method> GOOGLE_PROTO_EXCLUDE = new Predicate<Method>() {
-        Set<String> excludeMethod = new HashSet<>(Arrays.asList(
+        Set<String> excludeMethod = new HashSet<String>(Arrays.asList(
                 "setUnknownFields", 
                 "clearField", "mergeUnknownFields", "mergeFrom", "clearOneof", "mergeFrom"
         ));

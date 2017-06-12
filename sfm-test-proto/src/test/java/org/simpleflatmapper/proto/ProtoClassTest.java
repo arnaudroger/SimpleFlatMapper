@@ -77,19 +77,27 @@ message AddressBook {
                         .addMapping("email")
                         .addMapping("phones_number")
                         .addMapping("phones_type")
+                        .addMapping("phones_number")
+                        .addMapping("phones_type")
                         .mapper();
 
-        AddressBookProtos.Person person = csvMapper.iterator(new StringReader("arnaud,1,arnaud.roger@gmail.com,+4411223333,MOBILE")).next();
+        AddressBookProtos.Person person = csvMapper.iterator(new StringReader("arnaud,1,arnaud.roger@gmail.com,+4411223333,MOBILE,+4411223334,HOME")).next();
         
         assertEquals("arnaud", person.getName());
         assertEquals(1, person.getId());
         assertEquals("arnaud.roger@gmail.com", person.getEmail());
         
-        assertEquals(1, person.getPhonesCount());
+        assertEquals(2, person.getPhonesCount());
         AddressBookProtos.Person.PhoneNumber phones = person.getPhones(0);
 
         assertEquals("+4411223333", phones.getNumber());
         assertEquals(AddressBookProtos.Person.PhoneType.MOBILE, phones.getType());
+
+        phones = person.getPhones(1);
+
+        assertEquals("+4411223334", phones.getNumber());
+        assertEquals(AddressBookProtos.Person.PhoneType.HOME, phones.getType());
+
     }
 
     @Test

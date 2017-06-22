@@ -41,6 +41,8 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		constantConverter(consumer, CharSequence.class, Float.class,     new CharSequenceFloatConverter());
 		constantConverter(consumer, CharSequence.class, Double.class,    new CharSequenceDoubleConverter());
 		constantConverter(consumer, CharSequence.class, UUID.class,      new CharSequenceUUIDConverter());
+		constantConverter(consumer, CharSequence.class, Boolean.class,   new CharSequenceBooleanConverter());
+		
 		factoryConverter(consumer, new AbstractConverterFactory<CharSequence, Date>(CharSequence.class, Date.class) {
 			@Override
 			public Converter<? super CharSequence, ? extends Date> newConverter(ConvertingTypes targetedTypes, Object... params) {

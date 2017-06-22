@@ -129,6 +129,8 @@ public class ConverterServiceTest {
                 return "yyyyMMdd";
             }
         });
+        testConverter("false",   Boolean.FALSE);
+        testConverter("true",   Boolean.TRUE);
 
         final UUID uuid = UUID.randomUUID();
         testConverter(uuid.toString(), uuid);

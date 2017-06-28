@@ -110,7 +110,7 @@ public class OsgiTest {
 
         String javaVersion = System.getProperty("java.version");
         System.out.println("javaVersion = " + javaVersion);
-        if (!javaVersion.contains("9-ea")) {
+        if (!javaVersion.startsWith("9")) {
             hostApplication.install(ASM);
             hostApplication.install(ARIES);
             hostApplication.install(SPLIFLY);

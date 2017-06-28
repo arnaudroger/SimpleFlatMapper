@@ -20,7 +20,7 @@ jdk:
   - openjdk7
   - openjdk6
 
-script: java -version; java -version 2>&1 | grep -q "9" ; if [ $? -ne 0 ]; then mvn test -B; else  mvn test javadoc:javadoc -B; fi
+script: java -version; java -version 2>&1 | grep -q "9" ; if [ $? -ne 0 ]; then echo 'java 9' mvn test -B; else echo 'java lt 9' mvn test javadoc:javadoc -B; fi
 
 
 env:

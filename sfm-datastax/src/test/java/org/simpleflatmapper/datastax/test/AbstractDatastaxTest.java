@@ -31,6 +31,7 @@ public class AbstractDatastaxTest  {
 
     @SuppressWarnings("WeakerAccess")
     protected void testInSession(Callback callback) throws Exception {
+        if (callback == null) throw new NullPointerException();
         Session session =  null;
 
         try {
@@ -124,6 +125,7 @@ public class AbstractDatastaxTest  {
                 session.execute("insert into dbobjects_mapudt(id, l) values(1,  {2 : {str : 't1', l : 12}})");
             }
 
+            if (session == null) throw new NullPointerException();
             callback.call(session);
         } finally {
             try {

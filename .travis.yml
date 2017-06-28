@@ -20,7 +20,8 @@ jdk:
   - openjdk7
   - openjdk6
 
-script: mvn test javadoc:javadoc -B
+script: java -version 2>&1 | grep -q "9" ; if [ $? -ne 0 ]; then mvn test -B; else  mvn test javadoc:javadoc -B; fi
+
 
 env:
   - MAVEN_SKIP_RC=true TRAVISBUILD=true

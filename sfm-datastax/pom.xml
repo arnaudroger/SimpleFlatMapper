@@ -201,7 +201,7 @@
 		<profile>
 			<id>jdk19</id>
 			<activation>
-				<jdk>9-ea</jdk>
+				<jdk>9</jdk>
 			</activation>
 			<properties>
 				<maven.test.skip>true</maven.test.skip>

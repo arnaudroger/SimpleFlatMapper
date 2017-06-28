@@ -98,11 +98,12 @@ public class DatastaxHelper {
                 o.put(DataType.Name.COUNTER, longCodeInstance);
 
                 o = (Map) f.get(null);
-                System.out.println("primitiveCodecs = " + o);
+                System.out.println("fixed primitiveCodecs = " + o);
             }
 
 
         } catch(Throwable e ) {
+            e.printStackTrace(System.out);
             // used only for 2.1 drivers
         }
     }

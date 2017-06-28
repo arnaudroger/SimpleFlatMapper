@@ -62,6 +62,9 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
         DatastaxMapper<DbObject> dbObjectDatastaxMapper = DatastaxMapperFactory.newInstance().mapTo(DbObject.class);
         PreparedStatement preparedStatement = session.prepare("select * from dbobjects where id = ?");
         if (preparedStatement == null) throw new NullPointerException();
+        System.out.println("preparedStatement = " + preparedStatement);
+        System.out.println("object = " + object);
+        System.out.println("object.getId() = " + object.getId());
         BoundStatement boundStatement =
                 preparedStatement
                         .bind(object.getId());

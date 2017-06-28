@@ -87,7 +87,12 @@ public class DatastaxHelper {
 
             Class<?> longCodec = Class.forName("com.datastax.driver.core.TypeCodec$LongCodec");
 
-            Field instance = longCodec.getDeclaredField("newInstance");
+            Field instance;
+            try {
+                instance = longCodec.getDeclaredField("newInstance");
+            } catch (Exception e) {
+                instance = longCodec.getDeclaredField("instance");
+            }
             instance.setAccessible(true);
             Object longCodeInstance = instance.get(null);
             System.out.println("LongCodec.newInstance = " + longCodeInstance);

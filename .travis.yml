@@ -40,10 +40,11 @@ before_install:
   - sudo -E add-apt-repository -y ppa:webupd8team/java
   - sudo apt-get -y update
   - echo install jdk6 jdk7
-  - sudo apt-get -y install openjdk-6-jdk openjdk-7-jdk
+  - sudo apt-get -y install openjdk-6-jdk openjdk-7-jdk oracle-java9-installer
   - sudo ln -s /usr/lib/jvm/java-6-openjdk-amd64 /usr/lib/jvm/java-6-openjdk
   - sudo ln -s /usr/lib/jvm/java-7-openjdk-amd64 /usr/lib/jvm/java-7-openjdk
   - sudo ln -s /usr/lib/jvm/java-8-oracle /usr/lib/jvm/java-8-oracle-amd64
+  - ls -al /usr/lib/jvm/
 before_script:
   - mysql --verbose -u root -e 'create database sfm;'
   - mysql --verbose -u root -e "CREATE USER 'sfm'@'localhost';"

@@ -169,7 +169,7 @@ questions.
                 <jdk>9</jdk>
             </activation>
             <properties>
-                <jar.classifier>jdk9ea</jar.classifier>
+                <jar.classifier>jdk9</jar.classifier>
             </properties>
         </profile>
     </profiles>

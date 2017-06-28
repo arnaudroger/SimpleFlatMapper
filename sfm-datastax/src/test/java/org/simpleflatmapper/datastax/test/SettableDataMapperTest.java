@@ -65,12 +65,18 @@ public class SettableDataMapperTest extends AbstractDatastaxTest {
         System.out.println("preparedStatement = " + preparedStatement);
         System.out.println("object = " + object);
         System.out.println("object.getId() = " + object.getId());
-        BoundStatement boundStatement =
-                preparedStatement
-                        .bind(object.getId());
-        ResultSet execute = session.execute(boundStatement);
-        DbObject actual = dbObjectDatastaxMapper.iterator(execute).next();
-        assertEquals(object, actual);
+        try {
+            BoundStatement boundStatement =
+                    preparedStatement
+                            .bind(object.getId());
+
+            ResultSet execute = session.execute(boundStatement);
+            DbObject actual = dbObjectDatastaxMapper.iterator(execute).next();
+            assertEquals(object, actual);
+        } catch (NullPointerException e) {
+            e.printStackTrace(System.out);
+            throw e;
+        }
     }
 
 

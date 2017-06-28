@@ -418,8 +418,8 @@
                 <jdk>9</jdk>
             </activation>
             <properties>
-                <source.classifier>jdk9ea-sources</source.classifier>
-                <jar.classifier>jdk9ea</jar.classifier>
+                <source.classifier>jdk9-sources</source.classifier>
+                <jar.classifier>jdk9</jar.classifier>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
             </properties>
 

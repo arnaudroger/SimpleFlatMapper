@@ -4,7 +4,7 @@ package org.simpleflatmapper.util;
 public interface CheckedConsumer<T> {
     void accept(T t) throws Exception;
 
-    //IFJAVA8_START
+    /*IFJAVA8_START
     default Consumer<T> toConsumer() {
         return t -> {
             try {
@@ -18,6 +18,6 @@ public interface CheckedConsumer<T> {
     static <T> Consumer<T> toConsumer(CheckedConsumer<T> consumer) {
         return consumer.toConsumer();
     }
-    //IFJAVA8_END
+    IFJAVA8_END*/
 
 }

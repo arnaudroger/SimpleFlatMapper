@@ -28,9 +28,9 @@ public class KeyDefinition<S, K> {
     }
 
     private static <K> K getSingleKey(K[] keys) {
-        //IFJAVA8_START
+        /*IFJAVA8_START
         if (keys != null && keys.length == 1) return keys[0];
-        //IFJAVA8_END
+        IFJAVA8_END*/
         return null;
     }
 

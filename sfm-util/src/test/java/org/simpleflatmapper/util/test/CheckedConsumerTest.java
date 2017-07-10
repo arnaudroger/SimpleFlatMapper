@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public class CheckedConsumerTest {
 
-    //IFJAVA8_START
+    /*IFJAVA8_START
     @Test
     public void toConsumer() throws Exception {
         try {
@@ -29,7 +29,7 @@ public class CheckedConsumerTest {
             throw new IOException();
         }).accept(null);
     }
-    //IFJAVA8_END
+    IFJAVA8_END*/
 
 
 }

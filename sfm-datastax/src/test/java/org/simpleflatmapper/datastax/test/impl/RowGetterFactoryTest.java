@@ -23,10 +23,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-//IFJAVA8_END
+IFJAVA8_END*/
 import java.util.Date;
 import java.util.UUID;
 

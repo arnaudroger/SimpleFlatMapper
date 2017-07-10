@@ -18,9 +18,9 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.stream.Collectors;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 public class StaticSheetMapperTest {
 
@@ -79,7 +79,7 @@ public class StaticSheetMapperTest {
     }
 
 
-    //IFJAVA8_START
+    /*IFJAVA8_START
     @Test
     public void streamOnSheetFrom0WithStreamWithStaticMapper() {
 
@@ -99,7 +99,7 @@ public class StaticSheetMapperTest {
         assertDbObject(1, list.get(1));
     }
 
-    //IFJAVA8_END
+    IFJAVA8_END*/
 
     protected void testIteratorHasExpectedValue(Iterator<DbObject> iterator) {
         assertTrue(iterator.hasNext());

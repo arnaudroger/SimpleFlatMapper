@@ -24,7 +24,7 @@ public class ReflectionInstantiatorDefinitionFactory {
     }
 
     public static InstantiatorDefinition definition(Method m) {
-        //IFJAVA8_START
+        /*IFJAVA8_START
         if (m.getParameters().length > 0 && m.getParameters()[0].isNamePresent()) {
             Parameter[] parameters = new Parameter[m.getParameters().length];
             final java.lang.reflect.Parameter[] ps = m.getParameters();
@@ -35,7 +35,7 @@ public class ReflectionInstantiatorDefinitionFactory {
             }
             return new ExecutableInstantiatorDefinition(m , parameters);
         }
-        //IFJAVA8_END
+        IFJAVA8_END*/
         final Parameter[] parameters = ReflectionInstantiatorDefinitionFactory.getParameters(m, m.getGenericReturnType());
         return new ExecutableInstantiatorDefinition(m, parameters);
     }
@@ -62,21 +62,21 @@ public class ReflectionInstantiatorDefinitionFactory {
         return extractDefinitions(target, new ParameterBuilder() {
             @Override
             public Parameter[] getParameters(Method m, Type target) {
-                //IFJAVA8_START
+                /*IFJAVA8_START
                 if (true) {
                     return getParametersWithName(m);
                 }
-                //IFJAVA8_END
+                IFJAVA8_END*/
                 throw new IllegalStateException("Only supported on java8");
             }
 
             @Override
             public Parameter[] getParameters(Constructor<?> c, Type target) {
-                //IFJAVA8_START
+                /*IFJAVA8_START
                 if (true) {
                     return getParametersWithName(c);
                 }
-                //IFJAVA8_END
+                IFJAVA8_END*/
                 throw new IllegalStateException("Only supported on java8");
             }
         });
@@ -106,7 +106,7 @@ public class ReflectionInstantiatorDefinitionFactory {
         return instantiatorDefinitions;
     }
 
-    //IFJAVA8_START
+    /*IFJAVA8_START
     private static Parameter[] getParametersWithName(Executable m) {
 
         final java.lang.reflect.Parameter[] ps = m.getParameters();
@@ -118,7 +118,7 @@ public class ReflectionInstantiatorDefinitionFactory {
 
         return  parameters;
     }
-    //IFJAVA8_END
+    IFJAVA8_END*/
 
     private static Parameter[] getParameters(Constructor<?> constructor, Type target) {
         return buildParameters(target, constructor.getParameterTypes(), constructor.getGenericParameterTypes(), TypeHelper.toClass(target).getTypeParameters());
@@ -160,15 +160,15 @@ public class ReflectionInstantiatorDefinitionFactory {
     }
 
     public static boolean areParameterNamePresent(Type target) {
-        //IFJAVA8_START
+        /*IFJAVA8_START
         if (_areParameterNamePresent(target)) {
             return true;
         }
-        //IFJAVA8_END
+        IFJAVA8_END*/
         return false;
     }
 
-    //IFJAVA8_START
+    /*IFJAVA8_START
     // assume parameter name are either present or not for the type
     private static boolean _areParameterNamePresent(Type target) {
         Class<?> targetClass = TypeHelper.toClass(target);
@@ -189,5 +189,5 @@ public class ReflectionInstantiatorDefinitionFactory {
 
         return false;
     }
-    //IFJAVA8_END
+    IFJAVA8_END*/
 }

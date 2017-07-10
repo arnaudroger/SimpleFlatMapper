@@ -21,10 +21,10 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -150,7 +150,7 @@ public class CsvMapperImplTest {
 	}
 
 
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	@Test
 	public void testCsvStream()
 			throws IOException, ParseException {
@@ -221,7 +221,7 @@ public class CsvMapperImplTest {
 		});
 		assertEquals(1, i);
 	}
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
 
     public enum TypeRoot {

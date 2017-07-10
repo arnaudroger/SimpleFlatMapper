@@ -15,9 +15,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Iterator;
 import java.util.List;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.function.Consumer;
-//IFJAVA8_END
+IFJAVA8_END*/
 import static org.junit.Assert.*;
 
 public class JdbcMapperDbObjectTest {
@@ -141,7 +141,7 @@ public class JdbcMapperDbObjectTest {
 		});
 	}
 
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	@Test
 	public void testDbObjectMapperWithStream()
 			throws Exception {
@@ -247,6 +247,6 @@ public class JdbcMapperDbObjectTest {
 			}
 		});
 	}
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
 }

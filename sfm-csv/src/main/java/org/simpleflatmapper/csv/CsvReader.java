@@ -11,12 +11,12 @@ import org.simpleflatmapper.util.Function;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-//IFJAVA8_START
+/*IFJAVA8_START
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-//IFJAVA8_END
+IFJAVA8_END*/
 
 
 
@@ -122,7 +122,7 @@ public final class CsvReader implements Iterable<String[]> {
 		return new CsvStringArrayIterator(this);
 	}
 
-	//IFJAVA8_START
+	/*IFJAVA8_START
 	public Stream<String[]> stream() {
 		return StreamSupport.stream(new CsvStringArraySpliterator(this), false);
 	}
@@ -169,7 +169,7 @@ public final class CsvReader implements Iterable<String[]> {
 	}
 
 
-	//IFJAVA8_END
+	IFJAVA8_END*/
 
     private static class CsvStringArrayIterator implements Iterator<String[]> {
 

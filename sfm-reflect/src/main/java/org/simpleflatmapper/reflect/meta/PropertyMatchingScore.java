@@ -73,7 +73,7 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
     }
 
     public PropertyMatchingScore self(int numberOfProperties, String propName) {
-        return new PropertyMatchingScore(this.selfNumberOfProperties + numberOfProperties, this.nbMatch + (numberOfProperties == 0 ? propName.length() : 0 ), this.depth + 1);
+        return new PropertyMatchingScore(this.selfNumberOfProperties + numberOfProperties, this.nbMatch + (numberOfProperties == 0  ? propName.length() : 0 ), this.depth + 1);
     }
 
     public PropertyMatchingScore self(ClassMeta propertyMeta, String propName) {

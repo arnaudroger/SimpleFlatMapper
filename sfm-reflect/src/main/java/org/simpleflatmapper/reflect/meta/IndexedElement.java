@@ -50,4 +50,7 @@ public class IndexedElement<T, E> {
         return assignedPath.contains(path);
     }
 
+    public boolean hasAnyProperty() {
+        return !assignedPath.isEmpty();
+    }
 }

@@ -30,7 +30,12 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
         BooleanSupplier appendSetter = new BooleanSupplier() {
             @Override
             public boolean getAsBoolean() {
-                return elements.size() == 1;
+                for(int i = 1; i < elements.size(); i++) {
+                    if (elements.get(i).hasAnyProperty()) {
+                        return false;
+                    }
+                }
+                return true;
             }
         };
         return new ArrayElementPropertyMeta<T, E>(name,

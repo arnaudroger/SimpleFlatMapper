@@ -129,6 +129,11 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 		throw new UnsupportedOperationException("Cannot forEach property on array as variable");
 	}
 
+	@Override
+	public int getNumberOfProperties() {
+		return 10000;
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T, E> IntFactory<Setter<T, E>> newSetterFactory(final BooleanSupplier appendSetter) {
 		if (TypeHelper.isArray(type)) {

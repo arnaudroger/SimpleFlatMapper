@@ -75,7 +75,9 @@ public class SubPropertyMeta<O, I,  P> extends PropertyMeta<O, P> {
 
 	@Override
 	public String getPath() {
-		return getOwnerProperty().getPath() + "." + subProperty.getPath();
+		String subPath = subProperty.getPath();
+		String subPathPrefix = subPath.startsWith("[") ? "" : ".";
+		return getOwnerProperty().getPath() + subPathPrefix + subPath;
 	}
 
 

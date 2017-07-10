@@ -127,4 +127,9 @@ public class FastTupleClassMeta<T> implements ClassMeta<T> {
         delegate.forEachProperties(consumer);
     }
 
+    @Override
+    public int getNumberOfProperties() {
+        return delegate.getNumberOfProperties();
+    }
+
 }

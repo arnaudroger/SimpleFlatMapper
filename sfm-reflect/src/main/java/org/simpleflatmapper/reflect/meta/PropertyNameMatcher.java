@@ -14,7 +14,7 @@ public interface PropertyNameMatcher {
 
     IndexedColumn matchIndex();
 
-    PropertyNameMatcher partialMatch(CharSequence property);
+    PropertyNameMatch partialMatch(CharSequence property);
 
     PropertyNameMatch speculativeMatch();
 

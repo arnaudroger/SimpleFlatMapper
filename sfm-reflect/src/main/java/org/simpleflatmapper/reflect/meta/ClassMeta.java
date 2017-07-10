@@ -20,4 +20,6 @@ public interface ClassMeta<T> {
 	List<InstantiatorDefinition> getInstantiatorDefinitions();
 
 	void forEachProperties(Consumer<? super PropertyMeta<T, ?>> consumer);
+
+    int getNumberOfProperties();
 }

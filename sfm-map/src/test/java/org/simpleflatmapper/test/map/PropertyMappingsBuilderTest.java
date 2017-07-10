@@ -256,7 +256,7 @@ public class PropertyMappingsBuilderTest {
         PropertyMapping<List<Tuple2<B, List<C>>>, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm1 = builder2.addProperty(new SampleFieldKey("id", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
         PropertyMapping<List<Tuple2<B, List<C>>>, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm2 = builder2.addProperty(new SampleFieldKey("id", 1), FieldMapperColumnDefinition.<SampleFieldKey>identity());
 
-        assertEquals("0.element0.element1.0.element0.id", pm2.getPropertyMeta().getPath());
+        assertEquals("[0].element1[0].id", pm2.getPropertyMeta().getPath());
     }
     
 
@@ -282,7 +282,7 @@ public class PropertyMappingsBuilderTest {
         PropertyMapping<FooN, Object, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> propertyMapping = 
                 builder.addProperty(networks_network_ipv4, identity);
 
-        assertEquals("networks.0.element0.network.ipv4", propertyMapping.getPropertyMeta().getPath());
+        assertEquals("networks[0].network.ipv4", propertyMapping.getPropertyMeta().getPath());
 
     }
     

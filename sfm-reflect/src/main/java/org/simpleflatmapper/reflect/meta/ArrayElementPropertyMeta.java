@@ -3,6 +3,7 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.Setter;
+import org.simpleflatmapper.reflect.setter.AppendCollectionSetter;
 import org.simpleflatmapper.util.IntFactory;
 
 import java.lang.reflect.Type;
@@ -49,7 +50,7 @@ public class ArrayElementPropertyMeta<T, E> extends PropertyMeta<T, E> {
 
 	@Override
 	public String getPath() {
-		return index + "." + getName();
+		return  "[" + index + "]";
 	}
 
     @Override

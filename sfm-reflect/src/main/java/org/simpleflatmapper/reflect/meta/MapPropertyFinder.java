@@ -53,9 +53,9 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
 
                             if (keyProperty != null) {
                                 if (propertyMeta instanceof SelfPropertyMeta) {
-                                    matchingProperties.found(keyProperty, sCallback, score);
+                                    matchingProperties.found(keyProperty, sCallback, score.self(keyProperty.getPropertyClassMeta(), keyMatcher.toString()));
                                 } else {
-                                    matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), sCallback, score);
+                                    matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), sCallback, score.matches(keyMatcher));
                                 }
                             }
                         }

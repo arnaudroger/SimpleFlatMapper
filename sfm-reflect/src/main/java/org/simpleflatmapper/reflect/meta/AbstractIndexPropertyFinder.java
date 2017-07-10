@@ -31,10 +31,10 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
         IndexedColumn indexedColumn = propertyNameMatcher.matchIndex();
         if (indexedColumn != null) {
-            lookForAgainstColumn(indexedColumn, matchingProperties, score, propertyFinderTransformer);
+            lookForAgainstColumn(indexedColumn, matchingProperties, score.index(indexedColumn.getIndexValue()), propertyFinderTransformer);
         } else {
-            extrapolateIndex(propertyNameMatcher, matchingProperties, score.decrease(1), propertyFinderTransformer);
-            speculativeMatching(propertyNameMatcher, matchingProperties, score.shift(), propertyFinderTransformer);
+            extrapolateIndex(propertyNameMatcher, matchingProperties, score.speculative(), propertyFinderTransformer);
+            speculativeMatching(propertyNameMatcher, matchingProperties, score.speculative(), propertyFinderTransformer);
         }
     }
 
@@ -57,7 +57,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                         indexedElement.addProperty(SelfPropertyMeta.PROPERTY_PATH);
                     }
                 }
-            }, score);
+            }, score.self(indexedElement.getElementClassMeta(), indexedColumn.getIndexProperty()));
             return ;
         }
 
@@ -88,7 +88,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
                             }
                         }, score);
                     }
-                }, score, true, propertyFinderTransformer);
+                }, score.matches(indexedColumn.getIndexProperty()), true, propertyFinderTransformer);
     }
 
 
@@ -97,7 +97,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
         PropertyNameMatch speculativeMatch = propertyNameMatcher.speculativeMatch();
 
         if (speculativeMatch != null) {
-                extrapolateIndex(speculativeMatch.getLeftOverMatcher(), foundProperty, score, propertyFinderTransformer);
+                extrapolateIndex(speculativeMatch.getLeftOverMatcher(), foundProperty, score.speculative(), propertyFinderTransformer);
         }
     }
 

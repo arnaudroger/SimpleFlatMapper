@@ -48,7 +48,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 						}
 					}),
 					selfPropertySelectionCallback(propName),
-					PropertyMatchingScore.MINIMUM);
+					score.self(classMeta.getNumberOfProperties(), propName));
 		}
 	}
 
@@ -58,19 +58,20 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 				final String columnName = getColumnName(prop);
 				if (propertyNameMatcher.matches(columnName)
 						&& hasConstructorMatching(prop.getParameter())) {
-					matchingProperties.found(prop, propertiesRemoveNonMatchingCallBack(prop), score);
+					matchingProperties.found(prop, propertiesRemoveNonMatchingCallBack(prop), score.matches(propertyNameMatcher));
 				}
 
-				PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(columnName);
-				if (subPropMatcher != null && hasConstructorMatching(prop.getParameter())) {
+				PropertyNameMatch partialMatch = propertyNameMatcher.partialMatch(columnName);
+				if (partialMatch != null && hasConstructorMatching(prop.getParameter())) {
+					PropertyNameMatcher subPropMatcher = partialMatch.getLeftOverMatcher();
 					lookForSubProperty(subPropMatcher, prop, new FoundProperty() {
 						@Override
 						public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
 							matchingProperties.found(
 									new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
-									propertiesDelegateAndRemoveNonMatchingCallBack(selectionCallback, prop), score.shift());
+									propertiesDelegateAndRemoveNonMatchingCallBack(selectionCallback, prop), score);
 						}
-					}, score.shift(), propertyFinderTransformer);
+					}, score.matches(partialMatch.getProperty()), propertyFinderTransformer);
 				}
 			}
 		}
@@ -81,17 +82,18 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		for (final PropertyMeta<T, ?> prop : classMeta.getProperties()) {
 			final String columnName = getColumnName(prop);
 			if (propertyNameMatcher.matches(columnName)) {
-				matchingProperties.found(prop, propertiesCallBack(), score.decrease(1));
+				matchingProperties.found(prop, propertiesCallBack(), score.matches(propertyNameMatcher.toString()));
 			}
-			final PropertyNameMatcher subPropMatcher = propertyNameMatcher.partialMatch(columnName);
-			if (subPropMatcher != null) {
+			final PropertyNameMatch subPropMatch = propertyNameMatcher.partialMatch(columnName);
+			if (subPropMatch != null) {
+				final PropertyNameMatcher subPropMatcher = subPropMatch.getLeftOverMatcher();
 				lookForSubProperty(subPropMatcher, prop, new FoundProperty() {
 					@Override
 					public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
 						matchingProperties.found(new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
 								propertiesDelegateCallBack(selectionCallback), score);
 					}
-				}, score.shift().decrease( -1),
+				}, score.matches(subPropMatch.getProperty()),
 				propertyFinderTransformer);
 			}
 		}

@@ -37,9 +37,9 @@ public class DefaultPropertyNameMatcherTest {
 	@Test
 	public void testStartOf() {
 		PropertyNameMatcher matcher = new DefaultPropertyNameMatcher("my_Col_top_bottom", 0, false, false);
-		assertTrue(matcher.partialMatch("myCol").partialMatch("top").matches("bottom"));
-		assertTrue(matcher.partialMatch("my_Col").partialMatch("tOp").matches("bottom"));
-		assertTrue(matcher.partialMatch("my Col").partialMatch("tOp").matches("bottom"));
+		assertTrue(matcher.partialMatch("myCol").getLeftOverMatcher().partialMatch("top").getLeftOverMatcher().matches("bottom"));
+		assertTrue(matcher.partialMatch("my_Col").getLeftOverMatcher().partialMatch("tOp").getLeftOverMatcher().matches("bottom"));
+		assertTrue(matcher.partialMatch("my Col").getLeftOverMatcher().partialMatch("tOp").getLeftOverMatcher().matches("bottom"));
 		assertNull(matcher.partialMatch("my__Col"));
 		assertNull(matcher.partialMatch("myCol2"));
 	}

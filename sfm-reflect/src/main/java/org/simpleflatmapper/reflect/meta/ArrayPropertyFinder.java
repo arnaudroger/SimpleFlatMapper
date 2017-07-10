@@ -3,9 +3,6 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.util.BooleanSupplier;
 import org.simpleflatmapper.util.Predicate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 
@@ -55,14 +52,14 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
             for (int i = 0; i < elements.size(); i++) {
                 IndexedElement element = elements.get(i);
                 ExtrapolateFoundProperty<T> matchingProperties = new ExtrapolateFoundProperty<T>(element, foundProperty);
-                lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), matchingProperties, score.decrease(i), propertyFinderTransformer);
+                lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), matchingProperties, score.index(i), propertyFinderTransformer);
                 if (matchingProperties.hasFound()) {
                     return;
                 }
             }
 
             int index = elements.size();
-            lookForAgainstColumn(new IndexedColumn(index, propertyNameMatcher), foundProperty, score.decrease(index == 0 ? 0 : (16 + index) ), propertyFinderTransformer);
+            lookForAgainstColumn(new IndexedColumn(index,  propertyNameMatcher), foundProperty, score.newIndex(index), propertyFinderTransformer);
         }
 	}
 

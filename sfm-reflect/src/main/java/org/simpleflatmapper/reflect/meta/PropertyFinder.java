@@ -1,7 +1,6 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
-import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.Predicate;
@@ -18,9 +17,12 @@ public abstract class PropertyFinder<T> {
 		this.propertyFilter = propertyFilter;
 	}
 
-	@SuppressWarnings("unchecked")
 	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
-		MatchingProperties matchingProperties = new MatchingProperties(propertyFilter);
+		return findProperty(propertyNameMatcher, new DefaultPropertyFinderProbe(propertyNameMatcher));
+	}
+		@SuppressWarnings("unchecked")
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, PropertyFinderProbe propertyFinderProbe) {
+		MatchingProperties matchingProperties = new MatchingProperties(propertyFilter, propertyFinderProbe);
 		lookForProperties(propertyNameMatcher, matchingProperties, PropertyMatchingScore.INITIAL, true, IDENTITY_TRANSFORMER);
 		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
 	}
@@ -47,9 +49,11 @@ public abstract class PropertyFinder<T> {
 	protected static class MatchingProperties<T> implements FoundProperty<T> {
 		private final List<MatchedProperty<T, ?>> matchedProperties = new ArrayList<MatchedProperty<T, ?>>();
 		private final Predicate<PropertyMeta<?, ?>> propertyFilter;
+		private final PropertyFinderProbe propertyFinderProbe;
 
-		public MatchingProperties(Predicate<PropertyMeta<?, ?>> propertyFilter) {
+		public MatchingProperties(Predicate<PropertyMeta<?, ?>> propertyFilter, PropertyFinderProbe propertyFinderProbe) {
 			this.propertyFilter = propertyFilter;
+			this.propertyFinderProbe = propertyFinderProbe;
 		}
 
 		@Override
@@ -57,6 +61,7 @@ public abstract class PropertyFinder<T> {
 														  Runnable selectionCallback,
 														  PropertyMatchingScore score) {
 			if (propertyFilter.test(propertyMeta)) {
+				propertyFinderProbe.found(propertyMeta, score);
 				matchedProperties.add(new MatchedProperty<T, P>(propertyMeta, selectionCallback, score));
 			}
 		}
@@ -66,7 +71,10 @@ public abstract class PropertyFinder<T> {
 			Collections.sort(matchedProperties);
 			MatchedProperty<T, ?> selectedMatchedProperty = matchedProperties.get(0);
 			selectedMatchedProperty.select();
+			
+			propertyFinderProbe.select(selectedMatchedProperty.propertyMeta);
 			return selectedMatchedProperty.propertyMeta;
+			
 		}
 	}
 
@@ -180,4 +188,36 @@ public abstract class PropertyFinder<T> {
 			return "IDENTITY_TRANSFORMER";
 		}
 	};
+	
+	
+	public interface PropertyFinderProbe {
+
+		void found(PropertyMeta propertyMeta, PropertyMatchingScore score);
+
+		void select(PropertyMeta propertyMeta);
+	}
+	
+	public static class DefaultPropertyFinderProbe implements PropertyFinderProbe {
+		private static final boolean DEBUG = Boolean.getBoolean("org.simpleflatmapper.probe.propertyFinder");
+		
+		private final PropertyNameMatcher propertyNameMatcher;
+
+		public DefaultPropertyFinderProbe(PropertyNameMatcher propertyNameMatcher) {
+			this.propertyNameMatcher = propertyNameMatcher;
+		}
+
+		@Override
+		public void found(PropertyMeta propertyMeta, PropertyMatchingScore score) {
+			if (DEBUG) {
+				System.out.println("PropertyFinder for '" + propertyNameMatcher + "' - found " + score + " " + propertyMeta.getPath());
+			}
+		}
+
+		@Override
+		public void select(PropertyMeta propertyMeta) {
+			if (DEBUG) {
+				System.out.println("PropertyFinder for '" + propertyNameMatcher + "' - select " + propertyMeta.getPath());
+			}
+		}
+	}
 }

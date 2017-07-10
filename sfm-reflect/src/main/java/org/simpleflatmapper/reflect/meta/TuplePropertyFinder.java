@@ -61,10 +61,9 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
                             }, score);
                         }
                     }
-                }, score, true, propertyFinderTransformer);
+                }, score.index(i), true, propertyFinderTransformer);
 
             }
-            score = score.decrease(1);
         }
     }
 

@@ -83,6 +83,11 @@ public class OptionalClassMeta<T> implements ClassMeta<Optional<T>> {
 		consumer.accept(propertyMeta);
 	}
 
+	@Override
+	public int getNumberOfProperties() {
+		return 1;
+	}
+
 
 	private static class OptionalGetter<T> implements Getter<Optional<T>, Object> {
 		@Override

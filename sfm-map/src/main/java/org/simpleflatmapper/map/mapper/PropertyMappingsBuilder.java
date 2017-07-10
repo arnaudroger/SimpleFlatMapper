@@ -13,6 +13,7 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.map.PropertyNameMatcherFactory;
+import org.simpleflatmapper.reflect.meta.PropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.SelfPropertyMeta;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.BiConsumer;
@@ -38,6 +39,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
 	private final ClassMeta<T> classMeta;
+	private final PropertyMappingsBuilderProbe propertyMappingsBuilderProbe;
 
 	protected boolean modifiable = true;
 
@@ -49,9 +51,11 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 									final MapperBuilderErrorHandler mapperBuilderErrorHandler,
 									final Predicate<PropertyMeta<?, ?>> isValidPropertyMeta,
 									final PropertyFinder<T> propertyFinder,
-									List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties)  throws MapperBuildingException {
+									List<ExtendPropertyFinder.CustomProperty<?, ?>> customProperties, 
+									PropertyMappingsBuilderProbe propertyMappingsBuilderProbe)  throws MapperBuildingException {
 		this.mapperBuilderErrorHandler = mapperBuilderErrorHandler;
 		this.customProperties = customProperties;
+		this.propertyMappingsBuilderProbe = propertyMappingsBuilderProbe;
 		this.propertyFinder = propertyFinder != null ? propertyFinder : classMeta.newPropertyFinder(isValidPropertyMeta);
 		this.propertyNameMatcherFactory = propertyNameMatcherFactory;
 		this.classMeta = classMeta;
@@ -78,15 +82,17 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		if (!modifiable) throw new IllegalStateException("Builder not modifiable");
 
 		if (columnDefinition.ignore()) {
+			propertyMappingsBuilderProbe.ignore(key, columnDefinition);
 			properties.add(null);
 			return null;
 		}
 
 		PropertyFinder<T> effectivePropertyFinder = wrapPropertyFinder(this.propertyFinder);
 
+		PropertyNameMatcher propertyNameMatcher = propertyNameMatcherFactory.newInstance(key);
 		final PropertyMeta<T, P> prop =
 				(PropertyMeta<T, P>) effectivePropertyFinder
-						.findProperty(propertyNameMatcherFactory.newInstance(key));
+						.findProperty(propertyNameMatcher, propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher));
 
 
 		if (prop == null) {
@@ -95,6 +101,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 			return null;
 		} else {
 			PropertyMapping<T, P, K, D> propertyMapping = addProperty(key, columnDefinition, prop);
+			propertyMappingsBuilderProbe.map(key, columnDefinition, prop);
 
 			handleSelfPropertyMetaInvalidation(propertyNotFound);
 
@@ -313,7 +320,42 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 						mapperConfig.mapperBuilderErrorHandler(),
 						propertyPredicate,
 						propertyFinder,
-						customProperties);
+						customProperties, 
+						DefaultPropertyMappingsBuilderProbe.INSTANCE);
 	}
 
+	public interface PropertyMappingsBuilderProbe {
+		void ignore(FieldKey key, ColumnDefinition columnDefinition);
+
+		void map(FieldKey key, ColumnDefinition columnDefinition, PropertyMeta<?, ?> prop);
+
+		PropertyFinder.PropertyFinderProbe propertyFinderProbe(PropertyNameMatcher matcher);
+	}
+	
+	
+	private static class DefaultPropertyMappingsBuilderProbe implements PropertyMappingsBuilderProbe {
+		static final DefaultPropertyMappingsBuilderProbe INSTANCE = new DefaultPropertyMappingsBuilderProbe();
+		private static final boolean DEBUG = Boolean.getBoolean("org.simpleflatmapper.probe.propertyMappingsBuilder");
+
+		@Override
+		public void ignore(FieldKey key, ColumnDefinition columnDefinition) {
+			if (DEBUG) {
+				System.out.println("PropertyMappingsBuilder - ignore " + key);
+			}
+		}
+
+		@Override
+		public void map(FieldKey key, ColumnDefinition columnDefinition, PropertyMeta<?, ?> prop) {
+			if (DEBUG) {
+				String path = prop.getPath();
+				System.out.println("PropertyMappingsBuilder - map " + key.getName() + " to " + path);
+			}
+			
+		}
+
+		@Override
+		public PropertyFinder.PropertyFinderProbe propertyFinderProbe(PropertyNameMatcher matcher) {
+			return new PropertyFinder.DefaultPropertyFinderProbe(matcher);
+		}
+	}
 }

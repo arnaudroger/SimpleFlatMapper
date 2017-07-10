@@ -3,23 +3,32 @@ package org.simpleflatmapper.jdbc.test;
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
+import org.simpleflatmapper.jdbc.JdbcMapperFactory;
+import org.simpleflatmapper.test.beans.Bar;
+import org.simpleflatmapper.test.jdbc.DbHelper;
+import org.simpleflatmapper.test.jdbc.TestRowHandler;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.tuple.Tuple3;
 import org.simpleflatmapper.tuple.Tuple4;
 import org.simpleflatmapper.tuple.Tuple5;
 import org.simpleflatmapper.tuple.Tuples;
-import org.simpleflatmapper.test.jdbc.DbHelper;
-import org.simpleflatmapper.test.jdbc.TestRowHandler;
 import org.simpleflatmapper.util.ListCollector;
+import org.simpleflatmapper.util.TypeReference;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLType;
+import java.sql.Statement;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 
 public class JdbcMapperTupleTest {
-	
+
 	@Test
 	public void testTuple2OnString() throws Exception {
 		JdbcMapperBuilder<Tuple2<String, String>> builder = JdbcMapperFactoryHelper.asm().newBuilder(Tuples.typeDef(String.class, String.class));
@@ -161,5 +170,52 @@ public class JdbcMapperTupleTest {
 				"select '1', '2', 3, 4, 3.3 from  TEST_DB_OBJECT where id = 1"
 
 		);
+	}
+
+	@Test
+	public void testIssue450() throws Exception {
+		JdbcMapper<Tuple2<Integer, List<Privilege>>> mapper = 
+				JdbcMapperFactory
+						.newInstance()
+						.addKeys("resource_id", "id")
+						.newBuilder(new TypeReference<Tuple2<Integer, List<Privilege>>>() {})
+						.addMapping("id", 1, 4)
+						.addMapping("name", 2, 12)
+						.addMapping("resource_id", 3, 4)
+						.mapper();
+
+		Connection dbConnection = DbHelper.getDbConnection(DbHelper.TargetDB.POSTGRESQL);
+		
+		if (dbConnection == null) {
+			return;
+		}
+
+		Statement statement = dbConnection.createStatement();
+		
+		ResultSet rs = statement.executeQuery(
+				"with \n" +
+						"\tresource_privileges(resource_id, privilege_id) AS (VALUES(1, 10), (2, 10), (3, 11)),\n" +
+						"\tprivilege (id, name) as (values(10, 'write'), ('11', 'read'))\n" +
+						"select privilege.id, privilege.name, resource_privileges.resource_id\n" +
+						"from privilege join resource_privileges on resource_privileges.privilege_id = privilege.id\n" +
+						"order by resource_privileges.resource_id");
+		List<Tuple2<Integer, List<Privilege>>> list = mapper.forEach(rs, new ListCollector<Tuple2<Integer, List<Privilege>>>()).getList();
+		
+		
+		assertEquals(2, list.size());
+
+		assertEquals((Integer)10, list.get(0).first());
+		assertEquals((Integer)11, list.get(1).first());
+		
+		assertEquals(2, list.get(0).second().size());
+		assertEquals(1, list.get(1).second().size());
+		
+		dbConnection.close();
+
+	}
+	
+	public static class Privilege {
+		public int id;
+		public String name;
 	}
 }

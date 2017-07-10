@@ -86,4 +86,9 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 	public void forEachProperties(Consumer<? super PropertyMeta<M, ?>> consumer) {
 		throw new UnsupportedOperationException("Cannot list properties as non static");
 	}
+
+	@Override
+	public int getNumberOfProperties() {
+		return 10000;
+	}
 }

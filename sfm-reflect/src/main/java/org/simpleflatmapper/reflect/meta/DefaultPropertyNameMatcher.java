@@ -69,7 +69,7 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 			subPropertyNameMatcher = new DefaultPropertyNameMatcher(column, listIndexEnd, exactMatch, caseSensitive );
 		}
 
-		return new IndexedColumn(index, subPropertyNameMatcher);
+		return new IndexedColumn(index, column.substring(listIndexStart, listIndexEnd), subPropertyNameMatcher);
 	}
 
 	private int _partialMatch(final CharSequence property) {
@@ -129,10 +129,10 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	}
 
 	@Override
-	public PropertyNameMatcher partialMatch(final CharSequence property) {
+	public PropertyNameMatch partialMatch(final CharSequence property) {
 		int index = _partialMatch(property);
 		if (index != -1) {
-			return new DefaultPropertyNameMatcher(column, index, exactMatch, caseSensitive);
+			return new PropertyNameMatch(column.substring(from, index), new DefaultPropertyNameMatcher(column, index, exactMatch, caseSensitive));
 		} else {
 			return null;
 		}

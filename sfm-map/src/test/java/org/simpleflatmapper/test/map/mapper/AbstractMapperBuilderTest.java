@@ -51,9 +51,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.Optional;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 
 import static org.junit.Assert.*;
@@ -91,7 +91,7 @@ public class AbstractMapperBuilderTest {
         assertEquals(now, map.get(0));
     }
 
-    /*IFJAVA8_START
+    //IFJAVA8_START
     @Test
     public void testOptionalDbObject() {
         ClassMeta<Optional<DbObject>> classMeta =
@@ -107,7 +107,7 @@ public class AbstractMapperBuilderTest {
         assertEquals(1l, map.get().getId());
         assertEquals("name1", map.get().getName());
     }
-    IFJAVA8_END*/
+    //IFJAVA8_END
 
     @Test
     public void testArrayDbObject() {
@@ -505,9 +505,9 @@ public class AbstractMapperBuilderTest {
 
         testCanBuildMapper(mapperFactory.getClassMeta(new TypeReference<Tuple2<AA, String>>() { }));
         testCanBuildMapper(mapperFactory.getClassMeta(new TypeReference<List<AA>>() { }));
-        /*IFJAVA8_START
+        //IFJAVA8_START
         testCanBuildMapper(mapperFactory.getClassMeta(new TypeReference<Optional<AA>>() { }));
-        IFJAVA8_END*/
+        //IFJAVA8_END
 
         testCanBuildMapper(mapperFactory.getClassMeta(new TypeReference<Map<String, AA>>() { }), "aa_");
 

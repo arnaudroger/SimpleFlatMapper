@@ -3,9 +3,9 @@ package org.simpleflatmapper.map.context.impl;
 import org.simpleflatmapper.map.context.Key;
 
 import java.util.Arrays;
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.Objects;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 public final class SingleValueKey extends Key {
 
@@ -15,10 +15,10 @@ public final class SingleValueKey extends Key {
     public SingleValueKey(Object value) {
         this.value = value;
         this._hashCode = _hashCode(value);
-        /*IFJAVA8_START
+        //IFJAVA8_START
         if (true)
             return;
-        IFJAVA8_END*/
+        //IFJAVA8_END
         throw new IllegalArgumentException("Supported only in java8");
     }
 
@@ -29,9 +29,9 @@ public final class SingleValueKey extends Key {
         SingleValueKey keys = (SingleValueKey) o;
 
         if (true) {
-            /*IFJAVA8_START
+            //IFJAVA8_START
             return Objects.deepEquals(value, keys.value);
-            IFJAVA8_END*/
+            //IFJAVA8_END
         }
         throw new IllegalArgumentException("Supported only in java8");
     }

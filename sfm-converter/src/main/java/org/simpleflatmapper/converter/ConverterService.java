@@ -2,9 +2,9 @@ package org.simpleflatmapper.converter;
 
 import org.simpleflatmapper.converter.impl.JavaBaseConverterFactoryProducer;
 import org.simpleflatmapper.converter.impl.IdentityConverter;
-/*IFJAVA8_START
+//IFJAVA8_START
 import org.simpleflatmapper.converter.impl.time.JavaTimeConverterFactoryProducer;
-IFJAVA8_END*/
+//IFJAVA8_END
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ProducerServiceLoader;
 import org.simpleflatmapper.util.TypeHelper;
@@ -31,9 +31,9 @@ public class ConverterService {
 
         new JavaBaseConverterFactoryProducer().produce(factoryConsumer);
 
-        /*IFJAVA8_START
+        //IFJAVA8_START
         new JavaTimeConverterFactoryProducer().produce(factoryConsumer);
-        IFJAVA8_END*/
+        //IFJAVA8_END
 
         ProducerServiceLoader.produceFromServiceLoader(ConverterFactoryProducer.class, factoryConsumer);
 

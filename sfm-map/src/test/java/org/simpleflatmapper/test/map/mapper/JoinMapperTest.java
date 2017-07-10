@@ -18,9 +18,9 @@ import org.simpleflatmapper.util.ListCollector;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.stream.Collectors;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import static org.junit.Assert.*;
 
@@ -89,9 +89,9 @@ public class JoinMapperTest {
 
         checkList(joinMapper.forEach(data, new ListCollector<DbListObject>()).getList());
 
-        /*IFJAVA8_START
+        //IFJAVA8_START
         checkList(joinMapper.stream(data).collect(Collectors.<DbListObject>toList()));
-        IFJAVA8_END*/
+        //IFJAVA8_END
 
         List<DbListObject> list = new ArrayList<DbListObject>();
 

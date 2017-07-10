@@ -14,11 +14,11 @@ import org.simpleflatmapper.util.CheckedConsumer;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.*;
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 
 
@@ -111,7 +111,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		return iterator(CsvParser.skip(skip).reader(reader));
 	}
 
-	/*IFJAVA8_START
+	//IFJAVA8_START
 	@Override
 	public Stream<T> stream(Reader reader) throws IOException {
 		return stream(CsvParser.reader(reader));
@@ -188,7 +188,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		}
 	}
 
-	IFJAVA8_END*/
+	//IFJAVA8_END
 
     protected CsvMapperCellConsumer newCellConsumer(final CheckedConsumer<? super T> handler) {
         return newCellConsumer(handler, null, false);

@@ -15,9 +15,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.stream.Collectors;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 
 import static org.junit.Assert.*;
@@ -82,7 +82,7 @@ public class DynamicSheetMapperTest {
         assertEquals(3, row);
     }
 
-    /*IFJAVA8_START
+    //IFJAVA8_START
 
     @Test
     public void streamOnSheetFrom0WithStreamWithDynamicMapper() {
@@ -101,7 +101,7 @@ public class DynamicSheetMapperTest {
         assertDbObject(0, list.get(0));
         assertDbObject(1, list.get(1));
     }
-    IFJAVA8_END*/
+    //IFJAVA8_END
 
     protected void testIteratorHasExpectedValue(Iterator<DbObject> iterator) {
         assertTrue(iterator.hasNext());

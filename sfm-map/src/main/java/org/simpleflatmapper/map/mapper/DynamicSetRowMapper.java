@@ -11,9 +11,9 @@ import org.simpleflatmapper.util.UnaryFactoryWithException;
 
 import java.util.Iterator;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.stream.Stream;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 
 public class DynamicSetRowMapper<ROW, SET, T, E extends Exception, K extends FieldKey<K>> implements SetRowMapper<ROW, SET, T, E> {
@@ -68,12 +68,12 @@ public class DynamicSetRowMapper<ROW, SET, T, E extends Exception, K extends Fie
 		return getMapperFromSet(rs).iterator(rs);
 	}
 
-	/*IFJAVA8_START
+	//IFJAVA8_START
 	@Override
 	public final Stream<T> stream(SET set) throws E, MappingException {
 		return getMapperFromSet(set).stream(set);
 	}
-	IFJAVA8_END*/
+	//IFJAVA8_END
 
 	@Override
 	public final <H extends CheckedConsumer<? super T>> H forEach(SET set, H handler) throws E, MappingException {

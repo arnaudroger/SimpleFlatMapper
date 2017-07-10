@@ -19,10 +19,10 @@ import java.sql.*;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.time.*;
 import org.simpleflatmapper.jdbc.property.time.ZoneOffsetProperty;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import java.util.*;
 
@@ -270,7 +270,7 @@ public class ResultSetGetterFactoryTest {
 		}
 	}
 
-	/*IFJAVA8_START
+	//IFJAVA8_START
 
 	@Test
 	public void testJavaOffsetDateTime() throws Exception {
@@ -295,7 +295,7 @@ public class ResultSetGetterFactoryTest {
 		assertNull(getter.get(resultSet));
 	}
 
-	IFJAVA8_END*/
+	//IFJAVA8_END
 
 
 	@Test

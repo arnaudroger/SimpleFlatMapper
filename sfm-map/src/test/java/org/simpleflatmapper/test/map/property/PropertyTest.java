@@ -15,12 +15,12 @@ import org.simpleflatmapper.util.Predicate;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import org.simpleflatmapper.map.property.time.JavaDateTimeFormatterProperty;
 import org.simpleflatmapper.map.property.time.JavaZoneIdProperty;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import java.util.TimeZone;
 
@@ -238,7 +238,7 @@ public class PropertyTest {
         assertEquals("TimeZone{UTC}", property.toString());
     }
 
-    /*IFJAVA8_START
+    //IFJAVA8_START
     @Test
     public void testJavaZoneIdProperty() {
         ZoneId zoneId = ZoneId.of("UTC");
@@ -255,6 +255,6 @@ public class PropertyTest {
         assertSame(DateTimeFormatter.ISO_DATE, property.get());
         assertEquals("DateTimeFormatter{" +  DateTimeFormatter.ISO_DATE + "}", property.toString());
     }
-    IFJAVA8_END*/
+    //IFJAVA8_END
 
 }

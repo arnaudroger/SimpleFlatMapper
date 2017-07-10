@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 public class CellConsumerTest {
 
-    /*IFJAVA8_START
+    //IFJAVA8_START
 
     @Test
     public void testCellConsumerofConsumer() {
@@ -24,6 +24,6 @@ public class CellConsumerTest {
         assertArrayEquals(new String[] { "el"}, cells.toArray(new String[0]));
     }
 
-    IFJAVA8_END*/
+    //IFJAVA8_END
 
 }

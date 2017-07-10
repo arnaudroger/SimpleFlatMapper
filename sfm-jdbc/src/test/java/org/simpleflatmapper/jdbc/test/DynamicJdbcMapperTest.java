@@ -19,10 +19,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import static org.junit.Assert.*;
 
@@ -73,7 +73,7 @@ public class DynamicJdbcMapperTest {
 	}
 
 
-	/*IFJAVA8_START
+	//IFJAVA8_START
 	@Test
 	public void testResultSetMapperStream()
 			throws SQLException, Exception, ParseException {
@@ -97,7 +97,7 @@ public class DynamicJdbcMapperTest {
 			}
 		});
 	}
-	IFJAVA8_END*/
+	//IFJAVA8_END
 
 	@Test
 	public void testResultSetMapperMap()

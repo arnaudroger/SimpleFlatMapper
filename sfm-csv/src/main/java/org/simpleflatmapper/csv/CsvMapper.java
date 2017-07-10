@@ -6,9 +6,9 @@ import org.simpleflatmapper.util.CheckedConsumer;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.stream.Stream;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 /**
  * A CsvMapper will map from a {@link CsvReader} to an object of the specified type T.
@@ -162,9 +162,9 @@ public interface CsvMapper<T> {
 	 * @return stream of T
      * @throws IOException if an io error occurs
 	 */
-	/*IFJAVA8_START
+	//IFJAVA8_START
 	Stream<T> stream(Reader reader) throws IOException;
-	IFJAVA8_END*/
+	//IFJAVA8_END
 	/**
 	 * Will return a Stream of T
 	 *
@@ -172,9 +172,9 @@ public interface CsvMapper<T> {
 	 * @return stream of T
      * @throws IOException if an io error occurs
 	 */
-	/*IFJAVA8_START
+	//IFJAVA8_START
 	Stream<T> stream(CsvReader reader) throws IOException;
-	IFJAVA8_END*/
+	//IFJAVA8_END
 
 	/**
 	 * Will return a Stream of T.
@@ -184,8 +184,8 @@ public interface CsvMapper<T> {
 	 * @return stream of T
      * @throws IOException if an io error occurs
 	 */
-	/*IFJAVA8_START
+	//IFJAVA8_START
 	Stream<T> stream(Reader reader, int skip) throws IOException;
-	IFJAVA8_END*/
+	//IFJAVA8_END
 
 }

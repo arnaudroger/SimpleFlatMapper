@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-/*IFJAVA8_START
+//IFJAVA8_START
 import java.util.Optional;
-IFJAVA8_END*/
+//IFJAVA8_END
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -215,7 +215,7 @@ public class ObjectClassMetaTest {
         assertFalse(property.isValid());
     }
 
-    /*IFJAVA8_START
+    //IFJAVA8_START
     @Test
     public void testSelfRefInvalidationOnOptional() {
         ClassMeta<Optional<DbObject>> classMeta = ReflectionService.newInstance().getClassMeta(new TypeReference<Optional<DbObject>>() {
@@ -235,7 +235,7 @@ public class ObjectClassMetaTest {
 
         assertFalse(property.isValid());
     }
-    IFJAVA8_END*/
+    //IFJAVA8_END
 
     public static class GetterBetterThanName {
         public String getValue() {

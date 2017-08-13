@@ -1,19 +1,9 @@
 package org.simpleflatmapper.jooq.test;
 
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
-import org.jooq.RecordType;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
-import org.jooq.impl.DefaultConfiguration;
 import org.jooq.types.UInteger;
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.DynamicJdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
-import org.simpleflatmapper.jooq.SfmRecordMapperProvider;
-import org.simpleflatmapper.jooq.SfmRecordMapperProviderFactory;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.util.Consumer;
 
@@ -22,17 +12,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 
 public class Issue453Test {

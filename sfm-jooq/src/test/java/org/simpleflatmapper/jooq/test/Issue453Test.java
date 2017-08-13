@@ -15,6 +15,7 @@ import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.jooq.SfmRecordMapperProvider;
 import org.simpleflatmapper.jooq.SfmRecordMapperProviderFactory;
 import org.simpleflatmapper.test.jdbc.DbHelper;
+import org.simpleflatmapper.util.Consumer;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -70,7 +71,12 @@ public class Issue453Test {
                 try {
                     DynamicJdbcMapper<User> userDynamicJdbcMapper = JdbcMapperFactory.newInstance().newMapper(User.class);
 
-                    userDynamicJdbcMapper.forEach(resultSet, System.out::println);
+                    userDynamicJdbcMapper.forEach(resultSet, new Consumer<User>() {
+                        @Override
+                        public void accept(User user) {
+                            System.out.println(user.toString());
+                        }
+                    });
                 } finally {
                     resultSet.close();
                 }

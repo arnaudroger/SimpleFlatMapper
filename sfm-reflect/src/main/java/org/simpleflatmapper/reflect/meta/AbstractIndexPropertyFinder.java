@@ -5,16 +5,14 @@ import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     protected final ClassMeta<T> classMeta;
     protected final List<IndexedElement<T, ?>> elements;
 
-    public AbstractIndexPropertyFinder(ClassMeta<T> classMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
-        super(propertyFilter);
+    public AbstractIndexPropertyFinder(ClassMeta<T> classMeta, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
+        super(propertyFilter, selfScoreFullName);
         this.elements = new ArrayList<IndexedElement<T, ?>>();
         this.classMeta = classMeta;
     }

@@ -283,7 +283,7 @@ public final class ObjectClassMeta<T> implements ClassMeta<T> {
 
 	@Override
 	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
-		return new ObjectPropertyFinder<T>(this, propertyFilter);
+		return new ObjectPropertyFinder<T>(this, propertyFilter, reflectService.selfScoreFullName());
 	}
 
 	@Override

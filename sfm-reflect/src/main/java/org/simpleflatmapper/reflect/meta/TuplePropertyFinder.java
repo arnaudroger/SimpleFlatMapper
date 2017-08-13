@@ -8,8 +8,8 @@ import org.simpleflatmapper.util.Predicate;
 public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
 
 
-    public TuplePropertyFinder(final TupleClassMeta<T> tupleClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
-        super(tupleClassMeta, propertyFilter);
+    public TuplePropertyFinder(final TupleClassMeta<T> tupleClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
+        super(tupleClassMeta, propertyFilter, selfScoreFullName);
 
         tupleClassMeta.forEachProperties(new Consumer<PropertyMeta<T, ?>>() {
             @Override

@@ -109,7 +109,7 @@ public class TupleClassMeta<T> implements ClassMeta<T> {
 
 	@Override
 	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
-		return new TuplePropertyFinder<T>(this, propertyFilter);
+		return new TuplePropertyFinder<T>(this, propertyFilter, reflectionService.selfScoreFullName());
 	}
 
 	public Type getType() {

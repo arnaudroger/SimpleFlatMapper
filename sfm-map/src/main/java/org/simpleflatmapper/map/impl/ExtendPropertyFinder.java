@@ -35,8 +35,9 @@ public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
 
     public ExtendPropertyFinder(PropertyFinder<T> delegate,
                                 List<CustomProperty<?, ?>> customProperties,
-                                Function<PropertyFinderTransformer, PropertyFinderTransformer> transformerFunction) {
-        super(delegate.getPropertyFilter());
+                                Function<PropertyFinderTransformer, 
+                                PropertyFinderTransformer> transformerFunction) {
+        super(delegate.getPropertyFilter(), delegate.selfScoreFullName());
         this.delegate = delegate;
         this.customProperties = customProperties;
         this.transformerFunction = transformerFunction;

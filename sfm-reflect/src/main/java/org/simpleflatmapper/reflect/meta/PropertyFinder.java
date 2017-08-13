@@ -12,9 +12,11 @@ import java.util.List;
 
 public abstract class PropertyFinder<T> {
 	protected final Predicate<PropertyMeta<?, ?>> propertyFilter;
+	private final boolean selfScoreFullName;
 
-	protected PropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
+	protected PropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
 		this.propertyFilter = propertyFilter;
+		this.selfScoreFullName = selfScoreFullName;
 	}
 
 	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
@@ -23,7 +25,7 @@ public abstract class PropertyFinder<T> {
 		@SuppressWarnings("unchecked")
 	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, PropertyFinderProbe propertyFinderProbe) {
 		MatchingProperties matchingProperties = new MatchingProperties(propertyFilter, propertyFinderProbe);
-		lookForProperties(propertyNameMatcher, matchingProperties, PropertyMatchingScore.INITIAL, true, IDENTITY_TRANSFORMER);
+		lookForProperties(propertyNameMatcher, matchingProperties, PropertyMatchingScore.newInstance(selfScoreFullName), true, IDENTITY_TRANSFORMER);
 		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
 	}
 
@@ -45,6 +47,10 @@ public abstract class PropertyFinder<T> {
 	}
 
 	public abstract Type getOwnerType();
+
+	public boolean selfScoreFullName() {
+		return selfScoreFullName;
+	}
 
 	protected static class MatchingProperties<T> implements FoundProperty<T> {
 		private final List<MatchedProperty<T, ?>> matchedProperties = new ArrayList<MatchedProperty<T, ?>>();

@@ -7,8 +7,8 @@ import org.simpleflatmapper.util.Predicate;
 public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
 
 
-    public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
-        super(arrayClassMeta, propertyFilter);
+    public ArrayPropertyFinder(ArrayClassMeta<T, E> arrayClassMeta, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
+        super(arrayClassMeta, propertyFilter, selfScoreFullName);
     }
 
     @Override

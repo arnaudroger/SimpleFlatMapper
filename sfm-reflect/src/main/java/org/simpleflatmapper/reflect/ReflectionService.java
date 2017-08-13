@@ -62,7 +62,7 @@ public class ReflectionService {
 	private final AsmFactory asmFactory;
 	private final AliasProvider aliasProvider;
 	private final boolean builderIgnoresNullValues;
-
+	private final boolean selfScoreFullName;
 
 	private final ConcurrentMap<Type, ClassMeta<?>> metaCache = new ConcurrentHashMap<Type, ClassMeta<?>>();
 
@@ -73,20 +73,23 @@ public class ReflectionService {
 				new InstantiatorFactory(asmFactory),
 				asmFactory,
 				AliasProviderService.getAliasProvider(),
-				true);
+				true, false);
 	}
 
 	private ReflectionService(ObjectSetterFactory objectSetterFactory,
 							  ObjectGetterFactory objectGetterFactory,
 							  InstantiatorFactory instantiatorFactory,
 							  AsmFactory asmFactory,
-							  AliasProvider aliasProvider, boolean builderIgnoresNullValues) {
+							  AliasProvider aliasProvider, 
+							  boolean builderIgnoresNullValues, 
+							  boolean selfScoreFullName) {
 		this.objectSetterFactory = objectSetterFactory;
 		this.objectGetterFactory = objectGetterFactory;
 		this.instantiatorFactory = instantiatorFactory;
 		this.asmFactory = asmFactory;
 		this.aliasProvider = aliasProvider;
 		this.builderIgnoresNullValues = builderIgnoresNullValues;
+		this.selfScoreFullName = selfScoreFullName;
 		initPredefined();
 	}
 
@@ -256,7 +259,7 @@ public class ReflectionService {
 				objectGetterFactory,
 				instantiatorFactory,
 				asmFactory,
-				aliasProvider, builderIgnoresNullValues);
+				aliasProvider, builderIgnoresNullValues, selfScoreFullName);
 	}
 
 	public ReflectionService withBuilderIgnoresNullValues(boolean builderIgnoresNullValues) {
@@ -265,11 +268,24 @@ public class ReflectionService {
 				objectGetterFactory,
 				instantiatorFactory,
 				asmFactory,
-				aliasProvider, builderIgnoresNullValues);
+				aliasProvider, builderIgnoresNullValues, selfScoreFullName);
+	}
+
+	public ReflectionService withSelfScoreFullName(boolean selfScoreFullName) {
+		return new ReflectionService(
+				objectSetterFactory,
+				objectGetterFactory,
+				instantiatorFactory,
+				asmFactory,
+				aliasProvider, builderIgnoresNullValues, selfScoreFullName);
 	}
 
 	public boolean builderIgnoresNullValues() {
 		return builderIgnoresNullValues;
+	}
+	
+	public boolean selfScoreFullName() {
+		return selfScoreFullName;
 	}
 
     public interface ClassMetaFactoryProducer extends ProducerServiceLoader.Producer<UnaryFactory<ReflectionService, ClassMeta<?>>> {

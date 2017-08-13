@@ -108,6 +108,18 @@ public class Issue450 {
         assertEquals("element1[0].barId", getPathFor(finder, "barId"));
     }
 
+
+
+    @Test
+    public void testBar2() {
+        PropertyFinder<?> finder = getPropertyFinder(new TypeReference<Bar2>() {
+        });
+
+        assertEquals("barId", getPathFor(finder, "barId"));
+        assertEquals("fooId", getPathFor(finder, "fooId"));
+    }
+    
+
     @Test
     public void testTupleIntegerListBarReverse() {
         PropertyFinder<?> finder = getTuple2IntegerListBarPropertyFinder();
@@ -127,7 +139,7 @@ public class Issue450 {
     }
 
     private PropertyFinder<?> getPropertyFinder(TypeReference<?> typeReference) {
-        ClassMeta<Tuple2<Integer, Foo>> classMeta = ReflectionService.newInstance().getClassMeta(typeReference.getType());
+        ClassMeta<Tuple2<Integer, Foo>> classMeta = ReflectionService.newInstance().withSelfScoreFullName(true).getClassMeta(typeReference.getType());
 
         return classMeta.newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
             @Override
@@ -154,6 +166,12 @@ public class Issue450 {
 
     public static class Bar {
         public int barId;
+    }
+
+
+    public static class Bar2 {
+        public int barId;
+        public int fooId;
     }
 
 }

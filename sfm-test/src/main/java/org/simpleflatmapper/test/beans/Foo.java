@@ -12,4 +12,10 @@ public class Foo extends Bar {
 		this.foo = foo;
 	}
 
+	@Override
+	public String toString() {
+		return "Foo{" +
+				"foo='" + foo + '\'' +
+				'}';
+	}
 }

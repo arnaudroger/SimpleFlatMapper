@@ -3,7 +3,6 @@ package org.simpleflatmapper.reflect.meta;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.Parameter;
 import org.simpleflatmapper.util.BooleanProvider;
-import org.simpleflatmapper.util.Function;
 import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
@@ -23,8 +22,8 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 
 
 
-    ObjectPropertyFinder(ObjectClassMeta<T> classMeta, Predicate<PropertyMeta<?, ?>> propertyFilter) {
-        super(propertyFilter);
+    ObjectPropertyFinder(ObjectClassMeta<T> classMeta, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
+        super(propertyFilter, selfScoreFullName);
         this.classMeta = classMeta;
 		this.eligibleInstantiatorDefinitions = classMeta.getInstantiatorDefinitions() != null ? new ArrayList<InstantiatorDefinition>(classMeta.getInstantiatorDefinitions()) : null;
 	}

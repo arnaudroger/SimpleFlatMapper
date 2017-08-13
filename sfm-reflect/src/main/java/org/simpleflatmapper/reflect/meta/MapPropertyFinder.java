@@ -17,8 +17,8 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     private final Map<PropertyMeta<?, ?>, PropertyFinder<V>> findersByKey = new HashMap<PropertyMeta<?, ?>, PropertyFinder<V>>();
     private final Map<String, MapElementPropertyMeta<?, K, V>> keys = new HashMap<String, MapElementPropertyMeta<?, K, V>>();
 
-    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter, Predicate<PropertyMeta<?, ?>> propertyFilter) {
-        super(propertyFilter);
+    public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
+        super(propertyFilter, selfScoreFullName);
         this.mapMeta = mapMeta;
         this.valueMetaData = valueMetaData;
         this.keyConverter = keyConverter;

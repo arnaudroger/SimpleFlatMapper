@@ -104,7 +104,7 @@ public class ArrayClassMeta<T, E> implements ClassMeta<T> {
 
 	@Override
 	public PropertyFinder<T> newPropertyFinder(Predicate<PropertyMeta<?, ?>> propertyFilter) {
-		return new ArrayPropertyFinder<T, E>(this, propertyFilter);
+		return new ArrayPropertyFinder<T, E>(this, propertyFilter, reflectionService.selfScoreFullName());
 	}
 
 	public Type getType() {

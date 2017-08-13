@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
 import org.simpleflatmapper.jdbc.JdbcMapperFactory;
+import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.test.jdbc.DbHelper;
 import org.simpleflatmapper.test.jdbc.TestRowHandler;
 import org.simpleflatmapper.tuple.Tuple2;
@@ -173,6 +174,7 @@ public class JdbcMapperTupleTest {
 		JdbcMapper<Tuple2<Integer, List<Privilege>>> mapper = 
 				JdbcMapperFactory
 						.newInstance()
+						.reflectionService(ReflectionService.newInstance().withSelfScoreFullName(true))
 						.addKeys("resource_id", "id")
 						.newBuilder(new TypeReference<Tuple2<Integer, List<Privilege>>>() {})
 						.addMapping("id", 1, 4)

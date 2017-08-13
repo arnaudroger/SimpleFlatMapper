@@ -1,5 +1,6 @@
 module org.simpleflatmapper.jooq.test {
         requires org.simpleflatmapper.jooq;
+        requires org.simpleflatmapper.jdbc;
 
         requires java.sql;
         requires junit;

@@ -64,7 +64,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
-			<version>4.3.6.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

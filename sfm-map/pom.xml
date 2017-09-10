@@ -53,7 +53,6 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.9.7</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

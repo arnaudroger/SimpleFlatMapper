@@ -1,6 +1,7 @@
 #!/bin/bash
 function java9 {
-	sudo update-alternatives --set java /usr/lib/jvm/java-9-oracle/bin/java;export JAVA_HOME=/usr/lib/jvm/java-9-oracle
+#	sudo update-alternatives --set java /usr/lib/jvm/java-9-oracle/bin/java;export JAVA_HOME=/usr/lib/jvm/java-9-oracle
+	sudo update-alternatives --set java /usr/lib/jvm/java-9-openjdk-amd64/bin/java;export JAVA_HOME=/usr/lib/jvm/java-9-openjdk-amd64
 }
 function java8 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-8-oracle/jre/bin/java;export JAVA_HOME=/usr/lib/jvm/java-8-oracle

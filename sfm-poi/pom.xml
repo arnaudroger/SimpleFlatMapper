@@ -39,6 +39,11 @@
 							org.apache.poi.*
 						</Import-Package>
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.poi</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

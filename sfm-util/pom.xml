@@ -57,6 +57,11 @@
 					<instructions>
 						<Export-Package>org.simpleflatmapper.util,org.simpleflatmapper.util.date</Export-Package>
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.util</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

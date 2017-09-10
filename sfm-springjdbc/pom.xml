@@ -32,6 +32,11 @@
 						<Export-Package>org.simpleflatmapper.jdbc.spring</Export-Package>
 						<Import-Package>org.simpleflatmapper.*,org.springframework.*</Import-Package>
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.jdbc.spring</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

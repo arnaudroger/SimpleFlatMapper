@@ -32,6 +32,11 @@
 						<Export-Package>org.simpleflatmapper.jdbi</Export-Package>
 						<Import-Package>org.simpleflatmapper.*,org.skife.jdbi.*</Import-Package>
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.jdbi</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -67,6 +67,11 @@
 					<instructions>
 						<Import-Package>org.simpleflatmapper.*,org.joda.*</Import-Package>
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.converter.joda</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 

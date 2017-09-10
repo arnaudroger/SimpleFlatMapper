@@ -33,6 +33,11 @@
 						<Export-Package>org.simpleflatmapper.datastax</Export-Package>
 						<Import-Package>org.simpleflatmapper.*,com.datastax.driver.*,com.google.*</Import-Package>
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.datastax</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -61,6 +61,11 @@
 					<instructions>
 						<Import-Package>org.simpleflatmapper.*,com.google.protobuf.*</Import-Package>
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.converter.protobuf</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 

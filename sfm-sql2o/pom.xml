@@ -33,6 +33,11 @@
 						<Export-Package>org.simpleflatmapper.sql2o</Export-Package>
 						<Import-Package>org.simpleflatmapper.*,org.sql2o.*</Import-Package>
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.sql2o</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

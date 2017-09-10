@@ -31,6 +31,11 @@
 					<instructions>
 						<Export-Package>org.sfm.querydsl</Export-Package>
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.querydsl</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -84,6 +84,11 @@
 						<Provide-Capability>osgi.serviceloader;osgi.serviceloader=org.simpleflatmapper.reflect.meta.AliasProviderProducer,org.simpleflatmapper.reflect.ReflectionService.ClassMetaFactoryProducer</Provide-Capability>
 
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.reflect</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 

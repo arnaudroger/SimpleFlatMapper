@@ -92,6 +92,11 @@
 						<Export-Package>org.simpleflatmapper.jdbc,org.simpleflatmapper.jdbc.named</Export-Package>
 						<Import-Package>com.mysql;resolution:=optional,org.simpleflatmapper.*</Import-Package>
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.jdbc</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 			<plugin>

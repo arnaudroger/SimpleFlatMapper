@@ -51,6 +51,11 @@
 						<Export-Package>org.simpleflatmapper.tuple</Export-Package>
 						<Import-Package />
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.tuple</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

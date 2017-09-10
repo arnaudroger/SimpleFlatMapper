@@ -34,6 +34,11 @@
 						<Export-Package>org.sfm.jooq</Export-Package>
 						<Import-Package>org.simpleflatmapper.*,org.jooq.*</Import-Package>
 					</instructions>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.simpleflatmapper.jooq</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

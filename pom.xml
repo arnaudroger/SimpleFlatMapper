@@ -553,7 +553,7 @@
                         <version>2.5.4</version>
                         <configuration>
                             <goals>deploy nexus-staging:release</goals>
-                            <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
+                            <arguments>-Dgpg.passphrase=${gpg.passphrase} -DstagingRepositoryId=${stagingRepositoryId}</arguments>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -565,7 +565,7 @@
                             <serverId>sonatype-nexus-staging</serverId>
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                            <skipStagingRepositoryClose>false</skipStagingRepositoryClose>  
+                            <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
                         </configuration>
                     </plugin>
                 </plugins>

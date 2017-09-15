@@ -565,8 +565,7 @@
                             <serverId>sonatype-nexus-staging</serverId>
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                            <skipStagingRepositoryClose>false</skipStagingRepositoryClose>
-                            <
+                            <skipStagingRepositoryClose>false</skipStagingRepositoryClose>  
                         </configuration>
                     </plugin>
                 </plugins>

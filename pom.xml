@@ -266,6 +266,21 @@
                             </execution>
                         </executions>
                     </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.4</version>
+                        <configuration>
+                            <classifier>${javadoc.classifier}</classifier>
+                            <header>
+                                <![CDATA[<a href="http://www.simpleflatmapper.org">SimpleFlatMapper</a> hosted on <a href="https://github.com/arnaudroger/SimpleFlatMapper">GitHub</a>]]>
+                            </header>
+                            <sourceFileExcludes>
+                                <exclude>**/module-info.java</exclude>
+                            </sourceFileExcludes>
+                        </configuration>
+                    </plugin>
                 </plugins>
                 </pluginManagement>
             </build>

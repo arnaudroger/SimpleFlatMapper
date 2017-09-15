@@ -500,6 +500,10 @@
                     <value>true</value>
                 </property>
             </activation>
+            <properties>
+                <staging.repository></staging.repository>
+                <release.arguments></release.arguments>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -553,7 +557,7 @@
                         <version>2.5.4</version>
                         <configuration>
                             <goals>deploy nexus-staging:release</goals>
-                            <arguments>-Dgpg.passphrase=${gpg.passphrase} -DstagingRepositoryId=${stagingRepositoryId}</arguments>
+                            <arguments>-Dgpg.passphrase=${gpg.passphrase} ${release.arguments}</arguments>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -566,7 +570,7 @@
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
                             <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
-                            <stagingRepositoryId>${stagingRepositoryId}</stagingRepositoryId>
+                            <stagingRepositoryId>${staging.repository}</stagingRepositoryId>
                         </configuration>
                     </plugin>
                 </plugins>

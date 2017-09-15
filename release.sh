@@ -21,24 +21,26 @@ DEV=3.14-SNAPSHOT
 mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL \
                  -DdevelopmentVersion=$DEV
-#mvn release:prepare -Pdev
 cp release.properties tmp/release.properties
 
 
-java8
-mvn release:perform
 
 
 java7
 cp tmp/release.properties .
-mvn release:perform
+mvn release:perform -DstagingRepositoryId=sfm-$REL
 
 java9
 git reset --hard
 cp tmp/release.properties .
 export MAVEN_OPTS="--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED "
-mvn release:perform
+mvn release:perform -DstagingRepositoryId=sfm-$REL
 unset MAVEN_OPTS
+
+
+java8
+cp tmp/release.properties .
+mvn release:perform -DstagingRepositoryId=sfm-$REL
 
 
 git reset --hard && git pull --rebase

@@ -1,8 +1,7 @@
 #!/bin/bash
 
 function java9 {
-#	sudo update-alternatives --set java /usr/lib/jvm/java-9-oracle/bin/java;export JAVA_HOME=/usr/lib/jvm/java-9-oracle
-	sudo update-alternatives --set java /usr/lib/jvm/java-9-openjdk-amd64/bin/java;export JAVA_HOME=/usr/lib/jvm/java-9-openjdk-amd64
+	sudo update-alternatives --set java /usr/lib/jvm/java-9-oracle/bin/java;export JAVA_HOME=/usr/lib/jvm/java-9-oracle
 }
 function java8 {
 	sudo update-alternatives --set java /usr/lib/jvm/java-8-oracle/jre/bin/java;export JAVA_HOME=/usr/lib/jvm/java-8-oracle
@@ -17,8 +16,8 @@ function java6 {
 #echo "change versions"
 #exit
 java8
-REL=3.13
-DEV=3.14-SNAPSHOT
+REL=3.14
+DEV=3.15-SNAPSHOT
 mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL \
                  -DdevelopmentVersion=$DEV

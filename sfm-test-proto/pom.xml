@@ -5,7 +5,7 @@
 	<artifactId>sfm-test-proto</artifactId>
 	<packaging>jar</packaging>
 
-	<version>3.14-SNAPSHOT</version>
+	<version>3.13.2</version>
 
 	<licenses>
 		<license>
@@ -34,13 +34,13 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-csv</artifactId>
-			<version>3.14-SNAPSHOT</version>
+			<version>3.13.2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-converter-protobuf</artifactId>
-			<version>3.14-SNAPSHOT</version>
+			<version>3.13.2</version>
 		</dependency>
 
 		<dependency>

@@ -566,6 +566,7 @@
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
                             <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
+                            <stagingRepositoryId>${stagingRepositoryId}</stagingRepositoryId>
                         </configuration>
                     </plugin>
                 </plugins>

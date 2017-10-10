@@ -24,6 +24,7 @@ import org.simpleflatmapper.reflect.getter.BiFunctionGetter;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.getter.NullGetter;
+import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
@@ -422,7 +423,8 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         // look for keys property of the object
         for (PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>> pm : properties) {
             SubPropertyMeta<T, ?, ?> subPropertyMeta = (SubPropertyMeta<T, ?, ?>) pm.getPropertyMeta();
-            if (pm.getColumnDefinition().isKey()) {
+            // ignore ArrayElementPropertyMeta as it's a direct getter and will be managed in the setter
+            if (pm.getColumnDefinition().isKey() && !(subPropertyMeta.getSubProperty() instanceof ArrayElementPropertyMeta)) {
                 if (pm.getColumnDefinition().keyAppliesTo().test(subPropertyMeta.getSubProperty())) {
                     keys.add(pm.getColumnKey());
                 }

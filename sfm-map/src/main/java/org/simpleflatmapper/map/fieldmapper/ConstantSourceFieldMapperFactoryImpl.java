@@ -15,6 +15,7 @@ import org.simpleflatmapper.reflect.ObjectGetterFactory;
 import org.simpleflatmapper.reflect.ObjectSetterFactory;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
+import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.map.FieldKey;
@@ -109,8 +110,12 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 			if (type.isPrimitive() ) {
 				return this.<T, P>primitiveIndexedFieldMapper(type, setter, getter);
 			}
-
-			return new FieldMapperImpl<S, T, P>(getter, setter);
+			
+			if (propertyMapping.getColumnDefinition().isKey() && propertyMapping.getPropertyMeta() instanceof ArrayElementPropertyMeta) {
+				return new FieldMapperImpl<S, T, P>(getter, new NullValueFilterSetter(setter));
+			} else {
+				return new FieldMapperImpl<S, T, P>(getter, setter);
+			}
 		}
 	}
 

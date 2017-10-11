@@ -5,7 +5,7 @@
 	<artifactId>sfm-test-sandbox</artifactId>
 	<packaging>jar</packaging>
 
-	<version>3.14-SNAPSHOT</version>
+	<version>3.13.4</version>
 
 	<licenses>
 		<license>
@@ -33,13 +33,13 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-csv</artifactId>
-			<version>3.14-SNAPSHOT</version>
+			<version>3.13.4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-jdbc</artifactId>
-			<version>3.14-SNAPSHOT</version>
+			<version>3.13.4</version>
 		</dependency>
 
 		<dependency>

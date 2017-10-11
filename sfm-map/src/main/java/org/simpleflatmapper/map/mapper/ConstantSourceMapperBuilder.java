@@ -268,7 +268,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
         final Getter<? super S, P> getter =
                 (Getter<? super S, P>) fieldMapperFactory.getGetterFromSource(propertyMapping.getColumnKey(), pm.getPropertyType(), propertyMapping.getColumnDefinition(), pm.getPropertyClassMetaSupplier());
 
-        return new GetterMapper<>(getter);
+        return new GetterMapper<S, P>(getter);
     }
 
     private MappingContextFactoryBuilder getMapperContextFactoryBuilder(PropertyMeta<?, ?> owner, List<PropertyMapping<T, ?, K, FieldMapperColumnDefinition<K>>> properties) {

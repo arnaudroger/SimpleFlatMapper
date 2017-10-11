@@ -255,7 +255,10 @@ public class JdbcMapperListTest {
 
 		ResultSet rs = statement.executeQuery(
 				"with \n" +
-						"\tcols(id, name, photos, videos) AS (VALUES(2, 'trees', 'some_photo.jpg', null), (2, 'trees', 'some_photo2.jpg', null), (4, 'flowers', null, 'some_videos.mpg'))\n" +
+						"\tcols(id, name, photos, videos) " +
+						"AS (VALUES(2, 'trees', 'some_photo.jpg', 'videos'), " +
+						"(2, 'trees', 'some_photo2.jpg', 'videos'), " +
+						"(4, 'flowers', null, 'some_videos.mpg'))\n" +
 						"select id, name, photos, videos\n" +
 						"from cols\n" +
 						"order by id");
@@ -268,7 +271,7 @@ public class JdbcMapperListTest {
 		assertEquals(2, list.get(0).id);
 		assertEquals("trees", list.get(0).name);
 		assertEquals(Arrays.asList("some_photo.jpg", "some_photo2.jpg"), list.get(0).photos);
-		assertEquals(Arrays.asList(), list.get(0).videos);
+		assertEquals(Arrays.asList("videos"), list.get(0).videos);
 
 		assertEquals(4, list.get(1).id);
 		assertEquals("flowers", list.get(1).name);

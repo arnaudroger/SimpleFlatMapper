@@ -98,6 +98,10 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
     public CsvColumnDefinition addCustomReader(CellValueReader<?> cellValueReader) {
         return add(new CustomReaderProperty(cellValueReader));
     }
+
+    public CsvColumnDefinition addCustomReader(StringReader<?> cellValueReader) {
+        return add(new CustomReaderProperty(cellValueReader));
+    }
     public CsvColumnDefinition addCustomCellValueReaderFactory(CellValueReaderFactory cellValueReaderFactory) {
         return add(new CustomReaderFactoryProperty(cellValueReaderFactory));
     }
@@ -115,6 +119,10 @@ public class CsvColumnDefinition extends ColumnDefinition<CsvColumnKey, CsvColum
     }
 
     public static CsvColumnDefinition customReaderDefinition(final CellValueReader<?> cellValueReader) {
+        return identity().addCustomReader(cellValueReader);
+    }
+
+    public static CsvColumnDefinition customReaderDefinition(final StringReader<?> cellValueReader) {
         return identity().addCustomReader(cellValueReader);
     }
 

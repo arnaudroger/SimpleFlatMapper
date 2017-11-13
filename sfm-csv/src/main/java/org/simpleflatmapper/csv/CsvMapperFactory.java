@@ -1,6 +1,7 @@
 package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.impl.CellValueReaderFactoryImpl;
+import org.simpleflatmapper.csv.impl.CellValueReaderToStringReaderAdapter;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
 import org.simpleflatmapper.map.MapperBuildingException;
@@ -62,8 +63,12 @@ public final class CsvMapperFactory extends AbstractMapperFactory<CsvColumnKey, 
 		return this;
 	}
 
-	public CsvMapperFactory addCustomValueReader(String key,	CellValueReader<?> cellValueReader) {
+	public CsvMapperFactory addCustomValueReader(String key, CellValueReader<?> cellValueReader) {
 		return addColumnDefinition(key, CsvColumnDefinition.customReaderDefinition(cellValueReader));
+	}
+
+	public CsvMapperFactory addCustomValueReader(String key, StringReader<?> stringReader) {
+		return addColumnDefinition(key, CsvColumnDefinition.customReaderDefinition(stringReader));
 	}
 
 	/**

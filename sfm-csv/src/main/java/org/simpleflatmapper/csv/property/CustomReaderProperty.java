@@ -2,6 +2,8 @@ package org.simpleflatmapper.csv.property;
 
 
 import org.simpleflatmapper.csv.CellValueReader;
+import org.simpleflatmapper.csv.StringReader;
+import org.simpleflatmapper.csv.impl.CellValueReaderToStringReaderAdapter;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
@@ -10,7 +12,10 @@ import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
 public class CustomReaderProperty {
     private final CellValueReader<?> reader;
-
+    
+    public CustomReaderProperty(StringReader<?> reader) {
+        this.reader = new CellValueReaderToStringReaderAdapter<>(requireNonNull("reader",reader));
+    }
     public CustomReaderProperty(CellValueReader<?> reader) {
         this.reader = requireNonNull("reader",reader);
     }

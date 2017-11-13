@@ -13,8 +13,8 @@ import static org.simpleflatmapper.util.Asserts.requireNonNull;
 public class CustomReaderProperty {
     private final CellValueReader<?> reader;
     
-    public CustomReaderProperty(StringReader<?> reader) {
-        this.reader = new CellValueReaderToStringReaderAdapter<>(requireNonNull("reader",reader));
+    public <T> CustomReaderProperty(StringReader<T> reader) {
+        this.reader = new CellValueReaderToStringReaderAdapter<T>(requireNonNull("reader",reader));
     }
     public CustomReaderProperty(CellValueReader<?> reader) {
         this.reader = requireNonNull("reader",reader);

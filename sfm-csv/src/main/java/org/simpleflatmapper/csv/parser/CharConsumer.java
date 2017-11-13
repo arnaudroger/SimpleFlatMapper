@@ -231,9 +231,8 @@ public final class CharConsumer {
 				char c = chars[i];
 				if (c == quoteChar) {
 					return i;
-				} else if (c == escapeChar) {
-					escaped = true;
-				}
+				} 
+				escaped = c == escapeChar;
 			} else {
 				escaped = false;
 			}

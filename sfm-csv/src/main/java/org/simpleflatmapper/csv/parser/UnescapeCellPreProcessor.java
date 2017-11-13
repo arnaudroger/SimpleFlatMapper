@@ -23,7 +23,7 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
             if (chars[i] == escapeChar) {
                 int destIndex = i;
                 boolean escaped = true;
-                for(i = i +1 ;i < end; i++) {
+                for(i = i +1 ;i < end -1; i++) {
                     char c = chars[i];
                     if (c != escapeChar || escaped) {
                         chars[destIndex++] = c;
@@ -32,13 +32,17 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
                         escaped = true;
                     }
                 }
+                char c = chars[end - 1];
+                if (c != textFormat.quoteChar || escaped) {
+                    chars[destIndex++] = c;
+                }
                 cellConsumer.newCell(chars, start, destIndex - start);
                 return;
             }
         }
 
         int l = end - start;
-        if (l >0 && chars[end -1] == escapeChar) {
+        if (l >0 && chars[end -1] == textFormat.quoteChar) {
             l --;
         }
         cellConsumer.newCell(chars, start, l);

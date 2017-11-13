@@ -434,6 +434,7 @@ public class CsvParserTest {
 		CsvParser.DSL dsl = CsvParser
 				.bufferSize(4)
 				.separator(separator)
+				.escape(quote)
 				.quote(quote);
 
 		CsvParser.DSL dslTrim = dsl.trimSpaces();
@@ -562,7 +563,7 @@ public class CsvParserTest {
 		String[][] cells;
 		cells =
 				dsl.reader(createReader(expectations, separator, quote, cr)).parseAll(new AccumulateCellConsumer()).allValues();
-		assertArrayEquals(expectations, cells);
+		assertArrayEquals(Arrays.deepToString(expectations) + " " + Arrays.deepToString(cells), expectations, cells);
 	}
 
 	private Reader createReader(String[][] expectations, char separator, char quote, String cr) {

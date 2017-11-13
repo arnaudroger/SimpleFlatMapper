@@ -9,17 +9,18 @@ import java.io.IOException;
 public final class CharConsumer {
 
 
+	public static final int ESCAPED                     = 128;
 	public static final int ROW_DATA                    = 64;
 	public static final int COMMENTED                   = 32;
 	public static final int CELL_DATA                   = 16;
-	public static final int ESCAPED                     = 8;
+	public static final int QUOTED                      = 8;
 	public static final int LAST_CHAR_WAS_SEPARATOR     = 4;
 	public static final int LAST_CHAR_WAS_CR            = 2;
-	public static final int ESCAPED_AREA                = 1;
+	public static final int QUOTED_AREA                 = 1;
 	public static final int NONE                        = 0;
 
 	private static final int TURN_OFF_LAST_CHAR_MASK = ~(LAST_CHAR_WAS_CR|LAST_CHAR_WAS_SEPARATOR);
-	private static final int TURN_OFF_ESCAPED_AREA = ~(ESCAPED_AREA);
+	private static final int TURN_OFF_QUOTED_AREA = ~(QUOTED_AREA);
 
 	private static final char LF = '\n';
 	private static final char CR = '\r';
@@ -44,6 +45,7 @@ public final class CharConsumer {
 		final boolean notIgnoreLeadingSpace = !cellPreProcessor.ignoreLeadingSpace();
 		final boolean yamlComment = textFormat.yamlComment;
 		final char escapeChar = textFormat.escapeChar;
+		final char quoteChar = textFormat.quoteChar;
 		final char separatorChar = textFormat.separatorChar;
 
 		int currentState = _currentState;
@@ -54,7 +56,7 @@ public final class CharConsumer {
 
 		while(currentIndex < bufferSize) {
 			// unescaped loop
-			if ((currentState & ESCAPED_AREA) == 0) {
+			if ((currentState & QUOTED_AREA) == 0) {
 				if ((currentState & COMMENTED) == 0) {
 					while (currentIndex < bufferSize) {
 						final char character = chars[currentIndex];
@@ -81,8 +83,8 @@ public final class CharConsumer {
 							currentState = LAST_CHAR_WAS_CR;
 							cellConsumer.endOfRow();
 							continue;
-						} else if (((currentState ^ CELL_DATA) & (ESCAPED | CELL_DATA)) != 0 && character == escapeChar) {
-							currentState = ESCAPED_AREA | ESCAPED;
+						} else if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar) { // no cell data | quoted
+							currentState = QUOTED_AREA | QUOTED;
 							break;
 						} else if (yamlComment && (currentState & (CELL_DATA | ROW_DATA)) == 0 && character == COMMENT) {
 							currentState |= COMMENTED;
@@ -108,12 +110,12 @@ public final class CharConsumer {
 				}
 			} else {
 				// escaped area
-				int nextEscapeChar = findNexChar(chars, currentIndex, bufferSize, escapeChar);
-				if (nextEscapeChar != -1) {
-					currentIndex = nextEscapeChar + 1;
-					currentState &= TURN_OFF_ESCAPED_AREA;
+				int endOfQuotedArea = findEndOfQuotedArea(chars, currentIndex, bufferSize, escapeChar, quoteChar, currentState);
+				if (endOfQuotedArea != -1) {
+					currentIndex = endOfQuotedArea + 1;
+					currentState &= TURN_OFF_QUOTED_AREA;
 				} else {
-					currentIndex = bufferSize;
+					return;
 				}
 			}
 		}
@@ -127,6 +129,7 @@ public final class CharConsumer {
 		final boolean notIgnoreLeadingSpace = !cellPreProcessor.ignoreLeadingSpace();
 		final char escapeChar = textFormat.escapeChar;
 		final char separatorChar = textFormat.separatorChar;
+		final char quoteChar = textFormat.quoteChar;
 		final boolean yamlComment = textFormat.yamlComment;
 
 		int currentState = _currentState;
@@ -137,7 +140,7 @@ public final class CharConsumer {
 
 		while(currentIndex < bufferSize) {
 			// unescaped loop
-			if ((currentState & ESCAPED_AREA) == 0) {
+			if ((currentState & QUOTED_AREA) == 0) {
 				if ((currentState & COMMENTED) == 0) {
 					while(currentIndex < bufferSize) {
 						final char character = chars[currentIndex];
@@ -173,8 +176,8 @@ public final class CharConsumer {
 								return true;
 							}
 							continue;
-						} else if (((currentState ^ CELL_DATA) & (ESCAPED | CELL_DATA)) != 0 && character == escapeChar) {
-							currentState = ESCAPED_AREA | ESCAPED;
+						} else if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar) { // no cell data | quoted
+							currentState = QUOTED_AREA | QUOTED;
 							break;
 						} else if (yamlComment && (currentState & (CELL_DATA | ROW_DATA)) == 0 && character == COMMENT) {
 							currentState |= COMMENTED;
@@ -203,12 +206,12 @@ public final class CharConsumer {
 					}
 				}
 			} else {
-				int nextEscapeChar = findNexChar(chars, currentIndex, bufferSize, escapeChar);
+				int nextEscapeChar = findEndOfQuotedArea(chars, currentIndex, bufferSize, escapeChar, quoteChar, currentState);
 				if (nextEscapeChar != -1) {
 					currentIndex = nextEscapeChar + 1;
-					currentState &= TURN_OFF_ESCAPED_AREA;
+					currentState &= TURN_OFF_QUOTED_AREA;
 				} else {
-					currentIndex = bufferSize;
+					return false;
 				}
 			}
 		}
@@ -219,10 +222,28 @@ public final class CharConsumer {
 		return false;
 	}
 
-	private int findNexChar(char[] chars, int start, int end, char c) {
+	// look for non escape quoteChar
+	// unfortunately will modify object state if end of buffer
+	private int findEndOfQuotedArea(char[] chars, int start, int end, char escapeChar, char quoteChar, int currentState) {
+		boolean escaped = (currentState & ESCAPED) != 0;
 		for(int i = start; i < end; i++) {
-			if (chars[i] == c) return i;
+			if (!escaped) {
+				char c = chars[i];
+				if (c == quoteChar) {
+					return i;
+				} else if (c == escapeChar) {
+					escaped = true;
+				}
+			} else {
+				escaped = false;
+			}
 		}
+		if (escaped) { // dont really like that but will work for now we are at the end of the buffer
+			_currentState = currentState | ESCAPED;
+		} else {
+			_currentState = currentState;
+		}
+		_currentIndex = end;
 		return -1;
 	}
 

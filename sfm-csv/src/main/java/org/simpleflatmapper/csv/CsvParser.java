@@ -564,7 +564,7 @@ public final class CsvParser {
 		}
 
 		protected CellPreProcessor getUnescapeCellTransformer(TextFormat textFormat) {
-			return new UnescapeCellPreProcessor(textFormat);
+			return new UnescapeCellPreProcessor(textFormat.escapeChar, textFormat.quoteChar);
 		}
 
 		public final int maxBufferSize() {

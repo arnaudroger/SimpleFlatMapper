@@ -359,7 +359,14 @@ public class CsvWriter<T>  {
             }
             throw new IllegalStateException("Custom cell writer set, cannot use schema to alter it");
         }
-
+        
+        public CsvWriterDSL<T> escape(char escape) {
+            if (cellWriter instanceof CsvCellWriter) {
+                return newMapDSL(classMeta, columns, mapperConfig, ((CsvCellWriter)cellWriter).escape(escape), skipHeaders);
+            }
+            throw new IllegalStateException("Custom cell writer set, cannot use schema to alter it");
+        }
+        
         public CsvWriterDSL<T> endOfLine(String endOfLine) {
             if (cellWriter instanceof CsvCellWriter) {
                 return newMapDSL(classMeta, columns, mapperConfig, ((CsvCellWriter)cellWriter).endOfLine(endOfLine), skipHeaders);

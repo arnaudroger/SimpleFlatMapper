@@ -26,7 +26,20 @@ import static org.junit.Assert.*;
 
 public class CsvWriterTest {
 
+    @Test
+    public void testWriterCustomEscaping() throws ParseException, IOException {
+        StringWriter sw = new StringWriter();
 
+        DbObject value = newDbObject();
+        value.setName("Arnaud\"What\"");
+        
+        CsvWriter.from(DbObject.class).escape('\\').to(sw).append(value);
+        assertEquals(
+                "id,name,email,creation_time,type_ordinal,type_name\r\n" +
+                        "13,\"Arnaud\\\"What\\\"\",email,2015-06-06 17:46:23,type2,type3\r\n",
+                sw.toString());
+    } 
+    
     @Test
     public void testWriterCustomCellWriter() throws ParseException, IOException {
         StringWriter sw = new StringWriter();

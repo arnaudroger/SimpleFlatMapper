@@ -2,10 +2,12 @@ package org.simpleflatmapper.csv.parser;
 
 public class UnescapeCellPreProcessor extends CellPreProcessor {
 
-    private final TextFormat textFormat;
+    private char escapeChar;
+    private char quoteChar;
 
-    public UnescapeCellPreProcessor(TextFormat textFormat) {
-        this.textFormat = textFormat;
+    public UnescapeCellPreProcessor(char escapeChar, char quoteChar) {
+        this.escapeChar = escapeChar;
+        this.quoteChar = quoteChar;
     }
 
 
@@ -18,7 +20,6 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
     }
 
     private void unescape(final char[] chars, int start, int end, CellConsumer cellConsumer) {
-        char escapeChar = textFormat.escapeChar;
         for(int i = start; i < end - 1; i++) {
             if (chars[i] == escapeChar) {
                 int destIndex = i;
@@ -32,12 +33,12 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
                             escaped = true;
                         }
                     } else {
-                        chars[destIndex++] = unescapeChar(c, escapeChar);
+                        chars[destIndex++] = unescapeChar(c);
                         escaped = false;
                     }
                 }
                 char c = chars[end - 1];
-                if (c != textFormat.quoteChar || escaped) {
+                if (c != quoteChar || escaped) {
                     chars[destIndex++] = c;
                 }
                 cellConsumer.newCell(chars, start, destIndex - start);
@@ -46,13 +47,13 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
         }
 
         int l = end - start;
-        if (l >0 && chars[end -1] == textFormat.quoteChar) {
+        if (l >0 && chars[end -1] == quoteChar) {
             l --;
         }
         cellConsumer.newCell(chars, start, l);
     }
 
-    private char unescapeChar(char c, char escapeChar) {
+    private char unescapeChar(char c) {
         if (escapeChar == '\\') {
             switch (c) {
                 case 'n':

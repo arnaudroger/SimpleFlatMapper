@@ -7,17 +7,19 @@ import java.io.IOException;
 
 public final class CsvCellWriter implements CellWriter {
 
-    public static final CsvCellWriter DEFAULT_WRITER = new CsvCellWriter(',', '"', false, "\r\n");
+    public static final CsvCellWriter DEFAULT_WRITER = new CsvCellWriter(',', '"', '"', false, "\r\n");
 
     private final boolean alwaysEscape;
     private final char separator;
     private final char quote;
+    private final char escape;
     private final String endOfLine;
     private final char[] specialCharacters;
 
-    public CsvCellWriter(char separator, char quote, boolean alwaysEscape, String endOfLine) {
+    public CsvCellWriter(char separator, char quote, char escape, boolean alwaysEscape, String endOfLine) {
         this.separator = separator;
         this.quote = quote;
+        this.escape = escape;
         this.alwaysEscape = alwaysEscape;
         this.endOfLine = endOfLine;
         this.specialCharacters = (getSpecialCharacterForEndOfLine(endOfLine) + quote + separator).toCharArray();
@@ -56,10 +58,10 @@ public final class CsvCellWriter implements CellWriter {
         appendable.append(quote);
         for(int i = 0; i < sequence.length(); i++) {
             char c = sequence.charAt(i);
-            appendable.append(c);
             if (c == quote) {
-                appendable.append(quote);
+                appendable.append(escape);
             }
+            appendable.append(c);
         }
         appendable.append(quote);
     }
@@ -75,18 +77,20 @@ public final class CsvCellWriter implements CellWriter {
     }
 
     public CsvCellWriter separator(char separator) {
-        return new CsvCellWriter(separator, quote, alwaysEscape, endOfLine);
+        return new CsvCellWriter(separator, quote, escape, alwaysEscape, endOfLine);
     }
     public CsvCellWriter quote(char quote) {
-        return new CsvCellWriter(separator, quote, alwaysEscape, endOfLine);
+        return new CsvCellWriter(separator, quote, escape, alwaysEscape, endOfLine);
     }
-
+    public CsvCellWriter escape(char escape) {
+        return new CsvCellWriter(separator, quote, escape, alwaysEscape, endOfLine);
+    }
     public CsvCellWriter alwaysEscape(boolean alwaysEscape) {
-        return new CsvCellWriter(separator, quote, alwaysEscape, endOfLine);
+        return new CsvCellWriter(separator, quote, escape, alwaysEscape, endOfLine);
     }
 
     public CsvCellWriter endOfLine(String endOfLine) {
-        return new CsvCellWriter(separator, quote, alwaysEscape, endOfLine);
+        return new CsvCellWriter(separator, quote, escape, alwaysEscape, endOfLine);
     }
 
     public CellWriter alwaysEscape() {

@@ -1,6 +1,5 @@
 package org.simpleflatmapper.csv.parser;
 
-import org.simpleflatmapper.csv.impl.cellreader.StringCellValueReader;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import java.util.Arrays;

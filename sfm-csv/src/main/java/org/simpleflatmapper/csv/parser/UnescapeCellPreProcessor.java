@@ -25,11 +25,15 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
                 boolean escaped = true;
                 for(i = i +1 ;i < end -1; i++) {
                     char c = chars[i];
-                    if (c != escapeChar || escaped) {
-                        chars[destIndex++] = c;
-                        escaped = false;
+                    if (!escaped) {
+                        if (c != escapeChar) {
+                            chars[destIndex++] = c;
+                        } else {
+                            escaped = true;
+                        }
                     } else {
-                        escaped = true;
+                        chars[destIndex++] = unescapeChar(c, escapeChar);
+                        escaped = false;
                     }
                 }
                 char c = chars[end - 1];
@@ -46,6 +50,26 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
             l --;
         }
         cellConsumer.newCell(chars, start, l);
+    }
+
+    private char unescapeChar(char c, char escapeChar) {
+        if (escapeChar == '\\') {
+            switch (c) {
+                case 'n':
+                    return '\n';
+                case 'r':
+                    return '\r';
+                case 't':
+                    return '\t';
+                case 'b':
+                    return '\b';
+                case 'f':
+                    return '\f';
+                case 'v':
+                    return 0x0B;
+            }
+        }
+        return c;
     }
 
     @Override

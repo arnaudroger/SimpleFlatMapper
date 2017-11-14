@@ -5,13 +5,24 @@ import org.simpleflatmapper.util.Function;
 
 import static org.simpleflatmapper.util.Asserts.requireNonNull;
 
+/**
+ * Map an incoming/outgoing column name to the actual object property name.
+ */
 public class RenameProperty {
     private final Function<String, String> renameFunction;
 
+    /**
+     * Create a rename property to resolve the column name to the property name.
+     * @param renameFunction the function that transform the incoming/outgoing name to the actual object property name.
+     */
     public RenameProperty(Function<String, String> renameFunction) {
         this.renameFunction = renameFunction;
     }
 
+    /**
+     * Create a rename property to resolve the column name to the property name.
+     * @param name to the actual object property name.
+     */
     public RenameProperty(String name) {
         this(new ConstantRename(name));
     }

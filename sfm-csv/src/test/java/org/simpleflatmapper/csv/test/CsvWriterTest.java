@@ -5,6 +5,7 @@ import org.simpleflatmapper.csv.CsvWriter;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
 import org.simpleflatmapper.map.MapperBuildingException;
+import org.simpleflatmapper.map.property.RenameProperty;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.impl.writer.CsvCellWriter;
 import org.simpleflatmapper.map.property.DateFormatProperty;
@@ -199,5 +200,29 @@ public class CsvWriterTest {
         dbObject.setTypeOrdinal(DbObject.Type.type2);
         dbObject.setTypeName(DbObject.Type.type3);
         return dbObject;
+    }
+    
+    @Test
+    public void testIssue461() throws IOException {
+        CsvWriter.CsvWriterDSL<Pojo461> csvWriterConfig = CsvWriter.from(Pojo461.class)
+                .columns()
+                .column("timestamp", new RenameProperty("ts")) // OK
+                .column("action");
+        
+        StringBuilder sb = new StringBuilder();
+        csvWriterConfig.to(sb).append(new Pojo461(1, "add"));
+
+        System.out.println("sb = " + sb);
+    }
+
+
+    public static class Pojo461 {
+        public final long ts;
+        public final String action;
+
+        private Pojo461(long ts, String action) {
+            this.ts = ts;
+            this.action = action;
+        }
     }
 }

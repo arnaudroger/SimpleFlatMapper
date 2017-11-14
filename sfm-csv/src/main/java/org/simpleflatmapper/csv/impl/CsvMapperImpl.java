@@ -35,12 +35,14 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 
     private final boolean hasSetterSubProperties;
     private final boolean hasSubProperties;
+    private final int maxMandatoryCellIndex;
 
-	public CsvMapperImpl(CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory,
+    public CsvMapperImpl(CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory,
                          DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories,
                          CellSetter<T>[] setters,
                          CsvColumnKey[] joinKeys,
-                         ConsumerErrorHandler consumerErrorHandlers) {
+                         ConsumerErrorHandler consumerErrorHandlers, 
+                         int maxMandatoryCellIndex) {
 		super();
 		this.csvMapperCellHandlerFactory = csvMapperCellHandlerFactory;
 		this.delayedCellSetterFactories = delayedCellSetterFactories;
@@ -49,7 +51,8 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
 		this.consumerErrorHandlers = consumerErrorHandlers;
         this.hasSetterSubProperties = hasSetterSubProperties(setters);
         this.hasSubProperties = hasSetterSubProperties || hasDelayedMarker(delayedCellSetterFactories);
-	}
+        this.maxMandatoryCellIndex = maxMandatoryCellIndex;
+    }
 
     private boolean hasDelayedMarker(DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories) {
         for(DelayedCellSetterFactory<T, ?> setter : delayedCellSetterFactories) {
@@ -216,7 +219,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
         return new CsvMapperCellConsumer<T>(mapperSetters,
                 consumerErrorHandlers,
                 handler,
-                breakDetector, toList(cellHandlers), 0);
+                breakDetector, toList(cellHandlers), maxMandatoryCellIndex);
 	}
 
     @SuppressWarnings("unchecked")

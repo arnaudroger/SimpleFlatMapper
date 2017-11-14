@@ -1,5 +1,6 @@
 package org.simpleflatmapper.csv;
 
+import org.simpleflatmapper.csv.property.MandatoryColumnProperty;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.mapper.ColumnDefinitionProvider;
@@ -181,9 +182,21 @@ public class CsvMapperBuilder<T> {
         // needs to happen last
         final CsvMapperCellHandlerFactory<T> csvMapperCellHandlerFactory = newCsvMapperCellHandlerFactory(parsingContextFactoryBuilder, instantiator, keys, delayedCellSetterFactories, setters);
 
-        return new CsvMapperImpl<T>(csvMapperCellHandlerFactory,
+		int maxMandatoryIndex = propertyMappingsBuilder.forEachProperties(new ForEachCallBack<PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition>>() {
+			int maxMandatoryIndex = 0;
+
+			@Override
+			public void handle(PropertyMapping<T, ?, CsvColumnKey, CsvColumnDefinition> pm) {
+				if (pm.getColumnDefinition().has(MandatoryColumnProperty.class)) {
+					maxMandatoryIndex = Math.max(maxMandatoryIndex, pm.getColumnKey().getIndex());
+				}
+			}
+		}).maxMandatoryIndex;
+
+		return new CsvMapperImpl<T>(csvMapperCellHandlerFactory,
                 delayedCellSetterFactories,
-                setters, getJoinKeys(), mapperConfig.consumerErrorHandler());
+                setters, getJoinKeys(), mapperConfig.consumerErrorHandler(),
+				maxMandatoryIndex);
 	}
 
     private CsvMapperCellHandlerFactory<T> newCsvMapperCellHandlerFactory(ParsingContextFactoryBuilder parsingContextFactoryBuilder,

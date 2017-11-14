@@ -20,18 +20,26 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
     }
 
     private void unescape(final char[] chars, int start, int end, CellConsumer cellConsumer) {
-        for(int i = start; i < end - 1; i++) {
+        int nextEscapeChar = findNextEscapeChar(chars, start, end - 1);
+
+        if (nextEscapeChar == -1) {
+            int l = end - start;
+            if (l > 0 && chars[end - 1] == quoteChar) {
+                l--;
+            }
+            cellConsumer.newCell(chars, start, l);
+        } else {
+            shiftEscapedChar(chars, start, end, cellConsumer, nextEscapeChar);
+        }
+    }
+
+    private int findNextEscapeChar(char[] chars, int start, int end) {
+        for(int i = start; i < end; i++) {
             if (chars[i] == escapeChar) {
-                shiftEscapedChar(chars, start, end, cellConsumer, i);
-                return;
+                return i;
             }
         }
-
-        int l = end - start;
-        if (l >0 && chars[end -1] == quoteChar) {
-            l --;
-        }
-        cellConsumer.newCell(chars, start, l);
+        return -1;
     }
 
     private void shiftEscapedChar(char[] chars, int start, int end, CellConsumer cellConsumer, int currentIndex) {

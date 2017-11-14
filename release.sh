@@ -16,31 +16,31 @@ function java6 {
 #echo "change versions"
 #exit
 java8
-REL=3.13.2
-DEV=3.14-SNAPSHOT
+rm release.properties
+REL=3.14.0
+DEV=3.14.1-SNAPSHOT
 mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL \
                  -DdevelopmentVersion=$DEV
 cp release.properties tmp/release.properties
 
 
-
+REPOID=orgsimpleflatmapper-1582
 
 java7
 cp tmp/release.properties .
-mvn release:perform -DstagingRepositoryId=sfm-$REL
+mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
 
 java9
-git reset --hard
 cp tmp/release.properties .
 export MAVEN_OPTS="--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED "
-mvn release:perform -DstagingRepositoryId=sfm-$REL
+mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
 unset MAVEN_OPTS
 
 
 java8
 cp tmp/release.properties .
-mvn release:perform -DstagingRepositoryId=sfm-$REL
+mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
 
 
 git reset --hard && git pull --rebase

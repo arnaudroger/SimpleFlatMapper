@@ -120,7 +120,7 @@
 		<profile>
 			<id>jdk19</id>
 			<activation>
-				<jdk>9</jdk>
+				<jdk>[9,10]</jdk>
 			</activation>
 			<dependencies>
 				<dependency>

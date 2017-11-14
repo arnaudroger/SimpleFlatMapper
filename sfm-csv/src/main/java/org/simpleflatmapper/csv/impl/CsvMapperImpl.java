@@ -216,7 +216,7 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
         return new CsvMapperCellConsumer<T>(mapperSetters,
                 consumerErrorHandlers,
                 handler,
-                breakDetector, toList(cellHandlers));
+                breakDetector, toList(cellHandlers), 0);
 	}
 
     @SuppressWarnings("unchecked")

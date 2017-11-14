@@ -17,6 +17,8 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
     protected final CheckedConsumer<? super T> handler;
 
     protected final CsvMapperCellConsumer[] children;
+    
+    private final int maxMandatoryCellIndex;
 
     protected int cellIndex = 0;
 
@@ -29,13 +31,15 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
             ConsumerErrorHandler consumerErrorHandlers,
             CheckedConsumer<? super T> handler,
             BreakDetector breakDetector, 
-            Collection<CsvMapperCellConsumer<?>> children) {
+            Collection<CsvMapperCellConsumer<?>> children, 
+            int maxMandatoryCellIndex) {
         super();
         this.mapperSetters = csvMapperCellHandler;
         this.consumerErrorHandlers = consumerErrorHandlers;
         this.handler = handler;
         this.breakDetector = breakDetector;
         this.children = children.toArray(new CsvMapperCellConsumer[0]);
+        this.maxMandatoryCellIndex = maxMandatoryCellIndex;
     }
 
     @Override
@@ -62,7 +66,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
 
     protected final boolean hasData() {
-        return cellIndex > 0;
+        return cellIndex > maxMandatoryCellIndex;
     }
 
 

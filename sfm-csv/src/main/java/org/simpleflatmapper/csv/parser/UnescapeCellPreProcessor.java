@@ -22,26 +22,7 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
     private void unescape(final char[] chars, int start, int end, CellConsumer cellConsumer) {
         for(int i = start; i < end - 1; i++) {
             if (chars[i] == escapeChar) {
-                int destIndex = i;
-                boolean escaped = true;
-                for(i = i +1 ;i < end -1; i++) {
-                    char c = chars[i];
-                    if (!escaped) {
-                        if (c != escapeChar) {
-                            chars[destIndex++] = c;
-                        } else {
-                            escaped = true;
-                        }
-                    } else {
-                        chars[destIndex++] = unescapeChar(c);
-                        escaped = false;
-                    }
-                }
-                char c = chars[end - 1];
-                if (c != quoteChar || escaped) {
-                    chars[destIndex++] = c;
-                }
-                cellConsumer.newCell(chars, start, destIndex - start);
+                shiftEscapedChar(chars, start, end, cellConsumer, i);
                 return;
             }
         }
@@ -51,6 +32,29 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
             l --;
         }
         cellConsumer.newCell(chars, start, l);
+    }
+
+    private void shiftEscapedChar(char[] chars, int start, int end, CellConsumer cellConsumer, int currentIndex) {
+        int destIndex = currentIndex;
+        boolean escaped = true;
+        for(int i = currentIndex +1 ;i < end -1; i++) {
+            char c = chars[i];
+            if (!escaped) {
+                if (c != escapeChar) {
+                    chars[destIndex++] = c;
+                } else {
+                    escaped = true;
+                }
+            } else {
+                chars[destIndex++] = unescapeChar(c);
+                escaped = false;
+            }
+        }
+        char c = chars[end - 1];
+        if (c != quoteChar || escaped) {
+            chars[destIndex++] = c;
+        }
+        cellConsumer.newCell(chars, start, destIndex - start);
     }
 
     private char unescapeChar(char c) {

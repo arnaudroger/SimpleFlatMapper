@@ -91,6 +91,14 @@ public class CsvParserTest {
         String[] strs = iterator.next();
         assertEquals("0", strs[0]);
     }
+    
+    @Test
+	public void test459EscapeChar() throws IOException {
+		Iterator<String[]> iterator = CsvParser.dsl().escape('\\').iterator(new StringReader("\"blah\\r\\n\\\"helo\\\"\",ggg"));
+		String[] strs = iterator.next();
+		assertEquals("blah\r\n\"helo\"", strs[0]);
+		assertEquals("ggg", strs[1]);
+	}
 
     @Test
     public void testSimpleCsv() throws  IOException {

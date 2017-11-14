@@ -93,6 +93,9 @@ public final class CharConsumer {
 
 						currentState &= TURN_OFF_LAST_CHAR_MASK;
 						if (notIgnoreLeadingSpace || character != SPACE) {
+							if ((currentState & QUOTED) == 0) {
+								currentIndex = moveToNextSeparator(chars, separatorChar, currentIndex, bufferSize);
+							}
 							currentState |= CELL_DATA;
 						}
 					}
@@ -186,6 +189,9 @@ public final class CharConsumer {
 
 						currentState &= TURN_OFF_LAST_CHAR_MASK;
 						if (notIgnoreLeadingSpace || character != SPACE) {
+							if ((currentState & QUOTED) == 0) {
+								currentIndex = moveToNextSeparator(chars, separatorChar, currentIndex, bufferSize);
+							}
 							currentState |= CELL_DATA;
 						}
 					}
@@ -220,6 +226,17 @@ public final class CharConsumer {
 		_currentIndex = currentIndex;
 
 		return false;
+	}
+
+	private int moveToNextSeparator(char[] chars, char separatorChar, int currentIndex, int bufferSize) {
+		while(currentIndex < bufferSize) {
+			final char c = chars[currentIndex];
+			if (c == separatorChar || c == CR || c == LF) {
+				return currentIndex;
+			}
+			currentIndex++;
+		}
+		return currentIndex;
 	}
 
 	// look for non escape quoteChar

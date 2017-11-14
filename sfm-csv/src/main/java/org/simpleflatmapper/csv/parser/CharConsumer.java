@@ -237,11 +237,9 @@ public final class CharConsumer {
 				escaped = false;
 			}
 		}
-		if (escaped) { // dont really like that but will work for now we are at the end of the buffer
-			_currentState = currentState | ESCAPED;
-		} else {
-			_currentState = currentState;
-		}
+		// dont really like that but will work for now we are at the end of the buffer
+		
+		_currentState = currentState | (escaped ? ESCAPED : 0);
 		_currentIndex = end;
 		return -1;
 	}

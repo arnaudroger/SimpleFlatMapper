@@ -14,23 +14,27 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
     public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer, int state) {
         if ((state & CharConsumer.QUOTED) == 0) {
             cellConsumer.newCell(chars, start, end - start);
+        } else if ((state & CharConsumer.CONTAINS_ESCAPED_CHAR) == 0) {
+            unquote(chars, start + 1, end, cellConsumer);
         } else {
             unescape(chars, start + 1, end, cellConsumer);
         }
     }
 
+    private void unquote(final char[] chars, int start, int end, CellConsumer cellConsumer) {
+        int l = end - start;
+        if (l > 0 && chars[end - 1] == quoteChar) {
+            l--;
+        }
+        cellConsumer.newCell(chars, start, l);
+    }
+
     private void unescape(final char[] chars, int start, int end, CellConsumer cellConsumer) {
         int nextEscapeChar = findNextEscapeChar(chars, start, end - 1);
-
         if (nextEscapeChar == -1) {
-            int l = end - start;
-            if (l > 0 && chars[end - 1] == quoteChar) {
-                l--;
-            }
-            cellConsumer.newCell(chars, start, l);
-        } else {
-            shiftEscapedChar(chars, start, end, cellConsumer, nextEscapeChar);
+            throw new IllegalStateException("Expected escaped char");
         }
+        unescape(chars, start, end, cellConsumer, nextEscapeChar);
     }
 
     private int findNextEscapeChar(char[] chars, int start, int end) {
@@ -42,7 +46,7 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
         return -1;
     }
 
-    private void shiftEscapedChar(char[] chars, int start, int end, CellConsumer cellConsumer, int currentIndex) {
+    private void unescape(char[] chars, int start, int end, CellConsumer cellConsumer, int currentIndex) {
         int destIndex = currentIndex;
         boolean escaped = true;
         for(int i = currentIndex +1 ;i < end -1; i++) {

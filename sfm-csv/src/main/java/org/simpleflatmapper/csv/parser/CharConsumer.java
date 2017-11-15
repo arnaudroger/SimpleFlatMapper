@@ -9,6 +9,7 @@ import java.io.IOException;
 public final class CharConsumer {
 
 
+	public static final int CONTAINS_ESCAPED_CHAR       = 256;
 	public static final int ESCAPED                     = 128;
 	public static final int ROW_DATA                    = 64;
 	public static final int COMMENTED                   = 32;
@@ -21,6 +22,7 @@ public final class CharConsumer {
 
 	private static final int TURN_OFF_LAST_CHAR_MASK = ~(LAST_CHAR_WAS_CR|LAST_CHAR_WAS_SEPARATOR);
 	private static final int TURN_OFF_QUOTED_AREA = ~(QUOTED_AREA);
+	private static final int TURN_OFF_ESCAPED = ~(ESCAPED);
 
 	private static final char LF = '\n';
 	private static final char CR = '\r';
@@ -84,7 +86,10 @@ public final class CharConsumer {
 							cellConsumer.endOfRow();
 							continue;
 						} else if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar) { // no cell data | quoted
-							currentState = QUOTED_AREA | QUOTED;
+							currentState = 
+									  QUOTED_AREA 
+									| QUOTED 
+									| ((currentState & QUOTED) << 5); // if already quoted it's a double quot need to escape QUOTED << 5 is  CONTAINS_ESCAPED_CHAR
 							break;
 						} else if (yamlComment && (currentState & (CELL_DATA | ROW_DATA)) == 0 && character == COMMENT) {
 							currentState |= COMMENTED;
@@ -113,12 +118,15 @@ public final class CharConsumer {
 				}
 			} else {
 				// escaped area
-				int endOfQuotedArea = findEndOfQuotedArea(chars, currentIndex, bufferSize, escapeChar, quoteChar, currentState);
-				if (endOfQuotedArea != -1) {
-					currentIndex = endOfQuotedArea + 1;
+				long p = findEndOfQuotedArea(chars, currentIndex, bufferSize, escapeChar, quoteChar, currentState);
+				int index = unpackIndex(p);
+				currentState = unpackState(p);
+				
+				if (index != -1) {
+					currentIndex = index + 1;
 					currentState &= TURN_OFF_QUOTED_AREA;
 				} else {
-					return;
+					currentIndex = bufferSize;
 				}
 			}
 		}
@@ -180,7 +188,10 @@ public final class CharConsumer {
 							}
 							continue;
 						} else if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar) { // no cell data | quoted
-							currentState = QUOTED_AREA | QUOTED;
+							currentState =
+									QUOTED_AREA
+											| QUOTED
+											| ((currentState & QUOTED) << 5); // if already quoted it's a double quot need to escape QUOTED << 5 is  CONTAINS_ESCAPED_CHAR
 							break;
 						} else if (yamlComment && (currentState & (CELL_DATA | ROW_DATA)) == 0 && character == COMMENT) {
 							currentState |= COMMENTED;
@@ -212,12 +223,15 @@ public final class CharConsumer {
 					}
 				}
 			} else {
-				int nextEscapeChar = findEndOfQuotedArea(chars, currentIndex, bufferSize, escapeChar, quoteChar, currentState);
-				if (nextEscapeChar != -1) {
-					currentIndex = nextEscapeChar + 1;
+				long p = findEndOfQuotedArea(chars, currentIndex, bufferSize, escapeChar, quoteChar, currentState);
+				int index = unpackIndex(p);
+				currentState = unpackState(p);
+
+				if (index != -1) {
+					currentIndex = index + 1;
 					currentState &= TURN_OFF_QUOTED_AREA;
 				} else {
-					return false;
+					currentIndex = bufferSize;
 				}
 			}
 		}
@@ -241,25 +255,35 @@ public final class CharConsumer {
 
 	// look for non escape quoteChar
 	// unfortunately will modify object state if end of buffer
-	private int findEndOfQuotedArea(char[] chars, int start, int end, char escapeChar, char quoteChar, int currentState) {
-		boolean escaped = (currentState & ESCAPED) != 0;
+	private long findEndOfQuotedArea(char[] chars, int start, int end, char escapeChar, char quoteChar, int currentState) {
 		for(int i = start; i < end; i++) {
-			if (!escaped) {
+			if ((currentState & ESCAPED) == 0) {
 				char c = chars[i];
 				if (c == quoteChar) {
-					return i;
-				} 
-				escaped = c == escapeChar;
+					return pack(i, currentState);
+				} else if (c == escapeChar) {
+					currentState |= ESCAPED | CONTAINS_ESCAPED_CHAR;
+				}
 			} else {
-				escaped = false;
+				currentState &= TURN_OFF_ESCAPED;
 			}
 		}
 		// dont really like that but will work for now we are at the end of the buffer
-		
-		_currentState = currentState | (escaped ? ESCAPED : 0);
-		_currentIndex = end;
-		return -1;
+		return pack(-1, currentState);
 	}
+
+	public static long pack(int index, int state) {
+		return (((long)index) & 0xff_ff_ff_ffL) | (((long)state) << 32);
+	}
+	
+	public static int unpackState(long l) {
+		return (int)((l >> 32) & 0xff_ff_ff_ffL);
+	}
+
+	public static int unpackIndex(long l) {
+		return (int)(l & 0xff_ff_ff_ffL);
+	}
+
 
 	private int findNexEndOfLineChar(char[] chars, int start, int end) {
 		for(int i = start; i < end; i++) {

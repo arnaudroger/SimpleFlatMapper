@@ -30,20 +30,14 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
     }
 
     private void unescape(final char[] chars, int start, int end, CellConsumer cellConsumer) {
-        int nextEscapeChar = findNextEscapeChar(chars, start, end - 1);
-        if (nextEscapeChar == -1) {
-            throw new IllegalStateException("Expected escaped char");
-        }
-        unescape(chars, start, end, cellConsumer, nextEscapeChar);
-    }
-
-    private int findNextEscapeChar(char[] chars, int start, int end) {
-        for(int i = start; i < end; i++) {
+        for(int i = start; i < end - 1; i++) {
             if (chars[i] == escapeChar) {
-                return i;
+                unescape(chars, start, end, cellConsumer, i);
+                return;
             }
         }
-        return -1;
+        // no escape Char ??? fall back on unquote
+        unquote(chars, start, end, cellConsumer);
     }
 
     private void unescape(char[] chars, int start, int end, CellConsumer cellConsumer, int currentIndex) {

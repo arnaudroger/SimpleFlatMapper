@@ -85,10 +85,28 @@ public final class CharConsumer {
 							currentState = LAST_CHAR_WAS_CR;
 							cellConsumer.endOfRow();
 							continue;
+						} else if ((currentState & (QUOTED|CELL_DATA)) == (CELL_DATA)) {
+							while(currentIndex < bufferSize) {
+								final char c = chars[currentIndex];
+								final int ce = currentIndex;
+								currentIndex++;
+								if (c == separatorChar || c == LF || c == CR) { // separator
+									cellPreProcessor.newCell(chars, csvBuffer.mark, ce, cellConsumer, currentState);
+									csvBuffer.mark = currentIndex;
+									if (c == separatorChar) {
+										currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
+									} else {
+										currentState = (c == LF ? NONE : LAST_CHAR_WAS_CR );
+										cellConsumer.endOfRow();
+									}
+									break;
+								}
+							}
+							continue;
 						} else if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar) { // no cell data | quoted
-							currentState = 
-									  QUOTED_AREA 
-									| QUOTED 
+							currentState =
+									  QUOTED_AREA
+									| QUOTED
 									| ((currentState & QUOTED) << 5); // if already quoted it's a double quot need to escape QUOTED << 5 is  CONTAINS_ESCAPED_CHAR
 							break;
 						} else if (yamlComment && (currentState & (CELL_DATA | ROW_DATA)) == 0 && character == COMMENT) {
@@ -97,10 +115,8 @@ public final class CharConsumer {
 						}
 
 						currentState &= TURN_OFF_LAST_CHAR_MASK;
+
 						if (notIgnoreLeadingSpace || character != SPACE) {
-							if ((currentState & QUOTED) == 0) {
-								currentIndex = moveToNextSeparator(chars, separatorChar, currentIndex, bufferSize);
-							}
 							currentState |= CELL_DATA;
 						}
 					}
@@ -192,22 +208,42 @@ public final class CharConsumer {
 								return true;
 							}
 							continue;
-						} else if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar) { // no cell data | quoted
+						} else if ((currentState & (QUOTED|CELL_DATA)) == (CELL_DATA)) {
+							while(currentIndex < bufferSize) {
+								final char c = chars[currentIndex];
+								final int ce = currentIndex;
+								currentIndex++;
+								if (c == separatorChar || c == LF || c == CR) { // separator
+									cellPreProcessor.newCell(chars, csvBuffer.mark, ce, cellConsumer, currentState);
+									csvBuffer.mark = currentIndex;
+									if (c == separatorChar) {
+										currentState = LAST_CHAR_WAS_SEPARATOR | ROW_DATA;
+									} else {
+										currentState = c == LF ? NONE : LAST_CHAR_WAS_CR;
+										if (cellConsumer.endOfRow()) {
+											_currentState = currentState;
+											_currentIndex = currentIndex;
+											return true;
+										}
+									}
+									break;
+								}
+							}
+							continue;
+						} else if (((currentState ^ CELL_DATA) & (QUOTED | CELL_DATA)) != 0 && character == quoteChar ) { // no cell data | quoted
 							currentState =
 									QUOTED_AREA
 											| QUOTED
 											| ((currentState & QUOTED) << 5); // if already quoted it's a double quot need to escape QUOTED << 5 is  CONTAINS_ESCAPED_CHAR
 							break;
-						} else if (yamlComment && (currentState & (CELL_DATA | ROW_DATA)) == 0 && character == COMMENT) {
+						} else if ((currentState & (CELL_DATA | ROW_DATA)) == 0 && yamlComment && character == COMMENT) { // no cell data or row data
 							currentState |= COMMENTED;
 							break;
 						}
 
 						currentState &= TURN_OFF_LAST_CHAR_MASK;
+
 						if (notIgnoreLeadingSpace || character != SPACE) {
-							if ((currentState & QUOTED) == 0) {
-								currentIndex = moveToNextSeparator(chars, separatorChar, currentIndex, bufferSize);
-							}
 							currentState |= CELL_DATA;
 						}
 					}
@@ -253,7 +289,7 @@ public final class CharConsumer {
 		return false;
 	}
 
-	private int moveToNextSeparator(char[] chars, char separatorChar, int currentIndex, int bufferSize) {
+	private int _moveToNextSeparator(char[] chars, char separatorChar, int currentIndex, int bufferSize) {
 		while(currentIndex < bufferSize) {
 			final char c = chars[currentIndex];
 			if (c == separatorChar || c == CR || c == LF) {

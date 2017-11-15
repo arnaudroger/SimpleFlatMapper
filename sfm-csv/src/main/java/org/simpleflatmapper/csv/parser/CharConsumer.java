@@ -118,15 +118,20 @@ public final class CharConsumer {
 				}
 			} else {
 				// escaped area
-				long p = findEndOfQuotedArea(chars, currentIndex, bufferSize, escapeChar, quoteChar, currentState);
-				int index = unpackIndex(p);
-				currentState = unpackState(p);
-				
-				if (index != -1) {
-					currentIndex = index + 1;
-					currentState &= TURN_OFF_QUOTED_AREA;
-				} else {
-					currentIndex = bufferSize;
+				while(currentIndex < bufferSize) {
+					if ((currentState & ESCAPED) == 0) {
+						char c = chars[currentIndex];
+						if (c == quoteChar) {
+							currentIndex++;
+							currentState &= TURN_OFF_QUOTED_AREA;
+							break;
+						} else if (c == escapeChar) {
+							currentState |= ESCAPED | CONTAINS_ESCAPED_CHAR;
+						}
+					} else {
+						currentState &= TURN_OFF_ESCAPED;
+					}
+					currentIndex ++;
 				}
 			}
 		}
@@ -223,15 +228,21 @@ public final class CharConsumer {
 					}
 				}
 			} else {
-				long p = findEndOfQuotedArea(chars, currentIndex, bufferSize, escapeChar, quoteChar, currentState);
-				int index = unpackIndex(p);
-				currentState = unpackState(p);
-
-				if (index != -1) {
-					currentIndex = index + 1;
-					currentState &= TURN_OFF_QUOTED_AREA;
-				} else {
-					currentIndex = bufferSize;
+				// escaped area
+				while(currentIndex < bufferSize) {
+					if ((currentState & ESCAPED) == 0) {
+						char c = chars[currentIndex];
+						if (c == quoteChar) {
+							currentIndex++;
+							currentState &= TURN_OFF_QUOTED_AREA;
+							break;
+						} else if (c == escapeChar) {
+							currentState |= ESCAPED | CONTAINS_ESCAPED_CHAR;
+						}
+					} else {
+						currentState &= TURN_OFF_ESCAPED;
+					}
+					currentIndex ++;
 				}
 			}
 		}
@@ -252,38 +263,6 @@ public final class CharConsumer {
 		}
 		return currentIndex;
 	}
-
-	// look for non escape quoteChar
-	// unfortunately will modify object state if end of buffer
-	private long findEndOfQuotedArea(char[] chars, int start, int end, char escapeChar, char quoteChar, int currentState) {
-		for(int i = start; i < end; i++) {
-			if ((currentState & ESCAPED) == 0) {
-				char c = chars[i];
-				if (c == quoteChar) {
-					return pack(i, currentState);
-				} else if (c == escapeChar) {
-					currentState |= ESCAPED | CONTAINS_ESCAPED_CHAR;
-				}
-			} else {
-				currentState &= TURN_OFF_ESCAPED;
-			}
-		}
-		// dont really like that but will work for now we are at the end of the buffer
-		return pack(-1, currentState);
-	}
-
-	public static long pack(int index, int state) {
-		return (((long)index) & 0xff_ff_ff_ffL) | (((long)state) << 32);
-	}
-	
-	public static int unpackState(long l) {
-		return (int)((l >> 32) & 0xff_ff_ff_ffL);
-	}
-
-	public static int unpackIndex(long l) {
-		return (int)(l & 0xff_ff_ff_ffL);
-	}
-
 
 	private int findNexEndOfLineChar(char[] chars, int start, int end) {
 		for(int i = start; i < end; i++) {

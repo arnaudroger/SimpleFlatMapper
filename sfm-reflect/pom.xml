@@ -131,7 +131,7 @@
 								<artifactItem>
 									<groupId>org.simpleflatmapper</groupId>
 									<artifactId>ow2asm</artifactId>
-									<version>3.14-SNAPSHOT</version>
+									<version>3.14.1-SNAPSHOT</version>
 								</artifactItem>
 							</artifactItems>
 							<outputDirectory>target/classes</outputDirectory>

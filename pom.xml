@@ -108,7 +108,6 @@
     </dependencies>
 
     <profiles>
-        
         <profile>
             <id>non-java9</id>
             <activation>
@@ -116,7 +115,6 @@
             </activation>
 
             <modules>
-                <module>ow2.asm/ASM_5_1</module>
                 <module>sfm-util</module>
                 <module>sfm-reflect</module>
                 <module>sfm-map</module>
@@ -437,7 +435,6 @@
             </properties>
 
             <modules>
-                <module>ow2.asm/ASM_6_0_ALPHA</module>
                 <module>sfm-util</module>
                 <module>sfm-reflect</module>
                 <module>sfm-map</module>
@@ -594,6 +591,13 @@
                 <module>sfm-jmh</module>
                 <module>sfm-examples/sfm-jooq</module>
             </modules>
+            <dependencies>
+                <dependency>
+                    <groupId>org.simpleflatmapper</groupId>
+                    <artifactId>ow2asm</artifactId>
+                    <version>5_1</version>
+                </dependency>
+            </dependencies>
         </profile>
 
 
@@ -614,6 +618,13 @@
                 <module>sfm-jmh</module>
                 <!--<module>sfm-examples/sfm-jooq</module>-->
             </modules>
+            <dependencies>
+                <dependency>
+                    <groupId>org.simpleflatmapper</groupId>
+                    <artifactId>ow2asm</artifactId>
+                    <version>6_0_ALPHA</version>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 

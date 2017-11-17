@@ -15,7 +15,6 @@ addons:
     - mysql-client-5.6
 
 jdk:
-  - oraclejdk10
   - oraclejdk9
   - oraclejdk8
   - openjdk7
@@ -45,7 +44,6 @@ before_install:
   - sudo ln -s /usr/lib/jvm/java-6-openjdk-amd64 /usr/lib/jvm/java-6-openjdk
   - sudo ln -s /usr/lib/jvm/java-7-openjdk-amd64 /usr/lib/jvm/java-7-openjdk
   - sudo ln -s /usr/lib/jvm/java-8-oracle /usr/lib/jvm/java-8-oracle-amd64
-  - . ./.travis/install-jdk-10.sh
   - ls -al /usr/lib/jvm/
   
 before_script:

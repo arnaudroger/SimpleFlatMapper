@@ -623,7 +623,7 @@
                 <dependency>
                     <groupId>org.simpleflatmapper</groupId>
                     <artifactId>ow2asm</artifactId>
-                    <version>6_0_ALPHA</version>
+                    <version>6.0_ALPHA</version>
                     <scope>provided</scope>
                 </dependency>
             </dependencies>

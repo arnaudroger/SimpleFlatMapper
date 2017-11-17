@@ -596,6 +596,7 @@
                     <groupId>org.simpleflatmapper</groupId>
                     <artifactId>ow2asm</artifactId>
                     <version>5_1</version>
+                    <scope>provided</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -623,6 +624,7 @@
                     <groupId>org.simpleflatmapper</groupId>
                     <artifactId>ow2asm</artifactId>
                     <version>6_0_ALPHA</version>
+                    <scope>provided</scope>
                 </dependency>
             </dependencies>
         </profile>

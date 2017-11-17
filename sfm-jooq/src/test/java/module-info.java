@@ -5,6 +5,6 @@ module org.simpleflatmapper.jooq.test {
         requires java.sql;
         requires junit;
         requires sfm.test;
-        requires mockito.core;
+        requires org.mockito;
 
  }

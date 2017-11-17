@@ -9,7 +9,7 @@ module org.simpleflatmapper.datastax.test {
 
         requires junit;
         requires sfm.test;
-        requires mockito.core;
+        requires org.mockito;
         requires joda.time;
 
         requires org.simpleflatmapper.map.test;

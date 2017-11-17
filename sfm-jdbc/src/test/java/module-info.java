@@ -4,7 +4,7 @@ module org.simpleflatmapper.jdbc.test {
     requires org.simpleflatmapper.map.test;
     requires junit;
     requires sfm.test;
-    requires mockito.core;
+    requires org.mockito;
     requires javax.persistence;
     requires joda.time;
 }

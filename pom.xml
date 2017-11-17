@@ -591,6 +591,10 @@
                 <module>sfm-jmh</module>
                 <module>sfm-examples/sfm-jooq</module>
             </modules>
+        </profile>
+
+        <profile>
+            <id>idea</id>
             <dependencies>
                 <dependency>
                     <groupId>org.simpleflatmapper</groupId>
@@ -600,7 +604,6 @@
                 </dependency>
             </dependencies>
         </profile>
-
 
         <profile>
             <id>dev9</id>
@@ -619,6 +622,10 @@
                 <module>sfm-jmh</module>
                 <!--<module>sfm-examples/sfm-jooq</module>-->
             </modules>
+        </profile>
+
+        <profile>
+            <id>idea9</id>
             <dependencies>
                 <dependency>
                     <groupId>org.simpleflatmapper</groupId>

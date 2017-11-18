@@ -16,7 +16,7 @@ addons:
 matrix:
   include:
     - jdk: oraclejdk8
-      script:  mvn test javadoc:javadoc -B
+      script:  mvn test javadoc:javadoc -B && mvn -P travis,!dev -DserviceName=travis-ci jacoco:report coveralls:report
     - jdk: oraclejdk9
       install: . ./.travis/install-jdk-9.sh
       script:  mvn test -B
@@ -29,10 +29,6 @@ matrix:
 
 env:
   - MAVEN_SKIP_RC=true TRAVISBUILD=true
-
-after_success:
-  - mvn -P travis,!dev -DserviceName=travis-ci jacoco:report coveralls:report
-
 
 before_install:
   - echo "127.0.0.1    $HOSTNAME" | sudo tee -a /etc/hosts

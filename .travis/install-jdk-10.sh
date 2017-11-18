@@ -2,9 +2,9 @@
 set -e
 
 JDK_FEATURE=10
-JDK_BUILD=31
+JDK_BUILD=32
 JDK_ARCHIVE=jdk-${JDK_FEATURE}-ea+${JDK_BUILD}_linux-x64_bin.tar.gz
-
+# http://download.java.net/java/jdk10/archive/32/binaries/jdk-10-ea+32_linux-x64_bin.tar.gz
 cd ~
 wget http://download.java.net/java/jdk${JDK_FEATURE}/archive/${JDK_BUILD}/binaries/${JDK_ARCHIVE}
 tar -xzf ${JDK_ARCHIVE}

@@ -16,16 +16,16 @@ addons:
 matrix:
   include:
     - jdk: oraclejdk8
+      script:  mvn test javadoc:javadoc -B
     - jdk: oraclejdk9
       install: . ./.travis/install-jdk-9.sh
+      script:  mvn test -B
     - jdk: openjdk7
+      script:  mvn test javadoc:javadoc -B    
       install: . ./.travis/install-jdk-7.sh
     - jdk: openjdk6
+      script:  mvn test javadoc:javadoc -B
       install: . ./.travis/install-jdk-6.sh
-    
-
-script: java -version 2>&1 | grep 'version "9"' ; if [ $? -eq 0 ]; then echo java 9 $?; mvn test -B; else echo java lt 9 $?; mvn test javadoc:javadoc -B; fi
-
 
 env:
   - MAVEN_SKIP_RC=true TRAVISBUILD=true

@@ -109,7 +109,9 @@ public class HostApplication
                 File tmp = File.createTempFile("tmp", "jar");
 
                 Manifest man;
-                try (FileInputStream is = new FileInputStream(new File(root, "META-INF/MANIFEST.MF"))) {
+                File file = new File(root, "META-INF/MANIFEST.MF");
+                System.out.println("manifest = " + file + " " + file.exists());
+                try (FileInputStream is = new FileInputStream(file)) {
                     man = new Manifest(is);
                 }
 

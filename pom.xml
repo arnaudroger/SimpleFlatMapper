@@ -497,6 +497,11 @@
                             </header>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire</artifactId>
+                        <version>2.20.1</version>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -580,11 +585,6 @@
                             <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
                             <stagingRepositoryId>${staging.repository}</stagingRepositoryId>
                         </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.surefire</groupId>
-                        <artifactId>surefire</artifactId>
-                        <version>2.20.1</version>
                     </plugin>
                 </plugins>
             </build>

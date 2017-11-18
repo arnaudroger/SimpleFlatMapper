@@ -26,7 +26,7 @@ matrix:
     - jdk: openjdk6
       script:  mvn test javadoc:javadoc -B
       install: . ./.travis/install-jdk-6.sh
-    - script:  mvn package -B -X -Pjdk9
+    - script:  mvn package -B -X -Pjdk19
       install: . ./.travis/install-jdk-10.sh
     
 

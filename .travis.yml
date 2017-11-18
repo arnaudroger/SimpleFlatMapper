@@ -2,7 +2,6 @@ language: java
 
 sudo: required
 dist: trusty
-group: edge
 
 services:
   - postgresql
@@ -20,6 +19,17 @@ jdk:
   - openjdk7
   - openjdk6
 
+matrix:
+  include:
+    - jdk: oraclejdk8
+    - jdk: oraclejdk9
+      install: . ./.travis/install-jdk-9.sh
+    - jdk: openjdk7
+      install: . ./.travis/install-jdk-7.sh
+    - jdk: openjdk6
+      install: . ./.travis/install-jdk-6.sh
+    
+
 script: java -version 2>&1 | grep 'version "9"' ; if [ $? -eq 0 ]; then echo java 9 $?; mvn test -B; else echo java lt 9 $?; mvn test javadoc:javadoc -B; fi
 
 
@@ -36,15 +46,7 @@ before_install:
   - unzip -qq apache-maven-3.2.5-bin.zip
   - export M2_HOME=$PWD/apache-maven-3.2.5
   - export PATH=$M2_HOME/bin:$PATH
-  - sudo -E add-apt-repository -y ppa:openjdk-r/ppa
-  - sudo -E add-apt-repository -y ppa:webupd8team/java
-  - sudo apt-get -y update
-  - echo install jdk 6 7 9 10
-  - sudo apt-get -y install openjdk-6-jdk openjdk-7-jdk oracle-java9-installer
-  - sudo ln -s /usr/lib/jvm/java-6-openjdk-amd64 /usr/lib/jvm/java-6-openjdk
-  - sudo ln -s /usr/lib/jvm/java-7-openjdk-amd64 /usr/lib/jvm/java-7-openjdk
-  - sudo ln -s /usr/lib/jvm/java-8-oracle /usr/lib/jvm/java-8-oracle-amd64
-  - ls -al /usr/lib/jvm/
+
   
 before_script:
   - mysql --verbose -u root -e 'create database sfm;'

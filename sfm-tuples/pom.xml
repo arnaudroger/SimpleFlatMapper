@@ -163,7 +163,7 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>org.apache.maven.surefire</groupId>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>2.21.0-SNAPSHOT</version>
 					</plugin>

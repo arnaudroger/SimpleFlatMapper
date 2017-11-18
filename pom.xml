@@ -486,6 +486,17 @@
                             </instructions>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.0.0-M1</version>
+                        <configuration>
+                            <classifier>${javadoc.classifier}</classifier>
+                            <header>
+                                <![CDATA[<a href="http://www.simpleflatmapper.org">SimpleFlatMapper</a> hosted on <a href="https://github.com/arnaudroger/SimpleFlatMapper">GitHub</a>]]>
+                            </header>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -569,6 +580,11 @@
                             <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
                             <stagingRepositoryId>${staging.repository}</stagingRepositoryId>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire</artifactId>
+                        <version>2.20.1</version>
                     </plugin>
                 </plugins>
             </build>

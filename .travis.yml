@@ -26,7 +26,8 @@ matrix:
     - jdk: openjdk6
       script:  mvn test javadoc:javadoc -B
       install: . ./.travis/install-jdk-6.sh
-    - script:  mvn test -B
+    - name: oraclejdk10ea
+      script:  mvn test -B
       install: . ./.travis/install-jdk-10.sh
     
 

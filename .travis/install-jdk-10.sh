@@ -11,6 +11,7 @@ tar -xzf ${JDK_ARCHIVE}
 export JAVA_HOME=~/jdk-${JDK_FEATURE}
 export PATH=${JAVA_HOME}/bin:$PATH
 cd -
+echo check java version
 java --version
 
 wget https://archive.apache.org/dist/maven/maven-3/3.5.2/binaries/apache-maven-3.5.2-bin.zip

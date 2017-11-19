@@ -2,7 +2,7 @@
 [![Build Status](https://img.shields.io/travis/arnaudroger/SimpleFlatMapper.svg)](https://travis-ci.org/arnaudroger/SimpleFlatMapper)
 [![Coverage Status](https://img.shields.io/coveralls/arnaudroger/SimpleFlatMapper.svg)](https://coveralls.io/r/arnaudroger/SimpleFlatMapper)
 
-[![Java 6](https://img.shields.io/badge/java-6-orange.svg)](#java-6)[![Java 7](https://img.shields.io/badge/java-7-green.svg)](#java-7)[![Java 8](https://img.shields.io/badge/java-8-brightgreen.svg)](#java-8)[![Java 9-ea](https://img.shields.io/badge/java-9-brightgreen.svg)](#java-8)
+[![Java 6](https://img.shields.io/badge/java-6-orange.svg)](#java-6)[![Java 7](https://img.shields.io/badge/java-7-green.svg)](#java-7)[![Java 8](https://img.shields.io/badge/java-8-brightgreen.svg)](#java-8)[![Java 9-ea](https://img.shields.io/badge/java-9-brightgreen.svg)](#java-9)[![Java 9-ea](https://img.shields.io/badge/java-10-brightgreen.svg)](#java-10)
 
 # [Simple Flat Mapper](http://simpleflatmapper.org/) 
 

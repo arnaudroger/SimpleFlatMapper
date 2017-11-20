@@ -121,6 +121,10 @@ public final class CsvReader implements Iterable<String[]> {
 	public Iterator<String[]> iterator() {
 		return new CsvStringArrayIterator(this);
 	}
+	
+	public Iterator<Row> rowIterator() {
+		return new CsvRowArrayIterator(this, null);
+	}
 
 	//IFJAVA8_START
 	public Stream<String[]> stream() {
@@ -221,4 +225,56 @@ public final class CsvReader implements Iterable<String[]> {
             throw new UnsupportedOperationException();
         }
     }
+
+	private static class CsvRowArrayIterator implements Iterator<Row> {
+
+		private final CsvReader reader;
+		private final CellConsumer cellConsumer;
+		private Row.Headers headers;
+
+		private boolean isFetched;
+		private String[] value;
+
+		@SuppressWarnings("unchecked")
+		public CsvRowArrayIterator(CsvReader csvReader, Row.Headers headers) {
+			cellConsumer = csvReader.toCellConsumer(new CheckedConsumer<String[]>() {
+				@Override
+				public void accept(String[] strings)  {
+					value = strings;
+				}
+			});
+			reader = csvReader;
+		}
+
+		@Override
+		public boolean hasNext() {
+			fetch();
+			return value != null;
+		}
+
+		private void fetch() {
+			if (!isFetched) {
+				try {
+					value = null;
+					reader.parseRow(cellConsumer);
+				} catch (IOException e) {
+					ErrorHelper.rethrow(e);
+				}
+				isFetched = true;
+			}
+		}
+
+		@Override
+		public Row next() {
+			fetch();
+			if (value == null) throw new NoSuchElementException();
+			isFetched = false;
+			return new Row(headers, value);
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+	}
 }

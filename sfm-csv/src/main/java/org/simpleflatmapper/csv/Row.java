@@ -140,7 +140,7 @@ public class Row implements Map<String, String> {
         
         public final Set<String> keySet() {
             if (keySet == null) {
-                keySet = new HashSet<>();
+                keySet = new HashSet<String>();
                 Collections.addAll(keySet, headers);
             }
             return keySet;

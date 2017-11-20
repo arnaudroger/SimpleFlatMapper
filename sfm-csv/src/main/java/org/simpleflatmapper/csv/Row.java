@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 public class Row implements Map<String, String> {
@@ -163,7 +162,7 @@ public class Row implements Map<String, String> {
         @Override
         public final int indexOf(String key) {
             for(int i = 0; i < headers.length; i++) {
-                if (Objects.equals(key, headers[i])) {
+                if (Row.equals(key, headers[i])) {
                     return i;
                 }
             }
@@ -215,5 +214,9 @@ public class Row implements Map<String, String> {
                 this.index = index;
             }
         }
+    }
+
+    private static boolean equals(Object a, Object b) {
+        return (a == b) || (a != null && a.equals(b));
     }
 }

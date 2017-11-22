@@ -57,7 +57,7 @@ public class Issue472Test {
 
         List<MyPojo> list = mapper.forEach(new StringReader("id,map_v1,map_v2\ni1,c1,c2"), new ListCollector<MyPojo>()).getList();
 
-        HashMap<String, String> map = new HashMap<>();
+        HashMap<String, String> map = new HashMap<String, String>();
         map.put("v1", "c1");
         map.put("v2", "c2");
         assertEquals(list.get(0), new MyPojo("i1", map));

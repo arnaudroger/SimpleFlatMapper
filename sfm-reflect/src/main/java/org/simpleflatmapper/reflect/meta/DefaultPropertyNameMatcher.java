@@ -14,6 +14,9 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	private final boolean caseSensitive;
 
 	public DefaultPropertyNameMatcher(String column, int from, boolean exactMatch, boolean caseSensitive) {
+		if (from > column.length()) {
+			throw new IndexOutOfBoundsException("Index " + from + " out of " + column.length());
+		}
 		this.column = requireNonNull("property", column);
 		this.from = from;
 		this.exactMatch = exactMatch;
@@ -154,17 +157,20 @@ public final class DefaultPropertyNameMatcher implements PropertyNameMatcher {
 	public List<PropertyNameMatcherKeyValuePair> keyValuePairs() {
 		List<PropertyNameMatcherKeyValuePair> keyValuePairs = new ArrayList<PropertyNameMatcherKeyValuePair>();
 
-
+		int f = from;
+		// skip separator char
+		for(; f < column.length() && isSeparatorChar(column.charAt(f)); f++)
+			;
 		keyValuePairs.add(
 				new PropertyNameMatcherKeyValuePair(
-						new DefaultPropertyNameMatcher(column, from, exactMatch, caseSensitive),
+						new DefaultPropertyNameMatcher(column, f, exactMatch, caseSensitive),
 						new DefaultPropertyNameMatcher("", 0, exactMatch, caseSensitive)
 				));
-		for(int i = column.length() - 1; i >= from; i--) {
+		for(int i = column.length() - 1; i >= f; i--) {
 			char c = column.charAt(i);
 			if (isSeparatorChar(c)) {
-				PropertyNameMatcher key = new DefaultPropertyNameMatcher(column.substring(from, i), 0, exactMatch, caseSensitive);
-				PropertyNameMatcher value = new DefaultPropertyNameMatcher(column, from + i + 1, exactMatch, caseSensitive);
+				PropertyNameMatcher key = new DefaultPropertyNameMatcher(column.substring(f,  i), 0, exactMatch, caseSensitive);
+				PropertyNameMatcher value = new DefaultPropertyNameMatcher(column,  i + 1, exactMatch, caseSensitive);
 				keyValuePairs.add(new PropertyNameMatcherKeyValuePair(key, value));
 			}
 		}

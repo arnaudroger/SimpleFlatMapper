@@ -458,8 +458,13 @@ public class AsmUtils {
 						if (t.endsWith(";")) {
 							t = t.substring(0, t.length() -1);
 						}
-						sb.append(t);
-						sb.append("<");
+						if (t.endsWith(">")) {
+							t = t.substring(0, t.length() -1);
+							sb.append(t);
+						} else {
+							sb.append(t);
+							sb.append("<");
+						}
 					}
 					if  (wildcard != '=') {
 						sb.append(wildcard);

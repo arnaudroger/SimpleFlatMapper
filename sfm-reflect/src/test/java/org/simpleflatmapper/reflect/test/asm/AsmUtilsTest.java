@@ -126,6 +126,8 @@ public class AsmUtilsTest {
 	public void extractGenericTypeName() throws  Exception {
 		Assert.assertArrayEquals(new String[]{"T1", "T2", "O"},
 				AsmUtils.extractGenericTypeNames("<T1:Ljava.lang.Object;T2:Ljava.lang.Object;O:java.lang.Object>Ljava.lang.Object;").toArray(new String[]{}));
+
+
 	}
 
 
@@ -134,6 +136,12 @@ public class AsmUtilsTest {
 		String types = "([CILjava/util/List<Lorg/simpleflatmapper/beans/DbObject;>;TT1;Ljava/lang/String;)V";
 		assertEquals(Arrays.asList("[C", "I", "Ljava/util/List<Lorg/simpleflatmapper/beans/DbObject;>;", "TT1;", "Ljava/lang/String;"),
 				AsmUtils.extractTypeNames(types));
+	}
+	@Test
+	public void extractConstructorTypesIssue472() throws  Exception {
+		List<String> types = AsmUtils.extractTypeNames("(Ljava/lang/String;Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;)V");
+		Assert.assertArrayEquals(new String[] {"Ljava/lang/String;", "Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;"}, 
+				types.toArray(new String[0]));
 	}
 
 	@Test

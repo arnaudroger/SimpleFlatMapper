@@ -37,7 +37,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     }
 
     private Type getKeyValueType(ClassMeta<T> mapMeta) {
-        Type mapType = mapMeta.getType();
+        final Type mapType = mapMeta.getType();
         if (mapType instanceof ParameterizedType) {
             return new ParameterizedType() {
                 @Override

@@ -2,7 +2,7 @@ package org.simpleflatmapper.reflect.getter;
 
 import org.simpleflatmapper.reflect.Getter;
 
-public class NullGetter<P> implements Getter<Object, P> {
+public class NullGetter<T, P> implements Getter<T, P> {
 
     private static final NullGetter NULL_GETTER = new NullGetter();
 
@@ -15,12 +15,12 @@ public class NullGetter<P> implements Getter<Object, P> {
     }
 
     @Override
-    public P get(Object target) {
+    public P get(T target) {
         return null;
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> NullGetter<T> getter() {
+    public static <T, V> Getter<T, V> getter() {
         return NULL_GETTER;
     }
 

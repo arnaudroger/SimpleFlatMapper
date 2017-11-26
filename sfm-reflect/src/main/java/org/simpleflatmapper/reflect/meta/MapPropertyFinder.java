@@ -4,24 +4,60 @@ import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.util.Predicate;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder<T> {
 
+    private final ClassMeta<MapKeyValueElementPropertyMeta.KeyValue<K, V>> keyValueClassMeta;
     private final ClassMeta<V> valueMetaData;
     private final ClassMeta<T> mapMeta;
     private final Converter<? super CharSequence, ? extends K> keyConverter;
     private final Map<PropertyNameMatcher, PropertyFinder<V>> finders = new HashMap<PropertyNameMatcher, PropertyFinder<V>>();
-    private final Map<PropertyMeta<?, ?>, PropertyFinder<V>> findersByKey = new HashMap<PropertyMeta<?, ?>, PropertyFinder<V>>();
+    private final Map<PropertyMeta<?, ?>, PropertyFinder<?>> findersByKey = new HashMap<PropertyMeta<?, ?>, PropertyFinder<?>>();
     private final Map<String, MapElementPropertyMeta<?, K, V>> keys = new HashMap<String, MapElementPropertyMeta<?, K, V>>();
+    private final PropertyFinder<MapKeyValueElementPropertyMeta.KeyValue<K, V>> keyValuePropertyFinder;
+    private final Type keyValueType;
+    MapKeyValueElementPropertyMeta<T, K, V> elementPropertyMeta;;
+
+    private boolean keyValueMode = false;
 
     public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
         super(propertyFilter, selfScoreFullName);
         this.mapMeta = mapMeta;
         this.valueMetaData = valueMetaData;
         this.keyConverter = keyConverter;
+        this.keyValueType = getKeyValueType(mapMeta);
+        this.keyValueClassMeta = mapMeta.getReflectionService().getClassMeta(keyValueType);
+        this.keyValuePropertyFinder = keyValueClassMeta.newPropertyFinder(propertyFilter);
+        this.elementPropertyMeta = 
+            new MapKeyValueElementPropertyMeta<T, K, V>(mapMeta.getType(), valueMetaData.getReflectionService(), keyValueType);
+    }
+
+    private Type getKeyValueType(ClassMeta<T> mapMeta) {
+        Type mapType = mapMeta.getType();
+        if (mapType instanceof ParameterizedType) {
+            return new ParameterizedType() {
+                @Override
+                public Type[] getActualTypeArguments() {
+                    return ((ParameterizedType) mapType).getActualTypeArguments();
+                }
+
+                @Override
+                public Type getRawType() {
+                    return MapKeyValueElementPropertyMeta.KeyValue.class;
+                }
+
+                @Override
+                public Type getOwnerType() {
+                    return null;
+                }
+            };
+        } else {
+            return MapKeyValueElementPropertyMeta.KeyValue.class;
+        }
     }
 
     @Override
@@ -29,6 +65,32 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
             final PropertyNameMatcher propertyNameMatcher,
             final FoundProperty matchingProperties,
             final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer) {
+
+
+        propertyFinderTransformer.apply(keyValuePropertyFinder).lookForProperties(propertyNameMatcher,
+                new FoundProperty() {
+                    @Override
+                    public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
+
+                        Runnable sCallback = new Runnable() {
+                            @Override
+                            public void run() {
+                                selectionCallback.run();
+                                keyValueMode = true;
+                                findersByKey.put(elementPropertyMeta, keyValuePropertyFinder);
+                            }
+                        };
+
+                        matchingProperties.found(new SubPropertyMeta(propertyMeta.getReflectService(), elementPropertyMeta, propertyMeta), sCallback, score.matches(propertyNameMatcher));
+                    }
+                },
+                score,
+                false, propertyFinderTransformer);
+        if (keyValueMode) {
+            return;
+        }
+        
+        // classic keys set
         for(final PropertyNameMatcherKeyValuePair keyValue : propertyNameMatcher.keyValuePairs()) {
             final PropertyNameMatcher keyMatcher = keyValue.getKey();
             final PropertyNameMatcher valueMatcher = keyValue.getValue();

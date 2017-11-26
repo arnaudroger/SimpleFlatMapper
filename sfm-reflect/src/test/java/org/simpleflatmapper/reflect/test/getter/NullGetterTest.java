@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 public class NullGetterTest {
 
     @Test
-    public void testNullGetter() {
+    public void testNullGetter() throws Exception {
         assertTrue(NullGetter.isNull(null));
         assertTrue(NullGetter.isNull(NullGetter.getter()));
         assertFalse(NullGetter.isNull(new ConstantGetter<Object, Object>(null)));

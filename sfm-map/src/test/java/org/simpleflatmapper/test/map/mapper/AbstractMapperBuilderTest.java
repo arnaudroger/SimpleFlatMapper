@@ -524,6 +524,8 @@ public class AbstractMapperBuilderTest {
                         .addMapping(prefix + "value")
                         .mapper()); // fails
     }
+    
+    
 
     public static class AA {
         private String value;
@@ -606,7 +608,15 @@ public class AbstractMapperBuilderTest {
 
         @Override
         protected Mapper<Object[], T> newStaticMapper(Mapper<Object[], T> mapper) {
-            return mapper;
+            return new StaticSetRowMapper<>(mapper,
+                    mapperConfig.consumerErrorHandler(),
+                    mappingContextFactoryBuilder.newFactory(),
+                    new UnaryFactory<Object[][], Enumarable<Object[]>>() {
+                        @Override
+                        public Enumarable<Object[]> newInstance(Object[][] objects) {
+                            return new ArrayEnumarable<Object[]>(objects);
+                        }
+                    });
         }
     }
 

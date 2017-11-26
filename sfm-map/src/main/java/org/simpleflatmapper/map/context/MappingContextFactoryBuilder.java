@@ -5,6 +5,7 @@ import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.context.impl.KeyDefinitionBuilder;
 import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.MapElementPropertyMeta;
+import org.simpleflatmapper.reflect.meta.MapKeyValueElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.map.context.impl.BreakDetectorMappingContextFactory;
 import org.simpleflatmapper.map.context.impl.NullChecker;
@@ -181,6 +182,8 @@ public class MappingContextFactoryBuilder<S, K> {
             if (elementPropertyMeta.getSetter() instanceof AppendCollectionSetter) {
                 return true;
             }
+        } else if (owner instanceof MapKeyValueElementPropertyMeta) {
+            return true;
         }
         return false;
     }

@@ -608,7 +608,7 @@ public class AbstractMapperBuilderTest {
 
         @Override
         protected Mapper<Object[], T> newStaticMapper(Mapper<Object[], T> mapper) {
-            return new StaticSetRowMapper<>(mapper,
+            return new StaticSetRowMapper<Object[], Object[][], T, Exception>(mapper,
                     mapperConfig.consumerErrorHandler(),
                     mappingContextFactoryBuilder.newFactory(),
                     new UnaryFactory<Object[][], Enumarable<Object[]>>() {

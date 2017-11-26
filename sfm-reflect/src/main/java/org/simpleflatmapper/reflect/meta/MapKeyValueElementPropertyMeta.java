@@ -17,7 +17,7 @@ public class MapKeyValueElementPropertyMeta<T extends Map<K, V>, K, V> extends P
 	public MapKeyValueElementPropertyMeta(Type ownerType,
 										  ReflectionService reflectService,
 										  Type propertyType) {
-		super("kv", ownerType, reflectService);
+		super("entry", ownerType, reflectService);
 		this.propertyType = propertyType;
 		setter = new MapSetter<T, K, V>();
 	}

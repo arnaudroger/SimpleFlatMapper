@@ -28,9 +28,6 @@ public class MapClassMeta<M extends Map<K, V>, K, V> implements ClassMeta<M> {
 	public MapClassMeta(Type type, Type keyType, Type valueType, ReflectionService reflectionService) {
 		this.type = type;
 		this.keyConverter = ConverterService.getInstance().findConverter(CharSequence.class, keyType);
-		if (keyConverter == null) {
-			throw new IllegalArgumentException("Unsupported key type " + keyType);
-		}
 		this.reflectionService = reflectionService;
 		this.valueClassMeta = reflectionService.getClassMeta(valueType);
 		this.constructor = getConstructor(type);

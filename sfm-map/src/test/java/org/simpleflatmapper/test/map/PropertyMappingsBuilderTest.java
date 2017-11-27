@@ -18,8 +18,6 @@ import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.test.beans.DbObject;
-import org.simpleflatmapper.test.beans.Foo;
-import org.simpleflatmapper.test.map.mapper.MultiJoinMapperTest;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.ForEachCallBack;

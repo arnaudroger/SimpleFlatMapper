@@ -7,6 +7,7 @@ import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.asm.MapperAsmFactory;
 import org.simpleflatmapper.map.fieldmapper.MapperFieldMapper;
 import org.simpleflatmapper.map.impl.GetterMapper;
+import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.map.property.DefaultValueProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.property.GetterProperty;
@@ -25,7 +26,6 @@ import org.simpleflatmapper.reflect.getter.BiFunctionGetter;
 import org.simpleflatmapper.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.getter.NullGetter;
-import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
@@ -250,7 +250,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(e.owner, properties);
 
                 final Mapper<S, ?> mapper;
-                if (properties.size() == 1 && properties.get(0).getPropertyMeta() instanceof ArrayElementPropertyMeta) {
+                if (properties.size() == 1 && JoinUtils.isArrayElement(properties.get(0).getPropertyMeta())) {
                     mapper = getterPropertyMapper(e.owner, properties.get(0));
                 } else {
                     mapper = subPropertyMapper(e.owner, properties, currentBuilder);
@@ -320,7 +320,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
                 final MappingContextFactoryBuilder currentBuilder = getMapperContextFactoryBuilder(e.owner, e.propertyMappings);
 
                 final Mapper<S, ?> mapper;
-                if (e.propertyMappings.size() == 1 && e.propertyMappings.get(0).getPropertyMeta() instanceof ArrayElementPropertyMeta) {
+                if (e.propertyMappings.size() == 1 && JoinUtils.isArrayElement(e.propertyMappings.get(0).getPropertyMeta())) {
                     mapper = getterPropertyMapper(e.owner, e.propertyMappings.get(0));
                 } else {
                     mapper = subPropertyMapper(e.owner, e.propertyMappings, currentBuilder);
@@ -337,7 +337,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
 	}
 
     private boolean isTargetForMapperFieldMapper(PropertyMapping pm) {
-        return pm.getPropertyMeta().isSubProperty() || (pm.getPropertyMeta() instanceof ArrayElementPropertyMeta && pm.getColumnDefinition().isKey());
+        return pm.getPropertyMeta().isSubProperty() || (JoinUtils.isArrayElement(pm.getPropertyMeta()) && pm.getColumnDefinition().isKey());
     }
 
 
@@ -456,7 +456,7 @@ public final class ConstantSourceMapperBuilder<S, T, K extends FieldKey<K>>  {
             
             if (pm.getPropertyMeta().isSubProperty()) {
                 SubPropertyMeta<T, ?, ?> subPropertyMeta = (SubPropertyMeta<T, ?, ?>) pm.getPropertyMeta();
-                if (!(subPropertyMeta.getSubProperty() instanceof ArrayElementPropertyMeta)) {
+                if (!(JoinUtils.isArrayElement(subPropertyMeta.getSubProperty()))) {
                     // ignore ArrayElementPropertyMeta as it's a direct getter and will be managed in the setter
                     if (pm.getColumnDefinition().isKey()) {
                         if (pm.getColumnDefinition().keyAppliesTo().test(subPropertyMeta.getSubProperty())) {

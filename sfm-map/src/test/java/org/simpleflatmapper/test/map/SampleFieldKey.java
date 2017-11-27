@@ -61,7 +61,7 @@ public class SampleFieldKey extends FieldKey<SampleFieldKey> implements TypeAffi
     public String toString() {
         return "SampleFieldKey{" +
                 "name=" + getName() +
-                "affinities=" + Arrays.toString(affinities) +
+                ", affinities=" + Arrays.toString(affinities) +
                 ", type=" + type +
                 '}';
     }

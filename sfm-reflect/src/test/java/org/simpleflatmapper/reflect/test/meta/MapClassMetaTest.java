@@ -78,7 +78,7 @@ public class MapClassMetaTest {
     }
 
     @Test
-    public void testFailOnAbstractMap() throws Exception {
+    public void testNotFailOnAbstractMap() throws Exception {
         try {
             ReflectionService.newInstance().getClassMeta(new TypeReference<AbstractMap<String, String>>() {}.getType());
             fail();
@@ -98,13 +98,8 @@ public class MapClassMetaTest {
     }
 
     @Test
-    public void testFailOnUnsupportedConverter() throws Exception {
-        try {
-            ReflectionService.newInstance().getClassMeta(new TypeReference<Map<Map<String, String>, String>>() {}.getType());
-            fail();
-        } catch(IllegalArgumentException e) {
-            // expected
-        }
+    public void testNotFailOnUnsupportedConverter() throws Exception {
+        ReflectionService.newInstance().getClassMeta(new TypeReference<Map<Map<String, String>, String>>() {}.getType());
     }
 
     @Test

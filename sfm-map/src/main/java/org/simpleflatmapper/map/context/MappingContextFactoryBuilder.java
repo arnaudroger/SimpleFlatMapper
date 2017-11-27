@@ -3,6 +3,7 @@ package org.simpleflatmapper.map.context;
 
 import org.simpleflatmapper.map.MappingContext;
 import org.simpleflatmapper.map.context.impl.KeyDefinitionBuilder;
+import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.MapElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.MapKeyValueElementPropertyMeta;
@@ -131,7 +132,7 @@ public class MappingContextFactoryBuilder<S, K> {
         KeyDefinitionBuilder<S, K> keyDefinition;
 
         // empty key use parent key except for child of appendsetter
-        if (builder.effectiveKeys().isEmpty() && parent != null && ! builder.newObjectOnEachRow()) {
+        if (parent != null && builder.inheritKeys(parentIndex)) {
              keyDefinition = parent.asChild(builder.currentIndex);
         } else {
             List<K> keys = new ArrayList<K>(builder.effectiveKeys());
@@ -146,6 +147,10 @@ public class MappingContextFactoryBuilder<S, K> {
 
         keyDefinitions[builder.currentIndex] = keyDefinition;
         return keyDefinition;
+    }
+
+    private boolean inheritKeys(int parentIndex) {
+        return (effectiveKeys().isEmpty() && ! newObjectOnEachRow(parentIndex));
     }
 
     private void appendParentKeys(KeyDefinitionBuilder<S, K> parent, List<K> keys) {
@@ -176,7 +181,7 @@ public class MappingContextFactoryBuilder<S, K> {
     }
 
 
-    private boolean newObjectOnEachRow() {
+    private boolean newObjectOnEachRow(int parentIndex) {
         if (owner instanceof ArrayElementPropertyMeta) {
             ArrayElementPropertyMeta elementPropertyMeta = (ArrayElementPropertyMeta) owner;
             if (elementPropertyMeta.getSetter() instanceof AppendCollectionSetter) {
@@ -185,6 +190,11 @@ public class MappingContextFactoryBuilder<S, K> {
         } else if (owner instanceof MapKeyValueElementPropertyMeta) {
             return true;
         }
+        
+        if (parent != null && parent.currentIndex != parentIndex ) {
+            return parent.newObjectOnEachRow(parentIndex);
+        }
+        
         return false;
     }
 
@@ -215,8 +225,7 @@ public class MappingContextFactoryBuilder<S, K> {
     }
 
     private boolean isEligibleAsSubstituteKey() {
-        return !(owner instanceof ArrayElementPropertyMeta)
-                && !(owner instanceof MapElementPropertyMeta);
+        return !JoinUtils.isArrayElement(owner);
     }
 
     // ignore empty parent useful to skip root keys

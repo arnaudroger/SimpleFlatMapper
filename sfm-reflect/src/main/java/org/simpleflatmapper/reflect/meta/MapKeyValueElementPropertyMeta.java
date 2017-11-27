@@ -67,6 +67,14 @@ public class MapKeyValueElementPropertyMeta<T extends Map<K, V>, K, V> extends P
 		private final K key;
     	private final V value;
 
+//		public void setKey(K key) {
+//			this.key = key;
+//		}
+//
+//		public void setValue(V value) {
+//			this.value = value;
+//		}
+
 		public K getKey() {
 			return key;
 		}

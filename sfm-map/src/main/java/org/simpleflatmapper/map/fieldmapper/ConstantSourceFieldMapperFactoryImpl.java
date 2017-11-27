@@ -2,6 +2,7 @@ package org.simpleflatmapper.map.fieldmapper;
 
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.map.impl.JoinUtils;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
@@ -15,7 +16,6 @@ import org.simpleflatmapper.reflect.ObjectGetterFactory;
 import org.simpleflatmapper.reflect.ObjectSetterFactory;
 import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
-import org.simpleflatmapper.reflect.meta.ArrayElementPropertyMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.map.FieldKey;
@@ -111,7 +111,8 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 				return this.<T, P>primitiveIndexedFieldMapper(type, setter, getter);
 			}
 			
-			if (propertyMapping.getColumnDefinition().isKey() && propertyMapping.getPropertyMeta() instanceof ArrayElementPropertyMeta) {
+			if (propertyMapping.getColumnDefinition().isKey() 
+					&& JoinUtils.isArrayElement(propertyMapping.getPropertyMeta())) {
 				return new FieldMapperImpl<S, T, P>(getter, new NullValueFilterSetter(setter));
 			} else {
 				return new FieldMapperImpl<S, T, P>(getter, setter);

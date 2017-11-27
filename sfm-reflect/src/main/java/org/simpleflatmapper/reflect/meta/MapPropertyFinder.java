@@ -86,7 +86,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                 },
                 score,
                 false, propertyFinderTransformer);
-        if (keyValueMode) {
+        if (keyValueMode || keyConverter == null) {
             return;
         }
         

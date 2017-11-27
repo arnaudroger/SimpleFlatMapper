@@ -46,16 +46,16 @@ public class MapClassMetaTest {
         final PropertyFinder<Map<String, DbObject>> mapPropertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
         final SubPropertyMeta<?, ?, ?> k_kv_k_id =
-                (SubPropertyMeta<?, ?, ?>) mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_id"));
+                (SubPropertyMeta<?, ?, ?>) mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_id"), new Object[0]);
         assertNotNull(k_kv_k_id);
 
-        PropertyMeta<Map<String, DbObject>, Object> k_kv_k_noprop = mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_noprop"));
+        PropertyMeta<Map<String, DbObject>, Object> k_kv_k_noprop = mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_noprop"), new Object[0]);
         assertTrue(k_kv_k_noprop instanceof MapElementPropertyMeta); // self ref
 
         MapElementPropertyMeta<?, ?, ?> idMeta = (MapElementPropertyMeta<?, ?, ?>) k_kv_k_id.getOwnerProperty();
         assertEquals("k_kv_k", idMeta.getKey());
 
-        final SubPropertyMeta<Map<String, DbObject>, DbObject, Object> k_kv_k_creation_time = (SubPropertyMeta<Map<String, DbObject>, DbObject, Object>) mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_creation_time"));
+        final SubPropertyMeta<Map<String, DbObject>, DbObject, Object> k_kv_k_creation_time = (SubPropertyMeta<Map<String, DbObject>, DbObject, Object>) mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_creation_time"), new Object[0]);
         assertNotNull(k_kv_k_creation_time);
         MapElementPropertyMeta<?, ?, ?> creationTimeMeta = (MapElementPropertyMeta<?, ?, ?>) k_kv_k_creation_time.getOwnerProperty();
         assertEquals("k_kv_k", creationTimeMeta.getKey());
@@ -68,7 +68,7 @@ public class MapClassMetaTest {
                 ReflectionService.newInstance().getClassMeta(new TypeReference<Map<String, String>>() {}.getType());
         final PropertyFinder<Map<String, String>> mapPropertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
-        final PropertyMeta<?, ?> k_kv_k_id = mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_id"));
+        final PropertyMeta<?, ?> k_kv_k_id = mapPropertyFinder.findProperty(DefaultPropertyNameMatcher.of("k_kv_k_id"), new Object[0]);
         assertNotNull(k_kv_k_id);
         assertTrue("Expect MapElementPropertyMeta " + k_kv_k_id, k_kv_k_id instanceof  MapElementPropertyMeta);
         MapElementPropertyMeta<?, ?, ?> idMeta = (MapElementPropertyMeta<?, ?, ?>) k_kv_k_id;

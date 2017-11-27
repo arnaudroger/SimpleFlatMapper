@@ -480,7 +480,7 @@ public class AbstractMapperBuilderTest {
             String str = headers[i];
             builder.addMapping(str);
             builderIndexed.addMapping(str, i);
-            row[i] = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(str)).getGetter().get(instance1);
+            row[i] = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(str), new Object[0]).getGetter().get(instance1);
 
         }
         Mapper<Object[], T> mapper = builder.mapper();

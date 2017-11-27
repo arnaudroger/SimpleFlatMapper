@@ -31,12 +31,12 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void lookForProperties(final PropertyNameMatcher propertyNameMatcher,
-								  FoundProperty<T> matchingProperties,
-								  PropertyMatchingScore score,
-								  boolean allowSelfReference,
-								  PropertyFinderTransformer propertyFinderTransform) {
-		lookForConstructor(propertyNameMatcher, matchingProperties, score, propertyFinderTransform);
-		lookForProperty(propertyNameMatcher, matchingProperties, score, propertyFinderTransform);
+                                  Object[] properties, FoundProperty<T> matchingProperties,
+                                  PropertyMatchingScore score,
+                                  boolean allowSelfReference,
+                                  PropertyFinderTransformer propertyFinderTransform) {
+		lookForConstructor(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform);
+		lookForProperty(propertyNameMatcher, properties, matchingProperties, score, propertyFinderTransform);
 
 		final String propName = propertyNameMatcher.toString();
 		if (allowSelfReference && (state == State.NONE || (state == State.SELF && propName.equals(selfName)))) {
@@ -51,7 +51,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 		}
 	}
 
-	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer) {
+	private void lookForConstructor(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer) {
 		if (classMeta.getConstructorProperties() != null) {
 			for (final ConstructorPropertyMeta<T, ?> prop : classMeta.getConstructorProperties()) {
 				final String columnName = getColumnName(prop);
@@ -63,7 +63,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 				PropertyNameMatch partialMatch = propertyNameMatcher.partialMatch(columnName);
 				if (partialMatch != null && hasConstructorMatching(prop.getParameter())) {
 					PropertyNameMatcher subPropMatcher = partialMatch.getLeftOverMatcher();
-					lookForSubProperty(subPropMatcher, prop, new FoundProperty() {
+					lookForSubProperty(subPropMatcher, properties, prop, new FoundProperty() {
 						@Override
 						public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
 							matchingProperties.found(
@@ -77,7 +77,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 	}
 
 
-	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer) {
+	private void lookForProperty(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty<T> matchingProperties, final PropertyMatchingScore score, final PropertyFinderTransformer propertyFinderTransformer) {
 		for (final PropertyMeta<T, ?> prop : classMeta.getProperties()) {
 			final String columnName = getColumnName(prop);
 			if (propertyNameMatcher.matches(columnName)) {
@@ -86,7 +86,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 			final PropertyNameMatch subPropMatch = propertyNameMatcher.partialMatch(columnName);
 			if (subPropMatch != null) {
 				final PropertyNameMatcher subPropMatcher = subPropMatch.getLeftOverMatcher();
-				lookForSubProperty(subPropMatcher, prop, new FoundProperty() {
+				lookForSubProperty(subPropMatcher, properties, prop, new FoundProperty() {
 					@Override
 					public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
 						matchingProperties.found(new SubPropertyMeta(classMeta.getReflectionService(), prop, propertyMeta),
@@ -100,7 +100,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 
 	private void lookForSubProperty(
 			final PropertyNameMatcher propertyNameMatcher,
-			final PropertyMeta<T, ?> prop,
+			Object[] properties, final PropertyMeta<T, ?> prop,
 			final FoundProperty foundProperty,
 			final PropertyMatchingScore score,
 			final PropertyFinderTransformer propertyFinderTransformer) {
@@ -118,7 +118,7 @@ final class ObjectPropertyFinder<T> extends PropertyFinder<T> {
 
 		propertyFinderTransformer
 				.apply(subPropertyFinder)
-				.lookForProperties(propertyNameMatcher,  new FoundProperty() {
+				.lookForProperties(propertyNameMatcher, properties, new FoundProperty() {
 					@Override
 					public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
 						if (newPropertyFinder != null) {

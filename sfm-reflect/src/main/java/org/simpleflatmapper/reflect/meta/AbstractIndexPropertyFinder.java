@@ -21,7 +21,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     @Override
     public void lookForProperties(
             PropertyNameMatcher propertyNameMatcher,
-            FoundProperty<T> matchingProperties,
+            Object[] properties, FoundProperty<T> matchingProperties,
             PropertyMatchingScore score,
             boolean allowSelfReference,
             PropertyFinderTransformer propertyFinderTransformer) {
@@ -29,15 +29,15 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
         IndexedColumn indexedColumn = propertyNameMatcher.matchIndex();
         if (indexedColumn != null) {
-            lookForAgainstColumn(indexedColumn, matchingProperties, score.index(indexedColumn.getIndexValue()), propertyFinderTransformer);
+            lookForAgainstColumn(indexedColumn, properties, matchingProperties, score.index(indexedColumn.getIndexValue()), propertyFinderTransformer);
         } else {
-            extrapolateIndex(propertyNameMatcher, matchingProperties, score.speculative(), propertyFinderTransformer);
-            speculativeMatching(propertyNameMatcher, matchingProperties, score.speculative(), propertyFinderTransformer);
+            extrapolateIndex(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer);
+            speculativeMatching(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer);
         }
     }
 
     @SuppressWarnings("unchecked")
-    protected void lookForAgainstColumn(IndexedColumn indexedColumn, final FoundProperty<T> matchingProperties, PropertyMatchingScore score,
+    protected void lookForAgainstColumn(IndexedColumn indexedColumn, Object[] properties, final FoundProperty<T> matchingProperties, PropertyMatchingScore score,
                                         PropertyFinderTransformer propertyFinderTransformer) {
 
         if (indexedColumn == null || !isValidIndex(indexedColumn)) {
@@ -67,7 +67,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
         propertyFinderTransformer.apply(eltPropertyFinder)
                 .lookForProperties(indexedColumn.getSubPropertyNameMatcher(),
-                new FoundProperty() {
+                        properties, new FoundProperty() {
                     @Override
                     public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
                         PropertyMeta subProperty;
@@ -90,12 +90,12 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
     }
 
 
-    private void speculativeMatching(PropertyNameMatcher propertyNameMatcher, FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer) {
+    private void speculativeMatching(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer) {
         // try to match against prefix
         PropertyNameMatch speculativeMatch = propertyNameMatcher.speculativeMatch();
 
         if (speculativeMatch != null) {
-                extrapolateIndex(speculativeMatch.getLeftOverMatcher(), foundProperty, score.speculative(), propertyFinderTransformer);
+                extrapolateIndex(speculativeMatch.getLeftOverMatcher(), properties, foundProperty, score.speculative(), propertyFinderTransformer);
         }
     }
 
@@ -103,7 +103,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
     protected abstract <E> IndexedElement<T,?> getIndexedElement(IndexedColumn indexedColumn);
 
-    protected abstract void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer);
+    protected abstract void extrapolateIndex(PropertyNameMatcher propertyNameMatcher, Object[] properties, FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer);
 
     @Override
     public List<InstantiatorDefinition> getEligibleInstantiatorDefinitions() {

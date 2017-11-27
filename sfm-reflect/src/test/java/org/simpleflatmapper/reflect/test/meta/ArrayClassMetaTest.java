@@ -36,7 +36,7 @@ public class ArrayClassMetaTest {
             public boolean test(Object propertyMeta) {
                 return true;
             }
-        }).findProperty(DefaultPropertyNameMatcher.of("3"));
+        }).findProperty(DefaultPropertyNameMatcher.of("3"), new Object[0]);
 
         Object[] array = new Object[10];
         p.getSetter().set(array, "aaa");
@@ -70,7 +70,7 @@ public class ArrayClassMetaTest {
             public boolean test(Object propertyMeta) {
                 return true;
             }
-        }).findProperty(DefaultPropertyNameMatcher.of("3"));
+        }).findProperty(DefaultPropertyNameMatcher.of("3"), new Object[0]);
 
         p.getSetter().set(array, value);
         assertEquals(value, p.getGetter().get(array));
@@ -156,7 +156,7 @@ public class ArrayClassMetaTest {
                 public boolean test(Object propertyMeta) {
                     return true;
                 }
-            }).findProperty(DefaultPropertyNameMatcher.of("v"));
+            }).findProperty(DefaultPropertyNameMatcher.of("v"), new Object[0]);
     }
 
     private Object instantiate(ClassMeta<?> classMeta) throws Exception {

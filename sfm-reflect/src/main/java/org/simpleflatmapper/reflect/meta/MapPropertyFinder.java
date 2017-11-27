@@ -63,12 +63,12 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     @Override
     public void lookForProperties(
             final PropertyNameMatcher propertyNameMatcher,
-            final FoundProperty matchingProperties,
+            Object[] properties, final FoundProperty matchingProperties,
             final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer) {
 
 
         propertyFinderTransformer.apply(keyValuePropertyFinder).lookForProperties(propertyNameMatcher,
-                new FoundProperty() {
+                properties, new FoundProperty() {
                     @Override
                     public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
 
@@ -98,7 +98,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
             final PropertyFinder<V> propertyFinder = getPropertyFinder(keyMatcher);
 
             propertyFinderTransformer.apply(propertyFinder).lookForProperties(valueMatcher,
-                    new FoundProperty<V>() {
+                    properties, new FoundProperty<V>() {
                         @Override
                         public <P extends PropertyMeta<V, ?>> void found(final P propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
                             final PropertyMeta<T, ?> keyProperty = keyProperty(keyMatcher);

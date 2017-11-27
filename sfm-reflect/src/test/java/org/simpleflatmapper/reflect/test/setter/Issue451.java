@@ -32,8 +32,8 @@ public class Issue451 {
             }
         });
 
-        SubPropertyMeta f = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_f"));
-        SubPropertyMeta n = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_n"));
+        SubPropertyMeta f = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_f"), new Object[0]);
+        SubPropertyMeta n = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_n"), new Object[0]);
 
         assertEquals(AppendCollectionSetter.class, n.getOwnerProperty().getSetter().getClass());
 

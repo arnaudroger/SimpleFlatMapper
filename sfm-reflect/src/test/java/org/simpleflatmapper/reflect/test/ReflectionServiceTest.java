@@ -45,7 +45,7 @@ public class ReflectionServiceTest {
 
         ClassMeta<Node> cm = reflectionService.getClassMeta(Node.class);
 
-        final PropertyMeta<Node, Object> propertyMeta = cm.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("parent_parent_parent"));
+        final PropertyMeta<Node, Object> propertyMeta = cm.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("parent_parent_parent"), new Object[0]);
         assertNotNull(propertyMeta);
         assertNotNull(cm);
     }
@@ -78,7 +78,7 @@ public class ReflectionServiceTest {
         ClassMeta<IGetters> meta = ReflectionService.newInstance().getClassMeta(IGetters.class);
 
 
-        assertEquals("Rudolph", meta.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("name")).getGetter().get(value));
+        assertEquals("Rudolph", meta.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("name"), new Object[0]).getGetter().get(value));
 
 
 
@@ -88,7 +88,7 @@ public class ReflectionServiceTest {
     public void testDisableAsmResolvedConstructorParamName() {
         ClassMeta<DbFinalObject> classMeta = ReflectionService.disableAsm().getClassMeta(DbFinalObject.class);
 
-        PropertyMeta<DbFinalObject, ?> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("id"));
+        PropertyMeta<DbFinalObject, ?> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(DefaultPropertyNameMatcher.of("id"), new Object[0]);
         assertTrue(property.isConstructorProperty());
     }
 
@@ -128,10 +128,10 @@ public class ReflectionServiceTest {
         ClassMeta<?> classMeta = ReflectionService.newInstance().getClassMeta(classWithoutDebug);
 
         PropertyFinder<?> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
-        PropertyMeta<?, ?> name = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("name"));
-        PropertyMeta<?, ?> value = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("value"));
-        PropertyMeta<?, ?> arg0 = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("arg0"));
-        PropertyMeta<?, ?> arg1 = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("arg1"));
+        PropertyMeta<?, ?> name = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("name"), new Object[0]);
+        PropertyMeta<?, ?> value = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("value"), new Object[0]);
+        PropertyMeta<?, ?> arg0 = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("arg0"), new Object[0]);
+        PropertyMeta<?, ?> arg1 = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("arg1"), new Object[0]);
 
         assertNull(arg0);
         assertNull(arg1);

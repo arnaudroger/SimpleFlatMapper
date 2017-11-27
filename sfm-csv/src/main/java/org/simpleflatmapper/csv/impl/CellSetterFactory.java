@@ -256,7 +256,7 @@ public final class CellSetterFactory {
 							return propertyMeta.isConstructorProperty()
 									|| propertyMeta.isSubProperty() && ((SubPropertyMeta)propertyMeta).getOwnerProperty().isConstructorProperty();
 						}
-					}).findProperty(DefaultPropertyNameMatcher.exact(parameter.getName()));
+					}).findProperty(DefaultPropertyNameMatcher.exact(parameter.getName()), columnDefinition.properties());
 					reader = cellValueReaderFromFactory(property, index, columnDefinition, parsingContextFactoryBuilder);
 					if (reader != null) {
 						Instantiator<P, P> instantiator =

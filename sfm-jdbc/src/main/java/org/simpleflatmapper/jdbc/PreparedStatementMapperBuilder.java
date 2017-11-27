@@ -173,7 +173,7 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
 
                 PropertyMeta<C, P> childProperty =
                         (PropertyMeta<C, P>)
-                                pm.getPropertyMeta().getPropertyClassMeta().newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of("0"));
+                                pm.getPropertyMeta().getPropertyClassMeta().newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of("0"), pm.getColumnDefinition().properties());
 
                 final PropertyMapping<C, P, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> pmchildProperttMeta = pm.propertyMeta(childProperty);
 

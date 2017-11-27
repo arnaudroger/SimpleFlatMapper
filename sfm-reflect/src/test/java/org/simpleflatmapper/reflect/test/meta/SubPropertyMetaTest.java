@@ -30,7 +30,7 @@ public class SubPropertyMetaTest {
                         return true;
                     }
                 })
-                .findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false));
+                .findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false), new Object[0]);
 
         assertTrue(property instanceof SubPropertyMeta);
         assertTrue(property.isSubProperty());

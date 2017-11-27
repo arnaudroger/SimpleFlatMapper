@@ -92,7 +92,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		PropertyNameMatcher propertyNameMatcher = propertyNameMatcherFactory.newInstance(key);
 		final PropertyMeta<T, P> prop =
 				(PropertyMeta<T, P>) effectivePropertyFinder
-						.findProperty(propertyNameMatcher, propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher));
+						.findProperty(propertyNameMatcher, columnDefinition.properties(), propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher));
 
 
 		if (prop == null) {

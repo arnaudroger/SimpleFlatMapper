@@ -19,18 +19,19 @@ public abstract class PropertyFinder<T> {
 		this.selfScoreFullName = selfScoreFullName;
 	}
 
-	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher) {
-		return findProperty(propertyNameMatcher, new DefaultPropertyFinderProbe(propertyNameMatcher));
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties) {
+		return findProperty(propertyNameMatcher, properties, new DefaultPropertyFinderProbe(propertyNameMatcher));
 	}
 		@SuppressWarnings("unchecked")
-	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, PropertyFinderProbe propertyFinderProbe) {
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, PropertyFinderProbe propertyFinderProbe) {
 		MatchingProperties matchingProperties = new MatchingProperties(propertyFilter, propertyFinderProbe);
-		lookForProperties(propertyNameMatcher, matchingProperties, PropertyMatchingScore.newInstance(selfScoreFullName), true, IDENTITY_TRANSFORMER);
+		lookForProperties(propertyNameMatcher, properties, matchingProperties, PropertyMatchingScore.newInstance(selfScoreFullName), true, IDENTITY_TRANSFORMER);
 		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
 	}
 
 	public abstract void lookForProperties(
 			PropertyNameMatcher propertyNameMatcher,
+			Object[] properties, 
 			FoundProperty<T> matchingProperties,
 			PropertyMatchingScore score,
 			boolean allowSelfReference,

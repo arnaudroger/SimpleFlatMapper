@@ -149,7 +149,7 @@ message AddressBook {
             public boolean test(PropertyMeta<?, ?> propertyMeta) {
                 return true;
             }
-        }).findProperty(DefaultPropertyNameMatcher.of("ts"));
+        }).findProperty(DefaultPropertyNameMatcher.of("ts"), new Object[0]);
         
         assertEquals(Timestamp.class, ts.getPropertyType());
 

@@ -130,7 +130,7 @@ public class Issue450 {
 
 
     private String getPathFor(PropertyFinder<?> finder, String prop) {
-        return finder.findProperty(DefaultPropertyNameMatcher.of(prop), prob).getPath();
+        return finder.findProperty(DefaultPropertyNameMatcher.of(prop), new Object[0], prob).getPath();
     }
 
     private PropertyFinder<?> getTuple2IntegerFooPropertyFinder() {

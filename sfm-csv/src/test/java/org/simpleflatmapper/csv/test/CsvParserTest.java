@@ -1471,7 +1471,7 @@ public class CsvParserTest {
 
 		validatorRows(rowIterator);
 	}
-	//JAVA8_END
+	//IFJAVA8_END
 	
 	
 	public static class A1 {

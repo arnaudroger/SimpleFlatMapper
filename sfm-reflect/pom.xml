@@ -75,6 +75,7 @@
 							org.simpleflatmapper.reflect.getter,
 							org.simpleflatmapper.reflect.setter,
 							org.simpleflatmapper.reflect.primitive,
+							org.simpleflatmapper.reflect.property,
 							org.simpleflatmapper.ow2asm,
 							org.simpleflatmapper.ow2asm.signature
 						</Export-Package>

@@ -9,6 +9,7 @@ module org.simpleflatmapper.reflect {
         exports org.simpleflatmapper.reflect.getter;
         exports org.simpleflatmapper.reflect.setter;
         exports org.simpleflatmapper.reflect.primitive;
+        exports org.simpleflatmapper.reflect.property;
         exports org.simpleflatmapper.ow2asm;
         exports org.simpleflatmapper.ow2asm.signature;
 

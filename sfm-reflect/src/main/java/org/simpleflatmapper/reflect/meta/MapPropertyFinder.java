@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.reflect.property.MapTypeProperty;
 import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.ParameterizedType;
@@ -10,6 +11,10 @@ import java.util.*;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder<T> {
+    
+    public static int NONE = 0;
+    public static int COLUMN_AS_KEY = 1;
+    public static int KEY_VALUE = 2;
 
     private final ClassMeta<MapKeyValueElementPropertyMeta.KeyValue<K, V>> keyValueClassMeta;
     private final ClassMeta<V> valueMetaData;
@@ -22,7 +27,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     private final Type keyValueType;
     MapKeyValueElementPropertyMeta<T, K, V> elementPropertyMeta;;
 
-    private boolean keyValueMode = false;
+    private int keyValueMode = NONE;
 
     public MapPropertyFinder(ClassMeta<T> mapMeta, ClassMeta<V> valueMetaData, Converter<? super CharSequence, ? extends K> keyConverter, Predicate<PropertyMeta<?, ?>> propertyFilter, boolean selfScoreFullName) {
         super(propertyFilter, selfScoreFullName);
@@ -67,65 +72,73 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
             final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer) {
 
 
-        propertyFinderTransformer.apply(keyValuePropertyFinder).lookForProperties(propertyNameMatcher,
-                properties, new FoundProperty() {
-                    @Override
-                    public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
-
-                        Runnable sCallback = new Runnable() {
-                            @Override
-                            public void run() {
-                                selectionCallback.run();
-                                keyValueMode = true;
-                                findersByKey.put(elementPropertyMeta, keyValuePropertyFinder);
-                            }
-                        };
-
-                        matchingProperties.found(new SubPropertyMeta(propertyMeta.getReflectService(), elementPropertyMeta, propertyMeta), sCallback, score.matches(propertyNameMatcher));
-                    }
-                },
-                score,
-                false, propertyFinderTransformer);
-        if (keyValueMode || keyConverter == null) {
-            return;
-        }
-        
-        // classic keys set
-        for(final PropertyNameMatcherKeyValuePair keyValue : propertyNameMatcher.keyValuePairs()) {
-            final PropertyNameMatcher keyMatcher = keyValue.getKey();
-            final PropertyNameMatcher valueMatcher = keyValue.getValue();
-
-            final PropertyFinder<V> propertyFinder = getPropertyFinder(keyMatcher);
-
-            propertyFinderTransformer.apply(propertyFinder).lookForProperties(valueMatcher,
-                    properties, new FoundProperty<V>() {
+        if (isKeyValueEnabled(properties)) {
+            propertyFinderTransformer.apply(keyValuePropertyFinder).lookForProperties(propertyNameMatcher,
+                    properties, new FoundProperty() {
                         @Override
-                        public <P extends PropertyMeta<V, ?>> void found(final P propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
-                            final PropertyMeta<T, ?> keyProperty = keyProperty(keyMatcher);
+                        public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
+
                             Runnable sCallback = new Runnable() {
                                 @Override
                                 public void run() {
-                                    finders.put(keyMatcher, propertyFinder);
-                                    findersByKey.put(keyProperty, propertyFinder);
                                     selectionCallback.run();
+                                    keyValueMode = KEY_VALUE;
+                                    findersByKey.put(elementPropertyMeta, keyValuePropertyFinder);
                                 }
                             };
 
-
-
-                            if (keyProperty != null) {
-                                if (propertyMeta instanceof SelfPropertyMeta) {
-                                    matchingProperties.found(keyProperty, sCallback, score.self(keyProperty.getPropertyClassMeta(), keyMatcher.toString()));
-                                } else {
-                                    matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), sCallback, score.matches(keyMatcher));
-                                }
-                            }
+                            matchingProperties.found(new SubPropertyMeta(propertyMeta.getReflectService(), elementPropertyMeta, propertyMeta), sCallback, score.matches(propertyNameMatcher));
                         }
                     },
                     score,
-                    true, propertyFinderTransformer);
+                    false, propertyFinderTransformer);
+        }
+        if (isColunnKeyEnabled(properties)) {
+            // classic keys set
+            for (final PropertyNameMatcherKeyValuePair keyValue : propertyNameMatcher.keyValuePairs()) {
+                final PropertyNameMatcher keyMatcher = keyValue.getKey();
+                final PropertyNameMatcher valueMatcher = keyValue.getValue();
+
+                final PropertyFinder<V> propertyFinder = getPropertyFinder(keyMatcher);
+
+                propertyFinderTransformer.apply(propertyFinder).lookForProperties(valueMatcher,
+                        properties, new FoundProperty<V>() {
+                            @Override
+                            public <P extends PropertyMeta<V, ?>> void found(final P propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
+                                final PropertyMeta<T, ?> keyProperty = keyProperty(keyMatcher);
+                                Runnable sCallback = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finders.put(keyMatcher, propertyFinder);
+                                        findersByKey.put(keyProperty, propertyFinder);
+                                        selectionCallback.run();
+                                        keyValueMode = COLUMN_AS_KEY;
+
+                                    }
+                                };
+
+                                if (keyProperty != null) {
+                                    if (propertyMeta instanceof SelfPropertyMeta) {
+                                        matchingProperties.found(keyProperty, sCallback, score.self(keyProperty.getPropertyClassMeta(), keyMatcher.toString()));
+                                    } else {
+                                        matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), sCallback, score.matches(keyMatcher));
+                                    }
+                                }
+                            }
+                        },
+                        score,
+                        true, propertyFinderTransformer);
+            }
         }
 
+    }
+
+    private boolean isColunnKeyEnabled(Object[] properties) {
+        return keyConverter != null || keyValueMode == COLUMN_AS_KEY || (keyValueMode != KEY_VALUE && MapTypeProperty.isColumnKeyEnabled(properties)); 
+    }
+
+    private boolean isKeyValueEnabled(Object[] properties) {
+        return keyConverter == null || keyValueMode == KEY_VALUE || (keyValueMode != COLUMN_AS_KEY && MapTypeProperty.isKeyValueEnabled(properties));
     }
 
     private PropertyFinder<V> getPropertyFinder(PropertyNameMatcher keyMatcher) {

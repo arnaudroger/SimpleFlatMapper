@@ -8,6 +8,7 @@ import org.simpleflatmapper.map.mapper.JoinMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
+import org.simpleflatmapper.reflect.property.MapTypeProperty;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.tuple.Tuple2;
 import org.simpleflatmapper.util.ListCollector;
@@ -54,7 +55,7 @@ public class MapKeyValueTest {
                 new AbstractMapperBuilderTest.SampleMapperBuilder<PojoWithMap>(classMeta, getMapperConfig());
 
         builder.addMapping("id");
-        builder.addMapping("map_key");
+        builder.addMapping("map_key", MapTypeProperty.KEY_VALUE);
         builder.addMapping("map_value");
 
 
@@ -79,7 +80,7 @@ public class MapKeyValueTest {
                 new AbstractMapperBuilderTest.SampleMapperBuilder<PojoWithMap>(classMeta, getMapperConfig());
 
         builder.addKey("id");
-        builder.addMapping("map_key");
+        builder.addMapping("map_key", MapTypeProperty.KEY_VALUE);
         builder.addMapping("map_value");
 
 

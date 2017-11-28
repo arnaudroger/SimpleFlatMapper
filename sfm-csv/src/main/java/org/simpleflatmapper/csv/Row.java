@@ -14,8 +14,8 @@ public class Row implements Map<String, String> {
     public static final int SORTED_HEADERS_THRESHOLD = 10;
     private final Headers headers;
     private final String[] values;
-    private Set<Entry<String, String>> entrySet;
-    private Collection<String> mapvalues;
+    private Set<Entry<String, String>> entrySetCache;
+    private Collection<String> valuesCollectionCache;
 
     public Row(Headers headers, String[] values) {
         this.headers = headers;
@@ -91,22 +91,22 @@ public class Row implements Map<String, String> {
 
     @Override
     public Collection<String> values() {
-        if (mapvalues != null) {
-            mapvalues = Collections.unmodifiableList(Arrays.asList(values));
+        if (valuesCollectionCache != null) {
+            valuesCollectionCache = Collections.unmodifiableList(Arrays.asList(values));
         }
-        return mapvalues;
+        return valuesCollectionCache;
     }
 
     @Override
     public Set<Entry<String, String>> entrySet() {
-        if (entrySet == null) {
+        if (entrySetCache == null) {
             HashSet<Entry<String, String>> set = new HashSet<Entry<String, String>>();
             for(int i = 0; i < headers.headers.length; i++) {
                 set.add(new AbstractMap.SimpleImmutableEntry<String, String>(headers.headers[i], values[i]));
             }
-            entrySet = Collections.unmodifiableSet(set);
+            entrySetCache = Collections.unmodifiableSet(set);
         }
-        return entrySet;
+        return entrySetCache;
     }
     
     

@@ -1,5 +1,7 @@
 package org.simpleflatmapper.csv;
 
+import org.simpleflatmapper.csv.impl.CellConsumerCapture;
+import org.simpleflatmapper.csv.impl.CellConsumerFixLengthToCheckConsumer;
 import org.simpleflatmapper.csv.parser.CellConsumer;
 import org.simpleflatmapper.csv.parser.CharConsumer;
 import org.simpleflatmapper.csv.parser.NullCellConsumer;
@@ -8,6 +10,7 @@ import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.util.ErrorHelper;
 import org.simpleflatmapper.util.Function;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -48,7 +51,6 @@ public final class CsvReader implements Iterable<String[]> {
 
 		return cellConsumer;
 	}
-
 
 	private <CC extends CellConsumer> void _parseAll(CC cellConsumer) throws IOException {
 		do {
@@ -122,8 +124,8 @@ public final class CsvReader implements Iterable<String[]> {
 		return new CsvStringArrayIterator(this);
 	}
 	
-	public Iterator<Row> rowIterator() {
-		return new CsvRowArrayIterator(this, null);
+	public Iterator<Row> rowIterator() throws IOException {
+		return new CsvRowArrayIterator(this);
 	}
 
 	//IFJAVA8_START
@@ -172,7 +174,60 @@ public final class CsvReader implements Iterable<String[]> {
 		}
 	}
 
+	public Stream<Row> rowStream() {
+		return StreamSupport.stream(new CsvRowSpliterator(this), false);
+	}
 
+	private static class CsvRowSpliterator implements Spliterator<Row> {
+		private final CsvReader reader;
+		
+		private Row.Headers headers;
+
+		public CsvRowSpliterator(CsvReader csvReader) {
+			this.reader = csvReader;
+		}
+
+		@Override
+		public boolean tryAdvance(Consumer<? super Row> action) {
+			try {
+				if (headers == null) {
+					headers = headers(reader);
+				}
+				return reader.parseRow(new CellConsumerFixLengthToCheckConsumer(headers.size(), values -> action.accept(new Row(headers, values))));
+			} catch (IOException e) {
+				return ErrorHelper.rethrow(e);
+			}
+		}
+
+		@Override
+		public void forEachRemaining(Consumer<? super Row> action) {
+			try {
+				if (headers == null) {
+					headers = headers(reader);
+				}
+				reader.parseAll(new CellConsumerFixLengthToCheckConsumer(headers.size(), values -> action.accept(new Row(headers, values))));
+			} catch (IOException e) {
+				ErrorHelper.rethrow(e);
+			}
+		}
+
+		@Override
+		public Spliterator<Row> trySplit() {
+			return null;
+		}
+
+		@Override
+		public long estimateSize() {
+			return Long.MAX_VALUE;
+		}
+
+		@Override
+		public int characteristics() {
+			return Spliterator.ORDERED | Spliterator.NONNULL;
+		}
+		
+		
+	}
 	//IFJAVA8_END
 
     private static class CsvStringArrayIterator implements Iterator<String[]> {
@@ -182,7 +237,6 @@ public final class CsvReader implements Iterable<String[]> {
 
         private boolean isFetched;
         private String[] value;
-
         @SuppressWarnings("unchecked")
         public CsvStringArrayIterator(CsvReader csvReader) {
             cellConsumer = csvReader.toCellConsumer(new CheckedConsumer<String[]>() {
@@ -229,21 +283,22 @@ public final class CsvReader implements Iterable<String[]> {
 	private static class CsvRowArrayIterator implements Iterator<Row> {
 
 		private final CsvReader reader;
-		private final CellConsumer cellConsumer;
+		private final CellConsumerFixLengthToCheckConsumer cellConsumer;
 		private Row.Headers headers;
 
+		private Row value;
 		private boolean isFetched;
-		private String[] value;
+		
 
-		@SuppressWarnings("unchecked")
-		public CsvRowArrayIterator(CsvReader csvReader, Row.Headers headers) {
-			cellConsumer = csvReader.toCellConsumer(new CheckedConsumer<String[]>() {
+		public CsvRowArrayIterator(CsvReader csvReader) throws IOException {
+			reader = csvReader;
+			headers = headers(csvReader);
+			cellConsumer = new CellConsumerFixLengthToCheckConsumer(headers.size(), new org.simpleflatmapper.util.Consumer<String[]>() {
 				@Override
-				public void accept(String[] strings)  {
-					value = strings;
+				public void accept(String[] strings) {
+					value = new Row(headers, strings);
 				}
 			});
-			reader = csvReader;
 		}
 
 		@Override
@@ -269,7 +324,7 @@ public final class CsvReader implements Iterable<String[]> {
 			fetch();
 			if (value == null) throw new NoSuchElementException();
 			isFetched = false;
-			return new Row(headers, value);
+			return value;
 		}
 
 		@Override
@@ -277,4 +332,14 @@ public final class CsvReader implements Iterable<String[]> {
 			throw new UnsupportedOperationException();
 		}
 	}
+	
+	private static Row.Headers headers(CsvReader reader) throws IOException {
+		CellConsumerCapture cellConsumer = new CellConsumerCapture();
+		reader.parseRow(cellConsumer);
+		if (!cellConsumer.hasData()) {
+			throw new EOFException("No headers");
+		}
+		return Row.headers(cellConsumer.values());
+	} 
+	
 }

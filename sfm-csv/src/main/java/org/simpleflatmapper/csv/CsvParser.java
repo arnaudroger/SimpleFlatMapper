@@ -438,6 +438,23 @@ public final class CsvParser {
 			return onReader(file, this, CREATE_CLOSEABLE_ITERATOR);
 		}
 
+		public final Iterator<Row> rowIterator(Reader reader) throws IOException {
+			return reader(reader).rowIterator();
+		}
+
+		public final Iterator<Row> rowIterator(CharSequence content) throws IOException {
+			return reader(content).rowIterator();
+		}
+
+		public final Iterator<Row> rowIterator(String content) throws IOException {
+			return reader(content).rowIterator();
+		}
+
+		public final CloseableIterator<Row> rowIterator(File file) throws IOException {
+			return onReader(file, this, CREATE_CLOSEABLE_ROW_ITERATOR);
+		}
+		
+
 		public final <H extends CheckedConsumer<String[]>> H forEach(Reader reader, H consumer) throws IOException {
 			return reader(reader).read(consumer);
 		}
@@ -516,6 +533,18 @@ public final class CsvParser {
 		public final Stream<String[]> stream(String content) throws IOException {
 			return reader(content).stream();
 		}
+
+		public final Stream<Row> rowStream(Reader reader) throws IOException {
+			return reader(reader).rowStream();
+		}
+
+		public final Stream<Row> rowStream(CharSequence content) throws IOException {
+			return reader(content).rowStream();
+		}
+
+		public final Stream<Row> rowStream(String content) throws IOException {
+			return reader(content).rowStream();
+		}
 		//IFJAVA8_END
 		/**
 		 * Use @see AbstractDSL#stream(File, Function).
@@ -532,6 +561,16 @@ public final class CsvParser {
 			Reader reader = newReader(file);
 			try {
 				return function.apply(stream(reader));
+			} catch(IOException ioe) {
+				try { reader.close(); } catch(IOException ioe2) { }
+				throw ioe;
+			}
+		}
+
+		public final <R> R rowStream(File file, Function<Stream<Row>, R> function) throws IOException {
+			Reader reader = newReader(file);
+			try {
+				return function.apply(rowStream(reader));
 			} catch(IOException ioe) {
 				try { reader.close(); } catch(IOException ioe2) { }
 				throw ioe;
@@ -1082,6 +1121,14 @@ public final class CsvParser {
 				@Override
 				public CloseableIterator<String[]> apply(Reader reader, AbstractDSL<?> dsl) throws IOException {
 					return new CloseableIterator<String[]>(dsl.iterator(reader), reader);
+				}
+			};
+
+	private static final OnReaderFactory<CloseableIterator<Row>, AbstractDSL<?>> CREATE_CLOSEABLE_ROW_ITERATOR =
+			new OnReaderFactory<CloseableIterator<Row>, AbstractDSL<?>>() {
+				@Override
+				public CloseableIterator<Row> apply(Reader reader, AbstractDSL<?> dsl) throws IOException {
+					return new CloseableIterator<Row>(dsl.rowIterator(reader), reader);
 				}
 			};
 

@@ -11,6 +11,7 @@ import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
 import org.simpleflatmapper.csv.CsvReader;
 import org.simpleflatmapper.csv.ParsingContext;
+import org.simpleflatmapper.csv.Row;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.CheckedConsumer;
 import org.simpleflatmapper.csv.parser.BufferOverflowException;
@@ -47,6 +48,7 @@ import static org.junit.Assert.*;
 public class CsvParserTest {
 
 
+	public static final String ROW_DATA = "h1,h2\nv1,v2\nv3\nv4,v5,v6";
 	private static String[][] SAMPLE_CSV_MIX_EXPECTATION =
 			{
 					{"cell1", "cell2", ""},
@@ -1425,6 +1427,52 @@ public class CsvParserTest {
 		A3 next3 = iterator.next();
 		assertEquals("v", next3.b1s.d2);
 	}
+	
+	
+	@Test
+	public void testOptMapRowIterator() throws Exception {
+		Iterator<Row> rowIterator = CsvParser.dsl().rowIterator(ROW_DATA);
+
+		validatorRows(rowIterator);
+	}
+
+	private void validatorRows(Iterator<Row> rowIterator) {
+		assertTrue(rowIterator.hasNext());
+
+		Row r = rowIterator.next();
+
+		assertEquals(2, r.size());
+		assertEquals("v1", r.get("h1"));
+		assertEquals("v2", r.get("h2"));
+
+		assertTrue(rowIterator.hasNext());
+
+		r = rowIterator.next();
+
+		assertEquals(2, r.size());
+		assertEquals("v3", r.get("h1"));
+		assertEquals(null, r.get("h2"));
+
+		assertTrue(rowIterator.hasNext());
+
+		r = rowIterator.next();
+
+		assertEquals(2, r.size());
+		assertEquals("v4", r.get("h1"));
+		assertEquals("v5", r.get("h2"));
+
+		assertFalse(rowIterator.hasNext());
+	}
+
+	//IFJAVA8_START
+	@Test
+	public void testOptMapRowStream() throws Exception {
+		Iterator<Row> rowIterator = CsvParser.dsl().rowStream(ROW_DATA).collect(Collectors.toList()).iterator();
+
+		validatorRows(rowIterator);
+	}
+	//JAVA8_END
+	
 	
 	public static class A1 {
 		private final List<B1> b1s;

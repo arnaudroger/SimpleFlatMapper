@@ -299,7 +299,7 @@
 										<artifactItem>
 											<groupId>org.simpleflatmapper</groupId>
 											<artifactId>ow2asm</artifactId>
-											<version>6.0_ALPHA</version>
+											<version>6.0</version>
 										</artifactItem>
 									</artifactItems>
 									<outputDirectory>target/classes</outputDirectory>

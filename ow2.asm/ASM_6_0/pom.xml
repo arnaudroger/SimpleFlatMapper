@@ -1,0 +1,68 @@
+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <groupId>org.simpleflatmapper</groupId>
+  <name>ASM Core</name>
+  <version>6.0</version>
+  <artifactId>ow2asm</artifactId>
+  <packaging>jar</packaging>
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <maven.source.skip>true</maven.source.skip>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.6.0</version>
+        <configuration>
+          <source>9</source>
+          <target>9</target>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>6.0</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.7.5.201505241946</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.0.1</version>
+      </plugin>
+    </plugins>
+    
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.0.0-M1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>arnaudroger-maven-plugin-repository</id>
+      <url>https://arnaudroger.github.io/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
+</project>

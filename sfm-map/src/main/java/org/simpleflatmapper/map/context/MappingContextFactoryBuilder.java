@@ -138,7 +138,7 @@ public class MappingContextFactoryBuilder<S, K> {
             List<K> keys = new ArrayList<K>(builder.effectiveKeys());
 
             // ignore root parent
-            if (parentIndex >0 && parent != null) {
+            if (parent != null && parentIndex >0) {
                 appendParentKeys(parent, keys);
             }
 
@@ -203,25 +203,6 @@ public class MappingContextFactoryBuilder<S, K> {
             if (!builders.get(i).hasNoKeys()) return true;
         }
         return false;
-    }
-
-    private int getRootDetector(List<MappingContextFactoryBuilder<S, K>> builders) {
-        int rootDetector = -1;
-        // calculate rootDetector
-        for (int i = 0; i < builders.size(); i++) {
-            final MappingContextFactoryBuilder<S, K> builder = builders.get(i);
-            if (!builder.effectiveKeys().isEmpty()) {
-                if (builder.currentIndex == 0 || (rootDetector == -1 && builder.isEligibleAsRootKey())) {
-                    rootDetector = builder.currentIndex;
-                }
-            }
-        }
-        return rootDetector;
-    }
-
-    private boolean isEligibleAsRootKey() {
-        return isEligibleAsSubstituteKey()
-                && (parent == null || parent.isEligibleAsRootKey());
     }
 
     private boolean isEligibleAsSubstituteKey() {

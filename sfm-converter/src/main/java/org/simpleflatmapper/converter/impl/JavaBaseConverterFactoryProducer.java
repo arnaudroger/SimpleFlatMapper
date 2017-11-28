@@ -33,15 +33,17 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		constantConverter(consumer, Number.class, BigInteger.class, new NumberBigIntegerConverter());
 
 
-		constantConverter(consumer, CharSequence.class, Byte.class,      new CharSequenceByteConverter());
-		constantConverter(consumer, CharSequence.class, Character.class, new CharSequenceCharacterConverter());
-		constantConverter(consumer, CharSequence.class, Short.class,     new CharSequenceShortConverter());
-		constantConverter(consumer, CharSequence.class, Integer.class,   new CharSequenceIntegerConverter());
-		constantConverter(consumer, CharSequence.class, Long.class,      new CharSequenceLongConverter());
-		constantConverter(consumer, CharSequence.class, Float.class,     new CharSequenceFloatConverter());
-		constantConverter(consumer, CharSequence.class, Double.class,    new CharSequenceDoubleConverter());
-		constantConverter(consumer, CharSequence.class, UUID.class,      new CharSequenceUUIDConverter());
-		constantConverter(consumer, CharSequence.class, Boolean.class,   new CharSequenceBooleanConverter());
+		constantConverter(consumer, CharSequence.class, Byte.class,       new CharSequenceByteConverter());
+		constantConverter(consumer, CharSequence.class, BigInteger.class, new CharSequenceBigInteger());
+		constantConverter(consumer, CharSequence.class, BigDecimal.class, new CharSequenceBigDecimal());
+		constantConverter(consumer, CharSequence.class, Character.class,  new CharSequenceCharacterConverter());
+		constantConverter(consumer, CharSequence.class, Short.class,      new CharSequenceShortConverter());
+		constantConverter(consumer, CharSequence.class, Integer.class,    new CharSequenceIntegerConverter());
+		constantConverter(consumer, CharSequence.class, Long.class,       new CharSequenceLongConverter());
+		constantConverter(consumer, CharSequence.class, Float.class,      new CharSequenceFloatConverter());
+		constantConverter(consumer, CharSequence.class, Double.class,     new CharSequenceDoubleConverter());
+		constantConverter(consumer, CharSequence.class, UUID.class,       new CharSequenceUUIDConverter());
+		constantConverter(consumer, CharSequence.class, Boolean.class,    new CharSequenceBooleanConverter());
 		
 		factoryConverter(consumer, new AbstractConverterFactory<CharSequence, Date>(CharSequence.class, Date.class) {
 			@Override

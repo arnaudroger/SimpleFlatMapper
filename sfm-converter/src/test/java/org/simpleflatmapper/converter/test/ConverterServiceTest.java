@@ -131,6 +131,8 @@ public class ConverterServiceTest {
         });
         testConverter("false",   Boolean.FALSE);
         testConverter("true",   Boolean.TRUE);
+        testConverter("123456789101112",   new BigInteger("123456789101112"));
+        testConverter("123456789101112.0123456",   new BigDecimal("123456789101112.0123456"));
 
         final UUID uuid = UUID.randomUUID();
         testConverter(uuid.toString(), uuid);

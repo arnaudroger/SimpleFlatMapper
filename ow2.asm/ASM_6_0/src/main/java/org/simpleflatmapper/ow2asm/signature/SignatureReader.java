@@ -25,7 +25,7 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
-package org.objectweb.asm.signature;
+package org.simpleflatmapper.ow2asm.signature;
 
 /**
  * A parser for signature literals, as defined in the Java Virtual Machine Specification (JVMS), to
@@ -54,9 +54,9 @@ public class SignatureReader {
    * Makes the given visitor visit the signature of this {@link SignatureReader}. This signature is
    * the one specified in the constructor (see {@link #SignatureReader}). This method is intended to
    * be called on a {@link SignatureReader} that was created using a <i>ClassSignature</i> (such as
-   * the <code>signature</code> parameter of the {@link org.objectweb.asm.ClassVisitor#visit}
+   * the <code>signature</code> parameter of the {@link org.simpleflatmapper.ow2asm.ClassVisitor#visit}
    * method) or a <i>MethodSignature</i> (such as the <code>signature</code> parameter of the {@link
-   * org.objectweb.asm.ClassVisitor#visitMethod} method).
+   * org.simpleflatmapper.ow2asm.ClassVisitor#visitMethod} method).
    *
    * @param signatureVistor the visitor that must visit this signature.
    */
@@ -131,8 +131,8 @@ public class SignatureReader {
    * the one specified in the constructor (see {@link #SignatureReader}). This method is intended to
    * be called on a {@link SignatureReader} that was created using a <i>JavaTypeSignature</i>, such
    * as the <code>signature</code> parameter of the {@link
-   * org.objectweb.asm.ClassVisitor#visitField} or {@link
-   * org.objectweb.asm.MethodVisitor#visitLocalVariable} methods.
+   * org.simpleflatmapper.ow2asm.ClassVisitor#visitField} or {@link
+   * org.simpleflatmapper.ow2asm.MethodVisitor#visitLocalVariable} methods.
    *
    * @param signatureVisitor the visitor that must visit this signature.
    */

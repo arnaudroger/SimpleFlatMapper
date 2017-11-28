@@ -25,9 +25,9 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
-package org.objectweb.asm.signature;
+package org.simpleflatmapper.ow2asm.signature;
 
-import org.objectweb.asm.Opcodes;
+import org.simpleflatmapper.ow2asm.Opcodes;
 
 /**
  * A SignatureVisitor that generates signature literals, as defined in the Java Virtual Machine

@@ -26,7 +26,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-package org.objectweb.asm;
+package org.simpleflatmapper.ow2asm;
 
 /**
  * A reference to a type appearing in a class, field or method declaration, or on an instruction.

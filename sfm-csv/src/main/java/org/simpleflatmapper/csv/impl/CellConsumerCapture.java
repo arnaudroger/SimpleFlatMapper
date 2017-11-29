@@ -12,7 +12,7 @@ public class CellConsumerCapture implements CellConsumer {
     
     @Override
     public void newCell(char[] chars, int offset, int length) {
-        if (currentIndex < values.length) {
+        if (currentIndex >= values.length) {
             values = Arrays.copyOf(values, values.length * 2);
         }
         values[currentIndex++] = new String(chars, offset, length);

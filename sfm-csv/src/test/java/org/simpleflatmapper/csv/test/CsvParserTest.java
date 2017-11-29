@@ -1432,8 +1432,34 @@ public class CsvParserTest {
 	@Test
 	public void testOptMapRowIterator() throws Exception {
 		Iterator<Row> rowIterator = CsvParser.dsl().rowIterator(ROW_DATA);
-
 		validatorRows(rowIterator);
+	}
+
+	@Test
+	public void testOptMapRowIteratorWithSkip() throws Exception {
+		Iterator<Row> rowIterator = CsvParser.dsl().skip(1).rowIterator("abb,bbb\n" + ROW_DATA);
+		validatorRows(rowIterator);
+	}
+	
+	@Test
+	public void testLotsOfHeaders() throws  Exception {
+		StringBuilder sb = new StringBuilder();
+		for(char c = 'a'; c <= 'z'; c++) {
+			if (c != 'a') sb.append(",");
+			sb.append(c);
+		}
+
+		List<Row> rows = CsvParser.dsl().rowStream(sb.toString() + "\n" + sb.toString()).collect(Collectors.toList());
+		
+		assertEquals(1, rows.size());
+		
+		Row r = rows.get(0);
+
+		for(char c = 'a'; c <= 'z'; c++) {
+			String k = "" + c;
+			assertEquals(k, r.get(k));
+		}
+
 	}
 
 	private void validatorRows(Iterator<Row> rowIterator) {

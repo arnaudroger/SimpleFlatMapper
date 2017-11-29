@@ -24,10 +24,10 @@ mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DdevelopmentVersion=$DEV
 cp release.properties tmp/release.properties
 
-GPG_TTY=$(tty)
-export GPG_TTY
+#GPG_TTY=$(tty)
+#export GPG_TTY
 
-REPOID=orgsimpleflatmapper-1582
+REPOID=orgsimpleflatmapper-1586
 
 java7
 cp tmp/release.properties .
@@ -44,6 +44,4 @@ java8
 cp tmp/release.properties .
 mvn release:perform -Darguments="-DstagingRepositoryId=$REPOID"
 
-
-git reset --hard && git pull --rebase
 

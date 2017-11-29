@@ -1449,16 +1449,17 @@ public class CsvParserTest {
 			sb.append(c);
 		}
 
-		List<Row> rows = CsvParser.dsl().rowStream(sb.toString() + "\n" + sb.toString()).collect(Collectors.toList());
+		Iterator<Row> rows = CsvParser.dsl().rowIterator(sb.toString() + "\n" + sb.toString());
 		
-		assertEquals(1, rows.size());
+		assertTrue(rows.hasNext());
 		
-		Row r = rows.get(0);
+		Row r = rows.next();
 
 		for(char c = 'a'; c <= 'z'; c++) {
 			String k = "" + c;
 			assertEquals(k, r.get(k));
 		}
+		assertFalse(rows.hasNext());
 
 	}
 

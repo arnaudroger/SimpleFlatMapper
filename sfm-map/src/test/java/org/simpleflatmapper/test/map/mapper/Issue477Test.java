@@ -16,6 +16,7 @@ import org.simpleflatmapper.util.ListCollector;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class Issue477Test {
 
@@ -49,8 +50,19 @@ public class Issue477Test {
 
         assertEquals(4, list.size());
         
-        assertEquals(list.get(1).list.size(), 0);
-        
+        assertEquals(2, list.get(0).list.size());
+        assertEquals("id1", list.get(0).list.get(0).pojoA.id);
+        assertEquals("id2", list.get(0).list.get(0).pojoB.id);      
+        assertEquals("id11", list.get(0).list.get(1).pojoA.id);
+        assertEquals("id22", list.get(0).list.get(1).pojoB.id);
+        assertEquals(0, list.get(1).list.size());
+        assertEquals(1, list.get(2).list.size());
+        assertEquals("id1", list.get(2).list.get(0).pojoA.id);
+        assertNull( list.get(2).list.get(0).pojoB);
+        assertEquals(1, list.get(3).list.size());
+        assertNull(list.get(3).list.get(0).pojoA);
+        assertEquals("id2", list.get(3).list.get(0).pojoB.id);
+
     }
 
 

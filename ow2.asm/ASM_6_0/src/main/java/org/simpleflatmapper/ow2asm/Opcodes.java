@@ -58,6 +58,7 @@ public interface Opcodes {
   int V1_7 = 0 << 16 | 51;
   int V1_8 = 0 << 16 | 52;
   int V9 = 0 << 16 | 53;
+  int V10 = 0 << 16 | 54;
 
   // Access flags values, defined in
   // - https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-4.html#jvms-4.1-200-E.1

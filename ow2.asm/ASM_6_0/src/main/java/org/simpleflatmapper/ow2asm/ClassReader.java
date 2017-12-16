@@ -435,7 +435,7 @@ public class ClassReader {
     this.b = byteBuffer;
     // Check the class' major_version. This field is after the magic and minor_version fields, which
     // use 4 and 2 bytes respectively.
-    if (readShort(classFileOffset + 6) > Opcodes.V9) {
+    if (readShort(classFileOffset + 6) > Opcodes.V10) {
       throw new IllegalArgumentException();
     }
     // Create the constant pool arrays. The constant_pool_count field is after the magic,

@@ -431,7 +431,8 @@
             <properties>
                 <source.classifier>jdk9-sources</source.classifier>
                 <jar.classifier>jdk9</jar.classifier>
-                <maven.javadoc.skip>true</maven.javadoc.skip>
+                <!--<maven.javadoc.skip>true</maven.javadoc.skip>-->
+                <javadoc.classifier>javadoc-jdk9</javadoc.classifier>
             </properties>
 
             <modules>
@@ -489,7 +490,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.0.0-M1</version>
+                        <version>3.0.0</version>
                         <configuration>
                             <classifier>${javadoc.classifier}</classifier>
                             <header>

@@ -2,22 +2,18 @@ package org.simpleflatmapper.converter.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.converter.ConversionException;
+import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.util.date.DateFormatSupplier;
 
 import java.io.Reader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.URL;
 
-import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -141,5 +137,10 @@ public class ConverterServiceTest {
     @Test
     public void testNoConverter()  {
         assertNull(ConverterService.getInstance().findConverter(Reader.class, System.class));
+    }
+    
+    @Test
+    public void testListToNumberSOE() {
+        Converter<? super List, ? extends Number> converter = ConverterService.getInstance().findConverter(List.class, Number.class);
     }
 }

@@ -87,10 +87,12 @@ public class ConverterService {
 
                 for(ScoredConverterFactory sfactory : tails) {
                     Type tailFactoryInType = sfactory.converterFactory.getFromType();
-                    Converter converter = (Converter<? super F, ? extends P>) findConverter(inType, tailFactoryInType, params);
+                    if (outType != tailFactoryInType) { // ignore when no progress
+                        Converter converter = (Converter<? super F, ? extends P>) findConverter(inType, tailFactoryInType, params);
 
-                    if (converter != null) {
-                        return new ComposedConverter(converter, sfactory.converterFactory.newConverter(new ConvertingTypes(tailFactoryInType, targetedTypes.getTo()), params));
+                        if (converter != null) {
+                            return new ComposedConverter(converter, sfactory.converterFactory.newConverter(new ConvertingTypes(tailFactoryInType, targetedTypes.getTo()), params));
+                        }
                     }
                 }
             }

@@ -85,16 +85,29 @@ public class ConverterService {
             if (tails.size() > 0) {
                 Collections.sort(tails);
 
+                ComposedConverter composedConverter = null;
+                int currentScore = 0;
+                
                 for(ScoredConverterFactory sfactory : tails) {
+                    // break when score not to the max and have a converter
+                    if (composedConverter != null && currentScore > sfactory.score) {
+                        return composedConverter;
+                    }
                     Type tailFactoryInType = sfactory.converterFactory.getFromType();
                     if (outType != tailFactoryInType) { // ignore when no progress
-                        Converter converter = (Converter<? super F, ? extends P>) findConverter(inType, tailFactoryInType, params);
-
-                        if (converter != null) {
-                            return new ComposedConverter(converter, sfactory.converterFactory.newConverter(new ConvertingTypes(tailFactoryInType, targetedTypes.getTo()), params));
+                        Converter headConverter = (Converter<? super F, ? extends P>) findConverter(inType, tailFactoryInType, params);
+                        if (headConverter != null) {
+                            Converter tailConverter = sfactory.converterFactory.newConverter(new ConvertingTypes(tailFactoryInType, targetedTypes.getTo()), params);
+                            
+                            ComposedConverter c = new ComposedConverter(headConverter, tailConverter);
+                            // override converter only if depth is less\
+                            if (composedConverter == null || c.depth() < composedConverter.depth()) {
+                                composedConverter = c;
+                            }
                         }
                     }
                 }
+                return composedConverter;
             }
             return null;
         }

@@ -1,9 +1,12 @@
 package org.simpleflatmapper.converter.test;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.ComposedConverter;
 import org.simpleflatmapper.converter.ConversionException;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.converter.ToStringConverter;
+import org.simpleflatmapper.converter.impl.CharSequenceIntegerConverter;
 import org.simpleflatmapper.util.date.DateFormatSupplier;
 
 import java.io.Reader;
@@ -141,6 +144,13 @@ public class ConverterServiceTest {
     
     @Test
     public void testListToNumberSOE() {
-        Converter<? super List, ? extends Number> converter = ConverterService.getInstance().findConverter(List.class, Number.class);
+        ConverterService converterService = ConverterService.getInstance();
+        Converter<? super List, ? extends Integer> converter = 
+                converterService.findConverter(List.class, Integer.class);
+        
+        assertTrue(converter instanceof ComposedConverter);
+        ComposedConverter composedConverter = (ComposedConverter) converter;
+        assertTrue(composedConverter.c1 instanceof ToStringConverter);
+        assertTrue(composedConverter.c2 instanceof CharSequenceIntegerConverter);
     }
 }

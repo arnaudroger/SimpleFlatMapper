@@ -146,7 +146,7 @@ public class ReflectionService {
 			return new TupleClassMeta<T>(target, this);
 		} else if (isFastTuple(clazz)) {
             return new FastTupleClassMeta<T>(target, this);
-        } else if (Map.class.isAssignableFrom(clazz)) {
+		} else if (Map.class.isAssignableFrom(clazz)) {
 			return (ClassMeta<T>) newMapMeta(target);
 		} else if (Collection.class.isAssignableFrom(clazz) || Iterable.class.equals(clazz)) {
 			return newCollectionMeta(target);

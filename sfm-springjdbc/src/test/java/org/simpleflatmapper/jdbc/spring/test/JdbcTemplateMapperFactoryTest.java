@@ -1,5 +1,6 @@
 package org.simpleflatmapper.jdbc.spring.test;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.spring.JdbcTemplateMapperFactory;
@@ -65,5 +66,37 @@ public class JdbcTemplateMapperFactoryTest {
 				.query(DbHelper.TEST_DB_OBJECT_QUERY, 
 						mapper.newResultSetExtractor(new ListCollector<DbObject>())).getList();
 		DbHelper.assertDbObjectMapping(results.get(0));
+	}
+
+
+
+	@Test
+	public void testIssue483IgnorePropertyNotFound()  {
+		ResultSetExtractor<List<ThinDbObject>> mapper = 
+				JdbcTemplateMapperFactory.newInstance().ignorePropertyNotFound().newResultSetExtractor(ThinDbObject.class);
+		List<ThinDbObject> results = template.query(DbHelper.TEST_DB_OBJECT_QUERY, mapper);
+		Assert.assertEquals(1, results.get(0).getId());
+		Assert.assertEquals("name 1", results.get(0).getName());
+	}
+	
+	public static class ThinDbObject {
+		private long id;
+		private String name;
+
+		public long getId() {
+			return id;
+		}
+
+		public void setId(long id) {
+			this.id = id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
 	}
 }

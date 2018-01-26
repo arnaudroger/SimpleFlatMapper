@@ -53,12 +53,19 @@ public abstract class AbstractMapperFactory<
 
 
 	public AbstractMapperFactory(AbstractMapperFactory<K, CD, ?> config) {
+		this.fieldMapperErrorHandler = config.fieldMapperErrorHandler;
+		this.mapperBuilderErrorHandler = config.mapperBuilderErrorHandler;
+		this.consumerErrorHandler = config.consumerErrorHandler;
+
 		this.columnDefinitions = config.columnDefinitions;
 		this.identity = config.identity;
+		
 		this.useAsm = config.useAsm;
 		this.failOnAsm = config.failOnAsm;
 		this.asmMapperNbFieldsLimit = config.asmMapperNbFieldsLimit;
+		
 		this.propertyNameMatcherFactory = config.propertyNameMatcherFactory;
+		
 		this.reflectionService = config.reflectionService;
 		this.maxMethodSize = config.maxMethodSize;
 	}

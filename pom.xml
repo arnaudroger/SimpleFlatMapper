@@ -672,7 +672,7 @@
     <repositories>
         <repository>
             <id>arnaudroger-maven-repository</id>
-            <url>https://arnaudroger.github.io/maven</url>
+            <url>http://arnaudroger.github.io/maven</url>
         </repository>
     </repositories>
     <pluginRepositories>

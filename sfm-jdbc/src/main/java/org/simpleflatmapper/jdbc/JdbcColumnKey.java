@@ -1,6 +1,5 @@
 package org.simpleflatmapper.jdbc;
 
-import org.simpleflatmapper.jdbc.impl.JDBCTypeHelper;
 import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.reflect.TypeAffinity;
@@ -56,7 +55,7 @@ public final class JdbcColumnKey extends FieldKey<JdbcColumnKey> implements Type
 
 	@Override
 	public Type getType(Type targetType) {
-		return JDBCTypeHelper.toJavaType(sqlType, targetType);
+		return JdbcTypeHelper.toJavaType(sqlType, targetType);
 	}
 
 	@Override

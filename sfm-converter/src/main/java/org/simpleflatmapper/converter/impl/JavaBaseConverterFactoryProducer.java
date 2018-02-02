@@ -48,7 +48,10 @@ public class JavaBaseConverterFactoryProducer extends AbstractConverterFactoryPr
 		factoryConverter(consumer, new AbstractConverterFactory<CharSequence, Date>(CharSequence.class, Date.class) {
 			@Override
 			public Converter<? super CharSequence, ? extends Date> newConverter(ConvertingTypes targetedTypes, Object... params) {
-				return new CharSequenceToDateConverter(getFormat(params));
+				String format = getFormat(params);
+				if (format != null) {
+					return new CharSequenceToDateConverter(format);
+				} else return null;
 			}
 
 			private String getFormat(Object[] params) {

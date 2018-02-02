@@ -2,40 +2,32 @@ package org.simpleflatmapper.jdbc.impl;
 
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
+import org.simpleflatmapper.jdbc.JdbcTypeHelper;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.impl.setter.ArrayPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BigDecimalPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BlobPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BooleanPreparedStatementIndexSetter;
-import org.simpleflatmapper.jdbc.impl.setter.BooleanPreparedStatementSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BytePreparedStatementIndexSetter;
-import org.simpleflatmapper.jdbc.impl.setter.BytePreparedStatementSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BytesPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.CharacterPreparedStatementIndexSetter;
-import org.simpleflatmapper.jdbc.impl.setter.CharacterPreparedStatementSetter;
 import org.simpleflatmapper.jdbc.impl.setter.ClobPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.ConvertDelegateIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.DatePreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.DoublePreparedStatementIndexSetter;
-import org.simpleflatmapper.jdbc.impl.setter.DoublePreparedStatementSetter;
 import org.simpleflatmapper.jdbc.impl.setter.FloatPreparedStatementIndexSetter;
-import org.simpleflatmapper.jdbc.impl.setter.FloatPreparedStatementSetter;
 import org.simpleflatmapper.jdbc.impl.setter.InputStreamPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.IntegerPreparedStatementIndexSetter;
-import org.simpleflatmapper.jdbc.impl.setter.IntegerPreparedStatementSetter;
 import org.simpleflatmapper.jdbc.impl.setter.LongPreparedStatementIndexSetter;
-import org.simpleflatmapper.jdbc.impl.setter.LongPreparedStatementSetter;
 import org.simpleflatmapper.jdbc.impl.setter.NClobPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.ObjectPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.OrdinalEnumPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.PreparedStatementIndexSetter;
-import org.simpleflatmapper.jdbc.impl.setter.PreparedStatementSetterImpl;
 import org.simpleflatmapper.jdbc.impl.setter.ReaderPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.RefPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.RowIdPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.SQLXMLPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.ShortPreparedStatementIndexSetter;
-import org.simpleflatmapper.jdbc.impl.setter.ShortPreparedStatementSetter;
 import org.simpleflatmapper.jdbc.impl.setter.StringEnumPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.StringPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.TimePreparedStatementIndexSetter;
@@ -47,8 +39,6 @@ import org.simpleflatmapper.map.mapper.ColumnDefinition;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
 import org.simpleflatmapper.reflect.IndexedSetter;
 import org.simpleflatmapper.reflect.IndexedSetterFactory;
-import org.simpleflatmapper.reflect.Setter;
-import org.simpleflatmapper.reflect.SetterFactory;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.io.InputStream;
@@ -344,7 +334,7 @@ public class PreparedStatementIndexedSetterFactory
         IndexedSetter<PreparedStatement, T> setter = getIndexedSetter(propertyType, arg);
 
         if (setter == null) {
-            Class<?> iclass = JDBCTypeHelper.toJavaType(arg.getColumnKey().getSqlType(), propertyType);
+            Class<?> iclass = JdbcTypeHelper.toJavaType(arg.getColumnKey().getSqlType(), propertyType);
             setter = getSetterWithConvertion(TypeHelper.<T>toClass(propertyType), iclass, arg);
         }
 

@@ -17,6 +17,10 @@ public abstract class AbstractMultiFormatConverterFactory<I, O> extends Abstract
     public Converter<? super I, ? extends O> newConverter(ConvertingTypes targetedTypes, Object... params) {
 
         DateTimeFormatter[] dateTimeFormatters = JavaTimeHelper.getDateTimeFormatters(params);
+        
+        if (dateTimeFormatters.length == 0) {
+            return null;
+        }
 
         ZoneId zoneId = JavaTimeHelper.getZoneId(params);
 

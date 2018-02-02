@@ -1,4 +1,4 @@
-package org.simpleflatmapper.jdbc.impl;
+package org.simpleflatmapper.jdbc;
 
 import org.simpleflatmapper.util.TypeHelper;
 
@@ -22,7 +22,7 @@ import java.time.OffsetTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JDBCTypeHelper {
+public class JdbcTypeHelper {
 
     private static final Map<String, Class<?>> javaTypeToSqlType = new HashMap<String, Class<?>>();
 

@@ -6,6 +6,8 @@ public class ComposedConverter<I, J, O> implements Converter<I, O> {
     public final Converter<? super J, ? extends O> c2;
 
     public ComposedConverter(Converter<? super I, ? extends J> c1, Converter<? super J, ? extends O> c2) {
+        if (c1 == null || c2 == null)
+            throw new NullPointerException();
         this.c1 = c1;
         this.c2 = c2;
     }

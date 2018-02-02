@@ -80,7 +80,12 @@ public class ConverterService {
 
         if (potentials.size() > 0) {
             Collections.sort(potentials);
-            return (Converter<F, P>) potentials.get(0).converterFactory.newConverter(targetedTypes, params);
+            
+            for(ScoredConverterFactory p : potentials) {
+                Converter<F, P> converter = p.converterFactory.newConverter(targetedTypes, params);
+                if (converter != null) return converter;
+            }
+            return null;
         } else {
             if (tails.size() > 0) {
                 Collections.sort(tails);
@@ -98,11 +103,12 @@ public class ConverterService {
                         Converter headConverter = (Converter<? super F, ? extends P>) findConverter(inType, tailFactoryInType, params);
                         if (headConverter != null) {
                             Converter tailConverter = sfactory.converterFactory.newConverter(new ConvertingTypes(tailFactoryInType, targetedTypes.getTo()), params);
-                            
-                            ComposedConverter c = new ComposedConverter(headConverter, tailConverter);
-                            // override converter only if depth is less\
-                            if (composedConverter == null || c.depth() < composedConverter.depth()) {
-                                composedConverter = c;
+                            if (tailConverter != null) {
+                                ComposedConverter c = new ComposedConverter(headConverter, tailConverter);
+                                // override converter only if depth is less\
+                                if (composedConverter == null || c.depth() < composedConverter.depth()) {
+                                    composedConverter = c;
+                                }
                             }
                         }
                     }

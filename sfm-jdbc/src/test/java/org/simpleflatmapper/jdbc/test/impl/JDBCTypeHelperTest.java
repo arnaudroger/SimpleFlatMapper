@@ -3,8 +3,7 @@ package org.simpleflatmapper.jdbc.test.impl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
-import org.simpleflatmapper.jdbc.impl.JDBCTypeHelper;
-import org.simpleflatmapper.jdbc.impl.getter.UndefinedDateResultSetGetter;
+import org.simpleflatmapper.jdbc.JdbcTypeHelper;
 
 import java.math.BigDecimal;
 import java.sql.Array;
@@ -66,13 +65,13 @@ public class JDBCTypeHelperTest {
 
     private void testSqlTypes(Class<?> expected, int... sqlTypes) {
         for(int type : sqlTypes) {
-            Assert.assertEquals(expected, JDBCTypeHelper.toJavaType(type, null));
+            Assert.assertEquals(expected, JdbcTypeHelper.toJavaType(type, null));
         }
     }
 
     private void testSqlTypes(Class<?> expected, Class<?>... sqlTypes) {
         for(Class<?> type : sqlTypes) {
-            assertEquals(expected, JDBCTypeHelper.toJavaType(JdbcColumnKey.UNDEFINED_TYPE, type));
+            assertEquals(expected, JdbcTypeHelper.toJavaType(JdbcColumnKey.UNDEFINED_TYPE, type));
         }
     }
 

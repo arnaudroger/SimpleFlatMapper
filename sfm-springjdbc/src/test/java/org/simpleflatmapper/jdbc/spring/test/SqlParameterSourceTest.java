@@ -1,21 +1,81 @@
 package org.simpleflatmapper.jdbc.spring.test;
 
 import org.junit.Test;
+import org.simpleflatmapper.jdbc.SqlTypeColumnProperty;
 import org.simpleflatmapper.jdbc.spring.JdbcTemplateMapperFactory;
 import org.simpleflatmapper.jdbc.spring.SqlParameterSourceFactory;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.map.property.ConstantValueProperty;
-import org.springframework.jdbc.core.namedparam.NamedParameterUtils;
-import org.springframework.jdbc.core.namedparam.ParsedSql;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import java.sql.Timestamp;
 import java.sql.Types;
+
+//IFJAVA8_START
+import java.time.Instant;
+//IFJAVA8_END
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
 public class SqlParameterSourceTest {
 
+    //IFJAVA8_START
+    @Test
+    public void testInstantShouldBeTimestampType() {
+        String sql = "INSERT INTO table VALUES(:instant)";
+
+        SqlParameterSourceFactory<ObjectWithInstant> sqlParameters =
+                JdbcTemplateMapperFactory
+                        .newInstance()
+                        .newSqlParameterSourceFactory(ObjectWithInstant.class, sql);
+
+        
+        ObjectWithInstant data = new ObjectWithInstant(Instant.now());
+        
+        SqlParameterSource parameterSource = sqlParameters.newSqlParameterSource(data);
+
+        assertEquals(Types.TIMESTAMP, parameterSource.getSqlType("instant"));
+        assertEquals(new Timestamp(data.instant.toEpochMilli()), parameterSource.getValue("instant"));
+
+    }
+
+    @Test
+    public void testSpecifySqlType() {
+        String sql = "INSERT INTO table VALUES(:instant)";
+
+        SqlParameterSourceFactory<ObjectWithObject> sqlParameters =
+                JdbcTemplateMapperFactory
+                        .newInstance()
+                        .addColumnProperty("instant", SqlTypeColumnProperty.of(Types.TIMESTAMP))
+                        .newSqlParameterSourceFactory(ObjectWithObject.class, sql);
+
+
+        ObjectWithObject data = new ObjectWithObject(Instant.now());
+
+        SqlParameterSource parameterSource = sqlParameters.newSqlParameterSource(data);
+
+        assertEquals(Types.TIMESTAMP, parameterSource.getSqlType("instant"));
+        assertEquals(new Timestamp(((Instant)data.instant).toEpochMilli()), parameterSource.getValue("instant"));
+
+    }
+    
+    public class ObjectWithInstant {
+        public final Instant instant;
+
+        public ObjectWithInstant(Instant instant) {
+            this.instant = instant;
+        }
+    }
+
+    public class ObjectWithObject {
+        public final Object instant;
+
+        public ObjectWithObject(Object instant) {
+            this.instant = instant;
+        }
+    }
+    //IFJAVA8_END
     @Test
     public void testParseSql() {
         String sql = "INSERT INTO table VALUES(:id, :name, :email)";

@@ -70,14 +70,6 @@ public class Issue318Test {
 
     }
 
-    private Field createField(String name, Class<?> aClass) {
-
-        Field field = mock(Field.class);
-        when(field.getName()).thenReturn(name);
-        when(field.getType()).thenReturn(aClass);
-        return field;
-    }
-
     public static class Issue318 {
         private LocalDateTime t;
         private UUID id;
@@ -99,4 +91,13 @@ public class Issue318Test {
         }
     }
     //IFJAVA8_END
+
+    public static Field createField(String name, Class<?> aClass) {
+
+        Field field = mock(Field.class);
+        when(field.getName()).thenReturn(name);
+        when(field.getType()).thenReturn(aClass);
+        return field;
+    }
+
 }

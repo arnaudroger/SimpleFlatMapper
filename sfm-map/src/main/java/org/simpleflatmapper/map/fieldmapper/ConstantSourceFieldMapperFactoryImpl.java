@@ -183,17 +183,26 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 		Instantiator<? super T, ? extends P> instantiator =
 				classMeta.getReflectionService().getInstantiatorFactory().getOneArgIdentityInstantiator(id, classMeta.getReflectionService().builderIgnoresNullValues());
 
-		final Type sourceType = id.getParameters()[0].getGenericType();
+		final Type paramType = id.getParameters()[0].getGenericType();
 
-		Getter<? super S, ? extends T> subGetter = getterFactory.newGetter(sourceType, key, columnDefinition);
+		Getter<? super S, ? extends T> subGetter = getterFactory.newGetter(paramType, key, columnDefinition);
 
 		if (subGetter == null) {
-			if (types.contains(sourceType)) {
+			if (types.contains(paramType)) {
 				// loop circuit cutter
 				return null;
 			}
-			types.add(sourceType);
-			subGetter = lookForInstantiatorGetter(classMeta.getReflectionService().<T>getClassMeta(sourceType), key, columnDefinition, types);
+			types.add(paramType);
+			// converter?
+			Type sourceType = key.getType(paramType);
+			Converter converter = converterService.findConverter(sourceType, paramType, columnDefinition.properties());
+			
+			if (converter != null) {
+				Getter sourceTypeGetter = getterFactory.newGetter(sourceType, key, columnDefinition);
+				subGetter = new GetterWithConverter(converter, sourceTypeGetter);
+			} else {
+				subGetter = lookForInstantiatorGetter(classMeta.getReflectionService().<T>getClassMeta(paramType), key, columnDefinition, types);
+			}
 		}
 
 		if (subGetter != null) {

@@ -1,6 +1,7 @@
 package org.simpleflatmapper.reflect.test.asm;
 
 import org.junit.Test;
+import org.simpleflatmapper.reflect.Setter;
 import org.simpleflatmapper.reflect.asm.AsmFactory;
 import org.simpleflatmapper.reflect.asm.AsmInstantiatorDefinitionFactory;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
@@ -12,6 +13,7 @@ import org.simpleflatmapper.reflect.getter.ConstantGetter;
 import org.simpleflatmapper.reflect.getter.ConstantIntGetter;
 import org.simpleflatmapper.reflect.getter.ConstantLongGetter;
 import org.simpleflatmapper.reflect.getter.OrdinalEnumGetter;
+import org.simpleflatmapper.reflect.primitive.IntGetter;
 import org.simpleflatmapper.test.beans.DbFinalObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.test.beans.DbObject.Type;
@@ -28,6 +30,33 @@ import static org.junit.Assert.assertSame;
 public class AsmFactoryTest {
 
 	static AsmFactory asmFactory = new AsmFactory(Thread.currentThread().getContextClassLoader());
+	
+	
+	@Test
+	public void testSetterInteger() throws Exception {
+		Getter<Pojo, Integer> getI = asmFactory.createGetter(Pojo.class.getDeclaredMethod("getI"));
+		Setter<Pojo, Integer> setI = asmFactory.createSetter(Pojo.class.getDeclaredMethod("setI", Integer.class));
+		
+		Pojo p = new Pojo();
+		
+		assertNull(getI.get(p));
+		
+		setI.set(p, 123);
+		assertEquals(new Integer(123), getI.get(p));
+		
+	}
+	
+	public class Pojo {
+		Integer i;
+
+		public Integer getI() {
+			return i;
+		}
+
+		public void setI(Integer i) {
+			this.i = i;
+		}
+	}
 	
 	@Test
 	public void testCreateInstantiatorEmptyConstructor() throws Exception {

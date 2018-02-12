@@ -94,7 +94,7 @@ public class AsmFactory {
 
     private byte[] generateGetterByteCodes(final Method m, final String className) throws Exception {
         final Class<?> propertyType = m.getReturnType();
-        if (AsmUtils.primitivesClassAndWrapper.contains(propertyType)) {
+        if (propertyType.isPrimitive()) {
             return GetterBuilder.createPrimitiveGetter(className, m);
         } else {
             return GetterBuilder.createObjectGetter(className, m);
@@ -103,7 +103,7 @@ public class AsmFactory {
 
     private byte[] generateGetterByteCodes(final Field m, final String className) throws Exception {
         final Class<?> propertyType = m.getType();
-        if (AsmUtils.primitivesClassAndWrapper.contains(propertyType)) {
+        if (propertyType.isPrimitive()) {
             return GetterBuilder.createPrimitiveGetter(className, m);
         } else {
             return GetterBuilder.createObjectGetter(className, m);
@@ -112,7 +112,7 @@ public class AsmFactory {
 
 	private byte[] generateSetterByteCodes(final Method m, final String className) throws Exception {
 		final Class<?> propertyType = m.getParameterTypes()[0];
-		if (AsmUtils.primitivesClassAndWrapper.contains(propertyType)) {
+		if (propertyType.isPrimitive()) {
 			return SetterBuilder.createPrimitiveSetter(className, m);
 		} else {
 			return SetterBuilder.createObjectSetter(className, m);
@@ -121,7 +121,7 @@ public class AsmFactory {
 
     private byte[] generateSetterByteCodes(final Field m, final String className) throws Exception {
         final Class<?> propertyType = m.getType();
-        if (AsmUtils.primitivesClassAndWrapper.contains(propertyType)) {
+        if (propertyType.isPrimitive()) {
             return SetterBuilder.createPrimitiveSetter(className, m);
         } else {
             return SetterBuilder.createObjectSetter(className, m);

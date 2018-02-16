@@ -1,5 +1,6 @@
 package org.simpleflatmapper.reflect.test.tuples.jool;
 
+import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Assert;
 import org.junit.Test;
@@ -10,11 +11,13 @@ import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
+import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -27,6 +30,50 @@ public class JoolTupleTest {
     private Predicate<PropertyMeta<?, ?>> isValidPropertyMeta = ConstantPredicate.truePredicate();
 
 
+    @Test
+    public void issue488() {
+
+        ClassMeta<List<? extends DbObject>> cm3 =
+                ReflectionService.newInstance().getClassMeta(new TypeReference<List<? extends DbObject>>(){}.getType());
+
+        PropertyFinder<List<? extends DbObject>> propertyFinder3 = cm3.newPropertyFinder(t -> true);
+
+        PropertyMeta<List<? extends DbObject>, Object> prop3 = propertyFinder3.findProperty(DefaultPropertyNameMatcher.of("elt0_id"), new Object[0]);
+
+        System.out.println("prop3 = " + prop3.getPath());
+
+        assertEquals("[0].id", prop3.getPath());
+
+
+
+
+        ClassMeta<List<? extends Tuple2<DbObject, Long>>> cm2 =
+                ReflectionService.newInstance().getClassMeta(new TypeReference<List<? extends Tuple2<DbObject, Long>>>(){}.getType());
+
+        PropertyFinder<List<? extends Tuple2<DbObject, Long>>> propertyFinder2 = cm2.newPropertyFinder(t -> true);
+
+        PropertyMeta<List<? extends Tuple2<DbObject, Long>>, Object> prop2 = propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("elt0_elt0_id"), new Object[0]);
+
+        System.out.println("prop2 = " + prop2.getPath());
+
+        assertEquals("[0].element0.id", prop2.getPath());
+
+
+
+        ClassMeta<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>> cm =
+                ReflectionService.newInstance().getClassMeta(new TypeReference<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>>(){}.getType());
+
+        PropertyFinder<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>> propertyFinder = cm.newPropertyFinder(t -> true);
+
+        PropertyMeta<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>, Object> prop = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("elt1_elt0_elt0_id"), new Object[0]);
+
+        System.out.println("prop = " + prop.getPath());
+        assertEquals("element1[0].element0.id", prop.getPath());
+
+
+
+    }
+    
     @Test
     public void testMetaDataOnJoolTuple() throws Exception {
 

@@ -136,6 +136,12 @@ public class ReflectionService {
 	private <T> ClassMeta<T> newClassMeta(Type target) {
 		Class<T> clazz = TypeHelper.toClass(target);
 
+		if (target instanceof WildcardType) {
+			Type[] upperBounds = ((WildcardType) target).getUpperBounds();
+			if (upperBounds.length == 1) {
+				target = upperBounds[0];
+			}
+		}
 		if (clazz.isArray()) {
 			return newArrayMeta(clazz);
 			//IFJAVA8_START

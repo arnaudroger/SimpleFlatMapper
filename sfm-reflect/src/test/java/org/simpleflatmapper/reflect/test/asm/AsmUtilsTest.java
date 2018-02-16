@@ -135,19 +135,27 @@ public class AsmUtilsTest {
 	public void extractConstructorTypes() throws  Exception {
 		String types = "([CILjava/util/List<Lorg/simpleflatmapper/beans/DbObject;>;TT1;Ljava/lang/String;)V";
 		assertEquals(Arrays.asList("[C", "I", "Ljava/util/List<Lorg/simpleflatmapper/beans/DbObject;>;", "TT1;", "Ljava/lang/String;"),
-				AsmUtils.extractTypeNames(types));
+				AsmUtils.extractTypeNamesFromSignature(types));
 	}
 	@Test
 	public void extractConstructorTypesIssue472() throws  Exception {
-		List<String> types = AsmUtils.extractTypeNames("(Ljava/lang/String;Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;)V");
+		List<String> types = AsmUtils.extractTypeNamesFromSignature("(Ljava/lang/String;Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;)V");
 		Assert.assertArrayEquals(new String[] {"Ljava/lang/String;", "Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;"}, 
+				types.toArray(new String[0]));
+	}
+
+	@Test
+	public void extractConstructorTypesIssue488() throws  Exception {
+		List<String> types = AsmUtils.extractTypeNamesFromSignature("(Lorg/jooq/lambda/tuple/Tuple2<TT1;TT2;>;)V");
+		System.out.println("types = " + types);
+		Assert.assertArrayEquals(new String[] {"Lorg/jooq/lambda/tuple/Tuple2<TT1;TT2;>;"},
 				types.toArray(new String[0]));
 	}
 
 	@Test
 	public void extractMethodTypesOptional() throws  Exception {
 		String types = "<T:Ljava/lang/Object;>(TT;)Ljava/util/Optional<TT;>;";
-		assertEquals(Arrays.asList("TT;", "Ljava/util/Optional<TT;>;"),AsmUtils.extractTypeNames(types));
+		assertEquals(Arrays.asList("TT;", "Ljava/util/Optional<TT;>;"),AsmUtils.extractTypeNamesFromSignature(types));
 	}
 
 	@Test

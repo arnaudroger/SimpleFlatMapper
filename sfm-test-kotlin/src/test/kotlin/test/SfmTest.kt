@@ -1,5 +1,6 @@
 import org.junit.Test
 import org.simpleflatmapper.csv.CsvParser
+import org.simpleflatmapper.tuple.Tuple2
 import org.simpleflatmapper.util.TypeReference
 
 import kotlin.test.assertEquals
@@ -28,5 +29,11 @@ class SfmTest {
         assertEquals(2, triple.second)
         assertEquals(3, triple.third)
 
+    }
+    @Test
+    fun test488() {
+        val p = CsvParser.mapTo(object: TypeReference<Tuple2<String, List<Tuple2<Integer, Long>>>>() {})
+                .iterator("elt0,elt1_elt0_elt0,elt1_elt0_elt1\n1,2,3").next()
+        println(p);
     }
 }

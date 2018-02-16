@@ -16,6 +16,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -270,8 +271,16 @@ public class AsmUtils {
 		} else if (sig.startsWith("T")) {
             String templateType = sig.substring(1, sig.length() - (sig.endsWith(";") ? 1 : 0));
             int indexOfParam = genericTypeNames.indexOf(templateType);
+            if ( indexOfParam < 0 ) return null;
 			if (target instanceof  ParameterizedType) {
 				return ((ParameterizedType) target).getActualTypeArguments()[indexOfParam];
+			} else if (target instanceof WildcardType) {
+				WildcardType wt = (WildcardType) target;
+				Type[] upperBounds = wt.getUpperBounds();
+				if (indexOfParam < upperBounds.length) {
+					return upperBounds[indexOfParam];
+				}
+				return null;
 			} else {
 				// meethod parameter
 				return null;
@@ -396,7 +405,7 @@ public class AsmUtils {
 		return types.toArray(EMPTY_TYPE_ARRAY);
 	}
 
-	public static List<String> extractTypeNames(String sig) {
+	public static List<String> extractTypeNamesFromSignature(String sig) {
 		final List<String> types = new ArrayList<String>();
 
 		SignatureReader reader = new SignatureReader(sig);
@@ -406,7 +415,6 @@ public class AsmUtils {
 			// visitBaseType | visitTypeVariable | visitArrayType | ( visitClassType visitTypeArgument* ( visitInnerClassType visitTypeArgument* )* visitEnd ) )
 
 			class AppendType extends SignatureVisitor {
-
 				StringBuilder sb = new StringBuilder();
 				int l = 0;
 				public AppendType() {
@@ -417,7 +425,10 @@ public class AsmUtils {
 				public void visitBaseType(char descriptor) {
 					if (descriptor != 'V') {
 						sb.append(descriptor);
-						visitEnd();
+
+						if (l <= 0) {
+							flush();
+						}
 					}
 				}
 
@@ -425,7 +436,10 @@ public class AsmUtils {
 				public void visitTypeVariable(String name) {
 					sb.append("T");
 					sb.append(name);
-					visitEnd();
+					sb.append(";");
+					if (l <= 0) {
+						flush();
+					}
 				}
 
 				@Override
@@ -436,9 +450,10 @@ public class AsmUtils {
 
 				@Override
 				public void visitClassType(String name) {
+					l++;
 					sb.append("L");
 					sb.append(name);
-					visitEnd();
+					sb.append("<");
 				}
 
 				@Override
@@ -452,41 +467,36 @@ public class AsmUtils {
 
 				@Override
 				public SignatureVisitor visitTypeArgument(char wildcard) {
-					l++;
-					if (sb.length() == 0) {
-						String t = types.remove(types.size() - 1);
-						if (t.endsWith(";")) {
-							t = t.substring(0, t.length() -1);
-						}
-						if (t.endsWith(">")) {
-							t = t.substring(0, t.length() -1);
-							sb.append(t);
-						} else {
-							sb.append(t);
-							sb.append("<");
-						}
-					}
 					if  (wildcard != '=') {
 						sb.append(wildcard);
+					}
+
+					if (l <= 0) {
+						flush();
 					}
 					return this;
 				}
 
 				@Override
 				public void visitEnd() {
-					if (l == 0) {
-						flush();
+					l--;
+					
+					if (sb.charAt(sb.length() - 1) == '<') {
+						sb.setLength(sb.length() - 1); // remove last char
 					} else {
-						sb.append(";>");
-						l--;
+						sb.append('>');
+					}
+					
+					sb.append(";");
+					
+					if (l <= 0) {
+						flush();
 					}
 				}
 
 				private void flush() {
 					if (sb.length() >0) {
-						if (sb.charAt(0) == 'L' || sb.charAt(0) == 'T') {
-							sb.append(";");
-						}
+
 						types.add(sb.toString());
 
 						sb = new StringBuilder();

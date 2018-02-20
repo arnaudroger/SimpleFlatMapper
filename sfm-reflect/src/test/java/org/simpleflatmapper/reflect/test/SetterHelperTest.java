@@ -79,6 +79,17 @@ public class SetterHelperTest {
 		assertEquals("is", SetterHelper.getPropertyNameFromMethodName("is"));
 	}
 
+	@Test
+	public void testBuilderSetterName() {
+		assertEquals("getName", SetterHelper.getPropertyNameFromBuilderMethodName("getName"));
+		assertEquals("name", SetterHelper.getPropertyNameFromBuilderMethodName("withName"));
+		assertEquals("name", SetterHelper.getPropertyNameFromBuilderMethodName("setName"));
+		assertEquals("set", SetterHelper.getPropertyNameFromBuilderMethodName("set"));
+		assertEquals("get", SetterHelper.getPropertyNameFromBuilderMethodName("get"));
+		assertEquals("isName", SetterHelper.getPropertyNameFromBuilderMethodName("isName"));
+		assertEquals("is", SetterHelper.getPropertyNameFromBuilderMethodName("is"));
+	}
+
 
 	public static class Setters {
 		public void setValue(String value) {

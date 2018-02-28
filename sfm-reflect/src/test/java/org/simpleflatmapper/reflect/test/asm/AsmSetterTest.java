@@ -18,6 +18,8 @@ import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 import org.simpleflatmapper.test.beans.Foo;
 import org.simpleflatmapper.test.beans.FooField;
 
+import java.util.Objects;
+
 import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("SpellCheckingInspection")
@@ -27,6 +29,47 @@ public class AsmSetterTest {
 
 	DbPrimitiveObjectWithSetter object = new DbPrimitiveObjectWithSetter();
 	DbPrimitiveObjectFields objectField = new DbPrimitiveObjectFields();
+	
+	
+	public static class Foo2 {
+	    private int i;
+	    private Object o;
+
+        public int getI() {
+            return i;
+        }
+
+        public Foo2 setI(int i) {
+            this.i = i;
+            return this;
+        }
+
+        public Object getO() {
+            return o;
+        }
+
+        public Foo2 setO(Object o) {
+            this.o = o;
+            return this;
+        }
+    }
+    @Test
+    public void testFluentAPI() throws Exception {
+        Setter<Foo2, Object> setterO = factory.createSetter(Foo2.class.getDeclaredMethod("setO", Object.class));
+        Setter<Foo2, Integer> setterI = factory.createSetter(Foo2.class.getDeclaredMethod("setI", int.class));
+        
+        Foo2 f = new Foo2();
+        Object o = new Object();
+        setterO.set(f, o);
+        
+        assertEquals(o, f.o);
+        
+        ((IntSetter<Foo2>)setterI).setInt(f, 1);
+        assertEquals(1, f.i);
+        setterI.set(f, 2);
+        assertEquals(2, f.i);
+	    
+    }
 	@Test
 	public void testSet() throws Exception {
 		Setter<Foo, String> setter = factory.createSetter(Foo.class.getDeclaredMethod("setFoo", String.class));

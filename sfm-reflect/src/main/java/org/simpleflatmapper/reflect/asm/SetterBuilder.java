@@ -120,7 +120,7 @@ public class SetterBuilder implements Opcodes {
             mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(ALOAD, 2);
 
-            AsmUtils.invoke(mv, target, method.getName(),  "(" + AsmUtils.toTargetTypeDeclaration(propertyType) + ")V");
+            AsmUtils.invoke(mv, target, method.getName(),  "(" + AsmUtils.toTargetTypeDeclaration(propertyType) + ")" + AsmUtils.toTargetTypeDeclaration(method.getReturnType()));
 
             mv.visitInsn(RETURN);
             mv.visitMaxs(2, 3);
@@ -223,7 +223,7 @@ public class SetterBuilder implements Opcodes {
 		mv.visitVarInsn(ALOAD, 1);
 		mv.visitVarInsn(primitiveLoadOp, 2);
 		
-		AsmUtils.invoke(mv, target, method.getName(), "(" + primitiveType + ")V");
+		AsmUtils.invoke(mv, target, method.getName(), "(" + primitiveType + ")" + AsmUtils.toTargetTypeDeclaration(method.getReturnType()));
 		
 		mv.visitInsn(RETURN);
 		mv.visitMaxs(2, 3);
@@ -235,7 +235,7 @@ public class SetterBuilder implements Opcodes {
 		mv.visitVarInsn(ALOAD, 1);
 		mv.visitVarInsn(ALOAD, 2);
 		AsmUtils.invoke(mv, property, valueMethod, "()" + primitiveType);
-		AsmUtils.invoke(mv, target, method.getName(), "(" + primitiveType + ")V");
+		AsmUtils.invoke(mv, target, method.getName(), "(" + primitiveType + ")" + AsmUtils.toTargetTypeDeclaration(method.getReturnType()));
 		mv.visitInsn(RETURN);
 		mv.visitMaxs(2, 3);
 		mv.visitEnd();

@@ -32,7 +32,7 @@ public class Issue492Test {
         
         List<Foo> foos = CsvParser
                 .mapWith(CsvMapperFactory.newInstance().useAsm(true).newBuilder(Foo.class).addMapping("id").mapper())
-                .forEach("1\n2", new ListCollector<>()).getList();
+                .forEach("1\n2", new ListCollector<Foo>()).getList();
         
         assertEquals(2, foos.size());
         assertEquals(1, foos.get(0).id);

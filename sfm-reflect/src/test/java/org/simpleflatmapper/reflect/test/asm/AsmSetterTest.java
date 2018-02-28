@@ -18,7 +18,6 @@ import org.simpleflatmapper.test.beans.DbPrimitiveObjectWithSetter;
 import org.simpleflatmapper.test.beans.Foo;
 import org.simpleflatmapper.test.beans.FooField;
 
-import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
 

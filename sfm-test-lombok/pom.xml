@@ -5,7 +5,7 @@
 	<artifactId>sfm-test-lombok</artifactId>
 	<packaging>jar</packaging>
 
-	<version>3.15.11-SNAPSHOT</version>
+	<version>3.15.11</version>
 
 	<licenses>
 		<license>
@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-csv</artifactId>
-			<version>3.15.11-SNAPSHOT</version>
+			<version>3.15.11</version>
 			<classifier>${jar.classifier}</classifier>
 		</dependency>
 		<dependency>

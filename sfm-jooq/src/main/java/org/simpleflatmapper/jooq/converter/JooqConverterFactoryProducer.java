@@ -1,5 +1,7 @@
 package org.simpleflatmapper.jooq.converter;
 
+import org.jooq.tools.json.JSONObject;
+import org.jooq.tools.json.JSONParser;
 import org.jooq.types.UByte;
 import org.jooq.types.UInteger;
 import org.jooq.types.ULong;
@@ -107,7 +109,16 @@ public class JooqConverterFactoryProducer extends AbstractConverterFactoryProduc
                 return ULong.valueOf(in);
             }
         });
-        
+        this.constantConverter(consumer, String.class, JSONObject.class, new Converter<String, JSONObject>() {
+            @Override
+            public JSONObject convert(String in) throws Exception {
+                if (in == null) {
+                    return null;
+                }
+                JSONParser parser = new JSONParser();
+                return (JSONObject)parser.parse(in);
+            }
+        });
         
     }
 }

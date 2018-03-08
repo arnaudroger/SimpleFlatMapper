@@ -36,8 +36,17 @@ public class MapClassMetaTest {
         } catch (UnsupportedOperationException e) {
             // expected
         }
-
     }
+    
+    @Test
+    public void testUntypeMap494() {
+        MapClassMeta<?, ?, ?> classMeta = (MapClassMeta<?, ?, ?> )ReflectionService.newInstance().getClassMeta(MyMap.class);
+        assertNotNull(classMeta);
+    }
+    public static class MyMap extends HashMap {
+        
+    }
+    
     @Test
     @SuppressWarnings("unchecked")
     public void testFindPropertyStringDbObject() {

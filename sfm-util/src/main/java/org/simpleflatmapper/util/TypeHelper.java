@@ -225,7 +225,7 @@ public final class TypeHelper {
 				if (type instanceof ParameterizedType) {
 					return ((ParameterizedType) type).getActualTypeArguments()[i];
 				} else {
-					return null;
+					return Object.class;
 				}
 			}
 		}

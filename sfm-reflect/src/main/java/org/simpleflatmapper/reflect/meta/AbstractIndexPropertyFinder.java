@@ -29,7 +29,7 @@ public abstract class AbstractIndexPropertyFinder<T> extends PropertyFinder<T> {
 
         IndexedColumn indexedColumn = propertyNameMatcher.matchIndex();
         if (indexedColumn != null) {
-            lookForAgainstColumn(indexedColumn, properties, matchingProperties, score.index(indexedColumn.getIndexValue()), propertyFinderTransformer);
+            lookForAgainstColumn(indexedColumn, properties, matchingProperties, score.arrayIndex(indexedColumn.getIndexValue()), propertyFinderTransformer);
         } else {
             extrapolateIndex(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer);
             speculativeMatching(propertyNameMatcher, properties, matchingProperties, score.speculative(), propertyFinderTransformer);

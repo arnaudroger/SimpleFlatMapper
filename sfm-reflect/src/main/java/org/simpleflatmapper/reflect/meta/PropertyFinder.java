@@ -153,7 +153,7 @@ public abstract class PropertyFinder<T> {
 		@Override
 		public String toString() {
 			return "MatchedProperty{" +
-					"propertyMeta=" + propertyMeta +
+					"propertyMeta=" + propertyMeta.getPath() +
 					", score=" + score + ":" + nbGetterSetter(propertyMeta) +
 					", getter=" + propertyMeta.getGetter() +
 					", setter=" + propertyMeta.getSetter() +

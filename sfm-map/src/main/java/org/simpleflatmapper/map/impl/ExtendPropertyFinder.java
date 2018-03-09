@@ -57,7 +57,7 @@ public class ExtendPropertyFinder<T> extends PropertyFinder<T> {
                 .lookForProperties(
                         propertyNameMatcher,
                         properties, matchingProperties,
-                        score.index(1),
+                        score.tupleIndex(1),
                         allowSelfReference,
                         newTransformer);
     }

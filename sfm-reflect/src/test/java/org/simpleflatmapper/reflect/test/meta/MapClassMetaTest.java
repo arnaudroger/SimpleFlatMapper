@@ -13,6 +13,7 @@ import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeReference;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,16 @@ public class MapClassMetaTest {
         MapClassMeta<?, ?, ?> classMeta = (MapClassMeta<?, ?, ?> )ReflectionService.newInstance().getClassMeta(MyMap.class);
         assertNotNull(classMeta);
     }
+    @Test
+    public void testUntypeList494() {
+        ArrayClassMeta<?, ?> classMeta = (ArrayClassMeta<?, ?> )ReflectionService.newInstance().getClassMeta(MyList.class);
+        assertNotNull(classMeta);
+    }
     public static class MyMap extends HashMap {
+        
+    }
+    
+    public static class MyList extends ArrayList {
         
     }
     

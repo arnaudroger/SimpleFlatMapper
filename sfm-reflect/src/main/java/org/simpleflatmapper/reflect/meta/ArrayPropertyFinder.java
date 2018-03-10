@@ -52,14 +52,14 @@ public class ArrayPropertyFinder<T, E> extends AbstractIndexPropertyFinder<T> {
             for (int i = 0; i < elements.size(); i++) {
                 IndexedElement element = elements.get(i);
                 ExtrapolateFoundProperty<T> matchingProperties = new ExtrapolateFoundProperty<T>(element, foundProperty);
-                lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), properties, matchingProperties, score.arrayIndex(i), propertyFinderTransformer);
+                lookForAgainstColumn(new IndexedColumn(i, propertyNameMatcher), properties, matchingProperties, score.speculativeArrayIndex(i), propertyFinderTransformer);
                 if (matchingProperties.hasFound()) {
                     return;
                 }
             }
 
             int index = elements.size();
-            lookForAgainstColumn(new IndexedColumn(index,  propertyNameMatcher), properties, foundProperty, score.newArrayIndex(index), propertyFinderTransformer);
+            lookForAgainstColumn(new IndexedColumn(index,  propertyNameMatcher), properties, foundProperty, score.speculativeArrayIndex(index), propertyFinderTransformer);
         }
 	}
 

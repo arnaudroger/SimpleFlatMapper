@@ -65,10 +65,10 @@ public class PropertyMatchingScore implements Comparable<PropertyMatchingScore> 
         return new PropertyMatchingScore(
                 this.selfNumberOfProperties,
                 this.nbMatch,
-                verticalDepth  + i, this.horizontalDepth, selfScoreFullName);
+                verticalDepth, this.horizontalDepth  + i, selfScoreFullName);
     }
 
-    public PropertyMatchingScore newArrayIndex(int i) {
+    public PropertyMatchingScore speculativeArrayIndex(int i) {
         return new PropertyMatchingScore(
                 this.selfNumberOfProperties,
                 this.nbMatch,

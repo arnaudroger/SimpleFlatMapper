@@ -78,7 +78,12 @@ public class DbHelper {
 						+ " biginteger bigint , "
 						+ " stringArray VARCHAR(20) ARRAY DEFAULT ARRAY[],"
 						+ " stringList VARCHAR(20) ARRAY DEFAULT ARRAY[] )");
-				
+
+
+				st.execute("create table test_only_key("
+						+ " id bigint primary key  )");
+
+
 				PreparedStatement ps = c.prepareStatement("insert into db_extended_type values (?, 'https://github.com/arnaudroger/SimpleFlatMapper',"
 						+ "'07:08:09', '2014-11-02', 123.321, 123, ARRAY [ 'HOT', 'COLD' ], ARRAY [ 'COLD', 'FREEZING' ])");
 

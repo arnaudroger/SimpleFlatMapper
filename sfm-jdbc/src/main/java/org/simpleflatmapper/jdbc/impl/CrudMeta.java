@@ -130,4 +130,11 @@ public class CrudMeta {
             }
         }
     }
+
+    public boolean hasNoUpdatableFields() {
+        for(ColumnMeta cm : getColumnMetas()) {
+            if (!cm.isKey()) return false;
+        }
+        return true;
+    }
 }

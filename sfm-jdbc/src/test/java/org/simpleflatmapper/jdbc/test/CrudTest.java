@@ -426,6 +426,68 @@ public class CrudTest {
             connection.close();
         }
     }
+    
+    @Test
+    public void testOnlyKey497() throws SQLException {
+        Connection connection = DbHelper.getDbConnection(targetDB);
+        if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
+
+        try {
+            Crud<OnlyKey, Long> objectCrud =
+                    JdbcMapperFactory.newInstance().<OnlyKey, Long>crud(OnlyKey.class, Long.class).table(connection, "TEST_ONLY_KEY");
+
+            OnlyKey object = new OnlyKey(1);
+            objectCrud.delete(connection, Arrays.asList(1l, 2l));
+
+            assertNull(objectCrud.read(connection, 1l));
+
+            // create
+            objectCrud.create(connection, object);
+
+            // read
+            assertEquals(object, objectCrud.read(connection, 1l));
+
+            // update
+            objectCrud.update(connection, object);
+            // delete
+            objectCrud.delete(connection, 1l);
+            assertNull(objectCrud.read(connection, 1l));
+
+            objectCrud.create(connection, Arrays.asList(new OnlyKey(1), new OnlyKey(2)));
+            try {
+                objectCrud.createOrUpdate(connection, object);
+                objectCrud.createOrUpdate(connection, Arrays.asList(new OnlyKey(1), new OnlyKey(2)));
+            } catch (UnsupportedOperationException e ) {
+                // 
+            }
+
+        } finally {
+            connection.close();
+        }
+    }
+    
+    public static class OnlyKey {
+        public final long id;
+
+        public OnlyKey(long id) {
+            this.id = id;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            OnlyKey onlyKey = (OnlyKey) o;
+
+            return id == onlyKey.id;
+        }
+
+        @Override
+        public int hashCode() {
+            return (int) (id ^ (id >>> 32));
+        }
+    }
 
     private void assertCollectionEquals(List<DbObject> objects, List<DbObject> list) {
         assertEquals(objects.size(), list.size());

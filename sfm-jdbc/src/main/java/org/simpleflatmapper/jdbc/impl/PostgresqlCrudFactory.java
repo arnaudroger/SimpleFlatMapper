@@ -112,16 +112,22 @@ public class PostgresqlCrudFactory {
             }
         }
 
-        sb.append(") DO UPDATE SET ");
-        first = true;
-        for(ColumnMeta cm : crudMeta.getColumnMetas()) {
-            if (!cm.isKey()) {
-                if (!first) {
-                    sb.append(", ");
+        sb.append(") DO ");
+        
+        if (crudMeta.hasNoUpdatableFields()) {
+            sb.append("NOTHING");
+        } else {
+            sb.append("UPDATE SET ");
+            first = true;
+            for (ColumnMeta cm : crudMeta.getColumnMetas()) {
+                if (!cm.isKey()) {
+                    if (!first) {
+                        sb.append(", ");
+                    }
+                    sb.append(cm.getColumn());
+                    sb.append(" = EXCLUDED.").append(cm.getColumn());
+                    first = false;
                 }
-                sb.append(cm.getColumn());
-                sb.append(" = EXCLUDED.").append(cm.getColumn());
-                first = false;
             }
         }
 

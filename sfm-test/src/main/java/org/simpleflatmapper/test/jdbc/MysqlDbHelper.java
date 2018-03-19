@@ -25,6 +25,9 @@ public class MysqlDbHelper {
 
 	
 	private static void createDbObject(Statement st) throws SQLException {
+
+		st.execute("create table IF NOT EXISTS test_only_key("
+				+ " id bigint primary key  )");
 		st.execute("create table IF NOT EXISTS TEST_DB_OBJECT("
 				+ " id bigint primary key,"
 				+ " name varchar(100), "

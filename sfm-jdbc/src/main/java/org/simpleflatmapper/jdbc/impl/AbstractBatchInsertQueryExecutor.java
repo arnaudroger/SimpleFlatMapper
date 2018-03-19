@@ -97,7 +97,7 @@ public abstract class AbstractBatchInsertQueryExecutor<T> implements BatchQueryE
     }
 
     private void insertInto(StringBuilder sb) {
-        sb.append("INSERT INTO ");
+        appendInsertInto(sb);
         sb.append(table).append("(");
 
         for(int j = 0; j < insertColumns.length; j++) {
@@ -108,6 +108,10 @@ public abstract class AbstractBatchInsertQueryExecutor<T> implements BatchQueryE
         }
 
         sb.append(")");
+    }
+
+    protected void appendInsertInto(StringBuilder sb) {
+        sb.append("INSERT INTO ");
     }
 
     private void bindTo(PreparedStatement preparedStatement, Collection<T> values) throws Exception {

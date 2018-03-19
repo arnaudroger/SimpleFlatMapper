@@ -165,6 +165,10 @@ public class CrudFactory {
                 first = false;
             }
         }
+        if (first) {
+            // no field to update
+            return null;
+        }
         addWhereOnPrimaryKeys(crudMeta, sb);
         return jdbcMapperFactory.<T>from(target).to(NamedSqlQuery.parse(sb));
     }

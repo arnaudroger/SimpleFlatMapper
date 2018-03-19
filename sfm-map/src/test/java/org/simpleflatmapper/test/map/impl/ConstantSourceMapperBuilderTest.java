@@ -193,7 +193,44 @@ public class ConstantSourceMapperBuilderTest {
 
 
     }
+
+
+    @Test
+    public void testIssue495Simple() throws Exception {
+        TypeReference<List<Tuple3<Foo, Foo, Foo>>> typeReference = new TypeReference<List<Tuple3<Foo, Foo, Foo>>>() {
+        };
+        ClassMeta<List<Tuple3<Foo, Foo, Foo>>> classMeta = this.classMeta.getReflectionService().getClassMeta(typeReference.getType());
+
+        Predicate<PropertyMeta<?, ?>> propertyFilter = new Predicate<PropertyMeta<?, ?>>() {
+            @Override
+            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                return true;
+            }
+        };
+        PropertyFinder<?> propertyFinder = classMeta.newPropertyFinder(propertyFilter);
+        PropertyMeta<?, ?> p1 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bar", 0, false, false), new Object[0]);
+        PropertyMeta<?, ?> p2 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("bar", 0, false, false), new Object[0]);
+
+        assertEquals("[0].element0.bar", p1.getPath());
+        assertEquals("[0].element1.bar", p2.getPath());
+
+        propertyFinder = classMeta.newPropertyFinder(propertyFilter);
+        p1 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt0_elt0_bar", 0, false, false), new Object[0]);
+        p2 = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt1_elt0_bar", 0, false, false), new Object[0]);
+
+        assertEquals("[0].element0.bar", p1.getPath());
+        assertEquals("[1].element0.bar", p2.getPath());
+
+
+    }
     
+    public static class Foo {
+        private final String bar;
+
+        public Foo(String bar) {
+            this.bar = bar;
+        }
+    }
     public static class TableA {
         private int idA;
 

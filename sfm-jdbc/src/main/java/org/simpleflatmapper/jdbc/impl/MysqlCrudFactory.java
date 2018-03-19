@@ -65,7 +65,12 @@ public class MysqlCrudFactory {
     public static <T, K> QueryPreparer<T> buildUpsert(ClassMeta<T> target, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) {
         List<String> generatedKeys = new ArrayList<String>();
         StringBuilder sb = new StringBuilder();
-        sb.append("INSERT INTO ");
+        sb.append("INSERT ");
+
+        if (crudMeta.hasNoUpdatableFields()) {
+            sb.append("IGNORE ");
+        }
+        sb.append("INTO ");
         sb.append(crudMeta.getTable()).append("(");
 
         boolean first = true;
@@ -94,17 +99,19 @@ public class MysqlCrudFactory {
                 first = false;
             }
         }
-        sb.append(") ON DUPLICATE KEY UPDATE ");
-
-        first = true;
-        for(ColumnMeta cm : crudMeta.getColumnMetas()) {
-            if (!cm.isKey()) {
-                if (!first) {
-                    sb.append(", ");
+        sb.append(") ");
+        if (!crudMeta.hasNoUpdatableFields()) {
+            sb.append(" ON DUPLICATE KEY UPDATE ");
+            first = true;
+            for(ColumnMeta cm : crudMeta.getColumnMetas()) {
+                if (!cm.isKey()) {
+                    if (!first) {
+                        sb.append(", ");
+                    }
+                    sb.append(cm.getColumn());
+                    sb.append(" = VALUES(").append(cm.getColumn()).append(")");
+                    first = false;
                 }
-                sb.append(cm.getColumn());
-                sb.append(" = VALUES(").append(cm.getColumn()).append(")");
-                first = false;
             }
         }
 

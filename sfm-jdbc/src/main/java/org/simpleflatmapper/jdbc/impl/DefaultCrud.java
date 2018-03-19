@@ -112,11 +112,13 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
 
     @Override
     public void update(Connection connection, T value) throws SQLException {
+        if (updateQueryPreparer == null) return;
         executeQueryPreparer(connection, value, null, updateQueryPreparer);
     }
 
     @Override
     public void update(Connection connection, Collection<T> values) throws SQLException {
+        if (updateQueryPreparer == null) return;
         executeQueryPreparerInBatchMode(connection, values, null, updateQueryPreparer);
     }
 

@@ -28,6 +28,8 @@ matrix:
       install: . ./.travis/install-jdk-6.sh
     - script:  mvn package -B -Pjdk19
       install: . ./.travis/install-jdk-10.sh
+    - script:  mvn package -B -Pjdk19
+      install: . ./.travis/install-jdk-11.sh
     
 
 env:

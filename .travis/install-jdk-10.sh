@@ -8,7 +8,7 @@ JDK_FEATURE=10
 #TMP="${TMP%%<*}"                                        # remove everything after the number
 #JDK_BUILD="$(echo -e "${TMP}" | tr -d '[:space:]')" # remove all whitespace
 
-J#DK_ARCHIVE=openjdk-10_linux-x64_bin.tar.gz
+JDK_ARCHIVE=openjdk-10_linux-x64_bin.tar.gz
 #jdk-${JDK_FEATURE}+${JDK_BUILD}_linux-x64_bin.tar.gz
 
 cd ~

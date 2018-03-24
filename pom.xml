@@ -426,7 +426,7 @@
         <profile>
             <id>jdk19</id>
             <activation>
-                <jdk>[9,10]</jdk>
+                <jdk>[9,11]</jdk>
             </activation>
             <properties>
                 <source.classifier>jdk9-sources</source.classifier>
@@ -625,7 +625,7 @@
                     <name>env.TRAVIS</name>
                     <value>true</value>
                 </property>
-                <jdk>[9,10]</jdk>
+                <jdk>[9,11]</jdk>
             </activation>
             <modules>
                 <module>sfm-test-sandbox</module>

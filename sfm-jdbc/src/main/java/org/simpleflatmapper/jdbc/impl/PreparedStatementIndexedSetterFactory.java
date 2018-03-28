@@ -6,6 +6,7 @@ import org.simpleflatmapper.jdbc.JdbcTypeHelper;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.impl.setter.ArrayPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BigDecimalPreparedStatementIndexSetter;
+import org.simpleflatmapper.jdbc.impl.setter.BigIntegerPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BlobPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BooleanPreparedStatementIndexSetter;
 import org.simpleflatmapper.jdbc.impl.setter.BytePreparedStatementIndexSetter;

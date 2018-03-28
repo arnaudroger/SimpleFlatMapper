@@ -37,6 +37,6 @@ public final class JdbcColumnKeyMapperKeyComparator extends MapperKeyComparator<
         if (d != 0) return d;
         d = k1.getName().compareTo(k2.getName());
         if (d != 0) return d;
-        return k1.getSqlType() - k2.getSqlType();
+        return k1.getSqlType(null) - k2.getSqlType(null);
     }
 }

@@ -54,6 +54,6 @@ public class Utils {
     }
 
     private static JdbcColumnKey duplicateKey(JdbcColumnKey jdbcColumnKey) {
-        return new JdbcColumnKey(jdbcColumnKey.getName(), jdbcColumnKey.getIndex(), jdbcColumnKey.getSqlType(), jdbcColumnKey.getParent());
+        return new JdbcColumnKey(jdbcColumnKey.getName(), jdbcColumnKey.getIndex(), jdbcColumnKey.getSqlType(null), jdbcColumnKey.getParent());
     }
 }

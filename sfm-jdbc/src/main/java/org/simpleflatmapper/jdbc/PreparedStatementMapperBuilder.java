@@ -23,7 +23,6 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.IndexedGetter;
 import org.simpleflatmapper.reflect.IndexedSetter;
 import org.simpleflatmapper.reflect.IndexedSetterFactory;
-import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.getter.ArrayIndexedGetter;
 import org.simpleflatmapper.reflect.getter.ArraySizeGetter;
 import org.simpleflatmapper.reflect.getter.ListIndexedGetter;
@@ -36,7 +35,6 @@ import org.simpleflatmapper.reflect.primitive.IntGetter;
 import org.simpleflatmapper.util.ConstantPredicate;
 import org.simpleflatmapper.util.ErrorDoc;
 import org.simpleflatmapper.util.ForEachCallBack;
-import org.simpleflatmapper.util.Predicate;
 import org.simpleflatmapper.util.TypeHelper;
 
 import java.sql.PreparedStatement;

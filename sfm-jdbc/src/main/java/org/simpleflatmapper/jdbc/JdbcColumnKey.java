@@ -4,6 +4,7 @@ import org.simpleflatmapper.map.FieldKey;
 import org.simpleflatmapper.map.mapper.MapperKey;
 import org.simpleflatmapper.reflect.TypeAffinity;
 
+import java.io.ObjectInputStream;
 import java.lang.reflect.Type;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -31,7 +32,15 @@ public final class JdbcColumnKey extends FieldKey<JdbcColumnKey> implements Type
 		this.sqlType = sqlType;
 	}
 
-	public int getSqlType() {
+	public int getSqlType(Object[] properties) { 
+		if (properties != null) {
+			for(int i = 0; i < properties.length; i++) {
+				Object prop = properties[i];
+				if (prop instanceof SqlTypeColumnProperty) {
+					return ((SqlTypeColumnProperty)prop).getSqlType();
+				}
+			}
+		}
 		return sqlType;
 	}
 

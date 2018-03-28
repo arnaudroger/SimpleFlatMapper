@@ -63,7 +63,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		@SuppressWarnings("unchecked")
 		@Override
 		public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, Object... properties) {
-			switch (key.getSqlType()) {
+			switch (key.getSqlType(properties)) {
 				case JdbcColumnKey.UNDEFINED_TYPE:
 					return (Getter<ResultSet, P>) new UndefinedDateResultSetGetter(key.getIndex());
 				case Types.TIMESTAMP:
@@ -83,7 +83,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		@SuppressWarnings("unchecked")
 		@Override
 		public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, Object... properties) {
-			switch(key.getSqlType() ) {
+			switch(key.getSqlType(properties) ) {
 			case Types.NCHAR:
 			case Types.NVARCHAR:
 			case Types.LONGNVARCHAR:
@@ -108,7 +108,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, Object... properties) {
-				if (key.getSqlType() == Types.TIME_WITH_TIMEZONE) {
+				if (key.getSqlType(properties) == Types.TIME_WITH_TIMEZONE) {
 					return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
 
 				}
@@ -119,7 +119,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, Object... properties) {
-				if (key.getSqlType() == Types.TIMESTAMP_WITH_TIMEZONE) {
+				if (key.getSqlType(properties) == Types.TIMESTAMP_WITH_TIMEZONE) {
 					return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
 
 				}
@@ -224,7 +224,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, Object... properties) {
-				switch (key.getSqlType()) {
+				switch (key.getSqlType(properties)) {
 					case Types.LONGVARCHAR:
 					case Types.CHAR:
 					case Types.VARCHAR:
@@ -244,7 +244,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, Object... properties) {
-				switch (key.getSqlType()) {
+				switch (key.getSqlType(properties)) {
 					case Types.LONGVARCHAR:
 					case Types.CHAR:
 					case Types.VARCHAR:
@@ -265,7 +265,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, Object... properties) {
-				if (key.getSqlType() == Types.DATALINK) {
+				if (key.getSqlType(properties) == Types.DATALINK) {
 					return (Getter<ResultSet, P>) new UrlResultSetGetter(key.getIndex());
 				} else {
 					return (Getter<ResultSet, P>) new UrlFromStringResultSetGetter(key.getIndex());
@@ -301,7 +301,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, Object... properties) {
-				switch (key.getSqlType()) {
+				switch (key.getSqlType(properties)) {
 					case Types.LONGNVARCHAR:
 					case Types.NCHAR:
 					case Types.NVARCHAR:
@@ -360,7 +360,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type target, JdbcColumnKey key, Object... properties) {
-				switch (key.getSqlType()) {
+				switch (key.getSqlType(properties)) {
 					case JdbcColumnKey.UNDEFINED_TYPE:
 						return (Getter<ResultSet, P>)
 								new UUIDUnspecifiedTypeGetter<ResultSet>(new ObjectResultSetGetter(key.getIndex()));
@@ -382,7 +382,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 						// assume it's a UUID postgres
 						return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
 					default:
-						throw new MapperBuildingException("Incompatible type " + key.getSqlType() + " with UUID");
+						throw new MapperBuildingException("Incompatible type " + key.getSqlType(properties) + " with UUID");
 				}
 			}
 		});
@@ -407,7 +407,7 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 		}
 
 		if (getter == null) {
-			if (SQLData.class.isAssignableFrom(clazz) || key.getSqlType() == Types.JAVA_OBJECT) {
+			if (SQLData.class.isAssignableFrom(clazz) || key.getSqlType(properties) == Types.JAVA_OBJECT) {
 				return (Getter<ResultSet, P>) new ObjectResultSetGetter(key.getIndex());
 			}
 		}

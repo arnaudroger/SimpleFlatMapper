@@ -45,6 +45,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
@@ -209,6 +210,14 @@ public class PreparedStatementIndexedSetterFactory
                     @Override
                     public <P> PreparedStatementIndexSetter<P> getIndexedSetter(JdbcColumnKey key) {
                         return (PreparedStatementIndexSetter<P>) new BigDecimalPreparedStatementIndexSetter();
+                    }
+                });
+        factoryPerClass.put(BigInteger.class,
+                new Factory() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    public <P> PreparedStatementIndexSetter<P> getIndexedSetter(JdbcColumnKey key) {
+                        return (PreparedStatementIndexSetter<P>) new BigIntegerPreparedStatementIndexSetter();
                     }
                 });
         factoryPerClass.put(Array.class,

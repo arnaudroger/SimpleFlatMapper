@@ -1,5 +1,7 @@
 package org.simpleflatmapper.jdbc;
 
+import org.simpleflatmapper.jdbc.impl.getter.BigDecimalFromStringResultSetGetter;
+import org.simpleflatmapper.jdbc.impl.getter.BigIntegerFromStringResultSetGetter;
 import org.simpleflatmapper.reflect.getter.BytesUUIDGetter;
 import org.simpleflatmapper.reflect.getter.GetterFactory;
 import org.simpleflatmapper.reflect.getter.GetterFactoryRegistry;
@@ -222,14 +224,40 @@ public final class ResultSetGetterFactory implements GetterFactory<ResultSet, Jd
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, Object... properties) {
-				return (Getter<ResultSet, P>) new BigIntegerResultSetGetter(key.getIndex());
+				switch (key.getSqlType()) {
+					case Types.LONGVARCHAR:
+					case Types.CHAR:
+					case Types.VARCHAR:
+					case Types.CLOB:
+						return (Getter<ResultSet, P>) new BigIntegerFromStringResultSetGetter(new StringResultSetGetter(key.getIndex()));
+					case Types.LONGNVARCHAR:
+					case Types.NCHAR:
+					case Types.NVARCHAR:
+					case Types.NCLOB:
+						return (Getter<ResultSet, P>) new BigIntegerFromStringResultSetGetter(new NStringResultSetGetter(key.getIndex()));
+					default:
+						return (Getter<ResultSet, P>) new BigIntegerResultSetGetter(key.getIndex());
+				}
 			}
 		});
 		factoryRegistry.put(BigDecimal.class, new GetterFactory<ResultSet, JdbcColumnKey>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <P> Getter<ResultSet, P> newGetter(Type genericType, JdbcColumnKey key, Object... properties) {
-				return (Getter<ResultSet, P>) new BigDecimalResultSetGetter(key.getIndex());
+				switch (key.getSqlType()) {
+					case Types.LONGVARCHAR:
+					case Types.CHAR:
+					case Types.VARCHAR:
+					case Types.CLOB:
+						return (Getter<ResultSet, P>) new BigDecimalFromStringResultSetGetter(new StringResultSetGetter(key.getIndex()));
+					case Types.LONGNVARCHAR:
+					case Types.NCHAR:
+					case Types.NVARCHAR:
+					case Types.NCLOB:
+						return (Getter<ResultSet, P>) new BigDecimalFromStringResultSetGetter(new NStringResultSetGetter(key.getIndex()));
+					default:
+						return (Getter<ResultSet, P>) new BigDecimalResultSetGetter(key.getIndex());
+				}
 			}
 		});
 

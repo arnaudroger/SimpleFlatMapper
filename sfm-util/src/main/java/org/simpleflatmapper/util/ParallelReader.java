@@ -149,7 +149,7 @@ final class RingBufferReader extends Head {
     private long headCache;
     private final ParallelReader.WaitingStrategy waitingStrategy;
 
-    public RingBufferReader(Reader reader, Executor executorService, int ringBufferSize, int readBufferSize, ParallelReader.WaitingStrategy waitingStrategy) {
+    public RingBufferReader(Reader reader, Executor executorService, int ringBufferSize, int readSize, ParallelReader.WaitingStrategy waitingStrategy) {
         int powerOf2 =  1 << 32 - Integer.numberOfLeadingZeros(ringBufferSize - 1);
         tailPadding = powerOf2 <= 1024 ? 0 : L1_CACHE_LINE_SIZE;
         this.reader = reader;
@@ -157,7 +157,7 @@ final class RingBufferReader extends Head {
         bufferMask = buffer.length - 1;
         this.waitingStrategy = waitingStrategy;
         capacity = buffer.length;
-        dataProducer = new DataProducer(readBufferSize);
+        dataProducer = new DataProducer(Math.max(Math.min(ringBufferSize / 8, readSize), 1));
         executorService.execute(dataProducer);
     }
 
@@ -242,12 +242,9 @@ final class RingBufferReader extends Head {
         private volatile boolean run = true;
         private volatile IOException exception;
         
-        private char[] _buffer;
-        private int size;
-        private int offset;
-
-        public DataProducer(int bufferSize) {
-            _buffer = new char[bufferSize];
+        private int readSize;
+        public DataProducer(int readSize) {
+            this.readSize = readSize;
         }
 
         @Override
@@ -256,7 +253,7 @@ final class RingBufferReader extends Head {
             int i = 0;
             while(run) {
 
-                final long wrapPoint = currentTail - buffer.length + tailPadding;
+                final long wrapPoint = currentTail - buffer.length + tailPadding + readSize;
 
                 if (headCache <= wrapPoint) {
                     headCache = head;
@@ -267,19 +264,24 @@ final class RingBufferReader extends Head {
                 }
 
                 i = 0;
-                try {
-                    int r =  read(currentTail, headCache);
-                    if (r == -1) {
-                        run = false;
-                    } else {
-                        currentTail += r;
-                        tail = currentTail;
-                    }
-                } catch (IOException e) {
-                    exception = e;
-                    run = false;
-                }
+                currentTail = doRead(currentTail);
             }
+        }
+
+        private long doRead(long currentTail) {
+            try {
+                int r =  read(currentTail, headCache);
+                if (r == -1) {
+                    run = false;
+                } else {
+                    currentTail += r;
+                    tail = currentTail;
+                }
+            } catch (IOException e) {
+                exception = e;
+                run = false;
+            }
+            return currentTail;
         }
 
         private int read(long currentTail, long currentHead) throws IOException {
@@ -288,22 +290,12 @@ final class RingBufferReader extends Head {
             long length = capacity - used - tailPadding;
             
             int tailIndex = (int) (currentTail & bufferMask);
-
             int endBlock1 = (int) Math.min(tailIndex + length,  capacity );
-
             int block1Length = endBlock1 - tailIndex;
             
-            if (offset >= size) { // no more to read in the buffer
-                int l = reader.read(_buffer, 0, _buffer.length);
-                if (l == -1) return -1; // end of buffer
-                size = l;
-                offset = 0;
-            }
+            int l = Math.min(block1Length, readSize);
             
-            int l = Math.min(block1Length, size - offset);
-            System.arraycopy(_buffer, offset, buffer, tailIndex, l);
-            offset += l;
-            return l;
+            return reader.read(buffer, tailIndex, l);
         }
 
         public void stop() {

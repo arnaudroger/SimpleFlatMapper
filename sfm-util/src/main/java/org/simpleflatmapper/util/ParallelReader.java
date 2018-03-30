@@ -143,8 +143,8 @@ final class RingBufferReader extends Head {
     
     private final long bufferMask;
 
-    private final long capacity;
-    private final long tailPadding;
+    private final int capacity;
+    private final int tailPadding;
     private long tailCache;
     private long headCache;
     private final ParallelReader.WaitingStrategy waitingStrategy;
@@ -264,7 +264,6 @@ final class RingBufferReader extends Head {
             long currentTail = tail;
             int i = 0;
             while(run) {
-
                 final long wrapPoint = currentTail - buffer.length + tailPadding + readSize;
 
                 if (headCache <= wrapPoint) {
@@ -276,39 +275,29 @@ final class RingBufferReader extends Head {
                 }
 
                 i = 0;
-                currentTail = doRead(currentTail);
-            }
-        }
-
-        private long doRead(long currentTail) {
-            try {
-                int r =  read(currentTail, headCache);
-                if (r == -1) {
+                try {
+                    int used = (int)(currentTail - headCache);
+                    int writable = capacity - used - tailPadding;
+                    int tailIndex = (int) (currentTail & bufferMask);
+                    int endBlock1 = Math.min(tailIndex + writable,  capacity );
+                    int block1Length = endBlock1 - tailIndex;
+                    int l = Math.min(block1Length, readSize);
+                    
+                    int r = reader.read(buffer, tailIndex, l);
+                    
+                    if (r != -1) {
+                        currentTail += r;
+                        tail = currentTail;
+                    } else {
+                        run = false;
+                    }
+                } catch (IOException e) {
+                    exception = e;
                     run = false;
-                } else {
-                    currentTail += r;
-                    tail = currentTail;
                 }
-            } catch (IOException e) {
-                exception = e;
-                run = false;
             }
-            return currentTail;
         }
 
-        private int read(long currentTail, long currentHead) throws IOException {
-            long used = currentTail - currentHead;
-
-            long length = capacity - used - tailPadding;
-            
-            int tailIndex = (int) (currentTail & bufferMask);
-            int endBlock1 = (int) Math.min(tailIndex + length,  capacity );
-            int block1Length = endBlock1 - tailIndex;
-            
-            int l = Math.min(block1Length, readSize);
-            
-            return reader.read(buffer, tailIndex, l);
-        }
 
         public void stop() {
             run = false;

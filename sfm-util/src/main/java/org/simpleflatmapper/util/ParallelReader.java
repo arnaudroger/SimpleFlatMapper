@@ -3,79 +3,140 @@ package org.simpleflatmapper.util;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.locks.LockSupport;
+
 
 public class ParallelReader extends Reader {
-    private static final int DEFAULT_MAX_READ = 8192;
-    private static final int DEFAULT_BUFFER_SIZE = 1024 * 32;
+    
+    // stolen from jooq DefaultExecutor
+    private static final Executor DEFAULT_EXECUTOR = ForkJoinPool.getCommonPoolParallelism() > 1 ? ForkJoinPool.commonPool() : new Executor() {
+        public void execute(Runnable command) {
+            (new Thread(command)).start();
+        }
+    };
+    
+    private static final WaitingStrategy DEFAULT_WAITING_STRATEGY = new WaitingStrategy() {
+        @Override
+        public void idle() {
+            LockSupport.parkNanos(1l);
+        }
+    };
+    
+    private static final int DEFAULT_READ_BUFFER_SIZE = 8192;
+    private static final int DEFAULT_RING_BUFFER_SIZE = 1024 * 64; // 64 k
+    
+    private final RingBufferReader reader;
 
-    private final Reader reader;
-    private final DataProducer dataProducer;
-    private final char[] buffer;
-
-    private final int bufferMask;
-    private final int maxRead;
-
-    private AtomicLong tail = new AtomicLong();
-    private AtomicLong head = new AtomicLong();
-
-    private final long capacity;
-    private long tailCache;
-    private long headCache;
-
-    private final long padding;
-
+    public ParallelReader(Reader reader) {
+        this(reader, DEFAULT_EXECUTOR, DEFAULT_RING_BUFFER_SIZE);
+    }
 
     public ParallelReader(Reader reader, Executor executorService) {
-        this(reader, executorService, DEFAULT_BUFFER_SIZE);
+        this(reader, executorService, DEFAULT_RING_BUFFER_SIZE);
     }
 
     public ParallelReader(Reader reader, Executor executorService, int bufferSize) {
-        this(reader, executorService, bufferSize, DEFAULT_MAX_READ);
+        this(reader, executorService, bufferSize, DEFAULT_READ_BUFFER_SIZE);
     }
-    public ParallelReader(Reader reader, Executor executorService, int bufferSize, int maxRead) {
-        int powerOf2 =  1 << 32 - Integer.numberOfLeadingZeros(bufferSize - 1);
-        padding = powerOf2 <= 1024 ? 0 : 64;
-        this.reader = reader;
-        buffer = new char[powerOf2];
-        bufferMask = buffer.length - 1;
-        dataProducer = new DataProducer();
-        executorService.execute(dataProducer);
-        capacity = buffer.length;
-        this.maxRead = maxRead;
+    
+    public ParallelReader(Reader reader, Executor executorService, int bufferSize, int readBufferSize) {
+        this(reader, executorService, bufferSize, readBufferSize, DEFAULT_WAITING_STRATEGY);
+    }
+
+    public ParallelReader(Reader reader, Executor executorService, int bufferSize, int readBufferSize, WaitingStrategy waitingStrategy) {
+        this.reader = new RingBufferReader(reader, executorService, bufferSize, readBufferSize, waitingStrategy);
+    }
+
+    @Override
+    public int read() throws IOException {
+        return reader.read();
     }
 
     @Override
     public int read(char[] cbuf, int off, int len) throws IOException {
-        final long currentHead = head.get();
+        return reader.read(cbuf, off, len);
+    }
+
+    @Override
+    public void close() throws IOException {
+        reader.close();
+    }
+    
+    public interface WaitingStrategy {
+        void idle();
+    }
+}
+
+
+class Pad0 {
+    long p1,p2,p3,p4,p5,p6,p7;
+}
+class Tail extends Pad0 {
+    volatile long tail = 0;
+}
+class Pad1 extends Tail { long p1,p2,p3,p4,p5,p6,p7; }
+class Buffer extends Pad1 { char[] buffer; }
+class Pad2 extends Buffer { long p1,p2,p3,p4,p5,p6,p7; }
+class Head extends Pad2 {
+    volatile long head = 0;
+}
+
+final class RingBufferReader extends Head {
+
+    public static final int L1_CACHE_LINE_SIZE = 64;
+    private final Reader reader;
+    private final DataProducer dataProducer;
+    
+    private final long bufferMask;
+
+    private final long capacity;
+    private final long tailPadding;
+    private long tailCache;
+    private long headCache;
+    private final ParallelReader.WaitingStrategy waitingStrategy;
+
+    public RingBufferReader(Reader reader, Executor executorService, int ringBufferSize, int readBufferSize, ParallelReader.WaitingStrategy waitingStrategy) {
+        int powerOf2 =  1 << 32 - Integer.numberOfLeadingZeros(ringBufferSize - 1);
+        tailPadding = powerOf2 <= 1024 ? 0 : L1_CACHE_LINE_SIZE;
+        this.reader = reader;
+        buffer = new char[powerOf2];
+        bufferMask = buffer.length - 1;
+        this.waitingStrategy = waitingStrategy;
+        capacity = buffer.length;
+        dataProducer = new DataProducer(readBufferSize);
+        executorService.execute(dataProducer);
+    }
+
+    public int read(char[] cbuf, int off, int len) throws IOException {
+        final long currentHead = head;
         do {
             if (currentHead < tailCache) {
                 int l = read(cbuf, off, len, currentHead, tailCache);
 
-                head.lazySet(currentHead + l);
+                head = currentHead + l;
                 return l;
             }
 
-            tailCache = tail.get();
+            tailCache = tail;
             if (currentHead >= tailCache) {
                 if (!dataProducer.run) {
                     if (dataProducer.exception != null) {
                         throw dataProducer.exception;
                     }
-                    tailCache = tail.get();
+                    tailCache = tail;
                     if (currentHead >= tailCache) {
                         return -1;
                     }
                 }
-                waitingStrategy();
+                waitingStrategy.idle();
             }
         } while(true);
     }
 
-    @Override
     public int read() throws IOException {
 
-        final long currentHead = head.get();
+        final long currentHead = head;
         do {
             if (currentHead < tailCache) {
 
@@ -83,29 +144,25 @@ public class ParallelReader extends Reader {
 
                 char c = buffer[headIndex];
 
-                head.lazySet(currentHead + 1);
+                head = currentHead + 1;
 
                 return c;
             }
 
-            tailCache = tail.get();
+            tailCache = tail;
             if (currentHead >= tailCache) {
                 if (!dataProducer.run) {
                     if (dataProducer.exception != null) {
                         throw dataProducer.exception;
                     }
-                    tailCache = tail.get();
+                    tailCache = tail;
                     if (currentHead >= tailCache) {
                         return -1;
                     }
                 }
-                waitingStrategy();
+                waitingStrategy.idle();
             }
         } while(true);
-    }
-
-    private void waitingStrategy() {
-        Thread.yield();
     }
 
     private int read(char[] cbuf, int off, int len, long currentHead, long currentTail) {
@@ -122,27 +179,34 @@ public class ParallelReader extends Reader {
         return block1Length + block2Length;
     }
 
-    @Override
     public void close() throws IOException {
         dataProducer.stop();
         reader.close();
     }
 
-    private class DataProducer implements Runnable {
+    private final class DataProducer implements Runnable {
         private volatile boolean run = true;
         private volatile IOException exception;
+        
+        private char[] _buffer;
+        private int size;
+        private int offset;
+
+        public DataProducer(int bufferSize) {
+            _buffer = new char[bufferSize];
+        }
 
         @Override
         public void run() {
-            long currentTail = tail.get();
+            long currentTail = tail;
             while(run) {
 
-                final long wrapPoint = currentTail - buffer.length;
+                final long wrapPoint = currentTail - buffer.length + tailPadding;
 
-                if (headCache - padding <= wrapPoint) {
-                    headCache = head.get();
+                if (headCache <= wrapPoint) {
+                    headCache = head;
                     if (headCache <= wrapPoint) {
-                        waitingStrategy();
+                        waitingStrategy.idle();
                         continue;
                     }
                 }
@@ -153,7 +217,7 @@ public class ParallelReader extends Reader {
                         run = false;
                     } else {
                         currentTail += r;
-                        tail.lazySet(currentTail);
+                        tail = currentTail;
                     }
                 } catch (IOException e) {
                     exception = e;
@@ -165,15 +229,25 @@ public class ParallelReader extends Reader {
         private int read(long currentTail, long currentHead) throws IOException {
             long used = currentTail - currentHead;
 
-            long length = Math.min(capacity - used, maxRead);
-
+            long length = capacity - used - tailPadding;
+            
             int tailIndex = (int) (currentTail & bufferMask);
 
-            int endBlock1 = (int) Math.min(tailIndex + length,  capacity);
+            int endBlock1 = (int) Math.min(tailIndex + length,  capacity );
 
             int block1Length = endBlock1 - tailIndex;
-
-            return reader.read(buffer, tailIndex, block1Length);
+            
+            if (offset >= size) { // no more to read in the buffer
+                int l = reader.read(_buffer, 0, _buffer.length);
+                if (l == -1) return -1; // end of buffer
+                size = l;
+                offset = 0;
+            }
+            
+            int l = Math.min(block1Length, size - offset);
+            System.arraycopy(_buffer, offset, buffer, tailIndex, l);
+            offset += l;
+            return l;
         }
 
         public void stop() {
@@ -181,3 +255,5 @@ public class ParallelReader extends Reader {
         }
     }
 }
+
+

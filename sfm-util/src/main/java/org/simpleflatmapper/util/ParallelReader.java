@@ -55,8 +55,9 @@ public class ParallelReader extends Reader {
     
     private static final WaitingStrategy DEFAULT_WAITING_STRATEGY = new WaitingStrategy() {
         @Override
-        public void idle() {
-            LockSupport.parkNanos(1l);
+        public int idle(int i) {
+            LockSupport.parkNanos(1l); 
+            return i;
         }
     };
     
@@ -65,6 +66,13 @@ public class ParallelReader extends Reader {
     
     private final RingBufferReader reader;
 
+    /**
+     * Create a new ParallelReader that will fetch the data from that reader in a another thread.
+     * By default it will use the ForkJoinPool common pool from java8 or a ExecutorService with a pool size set to the number of available cores. 
+     * If the number of cores is 1 it will create a new Thread everytime.
+     * The default WaitingStrategy just call LockSupport.parkNanos(1l);
+     * @param reader the reader
+     */
     public ParallelReader(Reader reader) {
         this(reader, getDefaultExecutor(), DEFAULT_RING_BUFFER_SIZE);
     }
@@ -81,6 +89,14 @@ public class ParallelReader extends Reader {
         this(reader, executorService, bufferSize, readBufferSize, DEFAULT_WAITING_STRATEGY);
     }
 
+    /**
+     * Create a new ParallelReader.
+     * @param reader the reader
+     * @param executorService the executor to fetch from
+     * @param bufferSize the size of the ring buffer
+     * @param readBufferSize the size of the buffer to fetch data
+     * @param waitingStrategy the waiting strategy when the ring buffer is full
+     */
     public ParallelReader(Reader reader, Executor executorService, int bufferSize, int readBufferSize, WaitingStrategy waitingStrategy) {
         this.reader = new RingBufferReader(reader, executorService, bufferSize, readBufferSize, waitingStrategy);
     }
@@ -101,7 +117,7 @@ public class ParallelReader extends Reader {
     }
     
     public interface WaitingStrategy {
-        void idle();
+        int idle(int i);
     }
 }
 
@@ -147,10 +163,10 @@ final class RingBufferReader extends Head {
 
     public int read(char[] cbuf, int off, int len) throws IOException {
         final long currentHead = head;
+        int i = 0;
         do {
             if (currentHead < tailCache) {
                 int l = read(cbuf, off, len, currentHead, tailCache);
-
                 head = currentHead + l;
                 return l;
             }
@@ -166,7 +182,7 @@ final class RingBufferReader extends Head {
                         return -1;
                     }
                 }
-                waitingStrategy.idle();
+                i = waitingStrategy.idle(i);
             }
         } while(true);
     }
@@ -174,6 +190,7 @@ final class RingBufferReader extends Head {
     public int read() throws IOException {
 
         final long currentHead = head;
+        int i = 0;
         do {
             if (currentHead < tailCache) {
 
@@ -197,7 +214,7 @@ final class RingBufferReader extends Head {
                         return -1;
                     }
                 }
-                waitingStrategy.idle();
+                i = waitingStrategy.idle(i);
             }
         } while(true);
     }
@@ -236,6 +253,7 @@ final class RingBufferReader extends Head {
         @Override
         public void run() {
             long currentTail = tail;
+            int i = 0;
             while(run) {
 
                 final long wrapPoint = currentTail - buffer.length + tailPadding;
@@ -243,11 +261,12 @@ final class RingBufferReader extends Head {
                 if (headCache <= wrapPoint) {
                     headCache = head;
                     if (headCache <= wrapPoint) {
-                        waitingStrategy.idle();
+                        i = waitingStrategy.idle(i);
                         continue;
                     }
                 }
 
+                i = 0;
                 try {
                     int r =  read(currentTail, headCache);
                     if (r == -1) {

@@ -166,21 +166,9 @@ final class RingBufferReader extends Head {
         int i = 0;
         do {
             if (currentHead < tailCache) {
-                int headIndex = (int) (currentHead & bufferMask);
-                int usedLength = (int) (tailCache - currentHead);
-
-                int block1Length = Math.min(len, Math.min(usedLength, (capacity - headIndex)));
-                //int block2Length =  Math.min(len, usedLength) - block1Length;
-
-                System.arraycopy(buffer, headIndex, cbuf, off, block1Length);
-                //System.arraycopy(buffer, 0, cbuf, off+ block1Length, block2Length);
-
-                //int l =  block1Length + block2Length;
-                
-                head = currentHead + block1Length;
-                
-                return block1Length;
-                //return l;
+                int l = read(cbuf, off, len, currentHead, tailCache);
+                head = currentHead + l;
+                return l;
             }
 
             tailCache = tail;
@@ -236,7 +224,7 @@ final class RingBufferReader extends Head {
         int headIndex = (int) (currentHead & bufferMask);
         int usedLength = (int) (currentTail - currentHead);
 
-        int block1Length = Math.min(len, Math.min(usedLength, (capacity - headIndex)));
+        int block1Length = Math.min(len, Math.min(usedLength, (int) (capacity - headIndex)));
         int block2Length =  Math.min(len, usedLength) - block1Length;
 
         System.arraycopy(buffer, headIndex, cbuf, off, block1Length);

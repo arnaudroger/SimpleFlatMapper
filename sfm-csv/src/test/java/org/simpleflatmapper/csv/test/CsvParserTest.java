@@ -456,6 +456,7 @@ public class CsvParserTest {
 
 		testDsl(expectations, separator, quote, escape, cr, dsl);
 		testDsl(expectations, separator, quote, escape, cr, dslTrim);
+		testDsl(expectations, separator, quote, escape, cr, dsl.parallelReader());
 
 
 	}

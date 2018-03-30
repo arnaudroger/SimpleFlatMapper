@@ -691,7 +691,14 @@ public final class CsvParser {
 
 
 		/**
-		 * activate the parallelReader, when parsing a csv from a Reader it will use a ParallelReader.
+		 * on parsing from a reader the Reader will be fetched from a another thread.
+		 * <p>
+		 * On java 8 and over it will use the ForkJoinPool by default if the number of core is greater than 1, otherwise it will create a new Thread every time.
+		 * </p><p>
+		 * On java 6 and 7 it will create a shared ExecutorService with the number of threads set to the number of cores if it is greater than 1, otherwise it will create a new Thread every time.
+		 * </p><p>
+		 * If you wish to customize the org.simpleflatmapper.util.ParallelReader further for example to specify which Executor to user or the size of the ring buffer or read buffer you will need to wrap the Reader manually.
+		 * </p>
 		 * @return this
 		 */
 		public D parallelReader() {
@@ -742,7 +749,7 @@ public final class CsvParser {
 		/**
 		 * will parse line starting with # as yaml comment.
 		 * comments line will be ignored unless using the special foreach call.
-		 * @return
+		 * @return this
 		 */
 		public DSLYamlComment withYamlComments() {
 			return new DSLYamlComment(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing,
@@ -759,7 +766,7 @@ public final class CsvParser {
 		/**
 		 * will parse line starting with # as yaml comment.
 		 * comments line will be come as a row of 1 cell.
-		 * @return
+		 * @return this
 		 */
 		public DSLYamlComment withYamlCommentsAsCell() {
 			return new DSLYamlComment(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing,

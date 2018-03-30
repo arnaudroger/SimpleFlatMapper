@@ -3,18 +3,53 @@ package org.simpleflatmapper.util;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.locks.LockSupport;
 
 
 public class ParallelReader extends Reader {
     
-    // stolen from jooq DefaultExecutor
-    private static final Executor DEFAULT_EXECUTOR = ForkJoinPool.getCommonPoolParallelism() > 1 ? ForkJoinPool.commonPool() : new Executor() {
+    //IFJAVA8_START
+    private static final Executor DEFAULT_EXECUTOR_J8 = ForkJoinPool.getCommonPoolParallelism() > 1 ? ForkJoinPool.commonPool() : new Executor() {
         public void execute(Runnable command) {
             (new Thread(command)).start();
         }
     };
+    //IFJAVA8_END
+    private static Executor DEFAULT_EXECUTOR_J6 = null;
+    
+    private static final Object lock = new Object();
+    
+    public static Executor getDefaultExecutor() {
+        //IFJAVA8_START
+        if (true) {
+            return DEFAULT_EXECUTOR_J8;
+        }
+        //IFJAVA8_END
+
+        synchronized (lock) {
+            if (DEFAULT_EXECUTOR_J6 == null) {
+                DEFAULT_EXECUTOR_J6 = newDefaultExecutor();
+            }
+        }
+        return DEFAULT_EXECUTOR_J6;
+    }
+
+    private static Executor newDefaultExecutor() {
+        int p = Runtime.getRuntime().availableProcessors();
+        if (p <= 1) {
+            return new Executor() {
+                public void execute(Runnable command) {
+                    (new Thread(command)).start();
+                }
+            };
+        } else {
+            return Executors.newScheduledThreadPool(Math.min(p, 0x7fff));
+        }
+
+
+    } 
     
     private static final WaitingStrategy DEFAULT_WAITING_STRATEGY = new WaitingStrategy() {
         @Override
@@ -29,7 +64,7 @@ public class ParallelReader extends Reader {
     private final RingBufferReader reader;
 
     public ParallelReader(Reader reader) {
-        this(reader, DEFAULT_EXECUTOR, DEFAULT_RING_BUFFER_SIZE);
+        this(reader, getDefaultExecutor(), DEFAULT_RING_BUFFER_SIZE);
     }
 
     public ParallelReader(Reader reader, Executor executorService) {

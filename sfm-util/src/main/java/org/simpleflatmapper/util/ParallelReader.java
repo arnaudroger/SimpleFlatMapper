@@ -162,60 +162,49 @@ final class RingBufferReader extends Head {
 
     public int read(char[] cbuf, int off, int len) throws IOException {
         final long currentHead = head;
-        int i = 0;
-        do {
-            if (currentHead < tailCache) {
-                int l = read(cbuf, off, len, currentHead, tailCache);
-                head = currentHead + l;
-                return l;
-            }
-
+        if (currentHead >= tailCache) {
             tailCache = tail;
-            if (currentHead >= tailCache) {
+            int i = 0;
+            while(currentHead >= tailCache) {
                 if (!dataProducer.run) {
                     if (dataProducer.exception != null) {
                         throw dataProducer.exception;
-                    }
-                    tailCache = tail;
-                    if (currentHead >= tailCache) {
+                    } else {
                         return -1;
                     }
                 }
                 i = waitingStrategy.idle(i);
+                tailCache = tail;                
             }
-        } while(true);
+        }
+
+        int l = read(cbuf, off, len, currentHead, tailCache);
+        head = currentHead + l;
+        return l;
     }
 
     public int read() throws IOException {
-
         final long currentHead = head;
-        int i = 0;
-        do {
-            if (currentHead < tailCache) {
-
-                int headIndex = (int) (currentHead & bufferMask);
-
-                char c = buffer[headIndex + L1_CACHE_LINE_SIZE];
-
-                head = currentHead + 1;
-
-                return c;
-            }
-
+        if (currentHead >= tailCache) {
             tailCache = tail;
-            if (currentHead >= tailCache) {
+            int i = 0;
+            while(currentHead >= tailCache) {
                 if (!dataProducer.run) {
                     if (dataProducer.exception != null) {
                         throw dataProducer.exception;
-                    }
-                    tailCache = tail;
-                    if (currentHead >= tailCache) {
+                    } else {
                         return -1;
                     }
                 }
                 i = waitingStrategy.idle(i);
+                tailCache = tail;
             }
-        } while(true);
+        }
+
+        int headIndex = (int) (currentHead & bufferMask);
+        char c = buffer[headIndex + L1_CACHE_LINE_SIZE];
+        head = currentHead + 1;
+        return c;
     }
 
     private int read(char[] cbuf, int off, int len, long currentHead, long currentTail) {
@@ -223,13 +212,13 @@ final class RingBufferReader extends Head {
         int headIndex = (int) (currentHead & bufferMask);
         int usedLength = (int) (currentTail - currentHead);
 
-        int block1Length = Math.min(len, Math.min(usedLength, (capacity - headIndex)));
-        int block2Length =  Math.min(len, usedLength) - block1Length;
+        int maxContinuousLength = capacity - headIndex;
+        int block1Length = usedLength < maxContinuousLength ? usedLength : maxContinuousLength;
 
-        System.arraycopy(buffer, headIndex + L1_CACHE_LINE_SIZE, cbuf, off, block1Length);
-        System.arraycopy(buffer, L1_CACHE_LINE_SIZE, cbuf, off+ block1Length, block2Length);
+        int readLength = len < block1Length ? len : block1Length;
+        System.arraycopy(buffer, headIndex + L1_CACHE_LINE_SIZE, cbuf, off, readLength);
 
-        return block1Length + block2Length;
+        return readLength;
     }
 
     public void close() throws IOException {
@@ -249,26 +238,31 @@ final class RingBufferReader extends Head {
         @Override
         public void run() {
             long currentTail = tail;
-            int i = 0;
             while(run) {
                 final long wrapPoint = currentTail - capacity + tailPadding + readSize;
 
                 if (headCache <= wrapPoint) {
+                    int i = 0;
                     headCache = head;
-                    if (headCache <= wrapPoint) {
+                    while (headCache <= wrapPoint) {
                         i = waitingStrategy.idle(i);
-                        continue;
+                        headCache = head;
                     }
                 }
 
-                i = 0;
                 try {
                     int used = (int)(currentTail - headCache);
                     int writable = capacity - used - tailPadding;
                     int tailIndex = (int) (currentTail & bufferMask);
-                    int endBlock1 = Math.min(tailIndex + writable,  capacity );
+                    
+                    // check if available wrap over the array
+                    int endBlock1 = tailIndex + writable;
+                    if (endBlock1 > capacity) {
+                        endBlock1 = capacity;
+                    }
+                    
                     int block1Length = endBlock1 - tailIndex;
-                    int l = Math.min(block1Length, readSize);
+                    int l = readSize < block1Length ? readSize : block1Length;
                     
                     int r = reader.read(buffer, tailIndex +  L1_CACHE_LINE_SIZE, l);
                     

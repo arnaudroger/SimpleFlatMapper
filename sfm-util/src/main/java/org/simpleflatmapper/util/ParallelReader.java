@@ -150,13 +150,12 @@ final class RingBufferReader extends Head {
     private final ParallelReader.WaitingStrategy waitingStrategy;
 
     public RingBufferReader(Reader reader, Executor executorService, int ringBufferSize, int readSize, ParallelReader.WaitingStrategy waitingStrategy) {
-        int powerOf2 =  1 << 32 - Integer.numberOfLeadingZeros(ringBufferSize - 1);
-        tailPadding = powerOf2 <= 1024 ? 0 : L1_CACHE_LINE_SIZE;
+        capacity =  1 << 32 - Integer.numberOfLeadingZeros(ringBufferSize - 1);
+        tailPadding = capacity <= 1024 ? 0 : L1_CACHE_LINE_SIZE;
         this.reader = reader;
-        buffer = new char[powerOf2];
-        bufferMask = buffer.length - 1;
+        buffer = new char[capacity + L1_CACHE_LINE_SIZE * 2]; // cache line padding on both 
+        bufferMask = capacity - 1;
         this.waitingStrategy = waitingStrategy;
-        capacity = buffer.length;
         dataProducer = new DataProducer(Math.max(Math.min(ringBufferSize / 8, readSize), 1));
         executorService.execute(dataProducer);
     }
@@ -196,7 +195,7 @@ final class RingBufferReader extends Head {
 
                 int headIndex = (int) (currentHead & bufferMask);
 
-                char c = buffer[headIndex];
+                char c = buffer[headIndex + L1_CACHE_LINE_SIZE];
 
                 head = currentHead + 1;
 
@@ -224,11 +223,11 @@ final class RingBufferReader extends Head {
         int headIndex = (int) (currentHead & bufferMask);
         int usedLength = (int) (currentTail - currentHead);
 
-        int block1Length = Math.min(len, Math.min(usedLength, (int) (capacity - headIndex)));
+        int block1Length = Math.min(len, Math.min(usedLength, (capacity - headIndex)));
         int block2Length =  Math.min(len, usedLength) - block1Length;
 
-        System.arraycopy(buffer, headIndex, cbuf, off, block1Length);
-        System.arraycopy(buffer, 0, cbuf, off+ block1Length, block2Length);
+        System.arraycopy(buffer, headIndex + L1_CACHE_LINE_SIZE, cbuf, off, block1Length);
+        System.arraycopy(buffer, L1_CACHE_LINE_SIZE, cbuf, off+ block1Length, block2Length);
 
         return block1Length + block2Length;
     }
@@ -252,7 +251,7 @@ final class RingBufferReader extends Head {
             long currentTail = tail;
             int i = 0;
             while(run) {
-                final long wrapPoint = currentTail - buffer.length + tailPadding + readSize;
+                final long wrapPoint = currentTail - capacity + tailPadding + readSize;
 
                 if (headCache <= wrapPoint) {
                     headCache = head;
@@ -271,7 +270,7 @@ final class RingBufferReader extends Head {
                     int block1Length = endBlock1 - tailIndex;
                     int l = Math.min(block1Length, readSize);
                     
-                    int r = reader.read(buffer, tailIndex, l);
+                    int r = reader.read(buffer, tailIndex +  L1_CACHE_LINE_SIZE, l);
                     
                     if (r != -1) {
                         currentTail += r;

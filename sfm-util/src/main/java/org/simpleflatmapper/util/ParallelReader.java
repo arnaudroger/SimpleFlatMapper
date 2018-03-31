@@ -169,10 +169,10 @@ final class RingBufferReader extends Head {
                 if (!dataProducer.run) {
                     if (dataProducer.exception != null) {
                         throw dataProducer.exception;
-                    } else {
+                    } else if (currentHead >= tail) {
                         return -1;
                     }
-                }
+                } 
                 i = waitingStrategy.idle(i);
                 tailCache = tail;                
             }
@@ -192,7 +192,7 @@ final class RingBufferReader extends Head {
                 if (!dataProducer.run) {
                     if (dataProducer.exception != null) {
                         throw dataProducer.exception;
-                    } else {
+                    } else if (currentHead >= tail){
                         return -1;
                     }
                 }

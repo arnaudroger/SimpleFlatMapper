@@ -212,9 +212,11 @@ public class BiInstantiatorBuilder {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "newInstance", "(" + AsmUtils.toTargetTypeDeclaration(s1Type) + AsmUtils.toTargetTypeDeclaration(s2Type) +")" + AsmUtils.toTargetTypeDeclaration(targetType), null, new String[] { "java/lang/Exception" });
         mv.visitCode();
-        mv.visitTypeInsn(NEW, targetType);
-        mv.visitInsn(DUP);
-
+        
+        if (!Modifier.isStatic(instantiatorDefinition.getExecutable().getModifiers())) {
+            mv.visitTypeInsn(NEW, targetType);
+            mv.visitInsn(DUP);
+        }
 
         StringBuilder sb = new StringBuilder();
 

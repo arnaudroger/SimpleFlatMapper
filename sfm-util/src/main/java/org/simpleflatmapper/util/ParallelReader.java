@@ -208,17 +208,16 @@ final class RingBufferReader extends Head {
     }
 
     private int read(char[] cbuf, int off, int len, long currentHead, long currentTail) {
-
         int headIndex = (int) (currentHead & bufferMask);
         int usedLength = (int) (currentTail - currentHead);
 
-        int maxContinuousLength = capacity - headIndex;
-        int block1Length = usedLength < maxContinuousLength ? usedLength : maxContinuousLength;
+        int block1Length = Math.min(len, Math.min(usedLength, (capacity - headIndex)));
+        int block2Length =  Math.min(len, usedLength) - block1Length;
 
-        int readLength = len < block1Length ? len : block1Length;
-        System.arraycopy(buffer, headIndex + L1_CACHE_LINE_SIZE, cbuf, off, readLength);
+        System.arraycopy(buffer, headIndex + L1_CACHE_LINE_SIZE, cbuf, off, block1Length);
+        System.arraycopy(buffer, L1_CACHE_LINE_SIZE, cbuf, off+ block1Length, block2Length);
 
-        return readLength;
+        return block1Length + block2Length;
     }
 
     public void close() throws IOException {

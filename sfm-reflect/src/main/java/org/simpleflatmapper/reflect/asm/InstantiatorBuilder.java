@@ -16,6 +16,7 @@ import org.simpleflatmapper.util.TypeHelper;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -176,8 +177,11 @@ public class InstantiatorBuilder {
         MethodVisitor mv;
         mv = cw.visitMethod(ACC_PUBLIC, "newInstance", "(" + AsmUtils.toTargetTypeDeclaration(sourceType) + ")" + AsmUtils.toTargetTypeDeclaration(targetType), null, new String[] { "java/lang/Exception" });
         mv.visitCode();
-        mv.visitTypeInsn(NEW, targetType);
-        mv.visitInsn(DUP);
+        
+        if (!Modifier.isStatic(instantiatorDefinition.getExecutable().getModifiers())) {
+            mv.visitTypeInsn(NEW, targetType);
+            mv.visitInsn(DUP);
+        }
 
 
         StringBuilder sb = new StringBuilder();

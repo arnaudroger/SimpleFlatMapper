@@ -19,9 +19,13 @@ import org.simpleflatmapper.util.ListCollector;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class JdbcMapperBuilderTest {
 
@@ -105,6 +109,38 @@ public class JdbcMapperBuilderTest {
 		@Override
 		public long getLong(T target) throws Exception {
 			return l;
+		}
+	}
+
+
+	@Test
+	public void test501ZoneId() throws MappingException, SQLException {
+		test501(JdbcMapperFactoryHelper.asm().newBuilder(C501.class));
+		test501(JdbcMapperFactoryHelper.noAsm().newBuilder(C501.class));
+	}
+
+	private void test501(JdbcMapperBuilder<C501> builder) throws SQLException {
+		builder.addMapping("zone_id", 1, Types.VARCHAR);
+
+
+		JdbcMapper<C501> mapper = builder.mapper();
+
+		String zoneId = ZoneId.getAvailableZoneIds().iterator().next();
+		ResultSet rs = mock(ResultSet.class);
+		when(rs.next()).thenReturn(true, false);
+		when(rs.getString(1)).thenReturn(zoneId);
+
+		List<C501> l = mapper.forEach(rs, new ListCollector<C501>()).getList();
+
+		assertEquals(1, l.size());
+		assertEquals(ZoneId.of(zoneId), l.get(0).zoneId);
+	}
+
+	public static class C501 {
+		public final ZoneId zoneId;
+
+		public C501(ZoneId zoneId) {
+			this.zoneId = zoneId;
 		}
 	}
 }

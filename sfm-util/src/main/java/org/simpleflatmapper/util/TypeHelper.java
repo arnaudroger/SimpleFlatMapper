@@ -87,6 +87,7 @@ public final class TypeHelper {
 		wrappers.put(long.class, Long.class);
 		wrappers.put(float.class, Float.class);
 		wrappers.put(double.class, Double.class);
+		wrappers.put(void.class, Void.class);
 	}
 
 	public static boolean isArray(Type outType) {
@@ -173,7 +174,11 @@ public final class TypeHelper {
 
 	public static Class<?> toBoxedClass(Class<?> target) {
 		if (target.isPrimitive()) {
-			return wrappers.get(target);
+			Class<?> clazz = wrappers.get(target);
+			if (clazz == null) {
+				throw new RuntimeException("Unexpected primitive type " + target);
+			}
+			return clazz;
 		} else {
 			return target;
 		}

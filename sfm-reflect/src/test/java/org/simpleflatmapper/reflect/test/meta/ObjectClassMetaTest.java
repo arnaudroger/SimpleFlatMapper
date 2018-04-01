@@ -16,13 +16,13 @@ import org.simpleflatmapper.util.TypeReference;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 //IFJAVA8_START
 import java.util.Optional;
+import java.time.ZoneId;
 //IFJAVA8_END
 
 import static junit.framework.TestCase.assertTrue;
@@ -416,6 +416,7 @@ public class ObjectClassMetaTest {
             this.value2 = Asserts.requireNonNull("", value2);
         }
     }
+//IFJAVA8_START
 
     
     @Test
@@ -440,5 +441,7 @@ public class ObjectClassMetaTest {
             this.zoneId = zoneId;
         }
     }
+    //IFJAVA8_END
+
 
 }

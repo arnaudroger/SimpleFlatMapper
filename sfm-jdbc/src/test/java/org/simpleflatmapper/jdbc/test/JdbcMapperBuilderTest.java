@@ -20,7 +20,10 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+//IFJAVA8_START
 import java.time.ZoneId;
+//IFJAVA8_END
+
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -112,7 +115,7 @@ public class JdbcMapperBuilderTest {
 		}
 	}
 
-
+//IFJAVA8_START
 	@Test
 	public void test501ZoneId() throws MappingException, SQLException {
 		test501(JdbcMapperFactoryHelper.asm().newBuilder(C501.class));
@@ -143,4 +146,7 @@ public class JdbcMapperBuilderTest {
 			this.zoneId = zoneId;
 		}
 	}
+
+	//IFJAVA8_END
+
 }

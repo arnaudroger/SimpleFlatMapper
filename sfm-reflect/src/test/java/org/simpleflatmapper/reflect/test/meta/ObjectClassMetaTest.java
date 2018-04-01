@@ -1,6 +1,5 @@
 package org.simpleflatmapper.reflect.test.meta;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.reflect.test.KeyTest;
@@ -17,6 +16,7 @@ import org.simpleflatmapper.util.TypeReference;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -417,5 +417,28 @@ public class ObjectClassMetaTest {
         }
     }
 
+    
+    @Test
+    public void test501ZoneId() {
+        final ClassMeta<C501> classMeta = ReflectionService.newInstance().getClassMeta(C501.class);
+
+        PropertyMeta<C501, Object> zoneId = classMeta.newPropertyFinder(new Predicate<PropertyMeta<?, ?>>() {
+            @Override
+            public boolean test(PropertyMeta<?, ?> propertyMeta) {
+                return true;
+            }
+        }).findProperty(DefaultPropertyNameMatcher.of("zoneId"), new Object[0]);
+
+        System.out.println("zoneId = " + zoneId);
+
+    } 
+    
+    public static class C501 {
+        public final ZoneId zoneId;
+
+        public C501(ZoneId zoneId) {
+            this.zoneId = zoneId;
+        }
+    }
 
 }

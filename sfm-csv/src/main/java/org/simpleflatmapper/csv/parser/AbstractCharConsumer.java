@@ -85,7 +85,7 @@ public abstract class AbstractCharConsumer {
                     + "_CharConsumer";
 
 
-            Set<String> oldNames = new HashSet<>(Arrays.asList("org/simpleflatmapper/csv/parser/ConfigurableCharConsumer"));
+            Set<String> oldNames = new HashSet<String>(Arrays.asList("org/simpleflatmapper/csv/parser/ConfigurableCharConsumer"));
             ClassReader reader = new ClassReader(
                     ConfigurableCharConsumer.class.getResourceAsStream("ConfigurableCharConsumer.class")
             );

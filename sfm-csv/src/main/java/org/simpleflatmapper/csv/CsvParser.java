@@ -582,10 +582,18 @@ public final class CsvParser {
 		}
 		//IFJAVA8_END
 
-		protected final CharConsumer charConsumer(CharBuffer charBuffer) throws IOException {
+		protected final AbstractCharConsumer charConsumer(CharBuffer charBuffer) {
 			final TextFormat textFormat = getTextFormat();
-
-			return new CharConsumer(charBuffer, textFormat, getCellTransformer(textFormat, stringPostProcessing));
+			CellPreProcessor cellTransformer = getCellTransformer(textFormat, stringPostProcessing);
+			
+			if (!cellTransformer.ignoreLeadingSpace() 
+					&& textFormat.yamlComment == false
+					&& textFormat.escapeChar == '"'
+					&& textFormat.quoteChar == '"'
+					&& textFormat.separatorChar ==',') {
+				return new Rfc4180CharConsumer(charBuffer, cellTransformer);
+			}
+			return new ConfigurableCharConsumer(charBuffer, textFormat, cellTransformer);
 		}
 
 

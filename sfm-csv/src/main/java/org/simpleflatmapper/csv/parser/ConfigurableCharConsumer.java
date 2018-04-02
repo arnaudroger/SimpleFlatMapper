@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * Consume the charBuffer.
  */
-public final class CharConsumer {
+public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 
 	public static final int CONTAINS_ESCAPED_CHAR       = 256;
 	public static final int ESCAPED                     = 128;
@@ -35,12 +35,13 @@ public final class CharConsumer {
 	private int _currentIndex = 0;
 	private int _currentState = NONE;
 
-	public CharConsumer(CharBuffer csvBuffer, TextFormat textFormat, CellPreProcessor cellPreProcessor) {
+	public ConfigurableCharConsumer(CharBuffer csvBuffer, TextFormat textFormat, CellPreProcessor cellPreProcessor) {
 		this.csvBuffer = csvBuffer;
 		this.cellPreProcessor = cellPreProcessor;
 		this.textFormat = textFormat;
 	}
 
+	@Override
 	public final void consumeAllBuffer(final CellConsumer cellConsumer) {
 
 		final boolean notIgnoreLeadingSpace = !ignoreLeadingSpace();
@@ -155,6 +156,7 @@ public final class CharConsumer {
 		_currentIndex = currentIndex;
 	}
 
+	@Override
 	public final boolean consumeToNextRow(CellConsumer cellConsumer) {
 		final boolean notIgnoreLeadingSpace = !ignoreLeadingSpace();
 		final boolean yamlComment = yamlComment();
@@ -326,6 +328,7 @@ public final class CharConsumer {
 		return -1;
 	}
 
+	@Override
 	public final void finish(CellConsumer cellConsumer) {
 		if ( hasUnconsumedData()
 				|| (_currentState & LAST_CHAR_WAS_SEPARATOR) != 0) {
@@ -340,6 +343,7 @@ public final class CharConsumer {
 		return _currentIndex > csvBuffer.mark;
 	}
 
+	@Override
 	public boolean next() throws IOException {
 		int mark = csvBuffer.mark;
 		boolean b = csvBuffer.next();

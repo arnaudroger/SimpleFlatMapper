@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * Consume the charBuffer.
  */
-public final class ConfigurableCharConsumer extends AbstractCharConsumer {
+public final class Rfc4180CharConsumer extends AbstractCharConsumer {
 
 	public static final int CONTAINS_ESCAPED_CHAR       = 256;
 	public static final int ESCAPED                     = 128;
@@ -29,16 +29,14 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 	private static final char COMMENT = '#';
 
 	private final CharBuffer csvBuffer;
-	private final TextFormat textFormat;
 	private final CellPreProcessor cellPreProcessor;
 
 	private int _currentIndex = 0;
 	private int _currentState = NONE;
 
-	public ConfigurableCharConsumer(CharBuffer csvBuffer, TextFormat textFormat, CellPreProcessor cellPreProcessor) {
+	public Rfc4180CharConsumer(CharBuffer csvBuffer, CellPreProcessor cellPreProcessor) {
 		this.csvBuffer = csvBuffer;
 		this.cellPreProcessor = cellPreProcessor;
-		this.textFormat = textFormat;
 	}
 
 	@Override
@@ -290,23 +288,23 @@ public final class ConfigurableCharConsumer extends AbstractCharConsumer {
 	}
 
 	private char quoteChar() {
-		return textFormat.quoteChar;
+		return '"';
 	}
 
 	private boolean yamlComment() {
-		return textFormat.yamlComment;
+		return false;
 	}
 
 	private char separatorChar() {
-		return textFormat.separatorChar;
+		return ',';
 	}
 
 	private char escapeChar() {
-		return textFormat.escapeChar;
+		return '"';
 	}
 
 	private boolean ignoreLeadingSpace() {
-		return cellPreProcessor.ignoreLeadingSpace();
+		return false;
 	}
 
 	private int _moveToNextSeparator(char[] chars, char separatorChar, int currentIndex, int bufferSize) {

@@ -12,9 +12,9 @@ public class UnescapeCellPreProcessor extends CellPreProcessor {
 
 
     public final void newCell(char[] chars, int start, int end, CellConsumer cellConsumer, int state) {
-        if ((state & CharConsumer.QUOTED) == 0) {
+        if ((state & ConfigurableCharConsumer.QUOTED) == 0) {
             cellConsumer.newCell(chars, start, end - start);
-        } else if ((state & CharConsumer.CONTAINS_ESCAPED_CHAR) == 0) {
+        } else if ((state & ConfigurableCharConsumer.CONTAINS_ESCAPED_CHAR) == 0) {
             unquote(chars, start + 1, end, cellConsumer);
         } else {
             unescape(chars, start + 1, end, cellConsumer);

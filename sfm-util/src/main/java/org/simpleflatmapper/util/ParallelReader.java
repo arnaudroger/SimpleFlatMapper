@@ -62,7 +62,7 @@ public class ParallelReader extends Reader {
     };
     
     private static final int DEFAULT_READ_BUFFER_SIZE = 8192;
-    private static final int DEFAULT_RING_BUFFER_SIZE = 1024 * 64; // 64 k
+    private static final int DEFAULT_RING_BUFFER_SIZE = 1024 * 512; // 512k
     
     private final RingBufferReader reader;
 
@@ -74,7 +74,7 @@ public class ParallelReader extends Reader {
      * @param reader the reader
      */
     public ParallelReader(Reader reader) {
-        this(reader, getDefaultExecutor(), DEFAULT_RING_BUFFER_SIZE);
+        this(reader, getDefaultExecutor());
     }
 
     public ParallelReader(Reader reader, Executor executorService) {

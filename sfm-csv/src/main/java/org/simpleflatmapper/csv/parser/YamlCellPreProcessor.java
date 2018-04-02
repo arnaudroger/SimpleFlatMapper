@@ -80,7 +80,7 @@ public final class YamlCellPreProcessor extends CellPreProcessor {
 		}
 
 		public void newCell(char[] chars, int start, int end, int state) {
-			if ((state &  CharConsumer.COMMENTED ) == 0) {
+			if ((state &  ConfigurableCharConsumer.COMMENTED ) == 0) {
 				rowCellPreProcessor.newCell(chars, start, end, rowDelegate, state);
 				rowState = REGULAR_ROW;
 			} else {

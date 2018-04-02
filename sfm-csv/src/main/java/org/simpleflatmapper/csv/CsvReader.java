@@ -2,8 +2,8 @@ package org.simpleflatmapper.csv;
 
 import org.simpleflatmapper.csv.impl.CellConsumerCapture;
 import org.simpleflatmapper.csv.impl.CellConsumerFixLengthToCheckConsumer;
+import org.simpleflatmapper.csv.parser.AbstractCharConsumer;
 import org.simpleflatmapper.csv.parser.CellConsumer;
-import org.simpleflatmapper.csv.parser.CharConsumer;
 import org.simpleflatmapper.csv.parser.NullCellConsumer;
 import org.simpleflatmapper.csv.parser.StringArrayCellConsumer;
 import org.simpleflatmapper.util.CheckedConsumer;
@@ -25,15 +25,15 @@ import java.util.stream.StreamSupport;
 
 public final class CsvReader implements Iterable<String[]> {
 
-	private final CharConsumer consumer;
+	private final AbstractCharConsumer consumer;
 
 	private final Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper;
 
-	public CsvReader(CharConsumer charConsumer) {
+	public CsvReader(AbstractCharConsumer charConsumer) {
 		this(charConsumer, null);
 	}
 
-	public CsvReader(CharConsumer charConsumer,  Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
+	public CsvReader(AbstractCharConsumer charConsumer, Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper) {
 		this.consumer = charConsumer;
 		this.cellConsumerWrapper = cellConsumerWrapper;
 	}

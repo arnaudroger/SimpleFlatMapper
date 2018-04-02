@@ -39,15 +39,19 @@ public class CsvParserRandomDataTest {
 			TestData testData = createTestData();
 
 			testParse(dsl, testData);
+			testParse(dsl.disableSpecialisedCharConsumer(), testData);
 
 			testData.carriageReturn = "\r";
 			testParse(dsl, testData);
+			testParse(dsl.disableSpecialisedCharConsumer(), testData);
 
 			testData.carriageReturn = "\n";
 			testParse(dsl, testData);
+			testParse(dsl.disableSpecialisedCharConsumer(), testData);
 
 			testData.separator = '|';
 			testParse(dsl.separator(testData.separator), testData);
+			testParse(dsl.separator(testData.separator).disableSpecialisedCharConsumer(), testData);
 
 		}
 
@@ -60,6 +64,7 @@ public class CsvParserRandomDataTest {
 		testDsl(testData, dsl.bufferSize(4).trimSpaces());
 		testDsl(testData, dsl);
 		testDsl(testData, dsl.trimSpaces());
+		testDsl(testData, dsl.parallelReader());
 	}
 
 	private TestData createTestData() {

@@ -1,4 +1,4 @@
-package org.simpleflatmapper.reflect.asm;
+package org.simpleflatmapper.reflect;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +9,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-class FactoryClassLoader extends ClassLoader {
+public class FactoryClassLoader extends ClassLoader {
 
 	private class ClassInfo {
 		private final byte[] bytes;

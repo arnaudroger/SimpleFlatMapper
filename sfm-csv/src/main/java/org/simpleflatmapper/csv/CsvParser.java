@@ -316,6 +316,7 @@ public final class CsvParser {
 		protected final org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper;
 		protected final boolean yamlComment;
 		protected final boolean parallelReader;
+		protected final boolean specialisedCharConsumer;
 		
 		protected enum StringPostProcessing { NONE, UNESCAPE, TRIM_AND_UNESCAPE}
 
@@ -331,9 +332,10 @@ public final class CsvParser {
 			cellConsumerWrapper = null;
 			yamlComment = false;
 			parallelReader = false;
+			specialisedCharConsumer = false;
 		}
 
-		protected AbstractDSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader) {
+		protected AbstractDSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader, boolean specialisedCharConsumer) {
 			this.separatorChar = separatorChar;
 			this.quoteChar = quoteChar;
 			this.escapeChar = escapeChar;
@@ -345,6 +347,7 @@ public final class CsvParser {
 			this.cellConsumerWrapper = cellConsumerWrapper;
 			this.yamlComment = yamlComment;
 			this.parallelReader = parallelReader;
+			this.specialisedCharConsumer = specialisedCharConsumer;
 		}
 
 		/**
@@ -586,14 +589,7 @@ public final class CsvParser {
 			final TextFormat textFormat = getTextFormat();
 			CellPreProcessor cellTransformer = getCellTransformer(textFormat, stringPostProcessing);
 			
-			if (!cellTransformer.ignoreLeadingSpace() 
-					&& textFormat.yamlComment == false
-					&& textFormat.escapeChar == '"'
-					&& textFormat.quoteChar == '"'
-					&& textFormat.separatorChar ==',') {
-				return new Rfc4180CharConsumer(charBuffer, cellTransformer);
-			}
-			return new ConfigurableCharConsumer(charBuffer, textFormat, cellTransformer);
+			return AbstractCharConsumer.newCharConsumer(textFormat, charBuffer, cellTransformer, specialisedCharConsumer);
 		}
 
 
@@ -649,7 +645,7 @@ public final class CsvParser {
 		 * @return this
 		 */
 		public D separator(char c) {
-			return newDSL(c, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader);
+			return newDSL(c, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 		/**
@@ -658,7 +654,7 @@ public final class CsvParser {
 		 * @return this
 		 */
 		public D quote(char c) {
-			return newDSL(separatorChar, c, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader);
+			return newDSL(separatorChar, c, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 		/**
@@ -667,7 +663,7 @@ public final class CsvParser {
 		 * @return this
 		 */
 		public D escape(char c) {
-			return newDSL(separatorChar, quoteChar, c, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader);
+			return newDSL(separatorChar, quoteChar, c, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 		/**
@@ -676,7 +672,7 @@ public final class CsvParser {
 		 * @return this
 		 */
 		public D bufferSize(int size) {
-			return newDSL(separatorChar, quoteChar, escapeChar, size, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader);
+			return newDSL(separatorChar, quoteChar, escapeChar, size, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 		/**
@@ -685,7 +681,7 @@ public final class CsvParser {
 		 * @return this
 		 */
 		public D skip(int skip) {
-			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader);
+			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 		/**
@@ -694,12 +690,12 @@ public final class CsvParser {
 		 * @return this
 		 */
 		public D limit(int limit) {
-			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader);
+			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 
 		/**
-		 * on parsing from a reader the Reader will be fetched from a another thread.
+		 * on parsing from a reader the Reader will be fetched from a another thread. Use only if you have spare cores and the file is big enough.
 		 * <p>
 		 * On java 8 and over it will use the ForkJoinPool by default if the number of core is greater than 1, otherwise it will create a new Thread every time.
 		 * </p><p>
@@ -710,7 +706,7 @@ public final class CsvParser {
 		 * @return this
 		 */
 		public D parallelReader() {
-			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, true);
+			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, true, specialisedCharConsumer);
 		}
 		
 		/**
@@ -718,7 +714,11 @@ public final class CsvParser {
 		 * @return this
 		 */
 		public D serialReader() {
-			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, false);
+			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, false, specialisedCharConsumer);
+		}
+		
+		public D disableSpecialisedCharConsumer() {
+			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, false);
 		}
 		
 		/**
@@ -727,11 +727,11 @@ public final class CsvParser {
 		 * @return this
 		 */
 		public D maxBufferSize(int maxBufferSize) {
-			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader);
+			return newDSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 
-		protected abstract D newDSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader);
+		protected abstract D newDSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader, boolean specialisedCharConsumer);
 
 
 	}
@@ -744,14 +744,14 @@ public final class CsvParser {
 		protected DSL() {
 		}
 
-		protected DSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader) {
-			super(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader);
+		protected DSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader, boolean specialisedCharConsumer) {
+			super(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 
 
 		public DSL trimSpaces() {
-            return new DSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.TRIM_AND_UNESCAPE, cellConsumerWrapper, yamlComment, parallelReader);
+            return new DSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.TRIM_AND_UNESCAPE, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
         }
 
 		/**
@@ -768,7 +768,7 @@ public final class CsvParser {
 							return new YamlCellPreProcessor.YamlCellConsumer(cellConsumer, null, getCellTransformer(textFormat, stringPostProcessing));
 						}
 					},
-					true, parallelReader);
+					true, parallelReader, specialisedCharConsumer);
 		}
 
 		/**
@@ -785,16 +785,16 @@ public final class CsvParser {
 							return new YamlCellPreProcessor.YamlCellConsumer(cellConsumer, cellConsumer, getCellTransformer(textFormat, stringPostProcessing));
 						}
 					},
-					true, parallelReader);
+					true, parallelReader, specialisedCharConsumer);
 		}
 
 		public DSL disableUnescaping() {
-			return new DSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.NONE, cellConsumerWrapper, yamlComment, parallelReader);
+			return new DSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, StringPostProcessing.NONE, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 		@Override
-		protected DSL newDSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader) {
-			return new DSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader);
+		protected DSL newDSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader, boolean specialisedCharConsumer) {
+			return new DSL(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 	}
@@ -802,8 +802,8 @@ public final class CsvParser {
 
     public static final class DSLYamlComment extends AbstractDSL<DSLYamlComment> {
 
-		protected DSLYamlComment(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader) {
-			super(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader);
+		protected DSLYamlComment(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader, boolean specialisedCharConsumer) {
+			super(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 		private CsvReader rawReader(CharBuffer charBuffer) throws IOException {
@@ -869,8 +869,8 @@ public final class CsvParser {
 
 
 		@Override
-		protected DSLYamlComment newDSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader) {
-			return new DSLYamlComment(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader);
+		protected DSLYamlComment newDSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader, boolean specialisedCharConsumer) {
+			return new DSLYamlComment(separatorChar, quoteChar, escapeChar, bufferSize, skip, limit, maxBufferSize, stringPostProcessing, cellConsumerWrapper, yamlComment, parallelReader, specialisedCharConsumer);
 		}
 
 	}

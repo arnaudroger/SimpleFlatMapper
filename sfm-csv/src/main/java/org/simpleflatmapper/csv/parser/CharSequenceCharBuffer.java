@@ -1,22 +1,17 @@
 package org.simpleflatmapper.csv.parser;
 
-import java.io.IOException;
-import java.io.Reader;
-
 public final class CharSequenceCharBuffer extends CharBuffer {
 
-	public CharSequenceCharBuffer(final String str)
-			throws IOException {
+	public CharSequenceCharBuffer(final String str) {
 		super(str.toCharArray(), str.length());
 	}
 
-	public CharSequenceCharBuffer(final CharSequence str)
-			throws IOException {
+	public CharSequenceCharBuffer(final CharSequence str) {
 		super(toCharArray(str), str.length());
 	}
 
 	@Override
-	public final boolean next() throws IOException {
+	public final boolean next() {
 		return false;
 	}
 

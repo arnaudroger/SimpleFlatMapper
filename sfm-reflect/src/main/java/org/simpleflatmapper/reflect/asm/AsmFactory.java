@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.asm;
 
 import org.simpleflatmapper.reflect.BiInstantiator;
 import org.simpleflatmapper.reflect.BuilderInstantiatorDefinition;
+import org.simpleflatmapper.reflect.FactoryClassLoader;
 import org.simpleflatmapper.reflect.instantiator.ExecutableInstantiatorDefinition;
 import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;

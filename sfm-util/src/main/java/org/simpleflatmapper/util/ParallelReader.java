@@ -62,7 +62,7 @@ public class ParallelReader extends Reader {
     };
     
     private static final int DEFAULT_READ_BUFFER_SIZE = 8192;
-    private static final int DEFAULT_RING_BUFFER_SIZE = 1024 * 512; // 512k
+    private static final int DEFAULT_RING_BUFFER_SIZE = 1024 * 1024 * 4; // 4MB
     
     private final RingBufferReader reader;
 

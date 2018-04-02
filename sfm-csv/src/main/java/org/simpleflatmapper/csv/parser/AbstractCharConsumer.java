@@ -74,9 +74,9 @@ public abstract class AbstractCharConsumer {
     }
 
     @SuppressWarnings("unchecked")
-    private static Constructor<? extends AbstractCharConsumer> generateSpecialisedCharConsumer(SpecialisationKey key) {
+    private static Constructor<? extends AbstractCharConsumer> generateSpecialisedCharConsumer(final SpecialisationKey key) {
         try {
-            String newName = "org/simpleflatmapper/csv/parser/Asm_"
+            final String newName = "org/simpleflatmapper/csv/parser/Asm_"
                     + (key.ignoreLeadingSpace ? "Ils_" : "")
                     + (key.textFormat.yamlComment ? "Yaml_" : "")
                     + "S_" + Integer.toHexString(key.textFormat.separatorChar)
@@ -85,7 +85,7 @@ public abstract class AbstractCharConsumer {
                     + "_CharConsumer";
 
 
-            Set<String> oldNames = new HashSet<String>(Arrays.asList("org/simpleflatmapper/csv/parser/ConfigurableCharConsumer"));
+            final Set<String> oldNames = new HashSet<String>(Arrays.asList("org/simpleflatmapper/csv/parser/ConfigurableCharConsumer"));
             ClassReader reader = new ClassReader(
                     ConfigurableCharConsumer.class.getResourceAsStream("ConfigurableCharConsumer.class")
             );

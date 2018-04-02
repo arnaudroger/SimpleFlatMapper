@@ -1,8 +1,12 @@
-package org.simpleflatmapper.csv.parser;
+package org.simpleflatmapper.csv.test.parser;
 
 import org.junit.Test;
+import org.simpleflatmapper.csv.parser.AbstractCharConsumer;
+import org.simpleflatmapper.csv.parser.CharSequenceCharBuffer;
+import org.simpleflatmapper.csv.parser.ConfigurableCharConsumer;
+import org.simpleflatmapper.csv.parser.NoopCellPreProcessor;
+import org.simpleflatmapper.csv.parser.TextFormat;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static org.junit.Assert.*;

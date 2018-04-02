@@ -172,7 +172,7 @@ public abstract class AbstractCharConsumer {
                                     while (it.hasNext()) {
                                         name = (String) it.next();
                                         if (s.indexOf(name) != -1) {
-                                            s = desc.replaceAll(name, newName);
+                                            s = s.replaceAll(name, newName);
                                         }
                                     }
                                 }

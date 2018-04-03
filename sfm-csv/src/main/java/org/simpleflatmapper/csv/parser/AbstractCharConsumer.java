@@ -33,13 +33,13 @@ public abstract class AbstractCharConsumer {
         if (specialisedCharConsumer) {
             SpecialisationKey key = new SpecialisationKey(cellTransformer.ignoreLeadingSpace(), textFormat);
 
-            Constructor<? extends AbstractCharConsumer> constructor = null;
+            Constructor<? extends AbstractCharConsumer> constructor;
             
             if (key.equals(RFC4180)) {
                 constructor = RFC4180_CC;
             } else {
                 constructor = specialisedCharConsumers.get(key);
-                if (constructor == null) {
+                if (constructor == null && specialisedCharConsumers.size() < 64) {
                     constructor = createNewSpecialisedCharConsumer(key);
                 }
             }

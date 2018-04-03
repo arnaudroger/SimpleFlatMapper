@@ -332,7 +332,7 @@ public final class CsvParser {
 			cellConsumerWrapper = null;
 			yamlComment = false;
 			parallelReader = false;
-			specialisedCharConsumer = false;
+			specialisedCharConsumer = true;
 		}
 
 		protected AbstractDSL(char separatorChar, char quoteChar, char escapeChar, int bufferSize, int skip, int limit, int maxBufferSize, StringPostProcessing stringPostProcessing, org.simpleflatmapper.util.Function<? super CellConsumer, ? extends CellConsumer> cellConsumerWrapper, boolean yamlComment, boolean parallelReader, boolean specialisedCharConsumer) {

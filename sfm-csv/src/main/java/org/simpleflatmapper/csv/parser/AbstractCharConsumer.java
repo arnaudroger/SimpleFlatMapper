@@ -7,7 +7,6 @@ import org.simpleflatmapper.ow2asm.ClassWriter;
 import org.simpleflatmapper.ow2asm.MethodVisitor;
 import org.simpleflatmapper.reflect.FactoryClassLoader;
 import org.simpleflatmapper.reflect.asm.AsmUtils;
-import org.simpleflatmapper.util.ErrorHelper;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;

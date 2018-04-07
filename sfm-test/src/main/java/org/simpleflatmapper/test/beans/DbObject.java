@@ -27,15 +27,17 @@ public class DbObject {
 		type1, type2, type3, type4;
 		
 		public static Type shortForm(String str) {
-			switch (str) {
-				case "t1":
-					return type1;
-				case "t2":
-					return type2;
-				case "t3":
-					return type3;
-				case "t4":
-					return type4;
+			if ( "t1".equals(str)) {
+				return type1;
+			}
+			if ( "t2".equals(str)) {
+				return type2;
+			}
+			if ( "t3".equals(str)) {
+				return type3;
+			}
+			if ( "t4".equals(str)) {
+				return type4;
 			}
 			return null;
 		}

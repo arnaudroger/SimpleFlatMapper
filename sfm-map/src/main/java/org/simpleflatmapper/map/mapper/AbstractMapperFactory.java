@@ -156,22 +156,22 @@ public abstract class AbstractMapperFactory<
 
 	/**
 	 * Associate an alias on the property key to rename to value.
-	 * @param key the property to rename
+	 * @param column the column name to rename
 	 * @param value then name to rename to
 	 * @return the current factory
 	 */
-	public final MF addAlias(String key, String value) {
-		return addColumnDefinition(key,  identity.addRename(value));
+	public final MF addAlias(String column, String value) {
+		return addColumnDefinition(column,  identity.addRename(value));
 	}
 
     /**
      * Associate the specified columnDefinition to the specified property.
-     * @param key the property
+     * @param column the name of the column
      * @param columnDefinition the columnDefinition
      * @return the current factory
      */
-	public final MF addColumnDefinition(String key, CD columnDefinition) {
-		columnDefinitions.addColumnDefinition(key, columnDefinition);
+	public final MF addColumnDefinition(String column, CD columnDefinition) {
+		columnDefinitions.addColumnDefinition(column, columnDefinition);
 		return (MF) this;
 	}
 
@@ -188,13 +188,13 @@ public abstract class AbstractMapperFactory<
 
 	/**
 	 * Associate the specified columnProperties to the property matching the predicate.
-	 * @param name the property predicate
+	 * @param column the column name
 	 * @param properties the properties
 	 * @return the current factory
 	 */
-	public final MF addColumnProperty(String name, Object... properties) {
+	public final MF addColumnProperty(String column, Object... properties) {
 		for(Object property : properties) {
-			columnDefinitions.addColumnProperty(name, property);
+			columnDefinitions.addColumnProperty(column, property);
 		}
 		return (MF) this;
 	}

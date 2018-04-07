@@ -1,8 +1,10 @@
 package org.simpleflatmapper.jdbc.test;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
+import org.simpleflatmapper.map.property.ConverterProperty;
 import org.simpleflatmapper.test.beans.DbEnumObject;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.util.TypeReference;
@@ -52,7 +54,28 @@ public class JdbcMapperEnumTest {
 		assertEquals(DbObject.Type.type2, mapper.map(rs).getVal());
 		
 	}
-	
+
+
+    @Test
+    public void testIndexedEnumFactoryMethod() throws Exception {
+        JdbcMapperBuilder<DbEnumObject> builder = JdbcMapperFactoryHelper.asm().newBuilder(DbEnumObject.class);
+        builder.addMapping("val",1, Types.VARCHAR, new Object[] {
+                ConverterProperty.of(new Converter<String, DbObject.Type>() {
+            @Override
+            public DbObject.Type convert(String s) throws Exception {
+                return DbObject.Type.shortForm(s);
+            }
+        })});
+
+        JdbcMapper<DbEnumObject> mapper = builder.mapper();
+
+        ResultSet rs = mock(ResultSet.class);
+
+        when(rs.getString(1)).thenReturn("t2");
+
+        assertEquals(DbObject.Type.type2, mapper.map(rs).getVal());
+
+    }
 	
 	@Test
 	public void testIndexedEnumOrdinal() throws Exception {

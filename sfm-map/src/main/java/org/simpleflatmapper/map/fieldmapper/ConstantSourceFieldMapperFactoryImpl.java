@@ -3,6 +3,7 @@ package org.simpleflatmapper.map.fieldmapper;
 import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.map.impl.JoinUtils;
+import org.simpleflatmapper.map.property.ConverterProperty;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
 import org.simpleflatmapper.map.context.MappingContextFactoryBuilder;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
@@ -134,10 +135,23 @@ public final class ConstantSourceFieldMapperFactoryImpl<S, K extends FieldKey<K>
 			}
         }
 
+		ConverterProperty converterProperty = columnDefinition.lookFor(ConverterProperty.class);
+		
+		if (converterProperty != null) {
+			Type t = converterProperty.inType;
+			if (Object.class.equals(t)) { // lost type info... assume sql type is right
+				t = columnKey.getType(t);
+			}
+			getter = getterFactory.newGetter(t, columnKey, columnDefinition.properties());
+			if (getter == null) {
+				return null;
+			}
+			return new GetterWithConverter(converterProperty.function, getter);
+		}
+
 		if (getter == null) {
             getter = getterFactory.newGetter(propertyType, columnKey, columnDefinition.properties());
         }
-
 		// try to identify constructor that we could build from
 		if (getter == null) {
 			getter = lookForAlternativeGetter(propertyClassMetaSupplier.get(), columnKey, columnDefinition, new HashSet<Type>());

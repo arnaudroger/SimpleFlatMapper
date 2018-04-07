@@ -24,7 +24,22 @@ public class DbObject {
 
 	public enum
 	Type {
-		type1, type2, type3, type4
+		type1, type2, type3, type4;
+		
+		public static Type shortForm(String str) {
+			switch (str) {
+				case "t1":
+					return type1;
+				case "t2":
+					return type2;
+				case "t3":
+					return type3;
+				case "t4":
+					return type4;
+			}
+			return null;
+		}
+
 	}
 	private long id;
 	private String name;

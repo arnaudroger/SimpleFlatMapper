@@ -1,10 +1,12 @@
 package org.simpleflatmapper.csv.test;
 
 import org.junit.Test;
+import org.simpleflatmapper.converter.Converter;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperBuilder;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
+import org.simpleflatmapper.map.property.ConverterProperty;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.impl.CsvMapperImpl;
 import org.simpleflatmapper.test.jdbc.DbHelper;
@@ -287,6 +289,18 @@ public class CsvMapperImplTest {
 		assertEquals(new BigInteger("1234567891011121314"), biggy.bi);
 		assertEquals(new BigDecimal("123456789.1234556789"), biggy.bd);
 
+	}
+	
+	@Test
+	public void testConverterProperty() throws IOException {
+		DbObject d = CsvParser.mapWith(CsvMapperFactory.newInstance().addColumnProperty("typeName", ConverterProperty.of(new Converter<String, DbObject.Type>() {
+			@Override
+			public DbObject.Type convert(String in) throws Exception {
+				return DbObject.Type.shortForm(in);
+			}
+		})).newMapper(DbObject.class)).iterator("typeName\nt1").next();
+		
+		assertEquals(d.getTypeName(), DbObject.Type.type1);
 	}
 	
 	public static class Biggy {

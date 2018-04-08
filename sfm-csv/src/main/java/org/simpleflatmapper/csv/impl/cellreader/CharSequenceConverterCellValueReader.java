@@ -6,9 +6,9 @@ import org.simpleflatmapper.csv.ParsingContext;
 import org.simpleflatmapper.util.ErrorHelper;
 
 public class CharSequenceConverterCellValueReader<P> implements CellValueReader<P> {
-    private final Converter<? super CharSequence, ? extends P> converter;
+    private final Converter<? super String, ? extends P> converter;
 
-    public CharSequenceConverterCellValueReader(Converter<? super CharSequence, ? extends P> converter) {
+    public CharSequenceConverterCellValueReader(Converter<? super String, ? extends P> converter) {
         this.converter = converter;
     }
 

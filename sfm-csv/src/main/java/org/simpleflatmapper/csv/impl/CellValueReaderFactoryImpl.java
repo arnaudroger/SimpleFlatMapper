@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.simpleflatmapper.map.property.ConverterProperty;
+import org.simpleflatmapper.reflect.getter.GetterWithConverter;
 import org.simpleflatmapper.util.TypeHelper;
 
 public final class CellValueReaderFactoryImpl implements CellValueReaderFactory {
@@ -55,6 +57,11 @@ public final class CellValueReaderFactoryImpl implements CellValueReaderFactory 
 		Class<? extends P> propertyClass =  TypeHelper.toClass(propertyType);
 
 		CellValueReader<P> reader = null;
+
+		ConverterProperty converterProperty = columnDefinition.lookFor(ConverterProperty.class);
+		if (converterProperty != null) {
+			return new CharSequenceConverterCellValueReader(converterProperty.function);
+		}
 
 		if (propertyClass.equals(Date.class)) {
 			String[] patterns = columnDefinition.dateFormats();

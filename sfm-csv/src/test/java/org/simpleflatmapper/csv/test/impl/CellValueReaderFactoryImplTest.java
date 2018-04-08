@@ -34,12 +34,12 @@ public class CellValueReaderFactoryImplTest {
 
     @Test
     public void testDoesNotReaderAReaderForJavaSqlDate() throws ClassNotFoundException {
-        assertNull(cellValueReaderFactory.getReader(Class.forName("java.sql.Date"), 1, null, null));
+        assertNull(cellValueReaderFactory.getReader(Class.forName("java.sql.Date"), 1, CsvColumnDefinition.identity(), null));
     }
 
     @Test
     public void testReturnStringForObject() {
-        CellValueReader<?> reader = cellValueReaderFactory.getReader(Object.class, 1, null, null);
+        CellValueReader<?> reader = cellValueReaderFactory.getReader(Object.class, 1, CsvColumnDefinition.identity(), null);
         String object = "string";
         assertEquals(object, reader.read(object.toCharArray(), 0, object.length(), null));
     }

@@ -17,8 +17,9 @@ function java6 {
 #exit
 java8
 rm release.properties
-REL=3.17.2
-DEV=3.17.3-SNAPSHOT
+REL=3.17.3
+DEV=3.17.4-SNAPSHOT
+REPOID=orgsimpleflatmapper-1604
 mvn --batch-mode -Dtag=sfm-parent-$REL -Pdev release:prepare \
                  -DreleaseVersion=$REL \
                  -DdevelopmentVersion=$DEV
@@ -27,7 +28,6 @@ cp release.properties tmp/release.properties
 #GPG_TTY=$(tty)
 #export GPG_TTY
 
-REPOID=orgsimpleflatmapper-1603
 
 java7
 cp tmp/release.properties .

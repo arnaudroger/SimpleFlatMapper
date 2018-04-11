@@ -204,17 +204,7 @@ public class AsmCharConsumerFactory extends CharConsumerFactory {
     private static final Constructor<? extends AbstractCharConsumer> RFC4180_CC;
 
     static {
-        Constructor<? extends AbstractCharConsumer> rfc4180Cc = null;
-        try {
-            rfc4180Cc = generateSpecialisedCharConsumer(RFC4180);
-        } catch (Throwable e) {
-            if (e instanceof NoClassDefFoundError) {
-                // ignore
-            } else {
-                throw e;
-            }
-        }
-        RFC4180_CC = rfc4180Cc;
+        RFC4180_CC = generateSpecialisedCharConsumer(RFC4180);
     }
 
     private static final ConcurrentHashMap<SpecialisationKey, Constructor<? extends AbstractCharConsumer>> specialisedCharConsumers =

@@ -1,6 +1,7 @@
 package org.simpleflatmapper.csv.test.parser;
 
 import org.junit.Test;
+import org.simpleflatmapper.csv.impl.CharConsumerFactory;
 import org.simpleflatmapper.csv.parser.AbstractCharConsumer;
 import org.simpleflatmapper.csv.parser.CharSequenceCharBuffer;
 import org.simpleflatmapper.csv.parser.ConfigurableCharConsumer;
@@ -17,7 +18,8 @@ public class AbstractCharConsumerTest {
     public void newCharConsumer() throws Exception {
         AbstractCharConsumer abstractCharConsumer;
 
-        abstractCharConsumer = AbstractCharConsumer.newCharConsumer(TextFormat.RFC4180, new CharSequenceCharBuffer("aa,bb,cc"), NoopCellPreProcessor.INSTANCE, false);
+        CharConsumerFactory charConsumerFactory = CharConsumerFactory.newInstance();
+        abstractCharConsumer = charConsumerFactory.newCharConsumer(TextFormat.RFC4180, new CharSequenceCharBuffer("aa,bb,cc"), NoopCellPreProcessor.INSTANCE, false);
 
         assertTrue(abstractCharConsumer instanceof ConfigurableCharConsumer);
 
@@ -28,7 +30,7 @@ public class AbstractCharConsumerTest {
         assertEquals(false, get("ignoreLeadingSpace", abstractCharConsumer));
 
 
-        abstractCharConsumer = AbstractCharConsumer.newCharConsumer(TextFormat.RFC4180, new CharSequenceCharBuffer("aa,bb,cc"), NoopCellPreProcessor.INSTANCE, true);
+        abstractCharConsumer = charConsumerFactory.newCharConsumer(TextFormat.RFC4180, new CharSequenceCharBuffer("aa,bb,cc"), NoopCellPreProcessor.INSTANCE, true);
 
         assertFalse(abstractCharConsumer instanceof ConfigurableCharConsumer);
 

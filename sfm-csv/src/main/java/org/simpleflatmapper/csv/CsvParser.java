@@ -1,5 +1,6 @@
 package org.simpleflatmapper.csv;
 
+import org.simpleflatmapper.csv.impl.CharConsumerFactory;
 import org.simpleflatmapper.csv.impl.CsvColumnDefinitionProviderImpl;
 import org.simpleflatmapper.csv.impl.DynamicCsvMapper;
 import org.simpleflatmapper.csv.parser.*;
@@ -100,6 +101,8 @@ public final class CsvParser {
 	public static final int DEFAULT_BUFFER_SIZE_4K = 1024 * 4;
 	public static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
 
+	
+	private static final CharConsumerFactory CHAR_CONSUMER_FACTORY = CharConsumerFactory.newInstance();
 	/**
 	 *
 	 * @param c the separator char
@@ -589,7 +592,7 @@ public final class CsvParser {
 			final TextFormat textFormat = getTextFormat();
 			CellPreProcessor cellTransformer = getCellTransformer(textFormat, stringPostProcessing);
 			
-			return AbstractCharConsumer.newCharConsumer(textFormat, charBuffer, cellTransformer, specialisedCharConsumer);
+			return CHAR_CONSUMER_FACTORY.newCharConsumer(textFormat, charBuffer, cellTransformer, specialisedCharConsumer);
 		}
 
 

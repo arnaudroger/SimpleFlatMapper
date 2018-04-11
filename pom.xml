@@ -596,6 +596,7 @@
             </activation>
             <modules>
                 <module>sfm-test-sandbox</module>
+                <module>sfm-test-sandbox-csv</module>
                 <module>sfm-test-osgi</module>
                 <module>sfm-test-lombok</module>
                 <module>sfm-test-kotlin</module>

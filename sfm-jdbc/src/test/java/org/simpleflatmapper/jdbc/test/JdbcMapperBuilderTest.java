@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.jdbc.JdbcColumnKey;
 import org.simpleflatmapper.jdbc.JdbcMapper;
 import org.simpleflatmapper.jdbc.JdbcMapperBuilder;
+import org.simpleflatmapper.jdbc.JdbcMapperFactory;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperBuilderErrorHandler;
@@ -138,7 +139,8 @@ public class JdbcMapperBuilderTest {
 		assertEquals(1, l.size());
 		assertEquals(ZoneId.of(zoneId), l.get(0).zoneId);
 	}
-
+	
+	
 	public static class C501 {
 		public final ZoneId zoneId;
 
@@ -146,6 +148,47 @@ public class JdbcMapperBuilderTest {
 			this.zoneId = zoneId;
 		}
 	}
+
+
+	@Test
+	public void test509ZoneIdvsStr() throws SQLException {
+		JdbcMapperBuilder<C509> builder = JdbcMapperFactoryHelper.noAsm()
+				.newBuilder(C509.class);
+
+		builder.addMapping("zoneId", 1, Types.VARCHAR);
+		
+		JdbcMapper<C509> mapper = builder.mapper();
+		
+		ResultSet rs = mock(ResultSet.class);
+		when(rs.next()).thenReturn(true, false);
+		when(rs.getString(1)).thenReturn("UTC");
+
+
+		List<C509> l = mapper.forEach(rs, new ListCollector<C509>()).getList();
+
+		assertEquals(1, l.size());
+		assertEquals("UTC", l.get(0).zoneId.getId());
+		
+
+	}
+
+
+	public static class C509 {
+		private ZoneId zoneId;
+
+		public ZoneId getZoneId() {
+			return zoneId;
+		}
+
+		public void setZoneId(ZoneId zoneId) {
+			throw new UnsupportedOperationException();
+		}
+
+		public void setZoneId(CharSequence zoneId) {
+			this.zoneId = ZoneId.of(zoneId.toString());
+		}
+	}
+
 
 	//IFJAVA8_END
 

@@ -1,6 +1,7 @@
 package org.simpleflatmapper.reflect.test.meta;
 
 import org.junit.Test;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.getter.IdentityGetter;
 import org.simpleflatmapper.reflect.ReflectionService;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
@@ -21,7 +22,7 @@ public class SelfPropertyMetaTest {
         ClassMeta<String> direct = ReflectionService.newInstance().getClassMeta(String.class);
 
 
-        PropertyMeta<String, Object> property = direct.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("bbb", 0, true, true), new Object[0]);
+        PropertyMeta<String, Object> property = direct.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("bbb", 0, true, true), new Object[0], (TypeAffinity)null);
 
 
         assertTrue("Expect SelfPropertyMeta " + property, property instanceof SelfPropertyMeta);

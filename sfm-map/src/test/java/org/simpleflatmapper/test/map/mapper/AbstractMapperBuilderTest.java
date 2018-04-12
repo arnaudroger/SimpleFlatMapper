@@ -10,6 +10,7 @@ import org.simpleflatmapper.map.Mapper;
 import org.simpleflatmapper.map.MapperBuildingException;
 import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.MappingContext;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
 import org.simpleflatmapper.test.beans.DbListObject;
 import org.simpleflatmapper.test.map.SampleFieldKey;
@@ -480,7 +481,7 @@ public class AbstractMapperBuilderTest {
             String str = headers[i];
             builder.addMapping(str);
             builderIndexed.addMapping(str, i);
-            row[i] = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(str), new Object[0]).getGetter().get(instance1);
+            row[i] = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(str), new Object[0], (TypeAffinity)null).getGetter().get(instance1);
 
         }
         Mapper<Object[], T> mapper = builder.mapper();

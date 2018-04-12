@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.simpleflatmapper.reflect.ConstructorNotFoundException;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.test.beans.Foo;
 import org.simpleflatmapper.test.junit.LibrarySetsClassLoader;
@@ -67,10 +68,10 @@ public class TupleClassMetaTest {
     public void testIndexStartingAtZero() {
         final PropertyFinder<Tuple2<Foo, Foo>> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
-        final PropertyMeta<Tuple2<Foo, Foo>, ?> t0_foo = propertyFinder.findProperty(newMatcher("t0_foo"), new Object[0]);
-        final PropertyMeta<Tuple2<Foo, Foo>, ?> t0_bar = propertyFinder.findProperty(newMatcher("t0_bar"), new Object[0]);
-        final PropertyMeta<Tuple2<Foo, Foo>, ?> t1_foo = propertyFinder.findProperty(newMatcher("t1_foo"), new Object[0]);
-        final PropertyMeta<Tuple2<Foo, Foo>, ?> t1_bar = propertyFinder.findProperty(newMatcher("t1_bar"), new Object[0]);
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t0_foo = propertyFinder.findProperty(newMatcher("t0_foo"), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t0_bar = propertyFinder.findProperty(newMatcher("t0_bar"), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t1_foo = propertyFinder.findProperty(newMatcher("t1_foo"), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t1_bar = propertyFinder.findProperty(newMatcher("t1_bar"), new Object[0], (TypeAffinity)null);
 
         validate(t0_foo, t0_bar, t1_foo, t1_bar);
 
@@ -110,10 +111,10 @@ public class TupleClassMetaTest {
     public void testIndexStartingFlexiblePrefix() {
         final PropertyFinder<Tuple2<Foo, Foo>> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
-        final PropertyMeta<Tuple2<Foo, Foo>, ?> t0_foo = propertyFinder.findProperty(newMatcher("ta_foo"), new Object[0]);
-        final PropertyMeta<Tuple2<Foo, Foo>, ?> t0_bar = propertyFinder.findProperty(newMatcher("ta_bar"), new Object[0]);
-        final PropertyMeta<Tuple2<Foo, Foo>, ?> t1_foo = propertyFinder.findProperty(newMatcher("tb_foo"), new Object[0]);
-        final PropertyMeta<Tuple2<Foo, Foo>, ?> t1_bar = propertyFinder.findProperty(newMatcher("tb_bar"), new Object[0]);
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t0_foo = propertyFinder.findProperty(newMatcher("ta_foo"), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t0_bar = propertyFinder.findProperty(newMatcher("ta_bar"), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t1_foo = propertyFinder.findProperty(newMatcher("tb_foo"), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<Tuple2<Foo, Foo>, ?> t1_bar = propertyFinder.findProperty(newMatcher("tb_bar"), new Object[0], (TypeAffinity)null);
         validate(t0_foo, t0_bar, t1_foo, t1_bar);
 
     }

@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.test.setter;
 
 import org.junit.Test;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
@@ -32,8 +33,8 @@ public class Issue451 {
             }
         });
 
-        SubPropertyMeta f = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_f"), new Object[0]);
-        SubPropertyMeta n = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_n"), new Object[0]);
+        SubPropertyMeta f = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_f"), new Object[0], (TypeAffinity)null);
+        SubPropertyMeta n = (SubPropertyMeta)finder.findProperty(DefaultPropertyNameMatcher.of("b_n"), new Object[0], (TypeAffinity)null);
 
         assertEquals(AppendCollectionSetter.class, n.getOwnerProperty().getSetter().getClass());
 

@@ -1,9 +1,11 @@
 package org.simpleflatmapper.reflect.meta;
 
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.util.Predicate;
+import org.simpleflatmapper.util.TypeHelper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -19,23 +21,35 @@ public abstract class PropertyFinder<T> {
 		this.selfScoreFullName = selfScoreFullName;
 	}
 
-	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties) {
-		return findProperty(propertyNameMatcher, properties, new DefaultPropertyFinderProbe(propertyNameMatcher));
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinity typeAffinity) {
+		return findProperty(propertyNameMatcher, properties, toTypeAffinityScorer(typeAffinity));
+	}
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity) {
+		return findProperty(propertyNameMatcher, properties, typeAffinity, new DefaultPropertyFinderProbe(propertyNameMatcher));
+	}
+
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinity typeAffinity, PropertyFinderProbe propertyFinderProbe) {
+		return findProperty(propertyNameMatcher, properties, toTypeAffinityScorer(typeAffinity), propertyFinderProbe);
 	}
 		@SuppressWarnings("unchecked")
-	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, PropertyFinderProbe propertyFinderProbe) {
+	public final <E> PropertyMeta<T, E> findProperty(PropertyNameMatcher propertyNameMatcher, Object[] properties, TypeAffinityScorer typeAffinity, PropertyFinderProbe propertyFinderProbe) {
 		MatchingProperties matchingProperties = new MatchingProperties(propertyFilter, propertyFinderProbe);
-		lookForProperties(propertyNameMatcher, properties, matchingProperties, PropertyMatchingScore.newInstance(selfScoreFullName), true, IDENTITY_TRANSFORMER);
+		lookForProperties(propertyNameMatcher, properties, matchingProperties, PropertyMatchingScore.newInstance(selfScoreFullName), true, IDENTITY_TRANSFORMER,  typeAffinity);
 		return (PropertyMeta<T, E>)matchingProperties.selectBestMatch();
+	}
+
+	private TypeAffinityScorer toTypeAffinityScorer(TypeAffinity typeAffinity) {
+		return new TypeAffinityScorer(typeAffinity);
 	}
 
 	public abstract void lookForProperties(
 			PropertyNameMatcher propertyNameMatcher,
-			Object[] properties, 
+			Object[] properties,
 			FoundProperty<T> matchingProperties,
 			PropertyMatchingScore score,
 			boolean allowSelfReference,
-			PropertyFinderTransformer propertyFinderTransformer);
+			PropertyFinderTransformer propertyFinderTransformer, 
+			TypeAffinityScorer typeAffinityScorer);
 
 
 	public abstract List<InstantiatorDefinition> getEligibleInstantiatorDefinitions();
@@ -66,10 +80,10 @@ public abstract class PropertyFinder<T> {
 		@Override
 		public <P extends  PropertyMeta<T, ?>> void found(P propertyMeta,
 														  Runnable selectionCallback,
-														  PropertyMatchingScore score) {
+														  PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
 			if (propertyFilter.test(propertyMeta)) {
 				propertyFinderProbe.found(propertyMeta, score);
-				matchedProperties.add(new MatchedProperty<T, P>(propertyMeta, selectionCallback, score));
+				matchedProperties.add(new MatchedProperty<T, P>(propertyMeta, selectionCallback, score, typeAffinityScorer.score(propertyMeta.getPropertyType())));
 			}
 		}
 
@@ -89,11 +103,13 @@ public abstract class PropertyFinder<T> {
 		private final P propertyMeta;
 		private final Runnable selectionCallback;
 		private final PropertyMatchingScore score;
+		private final int typeAffinityScore;
 
-		private MatchedProperty(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score) {
+		private MatchedProperty(P propertyMeta, Runnable selectionCallback, PropertyMatchingScore score, int typeAffinityScore) {
 			this.propertyMeta = propertyMeta;
 			this.selectionCallback = selectionCallback;
 			this.score = score;
+			this.typeAffinityScore = typeAffinityScore;
 		}
 
 
@@ -102,7 +118,12 @@ public abstract class PropertyFinder<T> {
 			int i =  this.score.compareTo(o.score);
 			
 			if (i == 0) {
-				return compare(this.propertyMeta, o.propertyMeta);
+				i = (typeAffinityScore > o.typeAffinityScore) ? -1 : ((typeAffinityScore == o.typeAffinityScore) ? 0 : 1);
+				if (i == 0) {
+					return compare(this.propertyMeta, o.propertyMeta);
+				} else {
+					return i;
+				}
 			} else {
 				return i;
 			}
@@ -161,10 +182,35 @@ public abstract class PropertyFinder<T> {
 		}
 	}
 
+	public static class TypeAffinityScorer {
+
+		private Class<?>[] affinities;
+		public TypeAffinityScorer(TypeAffinity typeAffinity) {
+			if (typeAffinity == null || typeAffinity.getAffinities() == null) {
+				affinities = new Class[0];
+			} else {
+				affinities = typeAffinity.getAffinities();
+			}
+		}
+
+		public TypeAffinityScorer(Class<?>[] affinities) {
+			this.affinities = affinities;
+		}
+
+		public int score(Type type) {
+			for(int i = 0; i < affinities.length; i++) {
+				if (TypeHelper.isAssignable(type, affinities[i])) {
+					return affinities.length - i;
+				}
+			}
+			return -1;
+		}
+	}
+	
     public interface FoundProperty<T> {
         <P extends  PropertyMeta<T, ?>> void found(P propertyMeta,
-                                                   Runnable selectionCallback,
-                                                   PropertyMatchingScore score);
+												   Runnable selectionCallback,
+												   PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer);
     }
 
 

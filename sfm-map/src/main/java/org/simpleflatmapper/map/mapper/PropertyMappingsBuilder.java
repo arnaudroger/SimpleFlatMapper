@@ -8,6 +8,7 @@ import org.simpleflatmapper.map.MapperConfig;
 import org.simpleflatmapper.map.impl.ExtendPropertyFinder;
 import org.simpleflatmapper.map.property.GetterProperty;
 import org.simpleflatmapper.map.property.SetterProperty;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.getter.NullGetter;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
@@ -92,7 +93,7 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 		PropertyNameMatcher propertyNameMatcher = propertyNameMatcherFactory.newInstance(key);
 		final PropertyMeta<T, P> prop =
 				(PropertyMeta<T, P>) effectivePropertyFinder
-						.findProperty(propertyNameMatcher, columnDefinition.properties(), propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher));
+						.findProperty(propertyNameMatcher, columnDefinition.properties(), toTypeAffinity(key), propertyMappingsBuilderProbe.propertyFinderProbe(propertyNameMatcher));
 
 
 		if (prop == null) {
@@ -107,6 +108,13 @@ public final class PropertyMappingsBuilder<T, K extends FieldKey<K>, D extends C
 
 			return propertyMapping;
 		}
+	}
+
+	private TypeAffinity toTypeAffinity(K key) {
+		if (key instanceof TypeAffinity) {
+			return (TypeAffinity) key;
+		}
+		return null;
 	}
 
 	private <T> PropertyFinder<T> wrapPropertyFinder(PropertyFinder<T> propertyFinder) {

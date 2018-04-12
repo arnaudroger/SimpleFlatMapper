@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.test.setter;
 
 import org.junit.Test;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
@@ -130,7 +131,7 @@ public class Issue450 {
 
 
     private String getPathFor(PropertyFinder<?> finder, String prop) {
-        return finder.findProperty(DefaultPropertyNameMatcher.of(prop), new Object[0], prob).getPath();
+        return finder.findProperty(DefaultPropertyNameMatcher.of(prop), new Object[0], (TypeAffinity)null, prob).getPath();
     }
 
     private PropertyFinder<?> getTuple2IntegerFooPropertyFinder() {

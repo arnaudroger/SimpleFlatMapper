@@ -16,6 +16,7 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.instantiator.InstantiatorDefinitions;
+import org.simpleflatmapper.reflect.meta.PropertyFinder;
 import org.simpleflatmapper.reflect.meta.SubPropertyMeta;
 import org.simpleflatmapper.reflect.setter.NullSetter;
 import org.simpleflatmapper.reflect.ObjectSetterFactory;
@@ -51,6 +52,7 @@ public final class CellSetterFactory {
 			return 0;
 		}
 	};
+	public static final PropertyFinder.TypeAffinityScorer TYPE_AFFINITY_SCORER = new PropertyFinder.TypeAffinityScorer(new Class[]{CharSequence.class});
 
 	private final CellValueReaderFactory cellValueReaderFactory;
 	private final MapperBuilderErrorHandler mapperBuilderErrorHandler;
@@ -256,7 +258,7 @@ public final class CellSetterFactory {
 							return propertyMeta.isConstructorProperty()
 									|| propertyMeta.isSubProperty() && ((SubPropertyMeta)propertyMeta).getOwnerProperty().isConstructorProperty();
 						}
-					}).findProperty(DefaultPropertyNameMatcher.exact(parameter.getName()), columnDefinition.properties());
+					}).findProperty(DefaultPropertyNameMatcher.exact(parameter.getName()), columnDefinition.properties(), TYPE_AFFINITY_SCORER);
 					reader = cellValueReaderFromFactory(property, index, columnDefinition, parsingContextFactoryBuilder);
 					if (reader != null) {
 						Instantiator<P, P> instantiator =

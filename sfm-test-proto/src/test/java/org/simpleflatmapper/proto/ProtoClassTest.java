@@ -6,6 +6,7 @@ import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.map.property.DateFormatProperty;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
@@ -149,7 +150,7 @@ message AddressBook {
             public boolean test(PropertyMeta<?, ?> propertyMeta) {
                 return true;
             }
-        }).findProperty(DefaultPropertyNameMatcher.of("ts"), new Object[0]);
+        }).findProperty(DefaultPropertyNameMatcher.of("ts"), new Object[0], (TypeAffinity)null);
         
         assertEquals(Timestamp.class, ts.getPropertyType());
 

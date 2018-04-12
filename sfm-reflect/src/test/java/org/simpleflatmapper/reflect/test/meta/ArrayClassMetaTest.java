@@ -5,6 +5,7 @@ import org.simpleflatmapper.reflect.Instantiator;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.InstantiatorFactory;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.ArrayClassMeta;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
@@ -36,7 +37,7 @@ public class ArrayClassMetaTest {
             public boolean test(Object propertyMeta) {
                 return true;
             }
-        }).findProperty(DefaultPropertyNameMatcher.of("3"), new Object[0]);
+        }).findProperty(DefaultPropertyNameMatcher.of("3"), new Object[0], (TypeAffinity)null);
 
         Object[] array = new Object[10];
         p.getSetter().set(array, "aaa");
@@ -70,7 +71,7 @@ public class ArrayClassMetaTest {
             public boolean test(Object propertyMeta) {
                 return true;
             }
-        }).findProperty(DefaultPropertyNameMatcher.of("3"), new Object[0]);
+        }).findProperty(DefaultPropertyNameMatcher.of("3"), new Object[0], (TypeAffinity)null);
 
         p.getSetter().set(array, value);
         assertEquals(value, p.getGetter().get(array));
@@ -156,7 +157,7 @@ public class ArrayClassMetaTest {
                 public boolean test(Object propertyMeta) {
                     return true;
                 }
-            }).findProperty(DefaultPropertyNameMatcher.of("v"), new Object[0]);
+            }).findProperty(DefaultPropertyNameMatcher.of("v"), new Object[0], (TypeAffinity)null);
     }
 
     private Object instantiate(ClassMeta<?> classMeta) throws Exception {

@@ -69,14 +69,14 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
     public void lookForProperties(
             final PropertyNameMatcher propertyNameMatcher,
             Object[] properties, final FoundProperty matchingProperties,
-            final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer) {
+            final PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
 
 
         if (isKeyValueEnabled(properties)) {
             propertyFinderTransformer.apply(keyValuePropertyFinder).lookForProperties(propertyNameMatcher,
                     properties, new FoundProperty() {
                         @Override
-                        public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
+                        public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
 
                             Runnable sCallback = new Runnable() {
                                 @Override
@@ -87,11 +87,11 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                                 }
                             };
 
-                            matchingProperties.found(new SubPropertyMeta(propertyMeta.getReflectService(), elementPropertyMeta, propertyMeta), sCallback, score.matches(propertyNameMatcher));
+                            matchingProperties.found(new SubPropertyMeta(propertyMeta.getReflectService(), elementPropertyMeta, propertyMeta), sCallback, score.matches(propertyNameMatcher), typeAffinityScorer);
                         }
                     },
                     score,
-                    false, propertyFinderTransformer);
+                    false, propertyFinderTransformer, typeAffinityScorer);
         }
         if (isColunnKeyEnabled(properties)) {
             // classic keys set
@@ -104,7 +104,7 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
                 propertyFinderTransformer.apply(propertyFinder).lookForProperties(valueMatcher,
                         properties, new FoundProperty<V>() {
                             @Override
-                            public <P extends PropertyMeta<V, ?>> void found(final P propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
+                            public <P extends PropertyMeta<V, ?>> void found(final P propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
                                 final PropertyMeta<T, ?> keyProperty = keyProperty(keyMatcher);
                                 Runnable sCallback = new Runnable() {
                                     @Override
@@ -119,15 +119,15 @@ public class MapPropertyFinder<T extends Map<K, V>, K, V> extends PropertyFinder
 
                                 if (keyProperty != null) {
                                     if (propertyMeta instanceof SelfPropertyMeta) {
-                                        matchingProperties.found(keyProperty, sCallback, score.self(keyProperty.getPropertyClassMeta(), keyMatcher.toString()));
+                                        matchingProperties.found(keyProperty, sCallback, score.self(keyProperty.getPropertyClassMeta(), keyMatcher.toString()), typeAffinityScorer);
                                     } else {
-                                        matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), sCallback, score.matches(keyMatcher));
+                                        matchingProperties.found(newSubPropertyMeta(keyProperty, propertyMeta), sCallback, score.matches(keyMatcher), typeAffinityScorer);
                                     }
                                 }
                             }
                         },
                         score,
-                        true, propertyFinderTransformer);
+                        true, propertyFinderTransformer, typeAffinityScorer);
             }
         }
 

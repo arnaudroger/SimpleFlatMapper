@@ -3,6 +3,7 @@ package org.simpleflatmapper.reflect.test.meta;
 
 import org.junit.Test;
 import org.simpleflatmapper.reflect.Getter;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
@@ -30,7 +31,7 @@ public class SubPropertyMetaTest {
                         return true;
                     }
                 })
-                .findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false), new Object[0]);
+                .findProperty(new DefaultPropertyNameMatcher("dbObject_name", 0, false, false), new Object[0], (TypeAffinity)null);
 
         assertTrue(property instanceof SubPropertyMeta);
         assertTrue(property.isSubProperty());

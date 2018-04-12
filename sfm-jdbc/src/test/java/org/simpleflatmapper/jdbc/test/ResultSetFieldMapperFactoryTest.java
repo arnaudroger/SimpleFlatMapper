@@ -7,6 +7,7 @@ import org.simpleflatmapper.jdbc.ResultSetGetterFactory;
 import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactory;
 import org.simpleflatmapper.map.fieldmapper.ConstantSourceFieldMapperFactoryImpl;
 import org.simpleflatmapper.map.mapper.PropertyMapping;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.map.FieldMapper;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -30,7 +31,7 @@ public class ResultSetFieldMapperFactoryTest {
 	public void testPrimitiveField() {
 
 		ClassMeta<DbObject> classMeta = ReflectionService.newInstance(false).getClassMeta(DbObject.class);
-		PropertyMeta<DbObject, Long> id = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).<Long>findProperty(new DefaultPropertyNameMatcher("id", 0, false, false), new Object[0]);
+		PropertyMeta<DbObject, Long> id = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).<Long>findProperty(new DefaultPropertyNameMatcher("id", 0, false, false), new Object[0], (TypeAffinity)null);
 
 		FieldMapperColumnDefinition<JdbcColumnKey> identity = FieldMapperColumnDefinition.identity();
 		PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>> propertyMapping = new PropertyMapping<DbObject, Long, JdbcColumnKey, FieldMapperColumnDefinition<JdbcColumnKey>>(id, new JdbcColumnKey("id", 1), identity);

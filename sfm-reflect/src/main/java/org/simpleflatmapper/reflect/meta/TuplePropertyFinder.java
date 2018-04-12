@@ -34,7 +34,8 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
         return elements.get(indexedColumn.getIndexValue());
     }
 
-    protected void extrapolateIndex(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer) {
+    @Override
+    protected void extrapolateIndex(final PropertyNameMatcher propertyNameMatcher, Object[] properties, final FoundProperty foundProperty, PropertyMatchingScore score, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer) {
         for (int i = 0; i < elements.size(); i++) {
             final IndexedElement element = elements.get(i);
 
@@ -42,7 +43,7 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
                 PropertyFinder propertyFinder = element.getPropertyFinder();
                 propertyFinderTransformer.apply(propertyFinder).lookForProperties(propertyNameMatcher, properties, new FoundProperty() {
                     @Override
-                    public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score) {
+                    public void found(final PropertyMeta propertyMeta, final Runnable selectionCallback, final PropertyMatchingScore score, TypeAffinityScorer typeAffinityScorer) {
 
                         if (!element.hasProperty(propertyMeta)) {
                             PropertyMeta subProperty;
@@ -58,10 +59,10 @@ public class TuplePropertyFinder<T> extends AbstractIndexPropertyFinder<T> {
                                     element.addProperty(propertyMeta);
                                     selectionCallback.run();
                                 }
-                            }, score);
+                            }, score, typeAffinityScorer);
                         }
                     }
-                }, score.tupleIndex(i), true, propertyFinderTransformer);
+                }, score.tupleIndex(i), true, propertyFinderTransformer, typeAffinityScorer);
 
             }
         }

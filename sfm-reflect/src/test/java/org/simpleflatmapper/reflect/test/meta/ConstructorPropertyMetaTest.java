@@ -3,6 +3,7 @@ package org.simpleflatmapper.reflect.test.meta;
 
 import org.junit.Test;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyMeta;
@@ -22,19 +23,19 @@ public class ConstructorPropertyMetaTest {
 
     @Test
     public void testSetterIsNullSetter() throws Exception {
-        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false), new Object[0]);
+        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false), new Object[0], (TypeAffinity)null);
         assertTrue(property.getSetter() instanceof NullSetter);
     }
 
     @Test
     public void testGetValueIfGetterAvailable() throws Exception {
-        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false), new Object[0]);
+        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false), new Object[0], (TypeAffinity)null);
         assertEquals("v1", property.getGetter().get(cObject));
     }
 
     @Test
     public void testToString() {
-        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false), new Object[0]);
+        PropertyMeta<CObject, Object> property = classMeta.newPropertyFinder(isValidPropertyMeta).findProperty(new DefaultPropertyNameMatcher("p1", 0, false, false), new Object[0], (TypeAffinity)null);
 
         assertTrue(property.toString().startsWith("ConstructorPropertyMeta"));
     }

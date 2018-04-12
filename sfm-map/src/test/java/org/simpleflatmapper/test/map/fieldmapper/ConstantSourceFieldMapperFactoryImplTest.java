@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.converter.ConverterService;
 import org.simpleflatmapper.map.FieldMapper;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.test.map.SampleFieldKey;
 import org.simpleflatmapper.map.fieldmapper.*;
 import org.simpleflatmapper.map.property.FieldMapperColumnDefinition;
@@ -143,7 +144,7 @@ public class ConstantSourceFieldMapperFactoryImplTest {
             Class<T> target, String property) {
         ClassMeta<T> classMeta = REFLECTION_SERVICE.getClassMeta(target);
 
-        PropertyMeta<T, P> propertyMeta = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(property), new Object[0]);
+        PropertyMeta<T, P> propertyMeta = classMeta.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate()).findProperty(DefaultPropertyNameMatcher.of(property), new Object[0], (TypeAffinity)null);
 
         PropertyMapping<T, P , SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>> pm =
                 new PropertyMapping<T, P, SampleFieldKey, FieldMapperColumnDefinition<SampleFieldKey>>(

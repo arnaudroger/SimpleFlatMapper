@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.simpleflatmapper.reflect.InstantiatorDefinition;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.ConstructorPropertyMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
@@ -38,7 +39,7 @@ public class JoolTupleTest {
 
         PropertyFinder<List<? extends DbObject>> propertyFinder3 = cm3.newPropertyFinder(t -> true);
 
-        PropertyMeta<List<? extends DbObject>, Object> prop3 = propertyFinder3.findProperty(DefaultPropertyNameMatcher.of("elt0_id"), new Object[0]);
+        PropertyMeta<List<? extends DbObject>, Object> prop3 = propertyFinder3.findProperty(DefaultPropertyNameMatcher.of("elt0_id"), new Object[0], (TypeAffinity)null);
 
         System.out.println("prop3 = " + prop3.getPath());
 
@@ -52,7 +53,7 @@ public class JoolTupleTest {
 
         PropertyFinder<List<? extends Tuple2<DbObject, Long>>> propertyFinder2 = cm2.newPropertyFinder(t -> true);
 
-        PropertyMeta<List<? extends Tuple2<DbObject, Long>>, Object> prop2 = propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("elt0_elt0_id"), new Object[0]);
+        PropertyMeta<List<? extends Tuple2<DbObject, Long>>, Object> prop2 = propertyFinder2.findProperty(DefaultPropertyNameMatcher.of("elt0_elt0_id"), new Object[0], (TypeAffinity)null);
 
         System.out.println("prop2 = " + prop2.getPath());
 
@@ -65,7 +66,7 @@ public class JoolTupleTest {
 
         PropertyFinder<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>> propertyFinder = cm.newPropertyFinder(t -> true);
 
-        PropertyMeta<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>, Object> prop = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("elt1_elt0_elt0_id"), new Object[0]);
+        PropertyMeta<Tuple2<String, List<? extends Tuple2<DbObject, Long>>>, Object> prop = propertyFinder.findProperty(DefaultPropertyNameMatcher.of("elt1_elt0_elt0_id"), new Object[0], (TypeAffinity)null);
 
         System.out.println("prop = " + prop.getPath());
         assertEquals("element1[0].element0.id", prop.getPath());
@@ -91,10 +92,10 @@ public class JoolTupleTest {
 
         final PropertyFinder<Tuple3<Long, Integer, Short>> propertyFinder = cm.newPropertyFinder(isValidPropertyMeta);
 
-        final PropertyMeta<Tuple3<Long, Integer, Short>, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt0", 0, true, true), new Object[0]);
-        final PropertyMeta<Tuple3<Long, Integer, Short>, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt1", 0, true, true), new Object[0]);
-        final PropertyMeta<Tuple3<Long, Integer, Short>, Short> fieldC = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt2", 0, true, true), new Object[0]);
-        final PropertyMeta<Tuple3<Long, Integer, Short>, ?> fieldD = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt3", 0, true, true), new Object[0]);
+        final PropertyMeta<Tuple3<Long, Integer, Short>, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt0", 0, true, true), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<Tuple3<Long, Integer, Short>, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt1", 0, true, true), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<Tuple3<Long, Integer, Short>, Short> fieldC = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt2", 0, true, true), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<Tuple3<Long, Integer, Short>, ?> fieldD = propertyFinder.findProperty(new DefaultPropertyNameMatcher("elt3", 0, true, true), new Object[0], (TypeAffinity)null);
 
         assertNotNull(fieldA);
         assertNotNull(fieldB);

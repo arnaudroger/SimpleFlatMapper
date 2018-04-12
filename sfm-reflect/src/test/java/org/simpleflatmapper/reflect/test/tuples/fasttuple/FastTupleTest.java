@@ -5,6 +5,7 @@ import com.boundary.tuple.TupleSchema;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleflatmapper.reflect.ReflectionService;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.ClassMeta;
 import org.simpleflatmapper.reflect.meta.DefaultPropertyNameMatcher;
 import org.simpleflatmapper.reflect.meta.PropertyFinder;
@@ -41,10 +42,10 @@ public class FastTupleTest {
 
         final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
 
-        final PropertyMeta<FastTuple, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldA", 0, true, true), new Object[0]);
-        final PropertyMeta<FastTuple, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldB", 0, true, true), new Object[0]);
-        final PropertyMeta<FastTuple, Short> fieldC = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldC", 0, true, true), new Object[0]);
-        final PropertyMeta<FastTuple, ?> fieldD = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldD", 0, true, true), new Object[0]);
+        final PropertyMeta<FastTuple, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldA", 0, true, true), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<FastTuple, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldB", 0, true, true), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<FastTuple, Short> fieldC = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldC", 0, true, true), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<FastTuple, ?> fieldD = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldD", 0, true, true), new Object[0], (TypeAffinity)null);
 
         assertNotNull(fieldA);
         assertNotNull(fieldB);
@@ -80,10 +81,10 @@ public class FastTupleTest {
 
         final PropertyFinder<FastTuple> propertyFinder = cm.newPropertyFinder(ConstantPredicate.<PropertyMeta<?, ?>>truePredicate());
 
-        final PropertyMeta<FastTuple, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldA", 0, true, true), new Object[0]);
-        final PropertyMeta<FastTuple, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldB", 0, true, true), new Object[0]);
-        final PropertyMeta<FastTuple, Short> fieldC = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldC", 0, true, true), new Object[0]);
-        final PropertyMeta<FastTuple, ?> fieldD = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldD", 0, true, true), new Object[0]);
+        final PropertyMeta<FastTuple, Long> fieldA = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldA", 0, true, true), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<FastTuple, Integer> fieldB = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldB", 0, true, true), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<FastTuple, Short> fieldC = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldC", 0, true, true), new Object[0], (TypeAffinity)null);
+        final PropertyMeta<FastTuple, ?> fieldD = propertyFinder.findProperty(new DefaultPropertyNameMatcher("fieldD", 0, true, true), new Object[0], (TypeAffinity)null);
 
         assertNotNull(fieldA);
         assertNotNull(fieldB);

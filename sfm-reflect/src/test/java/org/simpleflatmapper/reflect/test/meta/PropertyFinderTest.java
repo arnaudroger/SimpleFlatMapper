@@ -2,6 +2,7 @@ package org.simpleflatmapper.reflect.test.meta;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.meta.*;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.reflect.ReflectionService;
@@ -23,31 +24,31 @@ public class PropertyFinderTest {
 
         PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
-        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("elt0_id"), new Object[0]);
+        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("elt0_id"), new Object[0], (TypeAffinity)null);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("2_id"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("2_id"), new Object[0], (TypeAffinity)null);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("id"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("id"), new Object[0], (TypeAffinity)null);
         assertNotNull(propEltId);
         Assert.assertEquals(1, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?, ?>) propEltId).getOwnerProperty()).getIndex());
 
 
-        propEltId = propertyFinder.findProperty(matcher("id"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("id"), new Object[0], (TypeAffinity)null);
         assertNotNull(propEltId);
         assertEquals(3, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?, ?>) propEltId).getOwnerProperty()).getIndex());
 
 
-        propEltId = propertyFinder.findProperty(matcher("name"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("name"), new Object[0], (TypeAffinity)null);
         assertNotNull(propEltId);
         assertEquals(0, ((ArrayElementPropertyMeta<?, ?>) ((SubPropertyMeta<?, ?, ?>) propEltId).getOwnerProperty()).getIndex());
 
-        propEltId = propertyFinder.findProperty(matcher("2_notid"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("2_notid"), new Object[0], (TypeAffinity)null);
         assertNull(propEltId);
 
 
-        propEltId = propertyFinder.findProperty(matcher("notid"), new Object[0]); // will safe match
+        propEltId = propertyFinder.findProperty(matcher("notid"), new Object[0], (TypeAffinity)null); // will safe match
         assertTrue(propEltId instanceof  ArrayElementPropertyMeta);
         assertEquals(4, ((ArrayElementPropertyMeta)propEltId).getIndex());
 
@@ -64,33 +65,33 @@ public class PropertyFinderTest {
 
         PropertyFinder<DbObject[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
-        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("element2_id"), new Object[0]);
+        PropertyMeta<DbObject[], ?> propEltId = propertyFinder.findProperty(matcher("element2_id"), new Object[0], (TypeAffinity)null);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("element1"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("element1"), new Object[0], (TypeAffinity)null);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("elt1"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("elt1"), new Object[0], (TypeAffinity)null);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("1"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("1"), new Object[0], (TypeAffinity)null);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("id"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("id"), new Object[0], (TypeAffinity)null);
         assertNotNull(propEltId);
 
 
-        propEltId = propertyFinder.findProperty(matcher("4_id"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("4_id"), new Object[0], (TypeAffinity)null);
         assertNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("2_notid"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("2_notid"), new Object[0], (TypeAffinity)null);
         assertNull(propEltId);
 
 
-        propEltId = propertyFinder.findProperty(matcher("elt0"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("elt0"), new Object[0], (TypeAffinity)null);
         assertNotNull(propEltId);
 
-        propEltId = propertyFinder.findProperty(matcher("notid"), new Object[0]);
+        propEltId = propertyFinder.findProperty(matcher("notid"), new Object[0], (TypeAffinity)null);
         assertNull(propEltId);
 
     }
@@ -103,10 +104,10 @@ public class PropertyFinderTest {
 
         PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
-        assertNotNull(propertyFinder.findProperty(matcher("1_arg1"), new Object[0]));
-        assertNotNull(propertyFinder.findProperty(matcher("1_arg3"), new Object[0]));
-        assertNotNull(propertyFinder.findProperty(matcher("2_arg1"), new Object[0]));
-        assertNotNull(propertyFinder.findProperty(matcher("2_arg2"), new Object[0]));
+        assertNotNull(propertyFinder.findProperty(matcher("1_arg1"), new Object[0], (TypeAffinity)null));
+        assertNotNull(propertyFinder.findProperty(matcher("1_arg3"), new Object[0], (TypeAffinity)null));
+        assertNotNull(propertyFinder.findProperty(matcher("2_arg1"), new Object[0], (TypeAffinity)null));
+        assertNotNull(propertyFinder.findProperty(matcher("2_arg2"), new Object[0], (TypeAffinity)null));
     }
 
     @Test
@@ -115,9 +116,9 @@ public class PropertyFinderTest {
 
         PropertyFinder<ObjectWithIncompatibleConstructor[]> propertyFinder = classMeta.newPropertyFinder(isValidPropertyMeta);
 
-        assertNotNull(propertyFinder.findProperty(matcher("1_arg1"), new Object[0]));
-        assertNotNull(propertyFinder.findProperty(matcher("1_arg3"), new Object[0]));
-        assertNull(propertyFinder.findProperty(matcher("1_arg2"), new Object[0]));
+        assertNotNull(propertyFinder.findProperty(matcher("1_arg1"), new Object[0], (TypeAffinity)null));
+        assertNotNull(propertyFinder.findProperty(matcher("1_arg3"), new Object[0], (TypeAffinity)null));
+        assertNull(propertyFinder.findProperty(matcher("1_arg2"), new Object[0], (TypeAffinity)null));
     }
 
     static class ObjectWithIncompatibleConstructor {

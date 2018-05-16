@@ -197,7 +197,10 @@ public class ReflectionService {
 
         if (!ReflectionInstantiatorDefinitionFactory.areParameterNamePresent(target)) {
             try {
-                list = AsmInstantiatorDefinitionFactory.extractDefinitions(target);
+				list = AsmInstantiatorDefinitionFactory.extractDefinitions(target);
+			} catch (IllegalArgumentException e) {
+				// byte code version issue
+				list = ReflectionInstantiatorDefinitionFactory.extractDefinitions(target);
             } catch(IOException e) {
                 // no access to class file
                 list = ReflectionInstantiatorDefinitionFactory.extractDefinitions(target);

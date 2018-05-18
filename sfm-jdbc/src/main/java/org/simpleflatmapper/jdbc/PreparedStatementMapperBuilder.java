@@ -104,18 +104,6 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
         return builder.preparedStatementMapper(query, generatedKeys);
     }
 
-    private String stripQuotes(String val) {
-        int startIndex = 0;
-        int endIndex = val.length();
-        
-        if (val.startsWith("\"")) {
-            startIndex = 1;
-            if (val.endsWith("\"")) {
-                endIndex = endIndex - 1;
-            }
-        }
-        return val.substring(startIndex, endIndex);
-    }
     private QueryPreparer<T> preparedStatementMapper(NamedSqlQuery query, String[] generatedKeys) {
 
         for(int i = 0; i < query.getParametersSize(); i++) {

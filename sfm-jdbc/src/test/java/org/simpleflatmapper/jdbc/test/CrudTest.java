@@ -268,11 +268,20 @@ public class CrudTest {
 
         if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
         try {
-            try {
-                connection.createStatement().execute("DROP TABLE  \"select\";");
-            } catch (Exception e) {
+            if (targetDB == DbHelper.TargetDB.MYSQL) {
+                try {
+                    connection.createStatement().execute("DROP TABLE  `select`;");
+                } catch (Exception e) {
+                }
+                connection.createStatement().execute("CREATE TABLE  `select` ( v integer PRIMARY KEY);");
+                
+            } else {
+                try {
+                    connection.createStatement().execute("DROP TABLE  \"select\";");
+                } catch (Exception e) {
+                }
+                connection.createStatement().execute("CREATE TABLE  \"select\" ( v integer PRIMARY KEY);");
             }
-            connection.createStatement().execute("CREATE TABLE  \"select\" ( v integer PRIMARY KEY);");
             
 
             Crud<Select, Integer> select = JdbcMapperFactory.newInstance().crud(Select.class, Integer.class).table("select");
@@ -287,7 +296,7 @@ public class CrudTest {
             select.delete(connection, 3);
 
 
-            select = JdbcMapperFactory.newInstance().crud(Select.class, Integer.class).table("\"select\"");
+            select = JdbcMapperFactory.newInstance().crud(Select.class, Integer.class).table(targetDB == DbHelper.TargetDB.MYSQL ? "`select`" : "\"select\"");
 
             select.create(connection, s);
 

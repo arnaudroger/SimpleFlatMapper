@@ -54,18 +54,22 @@ public class CrudMeta {
     public static CrudMeta of(Connection connection,
                               String table,
                               ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey>, JdbcColumnKey> columnDefinitionProvider) throws SQLException {
+
+        DatabaseMetaData metaData = connection.getMetaData();
+        DatabaseMeta databaseMeta = new DatabaseMeta(metaData.getDatabaseProductName(), metaData.getDatabaseMajorVersion(), metaData.getDatabaseMinorVersion());
+
         Statement statement = connection.createStatement();
         try {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM \"" + table + "\" WHERE 1 = 2");
+            ResultSet resultSet = statement.executeQuery(selectProtected(table, databaseMeta));
             try { // try exact match
-                return getCrudMeta(connection, table, columnDefinitionProvider, resultSet);
+                return getCrudMeta(connection, table, columnDefinitionProvider, resultSet, databaseMeta);
             } finally {
                 resultSet.close();
             }
         } catch (SQLException e) {
             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + table + " WHERE 1 = 2");
             try {
-                return getCrudMeta(connection, table, columnDefinitionProvider, resultSet);
+                return getCrudMeta(connection, table, columnDefinitionProvider, resultSet, databaseMeta);
             } finally {
                 resultSet.close();
             }
@@ -75,11 +79,16 @@ public class CrudMeta {
 
     }
 
-    private static CrudMeta getCrudMeta(Connection connection, String _table, ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey>, JdbcColumnKey> columnDefinitionProvider, ResultSet resultSet) throws SQLException {
+    private static String selectProtected(String table, DatabaseMeta dm) {
+        if (dm.isMysql()) {
+            return "SELECT * FROM `" + table + "` WHERE 1 = 2";
+        }
+        return "SELECT * FROM \"" + table + "\" WHERE 1 = 2";
+    }
+
+    private static CrudMeta getCrudMeta(Connection connection, String _table, ColumnDefinitionProvider<FieldMapperColumnDefinition<JdbcColumnKey>, JdbcColumnKey> columnDefinitionProvider, ResultSet resultSet, DatabaseMeta databaseMeta) throws SQLException {
         ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
 
-        DatabaseMetaData metaData = connection.getMetaData();
-        DatabaseMeta databaseMeta = new DatabaseMeta(metaData.getDatabaseProductName(), metaData.getDatabaseMajorVersion(), metaData.getDatabaseMinorVersion());
         ColumnMeta[] columnMetas = new ColumnMeta[resultSetMetaData.getColumnCount()];
         List<String> primaryKeys = getPrimaryKeys(connection, resultSetMetaData, columnDefinitionProvider);
 
@@ -148,9 +157,13 @@ public class CrudMeta {
         }
         return true;
     }
-    
-    
-    public static StringBuilder appendColumn(StringBuilder sb, String columnName) {
-        return sb.append("\"").append(columnName).append("\"");
+
+
+    public StringBuilder appendProtectedField(StringBuilder sb, String table) {
+        char c = '"';
+        if (databaseMeta.isMysql()) {
+            c = '`';
+        }
+        return sb.append(c).append(table).append(c);
     }
 }

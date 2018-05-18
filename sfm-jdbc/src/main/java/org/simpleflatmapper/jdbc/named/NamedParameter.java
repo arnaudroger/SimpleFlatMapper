@@ -14,6 +14,11 @@ public class NamedParameter extends Symbol {
                 return name.substring(1, name.length() -1);
             }
         }
+        if (name.startsWith("`")) {
+            if (name.endsWith("`")) {
+                return name.substring(1, name.length() -1);
+            }
+        }
         return name;
     }
 

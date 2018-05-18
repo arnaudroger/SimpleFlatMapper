@@ -11,8 +11,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.simpleflatmapper.jdbc.impl.CrudMeta.appendColumn;
-
 public class PostgresqlCrudFactory {
 
     public static <T, K> Crud<T, K> newInstance(ClassMeta<T>  target, ClassMeta<K>  keyTarget, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory, DefaultCrud<T, K> defaultCrud) throws SQLException {
@@ -84,7 +82,7 @@ public class PostgresqlCrudFactory {
                 if (!first) {
                     sb.append(", ");
                 }
-                appendColumn(sb, cm.getColumn());
+                crudMeta.appendProtectedField(sb, cm.getColumn());
                 first = false;
             }
         }
@@ -109,7 +107,7 @@ public class PostgresqlCrudFactory {
                 if (!first) {
                     sb.append(", ");
                 }
-                appendColumn(sb, cm.getColumn());
+                crudMeta.appendProtectedField(sb, cm.getColumn());
                 first = false;
             }
         }
@@ -126,9 +124,9 @@ public class PostgresqlCrudFactory {
                     if (!first) {
                         sb.append(", ");
                     }
-                    appendColumn(sb, cm.getColumn());
+                    crudMeta.appendProtectedField(sb, cm.getColumn());
                     sb.append(" = EXCLUDED.");
-                    appendColumn(sb, cm.getColumn());
+                    crudMeta.appendProtectedField(sb, cm.getColumn());
                     first = false;
                 }
             }

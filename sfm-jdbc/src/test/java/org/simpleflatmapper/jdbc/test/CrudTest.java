@@ -261,6 +261,48 @@ public class CrudTest {
             connection.close();
         }
     }
+    
+    @Test
+    public void testProtectedKeyWord() throws SQLException {
+        Connection connection = DbHelper.getDbConnection(targetDB);
+
+        if (connection == null) { System.err.println("Db " + targetDB + " not available"); return; }
+        try {
+            try {
+                connection.createStatement().execute("DROP TABLE  \"select\";");
+            } catch (Exception e) {
+            }
+            connection.createStatement().execute("CREATE TABLE  \"select\" ( v integer PRIMARY KEY);");
+            
+
+            Crud<Select, Integer> select = JdbcMapperFactory.newInstance().crud(Select.class, Integer.class).table("select");
+            
+            Select s = new Select();
+            s.v = 3;
+            select.create(connection, s);
+            
+            assertEquals(3, select.read(connection, 3).v);
+            
+            
+            select.delete(connection, 3);
+
+
+            select = JdbcMapperFactory.newInstance().crud(Select.class, Integer.class).table("\"select\"");
+
+            select.create(connection, s);
+
+            assertEquals(3, select.read(connection, 3).v);
+
+            select.delete(connection, 3);
+            
+        } finally {
+            connection.close();
+        }
+
+    }
+    public static class Select {
+        public int v;
+    }
 
     @Table(name = "TEST_DB_OBJECT")
     public static class DbObjectTable extends DbObject {

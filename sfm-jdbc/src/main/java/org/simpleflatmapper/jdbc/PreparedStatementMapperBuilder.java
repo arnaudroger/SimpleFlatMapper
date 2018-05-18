@@ -23,7 +23,6 @@ import org.simpleflatmapper.reflect.Getter;
 import org.simpleflatmapper.reflect.IndexedGetter;
 import org.simpleflatmapper.reflect.IndexedSetter;
 import org.simpleflatmapper.reflect.IndexedSetterFactory;
-import org.simpleflatmapper.reflect.TypeAffinity;
 import org.simpleflatmapper.reflect.getter.ArrayIndexedGetter;
 import org.simpleflatmapper.reflect.getter.ArraySizeGetter;
 import org.simpleflatmapper.reflect.getter.ListIndexedGetter;
@@ -41,6 +40,7 @@ import org.simpleflatmapper.util.TypeHelper;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMapperBuilder<PreparedStatement, T, JdbcColumnKey, PreparedStatementMapperBuilder<T>> {
 
@@ -104,6 +104,18 @@ public class PreparedStatementMapperBuilder<T> extends AbstractConstantTargetMap
         return builder.preparedStatementMapper(query, generatedKeys);
     }
 
+    private String stripQuotes(String val) {
+        int startIndex = 0;
+        int endIndex = val.length();
+        
+        if (val.startsWith("\"")) {
+            startIndex = 1;
+            if (val.endsWith("\"")) {
+                endIndex = endIndex - 1;
+            }
+        }
+        return val.substring(startIndex, endIndex);
+    }
     private QueryPreparer<T> preparedStatementMapper(NamedSqlQuery query, String[] generatedKeys) {
 
         for(int i = 0; i < query.getParametersSize(); i++) {

@@ -55,11 +55,11 @@ public class CrudUpsertTest {
         PreparedStatement ps = mock(PreparedStatement.class);
 
         when(connection.prepareStatement(
-                "INSERT INTO TEST(id, name) " +
+                "INSERT INTO TEST(\"id\", \"name\") " +
                         "VALUES(?, ?) " +
-                        "ON CONFLICT (id) " +
+                        "ON CONFLICT (\"id\") " +
                         "DO UPDATE " +
-                        "SET name = EXCLUDED.name", new String[0])).thenReturn(ps);
+                        "SET \"name\" = EXCLUDED.\"name\"", new String[0])).thenReturn(ps);
 
         DbObject o = DbObject.newInstance();
         postGresqlCrud.createOrUpdate(connection, o);

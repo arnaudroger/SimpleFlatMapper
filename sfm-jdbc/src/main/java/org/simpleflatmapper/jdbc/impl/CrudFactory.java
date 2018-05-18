@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.simpleflatmapper.jdbc.impl.CrudMeta.appendColumn;
+
 public class CrudFactory {
     public static <T, K> Crud<T, K> newInstance(
             ClassMeta<T> target,
@@ -126,7 +128,7 @@ public class CrudFactory {
                 if (!first) {
                     sb.append(", ");
                 }
-                sb.append(cm.getColumn());
+                appendColumn(sb, cm.getColumn());
                 first = false;
             } 
             
@@ -160,7 +162,7 @@ public class CrudFactory {
                 if (!first) {
                     sb.append(", ");
                 }
-                sb.append(columnName);
+                appendColumn(sb, columnName);
                 sb.append(" = ?");
                 first = false;
             }
@@ -181,7 +183,7 @@ public class CrudFactory {
             if (!first) {
                 sb.append(", ");
             }
-            sb.append(cm.getColumn());
+            appendColumn(sb, cm.getColumn());
             first = false;
         }
 
@@ -192,7 +194,7 @@ public class CrudFactory {
     }
 
     private static void appendTableName(StringBuilder sb, CrudMeta crudMeta) {
-        sb.append(crudMeta.getTable());
+        sb.append("\"").append(crudMeta.getTable()).append("\"");
     }
 
     private static <T, K> QueryPreparer<K> buildDelete(ClassMeta<K> keyTarget, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {
@@ -210,7 +212,7 @@ public class CrudFactory {
                 if (!first) {
                     sb.append("AND ");
                 }
-                sb.append(cm.getColumn());
+                appendColumn(sb, cm.getColumn());
                 sb.append(" = ? ");
                 first = false;
             }

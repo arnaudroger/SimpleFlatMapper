@@ -35,7 +35,8 @@ import java.util.stream.Stream;
 public interface JdbcMapper<T> extends SetRowMapper<ResultSet, ResultSet, T, SQLException>, MappingContextFactoryFromRows<ResultSet, ResultSet, SQLException> {
 
 	/**
-	 * map source object to a new newInstance of T
+	 * map source object to a new newInstance of T.
+	 * This method does not manage the iteration of the ResultSet and will only map the current row. No join aggregation will be performed.
 	 * @param rs the resultSet
 	 * @return a new mapped newInstance of T
 	 * @throws MappingException if an exception occurs
@@ -43,7 +44,7 @@ public interface JdbcMapper<T> extends SetRowMapper<ResultSet, ResultSet, T, SQL
 	T map(ResultSet rs) throws MappingException;
 
 	/**
-	 * Loop over the resultSet, map each row to a new newInstance of T and call back the handler
+	 * Loop over the resultSet, map each row to a new newInstance of T and call back the handler.
 	 *<p>
 	 * The method will return the handler passed as an argument so you can easily chain the calls like <br>
 	 * <code>

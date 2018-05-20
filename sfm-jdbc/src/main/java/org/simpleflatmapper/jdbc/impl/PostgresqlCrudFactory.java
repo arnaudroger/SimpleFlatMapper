@@ -55,7 +55,7 @@ public class PostgresqlCrudFactory {
         }
 
         PostgresqlBatchInsertQueryExecutor<T> queryExecutor = new PostgresqlBatchInsertQueryExecutor<T>(
-                crudMeta.getTable(),
+                crudMeta,
                 insertColumns.toArray(new String[0]),
                 insertColumnExpressions.toArray(new String[0]),
                 onDuplicateKeyUpdate ? updateColumns.toArray(new String[0]) : null,
@@ -70,7 +70,8 @@ public class PostgresqlCrudFactory {
         List<String> generatedKeys = new ArrayList<String>();
         StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO ");
-        sb.append(crudMeta.getTable()).append("(");
+        crudMeta.appendTableName(sb);
+        sb.append("(");
 
         boolean first = true;
         for(ColumnMeta cm : crudMeta.getColumnMetas()) {

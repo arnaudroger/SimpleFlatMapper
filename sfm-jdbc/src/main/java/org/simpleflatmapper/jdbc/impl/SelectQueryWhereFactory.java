@@ -11,14 +11,14 @@ import java.util.concurrent.ConcurrentMap;
 
 public class SelectQueryWhereFactory<T> {
 
-    private final String table;
+    private final CrudMeta meta;
     private final JdbcMapperFactory jdbcMapperFactory;
     private final JdbcMapper<T> jdbcMapper;
 
     private final ConcurrentMap<SelectQueryKey, SelectQueryImpl<T, ?>> cache = new ConcurrentHashMap<SelectQueryKey, SelectQueryImpl<T, ?>>();
 
-    public SelectQueryWhereFactory(String table, JdbcMapper<T> jdbcMapper, JdbcMapperFactory jdbcMapperFactory) {
-        this.table = table;
+    public SelectQueryWhereFactory(CrudMeta meta, JdbcMapper<T> jdbcMapper, JdbcMapperFactory jdbcMapperFactory) {
+        this.meta = meta;
         this.jdbcMapper = jdbcMapper;
         this.jdbcMapperFactory = jdbcMapperFactory;
     }
@@ -48,7 +48,11 @@ public class SelectQueryWhereFactory<T> {
     }
 
     private String sqlQuery(String whereClause) {
-        return "SELECT * FROM " + table + " WHERE " + whereClause;
+        StringBuilder sb = new StringBuilder("SELECT * FROM ");
+        meta.appendTableName(sb);
+        sb.append(" WHERE ");
+        sb.append(whereClause);
+        return sb.toString();
     }
 
     private static class SelectQueryKey {

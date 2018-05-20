@@ -7,14 +7,14 @@ public final class PostgresqlBatchInsertQueryExecutor<T> extends AbstractBatchIn
     private final String[] keys;
 
     public PostgresqlBatchInsertQueryExecutor(
-            String table,
+            CrudMeta meta,
             String[] insertColumns,
             String[] insertColumnExpressions,
             String[] updateColumns,
             String[] generatedKeys,
             String[] keys,
             MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
-        super(table, insertColumns, insertColumnExpressions, updateColumns, generatedKeys, multiIndexFieldMappers);
+        super(meta, insertColumns, insertColumnExpressions, updateColumns, generatedKeys, multiIndexFieldMappers);
         this.keys = keys;
     }
 

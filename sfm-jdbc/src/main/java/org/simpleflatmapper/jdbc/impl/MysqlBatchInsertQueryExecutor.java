@@ -5,13 +5,13 @@ import org.simpleflatmapper.jdbc.MultiIndexFieldMapper;
 public final class MysqlBatchInsertQueryExecutor<T> extends AbstractBatchInsertQueryExecutor<T> {
 
     public MysqlBatchInsertQueryExecutor(
-            String table,
+            CrudMeta meta,
             String[] insertColumns,
             String[] insertColumnExpressions,
             String[] updateColumns,
             String[] generatedKeys,
             MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
-        super(table, insertColumns, insertColumnExpressions, updateColumns, generatedKeys, multiIndexFieldMappers);
+        super(meta, insertColumns, insertColumnExpressions, updateColumns, generatedKeys, multiIndexFieldMappers);
     }
 
     protected void appendInsertInto(StringBuilder sb) {

@@ -36,7 +36,7 @@ public class CrudUpsertTest {
                     CrudFactory.<DbObject, Long>newInstance(
                     ReflectionService.newInstance().getClassMeta(DbObject.class),
                     ReflectionService.newInstance().getClassMeta(Long.class),
-                    new CrudMeta(new DatabaseMeta("PostgreSQL", 9, 5), "TEST",
+                    new CrudMeta(new DatabaseMeta("PostgreSQL", 9, 5), "public", "TEST",
                             new ColumnMeta[]{
                                     new ColumnMeta("id", Types.INTEGER, true, null),
                                     new ColumnMeta("name", Types.VARCHAR, false, null)
@@ -55,7 +55,7 @@ public class CrudUpsertTest {
         PreparedStatement ps = mock(PreparedStatement.class);
 
         when(connection.prepareStatement(
-                "INSERT INTO TEST(\"id\", \"name\") " +
+                "INSERT INTO \"public\".\"TEST\"(\"id\", \"name\") " +
                         "VALUES(?, ?) " +
                         "ON CONFLICT (\"id\") " +
                         "DO UPDATE " +
@@ -76,7 +76,7 @@ public class CrudUpsertTest {
         PreparedStatement ps = mock(PreparedStatement.class);
 
         when(connection.prepareStatement(
-                "INSERT INTO TEST(id, name) " +
+                "INSERT INTO \"public\".\"TEST\"(id, name) " +
                         "VALUES(?, ?), (?, ?) " +
                         "ON CONFLICT (id) " +
                         "DO UPDATE " +

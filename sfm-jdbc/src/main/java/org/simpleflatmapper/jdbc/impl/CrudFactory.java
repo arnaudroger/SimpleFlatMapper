@@ -50,9 +50,9 @@ public class CrudFactory {
                 selectMapper,
                 delete,
                 keyMapper,
-                crudMeta.getTable(),
+                crudMeta,
                 hasGeneratedKeys,
-                new SelectQueryWhereFactory<T>(crudMeta.getTable(), selectMapper, mapperFactory));
+                new SelectQueryWhereFactory<T>(crudMeta, selectMapper, mapperFactory));
 
         if (crudMeta.getDatabaseMeta().isMysql()) {
             return MysqlCrudFactory.newInstance(target, keyTarget, crudMeta, mapperFactory, defaultCrud);
@@ -193,7 +193,7 @@ public class CrudFactory {
     }
 
     private static void appendTableName(StringBuilder sb, CrudMeta crudMeta) {
-        crudMeta.appendProtectedField(sb, crudMeta.getTable());
+        crudMeta.appendTableName(sb);
     }
 
     private static <T, K> QueryPreparer<K> buildDelete(ClassMeta<K> keyTarget, CrudMeta crudMeta, JdbcMapperFactory jdbcMapperFactory) throws SQLException {

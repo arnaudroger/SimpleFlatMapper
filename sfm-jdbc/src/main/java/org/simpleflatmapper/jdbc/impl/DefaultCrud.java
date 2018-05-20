@@ -25,9 +25,10 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
     protected final KeyTupleQueryPreparer<K> keyTupleQueryPreparer;
     protected final JdbcMapper<T> selectQueryMapper;
     protected final JdbcMapper<K> keyMapper;
-    protected final String table;
     protected final boolean hasGeneratedKeys;
     protected final SelectQueryWhereFactory<T> selectQueryWhereFactory;
+    protected final String selectFromTableWhere;
+    protected final String deleteFromTableWhere;
 
     public DefaultCrud(QueryPreparer<T> insertQueryPreparer,
                        QueryPreparer<T> updateQueryPreparer,
@@ -36,7 +37,7 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
                        KeyTupleQueryPreparer<K> keyTupleQueryPreparer,
                        JdbcMapper<T> selectQueryMapper,
                        QueryPreparer<K> deleteQueryPreparer,
-                       JdbcMapper<K> keyMapper, String table,
+                       JdbcMapper<K> keyMapper, CrudMeta meta,
                        boolean hasGeneratedKeys,
                        SelectQueryWhereFactory<T> selectQueryWhereFactory) {
         this.insertQueryPreparer = insertQueryPreparer;
@@ -47,9 +48,19 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
         this.deleteQueryPreparer = deleteQueryPreparer;
         this.selectQueryMapper = selectQueryMapper;
         this.keyMapper = keyMapper;
-        this.table = table;
         this.hasGeneratedKeys = hasGeneratedKeys;
         this.selectQueryWhereFactory = selectQueryWhereFactory;
+        
+        StringBuilder sb = new StringBuilder("SELECT * FROM ");
+        meta.appendTableName(sb);
+        sb.append(" WHERE ");
+        selectFromTableWhere = sb.toString();
+
+        sb = new StringBuilder("DELETE FROM ");
+        meta.appendTableName(sb);
+        sb.append(" WHERE ");
+        deleteFromTableWhere = sb.toString();
+        
     }
 
     @Override
@@ -94,7 +105,7 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
 
     @Override
     public <RH extends CheckedConsumer<? super T>> RH read(Connection connection, Collection<K> keys, RH consumer) throws SQLException {
-        PreparedStatement preparedStatement = keyTupleQueryPreparer.prepareStatement("SELECT * FROM " + table + " WHERE ", connection, keys.size());
+        PreparedStatement preparedStatement = keyTupleQueryPreparer.prepareStatement(selectFromTableWhere, connection, keys.size());
         try {
             keyTupleQueryPreparer.bindTo(keys, preparedStatement, 0);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -129,7 +140,7 @@ public final class DefaultCrud<T, K> implements Crud<T,K> {
 
     @Override
     public void delete(Connection connection, Collection<K> keys) throws SQLException {
-        PreparedStatement preparedStatement = keyTupleQueryPreparer.prepareStatement("DELETE FROM " + table + " WHERE ", connection, keys.size());
+        PreparedStatement preparedStatement = keyTupleQueryPreparer.prepareStatement(deleteFromTableWhere, connection, keys.size());
         try {
             keyTupleQueryPreparer.bindTo(keys, preparedStatement, 0);
             preparedStatement.executeUpdate();

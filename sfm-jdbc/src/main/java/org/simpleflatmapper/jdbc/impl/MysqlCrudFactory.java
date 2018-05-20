@@ -25,7 +25,7 @@ public class MysqlCrudFactory {
             ClassMeta<T> target,
             CrudMeta crudMeta,
             JdbcMapperFactory jdbcMapperFactory,
-            boolean onDuplicateKeyUpdate) throws SQLException {
+            boolean onDuplicateKeyUpdate) {
 
         List<String> generatedKeys = new ArrayList<String>();
         List<String> insertColumns = new ArrayList<String>();
@@ -51,7 +51,7 @@ public class MysqlCrudFactory {
         }
 
         MysqlBatchInsertQueryExecutor<T> queryExecutor = new MysqlBatchInsertQueryExecutor<T>(
-                crudMeta.getTable(),
+                crudMeta,
                 insertColumns.toArray(new String[0]),
                 insertColumnExpressions.toArray(new String[0]),
                 onDuplicateKeyUpdate ? updateColumns.toArray(new String[0]) : null,
@@ -71,7 +71,8 @@ public class MysqlCrudFactory {
             sb.append("IGNORE ");
         }
         sb.append("INTO ");
-        sb.append(crudMeta.getTable()).append("(");
+        crudMeta.appendTableName(sb);
+        sb.append("(");
 
         boolean first = true;
         for(ColumnMeta cm : crudMeta.getColumnMetas()) {

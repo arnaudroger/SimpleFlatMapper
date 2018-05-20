@@ -12,7 +12,6 @@ import org.simpleflatmapper.jdbc.impl.CrudMeta;
 import org.simpleflatmapper.jdbc.impl.DatabaseMeta;
 import org.simpleflatmapper.reflect.ReflectionService;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -35,13 +34,13 @@ public class MysqlCrudTest {
     public void testBatch() throws SQLException {
         Connection connection = mock(Connection.class);
         PreparedStatement ps = mock(PreparedStatement.class);
-        when(connection.prepareStatement("INSERT INTO TEST(id) VALUES(?), (?), (?), (?), (?), (?), (?), (?), (?), (?)")).thenReturn(ps);
+        when(connection.prepareStatement("INSERT INTO `TEST`(id) VALUES(?), (?), (?), (?), (?), (?), (?), (?), (?), (?)")).thenReturn(ps);
 
         Crud<DbObject, Long> objectCrud =
             CrudFactory.<DbObject, Long>newInstance(
                     ReflectionService.newInstance().getClassMeta(DbObject.class),
                     ReflectionService.newInstance().getClassMeta(Long.class),
-                    new CrudMeta(new DatabaseMeta("MySQL", 5, 5), "TEST", new ColumnMeta[]{new ColumnMeta("id", Types.INTEGER, true, null)}),
+                    new CrudMeta(new DatabaseMeta("MySQL", 5, 5), null, "TEST", new ColumnMeta[]{new ColumnMeta("id", Types.INTEGER, true, null)}),
                     JdbcMapperFactory.newInstance());
 
 
@@ -64,8 +63,8 @@ public class MysqlCrudTest {
         Connection connection = mock(Connection.class);
         PreparedStatement ps = mock(PreparedStatement.class);
         PreparedStatement ps2 = mock(PreparedStatement.class);
-        when(connection.prepareStatement("INSERT INTO TEST(id) VALUES(?), (?), (?), (?), (?), (?), (?), (?), (?), (?)")).thenReturn(ps);
-        when(connection.prepareStatement("INSERT INTO TEST(id) VALUES(?), (?), (?), (?), (?)")).thenReturn(ps2);
+        when(connection.prepareStatement("INSERT INTO `TEST`(id) VALUES(?), (?), (?), (?), (?), (?), (?), (?), (?), (?)")).thenReturn(ps);
+        when(connection.prepareStatement("INSERT INTO `TEST`(id) VALUES(?), (?), (?), (?), (?)")).thenReturn(ps2);
         when(ps.executeUpdate()).thenThrow(getPacketTooBigException());
 
 
@@ -73,7 +72,7 @@ public class MysqlCrudTest {
                 CrudFactory.<DbObject, Long>newInstance(
                         ReflectionService.newInstance().getClassMeta(DbObject.class),
                         ReflectionService.newInstance().getClassMeta(Long.class),
-                        new CrudMeta(new DatabaseMeta("MySQL", 5, 5), "TEST", new ColumnMeta[]{new ColumnMeta("id", Types.INTEGER, true, null)}),
+                        new CrudMeta(new DatabaseMeta("MySQL", 5, 5), null, "TEST", new ColumnMeta[]{new ColumnMeta("id", Types.INTEGER, true, null)}),
                         JdbcMapperFactory.newInstance());
         final int batchsize = 10;
 

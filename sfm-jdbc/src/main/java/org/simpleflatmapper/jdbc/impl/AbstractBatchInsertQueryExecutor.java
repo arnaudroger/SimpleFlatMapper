@@ -10,16 +10,16 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 public abstract class AbstractBatchInsertQueryExecutor<T> implements BatchQueryExecutor<T> {
-    protected final String table;
     protected final String[] insertColumns;
     protected final String[] insertColumnExpressions;
     protected final String[] updateColumns;
     protected final String[] generatedKeys;
     
     protected final MultiIndexFieldMapper<T>[] multiIndexFieldMappers;
+    private final CrudMeta meta;
 
-    public AbstractBatchInsertQueryExecutor(String table, String[] insertColumns, String[] insertColumnExpressions, String[] updateColumns, String[] generatedKeys, MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
-        this.table = table;
+    public AbstractBatchInsertQueryExecutor(CrudMeta meta, String[] insertColumns, String[] insertColumnExpressions, String[] updateColumns, String[] generatedKeys, MultiIndexFieldMapper<T>[] multiIndexFieldMappers) {
+        this.meta = meta;
         this.insertColumns = insertColumns;
         this.insertColumnExpressions = insertColumnExpressions;
         this.updateColumns = updateColumns;
@@ -98,7 +98,8 @@ public abstract class AbstractBatchInsertQueryExecutor<T> implements BatchQueryE
 
     private void insertInto(StringBuilder sb) {
         appendInsertInto(sb);
-        sb.append(table).append("(");
+        meta.appendTableName(sb);
+        sb.append("(");
 
         for(int j = 0; j < insertColumns.length; j++) {
             if (j > 0) {

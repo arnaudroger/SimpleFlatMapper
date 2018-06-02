@@ -4,7 +4,7 @@ set -e
 JDK_FEATURE=11
 
 TMP=$(curl -L jdk.java.net/${JDK_FEATURE})
-TMP="${TMP#*Most recent build: jdk-${JDK_FEATURE}-ea+}" # remove everything before the number
+TMP="${TMP#*Latest build: jdk-${JDK_FEATURE}-ea+}" # remove everything before the number
 TMP="${TMP%%<*}"                                        # remove everything after the number
 JDK_BUILD="$(echo -e "${TMP}" | tr -d '[:space:]')" # remove all whitespace
 

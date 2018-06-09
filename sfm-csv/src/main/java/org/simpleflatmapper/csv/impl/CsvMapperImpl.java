@@ -24,6 +24,7 @@ import java.util.stream.StreamSupport;
 
 public final class CsvMapperImpl<T> implements CsvMapper<T> {
     private static final DelayedCellSetter[] EMPTY_DELAYED_CELL_SETTERS = new DelayedCellSetter[0];
+    public static final CsvMapperCellConsumer<?>[] EMPTY_CONSUMERS = new CsvMapperCellConsumer<?>[0];
 
     private final DelayedCellSetterFactory<T, ?>[] delayedCellSetterFactories;
     private final CellSetter<T>[] setters;
@@ -219,8 +220,28 @@ public final class CsvMapperImpl<T> implements CsvMapper<T> {
         return new CsvMapperCellConsumer<T>(mapperSetters,
                 consumerErrorHandlers,
                 handler,
-                breakDetector, toList(cellHandlers), maxMandatoryCellIndex);
+                breakDetector, stripNull(cellHandlers), maxMandatoryCellIndex);
 	}
+
+    private CsvMapperCellConsumer<?>[] stripNull(CsvMapperCellConsumer<?>[] cellHandlers) {
+        if (cellHandlers == null)
+            return EMPTY_CONSUMERS;
+        
+        int i = 0;
+        for(CsvMapperCellConsumer<?> cellConsumer : cellHandlers) {
+            if (cellConsumer != null) i++;
+        }
+        if (i == 0) return EMPTY_CONSUMERS;
+        
+        CsvMapperCellConsumer<?>[] nonull = new CsvMapperCellConsumer[i];
+
+        i = 0;
+        for(CsvMapperCellConsumer<?> cellConsumer : cellHandlers) {
+            if (cellConsumer != null) nonull[i++] = cellConsumer;
+        }
+        
+        return nonull;
+    }
 
     @SuppressWarnings("unchecked")
     private DelayedCellSetter<T, ?>[] getDelayedCellSetters(CsvMapperCellConsumer<?>[] cellHandlers, BreakDetector breakDetector) {

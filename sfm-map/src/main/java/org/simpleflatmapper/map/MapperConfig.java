@@ -143,7 +143,7 @@ public final class MapperConfig<K extends FieldKey<K>, CD extends ColumnDefiniti
                 consumerErrorHandler, maxMethodSize);
     }
 
-    public MapperConfig<K, CD> fieldMapperErrorHandler(FieldMapperErrorHandler<K> fieldMapperErrorHandler) {
+    public MapperConfig<K, CD> fieldMapperErrorHandler(FieldMapperErrorHandler<? super K> fieldMapperErrorHandler) {
         return new MapperConfig<K, CD>(
                 columnDefinitions,
                 propertyNameMatcherFactory,

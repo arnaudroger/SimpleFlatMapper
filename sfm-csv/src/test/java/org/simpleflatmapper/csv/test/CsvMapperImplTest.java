@@ -2,10 +2,15 @@ package org.simpleflatmapper.csv.test;
 
 import org.junit.Test;
 import org.simpleflatmapper.converter.Converter;
+import org.simpleflatmapper.csv.CsvColumnKey;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperBuilder;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
+import org.simpleflatmapper.map.FieldMapperErrorHandler;
+import org.simpleflatmapper.map.MappingException;
+import org.simpleflatmapper.map.Result;
+import org.simpleflatmapper.map.ResultFieldMapperErrorHandler;
 import org.simpleflatmapper.map.property.ConverterProperty;
 import org.simpleflatmapper.test.beans.DbObject;
 import org.simpleflatmapper.csv.impl.CsvMapperImpl;
@@ -31,6 +36,7 @@ import java.util.stream.Stream;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -65,8 +71,54 @@ public class CsvMapperImplTest {
             System.out.println(e.toString());
         }
 
-    }
+		Integer next = CsvMapperFactory.newInstance().fieldMapperErrorHandler(new FieldMapperErrorHandler<CsvColumnKey>() {
+			@Override
+			public void errorMappingField(CsvColumnKey key, Object source, Object target, Exception error) throws MappingException {
+				System.out.println(error.toString());
+			}
+		}).newMapper(Integer.class).iterator(new StringReader("val\nnnnn")).next();
 
+		System.out.println("next = " + next);
+
+	}
+	
+	
+	@Test
+	public void test517() throws IOException {
+		CsvMapper<Result<T517, CsvColumnKey>> mapper = CsvMapperFactory.newInstance().fieldMapperErrorHandler(new ResultFieldMapperErrorHandler<>(null)).newMapper(new TypeReference<Result<T517, CsvColumnKey>>() {
+		});
+
+		Iterator<Result<T517, CsvColumnKey>> iterator = mapper.iterator(new StringReader("v1,v2\n1,a\na,2"));
+
+		Result<T517, CsvColumnKey> t = iterator.next();
+		
+		assertEquals(1l, t.getValue().v1.longValue());
+		assertNull(t.getValue().v2);
+		assertEquals(1, t.getErrors().size());
+		assertEquals("v2", t.getErrors().get(0).getKey().getName());
+		t = iterator.next();
+		System.out.println("t = " + t);
+
+	}
+	
+	public static class T517 {
+		public final Long v1;
+		public final Long v2;
+
+		public T517(Long v1, Long v2) {
+			this.v1 = v1;
+			this.v2 = v2;
+		}
+
+		@Override
+		public String toString() {
+			return "T517{" +
+					"v1=" + v1 +
+					", v2=" + v2 +
+					'}';
+		}
+	}
+	
 	@Test
 	public void testCsvForEach()
 			throws IOException, ParseException {

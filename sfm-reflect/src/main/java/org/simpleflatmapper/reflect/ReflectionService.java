@@ -15,6 +15,7 @@ import org.simpleflatmapper.reflect.meta.ObjectClassMeta;
 //IFJAVA8_START
 import org.simpleflatmapper.reflect.meta.OptionalClassMeta;
 //IFJAVA8_END
+import org.simpleflatmapper.reflect.meta.PassThroughClassMeta;
 import org.simpleflatmapper.reflect.meta.TupleClassMeta;
 import org.simpleflatmapper.util.Consumer;
 import org.simpleflatmapper.util.ProducerServiceLoader;
@@ -23,6 +24,10 @@ import org.simpleflatmapper.util.TypeHelper;
 import org.simpleflatmapper.util.UnaryFactory;
 
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -148,6 +153,8 @@ public class ReflectionService {
 		} else if (Optional.class.isAssignableFrom(clazz)) {
 			return new OptionalClassMeta(target, this);
 			//IFJAVA8_END
+		} else if (clazz.isAnnotationPresent(PassThrough.class)) {
+			return new PassThroughClassMeta(target, this);
 		} else if (TupleHelper.isTuple(target)) {
 			return new TupleClassMeta<T>(target, this);
 		} else if (isFastTuple(clazz)) {
@@ -298,5 +305,11 @@ public class ReflectionService {
 	}
 
     public interface ClassMetaFactoryProducer extends ProducerServiceLoader.Producer<UnaryFactory<ReflectionService, ClassMeta<?>>> {
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.TYPE})
+	public @interface PassThrough {
+		String value() default "value";
 	}
 }

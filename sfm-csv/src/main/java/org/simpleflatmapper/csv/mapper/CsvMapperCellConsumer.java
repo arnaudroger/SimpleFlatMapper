@@ -24,6 +24,7 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
 
     private boolean calledHandler = false;
     private boolean producedObject = false;
+    private CsvMapperCellConsumer<?> parent;
 
     @SuppressWarnings("ToArrayCallWithZeroLengthArrayArgument")
     public CsvMapperCellConsumer(
@@ -31,15 +32,23 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
             ConsumerErrorHandler consumerErrorHandlers,
             CheckedConsumer<? super T> handler,
             BreakDetector breakDetector, 
-            Collection<CsvMapperCellConsumer<?>> children, 
+            CsvMapperCellConsumer<?>[] children, 
             int maxMandatoryCellIndex) {
         super();
         this.mapperSetters = csvMapperCellHandler;
         this.consumerErrorHandlers = consumerErrorHandlers;
         this.handler = handler;
         this.breakDetector = breakDetector;
-        this.children = children.toArray(new CsvMapperCellConsumer[0]);
+        this.children = children;
+        mapperSetters.mapperCellConsumer = this;
+        for(CsvMapperCellConsumer<?> child : children) {
+            child.setParent(this);
+        }
         this.maxMandatoryCellIndex = maxMandatoryCellIndex;
+    }
+
+    private void setParent(CsvMapperCellConsumer<?> parent) {
+        this.parent = parent;
     }
 
     @Override
@@ -188,4 +197,8 @@ public final class CsvMapperCellConsumer<T> implements CellConsumer {
         }
     }
 
+    public Object getRootCurrentInstance() {
+        if (parent == null) return mapperSetters.currentInstance;
+        return parent.getRootCurrentInstance();
+    }
 }

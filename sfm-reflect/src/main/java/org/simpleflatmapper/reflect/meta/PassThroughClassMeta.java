@@ -28,7 +28,7 @@ public class PassThroughClassMeta<T, V> implements ClassMeta<T> {
 
 		try {
             String value = TypeHelper.toClass(type).getAnnotation(ReflectionService.PassThrough.class).value();
-			ObjectClassMeta<T> objectClassMeta = new ObjectClassMeta<>(type, reflectionService);
+			ObjectClassMeta<T> objectClassMeta = new ObjectClassMeta<T>(type, reflectionService);
 			this.instantiatorDefinition = objectClassMeta.getInstantiatorDefinitions().get(0);
 			this.propertyMeta = objectClassMeta
 					.newPropertyFinder(ConstantPredicate.truePredicate())

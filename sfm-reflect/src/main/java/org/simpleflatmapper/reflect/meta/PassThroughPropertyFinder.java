@@ -5,7 +5,6 @@ import org.simpleflatmapper.util.Predicate;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Optional;
 
 public class PassThroughPropertyFinder<T, V> extends PropertyFinder<T> {
 
@@ -26,7 +25,7 @@ public class PassThroughPropertyFinder<T, V> extends PropertyFinder<T> {
     @Override
     public void lookForProperties(
             PropertyNameMatcher propertyNameMatcher,
-            Object[] properties, FoundProperty matchingProperties,
+            Object[] properties, final FoundProperty matchingProperties,
             PropertyMatchingScore score, boolean allowSelfReference, PropertyFinderTransformer propertyFinderTransformer, TypeAffinityScorer typeAffinityScorer){
         propertyFinderTransformer.apply(propertyFinder).lookForProperties(propertyNameMatcher, properties, new FoundProperty<V>() {
             @Override

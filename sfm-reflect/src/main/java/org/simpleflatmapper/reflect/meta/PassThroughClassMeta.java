@@ -30,8 +30,9 @@ public class PassThroughClassMeta<T, V> implements ClassMeta<T> {
             String value = TypeHelper.toClass(type).getAnnotation(ReflectionService.PassThrough.class).value();
 			ObjectClassMeta<T> objectClassMeta = new ObjectClassMeta<T>(type, reflectionService);
 			this.instantiatorDefinition = objectClassMeta.getInstantiatorDefinitions().get(0);
+			Predicate<PropertyMeta<?, ?>> predicate = ConstantPredicate.truePredicate();
 			this.propertyMeta = objectClassMeta
-					.newPropertyFinder(ConstantPredicate.truePredicate())
+					.newPropertyFinder(predicate)
 					.findProperty(DefaultPropertyNameMatcher.of(value), new Object[0], (TypeAffinity) null);;
 			this.innerMeta = propertyMeta.getPropertyClassMeta();
 		} catch(Exception e) {

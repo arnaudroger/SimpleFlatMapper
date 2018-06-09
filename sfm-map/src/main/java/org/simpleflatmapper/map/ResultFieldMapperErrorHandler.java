@@ -10,7 +10,7 @@ public class ResultFieldMapperErrorHandler<K> implements FieldMapperErrorHandler
 	public void errorMappingField(K key, Object source, Object target, Exception error) throws MappingException {
 		if (target instanceof Result) {
 			Result r = (Result) target;
-			r.getErrors().add(new Result.FieldError<>(key, error));
+			r.getErrors().add(new Result.FieldError<K>(key, error));
 		} else if (delegate != null) {
 			delegate.errorMappingField(key, source, target, error);
 		}

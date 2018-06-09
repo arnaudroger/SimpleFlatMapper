@@ -8,7 +8,7 @@ import java.util.List;
 @ReflectionService.PassThrough
 public class Result<T, K> {
     private T value;
-    private final List<FieldError<K>> errors = new ArrayList<>();
+    private final List<FieldError<K>> errors = new ArrayList<FieldError<K>>();
 
     public void setValue(T value) {
         this.value = value;

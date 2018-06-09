@@ -37,10 +37,10 @@ public class PassThroughPropertyFinder<T, V> extends PropertyFinder<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private <I, E> PropertyMeta<Optional<T>, E> getSubPropertyMeta(PropertyMeta<I, ?> property) {
-        return new SubPropertyMeta<Optional<T>, I, E>(
+    private <I, E> PropertyMeta<T, E> getSubPropertyMeta(PropertyMeta<I, ?> property) {
+        return new SubPropertyMeta<T, I, E>(
                 passThroughClassMeta.getReflectionService(),
-                (PropertyMeta<Optional<T>, I>) passThroughClassMeta.getProperty(),
+                (PropertyMeta<T, I>) passThroughClassMeta.getProperty(),
                 (PropertyMeta<I, E>)property);
     }
 
